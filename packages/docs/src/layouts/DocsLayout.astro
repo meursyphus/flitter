@@ -1,7 +1,9 @@
 ---
 import Layout from './Layout.astro'
 interface Props {
-  title: string;
+  title?: string;
+  description?: string;
+  image?: string;
 }
 
 const { title } = Astro.props;

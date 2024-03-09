@@ -1,7 +1,9 @@
 ---
 import Header from '../components/ui/Header.astro';
 interface Props {
-  title: string;
+  title?: string;
+  description?: string;
+  image?: string;
 }
 
 const { title } = Astro.props;
@@ -15,7 +17,7 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+    <title>{title ?? 'Flitter'}</title>
   </head>
   <body>
 		<Header />

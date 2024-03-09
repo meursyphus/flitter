@@ -1,0 +1,40 @@
+---
+import Layout from '../../layouts/DocsLayout.astro'
+import SideBar from '../../components/pages/docs/SideBar.astro'
+import Toc from '../../components/pages/docs/Toc.astro'
+import { getCollection } from 'astro:content'
+
+export async function getStaticPaths() {
+  const docsEntries = await getCollection('docs')
+
+  return docsEntries.map((entry: any) => ({
+    params: {slug: entry.slug}, props: { entry }
+  }))
+}
+
+const { entry } = Astro.props as any
+const { Content } = await entry.render()
+
+
+---
+
+<Layout title="Docs">
+  <main class="flex absolute left-1/2 -translate-x-1/2">
+    <SideBar />
+    <div class="h-full overflow-scroll w-full px-8">
+      <Content />
+    </div>
+    <Toc />
+  </main>
+</Layout>
+
+<style>
+  main {
+    --header: 72px;
+    height: calc(100vh - var(--header));
+    top: var(--header)
+    
+  }
+</style>
+
+
