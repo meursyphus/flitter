@@ -3,7 +3,8 @@
     "astro",
     "astrojs",
     "meursyphus",
-    "meusyphus"
+    "meusyphus",
+    "tailwindcss"
   ],
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": true
 }
