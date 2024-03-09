@@ -1,0 +1,24 @@
+---
+import Layout from '../layouts/DocsLayout.astro'
+import SideBar from '../components/pages/docs/SideBar.astro'
+import Content from '../components/pages/docs/Content.astro'
+import Toc from '../components/pages/docs/Toc.astro'
+---
+
+<Layout title="Docs">
+  <main class="flex absolute left-1/2 -translate-x-1/2">
+    <SideBar />
+    <Content />
+    <Toc />
+  </main>
+</Layout>
+
+<style>
+  main {
+    --header: 72px;
+    height: calc(100vh - var(--header));
+    top: var(--header)
+    
+  }
+</style>
+

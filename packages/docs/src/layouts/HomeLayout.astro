@@ -1,0 +1,16 @@
+---
+import Footer from '../components/ui/Footer.astro';
+import Layout from './Layout.astro'
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+
+---
+
+<Layout title={title}>
+  <slot />
+  <Footer />
+</Layout>
+
