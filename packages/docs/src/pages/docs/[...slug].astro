@@ -12,8 +12,24 @@ export async function getStaticPaths() {
   }))
 }
 
-const { entry } = Astro.props as any
+const { entry } = Astro.props 
 const { Content } = await entry.render()
+const docsEntries = await getCollection('docs')
+
+// docsEntries를 nav_group_order와 nav_order를 기준으로 정렬
+const sortedEntries = docsEntries.sort((a, b) => {
+  const groupOrderDiff = a.data.nav_group_order - b.data.nav_group_order;
+  if (groupOrderDiff === 0) { // 같은 그룹 내에서는 nav_order를 기준으로 정렬
+    return a.data.nav_order - b.data.nav_order;
+  }
+  return groupOrderDiff;
+});
+// 현재 entry의 인덱스 찾기
+const currentIndex = sortedEntries.findIndex(it => it.slug === entry.slug);
+
+// 이전 및 다음 entry 찾기
+const prevEntry = currentIndex > 0 ? sortedEntries[currentIndex - 1] : null;
+const nextEntry = currentIndex < sortedEntries.length - 1 ? sortedEntries[currentIndex + 1] : null;
 
 
 ---
@@ -23,6 +39,10 @@ const { Content } = await entry.render()
     <SideBar />
     <div class="h-full overflow-scroll w-full px-8">
       <Content />
+      <div class="flex">
+        {prevEntry && <a href={`/docs/${prevEntry.slug}`}>{prevEntry.data.nav_title}</a>}
+        {nextEntry && <a href={`/docs/${nextEntry.slug}`}>{nextEntry.data.nav_title}</a>}
+      </div>
     </div>
     <Toc />
   </main>
