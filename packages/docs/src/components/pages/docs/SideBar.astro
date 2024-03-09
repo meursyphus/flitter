@@ -1,14 +1,47 @@
+---
+import { getCollection } from 'astro:content'
+const docsEntries = await getCollection('docs')
+// navigation 정보로 표현할 객체 만들기
+const navigation = docsEntries.reduce((acc, entry) => {
+  
+  const { nav_group, nav_group_order, nav_order, title, nav_title,  } = entry.data
+
+  // 해당 navGroup이 이미 존재하는지 확인
+  let group = acc.find(g => g.name === nav_group)
+  if (!group) {
+    // 존재하지 않으면 새로운 그룹 생성
+    group = { name: nav_group, order: nav_group_order, items: [] }
+    acc.push(group)
+  }
+
+  // 그룹에 문서 추가
+  group.items.push({ url: `/docs/${entry.slug}`, title: nav_title ?? title, order: nav_order })
+
+  return acc
+}, [] as { name: string, order: number, items: { url: string, title: string, order: number }[] }[])
+
+// 그룹을 navGroupOrder에 따라 정렬
+navigation.sort((a, b) => a.order - b.order)
+
+// 각 그룹 내의 항목들을 navOrder에 따라 정렬
+navigation.forEach(group => {
+  group.items.sort((a, b) => a.order - b.order)
+})
+
+
+---
 <div class="w-80 shrink-0 h-full overflow-scroll px-12 py-[84px] border-r border-black flex-col justify-start items-start gap-4 inline-flex">
-  <div class="text-black text-2xl font-bold font-['Roboto'] leading-[33.60px]">Table of Contents</div>
-  <div class="self-stretch h-[255px] flex-col justify-start items-start flex">
-    <div class="self-stretch px-4 py-3 bg-zinc-100 justify-start items-start gap-2.5 inline-flex">
-      <div class="text-black text-lg font-bold font-['Roboto'] leading-[27px]">Heading 2</div>
+  {navigation.map(group => (
+    <div class="self-stretch flex-col justify-start items-start flex">
+      <div class="self-stretch px-4 py-3 bg-zinc-100 justify-start items-start gap-2.5 inline-flex">
+        <div class="text-black text-lg leading-[27px]">{group.name}</div>
+      </div>
+      {group.items.map(item => (
+        <div class="self-stretch px-8 py-3 justify-start items-start gap-2 inline-flex">
+          <a href={item.url} class="text-black text-lg leading-[27px]">{item.title}</a>
+        </div>
+      ))}
     </div>
-    <div class="self-stretch px-8 py-3 justify-start items-start gap-2 inline-flex">
-      <div class="text-black text-lg font-normal font-['Roboto'] leading-[27px]">Heading 3</div>
-    </div>
-    <div class="self-stretch px-12 py-3"></div>
-    <div class="self-stretch px-16 py-3"></div>
-    <div class="self-stretch px-20 py-3"></div>
-  </div>
+  ))}
 </div>
+
