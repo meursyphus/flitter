@@ -4,5 +4,6 @@
     "astrojs",
     "meursyphus",
     "meusyphus"
-  ]
+  ],
+  "editor.formatOnSave": true,
 }

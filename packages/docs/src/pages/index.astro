@@ -1,123 +1,473 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
+import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Welcome to Astro.">
-	<main>
-		<svg
-			class="astro-a"
-			width="495"
-			height="623"
-			viewBox="0 0 495 623"
-			fill="none"
-			xmlns="http://www.w3.org/2000/svg"
-			aria-hidden="true"
-		>
-			<path
-				fill-rule="evenodd"
-				clip-rule="evenodd"
-				d="M167.19 364.254C83.4786 364.254 0 404.819 0 404.819C0 404.819 141.781 19.4876 142.087 18.7291C146.434 7.33701 153.027 0 162.289 0H332.441C341.703 0 348.574 7.33701 352.643 18.7291C352.92 19.5022 494.716 404.819 494.716 404.819C494.716 404.819 426.67 364.254 327.525 364.254L264.41 169.408C262.047 159.985 255.147 153.581 247.358 153.581C239.569 153.581 232.669 159.985 230.306 169.408L167.19 364.254ZM160.869 530.172C160.877 530.18 160.885 530.187 160.894 530.195L160.867 530.181C160.868 530.178 160.868 530.175 160.869 530.172ZM136.218 411.348C124.476 450.467 132.698 504.458 160.869 530.172C160.997 529.696 161.125 529.242 161.248 528.804C161.502 527.907 161.737 527.073 161.917 526.233C165.446 509.895 178.754 499.52 195.577 500.01C211.969 500.487 220.67 508.765 223.202 527.254C224.141 534.12 224.23 541.131 224.319 548.105C224.328 548.834 224.337 549.563 224.347 550.291C224.563 566.098 228.657 580.707 237.264 593.914C245.413 606.426 256.108 615.943 270.749 622.478C270.593 621.952 270.463 621.508 270.35 621.126C270.045 620.086 269.872 619.499 269.685 618.911C258.909 585.935 266.668 563.266 295.344 543.933C298.254 541.971 301.187 540.041 304.12 538.112C310.591 533.854 317.059 529.599 323.279 525.007C345.88 508.329 360.09 486.327 363.431 457.844C364.805 446.148 363.781 434.657 359.848 423.275C358.176 424.287 356.587 425.295 355.042 426.275C351.744 428.366 348.647 430.33 345.382 431.934C303.466 452.507 259.152 455.053 214.03 448.245C184.802 443.834 156.584 436.019 136.218 411.348Z"
-				fill="url(#paint0_linear_1805_24383)"></path>
-			<defs>
-				<linearGradient
-					id="paint0_linear_1805_24383"
-					x1="247.358"
-					y1="0"
-					x2="247.358"
-					y2="622.479"
-					gradientUnits="userSpaceOnUse"
-				>
-					<stop stop-opacity="0.9"></stop>
-					<stop offset="1" stop-opacity="0.2"></stop>
-				</linearGradient>
-			</defs>
-		</svg>
-		<h1>Welcome to <span class="text-gradient">Astro</span></h1>
-		<p class="instructions">
-			To get started, open the directory <code>src/pages</code> in your project.<br />
-			<strong>Code Challenge:</strong> Tweak the "Welcome to Astro" message above.
-		</p>
-		<ul role="list" class="link-card-grid">
-			<Card
-				href="https://docs.astro.build/"
-				title="Documentation"
-				body="Learn how Astro works and explore the official API docs."
-			/>
-			<Card
-				href="https://astro.build/integrations/"
-				title="Integrations"
-				body="Supercharge your project with new frameworks and libraries."
-			/>
-			<Card
-				href="https://astro.build/themes/"
-				title="Themes"
-				body="Explore a galaxy of community-built starter themes."
-			/>
-			<Card
-				href="https://astro.build/chat/"
-				title="Community"
-				body="Come say hi to our amazing Discord community. ❤️"
-			/>
-		</ul>
-	</main>
+  <main class="flex-col justify-start items-start flex">
+    <div
+      class="w-[1440px] h-[72px] px-16 bg-white border-b border-black flex-col justify-center items-center flex"
+    >
+      <div class="self-stretch justify-center items-center gap-8 inline-flex">
+        <div
+          class="grow shrink basis-0 h-[27px] justify-start items-start flex"
+        >
+          <div class="w-[63px] h-[27px] relative"></div>
+        </div>
+        <div class="justify-start items-start gap-8 flex">
+          <div
+            class="text-black text-base font-normal font-['Roboto'] leading-normal"
+          >
+            <br />
+          </div>
+          <div
+            class="text-black text-base font-normal font-['Roboto'] leading-normal"
+          >
+            Features
+          </div>
+          <div
+            class="text-black text-base font-normal font-['Roboto'] leading-normal"
+          >
+            docs
+          </div>
+          <div class="justify-center items-center gap-1 flex">
+            <div
+              class="text-black text-base font-normal font-['Roboto'] leading-normal"
+            >
+              tutorial
+            </div>
+            <div class="w-6 h-6 relative"></div>
+          </div>
+        </div>
+        <div
+          class="grow shrink basis-0 flex-col justify-center items-end inline-flex"
+        >
+          <div
+            class="px-5 py-2 bg-black border border-black justify-center items-center gap-2 inline-flex"
+          >
+            <div
+              class="text-white text-base font-normal font-['Roboto'] leading-normal"
+            >
+              github
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="h-[800px] px-16 py-20 bg-white flex-col justify-start items-center gap-20 flex"
+    >
+      <div
+        class="self-stretch h-[640px] flex-col justify-start items-start gap-8 flex"
+      >
+        <div
+          class="w-[1312px] border border-black justify-start items-center inline-flex"
+        >
+          <div
+            class="grow shrink basis-0 self-stretch p-12 flex-col justify-center items-start gap-6 inline-flex"
+          >
+            <div
+              class="self-stretch h-[306px] flex-col justify-start items-start gap-6 flex"
+            >
+              <div
+                class="self-stretch text-black text-[56px] font-bold font-['Roboto'] leading-[67.20px]"
+              >
+                Transform your SVGs with Flitter's powerful features
+              </div>
+              <div
+                class="self-stretch text-black text-lg font-normal font-['Roboto'] leading-[27px]"
+              >
+                Flitter is a cutting-edge library for declarative SVG
+                manipulation. It simplifies the process of creating interactive
+                and dynamic SVGs, allowing you to bring your designs to life.
+              </div>
+            </div>
+            <div class="pt-4 justify-start items-start gap-4 inline-flex">
+              <div
+                class="px-6 py-3 bg-black border border-black justify-center items-center gap-2 flex"
+              >
+                <div
+                  class="text-white text-base font-normal font-['Roboto'] leading-normal"
+                >
+                  tutorial: comming soon
+                </div>
+              </div>
+              <div
+                class="px-6 py-3 border border-black justify-center items-center gap-2 flex"
+              >
+                <div
+                  class="text-black text-base font-normal font-['Roboto'] leading-normal"
+                >
+                  read the docs
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="grow shrink basis-0 h-[640px] flex-col justify-start items-center gap-2.5 inline-flex"
+          >
+            <img
+              class="self-stretch grow shrink basis-0"
+              src="https://via.placeholder.com/656x640"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="h-[864px] px-16 py-28 bg-white flex-col justify-start items-center gap-20 flex"
+    >
+      <div class="self-stretch justify-start items-center gap-20 inline-flex">
+        <img
+          class="grow shrink basis-0 h-[640px]"
+          src="https://via.placeholder.com/616x640"
+        />
+        <div
+          class="grow shrink basis-0 flex-col justify-start items-start gap-6 inline-flex"
+        >
+          <div class="w-12 h-12 relative"></div>
+          <div
+            class="self-stretch h-[201px] flex-col justify-start items-start gap-6 flex"
+          >
+            <div
+              class="self-stretch text-black text-[40px] font-bold font-['Roboto'] leading-[48px]"
+            >
+              Get started with Flitter in just a few simple steps
+            </div>
+            <div
+              class="self-stretch text-black text-lg font-normal font-['Roboto'] leading-[27px]"
+            >
+              Install Flitter using the following terminal code:<br /><br />npm
+              install flitter
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="h-[720px] px-16 py-28 bg-white flex-col justify-start items-start gap-20 flex"
+    >
+      <div class="self-stretch justify-start items-start gap-20 inline-flex">
+        <div
+          class="grow shrink basis-0 flex-col justify-start items-start gap-4 inline-flex"
+        >
+          <div
+            class="self-stretch text-black text-[40px] font-bold font-['Roboto'] leading-[48px]"
+          >
+            A Powerful SVG Manipulation Library with Declarative Syntax
+          </div>
+        </div>
+        <div
+          class="grow shrink basis-0 flex-col justify-start items-start gap-6 inline-flex"
+        >
+          <div
+            class="self-stretch text-black text-lg font-normal font-['Roboto'] leading-[27px]"
+          >
+            Flitter allows you to easily manipulate SVG elements using a simple
+            and intuitive syntax. With Flitter, you can create dynamic and
+            interactive SVG graphics without the hassle of manual DOM
+            manipulation.
+          </div>
+        </div>
+      </div>
+      <div
+        class="self-stretch h-80 justify-center items-start gap-12 inline-flex"
+      >
+        <div
+          class="grow shrink basis-0 flex-col justify-start items-start gap-6 inline-flex"
+        >
+          <div class="w-12 h-12 relative"></div>
+          <div
+            class="self-stretch text-black text-2xl font-bold font-['Roboto'] leading-[33.60px]"
+          >
+            Effortlessly Animate SVG Elements with Flitter's Animation Features
+          </div>
+          <div
+            class="self-stretch text-black text-base font-normal font-['Roboto'] leading-normal"
+          >
+            Flitter provides a comprehensive set of animation features that
+            enable you to bring your SVG graphics to life. From simple
+            transitions to complex keyframe animations, Flitter has got you
+            covered.
+          </div>
+          <div
+            class="self-stretch h-8 pt-2 flex-col justify-start items-start gap-2 flex"
+          >
+            <div class="justify-center items-center gap-2 inline-flex">
+              <div
+                class="text-black text-base font-normal font-['Roboto'] leading-normal"
+              >
+                Explore
+              </div>
+              <div class="w-6 h-6 relative"></div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="grow shrink basis-0 flex-col justify-start items-start gap-6 inline-flex"
+        >
+          <div class="w-12 h-12 relative"></div>
+          <div
+            class="self-stretch text-black text-2xl font-bold font-['Roboto'] leading-[33.60px]"
+          >
+            Optimize SVG Performance with Flitter's Advanced Rendering Engine
+          </div>
+          <div
+            class="self-stretch text-black text-base font-normal font-['Roboto'] leading-normal"
+          >
+            Flitter's rendering engine ensures smooth and efficient rendering of
+            SVG graphics, even with complex animations and interactions.
+          </div>
+          <div
+            class="self-stretch h-8 pt-2 flex-col justify-start items-start gap-2 flex"
+          >
+            <div class="justify-center items-center gap-2 inline-flex">
+              <div
+                class="text-black text-base font-normal font-['Roboto'] leading-normal"
+              >
+                Discover
+              </div>
+              <div class="w-6 h-6 relative"></div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="grow shrink basis-0 flex-col justify-start items-start gap-6 inline-flex"
+        >
+          <div class="w-12 h-12 relative"></div>
+          <div
+            class="self-stretch text-black text-2xl font-bold font-['Roboto'] leading-[33.60px]"
+          >
+            Simplify SVG Manipulation with Flitter's Component-Based Approach
+          </div>
+          <div
+            class="self-stretch text-black text-base font-normal font-['Roboto'] leading-normal"
+          >
+            Flitter's component-based approach allows you to encapsulate SVG
+            elements and their behaviors into reusable and modular components,
+            making your code more organized and maintainable.
+          </div>
+          <div
+            class="self-stretch h-8 pt-2 flex-col justify-start items-start gap-2 flex"
+          >
+            <div class="justify-center items-center gap-2 inline-flex">
+              <div
+                class="text-black text-base font-normal font-['Roboto'] leading-normal"
+              >
+                Get Started
+              </div>
+              <div class="w-6 h-6 relative"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="h-[1129px] px-16 py-28 bg-white flex-col justify-start items-center gap-20 flex"
+    >
+      <div class="h-[109px] flex-col justify-start items-center gap-6 flex">
+        <div
+          class="self-stretch text-center text-black text-5xl font-bold font-['Roboto'] leading-[57.60px]"
+        >
+          Data Gallery
+        </div>
+        <div
+          class="self-stretch text-center text-black text-lg font-normal font-['Roboto'] leading-[27px]"
+        >
+          Interactive charts for data-driven insights.
+        </div>
+      </div>
+      <div class="flex-col justify-start items-center gap-12 flex">
+        <div class="w-[1312px] justify-start items-start gap-8 inline-flex">
+          <div class="w-[1314px] h-[640px] relative">
+            <img
+              class="w-[640px] h-[640px] left-[673px] top-0 absolute"
+              src="https://via.placeholder.com/640x640"
+            />
+            <img
+              class="w-[640px] h-[640px] left-[1px] top-0 absolute"
+              src="https://via.placeholder.com/640x640"
+            />
+            <div
+              class="w-px left-0 top-0 absolute flex-col justify-center items-center inline-flex"
+            >
+              <div
+                class="self-stretch p-4 bg-white rounded-[50px] border border-black justify-center items-center gap-2 inline-flex"
+              >
+                <div class="w-6 h-6 relative"></div>
+              </div>
+            </div>
+            <div
+              class="w-px left-[1313px] top-0 absolute flex-col justify-center items-center inline-flex"
+            >
+              <div
+                class="self-stretch p-4 bg-white rounded-[50px] border border-black justify-center items-center gap-2 inline-flex"
+              >
+                <div class="w-6 h-6 relative"></div>
+              </div>
+            </div>
+          </div>
+          <img
+            class="w-[640px] h-[640px]"
+            src="https://via.placeholder.com/640x640"
+          />
+        </div>
+        <div class="p-2.5 justify-start items-start gap-[9px] inline-flex">
+          <div class="w-2 h-2 bg-black rounded-full"></div>
+          <div class="w-2 h-2 bg-stone-300 rounded-full"></div>
+          <div class="w-2 h-2 bg-stone-300 rounded-full"></div>
+          <div class="w-2 h-2 bg-stone-300 rounded-full"></div>
+          <div class="w-2 h-2 bg-stone-300 rounded-full"></div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="h-[532px] px-16 py-28 bg-white flex-col justify-start items-center gap-20 flex"
+    >
+      <div class="h-[308px] flex-col justify-start items-center gap-8 flex">
+        <div class="w-[140px] h-14 relative"></div>
+        <div
+          class="self-stretch text-center text-black text-2xl font-bold font-['Roboto'] leading-[33.60px]"
+        >
+          Flitter has completely transformed the way I work with SVG. It's
+          intuitive, powerful, and has drastically reduced my development time.
+        </div>
+        <div class="h-[120px] flex-col justify-start items-center gap-4 flex">
+          <img
+            class="w-14 h-14 rounded-full"
+            src="https://via.placeholder.com/56x56"
+          />
+          <div
+            class="self-stretch h-12 flex-col justify-start items-start flex"
+          >
+            <div
+              class="self-stretch text-center text-black text-base font-semibold font-['Roboto'] leading-normal"
+            >
+              John Doe
+            </div>
+            <div
+              class="self-stretch text-center text-black text-base font-normal font-['Roboto'] leading-normal"
+            >
+              Frontend Developer, ABC Corp
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="h-[421px] px-16 py-28 bg-black bg-opacity-50 flex-col justify-start items-start gap-20 flex"
+    >
+      <div class="h-[197px] flex-col justify-start items-start gap-6 flex">
+        <div
+          class="self-stretch h-[109px] flex-col justify-start items-start gap-6 flex"
+        >
+          <div
+            class="self-stretch text-white text-5xl font-bold font-['Roboto'] leading-[57.60px]"
+          >
+            Discover the power of Flitter
+          </div>
+          <div
+            class="self-stretch text-white text-lg font-normal font-['Roboto'] leading-[27px]"
+          >
+            Effortlessly manipulate SVG graphics with Flitter's intuitive API
+          </div>
+        </div>
+        <div class="pt-4 justify-start items-start gap-4 inline-flex">
+          <div
+            class="px-6 py-3 bg-black border border-black justify-center items-center gap-2 flex"
+          >
+            <div
+              class="text-white text-base font-normal font-['Roboto'] leading-normal"
+            >
+              Explore
+            </div>
+          </div>
+          <div
+            class="px-6 py-3 border border-white justify-center items-center gap-2 flex"
+          >
+            <div
+              class="text-white text-base font-normal font-['Roboto'] leading-normal"
+            >
+              Try Now
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="h-[321px] px-16 py-20 bg-white flex-col justify-start items-center gap-20 flex"
+    >
+      <div class="self-stretch justify-start items-center gap-8 inline-flex">
+        <div
+          class="grow shrink basis-0 flex-col justify-start items-start gap-6 inline-flex"
+        >
+          <div class="w-[63px] h-[27px] relative"></div>
+        </div>
+        <div class="justify-start items-start gap-8 flex">
+          <div
+            class="text-black text-base font-semibold font-['Roboto'] leading-normal"
+          >
+            Link One
+          </div>
+          <div
+            class="text-black text-base font-semibold font-['Roboto'] leading-normal"
+          >
+            Link Two
+          </div>
+          <div
+            class="text-black text-base font-semibold font-['Roboto'] leading-normal"
+          >
+            Link Three
+          </div>
+          <div
+            class="w-[97px] text-black text-base font-semibold font-['Roboto'] leading-normal"
+          >
+            Link Four
+          </div>
+          <div
+            class="text-black text-base font-semibold font-['Roboto'] leading-normal"
+          >
+            Link Five
+          </div>
+        </div>
+        <div
+          class="grow shrink basis-0 h-6 justify-end items-center gap-3 flex"
+        >
+          <div class="w-6 h-6 relative"></div>
+          <div class="w-6 h-6 relative"></div>
+          <div class="w-6 h-6 relative"></div>
+          <div class="w-6 h-6 relative"></div>
+          <div class="w-6 h-6 relative"></div>
+        </div>
+      </div>
+      <div
+        class="self-stretch h-[54px] flex-col justify-start items-center gap-8 flex"
+      >
+        <div class="self-stretch h-px bg-black border border-black"></div>
+        <div class="justify-start items-start gap-6 inline-flex">
+          <div
+            class="text-black text-sm font-normal font-['Roboto'] leading-[21px]"
+          >
+            © 2023 Flitter. All rights reserved.
+          </div>
+          <div class="justify-start items-start gap-6 flex">
+            <div
+              class="text-black text-sm font-normal font-['Roboto'] underline leading-[21px]"
+            >
+              Privacy Policy
+            </div>
+            <div
+              class="text-black text-sm font-normal font-['Roboto'] underline leading-[21px]"
+            >
+              Terms of Service
+            </div>
+            <div
+              class="text-black text-sm font-normal font-['Roboto'] underline leading-[21px]"
+            >
+              Cookies Settings
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 </Layout>
-
-<style>
-	main {
-		margin: auto;
-		padding: 1rem;
-		width: 800px;
-		max-width: calc(100% - 2rem);
-		color: white;
-		font-size: 20px;
-		line-height: 1.6;
-	}
-	.astro-a {
-		position: absolute;
-		top: -32px;
-		left: 50%;
-		transform: translatex(-50%);
-		width: 220px;
-		height: auto;
-		z-index: -1;
-	}
-	h1 {
-		font-size: 4rem;
-		font-weight: 700;
-		line-height: 1;
-		text-align: center;
-		margin-bottom: 1em;
-	}
-	.text-gradient {
-		background-image: var(--accent-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-size: 400%;
-		background-position: 0%;
-	}
-	.instructions {
-		margin-bottom: 2rem;
-		border: 1px solid rgba(var(--accent-light), 25%);
-		background: linear-gradient(rgba(var(--accent-dark), 66%), rgba(var(--accent-dark), 33%));
-		padding: 1.5rem;
-		border-radius: 8px;
-	}
-	.instructions code {
-		font-size: 0.8em;
-		font-weight: bold;
-		background: rgba(var(--accent-light), 12%);
-		color: rgb(var(--accent-light));
-		border-radius: 4px;
-		padding: 0.3em 0.4em;
-	}
-	.instructions strong {
-		color: rgb(var(--accent-light));
-	}
-	.link-card-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-		gap: 2rem;
-		padding: 0;
-	}
-</style>
