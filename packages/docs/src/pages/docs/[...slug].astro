@@ -13,7 +13,7 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props 
-const { Content } = await entry.render()
+const { Content, headings } = await entry.render()
 const docsEntries = await getCollection('docs')
 
 // docsEntries를 nav_group_order와 nav_order를 기준으로 정렬
@@ -44,7 +44,7 @@ const nextEntry = currentIndex < sortedEntries.length - 1 ? sortedEntries[curren
         {nextEntry && <a href={`/docs/${nextEntry.slug}`}>{nextEntry.data.nav_title}</a>}
       </div>
     </div>
-    <Toc />
+    <Toc headings={headings} />
   </main>
 </Layout>
 
