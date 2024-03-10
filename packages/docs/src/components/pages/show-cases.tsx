@@ -1,5 +1,4 @@
 import Flicking from "@egjs/react-flicking";
-import type { Widget } from "@moonmoonbrothers/flutterjs";
 import ReactWidget from "@moonmoonbrothers/flutterjs-react";
 import {
   BarChart,
@@ -8,7 +7,7 @@ import {
   ScatterChart,
   StackedBarChart,
 } from "@moonmoonbrothers/uglychart";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const barChartProps = {
   data: {
@@ -741,7 +740,7 @@ const lineChart = LineChart({
 });
 
 export const Chart = {
-  Bar: () => <ReactWidget width="640px" height="640px" widget={barChart} />,
+  Bar: () => <ReactWidget width="800px" height="640px" widget={barChart} />,
   Bubble: () => (
     <ReactWidget width="800px" height="640px" widget={bubbleChart} />
   ),
