@@ -4,6 +4,7 @@
     "astrojs",
     "meursyphus",
     "meusyphus",
+    "Shiki",
     "tailwindcss"
   ],
   "editor.formatOnSave": true
