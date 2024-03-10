@@ -1,0 +1,70 @@
+---
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+---
+
+<nav
+  class="w-[300px] toc px-5 shrink-0 h-[500px] grow-0 flex py-20 justify-start"
+>
+  <ul class="list-none flex flex-col gap-1">
+    {
+      headings.map((heading) => (
+        <li style={`padding-left: ${heading.depth * 1}rem;`}>
+          <a
+            href={`#${heading.slug}`}
+            class="text-gray-600 hover:text-gray-900"
+          >
+            {heading.text}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script type="text/javascript">
+  const content = document.querySelector(".content");
+  const headings = document.querySelectorAll("h2, h3, h4, h5, h6");
+  const toc = document.querySelector(".toc");
+  const tocLinks = toc.querySelectorAll("a");
+  const contentOffsetTop = content.getBoundingClientRect().top;
+  const headerLinks = Array.from(headings).map((heading) => {
+    return {
+      id: heading.id,
+      top: heading.offsetTop - contentOffsetTop,
+      bottom: heading.offsetTop + heading.offsetHeight - contentOffsetTop,
+    };
+  });
+  const onScroll = () => {
+    const scrollY = content.scrollTop;
+    const activeHeaderLink = headerLinks.findLast((headerLink) => {
+      return headerLink.top <= scrollY;
+    });
+    tocLinks.forEach((tocLink) => {
+      tocLink.classList.remove("active");
+    });
+    if (activeHeaderLink) {
+      const activeTocLink = toc.querySelector(
+        `a[href="#${activeHeaderLink.id}"]`,
+      );
+      activeTocLink.classList.add("active");
+    }
+  };
+  content.addEventListener("scroll", onScroll);
+</script>
+
+<style>
+  .active {
+    font-weight: bold;
+  }
+  nav {
+    height: calc(100vh - var(--header));
+    position: sticky;
+    top: 0;
+  }
+</style>
