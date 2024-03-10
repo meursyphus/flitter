@@ -1,47 +1,60 @@
 ---
-import Layout from '../../layouts/DocsLayout.astro'
-import SideBar from '../../components/pages/docs/SideBar.astro'
-import Toc from '../../components/pages/docs/Toc.astro'
-import { getCollection } from 'astro:content'
+import Layout from "../../layouts/DocsLayout.astro";
+import SideBar from "../../components/pages/docs/SideBar.astro";
+import Toc from "../../components/pages/docs/Toc.astro";
+import { getCollection } from "astro:content";
 
 export async function getStaticPaths() {
-  const docsEntries = await getCollection('docs')
+  const docsEntries = await getCollection("docs");
 
   return docsEntries.map((entry) => ({
-    params: {slug: entry.slug}, props: { entry }
-  }))
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
 }
 
-const { entry } = Astro.props 
-const { Content, headings } = await entry.render()
-const docsEntries = await getCollection('docs')
+const { entry } = Astro.props;
+const { Content, headings } = await entry.render();
+const docsEntries = await getCollection("docs");
 
 // docsEntries를 nav_group_order와 nav_order를 기준으로 정렬
 const sortedEntries = docsEntries.sort((a, b) => {
   const groupOrderDiff = a.data.nav_group_order - b.data.nav_group_order;
-  if (groupOrderDiff === 0) { // 같은 그룹 내에서는 nav_order를 기준으로 정렬
+  if (groupOrderDiff === 0) {
+    // 같은 그룹 내에서는 nav_order를 기준으로 정렬
     return a.data.nav_order - b.data.nav_order;
   }
   return groupOrderDiff;
 });
 // 현재 entry의 인덱스 찾기
-const currentIndex = sortedEntries.findIndex(it => it.slug === entry.slug);
+const currentIndex = sortedEntries.findIndex((it) => it.slug === entry.slug);
 
 // 이전 및 다음 entry 찾기
 const prevEntry = currentIndex > 0 ? sortedEntries[currentIndex - 1] : null;
-const nextEntry = currentIndex < sortedEntries.length - 1 ? sortedEntries[currentIndex + 1] : null;
-
-
+const nextEntry =
+  currentIndex < sortedEntries.length - 1
+    ? sortedEntries[currentIndex + 1]
+    : null;
 ---
 
 <Layout title="Docs">
   <main class="flex absolute left-1/2 -translate-x-1/2">
     <SideBar />
     <div class="h-full overflow-scroll w-full px-8">
-      <Content />
+      <div class="prose max-w-full lg:prose-md py-20">
+        <Content />
+      </div>
       <div class="flex">
-        {prevEntry && <a href={`/docs/${prevEntry.slug}`}>{prevEntry.data.nav_title}</a>}
-        {nextEntry && <a href={`/docs/${nextEntry.slug}`}>{nextEntry.data.nav_title}</a>}
+        {
+          prevEntry && (
+            <a href={`/docs/${prevEntry.slug}`}>{prevEntry.data.nav_title}</a>
+          )
+        }
+        {
+          nextEntry && (
+            <a href={`/docs/${nextEntry.slug}`}>{nextEntry.data.nav_title}</a>
+          )
+        }
       </div>
     </div>
     <Toc headings={headings} />
@@ -52,9 +65,6 @@ const nextEntry = currentIndex < sortedEntries.length - 1 ? sortedEntries[curren
   main {
     --header: 72px;
     height: calc(100vh - var(--header));
-    top: var(--header)
-    
+    top: var(--header);
   }
 </style>
-
-

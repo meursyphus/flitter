@@ -1,7 +1,7 @@
-import { defineCollection, reference, z } from "astro:content";
+import { defineCollection, z } from "astro:content";
 
 const docs = defineCollection({
-  type: "content", // v2.5.0 이후 버전에서 사용
+  type: "content", 
   schema: z.object({
     nav_group: z.string(),
     nav_group_order: z.number(),
@@ -11,7 +11,7 @@ const docs = defineCollection({
     description: z.string().optional(),
     tags: z.array(z.string()).optional(),
     image: z.string().optional(),
-  }),
+  })
 });
 
 export const collections = {

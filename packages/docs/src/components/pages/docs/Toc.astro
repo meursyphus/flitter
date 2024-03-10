@@ -1,23 +1,25 @@
 ---
-import type { MarkdownHeading } from 'astro'
+import type { MarkdownHeading } from "astro";
 
 interface Props {
-  headings: MarkdownHeading[]
+  headings: MarkdownHeading[];
 }
 
-const { headings } = Astro.props 
-
-
+const { headings } = Astro.props;
 ---
-<div class="w-[300px] shrink-0 h-[500px] grow-0 bg-gray-500 flex items-center justify-center">
-<ul class="list-none">
-  {headings.map((heading) => (
-    <li style={`padding-left: ${heading.depth * 1}rem;`}>
-      <a href={`#${heading.slug}`} class="text-white hover:text-gray-300">
-        {heading.text}
-      </a>
-    </li>
-  ))}
-</ul>
-</div>
 
+<div
+  class="w-[300px] shrink-0 h-[500px] grow-0 bg-gray-500 flex items-center justify-center"
+>
+  <ul class="list-none">
+    {
+      headings.map((heading) => (
+        <li style={`padding-left: ${heading.depth * 1}rem;`}>
+          <a href={`#${heading.slug}`} class="text-white hover:text-gray-300">
+            {heading.text}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
