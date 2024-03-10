@@ -12,9 +12,14 @@ const { headings } = Astro.props;
   class="w-[300px] toc px-5 shrink-0 h-[500px] grow-0 flex py-20 justify-start"
 >
   <ul class="list-none flex flex-col gap-1">
+    <li style={`padding-left: ${headings[0].depth * 16}px;`}>
+      <a class="text-gray-600 hover:text-gray-900" href={`#${headings[0].slug}`}
+        >Overview</a
+      >
+    </li>
     {
-      headings.map((heading) => (
-        <li style={`padding-left: ${heading.depth * 1}rem;`}>
+      headings.slice(1).map((heading) => (
+        <li style={`padding-left: ${(heading.depth - 1) * 16}px;`}>
           <a
             href={`#${heading.slug}`}
             class="text-gray-600 hover:text-gray-900"
@@ -28,8 +33,8 @@ const { headings } = Astro.props;
 </nav>
 
 <script type="text/javascript">
-  const content = document.querySelector(".content");
-  const headings = document.querySelectorAll("h2, h3, h4, h5, h6");
+  const content = document.querySelector(".layout");
+  const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
   const toc = document.querySelector(".toc");
   const tocLinks = toc.querySelectorAll("a");
   const contentOffsetTop = content.getBoundingClientRect().top;
@@ -42,8 +47,9 @@ const { headings } = Astro.props;
   });
   const onScroll = () => {
     const scrollY = content.scrollTop;
+    const offset = -81;
     const activeHeaderLink = headerLinks.findLast((headerLink) => {
-      return headerLink.top <= scrollY;
+      return headerLink.top + offset <= scrollY;
     });
     tocLinks.forEach((tocLink) => {
       tocLink.classList.remove("active");
@@ -56,6 +62,7 @@ const { headings } = Astro.props;
     }
   };
   content.addEventListener("scroll", onScroll);
+  onScroll();
 </script>
 
 <style>

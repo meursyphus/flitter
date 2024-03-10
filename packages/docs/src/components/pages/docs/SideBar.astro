@@ -38,6 +38,8 @@ navigation.sort((a, b) => a.order - b.order);
 navigation.forEach((group) => {
   group.items.sort((a, b) => a.order - b.order);
 });
+
+const currentUrl = Astro.url.pathname;
 ---
 
 <nav
@@ -51,7 +53,10 @@ navigation.forEach((group) => {
         </div>
         {group.items.map((item) => (
           <div class="self-stretch px-4 mt-1 justify-start items-start gap-2 inline-flex">
-            <a href={item.url} class="text-gray-700 text-lg hover:text-black">
+            <a
+              href={item.url}
+              class={`${item.url === currentUrl ? "font-semibold text-black" : "text-gray-700"} text-lg hover:text-black`}
+            >
               {item.title}
             </a>
           </div>
