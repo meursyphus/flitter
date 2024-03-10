@@ -40,7 +40,7 @@ navigation.forEach((group) => {
 });
 ---
 
-<div
+<nav
   class="w-80 shrink-0 h-full bg-red-50 overflow-scroll px-8 py-[84px] border-r border-black flex-col justify-start items-end gap-6 inline-flex"
 >
   {
@@ -59,4 +59,12 @@ navigation.forEach((group) => {
       </div>
     ))
   }
-</div>
+</nav>
+
+<style>
+  nav {
+    height: calc(100vh - var(--header));
+    position: sticky;
+    top: 0;
+  }
+</style>

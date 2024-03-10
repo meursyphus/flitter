@@ -1,5 +1,5 @@
 ---
-import Layout from './Layout.astro'
+import Layout from "./Layout.astro";
 interface Props {
   title?: string;
   description?: string;
@@ -7,10 +7,14 @@ interface Props {
 }
 
 const { title } = Astro.props;
-
 ---
 
 <Layout title={title}>
   <slot />
 </Layout>
 
+<style is:global>
+  .layout {
+    padding-top: var(--header);
+  }
+</style>

@@ -38,11 +38,9 @@ const nextEntry =
 ---
 
 <Layout title="Docs">
-  <main class="flex absolute left-1/2 -translate-x-1/2">
+  <main class="flex relative mx-auto">
     <SideBar />
-    <div
-      class="h-full content overflow-scroll w-full px-8 prose max-w-full lg:prose-lg py-20"
-    >
+    <div class="w-full px-8 prose max-w-full lg:prose-lg py-20">
       <Content />
       <div class="flex">
         {
@@ -63,30 +61,8 @@ const nextEntry =
 
 <style>
   main {
-    --header: 72px;
-    height: calc(100vh - var(--header));
-    top: var(--header);
   }
 </style>
 
 <style is:global>
-  /* Chrome, Edge, Safari에서 스크롤바 스타일링 */
-  ::-webkit-scrollbar {
-    width: 12px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: #a6a6a6;
-    border-radius: 20px;
-    border: 3px solid #f4f4f4;
-  }
-
-  /* 선택적: 스크롤바가 활성 상태일 때의 스타일 */
-  ::-webkit-scrollbar-thumb:hover {
-    background: #909090;
-  }
 </style>
