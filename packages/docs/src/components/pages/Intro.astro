@@ -1,3 +1,8 @@
+---
+import Diagram from "../../components/diagram/Diagram.svelte";
+import Widget from "@moonmoonbrothers/flutterjs-svelte";
+---
+
 <div
   class="h-[800px] px-16 py-20 bg-white flex-col justify-start items-center gap-20 flex"
 >
@@ -53,10 +58,7 @@
       <div
         class="grow shrink basis-0 h-[640px] flex-col justify-start items-center gap-2.5 inline-flex"
       >
-        <img
-          class="self-stretch grow shrink basis-0"
-          src="https://via.placeholder.com/656x640"
-        />
+        <Diagram client:load />
       </div>
     </div>
   </div>
