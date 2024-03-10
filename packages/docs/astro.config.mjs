@@ -19,8 +19,8 @@ export default defineConfig({
       // Alternatively, provide multiple themes
       // https://shiki.style/guide/dual-themes#light-dark-dual-themes
       experimentalThemes: {
-        light: "github-light",
-        dark: "github-dark",
+        light: "github-dark",
+        dark: "github-light",
       },
       // Add custom languages
       // Note: Shiki has countless langs built-in, including .astro!
