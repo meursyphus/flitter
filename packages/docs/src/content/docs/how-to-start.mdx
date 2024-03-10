@@ -6,3 +6,102 @@ nav_title: "How to Start"
 title: "Getting Started with Flitter Library"
 description: "Learn how to get started with Flitter library."
 ---
+# How to Start with Flitter
+
+Welcome to the quick start guide for Flitter, your go-to library for creating dynamic and responsive data visualizations with ease. Whether you're working with pure JavaScript, React, or Svelte, getting started is straightforward. Here's how you can integrate Flitter into your project.
+
+## Installation
+
+### Pure JavaScript
+
+First, install the Flitter package using npm:
+
+```bash
+npm i @meursyphus/flitter
+```
+
+Then, you can begin using Flitter by importing the necessary widgets and applying them to your SVG elements:
+
+```html
+<script>
+  import { Widget, Container } from '@meursyphus/flitter';
+
+  const svgElement = document.getElementById('mySvg');
+  const runner = new AppRunner({
+    // Size is automatically calculated based on the svgElement's dimensions.
+    view: svgElement,
+    /*
+      The following configurations are optional for browser-only environments.
+      For server-side rendering (SSR), you'll need to specify these properties.
+      Additional libraries might be required to emulate window, document, and svgElement on the server.
+    */
+  });
+  const widget = Container({
+    color: 'lightblue',
+  });
+  runner.runApp(widget);
+</script>
+
+<svg id="mySvg" style="width: 600px; height: 300px;"></svg>
+```
+
+### React
+
+To use Flitter with React, install both the Flitter package and the React-specific bindings:
+
+```bash
+npm i @meursyphus/flitter @meursyphus/flitter-react
+```
+
+You can then use the `Widget` component from the `flitter-react` package to integrate Flitter widgets within your React application:
+
+```javascript
+import { Container, Alignment, Text, TextStyle } from '@meursyphus/flitter';
+import Widget from '@meursyphus/flitter-react';
+
+const App = () => {
+  return(
+    <Widget
+      width="600px"
+      height="300px"
+      widget={Container({
+        alignment: Alignment.center,
+        color: 'lightblue',
+        child: Text("Hello, Flitter!", style: TextStyle({ fontSize: 30, weight: 'bold' }))
+      })}
+    />
+  );
+}
+```
+
+### Svelte
+
+For Svelte applications, install Flitter and its Svelte bindings:
+
+```bash
+npm i @meursyphus/flitter @meursyphus/flitter-svelte
+```
+
+In your Svelte component, import and use the `Widget` component to incorporate Flitter widgets seamlessly:
+
+```html
+<script>
+import { Container, Alignment, Text, TextStyle } from '@meursyphus/flitter';
+import Widget from '@meursyphus/flitter-svelte';
+</script>
+
+<Widget
+  width="600px"
+  height="300px"
+  widget={Container({
+    alignment: Alignment.center,
+    color: 'lightblue',
+    child: Text("Hello, Flitter!", style: TextStyle({ fontSize: 30, weight: 'bold' }))
+  })}
+/>
+```
+
+### See Result
+대충 상자모양..
+
+With these steps, you're now ready to explore the full potential of Flitter in your web projects. Dive into creating interactive and visually appealing data visualizations with minimal effort and maximum creativity.
