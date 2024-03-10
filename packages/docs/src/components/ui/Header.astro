@@ -1,3 +1,8 @@
+---
+const url = new URL(Astro.request.url);
+const pathname = url.pathname; // 현재 페이지의 경로
+---
+
 <header
   class="w-full fixed top-0 left-0 px-[32px] z-[9999] bg-white border-b border-black flex-col justify-center items-center flex"
 >
@@ -12,7 +17,10 @@
     </a>
 
     <div class="justify-start items-start gap-8 flex">
-      <a class="text-gray-600 text-base leading-normal" href="/docs"> docs </a>
+      <a
+        class={`${pathname.startsWith("/docs") ? "active" : ""} text-gray-600 text-base leading-normal`}
+        href="/docs">docs</a
+      >
       <div class="justify-center items-center gap-1 flex">
         <div class="text-black text-base leading-normal">
           <span class="opacity-50 select-none" title="comming soon"
@@ -42,5 +50,8 @@
 <style>
   header {
     height: var(--header);
+  }
+  .active {
+    font-weight: bold;
   }
 </style>
