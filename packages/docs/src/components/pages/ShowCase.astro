@@ -1,9 +1,10 @@
 ---
-import { Chart } from "./show-cases";
+import "@egjs/react-flicking/dist/flicking.css";
+import { Banner } from "./show-cases";
 ---
 
 <div
-  class="h-[1129px] px-16 py-28 bg-white flex-col justify-start items-center gap-20 flex"
+  class="h-[929px] px-16 py-28 bg-white flex-col justify-start items-center gap-20 flex"
 >
   <div class="h-[109px] flex-col justify-start items-center gap-6 flex">
     <div
@@ -18,18 +19,12 @@ import { Chart } from "./show-cases";
     </div>
   </div>
   <div class="flex-col justify-start items-center gap-12 flex">
-    <div class="gap-8 inline-flex h-[480px]">
-      <Chart.Bar client:visible />
-      <Chart.StackedBar client:load />
-      <Chart.Bubble client:load />
-      <Chart.Line client:load />
-    </div>
-    <div class="p-2.5 justify-start items-start gap-[9px] inline-flex">
-      <div class="w-2 h-2 bg-black rounded-full"></div>
-      <div class="w-2 h-2 bg-stone-300 rounded-full"></div>
-      <div class="w-2 h-2 bg-stone-300 rounded-full"></div>
-      <div class="w-2 h-2 bg-stone-300 rounded-full"></div>
-      <div class="w-2 h-2 bg-stone-300 rounded-full"></div>
-    </div>
+    <Banner client:load />
   </div>
 </div>
+
+<style is:global>
+  .panel {
+    user-select: none;
+  }
+</style>

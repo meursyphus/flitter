@@ -1,3 +1,4 @@
+import Flicking from "@egjs/react-flicking";
 import type { Widget } from "@moonmoonbrothers/flutterjs";
 import ReactWidget from "@moonmoonbrothers/flutterjs-react";
 import {
@@ -7,6 +8,7 @@ import {
   ScatterChart,
   StackedBarChart,
 } from "@moonmoonbrothers/uglychart";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const barChartProps = {
   data: {
@@ -32,14 +34,6 @@ const barChartProps = {
     title: "Monthly Revenue",
   },
 };
-
-const ChartWidget = ({
-  widget,
-  width = "100%",
-}: {
-  widget: Widget;
-  width?: string;
-}) => <ReactWidget width={width} height="100%" widget={widget} />;
 
 const barChart = BarChart({
   ...barChartProps,
@@ -747,15 +741,67 @@ const lineChart = LineChart({
 });
 
 export const Chart = {
-  Bar: () => <ReactWidget width="640px" height="100%" widget={barChart} />,
+  Bar: () => <ReactWidget width="640px" height="640px" widget={barChart} />,
   Bubble: () => (
-    <ReactWidget width="640px" height="100%" widget={bubbleChart} />
+    <ReactWidget width="800px" height="640px" widget={bubbleChart} />
   ),
   StackedBar: () => (
-    <ReactWidget width="640px" height="100%" widget={stackedBarChart} />
+    <ReactWidget width="800px" height="640px" widget={stackedBarChart} />
   ),
   Scatter: () => (
-    <ReactWidget width="640px" height="100%" widget={scatterChart} />
+    <ReactWidget width="800px" height="640px" widget={scatterChart} />
   ),
-  Line: () => <ReactWidget width="640px" height="100%" widget={lineChart} />,
+  Line: () => <ReactWidget width="800px" height="640px" widget={lineChart} />,
+};
+
+export const Banner = () => {
+  const controller = useRef<Flicking | null>(null);
+  const [stopped, setStopped] = useState(false);
+  useEffect(() => {
+    if (stopped) return;
+    const interval = setInterval(() => {
+      controller.current?.next();
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [stopped]);
+
+  const handleMouseEnter = () => {
+    setStopped(true);
+  };
+  const handleMouseLeave = () => {
+    setStopped(false);
+  };
+
+  const panels = [
+    <Chart.StackedBar />,
+    <Chart.Bar />,
+    <Chart.Bubble />,
+    <Chart.Line />,
+    <Chart.Scatter />,
+  ];
+
+  return (
+    <div
+      onTouchStart={handleMouseEnter}
+      onTouchEnd={handleMouseLeave}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="w-[1440px] flex flex-col"
+    >
+      <Flicking
+        changeOnHold={true}
+        duration={1500}
+        ref={controller}
+        align="prev"
+        circular={true}
+      >
+        {panels.map((panel, i) => (
+          <div key={i} className="panel">
+            {panel}
+          </div>
+        ))}
+      </Flicking>
+    </div>
+  );
 };
