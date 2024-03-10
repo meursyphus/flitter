@@ -1,6 +1,9 @@
+import type { Widget } from "@moonmoonbrothers/flutterjs";
+import ReactWidget from "@moonmoonbrothers/flutterjs-react";
 import {
   BarChart,
   BubbleChart,
+  LineChart,
   ScatterChart,
   StackedBarChart,
 } from "@moonmoonbrothers/uglychart";
@@ -30,21 +33,33 @@ const barChartProps = {
   },
 };
 
-const datChartProps = {};
+const ChartWidget = ({
+  widget,
+  width = "100%",
+}: {
+  widget: Widget;
+  width?: string;
+}) => <ReactWidget width={width} height="100%" widget={widget} />;
 
-export const barChart = BarChart({
+const barChart = BarChart({
+  ...barChartProps,
+});
+
+const stackedBarChart = StackedBarChart({
   ...barChartProps,
   custom: {
     chart: {
       type: "config",
-      direction: "vertical",
+      direction: "horizontal",
+    },
+    bar: {
+      type: "config",
+      thickness: 30,
     },
   },
 });
 
-export const stackedBarChart = StackedBarChart(barChartProps);
-
-export const bubbleChart = BubbleChart({
+const bubbleChart = BubbleChart({
   theme: {
     border: {
       width: 1,
@@ -172,7 +187,7 @@ export const bubbleChart = BubbleChart({
   },
 });
 
-export const scatterChart = ScatterChart({
+const scatterChart = ScatterChart({
   data: {
     title: "Body Mass Index",
     datasets: [
@@ -696,3 +711,51 @@ export const scatterChart = ScatterChart({
     ],
   },
 });
+
+const lineChart = LineChart({
+  data: {
+    labels: [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ],
+    datasets: [
+      {
+        legend: "Seoul",
+        data: [20, 40, 25, 50, 15, 45, 33, 34, 20, 30, 22, 13],
+      },
+      {
+        legend: "Sydney",
+        data: [5, 30, 21, 18, 59, 50, 28, 33, 7, 20, 10, 30],
+      },
+      {
+        legend: "Moscow",
+        data: [30, 5, 18, 21, 33, 41, 29, 15, 30, 10, 33, 5],
+      },
+    ],
+    title: "Average Temperature",
+  },
+});
+
+export const Chart = {
+  Bar: () => <ReactWidget width="640px" height="100%" widget={barChart} />,
+  Bubble: () => (
+    <ReactWidget width="640px" height="100%" widget={bubbleChart} />
+  ),
+  StackedBar: () => (
+    <ReactWidget width="640px" height="100%" widget={stackedBarChart} />
+  ),
+  Scatter: () => (
+    <ReactWidget width="640px" height="100%" widget={scatterChart} />
+  ),
+  Line: () => <ReactWidget width="640px" height="100%" widget={lineChart} />,
+};

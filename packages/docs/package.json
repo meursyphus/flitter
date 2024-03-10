@@ -15,8 +15,9 @@
     "@astrojs/react": "^3.0.10",
     "@astrojs/svelte": "^5.2.0",
     "@astrojs/tailwind": "^5.1.0",
-    "@moonmoonbrothers/flutterjs": "^1.1.41",
-    "@moonmoonbrothers/flutterjs-react": "^0.0.2",
+    "@moonmoonbrothers/flutterjs": "^1.2.3",
+    "@moonmoonbrothers/flutterjs-react": "^0.0.3",
+    "@moonmoonbrothers/flutterjs-svelte": "^0.0.4",
     "@moonmoonbrothers/uglychart": "^0.0.15",
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",
@@ -25,10 +26,10 @@
     "react-dom": "^18.2.0",
     "svelte": "^4.2.12",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.2",
+    "@tailwindcss/typography": "^0.5.10"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.10",
     "prettier": "^3.2.5",
     "prettier-plugin-astro": "^0.13.0"
   }
