@@ -12,8 +12,8 @@ import {
   TextAlign,
   TextStyle,
   Widget,
-} from "@moonmoonbrothers/flutterjs";
-import ReactWidget from "@moonmoonbrothers/flutterjs-react";
+} from "@meursyphus/flitter";
+import ReactWidget from "@meursyphus/flitter-react";
 
 class ResizableWidget extends StatefulWidget {
   createState(): State<StatefulWidget> {
@@ -118,6 +118,10 @@ class ResizableState extends State<ResizableWidget> {
 
 export const Resize = () => {
   return (
-    <ReactWidget widget={new ResizableWidget()} width="100%" height="600px" />
+    <ReactWidget
+      widget={new ResizableWidget() as any}
+      width="100%"
+      height="600px"
+    />
   );
 };

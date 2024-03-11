@@ -1,4 +1,4 @@
-import type { BuildContext, Widget } from "@moonmoonbrothers/flutterjs";
+import type { BuildContext, Widget } from "../index";
 import {
   ConstraintsTransformBox,
   GestureDetector,
@@ -11,7 +11,7 @@ import {
   Offset,
   SizedBox,
   Alignment,
-} from "@moonmoonbrothers/flutterjs";
+} from "../";
 import { functionalizeClass } from "../utils";
 
 type TooltipPosition =

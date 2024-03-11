@@ -1,18 +1,18 @@
-import { BuildContext, Provider, type Widget } from '@moonmoonbrothers/flutterjs';
-import { EventManager } from '../../event';
+import { BuildContext, Provider, type Widget } from "@meursyphus/flitter";
+import { EventManager } from "../../event";
 
-const KEY = Symbol('EventManagerProvider');
+const KEY = Symbol("EventManagerProvider");
 
 function EventManagerProvider({ child }: { child: Widget }) {
-	return Provider({
-		providerKey: KEY,
-		child,
-		value: new EventManager()
-	});
+  return Provider({
+    providerKey: KEY,
+    child,
+    value: new EventManager(),
+  });
 }
 
 function of(context: BuildContext) {
-	return Provider.of(KEY, context) as EventManager;
+  return Provider.of(KEY, context) as EventManager;
 }
 
 EventManagerProvider.of = of;

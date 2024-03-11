@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Widget from "@moonmoonbrothers/flutterjs-svelte";
+  import Widget from "@meursyphus/flitter-svelte";
   import Diagram from "./widget/Diagram";
   import { onMount } from "svelte";
   import { project } from "./fixture";

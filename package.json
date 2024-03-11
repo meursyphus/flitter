@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs:start": "npm run start --workspace=@meursyphus/flitter-docs"
   },
-  "author": "meusyphus",
+  "author": "meursyphus",
   "license": "MIT",
   "workspaces": [
     "packages/*"

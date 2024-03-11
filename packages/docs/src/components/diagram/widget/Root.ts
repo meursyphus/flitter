@@ -6,7 +6,7 @@ import {
   BuildContext,
   Positioned,
   Alignment,
-} from "@moonmoonbrothers/flutterjs";
+} from "@meursyphus/flitter";
 import InitialNodes from "./Node/InitialNodes";
 import InteractiveViewport from "./InteractiveViewport";
 import type { Project } from "../type";
