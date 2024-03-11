@@ -1,36 +1,3 @@
----
-nav_group: "Getting Started"
-nav_group_order: 1
-nav_order: 1
-nav_title: "Why Flitter"
-title: Introduction to Flitter
-description: Discover the ease of creating dynamic and responsive data visualizations with Flitter.
----
-import { Resize } from "$components/pages/docs/introduction/Resize"
-
-# Introduction to Flitter
-
-Welcome to Flitter, a declarative, widget-based library designed to simplify the process of creating dynamic and responsive data visualizations on the web. Inspired by the intuitive and powerful design of Flutter, Flitter brings a familiar syntax and a powerful layout engine to the world of web visualization, making it an ideal choice for developers at all levels.
-
-## Why Choose Flitter?
-
-In the realm of web development, effectively presenting data is as crucial as the data itself. Traditional visualization tools often come with steep learning curves and rigid frameworks that can stifle creativity and efficiency. Enter Flitter, which stands out by offering:
-
-- **A Flutter-like Declarative Syntax**: Write your visualizations with an intuitive and familiar widget-based syntax that significantly reduces the learning curve.
-- **Automatic Layout Calculations**: Flitter's layout engine automatically handles the intricacies of responsive design and text wrapping, allowing you to focus on crafting your story through data.
-- **Ease of Adding Interactions**: Creating interactive and engaging visualizations is straightforward with Flitter, empowering your visualizations with user-driven insights and actions.
-
-## A Practical Example: The Responsive Box
-
-To demonstrate Flitter's capabilities, 
-let's explore a practical example: 
-a resizable box containing text that automatically wraps according to its width. This example not only showcases the automatic layout calculations but also illustrates how easily interactions can be integrated into your visualizations with Flitter.
-
-<Resize client:load />
-
-### Example Code
-
-```typescript
 import {
   Alignment,
   BuildContext,
@@ -45,14 +12,8 @@ import {
   TextAlign,
   TextStyle,
   Widget,
-} from "@meursyphus/flitter";
-import ReactWidget from "@meursyphus/flitter-react";
-
-export default () => {
-  return (
-    <ReactWidget widget={new ResizableWidget()} width="100%" height="600px" />
-  );
-};
+} from "@moonmoonbrothers/flutterjs";
+import ReactWidget from "@moonmoonbrothers/flutterjs-react";
 
 class ResizableWidget extends StatefulWidget {
   createState(): State<StatefulWidget> {
@@ -61,8 +22,8 @@ class ResizableWidget extends StatefulWidget {
 }
 
 class ResizableState extends State<ResizableWidget> {
-  width = 400;
-  height = 400;
+  width = 700;
+  height = 480;
   hovered: "left" | "right" | "top" | "bottom" | null = null;
 
   clamp = (value: number, min: number, max: number) => {
@@ -105,7 +66,6 @@ class ResizableState extends State<ResizableWidget> {
     };
   };
   build(_context: BuildContext): Widget {
-
     return Center({
       child: Container({
         width: this.width,
@@ -120,8 +80,8 @@ class ResizableState extends State<ResizableWidget> {
                 textAlign: TextAlign.center,
                 style: new TextStyle({
                   color: "black",
-                  fontSize: 18,
-                  fontFamily: "Noto Sans KR",
+                  fontSize: 24,
+                  fontFamily: "Roboto",
                 }),
               },
             ),
@@ -155,6 +115,9 @@ class ResizableState extends State<ResizableWidget> {
     });
   }
 }
-```
 
-
+export const Resize = () => {
+  return (
+    <ReactWidget widget={new ResizableWidget()} width="100%" height="600px" />
+  );
+};
