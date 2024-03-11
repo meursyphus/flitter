@@ -13,8 +13,7 @@
   "files": [
     "dist"
   ],
-  "main": "dist/flitter-react.js",
-  "types": "dist/index.d.ts",
+  "main": "src/lib/index.ts",
   "dependencies": {
     "react": "^18.0.0"
   },

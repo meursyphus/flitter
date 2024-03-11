@@ -118,10 +118,6 @@ class ResizableState extends State<ResizableWidget> {
 
 export const Resize = () => {
   return (
-    <ReactWidget
-      widget={new ResizableWidget() as any}
-      width="100%"
-      height="600px"
-    />
+    <ReactWidget widget={new ResizableWidget()} width="100%" height="600px" />
   );
 };
