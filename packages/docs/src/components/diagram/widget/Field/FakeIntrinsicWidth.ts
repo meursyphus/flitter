@@ -28,7 +28,7 @@ class RenderFakeIntrinsicWidth extends SingleChildRenderObject {
 		super({ isPainter: false });
 	}
 
-	getIntrinsicWidth(height: number): number {
+	getIntrinsicWidth(_: number): number {
 		return 0;
 	}
 }
