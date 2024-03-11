@@ -31,21 +31,51 @@ Understanding the distinction between stateless and stateful widgets is vital. W
 
 A `StatelessWidget` in Flitter can be used to create a simple, immutable widget, such as a text label with customized styling. Here's how you might define a custom text widget:
 
-```dart
-class CustomTextWidget extends StatelessWidget {
-  final String text;
-  final TextStyle style;
+```typescript
+import { 
+  StatelessWidget, 
+  GestureDetector, 
+  Container, 
+  Text, 
+  EdgeInsets, 
+  BoxDecoration, 
+  BorderRadius, 
+  Colors, 
+  TextStyle 
+} from '@meursyphus/flitter';
 
-  CustomTextWidget({this.text, this.style});
+class CustomButton extends StatelessWidget {
+  constructor({ label, onPressed }) {
+    super();
+    this.label = label;
+    this.onPressed = onPressed;
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: style,
-    );
+  build(context) {
+    return new GestureDetector({
+      onTap: this.onPressed,
+      child: new Container({
+        padding: EdgeInsets.symmetric({ vertical: 12.0, horizontal: 24.0 }),
+        decoration: new BoxDecoration({
+          color: Colors.blue,
+          borderRadius: BorderRadius.circular(8.0),
+        }),
+        child: new Text(
+          this.label,
+          { style: new TextStyle({ color: Colors.white, fontSize: 16 }) }
+        ),
+      }),
+    });
   }
 }
+
+function classToFunction<V extends new (...args: any[]) => any>(Clazz: V) {
+  return (...args: ConstructorParameters<V>) =>
+    new Clazz(...args) as InstanceType<V>;
+}
+
+// Using classToFunction allows for a more convenient way to write code without needing to use the new constructor.
+export default classToFunction(CustomButton);
 ```
 
 ### Extending Widgets with RenderObject
@@ -55,35 +85,51 @@ For those looking to dive deeper into custom widget creation, Flitter provides t
 ### Custom RenderObjectWidget Example
 For more complex customizations that require low-level painting or layout decisions, you might define a widget that creates its own RenderObject. Here's a simplified example of how a custom widget with a unique rendering behavior could be structured, inspired by Flutter:
 
-```dart
+```typescript
+import { 
+  RenderObjectWidget, 
+  SingleChildRenderObject, 
+  PaintContext, 
+  Offset, 
+  Size, 
+  Paint 
+} from '@meursyphus/flitter';
+
 class CustomCircleWidget extends RenderObjectWidget {
-  final Color color;
+  constructor({ color }) {
+    super();
+    this.color = color;
+  }
 
-  CustomCircleWidget({this.color});
-
-  @override
-  RenderObject createRenderObject(BuildContext context) {
-    return CustomCircleRenderObject(color: color);
+  createRenderObject(context) {
+    return new CustomCircleRenderObject({ color: this.color });
   }
 }
 
-class CustomCircleRenderObject extends RenderBox {
-  Color _color;
-
-  CustomCircleRenderObject({Color color}) : _color = color;
-
-  @override
-  void paint(PaintingContext context, Offset offset) {
-    final Paint paint = Paint()..color = _color;
-    context.canvas.drawCircle(offset + Offset(size.width / 2, size.height / 2), size.width / 2, paint);
+class CustomCircleRenderObject extends SingleChildRenderObject {
+  constructor({ color }) {
+    super();
+    this._color = color;
   }
 
-  @override
-  void performLayout() {
-    size = constraints.constrain(Size(100.0, 100.0));
+  protected performPaint({ circle }: { circle: SVGElement }): void {
+    circle.setAttribute("fill", this.color);
+    circle.setAttribute("width", `${this.size.width}`);
+    circle.setAttribute("height", `${this.size.height}`);
+  }
+
+  createDefaultSvgEl({ createSvgEl }: PaintContext): {
+    [key: string]: SVGElement;
+  } {
+    return {
+      circle: createSvgEl("circle")
+    };
+  }
+
+  performLayout() {
+    this.size = this.constraints.constrain(new Size(100.0, 100.0));
   }
 }
-
 ```
 
 ## Conclusion
