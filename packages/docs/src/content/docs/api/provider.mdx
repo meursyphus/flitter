@@ -6,3 +6,26 @@
   title: Provider
   description: "A widget that provides a value to its descendants."
 ---
+# Provider 
+
+## Using Provider in flutterjs
+
+The `Provider` in `flutterjs` is a crucial component for state management. It facilitates easy sharing and accessing of data across different parts of the application. By utilizing `Provider`, you can reduce coupling between components and manage data flow more clearly.
+
+## Basic Usage
+
+To share data using `Provider`, you first need to create an object that holds the data you want to share. Then, you can pass this object to your components through `Provider`.
+
+## Provider Constructor and the `of` Function
+
+In `flutterjs`, the `Provider` plays a pivotal role in state management by allowing data to be shared and accessed across different parts of the application. Understanding the constructor arguments and the `of` function is crucial for effectively using `Provider`.
+
+## Provider Constructor
+
+The `Provider` constructor is used to create a new `Provider` instance. It takes an object with three key properties: `providerKey`, `value`, and `child`.
+
+- `providerKey`: A unique identifier for the `Provider`. This key is used to retrieve the value provided by the `Provider` from anywhere in the application.
+- `value`: The data or object that you want to make available to other parts of the application. This could be anything from a simple string or number to more complex objects.
+- `child`: The widget that will be the child of this `Provider`. The `Provider` will make the `value` available to this widget and its descendants.
+
+

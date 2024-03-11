@@ -42,15 +42,23 @@ const nextEntry =
     <SideBar />
     <div class="w-full px-8 prose max-w-full lg:prose-lg py-20">
       <Content />
-      <div class="flex">
+      <div class="flex justify-between py-4">
         {
-          prevEntry && (
-            <a href={`/docs/${prevEntry.slug}`}>{prevEntry.data.nav_title}</a>
+          prevEntry ? (
+            <a class="move" href={`/docs/${prevEntry.slug}`}>
+              {prevEntry.data.nav_title ?? prevEntry.data.title}
+            </a>
+          ) : (
+            <div class="move disabled" />
           )
         }
         {
-          nextEntry && (
-            <a href={`/docs/${nextEntry.slug}`}>{nextEntry.data.nav_title}</a>
+          nextEntry ? (
+            <a class="move" href={`/docs/${nextEntry.slug}`}>
+              {nextEntry.data.nav_title ?? nextEntry.data.title}
+            </a>
+          ) : (
+            <div class="move disabled" />
           )
         }
       </div>
@@ -67,5 +75,19 @@ const nextEntry =
 <style is:global>
   .layout {
     scroll-padding-top: calc(var(--header) + 80px);
+  }
+
+  .move {
+    width: 200px;
+    height: 80px;
+    border: black solid 1px;
+    font-size: 20px;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .move.disabled {
+    opacity: 0.5;
   }
 </style>
