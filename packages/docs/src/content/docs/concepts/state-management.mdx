@@ -16,29 +16,53 @@ State management is a critical aspect of any application, and Flitter offers a r
 `StatefulWidget` plays a pivotal role in Flitter by allowing widgets to rebuild themselves in response to state changes. Unlike `StatelessWidget`, which represents immutable widgets, `StatefulWidget` can maintain state that might change during the lifetime of the widget. Here's a basic example of a `StatefulWidget` in Flitter:
 
 ```typescript
-abstract class StatefulWidget extends StatelessWidget {
-  createState(): State<StatefulWidget>;
-}
+import { Widget, StatefulWidget, State, TextStyle, Text, Center } from '@meursyphus/flitter';
 
-class CustomStatefulWidget extends StatefulWidget {
-  createState() {
-    return new CustomWidgetState();
+class TimerWidget extends StatefulWidget {
+  constructor(props?: {}) {
+    super(props);
+  }
+
+  createState(): _TimerWidgetState {
+    return new _TimerWidgetState();
   }
 }
 
-class CustomWidgetState extends State<CustomStatefulWidget> {
-  int counter = 0;
+class _TimerWidgetState extends State<TimerWidget> {
+  private _timer?: number;
+  private _counter: number = 0;
 
-  void incrementCounter() {
-    setState(() {
-      counter++;
+  public _startTimer(): void {
+    this._counter = 0;
+    this._timer = window.setInterval(() => {
+      this.setState(() => {
+        this._counter++;
+      });
+    }, 1000);
+  }
+
+  public _stopTimer(): void {
+    if (this._timer) {
+      window.clearInterval(this._timer);
+    }
+  }
+
+  initState(): void {
+    super.initState();
+    this._startTimer();
+  }
+
+  dispose(): void {
+    this._stopTimer();
+    super.dispose();
+  }
+
+  build(context: any): Widget {
+    return Center({
+      child: Text(`Timer: ${this._counter}`, {
+        style: new TextStyle({ fontSize: 24 }),
+      }),
     });
-  }
-
-  build() {
-    // Conceptual: Render the widget with current state
-    console.log(`Counter value: ${this.counter}`);
-    // Here, an interaction might trigger incrementCounter, leading to a re-render with the new state.
   }
 }
 ```

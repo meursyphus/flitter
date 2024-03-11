@@ -27,33 +27,57 @@ To illustrate the syntactical resemblance, let's compare how a simple UI element
 ### Flutter Button Example
 
 ```dart
-import 'package:flutter/material.dart';
-
-class MyButton extends StatelessWidget {
+class SimpleLayoutApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        print('Button clicked in Flutter!');
-      },
-      child: Text('Click Me'),
+    return Container(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('Hello, '),
+              Text('World!'),
+            ],
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 20),
+            child: Text('Welcome to Flutter.'),
+          ),
+        ],
+      ),
     );
   }
 }
 ```
 ### Flitter Button Example
-```typescript
-import { Widget, Button, Text } from '@flitter/core';
 
-class MyButton extends Widget {
-  build() {
-    return new Button({
-      onPressed: () => {
-        console.log('Button clicked in Flitter!');
-      },
-      child: new Text('Click Me'),
+```typescript
+class SimpleLayoutApp extends StatelessWidget {
+  build(context: BuildContext): Widget {
+    return Container({
+      padding: EdgeInsets.all(20),
+      child: Column({
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row({
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Hello, '),
+              Text('World!'),
+            ],
+          }),
+          Container({
+            margin: EdgeInsets.only({top: 20}),
+            child: new Text('Welcome to FlutterJS.'),
+          }),
+        ],
+      }),
     });
   }
+}
 }
 ```
 
