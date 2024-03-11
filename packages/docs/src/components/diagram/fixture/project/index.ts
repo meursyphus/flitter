@@ -19,6 +19,7 @@ export default {
           note: "",
           fields: [
             {
+              note: '',
               id: 1,
               name: "id",
               type: { args: null, schemaName: "", typeName: "uuid" },
@@ -32,6 +33,7 @@ export default {
               },
             },
             {
+              note: '',
               id: 2,
               name: "name",
               type: { args: "200", schemaName: "", typeName: "varchar(200)" },

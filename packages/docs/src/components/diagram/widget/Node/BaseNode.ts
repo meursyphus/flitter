@@ -22,7 +22,6 @@ import {
 	Element,
 	ConstraintsTransformBox,
 	Constraints,
-	BorderRadius,
 	Padding
 } from '@moonmoonbrothers/flutterjs';
 import { classToFunction } from '../utils';
@@ -37,7 +36,7 @@ import {
 	NodeLayoutChangeEvent
 } from '../../event';
 import DiagramControllerProvider from '../Provider/DiagramControllerProvider';
-import type { DiagramController } from '$lib/components/diagram/controller';
+import type { DiagramController } from '../../controller';
 import { ChangedLayoutNotifier } from '../ChangeNotifier';
 
 class baseNode extends StatefulWidget {

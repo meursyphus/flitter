@@ -1,4 +1,4 @@
-import type { DiagramController } from '$lib/components/diagram/controller';
+import type { DiagramController } from '../../controller';
 import {
 	type EventManager,
 	NodeInsertEvent,
@@ -7,7 +7,7 @@ import {
 	NodeTranslationEndEvent,
 	NodeAlignTranslationEvent,
 	NodeLayoutChangeEvent
-} from '$lib/components/diagram/event';
+} from '../../event';
 import {
 	BuildContext,
 	Offset,

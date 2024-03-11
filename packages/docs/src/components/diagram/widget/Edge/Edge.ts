@@ -12,8 +12,8 @@ import drawEdge from './drawEdge';
 import EventManagerProvider from '../Provider/EventManagerProvider';
 import { ActiveRelationEvent, EventManager, FieldLayoutChangeEvent } from '../../event';
 import DiagramControllerProvider from '../Provider/DiagramControllerProvider';
-import type { DiagramController } from '$lib/components/diagram/controller';
-import type { FieldId } from '$lib/components/diagram/type';
+import type { DiagramController } from '../../controller';
+import type { FieldId } from '../../type';
 
 type Vertex<FIELD_ID = FieldId> = {
 	id: FIELD_ID;
