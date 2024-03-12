@@ -10,11 +10,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "prepublishOnly": "npm run build",
-    "package": "npm run build"
+    "postbuild": "echo \"Build complete. Please run: \n\ncd dist\nnpm publish\n\""
   },
-  "files": [
-    "dist"
-  ],
   "main": "src/lib/index.ts",
   "dependencies": {
     "react": "^18.0.0"
@@ -33,9 +30,17 @@
     "vite-plugin-dts": "^3.6.3"
   },
   "peerDependencies": {
-    "@meursyphus/flitter": "*"
+    "@meursyphus/flitter": "0.x || 1.x"
   },
-  "keywords": ["flitter", "data visualization", "SVG", "widget-based", "declarative", "flutter", "react"],
+  "keywords": [
+    "flitter",
+    "data visualization",
+    "SVG",
+    "widget-based",
+    "declarative",
+    "flutter",
+    "react"
+  ],
   "homepage": "https://flitter.pages.dev",
   "repository": "https://github.com/meursyphus/flitter",
   "bugs": {

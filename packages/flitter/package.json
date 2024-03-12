@@ -2,13 +2,21 @@
   "name": "@meursyphus/flitter",
   "version": "0.0.1",
   "description": "A declarative, widget-based library built on SVG for simplifying data visualization with a Flutter-like syntax.",
-  "keywords": ["flitter", "data visualization", "SVG", "widget-based", "declarative", "flutter"],
+  "keywords": [
+    "flitter",
+    "data visualization",
+    "SVG",
+    "widget-based",
+    "declarative",
+    "flutter"
+  ],
   "homepage": "https://flitter.pages.dev",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsup && cp package.json dist/package.json && cd dist && npm run fix-package",
     "fix-package": "npm pkg set main=./index.cjs module=./index.js exports.default=./index.js exports.import=./index.js",
-    "lint": "eslint src/**"
+    "lint": "eslint src/**",
+    "postbuild": "echo \"Build complete. Please run: \n\ncd dist\nnpm publish\n\""
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.16.0",
