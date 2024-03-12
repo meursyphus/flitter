@@ -6,7 +6,8 @@
     "baseUrl": ".",
     "paths": {
       "$components/*": ["src/components/*"], // '@components' alias 설정
-      "$layouts/*": ["src/layouts/*"] // '@layouts' alias 설정
+      "$layouts/*": ["src/layouts/*"],
+      "$@meursyphus/flitter": ["../flitter"] // '@layouts' alias 설정
     }  
   }
 }

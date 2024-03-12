@@ -1,7 +1,7 @@
 import type { RenderZIndex } from "../component/base/BaseZIndex";
 import type RenderObject from "./RenderObject";
 
-interface RenderObjectVisitor {
+export interface RenderObjectVisitor {
   visitZIndex(renderObject: RenderZIndex);
   visitGeneral(renderObject: RenderObject);
 }

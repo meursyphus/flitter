@@ -32,14 +32,22 @@
 	"dependencies": {
 		"linkedom": "^0.14.21"
 	},
-  "peerDependencies": {
-    "@meursyphus/flitter": "*"
-  },
-  "keywords": ["flitter", "data visualization", "SVG", "widget-based", "declarative", "flutter", "svelte"],
-  "homepage": "https://flitter.pages.dev",
-  "repository": "https://github.com/meursyphus/flitter",
-  "bugs": {
-    "url": "https://github.com/meursyphus/flitter/issues"
-  },
-  "license": "MIT"
+	"peerDependencies": {
+		"@meursyphus/flitter": "0.x || 1.x"
+	},
+	"keywords": [
+		"flitter",
+		"data visualization",
+		"SVG",
+		"widget-based",
+		"declarative",
+		"flutter",
+		"svelte"
+	],
+	"homepage": "https://flitter.pages.dev",
+	"repository": "https://github.com/meursyphus/flitter",
+	"bugs": {
+		"url": "https://github.com/meursyphus/flitter/issues"
+	},
+	"license": "MIT"
 }
