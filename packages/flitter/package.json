@@ -1,15 +1,9 @@
 {
   "name": "@meursyphus/flitter",
   "version": "0.0.1",
-  "description": "this is svg framework(virtual dom, state management, even calculation of layout",
-  "keywords": [
-    "flitter",
-    "flutter",
-    "svg",
-    "virtual dom",
-    "state management",
-    "layout"
-  ],
+  "description": "A declarative, widget-based library built on SVG for simplifying data visualization with a Flutter-like syntax.",
+  "keywords": ["flitter", "data visualization", "SVG", "widget-based", "declarative", "flutter"],
+  "homepage": "https://flitter.pages.dev",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsup && cp package.json dist/package.json && cd dist && npm run fix-package",
@@ -36,12 +30,11 @@
     "type": "git",
     "url": "git+https://github.com/meursyphus/flitter.git"
   },
-  "author": "",
+  "author": "meursyphus",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/meursyphus/flitter/issues"
   },
-  "homepage": "https://flitter.pages.dev",
   "main": "src/index.ts",
   "type": "module",
   "publishConfig": {

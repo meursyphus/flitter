@@ -1,7 +1,7 @@
 {
   "name": "flitter-workspace",
   "version": "1.0.0",
-  "description": "",
+  "description": "A declarative, widget-based library built on SVG for simplifying data visualization with a Flutter-like syntax.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs:start": "npm run start --workspace=@meursyphus/flitter-docs",
