@@ -1,15 +1,16 @@
 {
   "name": "@meursyphus/flitter-react",
   "private": false,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && cp package.json dist/package.json && cd dist && npm run fix-package",
+    "build": "vite build && npm run copy-package && npm run copy-readme && cd dist && npm run fix-package",
+    "copy-package": "cp package.json dist/package.json",
+    "copy-readme": "cp README.md dist/README.md",
     "fix-package": "npm pkg set main=./flitter-react.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "prepublishOnly": "npm run build",
     "postbuild": "echo \"Build complete. Please run: \n\ncd dist\nnpm publish\n\""
   },
   "main": "src/lib/index.ts",

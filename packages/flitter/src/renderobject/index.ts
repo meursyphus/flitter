@@ -1,9 +1,10 @@
-import MultiChildRenderObject from "./MultiChildRenderObject"
-import RenderBox from "./RenderBox"
-import RenderObject from "./RenderObject"
-import RenderView from "./RenderView"
-import SingleChildRenderObject from "./SingleChildRenderObject"
-import RenderAligningShiftedBox from "./RenderAligningShiftedBox"
+import MultiChildRenderObject from "./MultiChildRenderObject";
+import RenderBox from "./RenderBox";
+import RenderObject from "./RenderObject";
+import RenderView from "./RenderView";
+import SingleChildRenderObject from "./SingleChildRenderObject";
+import RenderAligningShiftedBox from "./RenderAligningShiftedBox";
+import RenderObjectVisitor from "./RenderObjectVisitor";
 
 export {
   RenderAligningShiftedBox,
@@ -12,4 +13,5 @@ export {
   RenderObject,
   RenderView,
   SingleChildRenderObject,
-}
+  RenderObjectVisitor,
+};

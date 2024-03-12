@@ -1,6 +1,6 @@
 {
   "name": "@meursyphus/flitter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A declarative, widget-based library built on SVG for simplifying data visualization with a Flutter-like syntax.",
   "keywords": [
     "flitter",
@@ -13,7 +13,9 @@
   "homepage": "https://flitter.pages.dev",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsup && cp package.json dist/package.json && cd dist && npm run fix-package",
+    "build": "tsup && npm run copy-package && npm run copy-readme && cd dist && npm run fix-package",
+    "copy-package": "cp package.json dist/package.json",
+    "copy-readme": "cp README.md dist/README.md",
     "fix-package": "npm pkg set main=./index.cjs module=./index.js exports.default=./index.js exports.import=./index.js",
     "lint": "eslint src/**",
     "postbuild": "echo \"Build complete. Please run: \n\ncd dist\nnpm publish\n\""

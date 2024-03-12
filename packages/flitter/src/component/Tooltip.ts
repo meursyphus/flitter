@@ -12,7 +12,7 @@ import {
   SizedBox,
   Alignment,
 } from "../";
-import { functionalizeClass } from "../utils";
+import { classToFunction } from "../utils";
 
 type TooltipPosition =
   | "topLeft"
@@ -123,4 +123,4 @@ class ToolTipState extends State<ToolTip> {
   }
 }
 
-export default functionalizeClass(ToolTip);
+export default classToFunction(ToolTip);

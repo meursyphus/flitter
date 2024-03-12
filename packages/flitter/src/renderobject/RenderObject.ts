@@ -9,7 +9,7 @@ import { assert } from "../utils";
   It does more things than flutters' RenderObject 
   Actually, It is more like RenderShiftedBox
 */
-class RenderObject {
+export class RenderObject {
   readonly isPainter: boolean;
   ownerElement!: RenderObjectElement;
   renderOwner!: RenderOwner;

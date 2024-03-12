@@ -1,6 +1,6 @@
 import type { Element } from "../element";
 import type { Path, Size } from "../type";
-import { functionalizeClass } from "../utils";
+import { classToFunction } from "../utils";
 import { StatelessWidget } from "../widget";
 import type Widget from "../widget/Widget";
 import BaseClipPath from "./base/BaseClipPath";
@@ -32,4 +32,4 @@ class ClipPath extends StatelessWidget {
   }
 }
 
-export default functionalizeClass(ClipPath);
+export default classToFunction(ClipPath);

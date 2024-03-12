@@ -1,8 +1,5 @@
 import BaseAnimatedRotation from "./base/BaseAnimatedRotation";
-function AnimatedOpacity(
-  ...props: ConstructorParameters<typeof BaseAnimatedRotation>
-) {
-  return new BaseAnimatedRotation(...props);
-}
+import { classToFunction } from "../utils";
 
-export default AnimatedOpacity;
+
+export default classToFunction(BaseAnimatedRotation);

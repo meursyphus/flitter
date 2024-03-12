@@ -1,7 +1,4 @@
 import BaseAnimatedPositioned from "./base/BaseAnimatedPositioned";
+import { classToFunction } from "../utils";
 
-export default function AnimatedPositioned(
-  ...props: ConstructorParameters<typeof BaseAnimatedPositioned>
-) {
-  return new BaseAnimatedPositioned(...props);
-}
+export default classToFunction(BaseAnimatedPositioned);
