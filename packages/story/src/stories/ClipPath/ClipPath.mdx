@@ -1,0 +1,56 @@
+import { Meta, Story } from '@storybook/blocks';
+import * as Stories from './ClipPath.stories';
+
+<Meta of={Stories} />
+
+# ClipPath
+
+This widget clip the child widget like ClipPath Widget in Flutter.
+
+ClipPath take clipper that is callback function and return Path object.
+
+You can create Whatever shape you want with Path.
+
+<iframe
+	width="560"
+	height="315"
+	src="https://www.youtube.com/embed/oAUebVIb-7s"
+	title="YouTube video player"
+	frameborder="0"
+	allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+	allowfullscreen
+></iframe>
+
+See: [https://api.flutter.dev/flutter/widgets/ClipPath-class.html](https://api.flutter.dev/flutter/widgets/ClipPath-class.html)
+
+## Props
+
+### clipped
+
+**Value: boolean** (default: **true**)
+
+### clipper
+
+**Value: Function**
+
+This defines The way of clipping.
+
+The size which is given to this callback would be ClipPath's size.
+
+<br />
+
+## Basic
+
+<Story of={Stories.Basic} />
+
+<br />
+
+## Rect
+
+<Story of={Stories.RectClip} />
+
+<br />
+
+## Oval
+
+<Story of={Stories.RectOval} />

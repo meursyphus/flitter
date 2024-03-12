@@ -6,7 +6,7 @@ import {
   State,
   StatefulWidget,
   Widget,
-} from "@moonmoonbrothers/flutterjs";
+} from "@meursyphus/flitter";
 import DiagramControllerProvider from "../Provider/DiagramControllerProvider";
 import { LegacyNodeEvent, type EventManager } from "../../event";
 import EventManagerProvider from "../Provider/EventManagerProvider";

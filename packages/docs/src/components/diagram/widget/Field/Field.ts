@@ -7,7 +7,7 @@ import {
   Tooltip,
   ToolTipPosition,
   GestureDetector,
-} from "@moonmoonbrothers/flutterjs";
+} from "@meursyphus/flitter";
 import type { Field as FieldProps } from "../../type";
 import { classToFunction } from "../utils";
 import ChangedLayoutNotifier from "../ChangeNotifier/ChangedLayoutNotifier";

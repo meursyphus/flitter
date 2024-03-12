@@ -1,0 +1,36 @@
+import { Meta, Story } from '@storybook/blocks';
+import * as Stories from './Widget.stories';
+
+<Meta of={Stories} />
+
+# AnimatedAlign
+
+This widget motivated by AnimatedAlign in Flutter.
+
+> Animated version of Align which automatically transitions the child's position over a given duration whenever the given alignment changes.
+
+See: https://api.flutter.dev/flutter/widgets/AnimatedAlign-class.html
+
+## Props
+
+### alignment
+
+**Value: Alignment** (default: **Alignment.center**)
+
+### widthFactor
+
+**Value: number | undefined**
+
+### heightFoctor
+
+**Value: number | undefined**
+
+### child
+
+**Value: Widget | undefined**
+
+## Examples
+
+### Basic
+
+<Story of={Stories.Basic} />

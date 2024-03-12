@@ -1,0 +1,29 @@
+import { Meta, Story } from '@storybook/blocks';
+import * as Stories from './Widget.stories';
+
+<Meta of={Stories} />
+
+# Tooltip
+
+This widget is motivated by Tooltip in Flutter.
+But It can render any widget as tooltip meessage (Flutter tooltip can only render message)
+
+## Props
+
+### width
+
+**child: Widget**
+
+### tootip: Widget\*\*
+
+**child: Widget**
+
+### position
+
+**Value: 'topLeft' | 'topCenter' | 'topRight' ...etc (default: 'bottomCenter') **
+
+## Examples
+
+### Basic
+
+<Story of={Stories.Basic} />

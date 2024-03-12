@@ -3,7 +3,7 @@ import {
   Element,
   State,
   StatefulWidget,
-} from "@moonmoonbrothers/flutterjs";
+} from "@meursyphus/flitter";
 import type { Line as LineProps } from "./type";
 import type { DiagramController } from "../../controller";
 import { DiagramControllerProvider } from "../Provider";

@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "target": "ES6",
+    "useDefineForClassFields": true,
+    "module": "ES2022",
+    "moduleResolution": "Node",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "package"
+  },
+  "include": ["src/index.ts"],
+  "exclude": ["node_modules"]
+}
