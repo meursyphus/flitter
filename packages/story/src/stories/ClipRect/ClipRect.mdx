@@ -1,0 +1,22 @@
+import { Meta, Story } from '@storybook/blocks';
+import { Source } from '@storybook/addon-docs';
+import { dedent } from 'ts-dedent';
+import * as Stories from './ClipRect.stories';
+
+<Meta of={Stories} />
+
+# ClipRect
+
+This widget clip the child widget like ClipRect Widget in Flutter.
+
+<b>The ClipRect</b> take clipper that is callback function and return <b>Rect</b> object.
+
+This widget use <b>ClipPath</b> internally to clip the child widget
+
+See: [https://api.flutter.dev/flutter/widgets/ClipRect-class.html](https://api.flutter.dev/flutter/widgets/ClipRect-class.html)
+
+<br />
+
+## Basic
+
+<Story of={Stories.Basic} />

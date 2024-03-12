@@ -13,7 +13,7 @@ import {
   SizedBox,
   Size,
   GlobalKey,
-} from "@moonmoonbrothers/flutterjs";
+} from "@meursyphus/flitter";
 import InitialNode from "./InitialNode";
 import { classToFunction } from "../utils";
 import type { Table } from "../../type";

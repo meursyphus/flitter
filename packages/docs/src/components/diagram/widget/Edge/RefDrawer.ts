@@ -5,7 +5,7 @@ import {
   State,
   StatefulWidget,
   Widget,
-} from "@moonmoonbrothers/flutterjs";
+} from "@meursyphus/flitter";
 import DiagramControllerProvider from "../Provider/DiagramControllerProvider";
 import { classToFunction } from "../utils";
 import Edge from "./Edge";

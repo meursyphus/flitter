@@ -12,8 +12,8 @@ import {
   TextAlign,
   TextStyle,
   Widget,
-} from "@moonmoonbrothers/flutterjs";
-import ReactWidget from "@moonmoonbrothers/flutterjs-react";
+} from "@meursyphus/flitter";
+import ReactWidget from "@meursyphus/flitter-react";
 
 class ResizableWidget extends StatefulWidget {
   createState(): State<StatefulWidget> {
