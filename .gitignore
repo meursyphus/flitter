@@ -1,5 +1,7 @@
-/node_modules
-/dist
 /.env
-
 *storybook.log
+
+node_modules/
+dist/
+.env
+package
