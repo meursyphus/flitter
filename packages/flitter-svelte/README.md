@@ -1,38 +1,26 @@
-# create-svelte
+## What is this?
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Flitter-Svelte is a library designed to simplify the integration of Flitter, a widget-based SVG manipulation framework, with Svelte applications. It enables developers to easily incorporate Flitter's declarative, Flutter-like syntax for data visualization within Svelte projects.
 
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
+For more details, visit [here](https://flitter.pages.dev).
 
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+npm i @meursyphus/flitter @meursyphus/flitter-svelte
 ```
 
-## Developing
+```svelte
+<script>
+  import { Container, Alignment, Text, TextStyle } from '@meursyphus/flitter';
+  import Widget from '@meursyphus/flitter-svelte';
+</script>
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+<Widget
+  width="600px"
+  height="300px"
+  widget={Container({
+    alignment: Alignment.center,
+    color: 'lightblue',
+    child: Text("Hello, Flitter!", style: TextStyle({ fontSize: 30, weight: 'bold' }))
+  })}
+/>
 ```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
