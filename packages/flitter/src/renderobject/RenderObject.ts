@@ -1,6 +1,6 @@
 import { Size, Offset, Constraints, Matrix4 } from "../type";
 import type { PaintContext } from "../utils/type";
-import type RenderObjectVisitor from "./RenderObjectVisitor";
+import { type RenderObjectVisitor } from "./RenderObjectVisitor";
 import type { RenderObjectElement } from "../element";
 import type { RenderOwner } from "../scheduler";
 import { assert } from "../utils";

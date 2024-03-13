@@ -1,7 +1,7 @@
 import type { RenderZIndex } from "../component/base/BaseZIndex";
 import type RenderObject from "../renderobject/RenderObject";
 import type RenderView from "../renderobject/RenderObject";
-import type RenderObjectVisitor from "../renderobject/RenderObjectVisitor";
+import { type RenderObjectVisitor } from "../renderobject/RenderObjectVisitor";
 import type { PaintContext } from "../utils/type";
 class RenderOwner {
   paintContext: PaintContext;

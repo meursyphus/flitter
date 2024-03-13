@@ -45,7 +45,7 @@
   "bugs": {
     "url": "https://github.com/meursyphus/flitter/issues"
   },
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "type": "module",
   "publishConfig": {
     "access": "public"
