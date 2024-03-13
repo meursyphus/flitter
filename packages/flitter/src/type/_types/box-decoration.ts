@@ -45,7 +45,6 @@ export default class BoxDecoration extends Data {
 
   equals(other: BoxDecoration): boolean {
     if (this === other) return true;
-    if (!(other instanceof BoxDecoration)) return false;
     if (
       !(this.color == null && other.color == null) &&
       (!(this.color != null && other.color != null) ||

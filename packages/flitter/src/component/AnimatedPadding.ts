@@ -1,7 +1,5 @@
 import BaseAnimatedPadding from "./base/BaseAnimatedPadding";
+import { classToFunction } from "../utils";
 
-export default function Padding(
-  ...props: ConstructorParameters<typeof BaseAnimatedPadding>
-) {
-  return new BaseAnimatedPadding(...props);
-}
+export default classToFunction(BaseAnimatedPadding);
+

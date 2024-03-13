@@ -1,5 +1,3 @@
 export interface Vector {
-
+  type: "v2" | "v3" | "v4";
 }
-
-export default Vector

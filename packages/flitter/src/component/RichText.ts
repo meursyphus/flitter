@@ -1,5 +1,5 @@
 import { Rect, TextOverflow } from "../type";
-import { functionalizeClass } from "../utils";
+import { classToFunction } from "../utils";
 import { StatelessWidget } from "../widget";
 import ClipRect from "./ClipRect";
 import type { RichTextProps } from "./base/BaseRichText";
@@ -35,4 +35,4 @@ class RichText extends StatelessWidget {
     });
   }
 }
-export default functionalizeClass(RichText);
+export default classToFunction(RichText);

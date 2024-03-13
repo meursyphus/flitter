@@ -1,8 +1,9 @@
-import type Vector from "./_vector";
-import Vector3 from "./_vector3";
-import Vector4 from "./_vector4";
+import type { Vector } from "./_vector";
+import { Vector3 } from "./_vector3";
+import { Vector4 } from "./_vector4";
 
 export class Vector2 implements Vector {
+  type: "v2" | "v3" | "v4" = "v2";
   _v2storage: [number, number];
 
   constructor(arg0: number, arg1: number) {

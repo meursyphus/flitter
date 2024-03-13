@@ -1,7 +1,7 @@
 import type RenderObject from "../renderobject/RenderObject";
 import type { RenderContext } from "../runApp";
 import type { BuildOwner, Scheduler } from "../scheduler";
-import { GlobalKey } from "../scheduler";
+import type { GlobalKey } from "../scheduler";
 import Widget from "../widget/Widget";
 
 class Element {
@@ -15,7 +15,7 @@ class Element {
   constructor(widget: Widget) {
     this.widget = widget;
   }
-
+  type: "render" | "none" | "provider" = "none";
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   visitChildren(visitor: (child: Element) => void) {
     throw { message: "not implemented" };
@@ -82,7 +82,7 @@ class Element {
     }
     this.parent = newParent;
 
-    if (this.widget.key instanceof GlobalKey) {
+    if ((this.widget.key as GlobalKey)?.isGlobalKey) {
       this.buildOwner.registerGlobalKey(this.widget.key, this);
     }
   }

@@ -1,6 +1,6 @@
 import RenderObject from "./RenderObject";
 
-class MultiChildRenderObject extends RenderObject {
+export class MultiChildRenderObject extends RenderObject {
   
 }
 

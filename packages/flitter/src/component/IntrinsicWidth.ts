@@ -1,4 +1,4 @@
-import { functionalizeClass } from "../utils";
+import { classToFunction } from "../utils";
 import BaseIntrinsicWidth from "./base/BaseIntrinsicWidth";
 
-export default functionalizeClass(BaseIntrinsicWidth);
+export default classToFunction(BaseIntrinsicWidth);

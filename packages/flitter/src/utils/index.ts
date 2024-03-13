@@ -2,12 +2,12 @@ import applyMixins from "./applyMixins";
 import assert from "./assert";
 import lerp from "./lerp";
 import { getTextHeight, getTextWidth } from "./getTextSize";
-import functionalizeClass from "./functionalizeClass";
-import { Calculable } from "../type";
+import classToFunction from "./classToFunction";
+import type { Calculable } from "../type";
 export { default as createUniqueId } from "./createUniqueId";
 export { default as TypedObject } from "./TypedObject";
 
-export { assert, applyMixins, getTextHeight, getTextWidth, functionalizeClass };
+export { assert, applyMixins, getTextHeight, getTextWidth, classToFunction };
 
 export default class Utils {
   static sumReducer = (acc: number, value: number) => acc + value;
@@ -38,7 +38,7 @@ export default class Utils {
       return lerp(a, b as number, t) as T;
     }
 
-    assert(b instanceof Calculable);
+    assert((b as Calculable)?.isCalculable, "b is not a Calculable");
 
     return a.plus((b as Calculable).minus(a).multiply(t)) as T;
   }

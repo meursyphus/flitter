@@ -1,6 +1,5 @@
 import MultiChildRenderObject from "../../renderobject/MultiChildRenderObject";
-import type {
-  Axis} from "../../type";
+import type { Axis } from "../../type";
 import {
   Constraints,
   CrossAxisAlignment,
@@ -12,7 +11,7 @@ import {
 } from "../../type";
 import MultiChildRenderObjectWidget from "../../widget/MultiChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
-import { RenderFlexible } from "./BaseFlexible";
+import type { RenderFlexible } from "./BaseFlexible";
 
 class Flex extends MultiChildRenderObjectWidget {
   direction: Axis;
@@ -167,7 +166,9 @@ class RenderFlex extends MultiChildRenderObject {
 
     sortedChildren.forEach((child) => {
       child.layout(this.constraints.loosen());
-      const flex = child instanceof RenderFlexible ? child.flex : 0;
+      const flex = (child as RenderFlexible)?.isRenderFlexible
+        ? (child as RenderFlexible).flex
+        : 0;
       totalFlex += flex;
       if (flex === 0) {
         childIntrinsicMainAxisValue += child.size[this.mainAxisSizeName];
@@ -189,14 +190,15 @@ class RenderFlex extends MultiChildRenderObject {
     sortedChildren.forEach((child) => {
       let childConstraint: Constraints;
 
-      if (!(child instanceof RenderFlexible)) {
+      if (!(child as RenderFlexible).isRenderFlexible) {
         childConstraint = this.getNonFlexItemConstraint(crossAxisValue);
       } else {
-        const flex = child.flex;
+        const flexible = child as RenderFlexible;
+        const flex = flexible.flex;
         const childMainAxisValue = flex * flexUnitSize;
         childConstraint = this.getFlexItemConstraint(
           childMainAxisValue,
-          child.fit
+          flexible.fit
         );
       }
 

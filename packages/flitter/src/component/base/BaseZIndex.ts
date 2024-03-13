@@ -1,5 +1,5 @@
 import { SingleChildRenderObject } from "../../renderobject";
-import type RenderObjectVisitor from "../../renderobject/RenderObjectVisitor";
+import type { RenderObjectVisitor } from "../../renderobject/RenderObjectVisitor";
 import type { Widget } from "../../widget";
 import { SingleChildRenderObjectWidget } from "../../widget";
 

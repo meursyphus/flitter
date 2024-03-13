@@ -1,6 +1,6 @@
 import type { Decoration, Matrix4 } from "../type";
 import { type EdgeInsets, type Alignment, Constraints, Rect } from "../type";
-import { assert, functionalizeClass } from "../utils";
+import { assert, classToFunction } from "../utils";
 import type Widget from "../widget/Widget";
 import Align from "./Align";
 import ConstrainedBox from "./ConstrainedBox";
@@ -187,4 +187,4 @@ class _Container extends StatelessWidget {
   }
 }
 
-export default functionalizeClass(_Container);
+export default classToFunction(_Container);

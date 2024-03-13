@@ -1,7 +1,6 @@
 import BaseAnimatedFractionallySizedBox from "./base/BaseAnimatedFractionallySizedBox";
+import { classToFunction } from "../utils";
 
-export default function AnimatedFractionallySizedBox(
-  ...props: ConstructorParameters<typeof BaseAnimatedFractionallySizedBox>
-) {
-  return new BaseAnimatedFractionallySizedBox(...props);
-}
+export default classToFunction(BaseAnimatedFractionallySizedBox);
+
+

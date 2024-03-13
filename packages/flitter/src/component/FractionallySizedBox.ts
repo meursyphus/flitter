@@ -1,4 +1,4 @@
-import { functionalizeClass } from "../utils";
+import { classToFunction } from "../utils";
 import BaseFractionallySizedBox from "./base/BaseFractionallySizedBox";
 
-export default functionalizeClass(BaseFractionallySizedBox);
+export default classToFunction(BaseFractionallySizedBox);

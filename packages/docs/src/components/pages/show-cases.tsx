@@ -1,12 +1,13 @@
 import Flicking from "@egjs/react-flicking";
-import ReactWidget from "@moonmoonbrothers/flutterjs-react";
+import ReactWidget from "@meursyphus/flitter-react";
+import '@meursyphus/flitter'
 import {
   BarChart,
   BubbleChart,
   LineChart,
   ScatterChart,
   StackedBarChart,
-} from "@moonmoonbrothers/uglychart";
+} from "@meursyphus/flitter-chart";
 import { useEffect, useRef, useState } from "react";
 
 const barChartProps = {

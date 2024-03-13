@@ -1,4 +1,4 @@
-import { functionalizeClass } from "../utils";
+import { classToFunction } from "../utils";
 import BaseOverflowBox from "./base/BaseOverflowBox";
 
-export default functionalizeClass(BaseOverflowBox);
+export default classToFunction(BaseOverflowBox);

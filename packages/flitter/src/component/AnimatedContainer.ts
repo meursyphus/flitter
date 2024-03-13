@@ -1,7 +1,4 @@
 import BaseAnimatedContainer from "./base/BaseAnimatedContainer";
+import { classToFunction } from "../utils";
 
-export default function AnimatedContainer(
-  ...props: ConstructorParameters<typeof BaseAnimatedContainer>
-) {
-  return new BaseAnimatedContainer(...props);
-}
+export default classToFunction(BaseAnimatedContainer);

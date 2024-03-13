@@ -1,8 +1,9 @@
-import type Vector from "./_vector";
+import type { Vector } from "./_vector";
 import Vector2 from "./_vector2";
 import Vector3 from "./_vector3";
 
 export class Vector4 implements Vector {
+  type: "v2" | "v3" | "v4" = "v4";
   _v4storage: [number, number, number, number];
   get storage() {
     return this._v4storage;

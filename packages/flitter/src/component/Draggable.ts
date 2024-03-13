@@ -1,4 +1,4 @@
-import { functionalizeClass } from "../utils";
+import { classToFunction } from "../utils";
 import type { Widget } from "../widget";
 import { StatefulWidget } from "../widget";
 import type { BuildContext } from "../element";
@@ -80,4 +80,4 @@ class DraggableState extends State<Draggable> {
   }
 }
 
-export default functionalizeClass(Draggable);
+export default classToFunction(Draggable);

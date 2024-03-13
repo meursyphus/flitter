@@ -1,4 +1,4 @@
-import { functionalizeClass } from "../utils";
+import { classToFunction } from "../utils";
 import BaseCustomPaint from "./base/BaseCustomPaint";
 
-export default functionalizeClass(BaseCustomPaint);
+export default classToFunction(BaseCustomPaint);

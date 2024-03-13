@@ -1,9 +1,5 @@
-import BaseAlignmentScale from "./base/BaseAnimatedScale";
+import { classToFunction } from "../utils";
+import BaseAnimatedScale from "./base/BaseAnimatedScale";
 
-function AnimatedScale(
-  ...props: ConstructorParameters<typeof BaseAlignmentScale>
-) {
-  return new BaseAlignmentScale(...props);
-}
 
-export default AnimatedScale;
+export default classToFunction(BaseAnimatedScale);

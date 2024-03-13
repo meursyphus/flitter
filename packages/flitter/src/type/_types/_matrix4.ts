@@ -2,6 +2,7 @@
 import Calculable from "./_calculable";
 import type Matrix2 from "./_matrix2";
 import Matrix3 from "./_matrix3";
+import type { Vector } from "./_vector";
 import type Vector2 from "./_vector2";
 import Vector3 from "./_vector3";
 import Vector4 from "./_vector4";
@@ -22,7 +23,7 @@ type Array16 = [
   number,
   number,
   number,
-  number
+  number,
 ];
 
 class Matrix4 extends Calculable {
@@ -644,15 +645,15 @@ Sets the entire matrix to the matrix in [arg].
    */
   translate(x: Vector3 | Vector4 | number, y?: number, z?: number) {
     let tx: number, ty: number, tz: number;
-    const tw = x instanceof Vector4 ? x.w : 1.0;
-    if (x instanceof Vector3) {
-      tx = x.x;
-      ty = x.y;
-      tz = x.z;
-    } else if (x instanceof Vector4) {
-      tx = x.x;
-      ty = x.y;
-      tz = x.z;
+    const tw = (x as Vector)?.type === "v4" ? (x as Vector4).w : 1.0;
+    if ((x as Vector)?.type === "v3") {
+      tx = (x as Vector3).x;
+      ty = (x as Vector3).y;
+      tz = (x as Vector3).z;
+    } else if ((x as Vector)?.type === "v4") {
+      tx = (x as Vector4).x;
+      ty = (x as Vector4).y;
+      tz = (x as Vector4).z;
     } else if (typeof x === "number") {
       tx = x;
       ty = y || 0.0;
@@ -697,22 +698,22 @@ Sets the entire matrix to the matrix in [arg].
    */
   leftTranslate(x: Vector3 | Vector4 | number, y = 0.0, z = 0.0) {
     let tx, ty, tz;
-    const tw = x instanceof Vector4 ? x.w : 1.0;
+    const tw = (x as Vector)?.type === "v4" ? (x as Vector4).w : 1.0;
 
-    if (x instanceof Vector3) {
-      tx = x.x;
-      ty = x.y;
-      tz = x.z;
-    } else if (x instanceof Vector4) {
-      tx = x.x;
-      ty = x.y;
-      tz = x.z;
+    if ((x as Vector)?.type === "v3") {
+      tx = (x as Vector3).x;
+      ty = (x as Vector3).y;
+      tz = (x as Vector3).z;
+    } else if ((x as Vector)?.type === "v4") {
+      tx = (x as Vector4).x;
+      ty = (x as Vector4).y;
+      tz = (x as Vector4).z;
     } else if (typeof x === "number") {
       tx = x;
-      ty = y;
-      tz = z;
+      ty = y || 0.0;
+      tz = z || 0.0;
     } else {
-      throw new Error("Invalid argument type");
+      throw new Error("Unsupported argument type.");
     }
 
     // Column 1
@@ -908,15 +909,15 @@ Rotate this matrix [angle] radians around [axis].
     let sx: number;
     let sy: number;
     let sz: number;
-    const sw = x instanceof Vector4 ? x.w : 1.0;
-    if (x instanceof Vector3) {
-      sx = x.x;
-      sy = x.y;
-      sz = x.z;
-    } else if (x instanceof Vector4) {
-      sx = x.x;
-      sy = x.y;
-      sz = x.z;
+    const sw = (x as Vector)?.type === "v4" ? (x as Vector4).w : 1.0;
+    if ((x as Vector).type === "v3") {
+      sx = (x as Vector3).x;
+      sy = (x as Vector3).y;
+      sz = (x as Vector3).z;
+    } else if ((x as Vector).type === "v4") {
+      sx = (x as Vector4).x;
+      sy = (x as Vector4).y;
+      sz = (x as Vector4).z;
     } else if (typeof x === "number") {
       sx = x;
       sy = y ?? x;

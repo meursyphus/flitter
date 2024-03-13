@@ -1,9 +1,4 @@
 import BaseConstrainedBox from "./base/BaseConstrainedBox";
+import { classToFunction } from "../utils";
 
-function ConstrainedBox(
-  ...props: ConstructorParameters<typeof BaseConstrainedBox>
-) {
-  return new BaseConstrainedBox(...props);
-}
-
-export default ConstrainedBox;
+export default classToFunction(BaseConstrainedBox);

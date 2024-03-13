@@ -25,10 +25,10 @@ class Provider<ProviderKey, Value> extends Widget {
     while (parent != null) {
       const current = parent;
       parent = current.parent;
-      if (!(current instanceof ProviderElement)) continue;
-      if (current.providerKey !== key) continue;
+      if (!(current.type === 'provider' )) continue;
+      if ((current as ProviderElement).providerKey !== key) continue;
 
-      return current.value as V;
+      return (current as ProviderElement).value as V;
     }
 
     throw { message: "can not find requested provider value" };
@@ -42,6 +42,8 @@ class Provider<ProviderKey, Value> extends Widget {
 class ProviderElement extends Element {
   declare widget: Provider<unknown, unknown>;
   child!: Element;
+  static type = 'provider' as const
+  override readonly type =  ProviderElement.type
 
   get providerKey() {
     return this.widget.providerKey;
