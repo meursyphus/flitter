@@ -139,7 +139,6 @@ class Border extends _BoxBorder {
 
   equals(other: BoxBorder): boolean {
     if (this === other) return true;
-    if (!(other instanceof Border)) return false;
     return (
       this.top.equals(other.top) &&
       this.right.equals(other.right) &&

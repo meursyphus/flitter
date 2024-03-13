@@ -16,7 +16,7 @@
     "build": "tsup && npm run copy-package && npm run copy-readme && cd dist && npm run fix-package",
     "copy-package": "cp package.json dist/package.json",
     "copy-readme": "cp README.md dist/README.md",
-    "fix-package": "npm pkg set main=./index.cjs module=./index.js exports.default=./index.js exports.import=./index.js",
+    "fix-package": "npm pkg set main=./index.cjs module=./index.js exports.default=./index.js exports.import=./index.js types=./index.d.ts",
     "lint": "eslint src/**",
     "postbuild": "echo \"Build complete. Please run: \n\ncd dist\nnpm publish\n\""
   },
@@ -46,6 +46,7 @@
     "url": "https://github.com/meursyphus/flitter/issues"
   },
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "publishConfig": {
     "access": "public"

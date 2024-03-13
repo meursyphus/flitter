@@ -10,6 +10,7 @@ import { assert } from "../utils";
   Actually, It is more like RenderShiftedBox
 */
 export class RenderObject {
+  readonly runtimeType = this.constructor.name;
   readonly isPainter: boolean;
   ownerElement!: RenderObjectElement;
   renderOwner!: RenderOwner;

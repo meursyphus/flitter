@@ -3,7 +3,7 @@ import assert from "./assert";
 import lerp from "./lerp";
 import { getTextHeight, getTextWidth } from "./getTextSize";
 import classToFunction from "./classToFunction";
-import { Calculable } from "../type";
+import type { Calculable } from "../type";
 export { default as createUniqueId } from "./createUniqueId";
 export { default as TypedObject } from "./TypedObject";
 
@@ -38,7 +38,7 @@ export default class Utils {
       return lerp(a, b as number, t) as T;
     }
 
-    assert(b instanceof Calculable);
+    assert((b as Calculable)?.isCalculable, "b is not a Calculable");
 
     return a.plus((b as Calculable).minus(a).multiply(t)) as T;
   }

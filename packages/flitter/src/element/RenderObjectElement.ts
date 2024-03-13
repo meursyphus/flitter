@@ -7,6 +7,7 @@ class RenderObjectElement extends Element {
   children!: Element[];
 
   _renderObject!: RenderObject;
+  override type: "render" | "none" | "provider" = 'render'
   createRenderObject() {
     const renderObject = (
       this.widget as RenderObjectWidget
@@ -97,7 +98,7 @@ class RenderObjectElement extends Element {
 
   private findAncestorRenderObjectElement(): RenderObjectElement | null {
     let ancestor: Element | null = this.parent;
-    while (ancestor != null && !(ancestor instanceof RenderObjectElement)) {
+    while (ancestor != null && !(ancestor.type === 'render')) {
       ancestor = ancestor.parent;
     }
     return ancestor as RenderObjectElement | null;
