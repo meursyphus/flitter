@@ -1,8 +1,4 @@
 import BaseAnimatedSlide from "./base/BaseAnimatedSlide";
-function AnimatedSlide(
-  ...props: ConstructorParameters<typeof BaseAnimatedSlide>
-) {
-  return new BaseAnimatedSlide(...props);
-}
+import { classToFunction } from "../utils";
 
-export default AnimatedSlide;
+export default classToFunction(BaseAnimatedSlide);

@@ -3,6 +3,7 @@ import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectW
 import type Widget from "../../widget/Widget";
 
 class Flexible extends SingleChildRenderObjectWidget {
+  isFlexible = true
   flex: number;
   fit: "tight" | "loose";
   constructor({
@@ -31,6 +32,7 @@ class Flexible extends SingleChildRenderObjectWidget {
 }
 
 export class RenderFlexible extends SingleChildRenderObject {
+  isRenderFlexible = true
   _flex: number;
   _fit: "tight" | "loose";
 

@@ -1,4 +1,4 @@
-import { functionalizeClass } from "../utils";
+import { classToFunction } from "../utils";
 import _FractionalTranslation from "./base/BaseFractionalTranslation";
 
-export default functionalizeClass(_FractionalTranslation);
+export default classToFunction(_FractionalTranslation);

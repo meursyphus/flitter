@@ -10,7 +10,7 @@ import {
 import Utils, { assert } from "../../utils";
 import type { Widget } from "../../widget";
 import MultiChildRenderObjectWidget from "../../widget/MultiChildRenderObjectWidget";
-import { RenderPositioned } from "./BasePositioned";
+import type { RenderPositioned } from "./BasePositioned";
 
 export default class BaseStack extends MultiChildRenderObjectWidget {
   alignment: Alignment;
@@ -117,7 +117,11 @@ export class RenderStack extends MultiChildRenderObject {
     }
 
     this.children.forEach((child) => {
-      if (child instanceof RenderPositioned && child.isPositioned) return;
+      if (
+        (child as RenderPositioned).isRenderPositioned &&
+        (child as RenderPositioned).isPositioned
+      )
+        return;
       hasNonPositionedChildren = true;
       child.layout(nonPositionedConstraints);
 
@@ -199,13 +203,18 @@ export class RenderStack extends MultiChildRenderObject {
     });
 
     this.children.forEach((child) => {
-      if (!(child instanceof RenderPositioned && child.isPositioned)) {
+      if (
+        !(
+          (child as RenderPositioned).isRenderPositioned &&
+          (child as RenderPositioned).isPositioned
+        )
+      ) {
         child.offset = this.resolvedAlignment.alongOffset(
           this.size.minus(child.size)
         );
       } else {
         RenderStack.layoutPositionedChild({
-          child,
+          child: child as RenderPositioned,
           size: this.size,
           alignment: this.resolvedAlignment,
         });

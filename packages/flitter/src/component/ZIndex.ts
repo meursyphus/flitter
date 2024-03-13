@@ -1,4 +1,4 @@
-import { functionalizeClass } from "../utils";
+import { classToFunction } from "../utils";
 import BaseZIndex from "./base/BaseZIndex";
 
-export default functionalizeClass(BaseZIndex);
+export default classToFunction(BaseZIndex);

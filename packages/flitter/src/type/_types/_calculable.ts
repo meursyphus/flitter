@@ -1,5 +1,6 @@
 import Data from "./_data";
 abstract class Calculable extends Data {
+  isCalculable = true;
   plus(_other: Calculable): Calculable {
     throw Error("plus is not implemented");
   }

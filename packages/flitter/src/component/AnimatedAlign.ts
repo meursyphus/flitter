@@ -1,7 +1,4 @@
 import BaseAnimatedAlignWidget from "./base/BaseAnimatedAlign";
+import { classToFunction } from "../utils";
 
-export default function AnimatedAlignWidget(
-  ...props: ConstructorParameters<typeof BaseAnimatedAlignWidget>
-) {
-  return new BaseAnimatedAlignWidget(...props);
-}
+export default classToFunction(BaseAnimatedAlignWidget);

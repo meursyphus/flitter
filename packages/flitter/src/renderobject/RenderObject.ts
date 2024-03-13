@@ -1,6 +1,6 @@
 import { Size, Offset, Constraints, Matrix4 } from "../type";
 import type { PaintContext } from "../utils/type";
-import type RenderObjectVisitor from "./RenderObjectVisitor";
+import { type RenderObjectVisitor } from "./RenderObjectVisitor";
 import type { RenderObjectElement } from "../element";
 import type { RenderOwner } from "../scheduler";
 import { assert } from "../utils";
@@ -9,7 +9,8 @@ import { assert } from "../utils";
   It does more things than flutters' RenderObject 
   Actually, It is more like RenderShiftedBox
 */
-class RenderObject {
+export class RenderObject {
+  readonly runtimeType = this.constructor.name;
   readonly isPainter: boolean;
   ownerElement!: RenderObjectElement;
   renderOwner!: RenderOwner;

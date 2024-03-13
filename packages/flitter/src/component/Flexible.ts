@@ -1,4 +1,4 @@
 import _Flexible from "./base/BaseFlexible";
-import { functionalizeClass } from "../utils";
+import { classToFunction } from "../utils";
 
-export default functionalizeClass(_Flexible);
+export default classToFunction(_Flexible);

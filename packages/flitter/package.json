@@ -1,6 +1,6 @@
 {
   "name": "@meursyphus/flitter",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "A declarative, widget-based library built on SVG for simplifying data visualization with a Flutter-like syntax.",
   "keywords": [
     "flitter",
@@ -13,8 +13,10 @@
   "homepage": "https://flitter.pages.dev",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsup && cp package.json dist/package.json && cd dist && npm run fix-package",
-    "fix-package": "npm pkg set main=./index.cjs module=./index.js exports.default=./index.js exports.import=./index.js",
+    "build": "tsup && npm run copy-package && npm run copy-readme && cd dist && npm run fix-package",
+    "copy-package": "cp package.json dist/package.json",
+    "copy-readme": "cp README.md dist/README.md",
+    "fix-package": "npm pkg set main=./index.cjs module=./index.js exports.default=./index.js exports.import=./index.js types=./index.d.ts",
     "lint": "eslint src/**",
     "postbuild": "echo \"Build complete. Please run: \n\ncd dist\nnpm publish\n\""
   },
@@ -43,7 +45,8 @@
   "bugs": {
     "url": "https://github.com/meursyphus/flitter/issues"
   },
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "publishConfig": {
     "access": "public"

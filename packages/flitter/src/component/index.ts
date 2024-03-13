@@ -48,8 +48,10 @@ import AnimatedContainer from "./AnimatedContainer";
 import Draggable from "./Draggable";
 import Tooltip from "./Tooltip";
 import ZIndex from "./ZIndex";
+import Painter from "./base/BaseCustomPaint";
 
 export {
+  Painter,
   ConstrainedBox,
   ConstraintsTransformBox,
   UnconstrainedBox,

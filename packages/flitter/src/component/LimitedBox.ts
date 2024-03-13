@@ -1,4 +1,4 @@
-import { functionalizeClass } from "../utils";
+import { classToFunction } from "../utils";
 import BaseLimitedBox from "./base/BaseLimitedBox";
 
-export default functionalizeClass(BaseLimitedBox);
+export default classToFunction(BaseLimitedBox);

@@ -1,4 +1,4 @@
-import { functionalizeClass } from "../utils";
+import { classToFunction } from "../utils";
 import _Opacity from "./base/BaseOpacity";
 
-export default functionalizeClass(_Opacity);
+export default classToFunction(_Opacity);

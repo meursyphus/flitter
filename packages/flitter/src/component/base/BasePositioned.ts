@@ -59,6 +59,7 @@ class BasePositioned extends SingleChildRenderObjectWidget {
 }
 
 export class RenderPositioned extends SingleChildRenderObject {
+  isRenderPositioned = true;
   _top?: number;
   _bottom?: number;
   _right?: number;

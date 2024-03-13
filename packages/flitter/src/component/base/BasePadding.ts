@@ -2,6 +2,7 @@ import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject"
 import { Size, Offset, EdgeInsets } from "../../type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
+import type Flexible from "./BaseFlexible";
 
 export default class Padding extends SingleChildRenderObjectWidget {
   padding: EdgeInsets;
@@ -15,6 +16,9 @@ export default class Padding extends SingleChildRenderObjectWidget {
     key?: any;
   }) {
     super({ child, key });
+
+    if ((child as Flexible)?.isFlexible && (child as Flexible).fit === "tight")
+      throw { message: "Padding must not have a Expanded Widget" };
     this.padding = padding;
   }
 

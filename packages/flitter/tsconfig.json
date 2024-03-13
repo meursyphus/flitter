@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
-    "rootDir": "./src",
+    "baseUrl": ".", // 기준 경로를 현재 디렉토리로 설정
+    "paths": {
+      "src/*": ["./src/*"] // 'src' 별칭을 src 디렉토리에 매핑
+    },
     "target": "ES6",
     "useDefineForClassFields": true,
     "module": "ES2022",

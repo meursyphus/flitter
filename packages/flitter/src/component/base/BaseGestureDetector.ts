@@ -167,6 +167,7 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
 }
 
 class RenderGestureDetector extends SingleChildRenderObject {
+  isRenderGestureDetector = true;
   private id = createUniqueId();
   private _bubble: Bubble;
   get bubble(): Bubble {
@@ -416,8 +417,8 @@ class RenderGestureDetector extends SingleChildRenderObject {
     let parent = this.parent;
 
     while (parent != null) {
-      if (parent instanceof RenderGestureDetector) {
-        parent.dispatch(e);
+      if ((parent as RenderGestureDetector)?.isRenderGestureDetector) {
+        (parent as RenderGestureDetector).dispatch(e);
         break;
       }
       parent = parent.parent;

@@ -2,7 +2,7 @@ import type { TextDirection } from "../type";
 import { Alignment, Offset } from "../type";
 import SingleChildRenderObject from "./SingleChildRenderObject";
 
-class RenderAligningShiftedBox extends SingleChildRenderObject {
+export class RenderAligningShiftedBox extends SingleChildRenderObject {
   _alignment: Alignment;
   get alignment(): Alignment {
     return this._alignment;
