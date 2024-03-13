@@ -1,6 +1,6 @@
 {
 	"name": "@meursyphus/flitter-svelte",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"main": "src/lib/index.ts",
 	"scripts": {
 		"dev": "vite dev",
@@ -31,9 +31,6 @@
 	"type": "module",
 	"dependencies": {
 		"linkedom": "^0.14.21"
-	},
-	"peerDependencies": {
-		"@meursyphus/flitter": "0.x || 1.x"
 	},
 	"keywords": [
 		"flitter",
