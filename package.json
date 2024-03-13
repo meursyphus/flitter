@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run build -workspace=@meursyphus/flitter",
     "docs:start": "npm run start --workspace=@meursyphus/flitter-docs",
-    "docs:build": "npm run build --workspace=@meursyphus/flitter-docs",
+    "docs:build": "npm run build && npm run build --workspace=@meursyphus/flitter-docs",
     "story:start": "npm run storybook --workspace=@meursyphus/flitter-story",
     "story:build": "npm run build-storybook --workspace=@meursyphus/flitter-story",
     "story:chromatic": "npm run chromatic --workspace=@meursyphus/flitter-story",
