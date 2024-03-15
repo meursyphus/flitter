@@ -1,1 +1,0 @@
-import{F as e,A as s}from"./Flex-edvBr9RZ.js";import"./Widget-Dxvrat1N.js";function x({children:o,mainAxisAlignment:r,crossAxisAlignment:i,verticalDirection:t,mainAxisSize:n,key:a}){return e({children:o,direction:s.horizontal,mainAxisAlignment:r,crossAxisAlignment:i,verticalDirection:t,mainAxisSize:n,key:a})}export{x as R};

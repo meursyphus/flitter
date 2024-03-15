@@ -28,7 +28,7 @@ const navigation = docsEntries.reduce(
     name: string;
     order: number;
     items: { url: string; title: string; order: number }[];
-  }[],
+  }[]
 );
 
 // 그룹을 navGroupOrder에 따라 정렬
@@ -39,7 +39,7 @@ navigation.forEach((group) => {
   group.items.sort((a, b) => a.order - b.order);
 });
 
-const currentUrl = Astro.url.pathname;
+const url = new URL(Astro.request.url);
 ---
 
 <nav
@@ -55,7 +55,7 @@ const currentUrl = Astro.url.pathname;
           <div class="self-stretch px-4 mt-1 justify-start items-start gap-2 inline-flex">
             <a
               href={item.url}
-              class={`${item.url === currentUrl ? "font-semibold text-black" : "text-gray-700"} text-lg hover:text-black`}
+              class={`${item.url === url.pathname ? "font-semibold text-black" : "text-gray-700"} text-lg hover:text-black`}
             >
               {item.title}
             </a>
