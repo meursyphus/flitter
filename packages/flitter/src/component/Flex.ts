@@ -32,7 +32,7 @@ export default function Flex({
   return ClipRect({
     clipped,
     key,
-    clipper: (size) =>
+    clipper: size =>
       Rect.fromLTWH({
         left: 0,
         top: 0,

@@ -15,7 +15,7 @@ class RenderIntrinsicWidth extends SingleChildRenderObject {
     if (this.child == null) return;
     const width = this.child.getIntrinsicWidth(this.constraints.maxHeight) || 0;
     const constraint = Constraints.tightFor({ width }).enforce(
-      this.constraints
+      this.constraints,
     );
     this.child.layout(constraint);
     this.size = this.child.size;

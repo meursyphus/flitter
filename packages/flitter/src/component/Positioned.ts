@@ -9,13 +9,13 @@ interface PositionedFunction {
     bottom?: number;
     right?: number;
     child: Widget;
-    key?: any
+    key?: any;
   }): Widget;
   fill: (props: { child: Widget }) => Widget;
 }
 
 const Positioned: PositionedFunction = classToFunction(
-  BasePositioned
+  BasePositioned,
 ) as PositionedFunction;
 
 Positioned.fill = ({ child }: { child: Widget }) =>

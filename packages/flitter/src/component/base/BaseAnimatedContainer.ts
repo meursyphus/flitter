@@ -1,14 +1,7 @@
-import type { Curve} from "../../animation";
+import type { Curve } from "../../animation";
 import { CalculableTween, Tween } from "../../animation";
-import type {
-  Alignment,
-  Decoration,
-  Matrix4,
-  Data} from "../../type";
-import {
-  Constraints,
-  BoxDecoration,
-} from "../../type";
+import type { Alignment, Decoration, Matrix4, Data } from "../../type";
+import { Constraints, BoxDecoration } from "../../type";
 import type { Nullable } from "../../utils/type";
 import type { Widget } from "../../widget";
 import Container from "../Container";
@@ -69,7 +62,7 @@ class BaseAnimatedContainer extends ImplicitlyAnimatedWidget {
     super({ key, curve, duration });
     assert(
       !(color != null && decoration != null),
-      "color must not be null when decoration exists"
+      "color must not be null when decoration exists",
     );
     this.child = child;
     this.alignment = alignment;
@@ -104,53 +97,52 @@ class BaseAnimatedContainerState extends AnimatedBaseWidgetState<BaseAnimatedCon
       tween: Nullable | T;
       targetValue: V | Nullable;
       constructor: (value: V) => T;
-    }) => Nullable | T
+    }) => Nullable | T,
   ): void {
     this.alignment = visitor({
       tween: this.alignment,
       targetValue: this.widget.alignment,
-      constructor: (value) => new CalculableTween({ begin: value, end: value }),
+      constructor: value => new CalculableTween({ begin: value, end: value }),
     });
     this.width = visitor({
       tween: this.width,
       targetValue: this.widget.width,
-      constructor: (value) => new Tween({ begin: value, end: value }),
+      constructor: value => new Tween({ begin: value, end: value }),
     });
     this.height = visitor({
       tween: this.height,
       targetValue: this.widget.height,
-      constructor: (value) => new Tween({ begin: value, end: value }),
+      constructor: value => new Tween({ begin: value, end: value }),
     });
     this.padding = visitor({
       tween: this.padding,
       targetValue: this.widget.padding,
-      constructor: (value) => new CalculableTween({ begin: value, end: value }),
+      constructor: value => new CalculableTween({ begin: value, end: value }),
     });
     this.margin = visitor({
       tween: this.margin,
       targetValue: this.widget.margin,
-      constructor: (value) => new CalculableTween({ begin: value, end: value }),
+      constructor: value => new CalculableTween({ begin: value, end: value }),
     });
     this.transformAlignment = visitor({
       tween: this.transformAlignment,
       targetValue: this.widget.transformAlignment,
-      constructor: (value) => new CalculableTween({ begin: value, end: value }),
+      constructor: value => new CalculableTween({ begin: value, end: value }),
     });
     this.decoration = visitor({
       tween: this.decoration,
       targetValue: this.widget.decoration,
-      constructor: (value) => new DecorationTween({ begin: value, end: value }),
+      constructor: value => new DecorationTween({ begin: value, end: value }),
     });
     this.transform = visitor({
       tween: this.transform,
       targetValue: this.widget.transform,
-      constructor: (value) => new CalculableTween({ begin: value, end: value }),
+      constructor: value => new CalculableTween({ begin: value, end: value }),
     });
     this.constraints = visitor({
       tween: this.constraints,
       targetValue: this.widget.constraints,
-      constructor: (value) =>
-        new ConstraintsTween({ begin: value, end: value }),
+      constructor: value => new ConstraintsTween({ begin: value, end: value }),
     });
   }
 

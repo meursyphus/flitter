@@ -336,16 +336,19 @@ class RenderGestureDetector extends SingleChildRenderObject {
       dragend: this.onDragEnd,
     };
 
-    return TypedObject.keys(listeners).reduce((acc, key) => {
-      acc[key] = (e: any) => {
-        if (this.bubble[key]) {
-          this.dispatchParent(e);
-        }
-        listeners[key]?.(e);
-      };
+    return TypedObject.keys(listeners).reduce(
+      (acc, key) => {
+        acc[key] = (e: any) => {
+          if (this.bubble[key]) {
+            this.dispatchParent(e);
+          }
+          listeners[key]?.(e);
+        };
 
-      return acc;
-    }, {} as Record<EventType, MouseEventCallback | ((e: WheelEvent) => void)>);
+        return acc;
+      },
+      {} as Record<EventType, MouseEventCallback | ((e: WheelEvent) => void)>,
+    );
   }
 
   attach(ownerElement: RenderObjectElement): void {
@@ -438,7 +441,7 @@ class DragBackend {
   get root(): Document {
     assert(
       typeof document !== "undefined",
-      "DragBackend requires document. please use DragBackend in browser environment."
+      "DragBackend requires document. please use DragBackend in browser environment.",
     );
     return document;
   }
@@ -485,20 +488,20 @@ class DragBackend {
       onDragStart?: (e: MouseEvent) => void;
       onDragMove?: (e: MouseEvent) => void;
       onDragEnd?: (e: MouseEvent) => void;
-    } = {}
+    } = {},
   ) {
-    this.dragStartListener[sourceId] = (e) => {
+    this.dragStartListener[sourceId] = e => {
       this.activeDragSourceId = sourceId;
       onDragStart(e);
     };
     node.addEventListener(
       "mousedown",
-      this.dragStartListener[sourceId].bind(this)
+      this.dragStartListener[sourceId].bind(this),
     );
-    this.dragMoveListener[sourceId] = (e) => {
+    this.dragMoveListener[sourceId] = e => {
       onDragMove(e);
     };
-    this.dragEndListener[sourceId] = (e) => {
+    this.dragEndListener[sourceId] = e => {
       this.activeDragSourceId = null;
       onDragEnd(e);
     };
