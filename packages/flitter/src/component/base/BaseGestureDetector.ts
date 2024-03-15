@@ -449,8 +449,6 @@ class DragBackend {
   private dragMoveListener: Record<SourceId, (e: MouseEvent) => void> = {};
   private dragEndListener: Record<SourceId, (e: MouseEvent) => void> = {};
 
-  constructor() {}
-
   setup() {
     if (typeof window === "undefined") return;
     if (this.isSetup) return;
