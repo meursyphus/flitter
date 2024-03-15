@@ -61,7 +61,7 @@ export class AppRunner {
   private widget!: Widget;
   runApp(widget: Widget): string {
     this.widget = widget;
-    if (this.viewSize == null) return ``;
+    if (this.viewSize == null) return "";
 
     this.root = new RenderObjectToWidgetAdapter({
       app: widget,
