@@ -40,7 +40,7 @@ function WidgetComponent({
 
   return (
     <div style={{ width, height }} ref={containerRef}>
-      <svg ref={svgRef} />
+      <svg style={{ width: "100%", height: "100%" }} ref={svgRef} />
     </div>
   );
 }
