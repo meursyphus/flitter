@@ -44,7 +44,7 @@ class Matrix4 extends Calculable {
 
   multiply(value: number): Matrix4 {
     const cloned = this.clone();
-    cloned._m4storage = cloned._m4storage.map((v) => v * value) as Array16;
+    cloned._m4storage = cloned._m4storage.map(v => v * value) as Array16;
     return cloned;
   }
 
@@ -298,7 +298,7 @@ class Matrix4 extends Calculable {
     arg12: number,
     arg13: number,
     arg14: number,
-    arg15: number
+    arg15: number,
   ) {
     super();
     this._m4storage = [
@@ -372,7 +372,7 @@ Set value at [row], [col] to be [v].
     arg12: number,
     arg13: number,
     arg14: number,
-    arg15: number
+    arg15: number,
   ) {
     this._m4storage[15] = arg15;
     this._m4storage[14] = arg14;
@@ -950,7 +950,7 @@ Rotate this matrix [angle] radians around [axis].
   public scaled(
     x: Vector3 | Vector4 | number,
     y?: number,
-    z?: number
+    z?: number,
   ): Matrix4 {
     const result = this.clone();
     result.scale(x, y, z);

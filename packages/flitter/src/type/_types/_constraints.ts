@@ -36,22 +36,22 @@ class Constraints extends Data {
     assert(
       (Number.isFinite(a.minWidth) && Number.isFinite(b.minWidth)) ||
         (a.minWidth === Infinity && b.minWidth === Infinity),
-      "Cannot interpolate between finite constraints and unbounded constraints."
+      "Cannot interpolate between finite constraints and unbounded constraints.",
     );
     assert(
       (Number.isFinite(a.maxWidth) && Number.isFinite(b.maxWidth)) ||
         (a.maxWidth === Infinity && b.maxWidth === Infinity),
-      "Cannot interpolate between finite constraints and unbounded constraints."
+      "Cannot interpolate between finite constraints and unbounded constraints.",
     );
     assert(
       (Number.isFinite(a.minHeight) && Number.isFinite(b.minHeight)) ||
         (a.minHeight === Infinity && b.minHeight === Infinity),
-      "Cannot interpolate between finite constraints and unbounded constraints."
+      "Cannot interpolate between finite constraints and unbounded constraints.",
     );
     assert(
       (Number.isFinite(a.minHeight) && Number.isFinite(b.minHeight)) ||
         (a.minHeight === Infinity && b.minHeight === Infinity),
-      "Cannot interpolate between finite constraints and unbounded constraints."
+      "Cannot interpolate between finite constraints and unbounded constraints.",
     );
 
     return new Constraints({

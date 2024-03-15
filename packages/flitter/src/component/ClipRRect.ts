@@ -20,7 +20,7 @@ export default function ClipOval({
     child,
     key,
     clipped,
-    clipper: (size) =>
+    clipper: size =>
       new Path().addRRect(
         clipper
           ? clipper(size)
@@ -30,8 +30,8 @@ export default function ClipOval({
                 top: 0,
                 width: size.width,
                 height: size.height,
-              })
-            )
+              }),
+            ),
       ),
   });
 }

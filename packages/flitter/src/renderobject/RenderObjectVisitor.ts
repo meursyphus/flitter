@@ -5,4 +5,3 @@ export interface RenderObjectVisitor {
   visitZIndex(renderObject: RenderZIndex): void;
   visitGeneral(renderObject: RenderObject): void;
 }
-

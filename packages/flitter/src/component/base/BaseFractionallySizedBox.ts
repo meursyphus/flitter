@@ -110,7 +110,7 @@ class RenderFractionallySizedBox extends RenderAligningShiftedBox {
       this.alignChild();
     } else {
       this.size = this.constraints.constrain(
-        this.getInnerConstraints(this.constraints).constrain(Size.zero)
+        this.getInnerConstraints(this.constraints).constrain(Size.zero),
       );
     }
   }

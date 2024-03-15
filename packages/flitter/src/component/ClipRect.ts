@@ -18,6 +18,6 @@ export default function ClipRect({
     child,
     clipped,
     key,
-    clipper: (size) => new Path().addRect(clipper(size)),
+    clipper: size => new Path().addRect(clipper(size)),
   });
 }

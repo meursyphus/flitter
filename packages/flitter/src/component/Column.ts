@@ -4,10 +4,9 @@ import type {
   MainAxisAlignment,
   CrossAxisAlignment,
   VerticalDirection,
-  MainAxisSize} from "../type";
-import {
-  Axis,
+  MainAxisSize,
 } from "../type";
+import { Axis } from "../type";
 
 export default function Column({
   children,

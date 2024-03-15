@@ -7,7 +7,7 @@ class GlobalKey {
   get currentContext(): BuildContext {
     assert(
       this.buildOwner != null,
-      "buildOwner is null, currentContext must be called after initState"
+      "buildOwner is null, currentContext must be called after initState",
     );
     return this.buildOwner.findByGlobalKey(this);
   }

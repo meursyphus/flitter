@@ -2,13 +2,11 @@ import type {
   TextDirection,
   TextOverflow,
   TextStyle,
-  TextWidthBasis} from "../type";
-import {
-  TextAlign,
-  TextSpan
+  TextWidthBasis,
 } from "../type";
+import { TextAlign, TextSpan } from "../type";
 import type InlineSpan from "../type/_types/Inline-span";
-import type { BuildContext} from "../widget";
+import type { BuildContext } from "../widget";
 import { StatelessWidget } from "../widget";
 import type Widget from "../widget/Widget";
 import RichText from "./RichText";

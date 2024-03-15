@@ -48,12 +48,12 @@ class BaseAnimatedScaleState extends AnimatedBaseWidgetState<BaseAnimatedScale> 
       tween: T;
       targetValue: V;
       constructor: (value: V) => T;
-    }) => T
+    }) => T,
   ): void {
     this.scaleTween = visitor({
       tween: this.scaleTween,
       targetValue: this.widget.scale,
-      constructor: (value) => new Tween({ begin: value }),
+      constructor: value => new Tween({ begin: value }),
     });
   }
 

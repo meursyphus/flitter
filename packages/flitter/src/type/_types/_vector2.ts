@@ -68,56 +68,56 @@ export class Vector2 implements Vector {
     return new Vector3(
       this._v2storage[0],
       this._v2storage[0],
-      this._v2storage[0]
+      this._v2storage[0],
     );
   }
   get xxy() {
     return new Vector3(
       this._v2storage[0],
       this._v2storage[0],
-      this._v2storage[1]
+      this._v2storage[1],
     );
   }
   get xyx() {
     return new Vector3(
       this._v2storage[0],
       this._v2storage[1],
-      this._v2storage[0]
+      this._v2storage[0],
     );
   }
   get xyy() {
     return new Vector3(
       this._v2storage[0],
       this._v2storage[1],
-      this._v2storage[1]
+      this._v2storage[1],
     );
   }
   get yxx() {
     return new Vector3(
       this._v2storage[1],
       this._v2storage[0],
-      this._v2storage[0]
+      this._v2storage[0],
     );
   }
   get yxy() {
     return new Vector3(
       this._v2storage[1],
       this._v2storage[0],
-      this._v2storage[1]
+      this._v2storage[1],
     );
   }
   get yyx() {
     return new Vector3(
       this._v2storage[1],
       this._v2storage[1],
-      this._v2storage[0]
+      this._v2storage[0],
     );
   }
   get yyy() {
     return new Vector3(
       this._v2storage[1],
       this._v2storage[1],
-      this._v2storage[1]
+      this._v2storage[1],
     );
   }
   get xxxx() {
@@ -125,7 +125,7 @@ export class Vector2 implements Vector {
       this._v2storage[0],
       this._v2storage[0],
       this._v2storage[0],
-      this._v2storage[0]
+      this._v2storage[0],
     );
   }
   get xxxy() {
@@ -133,7 +133,7 @@ export class Vector2 implements Vector {
       this._v2storage[0],
       this._v2storage[0],
       this._v2storage[0],
-      this._v2storage[1]
+      this._v2storage[1],
     );
   }
   get xxyx() {
@@ -141,7 +141,7 @@ export class Vector2 implements Vector {
       this._v2storage[0],
       this._v2storage[0],
       this._v2storage[1],
-      this._v2storage[0]
+      this._v2storage[0],
     );
   }
   get xxyy() {
@@ -149,7 +149,7 @@ export class Vector2 implements Vector {
       this._v2storage[0],
       this._v2storage[0],
       this._v2storage[1],
-      this._v2storage[1]
+      this._v2storage[1],
     );
   }
   get xyxx() {
@@ -157,7 +157,7 @@ export class Vector2 implements Vector {
       this._v2storage[0],
       this._v2storage[1],
       this._v2storage[0],
-      this._v2storage[0]
+      this._v2storage[0],
     );
   }
   get xyxy() {
@@ -165,7 +165,7 @@ export class Vector2 implements Vector {
       this._v2storage[0],
       this._v2storage[1],
       this._v2storage[0],
-      this._v2storage[1]
+      this._v2storage[1],
     );
   }
   get xyyx() {
@@ -173,7 +173,7 @@ export class Vector2 implements Vector {
       this._v2storage[0],
       this._v2storage[1],
       this._v2storage[1],
-      this._v2storage[0]
+      this._v2storage[0],
     );
   }
   get xyyy() {
@@ -181,7 +181,7 @@ export class Vector2 implements Vector {
       this._v2storage[0],
       this._v2storage[1],
       this._v2storage[1],
-      this._v2storage[1]
+      this._v2storage[1],
     );
   }
   get yxxx() {
@@ -189,7 +189,7 @@ export class Vector2 implements Vector {
       this._v2storage[1],
       this._v2storage[0],
       this._v2storage[0],
-      this._v2storage[0]
+      this._v2storage[0],
     );
   }
   get yxxy() {
@@ -197,7 +197,7 @@ export class Vector2 implements Vector {
       this._v2storage[1],
       this._v2storage[0],
       this._v2storage[0],
-      this._v2storage[1]
+      this._v2storage[1],
     );
   }
   get yxyx() {
@@ -205,7 +205,7 @@ export class Vector2 implements Vector {
       this._v2storage[1],
       this._v2storage[0],
       this._v2storage[1],
-      this._v2storage[0]
+      this._v2storage[0],
     );
   }
   get yxyy() {
@@ -213,7 +213,7 @@ export class Vector2 implements Vector {
       this._v2storage[1],
       this._v2storage[0],
       this._v2storage[1],
-      this._v2storage[1]
+      this._v2storage[1],
     );
   }
   get yyxx() {
@@ -221,7 +221,7 @@ export class Vector2 implements Vector {
       this._v2storage[1],
       this._v2storage[1],
       this._v2storage[0],
-      this._v2storage[0]
+      this._v2storage[0],
     );
   }
   get yyxy() {
@@ -229,7 +229,7 @@ export class Vector2 implements Vector {
       this._v2storage[1],
       this._v2storage[1],
       this._v2storage[0],
-      this._v2storage[1]
+      this._v2storage[1],
     );
   }
   get yyyx() {
@@ -237,7 +237,7 @@ export class Vector2 implements Vector {
       this._v2storage[1],
       this._v2storage[1],
       this._v2storage[1],
-      this._v2storage[0]
+      this._v2storage[0],
     );
   }
   get yyyy() {
@@ -245,7 +245,7 @@ export class Vector2 implements Vector {
       this._v2storage[1],
       this._v2storage[1],
       this._v2storage[1],
-      this._v2storage[1]
+      this._v2storage[1],
     );
   }
   get r() {
