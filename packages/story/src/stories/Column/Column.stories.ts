@@ -13,11 +13,6 @@ import { dedent } from 'ts-dedent';
 const ImportWidgetCode = dedent`import { Column, Container, Flexible } from '@meursyphus/flitter';
 \n\n`;
 
-function temp() {
-	[Container, Column, Flexible];
-}
-temp();
-
 const meta = {
 	title: 'Widget/Column',
 	component: Widget,
