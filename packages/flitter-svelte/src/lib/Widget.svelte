@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { parseHTML } from 'linkedom';
 	import { type Widget, Alignment, AppRunner, Container, Text } from '@meursyphus/flitter';
-	import { browser } from '$app/environment';
+	const browser = typeof window !== 'undefined';
 
 	export let widget: Widget = Container({
 		width: Infinity,

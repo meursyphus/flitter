@@ -1,6 +1,6 @@
 {
 	"name": "@meursyphus/flitter-svelte",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"main": "src/lib/index.ts",
 	"scripts": {
 		"dev": "vite dev",
