@@ -5,4 +5,5 @@ node_modules/
 dist/
 .env
 storybook-static/
+package
 
