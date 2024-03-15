@@ -9,6 +9,8 @@
     "meursyphus",
     "popmotion",
     "postbuild",
+    "predocs",
+    "prestory",
     "publint",
     "rgba",
     "Shiki",

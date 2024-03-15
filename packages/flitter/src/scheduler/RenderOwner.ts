@@ -34,7 +34,7 @@ class RenderOwner {
   }
 
   domOrderChanged: boolean = true;
-  private rearrangeDomOrder() {
+  rearrangeDomOrder() {
     if (!this.domOrderChanged) return;
     this.domOrderChanged = false;
     const domOrderVisitor = new DomOrderVisitor();
