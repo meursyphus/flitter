@@ -790,11 +790,11 @@ export const Banner = () => {
       className="w-[1440px] flex flex-col"
     >
       <Flicking
-        changeOnHold={true}
+        changeOnHold
         duration={1500}
         ref={controller}
         align="prev"
-        circular={true}
+        circular
       >
         {panels.map((panel, i) => (
           <div key={i} className="panel">
