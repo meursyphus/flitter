@@ -110,8 +110,6 @@ export class AppRunner {
   observeCanvasSize(target: HTMLElement) {
     const resize = (child: ResizeObserverEntry) => {
       const { width, height } = child.target.getBoundingClientRect();
-      this.renderContext.view.setAttribute("width", `${width}`);
-      this.renderContext.view.setAttribute("height", `${height}`);
       this.viewSize = new Size({ width, height });
     };
     const resizeObserver = new ResizeObserver((entries) => {
@@ -128,6 +126,7 @@ export class AppRunner {
 
   draw() {
     this.layout();
+    this.renderOwner.rearrangeDomOrder();
     this.paint();
   }
 
