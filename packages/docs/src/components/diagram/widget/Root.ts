@@ -45,7 +45,7 @@ class DiagramState extends State<DiagramRoot> {
    * This is temporary fix to avoid setState on unmounted component.
    * It causes error on finding value provided by Provider (that is located in Root Tree)
    */
-  mounted: boolean = false;
+  mounted = false;
   controller!: DiagramController;
 
   override initState(context: BuildContext) {

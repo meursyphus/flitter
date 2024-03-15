@@ -92,7 +92,7 @@ export class RenderObject {
     context: PaintContext,
     clipId?: string,
     matrix4: Matrix4 = Matrix4.identity(),
-    opacity: number = 1
+    opacity = 1
   ) {
     const translatedMatrix4 = matrix4.translated(this.offset.x, this.offset.y);
     if (

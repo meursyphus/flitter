@@ -2033,7 +2033,7 @@ Rotate this matrix [angle] radians around [axis].
     return arg;
   }
   // Copies this into [array] starting at [offset].
-  copyIntoArray(array: number[], offset: number = 0): void {
+  copyIntoArray(array: number[], offset = 0): void {
     const i = offset;
     array[i + 15] = this._m4storage[15];
     array[i + 14] = this._m4storage[14];

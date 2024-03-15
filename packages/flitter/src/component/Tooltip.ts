@@ -64,7 +64,7 @@ class ToolTip extends StatefulWidget {
 }
 
 class ToolTipState extends State<ToolTip> {
-  show: boolean = false;
+  show = false;
 
   handleMouseEnter() {
     this.show = true;

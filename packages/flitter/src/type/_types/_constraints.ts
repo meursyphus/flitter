@@ -223,11 +223,11 @@ class Constraints extends Data {
     });
   }
 
-  constrainWidth(width: number = Infinity) {
+  constrainWidth(width = Infinity) {
     return this.clampDouble(width, this.minWidth, this.maxWidth);
   }
 
-  constrainHeight(height: number = Infinity) {
+  constrainHeight(height = Infinity) {
     return this.clampDouble(height, this.minHeight, this.maxHeight);
   }
 

@@ -40,7 +40,7 @@ class FieldState extends State<Field> {
   key!: GlobalKey;
   eventManager!: EventManager;
   controller!: DiagramController;
-  active: boolean = false;
+  active = false;
 
   override initState(context: BuildContext): void {
     super.initState(context);

@@ -2,7 +2,7 @@ import type Rect from "./_rect";
 import type { RRect } from "./r-rect";
 
 export class Path {
-  private _d: string = "";
+  private _d = "";
 
   getD(): string {
     return this._d;

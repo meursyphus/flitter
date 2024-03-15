@@ -9,7 +9,7 @@ class AnimationController extends Animation<number> {
   get isCompleted() {
     return this.status === "completed";
   }
-  _value: number = 0;
+  _value = 0;
   get value(): number {
     if (this._value == null) return 0;
     return this._value;

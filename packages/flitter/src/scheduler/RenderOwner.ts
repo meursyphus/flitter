@@ -33,7 +33,7 @@ class RenderOwner {
     this.flushPaint();
   }
 
-  domOrderChanged: boolean = true;
+  domOrderChanged = true;
   rearrangeDomOrder() {
     if (!this.domOrderChanged) return;
     this.domOrderChanged = false;

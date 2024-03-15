@@ -185,7 +185,7 @@ export class Paragraph {
   }
 
   // It is only valid after layout call
-  width: number = 0;
+  width = 0;
 
   get height(): number {
     return this.lines.reduce((acc, line) => acc + line.height, 0);
@@ -203,7 +203,7 @@ export class Paragraph {
     return this.lines.reduce((acc, line) => Math.max(acc + line.height), 0);
   }
 
-  layout(width: number = Infinity) {
+  layout(width = Infinity) {
     this.width = width;
 
     this.lines = [];
