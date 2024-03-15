@@ -50,7 +50,7 @@ export class RenderObject {
   }
   type = this.constructor.name;
   get children(): RenderObject[] {
-    return this.ownerElement.children.map((child) => child.renderObject);
+    return this.ownerElement.children.map(child => child.renderObject);
   }
   constraints: Constraints = Constraints.loose(Size.maximum());
   private _offset: Offset = Offset.zero();
@@ -75,7 +75,7 @@ export class RenderObject {
 
   layout(
     constraint: Constraints,
-    { parentUsesSize = true }: { parentUsesSize?: boolean } = {}
+    { parentUsesSize = true }: { parentUsesSize?: boolean } = {},
   ) {
     const normalizedConstraints = constraint.normalize();
     if (this.constraints.equals(normalizedConstraints) && !this.needsLayout) {
@@ -92,7 +92,7 @@ export class RenderObject {
     context: PaintContext,
     clipId?: string,
     matrix4: Matrix4 = Matrix4.identity(),
-    opacity: number = 1
+    opacity: number = 1,
   ) {
     const translatedMatrix4 = matrix4.translated(this.offset.x, this.offset.y);
     if (
@@ -113,8 +113,8 @@ export class RenderObject {
       }
       container.setAttribute("opacity", `${opacity}`);
       container.setAttribute("pointer-events", "none");
-      Object.values(svgEls).forEach((el) =>
-        this.setSvgTransform(el, this.matrix)
+      Object.values(svgEls).forEach(el =>
+        this.setSvgTransform(el, this.matrix),
       );
       if (this.needsPaint) {
         this.performPaint(svgEls, context);
@@ -141,10 +141,10 @@ export class RenderObject {
       clipId?: string;
       matrix4: Matrix4;
       opacity: number;
-    }
+    },
   ) {
-    this.children.forEach((child) =>
-      child.paint(context, clipId, matrix4, opacity)
+    this.children.forEach(child =>
+      child.paint(context, clipId, matrix4, opacity),
     );
   }
 
@@ -195,7 +195,7 @@ export class RenderObject {
     const svgG = context.createSvgEl("g");
     appendSvgEl(svgG);
     svgG.setAttribute("data-render-type", this.type);
-    values.forEach((value) => {
+    values.forEach(value => {
       svgG.appendChild(value);
     });
 
@@ -246,7 +246,7 @@ export class RenderObject {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   protected performPaint(
     _svgEls: { [key: string]: SVGElement },
-    _context: PaintContext
+    _context: PaintContext,
   ): void {}
 
   protected getChildClipId(parentClipId?: string) {
@@ -292,7 +292,7 @@ export class RenderObject {
   }
 
   visitChildren(callback: (child: RenderObject) => void) {
-    this.children.forEach((child) => {
+    this.children.forEach(child => {
       callback(child);
     });
   }

@@ -112,7 +112,7 @@ export class AppRunner {
       const { width, height } = child.target.getBoundingClientRect();
       this.viewSize = new Size({ width, height });
     };
-    const resizeObserver = new ResizeObserver((entries) => {
+    const resizeObserver = new ResizeObserver(entries => {
       const child = entries[0];
       resize(child);
       if (this.didRun) {
@@ -183,7 +183,7 @@ export class RenderContext {
       createSvgEl(tagName) {
         const el = _document.createElementNS(
           "http://www.w3.org/2000/svg",
-          tagName
+          tagName,
         ) as unknown as SVGElement;
         return el;
       },

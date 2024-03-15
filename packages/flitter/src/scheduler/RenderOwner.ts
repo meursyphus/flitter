@@ -59,7 +59,7 @@ class RenderOwner {
 
     dirties
       .sort((a, b) => a.depth - b.depth)
-      .forEach((renderObject) => {
+      .forEach(renderObject => {
         if (!renderObject.needsLayout) return;
         renderObject.layoutWithoutResize();
       });
@@ -71,7 +71,7 @@ class RenderOwner {
 
     dirties
       .sort((a, b) => a.depth - b.depth)
-      .forEach((renderObject) => {
+      .forEach(renderObject => {
         if (!renderObject.needsPaint) return;
         renderObject.paintWithoutLayout(this.paintContext);
       });
@@ -94,7 +94,7 @@ class DomOrderVisitor implements RenderObjectVisitor {
 
   private visit(
     renderObject: RenderObject,
-    { willCollect }: { willCollect: boolean }
+    { willCollect }: { willCollect: boolean },
   ) {
     if (willCollect) {
       this.collectedRenderObjects.push({
@@ -104,7 +104,7 @@ class DomOrderVisitor implements RenderObjectVisitor {
       });
     }
 
-    renderObject.visitChildren((child) => {
+    renderObject.visitChildren(child => {
       child.accept(this);
     });
   }

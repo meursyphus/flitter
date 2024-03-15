@@ -53,7 +53,7 @@ class DraggableState extends State<Draggable> {
     if (this.origin == null) return;
     this.setState(() => {
       this.delta = this.lastDelta.plus(
-        new Offset({ x, y }).minus(this.origin!)
+        new Offset({ x, y }).minus(this.origin!),
       );
       this.widget.onDragUpdate?.({ delta: this.delta });
     });

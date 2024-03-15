@@ -7,7 +7,7 @@ class RenderObjectElement extends Element {
   children!: Element[];
 
   _renderObject!: RenderObject;
-  override type: "render" | "none" | "provider" = 'render'
+  override type: "render" | "none" | "provider" = "render";
   createRenderObject() {
     const renderObject = (
       this.widget as RenderObjectWidget
@@ -26,7 +26,7 @@ class RenderObjectElement extends Element {
   override unmount(): void {
     super.unmount();
     this.renderObject.dispose(this.renderContext.paintContext);
-    this.children.forEach((child) => {
+    this.children.forEach(child => {
       child.unmount();
     });
     this._renderObject.markNeedsParentLayout();
@@ -43,7 +43,7 @@ class RenderObjectElement extends Element {
     }
 
     this.children = (this.widget as RenderObjectWidget).children.map(
-      (childWidget) => this.inflateWidget(childWidget)
+      childWidget => this.inflateWidget(childWidget),
     );
 
     this._renderObject.attach(this);
@@ -58,11 +58,11 @@ class RenderObjectElement extends Element {
   updateChildren(newWidgets: Widget[]) {
     const updatedChildIndexes: number[] = [];
     const oldChildren = this.children;
-    const newChildren = newWidgets.map((newWidget) => {
+    const newChildren = newWidgets.map(newWidget => {
       const matchedChildIndex = oldChildren.findIndex(
         (oldChild, oldChildIndex) =>
           !updatedChildIndexes.includes(oldChildIndex) &&
-          Widget.canUpdate(newWidget, oldChild.widget)
+          Widget.canUpdate(newWidget, oldChild.widget),
       );
 
       let matchedChild: Element | null;
@@ -91,14 +91,14 @@ class RenderObjectElement extends Element {
   }
 
   visitChildren(visitor: (child: Element) => void): void {
-    this.children.forEach((child) => visitor(child));
+    this.children.forEach(child => visitor(child));
   }
 
   private ancestorRenderObjectElement: RenderObjectElement | null;
 
   private findAncestorRenderObjectElement(): RenderObjectElement | null {
     let ancestor: Element | null = this.parent;
-    while (ancestor != null && !(ancestor.type === 'render')) {
+    while (ancestor != null && !(ancestor.type === "render")) {
       ancestor = ancestor.parent;
     }
     return ancestor as RenderObjectElement | null;

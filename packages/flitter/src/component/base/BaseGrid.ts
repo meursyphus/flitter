@@ -30,7 +30,7 @@ class BaseGrid extends MultiChildRenderObjectWidget {
     key?: any;
   }) {
     super({ children: childrenByRow.flat(), key });
-    this.columnCounts = childrenByRow.map((children) => children.length);
+    this.columnCounts = childrenByRow.map(children => children.length);
     this.templateRows = templateRows;
     this.templateColumns = templateColumns;
     this.autoColumn = autoColumn;
@@ -127,7 +127,7 @@ class RenderBaseGrid extends MultiChildRenderObject {
   private get columnCount(): number {
     return this.columnCounts.reduce(
       (acc, current) => Math.max(acc, current),
-      0
+      0,
     );
   }
 
@@ -136,7 +136,7 @@ class RenderBaseGrid extends MultiChildRenderObject {
       children's length must be same with columnCounts sum.
     */
     let previous = 0;
-    return this.columnCounts.map((current) => {
+    return this.columnCounts.map(current => {
       const result = this.children.slice(previous, previous + current);
       previous += current;
       return result;
@@ -146,14 +146,14 @@ class RenderBaseGrid extends MultiChildRenderObject {
   private get columns(): GridTemplate[] {
     return Array.from(
       { length: this.columnCount },
-      (_, i) => this.templateColumns[i] ?? this.autoColumn
+      (_, i) => this.templateColumns[i] ?? this.autoColumn,
     );
   }
 
   private get rows(): GridTemplate[] {
     return Array.from(
       { length: this.rowCount },
-      (_, i) => this.templateRows[i] ?? this.autoRow
+      (_, i) => this.templateRows[i] ?? this.autoRow,
     );
   }
 
@@ -163,11 +163,11 @@ class RenderBaseGrid extends MultiChildRenderObject {
 
     const contentFitColumnWidths: number[] = Array.from(
       { length: this.columnCount },
-      () => 0
+      () => 0,
     );
     const contentFitRowHeights: number[] = Array.from(
       { length: this.rowCount },
-      () => 0
+      () => 0,
     );
 
     // let availableWidth = this.size.width;
@@ -210,14 +210,14 @@ class RenderBaseGrid extends MultiChildRenderObject {
         if (this.columns[columnIndex].type === "content-fit") {
           contentFitColumnWidths[columnIndex] = Math.max(
             child.getIntrinsicWidth(this.constraints.maxHeight),
-            contentFitColumnWidths[columnIndex]
+            contentFitColumnWidths[columnIndex],
           );
         }
 
         if (this.rows[rowIndex].type === "content-fit") {
           contentFitRowHeights[rowIndex] = Math.max(
             child.getIntrinsicHeight(this.constraints.maxWidth),
-            contentFitRowHeights[rowIndex]
+            contentFitRowHeights[rowIndex],
           );
         }
       });
@@ -235,7 +235,7 @@ class RenderBaseGrid extends MultiChildRenderObject {
         }
 
         return result;
-      }
+      },
     );
 
     const fixedRowHeights: number[] = this.rows.map(({ type, value }, i) => {
@@ -304,20 +304,20 @@ class RenderBaseGrid extends MultiChildRenderObject {
   }
   getIntrinsicWidth(height: number): number {
     return this.childrenByRow
-      .map((row) =>
+      .map(row =>
         row
-          .map((child) => child.getIntrinsicWidth(height))
-          .reduce(Utils.sumReducer)
+          .map(child => child.getIntrinsicWidth(height))
+          .reduce(Utils.sumReducer),
       )
       .reduce(Utils.maxReducer);
   }
 
   getIntrinsicHeight(width: number): number {
     return this.childrenByRow
-      .map((row) =>
+      .map(row =>
         row
-          .map((child) => child.getIntrinsicHeight(width))
-          .reduce(Utils.maxReducer)
+          .map(child => child.getIntrinsicHeight(width))
+          .reduce(Utils.maxReducer),
       )
       .reduce(Utils.sumReducer);
   }

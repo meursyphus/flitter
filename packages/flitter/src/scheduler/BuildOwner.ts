@@ -24,7 +24,7 @@ class BuildOwner {
 
     dirtyElements
       .sort((a, b) => a.depth - b.depth)
-      .forEach((elememt) => {
+      .forEach(elememt => {
         if (!elememt.dirty) return;
         elememt.rebuild();
       });

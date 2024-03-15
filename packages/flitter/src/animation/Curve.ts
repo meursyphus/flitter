@@ -9,7 +9,7 @@ class Curve {
   transform(value: number): number {
     assert(
       value >= 0 && value <= 1,
-      "parametric value $t is outside of [0, 1] range."
+      "parametric value $t is outside of [0, 1] range.",
     );
 
     return this.transfromInternal(value);

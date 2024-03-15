@@ -1,4 +1,4 @@
-import type { Constraints} from "../type";
+import type { Constraints } from "../type";
 import { Alignment, Rect, TextDirection } from "../type";
 import type Widget from "../widget/Widget";
 import BaseConstraintsTransformBox from "./base/BaseConstraintsTransformBox";
@@ -22,7 +22,7 @@ function ConstraintsTransformBox({
   return ClipRect({
     key,
     clipped,
-    clipper: (size) =>
+    clipper: size =>
       Rect.fromLTWH({
         left: 0,
         top: 0,

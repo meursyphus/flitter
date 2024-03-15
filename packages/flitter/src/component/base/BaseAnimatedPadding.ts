@@ -46,12 +46,12 @@ class BaseAnimatedPaddingState extends AnimatedBaseWidgetState<BaseAnimatedPaddi
       tween: T;
       targetValue: V;
       constructor: (value: V) => T;
-    }) => T
+    }) => T,
   ): void {
     this.paddingTween = visitor({
       tween: this.paddingTween,
       targetValue: this.widget.padding,
-      constructor: (value) => new CalculableTween({ begin: value, end: value }),
+      constructor: value => new CalculableTween({ begin: value, end: value }),
     });
   }
 

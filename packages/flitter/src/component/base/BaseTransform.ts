@@ -1,5 +1,5 @@
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
-import type { Offset} from "../../type";
+import type { Offset } from "../../type";
 import { Alignment, Matrix4, TextDirection } from "../../type";
 import { assert } from "../../utils";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
@@ -88,11 +88,11 @@ class Transform extends SingleChildRenderObjectWidget {
   }) {
     assert(
       !(scale == null && scaleX == null && scaleY == null),
-      "At least one of 'scale', 'scaleX' and 'scaleY' is required to be non-null"
+      "At least one of 'scale', 'scaleX' and 'scaleY' is required to be non-null",
     );
     assert(
       scale == null || (scaleX == null && scaleY == null),
-      "If 'scale' is non-null then 'scaleX' and 'scaleY' must be left null"
+      "If 'scale' is non-null then 'scaleX' and 'scaleY' must be left null",
     );
     return new Transform({
       key,
@@ -102,7 +102,7 @@ class Transform extends SingleChildRenderObjectWidget {
       transform: Matrix4.diagonal3Values(
         scale ?? scaleX ?? 1,
         scale ?? scaleY ?? 1,
-        1
+        1,
       ),
     });
   }

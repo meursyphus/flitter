@@ -5,7 +5,7 @@ export class Rect {
     public left: number,
     public top: number,
     public right: number,
-    public bottom: number
+    public bottom: number,
   ) {}
 
   get width() {

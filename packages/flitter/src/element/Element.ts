@@ -24,7 +24,7 @@ class Element {
   get renderObject(): RenderObject {
     let result: RenderObject | null = null;
 
-    this.visitChildren((child) => {
+    this.visitChildren(child => {
       result = child.renderObject;
     });
 
@@ -45,7 +45,7 @@ class Element {
   // in this case, child must be unmounted and newWidget would be inflated
   updateChild(
     child?: Element | null,
-    newWidget?: Widget | null
+    newWidget?: Widget | null,
   ): Element | null | undefined {
     if (child != null && newWidget == null) {
       child.unmount();

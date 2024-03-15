@@ -11,9 +11,11 @@ For more details, visit [here](https://flitter.pages.dev).
 Getting started with Flitter is straightforward. Follow these steps to install and use Flitter in your React or Svelte projects. (Or you can implement widget component manually to support Flitter.)
 
 ### React
+
 ```bash
 npm i @meursyphus/flitter @meursyphus/flitter-react
 ```
+
 Example of using Flitter widgets in a React component:
 
 ```javascript
@@ -34,6 +36,7 @@ const App = () => {
   );
 };
 ```
+
 ### Svelte
 
 ```bash

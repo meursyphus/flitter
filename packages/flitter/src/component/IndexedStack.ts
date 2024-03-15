@@ -1,4 +1,4 @@
-import type { Alignment} from "../type";
+import type { Alignment } from "../type";
 import { Rect, StackFit } from "../type";
 import type Widget from "../widget/Widget";
 import BaseIndexedStack from "./base/BaseIndexedStack";
@@ -21,7 +21,7 @@ export default function IndexedStack({
 }) {
   return ClipRect({
     clipped,
-    clipper: (size) =>
+    clipper: size =>
       Rect.fromLTWH({
         left: 0,
         top: 0,

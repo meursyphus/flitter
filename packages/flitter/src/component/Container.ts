@@ -94,7 +94,7 @@ class _Container extends StatelessWidget {
         : constraints;
     assert(
       color == null || decoration == null,
-      "Color must be null when decoration is defined"
+      "Color must be null when decoration is defined",
     );
 
     let current: Widget | undefined = child;
@@ -137,17 +137,17 @@ class _Container extends StatelessWidget {
     if (clipped) {
       assert(
         decoration != null,
-        "Decoration must not be null when clipped is true"
+        "Decoration must not be null when clipped is true",
       );
       current = ClipPath({
-        clipper: (size) =>
+        clipper: size =>
           decoration!.getClipPath(
             Rect.fromLTWH({
               width: size.width,
               height: size.height,
               left: 0,
               top: 0,
-            })
+            }),
           ),
         clipped,
         child: current,

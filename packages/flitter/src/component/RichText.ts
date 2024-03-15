@@ -21,7 +21,7 @@ class RichText extends StatelessWidget {
   build() {
     return ClipRect({
       clipped: this.overflow === TextOverflow.clip,
-      clipper: (size) =>
+      clipper: size =>
         Rect.fromLTWH({
           left: 0,
           top: 0,

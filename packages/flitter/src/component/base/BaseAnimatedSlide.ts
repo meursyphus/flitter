@@ -43,12 +43,12 @@ class BaseAnimatedSlideState extends AnimatedBaseWidgetState<BaseAnimatedSlide> 
       tween: T;
       targetValue: V;
       constructor: (value: V) => T;
-    }) => T
+    }) => T,
   ): void {
     this.offset = visitor({
       tween: this.offset,
       targetValue: this.widget.offset,
-      constructor: (value) => new CalculableTween({ begin: value }),
+      constructor: value => new CalculableTween({ begin: value }),
     })!;
   }
 

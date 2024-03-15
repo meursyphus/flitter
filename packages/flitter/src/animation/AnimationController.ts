@@ -94,7 +94,7 @@ class AnimationController extends Animation<number> {
             }
             repeat();
           },
-        }
+        },
       );
     };
     repeat();
@@ -112,7 +112,7 @@ class AnimationController extends Animation<number> {
 
   private animate(
     target: number,
-    overrideOptions: { onComplete?: () => void } = {}
+    overrideOptions: { onComplete?: () => void } = {},
   ) {
     if (typeof window === "undefined") return;
     this.animation?.stop();
@@ -126,7 +126,7 @@ class AnimationController extends Animation<number> {
       onPlay: () => {
         this.isAnimating = true;
       },
-      onUpdate: (latest) => {
+      onUpdate: latest => {
         this.internalSetValue(latest);
         this.notifyListeners();
       },
@@ -143,13 +143,13 @@ class AnimationController extends Animation<number> {
     this.listeners.push(callback);
   }
   removeListener(callback: () => void) {
-    this.listeners = this.listeners.filter((listenr) => listenr !== callback);
+    this.listeners = this.listeners.filter(listenr => listenr !== callback);
   }
   clearListeners() {
     this.listeners = [];
   }
   notifyListeners() {
-    this.listeners.forEach((listener) => {
+    this.listeners.forEach(listener => {
       listener();
     });
   }

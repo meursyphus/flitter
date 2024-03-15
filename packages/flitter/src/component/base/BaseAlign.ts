@@ -97,7 +97,7 @@ class RenderAlign extends RenderAligningShiftedBox {
           height: shrinkWrapHeight
             ? this.child.size.height * (this.heightFactor ?? 1)
             : Infinity,
-        })
+        }),
       );
       this.alignChild();
     } else {
@@ -105,7 +105,7 @@ class RenderAlign extends RenderAligningShiftedBox {
         new Size({
           width: shrinkWrapWidth ? 0 : Infinity,
           height: shrinkWrapHeight ? 0 : Infinity,
-        })
+        }),
       );
     }
   }

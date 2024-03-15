@@ -16,7 +16,7 @@ class RenderIntrinsicHeight extends SingleChildRenderObject {
     const height =
       this.child.getIntrinsicHeight(this.constraints.maxWidth) || 0;
     const constraint = Constraints.tightFor({ height }).enforce(
-      this.constraints
+      this.constraints,
     );
     this.child.layout(constraint);
     this.size = this.child.size;

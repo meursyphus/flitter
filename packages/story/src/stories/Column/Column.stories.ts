@@ -7,16 +7,12 @@ import {
 	Flexible,
 	VerticalDirection,
 	Alignment,
-	TextStyle
+	TextStyle,
+	MainAxisAlignment
 } from '@meursyphus/flitter';
 import { dedent } from 'ts-dedent';
 const ImportWidgetCode = dedent`import { Column, Container, Flexible } from '@meursyphus/flitter';
 \n\n`;
-
-function temp() {
-	[Container, Column, Flexible];
-}
-temp();
 
 const meta = {
 	title: 'Widget/Column',
@@ -203,7 +199,7 @@ export const MainAxisAlignment_center: Story = {
 		widget: Container({
 			color: 'lightblue',
 			child: Column({
-				mainAxisAlignment: 'center',
+				mainAxisAlignment: MainAxisAlignment.center,
 				children: [
 					Container({
 						width: 50,

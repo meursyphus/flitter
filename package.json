@@ -19,5 +19,12 @@
     "packages/*"
   ],
   "devDependencies": {
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2"
+  },
+  "lint-staged": {
+    "packages/**/*.{astro,js,jsx,ts,tsx,svelte,mdx}": [
+      "prettier --write"
+    ]
   }
 }

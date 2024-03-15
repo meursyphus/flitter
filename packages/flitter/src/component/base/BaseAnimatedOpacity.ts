@@ -43,12 +43,12 @@ class BaseAnimatedOpacityState extends AnimatedBaseWidgetState<BaseAnimatedOpaci
       tween: T;
       targetValue: V;
       constructor: (value: V) => T;
-    }) => T
+    }) => T,
   ): void {
     this.opacityTween = visitor({
       tween: this.opacityTween,
       targetValue: this.widget.opacity,
-      constructor: (value) => new Tween({ begin: value, end: value }),
+      constructor: value => new Tween({ begin: value, end: value }),
     });
   }
 

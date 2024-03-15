@@ -182,7 +182,7 @@ export class RRect {
     public trRadiusX: number,
     public trRadiusY: number,
     public brRadiusX: number,
-    public brRadiusY: number
+    public brRadiusY: number,
   ) {}
 
   static raw({
@@ -211,7 +211,7 @@ export class RRect {
       trRadiusX,
       trRadiusY,
       brRadiusX,
-      brRadiusY
+      brRadiusY,
     );
   }
 

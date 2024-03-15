@@ -13,7 +13,7 @@ export type Painter<T extends Record<string, SVGElement>, D = any> = {
 };
 
 class BaseCustomPaint<
-  T extends Record<string, SVGElement>
+  T extends Record<string, SVGElement>,
 > extends SingleChildRenderObjectWidget {
   painter: Painter<T>;
   size: Size;
@@ -48,7 +48,7 @@ class BaseCustomPaint<
 }
 
 export class RenderCustomPaint<
-  T extends Record<string, SVGElement>
+  T extends Record<string, SVGElement>,
 > extends SingleChildRenderObject {
   _painter: Painter<T>;
   get painter() {

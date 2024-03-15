@@ -886,448 +886,448 @@ export class Vector4 implements Vector {
     return new Vector3(
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xxy() {
     return new Vector3(
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xxz() {
     return new Vector3(
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xxw() {
     return new Vector3(
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xyx() {
     return new Vector3(
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xyy() {
     return new Vector3(
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xyz() {
     return new Vector3(
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xyw() {
     return new Vector3(
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xzx() {
     return new Vector3(
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xzy() {
     return new Vector3(
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xzz() {
     return new Vector3(
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xzw() {
     return new Vector3(
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xwx() {
     return new Vector3(
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xwy() {
     return new Vector3(
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xwz() {
     return new Vector3(
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xww() {
     return new Vector3(
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get yxx() {
     return new Vector3(
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get yxy() {
     return new Vector3(
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get yxz() {
     return new Vector3(
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get yxw() {
     return new Vector3(
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get yyx() {
     return new Vector3(
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get yyy() {
     return new Vector3(
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get yyz() {
     return new Vector3(
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get yyw() {
     return new Vector3(
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get yzx() {
     return new Vector3(
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get yzy() {
     return new Vector3(
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get yzz() {
     return new Vector3(
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get yzw() {
     return new Vector3(
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get ywx() {
     return new Vector3(
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get ywy() {
     return new Vector3(
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get ywz() {
     return new Vector3(
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get yww() {
     return new Vector3(
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zxx() {
     return new Vector3(
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zxy() {
     return new Vector3(
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zxz() {
     return new Vector3(
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zxw() {
     return new Vector3(
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zyx() {
     return new Vector3(
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zyy() {
     return new Vector3(
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zyz() {
     return new Vector3(
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zyw() {
     return new Vector3(
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zzx() {
     return new Vector3(
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zzy() {
     return new Vector3(
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zzz() {
     return new Vector3(
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zzw() {
     return new Vector3(
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zwx() {
     return new Vector3(
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zwy() {
     return new Vector3(
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zwz() {
     return new Vector3(
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zww() {
     return new Vector3(
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wxx() {
     return new Vector3(
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wxy() {
     return new Vector3(
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wxz() {
     return new Vector3(
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wxw() {
     return new Vector3(
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wyx() {
     return new Vector3(
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wyy() {
     return new Vector3(
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wyz() {
     return new Vector3(
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wyw() {
     return new Vector3(
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wzx() {
     return new Vector3(
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wzy() {
     return new Vector3(
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wzz() {
     return new Vector3(
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wzw() {
     return new Vector3(
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wwx() {
     return new Vector3(
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wwy() {
     return new Vector3(
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wwz() {
     return new Vector3(
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get www() {
     return new Vector3(
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xxxx() {
@@ -1335,7 +1335,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xxxy() {
@@ -1343,7 +1343,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xxxz() {
@@ -1351,7 +1351,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xxxw() {
@@ -1359,7 +1359,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xxyx() {
@@ -1367,7 +1367,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xxyy() {
@@ -1375,7 +1375,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xxyz() {
@@ -1383,7 +1383,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xxyw() {
@@ -1391,7 +1391,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xxzx() {
@@ -1399,7 +1399,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xxzy() {
@@ -1407,7 +1407,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xxzz() {
@@ -1415,7 +1415,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xxzw() {
@@ -1423,7 +1423,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xxwx() {
@@ -1431,7 +1431,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xxwy() {
@@ -1439,7 +1439,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xxwz() {
@@ -1447,7 +1447,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xxww() {
@@ -1455,7 +1455,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xyxx() {
@@ -1463,7 +1463,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xyxy() {
@@ -1471,7 +1471,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xyxz() {
@@ -1479,7 +1479,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xyxw() {
@@ -1487,7 +1487,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xyyx() {
@@ -1495,7 +1495,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xyyy() {
@@ -1503,7 +1503,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xyyz() {
@@ -1511,7 +1511,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xyyw() {
@@ -1519,7 +1519,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xyzx() {
@@ -1527,7 +1527,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xyzy() {
@@ -1535,7 +1535,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xyzz() {
@@ -1543,7 +1543,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xyzw() {
@@ -1551,7 +1551,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xywx() {
@@ -1559,7 +1559,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xywy() {
@@ -1567,7 +1567,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xywz() {
@@ -1575,7 +1575,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xyww() {
@@ -1583,7 +1583,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xzxx() {
@@ -1591,7 +1591,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xzxy() {
@@ -1599,7 +1599,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xzxz() {
@@ -1607,7 +1607,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xzxw() {
@@ -1615,7 +1615,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xzyx() {
@@ -1623,7 +1623,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xzyy() {
@@ -1631,7 +1631,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xzyz() {
@@ -1639,7 +1639,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xzyw() {
@@ -1647,7 +1647,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xzzx() {
@@ -1655,7 +1655,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xzzy() {
@@ -1663,7 +1663,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xzzz() {
@@ -1671,7 +1671,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xzzw() {
@@ -1679,7 +1679,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xzwx() {
@@ -1687,7 +1687,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xzwy() {
@@ -1695,7 +1695,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xzwz() {
@@ -1703,7 +1703,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xzww() {
@@ -1711,7 +1711,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xwxx() {
@@ -1719,7 +1719,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xwxy() {
@@ -1727,7 +1727,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xwxz() {
@@ -1735,7 +1735,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xwxw() {
@@ -1743,7 +1743,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xwyx() {
@@ -1751,7 +1751,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xwyy() {
@@ -1759,7 +1759,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xwyz() {
@@ -1767,7 +1767,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xwyw() {
@@ -1775,7 +1775,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xwzx() {
@@ -1783,7 +1783,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xwzy() {
@@ -1791,7 +1791,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xwzz() {
@@ -1799,7 +1799,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xwzw() {
@@ -1807,7 +1807,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get xwwx() {
@@ -1815,7 +1815,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get xwwy() {
@@ -1823,7 +1823,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get xwwz() {
@@ -1831,7 +1831,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get xwww() {
@@ -1839,7 +1839,7 @@ export class Vector4 implements Vector {
       this._v4storage[0],
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get yxxx() {
@@ -1847,7 +1847,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get yxxy() {
@@ -1855,7 +1855,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get yxxz() {
@@ -1863,7 +1863,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get yxxw() {
@@ -1871,7 +1871,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get yxyx() {
@@ -1879,7 +1879,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get yxyy() {
@@ -1887,7 +1887,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get yxyz() {
@@ -1895,7 +1895,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get yxyw() {
@@ -1903,7 +1903,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get yxzx() {
@@ -1911,7 +1911,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get yxzy() {
@@ -1919,7 +1919,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get yxzz() {
@@ -1927,7 +1927,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get yxzw() {
@@ -1935,7 +1935,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get yxwx() {
@@ -1943,7 +1943,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get yxwy() {
@@ -1951,7 +1951,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get yxwz() {
@@ -1959,7 +1959,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get yxww() {
@@ -1967,7 +1967,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get yyxx() {
@@ -1975,7 +1975,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get yyxy() {
@@ -1983,7 +1983,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get yyxz() {
@@ -1991,7 +1991,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get yyxw() {
@@ -1999,7 +1999,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get yyyx() {
@@ -2007,7 +2007,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get yyyy() {
@@ -2015,7 +2015,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get yyyz() {
@@ -2023,7 +2023,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get yyyw() {
@@ -2031,7 +2031,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get yyzx() {
@@ -2039,7 +2039,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get yyzy() {
@@ -2047,7 +2047,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get yyzz() {
@@ -2055,7 +2055,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get yyzw() {
@@ -2063,7 +2063,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get yywx() {
@@ -2071,7 +2071,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get yywy() {
@@ -2079,7 +2079,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get yywz() {
@@ -2087,7 +2087,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get yyww() {
@@ -2095,7 +2095,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get yzxx() {
@@ -2103,7 +2103,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get yzxy() {
@@ -2111,7 +2111,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get yzxz() {
@@ -2119,7 +2119,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get yzxw() {
@@ -2127,7 +2127,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get yzyx() {
@@ -2135,7 +2135,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get yzyy() {
@@ -2143,7 +2143,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get yzyz() {
@@ -2151,7 +2151,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get yzyw() {
@@ -2159,7 +2159,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get yzzx() {
@@ -2167,7 +2167,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get yzzy() {
@@ -2175,7 +2175,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get yzzz() {
@@ -2183,7 +2183,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get yzzw() {
@@ -2191,7 +2191,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get yzwx() {
@@ -2199,7 +2199,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get yzwy() {
@@ -2207,7 +2207,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get yzwz() {
@@ -2215,7 +2215,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get yzww() {
@@ -2223,7 +2223,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get ywxx() {
@@ -2231,7 +2231,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get ywxy() {
@@ -2239,7 +2239,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get ywxz() {
@@ -2247,7 +2247,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get ywxw() {
@@ -2255,7 +2255,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get ywyx() {
@@ -2263,7 +2263,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get ywyy() {
@@ -2271,7 +2271,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get ywyz() {
@@ -2279,7 +2279,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get ywyw() {
@@ -2287,7 +2287,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get ywzx() {
@@ -2295,7 +2295,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get ywzy() {
@@ -2303,7 +2303,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get ywzz() {
@@ -2311,7 +2311,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get ywzw() {
@@ -2319,7 +2319,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get ywwx() {
@@ -2327,7 +2327,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get ywwy() {
@@ -2335,7 +2335,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get ywwz() {
@@ -2343,7 +2343,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get ywww() {
@@ -2351,7 +2351,7 @@ export class Vector4 implements Vector {
       this._v4storage[1],
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zxxx() {
@@ -2359,7 +2359,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zxxy() {
@@ -2367,7 +2367,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zxxz() {
@@ -2375,7 +2375,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zxxw() {
@@ -2383,7 +2383,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zxyx() {
@@ -2391,7 +2391,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zxyy() {
@@ -2399,7 +2399,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zxyz() {
@@ -2407,7 +2407,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zxyw() {
@@ -2415,7 +2415,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zxzx() {
@@ -2423,7 +2423,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zxzy() {
@@ -2431,7 +2431,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zxzz() {
@@ -2439,7 +2439,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zxzw() {
@@ -2447,7 +2447,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zxwx() {
@@ -2455,7 +2455,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zxwy() {
@@ -2463,7 +2463,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zxwz() {
@@ -2471,7 +2471,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zxww() {
@@ -2479,7 +2479,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zyxx() {
@@ -2487,7 +2487,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zyxy() {
@@ -2495,7 +2495,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zyxz() {
@@ -2503,7 +2503,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zyxw() {
@@ -2511,7 +2511,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zyyx() {
@@ -2519,7 +2519,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zyyy() {
@@ -2527,7 +2527,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zyyz() {
@@ -2535,7 +2535,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zyyw() {
@@ -2543,7 +2543,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zyzx() {
@@ -2551,7 +2551,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zyzy() {
@@ -2559,7 +2559,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zyzz() {
@@ -2567,7 +2567,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zyzw() {
@@ -2575,7 +2575,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zywx() {
@@ -2583,7 +2583,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zywy() {
@@ -2591,7 +2591,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zywz() {
@@ -2599,7 +2599,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zyww() {
@@ -2607,7 +2607,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zzxx() {
@@ -2615,7 +2615,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zzxy() {
@@ -2623,7 +2623,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zzxz() {
@@ -2631,7 +2631,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zzxw() {
@@ -2639,7 +2639,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zzyx() {
@@ -2647,7 +2647,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zzyy() {
@@ -2655,7 +2655,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zzyz() {
@@ -2663,7 +2663,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zzyw() {
@@ -2671,7 +2671,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zzzx() {
@@ -2679,7 +2679,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zzzy() {
@@ -2687,7 +2687,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zzzz() {
@@ -2695,7 +2695,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zzzw() {
@@ -2703,7 +2703,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zzwx() {
@@ -2711,7 +2711,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zzwy() {
@@ -2719,7 +2719,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zzwz() {
@@ -2727,7 +2727,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zzww() {
@@ -2735,7 +2735,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zwxx() {
@@ -2743,7 +2743,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zwxy() {
@@ -2751,7 +2751,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zwxz() {
@@ -2759,7 +2759,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zwxw() {
@@ -2767,7 +2767,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zwyx() {
@@ -2775,7 +2775,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zwyy() {
@@ -2783,7 +2783,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zwyz() {
@@ -2791,7 +2791,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zwyw() {
@@ -2799,7 +2799,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zwzx() {
@@ -2807,7 +2807,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zwzy() {
@@ -2815,7 +2815,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zwzz() {
@@ -2823,7 +2823,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zwzw() {
@@ -2831,7 +2831,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get zwwx() {
@@ -2839,7 +2839,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get zwwy() {
@@ -2847,7 +2847,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get zwwz() {
@@ -2855,7 +2855,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get zwww() {
@@ -2863,7 +2863,7 @@ export class Vector4 implements Vector {
       this._v4storage[2],
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wxxx() {
@@ -2871,7 +2871,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wxxy() {
@@ -2879,7 +2879,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wxxz() {
@@ -2887,7 +2887,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wxxw() {
@@ -2895,7 +2895,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[0],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wxyx() {
@@ -2903,7 +2903,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wxyy() {
@@ -2911,7 +2911,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wxyz() {
@@ -2919,7 +2919,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wxyw() {
@@ -2927,7 +2927,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[0],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wxzx() {
@@ -2935,7 +2935,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wxzy() {
@@ -2943,7 +2943,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wxzz() {
@@ -2951,7 +2951,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wxzw() {
@@ -2959,7 +2959,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[0],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wxwx() {
@@ -2967,7 +2967,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wxwy() {
@@ -2975,7 +2975,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wxwz() {
@@ -2983,7 +2983,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wxww() {
@@ -2991,7 +2991,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[0],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wyxx() {
@@ -2999,7 +2999,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wyxy() {
@@ -3007,7 +3007,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wyxz() {
@@ -3015,7 +3015,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wyxw() {
@@ -3023,7 +3023,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[1],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wyyx() {
@@ -3031,7 +3031,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wyyy() {
@@ -3039,7 +3039,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wyyz() {
@@ -3047,7 +3047,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wyyw() {
@@ -3055,7 +3055,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[1],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wyzx() {
@@ -3063,7 +3063,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wyzy() {
@@ -3071,7 +3071,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wyzz() {
@@ -3079,7 +3079,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wyzw() {
@@ -3087,7 +3087,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[1],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wywx() {
@@ -3095,7 +3095,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wywy() {
@@ -3103,7 +3103,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wywz() {
@@ -3111,7 +3111,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wyww() {
@@ -3119,7 +3119,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[1],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wzxx() {
@@ -3127,7 +3127,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wzxy() {
@@ -3135,7 +3135,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wzxz() {
@@ -3143,7 +3143,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wzxw() {
@@ -3151,7 +3151,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[2],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wzyx() {
@@ -3159,7 +3159,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wzyy() {
@@ -3167,7 +3167,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wzyz() {
@@ -3175,7 +3175,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wzyw() {
@@ -3183,7 +3183,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[2],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wzzx() {
@@ -3191,7 +3191,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wzzy() {
@@ -3199,7 +3199,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wzzz() {
@@ -3207,7 +3207,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wzzw() {
@@ -3215,7 +3215,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[2],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wzwx() {
@@ -3223,7 +3223,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wzwy() {
@@ -3231,7 +3231,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wzwz() {
@@ -3239,7 +3239,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wzww() {
@@ -3247,7 +3247,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[2],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wwxx() {
@@ -3255,7 +3255,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wwxy() {
@@ -3263,7 +3263,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wwxz() {
@@ -3271,7 +3271,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wwxw() {
@@ -3279,7 +3279,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[3],
       this._v4storage[0],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wwyx() {
@@ -3287,7 +3287,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wwyy() {
@@ -3295,7 +3295,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wwyz() {
@@ -3303,7 +3303,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wwyw() {
@@ -3311,7 +3311,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[3],
       this._v4storage[1],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wwzx() {
@@ -3319,7 +3319,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wwzy() {
@@ -3327,7 +3327,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wwzz() {
@@ -3335,7 +3335,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wwzw() {
@@ -3343,7 +3343,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[3],
       this._v4storage[2],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get wwwx() {
@@ -3351,7 +3351,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[0]
+      this._v4storage[0],
     );
   }
   get wwwy() {
@@ -3359,7 +3359,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[1]
+      this._v4storage[1],
     );
   }
   get wwwz() {
@@ -3367,7 +3367,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[2]
+      this._v4storage[2],
     );
   }
   get wwww() {
@@ -3375,7 +3375,7 @@ export class Vector4 implements Vector {
       this._v4storage[3],
       this._v4storage[3],
       this._v4storage[3],
-      this._v4storage[3]
+      this._v4storage[3],
     );
   }
   get r() {

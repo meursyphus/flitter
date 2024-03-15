@@ -116,7 +116,7 @@ export class RenderStack extends MultiChildRenderObject {
         break;
     }
 
-    this.children.forEach((child) => {
+    this.children.forEach(child => {
       if (
         (child as RenderPositioned).isRenderPositioned &&
         (child as RenderPositioned).isPositioned
@@ -202,7 +202,7 @@ export class RenderStack extends MultiChildRenderObject {
       constraints: this.constraints,
     });
 
-    this.children.forEach((child) => {
+    this.children.forEach(child => {
       if (
         !(
           (child as RenderPositioned).isRenderPositioned &&
@@ -210,7 +210,7 @@ export class RenderStack extends MultiChildRenderObject {
         )
       ) {
         child.offset = this.resolvedAlignment.alongOffset(
-          this.size.minus(child.size)
+          this.size.minus(child.size),
         );
       } else {
         RenderStack.layoutPositionedChild({
@@ -224,13 +224,13 @@ export class RenderStack extends MultiChildRenderObject {
 
   getIntrinsicWidth(height: number): number {
     return this.children
-      .map((child) => child.getIntrinsicWidth(height))
+      .map(child => child.getIntrinsicWidth(height))
       .reduce(Utils.maxReducer, 0);
   }
 
   getIntrinsicHeight(width: number): number {
     return this.children
-      .map((child) => child.getIntrinsicHeight(width))
+      .map(child => child.getIntrinsicHeight(width))
       .reduce(Utils.maxReducer, 0);
   }
 }

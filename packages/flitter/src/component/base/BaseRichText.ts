@@ -191,7 +191,7 @@ class RenderParagraph extends RenderObject {
     }: {
       text: SVGTextElement;
     },
-    context: PaintContext
+    context: PaintContext,
   ): void {
     /**
      * Safari has issue that tspan inherit text's transform only when mounted.
@@ -226,7 +226,7 @@ class RenderParagraph extends RenderObject {
       new Size({
         width: this.textPainter.width,
         height: this.textPainter.height,
-      })
+      }),
     );
   }
 

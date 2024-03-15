@@ -164,7 +164,7 @@ class RenderFlex extends MultiChildRenderObject {
         ? this.children
         : [...this.children].reverse();
 
-    sortedChildren.forEach((child) => {
+    sortedChildren.forEach(child => {
       child.layout(this.constraints.loosen());
       const flex = (child as RenderFlexible)?.isRenderFlexible
         ? (child as RenderFlexible).flex
@@ -187,7 +187,7 @@ class RenderFlex extends MultiChildRenderObject {
     /*
       layout children
     */
-    sortedChildren.forEach((child) => {
+    sortedChildren.forEach(child => {
       let childConstraint: Constraints;
 
       if (!(child as RenderFlexible).isRenderFlexible) {
@@ -198,7 +198,7 @@ class RenderFlex extends MultiChildRenderObject {
         const childMainAxisValue = flex * flexUnitSize;
         childConstraint = this.getFlexItemConstraint(
           childMainAxisValue,
-          flexible.fit
+          flexible.fit,
         );
       }
 
@@ -214,14 +214,14 @@ class RenderFlex extends MultiChildRenderObject {
           this.mainAxisSize === "max"
             ? this.constraints.getMax(this.mainAxisSizeName)
             : sortedChildren
-                .map((child) => child.size[this.mainAxisSizeName])
+                .map(child => child.size[this.mainAxisSizeName])
                 .reduce((acc, childMainAxisSize) => acc + childMainAxisSize, 0),
         [this.crossAxisSizeName]: crossAxisValue,
-      } as any)
+      } as any),
     );
 
     const mainAxisOffsets = this.getChildOffsetsOnMainAxis(
-      sortedChildren.map(({ size }) => size[this.mainAxisSizeName])
+      sortedChildren.map(({ size }) => size[this.mainAxisSizeName]),
     );
 
     sortedChildren.forEach((child, i) => {
@@ -231,7 +231,7 @@ class RenderFlex extends MultiChildRenderObject {
       child.offset = new Offset({
         [mainAxisOffset]: mainAxisOffsets[i],
         [crossAxisOffset]: this.getChildOffsetOnCrossAxis(
-          child.size[this.crossAxisSizeName]
+          child.size[this.crossAxisSizeName],
         ),
       } as { x: number; y: number });
     });
@@ -312,7 +312,7 @@ class RenderFlex extends MultiChildRenderObject {
         break;
       default:
         throw new Error(
-          `this mainAixsAlignment(${this.mainAxisAlignment}) is not supported yet`
+          `this mainAixsAlignment(${this.mainAxisAlignment}) is not supported yet`,
         );
     }
 
@@ -330,7 +330,7 @@ class RenderFlex extends MultiChildRenderObject {
   }): number[] {
     const result: number[] = [];
     let previousOffset = startOffset;
-    childMainAxisValues.forEach((value) => {
+    childMainAxisValues.forEach(value => {
       result.push(previousOffset);
       previousOffset += value + additionalSpace;
     });
@@ -360,8 +360,8 @@ class RenderFlex extends MultiChildRenderObject {
   override getIntrinsicHeight(width: number): number {
     const sum = (acc: number, value: number) => acc + value;
     const max = (acc: number, value: number) => Math.max(acc, value);
-    const childIntrinsicHeights = this.children.map((child) =>
-      child.getIntrinsicHeight(width)
+    const childIntrinsicHeights = this.children.map(child =>
+      child.getIntrinsicHeight(width),
     );
     return this.direction === "horizontal"
       ? childIntrinsicHeights.reduce(max, 0)
@@ -371,8 +371,8 @@ class RenderFlex extends MultiChildRenderObject {
   override getIntrinsicWidth(height: number): number {
     const sum = (acc: number, value: number) => acc + value;
     const max = (acc: number, value: number) => Math.max(acc, value);
-    const childIntrinsicWidths = this.children.map((child) =>
-      child.getIntrinsicWidth(height)
+    const childIntrinsicWidths = this.children.map(child =>
+      child.getIntrinsicWidth(height),
     );
 
     return this.direction === "vertical"

@@ -17,4 +17,4 @@ enum TextOverflow {
   */
 }
 
-export default TextOverflow
+export default TextOverflow;

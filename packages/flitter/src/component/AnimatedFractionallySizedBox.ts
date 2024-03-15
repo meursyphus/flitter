@@ -2,5 +2,3 @@ import BaseAnimatedFractionallySizedBox from "./base/BaseAnimatedFractionallySiz
 import { classToFunction } from "../utils";
 
 export default classToFunction(BaseAnimatedFractionallySizedBox);
-
-
