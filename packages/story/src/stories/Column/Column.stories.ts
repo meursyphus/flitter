@@ -199,7 +199,6 @@ export const MainAxisAlignment_center: Story = {
 		widget: Container({
 			color: 'lightblue',
 			child: Column({
-
 				mainAxisAlignment: MainAxisAlignment.center,
 				children: [
 					Container({
