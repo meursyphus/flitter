@@ -19,10 +19,10 @@ class RenderFrameDispatcher {
     } else {
       if (!this.idle) return;
       this.idle = false;
-      setTimeout(() => {
+      window.requestAnimationFrame(() => {
         this.onFrame?.();
         this.idle = true;
-      }, 0);
+      });
     }
   }
 }
