@@ -3,17 +3,7 @@
   import Diagram from "./widget/Diagram";
   import { onMount } from "svelte";
   import { project } from "./fixture";
-  let height = 0;
   let container: HTMLElement;
-  onMount(() => {
-    const resizeObserver = new ResizeObserver(([entry]) => {
-      height = entry.contentRect.height;
-    });
-    resizeObserver.observe(container);
-    return () => {
-      resizeObserver.disconnect();
-    };
-  });
 </script>
 
 <div
@@ -23,7 +13,7 @@
   <Widget
     widget={Diagram({ project: project, subscribe: () => () => {} })}
     width="100%"
-    height="{height}px"
+    height="100%"
   />
 </div>
 

@@ -10,6 +10,7 @@
     "story:start": "npm run storybook --workspace=@meursyphus/flitter-story",
     "story:build": "npm run build-storybook --workspace=@meursyphus/flitter-story",
     "story:chromatic": "npm run chromatic --workspace=@meursyphus/flitter-story",
+    "test:dev": "npm run dev --workspace=@meursyphus/test",
     "prestory:chromatic": "npm run flitter:build",
     "predocs:build": "npm run flitter:build"
   },

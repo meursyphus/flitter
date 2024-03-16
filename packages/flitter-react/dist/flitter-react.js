@@ -1,28 +1,28 @@
 import { jsx as r } from "react/jsx-runtime";
-import { useRef as i, useEffect as l } from "react";
-import { AppRunner as c, Container as s, Alignment as m, Text as p } from "@meursyphus/flitter";
-function h({
+import { useRef as i, useEffect as u } from "react";
+import { AppRunner as c, Container as s, Alignment as d, Text as m } from "@meursyphus/flitter";
+function a({
   width: o = "100%",
   height: f = "300px",
-  widget: u = s({
+  widget: l = s({
     width: 1 / 0,
     height: 1 / 0,
-    alignment: m.center,
-    child: p("Hello World")
+    alignment: d.center,
+    child: m("Hello World")
   })
 }) {
-  const n = i(null), e = i(null);
-  return l(() => {
+  const e = i(null), n = i(null);
+  return u(() => {
     const t = new c({
-      view: e.current,
+      view: n.current,
       window,
       document
     });
-    t.runApp(u), t.onMount({
-      resizeTarget: n.current
+    t.runApp(l), t.onMount({
+      resizeTarget: e.current
     });
-  }, []), /* @__PURE__ */ r("div", { style: { width: o, height: f }, ref: n, children: /* @__PURE__ */ r("svg", { ref: e }) });
+  }, []), /* @__PURE__ */ r("div", { style: { width: o, height: f }, ref: e, children: /* @__PURE__ */ r("svg", { style: { width: "100%", height: "100%" }, ref: n }) });
 }
 export {
-  h as default
+  a as default
 };
