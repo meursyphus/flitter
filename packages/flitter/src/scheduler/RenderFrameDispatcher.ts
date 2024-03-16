@@ -8,18 +8,17 @@ class RenderFrameDispatcher {
     this.onFrame = () => callback();
   }
 
-  // Actually we dont need to invoke browser to render because browser automatically render its own state periodically
+  // Actually we don't need to invoke browser to render because browser automatically render its own state periodically
   // so Here we just call onFrame callback.
+  private idle = true;
   dispatch() {
-    if (typeof window === "undefined") {
-      setTimeout(() => {
-        this.onFrame?.();
-      }, 0);
-    } else {
-      window.requestAnimationFrame(() => {
-        this.onFrame?.();
-      });
-    }
+    if (typeof window === "undefined") return;
+    if (!this.idle) return;
+    this.idle = false;
+    window.requestAnimationFrame(() => {
+      this.onFrame?.();
+      this.idle = true;
+    });
   }
 }
 

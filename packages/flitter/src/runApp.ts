@@ -24,7 +24,6 @@ export class AppRunner {
   private buildOwner: BuildOwner;
   private renderOwner: RenderOwner;
   private scheduler: Scheduler;
-  private renderDispatcher: RenderFrameDispatcher;
 
   constructor({
     view,
@@ -53,7 +52,6 @@ export class AppRunner {
     this.buildOwner = buildOwner;
     this.renderOwner = renderOwner;
     this.scheduler = scheduler;
-    this.renderDispatcher = renderDispatcher;
     this.renderContext = renderContext;
   }
   private didRun = false;
@@ -72,8 +70,11 @@ export class AppRunner {
     }).createElement();
     this.root.mount(undefined);
     this.root.renderObject.constraints = Constraints.tight(this.viewSize);
+
     this.didRun = true;
     this.draw();
+    this.scheduler.consumePostCallbacks();
+
     return this.renderContext.view.innerHTML;
   }
 

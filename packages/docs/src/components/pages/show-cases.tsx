@@ -1,6 +1,6 @@
 import Flicking from "@egjs/react-flicking";
 import ReactWidget from "@meursyphus/flitter-react";
-import '@meursyphus/flitter'
+import "@meursyphus/flitter";
 import {
   BarChart,
   BubbleChart,
