@@ -8,6 +8,13 @@ class Scheduler {
     this.postFrameCallbacks = [];
   }
 
+  consumePostCallbacks() {
+    this.postFrameCallbacks.forEach((callback) => {
+      callback();
+    });
+    this.postFrameCallbacks = [];
+  }
+
   schedule() {
     switch (this.phase) {
       case SchedulerPhase.idle:
@@ -25,10 +32,7 @@ class Scheduler {
       callback();
     });
     this.phase = SchedulerPhase.postFrameCallbacks;
-    this.postFrameCallbacks.forEach((callback) => {
-      callback();
-    });
-    this.postFrameCallbacks = [];
+    this.consumePostCallbacks();
     this.phase = SchedulerPhase.idle;
   }
 
