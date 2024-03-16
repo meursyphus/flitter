@@ -23,7 +23,7 @@ class _BoxBorder extends Data implements ShapeBorder {
   }
   paint(
     _: BorderPathEls,
-    __: { rect: Rect; borderRadius?: BorderRadiusGeometry; shape?: BoxShape }
+    __: { rect: Rect; borderRadius?: BorderRadiusGeometry; shape?: BoxShape },
   ): void {
     throw new Error("paint is not implemented.");
   }
@@ -41,7 +41,7 @@ class _BoxBorder extends Data implements ShapeBorder {
       side,
       borderRadius,
       rect,
-    }: { side: BorderSide; borderRadius: BorderRadiusGeometry; rect: Rect }
+    }: { side: BorderSide; borderRadius: BorderRadiusGeometry; rect: Rect },
   ) {
     assert(side.style !== "none");
     const border = paths.top;
@@ -54,7 +54,7 @@ class _BoxBorder extends Data implements ShapeBorder {
 
     border.setAttribute("d", new Path().addDRRect({ inner, outer }).getD());
 
-    [("left" as const, "right" as const, "bottom" as const)].forEach((key) => {
+    [("left" as const, "right" as const, "bottom" as const)].forEach(key => {
       const path = paths[key];
       BorderSide.none.paint(path);
     });
@@ -62,7 +62,7 @@ class _BoxBorder extends Data implements ShapeBorder {
 
   protected static paintUniformBorderWidthCircle(
     paths: BorderPathEls,
-    { side, rect }: { side: BorderSide; rect: Rect }
+    { side, rect }: { side: BorderSide; rect: Rect },
   ) {
     assert(side.style !== "none");
     const border = paths.top;
@@ -74,12 +74,12 @@ class _BoxBorder extends Data implements ShapeBorder {
           Rect.fromCircle({
             center: rect.center,
             radius: (rect.shortestSide + side.strokeOffset) / 2,
-          })
+          }),
         )
-        .getD()
+        .getD(),
     );
 
-    [("left" as const, "right" as const, "bottom" as const)].forEach((key) => {
+    [("left" as const, "right" as const, "bottom" as const)].forEach(key => {
       const path = paths[key];
       BorderSide.none.paint(path);
     });
@@ -87,17 +87,17 @@ class _BoxBorder extends Data implements ShapeBorder {
 
   protected static paintUniformBorderWidthRectangle(
     paths: BorderPathEls,
-    { side, rect }: { side: BorderSide; rect: Rect }
+    { side, rect }: { side: BorderSide; rect: Rect },
   ) {
     assert(side.style !== "none");
     const border = paths.top;
     side.paint(border);
     border.setAttribute(
       "d",
-      new Path().addRect(rect.inflate(side.strokeOffset / 2)).getD()
+      new Path().addRect(rect.inflate(side.strokeOffset / 2)).getD(),
     );
 
-    [("left" as const, "right" as const, "bottom" as const)].forEach((key) => {
+    [("left" as const, "right" as const, "bottom" as const)].forEach(key => {
       const path = paths[key];
       BorderSide.none.paint(path);
     });
@@ -217,12 +217,12 @@ class Border extends _BoxBorder {
       rect,
       borderRadius,
       shape = "rectangle",
-    }: { rect: Rect; borderRadius?: BorderRadiusGeometry; shape?: BoxShape }
+    }: { rect: Rect; borderRadius?: BorderRadiusGeometry; shape?: BoxShape },
   ): void {
     if (this.isUniform) {
       switch (this.top.style) {
         case "none":
-          Object.values(paths).forEach((path) => {
+          Object.values(paths).forEach(path => {
             path.setAttribute("stroke-width", "0");
             path.setAttribute("fill", "none");
             path.setAttribute("d", "");
@@ -233,7 +233,7 @@ class Border extends _BoxBorder {
             case "circle":
               assert(
                 borderRadius == null,
-                "A borderRadius can only be given for rectangular boxes."
+                "A borderRadius can only be given for rectangular boxes.",
               );
               _BoxBorder.paintUniformBorderWidthCircle(paths, {
                 side: this.top,
@@ -281,7 +281,7 @@ class Border extends _BoxBorder {
           }
         }
         return true;
-      })()
+      })(),
     );
 
     assert(
@@ -305,7 +305,7 @@ class Border extends _BoxBorder {
           }
         }
         return true;
-      })()
+      })(),
     );
 
     assert(
@@ -315,11 +315,11 @@ class Border extends _BoxBorder {
           this.top.strokeAlign !== BorderSide.strokeAlignInside
         ) {
           throw new Error(
-            "A Border can only have different strokeAlign when BorderSide.strokeAlignInside is used on uniform borders."
+            "A Border can only have different strokeAlign when BorderSide.strokeAlignInside is used on uniform borders.",
           );
         }
         return true;
-      })()
+      })(),
     );
 
     this.paintBorder(paths, { rect });

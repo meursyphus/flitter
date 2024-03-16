@@ -9,7 +9,7 @@ class Scheduler {
   }
 
   consumePostCallbacks() {
-    this.postFrameCallbacks.forEach((callback) => {
+    this.postFrameCallbacks.forEach(callback => {
       callback();
     });
     this.postFrameCallbacks = [];
@@ -28,11 +28,12 @@ class Scheduler {
 
   private performSchedule() {
     this.phase = SchedulerPhase.persistenceCallbacks;
-    this.persistenceCallbacks.forEach((callback) => {
+    this.persistenceCallbacks.forEach(callback => {
       callback();
     });
     this.phase = SchedulerPhase.postFrameCallbacks;
     this.consumePostCallbacks();
+    this.postFrameCallbacks = [];
     this.phase = SchedulerPhase.idle;
   }
 

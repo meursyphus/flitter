@@ -13,7 +13,7 @@ export * from "./_types/_etc";
 import Matrix4 from "./_types/_matrix4";
 import StackFit from "./_types/stack-fit";
 import BorderRadius from "./_types/border-radius";
-import Radius from "./_types/_radius"
+import Radius from "./_types/_radius";
 import BorderStyle from "./_types/border-style";
 import Border, { type BoxBorder } from "./_types/_border";
 import BoxDecoration, { type Decoration } from "./_types/box-decoration";

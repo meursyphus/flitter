@@ -36,7 +36,7 @@ export class ImplicitlyAnimatedWidget extends StatefulWidget {
 export default ImplicitlyAnimatedWidget;
 
 export class ImplicitlyAnimatedWidgetState<
-  T extends ImplicitlyAnimatedWidget
+  T extends ImplicitlyAnimatedWidget,
 > extends State<T> {
   protected controller: AnimationController;
   protected animation: CurvedAnimation;
@@ -101,7 +101,7 @@ export class ImplicitlyAnimatedWidgetState<
 
   private updateTween(
     tween: Tween<Data | number>,
-    targetValue: Data | number
+    targetValue: Data | number,
   ): void {
     tween.begin = tween.evaluate(this.animation);
     tween.end = targetValue;
@@ -109,7 +109,7 @@ export class ImplicitlyAnimatedWidgetState<
 
   private shouldAnimateTween(
     tween: Tween<Data | number>,
-    targetValue: Data | number
+    targetValue: Data | number,
   ): boolean {
     const { end } = tween;
     if (typeof end === "number") {
@@ -128,7 +128,7 @@ export class ImplicitlyAnimatedWidgetState<
       tween: T | Nullable;
       targetValue: V | Nullable;
       constructor: (value: V) => T;
-    }) => T | Nullable
+    }) => T | Nullable,
   ) {
     throw new Error("forEachTween must be implemented");
   }
@@ -140,7 +140,7 @@ export class ImplicitlyAnimatedWidgetState<
 }
 
 export class AnimatedBaseWidgetState<
-  T extends ImplicitlyAnimatedWidget
+  T extends ImplicitlyAnimatedWidget,
 > extends ImplicitlyAnimatedWidgetState<T> {
   initState(context: BuildContext): void {
     super.initState(context);

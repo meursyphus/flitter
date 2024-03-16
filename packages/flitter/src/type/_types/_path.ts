@@ -181,7 +181,7 @@ export class Path {
     if (points.length < 3) throw Error("polygons need at least 3 points");
 
     this.moveTo(points[0]);
-    points.slice(1).forEach((point) => this.lineTo(point));
+    points.slice(1).forEach(point => this.lineTo(point));
     return this.close();
   }
 
@@ -198,7 +198,7 @@ export class Path {
       controlPoint: Offset;
       endPoint: Offset;
     },
-    relative: boolean
+    relative: boolean,
   ) {
     this._d += `${relative ? "q" : "Q"}${controlPoint.x} ${controlPoint.y} ${
       endPoint.x
@@ -226,7 +226,7 @@ export class Path {
       startControlPoint: Offset;
       endPoint: Offset;
     },
-    relative: boolean
+    relative: boolean,
   ) {
     this._d += `${relative ? "c" : "C"}${startControlPoint.x} ${
       startControlPoint.y
@@ -248,7 +248,7 @@ export class Path {
       largeArc: boolean;
       clockwise: boolean;
     },
-    relative: boolean
+    relative: boolean,
   ) {
     this._d += `${relative ? "a" : "A"}${radius.x} ${radius.y} ${rotation} ${
       largeArc ? 1 : 0

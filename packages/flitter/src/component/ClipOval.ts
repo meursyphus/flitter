@@ -18,6 +18,6 @@ export default function ClipOval({
     clipped,
     child,
     key,
-    clipper: (size) => new Path().addOval(clipper(size)),
+    clipper: size => new Path().addOval(clipper(size)),
   });
 }

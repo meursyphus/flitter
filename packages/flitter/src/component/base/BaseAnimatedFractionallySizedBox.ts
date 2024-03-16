@@ -54,22 +54,22 @@ class BaseAnimatedFractionallySizedBoxState extends AnimatedBaseWidgetState<Base
       tween: T;
       targetValue: V;
       constructor: (value: V) => T;
-    }) => T
+    }) => T,
   ): void {
     this.alignment = visitor({
       tween: this.alignment,
       targetValue: this.widget.alignment,
-      constructor: (value) => new CalculableTween({ begin: value, end: value }),
+      constructor: value => new CalculableTween({ begin: value, end: value }),
     });
     this.heightFactor = visitor({
       tween: this.heightFactor,
       targetValue: this.widget.heightFactor,
-      constructor: (value) => new Tween({ begin: value, end: value }),
+      constructor: value => new Tween({ begin: value, end: value }),
     });
     this.widthFactor = visitor({
       tween: this.widthFactor,
       targetValue: this.widget.widthFactor,
-      constructor: (value) => new Tween({ begin: value, end: value }),
+      constructor: value => new Tween({ begin: value, end: value }),
     });
   }
 

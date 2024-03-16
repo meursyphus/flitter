@@ -37,7 +37,7 @@ export class BorderSide extends Data {
     this.width = width;
     assert(
       strokeAlign >= -1 && strokeAlign <= 1,
-      "strokeAlign must be between -1 and 1"
+      "strokeAlign must be between -1 and 1",
     );
     this.strokeAlign = strokeAlign;
   }

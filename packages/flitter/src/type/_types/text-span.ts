@@ -30,7 +30,7 @@ class TextSpan extends InlineSpan {
 
   visitChildren(visitor: (span: InlineSpan) => void): void {
     visitor(this);
-    this.children.forEach((child) => child.visitChildren(visitor));
+    this.children.forEach(child => child.visitChildren(visitor));
   }
 
   protected override computeToPlainText(): string {
@@ -39,7 +39,7 @@ class TextSpan extends InlineSpan {
 
   build(
     paragraph: Paragraph,
-    parentStyle: TextStyle = this.style ?? new TextStyle()
+    parentStyle: TextStyle = this.style ?? new TextStyle(),
   ): void {
     const inheritedStyle = parentStyle.merge(this.style);
     const { fontFamily, fontSize, fontStyle, fontWeight, color, height } =
@@ -54,7 +54,7 @@ class TextSpan extends InlineSpan {
       content: this.computeToPlainText(),
     });
 
-    this.children.forEach((child) => {
+    this.children.forEach(child => {
       child.build(paragraph, inheritedStyle);
     });
   }

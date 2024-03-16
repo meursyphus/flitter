@@ -31,12 +31,12 @@ export default class BoxDecoration extends Data {
       border: Border.lerp(
         a.border ?? Border.fromBorderSide(BorderSide.none),
         b.border ?? Border.fromBorderSide(BorderSide.none),
-        t
+        t,
       ),
       borderRadius: BorderRadius.lerp(
         a.borderRadius ?? BorderRadius.all(Radius.zero),
         b.borderRadius ?? BorderRadius.all(Radius.zero),
-        t
+        t,
       ),
       boxShadow: BoxShadow.lerp(a.boxShadow ?? [], b.boxShadow ?? [], t),
       shape: t < 0.5 ? a.shape : b.shape,
@@ -172,7 +172,7 @@ class BoxDecorationPainter implements BoxPainter {
         rect,
         shape: this.decoration.shape,
         borderRadius: this.decoration.borderRadius,
-      }
+      },
     );
   }
 
@@ -189,7 +189,7 @@ class BoxDecorationPainter implements BoxPainter {
       (acc, shadow) =>
         acc +
         ` drop-shadow(${shadow.offset.x} ${shadow.offset.y} ${shadow.blurRadius} ${shadow.color.value})`,
-      ""
+      "",
     );
     box.setAttribute("filter", filter);
   }
@@ -218,9 +218,9 @@ class BoxDecorationPainter implements BoxPainter {
             topRight: this.decoration.borderRadius.topRight,
             bottomLeft: this.decoration.borderRadius.bottomLeft,
             bottomRight: this.decoration.borderRadius.bottomRight,
-          })
+          }),
         )
-        .getD()
+        .getD(),
     );
   }
 }

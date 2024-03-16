@@ -21,15 +21,13 @@ class RenderView extends RenderObject {
       width: constraint.maxWidth,
       height: constraint.maxHeight,
     });
-    this.children.forEach((child) =>
-      child.layout(Constraints.loose(this.size))
-    );
+    this.children.forEach(child => child.layout(Constraints.loose(this.size)));
   }
   paint(
     context: PaintContext,
     clipId?: string,
     matrix4?: Matrix4,
-    opacity?: number
+    opacity?: number,
   ): void {
     if (this.size.width === 0 || this.size.height === 0) return;
     super.paint(context, clipId, matrix4, opacity);

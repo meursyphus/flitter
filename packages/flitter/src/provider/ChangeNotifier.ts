@@ -9,7 +9,7 @@ class ChangeNotifier extends Listenable {
   }
 
   notifyListeners() {
-    this.listners.forEach((listner) => {
+    this.listners.forEach(listner => {
       listner();
     });
   }

@@ -60,7 +60,7 @@ class RenderPadding extends SingleChildRenderObject {
       new Size({
         width: childSize.width + left + right,
         height: childSize.height + top + bottom,
-      })
+      }),
     );
 
     this.child.offset = new Offset({ x: left, y: top });

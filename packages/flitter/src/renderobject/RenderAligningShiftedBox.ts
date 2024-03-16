@@ -47,7 +47,7 @@ export class RenderAligningShiftedBox extends SingleChildRenderObject {
       Offset.raw({
         x: this.size.width - this.child.size.width,
         y: this.size.height - this.child.size.height,
-      })
+      }),
     );
   }
 }

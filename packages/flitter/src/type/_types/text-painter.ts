@@ -87,7 +87,7 @@ export default class TextPainter {
     this.resetText(textEl);
     assert(this.paragraph != null, "paragraph should not be null");
 
-    this.paragraph!.lines.forEach((line) => {
+    this.paragraph!.lines.forEach(line => {
       line.spanBoxes.forEach(
         ({ offset, fontFamily, content, fontSize, fontWeight, color }) => {
           const tspanEl = createSvgEl("tspan");
@@ -101,7 +101,7 @@ export default class TextPainter {
           tspanEl.setAttribute("font-weight", fontWeight);
           tspanEl.textContent = content;
           textEl.appendChild(tspanEl);
-        }
+        },
       );
     });
   }
@@ -172,7 +172,11 @@ export class Paragraph {
       textAlign,
       ellipsis,
       textDirection,
-    }: { textAlign: TextAlign; ellipsis?: string; textDirection: TextDirection }
+    }: {
+      textAlign: TextAlign;
+      ellipsis?: string;
+      textDirection: TextDirection;
+    },
   ) {
     this.ellipsis = ellipsis;
     this.textAlign = textAlign;
@@ -225,7 +229,7 @@ export class Paragraph {
         let currentWidth = 0;
         const currentHeight = getTextHeight({ fontSize });
         const font = `${fontWeight} ${fontSize}px ${fontFamily}`;
-        words.forEach((word) => {
+        words.forEach(word => {
           const wordWidth = getTextWidth({
             text: word,
             font,
@@ -269,10 +273,10 @@ export class Paragraph {
                 height: currentHeight,
                 width: currentWidth,
               },
-            })
+            }),
           );
         }
-      }
+      },
     );
 
     this.addLine(currentLine);
@@ -287,7 +291,7 @@ export class Paragraph {
   private align() {
     let currentHeight = 0;
 
-    this.lines.forEach((line) => {
+    this.lines.forEach(line => {
       line.layout(this.resolvedTextAlign, {
         paragraphWidth: this.width,
         offsetY: currentHeight,
@@ -392,7 +396,7 @@ class ParagraphLine {
   get height() {
     return this.spanBoxes.reduce(
       (acc, { size, height }) => Math.max(acc, size.height * height),
-      0
+      0,
     );
   }
 
@@ -402,9 +406,9 @@ class ParagraphLine {
 
   layout(
     textAlign: "left" | "right" | "center",
-    { paragraphWidth, offsetY }: { offsetY: number; paragraphWidth: number }
+    { paragraphWidth, offsetY }: { offsetY: number; paragraphWidth: number },
   ) {
-    this.spanBoxes.forEach((spanBox) => {
+    this.spanBoxes.forEach(spanBox => {
       spanBox.offset.y = offsetY - spanBox.size.height + this.height;
     });
 
@@ -423,7 +427,7 @@ class ParagraphLine {
 
   private alignHorizontally(offsetX: number) {
     let currentX = offsetX;
-    this.spanBoxes.forEach((spanBox) => {
+    this.spanBoxes.forEach(spanBox => {
       spanBox.offset.x = currentX;
       currentX += spanBox.size.width;
     });

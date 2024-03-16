@@ -20,7 +20,7 @@ export default function Stack({
   return ClipRect({
     key,
     clipped,
-    clipper: (size) =>
+    clipper: size =>
       Rect.fromLTWH({
         left: 0,
         top: 0,

@@ -71,9 +71,9 @@ class RenderIndexedStack extends RenderStack {
       clipId?: string | undefined;
       matrix4: Matrix4;
       opacity: number;
-    }
+    },
   ): void {
-    this.children.forEach((child) => child.dispose(context));
+    this.children.forEach(child => child.dispose(context));
     const child = this.children[this.index];
     assert(child != null);
     child.paint(context, clipId, matrix4, opacity);
