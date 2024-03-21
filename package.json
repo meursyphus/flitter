@@ -13,6 +13,7 @@
     "test:playwright": "npm run test:integration --workspace=@meursyphus/test",
     "pretest:playwright": "npm run flitter:build",
     "prestory:chromatic": "npm run flitter:build",
+    "prestory:build": "npm run flitter:build",
     "predocs:build": "npm run flitter:build"
   },
   "author": "meursyphus",
