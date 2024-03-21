@@ -7,4 +7,7 @@ dist/
 storybook-static/
 package
 .svelte-kit
-
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
