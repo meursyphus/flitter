@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev --port 4173",
+		"dev": "vite dev",
 		"production": "npm run build && npm run preview",
 		"build": "vite build",
 		"preview": "vite preview",
