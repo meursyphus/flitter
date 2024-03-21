@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "A declarative, widget-based library built on SVG for simplifying data visualization with a Flutter-like syntax.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "flitter:build": "npm run build -workspace=@meursyphus/flitter",
     "docs:start": "npm run start --workspace=@meursyphus/flitter-docs",
     "docs:build": "npm run build --workspace=@meursyphus/flitter-docs",
@@ -11,6 +10,8 @@
     "story:build": "npm run build-storybook --workspace=@meursyphus/flitter-story",
     "story:chromatic": "npm run chromatic --workspace=@meursyphus/flitter-story",
     "test:dev": "npm run dev --workspace=@meursyphus/test",
+    "test:playwright": "npm run test:integration --workspace=@meursyphus/test",
+    "pretest:playwright": "npm run flitter:build",
     "prestory:chromatic": "npm run flitter:build",
     "predocs:build": "npm run flitter:build"
   },
@@ -20,6 +21,7 @@
     "packages/*"
   ],
   "devDependencies": {
+    "@types/node": "^20.11.30",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.2"
   },
