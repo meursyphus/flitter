@@ -8,6 +8,7 @@ on:
       - .github/workflows/flitter.yml
     branches:
       - dev
+      - devops-27-storybook
 
 jobs:
   chromatic-deployment:
@@ -21,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 16.17.1
+          node-version: 18.x
 
       - name: Install dependencies
         run: |
@@ -29,6 +30,7 @@ jobs:
 
       - name: Deploy to Chromatic
         uses: chromaui/action@v1
+
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: packages/story
