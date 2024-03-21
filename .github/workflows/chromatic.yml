@@ -5,7 +5,7 @@ on:
     paths:
       - packages/flitter/**/*
       - packages/story/**/*
-      - .github/workflows/flitter.yml
+      - .github/workflows/chromatic.yml
     branches:
       - dev
       - devops-27-storybook
