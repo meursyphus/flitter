@@ -30,10 +30,8 @@ jobs:
 
       - name: Deploy to Chromatic
         uses: chromaui/action@latest 
-        env:
-          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
         with:
-          projectToken: ${{ env.CHROMATIC_PROJECT_TOKEN }}
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: packages/story
           buildScriptName: build-storybook
           autoAcceptChanges: true
