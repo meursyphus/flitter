@@ -8,7 +8,6 @@ on:
       - .github/workflows/chromatic.yml
     branches:
       - dev
-      - devops-27-storybook
 
 jobs:
   chromatic-deployment:
