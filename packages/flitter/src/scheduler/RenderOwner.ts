@@ -2,9 +2,12 @@ import type { RenderZIndex } from "../component/base/BaseZIndex";
 import type RenderObject from "../renderobject/RenderObject";
 import type RenderView from "../renderobject/RenderObject";
 import { type RenderObjectVisitor } from "../renderobject/RenderObjectVisitor";
-import type { PaintContext } from "../utils/type";
+import type { HitTestDispatcher } from "../hit-test/HitTestDispatcher";
+import type { RenderContext } from "../runApp";
+
 class RenderOwner {
-  paintContext: PaintContext;
+  hitTestDispatcher: HitTestDispatcher;
+  renderContext: RenderContext;
   private onNeedVisualUpdate: () => void;
   needsPaintRenderObjects: RenderView[] = [];
   needsLayoutRenderObjects: RenderView[] = [];
@@ -14,13 +17,17 @@ class RenderOwner {
   renderView!: RenderView;
   constructor({
     onNeedVisualUpdate,
-    paintContext,
+    renderContext,
+    hitTestDispatcher,
   }: {
     onNeedVisualUpdate: () => void;
-    paintContext: PaintContext;
+    renderContext: RenderContext;
+    hitTestDispatcher: HitTestDispatcher;
   }) {
     this.onNeedVisualUpdate = onNeedVisualUpdate;
-    this.paintContext = paintContext;
+    this.renderContext = renderContext;
+    this.hitTestDispatcher = hitTestDispatcher;
+    this.hitTestDispatcher.init({ renderContext: this.renderContext });
   }
 
   requestVisualUpdate() {
@@ -73,7 +80,7 @@ class RenderOwner {
       .sort((a, b) => a.depth - b.depth)
       .forEach(renderObject => {
         if (!renderObject.needsPaint) return;
-        renderObject.paintWithoutLayout(this.paintContext);
+        renderObject.paintWithoutLayout(this.renderContext.paintContext);
       });
   }
 }

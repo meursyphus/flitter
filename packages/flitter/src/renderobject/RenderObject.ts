@@ -164,7 +164,7 @@ export class RenderObject {
     this.ownerElement = ownerElement;
     this.depth = ownerElement.depth;
     if (this.isPainter) {
-      this.mountSvgEl(this.renderOwner.paintContext);
+      this.mountSvgEl(this.renderOwner.renderContext.paintContext);
       this.renderOwner.didDomOrderChange();
     }
   }
@@ -221,7 +221,10 @@ export class RenderObject {
     if (!this.#domOrderChanged) return;
 
     this.isPainter &&
-      this.renderOwner.paintContext.insertSvgEl(this.domNode, this.domOrder);
+      this.renderOwner.renderContext.paintContext.insertSvgEl(
+        this.domNode,
+        this.domOrder,
+      );
     this.#domOrderChanged = false;
   }
 
@@ -298,11 +301,30 @@ export class RenderObject {
   }
 
   /**
-   *
    * It is currently only used on ZIndexRenderObject
    */
   accept(visitor: RenderObjectVisitor) {
     visitor.visitGeneral(this);
+  }
+
+  hitTest({ globalPoint }: { globalPoint: Offset }): boolean {
+    const viewPort = this.renderOwner.renderContext.viewPort;
+    const { translation, scale } = viewPort;
+    const bounds = {
+      left: (this.matrix.storage[12] + translation.x) * scale,
+      top: (this.matrix.storage[13] + translation.y) * scale,
+      right:
+        (this.matrix.storage[12] + translation.x + this.size.width) * scale,
+      bottom:
+        (this.matrix.storage[13] + translation.y + this.size.height) * scale,
+    };
+
+    return (
+      globalPoint.x >= bounds.left &&
+      globalPoint.x <= bounds.right &&
+      globalPoint.y >= bounds.top &&
+      globalPoint.y <= bounds.bottom
+    );
   }
 }
 

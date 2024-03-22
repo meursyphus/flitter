@@ -33,7 +33,9 @@
 								this.setState();
 							},
 							child: GestureDetector({
-								onClick: () => {},
+								onClick: (e) => {
+									e.stopPropagation();
+								},
 								child: Text('click')
 							})
 						})
