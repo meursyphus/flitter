@@ -1,6 +1,5 @@
 import type { RenderZIndex } from "../component/base/BaseZIndex";
 import type RenderObject from "../renderobject/RenderObject";
-import type RenderView from "../renderobject/RenderObject";
 import { type RenderObjectVisitor } from "../renderobject/RenderObjectVisitor";
 import type { HitTestDispatcher } from "../hit-test/HitTestDispatcher";
 import type { RenderContext } from "../runApp";
@@ -9,12 +8,12 @@ class RenderOwner {
   hitTestDispatcher: HitTestDispatcher;
   renderContext: RenderContext;
   private onNeedVisualUpdate: () => void;
-  needsPaintRenderObjects: RenderView[] = [];
-  needsLayoutRenderObjects: RenderView[] = [];
+  needsPaintRenderObjects: RenderObject[] = [];
+  needsLayoutRenderObjects: RenderObject[] = [];
   /*
    this will be set by RenderView
   */
-  renderView!: RenderView;
+  renderView!: RenderObject;
   constructor({
     onNeedVisualUpdate,
     renderContext,

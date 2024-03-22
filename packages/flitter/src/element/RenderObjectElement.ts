@@ -98,7 +98,7 @@ class RenderObjectElement extends Element {
 
   private findAncestorRenderObjectElement(): RenderObjectElement | null {
     let ancestor: Element | null = this.parent;
-    while (ancestor != null && !(ancestor.type === "render")) {
+    while (ancestor != null && ancestor.type !== "render") {
       ancestor = ancestor.parent;
     }
     return ancestor as RenderObjectElement | null;

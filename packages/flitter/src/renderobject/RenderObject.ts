@@ -4,6 +4,7 @@ import { type RenderObjectVisitor } from "./RenderObjectVisitor";
 import type { RenderObjectElement } from "../element";
 import type { RenderOwner } from "../scheduler";
 import { assert } from "../utils";
+import { NotImplementedError } from "../exception";
 
 /*
   It does more things than flutters' RenderObject 
@@ -208,8 +209,8 @@ export class RenderObject {
   } {
     const container = this.domNode;
     const svgEls: Record<string, SVGElement> = {};
-    for (let i = 0; i < container.children.length; i++) {
-      const child = container.children[i];
+    for (const element of container.children) {
+      const child = element;
       const name = child.getAttribute("data-render-name")!;
       svgEls[name] = child as unknown as SVGElement;
     }
@@ -240,7 +241,7 @@ export class RenderObject {
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected preformLayout(): void {
-    throw { message: "not implemented performLayout" };
+    throw new NotImplementedError("performLayout");
   }
 
   /*
