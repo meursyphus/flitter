@@ -33,9 +33,6 @@
 								this.setState();
 							},
 							child: GestureDetector({
-								bubble: {
-									click: true
-								},
 								onClick: () => {},
 								child: Text('click')
 							})

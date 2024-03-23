@@ -15,19 +15,17 @@ class RenderObjectToWidgetAdapter extends RenderObjectWidget {
     app,
     renderOwner,
     buildOwner,
-    renderContext,
     scheduler,
   }: {
     app: Widget;
     renderOwner: RenderOwner;
     buildOwner: BuildOwner;
-    renderContext: RenderContext;
     scheduler: Scheduler;
   }) {
     super({ children: [app] });
     this.renderOwner = renderOwner;
     this.buildOwner = buildOwner;
-    this.renderContext = renderContext;
+    this.renderContext = renderOwner.renderContext;
     this.scheduler = scheduler;
   }
 
@@ -43,9 +41,8 @@ class RenderObjectToWidgetAdapter extends RenderObjectWidget {
     return new RenderView({ renderOwner: this.renderOwner });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateRenderObject(renderObject: RenderObject): void {
-    //
+    renderObject.renderOwner = this.renderOwner;
   }
 }
 

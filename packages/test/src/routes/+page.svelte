@@ -1,6 +1,10 @@
 <script lang="ts">
 </script>
 
+<div style="display: flex; gap: 10px;">
+	<a href="/performance">Performance</a>
+	<a href="/interaction">Interaction</a>
+</div>
 <div
 	style="padding: 20px; background-color: #f0f0f0; border: 1px solid #dcdcdc; border-radius: 5px; margin-top: 20px;"
 >

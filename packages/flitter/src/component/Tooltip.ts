@@ -84,19 +84,6 @@ class ToolTipState extends State<ToolTip> {
       clipped: false,
       children: [
         GestureDetector({
-          bubble: {
-            mousedown: true,
-            mouseenter: true,
-            mouseleave: true,
-            mousemove: true,
-            mouseover: true,
-            mouseup: true,
-            click: true,
-            drag: true,
-            dragend: true,
-            dragstart: true,
-            wheel: true,
-          },
           cursor: "default",
           child: this.widget.child,
           onMouseEnter: () => {

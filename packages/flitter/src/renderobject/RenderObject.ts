@@ -4,6 +4,7 @@ import { type RenderObjectVisitor } from "./RenderObjectVisitor";
 import type { RenderObjectElement } from "../element";
 import type { RenderOwner } from "../scheduler";
 import { assert } from "../utils";
+import { NotImplementedError } from "../exception";
 
 /*
   It does more things than flutters' RenderObject 
@@ -34,10 +35,13 @@ export class RenderObject {
   }
   set domOrder(newOrder: number) {
     if (newOrder === this.#domOrder) return;
-    this.#domOrderChanged = true;
     this.#domOrder = newOrder;
+    this.didDomOrderChange();
   }
   #domOrderChanged = false;
+  didDomOrderChange() {
+    this.#domOrderChanged = true;
+  }
   get domNode() {
     assert(this.#domNode != null, "domNode is not initialized");
     return this.#domNode;
@@ -164,7 +168,7 @@ export class RenderObject {
     this.ownerElement = ownerElement;
     this.depth = ownerElement.depth;
     if (this.isPainter) {
-      this.mountSvgEl(this.renderOwner.paintContext);
+      this.mountSvgEl(this.renderOwner.renderContext.paintContext);
       this.renderOwner.didDomOrderChange();
     }
   }
@@ -208,8 +212,8 @@ export class RenderObject {
   } {
     const container = this.domNode;
     const svgEls: Record<string, SVGElement> = {};
-    for (let i = 0; i < container.children.length; i++) {
-      const child = container.children[i];
+    for (const element of container.children) {
+      const child = element;
       const name = child.getAttribute("data-render-name")!;
       svgEls[name] = child as unknown as SVGElement;
     }
@@ -221,7 +225,10 @@ export class RenderObject {
     if (!this.#domOrderChanged) return;
 
     this.isPainter &&
-      this.renderOwner.paintContext.insertSvgEl(this.domNode, this.domOrder);
+      this.renderOwner.renderContext.paintContext.insertSvgEl(
+        this.domNode,
+        this.domOrder,
+      );
     this.#domOrderChanged = false;
   }
 
@@ -237,7 +244,7 @@ export class RenderObject {
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected preformLayout(): void {
-    throw { message: "not implemented performLayout" };
+    throw new NotImplementedError("performLayout");
   }
 
   /*
@@ -298,11 +305,30 @@ export class RenderObject {
   }
 
   /**
-   *
    * It is currently only used on ZIndexRenderObject
    */
   accept(visitor: RenderObjectVisitor) {
     visitor.visitGeneral(this);
+  }
+
+  hitTest({ globalPoint }: { globalPoint: Offset }): boolean {
+    const viewPort = this.renderOwner.renderContext.viewPort;
+    const { translation, scale } = viewPort;
+    const bounds = {
+      left: (this.matrix.storage[12] + translation.x) * scale,
+      top: (this.matrix.storage[13] + translation.y) * scale,
+      right:
+        (this.matrix.storage[12] + translation.x + this.size.width) * scale,
+      bottom:
+        (this.matrix.storage[13] + translation.y + this.size.height) * scale,
+    };
+
+    return (
+      globalPoint.x >= bounds.left &&
+      globalPoint.x <= bounds.right &&
+      globalPoint.y >= bounds.top &&
+      globalPoint.y <= bounds.bottom
+    );
   }
 }
 

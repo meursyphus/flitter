@@ -1,6 +1,5 @@
 <script lang="ts">
 	import {
-		Alignment,
 		Center,
 		Element,
 		GestureDetector,

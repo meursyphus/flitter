@@ -7,8 +7,8 @@ type SizeProps = {
 };
 
 class Size {
-  readonly width: number;
-  readonly height: number;
+  width: number;
+  height: number;
   constructor({ width, height }: SizeProps) {
     this.width = width;
     this.height = height;

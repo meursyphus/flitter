@@ -40,7 +40,10 @@ class InteractiveViewportState extends State<InteractiveViewport> {
 
     if (typeof window === "undefined") return;
     this.view.addEventListener("wheel", this.handleWheel);
-    this.view.addEventListener("mousedown", this.handleDragStart);
+    this.view.parentElement!.addEventListener(
+      "mousedown",
+      this.handleDragStart,
+    );
     this.view.setAttribute("preserveAspectRatio", "none");
     document.addEventListener("mousemove", this.handleDragMove);
     document.addEventListener("mouseup", this.handleDragEnd);
@@ -56,7 +59,10 @@ class InteractiveViewportState extends State<InteractiveViewport> {
 
   dispose(): void {
     this.view.removeEventListener("wheel", this.handleWheel);
-    this.view.removeEventListener("mousedown", this.handleDragStart);
+    this.view.parentElement!.removeEventListener(
+      "mousedown",
+      this.handleDragStart,
+    );
     document.removeEventListener("mousemove", this.handleDragMove);
     document.removeEventListener("mouseup", this.handleDragEnd);
     this.resizeObserver.disconnect();
@@ -64,7 +70,7 @@ class InteractiveViewportState extends State<InteractiveViewport> {
 
   handleDragStart = (e: MouseEvent) => {
     this.dragPoint = new Offset({ x: e.x, y: e.y });
-    this.view.style.cursor = "grabbing"; // Change cursor shape to 'grabbing'
+    this.view.style.cursor = "grabbing";
   };
 
   handleDragMove = (e: MouseEvent) => {
@@ -146,11 +152,12 @@ class InteractiveViewportState extends State<InteractiveViewport> {
   }
 
   private notifyViewportChange() {
-    this.view.setAttribute(
-      "viewBox",
-      `${this.viedBox.x} ${this.viedBox.y} ${this.viedBox.width} ${this.viedBox.height}`,
-    );
     const scale = this.controller.getScale();
+    this.element.renderContext.setViewport({
+      translation: { x: -this.viedBox.x, y: -this.viedBox.y },
+      scale,
+    });
+
     this.controller.changeRootRect({
       left: -this.viedBox.x,
       top: -this.viedBox.y,
