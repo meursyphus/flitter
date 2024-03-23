@@ -26,4 +26,15 @@ test.describe('Interaction', () => {
 		const target = page.getByText('0');
 		await expect(target).toBeVisible();
 	});
+
+	test('show tooltip on only hover', async ({ page }) => {
+		await page.goto('http://localhost:4173/interaction/hover-effect');
+		const target = page.locator('rect').first();
+		await target.hover();
+		await expect(page.getByText('tooltip')).toBeVisible();
+
+		//mouse leave
+		await page.mouse.move(-500, -500, { steps: 5 });
+		await expect(page.getByText('tooltip')).not.toBeVisible();
+	});
 });

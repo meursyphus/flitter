@@ -50,6 +50,10 @@
 		runner.onMount({
 			resizeTarget: containerEl
 		});
+
+		return () => {
+			runner.dispose();
+		};
 	});
 </script>
 
@@ -66,6 +70,6 @@
 	}
 	.flitter {
 		width: 100%;
-		height: 100%
+		height: 100%;
 	}
 </style>

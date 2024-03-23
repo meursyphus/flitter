@@ -9,6 +9,7 @@ import {
   Scheduler,
   RenderFrameDispatcher,
 } from "./scheduler";
+import { HitTestDispatcher } from "./hit-test/HitTestDispatcher";
 
 type AppRunnerProps = {
   document?: Document;
@@ -36,15 +37,19 @@ export class AppRunner {
       view,
       document: _document,
       window: _window,
+      onResize: this.handleViewResize,
     });
     const renderDispatcher = new RenderFrameDispatcher();
     const buildOwner = new BuildOwner({
       onNeedVisualUpdate: () => renderDispatcher.dispatch(),
     });
+
     const renderOwner = new RenderOwner({
       onNeedVisualUpdate: () => renderDispatcher.dispatch(),
-      paintContext: renderContext.paintContext,
+      renderContext: renderContext,
+      hitTestDispatcher: new HitTestDispatcher(),
     });
+
     const scheduler = new Scheduler();
     scheduler.addPersistenceCallbacks(() => buildOwner.flushBuild());
     scheduler.addPersistenceCallbacks(() => renderOwner.drawFrame());
@@ -65,7 +70,6 @@ export class AppRunner {
       app: widget,
       buildOwner: this.buildOwner,
       renderOwner: this.renderOwner,
-      renderContext: this.renderContext,
       scheduler: this.scheduler,
     }).createElement();
     this.root.mount(undefined);
@@ -90,12 +94,12 @@ export class AppRunner {
     if (document) this.renderContext.document = document;
     if (window) this.renderContext.window = window;
     if (view) this.renderContext.view = view;
-    this.renderOwner.paintContext = this.renderContext.paintContext;
+    this.renderOwner.renderContext = this.renderContext;
   }
 
   onMount({
     view,
-    resizeTarget: resizeTarget,
+    resizeTarget,
   }: {
     view?: SVGSVGElement;
     resizeTarget?: HTMLElement;
@@ -105,25 +109,17 @@ export class AppRunner {
       window,
       document,
     });
-    resizeTarget && this.observeCanvasSize(resizeTarget);
+    resizeTarget && this.renderContext.observeSize(resizeTarget);
   }
 
-  observeCanvasSize(target: HTMLElement) {
-    const resize = (child: ResizeObserverEntry) => {
-      const { width, height } = child.target.getBoundingClientRect();
-      this.viewSize = new Size({ width, height });
-    };
-    const resizeObserver = new ResizeObserver(entries => {
-      const child = entries[0];
-      resize(child);
-      if (this.didRun) {
-        this.draw();
-      } else {
-        this.runApp(this.widget);
-      }
-    });
-    resizeObserver.observe(target);
-  }
+  handleViewResize = (size: Size) => {
+    this.viewSize = size;
+    if (this.didRun) {
+      this.draw();
+    } else {
+      this.runApp(this.widget);
+    }
+  };
 
   draw() {
     this.layout();
@@ -144,24 +140,54 @@ export class AppRunner {
     const rootRenderObject = this.root.renderObject;
     rootRenderObject.paint(this.renderContext.paintContext);
   }
+
+  dispose() {
+    this.root.unmount();
+    this.renderContext.dispose();
+  }
 }
 
 export class RenderContext {
   document: Document;
   window: Window;
   view: SVGSVGElement;
+  viewPort: { translation: { x: number; y: number }; scale: number } = {
+    translation: { x: 0, y: 0 },
+    scale: 1,
+  };
+  viewSize: Size = new Size({ width: 0, height: 0 });
+  private resizeObserver: ResizeObserver;
+  private onResize: (size: Size) => void;
+
   constructor({
     document,
     window,
     view,
+    onResize,
   }: {
     document: Document;
     window: Window;
     view: SVGSVGElement;
+    onResize: (size: Size) => void;
   }) {
     this.document = document;
     this.window = window;
     this.view = view;
+    this.onResize = onResize;
+  }
+
+  setViewport({
+    translation,
+    scale,
+  }: {
+    translation: { x: number; y: number };
+    scale: number;
+  }) {
+    this.viewPort = { translation, scale };
+    this.view.setAttribute(
+      "viewBox",
+      `${-this.viewPort.translation.x} ${-this.viewPort.translation.y} ${this.viewSize.width / this.viewPort.scale} ${this.viewSize.height / this.viewPort.scale}`,
+    );
   }
 
   setConfig({
@@ -201,5 +227,18 @@ export class RenderContext {
         child.insertAdjacentElement("beforebegin", el);
       },
     };
+  }
+
+  dispose() {
+    this.resizeObserver.disconnect();
+  }
+
+  observeSize(target: HTMLElement) {
+    this.resizeObserver = new ResizeObserver(([child]) => {
+      const { width, height } = child.target.getBoundingClientRect();
+      this.viewSize = new Size({ width, height });
+      this.onResize(this.viewSize);
+    });
+    this.resizeObserver.observe(target);
   }
 }
