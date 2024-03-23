@@ -35,10 +35,13 @@ export class RenderObject {
   }
   set domOrder(newOrder: number) {
     if (newOrder === this.#domOrder) return;
-    this.#domOrderChanged = true;
     this.#domOrder = newOrder;
+    this.didDomOrderChange();
   }
   #domOrderChanged = false;
+  didDomOrderChange() {
+    this.#domOrderChanged = true;
+  }
   get domNode() {
     assert(this.#domNode != null, "domNode is not initialized");
     return this.#domNode;

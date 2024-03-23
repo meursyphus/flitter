@@ -346,6 +346,11 @@ export class RenderGestureDetector extends SingleChildRenderObject {
       rect,
     };
   }
+
+  override didChangeDomOrder(): void {
+    super.didChangeDomOrder();
+    this.renderOwner.hitTestDispatcher.didChangeDomOrder();
+  }
 }
 
 type MouseEventCallback = (event: MouseEvent) => void;
@@ -364,7 +369,6 @@ class DragBackend {
     );
     return document;
   }
-  private dragStartListener: Record<SourceId, (e: MouseEvent) => void> = {};
   private dragMoveListener: Record<SourceId, (e: MouseEvent) => void> = {};
   private dragEndListener: Record<SourceId, (e: MouseEvent) => void> = {};
 
