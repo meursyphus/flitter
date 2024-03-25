@@ -77,7 +77,6 @@ export class AppRunner {
 
     this.didRun = true;
     this.draw();
-    this.scheduler.consumePostCallbacks();
 
     return this.renderContext.view.innerHTML;
   }
@@ -125,6 +124,7 @@ export class AppRunner {
     this.layout();
     this.renderOwner.rearrangeDomOrder();
     this.paint();
+    this.scheduler.consumePostCallbacks();
   }
 
   rebuild() {
