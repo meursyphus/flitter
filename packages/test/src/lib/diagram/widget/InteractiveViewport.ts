@@ -8,8 +8,7 @@ import {
 	Alignment,
 	BuildContext
 } from '@meursyphus/flitter';
-import { classToFunction } from './utils';
-import { clamp } from './utils';
+import { classToFunction, clamp } from './utils';
 import DiagramControllerProvider from './Provider/DiagramControllerProvider';
 import type { DiagramController } from '../controller';
 
