@@ -126,19 +126,12 @@ class AlignLinerState extends State<AlignLiner> {
 				 * legacy node가 mount되고 난 뒤 이벤트 발행
 				 */
 				this.addPostFrameCallback(() => {
-					/**
-					 * flitter의 scheduler 를 고치기 전까진, addPostFrameCallback 안에서 setState를 동작하게 하기 위해
-					 * Macro TaskQueue에 넣는 작업이 필요하다.
-					 * @see https://github.com/meursyphus/flitter/issues/25
-					 */
-					setTimeout(() => {
-						this.eventManager.dispatchEvent(
-							new NodeAlignTranslationEvent({
-								tableName: target!,
-								translation: new Offset({ x: dx, y: dy })
-							})
-						);
-					});
+					this.eventManager.dispatchEvent(
+						new NodeAlignTranslationEvent({
+							tableName: target!,
+							translation: new Offset({ x: dx, y: dy })
+						})
+					);
 				});
 			}
 		});
