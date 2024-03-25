@@ -20,7 +20,7 @@ class FakeIntrinsicWidth extends SingleChildRenderObjectWidget {
 	createRenderObject() {
 		return new RenderFakeIntrinsicWidth();
 	}
-	updateRenderObject(_: RenderObject): void {}
+	updateRenderObject(): void {}
 }
 
 class RenderFakeIntrinsicWidth extends SingleChildRenderObject {
@@ -28,7 +28,7 @@ class RenderFakeIntrinsicWidth extends SingleChildRenderObject {
 		super({ isPainter: false });
 	}
 
-	getIntrinsicWidth(height: number): number {
+	getIntrinsicWidth(): number {
 		return 0;
 	}
 }

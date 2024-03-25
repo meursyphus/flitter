@@ -1,6 +1,12 @@
 import { assert } from "src/utils";
 import type RenderFrameDispatcher from "./RenderFrameDispatcher";
 
+enum SchedulerPhase {
+  idle,
+  persistenceCallbacks,
+  postFrameCallbacks,
+}
+
 class Scheduler {
   phase: SchedulerPhase;
   private persistenceCallbacks: (() => void)[];
@@ -71,12 +77,6 @@ class Scheduler {
   addPostFrameCallbacks(callback: () => void) {
     this.postFrameCallbacks.push(() => callback());
   }
-}
-
-enum SchedulerPhase {
-  idle,
-  persistenceCallbacks,
-  postFrameCallbacks,
 }
 
 export default Scheduler;
