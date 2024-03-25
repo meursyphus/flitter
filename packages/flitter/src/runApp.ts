@@ -39,21 +39,20 @@ export class AppRunner {
       window: _window,
       onResize: this.handleViewResize,
     });
-    const renderDispatcher = new RenderFrameDispatcher();
+    const renderFrameDispatcher = new RenderFrameDispatcher();
+    const scheduler = new Scheduler({ renderFrameDispatcher });
     const buildOwner = new BuildOwner({
-      onNeedVisualUpdate: () => renderDispatcher.dispatch(),
+      onNeedVisualUpdate: () => scheduler.ensureVisualUpdate(),
     });
 
     const renderOwner = new RenderOwner({
-      onNeedVisualUpdate: () => renderDispatcher.dispatch(),
+      onNeedVisualUpdate: () => scheduler.ensureVisualUpdate(),
       renderContext: renderContext,
       hitTestDispatcher: new HitTestDispatcher(),
     });
 
-    const scheduler = new Scheduler();
     scheduler.addPersistenceCallbacks(() => buildOwner.flushBuild());
     scheduler.addPersistenceCallbacks(() => renderOwner.drawFrame());
-    renderDispatcher.setOnFrame(() => scheduler.schedule());
     this.buildOwner = buildOwner;
     this.renderOwner = renderOwner;
     this.scheduler = scheduler;
@@ -124,7 +123,7 @@ export class AppRunner {
     this.layout();
     this.renderOwner.rearrangeDomOrder();
     this.paint();
-    this.scheduler.consumePostCallbacks();
+    this.scheduler.flushPostCallbacks();
   }
 
   rebuild() {

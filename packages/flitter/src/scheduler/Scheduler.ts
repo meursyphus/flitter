@@ -1,40 +1,73 @@
+import { assert } from "src/utils";
+import type RenderFrameDispatcher from "./RenderFrameDispatcher";
+
+enum SchedulerPhase {
+  idle,
+  persistenceCallbacks,
+  postFrameCallbacks,
+}
+
 class Scheduler {
   phase: SchedulerPhase;
   private persistenceCallbacks: (() => void)[];
   private postFrameCallbacks: (() => void)[];
-  constructor() {
+  private renderFrameDispatcher: RenderFrameDispatcher;
+  constructor({
+    renderFrameDispatcher,
+  }: {
+    renderFrameDispatcher: RenderFrameDispatcher;
+  }) {
     this.phase = SchedulerPhase.idle;
     this.persistenceCallbacks = [];
     this.postFrameCallbacks = [];
+    this.renderFrameDispatcher = renderFrameDispatcher;
+
+    renderFrameDispatcher.setOnFrame(() => this.handleDrawFrame());
   }
 
-  consumePostCallbacks() {
+  flushPostCallbacks() {
     this.postFrameCallbacks.forEach(callback => {
       callback();
     });
     this.postFrameCallbacks = [];
   }
 
-  schedule() {
+  ensureVisualUpdate() {
     switch (this.phase) {
       case SchedulerPhase.idle:
       case SchedulerPhase.postFrameCallbacks:
-        this.performSchedule();
+        this.schedule();
         break;
       case SchedulerPhase.persistenceCallbacks:
         break;
     }
   }
 
-  private performSchedule() {
+  private hasScheduledFrame = false;
+  private schedule() {
+    if (this.hasScheduledFrame) return;
+    this.renderFrameDispatcher.dispatch();
+    this.hasScheduledFrame = true;
+  }
+
+  private handleDrawFrame() {
+    assert(
+      this.phase === SchedulerPhase.idle,
+      "Scheduler should be idle on beginning frame",
+    );
+    this.hasScheduledFrame = false;
+
     this.phase = SchedulerPhase.persistenceCallbacks;
+    this.flushPersistenceCallbacks();
+    this.phase = SchedulerPhase.postFrameCallbacks;
+    this.flushPostCallbacks();
+    this.phase = SchedulerPhase.idle;
+  }
+
+  private flushPersistenceCallbacks() {
     this.persistenceCallbacks.forEach(callback => {
       callback();
     });
-    this.phase = SchedulerPhase.postFrameCallbacks;
-    this.consumePostCallbacks();
-    this.postFrameCallbacks = [];
-    this.phase = SchedulerPhase.idle;
   }
 
   addPersistenceCallbacks(callback: () => void) {
@@ -44,12 +77,6 @@ class Scheduler {
   addPostFrameCallbacks(callback: () => void) {
     this.postFrameCallbacks.push(() => callback());
   }
-}
-
-enum SchedulerPhase {
-  idle,
-  persistenceCallbacks,
-  postFrameCallbacks,
 }
 
 export default Scheduler;

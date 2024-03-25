@@ -43,8 +43,8 @@ class DraggableState extends State<Draggable> {
 	delta: Offset = Offset.zero();
 
 	handleDragStart = (e: MouseEvent): void => {
-		e.preventDefault();
 		e.stopPropagation();
+		e.preventDefault();
 		const { x, y } = e;
 		this.origin = new Offset({ x, y });
 		this.widget.onDragStart?.();
@@ -58,10 +58,7 @@ class DraggableState extends State<Draggable> {
 		const newDelta = new Offset({ x, y }).minus(this.origin!);
 
 		this.delta = newDelta;
-		this.widget.onDragUpdate?.({
-			delta: newDelta,
-			movement: newDelta.minus(oldDelta)
-		});
+		this.widget.onDragUpdate?.({ delta: newDelta, movement: newDelta.minus(oldDelta) });
 	};
 
 	handleDragEnd = (): void => {

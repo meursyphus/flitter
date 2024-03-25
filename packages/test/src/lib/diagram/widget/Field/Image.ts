@@ -24,7 +24,7 @@ function Image({ width, height, src }: { width: number; height: number; src: str
 			paint({ image }, size) {
 				image.setAttribute('width', `${size.width}`);
 				image.setAttribute('height', `${size.height}`);
-				//image.setAttribute("href", src);
+				image.setAttribute('href', src);
 			}
 		}
 	});

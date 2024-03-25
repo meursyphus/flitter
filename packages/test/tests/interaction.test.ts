@@ -37,4 +37,12 @@ test.describe('Interaction', () => {
 		await page.mouse.move(-500, -500, { steps: 5 });
 		await expect(page.getByText('tooltip')).not.toBeVisible();
 	});
+
+	test('setState work on postCallbackFrame', async ({ page }) => {
+		await page.goto('http://localhost:4173/interaction/set-state-on-post-frame-callback');
+		const button = page.locator('rect');
+		await button.click();
+		const target = page.getByText('1');
+		await expect(target).toBeVisible();
+	});
 });

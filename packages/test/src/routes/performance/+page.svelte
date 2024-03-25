@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Diagram from '$lib/diagram/Diagram.svelte';
+	import { project } from '$lib/diagram/fixture';
 	let show = false;
 
 	function toggle() {
@@ -17,7 +18,7 @@
 
 <div class="diagram-wrapper">
 	{#if show}
-		<Diagram />
+		<Diagram {project} />
 	{/if}
 </div>
 
@@ -26,5 +27,6 @@
 		padding: 16px;
 		width: 100%;
 		height: 500px;
+		background-color: darkgrey;
 	}
 </style>

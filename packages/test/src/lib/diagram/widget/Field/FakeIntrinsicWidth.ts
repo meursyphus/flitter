@@ -1,10 +1,10 @@
 import {
-  RenderObject,
-  SingleChildRenderObject,
-  SingleChildRenderObjectWidget,
-  Widget,
-} from "@meursyphus/flitter";
-import { classToFunction } from "../utils";
+	RenderObject,
+	SingleChildRenderObject,
+	SingleChildRenderObjectWidget,
+	Widget
+} from '@meursyphus/flitter';
+import { classToFunction } from '../utils';
 
 /*
 현재 Field의 너비가 Note에 있는 Field의 가장 큰 너비에 맞추기 위해 노드 부모에 IntrinsicWidth를 두고 있다.
@@ -13,24 +13,24 @@ import { classToFunction } from "../utils";
 */
 
 class FakeIntrinsicWidth extends SingleChildRenderObjectWidget {
-  constructor({ child }: { child: Widget }) {
-    super(child);
-  }
+	constructor({ child }: { child: Widget }) {
+		super(child);
+	}
 
-  createRenderObject() {
-    return new RenderFakeIntrinsicWidth();
-  }
-  updateRenderObject(_: RenderObject): void {}
+	createRenderObject() {
+		return new RenderFakeIntrinsicWidth();
+	}
+	updateRenderObject(): void {}
 }
 
 class RenderFakeIntrinsicWidth extends SingleChildRenderObject {
-  constructor() {
-    super({ isPainter: false });
-  }
+	constructor() {
+		super({ isPainter: false });
+	}
 
-  getIntrinsicWidth(_: number): number {
-    return 0;
-  }
+	getIntrinsicWidth(): number {
+		return 0;
+	}
 }
 
 export default classToFunction(FakeIntrinsicWidth);
