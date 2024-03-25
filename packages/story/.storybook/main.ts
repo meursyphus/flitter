@@ -15,7 +15,9 @@ const config: StorybookConfig = {
 		getAbsolutePath('@storybook/addon-links'),
 		getAbsolutePath('@storybook/addon-essentials'),
 		getAbsolutePath('@chromatic-com/storybook'),
-		getAbsolutePath('@storybook/addon-interactions')
+		getAbsolutePath('@storybook/addon-interactions'),
+		getAbsolutePath('@storybook/addon-mdx-gfm'),
+		getAbsolutePath('@chromatic-com/storybook')
 	],
 	framework: {
 		name: getAbsolutePath('@storybook/sveltekit'),
@@ -23,6 +25,6 @@ const config: StorybookConfig = {
 	},
 	docs: {
 		autodocs: 'tag'
-	},
+	}
 };
 export default config;
