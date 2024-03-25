@@ -58,7 +58,7 @@ class StateMovedNodes extends State<MovedNodes> {
 		this.legacyNodes[tableName] = position;
 	};
 
-	override build(_context: Element): Widget {
+	override build(): Widget {
 		const tables = this.getLegacyTables();
 		return Stack({
 			fit: StackFit.loose,

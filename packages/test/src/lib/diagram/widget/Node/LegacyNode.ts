@@ -87,7 +87,7 @@ class NodeState extends State<Node> {
 		});
 	};
 
-	override build(_: BuildContext) {
+	override build() {
 		const { table } = this.widget;
 
 		return Positioned({

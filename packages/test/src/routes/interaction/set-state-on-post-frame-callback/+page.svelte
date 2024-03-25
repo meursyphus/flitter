@@ -29,10 +29,11 @@
 						right: 0,
 						child: GestureDetector({
 							onClick: () => {
-								this.setState(() => {});
-								this.element.scheduler.addPostFrameCallbacks(() => {
-									this.setState(() => {
-										this.number += 1;
+								this.setState(() => {
+									this.element.scheduler.addPostFrameCallbacks(() => {
+										this.setState(() => {
+											this.number += 1;
+										});
 									});
 								});
 							},

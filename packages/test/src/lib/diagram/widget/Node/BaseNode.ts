@@ -178,7 +178,7 @@ class BaseNodeState extends State<baseNode> {
 											})
 										})
 									}),
-									...fields.map((field) => Field({ field }))
+									...fields.map((field: unknown) => Field({ field }))
 								]
 							})
 						})
