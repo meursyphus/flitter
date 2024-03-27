@@ -9,8 +9,8 @@ class ChromeTraceAnalyzer {
 
 	getDurationMs(name) {
 		if (this.nodes == null) throw new Error('nodes is not initialized');
-		const node = this.nodes.find((node) => node.callFrame.functionName === name);
-		return node.duration / 1000;
+		const result = this.nodes.find((node) => node.callFrame.functionName === name);
+		return result.duration / 1000;
 	}
 
 	setConfig(trace) {
