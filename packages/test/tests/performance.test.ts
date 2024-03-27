@@ -1,138 +1,98 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { formatDate } from '../src/lib/formatDate';
-import { test } from '@playwright/test';
-import traceJson from '../performance-history/output/2024-03-26:13:00:58.js';
+import { expect, test } from '@playwright/test';
 
 test.describe('Performance', () => {
-	test('Measure widget rendering time', async ({ page }) => {
-		await page.goto('http://localhost:4173/performance');
-		const startTime = performance.now();
-		await page.click('button');
-		await page.waitForSelector('svg');
-		const endTime = performance.now();
-
-		const duration = endTime - startTime;
-
-		console.log('render duration: ', duration);
-	});
-
-	test('Get Performance Metrics', async ({ browser }) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const client = await context.newCDPSession(page);
-
-		await client.send('Performance.enable');
-
-		await page.goto('http://localhost:4173/performance');
-		await page.click('button');
-		await page.waitForSelector('svg');
-		console.log('=============CDP Performance Metrics===============');
-		const performanceMetrics = await client.send('Performance.getMetrics');
-
-		console.log(performanceMetrics.metrics);
-	});
-
-	test('Capture performance traces by marking actions using Performance API', async ({
-		page,
-		browser
-	}) => {
-		console.log('========== Start Tracing Perf ===========');
-		await browser.startTracing(page, {
-			path: `./performance-history/${formatDate(new Date())}.json`,
-			screenshots: true,
-			categories: ['disabled-by-default-v8.cpu_profiler']
-		});
-
-		await page.goto('http://localhost:4173/performance');
-
-		//Using Performance.mark API
-		await page.evaluate(() => window.performance.mark('Perf:Started'));
-		await page.click('button');
-		await page.waitForSelector('svg');
-		//Using performance.mark API
-		await page.evaluate(() => window.performance.mark('Perf:Ended'));
-		//Performance measure
-		await page.evaluate(() => window.performance.measure('overall', 'Perf:Started', 'Perf:Ended'));
-
-		//To get all performance marks
-		const getAllMarksJson = await page.evaluate(() =>
-			JSON.stringify(window.performance.getEntriesByType('mark'))
-		);
-		const getAllMarks = await JSON.parse(getAllMarksJson);
-		console.log('window.performance.getEntriesByType("mark")', getAllMarks);
-
-		//To get all performance measures of Google
-		const getAllMeasuresJson = await page.evaluate(() =>
-			JSON.stringify(window.performance.getEntriesByType('measure'))
-		);
-		const getAllMeasures = await JSON.parse(getAllMeasuresJson);
-		console.log('window.performance.getEntriesByType("measure")', getAllMeasures);
-
-		console.log('======= Stop Tracing ============');
-		await browser.stopTracing();
-	});
-
-	test('js execution time', async ({ browser }) => {
+	test('runApp method must be under 70ms', async ({ browser }) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const client = await context.newCDPSession(page);
 
 		await client.send('Tracing.start', {
-			categories: 'devtools.timeline',
+			categories: 'devtools.timeline,disabled-by-default-v8.cpu_profiler',
 			transferMode: 'ReturnAsStream'
 		});
 
 		await page.goto('http://localhost:4173/performance');
-		await page.click('button');
+		await page.getByText('Show').click();
 		await page.waitForSelector('svg');
 		await client.send('Tracing.end');
-		console.log('=============CDP Performance Metrics===============');
 
-		const traceData = await new Promise((resolve) => {
+		const traceData: any = await new Promise((resolve) => {
 			client.once('Tracing.tracingComplete', async (data) => {
 				const stream = data.stream!;
 				const chunks = [];
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				let chunk: any = '';
 				while ((chunk = await client.send('IO.read', { handle: stream }))) {
 					if (chunk.eof) {
 						await client.send('IO.close', { handle: stream });
 						break;
 					}
-					chunks.push(chunk.data);
+					chunks.push(JSON.parse(chunk.data));
 				}
-				resolve(chunks.join(''));
+				resolve(chunks);
 			});
 		});
 
-		console.log(traceData);
-	});
+		const [{ traceEvents }] = traceData;
+		const profileChunks = traceEvents.filter((entry: any) => entry.name === 'ProfileChunk');
+		const nodes = profileChunks
+			.map((entry: any) => entry.args.data.cpuProfile.nodes)
+			.flat()
+			.sort((a: any, b: any) => a.id - b.id);
+		const runApp = nodes.find((node: any) => node.callFrame.functionName === 'runApp');
+		const mount = nodes.find((node: any) => node.callFrame.functionName === 'mount');
+		const draw = nodes.find((node: any) => node.callFrame.functionName === 'draw');
+		const sampleTimes: Record<number, number> = {};
 
-	test('temp', () => {
-		const flattenTasks = (tasks: any) => {
-			return tasks.reduce((acc: any, task: any) => {
-				acc.push(task);
-				if (task.children && task.children.length) {
-					acc.push(...flattenTasks(task.children));
-				}
-				return acc;
-			}, []);
-		};
+		profileChunks.forEach((chunk: any) => {
+			const {
+				cpuProfile: { samples },
+				timeDeltas
+			} = chunk.args.data as {
+				cpuProfile: {
+					samples: number[];
+				};
+				timeDeltas: number[];
+			};
 
-		const tasks = traceJson.tasks;
-		const flatTasks = flattenTasks(tasks);
-		flatTasks.sort((a: any, b: any) => b.duration - a.duration);
-		console.log(
-			flatTasks
-				.filter((task: any) => task.event.name === 'FunctionCall')
-				.splice(0, 10)
-				.map((task: any) => ({
-					duration: task.duration,
-					selfTime: task.selfTime,
-					name: task.event.name,
-					attr: task.metadata.attribution,
-					children: task.children[0]
-				}))
-		);
+			samples.forEach((id, index) => {
+				const delta = timeDeltas[index];
+				const time = sampleTimes[id] ?? 0;
+				sampleTimes[id] = time + delta;
+			});
+		});
+		interface TreeNode {
+			id: number;
+			parent?: number;
+			children: TreeNode[];
+			duration: number;
+		}
+
+		const treeNodes: TreeNode[] = nodes;
+
+		const nodesMap = new Map<number, TreeNode>();
+		treeNodes.forEach((node) => {
+			if (node == null) return;
+			node.children = [];
+			node.duration = sampleTimes[node.id] ?? 0;
+			nodesMap.set(node.id, node);
+		});
+
+		treeNodes.sort((a, b) => b.id - a.id);
+		treeNodes.forEach((node) => {
+			if (node == null) return;
+			if (node.parent == null) return;
+			const parentNode = nodesMap.get(node.parent);
+			if (parentNode) {
+				parentNode.children.push(node);
+				parentNode.duration += node.duration;
+			}
+		});
+
+		console.log(`runApp execution time: ${(runApp.duration / 1000).toFixed(2)}ms`);
+		console.log(`mount execution time: ${(mount.duration / 1000).toFixed(2)}ms`);
+		console.log(`draw execution time: ${(draw.duration / 1000).toFixed(2)}ms`);
+
+		expect(runApp.duration).toBeLessThan(70 * 1000);
 	});
 });
