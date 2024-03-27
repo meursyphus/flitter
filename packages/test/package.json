@@ -12,7 +12,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
-		"test:integration": "playwright test",
+		"test:integration": "playwright test --grep-invert=tracking-performance.test.ts tests/",
 		"test:unit": "vitest"
 	},
 	"devDependencies": {
@@ -23,21 +23,24 @@
 		"@types/eslint": "^8.56.0",
 		"@typescript-eslint/eslint-plugin": "^7.0.0",
 		"@typescript-eslint/parser": "^7.0.0",
+		"chrome-trace": "^0.2.2",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
+		"fs": "^0.0.1-security",
+		"path": "^0.12.7",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
 		"svelte": "^4.2.7",
 		"svelte-check": "^3.6.0",
 		"tslib": "^2.4.1",
 		"typescript": "^5.0.0",
+		"url": "^0.11.3",
 		"vite": "^5.0.3",
 		"vitest": "^1.2.0"
 	},
 	"type": "module",
 	"dependencies": {
-		"fs": "^0.0.1-security",
-		"path": "^0.12.7"
+		"@meursyphus/flitter-chart": "^0.0.4"
 	}
 }
