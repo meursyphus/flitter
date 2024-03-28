@@ -57,8 +57,8 @@ export function getTextWidth({
     // is monospace
     width = fontSize * text.length;
   } else {
-    for (let i = 0; i < text.length; i++) {
-      const preCalcWidth = DEFAULT_TEXT_WIDTH_MAP[text[i]];
+    for (const char of text) {
+      const preCalcWidth = DEFAULT_TEXT_WIDTH_MAP[char];
       width += preCalcWidth == null ? fontSize : preCalcWidth * fontSize;
     }
   }

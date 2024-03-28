@@ -35,7 +35,8 @@ test.describe('Performance Tracking', () => {
 			runApp: 0,
 			mount: 0,
 			draw: 0,
-			layout: 0
+			layout: 0,
+			paint: 0
 		};
 		for (let i = 0; i < COUNT; i++) {
 			const browser = await chromium.launch({ headless: true });
