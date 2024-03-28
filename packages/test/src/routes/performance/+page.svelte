@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { StackedBarChart, LineChart } from '@meursyphus/flitter-chart';
+	import { Text } from '@meursyphus/flitter';
 	import SvelteWidget from '@meursyphus/flitter-svelte';
 	import { formatDate } from '$lib/formatDate';
 
@@ -19,7 +20,7 @@
 	) {
 		const labels = histories.map((d) => formatDate(new Date(d.timestamp)));
 		const datasets: { data: number[]; legend: string }[] = keys.map((legend) => ({
-			data: histories.map((d) => Math.round(d[legend] as number)),
+			data: histories.map((d) => Math.round((d[legend] as number) * 1000)),
 			legend
 		}));
 
@@ -35,7 +36,13 @@
 		width="100%"
 		height="600px"
 		widget={LineChart({
-			data: lineChartData
+			data: lineChartData,
+			custom: {
+				yAxisLabel: {
+					type: 'custom',
+					Custom: (_, { text }) => Text(`${Number(text) / 1000} ms`)
+				}
+			}
 		})}
 	/>
 	<SvelteWidget
@@ -52,6 +59,10 @@
 			},
 
 			custom: {
+				yAxisLabel: {
+					type: 'custom',
+					Custom: (_, { text }) => Text(`${Number(text) / 1000} ms`)
+				},
 				series: {
 					type: 'config'
 				},

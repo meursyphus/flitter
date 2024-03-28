@@ -145,7 +145,8 @@ class Constraints extends Data {
 
   normalize(): Constraints {
     return new Constraints({
-      ...this,
+      maxHeight: Math.max(this.minHeight, this.maxHeight),
+      maxWidth: Math.max(this.minWidth, this.maxWidth),
       minHeight: Math.min(this.minHeight, this.maxHeight),
       minWidth: Math.min(this.minWidth, this.maxWidth),
     });
