@@ -25,6 +25,8 @@ test.describe('Performance Tracking', () => {
 		await browser.stopTracing();
 	});
 
+	const SAVE_PERFORMANCE_TRACE = true;
+
 	test('Capture analyzed trace when diagram is rendered', async () => {
 		const COUNT = 10;
 
@@ -33,9 +35,7 @@ test.describe('Performance Tracking', () => {
 			runApp: 0,
 			mount: 0,
 			draw: 0,
-			layout: 0,
-			paint: 0,
-			note: ''
+			layout: 0
 		};
 		for (let i = 0; i < COUNT; i++) {
 			const browser = await chromium.launch({ headless: true });
@@ -74,8 +74,10 @@ test.describe('Performance Tracking', () => {
 		const __dirname = path.dirname(fileURLToPath(import.meta.url));
 		const filePath = path.join(__dirname, '../performance-history/duration.ts');
 
-		let fileContent = fs.readFileSync(filePath, { encoding: 'utf8' });
-		fileContent += `histories.push(${JSON.stringify(duration)});\n`;
-		fs.writeFileSync(filePath, fileContent);
+		if (SAVE_PERFORMANCE_TRACE) {
+			let fileContent = fs.readFileSync(filePath, { encoding: 'utf8' });
+			fileContent += `histories.push(${JSON.stringify(duration)});\n`;
+			fs.writeFileSync(filePath, fileContent);
+		}
 	});
 });

@@ -6,7 +6,9 @@
 
 	export let data: PageData;
 
-	const histories = data.histories.slice(0, 6).sort((a, b) => a.timestamp - b.timestamp);
+	const histories = data.histories
+		.sort((a, b) => a.timestamp - b.timestamp)
+		.slice(data.histories.length - 6, data.histories.length);
 
 	const lineChartData = convertChartData(histories);
 	const stackedChart = convertChartData(histories, ['paint', 'layout', 'mount']);
@@ -17,7 +19,7 @@
 	) {
 		const labels = histories.map((d) => formatDate(new Date(d.timestamp)));
 		const datasets: { data: number[]; legend: string }[] = keys.map((legend) => ({
-			data: histories.map((d) => Math.floor(d[legend] as number)),
+			data: histories.map((d) => Math.round(d[legend] as number)),
 			legend
 		}));
 
@@ -30,14 +32,14 @@
 
 <div class="chart-wrapper">
 	<SvelteWidget
-		width="800px"
+		width="100%"
 		height="600px"
 		widget={LineChart({
 			data: lineChartData
 		})}
 	/>
 	<SvelteWidget
-		width="700px"
+		width="100%"
 		height="600px"
 		widget={StackedBarChart({
 			data: {
@@ -72,6 +74,7 @@
 <style>
 	.chart-wrapper {
 		display: flex;
+		flex-direction: column;
 		gap: 1rem;
 	}
 </style>

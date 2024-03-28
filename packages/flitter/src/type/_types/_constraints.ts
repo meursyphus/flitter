@@ -129,7 +129,8 @@ class Constraints extends Data {
 
   loosen(): Constraints {
     return new Constraints({
-      ...this,
+      maxHeight: this.maxHeight,
+      maxWidth: this.maxWidth,
       minHeight: 0,
       minWidth: 0,
     });
