@@ -1,0 +1,27 @@
+import { Meta, Story } from '@storybook/blocks';
+import { Source } from '@storybook/addon-docs';
+import { dedent } from 'ts-dedent';
+import * as Stories from './Widget.stories';
+
+<Meta of={Stories} />
+
+# DecoratedBox
+
+This widget clip the child widget like DecoratedBox Widget in Flutter.
+
+
+See: [https://api.flutter.dev/flutter/widgets/DecoratedBox-class.html](https://api.flutter.dev/flutter/widgets/DecoratedBox-class.html)
+
+## Props
+
+### decoration
+
+**Value: Decoration**
+
+### child
+
+**Value: Widget | undefined**
+
+## Basic
+
+<Story of={Stories.Basic} />

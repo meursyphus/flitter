@@ -1,20 +1,20 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import Intro from '../components/pages/Intro.astro'
-import Features from '../components/pages/Features.astro'
-import ShowCase from '../components/pages/ShowCase.astro'
-import PleaseComeIn from '../components/pages/PleaseComeIn.astro'
-import Author from '../components/pages/Author.astro'
-import StartGuide from '../components/pages/StartGuide.astro'
+import Layout from "../layouts/HomeLayout.astro";
+import Intro from "../components/pages/Intro.astro";
+import Features from "../components/pages/Features.astro";
+import ShowCase from "../components/pages/ShowCase.astro";
+import PleaseComeIn from "../components/pages/PleaseComeIn.astro";
+import ThanksToFlutter from "../components/pages/ThanksToFlutter.astro";
+import StartGuide from "../components/pages/StartGuide.astro";
 ---
 
-<Layout title="Welcome to Astro.">
-  <main class="">
+<Layout title="Welcome to Flitter">
+  <main class="flex flex-col">
     <Intro />
     <StartGuide />
     <Features />
-    <ShowCase /> 
-    <Author />
+    <ShowCase />
+    <ThanksToFlutter />
     <PleaseComeIn />
   </main>
 </Layout>

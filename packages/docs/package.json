@@ -11,9 +11,13 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.5.6",
+    "@astrojs/mdx": "^2.1.1",
     "@astrojs/react": "^3.0.10",
     "@astrojs/svelte": "^5.2.0",
     "@astrojs/tailwind": "^5.1.0",
+    "@egjs/react-flicking": "^4.11.2",
+    "@meursyphus/flitter-chart": "^0.0.3",
+    "@tailwindcss/typography": "^0.5.10",
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",
     "astro": "^4.4.15",
@@ -24,6 +28,7 @@
     "typescript": "^5.4.2"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.10",
     "prettier": "^3.2.5",
     "prettier-plugin-astro": "^0.13.0"
   }

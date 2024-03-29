@@ -1,0 +1,87 @@
+---
+nav_group: "Concepts"
+nav_group_order: 2
+nav_order: 3
+nav_title: Flutter-like Syntax
+
+title: "Embracing Flutter-like Syntax in Flitter"
+description: "Discover the seamless transition from Flutter to Flitter with our closely mirrored syntax, making your journey into data visualization as smooth as possible."
+---
+
+# Embracing Flutter-like Syntax in Flitter
+
+Flitter's design philosophy is deeply influenced by Flutter, one of the most popular frameworks for building beautiful, natively compiled applications across mobile, web, and desktop from a single codebase. By adopting a Flutter-like syntax, Flitter aims to provide a familiar development experience for Flutter enthusiasts venturing into the realm of data visualization on the web. This document highlights the syntactical similarities between Flutter and Flitter and explores these parallels through code examples.
+
+## Similarities in Syntax
+
+The core concept of Flitter is to reduce the learning curve for developers coming from a Flutter background. This is achieved by maintaining a consistent syntax that mirrors Flutter's approach to building UIs. Here are key areas where Flitter's syntax aligns closely with Flutter's:
+
+- **Widget-based design**: Both Flutter and Flitter utilize a widget-based architecture, where the UI is composed of a tree of widgets.
+- **Declarative UI**: Just like Flutter, Flitter adopts a declarative approach to UI development, allowing developers to describe what their UI should look like, rather than how to construct it programmatically.
+- **Component properties**: In both frameworks, widgets are customized through properties (often called props in Flitter), enabling a high degree of reusability and composability.
+
+## Code Example Comparison
+
+To illustrate the syntactical resemblance, let's compare how a simple UI element, such as a button with a click event, is implemented in both Flutter and Flitter.
+
+### Flutter Button Example
+
+```dart
+class SimpleLayoutApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('Hello, '),
+              Text('World!'),
+            ],
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 20),
+            child: Text('Welcome to Flutter.'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+### Flitter Button Example
+
+```typescript
+class SimpleLayoutApp extends StatelessWidget {
+  build(context: BuildContext): Widget {
+    return Container({
+      padding: EdgeInsets.all(20),
+      child: Column({
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row({
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Hello, '),
+              Text('World!'),
+            ],
+          }),
+          Container({
+            margin: EdgeInsets.only({top: 20}),
+            child: new Text('Welcome to FlutterJS.'),
+          }),
+        ],
+      }),
+    });
+  }
+}
+}
+```
+
+Although the examples use different programming languages (Dart for Flutter and TypeScript for Flitter), the structure and flow of defining UI components are remarkably similar. Both examples showcase a button that logs a message on press, highlighting how actions and child elements are defined in a similar manner.
+
+## Conclusion
+By embracing a Flutter-like syntax, Flitter not only eases the transition for developers familiar with Flutter but also leverages the intuitive and powerful UI development practices that Flutter advocates. This syntactical similarity, combined with Flitter's unique capabilities for web-based data visualization, opens up new opportunities for developers to create compelling and interactive visual experiences with minimal friction.

@@ -1,8 +1,9 @@
 ---
-import Header from '../components/ui/Header.astro';
-import Footer from '../components/ui/Footer.astro';
+import Header from "../components/ui/Header.astro";
 interface Props {
-  title: string;
+  title?: string;
+  description?: string;
+  image?: string;
 }
 
 const { title } = Astro.props;
@@ -14,14 +15,15 @@ const { title } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="description" content="Astro description" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.jpeg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+    <title>{title ?? "Flitter"}</title>
   </head>
   <body>
-		<Header />
-    <slot />
-		<Footer />
+    <Header />
+    <div class="layout">
+      <slot />
+    </div>
   </body>
 </html>
 <style is:global>
@@ -58,13 +60,38 @@ const { title } = Astro.props;
     margin: 0;
     display: flex;
     flex-direction: column;
+    --header: 72px;
+    overflow: hidden;
+  }
+  .layout {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    height: 100vh;
   }
   main {
     width: 100%;
-    max-width: 1440px;
-    padding-inline: 32px;
+    max-width: 1520px;
     margin-inline: auto;
-		display: flex;
-		flex-direction: column;
+    padding-inline: 32px;
+  }
+  /* Chrome, Edge, Safari에서 스크롤바 스타일링 */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #a6a6a6;
+    border-radius: 20px;
+    border: 3px solid #f4f4f4;
+  }
+
+  /* 선택적: 스크롤바가 활성 상태일 때의 스타일 */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #909090;
   }
 </style>

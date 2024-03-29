@@ -1,0 +1,160 @@
+---
+nav_group: "Getting Started"
+nav_group_order: 1
+nav_order: 1
+nav_title: "Why Flitter"
+title: Introduction to Flitter
+description: Discover the ease of creating dynamic and responsive data visualizations with Flitter.
+---
+import { Resize } from "$components/pages/docs/introduction/Resize"
+
+# Introduction to Flitter
+
+Welcome to Flitter, a declarative, widget-based library designed to simplify the process of creating dynamic and responsive data visualizations on the web. Inspired by the intuitive and powerful design of Flutter, Flitter brings a familiar syntax and a powerful layout engine to the world of web visualization, making it an ideal choice for developers at all levels.
+
+## Why Choose Flitter?
+
+In the realm of web development, effectively presenting data is as crucial as the data itself. Traditional visualization tools often come with steep learning curves and rigid frameworks that can stifle creativity and efficiency. Enter Flitter, which stands out by offering:
+
+- **A Flutter-like Declarative Syntax**: Write your visualizations with an intuitive and familiar widget-based syntax that significantly reduces the learning curve.
+- **Automatic Layout Calculations**: Flitter's layout engine automatically handles the intricacies of responsive design and text wrapping, allowing you to focus on crafting your story through data.
+- **Ease of Adding Interactions**: Creating interactive and engaging visualizations is straightforward with Flitter, empowering your visualizations with user-driven insights and actions.
+
+## A Practical Example: The Responsive Box
+
+To demonstrate Flitter's capabilities, 
+let's explore a practical example: 
+a resizable box containing text that automatically wraps according to its width. This example not only showcases the automatic layout calculations but also illustrates how easily interactions can be integrated into your visualizations with Flitter.
+
+<Resize client:load />
+
+### Example Code
+
+```typescript
+import {
+  Alignment,
+  BuildContext,
+  Center,
+  Container,
+  GestureDetector,
+  Positioned,
+  Stack,
+  State,
+  StatefulWidget,
+  Text,
+  TextAlign,
+  TextStyle,
+  Widget,
+} from "@meursyphus/flitter";
+import ReactWidget from "@meursyphus/flitter-react";
+
+export default () => {
+  return (
+    <ReactWidget widget={new ResizableWidget()} width="100%" height="600px" />
+  );
+};
+
+class ResizableWidget extends StatefulWidget {
+  createState(): State<StatefulWidget> {
+    return new ResizableState();
+  }
+}
+
+class ResizableState extends State<ResizableWidget> {
+  width = 400;
+  height = 400;
+  hovered: "left" | "right" | "top" | "bottom" | null = null;
+
+  clamp = (value: number, min: number, max: number) => {
+    return Math.min(Math.max(value, min), max);
+  };
+
+  handleSize =
+    (type: "left" | "right" | "top" | "bottom") => (e: MouseEvent) => {
+      const key: "width" | "height" =
+        type === "left" || type === "right" ? "width" : "height";
+      const delta =
+        (key === "width" ? e.movementX : e.movementY) *
+        (type === "right" || type === "bottom" ? 1 : -1);
+
+      this.setState(() => {
+        this[key] = this.clamp(this[key] + delta * 2, 200, 800);
+      });
+    };
+  getGestureProps = (type: "left" | "right" | "top" | "bottom") => {
+    return {
+      cursor: (type === "left" || type === "right"
+        ? "ew-resize"
+        : "ns-resize") as "ew-resize" | "ns-resize",
+      onMouseEnter: () => {
+        this.setState(() => {
+          this.hovered = type;
+        });
+      },
+      onMouseLeave: () => {
+        this.setState(() => {
+          this.hovered = null;
+        });
+      },
+      onDragMove: this.handleSize(type),
+      child: Container({
+        color: this.hovered === type ? "blue" : "transparent",
+        width: type === "left" || type === "right" ? 4 : undefined,
+        height: type === "top" || type === "bottom" ? 4 : undefined,
+      }),
+    };
+  };
+  build(_context: BuildContext): Widget {
+
+    return Center({
+      child: Container({
+        width: this.width,
+        height: this.height,
+        color: "orange",
+        child: Stack({
+          alignment: Alignment.center,
+          children: [
+            Text(
+              "When you resize this component, the text automatically wraps. That is, when the size of the container is adjusted, the text is appropriately wrapped and displayed. This feature automates layout calculations, allowing developers to focus more on implementing core functionalities.",
+              {
+                textAlign: TextAlign.center,
+                style: new TextStyle({
+                  color: "black",
+                  fontSize: 18,
+                  fontFamily: "Noto Sans KR",
+                }),
+              },
+            ),
+            Positioned({
+              top: 0,
+              bottom: 0,
+              right: -2,
+              child: GestureDetector({ ...this.getGestureProps("right") }),
+            }),
+            Positioned({
+              top: 0,
+              bottom: 0,
+              left: -2,
+              child: GestureDetector({ ...this.getGestureProps("left") }),
+            }),
+            Positioned({
+              left: 0,
+              right: 0,
+              top: -2,
+              child: GestureDetector({ ...this.getGestureProps("top") }),
+            }),
+            Positioned({
+              left: 0,
+              right: 0,
+              bottom: -2,
+              child: GestureDetector({ ...this.getGestureProps("bottom") }),
+            }),
+          ],
+        }),
+      }),
+    });
+  }
+}
+```
+
+

@@ -1,0 +1,51 @@
+import {
+  linear,
+  easeIn,
+  easeInOut,
+  easeOut,
+  circIn,
+  circInOut,
+  circOut,
+  backIn,
+  backInOut,
+  backOut,
+  anticipate,
+  bounceIn,
+  bounceInOut,
+  bounceOut,
+} from "popmotion";
+import Curve from "./Curve";
+
+const transforms = {
+  linear,
+  easeIn,
+  easeInOut,
+  easeOut,
+  circIn,
+  circInOut,
+  circOut,
+  backIn,
+  backInOut,
+  backOut,
+  anticipate,
+  bounceIn,
+  bounceInOut,
+  bounceOut,
+};
+
+export default {
+  linear: new Curve(transforms.linear),
+  easeIn: new Curve(transforms.easeIn),
+  easeInOut: new Curve(transforms.easeInOut),
+  easeOut: new Curve(transforms.easeOut),
+  circIn: new Curve(transforms.circIn),
+  circInOut: new Curve(transforms.circInOut),
+  circOut: new Curve(transforms.circInOut),
+  backIn: new Curve(transforms.backIn),
+  backInOut: new Curve(transforms.backInOut),
+  backOut: new Curve(transforms.backOut),
+  anticipate: new Curve(transforms.anticipate),
+  bounceIn: new Curve(transforms.bounceIn),
+  bounceInOut: new Curve(transforms.bounceInOut),
+  bounceOut: new Curve(transforms.bounceOut),
+};

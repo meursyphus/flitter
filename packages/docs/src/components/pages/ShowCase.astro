@@ -1,60 +1,32 @@
+---
+import "@egjs/react-flicking/dist/flicking.css";
+import { Banner } from "./show-cases";
+---
 
+<div
+  class="h-[929px] px-16 py-28 bg-white flex-col justify-start items-center gap-20 flex"
+>
+  <div class="h-[109px] flex-col justify-start items-center gap-6 flex">
     <div
-      class="h-[1129px] px-16 py-28 bg-white flex-col justify-start items-center gap-20 flex"
+      class="self-stretch text-center text-black text-5xl font-bold font-['Roboto'] leading-[57.60px]"
     >
-      <div class="h-[109px] flex-col justify-start items-center gap-6 flex">
-        <div
-          class="self-stretch text-center text-black text-5xl font-bold font-['Roboto'] leading-[57.60px]"
-        >
-         Show Cases
-        </div>
-        <div
-          class="self-stretch text-center text-black text-lg font-normal font-['Roboto'] leading-[27px]"
-        >
-          Interactive charts for data-driven insights.
-        </div>
-      </div>
-      <div class="flex-col justify-start items-center gap-12 flex">
-        <div class="w-[1312px] justify-start items-start gap-8 inline-flex">
-          <div class="w-[1314px] h-[640px] relative">
-            <img
-              class="w-[640px] h-[640px] left-[673px] top-0 absolute"
-              src="https://via.placeholder.com/640x640"
-            />
-            <img
-              class="w-[640px] h-[640px] left-[1px] top-0 absolute"
-              src="https://via.placeholder.com/640x640"
-            />
-            <!-- <div
-              class="w-px left-0 top-0 absolute flex-col justify-center items-center inline-flex"
-            >
-              <div
-                class="self-stretch p-4 bg-white rounded-[50px] border border-black justify-center items-center gap-2 inline-flex"
-              >
-                <div class="w-6 h-6 relative"></div>
-              </div>
-            </div> -->
-            <!-- <div
-              class="w-px left-[1313px] top-0 absolute flex-col justify-center items-center inline-flex"
-            >
-              <div
-                class="self-stretch p-4 bg-white rounded-[50px] border border-black justify-center items-center gap-2 inline-flex"
-              >
-                <div class="w-6 h-6 relative"></div>
-              </div>
-            </div> -->
-          </div>
-          <img
-            class="w-[640px] h-[640px]"
-            src="https://via.placeholder.com/640x640"
-          />
-        </div>
-        <div class="p-2.5 justify-start items-start gap-[9px] inline-flex">
-          <div class="w-2 h-2 bg-black rounded-full"></div>
-          <div class="w-2 h-2 bg-stone-300 rounded-full"></div>
-          <div class="w-2 h-2 bg-stone-300 rounded-full"></div>
-          <div class="w-2 h-2 bg-stone-300 rounded-full"></div>
-          <div class="w-2 h-2 bg-stone-300 rounded-full"></div>
-        </div>
-      </div>
+      Show Cases
     </div>
+    <div
+      class="self-stretch text-center text-black text-lg font-normal font-['Roboto'] leading-[27px]"
+    >
+      Interactive charts implemented with Flitter
+      <br />
+      Explore the dynamic data visualization capabilities
+    </div>
+  </div>
+  <div class="flex-col justify-start items-center gap-12 flex">
+    <Banner client:load />
+  </div>
+</div>
+
+<style is:global>
+  .panel {
+    user-select: none;
+  }
+</style>

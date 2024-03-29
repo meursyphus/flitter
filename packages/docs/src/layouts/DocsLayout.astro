@@ -1,0 +1,24 @@
+---
+import Layout from "./Layout.astro";
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const { title } = Astro.props;
+---
+
+<Layout title={title}>
+  <slot />
+</Layout>
+
+<style is:global>
+  .layout {
+    padding-top: var(--header);
+  }
+
+  text {
+    user-select: none;
+  }
+</style>

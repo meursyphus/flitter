@@ -1,0 +1,137 @@
+---
+title: "Working with Widgets in Flitter"
+description: "Explore the foundational concept of widgets in Flitter, enabling the creation of dynamic and customizable data visualizations."
+
+nav_group: "Concepts"
+nav_group_order: 2
+nav_order: 1
+nav_title: "Widget"
+---
+# Working with Widgets in Flitter
+
+Widgets are the cornerstone of Flitter, inspired by the powerful and intuitive design of Flutter. In Flitter, everything from layouts to animations is a widget, offering unparalleled flexibility and creativity in data visualization design.
+
+## Introduction to Widgets in Flitter
+
+In Flitter, the concept of widgets is borrowed from Flutter, where every UI component is represented as a widget. This approach allows developers to build complex UIs in a highly modular and reusable way. Widgets in Flitter form the basis of your application's visual representation, making understanding them crucial for any Flitter developer.
+
+## The Power of Widgets
+
+Widgets are not just UI elements; they are the fundamental building blocks of your application's interface in Flitter. From handling user interactions with a `GestureDetector` widget to laying out your UI with `Container`, `Row`, and `Column` widgets, and even animating elements with `AnimatedContainer`, widgets empower your visualizations with functionality and aesthetics.
+
+### Decorator Pattern and Widget Composition
+
+Flitter utilizes the decorator pattern to allow widgets to be composed and layered for rich functionality. This composition enables developers to wrap a widget with another widget to add new features or customize its appearance. For instance, nesting a `Text` widget inside a `Container` can provide padding, margins, or a background color to the text, showcasing how widgets can be efficiently reused and combined.
+
+### Stateless and Stateful Widgets
+
+Understanding the distinction between stateless and stateful widgets is vital. While `StatelessWidget` is immutable, meaning its properties can't change during runtime, `StatefulWidget` can dynamically change its state. Developers can leverage `StatelessWidget` for static visual elements and `StatefulWidget` for interactive components that require dynamic changes.
+
+### Stateless Widget Example
+
+A `StatelessWidget` in Flitter can be used to create a simple, immutable widget, such as a text label with customized styling. Here's how you might define a custom text widget:
+
+```typescript
+import { 
+  StatelessWidget, 
+  GestureDetector, 
+  Container, 
+  Text, 
+  EdgeInsets, 
+  BoxDecoration, 
+  BorderRadius, 
+  Colors, 
+  TextStyle 
+} from '@meursyphus/flitter';
+
+class CustomButton extends StatelessWidget {
+  constructor({ label, onPressed }) {
+    super();
+    this.label = label;
+    this.onPressed = onPressed;
+  }
+
+  build(context) {
+    return new GestureDetector({
+      onTap: this.onPressed,
+      child: new Container({
+        padding: EdgeInsets.symmetric({ vertical: 12.0, horizontal: 24.0 }),
+        decoration: new BoxDecoration({
+          color: Colors.blue,
+          borderRadius: BorderRadius.circular(8.0),
+        }),
+        child: new Text(
+          this.label,
+          { style: new TextStyle({ color: Colors.white, fontSize: 16 }) }
+        ),
+      }),
+    });
+  }
+}
+
+function classToFunction<V extends new (...args: any[]) => any>(Clazz: V) {
+  return (...args: ConstructorParameters<V>) =>
+    new Clazz(...args) as InstanceType<V>;
+}
+
+// Using classToFunction allows for a more convenient way to write code without needing to use the new constructor.
+export default classToFunction(CustomButton);
+```
+
+### Extending Widgets with RenderObject
+
+For those looking to dive deeper into custom widget creation, Flitter provides the `RenderObject` class. By inheriting from `RenderObjectWidget`, developers can create their custom widgets, defining their own rendering and layout behaviors. This feature opens up a world of possibilities for creating highly customized and efficient visualizations.
+
+### Custom RenderObjectWidget Example
+For more complex customizations that require low-level painting or layout decisions, you might define a widget that creates its own RenderObject. Here's a simplified example of how a custom widget with a unique rendering behavior could be structured, inspired by Flutter:
+
+```typescript
+import { 
+  RenderObjectWidget, 
+  SingleChildRenderObject, 
+  PaintContext, 
+  Offset, 
+  Size, 
+  Paint 
+} from '@meursyphus/flitter';
+
+class CustomCircleWidget extends RenderObjectWidget {
+  constructor({ color }) {
+    super();
+    this.color = color;
+  }
+
+  createRenderObject(context) {
+    return new CustomCircleRenderObject({ color: this.color });
+  }
+}
+
+class CustomCircleRenderObject extends SingleChildRenderObject {
+  constructor({ color }) {
+    super();
+    this._color = color;
+  }
+
+  protected performPaint({ circle }: { circle: SVGElement }): void {
+    circle.setAttribute("fill", this.color);
+    circle.setAttribute("width", `${this.size.width}`);
+    circle.setAttribute("height", `${this.size.height}`);
+  }
+
+  createDefaultSvgEl({ createSvgEl }: PaintContext): {
+    [key: string]: SVGElement;
+  } {
+    return {
+      circle: createSvgEl("circle")
+    };
+  }
+
+  performLayout() {
+    this.size = this.constraints.constrain(new Size(100.0, 100.0));
+  }
+}
+```
+
+## Conclusion
+
+Widgets in Flitter offer a flexible, powerful way to construct your application's UI, from simple text displays to complex interactive data visualizations. By understanding and utilizing the widget system, including both stateless and stateful widgets and the potential for customization through `RenderObject`, developers can unleash the full creative potential of Flitter in their projects.

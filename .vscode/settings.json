@@ -2,9 +2,23 @@
   "cSpell.words": [
     "astro",
     "astrojs",
+    "autodocs",
+    "egjs",
+    "flutterjs",
+    "lerp",
+    "linkedom",
     "meursyphus",
-    "meusyphus",
-    "tailwindcss"
+    "popmotion",
+    "postbuild",
+    "predocs",
+    "prestory",
+    "publint",
+    "renderobject",
+    "rgba",
+    "Shiki",
+    "tailwindcss",
+    "tsup",
+    "uglychart"
   ],
   "editor.formatOnSave": true
 }

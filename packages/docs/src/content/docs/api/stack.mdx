@@ -1,0 +1,36 @@
+---
+  nav_group: "API Reference"
+  nav_group_order: 3
+  nav_order: 4
+
+  title: Stack
+  description: This widget allows you to overlay multiple child widgets and adjust the position of each child. 
+---
+
+This widget motivated by Stack in Flutter.
+
+This widget is inspired by the Stack in Flutter. It allows you to overlay multiple child widgets and adjust the position of each child. This makes it easy to create complex layouts. By default, the Stack aligns its children at the top left corner, overlapping them. However, you can choose a different alignment using the `alignment` property.
+The Stack widget is commonly used to place text over images or to overlay widgets to create a sense of depth in the UI. Similar to Flutter's Stack, this widget can receive multiple child widgets through the `children` property, and the position of each child widget can be adjusted using the `Positioned` widget.
+For example, if you want to center text over a background image, you can include an image widget and a text widget wrapped in `Positioned` within the Stack's `children`, and adjust the position using the `Positioned`'s `top`, `right`, `bottom`, and `left` properties.
+The Stack also allows you to decide whether child widgets can be drawn beyond the Stack's boundaries through the `clipped` property. The default value is `true`, which prevents the children from being drawn beyond the Stack's boundaries.
+Using the Stack widget, you can easily create various and complex layouts, functioning in a similar manner to Flutter's Stack widget.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/liEGSeD3Zt8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+See: https://api.flutter.dev/flutter/widgets/Stack-class.html
+
+### alignment
+
+**Value: Alignment**(default: **Alignment.topLeft**)
+
+### clipped
+
+**Value: boolean**(default: **true**)
+
+### sizing
+
+**Value: StackFit**(default: **StackFit.loose**)
+
+### children
+
+**Value: Widget[]**

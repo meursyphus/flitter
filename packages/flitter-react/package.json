@@ -1,0 +1,48 @@
+{
+  "name": "@meursyphus/flitter-react",
+  "private": false,
+  "version": "0.0.3",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && npm run copy-package && npm run copy-readme && cd dist && npm run fix-package",
+    "copy-package": "cp package.json dist/package.json",
+    "copy-readme": "cp README.md dist/README.md",
+    "fix-package": "npm pkg set main=./flitter-react.js",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "postbuild": "echo \"Build complete. Please run: \n\ncd dist\nnpm publish\n\""
+  },
+  "main": "src/lib/index.ts",
+  "dependencies": {
+    "react": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5",
+    "vite-plugin-dts": "^3.6.3"
+  },
+  "keywords": [
+    "flitter",
+    "data visualization",
+    "SVG",
+    "widget-based",
+    "declarative",
+    "flutter",
+    "react"
+  ],
+  "homepage": "https://flitter.pages.dev",
+  "repository": "https://github.com/meursyphus/flitter",
+  "bugs": {
+    "url": "https://github.com/meursyphus/flitter/issues"
+  },
+  "license": "MIT"
+}

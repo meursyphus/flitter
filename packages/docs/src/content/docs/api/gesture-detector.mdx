@@ -1,0 +1,67 @@
+---
+  nav_group: "API Reference"
+  nav_group_order: 3
+  nav_order: 5
+  title: GestureDetector
+  description: "A widget that detects gestures."
+---
+# GestureDetector
+This widget detect user interaction event like GestureDetector Widget in Flutter.
+The GestureDetector component in Flitter is designed to handle various mouse and gesture events. Below is a detailed description of the props that can be passed to the GestureDetector component to customize its behavior and functionality.
+
+<iframe
+	width="560"
+	height="315"
+	src="https://www.youtube.com/embed/WhVXkCFPmK4"
+	title="YouTube video player"
+	frameborder="0"
+	allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+	allowfullscreen
+></iframe>
+
+See: [https://api.flutter.dev/flutter/widgets/GestureDetector-class.html](https://api.flutter.dev/flutter/widgets/GestureDetector-class.html)
+
+## Props
+
+### onClick
+Type: (e: MouseEvent) => void | undefined
+Defines a callback function that is executed when the component is clicked. This is useful for handling click events and performing actions like state updates or navigation.
+### onMouseDown
+Type: (e: MouseEvent) => void | undefined
+Specifies a callback function that is called when the mouse button is pressed down over the component. It can be used to initiate drag operations or visual feedback.
+### onMouseMove
+Type: (e: MouseEvent) => void | undefined
+Sets a callback function that is called when the mouse moves over the component. This can be useful for tracking mouse movement or implementing hover effects.
+### onMouseUp
+Type: (e: MouseEvent) => void | undefined
+Provides a callback function that is called when the mouse button is released over the component. This can be used in conjunction with onMouseDown to implement click and release interactions.
+### onMouseOver
+Type: (e: MouseEvent) => void | undefined
+Assigns a callback function that is executed when the mouse enters the component area. This is often used to change the appearance of the component to indicate that it can be interacted with.
+### onMouseEnter
+Type: (e: MouseEvent) => void | undefined
+Defines a callback function that is called when the mouse pointer enters the boundary of the component. Similar to onMouseOver, but it is called only when the mouse first enters the component.
+### onMouseLeave
+Type: (e: MouseEvent) => void | undefined
+Sets a callback function that is called when the mouse leaves the component area. This can be useful for resetting hover states or visual effects applied during mouse interaction.
+### onDragStart
+Type: (e: MouseEvent) => void | undefined
+Specifies a callback function that is executed when a drag operation starts. This can be used to set up any state or visual elements needed for dragging.
+### onDragMove
+Type: (e: MouseEvent) => void | undefined
+Provides a callback function that is continuously called when the mouse is dragged over the component. This can be useful for implementing drag and drop functionality.
+### onDragEnd
+Type: (e: MouseEvent) => void | undefined
+Defines a callback function that is executed when a drag operation ends. This can be used to finalize the drag operation and clean up any temporary state or visual elements.
+### onWheel
+Type: (e: WheelEvent) => void | undefined
+Sets a callback function that is called when the mouse wheel scrolls over the component. This can be used to implement custom scrolling or zooming functions.
+### cursor
+Type: Cursor | undefined
+Specifies the style of the cursor when the mouse hovers over the component. This can be used to provide visual feedback on the interactivity of the component.
+### child
+Type: Widget | undefined
+Defines the child widget that the GestureDetector wraps. This allows the GestureDetector to intercept events for its child widget.
+### bubble
+Type: Record\<EventType, boolean> | undefined
+Controls event bubbling. This property determines whether events should propagate to parent components or be contained within the GestureDetector.

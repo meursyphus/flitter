@@ -1,0 +1,38 @@
+import { Meta, Story } from '@storybook/blocks';
+import * as Stories from './Widget.stories';
+
+<Meta of={Stories} />
+
+# AnimatedOpacity
+
+This widget motivated by AnimatedOpacity in Flutter.
+
+> Animated version of Opacity which automatically transitions the child's opacity over a given duration whenever the given opacity changes.
+
+<iframe
+	width="560"
+	height="315"
+	src="https://www.youtube.com/embed/QZAvjqOqiLY"
+	title="YouTube video player"
+	frameborder="0"
+	allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+	allowfullscreen
+></iframe>
+
+See: https://api.flutter.dev/flutter/widgets/AnimatedOpacity-class.html
+
+## Props
+
+### opacity
+
+**Value: number**
+
+### child
+
+**Value: Widget | undefined**
+
+## Examples
+
+### Basic
+
+<Story of={Stories.Basic} />

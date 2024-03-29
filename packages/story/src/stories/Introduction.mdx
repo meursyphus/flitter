@@ -1,0 +1,87 @@
+import { Meta, Story } from '@storybook/blocks';
+import { Source } from '@storybook/addon-docs';
+import { dedent } from 'ts-dedent';
+import FlutterJsExampleGif from './assets/love_flutter.gif';
+import BubbleChartGif from './assets/bubble.gif';
+import DiagramGif from './assets/diagram.gif';
+import pureJavascript from './assets/pure-javascript.ts';
+import react from './assets/react.ts';
+import svelte from './assets/svelte.ts';
+import componentWidget from './assets/component-widget.ts';
+import renderWidget from './assets/render-widget.ts';
+
+<Meta title="Introduction" />
+
+# Flutterjs
+
+Flutterjs is a framework that deals with SVG.
+Like React, it uses VDOM to manage state and optimize rendering,
+and because the library calculates the layout directly,
+it is much easier to visualize data than using D3.
+This provides a high level of control and flexibility for data visualization.
+
+(FlutterJs is a library inspired by Flutter, a cross-platform framework commonly used for mobile app development.)
+
+Here is an some example about what you can do with Flutterjs.
+
+<div style={{ display: 'flex' }}>
+	<img style={{ width: '50%' }} src={BubbleChartGif} />
+	<img style={{ width: '50%' }} src={DiagramGif} />
+</div>
+
+## Examples
+
+I do my best to make Flutterjs look like Flutter itself. See this.
+
+<img src={FlutterJsExampleGif} />
+
+## Usage
+
+### Pure javascript
+
+```
+ npm i @meursyphus/flitter
+```
+
+<Source language="js" dark format={false} code={pureJavascript} />
+
+### React
+
+```
+ npm i @meursyphus/flitter @meursyphus/flitter-react
+```
+
+<Source language="js" dark format={false} code={react} />
+
+### Svelte
+
+```
+ npm i @meursyphus/flitter @meursyphus/flitter-svelte
+```
+
+<Source language="js" dark format={false} code={svelte} />
+
+### See Result
+
+<div style={{ width: '600px', height: '300px', backgroundColor: 'lightblue', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+<div style={{fontSize: '30px', fontWeight: 'bold'}}>Hello, FlutterJS!</div>
+
+</div>
+
+## Description
+
+This framework use svg element unlike Flutter Web so I don't need to implement its own hit testing algorithm.
+
+By using svg, It can be rendered by Server side. (Ssr is possible!)
+
+I try to provide all important widget in Flutter. If there is no widget you want, you can create widget by yourself through RenderObjectWidget.
+
+<Source language="js" dark format={false} code={renderWidget} />
+
+And you can also create your own component through ComponentWidget.
+
+<Source language="js" dark format={false} code={componentWidget} />
+
+## Github
+
+[https://github.com/meursyphus/flitter-chart](https://github.com/meursyphus/flitter-chart)
