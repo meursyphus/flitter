@@ -52,7 +52,7 @@ npm i @meursyphus/flitter @meursyphus/flitter-svelte
   widget={Container({
     alignment: Alignment.center,
     color: 'lightblue',
-    child: Text("Hello, Flitter!", style: TextStyle({ fontSize: 30, weight: 'bold' }))
+    child: Text("Hello, Flitter!", { style: new TextStyle({ fontSize: 30, fontWeight: 'bold' }) })
   })}
 />
 ```
