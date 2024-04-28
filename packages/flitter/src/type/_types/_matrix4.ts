@@ -690,6 +690,9 @@ Sets the entire matrix to the matrix in [arg].
   }
 
   translated(x: Vector3 | Vector4 | number, y?: number, z?: number) {
+    if ((y == null || y === 0) && (z == null || z === 0) && x === 0) {
+      return this;
+    }
     return this.clone().translate(x, y, z);
   }
   /**

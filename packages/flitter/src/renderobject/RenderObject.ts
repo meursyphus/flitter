@@ -249,6 +249,7 @@ export class RenderObject {
   /*
    * Do not call this method directly. instead call paint
    */
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   protected performPaint(
     _svgEls: { [key: string]: SVGElement },
