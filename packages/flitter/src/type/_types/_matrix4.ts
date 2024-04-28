@@ -1911,49 +1911,7 @@ Rotate this matrix [angle] radians around [axis].
       m32 * argStorage[11] +
       m33 * argStorage[15];
   }
-  // /// Decomposes this into [translation], [rotation] and [scale] components.
-  // void decompose(Vector3 translation, Quaternion rotation, Vector3 scale) {
-  //   final v = _decomposeV ??= Vector3.zero();
-  //   var sx = (v..setValues(_m4storage[0], _m4storage[1], _m4storage[2])).length;
-  //   final sy =
-  //       (v..setValues(_m4storage[4], _m4storage[5], _m4storage[6])).length;
-  //   final sz =
-  //       (v..setValues(_m4storage[8], _m4storage[9], _m4storage[10])).length;
 
-  //   if (determinant() < 0) {
-  //     sx = -sx;
-  //   }
-
-  //   translation._v3storage[0] = _m4storage[12];
-  //   translation._v3storage[1] = _m4storage[13];
-  //   translation._v3storage[2] = _m4storage[14];
-
-  //   final invSX = 1.0 / sx;
-  //   final invSY = 1.0 / sy;
-  //   final invSZ = 1.0 / sz;
-
-  //   final m = _decomposeM ??= Matrix4.zero();
-  //   m.setFrom(this);
-  //   m._m4storage[0] *= invSX;
-  //   m._m4storage[1] *= invSX;
-  //   m._m4storage[2] *= invSX;
-  //   m._m4storage[4] *= invSY;
-  //   m._m4storage[5] *= invSY;
-  //   m._m4storage[6] *= invSY;
-  //   m._m4storage[8] *= invSZ;
-  //   m._m4storage[9] *= invSZ;
-  //   m._m4storage[10] *= invSZ;
-
-  //   final r = _decomposeR ??= Matrix3.zero();
-  //   m.copyRotation(r);
-  //   rotation.setFromRotation(r);
-
-  //   scale._v3storage[0] = sx;
-  //   scale._v3storage[1] = sy;
-  //   scale._v3storage[2] = sz;
-  // }
-
-  /// Rotate [arg] of type [Vector3] using the rotation defined by this.
   rotate3(arg: Vector3): Vector3 {
     const argStorage = arg._v3storage;
     const x =
