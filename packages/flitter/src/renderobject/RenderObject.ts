@@ -20,7 +20,7 @@ export class RenderObject {
   needsLayout = true;
   clipId?: string;
   matrix: Matrix4 = Matrix4.identity();
-  opacity = 0;
+  opacity = 1;
   depth = 0;
 
   #domNode!: SVGElement;
@@ -101,7 +101,7 @@ export class RenderObject {
     const translatedMatrix4 = matrix4.translated(this.offset.x, this.offset.y);
     const clipIdChanged = this.clipId !== clipId;
     const opacityChanged = this.opacity !== opacity;
-    const matrixChanged = this.matrix.equals(translatedMatrix4);
+    const matrixChanged = !this.matrix.equals(translatedMatrix4);
     if (
       !clipIdChanged &&
       !opacityChanged &&
