@@ -2,6 +2,7 @@ import type RenderObject from "../renderobject/RenderObject";
 import type { RenderContext } from "../runApp";
 import type { BuildOwner, Scheduler, GlobalKey } from "../scheduler";
 import Widget from "../widget/Widget";
+import { ElementType } from "./ElementType";
 
 class Element {
   scheduler: Scheduler;
@@ -14,7 +15,7 @@ class Element {
   constructor(widget: Widget) {
     this.widget = widget;
   }
-  type: "render" | "none" | "provider" = "none";
+  type: ElementType = ElementType.none;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   visitChildren(visitor: (child: Element) => void) {
     throw { message: "not implemented" };
