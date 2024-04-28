@@ -302,7 +302,7 @@ export class RenderObject {
     this.renderOwner.didDomOrderChange();
   }
 
-  localToGlobal(additionalOffset: Offset = Offset.zero()) {
+  localToGlobal(additionalOffset: Offset = Offset.Constants.zero) {
     return new Offset({
       x: this.matrix.storage[12] + additionalOffset.x,
       y: this.matrix.storage[13] + additionalOffset.y,
@@ -310,9 +310,7 @@ export class RenderObject {
   }
 
   visitChildren(callback: (child: RenderObject) => void) {
-    this.children.forEach(child => {
-      callback(child);
-    });
+    this.children.forEach(callback);
   }
 
   /**
