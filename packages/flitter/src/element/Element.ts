@@ -24,7 +24,9 @@ class Element {
     let result: RenderObject | null = null;
 
     this.visitChildren(child => {
-      result = child.renderObject;
+      if (result == null) {
+        result = child.renderObject;
+      }
     });
 
     if (result == null) throw { message: "can not find render object" };
