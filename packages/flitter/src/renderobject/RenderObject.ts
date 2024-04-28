@@ -18,8 +18,8 @@ export class RenderObject {
   parent?: RenderObject;
   needsPaint = true;
   needsLayout = true;
-  clipId?: string;
-  matrix: Matrix4 = Matrix4.identity();
+  clipId?: string = undefined;
+  matrix: Matrix4 = Matrix4.Constants.identity;
   opacity = 1;
   depth = 0;
 
@@ -95,7 +95,7 @@ export class RenderObject {
   paint(
     context: PaintContext,
     clipId?: string,
-    matrix4: Matrix4 = Matrix4.identity(),
+    matrix4: Matrix4 = Matrix4.Constants.identity,
     opacity: number = 1,
   ) {
     const translatedMatrix4 = matrix4.translated(this.offset.x, this.offset.y);
@@ -200,14 +200,14 @@ export class RenderObject {
     const { appendSvgEl } = context;
 
     const svgEls = this.createDefaultSvgEl(context);
-    Object.entries(svgEls).forEach(([name, value]) => {
+    const entries = Object.entries(svgEls);
+    entries.forEach(([name, value]) => {
       value.setAttribute("data-render-name", name);
     });
-    const values = Object.values(svgEls);
     const svgG = context.createSvgEl("g");
     appendSvgEl(svgG);
     svgG.setAttribute("data-render-type", this.type);
-    values.forEach(value => {
+    entries.forEach(([_, value]) => {
       svgG.appendChild(value);
     });
 
