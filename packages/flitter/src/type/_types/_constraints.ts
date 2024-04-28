@@ -129,9 +129,13 @@ class Constraints extends Data {
   }
 
   normalize(): Constraints {
+    if (this.minWidth <= this.maxWidth && this.minHeight <= this.maxHeight) {
+      return this;
+    }
     return new Constraints({
-      ...this,
+      maxHeight: Math.max(this.maxHeight, this.minHeight),
       minHeight: Math.min(this.minHeight, this.maxHeight),
+      maxWidth: Math.max(this.maxWidth, this.minWidth),
       minWidth: Math.min(this.minWidth, this.maxWidth),
     });
   }
