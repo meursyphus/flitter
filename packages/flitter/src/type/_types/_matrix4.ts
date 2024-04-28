@@ -224,17 +224,13 @@ class Matrix4 extends Calculable {
   }
 
   static readonly Constants = {
-    identity: Object.freeze(Matrix4.#identity()),
+    identity: Object.freeze(Matrix4.identity()),
   };
 
-  static #identity() {
+  static identity() {
     const m = Matrix4.zero();
     m.setIdentity();
     return m;
-  }
-
-  static identity() {
-    return Matrix4.Constants.identity;
   }
 
   static translation(translation: Vector3) {
