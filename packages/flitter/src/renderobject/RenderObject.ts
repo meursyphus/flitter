@@ -117,14 +117,17 @@ export class RenderObject {
 
     if (this.isPainter) {
       const { svgEls, container } = this.resolveSvgEl();
-      if (clipId) {
+      if (clipId && clipIdChanged) {
         container.setAttribute("clip-path", `url(#${clipId})`);
       }
-      container.setAttribute("opacity", `${opacity}`);
-      container.setAttribute("pointer-events", "none");
-      Object.values(svgEls).forEach(el =>
-        this.setSvgTransform(el, this.matrix),
-      );
+      if (opacityChanged) {
+        container.setAttribute("opacity", `${opacity}`);
+      }
+      if (matrixChanged) {
+        Object.values(svgEls).forEach(el =>
+          this.setSvgTransform(el, this.matrix),
+        );
+      }
       if (this.needsPaint) {
         this.performPaint(svgEls, context);
       }
@@ -208,6 +211,7 @@ export class RenderObject {
       svgG.appendChild(value);
     });
 
+    svgG.setAttribute("pointer-events", "none");
     this.#domNode = svgG;
   }
 
