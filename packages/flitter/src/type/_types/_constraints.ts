@@ -92,12 +92,7 @@ class Constraints extends Data {
   }
 
   static tight({ width, height }: { width: number; height: number }) {
-    return new Constraints({
-      maxHeight: height,
-      minHeight: height,
-      maxWidth: width,
-      minWidth: width,
-    });
+    return Constraints.tightFor({ width, height });
   }
 
   static tightFor({ width, height }: { width?: number; height?: number }) {
