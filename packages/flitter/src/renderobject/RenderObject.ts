@@ -99,17 +99,22 @@ export class RenderObject {
     opacity: number = 1,
   ) {
     const translatedMatrix4 = matrix4.translated(this.offset.x, this.offset.y);
+    const clipIdChanged = this.clipId !== clipId;
+    const opacityChanged = this.opacity !== opacity;
+    const matrixChanged = this.matrix.equals(translatedMatrix4);
     if (
-      this.clipId === clipId &&
-      this.matrix.equals(translatedMatrix4) &&
-      this.opacity === opacity &&
+      !clipIdChanged &&
+      !opacityChanged &&
+      !matrixChanged &&
       !this.needsPaint
     ) {
       return;
     }
+
     this.matrix = translatedMatrix4;
     this.clipId = clipId;
     this.opacity = opacity;
+
     if (this.isPainter) {
       const { svgEls, container } = this.resolveSvgEl();
       if (clipId) {

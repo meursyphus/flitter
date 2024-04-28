@@ -223,10 +223,18 @@ class Matrix4 extends Calculable {
     return r;
   }
 
-  static identity() {
+  static readonly Constants = {
+    identity: Object.freeze(Matrix4.#identity()),
+  };
+
+  static #identity() {
     const m = Matrix4.zero();
     m.setIdentity();
     return m;
+  }
+
+  static identity() {
+    return Matrix4.Constants.identity;
   }
 
   static translation(translation: Vector3) {
