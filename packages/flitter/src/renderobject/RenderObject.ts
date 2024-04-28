@@ -325,20 +325,16 @@ export class RenderObject {
   hitTest({ globalPoint }: { globalPoint: Offset }): boolean {
     const viewPort = this.renderOwner.renderContext.viewPort;
     const { translation, scale } = viewPort;
-    const bounds = {
-      left: (this.matrix.storage[12] + translation.x) * scale,
-      top: (this.matrix.storage[13] + translation.y) * scale,
-      right:
-        (this.matrix.storage[12] + translation.x + this.size.width) * scale,
-      bottom:
-        (this.matrix.storage[13] + translation.y + this.size.height) * scale,
-    };
+    const left = (this.matrix.storage[12] + translation.x) * scale;
+    const top = (this.matrix.storage[13] + translation.y) * scale;
+    const right = left + this.size.width * scale;
+    const bottom = top + this.size.height * scale;
 
     return (
-      globalPoint.x >= bounds.left &&
-      globalPoint.x <= bounds.right &&
-      globalPoint.y >= bounds.top &&
-      globalPoint.y <= bounds.bottom
+      globalPoint.x >= left &&
+      globalPoint.x <= right &&
+      globalPoint.y >= top &&
+      globalPoint.y <= bottom
     );
   }
 }
