@@ -33,41 +33,32 @@ class Constraints extends Data {
   }
 
   static lerp(a: Constraints, b: Constraints, t: number): Constraints {
-    assert(
-      (Number.isFinite(a.minWidth) && Number.isFinite(b.minWidth)) ||
-        (a.minWidth === Infinity && b.minWidth === Infinity),
-      "Cannot interpolate between finite constraints and unbounded constraints.",
-    );
-    assert(
-      (Number.isFinite(a.maxWidth) && Number.isFinite(b.maxWidth)) ||
-        (a.maxWidth === Infinity && b.maxWidth === Infinity),
-      "Cannot interpolate between finite constraints and unbounded constraints.",
-    );
-    assert(
-      (Number.isFinite(a.minHeight) && Number.isFinite(b.minHeight)) ||
-        (a.minHeight === Infinity && b.minHeight === Infinity),
-      "Cannot interpolate between finite constraints and unbounded constraints.",
-    );
-    assert(
-      (Number.isFinite(a.minHeight) && Number.isFinite(b.minHeight)) ||
-        (a.minHeight === Infinity && b.minHeight === Infinity),
-      "Cannot interpolate between finite constraints and unbounded constraints.",
-    );
-
+    Constraints.validateInterpolation(a, b);
     return new Constraints({
-      minWidth: Number.isFinite(a.minWidth)
-        ? Utils.lerp(a.minWidth, b.minWidth, t)
-        : Infinity,
-      maxWidth: Number.isFinite(a.maxWidth)
-        ? Utils.lerp(a.maxWidth, b.maxWidth, t)
-        : Infinity,
-      minHeight: Number.isFinite(a.minHeight)
-        ? Utils.lerp(a.minHeight, b.minHeight, t)
-        : Infinity,
-      maxHeight: Number.isFinite(a.maxHeight)
-        ? Utils.lerp(a.maxHeight, b.maxHeight, t)
-        : Infinity,
+      minWidth: Constraints.interpolateDimension(a.minWidth, b.minWidth, t),
+      maxWidth: Constraints.interpolateDimension(a.maxWidth, b.maxWidth, t),
+      minHeight: Constraints.interpolateDimension(a.minHeight, b.minHeight, t),
+      maxHeight: Constraints.interpolateDimension(a.maxHeight, b.maxHeight, t),
     });
+  }
+
+  private static validateInterpolation(a: Constraints, b: Constraints) {
+    const dimensions = ["minWidth", "maxWidth", "minHeight", "maxHeight"];
+    dimensions.forEach(dimension => {
+      assert(
+        (Number.isFinite(a[dimension]) && Number.isFinite(b[dimension])) ||
+          (a[dimension] === Infinity && b[dimension] === Infinity),
+        "Cannot interpolate between finite constraints and unbounded constraints.",
+      );
+    });
+  }
+
+  private static interpolateDimension(
+    aValue: number,
+    bValue: number,
+    t: number,
+  ): number {
+    return Number.isFinite(aValue) ? Utils.lerp(aValue, bValue, t) : Infinity;
   }
 
   static expand({
