@@ -236,13 +236,12 @@ export class RenderObject {
   protected createDefaultSvgEl(paintContext: PaintContext): {
     [key: string]: SVGElement;
   } {
-    throw { message: "not implemented defaultSvgEl" };
+    throw new NotImplementedError("createDefaultSvgEl");
   }
 
   /*
    * Do not call this method directly. instead call layout
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected preformLayout(): void {
     throw new NotImplementedError("performLayout");
   }
@@ -254,7 +253,9 @@ export class RenderObject {
   protected performPaint(
     _svgEls: { [key: string]: SVGElement },
     _context: PaintContext,
-  ): void {}
+  ): void {
+    //
+  }
 
   protected getChildClipId(parentClipId?: string) {
     return parentClipId;
