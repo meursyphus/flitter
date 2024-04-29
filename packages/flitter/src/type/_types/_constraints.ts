@@ -121,7 +121,7 @@ class Constraints extends Data {
     });
   }
 
-  constrain({ width, height }: Size): Size {
+  constrain({ width, height }: { width: number; height: number }): Size {
     return new Size({
       width: this.constrainWidth(width),
       height: this.constrainHeight(height),
