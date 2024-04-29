@@ -179,6 +179,6 @@ class ParagraphStyle {
 }
 
 export enum FontStyle {
-  normal = "normal",
-  italic = "italic",
+  normal = 1,
+  italic = 2,
 }
