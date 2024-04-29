@@ -6,7 +6,7 @@ class TextSpan extends InlineSpan {
   text?: string;
   children: InlineSpan[];
 
-  eqauls(other: TextSpan): boolean {
+  equals(other: TextSpan): boolean {
     if (other === this) return true;
     return (
       this.text === other.text &&
