@@ -1,7 +1,7 @@
 enum StackFit {
-  loose = "loose",
-  expand = "expand",
-  passthrough = "passthrough",
+  loose = 1,
+  expand = 2,
+  passthrough = 3,
 }
 
 export default StackFit;

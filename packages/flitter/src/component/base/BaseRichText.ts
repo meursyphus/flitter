@@ -130,7 +130,7 @@ class RenderParagraph extends RenderObject {
   }
 
   set text(value: InlineSpan) {
-    if (this.textPainter.text.eqauls(value)) return;
+    if (this.textPainter.text.equals(value)) return;
     this.textPainter.text = value;
     this.markNeedsLayout();
   }

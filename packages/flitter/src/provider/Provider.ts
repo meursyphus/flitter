@@ -1,3 +1,4 @@
+import { ElementType } from "../element/ElementType";
 import Element from "../element/Element";
 import Widget from "../widget/Widget";
 
@@ -25,7 +26,7 @@ class Provider<ProviderKey, Value> extends Widget {
     while (parent != null) {
       const current = parent;
       parent = current.parent;
-      if (!(current.type === "provider")) continue;
+      if (!(current.type === ElementType.provider)) continue;
       if ((current as ProviderElement).providerKey !== key) continue;
 
       return (current as ProviderElement).value as V;
@@ -42,8 +43,7 @@ class Provider<ProviderKey, Value> extends Widget {
 class ProviderElement extends Element {
   declare widget: Provider<unknown, unknown>;
   child!: Element;
-  static type = "provider" as const;
-  override readonly type = ProviderElement.type;
+  override readonly type = ElementType.provider;
 
   get providerKey() {
     return this.widget.providerKey;

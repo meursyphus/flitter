@@ -1,31 +1,31 @@
 export enum MainAxisSize {
-  min = "min",
-  max = "max",
+  min = 1,
+  max = 2,
 }
 
 export enum VerticalDirection {
-  up = "up",
-  down = "down",
+  up = 1,
+  down = 2,
 }
 
 export enum MainAxisAlignment {
-  start = "start",
-  end = "end",
-  center = "center",
-  spaceBetween = "spaceBetween",
-  spaceAround = "spaceAround",
-  spaceEvenly = "spaceEvenly",
+  start = 1,
+  end = 2,
+  center = 3,
+  spaceBetween = 4,
+  spaceAround = 5,
+  spaceEvenly = 6,
 }
 
 export enum CrossAxisAlignment {
-  start = "start",
-  end = "end",
-  center = "center",
-  stretch = "stretch",
+  start = 1,
+  end = 2,
+  center = 3,
+  stretch = 4,
   // baseline, It is not supported yet ,
 }
 
 export enum Axis {
-  horizontal = "horizontal",
-  vertical = "vertical",
+  horizontal = 1,
+  vertical = 2,
 }

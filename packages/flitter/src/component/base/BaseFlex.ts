@@ -1,5 +1,4 @@
 import MultiChildRenderObject from "../../renderobject/MultiChildRenderObject";
-import type { Axis } from "../../type";
 import {
   Constraints,
   CrossAxisAlignment,
@@ -8,6 +7,7 @@ import {
   Offset,
   Size,
   VerticalDirection,
+  Axis,
 } from "../../type";
 import MultiChildRenderObjectWidget from "../../widget/MultiChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
@@ -119,22 +119,22 @@ class RenderFlex extends MultiChildRenderObject {
   }
 
   get mainAxisSizeName(): "width" | "height" {
-    return this.direction === "horizontal" ? "width" : "height";
+    return this.direction === Axis.horizontal ? "width" : "height";
   }
   get crossAxisSizeName(): "width" | "height" {
-    return this.direction === "horizontal" ? "height" : "width";
+    return this.direction === Axis.horizontal ? "height" : "width";
   }
   get minMainAxisSizeName(): "minWidth" | "minHeight" {
-    return this.direction === "horizontal" ? "minWidth" : "minHeight";
+    return this.direction === Axis.horizontal ? "minWidth" : "minHeight";
   }
   get maxMainAxisSizeName(): "maxWidth" | "maxHeight" {
-    return this.direction === "horizontal" ? "maxWidth" : "maxHeight";
+    return this.direction === Axis.horizontal ? "maxWidth" : "maxHeight";
   }
   get minCrossAxisSizeName(): "minWidth" | "minHeight" {
-    return this.direction === "horizontal" ? "minHeight" : "minWidth";
+    return this.direction === Axis.horizontal ? "minHeight" : "minWidth";
   }
   get maxCrossAxisSizeName(): "maxWidth" | "maxHeight" {
-    return this.direction === "horizontal" ? "maxHeight" : "maxWidth";
+    return this.direction === Axis.horizontal ? "maxHeight" : "maxWidth";
   }
   constructor({
     direction,
@@ -160,7 +160,7 @@ class RenderFlex extends MultiChildRenderObject {
     let totalFlex = 0;
     let [childIntrinsicMainAxisValue, crossAxisValue] = [0, 0];
     const sortedChildren =
-      this.verticalDirection === "down"
+      this.verticalDirection === VerticalDirection.down
         ? this.children
         : [...this.children].reverse();
 
@@ -174,7 +174,7 @@ class RenderFlex extends MultiChildRenderObject {
         childIntrinsicMainAxisValue += child.size[this.mainAxisSizeName];
       }
       crossAxisValue =
-        this.crossAxisAlignment === "stretch"
+        this.crossAxisAlignment === CrossAxisAlignment.stretch
           ? this.constraints.getMax(this.crossAxisSizeName)
           : Math.max(crossAxisValue, child.size[this.crossAxisSizeName]);
     });
@@ -211,7 +211,7 @@ class RenderFlex extends MultiChildRenderObject {
     this.size = this.constraints.constrain(
       new Size({
         [this.mainAxisSizeName]:
-          this.mainAxisSize === "max"
+          this.mainAxisSize === MainAxisSize.max
             ? this.constraints.getMax(this.mainAxisSizeName)
             : sortedChildren
                 .map(child => child.size[this.mainAxisSizeName])
@@ -225,8 +225,8 @@ class RenderFlex extends MultiChildRenderObject {
     );
 
     sortedChildren.forEach((child, i) => {
-      const [mainAxisOffset, crossAxisOffset]: ("x" | "y")[] =
-        this.direction === "horizontal" ? ["x", "y"] : ["y", "x"];
+      const [mainAxisOffset, crossAxisOffset]: ["x" | "y", "x" | "y"] =
+        this.direction === Axis.horizontal ? ["x", "y"] : ["y", "x"];
 
       child.offset = new Offset({
         [mainAxisOffset]: mainAxisOffsets[i],
@@ -250,7 +250,7 @@ class RenderFlex extends MultiChildRenderObject {
   private getFlexItemConstraint(childExtent: number, fit: "loose" | "tight") {
     return new Constraints({
       [this.minCrossAxisSizeName]:
-        this.crossAxisAlignment === "stretch"
+        this.crossAxisAlignment === CrossAxisAlignment.stretch
           ? this.constraints[this.maxCrossAxisSizeName]
           : 0,
       [this.maxCrossAxisSizeName]: this.constraints[this.maxCrossAxisSizeName],
@@ -266,21 +266,21 @@ class RenderFlex extends MultiChildRenderObject {
       this.size[this.mainAxisSizeName] - childMainAxisValues.reduce(sum, 0);
 
     switch (this.mainAxisAlignment) {
-      case "start":
+      case MainAxisAlignment.start:
         offsetsOnMainAxis = this._getChildOffsetsOnMainAxis({
           startOffset: 0,
           additionalSpace: 0,
           childMainAxisValues,
         });
         break;
-      case "end":
+      case MainAxisAlignment.end:
         offsetsOnMainAxis = this._getChildOffsetsOnMainAxis({
           startOffset: restSpaceSize,
           additionalSpace: 0,
           childMainAxisValues,
         });
         break;
-      case "spaceAround":
+      case MainAxisAlignment.spaceAround:
         const aroundSpace = restSpaceSize / childMainAxisValues.length;
         offsetsOnMainAxis = this._getChildOffsetsOnMainAxis({
           startOffset: aroundSpace / 2,
@@ -288,14 +288,14 @@ class RenderFlex extends MultiChildRenderObject {
           childMainAxisValues,
         });
         break;
-      case "spaceBetween":
+      case MainAxisAlignment.spaceBetween:
         offsetsOnMainAxis = this._getChildOffsetsOnMainAxis({
           startOffset: 0,
           additionalSpace: restSpaceSize / (childMainAxisValues.length - 1),
           childMainAxisValues,
         });
         break;
-      case "spaceEvenly":
+      case MainAxisAlignment.spaceEvenly:
         const evenSpace = restSpaceSize / (childMainAxisValues.length + 1);
         offsetsOnMainAxis = this._getChildOffsetsOnMainAxis({
           startOffset: evenSpace,
@@ -303,7 +303,7 @@ class RenderFlex extends MultiChildRenderObject {
           childMainAxisValues,
         });
         break;
-      case "center":
+      case MainAxisAlignment.center:
         offsetsOnMainAxis = this._getChildOffsetsOnMainAxis({
           startOffset: restSpaceSize / 2,
           additionalSpace: 0,
@@ -312,7 +312,7 @@ class RenderFlex extends MultiChildRenderObject {
         break;
       default:
         throw new Error(
-          `this mainAixsAlignment(${this.mainAxisAlignment}) is not supported yet`,
+          `this mainAxisAlignment(${this.mainAxisAlignment}) is not supported yet`,
         );
     }
 
@@ -363,7 +363,7 @@ class RenderFlex extends MultiChildRenderObject {
     const childIntrinsicHeights = this.children.map(child =>
       child.getIntrinsicHeight(width),
     );
-    return this.direction === "horizontal"
+    return this.direction === Axis.horizontal
       ? childIntrinsicHeights.reduce(max, 0)
       : childIntrinsicHeights.reduce(sum, 0);
   }
@@ -375,7 +375,7 @@ class RenderFlex extends MultiChildRenderObject {
       child.getIntrinsicWidth(height),
     );
 
-    return this.direction === "vertical"
+    return this.direction === Axis.vertical
       ? childIntrinsicWidths.reduce(max, 0)
       : childIntrinsicWidths.reduce(sum, 0);
   }

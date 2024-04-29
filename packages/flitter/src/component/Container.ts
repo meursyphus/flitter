@@ -1,5 +1,11 @@
-import type { Decoration, Matrix4 } from "../type";
-import { type EdgeInsets, type Alignment, Constraints, Rect } from "../type";
+import {
+  type EdgeInsets,
+  type Alignment,
+  type Decoration,
+  type Matrix4,
+  Constraints,
+  Rect,
+} from "../type";
 import { assert, classToFunction } from "../utils";
 import type Widget from "../widget/Widget";
 import Align from "./Align";
@@ -30,7 +36,7 @@ type ContainerProps = {
   key?: any;
 };
 
-class _Container extends StatelessWidget {
+class Container extends StatelessWidget {
   padding?: EdgeInsets;
   margin?: EdgeInsets;
   width?: number;
@@ -187,4 +193,4 @@ class _Container extends StatelessWidget {
   }
 }
 
-export default classToFunction(_Container);
+export default classToFunction(Container);

@@ -18,9 +18,9 @@ export class RenderObject {
   parent?: RenderObject;
   needsPaint = true;
   needsLayout = true;
-  clipId?: string;
-  matrix: Matrix4 = Matrix4.identity();
-  opacity = 0;
+  clipId?: string = undefined;
+  matrix: Matrix4 = Matrix4.Constants.identity;
+  opacity = 1;
   depth = 0;
 
   #domNode!: SVGElement;
@@ -95,31 +95,39 @@ export class RenderObject {
   paint(
     context: PaintContext,
     clipId?: string,
-    matrix4: Matrix4 = Matrix4.identity(),
+    matrix4: Matrix4 = Matrix4.Constants.identity,
     opacity: number = 1,
   ) {
     const translatedMatrix4 = matrix4.translated(this.offset.x, this.offset.y);
+    const clipIdChanged = this.clipId !== clipId;
+    const opacityChanged = this.opacity !== opacity;
+    const matrixChanged = !this.matrix.equals(translatedMatrix4);
     if (
-      this.clipId === clipId &&
-      this.matrix.equals(translatedMatrix4) &&
-      this.opacity === opacity &&
+      !clipIdChanged &&
+      !opacityChanged &&
+      !matrixChanged &&
       !this.needsPaint
     ) {
       return;
     }
+
     this.matrix = translatedMatrix4;
     this.clipId = clipId;
     this.opacity = opacity;
+
     if (this.isPainter) {
       const { svgEls, container } = this.resolveSvgEl();
-      if (clipId) {
+      if (clipId && clipIdChanged) {
         container.setAttribute("clip-path", `url(#${clipId})`);
       }
-      container.setAttribute("opacity", `${opacity}`);
-      container.setAttribute("pointer-events", "none");
-      Object.values(svgEls).forEach(el =>
-        this.setSvgTransform(el, this.matrix),
-      );
+      if (opacityChanged) {
+        container.setAttribute("opacity", `${opacity}`);
+      }
+      if (matrixChanged) {
+        Object.values(svgEls).forEach(el =>
+          this.setSvgTransform(el, this.matrix),
+        );
+      }
       if (this.needsPaint) {
         this.performPaint(svgEls, context);
       }
@@ -192,17 +200,18 @@ export class RenderObject {
     const { appendSvgEl } = context;
 
     const svgEls = this.createDefaultSvgEl(context);
-    Object.entries(svgEls).forEach(([name, value]) => {
+    const entries = Object.entries(svgEls);
+    entries.forEach(([name, value]) => {
       value.setAttribute("data-render-name", name);
     });
-    const values = Object.values(svgEls);
     const svgG = context.createSvgEl("g");
     appendSvgEl(svgG);
     svgG.setAttribute("data-render-type", this.type);
-    values.forEach(value => {
+    entries.forEach(([_, value]) => {
       svgG.appendChild(value);
     });
 
+    svgG.setAttribute("pointer-events", "none");
     this.#domNode = svgG;
   }
 
@@ -236,13 +245,12 @@ export class RenderObject {
   protected createDefaultSvgEl(paintContext: PaintContext): {
     [key: string]: SVGElement;
   } {
-    throw { message: "not implemented defaultSvgEl" };
+    throw new NotImplementedError("createDefaultSvgEl");
   }
 
   /*
    * Do not call this method directly. instead call layout
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected preformLayout(): void {
     throw new NotImplementedError("performLayout");
   }
@@ -250,11 +258,14 @@ export class RenderObject {
   /*
    * Do not call this method directly. instead call paint
    */
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   protected performPaint(
     _svgEls: { [key: string]: SVGElement },
     _context: PaintContext,
-  ): void {}
+  ): void {
+    //
+  }
 
   protected getChildClipId(parentClipId?: string) {
     return parentClipId;
@@ -291,7 +302,7 @@ export class RenderObject {
     this.renderOwner.didDomOrderChange();
   }
 
-  localToGlobal(additionalOffset: Offset = Offset.zero()) {
+  localToGlobal(additionalOffset: Offset = Offset.Constants.zero) {
     return new Offset({
       x: this.matrix.storage[12] + additionalOffset.x,
       y: this.matrix.storage[13] + additionalOffset.y,
@@ -299,9 +310,7 @@ export class RenderObject {
   }
 
   visitChildren(callback: (child: RenderObject) => void) {
-    this.children.forEach(child => {
-      callback(child);
-    });
+    this.children.forEach(callback);
   }
 
   /**
@@ -314,20 +323,16 @@ export class RenderObject {
   hitTest({ globalPoint }: { globalPoint: Offset }): boolean {
     const viewPort = this.renderOwner.renderContext.viewPort;
     const { translation, scale } = viewPort;
-    const bounds = {
-      left: (this.matrix.storage[12] + translation.x) * scale,
-      top: (this.matrix.storage[13] + translation.y) * scale,
-      right:
-        (this.matrix.storage[12] + translation.x + this.size.width) * scale,
-      bottom:
-        (this.matrix.storage[13] + translation.y + this.size.height) * scale,
-    };
+    const left = (this.matrix.storage[12] + translation.x) * scale;
+    const top = (this.matrix.storage[13] + translation.y) * scale;
+    const right = left + this.size.width * scale;
+    const bottom = top + this.size.height * scale;
 
     return (
-      globalPoint.x >= bounds.left &&
-      globalPoint.x <= bounds.right &&
-      globalPoint.y >= bounds.top &&
-      globalPoint.y <= bounds.bottom
+      globalPoint.x >= left &&
+      globalPoint.x <= right &&
+      globalPoint.y >= top &&
+      globalPoint.y <= bottom
     );
   }
 }

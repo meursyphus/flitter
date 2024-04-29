@@ -1,11 +1,12 @@
 enum TextOverflow {
   /// Clip the overflowing text to fix its container.
-  clip = "clip",
+  clip = 1,
 
   /// Render overflowing text outside of its container.
-  visible = "visible",
+  visible = 2,
 
-  ellipsis = "ellipsis",
+  /// Use an ellipsis to indicate that the text has overflowed.
+  ellipsis = 3,
 
   /*
     Not implemented yet

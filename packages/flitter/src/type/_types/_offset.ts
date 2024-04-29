@@ -18,6 +18,10 @@ class Offset extends Calculable {
     return new Offset({ x: x, y: y });
   }
 
+  static Constants = {
+    zero: Object.freeze(Offset.raw({ x: 0, y: 0 })),
+  };
+
   static zero() {
     return Offset.raw({ x: 0, y: 0 });
   }
