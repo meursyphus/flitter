@@ -105,11 +105,23 @@ class Constraints extends Data {
   }
 
   enforce(parent: Constraints): Constraints {
+    const minWidth = parent.constrainWidth(this.minWidth);
+    const maxWidth = parent.constrainWidth(this.maxWidth);
+    const minHeight = parent.constrainHeight(this.minHeight);
+    const maxHeight = parent.constrainHeight(this.maxHeight);
+    if (
+      minWidth === maxWidth &&
+      minHeight === maxHeight &&
+      this.maxWidth === maxWidth &&
+      this.maxHeight === maxHeight
+    ) {
+      return this;
+    }
     return new Constraints({
-      minWidth: parent.constrainWidth(this.minWidth),
-      maxWidth: parent.constrainWidth(this.maxWidth),
-      minHeight: parent.constrainHeight(this.minHeight),
-      maxHeight: parent.constrainHeight(this.maxHeight),
+      minWidth,
+      maxWidth,
+      minHeight,
+      maxHeight,
     });
   }
 
