@@ -6,7 +6,9 @@
 
 	export let data: PageData;
 
-	const histories = data.histories.slice(0, 6).sort((a, b) => a.timestamp - b.timestamp);
+	const histories = data.histories
+		.slice(data.histories.length - 6, data.histories.length)
+		.sort((a, b) => a.timestamp - b.timestamp);
 
 	const lineChartData = convertChartData(histories);
 	const stackedChart = convertChartData(histories, ['paint', 'layout', 'mount']);

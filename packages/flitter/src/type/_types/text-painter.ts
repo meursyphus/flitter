@@ -300,13 +300,17 @@ export class Paragraph {
     });
   }
 
-  get resolvedTextAlign(): "left" | "right" | "center" {
+  get resolvedTextAlign(): TextAlign {
     if (this.textAlign === TextAlign.start) {
-      return this.textDirection === TextDirection.ltr ? "left" : "right";
+      return this.textDirection === TextDirection.ltr
+        ? TextAlign.left
+        : TextAlign.right;
     }
 
     if (this.textAlign === TextAlign.end) {
-      return this.textDirection === TextDirection.ltr ? "right" : "left";
+      return this.textDirection === TextDirection.ltr
+        ? TextAlign.right
+        : TextAlign.left;
     }
 
     return this.textAlign;
@@ -405,7 +409,7 @@ class ParagraphLine {
   }
 
   layout(
-    textAlign: "left" | "right" | "center",
+    textAlign: TextAlign,
     { paragraphWidth, offsetY }: { offsetY: number; paragraphWidth: number },
   ) {
     this.spanBoxes.forEach(spanBox => {
@@ -413,13 +417,13 @@ class ParagraphLine {
     });
 
     switch (textAlign) {
-      case "left":
+      case TextAlign.left:
         this.alignHorizontally(0);
         break;
-      case "right":
+      case TextAlign.right:
         this.alignHorizontally(paragraphWidth - this.width);
         break;
-      case "center":
+      case TextAlign.center:
         this.alignHorizontally((paragraphWidth - this.width) / 2);
         break;
     }

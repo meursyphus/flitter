@@ -8,7 +8,8 @@ import {
 	VerticalDirection,
 	Alignment,
 	TextStyle,
-	MainAxisAlignment
+	MainAxisAlignment,
+	CrossAxisAlignment
 } from '@meursyphus/flitter';
 import { dedent } from 'ts-dedent';
 const ImportWidgetCode = dedent`import { Column, Container, Flexible } from '@meursyphus/flitter';
@@ -142,7 +143,7 @@ export const Case2: Story = {
 		widget: Container({
 			color: 'lightblue',
 			child: Column({
-				mainAxisAlignment: 'end',
+				mainAxisAlignment: MainAxisAlignment.end,
 				children: [
 					Container({
 						width: 50,
@@ -257,7 +258,7 @@ export const Case3: Story = {
 		widget: Container({
 			color: 'lightblue',
 			child: Column({
-				mainAxisAlignment: 'spaceBetween',
+				mainAxisAlignment: MainAxisAlignment.spaceBetween,
 				children: [
 					Container({
 						width: 50,
@@ -315,7 +316,7 @@ export const Case4: Story = {
 		widget: Container({
 			color: 'lightblue',
 			child: Column({
-				mainAxisAlignment: 'spaceEvenly',
+				mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 				children: [
 					Container({
 						width: 50,
@@ -373,7 +374,7 @@ export const Case5: Story = {
 		widget: Container({
 			color: 'lightblue',
 			child: Column({
-				mainAxisAlignment: 'spaceAround',
+				mainAxisAlignment: MainAxisAlignment.spaceAround,
 				children: [
 					Container({
 						width: 50,
@@ -432,8 +433,8 @@ export const Case6: Story = {
 		widget: Container({
 			color: 'lightblue',
 			child: Column({
-				mainAxisAlignment: 'spaceBetween',
-				crossAxisAlignment: 'center',
+				mainAxisAlignment: MainAxisAlignment.spaceBetween,
+				crossAxisAlignment: CrossAxisAlignment.center,
 				children: [
 					Container({
 						width: 50,
@@ -492,8 +493,8 @@ export const Case7: Story = {
 		widget: Container({
 			color: 'lightblue',
 			child: Column({
-				mainAxisAlignment: 'spaceBetween',
-				crossAxisAlignment: 'start',
+				mainAxisAlignment: MainAxisAlignment.spaceBetween,
+				crossAxisAlignment: CrossAxisAlignment.start,
 				children: [
 					Container({
 						width: 50,
@@ -552,8 +553,8 @@ export const Case8: Story = {
 		widget: Container({
 			color: 'lightblue',
 			child: Column({
-				mainAxisAlignment: 'spaceBetween',
-				crossAxisAlignment: 'end',
+				mainAxisAlignment: MainAxisAlignment.spaceBetween,
+				crossAxisAlignment: CrossAxisAlignment.end,
 				children: [
 					Container({
 						width: 50,
@@ -612,8 +613,8 @@ export const Case9: Story = {
 		widget: Container({
 			color: 'lightblue',
 			child: Column({
-				mainAxisAlignment: 'spaceBetween',
-				crossAxisAlignment: 'stretch',
+				mainAxisAlignment: MainAxisAlignment.spaceBetween,
+				crossAxisAlignment: CrossAxisAlignment.stretch,
 				children: [
 					Container({
 						width: 50,

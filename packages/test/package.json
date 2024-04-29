@@ -41,6 +41,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@meursyphus/flitter-chart": "^0.0.4"
+		"@meursyphus/flitter-chart": "^0.0.6"
 	}
 }

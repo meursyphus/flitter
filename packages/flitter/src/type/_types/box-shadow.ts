@@ -77,13 +77,6 @@ class BoxShadow extends Calculable {
       this.blurRadius === other.blurRadius
     );
   }
-
-  /**
-   * @deprecated The method should not be used
-   */
-  eqaul(other: BoxShadow): boolean {
-    return this.equals(other);
-  }
 }
 
 export default BoxShadow;

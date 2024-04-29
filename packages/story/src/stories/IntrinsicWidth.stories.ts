@@ -1,6 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/svelte';
 import Widget from '@meursyphus/flitter-svelte';
-import { Alignment, Column, Container, IntrinsicWidth } from '@meursyphus/flitter';
+import {
+	Alignment,
+	Column,
+	Container,
+	CrossAxisAlignment,
+	IntrinsicWidth,
+	MainAxisAlignment
+} from '@meursyphus/flitter';
 
 const meta = {
 	title: 'Widget/IntrinsicWidth',
@@ -18,7 +25,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Case1: Story = {
 	args: {
-		ssrSize: { width: 600, height: 300 },
 		width: '600px',
 		height: '300px',
 		widget: Container({
@@ -28,8 +34,8 @@ export const Case1: Story = {
 			color: 'grey',
 			child: IntrinsicWidth({
 				child: Column({
-					mainAxisAlignment: 'spaceBetween',
-					crossAxisAlignment: 'stretch',
+					mainAxisAlignment: MainAxisAlignment.spaceBetween,
+					crossAxisAlignment: CrossAxisAlignment.stretch,
 					children: [
 						Container({
 							height: 50,

@@ -5,8 +5,8 @@ import type Size from "./_size";
 import type TextDirection from "./text-direction";
 
 class Alignment extends Calculable {
-  x: number; // -1 ~ 1
-  y: number; // -1 ~ 1
+  readonly x: number; // -1 ~ 1
+  readonly y: number; // -1 ~ 1
 
   plus(other: Alignment): Alignment {
     return new Alignment({
@@ -138,15 +138,15 @@ class Alignment extends Calculable {
     return new Alignment({ x, y });
   }
 
-  static topLeft = Alignment.of({ x: -1, y: -1 });
-  static topCenter = Alignment.of({ x: 0, y: -1 });
-  static topRight = Alignment.of({ x: 1, y: -1 });
-  static centerLeft = Alignment.of({ x: -1, y: 0 });
-  static center = Alignment.of({ x: 0, y: 0 });
-  static centerRight = Alignment.of({ x: 1, y: 0 });
-  static bottomLeft = Alignment.of({ x: -1, y: 1 });
-  static bottomCenter = Alignment.of({ x: 0, y: 1 });
-  static bottomRight = Alignment.of({ x: 1, y: 1 });
+  static readonly topLeft = Alignment.of({ x: -1, y: -1 });
+  static readonly topCenter = Alignment.of({ x: 0, y: -1 });
+  static readonly topRight = Alignment.of({ x: 1, y: -1 });
+  static readonly centerLeft = Alignment.of({ x: -1, y: 0 });
+  static readonly center = Alignment.of({ x: 0, y: 0 });
+  static readonly centerRight = Alignment.of({ x: 1, y: 0 });
+  static readonly bottomLeft = Alignment.of({ x: -1, y: 1 });
+  static readonly bottomCenter = Alignment.of({ x: 0, y: 1 });
+  static readonly bottomRight = Alignment.of({ x: 1, y: 1 });
 
   resolve(_?: TextDirection) {
     return this;

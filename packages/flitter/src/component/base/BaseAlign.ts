@@ -1,5 +1,5 @@
 import { RenderAligningShiftedBox } from "../../renderobject";
-import { Size, Alignment, TextDirection } from "../../type";
+import { Alignment, TextDirection } from "../../type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
@@ -89,24 +89,20 @@ class RenderAlign extends RenderAligningShiftedBox {
 
     if (this.child != null) {
       this.child.layout(constraints.loosen());
-      this.size = constraints.constrain(
-        new Size({
-          width: shrinkWrapWidth
-            ? this.child.size.width * (this.widthFactor ?? 1)
-            : Infinity,
-          height: shrinkWrapHeight
-            ? this.child.size.height * (this.heightFactor ?? 1)
-            : Infinity,
-        }),
-      );
+      this.size = constraints.constrain({
+        width: shrinkWrapWidth
+          ? this.child.size.width * (this.widthFactor ?? 1)
+          : Infinity,
+        height: shrinkWrapHeight
+          ? this.child.size.height * (this.heightFactor ?? 1)
+          : Infinity,
+      });
       this.alignChild();
     } else {
-      this.size = constraints.constrain(
-        new Size({
-          width: shrinkWrapWidth ? 0 : Infinity,
-          height: shrinkWrapHeight ? 0 : Infinity,
-        }),
-      );
+      this.size = constraints.constrain({
+        width: shrinkWrapWidth ? 0 : Infinity,
+        height: shrinkWrapHeight ? 0 : Infinity,
+      });
     }
   }
 }

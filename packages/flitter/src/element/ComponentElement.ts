@@ -26,7 +26,7 @@ class ComponentElement extends Element {
   }
 
   initState(): void {
-    throw new Error("not implemented initState on compoenent element");
+    throw new Error("not implemented initState on component element");
   }
 
   build(): Widget {

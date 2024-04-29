@@ -1,20 +1,20 @@
 enum TextAlign {
-  left = "left",
-  right = "right",
-  center = "center",
+  left = 1,
+  right = 2,
+  center = 3,
   /// Align the text on the leading edge of the container.
   ///
   /// For left-to-right text ([TextDirection.ltr]), this is the left edge.
   ///
   /// For right-to-left text ([TextDirection.rtl]), this is the right edge.
-  start = "start",
+  start = 4,
 
   /// Align the text on the trailing edge of the container.
   ///
   /// For left-to-right text ([TextDirection.ltr]), this is the right edge.
   ///
   /// For right-to-left text ([TextDirection.rtl]), this is the left edge.
-  end = "end",
+  end = 5,
 
   // Not implemented yet.
   //justify = "justify",

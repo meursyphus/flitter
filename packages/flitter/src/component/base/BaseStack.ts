@@ -105,13 +105,13 @@ export class RenderStack extends MultiChildRenderObject {
     let nonPositionedConstraints: Constraints;
 
     switch (this.fit) {
-      case "loose":
+      case StackFit.loose:
         nonPositionedConstraints = constraints.loosen();
         break;
-      case "expand":
+      case StackFit.expand:
         nonPositionedConstraints = Constraints.tight(constraints.biggest);
         break;
-      case "passthrough":
+      case StackFit.passthrough:
         nonPositionedConstraints = constraints;
         break;
     }

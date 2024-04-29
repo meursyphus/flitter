@@ -2,12 +2,13 @@ import type RenderObject from "../renderobject/RenderObject";
 import type RenderObjectWidget from "../widget/RenderObjectWidget";
 import Widget from "../widget/Widget";
 import Element from "./Element";
+import { ElementType } from "./ElementType";
 
 class RenderObjectElement extends Element {
   children!: Element[];
 
   _renderObject!: RenderObject;
-  override type: "render" | "none" | "provider" = "render";
+  override type: ElementType = ElementType.render;
   createRenderObject() {
     const renderObject = (
       this.widget as RenderObjectWidget
@@ -98,7 +99,7 @@ class RenderObjectElement extends Element {
 
   private findAncestorRenderObjectElement(): RenderObjectElement | null {
     let ancestor: Element | null = this.parent;
-    while (ancestor != null && ancestor.type !== "render") {
+    while (ancestor != null && ancestor.type !== ElementType.render) {
       ancestor = ancestor.parent;
     }
     return ancestor as RenderObjectElement | null;
