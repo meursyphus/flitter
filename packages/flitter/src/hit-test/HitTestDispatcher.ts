@@ -1,4 +1,4 @@
-import type { RenderContext } from "..";
+import type { RenderContext } from "../framework/renderer";
 import type { RenderGestureDetector } from "../component/base/BaseGestureDetector";
 import { Offset } from "../type";
 

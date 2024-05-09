@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { RenderOwner } from "../scheduler";
+import type { RenderOwner } from "../framework";
 import type { Matrix4 } from "../type";
 import { Size, Constraints } from "../type";
 import type { PaintContext } from "../utils/type";

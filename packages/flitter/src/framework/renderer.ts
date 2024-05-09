@@ -2,9 +2,106 @@ import type { RenderZIndex } from "../component/base/BaseZIndex";
 import type RenderObject from "../renderobject/RenderObject";
 import { type RenderObjectVisitor } from "../renderobject/RenderObjectVisitor";
 import type { HitTestDispatcher } from "../hit-test/HitTestDispatcher";
-import type { RenderContext } from "../runApp";
+import { Size } from "../type";
+import type { PaintContext } from "../utils/type";
 
-class RenderOwner {
+export class RenderContext {
+  document: Document;
+  window: Window;
+  view: SVGSVGElement;
+  viewPort: { translation: { x: number; y: number }; scale: number } = {
+    translation: { x: 0, y: 0 },
+    scale: 1,
+  };
+  viewSize: Size = new Size({ width: 0, height: 0 });
+  private resizeObserver: ResizeObserver;
+  private onResize: (size: Size) => void;
+
+  constructor({
+    document,
+    window,
+    view,
+    onResize,
+  }: {
+    document: Document;
+    window: Window;
+    view: SVGSVGElement;
+    onResize: (size: Size) => void;
+  }) {
+    this.document = document;
+    this.window = window;
+    this.view = view;
+    this.onResize = onResize;
+  }
+
+  setViewport({
+    translation,
+    scale,
+  }: {
+    translation: { x: number; y: number };
+    scale: number;
+  }) {
+    this.viewPort = { translation, scale };
+    this.view.setAttribute(
+      "viewBox",
+      `${-this.viewPort.translation.x} ${-this.viewPort.translation.y} ${this.viewSize.width / this.viewPort.scale} ${this.viewSize.height / this.viewPort.scale}`,
+    );
+  }
+
+  setConfig({
+    document,
+    window,
+    view,
+  }: {
+    document: Document;
+    window: Window;
+    view: SVGSVGElement;
+  }) {
+    this.document = document;
+    this.window = window;
+    this.view = view;
+  }
+  get paintContext(): PaintContext {
+    const { document: _document, view } = this;
+    return {
+      isOnBrowser: typeof this.window !== "undefined",
+      createSvgEl(tagName) {
+        const el = _document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          tagName,
+        ) as unknown as SVGElement;
+        return el;
+      },
+      appendSvgEl(el) {
+        view.appendChild(el);
+      },
+      insertSvgEl(el, index: number) {
+        const child = view.children[index];
+        if (child == null) {
+          view.appendChild(el);
+          return;
+        }
+
+        child.insertAdjacentElement("beforebegin", el);
+      },
+    };
+  }
+
+  dispose() {
+    this.resizeObserver.disconnect();
+  }
+
+  observeSize(target: HTMLElement) {
+    this.resizeObserver = new ResizeObserver(([child]) => {
+      const { width, height } = child.target.getBoundingClientRect();
+      this.viewSize = new Size({ width, height });
+      this.onResize(this.viewSize);
+    });
+    this.resizeObserver.observe(target);
+  }
+}
+
+class RenderPipeline {
   hitTestDispatcher: HitTestDispatcher;
   renderContext: RenderContext;
   private onNeedVisualUpdate: () => void;
@@ -185,4 +282,8 @@ class DomOrderVisitor implements RenderObjectVisitor {
   }
 }
 
-export default RenderOwner;
+export class SvgRenderPipeline extends RenderPipeline {}
+
+export class CanvasRenderOwner extends RenderPipeline {}
+
+export default RenderPipeline;

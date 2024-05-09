@@ -1,7 +1,13 @@
 import BuildOwner from "./BuildOwner";
-import RenderOwner from "./RenderOwner";
+import RenderPipeline from "./renderer";
 import Scheduler from "./Scheduler";
 import RenderFrameDispatcher from "./RenderFrameDispatcher";
 import GlobalKey from "./Globalkey";
 
-export { BuildOwner, RenderOwner, Scheduler, RenderFrameDispatcher, GlobalKey };
+export {
+  BuildOwner,
+  RenderPipeline as RenderOwner,
+  Scheduler,
+  RenderFrameDispatcher,
+  GlobalKey,
+};

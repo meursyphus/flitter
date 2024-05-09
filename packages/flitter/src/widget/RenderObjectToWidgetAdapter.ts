@@ -1,7 +1,7 @@
 import type { RenderObjectElement } from "../element";
 import type RenderObject from "../renderobject/RenderObject";
-import type { RenderContext } from "../runApp";
-import type { BuildOwner, RenderOwner, Scheduler } from "../scheduler";
+import type { RenderContext } from "../framework/renderer";
+import type { BuildOwner, RenderOwner, Scheduler } from "../framework";
 import RenderView from "../renderobject/RenderView";
 import RenderObjectWidget from "./RenderObjectWidget";
 import type Widget from "./Widget";

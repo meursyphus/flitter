@@ -2,7 +2,7 @@ import { Size, Offset, Constraints, Matrix4 } from "../type";
 import type { PaintContext } from "../utils/type";
 import { type RenderObjectVisitor } from "./RenderObjectVisitor";
 import type { RenderObjectElement } from "../element";
-import type { RenderOwner } from "../scheduler";
+import type { RenderOwner } from "../framework";
 import { assert } from "../utils";
 import { NotImplementedError } from "../exception";
 
