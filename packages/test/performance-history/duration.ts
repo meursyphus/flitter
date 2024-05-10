@@ -78,3 +78,21 @@ histories.push({
 	paint: 5.354,
 	note: ''
 });
+histories.push({
+	timestamp: 1715338831676,
+	runApp: 45.54619999999999,
+	mount: 14.171,
+	draw: 30.554499999999997,
+	layout: 14.7544,
+	paint: 9.0127,
+	note: ''
+});
+histories.push({
+	timestamp: 1715338879746,
+	runApp: 45.550000000000004,
+	mount: 13.9085,
+	draw: 30.7249,
+	layout: 14.824799999999998,
+	paint: 8.975,
+	note: ''
+});
