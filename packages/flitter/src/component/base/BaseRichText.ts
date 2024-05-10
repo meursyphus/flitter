@@ -6,7 +6,7 @@ import {
   TextOverflow,
   Size,
 } from "../../type";
-import type { PaintContext } from "../../utils/type";
+import type { SvgPaintContext } from "../../utils/type";
 import RenderObjectWidget from "../../widget/RenderObjectWidget";
 import type InlineSpan from "../../type/_types/Inline-span";
 import TextPainter from "../../type/_types/text-painter";
@@ -191,7 +191,7 @@ class RenderParagraph extends RenderObject {
     }: {
       text: SVGTextElement;
     },
-    context: PaintContext,
+    context: SvgPaintContext,
   ): void {
     /**
      * Safari has issue that tspan inherit text's transform only when mounted.
@@ -199,7 +199,7 @@ class RenderParagraph extends RenderObject {
      * so we need to remove text and create whenever paint is called.
      */
     if (
-      context.isOnBrowser &&
+      context.isOnBrowser() &&
       typeof navigator !== "undefined" &&
       /^(?!.*Chrome).*Safari.*/i.test(navigator.userAgent)
     ) {
@@ -267,7 +267,7 @@ class RenderParagraph extends RenderObject {
     return this.textPainter.width;
   }
 
-  createDefaultSvgEl({ createSvgEl }: PaintContext): {
+  createDefaultSvgEl({ createSvgEl }: SvgPaintContext): {
     [key: string]: SVGElement;
   } {
     return {

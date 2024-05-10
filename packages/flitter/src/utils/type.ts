@@ -1,8 +1,8 @@
-export type PaintContext = {
+export type SvgPaintContext = {
   createSvgEl: (tagName: keyof SVGElementTagNameMap) => SVGElement;
   appendSvgEl: (el: SVGElement) => void;
   insertSvgEl: (el: SVGElement, index: number) => void;
-  isOnBrowser: boolean;
+  isOnBrowser: () => boolean;
 };
 
 export type VoidCallback = () => void;

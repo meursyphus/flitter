@@ -1,7 +1,7 @@
 import type { RenderObjectElement } from "../../element";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import { assert, createUniqueId } from "../../utils";
-import type { PaintContext } from "../../utils/type";
+import type { SvgPaintContext } from "../../utils/type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
@@ -302,14 +302,14 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     this.renderOwner.hitTestDispatcher.addDetector(this);
   }
 
-  dispose(context: PaintContext): void {
+  dispose(): void {
     this.removeEventListeners();
     backendRefCount--;
     if (backendRefCount === 0) {
       getSingletonDragBackend().teardown();
       globalDragBackend = null;
     }
-    super.dispose(context);
+    super.dispose();
     this.renderOwner.hitTestDispatcher.removeDetector(this);
   }
 
@@ -340,7 +340,7 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     rect.setAttribute("fill", "transparent");
   }
 
-  createDefaultSvgEl({ createSvgEl }: PaintContext) {
+  createDefaultSvgEl({ createSvgEl }: SvgPaintContext) {
     const rect = createSvgEl("rect");
     return {
       rect,

@@ -1,6 +1,6 @@
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import type { Decoration } from "../../type";
-import type { PaintContext } from "../../utils/type";
+import type { SvgPaintContext } from "../../utils/type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
@@ -56,7 +56,7 @@ class RenderDecoratedBox extends SingleChildRenderObject {
     painter.paint(svgEls, this.size);
   }
 
-  createDefaultSvgEl({ createSvgEl }: PaintContext): {
+  createDefaultSvgEl({ createSvgEl }: SvgPaintContext): {
     [key: string]: SVGElement;
   } {
     return {

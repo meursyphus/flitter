@@ -35,22 +35,24 @@ class InteractiveViewportState extends State<InteractiveViewport> {
 	dragPoint: Offset | null = null;
 	initState(context: BuildContext) {
 		this.controller = DiagramControllerProvider.of(context);
-		this.view = context.renderContext.view;
 
 		if (typeof window === 'undefined') return;
-		this.view.addEventListener('wheel', this.handleWheel);
-		this.view.parentElement!.addEventListener('mousedown', this.handleDragStart);
-		this.view.setAttribute('preserveAspectRatio', 'none');
-		document.addEventListener('mousemove', this.handleDragMove);
-		document.addEventListener('mouseup', this.handleDragEnd);
-		this.viedBox = {
-			x: 0,
-			y: 0,
-			width: this.view.clientWidth,
-			height: this.view.clientHeight
-		};
-		this.resizeObserver = new ResizeObserver(this.handleResizeView);
-		this.resizeObserver.observe(this.view);
+		this.element.scheduler.addPostFrameCallbacks(() => {
+			this.view = this.element.renderObject.renderOwner.renderContext.view as SVGSVGElement;
+			this.view.addEventListener('wheel', this.handleWheel);
+			this.view.parentElement!.addEventListener('mousedown', this.handleDragStart);
+			this.view.setAttribute('preserveAspectRatio', 'none');
+			document.addEventListener('mousemove', this.handleDragMove);
+			document.addEventListener('mouseup', this.handleDragEnd);
+			this.viedBox = {
+				x: 0,
+				y: 0,
+				width: this.view.clientWidth,
+				height: this.view.clientHeight
+			};
+			this.resizeObserver = new ResizeObserver(this.handleResizeView);
+			this.resizeObserver.observe(this.view);
+		});
 	}
 
 	dispose(): void {
@@ -138,7 +140,7 @@ class InteractiveViewportState extends State<InteractiveViewport> {
 
 	private notifyViewportChange() {
 		const scale = this.controller.getScale();
-		this.element.renderContext.setViewport({
+		this.element.renderObject.renderOwner.renderContext.setViewport({
 			translation: { x: -this.viedBox.x, y: -this.viedBox.y },
 			scale
 		});

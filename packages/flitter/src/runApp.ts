@@ -3,7 +3,8 @@ import RenderObjectToWidgetAdapter from "./widget/RenderObjectToWidgetAdapter";
 import type Widget from "./widget/Widget";
 import {
   BuildOwner,
-  RenderOwner,
+  RenderPipelineProvider,
+  type RenderPipeline,
   Scheduler,
   RenderFrameDispatcher,
 } from "./framework";
@@ -14,7 +15,7 @@ import { Constraints, type Size } from "./type";
 type AppRunnerProps = {
   document?: Document;
   window?: Window;
-  view: SVGSVGElement;
+  view: SVGSVGElement | HTMLCanvasElement;
   ssrSize?: { width: number; height: number };
 };
 
@@ -23,7 +24,7 @@ export class AppRunner {
   private renderContext: RenderContext;
   private viewSize?: { width: number; height: number };
   private buildOwner: BuildOwner;
-  private renderOwner: RenderOwner;
+  private renderPipeline: RenderPipeline;
   private scheduler: Scheduler;
 
   constructor({
@@ -33,30 +34,33 @@ export class AppRunner {
     ssrSize,
   }: AppRunnerProps) {
     this.viewSize = ssrSize;
-    const renderContext = new RenderContext({
+
+    this.renderContext = new RenderContext({
       view,
+      viewSize: ssrSize,
       document: _document,
       window: _window,
       onResize: this.handleViewResize,
     });
     const renderFrameDispatcher = new RenderFrameDispatcher();
-    const scheduler = new Scheduler({ renderFrameDispatcher });
-    const buildOwner = new BuildOwner({
-      onNeedVisualUpdate: () => scheduler.ensureVisualUpdate(),
+    this.scheduler = new Scheduler({ renderFrameDispatcher });
+    this.buildOwner = new BuildOwner({
+      onNeedVisualUpdate: () => this.scheduler.ensureVisualUpdate(),
     });
 
-    const renderOwner = new RenderOwner({
-      onNeedVisualUpdate: () => scheduler.ensureVisualUpdate(),
-      renderContext: renderContext,
+    const rendererType =
+      view.tagName.toLowerCase() === "canvas" ? "canvas" : "svg";
+
+    this.renderPipeline = new RenderPipelineProvider({
+      onNeedVisualUpdate: () => this.scheduler.ensureVisualUpdate(),
+      renderContext: this.renderContext,
       hitTestDispatcher: new HitTestDispatcher(),
-    });
+    }).get(rendererType);
 
-    scheduler.addPersistenceCallbacks(() => buildOwner.flushBuild());
-    scheduler.addPersistenceCallbacks(() => renderOwner.drawFrame());
-    this.buildOwner = buildOwner;
-    this.renderOwner = renderOwner;
-    this.scheduler = scheduler;
-    this.renderContext = renderContext;
+    this.scheduler.addPersistenceCallbacks(() => this.buildOwner.flushBuild());
+    this.scheduler.addPersistenceCallbacks(() =>
+      this.renderPipeline.drawFrame(),
+    );
   }
   private didRun = false;
 
@@ -68,7 +72,7 @@ export class AppRunner {
     this.root = new RenderObjectToWidgetAdapter({
       app: widget,
       buildOwner: this.buildOwner,
-      renderOwner: this.renderOwner,
+      renderPipeline: this.renderPipeline,
       scheduler: this.scheduler,
     }).createElement();
     this.root.mount(undefined);
@@ -80,33 +84,7 @@ export class AppRunner {
     return this.renderContext.view.innerHTML;
   }
 
-  setConfig({
-    document,
-    window,
-    view,
-  }: {
-    document?: Document;
-    window?: Window;
-    view?: SVGSVGElement;
-  }) {
-    if (document) this.renderContext.document = document;
-    if (window) this.renderContext.window = window;
-    if (view) this.renderContext.view = view;
-    this.renderOwner.renderContext = this.renderContext;
-  }
-
-  onMount({
-    view,
-    resizeTarget,
-  }: {
-    view?: SVGSVGElement;
-    resizeTarget?: HTMLElement;
-  }) {
-    this.setConfig({
-      view,
-      window,
-      document,
-    });
+  onMount({ resizeTarget }: { resizeTarget?: HTMLElement }) {
     resizeTarget && this.renderContext.observeSize(resizeTarget);
   }
 
@@ -120,24 +98,8 @@ export class AppRunner {
   };
 
   draw() {
-    this.layout();
-    this.renderOwner.rearrangeDomOrder();
-    this.paint();
+    this.renderPipeline.reinitializeFrame();
     this.scheduler.flushPostCallbacks();
-  }
-
-  rebuild() {
-    this.root.children[0].rebuild();
-  }
-
-  layout() {
-    const rootRenderObject = this.root.renderObject;
-    rootRenderObject.layout(Constraints.tight(this.viewSize));
-  }
-
-  paint() {
-    const rootRenderObject = this.root.renderObject;
-    rootRenderObject.paint(this.renderContext.paintContext);
   }
 
   dispose() {

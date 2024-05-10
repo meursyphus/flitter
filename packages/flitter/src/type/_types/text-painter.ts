@@ -1,6 +1,6 @@
 import type InlineSpan from "./Inline-span";
 import Utils, { assert, getTextWidth } from "../../utils";
-import type { PaintContext } from "../../utils/type";
+import type { SvgPaintContext } from "../../utils/type";
 
 function getTextHeight({ fontSize }: { fontSize: number }) {
   return fontSize;
@@ -83,7 +83,7 @@ export default class TextPainter {
     return this.paragraph.longestLine;
   }
 
-  paint(textEl: SVGTextElement, { createSvgEl }: PaintContext) {
+  paint(textEl: SVGTextElement, { createSvgEl }: SvgPaintContext) {
     this.resetText(textEl);
     assert(this.paragraph != null, "paragraph should not be null");
 

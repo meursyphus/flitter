@@ -8,8 +8,7 @@ import {
   Alignment,
   BuildContext,
 } from "@meursyphus/flitter";
-import { classToFunction } from "./utils";
-import { clamp } from "./utils";
+import { classToFunction, clamp } from "./utils";
 import DiagramControllerProvider from "./Provider/DiagramControllerProvider";
 import type { DiagramController } from "../controller";
 
@@ -36,15 +35,18 @@ class InteractiveViewportState extends State<InteractiveViewport> {
   dragPoint: Offset | null = null;
   initState(context: BuildContext) {
     this.controller = DiagramControllerProvider.of(context);
-    this.view = context.renderContext.view;
 
     if (typeof window === "undefined") return;
-    this.view.addEventListener("wheel", this.handleWheel);
-    this.view.parentElement!.addEventListener(
-      "mousedown",
-      this.handleDragStart,
-    );
-    this.view.setAttribute("preserveAspectRatio", "none");
+    this.element.scheduler.addPostFrameCallbacks(() => {
+      this.view = this.element.renderObject.renderOwner.renderContext
+        .view as SVGSVGElement;
+      this.view.addEventListener("wheel", this.handleWheel);
+      this.view.parentElement!.addEventListener(
+        "mousedown",
+        this.handleDragStart,
+      );
+      this.view.setAttribute("preserveAspectRatio", "none");
+    });
     document.addEventListener("mousemove", this.handleDragMove);
     document.addEventListener("mouseup", this.handleDragEnd);
     this.viedBox = {
@@ -153,7 +155,7 @@ class InteractiveViewportState extends State<InteractiveViewport> {
 
   private notifyViewportChange() {
     const scale = this.controller.getScale();
-    this.element.renderContext.setViewport({
+    this.element.renderObject.renderOwner.renderContext.setViewport({
       translation: { x: -this.viedBox.x, y: -this.viedBox.y },
       scale,
     });

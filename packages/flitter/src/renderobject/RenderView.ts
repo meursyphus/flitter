@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { RenderOwner } from "../framework";
+import type { RenderPipeline } from "../framework";
 import type { Matrix4 } from "../type";
 import { Size, Constraints } from "../type";
-import type { PaintContext } from "../utils/type";
+import type { SvgPaintContext } from "../utils/type";
 import RenderObject from "./RenderObject";
 
 class RenderView extends RenderObject {
-  constructor({ renderOwner }: { renderOwner: RenderOwner }) {
+  constructor({ renderOwner }: { renderOwner: RenderPipeline }) {
     super({ isPainter: false });
     this.renderOwner = renderOwner;
     this.renderOwner.renderView = this;
@@ -15,7 +15,7 @@ class RenderView extends RenderObject {
   preformLayout(): void {
     const constraint = this.constraints;
     if (!constraint.isTight)
-      throw { message: "constraint must be tight on render view" };
+      throw new Error("constraint must be tight on render view");
     if (constraint.maxWidth === 0 || constraint.maxHeight === 0) return;
     this.size = new Size({
       width: constraint.maxWidth,
@@ -24,7 +24,7 @@ class RenderView extends RenderObject {
     this.children.forEach(child => child.layout(Constraints.loose(this.size)));
   }
   paint(
-    context: PaintContext,
+    context: SvgPaintContext,
     clipId?: string,
     matrix4?: Matrix4,
     opacity?: number,

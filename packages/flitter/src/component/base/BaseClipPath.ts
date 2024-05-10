@@ -2,7 +2,7 @@ import ShortUniqueId from "short-unique-id";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import type { Size } from "../../type";
 import type { Path } from "../../type/_types/_path";
-import type { PaintContext } from "../../utils/type";
+import type { SvgPaintContext } from "../../utils/type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
@@ -61,7 +61,7 @@ class RenderClipPath extends SingleChildRenderObject {
     pathEl.setAttribute("d", d);
   }
 
-  protected createDefaultSvgEl({ createSvgEl }: PaintContext): {
+  protected createDefaultSvgEl({ createSvgEl }: SvgPaintContext): {
     [key: string]: SVGElement;
   } {
     const clipPath = createSvgEl("clipPath");
@@ -74,7 +74,7 @@ class RenderClipPath extends SingleChildRenderObject {
     };
   }
 
-  override mountSvgEl(context: PaintContext): void {
+  override mountSvgEl(context: SvgPaintContext): void {
     const { appendSvgEl } = context;
     const svgEls = this.createDefaultSvgEl(context);
     Object.entries(svgEls).forEach(([name, value]) => {

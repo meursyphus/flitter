@@ -2,13 +2,14 @@ import type { RenderZIndex } from "../component/base/BaseZIndex";
 import type RenderObject from "../renderobject/RenderObject";
 import { type RenderObjectVisitor } from "../renderobject/RenderObjectVisitor";
 import type { HitTestDispatcher } from "../hit-test/HitTestDispatcher";
-import { Size } from "../type";
-import type { PaintContext } from "../utils/type";
+import { Constraints, Size } from "../type";
+import { canNotReach } from "../exception";
+import type { SvgPaintContext } from "../utils/type";
 
 export class RenderContext {
   document: Document;
   window: Window;
-  view: SVGSVGElement;
+  view: SVGSVGElement | HTMLCanvasElement;
   viewPort: { translation: { x: number; y: number }; scale: number } = {
     translation: { x: 0, y: 0 },
     scale: 1,
@@ -22,15 +23,20 @@ export class RenderContext {
     window,
     view,
     onResize,
+    viewSize,
   }: {
     document: Document;
     window: Window;
-    view: SVGSVGElement;
+    view: SVGSVGElement | HTMLCanvasElement;
+    viewSize?: { width: number; height: number };
     onResize: (size: Size) => void;
   }) {
     this.document = document;
     this.window = window;
     this.view = view;
+    if (viewSize) {
+      this.viewSize = new Size(viewSize);
+    }
     this.onResize = onResize;
   }
 
@@ -61,31 +67,6 @@ export class RenderContext {
     this.window = window;
     this.view = view;
   }
-  get paintContext(): PaintContext {
-    const { document: _document, view } = this;
-    return {
-      isOnBrowser: typeof this.window !== "undefined",
-      createSvgEl(tagName) {
-        const el = _document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          tagName,
-        ) as unknown as SVGElement;
-        return el;
-      },
-      appendSvgEl(el) {
-        view.appendChild(el);
-      },
-      insertSvgEl(el, index: number) {
-        const child = view.children[index];
-        if (child == null) {
-          view.appendChild(el);
-          return;
-        }
-
-        child.insertAdjacentElement("beforebegin", el);
-      },
-    };
-  }
 
   dispose() {
     this.resizeObserver.disconnect();
@@ -101,9 +82,9 @@ export class RenderContext {
   }
 }
 
-class RenderPipeline {
+export class RenderPipeline {
   hitTestDispatcher: HitTestDispatcher;
-  renderContext: RenderContext;
+  readonly renderContext: RenderContext;
   private onNeedVisualUpdate: () => void;
   needsPaintRenderObjects: RenderObject[] = [];
   needsLayoutRenderObjects: RenderObject[] = [];
@@ -126,6 +107,29 @@ class RenderPipeline {
     this.hitTestDispatcher.init({ renderContext: this.renderContext });
   }
 
+  paintContext: SvgPaintContext = {
+    isOnBrowser: () => typeof this.renderContext.window !== "undefined",
+    createSvgEl: (tagName: string) => {
+      const el = this.renderContext.document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        tagName,
+      ) as unknown as SVGElement;
+      return el;
+    },
+    appendSvgEl: (el: SVGElement) => {
+      this.renderContext.view.appendChild(el);
+    },
+    insertSvgEl: (el: SVGElement, index: number) => {
+      const child = this.renderContext.view.children[index];
+      if (child == null) {
+        this.renderContext.view.appendChild(el);
+        return;
+      }
+
+      child.insertAdjacentElement("beforebegin", el);
+    },
+  };
+
   requestVisualUpdate() {
     this.onNeedVisualUpdate();
   }
@@ -134,6 +138,12 @@ class RenderPipeline {
     this.flushLayout();
     this.rearrangeDomOrder();
     this.flushPaint();
+  }
+
+  reinitializeFrame() {
+    this.renderView.layout(Constraints.tight(this.renderContext.viewSize));
+    this.rearrangeDomOrder();
+    this.renderView.paint(this.paintContext);
   }
 
   domOrderChanged: boolean = true;
@@ -176,7 +186,7 @@ class RenderPipeline {
       .sort((a, b) => a.depth - b.depth)
       .forEach(renderObject => {
         if (!renderObject.needsPaint) return;
-        renderObject.paintWithoutLayout(this.renderContext.paintContext);
+        renderObject.paintWithoutLayout(this.paintContext);
       });
   }
 }
@@ -282,8 +292,21 @@ class DomOrderVisitor implements RenderObjectVisitor {
   }
 }
 
-export class SvgRenderPipeline extends RenderPipeline {}
+class SvgRenderPipeline extends RenderPipeline {}
 
-export class CanvasRenderOwner extends RenderPipeline {}
+class CanvasRenderPipeline extends RenderPipeline {}
 
-export default RenderPipeline;
+export class RenderPipelineProvider {
+  constructor(private props: ConstructorParameters<typeof RenderPipeline>[0]) {}
+
+  get(type: "svg" | "canvas") {
+    switch (type) {
+      case "svg":
+        return new SvgRenderPipeline(this.props);
+      case "canvas":
+        return new CanvasRenderPipeline(this.props);
+      default:
+        canNotReach(type);
+    }
+  }
+}

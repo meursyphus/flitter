@@ -1,13 +1,13 @@
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import type { Constraints } from "../../type";
 import { Size } from "../../type";
-import type { PaintContext } from "../../utils/type";
+import type { SvgPaintContext } from "../../utils/type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
 export type Painter<T extends Record<string, SVGElement>, D = any> = {
   paint: (els: T, size: Size) => void;
-  createDefaultSvgEl: (context: PaintContext) => T;
+  createDefaultSvgEl: (context: SvgPaintContext) => T;
   dependencies?: D;
   shouldRepaint?: (oldPainter: Painter<T, D>) => boolean;
 };
@@ -92,11 +92,11 @@ export class RenderCustomPaint<
     return constraints.constrain(this.preferredSize);
   }
 
-  protected performPaint(svgEls: T, _: PaintContext): void {
+  protected performPaint(svgEls: T, _: SvgPaintContext): void {
     this.painter.paint(svgEls, this.size);
   }
 
-  protected createDefaultSvgEl(paintContext: PaintContext): T {
+  protected createDefaultSvgEl(paintContext: SvgPaintContext): T {
     return this.painter.createDefaultSvgEl(paintContext);
   }
 

@@ -1,5 +1,5 @@
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
-import type { PaintContext } from "../../utils/type";
+import type { SvgPaintContext } from "../../utils/type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
@@ -48,7 +48,7 @@ class RenderColoredBox extends SingleChildRenderObject {
     rect.setAttribute("height", `${this.size.height}`);
   }
 
-  createDefaultSvgEl({ createSvgEl }: PaintContext): {
+  createDefaultSvgEl({ createSvgEl }: SvgPaintContext): {
     [key: string]: SVGElement;
   } {
     const rect = createSvgEl("rect");

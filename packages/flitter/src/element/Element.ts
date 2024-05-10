@@ -1,12 +1,11 @@
 import type RenderObject from "../renderobject/RenderObject";
-import type { RenderContext } from "../framework/renderer";
 import type { BuildOwner, Scheduler, GlobalKey } from "../framework";
 import Widget from "../widget/Widget";
 import { ElementType } from "./ElementType";
+import { NotImplementedError } from "../exception";
 
 class Element {
   scheduler: Scheduler;
-  renderContext!: RenderContext;
   buildOwner!: BuildOwner;
   widget: Widget;
   parent?: Element;
@@ -18,7 +17,7 @@ class Element {
   type: ElementType = ElementType.none;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   visitChildren(visitor: (child: Element) => void) {
-    throw { message: "not implemented" };
+    throw new NotImplementedError("visitChildren");
   }
 
   get renderObject(): RenderObject {
@@ -30,7 +29,7 @@ class Element {
       }
     });
 
-    if (result == null) throw { message: "can not find render object" };
+    if (result == null) throw new Error("can not find render object");
     return result;
   }
 
@@ -38,11 +37,11 @@ class Element {
   // 1. child is not null, but widget is null
   // in this case, child must be unmounted
   // 2. child is null, widget is null
-  // nothing happend
+  // nothing happened
   // 3. child is null, widget is not null
   // newWidget would be inflated,
   // 4. child is not null, widget is not null, and widget can be update
-  // in this case, just update widget configruation
+  // in this case, just update widget configuration
   // 5. it is similar to 4 but widget can not be update,
   // in this case, child must be unmounted and newWidget would be inflated
   updateChild(
@@ -77,7 +76,6 @@ class Element {
 
   mount(newParent?: Element) {
     if (newParent) {
-      this.renderContext = newParent.renderContext;
       this.buildOwner = newParent.buildOwner;
       this.depth = newParent.depth + 1;
       this.scheduler = newParent.scheduler;

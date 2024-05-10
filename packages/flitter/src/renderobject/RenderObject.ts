@@ -1,8 +1,8 @@
 import { Size, Offset, Constraints, Matrix4 } from "../type";
-import type { PaintContext } from "../utils/type";
+import type { SvgPaintContext } from "../utils/type";
 import { type RenderObjectVisitor } from "./RenderObjectVisitor";
 import type { RenderObjectElement } from "../element";
-import type { RenderOwner } from "../framework";
+import type { RenderPipeline as RenderOwner } from "../framework";
 import { assert } from "../utils";
 import { NotImplementedError } from "../exception";
 
@@ -18,9 +18,9 @@ export class RenderObject {
   parent?: RenderObject;
   needsPaint = true;
   needsLayout = true;
-  clipId?: string = undefined;
-  matrix: Matrix4 = Matrix4.Constants.identity;
-  opacity = 1;
+  private clipId?: string = undefined;
+  private matrix: Matrix4 = Matrix4.Constants.identity;
+  private opacity = 1;
   depth = 0;
 
   #domNode!: SVGElement;
@@ -93,7 +93,7 @@ export class RenderObject {
   }
 
   paint(
-    context: PaintContext,
+    context: SvgPaintContext,
     clipId?: string,
     matrix4: Matrix4 = Matrix4.Constants.identity,
     opacity: number = 1,
@@ -144,7 +144,7 @@ export class RenderObject {
   }
 
   paintChildren(
-    context: PaintContext,
+    context: SvgPaintContext,
     {
       clipId,
       matrix4,
@@ -176,12 +176,12 @@ export class RenderObject {
     this.ownerElement = ownerElement;
     this.depth = ownerElement.depth;
     if (this.isPainter) {
-      this.mountSvgEl(this.renderOwner.renderContext.paintContext);
+      this.mountSvgEl(this.renderOwner.paintContext);
       this.renderOwner.didDomOrderChange();
     }
   }
 
-  dispose(_: PaintContext) {
+  dispose() {
     if (this.isPainter) {
       this.#domNode.remove();
       this.renderOwner.didDomOrderChange();
@@ -196,7 +196,7 @@ export class RenderObject {
     return 0;
   }
 
-  mountSvgEl(context: PaintContext) {
+  mountSvgEl(context: SvgPaintContext) {
     const { appendSvgEl } = context;
 
     const svgEls = this.createDefaultSvgEl(context);
@@ -234,15 +234,12 @@ export class RenderObject {
     if (!this.#domOrderChanged) return;
 
     this.isPainter &&
-      this.renderOwner.renderContext.paintContext.insertSvgEl(
-        this.domNode,
-        this.domOrder,
-      );
+      this.renderOwner.paintContext.insertSvgEl(this.domNode, this.domOrder);
     this.#domOrderChanged = false;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected createDefaultSvgEl(paintContext: PaintContext): {
+  protected createDefaultSvgEl(paintContext: SvgPaintContext): {
     [key: string]: SVGElement;
   } {
     throw new NotImplementedError("createDefaultSvgEl");
@@ -262,7 +259,7 @@ export class RenderObject {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   protected performPaint(
     _svgEls: { [key: string]: SVGElement },
-    _context: PaintContext,
+    _context: SvgPaintContext,
   ): void {
     //
   }
@@ -275,7 +272,7 @@ export class RenderObject {
     this.layout(this.constraints, { parentUsesSize: this.parentUsesSize });
   }
 
-  paintWithoutLayout(context: PaintContext) {
+  paintWithoutLayout(context: SvgPaintContext) {
     this.paint(context, this.clipId, this.matrix, this.opacity);
   }
 
