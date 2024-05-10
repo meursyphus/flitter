@@ -1,9 +1,10 @@
 import { Size, Offset, Constraints, Matrix4 } from "../type";
-import type { SvgPaintContext } from "../utils/type";
-import { type RenderObjectVisitor } from "./RenderObjectVisitor";
 import type { RenderObjectElement } from "../element";
-import type { RenderPipeline as RenderOwner } from "../framework";
-import { assert } from "../utils";
+import {
+  CanvasPainter,
+  type RenderPipeline as RenderOwner,
+  SvgPainter,
+} from "../framework";
 import { NotImplementedError } from "../exception";
 
 /*
@@ -14,41 +15,45 @@ export class RenderObject {
   readonly runtimeType = this.constructor.name;
   readonly isPainter: boolean;
   ownerElement!: RenderObjectElement;
+  matrix: Matrix4 = Matrix4.Constants.identity;
   renderOwner!: RenderOwner;
   parent?: RenderObject;
   needsPaint = true;
   needsLayout = true;
-  private clipId?: string = undefined;
-  private matrix: Matrix4 = Matrix4.Constants.identity;
-  private opacity = 1;
   depth = 0;
 
-  #domNode!: SVGElement;
   /**
-   * domOrder is used to rearrange dom order
-   * it will be set by RenderOwner before flushPaint
+   * zOrder is used to order the render objects in the z axis
    */
-  #domOrder!: number;
-  get domOrder() {
-    assert(this.#domOrder != null, "domOrder is not initialized");
-    return this.#domOrder;
+  zOrder!: number;
+  #svgPainter: SvgPainter;
+  get svgPainter() {
+    if (this.#svgPainter == null) {
+      this.#svgPainter = this.createSvgPainter();
+    }
+    return this.#svgPainter;
   }
-  set domOrder(newOrder: number) {
-    if (newOrder === this.#domOrder) return;
-    this.#domOrder = newOrder;
-    this.didDomOrderChange();
+  #canvasPainter: CanvasPainter;
+  get canvasPainter() {
+    if (this.#canvasPainter == null) {
+      this.#canvasPainter = this.createCanvasPainter();
+    }
+    return this.#canvasPainter;
   }
-  #domOrderChanged = false;
-  didDomOrderChange() {
-    this.#domOrderChanged = true;
+
+  /**
+   * You should override this method if this renderer context is on SVG
+   */
+  protected createSvgPainter() {
+    return new SvgPainter(this);
   }
-  get domNode() {
-    assert(this.#domNode != null, "domNode is not initialized");
-    return this.#domNode;
+  /**
+   * You should override this method if this renderer context is on Canvas
+   */
+  protected createCanvasPainter() {
+    return new CanvasPainter(this);
   }
-  protected set domNode(el: SVGElement) {
-    this.#domNode = el;
-  }
+
   constructor({ isPainter }: { isPainter: boolean }) {
     this.isPainter = isPainter;
   }
@@ -92,100 +97,13 @@ export class RenderObject {
     this.markNeedsPaint();
   }
 
-  paint(
-    context: SvgPaintContext,
-    clipId?: string,
-    matrix4: Matrix4 = Matrix4.Constants.identity,
-    opacity: number = 1,
-  ) {
-    const translatedMatrix4 = matrix4.translated(this.offset.x, this.offset.y);
-    const clipIdChanged = this.clipId !== clipId;
-    const opacityChanged = this.opacity !== opacity;
-    const matrixChanged = !this.matrix.equals(translatedMatrix4);
-    if (
-      !clipIdChanged &&
-      !opacityChanged &&
-      !matrixChanged &&
-      !this.needsPaint
-    ) {
-      return;
-    }
-
-    this.matrix = translatedMatrix4;
-    this.clipId = clipId;
-    this.opacity = opacity;
-
-    if (this.isPainter) {
-      const { svgEls, container } = this.resolveSvgEl();
-      if (clipId && clipIdChanged) {
-        container.setAttribute("clip-path", `url(#${clipId})`);
-      }
-      if (opacityChanged) {
-        container.setAttribute("opacity", `${opacity}`);
-      }
-      if (matrixChanged) {
-        Object.values(svgEls).forEach(el =>
-          this.setSvgTransform(el, this.matrix),
-        );
-      }
-      if (this.needsPaint) {
-        this.performPaint(svgEls, context);
-      }
-    }
-    this.needsPaint = false;
-    const childClipId = this.getChildClipId(clipId);
-    const childMatrix4 = this.getChildMatrix4(this.matrix);
-    const childOpacity = this.getChildOpacity(opacity);
-    this.paintChildren(context, {
-      clipId: childClipId,
-      matrix4: childMatrix4,
-      opacity: childOpacity,
-    });
-  }
-
-  paintChildren(
-    context: SvgPaintContext,
-    {
-      clipId,
-      matrix4,
-      opacity,
-    }: {
-      clipId?: string;
-      matrix4: Matrix4;
-      opacity: number;
-    },
-  ) {
-    this.children.forEach(child =>
-      child.paint(context, clipId, matrix4, opacity),
-    );
-  }
-
-  protected getChildMatrix4(parentMatrix: Matrix4): Matrix4 {
-    return parentMatrix;
-  }
-
-  protected getChildOpacity(parentOpacity: number): number {
-    return parentOpacity;
-  }
-
-  private setSvgTransform(el: SVGElement, matrix: Matrix4) {
-    el.style.transform = `matrix3d(${matrix.storage.join(",")})`;
-  }
-
   attach(ownerElement: RenderObjectElement) {
     this.ownerElement = ownerElement;
     this.depth = ownerElement.depth;
-    if (this.isPainter) {
-      this.mountSvgEl(this.renderOwner.paintContext);
-      this.renderOwner.didDomOrderChange();
-    }
   }
 
   dispose() {
-    if (this.isPainter) {
-      this.#domNode.remove();
-      this.renderOwner.didDomOrderChange();
-    }
+    this.renderOwner.disposeRenderObject(this);
   }
 
   getIntrinsicWidth(_height: number) {
@@ -195,56 +113,6 @@ export class RenderObject {
   getIntrinsicHeight(_width: number) {
     return 0;
   }
-
-  mountSvgEl(context: SvgPaintContext) {
-    const { appendSvgEl } = context;
-
-    const svgEls = this.createDefaultSvgEl(context);
-    const entries = Object.entries(svgEls);
-    entries.forEach(([name, value]) => {
-      value.setAttribute("data-render-name", name);
-    });
-    const svgG = context.createSvgEl("g");
-    appendSvgEl(svgG);
-    svgG.setAttribute("data-render-type", this.type);
-    entries.forEach(([_, value]) => {
-      svgG.appendChild(value);
-    });
-
-    svgG.setAttribute("pointer-events", "none");
-    this.#domNode = svgG;
-  }
-
-  protected resolveSvgEl(): {
-    svgEls: Record<string, SVGElement>;
-    container: SVGElement;
-  } {
-    const container = this.domNode;
-    const svgEls: Record<string, SVGElement> = {};
-    for (const element of container.children) {
-      const child = element;
-      const name = child.getAttribute("data-render-name")!;
-      svgEls[name] = child as unknown as SVGElement;
-    }
-
-    return { svgEls, container };
-  }
-
-  rearrangeDomOrder() {
-    if (!this.#domOrderChanged) return;
-
-    this.isPainter &&
-      this.renderOwner.paintContext.insertSvgEl(this.domNode, this.domOrder);
-    this.#domOrderChanged = false;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected createDefaultSvgEl(paintContext: SvgPaintContext): {
-    [key: string]: SVGElement;
-  } {
-    throw new NotImplementedError("createDefaultSvgEl");
-  }
-
   /*
    * Do not call this method directly. instead call layout
    */
@@ -252,28 +120,8 @@ export class RenderObject {
     throw new NotImplementedError("performLayout");
   }
 
-  /*
-   * Do not call this method directly. instead call paint
-   */
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-  protected performPaint(
-    _svgEls: { [key: string]: SVGElement },
-    _context: SvgPaintContext,
-  ): void {
-    //
-  }
-
-  protected getChildClipId(parentClipId?: string) {
-    return parentClipId;
-  }
-
   layoutWithoutResize() {
     this.layout(this.constraints, { parentUsesSize: this.parentUsesSize });
-  }
-
-  paintWithoutLayout(context: SvgPaintContext) {
-    this.paint(context, this.clipId, this.matrix, this.opacity);
   }
 
   markNeedsParentLayout() {
@@ -291,12 +139,7 @@ export class RenderObject {
   }
 
   protected markNeedsPaint() {
-    this.needsPaint = true;
-    this.renderOwner.needsPaintRenderObjects.push(this);
-  }
-
-  protected didChangeDomOrder() {
-    this.renderOwner.didDomOrderChange();
+    this.renderOwner.markNeedsPaintRenderObject(this);
   }
 
   localToGlobal(additionalOffset: Offset = Offset.Constants.zero) {
@@ -308,13 +151,6 @@ export class RenderObject {
 
   visitChildren(callback: (child: RenderObject) => void) {
     this.children.forEach(callback);
-  }
-
-  /**
-   * It is currently only used on ZIndexRenderObject
-   */
-  accept(visitor: RenderObjectVisitor) {
-    visitor.visitGeneral(this);
   }
 
   hitTest({ globalPoint }: { globalPoint: Offset }): boolean {

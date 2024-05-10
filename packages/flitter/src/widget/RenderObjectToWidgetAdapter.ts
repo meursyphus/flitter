@@ -1,6 +1,6 @@
 import type { RenderObjectElement } from "../element";
 import type RenderObject from "../renderobject/RenderObject";
-import type { RenderContext } from "../framework/renderer";
+import type { RenderContext } from "../framework/renderer/renderer";
 import type { BuildOwner, RenderPipeline, Scheduler } from "../framework";
 import RenderView from "../renderobject/RenderView";
 import RenderObjectWidget from "./RenderObjectWidget";

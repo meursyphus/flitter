@@ -9,7 +9,7 @@ import {
   RenderFrameDispatcher,
 } from "./framework";
 import { HitTestDispatcher } from "./hit-test/HitTestDispatcher";
-import { RenderContext } from "./framework/renderer";
+import { RenderContext } from "./framework/renderer/renderer";
 import { Constraints, type Size } from "./type";
 
 type AppRunnerProps = {
@@ -67,7 +67,12 @@ export class AppRunner {
   private widget!: Widget;
   runApp(widget: Widget): string {
     this.widget = widget;
-    if (this.viewSize == null) return "";
+    if (
+      this.viewSize == null ||
+      this.viewSize.width === 0 ||
+      this.viewSize.height === 0
+    )
+      return "";
 
     this.root = new RenderObjectToWidgetAdapter({
       app: widget,

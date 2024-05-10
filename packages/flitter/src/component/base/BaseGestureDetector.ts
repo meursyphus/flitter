@@ -1,3 +1,4 @@
+import { SvgPainter } from "src/framework";
 import type { RenderObjectElement } from "../../element";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import { assert, createUniqueId } from "../../utils";
@@ -331,8 +332,15 @@ export class RenderGestureDetector extends SingleChildRenderObject {
       onDragEnd: this.onDragEnd,
     });
   }
-
-  protected performPaint({ rect }: { rect: SVGRectElement }): void {
+  protected createSvgPainter(): SvgPainter {
+    return new SvgPainterGestureDetector(this);
+  }
+}
+class SvgPainterGestureDetector extends SvgPainter {
+  get cursor() {
+    return (this.renderObject as RenderGestureDetector).cursor;
+  }
+  protected override performPaint({ rect }: { rect: SVGRectElement }): void {
     rect.setAttribute("width", `${this.size.width}`);
     rect.setAttribute("height", `${this.size.height}`);
     rect.setAttribute("cursor", this.cursor);
@@ -340,15 +348,15 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     rect.setAttribute("fill", "transparent");
   }
 
-  createDefaultSvgEl({ createSvgEl }: SvgPaintContext) {
+  override createDefaultSvgEl({ createSvgEl }: SvgPaintContext) {
     const rect = createSvgEl("rect");
     return {
       rect,
     };
   }
 
-  override didChangeDomOrder(): void {
-    super.didChangeDomOrder();
+  override didDomOrderChange(): void {
+    super.didDomOrderChange();
     this.renderOwner.hitTestDispatcher.didChangeDomOrder();
   }
 }

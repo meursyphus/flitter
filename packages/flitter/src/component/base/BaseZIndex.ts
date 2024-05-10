@@ -1,5 +1,6 @@
+import { type SvgPainterZIndexVisitor } from "../../framework/renderer/svg/svg-renderer";
+import { SvgPainter } from "../../framework/renderer/svg/svg-painter";
 import { SingleChildRenderObject } from "../../renderobject";
-import type { RenderObjectVisitor } from "../../renderobject/RenderObjectVisitor";
 import type { Widget } from "../../widget";
 import { SingleChildRenderObjectWidget } from "../../widget";
 
@@ -30,21 +31,36 @@ export default class BaseZIndex extends SingleChildRenderObjectWidget {
 
 export class RenderZIndex extends SingleChildRenderObject {
   #zIndex: number;
+  set zIndex(value: number) {
+    if (this.svgPainter != null) {
+      (this.svgPainter as SvgPainterZIndex).zIndex = value;
+    }
+  }
+  constructor({ zIndex }: { zIndex: number }) {
+    super({ isPainter: false });
+    this.#zIndex = zIndex;
+  }
+  override createSvgPainter() {
+    return new SvgPainterZIndex(this, this.#zIndex);
+  }
+}
+
+export class SvgPainterZIndex extends SvgPainter {
+  constructor(renderObject: RenderZIndex, zIndex: number) {
+    super(renderObject);
+    this.#zIndex = zIndex;
+  }
+  #zIndex: number;
   get zIndex() {
     return this.#zIndex;
   }
   set zIndex(value: number) {
     if (this.#zIndex === value) return;
     this.#zIndex = value;
-    this.markNeedsPaint();
-    this.didChangeDomOrder();
-  }
-  constructor({ zIndex }: { zIndex: number }) {
-    super({ isPainter: false });
-    this.#zIndex = zIndex;
+    this.didDomOrderChange();
   }
 
-  override accept(visitor: RenderObjectVisitor): void {
+  override accept(visitor: SvgPainterZIndexVisitor): void {
     visitor.visitZIndex(this);
   }
 }

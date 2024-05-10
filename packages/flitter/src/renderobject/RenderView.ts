@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { RenderPipeline } from "../framework";
-import type { Matrix4 } from "../type";
 import { Size, Constraints } from "../type";
-import type { SvgPaintContext } from "../utils/type";
 import RenderObject from "./RenderObject";
 
 class RenderView extends RenderObject {
@@ -22,15 +20,6 @@ class RenderView extends RenderObject {
       height: constraint.maxHeight,
     });
     this.children.forEach(child => child.layout(Constraints.loose(this.size)));
-  }
-  paint(
-    context: SvgPaintContext,
-    clipId?: string,
-    matrix4?: Matrix4,
-    opacity?: number,
-  ): void {
-    if (this.size.width === 0 || this.size.height === 0) return;
-    super.paint(context, clipId, matrix4, opacity);
   }
 }
 

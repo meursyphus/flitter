@@ -1,3 +1,4 @@
+import { SvgPainter } from "../../framework";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import { assert } from "../../utils";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
@@ -51,9 +52,18 @@ class RenderOpacity extends SingleChildRenderObject {
       this.size = this.child.size;
     }
   }
+  createSvgPainter(): SvgPainter {
+    return new SvgPainterOpacity(this);
+  }
+}
 
-  getChildOpacity(parentOpacity: number): number {
-    return parentOpacity * this.opacityProp;
+class SvgPainterOpacity extends SvgPainter {
+  get opacity() {
+    return (this.renderObject as RenderOpacity).opacityProp;
+  }
+
+  override getChildOpacity(parentOpacity: number): number {
+    return parentOpacity * this.opacity;
   }
 }
 

@@ -1,3 +1,4 @@
+import { SvgPainter } from "../../framework";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import type { Constraints } from "../../type";
 import { Size } from "../../type";
@@ -92,14 +93,6 @@ export class RenderCustomPaint<
     return constraints.constrain(this.preferredSize);
   }
 
-  protected performPaint(svgEls: T, _: SvgPaintContext): void {
-    this.painter.paint(svgEls, this.size);
-  }
-
-  protected createDefaultSvgEl(paintContext: SvgPaintContext): T {
-    return this.painter.createDefaultSvgEl(paintContext);
-  }
-
   override getIntrinsicWidth(height: number): number {
     if (this.child == null) {
       return Number.isFinite(this.preferredSize.width)
@@ -117,6 +110,26 @@ export class RenderCustomPaint<
     }
 
     return super.getIntrinsicHeight(width);
+  }
+
+  override createSvgPainter() {
+    return new SvgPainterCustomPaint(this);
+  }
+}
+
+class SvgPainterCustomPaint<
+  T extends Record<string, SVGElement>,
+> extends SvgPainter {
+  get painter() {
+    return (this.renderObject as RenderCustomPaint<T>).painter;
+  }
+
+  protected override performPaint(svgEls: T, _: SvgPaintContext): void {
+    this.painter.paint(svgEls, this.size);
+  }
+
+  protected override createDefaultSvgEl(paintContext: SvgPaintContext): T {
+    return this.painter.createDefaultSvgEl(paintContext);
   }
 }
 

@@ -1,14 +1,14 @@
-import ShortUniqueId from "short-unique-id";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import type { Size } from "../../type";
 import type { Path } from "../../type/_types/_path";
 import type { SvgPaintContext } from "../../utils/type";
-import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
+import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
+import { SvgPainter } from "../../framework/renderer/svg/svg-painter";
+import { createUniqueId } from "../../utils";
 
 type Clipper = (size: Size) => Path;
 
-const uid = new ShortUniqueId({ dictionary: "hex" });
 class BaseClipPath extends SingleChildRenderObjectWidget {
   public clipper: Clipper;
   constructor({
@@ -35,7 +35,6 @@ class BaseClipPath extends SingleChildRenderObjectWidget {
 
 class RenderClipPath extends SingleChildRenderObject {
   _clipper: Clipper;
-  private id = uid.randomUUID(6);
 
   get clipper() {
     return this._clipper;
@@ -51,17 +50,36 @@ class RenderClipPath extends SingleChildRenderObject {
     this._clipper = clipper;
   }
 
-  protected getChildClipId(_parentId?: string | undefined): string | undefined {
+  createSvgPainter() {
+    return new SvgPainterClipPath(this);
+  }
+}
+
+class SvgPainterClipPath extends SvgPainter {
+  private id = createUniqueId();
+  protected override getChildClipId(
+    _parentId?: string | undefined,
+  ): string | undefined {
     return this.id;
   }
 
-  protected performPaint({ clipPath }: { [key: string]: SVGElement }): void {
+  get clipper() {
+    return (this.renderObject as RenderClipPath).clipper(
+      this.renderObject.size,
+    );
+  }
+
+  protected override performPaint({
+    clipPath,
+  }: {
+    [key: string]: SVGElement;
+  }): void {
     const pathEl = clipPath.getElementsByTagName("path")[0];
-    const d = this.clipper(this.size).getD();
+    const d = this.clipper.getD();
     pathEl.setAttribute("d", d);
   }
 
-  protected createDefaultSvgEl({ createSvgEl }: SvgPaintContext): {
+  protected override createDefaultSvgEl({ createSvgEl }: SvgPaintContext): {
     [key: string]: SVGElement;
   } {
     const clipPath = createSvgEl("clipPath");
@@ -74,7 +92,7 @@ class RenderClipPath extends SingleChildRenderObject {
     };
   }
 
-  override mountSvgEl(context: SvgPaintContext): void {
+  override createSvgEl(context: SvgPaintContext) {
     const { appendSvgEl } = context;
     const svgEls = this.createDefaultSvgEl(context);
     Object.entries(svgEls).forEach(([name, value]) => {
@@ -85,7 +103,7 @@ class RenderClipPath extends SingleChildRenderObject {
     svgEl.setAttribute("data-render-type", this.type);
     appendSvgEl(svgEl);
 
-    this.domNode = svgEl;
+    return svgEl;
   }
 
   override resolveSvgEl(): {

@@ -1,3 +1,4 @@
+import { SvgPainter } from "../../framework";
 import RenderObject from "../../renderobject/RenderObject";
 import {
   TextDirection,
@@ -185,37 +186,6 @@ class RenderParagraph extends RenderObject {
     this.markNeedsLayout();
   }
 
-  protected performPaint(
-    {
-      text: textEl,
-    }: {
-      text: SVGTextElement;
-    },
-    context: SvgPaintContext,
-  ): void {
-    /**
-     * Safari has issue that tspan inherit text's transform only when mounted.
-     * even if existing text's transform style is changed, tspan still inherit previous position.
-     * so we need to remove text and create whenever paint is called.
-     */
-    if (
-      context.isOnBrowser() &&
-      typeof navigator !== "undefined" &&
-      /^(?!.*Chrome).*Safari.*/i.test(navigator.userAgent)
-    ) {
-      const newTextEl = context.createSvgEl("text") as SVGTextElement;
-      newTextEl.setAttribute("style", textEl.getAttribute("style"));
-      newTextEl.setAttribute("data-render-name", "text");
-      textEl.parentNode.appendChild(newTextEl);
-      textEl.remove();
-      this.textPainter.paint(newTextEl, context);
-      return;
-    }
-
-    if (!this.needsPaint && !this.changedLayout) return;
-    this.textPainter.paint(textEl, context);
-  }
-
   protected preformLayout(): void {
     this.layoutText({
       maxWidth: this.constraints.maxWidth,
@@ -267,12 +237,55 @@ class RenderParagraph extends RenderObject {
     return this.textPainter.width;
   }
 
-  createDefaultSvgEl({ createSvgEl }: SvgPaintContext): {
+  createSvgPainter(): SvgPainter {
+    return new SVgPainterParagraph(this);
+  }
+}
+
+class SVgPainterParagraph extends SvgPainter {
+  get textPainter() {
+    return (this.renderObject as RenderParagraph).textPainter;
+  }
+  get changedLayout() {
+    return (this.renderObject as RenderParagraph).changedLayout;
+  }
+  protected override createDefaultSvgEl({ createSvgEl }: SvgPaintContext): {
     [key: string]: SVGElement;
   } {
     return {
       text: createSvgEl("text"),
     };
+  }
+
+  protected override performPaint(
+    {
+      text: textEl,
+    }: {
+      text: SVGTextElement;
+    },
+    context: SvgPaintContext,
+  ): void {
+    /**
+     * Safari has issue that tspan inherit text's transform only when mounted.
+     * even if existing text's transform style is changed, tspan still inherit previous position.
+     * so we need to remove text and create whenever paint is called.
+     */
+    if (
+      context.isOnBrowser() &&
+      typeof navigator !== "undefined" &&
+      /^(?!.*Chrome).*Safari.*/i.test(navigator.userAgent)
+    ) {
+      const newTextEl = context.createSvgEl("text") as SVGTextElement;
+      newTextEl.setAttribute("style", textEl.getAttribute("style"));
+      newTextEl.setAttribute("data-render-name", "text");
+      textEl.parentNode.appendChild(newTextEl);
+      textEl.remove();
+      this.textPainter.paint(newTextEl, context);
+      return;
+    }
+
+    if (!this.needsPaint && !this.changedLayout) return;
+    this.textPainter.paint(textEl, context);
   }
 }
 

@@ -1,3 +1,4 @@
+import { SvgPainter } from "../../framework";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import type { Offset } from "../../type";
 import { Alignment, Matrix4, TextDirection } from "../../type";
@@ -217,7 +218,7 @@ class RenderTransform extends SingleChildRenderObject {
     this._textDirection = textDirection;
   }
 
-  private get _effectiveTransform(): Matrix4 {
+  get _effectiveTransform(): Matrix4 {
     const resolvedAlignment = this.alignment?.resolve(this.textDirection);
     const translation = resolvedAlignment?.alongSize(this.size) ?? {
       x: 0,
@@ -237,8 +238,17 @@ class RenderTransform extends SingleChildRenderObject {
     return result;
   }
 
+  createSvgPainter(): SvgPainter {
+    return new SvgPainterTransform(this);
+  }
+}
+
+class SvgPainterTransform extends SvgPainter {
+  get effectiveTransform() {
+    return (this.renderObject as RenderTransform)._effectiveTransform;
+  }
   override getChildMatrix4(parentMatrix: Matrix4): Matrix4 {
-    return parentMatrix.multipliedMatrix(this._effectiveTransform);
+    return parentMatrix.multipliedMatrix(this.effectiveTransform);
   }
 }
 

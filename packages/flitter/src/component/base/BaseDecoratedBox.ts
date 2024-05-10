@@ -1,3 +1,4 @@
+import { SvgPainter } from "../../framework";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import type { Decoration } from "../../type";
 import type { SvgPaintContext } from "../../utils/type";
@@ -44,7 +45,17 @@ class RenderDecoratedBox extends SingleChildRenderObject {
     this._decoration = decoration;
   }
 
-  protected performPaint(svgEls: {
+  protected override createSvgPainter() {
+    return new SvgPainterDecoratedBox(this);
+  }
+}
+
+class SvgPainterDecoratedBox extends SvgPainter {
+  get decoration() {
+    return (this.renderObject as RenderDecoratedBox).decoration;
+  }
+
+  protected override performPaint(svgEls: {
     box: SVGElement;
     topBorder: SVGElement;
     bottomBorder: SVGElement;
@@ -56,7 +67,7 @@ class RenderDecoratedBox extends SingleChildRenderObject {
     painter.paint(svgEls, this.size);
   }
 
-  createDefaultSvgEl({ createSvgEl }: SvgPaintContext): {
+  protected override createDefaultSvgEl({ createSvgEl }: SvgPaintContext): {
     [key: string]: SVGElement;
   } {
     return {

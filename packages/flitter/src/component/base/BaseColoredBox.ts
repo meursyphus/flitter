@@ -1,3 +1,4 @@
+import { SvgPainter } from "../../framework";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import type { SvgPaintContext } from "../../utils/type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
@@ -42,13 +43,23 @@ class RenderColoredBox extends SingleChildRenderObject {
     this._color = color;
   }
 
-  protected performPaint({ rect }: { rect: SVGElement }): void {
+  createSvgPainter() {
+    return new SvgPainterColoredBox(this);
+  }
+}
+
+class SvgPainterColoredBox extends SvgPainter {
+  get color() {
+    return (this.renderObject as RenderColoredBox).color;
+  }
+
+  protected override performPaint({ rect }: { rect: SVGElement }): void {
     rect.setAttribute("fill", this.color);
     rect.setAttribute("width", `${this.size.width}`);
     rect.setAttribute("height", `${this.size.height}`);
   }
 
-  createDefaultSvgEl({ createSvgEl }: SvgPaintContext): {
+  override createDefaultSvgEl({ createSvgEl }: SvgPaintContext): {
     [key: string]: SVGElement;
   } {
     const rect = createSvgEl("rect");
