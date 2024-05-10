@@ -1,5 +1,3 @@
-import type { Project } from "./type";
-
 export default {
   id: 1,
   name: "",
@@ -19,7 +17,7 @@ export default {
           note: "",
           fields: [
             {
-              note: '',
+              note: "",
               id: 1,
               name: "id",
               type: { args: null, schemaName: "", typeName: "uuid" },
@@ -33,7 +31,7 @@ export default {
               },
             },
             {
-              note: '',
+              note: "",
               id: 2,
               name: "name",
               type: { args: "200", schemaName: "", typeName: "varchar(200)" },
@@ -147,4 +145,4 @@ export default {
       ],
     },
   ],
-} satisfies Project;
+} as any;
