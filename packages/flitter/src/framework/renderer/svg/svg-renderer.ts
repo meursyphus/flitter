@@ -109,14 +109,14 @@ type StackingContext = {
 export class SvgRenderPipeline extends RenderPipeline {
   override drawFrame() {
     this.flushLayout();
-    this.rearrangeDomOrder();
     this.flushPaint();
+    this.rearrangeDomOrder();
   }
 
   override reinitializeFrame() {
     this.renderView.layout(Constraints.tight(this.renderContext.viewSize));
-    this.rearrangeDomOrder();
     this.renderView.svgPainter.paint(this.paintContext);
+    this.rearrangeDomOrder();
   }
 
   paintContext: SvgPaintContext = {
@@ -184,5 +184,6 @@ export class SvgRenderPipeline extends RenderPipeline {
   override markNeedsPaintRenderObject(renderObject: RenderObject): void {
     renderObject.needsPaint = true;
     this.needsPaintRenderObjects.push(renderObject);
+    this.requestVisualUpdate();
   }
 }

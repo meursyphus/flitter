@@ -3,8 +3,9 @@ import {
 	SingleChildRenderObjectWidget,
 	Size,
 	Widget,
-	type PaintContext,
-	Matrix4
+	type SvgPaintContext,
+	Matrix4,
+	SvgPainter
 } from '@meursyphus/flitter';
 import { classToFunction } from '../utils';
 
@@ -16,26 +17,36 @@ class ChangedLayoutNotifier extends SingleChildRenderObjectWidget {
 	}
 
 	createRenderObject() {
-		return new _SizeChangedLayoutNotifierRenderObject({
+		return new _ChangedLayoutNotifierRenderObject({
 			onChange: this.onChange
 		});
 	}
 
-	updateRenderObject(renderObject: _SizeChangedLayoutNotifierRenderObject) {
+	updateRenderObject(renderObject: _ChangedLayoutNotifierRenderObject) {
 		renderObject.onChange = this.onChange;
 	}
 }
 
-class _SizeChangedLayoutNotifierRenderObject extends SingleChildRenderObject {
+class _ChangedLayoutNotifierRenderObject extends SingleChildRenderObject {
 	onChange: () => void;
-	oldSize?: Size;
-	oldMatrix?: Matrix4;
 	constructor({ onChange }: { onChange: () => void }) {
 		super({ isPainter: false });
 		this.onChange = onChange;
 	}
 
-	override paint(context: PaintContext, clipId?: string, matrix4?: Matrix4, opacity?: number) {
+	protected createSvgPainter(): SvgPainter {
+		return new SvgPainterLayoutChangedNotifier(this);
+	}
+}
+
+class SvgPainterLayoutChangedNotifier extends SvgPainter {
+	get onChange() {
+		return (this.renderObject as _ChangedLayoutNotifierRenderObject).onChange;
+	}
+	oldSize?: Size;
+	oldMatrix?: Matrix4;
+
+	override paint(context: SvgPaintContext, clipId?: string, matrix4?: Matrix4, opacity?: number) {
 		super.paint(context, clipId, matrix4, opacity);
 		const oldSize = this.oldSize;
 		const oldMatrix = this.oldMatrix;
