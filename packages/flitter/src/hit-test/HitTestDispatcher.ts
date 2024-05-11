@@ -141,7 +141,7 @@ export class HitTestDispatcher {
    * into a single operation.
    */
   #didDomOrderChangeState: "idle" | "processing" = "idle";
-  didChangeDomOrder() {
+  didZOrderChange() {
     if (this.#didDomOrderChangeState === "processing") return;
     this.#didDomOrderChangeState = "processing";
     setTimeout(() => {

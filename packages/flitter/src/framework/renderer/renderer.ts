@@ -1,6 +1,8 @@
 import type RenderObject from "../../renderobject/RenderObject";
+import type { RenderObjectVisitor } from "../../renderobject/RenderObjectVisitor";
 import type { HitTestDispatcher } from "../../hit-test/HitTestDispatcher";
 import { Size } from "../../type";
+import type { RenderZIndex } from "../../component/base/BaseZIndex";
 
 export class RenderContext {
   document: Document;
@@ -84,6 +86,7 @@ export abstract class RenderPipeline {
   private onNeedVisualUpdate: () => void;
   needsPaintRenderObjects: RenderObject[] = [];
   needsLayoutRenderObjects: RenderObject[] = [];
+  needsPaintTransformUpdateRenderObjects: RenderObject[] = [];
   /*
    this will be set by RenderView
   */
@@ -119,11 +122,31 @@ export abstract class RenderPipeline {
       });
   }
 
+  #zOrderChanged = false;
+  notifyZOrderChanged() {
+    this.#zOrderChanged = true;
+    this.requestVisualUpdate();
+  }
+  protected recalculateZOrder() {
+    if (!this.#zOrderChanged) return [];
+    this.#zOrderChanged = false;
+    const visitor = new ZOrderCalculatorVisitor();
+    this.renderView.accept(visitor);
+    const painterRenderObjects = visitor.getRenderObjectsByDomOrder();
+    for (let i = painterRenderObjects.length - 1; i >= 0; i--) {
+      const renderObject = painterRenderObjects[i];
+      renderObject.updateZOrder(i);
+    }
+    return painterRenderObjects;
+  }
+
   abstract drawFrame(): void;
   abstract reinitializeFrame(): void;
   protected abstract flushPaint(): void;
+  protected abstract flushPaintTransformUpdate(): void;
   abstract disposeRenderObject(renderObject: RenderObject): void;
-  abstract markNeedsPaintRenderObject(renderObject: RenderObject): void;
+  abstract markNeedsPaint(renderObject: RenderObject): void;
+  abstract markNeedsPaintTransformUpdate(renderObject: RenderObject): void;
 }
 
 export class Painter {
@@ -133,5 +156,103 @@ export class Painter {
   }
   constructor(renderObject: RenderObject) {
     this.renderObject = renderObject;
+  }
+}
+
+type StackingContext = {
+  zIndex: number;
+  visitedOrder: number;
+};
+
+export class ZOrderCalculatorVisitor implements RenderObjectVisitor {
+  private collectedRenderObjects: {
+    renderObject: RenderObject;
+    visitedOrder: number;
+    contexts: StackingContext[];
+  }[] = [];
+  private currentVisitedOrder = 0;
+  private currentStackingContext: StackingContext[] = [];
+
+  #visit(
+    renderObject: RenderObject,
+    { willCollect }: { willCollect: boolean },
+  ) {
+    if (willCollect) {
+      this.collectedRenderObjects.push({
+        renderObject,
+        contexts: this.currentStackingContext,
+        visitedOrder: this.currentVisitedOrder++,
+      });
+    }
+
+    renderObject.visitChildren(child => {
+      child.accept(this);
+    });
+  }
+
+  visit(renderObject: RenderObject): void {
+    this.#visit(renderObject, { willCollect: renderObject.isPainter });
+  }
+
+  visitZIndex(renderObject: RenderZIndex) {
+    this.currentStackingContext = [...this.currentStackingContext];
+    this.currentStackingContext.push({
+      visitedOrder: this.currentVisitedOrder,
+      zIndex: renderObject.zIndex,
+    });
+
+    this.#visit(renderObject, { willCollect: false });
+
+    this.currentStackingContext = [...this.currentStackingContext];
+    this.currentStackingContext.pop();
+  }
+
+  getRenderObjectsByDomOrder(): RenderObject[] {
+    const sorted = this.collectedRenderObjects.sort((a, b) => {
+      const limit = Math.min(a.contexts.length, b.contexts.length);
+
+      for (let i = 0; i < limit; i++) {
+        const aContext = a.contexts[i];
+        const bContext = b.contexts[i];
+
+        if (aContext.zIndex !== bContext.zIndex) {
+          return aContext.zIndex - bContext.zIndex;
+        } else if (aContext.visitedOrder !== bContext.visitedOrder) {
+          return aContext.visitedOrder - bContext.visitedOrder;
+        }
+      }
+
+      if (limit > 0) {
+        const lastContext = a.contexts[limit - 1];
+
+        if (
+          lastContext.visitedOrder === a.visitedOrder ||
+          lastContext.visitedOrder === b.visitedOrder
+        ) {
+          return a.visitedOrder - b.visitedOrder;
+        }
+      }
+
+      if (a.contexts.length !== b.contexts.length) {
+        const aContext = a.contexts[limit] ?? {
+          visitedOrder: a.visitedOrder,
+          zIndex: 0,
+        };
+        const bContext = b.contexts[limit] ?? {
+          visitedOrder: b.visitedOrder,
+          zIndex: 0,
+        };
+
+        if (aContext.zIndex !== bContext.zIndex) {
+          return aContext.zIndex - bContext.zIndex;
+        } else if (aContext.visitedOrder !== bContext.visitedOrder) {
+          return aContext.visitedOrder - bContext.visitedOrder;
+        }
+      }
+
+      return a.visitedOrder - b.visitedOrder;
+    });
+
+    return sorted.map(({ renderObject }) => renderObject);
   }
 }

@@ -1,11 +1,8 @@
 import { Size, Offset, Constraints, Matrix4 } from "../type";
 import type { RenderObjectElement } from "../element";
-import {
-  CanvasPainter,
-  type RenderPipeline as RenderOwner,
-  SvgPainter,
-} from "../framework";
+import { CanvasPainter, type RenderPipeline, SvgPainter } from "../framework";
 import { NotImplementedError } from "../exception";
+import type { RenderObjectVisitor } from "./RenderObjectVisitor";
 
 /*
   It does more things than flutters' RenderObject 
@@ -15,17 +12,29 @@ export class RenderObject {
   readonly runtimeType = this.constructor.name;
   readonly isPainter: boolean;
   ownerElement!: RenderObjectElement;
-  matrix: Matrix4 = Matrix4.Constants.identity;
-  renderOwner!: RenderOwner;
+  renderOwner!: RenderPipeline;
+  paintTransform: Matrix4 = Matrix4.Constants.identity;
   parent?: RenderObject;
   needsPaint = true;
   needsLayout = true;
+  needsPaintTransformUpdate = true;
   depth = 0;
 
   /**
    * zOrder is used to order the render objects in the z axis
+   * Also related to event bubbling on HitTestDispatcher
    */
-  zOrder!: number;
+  #zOrder!: number;
+  get zOrder() {
+    return this.#zOrder;
+  }
+  updateZOrder(value: number) {
+    if (this.#zOrder === value) return;
+    this.#zOrder = value;
+    if (this.#svgPainter != null) {
+      this.#svgPainter.didDomOrderChange();
+    }
+  }
   #svgPainter: SvgPainter;
   get svgPainter() {
     if (this.#svgPainter == null) {
@@ -69,6 +78,7 @@ export class RenderObject {
   set offset(value: Offset) {
     if (this.offset.x === value.x && this.offset.y === value.y) return;
     this._offset = value;
+    this.markNeedsPaintTransformUpdate();
   }
   private _size: Size = Size.zero;
   get size() {
@@ -100,6 +110,7 @@ export class RenderObject {
   attach(ownerElement: RenderObjectElement) {
     this.ownerElement = ownerElement;
     this.depth = ownerElement.depth;
+    this.markNeedsUpdateZOrder();
   }
 
   dispose() {
@@ -139,13 +150,13 @@ export class RenderObject {
   }
 
   protected markNeedsPaint() {
-    this.renderOwner.markNeedsPaintRenderObject(this);
+    this.renderOwner.markNeedsPaint(this);
   }
 
   localToGlobal(additionalOffset: Offset = Offset.Constants.zero) {
     return new Offset({
-      x: this.matrix.storage[12] + additionalOffset.x,
-      y: this.matrix.storage[13] + additionalOffset.y,
+      x: this.paintTransform.storage[12] + additionalOffset.x,
+      y: this.paintTransform.storage[13] + additionalOffset.y,
     });
   }
 
@@ -153,20 +164,18 @@ export class RenderObject {
     this.children.forEach(callback);
   }
 
-  hitTest({ globalPoint }: { globalPoint: Offset }): boolean {
-    const viewPort = this.renderOwner.renderContext.viewPort;
-    const { translation, scale } = viewPort;
-    const left = (this.matrix.storage[12] + translation.x) * scale;
-    const top = (this.matrix.storage[13] + translation.y) * scale;
-    const right = left + this.size.width * scale;
-    const bottom = top + this.size.height * scale;
+  protected markNeedsPaintTransformUpdate() {
+    this.renderOwner.markNeedsPaintTransformUpdate(this);
+  }
 
-    return (
-      globalPoint.x >= left &&
-      globalPoint.x <= right &&
-      globalPoint.y >= top &&
-      globalPoint.y <= bottom
-    );
+  applyPaintTransform(transform: Matrix4): Matrix4 {
+    return transform;
+  }
+  accept(visitor: RenderObjectVisitor): void {
+    visitor.visit(this);
+  }
+  markNeedsUpdateZOrder() {
+    this.renderOwner.notifyZOrderChanged();
   }
 }
 

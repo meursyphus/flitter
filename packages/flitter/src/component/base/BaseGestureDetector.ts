@@ -1,10 +1,11 @@
-import { SvgPainter } from "src/framework";
+import { SvgPainter } from "../../framework";
 import type { RenderObjectElement } from "../../element";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import { assert, createUniqueId } from "../../utils";
 import type { SvgPaintContext } from "../../utils/type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
+import type { Offset } from "../../type";
 
 type Cursor =
   | "pointer"
@@ -335,6 +336,29 @@ export class RenderGestureDetector extends SingleChildRenderObject {
   protected createSvgPainter(): SvgPainter {
     return new SvgPainterGestureDetector(this);
   }
+
+  hitTest({ globalPoint }: { globalPoint: Offset }): boolean {
+    const viewPort = this.renderOwner.renderContext.viewPort;
+    const { translation, scale } = viewPort;
+    const left = (this.paintTransform.storage[12] + translation.x) * scale;
+    const top = (this.paintTransform.storage[13] + translation.y) * scale;
+    const right = left + this.size.width * scale;
+    const bottom = top + this.size.height * scale;
+
+    return (
+      globalPoint.x >= left &&
+      globalPoint.x <= right &&
+      globalPoint.y >= top &&
+      globalPoint.y <= bottom
+    );
+  }
+
+  override updateZOrder(value: number) {
+    if (value !== this.zOrder) {
+      this.renderOwner.hitTestDispatcher.didZOrderChange();
+    }
+    super.updateZOrder(value);
+  }
 }
 class SvgPainterGestureDetector extends SvgPainter {
   get cursor() {
@@ -353,11 +377,6 @@ class SvgPainterGestureDetector extends SvgPainter {
     return {
       rect,
     };
-  }
-
-  override didDomOrderChange(): void {
-    super.didDomOrderChange();
-    this.renderOwner.hitTestDispatcher.didChangeDomOrder();
   }
 }
 
