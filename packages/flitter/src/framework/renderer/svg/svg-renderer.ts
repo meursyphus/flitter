@@ -109,12 +109,14 @@ type StackingContext = {
 export class SvgRenderPipeline extends RenderPipeline {
   override drawFrame() {
     this.flushLayout();
+    this.flushPaintTransformUpdate();
     this.flushPaint();
     this.rearrangeDomOrder();
   }
 
   override reinitializeFrame() {
     this.renderView.layout(Constraints.tight(this.renderContext.viewSize));
+    this.renderView.svgPainter.updatePaintTransform();
     this.renderView.svgPainter.paint(this.paintContext);
     this.rearrangeDomOrder();
   }
@@ -181,9 +183,27 @@ export class SvgRenderPipeline extends RenderPipeline {
     }
   }
 
-  override markNeedsPaintRenderObject(renderObject: RenderObject): void {
+  override markNeedsPaint(renderObject: RenderObject): void {
     renderObject.needsPaint = true;
     this.needsPaintRenderObjects.push(renderObject);
     this.requestVisualUpdate();
+  }
+
+  override markNeedsPaintTransformUpdate(renderObject: RenderObject): void {
+    renderObject.needsPaintTransformUpdate = true;
+    this.needsPaintTransformUpdateRenderObjects.push(renderObject);
+    this.markNeedsPaint(renderObject);
+  }
+
+  protected override flushPaintTransformUpdate(): void {
+    const dirties = this.needsPaintTransformUpdateRenderObjects;
+    this.needsPaintTransformUpdateRenderObjects = [];
+
+    dirties
+      .sort((a, b) => a.depth - b.depth)
+      .forEach(renderObject => {
+        if (!renderObject.needsPaintTransformUpdate) return;
+        renderObject.svgPainter.updatePaintTransform();
+      });
   }
 }

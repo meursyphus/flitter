@@ -340,8 +340,8 @@ export class RenderGestureDetector extends SingleChildRenderObject {
   hitTest({ globalPoint }: { globalPoint: Offset }): boolean {
     const viewPort = this.renderOwner.renderContext.viewPort;
     const { translation, scale } = viewPort;
-    const left = (this.matrix.storage[12] + translation.x) * scale;
-    const top = (this.matrix.storage[13] + translation.y) * scale;
+    const left = (this.paintTransform.storage[12] + translation.x) * scale;
+    const top = (this.paintTransform.storage[13] + translation.y) * scale;
     const right = left + this.size.width * scale;
     const bottom = top + this.size.height * scale;
 

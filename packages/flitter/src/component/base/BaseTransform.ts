@@ -1,4 +1,3 @@
-import { SvgPainter } from "../../framework";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import type { Offset } from "../../type";
 import { Alignment, Matrix4, TextDirection } from "../../type";
@@ -190,6 +189,7 @@ class RenderTransform extends SingleChildRenderObject {
     if (this.transform.equals(value)) return;
     this._transform = value;
     this.markNeedsLayout();
+    this.markNeedsPaintTransformUpdate();
   }
   _textDirection: TextDirection;
   get textDirection(): TextDirection {
@@ -238,17 +238,8 @@ class RenderTransform extends SingleChildRenderObject {
     return result;
   }
 
-  createSvgPainter(): SvgPainter {
-    return new SvgPainterTransform(this);
-  }
-}
-
-class SvgPainterTransform extends SvgPainter {
-  get effectiveTransform() {
-    return (this.renderObject as RenderTransform)._effectiveTransform;
-  }
-  override getChildMatrix4(parentMatrix: Matrix4): Matrix4 {
-    return parentMatrix.multipliedMatrix(this.effectiveTransform);
+  override applyPaintTransform(transform: Matrix4): Matrix4 {
+    return transform.multipliedMatrix(this._effectiveTransform);
   }
 }
 

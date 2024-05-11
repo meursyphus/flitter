@@ -39,12 +39,6 @@ export class SvgPainter extends Painter {
   get renderOwner(): SvgRenderPipeline {
     return this.renderObject.renderOwner as SvgRenderPipeline;
   }
-  get matrix(): Matrix4 {
-    return this.renderObject.matrix;
-  }
-  set matrix(newValue: Matrix4) {
-    this.renderObject.matrix = newValue;
-  }
   get needsPaint(): boolean {
     return this.renderObject.needsPaint;
   }
@@ -57,27 +51,31 @@ export class SvgPainter extends Painter {
   get type(): string {
     return this.renderObject.type;
   }
+  get needsPaintTransformUpdate(): boolean {
+    return this.renderObject.needsPaintTransformUpdate;
+  }
+  set needsPaintTransformUpdate(newValue: boolean) {
+    this.renderObject.needsPaintTransformUpdate = newValue;
+  }
+  get paintTransform(): Matrix4 {
+    return this.renderObject.paintTransform;
+  }
+  set paintTransform(newValue: Matrix4) {
+    this.renderObject.paintTransform = newValue;
+  }
 
-  paint(
-    context: SvgPaintContext,
-    clipId?: string,
-    matrix4: Matrix4 = Matrix4.Constants.identity,
-    opacity: number = 1,
-  ) {
-    const translatedMatrix4 = matrix4.translated(this.offset.x, this.offset.y);
+  paint(context: SvgPaintContext, clipId?: string, opacity: number = 1) {
     const clipIdChanged = this.#clipId !== clipId;
     const opacityChanged = this.#opacity !== opacity;
-    const matrixChanged = !this.matrix.equals(translatedMatrix4);
     if (
       !clipIdChanged &&
       !opacityChanged &&
-      !matrixChanged &&
+      !this.#didChangePaintTransform &&
       !this.needsPaint
     ) {
       return;
     }
 
-    this.matrix = translatedMatrix4;
     this.#clipId = clipId;
     this.#opacity = opacity;
 
@@ -89,9 +87,10 @@ export class SvgPainter extends Painter {
       if (opacityChanged) {
         container.setAttribute("opacity", `${opacity}`);
       }
-      if (matrixChanged) {
+      if (this.#didChangePaintTransform) {
+        this.#didChangePaintTransform = false;
         Object.values(svgEls).forEach(el =>
-          this.setSvgTransform(el, this.matrix),
+          this.setSvgTransform(el, this.paintTransform),
         );
       }
       if (this.needsPaint) {
@@ -100,11 +99,9 @@ export class SvgPainter extends Painter {
     }
     this.needsPaint = false;
     const childClipId = this.getChildClipId(clipId);
-    const childMatrix4 = this.getChildMatrix4(this.matrix);
     const childOpacity = this.getChildOpacity(opacity);
     this.paintChildren(context, {
       clipId: childClipId,
-      matrix4: childMatrix4,
       opacity: childOpacity,
     });
   }
@@ -113,21 +110,15 @@ export class SvgPainter extends Painter {
     context: SvgPaintContext,
     {
       clipId,
-      matrix4,
       opacity,
     }: {
       clipId?: string;
-      matrix4: Matrix4;
       opacity: number;
     },
   ) {
     this.renderObject.visitChildren(child => {
-      child.svgPainter.paint(context, clipId, matrix4, opacity);
+      child.svgPainter.paint(context, clipId, opacity);
     });
-  }
-
-  protected getChildMatrix4(parentMatrix: Matrix4): Matrix4 {
-    return parentMatrix;
   }
 
   protected getChildOpacity(parentOpacity: number): number {
@@ -187,7 +178,7 @@ export class SvgPainter extends Painter {
   }
 
   paintWithoutLayout(context: SvgPaintContext) {
-    this.paint(context, this.#clipId, this.matrix, this.#opacity);
+    this.paint(context, this.#clipId, this.#opacity);
   }
 
   protected didDomOrderChange() {
@@ -215,5 +206,28 @@ export class SvgPainter extends Painter {
     [key: string]: SVGElement;
   } {
     throw new NotImplementedError("createDefaultSvgEl");
+  }
+
+  #didChangePaintTransform = false;
+  updatePaintTransform(
+    parentPaintTransform: Matrix4 = this.renderObject?.parent?.paintTransform ??
+      Matrix4.Constants.identity,
+  ) {
+    const oldTransform = this.paintTransform;
+    const newTransform = parentPaintTransform.translated(
+      this.offset.x,
+      this.offset.y,
+    );
+    if (!this.needsPaintTransformUpdate && newTransform.equals(oldTransform)) {
+      return;
+    }
+    this.needsPaintTransformUpdate = false;
+    this.paintTransform = newTransform;
+    this.#didChangePaintTransform = true;
+    const childPaintTransform =
+      this.renderObject.applyPaintTransform(newTransform);
+    this.renderObject.visitChildren(child => {
+      child.svgPainter.updatePaintTransform(childPaintTransform);
+    });
   }
 }

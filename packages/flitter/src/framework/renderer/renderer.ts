@@ -84,6 +84,7 @@ export abstract class RenderPipeline {
   private onNeedVisualUpdate: () => void;
   needsPaintRenderObjects: RenderObject[] = [];
   needsLayoutRenderObjects: RenderObject[] = [];
+  needsPaintTransformUpdateRenderObjects: RenderObject[] = [];
   /*
    this will be set by RenderView
   */
@@ -122,8 +123,10 @@ export abstract class RenderPipeline {
   abstract drawFrame(): void;
   abstract reinitializeFrame(): void;
   protected abstract flushPaint(): void;
+  protected abstract flushPaintTransformUpdate(): void;
   abstract disposeRenderObject(renderObject: RenderObject): void;
-  abstract markNeedsPaintRenderObject(renderObject: RenderObject): void;
+  abstract markNeedsPaint(renderObject: RenderObject): void;
+  abstract markNeedsPaintTransformUpdate(renderObject: RenderObject): void;
 }
 
 export class Painter {

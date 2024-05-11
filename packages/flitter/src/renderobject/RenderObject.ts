@@ -1,10 +1,6 @@
 import { Size, Offset, Constraints, Matrix4 } from "../type";
 import type { RenderObjectElement } from "../element";
-import {
-  CanvasPainter,
-  type RenderPipeline as RenderOwner,
-  SvgPainter,
-} from "../framework";
+import { CanvasPainter, type RenderPipeline, SvgPainter } from "../framework";
 import { NotImplementedError } from "../exception";
 
 /*
@@ -15,11 +11,12 @@ export class RenderObject {
   readonly runtimeType = this.constructor.name;
   readonly isPainter: boolean;
   ownerElement!: RenderObjectElement;
-  matrix: Matrix4 = Matrix4.Constants.identity;
-  renderOwner!: RenderOwner;
+  renderOwner!: RenderPipeline;
+  paintTransform: Matrix4 = Matrix4.Constants.identity;
   parent?: RenderObject;
   needsPaint = true;
   needsLayout = true;
+  needsPaintTransformUpdate = true;
   depth = 0;
 
   /**
@@ -69,6 +66,7 @@ export class RenderObject {
   set offset(value: Offset) {
     if (this.offset.x === value.x && this.offset.y === value.y) return;
     this._offset = value;
+    this.markNeedsPaintTransformUpdate();
   }
   private _size: Size = Size.zero;
   get size() {
@@ -139,18 +137,26 @@ export class RenderObject {
   }
 
   protected markNeedsPaint() {
-    this.renderOwner.markNeedsPaintRenderObject(this);
+    this.renderOwner.markNeedsPaint(this);
   }
 
   localToGlobal(additionalOffset: Offset = Offset.Constants.zero) {
     return new Offset({
-      x: this.matrix.storage[12] + additionalOffset.x,
-      y: this.matrix.storage[13] + additionalOffset.y,
+      x: this.paintTransform.storage[12] + additionalOffset.x,
+      y: this.paintTransform.storage[13] + additionalOffset.y,
     });
   }
 
   visitChildren(callback: (child: RenderObject) => void) {
     this.children.forEach(callback);
+  }
+
+  protected markNeedsPaintTransformUpdate() {
+    this.renderOwner.markNeedsPaintTransformUpdate(this);
+  }
+
+  applyPaintTransform(transform: Matrix4): Matrix4 {
+    return transform;
   }
 }
 
