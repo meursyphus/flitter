@@ -2,6 +2,7 @@ import { Size, Offset, Constraints, Matrix4 } from "../type";
 import type { RenderObjectElement } from "../element";
 import { CanvasPainter, type RenderPipeline, SvgPainter } from "../framework";
 import { NotImplementedError } from "../exception";
+import type { RenderObjectVisitor } from "./RenderObjectVisitor";
 
 /*
   It does more things than flutters' RenderObject 
@@ -21,8 +22,19 @@ export class RenderObject {
 
   /**
    * zOrder is used to order the render objects in the z axis
+   * Also related to event bubbling on HitTestDispatcher
    */
-  zOrder!: number;
+  #zOrder!: number;
+  get zOrder() {
+    return this.#zOrder;
+  }
+  updateZOrder(value: number) {
+    if (this.#zOrder === value) return;
+    this.#zOrder = value;
+    if (this.#svgPainter != null) {
+      this.#svgPainter.didDomOrderChange();
+    }
+  }
   #svgPainter: SvgPainter;
   get svgPainter() {
     if (this.#svgPainter == null) {
@@ -98,6 +110,7 @@ export class RenderObject {
   attach(ownerElement: RenderObjectElement) {
     this.ownerElement = ownerElement;
     this.depth = ownerElement.depth;
+    this.markNeedsUpdateZOrder();
   }
 
   dispose() {
@@ -157,6 +170,12 @@ export class RenderObject {
 
   applyPaintTransform(transform: Matrix4): Matrix4 {
     return transform;
+  }
+  accept(visitor: RenderObjectVisitor): void {
+    visitor.visit(this);
+  }
+  markNeedsUpdateZOrder() {
+    this.renderOwner.notifyZOrderChanged();
   }
 }
 

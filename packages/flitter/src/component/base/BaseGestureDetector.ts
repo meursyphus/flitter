@@ -352,6 +352,13 @@ export class RenderGestureDetector extends SingleChildRenderObject {
       globalPoint.y <= bottom
     );
   }
+
+  override updateZOrder(value: number) {
+    if (value !== this.zOrder) {
+      this.renderOwner.hitTestDispatcher.didZOrderChange();
+    }
+    super.updateZOrder(value);
+  }
 }
 class SvgPainterGestureDetector extends SvgPainter {
   get cursor() {
@@ -370,11 +377,6 @@ class SvgPainterGestureDetector extends SvgPainter {
     return {
       rect,
     };
-  }
-
-  override didDomOrderChange(): void {
-    super.didDomOrderChange();
-    this.renderOwner.hitTestDispatcher.didChangeDomOrder();
   }
 }
 

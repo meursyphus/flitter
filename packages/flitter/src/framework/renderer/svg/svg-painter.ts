@@ -1,10 +1,7 @@
 import type { SvgPaintContext } from "../../../utils/type";
 import { assert } from "../../../utils";
 import { Matrix4, type Offset } from "../../../type";
-import type {
-  SvgPainterZIndexVisitor,
-  SvgRenderPipeline,
-} from "./svg-renderer";
+import type { SvgRenderPipeline } from "./svg-renderer";
 import { NotImplementedError } from "../../../exception";
 import { Painter } from "../renderer";
 
@@ -16,19 +13,13 @@ export class SvgPainter extends Painter {
    * domOrder is used to rearrange dom order
    */
   #domOrderChanged = false;
-  get zOrder() {
-    return this.renderObject.zOrder;
-  }
-  set zOrder(newOrder: number) {
-    if (newOrder === this.zOrder) return;
-    this.renderObject.zOrder = newOrder;
-    this.didDomOrderChange();
+  didDomOrderChange() {
+    this.#domOrderChanged = true;
   }
 
   get domNode() {
     if (this.#domNode == null) {
       this.#domNode = this.createSvgEl(this.renderOwner.paintContext);
-      this.didDomOrderChange();
     }
     assert(this.#domNode != null, "domNode is not initialized");
     return this.#domNode;
@@ -181,23 +172,19 @@ export class SvgPainter extends Painter {
     this.paint(context, this.#clipId, this.#opacity);
   }
 
-  protected didDomOrderChange() {
-    this.#domOrderChanged = true;
-    this.renderOwner.didDomOrderChange();
-  }
-
   /**
    * It is currently only used on ZIndexRenderObject
    */
-  accept(visitor: SvgPainterZIndexVisitor) {
-    visitor.visitGeneral(this);
-  }
-
   rearrangeDomOrder() {
     if (!this.#domOrderChanged) return;
 
-    this.isPainter &&
-      this.renderOwner.paintContext.insertSvgEl(this.domNode, this.zOrder);
+    if (this.isPainter) {
+      this.renderOwner.paintContext.insertSvgEl(
+        this.domNode,
+        this.renderObject.zOrder,
+      );
+    }
+
     this.#domOrderChanged = false;
   }
 
