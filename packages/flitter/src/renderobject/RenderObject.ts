@@ -152,22 +152,6 @@ export class RenderObject {
   visitChildren(callback: (child: RenderObject) => void) {
     this.children.forEach(callback);
   }
-
-  hitTest({ globalPoint }: { globalPoint: Offset }): boolean {
-    const viewPort = this.renderOwner.renderContext.viewPort;
-    const { translation, scale } = viewPort;
-    const left = (this.matrix.storage[12] + translation.x) * scale;
-    const top = (this.matrix.storage[13] + translation.y) * scale;
-    const right = left + this.size.width * scale;
-    const bottom = top + this.size.height * scale;
-
-    return (
-      globalPoint.x >= left &&
-      globalPoint.x <= right &&
-      globalPoint.y >= top &&
-      globalPoint.y <= bottom
-    );
-  }
 }
 
 export default RenderObject;
