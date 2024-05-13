@@ -4,6 +4,7 @@ import { Alignment, Matrix4, TextDirection } from "../../type";
 import { assert } from "../../utils";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
+import { CanvasPainter, type CanvasPaintingContext } from "../../framework";
 
 class Transform extends SingleChildRenderObjectWidget {
   origin?: Offset;
@@ -240,6 +241,28 @@ class RenderTransform extends SingleChildRenderObject {
 
   override applyPaintTransform(transform: Matrix4): Matrix4 {
     return transform.multipliedMatrix(this._effectiveTransform);
+  }
+
+  protected override createCanvasPainter(): CanvasPainter {
+    return new TransformCanvasPainter(this);
+  }
+}
+
+class TransformCanvasPainter extends CanvasPainter {
+  get effectiveTransform(): Matrix4 {
+    return (this.renderObject as RenderTransform)._effectiveTransform;
+  }
+
+  protected performPaint(context: CanvasPaintingContext): void {
+    const arr = this.effectiveTransform._m4storage;
+    const a = arr[0],
+      b = arr[1],
+      c = arr[4],
+      d = arr[5],
+      e = arr[12],
+      f = arr[13];
+
+    context.canvas.transform(a, b, c, d, e, f);
   }
 }
 

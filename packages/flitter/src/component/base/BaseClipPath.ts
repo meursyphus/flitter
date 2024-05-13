@@ -1,10 +1,14 @@
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import type { Size } from "../../type";
 import type { Path } from "../../type/_types/_path";
-import type { SvgPaintContext } from "../../utils/type";
+import {
+  SvgPainter,
+  CanvasPainter,
+  type SvgPaintContext,
+  type CanvasPaintingContext,
+} from "../../framework";
 import type Widget from "../../widget/Widget";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
-import { SvgPainter } from "../../framework/renderer/svg/svg-painter";
 import { createUniqueId } from "../../utils";
 
 type Clipper = (size: Size) => Path;
@@ -50,8 +54,12 @@ class RenderClipPath extends SingleChildRenderObject {
     this._clipper = clipper;
   }
 
-  createSvgPainter() {
+  protected override createSvgPainter() {
     return new SvgPainterClipPath(this);
+  }
+
+  protected override createCanvasPainter() {
+    return new ClipPathCanvasPainter(this);
   }
 }
 
@@ -116,6 +124,17 @@ class SvgPainterClipPath extends SvgPainter {
     svgEls[name] = container;
 
     return { svgEls, container };
+  }
+}
+
+class ClipPathCanvasPainter extends CanvasPainter {
+  get clipper() {
+    return (this.renderObject as RenderClipPath).clipper(
+      this.renderObject.size,
+    );
+  }
+  protected override performPaint(context: CanvasPaintingContext): void {
+    context.canvas.clip(this.clipper.toCanvasPath());
   }
 }
 
