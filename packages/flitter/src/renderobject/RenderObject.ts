@@ -149,7 +149,7 @@ export class RenderObject {
     }
   }
 
-  protected markNeedsPaint() {
+  markNeedsPaint() {
     this.renderOwner.markNeedsPaint(this);
   }
 
@@ -176,6 +176,31 @@ export class RenderObject {
   }
   markNeedsUpdateZOrder() {
     this.renderOwner.notifyZOrderChanged();
+  }
+
+  updatePaintTransform(
+    parentPaintTransform: Matrix4 = this.parent?.paintTransform ??
+      Matrix4.Constants.identity,
+  ) {
+    const oldTransform = this.paintTransform;
+    const newTransform = parentPaintTransform.translated(
+      this.offset.x,
+      this.offset.y,
+    );
+    if (!this.needsPaintTransformUpdate && newTransform.equals(oldTransform)) {
+      return;
+    }
+    this.needsPaintTransformUpdate = false;
+    this.paintTransform = newTransform;
+    this.#didChangePaintTransform();
+    const childPaintTransform = this.applyPaintTransform(newTransform);
+    this.visitChildren(child => {
+      child.updatePaintTransform(childPaintTransform);
+    });
+  }
+
+  #didChangePaintTransform(): void {
+    this.renderOwner.didChangePaintTransform(this);
   }
 }
 

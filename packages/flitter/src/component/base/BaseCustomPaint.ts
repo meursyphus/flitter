@@ -2,7 +2,7 @@ import { SvgPainter } from "../../framework";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import type { Constraints } from "../../type";
 import { Size } from "../../type";
-import type { SvgPaintContext } from "../../utils/type";
+import type { SvgPaintContext } from "../../framework";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 

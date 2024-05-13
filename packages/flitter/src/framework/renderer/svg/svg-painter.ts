@@ -1,6 +1,5 @@
-import type { SvgPaintContext } from "../../../utils/type";
 import { assert } from "../../../utils";
-import { Matrix4, type Offset } from "../../../type";
+import type { Matrix4 } from "../../../type";
 import type { SvgRenderPipeline } from "./svg-renderer";
 import { NotImplementedError } from "../../../exception";
 import { Painter } from "../renderer";
@@ -16,6 +15,9 @@ export class SvgPainter extends Painter {
   didDomOrderChange() {
     this.#domOrderChanged = true;
   }
+  get renderOwner(): SvgRenderPipeline {
+    return this.renderObject.renderOwner as SvgRenderPipeline;
+  }
 
   get domNode() {
     if (this.#domNode == null) {
@@ -23,36 +25,6 @@ export class SvgPainter extends Painter {
     }
     assert(this.#domNode != null, "domNode is not initialized");
     return this.#domNode;
-  }
-  get isPainter(): boolean {
-    return this.renderObject.isPainter;
-  }
-  get renderOwner(): SvgRenderPipeline {
-    return this.renderObject.renderOwner as SvgRenderPipeline;
-  }
-  get needsPaint(): boolean {
-    return this.renderObject.needsPaint;
-  }
-  set needsPaint(newValue: boolean) {
-    this.renderObject.needsPaint = newValue;
-  }
-  get offset(): Offset {
-    return this.renderObject.offset;
-  }
-  get type(): string {
-    return this.renderObject.type;
-  }
-  get needsPaintTransformUpdate(): boolean {
-    return this.renderObject.needsPaintTransformUpdate;
-  }
-  set needsPaintTransformUpdate(newValue: boolean) {
-    this.renderObject.needsPaintTransformUpdate = newValue;
-  }
-  get paintTransform(): Matrix4 {
-    return this.renderObject.paintTransform;
-  }
-  set paintTransform(newValue: Matrix4) {
-    this.renderObject.paintTransform = newValue;
   }
 
   paint(context: SvgPaintContext, clipId?: string, opacity: number = 1) {
@@ -196,25 +168,14 @@ export class SvgPainter extends Painter {
   }
 
   #didChangePaintTransform = false;
-  updatePaintTransform(
-    parentPaintTransform: Matrix4 = this.renderObject?.parent?.paintTransform ??
-      Matrix4.Constants.identity,
-  ) {
-    const oldTransform = this.paintTransform;
-    const newTransform = parentPaintTransform.translated(
-      this.offset.x,
-      this.offset.y,
-    );
-    if (!this.needsPaintTransformUpdate && newTransform.equals(oldTransform)) {
-      return;
-    }
-    this.needsPaintTransformUpdate = false;
-    this.paintTransform = newTransform;
+  didChangePaintTransform() {
     this.#didChangePaintTransform = true;
-    const childPaintTransform =
-      this.renderObject.applyPaintTransform(newTransform);
-    this.renderObject.visitChildren(child => {
-      child.svgPainter.updatePaintTransform(childPaintTransform);
-    });
   }
 }
+
+export type SvgPaintContext = {
+  createSvgEl: (tagName: keyof SVGElementTagNameMap) => SVGElement;
+  appendSvgEl: (el: SVGElement) => void;
+  insertSvgEl: (el: SVGElement, index: number) => void;
+  isOnBrowser: () => boolean;
+};

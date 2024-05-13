@@ -4,6 +4,7 @@
 	import { type Widget, Alignment, AppRunner, Container, Text } from '@meursyphus/flitter';
 	const browser = typeof window !== 'undefined';
 
+	export let renderer: 'svg' | 'canvas' = 'svg';
 	export let widget: Widget = Container({
 		width: Infinity,
 		height: Infinity,
@@ -22,7 +23,7 @@
 	export let width = '100%';
 	export let height = '300px';
 
-	let svgEl: SVGSVGElement;
+	let renderEl: SVGSVGElement | HTMLCanvasElement;
 	let containerEl: HTMLElement;
 	let runner: AppRunner;
 	let innerHTML: string = '';
@@ -40,12 +41,12 @@
 
 	onMount(() => {
 		runner = new AppRunner({
-			view: svgEl,
+			view: renderEl,
 			window: window,
 			document: document,
 			ssrSize: ssr?.size
 		});
-		svgEl.innerHTML = '';
+		renderEl.innerHTML = '';
 		runner.runApp(widget);
 		runner.onMount({
 			resizeTarget: containerEl
@@ -58,9 +59,13 @@
 </script>
 
 <div bind:this={containerEl} style="--width: {width}; --height: {height}">
-	<svg class="flitter" bind:this={svgEl}>
-		{@html innerHTML}
-	</svg>
+	{#if renderer === 'canvas' && browser}
+		<canvas class="flitter" bind:this={renderEl} />
+	{:else}
+		<svg class="flitter" bind:this={renderEl}>
+			{@html innerHTML}
+		</svg>
+	{/if}
 </div>
 
 <style>
