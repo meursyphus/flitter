@@ -1,7 +1,7 @@
 import type RenderObject from "../../renderobject/RenderObject";
 import type { RenderObjectVisitor } from "../../renderobject/RenderObjectVisitor";
 import type { HitTestDispatcher } from "../../hit-test/HitTestDispatcher";
-import { Size } from "../../type";
+import { type Matrix4, type Offset, Size } from "../../type";
 import type { RenderZIndex } from "../../component/base/BaseZIndex";
 
 export class RenderContext {
@@ -14,20 +14,18 @@ export class RenderContext {
   };
   viewSize: Size = new Size({ width: 0, height: 0 });
   private resizeObserver: ResizeObserver;
-  private onResize: (size: Size) => void;
+  #resizeHandlers: ((size: Size) => void)[] = [];
 
   constructor({
     document,
     window,
     view,
-    onResize,
     viewSize,
   }: {
     document: Document;
     window: Window;
     view: SVGSVGElement | HTMLCanvasElement;
     viewSize?: { width: number; height: number };
-    onResize: (size: Size) => void;
   }) {
     this.document = document;
     this.window = window;
@@ -35,7 +33,6 @@ export class RenderContext {
     if (viewSize) {
       this.viewSize = new Size(viewSize);
     }
-    this.onResize = onResize;
   }
 
   setViewport({
@@ -74,9 +71,13 @@ export class RenderContext {
     this.resizeObserver = new ResizeObserver(([child]) => {
       const { width, height } = child.target.getBoundingClientRect();
       this.viewSize = new Size({ width, height });
-      this.onResize(this.viewSize);
+      this.#resizeHandlers.forEach(handler => handler(this.viewSize));
     });
     this.resizeObserver.observe(target);
+  }
+
+  addResizeHandler(handler: (size: Size) => void) {
+    this.#resizeHandlers.push(handler);
   }
 }
 
@@ -143,10 +144,21 @@ export abstract class RenderPipeline {
   abstract drawFrame(): void;
   abstract reinitializeFrame(): void;
   protected abstract flushPaint(): void;
-  protected abstract flushPaintTransformUpdate(): void;
+  protected flushPaintTransformUpdate(): void {
+    const dirties = this.needsPaintTransformUpdateRenderObjects;
+    this.needsPaintTransformUpdateRenderObjects = [];
+
+    dirties
+      .sort((a, b) => a.depth - b.depth)
+      .forEach(renderObject => {
+        if (!renderObject.needsPaintTransformUpdate) return;
+        renderObject.updatePaintTransform();
+      });
+  }
   abstract disposeRenderObject(renderObject: RenderObject): void;
   abstract markNeedsPaint(renderObject: RenderObject): void;
   abstract markNeedsPaintTransformUpdate(renderObject: RenderObject): void;
+  abstract didChangePaintTransform(renderObject: RenderObject): void;
 }
 
 export class Painter {
@@ -156,6 +168,33 @@ export class Painter {
   }
   constructor(renderObject: RenderObject) {
     this.renderObject = renderObject;
+  }
+  get isPainter(): boolean {
+    return this.renderObject.isPainter;
+  }
+  get needsPaint(): boolean {
+    return this.renderObject.needsPaint;
+  }
+  set needsPaint(newValue: boolean) {
+    this.renderObject.needsPaint = newValue;
+  }
+  get offset(): Offset {
+    return this.renderObject.offset;
+  }
+  get type(): string {
+    return this.renderObject.type;
+  }
+  get needsPaintTransformUpdate(): boolean {
+    return this.renderObject.needsPaintTransformUpdate;
+  }
+  set needsPaintTransformUpdate(newValue: boolean) {
+    this.renderObject.needsPaintTransformUpdate = newValue;
+  }
+  get paintTransform(): Matrix4 {
+    return this.renderObject.paintTransform;
+  }
+  set paintTransform(newValue: Matrix4) {
+    this.renderObject.paintTransform = newValue;
   }
 }
 

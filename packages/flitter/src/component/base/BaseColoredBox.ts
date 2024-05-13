@@ -1,6 +1,10 @@
-import { SvgPainter } from "../../framework";
+import {
+  SvgPainter,
+  type SvgPaintContext,
+  type CanvasPaintingContext,
+  CanvasPainter,
+} from "../../framework";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
-import type { SvgPaintContext } from "../../utils/type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
@@ -43,8 +47,12 @@ class RenderColoredBox extends SingleChildRenderObject {
     this._color = color;
   }
 
-  createSvgPainter() {
+  override createSvgPainter() {
     return new SvgPainterColoredBox(this);
+  }
+
+  override createCanvasPainter() {
+    return new CanvasPainterColoredBox(this);
   }
 }
 
@@ -66,6 +74,18 @@ class SvgPainterColoredBox extends SvgPainter {
     return {
       rect,
     };
+  }
+}
+
+class CanvasPainterColoredBox extends CanvasPainter {
+  get color() {
+    return (this.renderObject as RenderColoredBox).color;
+  }
+
+  protected override performPaint(paintContext: CanvasPaintingContext): void {
+    const { canvas: ctx } = paintContext;
+    ctx.fillStyle = this.color;
+    ctx.fillRect(0, 0, this.size.width, this.size.height);
   }
 }
 

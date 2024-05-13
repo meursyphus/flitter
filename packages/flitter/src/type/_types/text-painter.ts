@@ -1,6 +1,6 @@
 import type InlineSpan from "./Inline-span";
 import Utils, { assert, getTextWidth } from "../../utils";
-import type { SvgPaintContext } from "../../utils/type";
+import type { SvgPaintContext } from "../../framework";
 
 function getTextHeight({ fontSize }: { fontSize: number }) {
   return fontSize;

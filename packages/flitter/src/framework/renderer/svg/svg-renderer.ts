@@ -1,5 +1,5 @@
 import type RenderObject from "../../../renderobject/RenderObject";
-import type { SvgPaintContext } from "../../../utils/type";
+import type { SvgPaintContext } from "./svg-painter";
 import { Constraints } from "../../../type";
 import { RenderPipeline } from "../renderer";
 
@@ -14,7 +14,7 @@ export class SvgRenderPipeline extends RenderPipeline {
 
   override reinitializeFrame() {
     this.renderView.layout(Constraints.tight(this.renderContext.viewSize));
-    this.renderView.svgPainter.updatePaintTransform();
+    this.renderView.updatePaintTransform();
     this.renderView.svgPainter.paint(this.paintContext);
     const painterRenderObjects = this.recalculateZOrder();
     this.#rearrangeDomOrder(painterRenderObjects);
@@ -80,15 +80,7 @@ export class SvgRenderPipeline extends RenderPipeline {
     this.markNeedsPaint(renderObject);
   }
 
-  protected override flushPaintTransformUpdate(): void {
-    const dirties = this.needsPaintTransformUpdateRenderObjects;
-    this.needsPaintTransformUpdateRenderObjects = [];
-
-    dirties
-      .sort((a, b) => a.depth - b.depth)
-      .forEach(renderObject => {
-        if (!renderObject.needsPaintTransformUpdate) return;
-        renderObject.svgPainter.updatePaintTransform();
-      });
+  override didChangePaintTransform(renderObject: RenderObject): void {
+    renderObject.svgPainter.didChangePaintTransform();
   }
 }

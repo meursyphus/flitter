@@ -7,7 +7,7 @@ import {
   TextOverflow,
   Size,
 } from "../../type";
-import type { SvgPaintContext } from "../../utils/type";
+import type { SvgPaintContext } from "../../framework";
 import RenderObjectWidget from "../../widget/RenderObjectWidget";
 import type InlineSpan from "../../type/_types/Inline-span";
 import TextPainter from "../../type/_types/text-painter";

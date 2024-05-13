@@ -1,5 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import type { RenderPipeline } from "../framework";
+import { ContainerLayer } from "../framework/renderer/canvas/layer";
+import type { CanvasRenderPipeline } from "../framework/renderer/canvas/canvas-renderer";
+import { type RenderPipeline, CanvasPainter } from "../framework";
 import { Size, Constraints } from "../type";
 import RenderObject from "./RenderObject";
 
@@ -20,6 +21,21 @@ class RenderView extends RenderObject {
       height: constraint.maxHeight,
     });
     this.children.forEach(child => child.layout(Constraints.loose(this.size)));
+  }
+
+  protected createCanvasPainter(): CanvasPainter {
+    return new RootCanvasPainter(this);
+  }
+}
+
+class RootCanvasPainter extends CanvasPainter {
+  constructor(renderView: RenderView) {
+    super(renderView);
+    this.layer = new ContainerLayer();
+    this.layer.attach(renderView.renderOwner as CanvasRenderPipeline);
+  }
+  override get isRepaintBoundary() {
+    return true;
   }
 }
 

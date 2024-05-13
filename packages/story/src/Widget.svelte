@@ -1,8 +1,9 @@
 <script lang="ts">
 	import Widget from '@meursyphus/flitter-svelte';
-	import Highlight, { LineNumbers } from 'svelte-highlight';
+	import Highlight from 'svelte-highlight';
 	import typescript from 'svelte-highlight/languages/typescript';
 	import codeStyle from 'svelte-highlight/styles/github-dark-dimmed';
+	export let renderer: 'svg' | 'canvas' = 'svg';
 	export let widget: any;
 	export let ssrSize: { width: number; height: number } = { width: 0, height: 0 };
 	export let width: string;
@@ -16,7 +17,7 @@
 </svelte:head>
 
 <div class="widget">
-	<Widget {widget} {width} {height} {ssrSize} />
+	<Widget {widget} {width} {height} ssr={{ size: ssrSize }} {renderer} />
 	<p class="size">
 		{width.replace('px', '')} × {height.replace('px', '')}
 	</p>

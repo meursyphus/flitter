@@ -22,10 +22,10 @@ type AppRunnerProps = {
 export class AppRunner {
   private root!: RenderObjectElement;
   private renderContext: RenderContext;
-  private viewSize?: { width: number; height: number };
   private buildOwner: BuildOwner;
   private renderPipeline: RenderPipeline;
   private scheduler: Scheduler;
+  private rendererType: "canvas" | "svg";
 
   constructor({
     view,
@@ -33,29 +33,27 @@ export class AppRunner {
     window: _window = window,
     ssrSize,
   }: AppRunnerProps) {
-    this.viewSize = ssrSize;
-
     this.renderContext = new RenderContext({
       view,
       viewSize: ssrSize,
       document: _document,
       window: _window,
-      onResize: this.handleViewResize,
     });
+    this.renderContext.addResizeHandler(size => this.handleViewResize(size));
     const renderFrameDispatcher = new RenderFrameDispatcher();
     this.scheduler = new Scheduler({ renderFrameDispatcher });
     this.buildOwner = new BuildOwner({
       onNeedVisualUpdate: () => this.scheduler.ensureVisualUpdate(),
     });
 
-    const rendererType =
+    this.rendererType =
       view.tagName.toLowerCase() === "canvas" ? "canvas" : "svg";
 
     this.renderPipeline = new RenderPipelineProvider({
       onNeedVisualUpdate: () => this.scheduler.ensureVisualUpdate(),
       renderContext: this.renderContext,
       hitTestDispatcher: new HitTestDispatcher(),
-    }).get(rendererType);
+    }).get(this.rendererType);
 
     this.scheduler.addPersistenceCallbacks(() => this.buildOwner.flushBuild());
     this.scheduler.addPersistenceCallbacks(() =>
@@ -68,9 +66,9 @@ export class AppRunner {
   runApp(widget: Widget): string {
     this.widget = widget;
     if (
-      this.viewSize == null ||
-      this.viewSize.width === 0 ||
-      this.viewSize.height === 0
+      this.renderContext.viewSize == null ||
+      this.renderContext.viewSize.width === 0 ||
+      this.renderContext.viewSize.height === 0
     )
       return "";
 
@@ -81,7 +79,9 @@ export class AppRunner {
       scheduler: this.scheduler,
     }).createElement();
     this.root.mount(undefined);
-    this.root.renderObject.constraints = Constraints.tight(this.viewSize);
+    this.root.renderObject.constraints = Constraints.tight(
+      this.renderContext.viewSize,
+    );
 
     this.didRun = true;
     this.draw();
@@ -94,7 +94,8 @@ export class AppRunner {
   }
 
   handleViewResize = (size: Size) => {
-    this.viewSize = size;
+    if (this.rendererType === "canvas") {
+    }
     if (this.didRun) {
       this.draw();
     } else {
