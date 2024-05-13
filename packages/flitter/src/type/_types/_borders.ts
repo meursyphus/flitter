@@ -12,7 +12,6 @@ export interface ShapeBorder {
 
   getInnerPath(rect: Rect): Path;
   getOuterPath(rect: Rect): Path;
-  paint(svgEls: Record<string, SVGElement>, _: { rect: Rect }): void;
 }
 
 export class BorderSide extends Data {

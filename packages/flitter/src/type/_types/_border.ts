@@ -21,19 +21,6 @@ class _BoxBorder extends Data implements ShapeBorder {
   getOuterPath(rect: Rect): Path {
     return new Path().addRect(rect);
   }
-  paint(
-    _: BorderPathEls,
-    __: { rect: Rect; borderRadius?: BorderRadiusGeometry; shape?: BoxShape },
-  ): void {
-    throw new Error("paint is not implemented.");
-  }
-
-  /**
-   * @deprecated The method should not be used
-   */
-  equal(_: BoxBorder): boolean {
-    throw new Error("equal is not implemented.");
-  }
 }
 
 class Border extends _BoxBorder {

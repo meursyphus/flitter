@@ -159,19 +159,22 @@ class BoxDecorationSvgPainter {
     this.paintBackgroundColor(svgEls.box, rect);
     this.paintShadows(svgEls.box);
 
-    this.decoration.border?.paint(
-      {
-        top: svgEls.topBorder,
-        bottom: svgEls.bottomBorder,
-        left: svgEls.leftBorder,
-        right: svgEls.rightBorder,
-      },
-      {
-        rect,
-        shape: this.decoration.shape,
-        borderRadius: this.decoration.borderRadius,
-      },
-    );
+    const painter = this.decoration.border?.createSvgPainter();
+    if (painter != null) {
+      painter.paint(
+        {
+          top: svgEls.topBorder,
+          bottom: svgEls.bottomBorder,
+          left: svgEls.leftBorder,
+          right: svgEls.rightBorder,
+        },
+        {
+          rect,
+          shape: this.decoration.shape,
+          borderRadius: this.decoration.borderRadius,
+        },
+      );
+    }
   }
 
   private paintShadows(box: SVGPathElement) {
@@ -259,14 +262,12 @@ class BoxDecorationCanvasPainter {
       ctx.shadowOffsetY = shadow.offset.y;
       ctx.shadowBlur = shadow.blurRadius;
       ctx.shadowColor = shadow.color.value;
-      ctx.stroke(new Path().addRect(rect).toCanvasPath());
+      ctx.fill(new Path().addRect(rect).toCanvasPath());
       ctx.restore();
     });
   }
 
   private paintBackgroundColor(ctx: CanvasRenderingContext2D, rect: Rect) {
-    // box.setAttribute("stroke-width", "0");
-    // box.setAttribute("fill", this.decoration.color.value || "none");
     ctx.fillStyle = this.decoration.color.value || "none";
     if (this.decoration.shape == "circle") {
       ctx.fill(new Path().addOval(rect).toCanvasPath());
