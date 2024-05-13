@@ -79,12 +79,6 @@ export default class BoxDecoration extends Data {
     return true;
   }
 
-  /**
-   * @deprecated The method should not be used
-   */
-  equal(other: BoxDecoration): boolean {
-    return this.equals(other);
-  }
   /*
     Those are not implemented
     gradient?: Gradient
@@ -132,8 +126,12 @@ export default class BoxDecoration extends Data {
     }
   }
 
-  createBoxPainter(): BoxPainter {
-    return new BoxDecorationPainter(this);
+  createSvgBoxPainter() {
+    return new BoxDecorationSvgPainter(this);
+  }
+
+  createCanvasBoxPainter() {
+    return new BoxDecorationCanvasPainter(this);
   }
 }
 
@@ -147,7 +145,7 @@ type BoxDecorationSvgEls = {
   box: SVGPathElement;
 };
 
-class BoxDecorationPainter implements BoxPainter {
+class BoxDecorationSvgPainter {
   constructor(private decoration: BoxDecoration) {}
 
   paint(svgEls: BoxDecorationSvgEls, size: Size) {
@@ -225,6 +223,71 @@ class BoxDecorationPainter implements BoxPainter {
   }
 }
 
-interface BoxPainter {
-  paint(svgEls: Record<string, SVGElement>, size: Size): void;
+class BoxDecorationCanvasPainter {
+  constructor(private decoration: BoxDecoration) {}
+
+  paint(ctx: CanvasRenderingContext2D, size: Size) {
+    const rect = Rect.fromLTWH({
+      left: 0,
+      top: 0,
+      width: size.width,
+      height: size.height,
+    });
+
+    this.paintBackgroundColor(ctx, rect);
+    this.paintShadows(ctx, rect);
+    if (this.decoration.border != null) {
+      this.decoration.border.createCanvasPainter().paint(ctx, {
+        rect,
+        shape: this.decoration.shape,
+        borderRadius: this.decoration.borderRadius,
+      });
+    }
+  }
+
+  private paintShadows(ctx: CanvasRenderingContext2D, rect: Rect) {
+    if (
+      this.decoration.boxShadow == null ||
+      this.decoration.boxShadow.length === 0
+    ) {
+      return;
+    }
+
+    this.decoration.boxShadow.forEach(shadow => {
+      ctx.save();
+      ctx.shadowOffsetX = shadow.offset.x;
+      ctx.shadowOffsetY = shadow.offset.y;
+      ctx.shadowBlur = shadow.blurRadius;
+      ctx.shadowColor = shadow.color.value;
+      ctx.stroke(new Path().addRect(rect).toCanvasPath());
+      ctx.restore();
+    });
+  }
+
+  private paintBackgroundColor(ctx: CanvasRenderingContext2D, rect: Rect) {
+    // box.setAttribute("stroke-width", "0");
+    // box.setAttribute("fill", this.decoration.color.value || "none");
+    ctx.fillStyle = this.decoration.color.value || "none";
+    if (this.decoration.shape == "circle") {
+      ctx.fill(new Path().addOval(rect).toCanvasPath());
+      return;
+    }
+    if (this.decoration.borderRadius == null) {
+      ctx.fill(new Path().addRect(rect).toCanvasPath());
+      return;
+    }
+    ctx.fill(
+      new Path()
+        .addRRect(
+          RRect.fromRectAndCorners({
+            rect,
+            topLeft: this.decoration.borderRadius.topLeft,
+            topRight: this.decoration.borderRadius.topRight,
+            bottomLeft: this.decoration.borderRadius.bottomLeft,
+            bottomRight: this.decoration.borderRadius.bottomRight,
+          }),
+        )
+        .toCanvasPath(),
+    );
+  }
 }

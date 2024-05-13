@@ -255,6 +255,10 @@ export class Path {
     } ${clockwise ? 1 : 0} ${endPoint.x} ${endPoint.y}`;
     return this;
   }
+
+  toCanvasPath() {
+    return new Path2D(this._d);
+  }
 }
 
 type Offset = { x: number; y: number };

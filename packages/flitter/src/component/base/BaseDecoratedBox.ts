@@ -1,7 +1,11 @@
-import { SvgPainter } from "../../framework";
+import {
+  SvgPainter,
+  CanvasPainter,
+  type SvgPaintContext,
+  type CanvasPaintingContext,
+} from "../../framework";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import type { Decoration } from "../../type";
-import type { SvgPaintContext } from "../../utils/type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
@@ -35,7 +39,7 @@ class RenderDecoratedBox extends SingleChildRenderObject {
     return this._decoration;
   }
   set decoration(value) {
-    if (this.decoration.equal(value)) return;
+    if (this.decoration.equals(value)) return;
     this._decoration = value;
     this.markNeedsPaint();
   }
@@ -48,6 +52,9 @@ class RenderDecoratedBox extends SingleChildRenderObject {
   protected override createSvgPainter() {
     return new SvgPainterDecoratedBox(this);
   }
+  protected override createCanvasPainter() {
+    return new CanvasPainterDecoratedBox(this);
+  }
 }
 
 class SvgPainterDecoratedBox extends SvgPainter {
@@ -56,14 +63,13 @@ class SvgPainterDecoratedBox extends SvgPainter {
   }
 
   protected override performPaint(svgEls: {
-    box: SVGElement;
-    topBorder: SVGElement;
-    bottomBorder: SVGElement;
-    leftBorder: SVGElement;
-    rightBorder: SVGElement;
+    box: SVGPathElement;
+    topBorder: SVGPathElement;
+    bottomBorder: SVGPathElement;
+    leftBorder: SVGPathElement;
+    rightBorder: SVGPathElement;
   }): void {
-    const painter = this.decoration.createBoxPainter();
-
+    const painter = this.decoration.createSvgBoxPainter();
     painter.paint(svgEls, this.size);
   }
 
@@ -77,6 +83,16 @@ class SvgPainterDecoratedBox extends SvgPainter {
       rightBorder: createSvgEl("path"),
       bottomBorder: createSvgEl("path"),
     };
+  }
+}
+
+class CanvasPainterDecoratedBox extends CanvasPainter {
+  get decoration() {
+    return (this.renderObject as RenderDecoratedBox).decoration;
+  }
+  override performPaint(context: CanvasPaintingContext): void {
+    const painter = this.decoration.createCanvasBoxPainter();
+    painter.paint(context.canvas, this.size);
   }
 }
 
