@@ -1,4 +1,9 @@
-import { SvgPainter } from "../../framework";
+import {
+  SvgPainter,
+  CanvasPainter,
+  type CanvasPaintingContext,
+  type SvgPaintContext,
+} from "../../framework";
 import RenderObject from "../../renderobject/RenderObject";
 import {
   TextDirection,
@@ -7,7 +12,6 @@ import {
   TextOverflow,
   Size,
 } from "../../type";
-import type { SvgPaintContext } from "../../framework";
 import RenderObjectWidget from "../../widget/RenderObjectWidget";
 import type InlineSpan from "../../type/_types/Inline-span";
 import TextPainter from "../../type/_types/text-painter";
@@ -237,12 +241,16 @@ class RenderParagraph extends RenderObject {
     return this.textPainter.width;
   }
 
-  createSvgPainter(): SvgPainter {
-    return new SVgPainterParagraph(this);
+  protected override createSvgPainter(): SvgPainter {
+    return new ParagraphSvgPainter(this);
+  }
+
+  protected override createCanvasPainter(): CanvasPainter {
+    return new ParagraphCanvasPainter(this);
   }
 }
 
-class SVgPainterParagraph extends SvgPainter {
+class ParagraphSvgPainter extends SvgPainter {
   get textPainter() {
     return (this.renderObject as RenderParagraph).textPainter;
   }
@@ -280,12 +288,22 @@ class SVgPainterParagraph extends SvgPainter {
       newTextEl.setAttribute("data-render-name", "text");
       textEl.parentNode.appendChild(newTextEl);
       textEl.remove();
-      this.textPainter.paint(newTextEl, context);
+      this.textPainter.paintOnSvg(newTextEl, context);
       return;
     }
 
     if (!this.needsPaint && !this.changedLayout) return;
-    this.textPainter.paint(textEl, context);
+    this.textPainter.paintOnSvg(textEl, context);
+  }
+}
+
+class ParagraphCanvasPainter extends CanvasPainter {
+  get textPainter() {
+    return (this.renderObject as RenderParagraph).textPainter;
+  }
+
+  protected override performPaint(context: CanvasPaintingContext): void {
+    this.textPainter.paintOnCanvas(context.canvas);
   }
 }
 

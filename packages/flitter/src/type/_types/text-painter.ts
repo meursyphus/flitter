@@ -83,7 +83,22 @@ export default class TextPainter {
     return this.paragraph.longestLine;
   }
 
-  paint(textEl: SVGTextElement, { createSvgEl }: SvgPaintContext) {
+  paintOnCanvas(ctx: CanvasRenderingContext2D): void {
+    assert(this.paragraph != null, "paragraph should not be null");
+    this.paragraph.lines.forEach(line => {
+      line.spanBoxes.forEach(
+        ({ offset, fontFamily, content, fontSize, fontWeight, color }) => {
+          ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+          ctx.textAlign = "start";
+          ctx.textBaseline = "hanging";
+          ctx.fillStyle = color;
+          ctx.fillText(content, offset.x, offset.y);
+        },
+      );
+    });
+  }
+
+  paintOnSvg(textEl: SVGTextElement, { createSvgEl }: SvgPaintContext) {
     this.resetText(textEl);
     assert(this.paragraph != null, "paragraph should not be null");
 

@@ -15,8 +15,11 @@ import {
 } from '@meursyphus/flitter';
 
 const meta = {
-	title: 'Widget/RichText',
-	component: Widget
+	title: 'Widget/RichText/canvas',
+	component: Widget,
+	args: {
+		renderer: 'canvas'
+	}
 } satisfies Meta<Widget>;
 
 export default meta;
