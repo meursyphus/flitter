@@ -21,87 +21,6 @@ class _BoxBorder extends Data implements ShapeBorder {
   getOuterPath(rect: Rect): Path {
     return new Path().addRect(rect);
   }
-  paint(
-    _: BorderPathEls,
-    __: { rect: Rect; borderRadius?: BorderRadiusGeometry; shape?: BoxShape },
-  ): void {
-    throw new Error("paint is not implemented.");
-  }
-
-  /**
-   * @deprecated The method should not be used
-   */
-  equal(_: BoxBorder): boolean {
-    throw new Error("equal is not implemented.");
-  }
-
-  protected static paintUniformBorderWidthRadius(
-    paths: BorderPathEls,
-    {
-      side,
-      borderRadius,
-      rect,
-    }: { side: BorderSide; borderRadius: BorderRadiusGeometry; rect: Rect },
-  ) {
-    assert(side.style !== "none");
-    const border = paths.top;
-    border.setAttribute("stroke-width", "0");
-    border.setAttribute("fill", side.color.value);
-
-    const borderRect = borderRadius.toRRect(rect);
-    const inner = borderRect.deflate(side.strokeInset);
-    const outer = borderRect.inflate(side.strokeOutset);
-
-    border.setAttribute("d", new Path().addDRRect({ inner, outer }).getD());
-
-    [("left" as const, "right" as const, "bottom" as const)].forEach(key => {
-      const path = paths[key];
-      BorderSide.none.paint(path);
-    });
-  }
-
-  protected static paintUniformBorderWidthCircle(
-    paths: BorderPathEls,
-    { side, rect }: { side: BorderSide; rect: Rect },
-  ) {
-    assert(side.style !== "none");
-    const border = paths.top;
-    side.paint(border);
-    border.setAttribute(
-      "d",
-      new Path()
-        .addOval(
-          Rect.fromCircle({
-            center: rect.center,
-            radius: (rect.shortestSide + side.strokeOffset) / 2,
-          }),
-        )
-        .getD(),
-    );
-
-    [("left" as const, "right" as const, "bottom" as const)].forEach(key => {
-      const path = paths[key];
-      BorderSide.none.paint(path);
-    });
-  }
-
-  protected static paintUniformBorderWidthRectangle(
-    paths: BorderPathEls,
-    { side, rect }: { side: BorderSide; rect: Rect },
-  ) {
-    assert(side.style !== "none");
-    const border = paths.top;
-    side.paint(border);
-    border.setAttribute(
-      "d",
-      new Path().addRect(rect.inflate(side.strokeOffset / 2)).getD(),
-    );
-
-    [("left" as const, "right" as const, "bottom" as const)].forEach(key => {
-      const path = paths[key];
-      BorderSide.none.paint(path);
-    });
-  }
 }
 
 class Border extends _BoxBorder {
@@ -189,10 +108,6 @@ class Border extends _BoxBorder {
   }
 
   get dimensions(): EdgeInsetsGeometry {
-    if (this._widthIsUniform) {
-      return EdgeInsets.all(this.top.strokeInset);
-    }
-
     return EdgeInsets.fromLTRB({
       left: this.left.strokeInset,
       right: this.right.strokeInset,
@@ -201,7 +116,40 @@ class Border extends _BoxBorder {
     });
   }
 
-  get isUniform() {
+  createSvgPainter() {
+    return new BorderSvgPainter(this);
+  }
+
+  createCanvasPainter() {
+    return new BorderCanvasPainter(this);
+  }
+}
+
+type BorderPathEls = {
+  top: SVGPathElement;
+  bottom: SVGPathElement;
+  left: SVGPathElement;
+  right: SVGPathElement;
+};
+
+export type BoxBorder = Border;
+
+abstract class BorderPainter {
+  constructor(private border: Border) {}
+  get top() {
+    return this.border.top;
+  }
+  get right() {
+    return this.border.right;
+  }
+  get bottom() {
+    return this.border.bottom;
+  }
+  get left() {
+    return this.border.left;
+  }
+
+  protected get isUniform() {
     const result =
       this._colorIsUniform &&
       this._styleIsUniform &&
@@ -209,6 +157,113 @@ class Border extends _BoxBorder {
       this._widthIsUniform;
 
     return result;
+  }
+
+  protected get _styleIsUniform() {
+    const topStyle = this.top.style;
+    return (
+      this.right.style == topStyle &&
+      this.bottom.style == topStyle &&
+      this.left.style == topStyle
+    );
+  }
+
+  protected get _strokeAlignIsUniform() {
+    const topStrokeAlign = this.top.strokeAlign;
+
+    return (
+      this.right.strokeAlign == topStrokeAlign &&
+      this.bottom.strokeAlign == topStrokeAlign &&
+      this.left.strokeAlign == topStrokeAlign
+    );
+  }
+
+  protected get _colorIsUniform(): boolean {
+    const topColor = this.top.color;
+    return (
+      this.right.color.equals(topColor) &&
+      this.bottom.color.equals(topColor) &&
+      this.left.color.equals(topColor)
+    );
+  }
+
+  protected get _widthIsUniform() {
+    const topWidth = this.top.width;
+    return (
+      this.right.width === topWidth &&
+      this.bottom.width === topWidth &&
+      this.left.width === topWidth
+    );
+  }
+}
+
+class BorderSvgPainter extends BorderPainter {
+  protected static paintUniformBorderWidthRadius(
+    paths: BorderPathEls,
+    {
+      side,
+      borderRadius,
+      rect,
+    }: { side: BorderSide; borderRadius: BorderRadiusGeometry; rect: Rect },
+  ) {
+    assert(side.style !== "none");
+    const border = paths.top;
+
+    const borderRect = borderRadius.toRRect(rect);
+    const inner = borderRect.deflate(side.strokeInset);
+    const outer = borderRect.inflate(side.strokeOutset);
+
+    border.setAttribute("stroke-width", "0");
+    border.setAttribute("fill", side.color.value);
+    border.setAttribute("d", new Path().addDRRect({ inner, outer }).getD());
+
+    [("left" as const, "right" as const, "bottom" as const)].forEach(key => {
+      const path = paths[key];
+      BorderSide.none.applyOnSvg(path);
+    });
+  }
+
+  protected static paintUniformBorderWidthCircle(
+    paths: BorderPathEls,
+    { side, rect }: { side: BorderSide; rect: Rect },
+  ) {
+    assert(side.style !== "none");
+    const border = paths.top;
+    side.applyOnSvg(border);
+    border.setAttribute(
+      "d",
+      new Path()
+        .addOval(
+          Rect.fromCircle({
+            center: rect.center,
+            radius: (rect.shortestSide + side.strokeOffset) / 2,
+          }),
+        )
+        .getD(),
+    );
+
+    [("left" as const, "right" as const, "bottom" as const)].forEach(key => {
+      const path = paths[key];
+      BorderSide.none.applyOnSvg(path);
+    });
+  }
+
+  protected static paintUniformBorderWidthRectangle(
+    paths: BorderPathEls,
+    { side, rect }: { side: BorderSide; rect: Rect },
+  ) {
+    assert(side.style !== "none");
+    const border = paths.top;
+    side.applyOnSvg(border);
+    border.setAttribute(
+      "d",
+      new Path().addRect(rect.inflate(side.strokeOffset / 2)).getD(),
+    );
+
+    [("left" as const, "right" as const, "bottom" as const)].forEach(key => {
+      const path = paths[key];
+      BorderSide.none.applyOnSvg(path);
+    });
   }
 
   paint(
@@ -235,14 +290,14 @@ class Border extends _BoxBorder {
                 borderRadius == null,
                 "A borderRadius can only be given for rectangular boxes.",
               );
-              _BoxBorder.paintUniformBorderWidthCircle(paths, {
+              BorderSvgPainter.paintUniformBorderWidthCircle(paths, {
                 side: this.top,
                 rect,
               });
               break;
             case "rectangle":
               if (borderRadius != null && borderRadius != BorderRadius.zero) {
-                _BoxBorder.paintUniformBorderWidthRadius(paths, {
+                BorderSvgPainter.paintUniformBorderWidthRadius(paths, {
                   side: this.top,
                   borderRadius,
                   rect,
@@ -250,7 +305,7 @@ class Border extends _BoxBorder {
 
                 return;
               }
-              _BoxBorder.paintUniformBorderWidthRectangle(paths, {
+              BorderSvgPainter.paintUniformBorderWidthRectangle(paths, {
                 side: this.top,
                 rect,
               });
@@ -442,52 +497,260 @@ class Border extends _BoxBorder {
         break;
     }
   }
-
-  private get _colorIsUniform(): boolean {
-    const topColor = this.top.color;
-    return (
-      this.right.color.equals(topColor) &&
-      this.bottom.color.equals(topColor) &&
-      this.left.color.equals(topColor)
-    );
-  }
-
-  private get _widthIsUniform() {
-    const topWidth = this.top.width;
-    return (
-      this.right.width === topWidth &&
-      this.bottom.width === topWidth &&
-      this.left.width === topWidth
-    );
-  }
-
-  private get _styleIsUniform() {
-    const topStyle = this.top.style;
-    return (
-      this.right.style == topStyle &&
-      this.bottom.style == topStyle &&
-      this.left.style == topStyle
-    );
-  }
-
-  private get _strokeAlignIsUniform() {
-    const topStrokeAlign = this.top.strokeAlign;
-
-    return (
-      this.right.strokeAlign == topStrokeAlign &&
-      this.bottom.strokeAlign == topStrokeAlign &&
-      this.left.strokeAlign == topStrokeAlign
-    );
-  }
 }
 
-type BorderPathEls = {
-  top: SVGPathElement;
-  bottom: SVGPathElement;
-  left: SVGPathElement;
-  right: SVGPathElement;
-};
+class BorderCanvasPainter extends BorderPainter {
+  protected static paintUniformBorderWidthRadius(
+    ctx: CanvasRenderingContext2D,
+    {
+      side,
+      borderRadius,
+      rect,
+    }: { side: BorderSide; borderRadius: BorderRadiusGeometry; rect: Rect },
+  ) {
+    assert(side.style !== "none");
 
-export type BoxBorder = Border;
+    const borderRect = borderRadius.toRRect(rect);
+    const inner = borderRect.deflate(side.strokeInset);
+    const outer = borderRect.inflate(side.strokeOutset);
+
+    ctx.fillStyle = side.color.value;
+    ctx.fill(new Path().addDRRect({ inner, outer }).toCanvasPath());
+  }
+
+  protected static paintUniformBorderWidthCircle(
+    ctx: CanvasRenderingContext2D,
+    { side, rect }: { side: BorderSide; rect: Rect },
+  ) {
+    assert(side.style !== "none");
+    side.applyOnCanvas(ctx);
+    ctx.stroke(
+      new Path()
+        .addOval(
+          Rect.fromCircle({
+            center: rect.center,
+            radius: (rect.shortestSide + side.strokeOffset) / 2,
+          }),
+        )
+        .toCanvasPath(),
+    );
+  }
+
+  protected static paintUniformBorderWidthRectangle(
+    ctx: CanvasRenderingContext2D,
+    { side, rect }: { side: BorderSide; rect: Rect },
+  ) {
+    assert(side.style !== "none");
+    side.applyOnCanvas(ctx);
+    ctx.stroke(
+      new Path().addRect(rect.inflate(side.strokeOffset / 2)).toCanvasPath(),
+    );
+  }
+
+  paint(
+    ctx: CanvasRenderingContext2D,
+    {
+      rect,
+      borderRadius,
+      shape = "rectangle",
+    }: { rect: Rect; borderRadius?: BorderRadiusGeometry; shape?: BoxShape },
+  ): void {
+    if (this.isUniform) {
+      switch (this.top.style) {
+        case "none":
+          return;
+        case "solid":
+          switch (shape) {
+            case "circle":
+              assert(
+                borderRadius == null,
+                "A borderRadius can only be given for rectangular boxes.",
+              );
+              BorderCanvasPainter.paintUniformBorderWidthCircle(ctx, {
+                side: this.top,
+                rect,
+              });
+              break;
+            case "rectangle":
+              if (borderRadius != null && borderRadius != BorderRadius.zero) {
+                BorderCanvasPainter.paintUniformBorderWidthRadius(ctx, {
+                  side: this.top,
+                  borderRadius,
+                  rect,
+                });
+                return;
+              }
+              BorderCanvasPainter.paintUniformBorderWidthRectangle(ctx, {
+                side: this.top,
+                rect,
+              });
+              break;
+          }
+          return;
+      }
+    }
+
+    assert(
+      (() => {
+        if (borderRadius != null) {
+          const errorMessage = `
+          A borderRadius can only be given for a uniform Border.
+          The following is not uniform: `;
+
+          if (!this._colorIsUniform) {
+            throw new Error(errorMessage + "BorderSide.color");
+          }
+          if (!this._widthIsUniform) {
+            throw new Error(errorMessage + "BorderSide.width");
+          }
+          if (!this._styleIsUniform) {
+            throw new Error(errorMessage + "BorderSide.style");
+          }
+          if (!this._strokeAlignIsUniform) {
+            throw new Error(errorMessage + "BorderSide.strokeAlign");
+          }
+        }
+        return true;
+      })(),
+    );
+
+    assert(
+      (() => {
+        if (shape != "rectangle") {
+          const errorMessage = `
+          A Border can only be drawn as a circle if it is uniform.
+          The following is not uniform: `;
+
+          if (!this._colorIsUniform) {
+            throw new Error(errorMessage + "BorderSide.color");
+          }
+          if (!this._widthIsUniform) {
+            throw new Error(errorMessage + "BorderSide.width");
+          }
+          if (!this._styleIsUniform) {
+            throw new Error(errorMessage + "BorderSide.style");
+          }
+          if (!this._strokeAlignIsUniform) {
+            throw new Error(errorMessage + "BorderSide.strokeAlign");
+          }
+        }
+        return true;
+      })(),
+    );
+
+    assert(
+      (() => {
+        if (
+          !this._strokeAlignIsUniform &&
+          this.top.strokeAlign !== BorderSide.strokeAlignInside
+        ) {
+          throw new Error(
+            "A Border can only have different strokeAlign when BorderSide.strokeAlignInside is used on uniform borders.",
+          );
+        }
+        return true;
+      })(),
+    );
+
+    this.paintBorder(ctx, { rect });
+  }
+
+  private paintBorder(
+    ctx: CanvasRenderingContext2D,
+    { rect }: { rect: Rect },
+  ): void {
+    switch (this.top.style) {
+      case "solid":
+        ctx.fillStyle = this.top.color.value;
+        const topPath = new Path();
+        topPath.moveTo({ x: rect.left, y: rect.top });
+        topPath.lineTo({ x: rect.right, y: rect.top });
+        if (this.top.width !== 0) {
+          topPath.lineTo({
+            x: rect.right - this.right.width,
+            y: rect.top + this.top.width,
+          });
+          topPath.lineTo({
+            x: rect.left + this.left.width,
+            y: rect.top + this.top.width,
+          });
+        }
+        topPath.close();
+        ctx.fill(topPath.toCanvasPath());
+        break;
+      case "none":
+        break;
+    }
+
+    switch (this.right.style) {
+      case "solid":
+        ctx.fillStyle = this.right.color.value;
+        const rightPath = new Path();
+        rightPath.moveTo({ x: rect.right, y: rect.top });
+        rightPath.lineTo({ x: rect.right, y: rect.bottom });
+        if (this.right.width !== 0) {
+          rightPath.lineTo({
+            x: rect.right - this.right.width,
+            y: rect.bottom - this.bottom.width,
+          });
+          rightPath.lineTo({
+            x: rect.right - this.right.width,
+            y: rect.top + this.top.width,
+          });
+        }
+        rightPath.close();
+        ctx.fill(rightPath.toCanvasPath());
+        break;
+      case "none":
+        break;
+    }
+
+    switch (this.bottom.style) {
+      case "solid":
+        ctx.fillStyle = this.bottom.color.value;
+        const bottomPath = new Path();
+        bottomPath.moveTo({ x: rect.right, y: rect.bottom });
+        bottomPath.lineTo({ x: rect.left, y: rect.bottom });
+        if (this.bottom.width !== 0) {
+          bottomPath.lineTo({
+            x: rect.left + this.left.width,
+            y: rect.bottom - this.bottom.width,
+          });
+          bottomPath.lineTo({
+            x: rect.right - this.right.width,
+            y: rect.bottom - this.bottom.width,
+          });
+        }
+        bottomPath.close();
+        ctx.fill(bottomPath.toCanvasPath());
+        break;
+      case "none":
+        break;
+    }
+
+    switch (this.left.style) {
+      case "solid":
+        ctx.fillStyle = this.left.color.value;
+        const leftPath = new Path();
+        leftPath.moveTo({ x: rect.left, y: rect.bottom });
+        leftPath.lineTo({ x: rect.left, y: rect.top });
+        if (this.left.width !== 0) {
+          leftPath.lineTo({
+            x: rect.left + this.left.width,
+            y: rect.top + this.top.width,
+          });
+          leftPath.lineTo({
+            x: rect.left + this.left.width,
+            y: rect.bottom - this.bottom.width,
+          });
+        }
+        leftPath.close();
+        ctx.fill(leftPath.toCanvasPath());
+        break;
+      case "none":
+        break;
+    }
+  }
+}
 
 export default Border;
