@@ -263,7 +263,9 @@ class TransformCanvasPainter extends CanvasPainter {
       f = arr[13];
 
     context.canvas.save();
+    context.canvas.translate(offset.x, offset.y);
     context.canvas.transform(a, b, c, d, e, f);
+    context.canvas.translate(-offset.x, -offset.y);
     this.defaultPaint(context, offset);
     context.canvas.restore();
   }
