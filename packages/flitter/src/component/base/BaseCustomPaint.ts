@@ -7,21 +7,21 @@ import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectW
 import type Widget from "../../widget/Widget";
 
 export type Painter<
+  SVGEls extends Record<string, SVGElement> = Record<string, SVGElement>,
   D = any,
-  T extends Record<string, SVGElement> = Record<string, SVGElement>,
 > = {
   dependencies?: D;
-  shouldRepaint?: (oldPainter: Painter<D>) => boolean;
-} & (CustomSvgPainter<T> | CustomCanvasPainter);
+  shouldRepaint?: (oldPainter: Painter<SVGEls, D>) => boolean;
+  svg?: CustomSvgPainter<SVGEls>;
+  canvas?: CustomCanvasPainter;
+};
 
 export type CustomSvgPainter<T extends Record<string, SVGElement>> = {
-  type: "svg";
   createDefaultSvgEl: (context: SvgPaintContext) => T;
   paint: (els: T, size: Size) => void;
 };
 
 export type CustomCanvasPainter = {
-  type: "canvas";
   paint: (context: CanvasPaintingContext, size: Size) => void;
 };
 
@@ -141,13 +141,13 @@ class SvgPainterCustomPaint<
   }
 
   protected override performPaint(svgEls: T, _: SvgPaintContext): void {
-    (this.painter as CustomSvgPainter<T>).paint(svgEls, this.size);
+    if (this.painter.svg == null) throw new Error("svg painter is not defined");
+    this.painter.svg.paint(svgEls, this.size);
   }
 
   protected override createDefaultSvgEl(paintContext: SvgPaintContext): T {
-    return (this.painter as CustomSvgPainter<T>).createDefaultSvgEl(
-      paintContext,
-    );
+    if (this.painter.svg == null) throw new Error("svg painter is not defined");
+    return this.painter.svg.createDefaultSvgEl(paintContext);
   }
 }
 
@@ -161,7 +161,10 @@ class CanvasPainterCustomPaint extends CanvasPainter {
     offset: Offset,
   ): void {
     context.canvas.translate(offset.x, offset.y);
-    (this.painter as CustomCanvasPainter).paint(context, this.size);
+    if (this.painter.canvas == null) {
+      throw new Error("canvas painter is not defined");
+    }
+    this.painter.canvas.paint(context, this.size);
     context.canvas.translate(-offset.x, -offset.y);
     this.defaultPaint(context, offset);
   }

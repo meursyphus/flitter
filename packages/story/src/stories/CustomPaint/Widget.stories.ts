@@ -20,17 +20,18 @@ export const Basic: Story = {
 			child: CustomPaint({
 				size: Size.infinite,
 				painter: {
-					type: 'svg',
-					createDefaultSvgEl({ createSvgEl }) {
-						const rect = createSvgEl('rect');
-						return {
-							rect
-						};
-					},
-					paint({ rect }, size) {
-						rect.setAttribute('fill', 'red');
-						rect.setAttribute('width', `${size.width}`);
-						rect.setAttribute('height', `${size.height}`);
+					svg: {
+						createDefaultSvgEl({ createSvgEl }) {
+							const rect = createSvgEl('rect');
+							return {
+								rect
+							};
+						},
+						paint({ rect }, size) {
+							rect.setAttribute('fill', 'red');
+							rect.setAttribute('width', `${size.width}`);
+							rect.setAttribute('height', `${size.height}`);
+						}
 					}
 				}
 			})
@@ -72,10 +73,11 @@ export const BasicOnCanvas: Story = {
 			child: CustomPaint({
 				size: Size.infinite,
 				painter: {
-					type: 'canvas',
-					paint(context, size) {
-						context.canvas.fillStyle = 'red';
-						context.canvas.fillRect(0, 0, size.width, size.height);
+					canvas: {
+						paint(context, size) {
+							context.canvas.fillStyle = 'red';
+							context.canvas.fillRect(0, 0, size.width, size.height);
+						}
 					}
 				}
 			})
