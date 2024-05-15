@@ -5,7 +5,7 @@ import {
   type CanvasPaintingContext,
 } from "../../framework";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
-import type { Decoration } from "../../type";
+import { Rect, type Decoration, type Offset } from "../../type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
@@ -90,9 +90,18 @@ class CanvasPainterDecoratedBox extends CanvasPainter {
   get decoration() {
     return (this.renderObject as RenderDecoratedBox).decoration;
   }
-  override performPaint(context: CanvasPaintingContext): void {
+  override performPaint(context: CanvasPaintingContext, offset: Offset): void {
     const painter = this.decoration.createCanvasBoxPainter();
-    painter.paint(context.canvas, this.size);
+    painter.paint(
+      context.canvas,
+      Rect.fromLTWH({
+        left: offset.x,
+        top: offset.y,
+        width: this.size.width,
+        height: this.size.height,
+      }),
+    );
+    this.defaultPaint(context, offset);
   }
 }
 

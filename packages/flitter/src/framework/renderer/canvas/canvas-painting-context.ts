@@ -1,6 +1,6 @@
 import { assert } from "../../../utils";
 import type { RenderObject } from "../../../renderobject";
-import type { Rect } from "../../../type";
+import { Offset, type Rect } from "../../../type";
 import {
   type ContainerLayer,
   PictureLayer,
@@ -41,7 +41,7 @@ export class CanvasPaintingContext {
       childLayer,
       node.canvasPainter.paintBounds,
     );
-    node.canvasPainter.paint(childContext);
+    node.canvasPainter.paint(childContext, Offset.Constants.zero);
     childContext.stopRecording();
   }
 
@@ -79,5 +79,18 @@ export class CanvasPaintingContext {
 
   #appendLayer(layer: Layer) {
     this.#containerLayer.append(layer);
+  }
+
+  /**
+   * 
+   * @param child   /// Paint a child [RenderObject].
+   * @param offset 
+  ///
+  /// @todo: If the child has its own composited layer, the child will be composited
+  /// into the layer subtree associated with this painting context. Otherwise,
+  /// the child will be painted into the current PictureLayer for this context.
+   */
+  paintChild(child: RenderObject, offset: Offset) {
+    child.canvasPainter.paint(this, offset);
   }
 }

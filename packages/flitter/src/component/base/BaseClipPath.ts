@@ -1,5 +1,5 @@
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
-import type { Size } from "../../type";
+import type { Offset, Size } from "../../type";
 import type { Path } from "../../type/_types/_path";
 import {
   SvgPainter,
@@ -133,8 +133,16 @@ class ClipPathCanvasPainter extends CanvasPainter {
       this.renderObject.size,
     );
   }
-  protected override performPaint(context: CanvasPaintingContext): void {
+  protected override performPaint(
+    context: CanvasPaintingContext,
+    offset: Offset,
+  ): void {
+    context.canvas.save();
+    context.canvas.translate(offset.x, offset.y);
     context.canvas.clip(this.clipper.toCanvasPath());
+    context.canvas.translate(-offset.x, -offset.y);
+    this.defaultPaint(context, offset);
+    context.canvas.restore();
   }
 }
 

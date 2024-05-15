@@ -1,3 +1,4 @@
+import type { Offset } from "../../type";
 import {
   SvgPainter,
   type SvgPaintContext,
@@ -82,10 +83,16 @@ class CanvasPainterColoredBox extends CanvasPainter {
     return (this.renderObject as RenderColoredBox).color;
   }
 
-  protected override performPaint(paintContext: CanvasPaintingContext): void {
+  protected override performPaint(
+    paintContext: CanvasPaintingContext,
+    offset: Offset,
+  ): void {
     const { canvas: ctx } = paintContext;
+    ctx.save();
     ctx.fillStyle = this.color;
-    ctx.fillRect(0, 0, this.size.width, this.size.height);
+    ctx.fillRect(offset.x, offset.y, this.size.width, this.size.height);
+    ctx.restore();
+    this.defaultPaint(paintContext, offset);
   }
 }
 

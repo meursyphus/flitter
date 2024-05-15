@@ -1,10 +1,10 @@
-import { Rect } from "../../../type";
+import { Rect, type Offset } from "../../../type";
 import { NotImplementedError } from "../../../exception";
 import { Painter } from "../renderer";
 import type { CanvasRenderPipeline } from "./canvas-renderer";
 import type { CanvasPaintingContext } from "./canvas-painting-context";
 import { OffsetLayer, type ContainerLayer } from "./layer";
-import { assert } from "src/utils";
+import { assert } from "../../../utils";
 
 export class CanvasPainter extends Painter {
   get renderOwner(): CanvasRenderPipeline {
@@ -14,19 +14,18 @@ export class CanvasPainter extends Painter {
     return false;
   }
 
-  paint(context: CanvasPaintingContext) {
+  paint(context: CanvasPaintingContext, offset: Offset) {
     this.needsPaint = false;
-    context.canvas.translate(this.offset.x, this.offset.y);
-    this.performPaint(context);
-    this.#paintChildren(context);
+    this.performPaint(context, offset);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected performPaint(context: CanvasPaintingContext) {}
+  protected performPaint(context: CanvasPaintingContext, offset: Offset) {
+    this.defaultPaint(context, offset);
+  }
 
-  #paintChildren(context: CanvasPaintingContext) {
+  protected defaultPaint(context: CanvasPaintingContext, offset: Offset) {
     this.renderObject.visitChildren(child => {
-      child.canvasPainter.paint(context);
+      context.paintChild(child, offset.plus(child.offset));
     });
   }
 
@@ -46,6 +45,7 @@ export class CanvasPainter extends Painter {
   set layer(layer: ContainerLayer) {
     this.#layer = layer;
   }
+
   updateCompositedLayer(oldLayer: ContainerLayer | null) {
     assert(
       this.isRepaintBoundary,

@@ -11,6 +11,7 @@ import {
   TextWidthBasis,
   TextOverflow,
   Size,
+  type Offset,
 } from "../../type";
 import RenderObjectWidget from "../../widget/RenderObjectWidget";
 import type InlineSpan from "../../type/_types/Inline-span";
@@ -302,8 +303,11 @@ class ParagraphCanvasPainter extends CanvasPainter {
     return (this.renderObject as RenderParagraph).textPainter;
   }
 
-  protected override performPaint(context: CanvasPaintingContext): void {
-    this.textPainter.paintOnCanvas(context.canvas);
+  protected override performPaint(
+    context: CanvasPaintingContext,
+    offset: Offset,
+  ): void {
+    this.textPainter.paintOnCanvas(context.canvas, offset);
   }
 }
 

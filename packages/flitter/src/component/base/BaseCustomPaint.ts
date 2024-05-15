@@ -1,6 +1,6 @@
 import { CanvasPainter, SvgPainter } from "../../framework";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
-import type { Constraints } from "../../type";
+import type { Constraints, Offset } from "../../type";
 import { Size } from "../../type";
 import type { SvgPaintContext, CanvasPaintingContext } from "../../framework";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
@@ -156,8 +156,14 @@ class CanvasPainterCustomPaint extends CanvasPainter {
     return (this.renderObject as RenderCustomPaint).painter;
   }
 
-  protected override performPaint(context: CanvasPaintingContext): void {
+  protected override performPaint(
+    context: CanvasPaintingContext,
+    offset: Offset,
+  ): void {
+    context.canvas.translate(offset.x, offset.y);
     (this.painter as CustomCanvasPainter).paint(context, this.size);
+    context.canvas.translate(-offset.x, -offset.y);
+    this.defaultPaint(context, offset);
   }
 }
 
