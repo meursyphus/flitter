@@ -110,6 +110,7 @@ export class RenderObject {
   attach(ownerElement: RenderObjectElement) {
     this.ownerElement = ownerElement;
     this.depth = ownerElement.depth;
+    this.markNeedsPaintTransformUpdate();
     this.markNeedsUpdateZOrder();
   }
 

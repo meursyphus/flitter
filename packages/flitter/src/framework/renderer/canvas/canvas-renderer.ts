@@ -54,8 +54,10 @@ export class CanvasRenderPipeline extends RenderPipeline {
       parent = parent.parent;
     }
     if (parent != null) {
-      parent.needsPaint = true;
-      this.needsPaintRenderObjects.push(parent);
+      if (!parent.needsPaint) {
+        parent.needsPaint = true;
+        this.needsPaintRenderObjects.push(parent);
+      }
     }
   }
 

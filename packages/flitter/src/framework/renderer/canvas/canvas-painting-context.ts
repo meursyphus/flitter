@@ -7,6 +7,7 @@ import {
   PictureRecorder,
   type Layer,
 } from "./layer";
+import { NotImplementedError } from "src/exception";
 
 export class CanvasPaintingContext {
   #estimateBound: Rect;
@@ -45,7 +46,7 @@ export class CanvasPaintingContext {
   }
 
   static updateLayerProperties(_: RenderObject): void {
-    console.warn("updateLayerProperties is not implemented");
+    throw new NotImplementedError("updateLayerProperties is not implemented");
   }
 
   #recorder: PictureRecorder;

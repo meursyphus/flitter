@@ -41,6 +41,7 @@
 	<SvelteWidget
 		width="700px"
 		height="600px"
+		renderer="canvas"
 		widget={StackedBarChart({
 			data: {
 				...stackedChart

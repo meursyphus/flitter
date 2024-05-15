@@ -1,16 +1,28 @@
-import { SvgPainter } from "../../framework";
+import { CanvasPainter, SvgPainter } from "../../framework";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import type { Constraints } from "../../type";
 import { Size } from "../../type";
-import type { SvgPaintContext } from "../../framework";
+import type { SvgPaintContext, CanvasPaintingContext } from "../../framework";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
-export type Painter<T extends Record<string, SVGElement>, D = any> = {
-  paint: (els: T, size: Size) => void;
-  createDefaultSvgEl: (context: SvgPaintContext) => T;
+export type Painter<
+  D = any,
+  T extends Record<string, SVGElement> = Record<string, SVGElement>,
+> = {
   dependencies?: D;
-  shouldRepaint?: (oldPainter: Painter<T, D>) => boolean;
+  shouldRepaint?: (oldPainter: Painter<D>) => boolean;
+} & (CustomSvgPainter<T> | CustomCanvasPainter);
+
+export type CustomSvgPainter<T extends Record<string, SVGElement>> = {
+  type: "svg";
+  createDefaultSvgEl: (context: SvgPaintContext) => T;
+  paint: (els: T, size: Size) => void;
+};
+
+export type CustomCanvasPainter = {
+  type: "canvas";
+  paint: (context: CanvasPaintingContext, size: Size) => void;
 };
 
 class BaseCustomPaint<
@@ -49,7 +61,7 @@ class BaseCustomPaint<
 }
 
 export class RenderCustomPaint<
-  T extends Record<string, SVGElement>,
+  T extends Record<string, SVGElement> = Record<string, SVGElement>,
 > extends SingleChildRenderObject {
   _painter: Painter<T>;
   get painter() {
@@ -112,8 +124,12 @@ export class RenderCustomPaint<
     return super.getIntrinsicHeight(width);
   }
 
-  override createSvgPainter() {
+  protected override createSvgPainter() {
     return new SvgPainterCustomPaint(this);
+  }
+
+  protected override createCanvasPainter(): CanvasPainter {
+    return new CanvasPainterCustomPaint(this);
   }
 }
 
@@ -125,11 +141,23 @@ class SvgPainterCustomPaint<
   }
 
   protected override performPaint(svgEls: T, _: SvgPaintContext): void {
-    this.painter.paint(svgEls, this.size);
+    (this.painter as CustomSvgPainter<T>).paint(svgEls, this.size);
   }
 
   protected override createDefaultSvgEl(paintContext: SvgPaintContext): T {
-    return this.painter.createDefaultSvgEl(paintContext);
+    return (this.painter as CustomSvgPainter<T>).createDefaultSvgEl(
+      paintContext,
+    );
+  }
+}
+
+class CanvasPainterCustomPaint extends CanvasPainter {
+  get painter() {
+    return (this.renderObject as RenderCustomPaint).painter;
+  }
+
+  protected override performPaint(context: CanvasPaintingContext): void {
+    (this.painter as CustomCanvasPainter).paint(context, this.size);
   }
 }
 

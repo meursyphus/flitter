@@ -20,6 +20,7 @@ export const Basic: Story = {
 			child: CustomPaint({
 				size: Size.infinite,
 				painter: {
+					type: 'svg',
 					createDefaultSvgEl({ createSvgEl }) {
 						const rect = createSvgEl('rect');
 						return {
@@ -54,6 +55,43 @@ export const Basic: Story = {
 							rect
 						};
 					},
+				}
+			})
+		})
+		`
+	}
+};
+
+export const BasicOnCanvas: Story = {
+	args: {
+		ssrSize: { width: 400, height: 400 },
+		width: '400px',
+		height: '400px',
+		renderer: 'canvas',
+		widget: Center({
+			child: CustomPaint({
+				size: Size.infinite,
+				painter: {
+					type: 'canvas',
+					paint(context, size) {
+						context.canvas.fillStyle = 'red';
+						context.canvas.fillRect(0, 0, size.width, size.height);
+					}
+				}
+			})
+		}),
+		code: dedent`
+		import { Center, CustomPaint, Size } from '@meursyphus/flitter';
+
+		Center({
+			child: CustomPaint({
+				size: Size.infinite,
+				painter: {
+					type: 'canvas',
+					paint(context, size) {
+						context.canvas.fillStyle = 'red';
+						context.canvas.fillRect(0, 0, size.width, size.height);
+					}
 				}
 			})
 		})
