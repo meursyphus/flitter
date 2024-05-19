@@ -1,13 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/svelte';
 import Widget from '../../Widget.svelte';
-import { BasicStory } from './example';
+import { BasicStory } from './example/index.js';
 
 const meta = {
-	title: 'Widget/AnimatedContainer',
+	title: 'Widget/AnimatedAlign/canvas',
 	component: Widget,
 	args: {
-		width: '400px',
-		height: '400px'
+		renderer: 'canvas',
+		ssrSize: { width: 600, height: 300 },
+		width: '600px',
+		height: '300px'
 	}
 } satisfies Meta<Widget>;
 
@@ -16,10 +18,4 @@ type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
 	args: BasicStory
-};
-export const BasicOnCanvas: Story = {
-	args: {
-		...BasicStory,
-		renderer: 'canvas'
-	}
 };

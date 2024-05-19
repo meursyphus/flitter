@@ -229,14 +229,7 @@ class BoxDecorationSvgPainter {
 class BoxDecorationCanvasPainter {
   constructor(private decoration: BoxDecoration) {}
 
-  paint(ctx: CanvasRenderingContext2D, size: Size) {
-    const rect = Rect.fromLTWH({
-      left: 0,
-      top: 0,
-      width: size.width,
-      height: size.height,
-    });
-
+  paint(ctx: CanvasRenderingContext2D, rect: Rect) {
     this.paintBackgroundColor(ctx, rect);
     this.paintShadows(ctx, rect);
     if (this.decoration.border != null) {

@@ -1,3 +1,4 @@
+import type { Offset } from "../../type";
 import {
   SvgPainter,
   CanvasPainter,
@@ -79,8 +80,11 @@ class CanvasPainterOpacity extends CanvasPainter {
     return (this.renderObject as RenderOpacity).opacityProp;
   }
 
-  override performPaint(context: CanvasPaintingContext) {
-    context.canvas.globalAlpha *= this.opacity;
+  override performPaint(context: CanvasPaintingContext, offset: Offset) {
+    const oldAlpha = context.canvas.globalAlpha;
+    context.canvas.globalAlpha = oldAlpha * this.opacity;
+    this.defaultPaint(context, offset);
+    context.canvas.globalAlpha = oldAlpha;
   }
 }
 
