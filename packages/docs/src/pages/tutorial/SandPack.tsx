@@ -1,6 +1,5 @@
-import Editor, { useMonaco } from "@monaco-editor/react";
+import Editor from "@monaco-editor/react";
 import {
-  Sandpack,
   useActiveCode,
   SandpackStack,
   FileTabs,
@@ -14,7 +13,6 @@ import { useEffect, useRef } from "react";
 function MonacoEditor() {
   const { code, updateCode } = useActiveCode();
   const { sandpack } = useSandpack();
-  const monaco = useMonaco();
 
   const handleChange = (value: string | undefined) => {
     updateCode(value ?? "");
@@ -52,6 +50,7 @@ function MonacoEditor() {
     </SandpackStack>
   );
 }
+
 const customSetup = {
   dependencies: {
     "@meursyphus/flitter-react": "0.0.7",
@@ -61,17 +60,12 @@ const customSetup = {
     "react-markdown": "latest",
   },
 };
-const files = {
-  "/App.js": `import ReactMarkdown from 'react-markdown' 
-  import Widget from '@meursyphus/flitter-react'
-  import {Text} from '@meursyphus/flitter'
 
-export default function App() {
-  return <Widget height="200px" width="200px" widget={Text("Hello, worldasdf!")} />
-}`,
-};
-
-export default function MySandpack() {
+export default function MySandpack({
+  files,
+}: Readonly<{
+  files: Record<string, string>;
+}>) {
   return (
     <SandpackProvider
       files={files}
@@ -80,6 +74,9 @@ export default function MySandpack() {
       }}
       template="react"
       theme="dark"
+      style={{
+        height: "100%",
+      }}
     >
       <SandpackLayout
         style={{
@@ -93,38 +90,5 @@ export default function MySandpack() {
         <SandpackPreview />
       </SandpackLayout>
     </SandpackProvider>
-  );
-}
-
-export function Page() {
-  return (
-    <Sandpack
-      customSetup={{
-        dependencies: {
-          "@meursyphus/flitter-react": "0.0.3",
-          "@meursyphus/flitter": "latest",
-          "react-dom": "latest",
-          react: "latest",
-          "react-markdown": "latest",
-        },
-        entry: "/index.js",
-      }}
-      files={{
-        "/App.js": `import ReactMarkdown from 'react-markdown' 
-        import Widget from '@meursyphus/flitter-react'
-        import {Text} from '@meursyphus/flitter'
-
-export default function App() {
-  return <Widget height="200px" width="200px" widget={Text("Hello, worldasdf!")} />
-}`,
-        "/index.js": `import App from "./App";
-        import ReactDom from "react-dom"
-        import React from "react"
-
-ReactDom.render(<App />, document.getElementById("root"))
-
-export default App;`,
-      }}
-    />
   );
 }

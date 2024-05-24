@@ -1,0 +1,85 @@
+---
+import SandPack from "./SandPack.tsx";
+import Layout from "../../layouts/TutorialLayout.astro";
+import { getCollection } from "astro:content";
+
+function resolveSlug(slug: string) {
+  return slug.replace(/^\d+_/, "");
+}
+
+export const getStaticPaths = async () => {
+  const tutorialEntries = await getCollection("tutorial");
+  function resolveSlug(slug: string) {
+    return slug.replace(/^\d+_/, "");
+  }
+
+  return tutorialEntries.map((entry) => ({
+    params: {
+      slug: resolveSlug(entry.slug),
+    },
+    props: {
+      prev: tutorialEntries.find((e) => e.slug < entry.slug),
+      next: tutorialEntries.find((e) => e.slug > entry.slug),
+      entry,
+    },
+  }));
+};
+
+const { entry, prev, next } = Astro.props;
+const { Content } = await entry.render();
+const [prevSlug, nextSlug] = [
+  prev && resolveSlug(prev.slug),
+  next && resolveSlug(next.slug),
+];
+---
+
+<Layout title="Tutorial">
+  <div class="grid grid-cols-[3fr_4fr]">
+    <div class="w-full shrink-0">
+      <nav class="flex justify-between">
+        {
+          prev ? (
+            <a class="nav-button" href={prevSlug}>
+              Prev
+            </a>
+          ) : (
+            <div class="nav-button opacity-50">Prev</div>
+          )
+        }
+        <div
+          class="mx-1 border border-black w-full h-[60px] flex items-center justify-center"
+        >
+          Table of Content
+        </div>
+        {
+          next ? (
+            <a class="nav-button" href={nextSlug}>
+              Next
+            </a>
+          ) : (
+            <div class="nav-button opacity-50">Next</div>
+          )
+        }
+      </nav>
+      <div class="contents prose prose-sm">
+        <Content />
+      </div>
+    </div>
+    <div class="sticky-screen">
+      <SandPack files={entry.data.files} client:only="react" />
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .sticky-screen {
+    position: sticky;
+    top: 0;
+    height: calc(100vh - var(--header));
+  }
+
+  .nav-button {
+    border: 1px solid black;
+    padding: 1rem;
+  }
+</style>

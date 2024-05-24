@@ -1,6 +1,10 @@
 ---
 const url = new URL(Astro.request.url);
 const pathname = url.pathname; // 현재 페이지의 경로
+
+let current: "docs" | "tutorial" = pathname.startsWith("/docs")
+  ? "docs"
+  : "tutorial";
 ---
 
 <header
@@ -15,13 +19,13 @@ const pathname = url.pathname; // 현재 페이지의 경로
 
     <div class="justify-start items-start gap-8 flex">
       <a
-        class={`${pathname.startsWith("/docs") ? "active" : ""} text-gray-600 text-base leading-normal`}
+        class={`${current === "docs" ? "active" : ""} text-gray-600 text-base leading-normal`}
         href="/docs">docs</a
       >
       <div class="justify-center items-center gap-1 flex">
         <div class="text-black text-base leading-normal">
           <a
-            class="opacity-50 select-none"
+            class={`${current === "tutorial" ? "active" : ""} select-none`}
             title="comming soon"
             href="/tutorial">tutorial</a
           >
