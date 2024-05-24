@@ -1,4 +1,4 @@
-import Editor from "@monaco-editor/react";
+import Editor, { useMonaco } from "@monaco-editor/react";
 import {
   Sandpack,
   useActiveCode,
@@ -9,40 +9,31 @@ import {
   SandpackLayout,
   SandpackPreview,
 } from "@codesandbox/sandpack-react";
-import { useMemo } from "react";
-
-function debounce(func: Function, wait: any) {
-  let timeout: any;
-
-  return function executedFunction(...args: any[]) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
+import { useEffect, useRef } from "react";
 
 function MonacoEditor() {
   const { code, updateCode } = useActiveCode();
-  const { sandpack, dispatch } = useSandpack();
-  const debouncedUpdateCode = useMemo(
-    () =>
-      debounce(() => {
-        //dispatch({type: 'refresh'})
-      }, 1000),
-    [updateCode],
-  );
+  const { sandpack } = useSandpack();
+  const monaco = useMonaco();
 
   const handleChange = (value: string | undefined) => {
     updateCode(value ?? "");
-    debouncedUpdateCode();
   };
 
+  const editorRef = useRef<any>();
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (editorRef.current == null) return;
+      editorRef.current.layout({});
+      console.log(editorRef.current.layout);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <SandpackStack style={{ height: "100vh", margin: 0 }}>
+    <SandpackStack style={{ margin: 0, height: "50vh" }}>
       <FileTabs />
       <div style={{ flex: 1, paddingTop: 8, background: "#1e1e1e" }}>
         <Editor
@@ -53,6 +44,9 @@ function MonacoEditor() {
           key={sandpack.activeFile}
           defaultValue={code}
           onChange={handleChange}
+          onMount={(editor) => {
+            editorRef.current = editor;
+          }}
         />
       </div>
     </SandpackStack>
@@ -89,7 +83,7 @@ export default function MySandpack() {
     >
       <SandpackLayout
         style={{
-          height: "100vh",
+          height: "100%",
           margin: 0,
           display: "flex",
           flexDirection: "column",
