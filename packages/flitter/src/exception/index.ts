@@ -4,3 +4,7 @@ export class NotImplementedError extends Error {
     this.name = "NotImplementedError";
   }
 }
+
+export function canNotReach(type: never) {
+  throw new Error(`can not reach here: ${type}`);
+}

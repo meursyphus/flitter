@@ -1,5 +1,11 @@
+import type { Offset } from "../../type";
+import {
+  SvgPainter,
+  type SvgPaintContext,
+  type CanvasPaintingContext,
+  CanvasPainter,
+} from "../../framework";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
-import type { PaintContext } from "../../utils/type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
@@ -42,19 +48,51 @@ class RenderColoredBox extends SingleChildRenderObject {
     this._color = color;
   }
 
-  protected performPaint({ rect }: { rect: SVGElement }): void {
+  override createSvgPainter() {
+    return new SvgPainterColoredBox(this);
+  }
+
+  override createCanvasPainter() {
+    return new CanvasPainterColoredBox(this);
+  }
+}
+
+class SvgPainterColoredBox extends SvgPainter {
+  get color() {
+    return (this.renderObject as RenderColoredBox).color;
+  }
+
+  protected override performPaint({ rect }: { rect: SVGElement }): void {
     rect.setAttribute("fill", this.color);
     rect.setAttribute("width", `${this.size.width}`);
     rect.setAttribute("height", `${this.size.height}`);
   }
 
-  createDefaultSvgEl({ createSvgEl }: PaintContext): {
+  override createDefaultSvgEl({ createSvgEl }: SvgPaintContext): {
     [key: string]: SVGElement;
   } {
     const rect = createSvgEl("rect");
     return {
       rect,
     };
+  }
+}
+
+class CanvasPainterColoredBox extends CanvasPainter {
+  get color() {
+    return (this.renderObject as RenderColoredBox).color;
+  }
+
+  protected override performPaint(
+    paintContext: CanvasPaintingContext,
+    offset: Offset,
+  ): void {
+    const { canvas: ctx } = paintContext;
+    ctx.save();
+    ctx.fillStyle = this.color;
+    ctx.fillRect(offset.x, offset.y, this.size.width, this.size.height);
+    ctx.restore();
+    this.defaultPaint(paintContext, offset);
   }
 }
 

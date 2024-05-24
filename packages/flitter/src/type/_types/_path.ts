@@ -104,7 +104,7 @@ export class Path {
 
     const points = [
       { x: left, y: top + tlRadiusY },
-      { x: tlRadiusX, y: top },
+      { x: left + tlRadiusX, y: top },
       { x: right - trRadiusX, y: top },
       { x: right, y: top + trRadiusY },
       { x: right, y: bottom - brRadiusY },
@@ -254,6 +254,10 @@ export class Path {
       largeArc ? 1 : 0
     } ${clockwise ? 1 : 0} ${endPoint.x} ${endPoint.y}`;
     return this;
+  }
+
+  toCanvasPath() {
+    return new Path2D(this._d);
   }
 }
 

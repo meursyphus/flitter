@@ -9,6 +9,8 @@ interface PositionedFunction {
     bottom?: number;
     right?: number;
     child: Widget;
+    width?: number;
+    height?: number;
     key?: any;
   }): Widget;
   fill: (props: { child: Widget }) => Widget;

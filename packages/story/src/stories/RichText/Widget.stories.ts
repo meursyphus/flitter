@@ -11,8 +11,7 @@ import {
 	TextWidthBasis,
 	TextOverflow,
 	ConstrainedBox,
-	Constraints,
-	Text
+	Constraints
 } from '@meursyphus/flitter';
 
 const meta = {

@@ -20,7 +20,8 @@
   "author": "meursyphus",
   "license": "MIT",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "shared"
   ],
   "devDependencies": {
     "@types/node": "^20.11.30",
@@ -31,5 +32,8 @@
     "packages/**/*.{astro,js,jsx,ts,tsx,svelte,mdx}": [
       "prettier --write"
     ]
+  },
+  "dependencies": {
+    "@meursyphus/flitter-chart": "^0.0.7"
   }
 }

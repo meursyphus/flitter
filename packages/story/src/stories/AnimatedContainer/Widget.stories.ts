@@ -6,7 +6,6 @@ const meta = {
 	title: 'Widget/AnimatedContainer',
 	component: Widget,
 	args: {
-		ssrSize: { width: 400, height: 400 },
 		width: '400px',
 		height: '400px'
 	}
@@ -17,4 +16,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
 	args: BasicStory
+};
+export const BasicOnCanvas: Story = {
+	args: {
+		...BasicStory,
+		renderer: 'canvas'
+	}
 };

@@ -27,6 +27,9 @@ class Offset extends Calculable {
   }
 
   plus({ x, y }: Offset) {
+    if (x === 0 && y === 0) {
+      return this;
+    }
     return Offset.raw({ x: this.x + x, y: this.y + y });
   }
 
