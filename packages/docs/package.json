@@ -18,6 +18,7 @@
     "@codesandbox/sandpack-react": "^2.13.10",
     "@egjs/react-flicking": "^4.11.2",
     "@meursyphus/flitter-chart": "^0.0.3",
+    "@monaco-editor/react": "^4.6.0",
     "@tailwindcss/typography": "^0.5.10",
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",

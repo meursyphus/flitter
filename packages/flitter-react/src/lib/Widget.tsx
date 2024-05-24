@@ -36,7 +36,11 @@ function WidgetComponent({
     runner.onMount({
       resizeTarget: containerRef.current!,
     });
-  }, []);
+
+    return () => {
+      runner.dispose();
+    };
+  }, [widget]);
 
   return (
     <div style={{ width, height }} ref={containerRef}>
