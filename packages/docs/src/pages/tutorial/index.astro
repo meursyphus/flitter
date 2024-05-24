@@ -1,5 +1,11 @@
 ---
-import Page from "./Page.tsx";
+import SandPack from "./SandPack.tsx";
+import Layout from "../../layouts/TutorialLayout.astro";
 ---
 
-<Page client:only="react" />
+<Layout title="Tutorial">
+  <div class="grid grid-cols-[4fr_4fr]">
+    <div class="w-full">docs</div>
+    <SandPack client:only="react" />
+  </div>
+</Layout>

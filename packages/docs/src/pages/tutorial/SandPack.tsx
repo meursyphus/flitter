@@ -87,9 +87,16 @@ export default function MySandpack() {
       template="react"
       theme="dark"
     >
-      <SandpackLayout>
-        <MonacoEditor /> /
-        <SandpackPreview style={{ height: "100vh" }} />
+      <SandpackLayout
+        style={{
+          height: "100vh",
+          margin: 0,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <MonacoEditor />
+        <SandpackPreview />
       </SandpackLayout>
     </SandpackProvider>
   );
