@@ -3,10 +3,16 @@ title: "Introduction"
 files:
   App.js: |
     import Widget from '@meursyphus/flitter-react'
-    import {Text} from '@meursyphus/flitter'
+    import {Text, Container} from '@meursyphus/flitter'
 
     export default function App() {
-      return <Widget height="200px" width="200px" widget={Text("Hello, world!")} />
+      return (
+        <Widget 
+          height="200px" 
+          width="200px" 
+          widget={Container({color: 'red'})} 
+        />
+      )
     }
 ---
 
