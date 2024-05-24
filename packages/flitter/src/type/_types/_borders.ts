@@ -12,7 +12,6 @@ export interface ShapeBorder {
 
   getInnerPath(rect: Rect): Path;
   getOuterPath(rect: Rect): Path;
-  paint(svgEls: Record<string, SVGElement>, _: { rect: Rect }): void;
 }
 
 export class BorderSide extends Data {
@@ -87,7 +86,7 @@ export class BorderSide extends Data {
     return this.width * this.strokeAlign;
   }
 
-  paint(path: SVGPathElement) {
+  applyOnSvg(path: SVGPathElement) {
     if (this.style === "none") {
       path.setAttribute("stroke-width", "0");
       path.setAttribute("stroke", "transparent");
@@ -95,8 +94,16 @@ export class BorderSide extends Data {
       path.setAttribute("stroke-width", `${this.width}`);
       path.setAttribute("stroke", `${this.color.value}`);
     }
-
     path.setAttribute("fill", "none");
+  }
+
+  applyOnCanvas(ctx: CanvasRenderingContext2D) {
+    if (this.style === "none") {
+      ctx.strokeStyle = "transparent";
+    } else {
+      ctx.strokeStyle = this.color.value;
+      ctx.lineWidth = this.width;
+    }
   }
 }
 

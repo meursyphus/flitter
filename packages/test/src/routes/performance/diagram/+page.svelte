@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Diagram from '$lib/diagram/Diagram.svelte';
+	import { Diagram } from 'shared';
 	import { project } from '$lib/diagram/fixture';
 
 	let show = false;

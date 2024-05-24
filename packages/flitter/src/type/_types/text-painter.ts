@@ -1,6 +1,7 @@
 import type InlineSpan from "./Inline-span";
 import Utils, { assert, getTextWidth } from "../../utils";
-import type { PaintContext } from "../../utils/type";
+import type { SvgPaintContext } from "../../framework";
+import type Offset from "./_offset";
 
 function getTextHeight({ fontSize }: { fontSize: number }) {
   return fontSize;
@@ -83,7 +84,29 @@ export default class TextPainter {
     return this.paragraph.longestLine;
   }
 
-  paint(textEl: SVGTextElement, { createSvgEl }: PaintContext) {
+  paintOnCanvas(ctx: CanvasRenderingContext2D, offset: Offset): void {
+    assert(this.paragraph != null, "paragraph should not be null");
+    this.paragraph.lines.forEach(line => {
+      line.spanBoxes.forEach(
+        ({
+          offset: { x, y },
+          fontFamily,
+          content,
+          fontSize,
+          fontWeight,
+          color,
+        }) => {
+          ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+          ctx.textAlign = "start";
+          ctx.textBaseline = "hanging";
+          ctx.fillStyle = color;
+          ctx.fillText(content, x + offset.x, y + offset.y);
+        },
+      );
+    });
+  }
+
+  paintOnSvg(textEl: SVGTextElement, { createSvgEl }: SvgPaintContext) {
     this.resetText(textEl);
     assert(this.paragraph != null, "paragraph should not be null");
 

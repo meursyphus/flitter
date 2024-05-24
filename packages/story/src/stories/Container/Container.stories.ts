@@ -223,3 +223,16 @@ export const WithClipDecoration: Story = {
 		code: ImportWidgetCode + WithClipDecorationCode
 	}
 };
+
+export const ColoredBoxOnCanvas: Story = {
+	args: {
+		ssrSize: { width: 600, height: 300 },
+		width: '600px',
+		height: '300px',
+		renderer: 'canvas',
+		widget: Container({
+			color: 'lightblue'
+		}),
+		code: ImportWidgetCode + Case1Code
+	}
+};

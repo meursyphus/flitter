@@ -1,4 +1,4 @@
-import type { RenderContext } from "..";
+import type { RenderContext } from "../framework/renderer/renderer";
 import type { RenderGestureDetector } from "../component/base/BaseGestureDetector";
 import { Offset } from "../type";
 
@@ -141,11 +141,11 @@ export class HitTestDispatcher {
    * into a single operation.
    */
   #didDomOrderChangeState: "idle" | "processing" = "idle";
-  didChangeDomOrder() {
+  didZOrderChange() {
     if (this.#didDomOrderChangeState === "processing") return;
     this.#didDomOrderChangeState = "processing";
     setTimeout(() => {
-      this.#detectors = this.#detectors.sort((a, b) => b.domOrder - a.domOrder);
+      this.#detectors = this.#detectors.sort((a, b) => b.zOrder - a.zOrder);
       this.#didDomOrderChangeState = "idle";
     }, 0);
   }

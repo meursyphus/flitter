@@ -1,8 +1,8 @@
 <script lang="ts">
   import Widget from "@meursyphus/flitter-svelte";
-  import Diagram from "./widget/Diagram";
+  import { Diagram } from "shared";
   import { onMount } from "svelte";
-  import { project } from "./fixture";
+  import project from "./fixture/project";
   let container: HTMLElement;
 </script>
 
@@ -10,11 +10,7 @@
   bind:this={container}
   class="w-full h-full border-l border-black bg-gray-200"
 >
-  <Widget
-    widget={Diagram({ project: project, subscribe: () => () => {} })}
-    width="100%"
-    height="100%"
-  />
+  <Diagram {project} />
 </div>
 
 <style>

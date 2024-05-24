@@ -26,7 +26,7 @@ class RenderObjectElement extends Element {
 
   override unmount(): void {
     super.unmount();
-    this.renderObject.dispose(this.renderContext.paintContext);
+    this.renderObject.dispose();
     this.children.forEach(child => {
       child.unmount();
     });

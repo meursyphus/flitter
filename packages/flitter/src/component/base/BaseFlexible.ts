@@ -18,7 +18,7 @@ class Flexible extends SingleChildRenderObjectWidget {
     key?: any;
   } = {}) {
     super({ child, key });
-    if (flex < 0) throw { message: "flex must not be under zero" };
+    if (flex < 0) throw new Error("flex must not be under zero");
     this.flex = flex;
     this.fit = fit;
   }

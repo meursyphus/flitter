@@ -1,6 +1,11 @@
+import {
+  SvgPainter,
+  CanvasPainter,
+  type SvgPaintContext,
+  type CanvasPaintingContext,
+} from "../../framework";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
-import type { Decoration } from "../../type";
-import type { PaintContext } from "../../utils/type";
+import { Rect, type Decoration, type Offset } from "../../type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
@@ -34,7 +39,7 @@ class RenderDecoratedBox extends SingleChildRenderObject {
     return this._decoration;
   }
   set decoration(value) {
-    if (this.decoration.equal(value)) return;
+    if (this.decoration.equals(value)) return;
     this._decoration = value;
     this.markNeedsPaint();
   }
@@ -44,19 +49,31 @@ class RenderDecoratedBox extends SingleChildRenderObject {
     this._decoration = decoration;
   }
 
-  protected performPaint(svgEls: {
-    box: SVGElement;
-    topBorder: SVGElement;
-    bottomBorder: SVGElement;
-    leftBorder: SVGElement;
-    rightBorder: SVGElement;
-  }): void {
-    const painter = this.decoration.createBoxPainter();
+  protected override createSvgPainter() {
+    return new SvgPainterDecoratedBox(this);
+  }
+  protected override createCanvasPainter() {
+    return new CanvasPainterDecoratedBox(this);
+  }
+}
 
+class SvgPainterDecoratedBox extends SvgPainter {
+  get decoration() {
+    return (this.renderObject as RenderDecoratedBox).decoration;
+  }
+
+  protected override performPaint(svgEls: {
+    box: SVGPathElement;
+    topBorder: SVGPathElement;
+    bottomBorder: SVGPathElement;
+    leftBorder: SVGPathElement;
+    rightBorder: SVGPathElement;
+  }): void {
+    const painter = this.decoration.createSvgBoxPainter();
     painter.paint(svgEls, this.size);
   }
 
-  createDefaultSvgEl({ createSvgEl }: PaintContext): {
+  protected override createDefaultSvgEl({ createSvgEl }: SvgPaintContext): {
     [key: string]: SVGElement;
   } {
     return {
@@ -66,6 +83,25 @@ class RenderDecoratedBox extends SingleChildRenderObject {
       rightBorder: createSvgEl("path"),
       bottomBorder: createSvgEl("path"),
     };
+  }
+}
+
+class CanvasPainterDecoratedBox extends CanvasPainter {
+  get decoration() {
+    return (this.renderObject as RenderDecoratedBox).decoration;
+  }
+  override performPaint(context: CanvasPaintingContext, offset: Offset): void {
+    const painter = this.decoration.createCanvasBoxPainter();
+    painter.paint(
+      context.canvas,
+      Rect.fromLTWH({
+        left: offset.x,
+        top: offset.y,
+        width: this.size.width,
+        height: this.size.height,
+      }),
+    );
+    this.defaultPaint(context, offset);
   }
 }
 

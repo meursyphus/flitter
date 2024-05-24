@@ -1,5 +1,5 @@
+import type { ZOrderCalculatorVisitor } from "../../framework/renderer/renderer";
 import { SingleChildRenderObject } from "../../renderobject";
-import type { RenderObjectVisitor } from "../../renderobject/RenderObjectVisitor";
 import type { Widget } from "../../widget";
 import { SingleChildRenderObjectWidget } from "../../widget";
 
@@ -36,15 +36,15 @@ export class RenderZIndex extends SingleChildRenderObject {
   set zIndex(value: number) {
     if (this.#zIndex === value) return;
     this.#zIndex = value;
-    this.markNeedsPaint();
-    this.didChangeDomOrder();
+    this.markNeedsUpdateZOrder();
   }
+
   constructor({ zIndex }: { zIndex: number }) {
     super({ isPainter: false });
     this.#zIndex = zIndex;
   }
 
-  override accept(visitor: RenderObjectVisitor): void {
+  override accept(visitor: ZOrderCalculatorVisitor): void {
     visitor.visitZIndex(this);
   }
 }

@@ -4,7 +4,6 @@ import RenderObject from "./RenderObject";
 import RenderView from "./RenderView";
 import SingleChildRenderObject from "./SingleChildRenderObject";
 import RenderAligningShiftedBox from "./RenderAligningShiftedBox";
-import type { RenderObjectVisitor } from "./RenderObjectVisitor";
 
 export {
   RenderAligningShiftedBox,
@@ -13,5 +12,4 @@ export {
   RenderObject,
   RenderView,
   SingleChildRenderObject,
-  RenderObjectVisitor,
 };

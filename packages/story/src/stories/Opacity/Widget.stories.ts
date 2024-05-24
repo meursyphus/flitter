@@ -149,3 +149,39 @@ export const Nest: Story = {
 		})
 	}
 };
+
+export const NestOnCanvas: Story = {
+	args: {
+		renderer: 'canvas',
+		width: '400px',
+		height: '400px',
+		code:
+			dedent`import {  Container, Column, Opacity, Column } from '@meursyphus/flitter';'\n\n\n` +
+			NestCode,
+		widget: Column({
+			children: [
+				Opacity({
+					opacity: 0.5,
+					child: Container({
+						width: 400,
+						height: 60,
+						color: 'blue'
+					})
+				}),
+				Opacity({
+					opacity: 0.5,
+					child: Container({
+						child: Opacity({
+							opacity: 0.5,
+							child: Container({
+								width: 400,
+								height: 60,
+								color: 'blue'
+							})
+						})
+					})
+				})
+			]
+		})
+	}
+};

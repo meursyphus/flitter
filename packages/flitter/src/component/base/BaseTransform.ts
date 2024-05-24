@@ -4,6 +4,7 @@ import { Alignment, Matrix4, TextDirection } from "../../type";
 import { assert } from "../../utils";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
+import { CanvasPainter, type CanvasPaintingContext } from "../../framework";
 
 class Transform extends SingleChildRenderObjectWidget {
   origin?: Offset;
@@ -189,6 +190,7 @@ class RenderTransform extends SingleChildRenderObject {
     if (this.transform.equals(value)) return;
     this._transform = value;
     this.markNeedsLayout();
+    this.markNeedsPaintTransformUpdate();
   }
   _textDirection: TextDirection;
   get textDirection(): TextDirection {
@@ -217,7 +219,7 @@ class RenderTransform extends SingleChildRenderObject {
     this._textDirection = textDirection;
   }
 
-  private get _effectiveTransform(): Matrix4 {
+  get _effectiveTransform(): Matrix4 {
     const resolvedAlignment = this.alignment?.resolve(this.textDirection);
     const translation = resolvedAlignment?.alongSize(this.size) ?? {
       x: 0,
@@ -237,8 +239,35 @@ class RenderTransform extends SingleChildRenderObject {
     return result;
   }
 
-  override getChildMatrix4(parentMatrix: Matrix4): Matrix4 {
-    return parentMatrix.multipliedMatrix(this._effectiveTransform);
+  override applyPaintTransform(transform: Matrix4): Matrix4 {
+    return transform.multipliedMatrix(this._effectiveTransform);
+  }
+
+  protected override createCanvasPainter(): CanvasPainter {
+    return new TransformCanvasPainter(this);
+  }
+}
+
+class TransformCanvasPainter extends CanvasPainter {
+  get effectiveTransform(): Matrix4 {
+    return (this.renderObject as RenderTransform)._effectiveTransform;
+  }
+
+  protected performPaint(context: CanvasPaintingContext, offset: Offset): void {
+    const arr = this.effectiveTransform._m4storage;
+    const a = arr[0],
+      b = arr[1],
+      c = arr[4],
+      d = arr[5],
+      e = arr[12],
+      f = arr[13];
+
+    context.canvas.save();
+    context.canvas.translate(offset.x, offset.y);
+    context.canvas.transform(a, b, c, d, e, f);
+    context.canvas.translate(-offset.x, -offset.y);
+    this.defaultPaint(context, offset);
+    context.canvas.restore();
   }
 }
 

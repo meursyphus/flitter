@@ -1,15 +1,28 @@
+import { CanvasPainter, SvgPainter } from "../../framework";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
-import type { Constraints } from "../../type";
+import type { Constraints, Offset } from "../../type";
 import { Size } from "../../type";
-import type { PaintContext } from "../../utils/type";
+import type { SvgPaintContext, CanvasPaintingContext } from "../../framework";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
-export type Painter<T extends Record<string, SVGElement>, D = any> = {
-  paint: (els: T, size: Size) => void;
-  createDefaultSvgEl: (context: PaintContext) => T;
+export type Painter<
+  SVGEls extends Record<string, SVGElement> = Record<string, SVGElement>,
+  D = any,
+> = {
   dependencies?: D;
-  shouldRepaint?: (oldPainter: Painter<T, D>) => boolean;
+  shouldRepaint?: (oldPainter: Painter<SVGEls, D>) => boolean;
+  svg?: CustomSvgPainter<SVGEls>;
+  canvas?: CustomCanvasPainter;
+};
+
+export type CustomSvgPainter<T extends Record<string, SVGElement>> = {
+  createDefaultSvgEl: (context: SvgPaintContext) => T;
+  paint: (els: T, size: Size) => void;
+};
+
+export type CustomCanvasPainter = {
+  paint: (context: CanvasPaintingContext, size: Size) => void;
 };
 
 class BaseCustomPaint<
@@ -48,7 +61,7 @@ class BaseCustomPaint<
 }
 
 export class RenderCustomPaint<
-  T extends Record<string, SVGElement>,
+  T extends Record<string, SVGElement> = Record<string, SVGElement>,
 > extends SingleChildRenderObject {
   _painter: Painter<T>;
   get painter() {
@@ -92,14 +105,6 @@ export class RenderCustomPaint<
     return constraints.constrain(this.preferredSize);
   }
 
-  protected performPaint(svgEls: T, _: PaintContext): void {
-    this.painter.paint(svgEls, this.size);
-  }
-
-  protected createDefaultSvgEl(paintContext: PaintContext): T {
-    return this.painter.createDefaultSvgEl(paintContext);
-  }
-
   override getIntrinsicWidth(height: number): number {
     if (this.child == null) {
       return Number.isFinite(this.preferredSize.width)
@@ -117,6 +122,51 @@ export class RenderCustomPaint<
     }
 
     return super.getIntrinsicHeight(width);
+  }
+
+  protected override createSvgPainter() {
+    return new SvgPainterCustomPaint(this);
+  }
+
+  protected override createCanvasPainter(): CanvasPainter {
+    return new CanvasPainterCustomPaint(this);
+  }
+}
+
+class SvgPainterCustomPaint<
+  T extends Record<string, SVGElement>,
+> extends SvgPainter {
+  get painter() {
+    return (this.renderObject as RenderCustomPaint<T>).painter;
+  }
+
+  protected override performPaint(svgEls: T, _: SvgPaintContext): void {
+    if (this.painter.svg == null) throw new Error("svg painter is not defined");
+    this.painter.svg.paint(svgEls, this.size);
+  }
+
+  protected override createDefaultSvgEl(paintContext: SvgPaintContext): T {
+    if (this.painter.svg == null) throw new Error("svg painter is not defined");
+    return this.painter.svg.createDefaultSvgEl(paintContext);
+  }
+}
+
+class CanvasPainterCustomPaint extends CanvasPainter {
+  get painter() {
+    return (this.renderObject as RenderCustomPaint).painter;
+  }
+
+  protected override performPaint(
+    context: CanvasPaintingContext,
+    offset: Offset,
+  ): void {
+    context.canvas.translate(offset.x, offset.y);
+    if (this.painter.canvas == null) {
+      throw new Error("canvas painter is not defined");
+    }
+    this.painter.canvas.paint(context, this.size);
+    context.canvas.translate(-offset.x, -offset.y);
+    this.defaultPaint(context, offset);
   }
 }
 
