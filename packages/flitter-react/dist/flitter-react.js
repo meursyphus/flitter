@@ -1,30 +1,43 @@
-import { jsx as i } from "react/jsx-runtime";
-import { useRef as o, useEffect as l } from "react";
-import { AppRunner as s, Container as c, Alignment as p, Text as d } from "@meursyphus/flitter";
-function a({
-  width: u = "100%",
-  height: f = "300px",
-  widget: n = c({
+import { jsx as t } from "react/jsx-runtime";
+import { useRef as s, useEffect as c } from "react";
+import { AppRunner as f, Container as h, Alignment as p, Text as a } from "@meursyphus/flitter";
+function v({
+  width: l = "100%",
+  height: u = "300px",
+  renderer: i = "svg",
+  widget: r = h({
     width: 1 / 0,
     height: 1 / 0,
     alignment: p.center,
-    child: d("Hello World")
+    child: a("Hello World")
   })
 }) {
-  const t = o(null), r = o(null);
-  return l(() => {
-    const e = new s({
-      view: r.current,
+  const o = s(null), n = s(null);
+  return c(() => {
+    const e = new f({
+      view: n.current,
       window,
       document
     });
-    return e.runApp(n), e.onMount({
-      resizeTarget: t.current
+    return e.runApp(r), e.onMount({
+      resizeTarget: o.current
     }), () => {
       e.dispose();
     };
-  }, [n]), /* @__PURE__ */ i("div", { style: { width: u, height: f }, ref: t, children: /* @__PURE__ */ i("svg", { style: { width: "100%", height: "100%" }, ref: r }) });
+  }, [r, i]), /* @__PURE__ */ t("div", { style: { width: l, height: u }, ref: o, children: i === "canvas" ? /* @__PURE__ */ t(
+    "canvas",
+    {
+      style: { width: "100%", height: "100%" },
+      ref: n
+    }
+  ) : /* @__PURE__ */ t(
+    "svg",
+    {
+      style: { width: "100%", height: "100%" },
+      ref: n
+    }
+  ) });
 }
 export {
-  a as default
+  v as default
 };
