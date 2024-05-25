@@ -2,9 +2,11 @@
 const url = new URL(Astro.request.url);
 const pathname = url.pathname; // 현재 페이지의 경로
 
-let current: "docs" | "tutorial" = pathname.startsWith("/docs")
+let current: "docs" | "tutorial" | "none" = pathname.startsWith("/docs")
   ? "docs"
-  : "tutorial";
+  : pathname.startsWith("/tutorial")
+    ? "tutorial"
+    : "none";
 ---
 
 <header
