@@ -1,7 +1,7 @@
 import { defineCollection, z } from "astro:content";
 
 const docs = defineCollection({
-  type: "content", 
+  type: "content",
   schema: z.object({
     nav_group: z.string(),
     nav_group_order: z.number(),
@@ -11,9 +11,18 @@ const docs = defineCollection({
     description: z.string().optional(),
     tags: z.array(z.string()).optional(),
     image: z.string().optional(),
-  })
+  }),
+});
+
+const tutorial = defineCollection({
+  type: "content",
+  schema: z.object({
+    files: z.record(z.string()),
+    title: z.string(),
+  }),
 });
 
 export const collections = {
   docs: docs,
+  tutorial: tutorial,
 };

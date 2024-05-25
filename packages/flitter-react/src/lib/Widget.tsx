@@ -11,11 +11,13 @@ type WidgetComponentProps = {
   widget?: Widget;
   width?: string;
   height?: string;
+  renderer?: "canvas" | "svg";
 };
 
 function WidgetComponent({
   width = "100%",
   height = "300px",
+  renderer = "svg",
   widget = Container({
     width: Infinity,
     height: Infinity,
@@ -24,11 +26,11 @@ function WidgetComponent({
   }),
 }: WidgetComponentProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const svgRef = useRef<SVGSVGElement | null>(null);
+  const ref = useRef<SVGSVGElement | HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     const runner = new AppRunner({
-      view: svgRef.current!,
+      view: ref.current!,
       window: window,
       document: document,
     });
@@ -36,11 +38,25 @@ function WidgetComponent({
     runner.onMount({
       resizeTarget: containerRef.current!,
     });
-  }, []);
+
+    return () => {
+      runner.dispose();
+    };
+  }, [widget, renderer]);
 
   return (
     <div style={{ width, height }} ref={containerRef}>
-      <svg style={{ width: "100%", height: "100%" }} ref={svgRef} />
+      {renderer === "canvas" ? (
+        <canvas
+          style={{ width: "100%", height: "100%" }}
+          ref={ref as React.RefObject<HTMLCanvasElement>}
+        />
+      ) : (
+        <svg
+          style={{ width: "100%", height: "100%" }}
+          ref={ref as React.RefObject<SVGSVGElement>}
+        />
+      )}
     </div>
   );
 }

@@ -64,7 +64,10 @@ export class RenderContext {
   }
 
   dispose() {
-    this.resizeObserver.disconnect();
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
   }
 
   observeSize(target: HTMLElement) {

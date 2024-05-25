@@ -11,6 +11,7 @@ export default defineConfig({
   integrations: [react(), svelte(), tailwind(), mdx()],
   redirects: {
     "/docs": "/docs/introduction",
+    "/tutorial": "/tutorial/introduction",
   },
   markdown: {
     shikiConfig: {
