@@ -25,7 +25,6 @@ export const getStaticPaths = async () => {
 
 const { entry, prev, next } = Astro.props;
 const { Content } = await entry.render();
-const [prevSlug, nextSlug] = [prev && prev.slug, next && next.slug];
 ---
 
 <Layout title="Tutorial">
@@ -34,7 +33,7 @@ const [prevSlug, nextSlug] = [prev && prev.slug, next && next.slug];
       <nav class="flex justify-between sticky top-0 bg-white">
         {
           prev ? (
-            <a class="nav-button" href={prevSlug}>
+            <a class="nav-button" href={`/tutorial/${prev.slug}`}>
               Prev
             </a>
           ) : (
@@ -48,7 +47,7 @@ const [prevSlug, nextSlug] = [prev && prev.slug, next && next.slug];
         </div>
         {
           next ? (
-            <a class="nav-button" href={nextSlug}>
+            <a class="nav-button" href={`/tutorial/${next.slug}`}>
               Next
             </a>
           ) : (
