@@ -11,3 +11,6 @@ package
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+packages/*/dist/
+packages/*/package/
+

@@ -10,7 +10,7 @@ import {
 } from "./framework";
 import { HitTestDispatcher } from "./hit-test/HitTestDispatcher";
 import { RenderContext } from "./framework/renderer/renderer";
-import { Constraints, type Size } from "./type";
+import { Constraints } from "./type";
 
 type AppRunnerProps = {
   document?: Document;
@@ -39,7 +39,7 @@ export class AppRunner {
       document: _document,
       window: _window,
     });
-    this.renderContext.addResizeHandler(size => this.handleViewResize(size));
+    this.renderContext.addResizeHandler(() => this.handleViewResize());
     const renderFrameDispatcher = new RenderFrameDispatcher();
     this.scheduler = new Scheduler({ renderFrameDispatcher });
     this.buildOwner = new BuildOwner({
@@ -93,9 +93,7 @@ export class AppRunner {
     resizeTarget && this.renderContext.observeSize(resizeTarget);
   }
 
-  handleViewResize = (size: Size) => {
-    if (this.rendererType === "canvas") {
-    }
+  handleViewResize = () => {
     if (this.didRun) {
       this.draw();
     } else {
@@ -109,7 +107,10 @@ export class AppRunner {
   }
 
   dispose() {
-    this.root.unmount();
+    if (this.root) {
+      this.root.unmount();
+      this.root = null;
+    }
     this.renderContext.dispose();
   }
 }
