@@ -26,6 +26,7 @@ export type RichTextProps = {
   textScaleFactor?: number;
   maxLines?: number;
   textWidthBasis?: TextWidthBasis;
+  bindTextPainter: (painter: TextPainter) => void;
 };
 
 class RichText extends RenderObjectWidget {
@@ -37,6 +38,7 @@ class RichText extends RenderObjectWidget {
   textScaleFactor: number;
   maxLines?: number;
   textWidthBasis: TextWidthBasis;
+  bindTextPainter?: (painter: TextPainter) => void;
 
   constructor({
     text,
@@ -48,6 +50,7 @@ class RichText extends RenderObjectWidget {
     maxLines,
     textWidthBasis = TextWidthBasis.parent,
     key,
+    bindTextPainter,
   }: RichTextProps & { key?: any }) {
     super({ children: [], key });
     this.text = text;
@@ -58,6 +61,7 @@ class RichText extends RenderObjectWidget {
     this.textScaleFactor = textScaleFactor;
     this.maxLines = maxLines;
     this.textWidthBasis = textWidthBasis;
+    this.bindTextPainter = bindTextPainter;
   }
 
   createRenderObject(): RenderObject {
@@ -70,6 +74,7 @@ class RichText extends RenderObjectWidget {
       textScaleFactor: this.textScaleFactor,
       maxLines: this.maxLines,
       textWidthBasis: this.textWidthBasis,
+      bindTextPainter: this.bindTextPainter,
     });
   }
 
@@ -85,7 +90,7 @@ class RichText extends RenderObjectWidget {
   }
 }
 
-class RenderParagraph extends RenderObject {
+export class RenderParagraph extends RenderObject {
   _softWrap: boolean;
   _overflow: TextOverflow;
   get softWrap(): boolean {
@@ -116,6 +121,7 @@ class RenderParagraph extends RenderObject {
     textScaleFactor = 1,
     maxLines,
     textWidthBasis = TextWidthBasis.parent,
+    bindTextPainter,
   }: RichTextProps) {
     super({ isPainter: true });
     this._softWrap = softWrap;
@@ -129,6 +135,8 @@ class RenderParagraph extends RenderObject {
       ellipsis: overflow == TextOverflow.ellipsis ? "\u2026" : undefined,
       textWidthBasis,
     });
+
+    bindTextPainter?.(this.textPainter);
   }
 
   get text() {

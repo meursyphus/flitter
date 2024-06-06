@@ -1,3 +1,4 @@
+import type TextPainter from "../type/_types/text-painter";
 import type {
   TextDirection,
   TextOverflow,
@@ -31,6 +32,7 @@ class _Text extends StatelessWidget {
   softWrap?: boolean;
   textWidthBasis?: TextWidthBasis;
   overflow?: TextOverflow;
+  bindTextPainter?: (props: TextPainter) => void;
 
   constructor({
     data,
@@ -41,6 +43,7 @@ class _Text extends StatelessWidget {
     textWidthBasis,
     style,
     overflow,
+    bindTextPainter,
   }: TextProps & { data?: string; textSpan?: InlineSpan }) {
     super();
     this.softWrap = softWrap;
@@ -52,6 +55,7 @@ class _Text extends StatelessWidget {
 
     this.data = data;
     this.textSpan = textSpan;
+    this.bindTextPainter = bindTextPainter;
   }
 
   build(_: BuildContext): Widget {
@@ -66,6 +70,7 @@ class _Text extends StatelessWidget {
         text: this.data,
         children: this.textSpan && [this.textSpan],
       }),
+      bindTextPainter: this.bindTextPainter,
     });
   }
 }
@@ -77,4 +82,5 @@ type TextProps = {
   textDirection?: TextDirection;
   softWrap?: boolean;
   textWidthBasis?: TextWidthBasis;
+  bindTextPainter?: (painter: TextPainter) => void;
 };
