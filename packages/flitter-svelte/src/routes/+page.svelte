@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Widget from '../lib/Widget.svelte';
-	import { Alignment, Center, Container, Text, TextField } from '@meursyphus/flitter';
+	import { Container } from '@meursyphus/flitter';
+	import TextField from './TextField';
 
 	let el: HTMLTextAreaElement;
 </script>
@@ -11,13 +12,9 @@
 	widget={Container({
 		width: 300,
 		height: 300,
-		color: 'red',
-		child: TextField()
+		child: new TextField()
 	})}
 />
-
-<textarea bind:this={el} />
-<button on:click={() => el.focus()} />
 
 <style>
 </style>
