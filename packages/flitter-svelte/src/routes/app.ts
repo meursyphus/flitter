@@ -1,12 +1,10 @@
 import {
 	Container,
 	Animation,
-	GestureDetector,
 	Text,
 	TextStyle,
 	StatefulWidget,
 	State,
-	Widget,
 	Alignment,
 	SizedBox,
 	Column,
@@ -32,7 +30,7 @@ export default function BarChart() {
 			mainAxisSize: MainAxisSize.min,
 			crossAxisAlignment: CrossAxisAlignment.center,
 			children: [
-				Text('BarChart', { style: new TextStyle({ fontFamily: 'Intent' }) }),
+				Text('BarChart', { style: new TextStyle({ fontFamily: 'Intent', fontWeight: '600' }) }),
 				SizedBox({
 					width: 200,
 					height: 150,
