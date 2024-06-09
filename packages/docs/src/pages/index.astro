@@ -1,21 +1,54 @@
 ---
 import Layout from "../layouts/HomeLayout.astro";
+import {
+  IntroSection,
+  ShowcaseSection,
+  WhySection,
+  LastSection,
+  CodingSection,
+} from "../components/pages/home";
 ---
 
 <Layout title="Welcome to Flitter">
-  <main class="flex flex-col">
-    <div class="w-[400px]" id="lottie"></div>
+  <main class="flex flex-col gap-[128px] md:gap-[128px]">
+    <IntroSection />
+    <ShowcaseSection />
+    <WhySection />
+    <CodingSection />
+    <LastSection />
   </main>
 </Layout>
 
-<script>
-  import bodymovin from "lottie-web";
-  var animation = bodymovin.loadAnimation({
-    container: document.getElementById("lottie")!, // Required
-    path: "coding.json", // Required
-    renderer: "svg", // Required
-    loop: true, // Optional
-    autoplay: true, // Optional
-    name: "Hello World", // Name for future reference. Optional.
-  });
-</script>
+<style is:global>
+  main {
+    max-width: var(--mx);
+    margin-inline: auto;
+  }
+  .title {
+    color: #fff;
+    -webkit-text-stroke-width: 1;
+    -webkit-text-stroke-color: #000;
+    font-size: 64px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 68px; /* 106.25% */
+  }
+  .descrition {
+    color: #c8c8c8;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 31.12px; /* 155.6% */
+  }
+  @media (max-width: 768px) {
+    .title {
+      font-size: 30px;
+      line-height: 36px; /* 120% */
+    }
+    .descrition {
+      font-size: 16px;
+      line-height: 24px; /* 150% */
+    }
+  }
+</style>
+
+<script></script>

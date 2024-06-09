@@ -27,21 +27,49 @@ const { title } = Astro.props;
   </body>
 </html>
 <style is:global>
-  :root {
-    --accent: 136, 58, 234;
-    --accent-light: 224, 204, 250;
-    --accent-dark: 49, 10, 101;
-    --accent-gradient: linear-gradient(
-      45deg,
-      rgb(var(--accent)),
-      rgb(var(--accent-light)) 30%,
-      white 60%
-    );
+  html,
+  body {
+    padding: 0;
+    margin: 0;
   }
-  html {
-    font-family: system-ui, sans-serif;
-    background: white;
-    background-size: 224px;
+  body {
+    font-family: Inter;
+    color: white;
+    --header: 96px;
+  }
+  @media (max-width: 768px) {
+    .layout {
+      --px: 24px;
+    }
+    body {
+      --header: 116px;
+    }
+  }
+  .layout {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    height: 100vh;
+    --px: 32px;
+    --mw: 1920px;
+  }
+
+  /* Chrome, Edge, Safari에서 스크롤바 스타일링 */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #333333;
+    border-radius: 20px;
+    border: 3px solid #f4f4f4;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555555;
   }
   code {
     font-family:
@@ -53,45 +81,5 @@ const { title } = Astro.props;
       Bitstream Vera Sans Mono,
       Courier New,
       monospace;
-  }
-  html,
-  body {
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    --header: 72px;
-    overflow: hidden;
-  }
-  .layout {
-    display: flex;
-    flex-direction: column;
-    overflow-y: scroll;
-    height: 100vh;
-  }
-  main {
-    width: 100%;
-    max-width: 1520px;
-    margin-inline: auto;
-    padding-inline: 32px;
-  }
-  /* Chrome, Edge, Safari에서 스크롤바 스타일링 */
-  ::-webkit-scrollbar {
-    width: 12px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: #a6a6a6;
-    border-radius: 20px;
-    border: 3px solid #f4f4f4;
-  }
-
-  /* 선택적: 스크롤바가 활성 상태일 때의 스타일 */
-  ::-webkit-scrollbar-thumb:hover {
-    background: #909090;
   }
 </style>

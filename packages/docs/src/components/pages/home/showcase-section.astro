@@ -1,0 +1,32 @@
+---
+import "@egjs/react-flicking/dist/flicking.css";
+import { Banner } from "./show-cases";
+---
+
+<div
+  class="flex h-[929px] flex-col items-center justify-start gap-20 bg-white px-16 py-28"
+>
+  <div class="flex h-[109px] flex-col items-center justify-start gap-6">
+    <div
+      class="self-stretch text-center font-['Roboto'] text-5xl font-bold leading-[57.60px] text-black"
+    >
+      Show Cases
+    </div>
+    <div
+      class="self-stretch text-center font-['Roboto'] text-lg font-normal leading-[27px] text-black"
+    >
+      Interactive charts implemented with Flitter
+      <br />
+      Explore the dynamic data visualization capabilities
+    </div>
+  </div>
+  <div class="flex flex-col items-center justify-start gap-12">
+    <Banner client:load />
+  </div>
+</div>
+
+<style is:global>
+  .panel {
+    user-select: none;
+  }
+</style>
