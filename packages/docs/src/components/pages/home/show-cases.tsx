@@ -1,6 +1,20 @@
 import Flicking from "@egjs/react-flicking";
 import ReactWidget from "@meursyphus/flitter-react";
-import "@meursyphus/flitter";
+import {
+  Text,
+  Border,
+  BoxDecoration,
+  Container,
+  CrossAxisAlignment,
+  EdgeInsets,
+  GestureDetector,
+  MainAxisSize,
+  Row,
+  SizedBox,
+  TextStyle,
+  CustomPaint,
+  Path,
+} from "@meursyphus/flitter";
 import {
   BarChart,
   BubbleChart,
@@ -9,6 +23,101 @@ import {
   StackedBarChart,
 } from "@meursyphus/flitter-chart";
 import { useEffect, useRef, useState } from "react";
+
+const Check = ({ color = "white" }: { color?: string } = {}) => {
+  return CustomPaint({
+    painter: {
+      svg: {
+        createDefaultSvgEl({ createSvgEl }) {
+          const check = createSvgEl("path");
+          return {
+            check,
+          };
+        },
+        paint({ check }, size) {
+          const path = new Path();
+          path.moveTo({ x: size.width * 0.2, y: size.height * 0.5 });
+          path.lineTo({ x: size.width * 0.4, y: size.height * 0.7 });
+          path.lineTo({ x: size.width * 0.8, y: size.height * 0.3 });
+
+          check.setAttribute("fill", "none");
+          check.setAttribute("stroke", color);
+          check.setAttribute("stroke-width", "1");
+          check.setAttribute("d", path.getD());
+        },
+      },
+      canvas: {
+        paint({ canvas }, size) {
+          const path = new Path();
+          path.moveTo({ x: size.width * 0.2, y: size.height * 0.5 });
+          path.lineTo({ x: size.width * 0.4, y: size.height * 0.7 });
+          path.lineTo({ x: size.width * 0.8, y: size.height * 0.3 });
+          canvas.strokeStyle = color;
+          canvas.lineWidth = 1; // 선의 두께
+          canvas.stroke(path.toCanvasPath());
+        },
+      },
+    },
+  });
+};
+
+type LegendProps = {
+  legendStates: {
+    color: string;
+    label: string;
+    visible: boolean;
+  }[];
+  style: TextStyle;
+  margin?: EdgeInsets;
+  gap?: number;
+};
+
+export default function Legend({
+  legendStates,
+  style,
+  margin = EdgeInsets.only({ top: 5 }),
+  gap = 20,
+}: LegendProps) {
+  return Container({
+    margin,
+    child: Row({
+      mainAxisSize: MainAxisSize.min,
+      children: legendStates.map((state) => {
+        const { label, visible, color } = state;
+        return Container({
+          padding: EdgeInsets.symmetric({ horizontal: gap }),
+          child: GestureDetector({
+            onClick() {
+              state.visible = !state.visible;
+            },
+            child: Row({
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container({
+                  width: style.fontSize ? style.fontSize + 2 : 13,
+                  height: style.fontSize ? style.fontSize + 2 : 13,
+                  padding: EdgeInsets.all(1),
+                  decoration: new BoxDecoration({
+                    border: Border.all({ width: 1, color: "grey" }),
+                  }),
+                  child: visible ? Check() : undefined,
+                }),
+                Container({
+                  margin: EdgeInsets.symmetric({ horizontal: 4 }),
+                  width: style.fontSize ?? 11,
+                  height: style.fontSize ?? 11,
+                  color,
+                }),
+                Text(label, { style }),
+              ],
+            }),
+          }),
+        });
+      }),
+    }),
+  });
+}
 
 const barChartProps = {
   data: {
@@ -35,8 +144,77 @@ const barChartProps = {
   },
 };
 
+const commonCustoms = {
+  layout: {
+    type: "config",
+    backgroundColor: "transparent",
+  },
+  xAxis: {
+    type: "config",
+    color: "white",
+  },
+  xAxisTick: {
+    type: "config",
+    color: "white",
+  },
+  xAxisLabel: {
+    type: "config",
+    font: {
+      color: "white",
+    },
+  },
+  yAxis: {
+    type: "config",
+    color: "white",
+  },
+  yAxisTick: {
+    type: "config",
+    color: "white",
+  },
+  yAxisLabel: {
+    type: "config",
+    font: {
+      color: "white",
+    },
+  },
+  plot: {
+    type: "config",
+    verticalLine: {
+      color: "grey",
+    },
+    horizontalLine: {
+      color: "grey",
+    },
+  },
+  legend: {
+    type: "custom",
+    Custom(
+      _: never,
+      { legendStates }: { legendStates: LegendProps["legendStates"] },
+    ) {
+      return Legend({
+        legendStates,
+        style: new TextStyle({
+          color: "white",
+          fontSize: 12,
+          fontFamily: "Noto sans JP",
+        }),
+      });
+    },
+  },
+  title: {
+    type: "config",
+    font: {
+      color: "white",
+    },
+  },
+} as any;
+
 const barChart = BarChart({
   ...barChartProps,
+  custom: {
+    ...commonCustoms,
+  },
 });
 
 const stackedBarChart = StackedBarChart({
@@ -50,6 +228,7 @@ const stackedBarChart = StackedBarChart({
       type: "config",
       thickness: 30,
     },
+    ...commonCustoms,
   },
 });
 
@@ -178,6 +357,9 @@ const bubbleChart = BubbleChart({
         ],
       },
     ],
+  },
+  custom: {
+    ...commonCustoms,
   },
 });
 
@@ -704,6 +886,9 @@ const scatterChart = ScatterChart({
       },
     ],
   },
+  custom: {
+    ...commonCustoms,
+  },
 });
 
 const lineChart = LineChart({
@@ -738,33 +923,65 @@ const lineChart = LineChart({
     ],
     title: "Average Temperature",
   },
+  custom: {
+    ...commonCustoms,
+  },
 });
 
 export const Chart = {
-  Bar: () => <ReactWidget width="800px" height="640px" widget={barChart} />,
+  Bar: () => (
+    <ReactWidget
+      width="800px"
+      height="640px"
+      renderer="canvas"
+      widget={barChart}
+    />
+  ),
   Bubble: () => (
-    <ReactWidget width="800px" height="640px" widget={bubbleChart} />
+    <ReactWidget
+      width="800px"
+      height="640px"
+      widget={bubbleChart}
+      renderer="svg"
+    />
   ),
   StackedBar: () => (
-    <ReactWidget width="800px" height="640px" widget={stackedBarChart} />
+    <ReactWidget
+      width="800px"
+      height="640px"
+      widget={stackedBarChart}
+      renderer="canvas"
+    />
   ),
   Scatter: () => (
-    <ReactWidget width="800px" height="640px" widget={scatterChart} />
+    <ReactWidget
+      width="800px"
+      height="640px"
+      widget={scatterChart}
+      renderer="svg"
+    />
   ),
-  Line: () => <ReactWidget width="800px" height="640px" widget={lineChart} />,
+  Line: () => (
+    <ReactWidget
+      width="800px"
+      height="640px"
+      widget={lineChart}
+      renderer="canvas"
+    />
+  ),
 };
 
 export const Banner = () => {
   const controller = useRef<Flicking | null>(null);
   const [stopped, setStopped] = useState(false);
-  useEffect(() => {
-    if (stopped) return;
-    const interval = setInterval(() => {
-      controller.current?.next();
-    }, 4000);
+  // useEffect(() => {
+  //   if (stopped) return;
+  //   const interval = setInterval(() => {
+  //     controller.current?.next();
+  //   }, 4000);
 
-    return () => clearInterval(interval);
-  }, [stopped]);
+  //   return () => clearInterval(interval);
+  // }, [stopped]);
 
   const handleMouseEnter = () => {
     setStopped(true);
@@ -787,7 +1004,7 @@ export const Banner = () => {
       onTouchEnd={handleMouseLeave}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="flex w-[1440px] flex-col"
+      className="flex w-full flex-col"
     >
       <Flicking
         changeOnHold

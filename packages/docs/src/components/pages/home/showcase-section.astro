@@ -3,27 +3,42 @@ import "@egjs/react-flicking/dist/flicking.css";
 import { Banner } from "./show-cases";
 ---
 
-<div
-  class="flex h-[929px] flex-col items-center justify-start gap-20 bg-white px-16 py-28"
->
-  <div class="flex h-[109px] flex-col items-center justify-start gap-6">
-    <div
-      class="self-stretch text-center font-['Roboto'] text-5xl font-bold leading-[57.60px] text-black"
-    >
-      Show Cases
-    </div>
-    <div
-      class="self-stretch text-center font-['Roboto'] text-lg font-normal leading-[27px] text-black"
-    >
-      Interactive charts implemented with Flitter
-      <br />
-      Explore the dynamic data visualization capabilities
+<section class="flex w-full flex-col">
+  <h1 class="title mx-auto">Powered by Flitter</h1>
+  <div class="mt-[128px] flex h-screen w-full justify-end">
+    <div class="flex w-[90vw] max-w-[90vw] grow-0 items-center py-8">
+      <Banner client:visible />
     </div>
   </div>
-  <div class="flex flex-col items-center justify-start gap-12">
-    <Banner client:load />
+
+  <div id="easyrd-area" class="h-[300vh]">
+    <div class="sticky top-0 flex h-screen w-full items-end justify-start">
+      <img
+        id="easyrd"
+        class="h-[80%] translate-y-full"
+        src="/home/easyrd.jpg"
+        alt="showcase-diagram"
+      />
+    </div>
   </div>
-</div>
+</section>
+
+<script>
+  import gsap from "gsap";
+  import ScrollTrigger from "gsap/ScrollTrigger";
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.to("#easyrd", {
+    scrollTrigger: {
+      trigger: "#easyrd-area",
+      start: "top top",
+      end: "center bottom",
+      scrub: 4,
+    },
+    y: 0,
+    duration: 3,
+  });
+</script>
 
 <style is:global>
   .panel {
