@@ -71,7 +71,7 @@ class BarState extends State<Bar> {
 
 	override initState(): void {
 		this.animationController = new AnimationController({
-			duration: 1000
+			duration: 10000
 		});
 		this.animationController.addListener(() => {
 			this.setState();
