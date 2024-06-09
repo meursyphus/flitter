@@ -98,12 +98,12 @@ class BarState extends State<Bar> {
 						children: [
 							Container({
 								width: 20,
+								color: '#1a1a1a',
 								decoration: new BoxDecoration({
 									borderRadius: BorderRadius.only({
 										topLeft: Radius.circular(4),
 										topRight: Radius.circular(4)
-									}),
-									color: '#1a1a1a'
+									})
 								})
 							}),
 							SizedBox({ height: 5 }),
