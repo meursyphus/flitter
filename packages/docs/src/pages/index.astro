@@ -1,20 +1,61 @@
 ---
 import Layout from "../layouts/HomeLayout.astro";
-import Intro from "../components/pages/Intro.astro";
-import Features from "../components/pages/Features.astro";
-import ShowCase from "../components/pages/ShowCase.astro";
-import PleaseComeIn from "../components/pages/PleaseComeIn.astro";
-import ThanksToFlutter from "../components/pages/ThanksToFlutter.astro";
-import StartGuide from "../components/pages/StartGuide.astro";
+import {
+  IntroSection,
+  ShowcaseSection,
+  WhySection,
+  LastSection,
+  CodingSection,
+} from "../components/pages/home";
 ---
 
-<Layout title="Welcome to Flitter">
-  <main class="flex flex-col">
-    <Intro />
-    <StartGuide />
-    <Features />
-    <ShowCase />
-    <ThanksToFlutter />
-    <PleaseComeIn />
+<Layout>
+  <main class="flex w-full flex-col gap-[128px] md:gap-[128px]">
+    <IntroSection />
+    <ShowcaseSection />
+    <WhySection />
+    <CodingSection />
+    <LastSection />
   </main>
+  <footer class="padding-x flex items-center py-8">
+    <div class="text-[24px] md:text-[32px]">Flitter</div>
+    <div class="description ml-auto">design reference: https://remix.run</div>
+  </footer>
 </Layout>
+
+<style is:global>
+  .padding-x {
+    padding-inline: var(--px);
+  }
+  main {
+    max-width: var(--mx);
+    margin-inline: auto;
+  }
+  .title {
+    color: #fff;
+    -webkit-text-stroke-width: 1;
+    -webkit-text-stroke-color: #000;
+    font-size: 64px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 68px; /* 106.25% */
+  }
+  .description {
+    color: #c8c8c8;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 31.12px; /* 155.6% */
+  }
+  @media (max-width: 768px) {
+    .title {
+      font-size: 30px;
+      line-height: 36px; /* 120% */
+    }
+    .description {
+      font-size: 16px;
+      line-height: 24px; /* 150% */
+    }
+  }
+</style>
+
+<script></script>
