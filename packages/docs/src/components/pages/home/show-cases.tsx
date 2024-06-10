@@ -973,17 +973,40 @@ export const Chart = {
 
 export const Banner = () => {
   const controller = useRef<Flicking | null>(null);
+  const [visible, setVisible] = useState(false);
 
-  const panels = [
-    <Chart.StackedBar />,
-    <Chart.Line />,
-    <Chart.Bubble />,
-    <Chart.Bar />,
-    <Chart.Scatter />,
-  ];
+  const panels = visible
+    ? [
+        <Chart.StackedBar />,
+        <Chart.Line />,
+        <Chart.Bubble />,
+        <Chart.Bar />,
+        <Chart.Scatter />,
+      ]
+    : [null];
+
+  const container = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = container.current;
+    if (el == null) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+        }
+      },
+      {
+        threshold: 0.5,
+      },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className="flex w-full flex-col">
+    <div ref={container} className="flex w-full flex-col">
       <Flicking
         changeOnHold
         duration={1500}
