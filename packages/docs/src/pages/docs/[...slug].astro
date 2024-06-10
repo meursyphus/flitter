@@ -37,10 +37,10 @@ const nextEntry =
     : null;
 ---
 
-<Layout title="Docs">
-  <main class="flex relative mx-auto">
+<Layout title={`Flitter - ${entry.data.title}`}>
+  <main class="relative mx-auto flex">
     <SideBar />
-    <div class="w-full px-8 prose max-w-full lg:prose-lg py-20">
+    <div class="prose prose-invert w-full max-w-full px-8 py-20 lg:prose-lg">
       <Content />
       <div class="flex justify-between py-4">
         {

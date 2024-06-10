@@ -17,12 +17,14 @@
     "@astrojs/tailwind": "^5.1.0",
     "@codesandbox/sandpack-react": "^2.13.10",
     "@egjs/react-flicking": "^4.11.2",
-    "@monaco-editor/react": "^4.6.0",
     "@meursyphus/flitter-chart": "^0.0.9",
+    "@monaco-editor/react": "^4.6.0",
     "@tailwindcss/typography": "^0.5.10",
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",
     "astro": "^4.4.15",
+    "gsap": "^3.12.5",
+    "lottie-web": "^5.12.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-markdown": "^9.0.1",
@@ -32,7 +34,8 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
-    "prettier": "^3.2.5",
-    "prettier-plugin-astro": "^0.13.0"
+    "prettier": "^3.3.1",
+    "prettier-plugin-astro": "^0.13.0",
+    "prettier-plugin-tailwindcss": "^0.6.2"
   }
 }

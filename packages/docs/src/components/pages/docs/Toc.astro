@@ -9,21 +9,18 @@ const { headings } = Astro.props;
 ---
 
 <nav
-  class="w-[300px] toc px-5 shrink-0 h-[500px] grow-0 flex py-20 justify-start"
+  class="toc flex h-[500px] w-[300px] shrink-0 grow-0 justify-start px-5 py-20"
 >
-  <ul class="list-none flex flex-col gap-1">
+  <ul class="flex list-none flex-col gap-1">
     <li style={`padding-left: ${headings[0].depth * 16}px;`}>
-      <a class="text-gray-600 hover:text-gray-900" href={`#${headings[0].slug}`}
+      <a class="text-gray-400 hover:text-white" href={`#${headings[0].slug}`}
         >Overview</a
       >
     </li>
     {
       headings.slice(1).map((heading) => (
         <li style={`padding-left: ${(heading.depth - 1) * 16}px;`}>
-          <a
-            href={`#${heading.slug}`}
-            class="text-gray-600 hover:text-gray-900"
-          >
+          <a href={`#${heading.slug}`} class="text-gray-400 hover:text-white">
             {heading.text}
           </a>
         </li>
