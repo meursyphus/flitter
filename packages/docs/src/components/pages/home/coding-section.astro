@@ -1,0 +1,63 @@
+---
+const paragraphs: string[] = [
+  "Flitter is written declaratively, making your code super easy to read and maintain.",
+  "Thanks to the box model, you can easily craft complex layouts without breaking a sweat.",
+  "It’s the only data visualization library that supports both SVG and Canvas simultaneously. How cool is that?",
+  "Adding interactions and animations is a breeze. Your charts will come to life!",
+  "Ever tried adding mouse events to Canvas? It’s a nightmare, right? Flitter makes it simple.",
+  "Developing charts with D3? Ugh, the layout calculations can be a real pain. With Flitter, it’s a walk in the park.",
+];
+---
+
+<section id="coding-section" class="flex w-full shrink-0 flex-col md:flex-row">
+  <div class="padding-x title w-full">
+    {
+      paragraphs.map((paragraph) => (
+        <p class="h-[75vh] align-middle">{paragraph}</p>
+      ))
+    }
+  </div>
+  <div
+    class="h-sccren sticky top-0 flex w-full items-center justify-center bg-gray-600 md:h-screen"
+  >
+    <div class="h-[90vh] overflow-hidden" id="coding-lottie"></div>
+  </div>
+</section>
+
+<script>
+  import lottie from "lottie-web";
+  import gsap from "gsap";
+  import ScrollTrigger from "gsap/ScrollTrigger";
+  gsap.registerPlugin(ScrollTrigger);
+
+  const coding = document.getElementById("coding-lottie")!;
+
+  const animation = lottie.loadAnimation({
+    container: coding,
+    renderer: "canvas",
+    loop: false,
+    autoplay: false,
+    path: "/home/coding.json",
+  });
+
+  const playhead = { frame: 0 };
+  animation.addEventListener("data_ready", () => {
+    gsap.to(playhead, {
+      scrollTrigger: {
+        trigger: "#coding-section",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: true,
+      },
+      frame: animation.totalFrames - 1,
+      ease: "none",
+      onUpdate: () => animation.goToAndStop(playhead.frame, true),
+    });
+  });
+</script>
+
+<style>
+  .padding-x {
+    padding-inline: var(--px);
+  }
+</style>
