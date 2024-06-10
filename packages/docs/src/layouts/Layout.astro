@@ -34,24 +34,22 @@ const { title = "Flitter - Data Visualization Framework" } = Astro.props;
     margin: 0;
   }
   body {
-    font-family: Inter;
-    background-color: black;
+    font-family: Helvetica, sans-serif;
+    background: #121212;
     color: white;
     --header: 96px;
     overflow: scroll;
+    --px: 64px;
+    --mw: 1920px;
   }
   .layout {
     display: flex;
     flex-direction: column;
-    --px: 32px;
-    --mw: 1920px;
   }
   @media (max-width: 768px) {
-    .layout {
-      --px: 24px;
-    }
     body {
       --header: 116px;
+      --px: 24px;
     }
   }
 
