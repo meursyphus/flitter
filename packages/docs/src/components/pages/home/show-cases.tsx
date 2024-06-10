@@ -23,6 +23,9 @@ import {
   StackedBarChart,
 } from "@meursyphus/flitter-chart";
 import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import ScrollTrigger from "gsap-trial/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 
 const Check = ({ color = "white" }: { color?: string } = {}) => {
   return CustomPaint({
@@ -1004,6 +1007,14 @@ export const Banner = () => {
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (!visible) return;
+    const ct = controller.current;
+    if (ct == null) return;
+
+    const handleScroll = () => {};
+  }, [visible]);
 
   return (
     <div ref={container} className="flex w-full flex-col">
