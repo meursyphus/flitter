@@ -10,7 +10,6 @@ import {
   GestureDetector,
   MainAxisSize,
   Row,
-  SizedBox,
   TextStyle,
   CustomPaint,
   Path,
@@ -24,8 +23,6 @@ import {
 } from "@meursyphus/flitter-chart";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import ScrollTrigger from "gsap-trial/ScrollTrigger";
-gsap.registerPlugin(ScrollTrigger);
 
 const Check = ({ color = "white" }: { color?: string } = {}) => {
   return CustomPaint({
@@ -1001,19 +998,44 @@ export const Banner = () => {
         }
       },
       {
-        threshold: 0.5,
+        threshold: 0.8,
       },
     );
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
+  const ref = useRef(0);
+
   useEffect(() => {
     if (!visible) return;
     const ct = controller.current;
     if (ct == null) return;
 
-    const handleScroll = () => {};
+    const axes = ct.control.controller.axes;
+    const playhead = { x: 0 };
+    const instance = gsap.to(playhead, {
+      scrollTrigger: {
+        trigger: container.current,
+        start: "bottom+=100 bottom",
+        end: "bottom top",
+        scrub: true,
+      },
+      x: 1000,
+      onUpdate: () => {
+        axes.setTo({ flick: playhead.x });
+      },
+    });
+
+    return () => {
+      instance.kill();
+    };
+  }, [visible]);
+
+  useEffect(() => {
+    if (!visible) return;
+    const ct = controller.current;
+    if (ct == null) return;
   }, [visible]);
 
   return (
