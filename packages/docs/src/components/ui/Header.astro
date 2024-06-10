@@ -12,36 +12,34 @@ let current: "docs" | "tutorial" | "none" = pathname.startsWith("/docs")
 <header
   class="flex w-full flex-col items-center justify-center border-b border-black bg-black px-[32px]"
 >
-  <div
-    class="relative mx-auto inline-flex w-full items-center justify-center gap-8"
-  >
-    <a href="/" class="absolute left-20 top-1/2 -translate-y-1/2">
+  <div class="relative mx-auto inline-flex w-full items-center gap-8">
+    <a href="/" class="flex flex-row gap-4">
       <img class="h-10 w-10 rounded-full" src="/logo.jpeg" />
+      <span class="hidden text-[32px] font-bold md:block md:text-[32px]"
+        >Flitter</span
+      >
     </a>
 
-    <div class="flex items-start justify-start gap-8">
+    <nav
+      class="md:-translate-1/2 ml-auto flex items-start justify-start gap-8 text-gray-200 md:absolute md:left-1/2 md:ml-0"
+    >
       <a
         class={`${current === "docs" ? "active" : ""}  text-base leading-normal`}
         href="/docs">docs</a
       >
-      <div class="flex items-center justify-center gap-1">
-        <div class="text-base leading-normal">
-          <a
-            class={`${current === "tutorial" ? "active" : ""} select-none`}
-            title="comming soon"
-            href="/tutorial">tutorial</a
-          >
-        </div>
-        <div class="relative h-6 w-6"></div>
-      </div>
-    </div>
-    <div class="absolute right-10 top-1/2 flex -translate-y-1/2 gap-4">
+      <a
+        class={`${current === "tutorial" ? "active" : ""} select-none`}
+        title="comming soon"
+        href="/tutorial">tutorial</a
+      >
+    </nav>
+    <div class="ml-auto hidden gap-4 md:flex">
       <a href="https://github.com/meursyphus/flitter">
-        <img class="h-10 w-10 rounded-full bg-white" src="/github-mark.png" />
+        <img class="h-8 w-8 rounded-full invert" src="/github-mark.png" />
       </a>
       <a href="https://discord.gg/kUZp4SaHzF">
         <img
-          class="h-10 w-10 rounded-full object-scale-down"
+          class="h-8 w-8 rounded-full object-scale-down invert"
           src="/discord.png"
         />
       </a>
@@ -53,10 +51,12 @@ let current: "docs" | "tutorial" | "none" = pathname.startsWith("/docs")
   header {
     height: var(--header);
   }
-  header > {
+  header > div {
     max-width: var(--mx, 1920px);
+    padding-inline: var(--px);
   }
-  .active {
+  a.active {
     font-weight: bold;
+    color: white;
   }
 </style>

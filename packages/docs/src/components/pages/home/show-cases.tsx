@@ -973,39 +973,17 @@ export const Chart = {
 
 export const Banner = () => {
   const controller = useRef<Flicking | null>(null);
-  const [stopped, setStopped] = useState(false);
-  // useEffect(() => {
-  //   if (stopped) return;
-  //   const interval = setInterval(() => {
-  //     controller.current?.next();
-  //   }, 4000);
-
-  //   return () => clearInterval(interval);
-  // }, [stopped]);
-
-  const handleMouseEnter = () => {
-    setStopped(true);
-  };
-  const handleMouseLeave = () => {
-    setStopped(false);
-  };
 
   const panels = [
     <Chart.StackedBar />,
-    <Chart.Bar />,
-    <Chart.Bubble />,
     <Chart.Line />,
+    <Chart.Bubble />,
+    <Chart.Bar />,
     <Chart.Scatter />,
   ];
 
   return (
-    <div
-      onTouchStart={handleMouseEnter}
-      onTouchEnd={handleMouseLeave}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className="flex w-full flex-col"
-    >
+    <div className="flex w-full flex-col">
       <Flicking
         changeOnHold
         duration={1500}

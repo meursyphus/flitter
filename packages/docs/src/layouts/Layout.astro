@@ -38,6 +38,12 @@ const { title } = Astro.props;
     color: white;
     --header: 96px;
   }
+  .layout {
+    display: flex;
+    flex-direction: column;
+    --px: 32px;
+    --mw: 1920px;
+  }
   @media (max-width: 768px) {
     .layout {
       --px: 24px;
@@ -45,12 +51,6 @@ const { title } = Astro.props;
     body {
       --header: 116px;
     }
-  }
-  .layout {
-    display: flex;
-    flex-direction: column;
-    --px: 32px;
-    --mw: 1920px;
   }
 
   /* Chrome, Edge, Safari에서 스크롤바 스타일링 */
