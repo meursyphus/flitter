@@ -13,18 +13,21 @@ const paragraphs: string[] = [
 ];
 ---
 
-<section id="coding-section" class="flex w-full shrink-0 flex-col md:flex-row">
+<section
+  id="coding-section"
+  class="flex w-full shrink-0 flex-col-reverse md:flex-row"
+>
   <div class="padding-x title w-full">
     {
       paragraphs.map((paragraph) => (
-        <p class="h-screen align-middle">{paragraph}</p>
+        <p class="flex h-screen items-center align-middle">{paragraph}</p>
       ))
     }
   </div>
   <div
-    class="h-sccren sticky top-0 flex w-full items-center justify-center bg-gray-600 md:h-screen"
+    class="sticky top-0 flex h-[70vh] w-full items-center justify-center bg-gray-600 md:h-screen"
   >
-    <div class="h-[90vh] overflow-hidden" id="coding-lottie"></div>
+    <div class="h-[90%] overflow-hidden" id="coding-lottie"></div>
   </div>
 </section>
 
