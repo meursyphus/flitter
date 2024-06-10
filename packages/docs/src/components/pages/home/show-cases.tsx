@@ -931,40 +931,40 @@ const lineChart = LineChart({
 export const Chart = {
   Bar: () => (
     <ReactWidget
-      width="800px"
-      height="640px"
+      width="100%"
+      height="100%"
       renderer="canvas"
       widget={barChart}
     />
   ),
   Bubble: () => (
     <ReactWidget
-      width="800px"
-      height="640px"
+      width="100%"
+      height="100%"
       widget={bubbleChart}
       renderer="svg"
     />
   ),
   StackedBar: () => (
     <ReactWidget
-      width="800px"
-      height="640px"
+      width="100%"
+      height="100%"
       widget={stackedBarChart}
       renderer="canvas"
     />
   ),
   Scatter: () => (
     <ReactWidget
-      width="800px"
-      height="640px"
+      width="100%"
+      height="100%"
       widget={scatterChart}
       renderer="svg"
     />
   ),
   Line: () => (
     <ReactWidget
-      width="800px"
-      height="640px"
+      width="100%"
+      height="100%"
       widget={lineChart}
       renderer="canvas"
     />

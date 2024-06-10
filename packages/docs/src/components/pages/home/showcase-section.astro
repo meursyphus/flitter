@@ -5,17 +5,19 @@ import { Banner } from "./show-cases";
 
 <section class="flex w-full flex-col">
   <h1 class="title mx-auto">Powered by Flitter</h1>
-  <div class="mt-[128px] flex h-screen w-full justify-end">
-    <div class="flex w-[90vw] max-w-[90vw] grow-0 items-center py-8">
+  <div class="flex h-[75vh] w-full items-center justify-end md:h-screen">
+    <div
+      class="flex w-full grow-0 items-center py-8 md:w-[90vw] md:max-w-[90vw]"
+    >
       <Banner client:visible />
     </div>
   </div>
 
-  <div id="easyrd-area" class="h-[300vh]">
+  <div id="easyrd-area" class="h-[200vh] md:h-[300vh]">
     <div class="sticky top-0 flex h-screen w-full items-end justify-start">
       <img
         id="easyrd"
-        class="h-[80%] translate-y-full"
+        class="h-[80%] translate-y-full object-cover object-[75%_0px] md:object-center"
         src="/home/easyrd.jpg"
         alt="showcase-diagram"
       />
@@ -43,5 +45,13 @@ import { Banner } from "./show-cases";
 <style is:global>
   .panel {
     user-select: none;
+    width: 800px;
+    height: 640px;
+  }
+  @media (max-width: 768px) {
+    .panel {
+      width: 600px;
+      height: 480px;
+    }
   }
 </style>
