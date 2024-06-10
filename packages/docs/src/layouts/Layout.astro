@@ -6,7 +6,7 @@ interface Props {
   image?: string;
 }
 
-const { title } = Astro.props;
+const { title = "Flitter - Data Visualization Framework" } = Astro.props;
 ---
 
 <!doctype html>
@@ -17,7 +17,7 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.jpeg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title ?? "Flitter"}</title>
+    <title>{title}</title>
   </head>
   <body>
     <Header />
