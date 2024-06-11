@@ -998,7 +998,7 @@ export const Banner = () => {
         }
       },
       {
-        threshold: 0.8,
+        threshold: 0.5,
       },
     );
     observer.observe(el);
@@ -1019,9 +1019,9 @@ export const Banner = () => {
         trigger: container.current,
         start: "bottom+=100 bottom",
         end: "bottom top",
-        scrub: true,
+        scrub: 2,
       },
-      x: 1000,
+      x: 800,
       onUpdate: () => {
         axes.setTo({ flick: playhead.x });
       },
