@@ -1,8 +1,6 @@
-import { SvgPainter } from "../../framework";
 import type { RenderObjectElement } from "../../element";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import { assert, createUniqueId } from "../../utils";
-import type { SvgPaintContext } from "../../framework";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 import type { Offset } from "../../type";
@@ -283,7 +281,7 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     onWheel: (e: WheelEvent) => void;
     cursor: Cursor;
   }) {
-    super({ isPainter: true });
+    super({ isPainter: false });
     this._onClick = onClick;
     this._onMouseDown = onMouseDown;
     this._onMouseMove = onMouseMove;
@@ -333,9 +331,6 @@ export class RenderGestureDetector extends SingleChildRenderObject {
       onDragEnd: this.onDragEnd,
     });
   }
-  protected createSvgPainter(): SvgPainter {
-    return new SvgPainterGestureDetector(this);
-  }
 
   hitTest({ globalPoint }: { globalPoint: Offset }): boolean {
     const viewPort = this.renderOwner.renderContext.viewPort;
@@ -358,25 +353,6 @@ export class RenderGestureDetector extends SingleChildRenderObject {
       this.renderOwner.hitTestDispatcher.didZOrderChange();
     }
     super.updateZOrder(value);
-  }
-}
-class SvgPainterGestureDetector extends SvgPainter {
-  get cursor() {
-    return (this.renderObject as RenderGestureDetector).cursor;
-  }
-  protected override performPaint({ rect }: { rect: SVGRectElement }): void {
-    rect.setAttribute("width", `${this.size.width}`);
-    rect.setAttribute("height", `${this.size.height}`);
-    rect.setAttribute("cursor", this.cursor);
-    rect.setAttribute("pointer-events", "auto");
-    rect.setAttribute("fill", "transparent");
-  }
-
-  override createDefaultSvgEl({ createSvgEl }: SvgPaintContext) {
-    const rect = createSvgEl("rect");
-    return {
-      rect,
-    };
   }
 }
 

@@ -34,6 +34,7 @@
 	<SvelteWidget
 		width="800px"
 		height="600px"
+		renderer="canvas"
 		widget={LineChart({
 			data: lineChartData
 		})}
