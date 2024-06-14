@@ -17,6 +17,10 @@ const { title = "Flitter - Data Visualization Framework" } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.jpeg" />
     <meta name="generator" content={Astro.generator} />
+    <link
+      href="https://fonts.cdnfonts.com/css/helvetica-neue-55"
+      rel="stylesheet"
+    />
     <title>{title}</title>
   </head>
   <body>
@@ -34,24 +38,22 @@ const { title = "Flitter - Data Visualization Framework" } = Astro.props;
     margin: 0;
   }
   body {
-    font-family: Inter;
-    background-color: black;
+    font-family: Helvetica, sans-serif;
+    background: #121212;
     color: white;
     --header: 96px;
-    overflow: scroll;
+    overflow-y: scroll;
+    --px: 64px;
+    --mw: 1920px;
   }
   .layout {
     display: flex;
     flex-direction: column;
-    --px: 32px;
-    --mw: 1920px;
   }
   @media (max-width: 768px) {
-    .layout {
-      --px: 24px;
-    }
     body {
       --header: 116px;
+      --px: 24px;
     }
   }
 

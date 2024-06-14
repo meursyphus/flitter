@@ -45,20 +45,20 @@ const nextEntry =
       <div class="flex justify-between py-4">
         {
           prevEntry ? (
-            <a class="move" href={`/docs/${prevEntry.slug}`}>
+            <a class="move mr-auto" href={`/docs/${prevEntry.slug}`}>
               {prevEntry.data.nav_title ?? prevEntry.data.title}
             </a>
           ) : (
-            <div class="move disabled" />
+            <div class="move disabled mr-auto" />
           )
         }
         {
           nextEntry ? (
-            <a class="move" href={`/docs/${nextEntry.slug}`}>
+            <a class="move ml-auto" href={`/docs/${nextEntry.slug}`}>
               {nextEntry.data.nav_title ?? nextEntry.data.title}
             </a>
           ) : (
-            <div class="move disabled" />
+            <div class="move disabled ml-auto" />
           )
         }
       </div>
@@ -80,14 +80,13 @@ const nextEntry =
   .move {
     width: 200px;
     height: 80px;
-    border: black solid 1px;
+    border: white solid 1px;
     font-size: 20px;
-    color: black;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .move.disabled {
-    opacity: 0.5;
+    display: none;
   }
 </style>

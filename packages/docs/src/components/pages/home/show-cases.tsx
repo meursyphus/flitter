@@ -10,7 +10,6 @@ import {
   GestureDetector,
   MainAxisSize,
   Row,
-  SizedBox,
   TextStyle,
   CustomPaint,
   Path,
@@ -23,6 +22,7 @@ import {
   StackedBarChart,
 } from "@meursyphus/flitter-chart";
 import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
 
 const Check = ({ color = "white" }: { color?: string } = {}) => {
   return CustomPaint({
@@ -983,7 +983,7 @@ export const Banner = () => {
         <Chart.Bar />,
         <Chart.Scatter />,
       ]
-    : [null];
+    : [<Chart.StackedBar />];
 
   const container = useRef<HTMLDivElement>(null);
 
@@ -1004,6 +1004,37 @@ export const Banner = () => {
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (!visible) return;
+    const ct = controller.current;
+    if (ct == null) return;
+
+    const axes = ct.control.controller.axes;
+    const playhead = { x: 0 };
+    const instance = gsap.to(playhead, {
+      scrollTrigger: {
+        trigger: container.current,
+        start: "center-=100px bottom",
+        end: "bottom top",
+        scrub: 2,
+      },
+      x: 800,
+      onUpdate: () => {
+        axes.setTo({ flick: playhead.x });
+      },
+    });
+
+    return () => {
+      instance.kill();
+    };
+  }, [visible]);
+
+  useEffect(() => {
+    if (!visible) return;
+    const ct = controller.current;
+    if (ct == null) return;
+  }, [visible]);
 
   return (
     <div ref={container} className="flex w-full flex-col">
