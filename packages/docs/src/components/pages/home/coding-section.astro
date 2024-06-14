@@ -27,7 +27,9 @@ const paragraphs: string[] = [
   id="coding-section"
   class="flex w-full shrink-0 flex-col-reverse md:flex-row"
 >
-  <div class="padding-x title w-full">
+  <div
+    class="padding-x w-full text-[32px] font-bold leading-[1.1] md:text-[64px]"
+  >
     {
       paragraphs.map((paragraph) => (
         <p class="flex h-screen items-center align-middle">{paragraph}</p>
@@ -35,9 +37,13 @@ const paragraphs: string[] = [
     }
   </div>
   <div
-    class="sticky top-0 flex h-[70vh] w-full items-center justify-center bg-gray-600 md:h-screen"
+    class="sticky top-0 flex h-[65vh] w-full items-center justify-center bg-gray-600 md:h-screen"
   >
-    <div class="h-[90%] overflow-hidden" id="coding-lottie"></div>
+    <div
+      class="h-full overflow-hidden py-4 md:h-[90%] md:py-0"
+      id="coding-lottie"
+    >
+    </div>
   </div>
 </section>
 

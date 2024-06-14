@@ -983,7 +983,7 @@ export const Banner = () => {
         <Chart.Bar />,
         <Chart.Scatter />,
       ]
-    : [null];
+    : [<Chart.StackedBar />];
 
   const container = useRef<HTMLDivElement>(null);
 
@@ -1005,8 +1005,6 @@ export const Banner = () => {
     return () => observer.disconnect();
   }, []);
 
-  const ref = useRef(0);
-
   useEffect(() => {
     if (!visible) return;
     const ct = controller.current;
@@ -1017,7 +1015,7 @@ export const Banner = () => {
     const instance = gsap.to(playhead, {
       scrollTrigger: {
         trigger: container.current,
-        start: "bottom+=100 bottom",
+        start: "center-=100px bottom",
         end: "bottom top",
         scrub: 2,
       },
