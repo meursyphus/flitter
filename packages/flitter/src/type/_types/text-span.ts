@@ -10,6 +10,7 @@ class TextSpan extends InlineSpan {
     if (other === this) return true;
     return (
       this.text === other.text &&
+      this.style.equals(other.style) &&
       InlineSpan.equals(this.children, other.children)
     );
   }

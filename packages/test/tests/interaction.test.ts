@@ -1,4 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
+/**
+ *
+ * @todo: test code failed even though the test is correct
+ * it must be fixed.
+ */
 
 async function click(page: Page) {
 	const svgElement = page.locator('svg');
