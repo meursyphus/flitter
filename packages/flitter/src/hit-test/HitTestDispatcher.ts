@@ -1,7 +1,6 @@
 import type { RenderContext } from "../framework/renderer/renderer";
 import type { RenderGestureDetector } from "../component/base/BaseGestureDetector";
 import { Offset } from "../type";
-import BaseGestureDetector from "../component/base/BaseGestureDetector";
 
 type EventHandlerType =
   | "onClick"

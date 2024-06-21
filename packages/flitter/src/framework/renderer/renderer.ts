@@ -3,6 +3,7 @@ import type { RenderObjectVisitor } from "../../renderobject/RenderObjectVisitor
 import type { HitTestDispatcher } from "../../hit-test/HitTestDispatcher";
 import { type Matrix4, type Offset, Size } from "../../type";
 import type { RenderZIndex } from "../../component/base/BaseZIndex";
+import { RenderGestureDetector } from "src/component/base/BaseGestureDetector";
 
 export class RenderContext {
   document: Document;
@@ -137,6 +138,7 @@ export abstract class RenderPipeline {
     const visitor = new ZOrderCalculatorVisitor();
     this.renderView.accept(visitor);
     const painterRenderObjects = visitor.getRenderObjectsByDomOrder();
+
     for (let i = painterRenderObjects.length - 1; i >= 0; i--) {
       const renderObject = painterRenderObjects[i];
       renderObject.updateZOrder(i);
@@ -233,7 +235,16 @@ export class ZOrderCalculatorVisitor implements RenderObjectVisitor {
   }
 
   visit(renderObject: RenderObject): void {
-    this.#visit(renderObject, { willCollect: renderObject.isPainter });
+    /**
+     * @todo: renderObject's isPainter must moved to svgPainter.isPainter
+     */
+    this.#visit(renderObject, {
+      willCollect: renderObject.isPainter,
+    });
+  }
+
+  visitGestureDetector(gestureDetector: RenderGestureDetector): void {
+    this.#visit(gestureDetector, { willCollect: true });
   }
 
   visitZIndex(renderObject: RenderZIndex) {
