@@ -1,7 +1,5 @@
 <script lang="ts">
 	import Widget from '@meursyphus/flitter-svelte';
-	import Highlight from 'svelte-highlight';
-	import typescript from 'svelte-highlight/languages/typescript';
 	import codeStyle from 'svelte-highlight/styles/github-dark-dimmed';
 	export let renderer: 'svg' | 'canvas' = 'svg';
 	export let widget: any;
@@ -9,6 +7,9 @@
 	export let width: string;
 	export let height: string;
 	export let description = '';
+	/**
+	 * @deprecated: code is deprecated. write code in the story instead.
+	 */
 	export let code = '';
 </script>
 
@@ -22,14 +23,6 @@
 		{width.replace('px', '')} × {height.replace('px', '')}
 	</p>
 </div>
-
-{#if code}
-	<div class="wrapper">
-		<div class="highlight">
-			<Highlight langtag language={typescript} code={code.replaceAll('  ', ' ')} />
-		</div>
-	</div>
-{/if}
 
 {#if description}
 	<h3 class="">Description</h3>
