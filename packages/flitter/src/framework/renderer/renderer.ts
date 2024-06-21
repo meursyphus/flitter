@@ -3,7 +3,7 @@ import type { RenderObjectVisitor } from "../../renderobject/RenderObjectVisitor
 import type { HitTestDispatcher } from "../../hit-test/HitTestDispatcher";
 import { type Matrix4, type Offset, Size } from "../../type";
 import type { RenderZIndex } from "../../component/base/BaseZIndex";
-import { RenderGestureDetector } from "src/component/base/BaseGestureDetector";
+import type { RenderGestureDetector } from "../../component/base/BaseGestureDetector";
 
 export class RenderContext {
   document: Document;
