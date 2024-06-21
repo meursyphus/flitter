@@ -53,10 +53,7 @@ export default function BarChart() {
 }
 
 class Bar extends StatefulWidget {
-	constructor(
-		public label: string,
-		public value: number
-	) {
+	constructor(public label: string, public value: number) {
 		super();
 	}
 
