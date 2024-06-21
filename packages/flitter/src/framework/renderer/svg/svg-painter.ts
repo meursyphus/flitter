@@ -150,7 +150,7 @@ export class SvgPainter extends Painter {
   rearrangeDomOrder() {
     if (!this.#domOrderChanged) return;
 
-    if (this.isPainter) {
+    if (this.isPainter && this.domNode) {
       this.renderOwner.paintContext.insertSvgEl(
         this.domNode,
         this.renderObject.zOrder,

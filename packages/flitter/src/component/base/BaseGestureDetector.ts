@@ -4,6 +4,7 @@ import { assert, createUniqueId } from "../../utils";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 import type { Offset } from "../../type";
+import { RenderObjectVisitor } from "src/renderobject/RenderObjectVisitor";
 
 type Cursor =
   | "pointer"
@@ -353,6 +354,10 @@ export class RenderGestureDetector extends SingleChildRenderObject {
       this.renderOwner.hitTestDispatcher.didZOrderChange();
     }
     super.updateZOrder(value);
+  }
+
+  override accept(visitor: RenderObjectVisitor): void {
+    visitor.visitGestureDetector(this);
   }
 }
 
