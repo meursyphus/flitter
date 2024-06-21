@@ -76,6 +76,7 @@ class RenderFlex extends MultiChildRenderObject {
   set direction(newDirection: Axis) {
     if (this._direction === newDirection) return; // early return
     this._direction = newDirection;
+    this.markNeedsLayout();
   }
 
   get mainAxisAlignment(): MainAxisAlignment {
