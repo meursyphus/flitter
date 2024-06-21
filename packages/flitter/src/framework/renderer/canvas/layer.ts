@@ -70,7 +70,13 @@ export class SceneBuilder {
      * Addition required!
      */
     for (const { x, y, picture } of this.#pictures) {
-      ctx.drawImage(picture.toImage(), x, y);
+      ctx.drawImage(
+        picture.toImage(),
+        x,
+        y,
+        picture.size.width,
+        picture.size.height,
+      );
     }
   }
 
@@ -88,6 +94,12 @@ class Picture {
   toImage(): CanvasImageSource {
     return this.#source;
   }
+  get size() {
+    return {
+      width: this.#source.width / window.devicePixelRatio,
+      height: this.#source.height / window.devicePixelRatio,
+    };
+  }
 }
 
 export class PictureRecorder {
@@ -99,8 +111,9 @@ export class PictureRecorder {
    */
   constructor(paintBounds: Rect) {
     this.#source = document.createElement("canvas");
-    this.#source.width = paintBounds.width;
-    this.#source.height = paintBounds.height;
+    const dpr = window.devicePixelRatio;
+    this.#source.width = paintBounds.width * dpr;
+    this.#source.height = paintBounds.height * dpr;
   }
 
   /**
@@ -110,6 +123,7 @@ export class PictureRecorder {
    */
   createCanvasContext(): CanvasRenderingContext2D {
     const ctx = this.#source.getContext("2d");
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
     return ctx;
   }
 
