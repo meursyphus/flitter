@@ -8,7 +8,7 @@
 	export let height: string;
 	export let description = '';
 	/**
-	 * @deprecated: code is deprecated. write code in the story instead.
+	 * @deprecated: code is deprecated. write code in the story instead. good!!!!
 	 */
 	export let code = '';
 </script>
