@@ -30,6 +30,13 @@ const BasicWidget = dedent`
 `;
 
 export const Basic: Story = {
+	parameters: {
+		docs: {
+			story: {
+				description: 'This is a basic widget'
+			}
+		}
+	},
 	args: {
 		ssrSize: { width: 600, height: 300 },
 		width: '600px',
