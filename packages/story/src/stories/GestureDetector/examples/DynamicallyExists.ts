@@ -10,7 +10,6 @@ import {
 	Positioned,
 	EdgeInsets
 } from '@meursyphus/flitter';
-import { dedent } from 'ts-dedent';
 
 class CustomWidget extends StatefulWidget {
 	createState(): State<StatefulWidget> {
@@ -73,9 +72,7 @@ const SizeChangeStory = {
 	widget: Container({
 		alignment: Alignment.center,
 		child: new CustomWidget()
-	}),
-	code: dedent`
-		`
+	})
 };
 
 export default SizeChangeStory;

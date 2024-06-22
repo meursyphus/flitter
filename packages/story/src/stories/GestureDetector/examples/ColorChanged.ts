@@ -7,7 +7,6 @@ import {
 	StatefulWidget,
 	State
 } from '@meursyphus/flitter';
-import { dedent } from 'ts-dedent';
 
 class CustomWidget extends StatefulWidget {
 	colors: string[];
@@ -53,9 +52,7 @@ const ColorChangeStory = {
 		child: new CustomWidget({
 			colors: ['black', 'red', 'green']
 		})
-	}),
-	code: dedent`
-		`
+	})
 };
 
 export default ColorChangeStory;

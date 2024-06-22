@@ -1,3 +1,3 @@
-import BasicStory from './Basic';
+import BasicStory from './Basic.js';
 
 export { BasicStory };
