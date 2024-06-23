@@ -8,8 +8,7 @@ import {
   SandpackLayout,
   SandpackPreview,
 } from "@codesandbox/sandpack-react";
-import { useEffect, useRef } from "react";
-import { useState, useCallback } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 function useDebounce<T extends (...args: any[]) => any>(
   callback: T,

@@ -7,7 +7,6 @@ const meta = {
 	component: Widget,
 	args: {
 		renderer: 'canvas',
-		ssrSize: { width: 600, height: 300 },
 		width: '600px',
 		height: '300px'
 	}

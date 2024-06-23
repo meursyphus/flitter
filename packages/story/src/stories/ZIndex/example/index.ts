@@ -1,3 +1,3 @@
-export { default as Basic } from './Basic';
-import * as StackingContext from './StackingContext';
+export { default as Basic } from './Basic.js';
+import * as StackingContext from './StackingContext/index.js';
 export { StackingContext };

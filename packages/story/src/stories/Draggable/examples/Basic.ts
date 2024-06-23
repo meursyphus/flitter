@@ -1,13 +1,4 @@
-import {
-	Alignment,
-	Column,
-	Container,
-	Draggable,
-	GestureDetector,
-	Text,
-	TextStyle
-} from '@meursyphus/flitter';
-import { dedent } from 'ts-dedent';
+import { Column, Container, Draggable } from '@meursyphus/flitter';
 
 const Basic = {
 	widget: Column({
@@ -27,9 +18,7 @@ const Basic = {
 				})
 			})
 		]
-	}),
-	code: dedent`
-	`
+	})
 };
 
 export default Basic;

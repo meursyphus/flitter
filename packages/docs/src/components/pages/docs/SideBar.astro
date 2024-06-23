@@ -3,7 +3,7 @@ import { getCollection } from "astro:content";
 const docsEntries = await getCollection("docs");
 // navigation 정보로 표현할 객체 만들기
 const navigation = docsEntries.reduce(
-  (acc, entry) => {
+  (acc, entry, i) => {
     const { nav_group, nav_group_order, nav_order, title, nav_title } =
       entry.data;
 
@@ -19,7 +19,7 @@ const navigation = docsEntries.reduce(
     group.items.push({
       url: `/docs/${entry.slug}`,
       title: nav_title ?? title,
-      order: nav_order,
+      order: nav_order ?? i,
     });
 
     return acc;

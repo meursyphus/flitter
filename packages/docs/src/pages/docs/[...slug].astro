@@ -22,7 +22,11 @@ const sortedEntries = docsEntries.sort((a, b) => {
   const groupOrderDiff = a.data.nav_group_order - b.data.nav_group_order;
   if (groupOrderDiff === 0) {
     // 같은 그룹 내에서는 nav_order를 기준으로 정렬
-    return a.data.nav_order - b.data.nav_order;
+    const orderDiff = (a.data.nav_order ?? 0) - (b.data.nav_order ?? 0);
+    if (orderDiff === 0) {
+      return a.data.title.localeCompare(b.data.title);
+    }
+    return orderDiff;
   }
   return groupOrderDiff;
 });

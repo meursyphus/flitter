@@ -12,7 +12,6 @@ import {
 	State,
 	StatefulWidget
 } from '@meursyphus/flitter';
-import { dedent } from 'ts-dedent';
 
 class SizeChageWidget extends StatefulWidget {
 	count: number;
@@ -105,9 +104,7 @@ const SizeChangeStory = {
 	widget: Container({
 		alignment: Alignment.center,
 		child: new CounterWidget()
-	}),
-	code: dedent`
-		`
+	})
 };
 
 export default SizeChangeStory;
