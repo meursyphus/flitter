@@ -5,7 +5,7 @@ const docs = defineCollection({
   schema: z.object({
     nav_group: z.string(),
     nav_group_order: z.number(),
-    nav_order: z.number(),
+    nav_order: z.number().optional(),
     nav_title: z.string().optional(),
     title: z.string(),
     description: z.string().optional(),

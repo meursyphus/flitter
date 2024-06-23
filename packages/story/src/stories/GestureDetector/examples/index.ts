@@ -1,9 +1,9 @@
-import BasicStory from './Basic';
-import ColorChangeStory from './ColorChanged';
-import SizeChangeStory from './SizeChanged';
-import TestStatefulWidgetStory from './StatefulWidget';
-import DynamicallyExistsStory from './DynamicallyExists';
-import EventBubbleStory from './EventBubble';
+import BasicStory from './Basic.js';
+import ColorChangeStory from './ColorChanged.js';
+import SizeChangeStory from './SizeChanged.js';
+import TestStatefulWidgetStory from './StatefulWidget.js';
+import DynamicallyExistsStory from './DynamicallyExists.js';
+import EventBubbleStory from './EventBubble.js';
 
 export {
 	BasicStory,

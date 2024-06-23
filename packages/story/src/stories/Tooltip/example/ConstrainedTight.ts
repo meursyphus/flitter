@@ -1,4 +1,3 @@
-import { dedent } from 'ts-dedent';
 import {
 	Container,
 	Text,
@@ -35,8 +34,7 @@ const BasicStory = {
 				})
 			})
 		})
-	}),
-	code: dedent``
+	})
 };
 
 export default BasicStory;

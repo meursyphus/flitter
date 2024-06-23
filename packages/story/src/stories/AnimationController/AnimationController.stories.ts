@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/svelte';
 import Widget from '../../Widget.svelte';
-import { BasicStory } from './examples';
+import { BasicStory } from './examples/index.js';
 
 const meta = {
 	title: 'Animation/AnimationController',
@@ -10,8 +10,7 @@ const meta = {
 	},
 	args: {
 		width: '400px',
-		height: '400px',
-		ssrSize: { width: 400, height: 400 }
+		height: '400px'
 	}
 } satisfies Meta<Widget>;
 
