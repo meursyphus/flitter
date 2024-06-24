@@ -42,6 +42,7 @@ export class HitTestDispatcher {
   };
 
   #hitHistory: boolean[] = [];
+  #previousCursorDetector: RenderGestureDetector | null = null;
   #handleMouseMove = (e: Wrapped<MouseEvent>) => {
     this.traceHitPosition(e);
     this.hitTest(e, "onMouseMove");
@@ -77,6 +78,17 @@ export class HitTestDispatcher {
         globalPoint: this.#hitPosition,
       });
     });
+
+    // set cursor
+    const cursorDetectorIndex = this.#hitHistory.findIndex(hit => hit);
+    const cursorDetector: RenderGestureDetector | null =
+      this.#detectors[cursorDetectorIndex] ?? null;
+
+    if (cursorDetector !== this.#previousCursorDetector) {
+      this.#previousCursorDetector = cursorDetector;
+      this.#renderContext.view.style.cursor =
+        cursorDetector?.cursor ?? "default";
+    }
   };
 
   #handleMouseUp = (e: Wrapped<MouseEvent>) => {

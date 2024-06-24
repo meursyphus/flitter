@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		Center,
+		Container,
 		Element,
 		GestureDetector,
 		Positioned,
@@ -34,7 +35,10 @@
 							},
 							child: GestureDetector({
 								onClick: () => {},
-								child: Text('click')
+								child: Container({
+									color: 'yellow',
+									child: Text('click')
+								})
 							})
 						})
 					}),

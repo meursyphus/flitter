@@ -7,7 +7,7 @@ import {
 	SizeChangeStory,
 	TestStatefulWidgetStory,
 	EventBubbleStory
-} from './examples';
+} from './examples/index.js';
 
 const meta = {
 	title: 'Widget/GestureDetector',
@@ -17,8 +17,7 @@ const meta = {
 	},
 	args: {
 		width: '400px',
-		height: '400px',
-		ssrSize: { width: 400, height: 400 }
+		height: '400px'
 	}
 } satisfies Meta<Widget>;
 

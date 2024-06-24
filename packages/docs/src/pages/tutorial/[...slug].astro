@@ -27,10 +27,10 @@ const { entry, prev, next } = Astro.props;
 const { Content } = await entry.render();
 ---
 
-<Layout title="Tutorial">
+<Layout title="Flitter - Tutorial">
   <div class="grid grid-cols-[3fr_4fr]">
     <div class="w-full shrink-0">
-      <nav class="flex justify-between sticky top-0 bg-white">
+      <nav class="sticky top-0 flex justify-between bg-black">
         {
           prev ? (
             <a class="nav-button" href={`/tutorial/${prev.slug}`}>
@@ -41,7 +41,7 @@ const { Content } = await entry.render();
           )
         }
         <div
-          class="mx-1 border border-black w-full h-[60px] flex items-center justify-center"
+          class="mx-1 flex h-[60px] w-full items-center justify-center border border-white"
         >
           Table of Content
         </div>
@@ -55,7 +55,7 @@ const { Content } = await entry.render();
           )
         }
       </nav>
-      <div class="prose prose-sm !max-w-full p-2 shrink-0">
+      <div class="prose prose-sm prose-invert !max-w-full shrink-0 p-2">
         <Content />
       </div>
     </div>
@@ -73,7 +73,7 @@ const { Content } = await entry.render();
   }
 
   .nav-button {
-    border: 1px solid black;
+    border: 1px solid white;
     padding: 1rem;
   }
 </style>

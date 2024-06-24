@@ -3,7 +3,7 @@ import { getCollection } from "astro:content";
 const docsEntries = await getCollection("docs");
 // navigation 정보로 표현할 객체 만들기
 const navigation = docsEntries.reduce(
-  (acc, entry) => {
+  (acc, entry, i) => {
     const { nav_group, nav_group_order, nav_order, title, nav_title } =
       entry.data;
 
@@ -19,7 +19,7 @@ const navigation = docsEntries.reduce(
     group.items.push({
       url: `/docs/${entry.slug}`,
       title: nav_title ?? title,
-      order: nav_order,
+      order: nav_order ?? i,
     });
 
     return acc;
@@ -43,19 +43,19 @@ const url = new URL(Astro.request.url);
 ---
 
 <nav
-  class="w-80 shrink-0 h-full overflow-scroll px-8 py-[84px] border-r border-black flex-col justify-start items-end gap-6 inline-flex"
+  class="inline-flex h-full w-80 shrink-0 flex-col items-end justify-start gap-6 overflow-scroll border-r border-gray-200 px-8 py-[84px]"
 >
   {
     navigation.map((group) => (
-      <div class="self-stretch flex-col justify-start items-start flex">
-        <div class="self-stretch  justify-start items-start gap-2.5 inline-flex">
-          <div class="text-gray-800 text-xl font-bold">{group.name}</div>
+      <div class="flex flex-col items-start justify-start self-stretch">
+        <div class="inline-flex items-start justify-start gap-2.5 self-stretch">
+          <div class="text-xl font-bold text-gray-100">{group.name}</div>
         </div>
         {group.items.map((item) => (
-          <div class="self-stretch px-4 mt-1 justify-start items-start gap-2 inline-flex">
+          <div class="mt-1 inline-flex items-start justify-start gap-2 self-stretch px-4">
             <a
               href={item.url}
-              class={`${item.url === url.pathname ? "font-semibold text-black" : "text-gray-700"} text-lg hover:text-black`}
+              class={`${item.url === url.pathname ? "font-semibold text-white" : "text-gray-400"} text-lg hover:text-white`}
             >
               {item.title}
             </a>

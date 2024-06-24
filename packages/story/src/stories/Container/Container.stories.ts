@@ -12,8 +12,6 @@ import {
 	TextStyle
 } from '@meursyphus/flitter';
 import { dedent } from 'ts-dedent';
-const ImportWidgetCode = dedent`import { Container, Text, Alignment, EdgeInsets } from '@meursyphus/flitter';
-\n\n`;
 
 const meta = {
 	title: 'Widget/Container',
@@ -61,56 +59,27 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-const Case1Code = dedent`
-	Container({
-		color: 'lightblue'
-	})
-`;
 export const Case1: Story = {
 	args: {
-		ssrSize: { width: 600, height: 300 },
 		width: '600px',
 		height: '300px',
 		widget: Container({
 			color: 'lightblue'
-		}),
-		code: ImportWidgetCode + Case1Code
+		})
 	}
 };
-const Case2Code = dedent`
-	Container({
-		color: 'lightblue',
-		child: Text('text', { style: new TextStyle({ fontSize: 30 }) })
-	})
-`;
 export const Case2: Story = {
 	args: {
-		ssrSize: { width: 600, height: 300 },
 		width: '600px',
 		height: '300px',
 		widget: Container({
 			color: 'lightblue',
 			child: Text('text', { style: new TextStyle({ fontSize: 30 }) })
-		}),
-		code: ImportWidgetCode + Case2Code
+		})
 	}
 };
-const Case3Code = dedent`
-	Container({
-		color: 'lightblue',
-		width: 300,
-		height: 300,
-		padding: EdgeInsets.all(10),
-		child: Container({
-			color: 'green',
-			child: Text('child in blue container')
-		})
-	})
-`;
 export const Case3: Story = {
 	args: {
-		ssrSize: { width: 600, height: 300 },
 		width: '600px',
 		height: '300px',
 		widget: Container({
@@ -122,27 +91,11 @@ export const Case3: Story = {
 				color: 'green',
 				child: Text('child in blue container')
 			})
-		}),
-
-		code: ImportWidgetCode + Case3Code
+		})
 	}
 };
-const Case4Code = dedent`
-	Container({
-		color: 'lightblue',
-		width: 300,
-		height: 300,
-		padding: EdgeInsets.all(10),
-		alignment: Alignment.center,
-		child: Container({
-			color: 'green',
-			child: Text('child')
-		})
-	})
-`;
 export const Case4: Story = {
 	args: {
-		ssrSize: { width: 600, height: 300 },
 		width: '600px',
 		height: '300px',
 		widget: Container({
@@ -155,22 +108,12 @@ export const Case4: Story = {
 				color: 'green',
 				child: Text('child')
 			})
-		}),
-		code: ImportWidgetCode + Case4Code
+		})
 	}
 };
 
-const WithTransformCode = dedent`
-	Container({
-		color: 'lightblue',
-		width: 300,
-		height: 300,
-		transform: Matrix4.translationValues(10, 10, 0)
-	})
-`;
 export const WithTransform: Story = {
 	args: {
-		ssrSize: { width: 600, height: 300 },
 		width: '600px',
 		height: '300px',
 		widget: Container({
@@ -178,31 +121,12 @@ export const WithTransform: Story = {
 			width: 300,
 			height: 300,
 			transform: Matrix4.translationValues(10, 10, 0)
-		}),
-		code: ImportWidgetCode + WithTransformCode
+		})
 	}
 };
 
-const WithClipDecorationCode = dedent`
-		Container({
-			color: 'lightblue',
-			width: 300,
-			height: 300,
-			clipped: true,
-			decoration: new BoxDecoration({
-				borderRadius: BorderRadius.all(Radius.circular(20))
-			}),
-			alignment: Alignment.topLeft,
-			child: Container({
-				width: 100,
-				height: 100,
-				color: 'red'
-			})
-		}),
-`;
 export const WithClipDecoration: Story = {
 	args: {
-		ssrSize: { width: 600, height: 300 },
 		width: '600px',
 		height: '300px',
 		widget: Container({
@@ -219,20 +143,17 @@ export const WithClipDecoration: Story = {
 				height: 100,
 				color: 'red'
 			})
-		}),
-		code: ImportWidgetCode + WithClipDecorationCode
+		})
 	}
 };
 
 export const ColoredBoxOnCanvas: Story = {
 	args: {
-		ssrSize: { width: 600, height: 300 },
 		width: '600px',
 		height: '300px',
 		renderer: 'canvas',
 		widget: Container({
 			color: 'lightblue'
-		}),
-		code: ImportWidgetCode + Case1Code
+		})
 	}
 };

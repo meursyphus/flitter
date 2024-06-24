@@ -1,12 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/svelte';
 import Widget from '../../Widget.svelte';
-import { BasicStory } from './example';
+import { BasicStory } from './example/index.js';
 
 const meta = {
 	title: 'Widget/AnimatedScale',
 	component: Widget,
 	args: {
-		ssrSize: { width: 400, height: 400 },
 		width: '400px',
 		height: '400px'
 	}

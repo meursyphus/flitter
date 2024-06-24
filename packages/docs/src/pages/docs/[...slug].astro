@@ -22,7 +22,11 @@ const sortedEntries = docsEntries.sort((a, b) => {
   const groupOrderDiff = a.data.nav_group_order - b.data.nav_group_order;
   if (groupOrderDiff === 0) {
     // 같은 그룹 내에서는 nav_order를 기준으로 정렬
-    return a.data.nav_order - b.data.nav_order;
+    const orderDiff = (a.data.nav_order ?? 0) - (b.data.nav_order ?? 0);
+    if (orderDiff === 0) {
+      return a.data.title.localeCompare(b.data.title);
+    }
+    return orderDiff;
   }
   return groupOrderDiff;
 });
@@ -37,28 +41,28 @@ const nextEntry =
     : null;
 ---
 
-<Layout title="Docs">
-  <main class="flex relative mx-auto">
+<Layout title={`Flitter - ${entry.data.title}`}>
+  <main class="relative mx-auto flex">
     <SideBar />
-    <div class="w-full px-8 prose max-w-full lg:prose-lg py-20">
+    <div class="prose prose-invert w-full max-w-full px-8 py-20 lg:prose-lg">
       <Content />
       <div class="flex justify-between py-4">
         {
           prevEntry ? (
-            <a class="move" href={`/docs/${prevEntry.slug}`}>
+            <a class="move mr-auto" href={`/docs/${prevEntry.slug}`}>
               {prevEntry.data.nav_title ?? prevEntry.data.title}
             </a>
           ) : (
-            <div class="move disabled" />
+            <div class="move disabled mr-auto" />
           )
         }
         {
           nextEntry ? (
-            <a class="move" href={`/docs/${nextEntry.slug}`}>
+            <a class="move ml-auto" href={`/docs/${nextEntry.slug}`}>
               {nextEntry.data.nav_title ?? nextEntry.data.title}
             </a>
           ) : (
-            <div class="move disabled" />
+            <div class="move disabled ml-auto" />
           )
         }
       </div>
@@ -80,14 +84,13 @@ const nextEntry =
   .move {
     width: 200px;
     height: 80px;
-    border: black solid 1px;
+    border: white solid 1px;
     font-size: 20px;
-    color: black;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .move.disabled {
-    opacity: 0.5;
+    display: none;
   }
 </style>

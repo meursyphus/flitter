@@ -1,18 +1,29 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
+/**
+ *
+ * @todo: test code failed even though the test is correct
+ * it must be fixed.
+ */
+
+async function click(page: Page) {
+	const svgElement = page.locator('svg');
+	const boundingBox = await svgElement.boundingBox();
+	if (boundingBox) {
+		await page.mouse.click(boundingBox.x + boundingBox.width - 10, boundingBox.y + 10);
+	}
+}
 
 test.describe('Interaction', () => {
 	test('number change when button is clicked', async ({ page }) => {
 		await page.goto('http://localhost:4173/interaction/number-change-on-click');
-		const button = page.locator('rect');
-		await button.click();
+		await click(page);
 		const target = page.getByText('1');
 		await expect(target).toBeVisible();
 	});
 
 	test('number change when nested button clicked with bubbling', async ({ page }) => {
 		await page.goto('http://localhost:4173/interaction/bubbling-on-nest-child-click');
-		const nested = page.locator('rect').last();
-		await nested.click();
+		await click(page);
 		const target = page.getByText('1');
 		await expect(target).toBeVisible();
 	});
@@ -21,16 +32,21 @@ test.describe('Interaction', () => {
 		page
 	}) => {
 		await page.goto('http://localhost:4173/interaction/stop-bubbling-on-nest-child-click');
-		const button = page.locator('rect').last();
-		await button.click();
+		await click(page);
 		const target = page.getByText('0');
 		await expect(target).toBeVisible();
 	});
 
 	test('show tooltip on only hover', async ({ page }) => {
 		await page.goto('http://localhost:4173/interaction/hover-effect');
-		const target = page.locator('rect').first();
-		await target.hover();
+		const svgElement = page.locator('svg');
+		const boundingBox = await svgElement.boundingBox();
+		if (boundingBox) {
+			await page.mouse.move(
+				boundingBox.x + boundingBox.width / 2,
+				boundingBox.y + boundingBox.height / 2
+			);
+		}
 		await expect(page.getByText('tooltip')).toBeVisible();
 
 		//mouse leave
@@ -40,8 +56,7 @@ test.describe('Interaction', () => {
 
 	test('setState work on postCallbackFrame', async ({ page }) => {
 		await page.goto('http://localhost:4173/interaction/set-state-on-post-frame-callback');
-		const button = page.locator('rect');
-		await button.click();
+		await click(page);
 		const target = page.getByText('1');
 		await expect(target).toBeVisible();
 	});

@@ -6,7 +6,7 @@ interface Props {
   image?: string;
 }
 
-const { title } = Astro.props;
+const { title = "Flitter - Data Visualization Framework" } = Astro.props;
 ---
 
 <!doctype html>
@@ -17,31 +17,62 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.jpeg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title ?? "Flitter"}</title>
+    <link
+      href="https://fonts.cdnfonts.com/css/helvetica-neue-55"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
   </head>
   <body>
     <Header />
     <div class="layout">
       <slot />
     </div>
+    <slot name="footer" />
   </body>
 </html>
 <style is:global>
-  :root {
-    --accent: 136, 58, 234;
-    --accent-light: 224, 204, 250;
-    --accent-dark: 49, 10, 101;
-    --accent-gradient: linear-gradient(
-      45deg,
-      rgb(var(--accent)),
-      rgb(var(--accent-light)) 30%,
-      white 60%
-    );
+  html,
+  body {
+    padding: 0;
+    margin: 0;
   }
-  html {
-    font-family: system-ui, sans-serif;
-    background: white;
-    background-size: 224px;
+  body {
+    font-family: Helvetica, sans-serif;
+    background: #121212;
+    color: white;
+    --header: 96px;
+    overflow-y: scroll;
+    --px: 64px;
+    --mw: 1920px;
+  }
+  .layout {
+    display: flex;
+    flex-direction: column;
+  }
+  @media (max-width: 768px) {
+    body {
+      --header: 116px;
+      --px: 24px;
+    }
+  }
+
+  /* Chrome, Edge, Safari에서 스크롤바 스타일링 */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #333333;
+    border-radius: 20px;
+    border: 3px solid black;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555555;
   }
   code {
     font-family:
@@ -53,45 +84,5 @@ const { title } = Astro.props;
       Bitstream Vera Sans Mono,
       Courier New,
       monospace;
-  }
-  html,
-  body {
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    --header: 72px;
-    overflow: hidden;
-  }
-  .layout {
-    display: flex;
-    flex-direction: column;
-    overflow-y: scroll;
-    height: 100vh;
-  }
-  main {
-    width: 100%;
-    max-width: 1520px;
-    margin-inline: auto;
-    padding-inline: 32px;
-  }
-  /* Chrome, Edge, Safari에서 스크롤바 스타일링 */
-  ::-webkit-scrollbar {
-    width: 12px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: #a6a6a6;
-    border-radius: 20px;
-    border: 3px solid #f4f4f4;
-  }
-
-  /* 선택적: 스크롤바가 활성 상태일 때의 스타일 */
-  ::-webkit-scrollbar-thumb:hover {
-    background: #909090;
   }
 </style>
