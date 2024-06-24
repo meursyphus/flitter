@@ -34,7 +34,7 @@ import Matrix3 from "./_types/_matrix3";
 
 import { BorderSide } from "./_types/_borders";
 export { ToolTipPosition } from "./_types/tool-tip-position";
-export { default as TextPainter } from "./_types/text-painter";
+export { default as TextPainter, Paragraph } from "./_types/text-painter";
 
 export {
   Calculable,

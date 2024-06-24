@@ -10,22 +10,20 @@ import {
 	GestureDetector,
 	Text,
 	TextSpan,
-	Element,
 	Widget,
-	BuildContext,
-	AnimationController,
 	Opacity,
 	SizedBox,
 	ConstraintsTransformBox,
-	ConstrainedBox,
 	Constraints,
-	DecoratedBox,
 	BoxDecoration,
 	Border,
 	BorderRadius,
 	Radius,
 	Alignment,
-	TextStyle
+	TextStyle,
+	TextDirection,
+	TextWidthBasis,
+	TextAlign
 } from '@meursyphus/flitter';
 
 const browser = true;
@@ -48,7 +46,22 @@ class TextFieldState extends State<TextField> {
 		y: number;
 		x: number;
 	} | null = null;
-	#textPainter!: TextPainter;
+	#textPainter = new TextPainter({
+		text: new TextSpan({
+			text: '',
+			children: [],
+			style: new TextStyle({
+				fontFamily: 'Roboto',
+				fontSize: 20
+			})
+		}),
+		textDirection: TextDirection.ltr,
+		textScaleFactor: 1,
+		textWidthBasis: TextWidthBasis.parent,
+		textAlign: TextAlign.start,
+		maxLines: undefined,
+		ellipsis: undefined
+	});
 
 	get paragraphLines() {
 		return this.#textPainter.paragraph?.lines;
@@ -76,6 +89,23 @@ class TextFieldState extends State<TextField> {
 
 	#sync() {
 		this.#text = this.#nativeInput.value;
+		this.#textPainter = new TextPainter({
+			text: new TextSpan({
+				text: this.#text,
+				children: [],
+				style: new TextStyle({
+					fontFamily: 'Roboto',
+					fontSize: 20
+				})
+			}),
+			textDirection: TextDirection.ltr,
+			textScaleFactor: 1,
+			textWidthBasis: TextWidthBasis.parent,
+			textAlign: TextAlign.start,
+			maxLines: 100,
+			ellipsis: '...'
+		});
+
 		this.#render();
 		this.element.scheduler.addPostFrameCallbacks(() => {
 			this.#setSelection(...this.#nativeInput.getSelection());
@@ -213,26 +243,9 @@ class TextFieldState extends State<TextField> {
 									maxWidth: constraints.maxWidth
 								});
 							},
-							child: Text.rich(
-								new TextSpan({
-									text: '',
-									children: this.#text.split('').map(
-										(text) =>
-											new TextSpan({
-												text,
-												style: new TextStyle({
-													fontFamily: 'Roboto',
-													fontSize: 20
-												})
-											})
-									)
-								}),
-								{
-									bindTextPainter: (textPainter: TextPainter) => {
-										this.#textPainter = textPainter;
-									}
-								}
-							)
+							child: Text('', {
+								textPainter: this.#textPainter
+							})
 						})
 					})
 				}),
@@ -245,7 +258,7 @@ class TextFieldState extends State<TextField> {
 								height: this.#caret.height,
 								color: this.#caret.color
 							})
-						})
+					  })
 					: SizedBox.shrink()
 			]
 		});
@@ -307,7 +320,7 @@ class NativeInput {
 		if (this.#element == null) {
 			if (browser) {
 				this.#element = document.createElement('textarea');
-				this.#element.setAttribute('style', 'position: absolute; opacity: 0; height: 0; width: 0;');
+				//this.#element.setAttribute('style', 'position: absolute; opacity: 0; height: 0; width: 0;');
 				document.body.appendChild(this.#element);
 			} else {
 				this.#element = {

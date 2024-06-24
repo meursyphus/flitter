@@ -172,6 +172,8 @@ export default class TextPainter {
         case TextWidthBasis.parent:
           newWidth = this.intrinsicWidth;
           break;
+        default:
+          assert(false, `Unknown text width basis: ${this.textWidthBasis}`);
       }
       newWidth = Utils.clampDouble(newWidth, minWidth, maxWidth);
 

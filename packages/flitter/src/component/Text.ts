@@ -5,7 +5,7 @@ import type {
   TextStyle,
   TextWidthBasis,
 } from "../type";
-import { TextAlign, TextSpan } from "../type";
+import { type TextAlign, TextSpan } from "../type";
 import type InlineSpan from "../type/_types/Inline-span";
 import type { BuildContext } from "../widget";
 import { StatelessWidget } from "../widget";
@@ -32,7 +32,7 @@ class _Text extends StatelessWidget {
   softWrap?: boolean;
   textWidthBasis?: TextWidthBasis;
   overflow?: TextOverflow;
-  bindTextPainter?: (props: TextPainter) => void;
+  textPainter?: TextPainter;
 
   constructor({
     data,
@@ -43,7 +43,7 @@ class _Text extends StatelessWidget {
     textWidthBasis,
     style,
     overflow,
-    bindTextPainter,
+    textPainter,
   }: TextProps & { data?: string; textSpan?: InlineSpan }) {
     super();
     this.softWrap = softWrap;
@@ -55,12 +55,12 @@ class _Text extends StatelessWidget {
 
     this.data = data;
     this.textSpan = textSpan;
-    this.bindTextPainter = bindTextPainter;
+    this.textPainter = textPainter;
   }
 
   build(_: BuildContext): Widget {
     return RichText({
-      textAlign: this.textAlign ?? TextAlign.start,
+      textAlign: this.textAlign,
       textDirection: this.textDirection,
       softWrap: this.softWrap,
       overflow: this.overflow,
@@ -70,7 +70,7 @@ class _Text extends StatelessWidget {
         text: this.data,
         children: this.textSpan && [this.textSpan],
       }),
-      bindTextPainter: this.bindTextPainter,
+      textPainter: this.textPainter,
     });
   }
 }
@@ -82,5 +82,5 @@ type TextProps = {
   textDirection?: TextDirection;
   softWrap?: boolean;
   textWidthBasis?: TextWidthBasis;
-  bindTextPainter?: (painter: TextPainter) => void;
+  textPainter?: TextPainter;
 };

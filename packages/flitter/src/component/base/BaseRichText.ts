@@ -16,6 +16,7 @@ import {
 import RenderObjectWidget from "../../widget/RenderObjectWidget";
 import type InlineSpan from "../../type/_types/Inline-span";
 import TextPainter from "../../type/_types/text-painter";
+import { assert } from "../../utils";
 
 export type RichTextProps = {
   text: InlineSpan;
@@ -26,7 +27,7 @@ export type RichTextProps = {
   textScaleFactor?: number;
   maxLines?: number;
   textWidthBasis?: TextWidthBasis;
-  bindTextPainter: (painter: TextPainter) => void;
+  textPainter?: TextPainter;
 };
 
 class RichText extends RenderObjectWidget {
@@ -38,19 +39,19 @@ class RichText extends RenderObjectWidget {
   textScaleFactor: number;
   maxLines?: number;
   textWidthBasis: TextWidthBasis;
-  bindTextPainter?: (painter: TextPainter) => void;
+  textPainter?: TextPainter;
 
   constructor({
     text,
-    textAlign = TextAlign.start,
+    textAlign,
     textDirection,
     softWrap = true,
     overflow = TextOverflow.clip,
-    textScaleFactor = 1,
+    textScaleFactor,
     maxLines,
-    textWidthBasis = TextWidthBasis.parent,
+    textWidthBasis,
     key,
-    bindTextPainter,
+    textPainter,
   }: RichTextProps & { key?: any }) {
     super({ children: [], key });
     this.text = text;
@@ -61,82 +62,102 @@ class RichText extends RenderObjectWidget {
     this.textScaleFactor = textScaleFactor;
     this.maxLines = maxLines;
     this.textWidthBasis = textWidthBasis;
-    this.bindTextPainter = bindTextPainter;
+    this.textPainter = textPainter;
   }
 
   createRenderObject(): RenderObject {
     return new RenderParagraph({
       text: this.text,
       textAlign: this.textAlign,
-      textDirection: this.textDirection || TextDirection.ltr,
+      textDirection: this.textDirection,
       softWrap: this.softWrap,
       overflow: this.overflow,
       textScaleFactor: this.textScaleFactor,
       maxLines: this.maxLines,
       textWidthBasis: this.textWidthBasis,
-      bindTextPainter: this.bindTextPainter,
+      textPainter: this.textPainter,
     });
   }
 
   updateRenderObject(renderObject: RenderParagraph): void {
-    renderObject.softWrap = this.softWrap;
-    renderObject.overflow = this.overflow;
-    renderObject.textScaleFactor = this.textScaleFactor;
-    renderObject.maxLines = this.maxLines;
-    renderObject.textWidthBasis = this.textWidthBasis;
-    renderObject.text = this.text;
-    renderObject.textAlign = this.textAlign;
-    renderObject.textDirection = this.textDirection || TextDirection.ltr;
+    if (this.softWrap != null) renderObject.softWrap = this.softWrap;
+    if (this.overflow != null) renderObject.overflow = this.overflow;
+    if (this.textScaleFactor != null) renderObject.textScaleFactor = this.textScaleFactor;
+    if (this.maxLines != null) renderObject.maxLines = this.maxLines;
+    if (this.textWidthBasis != null) renderObject.textWidthBasis = this.textWidthBasis;
+    if (this.text != null) renderObject.text = this.text;
+    if (this.textAlign != null) renderObject.textAlign = this.textAlign;
+    if (this.textDirection != null) renderObject.textDirection = this.textDirection;
+    if (this.textPainter != null) renderObject.textPainter = this.textPainter;
   }
 }
 
 export class RenderParagraph extends RenderObject {
-  _softWrap: boolean;
-  _overflow: TextOverflow;
+  #softWrap: boolean;
+  #overflow: TextOverflow;
   get softWrap(): boolean {
-    return this._softWrap;
+    return this.#softWrap;
   }
   set softWrap(newSoftWrap: boolean) {
-    if (this._softWrap === newSoftWrap) return; // early return
-    this._softWrap = newSoftWrap;
+    if (this.#softWrap === newSoftWrap) return; // early return
+    this.#softWrap = newSoftWrap;
     this.markNeedsLayout();
   }
 
   get overflow(): TextOverflow {
-    return this._overflow;
+    return this.#overflow;
   }
 
   set overflow(newOverflow: TextOverflow) {
-    if (this._overflow === newOverflow) return; // early return
-    this._overflow = newOverflow;
+    if (this.#overflow === newOverflow) return; // early return
+    this.#overflow = newOverflow;
     this.markNeedsLayout();
   }
-  textPainter: TextPainter;
+  #textPainter: TextPainter;
+  get textPainter() {
+    return this.#textPainter;
+  }
+  set textPainter(value: TextPainter) {
+    if (this.#textPainter === value) return;
+    this.#textPainter = value;
+    this.markNeedsLayout();
+  }
   constructor({
     text,
-    textAlign = TextAlign.start,
+    textAlign,
     textDirection,
     softWrap = true,
     overflow = TextOverflow.clip,
-    textScaleFactor = 1,
+    textScaleFactor,
     maxLines,
-    textWidthBasis = TextWidthBasis.parent,
-    bindTextPainter,
+    textWidthBasis,
+    textPainter,
   }: RichTextProps) {
     super({ isPainter: true });
-    this._softWrap = softWrap;
-    this._overflow = overflow;
-    this.textPainter = new TextPainter({
-      text,
-      textAlign,
-      textDirection,
-      textScaleFactor,
-      maxLines,
-      ellipsis: overflow == TextOverflow.ellipsis ? "\u2026" : undefined,
-      textWidthBasis,
-    });
+    this.#softWrap = softWrap;
+    this.#overflow = overflow;
 
-    bindTextPainter?.(this.textPainter);
+    if (textPainter) {
+      assert(
+        textAlign == null &&
+          textDirection == null &&
+          textScaleFactor == null &&
+          textWidthBasis == null &&
+          maxLines == null,
+        "textAlign, textDirection, textScaleFactor, textWidthBasis, maxLines cannot be set when textPainter is provided.",
+      );
+      this.#textPainter = textPainter;
+    } else {
+      this.#textPainter = new TextPainter({
+        text,
+        textAlign: textAlign ?? TextAlign.start,
+        textDirection: textDirection ?? TextDirection.ltr,
+        textScaleFactor: textScaleFactor ?? 1,
+        ellipsis: overflow == TextOverflow.ellipsis ? "\u2026" : undefined,
+        textWidthBasis: textWidthBasis ?? TextWidthBasis.parent,
+        maxLines,
+      });
+    }
   }
 
   get text() {

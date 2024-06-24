@@ -49,7 +49,6 @@ import Draggable from "./Draggable";
 import Tooltip from "./Tooltip";
 import ZIndex from "./ZIndex";
 import Painter from "./base/BaseCustomPaint";
-import TextField from "./TextField";
 
 export {
   Painter,
@@ -103,5 +102,4 @@ export {
   Draggable,
   Tooltip,
   ZIndex,
-  TextField,
 };
