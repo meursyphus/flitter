@@ -9,7 +9,7 @@
 <Widget
 	width="300px"
 	height="150px"
-	renderer="canvas"
+	renderer="svg"
 	widget={Container({
 		width: 300,
 		height: Infinity,

@@ -232,7 +232,7 @@ export class Paragraph {
     return this.lines.reduce((acc, line) => Math.max(acc + line.height), 0);
   }
 
-  layout(width: number = Infinity) {
+  layout_legacy(width: number = Infinity) {
     this.width = width;
 
     this.lines = [];
@@ -248,7 +248,7 @@ export class Paragraph {
         color,
         height,
       }) => {
-        const words = content.split(/(\s|\n)/);
+        const words = content.match(/\S+|\s/g) || [];
 
         let currentText = "";
         let currentWidth = 0;
@@ -305,6 +305,100 @@ export class Paragraph {
     );
 
     this.addLine(currentLine);
+    this.align();
+  }
+  layout(width: number = Infinity) {
+    this.width = width;
+    this.lines = [];
+    let currentLine = new ParagraphLine();
+
+    const addNewLine = (style: {
+      fontFamily: string;
+      fontSize: number;
+      fontStyle: FontStyle;
+      fontWeight: string;
+      color: string;
+      height: number;
+    }) => {
+      if (currentLine.spanBoxes.length > 0) {
+        this.addLine(currentLine);
+      }
+      currentLine = new ParagraphLine();
+      // Add newline to the start of the new line
+      currentLine.addSpanBox(
+        new SpanBox({
+          content: "\n",
+          ...style,
+          size: {
+            height: getTextHeight({ fontSize: style.fontSize }),
+            width: 0,
+          },
+        }),
+      );
+    };
+
+    this.source.forEach(
+      ({
+        content,
+        fontFamily,
+        fontSize,
+        fontStyle,
+        fontWeight,
+        color,
+        height,
+      }) => {
+        const words = content.match(/\S+|\s+/g) || [];
+        const font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+        const currentHeight = getTextHeight({ fontSize });
+        const currentStyle = {
+          fontFamily,
+          fontSize,
+          fontStyle,
+          fontWeight,
+          color,
+          height,
+        };
+
+        words.forEach(word => {
+          const isWhitespace = /^\s+$/.test(word);
+          const containsNewline = word.includes("\n");
+
+          if (containsNewline) {
+            const parts = word.split(/(\n)/);
+            parts.forEach(part => {
+              if (part === "\n") {
+                addNewLine(currentStyle);
+              } else if (part.length > 0) {
+                addWordToLine(part, isWhitespace);
+              }
+            });
+          } else {
+            addWordToLine(word, isWhitespace);
+          }
+        });
+
+        function addWordToLine(word: string, isWhitespace: boolean) {
+          const wordWidth = getTextWidth({ text: word, font });
+          if (currentLine.width + wordWidth > width && !isWhitespace) {
+            addNewLine(currentStyle);
+          }
+          if (!isWhitespace || currentLine.spanBoxes.length > 0) {
+            currentLine.addSpanBox(
+              new SpanBox({
+                content: word,
+                ...currentStyle,
+                size: { height: currentHeight, width: wordWidth },
+              }),
+            );
+          }
+        }
+      },
+    );
+
+    if (currentLine.spanBoxes.length > 0) {
+      this.addLine(currentLine);
+    }
+
     this.align();
   }
 

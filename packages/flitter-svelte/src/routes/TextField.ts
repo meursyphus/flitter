@@ -208,25 +208,15 @@ class TextFieldState extends State<TextField> {
 		];
 		const lines = this.#textPainter?.paragraph?.lines ?? [];
 
-		// Binary search to find the correct line
-		let low = 0;
-		let high = lines.length - 1;
+		// Find the correct line using linear search
 		let lineIndex = -1;
 		let accumulatedHeight = 0;
-
-		while (low <= high) {
-			const mid = Math.floor((low + high) / 2);
-			const midHeight = accumulatedHeight + lines[mid].height;
-
-			if (y >= accumulatedHeight && y < midHeight) {
-				lineIndex = mid;
+		for (let i = 0; i < lines.length; i++) {
+			if (y >= accumulatedHeight && y < accumulatedHeight + lines[i].height) {
+				lineIndex = i;
 				break;
-			} else if (y < accumulatedHeight) {
-				high = mid - 1;
-			} else {
-				low = mid + 1;
-				accumulatedHeight = midHeight;
 			}
+			accumulatedHeight += lines[i].height;
 		}
 
 		if (lineIndex === -1) {
@@ -248,11 +238,9 @@ class TextFieldState extends State<TextField> {
 		for (let i = 0; i < line.spanBoxes.length; i++) {
 			const currentBox = line.spanBoxes[i];
 			const nextBox = i < line.spanBoxes.length - 1 ? line.spanBoxes[i + 1] : null;
-
 			const charMiddle = nextBox
 				? (currentBox.offset.x + nextBox.offset.x) / 2
 				: currentBox.offset.x + currentBox.size.width / 2;
-
 			if (x < charMiddle) {
 				break;
 			}
@@ -305,7 +293,7 @@ class TextFieldState extends State<TextField> {
 								height: this.#caret.height,
 								color: this.#caret.color
 							})
-					  })
+						})
 					: SizedBox.shrink()
 			]
 		});
