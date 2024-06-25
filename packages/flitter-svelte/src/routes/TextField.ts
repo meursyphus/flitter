@@ -132,7 +132,6 @@ class TextFieldState extends State<TextField> {
 	#setSelection(start: number, end: number = start, direction: 'ltr' | 'rtl' = 'rtl') {
 		this.#selection = [start, end];
 		const caretLocation = direction === 'rtl' ? end : start;
-
 		const lines = this.#textPainter?.paragraph?.lines ?? [];
 
 		let currentLocation = 0;
@@ -143,33 +142,45 @@ class TextFieldState extends State<TextField> {
 			y: number;
 			color: string;
 			width: number;
-		} = {
-			height: lines[0]?.height,
-			x: 0,
-			y: 0,
-			color: lines[0]?.spanBoxes[0]?.color ?? 'black',
-			width: 1
-		};
+		} | null = null;
 
-		/**
-		 * 이것도 좀 알짤딱으로 해보자
-		 */
 		for (const line of lines) {
-			for (const char of line.spanBoxes) {
-				currentLocation++;
-				caret = {
-					height: line.height,
-					y: currentY,
-					x: char.offset.x + char.size.width,
-					color: char.color,
-					width: 1
-				};
-
-				if (currentLocation === caretLocation) {
-					break;
+			if (currentLocation + line.spanBoxes.length >= caretLocation) {
+				// Caret is in this line
+				for (const char of line.spanBoxes) {
+					if (currentLocation === caretLocation) {
+						// Found the exact location
+						caret = {
+							height: line.height,
+							y: currentY,
+							x: char.offset.x,
+							color: char.color,
+							width: 1
+						};
+						break;
+					}
+					currentLocation++;
 				}
+				if (caret) break; // Exit the outer loop if caret is set
+			} else {
+				// Move to next line
+				currentLocation += line.spanBoxes.length;
+				currentY += line.height;
 			}
-			currentY += line.height;
+		}
+
+		// If we've gone through all lines and haven't set the caret,
+		// it means the caretLocation is at the very end of the text
+		if (!caret && lines.length > 0) {
+			const lastLine = lines[lines.length - 1];
+			const lastChar = lastLine.spanBoxes[lastLine.spanBoxes.length - 1];
+			caret = {
+				height: lastLine.height,
+				y: currentY,
+				x: lastChar ? lastChar.offset.x + lastChar.size.width : 0,
+				color: lastChar ? lastChar.color : 'black',
+				width: 1
+			};
 		}
 
 		this.#caret = caret;
