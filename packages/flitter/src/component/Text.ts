@@ -32,7 +32,6 @@ class _Text extends StatelessWidget {
   softWrap?: boolean;
   textWidthBasis?: TextWidthBasis;
   overflow?: TextOverflow;
-  textPainter?: TextPainter;
 
   constructor({
     data,
@@ -43,7 +42,6 @@ class _Text extends StatelessWidget {
     textWidthBasis,
     style,
     overflow,
-    textPainter,
   }: TextProps & { data?: string; textSpan?: InlineSpan }) {
     super();
     this.softWrap = softWrap;
@@ -55,7 +53,6 @@ class _Text extends StatelessWidget {
 
     this.data = data;
     this.textSpan = textSpan;
-    this.textPainter = textPainter;
   }
 
   build(_: BuildContext): Widget {
@@ -70,7 +67,6 @@ class _Text extends StatelessWidget {
         text: this.data,
         children: this.textSpan && [this.textSpan],
       }),
-      textPainter: this.textPainter,
     });
   }
 }

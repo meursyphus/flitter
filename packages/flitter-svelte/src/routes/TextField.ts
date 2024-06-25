@@ -8,7 +8,6 @@ import {
 	Container,
 	Positioned,
 	GestureDetector,
-	Text,
 	TextSpan,
 	Widget,
 	Opacity,
@@ -23,7 +22,8 @@ import {
 	TextStyle,
 	TextDirection,
 	TextWidthBasis,
-	TextAlign
+	TextAlign,
+	RichText
 } from '@meursyphus/flitter';
 
 const browser = true;
@@ -87,25 +87,31 @@ class TextFieldState extends State<TextField> {
 		this.#nativeInput.dispose();
 	}
 
+	/**
+	 * input과 textpainter를 동기화합니다.
+	 */
 	#sync() {
 		this.#text = this.#nativeInput.value;
 		this.#textPainter = new TextPainter({
 			text: new TextSpan({
-				text: this.#text,
-				children: [],
+				text: '',
+				children: this.#text.split('').map(
+					(text) =>
+						new TextSpan({
+							text,
+							style: new TextStyle({
+								fontFamily: 'Roboto',
+								fontSize: 20
+							})
+						})
+				),
 				style: new TextStyle({
 					fontFamily: 'Roboto',
 					fontSize: 20
 				})
-			}),
-			textDirection: TextDirection.ltr,
-			textScaleFactor: 1,
-			textWidthBasis: TextWidthBasis.parent,
-			textAlign: TextAlign.start,
-			maxLines: 100,
-			ellipsis: '...'
+			})
 		});
-
+		this.#textPainter.layout();
 		this.#render();
 		this.element.scheduler.addPostFrameCallbacks(() => {
 			this.#setSelection(...this.#nativeInput.getSelection());
@@ -118,7 +124,6 @@ class TextFieldState extends State<TextField> {
 		this.#nativeInput.value = this.#text;
 		this.#nativeInput.focus();
 		this.#setSelection(location);
-		console.log(this.#caret);
 		this.#nativeInput.setCaret(location);
 		this.#focused = true;
 		this.#render();
@@ -180,8 +185,9 @@ class TextFieldState extends State<TextField> {
 		this.#nativeInput.blur();
 		this.#focused = false;
 	};
-
 	handleMouseDown = (e: MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
 		const root = this.element.renderObject.renderOwner.renderContext.view;
 		const rootPosition = root.getBoundingClientRect();
 		const position = this.element.renderObject.localToGlobal();
@@ -189,34 +195,63 @@ class TextFieldState extends State<TextField> {
 			e.clientX - rootPosition.x - position.x,
 			e.clientY - rootPosition.y - position.y
 		];
-
 		const lines = this.#textPainter?.paragraph?.lines ?? [];
 
-		/**
-		 * TODO: ..
-		 * 어디에 있는지 찾도록 이분탐색 조진다
-		 * 하지만 구현하기 너무 귀차농
-		 */
-		/**
-		 * 바이너리 서치로 나중에 조지자
-		 */
-		let location = this.#text.length;
-		let charY = lines.reduce((acc, line) => acc + line.height, 0);
-		for (let i = lines.length - 1; i >= 0; i--) {
-			const line = lines[i];
-			charY -= line.height;
-			if (charY > y) continue;
-			for (let j = line.spanBoxes.length - 1; j >= 0; j--) {
-				location--;
-				const charX = line.spanBoxes[j].offset.x;
-				if (charX < x) {
-					this.focus(location + 1);
-					return;
-				}
+		// Binary search to find the correct line
+		let low = 0;
+		let high = lines.length - 1;
+		let lineIndex = -1;
+		let accumulatedHeight = 0;
+
+		while (low <= high) {
+			const mid = Math.floor((low + high) / 2);
+			const midHeight = accumulatedHeight + lines[mid].height;
+
+			if (y >= accumulatedHeight && y < midHeight) {
+				lineIndex = mid;
+				break;
+			} else if (y < accumulatedHeight) {
+				high = mid - 1;
+			} else {
+				low = mid + 1;
+				accumulatedHeight = midHeight;
 			}
 		}
 
-		this.focus();
+		if (lineIndex === -1) {
+			// If no line is found, focus on the end
+			this.focus(this.#text.length);
+			return;
+		}
+
+		const line = lines[lineIndex];
+		let charIndex = 0;
+		let globalCharIndex = 0;
+
+		// Calculate global char index for previous lines
+		for (let i = 0; i < lineIndex; i++) {
+			globalCharIndex += lines[i].spanBoxes.length;
+		}
+
+		// Find the character based on x position
+		for (let i = 0; i < line.spanBoxes.length; i++) {
+			const currentBox = line.spanBoxes[i];
+			const nextBox = i < line.spanBoxes.length - 1 ? line.spanBoxes[i + 1] : null;
+
+			const charMiddle = nextBox
+				? (currentBox.offset.x + nextBox.offset.x) / 2
+				: currentBox.offset.x + currentBox.size.width / 2;
+
+			if (x < charMiddle) {
+				break;
+			}
+			charIndex++;
+		}
+
+		globalCharIndex += charIndex;
+
+		// Set focus and selection
+		this.focus(globalCharIndex);
 	};
 
 	override build() {
@@ -228,7 +263,7 @@ class TextFieldState extends State<TextField> {
 					onMouseDown: this.handleMouseDown,
 					cursor: 'text',
 					child: Container({
-						width: 200,
+						width: 300,
 						decoration: new BoxDecoration({
 							border: Border.all({ color: 'black', width: 1 }),
 							borderRadius: BorderRadius.all(Radius.circular(4))
@@ -237,13 +272,14 @@ class TextFieldState extends State<TextField> {
 							alignment: Alignment.topLeft,
 							constraintsTransform(constraints) {
 								return new Constraints({
-									minHeight: 30,
+									minHeight: 100,
 									minWidth: 100,
 									maxHeight: constraints.maxHeight,
 									maxWidth: constraints.maxWidth
 								});
 							},
-							child: Text('', {
+							child: RichText({
+								text: undefined as unknown as TextSpan,
 								textPainter: this.#textPainter
 							})
 						})
@@ -320,6 +356,10 @@ class NativeInput {
 		if (this.#element == null) {
 			if (browser) {
 				this.#element = document.createElement('textarea');
+				this.#element.setAttribute(
+					'style',
+					'width: 300px; height: 150px; font-size: 20px; font-family: Roboto;'
+				);
 				//this.#element.setAttribute('style', 'position: absolute; opacity: 0; height: 0; width: 0;');
 				document.body.appendChild(this.#element);
 			} else {
@@ -350,9 +390,7 @@ class NativeInput {
 	}
 
 	focus = () => {
-		setTimeout(() => {
-			this.element.focus({ preventScroll: true });
-		}, 0);
+		this.element.focus({ preventScroll: true });
 	};
 
 	blur = () => {
@@ -369,6 +407,7 @@ class NativeInput {
 	};
 
 	setCaret = (pos: number) => {
+		console.log(pos, 'native pos');
 		this.setSelection(pos, pos);
 	};
 
