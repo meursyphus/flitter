@@ -232,171 +232,84 @@ export class Paragraph {
     return this.lines.reduce((acc, line) => Math.max(acc + line.height), 0);
   }
 
-  layout_legacy(width: number = Infinity) {
-    this.width = width;
-
-    this.lines = [];
-
-    let currentLine = new ParagraphLine();
-    this.source.forEach(
-      ({
-        content,
-        fontFamily,
-        fontSize,
-        fontStyle,
-        fontWeight,
-        color,
-        height,
-      }) => {
-        const words = content.match(/\S+|\s/g) || [];
-
-        let currentText = "";
-        let currentWidth = 0;
-        const currentHeight = getTextHeight({ fontSize });
-        const font = `${fontWeight} ${fontSize}px ${fontFamily}`;
-        words.forEach(word => {
-          const wordWidth = getTextWidth({
-            text: word,
-            font,
-          });
-
-          if (
-            currentLine.width + currentWidth + wordWidth > this.width ||
-            word === "\n"
-          ) {
-            addSpanBox();
-            this.addLine(currentLine);
-            currentLine = new ParagraphLine();
-            //prevent space on new line
-            if ([" ", "\n"].includes(word)) {
-              currentWidth = 0;
-              currentText = "";
-            } else {
-              currentWidth = wordWidth;
-              currentText = word;
-            }
-          } else {
-            currentText += word;
-            currentWidth += wordWidth;
-          }
-        });
-
-        addSpanBox();
-
-        function addSpanBox() {
-          if (!currentText) return;
-          currentLine.addSpanBox(
-            new SpanBox({
-              content: currentText,
-              fontFamily,
-              fontSize,
-              fontStyle,
-              fontWeight,
-              color,
-              height,
-              size: {
-                height: currentHeight,
-                width: currentWidth,
-              },
-            }),
-          );
-        }
-      },
-    );
-
-    this.addLine(currentLine);
-    this.align();
-  }
   layout(width: number = Infinity) {
-    this.width = width;
     this.lines = [];
     let currentLine = new ParagraphLine();
-
-    const addNewLine = (style: {
-      fontFamily: string;
+    let currentStyle: {
       fontSize: number;
-      fontStyle: FontStyle;
+      fontFamily: string;
       fontWeight: string;
+      fontStyle: FontStyle;
       color: string;
       height: number;
-    }) => {
+    };
+
+    const addNewLine = () => {
       if (currentLine.spanBoxes.length > 0) {
-        this.addLine(currentLine);
+        this.lines.push(currentLine);
       }
       currentLine = new ParagraphLine();
-      // Add newline to the start of the new line
       currentLine.addSpanBox(
         new SpanBox({
           content: "\n",
-          ...style,
+          ...currentStyle,
           size: {
-            height: getTextHeight({ fontSize: style.fontSize }),
+            height: getTextHeight({ fontSize: currentStyle.fontSize }),
             width: 0,
           },
         }),
       );
     };
 
-    this.source.forEach(
-      ({
-        content,
-        fontFamily,
-        fontSize,
-        fontStyle,
-        fontWeight,
-        color,
-        height,
-      }) => {
-        const words = content.match(/\S+|\s+/g) || [];
-        const font = `${fontWeight} ${fontSize}px ${fontFamily}`;
-        const currentHeight = getTextHeight({ fontSize });
-        const currentStyle = {
-          fontFamily,
-          fontSize,
-          fontStyle,
-          fontWeight,
-          color,
-          height,
-        };
+    const addWordToLine = (
+      word: string,
+      isWhitespace: boolean,
+      font: string,
+    ) => {
+      const wordWidth = getTextWidth({ text: word, font });
+      if (currentLine.width + wordWidth > width && !isWhitespace) {
+        addNewLine();
+      }
+      if (!isWhitespace || currentLine.spanBoxes.length > 0) {
+        currentLine.addSpanBox(
+          new SpanBox({
+            content: word,
+            ...currentStyle,
+            size: {
+              height: getTextHeight({ fontSize: currentStyle.fontSize }),
+              width: wordWidth,
+            },
+          }),
+        );
+      }
+    };
 
-        words.forEach(word => {
-          const isWhitespace = /^\s+$/.test(word);
-          const containsNewline = word.includes("\n");
+    const processWord = (font: string) => (word: string) => {
+      const isWhitespace = /^\s+$/.test(word);
+      const containsNewline = word.includes("\n");
 
-          if (containsNewline) {
-            const parts = word.split(/(\n)/);
-            parts.forEach(part => {
-              if (part === "\n") {
-                addNewLine(currentStyle);
-              } else if (part.length > 0) {
-                addWordToLine(part, isWhitespace);
-              }
-            });
-          } else {
-            addWordToLine(word, isWhitespace);
+      if (containsNewline) {
+        word.split(/(\n)/).forEach(part => {
+          if (part === "\n") {
+            addNewLine();
+          } else if (part.length > 0) {
+            addWordToLine(part, isWhitespace, font);
           }
         });
+      } else {
+        addWordToLine(word, isWhitespace, font);
+      }
+    };
 
-        function addWordToLine(word: string, isWhitespace: boolean) {
-          const wordWidth = getTextWidth({ text: word, font });
-          if (currentLine.width + wordWidth > width && !isWhitespace) {
-            addNewLine(currentStyle);
-          }
-          if (!isWhitespace || currentLine.spanBoxes.length > 0) {
-            currentLine.addSpanBox(
-              new SpanBox({
-                content: word,
-                ...currentStyle,
-                size: { height: currentHeight, width: wordWidth },
-              }),
-            );
-          }
-        }
-      },
-    );
+    this.source.forEach(({ content, ...style }) => {
+      currentStyle = style;
+      const font = `${style.fontWeight} ${style.fontSize}px ${style.fontFamily}`;
+      const words = content.match(/\S+|\s+/g) || [];
+      words.forEach(processWord(font));
+    });
 
     if (currentLine.spanBoxes.length > 0) {
-      this.addLine(currentLine);
+      this.lines.push(currentLine);
     }
 
     this.align();

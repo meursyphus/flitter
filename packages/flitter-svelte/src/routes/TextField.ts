@@ -23,7 +23,9 @@ import {
 	TextDirection,
 	TextWidthBasis,
 	TextAlign,
-	RichText
+	RichText,
+	EdgeInsets,
+	BorderSide
 } from '@meursyphus/flitter';
 
 const browser = true;
@@ -208,46 +210,61 @@ class TextFieldState extends State<TextField> {
 		];
 		const lines = this.#textPainter?.paragraph?.lines ?? [];
 
-		// Find the correct line using linear search
-		let lineIndex = -1;
-		let accumulatedHeight = 0;
-		for (let i = 0; i < lines.length; i++) {
-			if (y >= accumulatedHeight && y < accumulatedHeight + lines[i].height) {
-				lineIndex = i;
-				break;
-			}
-			accumulatedHeight += lines[i].height;
-		}
-
-		if (lineIndex === -1) {
-			// If no line is found, focus on the end
-			this.focus(this.#text.length);
-			return;
-		}
-
-		const line = lines[lineIndex];
-		let charIndex = 0;
 		let globalCharIndex = 0;
+		let found = false;
 
-		// Calculate global char index for previous lines
-		for (let i = 0; i < lineIndex; i++) {
-			globalCharIndex += lines[i].spanBoxes.length;
-		}
+		for (const element of lines) {
+			const line = element;
+			const lineTop = line.spanBoxes[0]?.offset.y ?? 0;
+			const lineBottom = lineTop + line.height;
 
-		// Find the character based on x position
-		for (let i = 0; i < line.spanBoxes.length; i++) {
-			const currentBox = line.spanBoxes[i];
-			const nextBox = i < line.spanBoxes.length - 1 ? line.spanBoxes[i + 1] : null;
-			const charMiddle = nextBox
-				? (currentBox.offset.x + nextBox.offset.x) / 2
-				: currentBox.offset.x + currentBox.size.width / 2;
-			if (x < charMiddle) {
-				break;
+			if (y >= lineTop && y < lineBottom) {
+				// We're on the correct line
+				const lineStartIndex = globalCharIndex;
+				const lineEndIndex = lineStartIndex + line.spanBoxes.length;
+
+				// Check if click is beyond the last character of the line
+				if (line.spanBoxes.length > 0) {
+					const lastBox = line.spanBoxes[line.spanBoxes.length - 1];
+					const lineEndX = lastBox.offset.x + lastBox.size.width;
+					console.log(lineEndX, 'lineEndX', x, lineEndIndex);
+
+					if (x >= lineEndX) {
+						globalCharIndex = lineEndIndex;
+						found = true;
+						break;
+					}
+				}
+
+				// If not beyond the last character, find the correct position within the line
+				for (let i = 0; i < line.spanBoxes.length; i++) {
+					const box = line.spanBoxes[i];
+					const boxMiddle = box.offset.x + box.size.width / 2;
+
+					if (x < boxMiddle) {
+						globalCharIndex = lineStartIndex + i;
+						found = true;
+						break;
+					}
+				}
+
+				// If we haven't found a position yet, it means the click was after the middle of the last character
+				// but before the end of the line
+				if (!found) {
+					globalCharIndex = lineEndIndex;
+				}
+
+				found = true;
+				break; // We've found our line, no need to continue
 			}
-			charIndex++;
+
+			globalCharIndex += line.spanBoxes.length;
 		}
 
-		globalCharIndex += charIndex;
+		if (!found) {
+			// If we haven't found a position, place the caret at the end of the text
+			globalCharIndex = this.#text.length;
+		}
 
 		// Set focus and selection
 		this.focus(globalCharIndex);
@@ -264,8 +281,9 @@ class TextFieldState extends State<TextField> {
 					child: Container({
 						width: 300,
 						decoration: new BoxDecoration({
-							border: Border.all({ color: 'black', width: 1 }),
-							borderRadius: BorderRadius.all(Radius.circular(4))
+							border: Border.symmetric({
+								horizontal: new BorderSide({ color: 'black', width: 1 })
+							})
 						}),
 						child: ConstraintsTransformBox({
 							alignment: Alignment.topLeft,
@@ -357,7 +375,7 @@ class NativeInput {
 				this.#element = document.createElement('textarea');
 				this.#element.setAttribute(
 					'style',
-					'width: 300px; height: 150px; font-size: 20px; font-family: Roboto;'
+					'width: 300px; height: 150px; font-size: 20px; font-family: Roboto; padding-inline: 4px;'
 				);
 				//this.#element.setAttribute('style', 'position: absolute; opacity: 0; height: 0; width: 0;');
 				document.body.appendChild(this.#element);
