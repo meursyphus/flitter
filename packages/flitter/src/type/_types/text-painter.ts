@@ -233,6 +233,7 @@ export class Paragraph {
   }
 
   layout(width: number = Infinity) {
+    this.width = width;
     this.lines = [];
     let currentLine = new ParagraphLine();
     let currentStyle: {
