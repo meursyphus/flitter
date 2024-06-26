@@ -217,63 +217,78 @@ class TextFieldState extends State<TextField> {
 			e.clientY - rootPosition.y - position.y
 		];
 		const lines = this.#textPainter?.paragraph?.lines ?? [];
+		if (lines.length === 0) {
+			this.focus(0);
+			return;
+		}
+		const accumulatedHeights = lines.reduce((acc, line, index) => {
+			acc.push((acc[index - 1] || 0) + line.height);
+			return acc;
+		}, [] as number[]);
 
-		let globalCharIndex = 0;
-		let found = false;
+		// Binary search to find the correct line
+		let low = 0;
+		let high = lines.length - 1;
+		let lineIndex = -1;
 
-		for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-			const line = lines[lineIndex];
-			const lineTop = line.spanBoxes[0]?.offset.y ?? 0;
-			const lineBottom = lineTop + line.height;
+		while (low <= high) {
+			const mid = Math.floor((low + high) / 2);
+			const lineTop = mid > 0 ? accumulatedHeights[mid - 1] : 0;
+			const lineBottom = accumulatedHeights[mid];
 
 			if (y >= lineTop && y < lineBottom) {
-				// We're on the correct line
-				const lineStartIndex = globalCharIndex;
-				const lineEndIndex = lineStartIndex + line.spanBoxes.length;
+				lineIndex = mid;
+				break;
+			} else if (y < lineTop) {
+				high = mid - 1;
+			} else {
+				low = mid + 1;
+			}
+		}
 
-				// Check if click is beyond the last character of the line
-				if (line.spanBoxes.length > 0) {
-					const lastBox = line.spanBoxes[line.spanBoxes.length - 1];
-					const lineEndX = lastBox.offset.x + lastBox.size.width;
+		// If lineIndex is still -1, it means the click was below the last line
+		if (lineIndex === -1) {
+			lineIndex = lines.length - 1;
+		}
 
-					if (x >= lineEndX) {
-						globalCharIndex = lineEndIndex;
-						console.log('line');
-						found = true;
-						break;
-					}
-				}
+		let globalCharIndex = 0;
 
-				// If not beyond the last character, find the correct position within the line
+		// Calculate global char index for previous lines
+		for (let i = 0; i < lineIndex; i++) {
+			globalCharIndex += lines[i].spanBoxes.length;
+		}
+
+		const line = lines[lineIndex];
+		const lineStartIndex = globalCharIndex;
+		const lineEndIndex = lineStartIndex + line.spanBoxes.length;
+
+		// Check if click is beyond the last character of the line
+		if (line.spanBoxes.length > 0) {
+			const lastBox = line.spanBoxes[line.spanBoxes.length - 1];
+			const lineEndX = lastBox.offset.x + lastBox.size.width;
+			if (x >= lineEndX) {
+				globalCharIndex = lineEndIndex;
+			} else {
+				// Linear search within the line for more accurate positioning
 				for (let i = 0; i < line.spanBoxes.length; i++) {
 					const box = line.spanBoxes[i];
-					const boxMiddle = box.offset.x + box.size.width / 2;
-
-					if (x < boxMiddle) {
+					const boxEnd = box.offset.x + box.size.width;
+					if (x < boxEnd) {
 						globalCharIndex = lineStartIndex + i;
-						found = true;
+						if (x > box.offset.x + box.size.width / 2) {
+							globalCharIndex++;
+						}
 						break;
 					}
 				}
-
-				// If we haven't found a position yet, it means the click was after the middle of the last character
-				// but before the end of the line
-				if (!found) {
+				// If we haven't found a position, it means the click was after the last character
+				if (globalCharIndex === lineStartIndex) {
 					globalCharIndex = lineEndIndex;
 				}
-
-				found = true;
-				break; // We've found our line, no need to continue
 			}
-
-			globalCharIndex += line.spanBoxes.length;
 		}
 
-		if (!found) {
-			// If we haven't found a position, place the caret at the end of the text
-			globalCharIndex = this.#text.length;
-		}
-
+		console.log(lineIndex, 'lineIndex');
 		console.log(globalCharIndex, 'globalCharIndex');
 		// Set focus and selection
 		this.focus(globalCharIndex);
