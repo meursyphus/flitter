@@ -221,6 +221,100 @@ class TextFieldState extends State<TextField> {
 			this.focus(0);
 			return;
 		}
+
+		// Create accumulated heights array
+		const accumulatedHeights = lines.reduce((acc, line, index) => {
+			acc.push((acc[index - 1] || 0) + line.height);
+			return acc;
+		}, [] as number[]);
+
+		// Binary search to find the correct line
+		let low = 0;
+		let high = lines.length - 1;
+		let lineIndex = -1;
+
+		while (low <= high) {
+			const mid = Math.floor((low + high) / 2);
+			const lineTop = mid > 0 ? accumulatedHeights[mid - 1] : 0;
+			const lineBottom = accumulatedHeights[mid];
+
+			if (y >= lineTop && y < lineBottom) {
+				lineIndex = mid;
+				break;
+			} else if (y < lineTop) {
+				high = mid - 1;
+			} else {
+				low = mid + 1;
+			}
+		}
+
+		// If lineIndex is still -1, it means the click was below the last line
+		if (lineIndex === -1) {
+			lineIndex = lines.length - 1;
+		}
+
+		let globalCharIndex = 0;
+
+		// Calculate global char index for previous lines
+		for (let i = 0; i < lineIndex; i++) {
+			globalCharIndex += lines[i].spanBoxes.length;
+		}
+
+		const line = lines[lineIndex];
+
+		// Binary search within the line to find the correct spanBox
+		low = 0;
+		high = line.spanBoxes.length - 1;
+		let spanBoxIndex = -1;
+
+		while (low <= high) {
+			const mid = Math.floor((low + high) / 2);
+			const box = line.spanBoxes[mid];
+			const boxStart = box.offset.x;
+			const boxEnd = boxStart + box.size.width;
+
+			if (x >= boxStart && x < boxEnd) {
+				spanBoxIndex = mid;
+				break;
+			} else if (x < boxStart) {
+				high = mid - 1;
+			} else {
+				low = mid + 1;
+			}
+		}
+
+		// If spanBoxIndex is -1, it means the click was after the last character
+		if (spanBoxIndex === -1) {
+			globalCharIndex += line.spanBoxes.length;
+		} else {
+			globalCharIndex += spanBoxIndex;
+			const box = line.spanBoxes[spanBoxIndex];
+			// If click is on the right half of the character, move to next character
+			if (x > box.offset.x + box.size.width / 2) {
+				globalCharIndex++;
+			}
+		}
+
+		console.log(lineIndex, 'lineIndex');
+		console.log(globalCharIndex, 'globalCharIndex');
+		// Set focus and selection
+		this.focus(globalCharIndex);
+	};
+	handleMouseDown_old = (e: MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+		const root = this.element.renderObject.renderOwner.renderContext.view;
+		const rootPosition = root.getBoundingClientRect();
+		const position = this.element.renderObject.localToGlobal();
+		const [x, y] = [
+			e.clientX - rootPosition.x - position.x,
+			e.clientY - rootPosition.y - position.y
+		];
+		const lines = this.#textPainter?.paragraph?.lines ?? [];
+		if (lines.length === 0) {
+			this.focus(0);
+			return;
+		}
 		const accumulatedHeights = lines.reduce((acc, line, index) => {
 			acc.push((acc[index - 1] || 0) + line.height);
 			return acc;
