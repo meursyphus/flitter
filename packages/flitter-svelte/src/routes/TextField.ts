@@ -130,12 +130,10 @@ class TextFieldState extends State<TextField> {
 		this.#focused = true;
 		this.#render();
 	};
-
 	#setSelection(start: number, end: number = start, direction: 'ltr' | 'rtl' = 'rtl') {
 		this.#selection = [start, end];
 		const caretLocation = direction === 'rtl' ? end : start;
 		const lines = this.#textPainter?.paragraph?.lines ?? [];
-
 		let currentLocation = 0;
 		let currentY = 0;
 		let caret: {
@@ -147,28 +145,38 @@ class TextFieldState extends State<TextField> {
 		} | null = null;
 
 		for (const line of lines) {
-			if (currentLocation + line.spanBoxes.length >= caretLocation) {
+			const lineEndLocation = currentLocation + line.spanBoxes.length;
+
+			if (caretLocation <= lineEndLocation) {
 				// Caret is in this line
-				for (const char of line.spanBoxes) {
-					if (currentLocation === caretLocation) {
-						// Found the exact location
-						caret = {
-							height: line.height,
-							y: currentY,
-							x: char.offset.x,
-							color: char.color,
-							width: 1
-						};
-						break;
-					}
-					currentLocation++;
+				if (caretLocation === lineEndLocation) {
+					// Caret is at the end of the line
+					const lastChar = line.spanBoxes[line.spanBoxes.length - 1];
+					caret = {
+						height: line.height,
+						y: currentY,
+						x: lastChar ? lastChar.offset.x + lastChar.size.width : 0,
+						color: lastChar ? lastChar.color : 'black',
+						width: 1
+					};
+				} else {
+					// Caret is within the line
+					const charIndex = caretLocation - currentLocation;
+					const char = line.spanBoxes[charIndex];
+					caret = {
+						height: line.height,
+						y: currentY,
+						x: char.offset.x,
+						color: char.color,
+						width: 1
+					};
 				}
-				if (caret) break; // Exit the outer loop if caret is set
-			} else {
-				// Move to next line
-				currentLocation += line.spanBoxes.length;
-				currentY += line.height;
+				break;
 			}
+
+			// Move to next line
+			currentLocation = lineEndLocation;
+			currentY += line.height;
 		}
 
 		// If we've gone through all lines and haven't set the caret,
@@ -230,6 +238,7 @@ class TextFieldState extends State<TextField> {
 
 					if (x >= lineEndX) {
 						globalCharIndex = lineEndIndex;
+						console.log('line');
 						found = true;
 						break;
 					}
@@ -265,6 +274,7 @@ class TextFieldState extends State<TextField> {
 			globalCharIndex = this.#text.length;
 		}
 
+		console.log(globalCharIndex, 'globalCharIndex');
 		// Set focus and selection
 		this.focus(globalCharIndex);
 	};
