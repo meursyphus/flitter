@@ -237,9 +237,10 @@ class TextFieldState extends State<TextField> {
 
 	handleBlur = () => {
 		this.#selection = [0, 0];
-		//this.#caret = null;
+		this.#caret = null;
 		this.#nativeInput.blur();
 		this.#focused = false;
+		this.setState();
 	};
 
 	handleMouseDown = (e: MouseEvent) => {
@@ -349,7 +350,8 @@ class TextFieldState extends State<TextField> {
 						width: 300,
 						decoration: new BoxDecoration({
 							border: Border.symmetric({
-								horizontal: new BorderSide({ color: 'black', width: 1 })
+								horizontal: new BorderSide({ color: 'black', width: 1 }),
+								vertical: new BorderSide({ color: 'black', width: 1 })
 							})
 						}),
 						child: ConstraintsTransformBox({

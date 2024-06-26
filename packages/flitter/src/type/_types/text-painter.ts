@@ -231,7 +231,7 @@ export class Paragraph {
   get intrinsicHeight(): number {
     return this.lines.reduce((acc, line) => Math.max(acc + line.height), 0);
   }
-  
+
   layout(width: number = Infinity) {
     this.lines = [];
     let currentLine = new ParagraphLine();
@@ -249,55 +249,48 @@ export class Paragraph {
         this.lines.push(currentLine);
       }
       currentLine = new ParagraphLine();
+    };
+
+    const addWordToLine = (word: string, font: string) => {
+      const wordWidth = getTextWidth({ text: word, font });
+      if (currentLine.width + wordWidth > width) {
+        addNewLine();
+      }
       currentLine.addSpanBox(
         new SpanBox({
-          content: "\n",
+          content: word,
           ...currentStyle,
           size: {
             height: getTextHeight({ fontSize: currentStyle.fontSize }),
-            width: 0,
+            width: wordWidth,
           },
         }),
       );
     };
 
-    const addWordToLine = (
-      word: string,
-      isWhitespace: boolean,
-      font: string,
-    ) => {
-      const wordWidth = getTextWidth({ text: word, font });
-      if (currentLine.width + wordWidth > width && !isWhitespace) {
-        addNewLine();
-      }
-      if (!isWhitespace || currentLine.spanBoxes.length > 0) {
-        currentLine.addSpanBox(
-          new SpanBox({
-            content: word,
-            ...currentStyle,
-            size: {
-              height: getTextHeight({ fontSize: currentStyle.fontSize }),
-              width: wordWidth,
-            },
-          }),
-        );
-      }
-    };
-
     const processWord = (font: string) => (word: string) => {
-      const isWhitespace = /^\s+$/.test(word);
       const containsNewline = word.includes("\n");
 
       if (containsNewline) {
         word.split(/(\n)/).forEach(part => {
           if (part === "\n") {
             addNewLine();
+            currentLine.addSpanBox(
+              new SpanBox({
+                content: "\n",
+                ...currentStyle,
+                size: {
+                  height: getTextHeight({ fontSize: currentStyle.fontSize }),
+                  width: 0,
+                },
+              }),
+            );
           } else if (part.length > 0) {
-            addWordToLine(part, isWhitespace, font);
+            addWordToLine(part, font);
           }
         });
       } else {
-        addWordToLine(word, isWhitespace, font);
+        addWordToLine(word, font);
       }
     };
 

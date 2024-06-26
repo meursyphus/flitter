@@ -1,20 +1,23 @@
 <script lang="ts">
 	import Widget from '../lib/Widget.svelte';
-	import { Container } from '@meursyphus/flitter';
+	import { Column, Container, MainAxisSize, Row } from '@meursyphus/flitter';
 	import TextField from './TextField';
 
 	let el: HTMLTextAreaElement;
 </script>
 
 <Widget
-	width="300px"
+	width="600px"
 	height="150px"
 	renderer="svg"
 	widget={Container({
-		width: 300,
+		width: 600,
 		height: Infinity,
 		color: 'lightgray',
-		child: new TextField()
+		child: Row({
+			mainAxisSize: MainAxisSize.min,
+			children: [new TextField()]
+		})
 	})}
 />
 
