@@ -137,6 +137,16 @@ class TextFieldState extends State<TextField> {
 		this.#selection = [start, end];
 		const caretLocation = direction === 'rtl' ? end : start;
 		const lines = this.#textPainter?.paragraph?.lines ?? [];
+		if (lines.length === 0) {
+			this.#caret = {
+				width: 1,
+				height: 20,
+				color: 'black',
+				y: 0,
+				x: 0
+			};
+			return;
+		}
 
 		// Calculate accumulated character counts and heights for each line
 		const accumulatedInfo = lines.reduce((acc, line, index) => {
@@ -432,7 +442,7 @@ class NativeInput {
 				this.#element = document.createElement('textarea');
 				this.#element.setAttribute(
 					'style',
-					'width: 300px; height: 150px; font-size: 20px; font-family: Roboto; padding-inline: 4px;'
+					'width: 300px; height: 150px; font-size: 20px; font-family: Roboto;'
 				);
 				//this.#element.setAttribute('style', 'position: absolute; opacity: 0; height: 0; width: 0;');
 				document.body.appendChild(this.#element);
