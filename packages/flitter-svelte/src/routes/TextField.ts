@@ -130,12 +130,52 @@ class TextFieldState extends State<TextField> {
 		this.#focused = true;
 		this.#render();
 	};
+	#render() {
+		this.setState();
+	}
 	#setSelection(start: number, end: number = start, direction: 'ltr' | 'rtl' = 'rtl') {
 		this.#selection = [start, end];
 		const caretLocation = direction === 'rtl' ? end : start;
 		const lines = this.#textPainter?.paragraph?.lines ?? [];
-		let currentLocation = 0;
-		let currentY = 0;
+
+		// Calculate accumulated character counts and heights for each line
+		const accumulatedInfo = lines.reduce((acc, line, index) => {
+			acc.push({
+				charCount: (acc[index - 1]?.charCount || 0) + line.spanBoxes.length,
+				height: (acc[index - 1]?.height || 0) + line.height
+			});
+			return acc;
+		}, [] as Array<{ charCount: number; height: number }>);
+
+		// Binary search to find the correct line
+		let low = 0;
+		let high = lines.length - 1;
+		let lineIndex = -1;
+		let previousChars = 0;
+		let previousHeight = 0;
+
+		while (low <= high) {
+			const mid = Math.floor((low + high) / 2);
+			const lineStartChar = mid > 0 ? accumulatedInfo[mid - 1].charCount : 0;
+			const lineEndChar = accumulatedInfo[mid].charCount;
+
+			if (caretLocation > lineStartChar && caretLocation <= lineEndChar) {
+				lineIndex = mid;
+				previousChars = lineStartChar;
+				previousHeight = mid > 0 ? accumulatedInfo[mid - 1].height : 0;
+				break;
+			} else if (caretLocation <= lineStartChar) {
+				high = mid - 1;
+			} else {
+				low = mid + 1;
+			}
+		}
+
+		// Handle the case when caret is at the very beginning of the text
+		if (lineIndex === -1 && caretLocation === 0) {
+			lineIndex = 0;
+		}
+
 		let caret: {
 			height: number;
 			x: number;
@@ -144,49 +184,38 @@ class TextFieldState extends State<TextField> {
 			width: number;
 		} | null = null;
 
-		for (const line of lines) {
-			const lineEndLocation = currentLocation + line.spanBoxes.length;
+		if (lineIndex !== -1) {
+			const line = lines[lineIndex];
+			const charIndex = caretLocation - previousChars;
 
-			if (caretLocation <= lineEndLocation) {
-				// Caret is in this line
-				if (caretLocation === lineEndLocation) {
-					// Caret is at the end of the line
-					const lastChar = line.spanBoxes[line.spanBoxes.length - 1];
-					caret = {
-						height: line.height,
-						y: currentY,
-						x: lastChar ? lastChar.offset.x + lastChar.size.width : 0,
-						color: lastChar ? lastChar.color : 'black',
-						width: 1
-					};
-				} else {
-					// Caret is within the line
-					const charIndex = caretLocation - currentLocation;
-					const char = line.spanBoxes[charIndex];
-					caret = {
-						height: line.height,
-						y: currentY,
-						x: char.offset.x,
-						color: char.color,
-						width: 1
-					};
-				}
-				break;
+			if (charIndex === line.spanBoxes.length) {
+				// Caret is at the end of the line
+				const lastChar = line.spanBoxes[line.spanBoxes.length - 1];
+				caret = {
+					height: line.height,
+					y: previousHeight,
+					x: lastChar ? lastChar.offset.x + lastChar.size.width : 0,
+					color: lastChar ? lastChar.color : 'black',
+					width: 1
+				};
+			} else {
+				// Caret is within the line
+				const char = line.spanBoxes[charIndex];
+				caret = {
+					height: line.height,
+					y: previousHeight,
+					x: char.offset.x,
+					color: char.color,
+					width: 1
+				};
 			}
-
-			// Move to next line
-			currentLocation = lineEndLocation;
-			currentY += line.height;
-		}
-
-		// If we've gone through all lines and haven't set the caret,
-		// it means the caretLocation is at the very end of the text
-		if (!caret && lines.length > 0) {
+		} else if (lines.length > 0) {
+			// If caret is beyond the last character, place it at the end of the text
 			const lastLine = lines[lines.length - 1];
 			const lastChar = lastLine.spanBoxes[lastLine.spanBoxes.length - 1];
 			caret = {
 				height: lastLine.height,
-				y: currentY,
+				y: accumulatedInfo[accumulatedInfo.length - 1].height - lastLine.height,
 				x: lastChar ? lastChar.offset.x + lastChar.size.width : 0,
 				color: lastChar ? lastChar.color : 'black',
 				width: 1
@@ -196,16 +225,13 @@ class TextFieldState extends State<TextField> {
 		this.#caret = caret;
 	}
 
-	#render() {
-		this.setState();
-	}
-
 	handleBlur = () => {
 		this.#selection = [0, 0];
 		//this.#caret = null;
 		this.#nativeInput.blur();
 		this.#focused = false;
 	};
+
 	handleMouseDown = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -292,93 +318,6 @@ class TextFieldState extends State<TextField> {
 			// If click is on the right half of the character, move to next character
 			if (x > box.offset.x + box.size.width / 2) {
 				globalCharIndex++;
-			}
-		}
-
-		console.log(lineIndex, 'lineIndex');
-		console.log(globalCharIndex, 'globalCharIndex');
-		// Set focus and selection
-		this.focus(globalCharIndex);
-	};
-	handleMouseDown_old = (e: MouseEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-		const root = this.element.renderObject.renderOwner.renderContext.view;
-		const rootPosition = root.getBoundingClientRect();
-		const position = this.element.renderObject.localToGlobal();
-		const [x, y] = [
-			e.clientX - rootPosition.x - position.x,
-			e.clientY - rootPosition.y - position.y
-		];
-		const lines = this.#textPainter?.paragraph?.lines ?? [];
-		if (lines.length === 0) {
-			this.focus(0);
-			return;
-		}
-		const accumulatedHeights = lines.reduce((acc, line, index) => {
-			acc.push((acc[index - 1] || 0) + line.height);
-			return acc;
-		}, [] as number[]);
-
-		// Binary search to find the correct line
-		let low = 0;
-		let high = lines.length - 1;
-		let lineIndex = -1;
-
-		while (low <= high) {
-			const mid = Math.floor((low + high) / 2);
-			const lineTop = mid > 0 ? accumulatedHeights[mid - 1] : 0;
-			const lineBottom = accumulatedHeights[mid];
-
-			if (y >= lineTop && y < lineBottom) {
-				lineIndex = mid;
-				break;
-			} else if (y < lineTop) {
-				high = mid - 1;
-			} else {
-				low = mid + 1;
-			}
-		}
-
-		// If lineIndex is still -1, it means the click was below the last line
-		if (lineIndex === -1) {
-			lineIndex = lines.length - 1;
-		}
-
-		let globalCharIndex = 0;
-
-		// Calculate global char index for previous lines
-		for (let i = 0; i < lineIndex; i++) {
-			globalCharIndex += lines[i].spanBoxes.length;
-		}
-
-		const line = lines[lineIndex];
-		const lineStartIndex = globalCharIndex;
-		const lineEndIndex = lineStartIndex + line.spanBoxes.length;
-
-		// Check if click is beyond the last character of the line
-		if (line.spanBoxes.length > 0) {
-			const lastBox = line.spanBoxes[line.spanBoxes.length - 1];
-			const lineEndX = lastBox.offset.x + lastBox.size.width;
-			if (x >= lineEndX) {
-				globalCharIndex = lineEndIndex;
-			} else {
-				// Linear search within the line for more accurate positioning
-				for (let i = 0; i < line.spanBoxes.length; i++) {
-					const box = line.spanBoxes[i];
-					const boxEnd = box.offset.x + box.size.width;
-					if (x < boxEnd) {
-						globalCharIndex = lineStartIndex + i;
-						if (x > box.offset.x + box.size.width / 2) {
-							globalCharIndex++;
-						}
-						break;
-					}
-				}
-				// If we haven't found a position, it means the click was after the last character
-				if (globalCharIndex === lineStartIndex) {
-					globalCharIndex = lineEndIndex;
-				}
 			}
 		}
 
