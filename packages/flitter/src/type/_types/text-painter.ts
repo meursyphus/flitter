@@ -231,7 +231,7 @@ export class Paragraph {
   get intrinsicHeight(): number {
     return this.lines.reduce((acc, line) => Math.max(acc + line.height), 0);
   }
-
+  
   layout(width: number = Infinity) {
     this.lines = [];
     let currentLine = new ParagraphLine();
@@ -303,7 +303,7 @@ export class Paragraph {
 
     this.source.forEach(({ content, ...style }) => {
       currentStyle = style;
-      const font = `${style.fontWeight} ${style.fontSize}px ${style.fontFamily}`;
+      const font = `${currentStyle.fontWeight} ${currentStyle.fontSize}px ${currentStyle.fontFamily}`;
       const words = content.match(/\S+|\s+/g) || [];
       words.forEach(processWord(font));
     });
@@ -313,11 +313,6 @@ export class Paragraph {
     }
 
     this.align();
-  }
-
-  private addLine(line: ParagraphLine) {
-    if (line.spanBoxes.length === 0) return;
-    this.lines.push(line);
   }
 
   private align() {

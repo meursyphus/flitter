@@ -213,8 +213,8 @@ class TextFieldState extends State<TextField> {
 		let globalCharIndex = 0;
 		let found = false;
 
-		for (const element of lines) {
-			const line = element;
+		for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+			const line = lines[lineIndex];
 			const lineTop = line.spanBoxes[0]?.offset.y ?? 0;
 			const lineBottom = lineTop + line.height;
 
@@ -227,7 +227,6 @@ class TextFieldState extends State<TextField> {
 				if (line.spanBoxes.length > 0) {
 					const lastBox = line.spanBoxes[line.spanBoxes.length - 1];
 					const lineEndX = lastBox.offset.x + lastBox.size.width;
-					console.log(lineEndX, 'lineEndX', x, lineEndIndex);
 
 					if (x >= lineEndX) {
 						globalCharIndex = lineEndIndex;
@@ -311,7 +310,7 @@ class TextFieldState extends State<TextField> {
 								height: this.#caret.height,
 								color: this.#caret.color
 							})
-						})
+					  })
 					: SizedBox.shrink()
 			]
 		});
