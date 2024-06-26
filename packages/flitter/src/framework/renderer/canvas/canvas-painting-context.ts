@@ -7,7 +7,7 @@ import {
   PictureRecorder,
   type Layer,
 } from "./layer";
-import { NotImplementedError } from "src/exception";
+import { NotImplementedError } from "../../../exception";
 
 export class CanvasPaintingContext {
   #estimateBound: Rect;
