@@ -133,6 +133,8 @@ class TextFieldState extends State<TextField> {
   #selectionStart: number = 0;
   #textFieldPosition: { x: number; y: number } | null = null;
   #focused = false;
+  #isTyping = false;
+  #typingTimer?: NodeJS.Timeout;
 
   constructor() {
     super();
@@ -187,6 +189,16 @@ class TextFieldState extends State<TextField> {
     this.#nativeInput.dispose();
   }
 
+  #resetTypingTimer() {
+    if (this.#typingTimer) {
+      clearTimeout(this.#typingTimer);
+    }
+    this.#typingTimer = setTimeout(() => {
+      this.#isTyping = false;
+      this.#render();
+    }, 10);
+  }
+
   #setText(text: string) {
     this.value = text;
     this.#textPainter = new TextPainter({
@@ -217,10 +229,15 @@ class TextFieldState extends State<TextField> {
     });
   }
 
+  /**
+   * Sync the text field with the native input.
+   */
   #syncThis() {
     this.#setText(this.#nativeInput.value);
     this.#textPainter.layout();
     this.#render();
+    this.#isTyping = true;
+    this.#resetTypingTimer();
     this.element.scheduler.addPostFrameCallbacks(() => {
       this.#setSelection(...this.#nativeInput.getSelection());
       this.#render();
@@ -553,6 +570,7 @@ class TextFieldState extends State<TextField> {
                     width: this.#caretUi.width,
                     height: this.#caretUi.height,
                     color: this.#caretUi.color,
+                    isTyping: this.#isTyping,
                   }),
                 })
               : SizedBox.shrink(),
@@ -567,19 +585,23 @@ class Caret extends StatefulWidget {
   width: number;
   height: number;
   color: string;
+  isTyping: boolean;
   constructor({
     width,
     height,
     color,
+    isTyping,
   }: {
     width: number;
     height: number;
     color: string;
+    isTyping: boolean;
   }) {
     super();
     this.width = width;
     this.height = height;
     this.color = color;
+    this.isTyping = isTyping;
   }
 
   override createState(): State<StatefulWidget> {
@@ -588,9 +610,25 @@ class Caret extends StatefulWidget {
 }
 
 class CaretState extends State<Caret> {
-  visible = false;
+  visible = true;
   interval?: NodeJS.Timeout;
+
   initState(): void {
+    this.startBlinking();
+  }
+
+  didUpdateWidget(oldWidget: Caret): void {
+    if (this.widget.isTyping !== oldWidget.isTyping) {
+      if (this.widget.isTyping) {
+        this.stopBlinking();
+        this.visible = true;
+      } else {
+        this.startBlinking();
+      }
+    }
+  }
+
+  startBlinking(): void {
     this.interval = setInterval(() => {
       this.setState(() => {
         this.visible = !this.visible;
@@ -598,8 +636,15 @@ class CaretState extends State<Caret> {
     }, 500);
   }
 
+  stopBlinking(): void {
+    if (this.interval) {
+      clearInterval(this.interval);
+      this.interval = undefined;
+    }
+  }
+
   dispose(): void {
-    this.interval && clearInterval(this.interval);
+    this.stopBlinking();
   }
 
   build(): Widget {
@@ -613,7 +658,6 @@ class CaretState extends State<Caret> {
     });
   }
 }
-
 /**
  * @description This class serves as an abstraction layer to handle browser-specific implementations,
  * ensuring compatibility across different environments.
