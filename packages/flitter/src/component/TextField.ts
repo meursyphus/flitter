@@ -645,6 +645,9 @@ class CaretState extends State<Caret> {
   }
 
   startBlinking(): void {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
     this.interval = setInterval(() => {
       this.setState(() => {
         this.visible = !this.visible;
@@ -661,6 +664,7 @@ class CaretState extends State<Caret> {
 
   dispose(): void {
     this.stopBlinking();
+    console.log("stoped");
   }
 
   build(): Widget {
