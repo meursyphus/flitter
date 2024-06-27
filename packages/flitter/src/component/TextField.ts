@@ -3,7 +3,6 @@ import { State } from "../element";
 import {
   Alignment,
   Border,
-  BorderSide,
   BoxDecoration,
   Constraints,
   EdgeInsets,
@@ -70,16 +69,12 @@ class TextField extends StatefulWidget {
       textAlign = TextAlign.start,
       textDirection = TextDirection.ltr,
       decoration = new BoxDecoration({
-        border: new Border({
-          bottom: new BorderSide({ color: "black", width: 1 }),
-        }),
+        border: Border.all({ color: "black", width: 1 }),
       }),
       padding = EdgeInsets.all(0),
       width = Infinity,
       height = 20,
-      focusedBorder = new Border({
-        bottom: new BorderSide({ color: "blue", width: 1 }),
-      }),
+      focusedBorder = Border.all({ color: "blue", width: 1 }),
     }: TextFieldProps = {},
   ) {
     super(key);
@@ -129,7 +124,7 @@ const ZERO_WIDTH_SPACE = "\u200B";
 
 class TextFieldState extends State<TextField> {
   #nativeInput = new NativeInput();
-  #text = "";
+  value = "";
   #selection: [number, number] = [0, 0];
   #caretUi: CaretInfo | null = null;
   #textPainter!: TextPainter;
@@ -137,6 +132,7 @@ class TextFieldState extends State<TextField> {
   #textKey = new GlobalKey();
   #selectionStart: number = 0;
   #textFieldPosition: { x: number; y: number } | null = null;
+  #focused = false;
 
   constructor() {
     super();
@@ -163,14 +159,27 @@ class TextFieldState extends State<TextField> {
 
   override initState(): void {
     this.#setText(this.widget.text);
-    this.#nativeInput.addEventListener("keydown", () => {
+
+    this.#nativeInput.addEventListener("input", () => {
+      this.widget.onChanged?.(this.#nativeInput.value);
+    });
+    this.#nativeInput.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        this.widget.onSubmitted?.(this.#nativeInput.value);
+      }
       setTimeout(() => {
         this.#syncThis();
       }, 0);
     });
 
     this.#nativeInput.addEventListener("blur", () => {
-      this.handleBlur();
+      this.#syncBlur();
+      this.widget.onBlurred?.();
+    });
+
+    this.#nativeInput.addEventListener("focus", () => {
+      this.widget.onFocused?.();
     });
   }
 
@@ -179,7 +188,7 @@ class TextFieldState extends State<TextField> {
   }
 
   #setText(text: string) {
-    this.#text = text;
+    this.value = text;
     this.#textPainter = new TextPainter({
       text: this.#toTextSpan(),
       textDirection: this.widget.textDirection,
@@ -196,9 +205,9 @@ class TextFieldState extends State<TextField> {
        * Please insert an empty string.
        * Otherwise, the caret position cannot be calculated when there are no lines and nothing is present.
        */
-      text: this.#text ? "" : ZERO_WIDTH_SPACE,
+      text: this.value ? "" : ZERO_WIDTH_SPACE,
       style: this.widget.style,
-      children: this.#text.split("").map(
+      children: this.value.split("").map(
         text =>
           new TextSpan({
             text,
@@ -208,9 +217,6 @@ class TextFieldState extends State<TextField> {
     });
   }
 
-  /**
-   * @description: syncronize: nativeInput -> this
-   */
   #syncThis() {
     this.#setText(this.#nativeInput.value);
     this.#textPainter.layout();
@@ -221,15 +227,23 @@ class TextFieldState extends State<TextField> {
     });
   }
 
-  #focused = false;
-  focus = (location: number = this.#text.length) => {
-    this.#nativeInput.value = this.#text;
+  #syncBlur = () => {
+    this.#selection = [0, 0];
+    this.#caretUi = null;
+    this.#selectionUI = null;
+    this.#focused = false;
+    this.#render();
+  };
+
+  focus = (location: number = this.value.length) => {
+    this.#nativeInput.value = this.value;
     this.#nativeInput.focus();
     this.#setSelection(location);
     this.#nativeInput.setCaret(location);
     this.#focused = true;
     this.#render();
   };
+
   #render() {
     this.setState();
   }
@@ -357,12 +371,9 @@ class TextFieldState extends State<TextField> {
     this.#render();
   }
 
-  handleBlur = () => {
-    this.#selection = [0, 0];
-    this.#caretUi = null;
+  blur = () => {
+    this.#syncBlur();
     this.#nativeInput.blur();
-    this.#focused = false;
-    this.setState();
   };
 
   #getCharIndexFromMouseEvent = (e: MouseEvent): number => {
@@ -446,7 +457,7 @@ class TextFieldState extends State<TextField> {
     } else {
       globalCharIndex += spanBoxIndex;
       const box = line.spanBoxes[spanBoxIndex];
-      // 클릭이 문자의 오른쪽 절반에 있다면 다음 문자로 이동
+      // Move to the next character if the click is on the right half of the character
       if (x > box.offset.x + box.size.width / 2) {
         globalCharIndex++;
       }

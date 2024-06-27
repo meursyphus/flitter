@@ -1,10 +1,11 @@
 <script lang="ts">
 	import Widget from '../lib/Widget.svelte';
 	import {
+	Alignment,
+	Column,
 		Container,
 		EdgeInsets,
 		MainAxisSize,
-		Row,
 		TextField,
 		TextStyle
 	} from '@meursyphus/flitter';
@@ -17,15 +18,22 @@
 	widget={Container({
 		height: Infinity,
 		color: 'lightgray',
-		child: Row({
+		alignment: Alignment.center,
+		child: Column({
 			mainAxisSize: MainAxisSize.min,
 			children: [
 				TextField('', {
-					padding: EdgeInsets.symmetric({ horizontal: 1 }),
+					padding: EdgeInsets.symmetric({ horizontal: 4, vertical: 4 }),
 					style: new TextStyle({
 						fontSize: 20
-					})
-				})
+					}),
+					onChanged: (value) => {
+						console.log("chnaged", value);
+					},
+					onSubmitted: (value) => {
+						console.log("submitted", value);
+					}
+				}),
 			]
 		})
 	})}
