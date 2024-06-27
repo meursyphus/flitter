@@ -7,7 +7,6 @@ import {
   BoxDecoration,
   Constraints,
   EdgeInsets,
-  StackFit,
   TextAlign,
   TextDirection,
   TextPainter,
@@ -265,7 +264,7 @@ class TextFieldState extends State<TextField> {
       }
     }
 
-    return lineInfo.length - 1; // handle as the last line
+    return lineInfo.length - 1; // 마지막 줄로 처리
   }
 
   #calculateCaret(lineInfo: LineInfo[], caretLocation: number): CaretInfo {
@@ -362,7 +361,7 @@ class TextFieldState extends State<TextField> {
 
   #getCharIndexFromMouseEvent = (e: MouseEvent): number => {
     if (!this.#textFieldPosition) {
-      return 0; // 또는 적절한 기본값
+      return 0; 
     }
 
     const [x, y] = [
@@ -375,13 +374,12 @@ class TextFieldState extends State<TextField> {
       return 0;
     }
 
-    // 누적된 높이 배열 생성
     const accumulatedHeights = lines.reduce((acc, line, index) => {
       acc.push((acc[index - 1] || 0) + line.height);
       return acc;
     }, [] as number[]);
 
-    // 이진 검색으로 올바른 라인 찾기
+    // Binary search to find the correct line
     let low = 0;
     let high = lines.length - 1;
     let lineIndex = -1;
@@ -401,21 +399,21 @@ class TextFieldState extends State<TextField> {
       }
     }
 
-    // 클릭이 마지막 라인 아래에 있었다면 마지막 라인으로 처리
+    // If the click is below the last line, handle it as the last line
     if (lineIndex === -1) {
       lineIndex = lines.length - 1;
     }
 
     let globalCharIndex = 0;
 
-    // 이전 라인들의 문자 수 계산
+    // Calculate the number of characters in previous lines
     for (let i = 0; i < lineIndex; i++) {
       globalCharIndex += lines[i].spanBoxes.length;
     }
 
     const line = lines[lineIndex];
 
-    // 라인 내에서 이진 검색으로 올바른 spanBox 찾기
+    // Binary search to find the correct spanBox in the line
     low = 0;
     high = line.spanBoxes.length - 1;
     let spanBoxIndex = -1;
@@ -436,7 +434,7 @@ class TextFieldState extends State<TextField> {
       }
     }
 
-    // 클릭이 마지막 문자 뒤에 있었다면 마지막 문자 다음 위치로 처리
+    // If the click is after the last character, handle it as the next character
     if (spanBoxIndex === -1) {
       globalCharIndex += line.spanBoxes.length;
     } else {
@@ -450,6 +448,7 @@ class TextFieldState extends State<TextField> {
 
     return globalCharIndex;
   };
+
   handleMouseDown = (e: MouseEvent) => {
     e.preventDefault();
 
@@ -480,98 +479,6 @@ class TextFieldState extends State<TextField> {
     this.#textFieldPosition = null;
   };
 
-  handleMouseDown2 = (e: MouseEvent) => {
-    e.preventDefault();
-    const root = this.element.renderObject.renderOwner.renderContext.view;
-    const rootPosition = root.getBoundingClientRect();
-    const position = this.#textKey.currentContext.renderObject.localToGlobal();
-    const [x, y] = [
-      e.clientX - rootPosition.x - position.x,
-      e.clientY - rootPosition.y - position.y,
-    ];
-    const lines = this.#textPainter?.paragraph?.lines ?? [];
-    if (lines.length === 0) {
-      this.focus(0);
-      return;
-    }
-
-    // Create accumulated heights array
-    const accumulatedHeights = lines.reduce((acc, line, index) => {
-      acc.push((acc[index - 1] || 0) + line.height);
-      return acc;
-    }, [] as number[]);
-
-    // Binary search to find the correct line
-    let low = 0;
-    let high = lines.length - 1;
-    let lineIndex = -1;
-
-    while (low <= high) {
-      const mid = Math.floor((low + high) / 2);
-      const lineTop = mid > 0 ? accumulatedHeights[mid - 1] : 0;
-      const lineBottom = accumulatedHeights[mid];
-
-      if (y >= lineTop && y < lineBottom) {
-        lineIndex = mid;
-        break;
-      } else if (y < lineTop) {
-        high = mid - 1;
-      } else {
-        low = mid + 1;
-      }
-    }
-
-    // If lineIndex is still -1, it means the click was below the last line
-    if (lineIndex === -1) {
-      lineIndex = lines.length - 1;
-    }
-
-    let globalCharIndex = 0;
-
-    // Calculate global char index for previous lines
-    for (let i = 0; i < lineIndex; i++) {
-      globalCharIndex += lines[i].spanBoxes.length;
-    }
-
-    const line = lines[lineIndex];
-
-    // Binary search within the line to find the correct spanBox
-    low = 0;
-    high = line.spanBoxes.length - 1;
-    let spanBoxIndex = -1;
-
-    while (low <= high) {
-      const mid = Math.floor((low + high) / 2);
-      const box = line.spanBoxes[mid];
-      const boxStart = box.offset.x;
-      const boxEnd = boxStart + box.size.width;
-
-      if (x >= boxStart && x < boxEnd) {
-        spanBoxIndex = mid;
-        break;
-      } else if (x < boxStart) {
-        high = mid - 1;
-      } else {
-        low = mid + 1;
-      }
-    }
-
-    // If spanBoxIndex is -1, it means the click was after the last character
-    if (spanBoxIndex === -1) {
-      globalCharIndex += line.spanBoxes.length;
-    } else {
-      globalCharIndex += spanBoxIndex;
-      const box = line.spanBoxes[spanBoxIndex];
-      // If click is on the right half of the character, move to next character
-      if (x > box.offset.x + box.size.width / 2) {
-        globalCharIndex++;
-      }
-    }
-
-    // Set focus and selection
-    this.focus(globalCharIndex);
-  };
-
   override build() {
     return Container({
       width: this.widget.width,
@@ -581,16 +488,15 @@ class TextFieldState extends State<TextField> {
         : this.widget.decoration.copyWith({
             border: this.widget.focusedBorder,
           }),
-      child: Stack({
-        fit: StackFit.loose,
-        clipped: false,
-        children: [
-          GestureDetector({
-            onMouseDown: this.handleMouseDown,
-            onMouseMove: this.handleMouseMove,
-            onMouseUp: this.handleMouseUp,
-            cursor: "text",
-            child: Container({
+      child: GestureDetector({
+        onMouseDown: this.handleMouseDown,
+        onMouseMove: this.handleMouseMove,
+        onMouseUp: this.handleMouseUp,
+        cursor: "text",
+        child: Stack({
+          clipped: false,
+          children: [
+            Container({
               child: ConstraintsTransformBox({
                 alignment: Alignment.topLeft,
                 constraintsTransform: constraints => {
@@ -611,30 +517,30 @@ class TextFieldState extends State<TextField> {
                 }),
               }),
             }),
-          }),
-          ...(this.#selectionUI?.map(segment =>
-            Positioned({
-              top: segment.y,
-              left: segment.start,
-              child: Container({
-                width: segment.end - segment.start,
-                height: segment.height,
-                color: "rgba(0, 0, 255, 0.2)", // 반투명한 파란색
-              }),
-            }),
-          ) ?? []),
-          this.#caretUi
-            ? Positioned({
-                top: this.#caretUi.y,
-                left: this.#caretUi.x,
-                child: new Caret({
-                  width: this.#caretUi.width,
-                  height: this.#caretUi.height,
-                  color: this.#caretUi.color,
+            ...(this.#selectionUI?.map(segment =>
+              Positioned({
+                top: segment.y,
+                left: segment.start,
+                child: Container({
+                  width: segment.end - segment.start,
+                  height: segment.height,
+                  color: "rgba(0, 0, 255, 0.2)", // 반투명한 파란색
                 }),
-              })
-            : SizedBox.shrink(),
-        ],
+              }),
+            ) ?? []),
+            this.#caretUi
+              ? Positioned({
+                  top: this.#caretUi.y,
+                  left: this.#caretUi.x,
+                  child: new Caret({
+                    width: this.#caretUi.width,
+                    height: this.#caretUi.height,
+                    color: this.#caretUi.color,
+                  }),
+                })
+              : SizedBox.shrink(),
+          ],
+        }),
       }),
     });
   }
