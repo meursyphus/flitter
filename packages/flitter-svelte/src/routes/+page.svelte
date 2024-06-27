@@ -16,7 +16,7 @@
 			mainAxisSize: MainAxisSize.min,
 			children: [
 				TextField('안녕하세요', {
-					padding: EdgeInsets.symmetric({ horizontal: 10 })
+					padding: EdgeInsets.symmetric({ horizontal: 10, vertical: 10 })
 				})
 			]
 		})

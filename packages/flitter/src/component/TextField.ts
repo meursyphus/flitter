@@ -1,3 +1,4 @@
+import { GlobalKey } from "..";
 import { State } from "../element";
 import {
   Alignment,
@@ -48,7 +49,7 @@ class TextField extends StatefulWidget {
   onSubmitted?: (text: string) => void;
   onFocused?: () => void;
   onBlurred?: () => void;
-  style?: TextStyle;
+  style: TextStyle;
   maxLines?: number;
   textAlign?: TextAlign;
   textDirection?: TextDirection;
@@ -133,6 +134,7 @@ class TextFieldState extends State<TextField> {
   #caretUi: CaretInfo | null = null;
   #textPainter!: TextPainter;
   #selectionUI: SelectionSegment[] = [];
+  #textKey = new GlobalKey();
 
   constructor() {
     super();
@@ -262,7 +264,7 @@ class TextFieldState extends State<TextField> {
       }
     }
 
-    return lineInfo.length - 1; // 마지막 줄로 처리
+    return lineInfo.length - 1; // handle as the last line
   }
 
   #calculateCaret(lineInfo: LineInfo[], caretLocation: number): CaretInfo {
@@ -283,8 +285,8 @@ class TextFieldState extends State<TextField> {
 
     return {
       height: line.height,
-      y: line.y + this.widget.padding.top,
-      x: x + this.widget.padding.left,
+      y: line.y,
+      x: x,
       color: spanBoxes[localCaretPosition]?.color || "black",
       width: 1,
     };
@@ -324,9 +326,9 @@ class TextFieldState extends State<TextField> {
               spanBoxes[spanBoxes.length - 1]?.size.width || 0;
 
       segments.push({
-        y: line.y + this.widget.padding.top,
-        start: startX + this.widget.padding.left,
-        end: endX + this.widget.padding.left,
+        y: line.y,
+        start: startX,
+        end: endX,
         height: line.height,
       });
     }
@@ -334,138 +336,19 @@ class TextFieldState extends State<TextField> {
     return segments;
   }
 
-  #setSelection(
-    start: number,
-    end: number = start,
-    direction: "ltr" | "rtl" = "rtl",
-  ) {
+  #setSelection(start: number, end: number = start) {
     this.#selection = [start, end];
-    const caretLocation = direction === "rtl" ? end : start;
+    const caretLocation = start;
 
     const lineInfo = this.#calculateLineInfo();
-
-    this.#caretUi = this.#calculateCaret(lineInfo, caretLocation);
-
-    if (start !== end) {
+    if (this.#hasSelection) {
       this.#selectionUI = this.#calculateSelectionUI(lineInfo, start, end);
+      this.#caretUi = null;
     } else {
       this.#selectionUI = null;
+      this.#caretUi = this.#calculateCaret(lineInfo, caretLocation);
     }
-
     this.#render();
-  }
-
-  #setSelection_legacy(
-    start: number,
-    end: number = start,
-    direction: "ltr" | "rtl" = "rtl",
-  ) {
-    this.#selection = [start, end];
-    const caretLocation = direction === "rtl" ? end : start;
-    const lines = this.#textPainter?.paragraph?.lines ?? [];
-    if (lines.length === 0) {
-      this.#caretUi = {
-        width: 1,
-        height: 20,
-        color: "black",
-        y: 0,
-        x: 0,
-      };
-      return;
-    }
-
-    // Calculate accumulated character counts and heights for each line
-    const accumulatedInfo = lines.reduce(
-      (acc, line, index) => {
-        acc.push({
-          charCount: (acc[index - 1]?.charCount || 0) + line.spanBoxes.length,
-          height: (acc[index - 1]?.height || 0) + line.height,
-        });
-        return acc;
-      },
-      [] as Array<{ charCount: number; height: number }>,
-    );
-
-    // Binary search to find the correct line
-    let low = 0;
-    let high = lines.length - 1;
-    let lineIndex = -1;
-    let previousChars = 0;
-    let previousHeight = 0;
-
-    while (low <= high) {
-      const mid = Math.floor((low + high) / 2);
-      const lineStartChar = mid > 0 ? accumulatedInfo[mid - 1].charCount : 0;
-      const lineEndChar = accumulatedInfo[mid].charCount;
-
-      if (caretLocation > lineStartChar && caretLocation <= lineEndChar) {
-        lineIndex = mid;
-        previousChars = lineStartChar;
-        previousHeight = mid > 0 ? accumulatedInfo[mid - 1].height : 0;
-        break;
-      } else if (caretLocation <= lineStartChar) {
-        high = mid - 1;
-      } else {
-        low = mid + 1;
-      }
-    }
-
-    // Handle the case when caret is at the very beginning of the text
-    if (lineIndex === -1 && caretLocation === 0) {
-      lineIndex = 0;
-    }
-
-    let caret: {
-      height: number;
-      x: number;
-      y: number;
-      color: string;
-      width: number;
-    } | null = null;
-
-    if (lineIndex !== -1) {
-      const line = lines[lineIndex];
-      const charIndex = caretLocation - previousChars;
-
-      if (charIndex === line.spanBoxes.length) {
-        // Caret is at the end of the line
-        const lastChar = line.spanBoxes[line.spanBoxes.length - 1];
-        caret = {
-          height: line.height,
-          y: previousHeight,
-          x: lastChar ? lastChar.offset.x + lastChar.size.width : 0,
-          color: lastChar ? lastChar.color : "black",
-          width: 1,
-        };
-      } else {
-        // Caret is within the line
-        const char = line.spanBoxes[charIndex];
-        caret = {
-          height: line.height,
-          y: previousHeight,
-          x: char.offset.x,
-          color: char.color,
-          width: 1,
-        };
-      }
-    } else if (lines.length > 0) {
-      // If caret is beyond the last character, place it at the end of the text
-      const lastLine = lines[lines.length - 1];
-      const lastChar = lastLine.spanBoxes[lastLine.spanBoxes.length - 1];
-      caret = {
-        height: lastLine.height,
-        y: accumulatedInfo[accumulatedInfo.length - 1].height - lastLine.height,
-        x: lastChar ? lastChar.offset.x + lastChar.size.width : 0,
-        color: lastChar ? lastChar.color : "black",
-        width: 1,
-      };
-    }
-
-    this.#caretUi = caret;
-    if (caret) {
-      caret.x += this.widget.padding.left;
-      caret.y += this.widget.padding.top;
-    }
   }
 
   handleBlur = () => {
@@ -480,10 +363,10 @@ class TextFieldState extends State<TextField> {
     e.preventDefault();
     const root = this.element.renderObject.renderOwner.renderContext.view;
     const rootPosition = root.getBoundingClientRect();
-    const position = this.element.renderObject.localToGlobal();
+    const position = this.#textKey.currentContext.renderObject.localToGlobal();
     const [x, y] = [
-      e.clientX - rootPosition.x - position.x - this.widget.padding.left,
-      e.clientY - rootPosition.y - position.y - this.widget.padding.top,
+      e.clientX - rootPosition.x - position.x,
+      e.clientY - rootPosition.y - position.y,
     ];
     const lines = this.#textPainter?.paragraph?.lines ?? [];
     if (lines.length === 0) {
@@ -569,22 +452,22 @@ class TextFieldState extends State<TextField> {
   };
 
   override build() {
-    return Stack({
-      fit: StackFit.loose,
-      clipped: false,
-      children: [
-        Container({
-          child: GestureDetector({
+    return Container({
+      width: this.widget.width,
+      padding: this.widget.padding,
+      decoration: !this.#focused
+        ? this.widget.decoration
+        : this.widget.decoration.copyWith({
+            border: this.widget.focusedBorder,
+          }),
+      child: Stack({
+        fit: StackFit.loose,
+        clipped: false,
+        children: [
+          GestureDetector({
             onMouseDown: this.handleMouseDown,
             cursor: "text",
             child: Container({
-              width: this.widget.width,
-              padding: this.widget.padding,
-              decoration: !this.#focused
-                ? this.widget.decoration
-                : this.widget.decoration.copyWith({
-                    border: this.widget.focusedBorder,
-                  }),
               child: ConstraintsTransformBox({
                 alignment: Alignment.topLeft,
                 constraintsTransform: constraints => {
@@ -599,36 +482,37 @@ class TextFieldState extends State<TextField> {
                   });
                 },
                 child: RichText({
+                  key: this.#textKey,
                   text: undefined as unknown as TextSpan,
                   textPainter: this.#textPainter,
                 }),
               }),
             }),
           }),
-        }),
-        ...(this.#selectionUI?.map(segment =>
-          Positioned({
-            top: segment.y,
-            left: segment.start,
-            child: Container({
-              width: segment.end - segment.start,
-              height: segment.height,
-              color: "rgba(0, 0, 255, 0.2)", // 반투명한 파란색
-            }),
-          }),
-        ) ?? []),
-        !this.#hasSelection && this.#caretUi
-          ? Positioned({
-              top: this.#caretUi.y,
-              left: this.#caretUi.x,
-              child: new Caret({
-                width: this.#caretUi.width,
-                height: this.#caretUi.height,
-                color: this.#caretUi.color,
+          ...(this.#selectionUI?.map(segment =>
+            Positioned({
+              top: segment.y,
+              left: segment.start,
+              child: Container({
+                width: segment.end - segment.start,
+                height: segment.height,
+                color: "rgba(0, 0, 255, 0.2)", // 반투명한 파란색
               }),
-            })
-          : SizedBox.shrink(),
-      ],
+            }),
+          ) ?? []),
+          this.#caretUi
+            ? Positioned({
+                top: this.#caretUi.y,
+                left: this.#caretUi.x,
+                child: new Caret({
+                  width: this.#caretUi.width,
+                  height: this.#caretUi.height,
+                  color: this.#caretUi.color,
+                }),
+              })
+            : SizedBox.shrink(),
+        ],
+      }),
     });
   }
 }
