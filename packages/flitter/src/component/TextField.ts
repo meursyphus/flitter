@@ -25,7 +25,6 @@ import Positioned from "./Positioned";
 import RichText from "./RichText";
 import SizedBox from "./SizedBox";
 import Stack from "./Stack";
-import Text from "./Text";
 
 type TextFieldProps = {
   key?: any;
@@ -739,7 +738,10 @@ class NativeInput {
           "style",
           "width: 300px; height: 150px; font-size: 20px; font-family: Roboto;",
         );
-        //this.#element.setAttribute('style', 'position: absolute; opacity: 0; height: 0; width: 0;');
+        // this.#element.setAttribute(
+        //   "style",
+        //   "position: absolute; opacity: 0; height: 0; width: 0;",
+        // );
         document.body.appendChild(this.#element);
       } else {
         this.#element = {
