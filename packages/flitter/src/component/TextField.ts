@@ -1,4 +1,4 @@
-import { GlobalKey } from "..";
+import { GlobalKey } from "../framework";
 import { State } from "../element";
 import {
   Alignment,
@@ -129,12 +129,13 @@ interface SelectionSegment {
 class TextFieldState extends State<TextField> {
   #nativeInput = new NativeInput();
   #text = "";
-
   #selection: [number, number] = [0, 0];
   #caretUi: CaretInfo | null = null;
   #textPainter!: TextPainter;
   #selectionUI: SelectionSegment[] = [];
   #textKey = new GlobalKey();
+  #selectionStart: number = 0;
+  #textFieldPosition: { x: number; y: number } | null = null;
 
   constructor() {
     super();
@@ -359,7 +360,127 @@ class TextFieldState extends State<TextField> {
     this.setState();
   };
 
+  #getCharIndexFromMouseEvent = (e: MouseEvent): number => {
+    if (!this.#textFieldPosition) {
+      return 0; // 또는 적절한 기본값
+    }
+
+    const [x, y] = [
+      e.clientX - this.#textFieldPosition.x,
+      e.clientY - this.#textFieldPosition.y,
+    ];
+
+    const lines = this.#textPainter?.paragraph?.lines ?? [];
+    if (lines.length === 0) {
+      return 0;
+    }
+
+    // 누적된 높이 배열 생성
+    const accumulatedHeights = lines.reduce((acc, line, index) => {
+      acc.push((acc[index - 1] || 0) + line.height);
+      return acc;
+    }, [] as number[]);
+
+    // 이진 검색으로 올바른 라인 찾기
+    let low = 0;
+    let high = lines.length - 1;
+    let lineIndex = -1;
+
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      const lineTop = mid > 0 ? accumulatedHeights[mid - 1] : 0;
+      const lineBottom = accumulatedHeights[mid];
+
+      if (y >= lineTop && y < lineBottom) {
+        lineIndex = mid;
+        break;
+      } else if (y < lineTop) {
+        high = mid - 1;
+      } else {
+        low = mid + 1;
+      }
+    }
+
+    // 클릭이 마지막 라인 아래에 있었다면 마지막 라인으로 처리
+    if (lineIndex === -1) {
+      lineIndex = lines.length - 1;
+    }
+
+    let globalCharIndex = 0;
+
+    // 이전 라인들의 문자 수 계산
+    for (let i = 0; i < lineIndex; i++) {
+      globalCharIndex += lines[i].spanBoxes.length;
+    }
+
+    const line = lines[lineIndex];
+
+    // 라인 내에서 이진 검색으로 올바른 spanBox 찾기
+    low = 0;
+    high = line.spanBoxes.length - 1;
+    let spanBoxIndex = -1;
+
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      const box = line.spanBoxes[mid];
+      const boxStart = box.offset.x;
+      const boxEnd = boxStart + box.size.width;
+
+      if (x >= boxStart && x < boxEnd) {
+        spanBoxIndex = mid;
+        break;
+      } else if (x < boxStart) {
+        high = mid - 1;
+      } else {
+        low = mid + 1;
+      }
+    }
+
+    // 클릭이 마지막 문자 뒤에 있었다면 마지막 문자 다음 위치로 처리
+    if (spanBoxIndex === -1) {
+      globalCharIndex += line.spanBoxes.length;
+    } else {
+      globalCharIndex += spanBoxIndex;
+      const box = line.spanBoxes[spanBoxIndex];
+      // 클릭이 문자의 오른쪽 절반에 있다면 다음 문자로 이동
+      if (x > box.offset.x + box.size.width / 2) {
+        globalCharIndex++;
+      }
+    }
+
+    return globalCharIndex;
+  };
   handleMouseDown = (e: MouseEvent) => {
+    e.preventDefault();
+
+    const root = this.element.renderObject.renderOwner.renderContext.view;
+    const rootPosition = root.getBoundingClientRect();
+    const position = this.#textKey.currentContext.renderObject.localToGlobal();
+    this.#textFieldPosition = {
+      x: rootPosition.x + position.x,
+      y: rootPosition.y + position.y,
+    };
+
+    const globalCharIndex = this.#getCharIndexFromMouseEvent(e);
+    this.#selectionStart = globalCharIndex;
+    this.focus(globalCharIndex);
+  };
+
+  handleMouseMove = (e: MouseEvent) => {
+    if (!this.#textFieldPosition) return;
+    const currentIndex = this.#getCharIndexFromMouseEvent(e);
+    const start = Math.min(this.#selectionStart, currentIndex);
+    const end = Math.max(this.#selectionStart, currentIndex);
+
+    this.#setSelection(start, end);
+    this.#nativeInput.setSelection(start, end);
+  };
+
+  handleMouseUp = () => {
+    this.#textFieldPosition = null;
+  };
+
+  handleMouseDown2 = (e: MouseEvent) => {
     e.preventDefault();
     const root = this.element.renderObject.renderOwner.renderContext.view;
     const rootPosition = root.getBoundingClientRect();
@@ -466,6 +587,8 @@ class TextFieldState extends State<TextField> {
         children: [
           GestureDetector({
             onMouseDown: this.handleMouseDown,
+            onMouseMove: this.handleMouseMove,
+            onMouseUp: this.handleMouseUp,
             cursor: "text",
             child: Container({
               child: ConstraintsTransformBox({
