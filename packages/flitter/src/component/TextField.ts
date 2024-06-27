@@ -125,6 +125,8 @@ interface SelectionSegment {
   height: number;
 }
 
+const ZERO_WIDTH_SPACE = "\u200B";
+
 class TextFieldState extends State<TextField> {
   #nativeInput = new NativeInput();
   #text = "";
@@ -190,7 +192,11 @@ class TextFieldState extends State<TextField> {
   }
   #toTextSpan() {
     return new TextSpan({
-      text: "",
+      /**
+       * Please insert an empty string.
+       * Otherwise, the caret position cannot be calculated when there are no lines and nothing is present.
+       */
+      text: this.#text ? "" : ZERO_WIDTH_SPACE,
       style: this.widget.style,
       children: this.#text.split("").map(
         text =>
@@ -264,7 +270,7 @@ class TextFieldState extends State<TextField> {
       }
     }
 
-    return lineInfo.length - 1; // 마지막 줄로 처리
+    return lineInfo.length - 1; // handle the last line
   }
 
   #calculateCaret(lineInfo: LineInfo[], caretLocation: number): CaretInfo {
@@ -361,7 +367,7 @@ class TextFieldState extends State<TextField> {
 
   #getCharIndexFromMouseEvent = (e: MouseEvent): number => {
     if (!this.#textFieldPosition) {
-      return 0; 
+      return 0;
     }
 
     const [x, y] = [

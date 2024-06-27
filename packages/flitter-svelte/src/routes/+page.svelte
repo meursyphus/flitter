@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Widget from '../lib/Widget.svelte';
 	import {
-		Column,
 		Container,
 		EdgeInsets,
 		MainAxisSize,
@@ -9,8 +8,6 @@
 		TextField,
 		TextStyle
 	} from '@meursyphus/flitter';
-
-	let el: HTMLTextAreaElement;
 </script>
 
 <Widget
@@ -23,7 +20,7 @@
 		child: Row({
 			mainAxisSize: MainAxisSize.min,
 			children: [
-				TextField('안녕하세요', {
+				TextField('', {
 					padding: EdgeInsets.symmetric({ horizontal: 1 }),
 					style: new TextStyle({
 						fontSize: 20
