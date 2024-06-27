@@ -28,10 +28,10 @@
 						fontSize: 20
 					}),
 					onChanged: (value) => {
-						console.log("chnaged", value);
+						//console.log("chnaged", value);
 					},
 					onSubmitted: (value) => {
-						console.log("submitted", value);
+						//console.log("submitted", value);
 					}
 				}),
 			]

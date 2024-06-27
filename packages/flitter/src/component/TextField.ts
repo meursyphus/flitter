@@ -6,6 +6,7 @@ import {
   BoxDecoration,
   Constraints,
   EdgeInsets,
+  Rect,
   TextAlign,
   TextDirection,
   TextPainter,
@@ -13,6 +14,7 @@ import {
   TextStyle,
   TextWidthBasis,
 } from "../type";
+import {} from "../type/_types/text-span";
 import { assert, browser, classToFunction } from "../utils";
 import { StatefulWidget, type Widget } from "../widget";
 import ConstraintsTransformBox from "./ConstraintsTransformBox";
@@ -23,6 +25,7 @@ import Positioned from "./Positioned";
 import RichText from "./RichText";
 import SizedBox from "./SizedBox";
 import Stack from "./Stack";
+import Text from "./Text";
 
 type TextFieldProps = {
   key?: any;
@@ -105,14 +108,6 @@ interface LineInfo {
   lineLength: number;
 }
 
-interface CaretInfo {
-  width: number;
-  height: number;
-  color: string;
-  y: number;
-  x: number;
-}
-
 interface SelectionSegment {
   y: number;
   start: number;
@@ -120,19 +115,17 @@ interface SelectionSegment {
   height: number;
 }
 
-type CompoistingUI = {
-  x: number;
-  y: number;
-  width: number;
-};
-
 const ZERO_WIDTH_SPACE = "\u200B";
+
+type CurrentCharUI = {
+  rect: Rect;
+  color: string;
+};
 
 class TextFieldState extends State<TextField> {
   #nativeInput = new NativeInput();
   value = "";
   #selection: [number, number] = [0, 0];
-  #caretUi: CaretInfo | null = null;
   #textPainter!: TextPainter;
   #selectionUI: SelectionSegment[] = [];
   #textKey = new GlobalKey();
@@ -142,8 +135,8 @@ class TextFieldState extends State<TextField> {
   #isTyping = false;
   #typingTimer?: NodeJS.Timeout;
   #isComposing = false;
-  #composingUI: CompoistingUI | null = null;
   #lineInfo: LineInfo[] = [];
+  #currentCharUI?: CurrentCharUI;
 
   constructor() {
     super();
@@ -171,23 +164,30 @@ class TextFieldState extends State<TextField> {
   override initState(): void {
     this.#setText(this.widget.text);
 
-    this.#nativeInput.addEventListener("compositionstart", () => {
-      this.#isComposing = true;
-    });
-
-    this.#nativeInput.addEventListener("compositionend", () => {
-      this.#composingUI = null;
-      this.#isComposing = false;
-    });
-
-    this.#nativeInput.addEventListener("input", () => {
+    this.#nativeInput.addEventListener("input", (e: KeyboardEvent) => {
+      /**
+       * 이상하게 띄어쓰기해도 composing이 취소가 안된걸로 나옴.
+       */
+      if (this.#nativeInput.value[this.#nativeInput.value.length - 1] === " ") {
+        this.setState(() => {
+          this.#isComposing = false;
+        });
+        return;
+      }
+      if (this.#isComposing !== e.isComposing) {
+        this.setState(() => {
+          this.#isComposing = e.isComposing;
+        });
+      }
       this.widget.onChanged?.(this.#nativeInput.value);
     });
 
     this.#nativeInput.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
+        this.#isComposing = false;
         this.widget.onSubmitted?.(this.#nativeInput.value);
+        return;
       }
       setTimeout(() => {
         this.#syncThis();
@@ -267,7 +267,7 @@ class TextFieldState extends State<TextField> {
 
   #syncBlur = () => {
     this.#selection = [0, 0];
-    this.#caretUi = null;
+    this.#currentCharUI = null;
     this.#selectionUI = null;
     this.#focused = false;
     this.#render();
@@ -325,7 +325,7 @@ class TextFieldState extends State<TextField> {
     return this.#lineInfo.length - 1; // handle the last line
   }
 
-  #calculateCaret(caretLocation: number): CaretInfo {
+  #calculateCurrentCharRect(caretLocation: number): CurrentCharUI {
     const lineIndex = this.#findLineIndexForPosition(caretLocation);
     const line = this.#lineInfo[lineIndex];
     const localCaretPosition = caretLocation - line.accumulatedChars;
@@ -333,21 +333,40 @@ class TextFieldState extends State<TextField> {
     const lines = this.#textPainter?.paragraph?.lines ?? [];
     const spanBoxes = lines[lineIndex]?.spanBoxes ?? [];
 
-    let x = 0;
+    let charUI: CurrentCharUI = {
+      rect: Rect.fromLTWH({
+        left: 0,
+        top: line.y,
+        width: 0,
+        height: line.height,
+      }),
+      color: "black",
+    };
+
     if (localCaretPosition > 0 && localCaretPosition <= spanBoxes.length) {
       const prevChar = spanBoxes[localCaretPosition - 1];
-      x = prevChar.offset.x + prevChar.size.width;
+      charUI = {
+        rect: Rect.fromLTWH({
+          left: prevChar.offset.x,
+          top: line.y,
+          width: prevChar.size.width,
+          height: line.height,
+        }),
+        color: prevChar.color,
+      };
     } else if (spanBoxes.length > 0) {
-      x = spanBoxes[0].offset.x;
+      charUI = {
+        rect: Rect.fromLTWH({
+          left: spanBoxes[0].offset.x,
+          top: line.y,
+          width: 0,
+          height: line.height,
+        }),
+        color: spanBoxes[0].color,
+      };
     }
 
-    return {
-      height: line.height,
-      y: line.y,
-      x: x,
-      color: spanBoxes[localCaretPosition]?.color || "black",
-      width: 1,
-    };
+    return charUI;
   }
 
   #calculateSelectionUI(start: number, end: number): SelectionSegment[] {
@@ -396,10 +415,10 @@ class TextFieldState extends State<TextField> {
 
     if (this.#hasSelection) {
       this.#selectionUI = this.#calculateSelectionUI(start, end);
-      this.#caretUi = null;
+      this.#currentCharUI = null;
     } else {
       this.#selectionUI = null;
-      this.#caretUi = this.#calculateCaret(caretLocation);
+      this.#currentCharUI = this.#calculateCurrentCharRect(caretLocation);
     }
     this.#render();
   }
@@ -567,6 +586,10 @@ class TextFieldState extends State<TextField> {
                 }),
               }),
             }),
+
+            /**
+             * selection
+             */
             ...(this.#selectionUI?.map(segment =>
               Positioned({
                 top: segment.y,
@@ -574,19 +597,38 @@ class TextFieldState extends State<TextField> {
                 child: Container({
                   width: segment.end - segment.start,
                   height: segment.height,
-                  color: "rgba(0, 0, 255, 0.2)", // 반투명한 파란색
+                  color: "rgba(0, 0, 255, 0.3)",
                 }),
               }),
             ) ?? []),
-            this.#caretUi
+
+            /**
+             * caret
+             */
+            this.#currentCharUI
               ? Positioned({
-                  top: this.#caretUi.y,
-                  left: this.#caretUi.x,
+                  top: this.#currentCharUI.rect.top,
+                  left: this.#currentCharUI.rect.right,
                   child: new Caret({
-                    width: this.#caretUi.width,
-                    height: this.#caretUi.height,
-                    color: this.#caretUi.color,
+                    width: 1,
+                    height: this.#currentCharUI.rect.height,
+                    color: this.#currentCharUI.color,
                     isTyping: this.#isTyping,
+                  }),
+                })
+              : SizedBox.shrink(),
+
+            /**
+             * composing
+             */
+            this.#currentCharUI && this.#isComposing
+              ? Positioned({
+                  top: this.#currentCharUI.rect.bottom,
+                  left: this.#currentCharUI.rect.left + 1,
+                  child: Container({
+                    width: this.#currentCharUI.rect.width - 1,
+                    height: 2,
+                    color: "rgba(0, 0, 255, 0.8)",
                   }),
                 })
               : SizedBox.shrink(),
@@ -664,7 +706,6 @@ class CaretState extends State<Caret> {
 
   dispose(): void {
     this.stopBlinking();
-    console.log("stoped");
   }
 
   build(): Widget {
