@@ -103,19 +103,36 @@ class TextField extends StatefulWidget {
   }
 }
 
+interface LineInfo {
+  y: number;
+  height: number;
+  accumulatedChars: number;
+  lineLength: number;
+}
+
+interface CaretInfo {
+  width: number;
+  height: number;
+  color: string;
+  y: number;
+  x: number;
+}
+
+interface SelectionSegment {
+  y: number;
+  start: number;
+  end: number;
+  height: number;
+}
+
 class TextFieldState extends State<TextField> {
   #nativeInput = new NativeInput();
   #text = "";
 
   #selection: [number, number] = [0, 0];
-  #caret: {
-    width: number;
-    height: number;
-    color: string;
-    y: number;
-    x: number;
-  } | null = null;
+  #caretUi: CaretInfo | null = null;
   #textPainter!: TextPainter;
+  #selectionUI: SelectionSegment[] = [];
 
   constructor() {
     super();
@@ -208,7 +225,137 @@ class TextFieldState extends State<TextField> {
   #render() {
     this.setState();
   }
+
+  #calculateLineInfo(): LineInfo[] {
+    const lines = this.#textPainter?.paragraph?.lines ?? [];
+    let accumulatedChars = 0;
+    let accumulatedHeight = 0;
+
+    return lines.map(line => {
+      const lineInfo: LineInfo = {
+        y: accumulatedHeight,
+        height: line.height,
+        accumulatedChars: accumulatedChars,
+        lineLength: line.spanBoxes.length,
+      };
+      accumulatedChars += line.spanBoxes.length;
+      accumulatedHeight += line.height;
+      return lineInfo;
+    });
+  }
+
+  #findLineIndexForPosition(lineInfo: LineInfo[], position: number): number {
+    let low = 0;
+    let high = lineInfo.length - 1;
+
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      const lineStart = lineInfo[mid].accumulatedChars;
+      const lineEnd = lineStart + lineInfo[mid].lineLength;
+
+      if (position >= lineStart && position < lineEnd) {
+        return mid;
+      } else if (position < lineStart) {
+        high = mid - 1;
+      } else {
+        low = mid + 1;
+      }
+    }
+
+    return lineInfo.length - 1; // 마지막 줄로 처리
+  }
+
+  #calculateCaret(lineInfo: LineInfo[], caretLocation: number): CaretInfo {
+    const lineIndex = this.#findLineIndexForPosition(lineInfo, caretLocation);
+    const line = lineInfo[lineIndex];
+    const localCaretPosition = caretLocation - line.accumulatedChars;
+
+    const lines = this.#textPainter?.paragraph?.lines ?? [];
+    const spanBoxes = lines[lineIndex]?.spanBoxes ?? [];
+
+    let x = 0;
+    if (localCaretPosition > 0 && localCaretPosition <= spanBoxes.length) {
+      const prevChar = spanBoxes[localCaretPosition - 1];
+      x = prevChar.offset.x + prevChar.size.width;
+    } else if (spanBoxes.length > 0) {
+      x = spanBoxes[0].offset.x;
+    }
+
+    return {
+      height: line.height,
+      y: line.y + this.widget.padding.top,
+      x: x + this.widget.padding.left,
+      color: spanBoxes[localCaretPosition]?.color || "black",
+      width: 1,
+    };
+  }
+
+  #calculateSelectionUI(
+    lineInfo: LineInfo[],
+    start: number,
+    end: number,
+  ): SelectionSegment[] {
+    const startLineIndex = this.#findLineIndexForPosition(lineInfo, start);
+    const endLineIndex = this.#findLineIndexForPosition(lineInfo, end);
+
+    const segments: SelectionSegment[] = [];
+    const lines = this.#textPainter?.paragraph?.lines ?? [];
+
+    for (let i = startLineIndex; i <= endLineIndex; i++) {
+      const line = lineInfo[i];
+      const spanBoxes = lines[i]?.spanBoxes ?? [];
+
+      const segmentStart =
+        i === startLineIndex ? start - line.accumulatedChars : 0;
+      const segmentEnd =
+        i === endLineIndex ? end - line.accumulatedChars : line.lineLength;
+
+      const startX =
+        segmentStart > 0 && segmentStart <= spanBoxes.length
+          ? spanBoxes[segmentStart - 1].offset.x +
+            spanBoxes[segmentStart - 1].size.width
+          : spanBoxes[0]?.offset.x || 0;
+
+      const endX =
+        segmentEnd > 0 && segmentEnd <= spanBoxes.length
+          ? spanBoxes[segmentEnd - 1].offset.x +
+            spanBoxes[segmentEnd - 1].size.width
+          : spanBoxes[spanBoxes.length - 1]?.offset.x +
+              spanBoxes[spanBoxes.length - 1]?.size.width || 0;
+
+      segments.push({
+        y: line.y + this.widget.padding.top,
+        start: startX + this.widget.padding.left,
+        end: endX + this.widget.padding.left,
+        height: line.height,
+      });
+    }
+
+    return segments;
+  }
+
   #setSelection(
+    start: number,
+    end: number = start,
+    direction: "ltr" | "rtl" = "rtl",
+  ) {
+    this.#selection = [start, end];
+    const caretLocation = direction === "rtl" ? end : start;
+
+    const lineInfo = this.#calculateLineInfo();
+
+    this.#caretUi = this.#calculateCaret(lineInfo, caretLocation);
+
+    if (start !== end) {
+      this.#selectionUI = this.#calculateSelectionUI(lineInfo, start, end);
+    } else {
+      this.#selectionUI = null;
+    }
+
+    this.#render();
+  }
+
+  #setSelection_legacy(
     start: number,
     end: number = start,
     direction: "ltr" | "rtl" = "rtl",
@@ -217,7 +364,7 @@ class TextFieldState extends State<TextField> {
     const caretLocation = direction === "rtl" ? end : start;
     const lines = this.#textPainter?.paragraph?.lines ?? [];
     if (lines.length === 0) {
-      this.#caret = {
+      this.#caretUi = {
         width: 1,
         height: 20,
         color: "black",
@@ -314,7 +461,7 @@ class TextFieldState extends State<TextField> {
       };
     }
 
-    this.#caret = caret;
+    this.#caretUi = caret;
     if (caret) {
       caret.x += this.widget.padding.left;
       caret.y += this.widget.padding.top;
@@ -323,7 +470,7 @@ class TextFieldState extends State<TextField> {
 
   handleBlur = () => {
     this.#selection = [0, 0];
-    this.#caret = null;
+    this.#caretUi = null;
     this.#nativeInput.blur();
     this.#focused = false;
     this.setState();
@@ -331,7 +478,6 @@ class TextFieldState extends State<TextField> {
 
   handleMouseDown = (e: MouseEvent) => {
     e.preventDefault();
-    e.stopPropagation();
     const root = this.element.renderObject.renderOwner.renderContext.view;
     const rootPosition = root.getBoundingClientRect();
     const position = this.element.renderObject.localToGlobal();
@@ -460,14 +606,25 @@ class TextFieldState extends State<TextField> {
             }),
           }),
         }),
-        !this.#hasSelection && this.#caret
+        ...(this.#selectionUI?.map(segment =>
+          Positioned({
+            top: segment.y,
+            left: segment.start,
+            child: Container({
+              width: segment.end - segment.start,
+              height: segment.height,
+              color: "rgba(0, 0, 255, 0.2)", // 반투명한 파란색
+            }),
+          }),
+        ) ?? []),
+        !this.#hasSelection && this.#caretUi
           ? Positioned({
-              top: this.#caret.y,
-              left: this.#caret.x,
+              top: this.#caretUi.y,
+              left: this.#caretUi.x,
               child: new Caret({
-                width: this.#caret.width,
-                height: this.#caret.height,
-                color: this.#caret.color,
+                width: this.#caretUi.width,
+                height: this.#caretUi.height,
+                color: this.#caretUi.color,
               }),
             })
           : SizedBox.shrink(),
