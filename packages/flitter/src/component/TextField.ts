@@ -120,6 +120,12 @@ interface SelectionSegment {
   height: number;
 }
 
+type CompoistingUI = {
+  x: number;
+  y: number;
+  width: number;
+};
+
 const ZERO_WIDTH_SPACE = "\u200B";
 
 class TextFieldState extends State<TextField> {
@@ -135,6 +141,9 @@ class TextFieldState extends State<TextField> {
   #focused = false;
   #isTyping = false;
   #typingTimer?: NodeJS.Timeout;
+  #isComposing = false;
+  #composingUI: CompoistingUI | null = null;
+  #lineInfo: LineInfo[] = [];
 
   constructor() {
     super();
@@ -162,9 +171,19 @@ class TextFieldState extends State<TextField> {
   override initState(): void {
     this.#setText(this.widget.text);
 
+    this.#nativeInput.addEventListener("compositionstart", () => {
+      this.#isComposing = true;
+    });
+
+    this.#nativeInput.addEventListener("compositionend", () => {
+      this.#composingUI = null;
+      this.#isComposing = false;
+    });
+
     this.#nativeInput.addEventListener("input", () => {
       this.widget.onChanged?.(this.#nativeInput.value);
     });
+
     this.#nativeInput.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
@@ -210,6 +229,10 @@ class TextFieldState extends State<TextField> {
       maxLines: this.widget.maxLines,
       ellipsis: undefined,
     });
+    this.#render();
+    this.element.scheduler.addPostFrameCallbacks(() => {
+      this.#lineInfo = this.#calculateLineInfo();
+    });
   }
   #toTextSpan() {
     return new TextSpan({
@@ -234,8 +257,6 @@ class TextFieldState extends State<TextField> {
    */
   #syncThis() {
     this.#setText(this.#nativeInput.value);
-    this.#textPainter.layout();
-    this.#render();
     this.#isTyping = true;
     this.#resetTypingTimer();
     this.element.scheduler.addPostFrameCallbacks(() => {
@@ -266,7 +287,7 @@ class TextFieldState extends State<TextField> {
   }
 
   #calculateLineInfo(): LineInfo[] {
-    const lines = this.#textPainter?.paragraph?.lines ?? [];
+    const lines = this.#textPainter.paragraph.lines;
     let accumulatedChars = 0;
     let accumulatedHeight = 0;
 
@@ -283,14 +304,14 @@ class TextFieldState extends State<TextField> {
     });
   }
 
-  #findLineIndexForPosition(lineInfo: LineInfo[], position: number): number {
+  #findLineIndexForPosition(position: number): number {
     let low = 0;
-    let high = lineInfo.length - 1;
+    let high = this.#lineInfo.length - 1;
 
     while (low <= high) {
       const mid = Math.floor((low + high) / 2);
-      const lineStart = lineInfo[mid].accumulatedChars;
-      const lineEnd = lineStart + lineInfo[mid].lineLength;
+      const lineStart = this.#lineInfo[mid].accumulatedChars;
+      const lineEnd = lineStart + this.#lineInfo[mid].lineLength;
 
       if (position >= lineStart && position < lineEnd) {
         return mid;
@@ -301,12 +322,12 @@ class TextFieldState extends State<TextField> {
       }
     }
 
-    return lineInfo.length - 1; // handle the last line
+    return this.#lineInfo.length - 1; // handle the last line
   }
 
-  #calculateCaret(lineInfo: LineInfo[], caretLocation: number): CaretInfo {
-    const lineIndex = this.#findLineIndexForPosition(lineInfo, caretLocation);
-    const line = lineInfo[lineIndex];
+  #calculateCaret(caretLocation: number): CaretInfo {
+    const lineIndex = this.#findLineIndexForPosition(caretLocation);
+    const line = this.#lineInfo[lineIndex];
     const localCaretPosition = caretLocation - line.accumulatedChars;
 
     const lines = this.#textPainter?.paragraph?.lines ?? [];
@@ -329,19 +350,15 @@ class TextFieldState extends State<TextField> {
     };
   }
 
-  #calculateSelectionUI(
-    lineInfo: LineInfo[],
-    start: number,
-    end: number,
-  ): SelectionSegment[] {
-    const startLineIndex = this.#findLineIndexForPosition(lineInfo, start);
-    const endLineIndex = this.#findLineIndexForPosition(lineInfo, end);
+  #calculateSelectionUI(start: number, end: number): SelectionSegment[] {
+    const startLineIndex = this.#findLineIndexForPosition(start);
+    const endLineIndex = this.#findLineIndexForPosition(end);
 
     const segments: SelectionSegment[] = [];
     const lines = this.#textPainter?.paragraph?.lines ?? [];
 
     for (let i = startLineIndex; i <= endLineIndex; i++) {
-      const line = lineInfo[i];
+      const line = this.#lineInfo[i];
       const spanBoxes = lines[i]?.spanBoxes ?? [];
 
       const segmentStart =
@@ -377,13 +394,12 @@ class TextFieldState extends State<TextField> {
     this.#selection = [start, end];
     const caretLocation = start;
 
-    const lineInfo = this.#calculateLineInfo();
     if (this.#hasSelection) {
-      this.#selectionUI = this.#calculateSelectionUI(lineInfo, start, end);
+      this.#selectionUI = this.#calculateSelectionUI(start, end);
       this.#caretUi = null;
     } else {
       this.#selectionUI = null;
-      this.#caretUi = this.#calculateCaret(lineInfo, caretLocation);
+      this.#caretUi = this.#calculateCaret(caretLocation);
     }
     this.#render();
   }
