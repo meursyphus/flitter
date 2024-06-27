@@ -161,6 +161,10 @@ class TextFieldState extends State<TextField> {
     return this.#selection[0] !== this.#selection[1];
   }
 
+  /**
+   * @todo: 여기 있는 nativeInput에서 날로 쓰고 있는걸,
+   * 이제 해당 클래스에서 브라우저 호환 담당하는걸로 우아하게 처리해야한다
+   */
   override initState(): void {
     this.#setText(this.widget.text);
 
