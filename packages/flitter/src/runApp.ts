@@ -72,6 +72,11 @@ export class AppRunner {
     )
       return "";
 
+    if (this.root) {
+      this.root.unmount();
+      this.root = null;
+    }
+
     this.root = new RenderObjectToWidgetAdapter({
       app: widget,
       buildOwner: this.buildOwner,
