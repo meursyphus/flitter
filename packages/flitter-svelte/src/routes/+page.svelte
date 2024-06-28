@@ -1,4 +1,16 @@
 <script lang="ts">
+	import {
+		Alignment,
+		Container,
+		Text,
+		StatelessWidget,
+		BuildContext,
+		EdgeInsets,
+		Provider,
+		TextStyle,
+		Column,
+		GestureDetector
+	} from '@meursyphus/flitter';
 	import Widget from '../lib/Widget.svelte';
 	import {
 	Alignment,
