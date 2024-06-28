@@ -5,7 +5,7 @@ import RenderObjectWidget from "./RenderObjectWidget";
 import Widget from "./Widget";
 import StatelessWidget from "./StatelessWidget";
 import StatefulWidget from "./StatefulWidget";
-import { Element } from "../element";
+import { Element, BuildContext } from "../element";
 import {
   AnimatedBaseWidgetState,
   ImplicitlyAnimatedWidget,
@@ -19,7 +19,8 @@ export {
   Widget,
   RenderObjectToWidgetAdapter,
   RenderObjectWidget,
-  Element as BuildContext,
+  Element,
+  BuildContext,
   StatelessWidget,
   StatefulWidget,
   AnimatedBaseWidgetState,

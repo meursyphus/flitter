@@ -132,8 +132,14 @@ export class RenderStack extends MultiChildRenderObject {
     let size: Size;
     if (hasNonPositionedChildren) {
       size = new Size({ width, height });
-      assert(size.width === constraints.constrainWidth(width));
-      assert(size.height === constraints.constrainHeight(height));
+      assert(
+        size.width === constraints.constrainWidth(width),
+        `width ${size.width} !== ${constraints.constrainWidth(width)}`,
+      );
+      assert(
+        size.height === constraints.constrainHeight(height),
+        `height ${size.height} !== ${constraints.constrainHeight(height)}`,
+      );
     } else {
       size = constraints.biggest;
     }

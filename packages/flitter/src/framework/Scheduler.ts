@@ -1,4 +1,4 @@
-import { assert } from "src/utils";
+import { assert } from "../utils";
 import type RenderFrameDispatcher from "./RenderFrameDispatcher";
 
 enum SchedulerPhase {
