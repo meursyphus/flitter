@@ -2,25 +2,14 @@
 	import {
 		Alignment,
 		Container,
-		Text,
-		StatelessWidget,
-		BuildContext,
 		EdgeInsets,
-		Provider,
 		TextStyle,
 		Column,
-		GestureDetector
+		MainAxisSize,
+		TextField
 	} from '@meursyphus/flitter';
 	import Widget from '../lib/Widget.svelte';
-	import {
-	Alignment,
-	Column,
-		Container,
-		EdgeInsets,
-		MainAxisSize,
-		TextField,
-		TextStyle
-	} from '@meursyphus/flitter';
+	import {} from '@meursyphus/flitter';
 </script>
 
 <Widget
@@ -45,7 +34,7 @@
 					onSubmitted: (value) => {
 						//console.log("submitted", value);
 					}
-				}),
+				})
 			]
 		})
 	})}

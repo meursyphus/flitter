@@ -756,7 +756,7 @@ class NativeInput {
 
   #createElement() {
     const el = document.createElement("textarea");
-    this.#element.setAttribute(
+    el.setAttribute(
       "style",
       "position: absolute; opacity: 0; height: 0; width: 0;",
     );
