@@ -160,38 +160,30 @@ class TextFieldState extends State<TextField> {
     return this.#selection[0] !== this.#selection[1];
   }
 
-  /**
-   * @todo: 여기 있는 nativeInput에서 날로 쓰고 있는걸,
-   * 이제 해당 클래스에서 브라우저 호환 담당하는걸로 우아하게 처리해야한다
-   */
   override initState(): void {
     this.#setText(this.widget.text);
 
-    this.#nativeInput.addEventListener("input", (e: KeyboardEvent) => {
-      /**
-       * 이상하게 띄어쓰기해도 composing이 취소가 안된걸로 나옴.
-       */
-      if (this.#nativeInput.value[this.#nativeInput.value.length - 1] === " ") {
-        this.setState(() => {
-          this.#isComposing = false;
-        });
-        return;
-      }
-      if (this.#isComposing !== e.isComposing) {
-        this.setState(() => {
-          this.#isComposing = e.isComposing;
-        });
-      }
+    this.#nativeInput.addEventListener("compositionstart", () => {
+      this.setState(() => {
+        this.#isComposing = true;
+      });
+    });
+    this.#nativeInput.addEventListener("compositionend", () => {
+      this.setState(() => {
+        this.#isComposing = false;
+      });
+    });
+
+    this.#nativeInput.addEventListener("input", _ => {
       this.widget.onChanged?.(this.#nativeInput.value);
     });
 
     this.#nativeInput.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        this.#isComposing = false;
         this.widget.onSubmitted?.(this.#nativeInput.value);
         return;
       }
+
       setTimeout(() => {
         this.#syncThis();
       }, 0);
@@ -722,26 +714,32 @@ class CaretState extends State<Caret> {
     });
   }
 }
+
+type InputEventType = {
+  input: { value: string };
+  compositionstart: undefined;
+  compositionend: undefined;
+  keydown: { key: string; ctrlKey: boolean; shiftKey: boolean };
+  focus: undefined;
+  blur: undefined;
+};
 /**
  * @description This class serves as an abstraction layer to handle browser-specific implementations,
  * ensuring compatibility across different environments.
+ * example) chrome: composingstart, composingend does not work
  */
 class NativeInput {
+  #isComposing: boolean = false;
   #element: HTMLTextAreaElement | null = null;
+  #listeners: Partial<{
+    [K in keyof InputEventType]: ((event: InputEventType[K]) => void)[];
+  }> = {};
   private get element(): HTMLTextAreaElement {
     assert(!this.#disposed, "invalid access. because native input is disposed");
 
     if (this.#element == null) {
       if (browser) {
-        this.#element = document.createElement("textarea");
-        this.#element.setAttribute(
-          "style",
-          "width: 300px; height: 150px; font-size: 20px; font-family: Roboto;",
-        );
-        // this.#element.setAttribute(
-        //   "style",
-        //   "position: absolute; opacity: 0; height: 0; width: 0;",
-        // );
+        this.#element = this.#createElement();
         document.body.appendChild(this.#element);
       } else {
         this.#element = {
@@ -754,6 +752,63 @@ class NativeInput {
     }
 
     return this.#element!;
+  }
+
+  #createElement() {
+    const el = document.createElement("textarea");
+    this.#element.setAttribute(
+      "style",
+      "position: absolute; opacity: 0; height: 0; width: 0;",
+    );
+
+    el.addEventListener("input", (e: InputEvent) => {
+      this.#dispatch("input", { value: this.value });
+
+      /**
+       * Even if you type a space, it seems that composing is not canceled.
+       */
+      if (e.isComposing && this.value[this.value.length - 1] === " ") {
+        this.#setComposing(false);
+        return;
+      }
+
+      this.#setComposing(e.isComposing);
+    });
+
+    el.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        this.#setComposing(false);
+      }
+
+      this.#setComposing(e.isComposing);
+
+      this.#dispatch("keydown", {
+        key: e.key,
+        ctrlKey: e.ctrlKey,
+        shiftKey: e.shiftKey,
+      });
+    });
+
+    el.addEventListener("focus", () => {
+      this.#dispatch("focus", undefined);
+    });
+
+    el.addEventListener("blur", () => {
+      this.#dispatch("blur", undefined);
+    });
+
+    return el;
+  }
+
+  #setComposing(isComposing: boolean) {
+    if (this.#isComposing === isComposing) return;
+    this.#isComposing = isComposing;
+    if (isComposing) {
+      this.#dispatch("compositionstart", undefined);
+    } else {
+      this.#dispatch("compositionend", undefined);
+    }
   }
 
   #disposed = false;
@@ -791,16 +846,24 @@ class NativeInput {
     this.setSelection(pos, pos);
   };
 
-  addEventListener = (
-    ...args: Parameters<HTMLTextAreaElement["addEventListener"]>
-  ) => {
-    this.element.addEventListener(...args);
-  };
+  addEventListener<K extends keyof InputEventType>(
+    type: K,
+    listener: (event: InputEventType[K]) => void,
+  ) {
+    if (!this.#listeners[type]) {
+      this.#listeners[type] = [];
+    }
+    this.#listeners[type]!.push(listener);
+  }
+
+  #dispatch<K extends keyof InputEventType>(type: K, event: InputEventType[K]) {
+    this.#listeners[type]?.forEach(listener => listener(event));
+  }
 
   removeEventListener = (
     ...args: Parameters<HTMLTextAreaElement["removeEventListener"]>
   ) => {
-    this.element.removeEventListener(...args);
+    assert(false, "not implemented removeEventListener on native input" + args);
   };
 }
 
