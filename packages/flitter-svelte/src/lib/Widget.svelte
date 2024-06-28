@@ -27,6 +27,9 @@
 	let containerEl: HTMLElement;
 	let runner: AppRunner;
 	let innerHTML: string = '';
+	/**
+	 * server side rendering
+	 */
 	if (!browser) {
 		const { document: _document, window: _window } = parseHTML(`<svg></svg>`);
 		const _svg = _document.querySelector('svg')!;
@@ -39,7 +42,14 @@
 		innerHTML = runner.runApp(widget);
 	}
 
+	$: {
+		[mounted, widget, runner];
+		rerender();
+	}
+
+	let mounted = false;
 	onMount(() => {
+		mounted = true;
 		runner = new AppRunner({
 			view: renderEl,
 			window: window,
@@ -47,7 +57,6 @@
 			ssrSize: ssr?.size
 		});
 		renderEl.innerHTML = '';
-		runner.runApp(widget);
 		runner.onMount({
 			resizeTarget: containerEl
 		});
@@ -56,6 +65,13 @@
 			runner.dispose();
 		};
 	});
+
+	const rerender = () => {
+		if (!browser) return;
+		if (!mounted) return;
+		if (!runner) return;
+		runner.runApp(widget);
+	};
 </script>
 
 <div bind:this={containerEl} style="--width: {width}; --height: {height}">

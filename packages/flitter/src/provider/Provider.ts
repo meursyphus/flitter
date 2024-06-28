@@ -62,6 +62,11 @@ class ProviderElement extends Element {
     this.child = this.inflateWidget(this.widget.child);
   }
 
+  override unmount(): void {
+    super.unmount();
+    this.child.unmount();
+  }
+
   update(newWidget: Widget): void {
     super.update(newWidget);
     this.performRebuild();
