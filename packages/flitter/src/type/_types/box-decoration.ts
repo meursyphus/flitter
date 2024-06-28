@@ -133,6 +133,22 @@ export default class BoxDecoration extends Data {
   createCanvasBoxPainter() {
     return new BoxDecorationCanvasPainter(this);
   }
+
+  copyWith({
+    color = this.color,
+    border = this.border,
+    borderRadius = this.borderRadius,
+    shape = this.shape,
+    boxShadow = this.boxShadow,
+  }: {
+    color?: string | Color;
+    border?: BoxBorder;
+    borderRadius?: BorderRadiusGeometry;
+    shape?: BoxShape;
+    boxShadow?: BoxShadow[];
+  }): BoxDecoration {
+    return new BoxDecoration({ color, border, borderRadius, shape, boxShadow });
+  }
 }
 
 export type BoxShape = "rectangle" | "circle";

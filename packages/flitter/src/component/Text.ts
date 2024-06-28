@@ -1,10 +1,11 @@
+import type TextPainter from "../type/_types/text-painter";
 import type {
   TextDirection,
   TextOverflow,
   TextStyle,
   TextWidthBasis,
 } from "../type";
-import { TextAlign, TextSpan } from "../type";
+import { type TextAlign, TextSpan } from "../type";
 import type InlineSpan from "../type/_types/Inline-span";
 import type { BuildContext } from "../widget";
 import { StatelessWidget } from "../widget";
@@ -56,7 +57,7 @@ class _Text extends StatelessWidget {
 
   build(_: BuildContext): Widget {
     return RichText({
-      textAlign: this.textAlign ?? TextAlign.start,
+      textAlign: this.textAlign,
       textDirection: this.textDirection,
       softWrap: this.softWrap,
       overflow: this.overflow,
@@ -77,4 +78,5 @@ type TextProps = {
   textDirection?: TextDirection;
   softWrap?: boolean;
   textWidthBasis?: TextWidthBasis;
+  textPainter?: TextPainter;
 };

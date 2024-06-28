@@ -4,6 +4,8 @@ import RenderObjectElement from "./RenderObjectElement";
 import StatelessElement from "./StatelessElement";
 import { StatefulElement, State } from "./StatefulElement";
 
+class BuildContext extends Element {}
+
 export {
   ComponentElement,
   Element,
@@ -11,5 +13,5 @@ export {
   StatelessElement,
   State,
   StatefulElement,
-  Element as BuildContext,
+  BuildContext,
 };

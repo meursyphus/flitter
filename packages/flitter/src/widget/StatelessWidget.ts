@@ -10,7 +10,7 @@ class StatelessWidget extends Widget {
   initState(_: BuildContext): void {}
 
   build(_: BuildContext): Widget {
-    throw { message: "not implemented build on ComponentWidget" };
+    throw new Error("not implemented build on ComponentWidget");
   }
 }
 
