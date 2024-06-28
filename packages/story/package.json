@@ -31,12 +31,12 @@
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^1.2.25",
+		"@storybook/addon-docs": "^8.1.10",
 		"@storybook/blocks": "^8.1.10",
 		"@storybook/svelte": "^8.1.10",
 		"@storybook/sveltekit": "^8.1.10",
 		"@storybook/test": "^8.1.10",
 		"@sveltejs/adapter-auto": "^3.0.0",
-		"@storybook/addon-docs": "^8.1.10",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/package": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
@@ -61,5 +61,7 @@
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"type": "module",
-	"dependencies": {}
+	"dependencies": {
+		"@storybook/addon-storysource": "^8.1.11"
+	}
 }
