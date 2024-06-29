@@ -21,7 +21,7 @@ Flitter is a powerful framework inspired by Flutter, supporting both SVG and Can
 Here are some examples of what you can create with Flitter:
 Interactive ERD (Entity-Relationship Diagram)[https://easyrd.dev]
 
-![Interactive ERD](https://flitter.pages.dev/home/easyrd.jpg)
+![Interactive ERD](https://flitter.dev/home/easyrd.jpg)
 
 This interactive ERD demonstrates Flitter's capability to create complex, interactive diagrams. Users can manipulate entities, add relationships, and visualize database structures in real-time. This showcase highlights Flitter's strengths in:
 
@@ -265,4 +265,4 @@ Flitter is provided under the MIT license.
 
 ## Learn More
 
-For detailed documentation and examples, visit the [Flitter Official Documentation](https://flitter.pages.dev).
+For detailed documentation and examples, visit the [Flitter Official Documentation](https://flitter.dev).
