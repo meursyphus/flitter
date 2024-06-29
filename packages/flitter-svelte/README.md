@@ -2,7 +2,7 @@
 
 Flitter-Svelte is a library designed to simplify the integration of Flitter, a widget-based SVG manipulation framework, with Svelte applications. It enables developers to easily incorporate Flitter's declarative, Flutter-like syntax for data visualization within Svelte projects.
 
-For more details, visit [here](https://flitter.pages.dev).
+For more details, visit [here](https://flitter.dev).
 
 ```bash
 npm i @meursyphus/flitter @meursyphus/flitter-svelte

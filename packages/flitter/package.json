@@ -10,7 +10,7 @@
     "declarative",
     "flutter"
   ],
-  "homepage": "https://flitter.pages.dev",
+  "homepage": "https://flitter.dev",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsup && npm run copy-package && npm run copy-readme && cd dist && npm run fix-package",
