@@ -9,7 +9,6 @@
 		TextField
 	} from '@meursyphus/flitter';
 	import Widget from '../lib/Widget.svelte';
-	import {} from '@meursyphus/flitter';
 </script>
 
 <Widget

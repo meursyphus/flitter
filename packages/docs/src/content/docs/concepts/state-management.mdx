@@ -1,90 +1,221 @@
 ---
-title: "State Management in Flitter"
-description: "Understand how Flitter manages state within your data visualizations, utilizing StatefulWidget, widget lifecycle, and efficient re-rendering mechanisms."
-
-nav_group: "Concepts"
+nav_group: "Core Concepts"
 nav_group_order: 2
-nav_order: 2
-nav_title: "State Management"
+nav_order: 3
+title: "State Management"
+description: "Understanding how to manage state effectively in Flitter applications"
 ---
+
 # State Management in Flitter
 
-State management is a critical aspect of any application, and Flitter offers a robust system for handling state changes and updating the UI accordingly. This document explores the key concepts of state management in Flitter, including the role of `StatefulWidget`, the widget tree lifecycle, and the process of re-rendering widgets when their state changes.
+State management is a crucial aspect of building interactive and dynamic applications with Flitter. This guide will explore the various approaches to managing state in Flitter, from simple local state management to more complex scenarios.
 
-## Using StatefulWidget
+## Local State Management with StatefulWidget
 
-`StatefulWidget` plays a pivotal role in Flitter by allowing widgets to rebuild themselves in response to state changes. Unlike `StatelessWidget`, which represents immutable widgets, `StatefulWidget` can maintain state that might change during the lifetime of the widget. Here's a basic example of a `StatefulWidget` in Flitter:
+The most basic form of state management in Flitter is achieved through `StatefulWidget`s. These widgets maintain their own state and can rebuild themselves when that state changes.
+
+### Example: Simple Counter
+
+Here's a basic example of local state management using a `StatefulWidget`:
 
 ```typescript
-import { Widget, StatefulWidget, State, TextStyle, Text, Center } from '@meursyphus/flitter';
+import {
+  StatefulWidget,
+  State,
+  Column,
+  Text,
+  TextStyle,
+  Colors,
+  GestureDetector,
+  Container,
+} from "@meursyphus/flitter";
 
-class TimerWidget extends StatefulWidget {
-  constructor(props?: {}) {
-    super(props);
-  }
-
-  createState(): _TimerWidgetState {
-    return new _TimerWidgetState();
+class Counter extends StatefulWidget {
+  createState() {
+    return new CounterState();
   }
 }
 
-class _TimerWidgetState extends State<TimerWidget> {
-  private _timer?: number;
-  private _counter: number = 0;
+class CounterState extends State<Counter> {
+  private count: number = 0;
 
-  public _startTimer(): void {
-    this._counter = 0;
-    this._timer = window.setInterval(() => {
-      this.setState(() => {
-        this._counter++;
-      });
-    }, 1000);
+  incrementCounter() {
+    this.setState(() => {
+      this.count++;
+    });
   }
 
-  public _stopTimer(): void {
-    if (this._timer) {
-      window.clearInterval(this._timer);
-    }
-  }
-
-  initState(): void {
-    super.initState();
-    this._startTimer();
-  }
-
-  dispose(): void {
-    this._stopTimer();
-    super.dispose();
-  }
-
-  build(context: any): Widget {
-    return Center({
-      child: Text(`Timer: ${this._counter}`, {
-        style: new TextStyle({ fontSize: 24 }),
-      }),
+  build() {
+    return Column({
+      children: [
+        Text(`Count: ${this.count}`, {
+          style: new TextStyle({ fontSize: 24 }),
+        }),
+        GestureDetector({
+          onClick: () => this.incrementCounter(),
+          child: Container({
+            padding: EdgeInsets.all(8),
+            color: Colors.blue[500],
+            child: Text("Increment", {
+              style: new TextStyle({ color: Colors.white }),
+            }),
+          }),
+        }),
+      ],
     });
   }
 }
 ```
-This example demonstrates how StatefulWidget and its associated state class work together to manage dynamic data within a widget.
 
-## Widget Tree Lifecycle
+In this example, `CounterState` manages the `count` state locally. The `setState` method is used to update the state and trigger a rebuild of the widget.
 
-In Flitter, just as in Flutter, understanding the lifecycle of widgets is fundamental for managing state effectively. Each widget goes through a specific lifecycle that impacts how it is initialized, rendered, and eventually disposed of. This lifecycle is crucial for optimizing performance and ensuring that resources are properly managed.
+## The setState Mechanism
 
-- **Creation (`initState`)**: This is the stage where the widget is inserted into the widget tree for the first time. It's akin to Flutter's `initState` method, where you can perform initial setup and state initialization for the widget.
+The `setState` method is key to updating the state of a `StatefulWidget`. When called, it does two things:
 
-- **Updating (`didUpdateWidget`)**: Whenever a widget's configuration changes, or if it receives new data from its parent, the widget updates. This stage corresponds to Flutter's `didUpdateWidget` method, allowing for the response to changes in the widget's properties.
+1. Updates the state variables you modify within it.
+2. Marks the widget as "dirty," scheduling it for rebuilding.
 
-- **Rebuilding (`build`)**: The `build` method is called whenever it's necessary to render the widget. This includes the initial build and subsequent rebuilds triggered by state changes within the widget or its children. In Flutter, the `build` method is where you describe the widget's part of the UI using other widgets.
+It's important to note that `setState` is asynchronous. The widget rebuild doesn't happen immediately, but is scheduled for the next frame.
 
-- **Removal (`dispose`)**: When a widget is removed from the widget tree, it enters the disposal stage. This is similar to Flutter's `dispose` method, where you release any resources held by the widget, such as animation controllers, stream subscriptions, or any other long-lived objects that need explicit disposal.
+### Visualization of setState and Dirty Checking Process
 
-## Re-rendering with Dirty Check
+Here's a simplified visualization of how setState and dirty checking work in the widget tree:
 
-Flitter, drawing inspiration from Flutter, employs a "dirty check" mechanism to determine which widgets need to be rebuilt. When a widget's state changes, it's marked as "dirty," signaling that its appearance may need to be updated. Only widgets marked as dirty will be rebuilt during the next frame, ensuring efficient use of resources and smooth UI performance.
-This selective updating mechanism is key to Flitter's ability to provide a responsive and efficient user experience, mirroring the principles established in Flutter for managing widget lifecycles and state changes.
+```
+   App (Root)
+   │
+   ├─ WidgetA
+   │  │
+   │  ├─ WidgetB (setState called here)
+   │  │  │
+   │  │  ├─ WidgetD (marked dirty)
+   │  │  └─ WidgetE (marked dirty)
+   │  │
+   │  └─ WidgetC
+   │
+   └─ WidgetF
+```
+
+1. Initial state: All widgets are clean.
+2. `setState` is called in WidgetB.
+3. WidgetB and its children (WidgetD and WidgetE) are marked as dirty.
+4. During the next frame:
+   ```
+   App (Root) - No change
+   │
+   ├─ WidgetA - No change
+   │  │
+   │  ├─ WidgetB - Rebuilds
+   │  │  │
+   │  │  ├─ WidgetD - Rebuilds
+   │  │  └─ WidgetE - Rebuilds
+   │  │
+   │  └─ WidgetC - No change
+   │
+   └─ WidgetF - No change
+   ```
+5. Only the dirty widgets (WidgetB, WidgetD, and WidgetE) are rebuilt.
+
+This process ensures that only the necessary parts of the UI are updated, optimizing performance.
+
+## Passing State Down
+
+For larger applications, you often need to pass state down to child widgets. This can be done through constructor parameters:
+
+```typescript
+class ParentWidget extends StatefulWidget {
+  createState() {
+    return new ParentWidgetState();
+  }
+}
+
+class ParentWidgetState extends State<ParentWidget> {
+  private data: string = "Initial Data";
+
+  updateData(newData: string) {
+    this.setState(() => {
+      this.data = newData;
+    });
+  }
+
+  build() {
+    return Column({
+      children: [
+        new ChildWidget(this.data),
+        GestureDetector({
+          onClick: () => this.updateData("Updated Data"),
+          child: Text("Update Data"),
+        }),
+      ],
+    });
+  }
+}
+
+class ChildWidget extends StatelessWidget {
+  private data: string;
+
+  constructor(data: string) {
+    super();
+    this.data = data;
+  }
+
+  build() {
+    return Text(this.data);
+  }
+}
+```
+
+## Managing Complex State
+
+For more complex applications, local state management might not be sufficient. In these cases, you might want to consider more advanced state management solutions. While Flitter doesn't have built-in complex state management solutions like Flutter's Provider or Riverpod, you can implement similar patterns:
+
+### Singleton State Manager
+
+For global state that needs to be accessed from multiple widgets, you can create a singleton state manager:
+
+```typescript
+class AppState {
+  private static instance: AppState;
+  private constructor() {}
+
+  static getInstance(): AppState {
+    if (!AppState.instance) {
+      AppState.instance = new AppState();
+    }
+    return AppState.instance;
+  }
+
+  private _data: string = "Initial Data";
+  get data(): string {
+    return this._data;
+  }
+  setData(newData: string) {
+    this._data = newData;
+    // Implement a way to notify listeners
+  }
+}
+
+// Usage in a widget
+class MyWidget extends StatefulWidget {
+  createState() {
+    return new MyWidgetState();
+  }
+}
+
+class MyWidgetState extends State<MyWidget> {
+  private appState = AppState.getInstance();
+
+  build() {
+    return Text(this.appState.data);
+  }
+}
+```
+
+This approach allows you to have a centralized state that can be accessed and modified from anywhere in your application.
 
 ## Conclusion
-State management in Flitter, inspired by the principles established in Flutter, offers a powerful and efficient system for building dynamic and responsive data visualizations. By leveraging StatefulWidget, understanding the widget tree lifecycle, and utilizing the dirty check mechanism for re-rendering, developers can create sophisticated visual experiences that are both performant and easy to maintain.
 
+State management in Flitter starts with the basics of `StatefulWidget` and `setState`, which are sufficient for many use cases. For more complex scenarios, you can implement custom solutions like singleton state managers. As your application grows, consider structuring your state management to keep your code organized and maintainable.
+
+Remember, effective state management is key to creating responsive and efficient Flitter applications. Always consider the scope of your state (local vs global) and choose the appropriate management technique accordingly.
