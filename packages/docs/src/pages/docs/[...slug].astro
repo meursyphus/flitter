@@ -3,6 +3,7 @@ import Layout from "../../layouts/DocsLayout.astro";
 import SideBar from "../../components/pages/docs/SideBar.astro";
 import Toc from "../../components/pages/docs/Toc.astro";
 import { getCollection } from "astro:content";
+import { getNavOrder } from "$utils/index";
 
 export async function getStaticPaths() {
   const docsEntries = await getCollection("docs");
@@ -17,11 +18,12 @@ const { entry } = Astro.props;
 const { Content, headings } = await entry.render();
 const docsEntries = await getCollection("docs");
 
-// docsEntries를 nav_group_order와 nav_order를 기준으로 정렬
+// Sort docsEntries by nav_group_order and nav_order
 const sortedEntries = docsEntries.sort((a, b) => {
-  const groupOrderDiff = a.data.nav_group_order - b.data.nav_group_order;
+  const groupOrderDiff =
+    getNavOrder(a.data.nav_group) - getNavOrder(b.data.nav_group);
   if (groupOrderDiff === 0) {
-    // 같은 그룹 내에서는 nav_order를 기준으로 정렬
+    // Within the same group, sort by nav_order
     const orderDiff = (a.data.nav_order ?? 0) - (b.data.nav_order ?? 0);
     if (orderDiff === 0) {
       return a.data.title.localeCompare(b.data.title);
@@ -30,10 +32,10 @@ const sortedEntries = docsEntries.sort((a, b) => {
   }
   return groupOrderDiff;
 });
-// 현재 entry의 인덱스 찾기
+// Find the index of the current entry
 const currentIndex = sortedEntries.findIndex((it) => it.slug === entry.slug);
 
-// 이전 및 다음 entry 찾기
+// Find the previous and next entry
 const prevEntry = currentIndex > 0 ? sortedEntries[currentIndex - 1] : null;
 const nextEntry =
   currentIndex < sortedEntries.length - 1
@@ -42,9 +44,12 @@ const nextEntry =
 ---
 
 <Layout title={`Flitter - ${entry.data.title}`}>
-  <main class="relative mx-auto flex">
+  <main data-theme="pink" class="relative mx-auto flex">
     <SideBar />
-    <div class="prose prose-invert w-full max-w-full px-8 py-20 lg:prose-lg">
+    <div
+      data-theme="pink"
+      class="prose prose-invert prose-modern w-full max-w-full px-8 py-20 lg:prose-lg"
+    >
       <Content />
       <div class="flex justify-between py-4">
         {
@@ -77,10 +82,6 @@ const nextEntry =
 </style>
 
 <style is:global>
-  .layout {
-    scroll-padding-top: calc(var(--header) + 80px);
-  }
-
   .move {
     width: 200px;
     height: 80px;
