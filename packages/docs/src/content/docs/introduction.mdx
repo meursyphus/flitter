@@ -6,23 +6,54 @@ title: "Introduction"
 description: "An introduction to the Flitter framework and its key features"
 ---
 
-# Introduction to Flitter
+# Introduction
 
-Flitter is a powerful web-based data visualization framework inspired by Flutter. It supports both SVG and Canvas, enabling developers to create high-performance graphics and interactive user interfaces with ease.
+Flitter is a powerful framework inspired by Flutter, supporting both SVG and Canvas to create high-performance graphics and user interfaces. It is designed to easily implement complex data visualizations, interactive charts, diagrams, and graphic editors in web applications.
 
-## Key Features of Flitter
+## Key Features
 
-1. **Flutter-like Syntax**: Uses declarative UI syntax familiar to Flutter developers.
-2. **SVG and Canvas Support**: Offers two rendering options to cater to various use cases.
-3. **High-Performance Rendering**: Optimized rendering pipeline for smooth handling of complex data visualizations.
-4. **Responsive Layouts**: Easily implement responsive designs with layout systems like Flex.
-5. **Rich Widget Library**: Variety of built-in widgets for rapid development.
+- **Render Object Tree**: Flitter uses a render object tree for efficient rendering, allowing easy management and manipulation of complex layouts.
 
-## Why Choose Flitter
+- **Declarative Programming**: Following a declarative paradigm, the screen automatically updates when values change, simplifying application state management.
 
-- **Gentle Learning Curve**: Quick adaptation for those with Flutter experience.
-- **Flexibility**: Choose between SVG and Canvas rendering to best suit your project needs.
-- **Performance**: Efficiently handle large datasets with optimized rendering.
-- **Extensibility**: Easily create custom widgets to extend the framework.
+- **Optimized Rendering**: Re-rendering, painting, and layout recalculations are managed by the renderer pipeline, with optimizations applied to update only necessary parts.
 
-With Flitter, you can efficiently implement complex data visualizations, interactive charts, diagrams, and more on the web. The following sections will guide you through installing Flitter and creating your first app.
+- **Box Model Layout**: Users can easily compose layouts using the familiar Box model.
+
+- **SVG and Canvas Support**: Supports both SVG and Canvas, meeting various graphic requirements. Developers can choose the appropriate renderer as needed.
+
+- **Diverse Applications**: Can be utilized in various fields such as charts, diagrams, data visualization, and graphic editors.
+
+## Showcase
+
+Here are some examples of what you can create with Flitter:
+Interactive ERD (Entity-Relationship Diagram)[https://easyrd.dev]
+
+![Interactive ERD](https://flitter.pages.dev/home/easyrd.jpg)
+
+This interactive ERD demonstrates Flitter's capability to create complex, interactive diagrams. Users can manipulate entities, add relationships, and visualize database structures in real-time. This showcase highlights Flitter's strengths in:
+
+Creating responsive, draggable elements
+Handling complex user interactions
+Rendering intricate diagrams with ease
+Real-time updates based on user input
+
+## Why Flitter?
+
+1. **Easy Learning Curve**: Uses syntax similar to Flutter, allowing mobile developers to easily adapt to the web environment.
+
+2. **High Performance**: Handles complex graphics smoothly with an optimized rendering pipeline.
+
+3. **Flexibility**: Abstracts SVG and Canvas manipulation, allowing developers to focus on business logic.
+
+4. **Renderer Selection**: Can choose between SVG and Canvas renderers as needed, meeting various graphic requirements.
+
+5. **Reusability**: Increases code reusability through a component-based approach.
+
+## Contributing
+
+Flitter is an open-source project. We welcome all forms of contributions including bug reports, feature suggestions, and pull requests. For more details, please visit [Discord](https://discord.gg/kUZp4SaHzF)
+
+## License
+
+Flitter is provided under the MIT license.
