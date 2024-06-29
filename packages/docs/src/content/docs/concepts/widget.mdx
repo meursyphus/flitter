@@ -1,137 +1,182 @@
 ---
-title: "Working with Widgets in Flitter"
-description: "Explore the foundational concept of widgets in Flitter, enabling the creation of dynamic and customizable data visualizations."
-
-nav_group: "Concepts"
+nav_group: "Core Concepts"
 nav_group_order: 2
 nav_order: 1
-nav_title: "Widget"
+title: "What are Widgets?"
+description: "Understanding the fundamental building blocks of Flitter applications: Widgets"
 ---
-# Working with Widgets in Flitter
 
-Widgets are the cornerstone of Flitter, inspired by the powerful and intuitive design of Flutter. In Flitter, everything from layouts to animations is a widget, offering unparalleled flexibility and creativity in data visualization design.
+# What are Widgets?
 
-## Introduction to Widgets in Flitter
+In Flitter, widgets are the fundamental building blocks of your application's user interface. Inspired by Flutter, everything you see on the screen in a Flitter app is a widget. Understanding widgets is crucial for effectively using Flitter to create data visualizations and interactive interfaces.
 
-In Flitter, the concept of widgets is borrowed from Flutter, where every UI component is represented as a widget. This approach allows developers to build complex UIs in a highly modular and reusable way. Widgets in Flitter form the basis of your application's visual representation, making understanding them crucial for any Flitter developer.
+## Definition of Widgets
 
-## The Power of Widgets
+A widget in Flitter is an immutable description of part of a user interface. Widgets can describe:
 
-Widgets are not just UI elements; they are the fundamental building blocks of your application's interface in Flitter. From handling user interactions with a `GestureDetector` widget to laying out your UI with `Container`, `Row`, and `Column` widgets, and even animating elements with `AnimatedContainer`, widgets empower your visualizations with functionality and aesthetics.
+- Structural elements (like containers or rows)
+- Stylistic elements (like colors or fonts)
+- Layout aspects (like padding or alignment)
+- And more complex functionalities (like gestures or animations)
 
-### Decorator Pattern and Widget Composition
+## Types of Widgets
 
-Flitter utilizes the decorator pattern to allow widgets to be composed and layered for rich functionality. This composition enables developers to wrap a widget with another widget to add new features or customize its appearance. For instance, nesting a `Text` widget inside a `Container` can provide padding, margins, or a background color to the text, showcasing how widgets can be efficiently reused and combined.
+Flitter provides several types of widgets, broadly categorized as:
 
-### Stateless and Stateful Widgets
+1. **Basic Widgets**: Such as `Container`, `Text`, and `Image`.
+2. **Layout Widgets**: Like `Row`, `Column`, and `Stack`.
+3. **Interactive Widgets**: Including `GestureDetector` and `Button`.
+4. **Painting and Effect Widgets**: For example, `Transform` and `Opacity`.
+5. **Stateful Widgets**: Widgets that can change over time based on user interaction or other factors.
 
-Understanding the distinction between stateless and stateful widgets is vital. While `StatelessWidget` is immutable, meaning its properties can't change during runtime, `StatefulWidget` can dynamically change its state. Developers can leverage `StatelessWidget` for static visual elements and `StatefulWidget` for interactive components that require dynamic changes.
+## Using Widgets
+
+Here's a simple example of how widgets are used in Flitter:
+
+```typescript
+import {
+  Container,
+  Text,
+  Center,
+  TextStyle,
+  Colors,
+} from "@meursyphus/flitter";
+
+const MyWidget = Container({
+  width: 200,
+  height: 100,
+  color: Colors.blue[500],
+  child: Center({
+    child: Text("Hello, Flitter!", {
+      style: new TextStyle({ color: Colors.white, fontSize: 20 }),
+    }),
+  }),
+});
+```
+
+In this example, we're using `Container`, `Center`, and `Text` widgets to create a blue rectangle with centered white text.
+
+## Widget Tree
+
+Widgets in Flitter are arranged in a tree structure. This tree represents the hierarchy of your user interface. For example:
+
+```
+       App
+        │
+    Container
+        │
+      Center
+        │
+       Text
+```
+
+Each widget in the tree can have child widgets, creating a nested structure that defines your entire UI.
+
+## Composition vs Inheritance
+
+Flitter favors composition over inheritance when it comes to creating custom widgets. This means that instead of subclassing existing widgets, you typically create new widgets by combining existing ones.
+
+## Stateless vs Stateful Widgets
+
+Flitter has two main types of widgets:
+
+1. **Stateless Widgets**: These are immutable. Once they're built, their properties can't change.
+2. **Stateful Widgets**: These can rebuild themselves when their internal state changes.
+
+Let's look at examples of both:
 
 ### Stateless Widget Example
 
-A `StatelessWidget` in Flitter can be used to create a simple, immutable widget, such as a text label with customized styling. Here's how you might define a custom text widget:
+Stateless widgets are simpler and more efficient when you don't need to manage changing state. Here's an example:
 
 ```typescript
-import { 
-  StatelessWidget, 
-  GestureDetector, 
-  Container, 
-  Text, 
-  EdgeInsets, 
-  BoxDecoration, 
-  BorderRadius, 
-  Colors, 
-  TextStyle 
-} from '@meursyphus/flitter';
+import {
+  StatelessWidget,
+  Container,
+  Text,
+  TextStyle,
+  Colors,
+} from "@meursyphus/flitter";
 
-class CustomButton extends StatelessWidget {
-  constructor({ label, onPressed }) {
+class Greeting extends StatelessWidget {
+  private name: string;
+
+  constructor(name: string) {
     super();
-    this.label = label;
-    this.onPressed = onPressed;
+    this.name = name;
   }
 
-  build(context) {
-    return new GestureDetector({
-      onTap: this.onPressed,
-      child: new Container({
-        padding: EdgeInsets.symmetric({ vertical: 12.0, horizontal: 24.0 }),
-        decoration: new BoxDecoration({
-          color: Colors.blue,
-          borderRadius: BorderRadius.circular(8.0),
-        }),
-        child: new Text(
-          this.label,
-          { style: new TextStyle({ color: Colors.white, fontSize: 16 }) }
-        ),
+  build() {
+    return Container({
+      padding: EdgeInsets.all(16),
+      color: Colors.blue[100],
+      child: Text(`Hello, ${this.name}!`, {
+        style: new TextStyle({ color: Colors.black, fontSize: 24 }),
       }),
     });
   }
 }
 
-function classToFunction<V extends new (...args: any[]) => any>(Clazz: V) {
-  return (...args: ConstructorParameters<V>) =>
-    new Clazz(...args) as InstanceType<V>;
-}
-
-// Using classToFunction allows for a more convenient way to write code without needing to use the new constructor.
-export default classToFunction(CustomButton);
+// Usage
+const myGreeting = new Greeting("Alice");
 ```
 
-### Extending Widgets with RenderObject
+In this example, `Greeting` is a stateless widget that displays a greeting message. It takes a name as a parameter and uses it to create the greeting. Once created, the greeting doesn't change.
 
-For those looking to dive deeper into custom widget creation, Flitter provides the `RenderObject` class. By inheriting from `RenderObjectWidget`, developers can create their custom widgets, defining their own rendering and layout behaviors. This feature opens up a world of possibilities for creating highly customized and efficient visualizations.
+### Stateful Widget Example
 
-### Custom RenderObjectWidget Example
-For more complex customizations that require low-level painting or layout decisions, you might define a widget that creates its own RenderObject. Here's a simplified example of how a custom widget with a unique rendering behavior could be structured, inspired by Flutter:
+Stateful widgets are used when the widget needs to maintain some state that can change over time. Here's an example of a simple counter:
 
 ```typescript
-import { 
-  RenderObjectWidget, 
-  SingleChildRenderObject, 
-  PaintContext, 
-  Offset, 
-  Size, 
-  Paint 
-} from '@meursyphus/flitter';
+import {
+  StatefulWidget,
+  State,
+  Container,
+  Text,
+  TextStyle,
+  Colors,
+  GestureDetector,
+} from "@meursyphus/flitter";
 
-class CustomCircleWidget extends RenderObjectWidget {
-  constructor({ color }) {
-    super();
-    this.color = color;
-  }
-
-  createRenderObject(context) {
-    return new CustomCircleRenderObject({ color: this.color });
+class Counter extends StatefulWidget {
+  createState() {
+    return new CounterState();
   }
 }
 
-class CustomCircleRenderObject extends SingleChildRenderObject {
-  constructor({ color }) {
-    super();
-    this._color = color;
+class CounterState extends State<Counter> {
+  private count: number = 0;
+
+  incrementCounter() {
+    this.setState(() => {
+      this.count++;
+    });
   }
 
-  protected performPaint({ circle }: { circle: SVGElement }): void {
-    circle.setAttribute("fill", this.color);
-    circle.setAttribute("width", `${this.size.width}`);
-    circle.setAttribute("height", `${this.size.height}`);
-  }
-
-  createDefaultSvgEl({ createSvgEl }: PaintContext): {
-    [key: string]: SVGElement;
-  } {
-    return {
-      circle: createSvgEl("circle")
-    };
-  }
-
-  performLayout() {
-    this.size = this.constraints.constrain(new Size(100.0, 100.0));
+  build() {
+    return Container({
+      padding: EdgeInsets.all(16),
+      color: Colors.blue[100],
+      child: GestureDetector({
+        onTap: () => this.incrementCounter(),
+        child: Text(`Count: ${this.count}`, {
+          style: new TextStyle({ color: Colors.black, fontSize: 24 }),
+        }),
+      }),
+    });
   }
 }
+
+// Usage
+const myCounter = new Counter();
 ```
+
+In this example, `Counter` is a stateful widget that maintains a count state. The `CounterState` class manages the state and provides a method to increment the counter. The `build` method creates a text display of the current count, wrapped in a `GestureDetector` that increments the count when tapped.
 
 ## Conclusion
 
-Widgets in Flitter offer a flexible, powerful way to construct your application's UI, from simple text displays to complex interactive data visualizations. By understanding and utilizing the widget system, including both stateless and stateful widgets and the potential for customization through `RenderObject`, developers can unleash the full creative potential of Flitter in their projects.
+Understanding the difference between stateless and stateful widgets is crucial for efficient Flitter development. Use stateless widgets for parts of your UI that depend only on their configuration info and the current theme, while stateful widgets are perfect for parts of the UI that need to dynamically change based on user interaction or other factors.
+
+In the next sections, we'll dive deeper into specific types of widgets and how to manage their state more effectively.
+
+We'll explore the difference between stateless and stateful widgets in more depth in the State Management section.

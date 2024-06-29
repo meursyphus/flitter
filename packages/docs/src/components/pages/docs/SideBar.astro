@@ -1,11 +1,13 @@
 ---
 import { getCollection } from "astro:content";
+import { getNavOrder, normalizePath } from "$utils/index";
+
 const docsEntries = await getCollection("docs");
 // navigation 정보로 표현할 객체 만들기
 const navigation = docsEntries.reduce(
   (acc, entry, i) => {
-    const { nav_group, nav_group_order, nav_order, title, nav_title } =
-      entry.data;
+    const { nav_group, nav_order, title, nav_title } = entry.data;
+    const nav_group_order = getNavOrder(nav_group);
 
     // 해당 navGroup이 이미 존재하는지 확인
     let group = acc.find((g) => g.name === nav_group);
@@ -40,22 +42,23 @@ navigation.forEach((group) => {
 });
 
 const url = new URL(Astro.request.url);
+const normalizedPathname = normalizePath(url.pathname);
 ---
 
 <nav
-  class="inline-flex h-full w-80 shrink-0 flex-col items-end justify-start gap-6 overflow-scroll border-r border-gray-200 px-8 py-[84px]"
+  class="inline-flex w-80 shrink-0 flex-col items-end justify-start gap-6 px-8 pt-[20px]"
 >
   {
     navigation.map((group) => (
       <div class="flex flex-col items-start justify-start self-stretch">
         <div class="inline-flex items-start justify-start gap-2.5 self-stretch">
-          <div class="text-xl font-bold text-gray-100">{group.name}</div>
+          <div class="text-xl font-bold text-gray-300">{group.name}</div>
         </div>
         {group.items.map((item) => (
           <div class="mt-1 inline-flex items-start justify-start gap-2 self-stretch px-4">
             <a
               href={item.url}
-              class={`${item.url === url.pathname ? "font-semibold text-white" : "text-gray-400"} text-lg hover:text-white`}
+              class={`${normalizePath(item.url) === normalizedPathname ? "font-semibold text-purple-500" : "text-gray-400"} text-lg hover:text-purple-500`}
             >
               {item.title}
             </a>
@@ -68,8 +71,10 @@ const url = new URL(Astro.request.url);
 
 <style>
   nav {
-    height: calc(100vh - var(--header));
+    height: calc(100vh);
     position: sticky;
     top: 0;
+    margin: 0;
+    overflow-y: auto;
   }
 </style>
