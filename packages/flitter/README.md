@@ -19,7 +19,7 @@ Flitter is a powerful framework inspired by Flutter, supporting both SVG and Can
 
 # Showcase
 Here are some examples of what you can create with Flitter:
-Interactive ERD (Entity-Relationship Diagram)
+Interactive ERD (Entity-Relationship Diagram)[https://easyrd.dev]
 
 ![Interactive ERD](https://flitter.pages.dev/home/easyrd.jpg)
 
@@ -129,29 +129,118 @@ npm install @meursyphus/flitter @meursyphus/flitter-svelte
 Example of creating a simple chart using Flitter:
 
 ```javascript
-import { Container, Row, Expanded, SizedBox } from '@meursyphus/flitter';
+import {
+	Container,
+	Animation,
+	Text,
+	TextStyle,
+	StatefulWidget,
+	State,
+	Alignment,
+	SizedBox,
+	Column,
+	MainAxisSize,
+	MainAxisAlignment,
+	Row,
+	CrossAxisAlignment,
+	FractionallySizedBox,
+	BoxDecoration,
+	BorderRadius,
+	Radius,
+	AnimationController,
+	Tween,
+	CurvedAnimation,
+	Curves
+} from '@meursyphus/flitter';
 
-const BarChart = ({ data }) => {
-  return Container({
-    width: 300,
-    height: 200,
-    child: Row({
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: data.map(value => 
-        Expanded({
-          child: Container({
-            color: 'blue',
-            height: value * 2,
-          })
-        })
-      ),
-    })
-  });
-};
+export default function BarChart() {
+	return Container({
+		alignment: Alignment.center,
+		color: 'lightgrey',
+		child: Column({
+			mainAxisSize: MainAxisSize.min,
+			crossAxisAlignment: CrossAxisAlignment.center,
+			children: [
+				Text('BarChart', { style: new TextStyle({ fontFamily: 'Intent', fontWeight: '600' }) }),
+				SizedBox({
+					width: 200,
+					height: 150,
+					child: Row({
+						mainAxisAlignment: MainAxisAlignment.spaceBetween,
+						children: [
+							{ label: 'S', value: 60 },
+							{ label: 'M', value: 20 },
+							{ label: 'T', value: 30 },
+							{ label: 'W', value: 90 },
+							{ label: 'T', value: 70 },
+							{ label: 'F', value: 50 },
+							{ label: 'S', value: 40 }
+						].map(({ label, value }) => new Bar(label, value))
+					})
+				})
+			]
+		})
+	});
+}
 
-// Usage
-const chartData = [50, 30, 70, 60, 90];
-const myChart = BarChart({ data: chartData });
+class Bar extends StatefulWidget {
+	constructor(public label: string, public value: number) {
+		super();
+	}
+
+	createState(): State<StatefulWidget> {
+		return new BarState();
+	}
+}
+
+class BarState extends State<Bar> {
+	animationController!: AnimationController;
+	tweenAnimation!: Animation<number>;
+
+	override initState(): void {
+		this.animationController = new AnimationController({
+			duration: 10000
+		});
+		this.animationController.addListener(() => {
+			this.setState();
+		});
+		const tween = new Tween({ begin: 0, end: this.widget.value });
+		this.tweenAnimation = tween.animated(
+			new CurvedAnimation({
+				parent: this.animationController,
+				curve: Curves.easeInOut
+			})
+		);
+		this.animationController.forward();
+	}
+
+	override build() {
+		return Column({
+			mainAxisAlignment: MainAxisAlignment.end,
+			children: [
+				FractionallySizedBox({
+					heightFactor: this.tweenAnimation.value / 100,
+					child: Column({
+						children: [
+							Container({
+								width: 20,
+								decoration: new BoxDecoration({
+									color: '#1a1a1a',
+									borderRadius: BorderRadius.only({
+										topLeft: Radius.circular(4),
+										topRight: Radius.circular(4)
+									})
+								})
+							}),
+							SizedBox({ height: 5 }),
+							Text(this.widget.label, { style: new TextStyle({ fontFamily: 'Intent' }) })
+						]
+					})
+				})
+			]
+		});
+	}
+}
 ```
 
 ## Why Flitter?

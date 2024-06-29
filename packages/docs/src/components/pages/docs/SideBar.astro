@@ -1,5 +1,7 @@
 ---
 import { getCollection } from "astro:content";
+import { normalizePath } from "$utils/index";
+
 const docsEntries = await getCollection("docs");
 // navigation 정보로 표현할 객체 만들기
 const navigation = docsEntries.reduce(
@@ -40,6 +42,7 @@ navigation.forEach((group) => {
 });
 
 const url = new URL(Astro.request.url);
+const normalizedPathname = normalizePath(url.pathname);
 ---
 
 <nav
@@ -55,7 +58,7 @@ const url = new URL(Astro.request.url);
           <div class="mt-1 inline-flex items-start justify-start gap-2 self-stretch px-4">
             <a
               href={item.url}
-              class={`${item.url === url.pathname ? "font-semibold text-white" : "text-gray-400"} text-lg hover:text-white`}
+              class={`${normalizePath(item.url) === normalizedPathname ? "font-semibold text-white" : "text-gray-400"} text-lg hover:text-white`}
             >
               {item.title}
             </a>
