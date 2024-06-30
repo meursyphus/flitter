@@ -1,6 +1,6 @@
 ---
 category: How to start
-title: "Introduction"
+title: "Introduction to Flitter"
 files:
   App.js: |
     import { useEffect, useRef } from "react";
@@ -12,49 +12,117 @@ files:
     } from "@meursyphus/flitter";
 
     export default function App() {
-      let runner
+      let runner;
       const svgRef = useRef(null);
-
+      
       const widget = Container({
         width: Infinity,
         height: Infinity,
         alignment: Alignment.center,
-        color: "red",
-        child: Text("Hello World")
+        color: "lightblue",
+        child: Text("Welcome to Flitter!")
       });
-
+      
       useEffect(() => {
         runner = new AppRunner({
           view: svgRef.current
         });
-
         runner.onMount({
           resizeTarget: svgRef.current
         });
-
         runner.runApp(widget);
-
         return () => {
           runner.dispose();
         };
       }, []);
-
+      
       return (
-        <svg style={{ width: "200px", height: "200px" }} ref={svgRef} />
+        <svg style={{ width: "300px", height: "200px" }} ref={svgRef} />
+      );
+    }
+solved:
+  App.js: |
+    import { useEffect, useRef } from "react";
+    import {
+      Alignment,
+      AppRunner,
+      Container,
+      Text,
+      Column,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      let runner;
+      const svgRef = useRef(null);
+      
+      const widget = Container({
+        width: Infinity,
+        height: Infinity,
+        alignment: Alignment.center,
+        color: "lightblue",
+        child: Column({
+          mainAxisAlignment: Alignment.center,
+          children: [
+            Text("Welcome to Flitter!", { style: { fontSize: 24, fontWeight: 'bold' } }),
+            Text("Let's build amazing visualizations!", { style: { fontSize: 16 } })
+          ]
+        })
+      });
+      
+      useEffect(() => {
+        runner = new AppRunner({
+          view: svgRef.current
+        });
+        runner.onMount({
+          resizeTarget: svgRef.current
+        });
+        runner.runApp(widget);
+        return () => {
+          runner.dispose();
+        };
+      }, []);
+      
+      return (
+        <svg style={{ width: "300px", height: "200px" }} ref={svgRef} />
       );
     }
 ---
 
-# Introduction
+# Introduction to Flitter
+
+Flitter is a powerful library for creating interactive data visualizations in React applications. It provides a declarative way to build complex visualizations without direct DOM manipulation.
+
+## Getting Started
+
+To use Flitter in your React project, first install it:
 
 ```bash
 npm install @meursyphus/flitter
 ```
 
-This example demonstrates how to render widgets using the `AppRunner` class. `AppRunner` is initialized with an SVG element as the `view` property, which is referenced through React's `useRef`. The widget is created using the `Container` function, which includes a `Text` widget as a child.
+Then, you can start using Flitter components in your React components.
 
-Within the `useEffect` hook, an `AppRunner` instance is created, and a resize event is set up through the `onMount` method. Afterwards, the `runApp` method is called to render the widget. When the component unmounts, the `dispose` method is called to clean up resources.
+## Basic Usage
 
-Through this process, the widget defined within the SVG element is rendered, and the layout is automatically updated according to screen size adjustments. This is handled by the `AppRunner`'s `handleViewResize` method.
+The example code demonstrates how to render a simple Flitter widget using the `AppRunner` class. Here's a breakdown of what's happening:
 
-Using the `@meursyphus/flitter` library in this way allows for declarative and reactive data visualization without complex DOM manipulation.
+1. We import necessary components from Flitter.
+2. We create a widget using `Container` and `Text` components.
+3. We use `useRef` to get a reference to the SVG element.
+4. In the `useEffect` hook, we create an `AppRunner` instance, set up resizing, and run our widget.
+5. We render an SVG element that Flitter will use to draw our widget.
+
+## Challenge
+
+Try modifying the widget to display two lines of text instead of one. Use a `Column` widget to stack the text vertically. You can use the code editor to make changes and see the results in real-time.
+
+When you're ready, click the "Solve" button to see one possible solution.
+
+## Key Concepts
+
+- **AppRunner**: This class is responsible for managing the Flitter application lifecycle.
+- **Container**: A basic layout widget that can contain other widgets.
+- **Text**: A widget for displaying text.
+- **Alignment**: Used to position widgets within their parent containers.
+
+In the next tutorial, we'll explore more widgets and learn how to create more complex layouts.

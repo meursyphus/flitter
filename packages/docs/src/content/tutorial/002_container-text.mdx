@@ -1,67 +1,153 @@
 ---
-category: Basic
-title: Container Text
+category: Basic Widgets
+title: "Basic Widgets and Layouts"
 files:
   App.js: |
-    import {
-      Text,
-      Container,
-      Alignment,
-      EdgesInset,
-      Border,
-      BoxDecoration,
-      BorderRadius,
-      TextStyle
-    } from '@meursyphus/flitter'
-    import Widget from '@meursyphus/flitter-react'
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { Container, Row, Column, Text, EdgeInsets, Expanded, Center, TextStyle, CrossAxisAlignment } from '@meursyphus/flitter';
 
     export default function App() {
-      return (
-        <Widget 
-          height="400px" 
-          width="100%" 
-          /* 
-           The renderer can be set to either "svg" or "canvas".
-           The default is "svg". 
-          */
-          // renderer="canvas" 
-          widget={
-            Container({
-              alignment: Alignment.center,
-              decoration: new BoxDecoration({
-                border: Border.all({color: "black", width: 3}),
-                borderRadius: BorderRadius.circular(10),
-                color: "yellow"
-              }),
-              child: Text("Hello World", {
-                style: new TextStyle({
-                  color: "blue",
-                  fontSize: 30
+      const widget = Container({
+        color: 'lightgrey',
+        padding: EdgeInsets.all(16),
+        child: Column({
+          children: [
+            Text('Basic Card Layout', { style: new TextStyle({ fontSize: 24, fontWeight: 'bold' }) }),
+            Container({ height: 16 }),  // Spacer
+            Row({
+              children: [
+                Container({
+                  width: 100,
+                  height: 100,
+                  color: 'lightblue',
+                  child: Center({
+                    child: Text('Image')
+                  })
+                }),
+                Container({ width: 16 }),  // Spacer
+                Expanded({
+                  child: Column({
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Card Title', { style: new TextStyle({ fontSize: 18, fontWeight: 'bold' }) }),
+                      Text('This is a basic card layout using Flitter widgets.')
+                    ]
+                  })
                 })
-              })
+              ]
             })
-          } 
+          ]
+        })
+      });
+
+      return (
+        <Widget
+          width="400px"
+          height="200px"
+          widget={widget}
+        />
+      );
+    }
+solved:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { Container, Row, Column, Text, EdgeInsets, Expanded, Center, CrossAxisAlignment, TextStyle, Center } from '@meursyphus/flitter';
+
+    export default function App() {
+      const widget = Container({
+        color: 'lightgrey',
+        padding: EdgeInsets.all(16),
+        child: Column({
+          children: [
+            Text('Enhanced Card Layout', { style: new TextStyle({ fontSize: 24, fontWeight: 'bold' }) }),
+            Container({ height: 16 }),  // Spacer
+            Row({
+              children: [
+                Container({
+                  width: 100,
+                  height: 100,
+                  color: 'lightblue',
+                  child: Center({
+                    child: Text('Image')
+                  })
+                }),
+                Container({ width: 16 }),  // Spacer
+                Expanded({
+                  child: Column({
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Improved Card', { style: new TextStyle({ fontSize: 18, fontWeight: 'bold' }) }),
+                      Text('This card now has more details and a button.'),
+                      Container({ height: 8 }),  // Spacer
+                      Container({
+                        padding: EdgeInsets.symmetric({ vertical: 8, horizontal: 16 }),
+                        color: 'blue',
+                        child: Text('Learn More', { style: new TextStyle({ color: 'white' }) })
+                      })
+                    ]
+                  })
+                })
+              ]
+            })
+          ]
+        })
+      });
+
+      return (
+        <Widget
+          width="400px"
+          height="250px"
+          widget={widget}
         />
       );
     }
 ---
 
-# Container Text
+# Basic Widgets and Layouts in Flitter
 
-The descriptions of each prop used in this example are as follows:
+In this tutorial, we'll explore some of the basic widgets in Flitter and learn how to combine them to create simple layouts. We'll focus on `Container`, `Row`, `Column`, and `Text` widgets, and use them to build a basic card layout.
 
-`Container` widget props:
+## Key Widgets
 
-- `alignment`: Sets the alignment of child elements within the container. `Alignment.center` positions the child elements at the center.
-- `decoration`: Defines the style of the container. `BoxDecoration` is used to set the background color, border, and the style of the border's edges.
-  - `border`: `Border.all` is used to apply a border to all sides. The color is "black", and the width is 3px.
-  - `borderRadius`: `BorderRadius.circular(10)` is used to round the edges. The value in the parentheses represents the radius of the corners.
-  - `color`: Sets the background color. In this example, it is set to "yellow".
+1. **Container**: A convenience widget that combines common painting, positioning, and sizing widgets.
+2. **Row**: A widget that displays its children in a horizontal array.
+3. **Column**: A widget that displays its children in a vertical array.
+4. **Text**: A widget for displaying text with a single style.
+5. **EdgeInsets**: A utility class for describing offsets in terms of visual edges.
 
-`Text` widget props:
+## Building a Basic Card Layout
 
-- `style`: Defines the style of the text. `TextStyle` is used to set the text color and font size.
-  - `color`: Sets the color of the text. In this example, it is set to "blue".
-  - `fontSize`: Sets the size of the text. In this example, it is set to 30.
+The example code demonstrates how to create a simple card layout using these widgets. Let's break it down:
 
-These settings allow users to freely adjust the appearance and layout of the widget.
+1. We start with a `Container` as the root, giving it a background color and padding.
+2. Inside this, we use a `Column` to arrange elements vertically.
+3. The first child of the column is a `Text` widget for the title.
+4. We then use another `Container` as a spacer.
+5. The main content is a `Row`, containing an image placeholder and some text.
+
+## Understanding the Layout
+
+- The `Row` widget arranges its children horizontally.
+- We use `Container` with specific dimensions for the image placeholder.
+- The `Expanded` widget is used to make the text take up all remaining horizontal space.
+- We use nested `Column` widgets to arrange text vertically within the `Row`.
+
+## Challenge
+
+Enhance the card layout by adding more details and a button. Here are some suggestions:
+
+1. Add a subtitle below the card title.
+2. Include a "Learn More" button at the bottom of the card.
+3. Adjust the spacing to make the layout more visually appealing.
+
+Use the code editor to make these changes. When you're ready, click the "Solve" button to see one possible solution.
+
+## Key Concepts
+
+- **Nesting**: Flitter layouts often involve nesting widgets inside each other to create complex structures.
+- **Flexibility**: Widgets like `Expanded` allow for flexible layouts that adapt to different screen sizes.
+- **Spacing**: Use `Container` with specific dimensions as spacers between elements.
+
+In the next tutorial, we'll explore more advanced layout techniques and introduce some interactive elements to our designs.

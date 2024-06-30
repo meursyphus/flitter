@@ -1,37 +1,95 @@
 ---
 category: How to start
-title: Flitter-React
+title: "Introduction to flitter-react"
 files:
   App.js: |
-    import {Text,Container,Alignment} from '@meursyphus/flitter'
-    import Widget from '@meursyphus/flitter-react'
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { Container, Text, Alignment } from '@meursyphus/flitter';
 
     export default function App() {
+      const widget = Container({
+        width: Infinity,
+        height: Infinity,
+        alignment: Alignment.center,
+        color: "lightblue",
+        child: Text("Welcome to flitter-react!")
+      });
+
       return (
-        <Widget 
-          height="200px" 
-          width="200px" 
-          /* 
-           The renderer can be set to either "svg" or "canvas".
-           The default is "svg". 
-          */
-          // renderer="canvas" 
-          widget={
-            Container({
-                width: Infinity,
-                height: Infinity,
-                alignment: Alignment.center,
-                color: "red",
-                child: Text("Hello World")
-            })
-          } 
+        <Widget
+          width="300px"
+          height="200px"
+          widget={widget}
+        />
+      );
+    }
+solved:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { Container, Text, Alignment, Column } from '@meursyphus/flitter';
+
+    export default function App() {
+      const widget = Container({
+        width: Infinity,
+        height: Infinity,
+        alignment: Alignment.center,
+        color: "lightblue",
+        child: Column({
+          mainAxisAlignment: Alignment.center,
+          children: [
+            Text("Welcome to flitter-react!", { style: { fontSize: 24, fontWeight: 'bold' } }),
+            Text("Simplified Flitter usage in React", { style: { fontSize: 16 } })
+          ]
+        })
+      });
+
+      return (
+        <Widget
+          width="300px"
+          height="200px"
+          widget={widget}
         />
       );
     }
 ---
 
-# Flitter-React
+# Introduction to flitter-react
 
-Flitter-React is a library that facilitates the easy use of Flitter widgets in a React environment.
-Through this, developers can integrate Flitter's widgets into their React projects without complex configurations.
-The example below demonstrates how to implement a simple widget as a React component using Flitter-React.
+flitter-react is a React wrapper for the Flitter library, providing an easier way to integrate Flitter widgets into React applications. It simplifies the process of rendering Flitter widgets by handling the AppRunner setup and lifecycle management for you.
+
+## Getting Started
+
+To use flitter-react, you need to install both flitter and flitter-react:
+
+```bash
+npm install @meursyphus/flitter @meursyphus/flitter-react
+```
+
+## Basic Usage
+
+The example code demonstrates how to use flitter-react to render a simple Flitter widget. Here's what's happening:
+
+1. We import the `Widget` component from flitter-react.
+2. We create a Flitter widget using `Container` and `Text` components from flitter.
+3. We use the `Widget` component to render our Flitter widget, specifying the width and height.
+
+## Advantages of flitter-react
+
+- **Simplified Integration**: No need to manually manage AppRunner or SVG references.
+- **React-like Usage**: Feels more natural in a React application.
+- **Automatic Lifecycle Management**: The Widget component handles mounting, unmounting, and resizing for you.
+
+## Challenge
+
+Modify the widget to display two lines of text, similar to the previous tutorial, but using the flitter-react approach. Use a `Column` widget to stack the text vertically.
+
+When you're ready, click the "Solve" button to see one possible solution.
+
+## Key Concepts
+
+- **Widget Component**: The main component from flitter-react used to render Flitter widgets.
+- **Flitter Components**: We still use Flitter components (Container, Text, etc.) to build our widget tree.
+
+In the next tutorials, we'll explore more complex layouts and interactions using flitter-react.
