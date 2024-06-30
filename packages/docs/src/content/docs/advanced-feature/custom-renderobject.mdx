@@ -1,0 +1,206 @@
+---
+nav_group: "Advanced Features"
+nav_order: 4
+title: "Customizing RenderObjects"
+description: "Learn how to create custom RenderObjects in Flitter for advanced layout and painting control"
+---
+
+# Customizing RenderObjects in Flitter
+
+Creating custom RenderObjects in Flitter allows you to have fine-grained control over both layout and painting. This guide will walk you through the process of creating a custom RenderObject, including how to implement custom layout logic and how to create separate painters for SVG and Canvas rendering.
+
+## Overview
+
+When creating a custom RenderObject, you'll typically need to:
+
+1. Create a custom Widget class
+2. Create a custom RenderObject class
+3. Implement custom layout logic
+4. Create custom SVG and Canvas painters
+
+Let's go through each of these steps with examples.
+
+## 1. Creating a Custom Widget
+
+First, you'll need to create a custom widget that will use your custom RenderObject:
+
+```typescript
+import { SingleChildRenderObjectWidget } from "@meursyphus/flitter";
+
+class CustomWidget extends SingleChildRenderObjectWidget {
+  // Add any additional properties here
+
+  constructor(props: {
+    /* your props */
+  }) {
+    super(props);
+    // Initialize your properties
+  }
+
+  createRenderObject(): RenderCustomObject {
+    return new RenderCustomObject(/* pass necessary props */);
+  }
+
+  updateRenderObject(renderObject: RenderCustomObject): void {
+    // Update render object properties if needed
+  }
+}
+```
+
+## 2. Creating a Custom RenderObject
+
+Next, create your custom RenderObject:
+
+```typescript
+import { SingleChildRenderObject } from "@meursyphus/flitter";
+
+class RenderCustomObject extends SingleChildRenderObject {
+  constructor(props: {
+    /* your props */
+  }) {
+    super({ isPainter: true }); // Set to true if this object paints itself
+    // Initialize your properties
+  }
+
+  // Override methods as needed
+}
+```
+
+## 3. Implementing Custom Layout Logic
+
+To implement custom layout logic, override the `performLayout` method:
+
+```typescript
+class RenderCustomObject extends SingleChildRenderObject {
+  // ...
+
+  protected override performLayout(): void {
+    // Implement your custom layout logic here
+    // For example:
+    if (this.child) {
+      this.child.layout(this.constraints);
+      this.size = this.child.size;
+    } else {
+      this.size = this.constraints.biggest;
+    }
+  }
+}
+```
+
+## 4. Creating Custom Painters
+
+For custom painting, you need to create separate painters for SVG and Canvas:
+
+```typescript
+import {
+  SvgPainter,
+  CanvasPainter,
+  SvgPaintContext,
+  CanvasPaintingContext,
+  Offset,
+} from "@meursyphus/flitter";
+
+class CustomSvgPainter extends SvgPainter {
+  protected override performPaint(context: {
+    [key: string]: SVGElement;
+  }): void {
+    // Implement SVG painting logic
+    const { rect } = context;
+    rect.setAttribute("fill", "blue");
+    rect.setAttribute("width", `${this.size.width}`);
+    rect.setAttribute("height", `${this.size.height}`);
+  }
+
+  override createDefaultSvgEl({ createSvgEl }: SvgPaintContext): {
+    [key: string]: SVGElement;
+  } {
+    return {
+      rect: createSvgEl("rect"),
+    };
+  }
+}
+
+class CustomCanvasPainter extends CanvasPainter {
+  protected override performPaint(
+    paintContext: CanvasPaintingContext,
+    offset: Offset,
+  ): void {
+    const { canvas: ctx } = paintContext;
+    ctx.save();
+    ctx.fillStyle = "blue";
+    ctx.fillRect(offset.x, offset.y, this.size.width, this.size.height);
+    ctx.restore();
+  }
+}
+```
+
+Then, in your RenderObject, override the `createSvgPainter` and `createCanvasPainter` methods:
+
+```typescript
+class RenderCustomObject extends SingleChildRenderObject {
+  // ...
+
+  override createSvgPainter() {
+    return new CustomSvgPainter(this);
+  }
+
+  override createCanvasPainter() {
+    return new CustomCanvasPainter(this);
+  }
+}
+```
+
+## Example: Custom Wrap Widget
+
+Here's an example of a custom Wrap widget that implements custom layout logic:
+
+```typescript
+class Wrap extends MultiChildRenderObjectWidget {
+  override createRenderObject(): RenderObject {
+    return new RenderWrap();
+  }
+
+  override updateRenderObject(): void {
+    // Update logic if needed
+  }
+}
+
+class RenderWrap extends MultiChildRenderObject {
+  constructor() {
+    super({ isPainter: false });
+  }
+
+  protected override performLayout(): void {
+    let currentX = 0;
+    let currentY = 0;
+    let maxHeightInRow = 0;
+    let maxWidth = 0;
+
+    this.children.forEach((child) => {
+      child.layout(this.constraints);
+
+      if (currentX + child.size.width > this.constraints.maxWidth) {
+        currentX = 0;
+        currentY += maxHeightInRow;
+        maxHeightInRow = 0;
+      }
+
+      child.offset = new Offset({ x: currentX, y: currentY });
+      currentX += child.size.width;
+      maxHeightInRow = Math.max(maxHeightInRow, child.size.height);
+      maxWidth = Math.max(maxWidth, currentX);
+    });
+
+    this.size = new Size({
+      width: maxWidth,
+      height: currentY + maxHeightInRow,
+    });
+  }
+}
+```
+
+## Conclusion
+
+Creating custom RenderObjects in Flitter gives you powerful control over layout and painting. By implementing custom layout logic and creating separate painters for SVG and Canvas, you can create highly specialized and efficient widgets.
+
+Remember to consider performance implications when creating custom RenderObjects, especially for components that may be frequently rebuilt or painted. Always profile your custom implementations to ensure they perform well in your application.
