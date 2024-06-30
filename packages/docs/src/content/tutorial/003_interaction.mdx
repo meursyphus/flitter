@@ -1,0 +1,148 @@
+---
+category: Advanced Techniques
+title: "Advanced Layout and Interaction"
+files:
+  App.js: |
+    import React, { useState } from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { Container, Stack, Text, EdgeInsets, GestureDetector, Positioned, Alignment } from '@meursyphus/flitter';
+
+    export default function App() {
+      const [isExpanded, setIsExpanded] = useState(false);
+
+      const widget = Container({
+        color: 'lightgrey',
+        padding: EdgeInsets.all(16),
+        child: Stack({
+          children: [
+            Container({
+              width: 300,
+              height: isExpanded ? 200 : 100,
+              color: 'white',
+              child: Text('Click to expand', { style: { fontSize: 18 } })
+            }),
+            Positioned({
+              right: 8,
+              bottom: 8,
+              child: GestureDetector({
+                onClick: () => setIsExpanded(!isExpanded),
+                child: Container({
+                  padding: EdgeInsets.all(8),
+                  color: 'blue',
+                  child: Text(isExpanded ? 'Collapse' : 'Expand', { style: { color: 'white' } })
+                })
+              })
+            })
+          ]
+        })
+      });
+
+      return (
+        <Widget
+          width="400px"
+          height="250px"
+          widget={widget}
+        />
+      );
+    }
+solved:
+  App.js: |
+    import React, { useState } from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { Container, Stack, Text, EdgeInsets, GestureDetector, Positioned, Alignment, Column } from '@meursyphus/flitter';
+
+    export default function App() {
+      const [isExpanded, setIsExpanded] = useState(false);
+
+      const widget = Container({
+        color: 'lightgrey',
+        padding: EdgeInsets.all(16),
+        child: Stack({
+          children: [
+            Container({
+              width: 300,
+              height: isExpanded ? 200 : 100,
+              color: 'white',
+              padding: EdgeInsets.all(16),
+              child: Column({
+                crossAxisAlignment: Alignment.start,
+                children: [
+                  Text('Interactive Card', { style: { fontSize: 20, fontWeight: 'bold' } }),
+                  Container({ height: 8 }),
+                  Text('Click the button to see more details.'),
+                  if (isExpanded) Container({ height: 8 }),
+                  if (isExpanded) Text('This is additional information that appears when the card is expanded. It demonstrates the use of conditional rendering in Flitter widgets.')
+                ]
+              })
+            }),
+            Positioned({
+              right: 8,
+              bottom: 8,
+              child: GestureDetector({
+                onClick: () => setIsExpanded(!isExpanded),
+                child: Container({
+                  padding: EdgeInsets.symmetric({ vertical: 8, horizontal: 16 }),
+                  color: 'blue',
+                  child: Text(isExpanded ? 'Collapse' : 'Expand', { style: { color: 'white' } })
+                })
+              })
+            })
+          ]
+        })
+      });
+
+      return (
+        <Widget
+          width="400px"
+          height="250px"
+          widget={widget}
+        />
+      );
+    }
+---
+
+# Advanced Layout and Interaction in Flitter
+
+In this tutorial, we'll explore more advanced layout techniques using the Stack widget and add interactivity with the GestureDetector. We'll create an expandable card that responds to user interaction.
+
+## Key Widgets and Concepts
+
+1. **Stack**: A widget that positions its children relative to the edges of its box.
+2. **Positioned**: A widget that controls where a child of a Stack is positioned.
+3. **GestureDetector**: A widget that detects gestures and responds to them with callbacks.
+4. **useState**: A React hook that we'll use to manage the state of our expandable card.
+
+## Building an Interactive Expandable Card
+
+The example code demonstrates how to create a card that expands when a button is clicked. Here's a breakdown of the key elements:
+
+1. We use a `Stack` as the main container for our card.
+2. The card content is in a `Container` that changes its height based on the `isExpanded` state.
+3. We use a `Positioned` widget to place an expand/collapse button at the bottom-right corner of the card.
+4. The `GestureDetector` wraps our button and handles the click event to toggle the card's expanded state.
+
+## Understanding the Layout
+
+- The `Stack` widget allows us to overlay widgets on top of each other.
+- `Positioned` is used within a `Stack` to precisely position the button.
+- We use React's `useState` hook to manage the expanded state of our card.
+
+## Challenge
+
+Enhance the expandable card by adding more interactive elements and improving the layout. Here are some suggestions:
+
+1. Add a title to the card that's always visible.
+2. Include some additional text that only appears when the card is expanded.
+3. Animate the height change of the card for a smoother transition.
+4. Add an icon to the expand/collapse button that rotates when the state changes.
+
+Use the code editor to implement these changes. When you're ready, click the "Solve" button to see one possible solution.
+
+## Key Concepts
+
+- **Layered Layouts**: The `Stack` widget allows for complex, layered layouts where elements can overlap.
+- **Positioning**: `Positioned` gives precise control over the placement of widgets within a `Stack`.
+- **Gesture Handling**: `GestureDetector` allows for the creation of interactive elements that respond to user input.
+- **State Management**: Using React's state management with Flitter allows for dynamic, reactive UIs.
+
+In the next tutorial, we'll dive deeper into animations and more complex interactions in Flitter.

@@ -1,64 +1,332 @@
 ---
-category: Basic
-title: Stack Positioned
+category: Advanced Techniques
+title: "Advanced State Management with Provider"
 files:
   App.js: |
-    import {Provider} from '@meursyphus/flitter';
+    import React from 'react';
     import Widget from '@meursyphus/flitter-react';
-    import CustomWidget from './CustomWidget.js';
+    import { StateManagementDemo } from './StateManagementDemo';
 
     export default function App() {
       return (
         <Widget
-          height="200px"
-          width="300px"
-          widget={
-            Provider({
-              providerKey: 'provider-key',
-              value: 'value from provider',
-              child: new CustomWidget()
-            })
-          }
+          width="400px"
+          height="600px"
+          widget={new StateManagementDemo()}
         />
       );
     }
-  CustomWidget.js: |
-    import {
-      StatelessWidget,
-      TextStyle,
-      Container,
-      Text,
-      EdgeInsets,
-      Provider
-    } from '@meursyphus/flitter';
-    import Widget from '@meursyphus/flitter-react';
+  StateManagementDemo.js: |
+    import { StatefulWidget, State, Container, Column, Text, EdgeInsets, GestureDetector, Provider, TextStyle } from '@meursyphus/flitter';
 
-    export default class CustomWidget extends StatelessWidget {
+    class CounterState {
+      constructor() {
+        this.count = 0;
+      }
 
-      build(context) {
-        const text = Provider.of('provider-key', context);
+      increment() {
+        this.count++;
+      }
+    }
 
-        return Container({
-          color: 'yellow',
-          margin: EdgeInsets.all(10),
-          padding: EdgeInsets.all(10),
-          child: Text(text, {
-            style: new TextStyle({
-              color: 'black',
-              fontSize: 20
+    export class StateManagementDemo extends StatefulWidget {
+      createState() {
+        return new StateManagementDemoState();
+      }
+    }
+
+    class StateManagementDemoState extends State<StateManagementDemo> {
+      counterState = new CounterState();
+
+      build() {
+        return Provider({
+          providerKey: 'counter',
+          value: this.counterState,
+          child: Container({
+            padding: EdgeInsets.all(16),
+            child: Column({
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Advanced State Management Demo', {
+                  style: new TextStyle({ fontSize: 20, fontWeight: 'bold' })
+                }),
+                Container({ height: 20 }),
+                new CounterDisplay(),
+                Container({ height: 20 }),
+                new IncrementButton(),
+              ]
             })
           })
-        })
+        });
+      }
+    }
+
+    class CounterDisplay extends StatelessWidget {
+      build(context) {
+        const state = Provider.of('counter', context);
+        return Text(`Count: ${state.count}`, {
+          style: new TextStyle({ fontSize: 24 })
+        });
+      }
+    }
+
+    class IncrementButton extends StatelessWidget {
+      build(context) {
+        return GestureDetector({
+          onClick: () => {
+            const state = Provider.of('counter', context);
+            state.increment();
+            context.markNeedsRebuild();
+          },
+          child: Container({
+            padding: EdgeInsets.symmetric({ vertical: 8, horizontal: 16 }),
+            color: 'blue',
+            child: Text('Increment', {
+              style: new TextStyle({ color: 'white' })
+            })
+          })
+        });
+      }
+    }
+solved:
+  StateManagementDemo.js: |
+    import { StatefulWidget, State, Container, Column, Text, EdgeInsets, GestureDetector, Provider, TextStyle } from '@meursyphus/flitter';
+
+    class CounterBloc {
+      constructor() {
+        this.count = 0;
+        this.listeners = [];
+      }
+
+      increment() {
+        this.count++;
+        this.notifyListeners();
+      }
+
+      decrement() {
+        if (this.count > 0) {
+          this.count--;
+          this.notifyListeners();
+        }
+      }
+
+      reset() {
+        this.count = 0;
+        this.notifyListeners();
+      }
+
+      addListener(listener) {
+        this.listeners.push(listener);
+      }
+
+      removeListener(listener) {
+        const index = this.listeners.indexOf(listener);
+        if (index > -1) {
+          this.listeners.splice(index, 1);
+        }
+      }
+
+      notifyListeners() {
+        this.listeners.forEach(listener => listener());
+      }
+    }
+
+    export class StateManagementDemo extends StatefulWidget {
+      createState() {
+        return new StateManagementDemoState();
+      }
+    }
+
+    class StateManagementDemoState extends State<StateManagementDemo> {
+      counterBloc = new CounterBloc();
+
+      build() {
+        return Provider({
+          providerKey: 'counterBloc',
+          value: this.counterBloc,
+          child: Container({
+            padding: EdgeInsets.all(16),
+            child: Column({
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Advanced State Management Demo', {
+                  style: new TextStyle({ fontSize: 20, fontWeight: 'bold' })
+                }),
+                Container({ height: 20 }),
+                new CounterDisplay(),
+                Container({ height: 20 }),
+                new CounterControls(),
+              ]
+            })
+          })
+        });
+      }
+    }
+
+    class CounterDisplay extends StatefulWidget {
+      createState() {
+        return new CounterDisplayState();
+      }
+    }
+
+    class CounterDisplayState extends State<CounterDisplay> {
+      bloc;
+
+      initState() {
+        super.initState();
+        this.bloc = Provider.of('counterBloc', this.context);
+        this.bloc.addListener(this.updateState);
+      }
+
+      updateState = () => {
+        this.setState(() => {});
+      };
+
+      dispose() {
+        this.bloc.removeListener(this.updateState);
+        super.dispose();
+      }
+
+      build(context) {
+        return Text(`Count: ${this.bloc.count}`, {
+          style: new TextStyle({ fontSize: 24 })
+        });
+      }
+    }
+
+    class CounterControls extends StatelessWidget {
+      build(context) {
+        const bloc = Provider.of('counterBloc', context);
+        return Row({
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            this.buildButton('Decrement', () => bloc.decrement(), 'red'),
+            this.buildButton('Reset', () => bloc.reset(), 'gray'),
+            this.buildButton('Increment', () => bloc.increment(), 'blue'),
+          ]
+        });
+      }
+
+      buildButton(text, onPressed, color) {
+        return GestureDetector({
+          onClick: onPressed,
+          child: Container({
+            padding: EdgeInsets.symmetric({ vertical: 8, horizontal: 16 }),
+            color: color,
+            child: Text(text, {
+              style: new TextStyle({ color: 'white' })
+            })
+          })
+        });
       }
     }
 ---
 
-# Provider
+# Advanced State Management with Provider in Flitter
 
-In this tutorial, we will learn how to use the `Provider` widget to pass data to child widgets. The `Provider` supplies specific data to its child widgets, and these child widgets can access the data using the `Provider.of` method.
+In this tutorial, we'll explore advanced state management techniques in Flitter using the Provider widget. We'll implement a simple BLoC (Business Logic Component) pattern for more complex state management.
 
-In the example above, the `Provider` holds a key called `provider-key` and a value called `value from provider`, and uses `CustomWidget` as its child widget. Inside the `CustomWidget`, it calls `Provider.of` to retrieve the value associated with `provider-key` and displays it on the screen.
+## Key Concepts
 
-This approach allows child widgets to easily access the state managed by parent widgets, enabling efficient data management and enhancing component reusability.
+1. **Provider**: A widget that makes a value available to its descendants.
+2. **BLoC Pattern**: A design pattern that helps separate business logic from the UI.
+3. **State Sharing**: Techniques for sharing state between widgets without passing it explicitly through constructors.
+4. **Reactive Programming**: Updating the UI in response to state changes.
 
-The `Provider` widget can be very useful in various scenarios, especially when data needs to be shared across multiple levels of an application.
+## Using Provider for State Sharing
+
+Provider allows you to share data efficiently down the widget tree without explicitly passing it through each widget's constructor.
+
+In our example, we create a `CounterBloc` and provide it to the widget tree:
+
+```typescript
+class CounterBloc {
+  constructor() {
+    this.count = 0;
+    this.listeners = [];
+  }
+
+  increment() {
+    this.count++;
+    this.notifyListeners();
+  }
+
+  // ... other methods ...
+
+  notifyListeners() {
+    this.listeners.forEach(listener => listener());
+  }
+}
+
+class StateManagementDemoState extends State<StateManagementDemo> {
+  counterBloc = new CounterBloc();
+
+  build() {
+    return Provider({
+      providerKey: 'counterBloc',
+      value: this.counterBloc,
+      child: // ... rest of the widget tree
+    });
+  }
+}
+```
+
+## Accessing Shared State
+
+To access the shared state, we use `Provider.of`:
+
+```typescript
+class CounterDisplay extends StatefulWidget {
+  createState() {
+    return new CounterDisplayState();
+  }
+}
+
+class CounterDisplayState extends State<CounterDisplay> {
+  bloc;
+
+  initState() {
+    super.initState();
+    this.bloc = Provider.of("counterBloc", this.context);
+    this.bloc.addListener(this.updateState);
+  }
+
+  // ... rest of the implementation
+}
+```
+
+## Reactive UI Updates
+
+To make our UI react to state changes, we create a StatefulWidget that listens to the BLoC:
+
+```typescript
+updateState = () => {
+  this.setState(() => {});
+};
+
+build(context) {
+  return Text(`Count: ${this.bloc.count}`, {
+    style: new TextStyle({ fontSize: 24 })
+  });
+}
+```
+
+## Challenge
+
+Enhance the state management demo with the following improvements:
+
+1. Add a decrement function to the CounterBloc.
+2. Implement a reset function that sets the counter back to zero.
+3. Create a new widget that displays the current count as a percentage of a maximum value.
+4. Implement error handling in the BLoC (e.g., prevent the counter from going below zero).
+
+Use the code editor to implement these changes. When you're ready, click the "Solve" button to see one possible solution.
+
+## Key Takeaways
+
+- Provider offers an efficient way to share data down the widget tree.
+- The BLoC pattern separates business logic from the UI, making the code more maintainable and testable.
+- Reactive programming principles allow for efficient UI updates in response to state changes.
+- Advanced state management techniques enable the creation of complex, data-driven applications in Flitter.
+
+In the next tutorial, we'll explore how to combine these state management techniques with animations to create dynamic, data-driven user interfaces.

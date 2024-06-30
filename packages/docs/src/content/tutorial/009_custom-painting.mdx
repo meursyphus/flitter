@@ -1,0 +1,265 @@
+---
+category: Advanced Techniques
+title: "Custom Painting in Flitter"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { CustomPaintingDemo } from './CustomPaintingDemo';
+
+    export default function App() {
+      return (
+        <Widget
+          width="400px"
+          height="400px"
+          widget={new CustomPaintingDemo()}
+        />
+      );
+    }
+  CustomPaintingDemo.js: |
+    import { StatelessWidget, Container, CustomPaint, Path, Size } from '@meursyphus/flitter';
+
+    export class CustomPaintingDemo extends StatelessWidget {
+      build() {
+        return Container({
+          width: 400,
+          height: 400,
+          child: CustomPaint({
+            size: Size.infinite,
+            painter: {
+              svg: {
+                createDefaultSvgEl: (context) => ({
+                  path: context.createSvgEl('path')
+                }),
+                paint: ({ path }, size) => {
+                  const pathObj = new Path();
+                  this.drawCustomShape(pathObj, size);
+                  path.setAttribute('d', pathObj.getD());
+                  path.setAttribute('fill', 'none');
+                  path.setAttribute('stroke', 'blue');
+                  path.setAttribute('stroke-width', '2');
+                }
+              },
+              canvas: {
+                paint: ({ canvas }, size) => {
+                  const path = new Path();
+                  this.drawCustomShape(path, size);
+                  canvas.strokeStyle = 'blue';
+                  canvas.lineWidth = 2;
+                  canvas.stroke(path.toCanvasPath());
+                }
+              }
+            }
+          })
+        });
+      }
+
+      drawCustomShape(path, size) {
+        const width = size.width;
+        const height = size.height;
+        path.moveTo(0, height / 2);
+        path.quadraticCurveTo(width / 4, 0, width / 2, height / 2);
+        path.quadraticCurveTo(3 * width / 4, height, width, height / 2);
+      }
+    }
+solved:
+  CustomPaintingDemo.js: |
+    import { StatefulWidget, State, Container, CustomPaint, Path, Size, GestureDetector } from '@meursyphus/flitter';
+
+    export class CustomPaintingDemo extends StatefulWidget {
+      createState() {
+        return new CustomPaintingDemoState();
+      }
+    }
+
+    class CustomPaintingDemoState extends State<CustomPaintingDemo> {
+      data = [50, 200, 100, 150, 75, 300];
+      hoveredIndex = -1;
+
+      build() {
+        return GestureDetector({
+          onMouseMove: (e) => this.updateHoveredIndex(e),
+          child: Container({
+            width: 400,
+            height: 400,
+            child: CustomPaint({
+              size: Size.infinite,
+              painter: {
+                svg: {
+                  createDefaultSvgEl: (context) => ({
+                    path: context.createSvgEl('path'),
+                    circles: this.data.map(() => context.createSvgEl('circle'))
+                  }),
+                  paint: ({ path, circles }, size) => {
+                    const pathObj = new Path();
+                    this.drawChart(pathObj, size);
+                    path.setAttribute('d', pathObj.getD());
+                    path.setAttribute('fill', 'none');
+                    path.setAttribute('stroke', 'blue');
+                    path.setAttribute('stroke-width', '2');
+
+                    circles.forEach((circle, index) => {
+                      const point = this.getPointFromData(index, size);
+                      circle.setAttribute('cx', point.x.toString());
+                      circle.setAttribute('cy', point.y.toString());
+                      circle.setAttribute('r', index === this.hoveredIndex ? '6' : '4');
+                      circle.setAttribute('fill', index === this.hoveredIndex ? 'red' : 'blue');
+                    });
+                  }
+                },
+                canvas: {
+                  paint: ({ canvas }, size) => {
+                    const path = new Path();
+                    this.drawChart(path, size);
+                    canvas.strokeStyle = 'blue';
+                    canvas.lineWidth = 2;
+                    canvas.stroke(path.toCanvasPath());
+
+                    this.data.forEach((_, index) => {
+                      const point = this.getPointFromData(index, size);
+                      canvas.beginPath();
+                      canvas.arc(point.x, point.y, index === this.hoveredIndex ? 6 : 4, 0, 2 * Math.PI);
+                      canvas.fillStyle = index === this.hoveredIndex ? 'red' : 'blue';
+                      canvas.fill();
+                    });
+                  }
+                }
+              }
+            })
+          })
+        });
+      }
+
+      drawChart(path, size) {
+        const width = size.width;
+        const height = size.height;
+        path.moveTo(0, height - this.data[0] * height / 300);
+        for (let i = 1; i < this.data.length; i++) {
+          const x = i * width / (this.data.length - 1);
+          const y = height - this.data[i] * height / 300;
+          path.lineTo(x, y);
+        }
+      }
+
+      getPointFromData(index, size) {
+        const x = index * size.width / (this.data.length - 1);
+        const y = size.height - this.data[index] * size.height / 300;
+        return { x, y };
+      }
+
+      updateHoveredIndex(e) {
+        const rect = e.target.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const width = rect.width;
+        const index = Math.round(x / width * (this.data.length - 1));
+        if (index !== this.hoveredIndex) {
+          this.setState(() => {
+            this.hoveredIndex = index;
+          });
+        }
+      }
+    }
+---
+
+# Custom Painting in Flitter
+
+In this tutorial, we'll explore custom painting techniques in Flitter using the CustomPaint widget. We'll implement a custom shape and then create an interactive line chart to demonstrate more complex painting scenarios.
+
+## Key Concepts
+
+1. **CustomPaint**: A widget that provides a canvas on which to draw custom shapes and graphics.
+2. **Path**: A utility class for creating complex shapes and paths.
+3. **SVG and Canvas Rendering**: Implementing custom painting for both SVG and Canvas contexts.
+4. **Interactive Graphics**: Creating graphics that respond to user input.
+
+## Basic Custom Painting
+
+Let's start with a basic example of custom painting:
+
+```typescript
+import {
+  StatelessWidget,
+  Container,
+  CustomPaint,
+  Path,
+  Size,
+} from "@meursyphus/flitter";
+
+export class CustomPaintingDemo extends StatelessWidget {
+  build() {
+    return Container({
+      width: 400,
+      height: 400,
+      child: CustomPaint({
+        size: Size.infinite,
+        painter: {
+          svg: {
+            createDefaultSvgEl: (context) => ({
+              path: context.createSvgEl("path"),
+            }),
+            paint: ({ path }, size) => {
+              const pathObj = new Path();
+              this.drawCustomShape(pathObj, size);
+              path.setAttribute("d", pathObj.getD());
+              path.setAttribute("fill", "none");
+              path.setAttribute("stroke", "blue");
+              path.setAttribute("stroke-width", "2");
+            },
+          },
+          canvas: {
+            paint: ({ canvas }, size) => {
+              const path = new Path();
+              this.drawCustomShape(path, size);
+              canvas.strokeStyle = "blue";
+              canvas.lineWidth = 2;
+              canvas.stroke(path.toCanvasPath());
+            },
+          },
+        },
+      }),
+    });
+  }
+
+  drawCustomShape(path, size) {
+    const width = size.width;
+    const height = size.height;
+    path.moveTo(0, height / 2);
+    path.quadraticCurveTo(width / 4, 0, width / 2, height / 2);
+    path.quadraticCurveTo((3 * width) / 4, height, width, height / 2);
+  }
+}
+```
+
+This example draws a simple curved line across the canvas.
+
+## Creating an Interactive Line Chart
+
+Now, let's create a more complex example: an interactive line chart. This will demonstrate how to handle user interactions and update the painting accordingly.
+
+Key features of the interactive chart:
+
+1. Draws a line chart based on a data array.
+2. Highlights data points when hovered.
+3. Works with both SVG and Canvas rendering.
+
+See the 'solved' tab for the full implementation.
+
+## Challenge
+
+Enhance the interactive line chart with the following features:
+
+1. Add labels for the x and y axes.
+2. Implement zooming functionality (e.g., allow users to zoom in on a specific part of the chart).
+3. Add smooth animations when updating the chart data.
+4. Implement a tooltip that shows the exact value when hovering over a data point.
+
+Use the code editor to implement these changes. When you're ready, click the "Solve" button to see one possible solution.
+
+## Key Takeaways
+
+- CustomPaint provides a powerful way to create custom graphics in Flitter.
+- The Path class is essential for creating complex shapes and lines.
+- Implementing both SVG and Canvas painting allows your custom graphics to work across different rendering contexts.
+- Combining custom painting with user interactions enables the creation of rich, interactive visualizations.
+
+In the next tutorial, we'll explore more advanced custom painting techniques, including complex shapes, gradients, and animations.

@@ -1,0 +1,330 @@
+---
+category: Advanced Techniques
+title: "Advanced Flex Layouts with MainAxisSize"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { FlexLayoutDemo } from './FlexLayoutDemo';
+
+    export default function App() {
+      return (
+        <Widget
+          width="400px"
+          height="600px"
+          widget={new FlexLayoutDemo()}
+        />
+      );
+    }
+  FlexLayoutDemo.js: |
+    import { StatelessWidget, Container, Row, Column, Expanded, Text, EdgeInsets, MainAxisAlignment, CrossAxisAlignment, MainAxisSize, TextStyle } from '@meursyphus/flitter';
+
+    export class FlexLayoutDemo extends StatelessWidget {
+      build() {
+        return Container({
+          color: 'lightgrey',
+          padding: EdgeInsets.all(16),
+          child: Column({
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              this.buildSection('Row with MainAxisSize.max', this.buildRowMax()),
+              Container({ height: 16 }),
+              this.buildSection('Row with MainAxisSize.min', this.buildRowMin()),
+              Container({ height: 16 }),
+              this.buildSection('Column with MainAxisSize.max', this.buildColumnMax()),
+              Container({ height: 16 }),
+              this.buildSection('Column with MainAxisSize.min', this.buildColumnMin()),
+            ]
+          })
+        });
+      }
+
+      buildSection(title, content) {
+        return Column({
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, { style: new TextStyle({ fontSize: 18, fontWeight: 'bold' }) }),
+            Container({ height: 8 }),
+            content
+          ]
+        });
+      }
+
+      buildRowMax() {
+        return Container({
+          color: 'white',
+          child: Row({
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              this.buildBox('1'),
+              this.buildBox('2'),
+              this.buildBox('3'),
+            ]
+          })
+        });
+      }
+
+      buildRowMin() {
+        return Container({
+          color: 'white',
+          child: Row({
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              this.buildBox('1'),
+              this.buildBox('2'),
+              this.buildBox('3'),
+            ]
+          })
+        });
+      }
+
+      buildColumnMax() {
+        return Container({
+          color: 'white',
+          height: 150,
+          child: Column({
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              this.buildBox('1'),
+              this.buildBox('2'),
+              this.buildBox('3'),
+            ]
+          })
+        });
+      }
+
+      buildColumnMin() {
+        return Container({
+          color: 'white',
+          height: 150,
+          child: Column({
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              this.buildBox('1'),
+              this.buildBox('2'),
+              this.buildBox('3'),
+            ]
+          })
+        });
+      }
+
+      buildBox(text) {
+        return Container({
+          width: 50,
+          height: 50,
+          color: 'lightblue',
+          alignment: Alignment.center,
+          child: Text(text, { style: new TextStyle({ color: 'black' }) })
+        });
+      }
+    }
+solved:
+  FlexLayoutDemo.js: |
+    import { StatelessWidget, Container, Row, Column, Expanded, Text, EdgeInsets, MainAxisAlignment, CrossAxisAlignment, MainAxisSize, TextStyle } from '@meursyphus/flitter';
+
+    export class FlexLayoutDemo extends StatelessWidget {
+      build() {
+        return Container({
+          color: 'lightgrey',
+          padding: EdgeInsets.all(16),
+          child: Column({
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              this.buildSection('Row with MainAxisSize.max', this.buildRowMax()),
+              Container({ height: 16 }),
+              this.buildSection('Row with MainAxisSize.min', this.buildRowMin()),
+              Container({ height: 16 }),
+              this.buildSection('Column with MainAxisSize.max', this.buildColumnMax()),
+              Container({ height: 16 }),
+              this.buildSection('Column with MainAxisSize.min', this.buildColumnMin()),
+              Container({ height: 16 }),
+              this.buildSection('Complex Layout', this.buildComplexLayout()),
+            ]
+          })
+        });
+      }
+
+      buildSection(title, content) {
+        return Column({
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, { style: new TextStyle({ fontSize: 18, fontWeight: 'bold' }) }),
+            Container({ height: 8 }),
+            content
+          ]
+        });
+      }
+
+      buildRowMax() {
+        return Container({
+          color: 'white',
+          child: Row({
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              this.buildBox('1'),
+              this.buildBox('2'),
+              this.buildBox('3'),
+            ]
+          })
+        });
+      }
+
+      buildRowMin() {
+        return Container({
+          color: 'white',
+          child: Row({
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              this.buildBox('1'),
+              this.buildBox('2'),
+              this.buildBox('3'),
+            ]
+          })
+        });
+      }
+
+      buildColumnMax() {
+        return Container({
+          color: 'white',
+          height: 150,
+          child: Column({
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              this.buildBox('1'),
+              this.buildBox('2'),
+              this.buildBox('3'),
+            ]
+          })
+        });
+      }
+
+      buildColumnMin() {
+        return Container({
+          color: 'white',
+          height: 150,
+          child: Column({
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              this.buildBox('1'),
+              this.buildBox('2'),
+              this.buildBox('3'),
+            ]
+          })
+        });
+      }
+
+      buildComplexLayout() {
+        return Container({
+          color: 'white',
+          height: 200,
+          child: Row({
+            children: [
+              Expanded({
+                child: Column({
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    this.buildBox('1'),
+                    this.buildBox('2'),
+                  ]
+                })
+              }),
+              Container({ width: 16 }),
+              Column({
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  this.buildBox('3'),
+                  Container({ height: 16 }),
+                  Row({
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      this.buildBox('4'),
+                      Container({ width: 16 }),
+                      this.buildBox('5'),
+                    ]
+                  })
+                ]
+              })
+            ]
+          })
+        });
+      }
+
+      buildBox(text) {
+        return Container({
+          width: 50,
+          height: 50,
+          color: 'lightblue',
+          alignment: Alignment.center,
+          child: Text(text, { style: new TextStyle({ color: 'black' }) })
+        });
+      }
+    }
+---
+
+# Advanced Flex Layouts with MainAxisSize in Flitter
+
+In this tutorial, we'll explore advanced techniques for creating complex layouts using Flex widgets (Row and Column) in Flitter, with a focus on the `MainAxisSize` property. We'll build several examples to demonstrate how `MainAxisSize` affects the layout behavior of Flex widgets.
+
+## Key Concepts
+
+1. **MainAxisSize**: Controls how a Flex widget (Row or Column) sizes itself on its main axis.
+2. **MainAxisAlignment**: Determines how children are positioned along the main axis.
+3. **CrossAxisAlignment**: Determines how children are positioned along the cross axis.
+4. **Expanded**: A widget that expands a child of a Row, Column, or Flex to fill available space along the main axis.
+
+## Understanding MainAxisSize
+
+`MainAxisSize` has two possible values:
+
+1. `MainAxisSize.max`: The Flex widget will take up all available space along its main axis.
+2. `MainAxisSize.min`: The Flex widget will minimize its size along its main axis, only taking up as much space as its children require.
+
+## Examples
+
+### Row with MainAxisSize.max
+
+This example shows a Row that takes up all available horizontal space, with its children evenly distributed.
+
+### Row with MainAxisSize.min
+
+This example demonstrates a Row that only takes up as much horizontal space as its children require.
+
+### Column with MainAxisSize.max
+
+Similar to the Row example, this Column takes up all available vertical space within its container.
+
+### Column with MainAxisSize.min
+
+This Column only occupies the vertical space required by its children.
+
+## Complex Layout Example
+
+The complex layout example demonstrates how to combine various Flex widgets with different MainAxisSize settings to create a more intricate design.
+
+## Challenge
+
+Enhance the complex layout example by:
+
+1. Adding nested Rows and Columns with different MainAxisSize settings.
+2. Incorporating Expanded widgets to create flexible layouts.
+3. Using MainAxisAlignment and CrossAxisAlignment to fine-tune the positioning of elements.
+4. Creating a responsive layout that adapts to different container sizes.
+
+Use the code editor to implement these changes. When you're ready, click the "Solve" button to see one possible solution.
+
+## Key Takeaways
+
+- `MainAxisSize.max` is useful when you want a Flex widget to fill its parent along its main axis.
+- `MainAxisSize.min` is helpful when you want a Flex widget to wrap its content tightly.
+- Combining different MainAxisSize settings in nested Flex widgets allows for complex, space-efficient layouts.
+- Always consider how MainAxisSize interacts with MainAxisAlignment and CrossAxisAlignment for precise control over your layout.
+
+In the next tutorial, we'll explore more advanced layout techniques, including custom multi-child layout widgets.

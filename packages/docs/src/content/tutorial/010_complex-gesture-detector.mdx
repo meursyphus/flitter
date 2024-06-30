@@ -1,0 +1,369 @@
+---
+category: Advanced Techniques
+title: "Advanced Gesture Handling"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { GestureDemo } from './GestureDemo';
+
+    export default function App() {
+      return (
+        <Widget
+          width="400px"
+          height="400px"
+          widget={new GestureDemo()}
+        />
+      );
+    }
+  GestureDemo.js: |
+    import { StatefulWidget, State, Container, GestureDetector, Text, Column, Row, TextStyle } from '@meursyphus/flitter';
+
+    export class GestureDemo extends StatefulWidget {
+      createState() {
+        return new GestureDemoState();
+      }
+    }
+
+    class GestureDemoState extends State<GestureDemo> {
+      lastTapTime = 0;
+      tapCount = 0;
+      gestureMessage = '';
+
+      build() {
+        return Container({
+          width: 400,
+          height: 400,
+          color: 'lightblue',
+          child: GestureDetector({
+            onClick: (e) => this.handleTap(e),
+            onDragStart: (e) => this.handleDragStart(e),
+            onDragUpdate: (e) => this.handleDragUpdate(e),
+            onDragEnd: (e) => this.handleDragEnd(e),
+            child: Column({
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Gesture Area', { style: new TextStyle({ fontSize: 24, fontWeight: 'bold' }) }),
+                Container({ height: 20 }),
+                Text(this.gestureMessage, { style: new TextStyle({ fontSize: 18 }) })
+              ]
+            })
+          })
+        });
+      }
+
+      handleTap(e) {
+        const currentTime = new Date().getTime();
+        if (currentTime - this.lastTapTime < 300) {
+          this.tapCount++;
+          if (this.tapCount === 2) {
+            this.setGestureMessage('Double tap detected!');
+          } else if (this.tapCount === 3) {
+            this.setGestureMessage('Triple tap detected!');
+            this.tapCount = 0;
+          }
+        } else {
+          this.tapCount = 1;
+          this.setGestureMessage('Single tap detected');
+        }
+        this.lastTapTime = currentTime;
+      }
+
+      handleDragStart(e) {
+        this.setGestureMessage('Drag started');
+      }
+
+      handleDragUpdate(e) {
+        this.setGestureMessage(`Dragging: (${e.delta.x.toFixed(2)}, ${e.delta.y.toFixed(2)})`);
+      }
+
+      handleDragEnd(e) {
+        this.setGestureMessage('Drag ended');
+      }
+
+      setGestureMessage(message) {
+        this.setState(() => {
+          this.gestureMessage = message;
+        });
+      }
+    }
+solved:
+  GestureDemo.js: |
+    import { StatefulWidget, State, Container, GestureDetector, Text, Column, Row, TextStyle, Offset } from '@meursyphus/flitter';
+
+    export class GestureDemo extends StatefulWidget {
+      createState() {
+        return new GestureDemoState();
+      }
+    }
+
+    class GestureDemoState extends State<GestureDemo> {
+      lastTapTime = 0;
+      tapCount = 0;
+      gestureMessage = '';
+      dragPosition = Offset.zero();
+      isDragging = false;
+
+      build() {
+        return Container({
+          width: 400,
+          height: 400,
+          color: 'lightblue',
+          child: Stack({
+            children: [
+              GestureDetector({
+                onClick: (e) => this.handleTap(e),
+                onDragStart: (e) => this.handleDragStart(e),
+                onDragUpdate: (e) => this.handleDragUpdate(e),
+                onDragEnd: (e) => this.handleDragEnd(e),
+                child: Container({
+                  width: 400,
+                  height: 400,
+                  child: Column({
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Gesture Area', { style: new TextStyle({ fontSize: 24, fontWeight: 'bold' }) }),
+                      Container({ height: 20 }),
+                      Text(this.gestureMessage, { style: new TextStyle({ fontSize: 18 }) })
+                    ]
+                  })
+                })
+              }),
+              Positioned({
+                left: this.dragPosition.x,
+                top: this.dragPosition.y,
+                child: GestureDetector({
+                  onDragStart: (e) => this.handleItemDragStart(e),
+                  onDragUpdate: (e) => this.handleItemDragUpdate(e),
+                  onDragEnd: (e) => this.handleItemDragEnd(e),
+                  child: Container({
+                    width: 100,
+                    height: 100,
+                    color: this.isDragging ? 'red' : 'green',
+                    child: Center({
+                      child: Text('Drag Me', { style: new TextStyle({ color: 'white' }) })
+                    })
+                  })
+                })
+              })
+            ]
+          })
+        });
+      }
+
+      handleTap(e) {
+        const currentTime = new Date().getTime();
+        if (currentTime - this.lastTapTime < 300) {
+          this.tapCount++;
+          if (this.tapCount === 2) {
+            this.setGestureMessage('Double tap detected!');
+          } else if (this.tapCount === 3) {
+            this.setGestureMessage('Triple tap detected!');
+            this.tapCount = 0;
+          }
+        } else {
+          this.tapCount = 1;
+          this.setGestureMessage('Single tap detected');
+        }
+        this.lastTapTime = currentTime;
+      }
+
+      handleDragStart(e) {
+        this.setGestureMessage('Background drag started');
+      }
+
+      handleDragUpdate(e) {
+        this.setGestureMessage(`Background dragging: (${e.delta.x.toFixed(2)}, ${e.delta.y.toFixed(2)})`);
+      }
+
+      handleDragEnd(e) {
+        this.setGestureMessage('Background drag ended');
+      }
+
+      handleItemDragStart(e) {
+        this.setState(() => {
+          this.isDragging = true;
+        });
+      }
+
+      handleItemDragUpdate(e) {
+        this.setState(() => {
+          this.dragPosition = this.dragPosition.translate(e.delta.x, e.delta.y);
+        });
+      }
+
+      handleItemDragEnd(e) {
+        this.setState(() => {
+          this.isDragging = false;
+        });
+      }
+
+      setGestureMessage(message) {
+        this.setState(() => {
+          this.gestureMessage = message;
+        });
+      }
+    }
+---
+
+# Advanced Gesture Handling in Flitter
+
+In this tutorial, we'll explore advanced gesture handling techniques in Flitter. We'll implement complex gesture recognition, including multi-tap detection and drag-and-drop functionality.
+
+## Key Concepts
+
+1. **GestureDetector**: A widget that detects various gestures.
+2. **Multi-tap Detection**: Recognizing single, double, and triple taps.
+3. **Drag and Drop**: Implementing draggable elements.
+4. **Custom Gesture Recognition**: Creating more complex gesture patterns.
+
+## Basic Gesture Handling
+
+Let's start with a basic example that detects taps and drags:
+
+```typescript
+import {
+  StatefulWidget,
+  State,
+  Container,
+  GestureDetector,
+  Text,
+  Column,
+  TextStyle,
+} from "@meursyphus/flitter";
+
+export class GestureDemo extends StatefulWidget {
+  createState() {
+    return new GestureDemoState();
+  }
+}
+
+class GestureDemoState extends State<GestureDemo> {
+  gestureMessage = "";
+
+  build() {
+    return Container({
+      width: 400,
+      height: 400,
+      color: "lightblue",
+      child: GestureDetector({
+        onClick: (e) => this.handleTap(e),
+        onDragStart: (e) => this.handleDragStart(e),
+        onDragUpdate: (e) => this.handleDragUpdate(e),
+        onDragEnd: (e) => this.handleDragEnd(e),
+        child: Column({
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Gesture Area", {
+              style: new TextStyle({ fontSize: 24, fontWeight: "bold" }),
+            }),
+            Container({ height: 20 }),
+            Text(this.gestureMessage, {
+              style: new TextStyle({ fontSize: 18 }),
+            }),
+          ],
+        }),
+      }),
+    });
+  }
+
+  handleTap(e) {
+    this.setGestureMessage("Tap detected");
+  }
+
+  handleDragStart(e) {
+    this.setGestureMessage("Drag started");
+  }
+
+  handleDragUpdate(e) {
+    this.setGestureMessage(
+      `Dragging: (${e.delta.x.toFixed(2)}, ${e.delta.y.toFixed(2)})`,
+    );
+  }
+
+  handleDragEnd(e) {
+    this.setGestureMessage("Drag ended");
+  }
+
+  setGestureMessage(message) {
+    this.setState(() => {
+      this.gestureMessage = message;
+    });
+  }
+}
+```
+
+## Implementing Multi-tap Detection
+
+To detect multi-taps, we need to track the time between taps:
+
+```typescript
+lastTapTime = 0;
+tapCount = 0;
+
+handleTap(e) {
+  const currentTime = new Date().getTime();
+  if (currentTime - this.lastTapTime < 300) {
+    this.tapCount++;
+    if (this.tapCount === 2) {
+      this.setGestureMessage('Double tap detected!');
+    } else if (this.tapCount === 3) {
+      this.setGestureMessage('Triple tap detected!');
+      this.tapCount = 0;
+    }
+  } else {
+    this.tapCount = 1;
+    this.setGestureMessage('Single tap detected');
+  }
+  this.lastTapTime = currentTime;
+}
+```
+
+## Implementing Drag and Drop
+
+To implement drag and drop, we need to track the position of the draggable item:
+
+```typescript
+dragPosition = Offset.zero();
+isDragging = false;
+
+handleItemDragStart(e) {
+  this.setState(() => {
+    this.isDragging = true;
+  });
+}
+
+handleItemDragUpdate(e) {
+  this.setState(() => {
+    this.dragPosition = this.dragPosition.translate(e.delta.x, e.delta.y);
+  });
+}
+
+handleItemDragEnd(e) {
+  this.setState(() => {
+    this.isDragging = false;
+  });
+}
+```
+
+See the 'solved' tab for a full implementation of drag and drop functionality.
+
+## Challenge
+
+Enhance the gesture demo with the following features:
+
+1. Implement a pinch-to-zoom gesture.
+2. Add a long-press gesture that changes the background color.
+3. Create a custom gesture that recognizes drawing a circle.
+4. Implement a swipe gesture that navigates between different pages.
+
+Use the code editor to implement these changes. When you're ready, click the "Solve" button to see one possible solution.
+
+## Key Takeaways
+
+- GestureDetector provides a powerful way to handle various touch and mouse events.
+- Custom gesture recognition can be implemented by tracking touch points and time.
+- Drag and drop functionality requires managing the position of draggable elements.
+- Complex gestures often involve combining multiple simple gestures and tracking their timing and positions.
+
+In the next tutorial, we'll explore how to optimize gesture handling for performance and how to handle gestures in more complex UI scenarios.

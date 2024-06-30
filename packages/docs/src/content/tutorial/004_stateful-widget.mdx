@@ -1,0 +1,198 @@
+---
+category: Advanced Techniques
+title: "Stateful Expandable Card"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { ExpandableCard } from './ExpandableCard';
+
+    export default function App() {
+      return (
+        <Widget
+          width="400px"
+          height="250px"
+          widget={new ExpandableCard()}
+        />
+      );
+    }
+  ExpandableCard.js: |
+    import { StatefulWidget, State, Container, Stack, Text, EdgeInsets, GestureDetector, Positioned, Alignment } from '@meursyphus/flitter';
+
+    export class ExpandableCard extends StatefulWidget {
+      createState() {
+        return new ExpandableCardState();
+      }
+    }
+
+    class ExpandableCardState extends State<ExpandableCard> {
+      isExpanded = false;
+
+      toggleExpanded() {
+        this.setState(() => {
+          this.isExpanded = !this.isExpanded;
+        });
+      }
+
+      build() {
+        return Container({
+          color: 'lightgrey',
+          padding: EdgeInsets.all(16),
+          child: Stack({
+            children: [
+              Container({
+                width: 300,
+                height: this.isExpanded ? 200 : 100,
+                color: 'white',
+                padding: EdgeInsets.all(16),
+                child: Text('Click to expand', { style: { fontSize: 18 } })
+              }),
+              Positioned({
+                right: 8,
+                bottom: 8,
+                child: GestureDetector({
+                  onClick: () => this.toggleExpanded(),
+                  child: Container({
+                    padding: EdgeInsets.all(8),
+                    color: 'blue',
+                    child: Text(this.isExpanded ? 'Collapse' : 'Expand', { style: { color: 'white' } })
+                  })
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+solved:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { ExpandableCard } from './ExpandableCard';
+
+    export default function App() {
+      return (
+        <Widget
+          width="400px"
+          height="250px"
+          widget={new ExpandableCard()}
+        />
+      );
+    }
+  ExpandableCard.js: |
+    import { StatefulWidget, State, Container, Stack, Text, EdgeInsets, GestureDetector, Positioned, Alignment, Column } from '@meursyphus/flitter';
+
+    export class ExpandableCard extends StatefulWidget {
+      createState() {
+        return new ExpandableCardState();
+      }
+    }
+
+    class ExpandableCardState extends State<ExpandableCard> {
+      isExpanded = false;
+
+      toggleExpanded() {
+        this.setState(() => {
+          this.isExpanded = !this.isExpanded;
+        });
+      }
+
+      build() {
+        return Container({
+          color: 'lightgrey',
+          padding: EdgeInsets.all(16),
+          child: Stack({
+            children: [
+              Container({
+                width: 300,
+                height: this.isExpanded ? 200 : 100,
+                color: 'white',
+                padding: EdgeInsets.all(16),
+                child: Column({
+                  crossAxisAlignment: Alignment.start,
+                  children: [
+                    Text('Interactive Card', { style: { fontSize: 20, fontWeight: 'bold' } }),
+                    Container({ height: 8 }),
+                    Text('Click the button to see more details.'),
+                    if (this.isExpanded) Container({ height: 8 }),
+                    if (this.isExpanded) Text('This is additional information that appears when the card is expanded. It demonstrates the use of conditional rendering in Flitter widgets.')
+                  ]
+                })
+              }),
+              Positioned({
+                right: 8,
+                bottom: 8,
+                child: GestureDetector({
+                  onClick: () => this.toggleExpanded(),
+                  child: Container({
+                    padding: EdgeInsets.symmetric({ vertical: 8, horizontal: 16 }),
+                    color: 'blue',
+                    child: Text(this.isExpanded ? 'Collapse' : 'Expand', { style: { color: 'white' } })
+                  })
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+---
+
+# Stateful Expandable Card in Flitter
+
+In this tutorial, we'll recreate the expandable card example using a StatefulWidget in Flitter. This approach demonstrates how to manage state and handle user interactions without relying on React's state management.
+
+## Key Concepts
+
+1. **StatefulWidget**: A widget that has mutable state.
+2. **State**: A class that holds the mutable state for a StatefulWidget.
+3. **setState**: A method to update the widget's state and trigger a rebuild.
+
+## File Structure
+
+We've split our code into two main files:
+
+1. `App.js`: The main entry point that renders our ExpandableCard.
+2. `ExpandableCard.js`: Contains the StatefulWidget implementation of our expandable card.
+
+## Implementing the Expandable Card
+
+### App.js
+
+This file is simple. It just renders our ExpandableCard widget using the Flitter-React bridge.
+
+### ExpandableCard.js
+
+This is where the main logic resides:
+
+1. We define an `ExpandableCard` class that extends `StatefulWidget`.
+2. We create a corresponding `ExpandableCardState` class that extends `State<ExpandableCard>`.
+3. In the state class, we manage the `isExpanded` boolean.
+4. The `toggleExpanded` method updates the state using `setState`.
+5. The `build` method returns the widget tree, which changes based on `isExpanded`.
+
+## Understanding StatefulWidgets
+
+- The `createState` method in the StatefulWidget returns an instance of the State class.
+- The `setState` method is used to update the widget's state and trigger a rebuild.
+- The `build` method in the State class defines the widget's structure and is called whenever the state changes.
+
+## Challenge
+
+Enhance the stateful expandable card with more features. Here are some suggestions:
+
+1. Add a counter that increments each time the card is expanded.
+2. Implement a color change when the card is expanded.
+3. Add a list of items that are only visible when the card is expanded.
+4. Implement a custom transition animation when expanding/collapsing.
+
+Use the code editor to implement these changes. When you're ready, click the "Solve" button to see one possible solution.
+
+## Key Takeaways
+
+- **StatefulWidget**: Used for widgets that need to manage mutable state.
+- **State Class**: Holds the mutable state and defines the `build` method for the widget.
+- **setState**: Used to update the state and trigger a rebuild of the widget.
+- **Separation of Concerns**: By splitting our code into multiple files, we improve readability and maintainability.
+
+In the next tutorial, we'll explore more complex state management techniques and how to share state between mul

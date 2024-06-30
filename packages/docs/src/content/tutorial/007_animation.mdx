@@ -1,0 +1,328 @@
+---
+category: Advanced Techniques
+title: "Advanced Animations in Flitter"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { AdvancedAnimationDemo } from './AdvancedAnimationDemo';
+
+    export default function App() {
+      return (
+        <Widget
+          width="400px"
+          height="600px"
+          widget={new AdvancedAnimationDemo()}
+        />
+      );
+    }
+  AdvancedAnimationDemo.js: |
+    import { StatefulWidget, State, Container, Column, Text, EdgeInsets, GestureDetector, AnimationController, Tween, ColorTween, Curves, TextStyle } from '@meursyphus/flitter';
+
+    export class AdvancedAnimationDemo extends StatefulWidget {
+      createState() {
+        return new AdvancedAnimationDemoState();
+      }
+    }
+
+    class AdvancedAnimationDemoState extends State<AdvancedAnimationDemo> {
+      controller;
+      sizeTween;
+      colorTween;
+      opacityTween;
+
+      initState() {
+        super.initState();
+        this.controller = new AnimationController({
+          duration: 2000, // 2 seconds
+        });
+
+        this.sizeTween = new Tween({
+          begin: 100,
+          end: 200,
+        });
+
+        this.colorTween = new ColorTween({
+          begin: 'blue',
+          end: 'red',
+        });
+
+        this.opacityTween = new Tween({
+          begin: 1.0,
+          end: 0.5,
+        });
+
+        this.controller.addStatusListener(this.handleAnimationStatus);
+      }
+
+      handleAnimationStatus = (status) => {
+        if (status === AnimationStatus.completed) {
+          this.controller.reverse();
+        } else if (status === AnimationStatus.dismissed) {
+          this.controller.forward();
+        }
+      };
+
+      dispose() {
+        this.controller.dispose();
+        super.dispose();
+      }
+
+      build() {
+        return Container({
+          padding: EdgeInsets.all(16),
+          child: Column({
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Advanced Animation Demo', {
+                style: new TextStyle({ fontSize: 20, fontWeight: 'bold' })
+              }),
+              Container({ height: 20 }),
+              this.buildAnimatedContainer(),
+              Container({ height: 20 }),
+              this.buildControlButton(),
+            ]
+          })
+        });
+      }
+
+      buildAnimatedContainer() {
+        return Container({
+          width: this.sizeTween.animate(this.controller),
+          height: this.sizeTween.animate(this.controller),
+          color: this.colorTween.animate(this.controller),
+          opacity: this.opacityTween.animate(this.controller),
+          child: Center({
+            child: Text('Animated', {
+              style: new TextStyle({ color: 'white' })
+            })
+          })
+        });
+      }
+
+      buildControlButton() {
+        return GestureDetector({
+          onClick: () => {
+            if (this.controller.isAnimating) {
+              this.controller.stop();
+            } else {
+              this.controller.forward();
+            }
+            this.setState(() => {});
+          },
+          child: Container({
+            padding: EdgeInsets.symmetric({ vertical: 8, horizontal: 16 }),
+            color: 'green',
+            child: Text(this.controller.isAnimating ? 'Stop' : 'Start', {
+              style: new TextStyle({ color: 'white' })
+            })
+          })
+        });
+      }
+    }
+solved:
+  AdvancedAnimationDemo.js: |
+    import { StatefulWidget, State, Container, Column, Text, EdgeInsets, GestureDetector, AnimationController, Tween, ColorTween, Curves, TextStyle, Transform } from '@meursyphus/flitter';
+
+    export class AdvancedAnimationDemo extends StatefulWidget {
+      createState() {
+        return new AdvancedAnimationDemoState();
+      }
+    }
+
+    class AdvancedAnimationDemoState extends State<AdvancedAnimationDemo> {
+      controller;
+      sizeTween;
+      colorTween;
+      opacityTween;
+      rotationTween;
+
+      initState() {
+        super.initState();
+        this.controller = new AnimationController({
+          duration: 3000, // 3 seconds
+        });
+
+        this.sizeTween = new Tween({
+          begin: 100,
+          end: 200,
+        }).chain(new CurveTween({ curve: Curves.elasticOut }));
+
+        this.colorTween = new ColorTween({
+          begin: 'blue',
+          end: 'red',
+        });
+
+        this.opacityTween = new Tween({
+          begin: 1.0,
+          end: 0.5,
+        }).chain(new CurveTween({ curve: Curves.easeInOut }));
+
+        this.rotationTween = new Tween({
+          begin: 0,
+          end: 2 * Math.PI,
+        }).chain(new CurveTween({ curve: Curves.easeInOut }));
+
+        this.setupAnimationSequence();
+      }
+
+      setupAnimationSequence() {
+        const sizeSequence = new TweenSequence([
+          { tween: new Tween({ begin: 100, end: 200 }), weight: 1 },
+          { tween: new Tween({ begin: 200, end: 150 }), weight: 1 },
+          { tween: new Tween({ begin: 150, end: 100 }), weight: 1 },
+        ]);
+
+        this.sizeTween = sizeSequence.chain(new CurveTween({ curve: Curves.elasticOut }));
+
+        this.controller.addStatusListener(this.handleAnimationStatus);
+      }
+
+      handleAnimationStatus = (status) => {
+        if (status === AnimationStatus.completed) {
+          this.controller.reverse();
+        } else if (status === AnimationStatus.dismissed) {
+          this.controller.forward();
+        }
+      };
+
+      dispose() {
+        this.controller.dispose();
+        super.dispose();
+      }
+
+      build() {
+        return Container({
+          padding: EdgeInsets.all(16),
+          child: Column({
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Advanced Animation Demo', {
+                style: new TextStyle({ fontSize: 20, fontWeight: 'bold' })
+              }),
+              Container({ height: 20 }),
+              this.buildAnimatedContainer(),
+              Container({ height: 20 }),
+              this.buildControlButton(),
+            ]
+          })
+        });
+      }
+
+      buildAnimatedContainer() {
+        return Transform({
+          transform: this.rotationTween.animate(this.controller),
+          child: Container({
+            width: this.sizeTween.animate(this.controller),
+            height: this.sizeTween.animate(this.controller),
+            color: this.colorTween.animate(this.controller),
+            opacity: this.opacityTween.animate(this.controller),
+            child: Center({
+              child: Text('Animated', {
+                style: new TextStyle({ color: 'white' })
+              })
+            })
+          })
+        });
+      }
+
+      buildControlButton() {
+        return GestureDetector({
+          onClick: () => {
+            if (this.controller.isAnimating) {
+              this.controller.stop();
+            } else {
+              this.controller.forward();
+            }
+            this.setState(() => {});
+          },
+          child: Container({
+            padding: EdgeInsets.symmetric({ vertical: 8, horizontal: 16 }),
+            color: 'green',
+            child: Text(this.controller.isAnimating ? 'Stop' : 'Start', {
+              style: new TextStyle({ color: 'white' })
+            })
+          })
+        });
+      }
+    }
+---
+
+# Advanced Animations in Flitter
+
+In this tutorial, we'll explore advanced animation techniques in Flitter. We'll cover custom Tweens, animation sequences, and complex usage of AnimationController to create sophisticated and engaging animations.
+
+## Key Concepts
+
+1. **Custom Tweens**: Creating tweens for custom interpolation between values.
+2. **Animation Sequences**: Combining multiple animations in a sequence.
+3. **Curves**: Using non-linear animation progressions for more natural-looking animations.
+4. **AnimationController**: Advanced usage for controlling complex animations.
+
+## Creating Custom Tweens
+
+Custom tweens allow you to interpolate between any two values. In our example, we use:
+
+- `Tween`: For size and opacity interpolation
+- `ColorTween`: For color interpolation
+
+## Animation Sequences
+
+Animation sequences allow you to chain multiple animations together. In the solved example, we create a size animation sequence:
+
+```typescript
+const sizeSequence = new TweenSequence([
+  { tween: new Tween({ begin: 100, end: 200 }), weight: 1 },
+  { tween: new Tween({ begin: 200, end: 150 }), weight: 1 },
+  { tween: new Tween({ begin: 150, end: 100 }), weight: 1 },
+]);
+```
+
+This creates a sequence where the size grows, then shrinks partially, then shrinks back to the original size.
+
+## Using Curves
+
+Curves add non-linear progressions to animations, making them more natural and appealing. We use `Curves.elasticOut` for the size animation and `Curves.easeInOut` for opacity and rotation:
+
+```typescript
+this.sizeTween = sizeSequence.chain(
+  new CurveTween({ curve: Curves.elasticOut }),
+);
+```
+
+## Complex AnimationController Usage
+
+We use a single AnimationController to drive multiple animations simultaneously. The controller's value (0.0 to 1.0) is used to compute the current value of each tween.
+
+We also use the controller's status listener to create a looping animation:
+
+```typescript
+handleAnimationStatus = (status) => {
+  if (status === AnimationStatus.completed) {
+    this.controller.reverse();
+  } else if (status === AnimationStatus.dismissed) {
+    this.controller.forward();
+  }
+};
+```
+
+## Challenge
+
+Enhance the animation demo with the following improvements:
+
+1. Add a rotation animation to the container.
+2. Implement a custom Tween for a property of your choice (e.g., border radius, scale).
+3. Create a more complex animation sequence that includes pauses between animations.
+4. Add user interaction to control aspects of the animation (e.g., speed, direction).
+
+Use the code editor to implement these changes. When you're ready, click the "Solve" button to see one possible solution.
+
+## Key Takeaways
+
+- Custom Tweens allow for interpolation between any types of values.
+- Animation Sequences provide a way to create complex, multi-step animations.
+- Curves add natural-looking motion to animations.
+- A single AnimationController can drive multiple animations, allowing for coordinated complex animations.
+- Combining these techniques allows for the creation of sophisticated, engaging animations in Flitter.
+
+In the next tutorial, we'll explore how to optimize animations for performance and how to create more complex, coordinated animations across multiple widgets.

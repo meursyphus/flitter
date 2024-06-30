@@ -1,0 +1,266 @@
+---
+category: Advanced Techniques
+title: "Stateful Widgets and Animations"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { StatefulWidget, State, Container, Stack, Text, EdgeInsets, GestureDetector, Positioned, AnimationController, Tween, Alignment } from '@meursyphus/flitter';
+
+    class ExpandableCard extends StatefulWidget {
+      createState() {
+        return new ExpandableCardState();
+      }
+    }
+
+    class ExpandableCardState extends State<ExpandableCard> {
+      isExpanded = false;
+      animationController;
+
+      initState() {
+        super.initState();
+        this.animationController = new AnimationController({
+          duration: 300,
+        });
+      }
+
+      dispose() {
+        this.animationController.dispose();
+        super.dispose();
+      }
+
+      toggleExpanded() {
+        this.setState(() => {
+          this.isExpanded = !this.isExpanded;
+          if (this.isExpanded) {
+            this.animationController.forward();
+          } else {
+            this.animationController.reverse();
+          }
+        });
+      }
+
+      build() {
+        return Container({
+          color: 'lightgrey',
+          padding: EdgeInsets.all(16),
+          child: Stack({
+            children: [
+              Container({
+                width: 300,
+                height: Tween({
+                  begin: 100,
+                  end: 200
+                }).animate(this.animationController),
+                color: 'white',
+                padding: EdgeInsets.all(16),
+                child: Column({
+                  crossAxisAlignment: Alignment.start,
+                  children: [
+                    Text('Stateful Animated Card', { style: { fontSize: 20, fontWeight: 'bold' } }),
+                    Container({ height: 8 }),
+                    Text('This card uses a StatefulWidget for state management.')
+                  ]
+                })
+              }),
+              Positioned({
+                right: 8,
+                bottom: 8,
+                child: GestureDetector({
+                  onClick: () => this.toggleExpanded(),
+                  child: Container({
+                    padding: EdgeInsets.symmetric({ vertical: 8, horizontal: 16 }),
+                    color: 'blue',
+                    child: Text(this.isExpanded ? 'Collapse' : 'Expand', { style: { color: 'white' } })
+                  })
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+
+    export default function App() {
+      return (
+        <Widget
+          width="400px"
+          height="250px"
+          widget={new ExpandableCard()}
+        />
+      );
+    }
+solved:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { StatefulWidget, State, Container, Stack, Text, EdgeInsets, GestureDetector, Positioned, AnimationController, Tween, Alignment, Transform } from '@meursyphus/flitter';
+
+    class ExpandableCard extends StatefulWidget {
+      createState() {
+        return new ExpandableCardState();
+      }
+    }
+
+    class ExpandableCardState extends State<ExpandableCard> {
+      isExpanded = false;
+      isLoading = false;
+      animationController;
+      loadingController;
+
+      initState() {
+        super.initState();
+        this.animationController = new AnimationController({
+          duration: 300,
+        });
+        this.loadingController = new AnimationController({
+          duration: 1000,
+        });
+        this.loadingController.repeat();
+      }
+
+      dispose() {
+        this.animationController.dispose();
+        this.loadingController.dispose();
+        super.dispose();
+      }
+
+      toggleExpanded() {
+        this.setState(() => {
+          this.isExpanded = !this.isExpanded;
+          if (this.isExpanded) {
+            this.animationController.forward();
+          } else {
+            this.animationController.reverse();
+          }
+        });
+      }
+
+      toggleLoading() {
+        this.setState(() => {
+          this.isLoading = !this.isLoading;
+        });
+      }
+
+      build() {
+        return Container({
+          color: 'lightgrey',
+          padding: EdgeInsets.all(16),
+          child: Stack({
+            children: [
+              Container({
+                width: 300,
+                height: Tween({
+                  begin: 100,
+                  end: 200
+                }).animate(this.animationController),
+                color: 'white',
+                padding: EdgeInsets.all(16),
+                child: Column({
+                  crossAxisAlignment: Alignment.start,
+                  children: [
+                    Text('Stateful Animated Card', { style: { fontSize: 20, fontWeight: 'bold' } }),
+                    Container({ height: 8 }),
+                    Text('This card uses a StatefulWidget for state management.'),
+                    Container({ height: 16 }),
+                    GestureDetector({
+                      onClick: () => this.toggleLoading(),
+                      child: Container({
+                        padding: EdgeInsets.symmetric({ vertical: 8, horizontal: 16 }),
+                        color: 'green',
+                        child: Text('Toggle Loading', { style: { color: 'white' } })
+                      })
+                    }),
+                    if (this.isLoading) Container({
+                      height: 50,
+                      child: Center({
+                        child: Transform({
+                          transform: Tween({
+                            begin: 0,
+                            end: 360
+                          }).animate(this.loadingController),
+                          child: Container({
+                            width: 30,
+                            height: 30,
+                            color: 'blue'
+                          })
+                        })
+                      })
+                    })
+                  ]
+                })
+              }),
+              Positioned({
+                right: 8,
+                bottom: 8,
+                child: GestureDetector({
+                  onClick: () => this.toggleExpanded(),
+                  child: Container({
+                    padding: EdgeInsets.symmetric({ vertical: 8, horizontal: 16 }),
+                    color: 'blue',
+                    child: Text(this.isExpanded ? 'Collapse' : 'Expand', { style: { color: 'white' } })
+                  })
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+
+    export default function App() {
+      return (
+        <Widget
+          width="400px"
+          height="250px"
+          widget={new ExpandableCard()}
+        />
+      );
+    }
+---
+
+# Stateful Widgets and Animations in Flitter
+
+In this tutorial, we'll learn how to use StatefulWidget to manage state and create animations in Flitter without relying on React's state management. We'll implement an expandable card with animations using pure Flitter code.
+
+## Key Concepts
+
+1. **StatefulWidget**: A widget that has mutable state.
+2. **State**: A class that holds the mutable state for a StatefulWidget.
+3. **AnimationController**: Manages animations within the State class.
+
+## Implementing a Stateful Animated Card
+
+The example code demonstrates how to create an expandable card using a StatefulWidget. Here's a breakdown of the key elements:
+
+1. We define a `ExpandableCard` class that extends `StatefulWidget`.
+2. We create a corresponding `ExpandableCardState` class that extends `State<ExpandableCard>`.
+3. In the state class, we manage the `isExpanded` boolean and the `AnimationController`.
+4. We implement `initState` to set up the AnimationController and `dispose` to clean it up.
+5. The `toggleExpanded` method updates the state and triggers the animation.
+
+## Understanding Stateful Widgets
+
+- The `createState` method in the StatefulWidget returns an instance of the State class.
+- The `setState` method is used to update the widget's state and trigger a rebuild.
+- `initState` and `dispose` are lifecycle methods for setup and cleanup.
+
+## Challenge
+
+Enhance the stateful animated card with more features. Here are some suggestions:
+
+1. Add a loading indicator that can be toggled on and off.
+2. Implement a color change animation when the card expands.
+3. Add a counter that increments each time the card is expanded.
+4. Implement a custom animation curve for the expand/collapse animation.
+
+Use the code editor to implement these changes. When you're ready, click the "Solve" button to see one possible solution.
+
+## Key Takeaways
+
+- **StatefulWidget**: Used for widgets that need to manage mutable state.
+- **State Class**: Holds the mutable state and defines the `build` method for the widget.
+- **setState**: Used to update the state and trigger a rebuild of the widget.
+- **AnimationController**: Can be managed within the State class for animations.
+
+In the next tutorial, we'll explore more complex state management techniques and how to share state between multiple widgets in Flitter.

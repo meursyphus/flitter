@@ -1,0 +1,327 @@
+---
+category: Advanced Techniques
+title: "Advanced CustomPaint in Flitter"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { CustomPaintDemo } from './CustomPaintDemo';
+
+    export default function App() {
+      return (
+        <Widget
+          width="400px"
+          height="400px"
+          renderer="canvas" // or "you must implement svg painting"
+          widget={new CustomPaintDemo()}
+        />
+      );
+    }
+  CustomPaintDemo.js: |
+    import { StatelessWidget, Container, CustomPaint, Size } from '@meursyphus/flitter';
+
+    export class CustomPaintDemo extends StatelessWidget {
+      build() {
+        return Container({
+          width: 400,
+          height: 400,
+          child: CustomPaint({
+            size: Size.infinite,
+            painter: {
+              svg: {
+                createDefaultSvgEl: (context) => ({
+                  circle: context.createSvgEl('circle'),
+                  rect: context.createSvgEl('rect')
+                }),
+                paint: ({ circle, rect }, size) => {
+                  circle.setAttribute('cx', '200');
+                  circle.setAttribute('cy', '200');
+                  circle.setAttribute('r', '100');
+                  circle.setAttribute('fill', 'blue');
+
+                  rect.setAttribute('x', '150');
+                  rect.setAttribute('y', '150');
+                  rect.setAttribute('width', '100');
+                  rect.setAttribute('height', '100');
+                  rect.setAttribute('fill', 'red');
+                }
+              },
+              canvas: {
+                paint: ({ canvas }, size) => {
+                  canvas.fillStyle = 'blue';
+                  canvas.beginPath();
+                  canvas.arc(200, 200, 100, 0, 2 * Math.PI);
+                  canvas.fill();
+
+                  canvas.fillStyle = 'red';
+                  canvas.fillRect(150, 150, 100, 100);
+                }
+              }
+            }
+          })
+        });
+      }
+    }
+solved:
+  CustomPaintDemo.js: |
+    import { StatefulWidget, State, Container, CustomPaint, Size, GestureDetector } from '@meursyphus/flitter';
+
+    export class CustomPaintDemo extends StatefulWidget {
+      createState() {
+        return new CustomPaintDemoState();
+      }
+    }
+
+    class CustomPaintDemoState extends State<CustomPaintDemo> {
+      shapes = [];
+
+      build() {
+        return GestureDetector({
+          onClick: (e) => this.addShape(e),
+          child: Container({
+            width: 400,
+            height: 400,
+            child: CustomPaint({
+              size: Size.infinite,
+              painter: {
+                svg: {
+                  createDefaultSvgEl: (context) => ({
+                    group: context.createSvgEl('g')
+                  }),
+                  paint: ({ group }, size) => {
+                    group.innerHTML = '';
+                    this.shapes.forEach(shape => {
+                      const element = document.createElementNS('http://www.w3.org/2000/svg', shape.type);
+                      Object.entries(shape.attributes).forEach(([key, value]) => {
+                        element.setAttribute(key, value);
+                      });
+                      group.appendChild(element);
+                    });
+                  }
+                },
+                canvas: {
+                  paint: ({ canvas }, size) => {
+                    canvas.clearRect(0, 0, size.width, size.height);
+                    this.shapes.forEach(shape => {
+                      if (shape.type === 'circle') {
+                        canvas.beginPath();
+                        canvas.arc(shape.attributes.cx, shape.attributes.cy, shape.attributes.r, 0, 2 * Math.PI);
+                        canvas.fillStyle = shape.attributes.fill;
+                        canvas.fill();
+                      } else if (shape.type === 'rect') {
+                        canvas.fillStyle = shape.attributes.fill;
+                        canvas.fillRect(shape.attributes.x, shape.attributes.y, shape.attributes.width, shape.attributes.height);
+                      }
+                    });
+                  }
+                }
+              }
+            })
+          })
+        });
+      }
+
+      addShape(e) {
+        const { offsetX, offsetY } = e;
+        const isCircle = Math.random() > 0.5;
+        const shape = isCircle
+          ? { type: 'circle', attributes: { cx: offsetX, cy: offsetY, r: 20, fill: this.getRandomColor() } }
+          : { type: 'rect', attributes: { x: offsetX - 20, y: offsetY - 20, width: 40, height: 40, fill: this.getRandomColor() } };
+        
+        this.setState(() => {
+          this.shapes.push(shape);
+        });
+      }
+
+      getRandomColor() {
+        return '#' + Math.floor(Math.random()*16777215).toString(16);
+      }
+    }
+---
+
+# Advanced CustomPaint in Flitter
+
+In this tutorial, we'll dive deep into the CustomPaint widget in Flitter, exploring its capabilities for both SVG and Canvas rendering. We'll also highlight the importance of implementing both rendering methods when using flitter-react.
+
+## Key Concepts
+
+1. **CustomPaint**: A widget that provides a canvas on which to draw custom graphics.
+2. **SVG vs Canvas Rendering**: Implementing painting logic for both SVG and Canvas contexts.
+3. **Renderer Selection**: Understanding how the renderer prop in flitter-react affects CustomPaint implementation.
+
+## CustomPaint Basics
+
+CustomPaint is a powerful widget that allows you to create custom graphics. Here's a basic structure:
+
+```typescript
+CustomPaint({
+  size: Size.infinite,
+  painter: {
+    svg: {
+      createDefaultSvgEl: (context) => ({
+        // Define SVG elements here
+      }),
+      paint: (elements, size) => {
+        // SVG painting logic
+      },
+    },
+    canvas: {
+      paint: ({ canvas }, size) => {
+        // Canvas painting logic
+      },
+    },
+  },
+});
+```
+
+## SVG vs Canvas Implementation
+
+It's crucial to implement both SVG and Canvas painting methods:
+
+```typescript
+CustomPaint({
+  size: Size.infinite,
+  painter: {
+    svg: {
+      createDefaultSvgEl: (context) => ({
+        circle: context.createSvgEl("circle"),
+        rect: context.createSvgEl("rect"),
+      }),
+      paint: ({ circle, rect }, size) => {
+        circle.setAttribute("cx", "200");
+        circle.setAttribute("cy", "200");
+        circle.setAttribute("r", "100");
+        circle.setAttribute("fill", "blue");
+
+        rect.setAttribute("x", "150");
+        rect.setAttribute("y", "150");
+        rect.setAttribute("width", "100");
+        rect.setAttribute("height", "100");
+        rect.setAttribute("fill", "red");
+      },
+    },
+    canvas: {
+      paint: ({ canvas }, size) => {
+        canvas.fillStyle = "blue";
+        canvas.beginPath();
+        canvas.arc(200, 200, 100, 0, 2 * Math.PI);
+        canvas.fill();
+
+        canvas.fillStyle = "red";
+        canvas.fillRect(150, 150, 100, 100);
+      },
+    },
+  },
+});
+```
+
+## Important Note on Renderer Selection
+
+When using flitter-react, the `renderer` prop determines which painting method will be used:
+
+```jsx
+<Widget
+  width="400px"
+  height="400px"
+  renderer="svg" // or "canvas"
+  widget={new CustomPaintDemo()}
+/>
+```
+
+It's crucial to implement both SVG and Canvas painting logic in your CustomPaint widget, as the chosen renderer will determine which method is called.
+
+## Interactive CustomPaint Example
+
+Let's create an interactive CustomPaint widget that adds shapes on click:
+
+```typescript
+class CustomPaintDemoState extends State<CustomPaintDemo> {
+  shapes = [];
+
+  build() {
+    return GestureDetector({
+      onClick: (e) => this.addShape(e),
+      child: Container({
+        width: 400,
+        height: 400,
+        child: CustomPaint({
+          size: Size.infinite,
+          painter: {
+            svg: {
+              createDefaultSvgEl: (context) => ({
+                group: context.createSvgEl("g"),
+              }),
+              paint: ({ group }, size) => {
+                group.innerHTML = "";
+                this.shapes.forEach((shape) => {
+                  const element = document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    shape.type,
+                  );
+                  Object.entries(shape.attributes).forEach(([key, value]) => {
+                    element.setAttribute(key, value);
+                  });
+                  group.appendChild(element);
+                });
+              },
+            },
+            canvas: {
+              paint: ({ canvas }, size) => {
+                canvas.clearRect(0, 0, size.width, size.height);
+                this.shapes.forEach((shape) => {
+                  if (shape.type === "circle") {
+                    canvas.beginPath();
+                    canvas.arc(
+                      shape.attributes.cx,
+                      shape.attributes.cy,
+                      shape.attributes.r,
+                      0,
+                      2 * Math.PI,
+                    );
+                    canvas.fillStyle = shape.attributes.fill;
+                    canvas.fill();
+                  } else if (shape.type === "rect") {
+                    canvas.fillStyle = shape.attributes.fill;
+                    canvas.fillRect(
+                      shape.attributes.x,
+                      shape.attributes.y,
+                      shape.attributes.width,
+                      shape.attributes.height,
+                    );
+                  }
+                });
+              },
+            },
+          },
+        }),
+      }),
+    });
+  }
+
+  addShape(e) {
+    // Add shape logic
+  }
+}
+```
+
+This example demonstrates how to handle both SVG and Canvas rendering for an interactive painting application.
+
+## Challenge
+
+Enhance the interactive CustomPaint demo with the following features:
+
+1. Add a feature to remove shapes on right-click.
+2. Implement a way to change the size of shapes dynamically.
+3. Add a feature to drag and reposition existing shapes.
+4. Implement a way to switch between SVG and Canvas rendering at runtime.
+
+Remember to implement these features for both SVG and Canvas rendering methods.
+
+## Key Takeaways
+
+- CustomPaint provides powerful custom rendering capabilities in Flitter.
+- Always implement both SVG and Canvas painting methods for compatibility with different renderers.
+- The `renderer` prop in flitter-react determines which painting method is used.
+- Interactive graphics can be created by combining CustomPaint with gesture handling.
+
+In the next tutorial, we'll explore more advanced techniques for optimizing CustomPaint performance and creating complex, data-driven visualizations.
