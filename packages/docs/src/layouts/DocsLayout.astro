@@ -6,10 +6,10 @@ interface Props {
   image?: string;
 }
 
-const { title } = Astro.props;
+const { title, description, image } = Astro.props;
 ---
 
-<Layout title={title}>
+<Layout title={title} description={description} image={image}>
   <slot />
 </Layout>
 
