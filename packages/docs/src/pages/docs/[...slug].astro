@@ -43,7 +43,11 @@ const nextEntry =
     : null;
 ---
 
-<Layout title={`Flitter - ${entry.data.title}`}>
+<Layout
+  title={`Flitter - ${entry.data.title}`}
+  description={entry.data.description}
+  image={entry.data.image}
+>
   <main data-theme="pink" class="relative mx-auto flex">
     <SideBar />
     <div
