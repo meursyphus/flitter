@@ -1,7 +1,7 @@
 ---
-import SandPack from "./SandPack.tsx";
 import Layout from "../../layouts/TutorialLayout.astro";
 import { getCollection } from "astro:content";
+import SandPack from "./SandPack";
 
 export const getStaticPaths = async () => {
   const tutorialEntries = await getCollection("tutorial");
