@@ -36,6 +36,10 @@ export class RenderContext {
     }
   }
 
+  /**
+   * @deprecated
+   * This method is deprecated and will be removed in future versions.
+   */
   setViewport({
     translation,
     scale,

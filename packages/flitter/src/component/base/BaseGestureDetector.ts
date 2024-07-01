@@ -4,7 +4,7 @@ import { assert, createUniqueId } from "../../utils";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 import type { Offset } from "../../type";
-import { RenderObjectVisitor } from "src/renderobject/RenderObjectVisitor";
+import type { RenderObjectVisitor } from "../../renderobject/RenderObjectVisitor";
 
 type Cursor =
   | "pointer"
@@ -358,6 +358,24 @@ export class RenderGestureDetector extends SingleChildRenderObject {
 
   override accept(visitor: RenderObjectVisitor): void {
     visitor.visitGestureDetector(this);
+  }
+
+  invokeCallback(
+    type:
+      | "onClick"
+      | "onMouseDown"
+      | "onMouseMove"
+      | "onMouseUp"
+      | "onMouseOver"
+      | "onMouseEnter"
+      | "onMouseLeave"
+      | "onDragStart"
+      | "onDragMove"
+      | "onDragEnd"
+      | "onWheel",
+    e: MouseEvent | WheelEvent,
+  ) {
+    this[type](e as any);
   }
 }
 
