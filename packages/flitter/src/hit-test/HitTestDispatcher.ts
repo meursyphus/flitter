@@ -7,7 +7,7 @@ type EventHandlerType =
   | "onMouseMove"
   | "onMouseUp"
   | "onMouseDown"
-  | "onMouseWheel"
+  | "onWheel"
   | "onMouseEnter"
   | "onMouseLeave";
 
@@ -96,7 +96,7 @@ export class HitTestDispatcher {
   };
 
   #handleMouseWheel = (e: Wrapped<WheelEvent>) => {
-    this.hitTest(e, "onMouseWheel");
+    this.hitTest(e, "onWheel");
     e.isPropagationStopped = false;
 
     for (const detector of this.#detectors) {
@@ -126,12 +126,12 @@ export class HitTestDispatcher {
     this.#hitPosition.y = e.clientY - this.#rootPosition.y;
   }
 
-  hitTest = (e: Wrapped<MouseEvent>, type: EventHandlerType) => {
+  hitTest = (e: Wrapped<MouseEvent | WheelEvent>, type: EventHandlerType) => {
     for (const detector of this.#detectors) {
       if (e.isPropagationStopped) return;
       if (!detector.hitTest({ globalPoint: this.#hitPosition })) continue;
 
-      detector[type](e);
+      detector.invokeCallback(type, e);
     }
   };
 
