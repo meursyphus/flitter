@@ -246,8 +246,8 @@ class BoxDecorationCanvasPainter {
   constructor(private decoration: BoxDecoration) {}
 
   paint(ctx: CanvasRenderingContext2D, rect: Rect) {
-    this.paintBackgroundColor(ctx, rect);
-    this.paintShadows(ctx, rect);
+    const path = this.paintBackgroundColor(ctx, rect);
+    this.paintShadows(ctx, rect, path);
     if (this.decoration.border != null) {
       this.decoration.border.createCanvasPainter().paint(ctx, {
         rect,
@@ -257,7 +257,7 @@ class BoxDecorationCanvasPainter {
     }
   }
 
-  private paintShadows(ctx: CanvasRenderingContext2D, rect: Rect) {
+  private paintShadows(ctx: CanvasRenderingContext2D, rect: Rect, path: Path) {
     if (
       this.decoration.boxShadow == null ||
       this.decoration.boxShadow.length === 0
@@ -271,20 +271,21 @@ class BoxDecorationCanvasPainter {
       ctx.shadowOffsetY = shadow.offset.y;
       ctx.shadowBlur = shadow.blurRadius;
       ctx.shadowColor = shadow.color.value;
+
       ctx.fill(new Path().addRect(rect).toCanvasPath());
-      ctx.restore();
     });
   }
 
   private paintBackgroundColor(ctx: CanvasRenderingContext2D, rect: Rect) {
     ctx.fillStyle = this.decoration.color.value || "none";
+    const path = new Path();
     if (this.decoration.shape == "circle") {
-      ctx.fill(new Path().addOval(rect).toCanvasPath());
-      return;
+      ctx.fill(path.addOval(rect).toCanvasPath());
+      return path;
     }
     if (this.decoration.borderRadius == null) {
-      ctx.fill(new Path().addRect(rect).toCanvasPath());
-      return;
+      ctx.fill(path.addRect(rect).toCanvasPath());
+      return path;
     }
     ctx.fill(
       new Path()
@@ -299,5 +300,6 @@ class BoxDecorationCanvasPainter {
         )
         .toCanvasPath(),
     );
+    return path;
   }
 }

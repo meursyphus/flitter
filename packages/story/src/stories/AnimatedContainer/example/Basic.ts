@@ -55,6 +55,7 @@ class CustomWidgetState extends State<CustomWidget> {
 				boxShadow: [
 					new BoxShadow({
 						blurRadius: 10,
+						color: 'black',
 						offset: new Offset({ x: 20, y: -20 })
 					})
 				]
