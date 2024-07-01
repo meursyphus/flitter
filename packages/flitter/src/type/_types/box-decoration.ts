@@ -273,6 +273,7 @@ class BoxDecorationCanvasPainter {
       ctx.shadowColor = shadow.color.value;
 
       ctx.fill(new Path().addRect(rect).toCanvasPath());
+      ctx.restore();
     });
   }
 
