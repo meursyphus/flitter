@@ -28,7 +28,6 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
 export const Basic: Story = {
 	args: {
 		width: '400px',
@@ -53,12 +52,7 @@ export const Circle: Story = {
 			child: Stack({
 				clipped: false,
 				children: [
-					Container({
-						width: 200,
-						height: 200,
-						color: 'white'
-					}),
-					Container({
+					DecoratedBox({
 						decoration: new BoxDecoration({
 							color: 'red',
 							shape: 'circle'
@@ -82,13 +76,9 @@ export const InnerBorder: Story = {
 			child: Stack({
 				clipped: false,
 				children: [
-					Container({
-						width: 200,
-						height: 200,
-						color: 'white'
-					}),
 					DecoratedBox({
 						decoration: new BoxDecoration({
+							color: 'white',
 							border: Border.all({ width: 20, color: 'green' })
 						}),
 						child: SizedBox({
@@ -110,13 +100,9 @@ export const OuterBorder: Story = {
 			child: Stack({
 				clipped: false,
 				children: [
-					Container({
-						width: 200,
-						height: 200,
-						color: 'white'
-					}),
 					DecoratedBox({
 						decoration: new BoxDecoration({
+							color: 'white',
 							border: Border.all({
 								width: 20,
 								color: 'green',
@@ -142,13 +128,9 @@ export const WithBorderRadius: Story = {
 			child: Stack({
 				clipped: false,
 				children: [
-					Container({
-						width: 200,
-						height: 200,
-						color: 'white'
-					}),
 					DecoratedBox({
 						decoration: new BoxDecoration({
+							color: 'white',
 							border: Border.all({
 								width: 20
 							}),
@@ -173,13 +155,9 @@ export const BorderTop: Story = {
 			child: Stack({
 				clipped: false,
 				children: [
-					Container({
-						width: 200,
-						height: 200,
-						color: 'white'
-					}),
 					DecoratedBox({
 						decoration: new BoxDecoration({
+							color: 'white',
 							border: new Border({
 								top: new BorderSide({ width: 10, color: 'black' })
 							})
@@ -203,13 +181,9 @@ export const UnUniformBorder: Story = {
 			child: Stack({
 				clipped: false,
 				children: [
-					Container({
-						width: 200,
-						height: 200,
-						color: 'white'
-					}),
 					DecoratedBox({
 						decoration: new BoxDecoration({
+							color: 'white',
 							border: new Border({
 								top: new BorderSide({ width: 10, color: 'blue' }),
 								left: new BorderSide({ width: 5, color: 'green' }),
