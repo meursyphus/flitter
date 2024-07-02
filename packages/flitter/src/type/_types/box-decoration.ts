@@ -246,8 +246,8 @@ class BoxDecorationCanvasPainter {
   constructor(private decoration: BoxDecoration) {}
 
   paint(ctx: CanvasRenderingContext2D, rect: Rect) {
-    const path = this.paintBackgroundColor(ctx, rect);
-    this.paintShadows(ctx, rect, path);
+    const backgroundPath = this.paintBackgroundColor(ctx, rect);
+    this.paintShadows(ctx, backgroundPath);
     if (this.decoration.border != null) {
       this.decoration.border.createCanvasPainter().paint(ctx, {
         rect,
@@ -257,7 +257,7 @@ class BoxDecorationCanvasPainter {
     }
   }
 
-  private paintShadows(ctx: CanvasRenderingContext2D, rect: Rect, path: Path) {
+  private paintShadows(ctx: CanvasRenderingContext2D, backgroundPath: Path) {
     if (
       this.decoration.boxShadow == null ||
       this.decoration.boxShadow.length === 0
@@ -272,7 +272,7 @@ class BoxDecorationCanvasPainter {
       ctx.shadowBlur = shadow.blurRadius;
       ctx.shadowColor = shadow.color.value;
 
-      ctx.fill(new Path().addRect(rect).toCanvasPath());
+      ctx.fill(backgroundPath.toCanvasPath());
       ctx.restore();
     });
   }
@@ -289,7 +289,7 @@ class BoxDecorationCanvasPainter {
       return path;
     }
     ctx.fill(
-      new Path()
+      path
         .addRRect(
           RRect.fromRectAndCorners({
             rect,
