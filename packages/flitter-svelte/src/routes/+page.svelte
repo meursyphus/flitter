@@ -6,7 +6,8 @@
 		TextStyle,
 		Column,
 		MainAxisSize,
-		TextField
+		TextField,
+		Colors
 	} from '@meursyphus/flitter';
 	import Widget from '../lib/Widget.svelte';
 </script>
@@ -17,7 +18,7 @@
 	renderer="svg"
 	widget={Container({
 		height: Infinity,
-		color: 'lightgray',
+		color: Colors.gray[500],
 		alignment: Alignment.center,
 		child: Column({
 			mainAxisSize: MainAxisSize.min,
