@@ -230,8 +230,8 @@ class ImageCanvasPainter extends CanvasPainter {
       calculateImageRendering(
         { width: image.width, height: image.height },
         {
-          width: size.width,
-          height: size.height,
+          containerWidth: size.width,
+          containerHeight: size.height,
           image: { width: imageSize.width, height: imageSize.height },
         },
         position,
@@ -264,12 +264,11 @@ class ImageSvgPainter extends SvgPainter {
     console.warn("not implemented svg painter on image widget");
   }
 }
-
 function calculateImageRendering(
-  originalImageSize: { width: number; height: number },
+  sourceImageSize: { width: number; height: number },
   calcImageSizeResult: {
-    width: number;
-    height: number;
+    containerWidth: number;
+    containerHeight: number;
     image: { width: number; height: number };
   },
   objectPosition: ObjectPosition = "center",
@@ -284,20 +283,19 @@ function calculateImageRendering(
   dHeight: number;
 } {
   const {
-    width: containerWidth,
-    height: containerHeight,
+    containerWidth,
+    containerHeight,
     image: { width: imageWidth, height: imageHeight },
   } = calcImageSizeResult;
 
   let sx = 0,
     sy = 0,
-    sWidth = originalImageSize.width,
-    sHeight = originalImageSize.height;
+    sWidth = sourceImageSize.width,
+    sHeight = sourceImageSize.height;
   let dx = 0,
     dy = 0;
-  // Set dWidth and dHeight to the container size, not the calculated image size
-  const dWidth = imageWidth;
-  const dHeight = imageHeight;
+  const dWidth = containerWidth,
+    dHeight = containerHeight;
 
   // Convert objectPosition to x and y percentages
   let xPercent = 50,
@@ -308,27 +306,25 @@ function calculateImageRendering(
   if (objectPosition.includes("bottom")) yPercent = 100;
 
   // Calculate scaling factors
-  const scaleX = imageWidth / originalImageSize.width;
-  const scaleY = imageHeight / originalImageSize.height;
+  const scaleX = imageWidth / sourceImageSize.width;
+  const scaleY = imageHeight / sourceImageSize.height;
+  const scale = Math.max(scaleX, scaleY);
 
-  if (scaleX !== scaleY) {
-    // Image doesn't fill the container with the same aspect ratio, adjust source rectangle
-    if (scaleX > scaleY) {
-      sHeight = imageHeight / scaleX;
-      sy = ((originalImageSize.height - sHeight) * yPercent) / 100;
-    } else {
-      sWidth = imageWidth / scaleY;
-      sx = ((originalImageSize.width - sWidth) * xPercent) / 100;
-    }
-  }
+  // Calculate the dimensions of the part of the image that will be displayed
+  sWidth = Math.min(sourceImageSize.width, containerWidth / scale);
+  sHeight = Math.min(sourceImageSize.height, containerHeight / scale);
 
-  // Adjust dx and dy to center the image within the container if necessary
-  if (imageWidth < containerWidth) {
-    dx = ((containerWidth - imageWidth) * xPercent) / 100;
-  }
-  if (imageHeight < containerHeight) {
-    dy = ((containerHeight - imageHeight) * yPercent) / 100;
-  }
+  // Calculate sx and sy based on objectPosition
+  sx = ((sourceImageSize.width - sWidth) * xPercent) / 100;
+  sy = ((sourceImageSize.height - sHeight) * yPercent) / 100;
+
+  // Ensure source rectangle doesn't exceed original image bounds
+  sx = Math.max(0, Math.min(sx, sourceImageSize.width - sWidth));
+  sy = Math.max(0, Math.min(sy, sourceImageSize.height - sHeight));
+
+  // Calculate dx and dy to center the image in the container
+  dx = (containerWidth - dWidth) / 2;
+  dy = (containerHeight - dHeight) / 2;
 
   // Round all values to prevent subpixel rendering issues
   return {
@@ -342,6 +338,7 @@ function calculateImageRendering(
     dHeight: Math.round(dHeight),
   };
 }
+
 function calcImageSize(
   source: { width: number; height: number },
   width?: number,
