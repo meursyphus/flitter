@@ -50,6 +50,7 @@ import Tooltip from "./Tooltip";
 import ZIndex from "./ZIndex";
 import Painter from "./base/BaseCustomPaint";
 import TextField from "./TextField";
+import Image from "./Image";
 
 export {
   Painter,
@@ -104,4 +105,5 @@ export {
   Tooltip,
   ZIndex,
   TextField,
+  Image,
 };
