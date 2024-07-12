@@ -16,9 +16,16 @@
 			child: Image({
 				src: profile,
 				width: 250,
-				height: 250,
-				objectFit: 'cover'
+				height: 500,
+				objectFit: 'contain'
 			})
 		})
 	})}
 />
+
+<style>
+	:global(html, body) {
+		padding: 0;
+		margin: 0;
+	}
+</style>
