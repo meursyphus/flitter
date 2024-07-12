@@ -17,17 +17,9 @@ export default function calculateSize(
   let containerHeight = container.height ?? source.height;
 
   if (container.width != null && container.height == null) {
-    if (objectFit === "scale-down" && container.width > source.width) {
-      containerHeight = source.height;
-    } else {
-      containerHeight = Math.round(container.width / aspectRatio);
-    }
+    containerHeight = Math.round(container.width / aspectRatio);
   } else if (container.width == null && container.height != null) {
-    if (objectFit === "scale-down" && container.height > source.height) {
-      containerWidth = source.width;
-    } else {
-      containerWidth = Math.round(container.height * aspectRatio);
-    }
+    containerWidth = Math.round(container.height * aspectRatio);
   }
 
   const imageSize = fitFunctions[objectFit](source, {

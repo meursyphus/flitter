@@ -1,44 +1,23 @@
 <script lang="ts">
-	import {
-		Alignment,
-		Container,
-		EdgeInsets,
-		TextStyle,
-		Column,
-		MainAxisSize,
-		TextField,
-		Colors
-	} from '@meursyphus/flitter';
-	import Widget from '../lib/Widget.svelte';
+	import Native from './native.svelte'
+	import Flitter from './flitter.svelte'
 </script>
 
-<Widget
-	width="300px"
-	height="150px"
-	renderer="svg"
-	widget={Container({
-		height: Infinity,
-		color: Colors.gray[500],
-		alignment: Alignment.center,
-		child: Column({
-			mainAxisSize: MainAxisSize.min,
-			children: [
-				TextField('', {
-					padding: EdgeInsets.symmetric({ horizontal: 4, vertical: 4 }),
-					style: new TextStyle({
-						fontSize: 20
-					}),
-					onChanged: (value) => {
-						//console.log("chnaged", value);
-					},
-					onSubmitted: (value) => {
-						//console.log("submitted", value);
-					}
-				})
-			]
-		})
-	})}
-/>
+<div class="container">
+	<Native />
+	<Flitter />
+</div>
 
 <style>
+	.container {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		justify-content: stretch;
+	}
+
+	:global(body, html) {
+		margin: 0;
+		padding: 0;
+		background-color: #f0f0f0;
+	}
 </style>
