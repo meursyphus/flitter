@@ -1,6 +1,44 @@
 import type { ObjectPosition as _ObjectPosition } from "../../../type";
-
 type ObjectPosition = `${_ObjectPosition}`;
+
+const objectPositionMap: Record<ObjectPosition, { x: number; y: number }> = {
+  center: { x: 0.5, y: 0.5 },
+  top: { x: 0.5, y: 0 },
+  right: { x: 1, y: 0.5 },
+  bottom: { x: 0.5, y: 1 },
+  left: { x: 0, y: 0.5 },
+  "top left": { x: 0, y: 0 },
+  "top right": { x: 1, y: 0 },
+  "bottom left": { x: 0, y: 1 },
+  "bottom right": { x: 1, y: 1 },
+};
+
+function calcSize(
+  sourceSize: number,
+  containerSize: number,
+  imageSize: number,
+  positionPercent: number,
+): { s: number; sSize: number; d: number; dSize: number } {
+  if (imageSize > containerSize) {
+    const ratio = sourceSize / imageSize;
+    const sSize = Math.min(sourceSize, containerSize * ratio);
+    const s = (sourceSize - sSize) * positionPercent;
+    return {
+      s: Math.max(0, Math.min(s, sourceSize - sSize)),
+      sSize,
+      d: 0,
+      dSize: containerSize,
+    };
+  } else {
+    const d = (containerSize - imageSize) * positionPercent;
+    return {
+      s: 0,
+      sSize: sourceSize,
+      d,
+      dSize: imageSize,
+    };
+  }
+}
 
 export default function calculateImageRendering(
   sourceImageSize: { width: number; height: number },
@@ -24,63 +62,29 @@ export default function calculateImageRendering(
     image: { width: imageWidth, height: imageHeight },
   } = calcImageSizeResult;
 
-  let sx = 0,
-    sy = 0;
-  let dx = 0,
-    dy = 0;
-  const dWidth = imageWidth;
-  const dHeight = imageHeight;
+  const { x: xPercent, y: yPercent } = objectPositionMap[objectPosition];
 
-  // Convert objectPosition to x and y percentages
-  let xPercent = 50,
-    yPercent = 50;
-  if (objectPosition.includes("left")) xPercent = 0;
-  if (objectPosition.includes("right")) xPercent = 100;
-  if (objectPosition.includes("top")) yPercent = 0;
-  if (objectPosition.includes("bottom")) yPercent = 100;
+  const horizontalResult = calcSize(
+    sourceImageSize.width,
+    containerWidth,
+    imageWidth,
+    xPercent,
+  );
+  const verticalResult = calcSize(
+    sourceImageSize.height,
+    containerHeight,
+    imageHeight,
+    yPercent,
+  );
 
-  if (imageWidth > containerWidth || imageHeight > containerHeight) {
-    // Image is larger than container, need to adjust source rectangle
-    const widthRatio = sourceImageSize.width / imageWidth;
-    const heightRatio = sourceImageSize.height / imageHeight;
-
-    const sWidth = Math.min(sourceImageSize.width, containerWidth * widthRatio);
-    const sHeight = Math.min(
-      sourceImageSize.height,
-      containerHeight * heightRatio,
-    );
-
-    sx = ((sourceImageSize.width - sWidth) * xPercent) / 100;
-    sy = ((sourceImageSize.height - sHeight) * yPercent) / 100;
-
-    // Ensure source rectangle doesn't exceed original image bounds
-    sx = Math.max(0, Math.min(sx, sourceImageSize.width - sWidth));
-    sy = Math.max(0, Math.min(sy, sourceImageSize.height - sHeight));
-
-    return {
-      sx: Math.round(sx),
-      sy: Math.round(sy),
-      sWidth: Math.round(sWidth),
-      sHeight: Math.round(sHeight),
-      dx: 0,
-      dy: 0,
-      dWidth: Math.round(containerWidth),
-      dHeight: Math.round(containerHeight),
-    };
-  } else {
-    // Image is smaller than or equal to container, adjust position within container
-    dx = Math.round(((containerWidth - imageWidth) * xPercent) / 100);
-    dy = Math.round(((containerHeight - imageHeight) * yPercent) / 100);
-
-    return {
-      sx: 0,
-      sy: 0,
-      sWidth: Math.round(sourceImageSize.width),
-      sHeight: Math.round(sourceImageSize.height),
-      dx: Math.round(dx),
-      dy: Math.round(dy),
-      dWidth: Math.round(dWidth),
-      dHeight: Math.round(dHeight),
-    };
-  }
+  return {
+    sx: Math.round(horizontalResult.s),
+    sy: Math.round(verticalResult.s),
+    sWidth: Math.round(horizontalResult.sSize),
+    sHeight: Math.round(verticalResult.sSize),
+    dx: Math.round(horizontalResult.d),
+    dy: Math.round(verticalResult.d),
+    dWidth: Math.round(horizontalResult.dSize),
+    dHeight: Math.round(verticalResult.dSize),
+  };
 }

@@ -9,7 +9,7 @@ import { type Offset, Size } from "../../../type";
 import { browser, assert } from "../../../utils";
 import { SingleChildRenderObjectWidget } from "../../../widget";
 
-import calculateImageRendering from "./calculatePosition";
+import calculatePosition from "./calculatePosition";
 import calculateSize from "./calculateSize";
 
 type ObjectPosition =
@@ -234,7 +234,7 @@ class ImageCanvasPatiner extends CanvasPainter {
     assert(imageSize != null);
 
     const { sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight } =
-      calculateImageRendering(
+      calculatePosition(
         { width: image.width, height: image.height },
         {
           container: size,
