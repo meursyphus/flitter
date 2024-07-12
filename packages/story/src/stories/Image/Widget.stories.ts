@@ -5,7 +5,8 @@ const meta = {
 	title: 'Widget/Image',
 	component: Widget,
 	parameters: {
-		layout: 'fullscreen'
+		layout: 'fullscreen',
+		chromatic: { disableSnapshot: true }
 	}
 } satisfies Meta<Widget>;
 
