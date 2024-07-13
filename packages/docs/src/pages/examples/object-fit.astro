@@ -1,0 +1,29 @@
+---
+import Native from "./image-native.svelte";
+import Flitter from "./image-flitter.svelte";
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+    <h1>Html vs Flitter</h1>
+    <div class="compare">
+        <Native />
+        <Flitter client:only="svelte" />
+    </div>
+</Layout>
+
+<style>
+    h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: var(--px);
+        margin-inline: auto;
+    }
+    .compare {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        justify-content: stretch;
+        margin-inline: auto;
+        padding-inline: var(--px);
+    }
+</style>

@@ -1,0 +1,94 @@
+---
+title: The Complete Guide to CSS object-fit Property
+description: Mastering Image Control in Web Development
+---
+
+# The Complete Guide to CSS object-fit: Key to Handling Images on the Web
+
+## Introduction: Why You Need to Know object-fit
+
+Dealing with images in web development has always been a challenging task. How can we consistently display images of various sizes and ratios? This is where the CSS `object-fit` property plays a crucial role.
+
+Understanding `object-fit` means more than just displaying images correctly. Recently, many cloud services that automatically adjust the size of user-uploaded images have been offering `object-fit` as an option. Therefore, if you don't understand the exact behavior of `object-fit`, you might unintentionally provide a negative user experience during the image optimization process.
+
+## Basic Concepts of object-fit
+
+The `object-fit` property determines how an image will be cropped or scaled to fit within the specified size (container size) of an `<img>` or `<video>` tag, in relation to the original image size.
+
+An important point to note is that when only `width` or `height` is specified, the other dimension is automatically determined based on the original image ratio. In this case, for all `object-fit` values except `scale-down` and `none`, the image will fill the container size while maintaining its aspect ratio. However, with `scale-down` and `none`, if the container size is larger than the image size, the image will maintain its original size without stretching.
+
+## object-fit Values and Their Effects
+
+### 1. contain
+
+```
+      Container
++--------------------+
+|        Image       |
+|:------------------:|
+|:                  :|
+|:                  :|
+|:                  :|
+|:                  :|
+|:------------------:|
+|                    |
++--------------------+
+```
+
+- Adjusts the image to be fully visible
+- Maintains image aspect ratio
+- May result in empty space within the container
+
+### 2. cover
+
+```
+         Image
+:######################:
+:#                    #:
+:#     Container      #:
+:#  +------------+    #:
+:#  |            |    #:
+:#  |            |    #:
+:#  |            |    #:
+:#  +------------+    #:
+:#                    #:
+:######################:
+```
+
+- Completely fills the container
+- Maintains image aspect ratio
+- May crop parts of the image
+
+### 3. fill
+
+- Completely fills the container
+- Ignores image aspect ratio (may distort the image)
+
+### 4. none
+
+- Maintains original image size
+- Ignores container size (image may be clipped)
+
+### 5. scale-down
+
+- Displays the image at the smaller size between `none` and `contain`
+- Prevents the image from stretching
+
+## Image Widget in Flitter
+
+The Flitter library also provides an Image widget that implements the behavior of `object-fit`. Flitter's Image widget is designed to behave as similarly as possible to the native HTML `<img>` tag and supports various `object-fit` options.
+
+```typescript
+Image({
+  src: 'https://flitter.dev/examples/object-fit/profile.jpg',
+  width: 750,
+  height: 250,
+  objectFit: 'none'
+})
+```
+
+If you want to see various examples of `object-fit`, visit the following URL: [https://flitter.dev/examples/object-fit](https://flitter.dev/examples/object-fit)
+
+## Conclusion
+
+The `object-fit` property is a powerful tool for handling images on the web. By properly understanding and using it, developers can effectively manage images of various sizes and ratios, providing users with a consistent visual experience. Understanding `object-fit` becomes even more important when using image optimization services. We hope this guide helps you handle images more effectively in your web projects.
