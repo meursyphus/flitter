@@ -7,6 +7,7 @@ import type { Calculable } from "../type";
 export { default as createUniqueId } from "./createUniqueId";
 export { default as TypedObject } from "./TypedObject";
 export * from "./environment";
+export { default as never } from "./never";
 
 export { assert, applyMixins, getTextHeight, getTextWidth, classToFunction };
 
