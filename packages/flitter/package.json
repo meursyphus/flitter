@@ -1,6 +1,6 @@
 {
   "name": "@meursyphus/flitter",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A declarative, widget-based library built on SVG for simplifying data visualization with a Flutter-like syntax.",
   "keywords": [
     "flitter",

@@ -39,18 +39,35 @@ Flitter can be used in various JavaScript environments. Here are installation an
 npm install @meursyphus/flitter
 ```
 
-```javascript
-import { Widget, Container, AppRunner } from '@meursyphus/flitter';
+```javascript 
+import { Container } from "@meursyphus/flitter";
 
-// Using SVG renderer
-const svgElement = document.getElementById('mySvg');
-const svgRunner = new AppRunner({ view: svgElement });
-svgRunner.runApp(Container({ color: 'lightblue' }));
+/**
+ * canvas style must be set to 100%, 100%
+ * and you also must wrap div for canvas in order to calculate the size of the canvas
+ */
+document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
+  <div style="width: 100vw; height: 100vh" id="container">
+    <canvas style="width: 100%; height: 100%;" id="view" />
+  </div>
+`;
+// Note: SVG is also supported
+// document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
+//   <div style="width: 100vw; height: 100vh" id="container">
+//     <svg style="width: 100%; height: 100%;" id="view"></svg>
+//   </div>
+// `;
+const app = new AppRunner({
+  view: document.querySelector<HTMLCanvasElement>("#view")!,
+});
+/**
+ * you must set resizeTarget to calculate the size of the canvas
+ */
+app.onMount({
+  resizeTarget: document.querySelector<HTMLDivElement>("#container")!,
+});
 
-// Using Canvas renderer
-const canvasElement = document.getElementById('myCanvas');
-const canvasRunner = new AppRunner({ view: canvasElement });
-canvasRunner.runApp(Container({ color: 'lightgreen' }));
+app.runApp(Container({ color: 'lightblue' }));
 ```
 
 ### React
@@ -68,21 +85,11 @@ const App = () => (
     <Widget
       width="600px"
       height="300px"
-      renderer="svg"
+      renderer="canvas" // or svg
       widget={Container({
         alignment: Alignment.center,
         color: 'lightblue',
         child: Text("Hello, Flitter SVG!", { style: TextStyle({ fontSize: 30, weight: 'bold' }) })
-      })}
-    />
-    <Widget
-      width="600px"
-      height="300px"
-      renderer="canvas"
-      widget={Container({
-        alignment: Alignment.center,
-        color: 'lightgreen',
-        child: Text("Hello, Flitter Canvas!", { style: TextStyle({ fontSize: 30, weight: 'bold' }) })
       })}
     />
   </>
@@ -104,22 +111,11 @@ npm install @meursyphus/flitter @meursyphus/flitter-svelte
 <Widget
   width="600px"
   height="300px"
-  renderer="svg"
+  renderer="canvas" <!-- or "svg" -->
   widget={Container({
     alignment: Alignment.center,
     color: 'lightblue',
     child: Text("Hello, Flitter SVG!", { style: TextStyle({ fontSize: 30, weight: 'bold' }) })
-  })}
-/>
-
-<Widget
-  width="600px"
-  height="300px"
-  renderer="canvas"
-  widget={Container({
-    alignment: Alignment.center,
-    color: 'lightgreen',
-    child: Text("Hello, Flitter Canvas!", { style: TextStyle({ fontSize: 30, weight: 'bold' }) })
   })}
 />
 ```
