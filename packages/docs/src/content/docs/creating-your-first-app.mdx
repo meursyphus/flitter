@@ -22,7 +22,11 @@ This guide will walk you through creating a simple Flitter app in three differen
     <title>My First Flitter App</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div style="width: 500px; height: 500px" id="container">
+      <!-- you must set width and height to 100% -->
+      <!-- you can use svg instead of canvas -->
+      <canvas style="width: 100%; height: 100%;" id="view"></canvas>
+    </div>
     <script type="module" src="./main.js"></script>
   </body>
 </html>
@@ -54,8 +58,14 @@ const MyApp = () => {
   });
 };
 
-const appElement = document.getElementById("app");
+const appElement = document.getElementById("view"); //it must be canvas or svg
 const runner = new AppRunner({ view: appElement });
+/**
+ * you must set resizeTarget to calculate the size of the canvas(or svg)
+ */
+app.onMount({
+  resizeTarget: document.querySelector<HTMLDivElement>("#container")!,
+});
 runner.runApp(MyApp());
 ```
 
