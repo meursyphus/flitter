@@ -9,5 +9,6 @@
       "$layouts/*": ["src/layouts/*"],
       "$utils/*": ["src/utils/*"]
     }  
-  }
+  },
+  "exclude": ["src/layouts/Layout.astro"]
 }

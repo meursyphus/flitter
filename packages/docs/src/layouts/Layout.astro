@@ -66,6 +66,19 @@ const fullCanonicalUrl = canonicalURL
     <meta name="pinterest:title" content={title} />
     <meta name="pinterest:description" content={description} />
     <meta name="pinterest:image" content={new URL(image, baseUrl)} />
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DY0NVVYBLS"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-DY0NVVYBLS");
+    </script>
   </head>
   <body>
     <Header />
