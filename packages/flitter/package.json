@@ -1,14 +1,17 @@
 {
   "name": "@meursyphus/flitter",
   "version": "2.0.2",
-  "description": "A declarative, widget-based library built on SVG for simplifying data visualization with a Flutter-like syntax.",
+  "description": "Flitter: A high-performance JavaScript rendering engine and framework inspired by Flutter. Features declarative programming, SVG and Canvas support, and optimized for complex data visualizations, interactive charts, and graphic editors in web applications.",
   "keywords": [
-    "flitter",
-    "data visualization",
-    "SVG",
-    "widget-based",
-    "declarative",
-    "flutter"
+    "rendering-engine",
+    "data-visualization",
+    "svg",
+    "canvas",
+    "flutter-like",
+    "javascript",
+    "interactive-charts",
+    "graphics",
+    "ui-framework"
   ],
   "homepage": "https://flitter.dev",
   "scripts": {
