@@ -14,3 +14,5 @@ package
 packages/*/dist/
 packages/*/package/
 
+# OS generated files
+.DS_Store
