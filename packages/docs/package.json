@@ -38,5 +38,8 @@
     "prettier": "^3.3.1",
     "prettier-plugin-astro": "^0.13.0",
     "prettier-plugin-tailwindcss": "^0.6.2"
+  },
+  "engines": {
+    "node": ">=18.14.1"
   }
 }
