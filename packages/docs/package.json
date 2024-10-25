@@ -13,6 +13,7 @@
     "@astrojs/check": "^0.5.6",
     "@astrojs/mdx": "^2.1.1",
     "@astrojs/react": "^3.0.10",
+    "@astrojs/sitemap": "^3.2.1",
     "@astrojs/svelte": "^5.2.0",
     "@astrojs/tailwind": "^5.1.0",
     "@codesandbox/sandpack-react": "^2.13.10",
@@ -38,5 +39,8 @@
     "prettier": "^3.3.1",
     "prettier-plugin-astro": "^0.13.0",
     "prettier-plugin-tailwindcss": "^0.6.2"
+  },
+  "engines": {
+    "node": ">=18.14.1"
   }
 }
