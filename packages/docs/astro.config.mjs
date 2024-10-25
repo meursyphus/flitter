@@ -5,10 +5,14 @@ import tailwind from "@astrojs/tailwind";
 //import ts from '@ast'
 
 import mdx from "@astrojs/mdx";
+import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [react(), svelte(), tailwind(), mdx()],
+  site: "https://flitter.dev",
+  integrations: [react(), svelte(), tailwind(), mdx(), sitemap({
+    lastmod: new Date('2024-10-25')
+  })],
   redirects: {
     "/docs": "/docs/introduction",
     "/tutorial": "/tutorial/introduction",
