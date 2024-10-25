@@ -15,10 +15,7 @@ export default defineConfig({
     svelte(),
     tailwind(),
     mdx(),
-    sitemap({
-      lastmod: new Date("2024-10-25"),
-      filter: (page) => page.url.includes("/docs"),
-    }),
+    sitemap(),
   ],
   redirects: {
     "/docs": "/docs/introduction",
