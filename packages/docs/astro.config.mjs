@@ -10,9 +10,16 @@ import sitemap from '@astrojs/sitemap';
 // https://astro.build/config
 export default defineConfig({
   site: "https://flitter.dev",
-  integrations: [react(), svelte(), tailwind(), mdx(), sitemap({
-    lastmod: new Date('2024-10-25')
-  })],
+  integrations: [
+    react(),
+    svelte(),
+    tailwind(),
+    mdx(),
+    sitemap({
+      lastmod: new Date("2024-10-25"),
+      filter: (page) => page.url.includes("/docs"),
+    }),
+  ],
   redirects: {
     "/docs": "/docs/introduction",
     "/tutorial": "/tutorial/introduction",
