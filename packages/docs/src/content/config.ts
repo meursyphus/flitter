@@ -16,8 +16,11 @@ const docs = defineCollection({
 const tutorial = defineCollection({
   type: "content",
   schema: z.object({
-    files: z.record(z.string()),
+    nav_group: z.string(),
+    nav_order: z.number().optional(),
     title: z.string(),
+    files: z.record(z.string()),
+    solved_files: z.record(z.string()).optional(),
   }),
 });
 

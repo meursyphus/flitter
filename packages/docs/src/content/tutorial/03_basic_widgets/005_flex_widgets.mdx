@@ -1,0 +1,292 @@
+---
+nav_group: "Basic Widgets"
+nav_order: 6
+title: "Flex Widgets (Row & Column)"
+description: "Flexible layout widgets for arranging children horizontally or vertically"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Row,
+      Column,
+      Center,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Center({
+            child: Row({
+              children: [
+                Container({
+                  width: 50,
+                  height: 50,
+                  color: "red"
+                }),
+                Container({
+                  width: 50,
+                  height: 50,
+                  color: "blue"
+                }),
+                Container({
+                  width: 50,
+                  height: 50,
+                  color: "green"
+                })
+              ]
+            })
+          })}
+        />
+      );
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Row,
+      Column,
+      Center,
+      Text,
+      MainAxisAlignment,
+      CrossAxisAlignment
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Center({
+            child: Column({
+              children: [
+                Row({
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container({
+                      width: 50,
+                      height: 50,
+                      color: "red"
+                    }),
+                    Container({
+                      width: 50,
+                      height: 50,
+                      color: "blue"
+                    }),
+                    Container({
+                      width: 50,
+                      height: 50,
+                      color: "green"
+                    })
+                  ]
+                }),
+                Container({ height: 16 }),
+                Row({
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container({
+                      width: 50,
+                      height: 70,
+                      color: "purple"
+                    }),
+                    Container({
+                      width: 50,
+                      height: 50,
+                      color: "orange"
+                    }),
+                    Container({
+                      width: 50,
+                      height: 60,
+                      color: "pink"
+                    })
+                  ]
+                }),
+                Container({ height: 16 }),
+                Container({
+                  height: 200,
+                  child: Column({
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container({
+                        width: 50,
+                        height: 50,
+                        color: "cyan"
+                      }),
+                      Container({
+                        width: 50,
+                        height: 50,
+                        color: "magenta"
+                      }),
+                      Container({
+                        width: 50,
+                        height: 50,
+                        color: "yellow"
+                      })
+                    ]
+                  })
+                })
+              ]
+            })
+          })}
+        />
+      );
+    }
+---
+
+# Flex Widgets (Row & Column)
+
+Row and Column are flex widgets that arrange their children in a horizontal or vertical array. They are fundamental for creating layouts in Flitter.
+
+## Properties
+
+Common properties for both Row and Column:
+
+- `children`: Widget[] - List of child widgets
+- `mainAxisAlignment`: MainAxisAlignment - How to place children along the main axis
+  - "start" (default)
+  - "end"
+  - "center"
+  - "spaceBetween"
+  - "spaceAround"
+  - "spaceEvenly"
+- `crossAxisAlignment`: CrossAxisAlignment - How to place children along the cross axis
+  - "start"
+  - "end"
+  - "center"(default)
+  - "stretch"
+- `mainAxisSize`: MainAxisSize - How much space to occupy in the main axis
+  - "min"
+  - "max" (default)
+- `verticalDirection`: VerticalDirection - The direction in which children are placed
+  - "up"
+  - "down" (default)
+- `clipped`: boolean - Whether to clip children to the container bounds (default: false)
+
+## Common Use Cases
+
+1. **Basic Row Layout**:
+
+   ```tsx
+   Row({
+     children: [
+       Container({
+         width: 50,
+         height: 50,
+         color: "red",
+       }),
+       Container({
+         width: 50,
+         height: 50,
+         color: "blue",
+       }),
+     ],
+   });
+   ```
+
+2. **Centered Column**:
+
+   ```tsx
+   Column({
+     mainAxisAlignment: "center",
+     crossAxisAlignment: "center",
+     children: [Text({ text: "Title" }), Text({ text: "Subtitle" })],
+   });
+   ```
+
+3. **Spaced Items**:
+   ```tsx
+   Row({
+     mainAxisAlignment: "spaceBetween",
+     crossAxisAlignment: "center",
+     children: [Text({ text: "Left" }), Text({ text: "Right" })],
+   });
+   ```
+
+## Best Practices
+
+1. **Layout Guidelines**:
+
+   - Choose appropriate axis alignment
+   - Consider cross-axis behavior
+   - Use consistent spacing
+   - Set clipped to true when overflow is possible
+
+2. **Performance**:
+
+   - Avoid deeply nested flex widgets
+   - Consider using Expanded for flexible sizing
+   - Minimize rebuilds of flex layouts
+
+3. **Responsive Design**:
+   - Handle overflow properly
+   - Consider screen size variations
+   - Use appropriate constraints
+
+## Common Patterns
+
+1. **Navigation Bar**:
+
+   ```tsx
+   Row({
+     mainAxisAlignment: "spaceBetween",
+     crossAxisAlignment: "center",
+     children: [
+       IconButton({ icon: "menu" }),
+       Text({ text: "Title" }),
+       IconButton({ icon: "settings" }),
+     ],
+   });
+   ```
+
+2. **Form Layout**:
+
+   ```tsx
+   Column({
+     crossAxisAlignment: "stretch",
+     mainAxisSize: "min",
+     children: [
+       TextField({ label: "Username" }),
+       TextField({ label: "Password" }),
+       Button({ text: "Submit" }),
+     ],
+   });
+   ```
+
+3. **Card Content**:
+   ```tsx
+   Column({
+     crossAxisAlignment: "start",
+     mainAxisSize: "min",
+     children: [
+       Image({ src: "image.jpg" }),
+       Text({ text: "Title" }),
+       Text({ text: "Description" }),
+     ],
+   });
+   ```
+
+## Tips and Tricks
+
+1. **Layout Debugging**:
+
+   - Add background colors temporarily
+   - Check alignment boundaries
+   - Monitor flex behavior
+   - Use clipped property to identify overflow
+
+2. **Spacing Techniques**:
+
+   - Use Container for gaps
+   - Consider mainAxisAlignment for spacing
+   - Maintain consistent spacing
+
+3. **Optimization**:
+   - Cache flex widgets when possible
+   - Use const constructors
+   - Consider layout constraints
+   - Set appropriate mainAxisSize

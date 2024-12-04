@@ -8,6 +8,7 @@ import {
   SandpackLayout,
   SandpackPreview,
 } from "@codesandbox/sandpack-react";
+
 import { useEffect, useRef, useCallback } from "react";
 
 function useDebounce<T extends (...args: any[]) => any>(
@@ -79,10 +80,11 @@ function MonacoEditor() {
 const customSetup = {
   dependencies: {
     "@meursyphus/flitter-react": "0.0.8",
-    "@meursyphus/flitter": "2.0.0-alpha.8",
+    "@meursyphus/flitter": "2.0.2",
     "react-dom": "latest",
     react: "latest",
     "react-markdown": "latest",
+    "@meursyphus/flitter-chart": "0.0.9",
   },
 };
 
@@ -112,7 +114,14 @@ export default function MySandpack({
         }}
       >
         <MonacoEditor />
-        <SandpackPreview />
+        <SandpackPreview
+          style={{
+            height: "100%",
+            flex: 1,
+            padding: 0,
+            margin: 0,
+          }}
+        />
       </SandpackLayout>
     </SandpackProvider>
   );

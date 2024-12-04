@@ -19,7 +19,7 @@ export default defineConfig({
   ],
   redirects: {
     "/docs": "/docs/introduction",
-    "/tutorial": "/tutorial/introduction",
+    "/tutorial": "/tutorial/get-started/introduction",
   },
   markdown: {
     shikiConfig: {

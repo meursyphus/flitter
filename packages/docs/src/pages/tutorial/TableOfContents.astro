@@ -1,0 +1,60 @@
+---
+import { getCollection } from "astro:content";
+
+const tutorials = await getCollection("tutorial");
+const sortedTutorials = tutorials
+  .map((entry) => ({
+    ...entry,
+    slug: entry.slug
+      .split("/")
+      .map((segment) => segment.replace(/^\d+_/, ""))
+      .join("/"),
+    order: parseInt(entry.slug.split("/")[0].split("_")[0]) || 0,
+    nav_group: entry.data.nav_group || "Others",
+  }))
+  .sort((a, b) => a.order - b.order);
+
+// Group tutorials by nav_group
+const groupedTutorials = sortedTutorials.reduce(
+  (acc, tutorial) => {
+    const group = tutorial.nav_group;
+    if (!acc[group]) {
+      acc[group] = [];
+    }
+    acc[group].push(tutorial);
+    return acc;
+  },
+  {} as Record<string, typeof sortedTutorials>,
+);
+
+const { currentSlug } = Astro.props;
+---
+
+<div class="p-3 text-sm">
+  {
+    Object.entries(groupedTutorials).map(([group, tutorials]) => (
+      <div class="mb-6">
+        <h3 class="mb-2 text-[16px] font-medium text-[rgb(75,85,99)]">
+          {group}
+        </h3>
+        <ul class="space-y-2.5">
+          {tutorials.map((tutorial) => (
+            <li>
+              <a
+                href={`/tutorial/${tutorial.slug}`}
+                class:list={[
+                  "block rounded px-2 py-1.5 text-[14px] transition-colors",
+                  currentSlug === tutorial.slug
+                    ? "bg-gray-800 font-medium text-[rgb(209,213,219)]"
+                    : "text-[rgb(156,163,175)] hover:text-[rgb(209,213,219)]",
+                ]}
+              >
+                {tutorial.data.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</div>

@@ -1,0 +1,97 @@
+---
+nav_group: "Getting Started"
+nav_order: 2
+title: "Installation"
+description: "Step-by-step guide to install Flitter in your project"
+files:
+  App.js: |
+    import { useEffect, useRef } from "react";
+    import { AppRunner } from "@meursyphus/flitter";
+    
+    export default function App() {
+      const svgRef = useRef(null);
+      const containerRef = useRef(null);
+      
+      useEffect(() => {
+        // TODO: Initialize Flitter
+      }, []);
+      
+      return (
+        <div ref={containerRef} style={{ width: "500px", height: "300px" }}>
+          <svg ref={svgRef} style={{ width: "100%", height: "100%" }} />
+        </div>
+      );
+    }
+solved_files:
+  App.js: |
+    import { useEffect, useRef } from "react";
+    import { AppRunner, Container, Text, Center } from "@meursyphus/flitter";
+    
+    export default function App() {
+      const svgRef = useRef(null);
+      const containerRef = useRef(null);
+      
+      useEffect(() => {
+        const widget = Container({
+          width: 300,
+          height: 200,
+          color: "blue",
+          child: Center({
+            child: Text("Installation Complete!")
+          })
+        });
+
+        const runner = new AppRunner({
+          view: svgRef.current
+        });
+        
+        runner.onMount({
+          resizeTarget: containerRef.current
+        });
+        
+        runner.runApp(widget);
+        
+        return () => {
+          runner.dispose();
+        };
+      }, []);
+      
+      return (
+        <div ref={containerRef} style={{ width: "500px", height: "300px" }}>
+          <svg ref={svgRef} style={{ width: "100%", height: "100%" }} />
+        </div>
+      );
+    }
+---
+
+# Installing Flitter
+
+This guide will walk you through the process of installing Flitter in your project. We'll focus on setting up Flitter with React, which is one of the most common use cases.
+
+## Installation Steps
+
+1. Create a new Vite project with React template:
+   ```bash
+   npm create vite@latest my-flitter-app -- --template react-ts
+   cd my-flitter-app
+   ```
+
+2. Install Flitter and its React bindings:
+   ```bash
+   npm install @meursyphus/flitter 
+   ```
+
+## Basic Setup
+
+Let's create a simple app to verify our installation. First, we'll set up the basic structure with React refs for the SVG element and its container. Then, we'll initialize Flitter with a basic widget to display some text.
+
+The example above shows how to:
+1. Create refs for both the SVG element(or canvas element) and its container
+2. Initialize the AppRunner with the SVG element
+3. Set up proper resize handling
+4. Create and render a basic widget
+5. Clean up resources when the component unmounts
+
+## Next Steps
+
+Now that you have Flitter installed and running, we'll explore how to create more complex applications using Flitter's widget system in the next section.

@@ -1,0 +1,106 @@
+---
+nav_group: "Getting Started"
+nav_order: 3
+title: "Using Flitter with React"
+description: "How to integrate Flitter into your React applications using the flitter-react package"
+files:
+  App.js: |
+    import { useEffect, useRef } from "react";
+    import {
+      Container,
+      Text,
+      AppRunner
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      const svgRef = useRef(null);
+      
+      useEffect(() => {
+        const widget = Container({
+          width: 300,
+          height: 200,
+          color: "red",
+          child: Text("Hello, Flitter!")
+        });
+
+        const runner = new AppRunner({
+          view: svgRef.current
+        });
+        runner.onMount({
+          resizeTarget: svgRef.current
+        });
+        runner.runApp(widget);
+        
+        return () => runner.dispose();
+      }, []);
+
+      return (
+        <svg style={{ width: "500px", height: "300px" }} ref={svgRef} />
+      );
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Text,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          renderer="svg" // or "canvas"
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Container({
+            width: 300,
+            height: 200,
+            color: "blue",
+            child: Text("Hello, Flitter!")
+          })}
+        />
+      );
+    }
+---
+
+# Using Flitter with React
+
+While Flitter can be used directly with SVG elements and AppRunner as shown above, we provide a simpler way to integrate Flitter with React through the `@meursyphus/flitter-react` package.
+
+## The Widget Component
+
+The `Widget` component from `@meursyphus/flitter-react` handles all the complex setup automatically:
+```typescript
+import Widget from "@meursyphus/flitter-react";
+```
+
+### Key Benefits
+
+1. No need to manage refs manually
+2. Automatic AppRunner lifecycle management
+3. Cleaner, more React-like syntax
+4. Built-in resize handling
+
+### Properties
+
+The `Widget` component accepts several props:
+- `renderer`: Choose between "svg" (default) or "canvas" rendering
+- `width`: Any valid CSS width value (e.g., "100%", "calc(100vh - 20px)", "auto")
+- `height`: Any valid CSS height value
+- `widget`: The Flitter widget to render
+
+### Framework Support
+
+In addition to React, Flitter also provides official support for Svelte through the `@meursyphus/flitter-svelte` package, offering similar functionality and ease of use.
+
+## Basic Usage
+
+As shown in the solved example above, using the `Widget` component greatly simplifies your code by:
+- Eliminating the need for useEffect and refs
+- Handling SVG/Canvas creation automatically
+- Managing the AppRunner lifecycle
+- Providing a more declarative API
+
+## Next Steps
+
+Now that you understand how to use Flitter with React, we'll explore Flitter's core concepts and widget system in the next sections.

@@ -1,14 +1,14 @@
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "jsxImportSource": "react",
-    "baseUrl": ".",
+    "baseUrl": "/Users/daeseungmoon/work/flitter/packages/docs",
     "paths": {
-      "$components/*": ["src/components/*"], // '@components' alias 설정
+      "$components/*": ["src/components/*"],
       "$layouts/*": ["src/layouts/*"],
       "$utils/*": ["src/utils/*"]
-    }  
+    }
   },
   "exclude": ["src/layouts/Layout.astro"]
 }

@@ -1,0 +1,385 @@
+---
+nav_group: "Interactions and Animations"
+nav_order: 2
+title: "Animation Controller"
+description: "Master animations in Flitter using Animation Controllers for smooth and controlled animations"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      AnimationController,
+      StatefulWidget,
+      State,
+    } from "@meursyphus/flitter";
+
+    class AnimatedBox extends StatefulWidget {
+      createState() {
+        return new AnimatedBoxState();
+      }
+    }
+
+    class AnimatedBoxState extends State {
+      controller;
+
+      initState() {
+        super.initState();
+        this.controller = new AnimationController({ duration: 1000 });
+        this.controller.addListener(() => {
+          this.setState();
+        });
+      }
+
+      dispose() {
+        this.controller.dispose();
+        super.dispose();
+      }
+
+      build() {
+        return Container({
+          width: 100,
+          height: 100,
+          color: "blue",
+        });
+      }
+    }
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={new AnimatedBox()}
+        />
+      );
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      AnimationController,
+      Curves,
+      CurvedAnimation,
+      StatefulWidget,
+      State,
+      GestureDetector,
+      Stack,
+      Text,
+      TextStyle,
+    } from "@meursyphus/flitter";
+
+    class AnimatedBox extends StatefulWidget {
+      createState() {
+        return new AnimatedBoxState();
+      }
+    }
+
+    class AnimatedBoxState extends State {
+      controller;
+      animation;
+
+      initState() {
+        super.initState();
+        this.controller = new AnimationController({ duration: 1000 });
+        this.animation = new CurvedAnimation({
+          parent: this.controller,
+          curve: Curves.easeInOut,
+        });
+        this.controller.addListener(() => {
+          this.setState();
+        });
+      }
+
+      dispose() {
+        this.controller.dispose();
+        super.dispose();
+      }
+
+      build() {
+        return Stack({
+          children: [
+            Container({
+              width: 200 * this.animation.value,
+              height: 100,
+              color: "blue",
+            }),
+            GestureDetector({
+              onClick: () => {
+                if (this.controller.isAnimating) {
+                  this.controller.stop();
+                } else if (this.controller.value === 1) {
+                  this.controller.reverse();
+                } else {
+                  this.controller.forward();
+                }
+              },
+              child: Text("Toggle Animation", {
+                style: new TextStyle({
+                  fontSize: 20,
+                  color: "black",
+                }),
+              }),
+            }),
+          ],
+        });
+      }
+    }
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={new AnimatedBox()}
+        />
+      );
+    }
+---
+
+# Animation Controller in Flitter
+
+The Animation Controller is the core class for managing animations in Flitter. It provides precise control over animation timing, direction, and state, allowing you to create smooth and interactive animations.
+
+## Core Concepts
+
+1. **Animation Value**: A double ranging from 0.0 to 1.0
+2. **Duration**: The length of time for the animation to complete
+3. **Direction**: Forward or reverse animation playback
+4. **State**: Animation status (dismissed, forward, reverse, completed)
+
+## Basic Usage
+
+Creating a simple animation controller:
+
+```typescript
+import { AnimationController } from "@meursyphus/flitter";
+
+const controller = new AnimationController({
+  duration: 1000, // milliseconds
+});
+
+// Start the animation
+controller.forward();
+```
+
+## Animation States
+
+### Controlling Animation State
+
+```typescript
+const controller = new AnimationController({ duration: 1000 });
+
+// Forward animation
+controller.forward();
+
+// Reverse animation
+controller.reverse();
+
+// Stop animation
+controller.stop();
+
+// Reset to initial state
+controller.reset();
+```
+
+### Checking Animation Status
+
+```typescript
+controller.addListener(() => {
+  console.log({
+    value: controller.value,
+    isAnimating: controller.isAnimating,
+    isDismissed: controller.isDismissed,
+    isCompleted: controller.isCompleted,
+  });
+});
+```
+
+## Advanced Features
+
+### Curved Animations
+
+Using CurvedAnimation for non-linear animation:
+
+```typescript
+import {
+  AnimationController,
+  CurvedAnimation,
+  Curves,
+} from "@meursyphus/flitter";
+
+const controller = new AnimationController({
+  duration: 1000,
+});
+
+const animation = new CurvedAnimation({
+  parent: controller,
+  curve: Curves.easeInOut,
+});
+
+// Use animation.value instead of controller.value
+```
+
+### Repeating Animations
+
+Creating looping animations:
+
+```typescript
+controller.repeat({
+  reverse: true, // Optional: ping-pong animation
+});
+```
+
+### Custom Starting Points
+
+Starting animation from specific points:
+
+```typescript
+controller.forward({ from: 0.5 }); // Start from middle
+controller.reverse({ from: 1.0 }); // Start from end
+```
+
+## Animation Patterns
+
+### Fading Widget
+
+```typescript
+function FadingWidget({ child }) {
+  const [controller] = useState(
+    () => new AnimationController({ duration: 300 }),
+  );
+
+  return Container({
+    opacity: controller.value,
+    child,
+  });
+}
+```
+
+### Size Animation
+
+```typescript
+function ExpandingWidget({ child }) {
+  const [controller] = useState(
+    () => new AnimationController({ duration: 500 }),
+  );
+
+  const size = new Tween({
+    begin: 100,
+    end: 200,
+  }).evaluate(controller);
+
+  return Container({
+    width: size,
+    height: size,
+    child,
+  });
+}
+```
+
+### Combined Animations
+
+```typescript
+function ComplexAnimation({ child }) {
+  const [controller] = useState(
+    () => new AnimationController({ duration: 1000 }),
+  );
+
+  const scaleAnimation = new CurvedAnimation({
+    parent: controller,
+    curve: Curves.easeOut,
+  });
+
+  const fadeAnimation = new CurvedAnimation({
+    parent: controller,
+    curve: Curves.linear,
+  });
+
+  return Container({
+    scale: 1 + scaleAnimation.value,
+    opacity: fadeAnimation.value,
+    child,
+  });
+}
+```
+
+## Best Practices
+
+1. **Resource Management**:
+
+   ```typescript
+   class AnimatedWidget extends StatefulWidget {
+     dispose() {
+       controller.dispose(); // Clean up when done
+       super.dispose();
+     }
+   }
+   ```
+
+2. **Performance Optimization**:
+
+   - Reuse animation controllers when possible
+   - Dispose controllers when no longer needed
+   - Use appropriate curves for smooth animations
+
+3. **State Management**:
+
+   - Keep animation logic separate from UI logic
+   - Use state management for complex animations
+   - Handle animation completion appropriately
+
+4. **Error Handling**:
+   - Check animation state before operations
+   - Handle animation interruptions gracefully
+   - Provide fallback states for animation failures
+
+## Common Patterns
+
+### Staggered Animations
+
+```typescript
+function StaggeredAnimation() {
+  const [controller1] = useState(
+    () => new AnimationController({ duration: 500 }),
+  );
+  const [controller2] = useState(
+    () => new AnimationController({ duration: 500 }),
+  );
+
+  controller1.addListener(() => {
+    if (controller1.isCompleted) {
+      controller2.forward();
+    }
+  });
+
+  return Stack({
+    children: [
+      Container({ opacity: controller1.value }),
+      Container({ opacity: controller2.value }),
+    ],
+  });
+}
+```
+
+### Interactive Animations
+
+```typescript
+function InteractiveAnimation() {
+  const [controller] = useState(
+    () => new AnimationController({ duration: 300 }),
+  );
+
+  return GestureDetector({
+    onPointerDown: () => controller.forward(),
+    onPointerUp: () => controller.reverse(),
+    child: Container({
+      scale: 1 + controller.value * 0.2,
+    }),
+  });
+}
+```
+
+## Conclusion
+
+The Animation Controller is a powerful tool for creating sophisticated animations in Flitter. By understanding its capabilities and following best practices, you can create smooth, performant, and engaging animations that enhance your user interface. Remember to manage resources properly, optimize performance, and consider the user experience when implementing animations.

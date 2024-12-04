@@ -1,0 +1,158 @@
+---
+nav_group: "Basic Widgets"
+nav_order: 4
+title: "Padding and Margin"
+description: "Learn how to use Padding and Margin in Flitter for proper spacing"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Text,
+      TextStyle,
+      EdgeInsets,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Container({
+            color: "lightblue",
+            child: Container({
+              color: "blue",
+              child: Text("Container without spacing", {
+                style: new TextStyle({
+                  fontSize: 18,
+                  color: "white"
+                })
+              })
+            })
+          })}
+        />
+      );
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Text,
+      TextStyle,
+      EdgeInsets,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Container({
+            color: "lightblue",
+            padding: EdgeInsets.all(20),
+            margin: EdgeInsets.all(10),
+            child: Container({
+            padding: EdgeInsets.only({
+              top: 5,
+              right: 15,
+              bottom: 10,
+              left: 25
+            }),
+              color: "blue",
+              child: Text("Container with padding and margin", {
+                style: new TextStyle({
+                  fontSize: 18,
+                  color: "white"
+                })
+              })
+            })
+          })}
+        />
+      );
+    }
+---
+
+# Understanding Padding and Margin
+
+In Flitter, padding and margin are essential properties for controlling spacing around widgets. While they might seem similar, they serve different purposes:
+
+- **Padding**: Space between the widget's content and its border
+- **Margin**: Space between the widget's border and surrounding widgets
+
+## EdgeInsets Class
+
+Both padding and margin use the `EdgeInsets` class, which provides several convenient constructors:
+
+1. `EdgeInsets.all(value)`: Same spacing on all sides
+2. `EdgeInsets.symmetric({ vertical, horizontal })`: Different spacing for vertical and horizontal sides
+3. `EdgeInsets.only({ left, top, right, bottom })`: Individual control for each side
+
+## Key Concepts
+
+1. **Padding Usage**:
+
+   ```tsx
+   Container({
+     padding: EdgeInsets.all(20),
+     child: Text("Padded text"),
+   });
+   ```
+
+2. **Margin Usage**:
+
+   ```tsx
+   Container({
+     margin: EdgeInsets.symmetric({
+       vertical: 10,
+       horizontal: 20,
+     }),
+     child: Text("Text with margin"),
+   });
+   ```
+
+3. **Combining Both**:
+   ```tsx
+   Container({
+     padding: EdgeInsets.all(16),
+     margin: EdgeInsets.all(8),
+     child: Text("Text with both"),
+   });
+   ```
+
+## Best Practices
+
+1. **Consistent Spacing**:
+
+   - Use consistent padding/margin values throughout your app
+   - Consider creating spacing constants for reusability
+
+2. **Responsive Design**:
+
+   - Use relative values when appropriate
+   - Consider how spacing will affect layout on different screen sizes
+
+3. **Layout Hierarchy**:
+
+   - Use padding for internal spacing within a widget
+   - Use margin for spacing between sibling widgets
+
+4. **Performance**:
+   - Prefer using margin on the container itself rather than wrapping in another padding widget
+   - Combine padding/margin when possible instead of nesting multiple containers
+
+## Common Pitfalls
+
+1. **Nested Padding**:
+
+   - Avoid unnecessary nesting of padding containers
+   - Combine padding values when possible
+
+2. **Margin Collapse**:
+
+   - Unlike CSS, margins in Flitter don't collapse
+   - Adjacent margins are additive
+
+3. **Overflow**:
+   - Be careful with fixed padding/margin values in responsive layouts
+   - Consider using constraints or flexible widgets

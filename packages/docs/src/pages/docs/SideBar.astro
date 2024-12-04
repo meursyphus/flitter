@@ -1,6 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import { getNavOrder, normalizePath } from "$utils/index";
+import { getNavOrder, normalizePath } from "./utils";
 
 const docsEntries = await getCollection("docs");
 // navigation 정보로 표현할 객체 만들기

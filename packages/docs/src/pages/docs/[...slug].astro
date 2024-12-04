@@ -1,9 +1,9 @@
 ---
 import Layout from "../../layouts/DocsLayout.astro";
-import SideBar from "../../components/pages/docs/SideBar.astro";
+import SideBar from "./SideBar.astro"
 import Toc from "../../components/pages/docs/Toc.astro";
 import { getCollection } from "astro:content";
-import { getNavOrder } from "$utils/index";
+import { getNavOrder } from "./utils";
 
 export async function getStaticPaths() {
   const docsEntries = await getCollection("docs");

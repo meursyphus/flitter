@@ -1,0 +1,164 @@
+---
+nav_group: "Layout"
+nav_order: 3
+title: "Stack Layout"
+description: "Master Stack layouts in Flitter for creating complex, overlapping UI designs"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Container({
+            width: 200,
+            height: 200,
+            color: "blue",
+          })}
+        />
+      );
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Stack,
+      Container,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Stack({
+            children: [
+              Container({
+                width: 300,
+                height: 300,
+                color: "red",
+              }),
+              Container({
+                width: 200,
+                height: 200,
+                color: "green",
+              }),
+              Container({
+                width: 100,
+                height: 100,
+                color: "blue",
+              }),
+            ],
+          })}
+        />
+      );
+    }
+---
+
+# Stack Layout in Flitter
+
+Stack layouts in Flitter allow you to overlay widgets on top of each other. This creates a layered effect where each child widget is painted on top of the previous one.
+
+## Core Concepts
+
+1. **Stacking Order**: Children are painted in the order they appear in the children list. The first child is at the bottom, and each subsequent child is painted on top.
+
+2. **Positioning**: By default, children are positioned at the top-left corner of the Stack.
+
+3. **Size**: A Stack sizes itself to contain all of its children.
+
+## Basic Usage
+
+Here's a simple example of using Stack to layer multiple containers:
+
+```typescript
+import { Stack, Container } from "@meursyphus/flitter";
+
+const stackExample = Stack({
+  children: [
+    Container({
+      width: 300,
+      height: 300,
+      color: "red",
+    }),
+    Container({
+      width: 200,
+      height: 200,
+      color: "green",
+    }),
+    Container({
+      width: 100,
+      height: 100,
+      color: "blue",
+    }),
+  ],
+});
+```
+
+In this example:
+
+- The red container (300x300) forms the base layer
+- The green container (200x200) is painted on top of it
+- The blue container (100x100) appears on the very top
+
+## Best Practices
+
+1. **Layer Management**:
+
+   - Keep track of your layers by ordering children logically
+   - Place background elements first in the children list
+   - Add overlay elements last
+
+2. **Performance**:
+   - Use Stack only when you need overlapping elements
+   - Keep the number of children reasonable
+   - Consider using other layout widgets (Row, Column) when overlap isn't needed
+
+## Common Patterns
+
+### Background with Overlay
+
+```typescript
+Stack({
+  children: [
+    Container({
+      width: 400,
+      height: 400,
+      color: "grey", // background
+    }),
+    Container({
+      width: 200,
+      height: 200,
+      color: "rgba(255, 0, 0, 0.5)", // semi-transparent overlay
+    }),
+  ],
+});
+```
+
+### Layered Cards
+
+```typescript
+Stack({
+  children: [
+    Container({
+      width: 300,
+      height: 200,
+      color: "blue",
+    }),
+    Container({
+      width: 250,
+      height: 150,
+      color: "lightblue",
+    }),
+  ],
+});
+```
+
+## Conclusion
+
+Stack is a powerful layout widget for creating layered interfaces. While simple in concept, it provides the foundation for complex UI designs by enabling widget overlays. Remember to use Stack judiciously and consider whether simpler layout widgets might better serve your needs.

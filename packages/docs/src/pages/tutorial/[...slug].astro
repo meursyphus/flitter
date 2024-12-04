@@ -2,11 +2,16 @@
 import SandPack from "./SandPack.tsx";
 import Layout from "../../layouts/TutorialLayout.astro";
 import { getCollection } from "astro:content";
+import TableOfContents from "./TableOfContents.astro";
 
 export const getStaticPaths = async () => {
   const tutorialEntries = await getCollection("tutorial");
   function resolveSlug(slug: string) {
-    return slug.replace(/^\d+_/, "");
+    const segments = slug.split("/");
+    const cleanedSegments = segments.map((segment) =>
+      segment.replace(/^\d+_/, ""),
+    );
+    return cleanedSegments.join("/");
   }
 
   return tutorialEntries
@@ -28,54 +33,185 @@ const { Content } = await entry.render();
 ---
 
 <Layout title="Flitter - Tutorial">
-  <div class="grid grid-cols-[3fr_4fr]">
-    <div class="w-full shrink-0">
-      <nav class="sticky top-0 flex justify-between bg-black">
-        {
-          prev ? (
-            <a class="nav-button" href={`/tutorial/${prev.slug}`}>
-              Prev
-            </a>
-          ) : (
-            <div class="nav-button opacity-50">Prev</div>
-          )
-        }
-        <div
-          class="mx-1 flex h-[60px] w-full items-center justify-center border border-white"
-        >
-          Table of Content
-        </div>
-        {
-          next ? (
-            <a class="nav-button" href={`/tutorial/${next.slug}`}>
-              Next
-            </a>
-          ) : (
-            <div class="nav-button opacity-50">Next</div>
-          )
-        }
-      </nav>
+  <div
+    class="grid h-[calc(100vh-var(--header))] grid-cols-[220px_1fr_1fr]"
+    id="mainContainer"
+  >
+    <aside class="relative border-r border-gray-600/30 h-full overflow-scroll">
       <div
-        class="prose prose-sm prose-invert prose-modern !max-w-full shrink-0 p-2"
+        class="absolute -right-1 top-0 h-full w-2 cursor-col-resize hover:bg-blue-500/20"
+        id="tocResizer"
       >
+      </div>
+      <TableOfContents currentSlug={entry.slug.replace(/^\d+_/, "")} />
+    </aside>
+
+    <div class="w-full overflow-auto">
+      <nav
+        class="sticky top-0 flex h-[60px] items-center justify-between border-b border-gray-600/30 px-6 backdrop-blur"
+      >
+        <div class="flex items-center gap-2">
+          {
+            prev && (
+              <a
+                href={`/tutorial/${prev.slug}`}
+                class="flex h-10 w-10 items-center justify-center rounded text-gray-300 transition-colors hover:bg-gray-800 hover:text-white"
+                title={prev.data.title}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </a>
+            )
+          }
+          {
+            next && (
+              <a
+                href={`/tutorial/${next.slug}`}
+                class="flex h-10 w-10 items-center justify-center rounded text-gray-300 transition-colors hover:bg-gray-800 hover:text-white"
+                title={next.data.title}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </a>
+            )
+          }
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            id="solvedButton"
+            class="rounded bg-gray-800 px-4 py-2 text-sm font-medium text-gray-100 transition-colors hover:bg-gray-700"
+          >
+            Show Solution
+          </button>
+        </div>
+      </nav>
+      <div class="prose prose-invert prose-modern max-w-none p-8">
         <Content />
       </div>
     </div>
+
     <div class="sticky-screen">
-      <SandPack files={entry.data.files} client:only="react" />
+      <div id="originalSandpack" class="h-full">
+        <SandPack files={entry.data.files} client:only="react" />
+      </div>
+      <div id="solvedSandpack" class="hidden h-full">
+        <SandPack
+          files={entry.data.solved_files ?? entry.data.files}
+          client:only="react"
+        />
+      </div>
     </div>
   </div>
 </Layout>
 
-<style>
-  .sticky-screen {
-    position: sticky;
-    top: 0;
-    height: calc(100vh - var(--header));
+<style is:global>
+  .sp-preview-container html,
+  .sp-preview-container body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+</style>
+
+<script>
+  // Toggle solution button logic
+  document.getElementById("solvedButton")?.addEventListener("click", () => {
+    const button = document.getElementById("solvedButton")!;
+    const originalSandpack = document.getElementById("originalSandpack");
+    const solvedSandpack = document.getElementById("solvedSandpack");
+
+    if (button?.classList.contains("solved")) {
+      originalSandpack?.classList.remove("hidden");
+      solvedSandpack?.classList.add("hidden");
+      button.classList.remove("solved");
+      button.classList.remove("bg-blue-500");
+      button.classList.add("bg-green-500");
+      button.textContent = "Show Solution";
+    } else {
+      originalSandpack?.classList.add("hidden");
+      solvedSandpack?.classList.remove("hidden");
+      button.classList.add("solved");
+      button.classList.remove("bg-green-500");
+      button.classList.add("bg-blue-500");
+      button.textContent = "Hide Solution";
+    }
+  });
+
+  // TOC Resizer logic
+  const resizer = document.getElementById("tocResizer");
+  const sidebar = resizer?.parentElement;
+  const container = sidebar?.parentElement;
+
+  let isResizing = false;
+  let startX: number;
+  let startWidth: number;
+
+  resizer?.addEventListener("mousedown", initResize);
+
+  function initResize(e: MouseEvent) {
+    isResizing = true;
+    startX = e.clientX;
+    startWidth = sidebar?.offsetWidth || 0;
+
+    document.addEventListener("mousemove", resize);
+    document.addEventListener("mouseup", stopResize);
+    document.body.style.userSelect = "none";
+    document.body.style.cursor = "col-resize";
   }
 
-  .nav-button {
-    border: 1px solid white;
-    padding: 1rem;
+  function resize(e: MouseEvent) {
+    if (!isResizing) return;
+
+    const diff = e.clientX - startX;
+    const newWidth = startWidth + diff;
+
+    if (newWidth >= 160 && newWidth <= 400) {
+      container?.style.setProperty(
+        "grid-template-columns",
+        `${newWidth}px 1fr 1fr`,
+      );
+    }
+  }
+
+  function stopResize() {
+    isResizing = false;
+    document.removeEventListener("mousemove", resize);
+    document.removeEventListener("mouseup", stopResize);
+    document.body.style.userSelect = "";
+    document.body.style.cursor = "";
+  }
+</script>
+
+<style>
+  #tocResizer {
+    transition: background-color 0.2s;
+    z-index: 10;
+  }
+  #tocResizer:active {
+    background-color: rgb(59 130 246 / 0.2);
   }
 </style>

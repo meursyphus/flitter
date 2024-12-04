@@ -79,6 +79,24 @@ const overflowText = Text("This is a very long text that might overflow...", {
 });
 ```
 
+### Text Width Basis
+
+Control how the text width is calculated:
+
+```typescript
+import { Text, TextWidthBasis } from "@meursyphus/flitter";
+
+// Use the width of the longest line
+const longLineText = Text("Multi-line text\nwith varying lengths", {
+  textWidthBasis: TextWidthBasis.longestLine,
+});
+
+// Use parent's width as basis
+const parentBasedText = Text("Text that follows parent width", {
+  textWidthBasis: TextWidthBasis.parent,
+});
+```
+
 ### Rich Text
 
 For text with multiple styles, you can use the `TextSpan` widget:
