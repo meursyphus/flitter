@@ -1,0 +1,289 @@
+---
+nav_group: "Basic Widgets"
+nav_order: 7
+title: "Stack & Positioned"
+description: "Stack widget for layering children and Positioned widget for precise positioning"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Stack,
+      Center,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Center({
+            child: Stack({
+              children: [
+                Container({
+                  width: 200,
+                  height: 200,
+                  color: "lightblue"
+                }),
+                Container({
+                  width: 100,
+                  height: 100,
+                  color: "pink"
+                }),
+                Container({
+                  width: 50,
+                  height: 50,
+                  color: "lightgreen"
+                })
+              ]
+            })
+          })}
+        />
+      );
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Stack,
+      Positioned,
+      Center,
+      StackFit,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Center({
+            child: Stack({
+              fit: StackFit.loose,
+              children: [
+                Container({
+                  width: 200,
+                  height: 200,
+                  color: "lightblue"
+                }),
+                Positioned({
+                  top: 20,
+                  right: 20,
+                  child: Container({
+                    width: 100,
+                    height: 100,
+                    color: "pink"
+                  })
+                }),
+                Positioned({
+                  bottom: 20,
+                  left: 20,
+                  child: Container({
+                    width: 50,
+                    height: 50,
+                    color: "lightgreen"
+                  })
+                })
+              ]
+            })
+          })}
+        />
+      );
+    }
+---
+
+# Stack & Positioned
+
+Stack and Positioned widgets work together to create layered layouts with precise positioning of child widgets.
+
+## Properties
+
+### Stack Properties
+
+- `children`: Widget[] - List of child widgets to be stacked
+- `alignment`: Alignment - How to align non-positioned children (default: "topLeft")
+  - "topLeft", "topCenter", "topRight"
+  - "centerLeft", "center", "centerRight"
+  - "bottomLeft", "bottomCenter", "bottomRight"
+- `fit`: StackFit - How to size the non-positioned children
+  - "loose" (default) - Children can be smaller than Stack
+  - "expand" - Children must fill Stack
+  - "passthrough" - Stack sizes itself to children
+- `clipped`: boolean - Whether to clip children to the stack's bounds (default: false)
+
+### Positioned Properties
+
+- `child`: Widget - The widget to position
+- `left`: number - Distance from the left edge
+- `top`: number - Distance from the top edge
+- `right`: number - Distance from the right edge
+- `bottom`: number - Distance from the bottom edge
+- `width`: number - Width of the positioned widget
+- `height`: number - Height of the positioned widget
+
+## Common Use Cases
+
+1. **Basic Overlay**:
+
+   ```tsx
+   Stack({
+     children: [
+       Container({
+         width: 200,
+         height: 200,
+         color: "blue",
+       }),
+       Positioned({
+         top: 20,
+         left: 20,
+         child: Container({
+           width: 50,
+           height: 50,
+           color: "red",
+         }),
+       }),
+     ],
+   });
+   ```
+
+2. **Card with Badge**:
+
+   ```tsx
+   Stack({
+     children: [
+       Container({
+         width: 150,
+         height: 200,
+         color: "white",
+       }),
+       Positioned({
+         top: -10,
+         right: -10,
+         child: Container({
+           width: 30,
+           height: 30,
+           borderRadius: BorderRadius.circular(15),
+           color: "red",
+         }),
+       }),
+     ],
+   });
+   ```
+
+3. **Full Screen Overlay**:
+   ```tsx
+   Stack({
+     fit: "expand",
+     children: [
+       ContentWidget(),
+       Container({
+         color: "rgba(0, 0, 0, 0.5)",
+       }),
+       Center({
+         child: LoadingSpinner(),
+       }),
+     ],
+   });
+   ```
+
+## Best Practices
+
+1. **Layout Guidelines**:
+
+   - Use Stack only when layering is needed
+   - Consider alignment for non-positioned children
+   - Choose appropriate StackFit
+   - Use clipped property when needed
+
+2. **Performance**:
+
+   - Minimize the number of positioned children
+   - Avoid unnecessary nesting of Stacks
+   - Use const constructors when possible
+
+3. **Responsive Design**:
+   - Handle different screen sizes
+   - Consider edge cases
+   - Use relative positioning when appropriate
+
+## Common Patterns
+
+1. **Modal Dialog**:
+
+   ```tsx
+   Stack({
+     fit: "expand",
+     children: [
+       Container({
+         color: "rgba(0, 0, 0, 0.5)",
+       }),
+       Center({
+         child: Container({
+           width: 300,
+           height: 200,
+           color: "white",
+           child: DialogContent(),
+         }),
+       }),
+     ],
+   });
+   ```
+
+2. **Image with Caption**:
+
+   ```tsx
+   Stack({
+     children: [
+       Image({ src: "image.jpg" }),
+       Positioned({
+         bottom: 0,
+         left: 0,
+         right: 0,
+         child: Container({
+           color: "rgba(0, 0, 0, 0.5)",
+           child: Text({
+             text: "Caption",
+             color: "white",
+           }),
+         }),
+       }),
+     ],
+   });
+   ```
+
+3. **Floating Action Button**:
+   ```tsx
+   Stack({
+     children: [
+       MainContent(),
+       Positioned({
+         bottom: 16,
+         right: 16,
+         child: FloatingActionButton({
+           onPressed: () => console.log("Pressed"),
+         }),
+       }),
+     ],
+   });
+   ```
+
+## Tips and Tricks
+
+1. **Layout Debugging**:
+
+   - Use temporary background colors
+   - Check stack boundaries
+   - Monitor positioning behavior
+   - Test clipping behavior
+
+2. **Positioning Techniques**:
+
+   - Use relative positioning when possible
+   - Consider stack alignment
+   - Handle overflow properly
+
+3. **Optimization**:
+   - Cache stack widgets when possible
+   - Use const constructors
+   - Consider layout constraints
+   - Choose appropriate fit property

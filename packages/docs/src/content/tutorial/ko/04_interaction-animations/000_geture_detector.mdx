@@ -1,0 +1,338 @@
+---
+nav_group: "Interactions and Animations"
+nav_order: 1
+title: "Gesture Detection"
+description: "Master gesture handling in Flitter for creating interactive user interfaces"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      GestureDetector,
+      Container,
+      Text,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={GestureDetector({
+            onClick: (e) => {
+              console.log("Clicked!");
+            },
+            child: Container({
+              width: 200,
+              height: 200,
+              color: "blue",
+              child: Text("Click me!"),
+            }),
+          })}
+        />
+      );
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {useState} from 'react'
+    import {
+      GestureDetector,
+      Container,
+      Text,
+      Stack,
+      TextStyle,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      const [position, setPosition] = useState({ x: 0, y: 0 });
+      const [color, setColor] = useState("blue");
+
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Stack({
+            children: [
+              GestureDetector({
+                onClick: () => setColor(color === "blue" ? "red" : "blue"),
+                onDragUpdate: (e) => {
+                  setPosition({
+                    x: position.x + e.delta.x,
+                    y: position.y + e.delta.y,
+                  });
+                },
+                child: Container({
+                  width: 200,
+                  height: 200,
+                  offset: position,
+                  color: color,
+                  child: Text("Drag or Click!", {
+                    style: new TextStyle({
+                      color: "white",
+                      fontSize: 20,
+                    }),
+                  }),
+                }),
+              }),
+            ],
+          })}
+        />
+      );
+    }
+---
+
+# Gesture Detection in Flitter
+
+Gesture detection in Flitter enables you to create interactive user interfaces by responding to various user inputs such as taps, drags, and mouse events. The GestureDetector widget provides a comprehensive API for handling these interactions.
+
+## Core Concepts
+
+1. **Event Types**: Various gesture events including clicks, drags, and mouse movements
+2. **Event Data**: Detailed information about the gesture (coordinates, pressure, etc.)
+3. **Propagation**: How events flow through the widget tree
+4. **State Management**: Handling gesture state and updates
+
+## Basic Usage
+
+Simple click detection:
+
+```typescript
+import { GestureDetector, Container } from "@meursyphus/flitter";
+
+const clickableContainer = GestureDetector({
+  onClick: (e) => {
+    console.log("Clicked at:", e.clientX, e.clientY);
+  },
+  child: Container({
+    width: 200,
+    height: 200,
+    color: "blue",
+  }),
+});
+```
+
+## Gesture Types
+
+### Click/Tap Events
+
+```typescript
+GestureDetector({
+  onClick: (e) => {
+    console.log("Single click");
+  },
+  onDoubleClick: (e) => {
+    console.log("Double click");
+  },
+  child: /* your widget */,
+});
+```
+
+### Drag Events
+
+```typescript
+GestureDetector({
+  onDragStart: (e) => {
+    console.log("Started dragging");
+  },
+  onDragUpdate: (e) => {
+    console.log("Dragging at:", e.clientX, e.clientY);
+    console.log("Delta:", e.delta.x, e.delta.y);
+  },
+  onDragEnd: (e) => {
+    console.log("Finished dragging");
+  },
+  child: /* your widget */,
+});
+```
+
+### Mouse Events
+
+```typescript
+GestureDetector({
+  onMouseEnter: (e) => {
+    console.log("Mouse entered");
+  },
+  onMouseMove: (e) => {
+    console.log("Mouse position:", e.clientX, e.clientY);
+  },
+  onMouseLeave: (e) => {
+    console.log("Mouse left");
+  },
+  child: /* your widget */,
+});
+```
+
+## Advanced Usage
+
+### Combining Multiple Gestures
+
+```typescript
+import { GestureDetector, Container, useState } from "@meursyphus/flitter";
+
+function InteractiveBox() {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  return GestureDetector({
+    onDragUpdate: (e) => {
+      setPosition({
+        x: position.x + e.delta.x,
+        y: position.y + e.delta.y,
+      });
+    },
+    onMouseEnter: () => setIsHovered(true),
+    onMouseLeave: () => setIsHovered(false),
+    child: Container({
+      width: 100,
+      height: 100,
+      offset: position,
+      color: isHovered ? "red" : "blue",
+    }),
+  });
+}
+```
+
+### Custom Gesture Recognition
+
+Creating a custom long-press detector:
+
+```typescript
+function LongPressDetector({ onLongPress, child }) {
+  let pressTimer;
+
+  return GestureDetector({
+    onPointerDown: () => {
+      pressTimer = setTimeout(onLongPress, 500);
+    },
+    onPointerUp: () => {
+      clearTimeout(pressTimer);
+    },
+    onPointerCancel: () => {
+      clearTimeout(pressTimer);
+    },
+    child,
+  });
+}
+```
+
+## Best Practices
+
+1. **Event Handling**:
+
+   - Keep event handlers small and focused
+   - Avoid expensive operations in handlers
+   - Consider debouncing for frequent events
+
+2. **User Experience**:
+
+   - Provide visual feedback for interactions
+   - Maintain consistent behavior
+   - Consider touch and mouse interactions
+
+3. **Performance**:
+
+   - Use appropriate event types
+   - Optimize drag handlers
+   - Clean up event listeners
+
+4. **Accessibility**:
+   - Support keyboard navigation
+   - Provide alternative interactions
+   - Consider users with different abilities
+
+## Common Patterns
+
+### Draggable Widget
+
+```typescript
+function DraggableWidget({ child }) {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  return GestureDetector({
+    onDragUpdate: (e) => {
+      setPosition({
+        x: position.x + e.delta.x,
+        y: position.y + e.delta.y,
+      });
+    },
+    child: Container({
+      offset: position,
+      child,
+    }),
+  });
+}
+```
+
+### Interactive Button
+
+```typescript
+function InteractiveButton({ onPress, child }) {
+  const [isPressed, setIsPressed] = useState(false);
+
+  return GestureDetector({
+    onPointerDown: () => setIsPressed(true),
+    onPointerUp: () => {
+      setIsPressed(false);
+      onPress();
+    },
+    onPointerCancel: () => setIsPressed(false),
+    child: Container({
+      scale: isPressed ? 0.95 : 1,
+      child,
+    }),
+  });
+}
+```
+
+## Troubleshooting
+
+### Event Propagation
+
+Handle event propagation correctly:
+
+```typescript
+GestureDetector({
+  onClick: (e) => {
+    e.stopPropagation(); // Prevent event from bubbling up
+    // Handle click
+  },
+  child: /* your widget */,
+});
+```
+
+### Gesture Conflicts
+
+Resolve conflicts between different gesture handlers:
+
+```typescript
+Stack({
+  children: [
+    // Background handler
+    GestureDetector({
+      onClick: (e) => {
+        // Only handle if not handled by child
+        if (!e.defaultPrevented) {
+          handleBackgroundClick();
+        }
+      },
+      child: Container({
+        /* ... */
+      }),
+    }),
+    // Foreground handler
+    GestureDetector({
+      onClick: (e) => {
+        e.preventDefault(); // Prevent background handling
+        handleForegroundClick();
+      },
+      child: Container({
+        /* ... */
+      }),
+    }),
+  ],
+});
+```
+
+## Conclusion
+
+Gesture detection is fundamental to creating interactive Flitter applications. The GestureDetector widget provides a rich API for handling user interactions, enabling you to create responsive and engaging user interfaces. Remember to consider both desktop and mobile interactions, maintain consistent behavior, and optimize performance for smooth user experiences.

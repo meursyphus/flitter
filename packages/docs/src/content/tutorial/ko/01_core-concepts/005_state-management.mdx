@@ -1,0 +1,233 @@
+---
+nav_group: "Core Concepts" 
+nav_order: 3
+title: "State Management"
+description: "Understanding how to manage state effectively in Flitter applications"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      StatelessWidget,
+      Container,
+      Text,
+      GestureDetector,
+      TextStyle,
+      Center,
+    } from "@meursyphus/flitter";
+
+    // StatelessWidget example - won't update on click
+    class Counter extends StatelessWidget {
+      count = 0; // This won't cause updates
+
+      build() {
+        return Center({
+          child: GestureDetector({
+            onClick: () => {
+              this.count++; // This won't trigger a rebuild
+              console.log('Clicked! Count:', this.count);
+            },
+            child: Container({
+              width: 200,
+              height: 200,
+              color: "blue",
+              child: Center({
+                child: Text(this.count.toString(), {
+                  style: new TextStyle({
+                    fontSize: 48,
+                    color: "white",
+                  })
+                })
+              })
+            })
+          })
+        });
+      }
+    }
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={new Counter()}
+        />
+      );
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      StatefulWidget,
+      State,
+      Container,
+      Text,
+      GestureDetector,
+      TextStyle,
+      Center,
+    } from "@meursyphus/flitter";
+
+    class Counter extends StatefulWidget {
+      createState() {
+        return new CounterState();
+      }
+    }
+
+    class CounterState extends State {
+      count = 0; // State variable that will trigger rebuilds
+
+      build() {
+        return Center({
+          child: GestureDetector({
+            onClick: () => {
+              this.setState(() => {
+                this.count++;
+              });
+            },
+            child: Container({
+              width: 200,
+              height: 200,
+              color: "blue",
+              child: Center({
+                child: Text(this.count.toString(), {
+                  style: new TextStyle({
+                    fontSize: 48,
+                    color: "white",
+                  })
+                })
+              })
+            })
+          })
+        });
+      }
+    }
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={new Counter()}
+        />
+      );
+    }
+---
+
+# State Management in Flitter
+
+State management is a fundamental concept in Flitter that determines how your application handles and updates data over time. This guide explores how to efficiently manage state in your applications using Stateless and Stateful widgets.
+
+## Understanding Widget State
+
+In Flitter, there are two main types of widgets when it comes to state management:
+
+1. **StatelessWidget**: Cannot maintain mutable state
+2. **StatefulWidget**: Can maintain and update mutable state
+
+Let's understand the difference through a simple counter example.
+
+### StatelessWidget Example
+
+A StatelessWidget cannot maintain mutable state that triggers rebuilds. In the example above, even though we increment the counter on click, the UI won't update:
+
+```typescript
+class Counter extends StatelessWidget {
+  count = 0; // This won't cause updates
+
+  build() {
+    return GestureDetector({
+      onClick: () => {
+        this.count++; // This won't trigger a rebuild
+        console.log('Clicked! Count:', this.count);
+      },
+      child: Container({ /* ... */ })
+    });
+  }
+}
+```
+
+### StatefulWidget Solution
+
+To create a widget that can update its UI based on user interactions, we need to use a StatefulWidget. The basic structure involves:
+
+1. A StatefulWidget class that creates its State
+2. A State class that maintains the actual state and build method
+
+```typescript
+// The widget class creates its state
+class Counter extends StatefulWidget {
+  createState() {
+    return new CounterState();
+  }
+}
+
+// The state class maintains the mutable state
+class CounterState extends State {
+  count = 0;
+
+  build() {
+    return GestureDetector({
+      onClick: () => {
+        this.setState(() => {
+          this.count++;
+        });
+      },
+      child: Container({ /* ... */ })
+    });
+  }
+}
+```
+
+## Key Concepts
+
+### State and setState
+
+1. **State Declaration**: Declare state variables in your State class
+2. **State Updates**: Always use setState() to modify state
+3. **Rebuild Cycle**: setState() triggers a rebuild of the widget
+
+### How setState Works
+
+When you call setState:
+1. The state is updated
+2. The widget is marked as "dirty"
+3. The framework schedules a rebuild
+4. The build method is called again with the new state
+
+```typescript
+// Good: Using setState
+this.setState(() => {
+  this.count++;
+});
+
+// Bad: Direct mutation
+this.count++; // Won't trigger a rebuild
+```
+
+## Best Practices
+
+1. **Minimize State**: Only store what needs to be mutable
+2. **Single Responsibility**: Each widget should manage its own localized state
+3. **Immutable Updates**: Always use setState for state modifications
+4. **State Location**: Keep state as close as possible to where it's used
+
+## Performance Considerations
+
+1. **Granular Updates**: Update only what's necessary
+2. **Avoid Unnecessary State**: Use StatelessWidget when possible
+3. **State Structure**: Organize state to minimize rebuilds
+
+## Debugging Tips
+
+1. **Logging**: Add console.log statements in setState and build
+2. **Widget Inspection**: Monitor widget rebuilds
+3. **State Validation**: Validate state changes in development
+
+## Conclusion
+
+Understanding state management is crucial for building interactive Flitter applications. By using StatefulWidget and setState correctly, you can create responsive applications that efficiently update their UI based on user interactions and data changes.
+
+Remember:
+- Use StatelessWidget for static UI components
+- Use StatefulWidget when you need to maintain mutable state
+- Always use setState to trigger UI updates
+- Keep state management simple and close to where it's used

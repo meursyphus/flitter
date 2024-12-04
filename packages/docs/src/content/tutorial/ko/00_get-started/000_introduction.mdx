@@ -1,0 +1,217 @@
+---
+nav_group: "Getting Started"
+nav_order: 1
+title: "Introduction"
+description: "An introduction to the Flitter framework and its key features"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { BarChart } from "@meursyphus/flitter-chart";
+
+    export default function App() {
+      const chart = BarChart({
+        data: {
+          title: "Title",
+          labels: ["label1", "label2", "label3", "label4", "label5"],
+          datasets: [
+            {
+              legend: "A",
+              data: [30, 40.5, 50.12, 30.5, 40],
+            },
+            {
+              legend: "B",
+              data: [60, 20.5, 20.2, 22.5, 10],
+            },
+            {
+              legend: "C",
+              data: [6, 10.5, 20.2, 12.5, 1],
+            },
+          ],
+        },
+      });
+
+      return (
+        <div>
+          <h1>Basic Flitter Bar Chart</h1>
+          <ReactWidget width="auto" height="calc(100vh - 16px)" widget={chart} />
+        </div>
+      );
+    }
+
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { BarChart } from "@meursyphus/flitter-chart";
+    import { Container, BoxDecoration, BoxShadow } from "@meursyphus/flitter";
+
+    export default function App() {
+      const customizedChart = BarChart({
+        data: {
+          title: "Title",
+          labels: ["label1", "label2", "label3", "label4", "label5"],
+          datasets: [
+            {
+              legend: "A",
+              data: [30, 40.5, 50.12, 30.5, 40],
+            },
+            {
+              legend: "B",
+              data: [60, 20.5, 20.2, 22.5, 10],
+            },
+            {
+              legend: "C",
+              data: [6, 10.5, 20.2, 12.5, 1],
+            },
+          ],
+        },
+        custom: {
+          bar: {
+            type: "custom",
+            Custom(child, { legend, backgroundColor }) {
+              return Container({
+                decoration: new BoxDecoration({
+                  color: backgroundColor,
+                  boxShadow:
+                    legend === "B" ? [new BoxShadow({ color: "black", blurRadius: 5 })] : [],
+                }),
+                width: legend === "B" ? 30 : 15,
+              });
+            },
+          },
+        },
+      });
+
+      return (
+        <div>
+          <h1>Customized Flitter Bar Chart</h1>
+          <ReactWidget width="auto" height="calc(100vh - 16px)" widget={customizedChart} />
+        </div>
+      );
+    }
+---
+
+# Introduction
+
+Flitter is an innovative framework that makes creating and customizing chart libraries incredibly easy. With automatic layout calculations and seamless support for both SVG and Canvas, Flitter takes the hassle out of crafting complex data visualizations. Ready-to-use interactions and animations are built-in, so you can focus on delivering engaging content without worrying about the underlying mechanics.
+
+## Key Features
+
+- Effortless Chart and Diagram Creation: Build a wide range of charts and diagrams with minimal code.
+- Automatic Layout Calculations: Flitter handles layout computations for you, simplifying the design process.
+- Dual Renderer Support: Enjoy simultaneous support for both SVG and Canvas to suit your project's needs.
+- Built-in Interactions and Animations: Enhance your charts with interactive elements and smooth animations.
+- Easy Customization: Customize every aspect of your charts directly using Flitter widgets.
+
+## Showcase
+
+### Basic Bar Chart
+
+Here's how you can create a basic bar chart using Flitter:
+
+```jsx
+import ReactWidget from "@meursyphus/flitter-react";
+import { BarChart } from "@meursyphus/flitter-chart";
+
+export default function App() {
+  const chart = BarChart({
+    data: {
+      title: "Title",
+      labels: ["label1", "label2", "label3", "label4", "label5"],
+      datasets: [
+        {
+          legend: "A",
+          data: [30, 40.5, 50.12, 30.5, 40],
+        },
+        {
+          legend: "B",
+          data: [60, 20.5, 20.2, 22.5, 10],
+        },
+        {
+          legend: "C",
+          data: [6, 10.5, 20.2, 12.5, 1],
+        },
+      ],
+    },
+  });
+
+  return (
+    <div>
+      <h1>Basic Flitter Bar Chart</h1>
+      <ReactWidget width="600" height="400" widget={chart} />
+    </div>
+  );
+}
+```
+
+This simple example demonstrates how straightforward it is to create a bar chart without any customizations.
+
+### Customized Bar Chart Using Flitter Widgets
+
+Now, let's see how easy it is to customize your chart using Flitter's powerful widget system:
+
+```jsx
+import ReactWidget from "@meursyphus/flitter-react";
+import { BarChart } from "@meursyphus/flitter-chart";
+import { Container, BoxDecoration, BoxShadow } from "@meursyphus/flitter";
+
+export default function App() {
+  const customizedChart = BarChart({
+    data: {
+      title: "Title",
+      labels: ["label1", "label2", "label3", "label4", "label5"],
+      datasets: [
+        {
+          legend: "A",
+          data: [30, 40.5, 50.12, 30.5, 40],
+        },
+        {
+          legend: "B",
+          data: [60, 20.5, 20.2, 22.5, 10],
+        },
+        {
+          legend: "C",
+          data: [6, 10.5, 20.2, 12.5, 1],
+        },
+      ],
+    },
+    custom: {
+      bar: {
+        type: "custom",
+        Custom(child, { legend, backgroundColor }) {
+          return Container({
+            decoration: new BoxDecoration({
+              color: backgroundColor,
+              boxShadow:
+                legend === "B"
+                  ? [new BoxShadow({ color: "black", blurRadius: 5 })]
+                  : [],
+            }),
+            width: legend === "B" ? 30 : 15,
+          });
+        },
+      },
+    },
+  });
+
+  return (
+    <div>
+      <h1>Customized Flitter Bar Chart</h1>
+      <ReactWidget width="600" height="400" widget={customizedChart} />
+    </div>
+  );
+}
+```
+
+#### Highlights of Customization:
+
+- Custom Bar Appearance: Changed the bar width and added a shadow effect to bars with the legend "B".
+- Easy Customization: Used Flitter's widgets directly to customize the chart components.
+- Automatic Layout Handling: Flitter automatically recalculates the layout, so you don't have to worry about positioning.
+
+## Advantages of Using Flitter
+
+- Simplified Development: Creating and customizing charts is effortless, saving you time and effort.
+- Flexible Customization: Easily tailor every part of your chart to meet your specific needs.
+- Automatic Layout Calculations: Focus on design and functionality while Flitter handles the layout.
+- Rich Interactions and Animations: Engage your users with built-in interactive features.
+- High Performance: Flitter ensures smooth rendering and performance across all devices.

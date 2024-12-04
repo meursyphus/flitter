@@ -1,0 +1,222 @@
+---
+nav_group: "Layout"
+nav_order: 2
+title: "Understanding Constraints"
+description: "Learn how constraints work in Flitter and how they affect widget sizing"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Text,
+      Center,
+    } from "@meursyphus/flitter";
+
+    // Container with infinite size request
+    // but no parent constraints
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Container({
+            child: Container({
+              width: Infinity,
+              height: Infinity,
+              color: "yellow",
+              child: Center({
+                child: Text("Trying Infinite Size")
+              })
+            })
+          })}
+        />
+      );
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Text,
+      Center,
+    } from "@meursyphus/flitter";
+
+    // Parent provides constraints,
+    // child responds to them
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Container({
+            width: 300,      // Parent constrains size
+            height: 300,     // Parent constrains size
+            child: Container({
+              width: Infinity,  // Now fills parent's constraints
+              height: Infinity, // Now fills parent's constraints
+              color: "yellow",
+              child: Center({
+                child: Text("Filling Parent Constraints")
+              })
+            })
+          })}
+        />
+      );
+    }
+---
+
+# Understanding Constraints in Flitter
+
+Constraints are fundamental to Flitter's layout system. They determine how widgets can be sized and positioned within their parent widgets.
+
+## The Constraints Flow
+
+In Flitter, layouts follow a simple principle: "Constraints go down, sizes go up"
+
+```
+┌───────────────────────────┐
+│      Parent Widget        │
+│  ┌──────────────────┐    │
+│  │   Constraints    │    │
+│  │        ↓        │    │
+│  │   Child Widget   │    │
+│  │        ↓        │    │
+│  │      Size       │    │
+│  └──────────────────┘    │
+└───────────────────────────┘
+```
+
+## How Container Uses Constraints
+
+A Container can either impose constraints on its child or let the child determine its own size:
+
+```
+┌───────────────────────────┐
+│      Container            │
+│  ┌──────────────────┐     │
+│  │  width: 300      │     │
+│  │  height: 300     │     │
+│  │                  │     │
+│  │    Child         │     │
+│  │                  │     │
+│  └──────────────────┘     │
+└───────────────────────────┘
+```
+
+When constraints are specified:
+
+```
+┌───────────────────────────┐
+│      Container            │
+│  ┌──────────────────┐     │
+│  │  width: 150      │     │
+│  │  height: 150     │     │
+│  │  ┌──────────┐    │     │
+│  │  │  Child   │    │     │
+│  │  └──────────┘    │     │
+│  └──────────────────┘     │
+└───────────────────────────┘
+```
+
+## Container Behavior
+
+### Without Constraints
+
+```typescript
+Container({
+  child: Center({
+    child: Text("No Constraints"),
+  }),
+});
+// Child will expand to fill parent
+```
+
+### With Constraints
+
+```typescript
+Container({
+  width: 150,
+  height: 150,
+  child: Center({
+    child: Text("With Constraints"),
+  }),
+});
+// Child is constrained to exact size
+```
+
+## Layout Process
+
+1. Parent Container provides constraints to child:
+
+```
+┌───────────────────────────┐
+│ Parent Container          │
+│ ┌─────────────────────┐   │
+│ │ Available Space     │   │
+│ │                     │   │
+│ │     ↓               │   │
+│ │  Child Container    │   │
+│ └─────────────────────┘   │
+└───────────────────────────┘
+```
+
+2. Child determines its size:
+
+```
+┌───────────────────────────┐
+│ Parent Container          │
+│ ┌─────────────────────┐   │
+│ │      Child Size     │   │
+│ │    ┌─────────┐      │   │
+│ │    │         │      │   │
+│ │    └─────────┘      │   │
+│ └─────────────────────┘   │
+└───────────────────────────┘
+```
+
+## Best Practices
+
+1. **Explicit Constraints**
+
+   - Use specific dimensions when you need exact sizing
+   - Be clear about your layout intentions
+
+2. **Flexible Layouts**
+
+   - Omit constraints when you want widgets to size to content
+   - Let parent widgets control child sizing when appropriate
+
+3. **Understanding Flow**
+   - Remember that constraints flow down
+   - Child sizes flow up
+   - Parent positioning is final
+
+## Common Patterns
+
+### Fixed Size Container
+
+```typescript
+Container({
+  width: 200,
+  height: 100,
+  child: Text("Fixed Size"),
+});
+```
+
+### Flexible Container
+
+```typescript
+Container({
+  child: Text("Flexible Size"),
+  // Size based on parent constraints
+});
+```
+
+## Conclusion
+
+Understanding how constraints work in Flitter is crucial for creating predictable layouts. The Container widget provides a clear way to either impose constraints on children or let them determine their own size. Remember:
+
+- Parent widgets pass constraints down
+- Child widgets determine their size within these constraints
+- Parent widgets make final positioning decisions
+- Clear constraint specification leads to predictable layouts

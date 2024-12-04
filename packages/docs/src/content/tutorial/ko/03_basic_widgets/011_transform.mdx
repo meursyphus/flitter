@@ -1,0 +1,231 @@
+---
+nav_group: "Basic Widgets"
+nav_order: 12
+title: "Transform"
+description: "Apply transformations to widgets using the Transform widget"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Center,
+      Text,
+      Row,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Row({
+            children: [
+              Container({
+                width: 100,
+                height: 100,
+                color: "blue",
+                child: Center({
+                  child: Text("Rotate")
+                })
+              }),
+              Container({ width: 20 }),
+              Container({
+                width: 100,
+                height: 100,
+                color: "green",
+                child: Center({
+                  child: Text("Scale")
+                })
+              }),
+              Container({ width: 20 }),
+              Container({
+                width: 100,
+                height: 100,
+                color: "red",
+                child: Center({
+                  child: Text("Skew")
+                })
+              })
+            ]
+          })}
+        />
+      );
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Transform,
+      Center,
+      Text,
+      Row,
+      Matrix4,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Row({
+            children: [
+              Transform({
+                transform: Matrix4.identity().rotateZ((45 * Math.PI) / 180),
+                child: Container({
+                  width: 100,
+                  height: 100,
+                  color: "blue",
+                  child: Center({
+                    child: Text("Rotate"),
+                  }),
+                }),
+              }),
+              Container({ width: 20 }),
+              Transform({
+                transform: Matrix4.diagonal3Values(1.5, 1.5, 1),
+                child: Container({
+                  width: 100,
+                  height: 100,
+                  color: "green",
+                  child: Center({
+                    child: Text("Scale"),
+                  }),
+                }),
+              }),
+              Container({ width: 20 }),
+              Transform({
+                transform: Matrix4.skewX(0.3),
+                child: Container({
+                  width: 100,
+                  height: 100,
+                  color: "red",
+                  child: Center({
+                    child: Text("Skew"),
+                  }),
+                }),
+              }),
+            ],
+          })}
+        />
+      );
+    }
+---
+
+# Transform Widget
+
+The Transform widget applies geometric transformations to its child widget using a 4x4 transformation matrix.
+
+## Common Transformations
+
+1. **Rotation**:
+   ```tsx
+   Transform({
+     transform: Matrix4.rotationZ(angle),
+     child: /* widget */
+   })
+   ```
+
+2. **Scale**:
+   ```tsx
+   Transform({
+     transform: Matrix4.diagonal3Values(scaleX, scaleY, 1),
+     child: /* widget */
+   })
+   ```
+
+3. **Translation**:
+   ```tsx
+   Transform({
+     transform: Matrix4.translationValues(x, y, 0),
+     child: /* widget */
+   })
+   ```
+
+4. **Skew**:
+   ```tsx
+   Transform({
+     transform: Matrix4.skewX(value),
+     child: /* widget */
+   })
+   ```
+
+## Matrix4 Operations
+
+1. **Basic Operations**:
+   - `Matrix4.identity()`: Creates identity matrix
+   - `Matrix4.rotationZ()`: Rotation around Z axis
+   - `Matrix4.translationValues()`: Translation in X, Y, Z
+   - `Matrix4.diagonal3Values()`: Scale in X, Y, Z
+
+2. **Combining Transformations**:
+   ```tsx
+   const matrix = Matrix4.identity()
+     .multiply(Matrix4.rotationZ(angle))
+     .multiply(Matrix4.translationValues(x, y, 0));
+   ```
+
+## Common Use Cases
+
+1. **Card Flip Effect**:
+   ```tsx
+   Transform({
+     transform: Matrix4.rotationY(isFlipped ? Math.PI : 0),
+     child: Card()
+   })
+   ```
+
+2. **Hover Scale**:
+   ```tsx
+   Transform({
+     transform: Matrix4.diagonal3Values(
+       isHovered ? 1.1 : 1,
+       isHovered ? 1.1 : 1,
+       1
+     ),
+     child: Button()
+   })
+   ```
+
+3. **3D Rotation**:
+   ```tsx
+   Transform({
+     transform: Matrix4.rotationX(angleX)
+       .multiply(Matrix4.rotationY(angleY)),
+     child: Container()
+   })
+   ```
+
+## Best Practices
+
+1. **Performance**:
+   - Use hardware acceleration when possible
+   - Avoid unnecessary transformations
+   - Consider using Transform.translate for simple translations
+
+2. **Animation**:
+   - Use smooth transitions
+   - Consider performance impact
+   - Test on different devices
+
+3. **Layout Considerations**:
+   - Be aware of transformed bounds
+   - Handle touch/click events correctly
+   - Consider parent constraints
+
+## Tips and Tricks
+
+1. **Origin Point**:
+   - Set transform origin for rotations
+   - Consider widget center vs corner
+   - Use alignment property
+
+2. **3D Effects**:
+   - Use perspective for depth
+   - Combine multiple transformations
+   - Test on different viewports
+
+3. **Debugging**:
+   - Use debug paint to visualize
+   - Check transformed bounds
+   - Verify touch areas

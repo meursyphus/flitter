@@ -1,0 +1,211 @@
+---
+nav_group: "Basic Widgets"
+nav_order: 1
+title: "Container"
+description: "A convenience widget that combines common painting, positioning, and sizing widgets"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Center,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Center({
+            child: Container({
+              width: 100,
+              height: 100,
+              color: "lightblue"
+            })
+          })}
+        />
+      );
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Text,
+      Center,
+      EdgeInsets,
+      BoxDecoration,
+      BorderRadius,
+      Radius,
+      TextStyle,
+      Alignment
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Center({
+            child: Container({
+              width: 300,
+              height: 300,
+              child: Container({
+                margin: EdgeInsets.all(20),
+                padding: EdgeInsets.all(16),
+                decoration: new BoxDecoration({
+                  color: "lightblue",
+                  borderRadius: BorderRadius.all(Radius.circular(8))
+                }),
+                alignment: Alignment.center,
+                child: Text("Hello Flitter!", {
+                  style: new TextStyle({
+                    fontSize: 24,
+                    color: "white"
+                  })
+                })
+              })
+            })
+          })}
+        />
+      );
+    }
+---
+
+# Container Widget
+
+The Container widget is a convenience widget that combines common painting, positioning, and sizing widgets. It can be used to add padding, margins, borders, background color, or decorations to its child.
+
+## Properties
+
+- `width`: number | string - Width of the container
+- `height`: number | string - Height of the container
+- `color`: string - Background color (default: "transparent")
+- `padding`: EdgeInsets - Inner spacing (default: EdgeInsets.all(0))
+  ```tsx
+  EdgeInsets.all(10)
+  EdgeInsets.symmetric({ horizontal: 16, vertical: 8 })
+  EdgeInsets.only({ left: 8, top: 16, right: 8, bottom: 16 })
+  ```
+- `margin`: EdgeInsets - Outer spacing (default: EdgeInsets.all(0))
+- `alignment`: Alignment - How to align the child widget
+  ```tsx
+  Alignment.center
+  Alignment.topLeft
+  Alignment.bottomRight
+  ```
+- `decoration`: BoxDecoration - Advanced styling
+  ```tsx
+  new BoxDecoration({
+    color: "white",
+    borderRadius: BorderRadius.all(Radius.circular(8))
+  })
+  ```
+- `child`: Widget - The widget to contain
+- `clipped`: boolean - Whether to clip child to the container's bounds
+- `transform`: Matrix4 - Transform to apply to the container
+
+## Common Use Cases
+
+1. **Basic Container**:
+   ```tsx
+   Container({
+     width: 100,
+     height: 100,
+     color: "lightblue"
+   })
+   ```
+
+2. **Container with Text**:
+   ```tsx
+   Container({
+     color: "lightblue",
+     child: Text("Hello", {
+       style: new TextStyle({ fontSize: 30 })
+     })
+   })
+   ```
+
+3. **Padded Container**:
+   ```tsx
+   Container({
+     color: "lightblue",
+     padding: EdgeInsets.all(10),
+     child: Container({
+       color: "green",
+       child: Text("Padded content")
+     })
+   })
+   ```
+
+## Best Practices
+
+1. **Layout Guidelines**:
+   - Use width/height only when needed
+   - Prefer EdgeInsets for spacing
+   - Use alignment for positioning child
+   - Consider clipped for overflow control
+
+2. **Styling Guidelines**:
+   - Use color for simple backgrounds
+   - Use BoxDecoration for complex styling
+   - Keep decorations consistent
+   - Consider reusable styles
+
+3. **Performance Tips**:
+   - Cache EdgeInsets objects
+   - Use const constructors
+   - Avoid unnecessary nesting
+   - Consider layout constraints
+
+## Common Patterns
+
+1. **Rounded Container**:
+   ```tsx
+   Container({
+     width: 300,
+     height: 300,
+     clipped: true,
+     decoration: new BoxDecoration({
+       borderRadius: BorderRadius.all(Radius.circular(20)),
+       color: "lightblue"
+     })
+   })
+   ```
+
+2. **Centered Content**:
+   ```tsx
+   Container({
+     color: "lightblue",
+     padding: EdgeInsets.all(10),
+     alignment: Alignment.center,
+     child: Text("Centered")
+   })
+   ```
+
+3. **Transformed Container**:
+   ```tsx
+   Container({
+     width: 300,
+     height: 300,
+     color: "lightblue",
+     transform: Matrix4.translationValues(10, 10, 0)
+   })
+   ```
+
+## Tips and Tricks
+
+1. **Spacing Tips**:
+   - Use EdgeInsets.symmetric for equal spacing
+   - Consider margin for outer spacing
+   - Use padding for inner spacing
+
+2. **Decoration Tips**:
+   - Use clipped with borderRadius
+   - Keep decorations simple
+   - Consider reusable styles
+
+3. **Layout Tips**:
+   - Use alignment for positioning
+   - Consider transform for effects
+   - Keep nesting minimal

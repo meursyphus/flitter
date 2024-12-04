@@ -1,0 +1,226 @@
+---
+nav_group: "Basic Widgets"
+nav_order: 13
+title: "Opacity"
+description: "Control widget transparency with the Opacity widget"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Center,
+      Text,
+      Row,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Row({
+            children: [
+              Container({
+                width: 100,
+                height: 100,
+                color: "blue",
+                child: Center({
+                  child: Text("100%"),
+                }),
+              }),
+              Container({ width: 20 }),
+              Container({
+                width: 100,
+                height: 100,
+                color: "blue",
+                child: Center({
+                  child: Text("70%"),
+                }),
+              }),
+              Container({ width: 20 }),
+              Container({
+                width: 100,
+                height: 100,
+                color: "blue",
+                child: Center({
+                  child: Text("50%"),
+                }),
+              }),
+            ],
+          })}
+        />
+      );
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Opacity,
+      Center,
+      Text,
+      Row,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Row({
+            children: [
+              Opacity({
+                opacity: 1.0,
+                child: Container({
+                  width: 100,
+                  height: 100,
+                  color: "blue",
+                  child: Center({
+                    child: Text("100%"),
+                  }),
+                }),
+              }),
+              Container({ width: 20 }),
+              Opacity({
+                opacity: 0.7,
+                child: Container({
+                  width: 100,
+                  height: 100,
+                  color: "blue",
+                  child: Center({
+                    child: Text("70%"),
+                  }),
+                }),
+              }),
+              Container({ width: 20 }),
+              Opacity({
+                opacity: 0.5,
+                child: Container({
+                  width: 100,
+                  height: 100,
+                  color: "blue",
+                  child: Center({
+                    child: Text("50%"),
+                  }),
+                }),
+              }),
+            ],
+          })}
+        />
+      );
+    }
+---
+
+# Opacity Widget
+
+The Opacity widget makes its child partially or fully transparent. It's useful for creating visual effects, transitions, and indicating widget states.
+
+## Properties
+
+- `opacity`: number between 0.0 (fully transparent) and 1.0 (fully opaque)
+- `child`: The widget to apply opacity to
+
+## Common Use Cases
+
+1. **Disabled State**:
+   ```tsx
+   Opacity({
+     opacity: isEnabled ? 1.0 : 0.5,
+     child: Button()
+   })
+   ```
+
+2. **Fade Effects**:
+   ```tsx
+   Opacity({
+     opacity: isVisible ? 1.0 : 0.0,
+     child: Content()
+   })
+   ```
+
+3. **Visual Hierarchy**:
+   ```tsx
+   Column({
+     children: [
+       Opacity({
+         opacity: 1.0,
+         child: PrimaryContent()
+       }),
+       Opacity({
+         opacity: 0.7,
+         child: SecondaryContent()
+       })
+     ]
+   })
+   ```
+
+## Best Practices
+
+1. **Performance**:
+   - Use opacity sparingly
+   - Consider using alpha color values for static transparency
+   - Be aware of compositing costs
+
+2. **Accessibility**:
+   - Ensure sufficient contrast
+   - Consider disabled states
+   - Hide non-interactive transparent elements
+
+3. **Animation**:
+   - Use smooth transitions
+   - Consider performance impact
+   - Test on different devices
+
+## Common Patterns
+
+1. **Loading States**:
+   ```tsx
+   Stack({
+     children: [
+       Content(),
+       Opacity({
+         opacity: isLoading ? 0.5 : 0.0,
+         child: LoadingOverlay()
+       })
+     ]
+   })
+   ```
+
+2. **Modal Overlays**:
+   ```tsx
+   Stack({
+     children: [
+       MainContent(),
+       Opacity({
+         opacity: 0.5,
+         child: ModalBackground()
+       }),
+       ModalContent()
+     ]
+   })
+   ```
+
+3. **Fade Transitions**:
+   ```tsx
+   Opacity({
+     opacity: isVisible ? 1.0 : 0.0,
+     child: TransitioningContent()
+   })
+   ```
+
+## Tips and Tricks
+
+1. **Visual Effects**:
+   - Layer multiple opacities
+   - Combine with other effects
+   - Consider background contrast
+
+2. **Interactive Elements**:
+   - Maintain visibility of important UI
+   - Use appropriate opacity levels
+   - Consider hover states
+
+3. **Debugging**:
+   - Test different opacity values
+   - Verify touch/click areas
+   - Check contrast ratios
