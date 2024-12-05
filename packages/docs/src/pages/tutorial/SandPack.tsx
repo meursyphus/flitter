@@ -79,7 +79,7 @@ function MonacoEditor() {
 
 const customSetup = {
   dependencies: {
-    "@meursyphus/flitter-react": "0.0.6",
+    "@meursyphus/flitter-react": "0.0.8",
     "@meursyphus/flitter": "2.0.2",
     "react-dom": "^18.2.0",
     react: "^18.2.0",
