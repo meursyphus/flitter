@@ -9,6 +9,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "lunaria:build": "lunaria build",
+    "lunaria:build2": "tsm ./scripts/lunaria.mts",
     "lunaria:preview": "lunaria preview"
   },
   "dependencies": {
@@ -20,7 +21,7 @@
     "@astrojs/tailwind": "^5.1.0",
     "@codesandbox/sandpack-react": "^2.13.10",
     "@egjs/react-flicking": "^4.11.2",
-    "@lunariajs/core": "^0.1.1",
+    "@lunariajs/core": "https://pkg.pr.new/lunariajs/lunaria/@lunariajs/core@62a858f",
     "@meursyphus/flitter": "^2.0.0-alpha.7",
     "@meursyphus/flitter-chart": "^0.0.9",
     "@meursyphus/flitter-react": "0.0.6",
@@ -43,7 +44,8 @@
     "@tailwindcss/typography": "^0.5.10",
     "prettier": "^3.3.1",
     "prettier-plugin-astro": "^0.13.0",
-    "prettier-plugin-tailwindcss": "^0.6.2"
+    "prettier-plugin-tailwindcss": "^0.6.2",
+    "tsm": "^2.3.0"
   },
   "engines": {
     "node": ">=18.14.1"
