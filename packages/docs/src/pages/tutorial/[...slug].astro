@@ -7,30 +7,14 @@ import TableOfContents from "./TableOfContents.astro";
 const DEFAULT_LANGUAGE = "en";
 const SUPPORTED_LANGUAGES = ["en", "ko"];
 
-function detectLanguage(
-  request: Request,
-): (typeof SUPPORTED_LANGUAGES)[number] {
-  const acceptLanguage = request.headers.get("accept-language");
-  if (!acceptLanguage) return DEFAULT_LANGUAGE;
-
-  const langs = acceptLanguage.split(",").map((lang) => lang.split(";")[0]);
-  for (const lang of langs) {
-    const shortLang = lang.slice(0, 2).toLowerCase();
-    if (SUPPORTED_LANGUAGES.includes(shortLang)) {
-      return shortLang;
-    }
-  }
-  return DEFAULT_LANGUAGE;
-}
-
 export const getStaticPaths = async () => {
   const tutorialEntries = await getCollection("tutorial");
 
   function resolveSlug(slug: string) {
     const segments = slug.split("/");
-    const cleanedSegments = segments
-      .slice(1)
-      .map((segment) => segment.replace(/^\d+_/, ""));
+    const cleanedSegments = segments.map((segment) =>
+      segment.replace(/^\d+_/, ""),
+    );
     return cleanedSegments.join("/");
   }
 
@@ -54,14 +38,38 @@ export const getStaticPaths = async () => {
 };
 
 const { entry, prev, next, lang } = Astro.props;
-const userLang = detectLanguage(Astro.request);
-
-// 현재 페이지의 언어가 감지된 언어와 다르면 리다이렉트
-if (lang !== userLang) {
-  return Astro.redirect(`/tutorial/${userLang}/${entry.slug}`);
-}
 
 const { Content } = await entry.render();
+
+// URL에서 언어 확인
+const { pathname } = Astro.url;
+
+const [_, langSegment] = pathname.split("/").filter(Boolean);
+
+// 선호 언어 감지 함수
+function detectLanguage(
+  request: Request,
+): (typeof SUPPORTED_LANGUAGES)[number] {
+  const acceptLanguage = request.headers.get("accept-language");
+  if (!acceptLanguage) return DEFAULT_LANGUAGE;
+
+  const langs = acceptLanguage.split(",").map((lang) => lang.split(";")[0]);
+  for (const lang of langs) {
+    const shortLang = lang.slice(0, 2).toLowerCase();
+    if (SUPPORTED_LANGUAGES.includes(shortLang)) {
+      return shortLang;
+    }
+  }
+  return DEFAULT_LANGUAGE;
+}
+
+
+if (!SUPPORTED_LANGUAGES.includes(langSegment)) {
+  const preferredLang = detectLanguage(Astro.request);
+  const pathWithoutTutorial = pathname.replace(/^\/tutorial/, "");
+  return Astro.redirect(`/tutorial/${preferredLang}${pathWithoutTutorial}`);
+}
+
 ---
 
 <Layout title="Flitter - Tutorial">
