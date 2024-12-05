@@ -81,9 +81,9 @@ const customSetup = {
   dependencies: {
     "@meursyphus/flitter-react": "0.0.8",
     "@meursyphus/flitter": "2.0.2",
-    "react-dom": "latest",
-    react: "latest",
-    "react-markdown": "latest",
+    "react-dom": "^18.2.0",
+    react: "^18.2.0",
+    "react-markdown": "^9.0.1",
     "@meursyphus/flitter-chart": "0.0.9",
   },
 };
