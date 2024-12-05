@@ -23,6 +23,7 @@
     "@lunariajs/core": "^0.1.1",
     "@meursyphus/flitter": "^2.0.0-alpha.7",
     "@meursyphus/flitter-chart": "^0.0.9",
+    "@meursyphus/flitter-react": "0.0.6",
     "@monaco-editor/react": "^4.6.0",
     "@tailwindcss/typography": "^0.5.10",
     "@types/react": "^18.2.64",
