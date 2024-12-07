@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/@lunariajs/core/config.schema.json",
+  "repository": {
+    "name": "flitter",
+    "branch": "latest",
+    "rootDir": "."
+  },
+  "defaultLocale": {
+    "label": "English",
+    "lang": "en"
+  },
+  "locales": [
+    {
+      "label": "English",
+      "lang": "en"
+    },
+    {
+      "label": "Korean",
+      "lang": "ko"
+    }
+  ],
+  "files": [
+    {
+      "location": "packages/docs/src/content/tutorial/en/**/*.mdx",
+      "pattern": "packages/docs/src/content/tutorial/@lang/@path",
+      "type": "universal"
+    }
+  ]
+}
