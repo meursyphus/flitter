@@ -45,10 +45,10 @@
     "shared"
   ],
   "devDependencies": {
+    "@lunariajs/core": "^0.1.1",
     "@types/node": "^20.11.30",
     "husky": "^9.0.11",
-    "lint-staged": "^15.2.2",
-    "@lunariajs/core": "^0.1.1"
+    "lint-staged": "^15.2.2"
   },
   "lint-staged": {
     "packages/**/*.{astro,js,jsx,ts,tsx,svelte,mdx}": [
@@ -56,6 +56,7 @@
     ]
   },
   "dependencies": {
-    "@meursyphus/flitter-chart": "^0.0.9"
+    "@meursyphus/flitter-chart": "^0.0.9",
+    "astro": "^5.0.3"
   }
 }

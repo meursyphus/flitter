@@ -10,7 +10,9 @@ import cloudflare from "@astrojs/cloudflare";
 export default defineConfig({
   site: "https://flitter.dev",
   output: "server",
-  adapter: cloudflare(),
+  adapter: cloudflare({
+
+  }),
   integrations: [
     react(),
     svelte(),

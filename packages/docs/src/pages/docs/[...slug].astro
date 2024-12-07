@@ -5,6 +5,8 @@ import Toc from "../../components/pages/docs/Toc.astro";
 import { getCollection } from "astro:content";
 import { getNavOrder } from "./utils";
 
+export const prerender = true;
+
 export async function getStaticPaths() {
   const docsEntries = await getCollection("docs");
 

@@ -4,6 +4,8 @@ import Layout from "../../layouts/TutorialLayout.astro";
 import { getCollection } from "astro:content";
 import TableOfContents from "./TableOfContents.astro";
 
+export const prerender = true;
+
 export const getStaticPaths = async () => {
   const tutorialEntries = await getCollection("tutorial");
 
