@@ -4,14 +4,15 @@ import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from "./i18n";
 function detectLanguage(
   context: Parameters<MiddlewareHandler>[0],
 ): (typeof SUPPORTED_LANGUAGES)[number] {
-  const preferredLocales = context.preferredLocaleList;
+  const acceptLanguage = context.request.headers.get("accept-language");
 
-  if (!preferredLocales) {
+  if (!acceptLanguage) {
     return DEFAULT_LANGUAGE;
   }
 
-  for (const locale of preferredLocales) {
-    const shortLang = locale.slice(0, 2).toLowerCase();
+  const langs = acceptLanguage.split(",").map((lang) => lang.split(";")[0]);
+  for (const lang of langs) {
+    const shortLang = lang.slice(0, 2).toLowerCase();
     if (
       SUPPORTED_LANGUAGES.includes(
         shortLang as (typeof SUPPORTED_LANGUAGES)[number],
