@@ -1,9 +1,8 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import LunariaHtml from "../../../public/lunaria.html?raw";
 ---
 
 <Layout title="Flitter - i18n">
-  <iframe
-    class="m-0 h-[calc(100vh-var(--header))] w-screen border-none p-0"
-    src="/lunaria.html"></iframe>
+  <div class="" set:html={LunariaHtml} />
 </Layout>
