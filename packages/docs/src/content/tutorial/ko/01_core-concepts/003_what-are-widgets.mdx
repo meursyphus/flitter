@@ -1,8 +1,8 @@
 ---
-nav_group: "Core Concepts"
+nav_group: "핵심 개념"
 nav_order: 1
-title: "What are Widgets?"
-description: "Understanding the fundamental building blocks of Flitter applications: Widgets"
+title: "위젯이란 무엇인가?"
+description: "Flitter 애플리케이션의 기본 구성 요소인 위젯 이해하기"
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
@@ -19,7 +19,7 @@ files:
             height: 100,
             alignment: Alignment.center,
             color: "lightblue",
-            child: Text("Basic Widget")
+            child: Text("기본 위젯")
           })}
         />
       );
@@ -42,7 +42,7 @@ solved_files:
           height: 100,
           alignment: Alignment.center,
           color: "lightblue",
-          child: Text(`Hello, ${this.name}!`)
+          child: Text(`안녕하세요, ${this.name}님!`)
         });
       }
     }
@@ -58,32 +58,32 @@ solved_files:
     }
 ---
 
-# What are Widgets?
+# 위젯이란 무엇인가?
 
-In Flitter, widgets are the fundamental building blocks of your application's user interface. Inspired by Flutter, everything you see on the screen in a Flitter app is a widget. Understanding widgets is crucial for effectively using Flitter to create data visualizations and interactive interfaces.
+Flitter에서 위젯은 애플리케이션의 사용자 인터페이스를 구성하는 기본 요소입니다. Flutter에서 영감을 받아, Flitter 앱에서 화면에 보이는 모든 것이 위젯입니다. Flitter를 사용하여 데이터 시각화와 상호작용하는 인터페이스를 효과적으로 만들기 위해서는 위젯을 이해하는 것이 매우 중요합니다.
 
-## Definition of Widgets
+## 위젯의 정의
 
-A widget in Flitter is an immutable description of part of a user interface. Widgets can describe:
+Flitter의 위젯은 사용자 인터페이스의 일부를 설명하는 불변의 객체입니다. 위젯은 다음과 같은 것들을 설명할 수 있습니다:
 
-- Structural elements (like containers or rows)
-- Stylistic elements (like colors or fonts)
-- Layout aspects (like padding or alignment)
-- And more complex functionalities (like gestures or animations)
+- 구조적 요소 (컨테이너나 행과 같은)
+- 스타일 요소 (색상이나 폰트와 같은)
+- 레이아웃 요소 (패딩이나 정렬과 같은)
+- 그리고 더 복잡한 기능들 (제스처나 애니메이션과 같은)
 
-## Types of Widgets
+## 위젯의 종류
 
-Flitter provides several types of widgets, broadly categorized as:
+Flitter는 다음과 같은 여러 종류의 위젯을 제공합니다:
 
-1. **Basic Widgets**: Such as `Container`, `Text`, and `Image`.
-2. **Layout Widgets**: Like `Row`, `Column`, and `Stack`.
-3. **Interactive Widgets**: Including `GestureDetector` and `Tooltip`.
-4. **Painting and Effect Widgets**: For example, `Transform` and `Opacity`.
-5. **Stateful Widgets**: Widgets that can change over time based on user interaction or other factors.
+1. **기본 위젯**: `Container`, `Text`, `Image`와 같은 위젯
+2. **레이아웃 위젯**: `Row`, `Column`, `Stack`과 같은 위젯
+3. **상호작용 위젯**: `GestureDetector`, `Tooltip`을 포함
+4. **그리기와 효과 위젯**: 예를 들어 `Transform`과 `Opacity`
+5. **상태 있는 위젯**: 사용자 상호작용이나 다른 요인에 따라 시간이 지나면서 변할 수 있는 위젯
 
-## Using Widgets
+## 위젯 사용하기
 
-Here's a simple example of how widgets are used in Flitter:
+다음은 Flitter에서 위젯을 사용하는 간단한 예시입니다:
 
 ```typescript
 import {
@@ -99,16 +99,16 @@ const MyWidget = Container({
   height: 100,
   color: Colors.blue[500],
   child: Center({
-    child: Text("Hello, Flitter!", {
+    child: Text("안녕하세요, Flitter!", {
       style: new TextStyle({ color: Colors.white, fontSize: 20 }),
     }),
   }),
 });
 ```
 
-## Widget Tree
+## 위젯 트리
 
-Widgets in Flitter are arranged in a tree structure. This tree represents the hierarchy of your user interface. For example:
+Flitter의 위젯들은 트리 구조로 배치됩니다. 이 트리는 사용자 인터페이스의 계층 구조를 나타냅니다. 예를 들면:
 
 ```
        App
@@ -120,22 +120,22 @@ Widgets in Flitter are arranged in a tree structure. This tree represents the hi
        Text
 ```
 
-Each widget in the tree can have child widgets, creating a nested structure that defines your entire UI.
+트리의 각 위젯은 자식 위젯을 가질 수 있어, 전체 UI를 정의하는 중첩된 구조를 만듭니다.
 
-## Composition vs Inheritance
+## 구성 vs 상속
 
-Flitter favors composition over inheritance when it comes to creating custom widgets. This means that instead of subclassing existing widgets, you typically create new widgets by combining existing ones.
+Flitter는 커스텀 위젯을 만들 때 상속보다 구성을 선호합니다. 이는 기존 위젯을 상속받는 대신, 일반적으로 기존 위젯들을 조합하여 새로운 위젯을 만든다는 의미입니다.
 
-## Stateless vs Stateful Widgets
+## 상태 없는 위젯 vs 상태 있는 위젯
 
-Flitter has two main types of widgets:
+Flitter에는 두 가지 주요 위젯 유형이 있습니다:
 
-1. **Stateless Widgets**: These are immutable. Once they're built, their properties can't change.
-2. **Stateful Widgets**: These can rebuild themselves when their internal state changes.
+1. **상태 없는 위젯**: 이들은 불변입니다. 한 번 만들어지면 그들의 속성은 변경될 수 없습니다.
+2. **상태 있는 위젯**: 이들은 내부 상태가 변경될 때 자신을 다시 빌드할 수 있습니다.
 
-Let's look at examples of both:
+두 가지 예시를 살펴보겠습니다:
 
-### Stateless Widget Example
+### 상태 없는 위젯 예시
 
 ```typescript
 import {
@@ -158,18 +158,18 @@ class Greeting extends StatelessWidget {
     return Container({
       padding: EdgeInsets.all(16),
       color: Colors.blue[100],
-      child: Text(`Hello, ${this.name}!`, {
+      child: Text(`안녕하세요, ${this.name}님!`, {
         style: new TextStyle({ color: Colors.black, fontSize: 24 }),
       }),
     });
   }
 }
 
-// Usage
+// 사용법
 const myGreeting = new Greeting("Alice");
 ```
 
-### Stateful Widget Example
+### 상태 있는 위젯 예시
 
 ```typescript
 import {
@@ -203,7 +203,7 @@ class CounterState extends State<Counter> {
       color: Colors.blue[100],
       child: GestureDetector({
         onTap: () => this.incrementCounter(),
-        child: Text(`Count: ${this.count}`, {
+        child: Text(`카운트: ${this.count}`, {
           style: new TextStyle({ color: Colors.black, fontSize: 24 }),
         }),
       }),
@@ -211,12 +211,12 @@ class CounterState extends State<Counter> {
   }
 }
 
-// Usage
+// 사용법
 const myCounter = new Counter();
 ```
 
-## Conclusion
+## 결론
 
-Understanding the difference between stateless and stateful widgets is crucial for efficient Flitter development. Use stateless widgets for parts of your UI that depend only on their configuration info and the current theme, while stateful widgets are perfect for parts of the UI that need to dynamically change based on user interaction or other factors.
+상태 없는 위젯과 상태 있는 위젯의 차이를 이해하는 것은 효율적인 Flitter 개발에 매우 중요합니다. 구성 정보와 현재 테마에만 의존하는 UI 부분에는 상태 없는 위젯을 사용하고, 사용자 상호작용이나 다른 요인에 기반하여 동적으로 변경되어야 하는 UI 부분에는 상태 있는 위젯이 적합합니다.
 
-In the next sections, we'll dive deeper into specific types of widgets and how to manage their state more effectively.
+다음 섹션에서는 특정 유형의 위젯들과 그들의 상태를 더 효과적으로 관리하는 방법에 대해 더 자세히 알아보겠습니다.

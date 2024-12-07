@@ -2,7 +2,8 @@
 nav_group: "Basic Widgets"
 nav_order: 14
 title: "GestureDetector"
-description: "Handle user interactions with the GestureDetector widget"
+description: "GestureDetector 위젯으로 사용자 상호작용 처리하기"
+
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
@@ -25,7 +26,7 @@ files:
                 height: 100,
                 color: "blue",
                 child: Center({
-                  child: Text("Click me!"),
+                  child: Text("클릭하세요!"),
                 }),
               }),
               Container({ height: 20 }),
@@ -34,7 +35,7 @@ files:
                 height: 100,
                 color: "green",
                 child: Center({
-                  child: Text("Drag me!"),
+                  child: Text("드래그하세요!"),
                 }),
               }),
             ],
@@ -106,7 +107,7 @@ solved_files:
                 height: 100,
                 color: "blue",
                 child: Center({
-                  child: Text(`Clicked ${this.tapCount} times`),
+                  child: Text(`${this.tapCount}번 클릭됨`),
                 }),
               }),
             }),
@@ -126,7 +127,7 @@ solved_files:
                   height: 100,
                   color: this.isDragging ? "darkgreen" : "green",
                   child: Center({
-                    child: Text(`Drag me!`),
+                    child: Text(`드래그하세요!`),
                   }),
                 }),
               }),
@@ -154,70 +155,70 @@ solved_files:
     }
 ---
 
-# GestureDetector Widget
+# GestureDetector 위젯
 
-The GestureDetector widget is the primary way to handle user interactions in Flitter. It wraps a child widget and detects various gestures and mouse events.
+GestureDetector 위젯은 Flitter에서 사용자 상호작용을 처리하는 주요 방법입니다. 자식 위젯을 감싸고 다양한 제스처와 마우스 이벤트를 감지합니다.
 
-## Supported Gestures
+## 지원하는 제스처
 
-### Click Gesture
+### 클릭 제스처
 
-- `onClick`: Handles click events
+- `onClick`: 클릭 이벤트 처리
 
 ```tsx
 GestureDetector({
-  onClick: () => console.log("Clicked"),
+  onClick: () => console.log("클릭됨"),
   child: /* widget */
 })
 ```
 
-### Mouse Events
+### 마우스 이벤트
 
-- `onMouseDown`: When mouse button is pressed
-- `onMouseMove`: When mouse is moved
-- `onMouseUp`: When mouse button is released
-- `onMouseOver`: When mouse is over the widget
-- `onMouseEnter`: When mouse enters the widget
-- `onMouseLeave`: When mouse leaves the widget
+- `onMouseDown`: 마우스 버튼이 눌렸을 때
+- `onMouseMove`: 마우스가 이동할 때
+- `onMouseUp`: 마우스 버튼이 떼어질 때
+- `onMouseOver`: 마우스가 위젯 위에 있을 때
+- `onMouseEnter`: 마우스가 위젯에 들어올 때
+- `onMouseLeave`: 마우스가 위젯을 떠날 때
 
 ```tsx
 GestureDetector({
-  onMouseDown: (e) => console.log("Mouse down", e),
-  onMouseMove: (e) => console.log("Mouse move", e),
-  onMouseUp: (e) => console.log("Mouse up", e),
-  onMouseEnter: (e) => console.log("Mouse enter", e),
-  onMouseLeave: (e) => console.log("Mouse leave", e),
+  onMouseDown: (e) => console.log("마우스 다운", e),
+  onMouseMove: (e) => console.log("마우스 이동", e),
+  onMouseUp: (e) => console.log("마우스 업", e),
+  onMouseEnter: (e) => console.log("마우스 진입", e),
+  onMouseLeave: (e) => console.log("마우스 이탈", e),
   child: /* widget */
 })
 ```
 
-### Drag Gestures
+### 드래그 제스처
 
-- `onDragStart`: When drag begins
-- `onDragMove`: During drag
-- `onDragEnd`: When drag ends
+- `onDragStart`: 드래그 시작 시
+- `onDragMove`: 드래그 중
+- `onDragEnd`: 드래그 종료 시
 
 ```tsx
 GestureDetector({
-  onDragStart: (e) => console.log("Drag start", e),
-  onDragMove: (e) => console.log("Dragging", e),
-  onDragEnd: (e) => console.log("Drag end", e),
+  onDragStart: (e) => console.log("드래그 시작", e),
+  onDragMove: (e) => console.log("드래그 중", e),
+  onDragEnd: (e) => console.log("드래그 종료", e),
   child: /* widget */
 })
 ```
 
-### Wheel Event
+### 휠 이벤트
 
-- `onWheel`: Mouse wheel scroll
+- `onWheel`: 마우스 휠 스크롤
 
 ```tsx
 GestureDetector({
-  onWheel: (e) => console.log("Wheel event", e),
+  onWheel: (e) => console.log("휠 이벤트", e),
   child: /* widget */
 })
 ```
 
-## Available Props
+## 사용 가능한 속성
 
 - `onClick`: (event: MouseEvent) => void
 - `onMouseDown`: (event: MouseEvent) => void
@@ -230,11 +231,11 @@ GestureDetector({
 - `onDragMove`: (event: MouseEvent) => void
 - `onDragEnd`: (event: MouseEvent) => void
 - `onWheel`: (event: WheelEvent) => void
-- `cursor`: Mouse cursor style of Cursor type
+- `cursor`: Cursor 타입의 마우스 커서 스타일
 
-## Cursor Types
+## 커서 타입
 
-Use the `cursor` prop to set the mouse cursor when hovering over the widget:
+위젯 위에 마우스를 올렸을 때 커서를 설정하려면 `cursor` 속성을 사용하세요:
 
 - "pointer"
 - "default"
@@ -247,9 +248,9 @@ Use the `cursor` prop to set the mouse cursor when hovering over the widget:
 - "crosshair"
 - "grab"
 - "grabbing"
-- And more...
+- 기타...
 
-Example:
+예시:
 
 ```tsx
 GestureDetector({
@@ -258,9 +259,9 @@ GestureDetector({
 })
 ```
 
-## Common Use Cases
+## 일반적인 사용 사례
 
-### Interactive Button
+### 대화형 버튼
 
 ```tsx
 GestureDetector({
@@ -269,7 +270,7 @@ GestureDetector({
 });
 ```
 
-### Draggable Item
+### 드래그 가능한 항목
 
 ```tsx
 GestureDetector({
@@ -280,7 +281,7 @@ GestureDetector({
 });
 ```
 
-### Mouse Interaction
+### 마우스 상호작용
 
 ```tsx
 GestureDetector({
@@ -290,33 +291,33 @@ GestureDetector({
 });
 ```
 
-## Best Practices
+## 모범 사례
 
-### State Management
+### 상태 관리
 
-- Use StatefulWidget and setState for state management
-- Minimize state changes to avoid unnecessary re-renders
+- 상태 관리를 위해 StatefulWidget과 setState 사용
+- 불필요한 재렌더링을 피하기 위해 상태 변경 최소화
 
-### Event Handling
+### 이벤트 처리
 
-- Use appropriate event handlers for different interactions
-- Use event.stopPropagation() when needed to prevent event bubbling
+- 다양한 상호작용에 적절한 이벤트 핸들러 사용
+- 이벤트 버블링을 방지하기 위해 필요한 경우 event.stopPropagation() 사용
 
-### Performance
+### 성능
 
-- Avoid heavy computations in event handlers
-- Use requestAnimationFrame for performance optimization when needed
+- 이벤트 핸들러에서 무거운 계산 피하기
+- 필요한 경우 성능 최적화를 위해 requestAnimationFrame 사용
 
-## Tips and Tricks
+## 팁과 요령
 
-### Custom Cursors
+### 커스텀 커서
 
-- Use the cursor prop to provide visual feedback to users
+- 사용자에게 시각적 피드백을 제공하기 위해 cursor 속성 활용
 
-### Event Propagation
+### 이벤트 전파
 
-- Control event bubbling using event.stopPropagation() and event.preventDefault()
+- event.stopPropagation()과 event.preventDefault()를 사용하여 이벤트 버블링 제어
 
-### Debugging
+### 디버깅
 
-- Use console.log in event handlers to inspect event data
+- 이벤트 데이터를 검사하기 위해 이벤트 핸들러에서 console.log 사용

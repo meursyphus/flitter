@@ -2,7 +2,7 @@
 nav_group: "Basic Widgets"
 nav_order: 9
 title: "OverflowBox"
-description: "Control child widget constraints independently of parent"
+description: "자식 위젯의 제약조건을 부모와 독립적으로 제어"
 
 files:
   App.js: |
@@ -26,7 +26,7 @@ files:
               height: 100,
               color: "lightblue",
               child: Center({
-                child: Text("Parent Box", {
+                child: Text("부모 박스", {
                   style: new TextStyle({
                     fontSize: 14,
                     color: "black"
@@ -68,7 +68,7 @@ solved_files:
                 child: Container({
                   color: "pink",
                   child: Center({
-                    child: Text("Bigger Child Box", {
+                    child: Text("더 큰 자식 박스", {
                       style: new TextStyle({
                         fontSize: 14,
                         color: "black"
@@ -85,11 +85,11 @@ solved_files:
 
 ---
 
-# OverflowBox Widget
+# OverflowBox 위젯
 
 OverflowBox는 자식 위젯의 제약조건(constraints)을 부모와 독립적으로 설정할 수 있게 해주는 위젯입니다. 자식이 부모의 경계를 벗어나도록 허용하며, 이는 의도적으로 오버플로우가 필요한 경우에 유용합니다.
 
-## Properties
+## 속성
 
 - `minWidth`: number | undefined - 자식의 최소 너비
 - `maxWidth`: number | undefined - 자식의 최대 너비
@@ -98,7 +98,7 @@ OverflowBox는 자식 위젯의 제약조건(constraints)을 부모와 독립적
 - `alignment`: Alignment - 자식 위젯의 정렬 방식 (기본값: Alignment.center)
 - `child`: Widget - 자식 위젯
 
-## Common Use Cases
+## 일반적인 사용 사례
 
 1. **부모보다 큰 자식 허용**:
    ```tsx
@@ -123,12 +123,12 @@ OverflowBox는 자식 위젯의 제약조건(constraints)을 부모와 독립적
      minHeight: 100,
      maxHeight: 100,
      child: Container({
-       child: Text("Fixed Size Content")
+       child: Text("고정 크기 콘텐츠")
      })
    })
    ```
 
-## Best Practices
+## 모범 사례
 
 1. **사용 시기**:
    - 자식이 부모보다 커야 할 때
@@ -140,7 +140,7 @@ OverflowBox는 자식 위젯의 제약조건(constraints)을 부모와 독립적
    - 레이아웃 문제의 임시방편으로 사용하지 않기
    - 접근성과 사용자 경험 고려하기
 
-## Tips and Tricks
+## 팁과 요령
 
 1. **레이아웃 디버깅**:
    - 임시 배경색 사용하여 경계 확인

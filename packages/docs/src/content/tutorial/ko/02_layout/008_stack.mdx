@@ -1,8 +1,8 @@
 ---
-nav_group: "Layout"
+nav_group: "레이아웃"
 nav_order: 3
-title: "Stack Layout"
-description: "Master Stack layouts in Flitter for creating complex, overlapping UI designs"
+title: "스택 레이아웃"
+description: "복잡한 중첩 UI 디자인을 만들기 위한 Flitter의 스택 레이아웃 마스터하기"
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
@@ -60,21 +60,21 @@ solved_files:
     }
 ---
 
-# Stack Layout in Flitter
+# Flitter의 스택 레이아웃
 
-Stack layouts in Flitter allow you to overlay widgets on top of each other. This creates a layered effect where each child widget is painted on top of the previous one.
+Flitter의 스택 레이아웃을 사용하면 위젯을 서로 겹쳐서 배치할 수 있습니다. 이는 각 자식 위젯이 이전 위젯 위에 그려지는 레이어 효과를 만듭니다.
 
-## Core Concepts
+## 핵심 개념
 
-1. **Stacking Order**: Children are painted in the order they appear in the children list. The first child is at the bottom, and each subsequent child is painted on top.
+1. **스택 순서**: 자식들은 children 리스트에 나타나는 순서대로 그려집니다. 첫 번째 자식이 맨 아래에 있고, 그 다음 자식들이 위에 그려집니다.
 
-2. **Positioning**: By default, children are positioned at the top-left corner of the Stack.
+2. **위치 지정**: 기본적으로 자식들은 스택의 왼쪽 상단 모서리에 위치합니다.
 
-3. **Size**: A Stack sizes itself to contain all of its children.
+3. **크기**: 스택은 모든 자식들을 포함할 수 있는 크기로 자신의 크기를 조정합니다.
 
-## Basic Usage
+## 기본 사용법
 
-Here's a simple example of using Stack to layer multiple containers:
+다음은 여러 컨테이너를 레이어로 만들기 위해 스택을 사용하는 간단한 예제입니다:
 
 ```typescript
 import { Stack, Container } from "@meursyphus/flitter";
@@ -100,28 +100,28 @@ const stackExample = Stack({
 });
 ```
 
-In this example:
+이 예제에서:
 
-- The red container (300x300) forms the base layer
-- The green container (200x200) is painted on top of it
-- The blue container (100x100) appears on the very top
+- 빨간색 컨테이너(300x300)가 기본 레이어를 형성합니다
+- 초록색 컨테이너(200x200)가 그 위에 그려집니다
+- 파란색 컨테이너(100x100)가 맨 위에 나타납니다
 
-## Best Practices
+## 모범 사례
 
-1. **Layer Management**:
+1. **레이어 관리**:
 
-   - Keep track of your layers by ordering children logically
-   - Place background elements first in the children list
-   - Add overlay elements last
+   - 자식들을 논리적으로 정렬하여 레이어를 추적하세요
+   - 배경 요소를 children 리스트의 맨 처음에 배치하세요
+   - 오버레이 요소를 마지막에 추가하세요
 
-2. **Performance**:
-   - Use Stack only when you need overlapping elements
-   - Keep the number of children reasonable
-   - Consider using other layout widgets (Row, Column) when overlap isn't needed
+2. **성능**:
+   - 겹치는 요소가 필요할 때만 스택을 사용하세요
+   - 자식의 수를 적절하게 유지하세요
+   - 겹침이 필요하지 않을 때는 다른 레이아웃 위젯(Row, Column)의 사용을 고려하세요
 
-## Common Patterns
+## 일반적인 패턴
 
-### Background with Overlay
+### 배경과 오버레이
 
 ```typescript
 Stack({
@@ -129,18 +129,18 @@ Stack({
     Container({
       width: 400,
       height: 400,
-      color: "grey", // background
+      color: "grey", // 배경
     }),
     Container({
       width: 200,
       height: 200,
-      color: "rgba(255, 0, 0, 0.5)", // semi-transparent overlay
+      color: "rgba(255, 0, 0, 0.5)", // 반투명 오버레이
     }),
   ],
 });
 ```
 
-### Layered Cards
+### 레이어드 카드
 
 ```typescript
 Stack({
@@ -159,6 +159,6 @@ Stack({
 });
 ```
 
-## Conclusion
+## 결론
 
-Stack is a powerful layout widget for creating layered interfaces. While simple in concept, it provides the foundation for complex UI designs by enabling widget overlays. Remember to use Stack judiciously and consider whether simpler layout widgets might better serve your needs.
+스택은 레이어드 인터페이스를 만들기 위한 강력한 레이아웃 위젯입니다. 개념은 단순하지만, 위젯 오버레이를 가능하게 함으로써 복잡한 UI 디자인을 위한 기반을 제공합니다. 스택을 현명하게 사용하고, 더 단순한 레이아웃 위젯이 더 적합할 수 있는지 고려하는 것을 잊지 마세요.

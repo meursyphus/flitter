@@ -1,8 +1,8 @@
 ---
-nav_group: "Layout"
+nav_group: "레이아웃"
 nav_order: 2
-title: "Understanding Constraints"
-description: "Learn how constraints work in Flitter and how they affect widget sizing"
+title: "제약 조건 이해하기"
+description: "Flitter의 제약 조건이 어떻게 작동하고 위젯 크기 조정에 어떤 영향을 미치는지 알아보기"
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
@@ -25,7 +25,7 @@ files:
               height: Infinity,
               color: "yellow",
               child: Center({
-                child: Text("Trying Infinite Size")
+                child: Text("무한 크기 시도")
               })
             })
           })}
@@ -56,7 +56,7 @@ solved_files:
               height: Infinity, // Now fills parent's constraints
               color: "yellow",
               child: Center({
-                child: Text("Filling Parent Constraints")
+                child: Text("부모 제약 조건 채우기")
               })
             })
           })}
@@ -65,30 +65,30 @@ solved_files:
     }
 ---
 
-# Understanding Constraints in Flitter
+# Flitter의 제약 조건 이해하기
 
-Constraints are fundamental to Flitter's layout system. They determine how widgets can be sized and positioned within their parent widgets.
+제약 조건은 Flitter의 레이아웃 시스템의 기본입니다. 이는 위젯이 부모 위젯 내에서 어떻게 크기가 조정되고 위치할 수 있는지를 결정합니다.
 
-## The Constraints Flow
+## 제약 조건의 흐름
 
-In Flitter, layouts follow a simple principle: "Constraints go down, sizes go up"
+Flitter에서 레이아웃은 간단한 원칙을 따릅니다: "제약 조건은 아래로, 크기는 위로"
 
 ```
 ┌───────────────────────────┐
-│      Parent Widget        │
+│      부모 위젯           │
 │  ┌──────────────────┐    │
-│  │   Constraints    │    │
+│  │   제약 조건      │    │
 │  │        ↓        │    │
-│  │   Child Widget   │    │
+│  │   자식 위젯      │    │
 │  │        ↓        │    │
-│  │      Size       │    │
+│  │      크기        │    │
 │  └──────────────────┘    │
 └───────────────────────────┘
 ```
 
-## How Container Uses Constraints
+## Container가 제약 조건을 사용하는 방법
 
-A Container can either impose constraints on its child or let the child determine its own size:
+Container는 자식에게 제약 조건을 부과하거나 자식이 자신의 크기를 결정하도록 할 수 있습니다:
 
 ```
 ┌───────────────────────────┐
@@ -97,13 +97,13 @@ A Container can either impose constraints on its child or let the child determin
 │  │  width: 300      │     │
 │  │  height: 300     │     │
 │  │                  │     │
-│  │    Child         │     │
+│  │    자식         │     │
 │  │                  │     │
 │  └──────────────────┘     │
 └───────────────────────────┘
 ```
 
-When constraints are specified:
+제약 조건이 지정된 경우:
 
 ```
 ┌───────────────────────────┐
@@ -112,61 +112,61 @@ When constraints are specified:
 │  │  width: 150      │     │
 │  │  height: 150     │     │
 │  │  ┌──────────┐    │     │
-│  │  │  Child   │    │     │
+│  │  │  자식    │    │     │
 │  │  └──────────┘    │     │
 │  └──────────────────┘     │
 └───────────────────────────┘
 ```
 
-## Container Behavior
+## Container 동작
 
-### Without Constraints
+### 제약 조건이 없는 경우
 
 ```typescript
 Container({
   child: Center({
-    child: Text("No Constraints"),
+    child: Text("제약 조건 없음"),
   }),
 });
-// Child will expand to fill parent
+// 자식이 부모를 채우도록 확장됨
 ```
 
-### With Constraints
+### 제약 조건이 있는 경우
 
 ```typescript
 Container({
   width: 150,
   height: 150,
   child: Center({
-    child: Text("With Constraints"),
+    child: Text("제약 조건 있음"),
   }),
 });
-// Child is constrained to exact size
+// 자식이 정확한 크기로 제한됨
 ```
 
-## Layout Process
+## 레이아웃 프로세스
 
-1. Parent Container provides constraints to child:
+1. 부모 Container가 자식에게 제약 조건을 제공:
 
 ```
 ┌───────────────────────────┐
-│ Parent Container          │
+│ 부모 Container           │
 │ ┌─────────────────────┐   │
-│ │ Available Space     │   │
+│ │ 사용 가능한 공간    │   │
 │ │                     │   │
 │ │     ↓               │   │
-│ │  Child Container    │   │
+│ │  자식 Container     │   │
 │ └─────────────────────┘   │
 └───────────────────────────┘
 ```
 
-2. Child determines its size:
+2. 자식이 자신의 크기를 결정:
 
 ```
 ┌───────────────────────────┐
-│ Parent Container          │
+│ 부모 Container           │
 │ ┌─────────────────────┐   │
-│ │      Child Size     │   │
+│ │     자식 크기       │   │
 │ │    ┌─────────┐      │   │
 │ │    │         │      │   │
 │ │    └─────────┘      │   │
@@ -174,49 +174,49 @@ Container({
 └───────────────────────────┘
 ```
 
-## Best Practices
+## 모범 사례
 
-1. **Explicit Constraints**
+1. **명시적 제약 조건**
 
-   - Use specific dimensions when you need exact sizing
-   - Be clear about your layout intentions
+   - 정확한 크기가 필요할 때는 특정 치수를 사용하세요
+   - 레이아웃 의도를 명확하게 하세요
 
-2. **Flexible Layouts**
+2. **유연한 레이아웃**
 
-   - Omit constraints when you want widgets to size to content
-   - Let parent widgets control child sizing when appropriate
+   - 위젯이 콘텐츠에 맞게 크기를 조정하길 원할 때는 제약 조건을 생략하세요
+   - 적절한 경우 부모 위젯이 자식 크기를 제어하도록 하세요
 
-3. **Understanding Flow**
-   - Remember that constraints flow down
-   - Child sizes flow up
-   - Parent positioning is final
+3. **흐름 이해하기**
+   - 제약 조건은 아래로 흐른다는 것을 기억하세요
+   - 자식 크기는 위로 흐릅니다
+   - 부모의 위치 지정이 최종입니다
 
-## Common Patterns
+## 일반적인 패턴
 
-### Fixed Size Container
+### 고정 크기 Container
 
 ```typescript
 Container({
   width: 200,
   height: 100,
-  child: Text("Fixed Size"),
+  child: Text("고정 크기"),
 });
 ```
 
-### Flexible Container
+### 유연한 Container
 
 ```typescript
 Container({
-  child: Text("Flexible Size"),
-  // Size based on parent constraints
+  child: Text("유연한 크기"),
+  // 부모의 제약 조건에 기반한 크기
 });
 ```
 
-## Conclusion
+## 결론
 
-Understanding how constraints work in Flitter is crucial for creating predictable layouts. The Container widget provides a clear way to either impose constraints on children or let them determine their own size. Remember:
+Flitter에서 제약 조건이 어떻게 작동하는지 이해하는 것은 예측 가능한 레이아웃을 만드는 데 매우 중요합니다. Container 위젯은 자식에게 제약 조건을 부과하거나 자신의 크기를 결정하도록 하는 명확한 방법을 제공합니다. 다음을 기억하세요:
 
-- Parent widgets pass constraints down
-- Child widgets determine their size within these constraints
-- Parent widgets make final positioning decisions
-- Clear constraint specification leads to predictable layouts
+- 부모 위젯은 제약 조건을 아래로 전달합니다
+- 자식 위젯은 이러한 제약 조건 내에서 자신의 크기를 결정합니다
+- 부모 위젯이 최종 위치 결정을 합니다
+- 명확한 제약 조건 지정은 예측 가능한 레이아웃으로 이어집니다

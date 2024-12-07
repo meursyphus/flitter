@@ -1,8 +1,8 @@
 ---
-nav_group: "Getting Started"
+nav_group: "시작하기"
 nav_order: 2
-title: "Installation"
-description: "Step-by-step guide to install Flitter in your project"
+title: "설치하기"
+description: "프로젝트에 Flitter를 설치하는 단계별 가이드"
 files:
   App.js: |
     import { useEffect, useRef } from "react";
@@ -37,7 +37,7 @@ solved_files:
           height: 200,
           color: "blue",
           child: Center({
-            child: Text("Installation Complete!")
+            child: Text("설치 완료!")
           })
         });
 
@@ -64,34 +64,34 @@ solved_files:
     }
 ---
 
-# Installing Flitter
+# Flitter 설치하기
 
-This guide will walk you through the process of installing Flitter in your project. We'll focus on setting up Flitter with React, which is one of the most common use cases.
+이 가이드에서는 프로젝트에 Flitter를 설치하는 과정을 안내합니다. 가장 일반적인 사용 사례인 React와 함께 Flitter를 설정하는 방법에 중점을 두겠습니다.
 
-## Installation Steps
+## 설치 단계
 
-1. Create a new Vite project with React template:
+1. React 템플릿으로 새로운 Vite 프로젝트 생성하기:
    ```bash
    npm create vite@latest my-flitter-app -- --template react-ts
    cd my-flitter-app
    ```
 
-2. Install Flitter and its React bindings:
+2. Flitter와 React 바인딩 설치하기:
    ```bash
    npm install @meursyphus/flitter 
    ```
 
-## Basic Setup
+## 기본 설정
 
-Let's create a simple app to verify our installation. First, we'll set up the basic structure with React refs for the SVG element and its container. Then, we'll initialize Flitter with a basic widget to display some text.
+설치가 제대로 되었는지 확인하기 위해 간단한 앱을 만들어보겠습니다. 먼저 SVG 요소와 그 컨테이너를 위한 React refs로 기본 구조를 설정한 다음, 기본 위젯으로 텍스트를 표시하도록 Flitter를 초기화하겠습니다.
 
-The example above shows how to:
-1. Create refs for both the SVG element(or canvas element) and its container
-2. Initialize the AppRunner with the SVG element
-3. Set up proper resize handling
-4. Create and render a basic widget
-5. Clean up resources when the component unmounts
+위의 예제는 다음과 같은 내용을 보여줍니다:
+1. SVG 요소(또는 canvas 요소)와 그 컨테이너를 위한 refs 생성
+2. SVG 요소로 AppRunner 초기화
+3. 적절한 리사이즈 처리 설정
+4. 기본 위젯 생성 및 렌더링
+5. 컴포넌트 언마운트 시 리소스 정리
 
-## Next Steps
+## 다음 단계
 
-Now that you have Flitter installed and running, we'll explore how to create more complex applications using Flitter's widget system in the next section.
+이제 Flitter가 설치되고 실행되었으므로, 다음 섹션에서는 Flitter의 위젯 시스템을 사용하여 더 복잡한 애플리케이션을 만드는 방법을 살펴보겠습니다.

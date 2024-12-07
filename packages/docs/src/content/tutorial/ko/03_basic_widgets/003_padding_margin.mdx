@@ -1,8 +1,8 @@
 ---
-nav_group: "Basic Widgets"
+nav_group: "기본 위젯"
 nav_order: 4
-title: "Padding and Margin"
-description: "Learn how to use Padding and Margin in Flitter for proper spacing"
+title: "패딩과 마진"
+description: "Flitter에서 적절한 간격을 위한 패딩과 마진 사용법 배우기"
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
@@ -22,7 +22,7 @@ files:
             color: "lightblue",
             child: Container({
               color: "blue",
-              child: Text("Container without spacing", {
+              child: Text("패딩과 마진이 없는 컨테이너", {
                 style: new TextStyle({
                   fontSize: 18,
                   color: "white"
@@ -60,7 +60,7 @@ solved_files:
               left: 25
             }),
               color: "blue",
-              child: Text("Container with padding and margin", {
+              child: Text("패딩과 마진이 있는 컨테이너", {
                 style: new TextStyle({
                   fontSize: 18,
                   color: "white"
@@ -73,33 +73,33 @@ solved_files:
     }
 ---
 
-# Understanding Padding and Margin
+# 패딩과 마진 이해하기
 
-In Flitter, padding and margin are essential properties for controlling spacing around widgets. While they might seem similar, they serve different purposes:
+Flitter에서 패딩과 마진은 위젯 주변의 간격을 제어하는 데 필수적인 속성입니다. 비슷해 보일 수 있지만 서로 다른 목적으로 사용됩니다:
 
-- **Padding**: Space between the widget's content and its border
-- **Margin**: Space between the widget's border and surrounding widgets
+- **패딩**: 위젯의 콘텐츠와 테두리 사이의 공간
+- **마진**: 위젯의 테두리와 주변 위젯 사이의 공간
 
-## EdgeInsets Class
+## EdgeInsets 클래스
 
-Both padding and margin use the `EdgeInsets` class, which provides several convenient constructors:
+패딩과 마진 모두 `EdgeInsets` 클래스를 사용하며, 이 클래스는 여러 편리한 생성자를 제공합니다:
 
-1. `EdgeInsets.all(value)`: Same spacing on all sides
-2. `EdgeInsets.symmetric({ vertical, horizontal })`: Different spacing for vertical and horizontal sides
-3. `EdgeInsets.only({ left, top, right, bottom })`: Individual control for each side
+1. `EdgeInsets.all(value)`: 모든 면에 동일한 간격
+2. `EdgeInsets.symmetric({ vertical, horizontal })`: 수직과 수평 면에 서로 다른 간격
+3. `EdgeInsets.only({ left, top, right, bottom })`: 각 면을 개별적으로 제어
 
-## Key Concepts
+## 핵심 개념
 
-1. **Padding Usage**:
+1. **패딩 사용법**:
 
    ```tsx
    Container({
      padding: EdgeInsets.all(20),
-     child: Text("Padded text"),
+     child: Text("패딩이 있는 텍스트"),
    });
    ```
 
-2. **Margin Usage**:
+2. **마진 사용법**:
 
    ```tsx
    Container({
@@ -107,52 +107,52 @@ Both padding and margin use the `EdgeInsets` class, which provides several conve
        vertical: 10,
        horizontal: 20,
      }),
-     child: Text("Text with margin"),
+     child: Text("마진이 있는 텍스트"),
    });
    ```
 
-3. **Combining Both**:
+3. **둘 다 사용하기**:
    ```tsx
    Container({
      padding: EdgeInsets.all(16),
      margin: EdgeInsets.all(8),
-     child: Text("Text with both"),
+     child: Text("패딩과 마진이 모두 있는 텍스트"),
    });
    ```
 
-## Best Practices
+## 모범 사례
 
-1. **Consistent Spacing**:
+1. **일관된 간격**:
 
-   - Use consistent padding/margin values throughout your app
-   - Consider creating spacing constants for reusability
+   - 앱 전체에서 일관된 패딩/마진 값 사용
+   - 재사용성을 위한 간격 상수 생성 고려
 
-2. **Responsive Design**:
+2. **반응형 디자인**:
 
-   - Use relative values when appropriate
-   - Consider how spacing will affect layout on different screen sizes
+   - 적절한 경우 상대적 값 사용
+   - 다양한 화면 크기에서 간격이 레이아웃에 미치는 영향 고려
 
-3. **Layout Hierarchy**:
+3. **레이아웃 계층**:
 
-   - Use padding for internal spacing within a widget
-   - Use margin for spacing between sibling widgets
+   - 위젯 내부 간격에는 패딩 사용
+   - 형제 위젯 간의 간격에는 마진 사용
 
-4. **Performance**:
-   - Prefer using margin on the container itself rather than wrapping in another padding widget
-   - Combine padding/margin when possible instead of nesting multiple containers
+4. **성능**:
+   - 다른 패딩 위젯으로 감싸는 대신 컨테이너 자체에 마진 사용 선호
+   - 여러 컨테이너를 중첩하는 대신 가능한 경우 패딩/마진 결합
 
-## Common Pitfalls
+## 일반적인 실수
 
-1. **Nested Padding**:
+1. **중첩된 패딩**:
 
-   - Avoid unnecessary nesting of padding containers
-   - Combine padding values when possible
+   - 불필요한 패딩 컨테이너 중첩 피하기
+   - 가능한 경우 패딩 값 결합하기
 
-2. **Margin Collapse**:
+2. **마진 상쇄**:
 
-   - Unlike CSS, margins in Flitter don't collapse
-   - Adjacent margins are additive
+   - CSS와 달리 Flitter에서는 마진이 상쇄되지 않음
+   - 인접한 마진은 더해짐
 
-3. **Overflow**:
-   - Be careful with fixed padding/margin values in responsive layouts
-   - Consider using constraints or flexible widgets
+3. **오버플로우**:
+   - 반응형 레이아웃에서 고정 패딩/마진 값 사용 시 주의
+   - 제약 조건이나 유연한 위젯 사용 고려

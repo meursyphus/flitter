@@ -1,8 +1,8 @@
 ---
-nav_group: "Basic Widgets"
+nav_group: "기본 위젯"
 nav_order: 6
-title: "Flex Widgets (Row & Column)"
-description: "Flexible layout widgets for arranging children horizontally or vertically"
+title: "플렉스 위젯 (Row & Column)"
+description: "자식 위젯들을 수평 또는 수직으로 배열하는 유연한 레이아웃 위젯"
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
@@ -138,38 +138,38 @@ solved_files:
     }
 ---
 
-# Flex Widgets (Row & Column)
+# 플렉스 위젯 (Row & Column)
 
-Row and Column are flex widgets that arrange their children in a horizontal or vertical array. They are fundamental for creating layouts in Flitter.
+Row와 Column은 자식 위젯들을 수평 또는 수직으로 배열하는 플렉스 위젯입니다. 이들은 Flitter에서 레이아웃을 만드는 데 기본이 되는 위젯입니다.
 
-## Properties
+## 속성
 
-Common properties for both Row and Column:
+Row와 Column에서 공통으로 사용되는 속성들:
 
-- `children`: Widget[] - List of child widgets
-- `mainAxisAlignment`: MainAxisAlignment - How to place children along the main axis
-  - "start" (default)
+- `children`: Widget[] - 자식 위젯들의 목록
+- `mainAxisAlignment`: MainAxisAlignment - 주축을 따라 자식들을 배치하는 방법
+  - "start" (기본값)
   - "end"
   - "center"
   - "spaceBetween"
   - "spaceAround"
   - "spaceEvenly"
-- `crossAxisAlignment`: CrossAxisAlignment - How to place children along the cross axis
+- `crossAxisAlignment`: CrossAxisAlignment - 교차축을 따라 자식들을 배치하는 방법
   - "start"
   - "end"
-  - "center"(default)
+  - "center" (기본값)
   - "stretch"
-- `mainAxisSize`: MainAxisSize - How much space to occupy in the main axis
+- `mainAxisSize`: MainAxisSize - 주축에서 차지할 공간의 크기
   - "min"
-  - "max" (default)
-- `verticalDirection`: VerticalDirection - The direction in which children are placed
+  - "max" (기본값)
+- `verticalDirection`: VerticalDirection - 자식들이 배치되는 방향
   - "up"
-  - "down" (default)
-- `clipped`: boolean - Whether to clip children to the container bounds (default: false)
+  - "down" (기본값)
+- `clipped`: boolean - 자식들을 컨테이너 경계로 잘라낼지 여부 (기본값: false)
 
-## Common Use Cases
+## 일반적인 사용 사례
 
-1. **Basic Row Layout**:
+1. **기본 Row 레이아웃**:
 
    ```tsx
    Row({
@@ -188,48 +188,48 @@ Common properties for both Row and Column:
    });
    ```
 
-2. **Centered Column**:
+2. **중앙 정렬된 Column**:
 
    ```tsx
    Column({
      mainAxisAlignment: "center",
      crossAxisAlignment: "center",
-     children: [Text({ text: "Title" }), Text({ text: "Subtitle" })],
+     children: [Text({ text: "제목" }), Text({ text: "부제목" })],
    });
    ```
 
-3. **Spaced Items**:
+3. **간격이 있는 아이템들**:
    ```tsx
    Row({
      mainAxisAlignment: "spaceBetween",
      crossAxisAlignment: "center",
-     children: [Text({ text: "Left" }), Text({ text: "Right" })],
+     children: [Text({ text: "왼쪽" }), Text({ text: "오른쪽" })],
    });
    ```
 
-## Best Practices
+## 모범 사례
 
-1. **Layout Guidelines**:
+1. **레이아웃 가이드라인**:
 
-   - Choose appropriate axis alignment
-   - Consider cross-axis behavior
-   - Use consistent spacing
-   - Set clipped to true when overflow is possible
+   - 적절한 축 정렬 선택하기
+   - 교차축 동작 고려하기
+   - 일관된 간격 사용하기
+   - 오버플로우가 가능한 경우 clipped를 true로 설정하기
 
-2. **Performance**:
+2. **성능**:
 
-   - Avoid deeply nested flex widgets
-   - Consider using Expanded for flexible sizing
-   - Minimize rebuilds of flex layouts
+   - 깊이 중첩된 플렉스 위젯 피하기
+   - 유연한 크기 조정을 위해 Expanded 사용 고려하기
+   - 플렉스 레이아웃의 리빌드 최소화하기
 
-3. **Responsive Design**:
-   - Handle overflow properly
-   - Consider screen size variations
-   - Use appropriate constraints
+3. **반응형 디자인**:
+   - 오버플로우를 적절히 처리하기
+   - 화면 크기 변화 고려하기
+   - 적절한 제약 조건 사용하기
 
-## Common Patterns
+## 일반적인 패턴
 
-1. **Navigation Bar**:
+1. **내비게이션 바**:
 
    ```tsx
    Row({
@@ -237,56 +237,56 @@ Common properties for both Row and Column:
      crossAxisAlignment: "center",
      children: [
        IconButton({ icon: "menu" }),
-       Text({ text: "Title" }),
+       Text({ text: "제목" }),
        IconButton({ icon: "settings" }),
      ],
    });
    ```
 
-2. **Form Layout**:
+2. **폼 레이아웃**:
 
    ```tsx
    Column({
      crossAxisAlignment: "stretch",
      mainAxisSize: "min",
      children: [
-       TextField({ label: "Username" }),
-       TextField({ label: "Password" }),
-       Button({ text: "Submit" }),
+       TextField({ label: "사용자 이름" }),
+       TextField({ label: "비밀번호" }),
+       Button({ text: "제출" }),
      ],
    });
    ```
 
-3. **Card Content**:
+3. **카드 콘텐츠**:
    ```tsx
    Column({
      crossAxisAlignment: "start",
      mainAxisSize: "min",
      children: [
        Image({ src: "image.jpg" }),
-       Text({ text: "Title" }),
-       Text({ text: "Description" }),
+       Text({ text: "제목" }),
+       Text({ text: "설명" }),
      ],
    });
    ```
 
-## Tips and Tricks
+## 팁과 트릭
 
-1. **Layout Debugging**:
+1. **레이아웃 디버깅**:
 
-   - Add background colors temporarily
-   - Check alignment boundaries
-   - Monitor flex behavior
-   - Use clipped property to identify overflow
+   - 임시로 배경색 추가하기
+   - 정렬 경계 확인하기
+   - 플렉스 동작 모니터링하기
+   - 오버플로우 식별을 위해 clipped 속성 사용하기
 
-2. **Spacing Techniques**:
+2. **간격 기법**:
 
-   - Use Container for gaps
-   - Consider mainAxisAlignment for spacing
-   - Maintain consistent spacing
+   - 간격을 위해 Container 사용하기
+   - 간격을 위해 mainAxisAlignment 고려하기
+   - 일관된 간격 유지하기
 
-3. **Optimization**:
-   - Cache flex widgets when possible
-   - Use const constructors
-   - Consider layout constraints
-   - Set appropriate mainAxisSize
+3. **최적화**:
+   - 가능한 경우 플렉스 위젯 캐싱하기
+   - const 생성자 사용하기
+   - 레이아웃 제약 조건 고려하기
+   - 적절한 mainAxisSize 설정하기

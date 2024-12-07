@@ -1,8 +1,8 @@
 ---
-nav_group: "Layout"
+nav_group: "레이아웃"
 nav_order: 2
-title: "Flex Layout"
-description: "Master Flex layouts in Flitter using Row, Column, Flexible, and Expanded widgets"
+title: "Flex 레이아웃"
+description: "Row, Column, Flexible, Expanded 위젯을 사용하여 Flitter의 Flex 레이아웃 마스터하기"
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
@@ -69,21 +69,21 @@ solved_files:
     }
 ---
 
-# Flex Layout in Flitter
+# Flitter의 Flex 레이아웃
 
-Flex layouts in Flitter provide a powerful and flexible way to arrange widgets in either a row or a column. This system is based on the CSS Flexbox model and is implemented primarily through the `Row` and `Column` widgets, along with supporting widgets like `Flexible` and `Expanded`.
+Flitter의 Flex 레이아웃은 위젯을 행이나 열로 배치하는 강력하고 유연한 방법을 제공합니다. 이 시스템은 CSS Flexbox 모델을 기반으로 하며, 주로 `Row`와 `Column` 위젯을 통해 구현되며 `Flexible`과 `Expanded` 같은 보조 위젯들도 함께 사용됩니다.
 
-## Core Concepts
+## 핵심 개념
 
-1. **Main Axis**: The primary axis along which children are placed (horizontal for `Row`, vertical for `Column`).
+1. **주축**: 자식들이 배치되는 기본 축 (`Row`의 경우 수평, `Column`의 경우 수직)
 
-2. **Cross Axis**: The axis perpendicular to the main axis.
+2. **교차축**: 주축에 수직인 축
 
-3. **Flex Factor**: Determines how much space a child should occupy along the main axis relative to other flexible children.
+3. **Flex 계수**: 다른 유연한 자식들과 비교하여 주축을 따라 자식이 차지해야 하는 공간의 양을 결정
 
-## Column and Row Widgets
+## Column과 Row 위젯
 
-### Column Example
+### Column 예제
 
 ```typescript
 import { Column, Container } from "@meursyphus/flitter";
@@ -97,24 +97,24 @@ const columnExample = Column({
 });
 ```
 
-Visual representation:
+시각적 표현:
 ```
 ┌──────────────┐
 │ ┌──────────┐ │
-│ │   Red    │ │
+│ │   빨강    │ │
 │ └──────────┘ │
 │ ┌──────────┐ │
-│ │  Green   │ │
+│ │   초록    │ │
 │ └──────────┘ │
 │ ┌──────────┐ │
-│ │   Blue   │ │
+│ │   파랑    │ │
 │ └──────────┘ │
 └──────────────┘
 ```
 
-## Nested Flex Layouts
+## 중첩된 Flex 레이아웃
 
-Combining Row and Column can create complex and responsive layouts.
+Row와 Column을 조합하여 복잡하고 반응형인 레이아웃을 만들 수 있습니다.
 
 ```typescript
 import {
@@ -146,44 +146,44 @@ const nestedFlexExample = Row({
 });
 ```
 
-Visual representation:
+시각적 표현:
 ```
 ┌──────────────────────────────┐
 │          ┌─────────┐         │
 │          │         │         │
-│          │  Green  │         │
+│          │  초록   │         │
 │ ┌──────┐ ├─────────┤         │
 │ │      │ │         │         │
-│ │ Red  │ │  Blue   │         │
+│ │ 빨강 │ │  파랑   │         │
 │ │      │ │         │         │
 │ └──────┘ └─────────┘         │
 └──────────────────────────────┘
 ```
 
-## Advanced Flex Properties
+## 고급 Flex 속성
 
-### MainAxisAlignment and CrossAxisAlignment
+### MainAxisAlignment와 CrossAxisAlignment
 
-Control the alignment of children within a Row or Column.
+Row나 Column 내에서 자식들의 정렬을 제어합니다.
 
-- **MainAxisAlignment**: Aligns children along the main axis.
-- **CrossAxisAlignment**: Aligns children along the cross axis.
+- **MainAxisAlignment**: 주축을 따라 자식들을 정렬합니다.
+- **CrossAxisAlignment**: 교차축을 따라 자식들을 정렬합니다.
 
-### Flexible and Expanded
+### Flexible과 Expanded
 
-- **Flexible**: Allows a child to flexibly resize using a flex factor.
-- **Expanded**: A shorthand for Flexible with fit: FlexFit.tight, forcing the child to fill the available space.
+- **Flexible**: flex 계수를 사용하여 자식이 유연하게 크기를 조정할 수 있게 합니다.
+- **Expanded**: fit: FlexFit.tight가 적용된 Flexible의 단축형으로, 자식이 사용 가능한 공간을 채우도록 강제합니다.
 
-## Best Practices
+## 모범 사례
 
-1. **Use Expanded for Proportional Sizing**: When you want widgets to share space proportionally.
+1. **비례 크기 조정에는 Expanded 사용**: 위젯들이 공간을 비례적으로 공유하기를 원할 때 사용하세요.
 
-2. **Combine Rows and Columns**: Nest Row inside Column or vice versa to create complex layouts.
+2. **Row와 Column 조합**: 복잡한 레이아웃을 만들기 위해 Row 안에 Column을 넣거나 그 반대로 중첩하세요.
 
-3. **Alignment Matters**: Utilize MainAxisAlignment and CrossAxisAlignment to fine-tune the positioning of widgets.
+3. **정렬이 중요합니다**: MainAxisAlignment와 CrossAxisAlignment를 사용하여 위젯의 위치를 미세 조정하세요.
 
-4. **Test Responsiveness**: Always test your layouts on different screen sizes.
+4. **반응형 테스트**: 항상 다양한 화면 크기에서 레이아웃을 테스트하세요.
 
-## Conclusion
+## 결론
 
-Mastering Flex layouts in Flitter allows you to create responsive and complex user interfaces with ease. By understanding the principles of the main axis, cross axis, and how to use widgets like Row, Column, Flexible, and Expanded, you can build layouts that adapt to different screen sizes and orientations.
+Flitter에서 Flex 레이아웃을 마스터하면 반응형이고 복잡한 사용자 인터페이스를 쉽게 만들 수 있습니다. 주축, 교차축의 원리를 이해하고 Row, Column, Flexible, Expanded와 같은 위젯을 사용하는 방법을 알면 다양한 화면 크기와 방향에 적응하는 레이아웃을 만들 수 있습니다.

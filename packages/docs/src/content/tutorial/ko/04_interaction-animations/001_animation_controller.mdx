@@ -1,8 +1,8 @@
 ---
-nav_group: "Interactions and Animations"
+nav_group: "상호작용과 애니메이션"
 nav_order: 2
-title: "Animation Controller"
-description: "Master animations in Flitter using Animation Controllers for smooth and controlled animations"
+title: "애니메이션 컨트롤러"
+description: "애니메이션 컨트롤러를 사용하여 Flitter에서 부드럽고 제어된 애니메이션을 마스터하세요"
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
@@ -114,7 +114,7 @@ solved_files:
                   this.controller.forward();
                 }
               },
-              child: Text("Toggle Animation", {
+              child: Text("애니메이션 토글", {
                 style: new TextStyle({
                   fontSize: 20,
                   color: "black",
@@ -137,53 +137,53 @@ solved_files:
     }
 ---
 
-# Animation Controller in Flitter
+# Flitter의 애니메이션 컨트롤러
 
-The Animation Controller is the core class for managing animations in Flitter. It provides precise control over animation timing, direction, and state, allowing you to create smooth and interactive animations.
+애니메이션 컨트롤러는 Flitter에서 애니메이션을 관리하는 핵심 클래스입니다. 애니메이션의 타이밍, 방향, 상태를 정밀하게 제어할 수 있어 부드럽고 상호작용이 가능한 애니메이션을 만들 수 있습니다.
 
-## Core Concepts
+## 핵심 개념
 
-1. **Animation Value**: A double ranging from 0.0 to 1.0
-2. **Duration**: The length of time for the animation to complete
-3. **Direction**: Forward or reverse animation playback
-4. **State**: Animation status (dismissed, forward, reverse, completed)
+1. **애니메이션 값**: 0.0부터 1.0 사이의 double 값
+2. **지속 시간**: 애니메이션이 완료되는 데 걸리는 시간
+3. **방향**: 정방향 또는 역방향 애니메이션 재생
+4. **상태**: 애니메이션 상태 (dismissed, forward, reverse, completed)
 
-## Basic Usage
+## 기본 사용법
 
-Creating a simple animation controller:
+간단한 애니메이션 컨트롤러 생성하기:
 
 ```typescript
 import { AnimationController } from "@meursyphus/flitter";
 
 const controller = new AnimationController({
-  duration: 1000, // milliseconds
+  duration: 1000, // 밀리초
 });
 
-// Start the animation
+// 애니메이션 시작
 controller.forward();
 ```
 
-## Animation States
+## 애니메이션 상태
 
-### Controlling Animation State
+### 애니메이션 상태 제어하기
 
 ```typescript
 const controller = new AnimationController({ duration: 1000 });
 
-// Forward animation
+// 정방향 애니메이션
 controller.forward();
 
-// Reverse animation
+// 역방향 애니메이션
 controller.reverse();
 
-// Stop animation
+// 애니메이션 정지
 controller.stop();
 
-// Reset to initial state
+// 초기 상태로 리셋
 controller.reset();
 ```
 
-### Checking Animation Status
+### 애니메이션 상태 확인하기
 
 ```typescript
 controller.addListener(() => {
@@ -196,11 +196,11 @@ controller.addListener(() => {
 });
 ```
 
-## Advanced Features
+## 고급 기능
 
-### Curved Animations
+### 곡선 애니메이션
 
-Using CurvedAnimation for non-linear animation:
+비선형 애니메이션을 위한 CurvedAnimation 사용하기:
 
 ```typescript
 import {
@@ -218,31 +218,31 @@ const animation = new CurvedAnimation({
   curve: Curves.easeInOut,
 });
 
-// Use animation.value instead of controller.value
+// controller.value 대신 animation.value 사용
 ```
 
-### Repeating Animations
+### 반복 애니메이션
 
-Creating looping animations:
+루핑 애니메이션 생성하기:
 
 ```typescript
 controller.repeat({
-  reverse: true, // Optional: ping-pong animation
+  reverse: true, // 옵션: 핑퐁 애니메이션
 });
 ```
 
-### Custom Starting Points
+### 사용자 정의 시작점
 
-Starting animation from specific points:
+특정 지점에서 애니메이션 시작하기:
 
 ```typescript
-controller.forward({ from: 0.5 }); // Start from middle
-controller.reverse({ from: 1.0 }); // Start from end
+controller.forward({ from: 0.5 }); // 중간에서 시작
+controller.reverse({ from: 1.0 }); // 끝에서 시작
 ```
 
-## Animation Patterns
+## 애니메이션 패턴
 
-### Fading Widget
+### 페이딩 위젯
 
 ```typescript
 function FadingWidget({ child }) {
@@ -257,7 +257,7 @@ function FadingWidget({ child }) {
 }
 ```
 
-### Size Animation
+### 크기 애니메이션
 
 ```typescript
 function ExpandingWidget({ child }) {
@@ -278,7 +278,7 @@ function ExpandingWidget({ child }) {
 }
 ```
 
-### Combined Animations
+### 복합 애니메이션
 
 ```typescript
 function ComplexAnimation({ child }) {
@@ -304,39 +304,39 @@ function ComplexAnimation({ child }) {
 }
 ```
 
-## Best Practices
+## 모범 사례
 
-1. **Resource Management**:
+1. **리소스 관리**:
 
    ```typescript
    class AnimatedWidget extends StatefulWidget {
      dispose() {
-       controller.dispose(); // Clean up when done
+       controller.dispose(); // 사용 후 정리
        super.dispose();
      }
    }
    ```
 
-2. **Performance Optimization**:
+2. **성능 최적화**:
 
-   - Reuse animation controllers when possible
-   - Dispose controllers when no longer needed
-   - Use appropriate curves for smooth animations
+   - 애니메이션 컨트롤러를 재사용할 때는 주의하세요
+   - 필요하지 않은 애니메이션 컨트롤러는 제거하세요
+   - 부드러운 애니메이션을 위해 적절하게 곡선을 사용하세요
 
-3. **State Management**:
+3. **상태 관리**:
 
-   - Keep animation logic separate from UI logic
-   - Use state management for complex animations
-   - Handle animation completion appropriately
+   - 애니메이션 로직과 UI 로직을 분리하세요
+   - 복잡한 애니메이션에는 상태 관리를 사용하세요
+   - 애니메이션 완료 시 적절하게 처리하세요
 
-4. **Error Handling**:
-   - Check animation state before operations
-   - Handle animation interruptions gracefully
-   - Provide fallback states for animation failures
+4. **오류 처리**:
+   - 애니메이션 상태를 확인하세요
+   - 애니메이션 중단 시 적절하게 처리하세요
+   - 애니메이션 실패 시 대체 상태를 제공하세요
 
-## Common Patterns
+## 일반적인 패턴
 
-### Staggered Animations
+### 연속 애니메이션
 
 ```typescript
 function StaggeredAnimation() {
@@ -362,7 +362,7 @@ function StaggeredAnimation() {
 }
 ```
 
-### Interactive Animations
+### 상호작용 애니메이션
 
 ```typescript
 function InteractiveAnimation() {
@@ -380,6 +380,6 @@ function InteractiveAnimation() {
 }
 ```
 
-## Conclusion
+## 결론
 
-The Animation Controller is a powerful tool for creating sophisticated animations in Flitter. By understanding its capabilities and following best practices, you can create smooth, performant, and engaging animations that enhance your user interface. Remember to manage resources properly, optimize performance, and consider the user experience when implementing animations.
+애니메이션 컨트롤러는 Flitter에서 복잡한 애니메이션을 만들 수 있는 강력한 도구입니다. 애니메이션 컨트롤러의 기능을 이해하고 모범 사례를 따르면 부드럽고 성능이 좋은 애니메이션을 만들 수 있습니다. 리소스를 적절하게 관리하고, 성능을 최적화하고, 사용자 경험을 고려하여 애니메이션을 구현하세요.
