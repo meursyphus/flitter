@@ -3,7 +3,7 @@
   "repository": {
     "name": "meursyphus/flitter",
     "branch": "latest",
-    "rootDir": "."
+    "rootDir": "packages/docs"
   },
   "defaultLocale": {
     "label": "English",
