@@ -1,0 +1,226 @@
+---
+nav_group: "Basic Widgets"
+nav_order: 5
+title: "Center and Align"
+description: "Master centering and alignment techniques in Flitter"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Text,
+      TextStyle,
+      Column,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Column({
+            children: [
+              Container({
+                width: Infinity,
+                height: 100,
+                color: "lightblue",
+                child: Text("Not Centered", {
+                  style: new TextStyle({
+                    fontSize: 24,
+                    color: "black"
+                  })
+                })
+              }),
+              Container({
+                width: Infinity,
+                height: 100,
+                color: "lightgreen",
+                child: Text("Default Position", {
+                  style: new TextStyle({
+                    fontSize: 24,
+                    color: "black"
+                  })
+                })
+              }),
+              Container({
+                width: Infinity,
+                height: 100,
+                color: "lightpink",
+                child: Text("No Alignment", {
+                  style: new TextStyle({
+                    fontSize: 24,
+                    color: "black"
+                  })
+                })
+              })
+            ]
+          })}
+        />
+      );
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Text,
+      TextStyle,
+      Center,
+      Column,
+      Align,
+      Alignment,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Column({
+            children: [
+              Container({
+                height: 100,
+                color: "lightblue",
+                child: Center({
+                  child: Text("Centered", {
+                    style: new TextStyle({
+                      fontSize: 24,
+                      color: "black"
+                    })
+                  })
+                })
+              }),
+              Container({
+                height: 100,
+                color: "lightgreen",
+                child: Align({
+                  alignment: Alignment.topRight,
+                  child: Text("Top Right", {
+                    style: new TextStyle({
+                      fontSize: 24,
+                      color: "black"
+                    })
+                  })
+                })
+              }),
+              Container({
+                height: 100,
+                color: "lightpink",
+                child: Align({
+                  alignment: Alignment.bottomLeft,
+                  child: Text("Bottom Left", {
+                    style: new TextStyle({
+                      fontSize: 24,
+                      color: "black"
+                    })
+                  })
+                })
+              })
+            ]
+          })}
+        />
+      );
+    }
+---
+
+# Center and Align Widgets
+
+Flitter provides two main widgets for controlling the position of child widgets within their parent containers: `Center` and `Align`.
+
+## Center Widget
+
+The `Center` widget centers its child within itself. It's a convenient shorthand for `Align` with `Alignment.center`.
+
+```tsx
+Center({
+  child: Text("Centered Content")
+})
+```
+
+## Align Widget
+
+The `Align` widget positions its child according to the specified alignment. It offers more precise control over positioning.
+
+```tsx
+Align({
+  alignment: Alignment.topRight,
+  child: Text("Top Right Content")
+})
+```
+
+## Alignment Class
+
+The `Alignment` class provides several predefined alignment constants:
+
+- `Alignment.topLeft`
+- `Alignment.topCenter`
+- `Alignment.topRight`
+- `Alignment.centerLeft`
+- `Alignment.center`
+- `Alignment.centerRight`
+- `Alignment.bottomLeft`
+- `Alignment.bottomCenter`
+- `Alignment.bottomRight`
+
+## Best Practices
+
+1. **Choose the Right Widget**:
+   - Use `Center` for simple centering
+   - Use `Align` for other alignment needs
+   - Consider `Container` with alignment prop for additional styling
+
+2. **Parent Size Considerations**:
+   - Ensure parent widgets have defined dimensions
+   - Be aware that alignment works relative to parent bounds
+
+3. **Combining with Other Widgets**:
+   - Can be combined with `Container` for additional styling
+   - Works well within `Stack` for overlapping layouts
+
+4. **Performance**:
+   - Prefer `Center` over `Align` when centering
+   - Avoid unnecessary nesting of alignment widgets
+
+## Common Use Cases
+
+1. **Centered Content**:
+   ```tsx
+   Container({
+     color: "lightblue",
+     child: Center({
+       child: Text("Centered Content")
+     })
+   })
+   ```
+
+2. **Corner Positioning**:
+   ```tsx
+   Container({
+     child: Align({
+       alignment: Alignment.topRight,
+       child: Text("Corner Content")
+     })
+   })
+   ```
+
+3. **Custom Alignment**:
+   ```tsx
+   Align({
+     alignment: new Alignment(-0.5, 0.5), // Custom x, y coordinates
+     child: Text("Custom Position")
+   })
+   ```
+
+## Tips and Tricks
+
+1. **Responsive Alignment**:
+   - Consider using different alignments based on screen size
+   - Combine with `MediaQuery` for responsive layouts
+
+2. **Debugging Alignment**:
+   - Use colored containers to visualize alignment bounds
+   - Add debug borders to understand spacing
+
+3. **Nested Alignment**:
+   - Alignment widgets can be nested for complex layouts
+   - Be careful with excessive nesting to avoid confusion

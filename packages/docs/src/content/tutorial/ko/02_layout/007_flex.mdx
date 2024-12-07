@@ -1,0 +1,189 @@
+---
+nav_group: "Layout"
+nav_order: 2
+title: "Flex Layout"
+description: "Master Flex layouts in Flitter using Row, Column, Flexible, and Expanded widgets"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Column,
+      Container,
+      Text,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Column({
+            children: [
+              Container({ width: 100, height: 50, color: "red" }),
+              Container({ width: 100, height: 50, color: "green" }),
+              Container({ width: 100, height: 50, color: "blue" }),
+            ],
+          })}
+        />
+      );
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Row,
+      Column,
+      Container,
+      Flexible,
+      Expanded,
+      MainAxisAlignment,
+      CrossAxisAlignment,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Row({
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded({
+                flex: 2,
+                child: Container({ color: "red" }),
+              }),
+              Expanded({
+                flex: 1,
+                child: Column({
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container({ height: 50, color: "green" }),
+                    Container({ height: 50, color: "blue" }),
+                  ],
+                }),
+              }),
+            ],
+          })}
+        />
+      );
+    }
+---
+
+# Flex Layout in Flitter
+
+Flex layouts in Flitter provide a powerful and flexible way to arrange widgets in either a row or a column. This system is based on the CSS Flexbox model and is implemented primarily through the `Row` and `Column` widgets, along with supporting widgets like `Flexible` and `Expanded`.
+
+## Core Concepts
+
+1. **Main Axis**: The primary axis along which children are placed (horizontal for `Row`, vertical for `Column`).
+
+2. **Cross Axis**: The axis perpendicular to the main axis.
+
+3. **Flex Factor**: Determines how much space a child should occupy along the main axis relative to other flexible children.
+
+## Column and Row Widgets
+
+### Column Example
+
+```typescript
+import { Column, Container } from "@meursyphus/flitter";
+
+const columnExample = Column({
+  children: [
+    Container({ width: 100, height: 50, color: "red" }),
+    Container({ width: 100, height: 50, color: "green" }),
+    Container({ width: 100, height: 50, color: "blue" }),
+  ],
+});
+```
+
+Visual representation:
+```
+┌──────────────┐
+│ ┌──────────┐ │
+│ │   Red    │ │
+│ └──────────┘ │
+│ ┌──────────┐ │
+│ │  Green   │ │
+│ └──────────┘ │
+│ ┌──────────┐ │
+│ │   Blue   │ │
+│ └──────────┘ │
+└──────────────┘
+```
+
+## Nested Flex Layouts
+
+Combining Row and Column can create complex and responsive layouts.
+
+```typescript
+import {
+  Row,
+  Column,
+  Container,
+  Expanded,
+  MainAxisAlignment,
+} from "@meursyphus/flitter";
+
+const nestedFlexExample = Row({
+  crossAxisAlignment: CrossAxisAlignment.stretch,
+  children: [
+    Expanded({
+      flex: 2,
+      child: Container({ color: "red" }),
+    }),
+    Expanded({
+      flex: 1,
+      child: Column({
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Container({ height: 50, color: "green" }),
+          Container({ height: 50, color: "blue" }),
+        ],
+      }),
+    }),
+  ],
+});
+```
+
+Visual representation:
+```
+┌──────────────────────────────┐
+│          ┌─────────┐         │
+│          │         │         │
+│          │  Green  │         │
+│ ┌──────┐ ├─────────┤         │
+│ │      │ │         │         │
+│ │ Red  │ │  Blue   │         │
+│ │      │ │         │         │
+│ └──────┘ └─────────┘         │
+└──────────────────────────────┘
+```
+
+## Advanced Flex Properties
+
+### MainAxisAlignment and CrossAxisAlignment
+
+Control the alignment of children within a Row or Column.
+
+- **MainAxisAlignment**: Aligns children along the main axis.
+- **CrossAxisAlignment**: Aligns children along the cross axis.
+
+### Flexible and Expanded
+
+- **Flexible**: Allows a child to flexibly resize using a flex factor.
+- **Expanded**: A shorthand for Flexible with fit: FlexFit.tight, forcing the child to fill the available space.
+
+## Best Practices
+
+1. **Use Expanded for Proportional Sizing**: When you want widgets to share space proportionally.
+
+2. **Combine Rows and Columns**: Nest Row inside Column or vice versa to create complex layouts.
+
+3. **Alignment Matters**: Utilize MainAxisAlignment and CrossAxisAlignment to fine-tune the positioning of widgets.
+
+4. **Test Responsiveness**: Always test your layouts on different screen sizes.
+
+## Conclusion
+
+Mastering Flex layouts in Flitter allows you to create responsive and complex user interfaces with ease. By understanding the principles of the main axis, cross axis, and how to use widgets like Row, Column, Flexible, and Expanded, you can build layouts that adapt to different screen sizes and orientations.

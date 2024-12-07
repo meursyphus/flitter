@@ -1,0 +1,223 @@
+---
+nav_group: "Basic Widgets"
+nav_order: 8
+title: "AspectRatio"
+description: "Control widget dimensions using aspect ratios"
+
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      AspectRatio,
+      Column,
+      Center,
+      Text,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Column({
+            children: [
+              AspectRatio({
+                aspectRatio: 1,
+                child: Container({
+                  color: "lightblue",
+                  child: Center({
+                    child: Text("Aspect Ratio Example")
+                  })
+                })
+              }),
+              Container({ height: 20 }),
+              AspectRatio({
+                aspectRatio: 1,
+                child: Container({
+                  color: "lightblue",
+                  child: Center({
+                    child: Text("Aspect Ratio Example")
+                  })
+                })
+              })
+            ]
+          })}
+        />
+      );
+    }
+
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      AspectRatio,
+      Column,
+      Center,
+      Text,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Column({
+            children: [
+              AspectRatio({
+                aspectRatio: 2,
+                child: Container({
+                  color: "lightblue",
+                  child: Center({
+                    child: Text("Aspect Ratio Example")
+                  })
+                })
+              }),
+              Container({ height: 20 }),
+              AspectRatio({
+                aspectRatio: 0.5,
+                child: Container({
+                  color: "lightblue",
+                  child: Center({
+                    child: Text("Aspect Ratio Example")
+                  })
+                })
+              })
+            ]
+          })}
+        />
+      );
+    }
+
+---
+
+# AspectRatio Widget
+
+The AspectRatio widget sizes its child to a specific aspect ratio, which is the ratio of width to height.
+
+## Properties
+
+- `aspectRatio`: number - The ratio of width to height
+- `child`: Widget - The widget to size according to the aspect ratio
+
+## Common Aspect Ratios
+
+1. **16:9 (1.78:1)**
+   - Widescreen video
+   - Modern displays
+   ```tsx
+   AspectRatio({
+     aspectRatio: 1.78,
+     child: VideoPlayer()
+   })
+   ```
+
+2. **4:3 (1.33:1)**
+   - Traditional photos
+   - Older displays
+   ```tsx
+   AspectRatio({
+     aspectRatio: 1.33,
+     child: Image()
+   })
+   ```
+
+3. **1:1 (1:1)**
+   - Square images
+   - Profile pictures
+   ```tsx
+   AspectRatio({
+     aspectRatio: 1,
+     child: ProfileImage()
+   })
+   ```
+
+## Use Cases
+
+1. **Responsive Video Players**:
+   ```tsx
+   Container({
+     width: "100%",
+     child: AspectRatio({
+       aspectRatio: 1.78,
+       child: VideoPlayer()
+     })
+   })
+   ```
+
+2. **Image Galleries**:
+   ```tsx
+   GridView({
+     children: images.map(image =>
+       AspectRatio({
+         aspectRatio: 1,
+         child: Image(image)
+       })
+     )
+   })
+   ```
+
+3. **Cards with Media**:
+   ```tsx
+   Column({
+     children: [
+       AspectRatio({
+         aspectRatio: 1.78,
+         child: HeaderImage()
+       }),
+       CardContent()
+     ]
+   })
+   ```
+
+## Best Practices
+
+1. **Responsive Design**:
+   - Use AspectRatio for consistent layouts
+   - Consider different screen sizes
+   - Test with various parent constraints
+
+2. **Content Fitting**:
+   - Use appropriate aspect ratios for content type
+   - Consider content cropping
+   - Handle overflow appropriately
+
+3. **Performance**:
+   - Avoid unnecessary nesting
+   - Use const widgets when possible
+   - Consider caching for lists
+
+## Common Patterns
+
+1. **Media Players**:
+   - Video players
+   - Image galleries
+   - Slideshows
+
+2. **Cards and Tiles**:
+   - Product cards
+   - News articles
+   - Photo galleries
+
+3. **Profile Pictures**:
+   - User avatars
+   - Team member photos
+   - Contact images
+
+## Tips and Tricks
+
+1. **Dynamic Ratios**:
+   - Calculate ratios based on content
+   - Consider orientation changes
+   - Handle edge cases
+
+2. **Content Scaling**:
+   - Use appropriate fit modes for images
+   - Handle different content sizes
+   - Consider placeholder content
+
+3. **Layout Integration**:
+   - Combine with other layout widgets
+   - Handle parent constraints
+   - Consider overflow cases

@@ -24,6 +24,7 @@ const tutorial = defineCollection({
   }),
 });
 
+
 export const collections = {
   docs: docs,
   tutorial: tutorial,

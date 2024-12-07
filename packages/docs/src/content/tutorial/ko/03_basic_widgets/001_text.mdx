@@ -1,0 +1,351 @@
+---
+nav_group: "Basic Widgets"
+nav_order: 2
+title: "Text"
+description: "A widget for displaying text with various styles and properties"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Text,
+      Center,
+      TextStyle,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Center({
+            child: Text("Hello Flitter")
+          })}
+        />
+      );
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Text,
+      Center,
+      Column,
+      Container,
+      TextStyle,
+      TextAlign,
+      TextOverflow,
+      FontStyle,
+      SizedBox,
+      TextWidthBasis,
+      EdgeInsets,
+      BoxDecoration,
+      BorderRadius,
+      Radius,
+      Border,
+      BorderSide
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Center({
+            child: Column({
+              children: [
+                // Basic text with decoration
+                Container({
+                  padding: EdgeInsets.all(12),
+                  decoration: new BoxDecoration({
+                    color: "white",
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                    border: Border.all({
+                      color: "lightblue",
+                      width: 2
+                    })
+                  }),
+                  child: Text("Basic Text")
+                }),
+                
+                SizedBox({ height: 16 }),
+                
+                // Styled text with gradient border
+                Container({
+                  padding: EdgeInsets.all(16),
+                  decoration: new BoxDecoration({
+                    color: "aliceblue",
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                    border: Border.all({
+                      color: "blue",
+                      width: 3
+                    })
+                  }),
+                  child: Text("Styled Text", {
+                    style: new TextStyle({
+                      fontSize: 24,
+                      color: "blue",
+                      fontWeight: "bold",
+                      fontFamily: "Arial"
+                    })
+                  })
+                }),
+                
+                SizedBox({ height: 16 }),
+                
+                // Text with alignment in decorated container
+                Container({
+                  width: 200,
+                  padding: EdgeInsets.symmetric({ vertical: 12, horizontal: 16 }),
+                  decoration: new BoxDecoration({
+                    color: "lavender",
+                    borderRadius: BorderRadius.all(Radius.circular(16)),
+                    border: Border.all({
+                      color: "purple",
+                      width: 2
+                    })
+                  }),
+                  child: Text("Centered Text", {
+                    textAlign: TextAlign.center,
+                    style: new TextStyle({
+                      fontSize: 18,
+                      color: "purple"
+                    })
+                  })
+                }),
+                
+                SizedBox({ height: 16 }),
+                
+                // Text with soft wrapping in rounded container
+                Container({
+                  width: 200,
+                  padding: EdgeInsets.all(16),
+                  decoration: new BoxDecoration({
+                    color: "mistyrose",
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    border: Border.all({
+                      color: "coral",
+                      width: 2
+                    })
+                  }),
+                  child: Text("This is a long text that demonstrates soft wrapping behavior when the content exceeds container width", {
+                    softWrap: true,
+                    style: new TextStyle({
+                      fontSize: 16,
+                      color: "coral"
+                    })
+                  })
+                }),
+
+                SizedBox({ height: 16 }),
+
+                // Text with width basis in fancy container
+                Container({
+                  padding: EdgeInsets.all(16),
+                  decoration: new BoxDecoration({
+                    color: "mintcream",
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                    border: Border.all({
+                      color: "seagreen",
+                      width: 2
+                    })
+                  }),
+                  child: Text("First Line\nSecond Longer Line\nThird Line", {
+                    textWidthBasis: TextWidthBasis.longestLine,
+                    style: new TextStyle({
+                      fontSize: 16,
+                      color: "seagreen"
+                    })
+                  })
+                })
+              ]
+            })
+          })}
+        />
+      );
+    }
+---
+
+# Text Widget
+
+The Text widget displays a string of text with various styles and properties. It supports rich text formatting, alignment, overflow handling, and more.
+
+## Properties
+
+- `text`: string - The text to display
+- `style`: TextStyle - Text styling properties
+  ```tsx
+  new TextStyle({
+    color?: string,              // Text color
+    fontSize?: number,           // Font size in pixels
+    fontWeight?: string,         // Font weight (e.g., "normal", "bold")
+    fontFamily?: string,         // Font family name
+    fontStyle?: FontStyle,       // FontStyle.normal or FontStyle.italic
+    height?: number,             // Line height as multiple of font size
+    inherit?: boolean           // Whether to inherit parent style
+  })
+  ```
+- `textAlign`: TextAlign - Text alignment
+  ```tsx
+  TextAlign.left;
+  TextAlign.right;
+  TextAlign.center;
+  TextAlign.start; // Leading edge (left in LTR, right in RTL)
+  TextAlign.end; // Trailing edge (right in LTR, left in RTL)
+  ```
+- `overflow`: TextOverflow - How to handle text overflow
+  ```tsx
+  TextOverflow.clip; // Clip overflowing text
+  TextOverflow.visible; // Show overflowing text
+  TextOverflow.ellipsis; // Show ellipsis (...) for overflow
+  ```
+- `softWrap`: boolean - Whether text should break at soft line breaks
+- `textDirection`: TextDirection - The directionality of the text
+- `textWidthBasis`: TextWidthBasis - How to measure the width of the rendered text
+  ```tsx
+  TextWidthBasis.parent;      // Use parent width as basis
+  TextWidthBasis.longestLine; // Use width of longest line
+  ```
+
+## Common Use Cases
+
+1. **Basic Text**:
+
+   ```tsx
+   Text("Hello Flitter");
+   ```
+
+2. **Styled Text**:
+
+   ```tsx
+   Text("Styled Text", {
+     style: new TextStyle({
+       fontSize: 24,
+       color: "blue",
+       fontWeight: "bold",
+     }),
+   });
+   ```
+
+3. **Centered Text**:
+
+   ```tsx
+   Text("Centered Text", {
+     textAlign: TextAlign.center,
+     style: new TextStyle({
+       fontSize: 18,
+     }),
+   });
+   ```
+
+4. **Text with Overflow**:
+   ```tsx
+   Text("This is a very long text...", {
+     overflow: TextOverflow.ellipsis,
+     style: new TextStyle({
+       fontSize: 16,
+     }),
+   });
+   ```
+
+5. **Text with Line Wrapping**:
+   ```tsx
+   Text("This is a long text that will wrap to the next line when it reaches the container's width", {
+     softWrap: true,
+     style: new TextStyle({
+       fontSize: 16,
+     }),
+   });
+   ```
+
+6. **Text with Width Basis**:
+   ```tsx
+   Text("Multi-line text\nwith varying line lengths", {
+     textWidthBasis: TextWidthBasis.longestLine,
+     style: new TextStyle({
+       fontSize: 16,
+     }),
+   });
+   ```
+
+## Best Practices
+
+1. **Styling Guidelines**:
+
+   - Use TextStyle for consistent text styling
+   - Consider font scaling for accessibility
+   - Use appropriate font sizes for readability
+   - Keep color contrast in mind
+
+2. **Layout Tips**:
+
+   - Use textAlign for proper alignment
+   - Consider overflow handling
+   - Use appropriate line height for readability
+   - Handle text direction when needed
+   - Use softWrap for automatic line breaking
+   - Choose appropriate textWidthBasis for layout calculations
+
+3. **Performance Tips**:
+   - Cache TextStyle objects when possible
+   - Use const constructors
+   - Consider text measurement impact
+   - Avoid unnecessary style changes
+
+## Common Patterns
+
+1. **Title Text**:
+
+   ```tsx
+   Text("Title", {
+     style: new TextStyle({
+       fontSize: 24,
+       fontWeight: "bold",
+       color: "black",
+     }),
+   });
+   ```
+
+2. **Caption Text**:
+
+   ```tsx
+   Text("Caption", {
+     style: new TextStyle({
+       fontSize: 12,
+       color: "gray",
+       height: 1.2,
+     }),
+   });
+   ```
+
+3. **Error Message**:
+   ```tsx
+   Text("Error: Something went wrong", {
+     style: new TextStyle({
+       fontSize: 14,
+       color: "red",
+       fontWeight: "bold",
+     }),
+   });
+   ```
+
+## Tips and Tricks
+
+1. **Style Tips**:
+
+   - Use font weight for emphasis
+   - Consider line height for readability
+   - Use appropriate font families
+   - Keep text styles consistent
+
+2. **Layout Tips**:
+
+   - Use Container for text width constraints
+   - Consider text alignment with parent
+   - Handle overflow appropriately
+   - Use padding for text spacing
+
+3. **Accessibility Tips**:
+   - Use semantic font sizes
+   - Maintain good color contrast
+   - Consider text scaling
+   - Use appropriate line height

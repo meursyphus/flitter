@@ -4,8 +4,11 @@ import Layout from "../../layouts/TutorialLayout.astro";
 import { getCollection } from "astro:content";
 import TableOfContents from "./TableOfContents.astro";
 
+export const prerender = true;
+
 export const getStaticPaths = async () => {
   const tutorialEntries = await getCollection("tutorial");
+
   function resolveSlug(slug: string) {
     const segments = slug.split("/");
     const cleanedSegments = segments.map((segment) =>
@@ -15,7 +18,11 @@ export const getStaticPaths = async () => {
   }
 
   return tutorialEntries
-    .map((entry) => ({ ...entry, slug: resolveSlug(entry.slug) }))
+    .map((entry) => ({
+      ...entry,
+      slug: resolveSlug(entry.slug),
+      lang: entry.slug.split("/")[0], // 언어 정보 추출
+    }))
     .map((entry, i, arr) => ({
       params: {
         slug: entry.slug,
@@ -24,12 +31,15 @@ export const getStaticPaths = async () => {
         prev: arr[i - 1],
         next: arr[i + 1],
         entry,
+        lang: entry.lang,
       },
     }));
 };
 
 const { entry, prev, next } = Astro.props;
+
 const { Content } = await entry.render();
+
 ---
 
 <Layout title="Flitter - Tutorial">
@@ -37,7 +47,7 @@ const { Content } = await entry.render();
     class="grid h-[calc(100vh-var(--header))] grid-cols-[220px_1fr_1fr]"
     id="mainContainer"
   >
-    <aside class="relative border-r border-gray-600/30 h-full overflow-scroll">
+    <aside class="relative h-full overflow-scroll border-r border-gray-600/30">
       <div
         class="absolute -right-1 top-0 h-full w-2 cursor-col-resize hover:bg-blue-500/20"
         id="tocResizer"

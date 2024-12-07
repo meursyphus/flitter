@@ -1,0 +1,381 @@
+---
+nav_group: "Basic Widgets"
+nav_order: 10
+title: "ClipPath"
+description: "Shape your widgets with custom clip paths"
+
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Column,
+      Row,
+      Center,
+      MainAxisSize,
+      SizedBox
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Center({
+            child: Column({
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row({
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container({
+                      width: 100,
+                      height: 100,
+                      color: "red"
+                    }),
+                    SizedBox({ width: 10 }),
+                    Container({
+                      width: 100,
+                      height: 100,
+                      color: "blue"
+                    }),
+                    SizedBox({ width: 10 }),
+                    Container({
+                      width: 100,
+                      height: 100,
+                      color: "green"
+                    })
+                  ]
+                }),
+                SizedBox({ height: 10 }),
+                Row({
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container({
+                      width: 100,
+                      height: 100,
+                      color: "yellow"
+                    }),
+                    SizedBox({ width: 10 }),
+                    Container({
+                      width: 100,
+                      height: 100,
+                      color: "purple"
+                    }),
+                    SizedBox({ width: 10 }),
+                    Container({
+                      width: 100,
+                      height: 100,
+                      color: "orange"
+                    })
+                  ]
+                }),
+                SizedBox({ height: 10 }),
+                Row({
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container({
+                      width: 100,
+                      height: 100,
+                      color: "cyan"
+                    }),
+                    SizedBox({ width: 10 }),
+                    Container({
+                      width: 100,
+                      height: 100,
+                      color: "magenta"
+                    }),
+                    SizedBox({ width: 10 }),
+                    Container({
+                      width: 100,
+                      height: 100,
+                      color: "lime"
+                    })
+                  ]
+                })
+              ]
+            })
+          })}
+        />
+      );
+    }
+
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Column,
+      Row,
+      Center,
+      MainAxisSize,
+      SizedBox,
+      ClipOval,
+      ClipRRect,
+      ClipPath,
+      Path,
+      Rect,
+      Offset,
+      Radius,
+      RRect
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Center({
+            child: Column({
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // First Row: ClipOval with clipper
+                Row({
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ClipOval({
+                      clipper: (size) =>
+                        Rect.fromLTWH({
+                          left: 0,
+                          top: 0,
+                          width: size.width,
+                          height: size.height
+                        }),
+                      child: Container({
+                        width: 100,
+                        height: 100,
+                        color: "red"
+                      })
+                    }),
+                    SizedBox({ width: 10 }),
+                    ClipOval({
+                      clipper: (size) =>
+                        Rect.fromLTWH({
+                          left: 0,
+                          top: 0,
+                          width: size.width,
+                          height: size.height
+                        }),
+                      child: Container({
+                        width: 100,
+                        height: 100,
+                        color: "blue"
+                      })
+                    }),
+                    SizedBox({ width: 10 }),
+                    ClipOval({
+                      clipper: (size) =>
+                        Rect.fromLTWH({
+                          left: 0,
+                          top: 0,
+                          width: size.width,
+                          height: size.height
+                        }),
+                      child: Container({
+                        width: 100,
+                        height: 100,
+                        color: "green"
+                      })
+                    })
+                  ]
+                }),
+                SizedBox({ height: 10 }),
+                // Second Row: ClipRRect using clipper
+                Row({
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ClipRRect({
+                      clipper: (size) =>
+                        RRect.fromRectXY({
+                          rect: Rect.fromLTWH({
+                            left: 0,
+                            top: 0,
+                            width: size.width,
+                            height: size.height
+                          }),
+                          radiusX: 10,
+                          radiusY: 10
+                        }),
+                      child: Container({
+                        width: 100,
+                        height: 100,
+                        color: "yellow"
+                      })
+                    }),
+                    SizedBox({ width: 10 }),
+                    ClipRRect({
+                      clipper: (size) =>
+                        RRect.fromRectXY({
+                          rect: Rect.fromLTWH({
+                            left: 0,
+                            top: 0,
+                            width: size.width,
+                            height: size.height
+                          }),
+                          radiusX: 20,
+                          radiusY: 20
+                        }),
+                      child: Container({
+                        width: 100,
+                        height: 100,
+                        color: "purple"
+                      })
+                    }),
+                    SizedBox({ width: 10 }),
+                    ClipRRect({
+                      clipper: (size) =>
+                        RRect.fromRectXY({
+                          rect: Rect.fromLTWH({
+                            left: 0,
+                            top: 0,
+                            width: size.width,
+                            height: size.height
+                          }),
+                          radiusX: 30,
+                          radiusY: 30
+                        }),
+                      child: Container({
+                        width: 100,
+                        height: 100,
+                        color: "orange"
+                      })
+                    })
+                  ]
+                }),
+                SizedBox({ height: 10 }),
+                // Third Row: ClipPath with custom paths
+                Row({
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ClipPath({
+                      clipper: (size) =>
+                        new Path()
+                          .moveTo({ x: size.width / 2, y: 0 })
+                          .lineTo({ x: size.width, y: size.height })
+                          .lineTo({ x: 0, y: size.height })
+                          .close(),
+                      child: Container({
+                        width: 100,
+                        height: 100,
+                        color: "cyan"
+                      })
+                    }),
+                    SizedBox({ width: 10 }),
+                    ClipPath({
+                      clipper: (size) =>
+                        new Path().addOval(
+                          Rect.fromLTWH({
+                            left: 0,
+                            top: 0,
+                            width: size.width,
+                            height: size.height
+                          })
+                        ),
+                      child: Container({
+                        width: 100,
+                        height: 100,
+                        color: "magenta"
+                      })
+                    }),
+                    SizedBox({ width: 10 }),
+                    ClipPath({
+                      clipper: (size) =>
+                        new Path().addPolygons([
+                          { x: size.width / 2, y: 0 },
+                          { x: size.width, y: size.height / 2 },
+                          { x: size.width / 2, y: size.height },
+                          { x: 0, y: size.height / 2 }
+                        ]),
+                      child: Container({
+                        width: 100,
+                        height: 100,
+                        color: "lime"
+                      })
+                    })
+                  ]
+                })
+              ]
+            })
+          })}
+        />
+      );
+    }
+---
+
+# Clipping Widgets
+
+Flitter는 다양한 클리핑 위젯을 제공하여 자식 위젯을 원하는 형태로 잘라낼 수 있습니다.
+
+## 기본 클리핑 위젯
+
+1. **ClipOval**
+   - 타원형으로 자식 위젯을 클리핑
+   - 정사각형 위젯의 경우 원형으로 클리핑됨
+
+2. **ClipRRect**
+   - 둥근 모서리 사각형으로 클리핑
+   - `borderRadius` 속성으로 모서리 반경 지정
+
+3. **ClipPath**
+   - 커스텀 경로를 사용한 클리핑
+   - `Path` 클래스로 복잡한 형태 구현 가능
+
+## Properties
+
+### ClipOval
+- `child`: Widget - 클리핑될 자식 위젯
+
+### ClipRRect
+- `borderRadius`: Radius - 모서리 반경
+- `child`: Widget - 클리핑될 자식 위젯
+
+### ClipPath
+- `clipper`: (size: Size) => Path - 클리핑 경로를 생성하는 함수
+- `child`: Widget - 클리핑될 자식 위젯
+
+## Path와 Rect 활용
+
+Path 클래스와 Rect 클래스를 함께 사용하면 더 정교한 클리핑을 구현할 수 있습니다.
+
+### Rect 클래스 주요 메서드
+
+1. **생성 메서드**:
+   ```tsx
+   // 좌표로 생성
+   Rect.fromLTRB({ left, top, right, bottom })
+   
+   // 위치와 크기로 생성
+   Rect.fromLTWH({ left, top, width, height })
+   
+   // 중심점 기준 생성
+   Rect.fromCenter({ center, width, height })
+   
+   // 원 기준 생성
+   Rect.fromCircle({ center, radius })
+   ```
+
+2. **유용한 속성**:
+   ```tsx
+   rect.center     // 중심점
+   rect.topLeft    // 좌상단 좌표
+   rect.topCenter  // 상단 중앙 좌표
+   rect.width      // 너비
+   rect.height     // 높이
+   ```
+
+## Best Practices
+
+1. **성능 최적화**:
+   - 단순한 형태는 `ClipOval`이나 `ClipRRect` 사용
+   - 복잡한 클리핑은 `ClipPath` 사용
+   - 불필요한 계산 피하기
+
+2. **레이아웃 고려사항**:
+   - 클리핑은 시각적 효과만 있음
+   - 실제 레이아웃 크기는 변경되지 않음
+   - 적절한 여백과 정렬 사용
+
+3. **반응형 디자인**:
+   - `Rect` 클래스의 static 메서드 활용
+   - 상대적 좌표 계산에 `center` 속성 활용
+   - 크기에 따른 동적 조정

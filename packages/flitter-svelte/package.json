@@ -46,5 +46,8 @@
 	"bugs": {
 		"url": "https://github.com/meursyphus/flitter/issues"
 	},
-	"license": "MIT"
+	"license": "MIT",
+	"peerDependencies": {
+		"svelte": "^4.0.0 || ^5.0.0"
+	}
 }

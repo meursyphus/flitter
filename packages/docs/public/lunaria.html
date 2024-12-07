@@ -1,0 +1,2196 @@
+
+		<!doctype html>
+		<html dir="ltr" lang="en">
+			<head>
+				<!-- Built-in/custom meta tags -->
+				
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+	<title>Localization Status</title>
+	<meta name="description" content="Online localization status dashboard of the project " />
+	
+	<meta property="og:title" content="Localization Status" />
+	<meta property="og:type" content="website" />
+	
+	<meta property="og:description" content="Online localization status dashboard of the project " />
+	 
+
+				<!-- Additional head tags -->
+				
+				<!-- Built-in styles -->
+				
+	<style>
+		:root {
+			/** Fonts */
+			--ln-font-fallback: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+				Apple Color Emoji, Segoe UI Emoji;
+			--ln-font-body: system-ui, var(--ln-font-fallback);
+			--ln-font-mono: 'IBM Plex Mono', Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console',
+				'Lucida Sans Typewriter', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Liberation Mono',
+				'Nimbus Mono L', Monaco, 'Courier New', Courier, monospace;
+
+			/* Light theme colors */
+			--ln-color-white: #f9fafb;
+			--ln-color-gray-1: #f3f4f6;
+			--ln-color-gray-2: #e5e7eb;
+			--ln-color-gray-3: #d1d5db;
+			--ln-color-gray-4: #9ca3af;
+			--ln-color-gray-5: #6b7280;
+			--ln-color-gray-6: #4b5563;
+			--ln-color-gray-7: #374151;
+			--ln-color-black: #030712;
+			--ln-color-blue: #3b82f6;
+			--ln-color-orange: #f97316;
+			--ln-color-purple: #a855f7;
+
+			/** Contextual colors */
+			--ln-color-background: var(--ln-color-white);
+			--ln-color-link: var(--ln-color-blue);
+			--ln-color-done: var(--ln-color-purple);
+			--ln-color-outdated: var(--ln-color-orange);
+			--ln-color-missing: var(--ln-color-black);
+			--ln-color-table-border: var(--ln-color-gray-3);
+			--ln-color-table-background: var(--ln-color-gray-1);
+		}
+
+		@media (prefers-color-scheme: dark) {
+			:root {
+				/* Dark theme colors */
+				--ln-color-white: #030712;
+				--ln-color-gray-1: #374151;
+				--ln-color-gray-2: #4b5563;
+				--ln-color-gray-3: #6b7280;
+				--ln-color-gray-4: #9ca3af;
+				--ln-color-gray-5: #d1d5db;
+				--ln-color-gray-6: #e5e7eb;
+				--ln-color-gray-7: #f3f4f6;
+				--ln-color-black: #f9fafb;
+				--ln-color-blue: #60a5fa;
+				--ln-color-orange: #fb923c;
+				--ln-color-purple: #c084fc;
+			}
+		}
+
+		* {
+			box-sizing: border-box;
+			margin: 0;
+		}
+
+		html {
+			background: var(--ln-color-background);
+			scrollbar-gutter: stable;
+		}
+
+		body {
+			color: var(--ln-color-black);
+			display: flex;
+			flex-direction: column;
+			font-family: var(--ln-font-body);
+			font-size: 16px;
+			line-height: 1.5;
+			margin-block: 2rem;
+			margin-inline: 1rem;
+		}
+
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			margin-bottom: 1rem;
+			font-weight: bold;
+			line-height: 1.3;
+		}
+
+		h1,
+		h2 {
+			max-width: 40ch;
+		}
+
+		h1 {
+			font-size: 2.25rem;
+			font-weight: 900;
+		}
+
+		h2 {
+			font-size: 1.875rem;
+			margin-top: 4rem;
+		}
+
+		h3,
+		h4 {
+			margin-top: 3rem;
+		}
+
+		h5,
+		h6 {
+			margin-top: 2rem;
+		}
+
+		main {
+			max-width: 80ch;
+			margin-inline: auto;
+		}
+
+		.limit-to-viewport {
+			max-width: calc(100vw - 2rem);
+		}
+
+		p + p {
+			margin-top: 1.25rem;
+		}
+
+		a {
+			color: var(--ln-color-link);
+			text-decoration: none;
+		}
+
+		h2 a {
+			color: inherit;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+
+		ul {
+			font-size: 0.875rem;
+		}
+
+		.progress-details {
+			margin-bottom: 1.25rem;
+		}
+
+		details summary {
+			cursor: pointer;
+			user-select: none;
+		}
+
+		details summary:hover strong,
+		details summary:hover::marker {
+			color: var(--ln-color-gray-5);
+		}
+
+		details p {
+			margin-top: 1.2rem;
+		}
+
+		details h3 {
+			margin-top: 1.2rem;
+			font-size: 0.8rem;
+		}
+
+		details h4 {
+			margin-top: 1rem;
+			font-size: 0.8rem;
+		}
+
+		details > :last-child {
+			margin-bottom: 1rem;
+		}
+
+		.create-button {
+			padding: 0.1em 0.5em;
+			font-weight: bold;
+			font-size: 0.75rem;
+		}
+
+		.status-by-file {
+			margin-bottom: 1rem;
+			border-collapse: collapse;
+			border: 1px solid var(--ln-color-table-border);
+			font-size: 0.8125rem;
+			column-gap: 64px;
+		}
+
+		.status-by-file tr:first-of-type td {
+			padding-top: 0.5rem;
+		}
+
+		.status-by-file tr:last-of-type td {
+			padding-bottom: 0.5rem;
+		}
+
+		.status-by-file tr td:first-of-type {
+			padding-inline: 1rem;
+		}
+
+		.status-by-file th {
+			border-bottom: 1px solid var(--ln-color-table-border);
+			background: var(--ln-color-table-background);
+			position: sticky;
+			top: -1px;
+			white-space: nowrap;
+			padding-inline: 0.3rem;
+		}
+
+		.status-by-file th,
+		.status-by-file td {
+			padding-block: 0.2rem;
+		}
+
+		.status-by-file tbody tr:hover td {
+			background: var(--ln-color-table-background);
+		}
+
+		.status-by-file th:first-of-type,
+		.status-by-file td:first-of-type {
+			text-align: left;
+			padding-inline-start: 1rem;
+		}
+
+		.status-by-file th:last-of-type,
+		.status-by-file td:last-of-type {
+			text-align: center;
+			padding-inline-end: 1rem;
+		}
+
+		.status-by-file td:not(:first-of-type) {
+			min-width: 2rem;
+			text-align: center;
+			cursor: default;
+		}
+
+		.status-by-file td:not(:first-of-type) a {
+			text-decoration: none;
+		}
+
+		.progress-summary {
+			font-size: 0.8125rem;
+		}
+
+		.progress-bar {
+			display: flex;
+			flex-direction: row;
+			margin-top: 0.5rem;
+		}
+
+		.progress-bar div:first-of-type {
+			border-radius: 36px 0px 0px 36px;
+		}
+
+		.progress-bar div:last-of-type {
+			border-radius: 0px 36px 36px 0px;
+		}
+
+		.done-bar,
+		.outdated-bar,
+		.missing-bar {
+			width: 1rem;
+			height: 1rem;
+		}
+
+		.done-bar {
+			background-color: var(--ln-color-done);
+		}
+
+		.outdated-bar {
+			background-color: var(--ln-color-outdated);
+		}
+
+		.missing-bar {
+			background-color: var(--ln-color-missing);
+		}
+
+		.capitalize {
+			text-transform: capitalize;
+		}
+	</style>
+
+				<!-- Custom styles -->
+				
+			</head>
+			<body>
+				<!-- Built-in/custom body content -->
+				
+		<main>
+			<div class="limit-to-viewport">
+				
+				<h1>Localization Status</h1>
+				
+				
+		<h2 id="by-locale">
+			<a href="#by-locale">Localization progress by locale</a>
+		</h2>
+		
+		<details class="progress-details">
+			<summary>
+				<strong
+					>English (en)</strong
+				>
+				<br />
+				<span class="progress-summary"
+					>82 done, 0 outdated, 0 missing</span
+				>
+				<br />
+				
+		<div class="progress-bar" aria-hidden="true">
+			<div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div> 
+			
+		</div>
+	
+			</summary>
+			
+			
+			<p>This localization is complete, amazing job! 🎉</p>
+		</details>
+	
+		<details class="progress-details">
+			<summary>
+				<strong
+					>Korean (ko)</strong
+				>
+				<br />
+				<span class="progress-summary"
+					>0 done, 0 outdated, 82 missing</span
+				>
+				<br />
+				
+		<div class="progress-bar" aria-hidden="true">
+			 
+			<div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div><div class="missing-bar"></div>
+		</div>
+	
+			</summary>
+			
+			<h3 class="capitalize">missing</h3>
+						<ul>
+							
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/00_get-started/000_introduction.mdx">packages/docs/src/content/tutorial/00_get-started/000_introduction.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/00_get-started/000_introduction.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/00_get-started/001_installation.mdx">packages/docs/src/content/tutorial/00_get-started/001_installation.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/00_get-started/001_installation.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/00_get-started/002_flitter-react.mdx">packages/docs/src/content/tutorial/00_get-started/002_flitter-react.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/00_get-started/002_flitter-react.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/01_core-concepts/003_what-are-widgets.mdx">packages/docs/src/content/tutorial/01_core-concepts/003_what-are-widgets.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/01_core-concepts/003_what-are-widgets.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/01_core-concepts/005_state-management.mdx">packages/docs/src/content/tutorial/01_core-concepts/005_state-management.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/01_core-concepts/005_state-management.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/02_layout/006_box-model.mdx">packages/docs/src/content/tutorial/02_layout/006_box-model.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/02_layout/006_box-model.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/02_layout/007_flex.mdx">packages/docs/src/content/tutorial/02_layout/007_flex.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/02_layout/007_flex.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/02_layout/008_stack.mdx">packages/docs/src/content/tutorial/02_layout/008_stack.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/02_layout/008_stack.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/02_layout/009_constraints.mdx">packages/docs/src/content/tutorial/02_layout/009_constraints.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/02_layout/009_constraints.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/000_container.mdx">packages/docs/src/content/tutorial/03_basic_widgets/000_container.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/000_container.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/001_text.mdx">packages/docs/src/content/tutorial/03_basic_widgets/001_text.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/001_text.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/003_padding_margin.mdx">packages/docs/src/content/tutorial/03_basic_widgets/003_padding_margin.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/003_padding_margin.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/004_center_align.mdx">packages/docs/src/content/tutorial/03_basic_widgets/004_center_align.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/004_center_align.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/005_flex_widgets.mdx">packages/docs/src/content/tutorial/03_basic_widgets/005_flex_widgets.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/005_flex_widgets.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/006_stack_positioned.mdx">packages/docs/src/content/tutorial/03_basic_widgets/006_stack_positioned.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/006_stack_positioned.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/007_aspect_ratio.mdx">packages/docs/src/content/tutorial/03_basic_widgets/007_aspect_ratio.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/007_aspect_ratio.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/008_overflow.mdx">packages/docs/src/content/tutorial/03_basic_widgets/008_overflow.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/008_overflow.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/009_clip.mdx">packages/docs/src/content/tutorial/03_basic_widgets/009_clip.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/009_clip.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/011_transform.mdx">packages/docs/src/content/tutorial/03_basic_widgets/011_transform.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/011_transform.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/012_opacity.mdx">packages/docs/src/content/tutorial/03_basic_widgets/012_opacity.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/012_opacity.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/013_gesture_detector.mdx">packages/docs/src/content/tutorial/03_basic_widgets/013_gesture_detector.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/013_gesture_detector.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/04_interaction-animations/000_geture_detector.mdx">packages/docs/src/content/tutorial/04_interaction-animations/000_geture_detector.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/04_interaction-animations/000_geture_detector.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/04_interaction-animations/001_animation_controller.mdx">packages/docs/src/content/tutorial/04_interaction-animations/001_animation_controller.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/04_interaction-animations/001_animation_controller.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/advanced-feature/custom-pinater.mdx">packages/docs/src/content/docs/advanced-feature/custom-pinater.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/advanced-feature/custom-pinater.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/advanced-feature/custom-renderobject.mdx">packages/docs/src/content/docs/advanced-feature/custom-renderobject.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/advanced-feature/custom-renderobject.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/advanced-feature/provider.mdx">packages/docs/src/content/docs/advanced-feature/provider.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/advanced-feature/provider.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/advanced-feature/svg-vs-canvas.mdx">packages/docs/src/content/docs/advanced-feature/svg-vs-canvas.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/advanced-feature/svg-vs-canvas.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/basic-widgets/container.mdx">packages/docs/src/content/docs/basic-widgets/container.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/basic-widgets/container.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/basic-widgets/flex-row-column.mdx">packages/docs/src/content/docs/basic-widgets/flex-row-column.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/basic-widgets/flex-row-column.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/basic-widgets/stack.mdx">packages/docs/src/content/docs/basic-widgets/stack.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/basic-widgets/stack.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/basic-widgets/text.mdx">packages/docs/src/content/docs/basic-widgets/text.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/basic-widgets/text.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/concepts/flutter-like.mdx">packages/docs/src/content/docs/concepts/flutter-like.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/concepts/flutter-like.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/concepts/state-management.mdx">packages/docs/src/content/docs/concepts/state-management.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/concepts/state-management.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/concepts/widget.mdx">packages/docs/src/content/docs/concepts/widget.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/concepts/widget.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/creating-your-first-app.mdx">packages/docs/src/content/docs/creating-your-first-app.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/creating-your-first-app.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/installation.mdx">packages/docs/src/content/docs/installation.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/installation.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/interactions-and-animations/animation-controller.mdx">packages/docs/src/content/docs/interactions-and-animations/animation-controller.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/interactions-and-animations/animation-controller.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/interactions-and-animations/gesture-detector.mdx">packages/docs/src/content/docs/interactions-and-animations/gesture-detector.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/interactions-and-animations/gesture-detector.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/introduction.mdx">packages/docs/src/content/docs/introduction.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/introduction.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/layout/box-model.mdx">packages/docs/src/content/docs/layout/box-model.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/layout/box-model.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/layout/flex.mdx">packages/docs/src/content/docs/layout/flex.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/layout/flex.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/layout/stack.mdx">packages/docs/src/content/docs/layout/stack.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/layout/stack.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Align/index.mdx">packages/docs/src/content/docs/widgets/Align/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Align/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedAlign/index.mdx">packages/docs/src/content/docs/widgets/AnimatedAlign/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedAlign/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedContainer/index.mdx">packages/docs/src/content/docs/widgets/AnimatedContainer/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedContainer/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedFractionallySizedBox/index.mdx">packages/docs/src/content/docs/widgets/AnimatedFractionallySizedBox/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedFractionallySizedBox/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedOpacity/index.mdx">packages/docs/src/content/docs/widgets/AnimatedOpacity/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedOpacity/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedPadding/index.mdx">packages/docs/src/content/docs/widgets/AnimatedPadding/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedPadding/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedPositioned/index.mdx">packages/docs/src/content/docs/widgets/AnimatedPositioned/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedPositioned/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedRotation/index.mdx">packages/docs/src/content/docs/widgets/AnimatedRotation/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedRotation/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedScale/index.mdx">packages/docs/src/content/docs/widgets/AnimatedScale/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedScale/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedSlide/index.mdx">packages/docs/src/content/docs/widgets/AnimatedSlide/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedSlide/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AspectRatio/index.mdx">packages/docs/src/content/docs/widgets/AspectRatio/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AspectRatio/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Center/index.mdx">packages/docs/src/content/docs/widgets/Center/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Center/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ClipOval/index.mdx">packages/docs/src/content/docs/widgets/ClipOval/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/ClipOval/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ClipPath/index.mdx">packages/docs/src/content/docs/widgets/ClipPath/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/ClipPath/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ClipRRect/index.mdx">packages/docs/src/content/docs/widgets/ClipRRect/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/ClipRRect/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ClipRect/index.mdx">packages/docs/src/content/docs/widgets/ClipRect/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/ClipRect/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ConstrainedBox/index.mdx">packages/docs/src/content/docs/widgets/ConstrainedBox/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/ConstrainedBox/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ConstraintsTransformBox/index.mdx">packages/docs/src/content/docs/widgets/ConstraintsTransformBox/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/ConstraintsTransformBox/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Container/index.mdx">packages/docs/src/content/docs/widgets/Container/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Container/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/CustomPaint/index.mdx">packages/docs/src/content/docs/widgets/CustomPaint/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/CustomPaint/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/DecoratedBox/index.mdx">packages/docs/src/content/docs/widgets/DecoratedBox/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/DecoratedBox/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Draggable/index.mdx">packages/docs/src/content/docs/widgets/Draggable/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Draggable/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Expanded/index.mdx">packages/docs/src/content/docs/widgets/Expanded/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Expanded/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Flex/index.mdx">packages/docs/src/content/docs/widgets/Flex/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Flex/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/FractionalTranslation/index.mdx">packages/docs/src/content/docs/widgets/FractionalTranslation/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/FractionalTranslation/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/FractionallySizedBox/index.mdx">packages/docs/src/content/docs/widgets/FractionallySizedBox/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/FractionallySizedBox/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/GestureDetector/index.mdx">packages/docs/src/content/docs/widgets/GestureDetector/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/GestureDetector/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/IndexedStack/index.mdx">packages/docs/src/content/docs/widgets/IndexedStack/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/IndexedStack/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/LimitedBox/index.mdx">packages/docs/src/content/docs/widgets/LimitedBox/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/LimitedBox/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Opacity/index.mdx">packages/docs/src/content/docs/widgets/Opacity/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Opacity/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/OverflowBox/index.mdx">packages/docs/src/content/docs/widgets/OverflowBox/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/OverflowBox/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/RichText/index.mdx">packages/docs/src/content/docs/widgets/RichText/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/RichText/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Row/index.mdx">packages/docs/src/content/docs/widgets/Row/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Row/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/SizedBox/index.mdx">packages/docs/src/content/docs/widgets/SizedBox/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/SizedBox/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Spacer/index.mdx">packages/docs/src/content/docs/widgets/Spacer/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Spacer/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Stack/index.mdx">packages/docs/src/content/docs/widgets/Stack/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Stack/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Tooltip/Widget.mdx">packages/docs/src/content/docs/widgets/Tooltip/Widget.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Tooltip/Widget.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Transform/index.mdx">packages/docs/src/content/docs/widgets/Transform/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Transform/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/UnconstrainedBox/index.mdx">packages/docs/src/content/docs/widgets/UnconstrainedBox/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/UnconstrainedBox/index.mdx">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ZIndex/index.mdx">packages/docs/src/content/docs/widgets/ZIndex/index.mdx</a>
+										<a class="create-button" href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/ZIndex/index.mdx">Create file</a>
+									</li>
+								
+						</ul>
+			
+		</details>
+	
+	
+				
+			</div>
+			
+		<h2 id="by-file">
+			<a href="#by-file">Localization status by file</a>
+		</h2>
+		<table class="status-by-file">
+			<thead>
+				<tr>
+					<th>File</th><th>en</th><th>ko</th>
+				</tr>
+			</thead>
+			
+		<tbody>
+			
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/00_get-started/000_introduction.mdx">packages/docs/src/content/tutorial/00_get-started/000_introduction.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/00_get-started/000_introduction.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/00_get-started/000_introduction.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/00_get-started/001_installation.mdx">packages/docs/src/content/tutorial/00_get-started/001_installation.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/00_get-started/001_installation.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/00_get-started/001_installation.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/00_get-started/002_flitter-react.mdx">packages/docs/src/content/tutorial/00_get-started/002_flitter-react.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/00_get-started/002_flitter-react.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/00_get-started/002_flitter-react.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/01_core-concepts/003_what-are-widgets.mdx">packages/docs/src/content/tutorial/01_core-concepts/003_what-are-widgets.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/01_core-concepts/003_what-are-widgets.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/01_core-concepts/003_what-are-widgets.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/01_core-concepts/005_state-management.mdx">packages/docs/src/content/tutorial/01_core-concepts/005_state-management.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/01_core-concepts/005_state-management.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/01_core-concepts/005_state-management.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/02_layout/006_box-model.mdx">packages/docs/src/content/tutorial/02_layout/006_box-model.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/02_layout/006_box-model.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/02_layout/006_box-model.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/02_layout/007_flex.mdx">packages/docs/src/content/tutorial/02_layout/007_flex.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/02_layout/007_flex.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/02_layout/007_flex.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/02_layout/008_stack.mdx">packages/docs/src/content/tutorial/02_layout/008_stack.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/02_layout/008_stack.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/02_layout/008_stack.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/02_layout/009_constraints.mdx">packages/docs/src/content/tutorial/02_layout/009_constraints.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/02_layout/009_constraints.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/02_layout/009_constraints.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/000_container.mdx">packages/docs/src/content/tutorial/03_basic_widgets/000_container.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/000_container.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/000_container.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/001_text.mdx">packages/docs/src/content/tutorial/03_basic_widgets/001_text.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/001_text.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/001_text.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/003_padding_margin.mdx">packages/docs/src/content/tutorial/03_basic_widgets/003_padding_margin.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/003_padding_margin.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/003_padding_margin.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/004_center_align.mdx">packages/docs/src/content/tutorial/03_basic_widgets/004_center_align.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/004_center_align.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/004_center_align.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/005_flex_widgets.mdx">packages/docs/src/content/tutorial/03_basic_widgets/005_flex_widgets.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/005_flex_widgets.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/005_flex_widgets.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/006_stack_positioned.mdx">packages/docs/src/content/tutorial/03_basic_widgets/006_stack_positioned.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/006_stack_positioned.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/006_stack_positioned.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/007_aspect_ratio.mdx">packages/docs/src/content/tutorial/03_basic_widgets/007_aspect_ratio.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/007_aspect_ratio.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/007_aspect_ratio.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/008_overflow.mdx">packages/docs/src/content/tutorial/03_basic_widgets/008_overflow.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/008_overflow.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/008_overflow.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/009_clip.mdx">packages/docs/src/content/tutorial/03_basic_widgets/009_clip.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/009_clip.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/009_clip.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/011_transform.mdx">packages/docs/src/content/tutorial/03_basic_widgets/011_transform.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/011_transform.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/011_transform.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/012_opacity.mdx">packages/docs/src/content/tutorial/03_basic_widgets/012_opacity.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/012_opacity.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/012_opacity.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/013_gesture_detector.mdx">packages/docs/src/content/tutorial/03_basic_widgets/013_gesture_detector.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/03_basic_widgets/013_gesture_detector.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/03_basic_widgets/013_gesture_detector.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/04_interaction-animations/000_geture_detector.mdx">packages/docs/src/content/tutorial/04_interaction-animations/000_geture_detector.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/04_interaction-animations/000_geture_detector.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/04_interaction-animations/000_geture_detector.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/04_interaction-animations/001_animation_controller.mdx">packages/docs/src/content/tutorial/04_interaction-animations/001_animation_controller.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/tutorial/en/04_interaction-animations/001_animation_controller.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/tutorial/ko/04_interaction-animations/001_animation_controller.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/advanced-feature/custom-pinater.mdx">packages/docs/src/content/docs/advanced-feature/custom-pinater.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/advanced-feature/custom-pinater.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/advanced-feature/custom-pinater.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/advanced-feature/custom-renderobject.mdx">packages/docs/src/content/docs/advanced-feature/custom-renderobject.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/advanced-feature/custom-renderobject.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/advanced-feature/custom-renderobject.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/advanced-feature/provider.mdx">packages/docs/src/content/docs/advanced-feature/provider.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/advanced-feature/provider.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/advanced-feature/provider.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/advanced-feature/svg-vs-canvas.mdx">packages/docs/src/content/docs/advanced-feature/svg-vs-canvas.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/advanced-feature/svg-vs-canvas.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/advanced-feature/svg-vs-canvas.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/basic-widgets/container.mdx">packages/docs/src/content/docs/basic-widgets/container.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/basic-widgets/container.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/basic-widgets/container.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/basic-widgets/flex-row-column.mdx">packages/docs/src/content/docs/basic-widgets/flex-row-column.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/basic-widgets/flex-row-column.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/basic-widgets/flex-row-column.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/basic-widgets/stack.mdx">packages/docs/src/content/docs/basic-widgets/stack.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/basic-widgets/stack.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/basic-widgets/stack.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/basic-widgets/text.mdx">packages/docs/src/content/docs/basic-widgets/text.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/basic-widgets/text.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/basic-widgets/text.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/concepts/flutter-like.mdx">packages/docs/src/content/docs/concepts/flutter-like.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/concepts/flutter-like.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/concepts/flutter-like.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/concepts/state-management.mdx">packages/docs/src/content/docs/concepts/state-management.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/concepts/state-management.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/concepts/state-management.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/concepts/widget.mdx">packages/docs/src/content/docs/concepts/widget.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/concepts/widget.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/concepts/widget.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/creating-your-first-app.mdx">packages/docs/src/content/docs/creating-your-first-app.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/creating-your-first-app.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/creating-your-first-app.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/installation.mdx">packages/docs/src/content/docs/installation.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/installation.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/installation.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/interactions-and-animations/animation-controller.mdx">packages/docs/src/content/docs/interactions-and-animations/animation-controller.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/interactions-and-animations/animation-controller.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/interactions-and-animations/animation-controller.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/interactions-and-animations/gesture-detector.mdx">packages/docs/src/content/docs/interactions-and-animations/gesture-detector.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/interactions-and-animations/gesture-detector.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/interactions-and-animations/gesture-detector.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/introduction.mdx">packages/docs/src/content/docs/introduction.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/introduction.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/introduction.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/layout/box-model.mdx">packages/docs/src/content/docs/layout/box-model.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/layout/box-model.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/layout/box-model.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/layout/flex.mdx">packages/docs/src/content/docs/layout/flex.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/layout/flex.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/layout/flex.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/layout/stack.mdx">packages/docs/src/content/docs/layout/stack.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/layout/stack.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/layout/stack.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Align/index.mdx">packages/docs/src/content/docs/widgets/Align/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Align/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Align/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedAlign/index.mdx">packages/docs/src/content/docs/widgets/AnimatedAlign/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedAlign/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedAlign/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedContainer/index.mdx">packages/docs/src/content/docs/widgets/AnimatedContainer/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedContainer/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedContainer/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedFractionallySizedBox/index.mdx">packages/docs/src/content/docs/widgets/AnimatedFractionallySizedBox/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedFractionallySizedBox/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedFractionallySizedBox/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedOpacity/index.mdx">packages/docs/src/content/docs/widgets/AnimatedOpacity/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedOpacity/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedOpacity/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedPadding/index.mdx">packages/docs/src/content/docs/widgets/AnimatedPadding/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedPadding/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedPadding/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedPositioned/index.mdx">packages/docs/src/content/docs/widgets/AnimatedPositioned/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedPositioned/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedPositioned/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedRotation/index.mdx">packages/docs/src/content/docs/widgets/AnimatedRotation/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedRotation/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedRotation/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedScale/index.mdx">packages/docs/src/content/docs/widgets/AnimatedScale/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedScale/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedScale/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedSlide/index.mdx">packages/docs/src/content/docs/widgets/AnimatedSlide/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AnimatedSlide/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AnimatedSlide/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AspectRatio/index.mdx">packages/docs/src/content/docs/widgets/AspectRatio/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/AspectRatio/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/AspectRatio/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Center/index.mdx">packages/docs/src/content/docs/widgets/Center/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Center/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Center/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ClipOval/index.mdx">packages/docs/src/content/docs/widgets/ClipOval/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ClipOval/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/ClipOval/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ClipPath/index.mdx">packages/docs/src/content/docs/widgets/ClipPath/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ClipPath/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/ClipPath/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ClipRRect/index.mdx">packages/docs/src/content/docs/widgets/ClipRRect/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ClipRRect/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/ClipRRect/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ClipRect/index.mdx">packages/docs/src/content/docs/widgets/ClipRect/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ClipRect/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/ClipRect/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ConstrainedBox/index.mdx">packages/docs/src/content/docs/widgets/ConstrainedBox/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ConstrainedBox/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/ConstrainedBox/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ConstraintsTransformBox/index.mdx">packages/docs/src/content/docs/widgets/ConstraintsTransformBox/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ConstraintsTransformBox/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/ConstraintsTransformBox/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Container/index.mdx">packages/docs/src/content/docs/widgets/Container/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Container/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Container/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/CustomPaint/index.mdx">packages/docs/src/content/docs/widgets/CustomPaint/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/CustomPaint/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/CustomPaint/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/DecoratedBox/index.mdx">packages/docs/src/content/docs/widgets/DecoratedBox/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/DecoratedBox/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/DecoratedBox/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Draggable/index.mdx">packages/docs/src/content/docs/widgets/Draggable/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Draggable/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Draggable/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Expanded/index.mdx">packages/docs/src/content/docs/widgets/Expanded/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Expanded/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Expanded/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Flex/index.mdx">packages/docs/src/content/docs/widgets/Flex/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Flex/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Flex/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/FractionalTranslation/index.mdx">packages/docs/src/content/docs/widgets/FractionalTranslation/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/FractionalTranslation/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/FractionalTranslation/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/FractionallySizedBox/index.mdx">packages/docs/src/content/docs/widgets/FractionallySizedBox/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/FractionallySizedBox/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/FractionallySizedBox/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/GestureDetector/index.mdx">packages/docs/src/content/docs/widgets/GestureDetector/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/GestureDetector/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/GestureDetector/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/IndexedStack/index.mdx">packages/docs/src/content/docs/widgets/IndexedStack/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/IndexedStack/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/IndexedStack/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/LimitedBox/index.mdx">packages/docs/src/content/docs/widgets/LimitedBox/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/LimitedBox/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/LimitedBox/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Opacity/index.mdx">packages/docs/src/content/docs/widgets/Opacity/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Opacity/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Opacity/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/OverflowBox/index.mdx">packages/docs/src/content/docs/widgets/OverflowBox/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/OverflowBox/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/OverflowBox/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/RichText/index.mdx">packages/docs/src/content/docs/widgets/RichText/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/RichText/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/RichText/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Row/index.mdx">packages/docs/src/content/docs/widgets/Row/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Row/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Row/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/SizedBox/index.mdx">packages/docs/src/content/docs/widgets/SizedBox/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/SizedBox/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/SizedBox/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Spacer/index.mdx">packages/docs/src/content/docs/widgets/Spacer/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Spacer/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Spacer/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Stack/index.mdx">packages/docs/src/content/docs/widgets/Stack/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Stack/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Stack/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Tooltip/Widget.mdx">packages/docs/src/content/docs/widgets/Tooltip/Widget.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Tooltip/Widget.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Tooltip/Widget.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Transform/index.mdx">packages/docs/src/content/docs/widgets/Transform/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/Transform/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/Transform/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/UnconstrainedBox/index.mdx">packages/docs/src/content/docs/widgets/UnconstrainedBox/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/UnconstrainedBox/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/UnconstrainedBox/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ZIndex/index.mdx">packages/docs/src/content/docs/widgets/ZIndex/index.mdx</a></td>
+						
+		<td>
+			<a href="https://github.com/meursyphus/flitter/blob/latest/packages/docs/packages/docs/src/content/docs/en/widgets/ZIndex/index.mdx" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/meursyphus/flitter/new/latest?filename=packages/docs/packages/docs/src/content/docs/ko/widgets/ZIndex/index.mdx" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+		</tbody>
+	
+		</table>
+		<sup class="capitalize"
+			>❌ missing &nbsp; 🔄 outdated &nbsp; ✔ done
+		</sup>
+	
+			
+		</main>
+	
+			</body>
+		</html>
+	

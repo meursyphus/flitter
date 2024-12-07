@@ -2,20 +2,28 @@
 import { getCollection } from "astro:content";
 
 const tutorials = await getCollection("tutorial");
-const sortedTutorials = tutorials
-  .map((entry) => ({
+const sortedTutorials = tutorials.map((entry) => {
+  const segments = entry.slug.split("/");
+  const lang = segments[0];
+  return {
     ...entry,
-    slug: entry.slug
-      .split("/")
-      .map((segment) => segment.replace(/^\d+_/, ""))
-      .join("/"),
-    order: parseInt(entry.slug.split("/")[0].split("_")[0]) || 0,
+    lang,
+    slug: segments.map((segment) => segment.replace(/^\d+_/, "")).join("/"),
+    order: parseInt(segments[1].split("_")[0]) || 0,
     nav_group: entry.data.nav_group || "Others",
-  }))
-  .sort((a, b) => a.order - b.order);
+  };
+});
 
-// Group tutorials by nav_group
-const groupedTutorials = sortedTutorials.reduce(
+// Group tutorials by nav_group and filter by language
+const { currentSlug } = Astro.props;
+
+const [lang] = currentSlug.split("/");
+
+const filteredTutorials = sortedTutorials.filter(
+  (tutorial) => tutorial.lang === lang,
+);
+
+const groupedTutorials = filteredTutorials.reduce(
   (acc, tutorial) => {
     const group = tutorial.nav_group;
     if (!acc[group]) {
@@ -24,10 +32,8 @@ const groupedTutorials = sortedTutorials.reduce(
     acc[group].push(tutorial);
     return acc;
   },
-  {} as Record<string, typeof sortedTutorials>,
+  {} as Record<string, typeof filteredTutorials>,
 );
-
-const { currentSlug } = Astro.props;
 ---
 
 <div class="p-3 text-sm">

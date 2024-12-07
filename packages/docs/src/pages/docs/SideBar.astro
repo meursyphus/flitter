@@ -3,8 +3,17 @@ import { getCollection } from "astro:content";
 import { getNavOrder, normalizePath } from "./utils";
 
 const docsEntries = await getCollection("docs");
+const url = new URL(Astro.request.url);
+const pathSegments = url.pathname.split("/").filter(Boolean);
+const lang = pathSegments[1];
+
+// 현재 언어에 맞는 문서만 필터링
+const filteredDocs = docsEntries.filter((entry) =>
+  entry.slug.startsWith(lang + "/"),
+);
+
 // navigation 정보로 표현할 객체 만들기
-const navigation = docsEntries.reduce(
+const navigation = filteredDocs.reduce(
   (acc, entry, i) => {
     const { nav_group, nav_order, title, nav_title } = entry.data;
     const nav_group_order = getNavOrder(nav_group);
@@ -41,7 +50,6 @@ navigation.forEach((group) => {
   group.items.sort((a, b) => a.order - b.order);
 });
 
-const url = new URL(Astro.request.url);
 const normalizedPathname = normalizePath(url.pathname);
 ---
 

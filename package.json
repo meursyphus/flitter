@@ -34,7 +34,9 @@
     "pretest:dev": "npm run flitter:build",
     "prestory:chromatic": "npm run flitter:build",
     "prestory:build": "npm run flitter:build",
-    "predocs:build": "npm run flitter:build"
+    "predocs:build": "npm run flitter:build",
+    "lunaria:build": "lunaria build && cp -r dist/lunaria/index.html packages/docs/public/lunaria.html",
+    "lunaria:preview": "lunaria preview"
   },
   "author": "meursyphus",
   "license": "MIT",
@@ -43,6 +45,7 @@
     "shared"
   ],
   "devDependencies": {
+    "@lunariajs/core": "^0.1.1",
     "@types/node": "^20.11.30",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.2"
@@ -53,6 +56,7 @@
     ]
   },
   "dependencies": {
-    "@meursyphus/flitter-chart": "^0.0.9"
+    "@meursyphus/flitter-chart": "^0.0.9",
+    "astro": "^5.0.3"
   }
 }

@@ -1,0 +1,94 @@
+---
+nav_group: "Widgets"
+nav_group_order: 3
+nav_title: AnimatedContainer
+title: "AnimatedContainer"
+description: ""
+---
+
+# AnimatedContainer
+
+This widget motivated by AnimatedContainer in Flutter.
+
+> Animated version of Container that gradually changes its values over a period of time.
+>
+> The AnimatedContainer will automatically animate between the old and new values of properties when they change using the provided curve and duration. Properties that are null are not animated. Its child and descendants are not animated.
+>
+> This class is useful for generating simple implicit transitions between different parameters to Container with its internal AnimationController. For more complex animations, you'll likely want to use a subclass of AnimatedWidget such as the DecoratedBoxTransition or use your own AnimationController.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/yI-8QHpGIP4"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowfullscreen
+></iframe>
+
+See: https://api.flutter.dev/flutter/widgets/AnimatedContainer-class.html
+
+## Props
+
+### duration
+
+**Value: number**
+
+### curve
+
+**Value: Curve(default Curves.linear)**
+
+### width
+
+**Value: number | undefined**
+
+### height
+
+**Value: number | undefined**
+
+### color
+
+**Value: string | undefined**
+
+This define background color of the container.
+This should not be with decoration
+
+### decoration
+
+**Value: Deaction | undefined**
+
+### margin
+
+**Value: EdgeInsets | undefined**
+
+### padding
+
+**Value: EdgeInsets | undefined**
+
+### Alignment
+
+**Value: Alignment | undefined**
+
+### Contraints
+
+**Value: Contraints | undefined**
+
+### clipped
+
+**Value: boolean (Default: false)**
+
+### Transform
+
+**Value: Matrix4 | undefined**
+
+### TransformAlignment
+
+**Value: Alignment | undefined**
+
+### child
+
+**Value: Widget | undefined**
+
+## Examples
+
+### Basic

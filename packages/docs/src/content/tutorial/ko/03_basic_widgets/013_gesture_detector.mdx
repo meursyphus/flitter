@@ -1,0 +1,322 @@
+---
+nav_group: "Basic Widgets"
+nav_order: 14
+title: "GestureDetector"
+description: "Handle user interactions with the GestureDetector widget"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      Center,
+      Text,
+      Column,
+    } from "@meursyphus/flitter";
+
+    export default function App() {
+      return (
+        <Widget
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={Column({
+            children: [
+              Container({
+                width: 200,
+                height: 100,
+                color: "blue",
+                child: Center({
+                  child: Text("Click me!"),
+                }),
+              }),
+              Container({ height: 20 }),
+              Container({
+                width: 200,
+                height: 100,
+                color: "green",
+                child: Center({
+                  child: Text("Drag me!"),
+                }),
+              }),
+            ],
+          })}
+        />
+      );
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import {
+      Container,
+      GestureDetector,
+      Center,
+      Text,
+      Column,
+      Matrix4,
+      StatefulWidget,
+      State,
+      Transform,
+    } from "@meursyphus/flitter";
+
+    class AppState extends State {
+      tapCount = 0;
+      isDragging = false;
+      dragStartPosition = null;
+      dragPosition = { x: 0, y: 0 };
+
+      handleClick = () => {
+        this.setState(() => {
+          this.tapCount += 1;
+        });
+      };
+
+      handleDragStart = (e) => {
+        const { clientX, clientY } = e;
+        this.setState(() => {
+          this.isDragging = true;
+          this.dragStartPosition = { x: clientX, y: clientY };
+        });
+      };
+
+      handleDragMove = (e) => {
+        if (!this.isDragging) return;
+        const { clientX, clientY } = e;
+        const deltaX = clientX - this.dragStartPosition.x;
+        const deltaY = clientY - this.dragStartPosition.y;
+        this.setState(() => {
+          this.dragPosition.x += deltaX;
+          this.dragPosition.y += deltaY;
+          this.dragStartPosition = { x: clientX, y: clientY };
+        });
+      };
+
+      handleDragEnd = () => {
+        this.setState(() => {
+          this.isDragging = false;
+          this.dragStartPosition = null;
+        });
+      };
+
+      build() {
+        return Column({
+          children: [
+            GestureDetector({
+              onClick: this.handleClick,
+              child: Container({
+                width: 200,
+                height: 100,
+                color: "blue",
+                child: Center({
+                  child: Text(`Clicked ${this.tapCount} times`),
+                }),
+              }),
+            }),
+            Container({ height: 20 }),
+            Transform({
+              transform: Matrix4.translationValues(
+                this.dragPosition.x,
+                this.dragPosition.y,
+                0
+              ),
+              child: GestureDetector({
+                onDragStart: this.handleDragStart,
+                onDragMove: this.handleDragMove,
+                onDragEnd: this.handleDragEnd,
+                child: Container({
+                  width: 200,
+                  height: 100,
+                  color: this.isDragging ? "darkgreen" : "green",
+                  child: Center({
+                    child: Text(`Drag me!`),
+                  }),
+                }),
+              }),
+            }),
+          ],
+        });
+      }
+    }
+
+    class App extends StatefulWidget {
+      createState() {
+        return new AppState();
+      }
+    }
+
+    export default function() {
+      return (
+        <Widget
+          renderer="canvas"
+          width="auto"
+          height="calc(100vh - 16px)"
+          widget={new App()}
+        />
+      );
+    }
+---
+
+# GestureDetector Widget
+
+The GestureDetector widget is the primary way to handle user interactions in Flitter. It wraps a child widget and detects various gestures and mouse events.
+
+## Supported Gestures
+
+### Click Gesture
+
+- `onClick`: Handles click events
+
+```tsx
+GestureDetector({
+  onClick: () => console.log("Clicked"),
+  child: /* widget */
+})
+```
+
+### Mouse Events
+
+- `onMouseDown`: When mouse button is pressed
+- `onMouseMove`: When mouse is moved
+- `onMouseUp`: When mouse button is released
+- `onMouseOver`: When mouse is over the widget
+- `onMouseEnter`: When mouse enters the widget
+- `onMouseLeave`: When mouse leaves the widget
+
+```tsx
+GestureDetector({
+  onMouseDown: (e) => console.log("Mouse down", e),
+  onMouseMove: (e) => console.log("Mouse move", e),
+  onMouseUp: (e) => console.log("Mouse up", e),
+  onMouseEnter: (e) => console.log("Mouse enter", e),
+  onMouseLeave: (e) => console.log("Mouse leave", e),
+  child: /* widget */
+})
+```
+
+### Drag Gestures
+
+- `onDragStart`: When drag begins
+- `onDragMove`: During drag
+- `onDragEnd`: When drag ends
+
+```tsx
+GestureDetector({
+  onDragStart: (e) => console.log("Drag start", e),
+  onDragMove: (e) => console.log("Dragging", e),
+  onDragEnd: (e) => console.log("Drag end", e),
+  child: /* widget */
+})
+```
+
+### Wheel Event
+
+- `onWheel`: Mouse wheel scroll
+
+```tsx
+GestureDetector({
+  onWheel: (e) => console.log("Wheel event", e),
+  child: /* widget */
+})
+```
+
+## Available Props
+
+- `onClick`: (event: MouseEvent) => void
+- `onMouseDown`: (event: MouseEvent) => void
+- `onMouseMove`: (event: MouseEvent) => void
+- `onMouseUp`: (event: MouseEvent) => void
+- `onMouseOver`: (event: MouseEvent) => void
+- `onMouseEnter`: (event: MouseEvent) => void
+- `onMouseLeave`: (event: MouseEvent) => void
+- `onDragStart`: (event: MouseEvent) => void
+- `onDragMove`: (event: MouseEvent) => void
+- `onDragEnd`: (event: MouseEvent) => void
+- `onWheel`: (event: WheelEvent) => void
+- `cursor`: Mouse cursor style of Cursor type
+
+## Cursor Types
+
+Use the `cursor` prop to set the mouse cursor when hovering over the widget:
+
+- "pointer"
+- "default"
+- "move"
+- "text"
+- "wait"
+- "help"
+- "progress"
+- "not-allowed"
+- "crosshair"
+- "grab"
+- "grabbing"
+- And more...
+
+Example:
+
+```tsx
+GestureDetector({
+  cursor: "pointer",
+  child: /* widget */
+})
+```
+
+## Common Use Cases
+
+### Interactive Button
+
+```tsx
+GestureDetector({
+  onClick: handleClick,
+  child: CustomButton(),
+});
+```
+
+### Draggable Item
+
+```tsx
+GestureDetector({
+  onDragStart: handleDragStart,
+  onDragMove: handleDragMove,
+  onDragEnd: handleDragEnd,
+  child: DraggableItem(),
+});
+```
+
+### Mouse Interaction
+
+```tsx
+GestureDetector({
+  onMouseEnter: handleMouseEnter,
+  onMouseLeave: handleMouseLeave,
+  child: HoverableWidget(),
+});
+```
+
+## Best Practices
+
+### State Management
+
+- Use StatefulWidget and setState for state management
+- Minimize state changes to avoid unnecessary re-renders
+
+### Event Handling
+
+- Use appropriate event handlers for different interactions
+- Use event.stopPropagation() when needed to prevent event bubbling
+
+### Performance
+
+- Avoid heavy computations in event handlers
+- Use requestAnimationFrame for performance optimization when needed
+
+## Tips and Tricks
+
+### Custom Cursors
+
+- Use the cursor prop to provide visual feedback to users
+
+### Event Propagation
+
+- Control event bubbling using event.stopPropagation() and event.preventDefault()
+
+### Debugging
+
+- Use console.log in event handlers to inspect event data

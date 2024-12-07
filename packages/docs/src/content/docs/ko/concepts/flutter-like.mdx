@@ -1,0 +1,136 @@
+---
+nav_group: "Core Concepts"
+nav_order: 2
+title: "Flutter-like Structure"
+description: "Understanding how Flitter adopts Flutter's structure and the benefits it brings to web-based data visualization"
+---
+
+# Flutter-like Structure in Flitter
+
+Flitter is designed to closely mirror the structure and principles of Flutter, bringing the power and simplicity of Flutter's declarative UI paradigm to web-based data visualization. This section explores how Flitter adopts Flutter's structure and the benefits it brings to developers.
+
+## Key Similarities with Flutter
+
+1. **Widget-based Architecture**: Like Flutter, everything in Flitter is a widget. This consistent approach simplifies UI construction and promotes reusability.
+
+2. **Declarative UI**: Flitter uses a declarative style to build UIs, making it easier to understand and predict how the UI will look based on the current state.
+
+3. **Composition over Inheritance**: Flitter encourages composing complex UIs from simpler widgets rather than relying heavily on class inheritance.
+
+4. **Immutable Widget Properties**: Once created, widget properties in Flitter are immutable, promoting a unidirectional data flow.
+
+5. **State Management**: Flitter adopts Flutter's concepts of Stateless and Stateful widgets for managing UI state.
+
+## Benefits of Flutter-like Structure
+
+1. **Familiar for Flutter Developers**: Developers with Flutter experience can quickly adapt to Flitter, reducing the learning curve.
+
+2. **Efficient Updates**: The immutable widget model allows for efficient UI updates by rebuilding only what's necessary.
+
+3. **Predictable State Management**: Clear separation of stateless and stateful widgets makes state management more predictable and easier to reason about.
+
+4. **Highly Customizable**: The composition-based approach allows for high levels of UI customization without complex inheritance hierarchies.
+
+5. **Optimized for Data Visualization**: While maintaining Flutter's structure, Flitter is optimized for web-based data visualization tasks.
+
+## Implementation in Flitter
+
+Here's a simple example showing how Flitter implements Flutter-like structure:
+
+```typescript
+import {
+  StatelessWidget,
+  StatefulWidget,
+  State,
+  Container,
+  Column,
+  Text,
+  TextStyle,
+  Colors,
+  GestureDetector,
+} from "@meursyphus/flitter";
+
+// A stateless widget
+class Header extends StatelessWidget {
+  private title: string;
+
+  constructor(title: string) {
+    super();
+    this.title = title;
+  }
+
+  build() {
+    return Container({
+      padding: EdgeInsets.all(16),
+      color: Colors.blue[500],
+      child: Text(this.title, {
+        style: new TextStyle({ color: Colors.white, fontSize: 24 }),
+      }),
+    });
+  }
+}
+
+// A stateful widget
+class Counter extends StatefulWidget {
+  createState() {
+    return new CounterState();
+  }
+}
+
+class CounterState extends State<Counter> {
+  private count: number = 0;
+
+  incrementCounter() {
+    this.setState(() => {
+      this.count++;
+    });
+  }
+
+  build() {
+    return Column({
+      children: [
+        new Header("Flutter-like Counter"),
+        Container({
+          padding: EdgeInsets.all(16),
+          child: Text(`Count: ${this.count}`, {
+            style: new TextStyle({ fontSize: 18 }),
+          }),
+        }),
+        GestureDetector({
+          onClick: () => this.incrementCounter(),
+          child: Container({
+            padding: EdgeInsets.all(8),
+            color: "green",
+            child: Text("Increment", {
+              style: new TextStyle({ color: Colors.white }),
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+}
+
+// Usage
+const myApp = new Counter();
+```
+
+This example demonstrates:
+
+- Use of both Stateless (`Header`) and Stateful (`Counter`) widgets
+- Composition of widgets to create the UI
+- State management within a Stateful widget
+- Event handling (tap gesture)
+
+## Differences from Flutter
+
+While Flitter closely mirrors Flutter's structure, there are some key differences:
+
+1. **Web-First**: Flitter is designed specifically for web environments, unlike Flutter which is cross-platform.
+2. **Rendering**: Flitter uses SVG or Canvas for rendering, optimized for data visualization tasks.
+3. **JavaScript/TypeScript**: Flitter is written in and used with JavaScript/TypeScript, not Dart.
+4. **Limited Widget Set**: Flitter focuses on widgets useful for data visualization, and may not include all widgets found in Flutter.
+
+## Conclusion
+
+By adopting a Flutter-like structure, Flitter brings the power and simplicity of Flutter's UI paradigm to web-based data visualization. This approach allows developers to create complex, interactive visualizations using a familiar, efficient, and highly customizable framework. As you continue to work with Flitter, you'll find that this structure enables you to create sophisticated data visualizations with ease and flexibility.
