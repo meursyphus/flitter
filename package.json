@@ -34,8 +34,8 @@
     "pretest:dev": "npm run flitter:build",
     "prestory:chromatic": "npm run flitter:build",
     "prestory:build": "npm run flitter:build",
-    "predocs:build": "npm run flitter:build",
-    "lunaria:build": "lunaria build",
+    "predocs:build": "npm run flitter:build && npm run lunaria:build",
+    "lunaria:build": "lunaria build && cp -r dist/lunaria/index.html packages/docs/public/lunaria.html",
     "lunaria:preview": "lunaria preview"
   },
   "author": "meursyphus",

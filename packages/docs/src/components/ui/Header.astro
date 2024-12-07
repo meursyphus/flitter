@@ -2,11 +2,13 @@
 const url = new URL(Astro.request.url);
 const pathname = url.pathname; // 현재 페이지의 경로
 
-let current: "docs" | "tutorial" | "none" = pathname.startsWith("/docs")
+let current: "docs" | "tutorial" | "i18n" | "none" = pathname.startsWith("/docs")
   ? "docs"
   : pathname.startsWith("/tutorial")
     ? "tutorial"
-    : "none";
+    : pathname.startsWith("/i18n")
+      ? "i18n"
+      : "none";
 ---
 
 <header class="flex w-full flex-col items-center justify-center bg-[#111111]">
@@ -29,6 +31,10 @@ let current: "docs" | "tutorial" | "none" = pathname.startsWith("/docs")
         class={`${current === "tutorial" ? "active" : ""} select-none`}
         title="coming soon"
         href="/tutorial/get-started/introduction">tutorial</a
+      >
+      <a
+        class={`${current === "i18n" ? "active" : ""} text-base leading-normal`}
+        href="/i18n">i18n</a
       >
     </nav>
     <div class="ml-auto hidden gap-4 md:flex">

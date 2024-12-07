@@ -24,6 +24,11 @@
       "location": "packages/docs/src/content/tutorial/en/**/*.mdx",
       "pattern": "packages/docs/src/content/tutorial/@lang/@path",
       "type": "universal"
+    },
+    {
+      "location": "packages/docs/src/content/docs/en/**/*.mdx",
+      "pattern": "packages/docs/src/content/docs/@lang/@path",
+      "type": "universal"
     }
   ]
 }
