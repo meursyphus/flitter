@@ -1,0 +1,105 @@
+---
+nav_group: "Advanced Features"
+nav_order: 2
+title: "SVG vs Canvas Rendering"
+description: "Understand the differences between SVG and Canvas rendering in Flitter and learn when to use each"
+---
+
+# SVG vs Canvas Rendering in Flitter
+
+Flitter provides the flexibility to render graphics using either SVG (Scalable Vector Graphics) or Canvas. Both rendering methods have their strengths and are suited for different scenarios. Understanding the differences between these two can help you make the right choice for your specific use case.
+
+## SVG Rendering
+
+SVG is a vector-based graphics format that uses XML to describe two-dimensional graphics.
+
+### Advantages of SVG:
+
+1. Scalability: SVG images can be scaled to any size without loss of quality.
+2. Accessibility: SVG elements can be read by screen readers, making them more accessible.
+3. Interactivity: Individual elements within an SVG can be styled and manipulated with CSS and JavaScript.
+4. Smaller file size: For simple graphics, SVG often has a smaller file size compared to raster formats.
+
+### Disadvantages of SVG:
+
+1. Performance: For complex graphics with many elements, SVG can be slower to render and manipulate.
+2. Browser support: While widely supported, some older browsers may have issues with advanced SVG features.
+
+## Canvas Rendering
+
+Canvas provides a way to draw graphics via JavaScript. It renders pixels directly to a bitmap.
+
+### Advantages of Canvas:
+
+1. Performance: Canvas is generally faster for rendering complex graphics or animations with many elements.
+2. Pixel-level manipulation: Canvas allows for direct pixel manipulation, which is useful for image processing.
+3. 3D support: Through WebGL, Canvas supports 3D graphics.
+
+### Disadvantages of Canvas:
+
+1. Non-scalable: Canvas drawings are rasterized and can become pixelated when scaled up.
+2. Less accessible: Canvas content is not easily readable by screen readers.
+3. No built-in interactivity: Individual drawn elements are not accessible for event handling.
+
+## Choosing Between SVG and Canvas in Flitter
+
+Flitter provides flexibility in choosing between SVG and Canvas rendering. The rendering method is determined by the type of element you provide to the AppRunner or the renderer prop in Flitter's React and Svelte components.
+
+### Using AppRunner
+
+When using the AppRunner directly, the rendering method is determined by the type of element you provide:
+
+```typescript
+import { AppRunner } from "@meursyphus/flitter";
+
+// For SVG rendering
+const svgElement = document.createElementNS(
+  "http://www.w3.org/2000/svg",
+  "svg",
+);
+const svgRunner = new AppRunner({
+  view: svgElement,
+});
+
+// For Canvas rendering
+const canvasElement = document.createElement("canvas");
+const canvasRunner = new AppRunner({
+  view: canvasElement,
+});
+```
+
+The AppRunner automatically detects whether you're using an SVG or Canvas element and sets up the appropriate rendering pipeline.
+
+### Using Flitter-React or Flitter-Svelte
+
+When using Flitter with React or Svelte, you can specify the renderer type using the `renderer` prop:
+
+For React:
+
+```jsx
+import Widget from '@meursyphus/flitter-react';
+
+// SVG rendering
+<Widget renderer="svg" widget={yourFlitterWidget} />
+
+// Canvas rendering
+<Widget renderer="canvas" widget={yourFlitterWidget} />
+```
+
+For Svelte:
+
+```svelte
+<script>
+  import Widget from "@meursyphus/flitter-svelte";
+</script>
+
+<!-- SVG rendering -->
+<Widget renderer="svg" widget={yourFlitterWidget} />
+
+<!-- Canvas rendering -->
+<Widget renderer="canvas" widget={yourFlitterWidget} />
+```
+
+This allows you to easily switch between SVG and Canvas rendering without changing your Flitter widget code.
+
+[The rest of the content about when to use SVG/Canvas, performance considerations, best practices, and conclusion remains the same]

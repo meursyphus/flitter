@@ -1,0 +1,160 @@
+---
+nav_group: "Basic Widgets"
+nav_order: 2
+title: "Flex, Row, and Column"
+description: "Understanding and using the Flex, Row, and Column widgets in Flitter for flexible layouts"
+---
+
+# Flex, Row, and Column Widgets in Flitter
+
+The Flex widget, along with its commonly used subclasses Row and Column, are fundamental to creating flexible layouts in Flitter. These widgets allow you to arrange child widgets in a single row or column, with various alignment and sizing options.
+
+## Flex Widget
+
+The Flex widget is the base class for both Row and Column. It allows you to specify the direction of the layout (horizontal or vertical).
+
+### Key Properties
+
+- `direction`: Specifies whether the layout is horizontal or vertical.
+- `children`: The list of child widgets to be laid out.
+- `mainAxisAlignment`: Determines how children are aligned along the main axis.
+- `crossAxisAlignment`: Determines how children are aligned along the cross axis.
+- `mainAxisSize`: Determines how much space the Flex should occupy on the main axis.
+
+## Row Widget
+
+The Row widget is a specialized Flex that lays out its children horizontally.
+
+### Basic Usage
+
+```typescript
+import { Row, Container } from "@meursyphus/flitter";
+
+const myRow = Row({
+  children: [
+    Container({ width: 50, height: 50, color: "red" }),
+    Container({ width: 50, height: 50, color: "green" }),
+    Container({ width: 50, height: 50, color: "blue" }),
+  ],
+});
+```
+
+### Visual Representation
+
+```
+┌──────────────────────────────┐
+│ ┌────┐ ┌────┐ ┌────┐         │
+│ │Red │ │Grn │ │Blue│         │
+│ └────┘ └────┘ └────┘         │
+└──────────────────────────────┘
+```
+
+## Column Widget
+
+The Column widget is a specialized Flex that lays out its children vertically.
+
+### Basic Usage
+
+```typescript
+import { Column, Container } from "@meursyphus/flitter";
+
+const myColumn = Column({
+  children: [
+    Container({ width: 100, height: 50, color: "red" }),
+    Container({ width: 100, height: 50, color: "green" }),
+    Container({ width: 100, height: 50, color: "blue" }),
+  ],
+});
+```
+
+### Visual Representation
+
+```
+┌──────────────┐
+│ ┌──────────┐ │
+│ │   Red    │ │
+│ └──────────┘ │
+│ ┌──────────┐ │
+│ │  Green   │ │
+│ └──────────┘ │
+│ ┌──────────┐ │
+│ │   Blue   │ │
+│ └──────────┘ │
+└──────────────┘
+```
+
+## Advanced Usage
+
+### MainAxisAlignment
+
+MainAxisAlignment determines how children are placed along the main axis. Here's an example using Row:
+
+```typescript
+import { Row, Container, MainAxisAlignment } from "@meursyphus/flitter";
+
+const spacedRow = Row({
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    Container({ width: 50, height: 50, color: "red" }),
+    Container({ width: 50, height: 50, color: "green" }),
+    Container({ width: 50, height: 50, color: "blue" }),
+  ],
+});
+```
+
+Visual representation:
+
+```
+┌──────────────────────────────┐
+│ ┌────┐     ┌────┐     ┌────┐ │
+│ │Red │     │Grn │     │Blue│ │
+│ └────┘     └────┘     └────┘ │
+└──────────────────────────────┘
+```
+
+### CrossAxisAlignment
+
+CrossAxisAlignment determines how children are placed along the cross axis. Here's an example using Column:
+
+```typescript
+import { Column, Container, CrossAxisAlignment } from "@meursyphus/flitter";
+
+const alignedColumn = Column({
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Container({ width: 100, height: 50, color: "red" }),
+    Container({ width: 75, height: 50, color: "green" }),
+    Container({ width: 50, height: 50, color: "blue" }),
+  ],
+});
+```
+
+Visual representation:
+
+```
+┌──────────────┐
+│ ┌──────────┐ │
+│ │   Red    │ │
+│ └──────────┘ │
+│ ┌────────┐   │
+│ │ Green  │   │
+│ └────────┘   │
+│ ┌────┐       │
+│ │Blue│       │
+│ └────┘       │
+└──────────────┘
+```
+
+## Best Practices
+
+1. **Use Expanded for flexible sizing**: When you want a child to fill the available space, wrap it in an Expanded widget.
+
+2. **Consider Flex for custom flex factors**: Use Flex when you need more control over how space is distributed among children.
+
+3. **Combine with other layout widgets**: Row and Column work well with other layout widgets like Container and SizedBox for more complex layouts.
+
+4. **Be mindful of overflow**: If children don't fit in the available space, consider using a scrollable widget like ListView.
+
+## Conclusion
+
+The Flex, Row, and Column widgets are essential for creating flexible layouts in Flitter. By understanding how to use these widgets effectively, you can create responsive and well-organized user interfaces. Remember to experiment with different alignment and sizing options to achieve the desired layout for your application.

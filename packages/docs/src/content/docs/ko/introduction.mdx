@@ -1,0 +1,94 @@
+---
+nav_group: "Getting Started"
+nav_order: 1
+title: "Introduction to Flitter"
+description: "An introduction to Flitter: A powerful JavaScript rendering engine and framework for creating high-performance graphics and user interfaces"
+---
+
+# Introduction to Flitter
+
+Flitter is a powerful JavaScript rendering engine and framework inspired by Flutter, designed to create high-performance graphics and user interfaces in web applications. It supports both SVG and Canvas, making it ideal for implementing complex data visualizations, interactive charts, diagrams, and graphic editors.
+
+## Key Features
+
+- **Advanced Rendering Engine**: At its core, Flitter provides a sophisticated rendering engine that gives developers precise control over how elements are drawn and updated on the screen.
+
+- **Render Object Tree**: Flitter uses a render object tree for efficient rendering, allowing easy management and manipulation of complex layouts. This approach enables optimized updates and redraws.
+
+- **Declarative Programming**: Following a declarative paradigm, the screen automatically updates when values change, simplifying application state management and reducing the complexity of manual DOM manipulation.
+
+- **Optimized Rendering Pipeline**: Re-rendering, painting, and layout recalculations are managed by the renderer pipeline, with optimizations applied to update only necessary parts. This ensures high performance even with complex, data-heavy visualizations.
+
+- **Box Model Layout**: Users can easily compose layouts using the familiar Box model, providing an intuitive way to structure complex UIs within the rendering engine.
+
+- **Dual Renderer Support**: As a flexible rendering engine, Flitter supports both SVG and Canvas, meeting various graphic requirements. Developers can choose the appropriate renderer as needed, switching seamlessly between vector and bitmap graphics.
+
+- **Component-Based Architecture**: Flitter's architecture promotes reusability and maintainability through a component-based approach.
+
+## Showcase
+
+Here are some examples of what you can create with Flitter:
+
+### Interactive ERD (Entity-Relationship Diagram)
+
+[Visit EasyRD](https://easyrd.dev)
+
+![Interactive ERD](https://flitter.dev/home/easyrd.jpg)
+
+This interactive ERD demonstrates Flitter's capability to create complex, interactive diagrams. Users can manipulate entities, add relationships, and visualize database structures in real-time. This showcase highlights Flitter's strengths in:
+
+- Creating responsive, draggable elements
+- Handling complex user interactions
+- Rendering intricate diagrams with ease
+- Providing real-time updates based on user input
+
+## Why Choose Flitter?
+
+1. **Powerful Rendering Engine**: Flitter's core strength lies in its advanced rendering capabilities, allowing for smooth handling of complex graphics and animations.
+
+2. **Familiar Syntax**: Uses syntax similar to Flutter, allowing mobile developers to easily adapt to the web environment while leveraging a powerful web-based rendering engine.
+
+3. **High Performance**: The optimized rendering pipeline ensures smooth performance even with complex, data-intensive visualizations.
+
+4. **Flexibility**: Abstracts SVG and Canvas manipulation, allowing developers to focus on business logic while the rendering engine handles the low-level drawing operations.
+
+5. **Renderer Selection**: Choose between SVG and Canvas renderers as needed, meeting various graphic requirements and allowing for the best performance in different scenarios.
+
+6. **Code Reusability**: Increases code reusability through a component-based approach, enabled by the underlying rendering engine's architecture.
+
+7. **Cross-Platform Potential**: While primarily for web, Flitter's Flutter-inspired design opens possibilities for easier cross-platform development in the future.
+
+## Quick Start Example
+
+Here's a simple example to get you started with Flitter:
+
+```javascript
+import { Container, Text, TextStyle, AppRunner } from '@meursyphus/flitter';
+
+const app = new AppRunner({
+  view: document.getElementById('app'),
+});
+
+app.runApp(
+  Container({
+    color: 'lightblue',
+    child: Text('Hello, Flitter!', {
+      style: new TextStyle({ fontSize: 24, fontWeight: 'bold' })
+    })
+  })
+);
+```
+
+This example creates a simple app with a light blue background and centered text.
+
+## Contributing
+
+Flitter is an open-source project. We welcome all forms of contributions including bug reports, feature suggestions, and pull requests. For more details, please visit our [Discord community](https://discord.gg/kUZp4SaHzF).
+
+## License
+
+Flitter is provided under the MIT license.
+
+## Learn More
+
+For detailed documentation, advanced examples, and API references, visit our [official documentation](https://flitter.dev/docs).
