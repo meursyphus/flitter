@@ -26,9 +26,6 @@ const navigation = filteredDocs.reduce(
       acc.push(group);
     }
 
-    // slug에서 언어 부분 제거하고 URL 생성
-    const slugWithoutLang = entry.slug.split("/").slice(1).join("/");
-
     // 그룹에 문서 추가
     group.items.push({
       url: `/docs/${entry.slug}`,
