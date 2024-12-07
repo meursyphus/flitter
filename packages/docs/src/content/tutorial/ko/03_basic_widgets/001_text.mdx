@@ -1,8 +1,8 @@
 ---
-nav_group: "Basic Widgets"
+nav_group: "기본 위젯"
 nav_order: 2
-title: "Text"
-description: "A widget for displaying text with various styles and properties"
+title: "텍스트"
+description: "다양한 스타일과 속성을 가진 텍스트를 표시하는 위젯"
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
@@ -18,7 +18,7 @@ files:
           width="auto"
           height="calc(100vh - 16px)"
           widget={Center({
-            child: Text("Hello Flitter")
+            child: Text("안녕하세요 Flitter")
           })}
         />
       );
@@ -53,7 +53,7 @@ solved_files:
           widget={Center({
             child: Column({
               children: [
-                // Basic text with decoration
+                // 기본 텍스트
                 Container({
                   padding: EdgeInsets.all(12),
                   decoration: new BoxDecoration({
@@ -64,12 +64,12 @@ solved_files:
                       width: 2
                     })
                   }),
-                  child: Text("Basic Text")
+                  child: Text("기본 텍스트")
                 }),
                 
                 SizedBox({ height: 16 }),
                 
-                // Styled text with gradient border
+                // 스타일이 적용된 텍스트
                 Container({
                   padding: EdgeInsets.all(16),
                   decoration: new BoxDecoration({
@@ -80,7 +80,7 @@ solved_files:
                       width: 3
                     })
                   }),
-                  child: Text("Styled Text", {
+                  child: Text("스타일이 적용된 텍스트", {
                     style: new TextStyle({
                       fontSize: 24,
                       color: "blue",
@@ -92,7 +92,7 @@ solved_files:
                 
                 SizedBox({ height: 16 }),
                 
-                // Text with alignment in decorated container
+                // 가운데 정렬된 텍스트
                 Container({
                   width: 200,
                   padding: EdgeInsets.symmetric({ vertical: 12, horizontal: 16 }),
@@ -104,7 +104,7 @@ solved_files:
                       width: 2
                     })
                   }),
-                  child: Text("Centered Text", {
+                  child: Text("가운데 정렬된 텍스트", {
                     textAlign: TextAlign.center,
                     style: new TextStyle({
                       fontSize: 18,
@@ -115,7 +115,7 @@ solved_files:
                 
                 SizedBox({ height: 16 }),
                 
-                // Text with soft wrapping in rounded container
+                // 오버플로우가 있는 텍스트
                 Container({
                   width: 200,
                   padding: EdgeInsets.all(16),
@@ -127,8 +127,8 @@ solved_files:
                       width: 2
                     })
                   }),
-                  child: Text("This is a long text that demonstrates soft wrapping behavior when the content exceeds container width", {
-                    softWrap: true,
+                  child: Text("이것은 매우 긴 텍스트입니다...", {
+                    overflow: TextOverflow.ellipsis,
                     style: new TextStyle({
                       fontSize: 16,
                       color: "coral"
@@ -138,8 +138,9 @@ solved_files:
 
                 SizedBox({ height: 16 }),
 
-                // Text with width basis in fancy container
+                // 줄바꿈이 있는 텍스트
                 Container({
+                  width: 200,
                   padding: EdgeInsets.all(16),
                   decoration: new BoxDecoration({
                     color: "mintcream",
@@ -149,8 +150,8 @@ solved_files:
                       width: 2
                     })
                   }),
-                  child: Text("First Line\nSecond Longer Line\nThird Line", {
-                    textWidthBasis: TextWidthBasis.longestLine,
+                  child: Text("이것은 컨테이너의 너비에 도달하면 다음 줄로 줄바꿈되는 긴 텍스트입니다", {
+                    softWrap: true,
                     style: new TextStyle({
                       fontSize: 16,
                       color: "seagreen"
@@ -165,59 +166,59 @@ solved_files:
     }
 ---
 
-# Text Widget
+# 텍스트 위젯
 
-The Text widget displays a string of text with various styles and properties. It supports rich text formatting, alignment, overflow handling, and more.
+텍스트 위젯은 다양한 스타일과 속성을 가진 문자열을 표시합니다. 리치 텍스트 서식, 정렬, 오버플로우 처리 등을 지원합니다.
 
-## Properties
+## 속성
 
-- `text`: string - The text to display
-- `style`: TextStyle - Text styling properties
+- `text`: string - 표시할 텍스트
+- `style`: TextStyle - 텍스트 스타일 속성
   ```tsx
   new TextStyle({
-    color?: string,              // Text color
-    fontSize?: number,           // Font size in pixels
-    fontWeight?: string,         // Font weight (e.g., "normal", "bold")
-    fontFamily?: string,         // Font family name
-    fontStyle?: FontStyle,       // FontStyle.normal or FontStyle.italic
-    height?: number,             // Line height as multiple of font size
-    inherit?: boolean           // Whether to inherit parent style
+    color?: string,              // 텍스트 색상
+    fontSize?: number,           // 픽셀 단위의 글꼴 크기
+    fontWeight?: string,         // 글꼴 두께 (예: "normal", "bold")
+    fontFamily?: string,         // 글꼴 패밀리 이름
+    fontStyle?: FontStyle,       // FontStyle.normal 또는 FontStyle.italic
+    height?: number,             // 글꼴 크기의 배수로 표현된 줄 높이
+    inherit?: boolean           // 부모 스타일을 상속할지 여부
   })
   ```
-- `textAlign`: TextAlign - Text alignment
+- `textAlign`: TextAlign - 텍스트 정렬
   ```tsx
   TextAlign.left;
   TextAlign.right;
   TextAlign.center;
-  TextAlign.start; // Leading edge (left in LTR, right in RTL)
-  TextAlign.end; // Trailing edge (right in LTR, left in RTL)
+  TextAlign.start; // 선행 가장자리 (LTR에서는 왼쪽, RTL에서는 오른쪽)
+  TextAlign.end; // 후행 가장자리 (LTR에서는 오른쪽, RTL에서는 왼쪽)
   ```
-- `overflow`: TextOverflow - How to handle text overflow
+- `overflow`: TextOverflow - 텍스트 오버플로우 처리 방법
   ```tsx
-  TextOverflow.clip; // Clip overflowing text
-  TextOverflow.visible; // Show overflowing text
-  TextOverflow.ellipsis; // Show ellipsis (...) for overflow
+  TextOverflow.clip; // 오버플로우 텍스트 잘라내기
+  TextOverflow.visible; // 오버플로우 텍스트 표시
+  TextOverflow.ellipsis; // 오버플로우에 말줄임표(...) 표시
   ```
-- `softWrap`: boolean - Whether text should break at soft line breaks
-- `textDirection`: TextDirection - The directionality of the text
-- `textWidthBasis`: TextWidthBasis - How to measure the width of the rendered text
+- `softWrap`: boolean - 텍스트가 소프트 줄바꿈에서 줄바꿈되어야 하는지 여부
+- `textDirection`: TextDirection - 텍스트의 방향성
+- `textWidthBasis`: TextWidthBasis - 렌더링된 텍스트의 너비를 측정하는 방법
   ```tsx
-  TextWidthBasis.parent;      // Use parent width as basis
-  TextWidthBasis.longestLine; // Use width of longest line
+  TextWidthBasis.parent;      // 부모 너비를 기준으로 사용
+  TextWidthBasis.longestLine; // 가장 긴 줄의 너비를 사용
   ```
 
-## Common Use Cases
+## 일반적인 사용 사례
 
-1. **Basic Text**:
+1. **기본 텍스트**:
 
    ```tsx
-   Text("Hello Flitter");
+   Text("안녕하세요 Flitter");
    ```
 
-2. **Styled Text**:
+2. **스타일이 적용된 텍스트**:
 
    ```tsx
-   Text("Styled Text", {
+   Text("스타일이 적용된 텍스트", {
      style: new TextStyle({
        fontSize: 24,
        color: "blue",
@@ -226,10 +227,10 @@ The Text widget displays a string of text with various styles and properties. It
    });
    ```
 
-3. **Centered Text**:
+3. **가운데 정렬된 텍스트**:
 
    ```tsx
-   Text("Centered Text", {
+   Text("가운데 정렬된 텍스트", {
      textAlign: TextAlign.center,
      style: new TextStyle({
        fontSize: 18,
@@ -237,9 +238,9 @@ The Text widget displays a string of text with various styles and properties. It
    });
    ```
 
-4. **Text with Overflow**:
+4. **오버플로우가 있는 텍스트**:
    ```tsx
-   Text("This is a very long text...", {
+   Text("이것은 매우 긴 텍스트입니다...", {
      overflow: TextOverflow.ellipsis,
      style: new TextStyle({
        fontSize: 16,
@@ -247,9 +248,9 @@ The Text widget displays a string of text with various styles and properties. It
    });
    ```
 
-5. **Text with Line Wrapping**:
+5. **줄바꿈이 있는 텍스트**:
    ```tsx
-   Text("This is a long text that will wrap to the next line when it reaches the container's width", {
+   Text("이것은 컨테이너의 너비에 도달하면 다음 줄로 줄바꿈되는 긴 텍스트입니다", {
      softWrap: true,
      style: new TextStyle({
        fontSize: 16,
@@ -257,9 +258,9 @@ The Text widget displays a string of text with various styles and properties. It
    });
    ```
 
-6. **Text with Width Basis**:
+6. **너비 기준이 있는 텍스트**:
    ```tsx
-   Text("Multi-line text\nwith varying line lengths", {
+   Text("여러 줄 텍스트\n다양한 줄 길이", {
      textWidthBasis: TextWidthBasis.longestLine,
      style: new TextStyle({
        fontSize: 16,
@@ -267,36 +268,36 @@ The Text widget displays a string of text with various styles and properties. It
    });
    ```
 
-## Best Practices
+## 모범 사례
 
-1. **Styling Guidelines**:
+1. **스타일링 가이드라인**:
 
-   - Use TextStyle for consistent text styling
-   - Consider font scaling for accessibility
-   - Use appropriate font sizes for readability
-   - Keep color contrast in mind
+   - 일관된 텍스트 스타일링에는 TextStyle 사용
+   - 접근성을 위한 글꼴 크기 조정 고려
+   - 가독성을 위한 적절한 글꼴 크기 사용
+   - 색상 대비 고려
 
-2. **Layout Tips**:
+2. **레이아웃 팁**:
 
-   - Use textAlign for proper alignment
-   - Consider overflow handling
-   - Use appropriate line height for readability
-   - Handle text direction when needed
-   - Use softWrap for automatic line breaking
-   - Choose appropriate textWidthBasis for layout calculations
+   - 적절한 정렬을 위해 textAlign 사용
+   - 오버플로우 처리 고려
+   - 가독성을 위한 적절한 줄 높이 사용
+   - 필요한 경우 텍스트 방향 처리
+   - 자동 줄바꿈을 위해 softWrap 사용
+   - 레이아웃 계산을 위한 적절한 textWidthBasis 선택
 
-3. **Performance Tips**:
-   - Cache TextStyle objects when possible
-   - Use const constructors
-   - Consider text measurement impact
-   - Avoid unnecessary style changes
+3. **성능 팁**:
+   - 가능한 경우 TextStyle 객체 캐싱
+   - const 생성자 사용
+   - 텍스트 측정의 영향 고려
+   - 불필요한 스타일 변경 피하기
 
-## Common Patterns
+## 일반적인 패턴
 
-1. **Title Text**:
+1. **제목 텍스트**:
 
    ```tsx
-   Text("Title", {
+   Text("제목", {
      style: new TextStyle({
        fontSize: 24,
        fontWeight: "bold",
@@ -305,10 +306,10 @@ The Text widget displays a string of text with various styles and properties. It
    });
    ```
 
-2. **Caption Text**:
+2. **캡션 텍스트**:
 
    ```tsx
-   Text("Caption", {
+   Text("캡션", {
      style: new TextStyle({
        fontSize: 12,
        color: "gray",
@@ -317,9 +318,9 @@ The Text widget displays a string of text with various styles and properties. It
    });
    ```
 
-3. **Error Message**:
+3. **오류 메시지**:
    ```tsx
-   Text("Error: Something went wrong", {
+   Text("오류: 문제가 발생했습니다", {
      style: new TextStyle({
        fontSize: 14,
        color: "red",
@@ -328,24 +329,24 @@ The Text widget displays a string of text with various styles and properties. It
    });
    ```
 
-## Tips and Tricks
+## 팁과 요령
 
-1. **Style Tips**:
+1. **스타일 팁**:
 
-   - Use font weight for emphasis
-   - Consider line height for readability
-   - Use appropriate font families
-   - Keep text styles consistent
+   - 강조를 위해 글꼴 두께 사용
+   - 가독성을 위한 줄 높이 고려
+   - 적절한 글꼴 패밀리 사용
+   - 텍스트 스타일 일관성 유지
 
-2. **Layout Tips**:
+2. **레이아웃 팁**:
 
-   - Use Container for text width constraints
-   - Consider text alignment with parent
-   - Handle overflow appropriately
-   - Use padding for text spacing
+   - 텍스트 너비 제약을 위해 Container 사용
+   - 부모와의 텍스트 정렬 고려
+   - 적절한 오버플로우 처리
+   - 텍스트 간격을 위해 패딩 사용
 
-3. **Accessibility Tips**:
-   - Use semantic font sizes
-   - Maintain good color contrast
-   - Consider text scaling
-   - Use appropriate line height
+3. **접근성 팁**:
+   - 의미 있는 글꼴 크기 사용
+   - 좋은 색상 대비 유지
+   - 텍스트 크기 조정 고려
+   - 적절한 줄 높이 사용

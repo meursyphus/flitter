@@ -1,8 +1,8 @@
 ---
-nav_group: "Core Concepts" 
+nav_group: "핵심 개념"
 nav_order: 3
-title: "State Management"
-description: "Understanding how to manage state effectively in Flitter applications"
+title: "상태 관리"
+description: "Flitter 애플리케이션에서 상태를 효과적으로 관리하는 방법 이해하기"
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
@@ -15,16 +15,16 @@ files:
       Center,
     } from "@meursyphus/flitter";
 
-    // StatelessWidget example - won't update on click
+    // StatelessWidget 예제 - 클릭 시 업데이트되지 않음
     class Counter extends StatelessWidget {
-      count = 0; // This won't cause updates
+      count = 0; // 이것은 업데이트를 발생시키지 않습니다
 
       build() {
         return Center({
           child: GestureDetector({
             onClick: () => {
-              this.count++; // This won't trigger a rebuild
-              console.log('Clicked! Count:', this.count);
+              this.count++; // 이것은 리빌드를 트리거하지 않습니다
+              console.log('클릭! 카운트:', this.count);
             },
             child: Container({
               width: 200,
@@ -73,7 +73,7 @@ solved_files:
     }
 
     class CounterState extends State {
-      count = 0; // State variable that will trigger rebuilds
+      count = 0; // 상태 변수가 리빌드를 트리거합니다
 
       build() {
         return Center({
@@ -112,32 +112,32 @@ solved_files:
     }
 ---
 
-# State Management in Flitter
+# Flitter의 상태 관리
 
-State management is a fundamental concept in Flitter that determines how your application handles and updates data over time. This guide explores how to efficiently manage state in your applications using Stateless and Stateful widgets.
+상태 관리는 애플리케이션이 시간이 지남에 따라 데이터를 어떻게 처리하고 업데이트하는지 결정하는 Flitter의 기본 개념입니다. 이 가이드에서는 상태가 없는 위젯과 상태가 있는 위젯을 사용하여 애플리케이션에서 상태를 효율적으로 관리하는 방법을 살펴봅니다.
 
-## Understanding Widget State
+## 위젯 상태 이해하기
 
-In Flitter, there are two main types of widgets when it comes to state management:
+Flitter에서 상태 관리와 관련하여 두 가지 주요 위젯 타입이 있습니다:
 
-1. **StatelessWidget**: Cannot maintain mutable state
-2. **StatefulWidget**: Can maintain and update mutable state
+1. **StatelessWidget**: 변경 가능한 상태를 유지할 수 없음
+2. **StatefulWidget**: 변경 가능한 상태를 유지하고 업데이트할 수 있음
 
-Let's understand the difference through a simple counter example.
+간단한 카운터 예제를 통해 그 차이를 이해해보겠습니다.
 
-### StatelessWidget Example
+### StatelessWidget 예제
 
-A StatelessWidget cannot maintain mutable state that triggers rebuilds. In the example above, even though we increment the counter on click, the UI won't update:
+StatelessWidget은 리빌드를 트리거하는 변경 가능한 상태를 유지할 수 없습니다. 위의 예제에서는 클릭할 때마다 카운터를 증가시키지만 UI는 업데이트되지 않습니다:
 
 ```typescript
 class Counter extends StatelessWidget {
-  count = 0; // This won't cause updates
+  count = 0; // 이것은 업데이트를 발생시키지 않습니다
 
   build() {
     return GestureDetector({
       onClick: () => {
-        this.count++; // This won't trigger a rebuild
-        console.log('Clicked! Count:', this.count);
+        this.count++; // 이것은 리빌드를 트리거하지 않습니다
+        console.log('클릭! 카운트:', this.count);
       },
       child: Container({ /* ... */ })
     });
@@ -145,22 +145,22 @@ class Counter extends StatelessWidget {
 }
 ```
 
-### StatefulWidget Solution
+### StatefulWidget 해결책
 
-To create a widget that can update its UI based on user interactions, we need to use a StatefulWidget. The basic structure involves:
+사용자 상호작용에 기반하여 UI를 업데이트할 수 있는 위젯을 만들기 위해서는 StatefulWidget을 사용해야 합니다. 기본 구조는 다음과 같습니다:
 
-1. A StatefulWidget class that creates its State
-2. A State class that maintains the actual state and build method
+1. State를 생성하는 StatefulWidget 클래스
+2. 실제 상태와 build 메서드를 유지하는 State 클래스
 
 ```typescript
-// The widget class creates its state
+// 위젯 클래스는 자신의 state를 생성합니다
 class Counter extends StatefulWidget {
   createState() {
     return new CounterState();
   }
 }
 
-// The state class maintains the mutable state
+// state 클래스는 변경 가능한 상태를 유지합니다
 class CounterState extends State {
   count = 0;
 
@@ -177,57 +177,57 @@ class CounterState extends State {
 }
 ```
 
-## Key Concepts
+## 핵심 개념
 
-### State and setState
+### State와 setState
 
-1. **State Declaration**: Declare state variables in your State class
-2. **State Updates**: Always use setState() to modify state
-3. **Rebuild Cycle**: setState() triggers a rebuild of the widget
+1. **상태 선언**: State 클래스에서 상태 변수를 선언합니다
+2. **상태 업데이트**: 항상 setState()를 사용하여 상태를 수정합니다
+3. **리빌드 주기**: setState()는 위젯의 리빌드를 트리거합니다
 
-### How setState Works
+### setState의 작동 방식
 
-When you call setState:
-1. The state is updated
-2. The widget is marked as "dirty"
-3. The framework schedules a rebuild
-4. The build method is called again with the new state
+setState를 호출하면:
+1. 상태가 업데이트됩니다
+2. 위젯이 "더티"로 표시됩니다
+3. 프레임워크가 리빌드를 예약합니다
+4. build 메서드가 새로운 상태로 다시 호출됩니다
 
 ```typescript
-// Good: Using setState
+// 좋음: setState 사용
 this.setState(() => {
   this.count++;
 });
 
-// Bad: Direct mutation
-this.count++; // Won't trigger a rebuild
+// 나쁨: 직접 변경
+this.count++; // 리빌드를 트리거하지 않습니다
 ```
 
-## Best Practices
+## 모범 사례
 
-1. **Minimize State**: Only store what needs to be mutable
-2. **Single Responsibility**: Each widget should manage its own localized state
-3. **Immutable Updates**: Always use setState for state modifications
-4. **State Location**: Keep state as close as possible to where it's used
+1. **상태 최소화**: 변경 가능해야 하는 것만 저장하세요
+2. **단일 책임**: 각 위젯은 자신의 지역화된 상태만 관리해야 합니다
+3. **불변 업데이트**: 상태 수정에는 항상 setState를 사용하세요
+4. **상태 위치**: 상태를 사용되는 곳과 최대한 가깝게 유지하세요
 
-## Performance Considerations
+## 성능 고려사항
 
-1. **Granular Updates**: Update only what's necessary
-2. **Avoid Unnecessary State**: Use StatelessWidget when possible
-3. **State Structure**: Organize state to minimize rebuilds
+1. **세분화된 업데이트**: 필요한 것만 업데이트하세요
+2. **불필요한 상태 피하기**: 가능한 경우 StatelessWidget을 사용하세요
+3. **상태 구조**: 리빌드를 최소화하도록 상태를 구성하세요
 
-## Debugging Tips
+## 디버깅 팁
 
-1. **Logging**: Add console.log statements in setState and build
-2. **Widget Inspection**: Monitor widget rebuilds
-3. **State Validation**: Validate state changes in development
+1. **로깅**: setState와 build에 console.log 문을 추가하세요
+2. **위젯 검사**: 위젯 리빌드를 모니터링하세요
+3. **상태 검증**: 개발 중에 상태 변경을 검증하세요
 
-## Conclusion
+## 결론
 
-Understanding state management is crucial for building interactive Flitter applications. By using StatefulWidget and setState correctly, you can create responsive applications that efficiently update their UI based on user interactions and data changes.
+상태 관리를 이해하는 것은 인터랙티브한 Flitter 애플리케이션을 만드는 데 매우 중요합니다. StatefulWidget과 setState를 올바르게 사용함으로써 사용자 상호작용과 데이터 변경에 기반하여 UI를 효율적으로 업데이트하는 반응형 애플리케이션을 만들 수 있습니다.
 
-Remember:
-- Use StatelessWidget for static UI components
-- Use StatefulWidget when you need to maintain mutable state
-- Always use setState to trigger UI updates
-- Keep state management simple and close to where it's used
+기억할 점:
+- 정적 UI 컴포넌트에는 StatelessWidget을 사용하세요
+- 변경 가능한 상태를 유지해야 할 때는 StatefulWidget을 사용하세요
+- UI 업데이트를 트리거하려면 항상 setState를 사용하세요
+- 상태 관리를 단순하게 유지하고 사용되는 곳과 가깝게 유지하세요

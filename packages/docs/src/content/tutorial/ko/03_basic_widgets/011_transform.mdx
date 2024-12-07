@@ -2,7 +2,8 @@
 nav_group: "Basic Widgets"
 nav_order: 12
 title: "Transform"
-description: "Apply transformations to widgets using the Transform widget"
+description: "Transform 위젯을 사용하여 위젯에 변형 적용하기"
+
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
@@ -25,7 +26,7 @@ files:
                 height: 100,
                 color: "blue",
                 child: Center({
-                  child: Text("Rotate")
+                  child: Text("회전")
                 })
               }),
               Container({ width: 20 }),
@@ -34,7 +35,7 @@ files:
                 height: 100,
                 color: "green",
                 child: Center({
-                  child: Text("Scale")
+                  child: Text("크기")
                 })
               }),
               Container({ width: 20 }),
@@ -43,7 +44,7 @@ files:
                 height: 100,
                 color: "red",
                 child: Center({
-                  child: Text("Skew")
+                  child: Text("기울기")
                 })
               })
             ]
@@ -77,7 +78,7 @@ solved_files:
                   height: 100,
                   color: "blue",
                   child: Center({
-                    child: Text("Rotate"),
+                    child: Text("회전"),
                   }),
                 }),
               }),
@@ -89,7 +90,7 @@ solved_files:
                   height: 100,
                   color: "green",
                   child: Center({
-                    child: Text("Scale"),
+                    child: Text("크기"),
                   }),
                 }),
               }),
@@ -101,7 +102,7 @@ solved_files:
                   height: 100,
                   color: "red",
                   child: Center({
-                    child: Text("Skew"),
+                    child: Text("기울기"),
                   }),
                 }),
               }),
@@ -112,13 +113,13 @@ solved_files:
     }
 ---
 
-# Transform Widget
+# Transform 위젯
 
-The Transform widget applies geometric transformations to its child widget using a 4x4 transformation matrix.
+Transform 위젯은 4x4 변환 행렬을 사용하여 자식 위젯에 기하학적 변환을 적용합니다.
 
-## Common Transformations
+## 일반적인 변환
 
-1. **Rotation**:
+1. **회전**:
    ```tsx
    Transform({
      transform: Matrix4.rotationZ(angle),
@@ -126,7 +127,7 @@ The Transform widget applies geometric transformations to its child widget using
    })
    ```
 
-2. **Scale**:
+2. **크기 조절**:
    ```tsx
    Transform({
      transform: Matrix4.diagonal3Values(scaleX, scaleY, 1),
@@ -134,7 +135,7 @@ The Transform widget applies geometric transformations to its child widget using
    })
    ```
 
-3. **Translation**:
+3. **이동**:
    ```tsx
    Transform({
      transform: Matrix4.translationValues(x, y, 0),
@@ -142,7 +143,7 @@ The Transform widget applies geometric transformations to its child widget using
    })
    ```
 
-4. **Skew**:
+4. **기울이기**:
    ```tsx
    Transform({
      transform: Matrix4.skewX(value),
@@ -150,24 +151,24 @@ The Transform widget applies geometric transformations to its child widget using
    })
    ```
 
-## Matrix4 Operations
+## Matrix4 연산
 
-1. **Basic Operations**:
-   - `Matrix4.identity()`: Creates identity matrix
-   - `Matrix4.rotationZ()`: Rotation around Z axis
-   - `Matrix4.translationValues()`: Translation in X, Y, Z
-   - `Matrix4.diagonal3Values()`: Scale in X, Y, Z
+1. **기본 연산**:
+   - `Matrix4.identity()`: 항등 행렬 생성
+   - `Matrix4.rotationZ()`: Z축 기준 회전
+   - `Matrix4.translationValues()`: X, Y, Z 축 이동
+   - `Matrix4.diagonal3Values()`: X, Y, Z 축 크기 조절
 
-2. **Combining Transformations**:
+2. **변환 조합**:
    ```tsx
    const matrix = Matrix4.identity()
      .multiply(Matrix4.rotationZ(angle))
      .multiply(Matrix4.translationValues(x, y, 0));
    ```
 
-## Common Use Cases
+## 일반적인 사용 사례
 
-1. **Card Flip Effect**:
+1. **카드 뒤집기 효과**:
    ```tsx
    Transform({
      transform: Matrix4.rotationY(isFlipped ? Math.PI : 0),
@@ -175,7 +176,7 @@ The Transform widget applies geometric transformations to its child widget using
    })
    ```
 
-2. **Hover Scale**:
+2. **호버 시 크기 변경**:
    ```tsx
    Transform({
      transform: Matrix4.diagonal3Values(
@@ -187,7 +188,7 @@ The Transform widget applies geometric transformations to its child widget using
    })
    ```
 
-3. **3D Rotation**:
+3. **3D 회전**:
    ```tsx
    Transform({
      transform: Matrix4.rotationX(angleX)
@@ -196,36 +197,36 @@ The Transform widget applies geometric transformations to its child widget using
    })
    ```
 
-## Best Practices
+## 모범 사례
 
-1. **Performance**:
-   - Use hardware acceleration when possible
-   - Avoid unnecessary transformations
-   - Consider using Transform.translate for simple translations
+1. **성능**:
+   - 가능한 하드웨어 가속 사용
+   - 불필요한 변환 피하기
+   - 단순 이동은 Transform.translate 사용 고려
 
-2. **Animation**:
-   - Use smooth transitions
-   - Consider performance impact
-   - Test on different devices
+2. **애니메이션**:
+   - 부드러운 전환 사용
+   - 성능 영향 고려
+   - 다양한 기기에서 테스트
 
-3. **Layout Considerations**:
-   - Be aware of transformed bounds
-   - Handle touch/click events correctly
-   - Consider parent constraints
+3. **레이아웃 고려사항**:
+   - 변환된 경계 영역 주의
+   - 터치/클릭 이벤트 올바르게 처리
+   - 부모 제약조건 고려
 
-## Tips and Tricks
+## 팁과 요령
 
-1. **Origin Point**:
-   - Set transform origin for rotations
-   - Consider widget center vs corner
-   - Use alignment property
+1. **원점**:
+   - 회전을 위한 변환 원점 설정
+   - 위젯 중심점 vs 모서리 고려
+   - alignment 속성 활용
 
-2. **3D Effects**:
-   - Use perspective for depth
-   - Combine multiple transformations
-   - Test on different viewports
+2. **3D 효과**:
+   - 깊이감을 위한 원근감 사용
+   - 여러 변환 조합
+   - 다양한 뷰포트에서 테스트
 
-3. **Debugging**:
-   - Use debug paint to visualize
-   - Check transformed bounds
-   - Verify touch areas
+3. **디버깅**:
+   - 시각화를 위한 디버그 페인트 사용
+   - 변환된 경계 확인
+   - 터치 영역 검증

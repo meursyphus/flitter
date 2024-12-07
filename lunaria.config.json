@@ -15,8 +15,16 @@
       "lang": "en"
     },
     {
-      "label": "Korean",
+      "label": "한국어",
       "lang": "ko"
+    },
+    {
+      "label": "简体中文",
+      "lang": "cn"
+    },
+    {
+      "label": "日本語",
+      "lang": "ja"
     }
   ],
   "files": [

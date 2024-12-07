@@ -1,8 +1,8 @@
 ---
-nav_group: "Interactions and Animations"
+nav_group: "상호작용과 애니메이션"
 nav_order: 1
-title: "Gesture Detection"
-description: "Master gesture handling in Flitter for creating interactive user interfaces"
+title: "제스처 감지"
+description: "Flitter에서 상호작용하는 사용자 인터페이스를 만들기 위한 제스처 처리 마스터하기"
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
@@ -19,13 +19,13 @@ files:
           height="calc(100vh - 16px)"
           widget={GestureDetector({
             onClick: (e) => {
-              console.log("Clicked!");
+              console.log("클릭됨!");
             },
             child: Container({
               width: 200,
               height: 200,
               color: "blue",
-              child: Text("Click me!"),
+              child: Text("클릭하세요!"),
             }),
           })}
         />
@@ -66,7 +66,7 @@ solved_files:
                   height: 200,
                   offset: position,
                   color: color,
-                  child: Text("Drag or Click!", {
+                  child: Text("드래그하거나 클릭하세요!", {
                     style: new TextStyle({
                       color: "white",
                       fontSize: 20,
@@ -81,27 +81,27 @@ solved_files:
     }
 ---
 
-# Gesture Detection in Flitter
+# Flitter의 제스처 감지
 
-Gesture detection in Flitter enables you to create interactive user interfaces by responding to various user inputs such as taps, drags, and mouse events. The GestureDetector widget provides a comprehensive API for handling these interactions.
+Flitter의 제스처 감지를 사용하면 탭, 드래그, 마우스 이벤트와 같은 다양한 사용자 입력에 반응하여 상호작용하는 사용자 인터페이스를 만들 수 있습니다. GestureDetector 위젯은 이러한 상호작용을 처리하기 위한 포괄적인 API를 제공합니다.
 
-## Core Concepts
+## 핵심 개념
 
-1. **Event Types**: Various gesture events including clicks, drags, and mouse movements
-2. **Event Data**: Detailed information about the gesture (coordinates, pressure, etc.)
-3. **Propagation**: How events flow through the widget tree
-4. **State Management**: Handling gesture state and updates
+1. **이벤트 유형**: 클릭, 드래그, 마우스 이동 등 다양한 제스처 이벤트
+2. **이벤트 데이터**: 제스처에 대한 상세 정보(좌표, 압력 등)
+3. **전파**: 이벤트가 위젯 트리를 통해 흐르는 방식
+4. **상태 관리**: 제스처 상태와 업데이트 처리
 
-## Basic Usage
+## 기본 사용법
 
-Simple click detection:
+간단한 클릭 감지:
 
 ```typescript
 import { GestureDetector, Container } from "@meursyphus/flitter";
 
 const clickableContainer = GestureDetector({
   onClick: (e) => {
-    console.log("Clicked at:", e.clientX, e.clientY);
+    console.log("클릭된 위치:", e.clientX, e.clientY);
   },
   child: Container({
     width: 200,
@@ -111,60 +111,60 @@ const clickableContainer = GestureDetector({
 });
 ```
 
-## Gesture Types
+## 제스처 유형
 
-### Click/Tap Events
+### 클릭/탭 이벤트
 
 ```typescript
 GestureDetector({
   onClick: (e) => {
-    console.log("Single click");
+    console.log("단일 클릭");
   },
   onDoubleClick: (e) => {
-    console.log("Double click");
+    console.log("더블 클릭");
   },
-  child: /* your widget */,
+  child: /* 위젯 */,
 });
 ```
 
-### Drag Events
+### 드래그 이벤트
 
 ```typescript
 GestureDetector({
   onDragStart: (e) => {
-    console.log("Started dragging");
+    console.log("드래그 시작");
   },
   onDragUpdate: (e) => {
-    console.log("Dragging at:", e.clientX, e.clientY);
-    console.log("Delta:", e.delta.x, e.delta.y);
+    console.log("드래그 위치:", e.clientX, e.clientY);
+    console.log("이동 거리:", e.delta.x, e.delta.y);
   },
   onDragEnd: (e) => {
-    console.log("Finished dragging");
+    console.log("드래그 완료");
   },
-  child: /* your widget */,
+  child: /* 위젯 */,
 });
 ```
 
-### Mouse Events
+### 마우스 이벤트
 
 ```typescript
 GestureDetector({
   onMouseEnter: (e) => {
-    console.log("Mouse entered");
+    console.log("마우스 진입");
   },
   onMouseMove: (e) => {
-    console.log("Mouse position:", e.clientX, e.clientY);
+    console.log("마우스 위치:", e.clientX, e.clientY);
   },
   onMouseLeave: (e) => {
-    console.log("Mouse left");
+    console.log("마우스 이탈");
   },
-  child: /* your widget */,
+  child: /* 위젯 */,
 });
 ```
 
-## Advanced Usage
+## 고급 사용법
 
-### Combining Multiple Gestures
+### 여러 제스처 결합하기
 
 ```typescript
 import { GestureDetector, Container, useState } from "@meursyphus/flitter";
@@ -192,9 +192,9 @@ function InteractiveBox() {
 }
 ```
 
-### Custom Gesture Recognition
+### 사용자 정의 제스처 인식
 
-Creating a custom long-press detector:
+사용자 정의 길게 누르기 감지기 만들기:
 
 ```typescript
 function LongPressDetector({ onLongPress, child }) {
@@ -215,34 +215,34 @@ function LongPressDetector({ onLongPress, child }) {
 }
 ```
 
-## Best Practices
+## 모범 사례
 
-1. **Event Handling**:
+1. **이벤트 처리**:
 
-   - Keep event handlers small and focused
-   - Avoid expensive operations in handlers
-   - Consider debouncing for frequent events
+   - 이벤트 핸들러를 작고 집중적으로 유지
+   - 핸들러에서 비용이 많이 드는 작업 피하기
+   - 빈번한 이벤트에 대한 디바운싱 고려
 
-2. **User Experience**:
+2. **사용자 경험**:
 
-   - Provide visual feedback for interactions
-   - Maintain consistent behavior
-   - Consider touch and mouse interactions
+   - 상호작용에 대한 시각적 피드백 제공
+   - 일관된 동작 유지
+   - 터치와 마우스 상호작용 고려
 
-3. **Performance**:
+3. **성능**:
 
-   - Use appropriate event types
-   - Optimize drag handlers
-   - Clean up event listeners
+   - 적절한 이벤트 유형 사용
+   - 드래그 핸들러 최적화
+   - 이벤트 리스너 정리
 
-4. **Accessibility**:
-   - Support keyboard navigation
-   - Provide alternative interactions
-   - Consider users with different abilities
+4. **접근성**:
+   - 키보드 네비게이션 지원
+   - 대체 상호작용 제공
+   - 다양한 능력을 가진 사용자 고려
 
-## Common Patterns
+## 일반적인 패턴
 
-### Draggable Widget
+### 드래그 가능한 위젯
 
 ```typescript
 function DraggableWidget({ child }) {
@@ -263,7 +263,7 @@ function DraggableWidget({ child }) {
 }
 ```
 
-### Interactive Button
+### 상호작용 버튼
 
 ```typescript
 function InteractiveButton({ onPress, child }) {
@@ -284,33 +284,33 @@ function InteractiveButton({ onPress, child }) {
 }
 ```
 
-## Troubleshooting
+## 문제 해결
 
-### Event Propagation
+### 이벤트 전파
 
-Handle event propagation correctly:
+이벤트 전파를 올바르게 처리하기:
 
 ```typescript
 GestureDetector({
   onClick: (e) => {
-    e.stopPropagation(); // Prevent event from bubbling up
-    // Handle click
+    e.stopPropagation(); // 이벤트가 상위로 전파되는 것을 방지
+    // 클릭 처리
   },
-  child: /* your widget */,
+  child: /* 위젯 */,
 });
 ```
 
-### Gesture Conflicts
+### 제스처 충돌
 
-Resolve conflicts between different gesture handlers:
+서로 다른 제스처 핸들러 간의 충돌 해결:
 
 ```typescript
 Stack({
   children: [
-    // Background handler
+    // 배경 핸들러
     GestureDetector({
       onClick: (e) => {
-        // Only handle if not handled by child
+        // 자식에 의해 처리되지 않은 경우에만 처리
         if (!e.defaultPrevented) {
           handleBackgroundClick();
         }
@@ -319,10 +319,10 @@ Stack({
         /* ... */
       }),
     }),
-    // Foreground handler
+    // 전경 핸들러
     GestureDetector({
       onClick: (e) => {
-        e.preventDefault(); // Prevent background handling
+        e.preventDefault(); // 배경 처리 방지
         handleForegroundClick();
       },
       child: Container({
@@ -333,6 +333,6 @@ Stack({
 });
 ```
 
-## Conclusion
+## 결론
 
-Gesture detection is fundamental to creating interactive Flitter applications. The GestureDetector widget provides a rich API for handling user interactions, enabling you to create responsive and engaging user interfaces. Remember to consider both desktop and mobile interactions, maintain consistent behavior, and optimize performance for smooth user experiences.
+제스처 감지는 상호작용하는 Flitter 애플리케이션을 만드는 데 기본이 됩니다. GestureDetector 위젯은 사용자 상호작용을 처리하기 위한 풍부한 API를 제공하여 반응이 빠르고 매력적인 사용자 인터페이스를 만들 수 있게 해줍니다. 데스크톱과 모바일 상호작용을 모두 고려하고, 일관된 동작을 유지하며, 부드러운 사용자 경험을 위해 성능을 최적화하는 것을 잊지 마세요.

@@ -2,7 +2,8 @@
 nav_group: "Basic Widgets"
 nav_order: 13
 title: "Opacity"
-description: "Control widget transparency with the Opacity widget"
+description: "Opacity 위젯으로 위젯의 투명도 제어하기"
+
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
@@ -111,18 +112,18 @@ solved_files:
     }
 ---
 
-# Opacity Widget
+# Opacity 위젯
 
-The Opacity widget makes its child partially or fully transparent. It's useful for creating visual effects, transitions, and indicating widget states.
+Opacity 위젯은 자식 위젯을 부분적으로 또는 완전히 투명하게 만듭니다. 시각적 효과, 전환, 위젯 상태 표시에 유용합니다.
 
-## Properties
+## 속성
 
-- `opacity`: number between 0.0 (fully transparent) and 1.0 (fully opaque)
-- `child`: The widget to apply opacity to
+- `opacity`: 0.0(완전 투명)에서 1.0(완전 불투명) 사이의 숫자
+- `child`: 투명도를 적용할 위젯
 
-## Common Use Cases
+## 일반적인 사용 사례
 
-1. **Disabled State**:
+1. **비활성화 상태**:
    ```tsx
    Opacity({
      opacity: isEnabled ? 1.0 : 0.5,
@@ -130,7 +131,7 @@ The Opacity widget makes its child partially or fully transparent. It's useful f
    })
    ```
 
-2. **Fade Effects**:
+2. **페이드 효과**:
    ```tsx
    Opacity({
      opacity: isVisible ? 1.0 : 0.0,
@@ -138,7 +139,7 @@ The Opacity widget makes its child partially or fully transparent. It's useful f
    })
    ```
 
-3. **Visual Hierarchy**:
+3. **시각적 계층**:
    ```tsx
    Column({
      children: [
@@ -154,26 +155,26 @@ The Opacity widget makes its child partially or fully transparent. It's useful f
    })
    ```
 
-## Best Practices
+## 모범 사례
 
-1. **Performance**:
-   - Use opacity sparingly
-   - Consider using alpha color values for static transparency
-   - Be aware of compositing costs
+1. **성능**:
+   - 투명도를 적절히 사용
+   - 정적 투명도는 알파 색상값 사용 고려
+   - 합성 비용 주의
 
-2. **Accessibility**:
-   - Ensure sufficient contrast
-   - Consider disabled states
-   - Hide non-interactive transparent elements
+2. **접근성**:
+   - 충분한 대비 보장
+   - 비활성화 상태 고려
+   - 상호작용 불가능한 투명 요소 숨기기
 
-3. **Animation**:
-   - Use smooth transitions
-   - Consider performance impact
-   - Test on different devices
+3. **애니메이션**:
+   - 부드러운 전환 사용
+   - 성능 영향 고려
+   - 다양한 기기에서 테스트
 
-## Common Patterns
+## 일반적인 패턴
 
-1. **Loading States**:
+1. **로딩 상태**:
    ```tsx
    Stack({
      children: [
@@ -186,7 +187,7 @@ The Opacity widget makes its child partially or fully transparent. It's useful f
    })
    ```
 
-2. **Modal Overlays**:
+2. **모달 오버레이**:
    ```tsx
    Stack({
      children: [
@@ -200,27 +201,7 @@ The Opacity widget makes its child partially or fully transparent. It's useful f
    })
    ```
 
-3. **Fade Transitions**:
-   ```tsx
-   Opacity({
-     opacity: isVisible ? 1.0 : 0.0,
-     child: TransitioningContent()
-   })
-   ```
-
-## Tips and Tricks
-
-1. **Visual Effects**:
-   - Layer multiple opacities
-   - Combine with other effects
-   - Consider background contrast
-
-2. **Interactive Elements**:
-   - Maintain visibility of important UI
-   - Use appropriate opacity levels
-   - Consider hover states
-
-3. **Debugging**:
-   - Test different opacity values
-   - Verify touch/click areas
-   - Check contrast ratios
+3. **디버깅**:
+   - 다양한 투명도 값 테스트
+   - 터치/클릭 영역 확인
+   - 대비율 확인

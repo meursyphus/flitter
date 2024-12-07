@@ -1,8 +1,8 @@
 ---
-nav_group: "Basic Widgets"
+nav_group: "기본 위젯"
 nav_order: 7
-title: "Stack & Positioned"
-description: "Stack widget for layering children and Positioned widget for precise positioning"
+title: "Stack과 Positioned"
+description: "자식 위젯들을 레이어로 쌓고 정확한 위치 지정을 위한 Stack과 Positioned 위젯"
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
@@ -92,38 +92,38 @@ solved_files:
     }
 ---
 
-# Stack & Positioned
+# Stack과 Positioned
 
-Stack and Positioned widgets work together to create layered layouts with precise positioning of child widgets.
+Stack과 Positioned 위젯은 함께 작동하여 자식 위젯들을 정확한 위치에 배치하는 레이어드 레이아웃을 만듭니다.
 
-## Properties
+## 속성
 
-### Stack Properties
+### Stack 속성
 
-- `children`: Widget[] - List of child widgets to be stacked
-- `alignment`: Alignment - How to align non-positioned children (default: "topLeft")
-  - "topLeft", "topCenter", "topRight"
-  - "centerLeft", "center", "centerRight"
-  - "bottomLeft", "bottomCenter", "bottomRight"
-- `fit`: StackFit - How to size the non-positioned children
-  - "loose" (default) - Children can be smaller than Stack
-  - "expand" - Children must fill Stack
-  - "passthrough" - Stack sizes itself to children
-- `clipped`: boolean - Whether to clip children to the stack's bounds (default: false)
+- `children`: Widget[] - 쌓을 자식 위젯들의 목록
+- `alignment`: Alignment - 위치가 지정되지 않은 자식들의 정렬 방법 (기본값: "topLeft")
+  - "topLeft", "topCenter", "topRight" - 상단 왼쪽, 상단 중앙, 상단 오른쪽
+  - "centerLeft", "center", "centerRight" - 중앙 왼쪽, 중앙, 중앙 오른쪽
+  - "bottomLeft", "bottomCenter", "bottomRight" - 하단 왼쪽, 하단 중앙, 하단 오른쪽
+- `fit`: StackFit - 위치가 지정되지 않은 자식들의 크기 조정 방법
+  - "loose" (기본값) - 자식들이 Stack보다 작을 수 있음
+  - "expand" - 자식들이 Stack을 채워야 함
+  - "passthrough" - Stack이 자식들의 크기에 맞춰짐
+- `clipped`: boolean - 자식들을 Stack의 경계로 잘라낼지 여부 (기본값: false)
 
-### Positioned Properties
+### Positioned 속성
 
-- `child`: Widget - The widget to position
-- `left`: number - Distance from the left edge
-- `top`: number - Distance from the top edge
-- `right`: number - Distance from the right edge
-- `bottom`: number - Distance from the bottom edge
-- `width`: number - Width of the positioned widget
-- `height`: number - Height of the positioned widget
+- `child`: Widget - 위치를 지정할 위젯
+- `left`: number - 왼쪽 가장자리로부터의 거리
+- `top`: number - 상단 가장자리로부터의 거리
+- `right`: number - 오른쪽 가장자리로부터의 거리
+- `bottom`: number - 하단 가장자리로부터의 거리
+- `width`: number - 위치가 지정된 위젯의 너비
+- `height`: number - 위치가 지정된 위젯의 높이
 
-## Common Use Cases
+## 일반적인 사용 사례
 
-1. **Basic Overlay**:
+1. **기본 오버레이**:
 
    ```tsx
    Stack({
@@ -146,7 +146,7 @@ Stack and Positioned widgets work together to create layered layouts with precis
    });
    ```
 
-2. **Card with Badge**:
+2. **배지가 있는 카드**:
 
    ```tsx
    Stack({
@@ -170,7 +170,7 @@ Stack and Positioned widgets work together to create layered layouts with precis
    });
    ```
 
-3. **Full Screen Overlay**:
+3. **전체 화면 오버레이**:
    ```tsx
    Stack({
      fit: "expand",
@@ -186,29 +186,28 @@ Stack and Positioned widgets work together to create layered layouts with precis
    });
    ```
 
-## Best Practices
+## 모범 사례
 
-1. **Layout Guidelines**:
+1. **레이아웃 가이드라인**:
 
-   - Use Stack only when layering is needed
-   - Consider alignment for non-positioned children
-   - Choose appropriate StackFit
-   - Use clipped property when needed
+   - 레이어가 필요한 경우에만 Stack 사용
+   - 위치가 지정되지 않은 자식들의 정렬 고려
+   - 적절한 StackFit 선택
+   - 필요한 경우 clipped 속성 사용
 
-2. **Performance**:
+2. **성능**:
 
-   - Minimize the number of positioned children
-   - Avoid unnecessary nesting of Stacks
-   - Use const constructors when possible
+   - 위치가 지정된 자식들의 수 최소화
+   - 불필요한 Stack 중첩 피하기
 
-3. **Responsive Design**:
-   - Handle different screen sizes
-   - Consider edge cases
-   - Use relative positioning when appropriate
+3. **반응형 디자인**:
+   - 다양한 화면 크기 처리
+   - 엣지 케이스 고려
+   - 적절한 경우 상대적 위치 지정 사용
 
-## Common Patterns
+## 일반적인 패턴
 
-1. **Modal Dialog**:
+1. **모달 다이얼로그**:
 
    ```tsx
    Stack({
@@ -229,7 +228,7 @@ Stack and Positioned widgets work together to create layered layouts with precis
    });
    ```
 
-2. **Image with Caption**:
+2. **캡션이 있는 이미지**:
 
    ```tsx
    Stack({
@@ -242,7 +241,7 @@ Stack and Positioned widgets work together to create layered layouts with precis
          child: Container({
            color: "rgba(0, 0, 0, 0.5)",
            child: Text({
-             text: "Caption",
+             text: "캡션",
              color: "white",
            }),
          }),
@@ -251,7 +250,7 @@ Stack and Positioned widgets work together to create layered layouts with precis
    });
    ```
 
-3. **Floating Action Button**:
+3. **플로팅 액션 버튼**:
    ```tsx
    Stack({
      children: [
@@ -260,30 +259,30 @@ Stack and Positioned widgets work together to create layered layouts with precis
          bottom: 16,
          right: 16,
          child: FloatingActionButton({
-           onPressed: () => console.log("Pressed"),
+           onPressed: () => console.log("눌림"),
          }),
        }),
      ],
    });
    ```
 
-## Tips and Tricks
+## 팁과 트릭
 
-1. **Layout Debugging**:
+1. **레이아웃 디버깅**:
 
-   - Use temporary background colors
-   - Check stack boundaries
-   - Monitor positioning behavior
-   - Test clipping behavior
+   - 임시 배경색 사용
+   - Stack 경계 확인
+   - 위치 지정 동작 모니터링
+   - 잘라내기 동작 테스트
 
-2. **Positioning Techniques**:
+2. **위치 지정 기법**:
 
-   - Use relative positioning when possible
-   - Consider stack alignment
-   - Handle overflow properly
+   - 가능한 경우 상대적 위치 지정 사용
+   - Stack 정렬 고려
+   - 오버플로우 적절히 처리
 
-3. **Optimization**:
-   - Cache stack widgets when possible
-   - Use const constructors
-   - Consider layout constraints
-   - Choose appropriate fit property
+3. **최적화**:
+   - 가능한 경우 Stack 위젯 캐싱
+   - const 생성자 사용
+   - 레이아웃 제약 조건 고려
+   - 적절한 fit 속성 선택

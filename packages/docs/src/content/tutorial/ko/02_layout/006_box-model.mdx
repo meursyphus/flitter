@@ -1,8 +1,8 @@
 ---
-nav_group: "Layout"
+nav_group: "레이아웃"
 nav_order: 1
-title: "Box Model"
-description: "Learn about the Box Model in Flitter and how it affects layout and sizing of widgets"
+title: "박스 모델"
+description: "Flitter의 박스 모델과 위젯의 레이아웃 및 크기 조정에 미치는 영향 알아보기"
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
@@ -22,7 +22,7 @@ files:
             width: 200,
             height: 100,
             color: "lightblue",
-            child: Text("Box Model Example")
+            child: Text("박스 모델 예제")
           })}
         />
       );
@@ -50,40 +50,40 @@ solved_files:
               color: "lightblue",
               border: Border.all({ color: "blue", width: 2 })
             }),
-            child: Text("Box Model Example")
+            child: Text("박스 모델 예제")
           })}
         />
       );
     }
 ---
 
-# Understanding the Box Model
+# 박스 모델 이해하기
 
-The Box Model is a fundamental concept in layout design, and Flitter, like many UI frameworks, uses this model to control the sizing and spacing of widgets. Understanding the Box Model is crucial for creating precise and responsive layouts in your Flitter applications.
+박스 모델은 레이아웃 디자인의 기본 개념이며, Flitter는 다른 많은 UI 프레임워크처럼 이 모델을 사용하여 위젯의 크기와 간격을 제어합니다. Flitter 애플리케이션에서 정확하고 반응형 레이아웃을 만들기 위해서는 박스 모델을 이해하는 것이 매우 중요합니다.
 
-## What is the Box Model?
+## 박스 모델이란?
 
-The Box Model describes how elements (or widgets in Flitter's case) are rendered in a layout. It consists of four main parts:
+박스 모델은 요소(또는 Flitter의 경우 위젯)가 레이아웃에서 어떻게 렌더링되는지 설명합니다. 박스 모델은 네 가지 주요 부분으로 구성됩니다:
 
-1. Content: The actual content of the widget (e.g., text, image)
-2. Padding: The space between the content and the border
-3. Border: The line surrounding the padding and content
-4. Margin: The space outside the border
+1. 콘텐츠: 위젯의 실제 내용 (예: 텍스트, 이미지)
+2. 패딩: 콘텐츠와 테두리 사이의 공간
+3. 테두리: 패딩과 콘텐츠를 둘러싸는 선
+4. 마진: 테두리 바깥의 공간
 
-## Visual Representation
+## 시각적 표현
 
-Here's a simple ASCII representation of the Box Model:
+다음은 박스 모델의 간단한 ASCII 표현입니다:
 
 ```
 ┌─────────────────────────────────────┐
-│               Margin                │
+│                마진                 │
 │   ┌─────────────────────────────┐   │
-│   │           Border            │   │
+│   │            테두리           │   │
 │   │   ┌─────────────────────┐   │   │
-│   │   │      Padding        │   │   │
+│   │   │        패딩         │   │   │
 │   │   │   ┌───────────────┐ │   │   │
 │   │   │   │               │ │   │   │
-│   │   │   │    Content    │ │   │   │
+│   │   │   │    콘텐츠     │ │   │   │
 │   │   │   │               │ │   │   │
 │   │   │   └───────────────┘ │   │   │
 │   │   │                     │   │   │
@@ -94,11 +94,11 @@ Here's a simple ASCII representation of the Box Model:
 └─────────────────────────────────────┘
 ```
 
-## Applying the Box Model in Flitter
+## Flitter에서 박스 모델 적용하기
 
-In Flitter, you can control these aspects of the Box Model using various properties of widgets, particularly the Container widget.
+Flitter에서는 위젯의 다양한 속성, 특히 Container 위젯을 사용하여 박스 모델의 이러한 측면들을 제어할 수 있습니다.
 
-### Example: Creating a Box Model with Container
+### 예제: Container로 박스 모델 만들기
 
 ```typescript
 import { Container, Text, EdgeInsets } from "@meursyphus/flitter";
@@ -110,40 +110,40 @@ const boxModelExample = Container({
     color: "lightblue",
     border: Border.all({ color: "blue", width: 2 }),
   }),
-  child: Text("Box Model Example"),
+  child: Text("박스 모델 예제"),
 });
 ```
 
-## Key Concepts
+## 핵심 개념
 
-### 1. Content Sizing
+### 1. 콘텐츠 크기 조정
 
-The content's size is determined by either its intrinsic size (e.g., the natural size of text) or constraints passed down from parent widgets.
+콘텐츠의 크기는 고유 크기(예: 텍스트의 자연스러운 크기)나 부모 위젯에서 전달된 제약 조건에 의해 결정됩니다.
 
-### 2. Padding
+### 2. 패딩
 
-Padding increases the size of the widget without affecting the size of its content. It's useful for creating space between the content and its border.
+패딩은 콘텐츠의 크기에 영향을 주지 않으면서 위젯의 크기를 증가시킵니다. 콘텐츠와 테두리 사이에 공간을 만드는 데 유용합니다.
 
-### 3. Border
+### 3. 테두리
 
-The border surrounds the padding and content. In Flitter, borders are typically added using BoxDecoration.
+테두리는 패딩과 콘텐츠를 둘러쌉니다. Flitter에서 테두리는 일반적으로 BoxDecoration을 사용하여 추가됩니다.
 
-### 4. Margin
+### 4. 마진
 
-Margin creates space around the widget, affecting its position relative to other widgets but not its internal layout.
+마진은 위젯 주위에 공간을 만들어 내부 레이아웃에는 영향을 주지 않으면서 다른 위젯과의 상대적 위치에 영향을 줍니다.
 
-## Best Practices
+## 모범 사례
 
-1. **Use padding for internal spacing**: When you need space inside a widget, use padding rather than margin.
+1. **내부 간격에는 패딩 사용**: 위젯 내부에 공간이 필요할 때는 마진 대신 패딩을 사용하세요.
 
-2. **Use margin for external spacing**: When you need space between widgets, use margin.
+2. **외부 간격에는 마진 사용**: 위젯 사이에 공간이 필요할 때는 마진을 사용하세요.
 
-3. **Be consistent**: Try to use consistent margin and padding values throughout your app for a cohesive look.
+3. **일관성 유지**: 통일된 모양을 위해 앱 전체에서 일관된 마진과 패딩 값을 사용하도록 노력하세요.
 
-4. **Consider nested boxes**: Remember that margins can collapse in certain situations when boxes are nested.
+4. **중첩된 박스 고려**: 박스가 중첩될 때 특정 상황에서 마진이 겹칠 수 있다는 점을 기억하세요.
 
-5. **Use EdgeInsets**: Flitter provides the EdgeInsets class for easily specifying padding and margins.
+5. **EdgeInsets 사용**: Flitter는 패딩과 마진을 쉽게 지정할 수 있는 EdgeInsets 클래스를 제공합니다.
 
-## Conclusion
+## 결론
 
-Understanding the Box Model is essential for creating well-structured layouts in Flitter. By mastering the concepts of content, padding, border, and margin, you'll be able to create more precise and visually appealing user interfaces. Remember that while the Container widget is often used to apply these Box Model concepts, many other Flitter widgets also incorporate aspects of the Box Model in their design.
+박스 모델을 이해하는 것은 Flitter에서 잘 구조화된 레이아웃을 만드는 데 필수적입니다. 콘텐츠, 패딩, 테두리, 마진의 개념을 마스터함으로써 더 정확하고 시각적으로 매력적인 사용자 인터페이스를 만들 수 있습니다. Container 위젯이 이러한 박스 모델 개념을 적용하는 데 자주 사용되지만, 많은 다른 Flitter 위젯들도 그들의 디자인에 박스 모델의 측면들을 포함하고 있다는 점을 기억하세요.

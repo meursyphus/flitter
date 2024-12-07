@@ -2,7 +2,7 @@
 nav_group: "Basic Widgets"
 nav_order: 10
 title: "ClipPath"
-description: "Shape your widgets with custom clip paths"
+description: "커스텀 클립 경로로 위젯 모양 만들기"
 
 files:
   App.js: |
@@ -129,7 +129,7 @@ solved_files:
             child: Column({
               mainAxisSize: MainAxisSize.min,
               children: [
-                // First Row: ClipOval with clipper
+                // 첫 번째 행: ClipOval과 clipper 사용
                 Row({
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -180,7 +180,7 @@ solved_files:
                   ]
                 }),
                 SizedBox({ height: 10 }),
-                // Second Row: ClipRRect using clipper
+                // 두 번째 행: ClipRRect와 clipper 사용
                 Row({
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -243,7 +243,7 @@ solved_files:
                   ]
                 }),
                 SizedBox({ height: 10 }),
-                // Third Row: ClipPath with custom paths
+                // 세 번째 행: ClipPath와 커스텀 경로 사용
                 Row({
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -302,7 +302,7 @@ solved_files:
     }
 ---
 
-# Clipping Widgets
+# 클리핑 위젯
 
 Flitter는 다양한 클리핑 위젯을 제공하여 자식 위젯을 원하는 형태로 잘라낼 수 있습니다.
 
@@ -320,7 +320,7 @@ Flitter는 다양한 클리핑 위젯을 제공하여 자식 위젯을 원하는
    - 커스텀 경로를 사용한 클리핑
    - `Path` 클래스로 복잡한 형태 구현 가능
 
-## Properties
+## 속성
 
 ### ClipOval
 - `child`: Widget - 클리핑될 자식 위젯
@@ -363,7 +363,7 @@ Path 클래스와 Rect 클래스를 함께 사용하면 더 정교한 클리핑�
    rect.height     // 높이
    ```
 
-## Best Practices
+## 모범 사례
 
 1. **성능 최적화**:
    - 단순한 형태는 `ClipOval`이나 `ClipRRect` 사용

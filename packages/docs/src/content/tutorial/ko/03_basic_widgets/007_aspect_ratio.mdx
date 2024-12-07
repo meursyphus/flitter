@@ -1,8 +1,8 @@
 ---
-nav_group: "Basic Widgets"
+nav_group: "기본 위젯"
 nav_order: 8
 title: "AspectRatio"
-description: "Control widget dimensions using aspect ratios"
+description: "종횡비를 사용하여 위젯 크기 제어하기"
 
 files:
   App.js: |
@@ -27,7 +27,7 @@ files:
                 child: Container({
                   color: "lightblue",
                   child: Center({
-                    child: Text("Aspect Ratio Example")
+                    child: Text("종횡비 예제")
                   })
                 })
               }),
@@ -37,7 +37,7 @@ files:
                 child: Container({
                   color: "lightblue",
                   child: Center({
-                    child: Text("Aspect Ratio Example")
+                    child: Text("종횡비 예제")
                   })
                 })
               })
@@ -70,7 +70,7 @@ solved_files:
                 child: Container({
                   color: "lightblue",
                   child: Center({
-                    child: Text("Aspect Ratio Example")
+                    child: Text("종횡비 예제")
                   })
                 })
               }),
@@ -80,7 +80,7 @@ solved_files:
                 child: Container({
                   color: "lightblue",
                   child: Center({
-                    child: Text("Aspect Ratio Example")
+                    child: Text("종횡비 예제")
                   })
                 })
               })
@@ -92,20 +92,20 @@ solved_files:
 
 ---
 
-# AspectRatio Widget
+# AspectRatio 위젯
 
-The AspectRatio widget sizes its child to a specific aspect ratio, which is the ratio of width to height.
+AspectRatio 위젯은 자식의 크기를 특정 종횡비(너비 대 높이의 비율)로 조정합니다.
 
-## Properties
+## 속성
 
-- `aspectRatio`: number - The ratio of width to height
-- `child`: Widget - The widget to size according to the aspect ratio
+- `aspectRatio`: number - 너비 대 높이의 비율
+- `child`: Widget - 종횡비에 따라 크기가 조정될 위젯
 
-## Common Aspect Ratios
+## 일반적인 종횡비
 
 1. **16:9 (1.78:1)**
-   - Widescreen video
-   - Modern displays
+   - 와이드스크린 비디오
+   - 현대적인 디스플레이
    ```tsx
    AspectRatio({
      aspectRatio: 1.78,
@@ -114,8 +114,8 @@ The AspectRatio widget sizes its child to a specific aspect ratio, which is the 
    ```
 
 2. **4:3 (1.33:1)**
-   - Traditional photos
-   - Older displays
+   - 전통적인 사진
+   - 구형 디스플레이
    ```tsx
    AspectRatio({
      aspectRatio: 1.33,
@@ -124,8 +124,8 @@ The AspectRatio widget sizes its child to a specific aspect ratio, which is the 
    ```
 
 3. **1:1 (1:1)**
-   - Square images
-   - Profile pictures
+   - 정사각형 이미지
+   - 프로필 사진
    ```tsx
    AspectRatio({
      aspectRatio: 1,
@@ -133,9 +133,9 @@ The AspectRatio widget sizes its child to a specific aspect ratio, which is the 
    })
    ```
 
-## Use Cases
+## 사용 사례
 
-1. **Responsive Video Players**:
+1. **반응형 비디오 플레이어**:
    ```tsx
    Container({
      width: "100%",
@@ -146,7 +146,7 @@ The AspectRatio widget sizes its child to a specific aspect ratio, which is the 
    })
    ```
 
-2. **Image Galleries**:
+2. **이미지 갤러리**:
    ```tsx
    GridView({
      children: images.map(image =>
@@ -158,7 +158,7 @@ The AspectRatio widget sizes its child to a specific aspect ratio, which is the 
    })
    ```
 
-3. **Cards with Media**:
+3. **미디어가 포함된 카드**:
    ```tsx
    Column({
      children: [
@@ -171,53 +171,53 @@ The AspectRatio widget sizes its child to a specific aspect ratio, which is the 
    })
    ```
 
-## Best Practices
+## 모범 사례
 
-1. **Responsive Design**:
-   - Use AspectRatio for consistent layouts
-   - Consider different screen sizes
-   - Test with various parent constraints
+1. **반응형 디자인**:
+   - 일관된 레이아웃을 위해 AspectRatio 사용
+   - 다양한 화면 크기 고려
+   - 다양한 부모 제약 조건에서 테스트
 
-2. **Content Fitting**:
-   - Use appropriate aspect ratios for content type
-   - Consider content cropping
-   - Handle overflow appropriately
+2. **콘텐츠 맞춤**:
+   - 콘텐츠 유형에 맞는 종횡비 사용
+   - 콘텐츠 잘림 고려
+   - 오버플로우 적절히 처리
 
-3. **Performance**:
-   - Avoid unnecessary nesting
-   - Use const widgets when possible
-   - Consider caching for lists
+3. **성능**:
+   - 불필요한 중첩 피하기
+   - 가능한 경우 const 위젯 사용
+   - 리스트의 경우 캐싱 고려
 
-## Common Patterns
+## 일반적인 패턴
 
-1. **Media Players**:
-   - Video players
-   - Image galleries
-   - Slideshows
+1. **미디어 플레이어**:
+   - 비디오 플레이어
+   - 이미지 갤러리
+   - 슬라이드쇼
 
-2. **Cards and Tiles**:
-   - Product cards
-   - News articles
-   - Photo galleries
+2. **카드와 타일**:
+   - 상품 카드
+   - 뉴스 기사
+   - 사진 갤러리
 
-3. **Profile Pictures**:
-   - User avatars
-   - Team member photos
-   - Contact images
+3. **프로필 사진**:
+   - 사용자 아바타
+   - 팀원 사진
+   - 연락처 이미지
 
-## Tips and Tricks
+## 팁과 트릭
 
-1. **Dynamic Ratios**:
-   - Calculate ratios based on content
-   - Consider orientation changes
-   - Handle edge cases
+1. **동적 비율**:
+   - 콘텐츠 기반으로 비율 계산
+   - 방향 변경 고려
+   - 엣지 케이스 처리
 
-2. **Content Scaling**:
-   - Use appropriate fit modes for images
-   - Handle different content sizes
-   - Consider placeholder content
+2. **콘텐츠 크기 조정**:
+   - 이미지에 적절한 맞춤 모드 사용
+   - 다양한 콘텐츠 크기 처리
+   - 플레이스홀더 콘텐츠 고려
 
-3. **Layout Integration**:
-   - Combine with other layout widgets
-   - Handle parent constraints
-   - Consider overflow cases
+3. **레이아웃 통합**:
+   - 다른 레이아웃 위젯과 조합
+   - 부모 제약 조건 처리
+   - 오버플로우 케이스 고려
