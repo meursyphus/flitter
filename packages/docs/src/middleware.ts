@@ -1,7 +1,5 @@
 import type { MiddlewareHandler } from "astro";
-
-const SUPPORTED_LANGUAGES = ["ko", "en"] as const;
-const DEFAULT_LANGUAGE = "en";
+import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from "./i18n";
 
 function detectLanguage(
   context: Parameters<MiddlewareHandler>[0],
