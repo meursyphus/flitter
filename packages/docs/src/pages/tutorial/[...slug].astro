@@ -44,6 +44,7 @@ const { Content } = await entry.render();
 <Layout
   title={`${entry.data.nav_group}/${entry.data.title} - Flitter`}
   description={entry.data.description}
+  image={entry.data.image ?? "/og-tutorial.png"}
 >
   <div
     class="grid h-[calc(100vh-var(--header))] grid-cols-[220px_1fr_1fr]"

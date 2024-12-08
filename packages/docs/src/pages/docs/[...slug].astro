@@ -48,7 +48,7 @@ const nextEntry =
 <Layout
   title={`${entry.data.nav_group}/${entry.data.title} - Flitter`}
   description={entry.data.description}
-  image={entry.data.image}
+  image={entry.data.image ?? "/og-docs.png"}
 >
   <main data-theme="pink" class="relative mx-auto flex">
     <SideBar />
