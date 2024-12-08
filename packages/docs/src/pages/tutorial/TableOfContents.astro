@@ -2,17 +2,19 @@
 import { getCollection } from "astro:content";
 
 const tutorials = await getCollection("tutorial");
-const sortedTutorials = tutorials.map((entry) => {
-  const segments = entry.slug.split("/");
-  const lang = segments[0];
-  return {
-    ...entry,
-    lang,
-    slug: segments.map((segment) => segment.replace(/^\d+_/, "")).join("/"),
-    order: parseInt(segments[1].split("_")[0]) || 0,
-    nav_group: entry.data.nav_group || "Others",
-  };
-});
+const sortedTutorials = tutorials
+  .sort((a, b) => a.slug.localeCompare(b.slug))
+  .map((entry) => {
+    const segments = entry.slug.split("/");
+    const lang = segments[0];
+    return {
+      ...entry,
+      lang,
+      slug: segments.map((segment) => segment.replace(/^\d+_/, "")).join("/"),
+      order: parseInt(segments[1].split("_")[0]) || 0,
+      nav_group: entry.data.nav_group || "Others",
+    };
+  });
 
 // Group tutorials by nav_group and filter by language
 const { currentSlug } = Astro.props;

@@ -1,6 +1,6 @@
 ---
 import Layout from "../../layouts/DocsLayout.astro";
-import SideBar from "./SideBar.astro"
+import SideBar from "./SideBar.astro";
 import Toc from "../../components/pages/docs/Toc.astro";
 import { getCollection } from "astro:content";
 import { getNavOrder } from "./utils";
@@ -46,7 +46,7 @@ const nextEntry =
 ---
 
 <Layout
-  title={`Flitter - ${entry.data.title}`}
+  title={`${entry.data.nav_group}/${entry.data.title} - Flitter`}
   description={entry.data.description}
   image={entry.data.image}
 >

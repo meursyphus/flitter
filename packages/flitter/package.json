@@ -1,6 +1,6 @@
 {
   "name": "@meursyphus/flitter",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Flitter: A high-performance JavaScript rendering engine and framework inspired by Flutter. Features declarative programming, SVG and Canvas support, and optimized for complex data visualizations, interactive charts, and graphic editors in web applications.",
   "keywords": [
     "rendering-engine",
