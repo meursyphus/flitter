@@ -19,6 +19,8 @@ const tutorial = defineCollection({
     nav_group: z.string(),
     nav_order: z.number().optional(),
     title: z.string(),
+    image: z.string().optional(),
+    description: z.string(),
     files: z.record(z.string()),
     solved_files: z.record(z.string()).optional(),
   }),

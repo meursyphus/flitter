@@ -4,25 +4,17 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
-  canonicalURL?: string;
 }
 
 const {
-  title = "Flitter - Data Visualization Framework",
-  description = "A powerful framework for creating interactive data visualizations on the web",
-  image = "/logo.jpeg",
-  canonicalURL,
+  image = "/og.png",
+  title = "Flitter - Say Goodbye to Chart Libraries, Hello to Freedom!",
+  description = "🔥 No more limits. 🎨 Declare, render, and customize your way. 🖌️ SVG or Canvas, your rules. 🚀 Built for high-performance visualizations.",
 } = Astro.props;
 
 // Set the base URL for canonical links
-const baseUrl = "https://flitter.dev";
-
-// Determine the canonical URL
-const fullCanonicalUrl = canonicalURL
-  ? canonicalURL.startsWith("http")
-    ? canonicalURL
-    : `${baseUrl}${canonicalURL}`
-  : `${baseUrl}${Astro.url.pathname}`;
+const BASE_ORIGIN = "https://flitter.dev";
+const fullCanonicalUrl = `${BASE_ORIGIN}${Astro.url.pathname}`;
 ---
 
 <!doctype html>
@@ -48,25 +40,25 @@ const fullCanonicalUrl = canonicalURL
     <meta property="og:url" content={fullCanonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(image, baseUrl)} />
+    <meta property="og:image" content={new URL(image, BASE_ORIGIN)} />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={fullCanonicalUrl} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL(image, baseUrl)} />
+    <meta name="twitter:image" content={new URL(image, BASE_ORIGIN)} />
 
     <!-- LinkedIn -->
     <meta property="og:site_name" content="Flitter" />
     <meta name="linkedin:title" content={title} />
     <meta name="linkedin:description" content={description} />
-    <meta name="linkedin:image" content={new URL(image, baseUrl)} />
+    <meta name="linkedin:image" content={new URL(image, BASE_ORIGIN)} />
 
     <!-- Pinterest -->
     <meta name="pinterest:title" content={title} />
     <meta name="pinterest:description" content={description} />
-    <meta name="pinterest:image" content={new URL(image, baseUrl)} />
+    <meta name="pinterest:image" content={new URL(image, BASE_ORIGIN)} />
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DY0NVVYBLS"

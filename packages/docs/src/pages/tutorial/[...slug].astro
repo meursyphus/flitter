@@ -39,10 +39,13 @@ export const getStaticPaths = async () => {
 const { entry, prev, next } = Astro.props;
 
 const { Content } = await entry.render();
-
 ---
 
-<Layout title="Flitter - Tutorial">
+<Layout
+  title={`${entry.data.nav_group}/${entry.data.title} - Flitter`}
+  description={entry.data.description}
+  image={entry.data.image ?? "/og-tutorial.png"}
+>
   <div
     class="grid h-[calc(100vh-var(--header))] grid-cols-[220px_1fr_1fr]"
     id="mainContainer"
