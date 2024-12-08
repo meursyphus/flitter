@@ -20,11 +20,59 @@
     },
     {
       "label": "简体中文",
-      "lang": "cn"
+      "lang": "zh-cn"
+    },
+    {
+      "label": "正體中文",
+      "lang": "zh-tw"
     },
     {
       "label": "日本語",
       "lang": "ja"
+    },
+    {
+      "label": "العربية",
+      "lang": "ar"
+    },
+    {
+      "label": "Deutsch",
+      "lang": "de"
+    },
+    {
+      "label": "Español",
+      "lang": "es"
+    },
+    {
+      "label": "Français",
+      "lang": "fr"
+    },
+    {
+      "label": "हिन्दी",
+      "lang": "hi"
+    },
+    {
+      "label": "Italiano",
+      "lang": "it"
+    },
+    {
+      "label": "Polski",
+      "lang": "pl"
+    },
+    {
+      "label": "Português do Brasil",
+      "lang": "pt-br"
+    },
+    {
+      "label": "Русский",
+      "lang": "ru"
+    },
+    {
+      "label": "简体中文",
+      "lang": "zh-cn"
+    },
+    {
+      "label": "正體中文",
+      "lang": "zh-tw"
     }
   ],
   "files": [
