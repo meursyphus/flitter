@@ -50,11 +50,33 @@ const nextEntry =
   description={entry.data.description}
   image={entry.data.image ?? "/og-docs.png"}
 >
-  <main data-theme="pink" class="relative mx-auto flex">
-    <SideBar />
+  <main data-theme="pink" class="relative mx-auto flex flex-col lg:flex-row">
+    <div class="lg:hidden fixed bottom-4 right-4 z-50 flex gap-2">
+      <button
+        id="sidebarBtn"
+        class="bg-pink-500 text-white p-3 rounded-full shadow-lg"
+        aria-label="Toggle sidebar"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+      </button>
+      <button
+        id="tocBtn"
+        class="bg-pink-500 text-white p-3 rounded-full shadow-lg"
+        aria-label="Toggle table of contents"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8" />
+        </svg>
+      </button>
+    </div>
+    <div id="sidebar" class="fixed inset-0 z-40 transform -translate-x-full transition-transform duration-300 lg:relative lg:translate-x-0 bg-[#151515]">
+      <SideBar />
+    </div>
     <div
       data-theme="pink"
-      class="prose prose-invert prose-modern w-full max-w-full px-8 py-20 lg:prose-lg"
+      class="prose prose-invert prose-modern w-full max-w-full px-4 py-20 lg:px-8 lg:prose-lg"
     >
       <Content />
       <div class="flex justify-between py-4">
@@ -78,14 +100,85 @@ const nextEntry =
         }
       </div>
     </div>
-    <Toc headings={headings} />
+    <div id="toc" class="fixed right-0 top-0 z-30 transform translate-x-full transition-transform duration-300 bg-[#151515] h-full w-[300px] lg:w-auto lg:relative lg:transform-none lg:translate-x-0">
+      <Toc headings={headings} />
+    </div>
   </main>
 </Layout>
 
 <style>
   main {
+    min-height: calc(100vh - var(--header-height, 0px));
+  }
+
+  @media (max-width: 1024px) {
+    #sidebar.show {
+      transform: translateX(0);
+    }
+    
+    #toc.show {
+      transform: translateX(0);
+    }
+    
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 35;
+    }
   }
 </style>
+
+<script>
+  let showingSidebar = false;
+  let showingToc = false;
+  const sidebarBtn = document.getElementById('sidebarBtn')!;
+  const tocBtn = document.getElementById('tocBtn')!;
+  const sidebar = document.getElementById('sidebar')!;
+  const toc = document.getElementById('toc')!;
+  const main = document.querySelector('main')!;
+
+  function toggleSidebar() {
+    if (showingToc) {
+      toggleToc();
+    }
+    showingSidebar = !showingSidebar;
+    
+    if (showingSidebar) {
+      sidebar.classList.add('translate-x-0');
+      const overlay = document.createElement('div');
+      overlay.className = 'overlay';
+      overlay.addEventListener('click', toggleSidebar);
+      main.appendChild(overlay);
+    } else {
+      sidebar.classList.remove('translate-x-0');
+      const overlay = document.querySelector('.overlay');
+      if (overlay) overlay.remove();
+    }
+  }
+
+  function toggleToc() {
+    if (showingSidebar) {
+      toggleSidebar();
+    }
+    showingToc = !showingToc;
+    
+    if (showingToc) {
+      toc.classList.remove('translate-x-full');
+      const overlay = document.createElement('div');
+      overlay.className = 'overlay';
+      overlay.addEventListener('click', toggleToc);
+      main.appendChild(overlay);
+    } else {
+      toc.classList.add('translate-x-full');
+      const overlay = document.querySelector('.overlay');
+      if (overlay) overlay.remove();
+    }
+  }
+
+  sidebarBtn?.addEventListener('click', toggleSidebar);
+  tocBtn?.addEventListener('click', toggleToc);
+</script>
 
 <style is:global>
   .move {

@@ -47,19 +47,31 @@ const { Content } = await entry.render();
   image={entry.data.image ?? "/og-tutorial.png"}
 >
   <div
-    class="grid h-[calc(100vh-var(--header))] grid-cols-[220px_1fr_1fr]"
+    class="grid h-[calc(100vh-var(--header))] grid-cols-1 lg:grid-cols-[220px_1fr_1fr]"
     id="mainContainer"
   >
-    <aside class="relative h-full overflow-scroll border-r border-gray-600/30">
+    <div class="lg:hidden fixed bottom-4 right-4 z-50">
+      <button
+        id="mobileMenuBtn"
+        class="bg-pink-500 text-white p-3 rounded-full shadow-lg"
+        aria-label="Toggle mobile menu"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+      </button>
+    </div>
+    
+    <aside class="fixed inset-0 z-40 transform -translate-x-full transition-transform duration-300 lg:relative lg:translate-x-0 lg:h-full lg:overflow-scroll lg:border-r lg:border-gray-600/30 bg-[#151515]" id="sidebar">
       <div
-        class="absolute -right-1 top-0 h-full w-2 cursor-col-resize hover:bg-blue-500/20"
+        class="absolute -right-1 top-0 h-full w-2 cursor-col-resize hover:bg-blue-500/20 hidden lg:block"
         id="tocResizer"
       >
       </div>
       <TableOfContents currentSlug={entry.slug.replace(/^\d+_/, "")} />
     </aside>
 
-    <div class="w-full overflow-auto">
+    <div class="w-full overflow-auto col-span-2 lg:col-span-1">
       <nav
         class="sticky top-0 flex h-[60px] items-center justify-between border-b border-gray-600/30 px-6 backdrop-blur"
       >
@@ -127,7 +139,7 @@ const { Content } = await entry.render();
       </div>
     </div>
 
-    <div class="sticky-screen">
+    <div id="sandpackContainer" class="w-full overflow-auto bg-[#151515] hidden lg:block">
       <div id="originalSandpack" class="h-full">
         <SandPack files={entry.data.files} client:only="react" />
       </div>
@@ -139,16 +151,66 @@ const { Content } = await entry.render();
       </div>
     </div>
   </div>
-</Layout>
 
-<style is:global>
-  .sp-preview-container html,
-  .sp-preview-container body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
+  <div class="lg:hidden fixed bottom-20 right-4 z-50">
+    <button
+      id="sandpackToggle"
+      class="bg-blue-500 text-white p-3 rounded-full shadow-lg"
+      aria-label="Toggle Sandpack"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+      </svg>
+    </button>
+  </div>
+
+<script>
+  let showingMenu = false;
+  let showingSandpack = false;
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn')!;
+  const sandpackToggle = document.getElementById('sandpackToggle')!;
+  const sidebar = document.getElementById('sidebar')!;
+  const sandpackContainer = document.getElementById('sandpackContainer')!;
+  const mainContainer = document.getElementById('mainContainer')!;
+
+  function toggleMenu() {
+    showingMenu = !showingMenu;
+    
+    if (showingMenu) {
+      sidebar.classList.add('translate-x-0');
+      const overlay = document.createElement('div');
+      overlay.className = 'fixed inset-0 bg-black/50 z-35';
+      overlay.addEventListener('click', toggleMenu);
+      mainContainer.appendChild(overlay);
+    } else {
+      sidebar.classList.remove('translate-x-0');
+      const overlay = document.querySelector('.fixed.inset-0.bg-black\\/50');
+      if (overlay) overlay.remove();
+    }
   }
-</style>
+
+  function toggleSandpack() {
+    showingSandpack = !showingSandpack;
+    
+    if (showingSandpack) {
+      sandpackContainer.classList.remove('hidden');
+      sandpackContainer.classList.add('fixed', 'inset-0', 'z-40');
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'absolute top-4 right-4 text-white p-2 rounded-full bg-gray-800';
+      closeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>';
+      closeBtn.addEventListener('click', toggleSandpack);
+      sandpackContainer.appendChild(closeBtn);
+    } else {
+      sandpackContainer.classList.add('hidden');
+      sandpackContainer.classList.remove('fixed', 'inset-0', 'z-40');
+      const closeBtn = sandpackContainer.querySelector('button');
+      if (closeBtn) closeBtn.remove();
+    }
+  }
+
+  mobileMenuBtn?.addEventListener('click', toggleMenu);
+  sandpackToggle?.addEventListener('click', toggleSandpack);
+</script>
 
 <script>
   // Toggle solution button logic
@@ -219,6 +281,15 @@ const { Content } = await entry.render();
   }
 </script>
 
+<style is:global>
+  .sp-preview-container html,
+  .sp-preview-container body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+</style>
+
 <style>
   #tocResizer {
     transition: background-color 0.2s;
@@ -226,5 +297,16 @@ const { Content } = await entry.render();
   }
   #tocResizer:active {
     background-color: rgb(59 130 246 / 0.2);
+  }
+</style>
+
+<style>
+  @media (max-width: 1024px) {
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 35;
+    }
   }
 </style>
