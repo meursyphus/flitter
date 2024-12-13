@@ -1,3 +1,7 @@
+---
+import SunIcon from "./SunIcon.astro"
+import MoonIcon from "./MoonIcon.astro"
+---
 <div class="flex items-center justify-center">
   <button
     id="theme-toggle-button"
@@ -5,43 +9,16 @@
     onclick="toggleTheme()"
   >
     <span id="theme-icon" class="w-6 h-6 flex items-center justify-center">
-      <svg
-        id="sun-icon"
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        stroke-width="2"
-        style="transform-origin: center; animation: fadeIn 0.3s ease-in-out;"
-      >
-        <circle cx="12" cy="12" r="5"></circle>
-        <line x1="12" y1="1" x2="12" y2="3"></line>
-        <line x1="12" y1="21" x2="12" y2="23"></line>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-        <line x1="1" y1="12" x2="3" y2="12"></line>
-        <line x1="21" y1="12" x2="23" y2="12"></line>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-      </svg>
-      <svg
-        id="moon-icon"
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-6 w-6"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        style="display: none; transform-origin: center;"
-      >
-        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
-      </svg>
+      <SunIcon/>
+      <MoonIcon/>
     </span>
   </button>
 </div>
 
 <script>
+
+  const getElement = <T extends HTMLElement>(id:string): T | null => document.getElementById(id) as T | null;
+
   const toggleTheme = () => {
     const html = document.documentElement;
     const isDark = html.classList.toggle('dark');
@@ -50,14 +27,16 @@
     const sunIcon = document.getElementById("sun-icon");
     const moonIcon = document.getElementById("moon-icon");
 
-    if (isDark) {
-      sunIcon!.style.display = "none";
-      moonIcon!.style.display = "block";
-      moonIcon!.style.animation = "grow 0.5s ease-in-out forwards";
-    } else {
-      moonIcon!.style.display = "none";
-      sunIcon!.style.display = "block";
-      sunIcon!.style.animation = "shrink 0.5s ease-in-out forwards";
+    if(sunIcon && moonIcon) {
+      if (isDark) {
+        sunIcon.style.display = "none";
+        moonIcon.style.display = "block";
+        moonIcon.style.animation = "grow 0.5s ease-in-out forwards";
+      } else {
+        moonIcon.style.display = "none";
+        sunIcon.style.display = "block";
+        sunIcon.style.animation = "shrink 0.5s ease-in-out forwards";
+      }
     }
   };
 
@@ -69,15 +48,21 @@
     const sunIcon = document.getElementById("sun-icon");
     const moonIcon = document.getElementById("moon-icon");
 
-    if (isDark) {
-      sunIcon!.style.display = "none";
-      moonIcon!.style.display = "block";
-    } else {
-      moonIcon!.style.display = "none";
-      sunIcon!.style.display = "block";
+    if(sunIcon && moonIcon) {
+      if (isDark) {
+         sunIcon!.style.display = "none";
+         moonIcon!.style.display = "block";
+      } else {
+         moonIcon!.style.display = "none";
+         sunIcon!.style.display = "block";
+      }
     }
   })();
-  document.getElementById("theme-toggle-button")!.addEventListener("click", toggleTheme);
+
+  const themeToggleButton = getElement<HTMLButtonElement>("theme-toggle-button");
+  if(themeToggleButton) {
+    themeToggleButton.addEventListener("click", toggleTheme);
+  }
 </script>
 
 <style>
