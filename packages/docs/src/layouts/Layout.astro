@@ -16,15 +16,24 @@ const {
 const BASE_ORIGIN = "https://flitter.dev";
 const fullCanonicalUrl = `${BASE_ORIGIN}${Astro.url.pathname}`;
 
-const themeScript = `(() => {
-  const savedTheme = localStorage.getItem('theme');
-  if(savedTheme === 'light') {
-    document.documentElement.classList.remove('dark');
-  } else {
-    document.documentElement.classList.add('dark');
-  }
-})();
-`;
+const themeScript = `
+    (() => {
+         try {
+           let savedTheme = localStorage.getItem('theme');
+           if(!savedTheme) {
+             localStorage.setItem('theme', 'dark');
+             savedTheme = 'dark';
+           }
+           if(savedTheme === 'light') {
+             document.documentElement.classList.remove('dark');
+           } else {
+             document.documentElement.classList.add('dark'); 
+           }
+        } catch (e) {
+           console.error('Theme script error:', e); 
+        } 
+    })();
+  `;
 ---
 
 <!doctype html>
@@ -82,7 +91,7 @@ const themeScript = `(() => {
 
       gtag("config", "G-DY0NVVYBLS");
     </script>
-    <script>{themeScript}</script>
+    <script is:inline set:html={themeScript}></script>
   </head>
   <body>
     <Header />
