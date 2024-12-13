@@ -1,4 +1,6 @@
 ---
+import ThemeToggle from "./ThemeToggle.astro";
+
 const url = new URL(Astro.request.url);
 const pathname = url.pathname; // 현재 페이지의 경로
 
@@ -46,6 +48,7 @@ let current: "docs" | "tutorial" | "i18n" | "none" = pathname.startsWith("/docs"
           src="/discord.png"
         />
       </a>
+      <ThemeToggle />
     </div>
   </div>
 </header>

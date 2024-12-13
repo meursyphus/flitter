@@ -8,10 +8,13 @@
 
 <script>
   const toggleTheme = () => {
+    console.log("Toggle button clicked!");
     const html = document.documentElement;
     const isDark = html.classList.toggle('dark');
     localStorage.setItem('theme', isDark ? 'dark': 'light');
   }
+
+  window.toggleTheme = toggleTheme;
 
   (() => {
     const savedTheme = localStorage.getItem('theme');
