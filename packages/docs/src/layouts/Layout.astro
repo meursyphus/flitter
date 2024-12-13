@@ -15,6 +15,16 @@ const {
 // Set the base URL for canonical links
 const BASE_ORIGIN = "https://flitter.dev";
 const fullCanonicalUrl = `${BASE_ORIGIN}${Astro.url.pathname}`;
+
+const themeScript = `(() => {
+  const savedTheme = localStorage.getItem('theme');
+  if(savedTheme === 'light') {
+    document.documentElement.classList.remove('dark');
+  } else {
+    document.documentElement.classList.add('dark');
+  }
+})();
+`;
 ---
 
 <!doctype html>
@@ -72,6 +82,7 @@ const fullCanonicalUrl = `${BASE_ORIGIN}${Astro.url.pathname}`;
 
       gtag("config", "G-DY0NVVYBLS");
     </script>
+    <script>{themeScript}</script>
   </head>
   <body>
     <Header />

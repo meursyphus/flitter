@@ -1,0 +1,22 @@
+<div class="flex items-center justify-center">
+    <button class="p-2 bg-gray-800 text-white rounded-md transition-colors duration-300 dark:bg-gray-300 dark:text-black"
+      onclick="toggleTheme()"
+    >
+        Toggle Dark Mode
+    </button>
+</div>
+
+<script>
+  const toggleTheme = () => {
+    const html = document.documentElement;
+    const isDark = html.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark': 'light');
+  }
+
+  (() => {
+    const savedTheme = localStorage.getItem('theme');
+    if(savedTheme) {
+        document.documentElement.classList.toggle('dark',savedTheme === 'dark');
+    }
+  })();
+</script>
