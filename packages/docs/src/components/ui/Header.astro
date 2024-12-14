@@ -1,5 +1,7 @@
 ---
 import ThemeToggle from "./ThemeToggle.astro";
+import GithubIcon from './GithubIcon.astro';
+import DiscordIcon from "./DiscordIcon.astro";
 
 const url = new URL(Astro.request.url);
 const pathname = url.pathname; // 현재 페이지의 경로
@@ -40,13 +42,10 @@ let current: "docs" | "tutorial" | "i18n" | "none" = pathname.startsWith("/docs"
     </nav>
     <div class="flex gap-4 items-center">
       <a href="https://github.com/meursyphus/flitter">
-        <img class="h-8 w-8 rounded-full invert" src="/github-mark.png" />
+       <GithubIcon />
       </a>
       <a href="https://discord.gg/kUZp4SaHzF">
-        <img
-          class="h-8 w-8 rounded-full object-scale-down invert"
-          src="/discord.png"
-        />
+        <DiscordIcon />
       </a>
       <ThemeToggle />
     </div>
@@ -60,6 +59,13 @@ let current: "docs" | "tutorial" | "i18n" | "none" = pathname.startsWith("/docs"
       if (img instanceof HTMLImageElement) {
         img.src = isDarkMode ? img.dataset.darkSrc ?? img.src : img.dataset.lightSrc ?? img.src;
      }
+    });
+    document.querySelectorAll('a.active').forEach((link) => {
+      if(isDarkMode) {
+        link.classList.add('dark-active');
+      } else {
+        link.classList.remove('dark-active');
+      }
     });
   });
 </script>
@@ -75,5 +81,9 @@ let current: "docs" | "tutorial" | "i18n" | "none" = pathname.startsWith("/docs"
   a.active {
     font-weight: bold;
     color: white !important;
+  }
+  a.dark-active {
+  font-weight: bold;
+  color: black !important; 
   }
 </style>
