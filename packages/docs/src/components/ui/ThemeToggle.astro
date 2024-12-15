@@ -1,101 +1,40 @@
 ---
-import SunIcon from "./SunIcon.astro"
-import MoonIcon from "./MoonIcon.astro"
+import SunIcon from "./SunIcon.astro";
+import MoonIcon from "./MoonIcon.astro";
 ---
+
 <div class="flex items-center justify-center">
   <button
     id="theme-toggle-button"
-    class="p-2 bg-gray-800 text-white rounded-md transition-colors duration-300 dark:bg-gray-300 dark:text-black"
+    class="rounded-md bg-gray-800 p-2 text-white transition-colors duration-300 dark:bg-gray-300 dark:text-black"
     onclick="toggleTheme()"
   >
-    <span id="theme-icon" class="w-6 h-6 flex items-center justify-center">
-      <SunIcon/>
-      <MoonIcon/>
+    <span id="theme-icon" class="flex h-6 w-6 items-center justify-center">
+      <span class="hidden dark:inline-block">
+        <SunIcon />
+      </span>
+      <span class="inline-block dark:hidden">
+        <MoonIcon />
+      </span>
     </span>
   </button>
 </div>
 
 <script>
-
-  const getElement = <T extends HTMLElement>(id:string): T | null => document.getElementById(id) as T | null;
+  const getElement = <T extends HTMLElement>(id: string): T | null =>
+    document.getElementById(id) as T | null;
 
   const toggleTheme = () => {
     const html = document.documentElement;
-    const isDark = html.classList.toggle('dark');
-    localStorage.setItem("theme", isDark ? "light" : "dark");
+    const isDark = html.classList.toggle("dark");
 
-    const sunIcon = document.getElementById("sun-icon");
-    const moonIcon = document.getElementById("moon-icon");
-
-    if(sunIcon && moonIcon) {
-      if (isDark) {
-        moonIcon.style.display = "none";
-        sunIcon.style.display = "block";
-        sunIcon.style.animation = "grow 0.5s ease-in-out forwards";
-      } else {
-        sunIcon.style.display = "none";
-        moonIcon.style.display = "block";
-        moonIcon.style.animation = "shrink 0.5s ease-in-out forwards";
-      }
-    }
+    document.cookie = `theme=${isDark ? "light" : "dark"}; path=/`;
   };
 
-  (() => {
-    const savedTheme = localStorage.getItem("theme");
-    const isDark = savedTheme === "light";
-    document.documentElement.classList.toggle("dark", isDark);
-
-    const sunIcon = document.getElementById("sun-icon");
-    const moonIcon = document.getElementById("moon-icon");
-
-    if(sunIcon && moonIcon) {
-      if (isDark) {
-        moonIcon.style.display = "none";
-        sunIcon.style.display = "block";
-      } else {
-        sunIcon.style.display = "none";
-        moonIcon.style.display = "block";
-      }
-    }
-  })();
-
-  const themeToggleButton = getElement<HTMLButtonElement>("theme-toggle-button");
-  if(themeToggleButton) {
+  const themeToggleButton = getElement<HTMLButtonElement>(
+    "theme-toggle-button",
+  );
+  if (themeToggleButton) {
     themeToggleButton.addEventListener("click", toggleTheme);
   }
 </script>
-
-<style>
-  @keyframes grow {
-    from {
-      transform: scale(0.5);
-      opacity: 0;
-    }
-    to {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
-
-  @keyframes shrink {
-    from {
-      transform: scale(1.5);
-      opacity: 0.5;
-    }
-    to {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
-
-  @keyframes fadeIn {
-    from {
-      transform: scale(0.5);
-      opacity: 0;
-    }
-    to {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
-</style>

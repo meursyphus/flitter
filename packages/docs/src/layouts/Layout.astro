@@ -16,28 +16,14 @@ const {
 const BASE_ORIGIN = "https://flitter.dev";
 const fullCanonicalUrl = `${BASE_ORIGIN}${Astro.url.pathname}`;
 
-const themeScript = `
-    (() => {
-         try {
-           let savedTheme = localStorage.getItem('theme');
-           if(!savedTheme) {
-             localStorage.setItem('theme', 'dark');
-             savedTheme = 'dark';
-           }
-           if(savedTheme === 'light') {
-             document.documentElement.classList.remove('dark');
-           } else {
-             document.documentElement.classList.add('dark'); 
-           }
-        } catch (e) {
-           console.error('Theme script error:', e); 
-        } 
-    })();
-  `;
+// Get theme from cookie
+const theme = Astro.cookies.get('theme')?.value;
+const isLight = theme === 'light'; 
+
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class={isLight ? 'dark' : ''}>
   <head>
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta charset="UTF-8" />
@@ -91,7 +77,6 @@ const themeScript = `
 
       gtag("config", "G-DY0NVVYBLS");
     </script>
-    <script is:inline set:html={themeScript}></script>
   </head>
   <body>
     <Header />
