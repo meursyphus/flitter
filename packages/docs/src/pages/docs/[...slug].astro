@@ -50,7 +50,7 @@ const nextEntry =
   description={entry.data.description}
   image={entry.data.image ?? "/og-docs.png"}
 >
-  <main data-theme="pink" class="relative mx-auto flex flex-col lg:flex-row">
+  <main data-theme="pink" class="relative mx-auto flex flex-col lg:flex-row dark:bg-white">
     <div class="lg:hidden fixed bottom-4 right-4 z-50 flex gap-2">
       <button
         id="sidebarBtn"
@@ -76,26 +76,26 @@ const nextEntry =
     </div>
     <div
       data-theme="pink"
-      class="prose prose-invert prose-modern w-full max-w-full px-4 py-20 lg:px-8 lg:prose-lg"
+      class="prose prose-invert prose-modern w-full max-w-full px-4 py-20 lg:px-8 lg:prose-lg dark:text-gray-800"
     >
       <Content />
       <div class="flex justify-between py-4">
         {
           prevEntry ? (
-            <a class="move mr-auto" href={`/docs/${prevEntry.slug}`}>
+            <a class="move mr-auto dark:text-black dark:border-black" href={`/docs/${prevEntry.slug}`}>
               {prevEntry.data.nav_title ?? prevEntry.data.title}
             </a>
           ) : (
-            <div class="move disabled mr-auto" />
+            <div class="move disabled mr-auto dark:text-gray-500" />
           )
         }
         {
           nextEntry ? (
-            <a class="move ml-auto" href={`/docs/${nextEntry.slug}`}>
+            <a class="move ml-auto dark:text-black dark:border-black" href={`/docs/${nextEntry.slug}`}>
               {nextEntry.data.nav_title ?? nextEntry.data.title}
             </a>
           ) : (
-            <div class="move disabled ml-auto" />
+            <div class="move disabled ml-auto dark:text-gray-500" />
           )
         }
       </div>

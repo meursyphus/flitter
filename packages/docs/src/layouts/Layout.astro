@@ -15,6 +15,25 @@ const {
 // Set the base URL for canonical links
 const BASE_ORIGIN = "https://flitter.dev";
 const fullCanonicalUrl = `${BASE_ORIGIN}${Astro.url.pathname}`;
+
+const themeScript = `
+    (() => {
+         try {
+           let savedTheme = localStorage.getItem('theme');
+           if(!savedTheme) {
+             localStorage.setItem('theme', 'dark');
+             savedTheme = 'dark';
+           }
+           if(savedTheme === 'light') {
+             document.documentElement.classList.remove('dark');
+           } else {
+             document.documentElement.classList.add('dark'); 
+           }
+        } catch (e) {
+           console.error('Theme script error:', e); 
+        } 
+    })();
+  `;
 ---
 
 <!doctype html>
@@ -72,6 +91,7 @@ const fullCanonicalUrl = `${BASE_ORIGIN}${Astro.url.pathname}`;
 
       gtag("config", "G-DY0NVVYBLS");
     </script>
+    <script is:inline set:html={themeScript}></script>
   </head>
   <body>
     <Header />
@@ -96,6 +116,10 @@ const fullCanonicalUrl = `${BASE_ORIGIN}${Astro.url.pathname}`;
     overflow-y: scroll;
     --px: 64px;
     --mw: 1920px;
+  }
+  body.dark {
+    background: white !important;
+    color: black !important; 
   }
   .layout {
     display: flex;

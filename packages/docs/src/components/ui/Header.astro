@@ -1,4 +1,8 @@
 ---
+import ThemeToggle from "./ThemeToggle.astro";
+import GithubIcon from './GithubIcon.astro';
+import DiscordIcon from "./DiscordIcon.astro";
+
 const url = new URL(Astro.request.url);
 const pathname = url.pathname; // 현재 페이지의 경로
 
@@ -11,8 +15,8 @@ let current: "docs" | "tutorial" | "i18n" | "none" = pathname.startsWith("/docs"
       : "none";
 ---
 
-<header class="flex w-full flex-col items-center justify-center bg-[#111111]">
-  <div class="relative mx-auto inline-flex w-full items-center gap-8">
+<header class="flex w-full flex-col items-center justify-center bg-[#111111] dark:bg-white">
+  <div class="relative mx-auto inline-flex w-full items-center justify-between">
     <a href="/" class="flex flex-row gap-4">
       <img class="size-11 rounded-lg" src="/logo.jpeg" />
       <span class="hidden text-[32px] font-bold text-[#9370DB] md:block md:text-[32px]"
@@ -21,34 +25,50 @@ let current: "docs" | "tutorial" | "i18n" | "none" = pathname.startsWith("/docs"
     </a>
 
     <nav
-      class="md:-translate-1/2 ml-auto flex items-start justify-start gap-8 md:absolute md:left-1/2 md:ml-0"
+      class="flex items-center justify-center gap-8"
     >
       <a
-        class={`${current === "docs" ? "active" : ""}  text-base leading-normal text-gray-200`}
+        class={`${current === "docs" ? "active" : ""}  text-base leading-normal text-gray-200 dark:text-gray-800`}
         href="/docs/introduction">docs</a
       >
       <a
-        class={`${current === "tutorial" ? "active" : ""} select-none text-gray-200`}
+        class={`${current === "tutorial" ? "active" : ""} select-none text-gray-200 dark:text-gray-800`}
         href="/tutorial/get-started/introduction">tutorial</a
       >
       <a
-        class={`${current === "i18n" ? "active" : ""} text-base leading-normal text-gray-200`}
+        class={`${current === "i18n" ? "active" : ""} text-base leading-normal text-gray-200 dark:text-gray-800`}
         href="/i18n">i18n</a
       >
     </nav>
-    <div class="ml-auto hidden gap-4 md:flex">
+    <div class="flex gap-4 items-center">
       <a href="https://github.com/meursyphus/flitter">
-        <img class="h-8 w-8 rounded-full invert" src="/github-mark.png" />
+       <GithubIcon />
       </a>
       <a href="https://discord.gg/kUZp4SaHzF">
-        <img
-          class="h-8 w-8 rounded-full object-scale-down invert"
-          src="/discord.png"
-        />
+        <DiscordIcon />
       </a>
+      <ThemeToggle />
     </div>
   </div>
 </header>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const isDarkMode = document.documentElement.classList.contains("dark");
+    document.querySelectorAll("img[data-dark-src]").forEach((img) => {
+      if (img instanceof HTMLImageElement) {
+        img.src = isDarkMode ? img.dataset.darkSrc ?? img.src : img.dataset.lightSrc ?? img.src;
+     }
+    });
+    document.querySelectorAll('a.active').forEach((link) => {
+      if(isDarkMode) {
+        link.classList.add('dark-active');
+      } else {
+        link.classList.remove('dark-active');
+      }
+    });
+  });
+</script>
 
 <style>
   header {
@@ -61,5 +81,9 @@ let current: "docs" | "tutorial" | "i18n" | "none" = pathname.startsWith("/docs"
   a.active {
     font-weight: bold;
     color: white !important;
+  }
+  a.dark-active {
+  font-weight: bold;
+  color: black !important; 
   }
 </style>
