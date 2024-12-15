@@ -22,27 +22,27 @@ import MoonIcon from "./MoonIcon.astro"
   const toggleTheme = () => {
     const html = document.documentElement;
     const isDark = html.classList.toggle('dark');
-    localStorage.setItem("theme", isDark ? "dark" : "light");
+    localStorage.setItem("theme", isDark ? "light" : "dark");
 
     const sunIcon = document.getElementById("sun-icon");
     const moonIcon = document.getElementById("moon-icon");
 
     if(sunIcon && moonIcon) {
       if (isDark) {
-        sunIcon.style.display = "none";
-        moonIcon.style.display = "block";
-        moonIcon.style.animation = "grow 0.5s ease-in-out forwards";
-      } else {
         moonIcon.style.display = "none";
         sunIcon.style.display = "block";
-        sunIcon.style.animation = "shrink 0.5s ease-in-out forwards";
+        sunIcon.style.animation = "grow 0.5s ease-in-out forwards";
+      } else {
+        sunIcon.style.display = "none";
+        moonIcon.style.display = "block";
+        moonIcon.style.animation = "shrink 0.5s ease-in-out forwards";
       }
     }
   };
 
   (() => {
     const savedTheme = localStorage.getItem("theme");
-    const isDark = savedTheme === "dark" || !savedTheme;
+    const isDark = savedTheme === "light";
     document.documentElement.classList.toggle("dark", isDark);
 
     const sunIcon = document.getElementById("sun-icon");
@@ -50,11 +50,11 @@ import MoonIcon from "./MoonIcon.astro"
 
     if(sunIcon && moonIcon) {
       if (isDark) {
-         sunIcon!.style.display = "none";
-         moonIcon!.style.display = "block";
+        moonIcon.style.display = "none";
+        sunIcon.style.display = "block";
       } else {
-         moonIcon!.style.display = "none";
-         sunIcon!.style.display = "block";
+        sunIcon.style.display = "none";
+        moonIcon.style.display = "block";
       }
     }
   })();
