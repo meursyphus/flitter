@@ -1,6 +1,6 @@
 {
   "name": "@meursyphus/flitter",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "description": "Flitter: A high-performance JavaScript rendering engine and framework inspired by Flutter. Features declarative programming, SVG and Canvas support, and optimized for complex data visualizations, interactive charts, and graphic editors in web applications.",
   "keywords": [
     "rendering-engine",
@@ -50,7 +50,9 @@
   "bugs": {
     "url": "https://github.com/meursyphus/flitter/issues"
   },
-  "main": "./src/index.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
   "publishConfig": {
     "access": "public"

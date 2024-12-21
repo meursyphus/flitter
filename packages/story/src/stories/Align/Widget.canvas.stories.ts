@@ -7,7 +7,7 @@ import {
 	Alignment,
 	ConstrainedBox,
 	Constraints,
-	ConstraintsTransformBox
+	ConstraintsTransformBox,
 } from '@meursyphus/flitter';
 
 const meta = {

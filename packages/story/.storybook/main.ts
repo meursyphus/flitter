@@ -10,18 +10,16 @@ function getAbsolutePath(value: string): any {
 	return dirname(require.resolve(join(value, 'package.json')));
 }
 const config: StorybookConfig = {
-	stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+	stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|ts|svelte)'],
 	addons: [
+		getAbsolutePath('@storybook/addon-svelte-csf'),
+		getAbsolutePath('@storybook/addon-essentials'),
 		getAbsolutePath('@chromatic-com/storybook'),
-		getAbsolutePath('@storybook/addon-storysource'),
-		getAbsolutePath('@storybook/addon-docs')
+		getAbsolutePath('@storybook/addon-interactions')
 	],
 	framework: {
 		name: getAbsolutePath('@storybook/sveltekit'),
 		options: {}
-	},
-	docs: {
-		autodocs: 'tag'
 	}
 };
 export default config;
