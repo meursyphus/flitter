@@ -1,7 +1,12 @@
+import { Vsync } from './Vsync';
+
 class RenderFrameDispatcher {
   private onFrame?: () => void;
+  private vsync: Vsync;
+
   constructor({ onFrame }: { onFrame?: () => void } = {}) {
     this.onFrame = onFrame;
+    this.vsync = Vsync.getInstance();
   }
 
   setOnFrame(callback: () => void) {
@@ -10,7 +15,7 @@ class RenderFrameDispatcher {
 
   dispatch() {
     if (typeof window === "undefined") return;
-    window.requestAnimationFrame(() => {
+    this.vsync.requestCallback(() => {
       this.onFrame?.();
     });
   }
