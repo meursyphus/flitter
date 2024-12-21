@@ -3,7 +3,6 @@
  * in a single animation frame to optimize performance.
  */
 export class Vsync {
-  private static instance: Vsync;
   private callbacks: ((time: number) => void)[];
   private frameRequested: boolean;
   private rafId: number | null;
@@ -15,10 +14,14 @@ export class Vsync {
   }
 
   public static getInstance(): Vsync {
-    if (!Vsync.instance) {
-      Vsync.instance = new Vsync();
+    if (typeof window === 'undefined') {
+      throw new Error('Vsync requires window object');
     }
-    return Vsync.instance;
+    
+    if (!(window as any).__flitter_vsync__) {
+      (window as any).__flitter_vsync__ = new Vsync();
+    }
+    return (window as any).__flitter_vsync__;
   }
 
   /**

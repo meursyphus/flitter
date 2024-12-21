@@ -1,5 +1,5 @@
 {
-  "name": "story",
+  "name": "@meursyphus/flitter-story",
   "version": "0.0.1",
   "scripts": {
     "dev": "vite dev",
