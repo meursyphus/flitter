@@ -1,12 +1,14 @@
 ---
 import ThemeToggle from "./ThemeToggle.astro";
-import GithubIcon from './GithubIcon.astro';
+import GithubIcon from "./GithubIcon.astro";
 import DiscordIcon from "./DiscordIcon.astro";
 
 const url = new URL(Astro.request.url);
 const pathname = url.pathname; // 현재 페이지의 경로
 
-let current: "docs" | "tutorial" | "i18n" | "none" = pathname.startsWith("/docs")
+let current: "docs" | "tutorial" | "i18n" | "none" = pathname.startsWith(
+  "/docs",
+)
   ? "docs"
   : pathname.startsWith("/tutorial")
     ? "tutorial"
@@ -15,18 +17,19 @@ let current: "docs" | "tutorial" | "i18n" | "none" = pathname.startsWith("/docs"
       : "none";
 ---
 
-<header class="flex w-full flex-col items-center justify-center bg-[#111111] dark:bg-white">
+<header
+  class="flex w-full flex-col items-center justify-center bg-[#111111] dark:bg-white"
+>
   <div class="relative mx-auto inline-flex w-full items-center justify-between">
     <a href="/" class="flex flex-row gap-4">
       <img class="size-11 rounded-lg" src="/logo.jpeg" />
-      <span class="hidden text-[32px] font-bold text-[#9370DB] md:block md:text-[32px]"
+      <span
+        class="hidden text-[32px] font-bold text-[#9370DB] md:block md:text-[32px]"
         >Flitter</span
       >
     </a>
 
-    <nav
-      class="flex items-center justify-center gap-8"
-    >
+    <nav class="flex items-center justify-center gap-8">
       <a
         class={`${current === "docs" ? "active" : ""}  text-base leading-normal text-gray-200 dark:text-gray-800`}
         href="/docs/introduction">docs</a
@@ -40,14 +43,14 @@ let current: "docs" | "tutorial" | "i18n" | "none" = pathname.startsWith("/docs"
         href="/i18n">i18n</a
       >
     </nav>
-    <div class="flex gap-4 items-center">
+    <div class="flex items-center gap-4 social-icons">
       <a href="https://github.com/meursyphus/flitter">
-       <GithubIcon />
+        <GithubIcon />
       </a>
       <a href="https://discord.gg/kUZp4SaHzF">
         <DiscordIcon />
       </a>
-      <ThemeToggle />
+      <!-- <ThemeToggle /> -->
     </div>
   </div>
 </header>
@@ -57,14 +60,16 @@ let current: "docs" | "tutorial" | "i18n" | "none" = pathname.startsWith("/docs"
     const isDarkMode = document.documentElement.classList.contains("dark");
     document.querySelectorAll("img[data-dark-src]").forEach((img) => {
       if (img instanceof HTMLImageElement) {
-        img.src = isDarkMode ? img.dataset.darkSrc ?? img.src : img.dataset.lightSrc ?? img.src;
-     }
+        img.src = isDarkMode
+          ? (img.dataset.darkSrc ?? img.src)
+          : (img.dataset.lightSrc ?? img.src);
+      }
     });
-    document.querySelectorAll('a.active').forEach((link) => {
-      if(isDarkMode) {
-        link.classList.add('dark-active');
+    document.querySelectorAll("a.active").forEach((link) => {
+      if (isDarkMode) {
+        link.classList.add("dark-active");
       } else {
-        link.classList.remove('dark-active');
+        link.classList.remove("dark-active");
       }
     });
   });
@@ -83,7 +88,13 @@ let current: "docs" | "tutorial" | "i18n" | "none" = pathname.startsWith("/docs"
     color: white !important;
   }
   a.dark-active {
-  font-weight: bold;
-  color: black !important; 
+    font-weight: bold;
+    color: black !important;
+  }
+  @media (max-width: 640px) {
+    .social-icons :global(svg) {
+      width: 24px;
+      height: 24px;
+    }
   }
 </style>
