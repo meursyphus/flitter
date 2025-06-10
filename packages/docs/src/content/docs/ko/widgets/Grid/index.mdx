@@ -1,0 +1,297 @@
+---
+title: Grid
+description: 자식 위젯들을 격자 형태로 배열하는 레이아웃 위젯
+nav_order: 5
+nav_group: 위젯
+---
+
+import { Widget } from '@meursyphus/flitter-svelte';
+import { Grid, Container, Text, TextStyle, Alignment, ColoredBox, EdgeInsets } from '@meursyphus/flitter';
+
+# Grid
+
+## 개요
+
+Grid는 자식 위젯들을 행과 열로 구성된 격자 형태로 배열하는 강력한 레이아웃 위젯입니다. CSS Grid와 유사한 개념으로, 복잡한 2차원 레이아웃을 쉽게 구성할 수 있습니다.
+
+## 사용 시기
+
+다음과 같은 상황에서 Grid를 사용합니다:
+
+- 테이블 형태의 레이아웃이 필요할 때
+- 이미지 갤러리나 카드 그리드를 만들 때
+- 대시보드나 위젯 격자를 구성할 때
+- 정확한 행과 열 크기 제어가 필요할 때
+
+## 기본 사용법
+
+```typescript
+Grid({
+  childrenByRow: [
+    [widget1, widget2, widget3],  // 첫 번째 행
+    [widget4, widget5, widget6],  // 두 번째 행
+  ]
+})
+```
+
+## 생성자 파라미터
+
+| 파라미터 | 타입 | 설명 | 기본값 |
+|---------|------|------|--------|
+| childrenByRow | `Widget[][]` | 행별로 구성된 자식 위젯들 | 필수 |
+| templateRows | `GridTemplate[]` | 행 크기 템플릿 | [] |
+| templateColumns | `GridTemplate[]` | 열 크기 템플릿 | [] |
+| autoRow | `GridTemplate` | 템플릿이 없는 행의 기본 크기 | Fr(1) |
+| autoColumn | `GridTemplate` | 템플릿이 없는 열의 기본 크기 | Fr(1) |
+| key | `any` | 위젯의 고유 키 | undefined |
+
+## GridTemplate 옵션
+
+Grid는 다양한 크기 단위를 지원합니다:
+
+- `Grid.Fr(value)` - 비율 단위 (Fractional unit)
+- `Grid.Px(value)` - 고정 픽셀 크기
+- `Grid.Percent(value)` - 부모 크기의 백분율 (0-100)
+- `Grid.ContentFit()` - 내용에 맞춤
+
+## 예제
+
+### 기본 3x3 그리드
+
+<Widget
+  width="300px"
+  height="300px"
+  renderer="svg"
+  widget={Container({
+    color: '#f0f0f0',
+    padding: { all: 10 },
+    child: Grid({
+      childrenByRow: [
+        [
+          Container({ color: '#3498db', alignment: Alignment.center, child: Text('1-1', { style: TextStyle({ color: '#fff' }) }) }),
+          Container({ color: '#e74c3c', alignment: Alignment.center, child: Text('1-2', { style: TextStyle({ color: '#fff' }) }) }),
+          Container({ color: '#2ecc71', alignment: Alignment.center, child: Text('1-3', { style: TextStyle({ color: '#fff' }) }) })
+        ],
+        [
+          Container({ color: '#f39c12', alignment: Alignment.center, child: Text('2-1', { style: TextStyle({ color: '#fff' }) }) }),
+          Container({ color: '#9b59b6', alignment: Alignment.center, child: Text('2-2', { style: TextStyle({ color: '#fff' }) }) }),
+          Container({ color: '#1abc9c', alignment: Alignment.center, child: Text('2-3', { style: TextStyle({ color: '#fff' }) }) })
+        ],
+        [
+          Container({ color: '#34495e', alignment: Alignment.center, child: Text('3-1', { style: TextStyle({ color: '#fff' }) }) }),
+          Container({ color: '#e67e22', alignment: Alignment.center, child: Text('3-2', { style: TextStyle({ color: '#fff' }) }) }),
+          Container({ color: '#95a5a6', alignment: Alignment.center, child: Text('3-3', { style: TextStyle({ color: '#fff' }) }) })
+        ]
+      ]
+    })
+  })}
+/>
+
+```typescript
+Grid({
+  childrenByRow: [
+    [
+      Container({ color: '#3498db', alignment: Alignment.center, child: Text('1-1') }),
+      Container({ color: '#e74c3c', alignment: Alignment.center, child: Text('1-2') }),
+      Container({ color: '#2ecc71', alignment: Alignment.center, child: Text('1-3') })
+    ],
+    [
+      Container({ color: '#f39c12', alignment: Alignment.center, child: Text('2-1') }),
+      Container({ color: '#9b59b6', alignment: Alignment.center, child: Text('2-2') }),
+      Container({ color: '#1abc9c', alignment: Alignment.center, child: Text('2-3') })
+    ],
+    [
+      Container({ color: '#34495e', alignment: Alignment.center, child: Text('3-1') }),
+      Container({ color: '#e67e22', alignment: Alignment.center, child: Text('3-2') }),
+      Container({ color: '#95a5a6', alignment: Alignment.center, child: Text('3-3') })
+    ]
+  ]
+})
+```
+
+### 사용자 정의 템플릿
+
+<Widget
+  width="350px"
+  height="250px"
+  renderer="svg"
+  widget={Container({
+    color: '#f0f0f0',
+    padding: { all: 10 },
+    child: Grid({
+      templateColumns: [Grid.Fr(2), Grid.Fr(1), Grid.Px(80)],
+      templateRows: [Grid.Px(60), Grid.Fr(1), Grid.Fr(2)],
+      childrenByRow: [
+        [
+          Container({ color: '#3498db', alignment: Alignment.center, child: Text('2fr', { style: TextStyle({ color: '#fff', fontSize: 12 }) }) }),
+          Container({ color: '#e74c3c', alignment: Alignment.center, child: Text('1fr', { style: TextStyle({ color: '#fff', fontSize: 12 }) }) }),
+          Container({ color: '#2ecc71', alignment: Alignment.center, child: Text('80px', { style: TextStyle({ color: '#fff', fontSize: 12 }) }) })
+        ],
+        [
+          Container({ color: '#f39c12', alignment: Alignment.center, child: Text('60px 높이', { style: TextStyle({ color: '#fff', fontSize: 12 }) }) }),
+          Container({ color: '#9b59b6', alignment: Alignment.center, child: Text('1fr', { style: TextStyle({ color: '#fff', fontSize: 12 }) }) }),
+          Container({ color: '#1abc9c', alignment: Alignment.center, child: Text('고정', { style: TextStyle({ color: '#fff', fontSize: 12 }) }) })
+        ],
+        [
+          Container({ color: '#34495e', alignment: Alignment.center, child: Text('2fr 높이', { style: TextStyle({ color: '#fff', fontSize: 12 }) }) }),
+          Container({ color: '#e67e22', alignment: Alignment.center, child: Text('비율', { style: TextStyle({ color: '#fff', fontSize: 12 }) }) }),
+          Container({ color: '#95a5a6', alignment: Alignment.center, child: Text('조합', { style: TextStyle({ color: '#fff', fontSize: 12 }) }) })
+        ]
+      ]
+    })
+  })}
+/>
+
+```typescript
+Grid({
+  templateColumns: [Grid.Fr(2), Grid.Fr(1), Grid.Px(80)],
+  templateRows: [Grid.Px(60), Grid.Fr(1), Grid.Fr(2)],
+  childrenByRow: [
+    [
+      Container({ color: '#3498db', child: Text('2fr') }),
+      Container({ color: '#e74c3c', child: Text('1fr') }),
+      Container({ color: '#2ecc71', child: Text('80px') })
+    ],
+    // ... 더 많은 행들
+  ]
+})
+```
+
+### ContentFit 사용 예제
+
+<Widget
+  width="350px"
+  height="200px"
+  renderer="svg"
+  widget={Container({
+    color: '#f0f0f0',
+    padding: { all: 10 },
+    child: Grid({
+      templateColumns: [Grid.ContentFit(), Grid.Fr(1), Grid.ContentFit()],
+      childrenByRow: [
+        [
+          Container({ 
+            padding: { horizontal: 20, vertical: 10 }, 
+            color: '#3498db', 
+            child: Text('내용에 맞춤', { style: TextStyle({ color: '#fff' }) }) 
+          }),
+          Container({ 
+            color: '#e74c3c', 
+            alignment: Alignment.center,
+            child: Text('남은 공간', { style: TextStyle({ color: '#fff' }) }) 
+          }),
+          Container({ 
+            padding: { horizontal: 15, vertical: 10 }, 
+            color: '#2ecc71', 
+            child: Text('자동 크기', { style: TextStyle({ color: '#fff' }) }) 
+          })
+        ],
+        [
+          Container({ 
+            padding: { all: 10 }, 
+            color: '#f39c12', 
+            child: Text('짧음', { style: TextStyle({ color: '#fff' }) }) 
+          }),
+          Container({ 
+            color: '#9b59b6', 
+            alignment: Alignment.center,
+            child: Text('확장됨', { style: TextStyle({ color: '#fff' }) }) 
+          }),
+          Container({ 
+            padding: { all: 10 }, 
+            color: '#1abc9c', 
+            child: Text('긴 텍스트 내용', { style: TextStyle({ color: '#fff' }) }) 
+          })
+        ]
+      ]
+    })
+  })}
+/>
+
+```typescript
+Grid({
+  templateColumns: [Grid.ContentFit(), Grid.Fr(1), Grid.ContentFit()],
+  childrenByRow: [
+    [
+      Container({ 
+        padding: { horizontal: 20, vertical: 10 }, 
+        color: '#3498db', 
+        child: Text('내용에 맞춤') 
+      }),
+      Container({ 
+        color: '#e74c3c', 
+        alignment: Alignment.center,
+        child: Text('남은 공간') 
+      }),
+      Container({ 
+        padding: { horizontal: 15, vertical: 10 }, 
+        color: '#2ecc71', 
+        child: Text('자동 크기') 
+      })
+    ]
+  ]
+})
+```
+
+### 불규칙한 그리드
+
+<Widget
+  width="300px"
+  height="200px"
+  renderer="svg"
+  widget={Container({
+    color: '#f0f0f0',
+    padding: { all: 10 },
+    child: Grid({
+      childrenByRow: [
+        [
+          Container({ color: '#3498db', alignment: Alignment.center, child: Text('1-1', { style: TextStyle({ color: '#fff' }) }) }),
+          Container({ color: '#e74c3c', alignment: Alignment.center, child: Text('1-2', { style: TextStyle({ color: '#fff' }) }) })
+        ],
+        [
+          Container({ color: '#2ecc71', alignment: Alignment.center, child: Text('2-1', { style: TextStyle({ color: '#fff' }) }) }),
+          Container({ color: '#f39c12', alignment: Alignment.center, child: Text('2-2', { style: TextStyle({ color: '#fff' }) }) }),
+          Container({ color: '#9b59b6', alignment: Alignment.center, child: Text('2-3', { style: TextStyle({ color: '#fff' }) }) })
+        ],
+        [
+          Container({ color: '#1abc9c', alignment: Alignment.center, child: Text('3-1', { style: TextStyle({ color: '#fff' }) }) })
+        ]
+      ]
+    })
+  })}
+/>
+
+```typescript
+Grid({
+  childrenByRow: [
+    [widget1, widget2],          // 2개 열
+    [widget3, widget4, widget5], // 3개 열
+    [widget6]                    // 1개 열
+  ]
+})
+```
+
+## repeat 헬퍼 메서드
+
+반복되는 템플릿을 쉽게 생성할 수 있습니다:
+
+```typescript
+Grid({
+  templateColumns: Grid.Fr(1).repeat(4), // [Fr(1), Fr(1), Fr(1), Fr(1)]
+  templateRows: Grid.Px(100).repeat(3),  // [Px(100), Px(100), Px(100)]
+  childrenByRow: [...]
+})
+```
+
+## 주의사항
+
+- 각 행의 열 개수가 다를 수 있지만, templateColumns를 사용할 때는 일관성을 유지하는 것이 좋습니다
+- Fr 단위는 고정 크기를 제외한 남은 공간을 비율로 나눕니다
+- ContentFit은 자식의 내재 크기를 사용하므로 성능에 영향을 줄 수 있습니다
+
+## 관련 위젯
+
+- [Column](/docs/ko/widgets/Column) - 수직 레이아웃
+- [Row](/docs/ko/widgets/Row) - 수평 레이아웃
+- [Stack](/docs/ko/widgets/Stack) - 겹치는 레이아웃
+- [Container](/docs/ko/widgets/Container) - 단일 자식 컨테이너
