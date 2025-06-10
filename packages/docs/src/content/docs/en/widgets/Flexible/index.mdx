@@ -1,0 +1,347 @@
+---
+title: Flexible
+description: A widget that controls how a child of a Row, Column, or Flex flexes
+nav_order: 3
+nav_group: Widgets
+---
+
+import { Widget } from '@meursyphus/flitter-svelte';
+import { Flexible, Row, Column, Container, Text, TextStyle, Expanded, EdgeInsets } from '@meursyphus/flitter';
+
+# Flexible
+
+## Overview
+
+Flexible is a widget that controls how a child of a Row, Column, or Flex widget flexes. Using the flex property, you can determine how much space this widget should take relative to other Flexible widgets.
+
+## When to Use
+
+Use Flexible in these situations:
+
+- When you want to fill remaining space in a Row or Column
+- When you need to distribute space proportionally between multiple widgets
+- When a child widget should take only necessary space but expand if more space is available
+- When building responsive layouts
+
+## Basic Usage
+
+```typescript
+Row({
+  children: [
+    Flexible({
+      flex: 1,
+      child: Container({
+        color: 'blue',
+        height: 100
+      })
+    }),
+    Flexible({
+      flex: 2,
+      child: Container({
+        color: 'red',
+        height: 100
+      })
+    })
+  ]
+})
+```
+
+## Constructor Parameters
+
+| Parameter | Type | Description | Default |
+|-----------|------|-------------|---------|
+| flex | `number` | The flex factor to use for this child | 1 |
+| fit | `'tight' \| 'loose'` | How the child should be sized | 'loose' |
+| child | `Widget` | The widget to be made flexible | undefined |
+| key | `any` | Unique key for the widget | undefined |
+
+## FlexFit Options
+
+- **loose**: The child can be at most as large as the available space (but can be smaller)
+- **tight**: The child is forced to fill the available space (same as Expanded)
+
+## Examples
+
+### Basic Example - Space Distribution
+
+<Widget name="Flexible-basic">
+  {Row({
+    children: [
+      Flexible({
+        flex: 1,
+        child: Container({
+          color: '#3498db',
+          height: 100,
+          child: Center({
+            child: Text('Flex: 1', {
+              style: TextStyle({
+                color: 'white',
+                fontSize: 16
+              })
+            })
+          })
+        })
+      }),
+      Flexible({
+        flex: 2,
+        child: Container({
+          color: '#e74c3c',
+          height: 100,
+          child: Center({
+            child: Text('Flex: 2', {
+              style: TextStyle({
+                color: 'white',
+                fontSize: 16
+              })
+            })
+          })
+        })
+      }),
+      Flexible({
+        flex: 1,
+        child: Container({
+          color: '#2ecc71',
+          height: 100,
+          child: Center({
+            child: Text('Flex: 1', {
+              style: TextStyle({
+                color: 'white',
+                fontSize: 16
+              })
+            })
+          })
+        })
+      })
+    ]
+  })}
+</Widget>
+
+### fit: loose vs tight Comparison
+
+<Widget name="Flexible-fit">
+  {Column({
+    children: [
+      Container({
+        margin: EdgeInsets.only({ bottom: 16 }),
+        child: Column({
+          children: [
+            Text('fit: loose (default)', {
+              style: TextStyle({
+                fontSize: 18,
+                fontWeight: 'bold'
+              })
+            }),
+            Container({
+              height: 60,
+              width: 300,
+              color: '#ecf0f1',
+              child: Row({
+                children: [
+                  Flexible({
+                    fit: 'loose',
+                    child: Container({
+                      color: '#3498db',
+                      padding: EdgeInsets.all(8),
+                      child: Text('Short', {
+                        style: TextStyle({ color: 'white' })
+                      })
+                    })
+                  }),
+                  Container({
+                    width: 100,
+                    color: '#95a5a6',
+                    child: Center({
+                      child: Text('Fixed', {
+                        style: TextStyle({ color: 'white' })
+                      })
+                    })
+                  })
+                ]
+              })
+            })
+          ]
+        })
+      }),
+      Container({
+        child: Column({
+          children: [
+            Text('fit: tight', {
+              style: TextStyle({
+                fontSize: 18,
+                fontWeight: 'bold'
+              })
+            }),
+            Container({
+              height: 60,
+              width: 300,
+              color: '#ecf0f1',
+              child: Row({
+                children: [
+                  Flexible({
+                    fit: 'tight',
+                    child: Container({
+                      color: '#e74c3c',
+                      padding: EdgeInsets.all(8),
+                      child: Text('Short', {
+                        style: TextStyle({ color: 'white' })
+                      })
+                    })
+                  }),
+                  Container({
+                    width: 100,
+                    color: '#95a5a6',
+                    child: Center({
+                      child: Text('Fixed', {
+                        style: TextStyle({ color: 'white' })
+                      })
+                    })
+                  })
+                ]
+              })
+            })
+          ]
+        })
+      })
+    ]
+  })}
+</Widget>
+
+### Usage in Column
+
+<Widget name="Flexible-column">
+  {Container({
+    height: 400,
+    width: 200,
+    color: '#ecf0f1',
+    child: Column({
+      children: [
+        Container({
+          height: 50,
+          color: '#34495e',
+          child: Center({
+            child: Text('Fixed height 50', {
+              style: TextStyle({ color: 'white' })
+            })
+          })
+        }),
+        Flexible({
+          flex: 1,
+          child: Container({
+            color: '#3498db',
+            child: Center({
+              child: Text('Flexible 1', {
+                style: TextStyle({ color: 'white', fontSize: 16 })
+              })
+            })
+          })
+        }),
+        Flexible({
+          flex: 2,
+          child: Container({
+            color: '#e74c3c',
+            child: Center({
+              child: Text('Flexible 2', {
+                style: TextStyle({ color: 'white', fontSize: 16 })
+              })
+            })
+          })
+        }),
+        Container({
+          height: 50,
+          color: '#34495e',
+          child: Center({
+            child: Text('Fixed height 50', {
+              style: TextStyle({ color: 'white' })
+            })
+          })
+        })
+      ]
+    })
+  })}
+</Widget>
+
+### Complex Layout Example
+
+<Widget name="Flexible-complex">
+  {Row({
+    children: [
+      Flexible({
+        flex: 2,
+        child: Container({
+          color: '#3498db',
+          padding: EdgeInsets.all(16),
+          child: Column({
+            crossAxisAlignment: 'start',
+            children: [
+              Text('Main Content', {
+                style: TextStyle({
+                  color: 'white',
+                  fontSize: 20,
+                  fontWeight: 'bold'
+                })
+              }),
+              Text('This area has flex: 2, taking twice as much space as the sidebar.', {
+                style: TextStyle({
+                  color: 'white',
+                  fontSize: 14
+                })
+              })
+            ]
+          })
+        })
+      }),
+      Flexible({
+        flex: 1,
+        child: Container({
+          color: '#2c3e50',
+          padding: EdgeInsets.all(16),
+          child: Column({
+            crossAxisAlignment: 'start',
+            children: [
+              Text('Sidebar', {
+                style: TextStyle({
+                  color: 'white',
+                  fontSize: 18,
+                  fontWeight: 'bold'
+                })
+              }),
+              Text('flex: 1', {
+                style: TextStyle({
+                  color: 'white',
+                  fontSize: 14
+                })
+              })
+            ]
+          })
+        })
+      })
+    ]
+  })}
+</Widget>
+
+## Flexible vs Expanded
+
+Expanded is a special case of Flexible:
+
+```typescript
+// These two are equivalent
+Expanded({ child: myWidget })
+Flexible({ fit: 'tight', child: myWidget })
+```
+
+- **Flexible**: Allows child to take only necessary space (fit: 'loose')
+- **Expanded**: Forces child to take all available space
+
+## Important Notes
+
+1. Flexible must be a direct child of Row, Column, or Flex
+2. The flex value must be greater than 0
+3. When multiple Flexible widgets are present, space is distributed according to flex ratios
+4. When used with fixed-size widgets, fixed sizes are allocated first, then remaining space is distributed to Flexible widgets
+
+## Related Widgets
+
+- [Expanded](/en/widgets/Expanded) - Shorthand for Flexible with fit: 'tight'
+- [Row](/en/widgets/Row) - Horizontal layout widget
+- [Column](/en/widgets/Column) - Vertical layout widget
+- [Spacer](/en/widgets/Spacer) - Empty Flexible widget that takes up space
