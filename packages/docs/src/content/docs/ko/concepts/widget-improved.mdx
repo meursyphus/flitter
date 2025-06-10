@@ -1,0 +1,569 @@
+---
+nav_group: "핵심 개념"
+nav_order: 1
+title: "위젯이란?"
+description: "Flitter 애플리케이션의 기본 구성 요소인 위젯에 대한 심화 이해"
+---
+
+import { Widget } from '@meursyphus/flitter-svelte';
+import { Container, Text, Column, Row, Center, TextStyle, EdgeInsets, BorderRadius, Stack, Positioned, GestureDetector, AnimatedContainer } from '@meursyphus/flitter';
+
+# 위젯이란?
+
+Flitter에서 위젯(Widget)은 사용자 인터페이스를 구성하는 기본 단위입니다. 차트의 막대 하나, 다이어그램의 노드 하나, 심지어 전체 대시보드까지 모든 것이 위젯으로 이루어져 있습니다.
+
+## 위젯의 핵심 개념
+
+### 1. 불변성 (Immutability)
+
+위젯은 **불변 객체**입니다. 한 번 생성된 위젯의 속성은 변경할 수 없습니다.
+
+<Widget name="widget-immutability">
+  {(() => {
+    const [color, setColor] = React.useState('#4c6ef5');
+    
+    return Container({
+      width: 400,
+      height: 200,
+      padding: EdgeInsets.all(20),
+      color: '#f8f9fa',
+      child: Column({
+        mainAxisAlignment: 'center',
+        children: [
+          Container({
+            width: 150,
+            height: 60,
+            decoration: {
+              color: color,
+              borderRadius: BorderRadius.circular(8)
+            },
+            child: Center({
+              child: Text('불변 위젯', {
+                style: TextStyle({
+                  color: 'white',
+                  fontSize: 16,
+                  fontWeight: 'bold'
+                })
+              })
+            })
+          }),
+          SizedBox({ height: 20 }),
+          Row({
+            mainAxisAlignment: 'center',
+            children: [
+              GestureDetector({
+                onTap: () => setColor('#51cf66'),
+                child: Container({
+                  padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+                  decoration: {
+                    color: '#51cf66',
+                    borderRadius: BorderRadius.circular(4)
+                  },
+                  child: Text('초록색', {
+                    style: TextStyle({ color: 'white' })
+                  })
+                })
+              }),
+              SizedBox({ width: 8 }),
+              GestureDetector({
+                onTap: () => setColor('#ff6b6b'),
+                child: Container({
+                  padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+                  decoration: {
+                    color: '#ff6b6b',
+                    borderRadius: BorderRadius.circular(4)
+                  },
+                  child: Text('빨간색', {
+                    style: TextStyle({ color: 'white' })
+                  })
+                })
+              })
+            ]
+          }),
+          SizedBox({ height: 10 }),
+          Text('색상이 변경될 때마다 새로운 위젯이 생성됩니다', {
+            style: TextStyle({
+              fontSize: 12,
+              color: '#868e96'
+            })
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+```typescript
+// 잘못된 방법 ❌
+const widget = Container({ color: 'blue' });
+widget.color = 'red'; // 에러! 위젯은 불변입니다
+
+// 올바른 방법 ✅
+const [color, setColor] = useState('blue');
+const widget = Container({ color }); // 상태가 변경되면 새 위젯 생성
+```
+
+### 2. 구성 가능성 (Composability)
+
+위젯은 다른 위젯을 조합하여 복잡한 UI를 만들 수 있습니다.
+
+<Widget name="widget-composability">
+  {(() => {
+    // 재사용 가능한 카드 위젯
+    const DataCard = ({ title, value, color, icon }) => Container({
+      width: 120,
+      height: 100,
+      decoration: {
+        color: 'white',
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [{
+          color: 'rgba(0,0,0,0.1)',
+          blurRadius: 8,
+          offset: { x: 0, y: 2 }
+        }]
+      },
+      padding: EdgeInsets.all(16),
+      child: Column({
+        mainAxisAlignment: 'spaceBetween',
+        crossAxisAlignment: 'start',
+        children: [
+          Row({
+            mainAxisAlignment: 'spaceBetween',
+            children: [
+              Text(icon, { style: TextStyle({ fontSize: 24 }) }),
+              Container({
+                width: 8,
+                height: 8,
+                decoration: {
+                  color: color,
+                  shape: 'circle'
+                }
+              })
+            ]
+          }),
+          Column({
+            crossAxisAlignment: 'start',
+            children: [
+              Text(value, {
+                style: TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: '#212529'
+                })
+              }),
+              Text(title, {
+                style: TextStyle({
+                  fontSize: 12,
+                  color: '#868e96'
+                })
+              })
+            ]
+          })
+        ]
+      })
+    });
+    
+    return Container({
+      width: 450,
+      height: 150,
+      padding: EdgeInsets.all(20),
+      color: '#f8f9fa',
+      child: Row({
+        mainAxisAlignment: 'spaceEvenly',
+        children: [
+          DataCard({
+            title: '방문자',
+            value: '1,234',
+            color: '#4c6ef5',
+            icon: '👥'
+          }),
+          DataCard({
+            title: '매출',
+            value: '₩5.2M',
+            color: '#51cf66',
+            icon: '💰'
+          }),
+          DataCard({
+            title: '성장률',
+            value: '+12%',
+            color: '#ff922b',
+            icon: '📈'
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+### 3. 위젯 트리 (Widget Tree)
+
+위젯들은 트리 구조로 조직됩니다. 부모 위젯은 자식 위젯을 포함하고, 이러한 계층 구조가 전체 UI를 형성합니다.
+
+<Widget name="widget-tree">
+  {(() => {
+    const [selectedNode, setSelectedNode] = React.useState('root');
+    
+    const nodes = {
+      root: { label: 'Container', color: '#4c6ef5', children: ['column'] },
+      column: { label: 'Column', color: '#51cf66', children: ['text1', 'row'] },
+      text1: { label: 'Text("제목")', color: '#ff922b', children: [] },
+      row: { label: 'Row', color: '#845ef7', children: ['text2', 'text3'] },
+      text2: { label: 'Text("A")', color: '#ff6b6b', children: [] },
+      text3: { label: 'Text("B")', color: '#20c997', children: [] }
+    };
+    
+    const TreeNode = ({ nodeId, x, y, level = 0 }) => {
+      const node = nodes[nodeId];
+      const isSelected = selectedNode === nodeId;
+      
+      return (
+        <>
+          <Positioned({
+            left: x - 60,
+            top: y - 20,
+            child: GestureDetector({
+              onTap: () => setSelectedNode(nodeId),
+              child: AnimatedContainer({
+                duration: 200,
+                width: 120,
+                height: 40,
+                decoration: {
+                  color: isSelected ? node.color : 'white',
+                  borderRadius: BorderRadius.circular(8),
+                  border: {
+                    color: node.color,
+                    width: 2
+                  }
+                },
+                child: Center({
+                  child: Text(node.label, {
+                    style: TextStyle({
+                      color: isSelected ? 'white' : node.color,
+                      fontSize: 12,
+                      fontWeight: isSelected ? 'bold' : 'normal'
+                    })
+                  })
+                })
+              })
+            })
+          }),
+          // 연결선
+          ...node.children.map((childId, index) => {
+            const childX = x - (node.children.length - 1) * 40 + index * 80;
+            const childY = y + 80;
+            
+            return (
+              <>
+                <Positioned({
+                  left: x,
+                  top: y + 20,
+                  child: Container({
+                    width: 2,
+                    height: 30,
+                    color: '#dee2e6'
+                  })
+                }),
+                <Positioned({
+                  left: Math.min(x, childX),
+                  top: y + 50,
+                  child: Container({
+                    width: Math.abs(childX - x) + 2,
+                    height: 2,
+                    color: '#dee2e6'
+                  })
+                }),
+                <Positioned({
+                  left: childX,
+                  top: y + 50,
+                  child: Container({
+                    width: 2,
+                    height: 10,
+                    color: '#dee2e6'
+                  })
+                }),
+                <TreeNode nodeId={childId} x={childX} y={childY} level={level + 1} />
+              </>
+            );
+          })
+        </>
+      );
+    };
+    
+    return Container({
+      width: 500,
+      height: 300,
+      color: '#f8f9fa',
+      child: Stack({
+        children: [
+          TreeNode({ nodeId: 'root', x: 250, y: 40 }),
+          Positioned({
+            bottom: 10,
+            left: 10,
+            right: 10,
+            child: Container({
+              padding: EdgeInsets.all(12),
+              decoration: {
+                color: 'white',
+                borderRadius: BorderRadius.circular(8),
+                border: {
+                  color: '#e9ecef',
+                  width: 1
+                }
+              },
+              child: Text(
+                selectedNode === 'root' ? '최상위 컨테이너가 전체 레이아웃을 감쌉니다' :
+                selectedNode === 'column' ? 'Column이 자식들을 수직으로 배열합니다' :
+                selectedNode === 'row' ? 'Row가 자식들을 수평으로 배열합니다' :
+                '리프 노드: 실제 콘텐츠를 표시합니다',
+                {
+                  style: TextStyle({
+                    fontSize: 12,
+                    color: '#495057'
+                  })
+                }
+              )
+            })
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+## 위젯의 종류
+
+### 1. 레이아웃 위젯
+
+UI의 구조를 정의하는 위젯들입니다.
+
+```typescript
+// 수직 배열
+Column({
+  children: [widget1, widget2, widget3]
+})
+
+// 수평 배열
+Row({
+  children: [widget1, widget2, widget3]
+})
+
+// 겹치기
+Stack({
+  children: [background, content, overlay]
+})
+```
+
+### 2. 그래픽 위젯
+
+시각적 요소를 그리는 위젯들입니다.
+
+```typescript
+// 커스텀 그리기
+CustomPaint({
+  painter: {
+    paint: (canvas, size) => {
+      // 차트나 다이어그램 그리기
+    }
+  }
+})
+
+// 기본 도형
+Container({
+  decoration: {
+    shape: 'circle',
+    color: '#4c6ef5'
+  }
+})
+```
+
+### 3. 인터랙션 위젯
+
+사용자 입력을 처리하는 위젯들입니다.
+
+```typescript
+// 제스처 감지
+GestureDetector({
+  onTap: () => console.log('탭!'),
+  onDrag: (details) => handleDrag(details),
+  child: myWidget
+})
+
+// 드래그 가능
+Draggable({
+  child: myWidget,
+  feedback: draggedWidget,
+  onDragEnd: (details) => updatePosition(details)
+})
+```
+
+### 4. 애니메이션 위젯
+
+동적인 효과를 제공하는 위젯들입니다.
+
+```typescript
+// 애니메이션 컨테이너
+AnimatedContainer({
+  duration: 300,
+  width: isExpanded ? 200 : 100,
+  height: isExpanded ? 200 : 100,
+  color: isActive ? '#4c6ef5' : '#e9ecef'
+})
+```
+
+## 위젯 생명주기
+
+<Widget name="widget-lifecycle">
+  {(() => {
+    const [phase, setPhase] = React.useState(0);
+    const phases = [
+      { name: '생성', color: '#4c6ef5', description: '위젯이 처음 만들어집니다' },
+      { name: '빌드', color: '#51cf66', description: '위젯이 렌더 트리를 구성합니다' },
+      { name: '렌더링', color: '#ff922b', description: '화면에 그려집니다' },
+      { name: '업데이트', color: '#845ef7', description: '상태 변경 시 재빌드됩니다' },
+      { name: '제거', color: '#868e96', description: '위젯이 트리에서 제거됩니다' }
+    ];
+    
+    React.useEffect(() => {
+      const timer = setInterval(() => {
+        setPhase((p) => (p + 1) % phases.length);
+      }, 2000);
+      return () => clearInterval(timer);
+    }, []);
+    
+    return Container({
+      width: 450,
+      height: 200,
+      padding: EdgeInsets.all(20),
+      color: '#f8f9fa',
+      child: Column({
+        children: [
+          Row({
+            mainAxisAlignment: 'spaceEvenly',
+            children: phases.map((p, i) => 
+              Column({
+                children: [
+                  AnimatedContainer({
+                    duration: 300,
+                    width: 60,
+                    height: 60,
+                    decoration: {
+                      color: i === phase ? p.color : '#e9ecef',
+                      shape: 'circle'
+                    },
+                    child: Center({
+                      child: Text((i + 1).toString(), {
+                        style: TextStyle({
+                          color: i === phase ? 'white' : '#868e96',
+                          fontSize: 20,
+                          fontWeight: 'bold'
+                        })
+                      })
+                    })
+                  }),
+                  SizedBox({ height: 8 }),
+                  Text(p.name, {
+                    style: TextStyle({
+                      fontSize: 12,
+                      fontWeight: i === phase ? 'bold' : 'normal',
+                      color: i === phase ? p.color : '#868e96'
+                    })
+                  })
+                ]
+              })
+            )
+          }),
+          SizedBox({ height: 30 }),
+          Container({
+            padding: EdgeInsets.all(12),
+            decoration: {
+              color: phases[phase].color + '20',
+              borderRadius: BorderRadius.circular(8),
+              border: {
+                color: phases[phase].color,
+                width: 1
+              }
+            },
+            child: Text(phases[phase].description, {
+              style: TextStyle({
+                fontSize: 14,
+                color: phases[phase].color
+              })
+            })
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+## 효율적인 위젯 사용법
+
+### 1. 위젯 재사용
+
+```typescript
+// 커스텀 위젯 정의
+const ChartBar = ({ value, maxValue, color, label }) => 
+  Column({
+    children: [
+      Container({
+        width: 40,
+        height: (value / maxValue) * 200,
+        decoration: {
+          color,
+          borderRadius: BorderRadius.only({
+            topLeft: 4,
+            topRight: 4
+          })
+        }
+      }),
+      Text(label)
+    ]
+  });
+
+// 재사용
+Row({
+  children: data.map(item => 
+    ChartBar({
+      value: item.value,
+      maxValue: 100,
+      color: item.color,
+      label: item.label
+    })
+  )
+})
+```
+
+### 2. 조건부 렌더링
+
+```typescript
+Container({
+  child: isLoading 
+    ? CircularProgressIndicator()
+    : hasError
+      ? ErrorWidget({ message: error })
+      : DataChart({ data })
+})
+```
+
+### 3. 키(Key) 사용
+
+```typescript
+Column({
+  children: items.map(item => 
+    Container({
+      key: item.id, // 위젯을 고유하게 식별
+      child: ItemWidget({ item })
+    })
+  )
+})
+```
+
+## 다음 단계
+
+이제 위젯의 기본 개념을 이해했으니, 다음을 학습해보세요:
+
+1. [상태 관리](/ko/concepts/state-management) - 동적인 위젯 만들기
+2. [레이아웃 시스템](/ko/concepts/layout) - 복잡한 레이아웃 구성
+3. [커스텀 위젯 만들기](/ko/tutorials/custom-widget) - 나만의 위젯 정의
+
+위젯은 Flitter의 핵심입니다. 이 개념을 확실히 이해하면 복잡한 차트와 다이어그램도 쉽게 구현할 수 있습니다!

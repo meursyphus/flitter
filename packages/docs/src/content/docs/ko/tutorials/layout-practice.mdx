@@ -1,0 +1,824 @@
+---
+title: "레이아웃 구성하기 실습"
+description: "다양한 레이아웃 패턴을 실습하며 차트 대시보드 만들기"
+nav_order: 3
+nav_group: "튜토리얼"
+---
+
+import { Widget } from '@meursyphus/flitter-svelte';
+import { Container, Column, Row, Stack, Positioned, Expanded, Text, TextStyle, EdgeInsets, BorderRadius, GridView, Wrap, Center, Align, ConstrainedBox, AspectRatio } from '@meursyphus/flitter';
+
+# 레이아웃 구성하기 실습
+
+Flitter의 강력한 레이아웃 시스템을 활용하여 차트 대시보드를 구성하는 방법을 실습해봅시다. 기본 레이아웃부터 복잡한 반응형 대시보드까지 단계별로 만들어봅니다.
+
+## 레이아웃 기초
+
+### Row와 Column
+
+가장 기본적인 레이아웃 위젯들입니다.
+
+<Widget name="layout-row-column">
+  {(() => {
+    const ChartCard = ({ title, value, color, icon }) => Container({
+      padding: EdgeInsets.all(16),
+      decoration: {
+        color: 'white',
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [{
+          color: 'rgba(0,0,0,0.05)',
+          blurRadius: 4,
+          offset: { x: 0, y: 2 }
+        }]
+      },
+      child: Column({
+        crossAxisAlignment: 'start',
+        children: [
+          Row({
+            mainAxisAlignment: 'spaceBetween',
+            children: [
+              Text(title, {
+                style: TextStyle({
+                  fontSize: 14,
+                  color: '#868e96'
+                })
+              }),
+              Text(icon, { style: TextStyle({ fontSize: 20 }) })
+            ]
+          }),
+          SizedBox({ height: 8 }),
+          Text(value, {
+            style: TextStyle({
+              fontSize: 24,
+              fontWeight: 'bold',
+              color: color
+            })
+          })
+        ]
+      })
+    });
+    
+    return Container({
+      width: 500,
+      height: 300,
+      padding: EdgeInsets.all(20),
+      color: '#f8f9fa',
+      child: Column({
+        children: [
+          Text('대시보드 개요', {
+            style: TextStyle({
+              fontSize: 20,
+              fontWeight: 'bold',
+              color: '#212529'
+            })
+          }),
+          SizedBox({ height: 20 }),
+          Row({
+            children: [
+              Expanded({
+                child: ChartCard({
+                  title: '총 방문자',
+                  value: '12,345',
+                  color: '#4c6ef5',
+                  icon: '👥'
+                })
+              }),
+              SizedBox({ width: 16 }),
+              Expanded({
+                child: ChartCard({
+                  title: '매출',
+                  value: '₩5.2M',
+                  color: '#51cf66',
+                  icon: '💰'
+                })
+              })
+            ]
+          }),
+          SizedBox({ height: 16 }),
+          Row({
+            children: [
+              Expanded({
+                child: ChartCard({
+                  title: '전환율',
+                  value: '3.45%',
+                  color: '#ff922b',
+                  icon: '📊'
+                })
+              }),
+              SizedBox({ width: 16 }),
+              Expanded({
+                child: ChartCard({
+                  title: '평균 체류',
+                  value: '2m 34s',
+                  color: '#845ef7',
+                  icon: '⏱️'
+                })
+              })
+            ]
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+```typescript
+Column({
+  children: [
+    // 헤더
+    Text('대시보드'),
+    // 카드 그리드
+    Row({
+      children: [
+        Expanded({ child: Card1 }),
+        Expanded({ child: Card2 })
+      ]
+    }),
+    Row({
+      children: [
+        Expanded({ child: Card3 }),
+        Expanded({ child: Card4 })
+      ]
+    })
+  ]
+})
+```
+
+### Expanded와 Flexible
+
+공간을 유연하게 분배하는 방법입니다.
+
+<Widget name="layout-expanded-flexible">
+  {(() => {
+    const [showDetails, setShowDetails] = React.useState(false);
+    
+    return Container({
+      width: 500,
+      height: 200,
+      padding: EdgeInsets.all(20),
+      color: '#f8f9fa',
+      child: Row({
+        children: [
+          // 고정 너비 사이드바
+          Container({
+            width: 120,
+            padding: EdgeInsets.all(16),
+            decoration: {
+              color: '#495057',
+              borderRadius: BorderRadius.circular(8)
+            },
+            child: Column({
+              children: [
+                Text('메뉴', {
+                  style: TextStyle({
+                    color: 'white',
+                    fontSize: 16,
+                    fontWeight: 'bold'
+                  })
+                }),
+                SizedBox({ height: 16 }),
+                ...['차트', '데이터', '설정'].map(item => 
+                  Container({
+                    margin: EdgeInsets.only({ bottom: 8 }),
+                    child: Text(item, {
+                      style: TextStyle({
+                        color: 'rgba(255,255,255,0.8)',
+                        fontSize: 14
+                      })
+                    })
+                  })
+                )
+              ]
+            })
+          }),
+          SizedBox({ width: 16 }),
+          // 메인 콘텐츠 (확장)
+          Expanded({
+            child: Container({
+              padding: EdgeInsets.all(16),
+              decoration: {
+                color: 'white',
+                borderRadius: BorderRadius.circular(8)
+              },
+              child: Column({
+                crossAxisAlignment: 'start',
+                children: [
+                  Text('메인 차트 영역', {
+                    style: TextStyle({
+                      fontSize: 18,
+                      fontWeight: 'bold'
+                    })
+                  }),
+                  SizedBox({ height: 8 }),
+                  Text('Expanded를 사용하여 남은 공간을 모두 차지합니다', {
+                    style: TextStyle({
+                      fontSize: 14,
+                      color: '#868e96'
+                    })
+                  }),
+                  Expanded({
+                    child: Center({
+                      child: Text('📈', {
+                        style: TextStyle({ fontSize: 48 })
+                      })
+                    })
+                  })
+                ]
+              })
+            })
+          }),
+          // 조건부 패널
+          if (showDetails) ...[
+            SizedBox({ width: 16 }),
+            Container({
+              width: 150,
+              padding: EdgeInsets.all(16),
+              decoration: {
+                color: '#e9ecef',
+                borderRadius: BorderRadius.circular(8)
+              },
+              child: Column({
+                children: [
+                  Text('상세 정보', {
+                    style: TextStyle({
+                      fontSize: 16,
+                      fontWeight: 'bold'
+                    })
+                  })
+                ]
+              })
+            })
+          ],
+          // 토글 버튼
+          Container({
+            margin: EdgeInsets.only({ left: 8 }),
+            child: GestureDetector({
+              onTap: () => setShowDetails(!showDetails),
+              child: Container({
+                padding: EdgeInsets.all(8),
+                decoration: {
+                  color: '#4c6ef5',
+                  borderRadius: BorderRadius.circular(4)
+                },
+                child: Text(showDetails ? '◀' : '▶', {
+                  style: TextStyle({
+                    color: 'white',
+                    fontSize: 12
+                  })
+                })
+              })
+            })
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+### Stack과 Positioned
+
+위젯을 겹치는 레이아웃입니다.
+
+<Widget name="layout-stack-positioned">
+  {(() => {
+    const data = [30, 45, 35, 50, 40, 55, 45];
+    const maxValue = Math.max(...data);
+    
+    return Container({
+      width: 450,
+      height: 250,
+      padding: EdgeInsets.all(20),
+      color: 'white',
+      child: Stack({
+        children: [
+          // 배경 그리드
+          ...Array.from({ length: 5 }, (_, i) => 
+            Positioned({
+              top: i * 40,
+              left: 0,
+              right: 0,
+              child: Container({
+                height: 1,
+                color: '#f1f3f5'
+              })
+            })
+          ),
+          // 차트 영역
+          Positioned({
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 30,
+            child: Row({
+              mainAxisAlignment: 'spaceEvenly',
+              crossAxisAlignment: 'end',
+              children: data.map((value, index) => 
+                Container({
+                  width: 40,
+                  height: (value / maxValue) * 160,
+                  decoration: {
+                    gradient: {
+                      type: 'linear',
+                      colors: ['#4c6ef5', '#5c7cfa'],
+                      begin: 'topCenter',
+                      end: 'bottomCenter'
+                    },
+                    borderRadius: BorderRadius.only({
+                      topLeft: 4,
+                      topRight: 4
+                    })
+                  }
+                })
+              )
+            })
+          }),
+          // 평균선
+          Positioned({
+            top: 80,
+            left: 0,
+            right: 0,
+            child: Container({
+              height: 2,
+              color: '#ff6b6b',
+              child: Stack({
+                clipBehavior: 'visible',
+                children: [
+                  Positioned({
+                    right: -40,
+                    top: -8,
+                    child: Container({
+                      padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 2 }),
+                      decoration: {
+                        color: '#ff6b6b',
+                        borderRadius: BorderRadius.circular(4)
+                      },
+                      child: Text('평균', {
+                        style: TextStyle({
+                          color: 'white',
+                          fontSize: 11
+                        })
+                      })
+                    })
+                  })
+                ]
+              })
+            })
+          }),
+          // 제목
+          Positioned({
+            top: -5,
+            left: 0,
+            child: Text('주간 트렌드', {
+              style: TextStyle({
+                fontSize: 16,
+                fontWeight: 'bold',
+                color: '#212529'
+              })
+            })
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+## 반응형 레이아웃
+
+### AspectRatio로 비율 유지
+
+<Widget name="layout-aspect-ratio">
+  {(() => {
+    const charts = [
+      { title: '원형 차트', ratio: 1, icon: '🥧', color: '#4c6ef5' },
+      { title: '가로 차트', ratio: 16/9, icon: '📊', color: '#51cf66' },
+      { title: '세로 차트', ratio: 3/4, icon: '📈', color: '#ff922b' }
+    ];
+    
+    return Container({
+      width: 500,
+      height: 300,
+      padding: EdgeInsets.all(20),
+      color: '#f8f9fa',
+      child: Row({
+        mainAxisAlignment: 'spaceEvenly',
+        children: charts.map(chart => 
+          Column({
+            children: [
+              Text(chart.title, {
+                style: TextStyle({
+                  fontSize: 14,
+                  fontWeight: 'bold',
+                  color: '#495057'
+                })
+              }),
+              SizedBox({ height: 8 }),
+              Container({
+                width: 120,
+                child: AspectRatio({
+                  aspectRatio: chart.ratio,
+                  child: Container({
+                    decoration: {
+                      color: chart.color + '20',
+                      borderRadius: BorderRadius.circular(8),
+                      border: {
+                        color: chart.color,
+                        width: 2
+                      }
+                    },
+                    child: Center({
+                      child: Column({
+                        mainAxisSize: 'min',
+                        children: [
+                          Text(chart.icon, {
+                            style: TextStyle({ fontSize: 32 })
+                          }),
+                          SizedBox({ height: 4 }),
+                          Text(`${chart.ratio}`, {
+                            style: TextStyle({
+                              fontSize: 12,
+                              color: chart.color,
+                              fontWeight: 'bold'
+                            })
+                          })
+                        ]
+                      })
+                    })
+                  })
+                })
+              })
+            ]
+          })
+        )
+      })
+    });
+  })()}
+</Widget>
+
+### Wrap으로 유연한 배치
+
+<Widget name="layout-wrap">
+  {(() => {
+    const tags = [
+      { label: '매출 분석', color: '#4c6ef5' },
+      { label: '사용자 행동', color: '#51cf66' },
+      { label: '전환율', color: '#ff922b' },
+      { label: '실시간', color: '#ff6b6b' },
+      { label: '주간 리포트', color: '#845ef7' },
+      { label: '월간 통계', color: '#20c997' },
+      { label: 'A/B 테스트', color: '#f9ca24' },
+      { label: '코호트 분석', color: '#e84393' }
+    ];
+    
+    return Container({
+      width: 450,
+      height: 200,
+      padding: EdgeInsets.all(20),
+      color: 'white',
+      child: Column({
+        crossAxisAlignment: 'start',
+        children: [
+          Text('대시보드 필터', {
+            style: TextStyle({
+              fontSize: 18,
+              fontWeight: 'bold',
+              color: '#212529'
+            })
+          }),
+          SizedBox({ height: 16 }),
+          Wrap({
+            spacing: 8,
+            runSpacing: 8,
+            children: tags.map(tag => 
+              Container({
+                padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 6 }),
+                decoration: {
+                  color: tag.color + '20',
+                  borderRadius: BorderRadius.circular(16),
+                  border: {
+                    color: tag.color,
+                    width: 1
+                  }
+                },
+                child: Row({
+                  mainAxisSize: 'min',
+                  children: [
+                    Container({
+                      width: 6,
+                      height: 6,
+                      decoration: {
+                        color: tag.color,
+                        shape: 'circle'
+                      }
+                    }),
+                    SizedBox({ width: 6 }),
+                    Text(tag.label, {
+                      style: TextStyle({
+                        fontSize: 12,
+                        color: tag.color,
+                        fontWeight: 'bold'
+                      })
+                    })
+                  ]
+                })
+              })
+            )
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+## 복잡한 대시보드 레이아웃
+
+모든 개념을 종합한 완전한 대시보드 예제입니다.
+
+<Widget name="layout-dashboard">
+  {(() => {
+    const [selectedMetric, setSelectedMetric] = React.useState('revenue');
+    
+    const metrics = {
+      revenue: { label: '매출', value: '₩12.5M', change: '+15%', color: '#51cf66' },
+      users: { label: '사용자', value: '45.2K', change: '+8%', color: '#4c6ef5' },
+      conversion: { label: '전환율', value: '3.2%', change: '-2%', color: '#ff922b' }
+    };
+    
+    const chartData = [65, 78, 82, 91, 85, 88, 95];
+    
+    return Container({
+      width: 600,
+      height: 400,
+      color: '#f8f9fa',
+      child: Column({
+        children: [
+          // 헤더
+          Container({
+            padding: EdgeInsets.all(20),
+            color: 'white',
+            child: Row({
+              mainAxisAlignment: 'spaceBetween',
+              children: [
+                Text('실시간 대시보드', {
+                  style: TextStyle({
+                    fontSize: 24,
+                    fontWeight: 'bold',
+                    color: '#212529'
+                  })
+                }),
+                Text(new Date().toLocaleTimeString('ko-KR'), {
+                  style: TextStyle({
+                    fontSize: 14,
+                    color: '#868e96'
+                  })
+                })
+              ]
+            })
+          }),
+          // 메인 콘텐츠
+          Expanded({
+            child: Container({
+              padding: EdgeInsets.all(20),
+              child: Row({
+                children: [
+                  // 왼쪽: 메트릭 카드
+                  Container({
+                    width: 180,
+                    child: Column({
+                      children: Object.entries(metrics).map(([key, metric]) => 
+                        GestureDetector({
+                          onTap: () => setSelectedMetric(key),
+                          child: AnimatedContainer({
+                            duration: 200,
+                            margin: EdgeInsets.only({ bottom: 12 }),
+                            padding: EdgeInsets.all(16),
+                            decoration: {
+                              color: selectedMetric === key ? metric.color + '10' : 'white',
+                              borderRadius: BorderRadius.circular(8),
+                              border: selectedMetric === key ? {
+                                color: metric.color,
+                                width: 2
+                              } : null,
+                              boxShadow: [{
+                                color: 'rgba(0,0,0,0.05)',
+                                blurRadius: 4,
+                                offset: { x: 0, y: 2 }
+                              }]
+                            },
+                            child: Column({
+                              crossAxisAlignment: 'start',
+                              children: [
+                                Text(metric.label, {
+                                  style: TextStyle({
+                                    fontSize: 12,
+                                    color: '#868e96'
+                                  })
+                                }),
+                                SizedBox({ height: 4 }),
+                                Row({
+                                  mainAxisAlignment: 'spaceBetween',
+                                  children: [
+                                    Text(metric.value, {
+                                      style: TextStyle({
+                                        fontSize: 20,
+                                        fontWeight: 'bold',
+                                        color: selectedMetric === key ? metric.color : '#212529'
+                                      })
+                                    }),
+                                    Container({
+                                      padding: EdgeInsets.symmetric({ horizontal: 6, vertical: 2 }),
+                                      decoration: {
+                                        color: metric.change.startsWith('+') ? '#51cf66' : '#ff6b6b',
+                                        borderRadius: BorderRadius.circular(4)
+                                      },
+                                      child: Text(metric.change, {
+                                        style: TextStyle({
+                                          fontSize: 11,
+                                          color: 'white',
+                                          fontWeight: 'bold'
+                                        })
+                                      })
+                                    })
+                                  ]
+                                })
+                              ]
+                            })
+                          })
+                        })
+                      )
+                    })
+                  }),
+                  SizedBox({ width: 20 }),
+                  // 오른쪽: 차트 영역
+                  Expanded({
+                    child: Container({
+                      padding: EdgeInsets.all(20),
+                      decoration: {
+                        color: 'white',
+                        borderRadius: BorderRadius.circular(12)
+                      },
+                      child: Column({
+                        crossAxisAlignment: 'start',
+                        children: [
+                          Row({
+                            mainAxisAlignment: 'spaceBetween',
+                            children: [
+                              Text(`${metrics[selectedMetric].label} 트렌드`, {
+                                style: TextStyle({
+                                  fontSize: 18,
+                                  fontWeight: 'bold',
+                                  color: '#212529'
+                                })
+                              }),
+                              Text('최근 7일', {
+                                style: TextStyle({
+                                  fontSize: 12,
+                                  color: '#868e96'
+                                })
+                              })
+                            ]
+                          }),
+                          SizedBox({ height: 20 }),
+                          Expanded({
+                            child: Stack({
+                              children: [
+                                // 그리드
+                                ...Array.from({ length: 4 }, (_, i) => 
+                                  Positioned({
+                                    top: i * 50,
+                                    left: 0,
+                                    right: 0,
+                                    child: Container({
+                                      height: 1,
+                                      color: '#f1f3f5'
+                                    })
+                                  })
+                                ),
+                                // 차트
+                                Row({
+                                  mainAxisAlignment: 'spaceEvenly',
+                                  crossAxisAlignment: 'end',
+                                  children: chartData.map((value, index) => 
+                                    AnimatedContainer({
+                                      duration: 300,
+                                      width: 30,
+                                      height: (value / 100) * 150,
+                                      decoration: {
+                                        color: metrics[selectedMetric].color,
+                                        borderRadius: BorderRadius.only({
+                                          topLeft: 4,
+                                          topRight: 4
+                                        }),
+                                        opacity: 0.8 + (index / chartData.length) * 0.2
+                                      }
+                                    })
+                                  )
+                                })
+                              ]
+                            })
+                          })
+                        ]
+                      })
+                    })
+                  })
+                ]
+              })
+            })
+          }),
+          // 하단 상태바
+          Container({
+            padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 12 }),
+            color: 'white',
+            child: Row({
+              mainAxisAlignment: 'spaceBetween',
+              children: [
+                Row({
+                  children: [
+                    Container({
+                      width: 8,
+                      height: 8,
+                      decoration: {
+                        color: '#51cf66',
+                        shape: 'circle'
+                      }
+                    }),
+                    SizedBox({ width: 6 }),
+                    Text('실시간 연결됨', {
+                      style: TextStyle({
+                        fontSize: 12,
+                        color: '#51cf66'
+                      })
+                    })
+                  ]
+                }),
+                Text('마지막 업데이트: 방금 전', {
+                  style: TextStyle({
+                    fontSize: 12,
+                    color: '#868e96'
+                  })
+                })
+              ]
+            })
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+## 레이아웃 팁과 모범 사례
+
+### 1. 일관된 여백 사용
+```typescript
+const spacing = {
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32
+};
+
+EdgeInsets.all(spacing.md)
+```
+
+### 2. 반응형 디자인 원칙
+```typescript
+// 화면 크기에 따라 레이아웃 변경
+const isSmallScreen = screenWidth < 600;
+
+isSmallScreen 
+  ? Column({ children: widgets })
+  : Row({ children: widgets })
+```
+
+### 3. 성능 최적화
+```typescript
+// 불필요한 중첩 피하기
+// 나쁜 예 ❌
+Container({
+  child: Container({
+    child: Container({
+      child: Text('깊은 중첩')
+    })
+  })
+})
+
+// 좋은 예 ✅
+Container({
+  padding: EdgeInsets.all(16),
+  decoration: { /* 모든 스타일 */ },
+  child: Text('단순한 구조')
+})
+```
+
+## 연습 과제
+
+1. **적응형 그리드**: 화면 크기에 따라 열 수가 변하는 그리드
+2. **탭 레이아웃**: 여러 차트를 탭으로 전환
+3. **분할 뷰**: 드래그로 크기 조절 가능한 패널
+4. **대시보드 템플릿**: 다양한 차트를 포함한 완전한 대시보드
+
+## 다음 단계
+
+- [상태 관리 기초](/ko/tutorials/state-management) - 동적 레이아웃
+- [애니메이션 입문](/ko/tutorials/animation-basics) - 레이아웃 전환
+- [커스텀 레이아웃](/ko/advanced/custom-layout) - 고급 레이아웃
