@@ -1,0 +1,1258 @@
+---
+title: "애니메이션 입문"
+description: "Flitter에서 부드럽고 인터랙티브한 차트 애니메이션 만들기"
+nav_order: 5
+nav_group: "튜토리얼"
+---
+
+import { Widget } from '@meursyphus/flitter-svelte';
+import { Container, Column, Row, Stack, Positioned, Expanded, Text, TextStyle, EdgeInsets, BorderRadius, GestureDetector, AnimatedContainer, AnimatedOpacity, Transform, CustomPaint } from '@meursyphus/flitter';
+
+# 애니메이션 입문
+
+애니메이션은 데이터 시각화에서 중요한 역할을 합니다. 데이터의 변화를 시각적으로 보여주고, 사용자의 주의를 끌며, 더 나은 사용자 경험을 제공합니다. 이 튜토리얼에서는 Flitter에서 애니메이션을 효과적으로 사용하는 방법을 배워봅시다.
+
+## 애니메이션의 중요성
+
+데이터 시각화에서 애니메이션은:
+
+- **변화 강조**: 데이터 업데이트를 명확하게 보여줌
+- **관심 유도**: 중요한 정보에 주의를 집중
+- **연속성 제공**: 상태 간 전환을 부드럽게 연결
+- **피드백 제공**: 사용자 액션에 대한 즉각적인 반응
+
+## 기본 애니메이션 위젯
+
+### AnimatedContainer - 속성 변화 애니메이션
+
+가장 기본적이고 유용한 애니메이션 위젯입니다.
+
+<Widget name="animation-container">
+  {(() => {
+    const [isExpanded, setIsExpanded] = React.useState(false);
+    const [selectedColor, setSelectedColor] = React.useState('#4c6ef5');
+    
+    const colors = ['#4c6ef5', '#51cf66', '#ff6b6b', '#f9ca24', '#845ef7'];
+    
+    return Container({
+      width: 450,
+      height: 300,
+      padding: EdgeInsets.all(20),
+      color: '#f8f9fa',
+      child: Column({
+        children: [
+          Text('AnimatedContainer 예제', {
+            style: TextStyle({
+              fontSize: 18,
+              fontWeight: 'bold',
+              color: '#212529'
+            })
+          }),
+          SizedBox({ height: 20 }),
+          Center({
+            child: GestureDetector({
+              onTap: () => setIsExpanded(!isExpanded),
+              child: AnimatedContainer({
+                duration: 500,
+                width: isExpanded ? 200 : 80,
+                height: isExpanded ? 120 : 80,
+                decoration: {
+                  color: selectedColor,
+                  borderRadius: BorderRadius.circular(isExpanded ? 20 : 40),
+                  boxShadow: isExpanded ? [{
+                    color: selectedColor + '40',
+                    blurRadius: 20,
+                    offset: { x: 0, y: 10 }
+                  }] : []
+                },
+                child: Center({
+                  child: AnimatedOpacity({
+                    opacity: isExpanded ? 1 : 0.7,
+                    duration: 300,
+                    child: Text(
+                      isExpanded ? '축소하기' : '확장',
+                      {
+                        style: TextStyle({
+                          color: 'white',
+                          fontSize: isExpanded ? 16 : 14,
+                          fontWeight: 'bold'
+                        })
+                      }
+                    )
+                  })
+                })
+              })
+            })
+          }),
+          SizedBox({ height: 30 }),
+          Text('색상 선택:', {
+            style: TextStyle({
+              fontSize: 14,
+              color: '#495057'
+            })
+          }),
+          SizedBox({ height: 10 }),
+          Row({
+            mainAxisAlignment: 'center',
+            children: colors.map(color => 
+              GestureDetector({
+                onTap: () => setSelectedColor(color),
+                child: AnimatedContainer({
+                  duration: 200,
+                  width: selectedColor === color ? 40 : 30,
+                  height: selectedColor === color ? 40 : 30,
+                  margin: EdgeInsets.symmetric({ horizontal: 4 }),
+                  decoration: {
+                    color: color,
+                    shape: 'circle',
+                    border: selectedColor === color ? {
+                      color: 'white',
+                      width: 3
+                    } : null,
+                    boxShadow: selectedColor === color ? [{
+                      color: color + '60',
+                      blurRadius: 8,
+                      offset: { x: 0, y: 4 }
+                    }] : []
+                  }
+                })
+              })
+            )
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+```typescript
+AnimatedContainer({
+  duration: 500, // 애니메이션 지속 시간 (밀리초)
+  width: isExpanded ? 200 : 100,
+  height: isExpanded ? 150 : 100,
+  decoration: {
+    color: isSelected ? '#4c6ef5' : '#e9ecef',
+    borderRadius: BorderRadius.circular(isExpanded ? 20 : 10)
+  },
+  child: myContent
+})
+```
+
+### AnimatedOpacity - 투명도 애니메이션
+
+요소의 나타남과 사라짐을 부드럽게 처리합니다.
+
+<Widget name="animation-opacity">
+  {(() => {
+    const [showDetails, setShowDetails] = React.useState(false);
+    const [activeIndex, setActiveIndex] = React.useState(0);
+    
+    const data = [
+      { label: 'Q1', value: 65, detail: '1분기 매출 상승' },
+      { label: 'Q2', value: 78, detail: '2분기 목표 달성' },
+      { label: 'Q3', value: 52, detail: '3분기 하락세' },
+      { label: 'Q4', value: 89, detail: '4분기 급성장' }
+    ];
+    
+    React.useEffect(() => {
+      const timer = setInterval(() => {
+        setActiveIndex(prev => (prev + 1) % data.length);
+      }, 2000);
+      return () => clearInterval(timer);
+    }, []);
+    
+    const maxValue = Math.max(...data.map(d => d.value));
+    
+    return Container({
+      width: 450,
+      height: 300,
+      padding: EdgeInsets.all(20),
+      color: 'white',
+      child: Column({
+        children: [
+          Row({
+            mainAxisAlignment: 'spaceBetween',
+            children: [
+              Text('분기별 성과', {
+                style: TextStyle({
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                  color: '#212529'
+                })
+              }),
+              GestureDetector({
+                onTap: () => setShowDetails(!showDetails),
+                child: Container({
+                  padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 6 }),
+                  decoration: {
+                    color: showDetails ? '#4c6ef5' : '#e9ecef',
+                    borderRadius: BorderRadius.circular(16)
+                  },
+                  child: Text('상세정보', {
+                    style: TextStyle({
+                      fontSize: 12,
+                      color: showDetails ? 'white' : '#495057'
+                    })
+                  })
+                })
+              })
+            ]
+          }),
+          SizedBox({ height: 20 }),
+          Expanded({
+            child: Stack({
+              children: [
+                // 차트
+                Row({
+                  mainAxisAlignment: 'spaceEvenly',
+                  crossAxisAlignment: 'end',
+                  children: data.map((item, index) => 
+                    Column({
+                      mainAxisAlignment: 'end',
+                      children: [
+                        AnimatedContainer({
+                          duration: 300,
+                          width: activeIndex === index ? 70 : 60,
+                          height: (item.value / maxValue) * 150,
+                          decoration: {
+                            gradient: activeIndex === index ? {
+                              type: 'linear',
+                              colors: ['#4c6ef5', '#364fc7'],
+                              begin: 'topCenter',
+                              end: 'bottomCenter'
+                            } : null,
+                            color: activeIndex === index ? null : '#adb5bd',
+                            borderRadius: BorderRadius.only({
+                              topLeft: 8,
+                              topRight: 8
+                            })
+                          }
+                        }),
+                        SizedBox({ height: 8 }),
+                        Text(item.label, {
+                          style: TextStyle({
+                            fontSize: 12,
+                            fontWeight: activeIndex === index ? 'bold' : 'normal',
+                            color: activeIndex === index ? '#4c6ef5' : '#868e96'
+                          })
+                        })
+                      ]
+                    })
+                  )
+                }),
+                // 상세 정보 오버레이
+                AnimatedOpacity({
+                  opacity: showDetails ? 1 : 0,
+                  duration: 300,
+                  child: Container({
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: 'rgba(0,0,0,0.8)',
+                    child: Center({
+                      child: Container({
+                        padding: EdgeInsets.all(20),
+                        decoration: {
+                          color: 'white',
+                          borderRadius: BorderRadius.circular(12)
+                        },
+                        child: Column({
+                          mainAxisSize: 'min',
+                          children: [
+                            Text(`${data[activeIndex].label} 상세 정보`, {
+                              style: TextStyle({
+                                fontSize: 16,
+                                fontWeight: 'bold',
+                                color: '#212529'
+                              })
+                            }),
+                            SizedBox({ height: 8 }),
+                            Text(`매출: ${data[activeIndex].value}%`, {
+                              style: TextStyle({
+                                fontSize: 14,
+                                color: '#495057'
+                              })
+                            }),
+                            SizedBox({ height: 4 }),
+                            Text(data[activeIndex].detail, {
+                              style: TextStyle({
+                                fontSize: 12,
+                                color: '#868e96'
+                              })
+                            })
+                          ]
+                        })
+                      })
+                    })
+                  })
+                })
+              ]
+            })
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+```typescript
+AnimatedOpacity({
+  opacity: isVisible ? 1.0 : 0.0,
+  duration: 300,
+  child: myWidget
+})
+```
+
+## 진보된 애니메이션 기법
+
+### Transform을 이용한 변형 애니메이션
+
+<Widget name="animation-transform">
+  {(() => {
+    const [rotationAngle, setRotationAngle] = React.useState(0);
+    const [scale, setScale] = React.useState(1);
+    const [offset, setOffset] = React.useState({ x: 0, y: 0 });
+    
+    const data = [40, 60, 35, 80, 45];
+    
+    React.useEffect(() => {
+      const timer = setInterval(() => {
+        setRotationAngle(prev => (prev + 0.1) % (Math.PI * 2));
+        setScale(prev => 0.8 + Math.sin(Date.now() / 1000) * 0.2);
+      }, 50);
+      return () => clearInterval(timer);
+    }, []);
+    
+    return Container({
+      width: 450,
+      height: 300,
+      padding: EdgeInsets.all(20),
+      color: '#f8f9fa',
+      child: Column({
+        children: [
+          Text('Transform 애니메이션', {
+            style: TextStyle({
+              fontSize: 18,
+              fontWeight: 'bold',
+              color: '#212529'
+            })
+          }),
+          SizedBox({ height: 20 }),
+          Expanded({
+            child: Center({
+              child: Transform({
+                transform: Matrix4.identity()
+                  .rotateZ(rotationAngle)
+                  .scale(scale),
+                child: Container({
+                  width: 200,
+                  height: 120,
+                  decoration: {
+                    color: 'white',
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [{
+                      color: 'rgba(0,0,0,0.1)',
+                      blurRadius: 10,
+                      offset: { x: 0, y: 5 }
+                    }]
+                  },
+                  child: Row({
+                    mainAxisAlignment: 'spaceEvenly',
+                    crossAxisAlignment: 'end',
+                    children: data.map((value, index) => 
+                      Container({
+                        width: 20,
+                        height: value,
+                        decoration: {
+                          gradient: {
+                            type: 'linear',
+                            colors: ['#ff6b6b', '#4c6ef5'],
+                            begin: 'topCenter',
+                            end: 'bottomCenter'
+                          },
+                          borderRadius: BorderRadius.only({
+                            topLeft: 2,
+                            topRight: 2
+                          })
+                        }
+                      })
+                    )
+                  })
+                })
+              })
+            })
+          }),
+          Row({
+            mainAxisAlignment: 'spaceEvenly',
+            children: [
+              GestureDetector({
+                onTap: () => setOffset({ x: offset.x - 20, y: offset.y }),
+                child: Container({
+                  padding: EdgeInsets.all(8),
+                  decoration: {
+                    color: '#4c6ef5',
+                    borderRadius: BorderRadius.circular(4)
+                  },
+                  child: Text('←', {
+                    style: TextStyle({ color: 'white' })
+                  })
+                })
+              }),
+              GestureDetector({
+                onTap: () => setOffset({ x: offset.x, y: offset.y - 20 }),
+                child: Container({
+                  padding: EdgeInsets.all(8),
+                  decoration: {
+                    color: '#4c6ef5',
+                    borderRadius: BorderRadius.circular(4)
+                  },
+                  child: Text('↑', {
+                    style: TextStyle({ color: 'white' })
+                  })
+                })
+              }),
+              GestureDetector({
+                onTap: () => setOffset({ x: offset.x, y: offset.y + 20 }),
+                child: Container({
+                  padding: EdgeInsets.all(8),
+                  decoration: {
+                    color: '#4c6ef5',
+                    borderRadius: BorderRadius.circular(4)
+                  },
+                  child: Text('↓', {
+                    style: TextStyle({ color: 'white' })
+                  })
+                })
+              }),
+              GestureDetector({
+                onTap: () => setOffset({ x: offset.x + 20, y: offset.y }),
+                child: Container({
+                  padding: EdgeInsets.all(8),
+                  decoration: {
+                    color: '#4c6ef5',
+                    borderRadius: BorderRadius.circular(4)
+                  },
+                  child: Text('→', {
+                    style: TextStyle({ color: 'white' })
+                  })
+                })
+              })
+            ]
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+```typescript
+Transform({
+  transform: Matrix4.identity()
+    .translate(x, y)
+    .rotateZ(angle)
+    .scale(scale),
+  child: myWidget
+})
+```
+
+### 순차적 애니메이션
+
+여러 요소가 순차적으로 나타나는 효과를 만들어봅시다.
+
+<Widget name="animation-staggered">
+  {(() => {
+    const [animationProgress, setAnimationProgress] = React.useState(0);
+    const [isPlaying, setIsPlaying] = React.useState(false);
+    
+    const data = [
+      { label: '월', value: 30, color: '#ff6b6b' },
+      { label: '화', value: 45, color: '#4ecdc4' },
+      { label: '수', value: 35, color: '#45b7d1' },
+      { label: '목', value: 60, color: '#f9ca24' },
+      { label: '금', value: 55, color: '#845ef7' },
+      { label: '토', value: 40, color: '#51cf66' },
+      { label: '일', value: 25, color: '#fd79a8' }
+    ];
+    
+    const startAnimation = () => {
+      setIsPlaying(true);
+      setAnimationProgress(0);
+      
+      const startTime = Date.now();
+      const duration = 2000;
+      
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        setAnimationProgress(progress);
+        
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          setIsPlaying(false);
+        }
+      };
+      
+      requestAnimationFrame(animate);
+    };
+    
+    React.useEffect(() => {
+      startAnimation();
+    }, []);
+    
+    const maxValue = Math.max(...data.map(d => d.value));
+    
+    return Container({
+      width: 500,
+      height: 350,
+      padding: EdgeInsets.all(20),
+      color: 'white',
+      child: Column({
+        children: [
+          Row({
+            mainAxisAlignment: 'spaceBetween',
+            children: [
+              Text('주간 활동 패턴', {
+                style: TextStyle({
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                  color: '#212529'
+                })
+              }),
+              GestureDetector({
+                onTap: startAnimation,
+                child: Container({
+                  padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+                  decoration: {
+                    color: isPlaying ? '#868e96' : '#4c6ef5',
+                    borderRadius: BorderRadius.circular(4)
+                  },
+                  child: Text(isPlaying ? '재생 중...' : '다시 재생', {
+                    style: TextStyle({
+                      color: 'white',
+                      fontSize: 12
+                    })
+                  })
+                })
+              })
+            ]
+          }),
+          SizedBox({ height: 30 }),
+          Expanded({
+            child: Row({
+              mainAxisAlignment: 'spaceEvenly',
+              crossAxisAlignment: 'end',
+              children: data.map((item, index) => {
+                // 각 막대의 지연 시간 계산
+                const delay = index * 0.1;
+                const itemProgress = Math.max(0, Math.min(1, (animationProgress - delay) / 0.8));
+                
+                // Ease-out 곡선 적용
+                const eased = 1 - Math.pow(1 - itemProgress, 3);
+                
+                return Column({
+                  mainAxisAlignment: 'end',
+                  children: [
+                    // 값 표시
+                    AnimatedOpacity({
+                      opacity: itemProgress,
+                      duration: 200,
+                      child: Container({
+                        padding: EdgeInsets.symmetric({ horizontal: 6, vertical: 2 }),
+                        decoration: {
+                          color: item.color + '20',
+                          borderRadius: BorderRadius.circular(4),
+                          border: {
+                            color: item.color,
+                            width: 1
+                          }
+                        },
+                        child: Text(item.value.toString(), {
+                          style: TextStyle({
+                            fontSize: 11,
+                            fontWeight: 'bold',
+                            color: item.color
+                          })
+                        })
+                      })
+                    }),
+                    SizedBox({ height: 4 }),
+                    // 막대
+                    Container({
+                      width: 45,
+                      height: (item.value / maxValue) * 200 * eased,
+                      decoration: {
+                        gradient: {
+                          type: 'linear',
+                          colors: [item.color, item.color + 'CC'],
+                          begin: 'topCenter',
+                          end: 'bottomCenter'
+                        },
+                        borderRadius: BorderRadius.only({
+                          topLeft: 8,
+                          topRight: 8
+                        }),
+                        boxShadow: eased > 0.5 ? [{
+                          color: item.color + '40',
+                          blurRadius: 8,
+                          offset: { x: 0, y: 4 }
+                        }] : []
+                      }
+                    }),
+                    SizedBox({ height: 8 }),
+                    // 레이블
+                    AnimatedOpacity({
+                      opacity: itemProgress,
+                      duration: 200,
+                      child: Text(item.label, {
+                        style: TextStyle({
+                          fontSize: 12,
+                          fontWeight: 'bold',
+                          color: '#495057'
+                        })
+                      })
+                    })
+                  ]
+                });
+              })
+            })
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+### 물리 기반 애니메이션
+
+스프링이나 관성 같은 물리적 효과를 시뮬레이션합니다.
+
+<Widget name="animation-physics">
+  {(() => {
+    const [ballPosition, setBallPosition] = React.useState({ x: 100, y: 50 });
+    const [velocity, setVelocity] = React.useState({ x: 0, y: 0 });
+    const [isAnimating, setIsAnimating] = React.useState(false);
+    
+    const bounceAnimation = () => {
+      if (isAnimating) return;
+      
+      setIsAnimating(true);
+      setVelocity({ x: 5, y: 3 });
+      
+      const animate = () => {
+        setBallPosition(prev => {
+          let newX = prev.x + velocity.x;
+          let newY = prev.y + velocity.y;
+          let newVelX = velocity.x;
+          let newVelY = velocity.y;
+          
+          // 경계 충돌 검사
+          if (newX <= 15 || newX >= 335) {
+            newVelX = -newVelX * 0.8; // 감쇠
+            newX = newX <= 15 ? 15 : 335;
+          }
+          if (newY <= 15 || newY >= 135) {
+            newVelY = -newVelY * 0.8; // 감쇠
+            newY = newY <= 15 ? 15 : 135;
+          }
+          
+          // 중력과 마찰 적용
+          newVelY += 0.2; // 중력
+          newVelX *= 0.99; // 마찰
+          newVelY *= 0.99; // 마찰
+          
+          setVelocity({ x: newVelX, y: newVelY });
+          
+          // 정지 조건
+          if (Math.abs(newVelX) < 0.1 && Math.abs(newVelY) < 0.1 && newY > 120) {
+            setIsAnimating(false);
+            return prev;
+          }
+          
+          return { x: newX, y: newY };
+        });
+        
+        if (isAnimating) {
+          requestAnimationFrame(animate);
+        }
+      };
+      
+      requestAnimationFrame(animate);
+    };
+    
+    const reset = () => {
+      setIsAnimating(false);
+      setBallPosition({ x: 100, y: 50 });
+      setVelocity({ x: 0, y: 0 });
+    };
+    
+    return Container({
+      width: 400,
+      height: 250,
+      padding: EdgeInsets.all(20),
+      color: '#f8f9fa',
+      child: Column({
+        children: [
+          Text('물리 기반 애니메이션', {
+            style: TextStyle({
+              fontSize: 18,
+              fontWeight: 'bold',
+              color: '#212529'
+            })
+          }),
+          SizedBox({ height: 20 }),
+          Container({
+            width: 350,
+            height: 150,
+            decoration: {
+              color: 'white',
+              borderRadius: BorderRadius.circular(8),
+              border: {
+                color: '#dee2e6',
+                width: 2
+              }
+            },
+            child: Stack({
+              children: [
+                // 배경 그리드
+                ...Array.from({ length: 7 }, (_, i) => 
+                  Positioned({
+                    left: i * 50,
+                    top: 0,
+                    bottom: 0,
+                    child: Container({
+                      width: 1,
+                      color: '#f1f3f5'
+                    })
+                  })
+                ),
+                ...Array.from({ length: 3 }, (_, i) => 
+                  Positioned({
+                    top: i * 50,
+                    left: 0,
+                    right: 0,
+                    child: Container({
+                      height: 1,
+                      color: '#f1f3f5'
+                    })
+                  })
+                ),
+                // 공
+                Positioned({
+                  left: ballPosition.x - 15,
+                  top: ballPosition.y - 15,
+                  child: Container({
+                    width: 30,
+                    height: 30,
+                    decoration: {
+                      gradient: {
+                        type: 'radial',
+                        colors: ['#4c6ef5', '#364fc7'],
+                        center: { x: 0.3, y: 0.3 },
+                        radius: 0.8
+                      },
+                      shape: 'circle',
+                      boxShadow: [{
+                        color: 'rgba(76, 110, 245, 0.4)',
+                        blurRadius: 10,
+                        offset: { x: 2, y: 4 }
+                      }]
+                    }
+                  })
+                }),
+                // 속도 벡터 표시
+                if (Math.abs(velocity.x) > 0.5 || Math.abs(velocity.y) > 0.5)
+                  Positioned({
+                    left: ballPosition.x,
+                    top: ballPosition.y,
+                    child: Container({
+                      width: Math.abs(velocity.x) * 10,
+                      height: 2,
+                      color: '#ff6b6b',
+                      transform: Matrix4.identity().rotateZ(
+                        Math.atan2(velocity.y, velocity.x)
+                      )
+                    })
+                  })
+              ]
+            })
+          }),
+          SizedBox({ height: 16 }),
+          Row({
+            mainAxisAlignment: 'spaceEvenly',
+            children: [
+              GestureDetector({
+                onTap: bounceAnimation,
+                child: Container({
+                  padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+                  decoration: {
+                    color: isAnimating ? '#868e96' : '#4c6ef5',
+                    borderRadius: BorderRadius.circular(4)
+                  },
+                  child: Text(isAnimating ? '애니메이션 중...' : '시작', {
+                    style: TextStyle({
+                      color: 'white',
+                      fontSize: 12
+                    })
+                  })
+                })
+              }),
+              GestureDetector({
+                onTap: reset,
+                child: Container({
+                  padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+                  decoration: {
+                    color: '#ff6b6b',
+                    borderRadius: BorderRadius.circular(4)
+                  },
+                  child: Text('리셋', {
+                    style: TextStyle({
+                      color: 'white',
+                      fontSize: 12
+                    })
+                  })
+                })
+              })
+            ]
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+## 데이터 변화 애니메이션
+
+실제 차트에서 데이터가 변경될 때의 애니메이션을 구현해봅시다.
+
+<Widget name="animation-data-transition">
+  {(() => {
+    const dataSets = [
+      [
+        { label: 'A', value: 30, color: '#ff6b6b' },
+        { label: 'B', value: 45, color: '#4ecdc4' },
+        { label: 'C', value: 25, color: '#45b7d1' },
+        { label: 'D', value: 60, color: '#f9ca24' }
+      ],
+      [
+        { label: 'A', value: 55, color: '#ff6b6b' },
+        { label: 'B', value: 35, color: '#4ecdc4' },
+        { label: 'C', value: 70, color: '#45b7d1' },
+        { label: 'D', value: 20, color: '#f9ca24' }
+      ],
+      [
+        { label: 'A', value: 40, color: '#ff6b6b' },
+        { label: 'B', value: 65, color: '#4ecdc4' },
+        { label: 'C', value: 45, color: '#45b7d1' },
+        { label: 'D', value: 80, color: '#f9ca24' }
+      ]
+    ];
+    
+    const [currentDataIndex, setCurrentDataIndex] = React.useState(0);
+    const [isTransitioning, setIsTransitioning] = React.useState(false);
+    
+    const nextData = () => {
+      if (isTransitioning) return;
+      
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentDataIndex((prev) => (prev + 1) % dataSets.length);
+        setIsTransitioning(false);
+      }, 100);
+    };
+    
+    const currentData = dataSets[currentDataIndex];
+    const maxValue = Math.max(...currentData.map(d => d.value));
+    
+    return Container({
+      width: 500,
+      height: 350,
+      padding: EdgeInsets.all(20),
+      color: 'white',
+      child: Column({
+        children: [
+          Row({
+            mainAxisAlignment: 'spaceBetween',
+            children: [
+              Text('데이터 전환 애니메이션', {
+                style: TextStyle({
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                  color: '#212529'
+                })
+              }),
+              Row({
+                children: [
+                  Text(`데이터셋 ${currentDataIndex + 1}/3`, {
+                    style: TextStyle({
+                      fontSize: 14,
+                      color: '#868e96'
+                    })
+                  }),
+                  SizedBox({ width: 12 }),
+                  GestureDetector({
+                    onTap: nextData,
+                    child: Container({
+                      padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 6 }),
+                      decoration: {
+                        color: isTransitioning ? '#868e96' : '#4c6ef5',
+                        borderRadius: BorderRadius.circular(4)
+                      },
+                      child: Text('다음', {
+                        style: TextStyle({
+                          color: 'white',
+                          fontSize: 12
+                        })
+                      })
+                    })
+                  })
+                ]
+              })
+            ]
+          }),
+          SizedBox({ height: 30 }),
+          Expanded({
+            child: Row({
+              mainAxisAlignment: 'spaceEvenly',
+              crossAxisAlignment: 'end',
+              children: currentData.map((item, index) => 
+                Column({
+                  mainAxisAlignment: 'end',
+                  children: [
+                    // 변화 표시
+                    Container({
+                      height: 20,
+                      child: AnimatedOpacity({
+                        opacity: isTransitioning ? 0 : 1,
+                        duration: 300,
+                        child: Text(item.value.toString(), {
+                          style: TextStyle({
+                            fontSize: 14,
+                            fontWeight: 'bold',
+                            color: item.color
+                          })
+                        })
+                      })
+                    }),
+                    SizedBox({ height: 8 }),
+                    // 막대 차트
+                    AnimatedContainer({
+                      duration: 600,
+                      width: 60,
+                      height: (item.value / maxValue) * 200,
+                      decoration: {
+                        gradient: {
+                          type: 'linear',
+                          colors: [item.color, item.color + 'AA'],
+                          begin: 'topCenter',
+                          end: 'bottomCenter'
+                        },
+                        borderRadius: BorderRadius.only({
+                          topLeft: 8,
+                          topRight: 8
+                        }),
+                        boxShadow: [{
+                          color: item.color + '40',
+                          blurRadius: 8,
+                          offset: { x: 0, y: 4 }
+                        }]
+                      }
+                    }),
+                    SizedBox({ height: 12 }),
+                    Text(item.label, {
+                      style: TextStyle({
+                        fontSize: 14,
+                        fontWeight: 'bold',
+                        color: '#495057'
+                      })
+                    })
+                  ]
+                })
+              )
+            })
+          }),
+          Container({
+            padding: EdgeInsets.all(12),
+            decoration: {
+              color: '#f8f9fa',
+              borderRadius: BorderRadius.circular(8)
+            },
+            child: Row({
+              children: dataSets.map((_, index) => 
+                Container({
+                  width: 8,
+                  height: 8,
+                  margin: EdgeInsets.only({ right: 4 }),
+                  decoration: {
+                    color: currentDataIndex === index ? '#4c6ef5' : '#dee2e6',
+                    shape: 'circle'
+                  }
+                })
+              )
+            })
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+## 애니메이션 성능 최적화
+
+### 1. 적절한 duration 설정
+```typescript
+// 빠른 피드백이 필요한 경우
+AnimatedContainer({ duration: 150 })
+
+// 일반적인 전환
+AnimatedContainer({ duration: 300 })
+
+// 강조가 필요한 경우
+AnimatedContainer({ duration: 500 })
+```
+
+### 2. 불필요한 애니메이션 피하기
+```typescript
+// 조건부 애니메이션
+AnimatedContainer({
+  duration: shouldAnimate ? 300 : 0,
+  width: targetWidth,
+  height: targetHeight
+})
+```
+
+### 3. 복합 애니메이션 최적화
+```typescript
+// 여러 속성을 한 번에 애니메이션
+AnimatedContainer({
+  duration: 300,
+  width: newWidth,
+  height: newHeight,
+  color: newColor
+})
+
+// 분리된 애니메이션보다 효율적
+```
+
+## 애니메이션 디자인 원칙
+
+### 1. 목적성
+- 애니메이션은 명확한 목적이 있어야 함
+- 장식이 아닌 기능으로 사용
+
+### 2. 자연스러움
+- 현실 세계의 물리 법칙을 따름
+- Ease-in, ease-out 곡선 활용
+
+### 3. 일관성
+- 전체 애플리케이션에서 일관된 duration과 easing
+- 비슷한 액션에는 비슷한 애니메이션
+
+### 4. 성능
+- 60fps 유지
+- 필요한 경우에만 애니메이션 사용
+
+## 실전 예제: 인터랙티브 파이 차트
+
+모든 애니메이션 기법을 활용한 복합 예제입니다.
+
+<Widget name="animation-pie-chart">
+  {(() => {
+    const [selectedSlice, setSelectedSlice] = React.useState(null);
+    const [animationProgress, setAnimationProgress] = React.useState(0);
+    
+    const data = [
+      { label: 'Desktop', value: 35, color: '#4c6ef5' },
+      { label: 'Mobile', value: 45, color: '#51cf66' },
+      { label: 'Tablet', value: 20, color: '#ff922b' }
+    ];
+    
+    React.useEffect(() => {
+      const timer = setTimeout(() => {
+        setAnimationProgress(1);
+      }, 500);
+      return () => clearTimeout(timer);
+    }, []);
+    
+    const total = data.reduce((sum, item) => sum + item.value, 0);
+    let currentAngle = 0;
+    
+    const PieSlice = ({ item, startAngle, endAngle, index }) => {
+      const isSelected = selectedSlice === index;
+      const centerAngle = (startAngle + endAngle) / 2;
+      const offset = isSelected ? 10 : 0;
+      
+      return (
+        <AnimatedContainer({
+          duration: 300,
+          transform: Matrix4.identity().translate(
+            Math.cos(centerAngle) * offset,
+            Math.sin(centerAngle) * offset
+          ),
+          child: GestureDetector({
+            onTap: () => setSelectedSlice(selectedSlice === index ? null : index),
+            child: CustomPaint({
+              painter: {
+                paint: (canvas, size) => {
+                  const center = { x: size.width / 2, y: size.height / 2 };
+                  const radius = Math.min(size.width, size.height) / 2 - 20;
+                  
+                  const sweepAngle = (endAngle - startAngle) * animationProgress;
+                  
+                  const paint = Paint();
+                  paint.color = item.color;
+                  paint.style = 'fill';
+                  
+                  canvas.drawArc(
+                    Rect.fromCircle(center, radius),
+                    startAngle,
+                    sweepAngle,
+                    true,
+                    paint
+                  );
+                  
+                  // 선택된 슬라이스 강조
+                  if (isSelected) {
+                    const strokePaint = Paint();
+                    strokePaint.color = 'white';
+                    strokePaint.style = 'stroke';
+                    strokePaint.strokeWidth = 3;
+                    
+                    canvas.drawArc(
+                      Rect.fromCircle(center, radius),
+                      startAngle,
+                      sweepAngle,
+                      true,
+                      strokePaint
+                    );
+                  }
+                }
+              }
+            })
+          })
+        })
+      );
+    };
+    
+    return Container({
+      width: 500,
+      height: 400,
+      padding: EdgeInsets.all(20),
+      color: 'white',
+      child: Row({
+        children: [
+          // 파이 차트
+          Container({
+            width: 250,
+            height: 250,
+            child: Stack({
+              children: data.map((item, index) => {
+                const sliceAngle = (item.value / total) * 2 * Math.PI;
+                const startAngle = currentAngle;
+                const endAngle = currentAngle + sliceAngle;
+                currentAngle += sliceAngle;
+                
+                return PieSlice({
+                  item,
+                  startAngle,
+                  endAngle,
+                  index
+                });
+              })
+            })
+          }),
+          SizedBox({ width: 30 }),
+          // 범례
+          Expanded({
+            child: Column({
+              crossAxisAlignment: 'start',
+              children: [
+                Text('디바이스별 사용률', {
+                  style: TextStyle({
+                    fontSize: 18,
+                    fontWeight: 'bold',
+                    color: '#212529'
+                  })
+                }),
+                SizedBox({ height: 20 }),
+                ...data.map((item, index) => {
+                  const isSelected = selectedSlice === index;
+                  const percentage = ((item.value / total) * 100).toFixed(1);
+                  
+                  return GestureDetector({
+                    onTap: () => setSelectedSlice(selectedSlice === index ? null : index),
+                    child: AnimatedContainer({
+                      duration: 200,
+                      margin: EdgeInsets.only({ bottom: 12 }),
+                      padding: EdgeInsets.all(12),
+                      decoration: {
+                        color: isSelected ? item.color + '20' : 'transparent',
+                        borderRadius: BorderRadius.circular(8),
+                        border: isSelected ? {
+                          color: item.color,
+                          width: 2
+                        } : null
+                      },
+                      child: Row({
+                        children: [
+                          Container({
+                            width: 16,
+                            height: 16,
+                            decoration: {
+                              color: item.color,
+                              shape: 'circle'
+                            }
+                          }),
+                          SizedBox({ width: 12 }),
+                          Expanded({
+                            child: Text(item.label, {
+                              style: TextStyle({
+                                fontSize: 14,
+                                fontWeight: isSelected ? 'bold' : 'normal',
+                                color: '#495057'
+                              })
+                            })
+                          }),
+                          Text(`${percentage}%`, {
+                            style: TextStyle({
+                              fontSize: 14,
+                              fontWeight: 'bold',
+                              color: item.color
+                            })
+                          })
+                        ]
+                      })
+                    })
+                  });
+                })
+              ]
+            })
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+## 정리
+
+이 튜토리얼에서 배운 애니메이션 기법:
+
+1. **기본 위젯**: AnimatedContainer, AnimatedOpacity
+2. **변형 애니메이션**: Transform을 이용한 회전, 크기 변경
+3. **순차적 애니메이션**: 여러 요소의 시간차 애니메이션
+4. **물리 기반**: 관성, 탄성, 중력 시뮬레이션
+5. **데이터 전환**: 차트 데이터 변경 애니메이션
+
+## 연습 과제
+
+1. **로딩 애니메이션**: 데이터 로딩 중 표시할 스켈레톤 UI
+2. **전환 효과**: 차트 타입 변경 시 부드러운 전환
+3. **제스처 애니메이션**: 드래그로 값을 조정하는 인터랙션
+4. **실시간 업데이트**: 라이브 데이터 스트림 시각화
+
+## 다음 단계
+
+- [커스텀 위젯](/ko/tutorials/custom-widget) - 애니메이션을 포함한 재사용 위젯
+- [성능 최적화](/ko/advanced/performance) - 복잡한 애니메이션 최적화
+- [고급 인터랙션](/ko/advanced/interactions) - 복합적인 사용자 인터랙션
