@@ -1,0 +1,350 @@
+---
+title: 중앙 정렬된 콘텐츠 만들기
+description: 화면 중앙에 콘텐츠를 배치하는 다양한 방법
+nav_order: 1
+nav_group: 쿡북
+---
+
+import { Widget } from '@meursyphus/flitter-svelte';
+import { Container, Center, Align, Column, Row, Text, TextStyle, SizedBox, EdgeInsets, Alignment } from '@meursyphus/flitter';
+
+# 중앙 정렬된 콘텐츠 만들기
+
+화면이나 컨테이너의 중앙에 콘텐츠를 배치하는 것은 가장 기본적이면서도 자주 사용되는 레이아웃 패턴입니다. Flitter는 이를 위한 여러 가지 방법을 제공합니다.
+
+## 방법 1: Center 위젯 사용
+
+가장 간단한 방법은 `Center` 위젯을 사용하는 것입니다.
+
+<Widget name="cookbook-center-basic">
+  {Container({
+    width: 300,
+    height: 200,
+    color: '#ecf0f1',
+    child: Center({
+      child: Text('중앙 정렬된 텍스트', {
+        style: TextStyle({
+          fontSize: 20,
+          fontWeight: 'bold'
+        })
+      })
+    })
+  })}
+</Widget>
+
+```typescript
+Container({
+  width: 300,
+  height: 200,
+  color: '#ecf0f1',
+  child: Center({
+    child: Text('중앙 정렬된 텍스트', {
+      style: TextStyle({
+        fontSize: 20,
+        fontWeight: 'bold'
+      })
+    })
+  })
+})
+```
+
+## 방법 2: Align 위젯으로 정밀한 위치 조정
+
+`Align` 위젯을 사용하면 더 정밀하게 위치를 조정할 수 있습니다.
+
+<Widget name="cookbook-align-positions">
+  {Container({
+    width: 300,
+    height: 300,
+    color: '#ecf0f1',
+    child: Stack({
+      children: [
+        Align({
+          alignment: Alignment.center,
+          child: Container({
+            width: 60,
+            height: 60,
+            color: '#3498db',
+            child: Center({
+              child: Text('중앙', {
+                style: TextStyle({ color: 'white', fontSize: 12 })
+              })
+            })
+          })
+        }),
+        Align({
+          alignment: Alignment.topCenter,
+          child: Container({
+            width: 60,
+            height: 30,
+            color: '#e74c3c',
+            child: Center({
+              child: Text('위', {
+                style: TextStyle({ color: 'white', fontSize: 12 })
+              })
+            })
+          })
+        }),
+        Align({
+          alignment: Alignment.bottomCenter,
+          child: Container({
+            width: 60,
+            height: 30,
+            color: '#2ecc71',
+            child: Center({
+              child: Text('아래', {
+                style: TextStyle({ color: 'white', fontSize: 12 })
+              })
+            })
+          })
+        }),
+        Align({
+          alignment: Alignment.centerLeft,
+          child: Container({
+            width: 30,
+            height: 60,
+            color: '#f39c12',
+            child: Center({
+              child: Text('왼', {
+                style: TextStyle({ color: 'white', fontSize: 12 })
+              })
+            })
+          })
+        }),
+        Align({
+          alignment: Alignment.centerRight,
+          child: Container({
+            width: 30,
+            height: 60,
+            color: '#9b59b6',
+            child: Center({
+              child: Text('오', {
+                style: TextStyle({ color: 'white', fontSize: 12 })
+              })
+            })
+          })
+        })
+      ]
+    })
+  })}
+</Widget>
+
+```typescript
+Align({
+  alignment: Alignment.center, // 또는 다른 정렬 값
+  child: YourWidget()
+})
+```
+
+### Alignment 값들
+
+- `Alignment.topLeft` - 왼쪽 위
+- `Alignment.topCenter` - 가운데 위
+- `Alignment.topRight` - 오른쪽 위
+- `Alignment.centerLeft` - 왼쪽 가운데
+- `Alignment.center` - 정중앙
+- `Alignment.centerRight` - 오른쪽 가운데
+- `Alignment.bottomLeft` - 왼쪽 아래
+- `Alignment.bottomCenter` - 가운데 아래
+- `Alignment.bottomRight` - 오른쪽 아래
+
+## 방법 3: Container의 alignment 속성
+
+`Container` 위젯의 `alignment` 속성을 직접 사용할 수도 있습니다.
+
+<Widget name="cookbook-container-alignment">
+  {Container({
+    width: 300,
+    height: 200,
+    color: '#3498db',
+    alignment: Alignment.center,
+    child: Container({
+      width: 100,
+      height: 50,
+      color: 'white',
+      child: Center({
+        child: Text('중앙', {
+          style: TextStyle({
+            color: '#3498db',
+            fontWeight: 'bold'
+          })
+        })
+      })
+    })
+  })}
+</Widget>
+
+```typescript
+Container({
+  width: 300,
+  height: 200,
+  color: '#3498db',
+  alignment: Alignment.center,
+  child: YourWidget()
+})
+```
+
+## 방법 4: Row와 Column으로 중앙 정렬
+
+`Row`와 `Column`의 정렬 속성을 사용하여 중앙 정렬할 수 있습니다.
+
+<Widget name="cookbook-row-column-center">
+  {Container({
+    width: 300,
+    height: 200,
+    color: '#ecf0f1',
+    child: Column({
+      mainAxisAlignment: 'center',
+      crossAxisAlignment: 'center',
+      children: [
+        Container({
+          width: 80,
+          height: 80,
+          color: '#e74c3c',
+          margin: EdgeInsets.all(8),
+          child: Center({
+            child: Text('1', {
+              style: TextStyle({ color: 'white', fontSize: 24 })
+            })
+          })
+        }),
+        Row({
+          mainAxisAlignment: 'center',
+          children: [
+            Container({
+              width: 60,
+              height: 60,
+              color: '#3498db',
+              margin: EdgeInsets.all(8),
+              child: Center({
+                child: Text('2', {
+                  style: TextStyle({ color: 'white', fontSize: 20 })
+                })
+              })
+            }),
+            Container({
+              width: 60,
+              height: 60,
+              color: '#2ecc71',
+              margin: EdgeInsets.all(8),
+              child: Center({
+                child: Text('3', {
+                  style: TextStyle({ color: 'white', fontSize: 20 })
+                })
+              })
+            })
+          ]
+        })
+      ]
+    })
+  })}
+</Widget>
+
+```typescript
+Column({
+  mainAxisAlignment: 'center',    // 세로 중앙
+  crossAxisAlignment: 'center',   // 가로 중앙
+  children: [
+    // 자식 위젯들
+  ]
+})
+```
+
+## 방법 5: 복합 중앙 정렬
+
+여러 위젯을 조합하여 복잡한 중앙 정렬 레이아웃을 만들 수 있습니다.
+
+<Widget name="cookbook-complex-center">
+  {Container({
+    width: 350,
+    height: 400,
+    color: '#2c3e50',
+    child: Center({
+      child: Container({
+        width: 280,
+        padding: EdgeInsets.all(24),
+        decoration: {
+          color: 'white',
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [{
+            color: 'rgba(0,0,0,0.1)',
+            blurRadius: 10,
+            offset: { x: 0, y: 5 }
+          }]
+        },
+        child: Column({
+          mainAxisSize: 'min',
+          children: [
+            Container({
+              width: 80,
+              height: 80,
+              decoration: {
+                color: '#3498db',
+                shape: 'circle'
+              },
+              child: Center({
+                child: Text('로고', {
+                  style: TextStyle({
+                    color: 'white',
+                    fontSize: 18,
+                    fontWeight: 'bold'
+                  })
+                })
+              })
+            }),
+            SizedBox({ height: 16 }),
+            Text('환영합니다', {
+              style: TextStyle({
+                fontSize: 24,
+                fontWeight: 'bold',
+                color: '#2c3e50'
+              })
+            }),
+            SizedBox({ height: 8 }),
+            Text('Flitter로 만든 중앙 정렬 UI입니다', {
+              style: TextStyle({
+                fontSize: 14,
+                color: '#7f8c8d'
+              })
+            }),
+            SizedBox({ height: 24 }),
+            Container({
+              width: 120,
+              height: 40,
+              decoration: {
+                color: '#3498db',
+                borderRadius: BorderRadius.circular(20)
+              },
+              child: Center({
+                child: Text('시작하기', {
+                  style: TextStyle({
+                    color: 'white',
+                    fontWeight: 'bold'
+                  })
+                })
+              })
+            })
+          ]
+        })
+      })
+    })
+  })}
+</Widget>
+
+## 팁과 모범 사례
+
+1. **Center vs Align**: 단순히 중앙에 배치하려면 `Center`를, 더 정밀한 제어가 필요하면 `Align`을 사용하세요.
+
+2. **Container alignment**: Container에 크기가 지정되어 있을 때만 `alignment` 속성이 작동합니다.
+
+3. **성능**: `Center`는 `Align(alignment: Alignment.center)`의 간편한 버전이므로 성능 차이는 없습니다.
+
+4. **반응형 디자인**: 화면 크기에 관계없이 중앙 정렬을 유지하려면 고정 크기 대신 비율을 사용하세요.
+
+5. **중첩 사용**: 필요에 따라 여러 중앙 정렬 방법을 중첩하여 사용할 수 있습니다.
+
+## 관련 레시피
+
+- [반응형 그리드 레이아웃](/ko/cookbook/responsive-grid)
+- [플렉시블 사이드바 레이아웃](/ko/cookbook/flexible-sidebar)
+- [고정 헤더와 스크롤 콘텐츠](/ko/cookbook/fixed-header-scroll)
