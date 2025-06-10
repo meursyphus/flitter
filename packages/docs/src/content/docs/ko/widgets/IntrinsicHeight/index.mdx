@@ -1,0 +1,212 @@
+---
+title: IntrinsicHeight
+description: 자식 위젯을 최소 고유 높이로 크기를 조정하는 위젯
+nav_order: 3
+nav_group: 위젯
+---
+
+import { Widget } from '@meursyphus/flitter-svelte';
+import { IntrinsicHeight, Row, Container, Text, TextStyle, Alignment, Column, EdgeInsets } from '@meursyphus/flitter';
+
+# IntrinsicHeight
+
+## 개요
+
+IntrinsicHeight는 자식 위젯을 가능한 최소 고유 높이(intrinsic height)로 크기를 조정하는 위젯입니다. 자식 위젯이 무한한 높이 제약 조건을 받을 때 유용하며, 자식의 콘텐츠에 맞는 적절한 높이를 계산합니다.
+
+## 사용 시기
+
+다음과 같은 상황에서 IntrinsicHeight를 사용합니다:
+
+- Row 내에서 여러 위젯의 높이를 동일하게 맞추고 싶을 때
+- 무한한 높이 제약을 받는 위젯에 적절한 높이를 부여하고 싶을 때
+- 자식 위젯의 콘텐츠에 기반한 최소 높이를 보장하고 싶을 때
+- 열(Column) 내에서 특정 위젯이 필요한 만큼만 공간을 차지하도록 할 때
+
+## 기본 사용법
+
+```typescript
+IntrinsicHeight({
+  child: Row({
+    children: [
+      Container({
+        color: 'blue',
+        width: 100,
+        child: Text('Short')
+      }),
+      Container({
+        color: 'red', 
+        width: 100,
+        child: Text('This is a much longer text that wraps')
+      })
+    ]
+  })
+})
+```
+
+## 생성자 파라미터
+
+| 파라미터 | 타입 | 설명 | 기본값 |
+|---------|------|------|--------|
+| child | `Widget` | 고유 높이가 적용될 자식 위젯 | undefined |
+| key | `any` | 위젯의 고유 키 | undefined |
+
+## 예제
+
+### 기본 예제 - Row에서 높이 맞추기
+
+<Widget name="IntrinsicHeight-basic">
+  {IntrinsicHeight({
+    child: Row({
+      children: [
+        Container({
+          color: '#3498db',
+          width: 120,
+          padding: EdgeInsets.all(16),
+          child: Text('짧은 텍스트', {
+            style: TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          })
+        }),
+        Container({
+          color: '#e74c3c',
+          width: 120,
+          padding: EdgeInsets.all(16),
+          child: Text('이것은 여러 줄로 표시되는 훨씬 긴 텍스트입니다. IntrinsicHeight가 없으면 각 컨테이너는 다른 높이를 가집니다.', {
+            style: TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          })
+        }),
+        Container({
+          color: '#2ecc71',
+          width: 120,
+          padding: EdgeInsets.all(16),
+          child: Text('중간 길이', {
+            style: TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          })
+        })
+      ]
+    })
+  })}
+</Widget>
+
+### IntrinsicHeight 없이 비교
+
+<Widget name="IntrinsicHeight-without">
+  {Row({
+    children: [
+      Container({
+        color: '#3498db',
+        width: 120,
+        padding: EdgeInsets.all(16),
+        child: Text('짧은 텍스트', {
+          style: TextStyle({
+            color: 'white',
+            fontSize: 16
+          })
+        })
+      }),
+      Container({
+        color: '#e74c3c',
+        width: 120,
+        padding: EdgeInsets.all(16),
+        child: Text('이것은 여러 줄로 표시되는 훨씬 긴 텍스트입니다. IntrinsicHeight가 없으면 각 컨테이너는 다른 높이를 가집니다.', {
+          style: TextStyle({
+            color: 'white',
+            fontSize: 16
+          })
+        })
+      }),
+      Container({
+        color: '#2ecc71',
+        width: 120,
+        padding: EdgeInsets.all(16),
+        child: Text('중간 길이', {
+          style: TextStyle({
+            color: 'white',
+            fontSize: 16
+          })
+        })
+      })
+    ]
+  })}
+</Widget>
+
+### 중첩된 구조에서 사용
+
+<Widget name="IntrinsicHeight-nested">
+  {Column({
+    children: [
+      Container({
+        color: '#ecf0f1',
+        padding: EdgeInsets.all(16),
+        child: IntrinsicHeight({
+          child: Row({
+            children: [
+              Container({
+                width: 100,
+                color: '#9b59b6',
+                padding: EdgeInsets.all(8),
+                child: Column({
+                  children: [
+                    Text('제목', {
+                      style: TextStyle({
+                        color: 'white',
+                        fontSize: 18,
+                        fontWeight: 'bold'
+                      })
+                    }),
+                    Text('부제목', {
+                      style: TextStyle({
+                        color: 'white',
+                        fontSize: 14
+                      })
+                    })
+                  ]
+                })
+              }),
+              Container({
+                width: 200,
+                color: '#34495e',
+                padding: EdgeInsets.all(8),
+                child: Text('이 컨테이너는 왼쪽 컨테이너와 동일한 높이를 가집니다. IntrinsicHeight 덕분에 두 컨테이너의 높이가 자동으로 맞춰집니다.', {
+                  style: TextStyle({
+                    color: 'white',
+                    fontSize: 14
+                  })
+                })
+              })
+            ]
+          })
+        })
+      })
+    ]
+  })}
+</Widget>
+
+## 성능 고려사항
+
+IntrinsicHeight는 레이아웃을 두 번 계산하므로 성능에 영향을 줄 수 있습니다:
+
+1. 첫 번째 패스에서 자식의 고유 높이를 계산
+2. 두 번째 패스에서 실제 레이아웃 수행
+
+따라서 다음 사항을 고려하세요:
+
+- 깊게 중첩된 구조에서는 사용을 자제
+- 애니메이션되는 위젯에서는 피하는 것이 좋음
+- 대안이 있다면 (고정 높이 등) 그것을 우선 고려
+
+## 관련 위젯
+
+- [IntrinsicWidth](/ko/widgets/IntrinsicWidth) - 가로 방향으로 동일한 기능 제공
+- [Row](/ko/widgets/Row) - IntrinsicHeight와 자주 함께 사용됨
+- [Column](/ko/widgets/Column) - 세로 레이아웃 구성
+- [Flexible](/ko/widgets/Flexible) - 유연한 크기 조정

@@ -12,10 +12,10 @@ Flitter 문서 개선을 위한 실행 가능한 작업 목록입니다. 각 항
 - [x] Column 위젯 문서 작성 (Flex와 별개)
 - [x] Grid 위젯 문서 작성
 - [x] Image 위젯 문서 작성
-- [ ] TextField 위젯 문서 작성
-- [ ] IntrinsicHeight 위젯 문서 작성
-- [ ] IntrinsicWidth 위젯 문서 작성
-- [ ] Flexible 위젯 문서 작성
+- [x] TextField 위젯 문서 작성
+- [x] IntrinsicHeight 위젯 문서 작성
+- [x] IntrinsicWidth 위젯 문서 작성
+- [x] Flexible 위젯 문서 작성
 
 ### 2단계: 기본 문서 구조 개선
 - [ ] API 레퍼런스 구조 생성
@@ -82,8 +82,8 @@ Flitter 문서 개선을 위한 실행 가능한 작업 목록입니다. 각 항
 
 ## 진행 상황
 
-- 전체 진행률: 6/40 (15%)
-- 1단계: 6/10 완료
+- 전체 진행률: 10/40 (25%)
+- 1단계: 10/10 완료 ✅
 - 2단계: 0/4 완료
 - 3단계: 0/5 완료
 - 4단계: 0/5 완료

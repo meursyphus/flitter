@@ -1,0 +1,284 @@
+---
+title: IntrinsicWidth
+description: 자식 위젯을 최소 고유 너비로 크기를 조정하는 위젯
+nav_order: 3
+nav_group: 위젯
+---
+
+import { Widget } from '@meursyphus/flitter-svelte';
+import { IntrinsicWidth, Column, Container, Text, TextStyle, Alignment, Row, EdgeInsets } from '@meursyphus/flitter';
+
+# IntrinsicWidth
+
+## 개요
+
+IntrinsicWidth는 자식 위젯을 가능한 최소 고유 너비(intrinsic width)로 크기를 조정하는 위젯입니다. 자식 위젯이 무한한 너비 제약 조건을 받을 때 유용하며, 자식의 콘텐츠에 맞는 적절한 너비를 계산합니다.
+
+## 사용 시기
+
+다음과 같은 상황에서 IntrinsicWidth를 사용합니다:
+
+- Column 내에서 여러 위젯의 너비를 동일하게 맞추고 싶을 때
+- 무한한 너비 제약을 받는 위젯에 적절한 너비를 부여하고 싶을 때
+- 자식 위젯의 콘텐츠에 기반한 최소 너비를 보장하고 싶을 때
+- 행(Row) 내에서 특정 위젯이 필요한 만큼만 공간을 차지하도록 할 때
+
+## 기본 사용법
+
+```typescript
+IntrinsicWidth({
+  child: Column({
+    children: [
+      Container({
+        color: 'blue',
+        height: 50,
+        child: Text('짧은 텍스트')
+      }),
+      Container({
+        color: 'red', 
+        height: 50,
+        child: Text('이것은 훨씬 더 긴 텍스트입니다')
+      })
+    ]
+  })
+})
+```
+
+## 생성자 파라미터
+
+| 파라미터 | 타입 | 설명 | 기본값 |
+|---------|------|------|--------|
+| child | `Widget` | 고유 너비가 적용될 자식 위젯 | undefined |
+| key | `any` | 위젯의 고유 키 | undefined |
+
+## 예제
+
+### 기본 예제 - Column에서 너비 맞추기
+
+<Widget name="IntrinsicWidth-basic">
+  {IntrinsicWidth({
+    child: Column({
+      crossAxisAlignment: 'stretch',
+      children: [
+        Container({
+          color: '#3498db',
+          height: 60,
+          padding: EdgeInsets.all(16),
+          child: Text('짧은 텍스트', {
+            style: TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          })
+        }),
+        Container({
+          color: '#e74c3c',
+          height: 60,
+          padding: EdgeInsets.all(16),
+          child: Text('이것은 훨씬 더 긴 텍스트입니다', {
+            style: TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          })
+        }),
+        Container({
+          color: '#2ecc71',
+          height: 60,
+          padding: EdgeInsets.all(16),
+          child: Text('중간 길이의 텍스트', {
+            style: TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          })
+        })
+      ]
+    })
+  })}
+</Widget>
+
+### IntrinsicWidth 없이 비교
+
+<Widget name="IntrinsicWidth-without">
+  {Column({
+    crossAxisAlignment: 'start',
+    children: [
+      Container({
+        color: '#3498db',
+        height: 60,
+        padding: EdgeInsets.all(16),
+        child: Text('짧은 텍스트', {
+          style: TextStyle({
+            color: 'white',
+            fontSize: 16
+          })
+        })
+      }),
+      Container({
+        color: '#e74c3c',
+        height: 60,
+        padding: EdgeInsets.all(16),
+        child: Text('이것은 훨씬 더 긴 텍스트입니다', {
+          style: TextStyle({
+            color: 'white',
+            fontSize: 16
+          })
+        })
+      }),
+      Container({
+        color: '#2ecc71',
+        height: 60,
+        padding: EdgeInsets.all(16),
+        child: Text('중간 길이의 텍스트', {
+          style: TextStyle({
+            color: 'white',
+            fontSize: 16
+          })
+        })
+      })
+    ]
+  })}
+</Widget>
+
+### 중첩된 구조에서 사용
+
+<Widget name="IntrinsicWidth-nested">
+  {Row({
+    mainAxisAlignment: 'center',
+    children: [
+      Container({
+        color: '#ecf0f1',
+        padding: EdgeInsets.all(16),
+        child: IntrinsicWidth({
+          child: Column({
+            children: [
+              Container({
+                height: 50,
+                color: '#9b59b6',
+                padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+                child: Row({
+                  mainAxisAlignment: 'spaceBetween',
+                  children: [
+                    Text('레이블:', {
+                      style: TextStyle({
+                        color: 'white',
+                        fontSize: 16
+                      })
+                    }),
+                    Text('값', {
+                      style: TextStyle({
+                        color: 'white',
+                        fontSize: 16,
+                        fontWeight: 'bold'
+                      })
+                    })
+                  ]
+                })
+              }),
+              Container({
+                height: 50,
+                color: '#34495e',
+                padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+                child: Row({
+                  mainAxisAlignment: 'spaceBetween',
+                  children: [
+                    Text('긴 레이블 텍스트:', {
+                      style: TextStyle({
+                        color: 'white',
+                        fontSize: 16
+                      })
+                    }),
+                    Text('긴 값 텍스트', {
+                      style: TextStyle({
+                        color: 'white',
+                        fontSize: 16,
+                        fontWeight: 'bold'
+                      })
+                    })
+                  ]
+                })
+              })
+            ]
+          })
+        })
+      })
+    ]
+  })}
+</Widget>
+
+### 버튼 그룹에서 활용
+
+<Widget name="IntrinsicWidth-buttons">
+  {IntrinsicWidth({
+    child: Column({
+      children: [
+        Container({
+          margin: EdgeInsets.only({ bottom: 8 }),
+          padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+          decoration: {
+            color: '#3498db',
+            borderRadius: 8
+          },
+          child: Text('확인', {
+            style: TextStyle({
+              color: 'white',
+              fontSize: 16,
+              fontWeight: 'bold'
+            })
+          })
+        }),
+        Container({
+          margin: EdgeInsets.only({ bottom: 8 }),
+          padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+          decoration: {
+            color: '#e74c3c',
+            borderRadius: 8
+          },
+          child: Text('삭제하기', {
+            style: TextStyle({
+              color: 'white',
+              fontSize: 16,
+              fontWeight: 'bold'
+            })
+          })
+        }),
+        Container({
+          padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+          decoration: {
+            color: '#95a5a6',
+            borderRadius: 8
+          },
+          child: Text('매우 긴 버튼 텍스트 취소하기', {
+            style: TextStyle({
+              color: 'white',
+              fontSize: 16,
+              fontWeight: 'bold'
+            })
+          })
+        })
+      ]
+    })
+  })}
+</Widget>
+
+## 성능 고려사항
+
+IntrinsicWidth는 레이아웃을 두 번 계산하므로 성능에 영향을 줄 수 있습니다:
+
+1. 첫 번째 패스에서 자식의 고유 너비를 계산
+2. 두 번째 패스에서 실제 레이아웃 수행
+
+따라서 다음 사항을 고려하세요:
+
+- 깊게 중첩된 구조에서는 사용을 자제
+- 애니메이션되는 위젯에서는 피하는 것이 좋음
+- 대안이 있다면 (고정 너비 등) 그것을 우선 고려
+- 리스트나 그리드 아이템에서는 성능 영향이 클 수 있음
+
+## 관련 위젯
+
+- [IntrinsicHeight](/ko/widgets/IntrinsicHeight) - 세로 방향으로 동일한 기능 제공
+- [Column](/ko/widgets/Column) - IntrinsicWidth와 자주 함께 사용됨
+- [Row](/ko/widgets/Row) - 가로 레이아웃 구성
+- [Flexible](/ko/widgets/Flexible) - 유연한 크기 조정

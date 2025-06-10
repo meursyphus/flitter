@@ -1,0 +1,212 @@
+---
+title: IntrinsicHeight
+description: A widget that sizes its child to the child's intrinsic height
+nav_order: 3
+nav_group: Widgets
+---
+
+import { Widget } from '@meursyphus/flitter-svelte';
+import { IntrinsicHeight, Row, Container, Text, TextStyle, Alignment, Column, EdgeInsets } from '@meursyphus/flitter';
+
+# IntrinsicHeight
+
+## Overview
+
+IntrinsicHeight is a widget that sizes its child to the child's minimum intrinsic height. It's useful when a child widget receives unbounded height constraints and helps calculate an appropriate height based on the child's content.
+
+## When to Use
+
+Use IntrinsicHeight in these situations:
+
+- When you want to make multiple widgets in a Row have the same height
+- When you need to give an appropriate height to widgets with unbounded height constraints
+- When you want to ensure a minimum height based on child widget's content
+- When specific widgets in a Column should only take up as much space as needed
+
+## Basic Usage
+
+```typescript
+IntrinsicHeight({
+  child: Row({
+    children: [
+      Container({
+        color: 'blue',
+        width: 100,
+        child: Text('Short')
+      }),
+      Container({
+        color: 'red', 
+        width: 100,
+        child: Text('This is a much longer text that wraps')
+      })
+    ]
+  })
+})
+```
+
+## Constructor Parameters
+
+| Parameter | Type | Description | Default |
+|-----------|------|-------------|---------|
+| child | `Widget` | The widget to apply intrinsic height to | undefined |
+| key | `any` | Unique key for the widget | undefined |
+
+## Examples
+
+### Basic Example - Matching Heights in Row
+
+<Widget name="IntrinsicHeight-basic">
+  {IntrinsicHeight({
+    child: Row({
+      children: [
+        Container({
+          color: '#3498db',
+          width: 120,
+          padding: EdgeInsets.all(16),
+          child: Text('Short text', {
+            style: TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          })
+        }),
+        Container({
+          color: '#e74c3c',
+          width: 120,
+          padding: EdgeInsets.all(16),
+          child: Text('This is a much longer text that spans multiple lines. Without IntrinsicHeight, each container would have different heights.', {
+            style: TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          })
+        }),
+        Container({
+          color: '#2ecc71',
+          width: 120,
+          padding: EdgeInsets.all(16),
+          child: Text('Medium length', {
+            style: TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          })
+        })
+      ]
+    })
+  })}
+</Widget>
+
+### Comparison Without IntrinsicHeight
+
+<Widget name="IntrinsicHeight-without">
+  {Row({
+    children: [
+      Container({
+        color: '#3498db',
+        width: 120,
+        padding: EdgeInsets.all(16),
+        child: Text('Short text', {
+          style: TextStyle({
+            color: 'white',
+            fontSize: 16
+          })
+        })
+      }),
+      Container({
+        color: '#e74c3c',
+        width: 120,
+        padding: EdgeInsets.all(16),
+        child: Text('This is a much longer text that spans multiple lines. Without IntrinsicHeight, each container would have different heights.', {
+          style: TextStyle({
+            color: 'white',
+            fontSize: 16
+          })
+        })
+      }),
+      Container({
+        color: '#2ecc71',
+        width: 120,
+        padding: EdgeInsets.all(16),
+        child: Text('Medium length', {
+          style: TextStyle({
+            color: 'white',
+            fontSize: 16
+          })
+        })
+      })
+    ]
+  })}
+</Widget>
+
+### Usage in Nested Structures
+
+<Widget name="IntrinsicHeight-nested">
+  {Column({
+    children: [
+      Container({
+        color: '#ecf0f1',
+        padding: EdgeInsets.all(16),
+        child: IntrinsicHeight({
+          child: Row({
+            children: [
+              Container({
+                width: 100,
+                color: '#9b59b6',
+                padding: EdgeInsets.all(8),
+                child: Column({
+                  children: [
+                    Text('Title', {
+                      style: TextStyle({
+                        color: 'white',
+                        fontSize: 18,
+                        fontWeight: 'bold'
+                      })
+                    }),
+                    Text('Subtitle', {
+                      style: TextStyle({
+                        color: 'white',
+                        fontSize: 14
+                      })
+                    })
+                  ]
+                })
+              }),
+              Container({
+                width: 200,
+                color: '#34495e',
+                padding: EdgeInsets.all(8),
+                child: Text('This container has the same height as the left container. Thanks to IntrinsicHeight, both containers automatically match their heights.', {
+                  style: TextStyle({
+                    color: 'white',
+                    fontSize: 14
+                  })
+                })
+              })
+            ]
+          })
+        })
+      })
+    ]
+  })}
+</Widget>
+
+## Performance Considerations
+
+IntrinsicHeight calculates layout twice, which can impact performance:
+
+1. First pass calculates the child's intrinsic height
+2. Second pass performs the actual layout
+
+Therefore, consider the following:
+
+- Avoid using in deeply nested structures
+- Not recommended for animated widgets
+- Consider alternatives (like fixed heights) if available
+
+## Related Widgets
+
+- [IntrinsicWidth](/en/widgets/IntrinsicWidth) - Provides the same functionality horizontally
+- [Row](/en/widgets/Row) - Often used together with IntrinsicHeight
+- [Column](/en/widgets/Column) - For vertical layout composition
+- [Flexible](/en/widgets/Flexible) - For flexible sizing
