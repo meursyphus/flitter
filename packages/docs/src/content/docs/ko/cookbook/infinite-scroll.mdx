@@ -1,0 +1,570 @@
+---
+title: 무한 스크롤 리스트
+description: 스크롤하면서 추가 데이터를 로드하는 리스트 구현
+nav_order: 6
+nav_group: 쿡북
+---
+
+import { Widget } from '@meursyphus/flitter-svelte';
+import { Container, Column, Text, TextStyle, ListView, Center, EdgeInsets, BorderRadius, CircularProgressIndicator } from '@meursyphus/flitter';
+
+# 무한 스크롤 리스트
+
+무한 스크롤은 사용자가 리스트 끝에 도달하면 자동으로 추가 데이터를 로드하는 패턴입니다. 대용량 데이터를 효율적으로 표시할 때 유용합니다.
+
+## 기본 무한 스크롤
+
+스크롤 끝에 도달하면 더 많은 아이템을 로드하는 기본 예제입니다.
+
+<Widget name="cookbook-infinite-basic">
+  {(() => {
+    const [items, setItems] = React.useState(
+      Array.from({ length: 20 }, (_, i) => `아이템 ${i + 1}`)
+    );
+    const [isLoading, setIsLoading] = React.useState(false);
+    
+    const loadMore = async () => {
+      if (isLoading) return;
+      
+      setIsLoading(true);
+      // API 호출 시뮬레이션
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const currentLength = items.length;
+      const newItems = Array.from(
+        { length: 10 }, 
+        (_, i) => `아이템 ${currentLength + i + 1}`
+      );
+      
+      setItems([...items, ...newItems]);
+      setIsLoading(false);
+    };
+    
+    return Container({
+      width: 350,
+      height: 400,
+      color: '#f8f9fa',
+      child: Column({
+        children: [
+          Container({
+            padding: EdgeInsets.all(16),
+            color: 'white',
+            child: Text('무한 스크롤 리스트', {
+              style: TextStyle({
+                fontSize: 18,
+                fontWeight: 'bold',
+                color: '#212529'
+              })
+            })
+          }),
+          Expanded({
+            child: ListView.builder({
+              itemCount: items.length + (isLoading ? 1 : 0),
+              itemBuilder: (context, index) => {
+                // 로딩 인디케이터
+                if (index === items.length) {
+                  return Container({
+                    padding: EdgeInsets.all(16),
+                    child: Center({
+                      child: CircularProgressIndicator()
+                    })
+                  });
+                }
+                
+                // 마지막 아이템에 도달하면 더 로드
+                if (index === items.length - 1 && !isLoading) {
+                  loadMore();
+                }
+                
+                // 일반 아이템
+                return Container({
+                  margin: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+                  padding: EdgeInsets.all(16),
+                  decoration: {
+                    color: 'white',
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [{
+                      color: 'rgba(0,0,0,0.05)',
+                      blurRadius: 4,
+                      offset: { x: 0, y: 2 }
+                    }]
+                  },
+                  child: Text(items[index], {
+                    style: TextStyle({
+                      fontSize: 16,
+                      color: '#495057'
+                    })
+                  })
+                });
+              }
+            })
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+## 이미지가 포함된 무한 스크롤
+
+이미지와 함께 표시되는 카드 형태의 무한 스크롤입니다.
+
+<Widget name="cookbook-infinite-cards">
+  {(() => {
+    const [posts, setPosts] = React.useState(
+      Array.from({ length: 10 }, (_, i) => ({
+        id: i + 1,
+        title: `게시물 제목 ${i + 1}`,
+        description: '이것은 샘플 게시물입니다. 스크롤하면 더 많은 게시물을 볼 수 있습니다.',
+        likes: Math.floor(Math.random() * 100),
+        color: ['#ff6b6b', '#4c6ef5', '#51cf66', '#ff922b', '#845ef7'][i % 5]
+      }))
+    );
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [hasMore, setHasMore] = React.useState(true);
+    
+    const loadMore = async () => {
+      if (isLoading || !hasMore) return;
+      
+      setIsLoading(true);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      const currentLength = posts.length;
+      if (currentLength >= 50) {
+        setHasMore(false);
+        setIsLoading(false);
+        return;
+      }
+      
+      const newPosts = Array.from({ length: 10 }, (_, i) => ({
+        id: currentLength + i + 1,
+        title: `게시물 제목 ${currentLength + i + 1}`,
+        description: '이것은 샘플 게시물입니다. 스크롤하면 더 많은 게시물을 볼 수 있습니다.',
+        likes: Math.floor(Math.random() * 100),
+        color: ['#ff6b6b', '#4c6ef5', '#51cf66', '#ff922b', '#845ef7'][(currentLength + i) % 5]
+      }));
+      
+      setPosts([...posts, ...newPosts]);
+      setIsLoading(false);
+    };
+    
+    return Container({
+      width: 380,
+      height: 500,
+      color: '#e9ecef',
+      child: Column({
+        children: [
+          Container({
+            padding: EdgeInsets.all(16),
+            color: 'white',
+            child: Row({
+              mainAxisAlignment: 'spaceBetween',
+              children: [
+                Text('피드', {
+                  style: TextStyle({
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    color: '#212529'
+                  })
+                }),
+                Text(`${posts.length}개 게시물`, {
+                  style: TextStyle({
+                    fontSize: 14,
+                    color: '#868e96'
+                  })
+                })
+              ]
+            })
+          }),
+          Expanded({
+            child: ListView.builder({
+              itemCount: posts.length + 1,
+              itemBuilder: (context, index) => {
+                // 마지막 아이템
+                if (index === posts.length) {
+                  if (!hasMore) {
+                    return Container({
+                      padding: EdgeInsets.all(32),
+                      child: Center({
+                        child: Text('모든 게시물을 불러왔습니다', {
+                          style: TextStyle({
+                            color: '#868e96',
+                            fontSize: 14
+                          })
+                        })
+                      })
+                    });
+                  }
+                  
+                  if (isLoading) {
+                    return Container({
+                      padding: EdgeInsets.all(32),
+                      child: Center({
+                        child: Column({
+                          mainAxisSize: 'min',
+                          children: [
+                            CircularProgressIndicator(),
+                            SizedBox({ height: 16 }),
+                            Text('게시물 로딩 중...', {
+                              style: TextStyle({
+                                color: '#868e96',
+                                fontSize: 14
+                              })
+                            })
+                          ]
+                        })
+                      })
+                    });
+                  }
+                  
+                  // 로드 트리거
+                  loadMore();
+                  return Container();
+                }
+                
+                const post = posts[index];
+                return Container({
+                  margin: EdgeInsets.all(16),
+                  decoration: {
+                    color: 'white',
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [{
+                      color: 'rgba(0,0,0,0.08)',
+                      blurRadius: 8,
+                      offset: { x: 0, y: 4 }
+                    }]
+                  },
+                  child: Column({
+                    crossAxisAlignment: 'start',
+                    children: [
+                      Container({
+                        height: 120,
+                        decoration: {
+                          color: post.color,
+                          borderRadius: BorderRadius.only({
+                            topLeft: 12,
+                            topRight: 12
+                          })
+                        },
+                        child: Center({
+                          child: Text(`🖼️ ${post.id}`, {
+                            style: TextStyle({
+                              fontSize: 36,
+                              color: 'white'
+                            })
+                          })
+                        })
+                      }),
+                      Container({
+                        padding: EdgeInsets.all(16),
+                        child: Column({
+                          crossAxisAlignment: 'start',
+                          children: [
+                            Text(post.title, {
+                              style: TextStyle({
+                                fontSize: 18,
+                                fontWeight: 'bold',
+                                color: '#212529'
+                              })
+                            }),
+                            SizedBox({ height: 8 }),
+                            Text(post.description, {
+                              style: TextStyle({
+                                fontSize: 14,
+                                color: '#495057'
+                              })
+                            }),
+                            SizedBox({ height: 12 }),
+                            Row({
+                              children: [
+                                Text('❤️', { style: TextStyle({ fontSize: 16 }) }),
+                                SizedBox({ width: 4 }),
+                                Text(`${post.likes}`, {
+                                  style: TextStyle({
+                                    fontSize: 14,
+                                    color: '#868e96'
+                                  })
+                                })
+                              ]
+                            })
+                          ]
+                        })
+                      })
+                    ]
+                  })
+                });
+              }
+            })
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+## 에러 처리가 있는 무한 스크롤
+
+네트워크 에러나 로딩 실패를 처리하는 무한 스크롤입니다.
+
+<Widget name="cookbook-infinite-error">
+  {(() => {
+    const [items, setItems] = React.useState(
+      Array.from({ length: 15 }, (_, i) => ({
+        id: i + 1,
+        name: `사용자 ${i + 1}`,
+        status: ['온라인', '오프라인', '자리비움'][Math.floor(Math.random() * 3)]
+      }))
+    );
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [error, setError] = React.useState(null);
+    const [retryCount, setRetryCount] = React.useState(0);
+    
+    const loadMore = async () => {
+      if (isLoading) return;
+      
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        // 가끔 실패하는 API 시뮬레이션
+        await new Promise((resolve, reject) => {
+          setTimeout(() => {
+            if (Math.random() > 0.7) {
+              reject(new Error('네트워크 오류'));
+            } else {
+              resolve();
+            }
+          }, 1000);
+        });
+        
+        const currentLength = items.length;
+        const newItems = Array.from({ length: 10 }, (_, i) => ({
+          id: currentLength + i + 1,
+          name: `사용자 ${currentLength + i + 1}`,
+          status: ['온라인', '오프라인', '자리비움'][Math.floor(Math.random() * 3)]
+        }));
+        
+        setItems([...items, ...newItems]);
+        setRetryCount(0);
+      } catch (err) {
+        setError(err.message);
+        setRetryCount(retryCount + 1);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    const getStatusColor = (status) => {
+      switch (status) {
+        case '온라인': return '#51cf66';
+        case '오프라인': return '#868e96';
+        case '자리비움': return '#ffd43b';
+        default: return '#868e96';
+      }
+    };
+    
+    return Container({
+      width: 350,
+      height: 500,
+      color: '#f8f9fa',
+      child: Column({
+        children: [
+          Container({
+            padding: EdgeInsets.all(16),
+            color: 'white',
+            borderBottom: {
+              color: '#e9ecef',
+              width: 1
+            },
+            child: Text('사용자 목록', {
+              style: TextStyle({
+                fontSize: 18,
+                fontWeight: 'bold',
+                color: '#212529'
+              })
+            })
+          }),
+          Expanded({
+            child: ListView.builder({
+              itemCount: items.length + 1,
+              itemBuilder: (context, index) => {
+                // 마지막 아이템 (로딩/에러/재시도)
+                if (index === items.length) {
+                  if (error) {
+                    return Container({
+                      padding: EdgeInsets.all(20),
+                      child: Column({
+                        children: [
+                          Text('⚠️', { style: TextStyle({ fontSize: 32 }) }),
+                          SizedBox({ height: 8 }),
+                          Text(error, {
+                            style: TextStyle({
+                              color: '#e03131',
+                              fontSize: 16
+                            })
+                          }),
+                          SizedBox({ height: 16 }),
+                          GestureDetector({
+                            onTap: loadMore,
+                            child: Container({
+                              padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+                              decoration: {
+                                color: '#4c6ef5',
+                                borderRadius: BorderRadius.circular(8)
+                              },
+                              child: Text('다시 시도', {
+                                style: TextStyle({
+                                  color: 'white',
+                                  fontWeight: 'bold'
+                                })
+                              })
+                            })
+                          }),
+                          if (retryCount > 0) ...[
+                            SizedBox({ height: 8 }),
+                            Text(`재시도 횟수: ${retryCount}`, {
+                              style: TextStyle({
+                                color: '#868e96',
+                                fontSize: 12
+                              })
+                            })
+                          ]
+                        ]
+                      })
+                    });
+                  }
+                  
+                  if (isLoading) {
+                    return Container({
+                      padding: EdgeInsets.all(20),
+                      child: Center({
+                        child: CircularProgressIndicator()
+                      })
+                    });
+                  }
+                  
+                  // 자동 로드
+                  loadMore();
+                  return Container();
+                }
+                
+                const user = items[index];
+                return Container({
+                  padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 12 }),
+                  decoration: {
+                    color: 'white',
+                    border: {
+                      color: '#e9ecef',
+                      width: 1,
+                      side: 'bottom'
+                    }
+                  },
+                  child: Row({
+                    children: [
+                      Container({
+                        width: 48,
+                        height: 48,
+                        decoration: {
+                          color: '#e9ecef',
+                          shape: 'circle'
+                        },
+                        child: Center({
+                          child: Text('👤', {
+                            style: TextStyle({ fontSize: 24 })
+                          })
+                        })
+                      }),
+                      SizedBox({ width: 12 }),
+                      Expanded({
+                        child: Column({
+                          crossAxisAlignment: 'start',
+                          children: [
+                            Text(user.name, {
+                              style: TextStyle({
+                                fontSize: 16,
+                                fontWeight: 'bold',
+                                color: '#212529'
+                              })
+                            }),
+                            SizedBox({ height: 4 }),
+                            Row({
+                              children: [
+                                Container({
+                                  width: 8,
+                                  height: 8,
+                                  decoration: {
+                                    color: getStatusColor(user.status),
+                                    shape: 'circle'
+                                  }
+                                }),
+                                SizedBox({ width: 4 }),
+                                Text(user.status, {
+                                  style: TextStyle({
+                                    fontSize: 12,
+                                    color: '#868e96'
+                                  })
+                                })
+                              ]
+                            })
+                          ]
+                        })
+                      })
+                    ]
+                  })
+                });
+              }
+            })
+          })
+        ]
+      })
+    });
+  })()}
+</Widget>
+
+## 구현 방법
+
+### 1. 스크롤 감지
+```typescript
+ListView.builder({
+  itemBuilder: (context, index) => {
+    if (index === items.length - 1) {
+      loadMore(); // 마지막 아이템에 도달
+    }
+    return ItemWidget();
+  }
+})
+```
+
+### 2. 로딩 상태 관리
+```typescript
+const [isLoading, setIsLoading] = useState(false);
+const [hasMore, setHasMore] = useState(true);
+const [error, setError] = useState(null);
+```
+
+### 3. 중복 로딩 방지
+```typescript
+const loadMore = async () => {
+  if (isLoading || !hasMore) return;
+  // 로딩 로직
+};
+```
+
+## 최적화 팁
+
+1. **메모리 관리**: 너무 많은 아이템이 메모리에 있으면 가상화 사용
+2. **프리로딩**: 마지막 아이템 도달 전에 미리 로드 시작
+3. **캐싱**: 이미 로드한 데이터는 캐시하여 재사용
+4. **디바운싱**: 스크롤 이벤트 과다 발생 방지
+
+## 접근성 고려사항
+
+1. 로딩 상태를 스크린 리더에 알림
+2. 키보드로 추가 로드 가능하도록 버튼 제공
+3. 에러 발생 시 명확한 안내 메시지
+
+## 관련 레시피
+
+- [그룹화된 리스트](/ko/cookbook/grouped-list) - 섹션별 리스트
+- [레이지 로딩](/ko/cookbook/lazy-loading) - 지연 로딩
+- [가상화된 리스트](/ko/cookbook/virtualized-list) - 대용량 리스트 최적화
