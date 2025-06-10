@@ -1,0 +1,135 @@
+---
+title: API 레퍼런스
+description: Flitter API 전체 문서
+nav_order: 10
+nav_group: API 레퍼런스
+---
+
+# API 레퍼런스
+
+Flitter의 모든 클래스, 함수, 속성에 대한 완전한 레퍼런스입니다.
+
+## 위젯 카테고리
+
+### 레이아웃 위젯
+기본적인 레이아웃 구성을 위한 위젯들입니다.
+
+- [Container](/ko/api-reference/widgets/container) - 장식, 패딩, 제약을 가진 박스
+- [Row](/ko/api-reference/widgets/row) - 수평 레이아웃
+- [Column](/ko/api-reference/widgets/column) - 수직 레이아웃
+- [Stack](/ko/api-reference/widgets/stack) - 겹치는 레이아웃
+- [Flex](/ko/api-reference/widgets/flex) - 유연한 레이아웃
+- [Expanded](/ko/api-reference/widgets/expanded) - Flex 내에서 확장
+- [Flexible](/ko/api-reference/widgets/flexible) - Flex 내에서 유연한 크기
+- [Spacer](/ko/api-reference/widgets/spacer) - 빈 공간 채우기
+
+### 포지셔닝 위젯
+자식 위젯의 위치를 제어하는 위젯들입니다.
+
+- [Align](/ko/api-reference/widgets/align) - 정렬
+- [Center](/ko/api-reference/widgets/center) - 중앙 정렬
+- [Padding](/ko/api-reference/widgets/padding) - 패딩 추가
+- [Transform](/ko/api-reference/widgets/transform) - 변환 적용
+- [FractionalTranslation](/ko/api-reference/widgets/fractional-translation) - 분수 단위 이동
+
+### 크기 조절 위젯
+위젯의 크기를 제어하는 위젯들입니다.
+
+- [SizedBox](/ko/api-reference/widgets/sized-box) - 고정 크기 박스
+- [ConstrainedBox](/ko/api-reference/widgets/constrained-box) - 제약 조건 박스
+- [UnconstrainedBox](/ko/api-reference/widgets/unconstrained-box) - 제약 없는 박스
+- [FractionallySizedBox](/ko/api-reference/widgets/fractionally-sized-box) - 분수 크기 박스
+- [AspectRatio](/ko/api-reference/widgets/aspect-ratio) - 종횡비 유지
+- [IntrinsicHeight](/ko/api-reference/widgets/intrinsic-height) - 고유 높이
+- [IntrinsicWidth](/ko/api-reference/widgets/intrinsic-width) - 고유 너비
+- [LimitedBox](/ko/api-reference/widgets/limited-box) - 제한된 박스
+- [OverflowBox](/ko/api-reference/widgets/overflow-box) - 오버플로우 박스
+
+### 장식 위젯
+시각적 효과를 추가하는 위젯들입니다.
+
+- [ColoredBox](/ko/api-reference/widgets/colored-box) - 색상 박스
+- [DecoratedBox](/ko/api-reference/widgets/decorated-box) - 장식 박스
+- [Opacity](/ko/api-reference/widgets/opacity) - 투명도
+- [ClipRect](/ko/api-reference/widgets/clip-rect) - 사각형 클리핑
+- [ClipRRect](/ko/api-reference/widgets/clip-rrect) - 둥근 사각형 클리핑
+- [ClipOval](/ko/api-reference/widgets/clip-oval) - 타원 클리핑
+- [ClipPath](/ko/api-reference/widgets/clip-path) - 경로 클리핑
+
+### 인터랙션 위젯
+사용자 입력을 처리하는 위젯들입니다.
+
+- [GestureDetector](/ko/api-reference/widgets/gesture-detector) - 제스처 감지
+- [Draggable](/ko/api-reference/widgets/draggable) - 드래그 가능
+- [TextField](/ko/api-reference/widgets/text-field) - 텍스트 입력
+- [Tooltip](/ko/api-reference/widgets/tooltip) - 툴팁
+
+### 애니메이션 위젯
+애니메이션 효과를 제공하는 위젯들입니다.
+
+- [AnimatedContainer](/ko/api-reference/widgets/animated-container) - 애니메이션 컨테이너
+- [AnimatedAlign](/ko/api-reference/widgets/animated-align) - 애니메이션 정렬
+- [AnimatedOpacity](/ko/api-reference/widgets/animated-opacity) - 애니메이션 투명도
+- [AnimatedPadding](/ko/api-reference/widgets/animated-padding) - 애니메이션 패딩
+- [AnimatedPositioned](/ko/api-reference/widgets/animated-positioned) - 애니메이션 위치
+- [AnimatedRotation](/ko/api-reference/widgets/animated-rotation) - 애니메이션 회전
+- [AnimatedScale](/ko/api-reference/widgets/animated-scale) - 애니메이션 스케일
+- [AnimatedSlide](/ko/api-reference/widgets/animated-slide) - 애니메이션 슬라이드
+- [AnimatedFractionallySizedBox](/ko/api-reference/widgets/animated-fractionally-sized-box) - 애니메이션 분수 크기 박스
+
+### 기타 위젯
+특수 목적의 위젯들입니다.
+
+- [Builder](/ko/api-reference/widgets/builder) - 빌더 패턴
+- [CustomPaint](/ko/api-reference/widgets/custom-paint) - 커스텀 페인팅
+- [RichText](/ko/api-reference/widgets/rich-text) - 서식 있는 텍스트
+- [Image](/ko/api-reference/widgets/image) - 이미지 표시
+- [Grid](/ko/api-reference/widgets/grid) - 그리드 레이아웃
+- [IndexedStack](/ko/api-reference/widgets/indexed-stack) - 인덱스 스택
+- [ZIndex](/ko/api-reference/widgets/z-index) - Z 순서
+
+## 핵심 클래스
+
+### Widget
+- [Widget](/ko/api-reference/core/widget) - 위젯 기본 클래스
+- [StatelessWidget](/ko/api-reference/core/stateless-widget) - 상태 없는 위젯
+- [StatefulWidget](/ko/api-reference/core/stateful-widget) - 상태 있는 위젯
+- [State](/ko/api-reference/core/state) - 상태 클래스
+
+### RenderObject
+- [RenderObject](/ko/api-reference/core/render-object) - 렌더 객체 기본 클래스
+- [SingleChildRenderObject](/ko/api-reference/core/single-child-render-object) - 단일 자식 렌더 객체
+- [MultiChildRenderObject](/ko/api-reference/core/multi-child-render-object) - 다중 자식 렌더 객체
+
+### 애니메이션
+- [AnimationController](/ko/api-reference/animation/animation-controller) - 애니메이션 컨트롤러
+- [Animation](/ko/api-reference/animation/animation) - 애니메이션 인터페이스
+- [Tween](/ko/api-reference/animation/tween) - 값 보간
+- [Curve](/ko/api-reference/animation/curve) - 애니메이션 곡선
+
+### 페인팅
+- [Paint](/ko/api-reference/painting/paint) - 페인트 설정
+- [Canvas](/ko/api-reference/painting/canvas) - 캔버스 API
+- [TextStyle](/ko/api-reference/painting/text-style) - 텍스트 스타일
+- [Decoration](/ko/api-reference/painting/decoration) - 장식
+
+### 제약 조건
+- [Constraints](/ko/api-reference/constraints/constraints) - 제약 조건
+- [BoxConstraints](/ko/api-reference/constraints/box-constraints) - 박스 제약 조건
+- [Size](/ko/api-reference/constraints/size) - 크기
+- [Offset](/ko/api-reference/constraints/offset) - 오프셋
+
+## 유틸리티
+
+### 정렬과 방향
+- [Alignment](/ko/api-reference/utils/alignment) - 정렬
+- [EdgeInsets](/ko/api-reference/utils/edge-insets) - 가장자리 여백
+- [MainAxisAlignment](/ko/api-reference/utils/main-axis-alignment) - 주축 정렬
+- [CrossAxisAlignment](/ko/api-reference/utils/cross-axis-alignment) - 교차축 정렬
+- [Axis](/ko/api-reference/utils/axis) - 축
+
+### 색상과 그래픽
+- [Color](/ko/api-reference/utils/color) - 색상
+- [Gradient](/ko/api-reference/utils/gradient) - 그라디언트
+- [BorderRadius](/ko/api-reference/utils/border-radius) - 테두리 반경
+- [BoxShadow](/ko/api-reference/utils/box-shadow) - 박스 그림자
