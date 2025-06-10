@@ -1,0 +1,374 @@
+---
+title: Column
+description: A layout widget that arranges its children vertically
+nav_order: 4
+nav_group: Widgets
+---
+
+import { Widget } from '@meursyphus/flitter-svelte';
+import { Column, Container, Text, TextStyle, Alignment, ColoredBox, SizedBox, MainAxisAlignment, CrossAxisAlignment, MainAxisSize, Expanded, Spacer } from '@meursyphus/flitter';
+
+# Column
+
+## Overview
+
+Column is a layout widget that arranges its children vertically. It's equivalent to a Flex widget with `direction: Axis.vertical`, but provides a more intuitive and convenient API.
+
+## When to Use
+
+Use Column in the following situations:
+
+- When you want to arrange multiple widgets from top to bottom
+- When creating vertical lists or form layouts
+- When composing content for cards or dialogs
+- When listing menu items vertically
+
+## Basic Usage
+
+```typescript
+Column({
+  children: [
+    Text('First item'),
+    Text('Second item'),
+    Text('Third item')
+  ]
+})
+```
+
+## Constructor Parameters
+
+| Parameter | Type | Description | Default |
+|-----------|------|-------------|---------|
+| children | `Widget[]` | Child widgets to arrange vertically | Required |
+| mainAxisAlignment | `MainAxisAlignment` | Main axis (vertical) alignment | start |
+| crossAxisAlignment | `CrossAxisAlignment` | Cross axis (horizontal) alignment | center |
+| mainAxisSize | `MainAxisSize` | Main axis size setting | max |
+| verticalDirection | `VerticalDirection` | Vertical direction (up/down) | down |
+| key | `any` | Unique key for the widget | undefined |
+
+## Alignment Options
+
+### MainAxisAlignment (Vertical Alignment)
+- `start`: Align to top
+- `end`: Align to bottom
+- `center`: Center alignment
+- `spaceBetween`: Place at ends and distribute evenly
+- `spaceAround`: Distribute with equal padding
+- `spaceEvenly`: Distribute all spacing equally
+
+### CrossAxisAlignment (Horizontal Alignment)
+- `start`: Align to left
+- `end`: Align to right
+- `center`: Center alignment
+- `stretch`: Stretch to full width
+
+## Examples
+
+### Basic Example
+
+<Widget
+  width="300px"
+  height="200px"
+  renderer="svg"
+  widget={Container({
+    alignment: Alignment.center,
+    color: '#f0f0f0',
+    child: ColoredBox({
+      color: '#ffffff',
+      child: Column({
+        mainAxisSize: 'min',
+        children: [
+          Container({
+            padding: { all: 10 },
+            color: '#3498db',
+            child: Text('Item 1', {
+              style: TextStyle({ color: '#ffffff' })
+            })
+          }),
+          Container({
+            padding: { all: 10 },
+            color: '#e74c3c',
+            child: Text('Item 2', {
+              style: TextStyle({ color: '#ffffff' })
+            })
+          }),
+          Container({
+            padding: { all: 10 },
+            color: '#2ecc71',
+            child: Text('Item 3', {
+              style: TextStyle({ color: '#ffffff' })
+            })
+          })
+        ]
+      })
+    })
+  })}
+/>
+
+```typescript
+Column({
+  mainAxisSize: 'min',
+  children: [
+    Container({
+      padding: { all: 10 },
+      color: '#3498db',
+      child: Text('Item 1', {
+        style: TextStyle({ color: '#ffffff' })
+      })
+    }),
+    Container({
+      padding: { all: 10 },
+      color: '#e74c3c',
+      child: Text('Item 2', {
+        style: TextStyle({ color: '#ffffff' })
+      })
+    }),
+    Container({
+      padding: { all: 10 },
+      color: '#2ecc71',
+      child: Text('Item 3', {
+        style: TextStyle({ color: '#ffffff' })
+      })
+    })
+  ]
+})
+```
+
+### MainAxisAlignment Example
+
+<Widget
+  width="300px"
+  height="250px"
+  renderer="svg"
+  widget={Container({
+    color: '#f0f0f0',
+    padding: { all: 10 },
+    child: Column({
+      mainAxisAlignment: 'spaceEvenly',
+      children: [
+        Container({
+          width: 120,
+          padding: { all: 10 },
+          color: '#3498db',
+          child: Text('spaceEvenly', {
+            style: TextStyle({ color: '#ffffff', fontSize: 14 })
+          })
+        }),
+        Container({
+          width: 120,
+          padding: { all: 10 },
+          color: '#e74c3c',
+          child: Text('Equal', {
+            style: TextStyle({ color: '#ffffff', fontSize: 14 })
+          })
+        }),
+        Container({
+          width: 120,
+          padding: { all: 10 },
+          color: '#f39c12',
+          child: Text('Spacing', {
+            style: TextStyle({ color: '#ffffff', fontSize: 14 })
+          })
+        })
+      ]
+    })
+  })}
+/>
+
+```typescript
+Column({
+  mainAxisAlignment: 'spaceEvenly',
+  children: [
+    Container({
+      width: 120,
+      padding: { all: 10 },
+      color: '#3498db',
+      child: Text('spaceEvenly', {
+        style: TextStyle({ color: '#ffffff', fontSize: 14 })
+      })
+    }),
+    Container({
+      width: 120,
+      padding: { all: 10 },
+      color: '#e74c3c',
+      child: Text('Equal', {
+        style: TextStyle({ color: '#ffffff', fontSize: 14 })
+      })
+    }),
+    Container({
+      width: 120,
+      padding: { all: 10 },
+      color: '#f39c12',
+      child: Text('Spacing', {
+        style: TextStyle({ color: '#ffffff', fontSize: 14 })
+      })
+    })
+  ]
+})
+```
+
+### CrossAxisAlignment Example
+
+<Widget
+  width="300px"
+  height="200px"
+  renderer="svg"
+  widget={Container({
+    color: '#f0f0f0',
+    padding: { all: 10 },
+    child: Column({
+      crossAxisAlignment: 'stretch',
+      children: [
+        Container({
+          padding: { all: 10 },
+          color: '#9b59b6',
+          child: Text('stretch - Full width', {
+            style: TextStyle({ color: '#ffffff', fontSize: 14 })
+          })
+        }),
+        Container({
+          padding: { all: 10 },
+          color: '#34495e',
+          child: Text('Stretched horizontally', {
+            style: TextStyle({ color: '#ffffff', fontSize: 14 })
+          })
+        }),
+        Container({
+          padding: { all: 10 },
+          color: '#16a085',
+          child: Text('Fits parent width', {
+            style: TextStyle({ color: '#ffffff', fontSize: 14 })
+          })
+        })
+      ]
+    })
+  })}
+/>
+
+```typescript
+Column({
+  crossAxisAlignment: 'stretch',
+  children: [
+    Container({
+      padding: { all: 10 },
+      color: '#9b59b6',
+      child: Text('stretch - Full width', {
+        style: TextStyle({ color: '#ffffff', fontSize: 14 })
+      })
+    }),
+    Container({
+      padding: { all: 10 },
+      color: '#34495e',
+      child: Text('Stretched horizontally', {
+        style: TextStyle({ color: '#ffffff', fontSize: 14 })
+      })
+    }),
+    Container({
+      padding: { all: 10 },
+      color: '#16a085',
+      child: Text('Fits parent width', {
+        style: TextStyle({ color: '#ffffff', fontSize: 14 })
+      })
+    })
+  ]
+})
+```
+
+### Using with Expanded
+
+<Widget
+  width="300px"
+  height="300px"
+  renderer="svg"
+  widget={Container({
+    color: '#f0f0f0',
+    padding: { all: 10 },
+    child: Column({
+      children: [
+        Container({
+          height: 50,
+          color: '#3498db',
+          alignment: Alignment.center,
+          child: Text('Fixed height 50px', {
+            style: TextStyle({ color: '#ffffff' })
+          })
+        }),
+        Expanded({
+          child: Container({
+            color: '#e74c3c',
+            alignment: Alignment.center,
+            child: Text('Expanded - Fills remaining', {
+              style: TextStyle({ color: '#ffffff' })
+            })
+          })
+        }),
+        Container({
+          height: 50,
+          color: '#2ecc71',
+          alignment: Alignment.center,
+          child: Text('Fixed height 50px', {
+            style: TextStyle({ color: '#ffffff' })
+          })
+        })
+      ]
+    })
+  })}
+/>
+
+```typescript
+Column({
+  children: [
+    Container({
+      height: 50,
+      color: '#3498db',
+      alignment: Alignment.center,
+      child: Text('Fixed height 50px', {
+        style: TextStyle({ color: '#ffffff' })
+      })
+    }),
+    Expanded({
+      child: Container({
+        color: '#e74c3c',
+        alignment: Alignment.center,
+        child: Text('Expanded - Fills remaining', {
+          style: TextStyle({ color: '#ffffff' })
+        })
+      })
+    }),
+    Container({
+      height: 50,
+      color: '#2ecc71',
+      alignment: Alignment.center,
+      child: Text('Fixed height 50px', {
+        style: TextStyle({ color: '#ffffff' })
+      })
+    })
+  ]
+})
+```
+
+## Notes
+
+- Column assumes infinite height vertically, so wrap with ScrollView if scrolling is needed
+- Overflow may occur if child widgets exceed Column's height
+- Expanded widgets must be direct children of Column
+
+## Difference from Flex
+
+Column is essentially equivalent to:
+
+```typescript
+Flex({
+  direction: Axis.vertical,
+  children: [...]
+})
+```
+
+Using Column makes the code more concise and the intent clearer.
+
+## Related Widgets
+
+- [Row](/docs/en/widgets/Row) - Horizontal layout widget
+- [Flex](/docs/en/widgets/Flex) - Flexible layout widget
+- [Stack](/docs/en/widgets/Stack) - Overlapping layout widget
+- [Expanded](/docs/en/widgets/Expanded) - Widget that fills space within Flex
