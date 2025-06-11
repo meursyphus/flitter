@@ -3,14 +3,14 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: FractionallySizedBox
 title: "FractionallySizedBox"
-description: ""
+description: "사용 가능한 공간의 일정 비율로 자식의 크기를 조정하는 위젯"
 ---
 
-# FractionallySizedBox
+## 개요
 
-This widget motivated by FractionallySizedBox in Flutter.
+FractionallySizedBox는 자식의 크기를 사용 가능한 전체 공간의 일정 비율로 조정하는 위젯입니다.
 
-> A widget that sizes its child to a fraction of the total available space.
+이 위젯은 부모가 제공하는 공간의 백분율로 자식의 크기를 설정할 때 유용합니다. 예를 들어, 화면 너비의 80%를 차지하는 카드나 높이의 절반을 차지하는 이미지를 만들 수 있습니다.
 
 <iframe
   width="560"
@@ -22,26 +22,436 @@ This widget motivated by FractionallySizedBox in Flutter.
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/FractionallySizedBox-class.html](https://api.flutter.dev/flutter/widgets/FractionallySizedBox-class.html)
+참조: [https://api.flutter.dev/flutter/widgets/FractionallySizedBox-class.html](https://api.flutter.dev/flutter/widgets/FractionallySizedBox-class.html)
+
+## 언제 사용하나요?
+
+- 부모 공간에 대한 상대적인 크기가 필요할 때
+- 반응형 레이아웃에서 비율 기반 크기 조정을 할 때
+- 화면 크기에 따라 적응하는 UI를 만들 때
+- 고정 픽셀 크기 대신 비율 기반 디자인을 할 때
+- 플렉시블한 레이아웃 구성 요소를 만들 때
+
+## 기본 사용법
+
+```typescript
+// 부모 너비의 80%
+FractionallySizedBox({
+  widthFactor: 0.8,
+  child: Container({
+    height: 100,
+    color: 'blue'
+  })
+})
+
+// 부모 높이의 50%
+FractionallySizedBox({
+  heightFactor: 0.5,
+  child: Container({
+    width: 200,
+    color: 'red'
+  })
+})
+
+// 너비 60%, 높이 40%
+FractionallySizedBox({
+  widthFactor: 0.6,
+  heightFactor: 0.4,
+  child: Container({
+    color: 'green'
+  })
+})
+
+// 정렬 조정
+FractionallySizedBox({
+  widthFactor: 0.7,
+  alignment: Alignment.topLeft,
+  child: Container({
+    height: 80,
+    color: 'purple'
+  })
+})
+```
 
 ## Props
 
-### alignment
-
-**Value: Alignment** (default: **Alignment.center**)
-
 ### widthFactor
 
-**Value: number | undefined**
+**값: number | undefined**
 
-### heightFoctor
+부모 너비에 대한 자식 너비의 비율입니다.
 
-**Value: number | undefined**
+- `undefined`: 부모의 너비 제약을 그대로 사용
+- `0.0 ~ 1.0`: 0%부터 100%까지의 비율
+- `> 1.0`: 부모보다 큰 크기 (오버플로우 가능)
+
+```typescript
+FractionallySizedBox({
+  widthFactor: 0.5,    // 부모 너비의 50%
+  child: child
+})
+
+FractionallySizedBox({
+  widthFactor: 1.2,    // 부모 너비의 120% (오버플로우)
+  child: child
+})
+
+FractionallySizedBox({
+  widthFactor: undefined,  // 부모 너비 제약 그대로
+  child: child
+})
+```
+
+### heightFactor
+
+**값: number | undefined**
+
+부모 높이에 대한 자식 높이의 비율입니다.
+
+- `undefined`: 부모의 높이 제약을 그대로 사용
+- `0.0 ~ 1.0`: 0%부터 100%까지의 비율
+- `> 1.0`: 부모보다 큰 크기 (오버플로우 가능)
+
+```typescript
+FractionallySizedBox({
+  heightFactor: 0.3,   // 부모 높이의 30%
+  child: child
+})
+
+FractionallySizedBox({
+  heightFactor: 1.5,   // 부모 높이의 150% (오버플로우)
+  child: child
+})
+```
+
+### alignment
+
+**값: Alignment** (기본값: **Alignment.center**)
+
+자식이 부모보다 작거나 클 때 정렬 방법입니다.
+
+```typescript
+FractionallySizedBox({
+  widthFactor: 0.8,
+  alignment: Alignment.centerLeft,  // 왼쪽 중앙 정렬
+  child: child
+})
+```
 
 ### child
 
-**Value: Widget | undefined**
+**값: Widget | undefined**
 
-## Examples
+크기가 조정될 자식 위젯입니다.
 
-### Basic
+## 실제 사용 예제
+
+### 예제 1: 반응형 카드 레이아웃
+
+```typescript
+const ResponsiveCard = ({ title, content }) => {
+  return Container({
+    padding: EdgeInsets.all(16),
+    child: FractionallySizedBox({
+      widthFactor: 0.9,  // 부모 너비의 90%
+      child: Container({
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration({
+          color: 'white',
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow({
+              color: 'rgba(0,0,0,0.1)',
+              blurRadius: 8,
+              offset: { x: 0, y: 2 }
+            })
+          ]
+        }),
+        child: Column({
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, {
+              style: TextStyle({
+                fontSize: 18,
+                fontWeight: 'bold',
+                marginBottom: 12
+              })
+            }),
+            Text(content, {
+              style: TextStyle({
+                fontSize: 14,
+                lineHeight: 1.4
+              })
+            })
+          ]
+        })
+      })
+    })
+  });
+};
+```
+
+### 예제 2: 프로그레스 바
+
+```typescript
+const ProgressBar = ({ progress, color = '#4CAF50' }) => {
+  return Container({
+    width: double.infinity,
+    height: 8,
+    decoration: BoxDecoration({
+      color: '#E0E0E0',
+      borderRadius: BorderRadius.circular(4)
+    }),
+    child: FractionallySizedBox({
+      widthFactor: progress,  // 0.0 ~ 1.0
+      alignment: Alignment.centerLeft,
+      child: Container({
+        decoration: BoxDecoration({
+          color: color,
+          borderRadius: BorderRadius.circular(4)
+        })
+      })
+    })
+  });
+};
+
+// 사용 예
+const ProgressExample = () => {
+  const [progress, setProgress] = useState(0.0);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress(prev => prev >= 1.0 ? 0.0 : prev + 0.1);
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
+  
+  return Column({
+    children: [
+      Text(`Progress: ${Math.round(progress * 100)}%`),
+      SizedBox({ height: 16 }),
+      ProgressBar({ progress })
+    ]
+  });
+};
+```
+
+### 예제 3: 반응형 이미지 갤러리
+
+```typescript
+const ResponsiveImageGallery = ({ images }) => {
+  return GridView({
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount({
+      crossAxisCount: 2,
+      childAspectRatio: 1.0,
+      crossAxisSpacing: 8,
+      mainAxisSpacing: 8
+    }),
+    children: images.map((image, index) => 
+      FractionallySizedBox({
+        widthFactor: 0.95,   // 그리드 셀의 95%
+        heightFactor: 0.95,
+        child: Container({
+          decoration: BoxDecoration({
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow({
+                color: 'rgba(0,0,0,0.2)',
+                blurRadius: 4,
+                offset: { x: 0, y: 2 }
+              })
+            ]
+          }),
+          child: ClipRRect({
+            borderRadius: BorderRadius.circular(8),
+            child: Image({
+              src: image.url,
+              objectFit: 'cover'
+            })
+          })
+        })
+      })
+    )
+  });
+};
+```
+
+### 예제 4: 적응형 다이얼로그
+
+```typescript
+const AdaptiveDialog = ({ title, content, actions, screenSize }) => {
+  // 화면 크기에 따른 다이얼로그 크기 조정
+  const getDialogSize = () => {
+    if (screenSize.width < 600) {
+      return { widthFactor: 0.9, heightFactor: undefined };
+    } else if (screenSize.width < 900) {
+      return { widthFactor: 0.7, heightFactor: 0.8 };
+    } else {
+      return { widthFactor: 0.5, heightFactor: 0.6 };
+    }
+  };
+  
+  const { widthFactor, heightFactor } = getDialogSize();
+  
+  return Center({
+    child: FractionallySizedBox({
+      widthFactor,
+      heightFactor,
+      child: Container({
+        decoration: BoxDecoration({
+          color: 'white',
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow({
+              color: 'rgba(0,0,0,0.3)',
+              blurRadius: 20,
+              offset: { x: 0, y: 10 }
+            })
+          ]
+        }),
+        child: Column({
+          children: [
+            // 헤더
+            Container({
+              padding: EdgeInsets.all(24),
+              decoration: BoxDecoration({
+                border: Border(bottom: BorderSide({ color: '#E0E0E0' }))
+              }),
+              child: Text(title, {
+                style: TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold'
+                })
+              })
+            }),
+            // 내용
+            Expanded({
+              child: SingleChildScrollView({
+                padding: EdgeInsets.all(24),
+                child: Text(content)
+              })
+            }),
+            // 액션 버튼
+            Container({
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration({
+                border: Border(top: BorderSide({ color: '#E0E0E0' }))
+              }),
+              child: Row({
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: actions
+              })
+            })
+          ]
+        })
+      })
+    })
+  });
+};
+```
+
+### 예제 5: 차트 컨테이너
+
+```typescript
+const ChartContainer = ({ data, title }) => {
+  return Container({
+    padding: EdgeInsets.all(16),
+    child: Column({
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, {
+          style: TextStyle({
+            fontSize: 18,
+            fontWeight: 'bold',
+            marginBottom: 16
+          })
+        }),
+        // 차트 영역 (부모 높이의 60%)
+        FractionallySizedBox({
+          heightFactor: 0.6,
+          child: Container({
+            width: double.infinity,
+            decoration: BoxDecoration({
+              color: '#F5F5F5',
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all({ color: '#E0E0E0' })
+            }),
+            child: CustomPaint({
+              painter: ChartPainter({ data }),
+              child: Container() // 차트 그리기 영역
+            })
+          })
+        }),
+        SizedBox({ height: 16 }),
+        // 범례 영역 (남은 공간)
+        Expanded({
+          child: Container({
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration({
+              color: 'white',
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all({ color: '#E0E0E0' })
+            }),
+            child: ChartLegend({ data })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+## 비율 계산 이해
+
+### 기본 계산 공식
+
+```typescript
+// 너비 계산
+childWidth = parentWidth * widthFactor
+
+// 높이 계산  
+childHeight = parentHeight * heightFactor
+
+// 예시
+const parentSize = { width: 400, height: 300 };
+
+FractionallySizedBox({
+  widthFactor: 0.8,    // 400 * 0.8 = 320px
+  heightFactor: 0.6,   // 300 * 0.6 = 180px
+  child: child
+})
+```
+
+### 한 방향만 지정
+
+```typescript
+// 너비만 비율로, 높이는 자식이 결정
+FractionallySizedBox({
+  widthFactor: 0.5,
+  // heightFactor: undefined (기본값)
+  child: child
+})
+
+// 높이만 비율로, 너비는 자식이 결정
+FractionallySizedBox({
+  heightFactor: 0.7,
+  // widthFactor: undefined (기본값)
+  child: child
+})
+```
+
+## 주의사항
+
+- `widthFactor`나 `heightFactor`가 음수이면 오류가 발생합니다
+- 1.0을 초과하는 값은 오버플로우를 일으킬 수 있습니다
+- 무한 제약에서는 예상과 다르게 동작할 수 있습니다
+- 중첩된 FractionallySizedBox 사용 시 복합 비율을 고려해야 합니다
+- 애니메이션과 함께 사용할 때 성능을 고려해야 합니다
+
+## 관련 위젯
+
+- **AspectRatio**: 종횡비 기반 크기 조정
+- **ConstrainedBox**: 제약 조건 기반 크기 조정
+- **SizedBox**: 고정 크기 지정
+- **Expanded**: Flex 내에서의 공간 확장
+- **Flexible**: Flex 내에서의 유연한 크기 조정
