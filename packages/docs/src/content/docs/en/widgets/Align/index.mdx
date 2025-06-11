@@ -3,17 +3,16 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: Align
 title: "Align"
-description: ""
+description: "A widget that aligns its child within itself and optionally sizes itself"
 ---
 
-# Align
+## Overview
 
-This widget motivated by Align in Flutter.
+Align is a widget that aligns its child within itself and optionally sizes itself based on the child's size.
 
-> A widget that aligns its child within itself and optionally sizes itself based on the child's size.
->
-> For example, to align a box at the bottom right, you would pass this box a tight constraint that is bigger than the child's natural size, with an alignment of Alignment.bottomRight.
-> This widget will be as big as possible if its dimensions are constrained and widthFactor and heightFactor are null. If a dimension is unconstrained and the corresponding size factor is null then the widget will match its child's size in that dimension. If a size factor is non-null then the corresponding dimension of this widget will be the product of the child's dimension and the size factor. For example if widthFactor is 2.0 then the width of this widget will always be twice its child's width.
+For example, to align a box at the bottom right, you would pass this box a tight constraint that is bigger than the child's natural size, with an alignment of `Alignment.bottomRight`.
+
+This widget will be as big as possible if its dimensions are constrained and widthFactor and heightFactor are null. If a dimension is unconstrained and the corresponding size factor is null then the widget will match its child's size in that dimension. If a size factor is non-null then the corresponding dimension of this widget will be the product of the child's dimension and the size factor.
 
 <iframe
   width="560"
@@ -27,24 +26,323 @@ This widget motivated by Align in Flutter.
 
 See: [https://api.flutter.dev/flutter/widgets/Align-class.html](https://api.flutter.dev/flutter/widgets/Align-class.html)
 
+## When to use it?
+
+- When aligning a child widget at a specific position within its parent
+- When creating specific ratio margins around a child widget
+- When centering content in dialogs or popups
+- When positioning buttons or icons at specific locations
+- When sizing a parent proportionally to its child's size
+
+## Basic Usage
+
+```typescript
+// Center alignment (default)
+Align({
+  child: Text('Centered text')
+})
+
+// Top right alignment
+Align({
+  alignment: Alignment.topRight,
+  child: Icon(Icons.close)
+})
+
+// Using size factors
+Align({
+  widthFactor: 2.0,
+  heightFactor: 1.5,
+  child: Container({
+    width: 100,
+    height: 100,
+    color: 'blue'
+  })
+})
+```
+
 ## Props
 
 ### alignment
 
 **Value: Alignment** (default: **Alignment.center**)
 
+Specifies the alignment position of the child widget. Alignment consists of x and y values, each ranging from -1.0 to 1.0.
+
+Common Alignment constants:
+- `Alignment.topLeft`: (-1.0, -1.0)
+- `Alignment.topCenter`: (0.0, -1.0)
+- `Alignment.topRight`: (1.0, -1.0)
+- `Alignment.centerLeft`: (-1.0, 0.0)
+- `Alignment.center`: (0.0, 0.0)
+- `Alignment.centerRight`: (1.0, 0.0)
+- `Alignment.bottomLeft`: (-1.0, 1.0)
+- `Alignment.bottomCenter`: (0.0, 1.0)
+- `Alignment.bottomRight`: (1.0, 1.0)
+
+```typescript
+// Custom alignment
+Align({
+  alignment: new Alignment(0.5, -0.5), // Towards top right
+  child: Text('Custom aligned')
+})
+```
+
 ### widthFactor
 
 **Value: number | undefined**
 
-### heightFoctor
+Sets this widget's width as a multiple of the child widget's width. If null, expands to available width.
+
+```typescript
+Align({
+  widthFactor: 1.5, // 1.5 times the child's width
+  child: Container({
+    width: 100,
+    height: 50,
+    color: 'red'
+  })
+})
+// Align's width will be 150
+```
+
+### heightFactor
 
 **Value: number | undefined**
+
+Sets this widget's height as a multiple of the child widget's height. If null, expands to available height.
+
+```typescript
+Align({
+  heightFactor: 2.0, // 2 times the child's height
+  child: Container({
+    width: 100,
+    height: 50,
+    color: 'green'
+  })
+})
+// Align's height will be 100
+```
 
 ### child
 
 **Value: Widget | undefined**
 
-## Examples
+The child widget to be aligned.
 
-### Basic
+## Practical Examples
+
+### Example 1: Close Button Alignment
+
+```typescript
+const DialogWithCloseButton = ({ title, content, onClose }) => {
+  return Container({
+    padding: EdgeInsets.all(20),
+    decoration: BoxDecoration({
+      color: 'white',
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow({
+          color: 'rgba(0, 0, 0, 0.1)',
+          blurRadius: 10,
+          offset: { x: 0, y: 4 }
+        })
+      ]
+    }),
+    child: Stack({
+      children: [
+        Column({
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, {
+              style: TextStyle({
+                fontSize: 20,
+                fontWeight: 'bold'
+              })
+            }),
+            SizedBox({ height: 12 }),
+            Text(content)
+          ]
+        }),
+        Align({
+          alignment: Alignment.topRight,
+          child: GestureDetector({
+            onTap: onClose,
+            child: Icon(Icons.close, { size: 24 })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### Example 2: Loading Indicator Center Alignment
+
+```typescript
+const LoadingOverlay = ({ isLoading, child }) => {
+  return Stack({
+    children: [
+      child,
+      if (isLoading) Container({
+        color: 'rgba(0, 0, 0, 0.5)',
+        child: Align({
+          alignment: Alignment.center,
+          child: Container({
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration({
+              color: 'white',
+              borderRadius: BorderRadius.circular(8)
+            }),
+            child: Column({
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox({ height: 16 }),
+                Text('Loading...')
+              ]
+            })
+          })
+        })
+      })
+    ]
+  });
+};
+```
+
+### Example 3: Badge Positioning
+
+```typescript
+const IconWithBadge = ({ icon, badgeCount }) => {
+  return Container({
+    width: 48,
+    height: 48,
+    child: Stack({
+      children: [
+        Center({
+          child: Icon(icon, { size: 32 })
+        }),
+        if (badgeCount > 0) Align({
+          alignment: Alignment.topRight,
+          child: Container({
+            padding: EdgeInsets.all(4),
+            decoration: BoxDecoration({
+              color: 'red',
+              shape: BoxShape.circle
+            }),
+            constraints: BoxConstraints({
+              minWidth: 20,
+              minHeight: 20
+            }),
+            child: Center({
+              child: Text(badgeCount.toString(), {
+                style: TextStyle({
+                  color: 'white',
+                  fontSize: 12,
+                  fontWeight: 'bold'
+                })
+              })
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### Example 4: Tooltip Alignment
+
+```typescript
+const TooltipWidget = ({ message, child, alignment = Alignment.topCenter }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return Stack({
+    clipBehavior: Clip.none,
+    children: [
+      GestureDetector({
+        onMouseEnter: () => setIsVisible(true),
+        onMouseLeave: () => setIsVisible(false),
+        child: child
+      }),
+      if (isVisible) Align({
+        alignment: alignment,
+        widthFactor: 1.0,
+        child: Transform.translate({
+          offset: { x: 0, y: alignment.y < 0 ? -30 : 30 },
+          child: Container({
+            padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 6 }),
+            decoration: BoxDecoration({
+              color: 'rgba(0, 0, 0, 0.8)',
+              borderRadius: BorderRadius.circular(4)
+            }),
+            child: Text(message, {
+              style: TextStyle({
+                color: 'white',
+                fontSize: 14
+              })
+            })
+          })
+        })
+      })
+    ]
+  });
+};
+```
+
+### Example 5: Responsive Card Layout
+
+```typescript
+const ResponsiveCard = ({ title, subtitle, action }) => {
+  return Container({
+    padding: EdgeInsets.all(16),
+    decoration: BoxDecoration({
+      border: Border.all({ color: '#E0E0E0' }),
+      borderRadius: BorderRadius.circular(8)
+    }),
+    child: Row({
+      children: [
+        Expanded({
+          child: Column({
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, {
+                style: TextStyle({
+                  fontSize: 18,
+                  fontWeight: 'bold'
+                })
+              }),
+              SizedBox({ height: 4 }),
+              Text(subtitle, {
+                style: TextStyle({
+                  color: '#666',
+                  fontSize: 14
+                })
+              })
+            ]
+          })
+        }),
+        Align({
+          alignment: Alignment.centerRight,
+          widthFactor: 1.2,
+          child: action
+        })
+      ]
+    })
+  });
+};
+```
+
+## Important Notes
+
+- widthFactor and heightFactor must be greater than 0
+- alignment values must be between -1.0 and 1.0
+- When child is null and widthFactor or heightFactor is null, the size may become 0
+- Understand the difference between Align and Positioned when using within Stack
+- Using size factors can impact layout performance
+
+## Related Widgets
+
+- **Center**: A special case of Align, always centers content
+- **Positioned**: Absolute positioning within Stack
+- **Container**: Can align children with alignment property
+- **FractionallySizedBox**: Sizes based on parent's dimensions
