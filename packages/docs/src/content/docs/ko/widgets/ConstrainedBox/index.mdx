@@ -3,15 +3,14 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: ConstrainedBox
 title: "ConstrainedBox"
-description: ""
+description: "자식 위젯에 추가 제약 조건을 적용하는 위젯"
 ---
 
-# ConstrainedBox
+## 개요
 
-This widget motivated by ConstrainedBox in Flutter.
+ConstrainedBox는 자식 위젯에 추가적인 제약 조건(constraints)을 적용하는 위젯입니다.
 
-The widget provide additional constraints to the child widget.
-The constrains witch come from parent widget constrain additional constraints.
+이 위젯은 부모로부터 받은 제약 조건과 자체적으로 정의한 제약 조건을 결합하여 자식에게 전달합니다. 이를 통해 자식 위젯의 최소/최대 크기를 제어할 수 있습니다.
 
 <iframe
   width="560"
@@ -23,16 +22,299 @@ The constrains witch come from parent widget constrain additional constraints.
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/ConstrainedBox-class.html](https://api.flutter.dev/flutter/widgets/Container-class.html)
+참조: [https://api.flutter.dev/flutter/widgets/ConstrainedBox-class.html](https://api.flutter.dev/flutter/widgets/ConstrainedBox-class.html)
+
+## 언제 사용하나요?
+
+- 위젯의 최소 또는 최대 크기를 제한하고 싶을 때
+- 자식 위젯이 특정 크기 범위 내에서만 크기를 가지도록 할 때
+- 반응형 레이아웃에서 크기 제한이 필요할 때
+- 스크롤 가능한 영역에서 최소 높이를 보장하고 싶을 때
+- 이미지나 비디오의 최대 크기를 제한할 때
+
+## 기본 사용법
+
+```typescript
+// 최소 크기 설정
+ConstrainedBox({
+  constraints: BoxConstraints({
+    minWidth: 100,
+    minHeight: 100
+  }),
+  child: Container({
+    color: 'blue'
+  })
+})
+
+// 최대 크기 설정
+ConstrainedBox({
+  constraints: BoxConstraints({
+    maxWidth: 200,
+    maxHeight: 200
+  }),
+  child: Container({
+    color: 'red',
+    width: 300,  // 200으로 제한됨
+    height: 300  // 200으로 제한됨
+  })
+})
+
+// 고정 크기 설정
+ConstrainedBox({
+  constraints: BoxConstraints.tight(Size({ width: 150, height: 150 })),
+  child: Container({
+    color: 'green'
+  })
+})
+```
 
 ## Props
 
-### constraints
+### constraints (필수)
 
-**Value: Constraints**
+**값: BoxConstraints**
+
+자식 위젯에 적용할 제약 조건입니다. BoxConstraints는 다음과 같은 속성을 가집니다:
+
+- `minWidth`: 최소 너비 (기본값: 0)
+- `maxWidth`: 최대 너비 (기본값: double.infinity)
+- `minHeight`: 최소 높이 (기본값: 0)
+- `maxHeight`: 최대 높이 (기본값: double.infinity)
+
+```typescript
+// 다양한 제약 조건 예제
+ConstrainedBox({
+  constraints: BoxConstraints({
+    minWidth: 100,
+    maxWidth: 300,
+    minHeight: 50,
+    maxHeight: 200
+  }),
+  child: child
+})
+```
 
 ### child
 
-**Value: Widget | undefined**
+**값: Widget | undefined**
 
-## Basic
+제약 조건이 적용될 자식 위젯입니다.
+
+## BoxConstraints 생성자
+
+BoxConstraints는 여러 편의 생성자를 제공합니다:
+
+```typescript
+// 기본 생성자
+BoxConstraints({
+  minWidth: 0,
+  maxWidth: double.infinity,
+  minHeight: 0,
+  maxHeight: double.infinity
+})
+
+// 타이트한 제약 (고정 크기)
+BoxConstraints.tight(Size({ width: 100, height: 100 }))
+
+// 느슨한 제약 (최대 크기만 제한)
+BoxConstraints.loose(Size({ width: 200, height: 200 }))
+
+// 확장 (부모 크기로 확장)
+BoxConstraints.expand({
+  width: 300,  // 선택적
+  height: 400  // 선택적
+})
+```
+
+## 제약 조건 결합
+
+ConstrainedBox는 부모의 제약 조건과 자신의 제약 조건을 결합합니다:
+
+```typescript
+// 부모 제약: min(50, 50), max(200, 200)
+// ConstrainedBox 제약: min(100, 100), max(150, 150)
+// 결과: min(100, 100), max(150, 150)
+
+Container({
+  constraints: BoxConstraints({
+    minWidth: 50,
+    maxWidth: 200,
+    minHeight: 50,
+    maxHeight: 200
+  }),
+  child: ConstrainedBox({
+    constraints: BoxConstraints({
+      minWidth: 100,
+      maxWidth: 150,
+      minHeight: 100,
+      maxHeight: 150
+    }),
+    child: Container({ color: 'blue' })
+  })
+})
+```
+
+## 실제 사용 예제
+
+### 예제 1: 버튼 최소 크기 보장
+
+```typescript
+const MinSizeButton = ({ onPressed, child, minWidth = 88, minHeight = 36 }) => {
+  return ConstrainedBox({
+    constraints: BoxConstraints({
+      minWidth: minWidth,
+      minHeight: minHeight
+    }),
+    child: ElevatedButton({
+      onPressed: onPressed,
+      child: child
+    })
+  });
+};
+
+// 사용
+MinSizeButton({
+  onPressed: () => console.log('clicked'),
+  child: Text('OK')  // 짧은 텍스트여도 최소 크기 보장
+})
+```
+
+### 예제 2: 이미지 크기 제한
+
+```typescript
+const ConstrainedImage = ({ src, maxSize = 300 }) => {
+  return Container({
+    decoration: BoxDecoration({
+      border: Border.all({ color: '#E0E0E0' }),
+      borderRadius: BorderRadius.circular(8)
+    }),
+    child: ConstrainedBox({
+      constraints: BoxConstraints({
+        maxWidth: maxSize,
+        maxHeight: maxSize
+      }),
+      child: Image({
+        src: src,
+        objectFit: 'contain'
+      })
+    })
+  });
+};
+```
+
+### 예제 3: 반응형 카드
+
+```typescript
+const ResponsiveCard = ({ title, content }) => {
+  return ConstrainedBox({
+    constraints: BoxConstraints({
+      minHeight: 100,
+      maxWidth: 400
+    }),
+    child: Card({
+      child: Padding({
+        padding: EdgeInsets.all(16),
+        child: Column({
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(title, {
+              style: TextStyle({
+                fontSize: 20,
+                fontWeight: 'bold'
+              })
+            }),
+            SizedBox({ height: 8 }),
+            Text(content, {
+              style: TextStyle({
+                fontSize: 16,
+                color: '#666'
+              })
+            })
+          ]
+        })
+      })
+    })
+  });
+};
+```
+
+### 예제 4: 스크롤 영역 최소 높이
+
+```typescript
+const ScrollableContent = ({ children, minHeight = 300 }) => {
+  return SingleChildScrollView({
+    child: ConstrainedBox({
+      constraints: BoxConstraints({
+        minHeight: minHeight
+      }),
+      child: Column({
+        children: children
+      })
+    })
+  });
+};
+```
+
+### 예제 5: 종횡비를 유지하는 제한된 박스
+
+```typescript
+const ConstrainedAspectBox = ({ 
+  child, 
+  aspectRatio = 16/9, 
+  maxWidth = 600 
+}) => {
+  return ConstrainedBox({
+    constraints: BoxConstraints({
+      maxWidth: maxWidth
+    }),
+    child: AspectRatio({
+      aspectRatio: aspectRatio,
+      child: Container({
+        decoration: BoxDecoration({
+          color: '#F5F5F5',
+          borderRadius: BorderRadius.circular(12)
+        }),
+        child: child
+      })
+    })
+  });
+};
+
+// 사용 예: 비디오 플레이어
+ConstrainedAspectBox({
+  aspectRatio: 16/9,
+  maxWidth: 800,
+  child: VideoPlayer({ url: 'video.mp4' })
+})
+```
+
+## 중첩된 ConstrainedBox
+
+여러 ConstrainedBox를 중첩할 때는 가장 제한적인 제약이 적용됩니다:
+
+```typescript
+ConstrainedBox({
+  constraints: BoxConstraints({ minWidth: 200, minHeight: 200 }),
+  child: ConstrainedBox({
+    constraints: BoxConstraints({ minWidth: 100, minHeight: 100 }),
+    child: Container({ color: 'blue' })
+  })
+})
+// 결과: 최소 크기는 200x200
+```
+
+## 주의사항
+
+- 부모의 제약 조건은 항상 우선시됩니다
+- 충돌하는 제약 조건은 가장 제한적인 것이 적용됩니다
+- 무한 크기 제약에서는 자식의 고유 크기가 사용됩니다
+- 너무 많은 중첩은 레이아웃 성능에 영향을 줄 수 있습니다
+- tight 제약은 자식의 크기를 완전히 무시합니다
+
+## 관련 위젯
+
+- **Container**: constraints 속성으로 동일한 기능 제공
+- **SizedBox**: 고정 크기를 설정하는 간단한 방법
+- **LimitedBox**: 무한 제약에서만 크기를 제한
+- **UnconstrainedBox**: 자식의 제약을 제거
