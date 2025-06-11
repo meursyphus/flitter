@@ -3,43 +3,532 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: OverflowBox
 title: "OverflowBox"
-description: ""
+description: "부모와 다른 제약 조건을 자식에 적용하여 오버플로우를 허용하는 위젯"
 ---
 
-# OverflowBox
+## 개요
 
-This widget motivated by OverflowBox in Flutter.
+OverflowBox는 부모로부터 받은 제약 조건과 다른 제약 조건을 자식에게 적용하는 위젯으로, 자식이 부모 영역을 벗어나도록 허용할 수 있습니다.
 
-> A widget that imposes different constraints on its child than it gets from its parent, possibly allowing the child to overflow the parent.
+이 위젯은 자식이 부모의 크기 제한을 무시하고 더 크거나 작은 크기를 가질 수 있도록 할 때 유용합니다. 예를 들어, 작은 컨테이너 안에 큰 아이콘이나 이미지를 표시할 때 사용할 수 있습니다.
 
-See: [https://api.flutter.dev/flutter/widgets/OverflowBox-class.html](https://api.flutter.dev/flutter/widgets/OverflowBox-class.html)
+참조: [https://api.flutter.dev/flutter/widgets/OverflowBox-class.html](https://api.flutter.dev/flutter/widgets/OverflowBox-class.html)
+
+## 언제 사용하나요?
+
+- 자식이 부모 크기를 초과해야 할 때
+- 팝업이나 툴팁처럼 부모 영역 밖으로 나가는 UI를 만들 때
+- 애니메이션 중 일시적으로 크기가 확장되는 효과를 만들 때
+- 부모 제약을 무시하고 고정 크기를 가져야 할 때
+- 오버레이 효과나 뱃지처럼 부모 경계를 넘는 요소를 만들 때
+
+## 기본 사용법
+
+```typescript
+// 부모보다 큰 자식 허용
+Container({
+  width: 100,
+  height: 100,
+  color: 'blue',
+  child: OverflowBox({
+    maxWidth: 200,
+    maxHeight: 200,
+    child: Container({
+      width: 150,
+      height: 150,
+      color: 'red'
+    })
+  })
+})
+
+// 부모보다 작은 자식 강제
+Container({
+  width: 200,
+  height: 200,
+  color: 'green',
+  child: OverflowBox({
+    maxWidth: 100,
+    maxHeight: 100,
+    child: Container({
+      color: 'yellow'
+    })
+  })
+})
+
+// 특정 크기로 고정
+OverflowBox({
+  minWidth: 150,
+  maxWidth: 150,
+  minHeight: 150,
+  maxHeight: 150,
+  child: Container({
+    color: 'purple'
+  })
+})
+```
 
 ## Props
 
-### maxWidth
-
-**Value: number | undefined**
-
-### maxHeight
-
-**Value: number | undefined**
-
 ### minWidth
 
-**Value: number | undefined**
+**값: number | undefined**
+
+자식에게 적용할 최소 너비 제약입니다.
+
+`undefined`인 경우 부모의 최소 너비 제약을 사용합니다.
+
+```typescript
+OverflowBox({
+  minWidth: 100,  // 자식은 최소 100 너비
+  child: child
+})
+```
+
+### maxWidth
+
+**값: number | undefined**
+
+자식에게 적용할 최대 너비 제약입니다.
+
+`undefined`인 경우 부모의 최대 너비 제약을 사용합니다.
+
+```typescript
+OverflowBox({
+  maxWidth: 300,  // 자식은 최대 300 너비
+  child: child
+})
+```
 
 ### minHeight
 
-**Value: number | undefined**
+**값: number | undefined**
+
+자식에게 적용할 최소 높이 제약입니다.
+
+`undefined`인 경우 부모의 최소 높이 제약을 사용합니다.
+
+```typescript
+OverflowBox({
+  minHeight: 50,  // 자식은 최소 50 높이
+  child: child
+})
+```
+
+### maxHeight
+
+**값: number | undefined**
+
+자식에게 적용할 최대 높이 제약입니다.
+
+`undefined`인 경우 부모의 최대 높이 제약을 사용합니다.
+
+```typescript
+OverflowBox({
+  maxHeight: 200,  // 자식은 최대 200 높이
+  child: child
+})
+```
 
 ### alignment
 
-**Value: Alignment** (default: **Alignment.center**)
+**값: Alignment** (기본값: **Alignment.center**)
+
+자식이 부모와 다른 크기일 때 정렬 방법입니다.
+
+```typescript
+OverflowBox({
+  maxWidth: 200,
+  maxHeight: 200,
+  alignment: Alignment.topRight,  // 오른쪽 위로 정렬
+  child: child
+})
+```
 
 ### child
 
-**Value: Widget | undefined**
+**값: Widget | undefined**
 
-## Examples
+새로운 제약 조건이 적용될 자식 위젯입니다.
 
-### Basic
+## 실제 사용 예제
+
+### 예제 1: 플로팅 액션 버튼 뱃지
+
+```typescript
+const FloatingActionButtonWithBadge = ({ count, onPressed }) => {
+  return Container({
+    width: 56,
+    height: 56,
+    child: Stack({
+      children: [
+        // FAB
+        FloatingActionButton({
+          onPressed,
+          child: Icon(Icons.shopping_cart)
+        }),
+        // 뱃지 (부모 영역을 벗어남)
+        Positioned({
+          top: 0,
+          right: 0,
+          child: OverflowBox({
+            maxWidth: 30,
+            maxHeight: 30,
+            child: Container({
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration({
+                color: 'red',
+                shape: BoxShape.circle,
+                border: Border.all({ 
+                  color: 'white', 
+                  width: 2 
+                })
+              }),
+              child: Center({
+                child: Text(count.toString(), {
+                  style: TextStyle({
+                    color: 'white',
+                    fontSize: 12,
+                    fontWeight: 'bold'
+                  })
+                })
+              })
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 2: 확대 미리보기
+
+```typescript
+const ZoomPreview = ({ image, zoomLevel = 2.0 }) => {
+  const [isHovering, setIsHovering] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  
+  return GestureDetector({
+    onHover: (event) => {
+      setIsHovering(true);
+      setMousePosition({ x: event.localPosition.x, y: event.localPosition.y });
+    },
+    onHoverExit: () => setIsHovering(false),
+    child: Container({
+      width: 300,
+      height: 300,
+      child: Stack({
+        children: [
+          // 원본 이미지
+          Image({
+            src: image,
+            objectFit: 'cover'
+          }),
+          // 확대된 영역
+          if (isHovering) Positioned({
+            left: mousePosition.x - 50,
+            top: mousePosition.y - 50,
+            child: OverflowBox({
+              maxWidth: 200,
+              maxHeight: 200,
+              child: Container({
+                width: 100 * zoomLevel,
+                height: 100 * zoomLevel,
+                decoration: BoxDecoration({
+                  border: Border.all({ 
+                    color: 'white', 
+                    width: 2 
+                  }),
+                  borderRadius: BorderRadius.circular(50),
+                  boxShadow: [
+                    BoxShadow({
+                      color: 'rgba(0,0,0,0.3)',
+                      blurRadius: 10,
+                      spreadRadius: 2
+                    })
+                  ]
+                }),
+                child: ClipOval({
+                  child: Transform.scale({
+                    scale: zoomLevel,
+                    child: Transform.translate({
+                      offset: {
+                        x: -mousePosition.x,
+                        y: -mousePosition.y
+                      },
+                      child: Image({
+                        src: image,
+                        objectFit: 'cover'
+                      })
+                    })
+                  })
+                })
+              })
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### 예제 3: 커스텀 툴팁
+
+```typescript
+const CustomTooltip = ({ text, child }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  
+  return MouseRegion({
+    onEnter: () => setIsVisible(true),
+    onExit: () => setIsVisible(false),
+    child: Stack({
+      clipBehavior: Clip.none,
+      children: [
+        child,
+        if (isVisible) Positioned({
+          top: -40,
+          left: 0,
+          right: 0,
+          child: OverflowBox({
+            maxWidth: 300,  // 부모보다 넓은 툴팁 허용
+            child: Container({
+              padding: EdgeInsets.symmetric({ 
+                horizontal: 12, 
+                vertical: 8 
+              }),
+              decoration: BoxDecoration({
+                color: 'rgba(0,0,0,0.8)',
+                borderRadius: BorderRadius.circular(6),
+                boxShadow: [
+                  BoxShadow({
+                    color: 'rgba(0,0,0,0.2)',
+                    blurRadius: 4,
+                    offset: { x: 0, y: 2 }
+                  })
+                ]
+              }),
+              child: Row({
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon({
+                    icon: Icons.info,
+                    size: 14,
+                    color: 'white'
+                  }),
+                  SizedBox({ width: 6 }),
+                  Text(text, {
+                    style: TextStyle({
+                      color: 'white',
+                      fontSize: 12
+                    })
+                  })
+                ]
+              })
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 4: 펄스 애니메이션 효과
+
+```typescript
+const PulseAnimation = ({ child, color = 'blue' }) => {
+  const [scale, setScale] = useState(1.0);
+  const [opacity, setOpacity] = useState(0.5);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setScale(s => s === 1.0 ? 1.5 : 1.0);
+      setOpacity(o => o === 0.5 ? 0.0 : 0.5);
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  return Container({
+    width: 100,
+    height: 100,
+    child: Stack({
+      children: [
+        // 펄스 효과 (부모보다 큼)
+        Center({
+          child: OverflowBox({
+            maxWidth: 150,
+            maxHeight: 150,
+            child: AnimatedContainer({
+              duration: Duration.milliseconds(1000),
+              width: 100 * scale,
+              height: 100 * scale,
+              decoration: BoxDecoration({
+                color: color,
+                shape: BoxShape.circle,
+                opacity: opacity
+              })
+            })
+          })
+        }),
+        // 실제 콘텐츠
+        Center({ child })
+      ]
+    })
+  });
+};
+```
+
+### 예제 5: 드롭다운 메뉴
+
+```typescript
+const CustomDropdown = ({ options, value, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  return Container({
+    width: 200,
+    height: 48,
+    child: Stack({
+      clipBehavior: Clip.none,
+      children: [
+        // 드롭다운 버튼
+        GestureDetector({
+          onTap: () => setIsOpen(!isOpen),
+          child: Container({
+            padding: EdgeInsets.symmetric({ horizontal: 16 }),
+            decoration: BoxDecoration({
+              color: 'white',
+              border: Border.all({ color: '#E0E0E0' }),
+              borderRadius: BorderRadius.circular(8)
+            }),
+            child: Row({
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(value || 'Select...'),
+                Icon({
+                  icon: isOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down
+                })
+              ]
+            })
+          })
+        }),
+        // 드롭다운 메뉴 (부모 너비를 초과할 수 있음)
+        if (isOpen) Positioned({
+          top: 52,
+          left: 0,
+          child: OverflowBox({
+            maxWidth: 300,  // 옵션이 길어도 표시 가능
+            child: Container({
+              constraints: BoxConstraints({
+                minWidth: 200  // 최소 부모 너비만큼
+              }),
+              decoration: BoxDecoration({
+                color: 'white',
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow({
+                    color: 'rgba(0,0,0,0.15)',
+                    blurRadius: 8,
+                    offset: { x: 0, y: 4 }
+                  })
+                ]
+              }),
+              child: Column({
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: options.map((option, index) => 
+                  GestureDetector({
+                    onTap: () => {
+                      onChange(option);
+                      setIsOpen(false);
+                    },
+                    child: Container({
+                      width: double.infinity,
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration({
+                        border: index > 0 
+                          ? Border(top: BorderSide({ color: '#F0F0F0' }))
+                          : null
+                      }),
+                      child: Text(option, {
+                        style: TextStyle({
+                          color: value === option ? '#1976D2' : '#333'
+                        })
+                      })
+                    })
+                  })
+                )
+              })
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+## 크기 동작 이해
+
+### OverflowBox의 크기 결정
+
+```typescript
+// OverflowBox 자체는 부모 제약을 따름
+Container({
+  width: 100,
+  height: 100,
+  color: 'blue',
+  child: OverflowBox({
+    maxWidth: 200,
+    maxHeight: 200,
+    child: Container({
+      width: 150,
+      height: 150,
+      color: 'red'  // 파란 영역을 벗어나 보임
+    })
+  })
+})
+
+// OverflowBox 크기: 100x100 (부모 제약)
+// 자식 크기: 150x150 (OverflowBox 제약)
+```
+
+### 제약 조건 상속
+
+```typescript
+// 일부 제약만 변경
+OverflowBox({
+  maxWidth: 300,  // 너비만 변경
+  // minWidth: 부모에서 상속
+  // minHeight: 부모에서 상속
+  // maxHeight: 부모에서 상속
+  child: child
+})
+
+// 모든 제약 변경
+OverflowBox({
+  minWidth: 100,
+  maxWidth: 200,
+  minHeight: 50,
+  maxHeight: 150,
+  child: child
+})
+```
+
+## 주의사항
+
+- OverflowBox는 자식이 부모 영역을 벗어나도록 허용하므로 레이아웃 문제를 일으킬 수 있습니다
+- 오버플로우된 영역은 클리핑되지 않으므로 다른 위젯과 겹칠 수 있습니다
+- Stack과 함께 사용할 때는 `clipBehavior: Clip.none`을 설정해야 합니다
+- 터치 이벤트는 부모 영역 내에서만 감지됩니다
+- 성능상 과도한 오버플로우는 피하는 것이 좋습니다
+
+## 관련 위젯
+
+- **UnconstrainedBox**: 모든 제약을 제거하는 위젯
+- **ConstrainedBox**: 추가 제약을 적용하는 위젯
+- **SizedBox**: 고정 크기를 지정하는 위젯
+- **LimitedBox**: 무한 제약에서만 크기를 제한하는 위젯
+- **FittedBox**: 자식을 부모에 맞게 스케일링하는 위젯
