@@ -3,11 +3,14 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: Stack
 title: "Stack"
-description: ""
+description: "자식 위젯을 겹쳐서 배치하는 레이아웃 위젯"
 ---
 
-This is **Stack** widget.
-This widget motivated by Stack in Flutter.
+## 개요
+
+Stack은 자식 위젯들을 겹쳐서 배치하는 레이아웃 위젯입니다.
+
+Stack을 사용하면 여러 위젯을 z축 방향으로 쌓아 올릴 수 있습니다. 자식 위젯들은 순서대로 그려지므로, 배열의 마지막 요소가 가장 위에 표시됩니다. Positioned 위젯과 함께 사용하면 Stack 내에서 위젯의 정확한 위치를 지정할 수 있습니다.
 
 <iframe
   width="560"
@@ -19,21 +22,317 @@ This widget motivated by Stack in Flutter.
   allowfullscreen
 ></iframe>
 
-See: https://api.flutter.dev/flutter/widgets/Stack-class.html
+참고: https://api.flutter.dev/flutter/widgets/Stack-class.html
+
+## 언제 사용하나요?
+
+- 배경 이미지 위에 텍스트나 버튼을 올릴 때
+- 플로팅 액션 버튼처럼 화면 특정 위치에 위젯을 고정할 때
+- 배지(Badge)나 알림 표시를 아이콘 위에 겹칠 때
+- 카드 위에 태그나 라벨을 표시할 때
+- 커스텀 오버레이 효과를 만들 때
+
+## 기본 사용법
+
+```typescript
+// 간단한 Stack 예제
+const stack = Stack({
+  children: [
+    Container({ width: 200, height: 200, color: 'blue' }),
+    Container({ width: 150, height: 150, color: 'red' }),
+    Container({ width: 100, height: 100, color: 'green' })
+  ]
+});
+
+// Positioned와 함께 사용
+const positionedStack = Stack({
+  children: [
+    Container({ color: 'lightgray' }), // 배경
+    Positioned({
+      top: 20,
+      left: 20,
+      child: Text('왼쪽 상단')
+    }),
+    Positioned({
+      bottom: 20,
+      right: 20,
+      child: Text('오른쪽 하단')
+    })
+  ]
+});
+```
+
+## Props
+
+### children (필수)
+
+**값: Widget[]**
+
+Stack에 표시할 자식 위젯들의 배열입니다. 배열 순서대로 아래에서 위로 쌓입니다.
+
+```typescript
+Stack({
+  children: [
+    Image({ src: 'background.jpg' }), // 맨 아래
+    Container({ color: 'rgba(0,0,0,0.5)' }), // 중간 (반투명 오버레이)
+    Text('Overlay Text') // 맨 위
+  ]
+})
+```
 
 ### alignment
 
-**Value: Alignment**(default: **Alignment.topLeft**)
+**값: Alignment** (기본값: **Alignment.topLeft**)
+
+Positioned로 감싸지 않은 자식 위젯들의 정렬 방식을 정의합니다.
+
+- **Alignment.topLeft**: 왼쪽 상단 정렬 (기본값)
+- **Alignment.center**: 중앙 정렬
+- **Alignment.bottomRight**: 오른쪽 하단 정렬
+- 기타 모든 Alignment 값 사용 가능
+
+```typescript
+Stack({
+  alignment: Alignment.center,
+  children: [
+    Container({ width: 200, height: 200, color: 'blue' }),
+    Container({ width: 100, height: 100, color: 'red' }) // 중앙에 배치
+  ]
+})
+```
+
+### fit
+
+**값: StackFit** (기본값: **StackFit.loose**)
+
+Positioned로 감싸지 않은 자식 위젯들의 크기 제약 방식을 정의합니다.
+
+- **StackFit.loose**: 자식이 필요한 만큼만 공간 사용 (기본값)
+- **StackFit.expand**: 자식이 Stack의 전체 크기로 확장
+- **StackFit.passthrough**: Stack의 제약을 그대로 자식에게 전달
+
+```typescript
+Stack({
+  fit: StackFit.expand,
+  children: [
+    Container({ color: 'blue' }), // Stack 전체 크기로 확장
+    Center({
+      child: Text('Centered Text')
+    })
+  ]
+})
+```
 
 ### clipped
 
-**Value: boolean**(default: **true**)
+**값: boolean** (기본값: **false**)
 
-### sizing
+Stack 영역을 벗어나는 자식 위젯을 잘라낼지 여부를 결정합니다.
 
-**Value: StackFit**(default: **StackFit.loose**)
+```typescript
+Stack({
+  clipped: true,
+  children: [
+    Container({ width: 100, height: 100, color: 'blue' }),
+    Positioned({
+      top: -10, // Stack 영역 밖
+      left: -10,
+      child: Container({ width: 50, height: 50, color: 'red' })
+    })
+  ]
+})
+```
 
-### children
+## Positioned 위젯
 
-**Value: Widget[]**
-`
+Stack 내에서 자식 위젯의 정확한 위치를 지정하는 위젯입니다.
+
+### Positioned Props
+
+- **top**: 상단으로부터의 거리
+- **bottom**: 하단으로부터의 거리
+- **left**: 왼쪽으로부터의 거리
+- **right**: 오른쪽으로부터의 거리
+- **width**: 너비 지정
+- **height**: 높이 지정
+- **child**: 위치를 지정할 자식 위젯
+
+```typescript
+Positioned({
+  top: 10,
+  left: 10,
+  width: 100,
+  height: 50,
+  child: Container({ color: 'red' })
+})
+```
+
+### Positioned.fill()
+
+Stack 전체를 채우는 Positioned 위젯을 생성합니다.
+
+```typescript
+Stack({
+  children: [
+    Image({ src: 'background.jpg' }),
+    Positioned.fill({
+      child: Container({ 
+        color: 'rgba(0, 0, 0, 0.5)' // 반투명 오버레이
+      })
+    })
+  ]
+})
+```
+
+## 실제 사용 예제
+
+### 예제 1: 프로필 카드 with 배지
+
+```typescript
+const profileCard = Container({
+  width: 120,
+  height: 120,
+  child: Stack({
+    children: [
+      // 프로필 이미지
+      Container({
+        decoration: BoxDecoration({
+          shape: 'circle',
+          color: 'gray'
+        }),
+        child: Icon({ 
+          icon: Icons.person, 
+          size: 80,
+          color: 'white' 
+        })
+      }),
+      // 온라인 상태 표시
+      Positioned({
+        bottom: 0,
+        right: 0,
+        child: Container({
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration({
+            shape: 'circle',
+            color: 'green',
+            border: Border.all({ color: 'white', width: 3 })
+          })
+        })
+      })
+    ]
+  })
+});
+```
+
+### 예제 2: 이미지 갤러리 with 오버레이
+
+```typescript
+const galleryItem = Container({
+  width: 300,
+  height: 200,
+  child: Stack({
+    fit: StackFit.expand,
+    children: [
+      // 배경 이미지
+      Image({
+        src: 'gallery-image.jpg',
+        fit: 'cover'
+      }),
+      // 그라데이션 오버레이
+      Positioned.fill({
+        child: Container({
+          decoration: BoxDecoration({
+            gradient: LinearGradient({
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: ['transparent', 'rgba(0,0,0,0.7)']
+            })
+          })
+        })
+      }),
+      // 텍스트 정보
+      Positioned({
+        bottom: 20,
+        left: 20,
+        right: 20,
+        child: Column({
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Image Title', {
+              style: TextStyle({ 
+                color: 'white', 
+                fontSize: 20, 
+                fontWeight: 'bold' 
+              })
+            }),
+            Text('By Photographer Name', {
+              style: TextStyle({ 
+                color: 'rgba(255,255,255,0.8)', 
+                fontSize: 14 
+              })
+            })
+          ]
+        })
+      })
+    ]
+  })
+});
+```
+
+### 예제 3: 플로팅 액션 버튼
+
+```typescript
+const screenWithFAB = Stack({
+  children: [
+    // 메인 컨텐츠
+    SingleChildScrollView({
+      child: Column({
+        children: [
+          // ... 컨텐츠 위젯들
+        ]
+      })
+    }),
+    // 플로팅 액션 버튼
+    Positioned({
+      bottom: 16,
+      right: 16,
+      child: Container({
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration({
+          shape: 'circle',
+          color: 'blue',
+          boxShadow: [
+            BoxShadow({
+              color: 'rgba(0,0,0,0.3)',
+              blurRadius: 6,
+              offset: { x: 0, y: 3 }
+            })
+          ]
+        }),
+        child: Icon({ 
+          icon: Icons.add, 
+          color: 'white' 
+        })
+      })
+    })
+  ]
+})
+```
+
+## 주의사항
+
+- Stack의 크기는 Positioned로 감싸지 않은 자식 중 가장 큰 위젯에 의해 결정됩니다.
+- Positioned 위젯은 반드시 Stack의 직접적인 자식이어야 합니다.
+- `top`과 `bottom`을 동시에 지정하면 `height`는 무시됩니다.
+- `left`와 `right`를 동시에 지정하면 `width`는 무시됩니다.
+- Stack 내부에서 무한 크기를 가진 위젯(예: ListView)을 사용할 때는 크기 제약을 명시해야 합니다.
+
+## 관련 위젯
+
+- **Positioned**: Stack 내에서 위젯의 위치를 지정
+- **Align**: 단일 자식을 정렬하는 더 간단한 방법
+- **IndexedStack**: 여러 자식 중 하나만 표시
+- **CustomMultiChildLayout**: 더 복잡한 레이아웃이 필요할 때
+- **Overlay**: 앱 전체에서 위젯을 겹쳐 표시
