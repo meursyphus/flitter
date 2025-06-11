@@ -3,12 +3,14 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: GestureDetector
 title: "GestureDetector"
-description: ""
+description: "사용자의 제스처와 마우스 이벤트를 감지하는 위젯"
 ---
 
-# DecoratedBox
+## 개요
 
-This widget detect user interaction event like GestureDetector Widget in Flutter.
+GestureDetector는 사용자의 제스처와 마우스 이벤트를 감지하는 위젯입니다.
+
+GestureDetector는 자식 위젯을 감싸서 다양한 사용자 상호작용 이벤트를 감지하고 처리할 수 있게 해줍니다. 클릭, 마우스 이동, 드래그 등 다양한 이벤트 핸들러를 제공하여 인터랙티브한 UI를 구현할 수 있습니다. 이벤트는 자식 위젯의 영역 내에서만 감지됩니다.
 
 <iframe
   width="560"
@@ -20,16 +22,500 @@ This widget detect user interaction event like GestureDetector Widget in Flutter
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/GestureDetector-class.html](https://api.flutter.dev/flutter/widgets/GestureDetector-class.html)
+참고: [https://api.flutter.dev/flutter/widgets/GestureDetector-class.html](https://api.flutter.dev/flutter/widgets/GestureDetector-class.html)
+
+## 언제 사용하나요?
+
+- 버튼이나 카드에 클릭 이벤트를 추가할 때
+- 드래그 앤 드롭 기능을 구현할 때
+- 호버 효과를 적용할 때
+- 커스텀 인터랙티브 위젯을 만들 때
+- 마우스 위치를 추적해야 할 때
+
+## 기본 사용법
+
+```typescript
+GestureDetector({
+  onClick: (e) => {
+    console.log('클릭됨!');
+  },
+  child: Container({
+    width: 100,
+    height: 100,
+    color: 'blue',
+    child: Center({
+      child: Text('클릭하세요')
+    })
+  })
+})
+```
 
 ## Props
 
 ### onClick
 
-**Value: (() => void) | undefined**
+**값: ((e: MouseEvent) => void) | undefined**
+
+마우스 클릭 시 호출되는 콜백 함수입니다.
+
+```typescript
+GestureDetector({
+  onClick: (e) => {
+    console.log(`클릭 위치: ${e.clientX}, ${e.clientY}`);
+  },
+  child: Text('클릭 가능한 텍스트')
+})
+```
+
+### onMouseDown
+
+**값: ((e: MouseEvent) => void) | undefined**
+
+마우스 버튼을 누를 때 호출되는 콜백 함수입니다.
+
+```typescript
+GestureDetector({
+  onMouseDown: (e) => {
+    console.log('마우스 버튼 눌림');
+  },
+  child: Container({ width: 100, height: 100 })
+})
+```
+
+### onMouseUp
+
+**값: ((e: MouseEvent) => void) | undefined**
+
+마우스 버튼을 뗄 때 호출되는 콜백 함수입니다.
+
+```typescript
+GestureDetector({
+  onMouseUp: (e) => {
+    console.log('마우스 버튼 뗌');
+  },
+  child: Container({ width: 100, height: 100 })
+})
+```
+
+### onMouseMove
+
+**값: ((e: MouseEvent) => void) | undefined**
+
+마우스가 움직일 때 호출되는 콜백 함수입니다.
+
+```typescript
+GestureDetector({
+  onMouseMove: (e) => {
+    console.log(`마우스 위치: ${e.clientX}, ${e.clientY}`);
+  },
+  child: Container({ width: 200, height: 200 })
+})
+```
+
+### onMouseEnter
+
+**값: ((e: MouseEvent) => void) | undefined**
+
+마우스가 위젯 영역에 진입할 때 호출되는 콜백 함수입니다.
+
+```typescript
+GestureDetector({
+  onMouseEnter: (e) => {
+    console.log('마우스 진입');
+  },
+  child: Container({ color: 'gray' })
+})
+```
+
+### onMouseLeave
+
+**값: ((e: MouseEvent) => void) | undefined**
+
+마우스가 위젯 영역을 벗어날 때 호출되는 콜백 함수입니다.
+
+```typescript
+GestureDetector({
+  onMouseLeave: (e) => {
+    console.log('마우스 떠남');
+  },
+  child: Container({ color: 'gray' })
+})
+```
+
+### onMouseOver
+
+**값: ((e: MouseEvent) => void) | undefined**
+
+마우스가 위젯 위에 있을 때 호출되는 콜백 함수입니다.
+
+```typescript
+GestureDetector({
+  onMouseOver: (e) => {
+    console.log('마우스 오버');
+  },
+  child: Container({ width: 100, height: 100 })
+})
+```
+
+### onDragStart
+
+**값: ((e: MouseEvent) => void) | undefined**
+
+드래그를 시작할 때 호출되는 콜백 함수입니다. onMouseDown 이벤트와 함께 발생합니다.
+
+```typescript
+GestureDetector({
+  onDragStart: (e) => {
+    console.log('드래그 시작');
+  },
+  child: Container({ width: 50, height: 50, color: 'red' })
+})
+```
+
+### onDragMove
+
+**값: ((e: MouseEvent) => void) | undefined**
+
+드래그 중일 때 호출되는 콜백 함수입니다.
+
+```typescript
+let position = { x: 0, y: 0 };
+
+GestureDetector({
+  onDragMove: (e) => {
+    position.x += e.movementX;
+    position.y += e.movementY;
+    console.log(`드래그 위치: ${position.x}, ${position.y}`);
+  },
+  child: Container({ width: 50, height: 50 })
+})
+```
+
+### onDragEnd
+
+**값: ((e: MouseEvent) => void) | undefined**
+
+드래그를 끝낼 때 호출되는 콜백 함수입니다.
+
+```typescript
+GestureDetector({
+  onDragEnd: (e) => {
+    console.log('드래그 종료');
+  },
+  child: Container({ width: 50, height: 50 })
+})
+```
+
+### onWheel
+
+**값: ((e: WheelEvent) => void) | undefined**
+
+마우스 휠을 사용할 때 호출되는 콜백 함수입니다.
+
+```typescript
+GestureDetector({
+  onWheel: (e) => {
+    console.log(`휠 델타: ${e.deltaY}`);
+    e.preventDefault(); // 기본 스크롤 방지
+  },
+  child: Container({ width: 200, height: 200 })
+})
+```
+
+### cursor
+
+**값: Cursor** (기본값: **"pointer"**)
+
+마우스 커서의 모양을 지정합니다.
+
+사용 가능한 커서 타입:
+- `"pointer"`: 손가락 모양 (기본값)
+- `"default"`: 기본 화살표
+- `"move"`: 이동 커서
+- `"text"`: 텍스트 선택 커서
+- `"wait"`: 대기 커서
+- `"help"`: 도움말 커서
+- `"crosshair"`: 십자선
+- `"grab"`: 잡기 커서
+- `"grabbing"`: 잡는 중 커서
+- `"not-allowed"`: 금지 커서
+- 리사이즈 커서: `"n-resize"`, `"e-resize"`, `"s-resize"`, `"w-resize"` 등
+
+```typescript
+GestureDetector({
+  cursor: 'grab',
+  onDragStart: () => setState(() => cursor = 'grabbing'),
+  onDragEnd: () => setState(() => cursor = 'grab'),
+  child: Container({ width: 100, height: 100 })
+})
+```
 
 ### child
 
-**Value: Widget | undefined**
+**값: Widget | undefined**
 
-## Basic
+이벤트를 감지할 자식 위젯입니다.
+
+```typescript
+GestureDetector({
+  onClick: () => console.log('클릭!'),
+  child: Container({
+    padding: EdgeInsets.all(20),
+    color: 'blue',
+    child: Text('클릭 가능한 영역')
+  })
+})
+```
+
+## 실제 사용 예제
+
+### 예제 1: 인터랙티브 버튼
+
+```typescript
+const InteractiveButton = () => {
+  const [isPressed, setIsPressed] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
+  return GestureDetector({
+    onMouseDown: () => setIsPressed(true),
+    onMouseUp: () => setIsPressed(false),
+    onMouseEnter: () => setIsHovered(true),
+    onMouseLeave: () => {
+      setIsHovered(false);
+      setIsPressed(false);
+    },
+    onClick: () => console.log('버튼 클릭됨!'),
+    cursor: 'pointer',
+    child: Container({
+      padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+      decoration: BoxDecoration({
+        color: isPressed ? '#1976D2' : (isHovered ? '#2196F3' : '#42A5F5'),
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: isPressed ? [] : [
+          BoxShadow({
+            color: 'rgba(0, 0, 0, 0.2)',
+            blurRadius: 4,
+            offset: { x: 0, y: 2 }
+          })
+        ]
+      }),
+      child: Text('커스텀 버튼', {
+        style: TextStyle({ color: 'white', fontWeight: 'bold' })
+      })
+    })
+  });
+};
+```
+
+### 예제 2: 드래그 가능한 요소
+
+```typescript
+const DraggableBox = () => {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+
+  return Transform({
+    transform: Matrix4.translation(position.x, position.y, 0),
+    child: GestureDetector({
+      onDragStart: () => setIsDragging(true),
+      onDragMove: (e) => {
+        setPosition(prev => ({
+          x: prev.x + e.movementX,
+          y: prev.y + e.movementY
+        }));
+      },
+      onDragEnd: () => setIsDragging(false),
+      cursor: isDragging ? 'grabbing' : 'grab',
+      child: Container({
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration({
+          color: isDragging ? 'orange' : 'blue',
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow({
+              color: 'rgba(0, 0, 0, 0.3)',
+              blurRadius: isDragging ? 8 : 4,
+              offset: { x: 0, y: isDragging ? 4 : 2 }
+            })
+          ]
+        }),
+        child: Center({
+          child: Text('드래그하세요', {
+            style: TextStyle({ color: 'white' })
+          })
+        })
+      })
+    })
+  });
+};
+```
+
+### 예제 3: 마우스 추적기
+
+```typescript
+const MouseTracker = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isInside, setIsInside] = useState(false);
+
+  return GestureDetector({
+    onMouseMove: (e) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      setMousePosition({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      });
+    },
+    onMouseEnter: () => setIsInside(true),
+    onMouseLeave: () => setIsInside(false),
+    child: Container({
+      width: 300,
+      height: 200,
+      color: 'lightgray',
+      child: Stack({
+        children: [
+          if (isInside) Positioned({
+            left: mousePosition.x - 10,
+            top: mousePosition.y - 10,
+            child: Container({
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration({
+                color: 'red',
+                borderRadius: BorderRadius.circular(10)
+              })
+            })
+          }),
+          Center({
+            child: Text(`마우스 위치: ${Math.round(mousePosition.x)}, ${Math.round(mousePosition.y)}`)
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### 예제 4: 컨텍스트 메뉴
+
+```typescript
+const ContextMenuExample = () => {
+  const [showMenu, setShowMenu] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+
+  return Stack({
+    children: [
+      GestureDetector({
+        onClick: (e) => {
+          e.preventDefault();
+          if (e.button === 2) { // 오른쪽 클릭
+            setShowMenu(true);
+            setMenuPosition({ x: e.clientX, y: e.clientY });
+          } else {
+            setShowMenu(false);
+          }
+        },
+        child: Container({
+          width: 400,
+          height: 300,
+          color: 'white',
+          child: Center({
+            child: Text('오른쪽 클릭하여 메뉴 열기')
+          })
+        })
+      }),
+      if (showMenu) Positioned({
+        left: menuPosition.x,
+        top: menuPosition.y,
+        child: Container({
+          width: 150,
+          padding: EdgeInsets.symmetric({ vertical: 8 }),
+          decoration: BoxDecoration({
+            color: 'white',
+            borderRadius: BorderRadius.circular(4),
+            boxShadow: [
+              BoxShadow({
+                color: 'rgba(0, 0, 0, 0.2)',
+                blurRadius: 8,
+                offset: { x: 0, y: 2 }
+              })
+            ]
+          }),
+          child: Column({
+            children: ['복사', '붙여넣기', '삭제'].map(item =>
+              GestureDetector({
+                onClick: () => {
+                  console.log(`${item} 선택됨`);
+                  setShowMenu(false);
+                },
+                cursor: 'pointer',
+                child: Container({
+                  padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+                  child: Text(item)
+                })
+              })
+            )
+          })
+        })
+      })
+    ]
+  });
+};
+```
+
+### 예제 5: 줌 가능한 이미지
+
+```typescript
+const ZoomableImage = ({ src }: { src: string }) => {
+  const [scale, setScale] = useState(1);
+  
+  return GestureDetector({
+    onWheel: (e) => {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? 0.9 : 1.1;
+      setScale(prev => Math.max(0.5, Math.min(3, prev * delta)));
+    },
+    cursor: scale > 1 ? 'zoom-out' : 'zoom-in',
+    child: Container({
+      width: 400,
+      height: 300,
+      clipped: true,
+      child: Transform({
+        transform: Matrix4.identity().scaled(scale, scale, 1),
+        alignment: Alignment.center,
+        child: Image({ src, fit: 'cover' })
+      })
+    })
+  });
+};
+```
+
+## MouseEvent 객체
+
+모든 마우스 이벤트 핸들러는 표준 MouseEvent 객체를 받습니다:
+
+- **clientX, clientY**: 뷰포트 기준 마우스 위치
+- **pageX, pageY**: 페이지 기준 마우스 위치
+- **screenX, screenY**: 화면 기준 마우스 위치
+- **movementX, movementY**: 이전 이벤트 대비 이동 거리
+- **button**: 누른 버튼 (0: 왼쪽, 1: 중간, 2: 오른쪽)
+- **buttons**: 현재 눌린 버튼들의 비트마스크
+- **ctrlKey, shiftKey, altKey, metaKey**: 보조 키 상태
+- **currentTarget**: 이벤트가 발생한 요소
+- **preventDefault()**: 기본 동작 방지
+- **stopPropagation()**: 이벤트 버블링 중단
+
+## 주의사항
+
+- child가 없으면 이벤트가 감지되지 않습니다.
+- 이벤트는 child의 실제 렌더링 영역에서만 감지됩니다.
+- 드래그 이벤트는 전역적으로 추적되므로 마우스가 위젯을 벗어나도 계속됩니다.
+- onDragStart는 onMouseDown과 함께 발생하므로 두 이벤트 모두 처리할 때 주의가 필요합니다.
+- 브라우저의 기본 동작을 막으려면 e.preventDefault()를 사용하세요.
+
+## 관련 위젯
+
+- **InkWell**: Material Design의 리플 효과가 있는 터치 반응 위젯
+- **Draggable**: 드래그 앤 드롭을 위한 특화된 위젯
+- **MouseRegion**: 마우스 호버 상태를 추적하는 위젯
+- **Listener**: 저수준 포인터 이벤트를 처리하는 위젯
