@@ -1,0 +1,392 @@
+---
+nav_group: "Widgets"
+nav_group_order: 3
+nav_title: IntrinsicHeight
+title: "IntrinsicHeight"
+description: "자식 위젯의 고유 높이로 크기를 조정하는 위젯"
+---
+
+## 개요
+
+IntrinsicHeight는 자식 위젯의 고유(intrinsic) 높이로 크기를 조정하는 위젯입니다.
+
+IntrinsicHeight는 자식 위젯이 원하는 고유 높이를 가질 수 있도록 강제합니다. 이는 Row 내에서 여러 자식들의 높이를 일치시키거나, 자식의 내용에 따라 동적으로 높이를 조정해야 할 때 유용합니다. 하지만 이 위젯은 성능 비용이 높으므로 신중하게 사용해야 합니다.
+
+## 언제 사용하나요?
+
+- Row의 자식들이 모두 같은 높이를 가져야 할 때
+- 자식 위젯의 내용에 따라 높이가 결정되어야 할 때
+- 다양한 높이의 위젯들을 일치시켜야 할 때
+- Divider나 VerticalDivider가 적절한 높이를 가져야 할 때
+- CrossAxisAlignment.stretch가 작동하지 않을 때
+
+## 기본 사용법
+
+```typescript
+IntrinsicHeight({
+  child: Row({
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Container({
+        color: 'blue',
+        width: 100,
+        child: Text('짧은 텍스트')
+      }),
+      Container({
+        color: 'red',
+        width: 100,
+        child: Text('이것은 훨씬 더 긴 텍스트로 여러 줄에 걸쳐 표시됩니다')
+      })
+    ]
+  })
+})
+```
+
+## Props
+
+### child
+
+**값: Widget | undefined**
+
+고유 높이로 크기가 조정될 자식 위젯입니다.
+
+```typescript
+IntrinsicHeight({
+  child: Container({
+    color: 'blue',
+    child: Text('내용에 맞춰 높이가 조정됩니다')
+  })
+})
+```
+
+## 작동 원리
+
+IntrinsicHeight는 다음과 같이 작동합니다:
+
+1. 자식 위젯에게 "주어진 너비에서 당신의 최소 높이는 얼마입니까?"라고 묻습니다.
+2. 자식이 응답한 높이를 사용하여 제약 조건을 만듭니다.
+3. 이 제약 조건으로 자식을 레이아웃합니다.
+
+이 과정은 추가적인 레이아웃 패스가 필요하므로 성능 비용이 발생합니다.
+
+## 실제 사용 예제
+
+### 예제 1: 같은 높이의 카드들
+
+```typescript
+const EqualHeightCards = () => {
+  return IntrinsicHeight({
+    child: Row({
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded({
+          child: Card({
+            child: Padding({
+              padding: EdgeInsets.all(16),
+              child: Column({
+                children: [
+                  Text('카드 1', {
+                    style: TextStyle({ fontSize: 18, fontWeight: 'bold' })
+                  }),
+                  SizedBox({ height: 8 }),
+                  Text('짧은 내용')
+                ]
+              })
+            })
+          })
+        }),
+        SizedBox({ width: 16 }),
+        Expanded({
+          child: Card({
+            child: Padding({
+              padding: EdgeInsets.all(16),
+              child: Column({
+                children: [
+                  Text('카드 2', {
+                    style: TextStyle({ fontSize: 18, fontWeight: 'bold' })
+                  }),
+                  SizedBox({ height: 8 }),
+                  Text('이 카드는 더 많은 내용을 가지고 있어서 자연스럽게 더 높이가 큽니다. IntrinsicHeight 덕분에 카드 1도 같은 높이를 갖게 됩니다.')
+                ]
+              })
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 2: 세로 구분선이 있는 행
+
+```typescript
+const RowWithDivider = () => {
+  return IntrinsicHeight({
+    child: Row({
+      children: [
+        Expanded({
+          child: Container({
+            padding: EdgeInsets.all(16),
+            child: Column({
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('섹션 1', {
+                  style: TextStyle({ fontWeight: 'bold' })
+                }),
+                Text('이 섹션의 내용')
+              ]
+            })
+          })
+        }),
+        VerticalDivider({ width: 1, color: '#E0E0E0' }),
+        Expanded({
+          child: Container({
+            padding: EdgeInsets.all(16),
+            child: Column({
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('섹션 2', {
+                  style: TextStyle({ fontWeight: 'bold' })
+                }),
+                Text('더 많은 내용이 있는 섹션'),
+                Text('추가 라인'),
+                Text('또 다른 라인')
+              ]
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 3: 통계 대시보드
+
+```typescript
+const StatsDashboard = () => {
+  return IntrinsicHeight({
+    child: Row({
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded({
+          child: Container({
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration({
+              color: '#F0F0F0',
+              borderRadius: BorderRadius.circular(8)
+            }),
+            child: Column({
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('1,234', {
+                  style: TextStyle({ 
+                    fontSize: 32, 
+                    fontWeight: 'bold',
+                    color: '#2196F3'
+                  })
+                }),
+                SizedBox({ height: 8 }),
+                Text('총 사용자')
+              ]
+            })
+          })
+        }),
+        SizedBox({ width: 12 }),
+        Expanded({
+          child: Container({
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration({
+              color: '#F0F0F0',
+              borderRadius: BorderRadius.circular(8)
+            }),
+            child: Column({
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('89%', {
+                  style: TextStyle({ 
+                    fontSize: 32, 
+                    fontWeight: 'bold',
+                    color: '#4CAF50'
+                  })
+                }),
+                SizedBox({ height: 8 }),
+                Text('활성 사용자'),
+                Text('지난 주 대비 +12%', {
+                  style: TextStyle({ 
+                    fontSize: 12,
+                    color: '#666'
+                  })
+                })
+              ]
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 4: 사이드바 메뉴 아이템
+
+```typescript
+const SidebarMenuItem = ({ icon, title, subtitle, isSelected }) => {
+  return IntrinsicHeight({
+    child: Container({
+      decoration: BoxDecoration({
+        color: isSelected ? '#E3F2FD' : 'transparent',
+        borderRadius: BorderRadius.circular(8)
+      }),
+      child: Row({
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container({
+            width: 4,
+            decoration: BoxDecoration({
+              color: isSelected ? '#2196F3' : 'transparent',
+              borderRadius: BorderRadius.only({
+                topLeft: 8,
+                bottomLeft: 8
+              })
+            })
+          }),
+          Expanded({
+            child: Padding({
+              padding: EdgeInsets.all(12),
+              child: Row({
+                children: [
+                  Icon({ 
+                    icon, 
+                    size: 24,
+                    color: isSelected ? '#2196F3' : '#666'
+                  }),
+                  SizedBox({ width: 12 }),
+                  Expanded({
+                    child: Column({
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(title, {
+                          style: TextStyle({
+                            fontWeight: isSelected ? 'bold' : 'normal',
+                            color: isSelected ? '#2196F3' : '#333'
+                          })
+                        }),
+                        if (subtitle) Text(subtitle, {
+                          style: TextStyle({
+                            fontSize: 12,
+                            color: '#999'
+                          })
+                        })
+                      ]
+                    })
+                  })
+                ]
+              })
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### 예제 5: 비교 테이블 행
+
+```typescript
+const ComparisonRow = ({ feature, basic, pro, enterprise }) => {
+  return IntrinsicHeight({
+    child: Row({
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded({
+          flex: 2,
+          child: Container({
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration({
+              color: '#F5F5F5',
+              border: Border.all({ color: '#E0E0E0' })
+            }),
+            child: Text(feature, {
+              style: TextStyle({ fontWeight: 'bold' })
+            })
+          })
+        }),
+        Expanded({
+          child: Container({
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration({
+              border: Border.all({ color: '#E0E0E0' })
+            }),
+            child: Center({
+              child: basic ? 
+                Icon({ icon: Icons.check, color: 'green' }) : 
+                Icon({ icon: Icons.close, color: 'red' })
+            })
+          })
+        }),
+        Expanded({
+          child: Container({
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration({
+              border: Border.all({ color: '#E0E0E0' })
+            }),
+            child: Center({
+              child: pro ? 
+                Icon({ icon: Icons.check, color: 'green' }) : 
+                Icon({ icon: Icons.close, color: 'red' })
+            })
+          })
+        }),
+        Expanded({
+          child: Container({
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration({
+              border: Border.all({ color: '#E0E0E0' })
+            }),
+            child: Center({
+              child: enterprise ? 
+                Icon({ icon: Icons.check, color: 'green' }) : 
+                Icon({ icon: Icons.close, color: 'red' })
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+## 성능 고려사항
+
+IntrinsicHeight는 추가적인 레이아웃 패스가 필요하므로 성능 비용이 발생합니다:
+
+1. **O(N²) 복잡도**: 깊이 중첩된 IntrinsicHeight는 지수적으로 느려집니다.
+2. **대안 고려**: 가능하면 다른 방법을 먼저 시도하세요.
+3. **스크롤 뷰에서 주의**: ListView나 스크롤 가능한 영역에서는 특히 주의가 필요합니다.
+
+## 대안
+
+성능이 중요한 경우 다음 대안을 고려하세요:
+
+1. **고정 높이 사용**: 가능하면 명시적인 높이를 지정
+2. **AspectRatio**: 비율이 일정한 경우
+3. **Table 위젯**: 테이블 형태의 레이아웃인 경우
+4. **커스텀 RenderObject**: 복잡한 레이아웃 로직이 필요한 경우
+
+## 주의사항
+
+- IntrinsicHeight는 성능 비용이 높으므로 꼭 필요한 경우에만 사용하세요.
+- 깊이 중첩된 IntrinsicHeight는 피하세요.
+- 무한 높이 제약 조건에서는 작동하지 않습니다.
+- 자식의 고유 높이가 정의되지 않은 경우 예상치 못한 결과가 발생할 수 있습니다.
+
+## 관련 위젯
+
+- **IntrinsicWidth**: 자식의 고유 너비로 크기 조정
+- **AspectRatio**: 가로세로 비율 유지
+- **Table**: 테이블 레이아웃
+- **CustomMultiChildLayout**: 복잡한 커스텀 레이아웃
