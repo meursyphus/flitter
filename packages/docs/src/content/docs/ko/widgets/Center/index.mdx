@@ -3,33 +3,396 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: Center
 title: "Center"
-description: ""
+description: "자식 위젯을 중앙에 정렬하는 위젯"
 ---
 
-# Center
+## 개요
 
-This widget motivated by Center in Flutter.
+Center는 자식 위젯을 자신 내부의 중앙에 정렬하는 위젯입니다.
 
-> A widget that centers its child within itself.
->
-> This widget will be as big as possible if its dimensions are constrained and widthFactor and heightFactor are null. If a dimension is unconstrained and the corresponding size factor is null then the widget will match its child's size in that dimension. If a size factor is non-null then the corresponding dimension of this widget will be the product of the child's dimension and the size factor. For example if widthFactor is 2.0 then the width of this widget will always be twice its child's width.
+Center는 실제로 `alignment: Alignment.center`가 설정된 Align 위젯의 편의 버전입니다. widthFactor와 heightFactor가 null이고 크기가 제한되어 있다면 이 위젯은 가능한 한 크게 확장됩니다. 특정 차원이 제한되지 않고 해당 크기 요소가 null이면 위젯은 해당 차원에서 자식의 크기와 일치합니다.
 
-See: [https://api.flutter.dev/flutter/widgets/Center-class.html](https://api.flutter.dev/flutter/widgets/Center-class.html)
+참조: [https://api.flutter.dev/flutter/widgets/Center-class.html](https://api.flutter.dev/flutter/widgets/Center-class.html)
+
+## 언제 사용하나요?
+
+- 컨테이너 내에서 콘텐츠를 중앙 정렬할 때
+- 로딩 인디케이터를 화면 중앙에 표시할 때
+- 빈 상태 메시지를 중앙에 배치할 때
+- 대화 상자나 모달의 내용을 중앙 정렬할 때
+- 아이콘이나 로고를 중앙에 배치할 때
+
+## 기본 사용법
+
+```typescript
+// 단순 중앙 정렬
+Center({
+  child: Text('중앙 정렬된 텍스트')
+})
+
+// 크기 요소와 함께 사용
+Center({
+  widthFactor: 1.5,
+  heightFactor: 2.0,
+  child: Icon(Icons.star, { size: 48 })
+})
+
+// 전체 화면 중앙 정렬
+Scaffold({
+  body: Center({
+    child: CircularProgressIndicator()
+  })
+})
+```
 
 ## Props
 
 ### widthFactor
 
-**Value: number | undefined**
+**값: number | undefined**
 
-### heightFoctor
+이 위젯의 너비를 자식 위젯 너비의 배수로 설정합니다. null이면 가능한 너비로 확장됩니다.
 
-**Value: number | undefined**
+```typescript
+Center({
+  widthFactor: 2.0,  // 자식 너비의 2배
+  child: Container({
+    width: 100,
+    height: 100,
+    color: 'blue'
+  })
+})
+// Center의 너비는 200이 됩니다
+```
+
+### heightFactor
+
+**값: number | undefined**
+
+이 위젯의 높이를 자식 위젯 높이의 배수로 설정합니다. null이면 가능한 높이로 확장됩니다.
+
+```typescript
+Center({
+  heightFactor: 1.5,  // 자식 높이의 1.5배
+  child: Container({
+    width: 100,
+    height: 100,
+    color: 'green'
+  })
+})
+// Center의 높이는 150이 됩니다
+```
 
 ### child
 
-**Value: Widget | undefined**
+**값: Widget | undefined**
 
-## Examples
+중앙에 정렬할 자식 위젯입니다.
 
-### Basic
+## Center vs Align
+
+Center는 Align의 특수한 경우입니다:
+
+```typescript
+// 이 두 코드는 동일합니다
+Center({
+  child: Text('Hello')
+})
+
+Align({
+  alignment: Alignment.center,
+  child: Text('Hello')
+})
+```
+
+## 실제 사용 예제
+
+### 예제 1: 로딩 화면
+
+```typescript
+const LoadingScreen = ({ message = '로딩 중...' }) => {
+  return Scaffold({
+    body: Center({
+      child: Column({
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircularProgressIndicator({
+            size: 60,
+            strokeWidth: 4
+          }),
+          SizedBox({ height: 24 }),
+          Text(message, {
+            style: TextStyle({
+              fontSize: 18,
+              color: '#666'
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### 예제 2: 빈 상태 표시
+
+```typescript
+const EmptyState = ({ icon, title, description, action }) => {
+  return Center({
+    child: Container({
+      padding: EdgeInsets.all(32),
+      child: Column({
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, {
+            size: 80,
+            color: '#CCCCCC'
+          }),
+          SizedBox({ height: 24 }),
+          Text(title, {
+            style: TextStyle({
+              fontSize: 24,
+              fontWeight: 'bold',
+              color: '#333'
+            }),
+            textAlign: TextAlign.center
+          }),
+          SizedBox({ height: 12 }),
+          Text(description, {
+            style: TextStyle({
+              fontSize: 16,
+              color: '#666'
+            }),
+            textAlign: TextAlign.center,
+            maxLines: 3
+          }),
+          if (action) ...[
+            SizedBox({ height: 32 }),
+            action
+          ]
+        ]
+      })
+    })
+  });
+};
+```
+
+### 예제 3: 스플래시 화면
+
+```typescript
+const SplashScreen = ({ logoUrl, appName }) => {
+  return Scaffold({
+    backgroundColor: '#2196F3',
+    body: Center({
+      child: Column({
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container({
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration({
+              color: 'white',
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow({
+                  color: 'rgba(0,0,0,0.2)',
+                  blurRadius: 20,
+                  offset: { x: 0, y: 10 }
+                })
+              ]
+            }),
+            child: Center({
+              child: Image({
+                src: logoUrl,
+                width: 80,
+                height: 80
+              })
+            })
+          }),
+          SizedBox({ height: 32 }),
+          Text(appName, {
+            style: TextStyle({
+              fontSize: 28,
+              fontWeight: 'bold',
+              color: 'white',
+              letterSpacing: 2
+            })
+          }),
+          SizedBox({ height: 48 }),
+          CircularProgressIndicator({
+            valueColor: AlwaysStoppedAnimation('white')
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### 예제 4: 에러 메시지
+
+```typescript
+const ErrorMessage = ({ error, onRetry }) => {
+  return Container({
+    padding: EdgeInsets.all(16),
+    child: Center({
+      widthFactor: 1.0,
+      child: Container({
+        padding: EdgeInsets.all(24),
+        decoration: BoxDecoration({
+          color: '#FFEBEE',
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all({
+            color: '#FFCDD2',
+            width: 1
+          })
+        }),
+        child: Column({
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error_outline, {
+              size: 48,
+              color: '#F44336'
+            }),
+            SizedBox({ height: 16 }),
+            Text('오류가 발생했습니다', {
+              style: TextStyle({
+                fontSize: 18,
+                fontWeight: 'bold',
+                color: '#D32F2F'
+              })
+            }),
+            SizedBox({ height: 8 }),
+            Text(error.message, {
+              style: TextStyle({
+                fontSize: 14,
+                color: '#D32F2F'
+              }),
+              textAlign: TextAlign.center
+            }),
+            if (onRetry) ...[
+              SizedBox({ height: 20 }),
+              ElevatedButton({
+                onPressed: onRetry,
+                child: Text('다시 시도'),
+                style: ButtonStyle({
+                  backgroundColor: '#F44336'
+                })
+              })
+            ]
+          ]
+        })
+      })
+    })
+  });
+};
+```
+
+### 예제 5: 대화상자 내용
+
+```typescript
+const DialogContent = ({ icon, title, message, actions }) => {
+  return Container({
+    width: 300,
+    padding: EdgeInsets.all(24),
+    child: Column({
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Center({
+          child: Container({
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration({
+              color: '#E3F2FD',
+              shape: BoxShape.circle
+            }),
+            child: Center({
+              child: Icon(icon, {
+                size: 32,
+                color: '#2196F3'
+              })
+            })
+          })
+        }),
+        SizedBox({ height: 20 }),
+        Center({
+          child: Text(title, {
+            style: TextStyle({
+              fontSize: 20,
+              fontWeight: 'bold'
+            })
+          })
+        }),
+        SizedBox({ height: 12 }),
+        Center({
+          child: Text(message, {
+            style: TextStyle({
+              fontSize: 16,
+              color: '#666'
+            }),
+            textAlign: TextAlign.center
+          })
+        }),
+        SizedBox({ height: 24 }),
+        Center({
+          child: Row({
+            mainAxisSize: MainAxisSize.min,
+            children: actions
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+## 레이아웃 동작
+
+Center 위젯의 크기 결정 방식:
+
+1. **제약이 타이트한 경우**: 제약 조건의 크기를 사용
+2. **제약이 느슨하고 factor가 null인 경우**: 가능한 한 크게 확장
+3. **제약이 무한하고 factor가 null인 경우**: 자식의 크기를 사용
+4. **factor가 지정된 경우**: 자식 크기 × factor
+
+```typescript
+// 다양한 시나리오
+Container({
+  width: 200,
+  height: 200,
+  color: 'lightgray',
+  child: Center({
+    // Center는 200x200으로 확장
+    child: Container({
+      width: 50,
+      height: 50,
+      color: 'blue'
+    })
+  })
+})
+
+Center({
+  widthFactor: 2.0,
+  heightFactor: 2.0,
+  // Center는 100x100 (자식의 2배)
+  child: Container({
+    width: 50,
+    height: 50,
+    color: 'red'
+  })
+})
+```
+
+## 주의사항
+
+- Center는 기본적으로 가능한 한 크게 확장되므로 Stack이나 무한 크기 컨테이너에서 주의해야 합니다
+- widthFactor와 heightFactor는 0보다 커야 합니다
+- 여러 Center를 중첩하는 것은 일반적으로 불필요합니다
+- 복잡한 정렬이 필요한 경우 Align 위젯을 직접 사용하는 것이 좋습니다
+
+## 관련 위젯
+
+- **Align**: 더 다양한 정렬 옵션을 제공하는 부모 위젯
+- **Container**: alignment 속성으로 중앙 정렬 가능
+- **Positioned**: Stack 내에서 위치 지정
+- **Padding**: 여백과 함께 중앙 정렬이 필요할 때
