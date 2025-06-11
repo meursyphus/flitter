@@ -3,18 +3,14 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: Opacity
 title: "Opacity"
-description: ""
+description: "A widget that controls the transparency of its child widget"
 ---
 
-# Opacity
+## Overview
 
-This widget motivated by Opacity in Flutter.
+`Opacity` is a widget that makes its child partially transparent. Inspired by Flutter's Opacity widget, it's used for creating fade in/out effects or visual layering.
 
-> A widget that makes its child partially transparent.
->
-> This class paints its child into an intermediate buffer and then blends the child back into the scene partially transparent.
->
-> For values of opacity other than 0.0 and 1.0, this class is relatively expensive because it requires painting the child into an intermediate buffer. For the value 0.0, the child is simply not painted at all. For the value 1.0, the child is painted immediately without an intermediate buffer.
+When the value is 0.0, the child is not painted at all. When the value is 1.0, the child is painted completely opaque. Values between 0.0 and 1.0 use an intermediate buffer and may have performance costs.
 
 <iframe
   width="560"
@@ -28,14 +24,316 @@ This widget motivated by Opacity in Flutter.
 
 See: [https://api.flutter.dev/flutter/widgets/Opacity-class.html](https://api.flutter.dev/flutter/widgets/Opacity-class.html)
 
+## When to Use?
+
+- When you need to control widget transparency
+- When creating fade in/out effects
+- When visually representing disabled UI elements
+- When creating overlays or modal backgrounds
+- When expressing visual hierarchy or depth
+
+## Basic Usage
+
+```typescript
+import { Opacity, Container } from 'flitter';
+
+// Semi-transparent box
+const SemiTransparentBox = Opacity({
+  opacity: 0.5,
+  child: Container({
+    width: 100,
+    height: 100,
+    color: '#3498db'
+  })
+});
+
+// Faded text
+const FadedText = Opacity({
+  opacity: 0.3,
+  child: Text('Faded text', {
+    style: { fontSize: 18 }
+  })
+});
+```
+
 ## Props
 
-### translation
+### opacity (required)
+**Value: number**
 
-**Value: Offset**
+Specifies the transparency value from 0.0 to 1.0.
 
-### child
+- **0.0**: Completely transparent (invisible)
+- **1.0**: Completely opaque (default state)
+- **0.0 ~ 1.0**: Partially transparent
 
-**Value: Widget | undefined**
+```typescript
+// Completely transparent
+opacity: 0.0
 
-## Examples
+// Semi-transparent
+opacity: 0.5
+
+// Almost opaque
+opacity: 0.9
+
+// Completely opaque
+opacity: 1.0
+```
+
+### child (optional)
+**Value: Widget**
+
+The child widget to which transparency will be applied. If there's no child, nothing is rendered.
+
+## Real-World Examples
+
+### Example 1: Various Transparency Levels
+
+```typescript
+import { Opacity, Container, Row, Column, Text } from 'flitter';
+
+const OpacityLevels = Row({
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0].map(opacity =>
+    Column({
+      children: [
+        Opacity({
+          opacity: opacity,
+          child: Container({
+            width: 60,
+            height: 60,
+            color: '#e74c3c'
+          })
+        }),
+        Text(`${opacity}`, {
+          style: { fontSize: 12, marginTop: 8 }
+        })
+      ]
+    })
+  )
+});
+```
+
+### Example 2: Disabled Button Representation
+
+```typescript
+import { Opacity, GestureDetector, Container, Text } from 'flitter';
+
+const Button = ({ text, onPress, disabled = false }) => {
+  const buttonContent = Container({
+    padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+    decoration: new BoxDecoration({
+      color: '#3498db',
+      borderRadius: BorderRadius.circular(8)
+    }),
+    child: Text(text, {
+      style: { color: 'white', fontSize: 16 }
+    })
+  });
+
+  if (disabled) {
+    return Opacity({
+      opacity: 0.5,
+      child: buttonContent
+    });
+  }
+
+  return GestureDetector({
+    onTap: onPress,
+    child: buttonContent
+  });
+};
+```
+
+### Example 3: Modal Overlay
+
+```typescript
+import { Opacity, Stack, Positioned, Container, GestureDetector } from 'flitter';
+
+const Modal = ({ isVisible, onClose, child }) => {
+  if (!isVisible) return null;
+
+  return Stack({
+    children: [
+      // Background overlay
+      Positioned({
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        child: GestureDetector({
+          onTap: onClose,
+          child: Opacity({
+            opacity: 0.5,
+            child: Container({
+              color: 'black'
+            })
+          })
+        })
+      }),
+      // Modal content
+      Center({
+        child: Container({
+          margin: EdgeInsets.all(40),
+          decoration: new BoxDecoration({
+            color: 'white',
+            borderRadius: BorderRadius.circular(12)
+          }),
+          child: child
+        })
+      })
+    ]
+  });
+};
+```
+
+### Example 4: Using with Animation (AnimatedOpacity)
+
+```typescript
+import { AnimatedOpacity, Container, GestureDetector } from 'flitter';
+
+class FadeButton extends StatefulWidget {
+  createState() {
+    return new FadeButtonState();
+  }
+}
+
+class FadeButtonState extends State {
+  isVisible = true;
+  
+  toggleVisibility = () => {
+    this.setState(() => {
+      this.isVisible = !this.isVisible;
+    });
+  };
+  
+  build() {
+    return Column({
+      children: [
+        GestureDetector({
+          onTap: this.toggleVisibility,
+          child: Container({
+            padding: EdgeInsets.all(16),
+            decoration: new BoxDecoration({
+              color: '#9b59b6',
+              borderRadius: BorderRadius.circular(8)
+            }),
+            child: Text('Toggle Button', {
+              style: { color: 'white' }
+            })
+          })
+        }),
+        
+        SizedBox({ height: 20 }),
+        
+        AnimatedOpacity({
+          opacity: this.isVisible ? 1.0 : 0.0,
+          duration: 500,
+          child: Container({
+            width: 200,
+            height: 100,
+            decoration: new BoxDecoration({
+              color: '#e67e22',
+              borderRadius: BorderRadius.circular(8)
+            }),
+            child: Center({
+              child: Text('Fade Effect', {
+                style: { color: 'white', fontSize: 18 }
+              })
+            })
+          })
+        })
+      ]
+    });
+  }
+}
+```
+
+### Example 5: Nested Opacity (Multiplication Effect)
+
+```typescript
+import { Opacity, Container, Row } from 'flitter';
+
+const NestedOpacityExample = Row({
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    // Single opacity
+    Container({
+      width: 100,
+      height: 100,
+      child: Opacity({
+        opacity: 0.5,
+        child: Container({ color: '#3498db' })
+      })
+    }),
+    
+    // Nested opacity (0.5 × 0.5 = 0.25)
+    Container({
+      width: 100,
+      height: 100,
+      child: Opacity({
+        opacity: 0.5,
+        child: Opacity({
+          opacity: 0.5,
+          child: Container({ color: '#3498db' })
+        })
+      })
+    })
+  ]
+});
+```
+
+### Example 6: Conditional Opacity
+
+```typescript
+import { Opacity, Container, Text } from 'flitter';
+
+class ConditionalOpacity extends StatefulWidget {
+  constructor(private isHighlighted = false) {
+    super();
+  }
+  
+  createState() {
+    return new ConditionalOpacityState();
+  }
+}
+
+class ConditionalOpacityState extends State {
+  build() {
+    return GestureDetector({
+      onHover: (isHovered) => this.setState(() => {
+        this.widget.isHighlighted = isHovered;
+      }),
+      child: Opacity({
+        opacity: this.widget.isHighlighted ? 1.0 : 0.7,
+        child: Container({
+          padding: EdgeInsets.all(16),
+          decoration: new BoxDecoration({
+            color: '#2ecc71',
+            borderRadius: BorderRadius.circular(8)
+          }),
+          child: Text('Hover Effect', {
+            style: { color: 'white' }
+          })
+        })
+      })
+    });
+  }
+}
+```
+
+## Best Practices
+
+- **Performance**: Values other than 0.0 and 1.0 use an intermediate buffer and may impact performance
+- **Nesting Effect**: Multiple Opacity widgets nested will multiply transparency (0.5 × 0.5 = 0.25)
+- **Animation**: Use `AnimatedOpacity` for smooth transparency changes
+- **Hit Testing**: Even when opacity is 0.0, child widgets can still receive touch events
+- **Range Validation**: Opacity value must be between 0.0 and 1.0
+
+## Related Widgets
+
+- **AnimatedOpacity**: When you need smooth opacity animations
+- **FadeTransition**: When you need more complex fade animation control
+- **Visibility**: When you need simple show/hide control
+- **Container**: When you only need to control background color transparency
