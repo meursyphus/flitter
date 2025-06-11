@@ -3,15 +3,14 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: CustomPaint
 title: "CustomPaint"
-description: ""
+description: "Canvas나 SVG를 사용해 커스텀 그래픽을 그릴 수 있는 위젯"
 ---
 
-# CustomPaint
+## 개요
 
-This widget motivated by CustomPaint in Flutter.
+`CustomPaint`는 Canvas API나 SVG를 사용해 커스텀 그래픽을 그릴 수 있는 위젯입니다. Flutter의 CustomPaint에서 영감을 받았으며, 복잡한 그래픽이나 차트, 다이어그램 등을 직접 그려야 할 때 사용합니다.
 
-This widget has different interface compared to Flutter's because This library use svg not canvas.
-But layout rule is same to original CustomPaint.
+Flitter의 CustomPaint는 SVG와 Canvas 렌더링을 모두 지원하는 것이 특징입니다. Flutter와 달리 SVG 렌더링도 지원하므로 인터페이스가 약간 다르지만, 레이아웃 규칙은 동일합니다.
 
 <iframe
   width="560"
@@ -23,22 +22,300 @@ But layout rule is same to original CustomPaint.
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/CustomPaint-class.html](https://api.flutter.dev/flutter/widgets/CustomPaint-class.html)
+참고: [https://api.flutter.dev/flutter/widgets/CustomPaint-class.html](https://api.flutter.dev/flutter/widgets/CustomPaint-class.html)
+
+## 언제 사용하나요?
+
+- 복잡한 그래픽이나 도형을 그려야 할 때
+- 차트나 그래프를 직접 구현해야 할 때
+- 애니메이션이 포함된 커스텀 UI를 만들 때
+- 게임이나 시각화 도구를 개발할 때
+- 기존 위젯으로는 표현하기 어려운 특수한 UI가 필요할 때
+
+## 기본 사용법
+
+```typescript
+import { CustomPaint, Size } from 'flitter';
+
+// Canvas 렌더링 예제
+const MyCanvasPaint = CustomPaint({
+  size: new Size(200, 200),
+  painter: {
+    canvas: {
+      paint: (context, size) => {
+        const ctx = context.canvas;
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(0, 0, size.width, size.height);
+      }
+    }
+  }
+});
+
+// SVG 렌더링 예제
+const MySvgPaint = CustomPaint({
+  size: new Size(200, 200),
+  painter: {
+    svg: {
+      createDefaultSvgEl: ({ createSvgEl }) => {
+        return {
+          rect: createSvgEl('rect')
+        };
+      },
+      paint: ({ rect }, size) => {
+        rect.setAttribute('fill', 'red');
+        rect.setAttribute('width', `${size.width}`);
+        rect.setAttribute('height', `${size.height}`);
+      }
+    }
+  }
+});
+```
 
 ## Props
 
-### size
+### size (선택)
+**값: Size** (기본값: **Size.zero**)
 
-**value: Size** (default: **Size.zero**)
+CustomPaint 영역의 크기를 지정합니다. `Size.zero`일 경우 자식 위젯의 크기를 따릅니다. `Size.infinite`를 사용하면 가능한 최대 크기로 확장됩니다.
 
-### painter
+```typescript
+// 고정 크기
+size: new Size(300, 200)
 
-**value: Painter**
+// 최대 크기로 확장
+size: Size.infinite
 
-### child
+// 자식 크기 따르기 (기본값)
+size: Size.zero
+```
 
-**value: Widget**
+### painter (필수)
+**값: Painter**
 
-## Examples
+그래픽을 그리는 로직을 담은 Painter 객체입니다. SVG나 Canvas 중 하나 또는 둘 다 구현할 수 있습니다.
 
-### Basic
+#### Painter 타입 정의:
+```typescript
+type Painter<SVGEls, D> = {
+  dependencies?: D;  // 의존성 데이터
+  shouldRepaint?: (oldPainter: Painter<SVGEls, D>) => boolean;  // 재그리기 여부 결정
+  svg?: CustomSvgPainter<SVGEls>;    // SVG 렌더링 구현
+  canvas?: CustomCanvasPainter;       // Canvas 렌더링 구현
+};
+```
+
+#### Canvas Painter:
+```typescript
+type CustomCanvasPainter = {
+  paint: (context: CanvasPaintingContext, size: Size) => void;
+};
+```
+
+#### SVG Painter:
+```typescript
+type CustomSvgPainter<T> = {
+  createDefaultSvgEl: (context: SvgPaintContext) => T;  // SVG 요소 생성
+  paint: (els: T, size: Size) => void;                  // SVG 요소 업데이트
+};
+```
+
+### child (선택)
+**값: Widget**
+
+CustomPaint 위에 그려질 자식 위젯입니다. 자식이 있을 경우, CustomPaint는 자식 뒤에 그려집니다.
+
+## 실제 사용 예제
+
+### 예제 1: 간단한 도형 그리기
+
+```typescript
+import { CustomPaint, Size } from 'flitter';
+
+const SimpleShapes = CustomPaint({
+  size: new Size(300, 300),
+  painter: {
+    canvas: {
+      paint: (context, size) => {
+        const ctx = context.canvas;
+        
+        // 배경
+        ctx.fillStyle = '#f0f0f0';
+        ctx.fillRect(0, 0, size.width, size.height);
+        
+        // 원 그리기
+        ctx.fillStyle = '#3498db';
+        ctx.beginPath();
+        ctx.arc(150, 100, 50, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // 사각형 그리기
+        ctx.fillStyle = '#e74c3c';
+        ctx.fillRect(100, 160, 100, 80);
+        
+        // 삼각형 그리기
+        ctx.fillStyle = '#2ecc71';
+        ctx.beginPath();
+        ctx.moveTo(150, 250);
+        ctx.lineTo(100, 320);
+        ctx.lineTo(200, 320);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+  }
+});
+```
+
+### 예제 2: 애니메이션 차트
+
+```typescript
+import { CustomPaint, Size, StatefulWidget, State } from 'flitter';
+
+class AnimatedChart extends StatefulWidget {
+  createState() {
+    return new AnimatedChartState();
+  }
+}
+
+class AnimatedChartState extends State<AnimatedChart> {
+  values = [30, 50, 80, 40, 60];
+  
+  build() {
+    return CustomPaint({
+      size: new Size(400, 300),
+      painter: {
+        dependencies: this.values,  // 의존성 추가
+        shouldRepaint: (oldPainter) => {
+          // 값이 변경되었을 때만 재그리기
+          return oldPainter.dependencies !== this.values;
+        },
+        canvas: {
+          paint: (context, size) => {
+            const ctx = context.canvas;
+            const barWidth = size.width / this.values.length;
+            const maxValue = Math.max(...this.values);
+            
+            // 배경
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, size.width, size.height);
+            
+            // 막대 그래프
+            this.values.forEach((value, index) => {
+              const barHeight = (value / maxValue) * size.height * 0.8;
+              const x = index * barWidth + barWidth * 0.1;
+              const y = size.height - barHeight;
+              const width = barWidth * 0.8;
+              
+              // 막대
+              ctx.fillStyle = '#3498db';
+              ctx.fillRect(x, y, width, barHeight);
+              
+              // 값 표시
+              ctx.fillStyle = '#2c3e50';
+              ctx.font = '14px Arial';
+              ctx.textAlign = 'center';
+              ctx.fillText(value.toString(), x + width / 2, y - 10);
+            });
+          }
+        }
+      }
+    });
+  }
+}
+```
+
+### 예제 3: SVG로 복잡한 패스 그리기
+
+```typescript
+import { CustomPaint, Size } from 'flitter';
+
+const SvgPathExample = CustomPaint({
+  size: new Size(300, 300),
+  painter: {
+    svg: {
+      createDefaultSvgEl: ({ createSvgEl }) => {
+        return {
+          background: createSvgEl('rect'),
+          path: createSvgEl('path'),
+          circle: createSvgEl('circle')
+        };
+      },
+      paint: (els, size) => {
+        // 배경
+        els.background.setAttribute('fill', '#f0f0f0');
+        els.background.setAttribute('width', `${size.width}`);
+        els.background.setAttribute('height', `${size.height}`);
+        
+        // 복잡한 패스
+        const pathData = `
+          M ${size.width * 0.2} ${size.height * 0.5}
+          Q ${size.width * 0.5} ${size.height * 0.2}
+            ${size.width * 0.8} ${size.height * 0.5}
+          T ${size.width * 0.5} ${size.height * 0.8}
+          Z
+        `;
+        els.path.setAttribute('d', pathData);
+        els.path.setAttribute('fill', 'none');
+        els.path.setAttribute('stroke', '#3498db');
+        els.path.setAttribute('stroke-width', '3');
+        
+        // 중심점
+        els.circle.setAttribute('cx', `${size.width * 0.5}`);
+        els.circle.setAttribute('cy', `${size.height * 0.5}`);
+        els.circle.setAttribute('r', '5');
+        els.circle.setAttribute('fill', '#e74c3c');
+      }
+    }
+  }
+});
+```
+
+### 예제 4: 자식 위젯과 함께 사용하기
+
+```typescript
+import { CustomPaint, Size, Container, Text } from 'flitter';
+
+const BackgroundPattern = CustomPaint({
+  painter: {
+    canvas: {
+      paint: (context, size) => {
+        const ctx = context.canvas;
+        
+        // 패턴 그리기
+        for (let x = 0; x < size.width; x += 20) {
+          for (let y = 0; y < size.height; y += 20) {
+            ctx.fillStyle = (x + y) % 40 === 0 ? '#e0e0e0' : '#f5f5f5';
+            ctx.fillRect(x, y, 20, 20);
+          }
+        }
+      }
+    }
+  },
+  child: Container({
+    alignment: Alignment.center,
+    padding: EdgeInsets.all(20),
+    child: Text('CustomPaint 배경 위의 텍스트', {
+      style: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#2c3e50'
+      }
+    })
+  })
+});
+```
+
+## 주의사항
+
+- `shouldRepaint` 메서드를 적절히 구현하여 불필요한 재그리기를 방지하세요
+- Canvas API 사용 시 성능을 고려하여 복잡한 계산은 미리 수행하세요
+- SVG와 Canvas 중 상황에 맞는 렌더러를 선택하세요 (SVG는 확대/축소 시 품질 유지, Canvas는 복잡한 애니메이션에 유리)
+- 메모리 누수를 방지하기 위해 애니메이션 정리를 잊지 마세요
+- `dependencies`를 활용하여 painter의 상태 변화를 효율적으로 관리하세요
+
+## 관련 위젯
+
+- **Container**: 간단한 배경색이나 테두리만 필요한 경우
+- **DecoratedBox**: 복잡한 장식이 필요하지만 커스텀 그리기까지는 필요 없을 때
+- **Transform**: 기존 위젯을 변형하여 표현할 수 있는 경우
+- **ClipPath**: 커스텀 모양으로 자르기만 필요한 경우
