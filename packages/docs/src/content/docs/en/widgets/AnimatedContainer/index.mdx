@@ -3,18 +3,14 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: AnimatedContainer
 title: "AnimatedContainer"
-description: ""
+description: "An animated container that smoothly transitions its properties over time"
 ---
 
-# AnimatedContainer
+## Overview
 
-This widget motivated by AnimatedContainer in Flutter.
+AnimatedContainer is an animated version of Container that automatically applies animations when property values change.
 
-> Animated version of Container that gradually changes its values over a period of time.
->
-> The AnimatedContainer will automatically animate between the old and new values of properties when they change using the provided curve and duration. Properties that are null are not animated. Its child and descendants are not animated.
->
-> This class is useful for generating simple implicit transitions between different parameters to Container with its internal AnimationController. For more complex animations, you'll likely want to use a subclass of AnimatedWidget such as the DecoratedBoxTransition or use your own AnimationController.
+AnimatedContainer automatically animates between the old and new values of properties when they change using the provided curve and duration. Properties that are null are not animated. Its child and descendants are not animated. This class is useful for generating simple implicit transitions between different parameters to Container with its internal AnimationController.
 
 <iframe
   width="560"
@@ -28,67 +24,468 @@ This widget motivated by AnimatedContainer in Flutter.
 
 See: https://api.flutter.dev/flutter/widgets/AnimatedContainer-class.html
 
+## When to use it?
+
+- When smoothly transitioning widget size, color, padding, etc.
+- When providing visual feedback in response to user interactions
+- When expressing state changes smoothly
+- When simple animations are needed without complex AnimationController
+- When expressing hover effects or selected states
+
+## Basic Usage
+
+```typescript
+// Variable to store state
+let isExpanded = false;
+
+// Create AnimatedContainer
+AnimatedContainer({
+  duration: 300, // 300ms
+  curve: Curves.easeInOut,
+  width: isExpanded ? 200 : 100,
+  height: isExpanded ? 200 : 100,
+  color: isExpanded ? 'blue' : 'red',
+  child: Center({
+    child: Text('Tap me')
+  })
+})
+
+// Animation automatically applies when state changes
+setState(() => {
+  isExpanded = !isExpanded;
+});
+```
+
 ## Props
 
-### duration
+### duration (required)
 
 **Value: number**
 
+The duration over which to animate the parameters of this container (in milliseconds).
+
+```typescript
+AnimatedContainer({
+  duration: 500, // 0.5 seconds
+  width: 100,
+  height: 100
+})
+```
+
 ### curve
 
-**Value: Curve(default Curves.linear)**
+**Value: Curve** (default: **Curves.linear**)
+
+Defines the animation progression curve. Various built-in curves are available.
+
+```typescript
+AnimatedContainer({
+  duration: 300,
+  curve: Curves.easeInOut, // Smooth start and end
+  width: expanded ? 200 : 100
+})
+```
+
+Available Curves:
+- **Curves.linear**: Constant speed
+- **Curves.easeIn**: Starts slowly
+- **Curves.easeOut**: Ends slowly
+- **Curves.easeInOut**: Starts and ends slowly
+- **Curves.bounceIn**: Bounces at the start
+- **Curves.bounceOut**: Bounces at the end
+- **Curves.bounceInOut**: Bounces at start and end
+- **Curves.anticipate**: Goes backward then forward
+- **Curves.backIn**: Pulls back then starts
+- **Curves.backOut**: Overshoots then returns
 
 ### width
 
 **Value: number | undefined**
 
+The container's width. Animates when changed.
+
+```typescript
+AnimatedContainer({
+  duration: 200,
+  width: isSelected ? 150 : 100,
+  height: 50
+})
+```
+
 ### height
 
 **Value: number | undefined**
+
+The container's height. Animates when changed.
+
+```typescript
+AnimatedContainer({
+  duration: 200,
+  width: 100,
+  height: isExpanded ? 200 : 100
+})
+```
 
 ### color
 
 **Value: string | undefined**
 
-This define background color of the container.
-This should not be with decoration
+The container's background color. Cannot be used with decoration.
+
+```typescript
+AnimatedContainer({
+  duration: 300,
+  color: isActive ? 'blue' : 'gray',
+  child: Text('Status indicator')
+})
+```
 
 ### decoration
 
-**Value: Deaction | undefined**
+**Value: Decoration | undefined**
+
+The decoration to paint behind the child. All BoxDecoration properties animate.
+
+```typescript
+AnimatedContainer({
+  duration: 400,
+  decoration: BoxDecoration({
+    color: isHovered ? 'lightblue' : 'white',
+    borderRadius: BorderRadius.circular(isHovered ? 20 : 10),
+    boxShadow: isHovered ? [
+      BoxShadow({
+        color: 'rgba(0, 0, 0, 0.2)',
+        blurRadius: 10,
+        offset: { x: 0, y: 5 }
+      })
+    ] : []
+  })
+})
+```
 
 ### margin
 
 **Value: EdgeInsets | undefined**
 
+Empty space to surround the container. Animates when changed.
+
+```typescript
+AnimatedContainer({
+  duration: 300,
+  margin: EdgeInsets.all(isSelected ? 20 : 10),
+  color: 'blue'
+})
+```
+
 ### padding
 
 **Value: EdgeInsets | undefined**
 
-### Alignment
+Empty space to inscribe inside the container. Animates when changed.
+
+```typescript
+AnimatedContainer({
+  duration: 300,
+  padding: EdgeInsets.all(isExpanded ? 20 : 10),
+  child: Text('Content')
+})
+```
+
+### alignment
 
 **Value: Alignment | undefined**
 
-### Contraints
+Aligns the child within the container. Animates when changed.
 
-**Value: Contraints | undefined**
+```typescript
+AnimatedContainer({
+  duration: 500,
+  alignment: isLeft ? Alignment.centerLeft : Alignment.centerRight,
+  child: Icon({ icon: Icons.star })
+})
+```
+
+### constraints
+
+**Value: Constraints | undefined**
+
+Additional constraints to apply to the child. Min/max sizes animate.
+
+```typescript
+AnimatedContainer({
+  duration: 300,
+  constraints: Constraints({
+    minWidth: 100,
+    maxWidth: isExpanded ? 300 : 150,
+    minHeight: 50,
+    maxHeight: isExpanded ? 200 : 100
+  })
+})
+```
 
 ### clipped
 
-**Value: boolean (Default: false)**
+**Value: boolean** (default: **false**)
 
-### Transform
+Whether to clip children to the container's bounds.
+
+```typescript
+AnimatedContainer({
+  duration: 300,
+  clipped: true,
+  width: 100,
+  height: 100,
+  child: Image({ src: 'large-image.jpg' })
+})
+```
+
+### transform
 
 **Value: Matrix4 | undefined**
 
-### TransformAlignment
+The transformation matrix to apply. Rotation, scaling, and translation animate.
+
+```typescript
+AnimatedContainer({
+  duration: 600,
+  transform: isRotated 
+    ? Matrix4.rotationZ(Math.PI / 4) // 45 degree rotation
+    : Matrix4.identity(),
+  child: Icon({ icon: Icons.refresh })
+})
+```
+
+### transformAlignment
 
 **Value: Alignment | undefined**
+
+The alignment of the origin for the transform. Used with transform.
+
+```typescript
+AnimatedContainer({
+  duration: 500,
+  transform: Matrix4.rotationZ(angle),
+  transformAlignment: Alignment.center, // Rotate around center
+  child: Text('Rotating')
+})
+```
 
 ### child
 
 **Value: Widget | undefined**
 
-## Examples
+The child widget, which is not animated.
 
-### Basic
+```typescript
+AnimatedContainer({
+  duration: 300,
+  width: 100,
+  height: 100,
+  child: Icon({ icon: Icons.favorite })
+})
+```
+
+## Practical Examples
+
+### Example 1: Hover Effect Card
+
+```typescript
+const HoverCard = () => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return GestureDetector({
+    onMouseEnter: () => setIsHovered(true),
+    onMouseLeave: () => setIsHovered(false),
+    child: AnimatedContainer({
+      duration: 200,
+      curve: Curves.easeOut,
+      width: 200,
+      height: isHovered ? 250 : 200,
+      decoration: BoxDecoration({
+        color: 'white',
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow({
+            color: isHovered ? 'rgba(0, 0, 0, 0.15)' : 'rgba(0, 0, 0, 0.05)',
+            blurRadius: isHovered ? 20 : 10,
+            offset: { x: 0, y: isHovered ? 10 : 5 }
+          })
+        ]
+      }),
+      child: Padding({
+        padding: EdgeInsets.all(16),
+        child: Column({
+          children: [
+            Icon({ 
+              icon: Icons.shopping_cart,
+              size: 48,
+              color: isHovered ? 'blue' : 'gray'
+            }),
+            SizedBox({ height: 12 }),
+            Text('Product Card')
+          ]
+        })
+      })
+    })
+  });
+};
+```
+
+### Example 2: Expandable Panel
+
+```typescript
+const ExpandablePanel = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return AnimatedContainer({
+    duration: 300,
+    curve: Curves.easeInOut,
+    width: 300,
+    height: isExpanded ? 400 : 80,
+    decoration: BoxDecoration({
+      color: 'white',
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all({ color: '#E0E0E0' })
+    }),
+    child: Column({
+      children: [
+        GestureDetector({
+          onTap: () => setIsExpanded(!isExpanded),
+          child: Container({
+            height: 80,
+            padding: EdgeInsets.symmetric({ horizontal: 16 }),
+            child: Row({
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Panel Title'),
+                AnimatedContainer({
+                  duration: 300,
+                  transform: Matrix4.rotationZ(isExpanded ? Math.PI : 0),
+                  transformAlignment: Alignment.center,
+                  child: Icon({ icon: Icons.expand_more })
+                })
+              ]
+            })
+          })
+        }),
+        if (isExpanded) Expanded({
+          child: Padding({
+            padding: EdgeInsets.all(16),
+            child: Text('Expanded content goes here.')
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### Example 3: Progress Indicator
+
+```typescript
+const ProgressIndicator = ({ progress }: { progress: number }) => {
+  return Container({
+    width: 300,
+    height: 20,
+    decoration: BoxDecoration({
+      color: '#E0E0E0',
+      borderRadius: BorderRadius.circular(10)
+    }),
+    child: Stack({
+      children: [
+        AnimatedContainer({
+          duration: 500,
+          curve: Curves.easeOut,
+          width: 300 * progress,
+          height: 20,
+          decoration: BoxDecoration({
+            color: progress < 0.5 ? 'orange' : 'green',
+            borderRadius: BorderRadius.circular(10)
+          })
+        }),
+        Center({
+          child: Text(`${Math.round(progress * 100)}%`, {
+            style: TextStyle({ color: 'white', fontWeight: 'bold' })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### Example 4: Selectable Chip
+
+```typescript
+const SelectableChip = ({ label, selected, onTap }) => {
+  return GestureDetector({
+    onTap: onTap,
+    child: AnimatedContainer({
+      duration: 200,
+      curve: Curves.easeOut,
+      padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+      decoration: BoxDecoration({
+        color: selected ? 'blue' : 'transparent',
+        border: Border.all({ 
+          color: selected ? 'blue' : 'gray',
+          width: selected ? 2 : 1
+        }),
+        borderRadius: BorderRadius.circular(20)
+      }),
+      child: Text(label, {
+        style: TextStyle({
+          color: selected ? 'white' : 'black',
+          fontWeight: selected ? 'bold' : 'normal'
+        })
+      })
+    })
+  });
+};
+```
+
+### Example 5: Loading Skeleton
+
+```typescript
+const LoadingSkeleton = () => {
+  const [animationPhase, setAnimationPhase] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setAnimationPhase(phase => (phase + 1) % 3);
+    }, 800);
+    return () => clearInterval(timer);
+  }, []);
+
+  return AnimatedContainer({
+    duration: 800,
+    curve: Curves.easeInOut,
+    width: 300,
+    height: 100,
+    decoration: BoxDecoration({
+      gradient: LinearGradient({
+        colors: ['#E0E0E0', '#F5F5F5', '#E0E0E0'],
+        stops: [0, 0.5, 1],
+        begin: Alignment.centerLeft.add(Alignment(-1 + animationPhase * 0.5, 0)),
+        end: Alignment.centerRight.add(Alignment(-1 + animationPhase * 0.5, 0))
+      }),
+      borderRadius: BorderRadius.circular(8)
+    })
+  });
+};
+```
+
+## Important Notes
+
+- duration is a required property. You must specify the animation duration.
+- color and decoration cannot be used together.
+- Child widgets are not animated. To animate children, use separate AnimatedWidgets.
+- Animating too many properties simultaneously can affect performance.
+- When state changes rapidly, the current animation is interrupted and a new one starts.
+
+## Related Widgets
+
+- **Container**: Basic container without animation
+- **AnimatedPadding**: Widget that only animates padding
+- **AnimatedAlign**: Widget that only animates alignment
+- **AnimatedOpacity**: Widget that only animates opacity
+- **AnimatedPositioned**: Widget that animates position within a Stack

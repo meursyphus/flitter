@@ -3,18 +3,14 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: AnimatedContainer
 title: "AnimatedContainer"
-description: ""
+description: "시간에 따라 속성이 부드럽게 변화하는 애니메이션 컨테이너"
 ---
 
-# AnimatedContainer
+## 개요
 
-This widget motivated by AnimatedContainer in Flutter.
+AnimatedContainer는 Container의 애니메이션 버전으로, 속성 값이 변경될 때 자동으로 애니메이션을 적용합니다.
 
-> Animated version of Container that gradually changes its values over a period of time.
->
-> The AnimatedContainer will automatically animate between the old and new values of properties when they change using the provided curve and duration. Properties that are null are not animated. Its child and descendants are not animated.
->
-> This class is useful for generating simple implicit transitions between different parameters to Container with its internal AnimationController. For more complex animations, you'll likely want to use a subclass of AnimatedWidget such as the DecoratedBoxTransition or use your own AnimationController.
+AnimatedContainer는 지정된 duration과 curve를 사용하여 이전 값과 새로운 값 사이를 자동으로 애니메이션합니다. null인 속성은 애니메이션되지 않으며, 자식 위젯과 그 하위 요소들은 애니메이션되지 않습니다. 내부 AnimationController를 사용하여 Container의 다양한 속성들 간에 간단한 암시적 전환을 생성하는 데 유용합니다.
 
 <iframe
   width="560"
@@ -26,69 +22,470 @@ This widget motivated by AnimatedContainer in Flutter.
   allowfullscreen
 ></iframe>
 
-See: https://api.flutter.dev/flutter/widgets/AnimatedContainer-class.html
+참고: https://api.flutter.dev/flutter/widgets/AnimatedContainer-class.html
+
+## 언제 사용하나요?
+
+- 위젯의 크기, 색상, 여백 등을 부드럽게 전환할 때
+- 사용자 상호작용에 반응하는 시각적 피드백을 제공할 때
+- 상태 변화를 부드럽게 표현하고 싶을 때
+- 복잡한 AnimationController 없이 간단한 애니메이션이 필요할 때
+- hover 효과나 선택 상태를 표현할 때
+
+## 기본 사용법
+
+```typescript
+// 상태를 저장할 변수
+let isExpanded = false;
+
+// AnimatedContainer 생성
+AnimatedContainer({
+  duration: 300, // 300ms
+  curve: Curves.easeInOut,
+  width: isExpanded ? 200 : 100,
+  height: isExpanded ? 200 : 100,
+  color: isExpanded ? 'blue' : 'red',
+  child: Center({
+    child: Text('탭하세요')
+  })
+})
+
+// 상태 변경 시 자동으로 애니메이션 적용
+setState(() => {
+  isExpanded = !isExpanded;
+});
+```
 
 ## Props
 
-### duration
+### duration (필수)
 
-**Value: number**
+**값: number**
+
+애니메이션이 완료되는 데 걸리는 시간(밀리초)입니다.
+
+```typescript
+AnimatedContainer({
+  duration: 500, // 0.5초
+  width: 100,
+  height: 100
+})
+```
 
 ### curve
 
-**Value: Curve(default Curves.linear)**
+**값: Curve** (기본값: **Curves.linear**)
+
+애니메이션의 진행 곡선을 정의합니다. 다양한 내장 곡선을 사용할 수 있습니다.
+
+```typescript
+AnimatedContainer({
+  duration: 300,
+  curve: Curves.easeInOut, // 부드러운 시작과 끝
+  width: expanded ? 200 : 100
+})
+```
+
+사용 가능한 Curves:
+- **Curves.linear**: 일정한 속도
+- **Curves.easeIn**: 천천히 시작
+- **Curves.easeOut**: 천천히 끝남
+- **Curves.easeInOut**: 천천히 시작하고 끝남
+- **Curves.bounceIn**: 바운스하며 시작
+- **Curves.bounceOut**: 바운스하며 끝남
+- **Curves.bounceInOut**: 바운스하며 시작하고 끝남
+- **Curves.anticipate**: 뒤로 갔다가 앞으로
+- **Curves.backIn**: 뒤로 당겼다가 시작
+- **Curves.backOut**: 목표를 넘었다가 돌아옴
 
 ### width
 
-**Value: number | undefined**
+**값: number | undefined**
+
+컨테이너의 너비입니다. 변경 시 애니메이션됩니다.
+
+```typescript
+AnimatedContainer({
+  duration: 200,
+  width: isSelected ? 150 : 100,
+  height: 50
+})
+```
 
 ### height
 
-**Value: number | undefined**
+**값: number | undefined**
+
+컨테이너의 높이입니다. 변경 시 애니메이션됩니다.
+
+```typescript
+AnimatedContainer({
+  duration: 200,
+  width: 100,
+  height: isExpanded ? 200 : 100
+})
+```
 
 ### color
 
-**Value: string | undefined**
+**값: string | undefined**
 
-This define background color of the container.
-This should not be with decoration
+컨테이너의 배경색입니다. decoration과 함께 사용할 수 없습니다.
+
+```typescript
+AnimatedContainer({
+  duration: 300,
+  color: isActive ? 'blue' : 'gray',
+  child: Text('상태 표시')
+})
+```
 
 ### decoration
 
-**Value: Deaction | undefined**
+**값: Decoration | undefined**
+
+컨테이너의 장식입니다. BoxDecoration의 모든 속성이 애니메이션됩니다.
+
+```typescript
+AnimatedContainer({
+  duration: 400,
+  decoration: BoxDecoration({
+    color: isHovered ? 'lightblue' : 'white',
+    borderRadius: BorderRadius.circular(isHovered ? 20 : 10),
+    boxShadow: isHovered ? [
+      BoxShadow({
+        color: 'rgba(0, 0, 0, 0.2)',
+        blurRadius: 10,
+        offset: { x: 0, y: 5 }
+      })
+    ] : []
+  })
+})
+```
 
 ### margin
 
-**Value: EdgeInsets | undefined**
+**값: EdgeInsets | undefined**
+
+컨테이너 외부 여백입니다. 변경 시 애니메이션됩니다.
+
+```typescript
+AnimatedContainer({
+  duration: 300,
+  margin: EdgeInsets.all(isSelected ? 20 : 10),
+  color: 'blue'
+})
+```
 
 ### padding
 
-**Value: EdgeInsets | undefined**
+**값: EdgeInsets | undefined**
 
-### Alignment
+컨테이너 내부 여백입니다. 변경 시 애니메이션됩니다.
 
-**Value: Alignment | undefined**
+```typescript
+AnimatedContainer({
+  duration: 300,
+  padding: EdgeInsets.all(isExpanded ? 20 : 10),
+  child: Text('내용')
+})
+```
 
-### Contraints
+### alignment
 
-**Value: Contraints | undefined**
+**값: Alignment | undefined**
+
+자식 위젯의 정렬 위치입니다. 변경 시 애니메이션됩니다.
+
+```typescript
+AnimatedContainer({
+  duration: 500,
+  alignment: isLeft ? Alignment.centerLeft : Alignment.centerRight,
+  child: Icon({ icon: Icons.star })
+})
+```
+
+### constraints
+
+**값: Constraints | undefined**
+
+컨테이너의 제약 조건입니다. 최소/최대 크기가 애니메이션됩니다.
+
+```typescript
+AnimatedContainer({
+  duration: 300,
+  constraints: Constraints({
+    minWidth: 100,
+    maxWidth: isExpanded ? 300 : 150,
+    minHeight: 50,
+    maxHeight: isExpanded ? 200 : 100
+  })
+})
+```
 
 ### clipped
 
-**Value: boolean (Default: false)**
+**값: boolean** (기본값: **false**)
 
-### Transform
+컨테이너 경계를 벗어나는 콘텐츠를 잘라낼지 여부입니다.
 
-**Value: Matrix4 | undefined**
+```typescript
+AnimatedContainer({
+  duration: 300,
+  clipped: true,
+  width: 100,
+  height: 100,
+  child: Image({ src: 'large-image.jpg' })
+})
+```
 
-### TransformAlignment
+### transform
 
-**Value: Alignment | undefined**
+**값: Matrix4 | undefined**
+
+컨테이너에 적용할 변환 행렬입니다. 회전, 크기 조정, 이동 등이 애니메이션됩니다.
+
+```typescript
+AnimatedContainer({
+  duration: 600,
+  transform: isRotated 
+    ? Matrix4.rotationZ(Math.PI / 4) // 45도 회전
+    : Matrix4.identity(),
+  child: Icon({ icon: Icons.refresh })
+})
+```
+
+### transformAlignment
+
+**값: Alignment | undefined**
+
+변환의 기준점입니다. transform과 함께 사용됩니다.
+
+```typescript
+AnimatedContainer({
+  duration: 500,
+  transform: Matrix4.rotationZ(angle),
+  transformAlignment: Alignment.center, // 중심점 기준 회전
+  child: Text('회전')
+})
+```
 
 ### child
 
-**Value: Widget | undefined**
+**값: Widget | undefined**
 
-## Examples
+애니메이션되지 않는 자식 위젯입니다.
 
-### Basic
+```typescript
+AnimatedContainer({
+  duration: 300,
+  width: 100,
+  height: 100,
+  child: Icon({ icon: Icons.favorite })
+})
+```
+
+## 실제 사용 예제
+
+### 예제 1: 호버 효과 카드
+
+```typescript
+const HoverCard = () => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return GestureDetector({
+    onMouseEnter: () => setIsHovered(true),
+    onMouseLeave: () => setIsHovered(false),
+    child: AnimatedContainer({
+      duration: 200,
+      curve: Curves.easeOut,
+      width: 200,
+      height: isHovered ? 250 : 200,
+      decoration: BoxDecoration({
+        color: 'white',
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow({
+            color: isHovered ? 'rgba(0, 0, 0, 0.15)' : 'rgba(0, 0, 0, 0.05)',
+            blurRadius: isHovered ? 20 : 10,
+            offset: { x: 0, y: isHovered ? 10 : 5 }
+          })
+        ]
+      }),
+      child: Padding({
+        padding: EdgeInsets.all(16),
+        child: Column({
+          children: [
+            Icon({ 
+              icon: Icons.shopping_cart,
+              size: 48,
+              color: isHovered ? 'blue' : 'gray'
+            }),
+            SizedBox({ height: 12 }),
+            Text('상품 카드')
+          ]
+        })
+      })
+    })
+  });
+};
+```
+
+### 예제 2: 확장 가능한 패널
+
+```typescript
+const ExpandablePanel = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return AnimatedContainer({
+    duration: 300,
+    curve: Curves.easeInOut,
+    width: 300,
+    height: isExpanded ? 400 : 80,
+    decoration: BoxDecoration({
+      color: 'white',
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all({ color: '#E0E0E0' })
+    }),
+    child: Column({
+      children: [
+        GestureDetector({
+          onTap: () => setIsExpanded(!isExpanded),
+          child: Container({
+            height: 80,
+            padding: EdgeInsets.symmetric({ horizontal: 16 }),
+            child: Row({
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('패널 제목'),
+                AnimatedContainer({
+                  duration: 300,
+                  transform: Matrix4.rotationZ(isExpanded ? Math.PI : 0),
+                  transformAlignment: Alignment.center,
+                  child: Icon({ icon: Icons.expand_more })
+                })
+              ]
+            })
+          })
+        }),
+        if (isExpanded) Expanded({
+          child: Padding({
+            padding: EdgeInsets.all(16),
+            child: Text('확장된 내용이 여기에 표시됩니다.')
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 3: 진행 표시기
+
+```typescript
+const ProgressIndicator = ({ progress }: { progress: number }) => {
+  return Container({
+    width: 300,
+    height: 20,
+    decoration: BoxDecoration({
+      color: '#E0E0E0',
+      borderRadius: BorderRadius.circular(10)
+    }),
+    child: Stack({
+      children: [
+        AnimatedContainer({
+          duration: 500,
+          curve: Curves.easeOut,
+          width: 300 * progress,
+          height: 20,
+          decoration: BoxDecoration({
+            color: progress < 0.5 ? 'orange' : 'green',
+            borderRadius: BorderRadius.circular(10)
+          })
+        }),
+        Center({
+          child: Text(`${Math.round(progress * 100)}%`, {
+            style: TextStyle({ color: 'white', fontWeight: 'bold' })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 4: 선택 가능한 칩
+
+```typescript
+const SelectableChip = ({ label, selected, onTap }) => {
+  return GestureDetector({
+    onTap: onTap,
+    child: AnimatedContainer({
+      duration: 200,
+      curve: Curves.easeOut,
+      padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+      decoration: BoxDecoration({
+        color: selected ? 'blue' : 'transparent',
+        border: Border.all({ 
+          color: selected ? 'blue' : 'gray',
+          width: selected ? 2 : 1
+        }),
+        borderRadius: BorderRadius.circular(20)
+      }),
+      child: Text(label, {
+        style: TextStyle({
+          color: selected ? 'white' : 'black',
+          fontWeight: selected ? 'bold' : 'normal'
+        })
+      })
+    })
+  });
+};
+```
+
+### 예제 5: 로딩 스켈레톤
+
+```typescript
+const LoadingSkeleton = () => {
+  const [animationPhase, setAnimationPhase] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setAnimationPhase(phase => (phase + 1) % 3);
+    }, 800);
+    return () => clearInterval(timer);
+  }, []);
+
+  return AnimatedContainer({
+    duration: 800,
+    curve: Curves.easeInOut,
+    width: 300,
+    height: 100,
+    decoration: BoxDecoration({
+      gradient: LinearGradient({
+        colors: ['#E0E0E0', '#F5F5F5', '#E0E0E0'],
+        stops: [0, 0.5, 1],
+        begin: Alignment.centerLeft.add(Alignment(-1 + animationPhase * 0.5, 0)),
+        end: Alignment.centerRight.add(Alignment(-1 + animationPhase * 0.5, 0))
+      }),
+      borderRadius: BorderRadius.circular(8)
+    })
+  });
+};
+```
+
+## 주의사항
+
+- duration은 필수 속성입니다. 애니메이션 시간을 반드시 지정해야 합니다.
+- color와 decoration을 동시에 사용할 수 없습니다.
+- 자식 위젯은 애니메이션되지 않습니다. 자식도 애니메이션하려면 별도의 AnimatedWidget을 사용하세요.
+- 너무 많은 속성을 동시에 애니메이션하면 성능에 영향을 줄 수 있습니다.
+- 빠른 상태 변경 시 애니메이션이 중단되고 새로운 애니메이션이 시작됩니다.
+
+## 관련 위젯
+
+- **Container**: 애니메이션이 없는 기본 컨테이너
+- **AnimatedPadding**: padding만 애니메이션하는 위젯
+- **AnimatedAlign**: alignment만 애니메이션하는 위젯
+- **AnimatedOpacity**: 투명도만 애니메이션하는 위젯
+- **AnimatedPositioned**: Stack 내에서 위치를 애니메이션하는 위젯
