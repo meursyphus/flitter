@@ -3,16 +3,14 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: ClipRRect
 title: "ClipRRect"
-description: ""
+description: "둥근 모서리 사각형으로 자식을 클리핑하는 위젯"
 ---
 
-# ClipRRect
+## 개요
 
-This widget clip the child widget like ClipRRect Widget in Flutter.
+ClipRRect는 둥근 모서리 사각형(rounded rectangle)을 사용하여 자식 위젯을 클리핑하는 위젯입니다.
 
-> A widget that clips its child using a rounded rectangle.
->
-> By default, ClipRRect uses its own bounds as the base rectangle for the clip, but the size and location of the clip can be customized using a custom clipper.
+기본적으로 ClipRRect는 자체 경계를 기본 사각형으로 사용하지만, 사용자 정의 clipper를 사용하여 클립의 크기와 위치를 커스터마이징할 수 있습니다. borderRadius 속성을 통해 각 모서리의 둥근 정도를 개별적으로 설정할 수 있습니다.
 
 <iframe
   width="560"
@@ -24,4 +22,506 @@ This widget clip the child widget like ClipRRect Widget in Flutter.
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/ClipRRect-class.html](https://api.flutter.dev/flutter/widgets/ClipRRect-class.html)
+참조: [https://api.flutter.dev/flutter/widgets/ClipRRect-class.html](https://api.flutter.dev/flutter/widgets/ClipRRect-class.html)
+
+## 언제 사용하나요?
+
+- 이미지나 콘테이너에 둥근 모서리를 적용하고 싶을 때
+- 카드 UI나 버튼에 부드러운 모서리 효과를 주고 싶을 때
+- 오버플로우되는 콘텐츠를 둥근 모서리로 자르고 싶을 때
+- 각 모서리의 둥근 정도를 다르게 설정하고 싶을 때
+- 프로필 이미지나 썸네일에 둥근 효과를 적용할 때
+
+## 기본 사용법
+
+```typescript
+// 모든 모서리가 동일한 반경
+ClipRRect({
+  borderRadius: BorderRadius.circular(16),
+  child: Image({
+    src: 'https://example.com/image.jpg',
+    width: 200,
+    height: 200,
+    objectFit: 'cover'
+  })
+})
+
+// 특정 모서리만 둥글게
+ClipRRect({
+  borderRadius: BorderRadius.only({
+    topLeft: Radius.circular(20),
+    topRight: Radius.circular(20),
+    bottomLeft: Radius.zero,
+    bottomRight: Radius.zero
+  }),
+  child: Container({
+    width: 300,
+    height: 200,
+    color: 'blue'
+  })
+})
+
+// 타원형 모서리
+ClipRRect({
+  borderRadius: BorderRadius.all(Radius.elliptical(40, 20)),
+  child: Container({
+    width: 150,
+    height: 100,
+    color: 'green'
+  })
+})
+```
+
+## Props 상세 설명
+
+### borderRadius
+
+**값: BorderRadius** (기본값: **BorderRadius.zero**)
+
+각 모서리의 둥근 정도를 정의합니다. BorderRadius 클래스는 다양한 팩토리 메서드를 제공합니다:
+
+- `BorderRadius.circular(radius)`: 모든 모서리에 동일한 원형 반경 적용
+- `BorderRadius.all(Radius)`: 모든 모서리에 동일한 Radius 적용
+- `BorderRadius.only({topLeft?, topRight?, bottomLeft?, bottomRight?})`: 각 모서리 개별 설정
+- `BorderRadius.vertical({top?, bottom?})`: 상단과 하단 모서리 설정
+- `BorderRadius.horizontal({left?, right?})`: 좌측과 우측 모서리 설정
+
+```typescript
+// 원형 반경
+ClipRRect({
+  borderRadius: BorderRadius.circular(20),
+  child: child
+})
+
+// 타원형 반경
+ClipRRect({
+  borderRadius: BorderRadius.all(Radius.elliptical(30, 15)),
+  child: child
+})
+
+// 개별 모서리 설정
+ClipRRect({
+  borderRadius: BorderRadius.only({
+    topLeft: Radius.circular(30),
+    topRight: Radius.circular(10),
+    bottomLeft: Radius.circular(5),
+    bottomRight: Radius.circular(20)
+  }),
+  child: child
+})
+```
+
+### clipper
+
+**값: (size: Size) => RRect** (선택)
+
+사용자 정의 클리핑 영역을 정의하는 콜백 함수입니다. 위젯의 크기를 받아 RRect(둥근 사각형) 객체를 반환해야 합니다.
+
+```typescript
+ClipRRect({
+  clipper: (size) => {
+    // 중앙에 작은 둥근 사각형 클리핑
+    return RRect.fromRectAndRadius({
+      rect: Rect.fromCenter({
+        center: { x: size.width / 2, y: size.height / 2 },
+        width: size.width * 0.8,
+        height: size.height * 0.8
+      }),
+      radius: Radius.circular(10)
+    });
+  },
+  child: child
+})
+```
+
+### clipped
+
+**값: boolean** (기본값: **true**)
+
+클리핑 효과를 활성화/비활성화합니다.
+
+- `true`: 클리핑 적용
+- `false`: 클리핑 비활성화 (자식 위젯이 정상적으로 표시됨)
+
+```typescript
+ClipRRect({
+  clipped: isClippingEnabled,
+  borderRadius: BorderRadius.circular(16),
+  child: content
+})
+```
+
+### child
+
+**값: Widget**
+
+클리핑될 자식 위젯입니다.
+
+## 실제 사용 예제
+
+### 예제 1: 카드 UI 구성
+
+```typescript
+const CardWithImage = ({ image, title, description, onTap }) => {
+  return GestureDetector({
+    onTap: onTap,
+    child: Container({
+      width: 320,
+      margin: EdgeInsets.all(16),
+      decoration: BoxDecoration({
+        color: 'white',
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow({
+            color: 'rgba(0,0,0,0.1)',
+            blurRadius: 10,
+            offset: { x: 0, y: 4 }
+          })
+        ]
+      }),
+      child: Column({
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 상단 이미지
+          ClipRRect({
+            borderRadius: BorderRadius.only({
+              topLeft: Radius.circular(16),
+              topRight: Radius.circular(16)
+            }),
+            child: Image({
+              src: image,
+              width: 320,
+              height: 180,
+              objectFit: 'cover'
+            })
+          }),
+          // 콘텐츠 영역
+          Padding({
+            padding: EdgeInsets.all(16),
+            child: Column({
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, {
+                  style: TextStyle({
+                    fontSize: 20,
+                    fontWeight: 'bold'
+                  })
+                }),
+                SizedBox({ height: 8 }),
+                Text(description, {
+                  style: TextStyle({
+                    fontSize: 14,
+                    color: '#666'
+                  })
+                })
+              ]
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### 예제 2: 프로필 아바타 변형
+
+```typescript
+const ProfileAvatar = ({ imageUrl, size, status }) => {
+  const getStatusColor = () => {
+    switch (status) {
+      case 'online': return '#4CAF50';
+      case 'away': return '#FF9800';
+      case 'busy': return '#F44336';
+      default: return '#9E9E9E';
+    }
+  };
+  
+  return Stack({
+    children: [
+      // 프로필 이미지
+      Container({
+        width: size,
+        height: size,
+        decoration: BoxDecoration({
+          border: Border.all({
+            color: getStatusColor(),
+            width: 3
+          }),
+          borderRadius: BorderRadius.circular(size * 0.25)
+        }),
+        padding: EdgeInsets.all(3),
+        child: ClipRRect({
+          borderRadius: BorderRadius.circular(size * 0.25 - 3),
+          child: Image({
+            src: imageUrl,
+            width: size - 6,
+            height: size - 6,
+            objectFit: 'cover'
+          })
+        })
+      }),
+      // 상태 표시기
+      Positioned({
+        right: 0,
+        bottom: 0,
+        child: Container({
+          width: size * 0.3,
+          height: size * 0.3,
+          decoration: BoxDecoration({
+            color: getStatusColor(),
+            borderRadius: BorderRadius.circular(size * 0.15),
+            border: Border.all({
+              color: 'white',
+              width: 2
+            })
+          })
+        })
+      })
+    ]
+  });
+};
+
+// 사용 예
+ProfileAvatar({
+  imageUrl: 'https://example.com/avatar.jpg',
+  size: 80,
+  status: 'online'
+});
+```
+
+### 예제 3: 메시지 버블
+
+```typescript
+const MessageBubble = ({ message, isMe, time, hasImage }) => {
+  return Container({
+    margin: EdgeInsets.symmetric({ horizontal: 16, vertical: 4 }),
+    alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+    child: Container({
+      constraints: BoxConstraints({ maxWidth: 280 }),
+      child: Column({
+        crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          ClipRRect({
+            borderRadius: BorderRadius.only({
+              topLeft: Radius.circular(isMe ? 16 : 4),
+              topRight: Radius.circular(isMe ? 4 : 16),
+              bottomLeft: Radius.circular(16),
+              bottomRight: Radius.circular(16)
+            }),
+            child: Container({
+              color: isMe ? '#007AFF' : '#E5E5EA',
+              child: Column({
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (hasImage)
+                    ClipRRect({
+                      borderRadius: BorderRadius.only({
+                        topLeft: Radius.circular(isMe ? 12 : 0),
+                        topRight: Radius.circular(isMe ? 0 : 12)
+                      }),
+                      child: Image({
+                        src: hasImage,
+                        width: 200,
+                        height: 150,
+                        objectFit: 'cover'
+                      })
+                    }),
+                  Padding({
+                    padding: EdgeInsets.all(12),
+                    child: Text(message, {
+                      style: TextStyle({
+                        color: isMe ? 'white' : 'black',
+                        fontSize: 16
+                      })
+                    })
+                  })
+                ]
+              })
+            })
+          }),
+          SizedBox({ height: 4 }),
+          Text(time, {
+            style: TextStyle({
+              fontSize: 12,
+              color: '#666'
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### 예제 4: 그라데이션 버튼
+
+```typescript
+const GradientButton = ({ text, onPressed, disabled = false }) => {
+  return GestureDetector({
+    onTap: disabled ? null : onPressed,
+    child: Opacity({
+      opacity: disabled ? 0.5 : 1.0,
+      child: ClipRRect({
+        borderRadius: BorderRadius.circular(30),
+        child: Container({
+          width: 200,
+          height: 60,
+          decoration: BoxDecoration({
+            gradient: LinearGradient({
+              colors: ['#667eea', '#764ba2'],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight
+            })
+          }),
+          child: Stack({
+            children: [
+              // 호버 효과를 위한 오버레이
+              AnimatedContainer({
+                duration: Duration.milliseconds(200),
+                decoration: BoxDecoration({
+                  color: 'rgba(255,255,255,0.1)'
+                })
+              }),
+              // 텍스트
+              Center({
+                child: Text(text, {
+                  style: TextStyle({
+                    color: 'white',
+                    fontSize: 18,
+                    fontWeight: 'bold'
+                  })
+                })
+              })
+            ]
+          })
+        })
+      })
+    })
+  });
+};
+```
+
+### 예제 5: 이미지 갤러리 썸네일
+
+```typescript
+const GalleryThumbnail = ({ images, title }) => {
+  const gridSize = Math.ceil(Math.sqrt(images.length));
+  
+  return Column({
+    children: [
+      ClipRRect({
+        borderRadius: BorderRadius.circular(12),
+        child: Container({
+          width: 200,
+          height: 200,
+          color: '#f0f0f0',
+          child: images.length === 1 
+            ? Image({
+                src: images[0],
+                width: 200,
+                height: 200,
+                objectFit: 'cover'
+              })
+            : Grid({
+                crossAxisCount: gridSize,
+                gap: 2,
+                children: images.slice(0, gridSize * gridSize).map((img, index) => 
+                  ClipRRect({
+                    borderRadius: BorderRadius.circular(
+                      index === 0 ? 12 : 0
+                    ),
+                    child: Image({
+                      src: img,
+                      width: 200 / gridSize - 2,
+                      height: 200 / gridSize - 2,
+                      objectFit: 'cover'
+                    })
+                  })
+                )
+              })
+        })
+      }),
+      SizedBox({ height: 8 }),
+      Container({
+        width: 200,
+        child: Row({
+          children: [
+            Expanded({
+              child: Text(title, {
+                style: TextStyle({
+                  fontSize: 14,
+                  fontWeight: 'bold'
+                }),
+                overflow: TextOverflow.ellipsis
+              })
+            }),
+            if (images.length > gridSize * gridSize)
+              Container({
+                padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 2 }),
+                decoration: BoxDecoration({
+                  color: 'rgba(0,0,0,0.6)',
+                  borderRadius: BorderRadius.circular(12)
+                }),
+                child: Text(`+${images.length - gridSize * gridSize}`, {
+                  style: TextStyle({
+                    color: 'white',
+                    fontSize: 12
+                  })
+                })
+              })
+          ]
+        })
+      })
+    ]
+  });
+};
+```
+
+## RRect API 이해하기
+
+### RRect 생성 메서드
+
+```typescript
+// 기본 생성자들
+RRect.fromLTRBR({
+  left: 0,
+  top: 0,
+  right: 100,
+  bottom: 100,
+  radius: Radius.circular(10)
+});
+
+RRect.fromRectAndRadius({
+  rect: Rect.fromLTWH({ left: 0, top: 0, width: 100, height: 100 }),
+  radius: Radius.circular(10)
+});
+
+RRect.fromRectAndCorners({
+  rect: rect,
+  topLeft: Radius.circular(10),
+  topRight: Radius.circular(20),
+  bottomLeft: Radius.circular(5),
+  bottomRight: Radius.circular(15)
+});
+
+// 확대/축소
+const inflatedRRect = rrect.inflate(10);  // 10픽셀 확대
+const deflatedRRect = rrect.deflate(5);   // 5픽셀 축소
+```
+
+## 주의사항
+
+- 클리핑은 렌더링 성능에 영향을 줄 수 있으므로 필요한 경우에만 사용하세요
+- borderRadius 값이 위젯 크기보다 크면 예상치 못한 결과가 발생할 수 있습니다
+- 클리핑된 영역 밖의 터치 이벤트는 감지되지 않습니다
+- 복잡한 레이아웃에서는 Container의 decoration과 ClipRRect를 함께 사용할 때 주의하세요
+- 이미지 로딩 중에는 플레이스홀더를 사용하여 레이아웃 이동을 방지하세요
+
+## 관련 위젯
+
+- **ClipRect**: 사각형으로 클리핑
+- **ClipOval**: 타원형으로 클리핑
+- **ClipPath**: 사용자 정의 경로로 클리핑
+- **Container**: decoration 속성으로 둥근 모서리 구현 가능
+- **Card**: 기본적으로 둥근 모서리를 가진 머티리얼 디자인 카드
