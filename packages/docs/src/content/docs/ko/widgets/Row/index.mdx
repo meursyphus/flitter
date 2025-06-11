@@ -3,23 +3,307 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: Row
 title: "Row"
-description: ""
+description: "자식 위젯을 수평으로 배치하는 레이아웃 위젯"
 ---
+
+## 개요
+
+Row는 자식 위젯들을 수평 방향으로 배치하는 레이아웃 위젯입니다.
+
+Row는 Flex 위젯의 편의 래퍼로, 방향이 수평으로 고정되어 있습니다. 여러 위젯을 가로로 나란히 배치할 때 사용하며, 다양한 정렬 옵션을 제공합니다. 기본적으로 Row는 가능한 모든 수평 공간을 차지하지만, `mainAxisSize`를 조정하여 필요한 만큼만 차지하도록 설정할 수 있습니다.
+
+## 언제 사용하나요?
+
+- 버튼, 아이콘, 텍스트 등을 가로로 나란히 배치할 때
+- 네비게이션 바나 툴바를 만들 때
+- 폼 필드와 라벨을 나란히 배치할 때
+- 카드나 리스트 아이템의 수평 레이아웃을 구성할 때
+- 아이콘과 텍스트를 함께 표시할 때
+
+## 기본 사용법
+
+```typescript
+// 간단한 예제
+const row = Row({
+  children: [
+    Text('First'),
+    Text('Second'),
+    Text('Third')
+  ]
+});
+
+// 정렬 옵션 사용
+const alignedRow = Row({
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Icon({ icon: Icons.home }),
+    Text('Home'),
+    Icon({ icon: Icons.settings })
+  ]
+});
+```
 
 ## Props
 
+### children (필수)
+
+**값: Widget[]**
+
+Row에 표시할 자식 위젯들의 배열입니다. 배열 순서대로 왼쪽에서 오른쪽으로 배치됩니다.
+
+```typescript
+Row({
+  children: [
+    Container({ width: 50, height: 50, color: 'red' }),
+    Container({ width: 50, height: 50, color: 'green' }),
+    Container({ width: 50, height: 50, color: 'blue' })
+  ]
+})
+```
+
 ### mainAxisAlignment
 
-**Value: center | start | end | spaceBetween | spaceEven | spaceAround** (default: **start**)
+**값: MainAxisAlignment** (기본값: **MainAxisAlignment.start**)
 
-This prop defines the **horizontal** display of its children.
+자식 위젯들의 수평 정렬 방식을 정의합니다.
+
+- **start**: 왼쪽 정렬 (기본값)
+- **end**: 오른쪽 정렬
+- **center**: 가운데 정렬
+- **spaceBetween**: 첫 번째와 마지막 위젯을 양 끝에 배치하고 나머지 공간을 균등 분배
+- **spaceAround**: 각 위젯 주변에 균등한 공간 분배
+- **spaceEvenly**: 모든 위젯과 가장자리 사이의 공간을 균등 분배
+
+```typescript
+// 가운데 정렬
+Row({
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Text('A'),
+    Text('B'),
+    Text('C')
+  ]
+})
+
+// 양쪽 끝 정렬
+Row({
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    Text('Left'),
+    Text('Right')
+  ]
+})
+```
 
 ### crossAxisAlignment
 
-**Value: stretch | start | center | end** (default: **center**)
+**값: CrossAxisAlignment** (기본값: **CrossAxisAlignment.center**)
 
-This prop defines the **vertical** display of its children.
+자식 위젯들의 수직 정렬 방식을 정의합니다.
 
-### children
+- **start**: 상단 정렬
+- **end**: 하단 정렬
+- **center**: 세로 가운데 정렬 (기본값)
+- **stretch**: 사용 가능한 세로 공간을 모두 차지하도록 늘림
 
-**value**: **Widget[]**
+```typescript
+Row({
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Container({ width: 50, height: 50, color: 'red' }),
+    Container({ width: 50, height: 100, color: 'green' }),
+    Container({ width: 50, height: 75, color: 'blue' })
+  ]
+})
+```
+
+### mainAxisSize
+
+**값: MainAxisSize** (기본값: **MainAxisSize.max**)
+
+Row가 차지하는 수평 공간의 크기를 제어합니다.
+
+- **max**: 사용 가능한 모든 수평 공간을 차지 (기본값)
+- **min**: 자식 위젯들에 필요한 최소 공간만 차지
+
+```typescript
+// 필요한 공간만 차지
+Container({
+  color: 'lightgray',
+  child: Row({
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text('Compact'),
+      Icon({ icon: Icons.star })
+    ]
+  })
+})
+```
+
+### verticalDirection
+
+**값: VerticalDirection** (기본값: **VerticalDirection.down**)
+
+자식 위젯들의 수직 배치 순서를 정의합니다.
+
+- **down**: 위에서 아래로 (기본값)
+- **up**: 아래에서 위로
+
+이 속성은 주로 `crossAxisAlignment`와 함께 사용됩니다.
+
+## 고급 사용법
+
+### Expanded와 함께 사용하기
+
+```typescript
+Row({
+  children: [
+    Container({ width: 50, height: 50, color: 'red' }),
+    Expanded({
+      child: Container({ height: 50, color: 'green' })
+    }),
+    Container({ width: 50, height: 50, color: 'blue' })
+  ]
+})
+// 녹색 Container가 남은 공간을 모두 차지합니다
+```
+
+### 반응형 레이아웃
+
+```typescript
+Row({
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    Flexible({
+      flex: 2,
+      child: Container({ height: 50, color: 'red' })
+    }),
+    Flexible({
+      flex: 1,
+      child: Container({ height: 50, color: 'green' })
+    }),
+    Flexible({
+      flex: 1,
+      child: Container({ height: 50, color: 'blue' })
+    })
+  ]
+})
+// 빨간색이 전체의 50%, 녹색과 파란색이 각각 25%를 차지합니다
+```
+
+## 실제 사용 예제
+
+### 예제 1: 네비게이션 바
+
+```typescript
+const navbar = Container({
+  padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+  color: 'white',
+  child: Row({
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Row({
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon({ icon: Icons.menu }),
+          SizedBox({ width: 16 }),
+          Text('My App', { style: TextStyle({ fontSize: 20, fontWeight: 'bold' }) })
+        ]
+      }),
+      Row({
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton({ icon: Icons.search, onPressed: () => {} }),
+          IconButton({ icon: Icons.notifications, onPressed: () => {} }),
+          IconButton({ icon: Icons.account_circle, onPressed: () => {} })
+        ]
+      })
+    ]
+  })
+});
+```
+
+### 예제 2: 폼 필드
+
+```typescript
+const formField = Container({
+  padding: EdgeInsets.all(16),
+  child: Row({
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Container({
+        width: 100,
+        child: Text('이름:', { style: TextStyle({ fontWeight: 'bold' }) })
+      }),
+      Expanded({
+        child: TextField({
+          decoration: InputDecoration({
+            hintText: '이름을 입력하세요',
+            border: OutlineInputBorder()
+          })
+        })
+      })
+    ]
+  })
+});
+```
+
+### 예제 3: 카드 레이아웃
+
+```typescript
+const card = Container({
+  margin: EdgeInsets.all(8),
+  padding: EdgeInsets.all(16),
+  decoration: BoxDecoration({
+    color: 'white',
+    borderRadius: BorderRadius.circular(8),
+    boxShadow: [
+      BoxShadow({
+        color: 'rgba(0, 0, 0, 0.1)',
+        blurRadius: 4,
+        offset: { x: 0, y: 2 }
+      })
+    ]
+  }),
+  child: Row({
+    children: [
+      Container({
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration({
+          shape: 'circle',
+          color: 'blue'
+        })
+      }),
+      SizedBox({ width: 16 }),
+      Expanded({
+        child: Column({
+          crossAxisAlignment: 'start',
+          children: [
+            Text('제목', { style: TextStyle({ fontSize: 16, fontWeight: 'bold' }) }),
+            Text('부제목', { style: TextStyle({ color: 'gray' }) })
+          ]
+        })
+      }),
+      Icon({ icon: Icons.arrow_forward })
+    ]
+  })
+});
+```
+
+## 주의사항
+
+- Row 내부의 자식 위젯이 가로 공간을 초과하면 오버플로우 오류가 발생합니다. 이런 경우 `Flexible` 또는 `Expanded`를 사용하세요.
+- `crossAxisAlignment.stretch`를 사용할 때, 자식 위젯의 높이가 제한되지 않으면 무한히 늘어날 수 있습니다.
+- Row는 스크롤을 지원하지 않습니다. 스크롤이 필요한 경우 `SingleChildScrollView`와 함께 사용하세요.
+- 세로 방향 레이아웃이 필요한 경우 `Column` 위젯을 사용하세요.
+
+## 관련 위젯
+
+- **Column**: 자식 위젯을 세로로 배치
+- **Flex**: Row와 Column의 기반이 되는 더 유연한 레이아웃 위젯
+- **Wrap**: 공간이 부족하면 다음 줄로 자동 줄바꿈
+- **Stack**: 자식 위젯을 겹쳐서 배치
+- **Expanded**: Row 내에서 남은 공간을 차지
+- **Flexible**: Row 내에서 유연한 크기 조정
