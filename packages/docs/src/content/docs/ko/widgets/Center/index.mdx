@@ -8,9 +8,7 @@ description: "자식 위젯을 중앙에 정렬하는 위젯"
 
 ## 개요
 
-Center는 자식 위젯을 자신 내부의 중앙에 정렬하는 위젯입니다.
-
-Center는 실제로 `alignment: Alignment.center`가 설정된 Align 위젯의 편의 버전입니다. widthFactor와 heightFactor가 null이고 크기가 제한되어 있다면 이 위젯은 가능한 한 크게 확장됩니다. 특정 차원이 제한되지 않고 해당 크기 요소가 null이면 위젯은 해당 차원에서 자식의 크기와 일치합니다.
+Center는 자식 위젯을 자신 내부의 중앙에 정렬하는 위젯입니다. 이는 `alignment: Alignment.center`가 설정된 Align 위젯의 편의 버전으로, 콘텐츠를 간단하게 중앙 정렬할 수 있습니다.
 
 참조: [https://api.flutter.dev/flutter/widgets/Center-class.html](https://api.flutter.dev/flutter/widgets/Center-class.html)
 
@@ -47,8 +45,12 @@ Scaffold({
 
 ## Props
 
-### widthFactor
+### child (선택)
+**값: Widget | undefined**
 
+중앙에 정렬할 자식 위젯입니다.
+
+### widthFactor (선택)
 **값: number | undefined**
 
 이 위젯의 너비를 자식 위젯 너비의 배수로 설정합니다. null이면 가능한 너비로 확장됩니다.
@@ -65,8 +67,7 @@ Center({
 // Center의 너비는 200이 됩니다
 ```
 
-### heightFactor
-
+### heightFactor (선택)
 **값: number | undefined**
 
 이 위젯의 높이를 자식 위젯 높이의 배수로 설정합니다. null이면 가능한 높이로 확장됩니다.
@@ -83,12 +84,6 @@ Center({
 // Center의 높이는 150이 됩니다
 ```
 
-### child
-
-**값: Widget | undefined**
-
-중앙에 정렬할 자식 위젯입니다.
-
 ## Center vs Align
 
 Center는 Align의 특수한 경우입니다:
@@ -102,6 +97,43 @@ Center({
 Align({
   alignment: Alignment.center,
   child: Text('Hello')
+})
+```
+
+## 레이아웃 동작
+
+Center 위젯의 크기 결정 방식:
+
+1. **제약이 타이트한 경우**: 제약 조건의 크기를 사용
+2. **제약이 느슨하고 factor가 null인 경우**: 가능한 한 크게 확장
+3. **제약이 무한하고 factor가 null인 경우**: 자식의 크기를 사용
+4. **factor가 지정된 경우**: 자식 크기 × factor
+
+```typescript
+// 다양한 시나리오
+Container({
+  width: 200,
+  height: 200,
+  color: 'lightgray',
+  child: Center({
+    // Center는 200x200으로 확장
+    child: Container({
+      width: 50,
+      height: 50,
+      color: 'blue'
+    })
+  })
+})
+
+Center({
+  widthFactor: 2.0,
+  heightFactor: 2.0,
+  // Center는 100x100 (자식의 2배)
+  child: Container({
+    width: 50,
+    height: 50,
+    color: 'red'
+  })
 })
 ```
 
@@ -346,49 +378,13 @@ const DialogContent = ({ icon, title, message, actions }) => {
 };
 ```
 
-## 레이아웃 동작
-
-Center 위젯의 크기 결정 방식:
-
-1. **제약이 타이트한 경우**: 제약 조건의 크기를 사용
-2. **제약이 느슨하고 factor가 null인 경우**: 가능한 한 크게 확장
-3. **제약이 무한하고 factor가 null인 경우**: 자식의 크기를 사용
-4. **factor가 지정된 경우**: 자식 크기 × factor
-
-```typescript
-// 다양한 시나리오
-Container({
-  width: 200,
-  height: 200,
-  color: 'lightgray',
-  child: Center({
-    // Center는 200x200으로 확장
-    child: Container({
-      width: 50,
-      height: 50,
-      color: 'blue'
-    })
-  })
-})
-
-Center({
-  widthFactor: 2.0,
-  heightFactor: 2.0,
-  // Center는 100x100 (자식의 2배)
-  child: Container({
-    width: 50,
-    height: 50,
-    color: 'red'
-  })
-})
-```
-
 ## 주의사항
 
 - Center는 기본적으로 가능한 한 크게 확장되므로 Stack이나 무한 크기 컨테이너에서 주의해야 합니다
 - widthFactor와 heightFactor는 0보다 커야 합니다
 - 여러 Center를 중첩하는 것은 일반적으로 불필요합니다
 - 복잡한 정렬이 필요한 경우 Align 위젯을 직접 사용하는 것이 좋습니다
+- 자식이 없을 때 factor가 null이면 크기가 0이 될 수 있습니다
 
 ## 관련 위젯
 
@@ -396,3 +392,4 @@ Center({
 - **Container**: alignment 속성으로 중앙 정렬 가능
 - **Positioned**: Stack 내에서 위치 지정
 - **Padding**: 여백과 함께 중앙 정렬이 필요할 때
+- **Column/Row**: mainAxisAlignment와 crossAxisAlignment로 정렬

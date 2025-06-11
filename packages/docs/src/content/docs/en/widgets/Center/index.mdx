@@ -8,13 +8,11 @@ description: "A widget that centers its child within itself"
 
 ## Overview
 
-Center is a widget that centers its child within itself.
+Center is a widget that centers its child within itself. It's a convenience version of the Align widget with `alignment: Alignment.center` set, providing a simple way to center content.
 
-Center is actually a convenience version of the Align widget with `alignment: Alignment.center` set. This widget will be as big as possible if its dimensions are constrained and widthFactor and heightFactor are null. If a dimension is unconstrained and the corresponding size factor is null then the widget will match its child's size in that dimension.
+Reference: [https://api.flutter.dev/flutter/widgets/Center-class.html](https://api.flutter.dev/flutter/widgets/Center-class.html)
 
-See: [https://api.flutter.dev/flutter/widgets/Center-class.html](https://api.flutter.dev/flutter/widgets/Center-class.html)
-
-## When to use it?
+## When to Use
 
 - When centering content within a container
 - When displaying loading indicators in the center of the screen
@@ -47,9 +45,13 @@ Scaffold({
 
 ## Props
 
-### widthFactor
+### child (optional)
+**Type: Widget | undefined**
 
-**Value: number | undefined**
+The child widget to be centered.
+
+### widthFactor (optional)
+**Type: number | undefined**
 
 Sets this widget's width as a multiple of the child widget's width. If null, expands to available width.
 
@@ -65,9 +67,8 @@ Center({
 // Center's width will be 200
 ```
 
-### heightFactor
-
-**Value: number | undefined**
+### heightFactor (optional)
+**Type: number | undefined**
 
 Sets this widget's height as a multiple of the child widget's height. If null, expands to available height.
 
@@ -83,12 +84,6 @@ Center({
 // Center's height will be 150
 ```
 
-### child
-
-**Value: Widget | undefined**
-
-The child widget to be centered.
-
 ## Center vs Align
 
 Center is a special case of Align:
@@ -102,6 +97,43 @@ Center({
 Align({
   alignment: Alignment.center,
   child: Text('Hello')
+})
+```
+
+## Layout Behavior
+
+How Center widget determines its size:
+
+1. **With tight constraints**: Uses the constraint's size
+2. **With loose constraints and null factors**: Expands as much as possible
+3. **With infinite constraints and null factors**: Uses the child's size
+4. **With specified factors**: Child size × factor
+
+```typescript
+// Various scenarios
+Container({
+  width: 200,
+  height: 200,
+  color: 'lightgray',
+  child: Center({
+    // Center expands to 200x200
+    child: Container({
+      width: 50,
+      height: 50,
+      color: 'blue'
+    })
+  })
+})
+
+Center({
+  widthFactor: 2.0,
+  heightFactor: 2.0,
+  // Center is 100x100 (2x the child)
+  child: Container({
+    width: 50,
+    height: 50,
+    color: 'red'
+  })
 })
 ```
 
@@ -346,49 +378,13 @@ const DialogContent = ({ icon, title, message, actions }) => {
 };
 ```
 
-## Layout Behavior
-
-How Center widget determines its size:
-
-1. **With tight constraints**: Uses the constraint's size
-2. **With loose constraints and null factors**: Expands as much as possible
-3. **With infinite constraints and null factors**: Uses the child's size
-4. **With specified factors**: Child size × factor
-
-```typescript
-// Various scenarios
-Container({
-  width: 200,
-  height: 200,
-  color: 'lightgray',
-  child: Center({
-    // Center expands to 200x200
-    child: Container({
-      width: 50,
-      height: 50,
-      color: 'blue'
-    })
-  })
-})
-
-Center({
-  widthFactor: 2.0,
-  heightFactor: 2.0,
-  // Center is 100x100 (2x the child)
-  child: Container({
-    width: 50,
-    height: 50,
-    color: 'red'
-  })
-})
-```
-
 ## Important Notes
 
 - Center expands as much as possible by default, so be careful in Stack or infinite size containers
 - widthFactor and heightFactor must be greater than 0
 - Nesting multiple Centers is generally unnecessary
 - For complex alignment needs, use Align widget directly
+- When there's no child and factor is null, size may become 0
 
 ## Related Widgets
 
@@ -396,3 +392,4 @@ Center({
 - **Container**: Can center align with alignment property
 - **Positioned**: Position within Stack
 - **Padding**: When centering with margins is needed
+- **Column/Row**: Align with mainAxisAlignment and crossAxisAlignment
