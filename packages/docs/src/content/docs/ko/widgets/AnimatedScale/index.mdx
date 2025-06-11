@@ -3,35 +3,521 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: AnimatedScale
 title: "AnimatedScale"
-description: ""
+description: "위젯의 크기를 애니메이션으로 전환하는 위젯"
 ---
 
-# AnimatedScale
+## 개요
 
-This widget motivated by AnimatedScale in Flutter.
+AnimatedScale은 위젯의 스케일(scale)이 변경될 때 자동으로 애니메이션을 적용하여 부드럽게 크기를 전환하는 위젯입니다. Flutter의 AnimatedScale 위젯에서 영감을 받아 구현되었습니다.
 
 > Animated version of Transform.scale which automatically transitions the child's scale over a given duration whenever the given scale changes.
 
-See: https://api.flutter.dev/flutter/widgets/AnimatedScale-class.html
+Flutter 참조: https://api.flutter.dev/flutter/widgets/AnimatedScale-class.html
+
+## 언제 사용하나요?
+
+- 버튼이나 아이콘의 클릭 효과를 구현할 때
+- 호버 시 요소를 강조하고 싶을 때
+- 로딩 상태나 업데이트 시 시각적 피드백을 제공할 때
+- 이미지나 카드의 확대/축소 효과를 만들 때
+- 인터랙션에 따라 요소의 중요도를 시각적으로 표현할 때
+- 메뉴나 오버레이의 등장/퇴장 효과를 구현할 때
+
+## 기본 사용법
+
+```typescript
+import { AnimatedScale, Container, StatefulWidget } from '@flitter/core';
+
+class ScaleExample extends StatefulWidget {
+  createState() {
+    return new ScaleExampleState();
+  }
+}
+
+class ScaleExampleState extends State<ScaleExample> {
+  scale = 1.0;
+
+  build() {
+    return Column({
+      children: [
+        ElevatedButton({
+          onPressed: () => {
+            this.setState(() => {
+              this.scale = this.scale === 1.0 ? 1.5 : 1.0;
+            });
+          },
+          child: Text("크기 변경"),
+        }),
+        AnimatedScale({
+          scale: this.scale,
+          duration: 300, // 0.3초
+          child: Container({
+            width: 100,
+            height: 100,
+            color: "blue",
+            child: Center({
+              child: Icon({
+                icon: Icons.star,
+                color: "white",
+                size: 40,
+              }),
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
 
 ## Props
 
-### scale
+### scale (필수)
+**값: number**
 
-**Value: number**
+위젯의 스케일 비율을 지정합니다.
+- 1.0 = 원본 크기 (100%)
+- 0.5 = 절반 크기 (50%)
+- 1.5 = 1.5배 크기 (150%)
+- 2.0 = 2배 크기 (200%)
+- 0.0 = 보이지 않음
+- 음수 값은 좌우/상하 반전 효과
 
-### duration
+### duration (필수)
+**값: number**
 
-**Value: number**
+애니메이션 지속 시간을 밀리초 단위로 지정합니다.
 
-### curve
+### alignment (선택)
+**값: Alignment** (기본값: **Alignment.center**)
 
-**Value: Curve(default Curves.linear)**
+스케일의 기준점을 지정합니다. 사용 가능한 값:
+- `Alignment.center`: 중앙을 기준으로 스케일
+- `Alignment.topLeft`: 좌상단을 기준으로 스케일
+- `Alignment.topRight`: 우상단을 기준으로 스케일
+- `Alignment.bottomLeft`: 좌하단을 기준으로 스케일
+- `Alignment.bottomRight`: 우하단을 기준으로 스케일
+- 커스텀 정렬: `Alignment.of({ x: -0.5, y: 0.5 })`
 
-### child
+### curve (선택)
+**값: Curve** (기본값: **Curves.linear**)
 
-**Value: Widget | undefined**
+애니메이션의 진행 곡선을 지정합니다. 사용 가능한 곡선:
+- `Curves.linear`: 일정한 속도
+- `Curves.easeIn`: 천천히 시작
+- `Curves.easeOut`: 천천히 종료
+- `Curves.easeInOut`: 천천히 시작하고 종료
+- `Curves.circIn`: 원형 가속 시작
+- `Curves.circOut`: 원형 감속 종료
+- `Curves.circInOut`: 원형 가속/감속
+- `Curves.backIn`: 뒤로 갔다가 시작
+- `Curves.backOut`: 목표를 지나쳤다가 돌아옴
+- `Curves.backInOut`: backIn + backOut
+- `Curves.anticipate`: 예비 동작 후 진행
+- `Curves.bounceIn`: 바운스하며 시작
+- `Curves.bounceOut`: 바운스하며 종료
+- `Curves.bounceInOut`: 바운스 시작/종료
 
-## Examples
+### child (선택)
+**값: Widget | undefined**
 
-### Basic
+스케일이 적용될 자식 위젯입니다.
+
+### key (선택)
+**값: any**
+
+위젯의 고유 식별자입니다.
+
+## 실제 사용 예제
+
+### 예제 1: 인터랙티브 버튼 효과
+
+```typescript
+import { AnimatedScale, Container, GestureDetector, Curves } from '@flitter/core';
+
+class InteractiveButton extends StatefulWidget {
+  createState() {
+    return new InteractiveButtonState();
+  }
+}
+
+class InteractiveButtonState extends State<InteractiveButton> {
+  isPressed = false;
+  scale = 1.0;
+
+  handleTapDown() {
+    this.setState(() => {
+      this.isPressed = true;
+      this.scale = 0.95; // 약간 축소
+    });
+  }
+
+  handleTapUp() {
+    this.setState(() => {
+      this.isPressed = false;
+      this.scale = 1.0; // 원본 크기로 복구
+    });
+  }
+
+  handleTapCancel() {
+    this.setState(() => {
+      this.isPressed = false;
+      this.scale = 1.0;
+    });
+  }
+
+  build() {
+    return GestureDetector({
+      onTapDown: () => this.handleTapDown(),
+      onTapUp: () => this.handleTapUp(),
+      onTapCancel: () => this.handleTapCancel(),
+      child: AnimatedScale({
+        scale: this.scale,
+        duration: 100,
+        curve: Curves.easeInOut,
+        child: Container({
+          width: 160,
+          height: 50,
+          decoration: BoxDecoration({
+            gradient: LinearGradient({
+              colors: this.isPressed 
+                ? ["#4A90E2", "#357ABD"]
+                : ["#5BA0F2", "#4A90E2"],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            }),
+            borderRadius: BorderRadius.circular(25),
+            boxShadow: this.isPressed ? [] : [
+              BoxShadow({
+                color: "rgba(0,0,0,0.3)",
+                blurRadius: 8,
+                offset: Offset({ x: 0, y: 4 }),
+              }),
+            ],
+          }),
+          child: Center({
+            child: Text(
+              "누를 수 있는 버튼",
+              { style: TextStyle({ color: "white", fontSize: 16, fontWeight: "bold" }) }
+            ),
+          }),
+        }),
+      }),
+    });
+  }
+}
+```
+
+### 예제 2: 호버 효과
+
+```typescript
+import { AnimatedScale, Container, MouseRegion, Curves } from '@flitter/core';
+
+class HoverEffect extends StatefulWidget {
+  createState() {
+    return new HoverEffectState();
+  }
+}
+
+class HoverEffectState extends State<HoverEffect> {
+  items = [
+    { icon: Icons.home, label: "홈", color: "#FF6B6B" },
+    { icon: Icons.search, label: "검색", color: "#4ECDC4" },
+    { icon: Icons.favorite, label: "좋아요", color: "#45B7D1" },
+    { icon: Icons.settings, label: "설정", color: "#96CEB4" },
+  ];
+  
+  hoveredIndex = -1;
+
+  build() {
+    return Row({
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: this.items.map((item, index) => {
+        const isHovered = this.hoveredIndex === index;
+        
+        return MouseRegion({
+          key: ValueKey(index),
+          onEnter: () => {
+            this.setState(() => {
+              this.hoveredIndex = index;
+            });
+          },
+          onExit: () => {
+            this.setState(() => {
+              this.hoveredIndex = -1;
+            });
+          },
+          child: AnimatedScale({
+            scale: isHovered ? 1.2 : 1.0,
+            duration: 200,
+            curve: Curves.easeOut,
+            child: Container({
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration({
+                color: item.color,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: isHovered ? [
+                  BoxShadow({
+                    color: "rgba(0,0,0,0.3)",
+                    blurRadius: 12,
+                    offset: Offset({ x: 0, y: 6 }),
+                  }),
+                ] : [
+                  BoxShadow({
+                    color: "rgba(0,0,0,0.1)",
+                    blurRadius: 4,
+                    offset: Offset({ x: 0, y: 2 }),
+                  }),
+                ],
+              }),
+              child: Column({
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon({
+                    icon: item.icon,
+                    color: "white",
+                    size: 32,
+                  }),
+                  SizedBox({ height: 4 }),
+                  Text(
+                    item.label,
+                    { style: TextStyle({ color: "white", fontSize: 12, fontWeight: "bold" }) }
+                  ),
+                ],
+              }),
+            }),
+          }),
+        });
+      }),
+    });
+  }
+}
+```
+
+### 예제 3: 로딩 상태 표시
+
+```typescript
+import { AnimatedScale, Container, CircularProgressIndicator, Curves } from '@flitter/core';
+
+class LoadingStateIndicator extends StatefulWidget {
+  createState() {
+    return new LoadingStateIndicatorState();
+  }
+}
+
+class LoadingStateIndicatorState extends State<LoadingStateIndicator> {
+  isLoading = false;
+  scale = 1.0;
+
+  async startLoading() {
+    this.setState(() => {
+      this.isLoading = true;
+      this.scale = 0.8;
+    });
+
+    // 맥동 효과
+    const pulseInterval = setInterval(() => {
+      if (this.isLoading) {
+        this.setState(() => {
+          this.scale = this.scale === 0.8 ? 1.0 : 0.8;
+        });
+      } else {
+        clearInterval(pulseInterval);
+      }
+    }, 600);
+
+    // 3초 후 로딩 완료
+    setTimeout(() => {
+      this.setState(() => {
+        this.isLoading = false;
+        this.scale = 1.0;
+      });
+      clearInterval(pulseInterval);
+    }, 3000);
+  }
+
+  build() {
+    return Column({
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        AnimatedScale({
+          scale: this.scale,
+          duration: 600,
+          curve: Curves.easeInOut,
+          child: Container({
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration({
+              color: this.isLoading ? "#3498db" : "#2ecc71",
+              borderRadius: BorderRadius.circular(60),
+              boxShadow: [
+                BoxShadow({
+                  color: "rgba(0,0,0,0.2)",
+                  blurRadius: 10,
+                  offset: Offset({ x: 0, y: 5 }),
+                }),
+              ],
+            }),
+            child: this.isLoading 
+              ? Center({
+                  child: CircularProgressIndicator({
+                    color: "white",
+                    strokeWidth: 3,
+                  }),
+                })
+              : Center({
+                  child: Icon({
+                    icon: Icons.check,
+                    color: "white",
+                    size: 48,
+                  }),
+                }),
+          }),
+        }),
+        SizedBox({ height: 20 }),
+        Text(
+          this.isLoading ? "로딩 중..." : "완료!",
+          { style: TextStyle({ fontSize: 18, fontWeight: "bold" }) }
+        ),
+        SizedBox({ height: 20 }),
+        ElevatedButton({
+          onPressed: this.isLoading ? null : () => this.startLoading(),
+          child: Text("로딩 시작"),
+        }),
+      ],
+    });
+  }
+}
+```
+
+### 예제 4: 이미지 갤러리 효과
+
+```typescript
+import { AnimatedScale, Container, GestureDetector, Curves } from '@flitter/core';
+
+class ImageGallery extends StatefulWidget {
+  createState() {
+    return new ImageGalleryState();
+  }
+}
+
+class ImageGalleryState extends State<ImageGallery> {
+  selectedIndex = -1;
+  images = [
+    { url: "https://picsum.photos/200/200?random=1", title: "이미지 1" },
+    { url: "https://picsum.photos/200/200?random=2", title: "이미지 2" },
+    { url: "https://picsum.photos/200/200?random=3", title: "이미지 3" },
+    { url: "https://picsum.photos/200/200?random=4", title: "이미지 4" },
+    { url: "https://picsum.photos/200/200?random=5", title: "이미지 5" },
+    { url: "https://picsum.photos/200/200?random=6", title: "이미지 6" },
+  ];
+
+  build() {
+    return Column({
+      children: [
+        Text(
+          "이미지를 클릭하여 선택하세요",
+          { style: TextStyle({ fontSize: 18, fontWeight: "bold", marginBottom: 20 }) }
+        ),
+        GridView.count({
+          crossAxisCount: 3,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          shrinkWrap: true,
+          children: this.images.map((image, index) => {
+            const isSelected = this.selectedIndex === index;
+            
+            return GestureDetector({
+              key: ValueKey(index),
+              onTap: () => {
+                this.setState(() => {
+                  this.selectedIndex = isSelected ? -1 : index;
+                });
+              },
+              child: AnimatedScale({
+                scale: isSelected ? 1.1 : 1.0,
+                duration: 300,
+                curve: Curves.easeInOut,
+                child: Container({
+                  decoration: BoxDecoration({
+                    borderRadius: BorderRadius.circular(12),
+                    border: isSelected 
+                      ? Border.all({ color: "#3498db", width: 3 })
+                      : null,
+                    boxShadow: isSelected ? [
+                      BoxShadow({
+                        color: "rgba(52, 152, 219, 0.4)",
+                        blurRadius: 15,
+                        offset: Offset({ x: 0, y: 8 }),
+                      }),
+                    ] : [
+                      BoxShadow({
+                        color: "rgba(0,0,0,0.1)",
+                        blurRadius: 5,
+                        offset: Offset({ x: 0, y: 2 }),
+                      }),
+                    ],
+                  }),
+                  child: ClipRRect({
+                    borderRadius: BorderRadius.circular(12),
+                    child: Stack({
+                      children: [
+                        Image({
+                          src: image.url,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: "cover",
+                        }),
+                        if (isSelected) Positioned({
+                          top: 8,
+                          right: 8,
+                          child: Container({
+                            padding: EdgeInsets.all(4),
+                            decoration: BoxDecoration({
+                              color: "#3498db",
+                              borderRadius: BorderRadius.circular(12),
+                            }),
+                            child: Icon({
+                              icon: Icons.check,
+                              color: "white",
+                              size: 16,
+                            }),
+                          }),
+                        }),
+                      ],
+                    }),
+                  }),
+                }),
+              }),
+            });
+          }),
+        }),
+        if (this.selectedIndex >= 0) Padding({
+          padding: EdgeInsets.only({ top: 20 }),
+          child: Text(
+            `선택된 이미지: ${this.images[this.selectedIndex].title}`,
+            { style: TextStyle({ fontSize: 16, color: "#3498db", fontWeight: "bold" }) }
+          ),
+        }),
+      ],
+    });
+  }
+}
+```
+
+## 주의사항
+
+- **scale 값 범위**: 0.0에서 무한대까지 가능하지만, 너무 큰 값은 시각적 문제를 일으킬 수 있습니다
+- **레이아웃 영향**: 스케일은 시각적 변화만 주고 레이아웃에는 영향을 주지 않습니다
+- **alignment 중요성**: 스케일 기준점에 따라 효과가 크게 달라집니다
+- **성능 고려**: 많은 위젯에 동시에 스케일 애니메이션을 적용하면 성능에 영향을 줄 수 있습니다
+- **음수 값**: 음수 scale 값은 이미지를 뒤집어 보이게 합니다
+
+## 관련 위젯
+
+- **Transform.scale**: 애니메이션 없이 스케일을 적용하는 기본 위젯
+- **AnimatedContainer**: 여러 변환을 동시에 애니메이션하는 범용 위젯
+- **ScaleTransition**: 명시적인 Animation 컨트롤러를 사용하는 스케일 애니메이션
+- **AnimatedRotation**: 회전을 애니메이션하는 위젯
+- **Transform**: 다양한 변환(회전, 크기, 위치)을 적용하는 기본 위젯
