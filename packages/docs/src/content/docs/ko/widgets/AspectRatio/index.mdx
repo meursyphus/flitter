@@ -3,16 +3,16 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: AspectRatio
 title: "AspectRatio"
-description: ""
+description: "특정 종횡비로 자식 위젯의 크기를 조정하는 위젯"
 ---
 
-# AspectRatio
+## 개요
 
-This widget motivated by AspectRatio in Flutter.
+AspectRatio는 자식 위젯을 특정 종횡비(가로세로 비율)로 크기를 조정하려고 시도하는 위젯입니다.
 
-> A widget that attempts to size the child to a specific aspect ratio.
->
-> The widget first tries the largest width permitted by the layout constraints. The height of the widget is determined by applying the given aspect ratio to the width, expressed as a ratio of width to height.
+이 위젯은 먼저 레이아웃 제약 조건에서 허용하는 최대 너비를 시도합니다. 위젯의 높이는 주어진 종횡비를 너비에 적용하여 결정되며, 이는 너비 대 높이의 비율로 표현됩니다.
+
+예를 들어, aspectRatio가 2.0이면 너비가 높이의 2배가 됩니다 (16:9는 16/9 = 1.78로 표현).
 
 <iframe
   width="560"
@@ -24,18 +24,389 @@ This widget motivated by AspectRatio in Flutter.
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/AspectRatio-class.html](https://api.flutter.dev/flutter/widgets/AspectRatio-class.html)
+참조: [https://api.flutter.dev/flutter/widgets/AspectRatio-class.html](https://api.flutter.dev/flutter/widgets/AspectRatio-class.html)
+
+## 언제 사용하나요?
+
+- 이미지나 비디오의 원본 비율을 유지할 때
+- 반응형 디자인에서 일정한 비율의 요소를 만들 때
+- 카드나 타일의 일관된 모양을 유지할 때
+- 차트나 그래프의 비율을 고정할 때
+- 로고나 아이콘의 비율을 보존할 때
+
+## 기본 사용법
+
+```typescript
+// 16:9 비율
+AspectRatio({
+  aspectRatio: 16 / 9,
+  child: Container({
+    color: 'blue',
+    child: Center({
+      child: Text('16:9')
+    })
+  })
+})
+
+// 정사각형 (1:1 비율)
+AspectRatio({
+  aspectRatio: 1.0,
+  child: Image({
+    src: '/assets/profile.jpg',
+    objectFit: 'cover'
+  })
+})
+
+// 황금비율
+AspectRatio({
+  aspectRatio: 1.618,
+  child: Card({
+    child: Center({
+      child: Text('황금비율')
+    })
+  })
+})
+```
 
 ## Props
 
-### aspectRatio
+### aspectRatio (필수)
 
-**Value: number**
+**값: number**
+
+너비 대 높이의 비율입니다. 반드시 0보다 크고 유한한 값이어야 합니다.
+
+일반적인 종횡비:
+- `1.0`: 정사각형 (1:1)
+- `16/9` (약 1.78): 와이드스크린 비디오
+- `4/3` (약 1.33): 전통적인 TV/모니터
+- `3/2` (1.5): 35mm 필름
+- `1.618`: 황금비율
+- `9/16` (약 0.56): 세로 모바일 화면
+
+```typescript
+// 다양한 종횡비 예제
+AspectRatio({
+  aspectRatio: 16 / 9,  // 와이드스크린
+  child: VideoPlayer({ url: 'video.mp4' })
+})
+
+AspectRatio({
+  aspectRatio: 1.0,  // 정사각형
+  child: ProfileImage({ src: 'avatar.jpg' })
+})
+
+AspectRatio({
+  aspectRatio: 3 / 4,  // 세로 형태
+  child: ProductCard({ product })
+})
+```
 
 ### child
 
-**Value: Widget | undefined**
+**값: Widget | undefined**
 
-## Examples
+종횡비가 적용될 자식 위젯입니다. 자식이 없어도 AspectRatio는 지정된 비율로 공간을 차지합니다.
 
-### Basic
+## 크기 계산 방식
+
+AspectRatio는 다음과 같은 순서로 크기를 결정합니다:
+
+1. 제약 조건이 타이트하면 해당 크기를 사용
+2. 최대 너비가 유한하면 너비를 기준으로 높이 계산
+3. 너비가 무한이면 최대 높이를 기준으로 너비 계산
+4. 계산된 크기가 제약 조건을 벗어나면 조정
+5. 최종적으로 min/max 제약 조건 내에서 비율 유지
+
+## 실제 사용 예제
+
+### 예제 1: 비디오 플레이어
+
+```typescript
+const VideoContainer = ({ videoUrl, title }) => {
+  return Column({
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      AspectRatio({
+        aspectRatio: 16 / 9,
+        child: Container({
+          color: 'black',
+          child: Stack({
+            children: [
+              VideoPlayer({ url: videoUrl }),
+              Positioned({
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container({
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration({
+                    gradient: LinearGradient({
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: ['transparent', 'rgba(0,0,0,0.7)']
+                    })
+                  }),
+                  child: Text(title, {
+                    style: TextStyle({
+                      color: 'white',
+                      fontSize: 16
+                    })
+                  })
+                })
+              })
+            ]
+          })
+        })
+      })
+    ]
+  });
+};
+```
+
+### 예제 2: 반응형 카드 그리드
+
+```typescript
+const ResponsiveCardGrid = ({ items }) => {
+  return GridView({
+    crossAxisCount: 3,
+    mainAxisSpacing: 16,
+    crossAxisSpacing: 16,
+    children: items.map(item => 
+      AspectRatio({
+        aspectRatio: 3 / 4,
+        child: Container({
+          decoration: BoxDecoration({
+            color: 'white',
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow({
+                color: 'rgba(0,0,0,0.1)',
+                blurRadius: 8,
+                offset: { x: 0, y: 2 }
+              })
+            ]
+          }),
+          child: Column({
+            children: [
+              Expanded({
+                flex: 3,
+                child: ClipRRect({
+                  borderRadius: BorderRadius.vertical({
+                    top: Radius.circular(12)
+                  }),
+                  child: Image({
+                    src: item.imageUrl,
+                    objectFit: 'cover',
+                    width: double.infinity,
+                    height: double.infinity
+                  })
+                })
+              }),
+              Expanded({
+                flex: 2,
+                child: Padding({
+                  padding: EdgeInsets.all(12),
+                  child: Column({
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(item.title, {
+                        style: TextStyle({
+                          fontSize: 16,
+                          fontWeight: 'bold'
+                        }),
+                        maxLines: 2
+                      }),
+                      Spacer(),
+                      Text(item.price, {
+                        style: TextStyle({
+                          fontSize: 18,
+                          color: '#FF5733',
+                          fontWeight: 'bold'
+                        })
+                      })
+                    ]
+                  })
+                })
+              })
+            ]
+          })
+        })
+      })
+    )
+  });
+};
+```
+
+### 예제 3: 프로필 이미지
+
+```typescript
+const ProfileAvatar = ({ imageUrl, name, size = 120 }) => {
+  return Container({
+    width: size,
+    child: AspectRatio({
+      aspectRatio: 1.0,  // 정사각형
+      child: Container({
+        decoration: BoxDecoration({
+          shape: BoxShape.circle,
+          border: Border.all({
+            color: '#E0E0E0',
+            width: 3
+          })
+        }),
+        child: ClipOval({
+          child: imageUrl ? 
+            Image({
+              src: imageUrl,
+              objectFit: 'cover',
+              width: double.infinity,
+              height: double.infinity
+            }) :
+            Container({
+              color: '#F0F0F0',
+              child: Center({
+                child: Text(
+                  name.split(' ').map(n => n[0]).join('').toUpperCase(),
+                  {
+                    style: TextStyle({
+                      fontSize: size / 3,
+                      fontWeight: 'bold',
+                      color: '#666'
+                    })
+                  }
+                )
+              })
+            })
+        })
+      })
+    })
+  });
+};
+```
+
+### 예제 4: 차트 컨테이너
+
+```typescript
+const ChartContainer = ({ chartData, title }) => {
+  return Card({
+    child: Padding({
+      padding: EdgeInsets.all(16),
+      child: Column({
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(title, {
+            style: TextStyle({
+              fontSize: 20,
+              fontWeight: 'bold'
+            })
+          }),
+          SizedBox({ height: 16 }),
+          AspectRatio({
+            aspectRatio: 2.0,  // 너비가 높이의 2배
+            child: Container({
+              decoration: BoxDecoration({
+                border: Border.all({
+                  color: '#E0E0E0'
+                }),
+                borderRadius: BorderRadius.circular(8)
+              }),
+              child: LineChart({
+                data: chartData,
+                padding: EdgeInsets.all(20)
+              })
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### 예제 5: 배너 이미지
+
+```typescript
+const PromotionBanner = ({ imageUrl, title, subtitle, onTap }) => {
+  return GestureDetector({
+    onTap: onTap,
+    child: Container({
+      margin: EdgeInsets.symmetric({ horizontal: 16 }),
+      child: AspectRatio({
+        aspectRatio: 21 / 9,  // 울트라 와이드 배너
+        child: Container({
+          decoration: BoxDecoration({
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow({
+                color: 'rgba(0,0,0,0.15)',
+                blurRadius: 10,
+                offset: { x: 0, y: 4 }
+              })
+            ]
+          }),
+          clipped: true,
+          child: Stack({
+            fit: StackFit.expand,
+            children: [
+              Image({
+                src: imageUrl,
+                objectFit: 'cover'
+              }),
+              Container({
+                decoration: BoxDecoration({
+                  gradient: LinearGradient({
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      'rgba(0,0,0,0.7)',
+                      'transparent'
+                    ]
+                  })
+                })
+              }),
+              Padding({
+                padding: EdgeInsets.all(24),
+                child: Column({
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, {
+                      style: TextStyle({
+                        color: 'white',
+                        fontSize: 28,
+                        fontWeight: 'bold'
+                      })
+                    }),
+                    SizedBox({ height: 8 }),
+                    Text(subtitle, {
+                      style: TextStyle({
+                        color: 'rgba(255,255,255,0.9)',
+                        fontSize: 16
+                      })
+                    })
+                  ]
+                })
+              })
+            ]
+          })
+        })
+      })
+    })
+  });
+};
+```
+
+## 주의사항
+
+- aspectRatio는 반드시 0보다 크고 유한한 값이어야 합니다
+- 부모의 제약 조건이 충분하지 않으면 원하는 비율을 유지하지 못할 수 있습니다
+- 무한한 제약 조건에서는 자식의 크기를 기반으로 크기가 결정됩니다
+- intrinsic 크기 계산 시 성능에 영향을 줄 수 있습니다
+- Stack 내에서 사용할 때는 적절한 제약 조건을 제공해야 합니다
+
+## 관련 위젯
+
+- **FractionallySizedBox**: 부모 크기의 비율로 크기 지정
+- **SizedBox**: 고정된 크기 지정
+- **Container**: constraints로 비율 제어 가능
+- **FittedBox**: 자식을 부모에 맞게 스케일링
