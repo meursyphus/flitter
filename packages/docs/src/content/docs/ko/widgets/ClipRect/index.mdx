@@ -3,21 +3,495 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: ClipRect
 title: "ClipRect"
-description: ""
+description: "사각형으로 자식을 클리핑하는 위젯"
 ---
 
-# ClipRect
+## 개요
 
-This widget clip the child widget like ClipRect Widget in Flutter.
+ClipRect는 사각형 영역으로 자식 위젯을 클리핑하는 위젯입니다.
 
-<b>The ClipRect</b> take clipper that is callback function and return <b>
-  Rect
-</b> object.
+이 위젯은 clipper 콜백 함수를 받아 Rect 객체를 반환하도록 하여, 자식 위젯을 원하는 사각형 영역으로 자를 수 있습니다. 내부적으로는 ClipPath를 사용하여 클리핑을 수행합니다.
 
-This widget use <b>ClipPath</b> internally to clip the child widget
+참조: [https://api.flutter.dev/flutter/widgets/ClipRect-class.html](https://api.flutter.dev/flutter/widgets/ClipRect-class.html)
 
-See: [https://api.flutter.dev/flutter/widgets/ClipRect-class.html](https://api.flutter.dev/flutter/widgets/ClipRect-class.html)
+## 언제 사용하나요?
 
-<br />
+- 위젯의 일부분만 보여주고 싶을 때
+- 오버플로우되는 콘텐츠를 숨기고 싶을 때
+- 스크롤 가능한 영역의 경계를 정의할 때
+- 이미지나 비디오의 특정 영역만 표시할 때
+- 사용자 정의 크롭(crop) 기능을 구현할 때
 
-## Basic
+## 기본 사용법
+
+```typescript
+// 전체 영역 클리핑 (기본)
+ClipRect({
+  clipper: (size) => Rect.fromLTWH({
+    left: 0,
+    top: 0,
+    width: size.width,
+    height: size.height
+  }),
+  child: Image({
+    src: 'https://example.com/large-image.jpg',
+    width: 400,
+    height: 400
+  })
+})
+
+// 중앙 부분만 클리핑
+ClipRect({
+  clipper: (size) => Rect.fromCenter({
+    center: { x: size.width / 2, y: size.height / 2 },
+    width: size.width * 0.5,
+    height: size.height * 0.5
+  }),
+  child: Container({
+    width: 200,
+    height: 200,
+    color: 'blue'
+  })
+})
+
+// 상단 절반만 표시
+ClipRect({
+  clipper: (size) => Rect.fromLTRB({
+    left: 0,
+    top: 0,
+    right: size.width,
+    bottom: size.height / 2
+  }),
+  child: child
+})
+```
+
+## Props 상세 설명
+
+### clipper (필수)
+
+**값: (size: Size) => Rect**
+
+클리핑 영역을 정의하는 콜백 함수입니다. 위젯의 크기(Size)를 매개변수로 받아 Rect 객체를 반환해야 합니다.
+
+```typescript
+// 다양한 클리핑 패턴 예제
+ClipRect({
+  // 왼쪽 상단 1/4 영역만
+  clipper: (size) => Rect.fromLTWH({
+    left: 0,
+    top: 0,
+    width: size.width / 2,
+    height: size.height / 2
+  }),
+  child: child
+})
+
+// 가로 중앙 스트립
+ClipRect({
+  clipper: (size) => Rect.fromLTRB({
+    left: 0,
+    top: size.height * 0.25,
+    right: size.width,
+    bottom: size.height * 0.75
+  }),
+  child: child
+})
+
+// 여백을 둔 클리핑
+ClipRect({
+  clipper: (size) => Rect.fromLTWH({
+    left: 20,
+    top: 20,
+    width: size.width - 40,
+    height: size.height - 40
+  }),
+  child: child
+})
+```
+
+### clipped
+
+**값: boolean** (기본값: **true**)
+
+클리핑 효과를 활성화/비활성화합니다.
+
+- `true`: 클리핑 적용
+- `false`: 클리핑 비활성화 (자식 위젯이 정상적으로 표시됨)
+
+```typescript
+ClipRect({
+  clipped: isClippingEnabled,
+  clipper: (size) => Rect.fromLTWH({ 
+    left: 0, 
+    top: 0, 
+    width: size.width, 
+    height: size.height 
+  }),
+  child: content
+})
+```
+
+### child
+
+**값: Widget**
+
+클리핑될 자식 위젯입니다.
+
+## Rect API 이해하기
+
+### Rect 생성 메서드
+
+```typescript
+// 왼쪽, 상단, 너비, 높이로 생성
+Rect.fromLTWH({
+  left: 10,
+  top: 10,
+  width: 100,
+  height: 100
+});
+
+// 왼쪽, 상단, 오른쪽, 하단 좌표로 생성
+Rect.fromLTRB({
+  left: 10,
+  top: 10,
+  right: 110,
+  bottom: 110
+});
+
+// 중심점과 크기로 생성
+Rect.fromCenter({
+  center: { x: 60, y: 60 },
+  width: 100,
+  height: 100
+});
+
+// 원을 감싸는 사각형
+Rect.fromCircle({
+  center: { x: 50, y: 50 },
+  radius: 50
+});
+
+// 두 점으로 생성
+Rect.fromPoints(
+  { x: 10, y: 10 },  // 첫 번째 점
+  { x: 110, y: 110 } // 두 번째 점
+);
+```
+
+## 실제 사용 예제
+
+### 예제 1: 이미지 크롭 도구
+
+```typescript
+const ImageCropper = ({ imageUrl, cropArea }) => {
+  const [cropRect, setCropRect] = useState({
+    x: 0,
+    y: 0,
+    width: 200,
+    height: 200
+  });
+  
+  return Container({
+    width: 400,
+    height: 400,
+    child: Stack({
+      children: [
+        // 원본 이미지 (어둡게)
+        Opacity({
+          opacity: 0.3,
+          child: Image({
+            src: imageUrl,
+            width: 400,
+            height: 400,
+            objectFit: 'cover'
+          })
+        }),
+        // 크롭된 영역
+        Positioned({
+          left: cropRect.x,
+          top: cropRect.y,
+          child: ClipRect({
+            clipper: (size) => Rect.fromLTWH({
+              left: 0,
+              top: 0,
+              width: cropRect.width,
+              height: cropRect.height
+            }),
+            child: Transform.translate({
+              offset: { x: -cropRect.x, y: -cropRect.y },
+              child: Image({
+                src: imageUrl,
+                width: 400,
+                height: 400,
+                objectFit: 'cover'
+              })
+            })
+          })
+        }),
+        // 크롭 영역 테두리
+        Positioned({
+          left: cropRect.x,
+          top: cropRect.y,
+          child: Container({
+            width: cropRect.width,
+            height: cropRect.height,
+            decoration: BoxDecoration({
+              border: Border.all({
+                color: 'white',
+                width: 2
+              })
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 2: 텍스트 오버플로우 처리
+
+```typescript
+const TextPreview = ({ text, maxLines = 3, lineHeight = 24 }) => {
+  const maxHeight = maxLines * lineHeight;
+  
+  return Container({
+    width: 300,
+    child: Stack({
+      children: [
+        ClipRect({
+          clipper: (size) => Rect.fromLTWH({
+            left: 0,
+            top: 0,
+            width: size.width,
+            height: Math.min(size.height, maxHeight)
+          }),
+          child: Text(text, {
+            style: TextStyle({
+              fontSize: 16,
+              lineHeight: lineHeight
+            })
+          })
+        }),
+        // 페이드 아웃 효과
+        Positioned({
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Container({
+            height: 30,
+            decoration: BoxDecoration({
+              gradient: LinearGradient({
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: ['rgba(255,255,255,0)', 'rgba(255,255,255,1)']
+              })
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 3: 진행률 표시기
+
+```typescript
+const ProgressBar = ({ progress, height = 20 }) => {
+  return Container({
+    width: 300,
+    height: height,
+    decoration: BoxDecoration({
+      borderRadius: BorderRadius.circular(height / 2),
+      color: '#E0E0E0'
+    }),
+    child: ClipRRect({
+      borderRadius: BorderRadius.circular(height / 2),
+      child: Stack({
+        children: [
+          // 진행률 바
+          ClipRect({
+            clipper: (size) => Rect.fromLTWH({
+              left: 0,
+              top: 0,
+              width: size.width * progress,
+              height: size.height
+            }),
+            child: Container({
+              decoration: BoxDecoration({
+                gradient: LinearGradient({
+                  colors: ['#4CAF50', '#8BC34A'],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight
+                })
+              })
+            })
+          }),
+          // 텍스트
+          Center({
+            child: Text(`${Math.round(progress * 100)}%`, {
+              style: TextStyle({
+                color: progress > 0.5 ? 'white' : 'black',
+                fontWeight: 'bold',
+                fontSize: 12
+              })
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### 예제 4: 뷰포트 시뮬레이션
+
+```typescript
+const ViewportSimulator = ({ content, viewportSize, scrollOffset }) => {
+  return Container({
+    width: viewportSize.width,
+    height: viewportSize.height,
+    decoration: BoxDecoration({
+      border: Border.all({
+        color: '#333',
+        width: 2
+      })
+    }),
+    child: ClipRect({
+      clipper: (size) => Rect.fromLTWH({
+        left: 0,
+        top: 0,
+        width: size.width,
+        height: size.height
+      }),
+      child: Transform.translate({
+        offset: { 
+          x: -scrollOffset.x, 
+          y: -scrollOffset.y 
+        },
+        child: content
+      })
+    })
+  });
+};
+
+// 사용 예
+ViewportSimulator({
+  viewportSize: { width: 300, height: 400 },
+  scrollOffset: { x: 0, y: 100 },
+  content: Container({
+    width: 300,
+    height: 1000,
+    child: Column({
+      children: Array.from({ length: 20 }, (_, i) => 
+        Container({
+          height: 50,
+          margin: EdgeInsets.all(5),
+          color: i % 2 === 0 ? '#E3F2FD' : '#BBDEFB',
+          child: Center({
+            child: Text(`Item ${i + 1}`)
+          })
+        })
+      )
+    })
+  })
+});
+```
+
+### 예제 5: 이미지 비교 슬라이더
+
+```typescript
+const ImageComparisonSlider = ({ beforeImage, afterImage }) => {
+  const [sliderPosition, setSliderPosition] = useState(0.5);
+  
+  return GestureDetector({
+    onHorizontalDragUpdate: (details) => {
+      const newPosition = Math.max(0, Math.min(1, 
+        details.localPosition.x / 400
+      ));
+      setSliderPosition(newPosition);
+    },
+    child: Container({
+      width: 400,
+      height: 300,
+      child: Stack({
+        children: [
+          // After 이미지 (전체)
+          Image({
+            src: afterImage,
+            width: 400,
+            height: 300,
+            objectFit: 'cover'
+          }),
+          // Before 이미지 (클리핑)
+          ClipRect({
+            clipper: (size) => Rect.fromLTWH({
+              left: 0,
+              top: 0,
+              width: size.width * sliderPosition,
+              height: size.height
+            }),
+            child: Image({
+              src: beforeImage,
+              width: 400,
+              height: 300,
+              objectFit: 'cover'
+            })
+          }),
+          // 슬라이더 라인
+          Positioned({
+            left: 400 * sliderPosition - 2,
+            top: 0,
+            bottom: 0,
+            child: Container({
+              width: 4,
+              color: 'white',
+              child: Center({
+                child: Container({
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration({
+                    color: 'white',
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow({
+                        color: 'rgba(0,0,0,0.3)',
+                        blurRadius: 4,
+                        offset: { x: 0, y: 2 }
+                      })
+                    ]
+                  }),
+                  child: Center({
+                    child: Icon({
+                      icon: Icons.dragHandle,
+                      color: '#666'
+                    })
+                  })
+                })
+              })
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+## 주의사항
+
+- ClipRect는 렌더링 성능에 영향을 줄 수 있으므로 필요한 경우에만 사용하세요
+- 클리핑된 영역 밖의 터치 이벤트는 감지되지 않습니다
+- clipper 함수는 위젯 크기가 변경될 때마다 호출되므로 복잡한 계산은 피하세요
+- 애니메이션과 함께 사용할 때는 성능 최적화를 고려하세요
+- 중첩된 클리핑은 성능 문제를 일으킬 수 있으므로 주의하세요
+
+## 관련 위젯
+
+- **ClipOval**: 타원형으로 클리핑
+- **ClipRRect**: 둥근 모서리 사각형으로 클리핑
+- **ClipPath**: 사용자 정의 경로로 클리핑
+- **CustomClipper**: 사용자 정의 클리핑 로직 구현
+- **Viewport**: 스크롤 가능한 영역 정의
