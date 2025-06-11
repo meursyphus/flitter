@@ -1,39 +1,323 @@
 ---
-nav_group: "Widgets"
-nav_group_order: 3
-nav_title: Draggable
-title: "Draggable"
-description: ""
+title: Draggable
+description: Guide to using the Draggable widget for creating draggable widgets
+sidebar:
+  order: 8
 ---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Draggable
 
-This widget is motivated by Draggable in Flutter.
+`Draggable` is a widget that makes child widgets draggable with mouse interactions. It internally uses `Transform` and `GestureDetector` to implement drag functionality.
 
-<iframe
-  width="560"
-  height="315"
-  src="https://www.youtube.com/embed/q4x2G_9-Mu0"
-  title="YouTube video player"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  allowfullscreen
-></iframe>
+## Overview
 
-See: [https://api.flutter.dev/flutter/widgets/Draggable-class.html](https://api.flutter.dev/flutter/widgets/Draggable-class.html)
+The Draggable widget enables user interaction to move widgets around on the screen. It provides drag start, progress, and end events for fine-grained control.
+
+## When to Use
+
+- **Drag and Drop Interfaces**: When moving files, cards, or items
+- **Interactive Diagrams**: When freely positioning nodes or elements  
+- **Widget Repositioning**: When users customize UI element positions
+- **Game Elements**: When moving puzzle pieces or game objects
+- **Visual Editors**: When placing elements in design tools
+
+## Basic Usage
+
+```typescript
+import { Draggable, Container } from '@meursyphus/flitter';
+
+Draggable({
+  onDragUpdate: ({ delta, movement }) => {
+    console.log('Dragging:', { delta, movement });
+  },
+  onDragStart: () => {
+    console.log('Drag started');
+  },
+  onDragEnd: () => {
+    console.log('Drag ended');
+  },
+  child: Container({
+    width: 100,
+    height: 100,
+    color: 'blue'
+  })
+})
+```
 
 ## Props
 
-### onDragUpdate
+| Property | Type | Description |
+|----------|------|-------------|
+| `child` | `Widget?` | Child widget to make draggable |
+| `onDragUpdate` | `(event: { delta: Offset, movement: Offset }) => void?` | Callback called during dragging |
+| `onDragStart` | `() => void?` | Callback called when drag starts |
+| `onDragEnd` | `() => void?` | Callback called when drag ends |
+| `feedback` | `Widget?` | Feedback widget to show during dragging |
 
-**Value: ((detail: \{delta: Offset\}) => void) | undefined**
+### Event Object
 
-### child
+- `delta`: Movement amount relative to previous frame
+- `movement`: Total movement amount relative to drag start point
 
-**Value: Widget**
+## Real-world Examples
 
-### feedback
+### 1. Basic Drag Box
 
-**Value: Widget (default child)**
+<Tabs>
+  <TabItem label="TypeScript">
+```typescript
+import { Draggable, Container, Text } from '@meursyphus/flitter';
 
-## Basic
+Draggable({
+  onDragUpdate: ({ movement }) => {
+    console.log(`Move: x=${movement.x}, y=${movement.y}`);
+  },
+  child: Container({
+    width: 120,
+    height: 80,
+    color: '#3498db',
+    child: Text('Drag me', {
+      style: { color: 'white', textAlign: 'center' }
+    })
+  })
+})
+```
+  </TabItem>
+</Tabs>
+
+### 2. State Management Integration
+
+<Tabs>
+  <TabItem label="TypeScript">
+```typescript
+import { StatefulWidget, State, Draggable, Container, Transform } from '@meursyphus/flitter';
+
+class DraggableBox extends StatefulWidget {
+  createState() {
+    return new DraggableBoxState();
+  }
+}
+
+class DraggableBoxState extends State<DraggableBox> {
+  position = { x: 0, y: 0 };
+  isDragging = false;
+
+  handleDragStart = () => {
+    this.setState(() => {
+      this.isDragging = true;
+    });
+  }
+
+  handleDragUpdate = ({ movement }) => {
+    this.setState(() => {
+      this.position = { x: movement.x, y: movement.y };
+    });
+  }
+
+  handleDragEnd = () => {
+    this.setState(() => {
+      this.isDragging = false;
+    });
+  }
+
+  build() {
+    return Transform.translate({
+      offset: this.position,
+      child: Draggable({
+        onDragStart: this.handleDragStart,
+        onDragUpdate: this.handleDragUpdate,
+        onDragEnd: this.handleDragEnd,
+        child: Container({
+          width: 100,
+          height: 100,
+          color: this.isDragging ? '#e74c3c' : '#2ecc71'
+        })
+      })
+    });
+  }
+}
+```
+  </TabItem>
+</Tabs>
+
+### 3. Bounded Dragging
+
+<Tabs>
+  <TabItem label="TypeScript">
+```typescript
+import { Draggable, Container } from '@meursyphus/flitter';
+
+class BoundedDraggable extends StatefulWidget {
+  createState() {
+    return new BoundedDraggableState();
+  }
+}
+
+class BoundedDraggableState extends State<BoundedDraggable> {
+  position = { x: 0, y: 0 };
+  bounds = { minX: -100, maxX: 100, minY: -50, maxY: 50 };
+
+  handleDragUpdate = ({ movement }) => {
+    const clampedX = Math.max(this.bounds.minX, 
+                      Math.min(this.bounds.maxX, movement.x));
+    const clampedY = Math.max(this.bounds.minY, 
+                      Math.min(this.bounds.maxY, movement.y));
+    
+    this.setState(() => {
+      this.position = { x: clampedX, y: clampedY };
+    });
+  }
+
+  build() {
+    return Transform.translate({
+      offset: this.position,
+      child: Draggable({
+        onDragUpdate: this.handleDragUpdate,
+        child: Container({
+          width: 60,
+          height: 60,
+          color: '#9b59b6'
+        })
+      })
+    });
+  }
+}
+```
+  </TabItem>
+</Tabs>
+
+### 4. Drag Feedback Widget
+
+<Tabs>
+  <TabItem label="TypeScript">
+```typescript
+import { Draggable, Container, Text, Opacity } from '@meursyphus/flitter';
+
+Draggable({
+  child: Container({
+    width: 100,
+    height: 100,
+    color: '#1abc9c',
+    child: Text('Original')
+  }),
+  feedback: Opacity({
+    opacity: 0.7,
+    child: Container({
+      width: 100,
+      height: 100,
+      color: '#16a085',
+      child: Text('Dragging', {
+        style: { color: 'white' }
+      })
+    })
+  })
+})
+```
+  </TabItem>
+</Tabs>
+
+### 5. Multiple Drag Objects
+
+<Tabs>
+  <TabItem label="TypeScript">
+```typescript
+import { Column, Draggable, Container, Text, EdgeInsets } from '@meursyphus/flitter';
+
+const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12'];
+const items = colors.map((color, index) => 
+  Draggable({
+    onDragUpdate: ({ movement }) => {
+      console.log(`Item ${index + 1} moved:`, movement);
+    },
+    child: Container({
+      width: 80,
+      height: 60,
+      color,
+      margin: EdgeInsets.all(5),
+      child: Text(`${index + 1}`, {
+        style: { color: 'white', textAlign: 'center' }
+      })
+    })
+  })
+);
+
+Column({
+  children: items
+})
+```
+  </TabItem>
+</Tabs>
+
+### 6. Drag State Visualization
+
+<Tabs>
+  <TabItem label="TypeScript">
+```typescript
+import { Draggable, Container, Text, Column } from '@meursyphus/flitter';
+
+class DragVisualizer extends StatefulWidget {
+  createState() {
+    return new DragVisualizerState();
+  }
+}
+
+class DragVisualizerState extends State<DragVisualizer> {
+  status = 'Waiting';
+  position = { x: 0, y: 0 };
+
+  build() {
+    return Column({
+      children: [
+        Text(`Status: ${this.status}`),
+        Text(`Position: (${this.position.x.toFixed(1)}, ${this.position.y.toFixed(1)})`),
+        
+        Draggable({
+          onDragStart: () => {
+            this.setState(() => {
+              this.status = 'Dragging';
+            });
+          },
+          onDragUpdate: ({ movement }) => {
+            this.setState(() => {
+              this.position = movement;
+            });
+          },
+          onDragEnd: () => {
+            this.setState(() => {
+              this.status = 'Completed';
+            });
+          },
+          child: Container({
+            width: 100,
+            height: 100,
+            color: '#8e44ad'
+          })
+        })
+      ]
+    });
+  }
+}
+```
+  </TabItem>
+</Tabs>
+
+## Important Notes
+
+1. **Performance**: Drag events occur frequently, so avoid heavy computations in `onDragUpdate`.
+
+2. **State Updates**: Proper `setState` calls are needed when changing state during dragging.
+
+3. **Coordinate System**: `movement` is relative to drag start point, `delta` is relative to previous frame.
+
+4. **Transform Relationship**: Draggable uses Transform internally, so be careful when applying additional transforms.
+
+5. **Drop Targets**: Currently Draggable only supports dragging; drop target functionality must be implemented separately.
+
+## Related Widgets
+
+- **Transform**: Widget transformation and positioning
+- **GestureDetector**: Mouse/touch event detection
+- **Container**: Draggable area definition
+- **ZIndex**: Layer order adjustment during dragging
