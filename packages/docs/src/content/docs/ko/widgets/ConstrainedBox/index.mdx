@@ -8,9 +8,7 @@ description: "자식 위젯에 추가 제약 조건을 적용하는 위젯"
 
 ## 개요
 
-ConstrainedBox는 자식 위젯에 추가적인 제약 조건(constraints)을 적용하는 위젯입니다.
-
-이 위젯은 부모로부터 받은 제약 조건과 자체적으로 정의한 제약 조건을 결합하여 자식에게 전달합니다. 이를 통해 자식 위젯의 최소/최대 크기를 제어할 수 있습니다.
+ConstrainedBox는 자식 위젯에 추가적인 제약 조건(constraints)을 적용하는 위젯입니다. 부모로부터 받은 제약 조건과 자체적으로 정의한 제약 조건을 결합하여 자식의 크기를 제어합니다.
 
 <iframe
   width="560"
@@ -37,7 +35,7 @@ ConstrainedBox는 자식 위젯에 추가적인 제약 조건(constraints)을 �
 ```typescript
 // 최소 크기 설정
 ConstrainedBox({
-  constraints: BoxConstraints({
+  constraints: new Constraints({
     minWidth: 100,
     minHeight: 100
   }),
@@ -48,7 +46,7 @@ ConstrainedBox({
 
 // 최대 크기 설정
 ConstrainedBox({
-  constraints: BoxConstraints({
+  constraints: new Constraints({
     maxWidth: 200,
     maxHeight: 200
   }),
@@ -61,7 +59,7 @@ ConstrainedBox({
 
 // 고정 크기 설정
 ConstrainedBox({
-  constraints: BoxConstraints.tight(Size({ width: 150, height: 150 })),
+  constraints: Constraints.tight({ width: 150, height: 150 }),
   child: Container({
     color: 'green'
   })
@@ -71,20 +69,19 @@ ConstrainedBox({
 ## Props
 
 ### constraints (필수)
+**값: Constraints**
 
-**값: BoxConstraints**
-
-자식 위젯에 적용할 제약 조건입니다. BoxConstraints는 다음과 같은 속성을 가집니다:
+자식 위젯에 적용할 제약 조건입니다. Constraints는 다음과 같은 속성을 가집니다:
 
 - `minWidth`: 최소 너비 (기본값: 0)
-- `maxWidth`: 최대 너비 (기본값: double.infinity)
+- `maxWidth`: 최대 너비 (기본값: Infinity)
 - `minHeight`: 최소 높이 (기본값: 0)
-- `maxHeight`: 최대 높이 (기본값: double.infinity)
+- `maxHeight`: 최대 높이 (기본값: Infinity)
 
 ```typescript
 // 다양한 제약 조건 예제
 ConstrainedBox({
-  constraints: BoxConstraints({
+  constraints: new Constraints({
     minWidth: 100,
     maxWidth: 300,
     minHeight: 50,
@@ -94,36 +91,34 @@ ConstrainedBox({
 })
 ```
 
-### child
-
+### child (선택)
 **값: Widget | undefined**
 
 제약 조건이 적용될 자식 위젯입니다.
 
-## BoxConstraints 생성자
+## Constraints 생성자
 
-BoxConstraints는 여러 편의 생성자를 제공합니다:
+Constraints는 여러 편의 생성자를 제공합니다:
 
 ```typescript
 // 기본 생성자
-BoxConstraints({
+new Constraints({
   minWidth: 0,
-  maxWidth: double.infinity,
+  maxWidth: Infinity,
   minHeight: 0,
-  maxHeight: double.infinity
+  maxHeight: Infinity
 })
 
 // 타이트한 제약 (고정 크기)
-BoxConstraints.tight(Size({ width: 100, height: 100 }))
+Constraints.tight({ width: 100, height: 100 })
 
 // 느슨한 제약 (최대 크기만 제한)
-BoxConstraints.loose(Size({ width: 200, height: 200 }))
+Constraints.loose({ width: 200, height: 200 })
 
 // 확장 (부모 크기로 확장)
-BoxConstraints.expand({
-  width: 300,  // 선택적
-  height: 400  // 선택적
-})
+Constraints.expand()  // 모든 방향으로 확장
+Constraints.expand({ width: 300 })  // 너비는 300, 높이는 확장
+Constraints.expand({ height: 400 })  // 높이는 400, 너비는 확장
 ```
 
 ## 제약 조건 결합
@@ -136,14 +131,14 @@ ConstrainedBox는 부모의 제약 조건과 자신의 제약 조건을 결합�
 // 결과: min(100, 100), max(150, 150)
 
 Container({
-  constraints: BoxConstraints({
+  constraints: new Constraints({
     minWidth: 50,
     maxWidth: 200,
     minHeight: 50,
     maxHeight: 200
   }),
   child: ConstrainedBox({
-    constraints: BoxConstraints({
+    constraints: new Constraints({
       minWidth: 100,
       maxWidth: 150,
       minHeight: 100,
@@ -161,7 +156,7 @@ Container({
 ```typescript
 const MinSizeButton = ({ onPressed, child, minWidth = 88, minHeight = 36 }) => {
   return ConstrainedBox({
-    constraints: BoxConstraints({
+    constraints: new Constraints({
       minWidth: minWidth,
       minHeight: minHeight
     }),
@@ -189,7 +184,7 @@ const ConstrainedImage = ({ src, maxSize = 300 }) => {
       borderRadius: BorderRadius.circular(8)
     }),
     child: ConstrainedBox({
-      constraints: BoxConstraints({
+      constraints: new Constraints({
         maxWidth: maxSize,
         maxHeight: maxSize
       }),
@@ -207,7 +202,7 @@ const ConstrainedImage = ({ src, maxSize = 300 }) => {
 ```typescript
 const ResponsiveCard = ({ title, content }) => {
   return ConstrainedBox({
-    constraints: BoxConstraints({
+    constraints: new Constraints({
       minHeight: 100,
       maxWidth: 400
     }),
@@ -245,7 +240,7 @@ const ResponsiveCard = ({ title, content }) => {
 const ScrollableContent = ({ children, minHeight = 300 }) => {
   return SingleChildScrollView({
     child: ConstrainedBox({
-      constraints: BoxConstraints({
+      constraints: new Constraints({
         minHeight: minHeight
       }),
       child: Column({
@@ -265,7 +260,7 @@ const ConstrainedAspectBox = ({
   maxWidth = 600 
 }) => {
   return ConstrainedBox({
-    constraints: BoxConstraints({
+    constraints: new Constraints({
       maxWidth: maxWidth
     }),
     child: AspectRatio({
@@ -295,9 +290,9 @@ ConstrainedAspectBox({
 
 ```typescript
 ConstrainedBox({
-  constraints: BoxConstraints({ minWidth: 200, minHeight: 200 }),
+  constraints: new Constraints({ minWidth: 200, minHeight: 200 }),
   child: ConstrainedBox({
-    constraints: BoxConstraints({ minWidth: 100, minHeight: 100 }),
+    constraints: new Constraints({ minWidth: 100, minHeight: 100 }),
     child: Container({ color: 'blue' })
   })
 })
@@ -318,3 +313,4 @@ ConstrainedBox({
 - **SizedBox**: 고정 크기를 설정하는 간단한 방법
 - **LimitedBox**: 무한 제약에서만 크기를 제한
 - **UnconstrainedBox**: 자식의 제약을 제거
+- **OverflowBox**: 부모의 제약을 벗어날 수 있게 허용

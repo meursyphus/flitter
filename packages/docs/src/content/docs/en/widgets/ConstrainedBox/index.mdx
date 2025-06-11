@@ -8,9 +8,7 @@ description: "A widget that imposes additional constraints on its child"
 
 ## Overview
 
-ConstrainedBox is a widget that imposes additional constraints on its child widget.
-
-This widget combines the constraints from its parent with its own defined constraints and passes them to its child. This allows you to control the minimum and maximum size of child widgets.
+ConstrainedBox is a widget that imposes additional constraints on its child widget. It combines the constraints from its parent with its own defined constraints to control the child's size.
 
 <iframe
   width="560"
@@ -22,9 +20,9 @@ This widget combines the constraints from its parent with its own defined constr
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/ConstrainedBox-class.html](https://api.flutter.dev/flutter/widgets/ConstrainedBox-class.html)
+Reference: [https://api.flutter.dev/flutter/widgets/ConstrainedBox-class.html](https://api.flutter.dev/flutter/widgets/ConstrainedBox-class.html)
 
-## When to use it?
+## When to Use
 
 - When you want to limit the minimum or maximum size of a widget
 - When child widgets should only have sizes within a specific range
@@ -37,7 +35,7 @@ See: [https://api.flutter.dev/flutter/widgets/ConstrainedBox-class.html](https:/
 ```typescript
 // Setting minimum size
 ConstrainedBox({
-  constraints: BoxConstraints({
+  constraints: new Constraints({
     minWidth: 100,
     minHeight: 100
   }),
@@ -48,7 +46,7 @@ ConstrainedBox({
 
 // Setting maximum size
 ConstrainedBox({
-  constraints: BoxConstraints({
+  constraints: new Constraints({
     maxWidth: 200,
     maxHeight: 200
   }),
@@ -61,7 +59,7 @@ ConstrainedBox({
 
 // Setting fixed size
 ConstrainedBox({
-  constraints: BoxConstraints.tight(Size({ width: 150, height: 150 })),
+  constraints: Constraints.tight({ width: 150, height: 150 }),
   child: Container({
     color: 'green'
   })
@@ -71,20 +69,19 @@ ConstrainedBox({
 ## Props
 
 ### constraints (required)
+**Type: Constraints**
 
-**Value: BoxConstraints**
-
-The constraints to impose on the child widget. BoxConstraints has the following properties:
+The constraints to impose on the child widget. Constraints has the following properties:
 
 - `minWidth`: Minimum width (default: 0)
-- `maxWidth`: Maximum width (default: double.infinity)
+- `maxWidth`: Maximum width (default: Infinity)
 - `minHeight`: Minimum height (default: 0)
-- `maxHeight`: Maximum height (default: double.infinity)
+- `maxHeight`: Maximum height (default: Infinity)
 
 ```typescript
 // Various constraint examples
 ConstrainedBox({
-  constraints: BoxConstraints({
+  constraints: new Constraints({
     minWidth: 100,
     maxWidth: 300,
     minHeight: 50,
@@ -94,36 +91,34 @@ ConstrainedBox({
 })
 ```
 
-### child
-
-**Value: Widget | undefined**
+### child (optional)
+**Type: Widget | undefined**
 
 The child widget to which the constraints will be applied.
 
-## BoxConstraints Constructors
+## Constraints Constructors
 
-BoxConstraints provides several convenience constructors:
+Constraints provides several convenience constructors:
 
 ```typescript
 // Default constructor
-BoxConstraints({
+new Constraints({
   minWidth: 0,
-  maxWidth: double.infinity,
+  maxWidth: Infinity,
   minHeight: 0,
-  maxHeight: double.infinity
+  maxHeight: Infinity
 })
 
 // Tight constraints (fixed size)
-BoxConstraints.tight(Size({ width: 100, height: 100 }))
+Constraints.tight({ width: 100, height: 100 })
 
 // Loose constraints (only max size limited)
-BoxConstraints.loose(Size({ width: 200, height: 200 }))
+Constraints.loose({ width: 200, height: 200 })
 
 // Expand (expand to parent size)
-BoxConstraints.expand({
-  width: 300,  // Optional
-  height: 400  // Optional
-})
+Constraints.expand()  // Expand in all directions
+Constraints.expand({ width: 300 })  // Width is 300, height expands
+Constraints.expand({ height: 400 })  // Height is 400, width expands
 ```
 
 ## Constraint Combination
@@ -136,14 +131,14 @@ ConstrainedBox combines parent constraints with its own constraints:
 // Result: min(100, 100), max(150, 150)
 
 Container({
-  constraints: BoxConstraints({
+  constraints: new Constraints({
     minWidth: 50,
     maxWidth: 200,
     minHeight: 50,
     maxHeight: 200
   }),
   child: ConstrainedBox({
-    constraints: BoxConstraints({
+    constraints: new Constraints({
       minWidth: 100,
       maxWidth: 150,
       minHeight: 100,
@@ -161,7 +156,7 @@ Container({
 ```typescript
 const MinSizeButton = ({ onPressed, child, minWidth = 88, minHeight = 36 }) => {
   return ConstrainedBox({
-    constraints: BoxConstraints({
+    constraints: new Constraints({
       minWidth: minWidth,
       minHeight: minHeight
     }),
@@ -189,7 +184,7 @@ const ConstrainedImage = ({ src, maxSize = 300 }) => {
       borderRadius: BorderRadius.circular(8)
     }),
     child: ConstrainedBox({
-      constraints: BoxConstraints({
+      constraints: new Constraints({
         maxWidth: maxSize,
         maxHeight: maxSize
       }),
@@ -207,7 +202,7 @@ const ConstrainedImage = ({ src, maxSize = 300 }) => {
 ```typescript
 const ResponsiveCard = ({ title, content }) => {
   return ConstrainedBox({
-    constraints: BoxConstraints({
+    constraints: new Constraints({
       minHeight: 100,
       maxWidth: 400
     }),
@@ -245,7 +240,7 @@ const ResponsiveCard = ({ title, content }) => {
 const ScrollableContent = ({ children, minHeight = 300 }) => {
   return SingleChildScrollView({
     child: ConstrainedBox({
-      constraints: BoxConstraints({
+      constraints: new Constraints({
         minHeight: minHeight
       }),
       child: Column({
@@ -265,7 +260,7 @@ const ConstrainedAspectBox = ({
   maxWidth = 600 
 }) => {
   return ConstrainedBox({
-    constraints: BoxConstraints({
+    constraints: new Constraints({
       maxWidth: maxWidth
     }),
     child: AspectRatio({
@@ -295,9 +290,9 @@ When nesting multiple ConstrainedBoxes, the most restrictive constraint applies:
 
 ```typescript
 ConstrainedBox({
-  constraints: BoxConstraints({ minWidth: 200, minHeight: 200 }),
+  constraints: new Constraints({ minWidth: 200, minHeight: 200 }),
   child: ConstrainedBox({
-    constraints: BoxConstraints({ minWidth: 100, minHeight: 100 }),
+    constraints: new Constraints({ minWidth: 100, minHeight: 100 }),
     child: Container({ color: 'blue' })
   })
 })
@@ -318,3 +313,4 @@ ConstrainedBox({
 - **SizedBox**: Simple way to set fixed size
 - **LimitedBox**: Limits size only in infinite constraints
 - **UnconstrainedBox**: Removes constraints from child
+- **OverflowBox**: Allows child to exceed parent constraints
