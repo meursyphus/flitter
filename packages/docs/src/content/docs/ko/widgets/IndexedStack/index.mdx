@@ -1,55 +1,510 @@
 ---
-nav_group: "Widgets"
-nav_group_order: 3
-nav_title: IndexedStack
-title: "IndexedStack"
-description: ""
+title: IndexedStack
+description: 여러 자식 중 특정 인덱스의 하나만 표시하는 IndexedStack 위젯 사용법
+sidebar:
+  order: 9
 ---
 
-# IndexedWidget
+import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-This widget motivated by IndexedWidget in Flutter.
+# IndexedStack
 
-> A Stack that shows a single child from a list of children.
->
-> The displayed child is the one with the given index. The stack is always as big as the largest child.
->
-> If value is null, then nothing is displayed.
+`IndexedStack`은 여러 자식 위젯 중에서 특정 인덱스에 해당하는 하나의 위젯만 표시하는 스택 위젯입니다. 탭 인터페이스나 페이지 전환에 유용합니다.
 
-<iframe
-  width="560"
-  height="315"
-  src="https://www.youtube.com/embed/_O0PPD1Xfbk"
-  title="YouTube video player"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  allowfullscreen
-></iframe>
+## 개요
 
-See: [https://api.flutter.dev/flutter/widgets/IndexedWidget-class.html](https://api.flutter.dev/flutter/widgets/IndexedWidget-class.html)
+IndexedStack은 모든 자식 위젯을 렌더링하지만 지정된 인덱스의 위젯만 화면에 보여줍니다. 다른 위젯들은 숨겨지지만 상태는 유지됩니다.
+
+## 언제 사용하나요?
+
+- **탭 인터페이스**: 여러 탭 중 하나만 표시할 때
+- **페이지 스위처**: 페이지 간 전환 시 상태를 유지하면서 전환할 때
+- **조건부 표시**: 상태에 따라 다른 위젯을 표시할 때
+- **위저드 UI**: 단계별 진행 시 이전 단계의 상태를 보존할 때
+- **카드 덱**: 카드 더미에서 특정 카드만 표시할 때
+
+## 기본 사용법
+
+```typescript
+import { IndexedStack, Container, Text } from '@meursyphus/flitter';
+
+IndexedStack({
+  index: 1, // 두 번째 자식을 표시
+  children: [
+    Container({
+      color: 'red',
+      child: Text('첫 번째 페이지')
+    }),
+    Container({
+      color: 'blue', 
+      child: Text('두 번째 페이지')
+    }),
+    Container({
+      color: 'green',
+      child: Text('세 번째 페이지')
+    })
+  ]
+})
+```
 
 ## Props
 
-### index
+| 속성 | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `index` | `number` | `0` | 표시할 자식 위젯의 인덱스 |
+| `children` | `Widget[]` | - | 스택에 포함될 자식 위젯들 |
+| `alignment` | `Alignment?` | `Alignment.topLeft` | 자식 위젯들의 정렬 방식 |
+| `sizing` | `StackFit?` | `StackFit.loose` | 스택 크기 조정 방식 |
+| `clipped` | `boolean?` | `true` | 자식이 경계를 벗어날 때 클리핑 여부 |
 
-**Value: number**(default: **0**)
+### StackFit 값
 
-### alignment
+- `StackFit.loose`: 자식들의 자연스러운 크기 사용
+- `StackFit.expand`: 가능한 최대 크기로 확장
+- `StackFit.passthrough`: 부모의 제약 조건 그대로 전달
 
-**Value: Alignment**(default: **Alignment.topLeft**)
+## 실제 사용 예제
 
-### clipped
+### 1. 기본 인덱스 스택
 
-**Value: boolean**(default: **true**)
+<Tabs>
+  <TabItem label="TypeScript">
+```typescript
+import { StatefulWidget, State, IndexedStack, Container, Text, Column, Button } from '@meursyphus/flitter';
 
-### sizing
+class BasicIndexedStack extends StatefulWidget {
+  createState() {
+    return new BasicIndexedStackState();
+  }
+}
 
-**Value: StackFit**(default: **StackFit.loose**)
+class BasicIndexedStackState extends State<BasicIndexedStack> {
+  currentIndex = 0;
 
-### children
+  switchPage = (index: number) => {
+    this.setState(() => {
+      this.currentIndex = index;
+    });
+  }
 
-**Value: Widget[]**
+  build() {
+    return Column({
+      children: [
+        // 페이지 버튼들
+        Row({
+          children: [
+            Button({
+              onPressed: () => this.switchPage(0),
+              child: Text('페이지 1')
+            }),
+            Button({
+              onPressed: () => this.switchPage(1),
+              child: Text('페이지 2')
+            }),
+            Button({
+              onPressed: () => this.switchPage(2),
+              child: Text('페이지 3')
+            })
+          ]
+        }),
+        
+        // 인덱스 스택
+        IndexedStack({
+          index: this.currentIndex,
+          children: [
+            Container({
+              width: 300,
+              height: 200,
+              color: '#ff6b6b',
+              child: Text('첫 번째 페이지', {
+                style: { color: 'white', fontSize: 24 }
+              })
+            }),
+            Container({
+              width: 300,
+              height: 200,
+              color: '#4ecdc4',
+              child: Text('두 번째 페이지', {
+                style: { color: 'white', fontSize: 24 }
+              })
+            }),
+            Container({
+              width: 300,
+              height: 200,
+              color: '#45b7d1',
+              child: Text('세 번째 페이지', {
+                style: { color: 'white', fontSize: 24 }
+              })
+            })
+          ]
+        })
+      ]
+    });
+  }
+}
+```
+  </TabItem>
+</Tabs>
 
-## Examples
+### 2. 상태 보존 탭 인터페이스
 
-### Basic
+<Tabs>
+  <TabItem label="TypeScript">
+```typescript
+import { StatefulWidget, State, IndexedStack, Column, TextField, Text } from '@meursyphus/flitter';
+
+class TabWithState extends StatefulWidget {
+  createState() {
+    return new TabWithStateState();
+  }
+}
+
+class TabWithStateState extends State<TabWithState> {
+  activeTab = 0;
+
+  build() {
+    return Column({
+      children: [
+        // 탭 헤더
+        Row({
+          children: [
+            Button({
+              onPressed: () => this.setState(() => { this.activeTab = 0; }),
+              child: Text('프로필')
+            }),
+            Button({
+              onPressed: () => this.setState(() => { this.activeTab = 1; }),
+              child: Text('설정')
+            }),
+            Button({
+              onPressed: () => this.setState(() => { this.activeTab = 2; }),
+              child: Text('도움말')
+            })
+          ]
+        }),
+        
+        // 탭 콘텐츠 (상태 보존)
+        IndexedStack({
+          index: this.activeTab,
+          children: [
+            // 프로필 탭
+            ProfileTab(),
+            
+            // 설정 탭  
+            SettingsTab(),
+            
+            // 도움말 탭
+            HelpTab()
+          ]
+        })
+      ]
+    });
+  }
+}
+
+class ProfileTab extends StatefulWidget {
+  createState() {
+    return new ProfileTabState();
+  }
+}
+
+class ProfileTabState extends State<ProfileTab> {
+  name = '';
+  email = '';
+
+  build() {
+    return Column({
+      children: [
+        TextField({
+          placeholder: '이름',
+          value: this.name,
+          onChanged: (value) => {
+            this.setState(() => {
+              this.name = value;
+            });
+          }
+        }),
+        TextField({
+          placeholder: '이메일',
+          value: this.email,
+          onChanged: (value) => {
+            this.setState(() => {
+              this.email = value;
+            });
+          }
+        }),
+        Text(`입력된 정보: ${this.name}, ${this.email}`)
+      ]
+    });
+  }
+}
+```
+  </TabItem>
+</Tabs>
+
+### 3. 스택 크기 조정 옵션
+
+<Tabs>
+  <TabItem label="TypeScript">
+```typescript
+import { IndexedStack, Container, Text, StackFit } from '@meursyphus/flitter';
+
+// loose: 자연스러운 크기
+IndexedStack({
+  index: 0,
+  sizing: StackFit.loose,
+  children: [
+    Container({
+      width: 100,
+      height: 100,
+      color: 'red',
+      child: Text('작은 박스')
+    }),
+    Container({
+      width: 200,
+      height: 150,
+      color: 'blue',
+      child: Text('큰 박스')
+    })
+  ]
+})
+
+// expand: 최대 크기로 확장
+IndexedStack({
+  index: 0,
+  sizing: StackFit.expand,
+  children: [
+    Container({
+      color: 'green',
+      child: Text('확장된 박스')
+    })
+  ]
+})
+```
+  </TabItem>
+</Tabs>
+
+### 4. 정렬 옵션
+
+<Tabs>
+  <TabItem label="TypeScript">
+```typescript
+import { IndexedStack, Container, Text, Alignment } from '@meursyphus/flitter';
+
+IndexedStack({
+  index: 0,
+  alignment: Alignment.center, // 중앙 정렬
+  children: [
+    Container({
+      width: 150,
+      height: 100,
+      color: '#9b59b6',
+      child: Text('중앙 정렬', {
+        style: { color: 'white', textAlign: 'center' }
+      })
+    })
+  ]
+})
+
+IndexedStack({
+  index: 0,
+  alignment: Alignment.bottomRight, // 우하단 정렬
+  children: [
+    Container({
+      width: 120,
+      height: 80,
+      color: '#e67e22',
+      child: Text('우하단 정렬', {
+        style: { color: 'white', textAlign: 'center' }
+      })
+    })
+  ]
+})
+```
+  </TabItem>
+</Tabs>
+
+### 5. 애니메이션과 함께 사용
+
+<Tabs>
+  <TabItem label="TypeScript">
+```typescript
+import { StatefulWidget, State, IndexedStack, AnimatedContainer, Text } from '@meursyphus/flitter';
+
+class AnimatedIndexedStack extends StatefulWidget {
+  createState() {
+    return new AnimatedIndexedStackState();
+  }
+}
+
+class AnimatedIndexedStackState extends State<AnimatedIndexedStack> {
+  currentPage = 0;
+  
+  nextPage = () => {
+    this.setState(() => {
+      this.currentPage = (this.currentPage + 1) % 3;
+    });
+  }
+
+  build() {
+    return Column({
+      children: [
+        Button({
+          onPressed: this.nextPage,
+          child: Text('다음 페이지')
+        }),
+        
+        IndexedStack({
+          index: this.currentPage,
+          children: [
+            AnimatedContainer({
+              duration: 300,
+              width: this.currentPage === 0 ? 200 : 150,
+              height: this.currentPage === 0 ? 200 : 150,
+              color: '#e74c3c',
+              child: Text('페이지 1')
+            }),
+            AnimatedContainer({
+              duration: 300,
+              width: this.currentPage === 1 ? 200 : 150,
+              height: this.currentPage === 1 ? 200 : 150,
+              color: '#3498db',
+              child: Text('페이지 2')
+            }),
+            AnimatedContainer({
+              duration: 300,
+              width: this.currentPage === 2 ? 200 : 150,
+              height: this.currentPage === 2 ? 200 : 150,
+              color: '#2ecc71',
+              child: Text('페이지 3')
+            })
+          ]
+        })
+      ]
+    });
+  }
+}
+```
+  </TabItem>
+</Tabs>
+
+### 6. 위저드 스타일 인터페이스
+
+<Tabs>
+  <TabItem label="TypeScript">
+```typescript
+import { StatefulWidget, State, IndexedStack, Column, Text, Button, Row } from '@meursyphus/flitter';
+
+class WizardInterface extends StatefulWidget {
+  createState() {
+    return new WizardInterfaceState();
+  }
+}
+
+class WizardInterfaceState extends State<WizardInterface> {
+  currentStep = 0;
+  totalSteps = 3;
+
+  nextStep = () => {
+    if (this.currentStep < this.totalSteps - 1) {
+      this.setState(() => {
+        this.currentStep++;
+      });
+    }
+  }
+
+  prevStep = () => {
+    if (this.currentStep > 0) {
+      this.setState(() => {
+        this.currentStep--;
+      });
+    }
+  }
+
+  build() {
+    return Column({
+      children: [
+        // 진행 표시
+        Text(`단계 ${this.currentStep + 1} / ${this.totalSteps}`),
+        
+        // 메인 콘텐츠
+        IndexedStack({
+          index: this.currentStep,
+          children: [
+            // 1단계
+            Container({
+              padding: EdgeInsets.all(20),
+              child: Column({
+                children: [
+                  Text('1단계: 기본 정보', { style: { fontSize: 18, fontWeight: 'bold' } }),
+                  TextField({ placeholder: '이름을 입력하세요' }),
+                  TextField({ placeholder: '이메일을 입력하세요' })
+                ]
+              })
+            }),
+            
+            // 2단계
+            Container({
+              padding: EdgeInsets.all(20),
+              child: Column({
+                children: [
+                  Text('2단계: 추가 정보', { style: { fontSize: 18, fontWeight: 'bold' } }),
+                  TextField({ placeholder: '전화번호를 입력하세요' }),
+                  TextField({ placeholder: '주소를 입력하세요' })
+                ]
+              })
+            }),
+            
+            // 3단계
+            Container({
+              padding: EdgeInsets.all(20),
+              child: Column({
+                children: [
+                  Text('3단계: 완료', { style: { fontSize: 18, fontWeight: 'bold' } }),
+                  Text('모든 정보가 입력되었습니다.'),
+                  Text('가입을 완료하시겠습니까?')
+                ]
+              })
+            })
+          ]
+        }),
+        
+        // 내비게이션 버튼
+        Row({
+          children: [
+            Button({
+              onPressed: this.currentStep > 0 ? this.prevStep : null,
+              child: Text('이전')
+            }),
+            Button({
+              onPressed: this.currentStep < this.totalSteps - 1 ? this.nextStep : null,
+              child: Text(this.currentStep === this.totalSteps - 1 ? '완료' : '다음')
+            })
+          ]
+        })
+      ]
+    });
+  }
+}
+```
+  </TabItem>
+</Tabs>
+
+## 주의사항
+
+1. **메모리 사용**: 모든 자식 위젯이 메모리에 유지되므로 많은 위젯이 있을 때 주의하세요.
+
+2. **인덱스 범위**: 인덱스가 자식 배열 범위를 벗어나면 아무것도 표시되지 않습니다.
+
+3. **상태 보존**: 숨겨진 위젯들도 상태가 유지되어 메모리를 사용합니다.
+
+4. **성능 고려**: 복잡한 위젯들이 많을 때는 lazy loading을 고려하세요.
+
+5. **클리핑**: `clipped: false`로 설정하면 자식이 경계를 벗어날 수 있습니다.
+
+## 관련 위젯
+
+- **Stack**: 여러 위젯을 겹쳐서 표시
+- **Column/Row**: 선형 배치로 위젯 정렬
+- **TabView**: 탭 인터페이스 구현
+- **AnimatedSwitcher**: 위젯 전환 시 애니메이션 제공

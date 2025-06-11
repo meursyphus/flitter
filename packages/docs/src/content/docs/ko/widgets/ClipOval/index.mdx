@@ -3,18 +3,16 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: ClipOval
 title: "ClipOval"
-description: ""
+description: "타원형으로 자식 위젯을 잘라내는 위젯"
 ---
 
-# ClipOval
+## 개요
 
-This widget clip the child widget like ClipOval Widget in Flutter.
+ClipOval은 자식 위젯을 타원형(ellipse) 또는 원형(circle)으로 잘라내는 위젯입니다. 주로 프로필 이미지나 아바타를 원형으로 만들거나, 디자인적으로 타원형 모양이 필요한 경우에 사용됩니다.
 
-<b>The ClipOval</b> take clipper that is callback function and return <b>
-  Rect
-</b> object.
+> A widget that clips its child using an oval shape.
 
-This widget use <b>ClipPath</b> internally to clip the child widget
+Flutter 참조: https://api.flutter.dev/flutter/widgets/ClipOval-class.html
 
 <iframe
   width="560"
@@ -26,6 +24,523 @@ This widget use <b>ClipPath</b> internally to clip the child widget
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/ClipOval-class.html](https://api.flutter.dev/flutter/widgets/ClipOval-class.html)
+## 언제 사용하나요?
 
-<br />
+- 프로필 이미지나 아바타를 원형으로 만들 때
+- 이미지나 컨테이너를 타원형으로 잘라내고 싶을 때
+- 버튼이나 카드를 원형 또는 타원형으로 만들 때
+- 디자인적으로 부드러운 곡선 모양이 필요할 때
+- 로고나 아이콘을 원형 배경에 넣을 때
+- 동그란 상태 표시기나 배지를 만들 때
+
+## 기본 사용법
+
+```typescript
+import { ClipOval, Container, Image } from '@flitter/core';
+
+// 기본 원형 클립
+ClipOval({
+  clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+  child: Container({
+    width: 100,
+    height: 100,
+    color: "blue",
+    child: Center({
+      child: Text("원형", { style: TextStyle({ color: "white", fontSize: 16 }) }),
+    }),
+  }),
+});
+
+// 이미지를 원형으로 클립
+ClipOval({
+  clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+  child: Image({
+    src: "https://example.com/profile.jpg",
+    width: 80,
+    height: 80,
+    fit: "cover",
+  }),
+});
+```
+
+## Props
+
+### child (필수)
+**값: Widget**
+
+잘라낼 자식 위젯입니다.
+
+### clipper (필수)
+**값: (size: Size) => Rect**
+
+클립 영역을 정의하는 함수입니다. 위젯의 크기를 받아서 타원이 그려질 사각형 영역을 반환합니다.
+- `Rect.fromLTWH(0, 0, size.width, size.height)`: 전체 영역을 타원으로 클립
+- `Rect.fromLTWH(10, 10, size.width-20, size.height-20)`: 여백을 둔 타원 클립
+
+### clipped (선택)
+**값: boolean** (기본값: **true**)
+
+클리핑 효과를 활성화할지 여부를 지정합니다.
+- `true`: 클리핑 적용
+- `false`: 클리핑 비활성화 (자식 위젯이 원래대로 표시됨)
+
+### key (선택)
+**값: any**
+
+위젯의 고유 식별자입니다.
+
+## 실제 사용 예제
+
+### 예제 1: 프로필 아바타 목록
+
+```typescript
+import { ClipOval, Container, Image, Row, Column } from '@flitter/core';
+
+class ProfileAvatars extends StatelessWidget {
+  profiles = [
+    { name: "김철수", image: "https://picsum.photos/200/200?random=1", status: "online" },
+    { name: "이영희", image: "https://picsum.photos/200/200?random=2", status: "offline" },
+    { name: "박민수", image: "https://picsum.photos/200/200?random=3", status: "away" },
+    { name: "최지은", image: "https://picsum.photos/200/200?random=4", status: "online" },
+  ];
+
+  build() {
+    return Column({
+      children: [
+        Text(
+          "팀 멤버",
+          { style: TextStyle({ fontSize: 20, fontWeight: "bold", marginBottom: 20 }) }
+        ),
+        Row({
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: this.profiles.map((profile, index) => {
+            return Column({
+              key: ValueKey(index),
+              children: [
+                Stack({
+                  children: [
+                    ClipOval({
+                      clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+                      child: Container({
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration({
+                          border: Border.all({
+                            color: profile.status === "online" ? "#4CAF50" : "#757575",
+                            width: 3,
+                          }),
+                        }),
+                        child: Image({
+                          src: profile.image,
+                          fit: "cover",
+                        }),
+                      }),
+                    }),
+                    // 상태 표시 점
+                    Positioned({
+                      right: 2,
+                      bottom: 2,
+                      child: ClipOval({
+                        clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+                        child: Container({
+                          width: 16,
+                          height: 16,
+                          color: profile.status === "online" ? "#4CAF50" : 
+                                 profile.status === "away" ? "#FF9800" : "#757575",
+                          child: Container({
+                            margin: EdgeInsets.all(2),
+                            decoration: BoxDecoration({
+                              color: "white",
+                              borderRadius: BorderRadius.circular(8),
+                            }),
+                          }),
+                        }),
+                      }),
+                    }),
+                  ],
+                }),
+                SizedBox({ height: 8 }),
+                Text(
+                  profile.name,
+                  { style: TextStyle({ fontSize: 12, textAlign: "center" }) }
+                ),
+              ],
+            });
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
+
+### 예제 2: 다양한 크기의 원형 버튼
+
+```typescript
+import { ClipOval, Container, GestureDetector, Icon } from '@flitter/core';
+
+class CircularButtons extends StatelessWidget {
+  buttons = [
+    { icon: Icons.home, color: "#2196F3", size: 80, label: "홈" },
+    { icon: Icons.search, color: "#4CAF50", size: 60, label: "검색" },
+    { icon: Icons.favorite, color: "#E91E63", size: 70, label: "좋아요" },
+    { icon: Icons.settings, color: "#FF9800", size: 65, label: "설정" },
+    { icon: Icons.add, color: "#9C27B0", size: 75, label: "추가" },
+  ];
+
+  build() {
+    return Column({
+      children: [
+        Text(
+          "원형 액션 버튼",
+          { style: TextStyle({ fontSize: 20, fontWeight: "bold", marginBottom: 30 }) }
+        ),
+        Wrap({
+          spacing: 20,
+          runSpacing: 20,
+          alignment: WrapAlignment.center,
+          children: this.buttons.map((button, index) => {
+            return Column({
+              key: ValueKey(index),
+              children: [
+                GestureDetector({
+                  onTap: () => {
+                    console.log(`${button.label} 버튼 클릭됨`);
+                  },
+                  child: ClipOval({
+                    clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+                    child: Container({
+                      width: button.size,
+                      height: button.size,
+                      decoration: BoxDecoration({
+                        gradient: RadialGradient({
+                          colors: [button.color, this.darkenColor(button.color)],
+                          stops: [0.0, 1.0],
+                        }),
+                        boxShadow: [
+                          BoxShadow({
+                            color: "rgba(0,0,0,0.3)",
+                            blurRadius: 8,
+                            offset: Offset({ x: 0, y: 4 }),
+                          }),
+                        ],
+                      }),
+                      child: Center({
+                        child: Icon({
+                          icon: button.icon,
+                          color: "white",
+                          size: button.size * 0.4,
+                        }),
+                      }),
+                    }),
+                  }),
+                }),
+                SizedBox({ height: 8 }),
+                Text(
+                  button.label,
+                  { style: TextStyle({ fontSize: 12, textAlign: "center" }) }
+                ),
+              ],
+            });
+          }),
+        }),
+      ],
+    });
+  }
+
+  darkenColor(color: string): string {
+    // 색상을 어둡게 만드는 간단한 함수
+    const colors: { [key: string]: string } = {
+      "#2196F3": "#1976D2",
+      "#4CAF50": "#388E3C",
+      "#E91E63": "#C2185B",
+      "#FF9800": "#F57C00",
+      "#9C27B0": "#7B1FA2",
+    };
+    return colors[color] || color;
+  }
+}
+```
+
+### 예제 3: 프로그레스 링과 원형 차트
+
+```typescript
+import { ClipOval, Container, Stack, CustomPaint } from '@flitter/core';
+
+class CircularProgress extends StatefulWidget {
+  createState() {
+    return new CircularProgressState();
+  }
+}
+
+class CircularProgressState extends State<CircularProgress> {
+  progresses = [
+    { label: "HTML", value: 0.9, color: "#E34F26" },
+    { label: "CSS", value: 0.85, color: "#1572B6" },
+    { label: "JavaScript", value: 0.8, color: "#F7DF1E" },
+    { label: "React", value: 0.75, color: "#61DAFB" },
+  ];
+
+  build() {
+    return Column({
+      children: [
+        Text(
+          "기술 숙련도",
+          { style: TextStyle({ fontSize: 20, fontWeight: "bold", marginBottom: 30 }) }
+        ),
+        GridView.count({
+          crossAxisCount: 2,
+          crossAxisSpacing: 20,
+          mainAxisSpacing: 20,
+          shrinkWrap: true,
+          children: this.progresses.map((progress, index) => {
+            return Column({
+              key: ValueKey(index),
+              children: [
+                Container({
+                  width: 120,
+                  height: 120,
+                  child: Stack({
+                    alignment: Alignment.center,
+                    children: [
+                      // 배경 원
+                      ClipOval({
+                        clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+                        child: Container({
+                          width: 120,
+                          height: 120,
+                          color: "#F5F5F5",
+                        }),
+                      }),
+                      // 프로그레스 원
+                      ClipOval({
+                        clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+                        child: Container({
+                          width: 120,
+                          height: 120,
+                          child: CustomPaint({
+                            painter: CircularProgressPainter({
+                              progress: progress.value,
+                              color: progress.color,
+                            }),
+                          }),
+                        }),
+                      }),
+                      // 중앙 텍스트
+                      ClipOval({
+                        clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+                        child: Container({
+                          width: 80,
+                          height: 80,
+                          color: "white",
+                          child: Center({
+                            child: Text(
+                              `${Math.round(progress.value * 100)}%`,
+                              { style: TextStyle({ 
+                                fontSize: 16, 
+                                fontWeight: "bold",
+                                color: progress.color 
+                              }) }
+                            ),
+                          }),
+                        }),
+                      }),
+                    ],
+                  }),
+                }),
+                SizedBox({ height: 12 }),
+                Text(
+                  progress.label,
+                  { style: TextStyle({ fontSize: 14, fontWeight: "bold", textAlign: "center" }) }
+                ),
+              ],
+            });
+          }),
+        }),
+      ],
+    });
+  }
+}
+
+class CircularProgressPainter extends CustomPainter {
+  progress: number;
+  color: string;
+
+  constructor({ progress, color }: { progress: number; color: string }) {
+    super();
+    this.progress = progress;
+    this.color = color;
+  }
+
+  paint(canvas: Canvas, size: Size) {
+    const center = Offset(size.width / 2, size.height / 2);
+    const radius = size.width / 2 - 10;
+
+    // 프로그레스 호 그리기
+    const paint = Paint()
+      .setColor(this.color)
+      .setStyle(PaintingStyle.stroke)
+      .setStrokeWidth(8)
+      .setStrokeCap(StrokeCap.round);
+
+    const startAngle = -Math.PI / 2;
+    const sweepAngle = 2 * Math.PI * this.progress;
+
+    canvas.drawArc(
+      Rect.fromCircle(center, radius),
+      startAngle,
+      sweepAngle,
+      false,
+      paint
+    );
+  }
+
+  shouldRepaint(oldDelegate: CircularProgressPainter): boolean {
+    return oldDelegate.progress !== this.progress || oldDelegate.color !== this.color;
+  }
+}
+```
+
+### 예제 4: 원형 이미지 갤러리
+
+```typescript
+import { ClipOval, Container, GestureDetector, Image, PageView } from '@flitter/core';
+
+class CircularImageGallery extends StatefulWidget {
+  createState() {
+    return new CircularImageGalleryState();
+  }
+}
+
+class CircularImageGalleryState extends State<CircularImageGallery> {
+  selectedIndex = 0;
+  images = [
+    { url: "https://picsum.photos/400/400?random=1", title: "자연 풍경" },
+    { url: "https://picsum.photos/400/400?random=2", title: "도시 야경" },
+    { url: "https://picsum.photos/400/400?random=3", title: "산속 길" },
+    { url: "https://picsum.photos/400/400?random=4", title: "해변가" },
+    { url: "https://picsum.photos/400/400?random=5", title: "숲속" },
+    { url: "https://picsum.photos/400/400?random=6", title: "별밤" },
+  ];
+
+  build() {
+    return Column({
+      children: [
+        Text(
+          "원형 이미지 갤러리",
+          { style: TextStyle({ fontSize: 20, fontWeight: "bold", marginBottom: 20 }) }
+        ),
+        
+        // 메인 이미지
+        Container({
+          margin: EdgeInsets.symmetric({ horizontal: 40 }),
+          child: ClipOval({
+            clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+            child: Container({
+              width: 250,
+              height: 250,
+              decoration: BoxDecoration({
+                boxShadow: [
+                  BoxShadow({
+                    color: "rgba(0,0,0,0.3)",
+                    blurRadius: 20,
+                    offset: Offset({ x: 0, y: 10 }),
+                  }),
+                ],
+              }),
+              child: Image({
+                src: this.images[this.selectedIndex].url,
+                fit: "cover",
+              }),
+            }),
+          }),
+        }),
+        
+        SizedBox({ height: 20 }),
+        Text(
+          this.images[this.selectedIndex].title,
+          { style: TextStyle({ fontSize: 18, fontWeight: "bold", textAlign: "center" }) }
+        ),
+        
+        SizedBox({ height: 30 }),
+        
+        // 썸네일 목록
+        Container({
+          height: 80,
+          child: ListView.builder({
+            scrollDirection: Axis.horizontal,
+            itemCount: this.images.length,
+            padding: EdgeInsets.symmetric({ horizontal: 20 }),
+            itemBuilder: (context, index) => {
+              const isSelected = index === this.selectedIndex;
+              
+              return GestureDetector({
+                onTap: () => {
+                  this.setState(() => {
+                    this.selectedIndex = index;
+                  });
+                },
+                child: Container({
+                  margin: EdgeInsets.symmetric({ horizontal: 8 }),
+                  child: ClipOval({
+                    clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+                    child: Container({
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration({
+                        border: isSelected ? Border.all({
+                          color: "#2196F3",
+                          width: 3,
+                        }) : null,
+                        boxShadow: isSelected ? [
+                          BoxShadow({
+                            color: "rgba(33, 150, 243, 0.4)",
+                            blurRadius: 8,
+                            offset: Offset({ x: 0, y: 4 }),
+                          }),
+                        ] : [
+                          BoxShadow({
+                            color: "rgba(0,0,0,0.1)",
+                            blurRadius: 4,
+                            offset: Offset({ x: 0, y: 2 }),
+                          }),
+                        ],
+                      }),
+                      child: Image({
+                        src: this.images[index].url,
+                        fit: "cover",
+                      }),
+                    }),
+                  }),
+                }),
+              });
+            },
+          }),
+        }),
+        
+        SizedBox({ height: 20 }),
+        Text(
+          `${this.selectedIndex + 1} / ${this.images.length}`,
+          { style: TextStyle({ fontSize: 14, color: "#666", textAlign: "center" }) }
+        ),
+      ],
+    });
+  }
+}
+```
+
+## 주의사항
+
+- **클리핑 성능**: 복잡한 모양의 클리핑은 렌더링 성능에 영향을 줄 수 있습니다
+- **경계 처리**: 클립된 영역 밖의 터치 이벤트는 감지되지 않습니다
+- **애니메이션**: 클리핑과 애니메이션을 함께 사용할 때는 성능을 고려해야 합니다
+- **clipper 함수**: clipper 함수는 위젯 크기가 변경될 때마다 호출되므로 무거운 연산은 피해야 합니다
+- **중첩 클리핑**: 여러 클리핑 위젯을 중첩할 때는 성능 저하가 있을 수 있습니다
+
+## 관련 위젯
+
+- **ClipRRect**: 둥근 모서리로 위젯을 잘라내는 위젯
+- **ClipRect**: 사각형으로 위젯을 잘라내는 위젯
+- **ClipPath**: 사용자 정의 경로로 위젯을 잘라내는 위젯
+- **Container**: decoration의 shape 속성으로 원형 모양을 만들 수 있는 위젯
+- **CircleAvatar**: 원형 아바타를 만드는 전용 위젯
