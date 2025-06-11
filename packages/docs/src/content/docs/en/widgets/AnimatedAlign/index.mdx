@@ -3,35 +3,317 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: AnimatedAlign
 title: "AnimatedAlign"
-description: ""
+description: "A widget that animates its child's alignment transition"
 ---
 
-# AnimatedAlign
+## Overview
 
-This widget motivated by AnimatedAlign in Flutter.
+AnimatedAlign is a widget that automatically animates the transition when its child widget's alignment changes. It provides smooth transitions for position changes. This widget is inspired by Flutter's AnimatedAlign widget.
 
 > Animated version of Align which automatically transitions the child's position over a given duration whenever the given alignment changes.
 
-See: https://api.flutter.dev/flutter/widgets/AnimatedAlign-class.html
+Flutter reference: https://api.flutter.dev/flutter/widgets/AnimatedAlign-class.html
+
+## When to use?
+
+- When you want to smoothly move a widget's position
+- When dynamically changing widget alignment based on user interaction
+- When you want to provide visual continuity during layout changes
+- When transitioning positions of floating buttons or popups with animation
+
+## Basic usage
+
+```typescript
+import { AnimatedAlign, Alignment, Container, StatefulWidget } from '@flitter/core';
+
+class AlignmentExample extends StatefulWidget {
+  createState() {
+    return new AlignmentExampleState();
+  }
+}
+
+class AlignmentExampleState extends State<AlignmentExample> {
+  alignment = Alignment.topLeft;
+
+  build() {
+    return GestureDetector({
+      onTap: () => {
+        this.setState(() => {
+          // Change alignment position on tap
+          this.alignment = this.alignment === Alignment.topLeft 
+            ? Alignment.bottomRight 
+            : Alignment.topLeft;
+        });
+      },
+      child: AnimatedAlign({
+        alignment: this.alignment,
+        duration: 1000, // 1 second
+        child: Container({
+          width: 50,
+          height: 50,
+          color: "blue",
+        }),
+      }),
+    });
+  }
+}
+```
 
 ## Props
 
-### alignment
+### alignment (required)
+**Value: Alignment**
 
-**Value: Alignment** (default: **Alignment.center**)
+Specifies the alignment position of the child widget. Predefined values:
+- `Alignment.topLeft`: Top left (-1, -1)
+- `Alignment.topCenter`: Top center (0, -1)
+- `Alignment.topRight`: Top right (1, -1)
+- `Alignment.centerLeft`: Center left (-1, 0)
+- `Alignment.center`: Center (0, 0)
+- `Alignment.centerRight`: Center right (1, 0)
+- `Alignment.bottomLeft`: Bottom left (-1, 1)
+- `Alignment.bottomCenter`: Bottom center (0, 1)
+- `Alignment.bottomRight`: Bottom right (1, 1)
 
-### widthFactor
+Custom alignment is also possible:
+```typescript
+Alignment.of({ x: 0.5, y: -0.5 }) // x: -1~1, y: -1~1
+```
 
+### duration (required)
+**Value: number**
+
+Specifies the animation duration in milliseconds.
+
+### curve (optional)
+**Value: Curve** (default: **Curves.linear**)
+
+Specifies the animation progression curve. Available curves:
+- `Curves.linear`: Constant speed
+- `Curves.easeIn`: Slow start
+- `Curves.easeOut`: Slow end
+- `Curves.easeInOut`: Slow start and end
+- `Curves.circIn`: Circular acceleration start
+- `Curves.circOut`: Circular deceleration end
+- `Curves.circInOut`: Circular acceleration/deceleration
+- `Curves.backIn`: Goes back then starts
+- `Curves.backOut`: Overshoots target then returns
+- `Curves.backInOut`: backIn + backOut
+- `Curves.anticipate`: Anticipatory motion before proceeding
+- `Curves.bounceIn`: Bounces at start
+- `Curves.bounceOut`: Bounces at end
+- `Curves.bounceInOut`: Bounces at start/end
+
+### widthFactor (optional)
 **Value: number | undefined**
 
-### heightFoctor
+Multiplier for the child widget's width. If not specified, uses the full width of the parent.
 
+### heightFactor (optional)
 **Value: number | undefined**
 
-### child
+Multiplier for the child widget's height. If not specified, uses the full height of the parent.
 
+### child (optional)
 **Value: Widget | undefined**
 
-## Examples
+The child widget to be aligned.
 
-### Basic
+### key (optional)
+**Value: any**
+
+A unique identifier for the widget.
+
+## Real-world examples
+
+### Example 1: Interactive floating button
+
+```typescript
+import { AnimatedAlign, Alignment, Container, FloatingActionButton, Curves } from '@flitter/core';
+
+class InteractiveFloatingButton extends StatefulWidget {
+  createState() {
+    return new InteractiveFloatingButtonState();
+  }
+}
+
+class InteractiveFloatingButtonState extends State<InteractiveFloatingButton> {
+  isExpanded = false;
+
+  build() {
+    return Stack({
+      children: [
+        // Main content
+        Container({
+          color: "lightgray",
+        }),
+        
+        // Animated floating button
+        AnimatedAlign({
+          alignment: this.isExpanded 
+            ? Alignment.center 
+            : Alignment.bottomRight,
+          duration: 500,
+          curve: Curves.easeInOut,
+          child: Padding({
+            padding: EdgeInsets.all(16),
+            child: FloatingActionButton({
+              onPressed: () => {
+                this.setState(() => {
+                  this.isExpanded = !this.isExpanded;
+                });
+              },
+              child: Icon(this.isExpanded ? Icons.close : Icons.add),
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
+
+### Example 2: Multi-position transition animation
+
+```typescript
+import { AnimatedAlign, Alignment, Container, Row, Column, Curves } from '@flitter/core';
+
+class MultiPositionAnimation extends StatefulWidget {
+  createState() {
+    return new MultiPositionAnimationState();
+  }
+}
+
+class MultiPositionAnimationState extends State<MultiPositionAnimation> {
+  currentPosition = 0;
+  positions = [
+    Alignment.topLeft,
+    Alignment.topRight,
+    Alignment.bottomRight,
+    Alignment.bottomLeft,
+    Alignment.center,
+  ];
+
+  build() {
+    return Column({
+      children: [
+        // Control buttons
+        Row({
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton({
+              onPressed: () => this.moveToNext(),
+              child: Text("Next Position"),
+            }),
+            ElevatedButton({
+              onPressed: () => this.moveToCenter(),
+              child: Text("To Center"),
+            }),
+          ],
+        }),
+        
+        // Animation area
+        Expanded({
+          child: Container({
+            color: "#f0f0f0",
+            child: AnimatedAlign({
+              alignment: this.positions[this.currentPosition],
+              duration: 800,
+              curve: Curves.anticipate,
+              child: Container({
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration({
+                  color: "purple",
+                  borderRadius: BorderRadius.circular(40),
+                }),
+                child: Center({
+                  child: Text(
+                    (this.currentPosition + 1).toString(),
+                    style: TextStyle({ color: "white", fontSize: 24 }),
+                  ),
+                }),
+              }),
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+
+  moveToNext() {
+    this.setState(() => {
+      this.currentPosition = (this.currentPosition + 1) % this.positions.length;
+    });
+  }
+
+  moveToCenter() {
+    this.setState(() => {
+      this.currentPosition = 4; // center position
+    });
+  }
+}
+```
+
+### Example 3: Using widthFactor and heightFactor
+
+```typescript
+import { AnimatedAlign, Alignment, Container, Curves } from '@flitter/core';
+
+class FactorAnimation extends StatefulWidget {
+  createState() {
+    return new FactorAnimationState();
+  }
+}
+
+class FactorAnimationState extends State<FactorAnimation> {
+  isCompact = false;
+
+  build() {
+    return GestureDetector({
+      onTap: () => {
+        this.setState(() => {
+          this.isCompact = !this.isCompact;
+        });
+      },
+      child: Container({
+        width: 300,
+        height: 300,
+        color: "lightblue",
+        child: AnimatedAlign({
+          alignment: Alignment.center,
+          widthFactor: this.isCompact ? 0.5 : 1.0,
+          heightFactor: this.isCompact ? 0.5 : 1.0,
+          duration: 600,
+          curve: Curves.bounceOut,
+          child: Container({
+            width: 100,
+            height: 100,
+            color: "red",
+            child: Center({
+              child: Text(
+                this.isCompact ? "Shrink" : "Expand",
+                style: TextStyle({ color: "white" }),
+              ),
+            }),
+          }),
+        }),
+      }),
+    });
+  }
+}
+```
+
+## Notes
+
+- Animation only occurs when the alignment value changes
+- widthFactor and heightFactor affect the child widget's size and also influence the parent widget's size constraints
+- If a new alignment value is set during animation, it smoothly transitions from the current position to the new target position
+- If duration is 0, the widget moves immediately without animation
+
+## Related widgets
+
+- **Align**: Basic widget for aligning children without animation
+- **AnimatedPositioned**: Animates position transitions within a Stack
+- **AnimatedContainer**: Animates multiple properties simultaneously
+- **AnimatedPadding**: Animates padding transitions
