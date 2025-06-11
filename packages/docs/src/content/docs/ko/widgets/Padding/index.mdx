@@ -1,0 +1,300 @@
+---
+nav_group: "Widgets"
+nav_group_order: 3
+nav_title: Padding
+title: "Padding"
+description: "자식 위젯 주위에 여백을 추가하는 위젯"
+---
+
+## 개요
+
+Padding은 자식 위젯 주위에 빈 공간을 추가하는 레이아웃 위젯입니다.
+
+Padding은 자식 위젯과 외부 위젯 사이에 여백을 만들 때 사용하는 기본적인 레이아웃 위젯입니다. EdgeInsets를 사용하여 상하좌우 각 방향의 여백을 개별적으로 또는 일괄적으로 지정할 수 있습니다. Container의 padding 속성과 동일한 효과를 제공하지만, 다른 스타일링 없이 순수하게 여백만 필요할 때 더 효율적입니다.
+
+## 언제 사용하나요?
+
+- 위젯 내부에 여백을 추가할 때
+- 텍스트나 아이콘 주위에 공간을 만들 때
+- 버튼이나 카드의 내부 여백을 설정할 때
+- Container의 다른 기능이 필요 없고 padding만 필요할 때
+- 레이아웃의 가독성과 사용성을 향상시킬 때
+
+## 기본 사용법
+
+```typescript
+// 모든 방향에 동일한 여백
+Padding({
+  padding: EdgeInsets.all(16),
+  child: Text('16픽셀 여백')
+})
+
+// 수평/수직 대칭 여백
+Padding({
+  padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 10 }),
+  child: Text('가로 20, 세로 10')
+})
+
+// 개별 방향 지정
+Padding({
+  padding: EdgeInsets.only({ top: 20, left: 10 }),
+  child: Text('위 20, 왼쪽 10')
+})
+```
+
+## Props
+
+### padding
+
+**값: EdgeInsets** (기본값: **EdgeInsets.all(0)**)
+
+자식 위젯 주위의 여백을 정의합니다. EdgeInsets 클래스의 정적 메서드를 사용하여 다양한 방식으로 여백을 지정할 수 있습니다.
+
+```typescript
+Padding({
+  padding: EdgeInsets.all(20),
+  child: Container({ color: 'blue' })
+})
+```
+
+### child
+
+**값: Widget | undefined**
+
+여백을 적용할 자식 위젯입니다.
+
+```typescript
+Padding({
+  padding: EdgeInsets.all(8),
+  child: Icon({ icon: Icons.star })
+})
+```
+
+## EdgeInsets 사용법
+
+### EdgeInsets.all()
+
+모든 방향에 동일한 여백을 적용합니다.
+
+```typescript
+Padding({
+  padding: EdgeInsets.all(16),
+  child: Text('모든 방향 16픽셀')
+})
+```
+
+### EdgeInsets.symmetric()
+
+수평과 수직 방향에 대칭적인 여백을 적용합니다.
+
+```typescript
+Padding({
+  padding: EdgeInsets.symmetric({ 
+    horizontal: 24,  // 좌우 각 24픽셀
+    vertical: 12     // 상하 각 12픽셀
+  }),
+  child: Text('대칭 여백')
+})
+```
+
+### EdgeInsets.only()
+
+특정 방향에만 여백을 적용합니다.
+
+```typescript
+Padding({
+  padding: EdgeInsets.only({ 
+    top: 20,
+    bottom: 10,
+    left: 15
+    // right는 0 (기본값)
+  }),
+  child: Text('선택적 여백')
+})
+```
+
+### EdgeInsets.fromLTRB()
+
+왼쪽, 위, 오른쪽, 아래 순서로 여백을 지정합니다.
+
+```typescript
+Padding({
+  padding: EdgeInsets.fromLTRB({
+    left: 10,
+    top: 20,
+    right: 30,
+    bottom: 40
+  }),
+  child: Text('LTRB 여백')
+})
+```
+
+## 실제 사용 예제
+
+### 예제 1: 카드 내부 여백
+
+```typescript
+const card = Container({
+  decoration: BoxDecoration({
+    color: 'white',
+    borderRadius: BorderRadius.circular(8),
+    boxShadow: [
+      BoxShadow({
+        color: 'rgba(0, 0, 0, 0.1)',
+        blurRadius: 4,
+        offset: { x: 0, y: 2 }
+      })
+    ]
+  }),
+  child: Padding({
+    padding: EdgeInsets.all(16),
+    child: Column({
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('카드 제목', { 
+          style: TextStyle({ fontSize: 18, fontWeight: 'bold' }) 
+        }),
+        SizedBox({ height: 8 }),
+        Text('카드 내용이 여기에 표시됩니다.')
+      ]
+    })
+  })
+});
+```
+
+### 예제 2: 리스트 아이템
+
+```typescript
+const listItem = Container({
+  decoration: BoxDecoration({
+    border: Border({ bottom: BorderSide({ color: '#E0E0E0' }) })
+  }),
+  child: Padding({
+    padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 12 }),
+    child: Row({
+      children: [
+        Icon({ icon: Icons.folder, color: 'blue' }),
+        SizedBox({ width: 12 }),
+        Expanded({
+          child: Text('문서 폴더')
+        }),
+        Icon({ icon: Icons.arrow_forward_ios, size: 16, color: 'gray' })
+      ]
+    })
+  })
+});
+```
+
+### 예제 3: 버튼 커스터마이징
+
+```typescript
+const customButton = GestureDetector({
+  onTap: () => console.log('버튼 클릭'),
+  child: Container({
+    decoration: BoxDecoration({
+      color: 'blue',
+      borderRadius: BorderRadius.circular(8)
+    }),
+    child: Padding({
+      padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+      child: Text('커스텀 버튼', {
+        style: TextStyle({ color: 'white', fontWeight: 'bold' })
+      })
+    })
+  })
+});
+```
+
+### 예제 4: 중첩된 Padding
+
+```typescript
+const nestedPadding = Container({
+  color: 'lightgray',
+  child: Padding({
+    padding: EdgeInsets.all(20),  // 외부 여백
+    child: Container({
+      color: 'white',
+      child: Padding({
+        padding: EdgeInsets.all(10),  // 내부 여백
+        child: Text('중첩된 여백')
+      })
+    })
+  })
+});
+```
+
+### 예제 5: 반응형 여백
+
+```typescript
+const responsivePadding = (isTablet: boolean) => {
+  return Padding({
+    padding: EdgeInsets.symmetric({
+      horizontal: isTablet ? 48 : 16,
+      vertical: isTablet ? 24 : 12
+    }),
+    child: Column({
+      children: [
+        Text('반응형 레이아웃'),
+        Text('디바이스에 따라 여백이 달라집니다')
+      ]
+    })
+  });
+};
+```
+
+## EdgeInsets 속성과 메서드
+
+### 속성
+- **top**: 상단 여백
+- **bottom**: 하단 여백
+- **left**: 왼쪽 여백
+- **right**: 오른쪽 여백
+- **horizontal**: 좌우 여백의 합 (left + right)
+- **vertical**: 상하 여백의 합 (top + bottom)
+
+### 메서드
+- **add(other)**: 두 EdgeInsets를 더함
+- **deflateRect(rect)**: 사각형에서 padding만큼 축소
+
+```typescript
+const padding1 = EdgeInsets.all(10);
+const padding2 = EdgeInsets.symmetric({ horizontal: 5 });
+const combined = padding1.add(padding2); // 모든 방향 10 + 좌우 5 추가
+```
+
+## Container와의 차이점
+
+### Padding 사용
+```typescript
+// 순수하게 여백만 필요할 때
+Padding({
+  padding: EdgeInsets.all(16),
+  child: Text('텍스트')
+})
+```
+
+### Container 사용
+```typescript
+// 여백과 함께 다른 스타일도 필요할 때
+Container({
+  padding: EdgeInsets.all(16),
+  color: 'blue',
+  decoration: BoxDecoration({ borderRadius: BorderRadius.circular(8) }),
+  child: Text('텍스트')
+})
+```
+
+## 주의사항
+
+- Padding의 자식으로 Expanded 위젯을 직접 사용할 수 없습니다. Row나 Column 내부에서 사용하세요.
+- EdgeInsets의 값은 음수가 될 수 없습니다.
+- 과도한 padding은 레이아웃 오버플로우를 일으킬 수 있습니다.
+- 중첩된 Padding보다는 EdgeInsets.add()를 사용하여 합친 후 한 번에 적용하는 것이 효율적입니다.
+
+## 관련 위젯
+
+- **Container**: padding 외에도 다양한 스타일링 옵션 제공
+- **AnimatedPadding**: 애니메이션이 적용된 padding 변경
+- **SizedBox**: 고정 크기의 빈 공간 생성
+- **EdgeInsetsDirectional**: 텍스트 방향을 고려한 padding
+- **SafeArea**: 시스템 UI를 피하는 padding 자동 적용
