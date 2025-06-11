@@ -8,11 +8,7 @@ description: "A widget that sizes its child to a specific aspect ratio"
 
 ## Overview
 
-AspectRatio is a widget that attempts to size its child to a specific aspect ratio (width-to-height ratio).
-
-The widget first tries the largest width permitted by the layout constraints. The height of the widget is determined by applying the given aspect ratio to the width, expressed as a ratio of width to height.
-
-For example, if aspectRatio is 2.0, the width will be twice the height (16:9 is expressed as 16/9 = 1.78).
+AspectRatio is a widget that sizes its child to a specific aspect ratio (width-to-height ratio). It maintains a consistent ratio between width and height while displaying the child at the largest possible size.
 
 <iframe
   width="560"
@@ -24,9 +20,9 @@ For example, if aspectRatio is 2.0, the width will be twice the height (16:9 is 
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/AspectRatio-class.html](https://api.flutter.dev/flutter/widgets/AspectRatio-class.html)
+Reference: [https://api.flutter.dev/flutter/widgets/AspectRatio-class.html](https://api.flutter.dev/flutter/widgets/AspectRatio-class.html)
 
-## When to use it?
+## When to Use
 
 - When maintaining original aspect ratios of images or videos
 - When creating elements with consistent ratios in responsive design
@@ -71,8 +67,7 @@ AspectRatio({
 ## Props
 
 ### aspectRatio (required)
-
-**Value: number**
+**Type: number**
 
 The ratio of width to height. Must be greater than 0 and finite.
 
@@ -102,9 +97,8 @@ AspectRatio({
 })
 ```
 
-### child
-
-**Value: Widget | undefined**
+### child (optional)
+**Type: Widget | undefined**
 
 The child widget to which the aspect ratio will be applied. Even without a child, AspectRatio will occupy space with the specified ratio.
 
@@ -344,7 +338,7 @@ const PromotionBanner = ({ imageUrl, title, subtitle, onTap }) => {
               })
             ]
           }),
-          clipped: true,
+          clipBehavior: Clip.hardEdge,
           child: Stack({
             fit: StackFit.expand,
             children: [
@@ -410,3 +404,4 @@ const PromotionBanner = ({ imageUrl, title, subtitle, onTap }) => {
 - **SizedBox**: Specifies fixed dimensions
 - **Container**: Can control ratio with constraints
 - **FittedBox**: Scales child to fit parent
+- **Align**: Sizes using widthFactor and heightFactor

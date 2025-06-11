@@ -8,11 +8,7 @@ description: "특정 종횡비로 자식 위젯의 크기를 조정하는 위젯
 
 ## 개요
 
-AspectRatio는 자식 위젯을 특정 종횡비(가로세로 비율)로 크기를 조정하려고 시도하는 위젯입니다.
-
-이 위젯은 먼저 레이아웃 제약 조건에서 허용하는 최대 너비를 시도합니다. 위젯의 높이는 주어진 종횡비를 너비에 적용하여 결정되며, 이는 너비 대 높이의 비율로 표현됩니다.
-
-예를 들어, aspectRatio가 2.0이면 너비가 높이의 2배가 됩니다 (16:9는 16/9 = 1.78로 표현).
+AspectRatio는 자식 위젯을 특정 종횡비(가로세로 비율)로 크기를 조정하는 위젯입니다. 너비와 높이의 비율을 일정하게 유지하면서 가능한 큰 크기로 자식을 표시합니다.
 
 <iframe
   width="560"
@@ -71,7 +67,6 @@ AspectRatio({
 ## Props
 
 ### aspectRatio (필수)
-
 **값: number**
 
 너비 대 높이의 비율입니다. 반드시 0보다 크고 유한한 값이어야 합니다.
@@ -102,8 +97,7 @@ AspectRatio({
 })
 ```
 
-### child
-
+### child (선택)
 **값: Widget | undefined**
 
 종횡비가 적용될 자식 위젯입니다. 자식이 없어도 AspectRatio는 지정된 비율로 공간을 차지합니다.
@@ -344,7 +338,7 @@ const PromotionBanner = ({ imageUrl, title, subtitle, onTap }) => {
               })
             ]
           }),
-          clipped: true,
+          clipBehavior: Clip.hardEdge,
           child: Stack({
             fit: StackFit.expand,
             children: [
@@ -410,3 +404,4 @@ const PromotionBanner = ({ imageUrl, title, subtitle, onTap }) => {
 - **SizedBox**: 고정된 크기 지정
 - **Container**: constraints로 비율 제어 가능
 - **FittedBox**: 자식을 부모에 맞게 스케일링
+- **Align**: widthFactor와 heightFactor로 크기 조정
