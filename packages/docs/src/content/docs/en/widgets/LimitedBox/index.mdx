@@ -3,12 +3,14 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: LimitedBox
 title: "LimitedBox"
-description: ""
+description: "A widget that applies size limits only when constraints are unbounded"
 ---
 
-# LimitedBox
+## Overview
 
-This widget motivated by LimitedBox in Flutter.
+LimitedBox is a widget that applies size limits to its child only when it receives unbounded constraints.
+
+This widget is primarily used to prevent children from growing indefinitely within scrollable widgets like ListView, Row, Column, or other widgets that provide infinite space. When the parent already provides finite constraints, LimitedBox does nothing.
 
 <iframe
   width="560"
@@ -22,16 +24,527 @@ This widget motivated by LimitedBox in Flutter.
 
 See: [https://api.flutter.dev/flutter/widgets/LimitedBox-class.html](https://api.flutter.dev/flutter/widgets/LimitedBox-class.html)
 
+## When to use it?
+
+- When you want to prevent infinite expansion in ListView, Column, Row, etc.
+- When you need to limit child size within scrollable containers
+- When you want to selectively apply size limits only in unbounded constraint environments
+- When you want to prevent containers from becoming too large while maintaining flexibility
+- When setting safe maximum sizes in responsive layouts
+
+## Basic Usage
+
+```typescript
+// Limit width within vertical scroll list
+ListView({
+  children: [
+    LimitedBox({
+      maxWidth: 300,
+      child: Container({
+        color: 'blue',
+        child: Text('Width limited to 300')
+      })
+    })
+  ]
+})
+
+// Limit height within horizontal scroll list
+SingleChildScrollView({
+  scrollDirection: Axis.horizontal,
+  child: Row({
+    children: [
+      LimitedBox({
+        maxHeight: 200,
+        child: Container({
+          color: 'red',
+          child: Text('Height limited to 200')
+        })
+      })
+    ]
+  })
+})
+
+// Limit both dimensions
+Column({
+  children: [
+    LimitedBox({
+      maxWidth: 400,
+      maxHeight: 300,
+      child: Container({
+        color: 'green',
+        child: Text('Width 400, height 300 limited')
+      })
+    })
+  ]
+})
+```
+
 ## Props
 
 ### maxWidth
 
-**Value: number | undefined**
+**Value: number** (default: **Infinity**)
+
+The maximum width to apply when width constraints are unbounded.
+
+This value is ignored if the parent already provides finite width constraints.
+
+```typescript
+LimitedBox({
+  maxWidth: 300,    // Max 300 in unbounded width constraints
+  child: child
+})
+
+LimitedBox({
+  maxWidth: Infinity,  // No width limit (default)
+  child: child
+})
+```
 
 ### maxHeight
 
-**Value: number | undefined**
+**Value: number** (default: **Infinity**)
+
+The maximum height to apply when height constraints are unbounded.
+
+This value is ignored if the parent already provides finite height constraints.
+
+```typescript
+LimitedBox({
+  maxHeight: 200,   // Max 200 in unbounded height constraints
+  child: child
+})
+
+LimitedBox({
+  maxHeight: Infinity,  // No height limit (default)
+  child: child
+})
+```
 
 ### child
 
 **Value: Widget | undefined**
+
+The child widget to which size limits will be applied.
+
+## Practical Examples
+
+### Example 1: Limited Card Size in List View
+
+```typescript
+const LimitedCardList = ({ cards }) => {
+  return ListView({
+    padding: EdgeInsets.all(16),
+    children: cards.map(card => 
+      Container({
+        margin: EdgeInsets.only({ bottom: 16 }),
+        child: LimitedBox({
+          maxWidth: 600,  // Limit card maximum width
+          child: Container({
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration({
+              color: 'white',
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow({
+                  color: 'rgba(0,0,0,0.1)',
+                  blurRadius: 8,
+                  offset: { x: 0, y: 2 }
+                })
+              ]
+            }),
+            child: Column({
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(card.title, {
+                  style: TextStyle({
+                    fontSize: 18,
+                    fontWeight: 'bold',
+                    marginBottom: 8
+                  })
+                }),
+                Text(card.description, {
+                  style: TextStyle({
+                    fontSize: 14,
+                    color: '#666',
+                    lineHeight: 1.4
+                  })
+                }),
+                SizedBox({ height: 16 }),
+                Row({
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton({
+                      onPressed: card.onAction,
+                      child: Text('Read More')
+                    })
+                  ]
+                })
+              ]
+            })
+          })
+        })
+      })
+    )
+  });
+};
+```
+
+### Example 2: Horizontal Scroll Image Gallery
+
+```typescript
+const HorizontalImageGallery = ({ images }) => {
+  return SingleChildScrollView({
+    scrollDirection: Axis.horizontal,
+    padding: EdgeInsets.all(16),
+    child: Row({
+      children: images.map((image, index) => 
+        Container({
+          margin: EdgeInsets.only({ 
+            right: index < images.length - 1 ? 16 : 0 
+          }),
+          child: LimitedBox({
+            maxHeight: 300,  // Limit image maximum height
+            child: AspectRatio({
+              aspectRatio: image.aspectRatio || 1.0,
+              child: Container({
+                decoration: BoxDecoration({
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow({
+                      color: 'rgba(0,0,0,0.2)',
+                      blurRadius: 6,
+                      offset: { x: 0, y: 2 }
+                    })
+                  ]
+                }),
+                child: ClipRRect({
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image({
+                    src: image.url,
+                    objectFit: 'cover'
+                  })
+                })
+              })
+            })
+          })
+        })
+      )
+    })
+  });
+};
+```
+
+### Example 3: Responsive Text Editor
+
+```typescript
+const ResponsiveTextEditor = ({ content, onChange }) => {
+  return Container({
+    padding: EdgeInsets.all(16),
+    child: Column({
+      children: [
+        // Toolbar
+        Container({
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration({
+            color: '#F5F5F5',
+            borderRadius: BorderRadius.only({
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8)
+            })
+          }),
+          child: Row({
+            children: [
+              IconButton({ icon: Icons.bold }),
+              IconButton({ icon: Icons.italic }),
+              IconButton({ icon: Icons.underline }),
+              Spacer(),
+              Text(`${content.length}/1000`, {
+                style: TextStyle({ 
+                  fontSize: 12, 
+                  color: '#666' 
+                })
+              })
+            ]
+          })
+        }),
+        // Editor area
+        Expanded({
+          child: LimitedBox({
+            maxWidth: 800,   // Don't get too wide on desktop
+            maxHeight: 600,  // Limit max height in infinite height
+            child: Container({
+              width: double.infinity,
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration({
+                color: 'white',
+                border: Border.all({ color: '#E0E0E0' }),
+                borderRadius: BorderRadius.only({
+                  bottomLeft: Radius.circular(8),
+                  bottomRight: Radius.circular(8)
+                })
+              }),
+              child: TextField({
+                value: content,
+                onChanged: onChange,
+                multiline: true,
+                maxLines: null,
+                decoration: InputDecoration({
+                  border: InputBorder.none,
+                  hintText: 'Enter your content here...'
+                })
+              })
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### Example 4: Infinite Scroll Feed
+
+```typescript
+const InfiniteScrollFeed = ({ posts, onLoadMore }) => {
+  return NotificationListener({
+    onNotification: (notification) => {
+      if (notification.metrics.pixels >= 
+          notification.metrics.maxScrollExtent - 200) {
+        onLoadMore();
+      }
+      return false;
+    },
+    child: ListView.builder({
+      itemCount: posts.length + 1,
+      itemBuilder: (context, index) => {
+        if (index >= posts.length) {
+          return Container({
+            padding: EdgeInsets.all(16),
+            child: Center({
+              child: CircularProgressIndicator()
+            })
+          });
+        }
+        
+        const post = posts[index];
+        return Container({
+          margin: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+          child: LimitedBox({
+            maxWidth: 700,  // Limit post maximum width
+            child: Container({
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration({
+                color: 'white',
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all({ color: '#E0E0E0' })
+              }),
+              child: Column({
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Row({
+                    children: [
+                      CircleAvatar({
+                        radius: 20,
+                        backgroundImage: NetworkImage(post.author.avatar)
+                      }),
+                      SizedBox({ width: 12 }),
+                      Expanded({
+                        child: Column({
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(post.author.name, {
+                              style: TextStyle({ fontWeight: 'bold' })
+                            }),
+                            Text(post.timestamp, {
+                              style: TextStyle({ 
+                                fontSize: 12, 
+                                color: '#666' 
+                              })
+                            })
+                          ]
+                        })
+                      })
+                    ]
+                  }),
+                  SizedBox({ height: 12 }),
+                  // Content
+                  Text(post.content),
+                  if (post.image) ...[
+                    SizedBox({ height: 12 }),
+                    LimitedBox({
+                      maxHeight: 400,  // Limit image maximum height
+                      child: ClipRRect({
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image({
+                          src: post.image,
+                          width: double.infinity,
+                          objectFit: 'cover'
+                        })
+                      })
+                    })
+                  ]
+                ]
+              })
+            })
+          })
+        });
+      }
+    })
+  });
+};
+```
+
+### Example 5: Variable Grid Layout
+
+```typescript
+const VariableGridLayout = ({ items }) => {
+  return SingleChildScrollView({
+    child: Wrap({
+      spacing: 16,
+      runSpacing: 16,
+      children: items.map((item, index) => 
+        LimitedBox({
+          maxWidth: 300,   // Max width for each grid item
+          maxHeight: 400,  // Max height for each grid item
+          child: Container({
+            width: double.infinity,
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration({
+              gradient: LinearGradient({
+                colors: item.colors,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight
+              }),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow({
+                  color: 'rgba(0,0,0,0.1)',
+                  blurRadius: 10,
+                  offset: { x: 0, y: 4 }
+                })
+              ]
+            }),
+            child: Column({
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon({
+                  icon: item.icon,
+                  size: 48,
+                  color: 'white'
+                }),
+                SizedBox({ height: 16 }),
+                Text(item.title, {
+                  style: TextStyle({
+                    fontSize: 18,
+                    fontWeight: 'bold',
+                    color: 'white'
+                  })
+                }),
+                SizedBox({ height: 8 }),
+                Expanded({
+                  child: Text(item.description, {
+                    style: TextStyle({
+                      fontSize: 14,
+                      color: 'rgba(255,255,255,0.8)',
+                      lineHeight: 1.4
+                    })
+                  })
+                }),
+                SizedBox({ height: 16 }),
+                Align({
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton({
+                    onPressed: item.onTap,
+                    style: ElevatedButton.styleFrom({
+                      backgroundColor: 'rgba(255,255,255,0.2)',
+                      foregroundColor: 'white'
+                    }),
+                    child: Text('View')
+                  })
+                })
+              ]
+            })
+          })
+        })
+      )
+    })
+  });
+};
+```
+
+## Understanding Constraint Behavior
+
+### Finite vs Infinite Constraints
+
+```typescript
+// Finite constraint environment (LimitedBox has no effect)
+Container({
+  width: 400,    // Clear width constraint
+  height: 300,   // Clear height constraint
+  child: LimitedBox({
+    maxWidth: 200,   // This value is ignored (parent already has finite constraint)
+    maxHeight: 150,  // This value is ignored (parent already has finite constraint)
+    child: Container({ color: 'blue' })
+  })
+})
+
+// Infinite constraint environment (LimitedBox has effect)
+Column({  // Column provides infinite vertical space
+  children: [
+    LimitedBox({
+      maxHeight: 200,  // This value is applied
+      child: Container({ color: 'red' })
+    })
+  ]
+})
+```
+
+### When Does It Take Effect?
+
+```typescript
+// ✅ Cases where it has effect
+ListView({  // Infinite vertical space
+  children: [
+    LimitedBox({ maxHeight: 300, child: child })
+  ]
+})
+
+Row({  // Infinite horizontal space
+  children: [
+    LimitedBox({ maxWidth: 200, child: child })
+  ]
+})
+
+SingleChildScrollView({  // Infinite space in scroll direction
+  child: LimitedBox({ maxHeight: 400, child: child })
+})
+
+// ❌ Cases where it has no effect
+Container({
+  width: 300,  // Already finite constraint
+  child: LimitedBox({ maxWidth: 200, child: child })  // Ignored
+})
+
+SizedBox({
+  height: 200,  // Already finite constraint
+  child: LimitedBox({ maxHeight: 100, child: child })  // Ignored
+})
+```
+
+## Important Notes
+
+- LimitedBox only works with infinite constraints
+- Has no effect if parent already provides finite constraints
+- Works conditionally, unlike ConstrainedBox
+- Negative values are not allowed
+- Using Infinity values removes the limit
+
+## Related Widgets
+
+- **ConstrainedBox**: Widget that always applies constraints
+- **SizedBox**: Widget that specifies fixed size
+- **UnconstrainedBox**: Widget that completely removes constraints
+- **OverflowBox**: Widget that allows child size ignoring parent size
+- **FractionallySizedBox**: Widget that sets child size as ratio of parent size
