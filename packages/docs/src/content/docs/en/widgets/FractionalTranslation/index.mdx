@@ -3,31 +3,412 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: FractionalTranslation
 title: "FractionalTranslation"
-description: ""
+description: "A widget that applies a translation transformation relative to the child's size"
 ---
 
-# FractionalTranslation
+## Overview
 
-This widget motivated by FractionalTranslation in Flutter.
+FractionalTranslation applies a translation transformation before painting its child.
 
-> Applies a translation transformation before painting its child.
->
-> The translation is expressed as a Offset scaled to the child's size. For example, an Offset with a dx of 0.25 will result in a horizontal translation of one quarter the width of the child.
->
-> Hit tests will only be detected inside the bounds of the FractionalTranslation, even if the contents are offset such that they overflow.
->
-> See: [https://api.flutter.dev/flutter/widgets/FractionalTranslation-class.html](https://api.flutter.dev/flutter/widgets/FractionalTranslation-class.html)
+The translation is expressed as an offset scaled to the child's size. For example, an offset with x of 0.25 will result in a horizontal translation of one quarter the width of the child.
+
+Hit tests will only be detected inside the bounds of the FractionalTranslation, even if the contents are offset such that they overflow.
+
+See: [https://api.flutter.dev/flutter/widgets/FractionalTranslation-class.html](https://api.flutter.dev/flutter/widgets/FractionalTranslation-class.html)
+
+## When to use it?
+
+- When you need to position relative to the child's own size
+- For size-independent movement in responsive animations  
+- When dynamically adjusting overlay or tooltip positions
+- When moving based on the child widget's center point or edges
+- For implementing slide in/out animations
+
+## Basic Usage
+
+```typescript
+// Move right by half, down by quarter
+FractionalTranslation({
+  translation: { x: 0.5, y: 0.25 },
+  child: Container({
+    width: 100,
+    height: 100,
+    color: 'blue'
+  })
+})
+
+// Center (move left and up by half of own size)
+FractionalTranslation({
+  translation: { x: -0.5, y: -0.5 },
+  child: Container({
+    width: 50,
+    height: 50,
+    color: 'red'
+  })
+})
+
+// Hide completely upward
+FractionalTranslation({
+  translation: { x: 0, y: -1.0 },
+  child: Container({
+    width: 200,
+    height: 80,
+    color: 'green'
+  })
+})
+```
 
 ## Props
 
-### translation
+### translation (required)
 
-**Value: Offset**
+**Value: { x: number, y: number }**
+
+The translation offset expressed as a fraction of the child's size.
+
+- `x`: Horizontal translation ratio relative to width (-∞ ~ +∞)
+- `y`: Vertical translation ratio relative to height (-∞ ~ +∞)
+
+**Value meanings:**
+- `0.0`: No translation
+- `1.0`: Move by the widget's own width (x) or height (y)
+- `-1.0`: Move by the widget's own width (x) or height (y) in opposite direction
+- `0.5`: Move by half of the widget's own width (x) or height (y)
+
+```typescript
+FractionalTranslation({
+  translation: { x: 0.25, y: -0.5 },  // Right by 1/4, up by 1/2
+  child: child
+})
+
+FractionalTranslation({
+  translation: { x: -1.0, y: 0 },     // Completely to the left
+  child: child
+})
+```
 
 ### child
 
 **Value: Widget | undefined**
 
-## Examples
+The child widget to which the translation transformation will be applied.
 
-### Basic
+## Practical Examples
+
+### Example 1: Slide In Animation
+
+```typescript
+const SlideInPanel = ({ isVisible, children }) => {
+  const [isAnimating, setIsAnimating] = useState(false);
+  
+  useEffect(() => {
+    if (isVisible) {
+      setIsAnimating(true);
+      setTimeout(() => setIsAnimating(false), 300);
+    }
+  }, [isVisible]);
+  
+  return AnimatedContainer({
+    duration: Duration.milliseconds(300),
+    curve: Curves.easeInOut,
+    child: FractionalTranslation({
+      translation: { 
+        x: isVisible ? 0 : 1.0,  // Slide in from off-screen
+        y: 0 
+      },
+      child: Container({
+        width: 300,
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration({
+          color: 'white',
+          borderRadius: BorderRadius.only({
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16)
+          }),
+          boxShadow: [
+            BoxShadow({
+              color: 'rgba(0,0,0,0.2)',
+              blurRadius: 10,
+              offset: { x: 0, y: -2 }
+            })
+          ]
+        }),
+        child: Column({
+          mainAxisSize: MainAxisSize.min,
+          children: children
+        })
+      })
+    })
+  });
+};
+```
+
+### Example 2: Custom Tooltip
+
+```typescript
+const CustomTooltip = ({ text, position, isVisible }) => {
+  // Calculate translation based on tooltip position
+  const getTranslation = () => {
+    switch (position) {
+      case 'top': return { x: -0.5, y: -1.1 };    // Above, center aligned
+      case 'bottom': return { x: -0.5, y: 0.1 };  // Below, center aligned
+      case 'left': return { x: -1.1, y: -0.5 };   // Left, vertically centered
+      case 'right': return { x: 0.1, y: -0.5 };   // Right, vertically centered
+      default: return { x: 0, y: 0 };
+    }
+  };
+  
+  return AnimatedOpacity({
+    opacity: isVisible ? 1.0 : 0.0,
+    duration: Duration.milliseconds(200),
+    child: FractionalTranslation({
+      translation: getTranslation(),
+      child: Container({
+        padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 8 }),
+        decoration: BoxDecoration({
+          color: 'rgba(0,0,0,0.8)',
+          borderRadius: BorderRadius.circular(6)
+        }),
+        child: Text(text, {
+          style: TextStyle({
+            color: 'white',
+            fontSize: 12
+          })
+        })
+      })
+    })
+  });
+};
+```
+
+### Example 3: Overlay Notification
+
+```typescript
+const OverlayNotification = ({ message, type, onDismiss }) => {
+  const [isExiting, setIsExiting] = useState(false);
+  
+  const handleDismiss = () => {
+    setIsExiting(true);
+    setTimeout(onDismiss, 300);
+  };
+  
+  useEffect(() => {
+    const timer = setTimeout(handleDismiss, 4000);
+    return () => clearTimeout(timer);
+  }, []);
+  
+  return FractionalTranslation({
+    translation: { 
+      x: 0, 
+      y: isExiting ? -1.2 : 0  // Slide out upward
+    },
+    child: AnimatedContainer({
+      duration: Duration.milliseconds(300),
+      margin: EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration({
+        color: type === 'success' ? '#4CAF50' : '#F44336',
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow({
+            color: 'rgba(0,0,0,0.2)',
+            blurRadius: 8,
+            offset: { x: 0, y: 2 }
+          })
+        ]
+      }),
+      child: Row({
+        children: [
+          Icon({
+            icon: type === 'success' ? Icons.check : Icons.error,
+            color: 'white'
+          }),
+          SizedBox({ width: 12 }),
+          Expanded({
+            child: Text(message, {
+              style: TextStyle({ color: 'white' })
+            })
+          }),
+          GestureDetector({
+            onTap: handleDismiss,
+            child: Icon({
+              icon: Icons.close,
+              color: 'white',
+              size: 18
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### Example 4: Image Gallery Preview
+
+```typescript
+const ImagePreview = ({ image, isExpanded, onToggle }) => {
+  return GestureDetector({
+    onTap: onToggle,
+    child: AnimatedContainer({
+      duration: Duration.milliseconds(400),
+      curve: Curves.easeInOut,
+      child: FractionalTranslation({
+        translation: isExpanded 
+          ? { x: -0.5, y: -0.5 }  // Move to center
+          : { x: 0, y: 0 },       // Original position
+        child: Transform.scale({
+          scale: isExpanded ? 2.0 : 1.0,
+          child: Container({
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration({
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: isExpanded ? [
+                BoxShadow({
+                  color: 'rgba(0,0,0,0.3)',
+                  blurRadius: 20,
+                  offset: { x: 0, y: 10 }
+                })
+              ] : []
+            }),
+            child: ClipRRect({
+              borderRadius: BorderRadius.circular(8),
+              child: Image({
+                src: image.url,
+                objectFit: 'cover'
+              })
+            })
+          })
+        })
+      })
+    })
+  });
+};
+```
+
+### Example 5: Floating Action Menu
+
+```typescript
+const FloatingActionMenu = ({ isOpen, actions }) => {
+  return Column({
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      // Action buttons (appear from bottom to top)
+      ...actions.map((action, index) => 
+        AnimatedContainer({
+          duration: Duration.milliseconds(200 + index * 50),
+          child: FractionalTranslation({
+            translation: { 
+              x: 0, 
+              y: isOpen ? 0 : 1.5 + (index * 0.2)  // Hide below
+            },
+            child: Container({
+              margin: EdgeInsets.only({ bottom: 16 }),
+              child: Row({
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  // Label
+                  AnimatedOpacity({
+                    opacity: isOpen ? 1.0 : 0.0,
+                    duration: Duration.milliseconds(150),
+                    child: Container({
+                      padding: EdgeInsets.symmetric({ 
+                        horizontal: 12, 
+                        vertical: 8 
+                      }),
+                      decoration: BoxDecoration({
+                        color: 'rgba(0,0,0,0.7)',
+                        borderRadius: BorderRadius.circular(4)
+                      }),
+                      child: Text(action.label, {
+                        style: TextStyle({ 
+                          color: 'white',
+                          fontSize: 12
+                        })
+                      })
+                    })
+                  }),
+                  SizedBox({ width: 16 }),
+                  // Action button
+                  FloatingActionButton({
+                    mini: true,
+                    onPressed: action.onPressed,
+                    backgroundColor: action.color,
+                    child: Icon(action.icon)
+                  })
+                ]
+              })
+            })
+          })
+        })
+      ),
+      // Main FAB
+      FloatingActionButton({
+        onPressed: () => setIsOpen(!isOpen),
+        child: AnimatedRotation({
+          turns: isOpen ? 0.125 : 0,  // 45 degree rotation
+          duration: Duration.milliseconds(200),
+          child: Icon(Icons.add)
+        })
+      })
+    ]
+  });
+};
+```
+
+## Understanding Coordinates
+
+### Translation Directions
+
+```typescript
+// Positive directions
+FractionalTranslation({ 
+  translation: { x: 1.0, y: 1.0 },  // Move right and down
+  child: child
+})
+
+// Negative directions  
+FractionalTranslation({ 
+  translation: { x: -1.0, y: -1.0 }, // Move left and up
+  child: child
+})
+
+// Single direction movement
+FractionalTranslation({ 
+  translation: { x: 0, y: -0.5 },    // Move up by half only
+  child: child
+})
+```
+
+### Center Alignment Pattern
+
+```typescript
+// Position at parent center
+Center({
+  child: FractionalTranslation({
+    translation: { x: -0.5, y: -0.5 },
+    child: Container({
+      width: 100,
+      height: 100,
+      color: 'blue'
+    })
+  })
+})
+```
+
+## Important Notes
+
+- Hit tests only work within the original position boundaries
+- Children can overflow parent area, so consider clipping
+- Excessive movement can harm user experience
+- Consider performance when using with animations
+- Understand direction correctly when using negative values
+
+## Related Widgets
+
+- **Transform.translate**: Absolute pixel-based translation
+- **Positioned**: Absolute positioning within Stack
+- **Align**: Alignment-based positioning
+- **AnimatedPositioned**: Animated positioning
+- **Offset**: Coordinate offset representation class
