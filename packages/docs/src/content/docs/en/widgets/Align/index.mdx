@@ -3,16 +3,12 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: Align
 title: "Align"
-description: "A widget that aligns its child within itself and optionally sizes itself"
+description: "A widget that aligns its child within itself and optionally sizes itself based on the child's size"
 ---
 
 ## Overview
 
-Align is a widget that aligns its child within itself and optionally sizes itself based on the child's size.
-
-For example, to align a box at the bottom right, you would pass this box a tight constraint that is bigger than the child's natural size, with an alignment of `Alignment.bottomRight`.
-
-This widget will be as big as possible if its dimensions are constrained and widthFactor and heightFactor are null. If a dimension is unconstrained and the corresponding size factor is null then the widget will match its child's size in that dimension. If a size factor is non-null then the corresponding dimension of this widget will be the product of the child's dimension and the size factor.
+Align is a widget that aligns its child within itself and optionally sizes itself based on the child's size. It uses a normalized coordinate system to flexibly position the child.
 
 <iframe
   width="560"
@@ -24,15 +20,15 @@ This widget will be as big as possible if its dimensions are constrained and wid
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/Align-class.html](https://api.flutter.dev/flutter/widgets/Align-class.html)
+Reference: [https://api.flutter.dev/flutter/widgets/Align-class.html](https://api.flutter.dev/flutter/widgets/Align-class.html)
 
-## When to use it?
+## When to Use
 
-- When aligning a child widget at a specific position within its parent
+- When you need to align a child widget at a specific position within its parent
 - When creating specific ratio margins around a child widget
-- When centering content in dialogs or popups
+- When center-aligning content in dialogs or popups
 - When positioning buttons or icons at specific locations
-- When sizing a parent proportionally to its child's size
+- When adjusting parent size proportionally to the child widget's size
 
 ## Basic Usage
 
@@ -42,7 +38,7 @@ Align({
   child: Text('Centered text')
 })
 
-// Top right alignment
+// Top-right alignment
 Align({
   alignment: Alignment.topRight,
   child: Icon(Icons.close)
@@ -62,13 +58,17 @@ Align({
 
 ## Props
 
-### alignment
+### child (optional)
+**Type: Widget | undefined**
 
-**Value: Alignment** (default: **Alignment.center**)
+The child widget to align.
+
+### alignment (optional)
+**Type: Alignment** (default: **Alignment.center**)
 
 Specifies the alignment position of the child widget. Alignment consists of x and y values, each ranging from -1.0 to 1.0.
 
-Common Alignment constants:
+Main Alignment constants:
 - `Alignment.topLeft`: (-1.0, -1.0)
 - `Alignment.topCenter`: (0.0, -1.0)
 - `Alignment.topRight`: (1.0, -1.0)
@@ -82,52 +82,61 @@ Common Alignment constants:
 ```typescript
 // Custom alignment
 Align({
-  alignment: new Alignment(0.5, -0.5), // Towards top right
-  child: Text('Custom aligned')
+  alignment: Alignment.of({ x: 0.5, y: -0.5 }), // Towards top-right
+  child: Text('Custom alignment')
 })
 ```
 
-### widthFactor
-
-**Value: number | undefined**
+### widthFactor (optional)
+**Type: number | undefined**
 
 Sets this widget's width as a multiple of the child widget's width. If null, expands to available width.
 
 ```typescript
 Align({
-  widthFactor: 1.5, // 1.5 times the child's width
+  widthFactor: 1.5, // 1.5 times child's width
   child: Container({
     width: 100,
     height: 50,
     color: 'red'
   })
 })
-// Align's width will be 150
+// Align's width becomes 150
 ```
 
-### heightFactor
-
-**Value: number | undefined**
+### heightFactor (optional)
+**Type: number | undefined**
 
 Sets this widget's height as a multiple of the child widget's height. If null, expands to available height.
 
 ```typescript
 Align({
-  heightFactor: 2.0, // 2 times the child's height
+  heightFactor: 2.0, // 2 times child's height
   child: Container({
     width: 100,
     height: 50,
     color: 'green'
   })
 })
-// Align's height will be 100
+// Align's height becomes 100
 ```
 
-### child
+## Layout Behavior
 
-**Value: Widget | undefined**
+### Size Constraint Handling
 
-The child widget to be aligned.
+1. **Under bounded constraints**:
+   - If widthFactor and heightFactor are null, expands to available size
+   - Layouts child with loosened constraints
+   - Positions child according to alignment
+
+2. **Under unbounded constraints**:
+   - If widthFactor and heightFactor are null, shrinks to child size
+   - If factors are specified, size is determined by child size × factor
+
+3. **When using size factors**:
+   - Always sizes to child size × factor
+   - Works independently of parent constraints
 
 ## Practical Examples
 
@@ -176,7 +185,7 @@ const DialogWithCloseButton = ({ title, content, onClose }) => {
 };
 ```
 
-### Example 2: Loading Indicator Center Alignment
+### Example 2: Centered Loading Indicator
 
 ```typescript
 const LoadingOverlay = ({ isLoading, child }) => {
@@ -335,14 +344,16 @@ const ResponsiveCard = ({ title, subtitle, action }) => {
 ## Important Notes
 
 - widthFactor and heightFactor must be greater than 0
-- alignment values must be between -1.0 and 1.0
-- When child is null and widthFactor or heightFactor is null, the size may become 0
+- alignment x and y values must be between -1.0 and 1.0
+- When there's no child and widthFactor or heightFactor is null, size may become 0
 - Understand the difference between Align and Positioned when using within Stack
 - Using size factors can impact layout performance
+- Loosens constraints to allow the child to have its desired size
 
 ## Related Widgets
 
-- **Center**: A special case of Align, always centers content
+- **Center**: Special case of Align, always centers content
 - **Positioned**: Absolute positioning within Stack
-- **Container**: Can align children with alignment property
-- **FractionallySizedBox**: Sizes based on parent's dimensions
+- **Container**: Can align children using alignment property
+- **FractionallySizedBox**: Sizes based on parent's dimensions ratio
+- **AnimatedAlign**: Animated transitions between alignments
