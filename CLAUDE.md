@@ -145,3 +145,135 @@ GestureDetector({
   child: /* your widget */
 })
 ```
+
+## Widget Documentation Structure
+
+When documenting widgets, follow this standard structure:
+
+### MDX Front Matter
+```yaml
+---
+nav_group: "Widgets"
+nav_group_order: 3
+nav_title: WidgetName
+title: "WidgetName"
+description: "Brief description of the widget's purpose"
+---
+```
+
+### Documentation Sections
+1. **Overview**: Brief description and Flutter documentation link
+2. **When to use it?**: 5-6 bullet points about use cases
+3. **Basic Usage**: Complete working example with StatefulWidget
+4. **Props**: Detailed property descriptions with types and examples
+5. **Practical Examples**: Multiple examples showing different use cases
+6. **Important Notes**: Key considerations and limitations
+7. **Related Widgets**: Links to similar or complementary widgets
+
+## Import/Export Patterns
+
+### Widget Exports
+All widgets must be exported as factory functions:
+```typescript
+// ❌ WRONG
+export class Container extends StatelessWidget { }
+
+// ✅ CORRECT
+class _Container extends StatelessWidget { }
+export default function Container(props: ContainerProps): Widget {
+  return new _Container(props);
+}
+// or
+export default classToFunction(_Container);
+```
+
+### Type Imports
+Import types from the centralized type module:
+```typescript
+import {
+  type EdgeInsets,
+  type Alignment,
+  Constraints,
+  Rect,
+} from "../type";
+```
+
+## Common Mistakes to Avoid
+
+### State Management
+- ❌ Never mutate state outside setState()
+- ❌ Never use React hooks (useState, useEffect, etc.)
+- ❌ Never use let/const for state variables outside class
+- ✅ Always use class properties for state in StatefulWidget
+- ✅ Always wrap state updates in setState()
+
+### Widget Creation
+- ❌ Never export widget classes directly
+- ❌ Never forget the factory function wrapper
+- ✅ Always use classToFunction() or manual factory function
+
+### Event Handling
+- ❌ Never use onClick/onChange directly on widgets
+- ✅ Always use GestureDetector for user interactions
+- ✅ Use proper event names: onClick (not onTap in GestureDetector)
+
+## Widget Lifecycle
+
+### StatefulWidget Lifecycle
+```typescript
+class MyWidgetState extends State<MyWidget> {
+  // Called once when state object is created
+  initState(): void {
+    super.initState();
+    // Initialize animations, controllers, etc.
+  }
+
+  // Called when widget configuration changes
+  didUpdateWidget(oldWidget: MyWidget): void {
+    super.didUpdateWidget(oldWidget);
+    // Update state based on new widget properties
+  }
+
+  // Called when state object is removed
+  dispose(): void {
+    // Dispose controllers, animations, listeners
+    super.dispose();
+  }
+
+  // Called whenever setState() is called
+  build(context: BuildContext): Widget {
+    return Container({ /* ... */ });
+  }
+}
+```
+
+## Type Definitions
+
+### Widget Props Pattern
+```typescript
+type WidgetNameProps = {
+  // Required properties
+  child: Widget;
+  
+  // Optional properties with defaults
+  padding?: EdgeInsets;
+  alignment?: Alignment;
+  
+  // Nullable properties
+  width?: number;
+  height?: number;
+  
+  // Callbacks
+  onTap?: () => void;
+  
+  // Always include key for widget reconciliation
+  key?: any;
+};
+```
+
+### Common Type Imports
+```typescript
+import type { BuildContext } from "../element";
+import type { Widget } from "../widget";
+import type { RenderObject } from "../renderobject";
+```
