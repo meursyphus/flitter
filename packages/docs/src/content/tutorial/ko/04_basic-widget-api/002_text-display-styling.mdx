@@ -1,0 +1,713 @@
+---
+nav_group: "기본 위젯 API 탐험"
+nav_order: 2
+title: "Text - 텍스트 표시와 스타일링"
+description: "Text 위젯을 사용해 다양한 스타일의 텍스트를 표시하고 꾸미는 방법을 배웁니다"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, 
+      Text, 
+      TextStyle, 
+      Colors,
+      Column,
+      Center,
+      EdgeInsets,
+      FontWeight,
+      TextAlign,
+      TextDecoration,
+      TextOverflow
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: 다양한 Text 스타일을 실습해보세요
+      // 1. fontSize로 크기 조절
+      // 2. fontWeight로 굵기 설정
+      // 3. color로 색상 변경
+      // 4. fontFamily로 폰트 변경
+      // 5. textAlign으로 정렬
+      
+      const widget = Container({
+        width: 600,
+        height: 500,
+        color: Colors.grey[50],
+        padding: EdgeInsets.all(20),
+        child: Center({
+          child: Column({
+            mainAxisAlignment: 'center',
+            children: [
+              Text("Text 위젯 실습"),
+              Text("다양한 스타일을 적용해보세요!")
+            ]
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Text 위젯 실습</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, 
+      Text, 
+      TextStyle, 
+      Colors,
+      Column,
+      Center,
+      EdgeInsets,
+      FontWeight,
+      TextAlign,
+      TextDecoration,
+      TextOverflow,
+      Row,
+      MainAxisAlignment,
+      CrossAxisAlignment,
+      SizedBox
+    } from "@meursyphus/flitter";
+
+    function App() {
+      const widget = Container({
+        width: 700,
+        height: 700,
+        color: Colors.grey[50],
+        child: Center({
+          child: Column({
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 제목
+              Text("✏️ Text 위젯 스타일링", {
+                style: new TextStyle({
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[800]
+                })
+              }),
+              
+              SizedBox({ height: 40 }),
+              
+              // 크기와 굵기
+              Container({
+                width: 600,
+                padding: EdgeInsets.all(20),
+                decoration: {
+                  color: Colors.blue[50],
+                  borderRadius: 12
+                },
+                child: Column({
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("크기와 굵기", {
+                      style: new TextStyle({
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue[900]
+                      })
+                    }),
+                    SizedBox({ height: 16 }),
+                    Text("fontSize: 12 - 작은 텍스트", {
+                      style: new TextStyle({ fontSize: 12 })
+                    }),
+                    Text("fontSize: 16 - 기본 텍스트", {
+                      style: new TextStyle({ fontSize: 16 })
+                    }),
+                    Text("fontSize: 24 - 큰 텍스트", {
+                      style: new TextStyle({ fontSize: 24 })
+                    }),
+                    SizedBox({ height: 12 }),
+                    Text("FontWeight.w300 - 가는 텍스트", {
+                      style: new TextStyle({
+                        fontSize: 16,
+                        fontWeight: FontWeight.w300
+                      })
+                    }),
+                    Text("FontWeight.normal - 보통 텍스트", {
+                      style: new TextStyle({
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal
+                      })
+                    }),
+                    Text("FontWeight.bold - 굵은 텍스트", {
+                      style: new TextStyle({
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold
+                      })
+                    })
+                  ]
+                })
+              }),
+              
+              SizedBox({ height: 20 }),
+              
+              // 색상과 장식
+              Container({
+                width: 600,
+                padding: EdgeInsets.all(20),
+                decoration: {
+                  color: Colors.purple[50],
+                  borderRadius: 12
+                },
+                child: Column({
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("색상과 장식", {
+                      style: new TextStyle({
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.purple[900]
+                      })
+                    }),
+                    SizedBox({ height: 16 }),
+                    Row({
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text("빨간 텍스트", {
+                          style: new TextStyle({
+                            fontSize: 18,
+                            color: Colors.red[600]
+                          })
+                        }),
+                        Text("파란 텍스트", {
+                          style: new TextStyle({
+                            fontSize: 18,
+                            color: Colors.blue[600]
+                          })
+                        }),
+                        Text("초록 텍스트", {
+                          style: new TextStyle({
+                            fontSize: 18,
+                            color: Colors.green[600]
+                          })
+                        })
+                      ]
+                    }),
+                    SizedBox({ height: 16 }),
+                    Row({
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text("밑줄", {
+                          style: new TextStyle({
+                            fontSize: 18,
+                            decoration: TextDecoration.underline,
+                            decorationColor: Colors.purple[600]
+                          })
+                        }),
+                        Text("취소선", {
+                          style: new TextStyle({
+                            fontSize: 18,
+                            decoration: TextDecoration.lineThrough,
+                            decorationColor: Colors.red[600]
+                          })
+                        }),
+                        Text("두꺼운 밑줄", {
+                          style: new TextStyle({
+                            fontSize: 18,
+                            decoration: TextDecoration.underline,
+                            decorationStyle: TextDecorationStyle.double,
+                            decorationThickness: 2
+                          })
+                        })
+                      ]
+                    })
+                  ]
+                })
+              }),
+              
+              SizedBox({ height: 20 }),
+              
+              // 정렬과 오버플로
+              Container({
+                width: 600,
+                padding: EdgeInsets.all(20),
+                decoration: {
+                  color: Colors.green[50],
+                  borderRadius: 12
+                },
+                child: Column({
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text("정렬과 오버플로", {
+                      style: new TextStyle({
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green[900]
+                      })
+                    }),
+                    SizedBox({ height: 16 }),
+                    Container({
+                      padding: EdgeInsets.all(12),
+                      color: Colors.white,
+                      child: Text("왼쪽 정렬 (기본)", {
+                        style: new TextStyle({ fontSize: 16 }),
+                        textAlign: TextAlign.left
+                      })
+                    }),
+                    SizedBox({ height: 8 }),
+                    Container({
+                      padding: EdgeInsets.all(12),
+                      color: Colors.white,
+                      child: Text("가운데 정렬", {
+                        style: new TextStyle({ fontSize: 16 }),
+                        textAlign: TextAlign.center
+                      })
+                    }),
+                    SizedBox({ height: 8 }),
+                    Container({
+                      padding: EdgeInsets.all(12),
+                      color: Colors.white,
+                      child: Text("오른쪽 정렬", {
+                        style: new TextStyle({ fontSize: 16 }),
+                        textAlign: TextAlign.right
+                      })
+                    }),
+                    SizedBox({ height: 16 }),
+                    Container({
+                      width: 200,
+                      padding: EdgeInsets.all(12),
+                      color: Colors.white,
+                      child: Text("이것은 매우 긴 텍스트입니다. 컨테이너의 너비를 초과하면 잘립니다.", {
+                        style: new TextStyle({ fontSize: 16 }),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1
+                      })
+                    })
+                  ]
+                })
+              }),
+              
+              SizedBox({ height: 20 }),
+              
+              // 고급 스타일링
+              Container({
+                padding: EdgeInsets.all(20),
+                decoration: {
+                  gradient: {
+                    colors: [Colors.orange[400], Colors.pink[400]],
+                    begin: { x: -1, y: -1 },
+                    end: { x: 1, y: 1 }
+                  },
+                  borderRadius: 12
+                },
+                child: Text("🎨 그라데이션 배경의 흰색 텍스트", {
+                  style: new TextStyle({
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 1.5,
+                    shadows: [{
+                      color: Colors.black.withOpacity(0.3),
+                      offset: { x: 2, y: 2 },
+                      blurRadius: 4
+                    }]
+                  })
+                })
+              })
+            ]
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Text 위젯 실습</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# Text - 텍스트 표시와 스타일링
+
+Text 위젯은 화면에 텍스트를 표시하는 가장 기본적인 위젯입니다. 단순해 보이지만 TextStyle을 통해 다양한 시각적 효과를 줄 수 있습니다. 아름답고 읽기 쉬운 텍스트를 만드는 방법을 알아봅시다.
+
+## 이 튜토리얼에서 배울 것
+
+- [ ] Text 위젯의 기본 사용법
+- [ ] TextStyle로 텍스트 꾸미기
+- [ ] 크기, 굵기, 색상 조절하기
+- [ ] 정렬과 오버플로 처리
+- [ ] 고급 텍스트 효과 적용하기
+
+## Text 위젯의 기본
+
+가장 간단한 Text 위젯 사용법:
+
+```typescript
+Text("Hello, Flitter!")
+```
+
+두 번째 파라미터로 옵션을 전달할 수 있습니다:
+
+```typescript
+Text("스타일이 있는 텍스트", {
+  style: new TextStyle({
+    fontSize: 20,
+    color: Colors.blue
+  })
+})
+```
+
+> **💡 핵심 개념: Text vs RichText**
+> 
+> - **Text**: 단일 스타일의 텍스트 표시
+> - **RichText**: 한 문장 안에 여러 스타일 적용 가능
+> 
+> 대부분의 경우 Text 위젯으로 충분하며, 복잡한 스타일이 필요할 때만 RichText를 사용합니다.
+
+## TextStyle - 텍스트 꾸미기
+
+TextStyle은 텍스트의 모든 시각적 속성을 제어합니다:
+
+### 크기와 굵기
+```typescript
+Text("크고 굵은 텍스트", {
+  style: new TextStyle({
+    fontSize: 24,              // 크기 (기본: 14)
+    fontWeight: FontWeight.bold // 굵기
+  })
+})
+
+// FontWeight 옵션들
+FontWeight.w100  // Thin
+FontWeight.w200  // Extra Light  
+FontWeight.w300  // Light
+FontWeight.w400  // Regular (normal)
+FontWeight.w500  // Medium
+FontWeight.w600  // Semi Bold
+FontWeight.w700  // Bold
+FontWeight.w800  // Extra Bold
+FontWeight.w900  // Black
+```
+
+### 색상
+```typescript
+Text("컬러풀한 텍스트", {
+  style: new TextStyle({
+    color: Colors.purple[600],
+    // 투명도 적용
+    // color: Colors.black.withOpacity(0.5)
+  })
+})
+```
+
+### 폰트 패밀리
+```typescript
+Text("다른 폰트", {
+  style: new TextStyle({
+    fontFamily: 'Roboto',  // 또는 'monospace', 'serif' 등
+    fontSize: 18
+  })
+})
+```
+
+## 텍스트 장식
+
+### 밑줄과 취소선
+```typescript
+// 밑줄
+Text("밑줄 텍스트", {
+  style: new TextStyle({
+    decoration: TextDecoration.underline,
+    decorationColor: Colors.red,
+    decorationThickness: 2
+  })
+})
+
+// 취소선
+Text("취소된 텍스트", {
+  style: new TextStyle({
+    decoration: TextDecoration.lineThrough,
+    decorationColor: Colors.grey
+  })
+})
+
+// 점선 스타일
+Text("점선 밑줄", {
+  style: new TextStyle({
+    decoration: TextDecoration.underline,
+    decorationStyle: TextDecorationStyle.dotted
+  })
+})
+```
+
+### 그림자 효과
+```typescript
+Text("그림자가 있는 텍스트", {
+  style: new TextStyle({
+    fontSize: 24,
+    color: Colors.white,
+    shadows: [{
+      color: Colors.black.withOpacity(0.5),
+      offset: { x: 2, y: 2 },
+      blurRadius: 4
+    }]
+  })
+})
+```
+
+## 텍스트 정렬
+
+### TextAlign
+```typescript
+Container({
+  width: 300,
+  child: Text("가운데 정렬된 텍스트", {
+    textAlign: TextAlign.center,
+    style: new TextStyle({ fontSize: 18 })
+  })
+})
+
+// 정렬 옵션들
+TextAlign.left    // 왼쪽 정렬 (기본)
+TextAlign.center  // 가운데 정렬
+TextAlign.right   // 오른쪽 정렬
+TextAlign.justify // 양쪽 정렬
+```
+
+> **⚠️ 주의**: TextAlign은 Text 위젯이 차지하는 공간 내에서만 작동합니다. Container의 width를 지정하거나 부모 위젯이 충분한 공간을 제공해야 합니다.
+
+## 텍스트 오버플로 처리
+
+긴 텍스트가 공간을 초과할 때 처리 방법:
+
+### 말줄임표 (...)
+```typescript
+Container({
+  width: 200,
+  child: Text("이것은 매우 긴 텍스트입니다. 공간이 부족하면 말줄임표로 표시됩니다.", {
+    overflow: TextOverflow.ellipsis,
+    maxLines: 1
+  })
+})
+```
+
+### 여러 줄 제한
+```typescript
+Container({
+  width: 200,
+  child: Text("여러 줄의 긴 텍스트입니다. 최대 2줄까지만 표시하고 나머지는 말줄임표로 처리합니다.", {
+    overflow: TextOverflow.ellipsis,
+    maxLines: 2,
+    style: new TextStyle({
+      fontSize: 16,
+      height: 1.5  // 줄 간격
+    })
+  })
+})
+```
+
+### 오버플로 옵션들
+```typescript
+TextOverflow.clip     // 잘라내기 (기본)
+TextOverflow.fade     // 페이드 아웃
+TextOverflow.ellipsis // 말줄임표 (...)
+TextOverflow.visible  // 오버플로 허용
+```
+
+## 고급 스타일링
+
+### 자간과 행간
+```typescript
+Text("자간과 행간 조절", {
+  style: new TextStyle({
+    letterSpacing: 2.0,  // 글자 간격
+    wordSpacing: 4.0,    // 단어 간격
+    height: 1.8          // 줄 높이 (fontSize의 배수)
+  })
+})
+```
+
+### 이탤릭체
+```typescript
+Text("기울어진 텍스트", {
+  style: new TextStyle({
+    fontStyle: FontStyle.italic,
+    fontSize: 18
+  })
+})
+```
+
+## 실전 예제: 제목과 본문 스타일
+
+```typescript
+Column({
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    // 대제목
+    Text("Flutter의 철학", {
+      style: new TextStyle({
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+        color: Colors.grey[900],
+        letterSpacing: -0.5
+      })
+    }),
+    
+    SizedBox({ height: 8 }),
+    
+    // 부제목
+    Text("모든 것은 위젯이다", {
+      style: new TextStyle({
+        fontSize: 18,
+        fontWeight: FontWeight.w500,
+        color: Colors.grey[700],
+        fontStyle: FontStyle.italic
+      })
+    }),
+    
+    SizedBox({ height: 16 }),
+    
+    // 본문
+    Text("Flutter에서는 텍스트, 버튼, 레이아웃 등 화면에 표시되는 모든 요소가 위젯으로 구성됩니다. 이러한 접근 방식은 일관되고 조합 가능한 UI를 만들 수 있게 해줍니다.", {
+      style: new TextStyle({
+        fontSize: 16,
+        height: 1.6,
+        color: Colors.grey[800]
+      })
+    })
+  ]
+})
+```
+
+## 연습해보기
+
+다음 텍스트 스타일들을 구현해보세요:
+
+1. **경고 메시지**:
+   - 빨간색 텍스트 (Colors.red[600])
+   - 굵은 글씨체
+   - 아이콘과 함께 표시
+
+2. **인용문**:
+   - 이탤릭체
+   - 회색 (Colors.grey[600])
+   - 왼쪽에 세로 막대 표시
+   - 위아래 여백 추가
+
+3. **가격 표시**:
+   - 원래 가격은 취소선
+   - 할인 가격은 크고 굵게
+   - 빨간색으로 강조
+
+<details>
+<summary>💡 힌트</summary>
+
+1. Row를 사용해서 아이콘과 텍스트를 나란히 배치
+2. Container의 border를 사용해서 왼쪽 막대 구현
+3. Column으로 원가와 할인가를 세로로 배치
+
+</details>
+
+## 성능 고려사항
+
+### 1. 복잡한 TextStyle 재사용
+```typescript
+// 자주 사용하는 스타일은 상수로 정의
+const titleStyle = new TextStyle({
+  fontSize: 24,
+  fontWeight: FontWeight.bold,
+  color: Colors.grey[900]
+});
+
+// 여러 곳에서 재사용
+Text("제목 1", { style: titleStyle });
+Text("제목 2", { style: titleStyle });
+```
+
+### 2. 긴 텍스트 처리
+```typescript
+// 긴 텍스트는 필요한 부분만 표시
+Text(longText, {
+  maxLines: 3,
+  overflow: TextOverflow.ellipsis
+})
+```
+
+## 접근성 고려사항
+
+### 1. 충분한 대비
+텍스트와 배경 사이에 충분한 대비를 유지하세요:
+```typescript
+// ✅ 좋은 예: 높은 대비
+Container({
+  color: Colors.white,
+  child: Text("읽기 쉬운 텍스트", {
+    style: new TextStyle({ color: Colors.black })
+  })
+})
+
+// ❌ 나쁜 예: 낮은 대비
+Container({
+  color: Colors.grey[300],
+  child: Text("읽기 어려운 텍스트", {
+    style: new TextStyle({ color: Colors.grey[400] })
+  })
+})
+```
+
+### 2. 적절한 크기
+본문 텍스트는 최소 14px 이상을 권장합니다:
+```typescript
+Text("읽기 편한 본문", {
+  style: new TextStyle({
+    fontSize: 16,  // 권장 크기
+    height: 1.5    // 충분한 줄 간격
+  })
+})
+```
+
+## 🎉 Text 스타일링 마스터!
+
+Text 위젯의 다양한 스타일링 옵션을 마스터했습니다.
+
+지금까지 배운 내용:
+- ✅ TextStyle로 크기, 색상, 굵기 조절
+- ✅ 텍스트 장식과 그림자 효과
+- ✅ 정렬과 오버플로 처리
+- ✅ 고급 스타일링 기법
+
+## 다음 단계
+
+Text 위젯을 마스터했으니, 이제 위젯들을 가로로 배치하는 Row와 세로로 배치하는 Column에 대해 알아보겠습니다.
+
+레이아웃의 기본이 되는 선형 배치를 배워보겠습니다.
+
+👉 **다음: Row와 Column - 선형 배치의 기본**

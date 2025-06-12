@@ -1,0 +1,638 @@
+---
+nav_group: "기본 위젯 API 탐험"
+nav_order: 3
+title: "Row와 Column - 선형 배치의 기본"
+description: "위젯을 가로와 세로로 배치하는 Row와 Column의 모든 기능을 마스터하세요"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Row, Column, Text, Colors, EdgeInsets, MainAxisAlignment, CrossAxisAlignment } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Row와 Column을 활용해 레이아웃을 만들어보세요
+      // 1. Row로 가로 배치
+      // 2. Column으로 세로 배치
+      // 3. MainAxisAlignment로 주축 정렬
+      // 4. CrossAxisAlignment로 교차축 정렬
+      const widget = Container({
+        padding: EdgeInsets.all(20),
+        child: Column({
+          children: [
+            Text("Row와 Column을 사용해보세요!"),
+            // 여기에 코드 추가
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Row와 Column 마스터하기</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, Row, Column, Text, TextStyle, Colors, EdgeInsets, 
+      MainAxisAlignment, CrossAxisAlignment, SizedBox, Expanded
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // 예제에서 사용할 컬러 박스 컴포넌트
+      const ColorBox = (color, text) => Container({
+        width: 60,
+        height: 60,
+        color: color,
+        child: Center({
+          child: Text(text, {
+            style: new TextStyle({ color: Colors.white, fontWeight: "bold" })
+          })
+        })
+      });
+
+      const widget = Container({
+        width: 600,
+        height: 800,
+        padding: EdgeInsets.all(20),
+        color: Colors.grey[100],
+        child: Column({
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 1. Row 기본 예제
+            Text("1. Row - 가로 배치", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              child: Row({
+                children: [
+                  ColorBox(Colors.red[400], "1"),
+                  SizedBox({ width: 10 }),
+                  ColorBox(Colors.green[400], "2"),
+                  SizedBox({ width: 10 }),
+                  ColorBox(Colors.blue[400], "3")
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 2. Column 기본 예제
+            Text("2. Column - 세로 배치", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              height: 220,
+              child: Column({
+                children: [
+                  ColorBox(Colors.purple[400], "A"),
+                  SizedBox({ height: 10 }),
+                  ColorBox(Colors.orange[400], "B"),
+                  SizedBox({ height: 10 }),
+                  ColorBox(Colors.teal[400], "C")
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 3. MainAxisAlignment 예제
+            Text("3. MainAxisAlignment - 주축 정렬", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            
+            // spaceEvenly
+            Container({
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              child: Column({
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text("spaceEvenly:"),
+                  SizedBox({ height: 5 }),
+                  Container({
+                    height: 80,
+                    color: Colors.grey[200],
+                    child: Row({
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ColorBox(Colors.red[300], "1"),
+                        ColorBox(Colors.green[300], "2"),
+                        ColorBox(Colors.blue[300], "3")
+                      ]
+                    })
+                  }),
+                  SizedBox({ height: 10 }),
+                  
+                  Text("spaceBetween:"),
+                  SizedBox({ height: 5 }),
+                  Container({
+                    height: 80,
+                    color: Colors.grey[200],
+                    child: Row({
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ColorBox(Colors.red[300], "1"),
+                        ColorBox(Colors.green[300], "2"),
+                        ColorBox(Colors.blue[300], "3")
+                      ]
+                    })
+                  }),
+                  SizedBox({ height: 10 }),
+                  
+                  Text("center:"),
+                  SizedBox({ height: 5 }),
+                  Container({
+                    height: 80,
+                    color: Colors.grey[200],
+                    child: Row({
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ColorBox(Colors.red[300], "1"),
+                        SizedBox({ width: 10 }),
+                        ColorBox(Colors.green[300], "2"),
+                        SizedBox({ width: 10 }),
+                        ColorBox(Colors.blue[300], "3")
+                      ]
+                    })
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 4. CrossAxisAlignment 예제
+            Text("4. CrossAxisAlignment - 교차축 정렬", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              child: Row({
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column({
+                    children: [
+                      Text("start"),
+                      Container({
+                        width: 100,
+                        height: 100,
+                        color: Colors.grey[200],
+                        child: Column({
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container({ width: 60, height: 20, color: Colors.pink[300] }),
+                            SizedBox({ height: 5 }),
+                            Container({ width: 40, height: 20, color: Colors.pink[400] }),
+                            SizedBox({ height: 5 }),
+                            Container({ width: 80, height: 20, color: Colors.pink[500] })
+                          ]
+                        })
+                      })
+                    ]
+                  }),
+                  Column({
+                    children: [
+                      Text("center"),
+                      Container({
+                        width: 100,
+                        height: 100,
+                        color: Colors.grey[200],
+                        child: Column({
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container({ width: 60, height: 20, color: Colors.indigo[300] }),
+                            SizedBox({ height: 5 }),
+                            Container({ width: 40, height: 20, color: Colors.indigo[400] }),
+                            SizedBox({ height: 5 }),
+                            Container({ width: 80, height: 20, color: Colors.indigo[500] })
+                          ]
+                        })
+                      })
+                    ]
+                  }),
+                  Column({
+                    children: [
+                      Text("end"),
+                      Container({
+                        width: 100,
+                        height: 100,
+                        color: Colors.grey[200],
+                        child: Column({
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Container({ width: 60, height: 20, color: Colors.cyan[300] }),
+                            SizedBox({ height: 5 }),
+                            Container({ width: 40, height: 20, color: Colors.cyan[400] }),
+                            SizedBox({ height: 5 }),
+                            Container({ width: 80, height: 20, color: Colors.cyan[500] })
+                          ]
+                        })
+                      })
+                    ]
+                  })
+                ]
+              })
+            })
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Row와 Column 마스터하기</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# Row와 Column - 선형 배치의 기본
+
+Row와 Column은 Flitter에서 가장 중요한 레이아웃 위젯입니다. 이 두 위젯만 잘 다루어도 대부분의 UI 레이아웃을 구성할 수 있습니다.
+
+## 이 튜토리얼에서 배울 것
+
+- [ ] Row로 위젯을 가로로 배치하기
+- [ ] Column으로 위젯을 세로로 배치하기
+- [ ] MainAxisAlignment로 주축 정렬 마스터하기
+- [ ] CrossAxisAlignment로 교차축 정렬 이해하기
+- [ ] Expanded와 Flexible로 유연한 레이아웃 만들기
+- [ ] 실전에서 자주 사용하는 레이아웃 패턴
+
+## Row와 Column의 기본 개념
+
+### 축(Axis) 이해하기
+
+Row와 Column은 두 개의 축을 가집니다:
+
+- **주축(Main Axis)**: 위젯이 배치되는 방향
+  - Row: 가로 (왼쪽 → 오른쪽)
+  - Column: 세로 (위 → 아래)
+
+- **교차축(Cross Axis)**: 주축에 수직인 방향
+  - Row: 세로
+  - Column: 가로
+
+> **💡 핵심 개념: 축의 중요성**
+> 
+> Row와 Column의 정렬을 이해하려면 주축과 교차축의 개념을 확실히 알아야 합니다. 
+> MainAxisAlignment는 주축 방향의 정렬을, CrossAxisAlignment는 교차축 방향의 정렬을 담당합니다.
+
+## 1단계: Row - 가로 배치
+
+가장 간단한 Row 예제:
+
+```typescript
+Row({
+  children: [
+    Text("첫 번째"),
+    Text("두 번째"),
+    Text("세 번째")
+  ]
+})
+```
+
+### 간격 추가하기
+
+```typescript
+Row({
+  children: [
+    Container({ width: 50, height: 50, color: Colors.red }),
+    SizedBox({ width: 10 }),  // 가로 간격
+    Container({ width: 50, height: 50, color: Colors.green }),
+    SizedBox({ width: 10 }),
+    Container({ width: 50, height: 50, color: Colors.blue })
+  ]
+})
+```
+
+## 2단계: Column - 세로 배치
+
+Column의 기본 사용법:
+
+```typescript
+Column({
+  children: [
+    Text("위"),
+    Text("중간"),
+    Text("아래")
+  ]
+})
+```
+
+### 간격 추가하기
+
+```typescript
+Column({
+  children: [
+    Container({ width: 50, height: 50, color: Colors.red }),
+    SizedBox({ height: 10 }),  // 세로 간격
+    Container({ width: 50, height: 50, color: Colors.green }),
+    SizedBox({ height: 10 }),
+    Container({ width: 50, height: 50, color: Colors.blue })
+  ]
+})
+```
+
+## 3단계: MainAxisAlignment - 주축 정렬
+
+### MainAxisAlignment 옵션들
+
+```typescript
+// 1. start (기본값) - 시작점에 정렬
+Row({
+  mainAxisAlignment: MainAxisAlignment.start,
+  children: [...]
+})
+
+// 2. end - 끝점에 정렬
+Row({
+  mainAxisAlignment: MainAxisAlignment.end,
+  children: [...]
+})
+
+// 3. center - 가운데 정렬
+Row({
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [...]
+})
+
+// 4. spaceBetween - 양 끝 배치, 중간 균등 분배
+Row({
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [...]
+})
+
+// 5. spaceEvenly - 모든 간격 균등 분배
+Row({
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [...]
+})
+
+// 6. spaceAround - 각 위젯 주변에 균등한 간격
+Row({
+  mainAxisAlignment: MainAxisAlignment.spaceAround,
+  children: [...]
+})
+```
+
+> **🎯 실전 팁: 언제 어떤 정렬을 사용할까?**
+> - **center**: 제목, 로고 등 중앙 배치가 필요할 때
+> - **spaceBetween**: 네비게이션 바, 툴바 등
+> - **spaceEvenly**: 탭 바, 균등한 버튼 그룹
+> - **start/end**: 좌측/우측 정렬이 필요한 텍스트나 아이콘
+
+## 4단계: CrossAxisAlignment - 교차축 정렬
+
+### CrossAxisAlignment 옵션들
+
+```typescript
+// 1. start - 교차축의 시작점
+Column({
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Container({ width: 100, height: 30, color: Colors.red }),
+    Container({ width: 150, height: 30, color: Colors.green }),
+    Container({ width: 80, height: 30, color: Colors.blue })
+  ]
+})
+
+// 2. center (기본값) - 교차축의 중앙
+// 3. end - 교차축의 끝점
+// 4. stretch - 교차축 방향으로 늘리기
+Column({
+  crossAxisAlignment: CrossAxisAlignment.stretch,
+  children: [...]
+})
+```
+
+## 5단계: Expanded와 Flexible
+
+### Expanded - 남은 공간 채우기
+
+```typescript
+Row({
+  children: [
+    Container({ width: 50, height: 50, color: Colors.red }),
+    Expanded({
+      child: Container({ height: 50, color: Colors.green })
+    }),
+    Container({ width: 50, height: 50, color: Colors.blue })
+  ]
+})
+```
+
+### flex 속성으로 비율 조절
+
+```typescript
+Row({
+  children: [
+    Expanded({
+      flex: 2,  // 2배 공간
+      child: Container({ height: 50, color: Colors.red })
+    }),
+    Expanded({
+      flex: 1,  // 1배 공간
+      child: Container({ height: 50, color: Colors.green })
+    }),
+    Expanded({
+      flex: 1,  // 1배 공간
+      child: Container({ height: 50, color: Colors.blue })
+    })
+  ]
+})
+```
+
+## 6단계: 실전 예제 - 카드 레이아웃
+
+```typescript
+Container({
+  padding: EdgeInsets.all(16),
+  decoration: new BoxDecoration({
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(8),
+    boxShadow: [{
+      color: Colors.black.withOpacity(0.1),
+      blurRadius: 4,
+      offset: { x: 0, y: 2 }
+    }]
+  }),
+  child: Row({
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // 프로필 이미지
+      Container({
+        width: 60,
+        height: 60,
+        decoration: new BoxDecoration({
+          color: Colors.grey[300],
+          shape: BoxShape.circle
+        })
+      }),
+      SizedBox({ width: 16 }),
+      // 텍스트 정보
+      Expanded({
+        child: Column({
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("사용자 이름", {
+              style: new TextStyle({
+                fontSize: 18,
+                fontWeight: "bold"
+              })
+            }),
+            SizedBox({ height: 4 }),
+            Text("상태 메시지가 여기에 표시됩니다", {
+              style: new TextStyle({
+                fontSize: 14,
+                color: Colors.grey[600]
+              })
+            }),
+            SizedBox({ height: 8 }),
+            Row({
+              children: [
+                Text("팔로워 ", {
+                  style: new TextStyle({ fontSize: 12 })
+                }),
+                Text("1.2K", {
+                  style: new TextStyle({
+                    fontSize: 12,
+                    fontWeight: "bold"
+                  })
+                }),
+                SizedBox({ width: 16 }),
+                Text("팔로잉 ", {
+                  style: new TextStyle({ fontSize: 12 })
+                }),
+                Text("580", {
+                  style: new TextStyle({
+                    fontSize: 12,
+                    fontWeight: "bold"
+                  })
+                })
+              ]
+            })
+          ]
+        })
+      })
+    ]
+  })
+})
+```
+
+## 연습 과제
+
+다음과 같은 레이아웃을 만들어보세요:
+
+1. **네비게이션 바**
+   - 로고(왼쪽), 메뉴 아이템들(중앙), 프로필(오른쪽)
+   - MainAxisAlignment.spaceBetween 활용
+
+2. **통계 대시보드**
+   - 3개의 통계 카드를 가로로 배치
+   - 각 카드는 아이콘, 수치, 레이블을 세로로 배치
+   - Expanded로 균등한 너비
+
+3. **채팅 메시지 UI**
+   - 프로필 이미지와 메시지를 가로 배치
+   - 메시지는 Expanded로 남은 공간 채우기
+   - 시간 표시는 오른쪽 정렬
+
+<details>
+<summary>💡 힌트</summary>
+
+1. 네비게이션 바는 Row + MainAxisAlignment.spaceBetween
+2. 통계 카드는 Row 안에 Expanded된 Column들
+3. 채팅 UI는 Row + CrossAxisAlignment.start가 핵심
+
+</details>
+
+## 중첩 레이아웃 팁
+
+Row와 Column을 중첩해서 복잡한 레이아웃을 만들 수 있습니다:
+
+```typescript
+Column({
+  children: [
+    Row({
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [/* 헤더 */]
+    }),
+    Expanded({
+      child: Row({
+        children: [
+          /* 사이드바 */
+          Expanded({
+            child: Column({
+              children: [/* 메인 콘텐츠 */]
+            })
+          })
+        ]
+      })
+    }),
+    Row({
+      children: [/* 푸터 */]
+    })
+  ]
+})
+```
+
+## 핵심 정리
+
+Row와 Column 마스터 체크리스트:
+
+- ✅ **기본 배치**: Row(가로), Column(세로)
+- ✅ **주축 정렬**: MainAxisAlignment의 6가지 옵션
+- ✅ **교차축 정렬**: CrossAxisAlignment의 4가지 옵션
+- ✅ **유연한 크기**: Expanded와 Flexible
+- ✅ **간격 조절**: SizedBox 활용
+
+## 🎉 완벽합니다!
+
+Row와 Column을 마스터했습니다! 이제 대부분의 UI 레이아웃을 자유자재로 구성할 수 있을 것입니다.
+
+## 다음 단계
+
+다음 튜토리얼에서는 위젯을 겹쳐서 배치하는 Stack 위젯을 배워보겠습니다.
+
+👉 **다음: Stack - 위젯 겹치기와 절대 위치**

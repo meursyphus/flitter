@@ -1,0 +1,663 @@
+---
+nav_group: "레이아웃 위젯 마스터하기"
+nav_order: 2
+title: "Align과 Center - 정렬의 예술"
+description: "Align과 Center 위젯으로 완벽한 정렬을 구현하는 모든 방법을 배워보세요"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Align, Center, Text, Colors, Alignment, Column } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Align과 Center를 활용해보세요
+      // 1. Center 위젯으로 중앙 정렬
+      // 2. Align 위젯으로 다양한 위치 정렬
+      // 3. Alignment 값으로 세밀한 조정
+      const widget = Container({
+        width: 400,
+        height: 400,
+        color: Colors.grey[200],
+        child: Column({
+          children: [
+            Text("Align과 Center를 연습해보세요!"),
+            // 여기에 코드 추가
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Align과 Center 마스터하기</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, Align, Center, Text, TextStyle, Colors, 
+      Alignment, Column, Row, SizedBox, EdgeInsets, Stack
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // 정렬 시각화를 위한 박스
+      const AlignBox = (alignment, text, color) => Container({
+        width: 150,
+        height: 150,
+        color: Colors.grey[200],
+        child: Align({
+          alignment: alignment,
+          child: Container({
+            padding: EdgeInsets.all(8),
+            color: color,
+            child: Text(text, {
+              style: new TextStyle({ 
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: "bold"
+              })
+            })
+          })
+        })
+      });
+
+      const widget = Container({
+        width: 600,
+        padding: EdgeInsets.all(20),
+        color: Colors.grey[100],
+        child: Column({
+          children: [
+            // 1. Center 위젯
+            Text("1. Center 위젯 - 가장 간단한 중앙 정렬", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              width: 300,
+              height: 100,
+              color: Colors.blue[100],
+              child: Center({
+                child: Container({
+                  padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 10 }),
+                  color: Colors.blue[400],
+                  child: Text("Center로 정렬됨", {
+                    style: new TextStyle({ color: Colors.white })
+                  })
+                })
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 2. Align 기본 정렬 옵션들
+            Text("2. Align의 9가지 기본 정렬", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              child: Column({
+                children: [
+                  Row({
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      AlignBox(Alignment.topLeft, "topLeft", Colors.red[400]),
+                      AlignBox(Alignment.topCenter, "topCenter", Colors.green[400]),
+                      AlignBox(Alignment.topRight, "topRight", Colors.blue[400])
+                    ]
+                  }),
+                  SizedBox({ height: 10 }),
+                  Row({
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      AlignBox(Alignment.centerLeft, "centerLeft", Colors.orange[400]),
+                      AlignBox(Alignment.center, "center", Colors.purple[400]),
+                      AlignBox(Alignment.centerRight, "centerRight", Colors.teal[400])
+                    ]
+                  }),
+                  SizedBox({ height: 10 }),
+                  Row({
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      AlignBox(Alignment.bottomLeft, "bottomLeft", Colors.pink[400]),
+                      AlignBox(Alignment.bottomCenter, "bottomCenter", Colors.indigo[400]),
+                      AlignBox(Alignment.bottomRight, "bottomRight", Colors.amber[400])
+                    ]
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 3. 커스텀 Alignment
+            Text("3. 커스텀 Alignment - 정밀한 위치 조정", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              width: 400,
+              height: 200,
+              color: Colors.grey[300],
+              child: Stack({
+                children: [
+                  // 중앙 기준점
+                  Center({
+                    child: Container({
+                      width: 2,
+                      height: 200,
+                      color: Colors.black.withOpacity(0.2)
+                    })
+                  }),
+                  Center({
+                    child: Container({
+                      width: 400,
+                      height: 2,
+                      color: Colors.black.withOpacity(0.2)
+                    })
+                  }),
+                  // 커스텀 정렬 예제들
+                  Align({
+                    alignment: new Alignment(0.5, -0.5),
+                    child: Container({
+                      padding: EdgeInsets.all(8),
+                      color: Colors.red[500],
+                      child: Text("(0.5, -0.5)", {
+                        style: new TextStyle({ color: Colors.white, fontSize: 11 })
+                      })
+                    })
+                  }),
+                  Align({
+                    alignment: new Alignment(-0.7, 0.3),
+                    child: Container({
+                      padding: EdgeInsets.all(8),
+                      color: Colors.green[500],
+                      child: Text("(-0.7, 0.3)", {
+                        style: new TextStyle({ color: Colors.white, fontSize: 11 })
+                      })
+                    })
+                  }),
+                  Align({
+                    alignment: new Alignment(0.3, 0.7),
+                    child: Container({
+                      padding: EdgeInsets.all(8),
+                      color: Colors.blue[500],
+                      child: Text("(0.3, 0.7)", {
+                        style: new TextStyle({ color: Colors.white, fontSize: 11 })
+                      })
+                    })
+                  }),
+                  // 중앙 표시
+                  Center({
+                    child: Container({
+                      padding: EdgeInsets.all(8),
+                      color: Colors.purple[500],
+                      child: Text("(0, 0)", {
+                        style: new TextStyle({ color: Colors.white, fontSize: 11 })
+                      })
+                    })
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 4. 실전 예제 - 플로팅 버튼
+            Text("4. 실전 예제 - 플로팅 액션 버튼", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              width: 400,
+              height: 200,
+              decoration: new BoxDecoration({
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8)
+              }),
+              child: Stack({
+                children: [
+                  // 메인 컨텐츠
+                  Center({
+                    child: Column({
+                      mainAxisSize: "min",
+                      children: [
+                        Text("메인 컨텐츠 영역", {
+                          style: new TextStyle({ 
+                            fontSize: 16,
+                            color: Colors.grey[700]
+                          })
+                        }),
+                        SizedBox({ height: 8 }),
+                        Text("FAB는 우하단에 위치", {
+                          style: new TextStyle({ 
+                            fontSize: 14,
+                            color: Colors.grey[500]
+                          })
+                        })
+                      ]
+                    })
+                  }),
+                  // FAB
+                  Align({
+                    alignment: Alignment.bottomRight,
+                    child: Container({
+                      margin: EdgeInsets.all(16),
+                      width: 56,
+                      height: 56,
+                      decoration: new BoxDecoration({
+                        color: Colors.blue[500],
+                        shape: BoxShape.circle,
+                        boxShadow: [{
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 6,
+                          offset: { x: 0, y: 3 }
+                        }]
+                      }),
+                      child: Center({
+                        child: Text("＋", {
+                          style: new TextStyle({
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: "bold"
+                          })
+                        })
+                      })
+                    })
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 5. Align vs Center 성능 비교
+            Text("5. Align vs Center - 언제 무엇을 사용할까?", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              padding: EdgeInsets.all(15),
+              color: Colors.amber[50],
+              child: Column({
+                crossAxisAlignment: "start",
+                children: [
+                  Text("• Center 사용: 단순히 중앙 정렬만 필요할 때", {
+                    style: new TextStyle({ fontSize: 14 })
+                  }),
+                  SizedBox({ height: 5 }),
+                  Text("• Align 사용: 다양한 위치에 정렬이 필요할 때", {
+                    style: new TextStyle({ fontSize: 14 })
+                  }),
+                  SizedBox({ height: 5 }),
+                  Text("• Center는 Align(alignment: Alignment.center)의 축약형", {
+                    style: new TextStyle({ fontSize: 14, fontWeight: "bold" })
+                  })
+                ]
+              })
+            })
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Align과 Center 마스터하기</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# Align과 Center - 정렬의 예술
+
+Align과 Center는 위젯을 원하는 위치에 정확히 배치하는 핵심 레이아웃 위젯입니다. 이 두 위젯을 마스터하면 픽셀 단위의 정밀한 UI를 만들 수 있습니다.
+
+## 이 튜토리얼에서 배울 것
+
+- [ ] Center 위젯으로 간단한 중앙 정렬
+- [ ] Align 위젯의 9가지 기본 정렬 위치
+- [ ] Alignment 클래스로 커스텀 위치 지정
+- [ ] Stack과 함께 사용하는 고급 패턴
+- [ ] 실전에서 자주 사용하는 정렬 테크닉
+- [ ] 성능을 고려한 정렬 위젯 선택
+
+## Center vs Align 이해하기
+
+### Center 위젯
+
+- **목적**: 오직 중앙 정렬만을 위한 특화 위젯
+- **사용법**: 매우 간단하고 직관적
+- **성능**: Align보다 약간 더 가벼움
+
+### Align 위젯
+
+- **목적**: 9가지 기본 위치 + 커스텀 위치 지정
+- **유연성**: 다양한 정렬 옵션 제공
+- **확장성**: 애니메이션과 함께 사용 가능
+
+> **💡 핵심 개념: 좌표 시스템**
+> 
+> Alignment는 -1.0에서 1.0 사이의 좌표를 사용합니다:
+> - x축: -1.0(왼쪽) ~ 0(중앙) ~ 1.0(오른쪽)
+> - y축: -1.0(위) ~ 0(중앙) ~ 1.0(아래)
+
+## 1단계: Center 위젯 마스터하기
+
+### 기본 사용법
+
+```typescript
+Center({
+  child: Text("정중앙에 위치")
+})
+```
+
+### Center의 특징
+
+1. **크기 확장**: 가능한 최대 크기로 확장
+2. **단일 자식**: 하나의 child만 가능
+3. **중앙 정렬**: 가로/세로 모두 중앙
+
+```typescript
+Container({
+  width: 200,
+  height: 200,
+  color: Colors.blue[100],
+  child: Center({
+    child: Container({
+      width: 50,
+      height: 50,
+      color: Colors.blue[500]
+    })
+  })
+})
+```
+
+## 2단계: Align의 9가지 기본 정렬
+
+### 기본 Alignment 상수들
+
+```typescript
+// 상단 정렬
+Alignment.topLeft      // (-1.0, -1.0)
+Alignment.topCenter    // (0.0, -1.0)
+Alignment.topRight     // (1.0, -1.0)
+
+// 중단 정렬
+Alignment.centerLeft   // (-1.0, 0.0)
+Alignment.center       // (0.0, 0.0)
+Alignment.centerRight  // (1.0, 0.0)
+
+// 하단 정렬
+Alignment.bottomLeft   // (-1.0, 1.0)
+Alignment.bottomCenter // (0.0, 1.0)
+Alignment.bottomRight  // (1.0, 1.0)
+```
+
+### 사용 예제
+
+```typescript
+Align({
+  alignment: Alignment.topRight,
+  child: Container({
+    padding: EdgeInsets.all(8),
+    color: Colors.red,
+    child: Text("우상단")
+  })
+})
+```
+
+## 3단계: 커스텀 Alignment
+
+### 정밀한 위치 지정
+
+```typescript
+Align({
+  alignment: new Alignment(0.5, -0.7),  // x: 약간 오른쪽, y: 위쪽
+  child: MyWidget()
+})
+```
+
+### 계산을 통한 동적 정렬
+
+```typescript
+// 원형 배치 예제
+const angleToAlignment = (angle) => {
+  const radian = angle * Math.PI / 180;
+  return new Alignment(
+    Math.cos(radian),
+    Math.sin(radian)
+  );
+};
+
+// 45도 각도에 위치
+Align({
+  alignment: angleToAlignment(45),
+  child: MyWidget()
+})
+```
+
+## 4단계: Stack과 함께 사용하기
+
+### 다중 정렬 레이아웃
+
+```typescript
+Stack({
+  children: [
+    // 배경
+    Container({ color: Colors.grey[200] }),
+    
+    // 각 모서리에 위젯 배치
+    Align({
+      alignment: Alignment.topLeft,
+      child: IconButton("⚙️")
+    }),
+    Align({
+      alignment: Alignment.topRight,
+      child: IconButton("🔔")
+    }),
+    Align({
+      alignment: Alignment.bottomCenter,
+      child: NavigationBar()
+    })
+  ]
+})
+```
+
+## 5단계: 실전 패턴 - 로딩 오버레이
+
+```typescript
+Stack({
+  children: [
+    // 메인 컨텐츠
+    MyMainContent(),
+    
+    // 로딩 오버레이
+    if (isLoading) Positioned.fill({
+      child: Container({
+        color: Colors.black.withOpacity(0.5),
+        child: Center({
+          child: Container({
+            padding: EdgeInsets.all(20),
+            decoration: new BoxDecoration({
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8)
+            }),
+            child: Column({
+              mainAxisSize: "min",
+              children: [
+                CircularProgressIndicator(),
+                SizedBox({ height: 16 }),
+                Text("로딩 중...")
+              ]
+            })
+          })
+        })
+      })
+    })
+  ]
+})
+```
+
+## 6단계: 반응형 정렬
+
+### 화면 크기에 따른 정렬 변경
+
+```typescript
+class ResponsiveAlign extends StatelessWidget {
+  constructor(props) {
+    super(props);
+    this.child = props.child;
+  }
+
+  build(context) {
+    const screenWidth = MediaQuery.of(context).size.width;
+    
+    // 화면 크기에 따라 정렬 변경
+    const alignment = screenWidth > 600 
+      ? Alignment.centerRight 
+      : Alignment.center;
+    
+    return Align({
+      alignment: alignment,
+      child: this.child
+    });
+  }
+}
+```
+
+## 연습 과제
+
+다음과 같은 UI를 만들어보세요:
+
+1. **배지가 있는 아이콘**
+   - 아이콘 중앙 배치
+   - 배지는 우상단에 위치
+   - Stack과 Align 조합 사용
+
+2. **대각선 레이아웃**
+   - 4개의 위젯을 대각선으로 배치
+   - 커스텀 Alignment 사용
+   - 각 위젯은 다른 색상
+
+3. **툴팁 위젯**
+   - 버튼 위에 툴팁 표시
+   - Align으로 버튼 상단 중앙에 위치
+   - 삼각형 꼬리 포함
+
+<details>
+<summary>💡 힌트</summary>
+
+1. Stack 안에 Center(아이콘)와 Align(배지) 사용
+2. Alignment(-0.7, -0.7), (-0.3, -0.3), (0.3, 0.3), (0.7, 0.7)
+3. Stack으로 버튼과 툴팁을 겹치고, bottomCenter에서 위로 이동
+
+</details>
+
+## 고급 팁: FractionalOffset
+
+더 직관적인 위치 지정이 필요할 때:
+
+```typescript
+// Alignment 대신 FractionalOffset 사용
+FractionalOffset(0.25, 0.75)  // 왼쪽에서 25%, 위에서 75%
+
+// 퍼센트 기반 배치
+Align({
+  alignment: FractionalOffset(0.8, 0.2),  // 우측 80%, 상단 20%
+  child: MyWidget()
+})
+```
+
+## 애니메이션과 함께 사용
+
+```typescript
+class AnimatedAlignExample extends StatefulWidget {
+  createState() {
+    return new AnimatedAlignExampleState();
+  }
+}
+
+class AnimatedAlignExampleState extends State {
+  alignment = Alignment.topLeft;
+
+  build(context) {
+    return GestureDetector({
+      onTap: () => {
+        this.setState(() => {
+          // 랜덤 위치로 이동
+          this.alignment = new Alignment(
+            Math.random() * 2 - 1,  // -1 to 1
+            Math.random() * 2 - 1   // -1 to 1
+          );
+        });
+      },
+      child: Container({
+        width: 300,
+        height: 300,
+        color: Colors.grey[200],
+        child: AnimatedAlign({
+          alignment: this.alignment,
+          duration: Duration({ milliseconds: 500 }),
+          curve: Curves.easeInOut,
+          child: Container({
+            width: 50,
+            height: 50,
+            color: Colors.blue
+          })
+        })
+      })
+    });
+  }
+}
+```
+
+## 핵심 정리
+
+Align과 Center 마스터 체크리스트:
+
+- ✅ **Center**: 단순 중앙 정렬에 최적
+- ✅ **Align**: 9가지 기본 위치 + 커스텀
+- ✅ **Alignment**: -1.0 ~ 1.0 좌표 시스템
+- ✅ **Stack과 조합**: 복잡한 레이아웃 구성
+- ✅ **성능**: 목적에 맞는 위젯 선택
+
+## 🎉 완벽합니다!
+
+Align과 Center를 완전히 마스터했습니다! 이제 어떤 위치든 정확하게 위젯을 배치할 수 있을 것입니다.
+
+## 다음 단계
+
+다음 튜토리얼에서는 Expanded와 Flexible로 유연한 공간 분배를 배워보겠습니다.
+
+👉 **다음: Expanded와 Flexible - 공간 분배**

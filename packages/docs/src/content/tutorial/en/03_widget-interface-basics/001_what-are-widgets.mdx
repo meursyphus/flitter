@@ -1,0 +1,412 @@
+---
+nav_group: "Widget Interface Basics"
+nav_order: 1
+title: "What are Widgets? - Everything is a Widget"
+description: "Understand the core concept of widgets in Flitter and how they compose to build UIs"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, 
+      Column, 
+      Row, 
+      Text, 
+      TextStyle, 
+      Colors,
+      Padding,
+      EdgeInsets,
+      Center
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Combine various widgets to create a UI
+      // 1. Set up overall layout with Container
+      // 2. Arrange vertically with Column
+      // 3. Arrange horizontally with Row
+      // 4. Add spacing with Padding
+      const widget = Container({
+        width: 500,
+        height: 400,
+        color: Colors.grey[200],
+        child: Center({
+          child: Text("Compose widgets here!")
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Widget Composition Practice</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, 
+      Column, 
+      Row, 
+      Text, 
+      TextStyle, 
+      Colors,
+      Padding,
+      EdgeInsets,
+      Center,
+      MainAxisAlignment,
+      CrossAxisAlignment
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // Composing multiple widgets to create complex UI
+      const widget = Container({
+        width: 500,
+        height: 400,
+        color: Colors.blue[50],
+        child: Padding({
+          padding: EdgeInsets.all(20),
+          child: Column({
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Title text
+              Text("🧩 Everything is a Widget", {
+                style: new TextStyle({
+                  fontSize: 24,
+                  fontWeight: 'bold',
+                  color: Colors.blue[900]
+                })
+              }),
+              
+              // Spacing with empty Container
+              Container({ height: 20 }),
+              
+              // Description text
+              Container({
+                padding: EdgeInsets.symmetric({ horizontal: 40, vertical: 10 }),
+                color: Colors.white,
+                borderRadius: 8,
+                child: Text("In Flitter, text, buttons, layouts, and\nevery UI element is composed of widgets", {
+                  style: new TextStyle({
+                    fontSize: 16,
+                    color: Colors.blue[700],
+                    height: 1.5
+                  })
+                })
+              }),
+              
+              // Spacing
+              Container({ height: 30 }),
+              
+              // Widget examples arranged in Row
+              Row({
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // First widget box
+                  Container({
+                    width: 120,
+                    height: 80,
+                    color: Colors.green[200],
+                    child: Center({
+                      child: Text("Container", {
+                        style: new TextStyle({
+                          color: Colors.green[800],
+                          fontWeight: 'bold'
+                        })
+                      })
+                    })
+                  }),
+                  
+                  // Second widget box
+                  Container({
+                    width: 120,
+                    height: 80,
+                    color: Colors.orange[200],
+                    child: Center({
+                      child: Text("Text", {
+                        style: new TextStyle({
+                          color: Colors.orange[800],
+                          fontWeight: 'bold'
+                        })
+                      })
+                    })
+                  }),
+                  
+                  // Third widget box
+                  Container({
+                    width: 120,
+                    height: 80,
+                    color: Colors.purple[200],
+                    child: Center({
+                      child: Text("Column", {
+                        style: new TextStyle({
+                          color: Colors.purple[800],
+                          fontWeight: 'bold'
+                        })
+                      })
+                    })
+                  })
+                ]
+              })
+            ]
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Widget Composition Practice</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# What are Widgets? - Everything is a Widget
+
+In Flitter, everything you see on the screen is a **widget**. Text is a widget, buttons are widgets, and even padding and alignment are expressed as widgets. Understanding this powerful concept allows you to create complex UIs by combining simple widgets.
+
+## What You'll Learn
+
+- [ ] Understanding the concept and role of widgets
+- [ ] Types and purposes of basic widgets
+- [ ] Composing widgets to build UIs
+- [ ] Understanding the widget tree concept
+- [ ] Comparing Flutter and Flitter widget systems
+
+## The Widget Concept
+
+Widgets are the fundamental building blocks of Flitter UI. Following Flutter's philosophy, we've adopted the principle that "everything is a widget."
+
+### Widget Characteristics
+
+1. **Immutable**: Once created, widgets don't change
+2. **Composable**: Combine small widgets to create complex UIs
+3. **Reusable**: Use the same widget in multiple places
+
+> **💡 Core Concept: Widget Philosophy**
+> 
+> Widgets are "blueprints" for UI. They declaratively describe what to draw on screen.
+> 
+> In practice, you combine small widgets like LEGO blocks to build complex UIs.
+
+## Types of Widgets
+
+Flitter widgets fall into three main categories:
+
+### 1. Layout Widgets
+Widgets that arrange and align space:
+
+```typescript
+// Vertical arrangement
+Column({
+  children: [widget1, widget2, widget3]
+})
+
+// Horizontal arrangement
+Row({
+  children: [widget1, widget2, widget3]
+})
+
+// Overlapping arrangement
+Stack({
+  children: [backgroundWidget, foregroundWidget]
+})
+```
+
+### 2. Visual Widgets
+Widgets that draw directly on screen:
+
+```typescript
+// Display text
+Text("Hello Flitter")
+
+// Colored box
+Container({
+  width: 100,
+  height: 100,
+  color: Colors.blue
+})
+
+// Display image
+Image({ src: "image.png" })
+```
+
+### 3. Structural Widgets
+Widgets that wrap others to add specific functionality:
+
+```typescript
+// Add padding
+Padding({
+  padding: EdgeInsets.all(10),
+  child: Text("Text with padding")
+})
+
+// Center alignment
+Center({
+  child: Text("Centered text")
+})
+
+// Size constraints
+SizedBox({
+  width: 200,
+  height: 50,
+  child: Container({ color: Colors.red })
+})
+```
+
+## The Power of Widget Composition
+
+The true power of widgets comes from composition. Let's create a complex UI by combining simple widgets:
+
+```typescript
+// Creating a card UI
+Container({
+  padding: EdgeInsets.all(16),
+  decoration: BoxDecoration({
+    color: Colors.white,
+    borderRadius: 8,
+    boxShadow: [/* shadow effects */]
+  }),
+  child: Column({
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text("Title", {
+        style: new TextStyle({ fontSize: 20, fontWeight: 'bold' })
+      }),
+      SizedBox({ height: 8 }),
+      Text("Content goes here...", {
+        style: new TextStyle({ color: Colors.grey[600] })
+      })
+    ]
+  })
+})
+```
+
+## Understanding the Widget Tree
+
+Widgets form a tree structure. Parent widgets contain child widgets, and these relationships continue hierarchically:
+
+```
+Container
+  └─ Padding
+      └─ Column
+          ├─ Text("Title")
+          ├─ SizedBox
+          └─ Row
+              ├─ Icon
+              └─ Text("Subtitle")
+```
+
+> **💡 Tip**: Drawing the widget tree helps understand UI structure. When creating complex UIs, try sketching the tree structure first!
+
+## Try It Yourself
+
+Using the completed code as reference, create a UI that meets these requirements:
+
+1. **Main Container**: 500x400 size, light blue background
+2. **Add Padding**: 20 padding all around
+3. **Vertical arrangement with Column**:
+   - Title text (large, bold)
+   - Description text (white background, rounded corners)
+   - Three color boxes arranged horizontally with Row
+
+<details>
+<summary>💡 Hints</summary>
+
+1. Set overall padding with `EdgeInsets.all(20)`
+2. Center align with `MainAxisAlignment.center`
+3. Create spacing with `Container({ height: 20 })`
+4. Set Row's `mainAxisAlignment` to `spaceEvenly`
+
+</details>
+
+## Practical Tips: Widget Design Principles
+
+### 1. Single Responsibility Principle
+Design each widget to handle only one role:
+- ❌ Putting too many features in one widget
+- ✅ Combining small widgets to implement complex features
+
+### 2. Consider Reusability
+Create custom widgets for frequently used patterns:
+```typescript
+// Reusable card widget
+function MyCard({ title, content }) {
+  return Container({
+    // Card styling
+    child: Column({
+      children: [
+        Text(title),
+        Text(content)
+      ]
+    })
+  });
+}
+```
+
+### 3. Performance Considerations
+- Avoid unnecessary nesting
+- Create heavy widgets only when needed
+- Use virtualized widgets for lists
+
+## Comparison with Flutter
+
+Flitter's widget system is modeled after Flutter but optimized for the web environment:
+
+| Feature | Flutter | Flitter |
+|---------|---------|---------|
+| Rendering | Skia Engine | SVG/Canvas |
+| Platform | Mobile/Desktop | Web Browser |
+| Language | Dart | TypeScript/JavaScript |
+| State Management | setState, Provider, etc | setState, Context |
+
+## 🎉 Welcome to the World of Widgets!
+
+You now understand what widgets are and how to compose them.
+
+What you've learned:
+- ✅ Widget concept and philosophy
+- ✅ Types of layout, visual, and structural widgets
+- ✅ Creating complex UIs through widget composition
+- ✅ Understanding widget tree structure
+
+## Next Steps
+
+Now that you understand the basic widget concept, the next tutorial will explore how widgets are organized in a tree structure in more detail.
+
+You'll learn about parent-child relationships, widget keys, and efficient tree composition methods.
+
+👉 **Next: Understanding Widget Tree Structure**

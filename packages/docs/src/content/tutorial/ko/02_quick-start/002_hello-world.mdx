@@ -1,0 +1,215 @@
+---
+nav_group: "빠른 시작"
+nav_order: 2
+title: "첫 번째 Hello World 앱"
+description: "Flitter의 기본 위젯들을 사용해 첫 번째 애플리케이션을 만들어보세요"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Text, Colors } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Container 위젯을 만들어보세요
+      // 1. width: 400, height: 200
+      // 2. 배경색: Colors.green[200]
+      // 3. child로 Text 위젯 추가
+      const widget = null;
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>나의 첫 번째 Flitter 앱</h1>
+          {/* 여기에 ReactWidget을 추가하세요 */}
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Text, TextStyle, Colors, Center } from "@meursyphus/flitter";
+
+    function App() {
+      // Container 위젯으로 기본 레이아웃 생성
+      const widget = Container({
+        width: 400,
+        height: 200,
+        color: Colors.green[200],
+        child: Center({
+          child: Text("🌟 Hello, Flitter World! 🌟", {
+            style: new TextStyle({
+              fontSize: 28,
+              fontWeight: 'bold',
+              color: Colors.green[800]
+            })
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>나의 첫 번째 Flitter 앱</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+---
+
+# 첫 번째 "Hello World" 앱
+
+이제 Flitter의 기본 위젯들을 사용해서 실제로 동작하는 앱을 만들어보겠습니다! 간단하지만 Flitter의 핵심 개념들을 체험할 수 있는 Hello World 앱을 만들어봅시다.
+
+## 이 튜토리얼에서 배울 것
+
+- [ ] Container 위젯의 기본 사용법
+- [ ] Text 위젯과 스타일링
+- [ ] Center 위젯으로 정렬하기
+- [ ] Colors 시스템 활용하기
+- [ ] ReactWidget으로 Flitter 위젯 렌더링하기
+
+## 1단계: Container 위젯 이해하기
+
+Container는 Flitter에서 가장 기본이 되는 위젯입니다. 하나의 자식 위젯을 담을 수 있고, 크기, 색상, 패딩 등을 설정할 수 있습니다.
+
+```typescript
+Container({
+  width: 400,     // 너비 설정
+  height: 200,    // 높이 설정
+  color: Colors.green[200],  // 배경색 설정
+  child: /* 자식 위젯 */
+})
+```
+
+> **💡 핵심 개념: Container 위젯**
+> 
+> Container는 Flutter의 Container와 동일한 역할을 합니다. 박스 모델 기반으로 동작하며, 하나의 자식을 가질 수 있습니다.
+> 
+> 실무에서는 카드, 버튼, 섹션 등 다양한 UI 요소의 기본 틀로 사용됩니다.
+
+## 2단계: Text 위젯과 스타일링
+
+Text 위젯은 텍스트를 표시하는 위젯입니다. TextStyle을 통해 폰트 크기, 색상, 굵기 등을 설정할 수 있습니다.
+
+```typescript
+Text("🌟 Hello, Flitter World! 🌟", {
+  style: new TextStyle({
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: Colors.green[800]
+  })
+})
+```
+
+## 3단계: Center 위젯으로 정렬
+
+Center 위젯은 자식 위젯을 가운데로 정렬시켜줍니다. 매우 간단하지만 레이아웃에서 자주 사용되는 위젯입니다.
+
+```typescript
+Center({
+  child: Text("가운데 정렬된 텍스트")
+})
+```
+
+## 4단계: Colors 시스템
+
+Flitter는 Material Design의 색상 팔레트를 제공합니다. 각 색상마다 50부터 900까지의 음영을 사용할 수 있습니다.
+
+```typescript
+Colors.green[200]  // 연한 초록색
+Colors.green[800]  // 진한 초록색
+Colors.blue[500]   // 기본 파란색
+Colors.red[300]    // 연한 빨간색
+```
+
+> **💡 팁**: Colors 시스템을 활용하면 일관된 디자인을 쉽게 만들 수 있습니다. 연한 색상(200-300)은 배경에, 진한 색상(700-900)은 텍스트에 사용하세요!
+
+## 5단계: ReactWidget으로 렌더링
+
+마지막으로 만든 Flitter 위젯을 ReactWidget으로 감싸서 React 앱에 렌더링합니다.
+
+```typescript
+<ReactWidget widget={widget} />
+```
+
+## 연습해보기
+
+위의 코드를 참고해서 다음 요구사항을 만족하는 Hello World 앱을 완성해보세요:
+
+1. **Container 생성**: width 400, height 200, 배경색 green[200]
+2. **Text 추가**: "Hello, Flitter World!" 메시지
+3. **스타일링**: 폰트 크기 28, 굵게, 색상 green[800]
+4. **정렬**: Center 위젯으로 텍스트 가운데 정렬
+5. **렌더링**: ReactWidget으로 화면에 표시
+
+<details>
+<summary>💡 힌트</summary>
+
+1. Container의 child로 Center를 넣으세요
+2. Center의 child로 Text를 넣으세요
+3. TextStyle은 `new TextStyle({...})`로 생성하세요
+4. ReactWidget에는 widget prop을 전달하세요
+
+</details>
+
+## 결과 확인
+
+완성하면 다음과 같은 화면을 볼 수 있어야 합니다:
+
+- 연한 초록색 배경의 사각형 (400x200)
+- 가운데 정렬된 "Hello, Flitter World!" 텍스트
+- 진한 초록색의 굵은 글씨
+
+## 🎉 축하합니다!
+
+첫 번째 Flitter 앱을 성공적으로 완성했습니다! 
+
+지금까지 배운 내용:
+- ✅ Container로 기본 레이아웃 만들기
+- ✅ Text와 TextStyle로 텍스트 표시
+- ✅ Center로 위젯 정렬하기
+- ✅ Colors 시스템 활용하기
+- ✅ ReactWidget으로 렌더링하기
+
+## 다음 단계
+
+이제 기본 위젯들의 사용법을 익혔으니, 다음 튜토리얼에서는 사용자와 상호작용할 수 있는 인터랙티브 버튼을 만들어보겠습니다!
+
+상태 관리와 이벤트 처리의 기초를 배워보겠습니다.
+
+👉 **다음: 간단한 인터랙티브 버튼 만들기**

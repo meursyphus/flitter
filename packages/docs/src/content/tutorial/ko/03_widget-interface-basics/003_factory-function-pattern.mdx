@@ -1,0 +1,634 @@
+---
+nav_group: "위젯 인터페이스 기초"
+nav_order: 3
+title: "팩토리 함수 패턴 (classToFunction)"
+description: "Flitter가 위젯을 생성하는 독특한 팩토리 함수 패턴과 classToFunction의 동작 원리를 이해합니다"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, 
+      Text, 
+      TextStyle, 
+      Colors,
+      Center,
+      Column,
+      StatelessWidget,
+      StatefulWidget,
+      State,
+      classToFunction
+    } from "@meursyphus/flitter";
+
+    // TODO: 커스텀 위젯을 만들고 팩토리 함수로 export해보세요
+    
+    // 1. StatelessWidget 만들기
+    class MyCustomCard extends StatelessWidget {
+      constructor(props) {
+        super(props);
+        // TODO: props에서 title과 content를 받아 저장하세요
+      }
+      
+      build(context) {
+        // TODO: 카드 UI를 구성하세요
+        return Container({
+          child: Text("커스텀 카드를 만들어보세요")
+        });
+      }
+    }
+    
+    // 2. 팩토리 함수로 export
+    // TODO: classToFunction을 사용해서 export하세요
+    
+    function App() {
+      const widget = Container({
+        width: 600,
+        height: 400,
+        color: Colors.grey[100],
+        child: Center({
+          child: Column({
+            mainAxisSize: 'min',
+            children: [
+              // TODO: 만든 커스텀 위젯을 사용해보세요
+              Text("커스텀 위젯을 여기에 추가하세요")
+            ]
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>팩토리 함수 패턴 실습</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, 
+      Text, 
+      TextStyle, 
+      Colors,
+      Center,
+      Column,
+      StatelessWidget,
+      StatefulWidget,
+      State,
+      classToFunction,
+      Padding,
+      EdgeInsets,
+      MainAxisSize,
+      GestureDetector
+    } from "@meursyphus/flitter";
+
+    // StatelessWidget 예제
+    class _MyCustomCard extends StatelessWidget {
+      constructor({ title, content, color = Colors.blue[100], key }) {
+        super({ key });
+        this.title = title;
+        this.content = content;
+        this.color = color;
+      }
+      
+      build(context) {
+        return Container({
+          margin: EdgeInsets.all(8),
+          padding: EdgeInsets.all(16),
+          decoration: {
+            color: this.color,
+            borderRadius: 12,
+            boxShadow: [{
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: { x: 0, y: 2 }
+            }]
+          },
+          child: Column({
+            crossAxisAlignment: 'start',
+            mainAxisSize: 'min',
+            children: [
+              Text(this.title, {
+                style: new TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: Colors.blue[900]
+                })
+              }),
+              Container({ height: 8 }),
+              Text(this.content, {
+                style: new TextStyle({
+                  fontSize: 16,
+                  color: Colors.blue[700],
+                  height: 1.5
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+    
+    // classToFunction으로 팩토리 함수 생성
+    const MyCustomCard = classToFunction(_MyCustomCard);
+    
+    // StatefulWidget 예제
+    class _ClickCounter extends StatefulWidget {
+      createState() {
+        return new _ClickCounterState();
+      }
+    }
+    
+    class _ClickCounterState extends State {
+      count = 0;
+      
+      build(context) {
+        return GestureDetector({
+          onClick: () => {
+            this.setState(() => {
+              this.count++;
+            });
+          },
+          child: Container({
+            padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+            decoration: {
+              color: Colors.green[100],
+              borderRadius: 8,
+              border: {
+                color: Colors.green[400],
+                width: 2
+              }
+            },
+            child: Text(`🎯 클릭 횟수: ${this.count}`, {
+              style: new TextStyle({
+                fontSize: 18,
+                fontWeight: 'bold',
+                color: Colors.green[800]
+              })
+            })
+          })
+        });
+      }
+    }
+    
+    // StatefulWidget도 같은 방식으로 export
+    const ClickCounter = classToFunction(_ClickCounter);
+    
+    // 수동 팩토리 함수 예제
+    function SimpleCard({ title, description }) {
+      return Container({
+        padding: EdgeInsets.all(12),
+        margin: EdgeInsets.all(4),
+        decoration: {
+          color: Colors.purple[50],
+          borderRadius: 8
+        },
+        child: Column({
+          crossAxisAlignment: 'start',
+          mainAxisSize: 'min',
+          children: [
+            Text(title, {
+              style: new TextStyle({
+                fontSize: 16,
+                fontWeight: 'bold',
+                color: Colors.purple[800]
+              })
+            }),
+            Text(description, {
+              style: new TextStyle({
+                fontSize: 14,
+                color: Colors.purple[600]
+              })
+            })
+          ]
+        })
+      });
+    }
+
+    function App() {
+      const widget = Container({
+        width: 600,
+        height: 500,
+        color: Colors.grey[50],
+        child: Center({
+          child: Column({
+            mainAxisSize: 'min',
+            children: [
+              Text("🏭 팩토리 함수 패턴", {
+                style: new TextStyle({
+                  fontSize: 28,
+                  fontWeight: 'bold',
+                  color: Colors.grey[800]
+                })
+              }),
+              
+              Container({ height: 24 }),
+              
+              // classToFunction 사용 예제
+              MyCustomCard({
+                title: "classToFunction 패턴",
+                content: "클래스를 팩토리 함수로 변환하여 사용합니다",
+                color: Colors.blue[100]
+              }),
+              
+              // StatefulWidget 예제
+              ClickCounter(),
+              
+              Container({ height: 8 }),
+              
+              // 수동 팩토리 함수 예제
+              SimpleCard({
+                title: "수동 팩토리 함수",
+                description: "직접 함수를 작성할 수도 있습니다"
+              })
+            ]
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>팩토리 함수 패턴 실습</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# 팩토리 함수 패턴 (classToFunction)
+
+Flitter에서 위젯을 사용할 때 `new Container()`가 아닌 `Container()`로 호출하는 것을 눈치채셨나요? 이것이 바로 Flitter의 **팩토리 함수 패턴**입니다. 이 패턴이 왜 중요한지, 어떻게 동작하는지 알아봅시다.
+
+## 이 튜토리얼에서 배울 것
+
+- [ ] 팩토리 함수 패턴의 개념과 장점
+- [ ] classToFunction의 동작 원리
+- [ ] 커스텀 위젯에서 팩토리 패턴 적용하기
+- [ ] 수동 팩토리 함수 작성법
+- [ ] 팩토리 패턴의 실무 활용법
+
+## 왜 팩토리 함수를 사용할까?
+
+### 1. 더 깔끔한 문법
+```typescript
+// ❌ new 키워드 사용 (번거로움)
+const widget = new Container({
+  child: new Center({
+    child: new Text("Hello")
+  })
+});
+
+// ✅ 팩토리 함수 (깔끔함)
+const widget = Container({
+  child: Center({
+    child: Text("Hello")
+  })
+});
+```
+
+### 2. 함수형 프로그래밍과의 조화
+JavaScript/TypeScript의 함수형 프로그래밍 스타일과 잘 어울립니다:
+
+```typescript
+// 위젯을 반환하는 함수들과 자연스럽게 조합
+const widgets = items.map(item => 
+  Container({
+    child: Text(item.name)
+  })
+);
+```
+
+### 3. 미래의 최적화 가능성
+팩토리 함수는 내부적으로 캐싱, 풀링 등의 최적화를 적용할 수 있습니다:
+
+```typescript
+// 팩토리 함수 내부에서 최적화 가능
+function Container(props) {
+  // 캐싱 로직
+  if (shouldUseCache(props)) {
+    return getCachedWidget(props);
+  }
+  return new _Container(props);
+}
+```
+
+> **💡 핵심 개념: 팩토리 패턴**
+> 
+> 팩토리 패턴은 객체 생성을 캡슐화하는 디자인 패턴입니다. 
+> 
+> 실무에서는 객체 생성 로직을 숨기고, API를 단순하게 만들며, 유연성을 제공하는 데 사용됩니다.
+
+## classToFunction 이해하기
+
+`classToFunction`은 위젯 클래스를 팩토리 함수로 자동 변환하는 유틸리티입니다:
+
+### 기본 사용법
+```typescript
+// 1. 클래스 정의 (언더스코어로 시작하는 관례)
+class _MyWidget extends StatelessWidget {
+  constructor(props) {
+    super(props);
+    this.color = props.color;
+  }
+  
+  build(context) {
+    return Container({
+      color: this.color,
+      child: Text("My Widget")
+    });
+  }
+}
+
+// 2. classToFunction으로 변환
+const MyWidget = classToFunction(_MyWidget);
+
+// 3. 사용
+const widget = MyWidget({ color: Colors.blue });
+```
+
+### 내부 동작 원리
+`classToFunction`은 대략 다음과 같이 동작합니다:
+
+```typescript
+function classToFunction(WidgetClass) {
+  return function(props) {
+    return new WidgetClass(props);
+  };
+}
+```
+
+## 커스텀 위젯 만들기
+
+### StatelessWidget 예제
+```typescript
+// 1. 클래스 정의
+class _ProfileCard extends StatelessWidget {
+  constructor({ name, role, avatar, key }) {
+    super({ key });
+    this.name = name;
+    this.role = role;
+    this.avatar = avatar;
+  }
+  
+  build(context) {
+    return Container({
+      padding: EdgeInsets.all(16),
+      decoration: {
+        color: Colors.white,
+        borderRadius: 12,
+        boxShadow: [/* ... */]
+      },
+      child: Row({
+        children: [
+          CircleAvatar({
+            backgroundImage: this.avatar,
+            radius: 30
+          }),
+          SizedBox({ width: 16 }),
+          Column({
+            crossAxisAlignment: 'start',
+            children: [
+              Text(this.name, {
+                style: new TextStyle({
+                  fontSize: 18,
+                  fontWeight: 'bold'
+                })
+              }),
+              Text(this.role, {
+                style: new TextStyle({
+                  fontSize: 14,
+                  color: Colors.grey[600]
+                })
+              })
+            ]
+          })
+        ]
+      })
+    });
+  }
+}
+
+// 2. 팩토리 함수로 export
+export const ProfileCard = classToFunction(_ProfileCard);
+```
+
+### StatefulWidget 예제
+```typescript
+class _ToggleButton extends StatefulWidget {
+  createState() {
+    return new _ToggleButtonState();
+  }
+}
+
+class _ToggleButtonState extends State {
+  isOn = false;
+  
+  build(context) {
+    return GestureDetector({
+      onClick: () => {
+        this.setState(() => {
+          this.isOn = !this.isOn;
+        });
+      },
+      child: Container({
+        width: 60,
+        height: 30,
+        decoration: {
+          color: this.isOn ? Colors.green : Colors.grey,
+          borderRadius: 15
+        },
+        child: /* 토글 UI */
+      })
+    });
+  }
+}
+
+export const ToggleButton = classToFunction(_ToggleButton);
+```
+
+## 수동 팩토리 함수
+
+간단한 위젯은 클래스 없이 직접 함수로 만들 수 있습니다:
+
+```typescript
+// 함수형 위젯 (Stateless만 가능)
+function Badge({ text, color = Colors.red }) {
+  return Container({
+    padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
+    decoration: {
+      color: color,
+      borderRadius: 12
+    },
+    child: Text(text, {
+      style: new TextStyle({
+        color: Colors.white,
+        fontSize: 12,
+        fontWeight: 'bold'
+      })
+    })
+  });
+}
+
+// 사용
+Badge({ text: "NEW", color: Colors.blue });
+```
+
+## 팩토리 패턴의 실무 활용
+
+### 1. 프롭스 검증
+팩토리 함수에서 프롭스를 검증할 수 있습니다:
+
+```typescript
+function Button(props) {
+  // 프롭스 검증
+  if (!props.onPressed && !props.disabled) {
+    console.warn("Button: onPressed가 없고 disabled도 아닙니다");
+  }
+  
+  return new _Button(props);
+}
+```
+
+### 2. 기본값 처리
+```typescript
+function Card(props) {
+  // 기본값 적용
+  const finalProps = {
+    padding: EdgeInsets.all(16),
+    elevation: 2,
+    ...props
+  };
+  
+  return new _Card(finalProps);
+}
+```
+
+### 3. 조건부 위젯 반환
+```typescript
+function AdaptiveButton(props) {
+  // 플랫폼에 따라 다른 위젯 반환
+  if (isMobile()) {
+    return new _MobileButton(props);
+  }
+  return new _DesktopButton(props);
+}
+```
+
+## 연습해보기
+
+다음 요구사항을 만족하는 커스텀 위젯을 만들어보세요:
+
+1. **NotificationCard** 위젯 만들기:
+   - title, message, type(info/warning/error) 프롭스 받기
+   - type에 따라 다른 색상 표시
+   - classToFunction으로 export
+
+2. **CounterButton** 위젯 만들기:
+   - StatefulWidget으로 구현
+   - 클릭할 때마다 카운트 증가
+   - 현재 카운트 표시
+
+<details>
+<summary>💡 힌트</summary>
+
+1. type에 따른 색상 매핑:
+   ```typescript
+   const colorMap = {
+     info: Colors.blue[100],
+     warning: Colors.orange[100],
+     error: Colors.red[100]
+   };
+   ```
+
+2. StatefulWidget의 state 관리:
+   ```typescript
+   class _CounterButtonState extends State {
+     count = 0;
+     // build 메서드에서 this.count 사용
+   }
+   ```
+
+</details>
+
+## 네이밍 컨벤션
+
+Flitter에서 권장하는 네이밍 규칙:
+
+```typescript
+// 내부 클래스: 언더스코어로 시작
+class _MyWidget extends StatelessWidget { }
+
+// export되는 팩토리 함수: 일반 파스칼케이스
+const MyWidget = classToFunction(_MyWidget);
+
+// 파일명: 케밥케이스
+// my-widget.ts
+```
+
+## 주의사항
+
+### 1. 직접 클래스 export 금지
+```typescript
+// ❌ 클래스를 직접 export하지 마세요
+export class Container extends StatelessWidget { }
+
+// ✅ 항상 팩토리 함수로 export
+export const Container = classToFunction(_Container);
+```
+
+### 2. props 구조 유지
+```typescript
+// props는 항상 객체로 전달
+MyWidget({ color: Colors.blue });  // ✅
+MyWidget(Colors.blue);             // ❌
+```
+
+## 🎉 팩토리 패턴 마스터!
+
+Flitter의 핵심 패턴인 팩토리 함수를 이해하셨습니다.
+
+지금까지 배운 내용:
+- ✅ 팩토리 함수 패턴의 장점
+- ✅ classToFunction의 사용법
+- ✅ 커스텀 위젯에 팩토리 패턴 적용
+- ✅ 수동 팩토리 함수 작성법
+
+## 다음 단계
+
+이제 위젯 시스템의 기초를 모두 배웠습니다! 다음 튜토리얼에서는 가장 중요한 두 가지 위젯 타입인 StatelessWidget과 StatefulWidget의 차이점과 사용법을 자세히 알아보겠습니다.
+
+상태 관리의 기초를 배울 준비가 되셨나요?
+
+👉 **다음: StatelessWidget vs StatefulWidget 첫 만남**

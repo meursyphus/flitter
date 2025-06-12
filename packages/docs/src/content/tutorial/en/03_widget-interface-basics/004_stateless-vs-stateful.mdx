@@ -1,0 +1,766 @@
+---
+nav_group: "Widget Interface Basics"
+nav_order: 4
+title: "First Look at StatelessWidget vs StatefulWidget"
+description: "Learn the differences and usage of Flitter's two core widget types: StatelessWidget and StatefulWidget"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, 
+      Column,
+      Row,
+      Text, 
+      TextStyle, 
+      Colors,
+      Center,
+      StatelessWidget,
+      StatefulWidget,
+      State,
+      classToFunction,
+      Padding,
+      EdgeInsets,
+      GestureDetector,
+      MainAxisAlignment
+    } from "@meursyphus/flitter";
+
+    // TODO: StatelessWidget example - Clock display
+    class _ClockDisplay extends StatelessWidget {
+      constructor({ time, key }) {
+        super({ key });
+        // TODO: Store time prop
+      }
+      
+      build(context) {
+        // TODO: Implement UI to display current time
+        return Text("Implement StatelessWidget");
+      }
+    }
+
+    // TODO: StatefulWidget example - Counter
+    class _Counter extends StatefulWidget {
+      createState() {
+        // TODO: Return State object
+      }
+    }
+
+    // TODO: Implement State class
+    class _CounterState extends State {
+      // TODO: count state variable
+      
+      build(context) {
+        // TODO: UI with increment/decrement buttons and count display
+        return Text("Implement StatefulWidget");
+      }
+    }
+
+    // TODO: Export with classToFunction
+
+    function App() {
+      const widget = Container({
+        width: 700,
+        height: 500,
+        color: Colors.grey[50],
+        child: Center({
+          child: Column({
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Widget Type Comparison", {
+                style: new TextStyle({
+                  fontSize: 28,
+                  fontWeight: 'bold'
+                })
+              }),
+              Container({ height: 40 }),
+              // TODO: Arrange both widgets side by side
+            ]
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>StatelessWidget vs StatefulWidget</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, 
+      Column,
+      Row,
+      Text, 
+      TextStyle, 
+      Colors,
+      Center,
+      StatelessWidget,
+      StatefulWidget,
+      State,
+      classToFunction,
+      Padding,
+      EdgeInsets,
+      GestureDetector,
+      MainAxisAlignment,
+      CrossAxisAlignment,
+      MainAxisSize
+    } from "@meursyphus/flitter";
+
+    // StatelessWidget example - Profile card
+    class _ProfileCard extends StatelessWidget {
+      constructor({ name, role, imageUrl, key }) {
+        super({ key });
+        this.name = name;
+        this.role = role;
+        this.imageUrl = imageUrl;
+      }
+      
+      build(context) {
+        return Container({
+          width: 280,
+          padding: EdgeInsets.all(20),
+          decoration: {
+            color: Colors.blue[50],
+            borderRadius: 12,
+            boxShadow: [{
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: { x: 0, y: 2 }
+            }]
+          },
+          child: Column({
+            mainAxisSize: 'min',
+            children: [
+              Container({
+                width: 80,
+                height: 80,
+                decoration: {
+                  color: Colors.blue[200],
+                  shape: 'circle'
+                },
+                child: Center({
+                  child: Text(this.name[0], {
+                    style: new TextStyle({
+                      fontSize: 32,
+                      fontWeight: 'bold',
+                      color: Colors.white
+                    })
+                  })
+                })
+              }),
+              Container({ height: 16 }),
+              Text(this.name, {
+                style: new TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: Colors.blue[900]
+                })
+              }),
+              Container({ height: 4 }),
+              Text(this.role, {
+                style: new TextStyle({
+                  fontSize: 16,
+                  color: Colors.blue[700]
+                })
+              }),
+              Container({ height: 16 }),
+              Container({
+                padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+                decoration: {
+                  color: Colors.blue[100],
+                  borderRadius: 20
+                },
+                child: Text("StatelessWidget", {
+                  style: new TextStyle({
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    color: Colors.blue[800]
+                  })
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+
+    // StatefulWidget example - Like counter
+    class _LikeCounter extends StatefulWidget {
+      constructor({ initialCount = 0, key }) {
+        super({ key });
+        this.initialCount = initialCount;
+      }
+      
+      createState() {
+        return new _LikeCounterState();
+      }
+    }
+
+    class _LikeCounterState extends State {
+      count = 0;
+      isLiked = false;
+      
+      initState() {
+        super.initState();
+        this.count = this.widget.initialCount;
+      }
+      
+      handleLike() {
+        this.setState(() => {
+          if (this.isLiked) {
+            this.count--;
+            this.isLiked = false;
+          } else {
+            this.count++;
+            this.isLiked = true;
+          }
+        });
+      }
+      
+      build(context) {
+        return Container({
+          width: 280,
+          padding: EdgeInsets.all(20),
+          decoration: {
+            color: Colors.pink[50],
+            borderRadius: 12,
+            boxShadow: [{
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: { x: 0, y: 2 }
+            }]
+          },
+          child: Column({
+            mainAxisSize: 'min',
+            children: [
+              GestureDetector({
+                onClick: () => this.handleLike(),
+                child: Container({
+                  width: 80,
+                  height: 80,
+                  decoration: {
+                    color: this.isLiked ? Colors.pink[400] : Colors.grey[300],
+                    shape: 'circle'
+                  },
+                  child: Center({
+                    child: Text(this.isLiked ? "❤️" : "🤍", {
+                      style: new TextStyle({
+                        fontSize: 40
+                      })
+                    })
+                  })
+                })
+              }),
+              Container({ height: 16 }),
+              Text(`${this.count} likes`, {
+                style: new TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: Colors.pink[900]
+                })
+              }),
+              Container({ height: 4 }),
+              Text("Click to like!", {
+                style: new TextStyle({
+                  fontSize: 16,
+                  color: Colors.pink[700]
+                })
+              }),
+              Container({ height: 16 }),
+              Container({
+                padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+                decoration: {
+                  color: Colors.pink[100],
+                  borderRadius: 20
+                },
+                child: Text("StatefulWidget", {
+                  style: new TextStyle({
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    color: Colors.pink[800]
+                  })
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+
+    // Comparison info widget
+    class _ComparisonInfo extends StatelessWidget {
+      build(context) {
+        return Container({
+          width: 600,
+          padding: EdgeInsets.all(20),
+          decoration: {
+            color: Colors.amber[50],
+            borderRadius: 12
+          },
+          child: Column({
+            children: [
+              Text("💡 Key Differences", {
+                style: new TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: Colors.amber[900]
+                })
+              }),
+              Container({ height: 12 }),
+              Row({
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column({
+                    children: [
+                      Text("StatelessWidget", {
+                        style: new TextStyle({
+                          fontSize: 16,
+                          fontWeight: 'bold',
+                          color: Colors.blue[800]
+                        })
+                      }),
+                      Container({ height: 8 }),
+                      Text("• No state\n• Props only\n• Immutable", {
+                        style: new TextStyle({
+                          fontSize: 14,
+                          height: 1.5
+                        })
+                      })
+                    ]
+                  }),
+                  Container({
+                    width: 1,
+                    height: 60,
+                    color: Colors.amber[300]
+                  }),
+                  Column({
+                    children: [
+                      Text("StatefulWidget", {
+                        style: new TextStyle({
+                          fontSize: 16,
+                          fontWeight: 'bold',
+                          color: Colors.pink[800]
+                        })
+                      }),
+                      Container({ height: 8 }),
+                      Text("• Can hold state\n• Uses setState()\n• Dynamic UI changes", {
+                        style: new TextStyle({
+                          fontSize: 14,
+                          height: 1.5
+                        })
+                      })
+                    ]
+                  })
+                ]
+              })
+            ]
+          })
+        });
+      }
+    }
+
+    // Export
+    const ProfileCard = classToFunction(_ProfileCard);
+    const LikeCounter = classToFunction(_LikeCounter);
+    const ComparisonInfo = classToFunction(_ComparisonInfo);
+
+    function App() {
+      const widget = Container({
+        width: 700,
+        height: 600,
+        color: Colors.grey[50],
+        child: Center({
+          child: Column({
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("🎭 StatelessWidget vs StatefulWidget", {
+                style: new TextStyle({
+                  fontSize: 32,
+                  fontWeight: 'bold',
+                  color: Colors.grey[800]
+                })
+              }),
+              Container({ height: 30 }),
+              Row({
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ProfileCard({
+                    name: "Alex Flutter",
+                    role: "Frontend Developer"
+                  }),
+                  Container({ width: 40 }),
+                  LikeCounter({
+                    initialCount: 42
+                  })
+                ]
+              }),
+              Container({ height: 30 }),
+              ComparisonInfo()
+            ]
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>StatelessWidget vs StatefulWidget</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# First Look at StatelessWidget vs StatefulWidget
+
+Flitter has two main widget types: **StatelessWidget** and **StatefulWidget**. Understanding the difference between these two is core to Flitter development. When should you use which widget?
+
+## What You'll Learn
+
+- [ ] The concept and usage of StatelessWidget
+- [ ] The concept and lifecycle of StatefulWidget
+- [ ] The meaning of state and using setState()
+- [ ] Criteria for choosing between the two widget types
+- [ ] Comparison through practical examples
+
+## StatelessWidget - Unchanging UI
+
+StatelessWidget is a widget that doesn't change once created. It uses only external props to draw the UI.
+
+### Basic Structure
+```typescript
+class _MyStatelessWidget extends StatelessWidget {
+  constructor(props) {
+    super(props);
+    // Store props
+    this.title = props.title;
+    this.color = props.color;
+  }
+  
+  build(context) {
+    // Compose UI using props
+    return Container({
+      color: this.color,
+      child: Text(this.title)
+    });
+  }
+}
+```
+
+### Characteristics
+1. **Immutability**: Cannot change once created
+2. **Simplicity**: Simple without state management
+3. **Predictability**: Same props always produce same UI
+4. **Performance**: Efficient with no state changes
+
+> **💡 Core Concept: Props vs State**
+> 
+> - **Props**: Read-only data passed from parent
+> - **State**: Mutable data managed directly by the widget
+> 
+> StatelessWidget uses only Props, while StatefulWidget can use both.
+
+### When to Use?
+- Static UI elements (logos, icons, labels)
+- When only displaying external data
+- When there's no user interaction
+- Simple layout composition
+
+## StatefulWidget - Dynamic UI
+
+StatefulWidget has mutable state, and when state changes, the UI updates automatically.
+
+### Basic Structure
+```typescript
+// 1. StatefulWidget class
+class _MyStatefulWidget extends StatefulWidget {
+  constructor(props) {
+    super(props);
+    this.initialValue = props.initialValue;
+  }
+  
+  createState() {
+    return new _MyStatefulWidgetState();
+  }
+}
+
+// 2. State class
+class _MyStatefulWidgetState extends State {
+  // State variables
+  count = 0;
+  
+  // Initialization
+  initState() {
+    super.initState();
+    this.count = this.widget.initialValue || 0;
+  }
+  
+  // UI composition
+  build(context) {
+    return GestureDetector({
+      onClick: () => {
+        // Change state with setState
+        this.setState(() => {
+          this.count++;
+        });
+      },
+      child: Text(`Count: ${this.count}`)
+    });
+  }
+}
+```
+
+### Characteristics
+1. **Mutability**: Can change state with setState()
+2. **Reactivity**: Automatically rebuilds when state changes
+3. **Lifecycle**: Lifecycle methods like initState, dispose
+4. **Complexity**: Complexity from state management
+
+### When to Use?
+- Processing user input (forms, buttons)
+- When animations are needed
+- Displaying real-time data
+- When UI changes dynamically
+
+## Understanding setState()
+
+`setState()` is the core of StatefulWidget. It changes state and triggers UI redraw.
+
+### Correct Usage
+```typescript
+// ✅ Good: Change state inside setState
+this.setState(() => {
+  this.count++;
+  this.isActive = true;
+});
+
+// ❌ Bad: Change state outside setState
+this.count++;  // UI won't update!
+this.setState(() => {});
+```
+
+### How setState() Works
+1. Call setState()
+2. Execute callback function (change state)
+3. Schedule widget rebuild
+4. Re-execute build() method
+5. Update UI
+
+## Real Comparison Examples
+
+### Static Card (StatelessWidget)
+```typescript
+class _ProductCard extends StatelessWidget {
+  constructor({ name, price, image }) {
+    super();
+    this.name = name;
+    this.price = price;
+    this.image = image;
+  }
+  
+  build(context) {
+    return Container({
+      child: Column({
+        children: [
+          Image({ src: this.image }),
+          Text(this.name),
+          Text(`$${this.price}`)
+        ]
+      })
+    });
+  }
+}
+```
+
+### Dynamic Card (StatefulWidget)
+```typescript
+class _InteractiveCard extends StatefulWidget {
+  createState() {
+    return new _InteractiveCardState();
+  }
+}
+
+class _InteractiveCardState extends State {
+  isExpanded = false;
+  isFavorite = false;
+  
+  build(context) {
+    return GestureDetector({
+      onClick: () => {
+        this.setState(() => {
+          this.isExpanded = !this.isExpanded;
+        });
+      },
+      child: Container({
+        height: this.isExpanded ? 200 : 100,
+        child: Column({
+          children: [
+            // Basic content
+            Text("Click to expand"),
+            
+            // Additional content when expanded
+            if (this.isExpanded) ...[
+              Text("Additional info"),
+              IconButton({
+                icon: this.isFavorite ? "❤️" : "🤍",
+                onPressed: () => {
+                  this.setState(() => {
+                    this.isFavorite = !this.isFavorite;
+                  });
+                }
+              })
+            ]
+          ]
+        })
+      })
+    });
+  }
+}
+```
+
+## Selection Guide
+
+### Choose StatelessWidget when:
+- ✅ UI depends only on props
+- ✅ No user interaction
+- ✅ Doesn't change over time
+- ✅ Simple display purpose
+
+### Choose StatefulWidget when:
+- ✅ Need to handle user input
+- ✅ Have data that changes over time
+- ✅ Need animations
+- ✅ Need local state management
+
+## Try It Yourself
+
+Create widgets that meet these requirements:
+
+1. **StatelessWidget Practice**: WeatherCard
+   - props: city name, temperature, weather icon
+   - Display static weather information
+
+2. **StatefulWidget Practice**: TodoItem
+   - Composed of checkbox and text
+   - Toggle completion status on click
+   - Show strikethrough on completed text
+
+<details>
+<summary>💡 Hints</summary>
+
+1. WeatherCard structure:
+   ```typescript
+   class _WeatherCard extends StatelessWidget {
+     constructor({ city, temperature, icon }) {
+       super();
+       // Store props
+     }
+   }
+   ```
+
+2. TodoItem state management:
+   ```typescript
+   class _TodoItemState extends State {
+     isCompleted = false;
+     
+     // Toggle isCompleted with setState
+   }
+   ```
+
+</details>
+
+## Performance Considerations
+
+### StatelessWidget
+- No unnecessary rebuilds
+- Can use const constructors
+- Memory efficient
+
+### StatefulWidget  
+- Entire rebuild on setState() call
+- State management overhead
+- Use only when necessary
+
+## Migration Tips
+
+Start with StatelessWidget and convert to StatefulWidget when state is needed:
+
+```typescript
+// Step 1: Start with StatelessWidget
+class _MyWidget extends StatelessWidget {
+  build(context) {
+    return Text("Static text");
+  }
+}
+
+// Step 2: Convert when state is needed
+class _MyWidget extends StatefulWidget {
+  createState() => new _MyWidgetState();
+}
+
+class _MyWidgetState extends State {
+  text = "Dynamic text";
+  
+  build(context) {
+    return GestureDetector({
+      onClick: () => {
+        this.setState(() => {
+          this.text = "Changed!";
+        });
+      },
+      child: Text(this.text)
+    });
+  }
+}
+```
+
+## 🎉 Mastered the Difference Between Two Widgets!
+
+You now know when to use which widget type.
+
+What you've learned:
+- ✅ StatelessWidget's immutability and simplicity
+- ✅ StatefulWidget's dynamic state management
+- ✅ Correct usage of setState()
+- ✅ Appropriate use cases for each widget type
+
+## Next Steps
+
+You've learned all the basics of widget interfaces! You're now ready to explore basic widget APIs.
+
+In the next chapter, we'll examine Flitter's core widgets like Container, Text, Row, and Column in detail one by one.
+
+👉 **Next Chapter: Exploring Basic Widget APIs**

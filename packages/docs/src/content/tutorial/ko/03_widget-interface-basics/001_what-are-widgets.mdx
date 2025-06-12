@@ -1,0 +1,412 @@
+---
+nav_group: "위젯 인터페이스 기초"
+nav_order: 1
+title: "위젯이란? - 모든 것은 위젯이다"
+description: "Flitter의 핵심 개념인 위젯에 대해 이해하고, 위젯이 어떻게 UI를 구성하는지 알아봅니다"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, 
+      Column, 
+      Row, 
+      Text, 
+      TextStyle, 
+      Colors,
+      Padding,
+      EdgeInsets,
+      Center
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: 다양한 위젯을 조합해서 UI를 만들어보세요
+      // 1. Container로 전체 레이아웃 설정
+      // 2. Column으로 수직 배치
+      // 3. Row로 수평 배치
+      // 4. Padding으로 여백 추가
+      const widget = Container({
+        width: 500,
+        height: 400,
+        color: Colors.grey[200],
+        child: Center({
+          child: Text("위젯을 조합해보세요!")
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>위젯 조합 실습</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, 
+      Column, 
+      Row, 
+      Text, 
+      TextStyle, 
+      Colors,
+      Padding,
+      EdgeInsets,
+      Center,
+      MainAxisAlignment,
+      CrossAxisAlignment
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // 여러 위젯을 조합해서 복잡한 UI 구성
+      const widget = Container({
+        width: 500,
+        height: 400,
+        color: Colors.blue[50],
+        child: Padding({
+          padding: EdgeInsets.all(20),
+          child: Column({
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // 제목 텍스트
+              Text("🧩 모든 것은 위젯입니다", {
+                style: new TextStyle({
+                  fontSize: 24,
+                  fontWeight: 'bold',
+                  color: Colors.blue[900]
+                })
+              }),
+              
+              // 간격을 위한 빈 Container
+              Container({ height: 20 }),
+              
+              // 설명 텍스트
+              Container({
+                padding: EdgeInsets.symmetric({ horizontal: 40, vertical: 10 }),
+                color: Colors.white,
+                borderRadius: 8,
+                child: Text("Flitter에서는 텍스트, 버튼, 레이아웃 등\n모든 UI 요소가 위젯으로 구성됩니다", {
+                  style: new TextStyle({
+                    fontSize: 16,
+                    color: Colors.blue[700],
+                    height: 1.5
+                  })
+                })
+              }),
+              
+              // 간격
+              Container({ height: 30 }),
+              
+              // 위젯 예시들을 Row로 배치
+              Row({
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // 첫 번째 위젯 박스
+                  Container({
+                    width: 120,
+                    height: 80,
+                    color: Colors.green[200],
+                    child: Center({
+                      child: Text("Container", {
+                        style: new TextStyle({
+                          color: Colors.green[800],
+                          fontWeight: 'bold'
+                        })
+                      })
+                    })
+                  }),
+                  
+                  // 두 번째 위젯 박스
+                  Container({
+                    width: 120,
+                    height: 80,
+                    color: Colors.orange[200],
+                    child: Center({
+                      child: Text("Text", {
+                        style: new TextStyle({
+                          color: Colors.orange[800],
+                          fontWeight: 'bold'
+                        })
+                      })
+                    })
+                  }),
+                  
+                  // 세 번째 위젯 박스
+                  Container({
+                    width: 120,
+                    height: 80,
+                    color: Colors.purple[200],
+                    child: Center({
+                      child: Text("Column", {
+                        style: new TextStyle({
+                          color: Colors.purple[800],
+                          fontWeight: 'bold'
+                        })
+                      })
+                    })
+                  })
+                ]
+              })
+            ]
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>위젯 조합 실습</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# 위젯이란? - 모든 것은 위젯이다
+
+Flitter에서는 화면에 보이는 모든 것이 **위젯(Widget)**입니다. 텍스트도 위젯이고, 버튼도 위젯이며, 심지어 여백과 정렬조차도 위젯으로 표현됩니다. 이 강력한 개념을 이해하면 복잡한 UI도 간단한 위젯들의 조합으로 만들 수 있습니다.
+
+## 이 튜토리얼에서 배울 것
+
+- [ ] 위젯의 개념과 역할 이해하기
+- [ ] 기본 위젯들의 종류와 용도
+- [ ] 위젯을 조합해서 UI 구성하기
+- [ ] 위젯 트리의 개념 이해하기
+- [ ] Flutter와 Flitter의 위젯 시스템 비교
+
+## 위젯의 개념
+
+위젯은 Flitter UI의 기본 구성 단위입니다. Flutter의 철학을 따라 "모든 것은 위젯이다"라는 원칙을 채택했습니다.
+
+### 위젯의 특징
+
+1. **불변성(Immutable)**: 위젯은 한 번 생성되면 변경되지 않습니다
+2. **구성 가능(Composable)**: 작은 위젯들을 조합해 복잡한 UI를 만듭니다
+3. **재사용 가능(Reusable)**: 한 번 만든 위젯은 여러 곳에서 사용할 수 있습니다
+
+> **💡 핵심 개념: 위젯의 철학**
+> 
+> 위젯은 UI의 "설명서"입니다. 화면에 무엇을 그릴지 선언적으로 표현합니다.
+> 
+> 실무에서는 작은 위젯들을 레고 블록처럼 조합해서 복잡한 UI를 만듭니다.
+
+## 위젯의 종류
+
+Flitter의 위젯은 크게 세 가지로 분류됩니다:
+
+### 1. 레이아웃 위젯
+공간을 배치하고 정렬하는 위젯들입니다:
+
+```typescript
+// 수직 배치
+Column({
+  children: [위젯1, 위젯2, 위젯3]
+})
+
+// 수평 배치
+Row({
+  children: [위젯1, 위젯2, 위젯3]
+})
+
+// 겹쳐서 배치
+Stack({
+  children: [배경위젯, 전경위젯]
+})
+```
+
+### 2. 시각적 위젯
+화면에 직접 그려지는 위젯들입니다:
+
+```typescript
+// 텍스트 표시
+Text("Hello Flitter")
+
+// 색상 있는 박스
+Container({
+  width: 100,
+  height: 100,
+  color: Colors.blue
+})
+
+// 이미지 표시
+Image({ src: "image.png" })
+```
+
+### 3. 구조적 위젯
+다른 위젯들을 감싸서 특정 기능을 추가합니다:
+
+```typescript
+// 여백 추가
+Padding({
+  padding: EdgeInsets.all(10),
+  child: Text("여백이 있는 텍스트")
+})
+
+// 가운데 정렬
+Center({
+  child: Text("가운데 정렬")
+})
+
+// 크기 제한
+SizedBox({
+  width: 200,
+  height: 50,
+  child: Container({ color: Colors.red })
+})
+```
+
+## 위젯 조합의 힘
+
+위젯의 진정한 힘은 조합에서 나옵니다. 간단한 위젯들을 조합해서 복잡한 UI를 만들어봅시다:
+
+```typescript
+// 카드 UI 만들기
+Container({
+  padding: EdgeInsets.all(16),
+  decoration: BoxDecoration({
+    color: Colors.white,
+    borderRadius: 8,
+    boxShadow: [/* 그림자 효과 */]
+  }),
+  child: Column({
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text("제목", {
+        style: new TextStyle({ fontSize: 20, fontWeight: 'bold' })
+      }),
+      SizedBox({ height: 8 }),
+      Text("내용이 들어갑니다...", {
+        style: new TextStyle({ color: Colors.grey[600] })
+      })
+    ]
+  })
+})
+```
+
+## 위젯 트리 이해하기
+
+위젯들은 트리 구조로 구성됩니다. 부모 위젯은 자식 위젯을 포함하고, 이런 관계가 계층적으로 이어집니다:
+
+```
+Container
+  └─ Padding
+      └─ Column
+          ├─ Text("제목")
+          ├─ SizedBox
+          └─ Row
+              ├─ Icon
+              └─ Text("부제목")
+```
+
+> **💡 팁**: 위젯 트리를 그려보면 UI 구조를 이해하기 쉽습니다. 복잡한 UI를 만들 때는 먼저 트리 구조를 스케치해보세요!
+
+## 연습해보기
+
+위의 완성 코드를 참고해서 다음 요구사항을 만족하는 UI를 만들어보세요:
+
+1. **전체 Container**: 500x400 크기, 연한 파란색 배경
+2. **Padding 추가**: 전체 여백 20
+3. **Column으로 수직 배치**:
+   - 제목 텍스트 (큰 글씨, 굵게)
+   - 설명 텍스트 (흰 배경, 둥근 모서리)
+   - 3개의 컬러 박스를 Row로 수평 배치
+
+<details>
+<summary>💡 힌트</summary>
+
+1. `EdgeInsets.all(20)`으로 전체 여백 설정
+2. `MainAxisAlignment.center`로 가운데 정렬
+3. `Container({ height: 20 })`로 간격 만들기
+4. `Row`의 `mainAxisAlignment`를 `spaceEvenly`로 설정
+
+</details>
+
+## 실무 팁: 위젯 설계 원칙
+
+### 1. 단일 책임 원칙
+각 위젯은 하나의 역할만 담당하도록 설계하세요:
+- ❌ 너무 많은 기능을 하나의 위젯에 넣기
+- ✅ 작은 위젯들을 조합해서 복잡한 기능 구현
+
+### 2. 재사용성 고려
+자주 사용되는 패턴은 커스텀 위젯으로 만들어두세요:
+```typescript
+// 재사용 가능한 카드 위젯
+function MyCard({ title, content }) {
+  return Container({
+    // 카드 스타일
+    child: Column({
+      children: [
+        Text(title),
+        Text(content)
+      ]
+    })
+  });
+}
+```
+
+### 3. 성능 고려
+- 불필요한 중첩 피하기
+- 무거운 위젯은 필요할 때만 생성
+- 리스트는 가상화 위젯 사용
+
+## Flutter와의 비교
+
+Flitter의 위젯 시스템은 Flutter를 모델로 했지만, 웹 환경에 최적화되어 있습니다:
+
+| 특징 | Flutter | Flitter |
+|------|---------|---------|
+| 렌더링 | Skia 엔진 | SVG/Canvas |
+| 플랫폼 | 모바일/데스크톱 | 웹 브라우저 |
+| 언어 | Dart | TypeScript/JavaScript |
+| 상태 관리 | setState, Provider 등 | setState, Context |
+
+## 🎉 위젯의 세계에 오신 것을 환영합니다!
+
+이제 위젯이 무엇인지, 어떻게 조합하는지 이해하셨습니다. 
+
+지금까지 배운 내容:
+- ✅ 위젯의 개념과 철학
+- ✅ 레이아웃, 시각적, 구조적 위젯의 종류
+- ✅ 위젯 조합으로 복잡한 UI 만들기
+- ✅ 위젯 트리 구조 이해하기
+
+## 다음 단계
+
+위젯의 기본 개념을 이해했으니, 다음 튜토리얼에서는 위젯이 어떻게 트리 구조로 구성되는지 더 자세히 알아보겠습니다. 
+
+부모-자식 관계, 위젯 키, 그리고 효율적인 트리 구성 방법을 배워보겠습니다.
+
+👉 **다음: 위젯 트리 구조 이해하기**

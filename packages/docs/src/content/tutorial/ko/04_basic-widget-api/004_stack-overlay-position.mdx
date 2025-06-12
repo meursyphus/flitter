@@ -1,0 +1,929 @@
+---
+nav_group: "기본 위젯 API 탐험"
+nav_order: 4
+title: "Stack - 위젯 겹치기와 절대 위치"
+description: "Stack을 사용해 위젯들을 겹쳐서 배치하고 Positioned로 절대 위치를 지정하는 방법을 배웁니다"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, 
+      Stack,
+      Positioned,
+      Text, 
+      TextStyle, 
+      Colors,
+      EdgeInsets,
+      Center,
+      Alignment,
+      Column
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Stack을 사용해 위젯들을 겹쳐보세요
+      // 1. 기본 Stack으로 위젯 겹치기
+      // 2. alignment로 정렬 변경
+      // 3. Positioned로 절대 위치 지정
+      // 4. Positioned.fill로 전체 영역 채우기
+      // 5. 실제 UI 예제 만들기 (배지, 플로팅 버튼 등)
+      
+      const widget = Container({
+        width: 600,
+        height: 500,
+        color: Colors.grey[100],
+        padding: EdgeInsets.all(20),
+        child: Center({
+          child: Stack({
+            children: [
+              Container({
+                width: 200,
+                height: 200,
+                color: Colors.blue
+              }),
+              Container({
+                width: 100,
+                height: 100,
+                color: Colors.red
+              })
+            ]
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Stack 위젯 실습</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, 
+      Stack,
+      Positioned,
+      Text, 
+      TextStyle, 
+      Colors,
+      EdgeInsets,
+      Center,
+      Alignment,
+      Column,
+      Row,
+      MainAxisAlignment,
+      SizedBox,
+      ClipRRect,
+      BorderRadius
+    } from "@meursyphus/flitter";
+
+    function App() {
+      const widget = Container({
+        width: 700,
+        height: 800,
+        color: Colors.grey[50],
+        child: Center({
+          child: Column({
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 제목
+              Text("🏗️ Stack으로 위젯 겹치기", {
+                style: new TextStyle({
+                  fontSize: 28,
+                  fontWeight: 'bold',
+                  color: Colors.grey[800]
+                })
+              }),
+              
+              SizedBox({ height: 30 }),
+              
+              // 기본 Stack 예제
+              Container({
+                width: 600,
+                padding: EdgeInsets.all(20),
+                decoration: {
+                  color: Colors.blue[50],
+                  borderRadius: 12
+                },
+                child: Column({
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("기본 Stack", {
+                      style: new TextStyle({
+                        fontSize: 20,
+                        fontWeight: 'bold',
+                        color: Colors.blue[900]
+                      })
+                    }),
+                    SizedBox({ height: 16 }),
+                    
+                    Row({
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        // alignment 예제
+                        Column({
+                          children: [
+                            Text("alignment: center", {
+                              style: new TextStyle({ fontSize: 14 })
+                            }),
+                            SizedBox({ height: 8 }),
+                            Container({
+                              width: 150,
+                              height: 150,
+                              color: Colors.grey[300],
+                              child: Stack({
+                                alignment: Alignment.center,
+                                children: [
+                                  Container({
+                                    width: 120,
+                                    height: 120,
+                                    color: Colors.blue[300]
+                                  }),
+                                  Container({
+                                    width: 80,
+                                    height: 80,
+                                    color: Colors.blue[500]
+                                  }),
+                                  Container({
+                                    width: 40,
+                                    height: 40,
+                                    color: Colors.blue[700]
+                                  })
+                                ]
+                              })
+                            })
+                          ]
+                        }),
+                        
+                        // 다른 alignment
+                        Column({
+                          children: [
+                            Text("alignment: topRight", {
+                              style: new TextStyle({ fontSize: 14 })
+                            }),
+                            SizedBox({ height: 8 }),
+                            Container({
+                              width: 150,
+                              height: 150,
+                              color: Colors.grey[300],
+                              child: Stack({
+                                alignment: Alignment.topRight,
+                                children: [
+                                  Container({
+                                    width: 120,
+                                    height: 120,
+                                    color: Colors.green[300]
+                                  }),
+                                  Container({
+                                    width: 80,
+                                    height: 80,
+                                    color: Colors.green[500]
+                                  }),
+                                  Container({
+                                    width: 40,
+                                    height: 40,
+                                    color: Colors.green[700]
+                                  })
+                                ]
+                              })
+                            })
+                          ]
+                        })
+                      ]
+                    })
+                  ]
+                })
+              }),
+              
+              SizedBox({ height: 20 }),
+              
+              // Positioned 예제
+              Container({
+                width: 600,
+                padding: EdgeInsets.all(20),
+                decoration: {
+                  color: Colors.purple[50],
+                  borderRadius: 12
+                },
+                child: Column({
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Positioned - 절대 위치", {
+                      style: new TextStyle({
+                        fontSize: 20,
+                        fontWeight: 'bold',
+                        color: Colors.purple[900]
+                      })
+                    }),
+                    SizedBox({ height: 16 }),
+                    
+                    Center({
+                      child: Container({
+                        width: 300,
+                        height: 200,
+                        color: Colors.purple[100],
+                        child: Stack({
+                          children: [
+                            // 왼쪽 상단
+                            Positioned({
+                              left: 10,
+                              top: 10,
+                              child: Container({
+                                width: 60,
+                                height: 60,
+                                decoration: {
+                                  color: Colors.red[400],
+                                  borderRadius: 8
+                                },
+                                child: Center({
+                                  child: Text("LT", {
+                                    style: new TextStyle({
+                                      color: Colors.white,
+                                      fontWeight: 'bold'
+                                    })
+                                  })
+                                })
+                              })
+                            }),
+                            
+                            // 오른쪽 상단
+                            Positioned({
+                              right: 10,
+                              top: 10,
+                              child: Container({
+                                width: 60,
+                                height: 60,
+                                decoration: {
+                                  color: Colors.green[400],
+                                  borderRadius: 8
+                                },
+                                child: Center({
+                                  child: Text("RT", {
+                                    style: new TextStyle({
+                                      color: Colors.white,
+                                      fontWeight: 'bold'
+                                    })
+                                  })
+                                })
+                              })
+                            }),
+                            
+                            // 중앙
+                            Positioned({
+                              left: 0,
+                              right: 0,
+                              top: 0,
+                              bottom: 0,
+                              child: Center({
+                                child: Container({
+                                  width: 80,
+                                  height: 80,
+                                  decoration: {
+                                    color: Colors.orange[400],
+                                    shape: 'circle'
+                                  },
+                                  child: Center({
+                                    child: Text("Center", {
+                                      style: new TextStyle({
+                                        color: Colors.white,
+                                        fontWeight: 'bold'
+                                      })
+                                    })
+                                  })
+                                })
+                              })
+                            }),
+                            
+                            // 하단 전체 너비
+                            Positioned({
+                              left: 10,
+                              right: 10,
+                              bottom: 10,
+                              child: Container({
+                                height: 40,
+                                decoration: {
+                                  color: Colors.blue[400],
+                                  borderRadius: 8
+                                },
+                                child: Center({
+                                  child: Text("Bottom Bar", {
+                                    style: new TextStyle({
+                                      color: Colors.white,
+                                      fontWeight: 'bold'
+                                    })
+                                  })
+                                })
+                              })
+                            })
+                          ]
+                        })
+                      })
+                    })
+                  ]
+                })
+              }),
+              
+              SizedBox({ height: 20 }),
+              
+              // 실용 예제
+              Container({
+                width: 600,
+                padding: EdgeInsets.all(20),
+                decoration: {
+                  color: Colors.green[50],
+                  borderRadius: 12
+                },
+                child: Column({
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("실용적인 예제", {
+                      style: new TextStyle({
+                        fontSize: 20,
+                        fontWeight: 'bold',
+                        color: Colors.green[900]
+                      })
+                    }),
+                    SizedBox({ height: 16 }),
+                    
+                    Row({
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        // 배지가 있는 아이콘
+                        Column({
+                          children: [
+                            Text("알림 배지", { style: new TextStyle({ fontSize: 14 }) }),
+                            SizedBox({ height: 8 }),
+                            Stack({
+                              clipBehavior: 'none',
+                              children: [
+                                Container({
+                                  width: 60,
+                                  height: 60,
+                                  decoration: {
+                                    color: Colors.grey[300],
+                                    shape: 'circle'
+                                  },
+                                  child: Center({
+                                    child: Text("🔔", {
+                                      style: new TextStyle({ fontSize: 30 })
+                                    })
+                                  })
+                                }),
+                                Positioned({
+                                  right: -5,
+                                  top: -5,
+                                  child: Container({
+                                    width: 24,
+                                    height: 24,
+                                    decoration: {
+                                      color: Colors.red[500],
+                                      shape: 'circle',
+                                      border: {
+                                        color: Colors.white,
+                                        width: 2
+                                      }
+                                    },
+                                    child: Center({
+                                      child: Text("3", {
+                                        style: new TextStyle({
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: 'bold'
+                                        })
+                                      })
+                                    })
+                                  })
+                                })
+                              ]
+                            })
+                          ]
+                        }),
+                        
+                        // 이미지 위 텍스트
+                        Column({
+                          children: [
+                            Text("이미지 오버레이", { style: new TextStyle({ fontSize: 14 }) }),
+                            SizedBox({ height: 8 }),
+                            ClipRRect({
+                              borderRadius: BorderRadius.circular(12),
+                              child: Stack({
+                                children: [
+                                  Container({
+                                    width: 150,
+                                    height: 100,
+                                    color: Colors.teal[300]
+                                  }),
+                                  Positioned({
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    child: Container({
+                                      padding: EdgeInsets.all(8),
+                                      decoration: {
+                                        gradient: {
+                                          colors: [
+                                            Colors.black.withOpacity(0.7),
+                                            Colors.transparent
+                                          ],
+                                          begin: { x: 0, y: 1 },
+                                          end: { x: 0, y: 0 }
+                                        }
+                                      },
+                                      child: Text("Beautiful View", {
+                                        style: new TextStyle({
+                                          color: Colors.white,
+                                          fontWeight: 'bold'
+                                        })
+                                      })
+                                    })
+                                  })
+                                ]
+                              })
+                            })
+                          ]
+                        })
+                      ]
+                    })
+                  ]
+                })
+              })
+            ]
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Stack 위젯 실습</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# Stack - 위젯 겹치기와 절대 위치
+
+Stack은 위젯들을 겹쳐서 배치할 수 있게 해주는 강력한 레이아웃 위젯입니다. 카드 위의 배지, 이미지 위의 텍스트, 플로팅 버튼 등 다양한 UI를 만들 때 필수적입니다. Z축(깊이)을 활용한 레이아웃을 배워봅시다.
+
+## 이 튜토리얼에서 배울 것
+
+- [ ] Stack의 기본 개념과 사용법
+- [ ] alignment로 위젯 정렬하기
+- [ ] Positioned로 절대 위치 지정하기
+- [ ] clipBehavior로 오버플로 제어하기
+- [ ] 실용적인 Stack 패턴들
+
+## Stack의 기본 개념
+
+Stack은 자식 위젯들을 겹쳐서 표시합니다. 먼저 추가된 위젯이 아래에, 나중에 추가된 위젯이 위에 그려집니다:
+
+```typescript
+Stack({
+  children: [
+    Container({ width: 200, height: 200, color: Colors.red }),    // 맨 아래
+    Container({ width: 150, height: 150, color: Colors.green }),  // 중간
+    Container({ width: 100, height: 100, color: Colors.blue })    // 맨 위
+  ]
+})
+```
+
+> **💡 핵심 개념: Z-순서**
+> 
+> Stack의 children 배열에서 인덱스가 클수록 위에 그려집니다.
+> - 인덱스 0: 가장 아래 (배경)
+> - 인덱스 1, 2, ...: 점점 위로
+> - 마지막 인덱스: 가장 위 (전경)
+> 
+> CSS의 z-index와 비슷한 개념입니다.
+
+## Alignment - 위젯 정렬
+
+alignment 속성으로 Positioned가 아닌 자식들의 정렬을 제어합니다:
+
+### 기본 정렬
+```typescript
+Stack({
+  alignment: Alignment.center,  // 기본값
+  children: [
+    Container({ width: 200, height: 200, color: Colors.blue[200] }),
+    Container({ width: 100, height: 100, color: Colors.blue[600] }),
+    Container({ width: 50, height: 50, color: Colors.blue[900] })
+  ]
+})
+```
+
+### 정렬 옵션들
+```typescript
+Alignment.topLeft      // 왼쪽 상단
+Alignment.topCenter    // 상단 중앙
+Alignment.topRight     // 오른쪽 상단
+Alignment.centerLeft   // 왼쪽 중앙
+Alignment.center       // 정중앙 (기본값)
+Alignment.centerRight  // 오른쪽 중앙
+Alignment.bottomLeft   // 왼쪽 하단
+Alignment.bottomCenter // 하단 중앙
+Alignment.bottomRight  // 오른쪽 하단
+
+// 커스텀 정렬 (-1.0 ~ 1.0)
+Alignment(0.5, -0.5)  // x: 오른쪽으로 조금, y: 위로 조금
+```
+
+## Positioned - 절대 위치 지정
+
+Positioned를 사용하면 Stack 내에서 위젯의 정확한 위치를 지정할 수 있습니다:
+
+### 기본 사용법
+```typescript
+Stack({
+  children: [
+    // 배경
+    Container({ width: 300, height: 200, color: Colors.grey[300] }),
+    
+    // 왼쪽 상단에서 20px 떨어진 위치
+    Positioned({
+      left: 20,
+      top: 20,
+      child: Container({
+        width: 80,
+        height: 80,
+        color: Colors.red
+      })
+    }),
+    
+    // 오른쪽 하단에서 20px 떨어진 위치
+    Positioned({
+      right: 20,
+      bottom: 20,
+      child: Container({
+        width: 80,
+        height: 80,
+        color: Colors.blue
+      })
+    })
+  ]
+})
+```
+
+### Positioned 속성들
+```typescript
+Positioned({
+  left: 10,    // 왼쪽에서의 거리
+  top: 10,     // 위에서의 거리
+  right: 10,   // 오른쪽에서의 거리
+  bottom: 10,  // 아래에서의 거리
+  width: 100,  // 너비 (선택사항)
+  height: 50,  // 높이 (선택사항)
+  child: Widget
+})
+```
+
+### 전체 영역 채우기
+```typescript
+// 방법 1: 모든 방향 0
+Positioned({
+  left: 0,
+  top: 0,
+  right: 0,
+  bottom: 0,
+  child: Container({ color: Colors.black.withOpacity(0.5) })
+})
+
+// 방법 2: Positioned.fill 사용
+Positioned.fill({
+  child: Container({ color: Colors.black.withOpacity(0.5) })
+})
+```
+
+## ClipBehavior - 오버플로 제어
+
+Stack 영역을 벗어나는 위젯들을 어떻게 처리할지 결정합니다:
+
+```typescript
+Stack({
+  clipBehavior: Clip.none,  // 잘리지 않음 (기본값)
+  // Clip.hardEdge,  // 날카롭게 자름
+  // Clip.antiAlias, // 부드럽게 자름 (성능 비용)
+  children: [
+    Container({ width: 100, height: 100, color: Colors.blue }),
+    Positioned({
+      right: -20,  // Stack 영역 밖으로 나감
+      top: -20,
+      child: Container({
+        width: 40,
+        height: 40,
+        color: Colors.red
+      })
+    })
+  ]
+})
+```
+
+## 실용적인 예제들
+
+### 1. 배지가 있는 아이콘
+```typescript
+Stack({
+  clipBehavior: Clip.none,
+  children: [
+    // 메인 아이콘
+    Container({
+      width: 60,
+      height: 60,
+      decoration: {
+        color: Colors.blue,
+        shape: 'circle'
+      },
+      child: Icon(Icons.shopping_cart, { color: Colors.white })
+    }),
+    
+    // 배지
+    Positioned({
+      right: -8,
+      top: -8,
+      child: Container({
+        width: 24,
+        height: 24,
+        decoration: {
+          color: Colors.red,
+          shape: 'circle',
+          border: Border.all({ color: Colors.white, width: 2 })
+        },
+        alignment: Alignment.center,
+        child: Text("3", {
+          style: new TextStyle({
+            color: Colors.white,
+            fontSize: 12,
+            fontWeight: 'bold'
+          })
+        })
+      })
+    })
+  ]
+})
+```
+
+### 2. 이미지 위 그라데이션 텍스트
+```typescript
+Stack({
+  children: [
+    // 이미지
+    Image({ src: "background.jpg", fit: BoxFit.cover }),
+    
+    // 하단 그라데이션
+    Positioned({
+      left: 0,
+      right: 0,
+      bottom: 0,
+      child: Container({
+        height: 100,
+        decoration: {
+          gradient: LinearGradient({
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [
+              Colors.black.withOpacity(0.8),
+              Colors.transparent
+            ]
+          })
+        }
+      })
+    }),
+    
+    // 텍스트
+    Positioned({
+      left: 16,
+      right: 16,
+      bottom: 16,
+      child: Column({
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Beautiful Sunset", {
+            style: new TextStyle({
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: 'bold'
+            })
+          }),
+          Text("Captured at the beach", {
+            style: new TextStyle({
+              color: Colors.white.withOpacity(0.8),
+              fontSize: 16
+            })
+          })
+        ]
+      })
+    })
+  ]
+})
+```
+
+### 3. 플로팅 액션 버튼
+```typescript
+Stack({
+  children: [
+    // 메인 콘텐츠
+    ListView({
+      children: /* 리스트 아이템들 */
+    }),
+    
+    // FAB
+    Positioned({
+      right: 16,
+      bottom: 16,
+      child: Container({
+        width: 56,
+        height: 56,
+        decoration: {
+          color: Colors.blue,
+          shape: 'circle',
+          boxShadow: [
+            BoxShadow({
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 8,
+              offset: { x: 0, y: 4 }
+            })
+          ]
+        },
+        child: Icon(Icons.add, { color: Colors.white })
+      })
+    })
+  ]
+})
+```
+
+### 4. 프로그레스 오버레이
+```typescript
+Stack({
+  children: [
+    // 메인 콘텐츠
+    Container({ /* ... */ }),
+    
+    // 로딩 오버레이
+    if (isLoading) Positioned.fill({
+      child: Container({
+        color: Colors.black.withOpacity(0.5),
+        child: Center({
+          child: CircularProgressIndicator()
+        })
+      })
+    })
+  ]
+})
+```
+
+## IndexedStack - 한 번에 하나만 표시
+
+IndexedStack은 여러 자식 중 하나만 표시합니다:
+
+```typescript
+IndexedStack({
+  index: currentIndex,  // 표시할 자식의 인덱스
+  children: [
+    Container({ color: Colors.red }),    // index: 0
+    Container({ color: Colors.green }),  // index: 1
+    Container({ color: Colors.blue })    // index: 2
+  ]
+})
+```
+
+## 연습해보기
+
+다음 UI들을 Stack으로 구현해보세요:
+
+1. **프로필 카드**:
+   - 배경 이미지
+   - 하단에 사용자 정보 (그라데이션 배경)
+   - 우측 상단에 편집 버튼
+
+2. **음악 플레이어 미니바**:
+   - 앨범 아트 (왼쪽)
+   - 곡 정보 (중앙)
+   - 재생 버튼 (오른쪽)
+   - 진행률 바 (하단 전체)
+
+3. **할인 배지**:
+   - 상품 이미지
+   - 왼쪽 상단에 "SALE" 배지
+   - 오른쪽 하단에 할인율
+
+<details>
+<summary>💡 힌트</summary>
+
+1. Stack > [이미지, Positioned(bottom), Positioned(top-right)]
+2. Stack > [Row(메인 콘텐츠), Positioned(bottom, 진행률)]
+3. clipBehavior: Clip.none로 배지가 살짝 밖으로 나가게
+
+</details>
+
+## 성능 고려사항
+
+### 1. 불필요한 Stack 피하기
+```typescript
+// ❌ 단순 정렬을 위한 Stack
+Stack({
+  alignment: Alignment.center,
+  children: [Text("중앙 정렬")]
+})
+
+// ✅ Center 사용
+Center({ child: Text("중앙 정렬") })
+```
+
+### 2. 복잡한 Stack 최적화
+```typescript
+// 자주 변경되는 부분만 setState에 포함
+Stack({
+  children: [
+    // 정적인 배경 (const로 최적화)
+    const BackgroundWidget(),
+    
+    // 동적인 콘텐츠
+    if (showOverlay) AnimatedOverlay()
+  ]
+})
+```
+
+## 주의사항
+
+### 1. Positioned는 Stack의 직접 자식이어야 함
+```typescript
+// ❌ 에러 발생
+Stack({
+  children: [
+    Container({
+      child: Positioned({ /* ... */ })  // 에러!
+    })
+  ]
+})
+
+// ✅ 올바른 사용
+Stack({
+  children: [
+    Positioned({
+      child: Container({ /* ... */ })
+    })
+  ]
+})
+```
+
+### 2. Stack 크기 결정
+Stack의 크기는 non-positioned 자식들에 의해 결정됩니다:
+```typescript
+Stack({
+  children: [
+    Container({ width: 200, height: 200 }),  // Stack 크기 결정
+    Positioned({ /* 크기에 영향 없음 */ })
+  ]
+})
+```
+
+## 🎉 Stack 레이아웃 마스터!
+
+Stack을 사용한 겹치기 레이아웃을 마스터했습니다.
+
+지금까지 배운 내용:
+- ✅ Stack으로 위젯 겹치기
+- ✅ alignment로 정렬 제어
+- ✅ Positioned로 절대 위치 지정
+- ✅ 실용적인 UI 패턴 구현
+
+## 다음 단계
+
+기본 위젯 API를 모두 배웠습니다! 다음 챕터에서는 Padding, Align, Center 등 레이아웃을 더 정교하게 다루는 위젯들을 알아보겠습니다.
+
+더 세밀한 레이아웃 제어를 배워보겠습니다.
+
+👉 **다음 챕터: 레이아웃 위젯 마스터하기**

@@ -1,0 +1,655 @@
+---
+nav_group: "레이아웃 위젯 마스터하기"
+nav_order: 1
+title: "Padding과 Margin - 공간 다루기"
+description: "Padding과 Container의 margin으로 위젯 주변의 공간을 자유자재로 다루는 방법을 배워보세요"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Padding, Text, Colors, EdgeInsets, Column, Row, Border } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Padding과 margin을 활용해보세요
+      // 1. Padding 위젯으로 내부 간격 추가
+      // 2. Container의 margin으로 외부 간격 추가
+      // 3. EdgeInsets의 다양한 메서드 활용
+      const widget = Container({
+        color: Colors.grey[200],
+        child: Column({
+          children: [
+            Text("Padding과 Margin을 연습해보세요!"),
+            // 여기에 코드 추가
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Padding과 Margin 마스터하기</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, Padding, Text, TextStyle, Colors, EdgeInsets, 
+      Column, Row, SizedBox, Center, Border, BorderSide
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // 시각적으로 보여주기 위한 컴포넌트
+      const DemoBox = (text, color = Colors.blue[300]) => Container({
+        width: 100,
+        height: 100,
+        color: color,
+        child: Center({
+          child: Text(text, {
+            style: new TextStyle({ 
+              color: Colors.white,
+              fontWeight: "bold"
+            })
+          })
+        })
+      });
+
+      const widget = Container({
+        width: 600,
+        padding: EdgeInsets.all(20),
+        color: Colors.grey[100],
+        child: Column({
+          crossAxisAlignment: "stretch",
+          children: [
+            // 1. Padding 기본 예제
+            Text("1. Padding 위젯 - 내부 간격", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              color: Colors.amber[100],
+              child: Padding({
+                padding: EdgeInsets.all(20),
+                child: Container({
+                  color: Colors.amber[400],
+                  height: 60,
+                  child: Center({
+                    child: Text("Padding으로 감싸진 컨텐츠", {
+                      style: new TextStyle({ color: Colors.white })
+                    })
+                  })
+                })
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 2. Container margin 예제
+            Text("2. Container margin - 외부 간격", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              color: Colors.purple[100],
+              padding: EdgeInsets.all(10),
+              child: Container({
+                margin: EdgeInsets.all(20),
+                color: Colors.purple[400],
+                height: 60,
+                child: Center({
+                  child: Text("Margin이 적용된 Container", {
+                    style: new TextStyle({ color: Colors.white })
+                  })
+                })
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 3. EdgeInsets 다양한 사용법
+            Text("3. EdgeInsets의 다양한 메서드", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            
+            // EdgeInsets.all()
+            Container({
+              margin: EdgeInsets.only({ bottom: 10 }),
+              color: Colors.white,
+              child: Row({
+                children: [
+                  Container({
+                    width: 140,
+                    padding: EdgeInsets.all(10),
+                    child: Text("EdgeInsets.all(20)")
+                  }),
+                  Expanded({
+                    child: Container({
+                      color: Colors.green[100],
+                      child: Padding({
+                        padding: EdgeInsets.all(20),
+                        child: Container({
+                          height: 40,
+                          color: Colors.green[400]
+                        })
+                      })
+                    })
+                  })
+                ]
+              })
+            }),
+
+            // EdgeInsets.symmetric()
+            Container({
+              margin: EdgeInsets.only({ bottom: 10 }),
+              color: Colors.white,
+              child: Row({
+                children: [
+                  Container({
+                    width: 140,
+                    padding: EdgeInsets.all(10),
+                    child: Text("symmetric(h:30, v:10)")
+                  }),
+                  Expanded({
+                    child: Container({
+                      color: Colors.blue[100],
+                      child: Padding({
+                        padding: EdgeInsets.symmetric({ horizontal: 30, vertical: 10 }),
+                        child: Container({
+                          height: 40,
+                          color: Colors.blue[400]
+                        })
+                      })
+                    })
+                  })
+                ]
+              })
+            }),
+
+            // EdgeInsets.fromLTRB()
+            Container({
+              margin: EdgeInsets.only({ bottom: 10 }),
+              color: Colors.white,
+              child: Row({
+                children: [
+                  Container({
+                    width: 140,
+                    padding: EdgeInsets.all(10),
+                    child: Text("fromLTRB(10,5,30,15)")
+                  }),
+                  Expanded({
+                    child: Container({
+                      color: Colors.red[100],
+                      child: Padding({
+                        padding: EdgeInsets.fromLTRB({ left: 10, top: 5, right: 30, bottom: 15 }),
+                        child: Container({
+                          height: 40,
+                          color: Colors.red[400]
+                        })
+                      })
+                    })
+                  })
+                ]
+              })
+            }),
+
+            // EdgeInsets.only()
+            Container({
+              color: Colors.white,
+              child: Row({
+                children: [
+                  Container({
+                    width: 140,
+                    padding: EdgeInsets.all(10),
+                    child: Text("only(left:40, top:20)")
+                  }),
+                  Expanded({
+                    child: Container({
+                      color: Colors.orange[100],
+                      child: Padding({
+                        padding: EdgeInsets.only({ left: 40, top: 20 }),
+                        child: Container({
+                          height: 40,
+                          color: Colors.orange[400]
+                        })
+                      })
+                    })
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 4. 실전 예제 - 카드 레이아웃
+            Text("4. 실전 예제 - 카드 디자인", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              margin: EdgeInsets.symmetric({ horizontal: 20, vertical: 10 }),
+              padding: EdgeInsets.all(20),
+              decoration: new BoxDecoration({
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [{
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: { x: 0, y: 4 }
+                }]
+              }),
+              child: Column({
+                crossAxisAlignment: "start",
+                children: [
+                  Row({
+                    children: [
+                      Container({
+                        width: 50,
+                        height: 50,
+                        margin: EdgeInsets.only({ right: 15 }),
+                        decoration: new BoxDecoration({
+                          color: Colors.indigo[400],
+                          shape: BoxShape.circle
+                        }),
+                        child: Center({
+                          child: Text("👤", {
+                            style: new TextStyle({ fontSize: 24 })
+                          })
+                        })
+                      }),
+                      Expanded({
+                        child: Column({
+                          crossAxisAlignment: "start",
+                          children: [
+                            Text("사용자 프로필", {
+                              style: new TextStyle({
+                                fontSize: 18,
+                                fontWeight: "bold"
+                              })
+                            }),
+                            SizedBox({ height: 4 }),
+                            Text("margin과 padding의 조합", {
+                              style: new TextStyle({
+                                color: Colors.grey[600],
+                                fontSize: 14
+                              })
+                            })
+                          ]
+                        })
+                      })
+                    ]
+                  }),
+                  Padding({
+                    padding: EdgeInsets.only({ top: 15 }),
+                    child: Text("이 카드는 Container의 margin으로 외부 간격을, padding으로 내부 간격을 만들었습니다. 아이콘은 margin-right로 텍스트와 간격을 두었습니다.", {
+                      style: new TextStyle({
+                        color: Colors.grey[700],
+                        fontSize: 13,
+                        height: 1.5
+                      })
+                    })
+                  })
+                ]
+              })
+            })
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Padding과 Margin 마스터하기</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# Padding과 Margin - 공간 다루기
+
+Padding과 margin은 UI 디자인에서 가장 중요한 개념 중 하나입니다. 적절한 간격은 사용성을 높이고 시각적으로 아름다운 인터페이스를 만드는 핵심입니다.
+
+## 이 튜토리얼에서 배울 것
+
+- [ ] Padding 위젯으로 내부 간격 만들기
+- [ ] Container의 margin으로 외부 간격 만들기
+- [ ] EdgeInsets의 다양한 생성 메서드 활용하기
+- [ ] padding과 margin의 차이점 이해하기
+- [ ] 실전에서 자주 사용하는 간격 패턴
+- [ ] 반응형 간격 디자인 팁
+
+## Padding vs Margin 이해하기
+
+### 핵심 차이점
+
+- **Padding (내부 간격)**: 위젯의 경계 안쪽 공간
+  - 배경색이나 테두리 안쪽에 적용
+  - 클릭/터치 영역에 포함됨
+  
+- **Margin (외부 간격)**: 위젯의 경계 바깥쪽 공간
+  - 다른 위젯과의 거리
+  - 클릭/터치 영역에 포함되지 않음
+
+> **💡 핵심 개념: 언제 무엇을 사용할까?**
+> 
+> - **Padding 사용**: 버튼의 텍스트 주변 공간, 카드의 내용물 간격
+> - **Margin 사용**: 카드 사이의 간격, 섹션 구분, 화면 가장자리와의 거리
+
+## 1단계: Padding 위젯 사용하기
+
+### 기본 사용법
+
+```typescript
+Padding({
+  padding: EdgeInsets.all(16),
+  child: Text("패딩이 적용된 텍스트")
+})
+```
+
+### Padding의 특징
+
+1. **단일 목적 위젯**: 오직 padding만을 위한 위젯
+2. **성능 최적화**: Container보다 가벼움
+3. **명시적 의도**: 코드를 읽기 쉽게 만듦
+
+```typescript
+// 좋은 예 - 목적이 명확함
+Padding({
+  padding: EdgeInsets.all(20),
+  child: MyWidget()
+})
+
+// 비추천 - Container는 더 무거움
+Container({
+  padding: EdgeInsets.all(20),
+  child: MyWidget()
+})
+```
+
+## 2단계: Container의 margin 속성
+
+### margin 사용법
+
+```typescript
+Container({
+  margin: EdgeInsets.all(16),
+  color: Colors.blue,
+  child: Text("마진이 적용된 컨테이너")
+})
+```
+
+### margin의 특징
+
+1. **Container 전용**: 오직 Container에서만 사용 가능
+2. **다른 속성과 조합**: color, decoration 등과 함께 사용
+3. **레이아웃 영향**: 주변 위젯들의 배치에 영향
+
+## 3단계: EdgeInsets 마스터하기
+
+### EdgeInsets.all() - 모든 방향 동일
+
+```typescript
+EdgeInsets.all(20)  // 상하좌우 모두 20
+```
+
+### EdgeInsets.symmetric() - 대칭 간격
+
+```typescript
+EdgeInsets.symmetric({
+  horizontal: 20,  // 좌우 20
+  vertical: 10    // 상하 10
+})
+```
+
+### EdgeInsets.fromLTRB() - 각 방향 개별 지정
+
+```typescript
+EdgeInsets.fromLTRB({
+  left: 10,
+  top: 20,
+  right: 10,
+  bottom: 30
+})
+```
+
+### EdgeInsets.only() - 특정 방향만
+
+```typescript
+EdgeInsets.only({
+  left: 20,
+  top: 10
+  // right와 bottom은 0
+})
+```
+
+## 4단계: 실전 패턴 - 중첩 사용
+
+```typescript
+Container({
+  margin: EdgeInsets.all(16),        // 외부 간격
+  padding: EdgeInsets.all(20),       // 내부 간격
+  decoration: new BoxDecoration({
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(8),
+    border: Border.all({
+      color: Colors.grey[300],
+      width: 1
+    })
+  }),
+  child: Column({
+    children: [
+      Text("제목", {
+        style: new TextStyle({ fontSize: 20, fontWeight: "bold" })
+      }),
+      Padding({
+        padding: EdgeInsets.only({ top: 8 }),  // 제목과 본문 사이
+        child: Text("본문 내용...")
+      })
+    ]
+  })
+})
+```
+
+## 5단계: 반응형 간격 디자인
+
+### 화면 크기에 따른 간격 조정
+
+```typescript
+// 기본 간격 정의
+const baseSpacing = 8;
+
+// 배수로 일관성 있는 간격 사용
+const spacing = {
+  xs: baseSpacing * 0.5,   // 4
+  sm: baseSpacing,         // 8
+  md: baseSpacing * 2,     // 16
+  lg: baseSpacing * 3,     // 24
+  xl: baseSpacing * 4      // 32
+};
+
+// 사용 예
+Padding({
+  padding: EdgeInsets.symmetric({
+    horizontal: spacing.lg,
+    vertical: spacing.md
+  }),
+  child: MyContent()
+})
+```
+
+## 6단계: 실전 예제 - 리스트 아이템
+
+```typescript
+Container({
+  margin: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+  child: Container({
+    padding: EdgeInsets.all(16),
+    decoration: new BoxDecoration({
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(8),
+      boxShadow: [{
+        color: Colors.black.withOpacity(0.05),
+        blurRadius: 4,
+        offset: { x: 0, y: 2 }
+      }]
+    }),
+    child: Row({
+      children: [
+        // 아이콘
+        Container({
+          width: 48,
+          height: 48,
+          margin: EdgeInsets.only({ right: 16 }),
+          decoration: new BoxDecoration({
+            color: Colors.blue[100],
+            shape: BoxShape.circle
+          }),
+          child: Center({
+            child: Text("📋", { style: new TextStyle({ fontSize: 24 }) })
+          })
+        }),
+        // 컨텐츠
+        Expanded({
+          child: Column({
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("리스트 아이템 제목", {
+                style: new TextStyle({
+                  fontSize: 16,
+                  fontWeight: "bold"
+                })
+              }),
+              Padding({
+                padding: EdgeInsets.only({ top: 4 }),
+                child: Text("부가 설명 텍스트", {
+                  style: new TextStyle({
+                    fontSize: 14,
+                    color: Colors.grey[600]
+                  })
+                })
+              })
+            ]
+          })
+        }),
+        // 액션 버튼
+        Padding({
+          padding: EdgeInsets.only({ left: 16 }),
+          child: Text("→", {
+            style: new TextStyle({
+              fontSize: 20,
+              color: Colors.grey[400]
+            })
+          })
+        })
+      ]
+    })
+  })
+})
+```
+
+## 연습 과제
+
+다음과 같은 레이아웃을 만들어보세요:
+
+1. **네비게이션 바**
+   - 상하 padding 12, 좌우 padding 20
+   - 로고와 메뉴 아이템 사이 간격
+   - 전체 네비게이션 바의 margin-bottom 사용
+
+2. **카드 그리드**
+   - 카드 간 간격은 margin으로
+   - 카드 내부 컨텐츠는 padding으로
+   - 그리드 전체의 padding 적용
+
+3. **폼 디자인**
+   - 입력 필드의 내부 padding
+   - 필드 간 margin
+   - 레이블과 입력 필드 사이 간격
+
+<details>
+<summary>💡 힌트</summary>
+
+1. 네비게이션 바는 Container + Row 조합
+2. 카드 그리드는 Wrap 위젯이나 GridView 활용
+3. 폼은 Column + 각 필드마다 적절한 margin/padding
+
+</details>
+
+## 고급 팁: 일관된 간격 시스템
+
+```typescript
+// 디자인 시스템 정의
+class Spacing {
+  static const double unit = 4;
+  
+  static EdgeInsets all(double multiplier) {
+    return EdgeInsets.all(unit * multiplier);
+  }
+  
+  static EdgeInsets horizontal(double multiplier) {
+    return EdgeInsets.symmetric({ horizontal: unit * multiplier });
+  }
+  
+  static EdgeInsets vertical(double multiplier) {
+    return EdgeInsets.symmetric({ vertical: unit * multiplier });
+  }
+}
+
+// 사용 예
+Padding({
+  padding: Spacing.all(4),      // 16px
+  child: Container({
+    margin: Spacing.vertical(2), // 8px 상하
+    child: MyWidget()
+  })
+})
+```
+
+## 핵심 정리
+
+Padding과 Margin 마스터 체크리스트:
+
+- ✅ **Padding**: 내부 간격, 클릭 영역 포함
+- ✅ **Margin**: 외부 간격, 위젯 간 거리
+- ✅ **EdgeInsets**: all, symmetric, fromLTRB, only
+- ✅ **성능**: 단순 padding은 Padding 위젯 사용
+- ✅ **일관성**: 디자인 시스템으로 간격 통일
+
+## 🎉 훌륭합니다!
+
+Padding과 margin을 완벽히 마스터했습니다! 이제 프로페셔널한 간격 디자인을 만들 수 있을 것입니다.
+
+## 다음 단계
+
+다음 튜토리얼에서는 Align과 Center 위젯으로 정렬을 마스터해보겠습니다.
+
+👉 **다음: Align과 Center - 정렬의 예술**

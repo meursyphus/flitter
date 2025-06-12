@@ -1,0 +1,215 @@
+---
+nav_group: "Quick Start"
+nav_order: 2
+title: "Your First Hello World App"
+description: "Create your first application using Flitter's basic widgets"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Text, Colors } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Create a Container widget
+      // 1. width: 400, height: 200
+      // 2. background color: Colors.green[200]
+      // 3. add Text widget as child
+      const widget = null;
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>My First Flitter App</h1>
+          {/* Add ReactWidget here */}
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Text, TextStyle, Colors, Center } from "@meursyphus/flitter";
+
+    function App() {
+      // Create basic layout with Container widget
+      const widget = Container({
+        width: 400,
+        height: 200,
+        color: Colors.green[200],
+        child: Center({
+          child: Text("🌟 Hello, Flitter World! 🌟", {
+            style: new TextStyle({
+              fontSize: 28,
+              fontWeight: 'bold',
+              color: Colors.green[800]
+            })
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>My First Flitter App</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+---
+
+# Your First "Hello World" App
+
+Now let's create an actual working app using Flitter's basic widgets! We'll build a simple but functional Hello World app that introduces you to Flitter's core concepts.
+
+## What You'll Learn
+
+- [ ] Basic usage of Container widget
+- [ ] Text widget and styling
+- [ ] Center widget for alignment
+- [ ] Using the Colors system
+- [ ] Rendering Flitter widgets with ReactWidget
+
+## Step 1: Understanding the Container Widget
+
+Container is the most fundamental widget in Flitter. It can hold a single child widget and allows you to set dimensions, colors, padding, and more.
+
+```typescript
+Container({
+  width: 400,     // Set width
+  height: 200,    // Set height
+  color: Colors.green[200],  // Set background color
+  child: /* child widget */
+})
+```
+
+> **💡 Core Concept: Container Widget**
+> 
+> Container works exactly like Flutter's Container. It operates on a box model and can have one child.
+> 
+> In real-world projects, it's used as the foundation for cards, buttons, sections, and other UI elements.
+
+## Step 2: Text Widget and Styling
+
+The Text widget displays text content. You can customize its appearance using TextStyle to set font size, color, weight, and more.
+
+```typescript
+Text("🌟 Hello, Flitter World! 🌟", {
+  style: new TextStyle({
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: Colors.green[800]
+  })
+})
+```
+
+## Step 3: Center Widget for Alignment
+
+The Center widget aligns its child to the center. It's simple but frequently used in layouts.
+
+```typescript
+Center({
+  child: Text("Centered text")
+})
+```
+
+## Step 4: Colors System
+
+Flitter provides Material Design's color palette. Each color has shades from 50 to 900.
+
+```typescript
+Colors.green[200]  // Light green
+Colors.green[800]  // Dark green
+Colors.blue[500]   // Default blue
+Colors.red[300]    // Light red
+```
+
+> **💡 Tip**: Use the Colors system for consistent design. Light colors (200-300) work great for backgrounds, while dark colors (700-900) are perfect for text!
+
+## Step 5: Rendering with ReactWidget
+
+Finally, wrap your Flitter widget with ReactWidget to render it in your React app.
+
+```typescript
+<ReactWidget widget={widget} />
+```
+
+## Practice Exercise
+
+Using the code above as reference, complete the Hello World app with these requirements:
+
+1. **Create Container**: width 400, height 200, background color green[200]
+2. **Add Text**: "Hello, Flitter World!" message
+3. **Style it**: font size 28, bold, color green[800]
+4. **Center align**: Use Center widget for text alignment
+5. **Render**: Display on screen with ReactWidget
+
+<details>
+<summary>💡 Hint</summary>
+
+1. Set Center as the child of Container
+2. Set Text as the child of Center
+3. Create TextStyle with `new TextStyle({...})`
+4. Pass the widget prop to ReactWidget
+
+</details>
+
+## Expected Result
+
+When completed, you should see:
+
+- A light green rectangle (400x200) background
+- Centered "Hello, Flitter World!" text
+- Bold, dark green text
+
+## 🎉 Congratulations!
+
+You've successfully completed your first Flitter app! 
+
+What you've learned:
+- ✅ Creating basic layouts with Container
+- ✅ Displaying text with Text and TextStyle
+- ✅ Aligning widgets with Center
+- ✅ Using the Colors system
+- ✅ Rendering with ReactWidget
+
+## Next Steps
+
+Now that you know how to use basic widgets, let's create an interactive button that responds to user input in the next tutorial!
+
+You'll learn the basics of state management and event handling.
+
+👉 **Next: Creating a Simple Interactive Button**

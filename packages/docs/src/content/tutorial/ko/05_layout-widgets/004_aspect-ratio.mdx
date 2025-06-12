@@ -1,0 +1,909 @@
+---
+nav_group: "레이아웃 위젯 마스터하기"
+nav_order: 4
+title: "AspectRatio - 비율 유지하기"
+description: "AspectRatio로 이미지, 비디오, 카드 등의 비율을 완벽하게 유지하는 방법을 배워보세요"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, AspectRatio, Text, Colors, EdgeInsets, Column } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: AspectRatio를 활용해보세요
+      // 1. 정사각형 만들기 (1:1 비율)
+      // 2. 16:9 비디오 플레이어 비율
+      // 3. 황금비율 적용하기
+      const widget = Container({
+        padding: EdgeInsets.all(20),
+        child: Column({
+          children: [
+            Text("AspectRatio를 연습해보세요!"),
+            // 여기에 코드 추가
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>AspectRatio 마스터하기</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, AspectRatio, Text, TextStyle, Colors, EdgeInsets, 
+      Column, Row, SizedBox, Center, Expanded, GridView
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // 비율 시각화 컴포넌트
+      const RatioBox = (ratio, label, color) => Container({
+        margin: EdgeInsets.all(10),
+        child: Column({
+          children: [
+            Text(label, {
+              style: new TextStyle({ 
+                fontSize: 14, 
+                fontWeight: "bold",
+                color: Colors.grey[700]
+              })
+            }),
+            SizedBox({ height: 5 }),
+            Container({
+              width: 150,
+              color: Colors.grey[200],
+              child: AspectRatio({
+                aspectRatio: ratio,
+                child: Container({
+                  color: color,
+                  child: Center({
+                    child: Text(`${ratio}`, {
+                      style: new TextStyle({ 
+                        color: Colors.white,
+                        fontWeight: "bold"
+                      })
+                    })
+                  })
+                })
+              })
+            })
+          ]
+        })
+      });
+
+      const widget = Container({
+        width: 700,
+        padding: EdgeInsets.all(20),
+        color: Colors.grey[100],
+        child: Column({
+          crossAxisAlignment: "stretch",
+          children: [
+            // 1. 기본 AspectRatio 사용법
+            Text("1. AspectRatio 기본 - 다양한 비율", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              child: Row({
+                mainAxisAlignment: "center",
+                children: [
+                  RatioBox(1.0, "정사각형 (1:1)", Colors.blue[400]),
+                  RatioBox(16/9, "와이드 (16:9)", Colors.green[400]),
+                  RatioBox(4/3, "표준 (4:3)", Colors.orange[400]),
+                  RatioBox(1.618, "황금비 (1.618:1)", Colors.purple[400])
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 2. 실용적인 예제들
+            Text("2. 실용적인 사용 예제", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            
+            // 이미지 갤러리
+            Container({
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              child: Column({
+                crossAxisAlignment: "start",
+                children: [
+                  Text("이미지 갤러리 (모두 1:1 비율):", {
+                    style: new TextStyle({ fontSize: 14, fontWeight: "bold" })
+                  }),
+                  SizedBox({ height: 10 }),
+                  Row({
+                    children: [
+                      Expanded({
+                        child: AspectRatio({
+                          aspectRatio: 1.0,
+                          child: Container({
+                            margin: EdgeInsets.only({ right: 5 }),
+                            decoration: new BoxDecoration({
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(8)
+                            }),
+                            child: Center({
+                              child: Text("📷", {
+                                style: new TextStyle({ fontSize: 32 })
+                              })
+                            })
+                          })
+                        })
+                      }),
+                      Expanded({
+                        child: AspectRatio({
+                          aspectRatio: 1.0,
+                          child: Container({
+                            margin: EdgeInsets.symmetric({ horizontal: 5 }),
+                            decoration: new BoxDecoration({
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(8)
+                            }),
+                            child: Center({
+                              child: Text("🎨", {
+                                style: new TextStyle({ fontSize: 32 })
+                              })
+                            })
+                          })
+                        })
+                      }),
+                      Expanded({
+                        child: AspectRatio({
+                          aspectRatio: 1.0,
+                          child: Container({
+                            margin: EdgeInsets.only({ left: 5 }),
+                            decoration: new BoxDecoration({
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(8)
+                            }),
+                            child: Center({
+                              child: Text("🌅", {
+                                style: new TextStyle({ fontSize: 32 })
+                              })
+                            })
+                          })
+                        })
+                      })
+                    ]
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 10 }),
+
+            // 비디오 플레이어
+            Container({
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              child: Column({
+                crossAxisAlignment: "start",
+                children: [
+                  Text("비디오 플레이어 (16:9 비율):", {
+                    style: new TextStyle({ fontSize: 14, fontWeight: "bold" })
+                  }),
+                  SizedBox({ height: 10 }),
+                  AspectRatio({
+                    aspectRatio: 16/9,
+                    child: Container({
+                      decoration: new BoxDecoration({
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(8)
+                      }),
+                      child: Stack({
+                        children: [
+                          Center({
+                            child: Container({
+                              width: 80,
+                              height: 80,
+                              decoration: new BoxDecoration({
+                                color: Colors.white.withOpacity(0.3),
+                                shape: BoxShape.circle
+                              }),
+                              child: Center({
+                                child: Text("▶", {
+                                  style: new TextStyle({ 
+                                    fontSize: 40,
+                                    color: Colors.white
+                                  })
+                                })
+                              })
+                            })
+                          }),
+                          Positioned({
+                            bottom: 10,
+                            left: 10,
+                            right: 10,
+                            child: Container({
+                              height: 4,
+                              decoration: new BoxDecoration({
+                                color: Colors.white.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(2)
+                              })
+                            })
+                          })
+                        ]
+                      })
+                    })
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 3. 반응형 카드 그리드
+            Text("3. 반응형 카드 그리드", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              height: 200,
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              child: Row({
+                children: [
+                  // 카드 1
+                  Expanded({
+                    child: Container({
+                      margin: EdgeInsets.only({ right: 5 }),
+                      child: AspectRatio({
+                        aspectRatio: 3/4,  // 세로형 카드
+                        child: Container({
+                          decoration: new BoxDecoration({
+                            gradient: new LinearGradient({
+                              colors: [Colors.blue[400], Colors.blue[600]],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight
+                            }),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [{
+                              color: Colors.blue.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: { x: 0, y: 4 }
+                            }]
+                          }),
+                          child: Center({
+                            child: Column({
+                              mainAxisSize: "min",
+                              children: [
+                                Text("3:4", {
+                                  style: new TextStyle({
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: "bold"
+                                  })
+                                }),
+                                SizedBox({ height: 8 }),
+                                Text("세로형 카드", {
+                                  style: new TextStyle({
+                                    color: Colors.white.withOpacity(0.8),
+                                    fontSize: 14
+                                  })
+                                })
+                              ]
+                            })
+                          })
+                        })
+                      })
+                    })
+                  }),
+                  // 카드 2
+                  Expanded({
+                    child: Container({
+                      margin: EdgeInsets.symmetric({ horizontal: 5 }),
+                      child: AspectRatio({
+                        aspectRatio: 1.0,  // 정사각형 카드
+                        child: Container({
+                          decoration: new BoxDecoration({
+                            gradient: new LinearGradient({
+                              colors: [Colors.purple[400], Colors.purple[600]],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight
+                            }),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [{
+                              color: Colors.purple.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: { x: 0, y: 4 }
+                            }]
+                          }),
+                          child: Center({
+                            child: Column({
+                              mainAxisSize: "min",
+                              children: [
+                                Text("1:1", {
+                                  style: new TextStyle({
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: "bold"
+                                  })
+                                }),
+                                SizedBox({ height: 8 }),
+                                Text("정사각형", {
+                                  style: new TextStyle({
+                                    color: Colors.white.withOpacity(0.8),
+                                    fontSize: 14
+                                  })
+                                })
+                              ]
+                            })
+                          })
+                        })
+                      })
+                    })
+                  }),
+                  // 카드 3
+                  Expanded({
+                    child: Container({
+                      margin: EdgeInsets.only({ left: 5 }),
+                      child: AspectRatio({
+                        aspectRatio: 4/3,  // 가로형 카드
+                        child: Container({
+                          decoration: new BoxDecoration({
+                            gradient: new LinearGradient({
+                              colors: [Colors.orange[400], Colors.orange[600]],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight
+                            }),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [{
+                              color: Colors.orange.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: { x: 0, y: 4 }
+                            }]
+                          }),
+                          child: Center({
+                            child: Column({
+                              mainAxisSize: "min",
+                              children: [
+                                Text("4:3", {
+                                  style: new TextStyle({
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: "bold"
+                                  })
+                                }),
+                                SizedBox({ height: 8 }),
+                                Text("가로형 카드", {
+                                  style: new TextStyle({
+                                    color: Colors.white.withOpacity(0.8),
+                                    fontSize: 14
+                                  })
+                                })
+                              ]
+                            })
+                          })
+                        })
+                      })
+                    })
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 4. 실전 예제 - 제품 카드
+            Text("4. 실전 예제 - 이커머스 제품 카드", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              width: 250,
+              decoration: new BoxDecoration({
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [{
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: { x: 0, y: 4 }
+                }]
+              }),
+              child: Column({
+                crossAxisAlignment: "start",
+                children: [
+                  // 제품 이미지 영역
+                  AspectRatio({
+                    aspectRatio: 1.0,  // 정사각형 이미지
+                    child: Container({
+                      decoration: new BoxDecoration({
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.vertical({ top: 12 })
+                      }),
+                      child: Stack({
+                        children: [
+                          Center({
+                            child: Text("👟", {
+                              style: new TextStyle({ fontSize: 80 })
+                            })
+                          }),
+                          Positioned({
+                            top: 10,
+                            right: 10,
+                            child: Container({
+                              padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
+                              decoration: new BoxDecoration({
+                                color: Colors.red[500],
+                                borderRadius: BorderRadius.circular(12)
+                              }),
+                              child: Text("-20%", {
+                                style: new TextStyle({
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: "bold"
+                                })
+                              })
+                            })
+                          })
+                        ]
+                      })
+                    })
+                  }),
+                  // 제품 정보
+                  Padding({
+                    padding: EdgeInsets.all(16),
+                    child: Column({
+                      crossAxisAlignment: "start",
+                      children: [
+                        Text("프리미엄 운동화", {
+                          style: new TextStyle({
+                            fontSize: 16,
+                            fontWeight: "bold"
+                          })
+                        }),
+                        SizedBox({ height: 4 }),
+                        Text("편안한 착용감의 데일리 스니커즈", {
+                          style: new TextStyle({
+                            fontSize: 12,
+                            color: Colors.grey[600]
+                          })
+                        }),
+                        SizedBox({ height: 8 }),
+                        Row({
+                          children: [
+                            Text("89,000원", {
+                              style: new TextStyle({
+                                fontSize: 18,
+                                fontWeight: "bold",
+                                color: Colors.blue[700]
+                              })
+                            }),
+                            SizedBox({ width: 8 }),
+                            Text("111,000원", {
+                              style: new TextStyle({
+                                fontSize: 14,
+                                color: Colors.grey[500],
+                                decoration: "lineThrough"
+                              })
+                            })
+                          ]
+                        })
+                      ]
+                    })
+                  })
+                ]
+              })
+            })
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>AspectRatio 마스터하기</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# AspectRatio - 비율 유지하기
+
+AspectRatio는 자식 위젯의 가로세로 비율을 유지하는 레이아웃 위젯입니다. 이미지, 비디오, 카드 등의 일관된 비율을 유지하는 데 필수적입니다.
+
+## 이 튜토리얼에서 배울 것
+
+- [ ] AspectRatio의 기본 원리 이해하기
+- [ ] 일반적인 화면 비율 활용하기
+- [ ] 반응형 디자인에서의 활용법
+- [ ] 이미지 갤러리와 그리드 레이아웃
+- [ ] 실전 UI 패턴 구현하기
+- [ ] 성능 최적화 팁
+
+## AspectRatio의 작동 원리
+
+AspectRatio는 주어진 비율에 따라 자식 위젯의 크기를 결정합니다:
+
+- **가로 제약이 있을 때**: 높이 = 가로 / aspectRatio
+- **세로 제약이 있을 때**: 가로 = 세로 × aspectRatio
+
+> **💡 핵심 개념: aspectRatio 계산**
+> 
+> aspectRatio = 가로 / 세로
+> - 1.0 = 정사각형 (1:1)
+> - 2.0 = 가로가 세로의 2배 (2:1)
+> - 0.5 = 세로가 가로의 2배 (1:2)
+
+## 1단계: 기본 사용법
+
+### 정사각형 만들기
+
+```typescript
+Container({
+  width: 200,  // 가로 크기만 지정
+  child: AspectRatio({
+    aspectRatio: 1.0,  // 1:1 비율
+    child: Container({
+      color: Colors.blue,
+      child: Center({
+        child: Text("정사각형")
+      })
+    })
+  })
+})
+// 결과: 200x200 크기의 정사각형
+```
+
+### 일반적인 화면 비율
+
+```typescript
+// 16:9 (와이드스크린)
+AspectRatio({
+  aspectRatio: 16/9,
+  child: VideoPlayer()
+})
+
+// 4:3 (표준)
+AspectRatio({
+  aspectRatio: 4/3,
+  child: OldTvScreen()
+})
+
+// 21:9 (울트라와이드)
+AspectRatio({
+  aspectRatio: 21/9,
+  child: CinematicView()
+})
+```
+
+## 2단계: 황금비와 디자인 비율
+
+### 황금비 (Golden Ratio)
+
+```typescript
+AspectRatio({
+  aspectRatio: 1.618,  // 황금비
+  child: Container({
+    decoration: new BoxDecoration({
+      gradient: new LinearGradient({
+        colors: [Colors.amber[300], Colors.amber[600]]
+      })
+    }),
+    child: Center({
+      child: Text("황금비 1.618:1")
+    })
+  })
+})
+```
+
+### 디자인 시스템 비율
+
+```typescript
+// Instagram 포스트
+AspectRatio({ aspectRatio: 1.0 })  // 1:1
+
+// Instagram 스토리
+AspectRatio({ aspectRatio: 9/16 })  // 9:16
+
+// Twitter 카드
+AspectRatio({ aspectRatio: 16/9 })  // 16:9
+
+// Pinterest 핀
+AspectRatio({ aspectRatio: 2/3 })   // 2:3
+```
+
+## 3단계: 반응형 그리드 레이아웃
+
+### 이미지 갤러리
+
+```typescript
+GridView.count({
+  crossAxisCount: 3,
+  crossAxisSpacing: 10,
+  mainAxisSpacing: 10,
+  children: images.map((image) => {
+    return AspectRatio({
+      aspectRatio: 1.0,  // 모든 이미지를 정사각형으로
+      child: Container({
+        decoration: new BoxDecoration({
+          image: new DecorationImage({
+            image: NetworkImage(image.url),
+            fit: BoxFit.cover
+          }),
+          borderRadius: BorderRadius.circular(8)
+        })
+      })
+    });
+  })
+})
+```
+
+## 4단계: 실전 패턴 - 카드 레이아웃
+
+### 제품 카드
+
+```typescript
+class ProductCard extends StatelessWidget {
+  constructor(props) {
+    super(props);
+    this.product = props.product;
+  }
+
+  build(context) {
+    return Container({
+      decoration: new BoxDecoration({
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [{
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 8,
+          offset: { x: 0, y: 2 }
+        }]
+      }),
+      child: Column({
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 이미지 영역 - 항상 정사각형
+          AspectRatio({
+            aspectRatio: 1.0,
+            child: Container({
+              decoration: new BoxDecoration({
+                image: new DecorationImage({
+                  image: this.product.imageUrl,
+                  fit: BoxFit.cover
+                }),
+                borderRadius: BorderRadius.vertical({ top: 12 })
+              })
+            })
+          }),
+          // 정보 영역
+          Padding({
+            padding: EdgeInsets.all(12),
+            child: Column({
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(this.product.name, {
+                  style: new TextStyle({
+                    fontWeight: "bold",
+                    fontSize: 16
+                  })
+                }),
+                SizedBox({ height: 4 }),
+                Text(`₩${this.product.price}`, {
+                  style: new TextStyle({
+                    color: Colors.blue[700],
+                    fontSize: 18,
+                    fontWeight: "bold"
+                  })
+                })
+              ]
+            })
+          })
+        ]
+      })
+    });
+  }
+}
+```
+
+## 5단계: 비디오 플레이어 UI
+
+```typescript
+class VideoPlayer extends StatelessWidget {
+  build(context) {
+    return AspectRatio({
+      aspectRatio: 16/9,
+      child: Container({
+        color: Colors.black,
+        child: Stack({
+          children: [
+            // 비디오 컨텐츠
+            Center({
+              child: Text("비디오 영역", {
+                style: new TextStyle({ color: Colors.white })
+              })
+            }),
+            // 컨트롤 오버레이
+            Positioned({
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container({
+                padding: EdgeInsets.all(16),
+                decoration: new BoxDecoration({
+                  gradient: new LinearGradient({
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.7)
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter
+                  })
+                }),
+                child: Row({
+                  children: [
+                    PlayButton(),
+                    SizedBox({ width: 16 }),
+                    Expanded({ child: ProgressBar() }),
+                    SizedBox({ width: 16 }),
+                    FullscreenButton()
+                  ]
+                })
+              })
+            })
+          ]
+        })
+      })
+    });
+  }
+}
+```
+
+## 6단계: 고급 패턴 - 적응형 비율
+
+```typescript
+class AdaptiveAspectRatio extends StatelessWidget {
+  constructor(props) {
+    super(props);
+    this.child = props.child;
+  }
+
+  build(context) {
+    const screenWidth = MediaQuery.of(context).size.width;
+    
+    // 화면 크기에 따라 비율 변경
+    let aspectRatio;
+    if (screenWidth < 600) {
+      aspectRatio = 1.0;      // 모바일: 정사각형
+    } else if (screenWidth < 1200) {
+      aspectRatio = 4/3;      // 태블릿: 4:3
+    } else {
+      aspectRatio = 16/9;     // 데스크톱: 16:9
+    }
+    
+    return AspectRatio({
+      aspectRatio: aspectRatio,
+      child: this.child
+    });
+  }
+}
+```
+
+## 연습 과제
+
+다음과 같은 UI를 만들어보세요:
+
+1. **소셜 미디어 피드**
+   - 사용자 정보 헤더
+   - 1:1 비율의 이미지
+   - 좋아요, 댓글 섹션
+
+2. **영화 포스터 그리드**
+   - 2:3 비율의 포스터
+   - 호버 시 정보 오버레이
+   - 반응형 그리드
+
+3. **대시보드 차트 카드**
+   - 16:10 비율의 차트 영역
+   - 제목과 통계 정보
+   - 여러 카드를 그리드로 배치
+
+<details>
+<summary>💡 힌트</summary>
+
+1. Column으로 구성, 이미지는 AspectRatio(1.0)로 감싸기
+2. GridView + AspectRatio(2/3) + Stack으로 오버레이
+3. AspectRatio(16/10)으로 차트 영역 만들고 Column으로 정보 추가
+
+</details>
+
+## 성능 최적화 팁
+
+### 이미지 로딩 최적화
+
+```typescript
+AspectRatio({
+  aspectRatio: 16/9,
+  child: Container({
+    decoration: new BoxDecoration({
+      color: Colors.grey[300]  // 플레이스홀더
+    }),
+    child: Image.network(url, {
+      fit: BoxFit.cover,
+      loadingBuilder: (context, child, loadingProgress) => {
+        if (loadingProgress == null) return child;
+        return Center({
+          child: CircularProgressIndicator()
+        });
+      }
+    })
+  })
+})
+```
+
+### 비율 계산 캐싱
+
+```typescript
+// 자주 사용하는 비율은 상수로 정의
+const ASPECT_RATIOS = {
+  SQUARE: 1.0,
+  VIDEO_16_9: 16/9,
+  VIDEO_4_3: 4/3,
+  GOLDEN: 1.618,
+  INSTAGRAM_PORTRAIT: 4/5,
+  INSTAGRAM_LANDSCAPE: 1.91
+};
+
+// 사용
+AspectRatio({
+  aspectRatio: ASPECT_RATIOS.VIDEO_16_9,
+  child: VideoWidget()
+})
+```
+
+## 핵심 정리
+
+AspectRatio 마스터 체크리스트:
+
+- ✅ **기본 원리**: 가로/세로 비율 유지
+- ✅ **일반 비율**: 1:1, 16:9, 4:3, 황금비
+- ✅ **반응형**: 화면 크기에 따른 비율 조정
+- ✅ **그리드**: 일관된 비율의 아이템 배치
+- ✅ **성능**: 이미지 로딩 최적화
+
+## 🎉 완성입니다!
+
+AspectRatio를 완벽히 마스터했습니다! 이제 어떤 비율의 UI도 정확하게 구현할 수 있을 것입니다.
+
+## 다음 단계
+
+축하합니다! Chapter 5 "레이아웃 위젯 마스터하기"를 모두 완료했습니다. 다음 챕터에서는 시각적 효과 위젯들을 배워보겠습니다.
+
+👉 **다음 챕터: 시각적 효과 위젯들**

@@ -1,0 +1,766 @@
+---
+nav_group: "위젯 인터페이스 기초"
+nav_order: 4
+title: "StatelessWidget vs StatefulWidget 첫 만남"
+description: "Flitter의 두 가지 핵심 위젯 타입인 StatelessWidget과 StatefulWidget의 차이점과 사용법을 알아봅니다"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, 
+      Column,
+      Row,
+      Text, 
+      TextStyle, 
+      Colors,
+      Center,
+      StatelessWidget,
+      StatefulWidget,
+      State,
+      classToFunction,
+      Padding,
+      EdgeInsets,
+      GestureDetector,
+      MainAxisAlignment
+    } from "@meursyphus/flitter";
+
+    // TODO: StatelessWidget 예제 - 시계 표시
+    class _ClockDisplay extends StatelessWidget {
+      constructor({ time, key }) {
+        super({ key });
+        // TODO: time prop 저장
+      }
+      
+      build(context) {
+        // TODO: 현재 시간을 표시하는 UI 구현
+        return Text("StatelessWidget 구현하기");
+      }
+    }
+
+    // TODO: StatefulWidget 예제 - 카운터
+    class _Counter extends StatefulWidget {
+      createState() {
+        // TODO: State 객체 반환
+      }
+    }
+
+    // TODO: State 클래스 구현
+    class _CounterState extends State {
+      // TODO: count 상태 변수
+      
+      build(context) {
+        // TODO: 증가/감소 버튼과 카운트 표시 UI
+        return Text("StatefulWidget 구현하기");
+      }
+    }
+
+    // TODO: classToFunction으로 export
+
+    function App() {
+      const widget = Container({
+        width: 700,
+        height: 500,
+        color: Colors.grey[50],
+        child: Center({
+          child: Column({
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("위젯 타입 비교", {
+                style: new TextStyle({
+                  fontSize: 28,
+                  fontWeight: 'bold'
+                })
+              }),
+              Container({ height: 40 }),
+              // TODO: 두 위젯을 나란히 배치
+            ]
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>StatelessWidget vs StatefulWidget</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, 
+      Column,
+      Row,
+      Text, 
+      TextStyle, 
+      Colors,
+      Center,
+      StatelessWidget,
+      StatefulWidget,
+      State,
+      classToFunction,
+      Padding,
+      EdgeInsets,
+      GestureDetector,
+      MainAxisAlignment,
+      CrossAxisAlignment,
+      MainAxisSize
+    } from "@meursyphus/flitter";
+
+    // StatelessWidget 예제 - 프로필 카드
+    class _ProfileCard extends StatelessWidget {
+      constructor({ name, role, imageUrl, key }) {
+        super({ key });
+        this.name = name;
+        this.role = role;
+        this.imageUrl = imageUrl;
+      }
+      
+      build(context) {
+        return Container({
+          width: 280,
+          padding: EdgeInsets.all(20),
+          decoration: {
+            color: Colors.blue[50],
+            borderRadius: 12,
+            boxShadow: [{
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: { x: 0, y: 2 }
+            }]
+          },
+          child: Column({
+            mainAxisSize: 'min',
+            children: [
+              Container({
+                width: 80,
+                height: 80,
+                decoration: {
+                  color: Colors.blue[200],
+                  shape: 'circle'
+                },
+                child: Center({
+                  child: Text(this.name[0], {
+                    style: new TextStyle({
+                      fontSize: 32,
+                      fontWeight: 'bold',
+                      color: Colors.white
+                    })
+                  })
+                })
+              }),
+              Container({ height: 16 }),
+              Text(this.name, {
+                style: new TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: Colors.blue[900]
+                })
+              }),
+              Container({ height: 4 }),
+              Text(this.role, {
+                style: new TextStyle({
+                  fontSize: 16,
+                  color: Colors.blue[700]
+                })
+              }),
+              Container({ height: 16 }),
+              Container({
+                padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+                decoration: {
+                  color: Colors.blue[100],
+                  borderRadius: 20
+                },
+                child: Text("StatelessWidget", {
+                  style: new TextStyle({
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    color: Colors.blue[800]
+                  })
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+
+    // StatefulWidget 예제 - 좋아요 카운터
+    class _LikeCounter extends StatefulWidget {
+      constructor({ initialCount = 0, key }) {
+        super({ key });
+        this.initialCount = initialCount;
+      }
+      
+      createState() {
+        return new _LikeCounterState();
+      }
+    }
+
+    class _LikeCounterState extends State {
+      count = 0;
+      isLiked = false;
+      
+      initState() {
+        super.initState();
+        this.count = this.widget.initialCount;
+      }
+      
+      handleLike() {
+        this.setState(() => {
+          if (this.isLiked) {
+            this.count--;
+            this.isLiked = false;
+          } else {
+            this.count++;
+            this.isLiked = true;
+          }
+        });
+      }
+      
+      build(context) {
+        return Container({
+          width: 280,
+          padding: EdgeInsets.all(20),
+          decoration: {
+            color: Colors.pink[50],
+            borderRadius: 12,
+            boxShadow: [{
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: { x: 0, y: 2 }
+            }]
+          },
+          child: Column({
+            mainAxisSize: 'min',
+            children: [
+              GestureDetector({
+                onClick: () => this.handleLike(),
+                child: Container({
+                  width: 80,
+                  height: 80,
+                  decoration: {
+                    color: this.isLiked ? Colors.pink[400] : Colors.grey[300],
+                    shape: 'circle'
+                  },
+                  child: Center({
+                    child: Text(this.isLiked ? "❤️" : "🤍", {
+                      style: new TextStyle({
+                        fontSize: 40
+                      })
+                    })
+                  })
+                })
+              }),
+              Container({ height: 16 }),
+              Text(`좋아요 ${this.count}개`, {
+                style: new TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: Colors.pink[900]
+                })
+              }),
+              Container({ height: 4 }),
+              Text("클릭하여 좋아요!", {
+                style: new TextStyle({
+                  fontSize: 16,
+                  color: Colors.pink[700]
+                })
+              }),
+              Container({ height: 16 }),
+              Container({
+                padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+                decoration: {
+                  color: Colors.pink[100],
+                  borderRadius: 20
+                },
+                child: Text("StatefulWidget", {
+                  style: new TextStyle({
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    color: Colors.pink[800]
+                  })
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+
+    // 비교 설명 위젯
+    class _ComparisonInfo extends StatelessWidget {
+      build(context) {
+        return Container({
+          width: 600,
+          padding: EdgeInsets.all(20),
+          decoration: {
+            color: Colors.amber[50],
+            borderRadius: 12
+          },
+          child: Column({
+            children: [
+              Text("💡 핵심 차이점", {
+                style: new TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: Colors.amber[900]
+                })
+              }),
+              Container({ height: 12 }),
+              Row({
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column({
+                    children: [
+                      Text("StatelessWidget", {
+                        style: new TextStyle({
+                          fontSize: 16,
+                          fontWeight: 'bold',
+                          color: Colors.blue[800]
+                        })
+                      }),
+                      Container({ height: 8 }),
+                      Text("• 상태가 없음\n• Props만 사용\n• 불변(Immutable)", {
+                        style: new TextStyle({
+                          fontSize: 14,
+                          height: 1.5
+                        })
+                      })
+                    ]
+                  }),
+                  Container({
+                    width: 1,
+                    height: 60,
+                    color: Colors.amber[300]
+                  }),
+                  Column({
+                    children: [
+                      Text("StatefulWidget", {
+                        style: new TextStyle({
+                          fontSize: 16,
+                          fontWeight: 'bold',
+                          color: Colors.pink[800]
+                        })
+                      }),
+                      Container({ height: 8 }),
+                      Text("• 상태 보유 가능\n• setState() 사용\n• 동적 UI 변경", {
+                        style: new TextStyle({
+                          fontSize: 14,
+                          height: 1.5
+                        })
+                      })
+                    ]
+                  })
+                ]
+              })
+            ]
+          })
+        });
+      }
+    }
+
+    // Export
+    const ProfileCard = classToFunction(_ProfileCard);
+    const LikeCounter = classToFunction(_LikeCounter);
+    const ComparisonInfo = classToFunction(_ComparisonInfo);
+
+    function App() {
+      const widget = Container({
+        width: 700,
+        height: 600,
+        color: Colors.grey[50],
+        child: Center({
+          child: Column({
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("🎭 StatelessWidget vs StatefulWidget", {
+                style: new TextStyle({
+                  fontSize: 32,
+                  fontWeight: 'bold',
+                  color: Colors.grey[800]
+                })
+              }),
+              Container({ height: 30 }),
+              Row({
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ProfileCard({
+                    name: "김플리터",
+                    role: "프론트엔드 개발자"
+                  }),
+                  Container({ width: 40 }),
+                  LikeCounter({
+                    initialCount: 42
+                  })
+                ]
+              }),
+              Container({ height: 30 }),
+              ComparisonInfo()
+            ]
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>StatelessWidget vs StatefulWidget</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# StatelessWidget vs StatefulWidget 첫 만남
+
+Flitter에는 두 가지 주요 위젯 타입이 있습니다: **StatelessWidget**과 **StatefulWidget**. 이 둘의 차이를 이해하는 것은 Flitter 개발의 핵심입니다. 언제 어떤 위젯을 사용해야 할까요?
+
+## 이 튜토리얼에서 배울 것
+
+- [ ] StatelessWidget의 개념과 사용법
+- [ ] StatefulWidget의 개념과 생명주기
+- [ ] 상태(State)의 의미와 setState() 사용법
+- [ ] 두 위젯 타입을 선택하는 기준
+- [ ] 실제 예제를 통한 비교
+
+## StatelessWidget - 변하지 않는 UI
+
+StatelessWidget은 한 번 생성되면 변하지 않는 위젯입니다. 외부에서 받은 props만을 사용해 UI를 그립니다.
+
+### 기본 구조
+```typescript
+class _MyStatelessWidget extends StatelessWidget {
+  constructor(props) {
+    super(props);
+    // props 저장
+    this.title = props.title;
+    this.color = props.color;
+  }
+  
+  build(context) {
+    // props를 사용해 UI 구성
+    return Container({
+      color: this.color,
+      child: Text(this.title)
+    });
+  }
+}
+```
+
+### 특징
+1. **불변성**: 한 번 생성되면 변경 불가
+2. **단순함**: 상태 관리가 필요 없어 간단
+3. **예측 가능**: 같은 props면 항상 같은 UI
+4. **성능**: 상태 변경이 없어 효율적
+
+> **💡 핵심 개념: Props vs State**
+> 
+> - **Props**: 부모에서 전달받는 읽기 전용 데이터
+> - **State**: 위젯이 직접 관리하는 변경 가능한 데이터
+> 
+> StatelessWidget은 Props만 사용하고, StatefulWidget은 둘 다 사용할 수 있습니다.
+
+### 언제 사용할까?
+- 정적인 UI 요소 (로고, 아이콘, 레이블)
+- 외부 데이터만 표시하는 경우
+- 사용자 상호작용이 없는 경우
+- 단순한 레이아웃 구성
+
+## StatefulWidget - 동적인 UI
+
+StatefulWidget은 변경 가능한 상태를 가지며, 상태가 변경되면 UI가 자동으로 업데이트됩니다.
+
+### 기본 구조
+```typescript
+// 1. StatefulWidget 클래스
+class _MyStatefulWidget extends StatefulWidget {
+  constructor(props) {
+    super(props);
+    this.initialValue = props.initialValue;
+  }
+  
+  createState() {
+    return new _MyStatefulWidgetState();
+  }
+}
+
+// 2. State 클래스
+class _MyStatefulWidgetState extends State {
+  // 상태 변수
+  count = 0;
+  
+  // 초기화
+  initState() {
+    super.initState();
+    this.count = this.widget.initialValue || 0;
+  }
+  
+  // UI 구성
+  build(context) {
+    return GestureDetector({
+      onClick: () => {
+        // setState로 상태 변경
+        this.setState(() => {
+          this.count++;
+        });
+      },
+      child: Text(`Count: ${this.count}`)
+    });
+  }
+}
+```
+
+### 특징
+1. **가변성**: setState()로 상태 변경 가능
+2. **반응성**: 상태 변경 시 자동으로 rebuild
+3. **생명주기**: initState, dispose 등 생명주기 메서드
+4. **복잡도**: 상태 관리로 인한 복잡성
+
+### 언제 사용할까?
+- 사용자 입력을 처리하는 경우 (폼, 버튼)
+- 애니메이션이 필요한 경우
+- 실시간 데이터를 표시하는 경우
+- UI가 동적으로 변하는 경우
+
+## setState() 이해하기
+
+`setState()`는 StatefulWidget의 핵심입니다. 상태를 변경하고 UI를 다시 그리도록 합니다.
+
+### 올바른 사용법
+```typescript
+// ✅ 좋은 예: setState 내에서 상태 변경
+this.setState(() => {
+  this.count++;
+  this.isActive = true;
+});
+
+// ❌ 나쁜 예: setState 밖에서 상태 변경
+this.count++;  // UI가 업데이트되지 않음!
+this.setState(() => {});
+```
+
+### setState() 동작 과정
+1. setState() 호출
+2. 콜백 함수 실행 (상태 변경)
+3. 위젯 다시 빌드 예약
+4. build() 메서드 재실행
+5. UI 업데이트
+
+## 실제 비교 예제
+
+### 정적 카드 (StatelessWidget)
+```typescript
+class _ProductCard extends StatelessWidget {
+  constructor({ name, price, image }) {
+    super();
+    this.name = name;
+    this.price = price;
+    this.image = image;
+  }
+  
+  build(context) {
+    return Container({
+      child: Column({
+        children: [
+          Image({ src: this.image }),
+          Text(this.name),
+          Text(`₩${this.price}`)
+        ]
+      })
+    });
+  }
+}
+```
+
+### 동적 카드 (StatefulWidget)
+```typescript
+class _InteractiveCard extends StatefulWidget {
+  createState() {
+    return new _InteractiveCardState();
+  }
+}
+
+class _InteractiveCardState extends State {
+  isExpanded = false;
+  isFavorite = false;
+  
+  build(context) {
+    return GestureDetector({
+      onClick: () => {
+        this.setState(() => {
+          this.isExpanded = !this.isExpanded;
+        });
+      },
+      child: Container({
+        height: this.isExpanded ? 200 : 100,
+        child: Column({
+          children: [
+            // 기본 콘텐츠
+            Text("클릭하여 확장"),
+            
+            // 확장 시 추가 콘텐츠
+            if (this.isExpanded) ...[
+              Text("추가 정보"),
+              IconButton({
+                icon: this.isFavorite ? "❤️" : "🤍",
+                onPressed: () => {
+                  this.setState(() => {
+                    this.isFavorite = !this.isFavorite;
+                  });
+                }
+              })
+            ]
+          ]
+        })
+      })
+    });
+  }
+}
+```
+
+## 선택 가이드
+
+### StatelessWidget을 선택하세요:
+- ✅ UI가 props에만 의존하는 경우
+- ✅ 사용자 상호작용이 없는 경우
+- ✅ 시간에 따라 변하지 않는 경우
+- ✅ 단순한 표시 목적인 경우
+
+### StatefulWidget을 선택하세요:
+- ✅ 사용자 입력을 처리해야 하는 경우
+- ✅ 시간에 따라 변하는 데이터가 있는 경우
+- ✅ 애니메이션이 필요한 경우
+- ✅ 로컬 상태 관리가 필요한 경우
+
+## 연습해보기
+
+다음 요구사항에 맞는 위젯을 만들어보세요:
+
+1. **StatelessWidget 연습**: WeatherCard
+   - props: 도시명, 온도, 날씨 아이콘
+   - 정적인 날씨 정보 표시
+
+2. **StatefulWidget 연습**: TodoItem
+   - 체크박스와 텍스트로 구성
+   - 클릭하면 완료 상태 토글
+   - 완료 시 텍스트에 취소선 표시
+
+<details>
+<summary>💡 힌트</summary>
+
+1. WeatherCard 구조:
+   ```typescript
+   class _WeatherCard extends StatelessWidget {
+     constructor({ city, temperature, icon }) {
+       super();
+       // props 저장
+     }
+   }
+   ```
+
+2. TodoItem의 상태 관리:
+   ```typescript
+   class _TodoItemState extends State {
+     isCompleted = false;
+     
+     // setState로 isCompleted 토글
+   }
+   ```
+
+</details>
+
+## 성능 고려사항
+
+### StatelessWidget
+- 불필요한 rebuild 없음
+- const 생성자 활용 가능
+- 메모리 효율적
+
+### StatefulWidget  
+- setState() 호출 시 전체 rebuild
+- 상태 관리 오버헤드
+- 필요한 경우에만 사용
+
+## 마이그레이션 팁
+
+처음에는 StatelessWidget으로 시작하고, 상태가 필요해지면 StatefulWidget으로 변환하세요:
+
+```typescript
+// 1단계: StatelessWidget으로 시작
+class _MyWidget extends StatelessWidget {
+  build(context) {
+    return Text("정적 텍스트");
+  }
+}
+
+// 2단계: 상태가 필요해지면 변환
+class _MyWidget extends StatefulWidget {
+  createState() => new _MyWidgetState();
+}
+
+class _MyWidgetState extends State {
+  text = "동적 텍스트";
+  
+  build(context) {
+    return GestureDetector({
+      onClick: () => {
+        this.setState(() => {
+          this.text = "변경됨!";
+        });
+      },
+      child: Text(this.text)
+    });
+  }
+}
+```
+
+## 🎉 두 위젯의 차이를 마스터했습니다!
+
+이제 언제 어떤 위젯을 사용해야 하는지 알게 되었습니다.
+
+지금까지 배운 내용:
+- ✅ StatelessWidget의 불변성과 단순함
+- ✅ StatefulWidget의 동적 상태 관리
+- ✅ setState()의 올바른 사용법
+- ✅ 각 위젯 타입의 적절한 사용 시기
+
+## 다음 단계
+
+위젯 인터페이스의 기초를 모두 배웠습니다! 이제 기본 위젯 API를 탐험할 준비가 되었습니다.
+
+다음 챕터에서는 Container, Text, Row, Column 등 Flitter의 핵심 위젯들을 하나씩 자세히 알아보겠습니다.
+
+👉 **다음 챕터: 기본 위젯 API 탐험**

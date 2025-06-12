@@ -1,0 +1,727 @@
+---
+nav_group: "기본 위젯 API 탐험"
+nav_order: 1
+title: "Container - 모든 것을 담는 기본 상자"
+description: "Flitter에서 가장 많이 사용되는 Container 위젯의 모든 기능과 활용법을 마스터합니다"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, 
+      Text, 
+      TextStyle, 
+      Colors,
+      EdgeInsets,
+      Column,
+      Row,
+      Center,
+      Alignment,
+      BoxDecoration,
+      Border,
+      BorderRadius,
+      BoxShadow
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: 다양한 Container 속성들을 실습해보세요
+      // 1. width, height로 크기 설정
+      // 2. color로 배경색 설정
+      // 3. padding, margin 적용
+      // 4. decoration으로 테두리, 그림자 추가
+      // 5. alignment로 자식 위젯 정렬
+      
+      const widget = Container({
+        width: 600,
+        height: 500,
+        color: Colors.grey[100],
+        child: Center({
+          child: Container({
+            width: 200,
+            height: 100,
+            color: Colors.blue,
+            child: Center({
+              child: Text("Container 실습", {
+                style: new TextStyle({
+                  color: Colors.white,
+                  fontSize: 18
+                })
+              })
+            })
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Container 위젯 실습</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, 
+      Text, 
+      TextStyle, 
+      Colors,
+      EdgeInsets,
+      Column,
+      Row,
+      Center,
+      Alignment,
+      BoxDecoration,
+      Border,
+      BorderRadius,
+      BoxShadow,
+      MainAxisAlignment,
+      CrossAxisAlignment
+    } from "@meursyphus/flitter";
+
+    function App() {
+      const widget = Container({
+        width: 700,
+        height: 600,
+        color: Colors.grey[50],
+        child: Center({
+          child: Column({
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 제목
+              Text("📦 Container 위젯 마스터하기", {
+                style: new TextStyle({
+                  fontSize: 28,
+                  fontWeight: 'bold',
+                  color: Colors.grey[800]
+                })
+              }),
+              
+              Container({ height: 30 }),
+              
+              // 기본 Container
+              Row({
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column({
+                    children: [
+                      Text("기본 Container", {
+                        style: new TextStyle({
+                          fontSize: 16,
+                          fontWeight: 'bold',
+                          color: Colors.grey[700]
+                        })
+                      }),
+                      Container({ height: 8 }),
+                      Container({
+                        width: 150,
+                        height: 100,
+                        color: Colors.blue[300],
+                        child: Center({
+                          child: Text("색상만", {
+                            style: new TextStyle({
+                              color: Colors.white,
+                              fontWeight: 'bold'
+                            })
+                          })
+                        })
+                      })
+                    ]
+                  }),
+                  
+                  Container({ width: 20 }),
+                  
+                  // Padding과 Margin
+                  Column({
+                    children: [
+                      Text("Padding & Margin", {
+                        style: new TextStyle({
+                          fontSize: 16,
+                          fontWeight: 'bold',
+                          color: Colors.grey[700]
+                        })
+                      }),
+                      Container({ height: 8 }),
+                      Container({
+                        width: 150,
+                        height: 100,
+                        margin: EdgeInsets.all(10),
+                        padding: EdgeInsets.all(20),
+                        color: Colors.green[300],
+                        child: Container({
+                          color: Colors.white,
+                          child: Center({
+                            child: Text("여백", {
+                              style: new TextStyle({
+                                fontSize: 14,
+                                color: Colors.green[800]
+                              })
+                            })
+                          })
+                        })
+                      })
+                    ]
+                  }),
+                  
+                  Container({ width: 20 }),
+                  
+                  // Decoration
+                  Column({
+                    children: [
+                      Text("Decoration", {
+                        style: new TextStyle({
+                          fontSize: 16,
+                          fontWeight: 'bold',
+                          color: Colors.grey[700]
+                        })
+                      }),
+                      Container({ height: 8 }),
+                      Container({
+                        width: 150,
+                        height: 100,
+                        decoration: new BoxDecoration({
+                          color: Colors.purple[100],
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all({
+                            color: Colors.purple[400],
+                            width: 2
+                          }),
+                          boxShadow: [
+                            new BoxShadow({
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: { x: 0, y: 4 }
+                            })
+                          ]
+                        }),
+                        child: Center({
+                          child: Text("장식", {
+                            style: new TextStyle({
+                              fontWeight: 'bold',
+                              color: Colors.purple[800]
+                            })
+                          })
+                        })
+                      })
+                    ]
+                  })
+                ]
+              }),
+              
+              Container({ height: 30 }),
+              
+              // 정렬 예제
+              Container({
+                width: 500,
+                padding: EdgeInsets.all(20),
+                decoration: new BoxDecoration({
+                  color: Colors.amber[50],
+                  borderRadius: BorderRadius.circular(12)
+                }),
+                child: Column({
+                  children: [
+                    Text("Alignment 속성", {
+                      style: new TextStyle({
+                        fontSize: 18,
+                        fontWeight: 'bold',
+                        color: Colors.amber[900]
+                      })
+                    }),
+                    Container({ height: 16 }),
+                    Row({
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container({
+                          width: 100,
+                          height: 100,
+                          color: Colors.amber[200],
+                          alignment: Alignment.topLeft,
+                          child: Container({
+                            width: 30,
+                            height: 30,
+                            color: Colors.amber[600],
+                            child: Center({
+                              child: Text("TL", {
+                                style: new TextStyle({
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: 'bold'
+                                })
+                              })
+                            })
+                          })
+                        }),
+                        Container({
+                          width: 100,
+                          height: 100,
+                          color: Colors.amber[200],
+                          alignment: Alignment.center,
+                          child: Container({
+                            width: 30,
+                            height: 30,
+                            color: Colors.amber[600],
+                            child: Center({
+                              child: Text("C", {
+                                style: new TextStyle({
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: 'bold'
+                                })
+                              })
+                            })
+                          })
+                        }),
+                        Container({
+                          width: 100,
+                          height: 100,
+                          color: Colors.amber[200],
+                          alignment: Alignment.bottomRight,
+                          child: Container({
+                            width: 30,
+                            height: 30,
+                            color: Colors.amber[600],
+                            child: Center({
+                              child: Text("BR", {
+                                style: new TextStyle({
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: 'bold'
+                                })
+                              })
+                            })
+                          })
+                        })
+                      ]
+                    })
+                  ]
+                })
+              })
+            ]
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Container 위젯 실습</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# Container - 모든 것을 담는 기본 상자
+
+Container는 Flitter에서 가장 많이 사용되는 위젯입니다. 단순한 상자처럼 보이지만, 크기, 여백, 장식, 정렬 등 다양한 기능을 제공하는 만능 위젯입니다. Container를 마스터하면 대부분의 레이아웃을 구현할 수 있습니다.
+
+## 이 튜토리얼에서 배울 것
+
+- [ ] Container의 기본 속성과 사용법
+- [ ] 크기(width, height)와 제약(constraints) 설정
+- [ ] 여백(padding, margin) 다루기
+- [ ] BoxDecoration으로 시각적 효과 추가
+- [ ] alignment로 자식 위젯 정렬하기
+
+## Container의 기본 개념
+
+Container는 하나의 자식 위젯을 포함할 수 있는 상자입니다. CSS의 div와 비슷하지만 더 많은 기능을 내장하고 있습니다.
+
+### 가장 간단한 사용법
+```typescript
+Container({
+  child: Text("Hello Container!")
+})
+```
+
+> **💡 핵심 개념: Container의 크기 결정**
+> 
+> Container의 크기는 다음 우선순위로 결정됩니다:
+> 1. width/height가 지정되면 해당 크기 사용
+> 2. child가 있고 크기가 지정되지 않으면 child 크기에 맞춤
+> 3. child가 없고 크기도 없으면 가능한 최대 크기로 확장
+> 
+> 실무에서는 명시적으로 크기를 지정하는 것이 예측 가능한 레이아웃을 만듭니다.
+
+## 크기 설정
+
+### 고정 크기
+```typescript
+Container({
+  width: 200,
+  height: 100,
+  color: Colors.blue,
+  child: Text("200x100 크기")
+})
+```
+
+### 제약 조건 (Constraints)
+```typescript
+Container({
+  constraints: BoxConstraints({
+    minWidth: 100,
+    maxWidth: 300,
+    minHeight: 50,
+    maxHeight: 200
+  }),
+  color: Colors.green,
+  child: Text("유연한 크기")
+})
+```
+
+### 무한 크기
+```typescript
+Container({
+  width: double.infinity,  // 가능한 최대 너비
+  height: 50,
+  color: Colors.red,
+  child: Text("전체 너비")
+})
+```
+
+## 여백 다루기
+
+### Padding (내부 여백)
+padding은 Container의 경계와 child 사이의 공간입니다:
+
+```typescript
+Container({
+  color: Colors.blue,
+  padding: EdgeInsets.all(20),  // 모든 방향 20
+  child: Text("패딩이 있는 텍스트")
+})
+
+// 방향별 패딩
+Container({
+  padding: EdgeInsets.only({
+    left: 10,
+    top: 20,
+    right: 10,
+    bottom: 30
+  }),
+  child: Text("방향별 패딩")
+})
+
+// 대칭 패딩
+Container({
+  padding: EdgeInsets.symmetric({
+    horizontal: 20,  // 좌우
+    vertical: 10    // 상하
+  }),
+  child: Text("대칭 패딩")
+})
+```
+
+### Margin (외부 여백)
+margin은 Container 외부의 공간입니다:
+
+```typescript
+Container({
+  margin: EdgeInsets.all(10),
+  color: Colors.green,
+  child: Text("마진이 있는 컨테이너")
+})
+```
+
+## BoxDecoration - 시각적 효과
+
+decoration 속성으로 Container를 아름답게 꾸밀 수 있습니다:
+
+### 기본 장식
+```typescript
+Container({
+  width: 200,
+  height: 100,
+  decoration: new BoxDecoration({
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(12),
+    border: Border.all({
+      color: Colors.blue,
+      width: 2
+    })
+  }),
+  child: Center({
+    child: Text("장식된 컨테이너")
+  })
+})
+```
+
+### 그림자 효과
+```typescript
+Container({
+  width: 200,
+  height: 100,
+  decoration: new BoxDecoration({
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(8),
+    boxShadow: [
+      new BoxShadow({
+        color: Colors.black.withOpacity(0.1),
+        blurRadius: 10,
+        offset: { x: 0, y: 5 }
+      })
+    ]
+  }),
+  child: Center({
+    child: Text("그림자가 있는 카드")
+  })
+})
+```
+
+### 그라데이션
+```typescript
+Container({
+  width: 200,
+  height: 100,
+  decoration: new BoxDecoration({
+    gradient: LinearGradient({
+      colors: [Colors.blue[400], Colors.purple[400]],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight
+    })
+  }),
+  child: Center({
+    child: Text("그라데이션", {
+      style: new TextStyle({
+        color: Colors.white,
+        fontWeight: 'bold'
+      })
+    })
+  })
+})
+```
+
+> **⚠️ 주의**: color 속성과 decoration을 동시에 사용할 수 없습니다. color를 사용하려면 decoration.color로 설정하세요.
+
+## Alignment - 자식 위젯 정렬
+
+alignment 속성으로 child의 위치를 조절할 수 있습니다:
+
+### 기본 정렬
+```typescript
+Container({
+  width: 200,
+  height: 200,
+  color: Colors.grey[300],
+  alignment: Alignment.center,  // 중앙 정렬
+  child: Container({
+    width: 50,
+    height: 50,
+    color: Colors.red
+  })
+})
+```
+
+### 정렬 옵션들
+```typescript
+// 미리 정의된 정렬
+Alignment.topLeft      // 좌상단
+Alignment.topCenter    // 상단 중앙
+Alignment.topRight     // 우상단
+Alignment.centerLeft   // 좌측 중앙
+Alignment.center       // 정중앙
+Alignment.centerRight  // 우측 중앙
+Alignment.bottomLeft   // 좌하단
+Alignment.bottomCenter // 하단 중앙
+Alignment.bottomRight  // 우하단
+
+// 커스텀 정렬 (-1.0 ~ 1.0)
+Alignment(-0.5, 0.5)  // 좌측으로 조금, 아래로 조금
+```
+
+## 실전 예제: 카드 UI 만들기
+
+Container의 모든 기능을 활용한 카드 UI:
+
+```typescript
+Container({
+  width: 300,
+  margin: EdgeInsets.all(16),
+  padding: EdgeInsets.all(20),
+  decoration: new BoxDecoration({
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(16),
+    boxShadow: [
+      new BoxShadow({
+        color: Colors.black.withOpacity(0.1),
+        blurRadius: 20,
+        offset: { x: 0, y: 10 }
+      })
+    ]
+  }),
+  child: Column({
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Container({
+        width: 60,
+        height: 60,
+        decoration: new BoxDecoration({
+          color: Colors.blue[100],
+          shape: BoxShape.circle
+        }),
+        alignment: Alignment.center,
+        child: Text("📦", {
+          style: new TextStyle({ fontSize: 30 })
+        })
+      }),
+      Container({ height: 16 }),
+      Text("Container 마스터", {
+        style: new TextStyle({
+          fontSize: 20,
+          fontWeight: 'bold'
+        })
+      }),
+      Container({ height: 8 }),
+      Text("모든 UI의 기본이 되는 Container 위젯을 완벽하게 이해했습니다!", {
+        style: new TextStyle({
+          fontSize: 14,
+          color: Colors.grey[600],
+          height: 1.5
+        })
+      })
+    ]
+  })
+})
+```
+
+## 연습해보기
+
+다음 요구사항을 만족하는 Container들을 만들어보세요:
+
+1. **프로필 뱃지**: 
+   - 원형 Container (width = height = 80)
+   - 파란색 배경에 흰색 이니셜
+   - 그림자 효과 추가
+
+2. **알림 카드**:
+   - 노란색 배경, 둥근 모서리
+   - 좌측에 아이콘, 우측에 텍스트
+   - 전체 패딩 16, 아이콘과 텍스트 사이 간격 12
+
+<details>
+<summary>💡 힌트</summary>
+
+1. 원형은 `shape: BoxShape.circle` 사용
+2. Row로 아이콘과 텍스트를 수평 배치
+3. 간격은 `Container({ width: 12 })` 또는 `SizedBox` 사용
+
+</details>
+
+## 성능 팁
+
+### 1. 불필요한 Container 피하기
+```typescript
+// ❌ 불필요한 중첩
+Container({
+  child: Container({
+    child: Container({
+      child: Text("과도한 중첩")
+    })
+  })
+})
+
+// ✅ 필요한 속성만 사용
+Container({
+  padding: EdgeInsets.all(20),
+  color: Colors.blue,
+  child: Text("간단하게")
+})
+```
+
+### 2. const 활용
+```typescript
+// 변하지 않는 Container는 const로
+const emptyBox = Container({
+  width: 20,
+  height: 20
+});
+```
+
+## 자주 하는 실수
+
+### 1. color와 decoration 충돌
+```typescript
+// ❌ 에러 발생
+Container({
+  color: Colors.blue,
+  decoration: new BoxDecoration({
+    borderRadius: BorderRadius.circular(8)
+  })
+})
+
+// ✅ decoration.color 사용
+Container({
+  decoration: new BoxDecoration({
+    color: Colors.blue,
+    borderRadius: BorderRadius.circular(8)
+  })
+})
+```
+
+### 2. 크기 지정 없이 정렬
+```typescript
+// ❌ 작동하지 않음 (Container가 child 크기로 축소)
+Container({
+  color: Colors.blue,
+  alignment: Alignment.centerRight,
+  child: Text("정렬 안됨")
+})
+
+// ✅ 크기 지정 필요
+Container({
+  width: 200,
+  color: Colors.blue,
+  alignment: Alignment.centerRight,
+  child: Text("정렬됨")
+})
+```
+
+## 🎉 Container 마스터!
+
+Container의 모든 주요 기능을 배웠습니다.
+
+지금까지 배운 내용:
+- ✅ 크기와 제약 조건 설정
+- ✅ padding과 margin으로 여백 조절
+- ✅ BoxDecoration으로 시각적 효과 추가
+- ✅ alignment로 자식 위젯 정렬
+
+## 다음 단계
+
+Container를 마스터했으니, 이제 텍스트를 다루는 Text 위젯에 대해 알아보겠습니다.
+
+다양한 텍스트 스타일링과 폰트 설정 방법을 배워보겠습니다.
+
+👉 **다음: Text - 텍스트 표시와 스타일링**

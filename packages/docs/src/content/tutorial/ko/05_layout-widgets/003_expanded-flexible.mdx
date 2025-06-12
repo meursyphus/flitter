@@ -1,0 +1,762 @@
+---
+nav_group: "레이아웃 위젯 마스터하기"
+nav_order: 3
+title: "Expanded와 Flexible - 공간 분배"
+description: "Expanded와 Flexible로 유연하고 반응형인 레이아웃을 만드는 모든 방법을 배워보세요"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Row, Column, Expanded, Flexible, Text, Colors, EdgeInsets } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Expanded와 Flexible을 활용해보세요
+      // 1. Expanded로 남은 공간 채우기
+      // 2. flex 속성으로 비율 조절
+      // 3. Flexible로 유연한 크기 조절
+      const widget = Container({
+        padding: EdgeInsets.all(20),
+        child: Column({
+          children: [
+            Text("Expanded와 Flexible을 연습해보세요!"),
+            // 여기에 코드 추가
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Expanded와 Flexible 마스터하기</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, Row, Column, Expanded, Flexible, Text, TextStyle, 
+      Colors, EdgeInsets, SizedBox, Center, FlexFit
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // 데모용 박스 컴포넌트
+      const ColorBox = (text, color, width = null, height = 60) => Container({
+        width: width,
+        height: height,
+        color: color,
+        child: Center({
+          child: Text(text, {
+            style: new TextStyle({ 
+              color: Colors.white,
+              fontWeight: "bold"
+            })
+          })
+        })
+      });
+
+      const widget = Container({
+        width: 600,
+        padding: EdgeInsets.all(20),
+        color: Colors.grey[100],
+        child: Column({
+          crossAxisAlignment: "stretch",
+          children: [
+            // 1. Expanded 기본 사용법
+            Text("1. Expanded - 남은 공간 채우기", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              height: 80,
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              child: Row({
+                children: [
+                  ColorBox("고정 100px", Colors.blue[400], 100),
+                  SizedBox({ width: 10 }),
+                  Expanded({
+                    child: ColorBox("Expanded", Colors.green[400])
+                  }),
+                  SizedBox({ width: 10 }),
+                  ColorBox("고정 80px", Colors.red[400], 80)
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 2. flex 속성으로 비율 조절
+            Text("2. flex 속성 - 공간 비율 조절", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              height: 80,
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              child: Row({
+                children: [
+                  Expanded({
+                    flex: 1,
+                    child: ColorBox("flex: 1", Colors.purple[400])
+                  }),
+                  SizedBox({ width: 10 }),
+                  Expanded({
+                    flex: 2,
+                    child: ColorBox("flex: 2", Colors.orange[400])
+                  }),
+                  SizedBox({ width: 10 }),
+                  Expanded({
+                    flex: 3,
+                    child: ColorBox("flex: 3", Colors.teal[400])
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 3. Flexible vs Expanded
+            Text("3. Flexible vs Expanded 비교", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            
+            // Flexible 예제
+            Container({
+              margin: EdgeInsets.only({ bottom: 10 }),
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              child: Column({
+                crossAxisAlignment: "start",
+                children: [
+                  Text("Flexible - 필요한 만큼만 차지:", {
+                    style: new TextStyle({ fontSize: 14, fontWeight: "bold" })
+                  }),
+                  SizedBox({ height: 5 }),
+                  Container({
+                    height: 60,
+                    color: Colors.grey[200],
+                    child: Row({
+                      children: [
+                        Flexible({
+                          child: Container({
+                            color: Colors.indigo[400],
+                            child: Center({
+                              child: Text("짧은 텍스트", {
+                                style: new TextStyle({ color: Colors.white })
+                              })
+                            })
+                          })
+                        }),
+                        SizedBox({ width: 10 }),
+                        Flexible({
+                          child: Container({
+                            color: Colors.pink[400],
+                            child: Center({
+                              child: Text("이것은 좀 더 긴 텍스트입니다", {
+                                style: new TextStyle({ color: Colors.white })
+                              })
+                            })
+                          })
+                        }),
+                        SizedBox({ width: 10 }),
+                        ColorBox("고정", Colors.grey[600], 80)
+                      ]
+                    })
+                  })
+                ]
+              })
+            }),
+            
+            // Expanded 예제
+            Container({
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              child: Column({
+                crossAxisAlignment: "start",
+                children: [
+                  Text("Expanded - 남은 공간 모두 차지:", {
+                    style: new TextStyle({ fontSize: 14, fontWeight: "bold" })
+                  }),
+                  SizedBox({ height: 5 }),
+                  Container({
+                    height: 60,
+                    color: Colors.grey[200],
+                    child: Row({
+                      children: [
+                        Expanded({
+                          child: Container({
+                            color: Colors.indigo[400],
+                            child: Center({
+                              child: Text("짧은 텍스트", {
+                                style: new TextStyle({ color: Colors.white })
+                              })
+                            })
+                          })
+                        }),
+                        SizedBox({ width: 10 }),
+                        Expanded({
+                          child: Container({
+                            color: Colors.pink[400],
+                            child: Center({
+                              child: Text("이것은 좀 더 긴 텍스트입니다", {
+                                style: new TextStyle({ color: Colors.white })
+                              })
+                            })
+                          })
+                        }),
+                        SizedBox({ width: 10 }),
+                        ColorBox("고정", Colors.grey[600], 80)
+                      ]
+                    })
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 4. Column에서의 사용
+            Text("4. Column에서 Expanded 사용", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              height: 300,
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              child: Row({
+                children: [
+                  // 첫 번째 Column
+                  Expanded({
+                    child: Container({
+                      margin: EdgeInsets.only({ right: 5 }),
+                      color: Colors.grey[200],
+                      child: Column({
+                        children: [
+                          ColorBox("헤더", Colors.blue[600], null, 50),
+                          Expanded({
+                            child: Container({
+                              margin: EdgeInsets.symmetric({ vertical: 10 }),
+                              color: Colors.blue[200],
+                              child: Center({
+                                child: Text("메인 컨텐츠\n(Expanded)")
+                              })
+                            })
+                          }),
+                          ColorBox("푸터", Colors.blue[600], null, 40)
+                        ]
+                      })
+                    })
+                  }),
+                  // 두 번째 Column
+                  Expanded({
+                    child: Container({
+                      margin: EdgeInsets.only({ left: 5 }),
+                      color: Colors.grey[200],
+                      child: Column({
+                        children: [
+                          ColorBox("작은 헤더", Colors.green[600], null, 30),
+                          Expanded({
+                            flex: 2,
+                            child: Container({
+                              margin: EdgeInsets.symmetric({ vertical: 10 }),
+                              color: Colors.green[200],
+                              child: Center({
+                                child: Text("상단 영역\n(flex: 2)")
+                              })
+                            })
+                          }),
+                          Expanded({
+                            flex: 1,
+                            child: Container({
+                              margin: EdgeInsets.only({ bottom: 10 }),
+                              color: Colors.green[300],
+                              child: Center({
+                                child: Text("하단 영역\n(flex: 1)")
+                              })
+                            })
+                          })
+                        ]
+                      })
+                    })
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 5. 실전 예제 - 대시보드 레이아웃
+            Text("5. 실전 예제 - 대시보드 카드", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              height: 120,
+              decoration: new BoxDecoration({
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [{
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: { x: 0, y: 2 }
+                }]
+              }),
+              child: Row({
+                children: [
+                  // 아이콘 영역
+                  Container({
+                    width: 120,
+                    decoration: new BoxDecoration({
+                      color: Colors.amber[400],
+                      borderRadius: BorderRadius.horizontal({ left: 8 })
+                    }),
+                    child: Center({
+                      child: Text("📊", {
+                        style: new TextStyle({ fontSize: 48 })
+                      })
+                    })
+                  }),
+                  // 컨텐츠 영역
+                  Expanded({
+                    child: Padding({
+                      padding: EdgeInsets.all(16),
+                      child: Column({
+                        crossAxisAlignment: "start",
+                        children: [
+                          Text("매출 현황", {
+                            style: new TextStyle({
+                              fontSize: 16,
+                              fontWeight: "bold",
+                              color: Colors.grey[800]
+                            })
+                          }),
+                          SizedBox({ height: 4 }),
+                          Text("전월 대비 23% 상승", {
+                            style: new TextStyle({
+                              fontSize: 14,
+                              color: Colors.green[600]
+                            })
+                          }),
+                          Expanded({
+                            child: Align({
+                              alignment: Alignment.bottomRight,
+                              child: Text("2,450,000원", {
+                                style: new TextStyle({
+                                  fontSize: 24,
+                                  fontWeight: "bold",
+                                  color: Colors.amber[700]
+                                })
+                              })
+                            })
+                          })
+                        ]
+                      })
+                    })
+                  })
+                ]
+              })
+            })
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Expanded와 Flexible 마스터하기</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# Expanded와 Flexible - 공간 분배
+
+Expanded와 Flexible은 Row, Column에서 자식 위젯들의 크기를 유연하게 조절하는 핵심 위젯입니다. 반응형 레이아웃을 만들 때 필수적인 도구입니다.
+
+## 이 튜토리얼에서 배울 것
+
+- [ ] Expanded로 남은 공간 채우기
+- [ ] flex 속성으로 공간 비율 조절하기
+- [ ] Flexible과 Expanded의 차이점 이해하기
+- [ ] FlexFit으로 세밀한 크기 제어
+- [ ] Row와 Column에서의 활용 패턴
+- [ ] 실전 반응형 레이아웃 구현
+
+## Expanded vs Flexible 핵심 차이
+
+### Expanded
+- **동작**: 남은 공간을 **모두** 차지
+- **사용 시기**: 공간을 완전히 채우고 싶을 때
+- **FlexFit**: tight (고정)
+
+### Flexible
+- **동작**: 필요한 만큼만 차지 (최대 가능한 크기까지)
+- **사용 시기**: 컨텐츠 크기에 따라 유연하게 조절하고 싶을 때
+- **FlexFit**: loose (유연)
+
+> **💡 핵심 개념: Flex 레이아웃**
+> 
+> Expanded와 Flexible은 CSS Flexbox와 유사한 개념입니다.
+> Row/Column의 주축 방향으로 공간을 분배합니다.
+
+## 1단계: Expanded 기본 사용법
+
+### 남은 공간 채우기
+
+```typescript
+Row({
+  children: [
+    Container({
+      width: 100,
+      height: 50,
+      color: Colors.blue
+    }),
+    Expanded({
+      child: Container({
+        height: 50,
+        color: Colors.green  // 남은 공간 모두 차지
+      })
+    }),
+    Container({
+      width: 100,
+      height: 50,
+      color: Colors.red
+    })
+  ]
+})
+```
+
+### Expanded의 특징
+
+1. **Row에서**: 가로 방향으로 확장
+2. **Column에서**: 세로 방향으로 확장
+3. **필수 부모**: Row, Column, Flex 안에서만 사용
+
+## 2단계: flex 속성으로 비율 조절
+
+### 공간 분배 비율
+
+```typescript
+Row({
+  children: [
+    Expanded({
+      flex: 1,  // 전체의 1/6
+      child: Container({ color: Colors.red })
+    }),
+    Expanded({
+      flex: 2,  // 전체의 2/6
+      child: Container({ color: Colors.green })
+    }),
+    Expanded({
+      flex: 3,  // 전체의 3/6
+      child: Container({ color: Colors.blue })
+    })
+  ]
+})
+```
+
+### flex 계산 방법
+
+- 총 flex = 1 + 2 + 3 = 6
+- 빨강: 1/6 (약 16.7%)
+- 초록: 2/6 (약 33.3%)
+- 파랑: 3/6 (50%)
+
+## 3단계: Flexible 이해하기
+
+### 기본 사용법
+
+```typescript
+Row({
+  children: [
+    Flexible({
+      child: Container({
+        color: Colors.blue,
+        child: Text("필요한 만큼만 차지")
+      })
+    }),
+    Flexible({
+      child: Container({
+        color: Colors.green,
+        child: Text("이것도 필요한 만큼만")
+      })
+    })
+  ]
+})
+```
+
+### FlexFit 옵션
+
+```typescript
+Flexible({
+  fit: FlexFit.tight,  // Expanded와 동일
+  child: MyWidget()
+})
+
+Flexible({
+  fit: FlexFit.loose,  // 기본값, 필요한 만큼만
+  child: MyWidget()
+})
+```
+
+## 4단계: 실전 패턴 - 반응형 버튼 바
+
+```typescript
+Container({
+  padding: EdgeInsets.all(16),
+  child: Row({
+    children: [
+      // 취소 버튼 - 고정 너비
+      Container({
+        width: 100,
+        height: 48,
+        decoration: new BoxDecoration({
+          border: Border.all({ color: Colors.grey[400] }),
+          borderRadius: BorderRadius.circular(8)
+        }),
+        child: Center({
+          child: Text("취소")
+        })
+      }),
+      
+      SizedBox({ width: 16 }),
+      
+      // 확인 버튼 - 남은 공간 채우기
+      Expanded({
+        child: Container({
+          height: 48,
+          decoration: new BoxDecoration({
+            color: Colors.blue[500],
+            borderRadius: BorderRadius.circular(8)
+          }),
+          child: Center({
+            child: Text("확인", {
+              style: new TextStyle({
+                color: Colors.white,
+                fontWeight: "bold"
+              })
+            })
+          })
+        })
+      })
+    ]
+  })
+})
+```
+
+## 5단계: Column에서의 활용
+
+### 채팅 UI 레이아웃
+
+```typescript
+Column({
+  children: [
+    // 헤더 - 고정 높이
+    Container({
+      height: 60,
+      color: Colors.blue[500],
+      child: Center({
+        child: Text("채팅방", {
+          style: new TextStyle({
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: "bold"
+          })
+        })
+      })
+    }),
+    
+    // 메시지 영역 - 확장
+    Expanded({
+      child: Container({
+        color: Colors.grey[100],
+        padding: EdgeInsets.all(16),
+        child: MessageList()
+      })
+    }),
+    
+    // 입력 영역 - 고정 높이
+    Container({
+      height: 80,
+      padding: EdgeInsets.all(16),
+      color: Colors.white,
+      child: Row({
+        children: [
+          Expanded({
+            child: TextField()
+          }),
+          SizedBox({ width: 16 }),
+          SendButton()
+        ]
+      })
+    })
+  ]
+})
+```
+
+## 6단계: 고급 패턴 - 대시보드 그리드
+
+```typescript
+Row({
+  children: [
+    // 사이드바 - 고정 너비
+    Container({
+      width: 200,
+      color: Colors.grey[800],
+      child: NavigationMenu()
+    }),
+    
+    // 메인 컨텐츠 영역
+    Expanded({
+      child: Column({
+        children: [
+          // 통계 카드들
+          Container({
+            height: 120,
+            child: Row({
+              children: [
+                Expanded({
+                  child: StatCard("방문자", "1,234")
+                }),
+                SizedBox({ width: 16 }),
+                Expanded({
+                  child: StatCard("매출", "₩2.5M")
+                }),
+                SizedBox({ width: 16 }),
+                Expanded({
+                  child: StatCard("전환율", "3.2%")
+                })
+              ]
+            })
+          }),
+          
+          // 차트 영역
+          Expanded({
+            child: Container({
+              margin: EdgeInsets.all(16),
+              padding: EdgeInsets.all(20),
+              color: Colors.white,
+              child: Chart()
+            })
+          })
+        ]
+      })
+    })
+  ]
+})
+```
+
+## 연습 과제
+
+다음과 같은 레이아웃을 만들어보세요:
+
+1. **이메일 앱 레이아웃**
+   - 왼쪽: 고정 너비 폴더 목록
+   - 중앙: Expanded 이메일 리스트
+   - 오른쪽: Flexible 이메일 내용
+
+2. **음악 플레이어 바**
+   - 앨범 아트: 고정 크기
+   - 곡 정보: Expanded
+   - 컨트롤 버튼들: 고정 크기
+
+3. **폼 레이아웃**
+   - 레이블: 고정 너비
+   - 입력 필드: Expanded
+   - 여러 줄로 구성
+
+<details>
+<summary>💡 힌트</summary>
+
+1. Row 안에 Container(고정) + Expanded + Flexible 조합
+2. Row로 구성, 중간의 Column을 Expanded로 감싸기
+3. 각 줄을 Row로 만들고, TextField를 Expanded로 감싸기
+
+</details>
+
+## 성능 최적화 팁
+
+### Expanded vs SizedBox.expand
+
+```typescript
+// 단순히 공간만 채울 때
+Expanded({
+  child: SizedBox()  // 더 가벼움
+})
+
+// 복잡한 위젯을 채울 때
+Expanded({
+  child: ComplexWidget()
+})
+```
+
+### 불필요한 중첩 피하기
+
+```typescript
+// 나쁜 예
+Expanded({
+  child: Container({
+    child: Expanded({  // 오류!
+      child: MyWidget()
+    })
+  })
+})
+
+// 좋은 예
+Expanded({
+  child: Container({
+    child: MyWidget()
+  })
+})
+```
+
+## 핵심 정리
+
+Expanded와 Flexible 마스터 체크리스트:
+
+- ✅ **Expanded**: 남은 공간 모두 차지
+- ✅ **Flexible**: 필요한 만큼만 차지
+- ✅ **flex**: 공간 분배 비율 조절
+- ✅ **부모 제약**: Row/Column 안에서만 사용
+- ✅ **조합**: 고정 크기와 함께 사용
+
+## 🎉 훌륭합니다!
+
+Expanded와 Flexible을 완벽히 마스터했습니다! 이제 어떤 반응형 레이아웃도 만들 수 있을 것입니다.
+
+## 다음 단계
+
+다음 튜토리얼에서는 AspectRatio로 비율을 유지하는 레이아웃을 배워보겠습니다.
+
+👉 **다음: AspectRatio - 비율 유지하기**
