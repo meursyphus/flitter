@@ -1,0 +1,336 @@
+---
+nav_group: "Basic Widget API"
+nav_order: 1
+title: "Container - The Foundation Box"
+description: "Explore all the features of Flitter's most basic yet powerful Container widget"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Text, Colors, EdgeInsets } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Try out Container's various properties
+      // 1. Set size: width, height
+      // 2. Set color: color
+      // 3. Set padding: padding
+      // 4. Set margin: margin
+      const widget = Container({
+        child: Text("Style the Container widget!")
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Mastering the Container Widget</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Text, TextStyle, Colors, EdgeInsets, Center, Column, MainAxisAlignment } from "@meursyphus/flitter";
+
+    function App() {
+      // Examples showcasing Container's various properties
+      const examples = Column({
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          // 1. Basic Container
+          Container({
+            width: 200,
+            height: 100,
+            color: Colors.blue[300],
+            child: Center({
+              child: Text("Basic Container", {
+                style: new TextStyle({ color: Colors.white })
+              })
+            })
+          }),
+          
+          // 2. Container with padding
+          Container({
+            color: Colors.green[300],
+            padding: EdgeInsets.all(20),
+            child: Text("Container with Padding", {
+              style: new TextStyle({ color: Colors.white })
+            })
+          }),
+          
+          // 3. Container with both margin and padding
+          Container({
+            width: 250,
+            height: 80,
+            margin: EdgeInsets.symmetric({ horizontal: 20, vertical: 10 }),
+            padding: EdgeInsets.fromLTRB({ left: 15, top: 10, right: 15, bottom: 10 }),
+            color: Colors.purple[300],
+            child: Center({
+              child: Text("Margin + Padding", {
+                style: new TextStyle({ color: Colors.white, fontSize: 16 })
+              })
+            })
+          }),
+          
+          // 4. Container with constraints
+          Container({
+            constraints: {
+              minWidth: 150,
+              maxWidth: 300,
+              minHeight: 60,
+              maxHeight: 100
+            },
+            color: Colors.orange[300],
+            padding: EdgeInsets.all(15),
+            child: Text("Container with Constraints\n(min/max size set)", {
+              style: new TextStyle({ color: Colors.white })
+            })
+          })
+        ]
+      });
+
+      const widget = Container({
+        width: 400,
+        height: 500,
+        color: Colors.grey[200],
+        child: examples
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Mastering the Container Widget</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# Container - The Foundation Box
+
+Container is the most frequently used basic widget in Flitter. While it looks like a simple box, it's a versatile widget that provides various features like size adjustment, padding, margin, color, alignment, and more.
+
+## What You'll Learn
+
+- [ ] Container's basic properties (width, height, color)
+- [ ] The difference and usage of padding and margin
+- [ ] Various spacing settings using EdgeInsets
+- [ ] Flexible sizing using constraints
+- [ ] Building practical layouts with Container
+
+## What is a Container?
+
+Container serves the following roles as a basic widget:
+
+1. **Basic unit of layout**: Acts as a box to contain other widgets
+2. **Styling**: Adds visual effects like background color, borders, and shadows
+3. **Spacing control**: Arranges space with padding and margin
+4. **Size specification**: Controls size with fixed dimensions or constraints
+
+> **💡 Key Concept: Container's Rendering Order**
+> 
+> Container applies properties in this order:
+> 1. Apply constraints
+> 2. Apply size (width/height)
+> 3. Apply margin
+> 4. Apply padding
+> 5. Position child widget
+
+## Step 1: Creating a Basic Container
+
+Let's start with the simplest Container:
+
+```typescript
+Container({
+  width: 200,
+  height: 100,
+  color: Colors.blue[300],
+  child: Text("Hello Container!")
+})
+```
+
+### Key Properties:
+
+- **width/height**: Set fixed size
+- **color**: Set background color
+- **child**: Widget to contain (only one allowed)
+
+## Step 2: Understanding Padding
+
+Padding is the space between the Container's border and its internal content:
+
+```typescript
+Container({
+  color: Colors.green[300],
+  padding: EdgeInsets.all(20),  // 20 pixels padding on all sides
+  child: Text("Text with padding")
+})
+```
+
+### Various Ways to Use EdgeInsets:
+
+```typescript
+// Same padding on all sides
+EdgeInsets.all(16)
+
+// Different padding for horizontal/vertical
+EdgeInsets.symmetric({ horizontal: 20, vertical: 10 })
+
+// Different padding for each direction
+EdgeInsets.fromLTRB({ left: 10, top: 20, right: 10, bottom: 30 })
+
+// Padding only on specific sides
+EdgeInsets.only({ left: 20, right: 20 })
+```
+
+## Step 3: Using Margin
+
+Margin is the space between the Container and other widgets outside:
+
+```typescript
+Container({
+  margin: EdgeInsets.all(10),  // External spacing
+  padding: EdgeInsets.all(20), // Internal spacing
+  color: Colors.purple[300],
+  child: Text("Margin and Padding")
+})
+```
+
+> **🎯 Pro Tip: Margin vs Padding**
+> - **Padding**: Space inside the background color or border. Included in click area.
+> - **Margin**: Space between other widgets. Not included in click area.
+
+## Step 4: Using Constraints
+
+Use constraints when you need flexible sizing instead of fixed dimensions:
+
+```typescript
+Container({
+  constraints: {
+    minWidth: 100,   // Minimum width
+    maxWidth: 300,   // Maximum width
+    minHeight: 50,   // Minimum height
+    maxHeight: 150   // Maximum height
+  },
+  color: Colors.orange[300],
+  child: Text("Container with flexible size")
+})
+```
+
+This allows the Container to automatically adjust based on its content size!
+
+## Step 5: Practical Example - Creating a Card UI
+
+Let's create a practical card UI using Container:
+
+```typescript
+Container({
+  width: 300,
+  margin: EdgeInsets.all(16),
+  padding: EdgeInsets.all(20),
+  decoration: new BoxDecoration({
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+      {
+        color: Colors.black.withOpacity(0.1),
+        blurRadius: 10,
+        offset: { x: 0, y: 4 }
+      }
+    ]
+  }),
+  child: Column({
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text("Card Title", {
+        style: new TextStyle({ 
+          fontSize: 20, 
+          fontWeight: 'bold' 
+        })
+      }),
+      SizedBox({ height: 8 }),
+      Text("Card content goes here.", {
+        style: new TextStyle({ 
+          color: Colors.grey[600] 
+        })
+      })
+    ]
+  })
+})
+```
+
+## Practice Exercises
+
+Create Containers that meet the following requirements:
+
+1. **Traffic Light**
+   - 3 circular Containers arranged vertically
+   - Use red, yellow, and green colors
+   - Arrange with appropriate spacing
+
+2. **Profile Card**
+   - Space for an image (gray Container)
+   - Name and description text
+   - Card-style Container wrapping everything
+
+3. **Button-style Container**
+   - Horizontal padding 24, vertical padding 12
+   - Rounded corners (BorderRadius.circular(8))
+   - Shadow for hover effect
+
+<details>
+<summary>💡 Hints</summary>
+
+1. For circular Container, make `width` and `height` equal and use `shape: BoxShape.circle` in `decoration`
+2. You can arrange vertically with the Column widget
+3. BoxDecoration can provide various visual effects
+
+</details>
+
+## Key Takeaways
+
+Container is simple but powerful widget:
+
+- ✅ **Size control**: width, height, constraints
+- ✅ **Spacing control**: padding (internal), margin (external)
+- ✅ **Visual effects**: color, decoration
+- ✅ **Layout**: Basic unit for containing other widgets
+
+## 🎉 Great Job!
+
+You've mastered the various features of the Container widget! Container will be the foundation of all UIs you'll create.
+
+## Next Steps
+
+In the next tutorial, we'll learn various styling methods for the Text widget that handles text.
+
+👉 **Next: Text - Displaying and Styling Text**

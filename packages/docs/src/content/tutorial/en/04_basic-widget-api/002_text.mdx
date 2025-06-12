@@ -1,0 +1,514 @@
+---
+nav_group: "Basic Widget API"
+nav_order: 2
+title: "Text - Displaying and Styling Text"
+description: "Learn all about the Text widget and TextStyle features for beautiful text presentation"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Text, TextStyle, Colors, EdgeInsets, Column } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Try out various TextStyle properties
+      // 1. Adjust size with fontSize
+      // 2. Set weight with fontWeight
+      // 3. Change color with color
+      // 4. Add italic effect with fontStyle
+      const widget = Container({
+        padding: EdgeInsets.all(20),
+        child: Column({
+          crossAxisAlignment: "start",
+          children: [
+            Text("Basic text"),
+            Text("Apply some style!", {
+              style: new TextStyle({
+                // Add style here
+              })
+            })
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Text Widget and Styling</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Text, TextStyle, Colors, EdgeInsets, Column, SizedBox, Center } from "@meursyphus/flitter";
+
+    function App() {
+      // Various styling examples with Text widget
+      const widget = Container({
+        width: 500,
+        padding: EdgeInsets.all(30),
+        color: Colors.grey[100],
+        child: Column({
+          crossAxisAlignment: "start",
+          children: [
+            // 1. Basic text
+            Text("1. Basic text style"),
+            SizedBox({ height: 20 }),
+            
+            // 2. Size variations
+            Text("2. Text in various sizes", {
+              style: new TextStyle({ fontSize: 24 })
+            }),
+            Text("Small text", {
+              style: new TextStyle({ fontSize: 12 })
+            }),
+            SizedBox({ height: 20 }),
+            
+            // 3. Weight control
+            Text("3. Bold text", {
+              style: new TextStyle({ 
+                fontWeight: "bold",
+                fontSize: 18 
+              })
+            }),
+            Text("Light text", {
+              style: new TextStyle({ 
+                fontWeight: "w300",
+                fontSize: 18 
+              })
+            }),
+            SizedBox({ height: 20 }),
+            
+            // 4. Color variations
+            Text("4. Colorful text", {
+              style: new TextStyle({ 
+                color: Colors.blue[600],
+                fontSize: 18 
+              })
+            }),
+            Text("Red warning message", {
+              style: new TextStyle({ 
+                color: Colors.red[700],
+                fontWeight: "bold" 
+              })
+            }),
+            SizedBox({ height: 20 }),
+            
+            // 5. Italic and decorations
+            Text("5. Italic text", {
+              style: new TextStyle({ 
+                fontStyle: "italic",
+                fontSize: 16 
+              })
+            }),
+            Text("Underlined text", {
+              style: new TextStyle({ 
+                decoration: "underline",
+                decorationColor: Colors.blue[400],
+                fontSize: 16 
+              })
+            }),
+            Text("Strikethrough text", {
+              style: new TextStyle({ 
+                decoration: "lineThrough",
+                decorationColor: Colors.red[400],
+                fontSize: 16 
+              })
+            }),
+            SizedBox({ height: 20 }),
+            
+            // 6. Combined styles
+            Container({
+              padding: EdgeInsets.all(15),
+              color: Colors.blue[50],
+              child: Text("🎨 Beautiful text combining all styles", {
+                style: new TextStyle({ 
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  color: Colors.blue[800],
+                  letterSpacing: 1.2,
+                  height: 1.5
+                })
+              })
+            }),
+            SizedBox({ height: 20 }),
+            
+            // 7. Text alignment
+            Container({
+              width: "100%",
+              padding: EdgeInsets.all(10),
+              color: Colors.purple[50],
+              child: Text("Center aligned text", {
+                style: new TextStyle({ 
+                  fontSize: 16,
+                  color: Colors.purple[700]
+                }),
+                textAlign: "center"
+              })
+            }),
+            
+            Container({
+              width: "100%",
+              padding: EdgeInsets.all(10),
+              color: Colors.green[50],
+              child: Text("Right aligned text", {
+                style: new TextStyle({ 
+                  fontSize: 16,
+                  color: Colors.green[700]
+                }),
+                textAlign: "right"
+              })
+            }),
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Text Widget and Styling</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# Text - Displaying and Styling Text
+
+The Text widget is the most basic widget for displaying text on screen. While it looks simple, it enables countless expressions through TextStyle.
+
+## What You'll Learn
+
+- [ ] Basic usage of the Text widget
+- [ ] Applying various styles with TextStyle
+- [ ] Adjusting font size, weight, and color
+- [ ] Text decoration effects (underline, strikethrough, etc.)
+- [ ] Text alignment and spacing control
+- [ ] Common text patterns used in practice
+
+## Text Widget Basics
+
+The simplest form of Text widget:
+
+```typescript
+Text("Hello, World!")
+```
+
+To add styling, use TextStyle:
+
+```typescript
+Text("Styled text", {
+  style: new TextStyle({
+    fontSize: 20,
+    color: Colors.blue[600]
+  })
+})
+```
+
+> **💡 Key Concept: Text Widget Characteristics**
+> 
+> - Only single style can be applied (use RichText for multiple styles)
+> - Displays as single line by default, wraps automatically when overflowing
+> - Size is determined by parent widget's constraints
+
+## Step 1: Text Size and Weight
+
+### fontSize - Text Size
+
+```typescript
+Text("Large Title", {
+  style: new TextStyle({ fontSize: 32 })
+})
+
+Text("Small Description", {
+  style: new TextStyle({ fontSize: 14 })
+})
+```
+
+### fontWeight - Text Weight
+
+```typescript
+// String method
+Text("Bold text", {
+  style: new TextStyle({ fontWeight: "bold" })
+})
+
+// Numeric method (w100 ~ w900)
+Text("Medium weight", {
+  style: new TextStyle({ fontWeight: "w500" })
+})
+```
+
+Weight options:
+- `"normal"` or `"w400"`: Default weight
+- `"bold"` or `"w700"`: Bold
+- `"w100"` ~ `"w900"`: Fine control
+
+## Step 2: Color and Style
+
+### color - Text Color
+
+```typescript
+Text("Blue text", {
+  style: new TextStyle({ 
+    color: Colors.blue[600] 
+  })
+})
+
+// Opacity control
+Text("Semi-transparent text", {
+  style: new TextStyle({ 
+    color: Colors.black.withOpacity(0.5) 
+  })
+})
+```
+
+### fontStyle - Italic
+
+```typescript
+Text("Italic text", {
+  style: new TextStyle({ 
+    fontStyle: "italic" 
+  })
+})
+```
+
+## Step 3: Text Decoration
+
+### decoration - Underline, Strikethrough, etc.
+
+```typescript
+// Underline
+Text("Underlined text", {
+  style: new TextStyle({ 
+    decoration: "underline",
+    decorationColor: Colors.blue[400]
+  })
+})
+
+// Strikethrough
+Text("Cancelled item", {
+  style: new TextStyle({ 
+    decoration: "lineThrough",
+    decorationColor: Colors.red[400]
+  })
+})
+
+// Overline
+Text("Overlined text", {
+  style: new TextStyle({ 
+    decoration: "overline"
+  })
+})
+```
+
+### decorationStyle - Decoration Line Style
+
+```typescript
+Text("Dotted underline", {
+  style: new TextStyle({ 
+    decoration: "underline",
+    decorationStyle: "dotted"
+  })
+})
+```
+
+Style options:
+- `"solid"`: Solid line (default)
+- `"double"`: Double line
+- `"dotted"`: Dotted line
+- `"dashed"`: Dashed line
+- `"wavy"`: Wavy line
+
+## Step 4: Spacing and Height
+
+### letterSpacing - Letter Spacing
+
+```typescript
+Text("Text with wide letter spacing", {
+  style: new TextStyle({ 
+    letterSpacing: 2.0 
+  })
+})
+```
+
+### wordSpacing - Word Spacing
+
+```typescript
+Text("Text with wide word spacing", {
+  style: new TextStyle({ 
+    wordSpacing: 5.0 
+  })
+})
+```
+
+### height - Line Height
+
+```typescript
+Text("Text with\nwide\nline spacing", {
+  style: new TextStyle({ 
+    height: 2.0  // Multiple of fontSize
+  })
+})
+```
+
+## Step 5: Text Alignment
+
+### textAlign - Text Alignment
+
+```typescript
+Container({
+  width: 300,
+  child: Text("Center aligned", {
+    textAlign: "center"
+  })
+})
+```
+
+Alignment options:
+- `"left"`: Left align (default)
+- `"right"`: Right align
+- `"center"`: Center align
+- `"justify"`: Justify
+
+## Step 6: Practical Example - Title and Body Styles
+
+```typescript
+Column({
+  crossAxisAlignment: "start",
+  children: [
+    // Title style
+    Text("📱 The Future of Mobile App Development", {
+      style: new TextStyle({
+        fontSize: 24,
+        fontWeight: "bold",
+        color: Colors.grey[800],
+        letterSpacing: 0.5
+      })
+    }),
+    
+    SizedBox({ height: 8 }),
+    
+    // Subtitle style
+    Text("Cross-platform apps with Flutter and Flitter", {
+      style: new TextStyle({
+        fontSize: 16,
+        color: Colors.grey[600],
+        fontStyle: "italic"
+      })
+    }),
+    
+    SizedBox({ height: 16 }),
+    
+    // Body style
+    Text("Flitter is an innovative framework that brings Flutter's widget system to the web environment. You can use Flutter's advantages like declarative UI, hot reload, and rich widget library directly on the web.", {
+      style: new TextStyle({
+        fontSize: 14,
+        height: 1.6,
+        color: Colors.grey[700]
+      })
+    })
+  ]
+})
+```
+
+## Practice Exercises
+
+Create the following text styles:
+
+1. **Warning Message**
+   - Red bold text
+   - Include exclamation icon
+   - Container with background color and padding
+
+2. **Discount Price Display**
+   - Original price: gray with strikethrough
+   - Discount price: red, bold, large
+   - Discount rate: green background
+
+3. **Code Style**
+   - Monospace font (fontFamily: "monospace")
+   - Gray background
+   - Small padding
+
+<details>
+<summary>💡 Hints</summary>
+
+1. Include emojis directly in the text for icons
+2. You can arrange multiple Text widgets horizontally with Row widget
+3. Use Container's decoration for background color and rounded corners
+
+</details>
+
+## Advanced Tip: Reusing TextStyle
+
+Save frequently used styles as variables for reuse:
+
+```typescript
+// Define styles
+const headingStyle = new TextStyle({
+  fontSize: 20,
+  fontWeight: "bold",
+  color: Colors.grey[800]
+});
+
+const bodyStyle = new TextStyle({
+  fontSize: 14,
+  height: 1.5,
+  color: Colors.grey[600]
+});
+
+// Use
+Text("Title", { style: headingStyle })
+Text("Body content", { style: bodyStyle })
+```
+
+## Key Takeaways
+
+What you can do with Text widget and TextStyle:
+
+- ✅ **Size and weight**: fontSize, fontWeight
+- ✅ **Color and style**: color, fontStyle
+- ✅ **Decoration**: decoration, decorationColor, decorationStyle
+- ✅ **Spacing**: letterSpacing, wordSpacing, height
+- ✅ **Alignment**: textAlign
+
+## 🎉 Congratulations!
+
+You've mastered various styling methods for the Text widget! Now you can implement any text design.
+
+## Next Steps
+
+In the next tutorial, we'll learn about Row and Column widgets for arranging widgets horizontally and vertically.
+
+👉 **Next: Row and Column - Basics of Linear Layout**

@@ -1,0 +1,140 @@
+---
+nav_group: "Layout Widgets"
+nav_order: 0
+title: "Chapter 5: Layout Widgets"
+description: "Master advanced layout widgets for handling space, alignment, and proportions to create professional UIs"
+---
+
+# Chapter 5: Layout Widgets
+
+In this chapter, we'll cover advanced widgets for creating more precise and flexible layouts. Mastering these widgets will allow you to implement pixel-perfect designs and responsive layouts with ease.
+
+## 🎯 Learning Objectives
+
+By completing this chapter, you will be able to:
+- Precisely control space and spacing
+- Accurately position widgets where you want them
+- Create flexible and responsive layouts
+- Build UI components with consistent proportions
+- Design professional-level layouts
+
+## 📚 Chapter Structure
+
+### [1. Padding and Margin - Managing Space](./001_padding-margin)
+- Control internal spacing with Padding widget
+- Set external spacing with Container's margin
+- Master all EdgeInsets methods
+- Build consistent spacing systems
+
+### [2. Align and Center - The Art of Alignment](./002_align-center)
+- Simple center alignment with Center
+- 9 basic positions with Align
+- Precise positioning with custom Alignment
+- Advanced patterns with Stack
+
+### [3. Expanded and Flexible - Space Distribution](./003_expanded-flexible)
+- Fill remaining space with Expanded
+- Control ratios with flex property
+- Differences between Flexible and Expanded
+- Implement responsive layouts
+
+### [4. AspectRatio - Maintaining Proportions](./004_aspect-ratio)
+- Maintain consistent width-to-height ratios
+- Use common screen ratios
+- Image galleries and grid layouts
+- Responsive card design
+
+## 🛠 Hands-on Learning
+
+Each tutorial includes:
+- **Interactive Code Editor**: See layout changes in real-time
+- **Visual Examples**: See the effects of each property
+- **Practical Patterns**: Layout techniques used in real apps
+- **Performance Optimization**: Efficient layout composition methods
+
+## 💡 Learning Tips
+
+1. **Visual Understanding**: Check effects while changing each property
+2. **Practice Combinations**: Use multiple layout widgets together
+3. **Think Responsive**: Consider various screen sizes
+4. **Performance Conscious**: Avoid unnecessary nesting
+
+## 🎨 Layouts You'll Be Able to Create
+
+- 📱 **Mobile App UI**: Consistent spacing and alignment
+- 🖼 **Image Gallery**: Perfect ratio grids
+- 📊 **Dashboard**: Flexible card layouts
+- 🎬 **Media Player**: 16:9 video containers
+- 🛒 **E-commerce**: Responsive product cards
+- 📝 **Form Design**: Aligned input fields
+
+## 🏗 Layout Design Principles
+
+### 1. Space Consistency
+```typescript
+// 8px-based spacing system
+const spacing = {
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32
+};
+```
+
+### 2. Alignment Clarity
+```typescript
+// Express intent clearly
+Center({ child: Logo() })  // Simple center alignment
+Align({ alignment: Alignment.topRight })  // Specific position
+```
+
+### 3. Flexible Sizing
+```typescript
+// Fixed vs flexible
+Row({
+  children: [
+    FixedWidth({ width: 100 }),  // Fixed
+    Expanded({ child: FlexibleContent() })  // Flexible
+  ]
+})
+```
+
+### 4. Ratio Consistency
+```typescript
+// Design system ratios
+AspectRatio({ aspectRatio: 16/9 })  // Video
+AspectRatio({ aspectRatio: 1.0 })   // Square
+AspectRatio({ aspectRatio: 1.618 }) // Golden ratio
+```
+
+## 🚀 Getting Started
+
+Ready? Let's start with Padding and Margin and master advanced layout techniques one by one!
+
+<div style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: '#f0f9ff', borderRadius: '8px', border: '1px solid #0ea5e9' }}>
+  <h3 style={{ marginTop: 0, color: '#0284c7' }}>👉 Start Your First Tutorial</h3>
+  <p style={{ marginBottom: '1rem' }}>Master handling space freely with Padding and Margin.</p>
+  <a href="./001_padding-margin" style={{ 
+    display: 'inline-block', 
+    padding: '0.75rem 1.5rem', 
+    backgroundColor: '#0ea5e9', 
+    color: 'white', 
+    textDecoration: 'none',
+    borderRadius: '6px',
+    fontWeight: 'bold'
+  }}>
+    Start Padding and Margin Tutorial →
+  </a>
+</div>
+
+## 📝 Learning Checklist
+
+Before starting, check:
+
+- [ ] Do you understand the basic widgets from Chapter 4?
+- [ ] Do you know the main axis/cross axis concepts of Row and Column?
+- [ ] Can you use Container's basic properties?
+- [ ] Do you know how to overlay widgets in Stack?
+
+If everything is ready, let's learn advanced layout techniques! 🎯

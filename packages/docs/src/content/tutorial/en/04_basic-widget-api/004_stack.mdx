@@ -1,0 +1,752 @@
+---
+nav_group: "Basic Widget API"
+nav_order: 4
+title: "Stack - Widget Overlaying and Absolute Positioning"
+description: "Learn advanced layout techniques for overlaying widgets and absolute positioning with Stack"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Stack, Positioned, Text, Colors, EdgeInsets } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Try using Stack and Positioned
+      // 1. Overlay multiple widgets with Stack
+      // 2. Set absolute position with Positioned
+      // 3. Align with Alignment
+      const widget = Container({
+        width: 400,
+        height: 400,
+        color: Colors.grey[200],
+        child: Stack({
+          children: [
+            // Add widgets to overlay here
+            Text("Try using Stack!")
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Layout Magic with Stack</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, Stack, Positioned, Align, Text, TextStyle, 
+      Colors, EdgeInsets, Alignment, Center, Column, Row,
+      SizedBox, BoxDecoration, BorderRadius
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // Card component
+      const Card = (color, text) => Container({
+        width: 150,
+        height: 100,
+        decoration: new BoxDecoration({
+          color: color,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [{
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 8,
+            offset: { x: 2, y: 2 }
+          }]
+        }),
+        child: Center({
+          child: Text(text, {
+            style: new TextStyle({ 
+              color: Colors.white, 
+              fontSize: 18,
+              fontWeight: "bold"
+            })
+          })
+        })
+      });
+
+      const widget = Container({
+        width: 600,
+        padding: EdgeInsets.all(20),
+        color: Colors.grey[100],
+        child: Column({
+          children: [
+            // 1. Basic Stack - Widget overlaying
+            Text("1. Basic Stack - Widget Overlaying", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              width: 300,
+              height: 200,
+              color: Colors.white,
+              child: Stack({
+                children: [
+                  // Bottom layer
+                  Container({
+                    width: 200,
+                    height: 150,
+                    color: Colors.blue[300]
+                  }),
+                  // Middle layer
+                  Container({
+                    width: 150,
+                    height: 100,
+                    color: Colors.green[300]
+                  }),
+                  // Top layer
+                  Container({
+                    width: 100,
+                    height: 50,
+                    color: Colors.red[300]
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 30 }),
+
+            // 2. Using Positioned
+            Text("2. Positioned - Absolute Positioning", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              width: 300,
+              height: 200,
+              color: Colors.grey[300],
+              child: Stack({
+                children: [
+                  // Top left
+                  Positioned({
+                    top: 10,
+                    left: 10,
+                    child: Container({
+                      width: 60,
+                      height: 60,
+                      color: Colors.red[400],
+                      child: Center({
+                        child: Text("TL", {
+                          style: new TextStyle({ color: Colors.white })
+                        })
+                      })
+                    })
+                  }),
+                  // Top right
+                  Positioned({
+                    top: 10,
+                    right: 10,
+                    child: Container({
+                      width: 60,
+                      height: 60,
+                      color: Colors.green[400],
+                      child: Center({
+                        child: Text("TR", {
+                          style: new TextStyle({ color: Colors.white })
+                        })
+                      })
+                    })
+                  }),
+                  // Bottom left
+                  Positioned({
+                    bottom: 10,
+                    left: 10,
+                    child: Container({
+                      width: 60,
+                      height: 60,
+                      color: Colors.blue[400],
+                      child: Center({
+                        child: Text("BL", {
+                          style: new TextStyle({ color: Colors.white })
+                        })
+                      })
+                    })
+                  }),
+                  // Bottom right
+                  Positioned({
+                    bottom: 10,
+                    right: 10,
+                    child: Container({
+                      width: 60,
+                      height: 60,
+                      color: Colors.purple[400],
+                      child: Center({
+                        child: Text("BR", {
+                          style: new TextStyle({ color: Colors.white })
+                        })
+                      })
+                    })
+                  }),
+                  // Center
+                  Positioned({
+                    top: 70,
+                    left: 120,
+                    child: Container({
+                      width: 60,
+                      height: 60,
+                      color: Colors.orange[400],
+                      child: Center({
+                        child: Text("C", {
+                          style: new TextStyle({ color: Colors.white })
+                        })
+                      })
+                    })
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 30 }),
+
+            // 3. Using Align
+            Text("3. Align - Positioning with Alignment", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              width: 300,
+              height: 200,
+              color: Colors.amber[100],
+              child: Stack({
+                children: [
+                  // Center
+                  Align({
+                    alignment: Alignment.center,
+                    child: Card(Colors.indigo[400], "Center")
+                  }),
+                  // Center left
+                  Align({
+                    alignment: Alignment.centerLeft,
+                    child: Card(Colors.teal[400], "Left")
+                  }),
+                  // Center right
+                  Align({
+                    alignment: Alignment.centerRight,
+                    child: Card(Colors.pink[400], "Right")
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 30 }),
+
+            // 4. Practical example - Icons with badges
+            Text("4. Practical Example - Notification Badges", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Row({
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Message icon with badge
+                Stack({
+                  clipBehavior: "none",
+                  children: [
+                    Container({
+                      width: 60,
+                      height: 60,
+                      decoration: new BoxDecoration({
+                        color: Colors.blue[100],
+                        borderRadius: BorderRadius.circular(12)
+                      }),
+                      child: Center({
+                        child: Text("💬", {
+                          style: new TextStyle({ fontSize: 28 })
+                        })
+                      })
+                    }),
+                    Positioned({
+                      top: -5,
+                      right: -5,
+                      child: Container({
+                        width: 24,
+                        height: 24,
+                        decoration: new BoxDecoration({
+                          color: Colors.red[500],
+                          shape: BoxShape.circle
+                        }),
+                        child: Center({
+                          child: Text("3", {
+                            style: new TextStyle({
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: "bold"
+                            })
+                          })
+                        })
+                      })
+                    })
+                  ]
+                }),
+                
+                // Notification icon with badge
+                Stack({
+                  clipBehavior: "none",
+                  children: [
+                    Container({
+                      width: 60,
+                      height: 60,
+                      decoration: new BoxDecoration({
+                        color: Colors.amber[100],
+                        borderRadius: BorderRadius.circular(12)
+                      }),
+                      child: Center({
+                        child: Text("🔔", {
+                          style: new TextStyle({ fontSize: 28 })
+                        })
+                      })
+                    }),
+                    Positioned({
+                      top: -5,
+                      right: -5,
+                      child: Container({
+                        width: 24,
+                        height: 24,
+                        decoration: new BoxDecoration({
+                          color: Colors.red[500],
+                          shape: BoxShape.circle
+                        }),
+                        child: Center({
+                          child: Text("9+", {
+                            style: new TextStyle({
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: "bold"
+                            })
+                          })
+                        })
+                      })
+                    })
+                  ]
+                }),
+                
+                // Cart icon with badge
+                Stack({
+                  clipBehavior: "none",
+                  children: [
+                    Container({
+                      width: 60,
+                      height: 60,
+                      decoration: new BoxDecoration({
+                        color: Colors.green[100],
+                        borderRadius: BorderRadius.circular(12)
+                      }),
+                      child: Center({
+                        child: Text("🛒", {
+                          style: new TextStyle({ fontSize: 28 })
+                        })
+                      })
+                    }),
+                    Positioned({
+                      top: -5,
+                      right: -5,
+                      child: Container({
+                        width: 24,
+                        height: 24,
+                        decoration: new BoxDecoration({
+                          color: Colors.orange[500],
+                          shape: BoxShape.circle
+                        }),
+                        child: Center({
+                          child: Text("12", {
+                            style: new TextStyle({
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: "bold"
+                            })
+                          })
+                        })
+                      })
+                    })
+                  ]
+                })
+              ]
+            })
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Layout Magic with Stack</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# Stack - Widget Overlaying and Absolute Positioning
+
+Stack is a powerful layout widget that allows you to overlay widgets on top of each other. It's essential for implementing various UI patterns like floating buttons, badges, and overlays.
+
+## What You'll Learn
+
+- [ ] Basic concepts of Stack and widget overlaying
+- [ ] Absolute positioning with Positioned
+- [ ] Relative alignment with Align
+- [ ] Controlling overflow with clipBehavior
+- [ ] Practical UI patterns using Stack
+- [ ] Understanding z-index and rendering order
+
+## Basic Concepts of Stack
+
+Stack displays its children widgets overlapped:
+
+- **Rendering order**: Earlier widgets are rendered below, later widgets on top
+- **Size**: Follows the size of the largest child or parent's constraints
+- **Position**: Aligned to top-left by default, adjustable with Positioned or Align
+
+> **💡 Key Concept: Stack vs Row/Column**
+> 
+> - Row/Column: Arrange widgets side by side (linear layout)
+> - Stack: Overlay widgets on top of each other (absolute layout)
+> 
+> Think of Stack as a layout that utilizes the z-axis (depth).
+
+## Step 1: Basic Stack Usage
+
+The simplest Stack example:
+
+```typescript
+Stack({
+  children: [
+    // Bottom (background)
+    Container({
+      width: 200,
+      height: 200,
+      color: Colors.blue[200]
+    }),
+    // Middle layer
+    Container({
+      width: 150,
+      height: 150,
+      color: Colors.green[200]
+    }),
+    // Top (foreground)
+    Container({
+      width: 100,
+      height: 100,
+      color: Colors.red[200]
+    })
+  ]
+})
+```
+
+### Understanding Rendering Order
+
+The order in the children array determines the rendering order:
+- Index 0: Bottom-most
+- Index 1: Above that
+- Index 2: Top-most
+
+## Step 2: Positioned - Absolute Positioning
+
+With Positioned, you can specify exact positions within a Stack:
+
+```typescript
+Stack({
+  children: [
+    // Background
+    Container({ color: Colors.grey[200] }),
+    
+    // 10 pixels from top-left
+    Positioned({
+      top: 10,
+      left: 10,
+      child: Container({
+        width: 50,
+        height: 50,
+        color: Colors.red
+      })
+    }),
+    
+    // 10 pixels from bottom-right
+    Positioned({
+      bottom: 10,
+      right: 10,
+      child: Container({
+        width: 50,
+        height: 50,
+        color: Colors.blue
+      })
+    })
+  ]
+})
+```
+
+### Positioned Properties
+
+- **top**: Distance from top
+- **bottom**: Distance from bottom
+- **left**: Distance from left
+- **right**: Distance from right
+- **width/height**: Size specification (optional)
+
+> **🎯 Pro Tip: Positioned Usage Rules**
+> - Specifying both top and bottom auto-calculates height
+> - Specifying both left and right auto-calculates width
+> - Specifying all four fills the entire area
+
+## Step 3: Align - Relative Alignment
+
+Align allows more intuitive positioning using Alignment:
+
+```typescript
+Stack({
+  children: [
+    // Center
+    Align({
+      alignment: Alignment.center,
+      child: Text("Center")
+    }),
+    
+    // Top left
+    Align({
+      alignment: Alignment.topLeft,
+      child: Text("Top Left")
+    }),
+    
+    // Bottom right
+    Align({
+      alignment: Alignment.bottomRight,
+      child: Text("Bottom Right")
+    })
+  ]
+})
+```
+
+### Alignment Options
+
+```typescript
+// Basic alignment options
+Alignment.topLeft      // Top left
+Alignment.topCenter    // Top center
+Alignment.topRight     // Top right
+Alignment.centerLeft   // Center left
+Alignment.center       // Center
+Alignment.centerRight  // Center right
+Alignment.bottomLeft   // Bottom left
+Alignment.bottomCenter // Bottom center
+Alignment.bottomRight  // Bottom right
+
+// Custom alignment (x, y range from -1.0 to 1.0)
+new Alignment(0.5, -0.5)  // x: 50% to right, y: 50% up
+```
+
+## Step 4: clipBehavior - Overflow Control
+
+Determines how to handle widgets that extend beyond the Stack's boundaries:
+
+```typescript
+Stack({
+  clipBehavior: "none",  // No clipping (default)
+  children: [
+    Container({
+      width: 100,
+      height: 100,
+      color: Colors.blue
+    }),
+    Positioned({
+      top: -10,  // Extends outside Stack area
+      right: -10,
+      child: Container({
+        width: 30,
+        height: 30,
+        color: Colors.red
+      })
+    })
+  ]
+})
+```
+
+clipBehavior options:
+- `"none"`: No clipping
+- `"hardEdge"`: Sharp clipping
+- `"antiAlias"`: Smooth clipping
+- `"antiAliasWithSaveLayer"`: Smoother (higher performance cost)
+
+## Step 5: Practical Example - Profile Card
+
+```typescript
+Container({
+  width: 300,
+  height: 200,
+  child: Stack({
+    children: [
+      // Background image
+      Positioned.fill({
+        child: Container({
+          decoration: new BoxDecoration({
+            gradient: new LinearGradient({
+              colors: [Colors.blue[400], Colors.purple[400]],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight
+            })
+          })
+        })
+      }),
+      
+      // Gradient overlay
+      Positioned.fill({
+        child: Container({
+          decoration: new BoxDecoration({
+            gradient: new LinearGradient({
+              colors: [
+                Colors.transparent,
+                Colors.black.withOpacity(0.7)
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter
+            })
+          })
+        })
+      }),
+      
+      // Profile info
+      Positioned({
+        bottom: 20,
+        left: 20,
+        right: 20,
+        child: Column({
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("John Flutter", {
+              style: new TextStyle({
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: "bold"
+              })
+            }),
+            SizedBox({ height: 4 }),
+            Text("Flutter & Flitter Developer", {
+              style: new TextStyle({
+                color: Colors.white.withOpacity(0.8),
+                fontSize: 16
+              })
+            })
+          ]
+        })
+      }),
+      
+      // Favorite button
+      Positioned({
+        top: 16,
+        right: 16,
+        child: Container({
+          width: 40,
+          height: 40,
+          decoration: new BoxDecoration({
+            color: Colors.white.withOpacity(0.2),
+            shape: BoxShape.circle
+          }),
+          child: Center({
+            child: Text("⭐", { style: new TextStyle({ fontSize: 20 }) })
+          })
+        })
+      })
+    ]
+  })
+})
+```
+
+## Practice Exercises
+
+Create the following UIs using Stack:
+
+1. **Floating Action Button**
+   - Fixed circular button at bottom-right
+   - Add shadow effect
+   - Center-aligned icon
+
+2. **Image Gallery with Page Indicator**
+   - Dots indicating pages over image
+   - Positioned at bottom center
+   - Semi-transparent background
+
+3. **Game-style Health Bar**
+   - Background bar (gray)
+   - Current health bar (red)
+   - Health value text overlay
+
+<details>
+<summary>💡 Hints</summary>
+
+1. Use Positioned + bottom/right to position FAB
+2. Overlay image and indicator with Stack, use Align.bottomCenter
+3. Stack two Containers and place Text on top
+
+</details>
+
+## Advanced Pattern: IndexedStack
+
+When you want to show only one widget among many:
+
+```typescript
+IndexedStack({
+  index: currentIndex,  // 0, 1, 2...
+  children: [
+    // Visible only when index is 0
+    Container({ color: Colors.red }),
+    // Visible only when index is 1
+    Container({ color: Colors.green }),
+    // Visible only when index is 2
+    Container({ color: Colors.blue })
+  ]
+})
+```
+
+## Stack Usage Considerations
+
+1. **Performance**: Too many overlapping widgets can degrade performance
+2. **Size**: Layout issues can occur if Stack size is unclear
+3. **Accessibility**: Be careful that touch areas of overlapping widgets don't overlap
+
+## Key Takeaways
+
+Stack mastery checklist:
+
+- ✅ **Basic overlaying**: z-index determined by children order
+- ✅ **Absolute position**: Exact positioning with Positioned
+- ✅ **Relative alignment**: Intuitive alignment with Align
+- ✅ **Overflow**: Handle outside area with clipBehavior
+- ✅ **Practical use**: Badges, overlays, FAB, etc.
+
+## 🎉 Amazing!
+
+You've mastered all the features of Stack! Now you can freely create complex overlay UIs.
+
+## Next Steps
+
+Congratulations! You've mastered all the basic widgets in Chapter 4. In the next chapter, we'll learn about more advanced widgets and animations.
+
+👉 **Next Chapter: Interactive Widgets and State Management**

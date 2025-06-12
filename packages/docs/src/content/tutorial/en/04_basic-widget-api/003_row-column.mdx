@@ -1,0 +1,638 @@
+---
+nav_group: "Basic Widget API"
+nav_order: 3
+title: "Row and Column - Basics of Linear Layout"
+description: "Master all the features of Row and Column for arranging widgets horizontally and vertically"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Row, Column, Text, Colors, EdgeInsets, MainAxisAlignment, CrossAxisAlignment } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Create layouts using Row and Column
+      // 1. Horizontal arrangement with Row
+      // 2. Vertical arrangement with Column
+      // 3. Main axis alignment with MainAxisAlignment
+      // 4. Cross axis alignment with CrossAxisAlignment
+      const widget = Container({
+        padding: EdgeInsets.all(20),
+        child: Column({
+          children: [
+            Text("Try using Row and Column!"),
+            // Add code here
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Mastering Row and Column</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, Row, Column, Text, TextStyle, Colors, EdgeInsets, 
+      MainAxisAlignment, CrossAxisAlignment, SizedBox, Expanded
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // Color box component used in examples
+      const ColorBox = (color, text) => Container({
+        width: 60,
+        height: 60,
+        color: color,
+        child: Center({
+          child: Text(text, {
+            style: new TextStyle({ color: Colors.white, fontWeight: "bold" })
+          })
+        })
+      });
+
+      const widget = Container({
+        width: 600,
+        height: 800,
+        padding: EdgeInsets.all(20),
+        color: Colors.grey[100],
+        child: Column({
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 1. Basic Row example
+            Text("1. Row - Horizontal Layout", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              child: Row({
+                children: [
+                  ColorBox(Colors.red[400], "1"),
+                  SizedBox({ width: 10 }),
+                  ColorBox(Colors.green[400], "2"),
+                  SizedBox({ width: 10 }),
+                  ColorBox(Colors.blue[400], "3")
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 2. Basic Column example
+            Text("2. Column - Vertical Layout", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              height: 220,
+              child: Column({
+                children: [
+                  ColorBox(Colors.purple[400], "A"),
+                  SizedBox({ height: 10 }),
+                  ColorBox(Colors.orange[400], "B"),
+                  SizedBox({ height: 10 }),
+                  ColorBox(Colors.teal[400], "C")
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 3. MainAxisAlignment example
+            Text("3. MainAxisAlignment - Main Axis Alignment", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            
+            // spaceEvenly
+            Container({
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              child: Column({
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text("spaceEvenly:"),
+                  SizedBox({ height: 5 }),
+                  Container({
+                    height: 80,
+                    color: Colors.grey[200],
+                    child: Row({
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ColorBox(Colors.red[300], "1"),
+                        ColorBox(Colors.green[300], "2"),
+                        ColorBox(Colors.blue[300], "3")
+                      ]
+                    })
+                  }),
+                  SizedBox({ height: 10 }),
+                  
+                  Text("spaceBetween:"),
+                  SizedBox({ height: 5 }),
+                  Container({
+                    height: 80,
+                    color: Colors.grey[200],
+                    child: Row({
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ColorBox(Colors.red[300], "1"),
+                        ColorBox(Colors.green[300], "2"),
+                        ColorBox(Colors.blue[300], "3")
+                      ]
+                    })
+                  }),
+                  SizedBox({ height: 10 }),
+                  
+                  Text("center:"),
+                  SizedBox({ height: 5 }),
+                  Container({
+                    height: 80,
+                    color: Colors.grey[200],
+                    child: Row({
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ColorBox(Colors.red[300], "1"),
+                        SizedBox({ width: 10 }),
+                        ColorBox(Colors.green[300], "2"),
+                        SizedBox({ width: 10 }),
+                        ColorBox(Colors.blue[300], "3")
+                      ]
+                    })
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 4. CrossAxisAlignment example
+            Text("4. CrossAxisAlignment - Cross Axis Alignment", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              padding: EdgeInsets.all(10),
+              color: Colors.white,
+              child: Row({
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column({
+                    children: [
+                      Text("start"),
+                      Container({
+                        width: 100,
+                        height: 100,
+                        color: Colors.grey[200],
+                        child: Column({
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container({ width: 60, height: 20, color: Colors.pink[300] }),
+                            SizedBox({ height: 5 }),
+                            Container({ width: 40, height: 20, color: Colors.pink[400] }),
+                            SizedBox({ height: 5 }),
+                            Container({ width: 80, height: 20, color: Colors.pink[500] })
+                          ]
+                        })
+                      })
+                    ]
+                  }),
+                  Column({
+                    children: [
+                      Text("center"),
+                      Container({
+                        width: 100,
+                        height: 100,
+                        color: Colors.grey[200],
+                        child: Column({
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container({ width: 60, height: 20, color: Colors.indigo[300] }),
+                            SizedBox({ height: 5 }),
+                            Container({ width: 40, height: 20, color: Colors.indigo[400] }),
+                            SizedBox({ height: 5 }),
+                            Container({ width: 80, height: 20, color: Colors.indigo[500] })
+                          ]
+                        })
+                      })
+                    ]
+                  }),
+                  Column({
+                    children: [
+                      Text("end"),
+                      Container({
+                        width: 100,
+                        height: 100,
+                        color: Colors.grey[200],
+                        child: Column({
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Container({ width: 60, height: 20, color: Colors.cyan[300] }),
+                            SizedBox({ height: 5 }),
+                            Container({ width: 40, height: 20, color: Colors.cyan[400] }),
+                            SizedBox({ height: 5 }),
+                            Container({ width: 80, height: 20, color: Colors.cyan[500] })
+                          ]
+                        })
+                      })
+                    ]
+                  })
+                ]
+              })
+            })
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Mastering Row and Column</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# Row and Column - Basics of Linear Layout
+
+Row and Column are the most important layout widgets in Flitter. Mastering these two widgets alone enables you to create most UI layouts.
+
+## What You'll Learn
+
+- [ ] Arranging widgets horizontally with Row
+- [ ] Arranging widgets vertically with Column
+- [ ] Mastering main axis alignment with MainAxisAlignment
+- [ ] Understanding cross axis alignment with CrossAxisAlignment
+- [ ] Creating flexible layouts with Expanded and Flexible
+- [ ] Common layout patterns used in practice
+
+## Basic Concepts of Row and Column
+
+### Understanding Axes
+
+Row and Column have two axes:
+
+- **Main Axis**: The direction in which widgets are arranged
+  - Row: Horizontal (left → right)
+  - Column: Vertical (top → bottom)
+
+- **Cross Axis**: The direction perpendicular to the main axis
+  - Row: Vertical
+  - Column: Horizontal
+
+> **💡 Key Concept: Importance of Axes**
+> 
+> To understand Row and Column alignment, you must clearly understand the concepts of main axis and cross axis.
+> MainAxisAlignment handles alignment along the main axis, while CrossAxisAlignment handles alignment along the cross axis.
+
+## Step 1: Row - Horizontal Layout
+
+The simplest Row example:
+
+```typescript
+Row({
+  children: [
+    Text("First"),
+    Text("Second"),
+    Text("Third")
+  ]
+})
+```
+
+### Adding Spacing
+
+```typescript
+Row({
+  children: [
+    Container({ width: 50, height: 50, color: Colors.red }),
+    SizedBox({ width: 10 }),  // Horizontal spacing
+    Container({ width: 50, height: 50, color: Colors.green }),
+    SizedBox({ width: 10 }),
+    Container({ width: 50, height: 50, color: Colors.blue })
+  ]
+})
+```
+
+## Step 2: Column - Vertical Layout
+
+Basic Column usage:
+
+```typescript
+Column({
+  children: [
+    Text("Top"),
+    Text("Middle"),
+    Text("Bottom")
+  ]
+})
+```
+
+### Adding Spacing
+
+```typescript
+Column({
+  children: [
+    Container({ width: 50, height: 50, color: Colors.red }),
+    SizedBox({ height: 10 }),  // Vertical spacing
+    Container({ width: 50, height: 50, color: Colors.green }),
+    SizedBox({ height: 10 }),
+    Container({ width: 50, height: 50, color: Colors.blue })
+  ]
+})
+```
+
+## Step 3: MainAxisAlignment - Main Axis Alignment
+
+### MainAxisAlignment Options
+
+```typescript
+// 1. start (default) - Align to start
+Row({
+  mainAxisAlignment: MainAxisAlignment.start,
+  children: [...]
+})
+
+// 2. end - Align to end
+Row({
+  mainAxisAlignment: MainAxisAlignment.end,
+  children: [...]
+})
+
+// 3. center - Center alignment
+Row({
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [...]
+})
+
+// 4. spaceBetween - Place at ends, distribute middle evenly
+Row({
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [...]
+})
+
+// 5. spaceEvenly - Distribute all spacing evenly
+Row({
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [...]
+})
+
+// 6. spaceAround - Equal spacing around each widget
+Row({
+  mainAxisAlignment: MainAxisAlignment.spaceAround,
+  children: [...]
+})
+```
+
+> **🎯 Pro Tip: When to Use Which Alignment?**
+> - **center**: When center placement is needed for titles, logos, etc.
+> - **spaceBetween**: Navigation bars, toolbars, etc.
+> - **spaceEvenly**: Tab bars, evenly spaced button groups
+> - **start/end**: Text or icons that need left/right alignment
+
+## Step 4: CrossAxisAlignment - Cross Axis Alignment
+
+### CrossAxisAlignment Options
+
+```typescript
+// 1. start - Start of cross axis
+Column({
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Container({ width: 100, height: 30, color: Colors.red }),
+    Container({ width: 150, height: 30, color: Colors.green }),
+    Container({ width: 80, height: 30, color: Colors.blue })
+  ]
+})
+
+// 2. center (default) - Center of cross axis
+// 3. end - End of cross axis
+// 4. stretch - Stretch along cross axis
+Column({
+  crossAxisAlignment: CrossAxisAlignment.stretch,
+  children: [...]
+})
+```
+
+## Step 5: Expanded and Flexible
+
+### Expanded - Fill Remaining Space
+
+```typescript
+Row({
+  children: [
+    Container({ width: 50, height: 50, color: Colors.red }),
+    Expanded({
+      child: Container({ height: 50, color: Colors.green })
+    }),
+    Container({ width: 50, height: 50, color: Colors.blue })
+  ]
+})
+```
+
+### Controlling Ratios with flex Property
+
+```typescript
+Row({
+  children: [
+    Expanded({
+      flex: 2,  // 2x space
+      child: Container({ height: 50, color: Colors.red })
+    }),
+    Expanded({
+      flex: 1,  // 1x space
+      child: Container({ height: 50, color: Colors.green })
+    }),
+    Expanded({
+      flex: 1,  // 1x space
+      child: Container({ height: 50, color: Colors.blue })
+    })
+  ]
+})
+```
+
+## Step 6: Practical Example - Card Layout
+
+```typescript
+Container({
+  padding: EdgeInsets.all(16),
+  decoration: new BoxDecoration({
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(8),
+    boxShadow: [{
+      color: Colors.black.withOpacity(0.1),
+      blurRadius: 4,
+      offset: { x: 0, y: 2 }
+    }]
+  }),
+  child: Row({
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // Profile image
+      Container({
+        width: 60,
+        height: 60,
+        decoration: new BoxDecoration({
+          color: Colors.grey[300],
+          shape: BoxShape.circle
+        })
+      }),
+      SizedBox({ width: 16 }),
+      // Text information
+      Expanded({
+        child: Column({
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Username", {
+              style: new TextStyle({
+                fontSize: 18,
+                fontWeight: "bold"
+              })
+            }),
+            SizedBox({ height: 4 }),
+            Text("Status message displays here", {
+              style: new TextStyle({
+                fontSize: 14,
+                color: Colors.grey[600]
+              })
+            }),
+            SizedBox({ height: 8 }),
+            Row({
+              children: [
+                Text("Followers ", {
+                  style: new TextStyle({ fontSize: 12 })
+                }),
+                Text("1.2K", {
+                  style: new TextStyle({
+                    fontSize: 12,
+                    fontWeight: "bold"
+                  })
+                }),
+                SizedBox({ width: 16 }),
+                Text("Following ", {
+                  style: new TextStyle({ fontSize: 12 })
+                }),
+                Text("580", {
+                  style: new TextStyle({
+                    fontSize: 12,
+                    fontWeight: "bold"
+                  })
+                })
+              ]
+            })
+          ]
+        })
+      })
+    ]
+  })
+})
+```
+
+## Practice Exercises
+
+Create the following layouts:
+
+1. **Navigation Bar**
+   - Logo (left), menu items (center), profile (right)
+   - Use MainAxisAlignment.spaceBetween
+
+2. **Statistics Dashboard**
+   - 3 stat cards arranged horizontally
+   - Each card has icon, number, and label arranged vertically
+   - Equal width using Expanded
+
+3. **Chat Message UI**
+   - Profile image and message arranged horizontally
+   - Message fills remaining space with Expanded
+   - Time display aligned to right
+
+<details>
+<summary>💡 Hints</summary>
+
+1. Navigation bar uses Row + MainAxisAlignment.spaceBetween
+2. Stat cards are Expanded Columns inside a Row
+3. Chat UI key is Row + CrossAxisAlignment.start
+
+</details>
+
+## Nested Layout Tips
+
+You can create complex layouts by nesting Row and Column:
+
+```typescript
+Column({
+  children: [
+    Row({
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [/* header */]
+    }),
+    Expanded({
+      child: Row({
+        children: [
+          /* sidebar */
+          Expanded({
+            child: Column({
+              children: [/* main content */]
+            })
+          })
+        ]
+      })
+    }),
+    Row({
+      children: [/* footer */]
+    })
+  ]
+})
+```
+
+## Key Takeaways
+
+Row and Column mastery checklist:
+
+- ✅ **Basic arrangement**: Row (horizontal), Column (vertical)
+- ✅ **Main axis alignment**: 6 MainAxisAlignment options
+- ✅ **Cross axis alignment**: 4 CrossAxisAlignment options
+- ✅ **Flexible sizing**: Expanded and Flexible
+- ✅ **Spacing control**: Using SizedBox
+
+## 🎉 Perfect!
+
+You've mastered Row and Column! Now you can freely create most UI layouts.
+
+## Next Steps
+
+In the next tutorial, we'll learn about the Stack widget for overlaying widgets.
+
+👉 **Next: Stack - Widget Overlaying and Absolute Positioning**
