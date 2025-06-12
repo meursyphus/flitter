@@ -3,29 +3,27 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: ConstraintsTransformBox
 title: "ConstraintsTransformBox"
-description: "A widget that transforms constraints before applying them to its child"
+description: "A widget that transforms constraints before passing them to its child"
 ---
 
 ## Overview
 
-ConstraintsTransformBox is a container widget that applies an arbitrary transform to its constraints and sizes its child using the resulting BoxConstraints.
+ConstraintsTransformBox is a widget that transforms the constraints received from its parent before passing them to its child. This allows you to dynamically modify the constraints that a child widget receives.
 
-This container sizes its child using a BoxConstraints created by applying constraintsTransform to its own constraints. This container will then attempt to adopt the same size, within the limits of its own constraints. If it ends up with a different size, it will align the child based on alignment. If the container cannot expand enough to accommodate the entire child, the child will be clipped if clipped is true.
+Reference: [https://api.flutter.dev/flutter/widgets/ConstraintsTransformBox-class.html](https://api.flutter.dev/flutter/widgets/ConstraintsTransformBox-class.html)
 
-See: [https://api.flutter.dev/flutter/widgets/ConstraintsTransformBox-class.html](https://api.flutter.dev/flutter/widgets/ConstraintsTransformBox-class.html)
+## When to Use
 
-## When to use it?
-
-- When you want to provide unlimited size or special constraints to child widgets
-- When you want children to ignore parent constraints and have their natural size
-- When you need to remove constraints in specific directions only
-- When creating layouts where children can be larger than their parents
-- In complex layouts where flexible constraint manipulation is needed
+- When you need to customize the constraints a child widget receives
+- When allowing a child to have infinite height in a scrollable area
+- When temporarily removing constraints in specific dimensions
+- When debugging constraints in complex layouts
+- When you need more fine-grained control than UnconstrainedBox provides
 
 ## Basic Usage
 
 ```typescript
-// No constraints - child has natural size
+// Remove all constraints
 ConstraintsTransformBox({
   constraintsTransform: ConstraintsTransformBox.unconstrained,
   child: Container({
@@ -38,115 +36,132 @@ ConstraintsTransformBox({
 // Remove only height constraints
 ConstraintsTransformBox({
   constraintsTransform: ConstraintsTransformBox.heightUnconstrained,
-  clipped: true,
   child: Column({
     children: [
-      Container({ height: 100, color: 'red' }),
-      Container({ height: 100, color: 'green' }),
-      Container({ height: 100, color: 'blue' })
+      Text('Free height'),
+      // ... many children
     ]
   })
 })
 
-// Custom constraint transformation
+// Custom transformation
 ConstraintsTransformBox({
-  constraintsTransform: (constraints) => constraints.copyWith({
-    maxWidth: constraints.maxWidth * 2,
-    maxHeight: constraints.maxHeight * 0.5
-  }),
-  child: Container({
-    color: 'purple',
-    child: Text('Transformed constraints')
-  })
+  constraintsTransform: (constraints) => {
+    return new Constraints({
+      minWidth: Math.max(constraints.minWidth, 100),
+      maxWidth: constraints.maxWidth,
+      minHeight: 0,
+      maxHeight: Infinity
+    });
+  },
+  child: child
 })
 ```
 
 ## Props
 
 ### constraintsTransform (required)
+**Type: (constraints: Constraints) => Constraints**
 
-**Value: (constraints: Constraints) => Constraints**
-
-A function that transforms input constraints. Several static methods are provided:
+A function that transforms the constraints received from the parent. This function takes the original constraints and should return new constraints.
 
 ```typescript
-// Built-in transformation functions
-ConstraintsTransformBox.unmodified        // Keep constraints unchanged
-ConstraintsTransformBox.unconstrained     // Remove all constraints
-ConstraintsTransformBox.widthUnconstrained    // Remove width constraints only
-ConstraintsTransformBox.heightUnconstrained   // Remove height constraints only
-ConstraintsTransformBox.maxWidthUnconstrained  // Unlimited max width only
-ConstraintsTransformBox.maxHeightUnconstrained // Unlimited max height only
-ConstraintsTransformBox.maxUnconstrained      // Unlimited max width/height
-
-// Custom transformation function
-(constraints) => constraints.copyWith({
-  minWidth: 100,
-  maxWidth: 500,
-  minHeight: 50,
-  maxHeight: 200
+ConstraintsTransformBox({
+  constraintsTransform: (constraints) => {
+    // Set minimum width to 200
+    return constraints.copyWith({
+      minWidth: 200
+    });
+  },
+  child: child
 })
 ```
 
-### alignment
+### child (optional)
+**Type: Widget | undefined**
 
-**Value: Alignment** (default: **Alignment.center**)
+The child widget to which the transformed constraints will be applied.
 
-How to align the child when it has a different size than the container.
+### alignment (optional)
+**Type: Alignment** (default: **Alignment.center**)
+
+How to align the child when its size differs from the parent.
 
 ```typescript
 ConstraintsTransformBox({
   constraintsTransform: ConstraintsTransformBox.unconstrained,
   alignment: Alignment.topLeft,
-  child: child
+  child: Container({
+    width: 100,
+    height: 100,
+    color: 'red'
+  })
 })
 ```
 
-### clipped
+### clipped (optional)
+**Type: boolean** (default: **false**)
 
-**Value: boolean** (default: **false**)
-
-Whether to clip the child when it exceeds the container area.
+Whether to clip the child when it exceeds the parent's boundaries.
 
 ```typescript
 ConstraintsTransformBox({
   constraintsTransform: ConstraintsTransformBox.unconstrained,
-  clipped: true,  // Clip on overflow
-  child: child
+  clipped: true,  // Clip overflow
+  child: Container({
+    width: 500,
+    height: 500,
+    color: 'green'
+  })
 })
 ```
 
-### child
+### textDirection (optional)
+**Type: TextDirection** (default: **TextDirection.ltr**)
 
-**Value: Widget | undefined**
+The text direction used to resolve the alignment.
 
-The child widget to which the transformed constraints will be applied.
+## Static Helper Methods
+
+ConstraintsTransformBox provides several static methods for common transformations:
+
+```typescript
+// Leave constraints unchanged
+ConstraintsTransformBox.unmodified
+
+// Remove all constraints (infinite size)
+ConstraintsTransformBox.unconstrained
+
+// Remove only width constraints
+ConstraintsTransformBox.widthUnconstrained
+
+// Remove only height constraints
+ConstraintsTransformBox.heightUnconstrained
+
+// Remove max height constraint
+ConstraintsTransformBox.maxHeightUnconstrained
+
+// Remove max width constraint
+ConstraintsTransformBox.maxWidthUnconstrained
+
+// Remove both max width and height constraints
+ConstraintsTransformBox.maxUnconstrained
+```
 
 ## Practical Examples
 
-### Example 1: Long List Without Scrolling
+### Example 1: Removing Height Constraints in Scrollable List
 
 ```typescript
-const UnconstrainedList = ({ items }) => {
-  return Container({
-    height: 200,
-    decoration: BoxDecoration({
-      border: Border.all({ color: '#E0E0E0' }),
-      borderRadius: BorderRadius.circular(8)
-    }),
+const ScrollableList = ({ items }) => {
+  return SingleChildScrollView({
     child: ConstraintsTransformBox({
       constraintsTransform: ConstraintsTransformBox.heightUnconstrained,
-      clipped: true,
-      alignment: Alignment.topCenter,
       child: Column({
         children: items.map(item => 
-          Container({
-            height: 50,
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration({
-              border: Border(bottom: BorderSide({ color: '#F0F0F0' }))
-            }),
-            child: Text(item.title)
+          ListTile({
+            title: Text(item.title),
+            subtitle: Text(item.description)
           })
         )
       })
@@ -155,200 +170,157 @@ const UnconstrainedList = ({ items }) => {
 };
 ```
 
-### Example 2: Responsive Card Grid
+### Example 2: Ensuring Minimum Size While Transforming
 
 ```typescript
-const ResponsiveCardGrid = ({ cards, maxCardWidth = 300 }) => {
+const MinSizeTransform = ({ minSize = 150, child }) => {
   return ConstraintsTransformBox({
     constraintsTransform: (constraints) => {
-      const availableWidth = constraints.maxWidth;
-      const cardsPerRow = Math.floor(availableWidth / maxCardWidth);
-      const actualCardWidth = availableWidth / cardsPerRow;
+      return new Constraints({
+        minWidth: Math.max(constraints.minWidth, minSize),
+        maxWidth: constraints.maxWidth,
+        minHeight: Math.max(constraints.minHeight, minSize),
+        maxHeight: constraints.maxHeight
+      });
+    },
+    child: child
+  });
+};
+
+// Usage
+MinSizeTransform({
+  minSize: 200,
+  child: Container({
+    color: 'blue',
+    child: Text('Minimum 200x200 size guaranteed')
+  })
+})
+```
+
+### Example 3: Aspect Ratio Constraint Transform
+
+```typescript
+const AspectRatioTransform = ({ aspectRatio = 1, child }) => {
+  return ConstraintsTransformBox({
+    constraintsTransform: (constraints) => {
+      const width = constraints.maxWidth;
+      const height = width / aspectRatio;
       
-      return constraints.copyWith({
-        minWidth: actualCardWidth,
-        maxWidth: actualCardWidth
+      return new Constraints({
+        minWidth: 0,
+        maxWidth: width,
+        minHeight: 0,
+        maxHeight: height
       });
     },
-    child: Wrap({
-      children: cards.map(card => 
-        Container({
-          height: 200,
-          margin: EdgeInsets.all(8),
-          decoration: BoxDecoration({
-            color: 'white',
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow({
-                color: 'rgba(0,0,0,0.1)',
-                blurRadius: 8,
-                offset: { x: 0, y: 2 }
-              })
-            ]
-          }),
-          child: Center({
-            child: Text(card.title)
-          })
-        })
-      )
-    })
+    alignment: Alignment.center,
+    child: child
   });
 };
 ```
 
-### Example 3: Overflow Allowed Text
+### Example 4: Debug Constraint Logging
 
 ```typescript
-const OverflowText = ({ text, maxLines = 1 }) => {
-  return Container({
-    width: 200,
-    height: 50,
-    decoration: BoxDecoration({
-      border: Border.all({ color: '#E0E0E0' }),
-      borderRadius: BorderRadius.circular(4)
-    }),
-    child: ConstraintsTransformBox({
-      constraintsTransform: maxLines === 1 
-        ? ConstraintsTransformBox.widthUnconstrained
-        : ConstraintsTransformBox.unconstrained,
-      clipped: true,
-      alignment: Alignment.centerLeft,
-      child: Padding({
-        padding: EdgeInsets.all(8),
-        child: Text(text, {
-          style: TextStyle({ fontSize: 16 }),
-          maxLines: maxLines
-        })
-      })
-    })
-  });
-};
-```
-
-### Example 4: Flexible Image Gallery
-
-```typescript
-const FlexibleImageGallery = ({ images }) => {
+const DebugConstraints = ({ label, child }) => {
   return ConstraintsTransformBox({
     constraintsTransform: (constraints) => {
-      // Allow image gallery to have as much height as needed
-      return constraints.copyWith({
-        maxHeight: double.infinity
+      console.log(`${label} constraints:`, {
+        minWidth: constraints.minWidth,
+        maxWidth: constraints.maxWidth,
+        minHeight: constraints.minHeight,
+        maxHeight: constraints.maxHeight
       });
+      
+      return constraints;  // Return unchanged
     },
-    clipped: false,
-    child: Column({
-      children: images.map(image => 
-        Container({
-          margin: EdgeInsets.only({ bottom: 16 }),
-          child: AspectRatio({
-            aspectRatio: 16/9,
-            child: Image({
-              src: image.url,
-              objectFit: 'cover'
-            })
-          })
-        })
-      )
-    })
+    child: child
   });
 };
+
+// Usage
+DebugConstraints({
+  label: 'Container',
+  child: Container({
+    width: 200,
+    height: 200,
+    color: 'red'
+  })
+})
 ```
 
-### Example 5: Dynamic Form Field
+### Example 5: Conditional Constraint Transform
 
 ```typescript
-const DynamicFormField = ({ 
-  label, 
-  value, 
-  multiline = false,
-  maxWidth = 400 
+const ConditionalConstraints = ({ 
+  isExpanded, 
+  maxWidth = 300,
+  child 
 }) => {
   return ConstraintsTransformBox({
     constraintsTransform: (constraints) => {
-      if (multiline) {
-        // Multiline field has no height constraint
-        return constraints.copyWith({
-          maxWidth: Math.min(maxWidth, constraints.maxWidth),
-          maxHeight: double.infinity
-        });
+      if (isExpanded) {
+        return constraints;  // Use original constraints in expanded mode
       }
-      // Single line field only limits max width
+      
+      // Limit max width in collapsed mode
       return constraints.copyWith({
-        maxWidth: Math.min(maxWidth, constraints.maxWidth)
+        maxWidth: Math.min(constraints.maxWidth, maxWidth)
       });
     },
-    alignment: Alignment.topLeft,
-    child: Column({
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, {
-          style: TextStyle({
-            fontSize: 14,
-            fontWeight: 'bold',
-            color: '#333'
-          })
-        }),
-        SizedBox({ height: 8 }),
-        Container({
-          padding: EdgeInsets.all(12),
-          decoration: BoxDecoration({
-            border: Border.all({ color: '#E0E0E0' }),
-            borderRadius: BorderRadius.circular(6)
-          }),
-          child: TextField({
-            value: value,
-            multiline: multiline,
-            decoration: InputDecoration.none
-          })
-        })
-      ]
+    clipped: !isExpanded,
+    child: AnimatedContainer({
+      duration: Duration({ milliseconds: 300 }),
+      child: child
     })
   });
 };
 ```
 
-## Understanding Transform Functions
+## Constraint Transform Patterns
 
-Behavior of each static method:
+### Common Transform Patterns
 
 ```typescript
-// 1. unmodified: No constraint changes
-(constraints) => constraints
-
-// 2. unconstrained: Remove all constraints
-(constraints) => new Constraints()
-
-// 3. widthUnconstrained: Remove width constraints only
-(constraints) => constraints.heightConstraints()
-
-// 4. heightUnconstrained: Remove height constraints only
-(constraints) => constraints.widthConstraints()
-
-// 5. maxWidthUnconstrained: Unlimited max width only
-(constraints) => constraints.copyWith({ maxWidth: Infinity })
-
-// 6. maxHeightUnconstrained: Unlimited max height only
-(constraints) => constraints.copyWith({ maxHeight: Infinity })
-
-// 7. maxUnconstrained: Unlimited max width/height
-(constraints) => constraints.copyWith({ 
-  maxWidth: Infinity, 
-  maxHeight: Infinity 
+// 1. Force minimum size
+(constraints) => constraints.copyWith({
+  minWidth: 100,
+  minHeight: 100
 })
+
+// 2. Limit maximum size
+(constraints) => constraints.copyWith({
+  maxWidth: Math.min(constraints.maxWidth, 500),
+  maxHeight: Math.min(constraints.maxHeight, 500)
+})
+
+// 3. Force square
+(constraints) => {
+  const size = Math.min(constraints.maxWidth, constraints.maxHeight);
+  return Constraints.tight({ width: size, height: size });
+}
+
+// 4. Maintain ratio
+(constraints) => {
+  const ratio = 0.5; // Height is half of width
+  return constraints.copyWith({
+    maxHeight: constraints.maxWidth * ratio
+  });
+}
 ```
 
 ## Important Notes
 
-- Children with removed constraints can be larger than parents, so consider the clipped option
-- Unconstrained transforms can impact performance, so use carefully
-- Children might request infinite size, so appropriate limits are needed
-- Special care is needed when using within Stack
-- Layout overflow can occur, so testing is important
+- Invalid transformed constraints can cause layout errors
+- When using infinite constraints, the child must have an intrinsic size
+- When clipped is false, the child can overflow its parent
+- Complex transformations can impact layout performance
+- Transform functions should be pure functions without side effects
 
 ## Related Widgets
 
-- **UnconstrainedBox**: Simpler constraint removal widget
-- **OverflowBox**: Allows child size ignoring parent size
-- **ConstrainedBox**: Adds constraints
-- **LimitedBox**: Limits size only in infinite constraints
+- **UnconstrainedBox**: Simple way to remove all constraints
+- **ConstrainedBox**: Apply additional constraints
+- **OverflowBox**: Allow child to exceed parent constraints
+- **SizedBox**: Specify fixed size
+- **FractionallySizedBox**: Size based on parent's dimensions

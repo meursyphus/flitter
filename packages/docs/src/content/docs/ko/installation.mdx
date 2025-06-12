@@ -1,83 +1,83 @@
 ---
 nav_group: "Getting Started"
 nav_order: 2
-title: "Installation"
-description: "Step-by-step guide to install Flitter in your project"
+title: "설치"
+description: "프로젝트에 Flitter를 설치하는 단계별 가이드"
 ---
 
-# Installing Flitter
+# Flitter 설치하기
 
-This guide will walk you through the process of installing Flitter in your project. Flitter can be used in various JavaScript environments, including pure JavaScript, React, and Svelte.
+이 가이드는 프로젝트에 Flitter를 설치하는 과정을 안내합니다. Flitter는 순수 JavaScript, React, Svelte를 포함한 다양한 JavaScript 환경에서 사용할 수 있습니다.
 
-## Prerequisites
+## 사전 요구사항
 
-- Node.js (version 14 or later)
-- npm (usually comes with Node.js)
+- Node.js (버전 14 이상)
+- npm (일반적으로 Node.js와 함께 제공됨)
 
-## Installation Steps
+## 설치 단계
 
-### For Pure JavaScript Projects
+### 순수 JavaScript 프로젝트의 경우
 
-1. Create a new directory for your project (if you haven't already):
+1. 프로젝트를 위한 새 디렉토리를 생성합니다 (아직 생성하지 않은 경우):
 
    ```bash
    mkdir my-flitter-project
    cd my-flitter-project
    ```
 
-2. Initialize a new npm project:
+2. 새 npm 프로젝트를 초기화합니다:
 
    ```bash
    npm init -y
    ```
 
-3. Install Flitter:
+3. Flitter를 설치합니다:
    ```bash
    npm install @meursyphus/flitter
    ```
 
-### For React Projects (using Vite)
+### React 프로젝트의 경우 (Vite 사용)
 
-1. Create a new Vite project with React template:
+1. React 템플릿으로 새 Vite 프로젝트를 생성합니다:
 
    ```bash
    npm create vite@latest my-flitter-react-app -- --template react-ts
    cd my-flitter-react-app
    ```
 
-2. Install dependencies:
+2. 의존성을 설치합니다:
 
    ```bash
    npm install
    ```
 
-3. Install Flitter and its React bindings:
+3. Flitter와 React 바인딩을 설치합니다:
    ```bash
    npm install @meursyphus/flitter @meursyphus/flitter-react
    ```
 
-### For Svelte Projects (using SvelteKit)
+### Svelte 프로젝트의 경우 (SvelteKit 사용)
 
-1. Create a new SvelteKit project:
+1. 새 SvelteKit 프로젝트를 생성합니다:
 
    ```bash
    npm create svelte@latest my-flitter-svelte-app
    cd my-flitter-svelte-app
    ```
 
-2. Install dependencies:
+2. 의존성을 설치합니다:
 
    ```bash
    npm install
    ```
 
-3. Install Flitter and its Svelte bindings:
+3. Flitter와 Svelte 바인딩을 설치합니다:
    ```bash
    npm install @meursyphus/flitter @meursyphus/flitter-svelte
    ```
 
-## Verifying the Installation
+## 설치 확인
 
-After installation, you can verify that Flitter is correctly installed by checking your `package.json` for the Flitter dependencies.
+설치 후, `package.json`에서 Flitter 의존성을 확인하여 Flitter가 올바르게 설치되었는지 확인할 수 있습니다.
 
-In the next section, we'll guide you through creating your first Flitter app to ensure everything is set up correctly.
+다음 섹션에서는 모든 것이 올바르게 설정되었는지 확인하기 위해 첫 번째 Flitter 앱을 만드는 과정을 안내합니다.

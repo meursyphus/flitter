@@ -67,7 +67,6 @@ class ToolTipState extends State<ToolTip> {
   show: boolean = false;
 
   handleMouseEnter() {
-    this.show = true;
     this.setState(() => {
       this.show = true;
     });

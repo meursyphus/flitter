@@ -242,12 +242,24 @@ Available cursor types:
 - Resize cursors: `"n-resize"`, `"e-resize"`, `"s-resize"`, `"w-resize"`, etc.
 
 ```typescript
-GestureDetector({
-  cursor: 'grab',
-  onDragStart: () => setState(() => cursor = 'grabbing'),
-  onDragEnd: () => setState(() => cursor = 'grab'),
-  child: Container({ width: 100, height: 100 })
-})
+class DraggableCursor extends StatefulWidget {
+  createState() {
+    return new DraggableCursorState();
+  }
+}
+
+class DraggableCursorState extends State<DraggableCursor> {
+  cursor = 'grab';
+  
+  build() {
+    return GestureDetector({
+      cursor: this.cursor,
+      onDragStart: () => this.setState(() => this.cursor = 'grabbing'),
+      onDragEnd: () => this.setState(() => this.cursor = 'grab'),
+      child: Container({ width: 100, height: 100 })
+    });
+  }
+}
 ```
 
 ### child
@@ -272,222 +284,279 @@ GestureDetector({
 ### Example 1: Interactive Button
 
 ```typescript
-const InteractiveButton = () => {
-  const [isPressed, setIsPressed] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
+class InteractiveButton extends StatefulWidget {
+  createState() {
+    return new InteractiveButtonState();
+  }
+}
 
-  return GestureDetector({
-    onMouseDown: () => setIsPressed(true),
-    onMouseUp: () => setIsPressed(false),
-    onMouseEnter: () => setIsHovered(true),
-    onMouseLeave: () => {
-      setIsHovered(false);
-      setIsPressed(false);
-    },
-    onClick: () => console.log('Button clicked!'),
-    cursor: 'pointer',
-    child: Container({
-      padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
-      decoration: BoxDecoration({
-        color: isPressed ? '#1976D2' : (isHovered ? '#2196F3' : '#42A5F5'),
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: isPressed ? [] : [
-          BoxShadow({
-            color: 'rgba(0, 0, 0, 0.2)',
-            blurRadius: 4,
-            offset: { x: 0, y: 2 }
-          })
-        ]
-      }),
-      child: Text('Custom Button', {
-        style: TextStyle({ color: 'white', fontWeight: 'bold' })
+class InteractiveButtonState extends State<InteractiveButton> {
+  isPressed = false;
+  isHovered = false;
+  
+  build() {
+    return GestureDetector({
+      onMouseDown: () => this.setState(() => this.isPressed = true),
+      onMouseUp: () => this.setState(() => this.isPressed = false),
+      onMouseEnter: () => this.setState(() => this.isHovered = true),
+      onMouseLeave: () => {
+        this.setState(() => {
+          this.isHovered = false;
+          this.isPressed = false;
+        });
+      },
+      onClick: () => console.log('Button clicked!'),
+      cursor: 'pointer',
+      child: Container({
+        padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+        decoration: BoxDecoration({
+          color: this.isPressed ? '#1976D2' : (this.isHovered ? '#2196F3' : '#42A5F5'),
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: this.isPressed ? [] : [
+            BoxShadow({
+              color: 'rgba(0, 0, 0, 0.2)',
+              blurRadius: 4,
+              offset: { x: 0, y: 2 }
+            })
+          ]
+        }),
+        child: Text('Custom Button', {
+          style: TextStyle({ color: 'white', fontWeight: 'bold' })
+        })
       })
-    })
-  });
-};
+    });
+  }
+}
 ```
 
 ### Example 2: Draggable Element
 
 ```typescript
-const DraggableBox = () => {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
+class DraggableBox extends StatefulWidget {
+  createState() {
+    return new DraggableBoxState();
+  }
+}
 
-  return Transform({
-    transform: Matrix4.translation(position.x, position.y, 0),
-    child: GestureDetector({
-      onDragStart: () => setIsDragging(true),
-      onDragMove: (e) => {
-        setPosition(prev => ({
-          x: prev.x + e.movementX,
-          y: prev.y + e.movementY
-        }));
-      },
-      onDragEnd: () => setIsDragging(false),
-      cursor: isDragging ? 'grabbing' : 'grab',
-      child: Container({
-        width: 100,
-        height: 100,
-        decoration: BoxDecoration({
-          color: isDragging ? 'orange' : 'blue',
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow({
-              color: 'rgba(0, 0, 0, 0.3)',
-              blurRadius: isDragging ? 8 : 4,
-              offset: { x: 0, y: isDragging ? 4 : 2 }
+class DraggableBoxState extends State<DraggableBox> {
+  position = { x: 0, y: 0 };
+  isDragging = false;
+  
+  build() {
+    return Transform({
+      transform: Matrix4.translation(this.position.x, this.position.y, 0),
+      child: GestureDetector({
+        onDragStart: () => this.setState(() => this.isDragging = true),
+        onDragMove: (e) => {
+          this.setState(() => {
+            this.position = {
+              x: this.position.x + e.movementX,
+              y: this.position.y + e.movementY
+            };
+          });
+        },
+        onDragEnd: () => this.setState(() => this.isDragging = false),
+        cursor: this.isDragging ? 'grabbing' : 'grab',
+        child: Container({
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration({
+            color: this.isDragging ? 'orange' : 'blue',
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow({
+                color: 'rgba(0, 0, 0, 0.3)',
+                blurRadius: this.isDragging ? 8 : 4,
+                offset: { x: 0, y: this.isDragging ? 4 : 2 }
+              })
+            ]
+          }),
+          child: Center({
+            child: Text('Drag me', {
+              style: TextStyle({ color: 'white' })
             })
-          ]
-        }),
-        child: Center({
-          child: Text('Drag me', {
-            style: TextStyle({ color: 'white' })
           })
         })
       })
-    })
-  });
-};
+    });
+  }
+}
 ```
 
 ### Example 3: Mouse Tracker
 
 ```typescript
-const MouseTracker = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isInside, setIsInside] = useState(false);
+class MouseTracker extends StatefulWidget {
+  createState() {
+    return new MouseTrackerState();
+  }
+}
 
-  return GestureDetector({
-    onMouseMove: (e) => {
-      const rect = e.currentTarget.getBoundingClientRect();
-      setMousePosition({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      });
-    },
-    onMouseEnter: () => setIsInside(true),
-    onMouseLeave: () => setIsInside(false),
-    child: Container({
-      width: 300,
-      height: 200,
-      color: 'lightgray',
-      child: Stack({
-        children: [
-          if (isInside) Positioned({
-            left: mousePosition.x - 10,
-            top: mousePosition.y - 10,
-            child: Container({
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration({
-                color: 'red',
-                borderRadius: BorderRadius.circular(10)
+class MouseTrackerState extends State<MouseTracker> {
+  mousePosition = { x: 0, y: 0 };
+  isInside = false;
+  
+  build() {
+    return GestureDetector({
+      onMouseMove: (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        this.setState(() => {
+          this.mousePosition = {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+          };
+        });
+      },
+      onMouseEnter: () => this.setState(() => this.isInside = true),
+      onMouseLeave: () => this.setState(() => this.isInside = false),
+      child: Container({
+        width: 300,
+        height: 200,
+        color: 'lightgray',
+        child: Stack({
+          children: [
+            if (this.isInside) Positioned({
+              left: this.mousePosition.x - 10,
+              top: this.mousePosition.y - 10,
+              child: Container({
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration({
+                  color: 'red',
+                  borderRadius: BorderRadius.circular(10)
+                })
               })
+            }),
+            Center({
+              child: Text(`Mouse position: ${Math.round(this.mousePosition.x)}, ${Math.round(this.mousePosition.y)}`)
             })
-          }),
-          Center({
-            child: Text(`Mouse position: ${Math.round(mousePosition.x)}, ${Math.round(mousePosition.y)}`)
-          })
-        ]
+          ]
+        })
       })
-    })
-  });
-};
+    });
+  }
+}
 ```
 
 ### Example 4: Context Menu
 
 ```typescript
-const ContextMenuExample = () => {
-  const [showMenu, setShowMenu] = useState(false);
-  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+class ContextMenuExample extends StatefulWidget {
+  createState() {
+    return new ContextMenuExampleState();
+  }
+}
 
-  return Stack({
-    children: [
-      GestureDetector({
-        onClick: (e) => {
-          e.preventDefault();
-          if (e.button === 2) { // Right click
-            setShowMenu(true);
-            setMenuPosition({ x: e.clientX, y: e.clientY });
-          } else {
-            setShowMenu(false);
-          }
-        },
-        child: Container({
-          width: 400,
-          height: 300,
-          color: 'white',
-          child: Center({
-            child: Text('Right-click to open menu')
-          })
-        })
-      }),
-      if (showMenu) Positioned({
-        left: menuPosition.x,
-        top: menuPosition.y,
-        child: Container({
-          width: 150,
-          padding: EdgeInsets.symmetric({ vertical: 8 }),
-          decoration: BoxDecoration({
+class ContextMenuExampleState extends State<ContextMenuExample> {
+  showMenu = false;
+  menuPosition = { x: 0, y: 0 };
+  
+  build() {
+    return Stack({
+      children: [
+        GestureDetector({
+          onClick: (e) => {
+            e.preventDefault();
+            if (e.button === 2) { // Right click
+              this.setState(() => {
+                this.showMenu = true;
+                this.menuPosition = { x: e.clientX, y: e.clientY };
+              });
+            } else {
+              this.setState(() => this.showMenu = false);
+            }
+          },
+          child: Container({
+            width: 400,
+            height: 300,
             color: 'white',
-            borderRadius: BorderRadius.circular(4),
-            boxShadow: [
-              BoxShadow({
-                color: 'rgba(0, 0, 0, 0.2)',
-                blurRadius: 8,
-                offset: { x: 0, y: 2 }
-              })
-            ]
-          }),
-          child: Column({
-            children: ['Copy', 'Paste', 'Delete'].map(item =>
-              GestureDetector({
-                onClick: () => {
-                  console.log(`${item} selected`);
-                  setShowMenu(false);
-                },
-                cursor: 'pointer',
-                child: Container({
-                  padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
-                  child: Text(item)
+            child: Center({
+              child: Text('Right-click to open menu')
+            })
+          })
+        }),
+        if (this.showMenu) Positioned({
+          left: this.menuPosition.x,
+          top: this.menuPosition.y,
+          child: Container({
+            width: 150,
+            padding: EdgeInsets.symmetric({ vertical: 8 }),
+            decoration: BoxDecoration({
+              color: 'white',
+              borderRadius: BorderRadius.circular(4),
+              boxShadow: [
+                BoxShadow({
+                  color: 'rgba(0, 0, 0, 0.2)',
+                  blurRadius: 8,
+                  offset: { x: 0, y: 2 }
                 })
-              })
-            )
+              ]
+            }),
+            child: Column({
+              children: ['Copy', 'Paste', 'Delete'].map(item =>
+                GestureDetector({
+                  onClick: () => {
+                    console.log(`${item} selected`);
+                    this.setState(() => this.showMenu = false);
+                  },
+                  cursor: 'pointer',
+                  child: Container({
+                    padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+                    child: Text(item)
+                  })
+                })
+              )
+            })
           })
         })
-      })
-    ]
-  });
-};
+      ]
+    });
+  }
+}
 ```
 
 ### Example 5: Zoomable Image
 
 ```typescript
-const ZoomableImage = ({ src }: { src: string }) => {
-  const [scale, setScale] = useState(1);
+class ZoomableImage extends StatefulWidget {
+  src: string;
   
-  return GestureDetector({
-    onWheel: (e) => {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? 0.9 : 1.1;
-      setScale(prev => Math.max(0.5, Math.min(3, prev * delta)));
-    },
-    cursor: scale > 1 ? 'zoom-out' : 'zoom-in',
-    child: Container({
-      width: 400,
-      height: 300,
-      clipped: true,
-      child: Transform({
-        transform: Matrix4.identity().scaled(scale, scale, 1),
-        alignment: Alignment.center,
-        child: Image({ src, fit: 'cover' })
+  constructor({ src }: { src: string }) {
+    super();
+    this.src = src;
+  }
+  
+  createState() {
+    return new ZoomableImageState();
+  }
+}
+
+class ZoomableImageState extends State<ZoomableImage> {
+  scale = 1;
+  
+  build() {
+    return GestureDetector({
+      onWheel: (e) => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? 0.9 : 1.1;
+        this.setState(() => {
+          this.scale = Math.max(0.5, Math.min(3, this.scale * delta));
+        });
+      },
+      cursor: this.scale > 1 ? 'zoom-out' : 'zoom-in',
+      child: Container({
+        width: 400,
+        height: 300,
+        clipped: true,
+        child: Transform({
+          transform: Matrix4.identity().scaled(this.scale, this.scale, 1),
+          alignment: Alignment.center,
+          child: Image({ src: this.widget.src, fit: 'cover' })
+        })
       })
-    })
-  });
-};
+    });
+  }
+}
 ```
 
 ## MouseEvent Object

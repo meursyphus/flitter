@@ -674,7 +674,9 @@ class CaretState extends State<Caret> {
     if (this.widget.isTyping !== oldWidget.isTyping) {
       if (this.widget.isTyping) {
         this.stopBlinking();
-        this.visible = true;
+        this.setState(() => {
+          this.visible = true;
+        });
       } else {
         this.startBlinking();
       }

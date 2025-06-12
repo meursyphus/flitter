@@ -35,25 +35,39 @@ AnimatedContainer는 지정된 duration과 curve를 사용하여 이전 값과 �
 ## 기본 사용법
 
 ```typescript
-// 상태를 저장할 변수
-let isExpanded = false;
+// StatefulWidget을 생성하여 상태를 관리합니다
+class AnimatedContainerExample extends StatefulWidget {
+  createState() {
+    return new AnimatedContainerExampleState();
+  }
+}
 
-// AnimatedContainer 생성
-AnimatedContainer({
-  duration: 300, // 300ms
-  curve: Curves.easeInOut,
-  width: isExpanded ? 200 : 100,
-  height: isExpanded ? 200 : 100,
-  color: isExpanded ? 'blue' : 'red',
-  child: Center({
-    child: Text('탭하세요')
-  })
-})
+class AnimatedContainerExampleState extends State<AnimatedContainerExample> {
+  isExpanded = false;
 
-// 상태 변경 시 자동으로 애니메이션 적용
-setState(() => {
-  isExpanded = !isExpanded;
-});
+  build() {
+    return GestureDetector({
+      onTap: () => {
+        this.setState(() => {
+          this.isExpanded = !this.isExpanded;
+        });
+      },
+      child: AnimatedContainer({
+        duration: 300, // 300ms
+        curve: Curves.easeInOut,
+        width: this.isExpanded ? 200 : 100,
+        height: this.isExpanded ? 200 : 100,
+        color: this.isExpanded ? 'blue' : 'red',
+        child: Center({
+          child: Text('탭하세요')
+        })
+      })
+    });
+  }
+}
+
+// 팩토리 함수로 내보내기
+export default classToFunction(AnimatedContainerExample);
 ```
 
 ## Props
@@ -290,94 +304,110 @@ AnimatedContainer({
 ### 예제 1: 호버 효과 카드
 
 ```typescript
-const HoverCard = () => {
-  const [isHovered, setIsHovered] = useState(false);
+class HoverCard extends StatefulWidget {
+  createState() {
+    return new HoverCardState();
+  }
+}
 
-  return GestureDetector({
-    onMouseEnter: () => setIsHovered(true),
-    onMouseLeave: () => setIsHovered(false),
-    child: AnimatedContainer({
-      duration: 200,
-      curve: Curves.easeOut,
-      width: 200,
-      height: isHovered ? 250 : 200,
-      decoration: BoxDecoration({
-        color: 'white',
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow({
-            color: isHovered ? 'rgba(0, 0, 0, 0.15)' : 'rgba(0, 0, 0, 0.05)',
-            blurRadius: isHovered ? 20 : 10,
-            offset: { x: 0, y: isHovered ? 10 : 5 }
-          })
-        ]
-      }),
-      child: Padding({
-        padding: EdgeInsets.all(16),
-        child: Column({
-          children: [
-            Icon({ 
-              icon: Icons.shopping_cart,
-              size: 48,
-              color: isHovered ? 'blue' : 'gray'
-            }),
-            SizedBox({ height: 12 }),
-            Text('상품 카드')
+class HoverCardState extends State<HoverCard> {
+  isHovered = false;
+
+  build() {
+    return GestureDetector({
+      onMouseEnter: () => this.setState(() => { this.isHovered = true; }),
+      onMouseLeave: () => this.setState(() => { this.isHovered = false; }),
+      child: AnimatedContainer({
+        duration: 200,
+        curve: Curves.easeOut,
+        width: 200,
+        height: this.isHovered ? 250 : 200,
+        decoration: BoxDecoration({
+          color: 'white',
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow({
+              color: this.isHovered ? 'rgba(0, 0, 0, 0.15)' : 'rgba(0, 0, 0, 0.05)',
+              blurRadius: this.isHovered ? 20 : 10,
+              offset: { x: 0, y: this.isHovered ? 10 : 5 }
+            })
           ]
+        }),
+        child: Padding({
+          padding: EdgeInsets.all(16),
+          child: Column({
+            children: [
+              Icon({ 
+                icon: Icons.shopping_cart,
+                size: 48,
+                color: this.isHovered ? 'blue' : 'gray'
+              }),
+              SizedBox({ height: 12 }),
+              Text('상품 카드')
+            ]
+          })
         })
       })
-    })
-  });
-};
+    });
+  }
+}
 ```
 
 ### 예제 2: 확장 가능한 패널
 
 ```typescript
-const ExpandablePanel = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
+class ExpandablePanel extends StatefulWidget {
+  createState() {
+    return new ExpandablePanelState();
+  }
+}
 
-  return AnimatedContainer({
-    duration: 300,
-    curve: Curves.easeInOut,
-    width: 300,
-    height: isExpanded ? 400 : 80,
-    decoration: BoxDecoration({
-      color: 'white',
-      borderRadius: BorderRadius.circular(8),
-      border: Border.all({ color: '#E0E0E0' })
-    }),
-    child: Column({
-      children: [
-        GestureDetector({
-          onTap: () => setIsExpanded(!isExpanded),
-          child: Container({
-            height: 80,
-            padding: EdgeInsets.symmetric({ horizontal: 16 }),
-            child: Row({
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('패널 제목'),
-                AnimatedContainer({
-                  duration: 300,
-                  transform: Matrix4.rotationZ(isExpanded ? Math.PI : 0),
-                  transformAlignment: Alignment.center,
-                  child: Icon({ icon: Icons.expand_more })
-                })
-              ]
+class ExpandablePanelState extends State<ExpandablePanel> {
+  isExpanded = false;
+
+  build() {
+    return AnimatedContainer({
+      duration: 300,
+      curve: Curves.easeInOut,
+      width: 300,
+      height: this.isExpanded ? 400 : 80,
+      decoration: BoxDecoration({
+        color: 'white',
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all({ color: '#E0E0E0' })
+      }),
+      child: Column({
+        children: [
+          GestureDetector({
+            onTap: () => this.setState(() => { this.isExpanded = !this.isExpanded; }),
+            child: Container({
+              height: 80,
+              padding: EdgeInsets.symmetric({ horizontal: 16 }),
+              child: Row({
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('패널 제목'),
+                  AnimatedContainer({
+                    duration: 300,
+                    transform: Matrix4.rotationZ(this.isExpanded ? Math.PI : 0),
+                    transformAlignment: Alignment.center,
+                    child: Icon({ icon: Icons.expand_more })
+                  })
+                ]
+              })
+            })
+          }),
+          if (this.isExpanded) Expanded({
+            child: Padding({
+              padding: EdgeInsets.all(16),
+              child: Text('확장된 내용이 여기에 표시됩니다.')
             })
           })
-        }),
-        if (isExpanded) Expanded({
-          child: Padding({
-            padding: EdgeInsets.all(16),
-            child: Text('확장된 내용이 여기에 표시됩니다.')
-          })
-        })
-      ]
-    })
-  });
-};
+        ]
+      })
+    });
+  }
+}
 ```
 
 ### 예제 3: 진행 표시기
@@ -446,32 +476,48 @@ const SelectableChip = ({ label, selected, onTap }) => {
 ### 예제 5: 로딩 스켈레톤
 
 ```typescript
-const LoadingSkeleton = () => {
-  const [animationPhase, setAnimationPhase] = useState(0);
+class LoadingSkeleton extends StatefulWidget {
+  createState() {
+    return new LoadingSkeletonState();
+  }
+}
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setAnimationPhase(phase => (phase + 1) % 3);
-    }, 800);
-    return () => clearInterval(timer);
-  }, []);
+class LoadingSkeletonState extends State<LoadingSkeleton> {
+  animationPhase = 0;
+  Timer? timer;
 
-  return AnimatedContainer({
-    duration: 800,
-    curve: Curves.easeInOut,
-    width: 300,
-    height: 100,
-    decoration: BoxDecoration({
-      gradient: LinearGradient({
-        colors: ['#E0E0E0', '#F5F5F5', '#E0E0E0'],
-        stops: [0, 0.5, 1],
-        begin: Alignment.centerLeft.add(Alignment(-1 + animationPhase * 0.5, 0)),
-        end: Alignment.centerRight.add(Alignment(-1 + animationPhase * 0.5, 0))
-      }),
-      borderRadius: BorderRadius.circular(8)
-    })
-  });
-};
+  initState() {
+    super.initState();
+    this.timer = Timer.periodic(Duration({ milliseconds: 800 }), () => {
+      this.setState(() => {
+        this.animationPhase = (this.animationPhase + 1) % 3;
+      });
+    });
+  }
+
+  dispose() {
+    this.timer?.cancel();
+    super.dispose();
+  }
+
+  build() {
+    return AnimatedContainer({
+      duration: 800,
+      curve: Curves.easeInOut,
+      width: 300,
+      height: 100,
+      decoration: BoxDecoration({
+        gradient: LinearGradient({
+          colors: ['#E0E0E0', '#F5F5F5', '#E0E0E0'],
+          stops: [0, 0.5, 1],
+          begin: Alignment.centerLeft.add(Alignment(-1 + this.animationPhase * 0.5, 0)),
+          end: Alignment.centerRight.add(Alignment(-1 + this.animationPhase * 0.5, 0))
+        }),
+        borderRadius: BorderRadius.circular(8)
+      })
+    });
+  }
+}
 ```
 
 ### 예제 6: 다단계 온보딩 화면

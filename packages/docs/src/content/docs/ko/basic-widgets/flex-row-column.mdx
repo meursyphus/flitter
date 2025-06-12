@@ -1,31 +1,31 @@
 ---
 nav_group: "Basic Widgets"
 nav_order: 2
-title: "Flex, Row, and Column"
-description: "Understanding and using the Flex, Row, and Column widgets in Flitter for flexible layouts"
+title: "Flex, Row, 그리고 Column"
+description: "Flitter에서 유연한 레이아웃을 위한 Flex, Row, Column 위젯 이해하고 사용하기"
 ---
 
-# Flex, Row, and Column Widgets in Flitter
+# Flitter의 Flex, Row, Column 위젯
 
-The Flex widget, along with its commonly used subclasses Row and Column, are fundamental to creating flexible layouts in Flitter. These widgets allow you to arrange child widgets in a single row or column, with various alignment and sizing options.
+Flex 위젯과 그 하위 클래스인 Row와 Column은 Flitter에서 유연한 레이아웃을 만드는 데 기본적입니다. 이러한 위젯을 사용하면 다양한 정렬 및 크기 조정 옵션과 함께 자식 위젯을 한 행 또는 열로 배치할 수 있습니다.
 
-## Flex Widget
+## Flex 위젯
 
-The Flex widget is the base class for both Row and Column. It allows you to specify the direction of the layout (horizontal or vertical).
+Flex 위젯은 Row와 Column의 기본 클래스입니다. 레이아웃의 방향(수평 또는 수직)을 지정할 수 있습니다.
 
-### Key Properties
+### 주요 속성
 
-- `direction`: Specifies whether the layout is horizontal or vertical.
-- `children`: The list of child widgets to be laid out.
-- `mainAxisAlignment`: Determines how children are aligned along the main axis.
-- `crossAxisAlignment`: Determines how children are aligned along the cross axis.
-- `mainAxisSize`: Determines how much space the Flex should occupy on the main axis.
+- `direction`: 레이아웃이 수평인지 수직인지 지정합니다.
+- `children`: 배치할 자식 위젯의 목록입니다.
+- `mainAxisAlignment`: 주축을 따라 자식이 어떻게 정렬되는지 결정합니다.
+- `crossAxisAlignment`: 교차축을 따라 자식이 어떻게 정렬되는지 결정합니다.
+- `mainAxisSize`: 주축에서 Flex가 차지해야 하는 공간을 결정합니다.
 
-## Row Widget
+## Row 위젯
 
-The Row widget is a specialized Flex that lays out its children horizontally.
+Row 위젯은 자식을 수평으로 배치하는 특수한 Flex입니다.
 
-### Basic Usage
+### 기본 사용법
 
 ```typescript
 import { Row, Container } from "@meursyphus/flitter";
@@ -39,21 +39,21 @@ const myRow = Row({
 });
 ```
 
-### Visual Representation
+### 시각적 표현
 
 ```
 ┌──────────────────────────────┐
 │ ┌────┐ ┌────┐ ┌────┐         │
-│ │Red │ │Grn │ │Blue│         │
+│ │빨강 │ │초록 │ │파랑│         │
 │ └────┘ └────┘ └────┘         │
 └──────────────────────────────┘
 ```
 
-## Column Widget
+## Column 위젯
 
-The Column widget is a specialized Flex that lays out its children vertically.
+Column 위젯은 자식을 수직으로 배치하는 특수한 Flex입니다.
 
-### Basic Usage
+### 기본 사용법
 
 ```typescript
 import { Column, Container } from "@meursyphus/flitter";
@@ -67,27 +67,27 @@ const myColumn = Column({
 });
 ```
 
-### Visual Representation
+### 시각적 표현
 
 ```
 ┌──────────────┐
 │ ┌──────────┐ │
-│ │   Red    │ │
+│ │   빨강    │ │
 │ └──────────┘ │
 │ ┌──────────┐ │
-│ │  Green   │ │
+│ │   초록    │ │
 │ └──────────┘ │
 │ ┌──────────┐ │
-│ │   Blue   │ │
+│ │   파랑    │ │
 │ └──────────┘ │
 └──────────────┘
 ```
 
-## Advanced Usage
+## 고급 사용법
 
 ### MainAxisAlignment
 
-MainAxisAlignment determines how children are placed along the main axis. Here's an example using Row:
+MainAxisAlignment는 주축을 따라 자식이 배치되는 방법을 결정합니다. Row를 사용한 예제입니다:
 
 ```typescript
 import { Row, Container, MainAxisAlignment } from "@meursyphus/flitter";
@@ -102,19 +102,19 @@ const spacedRow = Row({
 });
 ```
 
-Visual representation:
+시각적 표현:
 
 ```
 ┌──────────────────────────────┐
 │ ┌────┐     ┌────┐     ┌────┐ │
-│ │Red │     │Grn │     │Blue│ │
+│ │빨강 │     │초록 │     │파랑│ │
 │ └────┘     └────┘     └────┘ │
 └──────────────────────────────┘
 ```
 
 ### CrossAxisAlignment
 
-CrossAxisAlignment determines how children are placed along the cross axis. Here's an example using Column:
+CrossAxisAlignment는 교차축을 따라 자식이 배치되는 방법을 결정합니다. Column을 사용한 예제입니다:
 
 ```typescript
 import { Column, Container, CrossAxisAlignment } from "@meursyphus/flitter";
@@ -129,32 +129,32 @@ const alignedColumn = Column({
 });
 ```
 
-Visual representation:
+시각적 표현:
 
 ```
 ┌──────────────┐
 │ ┌──────────┐ │
-│ │   Red    │ │
+│ │   빨강    │ │
 │ └──────────┘ │
 │ ┌────────┐   │
-│ │ Green  │   │
+│ │  초록   │   │
 │ └────────┘   │
 │ ┌────┐       │
-│ │Blue│       │
+│ │파랑│       │
 │ └────┘       │
 └──────────────┘
 ```
 
-## Best Practices
+## 모범 사례
 
-1. **Use Expanded for flexible sizing**: When you want a child to fill the available space, wrap it in an Expanded widget.
+1. **유연한 크기 조정에 Expanded 사용**: 자식이 사용 가능한 공간을 채우기를 원할 때 Expanded 위젯으로 감싸세요.
 
-2. **Consider Flex for custom flex factors**: Use Flex when you need more control over how space is distributed among children.
+2. **사용자 지정 flex 요소에 Flex 고려**: 자식 간에 공간이 분배되는 방식을 더 세밀하게 제어해야 할 때 Flex를 사용하세요.
 
-3. **Combine with other layout widgets**: Row and Column work well with other layout widgets like Container and SizedBox for more complex layouts.
+3. **다른 레이아웃 위젯과 결합**: Row와 Column은 더 복잡한 레이아웃을 위해 Container와 SizedBox 같은 다른 레이아웃 위젯과 잘 작동합니다.
 
-4. **Be mindful of overflow**: If children don't fit in the available space, consider using a scrollable widget like ListView.
+4. **오버플로우 주의**: 자식이 사용 가능한 공간에 맞지 않는 경우 ListView와 같은 스크롤 가능한 위젯 사용을 고려하세요.
 
-## Conclusion
+## 결론
 
-The Flex, Row, and Column widgets are essential for creating flexible layouts in Flitter. By understanding how to use these widgets effectively, you can create responsive and well-organized user interfaces. Remember to experiment with different alignment and sizing options to achieve the desired layout for your application.
+Flex, Row, Column 위젯은 Flitter에서 유연한 레이아웃을 만드는 데 필수적입니다. 이러한 위젯을 효과적으로 사용하는 방법을 이해하면 반응형이고 잘 조직된 사용자 인터페이스를 만들 수 있습니다. 애플리케이션에 원하는 레이아웃을 달성하기 위해 다양한 정렬 및 크기 조정 옵션을 실험해 보세요.

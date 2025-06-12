@@ -91,3 +91,57 @@ class MyWidget extends StatefulWidget {
 ## Localization
 
 The project supports 14 languages using Lunaria. Documentation is localized in respective language folders under `packages/docs/src/content/`.
+
+## Important Documentation Guidelines
+
+### State Management in Flitter
+
+Flitter uses Flutter-style state management, NOT React hooks. When writing documentation:
+
+**NEVER use React patterns:**
+```typescript
+// ❌ WRONG - React hooks
+const [isExpanded, setIsExpanded] = useState(false);
+let isHovered = false;
+```
+
+**ALWAYS use Flitter/Flutter patterns:**
+```typescript
+// ✅ CORRECT - StatefulWidget
+class MyWidget extends StatefulWidget {
+  createState() {
+    return new MyWidgetState();
+  }
+}
+
+class MyWidgetState extends State<MyWidget> {
+  isExpanded = false;  // State variables as class properties
+  isHovered = false;
+  
+  build(context: BuildContext): Widget {
+    return GestureDetector({
+      onClick: () => {
+        this.setState(() => {
+          this.isExpanded = !this.isExpanded;
+        });
+      },
+      child: Container({ /* ... */ })
+    });
+  }
+}
+
+// Export as factory function
+export default classToFunction(MyWidget);
+```
+
+### Event Handling
+
+Use GestureDetector for handling user interactions:
+```typescript
+GestureDetector({
+  onClick: () => { /* handle click */ },
+  onMouseEnter: () => { /* handle hover */ },
+  onMouseLeave: () => { /* handle hover end */ },
+  child: /* your widget */
+})
+```

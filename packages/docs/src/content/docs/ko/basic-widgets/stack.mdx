@@ -2,27 +2,27 @@
 nav_group: "Basic Widgets"
 nav_order: 3
 title: "Stack"
-description: "Understanding and using the Stack widget in Flitter for overlapping layouts"
+description: "Flitter에서 겹치는 레이아웃을 위한 Stack 위젯 이해하고 사용하기"
 ---
 
-# Stack Widget in Flitter
+# Flitter의 Stack 위젯
 
-The Stack widget in Flitter allows you to overlay multiple child widgets on top of each other. This is particularly useful for creating complex layouts where elements need to be positioned relative to each other, such as placing text over an image or creating layered UIs.
+Flitter의 Stack 위젯은 여러 자식 위젯을 서로 겹쳐서 배치할 수 있게 해줍니다. 이는 이미지 위에 텍스트를 배치하거나 레이어드 UI를 만드는 것과 같이 요소들이 서로에 대해 상대적으로 배치되어야 하는 복잡한 레이아웃을 만들 때 특히 유용합니다.
 
-## Overview
+## 개요
 
-Stack positions its children relative to the edges of its box. The stack itself becomes as large as possible to fit its children, unless constrained by its parent.
+Stack은 자식을 상자의 가장자리에 대해 상대적으로 배치합니다. Stack 자체는 부모에 의해 제약되지 않는 한 자식을 수용할 수 있는 최대 크기로 확장됩니다.
 
-## Key Properties
+## 주요 속성
 
-- `children`: A list of child widgets to be stacked.
-- `alignment`: Determines how to align the non-positioned or partially-positioned children in the stack.
-- `fit`: Determines how the non-positioned children should be sized.
-- `clipBehavior`: Determines whether to clip children that extend outside the stack's bounds.
+- `children`: 쉽이에 배치할 자식 위젯의 목록입니다.
+- `alignment`: 스택에서 위치가 지정되지 않은 또는 부분적으로 위치가 지정된 자식을 정렬하는 방법을 결정합니다.
+- `fit`: 위치가 지정되지 않은 자식의 크기를 어떻게 조정할지 결정합니다.
+- `clipBehavior`: 스택의 경계를 벗어나는 자식을 클립할지 여부를 결정합니다.
 
-## Basic Usage
+## 기본 사용법
 
-Here's a simple example of how to use a Stack:
+Stack을 사용하는 간단한 예제입니다:
 
 ```typescript
 import { Stack, Container, Positioned, Text } from "@meursyphus/flitter";
@@ -44,9 +44,9 @@ const myStack = Stack({
 });
 ```
 
-This creates a light blue container with text positioned in the top-left and bottom-right corners.
+이것은 왼쪽 상단과 오른쪽 하단에 텍스트가 배치된 연한 파란색 컨테이너를 만듭니다.
 
-## Visual Representation
+## 시각적 표현
 
 ```
 ┌────────────────────────────────┐
@@ -61,11 +61,11 @@ This creates a light blue container with text positioned in the top-left and bot
 └────────────────────────────────┘
 ```
 
-## Advanced Usage
+## 고급 사용법
 
-### Combining with Positioned Widget
+### Positioned 위젯과 함께 사용하기
 
-The Positioned widget is often used with Stack to precisely position children:
+Positioned 위젯은 자식을 정확하게 배치하기 위해 Stack과 함께 자주 사용됩니다:
 
 ```typescript
 import { Stack, Container, Positioned } from "@meursyphus/flitter";
@@ -87,7 +87,7 @@ const advancedStack = Stack({
 });
 ```
 
-Visual representation:
+시각적 표현:
 
 ```
 ┌────────────────────────────────┐
@@ -105,9 +105,9 @@ Visual representation:
 └────────────────────────────────┘
 ```
 
-### Using Alignment
+### Alignment 사용하기
 
-You can use the `alignment` property to position non-positioned children:
+`alignment` 속성을 사용하여 위치가 지정되지 않은 자식을 배치할 수 있습니다:
 
 ```typescript
 import { Stack, Container, Alignment } from "@meursyphus/flitter";
@@ -121,18 +121,18 @@ const alignedStack = Stack({
 });
 ```
 
-This will center the red container within the light grey container.
+이것은 연한 회색 컨테이너 내에서 빨간색 컨테이너를 중앙에 배치합니다.
 
-## Best Practices
+## 모범 사례
 
-1. **Use Positioned wisely**: While Positioned gives you precise control, overusing it can lead to layouts that don't adapt well to different screen sizes.
+1. **Positioned를 현명하게 사용**: Positioned는 정확한 제어를 제공하지만, 과도하게 사용하면 다양한 화면 크기에 잘 적응하지 않는 레이아웃이 될 수 있습니다.
 
-2. **Consider responsiveness**: Remember that Stacks can behave differently on different screen sizes. Test your layout on various devices.
+2. **반응성 고려**: Stack은 다른 화면 크기에서 다르게 동작할 수 있다는 점을 기억하세요. 다양한 기기에서 레이아웃을 테스트하세요.
 
-3. **Mind the order**: Children are painted in the order they appear in the children list. The last child will be on top.
+3. **순서 주의**: 자식은 children 목록에 나타나는 순서대로 그려집니다. 마지막 자식이 가장 위에 위치합니다.
 
-4. **Combine with other widgets**: Stack works well with other layout widgets. For example, you can use a Stack inside a Container to add padding or constraints.
+4. **다른 위젯과 결합**: Stack은 다른 레이아웃 위젯과 잘 작동합니다. 예를 들어, Container 내부에 Stack을 사용하여 패딩이나 제약 조건을 추가할 수 있습니다.
 
-## Conclusion
+## 결론
 
-The Stack widget is a powerful tool for creating complex, overlapping layouts in Flitter. By understanding how to use Stack effectively, along with its companion Positioned widget, you can create rich, layered user interfaces. Remember to use it judiciously and always consider how your layout will adapt to different screen sizes and orientations.
+Stack 위젯은 Flitter에서 복잡하고 겹치는 레이아웃을 만드는 강력한 도구입니다. Stack을 효과적으로 사용하는 방법과 함께 Positioned 위젯을 이해함으로써 풍부하고 레이어드된 사용자 인터페이스를 만들 수 있습니다. 신중하게 사용하고 항상 레이아웃이 다양한 화면 크기와 방향에 어떻게 적응할지 고려하세요.

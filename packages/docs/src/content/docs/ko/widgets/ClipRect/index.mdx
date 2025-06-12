@@ -184,76 +184,91 @@ Rect.fromPoints(
 ### 예제 1: 이미지 크롭 도구
 
 ```typescript
-const ImageCropper = ({ imageUrl, cropArea }) => {
-  const [cropRect, setCropRect] = useState({
+class ImageCropper extends StatefulWidget {
+  imageUrl: string;
+  
+  constructor({ imageUrl }: { imageUrl: string }) {
+    super();
+    this.imageUrl = imageUrl;
+  }
+  
+  createState(): State<ImageCropper> {
+    return new ImageCropperState();
+  }
+}
+
+class ImageCropperState extends State<ImageCropper> {
+  cropRect = {
     x: 0,
     y: 0,
     width: 200,
     height: 200
-  });
+  };
   
-  return Container({
-    width: 400,
-    height: 400,
-    child: Stack({
-      children: [
-        // 원본 이미지 (어둡게)
-        Opacity({
-          opacity: 0.3,
-          child: Image({
-            src: imageUrl,
-            width: 400,
-            height: 400,
-            objectFit: 'cover'
-          })
-        }),
-        // 크롭된 영역
-        Positioned({
-          left: cropRect.x,
-          top: cropRect.y,
-          child: ClipRect({
-            clipper: (size) => Rect.fromLTWH({
-              left: 0,
-              top: 0,
-              width: cropRect.width,
-              height: cropRect.height
-            }),
-            child: Transform.translate({
-              offset: { x: -cropRect.x, y: -cropRect.y },
-              child: Image({
-                src: imageUrl,
-                width: 400,
-                height: 400,
-                objectFit: 'cover'
+  build(): Widget {
+    return Container({
+      width: 400,
+      height: 400,
+      child: Stack({
+        children: [
+          // 원본 이미지 (어둡게)
+          Opacity({
+            opacity: 0.3,
+            child: Image({
+              src: this.widget.imageUrl,
+              width: 400,
+              height: 400,
+              objectFit: 'cover'
+            })
+          }),
+          // 크롭된 영역
+          Positioned({
+            left: this.cropRect.x,
+            top: this.cropRect.y,
+            child: ClipRect({
+              clipper: (size) => Rect.fromLTWH({
+                left: 0,
+                top: 0,
+                width: this.cropRect.width,
+                height: this.cropRect.height
+              }),
+              child: Transform.translate({
+                offset: { x: -this.cropRect.x, y: -this.cropRect.y },
+                child: Image({
+                  src: this.widget.imageUrl,
+                  width: 400,
+                  height: 400,
+                  objectFit: 'cover'
+                })
+              })
+            })
+          }),
+          // 크롭 영역 테두리
+          Positioned({
+            left: this.cropRect.x,
+            top: this.cropRect.y,
+            child: Container({
+              width: this.cropRect.width,
+              height: this.cropRect.height,
+              decoration: BoxDecoration({
+                border: Border.all({
+                  color: 'white',
+                  width: 2
+                })
               })
             })
           })
-        }),
-        // 크롭 영역 테두리
-        Positioned({
-          left: cropRect.x,
-          top: cropRect.y,
-          child: Container({
-            width: cropRect.width,
-            height: cropRect.height,
-            decoration: BoxDecoration({
-              border: Border.all({
-                color: 'white',
-                width: 2
-              })
-            })
-          })
-        })
-      ]
-    })
-  });
-};
+        ]
+      })
+    });
+  }
+}
 ```
 
 ### 예제 2: 텍스트 오버플로우 처리
 
 ```typescript
-const TextPreview = ({ text, maxLines = 3, lineHeight = 24 }) => {
+function TextPreview({ text, maxLines = 3, lineHeight = 24 }): Widget {
   const maxHeight = maxLines * lineHeight;
   
   return Container({
@@ -299,7 +314,7 @@ const TextPreview = ({ text, maxLines = 3, lineHeight = 24 }) => {
 ### 예제 3: 진행률 표시기
 
 ```typescript
-const ProgressBar = ({ progress, height = 20 }) => {
+function ProgressBar({ progress, height = 20 }): Widget {
   return Container({
     width: 300,
     height: height,
@@ -349,7 +364,7 @@ const ProgressBar = ({ progress, height = 20 }) => {
 ### 예제 4: 뷰포트 시뮬레이션
 
 ```typescript
-const ViewportSimulator = ({ content, viewportSize, scrollOffset }) => {
+function ViewportSimulator({ content, viewportSize, scrollOffset }): Widget {
   return Container({
     width: viewportSize.width,
     height: viewportSize.height,
@@ -403,81 +418,100 @@ ViewportSimulator({
 ### 예제 5: 이미지 비교 슬라이더
 
 ```typescript
-const ImageComparisonSlider = ({ beforeImage, afterImage }) => {
-  const [sliderPosition, setSliderPosition] = useState(0.5);
+class ImageComparisonSlider extends StatefulWidget {
+  beforeImage: string;
+  afterImage: string;
   
-  return GestureDetector({
-    onHorizontalDragUpdate: (details) => {
-      const newPosition = Math.max(0, Math.min(1, 
-        details.localPosition.x / 400
-      ));
-      setSliderPosition(newPosition);
-    },
-    child: Container({
-      width: 400,
-      height: 300,
-      child: Stack({
-        children: [
-          // After 이미지 (전체)
-          Image({
-            src: afterImage,
-            width: 400,
-            height: 300,
-            objectFit: 'cover'
-          }),
-          // Before 이미지 (클리핑)
-          ClipRect({
-            clipper: (size) => Rect.fromLTWH({
-              left: 0,
-              top: 0,
-              width: size.width * sliderPosition,
-              height: size.height
-            }),
-            child: Image({
-              src: beforeImage,
+  constructor({ beforeImage, afterImage }: { beforeImage: string; afterImage: string }) {
+    super();
+    this.beforeImage = beforeImage;
+    this.afterImage = afterImage;
+  }
+  
+  createState(): State<ImageComparisonSlider> {
+    return new ImageComparisonSliderState();
+  }
+}
+
+class ImageComparisonSliderState extends State<ImageComparisonSlider> {
+  sliderPosition = 0.5;
+  
+  build(): Widget {
+    return GestureDetector({
+      onHorizontalDragUpdate: (details) => {
+        const newPosition = Math.max(0, Math.min(1, 
+          details.localPosition.x / 400
+        ));
+        this.setState(() => {
+          this.sliderPosition = newPosition;
+        });
+      },
+      child: Container({
+        width: 400,
+        height: 300,
+        child: Stack({
+          children: [
+            // After 이미지 (전체)
+            Image({
+              src: this.widget.afterImage,
               width: 400,
               height: 300,
               objectFit: 'cover'
-            })
-          }),
-          // 슬라이더 라인
-          Positioned({
-            left: 400 * sliderPosition - 2,
-            top: 0,
-            bottom: 0,
-            child: Container({
-              width: 4,
-              color: 'white',
-              child: Center({
-                child: Container({
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration({
-                    color: 'white',
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow({
-                        color: 'rgba(0,0,0,0.3)',
-                        blurRadius: 4,
-                        offset: { x: 0, y: 2 }
+            }),
+            // Before 이미지 (클리핑)
+            ClipRect({
+              clipper: (size) => Rect.fromLTWH({
+                left: 0,
+                top: 0,
+                width: size.width * this.sliderPosition,
+                height: size.height
+              }),
+              child: Image({
+                src: this.widget.beforeImage,
+                width: 400,
+                height: 300,
+                objectFit: 'cover'
+              })
+            }),
+            // 슬라이더 라인
+            Positioned({
+              left: 400 * this.sliderPosition - 2,
+              top: 0,
+              bottom: 0,
+              child: Container({
+                width: 4,
+                color: 'white',
+                child: Center({
+                  child: Container({
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration({
+                      color: 'white',
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow({
+                          color: 'rgba(0,0,0,0.3)',
+                          blurRadius: 4,
+                          offset: { x: 0, y: 2 }
+                        })
+                      ]
+                    }),
+                    child: Center({
+                      child: Icon({
+                        icon: Icons.dragHandle,
+                        color: '#666'
                       })
-                    ]
-                  }),
-                  child: Center({
-                    child: Icon({
-                      icon: Icons.dragHandle,
-                      color: '#666'
                     })
                   })
                 })
               })
             })
-          })
-        ]
+          ]
+        })
       })
-    })
-  });
-};
+    });
+  }
+}
 ```
 
 ## 주의사항

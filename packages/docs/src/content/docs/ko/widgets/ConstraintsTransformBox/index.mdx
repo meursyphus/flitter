@@ -3,29 +3,27 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: ConstraintsTransformBox
 title: "ConstraintsTransformBox"
-description: "제약 조건을 변환하여 자식에게 적용하는 위젯"
+description: "자식 위젯에 전달되는 제약 조건을 변환하는 위젯"
 ---
 
 ## 개요
 
-ConstraintsTransformBox는 자신의 제약 조건을 임의로 변환하여 자식 위젯에 적용하는 컨테이너 위젯입니다.
-
-이 컨테이너는 constraintsTransform을 자신의 제약 조건에 적용하여 생성된 BoxConstraints를 사용하여 자식의 크기를 결정합니다. 그 다음 자신의 제약 조건 한계 내에서 동일한 크기를 채택하려고 시도합니다. 결과적으로 다른 크기가 되면 alignment에 따라 자식을 정렬합니다. 컨테이너가 전체 자식을 수용할 수 없다면 clipped가 true인 경우 자식이 클리핑됩니다.
+ConstraintsTransformBox는 부모로부터 받은 제약 조건을 변환하여 자식에게 전달하는 위젯입니다. 이를 통해 자식 위젯이 받는 제약 조건을 동적으로 수정할 수 있습니다.
 
 참조: [https://api.flutter.dev/flutter/widgets/ConstraintsTransformBox-class.html](https://api.flutter.dev/flutter/widgets/ConstraintsTransformBox-class.html)
 
 ## 언제 사용하나요?
 
-- 자식 위젯에게 무제한 크기나 특별한 제약을 제공하고 싶을 때
-- 부모의 제약을 완전히 무시하고 자식이 자연스러운 크기를 가지게 하고 싶을 때
-- 특정 방향의 제약만 제거하고 싶을 때
-- 자식이 부모보다 클 수 있는 레이아웃을 만들 때
-- 제약 조건을 유연하게 조작해야 하는 복잡한 레이아웃에서
+- 자식 위젯이 받는 제약 조건을 커스터마이즈해야 할 때
+- 스크롤 가능한 영역에서 자식이 무한 높이를 가지도록 할 때
+- 특정 차원의 제약을 일시적으로 해제해야 할 때
+- 복잡한 레이아웃에서 제약 조건을 디버깅할 때
+- UnconstrainedBox보다 더 세밀한 제어가 필요할 때
 
 ## 기본 사용법
 
 ```typescript
-// 제약 없음 - 자식이 자연스러운 크기를 가짐
+// 모든 제약 제거
 ConstraintsTransformBox({
   constraintsTransform: ConstraintsTransformBox.unconstrained,
   child: Container({
@@ -38,115 +36,132 @@ ConstraintsTransformBox({
 // 높이 제약만 제거
 ConstraintsTransformBox({
   constraintsTransform: ConstraintsTransformBox.heightUnconstrained,
-  clipped: true,
   child: Column({
     children: [
-      Container({ height: 100, color: 'red' }),
-      Container({ height: 100, color: 'green' }),
-      Container({ height: 100, color: 'blue' })
+      Text('자유로운 높이'),
+      // ... 많은 자식들
     ]
   })
 })
 
-// 커스텀 제약 변환
+// 커스텀 변환
 ConstraintsTransformBox({
-  constraintsTransform: (constraints) => constraints.copyWith({
-    maxWidth: constraints.maxWidth * 2,
-    maxHeight: constraints.maxHeight * 0.5
-  }),
-  child: Container({
-    color: 'purple',
-    child: Text('변환된 제약')
-  })
+  constraintsTransform: (constraints) => {
+    return new Constraints({
+      minWidth: Math.max(constraints.minWidth, 100),
+      maxWidth: constraints.maxWidth,
+      minHeight: 0,
+      maxHeight: Infinity
+    });
+  },
+  child: child
 })
 ```
 
 ## Props
 
 ### constraintsTransform (필수)
-
 **값: (constraints: Constraints) => Constraints**
 
-입력 제약 조건을 변환하는 함수입니다. 여러 정적 메서드를 제공합니다:
+부모로부터 받은 제약 조건을 변환하는 함수입니다. 이 함수는 원본 제약 조건을 받아 새로운 제약 조건을 반환해야 합니다.
 
 ```typescript
-// 기본 제공 변환 함수들
-ConstraintsTransformBox.unmodified        // 제약 조건을 그대로 유지
-ConstraintsTransformBox.unconstrained     // 모든 제약 제거
-ConstraintsTransformBox.widthUnconstrained    // 너비 제약만 제거
-ConstraintsTransformBox.heightUnconstrained   // 높이 제약만 제거
-ConstraintsTransformBox.maxWidthUnconstrained  // 최대 너비만 무제한
-ConstraintsTransformBox.maxHeightUnconstrained // 최대 높이만 무제한
-ConstraintsTransformBox.maxUnconstrained      // 최대 너비/높이 무제한
-
-// 커스텀 변환 함수
-(constraints) => constraints.copyWith({
-  minWidth: 100,
-  maxWidth: 500,
-  minHeight: 50,
-  maxHeight: 200
+ConstraintsTransformBox({
+  constraintsTransform: (constraints) => {
+    // 최소 너비를 200으로 설정
+    return constraints.copyWith({
+      minWidth: 200
+    });
+  },
+  child: child
 })
 ```
 
-### alignment
+### child (선택)
+**값: Widget | undefined**
 
+변환된 제약 조건이 적용될 자식 위젯입니다.
+
+### alignment (선택)
 **값: Alignment** (기본값: **Alignment.center**)
 
-자식이 컨테이너와 다른 크기일 때 자식을 정렬하는 방법입니다.
+자식의 크기가 부모와 다를 때 자식을 정렬하는 방법입니다.
 
 ```typescript
 ConstraintsTransformBox({
   constraintsTransform: ConstraintsTransformBox.unconstrained,
   alignment: Alignment.topLeft,
-  child: child
+  child: Container({
+    width: 100,
+    height: 100,
+    color: 'red'
+  })
 })
 ```
 
-### clipped
-
+### clipped (선택)
 **값: boolean** (기본값: **false**)
 
-자식이 컨테이너 영역을 벗어날 때 클리핑할지 여부입니다.
+자식이 부모의 경계를 벗어날 때 클리핑할지 여부입니다.
 
 ```typescript
 ConstraintsTransformBox({
   constraintsTransform: ConstraintsTransformBox.unconstrained,
-  clipped: true,  // 오버플로우 시 클리핑
-  child: child
+  clipped: true,  // 오버플로우 클리핑
+  child: Container({
+    width: 500,
+    height: 500,
+    color: 'green'
+  })
 })
 ```
 
-### child
+### textDirection (선택)
+**값: TextDirection** (기본값: **TextDirection.ltr**)
 
-**값: Widget | undefined**
+정렬을 해석하는 데 사용되는 텍스트 방향입니다.
 
-변환된 제약 조건이 적용될 자식 위젯입니다.
+## 정적 헬퍼 메서드
+
+ConstraintsTransformBox는 일반적인 변환을 위한 여러 정적 메서드를 제공합니다:
+
+```typescript
+// 제약 조건을 변경하지 않음
+ConstraintsTransformBox.unmodified
+
+// 모든 제약 제거 (무한 크기)
+ConstraintsTransformBox.unconstrained
+
+// 너비 제약만 제거
+ConstraintsTransformBox.widthUnconstrained
+
+// 높이 제약만 제거
+ConstraintsTransformBox.heightUnconstrained
+
+// 최대 높이 제약 제거
+ConstraintsTransformBox.maxHeightUnconstrained
+
+// 최대 너비 제약 제거
+ConstraintsTransformBox.maxWidthUnconstrained
+
+// 최대 너비와 높이 제약 제거
+ConstraintsTransformBox.maxUnconstrained
+```
 
 ## 실제 사용 예제
 
-### 예제 1: 스크롤 없는 긴 리스트
+### 예제 1: 스크롤 가능한 리스트에서 높이 제약 제거
 
 ```typescript
-const UnconstrainedList = ({ items }) => {
-  return Container({
-    height: 200,
-    decoration: BoxDecoration({
-      border: Border.all({ color: '#E0E0E0' }),
-      borderRadius: BorderRadius.circular(8)
-    }),
+const ScrollableList = ({ items }) => {
+  return SingleChildScrollView({
     child: ConstraintsTransformBox({
       constraintsTransform: ConstraintsTransformBox.heightUnconstrained,
-      clipped: true,
-      alignment: Alignment.topCenter,
       child: Column({
         children: items.map(item => 
-          Container({
-            height: 50,
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration({
-              border: Border(bottom: BorderSide({ color: '#F0F0F0' }))
-            }),
-            child: Text(item.title)
+          ListTile({
+            title: Text(item.title),
+            subtitle: Text(item.description)
           })
         )
       })
@@ -155,200 +170,157 @@ const UnconstrainedList = ({ items }) => {
 };
 ```
 
-### 예제 2: 반응형 카드 그리드
+### 예제 2: 최소 크기 보장하면서 제약 변환
 
 ```typescript
-const ResponsiveCardGrid = ({ cards, maxCardWidth = 300 }) => {
+const MinSizeTransform = ({ minSize = 150, child }) => {
   return ConstraintsTransformBox({
     constraintsTransform: (constraints) => {
-      const availableWidth = constraints.maxWidth;
-      const cardsPerRow = Math.floor(availableWidth / maxCardWidth);
-      const actualCardWidth = availableWidth / cardsPerRow;
+      return new Constraints({
+        minWidth: Math.max(constraints.minWidth, minSize),
+        maxWidth: constraints.maxWidth,
+        minHeight: Math.max(constraints.minHeight, minSize),
+        maxHeight: constraints.maxHeight
+      });
+    },
+    child: child
+  });
+};
+
+// 사용
+MinSizeTransform({
+  minSize: 200,
+  child: Container({
+    color: 'blue',
+    child: Text('최소 200x200 크기 보장')
+  })
+})
+```
+
+### 예제 3: 종횡비를 유지하면서 제약 변환
+
+```typescript
+const AspectRatioTransform = ({ aspectRatio = 1, child }) => {
+  return ConstraintsTransformBox({
+    constraintsTransform: (constraints) => {
+      const width = constraints.maxWidth;
+      const height = width / aspectRatio;
       
-      return constraints.copyWith({
-        minWidth: actualCardWidth,
-        maxWidth: actualCardWidth
+      return new Constraints({
+        minWidth: 0,
+        maxWidth: width,
+        minHeight: 0,
+        maxHeight: height
       });
     },
-    child: Wrap({
-      children: cards.map(card => 
-        Container({
-          height: 200,
-          margin: EdgeInsets.all(8),
-          decoration: BoxDecoration({
-            color: 'white',
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow({
-                color: 'rgba(0,0,0,0.1)',
-                blurRadius: 8,
-                offset: { x: 0, y: 2 }
-              })
-            ]
-          }),
-          child: Center({
-            child: Text(card.title)
-          })
-        })
-      )
-    })
+    alignment: Alignment.center,
+    child: child
   });
 };
 ```
 
-### 예제 3: 오버플로우 허용 텍스트
+### 예제 4: 디버깅용 제약 로깅
 
 ```typescript
-const OverflowText = ({ text, maxLines = 1 }) => {
-  return Container({
-    width: 200,
-    height: 50,
-    decoration: BoxDecoration({
-      border: Border.all({ color: '#E0E0E0' }),
-      borderRadius: BorderRadius.circular(4)
-    }),
-    child: ConstraintsTransformBox({
-      constraintsTransform: maxLines === 1 
-        ? ConstraintsTransformBox.widthUnconstrained
-        : ConstraintsTransformBox.unconstrained,
-      clipped: true,
-      alignment: Alignment.centerLeft,
-      child: Padding({
-        padding: EdgeInsets.all(8),
-        child: Text(text, {
-          style: TextStyle({ fontSize: 16 }),
-          maxLines: maxLines
-        })
-      })
-    })
-  });
-};
-```
-
-### 예제 4: 플렉서블 이미지 갤러리
-
-```typescript
-const FlexibleImageGallery = ({ images }) => {
+const DebugConstraints = ({ label, child }) => {
   return ConstraintsTransformBox({
     constraintsTransform: (constraints) => {
-      // 이미지 갤러리가 필요한 만큼 높이를 가질 수 있도록
-      return constraints.copyWith({
-        maxHeight: double.infinity
+      console.log(`${label} 제약:`, {
+        minWidth: constraints.minWidth,
+        maxWidth: constraints.maxWidth,
+        minHeight: constraints.minHeight,
+        maxHeight: constraints.maxHeight
       });
+      
+      return constraints;  // 변경 없이 반환
     },
-    clipped: false,
-    child: Column({
-      children: images.map(image => 
-        Container({
-          margin: EdgeInsets.only({ bottom: 16 }),
-          child: AspectRatio({
-            aspectRatio: 16/9,
-            child: Image({
-              src: image.url,
-              objectFit: 'cover'
-            })
-          })
-        })
-      )
-    })
+    child: child
   });
 };
+
+// 사용
+DebugConstraints({
+  label: 'Container',
+  child: Container({
+    width: 200,
+    height: 200,
+    color: 'red'
+  })
+})
 ```
 
-### 예제 5: 동적 폼 필드
+### 예제 5: 조건부 제약 변환
 
 ```typescript
-const DynamicFormField = ({ 
-  label, 
-  value, 
-  multiline = false,
-  maxWidth = 400 
+const ConditionalConstraints = ({ 
+  isExpanded, 
+  maxWidth = 300,
+  child 
 }) => {
   return ConstraintsTransformBox({
     constraintsTransform: (constraints) => {
-      if (multiline) {
-        // 멀티라인 필드는 높이 제약 없음
-        return constraints.copyWith({
-          maxWidth: Math.min(maxWidth, constraints.maxWidth),
-          maxHeight: double.infinity
-        });
+      if (isExpanded) {
+        return constraints;  // 확장 모드에서는 원본 제약 사용
       }
-      // 싱글라인 필드는 최대 너비만 제한
+      
+      // 축소 모드에서는 최대 너비 제한
       return constraints.copyWith({
-        maxWidth: Math.min(maxWidth, constraints.maxWidth)
+        maxWidth: Math.min(constraints.maxWidth, maxWidth)
       });
     },
-    alignment: Alignment.topLeft,
-    child: Column({
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, {
-          style: TextStyle({
-            fontSize: 14,
-            fontWeight: 'bold',
-            color: '#333'
-          })
-        }),
-        SizedBox({ height: 8 }),
-        Container({
-          padding: EdgeInsets.all(12),
-          decoration: BoxDecoration({
-            border: Border.all({ color: '#E0E0E0' }),
-            borderRadius: BorderRadius.circular(6)
-          }),
-          child: TextField({
-            value: value,
-            multiline: multiline,
-            decoration: InputDecoration.none
-          })
-        })
-      ]
+    clipped: !isExpanded,
+    child: AnimatedContainer({
+      duration: Duration({ milliseconds: 300 }),
+      child: child
     })
   });
 };
 ```
 
-## 제약 변환 함수 이해
+## 제약 변환 패턴
 
-각 정적 메서드의 동작:
+### 일반적인 변환 패턴
 
 ```typescript
-// 1. unmodified: 제약 조건 변경 없음
-(constraints) => constraints
-
-// 2. unconstrained: 모든 제약 제거
-(constraints) => new Constraints()
-
-// 3. widthUnconstrained: 너비 제약만 제거
-(constraints) => constraints.heightConstraints()
-
-// 4. heightUnconstrained: 높이 제약만 제거
-(constraints) => constraints.widthConstraints()
-
-// 5. maxWidthUnconstrained: 최대 너비만 무제한
-(constraints) => constraints.copyWith({ maxWidth: Infinity })
-
-// 6. maxHeightUnconstrained: 최대 높이만 무제한
-(constraints) => constraints.copyWith({ maxHeight: Infinity })
-
-// 7. maxUnconstrained: 최대 너비/높이 무제한
-(constraints) => constraints.copyWith({ 
-  maxWidth: Infinity, 
-  maxHeight: Infinity 
+// 1. 최소 크기 강제
+(constraints) => constraints.copyWith({
+  minWidth: 100,
+  minHeight: 100
 })
+
+// 2. 최대 크기 제한
+(constraints) => constraints.copyWith({
+  maxWidth: Math.min(constraints.maxWidth, 500),
+  maxHeight: Math.min(constraints.maxHeight, 500)
+})
+
+// 3. 정사각형 강제
+(constraints) => {
+  const size = Math.min(constraints.maxWidth, constraints.maxHeight);
+  return Constraints.tight({ width: size, height: size });
+}
+
+// 4. 비율 유지
+(constraints) => {
+  const ratio = 0.5; // 높이가 너비의 절반
+  return constraints.copyWith({
+    maxHeight: constraints.maxWidth * ratio
+  });
+}
 ```
 
 ## 주의사항
 
-- 제약이 제거된 자식은 부모보다 클 수 있으므로 clipped 옵션을 고려해야 합니다
-- unconstrained 변환은 성능에 영향을 줄 수 있으므로 신중히 사용해야 합니다
-- 자식이 무한 크기를 요청할 수 있으므로 적절한 제한이 필요합니다
-- Stack 내에서 사용할 때는 특별한 주의가 필요합니다
-- 레이아웃 오버플로우가 발생할 수 있으므로 테스트가 중요합니다
+- 변환된 제약이 유효하지 않으면 레이아웃 오류가 발생할 수 있습니다
+- 무한 제약을 사용할 때는 자식이 고유 크기를 가져야 합니다
+- clipped가 false일 때 자식이 부모를 오버플로우할 수 있습니다
+- 너무 복잡한 변환은 레이아웃 성능에 영향을 줄 수 있습니다
+- 변환 함수는 순수 함수여야 하며, 부작용이 없어야 합니다
 
 ## 관련 위젯
 
-- **UnconstrainedBox**: 더 간단한 제약 제거 위젯
-- **OverflowBox**: 부모 크기를 무시하고 자식 크기 허용
-- **ConstrainedBox**: 제약 조건 추가
-- **LimitedBox**: 무한 제약에서만 크기 제한
+- **UnconstrainedBox**: 모든 제약을 제거하는 간단한 방법
+- **ConstrainedBox**: 추가 제약을 적용
+- **OverflowBox**: 부모 제약을 벗어날 수 있게 허용
+- **SizedBox**: 고정 크기 지정
+- **FractionallySizedBox**: 부모 크기의 비율로 크기 지정
