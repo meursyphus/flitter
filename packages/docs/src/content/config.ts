@@ -3,7 +3,7 @@ import { defineCollection, z } from "astro:content";
 const docs = defineCollection({
   type: "content",
   schema: z.object({
-    nav_group: z.string(),
+    nav_group: z.string().optional(),
     nav_order: z.number().optional(),
     nav_title: z.string().optional(),
     title: z.string(),
