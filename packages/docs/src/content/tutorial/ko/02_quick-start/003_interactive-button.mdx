@@ -47,13 +47,16 @@ files:
     }
 
     function App() {
-      const widget = new CounterButton();
+      // TODO: 아래 주석을 해제하고 CounterButton을 완성하세요
+      // const widget = new CounterButton();
 
       return (
         <div style={{ padding: '20px' }}>
           <h1>인터랙티브 버튼</h1>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <ReactWidget widget={widget} />
+            {/* TODO: CounterButton을 완성한 후 주석을 해제하세요 */}
+            {/* <ReactWidget widget={widget} /> */}
+            <p>CounterButton을 구현해주세요!</p>
           </div>
         </div>
       );
@@ -106,7 +109,7 @@ solved_files:
               borderRadius: 8,
               boxShadow: [
                 {
-                  color: Colors.black.withOpacity(0.2),
+                  color: "rgba(0, 0, 0, 0.2)",
                   offset: { x: 0, y: 2 },
                   blurRadius: 4
                 }
