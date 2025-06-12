@@ -1,0 +1,611 @@
+---
+nav_group: "Layout Widgets"
+nav_order: 3
+title: "Expanded and Flexible - Space Distribution"
+description: "Master flexible layouts and space distribution with Expanded and Flexible widgets"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Row, Column, Expanded, Flexible, Text, Colors, EdgeInsets } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Try using Expanded and Flexible
+      // 1. Fill remaining space with Expanded
+      // 2. Control ratios with flex property
+      // 3. Understand Flexible vs Expanded differences
+      const widget = Container({
+        width: 500,
+        height: 400,
+        color: Colors.grey[200],
+        child: Column({
+          children: [
+            Text("Practice Expanded and Flexible!"),
+            // Add code here
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Mastering Expanded and Flexible</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, Row, Column, Expanded, Flexible, Text, TextStyle, 
+      Colors, EdgeInsets, SizedBox, Center, MainAxisAlignment
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // Helper component for demonstrations
+      const ColorBox = (text, color, width = null, height = 50) => Container({
+        width: width,
+        height: height,
+        color: color,
+        child: Center({
+          child: Text(text, {
+            style: new TextStyle({ 
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: "bold"
+            })
+          })
+        })
+      });
+
+      const widget = Container({
+        width: 600,
+        padding: EdgeInsets.all(20),
+        color: Colors.grey[100],
+        child: Column({
+          crossAxisAlignment: "stretch",
+          children: [
+            // 1. Basic Expanded usage
+            Text("1. Expanded - Fill Remaining Space", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              height: 80,
+              color: Colors.white,
+              child: Row({
+                children: [
+                  ColorBox("Fixed", Colors.red[400], 100),
+                  SizedBox({ width: 10 }),
+                  Expanded({
+                    child: ColorBox("Expanded", Colors.green[400])
+                  }),
+                  SizedBox({ width: 10 }),
+                  ColorBox("Fixed", Colors.blue[400], 100)
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 2. Flex ratios
+            Text("2. Flex Property - Control Ratios", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              height: 80,
+              color: Colors.white,
+              child: Row({
+                children: [
+                  Expanded({
+                    flex: 1,
+                    child: ColorBox("flex: 1", Colors.purple[400])
+                  }),
+                  SizedBox({ width: 5 }),
+                  Expanded({
+                    flex: 2,
+                    child: ColorBox("flex: 2", Colors.orange[400])
+                  }),
+                  SizedBox({ width: 5 }),
+                  Expanded({
+                    flex: 3,
+                    child: ColorBox("flex: 3", Colors.teal[400])
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 3. Flexible vs Expanded
+            Text("3. Flexible vs Expanded - The Difference", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            
+            // Flexible example
+            Text("Flexible (takes only needed space):", {
+              style: new TextStyle({ fontSize: 14, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 5 }),
+            Container({
+              height: 60,
+              color: Colors.white,
+              child: Row({
+                children: [
+                  ColorBox("Fixed", Colors.red[300], 80),
+                  SizedBox({ width: 5 }),
+                  Flexible({
+                    child: ColorBox("Short", Colors.amber[400])
+                  }),
+                  SizedBox({ width: 5 }),
+                  ColorBox("Fixed", Colors.blue[300], 80)
+                ]
+              })
+            }),
+            SizedBox({ height: 10 }),
+            
+            // Expanded example
+            Text("Expanded (fills all available space):", {
+              style: new TextStyle({ fontSize: 14, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 5 }),
+            Container({
+              height: 60,
+              color: Colors.white,
+              child: Row({
+                children: [
+                  ColorBox("Fixed", Colors.red[300], 80),
+                  SizedBox({ width: 5 }),
+                  Expanded({
+                    child: ColorBox("Fills All", Colors.amber[400])
+                  }),
+                  SizedBox({ width: 5 }),
+                  ColorBox("Fixed", Colors.blue[300], 80)
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 4. Practical example - App layout
+            Text("4. Practical Example - App Layout", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              height: 200,
+              decoration: BoxDecoration({
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all({ color: Colors.grey[300] })
+              }),
+              child: Column({
+                children: [
+                  // Header (fixed height)
+                  Container({
+                    height: 50,
+                    color: Colors.indigo[400],
+                    child: Center({
+                      child: Text("Header (Fixed Height)", {
+                        style: new TextStyle({ color: Colors.white })
+                      })
+                    })
+                  }),
+                  // Body (flexible)
+                  Expanded({
+                    child: Row({
+                      children: [
+                        // Sidebar (fixed width)
+                        Container({
+                          width: 120,
+                          color: Colors.grey[300],
+                          child: Center({
+                            child: Text("Sidebar\n(Fixed)", {
+                              style: new TextStyle({ fontSize: 12 }),
+                              textAlign: "center"
+                            })
+                          })
+                        }),
+                        // Main content (fills remaining)
+                        Expanded({
+                          child: Container({
+                            color: Colors.blue[50],
+                            child: Center({
+                              child: Text("Main Content\n(Expanded)", {
+                                style: new TextStyle({ fontSize: 12 }),
+                                textAlign: "center"
+                              })
+                            })
+                          })
+                        })
+                      ]
+                    })
+                  }),
+                  // Footer (fixed height)
+                  Container({
+                    height: 40,
+                    color: Colors.grey[400],
+                    child: Center({
+                      child: Text("Footer (Fixed Height)", {
+                        style: new TextStyle({ color: Colors.white, fontSize: 12 })
+                      })
+                    })
+                  })
+                ]
+              })
+            })
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Mastering Expanded and Flexible</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# Expanded and Flexible - Space Distribution
+
+Creating responsive and flexible layouts is essential for modern UI design. The Expanded and Flexible widgets provide powerful tools for distributing space intelligently among child widgets.
+
+## What You'll Learn
+
+- [ ] Fill remaining space with Expanded
+- [ ] Control space ratios with flex property
+- [ ] Understand differences between Flexible and Expanded
+- [ ] Create responsive layouts
+- [ ] Common flexible layout patterns
+- [ ] Performance considerations
+
+## Expanded Widget - Fill Available Space
+
+The Expanded widget forces its child to fill all available space in the main axis:
+
+```typescript
+Row({
+  children: [
+    Container({ width: 100, height: 50, color: Colors.red }),
+    Expanded({
+      child: Container({ height: 50, color: Colors.green })
+    }),
+    Container({ width: 100, height: 50, color: Colors.blue })
+  ]
+})
+```
+
+### Key Characteristics
+
+- **Forces expansion**: Child must fill available space
+- **Main axis only**: Only affects the direction of Row/Column
+- **Cannot shrink**: Will not be smaller than available space
+
+## Flex Property - Control Ratios
+
+Use the `flex` property to control how much space each Expanded widget gets:
+
+```typescript
+Row({
+  children: [
+    Expanded({
+      flex: 1,  // Gets 1/6 of space
+      child: Container({ color: Colors.red })
+    }),
+    Expanded({
+      flex: 2,  // Gets 2/6 of space
+      child: Container({ color: Colors.green })
+    }),
+    Expanded({
+      flex: 3,  // Gets 3/6 of space
+      child: Container({ color: Colors.blue })
+    })
+  ]
+})
+```
+
+### Flex Ratio Calculation
+
+- Total flex: 1 + 2 + 3 = 6
+- First widget: 1/6 ≈ 16.7% of space
+- Second widget: 2/6 ≈ 33.3% of space  
+- Third widget: 3/6 = 50% of space
+
+## Flexible Widget - Take Only What You Need
+
+The Flexible widget allows its child to occupy available space but doesn't force it:
+
+```typescript
+Row({
+  children: [
+    Container({ width: 100, height: 50, color: Colors.red }),
+    Flexible({
+      child: Container({ height: 50, color: Colors.green, width: 50 })
+    }),
+    Container({ width: 100, height: 50, color: Colors.blue })
+  ]
+})
+```
+
+### Flexible vs Expanded
+
+| Aspect | Flexible | Expanded |
+|--------|----------|----------|
+| **Space usage** | Only what child needs | All available space |
+| **Can be smaller** | Yes | No |
+| **Forces size** | No | Yes |
+| **Use case** | Variable content | Space filling |
+
+## Practical Examples
+
+### Navigation Layout
+
+```typescript
+Container({
+  height: 60,
+  child: Row({
+    children: [
+      // Logo (fixed size)
+      Container({
+        width: 120,
+        child: Center({ child: Text("Logo") })
+      }),
+      // Navigation items (center)
+      Expanded({
+        child: Row({
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Home"),
+            SizedBox({ width: 24 }),
+            Text("About"),
+            SizedBox({ width: 24 }),
+            Text("Contact")
+          ]
+        })
+      }),
+      // User menu (fixed size)
+      Container({
+        width: 100,
+        child: Center({ child: Text("Profile") })
+      })
+    ]
+  })
+})
+```
+
+### Dashboard Cards
+
+```typescript
+Row({
+  children: [
+    Expanded({
+      flex: 2,
+      child: DashboardCard({
+        title: "Revenue",
+        value: "$12,345"
+      })
+    }),
+    SizedBox({ width: 16 }),
+    Expanded({
+      flex: 1,
+      child: DashboardCard({
+        title: "Users",
+        value: "1,234"
+      })
+    }),
+    SizedBox({ width: 16 }),
+    Expanded({
+      flex: 1,
+      child: DashboardCard({
+        title: "Orders",
+        value: "567"
+      })
+    })
+  ]
+})
+```
+
+### Chat Interface
+
+```typescript
+Column({
+  children: [
+    // Header (fixed)
+    Container({
+      height: 60,
+      color: Colors.blue,
+      child: Center({
+        child: Text("Chat", {
+          style: TextStyle({ color: Colors.white })
+        })
+      })
+    }),
+    // Messages (expandable)
+    Expanded({
+      child: ListView({
+        children: chatMessages
+      })
+    }),
+    // Input area (fixed)
+    Container({
+      height: 80,
+      padding: EdgeInsets.all(16),
+      child: Row({
+        children: [
+          Expanded({
+            child: TextField({
+              placeholder: "Type a message..."
+            })
+          }),
+          SizedBox({ width: 8 }),
+          SendButton()
+        ]
+      })
+    })
+  ]
+})
+```
+
+## Advanced Patterns
+
+### Responsive Grid
+
+```typescript
+Row({
+  children: [
+    Expanded({
+      flex: screenWidth > 768 ? 2 : 1,
+      child: LeftPanel()
+    }),
+    if (screenWidth > 480) ...[
+      SizedBox({ width: 16 }),
+      Expanded({
+        flex: 1,
+        child: RightPanel()
+      })
+    ]
+  ]
+})
+```
+
+### Form Layout
+
+```typescript
+Column({
+  children: [
+    // Form fields take minimum space
+    Flexible({
+      child: Column({
+        children: formFields.map((field) => 
+          Padding({
+            padding: EdgeInsets.only({ bottom: 16 }),
+            child: TextFormField({ label: field.label })
+          })
+        )
+      })
+    }),
+    // Spacer pushes buttons to bottom
+    Expanded({
+      child: SizedBox()
+    }),
+    // Action buttons (fixed at bottom)
+    Row({
+      children: [
+        Expanded({
+          child: SecondaryButton({ text: "Cancel" })
+        }),
+        SizedBox({ width: 16 }),
+        Expanded({
+          child: PrimaryButton({ text: "Submit" })
+        })
+      ]
+    })
+  ]
+})
+```
+
+## Performance Tips
+
+1. **Avoid unnecessary Expanded**: Only use when space distribution is needed
+2. **Use Flexible for optional expansion**: When content might not need all space
+3. **Consider intrinsic dimensions**: Some widgets have natural sizes
+4. **Test on different screen sizes**: Ensure responsive behavior
+
+## Common Patterns
+
+### Three-Column Layout
+
+```typescript
+Row({
+  children: [
+    // Left sidebar (25%)
+    Expanded({
+      flex: 1,
+      child: Sidebar()
+    }),
+    // Main content (50%)
+    Expanded({
+      flex: 2,
+      child: MainContent()
+    }),
+    // Right panel (25%)
+    Expanded({
+      flex: 1,
+      child: RightPanel()
+    })
+  ]
+})
+```
+
+### Progressive Disclosure
+
+```typescript
+Column({
+  children: [
+    // Always visible summary
+    SummaryCard(),
+    SizedBox({ height: 16 }),
+    // Expandable details
+    if (showDetails) ...[
+      Expanded({
+        child: DetailView()
+      })
+    ] else ...[
+      Flexible({
+        child: PreviewCard()
+      })
+    ]
+  ]
+})
+```
+
+## Key Takeaways
+
+Space distribution mastery checklist:
+
+- ✅ **Expanded**: Forces child to fill available space
+- ✅ **Flexible**: Allows child to use available space
+- ✅ **Flex ratios**: Control space distribution
+- ✅ **Responsive patterns**: Adapt to screen sizes
+- ✅ **Performance**: Use appropriately for layout needs
+
+## 🎉 Fantastic!
+
+You've mastered flexible space distribution! Your layouts can now adapt to any screen size.
+
+## Next Steps
+
+In the next tutorial, we'll learn about maintaining consistent proportions with AspectRatio.
+
+👉 **Next: AspectRatio - Maintaining Proportions**

@@ -10,28 +10,28 @@
 - [ ] Flitter가 뛰어난 이유 (Flutter 기반, SVG/Canvas 듀얼 렌더링) -->
 
 ## 2. 빠른 시작
-- [ ] 설치 및 환경 설정
-- [ ] 첫 번째 "Hello World" 앱
-- [ ] 간단한 인터랙티브 버튼 만들기
-- [ ] 개발 도구 설정 (VS Code, 디버깅)
+- [x] 설치 및 환경 설정
+- [x] 첫 번째 "Hello World" 앱
+- [x] 간단한 인터랙티브 버튼 만들기
+- [x] 개발 도구 설정 (VS Code, 디버깅)
 
 ## 3. 위젯 인터페이스 기초
-- [ ] 위젯이란? - 모든 것은 위젯이다
-- [ ] 위젯 트리 구조 이해하기
-- [ ] 팩토리 함수 패턴 (classToFunction)
-- [ ] StatelessWidget vs StatefulWidget 첫 만남
+- [x] 위젯이란? - 모든 것은 위젯이다
+- [x] 위젯 트리 구조 이해하기
+- [x] 팩토리 함수 패턴 (classToFunction)
+- [x] StatelessWidget vs StatefulWidget 첫 만남
 
 ## 4. 기본 위젯 API 탐험
-- [ ] Container - 모든 것을 담는 기본 상자
-- [ ] Text - 텍스트 표시와 스타일링
-- [ ] Row와 Column - 선형 배치의 기본
-- [ ] Stack - 위젯 겹치기와 절대 위치
+- [x] Container - 모든 것을 담는 기본 상자
+- [x] Text - 텍스트 표시와 스타일링
+- [x] Row와 Column - 선형 배치의 기본
+- [x] Stack - 위젯 겹치기와 절대 위치
 
 ## 5. 레이아웃 위젯 마스터하기
-- [ ] Padding과 Margin - 공간 다루기
-- [ ] Align과 Center - 정렬의 예술
-- [ ] Expanded와 Flexible - 공간 분배
-- [ ] AspectRatio - 비율 유지하기
+- [x] Padding과 Margin - 공간 다루기
+- [x] Align과 Center - 정렬의 예술
+- [x] Expanded와 Flexible - 공간 분배
+- [x] AspectRatio - 비율 유지하기
 
 ## 6. 시각적 효과 위젯들
 - [ ] Transform - 회전, 크기 조정, 이동

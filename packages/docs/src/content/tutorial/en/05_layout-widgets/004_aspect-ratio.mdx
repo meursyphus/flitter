@@ -1,0 +1,820 @@
+---
+nav_group: "Layout Widgets"
+nav_order: 4
+title: "AspectRatio - Maintaining Proportions"
+description: "Learn to maintain consistent width-to-height ratios with the AspectRatio widget for professional layouts"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, AspectRatio, Text, Colors, EdgeInsets, Column } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Try using AspectRatio
+      // 1. Maintain consistent proportions
+      // 2. Use common aspect ratios (16:9, 1:1, 4:3)
+      // 3. Create responsive image containers
+      const widget = Container({
+        width: 500,
+        padding: EdgeInsets.all(20),
+        color: Colors.grey[200],
+        child: Column({
+          children: [
+            Text("Practice AspectRatio!"),
+            // Add code here
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Mastering AspectRatio</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, AspectRatio, Text, TextStyle, Colors, 
+      EdgeInsets, Column, Row, SizedBox, Center, Wrap
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // Helper component for demonstrations
+      const RatioDemo = (ratio, label, color) => Container({
+        width: 150,
+        margin: EdgeInsets.all(8),
+        child: Column({
+          children: [
+            AspectRatio({
+              aspectRatio: ratio,
+              child: Container({
+                color: color,
+                child: Center({
+                  child: Text(label, {
+                    style: new TextStyle({
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: "bold"
+                    }),
+                    textAlign: "center"
+                  })
+                })
+              })
+            }),
+            SizedBox({ height: 4 }),
+            Text(label, {
+              style: new TextStyle({ fontSize: 12 }),
+              textAlign: "center"
+            })
+          ]
+        })
+      });
+
+      const widget = Container({
+        width: 600,
+        padding: EdgeInsets.all(20),
+        color: Colors.grey[100],
+        child: Column({
+          crossAxisAlignment: "stretch",
+          children: [
+            // 1. Common aspect ratios
+            Text("1. Common Aspect Ratios", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Wrap({
+              children: [
+                RatioDemo(16/9, "16:9\nVideo", Colors.red[400]),
+                RatioDemo(4/3, "4:3\nClassic", Colors.green[400]),
+                RatioDemo(1.0, "1:1\nSquare", Colors.blue[400]),
+                RatioDemo(3/4, "3:4\nPortrait", Colors.purple[400])
+              ]
+            }),
+            SizedBox({ height: 20 }),
+
+            // 2. Video player mockup
+            Text("2. Video Player (16:9)", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              margin: EdgeInsets.symmetric({ horizontal: 20 }),
+              decoration: BoxDecoration({
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(8)
+              }),
+              child: AspectRatio({
+                aspectRatio: 16/9,
+                child: Container({
+                  decoration: BoxDecoration({
+                    gradient: LinearGradient({
+                      colors: [Colors.blue[400], Colors.purple[400]],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight
+                    }),
+                    borderRadius: BorderRadius.circular(8)
+                  }),
+                  child: Stack({
+                    children: [
+                      Center({
+                        child: Container({
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration({
+                            color: Colors.white.withOpacity(0.8),
+                            shape: BoxShape.circle
+                          }),
+                          child: Center({
+                            child: Text("▶", {
+                              style: new TextStyle({
+                                fontSize: 24,
+                                color: Colors.black
+                              })
+                            })
+                          })
+                        })
+                      }),
+                      Positioned({
+                        bottom: 16,
+                        left: 16,
+                        right: 16,
+                        child: Container({
+                          padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 8 }),
+                          decoration: BoxDecoration({
+                            color: Colors.black.withOpacity(0.7),
+                            borderRadius: BorderRadius.circular(4)
+                          }),
+                          child: Row({
+                            children: [
+                              Text("0:00", {
+                                style: new TextStyle({ color: Colors.white, fontSize: 12 })
+                              }),
+                              SizedBox({ width: 8 }),
+                              Expanded({
+                                child: Container({
+                                  height: 4,
+                                  decoration: BoxDecoration({
+                                    color: Colors.white.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(2)
+                                  })
+                                })
+                              }),
+                              SizedBox({ width: 8 }),
+                              Text("5:32", {
+                                style: new TextStyle({ color: Colors.white, fontSize: 12 })
+                              })
+                            ]
+                          })
+                        })
+                      })
+                    ]
+                  })
+                })
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 3. Image gallery grid
+            Text("3. Image Gallery Grid", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              height: 200,
+              child: Row({
+                children: [
+                  Expanded({
+                    child: Column({
+                      children: [
+                        Expanded({
+                          child: AspectRatio({
+                            aspectRatio: 1.0,
+                            child: Container({
+                              margin: EdgeInsets.all(2),
+                              color: Colors.amber[300],
+                              child: Center({
+                                child: Text("📷", {
+                                  style: new TextStyle({ fontSize: 32 })
+                                })
+                              })
+                            })
+                          })
+                        }),
+                        Expanded({
+                          child: AspectRatio({
+                            aspectRatio: 1.0,
+                            child: Container({
+                              margin: EdgeInsets.all(2),
+                              color: Colors.green[300],
+                              child: Center({
+                                child: Text("🎨", {
+                                  style: new TextStyle({ fontSize: 32 })
+                                })
+                              })
+                            })
+                          })
+                        })
+                      ]
+                    })
+                  }),
+                  Expanded({
+                    child: AspectRatio({
+                      aspectRatio: 1.0,
+                      child: Container({
+                        margin: EdgeInsets.all(2),
+                        color: Colors.pink[300],
+                        child: Center({
+                          child: Text("🖼️", {
+                            style: new TextStyle({ fontSize: 48 })
+                          })
+                        })
+                      })
+                    })
+                  }),
+                  Expanded({
+                    child: Column({
+                      children: [
+                        Expanded({
+                          child: AspectRatio({
+                            aspectRatio: 1.0,
+                            child: Container({
+                              margin: EdgeInsets.all(2),
+                              color: Colors.cyan[300],
+                              child: Center({
+                                child: Text("🎭", {
+                                  style: new TextStyle({ fontSize: 32 })
+                                })
+                              })
+                            })
+                          })
+                        }),
+                        Expanded({
+                          child: AspectRatio({
+                            aspectRatio: 1.0,
+                            child: Container({
+                              margin: EdgeInsets.all(2),
+                              color: Colors.orange[300],
+                              child: Center({
+                                child: Text("🎪", {
+                                  style: new TextStyle({ fontSize: 32 })
+                                })
+                              })
+                            })
+                          })
+                        })
+                      ]
+                    })
+                  })
+                ]
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 4. Product cards
+            Text("4. Product Cards (Golden Ratio)", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Row({
+              children: [
+                Expanded({
+                  child: Container({
+                    margin: EdgeInsets.all(4),
+                    decoration: BoxDecoration({
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [{
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: { x: 0, y: 2 }
+                      }]
+                    }),
+                    child: Column({
+                      crossAxisAlignment: "stretch",
+                      children: [
+                        AspectRatio({
+                          aspectRatio: 1.618, // Golden ratio
+                          child: Container({
+                            decoration: BoxDecoration({
+                              color: Colors.indigo[100],
+                              borderRadius: BorderRadius.only({
+                                topLeft: Radius.circular(8),
+                                topRight: Radius.circular(8)
+                              })
+                            }),
+                            child: Center({
+                              child: Text("Product\nImage", {
+                                style: new TextStyle({
+                                  fontSize: 14,
+                                  color: Colors.indigo[600]
+                                }),
+                                textAlign: "center"
+                              })
+                            })
+                          })
+                        }),
+                        Padding({
+                          padding: EdgeInsets.all(12),
+                          child: Column({
+                            crossAxisAlignment: "start",
+                            children: [
+                              Text("Product Name", {
+                                style: new TextStyle({
+                                  fontSize: 14,
+                                  fontWeight: "bold"
+                                })
+                              }),
+                              SizedBox({ height: 4 }),
+                              Text("$29.99", {
+                                style: new TextStyle({
+                                  fontSize: 16,
+                                  color: Colors.green[600],
+                                  fontWeight: "bold"
+                                })
+                              })
+                            ]
+                          })
+                        })
+                      ]
+                    })
+                  })
+                }),
+                Expanded({
+                  child: Container({
+                    margin: EdgeInsets.all(4),
+                    decoration: BoxDecoration({
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [{
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: { x: 0, y: 2 }
+                      }]
+                    }),
+                    child: Column({
+                      crossAxisAlignment: "stretch",
+                      children: [
+                        AspectRatio({
+                          aspectRatio: 1.618,
+                          child: Container({
+                            decoration: BoxDecoration({
+                              color: Colors.teal[100],
+                              borderRadius: BorderRadius.only({
+                                topLeft: Radius.circular(8),
+                                topRight: Radius.circular(8)
+                              })
+                            }),
+                            child: Center({
+                              child: Text("Product\nImage", {
+                                style: new TextStyle({
+                                  fontSize: 14,
+                                  color: Colors.teal[600]
+                                }),
+                                textAlign: "center"
+                              })
+                            })
+                          })
+                        }),
+                        Padding({
+                          padding: EdgeInsets.all(12),
+                          child: Column({
+                            crossAxisAlignment: "start",
+                            children: [
+                              Text("Another Product", {
+                                style: new TextStyle({
+                                  fontSize: 14,
+                                  fontWeight: "bold"
+                                })
+                              }),
+                              SizedBox({ height: 4 }),
+                              Text("$49.99", {
+                                style: new TextStyle({
+                                  fontSize: 16,
+                                  color: Colors.green[600],
+                                  fontWeight: "bold"
+                                })
+                              })
+                            ]
+                          })
+                        })
+                      ]
+                    })
+                  })
+                })
+              ]
+            })
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Mastering AspectRatio</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# AspectRatio - Maintaining Proportions
+
+The AspectRatio widget ensures your UI elements maintain consistent width-to-height proportions across different screen sizes. This is essential for creating professional, visually pleasing layouts.
+
+## What You'll Learn
+
+- [ ] Maintain consistent width-to-height ratios
+- [ ] Use common aspect ratios (16:9, 4:3, 1:1)
+- [ ] Create responsive image containers
+- [ ] Build professional gallery layouts
+- [ ] Design proportional cards and media players
+- [ ] Apply the golden ratio in UI design
+
+## Understanding Aspect Ratios
+
+An aspect ratio is the proportional relationship between width and height:
+
+```typescript
+AspectRatio({
+  aspectRatio: 16/9,  // Width:Height = 16:9
+  child: Container({
+    color: Colors.blue,
+    child: Center({
+      child: Text("16:9 Video")
+    })
+  })
+})
+```
+
+### Common Aspect Ratios
+
+- **16:9** (1.778): Widescreen video, modern monitors
+- **4:3** (1.333): Classic TV, presentations  
+- **1:1** (1.0): Square images, profile pictures
+- **3:4** (0.75): Portrait photos, mobile screens
+- **1.618**: Golden ratio, aesthetically pleasing
+
+## Basic Usage
+
+The AspectRatio widget forces its child to maintain the specified ratio:
+
+```typescript
+AspectRatio({
+  aspectRatio: 2.0,  // 2:1 ratio (twice as wide as tall)
+  child: Container({
+    color: Colors.green,
+    child: Center({
+      child: Text("2:1 Rectangle")
+    })
+  })
+})
+```
+
+### How It Works
+
+1. **Calculates dimensions**: Based on available space and ratio
+2. **Constrains child**: Forces child to fit the calculated size
+3. **Maintains ratio**: Regardless of parent container changes
+
+## Practical Examples
+
+### Video Player Interface
+
+```typescript
+Container({
+  margin: EdgeInsets.all(16),
+  decoration: BoxDecoration({
+    color: Colors.black,
+    borderRadius: BorderRadius.circular(8)
+  }),
+  child: AspectRatio({
+    aspectRatio: 16/9,
+    child: Stack({
+      children: [
+        // Video thumbnail
+        Container({
+          decoration: BoxDecoration({
+            image: DecorationImage({
+              image: AssetImage("video_thumbnail.jpg"),
+              fit: BoxFit.cover
+            }),
+            borderRadius: BorderRadius.circular(8)
+          })
+        }),
+        // Play button overlay
+        Center({
+          child: Container({
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration({
+              color: Colors.white.withOpacity(0.9),
+              shape: BoxShape.circle
+            }),
+            child: Center({
+              child: Icon(Icons.play_arrow, { size: 32 })
+            })
+          })
+        }),
+        // Video controls
+        Positioned({
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: VideoControls()
+        })
+      ]
+    })
+  })
+})
+```
+
+### Image Gallery Grid
+
+```typescript
+GridView({
+  crossAxisCount: 3,
+  childAspectRatio: 1.0,  // Square images
+  children: images.map((image) => 
+    AspectRatio({
+      aspectRatio: 1.0,
+      child: Container({
+        margin: EdgeInsets.all(2),
+        decoration: BoxDecoration({
+          image: DecorationImage({
+            image: NetworkImage(image.url),
+            fit: BoxFit.cover
+          }),
+          borderRadius: BorderRadius.circular(4)
+        })
+      })
+    })
+  )
+})
+```
+
+### Product Card Layout
+
+```typescript
+Container({
+  width: 200,
+  decoration: BoxDecoration({
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(8),
+    boxShadow: [BoxShadow({
+      color: Colors.black.withOpacity(0.1),
+      blurRadius: 4,
+      offset: Offset(0, 2)
+    })]
+  }),
+  child: Column({
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      // Product image with golden ratio
+      AspectRatio({
+        aspectRatio: 1.618,
+        child: Container({
+          decoration: BoxDecoration({
+            image: DecorationImage({
+              image: AssetImage("product.jpg"),
+              fit: BoxFit.cover
+            }),
+            borderRadius: BorderRadius.only({
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8)
+            })
+          })
+        })
+      }),
+      // Product details
+      Padding({
+        padding: EdgeInsets.all(12),
+        child: Column({
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Product Name", {
+              style: TextStyle({
+                fontSize: 16,
+                fontWeight: FontWeight.bold
+              })
+            }),
+            SizedBox({ height: 4 }),
+            Text("$29.99", {
+              style: TextStyle({
+                fontSize: 18,
+                color: Colors.green[600],
+                fontWeight: FontWeight.bold
+              })
+            })
+          ]
+        })
+      })
+    ]
+  })
+})
+```
+
+## Responsive Design with AspectRatio
+
+### Mobile-First Approach
+
+```typescript
+LayoutBuilder({
+  builder: (context, constraints) => {
+    final isMobile = constraints.maxWidth < 600;
+    
+    return AspectRatio({
+      aspectRatio: isMobile ? 9/16 : 16/9,  // Portrait on mobile, landscape on desktop
+      child: Container({
+        color: Colors.blue,
+        child: Center({
+          child: Text(isMobile ? "Mobile View" : "Desktop View")
+        })
+      })
+    });
+  }
+})
+```
+
+### Dynamic Grid
+
+```typescript
+GridView.builder({
+  itemCount: items.length,
+  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount({
+    crossAxisCount: screenWidth > 800 ? 4 : 2,
+    childAspectRatio: 0.8,  // Slightly taller than square
+    crossAxisSpacing: 8,
+    mainAxisSpacing: 8
+  }),
+  itemBuilder: (context, index) => 
+    AspectRatio({
+      aspectRatio: 0.8,
+      child: ProductCard({ product: items[index] })
+    })
+})
+```
+
+## Advanced Patterns
+
+### Instagram-style Feed
+
+```typescript
+Column({
+  children: posts.map((post) => 
+    Container({
+      margin: EdgeInsets.only({ bottom: 16 }),
+      child: Column({
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Post header
+          PostHeader({ user: post.user }),
+          // Square image
+          AspectRatio({
+            aspectRatio: 1.0,
+            child: Image.network({
+              src: post.imageUrl,
+              fit: BoxFit.cover
+            })
+          }),
+          // Post actions and caption
+          PostFooter({ post: post })
+        ]
+      })
+    })
+  )
+})
+```
+
+### Hero Banner
+
+```typescript
+AspectRatio({
+  aspectRatio: 21/9,  // Ultra-wide for hero banners
+  child: Container({
+    decoration: BoxDecoration({
+      gradient: LinearGradient({
+        colors: [Colors.purple[400], Colors.pink[400]],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight
+      })
+    }),
+    child: Stack({
+      children: [
+        // Background pattern
+        Positioned.fill({
+          child: BackgroundPattern()
+        }),
+        // Content
+        Center({
+          child: Column({
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Welcome to Our App", {
+                style: TextStyle({
+                  fontSize: 48,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white
+                })
+              }),
+              SizedBox({ height: 16 }),
+              Text("Discover amazing features", {
+                style: TextStyle({
+                  fontSize: 20,
+                  color: Colors.white.withOpacity(0.9)
+                })
+              })
+            ]
+          })
+        })
+      ]
+    })
+  })
+})
+```
+
+## Performance Considerations
+
+1. **Efficient constraints**: AspectRatio calculates optimal size efficiently
+2. **Image optimization**: Use appropriate image sizes for aspect ratios
+3. **Avoid deep nesting**: Keep AspectRatio close to content widgets
+4. **Cache calculations**: Aspect ratio calculations are cached automatically
+
+## Design Guidelines
+
+### Choosing Aspect Ratios
+
+- **Video content**: Use 16:9 for modern video players
+- **Images**: 4:3 for classic photos, 1:1 for thumbnails
+- **Cards**: Golden ratio (1.618) for aesthetically pleasing proportions
+- **Banners**: 21:9 or 32:9 for wide hero sections
+
+### Consistency Rules
+
+```typescript
+// Define ratios in a design system
+class AspectRatios {
+  static const double video = 16/9;
+  static const double square = 1.0;
+  static const double card = 1.618;  // Golden ratio
+  static const double banner = 21/9;
+}
+
+// Use consistently throughout app
+AspectRatio({
+  aspectRatio: AspectRatios.video,
+  child: VideoPlayer()
+})
+```
+
+## Key Takeaways
+
+AspectRatio mastery checklist:
+
+- ✅ **Consistent proportions**: Maintain ratios across screen sizes
+- ✅ **Common ratios**: Know when to use 16:9, 1:1, 4:3, golden ratio
+- ✅ **Responsive design**: Adapt ratios for different devices
+- ✅ **Performance**: Efficient constraint calculations
+- ✅ **Design system**: Define and reuse standard ratios
+
+## 🎉 Outstanding!
+
+You've mastered aspect ratios! Your layouts will now maintain perfect proportions across all devices and screen sizes.
+
+## Chapter Complete
+
+Congratulations! You've completed Chapter 5 and mastered all the essential layout widgets. You can now create sophisticated, responsive layouts with precise control over spacing, alignment, distribution, and proportions.
+
+👉 **Next Chapter: Advanced UI Patterns and Interactions**

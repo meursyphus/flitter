@@ -1,0 +1,446 @@
+---
+nav_group: "Layout Widgets"
+nav_order: 2
+title: "Align and Center - The Art of Alignment"
+description: "Learn all the ways to implement perfect alignment with Align and Center widgets"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Align, Center, Text, Colors, Alignment, Column } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Try using Align and Center
+      // 1. Center alignment with Center widget
+      // 2. Various position alignment with Align widget  
+      // 3. Fine adjustment with Alignment values
+      const widget = Container({
+        width: 400,
+        height: 400,
+        color: Colors.grey[200],
+        child: Column({
+          children: [
+            Text("Practice Align and Center!"),
+            // Add code here
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Mastering Align and Center</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { 
+      Container, Align, Center, Text, TextStyle, Colors, 
+      Alignment, Column, Row, SizedBox, EdgeInsets, Stack
+    } from "@meursyphus/flitter";
+
+    function App() {
+      // Box for alignment visualization
+      const AlignBox = (alignment, text, color) => Container({
+        width: 150,
+        height: 150,
+        color: Colors.grey[200],
+        child: Align({
+          alignment: alignment,
+          child: Container({
+            padding: EdgeInsets.all(8),
+            color: color,
+            child: Text(text, {
+              style: new TextStyle({ 
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: "bold"
+              })
+            })
+          })
+        })
+      });
+
+      const widget = Container({
+        width: 600,
+        padding: EdgeInsets.all(20),
+        color: Colors.grey[100],
+        child: Column({
+          children: [
+            // 1. Center widget demonstration
+            Text("1. Center Widget - Simplest Center Alignment", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              width: 300,
+              height: 100,
+              color: Colors.blue[100],
+              child: Center({
+                child: Container({
+                  padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 10 }),
+                  color: Colors.blue[400],
+                  child: Text("Centered with Center", {
+                    style: new TextStyle({ color: Colors.white })
+                  })
+                })
+              })
+            }),
+            SizedBox({ height: 20 }),
+
+            // 2. Align widget 9 positions
+            Text("2. Align Widget - 9 Basic Positions", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Row({
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                AlignBox(Alignment.topLeft, "topLeft", Colors.red[400]),
+                AlignBox(Alignment.topCenter, "topCenter", Colors.green[400]),
+                AlignBox(Alignment.topRight, "topRight", Colors.blue[400])
+              ]
+            }),
+            SizedBox({ height: 10 }),
+            Row({
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                AlignBox(Alignment.centerLeft, "centerLeft", Colors.orange[400]),
+                AlignBox(Alignment.center, "center", Colors.purple[400]),
+                AlignBox(Alignment.centerRight, "centerRight", Colors.teal[400])
+              ]
+            }),
+            SizedBox({ height: 10 }),
+            Row({
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                AlignBox(Alignment.bottomLeft, "bottomLeft", Colors.pink[400]),
+                AlignBox(Alignment.bottomCenter, "bottomCenter", Colors.indigo[400]),
+                AlignBox(Alignment.bottomRight, "bottomRight", Colors.cyan[400])
+              ]
+            }),
+            SizedBox({ height: 20 }),
+
+            // 3. Custom Alignment
+            Text("3. Custom Alignment - Precise Positioning", {
+              style: new TextStyle({ fontSize: 18, fontWeight: "bold" })
+            }),
+            SizedBox({ height: 10 }),
+            Container({
+              width: 300,
+              height: 150,
+              color: Colors.amber[100],
+              child: Stack({
+                children: [
+                  Align({
+                    alignment: new Alignment(0.3, -0.5),
+                    child: Container({
+                      width: 20,
+                      height: 20,
+                      color: Colors.red[500],
+                      child: Center({
+                        child: Text("1", {
+                          style: new TextStyle({ color: Colors.white, fontSize: 12 })
+                        })
+                      })
+                    })
+                  }),
+                  Align({
+                    alignment: new Alignment(-0.7, 0.2),
+                    child: Container({
+                      width: 20,
+                      height: 20,
+                      color: Colors.blue[500],
+                      child: Center({
+                        child: Text("2", {
+                          style: new TextStyle({ color: Colors.white, fontSize: 12 })
+                        })
+                      })
+                    })
+                  }),
+                  Align({
+                    alignment: new Alignment(0.8, 0.7),
+                    child: Container({
+                      width: 20,
+                      height: 20,
+                      color: Colors.green[500],
+                      child: Center({
+                        child: Text("3", {
+                          style: new TextStyle({ color: Colors.white, fontSize: 12 })
+                        })
+                      })
+                    })
+                  })
+                ]
+              })
+            })
+          ]
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Mastering Align and Center</h1>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReactWidget widget={widget} />
+          </div>
+        </div>
+      );
+    }
+
+    export default App;
+  styles.css: |
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+---
+
+# Align and Center - The Art of Alignment
+
+Proper alignment is crucial for creating beautiful and professional UIs. The Align and Center widgets provide powerful tools for positioning widgets exactly where you want them.
+
+## What You'll Learn
+
+- [ ] Simple center alignment with Center widget
+- [ ] 9 basic positions with Align widget
+- [ ] Custom positioning with Alignment values
+- [ ] Advanced patterns combining with Stack
+- [ ] Performance considerations for alignment
+- [ ] Common alignment patterns in UI design
+
+## Center Widget - The Simplest Solution
+
+The Center widget is the most straightforward way to center a child widget:
+
+```typescript
+Center({
+  child: Text("Centered content")
+})
+```
+
+### When to Use Center
+
+- Simple center alignment needs
+- Single widget centering
+- Quick prototyping
+- Clear intent expression
+
+## Align Widget - Precise Control
+
+The Align widget offers much more control over positioning:
+
+```typescript
+Align({
+  alignment: Alignment.topRight,
+  child: Text("Top right corner")
+})
+```
+
+### 9 Basic Alignment Positions
+
+```typescript
+// Top row
+Alignment.topLeft      // Top left corner
+Alignment.topCenter    // Top center
+Alignment.topRight     // Top right corner
+
+// Middle row  
+Alignment.centerLeft   // Middle left
+Alignment.center       // Perfect center
+Alignment.centerRight  // Middle right
+
+// Bottom row
+Alignment.bottomLeft   // Bottom left corner
+Alignment.bottomCenter // Bottom center
+Alignment.bottomRight  // Bottom right corner
+```
+
+## Custom Alignment - Pixel Perfect
+
+Create custom positions using Alignment coordinates:
+
+```typescript
+// Custom alignment (x, y range from -1.0 to 1.0)
+Align({
+  alignment: new Alignment(0.5, -0.3),  // 50% right, 30% up from center
+  child: MyWidget()
+})
+```
+
+### Understanding Alignment Coordinates
+
+- **X-axis**: -1.0 (far left) to 1.0 (far right)
+- **Y-axis**: -1.0 (top) to 1.0 (bottom)
+- **Center**: (0.0, 0.0)
+
+## Practical Examples
+
+### Navigation Bar Alignment
+
+```typescript
+Container({
+  height: 60,
+  padding: EdgeInsets.symmetric({ horizontal: 16 }),
+  child: Row({
+    children: [
+      // Left side - Logo
+      Align({
+        alignment: Alignment.centerLeft,
+        child: Text("Logo")
+      }),
+      // Right side - Menu
+      Align({
+        alignment: Alignment.centerRight,
+        child: Row({
+          children: [
+            Text("Menu"),
+            SizedBox({ width: 16 }),
+            Text("Profile")
+          ]
+        })
+      })
+    ]
+  })
+})
+```
+
+### Floating Action Button
+
+```typescript
+Stack({
+  children: [
+    // Main content
+    MyMainContent(),
+    // FAB positioned at bottom right
+    Align({
+      alignment: Alignment.bottomRight,
+      child: Container({
+        margin: EdgeInsets.all(16),
+        child: FloatingActionButton()
+      })
+    })
+  ]
+})
+```
+
+## Advanced Patterns
+
+### Multiple Aligned Elements
+
+```typescript
+Stack({
+  children: [
+    // Background
+    Container({ color: Colors.grey[200] }),
+    // Top left badge
+    Align({
+      alignment: Alignment.topLeft,
+      child: Container({
+        margin: EdgeInsets.all(8),
+        child: Badge("New")
+      })
+    }),
+    // Bottom right action
+    Align({
+      alignment: Alignment.bottomRight,
+      child: Container({
+        margin: EdgeInsets.all(8),
+        child: ActionButton()
+      })
+    }),
+    // Center content
+    Center({
+      child: MainContent()
+    })
+  ]
+})
+```
+
+## Performance Tips
+
+1. **Use Center for simple cases**: More efficient than Align with center alignment
+2. **Avoid unnecessary nesting**: Don't wrap in extra containers
+3. **Prefer specific widgets**: Use Center instead of Align when possible
+
+## Common Patterns
+
+### Card with Corner Badge
+
+```typescript
+Stack({
+  children: [
+    // Main card
+    Container({
+      width: 200,
+      height: 150,
+      decoration: BoxDecoration({
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8)
+      }),
+      child: Center({
+        child: Text("Card Content")
+      })
+    }),
+    // Corner badge
+    Align({
+      alignment: Alignment.topRight,
+      child: Container({
+        margin: EdgeInsets.all(8),
+        padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
+        decoration: BoxDecoration({
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(12)
+        }),
+        child: Text("Sale", {
+          style: TextStyle({ color: Colors.white, fontSize: 12 })
+        })
+      })
+    })
+  ]
+})
+```
+
+## Key Takeaways
+
+Alignment mastery checklist:
+
+- ✅ **Center**: Simple center alignment
+- ✅ **Align**: 9 basic positions + custom
+- ✅ **Coordinates**: -1.0 to 1.0 range understanding
+- ✅ **Stack combination**: Multiple aligned elements
+- ✅ **Performance**: Choose appropriate widget
+
+## 🎉 Excellent!
+
+You've mastered alignment techniques! Now you can position any widget exactly where you want it.
+
+## Next Steps
+
+In the next tutorial, we'll learn about space distribution with Expanded and Flexible widgets.
+
+👉 **Next: Expanded and Flexible - Space Distribution**
