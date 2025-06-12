@@ -44,30 +44,40 @@ const paragraphs: string[] = [
   gsap.registerPlugin(ScrollTrigger);
 
   const coding = document.getElementById("coding-lottie")!;
+  
+  // 비동기로 animation data를 먼저 로드
+  fetch("https://static.flitter.dev/coding.json")
+    .then((res) => res.json())
+    .then((animationData) => {
+      const animation = lottie.loadAnimation({
+        container: coding,
+        renderer: "canvas",
+        loop: false,
+        autoplay: false,
+        animationData: animationData,
+      });
 
-  const animation = lottie.loadAnimation({
-    container: coding,
-    renderer: "canvas",
-    loop: false,
-    autoplay: false,
-    path: "/home/coding.json",
-  });
-
-  const playhead = { frame: 0 };
-  animation.addEventListener("data_ready", () => {
-    console.log(animation.totalFrames);
-    gsap.to(playhead, {
-      scrollTrigger: {
-        trigger: "#coding-section",
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 1,
-      },
-      frame: animation.totalFrames - 1,
-      ease: "none",
-      onUpdate: () => animation.goToAndStop(playhead.frame, true),
+      const playhead = { frame: 0 };
+      
+      // animationData로 로드할 때는 DOMLoaded 이벤트를 사용
+      animation.addEventListener("DOMLoaded", () => {
+        console.log("Animation loaded, total frames:", animation.totalFrames);
+        gsap.to(playhead, {
+          scrollTrigger: {
+            trigger: "#coding-section",
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 1,
+          },
+          frame: animation.totalFrames - 1,
+          ease: "none",
+          onUpdate: () => animation.goToAndStop(playhead.frame, true),
+        });
+      });
+    })
+    .catch((error) => {
+      console.error("Failed to load animation data:", error);
     });
-  });
 </script>
 
 <style>

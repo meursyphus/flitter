@@ -1,0 +1,331 @@
+---
+nav_group: Widgets
+nav_group_order: 3
+nav_title: Flexible
+title: "Flexible"
+description: "Row, Column 내에서 자식의 유연한 크기 조정을 제어하는 위젯"
+---
+
+## 개요
+
+Flexible은 Row, Column, Flex 내에서 자식 위젯이 사용 가능한 공간을 어떻게 차지할지 제어하는 위젯입니다.
+
+Flexible은 자식 위젯에게 유연한 크기 조정 옵션을 제공합니다. `fit` 속성을 통해 자식이 할당된 공간을 반드시 모두 채울지(tight), 아니면 필요한 만큼만 사용할지(loose)를 결정할 수 있습니다. Expanded는 사실 `fit: FlexFit.tight`가 적용된 Flexible의 특수한 경우입니다.
+
+## 언제 사용하나요?
+
+- 자식 위젯이 할당된 공간보다 작을 수 있게 하고 싶을 때
+- Row/Column 내에서 공간 분배는 하되, 자식의 고유 크기를 존중하고 싶을 때
+- Expanded보다 더 세밀한 레이아웃 제어가 필요할 때
+- 반응형 레이아웃에서 최소/최대 크기 제약이 필요할 때
+- 여러 위젯 간 비율은 유지하되 강제로 확장하고 싶지 않을 때
+
+## 기본 사용법
+
+```typescript
+// Flexible의 기본 동작 (loose fit)
+Row({
+  children: [
+    Container({ width: 100, height: 50, color: 'blue' }),
+    Flexible({
+      child: Container({ 
+        width: 50,  // 50px만 사용 (더 많은 공간이 있어도)
+        height: 50, 
+        color: 'red' 
+      })
+    }),
+    Container({ width: 100, height: 50, color: 'green' })
+  ]
+})
+
+// tight fit 사용 (Expanded와 동일)
+Row({
+  children: [
+    Flexible({
+      fit: FlexFit.tight,
+      child: Container({ height: 50, color: 'purple' })
+    })
+  ]
+})
+```
+
+## Props
+
+### child (필수)
+
+**값: Widget**
+
+Flexible로 감쌀 자식 위젯입니다.
+
+```typescript
+Flexible({
+  child: Text('유연한 텍스트')
+})
+```
+
+### flex
+
+**값: number** (기본값: **1**)
+
+다른 Flexible/Expanded 위젯과 비교하여 이 위젯이 차지할 공간의 비율을 정의합니다.
+
+- 0 이상의 정수여야 합니다
+- 값이 클수록 더 많은 공간을 할당받습니다
+- 다른 flex 자식들과의 비율로 공간이 분배됩니다
+
+```typescript
+Row({
+  children: [
+    Flexible({
+      flex: 2,  // 2/3의 공간 할당
+      child: Container({ color: 'red' })
+    }),
+    Flexible({
+      flex: 1,  // 1/3의 공간 할당
+      child: Container({ color: 'blue' })
+    })
+  ]
+})
+```
+
+### fit
+
+**값: FlexFit** (기본값: **FlexFit.loose**)
+
+자식 위젯이 할당된 공간을 어떻게 차지할지 결정합니다.
+
+- **FlexFit.loose**: 자식이 필요한 만큼만 공간을 사용 (기본값)
+- **FlexFit.tight**: 자식이 할당된 공간을 모두 차지
+
+```typescript
+// loose fit - 자식이 자신의 크기 유지
+Row({
+  children: [
+    Flexible({
+      fit: FlexFit.loose,
+      child: Container({ 
+        width: 100,  // 100px만 사용
+        height: 50, 
+        color: 'blue' 
+      })
+    })
+  ]
+})
+
+// tight fit - 자식이 모든 공간 차지
+Row({
+  children: [
+    Flexible({
+      fit: FlexFit.tight,
+      child: Container({ 
+        height: 50, 
+        color: 'red'  // 가능한 모든 너비 차지
+      })
+    })
+  ]
+})
+```
+
+## FlexFit 동작 비교
+
+### FlexFit.loose (기본값)
+```typescript
+Row({
+  children: [
+    Container({ width: 50, height: 50, color: 'gray' }),
+    Flexible({
+      fit: FlexFit.loose,
+      flex: 1,
+      child: Container({ 
+        width: 80,  // 80px만 사용 (더 많은 공간이 할당되어도)
+        height: 50, 
+        color: 'blue' 
+      })
+    }),
+    Container({ width: 50, height: 50, color: 'gray' })
+  ]
+})
+```
+
+### FlexFit.tight
+```typescript
+Row({
+  children: [
+    Container({ width: 50, height: 50, color: 'gray' }),
+    Flexible({
+      fit: FlexFit.tight,
+      flex: 1,
+      child: Container({ 
+        height: 50, 
+        color: 'red'  // 할당된 모든 공간 차지
+      })
+    }),
+    Container({ width: 50, height: 50, color: 'gray' })
+  ]
+})
+```
+
+## 실제 사용 예제
+
+### 예제 1: 반응형 텍스트 레이아웃
+
+```typescript
+const responsiveTextLayout = Row({
+  children: [
+    Flexible({
+      fit: FlexFit.loose,
+      child: Text(
+        '이 텍스트는 필요한 만큼만 공간을 차지합니다',
+        { style: TextStyle({ overflow: 'ellipsis' }) }
+      )
+    }),
+    SizedBox({ width: 16 }),
+    Container({
+      padding: EdgeInsets.all(8),
+      color: 'blue',
+      child: Text('고정', { style: TextStyle({ color: 'white' }) })
+    })
+  ]
+});
+```
+
+### 예제 2: 혼합 레이아웃
+
+```typescript
+const mixedLayout = Row({
+  children: [
+    // 고정 크기
+    Icon({ icon: Icons.home, size: 24 }),
+    SizedBox({ width: 8 }),
+    
+    // 유연하지만 내용에 맞춤
+    Flexible({
+      fit: FlexFit.loose,
+      child: Chip({
+        label: Text('태그'),
+        backgroundColor: 'lightblue'
+      })
+    }),
+    
+    // 남은 공간 모두 차지
+    Flexible({
+      fit: FlexFit.tight,
+      child: Container({
+        height: 40,
+        color: 'lightgray',
+        alignment: Alignment.center,
+        child: Text('확장됨')
+      })
+    }),
+    
+    // 고정 크기
+    IconButton({
+      icon: Icons.more_vert,
+      onPressed: () => {}
+    })
+  ]
+});
+```
+
+### 예제 3: 최대 너비 제한
+
+```typescript
+const constrainedFlexible = Row({
+  children: [
+    Flexible({
+      fit: FlexFit.loose,
+      child: Container({
+        constraints: Constraints({ maxWidth: 200 }),
+        padding: EdgeInsets.all(16),
+        color: 'orange',
+        child: Text('최대 200px까지만 확장')
+      })
+    }),
+    Spacer(),
+    ElevatedButton({
+      onPressed: () => {},
+      child: Text('버튼')
+    })
+  ]
+});
+```
+
+### 예제 4: 비율 기반 그리드
+
+```typescript
+const proportionalGrid = Column({
+  children: [
+    Row({
+      children: [
+        Flexible({
+          flex: 2,
+          fit: FlexFit.tight,
+          child: Container({ height: 100, color: 'red' })
+        }),
+        SizedBox({ width: 8 }),
+        Flexible({
+          flex: 1,
+          fit: FlexFit.tight,
+          child: Container({ height: 100, color: 'green' })
+        })
+      ]
+    }),
+    SizedBox({ height: 8 }),
+    Row({
+      children: [
+        Flexible({
+          flex: 1,
+          fit: FlexFit.tight,
+          child: Container({ height: 100, color: 'blue' })
+        }),
+        SizedBox({ width: 8 }),
+        Flexible({
+          flex: 1,
+          fit: FlexFit.tight,
+          child: Container({ height: 100, color: 'yellow' })
+        }),
+        SizedBox({ width: 8 }),
+        Flexible({
+          flex: 1,
+          fit: FlexFit.tight,
+          child: Container({ height: 100, color: 'purple' })
+        })
+      ]
+    })
+  ]
+});
+```
+
+## Expanded와의 관계
+
+```typescript
+// 이 두 코드는 완전히 동일합니다
+Expanded({ 
+  flex: 2, 
+  child: widget 
+})
+
+Flexible({ 
+  flex: 2, 
+  fit: FlexFit.tight,
+  child: widget 
+})
+
+// Expanded는 단순히 편의를 위한 래퍼입니다
+```
+
+## 주의사항
+
+- Flexible은 반드시 Row, Column, 또는 Flex의 직접적인 자식이어야 합니다.
+- `fit: FlexFit.loose`일 때 자식 위젯이 주축 방향으로 고유 크기를 가져야 의미가 있습니다.
+- 모든 Flexible 자식이 loose fit을 사용하고 남은 공간이 있으면, 그 공간은 사용되지 않습니다.
+- flex 값은 0 이상이어야 하며, 음수를 사용하면 오류가 발생합니다.
+- Flexible 안에 Flexible을 직접 중첩할 수 없습니다.
+
+## 관련 위젯
+
+- **Expanded**: fit이 항상 tight인 Flexible의 특수한 경우
+- **Spacer**: 빈 공간을 만들기 위한 Expanded
+- **Row**: 가로 방향 flex 레이아웃
+- **Column**: 세로 방향 flex 레이아웃
+- **Flex**: Row와 Column의 기반 위젯

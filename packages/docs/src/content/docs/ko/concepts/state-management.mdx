@@ -1,21 +1,21 @@
 ---
 nav_group: "Core Concepts"
 nav_order: 3
-title: "State Management"
-description: "Understanding how to manage state effectively in Flitter applications"
+title: "상태 관리"
+description: "Flitter 애플리케이션에서 상태를 효과적으로 관리하는 방법 이해하기"
 ---
 
-# State Management in Flitter
+# Flitter에서의 상태 관리
 
-State management is a crucial aspect of building interactive and dynamic applications with Flitter. This guide will explore the various approaches to managing state in Flitter, from simple local state management to more complex scenarios.
+상태 관리는 Flitter로 대화형이고 동적인 애플리케이션을 구축하는 데 있어 중요한 측면입니다. 이 가이드는 간단한 로컬 상태 관리부터 더 복잡한 시나리오까지 Flitter에서 상태를 관리하는 다양한 접근 방식을 탐구합니다.
 
-## Local State Management with StatefulWidget
+## StatefulWidget을 사용한 로컬 상태 관리
 
-The most basic form of state management in Flitter is achieved through `StatefulWidget`s. These widgets maintain their own state and can rebuild themselves when that state changes.
+Flitter에서 가장 기본적인 형태의 상태 관리는 `StatefulWidget`을 통해 달성됩니다. 이러한 위젯은 자체 상태를 유지하고 해당 상태가 변경될 때 스스로를 다시 구축할 수 있습니다.
 
-### Example: Simple Counter
+### 예제: 간단한 카운터
 
-Here's a basic example of local state management using a `StatefulWidget`:
+`StatefulWidget`을 사용한 로컬 상태 관리의 기본 예제입니다:
 
 ```typescript
 import {
@@ -66,20 +66,20 @@ class CounterState extends State<Counter> {
 }
 ```
 
-In this example, `CounterState` manages the `count` state locally. The `setState` method is used to update the state and trigger a rebuild of the widget.
+이 예제에서 `CounterState`는 `count` 상태를 로컬로 관리합니다. `setState` 메서드는 상태를 업데이트하고 위젯의 다시 구축을 트리거하는 데 사용됩니다.
 
-## The setState Mechanism
+## setState 메커니즘
 
-The `setState` method is key to updating the state of a `StatefulWidget`. When called, it does two things:
+`setState` 메서드는 `StatefulWidget`의 상태를 업데이트하는 핵심입니다. 호출되면 두 가지 작업을 수행합니다:
 
-1. Updates the state variables you modify within it.
-2. Marks the widget as "dirty," scheduling it for rebuilding.
+1. 내부에서 수정하는 상태 변수를 업데이트합니다.
+2. 위젯을 "dirty"로 표시하여 다시 구축을 예약합니다.
 
-It's important to note that `setState` is asynchronous. The widget rebuild doesn't happen immediately, but is scheduled for the next frame.
+`setState`는 비동기적이라는 점을 주의해야 합니다. 위젯 다시 구축은 즉시 발생하지 않고 다음 프레임에 예약됩니다.
 
-### Visualization of setState and Dirty Checking Process
+### setState와 Dirty 체크 프로세스의 시각화
 
-Here's a simplified visualization of how setState and dirty checking work in the widget tree:
+위젯 트리에서 setState와 dirty 체크가 어떻게 작동하는지에 대한 간단한 시각화입니다:
 
 ```
    App (Root)
@@ -116,11 +116,11 @@ Here's a simplified visualization of how setState and dirty checking work in the
    ```
 5. Only the dirty widgets (WidgetB, WidgetD, and WidgetE) are rebuilt.
 
-This process ensures that only the necessary parts of the UI are updated, optimizing performance.
+이 프로세스는 UI의 필요한 부분만 업데이트되도록 보장하여 성능을 최적화합니다.
 
-## Passing State Down
+## 상태 전달하기
 
-For larger applications, you often need to pass state down to child widgets. This can be done through constructor parameters:
+더 큰 애플리케이션의 경우, 자식 위젯에 상태를 전달해야 하는 경우가 자주 있습니다. 이는 생성자 매개변수를 통해 수행할 수 있습니다:
 
 ```typescript
 class ParentWidget extends StatefulWidget {
@@ -165,13 +165,13 @@ class ChildWidget extends StatelessWidget {
 }
 ```
 
-## Managing Complex State
+## 복잡한 상태 관리
 
-For more complex applications, local state management might not be sufficient. In these cases, you might want to consider more advanced state management solutions. While Flitter doesn't have built-in complex state management solutions like Flutter's Provider or Riverpod, you can implement similar patterns:
+더 복잡한 애플리케이션의 경우, 로컬 상태 관리만으로는 충분하지 않을 수 있습니다. 이러한 경우 더 고급 상태 관리 솔루션을 고려할 수 있습니다. Flitter에는 Flutter의 Provider나 Riverpod와 같은 내장 복잡한 상태 관리 솔루션이 없지만, 비슷한 패턴을 구현할 수 있습니다:
 
-### Singleton State Manager
+### 싱글톤 상태 관리자
 
-For global state that needs to be accessed from multiple widgets, you can create a singleton state manager:
+여러 위젯에서 액세스해야 하는 전역 상태의 경우, 싱글톤 상태 관리자를 만들 수 있습니다:
 
 ```typescript
 class AppState {
@@ -211,10 +211,10 @@ class MyWidgetState extends State<MyWidget> {
 }
 ```
 
-This approach allows you to have a centralized state that can be accessed and modified from anywhere in your application.
+이 접근 방식을 사용하면 애플리케이션의 어디서나 액세스하고 수정할 수 있는 중앙 집중식 상태를 가질 수 있습니다.
 
-## Conclusion
+## 결론
 
-State management in Flitter starts with the basics of `StatefulWidget` and `setState`, which are sufficient for many use cases. For more complex scenarios, you can implement custom solutions like singleton state managers. As your application grows, consider structuring your state management to keep your code organized and maintainable.
+Flitter에서의 상태 관리는 많은 사용 사례에 충분한 `StatefulWidget`과 `setState`의 기본에서 시작됩니다. 더 복잡한 시나리오의 경우, 싱글톤 상태 관리자와 같은 사용자 지정 솔루션을 구현할 수 있습니다. 애플리케이션이 성장함에 따라 코드를 체계적이고 유지 관리 가능하게 유지하기 위해 상태 관리를 구조화하는 것을 고려하세요.
 
-Remember, effective state management is key to creating responsive and efficient Flitter applications. Always consider the scope of your state (local vs global) and choose the appropriate management technique accordingly.
+효과적인 상태 관리는 반응형이고 효율적인 Flitter 애플리케이션을 만드는 핵심임을 기억하세요. 항상 상태의 범위(로컬 vs 전역)를 고려하고 그에 따라 적절한 관리 기법을 선택하세요.

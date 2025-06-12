@@ -1,19 +1,14 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: Align
 title: "Align"
-description: ""
+description: "자식 위젯을 정렬하고 선택적으로 크기를 조정하는 위젯"
 ---
 
-# Align
+## 개요
 
-This widget motivated by Align in Flutter.
-
-> A widget that aligns its child within itself and optionally sizes itself based on the child's size.
->
-> For example, to align a box at the bottom right, you would pass this box a tight constraint that is bigger than the child's natural size, with an alignment of Alignment.bottomRight.
-> This widget will be as big as possible if its dimensions are constrained and widthFactor and heightFactor are null. If a dimension is unconstrained and the corresponding size factor is null then the widget will match its child's size in that dimension. If a size factor is non-null then the corresponding dimension of this widget will be the product of the child's dimension and the size factor. For example if widthFactor is 2.0 then the width of this widget will always be twice its child's width.
+Align은 자식 위젯을 자신 내부에서 정렬하고, 선택적으로 자식의 크기에 따라 자신의 크기를 조정하는 위젯입니다. 정규화된 좌표 시스템을 사용하여 자식을 유연하게 배치할 수 있습니다.
 
 <iframe
   width="560"
@@ -25,26 +20,367 @@ This widget motivated by Align in Flutter.
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/Align-class.html](https://api.flutter.dev/flutter/widgets/Align-class.html)
+참조: [https://api.flutter.dev/flutter/widgets/Align-class.html](https://api.flutter.dev/flutter/widgets/Align-class.html)
+
+## 언제 사용하나요?
+
+- 자식 위젯을 부모 내에서 특정 위치에 정렬할 때
+- 자식 위젯 주변에 특정 비율의 여백을 만들 때  
+- 대화 상자나 팝업의 내용을 중앙 정렬할 때
+- 버튼이나 아이콘을 특정 위치에 배치할 때
+- 자식 위젯의 크기에 비례하여 부모 크기를 조정할 때
+
+## 기본 사용법
+
+```typescript
+// 중앙 정렬 (기본값)
+Align({
+  child: Text('중앙 정렬된 텍스트')
+})
+
+// 오른쪽 상단 정렬
+Align({
+  alignment: Alignment.topRight,
+  child: Icon(Icons.close)
+})
+
+// 크기 요소 사용
+Align({
+  widthFactor: 2.0,
+  heightFactor: 1.5,
+  child: Container({
+    width: 100,
+    height: 100,
+    color: 'blue'
+  })
+})
+```
 
 ## Props
 
-### alignment
+### child (선택)
+**값: Widget | undefined**
 
-**Value: Alignment** (default: **Alignment.center**)
+정렬할 자식 위젯입니다.
 
-### widthFactor
+### alignment (선택)
+**값: Alignment** (기본값: **Alignment.center**)
 
-**Value: number | undefined**
+자식 위젯의 정렬 위치를 지정합니다. Alignment는 x와 y 값으로 구성되며, 각각 -1.0에서 1.0 사이의 값을 가집니다.
 
-### heightFoctor
+주요 Alignment 상수:
+- `Alignment.topLeft`: (-1.0, -1.0)
+- `Alignment.topCenter`: (0.0, -1.0)
+- `Alignment.topRight`: (1.0, -1.0)
+- `Alignment.centerLeft`: (-1.0, 0.0)
+- `Alignment.center`: (0.0, 0.0)
+- `Alignment.centerRight`: (1.0, 0.0)
+- `Alignment.bottomLeft`: (-1.0, 1.0)
+- `Alignment.bottomCenter`: (0.0, 1.0)
+- `Alignment.bottomRight`: (1.0, 1.0)
 
-**Value: number | undefined**
+```typescript
+// 사용자 정의 정렬
+Align({
+  alignment: Alignment.of({ x: 0.5, y: -0.5 }), // 오른쪽 상단 쪽
+  child: Text('커스텀 정렬')
+})
+```
 
-### child
+### widthFactor (선택)
+**값: number | undefined**
 
-**Value: Widget | undefined**
+이 위젯의 너비를 자식 위젯 너비의 배수로 설정합니다. null이면 가능한 너비로 확장됩니다.
 
-## Examples
+```typescript
+Align({
+  widthFactor: 1.5, // 자식 너비의 1.5배
+  child: Container({
+    width: 100,
+    height: 50,
+    color: 'red'
+  })
+})
+// Align의 너비는 150이 됩니다
+```
 
-### Basic
+### heightFactor (선택)
+**값: number | undefined**
+
+이 위젯의 높이를 자식 위젯 높이의 배수로 설정합니다. null이면 가능한 높이로 확장됩니다.
+
+```typescript
+Align({
+  heightFactor: 2.0, // 자식 높이의 2배
+  child: Container({
+    width: 100,
+    height: 50,
+    color: 'green'
+  })
+})
+// Align의 높이는 100이 됩니다
+```
+
+## 레이아웃 동작
+
+### 크기 제약 처리
+
+1. **제한된 제약 조건 하에서**:
+   - widthFactor와 heightFactor가 null이면 가능한 크기로 확장
+   - 자식을 느슨한 제약 조건으로 레이아웃
+   - alignment에 따라 자식 위치 지정
+
+2. **무제한 제약 조건 하에서**:
+   - widthFactor와 heightFactor가 null이면 자식 크기로 축소
+   - 지정된 factor가 있으면 자식 크기 × factor로 크기 결정
+
+3. **크기 요소(factor) 사용 시**:
+   - 항상 자식 크기 × factor로 크기 결정
+   - 부모의 제약 조건과 무관하게 동작
+
+## 실제 사용 예제
+
+### 예제 1: 닫기 버튼 정렬
+
+```typescript
+const DialogWithCloseButton = ({ title, content, onClose }) => {
+  return Container({
+    padding: EdgeInsets.all(20),
+    decoration: BoxDecoration({
+      color: 'white',
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow({
+          color: 'rgba(0, 0, 0, 0.1)',
+          blurRadius: 10,
+          offset: { x: 0, y: 4 }
+        })
+      ]
+    }),
+    child: Stack({
+      children: [
+        Column({
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, {
+              style: TextStyle({
+                fontSize: 20,
+                fontWeight: 'bold'
+              })
+            }),
+            SizedBox({ height: 12 }),
+            Text(content)
+          ]
+        }),
+        Align({
+          alignment: Alignment.topRight,
+          child: GestureDetector({
+            onTap: onClose,
+            child: Icon(Icons.close, { size: 24 })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 2: 로딩 인디케이터 중앙 정렬
+
+```typescript
+const LoadingOverlay = ({ isLoading, child }) => {
+  return Stack({
+    children: [
+      child,
+      if (isLoading) Container({
+        color: 'rgba(0, 0, 0, 0.5)',
+        child: Align({
+          alignment: Alignment.center,
+          child: Container({
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration({
+              color: 'white',
+              borderRadius: BorderRadius.circular(8)
+            }),
+            child: Column({
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox({ height: 16 }),
+                Text('로딩 중...')
+              ]
+            })
+          })
+        })
+      })
+    ]
+  });
+};
+```
+
+### 예제 3: 배지 위치 지정
+
+```typescript
+const IconWithBadge = ({ icon, badgeCount }) => {
+  return Container({
+    width: 48,
+    height: 48,
+    child: Stack({
+      children: [
+        Center({
+          child: Icon(icon, { size: 32 })
+        }),
+        if (badgeCount > 0) Align({
+          alignment: Alignment.topRight,
+          child: Container({
+            padding: EdgeInsets.all(4),
+            decoration: BoxDecoration({
+              color: 'red',
+              shape: BoxShape.circle
+            }),
+            constraints: BoxConstraints({
+              minWidth: 20,
+              minHeight: 20
+            }),
+            child: Center({
+              child: Text(badgeCount.toString(), {
+                style: TextStyle({
+                  color: 'white',
+                  fontSize: 12,
+                  fontWeight: 'bold'
+                })
+              })
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 4: 툴팁 정렬
+
+```typescript
+class TooltipWidget extends StatefulWidget {
+  message: string;
+  child: Widget;
+  alignment: Alignment;
+
+  constructor({ message, child, alignment = Alignment.topCenter }) {
+    super();
+    this.message = message;
+    this.child = child;
+    this.alignment = alignment;
+  }
+
+  createState(): State<TooltipWidget> {
+    return new TooltipWidgetState();
+  }
+}
+
+class TooltipWidgetState extends State<TooltipWidget> {
+  isVisible = false;
+
+  build(): Widget {
+    return Stack({
+      clipBehavior: Clip.none,
+      children: [
+        GestureDetector({
+          onMouseEnter: () => {
+            this.setState(() => {
+              this.isVisible = true;
+            });
+          },
+          onMouseLeave: () => {
+            this.setState(() => {
+              this.isVisible = false;
+            });
+          },
+          child: this.widget.child
+        }),
+        if (this.isVisible) Align({
+          alignment: this.widget.alignment,
+          widthFactor: 1.0,
+          child: Transform.translate({
+            offset: { x: 0, y: this.widget.alignment.y < 0 ? -30 : 30 },
+            child: Container({
+              padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 6 }),
+              decoration: BoxDecoration({
+                color: 'rgba(0, 0, 0, 0.8)',
+                borderRadius: BorderRadius.circular(4)
+              }),
+              child: Text(this.widget.message, {
+                style: TextStyle({
+                  color: 'white',
+                  fontSize: 14
+                })
+              })
+            })
+          })
+        })
+      ]
+    });
+  }
+}
+```
+
+### 예제 5: 반응형 카드 레이아웃
+
+```typescript
+const ResponsiveCard = ({ title, subtitle, action }) => {
+  return Container({
+    padding: EdgeInsets.all(16),
+    decoration: BoxDecoration({
+      border: Border.all({ color: '#E0E0E0' }),
+      borderRadius: BorderRadius.circular(8)
+    }),
+    child: Row({
+      children: [
+        Expanded({
+          child: Column({
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, {
+                style: TextStyle({
+                  fontSize: 18,
+                  fontWeight: 'bold'
+                })
+              }),
+              SizedBox({ height: 4 }),
+              Text(subtitle, {
+                style: TextStyle({
+                  color: '#666',
+                  fontSize: 14
+                })
+              })
+            ]
+          })
+        }),
+        Align({
+          alignment: Alignment.centerRight,
+          widthFactor: 1.2,
+          child: action
+        })
+      ]
+    })
+  });
+};
+```
+
+## 주의사항
+
+- widthFactor와 heightFactor는 0보다 커야 합니다
+- alignment의 x, y 값은 -1.0에서 1.0 사이여야 합니다
+- 자식이 없을 때 widthFactor나 heightFactor가 null이면 크기가 0이 될 수 있습니다
+- Stack 내에서 Align을 사용할 때는 Positioned 위젯과의 차이점을 이해해야 합니다
+- 크기 요소를 사용하면 레이아웃 성능에 영향을 줄 수 있습니다
+- 제약 조건을 느슨하게 만들어 자식이 원하는 크기를 가질 수 있게 합니다
+
+## 관련 위젯
+
+- **Center**: Align의 특수한 경우로, 항상 중앙 정렬
+- **Positioned**: Stack 내에서 절대 위치 지정
+- **Container**: alignment 속성으로 자식 정렬 가능
+- **FractionallySizedBox**: 부모 크기의 비율로 크기 지정
+- **AnimatedAlign**: 정렬 위치 간 애니메이션 전환

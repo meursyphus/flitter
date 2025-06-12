@@ -1,18 +1,16 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: Spacer
 title: "Spacer"
-description: ""
+description: "Row나 Column 같은 Flex 컨테이너에서 위젯 간 간격을 조정하는 빈 공간 위젯"
 ---
 
-# Spacer
+## 개요
 
-This widget motivated by Spacer in Flutter.
+Spacer는 Row나 Column 같은 Flex 컨테이너에서 위젯 간의 간격을 조정하는 데 사용할 수 있는 조정 가능한 빈 공간을 만드는 위젯입니다.
 
-> Spacer creates an adjustable, empty spacer that can be used to tune the spacing between widgets in a Flex container, like Row or Column.
->
-> The Spacer widget will take up any available space, so setting the Flex.mainAxisAlignment on a flex container that contains a Spacer to MainAxisAlignment.spaceAround, MainAxisAlignment.spaceBetween, or MainAxisAlignment.spaceEvenly will not have any visible effect: the Spacer has taken up all of the additional space, therefore there is none left to redistribute.
+Spacer 위젯은 사용 가능한 모든 공간을 차지하므로, Spacer가 포함된 Flex 컨테이너의 mainAxisAlignment를 MainAxisAlignment.spaceAround, MainAxisAlignment.spaceBetween, 또는 MainAxisAlignment.spaceEvenly로 설정해도 눈에 띄는 효과가 없습니다. Spacer가 이미 모든 추가 공간을 차지했기 때문에 재분배할 공간이 남아있지 않습니다.
 
 <iframe
   width="560"
@@ -24,14 +22,485 @@ This widget motivated by Spacer in Flutter.
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/Spacer-class.html](https://api.flutter.dev/flutter/widgets/Spacer-class.html)
+참조: [https://api.flutter.dev/flutter/widgets/Spacer-class.html](https://api.flutter.dev/flutter/widgets/Spacer-class.html)
+
+## 언제 사용하나요?
+
+- Row나 Column에서 위젯들 사이에 유연한 공간을 만들고 싶을 때
+- 특정 위젯을 한쪽 끝으로 밀어내고 싶을 때
+- 여러 위젯을 균등하게 배치하고 싶을 때
+- 남은 공간을 특정 비율로 분배하고 싶을 때
+- 반응형 레이아웃에서 동적인 간격이 필요할 때
+
+## 기본 사용법
+
+```typescript
+// 기본 사용: 위젯을 양쪽 끝으로 밀어냄
+Row({
+  children: [
+    Text('왼쪽'),
+    Spacer(),
+    Text('오른쪽')
+  ]
+})
+
+// 여러 Spacer로 균등 분배
+Row({
+  children: [
+    Spacer(),
+    Text('첫 번째'),
+    Spacer(),
+    Text('두 번째'),
+    Spacer(),
+    Text('세 번째'),
+    Spacer()
+  ]
+})
+
+// flex 값으로 공간 비율 조정
+Row({
+  children: [
+    Text('시작'),
+    Spacer({ flex: 1 }),
+    Text('중간'),
+    Spacer({ flex: 2 }),  // 첫 번째 Spacer의 2배 공간
+    Text('끝')
+  ]
+})
+```
 
 ## Props
 
 ### flex
 
-**Value: number** (default: **1**)
+**값: number** (기본값: **1**)
 
-## Examples
+다른 Flexible 자식들과 비교하여 이 자식이 차지할 공간의 양을 나타내는 flex 인수입니다.
 
-### Basic
+```typescript
+// 기본 flex 값 (1)
+Spacer()
+
+// 커스텀 flex 값
+Spacer({ flex: 2 })  // 다른 flex: 1 위젯보다 2배 공간
+
+// 비율 조정 예시
+Row({
+  children: [
+    Container({ width: 50, height: 50, color: 'red' }),
+    Spacer({ flex: 1 }),  // 1의 비율
+    Container({ width: 50, height: 50, color: 'green' }),
+    Spacer({ flex: 3 }),  // 3의 비율 (첫 번째의 3배)
+    Container({ width: 50, height: 50, color: 'blue' })
+  ]
+})
+```
+
+## 실제 사용 예제
+
+### 예제 1: 내비게이션 바
+
+```typescript
+const NavigationBar = ({ title, onBack, onMenu }) => {
+  return Container({
+    height: 56,
+    padding: EdgeInsets.symmetric({ horizontal: 8 }),
+    decoration: BoxDecoration({
+      color: 'white',
+      boxShadow: [
+        BoxShadow({
+          color: 'rgba(0,0,0,0.1)',
+          blurRadius: 4,
+          offset: { x: 0, y: 2 }
+        })
+      ]
+    }),
+    child: Row({
+      children: [
+        IconButton({
+          icon: Icons.arrow_back,
+          onPressed: onBack
+        }),
+        SizedBox({ width: 16 }),
+        Text(title, {
+          style: TextStyle({
+            fontSize: 20,
+            fontWeight: 'bold'
+          })
+        }),
+        Spacer(),  // 제목을 왼쪽으로, 메뉴를 오른쪽으로
+        IconButton({
+          icon: Icons.menu,
+          onPressed: onMenu
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 2: 카드 푸터
+
+```typescript
+const CardWithFooter = ({ title, content, primaryAction, secondaryAction }) => {
+  return Container({
+    margin: EdgeInsets.all(16),
+    decoration: BoxDecoration({
+      color: 'white',
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow({
+          color: 'rgba(0,0,0,0.1)',
+          blurRadius: 8,
+          offset: { x: 0, y: 2 }
+        })
+      ]
+    }),
+    child: Column({
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 헤더
+        Container({
+          padding: EdgeInsets.all(16),
+          child: Text(title, {
+            style: TextStyle({
+              fontSize: 18,
+              fontWeight: 'bold'
+            })
+          })
+        }),
+        // 내용
+        Container({
+          padding: EdgeInsets.symmetric({ horizontal: 16 }),
+          child: Text(content, {
+            style: TextStyle({
+              fontSize: 14,
+              color: '#666',
+              lineHeight: 1.4
+            })
+          })
+        }),
+        SizedBox({ height: 16 }),
+        // 푸터
+        Container({
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration({
+            border: Border(top: BorderSide({ color: '#E0E0E0' }))
+          }),
+          child: Row({
+            children: [
+              TextButton({
+                onPressed: secondaryAction.onPressed,
+                child: Text(secondaryAction.label)
+              }),
+              Spacer(),  // 버튼들을 양쪽 끝으로
+              ElevatedButton({
+                onPressed: primaryAction.onPressed,
+                child: Text(primaryAction.label)
+              })
+            ]
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 3: 소셜 미디어 통계
+
+```typescript
+const SocialStats = ({ likes, comments, shares }) => {
+  return Container({
+    padding: EdgeInsets.all(16),
+    child: Row({
+      children: [
+        // 좋아요
+        Row({
+          children: [
+            Icon({ icon: Icons.favorite, color: '#E91E63', size: 20 }),
+            SizedBox({ width: 4 }),
+            Text(likes.toString(), {
+              style: TextStyle({ fontWeight: 'bold' })
+            })
+          ]
+        }),
+        Spacer({ flex: 1 }),
+        // 댓글
+        Row({
+          children: [
+            Icon({ icon: Icons.comment, color: '#2196F3', size: 20 }),
+            SizedBox({ width: 4 }),
+            Text(comments.toString(), {
+              style: TextStyle({ fontWeight: 'bold' })
+            })
+          ]
+        }),
+        Spacer({ flex: 1 }),
+        // 공유
+        Row({
+          children: [
+            Icon({ icon: Icons.share, color: '#4CAF50', size: 20 }),
+            SizedBox({ width: 4 }),
+            Text(shares.toString(), {
+              style: TextStyle({ fontWeight: 'bold' })
+            })
+          ]
+        }),
+        Spacer({ flex: 2 }),  // 오른쪽에 더 많은 공간
+        // 북마크
+        IconButton({
+          icon: Icons.bookmark_border,
+          onPressed: () => {}
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 4: 단계 표시기
+
+```typescript
+const StepIndicator = ({ currentStep, totalSteps, labels }) => {
+  return Container({
+    padding: EdgeInsets.all(24),
+    child: Column({
+      children: [
+        // 단계 표시 바
+        Row({
+          children: Array.from({ length: totalSteps }, (_, index) => {
+            const isActive = index <= currentStep;
+            const isLast = index === totalSteps - 1;
+            
+            return [
+              // 단계 원
+              Container({
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration({
+                  shape: BoxShape.circle,
+                  color: isActive ? '#2196F3' : '#E0E0E0',
+                  border: isActive ? null : Border.all({ 
+                    color: '#BDBDBD', 
+                    width: 2 
+                  })
+                }),
+                child: Center({
+                  child: Text((index + 1).toString(), {
+                    style: TextStyle({
+                      color: isActive ? 'white' : '#757575',
+                      fontWeight: 'bold'
+                    })
+                  })
+                })
+              }),
+              // 연결선 (마지막 제외)
+              if (!isLast) Expanded({
+                child: Container({
+                  height: 2,
+                  margin: EdgeInsets.symmetric({ horizontal: 8 }),
+                  color: isActive ? '#2196F3' : '#E0E0E0'
+                })
+              })
+            ];
+          }).flat()
+        }),
+        SizedBox({ height: 16 }),
+        // 레이블
+        Row({
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: labels.map((label, index) => {
+            if (index === 0) {
+              return Text(label, {
+                style: TextStyle({ fontSize: 12 })
+              });
+            } else if (index === labels.length - 1) {
+              return Text(label, {
+                style: TextStyle({ fontSize: 12 })
+              });
+            } else {
+              return [
+                Spacer(),
+                Text(label, {
+                  style: TextStyle({ fontSize: 12 })
+                }),
+                Spacer()
+              ];
+            }
+          }).flat()
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 5: 대시보드 레이아웃
+
+```typescript
+const DashboardHeader = ({ userName, notifications, onProfile, onNotifications }) => {
+  return Container({
+    padding: EdgeInsets.all(16),
+    decoration: BoxDecoration({
+      gradient: LinearGradient({
+        colors: ['#2196F3', '#1976D2'],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight
+      })
+    }),
+    child: Column({
+      children: [
+        // 상단 바
+        Row({
+          children: [
+            Text('Dashboard', {
+              style: TextStyle({
+                color: 'white',
+                fontSize: 24,
+                fontWeight: 'bold'
+              })
+            }),
+            Spacer(),
+            // 알림 아이콘
+            Stack({
+              children: [
+                IconButton({
+                  icon: Icons.notifications,
+                  color: 'white',
+                  onPressed: onNotifications
+                }),
+                if (notifications > 0) Positioned({
+                  top: 8,
+                  right: 8,
+                  child: Container({
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration({
+                      color: '#F44336',
+                      shape: BoxShape.circle
+                    }),
+                    child: Center({
+                      child: Text(notifications.toString(), {
+                        style: TextStyle({
+                          color: 'white',
+                          fontSize: 10,
+                          fontWeight: 'bold'
+                        })
+                      })
+                    })
+                  })
+                })
+              ]
+            }),
+            SizedBox({ width: 8 }),
+            // 프로필 버튼
+            GestureDetector({
+              onTap: onProfile,
+              child: CircleAvatar({
+                radius: 20,
+                backgroundColor: 'white',
+                child: Text(userName[0], {
+                  style: TextStyle({
+                    color: '#2196F3',
+                    fontWeight: 'bold'
+                  })
+                })
+              })
+            })
+          ]
+        }),
+        SizedBox({ height: 16 }),
+        // 환영 메시지
+        Row({
+          children: [
+            Column({
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(`안녕하세요, ${userName}님!`, {
+                  style: TextStyle({
+                    color: 'white',
+                    fontSize: 18
+                  })
+                }),
+                Text('오늘도 좋은 하루 되세요', {
+                  style: TextStyle({
+                    color: 'rgba(255,255,255,0.8)',
+                    fontSize: 14
+                  })
+                })
+              ]
+            }),
+            Spacer()
+          ]
+        })
+      ]
+    })
+  });
+};
+```
+
+## Spacer vs SizedBox
+
+### 언제 어떤 것을 사용할까?
+
+```typescript
+// ✅ Spacer: 유연한 공간이 필요할 때
+Row({
+  children: [
+    Text('왼쪽'),
+    Spacer(),  // 남은 공간 모두 차지
+    Text('오른쪽')
+  ]
+})
+
+// ✅ SizedBox: 고정된 공간이 필요할 때
+Row({
+  children: [
+    Text('첫 번째'),
+    SizedBox({ width: 16 }),  // 정확히 16픽셀
+    Text('두 번째')
+  ]
+})
+
+// 비교 예시
+Column({
+  children: [
+    // Spacer는 남은 공간을 차지
+    Container({
+      height: 100,
+      child: Row({
+        children: [
+          Container({ width: 50, color: 'red' }),
+          Spacer(),  // 나머지 공간
+          Container({ width: 50, color: 'blue' })
+        ]
+      })
+    }),
+    // SizedBox는 고정 크기
+    Row({
+      children: [
+        Container({ width: 50, color: 'red' }),
+        SizedBox({ width: 30 }),  // 정확히 30
+        Container({ width: 50, color: 'blue' })
+      ]
+    })
+  ]
+})
+```
+
+## 주의사항
+
+- Spacer는 Flex 위젯(Row, Column, Flex) 내에서만 사용해야 합니다
+- Spacer가 있으면 mainAxisAlignment의 space 관련 옵션들이 무시됩니다
+- 여러 Spacer를 사용할 때는 flex 값으로 비율을 조정할 수 있습니다
+- Spacer는 실제로 Expanded(child: SizedBox.shrink())의 축약형입니다
+- 무한 공간에서는 오류가 발생할 수 있으므로 주의가 필요합니다
+
+## 관련 위젯
+
+- **Expanded**: Flex 내에서 자식을 확장하는 위젯
+- **Flexible**: Flex 내에서 유연한 크기를 가지는 위젯
+- **SizedBox**: 고정 크기의 빈 공간을 만드는 위젯
+- **Padding**: 위젯 주위에 여백을 추가하는 위젯
+- **Container**: 여백, 패딩, 크기 등을 지정할 수 있는 위젯

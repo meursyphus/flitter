@@ -1,13 +1,16 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: Container
 title: "Container"
-description: ""
+description: "자식 위젯을 꾸미고, 위치를 지정하고, 크기를 제한하는 편의 위젯"
 ---
 
-This is **Container** widget.
-This widget motivated by Container in Flutter.
+## 개요
+
+Container는 자식 위젯을 꾸미고, 위치를 지정하고, 크기를 제한하는 편의 위젯입니다.
+
+Container는 여러 기본 위젯(Padding, Align, ColoredBox, DecoratedBox, ConstrainedBox, Transform 등)을 하나로 결합한 위젯으로, 일반적인 레이아웃과 스타일링 작업을 단순화합니다. 빈 Container는 가능한 한 많은 공간을 차지하려고 하지만, 자식이 있으면 자식의 크기에 맞춰집니다.
 
 <iframe
   width="560"
@@ -19,36 +22,326 @@ This widget motivated by Container in Flutter.
   allowfullscreen
 ></iframe>
 
-See: https://api.flutter.dev/flutter/widgets/Container-class.html
+참고: https://api.flutter.dev/flutter/widgets/Container-class.html
+
+## 언제 사용하나요?
+
+- 위젯에 배경색, 테두리, 그림자 등의 스타일을 적용할 때
+- 위젯 주변에 여백(margin)이나 안쪽 여백(padding)을 추가할 때
+- 위젯의 크기를 제한하거나 고정할 때
+- 여러 레이아웃 속성을 한 번에 적용할 때
+- 카드 UI, 버튼 배경, 섹션 구분 등을 만들 때
+
+## 기본 사용법
+
+```typescript
+// 가장 간단한 사용 예제
+const widget = Container({
+  width: 200,
+  height: 100,
+  color: 'blue',
+  child: Text('Hello Container!')
+});
+
+// padding과 margin 사용
+const paddedContainer = Container({
+  margin: EdgeInsets.all(10),
+  padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 10 }),
+  color: 'lightgray',
+  child: Text('Padded Text')
+});
+```
 
 ## Props
 
 ### width
 
-**Value: number | undefined**
+**값: number | undefined**
+
+Container의 너비를 픽셀 단위로 지정합니다. 지정하지 않으면 자식 위젯의 크기나 부모의 제약에 따라 결정됩니다.
+
+```typescript
+Container({ width: 300, color: 'red' })
+```
 
 ### height
 
-**Value: number | undefined**
+**값: number | undefined**
 
-### color
+Container의 높이를 픽셀 단위로 지정합니다. 지정하지 않으면 자식 위젯의 크기나 부모의 제약에 따라 결정됩니다.
 
-**Value: string** (default: **transparent**)
+```typescript
+Container({ height: 150, color: 'green' })
+```
 
-This define background color of the container.
+### constraints
 
-### margin
+**값: Constraints | undefined**
 
-**Value: EdgeInsets** (default: **EdgeInsets.all(0)**)
+Container의 최소/최대 너비와 높이를 지정합니다. width/height보다 더 유연한 크기 제어가 가능합니다.
+
+```typescript
+Container({
+  constraints: Constraints({
+    minWidth: 100,
+    maxWidth: 300,
+    minHeight: 50,
+    maxHeight: 200
+  }),
+  color: 'orange'
+})
+```
 
 ### padding
 
-**Value: EdgeInsets** (default: **EdgeInsets.all(0)**)
+**값: EdgeInsets** (기본값: **없음**)
 
-### Alignment
+Container 내부의 자식 위젯과 Container 가장자리 사이의 간격입니다.
 
-**Value: Alignment | undefined**
+```typescript
+// 모든 방향에 동일한 padding
+Container({
+  padding: EdgeInsets.all(16),
+  color: 'lightblue',
+  child: Text('Padded')
+})
+
+// 방향별로 다른 padding
+Container({
+  padding: EdgeInsets.only({ top: 20, left: 10, right: 10, bottom: 5 }),
+  color: 'pink'
+})
+```
+
+### margin
+
+**값: EdgeInsets** (기본값: **없음**)
+
+Container 외부와 다른 위젯 사이의 간격입니다.
+
+```typescript
+Container({
+  margin: EdgeInsets.symmetric({ horizontal: 20, vertical: 10 }),
+  color: 'yellow',
+  child: Text('Margined')
+})
+```
+
+### alignment
+
+**값: Alignment | undefined**
+
+Container 내부에서 자식 위젯의 정렬 위치를 지정합니다. x와 y 값은 -1에서 1 사이입니다.
+
+```typescript
+Container({
+  width: 200,
+  height: 200,
+  color: 'gray',
+  alignment: Alignment.center,
+  child: Text('Centered')
+})
+
+// 사용 가능한 정렬 상수
+// Alignment.topLeft, Alignment.topCenter, Alignment.topRight
+// Alignment.centerLeft, Alignment.center, Alignment.centerRight
+// Alignment.bottomLeft, Alignment.bottomCenter, Alignment.bottomRight
+```
+
+### color
+
+**값: string | undefined**
+
+Container의 배경색을 지정합니다. decoration과 동시에 사용할 수 없습니다.
+
+⚠️ **주의**: decoration prop과 함께 사용하면 오류가 발생합니다.
+
+```typescript
+Container({
+  width: 100,
+  height: 100,
+  color: '#FF5733'
+})
+```
+
+### decoration
+
+**값: Decoration | undefined**
+
+Container의 복잡한 스타일(테두리, 둥근 모서리, 그림자 등)을 지정합니다.
+
+⚠️ **주의**: color prop과 함께 사용할 수 없습니다. decoration 내부에 color를 지정하세요.
+
+```typescript
+Container({
+  width: 150,
+  height: 150,
+  decoration: BoxDecoration({
+    color: 'white',
+    border: Border.all({ color: 'black', width: 2 }),
+    borderRadius: BorderRadius.circular(10),
+    boxShadow: [
+      BoxShadow({
+        color: 'rgba(0, 0, 0, 0.3)',
+        blurRadius: 10,
+        offset: { x: 5, y: 5 }
+      })
+    ]
+  }),
+  child: Text('Decorated')
+})
+```
+
+### clipped
+
+**값: boolean | undefined** (기본값: **false**)
+
+decoration의 shape에 따라 자식 위젯을 자를지 여부를 결정합니다.
+
+⚠️ **주의**: clipped가 true일 때는 decoration이 반드시 필요합니다.
+
+```typescript
+Container({
+  width: 100,
+  height: 100,
+  clipped: true,
+  decoration: BoxDecoration({
+    shape: 'circle',
+    color: 'blue'
+  }),
+  child: Image({ src: 'photo.jpg', fit: 'cover' })
+})
+```
+
+### transform
+
+**값: Matrix4 | undefined**
+
+Container에 회전, 크기 조정, 기울이기 등의 변형을 적용합니다.
+
+```typescript
+Container({
+  color: 'purple',
+  transform: Matrix4.rotationZ(Math.PI / 4), // 45도 회전
+  child: Text('Rotated')
+})
+```
+
+### transformAlignment
+
+**값: Alignment | undefined**
+
+변형의 기준점을 지정합니다. 기본값은 Container의 중심입니다.
+
+```typescript
+Container({
+  width: 100,
+  height: 100,
+  color: 'green',
+  transform: Matrix4.rotationZ(Math.PI / 6),
+  transformAlignment: Alignment.topLeft, // 왼쪽 상단을 기준으로 회전
+  child: Text('Transform')
+})
+```
 
 ### child
 
-**Value: Widget | undefined**
+**값: Widget | undefined**
+
+Container 내부에 표시할 자식 위젯입니다.
+
+```typescript
+Container({
+  padding: EdgeInsets.all(20),
+  color: 'lightgray',
+  child: Column({
+    children: [
+      Text('Title'),
+      Text('Subtitle')
+    ]
+  })
+})
+```
+
+## 실제 사용 예제
+
+### 카드 UI 만들기
+
+```typescript
+const card = Container({
+  margin: EdgeInsets.all(16),
+  padding: EdgeInsets.all(16),
+  decoration: BoxDecoration({
+    color: 'white',
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+      BoxShadow({
+        color: 'rgba(0, 0, 0, 0.1)',
+        blurRadius: 8,
+        offset: { x: 0, y: 2 }
+      })
+    ]
+  }),
+  child: Column({
+    crossAxisAlignment: 'start',
+    children: [
+      Text('Card Title', { style: TextStyle({ fontSize: 18, fontWeight: 'bold' }) }),
+      SizedBox({ height: 8 }),
+      Text('Card content goes here...')
+    ]
+  })
+});
+```
+
+### 원형 아바타 만들기
+
+```typescript
+const avatar = Container({
+  width: 80,
+  height: 80,
+  clipped: true,
+  decoration: BoxDecoration({
+    shape: 'circle',
+    border: Border.all({ color: 'blue', width: 3 })
+  }),
+  child: Image({
+    src: 'profile.jpg',
+    fit: 'cover'
+  })
+});
+```
+
+### 버튼 스타일링
+
+```typescript
+const customButton = GestureDetector({
+  onTap: () => console.log('Button tapped'),
+  child: Container({
+    padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+    decoration: BoxDecoration({
+      color: 'blue',
+      borderRadius: BorderRadius.circular(8)
+    }),
+    child: Text('Click Me', {
+      style: TextStyle({ color: 'white', fontSize: 16 })
+    })
+  })
+});
+```
+
+## 주의사항
+
+- `color`와 `decoration`을 동시에 사용할 수 없습니다. decoration을 사용할 때는 decoration 내부에 color를 지정하세요.
+- `clipped`를 true로 설정할 때는 반드시 `decoration`이 필요합니다.
+- Container에 자식이 없고 크기 제약이 없으면 가능한 한 많은 공간을 차지합니다.
+- `transform`을 사용할 때는 변형된 Container가 다른 위젯과 겹칠 수 있으니 주의하세요.
+- decoration의 border를 사용하면 자동으로 padding이 추가됩니다.
+
+## 관련 위젯
+
+- **DecoratedBox**: decoration만 적용할 때 사용
+- **ColoredBox**: 단순히 배경색만 필요할 때 사용
+- **Padding**: margin이나 padding만 필요할 때 사용
+- **SizedBox**: 고정 크기만 필요할 때 사용
+- **ConstrainedBox**: 크기 제약만 필요할 때 사용
+- **Align**: 정렬만 필요할 때 사용

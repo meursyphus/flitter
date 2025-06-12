@@ -14,12 +14,23 @@ export default defineConfig({
 
   }),
   integrations: [
-    react(),
+    react({
+      mode: 'production',
+    }),
     svelte(),
     tailwind(),
     mdx(),
     sitemap(),
   ],
+  vite: {
+    optimizeDeps: {
+      include: ['@monaco-editor/react', '@codesandbox/sandpack-react'],
+      force: true
+    },
+    ssr: {
+      noExternal: ['@codesandbox/sandpack-react', '@monaco-editor/react']
+    }
+  },
   redirects: {
     "/docs": "/docs/introduction",
     "/tutorial": "/tutorial/get-started/introduction",

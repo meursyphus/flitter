@@ -2,81 +2,81 @@
 nav_group: "Advanced Features"
 nav_order: 4
 title: "Customizing RenderObjects"
-description: "Learn how to create custom RenderObjects in Flitter for advanced layout and painting control"
+description: "Flitter에서 고급 레이아웃과 페인팅 제어를 위한 커스텀 RenderObject 만드는 방법 알아보기"
 ---
 
-# Customizing RenderObjects in Flitter
+# Flitter에서 RenderObject 사용자 지정하기
 
-Creating custom RenderObjects in Flitter allows you to have fine-grained control over both layout and painting. This guide will walk you through the process of creating a custom RenderObject, including how to implement custom layout logic and how to create separate painters for SVG and Canvas rendering.
+Flitter에서 커스텀 RenderObject를 만들면 레이아웃과 페인팅 모두에 대해 세밀한 제어가 가능합니다. 이 가이드는 커스텀 레이아웃 로직을 구현하는 방법과 SVG 및 Canvas 렌더링을 위한 별도의 페인터를 만드는 방법을 포함하여 커스텀 RenderObject를 만드는 과정을 안내합니다.
 
-## Overview
+## 개요
 
-When creating a custom RenderObject, you'll typically need to:
+커스텀 RenderObject를 만들 때 일반적으로 다음이 필요합니다:
 
-1. Create a custom Widget class
-2. Create a custom RenderObject class
-3. Implement custom layout logic
-4. Create custom SVG and Canvas painters
+1. 커스텀 Widget 클래스 만들기
+2. 커스텀 RenderObject 클래스 만들기
+3. 커스텀 레이아웃 로직 구현하기
+4. 커스텀 SVG 및 Canvas 페인터 만들기
 
-Let's go through each of these steps with examples.
+예제와 함께 각 단계를 살펴보겠습니다.
 
-## 1. Creating a Custom Widget
+## 1. 커스텀 위젯 만들기
 
-First, you'll need to create a custom widget that will use your custom RenderObject:
+먼저 커스텀 RenderObject를 사용할 커스텀 위젯을 만들어야 합니다:
 
 ```typescript
 import { SingleChildRenderObjectWidget } from "@meursyphus/flitter";
 
 class CustomWidget extends SingleChildRenderObjectWidget {
-  // Add any additional properties here
+  // 추가 속성을 여기에 추가하세요
 
   constructor(props: {
-    /* your props */
+    /* 당신의 props */
   }) {
     super(props);
-    // Initialize your properties
+    // 속성 초기화
   }
 
   createRenderObject(): RenderCustomObject {
-    return new RenderCustomObject(/* pass necessary props */);
+    return new RenderCustomObject(/* 필요한 props 전달 */);
   }
 
   updateRenderObject(renderObject: RenderCustomObject): void {
-    // Update render object properties if needed
+    // 필요한 경우 렌더 객체 속성 업데이트
   }
 }
 ```
 
-## 2. Creating a Custom RenderObject
+## 2. 커스텀 RenderObject 만들기
 
-Next, create your custom RenderObject:
+다음으로 커스텀 RenderObject를 만듭니다:
 
 ```typescript
 import { SingleChildRenderObject } from "@meursyphus/flitter";
 
 class RenderCustomObject extends SingleChildRenderObject {
   constructor(props: {
-    /* your props */
+    /* 당신의 props */
   }) {
-    super({ isPainter: true }); // Set to true if this object paints itself
-    // Initialize your properties
+    super({ isPainter: true }); // 이 객체가 스스로를 페인트하는 경우 true로 설정
+    // 속성 초기화
   }
 
-  // Override methods as needed
+  // 필요에 따라 메서드 오버라이드
 }
 ```
 
-## 3. Implementing Custom Layout Logic
+## 3. 커스텀 레이아웃 로직 구현하기
 
-To implement custom layout logic, override the `performLayout` method:
+커스텀 레이아웃 로직을 구현하려면 `performLayout` 메서드를 오버라이드합니다:
 
 ```typescript
 class RenderCustomObject extends SingleChildRenderObject {
   // ...
 
   protected override performLayout(): void {
-    // Implement your custom layout logic here
-    // For example:
+    // 여기에 커스텀 레이아웃 로직 구현
+    // 예시:
     if (this.child) {
       this.child.layout(this.constraints);
       this.size = this.child.size;
@@ -87,9 +87,9 @@ class RenderCustomObject extends SingleChildRenderObject {
 }
 ```
 
-## 4. Creating Custom Painters
+## 4. 커스텀 페인터 만들기
 
-For custom painting, you need to create separate painters for SVG and Canvas:
+커스텀 페인팅을 위해 SVG와 Canvas용 별도의 페인터를 만들어야 합니다:
 
 ```typescript
 import {
@@ -104,7 +104,7 @@ class CustomSvgPainter extends SvgPainter {
   protected override performPaint(context: {
     [key: string]: SVGElement;
   }): void {
-    // Implement SVG painting logic
+    // SVG 페인팅 로직 구현
     const { rect } = context;
     rect.setAttribute("fill", "blue");
     rect.setAttribute("width", `${this.size.width}`);
@@ -134,7 +134,7 @@ class CustomCanvasPainter extends CanvasPainter {
 }
 ```
 
-Then, in your RenderObject, override the `createSvgPainter` and `createCanvasPainter` methods:
+그런 다음 RenderObject에서 `createSvgPainter`와 `createCanvasPainter` 메서드를 오버라이드합니다:
 
 ```typescript
 class RenderCustomObject extends SingleChildRenderObject {
@@ -150,9 +150,9 @@ class RenderCustomObject extends SingleChildRenderObject {
 }
 ```
 
-## Example: Custom Wrap Widget
+## 예제: 커스텀 Wrap 위젯
 
-Here's an example of a custom Wrap widget that implements custom layout logic:
+커스텀 레이아웃 로직을 구현하는 커스텀 Wrap 위젯의 예제입니다:
 
 ```typescript
 class Wrap extends MultiChildRenderObjectWidget {
@@ -161,7 +161,7 @@ class Wrap extends MultiChildRenderObjectWidget {
   }
 
   override updateRenderObject(): void {
-    // Update logic if needed
+    // 필요한 경우 업데이트 로직
   }
 }
 
@@ -199,8 +199,8 @@ class RenderWrap extends MultiChildRenderObject {
 }
 ```
 
-## Conclusion
+## 결론
 
-Creating custom RenderObjects in Flitter gives you powerful control over layout and painting. By implementing custom layout logic and creating separate painters for SVG and Canvas, you can create highly specialized and efficient widgets.
+Flitter에서 커스텀 RenderObject를 만들면 레이아웃과 페인팅에 대한 강력한 제어가 가능합니다. 커스텀 레이아웃 로직을 구현하고 SVG와 Canvas용 별도의 페인터를 만들어 매우 특화되고 효율적인 위젯을 만들 수 있습니다.
 
-Remember to consider performance implications when creating custom RenderObjects, especially for components that may be frequently rebuilt or painted. Always profile your custom implementations to ensure they perform well in your application.
+커스텀 RenderObject를 만들 때, 특히 자주 재구축되거나 페인트될 수 있는 구성 요소의 경우 성능 영향을 고려하는 것을 잊지 마세요. 애플리케이션에서 제대로 작동하는지 확인하기 위해 항상 커스텀 구현을 프로파일링하세요.

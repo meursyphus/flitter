@@ -1,45 +1,534 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: OverflowBox
 title: "OverflowBox"
-description: ""
+description: "A widget that imposes different constraints on its child than it gets from its parent, possibly allowing overflow"
 ---
 
-# OverflowBox
+## Overview
 
-This widget motivated by OverflowBox in Flutter.
+OverflowBox is a widget that imposes different constraints on its child than it gets from its parent, possibly allowing the child to overflow the parent.
 
-> A widget that imposes different constraints on its child than it gets from its parent, possibly allowing the child to overflow the parent.
+This widget is useful when you want a child to have a different size than what the parent allows, either larger or smaller. For example, it can be used to display large icons or images inside small containers.
 
 See: [https://api.flutter.dev/flutter/widgets/OverflowBox-class.html](https://api.flutter.dev/flutter/widgets/OverflowBox-class.html)
 
+## When to use it?
+
+- When a child needs to exceed the parent's size
+- When creating UI elements like popups or tooltips that extend outside the parent area
+- When creating effects where size temporarily expands during animations
+- When you need a fixed size that ignores parent constraints
+- When creating elements like overlays or badges that cross parent boundaries
+
+## Basic Usage
+
+```typescript
+// Allow child larger than parent
+Container({
+  width: 100,
+  height: 100,
+  color: 'blue',
+  child: OverflowBox({
+    maxWidth: 200,
+    maxHeight: 200,
+    child: Container({
+      width: 150,
+      height: 150,
+      color: 'red'
+    })
+  })
+})
+
+// Force child smaller than parent
+Container({
+  width: 200,
+  height: 200,
+  color: 'green',
+  child: OverflowBox({
+    maxWidth: 100,
+    maxHeight: 100,
+    child: Container({
+      color: 'yellow'
+    })
+  })
+})
+
+// Fix to specific size
+OverflowBox({
+  minWidth: 150,
+  maxWidth: 150,
+  minHeight: 150,
+  maxHeight: 150,
+  child: Container({
+    color: 'purple'
+  })
+})
+```
+
 ## Props
-
-### maxWidth
-
-**Value: number | undefined**
-
-### maxHeight
-
-**Value: number | undefined**
 
 ### minWidth
 
 **Value: number | undefined**
 
+The minimum width constraint to apply to the child.
+
+When `undefined`, uses the parent's minimum width constraint.
+
+```typescript
+OverflowBox({
+  minWidth: 100,  // Child has minimum width of 100
+  child: child
+})
+```
+
+### maxWidth
+
+**Value: number | undefined**
+
+The maximum width constraint to apply to the child.
+
+When `undefined`, uses the parent's maximum width constraint.
+
+```typescript
+OverflowBox({
+  maxWidth: 300,  // Child has maximum width of 300
+  child: child
+})
+```
+
 ### minHeight
 
 **Value: number | undefined**
+
+The minimum height constraint to apply to the child.
+
+When `undefined`, uses the parent's minimum height constraint.
+
+```typescript
+OverflowBox({
+  minHeight: 50,  // Child has minimum height of 50
+  child: child
+})
+```
+
+### maxHeight
+
+**Value: number | undefined**
+
+The maximum height constraint to apply to the child.
+
+When `undefined`, uses the parent's maximum height constraint.
+
+```typescript
+OverflowBox({
+  maxHeight: 200,  // Child has maximum height of 200
+  child: child
+})
+```
 
 ### alignment
 
 **Value: Alignment** (default: **Alignment.center**)
 
+How to align the child when it has a different size than the parent.
+
+```typescript
+OverflowBox({
+  maxWidth: 200,
+  maxHeight: 200,
+  alignment: Alignment.topRight,  // Align to top right
+  child: child
+})
+```
+
 ### child
 
 **Value: Widget | undefined**
 
-## Examples
+The child widget to which the new constraints will be applied.
 
-### Basic
+## Practical Examples
+
+### Example 1: Floating Action Button Badge
+
+```typescript
+const FloatingActionButtonWithBadge = ({ count, onPressed }) => {
+  return Container({
+    width: 56,
+    height: 56,
+    child: Stack({
+      children: [
+        // FAB
+        FloatingActionButton({
+          onPressed,
+          child: Icon(Icons.shopping_cart)
+        }),
+        // Badge (overflows parent area)
+        Positioned({
+          top: 0,
+          right: 0,
+          child: OverflowBox({
+            maxWidth: 30,
+            maxHeight: 30,
+            child: Container({
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration({
+                color: 'red',
+                shape: BoxShape.circle,
+                border: Border.all({ 
+                  color: 'white', 
+                  width: 2 
+                })
+              }),
+              child: Center({
+                child: Text(count.toString(), {
+                  style: TextStyle({
+                    color: 'white',
+                    fontSize: 12,
+                    fontWeight: 'bold'
+                  })
+                })
+              })
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### Example 2: Zoom Preview
+
+```typescript
+const ZoomPreview = ({ image, zoomLevel = 2.0 }) => {
+  const [isHovering, setIsHovering] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  
+  return GestureDetector({
+    onHover: (event) => {
+      setIsHovering(true);
+      setMousePosition({ x: event.localPosition.x, y: event.localPosition.y });
+    },
+    onHoverExit: () => setIsHovering(false),
+    child: Container({
+      width: 300,
+      height: 300,
+      child: Stack({
+        children: [
+          // Original image
+          Image({
+            src: image,
+            objectFit: 'cover'
+          }),
+          // Zoomed area
+          if (isHovering) Positioned({
+            left: mousePosition.x - 50,
+            top: mousePosition.y - 50,
+            child: OverflowBox({
+              maxWidth: 200,
+              maxHeight: 200,
+              child: Container({
+                width: 100 * zoomLevel,
+                height: 100 * zoomLevel,
+                decoration: BoxDecoration({
+                  border: Border.all({ 
+                    color: 'white', 
+                    width: 2 
+                  }),
+                  borderRadius: BorderRadius.circular(50),
+                  boxShadow: [
+                    BoxShadow({
+                      color: 'rgba(0,0,0,0.3)',
+                      blurRadius: 10,
+                      spreadRadius: 2
+                    })
+                  ]
+                }),
+                child: ClipOval({
+                  child: Transform.scale({
+                    scale: zoomLevel,
+                    child: Transform.translate({
+                      offset: {
+                        x: -mousePosition.x,
+                        y: -mousePosition.y
+                      },
+                      child: Image({
+                        src: image,
+                        objectFit: 'cover'
+                      })
+                    })
+                  })
+                })
+              })
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### Example 3: Custom Tooltip
+
+```typescript
+const CustomTooltip = ({ text, child }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  
+  return MouseRegion({
+    onEnter: () => setIsVisible(true),
+    onExit: () => setIsVisible(false),
+    child: Stack({
+      clipBehavior: Clip.none,
+      children: [
+        child,
+        if (isVisible) Positioned({
+          top: -40,
+          left: 0,
+          right: 0,
+          child: OverflowBox({
+            maxWidth: 300,  // Allow tooltip wider than parent
+            child: Container({
+              padding: EdgeInsets.symmetric({ 
+                horizontal: 12, 
+                vertical: 8 
+              }),
+              decoration: BoxDecoration({
+                color: 'rgba(0,0,0,0.8)',
+                borderRadius: BorderRadius.circular(6),
+                boxShadow: [
+                  BoxShadow({
+                    color: 'rgba(0,0,0,0.2)',
+                    blurRadius: 4,
+                    offset: { x: 0, y: 2 }
+                  })
+                ]
+              }),
+              child: Row({
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon({
+                    icon: Icons.info,
+                    size: 14,
+                    color: 'white'
+                  }),
+                  SizedBox({ width: 6 }),
+                  Text(text, {
+                    style: TextStyle({
+                      color: 'white',
+                      fontSize: 12
+                    })
+                  })
+                ]
+              })
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### Example 4: Pulse Animation Effect
+
+```typescript
+const PulseAnimation = ({ child, color = 'blue' }) => {
+  const [scale, setScale] = useState(1.0);
+  const [opacity, setOpacity] = useState(0.5);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setScale(s => s === 1.0 ? 1.5 : 1.0);
+      setOpacity(o => o === 0.5 ? 0.0 : 0.5);
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  return Container({
+    width: 100,
+    height: 100,
+    child: Stack({
+      children: [
+        // Pulse effect (larger than parent)
+        Center({
+          child: OverflowBox({
+            maxWidth: 150,
+            maxHeight: 150,
+            child: AnimatedContainer({
+              duration: Duration.milliseconds(1000),
+              width: 100 * scale,
+              height: 100 * scale,
+              decoration: BoxDecoration({
+                color: color,
+                shape: BoxShape.circle,
+                opacity: opacity
+              })
+            })
+          })
+        }),
+        // Actual content
+        Center({ child })
+      ]
+    })
+  });
+};
+```
+
+### Example 5: Dropdown Menu
+
+```typescript
+const CustomDropdown = ({ options, value, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  return Container({
+    width: 200,
+    height: 48,
+    child: Stack({
+      clipBehavior: Clip.none,
+      children: [
+        // Dropdown button
+        GestureDetector({
+          onTap: () => setIsOpen(!isOpen),
+          child: Container({
+            padding: EdgeInsets.symmetric({ horizontal: 16 }),
+            decoration: BoxDecoration({
+              color: 'white',
+              border: Border.all({ color: '#E0E0E0' }),
+              borderRadius: BorderRadius.circular(8)
+            }),
+            child: Row({
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(value || 'Select...'),
+                Icon({
+                  icon: isOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down
+                })
+              ]
+            })
+          })
+        }),
+        // Dropdown menu (can exceed parent width)
+        if (isOpen) Positioned({
+          top: 52,
+          left: 0,
+          child: OverflowBox({
+            maxWidth: 300,  // Allow longer options to display
+            child: Container({
+              constraints: BoxConstraints({
+                minWidth: 200  // At least parent width
+              }),
+              decoration: BoxDecoration({
+                color: 'white',
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow({
+                    color: 'rgba(0,0,0,0.15)',
+                    blurRadius: 8,
+                    offset: { x: 0, y: 4 }
+                  })
+                ]
+              }),
+              child: Column({
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: options.map((option, index) => 
+                  GestureDetector({
+                    onTap: () => {
+                      onChange(option);
+                      setIsOpen(false);
+                    },
+                    child: Container({
+                      width: double.infinity,
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration({
+                        border: index > 0 
+                          ? Border(top: BorderSide({ color: '#F0F0F0' }))
+                          : null
+                      }),
+                      child: Text(option, {
+                        style: TextStyle({
+                          color: value === option ? '#1976D2' : '#333'
+                        })
+                      })
+                    })
+                  })
+                )
+              })
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+## Understanding Size Behavior
+
+### OverflowBox Size Determination
+
+```typescript
+// OverflowBox itself follows parent constraints
+Container({
+  width: 100,
+  height: 100,
+  color: 'blue',
+  child: OverflowBox({
+    maxWidth: 200,
+    maxHeight: 200,
+    child: Container({
+      width: 150,
+      height: 150,
+      color: 'red'  // Appears outside blue area
+    })
+  })
+})
+
+// OverflowBox size: 100x100 (parent constraints)
+// Child size: 150x150 (OverflowBox constraints)
+```
+
+### Constraint Inheritance
+
+```typescript
+// Change only some constraints
+OverflowBox({
+  maxWidth: 300,  // Change width only
+  // minWidth: inherited from parent
+  // minHeight: inherited from parent
+  // maxHeight: inherited from parent
+  child: child
+})
+
+// Change all constraints
+OverflowBox({
+  minWidth: 100,
+  maxWidth: 200,
+  minHeight: 50,
+  maxHeight: 150,
+  child: child
+})
+```
+
+## Important Notes
+
+- OverflowBox allows children to overflow parent area, which can cause layout issues
+- Overflowed areas are not clipped and may overlap other widgets
+- When using with Stack, set `clipBehavior: Clip.none`
+- Touch events are only detected within the parent area
+- Avoid excessive overflow for performance reasons
+
+## Related Widgets
+
+- **UnconstrainedBox**: Widget that removes all constraints
+- **ConstrainedBox**: Widget that applies additional constraints
+- **SizedBox**: Widget that specifies fixed size
+- **LimitedBox**: Widget that limits size only in infinite constraints
+- **FittedBox**: Widget that scales child to fit parent

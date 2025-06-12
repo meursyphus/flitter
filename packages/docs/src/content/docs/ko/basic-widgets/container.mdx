@@ -2,30 +2,30 @@
 nav_group: "Basic Widgets"
 nav_order: 1
 title: "Container"
-description: "Understanding and using the Container widget in Flitter for layout and styling"
+description: "Flitter에서 레이아웃과 스타일링을 위한 Container 위젯 이해하고 사용하기"
 ---
 
-# Container Widget in Flitter
+# Flitter의 Container 위젯
 
-The Container widget is one of the most versatile and commonly used widgets in Flitter. It combines common painting, positioning, and sizing widgets into a single, convenient widget.
+Container 위젯은 Flitter에서 가장 다재다능하고 일반적으로 사용되는 위젯 중 하나입니다. 일반적인 페인팅, 위치 지정 및 크기 조정 위젯을 하나의 편리한 위젯으로 결합합니다.
 
-## Overview
+## 개요
 
-A Container widget lets you create a rectangular visual element. It can be decorated with a background color, border, or an image. You can also transform its shape using various properties such as padding, margins, and constraints.
+Container 위젯을 사용하면 직사각형 시각적 요소를 만들 수 있습니다. 배경색, 테두리 또는 이미지로 장식할 수 있습니다. 또한 패딩, 여백 및 제약 조건과 같은 다양한 속성을 사용하여 모양을 변환할 수도 있습니다.
 
-## Key Properties
+## 주요 속성
 
-- `width` and `height`: Set the dimensions of the container.
-- `color`: Sets the background color.
-- `padding`: Adds internal padding.
-- `margin`: Adds external margin.
-- `alignment`: Aligns the child within the container.
-- `decoration`: Applies a BoxDecoration to the container.
-- `child`: The widget to be placed inside the container.
+- `width`와 `height`: 컨테이너의 크기를 설정합니다.
+- `color`: 배경색을 설정합니다.
+- `padding`: 내부 패딩을 추가합니다.
+- `margin`: 외부 여백을 추가합니다.
+- `alignment`: 컨테이너 내에서 자식을 정렬합니다.
+- `decoration`: 컨테이너에 BoxDecoration을 적용합니다.
+- `child`: 컨테이너 내부에 배치할 위젯입니다.
 
-## Basic Usage
+## 기본 사용법
 
-Here's a simple example of how to use a Container:
+Container를 사용하는 간단한 예제입니다:
 
 ```typescript
 import { Container, Colors } from "@meursyphus/flitter";
@@ -37,11 +37,11 @@ const myContainer = Container({
 });
 ```
 
-This creates a blue square container with dimensions of 100x100 pixels.
+이것은 100x100 픽셀 크기의 파란색 정사각형 컨테이너를 만듭니다.
 
-## Advanced Usage
+## 고급 사용법
 
-Let's create a more complex container with multiple properties:
+여러 속성을 가진 더 복잡한 컨테이너를 만들어 보겠습니다:
 
 ```typescript
 import {
@@ -71,11 +71,11 @@ const advancedContainer = Container({
 });
 ```
 
-This creates a rounded green container with a shadow, containing centered white text.
+이것은 그림자가 있는 둥근 녹색 컨테이너를 만들고, 중앙에 흰색 텍스트를 포함합니다.
 
-## Visual Representation
+## 시각적 표현
 
-Here's a simple ASCII representation of the above container:
+위 컨테이너의 간단한 ASCII 표현입니다:
 
 ```
    ┌─────────────────────────────┐
@@ -89,23 +89,23 @@ Here's a simple ASCII representation of the above container:
    └─────────────────────────────┘
      ^                         ^
      │                         │
-   Margin                    Margin
+   여백                       여백
 ```
 
-- Outer rectangle: Margin
-- Middle rectangle: Container with rounded corners
-- Inner content: Padding and centered text
+- 외부 사각형: 여백(Margin)
+- 중간 사각형: 둥근 모서리가 있는 컨테이너
+- 내부 콘텐츠: 패딩과 중앙 정렬된 텍스트
 
-## Best Practices
+## 모범 사례
 
-1. **Use for visual structure**: Containers are great for creating visual structure in your UI, like cards or sections.
+1. **시각적 구조에 사용**: 컨테이너는 카드나 섹션과 같은 UI의 시각적 구조를 만드는 데 적합합니다.
 
-2. **Avoid nesting too deeply**: While containers are versatile, nesting them too deeply can lead to performance issues.
+2. **너무 깊게 중첩하지 않기**: 컨테이너는 다재다능하지만, 너무 깊게 중첩하면 성능 문제가 발생할 수 있습니다.
 
-3. **Consider SizedBox for simple sizing**: If you only need to set a width or height without any other styling, consider using SizedBox instead.
+3. **간단한 크기 조정에는 SizedBox 고려**: 다른 스타일링 없이 너비나 높이만 설정해야 하는 경우 대신 SizedBox를 사용하는 것을 고려하세요.
 
-4. **Use constraints wisely**: Containers can be constrained by their parent. Be mindful of how constraints are passed down the widget tree.
+4. **제약 조건을 현명하게 사용**: 컨테이너는 부모에 의해 제약될 수 있습니다. 제약 조건이 위젯 트리에서 어떻게 전달되는지 주의하세요.
 
-## Conclusion
+## 결론
 
-The Container widget is a fundamental building block in Flitter. Its flexibility allows you to create a wide range of UI elements, from simple colored boxes to complex, styled components. By mastering the Container widget, you'll have a powerful tool for structuring and styling your Flitter applications.
+Container 위젯은 Flitter의 기본 구성 요소입니다. 그 유연성은 간단한 색상 상자부터 복잡하고 스타일이 지정된 구성 요소까지 다양한 UI 요소를 만들 수 있게 합니다. Container 위젯을 마스터하면 Flitter 애플리케이션을 구조화하고 스타일을 지정하는 강력한 도구를 갖게 됩니다.
