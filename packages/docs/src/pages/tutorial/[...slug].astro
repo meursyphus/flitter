@@ -17,7 +17,15 @@ export const getStaticPaths = async () => {
     return cleanedSegments.join("/");
   }
 
-  return tutorialEntries
+  // 원본 슬러그와 변환된 슬러그를 로그로 출력
+  console.log("===== Tutorial Entries =====");
+  tutorialEntries.forEach(entry => {
+    console.log(`Original slug: ${entry.slug}`);
+    console.log(`Resolved slug: ${resolveSlug(entry.slug)}`);
+    console.log("---");
+  });
+
+  const paths = tutorialEntries
     .map((entry) => ({
       ...entry,
       slug: resolveSlug(entry.slug),
@@ -34,6 +42,15 @@ export const getStaticPaths = async () => {
         lang: entry.lang,
       },
     }));
+  
+  // 최종 생성된 경로들 로그 출력
+  console.log("===== Generated Paths =====");
+  paths.forEach(path => {
+    console.log(`Path: /tutorial/${path.params.slug}`);
+    console.log("---");
+  });
+
+  return paths;
 };
 
 const { entry, prev, next } = Astro.props;
@@ -134,7 +151,7 @@ const { Content } = await entry.render();
           </button>
         </div>
       </nav>
-      <div class="prose prose-invert prose-modern max-w-none p-8">
+      <div class="prose prose-invert max-w-none p-8">
         <Content />
       </div>
     </div>

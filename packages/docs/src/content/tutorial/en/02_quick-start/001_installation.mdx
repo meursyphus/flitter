@@ -1,0 +1,242 @@
+---
+nav_group: "Quick Start"
+nav_order: 1
+title: "Installation & Setup"
+description: "Set up your development environment for Flitter and start your first project"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Text, TextStyle, Colors } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Create a Flitter widget
+      const widget = null;
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Getting Started with Flitter</h1>
+          {/* Pass the widget to ReactWidget */}
+        </div>
+      );
+    }
+
+    export default App;
+  package.json: |
+    {
+      "name": "my-flitter-app",
+      "version": "0.1.0",
+      "private": true,
+      "dependencies": {
+        "@testing-library/jest-dom": "^5.16.4",
+        "@testing-library/react": "^13.3.0",
+        "@testing-library/user-event": "^13.5.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-scripts": "5.0.1",
+        "web-vitals": "^2.1.4"
+      },
+      "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+      }
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Text, TextStyle, Colors } from "@meursyphus/flitter";
+
+    function App() {
+      // Create a simple Flitter widget
+      const widget = Container({
+        width: 300,
+        height: 100,
+        color: Colors.blue[100],
+        child: Text("🎉 Flitter Setup Complete!", {
+          style: new TextStyle({ 
+            fontSize: 24,
+            fontWeight: 'bold',
+            color: Colors.blue[800]
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Getting Started with Flitter</h1>
+          <ReactWidget widget={widget} />
+        </div>
+      );
+    }
+
+    export default App;
+  package.json: |
+    {
+      "name": "my-flitter-app",
+      "version": "0.1.0",
+      "private": true,
+      "dependencies": {
+        "@testing-library/jest-dom": "^5.16.4",
+        "@testing-library/react": "^13.3.0",
+        "@testing-library/user-event": "^13.5.0",
+        "@meursyphus/flitter": "^latest",
+        "@meursyphus/flitter-react": "^latest",
+        "@meursyphus/flitter-chart": "^latest",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-scripts": "5.0.1",
+        "web-vitals": "^2.1.4"
+      },
+      "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+      }
+    }
+---
+
+# Installation & Setup
+
+Ready to create amazing charts and diagrams with Flitter? You'll be up and running in just 5 minutes!
+
+## What You'll Learn
+
+- [ ] Verify Node.js and npm environment
+- [ ] Create a new React project
+- [ ] Install Flitter packages
+- [ ] Confirm development server is running
+
+## Prerequisites
+
+Before we start, make sure you have the following installed:
+
+### Node.js (v16 or higher)
+```bash
+node --version
+npm --version
+```
+
+If you haven't installed it yet, download the latest LTS version from [nodejs.org](https://nodejs.org/).
+
+## Step 1: Create a New React Project
+
+Open your terminal and run the following commands:
+
+```bash
+# Create a new project with Create React App
+npx create-react-app my-flitter-app
+cd my-flitter-app
+```
+
+> **💡 Tip**: You can change the project name to whatever you like. For example: `my-chart-project`, `dashboard-app`, etc.!
+
+## Step 2: Install Flitter Packages
+
+Now let's install the core Flitter packages:
+
+```bash
+# Flitter core library
+npm install @meursyphus/flitter
+
+# React integration package  
+npm install @meursyphus/flitter-react
+
+# Chart library (optional)
+npm install @meursyphus/flitter-chart
+```
+
+> **🔥 Advanced**: If you're using TypeScript, no additional setup is required. Flitter provides full TypeScript support!
+
+## Step 3: Verify Installation
+
+Let's verify that everything is installed correctly. Modify your `src/App.js` file as follows:
+
+```jsx
+import ReactWidget from "@meursyphus/flitter-react";
+import { Container, Text, TextStyle, Colors } from "@meursyphus/flitter";
+
+function App() {
+  // Create a simple Flitter widget
+  const widget = Container({
+    width: 300,
+    height: 100,
+    color: Colors.blue[100],
+    child: Text("🎉 Flitter Setup Complete!", {
+      style: new TextStyle({ 
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: Colors.blue[800]
+      })
+    })
+  });
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <h1>Getting Started with Flitter</h1>
+      <ReactWidget widget={widget} />
+    </div>
+  );
+}
+
+export default App;
+```
+
+## Step 4: Run the Development Server
+
+Now start the development server:
+
+```bash
+npm start
+```
+
+Your browser should automatically open and you should see the following at `http://localhost:3000`:
+
+- "Getting Started with Flitter" heading
+- "🎉 Flitter Setup Complete!" message with a blue background
+
+> **💡 Core Concept: ReactWidget**
+> 
+> `ReactWidget` is the bridge that allows you to use Flitter widgets within React components.
+> 
+> In real-world projects, you'll create complex charts or diagrams with Flitter and integrate them into React apps using ReactWidget.
+
+## 🐛 Troubleshooting
+
+### "Module not found" errors
+```bash
+# Delete node_modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Development server won't start
+```bash
+# Check for port conflicts and use a different port
+npm start -- --port 3001
+```
+
+### TypeScript errors
+```bash
+# For TypeScript projects, verify type definitions
+npm install --save-dev @types/react @types/react-dom
+```
+
+## Congratulations! 🎉
+
+Your Flitter development environment is successfully set up! 
+
+What you've accomplished:
+- ✅ Verified Node.js environment
+- ✅ Created React project
+- ✅ Installed Flitter packages  
+- ✅ Ran your first Flitter widget
+
+## Next Steps
+
+Now that your environment is ready, let's create an actual "Hello World" app!
+
+In the next tutorial, we'll dive deeper into Container and Text widgets, and learn how to adjust colors and styles.
+
+👉 **Next: Your First "Hello World" App**

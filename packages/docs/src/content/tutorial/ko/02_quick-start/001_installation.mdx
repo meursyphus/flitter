@@ -1,0 +1,242 @@
+---
+nav_group: "빠른 시작"
+nav_order: 1
+title: "설치 및 환경 설정"
+description: "Flitter 개발을 위한 환경을 설정하고 첫 번째 프로젝트를 시작해보세요"
+files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Text, TextStyle, Colors } from "@meursyphus/flitter";
+
+    function App() {
+      // TODO: Flitter 위젯을 생성해보세요
+      const widget = null;
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Flitter 시작하기</h1>
+          {/* ReactWidget에 위젯을 전달하세요 */}
+        </div>
+      );
+    }
+
+    export default App;
+  package.json: |
+    {
+      "name": "my-flitter-app",
+      "version": "0.1.0",
+      "private": true,
+      "dependencies": {
+        "@testing-library/jest-dom": "^5.16.4",
+        "@testing-library/react": "^13.3.0",
+        "@testing-library/user-event": "^13.5.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-scripts": "5.0.1",
+        "web-vitals": "^2.1.4"
+      },
+      "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+      }
+    }
+solved_files:
+  App.js: |
+    import ReactWidget from "@meursyphus/flitter-react";
+    import { Container, Text, TextStyle, Colors } from "@meursyphus/flitter";
+
+    function App() {
+      // 간단한 Flitter 위젯 생성
+      const widget = Container({
+        width: 300,
+        height: 100,
+        color: Colors.blue[100],
+        child: Text("🎉 Flitter 설치 완료!", {
+          style: new TextStyle({ 
+            fontSize: 24,
+            fontWeight: 'bold',
+            color: Colors.blue[800]
+          })
+        })
+      });
+
+      return (
+        <div style={{ padding: '20px' }}>
+          <h1>Flitter 시작하기</h1>
+          <ReactWidget widget={widget} />
+        </div>
+      );
+    }
+
+    export default App;
+  package.json: |
+    {
+      "name": "my-flitter-app",
+      "version": "0.1.0",
+      "private": true,
+      "dependencies": {
+        "@testing-library/jest-dom": "^5.16.4",
+        "@testing-library/react": "^13.3.0",
+        "@testing-library/user-event": "^13.5.0",
+        "@meursyphus/flitter": "^latest",
+        "@meursyphus/flitter-react": "^latest",
+        "@meursyphus/flitter-chart": "^latest",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-scripts": "5.0.1",
+        "web-vitals": "^2.1.4"
+      },
+      "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+      }
+    }
+---
+
+# 설치 및 환경 설정
+
+Flitter로 멋진 차트와 다이어그램을 만들어보고 싶으신가요? 5분이면 모든 준비가 끝납니다!
+
+## 이 튜토리얼에서 배울 것
+
+- [ ] Node.js와 npm 환경 확인하기
+- [ ] 새로운 React 프로젝트 생성하기
+- [ ] Flitter 패키지 설치하기
+- [ ] 개발 서버 실행 확인하기
+
+## 사전 요구사항
+
+시작하기 전에 다음이 설치되어 있는지 확인해주세요:
+
+### Node.js (v16 이상)
+```bash
+node --version
+npm --version
+```
+
+아직 설치하지 않으셨다면 [nodejs.org](https://nodejs.org/)에서 최신 LTS 버전을 다운로드하세요.
+
+## 1단계: 새로운 React 프로젝트 생성
+
+터미널을 열고 다음 명령어를 실행하세요:
+
+```bash
+# Create React App으로 새 프로젝트 생성
+npx create-react-app my-flitter-app
+cd my-flitter-app
+```
+
+> **💡 팁**: 프로젝트 이름은 원하는 대로 변경하셔도 됩니다. 예를 들어 `my-chart-project`, `dashboard-app` 등으로요!
+
+## 2단계: Flitter 패키지 설치
+
+이제 Flitter의 핵심 패키지들을 설치해보겠습니다:
+
+```bash
+# Flitter 핵심 라이브러리
+npm install @meursyphus/flitter
+
+# React 통합 패키지  
+npm install @meursyphus/flitter-react
+
+# 차트 라이브러리 (선택사항)
+npm install @meursyphus/flitter-chart
+```
+
+> **🔥 고급**: TypeScript를 사용하신다면 추가 설정이 필요하지 않습니다. Flitter는 완전한 TypeScript 지원을 제공합니다!
+
+## 3단계: 설치 확인
+
+설치가 제대로 되었는지 확인해보겠습니다. `src/App.js` 파일을 다음과 같이 수정하세요:
+
+```jsx
+import ReactWidget from "@meursyphus/flitter-react";
+import { Container, Text, TextStyle, Colors } from "@meursyphus/flitter";
+
+function App() {
+  // 간단한 Flitter 위젯 생성
+  const widget = Container({
+    width: 300,
+    height: 100,
+    color: Colors.blue[100],
+    child: Text("🎉 Flitter 설치 완료!", {
+      style: new TextStyle({ 
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: Colors.blue[800]
+      })
+    })
+  });
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <h1>Flitter 시작하기</h1>
+      <ReactWidget widget={widget} />
+    </div>
+  );
+}
+
+export default App;
+```
+
+## 4단계: 개발 서버 실행
+
+이제 개발 서버를 실행해보세요:
+
+```bash
+npm start
+```
+
+브라우저가 자동으로 열리고 `http://localhost:3000`에서 다음을 확인할 수 있어야 합니다:
+
+- "Flitter 시작하기" 제목
+- 파란색 배경의 "🎉 Flitter 설치 완료!" 메시지
+
+> **💡 핵심 개념: ReactWidget**
+> 
+> `ReactWidget`은 Flitter 위젯을 React 컴포넌트에서 사용할 수 있게 해주는 브릿지입니다.
+> 
+> 실무에서는 복잡한 차트나 다이어그램을 Flitter로 만들고, ReactWidget으로 React 앱에 통합합니다.
+
+## 🐛 문제해결
+
+### "Module not found" 오류가 발생하는 경우
+```bash
+# node_modules 삭제 후 재설치
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### 개발 서버가 시작되지 않는 경우
+```bash
+# 포트 충돌 확인 및 다른 포트 사용
+npm start -- --port 3001
+```
+
+### TypeScript 오류가 발생하는 경우
+```bash
+# TypeScript 프로젝트라면 타입 정의 확인
+npm install --save-dev @types/react @types/react-dom
+```
+
+## 축하합니다! 🎉
+
+Flitter 개발 환경이 성공적으로 설정되었습니다! 
+
+지금까지 학습한 내용:
+- ✅ Node.js 환경 확인
+- ✅ React 프로젝트 생성
+- ✅ Flitter 패키지 설치  
+- ✅ 첫 번째 Flitter 위젯 실행
+
+## 다음 단계
+
+이제 환경 설정이 완료되었으니, 실제로 "Hello World" 앱을 만들어보겠습니다!
+
+다음 튜토리얼에서는 Container, Text 위젯을 더 자세히 알아보고, 색상과 스타일을 조정하는 방법을 배워보겠습니다.
+
+👉 **다음: 첫 번째 "Hello World" 앱**
