@@ -16,7 +16,7 @@ files:
       const widget = Container({
         width: 400,
         height: 400,
-        color: Colors.grey[200],
+        color: Colors.gray[200],
         child: Column({
           children: [
             Text("Align과 Center를 연습해보세요!"),
@@ -61,7 +61,7 @@ solved_files:
       const AlignBox = (alignment, text, color) => Container({
         width: 150,
         height: 150,
-        color: Colors.grey[200],
+        color: Colors.gray[200],
         child: Align({
           alignment: alignment,
           child: Container({
@@ -81,7 +81,7 @@ solved_files:
       const widget = Container({
         width: 600,
         padding: EdgeInsets.all(20),
-        color: Colors.grey[100],
+        color: Colors.gray[100],
         child: Column({
           children: [
             // 1. Center 위젯
@@ -154,7 +154,7 @@ solved_files:
             Container({
               width: 400,
               height: 200,
-              color: Colors.grey[300],
+              color: Colors.gray[300],
               child: Stack({
                 children: [
                   // 중앙 기준점
@@ -240,14 +240,14 @@ solved_files:
                         Text("메인 컨텐츠 영역", {
                           style: new TextStyle({ 
                             fontSize: 16,
-                            color: Colors.grey[700]
+                            color: Colors.gray[700]
                           })
                         }),
                         SizedBox({ height: 8 }),
                         Text("FAB는 우하단에 위치", {
                           style: new TextStyle({ 
                             fontSize: 14,
-                            color: Colors.grey[500]
+                            color: Colors.gray[500]
                           })
                         })
                       ]
@@ -475,7 +475,7 @@ Align({
 Stack({
   children: [
     // 배경
-    Container({ color: Colors.grey[200] }),
+    Container({ color: Colors.gray[200] }),
     
     // 각 모서리에 위젯 배치
     Align({
@@ -625,7 +625,7 @@ class AnimatedAlignExampleState extends State {
       child: Container({
         width: 300,
         height: 300,
-        color: Colors.grey[200],
+        color: Colors.gray[200],
         child: AnimatedAlign({
           alignment: this.alignment,
           duration: Duration({ milliseconds: 500 }),
