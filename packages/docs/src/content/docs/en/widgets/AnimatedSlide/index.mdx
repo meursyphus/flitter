@@ -1,39 +1,631 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: AnimatedSlide
 title: "AnimatedSlide"
-description: ""
+description: "A widget that animates position transitions with slide effects"
 ---
 
-# AnimatedSlide
+## Overview
 
-This widget motivated by AnimatedSlide in Flutter.
+AnimatedSlide is a widget that automatically animates when its position (offset) changes, providing smooth slide transition effects. This widget is inspired by Flutter's AnimatedSlide widget.
 
-> Widget which automatically transitions the child's offset relative to its normal position whenever the given offset changes.
->
-> The translation is expressed as an Offset scaled to the child's size. For example, an Offset with a dx of 0.25 will result in a horizontal translation of one quarter the width of the child.
+> Animated version of FractionalTranslation which automatically transitions the child's offset over a given duration whenever the given offset changes.
 
-See: https://api.flutter.dev/flutter/widgets/AnimatedSlide-class.html
+Flutter reference: https://api.flutter.dev/flutter/widgets/AnimatedSlide-class.html
+
+## When to use?
+
+- When creating slide effects for elements appearing or disappearing from the screen
+- When implementing smooth slide animations for tab or page transitions
+- When showing or hiding notifications or toast messages with slide effects
+- When creating transition effects for sliders or carousels
+- When providing visual feedback for drag and drop or swipe gestures
+- When implementing open/close animations for menus or sidebars
+
+## Basic usage
+
+```typescript
+import { AnimatedSlide, Container, StatefulWidget, Offset } from '@flitter/core';
+
+class SlideExample extends StatefulWidget {
+  createState() {
+    return new SlideExampleState();
+  }
+}
+
+class SlideExampleState extends State<SlideExample> {
+  offset = Offset({ x: 0, y: 0 });
+
+  build() {
+    return Column({
+      children: [
+        ElevatedButton({
+          onPressed: () => {
+            this.setState(() => {
+              this.offset = this.offset.x === 0 
+                ? Offset({ x: 1, y: 0 }) // Move right
+                : Offset({ x: 0, y: 0 }); // Back to original position
+            });
+          },
+          child: Text("Slide Move"),
+        }),
+        Container({
+          width: 300,
+          height: 200,
+          color: "lightblue",
+          child: AnimatedSlide({
+            offset: this.offset,
+            duration: 500, // 0.5 seconds
+            child: Container({
+              width: 100,
+              height: 100,
+              color: "blue",
+              child: Center({
+                child: Icon({
+                  icon: Icons.star,
+                  color: "white",
+                  size: 40,
+                }),
+              }),
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
 
 ## Props
 
-### offset
-
+### offset (required)
 **Value: Offset**
 
-### duration
+Specifies the widget's movement distance. This is a relative position calculated as a ratio to the widget's size.
+- `Offset({ x: 0, y: 0 })`: Original position
+- `Offset({ x: 1, y: 0 })`: Move right by widget width
+- `Offset({ x: -1, y: 0 })`: Move left by widget width
+- `Offset({ x: 0, y: 1 })`: Move down by widget height
+- `Offset({ x: 0, y: -1 })`: Move up by widget height
+- `Offset({ x: 0.5, y: 0.5 })`: Move right by half width, down by half height
 
+### duration (required)
 **Value: number**
 
-### curve
+Specifies the animation duration in milliseconds.
 
-**Value: Curve(default Curves.linear)**
+### curve (optional)
+**Value: Curve** (default: **Curves.linear**)
 
-### child
+Specifies the animation progression curve. Available curves:
+- `Curves.linear`: Constant speed
+- `Curves.easeIn`: Slow start
+- `Curves.easeOut`: Slow end
+- `Curves.easeInOut`: Slow start and end
+- `Curves.circIn`: Circular acceleration start
+- `Curves.circOut`: Circular deceleration end
+- `Curves.circInOut`: Circular acceleration/deceleration
+- `Curves.backIn`: Goes back then starts
+- `Curves.backOut`: Overshoots target then returns
+- `Curves.backInOut`: backIn + backOut
+- `Curves.anticipate`: Anticipatory motion before proceeding
+- `Curves.bounceIn`: Bounces at start
+- `Curves.bounceOut`: Bounces at end
+- `Curves.bounceInOut`: Bounces at start/end
 
+### child (optional)
 **Value: Widget | undefined**
 
-## Examples
+The child widget to which the slide effect will be applied.
 
-### Basic
+### key (optional)
+**Value: any**
+
+A unique identifier for the widget.
+
+## Real-world examples
+
+### Example 1: Toast notification animation
+
+```typescript
+import { AnimatedSlide, Container, Text, Curves, Offset } from '@flitter/core';
+
+class ToastNotification extends StatefulWidget {
+  createState() {
+    return new ToastNotificationState();
+  }
+}
+
+class ToastNotificationState extends State<ToastNotification> {
+  isVisible = false;
+  offset = Offset({ x: 0, y: -1 }); // Hidden above screen
+
+  showToast() {
+    this.setState(() => {
+      this.isVisible = true;
+      this.offset = Offset({ x: 0, y: 0 }); // Appear on screen
+    });
+
+    // Auto hide after 3 seconds
+    setTimeout(() => {
+      this.setState(() => {
+        this.isVisible = false;
+        this.offset = Offset({ x: 0, y: -1 });
+      });
+    }, 3000);
+  }
+
+  build() {
+    return Column({
+      children: [
+        ElevatedButton({
+          onPressed: () => this.showToast(),
+          child: Text("Show Toast"),
+        }),
+        SizedBox({ height: 20 }),
+        Container({
+          width: double.infinity,
+          height: 100,
+          child: Stack({
+            children: [
+              if (this.isVisible) AnimatedSlide({
+                offset: this.offset,
+                duration: 300,
+                curve: Curves.easeOut,
+                child: Container({
+                  margin: EdgeInsets.symmetric({ horizontal: 20 }),
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration({
+                    color: "#2ecc71",
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow({
+                        color: "rgba(0,0,0,0.3)",
+                        blurRadius: 8,
+                        offset: Offset({ x: 0, y: 4 }),
+                      }),
+                    ],
+                  }),
+                  child: Row({
+                    children: [
+                      Icon({
+                        icon: Icons.check_circle,
+                        color: "white",
+                        size: 24,
+                      }),
+                      SizedBox({ width: 12 }),
+                      Expanded({
+                        child: Text(
+                          "Successfully saved!",
+                          { style: TextStyle({ color: "white", fontSize: 16, fontWeight: "bold" }) }
+                        ),
+                      }),
+                    ],
+                  }),
+                }),
+              }),
+            ],
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
+
+### Example 2: Tab switching animation
+
+```typescript
+import { AnimatedSlide, Container, GestureDetector, Curves, Offset } from '@flitter/core';
+
+class TabSwitcher extends StatefulWidget {
+  createState() {
+    return new TabSwitcherState();
+  }
+}
+
+class TabSwitcherState extends State<TabSwitcher> {
+  activeTab = 0;
+  tabs = ["Home", "Search", "Profile", "Settings"];
+
+  getTabOffset(index: number): Offset {
+    const diff = index - this.activeTab;
+    return Offset({ x: diff, y: 0 });
+  }
+
+  build() {
+    return Column({
+      children: [
+        // Tab header
+        Row({
+          children: this.tabs.map((tab, index) => {
+            const isActive = this.activeTab === index;
+            
+            return Expanded({
+              key: ValueKey(index),
+              child: GestureDetector({
+                onTap: () => {
+                  this.setState(() => {
+                    this.activeTab = index;
+                  });
+                },
+                child: Container({
+                  padding: EdgeInsets.symmetric({ vertical: 16 }),
+                  decoration: BoxDecoration({
+                    color: isActive ? "#3498db" : "#ecf0f1",
+                    borderRadius: BorderRadius.circular(8),
+                  }),
+                  child: Center({
+                    child: Text(
+                      tab,
+                      { style: TextStyle({ 
+                        color: isActive ? "white" : "#34495e", 
+                        fontWeight: isActive ? "bold" : "normal",
+                        fontSize: 16
+                      }) }
+                    ),
+                  }),
+                }),
+              }),
+            });
+          }),
+        }),
+        SizedBox({ height: 20 }),
+        
+        // Tab content
+        Container({
+          height: 300,
+          width: double.infinity,
+          child: Stack({
+            children: this.tabs.map((tab, index) => {
+              return AnimatedSlide({
+                key: ValueKey(index),
+                offset: this.getTabOffset(index),
+                duration: 400,
+                curve: Curves.easeInOut,
+                child: Container({
+                  width: double.infinity,
+                  height: double.infinity,
+                  decoration: BoxDecoration({
+                    color: ["#e74c3c", "#f39c12", "#9b59b6", "#1abc9c"][index],
+                    borderRadius: BorderRadius.circular(12),
+                  }),
+                  child: Center({
+                    child: Column({
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon({
+                          icon: [Icons.home, Icons.search, Icons.person, Icons.settings][index],
+                          color: "white",
+                          size: 64,
+                        }),
+                        SizedBox({ height: 16 }),
+                        Text(
+                          `${tab} Tab`,
+                          { style: TextStyle({ color: "white", fontSize: 24, fontWeight: "bold" }) }
+                        ),
+                        SizedBox({ height: 8 }),
+                        Text(
+                          `This is the content of the ${tab} tab.`,
+                          { style: TextStyle({ color: "white", fontSize: 16, opacity: 0.8 }) }
+                        ),
+                      ],
+                    }),
+                  }),
+                }),
+              });
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
+
+### Example 3: Side menu animation
+
+```typescript
+import { AnimatedSlide, Container, GestureDetector, Curves, Offset } from '@flitter/core';
+
+class SideMenu extends StatefulWidget {
+  createState() {
+    return new SideMenuState();
+  }
+}
+
+class SideMenuState extends State<SideMenu> {
+  isMenuOpen = false;
+
+  toggleMenu() {
+    this.setState(() => {
+      this.isMenuOpen = !this.isMenuOpen;
+    });
+  }
+
+  build() {
+    return Container({
+      width: double.infinity,
+      height: 400,
+      child: Stack({
+        children: [
+          // Main content
+          Container({
+            color: "#ecf0f1",
+            child: Column({
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton({
+                  onPressed: () => this.toggleMenu(),
+                  child: Text(this.isMenuOpen ? "Close Menu" : "Open Menu"),
+                }),
+                SizedBox({ height: 20 }),
+                Text(
+                  "Main Content Area",
+                  { style: TextStyle({ fontSize: 18, color: "#34495e" }) }
+                ),
+              ],
+            }),
+          }),
+          
+          // Side menu
+          AnimatedSlide({
+            offset: this.isMenuOpen 
+              ? Offset({ x: 0, y: 0 })    // Appear on screen
+              : Offset({ x: -1, y: 0 }),  // Hide to the left
+            duration: 300,
+            curve: Curves.easeInOut,
+            child: Container({
+              width: 250,
+              height: double.infinity,
+              decoration: BoxDecoration({
+                color: "#2c3e50",
+                boxShadow: [
+                  BoxShadow({
+                    color: "rgba(0,0,0,0.3)",
+                    blurRadius: 10,
+                    offset: Offset({ x: 2, y: 0 }),
+                  }),
+                ],
+              }),
+              child: Column({
+                children: [
+                  Container({
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration({
+                      color: "#34495e",
+                    }),
+                    child: Row({
+                      children: [
+                        CircleAvatar({
+                          backgroundColor: "#3498db",
+                          child: Icon({
+                            icon: Icons.person,
+                            color: "white",
+                          }),
+                        }),
+                        SizedBox({ width: 12 }),
+                        Expanded({
+                          child: Column({
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Username",
+                                { style: TextStyle({ color: "white", fontSize: 16, fontWeight: "bold" }) }
+                              ),
+                              Text(
+                                "user@example.com",
+                                { style: TextStyle({ color: "#bdc3c7", fontSize: 12 }) }
+                              ),
+                            ],
+                          }),
+                        }),
+                      ],
+                    }),
+                  }),
+                  ...["Home", "Profile", "Settings", "Help", "Logout"].map((item, index) => {
+                    const icons = [Icons.home, Icons.person, Icons.settings, Icons.help, Icons.exit_to_app];
+                    
+                    return ListTile({
+                      key: ValueKey(index),
+                      leading: Icon({
+                        icon: icons[index],
+                        color: "#bdc3c7",
+                      }),
+                      title: Text(
+                        item,
+                        { style: TextStyle({ color: "white", fontSize: 16 }) }
+                      ),
+                      onTap: () => {
+                        // Handle menu item click
+                        this.toggleMenu();
+                      },
+                    });
+                  }),
+                ],
+              }),
+            }),
+          }),
+          
+          // Overlay (when menu is open)
+          if (this.isMenuOpen) GestureDetector({
+            onTap: () => this.toggleMenu(),
+            child: Container({
+              color: "rgba(0,0,0,0.5)",
+            }),
+          }),
+        ],
+      }),
+    });
+  }
+}
+```
+
+### Example 4: Card swipe animation
+
+```typescript
+import { AnimatedSlide, Container, GestureDetector, Curves, Offset } from '@flitter/core';
+
+class SwipeableCard extends StatefulWidget {
+  createState() {
+    return new SwipeableCardState();
+  }
+}
+
+class SwipeableCardState extends State<SwipeableCard> {
+  cards = [
+    { title: "Card 1", color: "#e74c3c", content: "This is the first card." },
+    { title: "Card 2", color: "#f39c12", content: "This is the second card." },
+    { title: "Card 3", color: "#27ae60", content: "This is the third card." },
+    { title: "Card 4", color: "#3498db", content: "This is the fourth card." },
+  ];
+  
+  currentIndex = 0;
+  offset = Offset({ x: 0, y: 0 });
+  isAnimating = false;
+
+  swipeLeft() {
+    if (this.isAnimating || this.currentIndex >= this.cards.length - 1) return;
+    
+    this.setState(() => {
+      this.isAnimating = true;
+      this.offset = Offset({ x: -1, y: 0 });
+    });
+
+    setTimeout(() => {
+      this.setState(() => {
+        this.currentIndex += 1;
+        this.offset = Offset({ x: 1, y: 0 });
+      });
+      
+      setTimeout(() => {
+        this.setState(() => {
+          this.offset = Offset({ x: 0, y: 0 });
+          this.isAnimating = false;
+        });
+      }, 50);
+    }, 250);
+  }
+
+  swipeRight() {
+    if (this.isAnimating || this.currentIndex <= 0) return;
+    
+    this.setState(() => {
+      this.isAnimating = true;
+      this.offset = Offset({ x: 1, y: 0 });
+    });
+
+    setTimeout(() => {
+      this.setState(() => {
+        this.currentIndex -= 1;
+        this.offset = Offset({ x: -1, y: 0 });
+      });
+      
+      setTimeout(() => {
+        this.setState(() => {
+          this.offset = Offset({ x: 0, y: 0 });
+          this.isAnimating = false;
+        });
+      }, 50);
+    }, 250);
+  }
+
+  build() {
+    const currentCard = this.cards[this.currentIndex];
+    
+    return Column({
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container({
+          width: 300,
+          height: 200,
+          child: AnimatedSlide({
+            offset: this.offset,
+            duration: 250,
+            curve: Curves.easeInOut,
+            child: Container({
+              decoration: BoxDecoration({
+                color: currentCard.color,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow({
+                    color: "rgba(0,0,0,0.3)",
+                    blurRadius: 10,
+                    offset: Offset({ x: 0, y: 5 }),
+                  }),
+                ],
+              }),
+              child: Padding({
+                padding: EdgeInsets.all(20),
+                child: Column({
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      currentCard.title,
+                      { style: TextStyle({ color: "white", fontSize: 24, fontWeight: "bold" }) }
+                    ),
+                    SizedBox({ height: 16 }),
+                    Text(
+                      currentCard.content,
+                      { style: TextStyle({ color: "white", fontSize: 16, opacity: 0.8 }) }
+                    ),
+                  ],
+                }),
+              }),
+            }),
+          }),
+        }),
+        SizedBox({ height: 30 }),
+        Row({
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton({
+              onPressed: this.currentIndex > 0 ? () => this.swipeRight() : null,
+              child: Row({
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.arrow_back),
+                  SizedBox({ width: 8 }),
+                  Text("Previous"),
+                ],
+              }),
+            }),
+            Text(
+              `${this.currentIndex + 1} / ${this.cards.length}`,
+              { style: TextStyle({ fontSize: 16, fontWeight: "bold" }) }
+            ),
+            ElevatedButton({
+              onPressed: this.currentIndex < this.cards.length - 1 ? () => this.swipeLeft() : null,
+              child: Row({
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("Next"),
+                  SizedBox({ width: 8 }),
+                  Icon(Icons.arrow_forward),
+                ],
+              }),
+            }),
+          ],
+        }),
+      ],
+    });
+  }
+}
+```
+
+## Notes
+
+- **Offset value meaning**: Offset values are relative ratios to the widget's size (not absolute pixel values)
+- **Layout impact**: Slide only affects visual appearance and does not influence layout
+- **Performance considerations**: Applying slide animation to many widgets simultaneously may impact performance
+- **Boundary handling**: Slid widgets may extend beyond their parent container, so boundaries can be limited with ClipRect etc.
+- **Continuous animations**: State management is needed to prevent animation overlap during rapid successive calls
+
+## Related widgets
+
+- **FractionalTranslation**: Basic widget for applying relative position movement without animation
+- **AnimatedContainer**: General-purpose widget for animating multiple transformations simultaneously
+- **SlideTransition**: Slide animation using explicit Animation controllers
+- **AnimatedPositioned**: Widget for animating absolute positions within Stack
+- **Transform.translate**: Basic widget for moving position with absolute pixel values

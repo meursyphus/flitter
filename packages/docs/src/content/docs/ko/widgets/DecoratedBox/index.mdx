@@ -1,25 +1,313 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: DecoratedBox
 title: "DecoratedBox"
-description: ""
+description: "자식 위젯에 배경 장식을 추가하는 위젯"
 ---
 
-# DecoratedBox
+## 개요
 
-This widget clip the child widget like DecoratedBox Widget in Flutter.
+`DecoratedBox`는 자식 위젯 뒤에 장식(배경색, 테두리, 그림자 등)을 그리는 위젯입니다. Flutter의 DecoratedBox에서 영감을 받았으며, 위젯에 시각적 스타일을 추가할 때 사용합니다.
 
-See: [https://api.flutter.dev/flutter/widgets/DecoratedBox-class.html](https://api.flutter.dev/flutter/widgets/DecoratedBox-class.html)
+`Container` 위젯도 내부적으로 decoration 속성이 제공되면 DecoratedBox를 사용합니다. 단순히 장식만 필요하고 다른 레이아웃 속성이 필요 없다면 DecoratedBox를 직접 사용하는 것이 더 효율적입니다.
+
+참고: [https://api.flutter.dev/flutter/widgets/DecoratedBox-class.html](https://api.flutter.dev/flutter/widgets/DecoratedBox-class.html)
+
+## 언제 사용하나요?
+
+- 위젯에 배경색이나 그라데이션을 추가할 때
+- 테두리(border)를 그려야 할 때
+- 둥근 모서리(border radius)를 만들어야 할 때
+- 그림자(box shadow) 효과를 추가할 때
+- 원형 또는 사각형 모양으로 클리핑이 필요할 때
+
+## 기본 사용법
+
+```typescript
+import { DecoratedBox, BoxDecoration } from 'flitter';
+
+// 기본 배경색
+const ColoredBox = DecoratedBox({
+  decoration: new BoxDecoration({
+    color: '#3498db'
+  }),
+  child: SizedBox({ width: 100, height: 100 })
+});
+
+// 테두리와 둥근 모서리
+const RoundedBox = DecoratedBox({
+  decoration: new BoxDecoration({
+    color: 'white',
+    border: Border.all({ color: '#2c3e50', width: 2 }),
+    borderRadius: BorderRadius.circular(10)
+  }),
+  child: Padding({
+    padding: EdgeInsets.all(16),
+    child: Text('둥근 상자')
+  })
+});
+```
 
 ## Props
 
-### decoration
+### decoration (필수)
+**값: Decoration (BoxDecoration)**
 
-**Value: Decoration**
+위젯에 적용할 장식을 정의합니다. 현재는 `BoxDecoration`만 지원됩니다.
 
-### child
+#### BoxDecoration 속성:
 
-**Value: Widget | undefined**
+- **color**: `Color | string` - 배경색 (기본값: "transparent")
+- **border**: `Border` - 테두리 설정
+- **borderRadius**: `BorderRadiusGeometry` - 모서리 둥글기
+- **boxShadow**: `BoxShadow[]` - 그림자 효과 배열
+- **shape**: `"rectangle" | "circle"` - 모양 (기본값: "rectangle")
 
-## Basic
+### child (선택)
+**값: Widget**
+
+장식 위에 표시될 자식 위젯입니다. 장식은 항상 자식 뒤에 그려집니다.
+
+## 실제 사용 예제
+
+### 예제 1: 다양한 배경색과 모양
+
+```typescript
+import { DecoratedBox, BoxDecoration, SizedBox, Row } from 'flitter';
+
+const ColorExamples = Row({
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    // 사각형 배경
+    DecoratedBox({
+      decoration: new BoxDecoration({
+        color: '#e74c3c'
+      }),
+      child: SizedBox({ width: 80, height: 80 })
+    }),
+    
+    // 원형 배경
+    DecoratedBox({
+      decoration: new BoxDecoration({
+        color: '#3498db',
+        shape: 'circle'
+      }),
+      child: SizedBox({ width: 80, height: 80 })
+    }),
+    
+    // 투명도가 있는 배경
+    DecoratedBox({
+      decoration: new BoxDecoration({
+        color: 'rgba(46, 204, 113, 0.5)'
+      }),
+      child: SizedBox({ width: 80, height: 80 })
+    })
+  ]
+});
+```
+
+### 예제 2: 테두리 스타일링
+
+```typescript
+import { DecoratedBox, BoxDecoration, Border, BorderRadius } from 'flitter';
+
+const BorderExamples = Column({
+  children: [
+    // 전체 테두리
+    DecoratedBox({
+      decoration: new BoxDecoration({
+        color: 'white',
+        border: Border.all({ 
+          color: '#34495e', 
+          width: 3 
+        })
+      }),
+      child: Padding({
+        padding: EdgeInsets.all(20),
+        child: Text('전체 테두리')
+      })
+    }),
+    
+    // 부분 테두리
+    DecoratedBox({
+      decoration: new BoxDecoration({
+        color: '#ecf0f1',
+        border: Border.symmetric({
+          horizontal: new BorderSide({ color: '#e74c3c', width: 2 }),
+          vertical: new BorderSide({ color: '#3498db', width: 2 })
+        })
+      }),
+      child: Padding({
+        padding: EdgeInsets.all(20),
+        child: Text('대칭 테두리')
+      })
+    }),
+    
+    // 둥근 테두리
+    DecoratedBox({
+      decoration: new BoxDecoration({
+        color: 'white',
+        border: Border.all({ color: '#9b59b6', width: 2 }),
+        borderRadius: BorderRadius.circular(20)
+      }),
+      child: Padding({
+        padding: EdgeInsets.all(20),
+        child: Text('둥근 테두리')
+      })
+    })
+  ]
+});
+```
+
+### 예제 3: 그림자 효과
+
+```typescript
+import { DecoratedBox, BoxDecoration, BoxShadow, Offset } from 'flitter';
+
+const ShadowExample = DecoratedBox({
+  decoration: new BoxDecoration({
+    color: 'white',
+    borderRadius: BorderRadius.circular(10),
+    boxShadow: [
+      new BoxShadow({
+        color: 'rgba(0, 0, 0, 0.2)',
+        offset: new Offset({ x: 0, y: 4 }),
+        blurRadius: 8
+      }),
+      new BoxShadow({
+        color: 'rgba(0, 0, 0, 0.1)',
+        offset: new Offset({ x: 0, y: 2 }),
+        blurRadius: 4
+      })
+    ]
+  }),
+  child: Padding({
+    padding: EdgeInsets.all(24),
+    child: Text('부드러운 그림자', {
+      style: { fontSize: 18 }
+    })
+  })
+});
+```
+
+### 예제 4: 복잡한 카드 디자인
+
+```typescript
+import { DecoratedBox, BoxDecoration, Column, Row } from 'flitter';
+
+const Card = ({ title, content, color }) => DecoratedBox({
+  decoration: new BoxDecoration({
+    color: 'white',
+    border: Border.all({ 
+      color: color, 
+      width: 1 
+    }),
+    borderRadius: BorderRadius.only({
+      topLeft: Radius.circular(20),
+      topRight: Radius.circular(20),
+      bottomLeft: Radius.circular(8),
+      bottomRight: Radius.circular(8)
+    }),
+    boxShadow: [
+      new BoxShadow({
+        color: 'rgba(0, 0, 0, 0.1)',
+        offset: new Offset({ x: 0, y: 2 }),
+        blurRadius: 4
+      })
+    ]
+  }),
+  child: Column({
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      // 헤더
+      DecoratedBox({
+        decoration: new BoxDecoration({
+          color: color,
+          borderRadius: BorderRadius.vertical({
+            top: Radius.circular(19)
+          })
+        }),
+        child: Padding({
+          padding: EdgeInsets.all(16),
+          child: Text(title, {
+            style: { 
+              color: 'white', 
+              fontSize: 18, 
+              fontWeight: 'bold' 
+            }
+          })
+        })
+      }),
+      // 컨텐츠
+      Padding({
+        padding: EdgeInsets.all(16),
+        child: Text(content)
+      })
+    ]
+  })
+});
+```
+
+### 예제 5: 애니메이션과 함께 사용
+
+```typescript
+import { AnimatedContainer, BoxDecoration } from 'flitter';
+
+class AnimatedDecoration extends StatefulWidget {
+  createState() {
+    return new AnimatedDecorationState();
+  }
+}
+
+class AnimatedDecorationState extends State {
+  isActive = false;
+  
+  build() {
+    return GestureDetector({
+      onTap: () => this.setState(() => {
+        this.isActive = !this.isActive;
+      }),
+      child: AnimatedContainer({
+        duration: 300,
+        decoration: new BoxDecoration({
+          color: this.isActive ? '#e74c3c' : '#3498db',
+          borderRadius: BorderRadius.circular(
+            this.isActive ? 30 : 10
+          ),
+          boxShadow: this.isActive ? [
+            new BoxShadow({
+              color: 'rgba(231, 76, 60, 0.4)',
+              offset: new Offset({ x: 0, y: 8 }),
+              blurRadius: 16
+            })
+          ] : []
+        }),
+        width: 150,
+        height: 150,
+        child: Center({
+          child: Text(
+            this.isActive ? '활성' : '비활성',
+            { style: { color: 'white', fontSize: 20 } }
+          )
+        })
+      })
+    });
+  }
+}
+```
+
+## 주의사항
+
+- `shape: 'circle'`를 사용할 때는 자식 위젯의 가로세로 크기가 같아야 완벽한 원이 됩니다
+- `borderRadius`는 `shape: 'rectangle'`일 때만 적용됩니다
+- 그림자는 성능에 영향을 줄 수 있으므로 필요한 경우에만 사용하세요
+- 복잡한 장식이 필요한 경우 `CustomPaint`를 고려해보세요
+- `Container` 위젯도 decoration을 지원하므로, 추가 레이아웃 속성이 필요하면 Container를 사용하세요
+
+## 관련 위젯
+
+- **Container**: decoration과 함께 padding, margin 등의 레이아웃 속성이 필요할 때
+- **ClipRRect**: 단순히 둥근 모서리로 자르기만 할 때
+- **CustomPaint**: 더 복잡한 그래픽이나 커스텀 그리기가 필요할 때
+- **AnimatedContainer**: decoration 애니메이션이 필요할 때

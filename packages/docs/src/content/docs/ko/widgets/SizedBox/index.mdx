@@ -1,14 +1,16 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: SizedBox
 title: "SizedBox"
-description: ""
+description: "고정된 크기를 지정하는 간단한 박스 위젯"
 ---
 
-# SizedBox
+## 개요
 
-This widget motivated by SizedBox in Flutter.
+SizedBox는 특정 너비와 높이를 가진 박스를 생성하는 간단한 위젯입니다.
+
+SizedBox는 크기 지정만을 목적으로 하는 단일 기능 위젯으로, Container보다 가볍고 효율적입니다. 주로 위젯 간 간격을 만들거나, 자식 위젯의 크기를 제한하거나, 조건부 렌더링에서 빈 공간을 만들 때 사용됩니다. 내부적으로는 ConstrainedBox를 사용하여 tight constraints를 적용합니다.
 
 <iframe
   width="560"
@@ -20,18 +22,268 @@ This widget motivated by SizedBox in Flutter.
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/SizedBox-class.html](https://api.flutter.dev/flutter/widgets/SizedBox-class.html)
+참고: [https://api.flutter.dev/flutter/widgets/SizedBox-class.html](https://api.flutter.dev/flutter/widgets/SizedBox-class.html)
+
+## 언제 사용하나요?
+
+- 위젯 간 고정된 간격을 만들 때
+- 자식 위젯에 고정된 크기를 강제할 때
+- 조건부 렌더링에서 빈 공간이 필요할 때
+- Container의 다른 기능(색상, 패딩, 장식 등)이 필요 없을 때
+- 성능이 중요한 곳에서 단순히 크기만 지정할 때
+
+## 기본 사용법
+
+```typescript
+// 고정 크기 박스
+SizedBox({
+  width: 200,
+  height: 100,
+  child: Text('고정 크기')
+})
+
+// 간격 만들기 (가장 일반적인 사용)
+Column({
+  children: [
+    Text('위'),
+    SizedBox({ height: 20 }), // 20픽셀 세로 간격
+    Text('아래')
+  ]
+})
+
+// 가로 간격
+Row({
+  children: [
+    Icon({ icon: Icons.star }),
+    SizedBox({ width: 8 }), // 8픽셀 가로 간격
+    Text('별표')
+  ]
+})
+```
 
 ## Props
 
 ### width
 
-**Value: number | undefined**
+**값: number | undefined**
+
+박스의 너비를 픽셀 단위로 지정합니다. 지정하지 않으면 자식의 너비에 따라 결정됩니다.
+
+```typescript
+SizedBox({
+  width: 100,
+  child: Text('너비 100px')
+})
+```
 
 ### height
 
-**Value: number | undefined**
+**값: number | undefined**
+
+박스의 높이를 픽셀 단위로 지정합니다. 지정하지 않으면 자식의 높이에 따라 결정됩니다.
+
+```typescript
+SizedBox({
+  height: 50,
+  child: Text('높이 50px')
+})
+```
 
 ### child
 
-**Value: Widget | undefined**
+**값: Widget | undefined**
+
+SizedBox 안에 배치할 자식 위젯입니다. 자식이 없으면 빈 공간이 생성됩니다.
+
+```typescript
+SizedBox({
+  width: 200,
+  height: 200,
+  child: Container({ color: 'blue' })
+})
+```
+
+## 정적 메서드
+
+### SizedBox.shrink()
+
+크기가 0인 SizedBox를 생성합니다. 조건부 렌더링에서 아무것도 표시하지 않을 때 유용합니다.
+
+```typescript
+// 조건부 렌더링
+const widget = showButton 
+  ? ElevatedButton({ child: Text('클릭') })
+  : SizedBox.shrink();
+
+// 기본 사용
+SizedBox.shrink() // width: 0, height: 0
+
+// 자식과 함께 사용
+SizedBox.shrink({
+  child: Text('보이지 않음') // 크기가 0이므로 표시되지 않음
+})
+```
+
+### SizedBox.expand()
+
+가능한 모든 공간을 차지하는 SizedBox를 생성합니다.
+
+```typescript
+// 전체 공간 차지
+SizedBox.expand({
+  child: Container({ color: 'red' })
+})
+
+// 특정 방향만 확장
+SizedBox.expand({
+  width: 100, // 너비는 100으로 고정
+  child: Container({ color: 'blue' }) // 높이만 확장
+})
+```
+
+### SizedBox.fromSize()
+
+Size 객체로부터 SizedBox를 생성합니다.
+
+```typescript
+const size = Size({ width: 150, height: 75 });
+
+SizedBox.fromSize({
+  size: size,
+  child: Text('Size 객체 사용')
+})
+```
+
+### SizedBox.square()
+
+정사각형 SizedBox를 생성합니다.
+
+```typescript
+// 100x100 정사각형
+SizedBox.square({
+  dimension: 100,
+  child: Container({ color: 'green' })
+})
+```
+
+## 실제 사용 예제
+
+### 예제 1: 리스트 아이템 간격
+
+```typescript
+const listWithSpacing = Column({
+  children: [
+    ListTile({ title: Text('항목 1') }),
+    SizedBox({ height: 8 }),
+    ListTile({ title: Text('항목 2') }),
+    SizedBox({ height: 8 }),
+    ListTile({ title: Text('항목 3') })
+  ]
+});
+```
+
+### 예제 2: 버튼 그룹
+
+```typescript
+const buttonGroup = Row({
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    ElevatedButton({
+      onPressed: () => {},
+      child: Text('이전')
+    }),
+    SizedBox({ width: 16 }), // 버튼 간 간격
+    ElevatedButton({
+      onPressed: () => {},
+      child: Text('다음')
+    })
+  ]
+});
+```
+
+### 예제 3: 조건부 간격
+
+```typescript
+const conditionalSpacing = Column({
+  children: [
+    Text('제목'),
+    hasSubtitle ? SizedBox({ height: 8 }) : SizedBox.shrink(),
+    hasSubtitle ? Text('부제목') : SizedBox.shrink(),
+    SizedBox({ height: 16 }),
+    Text('본문')
+  ]
+});
+```
+
+### 예제 4: 고정 크기 이미지 컨테이너
+
+```typescript
+const imageGrid = GridView({
+  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount({
+    crossAxisCount: 3,
+    spacing: 8
+  }),
+  children: images.map(img => 
+    SizedBox.square({
+      dimension: 100,
+      child: Image({
+        src: img,
+        fit: 'cover'
+      })
+    })
+  )
+});
+```
+
+### 예제 5: 로딩 표시기 크기 제한
+
+```typescript
+const loadingIndicator = Center({
+  child: SizedBox({
+    width: 50,
+    height: 50,
+    child: CircularProgressIndicator()
+  })
+});
+```
+
+## Container와의 차이점
+
+### SizedBox 사용
+```typescript
+// 단순히 크기만 필요할 때
+SizedBox({ 
+  width: 100, 
+  height: 50,
+  child: widget 
+})
+```
+
+### Container 사용
+```typescript
+// 크기 외에 다른 스타일이 필요할 때
+Container({ 
+  width: 100, 
+  height: 50,
+  padding: EdgeInsets.all(8),
+  color: 'blue',
+  child: widget 
+})
+```
+
+**성능 차이**: SizedBox는 단일 ConstrainedBox만 생성하지만, Container는 여러 위젯을 조합하므로 SizedBox가 더 효율적입니다.
+
+## 주의사항
+
+- width와 height 중 하나만 지정하면 다른 축은 자식의 크기를 따릅니다.
+- SizedBox.expand()는 부모가 무한 크기를 허용하면 오류가 발생할 수 있습니다.
+- 자식이 없는 SizedBox는 지정된 크기의 빈 공간을 만듭니다.
+- 음수 크기는 허용되지 않습니다.
+
+## 관련 위젯
+
+- **Container**: 크기 외에 다양한 스타일링이 필요할 때
+- **ConstrainedBox**: 최소/최대 크기 제약이 필요할 때
+- **AspectRatio**: 가로세로 비율을 유지해야 할 때
+- **FractionallySizedBox**: 부모 크기의 비율로 크기를 정할 때
+- **Spacer**: Row/Column에서 유연한 공간을 만들 때

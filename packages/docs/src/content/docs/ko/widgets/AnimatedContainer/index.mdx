@@ -1,20 +1,16 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: AnimatedContainer
 title: "AnimatedContainer"
-description: ""
+description: "시간에 따라 속성이 부드럽게 변화하는 애니메이션 컨테이너"
 ---
 
-# AnimatedContainer
+## 개요
 
-This widget motivated by AnimatedContainer in Flutter.
+AnimatedContainer는 Container의 애니메이션 버전으로, 속성 값이 변경될 때 자동으로 애니메이션을 적용합니다.
 
-> Animated version of Container that gradually changes its values over a period of time.
->
-> The AnimatedContainer will automatically animate between the old and new values of properties when they change using the provided curve and duration. Properties that are null are not animated. Its child and descendants are not animated.
->
-> This class is useful for generating simple implicit transitions between different parameters to Container with its internal AnimationController. For more complex animations, you'll likely want to use a subclass of AnimatedWidget such as the DecoratedBoxTransition or use your own AnimationController.
+AnimatedContainer는 지정된 duration과 curve를 사용하여 이전 값과 새로운 값 사이를 자동으로 애니메이션합니다. null인 속성은 애니메이션되지 않으며, 자식 위젯과 그 하위 요소들은 애니메이션되지 않습니다. 내부 AnimationController를 사용하여 Container의 다양한 속성들 간에 간단한 암시적 전환을 생성하는 데 유용합니다.
 
 <iframe
   width="560"
@@ -26,69 +22,988 @@ This widget motivated by AnimatedContainer in Flutter.
   allowfullscreen
 ></iframe>
 
-See: https://api.flutter.dev/flutter/widgets/AnimatedContainer-class.html
+참고: https://api.flutter.dev/flutter/widgets/AnimatedContainer-class.html
+
+## 언제 사용하나요?
+
+- 위젯의 크기, 색상, 여백 등을 부드럽게 전환할 때
+- 사용자 상호작용에 반응하는 시각적 피드백을 제공할 때
+- 상태 변화를 부드럽게 표현하고 싶을 때
+- 복잡한 AnimationController 없이 간단한 애니메이션이 필요할 때
+- hover 효과나 선택 상태를 표현할 때
+
+## 기본 사용법
+
+```typescript
+// StatefulWidget을 생성하여 상태를 관리합니다
+class AnimatedContainerExample extends StatefulWidget {
+  createState() {
+    return new AnimatedContainerExampleState();
+  }
+}
+
+class AnimatedContainerExampleState extends State<AnimatedContainerExample> {
+  isExpanded = false;
+
+  build() {
+    return GestureDetector({
+      onTap: () => {
+        this.setState(() => {
+          this.isExpanded = !this.isExpanded;
+        });
+      },
+      child: AnimatedContainer({
+        duration: 300, // 300ms
+        curve: Curves.easeInOut,
+        width: this.isExpanded ? 200 : 100,
+        height: this.isExpanded ? 200 : 100,
+        color: this.isExpanded ? 'blue' : 'red',
+        child: Center({
+          child: Text('탭하세요')
+        })
+      })
+    });
+  }
+}
+
+// 팩토리 함수로 내보내기
+export default classToFunction(AnimatedContainerExample);
+```
 
 ## Props
 
-### duration
+### duration (필수)
 
-**Value: number**
+**값: number**
+
+애니메이션이 완료되는 데 걸리는 시간(밀리초)입니다.
+
+```typescript
+AnimatedContainer({
+  duration: 500, // 0.5초
+  width: 100,
+  height: 100
+})
+```
 
 ### curve
 
-**Value: Curve(default Curves.linear)**
+**값: Curve** (기본값: **Curves.linear**)
+
+애니메이션의 진행 곡선을 정의합니다. 다양한 내장 곡선을 사용할 수 있습니다.
+
+```typescript
+AnimatedContainer({
+  duration: 300,
+  curve: Curves.easeInOut, // 부드러운 시작과 끝
+  width: expanded ? 200 : 100
+})
+```
+
+사용 가능한 Curves:
+- **Curves.linear**: 일정한 속도
+- **Curves.easeIn**: 천천히 시작
+- **Curves.easeOut**: 천천히 끝남
+- **Curves.easeInOut**: 천천히 시작하고 끝남
+- **Curves.bounceIn**: 바운스하며 시작
+- **Curves.bounceOut**: 바운스하며 끝남
+- **Curves.bounceInOut**: 바운스하며 시작하고 끝남
+- **Curves.anticipate**: 뒤로 갔다가 앞으로
+- **Curves.backIn**: 뒤로 당겼다가 시작
+- **Curves.backOut**: 목표를 넘었다가 돌아옴
 
 ### width
 
-**Value: number | undefined**
+**값: number | undefined**
+
+컨테이너의 너비입니다. 변경 시 애니메이션됩니다.
+
+```typescript
+AnimatedContainer({
+  duration: 200,
+  width: isSelected ? 150 : 100,
+  height: 50
+})
+```
 
 ### height
 
-**Value: number | undefined**
+**값: number | undefined**
+
+컨테이너의 높이입니다. 변경 시 애니메이션됩니다.
+
+```typescript
+AnimatedContainer({
+  duration: 200,
+  width: 100,
+  height: isExpanded ? 200 : 100
+})
+```
 
 ### color
 
-**Value: string | undefined**
+**값: string | undefined**
 
-This define background color of the container.
-This should not be with decoration
+컨테이너의 배경색입니다. decoration과 함께 사용할 수 없습니다.
+
+```typescript
+AnimatedContainer({
+  duration: 300,
+  color: isActive ? 'blue' : 'gray',
+  child: Text('상태 표시')
+})
+```
 
 ### decoration
 
-**Value: Deaction | undefined**
+**값: Decoration | undefined**
+
+컨테이너의 장식입니다. BoxDecoration의 모든 속성이 애니메이션됩니다.
+
+```typescript
+AnimatedContainer({
+  duration: 400,
+  decoration: BoxDecoration({
+    color: isHovered ? 'lightblue' : 'white',
+    borderRadius: BorderRadius.circular(isHovered ? 20 : 10),
+    boxShadow: isHovered ? [
+      BoxShadow({
+        color: 'rgba(0, 0, 0, 0.2)',
+        blurRadius: 10,
+        offset: { x: 0, y: 5 }
+      })
+    ] : []
+  })
+})
+```
 
 ### margin
 
-**Value: EdgeInsets | undefined**
+**값: EdgeInsets | undefined**
+
+컨테이너 외부 여백입니다. 변경 시 애니메이션됩니다.
+
+```typescript
+AnimatedContainer({
+  duration: 300,
+  margin: EdgeInsets.all(isSelected ? 20 : 10),
+  color: 'blue'
+})
+```
 
 ### padding
 
-**Value: EdgeInsets | undefined**
+**값: EdgeInsets | undefined**
 
-### Alignment
+컨테이너 내부 여백입니다. 변경 시 애니메이션됩니다.
 
-**Value: Alignment | undefined**
+```typescript
+AnimatedContainer({
+  duration: 300,
+  padding: EdgeInsets.all(isExpanded ? 20 : 10),
+  child: Text('내용')
+})
+```
 
-### Contraints
+### alignment
 
-**Value: Contraints | undefined**
+**값: Alignment | undefined**
+
+자식 위젯의 정렬 위치입니다. 변경 시 애니메이션됩니다.
+
+```typescript
+AnimatedContainer({
+  duration: 500,
+  alignment: isLeft ? Alignment.centerLeft : Alignment.centerRight,
+  child: Icon({ icon: Icons.star })
+})
+```
+
+### constraints
+
+**값: Constraints | undefined**
+
+컨테이너의 제약 조건입니다. 최소/최대 크기가 애니메이션됩니다.
+
+```typescript
+AnimatedContainer({
+  duration: 300,
+  constraints: Constraints({
+    minWidth: 100,
+    maxWidth: isExpanded ? 300 : 150,
+    minHeight: 50,
+    maxHeight: isExpanded ? 200 : 100
+  })
+})
+```
 
 ### clipped
 
-**Value: boolean (Default: false)**
+**값: boolean** (기본값: **false**)
 
-### Transform
+컨테이너 경계를 벗어나는 콘텐츠를 잘라낼지 여부입니다.
 
-**Value: Matrix4 | undefined**
+```typescript
+AnimatedContainer({
+  duration: 300,
+  clipped: true,
+  width: 100,
+  height: 100,
+  child: Image({ src: 'large-image.jpg' })
+})
+```
 
-### TransformAlignment
+### transform
 
-**Value: Alignment | undefined**
+**값: Matrix4 | undefined**
+
+컨테이너에 적용할 변환 행렬입니다. 회전, 크기 조정, 이동 등이 애니메이션됩니다.
+
+```typescript
+AnimatedContainer({
+  duration: 600,
+  transform: isRotated 
+    ? Matrix4.rotationZ(Math.PI / 4) // 45도 회전
+    : Matrix4.identity(),
+  child: Icon({ icon: Icons.refresh })
+})
+```
+
+### transformAlignment
+
+**값: Alignment | undefined**
+
+변환의 기준점입니다. transform과 함께 사용됩니다.
+
+```typescript
+AnimatedContainer({
+  duration: 500,
+  transform: Matrix4.rotationZ(angle),
+  transformAlignment: Alignment.center, // 중심점 기준 회전
+  child: Text('회전')
+})
+```
 
 ### child
 
-**Value: Widget | undefined**
+**값: Widget | undefined**
 
-## Examples
+애니메이션되지 않는 자식 위젯입니다.
 
-### Basic
+```typescript
+AnimatedContainer({
+  duration: 300,
+  width: 100,
+  height: 100,
+  child: Icon({ icon: Icons.favorite })
+})
+```
+
+## 실제 사용 예제
+
+### 예제 1: 호버 효과 카드
+
+```typescript
+class HoverCard extends StatefulWidget {
+  createState() {
+    return new HoverCardState();
+  }
+}
+
+class HoverCardState extends State<HoverCard> {
+  isHovered = false;
+
+  build() {
+    return GestureDetector({
+      onMouseEnter: () => this.setState(() => { this.isHovered = true; }),
+      onMouseLeave: () => this.setState(() => { this.isHovered = false; }),
+      child: AnimatedContainer({
+        duration: 200,
+        curve: Curves.easeOut,
+        width: 200,
+        height: this.isHovered ? 250 : 200,
+        decoration: BoxDecoration({
+          color: 'white',
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow({
+              color: this.isHovered ? 'rgba(0, 0, 0, 0.15)' : 'rgba(0, 0, 0, 0.05)',
+              blurRadius: this.isHovered ? 20 : 10,
+              offset: { x: 0, y: this.isHovered ? 10 : 5 }
+            })
+          ]
+        }),
+        child: Padding({
+          padding: EdgeInsets.all(16),
+          child: Column({
+            children: [
+              Icon({ 
+                icon: Icons.shopping_cart,
+                size: 48,
+                color: this.isHovered ? 'blue' : 'gray'
+              }),
+              SizedBox({ height: 12 }),
+              Text('상품 카드')
+            ]
+          })
+        })
+      })
+    });
+  }
+}
+```
+
+### 예제 2: 확장 가능한 패널
+
+```typescript
+class ExpandablePanel extends StatefulWidget {
+  createState() {
+    return new ExpandablePanelState();
+  }
+}
+
+class ExpandablePanelState extends State<ExpandablePanel> {
+  isExpanded = false;
+
+  build() {
+    return AnimatedContainer({
+      duration: 300,
+      curve: Curves.easeInOut,
+      width: 300,
+      height: this.isExpanded ? 400 : 80,
+      decoration: BoxDecoration({
+        color: 'white',
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all({ color: '#E0E0E0' })
+      }),
+      child: Column({
+        children: [
+          GestureDetector({
+            onTap: () => this.setState(() => { this.isExpanded = !this.isExpanded; }),
+            child: Container({
+              height: 80,
+              padding: EdgeInsets.symmetric({ horizontal: 16 }),
+              child: Row({
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('패널 제목'),
+                  AnimatedContainer({
+                    duration: 300,
+                    transform: Matrix4.rotationZ(this.isExpanded ? Math.PI : 0),
+                    transformAlignment: Alignment.center,
+                    child: Icon({ icon: Icons.expand_more })
+                  })
+                ]
+              })
+            })
+          }),
+          if (this.isExpanded) Expanded({
+            child: Padding({
+              padding: EdgeInsets.all(16),
+              child: Text('확장된 내용이 여기에 표시됩니다.')
+            })
+          })
+        ]
+      })
+    });
+  }
+}
+```
+
+### 예제 3: 진행 표시기
+
+```typescript
+const ProgressIndicator = ({ progress }: { progress: number }) => {
+  return Container({
+    width: 300,
+    height: 20,
+    decoration: BoxDecoration({
+      color: '#E0E0E0',
+      borderRadius: BorderRadius.circular(10)
+    }),
+    child: Stack({
+      children: [
+        AnimatedContainer({
+          duration: 500,
+          curve: Curves.easeOut,
+          width: 300 * progress,
+          height: 20,
+          decoration: BoxDecoration({
+            color: progress < 0.5 ? 'orange' : 'green',
+            borderRadius: BorderRadius.circular(10)
+          })
+        }),
+        Center({
+          child: Text(`${Math.round(progress * 100)}%`, {
+            style: TextStyle({ color: 'white', fontWeight: 'bold' })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 4: 선택 가능한 칩
+
+```typescript
+const SelectableChip = ({ label, selected, onTap }) => {
+  return GestureDetector({
+    onTap: onTap,
+    child: AnimatedContainer({
+      duration: 200,
+      curve: Curves.easeOut,
+      padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+      decoration: BoxDecoration({
+        color: selected ? 'blue' : 'transparent',
+        border: Border.all({ 
+          color: selected ? 'blue' : 'gray',
+          width: selected ? 2 : 1
+        }),
+        borderRadius: BorderRadius.circular(20)
+      }),
+      child: Text(label, {
+        style: TextStyle({
+          color: selected ? 'white' : 'black',
+          fontWeight: selected ? 'bold' : 'normal'
+        })
+      })
+    })
+  });
+};
+```
+
+### 예제 5: 로딩 스켈레톤
+
+```typescript
+class LoadingSkeleton extends StatefulWidget {
+  createState() {
+    return new LoadingSkeletonState();
+  }
+}
+
+class LoadingSkeletonState extends State<LoadingSkeleton> {
+  animationPhase = 0;
+  Timer? timer;
+
+  initState() {
+    super.initState();
+    this.timer = Timer.periodic(Duration({ milliseconds: 800 }), () => {
+      this.setState(() => {
+        this.animationPhase = (this.animationPhase + 1) % 3;
+      });
+    });
+  }
+
+  dispose() {
+    this.timer?.cancel();
+    super.dispose();
+  }
+
+  build() {
+    return AnimatedContainer({
+      duration: 800,
+      curve: Curves.easeInOut,
+      width: 300,
+      height: 100,
+      decoration: BoxDecoration({
+        gradient: LinearGradient({
+          colors: ['#E0E0E0', '#F5F5F5', '#E0E0E0'],
+          stops: [0, 0.5, 1],
+          begin: Alignment.centerLeft.add(Alignment(-1 + this.animationPhase * 0.5, 0)),
+          end: Alignment.centerRight.add(Alignment(-1 + this.animationPhase * 0.5, 0))
+        }),
+        borderRadius: BorderRadius.circular(8)
+      })
+    });
+  }
+}
+```
+
+### 예제 6: 다단계 온보딩 화면
+
+```typescript
+class OnboardingScreen extends StatefulWidget {
+  createState() {
+    return new OnboardingScreenState();
+  }
+}
+
+class OnboardingScreenState extends State<OnboardingScreen> {
+  currentStep = 0;
+  
+  steps = [
+    { color: '#3F51B5', icon: Icons.rocket_launch, title: '시작하기', description: 'Flitter로 멋진 앱을 만들어보세요' },
+    { color: '#00BCD4', icon: Icons.palette, title: '디자인', description: '아름다운 UI를 쉽게 구현하세요' },
+    { color: '#4CAF50', icon: Icons.speed, title: '성능', description: '빠르고 부드러운 애니메이션' },
+    { color: '#FF5722', icon: Icons.done_all, title: '완성', description: '당신의 첫 앱이 준비되었습니다!' }
+  ];
+
+  build() {
+    const step = this.steps[this.currentStep];
+    
+    return Container({
+      width: 400,
+      height: 600,
+      child: Column({
+        children: [
+          // 애니메이션 배경
+          AnimatedContainer({
+            duration: 600,
+            curve: Curves.easeInOut,
+            width: 400,
+            height: 400,
+            decoration: BoxDecoration({
+              gradient: RadialGradient({
+                colors: [step.color, this.darkenColor(step.color)],
+                radius: 1.5,
+              }),
+            }),
+            child: Center({
+              child: AnimatedContainer({
+                duration: 400,
+                curve: Curves.bounceOut,
+                transform: Matrix4.identity()
+                  .scaled(this.currentStep === 3 ? 1.2 : 1.0)
+                  .rotateZ(this.currentStep * Math.PI / 8),
+                transformAlignment: Alignment.center,
+                child: Icon({
+                  icon: step.icon,
+                  size: 100,
+                  color: 'white',
+                }),
+              }),
+            }),
+          }),
+          
+          // 텍스트 영역
+          Expanded({
+            child: Container({
+              padding: EdgeInsets.all(24),
+              child: Column({
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column({
+                    children: [
+                      AnimatedContainer({
+                        duration: 300,
+                        height: 40,
+                        child: Text(step.title, {
+                          style: TextStyle({
+                            fontSize: 28,
+                            fontWeight: 'bold',
+                            color: step.color,
+                          }),
+                        }),
+                      }),
+                      SizedBox({ height: 12 }),
+                      AnimatedContainer({
+                        duration: 400,
+                        curve: Curves.easeOut,
+                        padding: EdgeInsets.symmetric({ horizontal: 20 }),
+                        child: Text(step.description, {
+                          style: TextStyle({
+                            fontSize: 16,
+                            color: '#666',
+                            textAlign: 'center',
+                          }),
+                        }),
+                      }),
+                    ],
+                  }),
+                  
+                  // 진행 표시 및 버튼
+                  Column({
+                    children: [
+                      // 진행 점
+                      Row({
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: this.steps.map((_, index) => {
+                          return Container({
+                            margin: EdgeInsets.symmetric({ horizontal: 4 }),
+                            child: AnimatedContainer({
+                              duration: 300,
+                              width: index === this.currentStep ? 24 : 8,
+                              height: 8,
+                              decoration: BoxDecoration({
+                                color: index === this.currentStep ? step.color : '#E0E0E0',
+                                borderRadius: BorderRadius.circular(4),
+                              }),
+                            }),
+                          });
+                        }),
+                      }),
+                      
+                      SizedBox({ height: 24 }),
+                      
+                      // 네비게이션 버튼
+                      Row({
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          AnimatedContainer({
+                            duration: 200,
+                            opacity: this.currentStep > 0 ? 1 : 0,
+                            child: TextButton({
+                              onPressed: () => {
+                                if (this.currentStep > 0) {
+                                  this.setState(() => {
+                                    this.currentStep--;
+                                  });
+                                }
+                              },
+                              child: Text('이전'),
+                            }),
+                          }),
+                          
+                          GestureDetector({
+                            onTap: () => {
+                              if (this.currentStep < this.steps.length - 1) {
+                                this.setState(() => {
+                                  this.currentStep++;
+                                });
+                              }
+                            },
+                            child: AnimatedContainer({
+                              duration: 300,
+                              padding: EdgeInsets.symmetric({ horizontal: 32, vertical: 12 }),
+                              decoration: BoxDecoration({
+                                color: step.color,
+                                borderRadius: BorderRadius.circular(24),
+                                boxShadow: [
+                                  BoxShadow({
+                                    color: `${step.color}40`,
+                                    blurRadius: 12,
+                                    offset: Offset({ x: 0, y: 4 }),
+                                  }),
+                                ],
+                              }),
+                              child: Text(
+                                this.currentStep === this.steps.length - 1 ? '시작하기' : '다음',
+                                { style: TextStyle({ color: 'white', fontWeight: 'bold' }) }
+                              ),
+                            }),
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            }),
+          }),
+        ],
+      }),
+    });
+  }
+  
+  darkenColor(color: string): string {
+    // 색상을 어둡게 만드는 간단한 헬퍼
+    const colors: { [key: string]: string } = {
+      '#3F51B5': '#303F9F',
+      '#00BCD4': '#0097A7',
+      '#4CAF50': '#388E3C',
+      '#FF5722': '#D84315',
+    };
+    return colors[color] || color;
+  }
+}
+```
+
+### 예제 7: 반응형 그리드 아이템
+
+```typescript
+class ResponsiveGridItem extends StatefulWidget {
+  item: { id: string; title: string; color: string; icon: any };
+  
+  constructor({ item }: { item: any }) {
+    super();
+    this.item = item;
+  }
+  
+  createState() {
+    return new ResponsiveGridItemState();
+  }
+}
+
+class ResponsiveGridItemState extends State<ResponsiveGridItem> {
+  isPressed = false;
+  isHovered = false;
+  
+  build() {
+    return GestureDetector({
+      onTapDown: () => this.setState(() => { this.isPressed = true; }),
+      onTapUp: () => this.setState(() => { this.isPressed = false; }),
+      onTapCancel: () => this.setState(() => { this.isPressed = false; }),
+      onMouseEnter: () => this.setState(() => { this.isHovered = true; }),
+      onMouseLeave: () => this.setState(() => { this.isHovered = false; }),
+      
+      child: AnimatedContainer({
+        duration: 200,
+        curve: Curves.easeOut,
+        margin: EdgeInsets.all(this.isPressed ? 12 : 8),
+        transform: Matrix4.identity()
+          .scaled(this.isPressed ? 0.95 : (this.isHovered ? 1.05 : 1.0)),
+        transformAlignment: Alignment.center,
+        decoration: BoxDecoration({
+          color: this.widget.item.color,
+          borderRadius: BorderRadius.circular(this.isHovered ? 20 : 12),
+          boxShadow: [
+            BoxShadow({
+              color: this.isPressed 
+                ? 'rgba(0,0,0,0.1)' 
+                : (this.isHovered ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.15)'),
+              blurRadius: this.isPressed ? 5 : (this.isHovered ? 20 : 10),
+              offset: Offset({ 
+                x: 0, 
+                y: this.isPressed ? 2 : (this.isHovered ? 8 : 4) 
+              }),
+            }),
+          ],
+        }),
+        child: Stack({
+          children: [
+            // 배경 패턴
+            Positioned({
+              right: -20,
+              bottom: -20,
+              child: AnimatedContainer({
+                duration: 400,
+                curve: Curves.easeOut,
+                width: 100,
+                height: 100,
+                transform: Matrix4.identity()
+                  .rotateZ(this.isHovered ? Math.PI / 6 : 0),
+                transformAlignment: Alignment.center,
+                decoration: BoxDecoration({
+                  color: 'rgba(255,255,255,0.1)',
+                  borderRadius: BorderRadius.circular(20),
+                }),
+              }),
+            }),
+            
+            // 콘텐츠
+            Padding({
+              padding: EdgeInsets.all(20),
+              child: Column({
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AnimatedContainer({
+                    duration: 300,
+                    padding: EdgeInsets.all(this.isHovered ? 12 : 8),
+                    decoration: BoxDecoration({
+                      color: 'rgba(255,255,255,0.2)',
+                      borderRadius: BorderRadius.circular(this.isHovered ? 16 : 12),
+                    }),
+                    child: Icon({
+                      icon: this.widget.item.icon,
+                      size: 32,
+                      color: 'white',
+                    }),
+                  }),
+                  
+                  Spacer(),
+                  
+                  AnimatedContainer({
+                    duration: 200,
+                    transform: Matrix4.identity()
+                      .translate(this.isHovered ? -4 : 0, 0),
+                    child: Text(this.widget.item.title, {
+                      style: TextStyle({
+                        color: 'white',
+                        fontSize: 18,
+                        fontWeight: 'bold',
+                      }),
+                    }),
+                  }),
+                  
+                  AnimatedContainer({
+                    duration: 300,
+                    height: this.isHovered ? 20 : 0,
+                    child: this.isHovered ? Text('자세히 보기 →', {
+                      style: TextStyle({
+                        color: 'rgba(255,255,255,0.8)',
+                        fontSize: 14,
+                      }),
+                    }) : null,
+                  }),
+                ],
+              }),
+            }),
+          ],
+        }),
+      }),
+    });
+  }
+}
+
+// 사용 예시
+GridView.count({
+  crossAxisCount: 3,
+  crossAxisSpacing: 16,
+  mainAxisSpacing: 16,
+  padding: EdgeInsets.all(16),
+  children: [
+    { id: '1', title: '대시보드', color: '#3F51B5', icon: Icons.dashboard },
+    { id: '2', title: '분석', color: '#00BCD4', icon: Icons.analytics },
+    { id: '3', title: '보고서', color: '#4CAF50', icon: Icons.description },
+    { id: '4', title: '설정', color: '#FF5722', icon: Icons.settings },
+    { id: '5', title: '사용자', color: '#9C27B0', icon: Icons.people },
+    { id: '6', title: '알림', color: '#FF9800', icon: Icons.notifications },
+  ].map(item => ResponsiveGridItem({ item })),
+});
+```
+
+### 예제 8: 플로팅 액션 버튼 메뉴
+
+```typescript
+class FloatingActionMenu extends StatefulWidget {
+  createState() {
+    return new FloatingActionMenuState();
+  }
+}
+
+class FloatingActionMenuState extends State<FloatingActionMenu> {
+  isOpen = false;
+  
+  menuItems = [
+    { icon: Icons.photo_camera, label: '사진', color: '#4CAF50' },
+    { icon: Icons.videocam, label: '동영상', color: '#2196F3' },
+    { icon: Icons.mic, label: '음성', color: '#FF5722' },
+    { icon: Icons.attach_file, label: '파일', color: '#FF9800' },
+  ];
+  
+  build() {
+    return Container({
+      width: 200,
+      height: 300,
+      child: Stack({
+        alignment: Alignment.bottomRight,
+        children: [
+          // 메뉴 아이템들
+          ...this.menuItems.map((item, index) => {
+            const angle = (Math.PI / 2) * (index / (this.menuItems.length - 1));
+            const distance = 80;
+            
+            return AnimatedContainer({
+              duration: 300 + index * 50,
+              curve: this.isOpen ? Curves.easeOut : Curves.easeIn,
+              transform: Matrix4.identity()
+                .translate(
+                  this.isOpen ? -Math.cos(angle) * distance : 0,
+                  this.isOpen ? -Math.sin(angle) * distance : 0,
+                ),
+              child: AnimatedContainer({
+                duration: 200,
+                opacity: this.isOpen ? 1 : 0,
+                transform: Matrix4.identity()
+                  .scaled(this.isOpen ? 1 : 0.5),
+                transformAlignment: Alignment.center,
+                child: Row({
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (this.isOpen) Container({
+                      padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
+                      decoration: BoxDecoration({
+                        color: 'white',
+                        borderRadius: BorderRadius.circular(4),
+                        boxShadow: [
+                          BoxShadow({
+                            color: 'rgba(0,0,0,0.1)',
+                            blurRadius: 4,
+                            offset: Offset({ x: 0, y: 2 }),
+                          }),
+                        ],
+                      }),
+                      child: Text(item.label, {
+                        style: TextStyle({ fontSize: 12 }),
+                      }),
+                    }),
+                    SizedBox({ width: 8 }),
+                    Container({
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration({
+                        color: item.color,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow({
+                            color: `${item.color}40`,
+                            blurRadius: 8,
+                            offset: Offset({ x: 0, y: 4 }),
+                          }),
+                        ],
+                      }),
+                      child: Center({
+                        child: Icon({
+                          icon: item.icon,
+                          color: 'white',
+                          size: 24,
+                        }),
+                      }),
+                    }),
+                  ],
+                }),
+              }),
+            });
+          }),
+          
+          // 메인 FAB
+          GestureDetector({
+            onTap: () => {
+              this.setState(() => {
+                this.isOpen = !this.isOpen;
+              });
+            },
+            child: AnimatedContainer({
+              duration: 300,
+              width: 56,
+              height: 56,
+              transform: Matrix4.identity()
+                .rotateZ(this.isOpen ? Math.PI / 4 : 0),
+              transformAlignment: Alignment.center,
+              decoration: BoxDecoration({
+                color: this.isOpen ? '#F44336' : '#2196F3',
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow({
+                    color: this.isOpen ? 'rgba(244,67,54,0.4)' : 'rgba(33,150,243,0.4)',
+                    blurRadius: 12,
+                    offset: Offset({ x: 0, y: 6 }),
+                  }),
+                ],
+              }),
+              child: Center({
+                child: Icon({
+                  icon: Icons.add,
+                  color: 'white',
+                  size: 28,
+                }),
+              }),
+            }),
+          }),
+        ],
+      }),
+    });
+  }
+}
+```
+
+## 주의사항
+
+- duration은 필수 속성입니다. 애니메이션 시간을 반드시 지정해야 합니다.
+- color와 decoration을 동시에 사용할 수 없습니다.
+- 자식 위젯은 애니메이션되지 않습니다. 자식도 애니메이션하려면 별도의 AnimatedWidget을 사용하세요.
+- 너무 많은 속성을 동시에 애니메이션하면 성능에 영향을 줄 수 있습니다.
+- 빠른 상태 변경 시 애니메이션이 중단되고 새로운 애니메이션이 시작됩니다.
+- transform 사용 시 레이아웃 크기는 변하지 않습니다. 실제 공간을 차지하는 애니메이션이 필요하면 width/height를 사용하세요.
+- 복잡한 decoration 애니메이션은 성능에 영향을 줄 수 있으므로 주의가 필요합니다.
+
+## 관련 위젯
+
+- **Container**: 애니메이션이 없는 기본 컨테이너
+- **AnimatedPadding**: padding만 애니메이션하는 위젯
+- **AnimatedAlign**: alignment만 애니메이션하는 위젯
+- **AnimatedOpacity**: 투명도만 애니메이션하는 위젯
+- **AnimatedPositioned**: Stack 내에서 위치를 애니메이션하는 위젯
+- **AnimatedPhysicalModel**: 그림자와 elevation을 애니메이션하는 위젯
+- **AnimatedDefaultTextStyle**: 텍스트 스타일을 애니메이션하는 위젯

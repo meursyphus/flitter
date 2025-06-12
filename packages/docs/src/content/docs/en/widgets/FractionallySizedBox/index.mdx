@@ -1,16 +1,16 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: FractionallySizedBox
 title: "FractionallySizedBox"
-description: ""
+description: "A widget that sizes its child to a fraction of the total available space"
 ---
 
-# FractionallySizedBox
+## Overview
 
-This widget motivated by FractionallySizedBox in Flutter.
+FractionallySizedBox is a widget that sizes its child to a fraction of the total available space.
 
-> A widget that sizes its child to a fraction of the total available space.
+This widget is useful when you want to set the child's size as a percentage of the parent's available space. For example, you can create a card that takes 80% of the screen width or an image that takes half the height.
 
 <iframe
   width="560"
@@ -24,24 +24,434 @@ This widget motivated by FractionallySizedBox in Flutter.
 
 See: [https://api.flutter.dev/flutter/widgets/FractionallySizedBox-class.html](https://api.flutter.dev/flutter/widgets/FractionallySizedBox-class.html)
 
+## When to use it?
+
+- When you need relative sizing based on parent space
+- For ratio-based sizing in responsive layouts
+- When creating UI that adapts to screen size
+- For percentage-based design instead of fixed pixel sizes
+- When building flexible layout components
+
+## Basic Usage
+
+```typescript
+// 80% of parent width
+FractionallySizedBox({
+  widthFactor: 0.8,
+  child: Container({
+    height: 100,
+    color: 'blue'
+  })
+})
+
+// 50% of parent height
+FractionallySizedBox({
+  heightFactor: 0.5,
+  child: Container({
+    width: 200,
+    color: 'red'
+  })
+})
+
+// 60% width, 40% height
+FractionallySizedBox({
+  widthFactor: 0.6,
+  heightFactor: 0.4,
+  child: Container({
+    color: 'green'
+  })
+})
+
+// With custom alignment
+FractionallySizedBox({
+  widthFactor: 0.7,
+  alignment: Alignment.topLeft,
+  child: Container({
+    height: 80,
+    color: 'purple'
+  })
+})
+```
+
 ## Props
-
-### alignment
-
-**Value: Alignment** (default: **Alignment.center**)
 
 ### widthFactor
 
 **Value: number | undefined**
 
-### heightFoctor
+The fraction of the parent's width that the child should occupy.
+
+- `undefined`: Use parent's width constraints as-is
+- `0.0 ~ 1.0`: 0% to 100% ratio
+- `> 1.0`: Larger than parent (may overflow)
+
+```typescript
+FractionallySizedBox({
+  widthFactor: 0.5,    // 50% of parent width
+  child: child
+})
+
+FractionallySizedBox({
+  widthFactor: 1.2,    // 120% of parent width (overflow)
+  child: child
+})
+
+FractionallySizedBox({
+  widthFactor: undefined,  // Use parent width constraints
+  child: child
+})
+```
+
+### heightFactor
 
 **Value: number | undefined**
+
+The fraction of the parent's height that the child should occupy.
+
+- `undefined`: Use parent's height constraints as-is
+- `0.0 ~ 1.0`: 0% to 100% ratio
+- `> 1.0`: Larger than parent (may overflow)
+
+```typescript
+FractionallySizedBox({
+  heightFactor: 0.3,   // 30% of parent height
+  child: child
+})
+
+FractionallySizedBox({
+  heightFactor: 1.5,   // 150% of parent height (overflow)
+  child: child
+})
+```
+
+### alignment
+
+**Value: Alignment** (default: **Alignment.center**)
+
+How to align the child when it's smaller or larger than the parent.
+
+```typescript
+FractionallySizedBox({
+  widthFactor: 0.8,
+  alignment: Alignment.centerLeft,  // Left center alignment
+  child: child
+})
+```
 
 ### child
 
 **Value: Widget | undefined**
 
-## Examples
+The child widget that will be sized.
 
-### Basic
+## Practical Examples
+
+### Example 1: Responsive Card Layout
+
+```typescript
+const ResponsiveCard = ({ title, content }) => {
+  return Container({
+    padding: EdgeInsets.all(16),
+    child: FractionallySizedBox({
+      widthFactor: 0.9,  // 90% of parent width
+      child: Container({
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration({
+          color: 'white',
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow({
+              color: 'rgba(0,0,0,0.1)',
+              blurRadius: 8,
+              offset: { x: 0, y: 2 }
+            })
+          ]
+        }),
+        child: Column({
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, {
+              style: TextStyle({
+                fontSize: 18,
+                fontWeight: 'bold',
+                marginBottom: 12
+              })
+            }),
+            Text(content, {
+              style: TextStyle({
+                fontSize: 14,
+                lineHeight: 1.4
+              })
+            })
+          ]
+        })
+      })
+    })
+  });
+};
+```
+
+### Example 2: Progress Bar
+
+```typescript
+const ProgressBar = ({ progress, color = '#4CAF50' }) => {
+  return Container({
+    width: double.infinity,
+    height: 8,
+    decoration: BoxDecoration({
+      color: '#E0E0E0',
+      borderRadius: BorderRadius.circular(4)
+    }),
+    child: FractionallySizedBox({
+      widthFactor: progress,  // 0.0 ~ 1.0
+      alignment: Alignment.centerLeft,
+      child: Container({
+        decoration: BoxDecoration({
+          color: color,
+          borderRadius: BorderRadius.circular(4)
+        })
+      })
+    })
+  });
+};
+
+// Usage example
+const ProgressExample = () => {
+  const [progress, setProgress] = useState(0.0);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress(prev => prev >= 1.0 ? 0.0 : prev + 0.1);
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
+  
+  return Column({
+    children: [
+      Text(`Progress: ${Math.round(progress * 100)}%`),
+      SizedBox({ height: 16 }),
+      ProgressBar({ progress })
+    ]
+  });
+};
+```
+
+### Example 3: Responsive Image Gallery
+
+```typescript
+const ResponsiveImageGallery = ({ images }) => {
+  return GridView({
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount({
+      crossAxisCount: 2,
+      childAspectRatio: 1.0,
+      crossAxisSpacing: 8,
+      mainAxisSpacing: 8
+    }),
+    children: images.map((image, index) => 
+      FractionallySizedBox({
+        widthFactor: 0.95,   // 95% of grid cell
+        heightFactor: 0.95,
+        child: Container({
+          decoration: BoxDecoration({
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow({
+                color: 'rgba(0,0,0,0.2)',
+                blurRadius: 4,
+                offset: { x: 0, y: 2 }
+              })
+            ]
+          }),
+          child: ClipRRect({
+            borderRadius: BorderRadius.circular(8),
+            child: Image({
+              src: image.url,
+              objectFit: 'cover'
+            })
+          })
+        })
+      })
+    )
+  });
+};
+```
+
+### Example 4: Adaptive Dialog
+
+```typescript
+const AdaptiveDialog = ({ title, content, actions, screenSize }) => {
+  // Adjust dialog size based on screen size
+  const getDialogSize = () => {
+    if (screenSize.width < 600) {
+      return { widthFactor: 0.9, heightFactor: undefined };
+    } else if (screenSize.width < 900) {
+      return { widthFactor: 0.7, heightFactor: 0.8 };
+    } else {
+      return { widthFactor: 0.5, heightFactor: 0.6 };
+    }
+  };
+  
+  const { widthFactor, heightFactor } = getDialogSize();
+  
+  return Center({
+    child: FractionallySizedBox({
+      widthFactor,
+      heightFactor,
+      child: Container({
+        decoration: BoxDecoration({
+          color: 'white',
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow({
+              color: 'rgba(0,0,0,0.3)',
+              blurRadius: 20,
+              offset: { x: 0, y: 10 }
+            })
+          ]
+        }),
+        child: Column({
+          children: [
+            // Header
+            Container({
+              padding: EdgeInsets.all(24),
+              decoration: BoxDecoration({
+                border: Border(bottom: BorderSide({ color: '#E0E0E0' }))
+              }),
+              child: Text(title, {
+                style: TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold'
+                })
+              })
+            }),
+            // Content
+            Expanded({
+              child: SingleChildScrollView({
+                padding: EdgeInsets.all(24),
+                child: Text(content)
+              })
+            }),
+            // Action buttons
+            Container({
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration({
+                border: Border(top: BorderSide({ color: '#E0E0E0' }))
+              }),
+              child: Row({
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: actions
+              })
+            })
+          ]
+        })
+      })
+    })
+  });
+};
+```
+
+### Example 5: Chart Container
+
+```typescript
+const ChartContainer = ({ data, title }) => {
+  return Container({
+    padding: EdgeInsets.all(16),
+    child: Column({
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, {
+          style: TextStyle({
+            fontSize: 18,
+            fontWeight: 'bold',
+            marginBottom: 16
+          })
+        }),
+        // Chart area (60% of parent height)
+        FractionallySizedBox({
+          heightFactor: 0.6,
+          child: Container({
+            width: double.infinity,
+            decoration: BoxDecoration({
+              color: '#F5F5F5',
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all({ color: '#E0E0E0' })
+            }),
+            child: CustomPaint({
+              painter: ChartPainter({ data }),
+              child: Container() // Chart drawing area
+            })
+          })
+        }),
+        SizedBox({ height: 16 }),
+        // Legend area (remaining space)
+        Expanded({
+          child: Container({
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration({
+              color: 'white',
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all({ color: '#E0E0E0' })
+            }),
+            child: ChartLegend({ data })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+## Understanding Ratio Calculations
+
+### Basic Calculation Formula
+
+```typescript
+// Width calculation
+childWidth = parentWidth * widthFactor
+
+// Height calculation  
+childHeight = parentHeight * heightFactor
+
+// Example
+const parentSize = { width: 400, height: 300 };
+
+FractionallySizedBox({
+  widthFactor: 0.8,    // 400 * 0.8 = 320px
+  heightFactor: 0.6,   // 300 * 0.6 = 180px
+  child: child
+})
+```
+
+### Single Direction Sizing
+
+```typescript
+// Only width as ratio, height determined by child
+FractionallySizedBox({
+  widthFactor: 0.5,
+  // heightFactor: undefined (default)
+  child: child
+})
+
+// Only height as ratio, width determined by child
+FractionallySizedBox({
+  heightFactor: 0.7,
+  // widthFactor: undefined (default)
+  child: child
+})
+```
+
+## Important Notes
+
+- Negative `widthFactor` or `heightFactor` values will cause errors
+- Values exceeding 1.0 may cause overflow
+- May behave unexpectedly with infinite constraints
+- Consider compound ratios when nesting FractionallySizedBox widgets
+- Consider performance when using with animations
+
+## Related Widgets
+
+- **AspectRatio**: Aspect ratio-based sizing
+- **ConstrainedBox**: Constraint-based sizing
+- **SizedBox**: Fixed size specification
+- **Expanded**: Space expansion within Flex
+- **Flexible**: Flexible sizing within Flex

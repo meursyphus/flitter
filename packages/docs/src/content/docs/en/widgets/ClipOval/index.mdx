@@ -1,20 +1,18 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: ClipOval
 title: "ClipOval"
-description: ""
+description: "A widget that clips its child using an oval shape"
 ---
 
-# ClipOval
+## Overview
 
-This widget clip the child widget like ClipOval Widget in Flutter.
+ClipOval is a widget that clips its child using an elliptical or circular shape. It is commonly used to create circular profile images, avatars, or when an elliptical shape is needed for design purposes.
 
-<b>The ClipOval</b> take clipper that is callback function and return <b>
-  Rect
-</b> object.
+> A widget that clips its child using an oval shape.
 
-This widget use <b>ClipPath</b> internally to clip the child widget
+Flutter reference: https://api.flutter.dev/flutter/widgets/ClipOval-class.html
 
 <iframe
   width="560"
@@ -26,6 +24,523 @@ This widget use <b>ClipPath</b> internally to clip the child widget
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/ClipOval-class.html](https://api.flutter.dev/flutter/widgets/ClipOval-class.html)
+## When to use
 
-<br />
+- Creating circular profile images or avatars
+- Clipping images or containers into an elliptical shape
+- Making buttons or cards circular or elliptical
+- When smooth curved shapes are needed for design
+- Placing logos or icons on a circular background
+- Creating round status indicators or badges
+
+## Basic usage
+
+```typescript
+import { ClipOval, Container, Image } from '@flitter/core';
+
+// Basic circular clip
+ClipOval({
+  clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+  child: Container({
+    width: 100,
+    height: 100,
+    color: "blue",
+    child: Center({
+      child: Text("Circle", { style: TextStyle({ color: "white", fontSize: 16 }) }),
+    }),
+  }),
+});
+
+// Clipping an image into a circle
+ClipOval({
+  clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+  child: Image({
+    src: "https://example.com/profile.jpg",
+    width: 80,
+    height: 80,
+    fit: "cover",
+  }),
+});
+```
+
+## Props
+
+### child (required)
+**Type: Widget**
+
+The child widget to be clipped.
+
+### clipper (required)
+**Type: (size: Size) => Rect**
+
+A function that defines the clip region. It receives the widget's size and returns the rectangular area where the oval will be drawn.
+- `Rect.fromLTWH(0, 0, size.width, size.height)`: Clips the entire area as an oval
+- `Rect.fromLTWH(10, 10, size.width-20, size.height-20)`: Clips as an oval with margins
+
+### clipped (optional)
+**Type: boolean** (default: **true**)
+
+Specifies whether to enable the clipping effect.
+- `true`: Apply clipping
+- `false`: Disable clipping (child widget displays normally)
+
+### key (optional)
+**Type: any**
+
+Unique identifier for the widget.
+
+## Real-world examples
+
+### Example 1: Profile avatar list
+
+```typescript
+import { ClipOval, Container, Image, Row, Column } from '@flitter/core';
+
+class ProfileAvatars extends StatelessWidget {
+  profiles = [
+    { name: "John Doe", image: "https://picsum.photos/200/200?random=1", status: "online" },
+    { name: "Jane Smith", image: "https://picsum.photos/200/200?random=2", status: "offline" },
+    { name: "Mike Wilson", image: "https://picsum.photos/200/200?random=3", status: "away" },
+    { name: "Sarah Lee", image: "https://picsum.photos/200/200?random=4", status: "online" },
+  ];
+
+  build() {
+    return Column({
+      children: [
+        Text(
+          "Team Members",
+          { style: TextStyle({ fontSize: 20, fontWeight: "bold", marginBottom: 20 }) }
+        ),
+        Row({
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: this.profiles.map((profile, index) => {
+            return Column({
+              key: ValueKey(index),
+              children: [
+                Stack({
+                  children: [
+                    ClipOval({
+                      clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+                      child: Container({
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration({
+                          border: Border.all({
+                            color: profile.status === "online" ? "#4CAF50" : "#757575",
+                            width: 3,
+                          }),
+                        }),
+                        child: Image({
+                          src: profile.image,
+                          fit: "cover",
+                        }),
+                      }),
+                    }),
+                    // Status indicator dot
+                    Positioned({
+                      right: 2,
+                      bottom: 2,
+                      child: ClipOval({
+                        clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+                        child: Container({
+                          width: 16,
+                          height: 16,
+                          color: profile.status === "online" ? "#4CAF50" : 
+                                 profile.status === "away" ? "#FF9800" : "#757575",
+                          child: Container({
+                            margin: EdgeInsets.all(2),
+                            decoration: BoxDecoration({
+                              color: "white",
+                              borderRadius: BorderRadius.circular(8),
+                            }),
+                          }),
+                        }),
+                      }),
+                    }),
+                  ],
+                }),
+                SizedBox({ height: 8 }),
+                Text(
+                  profile.name,
+                  { style: TextStyle({ fontSize: 12, textAlign: "center" }) }
+                ),
+              ],
+            });
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
+
+### Example 2: Various sized circular buttons
+
+```typescript
+import { ClipOval, Container, GestureDetector, Icon } from '@flitter/core';
+
+class CircularButtons extends StatelessWidget {
+  buttons = [
+    { icon: Icons.home, color: "#2196F3", size: 80, label: "Home" },
+    { icon: Icons.search, color: "#4CAF50", size: 60, label: "Search" },
+    { icon: Icons.favorite, color: "#E91E63", size: 70, label: "Favorite" },
+    { icon: Icons.settings, color: "#FF9800", size: 65, label: "Settings" },
+    { icon: Icons.add, color: "#9C27B0", size: 75, label: "Add" },
+  ];
+
+  build() {
+    return Column({
+      children: [
+        Text(
+          "Circular Action Buttons",
+          { style: TextStyle({ fontSize: 20, fontWeight: "bold", marginBottom: 30 }) }
+        ),
+        Wrap({
+          spacing: 20,
+          runSpacing: 20,
+          alignment: WrapAlignment.center,
+          children: this.buttons.map((button, index) => {
+            return Column({
+              key: ValueKey(index),
+              children: [
+                GestureDetector({
+                  onTap: () => {
+                    console.log(`${button.label} button clicked`);
+                  },
+                  child: ClipOval({
+                    clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+                    child: Container({
+                      width: button.size,
+                      height: button.size,
+                      decoration: BoxDecoration({
+                        gradient: RadialGradient({
+                          colors: [button.color, this.darkenColor(button.color)],
+                          stops: [0.0, 1.0],
+                        }),
+                        boxShadow: [
+                          BoxShadow({
+                            color: "rgba(0,0,0,0.3)",
+                            blurRadius: 8,
+                            offset: Offset({ x: 0, y: 4 }),
+                          }),
+                        ],
+                      }),
+                      child: Center({
+                        child: Icon({
+                          icon: button.icon,
+                          color: "white",
+                          size: button.size * 0.4,
+                        }),
+                      }),
+                    }),
+                  }),
+                }),
+                SizedBox({ height: 8 }),
+                Text(
+                  button.label,
+                  { style: TextStyle({ fontSize: 12, textAlign: "center" }) }
+                ),
+              ],
+            });
+          }),
+        }),
+      ],
+    });
+  }
+
+  darkenColor(color: string): string {
+    // Simple function to darken colors
+    const colors: { [key: string]: string } = {
+      "#2196F3": "#1976D2",
+      "#4CAF50": "#388E3C",
+      "#E91E63": "#C2185B",
+      "#FF9800": "#F57C00",
+      "#9C27B0": "#7B1FA2",
+    };
+    return colors[color] || color;
+  }
+}
+```
+
+### Example 3: Progress rings and circular charts
+
+```typescript
+import { ClipOval, Container, Stack, CustomPaint } from '@flitter/core';
+
+class CircularProgress extends StatefulWidget {
+  createState() {
+    return new CircularProgressState();
+  }
+}
+
+class CircularProgressState extends State<CircularProgress> {
+  progresses = [
+    { label: "HTML", value: 0.9, color: "#E34F26" },
+    { label: "CSS", value: 0.85, color: "#1572B6" },
+    { label: "JavaScript", value: 0.8, color: "#F7DF1E" },
+    { label: "React", value: 0.75, color: "#61DAFB" },
+  ];
+
+  build() {
+    return Column({
+      children: [
+        Text(
+          "Skill Proficiency",
+          { style: TextStyle({ fontSize: 20, fontWeight: "bold", marginBottom: 30 }) }
+        ),
+        GridView.count({
+          crossAxisCount: 2,
+          crossAxisSpacing: 20,
+          mainAxisSpacing: 20,
+          shrinkWrap: true,
+          children: this.progresses.map((progress, index) => {
+            return Column({
+              key: ValueKey(index),
+              children: [
+                Container({
+                  width: 120,
+                  height: 120,
+                  child: Stack({
+                    alignment: Alignment.center,
+                    children: [
+                      // Background circle
+                      ClipOval({
+                        clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+                        child: Container({
+                          width: 120,
+                          height: 120,
+                          color: "#F5F5F5",
+                        }),
+                      }),
+                      // Progress circle
+                      ClipOval({
+                        clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+                        child: Container({
+                          width: 120,
+                          height: 120,
+                          child: CustomPaint({
+                            painter: CircularProgressPainter({
+                              progress: progress.value,
+                              color: progress.color,
+                            }),
+                          }),
+                        }),
+                      }),
+                      // Center text
+                      ClipOval({
+                        clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+                        child: Container({
+                          width: 80,
+                          height: 80,
+                          color: "white",
+                          child: Center({
+                            child: Text(
+                              `${Math.round(progress.value * 100)}%`,
+                              { style: TextStyle({ 
+                                fontSize: 16, 
+                                fontWeight: "bold",
+                                color: progress.color 
+                              }) }
+                            ),
+                          }),
+                        }),
+                      }),
+                    ],
+                  }),
+                }),
+                SizedBox({ height: 12 }),
+                Text(
+                  progress.label,
+                  { style: TextStyle({ fontSize: 14, fontWeight: "bold", textAlign: "center" }) }
+                ),
+              ],
+            });
+          }),
+        }),
+      ],
+    });
+  }
+}
+
+class CircularProgressPainter extends CustomPainter {
+  progress: number;
+  color: string;
+
+  constructor({ progress, color }: { progress: number; color: string }) {
+    super();
+    this.progress = progress;
+    this.color = color;
+  }
+
+  paint(canvas: Canvas, size: Size) {
+    const center = Offset(size.width / 2, size.height / 2);
+    const radius = size.width / 2 - 10;
+
+    // Draw progress arc
+    const paint = Paint()
+      .setColor(this.color)
+      .setStyle(PaintingStyle.stroke)
+      .setStrokeWidth(8)
+      .setStrokeCap(StrokeCap.round);
+
+    const startAngle = -Math.PI / 2;
+    const sweepAngle = 2 * Math.PI * this.progress;
+
+    canvas.drawArc(
+      Rect.fromCircle(center, radius),
+      startAngle,
+      sweepAngle,
+      false,
+      paint
+    );
+  }
+
+  shouldRepaint(oldDelegate: CircularProgressPainter): boolean {
+    return oldDelegate.progress !== this.progress || oldDelegate.color !== this.color;
+  }
+}
+```
+
+### Example 4: Circular image gallery
+
+```typescript
+import { ClipOval, Container, GestureDetector, Image, PageView } from '@flitter/core';
+
+class CircularImageGallery extends StatefulWidget {
+  createState() {
+    return new CircularImageGalleryState();
+  }
+}
+
+class CircularImageGalleryState extends State<CircularImageGallery> {
+  selectedIndex = 0;
+  images = [
+    { url: "https://picsum.photos/400/400?random=1", title: "Nature Landscape" },
+    { url: "https://picsum.photos/400/400?random=2", title: "City Night View" },
+    { url: "https://picsum.photos/400/400?random=3", title: "Mountain Path" },
+    { url: "https://picsum.photos/400/400?random=4", title: "Beach Side" },
+    { url: "https://picsum.photos/400/400?random=5", title: "Forest" },
+    { url: "https://picsum.photos/400/400?random=6", title: "Starry Night" },
+  ];
+
+  build() {
+    return Column({
+      children: [
+        Text(
+          "Circular Image Gallery",
+          { style: TextStyle({ fontSize: 20, fontWeight: "bold", marginBottom: 20 }) }
+        ),
+        
+        // Main image
+        Container({
+          margin: EdgeInsets.symmetric({ horizontal: 40 }),
+          child: ClipOval({
+            clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+            child: Container({
+              width: 250,
+              height: 250,
+              decoration: BoxDecoration({
+                boxShadow: [
+                  BoxShadow({
+                    color: "rgba(0,0,0,0.3)",
+                    blurRadius: 20,
+                    offset: Offset({ x: 0, y: 10 }),
+                  }),
+                ],
+              }),
+              child: Image({
+                src: this.images[this.selectedIndex].url,
+                fit: "cover",
+              }),
+            }),
+          }),
+        }),
+        
+        SizedBox({ height: 20 }),
+        Text(
+          this.images[this.selectedIndex].title,
+          { style: TextStyle({ fontSize: 18, fontWeight: "bold", textAlign: "center" }) }
+        ),
+        
+        SizedBox({ height: 30 }),
+        
+        // Thumbnail list
+        Container({
+          height: 80,
+          child: ListView.builder({
+            scrollDirection: Axis.horizontal,
+            itemCount: this.images.length,
+            padding: EdgeInsets.symmetric({ horizontal: 20 }),
+            itemBuilder: (context, index) => {
+              const isSelected = index === this.selectedIndex;
+              
+              return GestureDetector({
+                onTap: () => {
+                  this.setState(() => {
+                    this.selectedIndex = index;
+                  });
+                },
+                child: Container({
+                  margin: EdgeInsets.symmetric({ horizontal: 8 }),
+                  child: ClipOval({
+                    clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
+                    child: Container({
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration({
+                        border: isSelected ? Border.all({
+                          color: "#2196F3",
+                          width: 3,
+                        }) : null,
+                        boxShadow: isSelected ? [
+                          BoxShadow({
+                            color: "rgba(33, 150, 243, 0.4)",
+                            blurRadius: 8,
+                            offset: Offset({ x: 0, y: 4 }),
+                          }),
+                        ] : [
+                          BoxShadow({
+                            color: "rgba(0,0,0,0.1)",
+                            blurRadius: 4,
+                            offset: Offset({ x: 0, y: 2 }),
+                          }),
+                        ],
+                      }),
+                      child: Image({
+                        src: this.images[index].url,
+                        fit: "cover",
+                      }),
+                    }),
+                  }),
+                }),
+              });
+            },
+          }),
+        }),
+        
+        SizedBox({ height: 20 }),
+        Text(
+          `${this.selectedIndex + 1} / ${this.images.length}`,
+          { style: TextStyle({ fontSize: 14, color: "#666", textAlign: "center" }) }
+        ),
+      ],
+    });
+  }
+}
+```
+
+## Important notes
+
+- **Clipping performance**: Complex shape clipping can affect rendering performance
+- **Boundary handling**: Touch events outside the clipped area are not detected
+- **Animation**: Consider performance when using clipping with animations
+- **Clipper function**: The clipper function is called whenever the widget size changes, so avoid heavy computations
+- **Nested clipping**: Performance degradation may occur when nesting multiple clipping widgets
+
+## Related widgets
+
+- **ClipRRect**: Widget that clips with rounded corners
+- **ClipRect**: Widget that clips with a rectangle
+- **ClipPath**: Widget that clips with custom paths
+- **Container**: Can create circular shapes using the shape property of decoration
+- **CircleAvatar**: Dedicated widget for creating circular avatars

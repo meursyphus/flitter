@@ -1,18 +1,16 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: ClipRRect
 title: "ClipRRect"
-description: ""
+description: "A widget that clips its child using a rounded rectangle"
 ---
 
-# ClipRRect
+## Overview
 
-This widget clip the child widget like ClipRRect Widget in Flutter.
+ClipRRect is a widget that clips its child using a rounded rectangle. 
 
-> A widget that clips its child using a rounded rectangle.
->
-> By default, ClipRRect uses its own bounds as the base rectangle for the clip, but the size and location of the clip can be customized using a custom clipper.
+By default, ClipRRect uses its own bounds as the base rectangle for the clip, but the size and location of the clip can be customized using a custom clipper. The borderRadius property allows you to individually set the roundness of each corner.
 
 <iframe
   width="560"
@@ -25,3 +23,505 @@ This widget clip the child widget like ClipRRect Widget in Flutter.
 ></iframe>
 
 See: [https://api.flutter.dev/flutter/widgets/ClipRRect-class.html](https://api.flutter.dev/flutter/widgets/ClipRRect-class.html)
+
+## When to Use
+
+- When you want to apply rounded corners to images or containers
+- When creating card UI or buttons with smooth corner effects
+- When you need to clip overflowing content with rounded corners
+- When you want to set different radii for each corner
+- When applying rounded effects to profile images or thumbnails
+
+## Basic Usage
+
+```typescript
+// Same radius for all corners
+ClipRRect({
+  borderRadius: BorderRadius.circular(16),
+  child: Image({
+    src: 'https://example.com/image.jpg',
+    width: 200,
+    height: 200,
+    objectFit: 'cover'
+  })
+})
+
+// Rounded specific corners only
+ClipRRect({
+  borderRadius: BorderRadius.only({
+    topLeft: Radius.circular(20),
+    topRight: Radius.circular(20),
+    bottomLeft: Radius.zero,
+    bottomRight: Radius.zero
+  }),
+  child: Container({
+    width: 300,
+    height: 200,
+    color: 'blue'
+  })
+})
+
+// Elliptical corners
+ClipRRect({
+  borderRadius: BorderRadius.all(Radius.elliptical(40, 20)),
+  child: Container({
+    width: 150,
+    height: 100,
+    color: 'green'
+  })
+})
+```
+
+## Props Details
+
+### borderRadius
+
+**Type: BorderRadius** (Default: **BorderRadius.zero**)
+
+Defines the roundness of each corner. The BorderRadius class provides various factory methods:
+
+- `BorderRadius.circular(radius)`: Apply the same circular radius to all corners
+- `BorderRadius.all(Radius)`: Apply the same Radius to all corners
+- `BorderRadius.only({topLeft?, topRight?, bottomLeft?, bottomRight?})`: Set each corner individually
+- `BorderRadius.vertical({top?, bottom?})`: Set top and bottom corners
+- `BorderRadius.horizontal({left?, right?})`: Set left and right corners
+
+```typescript
+// Circular radius
+ClipRRect({
+  borderRadius: BorderRadius.circular(20),
+  child: child
+})
+
+// Elliptical radius
+ClipRRect({
+  borderRadius: BorderRadius.all(Radius.elliptical(30, 15)),
+  child: child
+})
+
+// Individual corner settings
+ClipRRect({
+  borderRadius: BorderRadius.only({
+    topLeft: Radius.circular(30),
+    topRight: Radius.circular(10),
+    bottomLeft: Radius.circular(5),
+    bottomRight: Radius.circular(20)
+  }),
+  child: child
+})
+```
+
+### clipper
+
+**Type: (size: Size) => RRect** (Optional)
+
+A callback function that defines a custom clipping area. It receives the widget's size and must return an RRect (rounded rectangle) object.
+
+```typescript
+ClipRRect({
+  clipper: (size) => {
+    // Clip to a smaller rounded rectangle in the center
+    return RRect.fromRectAndRadius({
+      rect: Rect.fromCenter({
+        center: { x: size.width / 2, y: size.height / 2 },
+        width: size.width * 0.8,
+        height: size.height * 0.8
+      }),
+      radius: Radius.circular(10)
+    });
+  },
+  child: child
+})
+```
+
+### clipped
+
+**Type: boolean** (Default: **true**)
+
+Enables or disables the clipping effect.
+
+- `true`: Apply clipping
+- `false`: Disable clipping (child widget displays normally)
+
+```typescript
+ClipRRect({
+  clipped: isClippingEnabled,
+  borderRadius: BorderRadius.circular(16),
+  child: content
+})
+```
+
+### child
+
+**Type: Widget**
+
+The child widget to be clipped.
+
+## Practical Examples
+
+### Example 1: Card UI Composition
+
+```typescript
+const CardWithImage = ({ image, title, description, onTap }) => {
+  return GestureDetector({
+    onTap: onTap,
+    child: Container({
+      width: 320,
+      margin: EdgeInsets.all(16),
+      decoration: BoxDecoration({
+        color: 'white',
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow({
+            color: 'rgba(0,0,0,0.1)',
+            blurRadius: 10,
+            offset: { x: 0, y: 4 }
+          })
+        ]
+      }),
+      child: Column({
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Top image
+          ClipRRect({
+            borderRadius: BorderRadius.only({
+              topLeft: Radius.circular(16),
+              topRight: Radius.circular(16)
+            }),
+            child: Image({
+              src: image,
+              width: 320,
+              height: 180,
+              objectFit: 'cover'
+            })
+          }),
+          // Content area
+          Padding({
+            padding: EdgeInsets.all(16),
+            child: Column({
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, {
+                  style: TextStyle({
+                    fontSize: 20,
+                    fontWeight: 'bold'
+                  })
+                }),
+                SizedBox({ height: 8 }),
+                Text(description, {
+                  style: TextStyle({
+                    fontSize: 14,
+                    color: '#666'
+                  })
+                })
+              ]
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### Example 2: Profile Avatar Variations
+
+```typescript
+const ProfileAvatar = ({ imageUrl, size, status }) => {
+  const getStatusColor = () => {
+    switch (status) {
+      case 'online': return '#4CAF50';
+      case 'away': return '#FF9800';
+      case 'busy': return '#F44336';
+      default: return '#9E9E9E';
+    }
+  };
+  
+  return Stack({
+    children: [
+      // Profile image
+      Container({
+        width: size,
+        height: size,
+        decoration: BoxDecoration({
+          border: Border.all({
+            color: getStatusColor(),
+            width: 3
+          }),
+          borderRadius: BorderRadius.circular(size * 0.25)
+        }),
+        padding: EdgeInsets.all(3),
+        child: ClipRRect({
+          borderRadius: BorderRadius.circular(size * 0.25 - 3),
+          child: Image({
+            src: imageUrl,
+            width: size - 6,
+            height: size - 6,
+            objectFit: 'cover'
+          })
+        })
+      }),
+      // Status indicator
+      Positioned({
+        right: 0,
+        bottom: 0,
+        child: Container({
+          width: size * 0.3,
+          height: size * 0.3,
+          decoration: BoxDecoration({
+            color: getStatusColor(),
+            borderRadius: BorderRadius.circular(size * 0.15),
+            border: Border.all({
+              color: 'white',
+              width: 2
+            })
+          })
+        })
+      })
+    ]
+  });
+};
+
+// Usage example
+ProfileAvatar({
+  imageUrl: 'https://example.com/avatar.jpg',
+  size: 80,
+  status: 'online'
+});
+```
+
+### Example 3: Message Bubble
+
+```typescript
+const MessageBubble = ({ message, isMe, time, hasImage }) => {
+  return Container({
+    margin: EdgeInsets.symmetric({ horizontal: 16, vertical: 4 }),
+    alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+    child: Container({
+      constraints: BoxConstraints({ maxWidth: 280 }),
+      child: Column({
+        crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          ClipRRect({
+            borderRadius: BorderRadius.only({
+              topLeft: Radius.circular(isMe ? 16 : 4),
+              topRight: Radius.circular(isMe ? 4 : 16),
+              bottomLeft: Radius.circular(16),
+              bottomRight: Radius.circular(16)
+            }),
+            child: Container({
+              color: isMe ? '#007AFF' : '#E5E5EA',
+              child: Column({
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (hasImage)
+                    ClipRRect({
+                      borderRadius: BorderRadius.only({
+                        topLeft: Radius.circular(isMe ? 12 : 0),
+                        topRight: Radius.circular(isMe ? 0 : 12)
+                      }),
+                      child: Image({
+                        src: hasImage,
+                        width: 200,
+                        height: 150,
+                        objectFit: 'cover'
+                      })
+                    }),
+                  Padding({
+                    padding: EdgeInsets.all(12),
+                    child: Text(message, {
+                      style: TextStyle({
+                        color: isMe ? 'white' : 'black',
+                        fontSize: 16
+                      })
+                    })
+                  })
+                ]
+              })
+            })
+          }),
+          SizedBox({ height: 4 }),
+          Text(time, {
+            style: TextStyle({
+              fontSize: 12,
+              color: '#666'
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### Example 4: Gradient Button
+
+```typescript
+const GradientButton = ({ text, onPressed, disabled = false }) => {
+  return GestureDetector({
+    onTap: disabled ? null : onPressed,
+    child: Opacity({
+      opacity: disabled ? 0.5 : 1.0,
+      child: ClipRRect({
+        borderRadius: BorderRadius.circular(30),
+        child: Container({
+          width: 200,
+          height: 60,
+          decoration: BoxDecoration({
+            gradient: LinearGradient({
+              colors: ['#667eea', '#764ba2'],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight
+            })
+          }),
+          child: Stack({
+            children: [
+              // Overlay for hover effect
+              AnimatedContainer({
+                duration: Duration.milliseconds(200),
+                decoration: BoxDecoration({
+                  color: 'rgba(255,255,255,0.1)'
+                })
+              }),
+              // Text
+              Center({
+                child: Text(text, {
+                  style: TextStyle({
+                    color: 'white',
+                    fontSize: 18,
+                    fontWeight: 'bold'
+                  })
+                })
+              })
+            ]
+          })
+        })
+      })
+    })
+  });
+};
+```
+
+### Example 5: Image Gallery Thumbnail
+
+```typescript
+const GalleryThumbnail = ({ images, title }) => {
+  const gridSize = Math.ceil(Math.sqrt(images.length));
+  
+  return Column({
+    children: [
+      ClipRRect({
+        borderRadius: BorderRadius.circular(12),
+        child: Container({
+          width: 200,
+          height: 200,
+          color: '#f0f0f0',
+          child: images.length === 1 
+            ? Image({
+                src: images[0],
+                width: 200,
+                height: 200,
+                objectFit: 'cover'
+              })
+            : Grid({
+                crossAxisCount: gridSize,
+                gap: 2,
+                children: images.slice(0, gridSize * gridSize).map((img, index) => 
+                  ClipRRect({
+                    borderRadius: BorderRadius.circular(
+                      index === 0 ? 12 : 0
+                    ),
+                    child: Image({
+                      src: img,
+                      width: 200 / gridSize - 2,
+                      height: 200 / gridSize - 2,
+                      objectFit: 'cover'
+                    })
+                  })
+                )
+              })
+        })
+      }),
+      SizedBox({ height: 8 }),
+      Container({
+        width: 200,
+        child: Row({
+          children: [
+            Expanded({
+              child: Text(title, {
+                style: TextStyle({
+                  fontSize: 14,
+                  fontWeight: 'bold'
+                }),
+                overflow: TextOverflow.ellipsis
+              })
+            }),
+            if (images.length > gridSize * gridSize)
+              Container({
+                padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 2 }),
+                decoration: BoxDecoration({
+                  color: 'rgba(0,0,0,0.6)',
+                  borderRadius: BorderRadius.circular(12)
+                }),
+                child: Text(`+${images.length - gridSize * gridSize}`, {
+                  style: TextStyle({
+                    color: 'white',
+                    fontSize: 12
+                  })
+                })
+              })
+          ]
+        })
+      })
+    ]
+  });
+};
+```
+
+## Understanding RRect API
+
+### RRect Creation Methods
+
+```typescript
+// Basic constructors
+RRect.fromLTRBR({
+  left: 0,
+  top: 0,
+  right: 100,
+  bottom: 100,
+  radius: Radius.circular(10)
+});
+
+RRect.fromRectAndRadius({
+  rect: Rect.fromLTWH({ left: 0, top: 0, width: 100, height: 100 }),
+  radius: Radius.circular(10)
+});
+
+RRect.fromRectAndCorners({
+  rect: rect,
+  topLeft: Radius.circular(10),
+  topRight: Radius.circular(20),
+  bottomLeft: Radius.circular(5),
+  bottomRight: Radius.circular(15)
+});
+
+// Inflate/Deflate
+const inflatedRRect = rrect.inflate(10);  // Expand by 10 pixels
+const deflatedRRect = rrect.deflate(5);   // Shrink by 5 pixels
+```
+
+## Important Notes
+
+- Clipping can affect rendering performance, so use it only when necessary
+- If the borderRadius value is larger than the widget size, unexpected results may occur
+- Touch events outside the clipped area are not detected
+- Be careful when using Container's decoration with ClipRRect in complex layouts
+- Use placeholders during image loading to prevent layout shifts
+
+## Related Widgets
+
+- **ClipRect**: Clips with a rectangle
+- **ClipOval**: Clips with an oval shape
+- **ClipPath**: Clips with a custom path
+- **Container**: Can implement rounded corners with the decoration property
+- **Card**: Material design card with rounded corners by default

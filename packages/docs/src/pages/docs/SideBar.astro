@@ -16,13 +16,14 @@ const filteredDocs = docsEntries.filter((entry) =>
 const navigation = filteredDocs.reduce(
   (acc, entry, i) => {
     const { nav_group, nav_order, title, nav_title } = entry.data;
-    const nav_group_order = getNavOrder(nav_group);
+    const groupName = nav_group ?? "Widgets";
+    const nav_group_order = getNavOrder(groupName);
 
     // 해당 navGroup이 이미 존재하는지 확인
-    let group = acc.find((g) => g.name === nav_group);
+    let group = acc.find((g) => g.name === groupName);
     if (!group) {
       // 존재하지 않으면 새로운 그룹 생성
-      group = { name: nav_group, order: nav_group_order, items: [] };
+      group = { name: groupName, order: nav_group_order, items: [] };
       acc.push(group);
     }
 

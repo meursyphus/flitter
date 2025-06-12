@@ -1,14 +1,14 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: AnimatedOpacity
 title: "AnimatedOpacity"
-description: ""
+description: "A widget that animates opacity transitions"
 ---
 
-# AnimatedOpacity
+## Overview
 
-This widget motivated by AnimatedOpacity in Flutter.
+AnimatedOpacity is a widget that automatically animates when its child widget's opacity changes, providing smooth transitions. This widget is inspired by Flutter's AnimatedOpacity widget.
 
 > Animated version of Opacity which automatically transitions the child's opacity over a given duration whenever the given opacity changes.
 
@@ -22,18 +22,446 @@ This widget motivated by AnimatedOpacity in Flutter.
   allowfullscreen
 ></iframe>
 
-See: https://api.flutter.dev/flutter/widgets/AnimatedOpacity-class.html
+Flutter reference: https://api.flutter.dev/flutter/widgets/AnimatedOpacity-class.html
+
+## When to use?
+
+- When showing or hiding widgets with fade in/out effects
+- When smoothly adjusting widget visibility based on user interaction
+- When dimming content to indicate loading states
+- When smoothly showing/hiding tooltips or hint messages
+- When providing natural fade effects during screen transitions
+
+## Basic usage
+
+```typescript
+import { AnimatedOpacity, Container, StatefulWidget } from '@flitter/core';
+
+class OpacityExample extends StatefulWidget {
+  createState() {
+    return new OpacityExampleState();
+  }
+}
+
+class OpacityExampleState extends State<OpacityExample> {
+  isVisible = true;
+
+  build() {
+    return Column({
+      children: [
+        ElevatedButton({
+          onPressed: () => {
+            this.setState(() => {
+              this.isVisible = !this.isVisible;
+            });
+          },
+          child: Text(this.isVisible ? "Hide" : "Show"),
+        }),
+        AnimatedOpacity({
+          opacity: this.isVisible ? 1.0 : 0.0,
+          duration: 500, // 0.5 seconds
+          child: Container({
+            width: 200,
+            height: 200,
+            color: "blue",
+            child: Center({
+              child: Text("Fade Effect", { style: TextStyle({ color: "white" }) }),
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
 
 ## Props
 
-### opacity
-
+### opacity (required)
 **Value: number**
 
-### child
+Sets the widget's opacity.
+- 0.0 = Completely transparent (invisible)
+- 1.0 = Completely opaque (fully visible)
+- Values between 0.0 and 1.0 for partial transparency
 
+### duration (required)
+**Value: number**
+
+Specifies the animation duration in milliseconds.
+
+### curve (optional)
+**Value: Curve** (default: **Curves.linear**)
+
+Specifies the animation progression curve. Available curves:
+- `Curves.linear`: Constant speed
+- `Curves.easeIn`: Slow start
+- `Curves.easeOut`: Slow end
+- `Curves.easeInOut`: Slow start and end
+- `Curves.circIn`: Circular acceleration start
+- `Curves.circOut`: Circular deceleration end
+- `Curves.circInOut`: Circular acceleration/deceleration
+- `Curves.backIn`: Goes back then starts
+- `Curves.backOut`: Overshoots target then returns
+- `Curves.backInOut`: backIn + backOut
+- `Curves.anticipate`: Anticipatory motion before proceeding
+- `Curves.bounceIn`: Bounces at start
+- `Curves.bounceOut`: Bounces at end
+- `Curves.bounceInOut`: Bounces at start/end
+
+### child (optional)
 **Value: Widget | undefined**
 
-## Examples
+The child widget whose opacity will be adjusted.
 
-### Basic
+### key (optional)
+**Value: any**
+
+A unique identifier for the widget.
+
+## Real-world examples
+
+### Example 1: Loading state display
+
+```typescript
+import { AnimatedOpacity, CircularProgressIndicator, Container, Curves } from '@flitter/core';
+
+class LoadingOverlay extends StatefulWidget {
+  createState() {
+    return new LoadingOverlayState();
+  }
+}
+
+class LoadingOverlayState extends State<LoadingOverlay> {
+  isLoading = false;
+
+  async loadData() {
+    this.setState(() => {
+      this.isLoading = true;
+    });
+
+    // Simulate data loading
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    this.setState(() => {
+      this.isLoading = false;
+    });
+  }
+
+  build() {
+    return Stack({
+      children: [
+        // Main content
+        Container({
+          width: double.infinity,
+          height: double.infinity,
+          child: Center({
+            child: ElevatedButton({
+              onPressed: () => this.loadData(),
+              child: Text("Load Data"),
+            }),
+          }),
+        }),
+        
+        // Loading overlay
+        AnimatedOpacity({
+          opacity: this.isLoading ? 1.0 : 0.0,
+          duration: 300,
+          curve: Curves.easeInOut,
+          child: Container({
+            width: double.infinity,
+            height: double.infinity,
+            color: "rgba(0, 0, 0, 0.7)",
+            child: Center({
+              child: Column({
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator({
+                    color: "white",
+                  }),
+                  SizedBox({ height: 16 }),
+                  Text(
+                    "Loading...",
+                    { style: TextStyle({ color: "white", fontSize: 18 }) }
+                  ),
+                ],
+              }),
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
+
+### Example 2: Tooltip message
+
+```typescript
+import { AnimatedOpacity, Container, Tooltip, Curves } from '@flitter/core';
+
+class TooltipExample extends StatefulWidget {
+  createState() {
+    return new TooltipExampleState();
+  }
+}
+
+class TooltipExampleState extends State<TooltipExample> {
+  showTooltip = false;
+
+  build() {
+    return Container({
+      padding: EdgeInsets.all(20),
+      child: Column({
+        children: [
+          // Hover area
+          MouseRegion({
+            onEnter: () => {
+              this.setState(() => {
+                this.showTooltip = true;
+              });
+            },
+            onExit: () => {
+              this.setState(() => {
+                this.showTooltip = false;
+              });
+            },
+            child: Container({
+              padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+              decoration: BoxDecoration({
+                color: "blue",
+                borderRadius: BorderRadius.circular(8),
+              }),
+              child: Text(
+                "Hover over me",
+                { style: TextStyle({ color: "white" }) }
+              ),
+            }),
+          }),
+          
+          SizedBox({ height: 8 }),
+          
+          // Tooltip message
+          AnimatedOpacity({
+            opacity: this.showTooltip ? 1.0 : 0.0,
+            duration: 200,
+            curve: Curves.easeOut,
+            child: Container({
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration({
+                color: "rgba(0, 0, 0, 0.8)",
+                borderRadius: BorderRadius.circular(4),
+              }),
+              child: Text(
+                "This is a tooltip message!",
+                { style: TextStyle({ color: "white", fontSize: 14 }) }
+              ),
+            }),
+          }),
+        ],
+      }),
+    });
+  }
+}
+```
+
+### Example 3: Sequential fade-in effect
+
+```typescript
+import { AnimatedOpacity, Container, Curves } from '@flitter/core';
+
+class SequentialFadeIn extends StatefulWidget {
+  createState() {
+    return new SequentialFadeInState();
+  }
+}
+
+class SequentialFadeInState extends State<SequentialFadeIn> {
+  item1Visible = false;
+  item2Visible = false;
+  item3Visible = false;
+
+  initState() {
+    super.initState();
+    
+    // Sequential fade in
+    setTimeout(() => {
+      this.setState(() => this.item1Visible = true);
+    }, 500);
+    
+    setTimeout(() => {
+      this.setState(() => this.item2Visible = true);
+    }, 1000);
+    
+    setTimeout(() => {
+      this.setState(() => this.item3Visible = true);
+    }, 1500);
+  }
+
+  build() {
+    return Container({
+      padding: EdgeInsets.all(20),
+      child: Column({
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AnimatedOpacity({
+            opacity: this.item1Visible ? 1.0 : 0.0,
+            duration: 600,
+            curve: Curves.easeOut,
+            child: Container({
+              width: 300,
+              padding: EdgeInsets.all(16),
+              margin: EdgeInsets.only({ bottom: 16 }),
+              decoration: BoxDecoration({
+                color: "#FF6B6B",
+                borderRadius: BorderRadius.circular(8),
+              }),
+              child: Text(
+                "First Item",
+                { style: TextStyle({ color: "white", fontSize: 18 }) }
+              ),
+            }),
+          }),
+          
+          AnimatedOpacity({
+            opacity: this.item2Visible ? 1.0 : 0.0,
+            duration: 600,
+            curve: Curves.easeOut,
+            child: Container({
+              width: 300,
+              padding: EdgeInsets.all(16),
+              margin: EdgeInsets.only({ bottom: 16 }),
+              decoration: BoxDecoration({
+                color: "#4ECDC4",
+                borderRadius: BorderRadius.circular(8),
+              }),
+              child: Text(
+                "Second Item",
+                { style: TextStyle({ color: "white", fontSize: 18 }) }
+              ),
+            }),
+          }),
+          
+          AnimatedOpacity({
+            opacity: this.item3Visible ? 1.0 : 0.0,
+            duration: 600,
+            curve: Curves.easeOut,
+            child: Container({
+              width: 300,
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration({
+                color: "#45B7D1",
+                borderRadius: BorderRadius.circular(8),
+              }),
+              child: Text(
+                "Third Item",
+                { style: TextStyle({ color: "white", fontSize: 18 }) }
+              ),
+            }),
+          }),
+        ],
+      }),
+    });
+  }
+}
+```
+
+### Example 4: Cross-fade transition
+
+```typescript
+import { AnimatedOpacity, Container, Curves } from '@flitter/core';
+
+class CrossFadeExample extends StatefulWidget {
+  createState() {
+    return new CrossFadeExampleState();
+  }
+}
+
+class CrossFadeExampleState extends State<CrossFadeExample> {
+  showFirst = true;
+
+  build() {
+    return GestureDetector({
+      onTap: () => {
+        this.setState(() => {
+          this.showFirst = !this.showFirst;
+        });
+      },
+      child: Container({
+        width: 300,
+        height: 300,
+        child: Stack({
+          children: [
+            // First image
+            AnimatedOpacity({
+              opacity: this.showFirst ? 1.0 : 0.0,
+              duration: 500,
+              curve: Curves.easeInOut,
+              child: Container({
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration({
+                  gradient: LinearGradient({
+                    colors: ["#667eea", "#764ba2"],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  }),
+                  borderRadius: BorderRadius.circular(16),
+                }),
+                child: Center({
+                  child: Icon({
+                    icon: Icons.sunny,
+                    size: 80,
+                    color: "white",
+                  }),
+                }),
+              }),
+            }),
+            
+            // Second image
+            AnimatedOpacity({
+              opacity: this.showFirst ? 0.0 : 1.0,
+              duration: 500,
+              curve: Curves.easeInOut,
+              child: Container({
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration({
+                  gradient: LinearGradient({
+                    colors: ["#f093fb", "#f5576c"],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  }),
+                  borderRadius: BorderRadius.circular(16),
+                }),
+                child: Center({
+                  child: Icon({
+                    icon: Icons.nightlight,
+                    size: 80,
+                    color: "white",
+                  }),
+                }),
+              }),
+            }),
+          ],
+        }),
+      }),
+    });
+  }
+}
+```
+
+## Notes
+
+- Opacity values must be between 0.0 and 1.0
+- Even when opacity is 0.0, the widget still occupies layout space
+- To completely hide and remove space, use conditional rendering
+- For performance, avoid applying opacity animations to too many widgets simultaneously
+- If a new opacity value is set during animation, it smoothly transitions from the current value to the new value
+
+## Related widgets
+
+- **Opacity**: Basic widget for setting opacity without animation
+- **AnimatedContainer**: Animates multiple properties simultaneously
+- **FadeTransition**: Fade effect using explicit Animation objects
+- **Visibility**: Controls widget visibility and manages layout space

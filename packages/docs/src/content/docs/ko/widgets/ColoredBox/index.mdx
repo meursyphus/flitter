@@ -1,0 +1,278 @@
+---
+nav_group: Widgets
+nav_group_order: 3
+nav_title: ColoredBox
+title: "ColoredBox"
+description: "단색 배경을 가진 박스를 그리는 위젯"
+---
+
+## 개요
+
+ColoredBox는 단색 배경을 가진 박스를 그리는 위젯입니다.
+
+ColoredBox는 Container의 color 속성과 동일한 효과를 제공하지만, 더 가볍고 효율적입니다. 단순히 색상만 필요하고 Container의 다른 기능(padding, margin, decoration 등)이 필요하지 않을 때 사용하면 성능상 이점이 있습니다.
+
+## 언제 사용하나요?
+
+- 단순한 색상 배경만 필요할 때
+- Container보다 가벼운 위젯이 필요할 때
+- 성능 최적화가 중요한 경우
+- 색상 오버레이를 만들 때
+- 리스트 아이템의 배경색을 지정할 때
+
+## 기본 사용법
+
+```typescript
+// 단색 배경
+ColoredBox({
+  color: 'blue',
+  child: Text('파란 배경')
+})
+
+// 투명도가 있는 색상
+ColoredBox({
+  color: 'rgba(255, 0, 0, 0.5)',
+  child: Padding({
+    padding: EdgeInsets.all(20),
+    child: Text('반투명 빨간 배경')
+  })
+})
+```
+
+## Props
+
+### color (필수)
+
+**값: string**
+
+박스의 배경색입니다. CSS 색상 값을 사용할 수 있습니다.
+
+```typescript
+ColoredBox({
+  color: 'red',  // 색상 이름
+  child: Text('빨간 배경')
+})
+
+ColoredBox({
+  color: '#FF5733',  // HEX 색상
+  child: Text('주황색 배경')
+})
+
+ColoredBox({
+  color: 'rgba(0, 0, 255, 0.3)',  // RGBA
+  child: Text('반투명 파란 배경')
+})
+```
+
+### child
+
+**값: Widget | undefined**
+
+색상 배경 위에 표시될 자식 위젯입니다.
+
+```typescript
+ColoredBox({
+  color: 'lightgray',
+  child: Center({
+    child: Text('가운데 정렬된 텍스트')
+  })
+})
+```
+
+## Container와의 차이점
+
+### ColoredBox 사용
+```typescript
+// 단순히 색상만 필요할 때
+ColoredBox({
+  color: 'blue',
+  child: Text('텍스트')
+})
+```
+
+### Container 사용
+```typescript
+// 색상과 함께 다른 스타일링이 필요할 때
+Container({
+  color: 'blue',
+  padding: EdgeInsets.all(16),
+  margin: EdgeInsets.all(8),
+  child: Text('텍스트')
+})
+```
+
+## 실제 사용 예제
+
+### 예제 1: 상태 표시 배지
+
+```typescript
+const StatusBadge = ({ status }) => {
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'active': return '#4CAF50';
+      case 'pending': return '#FF9800';
+      case 'inactive': return '#F44336';
+      default: return '#9E9E9E';
+    }
+  };
+
+  return ColoredBox({
+    color: getStatusColor(status),
+    child: Padding({
+      padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 4 }),
+      child: Text(status.toUpperCase(), {
+        style: TextStyle({
+          color: 'white',
+          fontSize: 12,
+          fontWeight: 'bold'
+        })
+      })
+    })
+  });
+};
+```
+
+### 예제 2: 줄무늬 배경
+
+```typescript
+const StripedBackground = ({ children }) => {
+  return Stack({
+    children: [
+      Column({
+        children: Array.from({ length: 10 }, (_, i) => 
+          Expanded({
+            child: ColoredBox({
+              color: i % 2 === 0 ? '#F5F5F5' : 'white'
+            })
+          })
+        )
+      }),
+      children
+    ]
+  });
+};
+```
+
+### 예제 3: 색상 팔레트
+
+```typescript
+const ColorPalette = ({ colors, onColorSelect }) => {
+  return Wrap({
+    spacing: 8,
+    runSpacing: 8,
+    children: colors.map(color => 
+      GestureDetector({
+        onTap: () => onColorSelect(color),
+        child: Container({
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration({
+            border: Border.all({ color: '#E0E0E0', width: 2 }),
+            borderRadius: BorderRadius.circular(8)
+          }),
+          clipped: true,
+          child: ColoredBox({ color })
+        })
+      })
+    )
+  });
+};
+```
+
+### 예제 4: 로딩 스켈레톤
+
+```typescript
+const SkeletonLoader = () => {
+  return Column({
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // 제목 스켈레톤
+      ColoredBox({
+        color: '#E0E0E0',
+        child: SizedBox({ width: 200, height: 24 })
+      }),
+      SizedBox({ height: 12 }),
+      // 본문 스켈레톤
+      ColoredBox({
+        color: '#E0E0E0',
+        child: SizedBox({ width: double.infinity, height: 16 })
+      }),
+      SizedBox({ height: 8 }),
+      ColoredBox({
+        color: '#E0E0E0',
+        child: SizedBox({ width: 300, height: 16 })
+      }),
+      SizedBox({ height: 8 }),
+      ColoredBox({
+        color: '#E0E0E0',
+        child: SizedBox({ width: 250, height: 16 })
+      })
+    ]
+  });
+};
+```
+
+### 예제 5: 오버레이 효과
+
+```typescript
+const ImageWithOverlay = ({ imageUrl, text }) => {
+  return Stack({
+    children: [
+      Image({
+        src: imageUrl,
+        width: 300,
+        height: 200,
+        objectFit: 'cover'
+      }),
+      Positioned.fill({
+        child: ColoredBox({
+          color: 'rgba(0, 0, 0, 0.4)',
+          child: Center({
+            child: Text(text, {
+              style: TextStyle({
+                color: 'white',
+                fontSize: 24,
+                fontWeight: 'bold'
+              })
+            })
+          })
+        })
+      })
+    ]
+  });
+};
+```
+
+## 성능 고려사항
+
+ColoredBox는 Container보다 가볍습니다:
+
+1. **메모리 사용**: Container보다 적은 메모리 사용
+2. **렌더링 성능**: 단순한 렌더링 로직으로 빠른 처리
+3. **리스트에서 유용**: 많은 아이템이 있는 리스트에서 특히 효과적
+
+```typescript
+// 성능이 중요한 리스트에서
+ListView({
+  children: items.map(item => 
+    ColoredBox({
+      color: item.isSelected ? '#E3F2FD' : 'white',
+      child: ListTile({ title: item.name })
+    })
+  )
+})
+```
+
+## 주의사항
+
+- ColoredBox는 오직 색상만 지정할 수 있습니다. 그라데이션, 이미지, 테두리 등이 필요하면 Container나 DecoratedBox를 사용하세요.
+- 자식 위젯의 크기에 따라 ColoredBox의 크기가 결정됩니다.
+- 투명도가 있는 색상을 사용할 때는 배경과의 합성을 고려해야 합니다.
+- SVG 렌더링 모드에서도 정상적으로 작동합니다.
+
+## 관련 위젯
+
+- **Container**: 더 많은 스타일링 옵션이 필요할 때
+- **DecoratedBox**: 복잡한 decoration이 필요할 때
+- **Opacity**: 전체 위젯의 투명도를 조절할 때
+- **AnimatedContainer**: 색상 변화를 애니메이션하고 싶을 때

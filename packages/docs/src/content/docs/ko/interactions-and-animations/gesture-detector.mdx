@@ -2,108 +2,108 @@
 nav_group: "Interactions and Animations"
 nav_order: 1
 title: "Gesture Detection"
-description: "Learn how to implement and handle user gestures in Flitter applications"
+description: "Flitter 애플리케이션에서 사용자 제스처를 구현하고 처리하는 방법 알아보기"
 ---
 
-# Gesture Detection in Flitter
+# Flitter의 제스처 감지
 
-Gesture detection is a crucial aspect of creating interactive user interfaces in Flitter. It allows your application to respond to various user inputs such as taps, drags, and scrolls. Flitter provides a powerful widget called GestureDetector to handle these interactions.
+제스처 감지는 Flitter에서 대화형 사용자 인터페이스를 만드는 데 중요한 측면입니다. 탭, 드래그, 스크롤과 같은 다양한 사용자 입력에 애플리케이션이 응답할 수 있게 해줍니다. Flitter는 이러한 상호작용을 처리하기 위해 GestureDetector라는 강력한 위젯을 제공합니다.
 
-## GestureDetector Widget
+## GestureDetector 위젯
 
-The GestureDetector widget doesn't have a visual representation but instead detects gestures made on its child widget.
+GestureDetector 위젯은 시각적 표현이 없지만 대신 자식 위젯에서 만들어진 제스처를 감지합니다.
 
-### Basic Usage
+### 기본 사용법
 
-Here's a simple example of how to use a GestureDetector:
+GestureDetector를 사용하는 간단한 예제입니다:
 
 ```typescript
 import { GestureDetector, Container, Text } from "@meursyphus/flitter";
 
 const gestureExample = GestureDetector({
   onClick: (e) => {
-    console.log("Container clicked!");
+    console.log("컨테이너가 클릭되었습니다!");
   },
   child: Container({
     width: 200,
     height: 100,
     color: "blue",
-    child: Text("Click me!", { style: new TextStyle({ color: "white" }) }),
+    child: Text("클릭하세요!", { style: new TextStyle({ color: "white" }) }),
   }),
 });
 ```
 
-## Common Gesture Types
+## 일반적인 제스처 유형
 
-GestureDetector can handle various types of gestures. Here are some of the most commonly used ones:
+GestureDetector는 다양한 유형의 제스처를 처리할 수 있습니다. 다음은 가장 일반적으로 사용되는 것들입니다:
 
-### 1. Click (Tap)
+### 1. 클릭 (탭)
 
-Detects when the user taps the screen.
+사용자가 화면을 탭할 때를 감지합니다.
 
 ```typescript
 GestureDetector({
   onClick: (e) => {
-    console.log('Tapped at: ', e.clientX, e.clientY);
+    console.log('탭 위치: ', e.clientX, e.clientY);
   },
   child: /* your widget here */
 })
 ```
 
-### 2. Double Click (Double Tap)
+### 2. 더블 클릭 (더블 탭)
 
-Detects when the user double-taps the screen.
+사용자가 화면을 더블 탭할 때를 감지합니다.
 
 ```typescript
 GestureDetector({
   onDoubleClick: (e) => {
-    console.log('Double tapped!');
+    console.log('더블 탭되었습니다!');
   },
   child: /* your widget here */
 })
 ```
 
-### 3. Drag
+### 3. 드래그
 
-Detects when the user drags their finger across the screen.
+사용자가 화면을 가로질러 손가락을 드래그할 때를 감지합니다.
 
 ```typescript
 GestureDetector({
   onDragStart: (e) => {
-    console.log('Started dragging');
+    console.log('드래그 시작');
   },
   onDragUpdate: (e) => {
-    console.log('Dragging at: ', e.clientX, e.clientY);
+    console.log('드래그 위치: ', e.clientX, e.clientY);
   },
   onDragEnd: (e) => {
-    console.log('Ended dragging');
+    console.log('드래그 종료');
   },
   child: /* your widget here */
 })
 ```
 
-### 4. Mouse Events
+### 4. 마우스 이벤트
 
-For web applications, you can also handle specific mouse events:
+웹 애플리케이션의 경우 특정 마우스 이벤트도 처리할 수 있습니다:
 
 ```typescript
 GestureDetector({
   onMouseEnter: (e) => {
-    console.log('Mouse entered');
+    console.log('마우스 진입');
   },
   onMouseLeave: (e) => {
-    console.log('Mouse left');
+    console.log('마우스 이탈');
   },
   onMouseMove: (e) => {
-    console.log('Mouse moved to: ', e.clientX, e.clientY);
+    console.log('마우스 이동 위치: ', e.clientX, e.clientY);
   },
   child: /* your widget here */
 })
 ```
 
-## Advanced Usage: Combining Gestures
+## 고급 사용법: 제스처 결합하기
 
-You can combine multiple gesture recognizers on a single GestureDetector:
+단일 GestureDetector에서 여러 제스처 인식기를 결합할 수 있습니다:
 
 ```typescript
 import {
@@ -121,26 +121,26 @@ class InteractiveBox extends StatefulWidget {
 
 class InteractiveBoxState extends State<InteractiveBox> {
   private color: string = "blue";
-  private text: string = "Interact with me!";
+  private text: string = "저와 상호작용하세요!";
 
   build() {
     return GestureDetector({
       onClick: () => {
         this.setState(() => {
           this.color = "red";
-          this.text = "Clicked!";
+          this.text = "클릭됨!";
         });
       },
       onMouseEnter: () => {
         this.setState(() => {
           this.color = "yellow";
-          this.text = "Mouse Entered!";
+          this.text = "마우스 진입!";
         });
       },
       onMouseLeave: () => {
         this.setState(() => {
           this.color = "blue";
-          this.text = "Mouse Left!";
+          this.text = "마우스 이탈!";
         });
       },
       child: Container({
@@ -154,20 +154,20 @@ class InteractiveBoxState extends State<InteractiveBox> {
 }
 ```
 
-This example creates an interactive box that changes its color and text based on different user interactions.
+이 예제는 다양한 사용자 상호작용에 따라 색상과 텍스트가 변경되는 대화형 상자를 만듭니다.
 
-## Best Practices
+## 모범 사례
 
-1. **Be responsive**: Ensure that your app provides immediate feedback for gestures to enhance user experience.
+1. **반응성 있게 만들기**: 사용자 경험을 향상시키기 위해 앱이 제스처에 대해 즉각적인 피드백을 제공하도록 합니다.
 
-2. **Use appropriate gestures**: Choose gestures that are intuitive for the action being performed.
+2. **적절한 제스처 사용**: 수행되는 동작에 직관적인 제스처를 선택합니다.
 
-3. **Provide visual feedback**: Always give visual cues to the user when their gestures are recognized.
+3. **시각적 피드백 제공**: 제스처가 인식될 때 항상 사용자에게 시각적 단서를 제공합니다.
 
-4. **Consider accessibility**: Ensure that your app can be used with alternative input methods for users with disabilities.
+4. **접근성 고려**: 장애가 있는 사용자를 위해 대체 입력 방법으로 앱을 사용할 수 있도록 합니다.
 
-5. **Test thoroughly**: Gesture interactions can sometimes be tricky, so test your app thoroughly on various devices and screen sizes.
+5. **철저한 테스트**: 제스처 상호작용은 때때로 까다로울 수 있으므로 다양한 기기와 화면 크기에서 앱을 철저히 테스트합니다.
 
-## Conclusion
+## 결론
 
-Gesture detection is a powerful tool in creating interactive and responsive Flitter applications. By mastering the GestureDetector widget and understanding different types of gestures, you can create rich user experiences that respond intuitively to user input. Remember to combine gesture detection with state management for creating dynamic and interactive UIs.
+제스처 감지는 대화형이고 반응형 Flitter 애플리케이션을 만드는 강력한 도구입니다. GestureDetector 위젯을 마스터하고 다양한 유형의 제스처를 이해함으로써 사용자 입력에 직관적으로 반응하는 풍부한 사용자 경험을 만들 수 있습니다. 동적이고 대화형 UI를 만들기 위해 제스처 감지를 상태 관리와 결합하는 것을 잊지 마세요.

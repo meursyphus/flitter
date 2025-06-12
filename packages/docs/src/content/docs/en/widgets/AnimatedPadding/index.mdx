@@ -1,14 +1,14 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: AnimatedPadding
 title: "AnimatedPadding"
-description: ""
+description: "A widget that animates padding transitions"
 ---
 
-# AnimatedPadding
+## Overview
 
-This widget motivated by AnimatedOpacity in Flutter.
+AnimatedPadding is a widget that automatically animates when its padding changes, providing smooth transitions. This widget is inspired by Flutter's AnimatedPadding widget.
 
 > Animated version of Padding which automatically transitions the indentation over a given duration whenever the given inset changes.
 
@@ -22,26 +22,486 @@ This widget motivated by AnimatedOpacity in Flutter.
   allowfullscreen
 ></iframe>
 
-See: https://api.flutter.dev/flutter/widgets/AnimatedPadding-class.html
+Flutter reference: https://api.flutter.dev/flutter/widgets/AnimatedPadding-class.html
+
+## When to use?
+
+- When dynamically adjusting widget spacing based on user interaction
+- When smoothly changing internal margins during card or container expansion/collapse
+- When dynamically adjusting item spacing in masonry lists
+- When adjusting spacing based on screen size in responsive design
+- When transitioning padding in foldable content with animation
+
+## Basic usage
+
+```typescript
+import { AnimatedPadding, Container, EdgeInsets, StatefulWidget } from '@flitter/core';
+
+class PaddingExample extends StatefulWidget {
+  createState() {
+    return new PaddingExampleState();
+  }
+}
+
+class PaddingExampleState extends State<PaddingExample> {
+  isExpanded = false;
+
+  build() {
+    return Column({
+      children: [
+        ElevatedButton({
+          onPressed: () => {
+            this.setState(() => {
+              this.isExpanded = !this.isExpanded;
+            });
+          },
+          child: Text(this.isExpanded ? "Collapse" : "Expand"),
+        }),
+        Container({
+          width: 300,
+          height: 300,
+          color: "lightgray",
+          child: AnimatedPadding({
+            padding: this.isExpanded 
+              ? EdgeInsets.all(50) 
+              : EdgeInsets.all(10),
+            duration: 500, // 0.5 seconds
+            child: Container({
+              color: "blue",
+              child: Center({
+                child: Text("Animated Padding", {
+                  style: TextStyle({ color: "white" })
+                }),
+              }),
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
 
 ## Props
 
-### padding
-
-**Value: EdgeGeometry | undefined**
-
-### child
-
-**Value: Widget | undefined**
-
-### duration
-
+### duration (required)
 **Value: number**
 
-### curve
+Specifies the animation duration in milliseconds.
 
-**Value: Curve(default Curves.linear)**
+### padding (optional)
+**Value: EdgeInsetsGeometry** (default: **EdgeInsets.all(0)**)
 
-## Examples
+Sets the internal spacing of the widget. Available methods:
 
-### Basic
+#### EdgeInsets methods
+- `EdgeInsets.all(value)`: Same spacing in all directions
+- `EdgeInsets.symmetric({ horizontal, vertical })`: Horizontal/vertical symmetric spacing
+- `EdgeInsets.only({ top, bottom, left, right })`: Specify spacing for each direction
+- `EdgeInsets.fromLTRB({ left, top, right, bottom })`: Specify in left/top/right/bottom order
+
+#### Usage examples
+```typescript
+// 20 spacing in all directions
+EdgeInsets.all(20)
+
+// Horizontal 16, vertical 8 spacing
+EdgeInsets.symmetric({ horizontal: 16, vertical: 8 })
+
+// Different spacing for each direction
+EdgeInsets.only({ top: 10, left: 20, right: 20, bottom: 30 })
+
+// Specify in LTRB order
+EdgeInsets.fromLTRB({ left: 10, top: 20, right: 10, bottom: 20 })
+```
+
+### curve (optional)
+**Value: Curve** (default: **Curves.linear**)
+
+Specifies the animation progression curve. Available curves:
+- `Curves.linear`: Constant speed
+- `Curves.easeIn`: Slow start
+- `Curves.easeOut`: Slow end
+- `Curves.easeInOut`: Slow start and end
+- `Curves.circIn`: Circular acceleration start
+- `Curves.circOut`: Circular deceleration end
+- `Curves.circInOut`: Circular acceleration/deceleration
+- `Curves.backIn`: Goes back then starts
+- `Curves.backOut`: Overshoots target then returns
+- `Curves.backInOut`: backIn + backOut
+- `Curves.anticipate`: Anticipatory motion before proceeding
+- `Curves.bounceIn`: Bounces at start
+- `Curves.bounceOut`: Bounces at end
+- `Curves.bounceInOut`: Bounces at start/end
+
+### child (optional)
+**Value: Widget | undefined**
+
+The child widget to which padding will be applied.
+
+### key (optional)
+**Value: any**
+
+A unique identifier for the widget.
+
+## Real-world examples
+
+### Example 1: Foldable card
+
+```typescript
+import { AnimatedPadding, Container, Card, EdgeInsets, Curves } from '@flitter/core';
+
+class FoldableCard extends StatefulWidget {
+  createState() {
+    return new FoldableCardState();
+  }
+}
+
+class FoldableCardState extends State<FoldableCard> {
+  isExpanded = false;
+
+  build() {
+    return Card({
+      child: Column({
+        children: [
+          // Header
+          ListTile({
+            title: Text("Foldable Card"),
+            trailing: Icon(
+              this.isExpanded ? Icons.expand_less : Icons.expand_more
+            ),
+            onTap: () => {
+              this.setState(() => {
+                this.isExpanded = !this.isExpanded;
+              });
+            },
+          }),
+          
+          // Expandable content
+          AnimatedPadding({
+            padding: this.isExpanded 
+              ? EdgeInsets.fromLTRB({ left: 16, top: 0, right: 16, bottom: 16 })
+              : EdgeInsets.all(0),
+            duration: 300,
+            curve: Curves.easeOut,
+            child: this.isExpanded ? Column({
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Detailed Content",
+                  { style: TextStyle({ fontWeight: "bold", fontSize: 16 }) }
+                ),
+                SizedBox({ height: 8 }),
+                Text(
+                  "This card expands when clicked, and the internal content padding "
+                  "animates smoothly to appear naturally."
+                ),
+                SizedBox({ height: 12 }),
+                Row({
+                  children: [
+                    ElevatedButton({
+                      onPressed: () => {},
+                      child: Text("Action 1"),
+                    }),
+                    SizedBox({ width: 8 }),
+                    OutlinedButton({
+                      onPressed: () => {},
+                      child: Text("Action 2"),
+                    }),
+                  ],
+                }),
+              ],
+            }) : SizedBox.shrink(),
+          }),
+        ],
+      }),
+    });
+  }
+}
+```
+
+### Example 2: Responsive margins
+
+```typescript
+import { AnimatedPadding, Container, EdgeInsets, Curves } from '@flitter/core';
+
+class ResponsiveMargin extends StatefulWidget {
+  createState() {
+    return new ResponsiveMarginState();
+  }
+}
+
+class ResponsiveMarginState extends State<ResponsiveMargin> {
+  screenSize = "mobile"; // mobile, tablet, desktop
+
+  get currentPadding() {
+    switch (this.screenSize) {
+      case "mobile":
+        return EdgeInsets.all(8);
+      case "tablet":
+        return EdgeInsets.all(16);
+      case "desktop":
+        return EdgeInsets.all(32);
+      default:
+        return EdgeInsets.all(8);
+    }
+  }
+
+  build() {
+    return Column({
+      children: [
+        // Screen size selection
+        Row({
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton({
+              onPressed: () => this.changeScreenSize("mobile"),
+              child: Text("Mobile"),
+              style: ButtonStyle({
+                backgroundColor: this.screenSize === "mobile" ? "blue" : "gray",
+              }),
+            }),
+            SizedBox({ width: 8 }),
+            ElevatedButton({
+              onPressed: () => this.changeScreenSize("tablet"),
+              child: Text("Tablet"),
+              style: ButtonStyle({
+                backgroundColor: this.screenSize === "tablet" ? "blue" : "gray",
+              }),
+            }),
+            SizedBox({ width: 8 }),
+            ElevatedButton({
+              onPressed: () => this.changeScreenSize("desktop"),
+              child: Text("Desktop"),
+              style: ButtonStyle({
+                backgroundColor: this.screenSize === "desktop" ? "blue" : "gray",
+              }),
+            }),
+          ],
+        }),
+        SizedBox({ height: 20 }),
+        
+        // Responsive container
+        Container({
+          width: 400,
+          height: 300,
+          color: "#f0f0f0",
+          child: AnimatedPadding({
+            padding: this.currentPadding,
+            duration: 400,
+            curve: Curves.easeInOut,
+            child: Container({
+              decoration: BoxDecoration({
+                color: "white",
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow({
+                    color: "rgba(0,0,0,0.1)",
+                    blurRadius: 4,
+                    offset: Offset({ x: 0, y: 2 }),
+                  }),
+                ],
+              }),
+              child: Center({
+                child: Column({
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      `Current mode: ${this.screenSize}`,
+                      { style: TextStyle({ fontSize: 18, fontWeight: "bold" }) }
+                    ),
+                    SizedBox({ height: 8 }),
+                    Text(
+                      `Padding: ${this.currentPadding.top}px`,
+                      { style: TextStyle({ color: "gray" }) }
+                    ),
+                  ],
+                }),
+              }),
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+
+  changeScreenSize(size: string) {
+    this.setState(() => {
+      this.screenSize = size;
+    });
+  }
+}
+```
+
+### Example 3: Dynamic list item spacing
+
+```typescript
+import { AnimatedPadding, Container, ListView, EdgeInsets, Curves } from '@flitter/core';
+
+class DynamicListSpacing extends StatefulWidget {
+  createState() {
+    return new DynamicListSpacingState();
+  }
+}
+
+class DynamicListSpacingState extends State<DynamicListSpacing> {
+  isCompact = false;
+  items = [
+    { title: "First Item", color: "#FF6B6B" },
+    { title: "Second Item", color: "#4ECDC4" },
+    { title: "Third Item", color: "#45B7D1" },
+    { title: "Fourth Item", color: "#96CEB4" },
+    { title: "Fifth Item", color: "#FFEAA7" },
+  ];
+
+  build() {
+    return Column({
+      children: [
+        // Density control
+        Padding({
+          padding: EdgeInsets.all(16),
+          child: Row({
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "List Density",
+                { style: TextStyle({ fontSize: 18, fontWeight: "bold" }) }
+              ),
+              Switch({
+                value: this.isCompact,
+                onChanged: (value) => {
+                  this.setState(() => {
+                    this.isCompact = value;
+                  });
+                },
+              }),
+            ],
+          }),
+        }),
+        
+        // List
+        Expanded({
+          child: ListView({
+            children: this.items.map((item, index) => {
+              return AnimatedPadding({
+                key: ValueKey(index),
+                padding: this.isCompact 
+                  ? EdgeInsets.symmetric({ horizontal: 16, vertical: 4 })
+                  : EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+                duration: 200,
+                curve: Curves.easeOut,
+                child: Container({
+                  height: this.isCompact ? 60 : 80,
+                  decoration: BoxDecoration({
+                    color: item.color,
+                    borderRadius: BorderRadius.circular(8),
+                  }),
+                  child: Center({
+                    child: Text(
+                      item.title,
+                      { style: TextStyle({ color: "white", fontSize: 16 }) }
+                    ),
+                  }),
+                }),
+              });
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
+
+### Example 4: Asymmetric padding animation
+
+```typescript
+import { AnimatedPadding, Container, EdgeInsets, Curves } from '@flitter/core';
+
+class AsymmetricPadding extends StatefulWidget {
+  createState() {
+    return new AsymmetricPaddingState();
+  }
+}
+
+class AsymmetricPaddingState extends State<AsymmetricPadding> {
+  paddingIndex = 0;
+  paddingConfigs = [
+    EdgeInsets.all(20),
+    EdgeInsets.only({ left: 50, right: 10, top: 20, bottom: 20 }),
+    EdgeInsets.only({ left: 10, right: 50, top: 40, bottom: 10 }),
+    EdgeInsets.symmetric({ horizontal: 30, vertical: 10 }),
+    EdgeInsets.fromLTRB({ left: 60, top: 10, right: 20, bottom: 40 }),
+  ];
+
+  build() {
+    const currentPadding = this.paddingConfigs[this.paddingIndex];
+    
+    return GestureDetector({
+      onTap: () => this.nextPadding(),
+      child: Container({
+        width: 350,
+        height: 250,
+        color: "#2C3E50",
+        child: AnimatedPadding({
+          padding: currentPadding,
+          duration: 800,
+          curve: Curves.backOut,
+          child: Container({
+            decoration: BoxDecoration({
+              gradient: LinearGradient({
+                colors: ["#74b9ff", "#0984e3"],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              }),
+              borderRadius: BorderRadius.circular(12),
+            }),
+            child: Center({
+              child: Column({
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Asymmetric Padding",
+                    { style: TextStyle({ color: "white", fontSize: 20, fontWeight: "bold" }) }
+                  ),
+                  SizedBox({ height: 8 }),
+                  Text(
+                    `L:${currentPadding.left} T:${currentPadding.top} R:${currentPadding.right} B:${currentPadding.bottom}`,
+                    { style: TextStyle({ color: "white", fontSize: 14 }) }
+                  ),
+                  SizedBox({ height: 16 }),
+                  Text(
+                    "Tap for next padding",
+                    { style: TextStyle({ color: "white", fontSize: 12, opacity: 0.8 }) }
+                  ),
+                ],
+              }),
+            }),
+          }),
+        }),
+      }),
+    });
+  }
+
+  nextPadding() {
+    this.setState(() => {
+      this.paddingIndex = (this.paddingIndex + 1) % this.paddingConfigs.length;
+    });
+  }
+}
+```
+
+## Notes
+
+- Padding values cannot be negative
+- All properties of EdgeInsetsGeometry animate simultaneously
+- Very large padding values can impact performance
+- If a new padding value is set during animation, it smoothly transitions from the current value to the new value
+- Padding space is maintained even without child widgets
+
+## Related widgets
+
+- **Padding**: Basic widget for setting padding without animation
+- **AnimatedContainer**: Animates multiple properties simultaneously
+- **AnimatedAlign**: Animates alignment transitions
+- **Container**: Versatile widget that can set both padding and margin simultaneously

@@ -1,25 +1,309 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: Row
 title: "Row"
-description: ""
+description: "A layout widget that arranges its children horizontally"
 ---
+
+## Overview
+
+Row is a layout widget that arranges its children in a horizontal direction.
+
+Row is a convenience wrapper around the Flex widget with the direction fixed to horizontal. It's used to place multiple widgets side by side and provides various alignment options. By default, Row takes up all available horizontal space, but you can adjust `mainAxisSize` to only take up as much space as needed.
+
+## When to use it?
+
+- When arranging buttons, icons, or text horizontally
+- When creating navigation bars or toolbars
+- When placing form fields and labels side by side
+- When structuring horizontal layouts for cards or list items
+- When displaying icons alongside text
+
+## Basic Usage
+
+```typescript
+// Simple example
+const row = Row({
+  children: [
+    Text('First'),
+    Text('Second'),
+    Text('Third')
+  ]
+});
+
+// Using alignment options
+const alignedRow = Row({
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Icon({ icon: Icons.home }),
+    Text('Home'),
+    Icon({ icon: Icons.settings })
+  ]
+});
+```
 
 ## Props
 
+### children (required)
+
+**Value: Widget[]**
+
+An array of child widgets to display in the Row. They are arranged from left to right in array order.
+
+```typescript
+Row({
+  children: [
+    Container({ width: 50, height: 50, color: 'red' }),
+    Container({ width: 50, height: 50, color: 'green' }),
+    Container({ width: 50, height: 50, color: 'blue' })
+  ]
+})
+```
+
 ### mainAxisAlignment
 
-**Value: center | start | end | spaceBetween | spaceEven | spaceAround** (default: **start**)
+**Value: MainAxisAlignment** (default: **MainAxisAlignment.start**)
 
-This prop defines the **horizontal** display of its children.
+Defines the horizontal alignment of child widgets.
+
+- **start**: Left alignment (default)
+- **end**: Right alignment
+- **center**: Center alignment
+- **spaceBetween**: Place first and last widgets at edges, distribute remaining space evenly
+- **spaceAround**: Distribute equal space around each widget
+- **spaceEvenly**: Distribute equal space between all widgets and edges
+
+```typescript
+// Center alignment
+Row({
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Text('A'),
+    Text('B'),
+    Text('C')
+  ]
+})
+
+// Space between
+Row({
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    Text('Left'),
+    Text('Right')
+  ]
+})
+```
 
 ### crossAxisAlignment
 
-**Value: stretch | start | center | end** (default: **center**)
+**Value: CrossAxisAlignment** (default: **CrossAxisAlignment.center**)
 
-This prop defines the **vertical** display of its children.
+Defines the vertical alignment of child widgets.
 
-### children
+- **start**: Top alignment
+- **end**: Bottom alignment
+- **center**: Vertical center alignment (default)
+- **stretch**: Stretch to fill available vertical space
 
-**value**: **Widget[]**
+```typescript
+Row({
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Container({ width: 50, height: 50, color: 'red' }),
+    Container({ width: 50, height: 100, color: 'green' }),
+    Container({ width: 50, height: 75, color: 'blue' })
+  ]
+})
+```
+
+### mainAxisSize
+
+**Value: MainAxisSize** (default: **MainAxisSize.max**)
+
+Controls the amount of horizontal space the Row takes up.
+
+- **max**: Take up all available horizontal space (default)
+- **min**: Take up only the minimum space needed by children
+
+```typescript
+// Take up only necessary space
+Container({
+  color: 'lightgray',
+  child: Row({
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text('Compact'),
+      Icon({ icon: Icons.star })
+    ]
+  })
+})
+```
+
+### verticalDirection
+
+**Value: VerticalDirection** (default: **VerticalDirection.down**)
+
+Defines the vertical layout order of child widgets.
+
+- **down**: From top to bottom (default)
+- **up**: From bottom to top
+
+This property is mainly used in conjunction with `crossAxisAlignment`.
+
+## Advanced Usage
+
+### Using with Expanded
+
+```typescript
+Row({
+  children: [
+    Container({ width: 50, height: 50, color: 'red' }),
+    Expanded({
+      child: Container({ height: 50, color: 'green' })
+    }),
+    Container({ width: 50, height: 50, color: 'blue' })
+  ]
+})
+// The green Container takes up all remaining space
+```
+
+### Responsive Layout
+
+```typescript
+Row({
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    Flexible({
+      flex: 2,
+      child: Container({ height: 50, color: 'red' })
+    }),
+    Flexible({
+      flex: 1,
+      child: Container({ height: 50, color: 'green' })
+    }),
+    Flexible({
+      flex: 1,
+      child: Container({ height: 50, color: 'blue' })
+    })
+  ]
+})
+// Red takes 50%, green and blue each take 25%
+```
+
+## Practical Examples
+
+### Example 1: Navigation Bar
+
+```typescript
+const navbar = Container({
+  padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+  color: 'white',
+  child: Row({
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Row({
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon({ icon: Icons.menu }),
+          SizedBox({ width: 16 }),
+          Text('My App', { style: TextStyle({ fontSize: 20, fontWeight: 'bold' }) })
+        ]
+      }),
+      Row({
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton({ icon: Icons.search, onPressed: () => {} }),
+          IconButton({ icon: Icons.notifications, onPressed: () => {} }),
+          IconButton({ icon: Icons.account_circle, onPressed: () => {} })
+        ]
+      })
+    ]
+  })
+});
+```
+
+### Example 2: Form Field
+
+```typescript
+const formField = Container({
+  padding: EdgeInsets.all(16),
+  child: Row({
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Container({
+        width: 100,
+        child: Text('Name:', { style: TextStyle({ fontWeight: 'bold' }) })
+      }),
+      Expanded({
+        child: TextField({
+          decoration: InputDecoration({
+            hintText: 'Enter your name',
+            border: OutlineInputBorder()
+          })
+        })
+      })
+    ]
+  })
+});
+```
+
+### Example 3: Card Layout
+
+```typescript
+const card = Container({
+  margin: EdgeInsets.all(8),
+  padding: EdgeInsets.all(16),
+  decoration: BoxDecoration({
+    color: 'white',
+    borderRadius: BorderRadius.circular(8),
+    boxShadow: [
+      BoxShadow({
+        color: 'rgba(0, 0, 0, 0.1)',
+        blurRadius: 4,
+        offset: { x: 0, y: 2 }
+      })
+    ]
+  }),
+  child: Row({
+    children: [
+      Container({
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration({
+          shape: 'circle',
+          color: 'blue'
+        })
+      }),
+      SizedBox({ width: 16 }),
+      Expanded({
+        child: Column({
+          crossAxisAlignment: 'start',
+          children: [
+            Text('Title', { style: TextStyle({ fontSize: 16, fontWeight: 'bold' }) }),
+            Text('Subtitle', { style: TextStyle({ color: 'gray' }) })
+          ]
+        })
+      }),
+      Icon({ icon: Icons.arrow_forward })
+    ]
+  })
+});
+```
+
+## Important Notes
+
+- If child widgets exceed horizontal space, an overflow error occurs. Use `Flexible` or `Expanded` in such cases.
+- When using `crossAxisAlignment.stretch`, child widgets can expand infinitely if their height is unconstrained.
+- Row doesn't support scrolling. Use with `SingleChildScrollView` if scrolling is needed.
+- Use the `Column` widget for vertical layouts.
+
+## Related Widgets
+
+- **Column**: Arranges children vertically
+- **Flex**: More flexible layout widget that Row and Column are based on
+- **Wrap**: Automatically wraps to next line when space is insufficient
+- **Stack**: Overlays children on top of each other
+- **Expanded**: Takes up remaining space within a Row
+- **Flexible**: Allows flexible sizing within a Row

@@ -1,18 +1,14 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: AspectRatio
 title: "AspectRatio"
-description: ""
+description: "A widget that sizes its child to a specific aspect ratio"
 ---
 
-# AspectRatio
+## Overview
 
-This widget motivated by AspectRatio in Flutter.
-
-> A widget that attempts to size the child to a specific aspect ratio.
->
-> The widget first tries the largest width permitted by the layout constraints. The height of the widget is determined by applying the given aspect ratio to the width, expressed as a ratio of width to height.
+AspectRatio is a widget that sizes its child to a specific aspect ratio (width-to-height ratio). It maintains a consistent ratio between width and height while displaying the child at the largest possible size.
 
 <iframe
   width="560"
@@ -24,18 +20,388 @@ This widget motivated by AspectRatio in Flutter.
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/AspectRatio-class.html](https://api.flutter.dev/flutter/widgets/AspectRatio-class.html)
+Reference: [https://api.flutter.dev/flutter/widgets/AspectRatio-class.html](https://api.flutter.dev/flutter/widgets/AspectRatio-class.html)
+
+## When to Use
+
+- When maintaining original aspect ratios of images or videos
+- When creating elements with consistent ratios in responsive design
+- When maintaining consistent appearance of cards or tiles
+- When fixing aspect ratios of charts or graphs
+- When preserving logo or icon proportions
+
+## Basic Usage
+
+```typescript
+// 16:9 ratio
+AspectRatio({
+  aspectRatio: 16 / 9,
+  child: Container({
+    color: 'blue',
+    child: Center({
+      child: Text('16:9')
+    })
+  })
+})
+
+// Square (1:1 ratio)
+AspectRatio({
+  aspectRatio: 1.0,
+  child: Image({
+    src: '/assets/profile.jpg',
+    objectFit: 'cover'
+  })
+})
+
+// Golden ratio
+AspectRatio({
+  aspectRatio: 1.618,
+  child: Card({
+    child: Center({
+      child: Text('Golden Ratio')
+    })
+  })
+})
+```
 
 ## Props
 
-### aspectRatio
+### aspectRatio (required)
+**Type: number**
 
-**Value: number**
+The ratio of width to height. Must be greater than 0 and finite.
 
-### child
+Common aspect ratios:
+- `1.0`: Square (1:1)
+- `16/9` (~1.78): Widescreen video
+- `4/3` (~1.33): Traditional TV/monitor
+- `3/2` (1.5): 35mm film
+- `1.618`: Golden ratio
+- `9/16` (~0.56): Portrait mobile screen
 
-**Value: Widget | undefined**
+```typescript
+// Various aspect ratio examples
+AspectRatio({
+  aspectRatio: 16 / 9,  // Widescreen
+  child: VideoPlayer({ url: 'video.mp4' })
+})
 
-## Examples
+AspectRatio({
+  aspectRatio: 1.0,  // Square
+  child: ProfileImage({ src: 'avatar.jpg' })
+})
 
-### Basic
+AspectRatio({
+  aspectRatio: 3 / 4,  // Portrait
+  child: ProductCard({ product })
+})
+```
+
+### child (optional)
+**Type: Widget | undefined**
+
+The child widget to which the aspect ratio will be applied. Even without a child, AspectRatio will occupy space with the specified ratio.
+
+## Size Calculation
+
+AspectRatio determines its size in the following order:
+
+1. If constraints are tight, use those dimensions
+2. If max width is finite, calculate height based on width
+3. If width is infinite, calculate width based on max height
+4. Adjust if calculated size exceeds constraints
+5. Finally maintain ratio within min/max constraints
+
+## Practical Examples
+
+### Example 1: Video Player
+
+```typescript
+const VideoContainer = ({ videoUrl, title }) => {
+  return Column({
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      AspectRatio({
+        aspectRatio: 16 / 9,
+        child: Container({
+          color: 'black',
+          child: Stack({
+            children: [
+              VideoPlayer({ url: videoUrl }),
+              Positioned({
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container({
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration({
+                    gradient: LinearGradient({
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: ['transparent', 'rgba(0,0,0,0.7)']
+                    })
+                  }),
+                  child: Text(title, {
+                    style: TextStyle({
+                      color: 'white',
+                      fontSize: 16
+                    })
+                  })
+                })
+              })
+            ]
+          })
+        })
+      })
+    ]
+  });
+};
+```
+
+### Example 2: Responsive Card Grid
+
+```typescript
+const ResponsiveCardGrid = ({ items }) => {
+  return GridView({
+    crossAxisCount: 3,
+    mainAxisSpacing: 16,
+    crossAxisSpacing: 16,
+    children: items.map(item => 
+      AspectRatio({
+        aspectRatio: 3 / 4,
+        child: Container({
+          decoration: BoxDecoration({
+            color: 'white',
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow({
+                color: 'rgba(0,0,0,0.1)',
+                blurRadius: 8,
+                offset: { x: 0, y: 2 }
+              })
+            ]
+          }),
+          child: Column({
+            children: [
+              Expanded({
+                flex: 3,
+                child: ClipRRect({
+                  borderRadius: BorderRadius.vertical({
+                    top: Radius.circular(12)
+                  }),
+                  child: Image({
+                    src: item.imageUrl,
+                    objectFit: 'cover',
+                    width: double.infinity,
+                    height: double.infinity
+                  })
+                })
+              }),
+              Expanded({
+                flex: 2,
+                child: Padding({
+                  padding: EdgeInsets.all(12),
+                  child: Column({
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(item.title, {
+                        style: TextStyle({
+                          fontSize: 16,
+                          fontWeight: 'bold'
+                        }),
+                        maxLines: 2
+                      }),
+                      Spacer(),
+                      Text(item.price, {
+                        style: TextStyle({
+                          fontSize: 18,
+                          color: '#FF5733',
+                          fontWeight: 'bold'
+                        })
+                      })
+                    ]
+                  })
+                })
+              })
+            ]
+          })
+        })
+      })
+    )
+  });
+};
+```
+
+### Example 3: Profile Image
+
+```typescript
+const ProfileAvatar = ({ imageUrl, name, size = 120 }) => {
+  return Container({
+    width: size,
+    child: AspectRatio({
+      aspectRatio: 1.0,  // Square
+      child: Container({
+        decoration: BoxDecoration({
+          shape: BoxShape.circle,
+          border: Border.all({
+            color: '#E0E0E0',
+            width: 3
+          })
+        }),
+        child: ClipOval({
+          child: imageUrl ? 
+            Image({
+              src: imageUrl,
+              objectFit: 'cover',
+              width: double.infinity,
+              height: double.infinity
+            }) :
+            Container({
+              color: '#F0F0F0',
+              child: Center({
+                child: Text(
+                  name.split(' ').map(n => n[0]).join('').toUpperCase(),
+                  {
+                    style: TextStyle({
+                      fontSize: size / 3,
+                      fontWeight: 'bold',
+                      color: '#666'
+                    })
+                  }
+                )
+              })
+            })
+        })
+      })
+    })
+  });
+};
+```
+
+### Example 4: Chart Container
+
+```typescript
+const ChartContainer = ({ chartData, title }) => {
+  return Card({
+    child: Padding({
+      padding: EdgeInsets.all(16),
+      child: Column({
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(title, {
+            style: TextStyle({
+              fontSize: 20,
+              fontWeight: 'bold'
+            })
+          }),
+          SizedBox({ height: 16 }),
+          AspectRatio({
+            aspectRatio: 2.0,  // Width is twice the height
+            child: Container({
+              decoration: BoxDecoration({
+                border: Border.all({
+                  color: '#E0E0E0'
+                }),
+                borderRadius: BorderRadius.circular(8)
+              }),
+              child: LineChart({
+                data: chartData,
+                padding: EdgeInsets.all(20)
+              })
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### Example 5: Banner Image
+
+```typescript
+const PromotionBanner = ({ imageUrl, title, subtitle, onTap }) => {
+  return GestureDetector({
+    onTap: onTap,
+    child: Container({
+      margin: EdgeInsets.symmetric({ horizontal: 16 }),
+      child: AspectRatio({
+        aspectRatio: 21 / 9,  // Ultra-wide banner
+        child: Container({
+          decoration: BoxDecoration({
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow({
+                color: 'rgba(0,0,0,0.15)',
+                blurRadius: 10,
+                offset: { x: 0, y: 4 }
+              })
+            ]
+          }),
+          clipBehavior: Clip.hardEdge,
+          child: Stack({
+            fit: StackFit.expand,
+            children: [
+              Image({
+                src: imageUrl,
+                objectFit: 'cover'
+              }),
+              Container({
+                decoration: BoxDecoration({
+                  gradient: LinearGradient({
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      'rgba(0,0,0,0.7)',
+                      'transparent'
+                    ]
+                  })
+                })
+              }),
+              Padding({
+                padding: EdgeInsets.all(24),
+                child: Column({
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, {
+                      style: TextStyle({
+                        color: 'white',
+                        fontSize: 28,
+                        fontWeight: 'bold'
+                      })
+                    }),
+                    SizedBox({ height: 8 }),
+                    Text(subtitle, {
+                      style: TextStyle({
+                        color: 'rgba(255,255,255,0.9)',
+                        fontSize: 16
+                      })
+                    })
+                  ]
+                })
+              })
+            ]
+          })
+        })
+      })
+    })
+  });
+};
+```
+
+## Important Notes
+
+- aspectRatio must be greater than 0 and finite
+- May not maintain desired ratio if parent constraints are insufficient
+- Size is determined based on child size with infinite constraints
+- Can impact performance during intrinsic size calculations
+- Proper constraints must be provided when used within Stack
+
+## Related Widgets
+
+- **FractionallySizedBox**: Sizes based on parent's dimensions
+- **SizedBox**: Specifies fixed dimensions
+- **Container**: Can control ratio with constraints
+- **FittedBox**: Scales child to fit parent
+- **Align**: Sizes using widthFactor and heightFactor

@@ -1,0 +1,428 @@
+---
+nav_group: Widgets
+nav_group_order: 3
+nav_title: Image
+title: "Image"
+description: "이미지를 표시하는 위젯"
+---
+
+## 개요
+
+Image는 이미지를 표시하는 위젯입니다.
+
+Image 위젯은 네트워크, 로컬 파일, 또는 에셋에서 이미지를 로드하여 표시합니다. 다양한 이미지 형식을 지원하며, 크기 조정과 위치 지정 옵션을 제공합니다. objectFit 속성을 사용하여 이미지가 할당된 공간에 어떻게 맞춰질지 제어할 수 있습니다.
+
+## 언제 사용하나요?
+
+- 앱에서 이미지를 표시할 때
+- 썸네일이나 프로필 사진을 보여줄 때
+- 배경 이미지나 일러스트레이션을 표시할 때
+- 아이콘 대신 실제 이미지가 필요할 때
+- 반응형 이미지 레이아웃이 필요할 때
+
+## 기본 사용법
+
+```typescript
+// 기본 이미지
+Image({
+  src: 'https://example.com/image.jpg'
+})
+
+// 크기가 지정된 이미지
+Image({
+  src: '/assets/profile.png',
+  width: 100,
+  height: 100
+})
+
+// 맞춤 옵션이 있는 이미지
+Image({
+  src: '/assets/banner.jpg',
+  width: 300,
+  height: 200,
+  objectFit: 'cover',
+  objectPosition: 'center'
+})
+```
+
+## Props
+
+### src (필수)
+
+**값: string**
+
+표시할 이미지의 URL 또는 경로입니다.
+
+```typescript
+Image({
+  src: 'https://example.com/photo.jpg'  // 네트워크 이미지
+})
+
+Image({
+  src: '/images/logo.png'  // 로컬 이미지
+})
+```
+
+### width
+
+**값: number | undefined**
+
+이미지의 너비입니다 (픽셀 단위).
+
+```typescript
+Image({
+  src: '/image.jpg',
+  width: 200
+})
+```
+
+### height
+
+**값: number | undefined**
+
+이미지의 높이입니다 (픽셀 단위).
+
+```typescript
+Image({
+  src: '/image.jpg',
+  height: 150
+})
+```
+
+### objectFit
+
+**값: ObjectFit | undefined**
+
+이미지가 지정된 크기에 어떻게 맞춰질지 결정합니다.
+
+사용 가능한 값:
+- `'fill'`: 이미지를 늘려서 전체 영역을 채웁니다 (기본값)
+- `'contain'`: 비율을 유지하면서 영역 안에 맞춥니다
+- `'cover'`: 비율을 유지하면서 영역을 가득 채웁니다
+- `'none'`: 원본 크기를 유지합니다
+- `'scale-down'`: none과 contain 중 더 작은 크기를 선택합니다
+
+```typescript
+Image({
+  src: '/banner.jpg',
+  width: 300,
+  height: 200,
+  objectFit: 'cover'  // 비율 유지하며 영역 채우기
+})
+```
+
+### objectPosition
+
+**값: ObjectPosition | undefined**
+
+이미지의 위치를 지정합니다.
+
+사용 가능한 값:
+- `'center'`: 중앙 (기본값)
+- `'top'`: 상단
+- `'right'`: 오른쪽
+- `'bottom'`: 하단
+- `'left'`: 왼쪽
+- `'top left'`: 왼쪽 상단
+- `'top right'`: 오른쪽 상단
+- `'bottom left'`: 왼쪽 하단
+- `'bottom right'`: 오른쪽 하단
+
+```typescript
+Image({
+  src: '/photo.jpg',
+  width: 200,
+  height: 200,
+  objectFit: 'cover',
+  objectPosition: 'top'  // 상단 부분 표시
+})
+```
+
+## 실제 사용 예제
+
+### 예제 1: 프로필 이미지
+
+```typescript
+const ProfileImage = ({ imageUrl, name, size = 80 }) => {
+  return Container({
+    width: size,
+    height: size,
+    decoration: BoxDecoration({
+      borderRadius: BorderRadius.circular(size / 2),
+      border: Border.all({ color: '#E0E0E0', width: 2 })
+    }),
+    clipped: true,
+    child: imageUrl ? 
+      Image({
+        src: imageUrl,
+        width: size,
+        height: size,
+        objectFit: 'cover',
+        objectPosition: 'center'
+      }) :
+      Container({
+        color: '#F0F0F0',
+        child: Center({
+          child: Text(name.charAt(0).toUpperCase(), {
+            style: TextStyle({
+              fontSize: size / 2,
+              fontWeight: 'bold',
+              color: '#666'
+            })
+          })
+        })
+      })
+  });
+};
+```
+
+### 예제 2: 상품 카드
+
+```typescript
+const ProductCard = ({ product }) => {
+  return Container({
+    decoration: BoxDecoration({
+      color: 'white',
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow({
+          color: 'rgba(0, 0, 0, 0.1)',
+          blurRadius: 8,
+          offset: { x: 0, y: 2 }
+        })
+      ]
+    }),
+    clipped: true,
+    child: Column({
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AspectRatio({
+          aspectRatio: 4 / 3,
+          child: Image({
+            src: product.imageUrl,
+            objectFit: 'cover'
+          })
+        }),
+        Padding({
+          padding: EdgeInsets.all(16),
+          child: Column({
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(product.name, {
+                style: TextStyle({
+                  fontSize: 18,
+                  fontWeight: 'bold'
+                })
+              }),
+              SizedBox({ height: 8 }),
+              Text(`₩${product.price.toLocaleString()}`, {
+                style: TextStyle({
+                  fontSize: 20,
+                  color: '#FF5733',
+                  fontWeight: 'bold'
+                })
+              })
+            ]
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 3: 이미지 갤러리 아이템
+
+```typescript
+const GalleryItem = ({ imageUrl, title, onTap }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return GestureDetector({
+    onTap: onTap,
+    onMouseEnter: () => setIsHovered(true),
+    onMouseLeave: () => setIsHovered(false),
+    child: Container({
+      decoration: BoxDecoration({
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: isHovered ? [
+          BoxShadow({
+            color: 'rgba(0, 0, 0, 0.2)',
+            blurRadius: 12,
+            offset: { x: 0, y: 6 }
+          })
+        ] : []
+      }),
+      clipped: true,
+      child: Stack({
+        children: [
+          Image({
+            src: imageUrl,
+            width: 300,
+            height: 200,
+            objectFit: 'cover'
+          }),
+          if (isHovered) Positioned({
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container({
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration({
+                gradient: LinearGradient({
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.7)']
+                })
+              }),
+              child: Text(title, {
+                style: TextStyle({
+                  color: 'white',
+                  fontSize: 16,
+                  fontWeight: 'bold'
+                })
+              })
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### 예제 4: 배경 이미지가 있는 헤더
+
+```typescript
+const HeroHeader = ({ backgroundImage, title, subtitle }) => {
+  return Container({
+    height: 400,
+    child: Stack({
+      fit: StackFit.expand,
+      children: [
+        Image({
+          src: backgroundImage,
+          objectFit: 'cover',
+          objectPosition: 'center'
+        }),
+        Container({
+          decoration: BoxDecoration({
+            gradient: LinearGradient({
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                'rgba(0, 0, 0, 0.3)',
+                'rgba(0, 0, 0, 0.7)'
+              ]
+            })
+          })
+        }),
+        Center({
+          child: Column({
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(title, {
+                style: TextStyle({
+                  fontSize: 48,
+                  fontWeight: 'bold',
+                  color: 'white'
+                })
+              }),
+              SizedBox({ height: 16 }),
+              Text(subtitle, {
+                style: TextStyle({
+                  fontSize: 20,
+                  color: 'rgba(255, 255, 255, 0.9)'
+                })
+              })
+            ]
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 5: 썸네일 리스트
+
+```typescript
+const ThumbnailList = ({ images, selectedIndex, onSelect }) => {
+  return Container({
+    height: 80,
+    child: Row({
+      children: images.map((image, index) => 
+        GestureDetector({
+          onTap: () => onSelect(index),
+          child: Container({
+            width: 80,
+            height: 80,
+            margin: EdgeInsets.only({ right: 8 }),
+            decoration: BoxDecoration({
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all({
+                color: index === selectedIndex ? '#2196F3' : '#E0E0E0',
+                width: index === selectedIndex ? 3 : 1
+              })
+            }),
+            clipped: true,
+            child: Opacity({
+              opacity: index === selectedIndex ? 1 : 0.7,
+              child: Image({
+                src: image.thumbnailUrl,
+                width: 80,
+                height: 80,
+                objectFit: 'cover'
+              })
+            })
+          })
+        })
+      )
+    })
+  });
+};
+```
+
+## 로딩 상태 처리
+
+Image 위젯은 이미지가 로드되는 동안 지정된 크기의 빈 공간을 표시합니다. 로딩 인디케이터를 표시하려면 별도의 상태 관리가 필요합니다:
+
+```typescript
+const ImageWithLoader = ({ src, width, height }) => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  return Stack({
+    children: [
+      Image({
+        src,
+        width,
+        height,
+        objectFit: 'cover'
+      }),
+      if (isLoading) Center({
+        child: CircularProgressIndicator()
+      })
+    ]
+  });
+};
+```
+
+## 성능 고려사항
+
+1. **이미지 크기**: 표시할 크기에 적합한 이미지를 사용하세요.
+2. **형식 선택**: WebP 같은 효율적인 형식을 고려하세요.
+3. **레이지 로딩**: 스크롤 영역에서는 뷰포트에 보이는 이미지만 로드하세요.
+4. **캐싱**: 브라우저 캐싱을 활용하세요.
+
+## 주의사항
+
+- width와 height가 모두 지정되지 않으면 이미지의 원본 크기가 사용됩니다.
+- objectFit과 objectPosition은 이미지의 크기가 지정되었을 때만 효과가 있습니다.
+- 네트워크 이미지는 CORS 정책의 영향을 받을 수 있습니다.
+- SVG 렌더링 모드에서는 일부 기능이 제한될 수 있습니다.
+
+## 관련 위젯
+
+- **Container**: 이미지에 추가 스타일링이 필요할 때
+- **ClipRRect**: 이미지를 둥근 모서리로 자를 때
+- **AspectRatio**: 이미지의 가로세로 비율을 유지할 때
+- **FadeInImage**: 페이드 인 효과가 필요할 때

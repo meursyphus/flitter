@@ -1,18 +1,16 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: ClipPath
 title: "ClipPath"
-description: ""
+description: "사용자 정의 경로로 자식 위젯을 클리핑하는 위젯"
 ---
 
-# ClipPath
+## 개요
 
-This widget clip the child widget like ClipPath Widget in Flutter.
+ClipPath는 사용자가 정의한 경로(Path)를 사용하여 자식 위젯을 클리핑하는 위젯입니다.
 
-ClipPath take clipper that is callback function and return Path object.
-
-You can create Whatever shape you want with Path.
+Path 객체를 반환하는 clipper 콜백 함수를 받아, 원하는 모양으로 자식 위젯을 자를 수 있습니다. 복잡한 도형, 곡선, 다각형 등 다양한 모양의 클리핑이 가능합니다.
 
 <iframe
   width="560"
@@ -24,18 +22,489 @@ You can create Whatever shape you want with Path.
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/ClipPath-class.html](https://api.flutter.dev/flutter/widgets/ClipPath-class.html)
+참조: [https://api.flutter.dev/flutter/widgets/ClipPath-class.html](https://api.flutter.dev/flutter/widgets/ClipPath-class.html)
 
-## Props
+## 언제 사용하나요?
+
+- 사용자 정의 모양으로 이미지나 콘텐츠를 자르고 싶을 때
+- 특별한 디자인 효과(물결, 대각선, 별 모양 등)를 만들고 싶을 때
+- 복잡한 마스킹 효과가 필요할 때
+- 애니메이션과 함께 동적인 클리핑 효과를 구현할 때
+- 기본 제공되는 클리핑 위젯(ClipRect, ClipOval, ClipRRect)으로는 불가능한 모양이 필요할 때
+
+## 기본 사용법
+
+```typescript
+// 삼각형 클리핑
+ClipPath({
+  clipper: (size) => {
+    return new Path()
+      .moveTo({ x: size.width / 2, y: 0 })
+      .lineTo({ x: 0, y: size.height })
+      .lineTo({ x: size.width, y: size.height })
+      .close();
+  },
+  child: Container({
+    width: 200,
+    height: 200,
+    color: 'blue'
+  })
+})
+
+// 원형 클리핑
+ClipPath({
+  clipper: (size) => {
+    const rect = Rect.fromLTWH({
+      left: 0,
+      top: 0,
+      width: size.width,
+      height: size.height
+    });
+    return new Path().addOval(rect);
+  },
+  child: Image({ src: 'profile.jpg' })
+})
+```
+
+## Props 상세 설명
+
+### clipper (필수)
+
+**값: (size: Size) => Path**
+
+클리핑 경로를 정의하는 콜백 함수입니다. 위젯의 크기(Size)를 매개변수로 받아 Path 객체를 반환해야 합니다.
+
+```typescript
+// 별 모양 클리핑
+ClipPath({
+  clipper: (size) => {
+    const path = new Path();
+    const halfWidth = size.width / 2;
+    const halfHeight = size.height / 2;
+    
+    // 5각 별 그리기
+    for (let i = 0; i < 5; i++) {
+      const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+      const x = halfWidth + halfWidth * 0.8 * Math.cos(angle);
+      const y = halfHeight + halfHeight * 0.8 * Math.sin(angle);
+      
+      if (i === 0) {
+        path.moveTo({ x, y });
+      } else {
+        path.lineTo({ x, y });
+      }
+    }
+    
+    return path.close();
+  },
+  child: child
+})
+```
 
 ### clipped
 
-**Value: boolean** (default: **true**)
+**값: boolean** (기본값: **true**)
 
-### clipper
+클리핑 효과를 활성화/비활성화합니다.
 
-**Value: Function**
+- `true`: 클리핑 적용
+- `false`: 클리핑 비활성화 (자식 위젯이 정상적으로 표시됨)
 
-This defines The way of clipping.
+```typescript
+ClipPath({
+  clipped: isClippingEnabled,
+  clipper: (size) => createCustomPath(size),
+  child: content
+})
+```
 
-The size which is given to this callback would be ClipPath's size.
+### child
+
+**값: Widget | undefined**
+
+클리핑될 자식 위젯입니다.
+
+## Path API 이해하기
+
+### 주요 Path 메서드
+
+```typescript
+const path = new Path();
+
+// 이동
+path.moveTo({ x: 10, y: 10 });           // 절대 위치로 이동
+path.relativeMoveTo({ x: 5, y: 5 });     // 상대 위치로 이동
+
+// 직선
+path.lineTo({ x: 50, y: 50 });           // 절대 위치까지 직선
+path.relativeLineTo({ x: 20, y: 0 });    // 상대 위치까지 직선
+
+// 곡선
+path.quadraticBezierTo({                 // 2차 베지어 곡선
+  controlPoint: { x: 25, y: 0 },
+  endPoint: { x: 50, y: 25 }
+});
+
+path.cubicTo({                           // 3차 베지어 곡선
+  startControlPoint: { x: 20, y: 0 },
+  endControlPoint: { x: 40, y: 50 },
+  endPoint: { x: 60, y: 30 }
+});
+
+// 호
+path.arcToPoint({
+  endPoint: { x: 100, y: 100 },
+  radius: { x: 50, y: 50 },
+  rotation: 0,
+  largeArc: false,
+  clockwise: true
+});
+
+// 도형
+path.addRect(rect);                      // 사각형 추가
+path.addOval(rect);                      // 타원 추가
+path.addRRect(roundedRect);              // 둥근 사각형 추가
+path.addPolygons(points);                // 다각형 추가
+
+// 경로 닫기
+path.close();
+```
+
+## 실제 사용 예제
+
+### 예제 1: 물결 모양 헤더
+
+```typescript
+const WaveHeader = ({ height, color, child }) => {
+  return ClipPath({
+    clipper: (size) => {
+      const path = new Path();
+      
+      path.moveTo({ x: 0, y: 0 });
+      path.lineTo({ x: 0, y: size.height - 40 });
+      
+      // 물결 모양 그리기
+      path.quadraticBezierTo({
+        controlPoint: { x: size.width / 4, y: size.height },
+        endPoint: { x: size.width / 2, y: size.height - 40 }
+      });
+      
+      path.quadraticBezierTo({
+        controlPoint: { x: size.width * 3 / 4, y: size.height - 80 },
+        endPoint: { x: size.width, y: size.height - 40 }
+      });
+      
+      path.lineTo({ x: size.width, y: 0 });
+      path.close();
+      
+      return path;
+    },
+    child: Container({
+      height: height,
+      decoration: BoxDecoration({
+        gradient: LinearGradient({
+          colors: [color, lightenColor(color)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter
+        })
+      }),
+      child: child
+    })
+  });
+};
+
+// 사용 예
+WaveHeader({
+  height: 200,
+  color: '#2196F3',
+  child: Center({
+    child: Text('Welcome', {
+      style: TextStyle({
+        color: 'white',
+        fontSize: 32,
+        fontWeight: 'bold'
+      })
+    })
+  })
+});
+```
+
+### 예제 2: 대각선 이미지 갤러리
+
+```typescript
+const DiagonalImageCard = ({ image, title, onTap }) => {
+  return GestureDetector({
+    onTap: onTap,
+    child: Container({
+      width: 300,
+      height: 200,
+      margin: EdgeInsets.all(16),
+      child: Stack({
+        children: [
+          // 대각선으로 자른 이미지
+          ClipPath({
+            clipper: (size) => {
+              return new Path()
+                .moveTo({ x: 0, y: 0 })
+                .lineTo({ x: size.width, y: 0 })
+                .lineTo({ x: size.width, y: size.height * 0.7 })
+                .lineTo({ x: 0, y: size.height })
+                .close();
+            },
+            child: Image({
+              src: image,
+              width: 300,
+              height: 200,
+              objectFit: 'cover'
+            })
+          }),
+          // 텍스트 영역
+          Positioned({
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container({
+              height: 60,
+              padding: EdgeInsets.symmetric({ horizontal: 20 }),
+              decoration: BoxDecoration({
+                color: 'rgba(0,0,0,0.7)'
+              }),
+              child: Center({
+                child: Text(title, {
+                  style: TextStyle({
+                    color: 'white',
+                    fontSize: 18,
+                    fontWeight: 'bold'
+                  })
+                })
+              })
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### 예제 3: 애니메이션 모프 효과
+
+```typescript
+const MorphingShape = ({ progress }) => {
+  return ClipPath({
+    clipper: (size) => {
+      const path = new Path();
+      const center = { x: size.width / 2, y: size.height / 2 };
+      const radius = Math.min(size.width, size.height) / 2 - 20;
+      
+      // progress에 따라 원에서 별로 변형
+      const sides = Math.floor(3 + progress * 3); // 3각형에서 6각형으로
+      
+      for (let i = 0; i < sides; i++) {
+        const angle = (i * 2 * Math.PI) / sides - Math.PI / 2;
+        const innerRadius = radius * (0.5 + progress * 0.5);
+        
+        // 별 모양의 외부 점
+        const outerX = center.x + radius * Math.cos(angle);
+        const outerY = center.y + radius * Math.sin(angle);
+        
+        // 별 모양의 내부 점
+        const innerAngle = angle + Math.PI / sides;
+        const innerX = center.x + innerRadius * Math.cos(innerAngle);
+        const innerY = center.y + innerRadius * Math.sin(innerAngle);
+        
+        if (i === 0) {
+          path.moveTo({ x: outerX, y: outerY });
+        } else {
+          path.lineTo({ x: outerX, y: outerY });
+        }
+        
+        if (progress > 0) {
+          path.lineTo({ x: innerX, y: innerY });
+        }
+      }
+      
+      return path.close();
+    },
+    child: Container({
+      width: 200,
+      height: 200,
+      decoration: BoxDecoration({
+        gradient: RadialGradient({
+          colors: ['#FF6B6B', '#4ECDC4'],
+          center: Alignment.center
+        })
+      })
+    })
+  });
+};
+```
+
+### 예제 4: 메시지 버블
+
+```typescript
+const MessageBubble = ({ message, isMe, time }) => {
+  return ClipPath({
+    clipper: (size) => {
+      const path = new Path();
+      const radius = 16;
+      const tailSize = 10;
+      
+      // 둥근 사각형 본체
+      const rect = RRect.fromLTRBR({
+        left: isMe ? 0 : tailSize,
+        top: 0,
+        right: isMe ? size.width - tailSize : size.width,
+        bottom: size.height,
+        radius: Radius.circular(radius)
+      });
+      
+      path.addRRect(rect);
+      
+      // 꼬리 부분
+      if (isMe) {
+        path.moveTo({ x: size.width - tailSize, y: size.height - 20 });
+        path.lineTo({ x: size.width, y: size.height - 15 });
+        path.lineTo({ x: size.width - tailSize, y: size.height - 10 });
+      } else {
+        path.moveTo({ x: tailSize, y: size.height - 20 });
+        path.lineTo({ x: 0, y: size.height - 15 });
+        path.lineTo({ x: tailSize, y: size.height - 10 });
+      }
+      
+      return path;
+    },
+    child: Container({
+      padding: EdgeInsets.all(12),
+      constraints: BoxConstraints({ maxWidth: 250 }),
+      decoration: BoxDecoration({
+        color: isMe ? '#007AFF' : '#E5E5EA'
+      }),
+      child: Column({
+        crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Text(message, {
+            style: TextStyle({
+              color: isMe ? 'white' : 'black',
+              fontSize: 16
+            })
+          }),
+          SizedBox({ height: 4 }),
+          Text(time, {
+            style: TextStyle({
+              color: isMe ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)',
+              fontSize: 12
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### 예제 5: 육각형 프로필 그리드
+
+```typescript
+const HexagonalProfile = ({ profiles }) => {
+  const createHexagonPath = (size: Size) => {
+    const path = new Path();
+    const radius = Math.min(size.width, size.height) / 2;
+    const center = { x: size.width / 2, y: size.height / 2 };
+    
+    for (let i = 0; i < 6; i++) {
+      const angle = (i * Math.PI) / 3 - Math.PI / 2;
+      const x = center.x + radius * Math.cos(angle);
+      const y = center.y + radius * Math.sin(angle);
+      
+      if (i === 0) {
+        path.moveTo({ x, y });
+      } else {
+        path.lineTo({ x, y });
+      }
+    }
+    
+    return path.close();
+  };
+  
+  return Wrap({
+    spacing: 10,
+    runSpacing: 10,
+    children: profiles.map((profile, index) => 
+      Stack({
+        children: [
+          ClipPath({
+            clipper: createHexagonPath,
+            child: Container({
+              width: 100,
+              height: 100,
+              child: Image({
+                src: profile.avatar,
+                objectFit: 'cover'
+              })
+            })
+          }),
+          Positioned({
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: ClipPath({
+              clipper: (size) => {
+                const path = new Path();
+                path.moveTo({ x: 0, y: size.height * 0.3 });
+                path.lineTo({ x: 0, y: size.height });
+                path.lineTo({ x: size.width, y: size.height });
+                path.lineTo({ x: size.width, y: size.height * 0.3 });
+                
+                // 육각형 하단 부분
+                const radius = size.width / 2;
+                const centerX = size.width / 2;
+                
+                path.lineTo({ 
+                  x: centerX + radius * Math.cos(Math.PI / 6), 
+                  y: size.height * 0.3 
+                });
+                path.lineTo({ 
+                  x: centerX - radius * Math.cos(Math.PI / 6), 
+                  y: size.height * 0.3 
+                });
+                
+                return path.close();
+              },
+              child: Container({
+                height: 35,
+                color: 'rgba(0,0,0,0.7)',
+                child: Center({
+                  child: Text(profile.name, {
+                    style: TextStyle({
+                      color: 'white',
+                      fontSize: 12,
+                      fontWeight: 'bold'
+                    })
+                  })
+                })
+              })
+            })
+          })
+        ]
+      })
+    )
+  });
+};
+```
+
+## 주의사항
+
+- 복잡한 경로는 렌더링 성능에 영향을 줄 수 있으므로 신중히 사용하세요
+- clipper 함수는 위젯 크기가 변경될 때마다 호출되므로 무거운 계산은 피하세요
+- 클리핑된 영역 밖의 터치 이벤트는 감지되지 않습니다
+- 애니메이션과 함께 사용할 때는 성능을 고려하세요
+- Path 객체는 재사용이 가능하므로 필요시 캐싱을 고려하세요
+
+## 관련 위젯
+
+- **ClipRect**: 사각형으로 클리핑
+- **ClipOval**: 타원형으로 클리핑
+- **ClipRRect**: 둥근 모서리 사각형으로 클리핑
+- **CustomPaint**: 사용자 정의 그리기
+- **ShaderMask**: 셰이더를 사용한 마스킹

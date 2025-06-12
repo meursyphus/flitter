@@ -23,7 +23,7 @@ const docsEntries = await getCollection("docs");
 // Sort docsEntries by nav_group_order and nav_order
 const sortedEntries = docsEntries.sort((a, b) => {
   const groupOrderDiff =
-    getNavOrder(a.data.nav_group) - getNavOrder(b.data.nav_group);
+    getNavOrder(a.data.nav_group ?? "Widgets") - getNavOrder(b.data.nav_group ?? "Widgets");
   if (groupOrderDiff === 0) {
     // Within the same group, sort by nav_order
     const orderDiff = (a.data.nav_order ?? 0) - (b.data.nav_order ?? 0);
@@ -46,7 +46,7 @@ const nextEntry =
 ---
 
 <Layout
-  title={`${entry.data.nav_group}/${entry.data.title} - Flitter`}
+  title={`${entry.data.nav_group ?? "Widgets"}/${entry.data.title} - Flitter`}
   description={entry.data.description}
   image={entry.data.image ?? "/og-docs.png"}
 >

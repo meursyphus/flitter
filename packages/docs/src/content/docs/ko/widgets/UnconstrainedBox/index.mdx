@@ -1,39 +1,387 @@
 ---
-nav_group: "Widgets"
+nav_group: Widgets
 nav_group_order: 3
 nav_title: UnconstrainedBox
 title: "UnconstrainedBox"
-description: ""
+description: "자식에게 제약 조건을 부과하지 않아 '자연스러운' 크기로 렌더링하게 하는 위젯"
 ---
 
-# UnconstrainedBox
+## 개요
 
-This widget motivated by UnconstrainedBox in Flutter.
+UnconstrainedBox는 자식에게 어떠한 제약 조건도 부과하지 않아, 자식이 자신의 '자연스러운' 크기로 렌더링되도록 하는 위젯입니다.
 
-> A widget that imposes no constraints on its child, allowing it to render at its "natural" size.
->
-> This allows a child to render at the size it would render if it were alone on an infinite canvas with no constraints. This container will then attempt to adopt the same size, within the limits of its own constraints. If it ends up with a different size, it will align the child based on alignment. If the box cannot expand enough to accommodate the entire child, the child will be clipped.
+이를 통해 자식은 마치 무한한 캔버스에 제약 없이 혼자 있는 것처럼 원하는 크기로 렌더링할 수 있습니다. UnconstrainedBox는 자신의 제약 조건 내에서 자식과 동일한 크기를 채택하려고 시도합니다. 다른 크기가 되는 경우, alignment 속성에 따라 자식을 정렬합니다. 상자가 자식 전체를 수용할 만큼 확장할 수 없는 경우, 자식은 클리핑됩니다.
 
-See: [https://api.flutter.dev/flutter/widgets/UnconstrainedBox-class.html](https://api.flutter.dev/flutter/widgets/UnconstrainedBox-class.html)
+참조: [https://api.flutter.dev/flutter/widgets/UnconstrainedBox-class.html](https://api.flutter.dev/flutter/widgets/UnconstrainedBox-class.html)
 
-## Props
+## 언제 사용하나요?
+
+- 자식이 부모의 제약 조건에 영향받지 않고 자체 크기로 렌더링되어야 할 때
+- 특정 축(가로 또는 세로)의 제약만 해제하고 싶을 때
+- 오버플로우 디버깅을 위해 제약 조건을 일시적으로 제거할 때
+- 자식 위젯의 실제 크기를 파악하고 싶을 때
+- 부모의 tight 제약 조건을 무시하고 자식이 유연한 크기를 가지게 하고 싶을 때
+
+## 기본 사용법
+
+```typescript
+// 모든 제약 조건 제거
+UnconstrainedBox({
+  child: Container({
+    width: 200,
+    height: 100,
+    color: 'blue'
+  })
+})
+
+// 세로 축만 제약 해제 (가로는 부모 따름)
+UnconstrainedBox({
+  constrainedAxis: 'horizontal',
+  child: Container({
+    width: 200,  // 부모 너비를 따름
+    height: 100, // 자유롭게 100으로 설정
+    color: 'green'
+  })
+})
+
+// 정렬과 함께 사용
+UnconstrainedBox({
+  alignment: Alignment.topLeft,
+  child: Container({
+    width: 50,
+    height: 50,
+    color: 'red'
+  })
+})
+```
+
+## Props 상세 설명
 
 ### constrainedAxis
 
-**Value: vertical | horizontal | undefined**
+**값: 'vertical' | 'horizontal' | undefined**
+
+특정 축의 제약 조건만 유지하고 싶을 때 사용합니다.
+
+- `undefined` (기본값): 모든 축의 제약 조건 제거
+- `'vertical'`: 세로 축의 제약은 유지, 가로 축만 제약 해제
+- `'horizontal'`: 가로 축의 제약은 유지, 세로 축만 제약 해제
+
+```typescript
+// 세로 축 제약 유지 (가로만 자유)
+UnconstrainedBox({
+  constrainedAxis: 'vertical',
+  child: Container({
+    width: 300,   // 자유롭게 설정 가능
+    height: 100,  // 부모의 세로 제약을 따름
+    color: 'blue'
+  })
+})
+
+// 가로 축 제약 유지 (세로만 자유)
+UnconstrainedBox({
+  constrainedAxis: 'horizontal',
+  child: Container({
+    width: 300,   // 부모의 가로 제약을 따름
+    height: 100,  // 자유롭게 설정 가능
+    color: 'green'
+  })
+})
+```
 
 ### alignment
 
-**Value: Alignment** (default: **Alignment.center**)
+**값: Alignment** (기본값: **Alignment.center**)
+
+자식이 UnconstrainedBox보다 작을 때 정렬 방식을 지정합니다.
+
+```typescript
+UnconstrainedBox({
+  alignment: Alignment.topRight,
+  child: Container({
+    width: 50,
+    height: 50,
+    color: 'purple'
+  })
+})
+
+UnconstrainedBox({
+  alignment: Alignment.bottomCenter,
+  child: Text('Bottom Aligned Text')
+})
+```
 
 ### clipped
 
-**Value: boolean** (default: **false**)
+**값: boolean** (기본값: **false**)
+
+자식이 UnconstrainedBox의 경계를 넘어갈 때 클리핑 여부를 결정합니다.
+
+- `false`: 오버플로우 허용 (디버깅 시 유용)
+- `true`: 경계를 넘어가는 부분 클리핑
+
+```typescript
+// 오버플로우 허용
+UnconstrainedBox({
+  clipped: false,
+  child: Container({
+    width: 500,
+    height: 500,
+    color: 'red'
+  })
+})
+
+// 오버플로우 클리핑
+UnconstrainedBox({
+  clipped: true,
+  child: Container({
+    width: 500,
+    height: 500,
+    color: 'blue'
+  })
+})
+```
 
 ### child
 
-**Value: Widget | undefined**
+**값: Widget | undefined**
 
-## Examples
+제약 조건이 제거될 자식 위젯입니다.
 
-### Basic
+## 실제 사용 예제
+
+### 예제 1: 반응형 버튼 그룹
+
+```typescript
+const ResponsiveButtonGroup = ({ buttons }) => {
+  return Row({
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: buttons.map(button => 
+      Padding({
+        padding: EdgeInsets.symmetric({ horizontal: 8 }),
+        child: UnconstrainedBox({
+          child: ElevatedButton({
+            onPressed: button.onPressed,
+            child: Padding({
+              padding: EdgeInsets.symmetric({ 
+                horizontal: 24, 
+                vertical: 12 
+              }),
+              child: Text(button.label, {
+                style: TextStyle({
+                  fontSize: 16,
+                  fontWeight: 'bold'
+                })
+              })
+            })
+          })
+        })
+      })
+    )
+  });
+};
+```
+
+### 예제 2: 오버플로우 감지 디버그 도구
+
+```typescript
+const DebugOverflowWrapper = ({ child, showBounds }) => {
+  return Stack({
+    children: [
+      UnconstrainedBox({
+        clipped: false,
+        child: child
+      }),
+      if (showBounds) 
+        Positioned.fill({
+          child: Container({
+            decoration: BoxDecoration({
+              border: Border.all({
+                color: 'red',
+                width: 2,
+                style: 'dashed'
+              })
+            })
+          })
+        })
+    ]
+  });
+};
+
+// 사용 예
+DebugOverflowWrapper({
+  showBounds: true,
+  child: Container({
+    width: 400,
+    height: 100,
+    color: 'rgba(0, 0, 255, 0.3)',
+    child: Center({
+      child: Text('이 컨테이너는 부모보다 클 수 있습니다')
+    })
+  })
+});
+```
+
+### 예제 3: 동적 크기 카드
+
+```typescript
+const DynamicSizeCard = ({ title, content, maxWidth }) => {
+  return Center({
+    child: UnconstrainedBox({
+      child: Container({
+        constraints: BoxConstraints({
+          maxWidth: maxWidth || 600,
+          minWidth: 200
+        }),
+        padding: EdgeInsets.all(24),
+        decoration: BoxDecoration({
+          color: 'white',
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow({
+              color: 'rgba(0,0,0,0.1)',
+              blurRadius: 10,
+              offset: { x: 0, y: 4 }
+            })
+          ]
+        }),
+        child: Column({
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, {
+              style: TextStyle({
+                fontSize: 24,
+                fontWeight: 'bold'
+              })
+            }),
+            SizedBox({ height: 16 }),
+            Text(content, {
+              style: TextStyle({
+                fontSize: 16,
+                color: '#666'
+              })
+            }),
+            SizedBox({ height: 24 }),
+            UnconstrainedBox({
+              alignment: Alignment.centerRight,
+              child: ElevatedButton({
+                onPressed: () => console.log('Clicked'),
+                child: Text('자세히 보기')
+              })
+            })
+          ]
+        })
+      })
+    })
+  });
+};
+```
+
+### 예제 4: 축별 제약 해제 레이아웃
+
+```typescript
+const FlexibleLayout = ({ orientation, children }) => {
+  return Container({
+    color: '#f5f5f5',
+    padding: EdgeInsets.all(16),
+    child: Column({
+      children: [
+        // 헤더는 전체 너비 사용
+        Container({
+          height: 60,
+          color: '#2196F3',
+          child: Center({
+            child: Text('Header', {
+              style: TextStyle({
+                color: 'white',
+                fontSize: 20
+              })
+            })
+          })
+        }),
+        SizedBox({ height: 16 }),
+        // 콘텐츠는 가로 제약 해제
+        UnconstrainedBox({
+          constrainedAxis: 'vertical',
+          alignment: Alignment.topCenter,
+          child: Container({
+            width: 800, // 부모보다 넓을 수 있음
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration({
+              color: 'white',
+              borderRadius: BorderRadius.circular(8)
+            }),
+            child: Column({
+              children: children
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 예제 5: 툴팁 포지셔닝
+
+```typescript
+const TooltipWithUnconstrainedBox = ({ target, tooltip, isVisible }) => {
+  return Stack({
+    clipBehavior: 'none',
+    children: [
+      target,
+      if (isVisible)
+        Positioned({
+          top: -40,
+          left: 0,
+          right: 0,
+          child: UnconstrainedBox({
+            child: Container({
+              padding: EdgeInsets.symmetric({ 
+                horizontal: 16, 
+                vertical: 8 
+              }),
+              decoration: BoxDecoration({
+                color: 'rgba(0,0,0,0.8)',
+                borderRadius: BorderRadius.circular(4)
+              }),
+              child: Text(tooltip, {
+                style: TextStyle({
+                  color: 'white',
+                  fontSize: 14
+                })
+              })
+            })
+          })
+        })
+    ]
+  });
+};
+
+// 사용 예
+TooltipWithUnconstrainedBox({
+  isVisible: showTooltip,
+  tooltip: '이것은 제약 없는 툴팁입니다. 내용에 따라 크기가 자동 조정됩니다.',
+  target: IconButton({
+    icon: Icons.info,
+    onPressed: () => setShowTooltip(!showTooltip)
+  })
+});
+```
+
+## 주의사항
+
+- UnconstrainedBox를 과도하게 사용하면 레이아웃 오버플로우가 발생할 수 있습니다
+- 프로덕션 환경에서는 `clipped: true`를 사용하여 오버플로우를 방지하는 것이 좋습니다
+- 디버깅 목적으로 사용할 때는 개발 환경에서만 사용하세요
+- 중첩된 UnconstrainedBox는 예상치 못한 레이아웃 문제를 일으킬 수 있습니다
+- 성능에 민감한 부분에서는 신중하게 사용하세요
+
+## 관련 위젯
+
+- **ConstrainedBox**: 자식에게 추가 제약 조건을 부과
+- **LimitedBox**: 제약이 없을 때만 크기 제한을 적용
+- **OverflowBox**: 부모의 제약 조건을 무시하고 다른 제약 조건 부과
+- **SizedBox**: 고정된 크기를 지정
+- **FittedBox**: 자식을 부모에 맞게 스케일링
