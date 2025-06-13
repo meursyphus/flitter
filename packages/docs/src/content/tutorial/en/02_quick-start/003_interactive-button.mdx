@@ -75,7 +75,10 @@ solved_files:
       Colors,
       GestureDetector,
       Center,
-      EdgeInsets
+      EdgeInsets,
+      BoxDecoration,
+      BorderRadius,
+      BoxShadow
     } from "@meursyphus/flitter";
 
     // Create a stateful button with StatefulWidget
@@ -104,17 +107,17 @@ solved_files:
             width: 200,
             height: 60,
             padding: EdgeInsets.all(16),
-            decoration: {
+            decoration: new BoxDecoration({
               color: Colors.blue[500],
-              borderRadius: 8,
+              borderRadius: BorderRadius.circular(8),
               boxShadow: [
-                {
+                new BoxShadow({
                   color: "rgba(0, 0, 0, 0.2)",
                   offset: { x: 0, y: 2 },
                   blurRadius: 4
-                }
+                })
               ]
-            },
+            }),
             child: Center({
               child: Text(`Clicked: ${this.count} times`, {
                 style: new TextStyle({

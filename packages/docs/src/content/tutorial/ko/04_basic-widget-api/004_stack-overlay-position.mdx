@@ -91,7 +91,9 @@ solved_files:
       MainAxisAlignment,
       SizedBox,
       ClipRRect,
-      BorderRadius
+      BorderRadius,
+      BoxDecoration,
+      Border
     } from "@meursyphus/flitter";
 
     function App() {
@@ -376,10 +378,10 @@ solved_files:
                                 Container({
                                   width: 60,
                                   height: 60,
-                                  decoration: {
+                                  decoration: new BoxDecoration({
                                     color: Colors.gray[300],
-                                    shape: 'circle'
-                                  },
+                                    shape: "circle"
+                                  }),
                                   child: Center({
                                     child: Text("🔔", {
                                       style: new TextStyle({ fontSize: 30 })
@@ -392,14 +394,14 @@ solved_files:
                                   child: Container({
                                     width: 24,
                                     height: 24,
-                                    decoration: {
+                                    decoration: new BoxDecoration({
                                       color: Colors.red[500],
-                                      shape: 'circle',
-                                      border: {
+                                      shape: "circle",
+                                      border: Border.all({
                                         color: Colors.white,
                                         width: 2
-                                      }
-                                    },
+                                      })
+                                    }),
                                     child: Center({
                                       child: Text("3", {
                                         style: new TextStyle({
