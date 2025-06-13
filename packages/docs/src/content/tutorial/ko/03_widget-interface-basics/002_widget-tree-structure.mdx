@@ -89,7 +89,9 @@ solved_files:
       MainAxisAlignment,
       CrossAxisAlignment,
       Align,
-      Alignment
+      Alignment,
+      BoxDecoration,
+      BorderRadius
     } from "@meursyphus/flitter";
 
     function App() {
@@ -129,10 +131,10 @@ solved_files:
                     Expanded({
                       child: Container({
                         padding: EdgeInsets.all(16),
-                        decoration: {
+                        decoration: new BoxDecoration({
                           color: Colors.white,
-                          borderRadius: 8
-                        },
+                          borderRadius: BorderRadius.circular(8)
+                        }),
                         child: Column({
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -198,10 +200,10 @@ solved_files:
                     Expanded({
                       child: Container({
                         padding: EdgeInsets.all(16),
-                        decoration: {
+                        decoration: new BoxDecoration({
                           color: Colors.white,
-                          borderRadius: 8
-                        },
+                          borderRadius: BorderRadius.circular(8)
+                        }),
                         child: Column({
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -610,4 +612,4 @@ App (검색어 상태 보관)
 
 왜 `new Container()`가 아닌 `Container()`를 사용하는지, 이 패턴의 장점은 무엇인지 배워보겠습니다.
 
-👉 **다음: 팩토리 함수 패턴 (classToFunction)**
+👉 **다음: 팩토리 함수 패턴**

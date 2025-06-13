@@ -54,7 +54,7 @@ files:
       }
     }
 
-    // TODO: classToFunction으로 export
+    // TODO: 팩토리 함수 패턴으로 export
 
     function App() {
       const widget = Container({
@@ -377,10 +377,18 @@ solved_files:
       }
     }
 
-    // Export
-    const ProfileCard = classToFunction(_ProfileCard);
-    const LikeCounter = classToFunction(_LikeCounter);
-    const ComparisonInfo = classToFunction(_ComparisonInfo);
+    // 팩토리 함수 패턴으로 export
+    function ProfileCard(props) {
+      return new _ProfileCard(props);
+    }
+    
+    function LikeCounter(props) {
+      return new _LikeCounter(props);
+    }
+    
+    function ComparisonInfo(props) {
+      return new _ComparisonInfo(props);
+    }
 
     function App() {
       const widget = Container({

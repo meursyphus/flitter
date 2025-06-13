@@ -89,7 +89,9 @@ solved_files:
       MainAxisAlignment,
       CrossAxisAlignment,
       Align,
-      Alignment
+      Alignment,
+      BoxDecoration,
+      BorderRadius
     } from "@meursyphus/flitter";
 
     function App() {
@@ -129,10 +131,10 @@ solved_files:
                     Expanded({
                       child: Container({
                         padding: EdgeInsets.all(16),
-                        decoration: {
+                        decoration: new BoxDecoration({
                           color: Colors.white,
-                          borderRadius: 8
-                        },
+                          borderRadius: BorderRadius.circular(8)
+                        }),
                         child: Column({
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -198,10 +200,10 @@ solved_files:
                     Expanded({
                       child: Container({
                         padding: EdgeInsets.all(16),
-                        decoration: {
+                        decoration: new BoxDecoration({
                           color: Colors.white,
-                          borderRadius: 8
-                        },
+                          borderRadius: BorderRadius.circular(8)
+                        }),
                         child: Column({
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -610,4 +612,4 @@ Now that you understand tree structure, let's explore Flitter's unique factory f
 
 You'll learn why we use `Container()` instead of `new Container()` and the advantages of this pattern.
 
-👉 **Next: Factory Function Pattern (classToFunction)**
+👉 **Next: Factory Function Pattern**
