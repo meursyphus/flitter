@@ -53,7 +53,9 @@ solved_files:
     import ReactWidget from "@meursyphus/flitter-react";
     import { 
       Container, AspectRatio, Text, TextStyle, Colors, 
-      EdgeInsets, Column, Row, SizedBox, Center, Wrap
+      EdgeInsets, Column, Row, SizedBox, Center, Wrap, TextAlign,
+      BoxDecoration, BorderRadius, LinearGradient, Alignment,
+      Stack, Positioned, Expanded, BoxShadow, Padding, Border
     } from "@meursyphus/flitter";
 
     function App() {
@@ -74,7 +76,7 @@ solved_files:
                       fontSize: 14,
                       fontWeight: "bold"
                     }),
-                    textAlign: "center"
+                    textAlign: TextAlign.center
                   })
                 })
               })
@@ -82,7 +84,7 @@ solved_files:
             SizedBox({ height: 4 }),
             Text(label, {
               style: new TextStyle({ fontSize: 12 }),
-              textAlign: "center"
+              textAlign: TextAlign.center
             })
           ]
         })
@@ -326,7 +328,7 @@ solved_files:
                                   fontSize: 14,
                                   color: Colors.indigo[600]
                                 }),
-                                textAlign: "center"
+                                textAlign: TextAlign.center
                               })
                             })
                           })
@@ -388,7 +390,7 @@ solved_files:
                                   fontSize: 14,
                                   color: Colors.teal[600]
                                 }),
-                                textAlign: "center"
+                                textAlign: TextAlign.center
                               })
                             })
                           })

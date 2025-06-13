@@ -16,7 +16,10 @@ files:
       EdgeInsets,
       MainAxisAlignment,
       CrossAxisAlignment,
-      MainAxisSize
+      MainAxisSize,
+      BoxDecoration,
+      BorderRadius,
+      BoxShape
     } from "@meursyphus/flitter";
 
     function App() {
@@ -84,7 +87,10 @@ solved_files:
       Center,
       SizedBox,
       Expanded,
-      Spacer
+      Spacer,
+      BoxDecoration,
+      BorderRadius,
+      BoxShape
     } from "@meursyphus/flitter";
 
     function App() {
@@ -111,10 +117,10 @@ solved_files:
               Container({
                 width: 600,
                 padding: EdgeInsets.all(20),
-                decoration: {
+                decoration: new BoxDecoration({
                   color: Colors.blue[50],
-                  borderRadius: 12
-                },
+                  borderRadius: BorderRadius.circular(12)
+                }),
                 child: Column({
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -189,10 +195,10 @@ solved_files:
               Container({
                 width: 600,
                 padding: EdgeInsets.all(20),
-                decoration: {
+                decoration: new BoxDecoration({
                   color: Colors.green[50],
-                  borderRadius: 12
-                },
+                  borderRadius: BorderRadius.circular(12)
+                }),
                 child: Row({
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -286,10 +292,10 @@ solved_files:
               Container({
                 width: 600,
                 padding: EdgeInsets.all(20),
-                decoration: {
+                decoration: new BoxDecoration({
                   color: Colors.purple[50],
-                  borderRadius: 12
-                },
+                  borderRadius: BorderRadius.circular(12)
+                }),
                 child: Column({
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -624,21 +630,21 @@ Row({
 ```typescript
 Container({
   padding: EdgeInsets.all(16),
-  decoration: {
+  decoration: new BoxDecoration({
     color: Colors.white,
-    borderRadius: 8,
+    borderRadius: BorderRadius.circular(8),
     boxShadow: [/*...*/]
-  },
+  }),
   child: Row({
     children: [
       // 왼쪽: 아이콘
       Container({
         width: 60,
         height: 60,
-        decoration: {
+        decoration: new BoxDecoration({
           color: Colors.blue[100],
-          shape: 'circle'
-        },
+          shape: BoxShape.circle
+        }),
         child: Center({
           child: Text("👤", { 
             style: new TextStyle({ fontSize: 30 })

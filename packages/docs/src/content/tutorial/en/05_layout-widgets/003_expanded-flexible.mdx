@@ -53,7 +53,7 @@ solved_files:
     import ReactWidget from "@meursyphus/flitter-react";
     import { 
       Container, Row, Column, Expanded, Flexible, Text, TextStyle, 
-      Colors, EdgeInsets, SizedBox, Center, MainAxisAlignment
+      Colors, EdgeInsets, SizedBox, Center, MainAxisAlignment, TextAlign
     } from "@meursyphus/flitter";
 
     function App() {
@@ -216,7 +216,7 @@ solved_files:
                           child: Center({
                             child: Text("Sidebar\n(Fixed)", {
                               style: new TextStyle({ fontSize: 12 }),
-                              textAlign: "center"
+                              textAlign: TextAlign.center
                             })
                           })
                         }),
@@ -227,7 +227,7 @@ solved_files:
                             child: Center({
                               child: Text("Main Content\n(Expanded)", {
                                 style: new TextStyle({ fontSize: 12 }),
-                                textAlign: "center"
+                                textAlign: TextAlign.center
                               })
                             })
                           })
