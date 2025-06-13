@@ -522,7 +522,7 @@ function printWidgetTree(widget, depth = 0) {
 // 디버그용 컨테이너
 function DebugContainer({ child, label }) {
   return Container({
-    decoration: BoxDecoration({
+    decoration: new BoxDecoration({
       border: Border.all({ color: Colors.red, width: 1 })
     }),
     child: Stack({

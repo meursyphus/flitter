@@ -317,7 +317,7 @@ solved_files:
                     color: Colors.white,
                     letterSpacing: 1.5,
                     shadows: [{
-                      color: Colors.black.withOpacity(0.3),
+                      color: "rgba(0, 0, 0, 0.3)",
                       offset: { x: 2, y: 2 },
                       blurRadius: 4
                     }]
@@ -423,7 +423,7 @@ Text("컬러풀한 텍스트", {
   style: new TextStyle({
     color: Colors.purple[600],
     // 투명도 적용
-    // color: Colors.black.withOpacity(0.5)
+    // color: "rgba(0, 0, 0, 0.5)"
   })
 })
 ```
@@ -475,7 +475,7 @@ Text("그림자가 있는 텍스트", {
     fontSize: 24,
     color: Colors.white,
     shadows: [{
-      color: Colors.black.withOpacity(0.5),
+      color: "rgba(0, 0, 0, 0.5)",
       offset: { x: 2, y: 2 },
       blurRadius: 4
     }]

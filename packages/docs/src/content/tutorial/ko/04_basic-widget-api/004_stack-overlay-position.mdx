@@ -441,7 +441,7 @@ solved_files:
                                       decoration: {
                                         gradient: {
                                           colors: [
-                                            Colors.black.withOpacity(0.7),
+                                            "rgba(0, 0, 0, 0.7)",
                                             Colors.transparent
                                           ],
                                           begin: { x: 0, y: 1 },
@@ -620,12 +620,12 @@ Positioned({
   top: 0,
   right: 0,
   bottom: 0,
-  child: Container({ color: Colors.black.withOpacity(0.5) })
+  child: Container({ color: "rgba(0, 0, 0, 0.5)" })
 })
 
 // 방법 2: Positioned.fill 사용
 Positioned.fill({
-  child: Container({ color: Colors.black.withOpacity(0.5) })
+  child: Container({ color: "rgba(0, 0, 0, 0.5)" })
 })
 ```
 
@@ -716,7 +716,7 @@ Stack({
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
             colors: [
-              Colors.black.withOpacity(0.8),
+              "rgba(0, 0, 0, 0.8)",
               Colors.transparent
             ]
           })
@@ -741,7 +741,7 @@ Stack({
           }),
           Text("Captured at the beach", {
             style: new TextStyle({
-              color: Colors.white.withOpacity(0.8),
+              color: "rgba(255, 255, 255, 0.8)",
               fontSize: 16
             })
           })
@@ -773,7 +773,7 @@ Stack({
           shape: 'circle',
           boxShadow: [
             BoxShadow({
-              color: Colors.black.withOpacity(0.3),
+              color: "rgba(0, 0, 0, 0.3)",
               blurRadius: 8,
               offset: { x: 0, y: 4 }
             })
@@ -796,7 +796,7 @@ Stack({
     // 로딩 오버레이
     if (isLoading) Positioned.fill({
       child: Container({
-        color: Colors.black.withOpacity(0.5),
+        color: "rgba(0, 0, 0, 0.5)",
         child: Center({
           child: CircularProgressIndicator()
         })

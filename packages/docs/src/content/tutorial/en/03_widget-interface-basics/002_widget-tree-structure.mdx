@@ -522,7 +522,7 @@ Visually display widget boundaries in development mode:
 // Debug container
 function DebugContainer({ child, label }) {
   return Container({
-    decoration: BoxDecoration({
+    decoration: new BoxDecoration({
       border: Border.all({ color: Colors.red, width: 1 })
     }),
     child: Stack({

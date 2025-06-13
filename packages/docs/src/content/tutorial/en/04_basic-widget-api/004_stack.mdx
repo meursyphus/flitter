@@ -66,7 +66,7 @@ solved_files:
           color: color,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [{
-            color: Colors.black.withOpacity(0.2),
+            color: "rgba(0, 0, 0, 0.2)",
             blurRadius: 8,
             offset: { x: 2, y: 2 }
           }]
@@ -623,7 +623,7 @@ Container({
             gradient: new LinearGradient({
               colors: [
                 Colors.transparent,
-                Colors.black.withOpacity(0.7)
+                "rgba(0, 0, 0, 0.7)"
               ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter
@@ -650,7 +650,7 @@ Container({
             SizedBox({ height: 4 }),
             Text("Flutter & Flitter Developer", {
               style: new TextStyle({
-                color: Colors.white.withOpacity(0.8),
+                color: "rgba(255, 255, 255, 0.8)",
                 fontSize: 16
               })
             })
@@ -666,7 +666,7 @@ Container({
           width: 40,
           height: 40,
           decoration: new BoxDecoration({
-            color: Colors.white.withOpacity(0.2),
+            color: "rgba(255, 255, 255, 0.2)",
             shape: BoxShape.circle
           }),
           child: Center({

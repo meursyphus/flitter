@@ -1,0 +1,342 @@
+---
+nav_group: "Advanced Features"
+nav_order: 1
+title: "듀얼 렌더러 지원"
+description: "Flitter의 SVG와 Canvas 듀얼 렌더러 지원 사용법을 알아봅니다"
+---
+
+# 듀얼 렌더러 지원
+
+Flitter는 위젯 코드 변경 없이 SVG와 Canvas 렌더링을 전환할 수 있는 원활한 듀얼 렌더러 지원을 제공합니다. 이러한 유연성을 통해 애플리케이션의 특정 요구사항에 따라 최적의 렌더링 방법을 선택할 수 있습니다.
+
+## 개요
+
+Flitter의 아키텍처는 렌더링 레이어를 추상화하여 동일한 위젯 트리를 SVG 또는 Canvas로 렌더링할 수 있습니다. 렌더러 타입은 AppRunner에 제공된 뷰 요소를 기반으로 런타임에 결정됩니다.
+
+## AppRunner 직접 사용하기
+
+`AppRunner` 클래스는 렌더링 파이프라인을 관리하는 핵심 엔진입니다. 제공된 뷰 요소를 기반으로 렌더러 타입을 자동으로 감지합니다.
+
+### 기본 사용법
+
+```typescript
+import { AppRunner } from "@meursyphus/flitter";
+import { Container, Text, Center } from "@meursyphus/flitter";
+
+// 위젯 생성
+const myWidget = Container({
+  width: 300,
+  height: 200,
+  color: Colors.blue,
+  child: Center({
+    child: Text("안녕하세요, Flitter!", {
+      style: new TextStyle({ fontSize: 24, color: Colors.white })
+    })
+  })
+});
+
+// SVG 렌더링
+const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+svgElement.setAttribute("width", "300");
+svgElement.setAttribute("height", "200");
+document.body.appendChild(svgElement);
+
+const svgRunner = new AppRunner({
+  view: svgElement,
+  window: window,
+  document: document
+});
+svgRunner.runApp(myWidget);
+
+// Canvas 렌더링
+const canvasElement = document.createElement("canvas");
+canvasElement.width = 300;
+canvasElement.height = 200;
+document.body.appendChild(canvasElement);
+
+const canvasRunner = new AppRunner({
+  view: canvasElement,
+  window: window,
+  document: document
+});
+canvasRunner.runApp(myWidget);
+```
+
+### 고급 설정
+
+```typescript
+// 서버 사이드 렌더링(SSR) 크기 힌트 포함
+const runner = new AppRunner({
+  view: element,
+  window: window,
+  document: document,
+  ssrSize: { width: 800, height: 600 } // SSR용 옵션
+});
+
+// 사용 완료 후 정리
+runner.dispose();
+```
+
+## React 통합
+
+`@meursyphus/flitter-react` 패키지는 React 애플리케이션에서 Flitter 위젯을 쉽게 사용할 수 있는 React 컴포넌트를 제공합니다.
+
+### 설치
+
+```bash
+npm install @meursyphus/flitter-react
+# 또는
+yarn add @meursyphus/flitter-react
+```
+
+### 기본 사용법
+
+```jsx
+import Widget from '@meursyphus/flitter-react';
+import { Container, Column, Text } from '@meursyphus/flitter';
+
+function MyComponent() {
+  const flitterWidget = Container({
+    padding: EdgeInsets.all(20),
+    child: Column({
+      children: [
+        Text("SVG 렌더링", { style: new TextStyle({ fontSize: 20 }) }),
+        Text("확장 가능하고 접근성이 좋습니다", { style: new TextStyle({ fontSize: 14 }) })
+      ]
+    })
+  });
+
+  return (
+    <div>
+      {/* SVG 렌더링 (기본값) */}
+      <Widget 
+        widget={flitterWidget}
+        width="300px"
+        height="200px"
+      />
+
+      {/* Canvas 렌더링 */}
+      <Widget 
+        renderer="canvas"
+        widget={flitterWidget}
+        width="300px"
+        height="200px"
+      />
+    </div>
+  );
+}
+```
+
+### Props
+
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|---------|-------------|
+| `widget` | `Widget` | 필수 | 렌더링할 Flitter 위젯 |
+| `renderer` | `"svg" \| "canvas"` | `"svg"` | 사용할 렌더링 방법 |
+| `width` | `string` | `"100%"` | 컨테이너 너비 |
+| `height` | `string` | `"100%"` | 컨테이너 높이 |
+
+## Svelte 통합
+
+`@meursyphus/flitter-svelte` 패키지는 서버 사이드 렌더링 지원과 같은 추가 기능이 있는 Svelte 컴포넌트를 제공합니다.
+
+### 설치
+
+```bash
+npm install @meursyphus/flitter-svelte
+# 또는
+yarn add @meursyphus/flitter-svelte
+```
+
+### 기본 사용법
+
+```svelte
+<script>
+  import Widget from '@meursyphus/flitter-svelte';
+  import { Container, Center, Text } from '@meursyphus/flitter';
+  
+  const myWidget = Container({
+    decoration: {
+      color: Colors.purple,
+      borderRadius: BorderRadius.circular(10)
+    },
+    child: Center({
+      child: Text("Svelte에서 안녕하세요!", {
+        style: new TextStyle({ 
+          fontSize: 24, 
+          color: Colors.white,
+          fontWeight: 'bold'
+        })
+      })
+    })
+  });
+</script>
+
+<!-- SVG 렌더링 -->
+<Widget 
+  widget={myWidget}
+  width="400px"
+  height="300px"
+/>
+
+<!-- Canvas 렌더링 -->
+<Widget 
+  renderer="canvas"
+  widget={myWidget}
+  width="400px"
+  height="300px"
+/>
+```
+
+### 서버 사이드 렌더링 (SSR)
+
+Svelte 통합은 SVG 렌더러로 SSR을 지원합니다:
+
+```svelte
+<script>
+  import Widget from '@meursyphus/flitter-svelte';
+  
+  // SSR 설정
+  const ssrConfig = {
+    size: { width: 800, height: 600 }
+  };
+</script>
+
+<Widget 
+  widget={myWidget}
+  renderer="svg"
+  width="100%"
+  height="600px"
+  ssr={ssrConfig}
+/>
+```
+
+## 올바른 렌더러 선택하기
+
+### SVG를 사용해야 할 때
+
+다음이 필요한 경우 SVG 렌더링을 선택하세요:
+
+- **확장성**: 모든 해상도에서 완벽하게 확장되는 그래픽
+- **접근성**: 스크린 리더 지원 및 시맨틱 마크업
+- **상호작용성**: CSS 스타일링 및 DOM 이벤트 처리
+- **텍스트 선택**: 네이티브 텍스트 선택 기능
+- **SEO**: 검색 엔진이 인덱싱할 수 있는 콘텐츠
+
+사용 사례 예시:
+- 툴팁이 있는 데이터 시각화
+- 인터랙티브 다이어그램
+- 접근 가능한 인포그래픽
+- 인쇄 품질 그래픽
+
+### Canvas를 사용해야 할 때
+
+다음이 필요한 경우 Canvas 렌더링을 선택하세요:
+
+- **성능**: 많은 요소를 가진 고성능 애니메이션
+- **픽셀 효과**: 이미지 필터 및 픽셀 조작
+- **게임**: 실시간 그래픽 및 파티클 시스템
+- **복잡한 애니메이션**: 수천 개의 요소를 가진 부드러운 60fps 애니메이션
+
+사용 사례 예시:
+- 게임 및 시뮬레이션
+- 파티클 효과
+- 이미지 편집기
+- 성능이 중요한 시각화
+
+## 성능 고려사항
+
+### 렌더링 파이프라인
+
+두 렌더러 모두 최적화된 파이프라인을 사용합니다:
+
+1. **SVG 파이프라인**: DOM 요소를 효율적으로 생성하고 업데이트
+2. **Canvas 파이프라인**: 그리기 호출을 배치하고 상태 변경을 최소화
+
+### 벤치마킹
+
+```typescript
+// 렌더러 성능 비교
+import { AppRunner } from "@meursyphus/flitter";
+
+function benchmark(renderer: "svg" | "canvas") {
+  const element = renderer === "svg" 
+    ? document.createElementNS("http://www.w3.org/2000/svg", "svg")
+    : document.createElement("canvas");
+    
+  const runner = new AppRunner({ view: element });
+  
+  const start = performance.now();
+  runner.runApp(complexWidget);
+  const end = performance.now();
+  
+  console.log(`${renderer} 렌더링 소요 시간: ${end - start}ms`);
+  
+  return runner;
+}
+```
+
+## 모범 사례
+
+1. **SVG로 시작하기**: 더 나은 접근성과 개발 편의성을 위해 기본적으로 SVG 렌더링 사용
+2. **전환 전 프로파일링**: 측정 가능한 성능 문제가 있을 때만 Canvas로 전환
+3. **하이브리드 접근 방식 고려**: 앱의 다른 부분에 대해 다른 렌더러를 사용하는 여러 Flitter 인스턴스 사용
+4. **대상 기기에서 테스트**: 성능 특성은 기기와 브라우저에 따라 다름
+
+## 예시: 동적 렌더러 전환
+
+```jsx
+import React, { useState } from 'react';
+import Widget from '@meursyphus/flitter-react';
+
+function DynamicRendererExample() {
+  const [renderer, setRenderer] = useState('svg');
+  
+  const widget = Container({
+    padding: EdgeInsets.all(20),
+    child: Column({
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(`현재 렌더러: ${renderer.toUpperCase()}`, {
+          style: new TextStyle({ fontSize: 24, fontWeight: 'bold' })
+        }),
+        SizedBox({ height: 20 }),
+        Container({
+          width: 200,
+          height: 50,
+          decoration: {
+            color: renderer === 'svg' ? Colors.blue : Colors.green,
+            borderRadius: BorderRadius.circular(25)
+          },
+          child: Center({
+            child: Text("렌더러 전환", {
+              style: new TextStyle({ color: Colors.white, fontSize: 16 })
+            })
+          })
+        })
+      ]
+    })
+  });
+
+  return (
+    <div>
+      <button onClick={() => setRenderer(r => r === 'svg' ? 'canvas' : 'svg')}>
+        렌더러 토글
+      </button>
+      
+      <Widget 
+        renderer={renderer}
+        widget={widget}
+        width="400px"
+        height="300px"
+      />
+    </div>
+  );
+}
+```
+
+## 결론
+
+Flitter의 듀얼 렌더러 지원은 특정 사용 사례에 최적의 렌더링 방법을 선택할 수 있는 유연성을 제공합니다. SVG의 확장성과 접근성이 필요하든, Canvas의 성능과 픽셀 수준 제어가 필요하든, Flitter는 위젯 코드를 변경하지 않고도 렌더러 간 전환을 쉽게 만들어줍니다.
+
+렌더링 레이어의 추상화는 애플리케이션 로직을 한 번 개발하고 각 시나리오에 가장 적합한 렌더러로 배포할 수 있음을 의미하므로, Flitter는 다양한 애플리케이션에 대한 다재다능한 선택이 됩니다.

@@ -117,14 +117,14 @@ solved_files:
             SizedBox({ height: 10 }),
             Container({
               margin: EdgeInsets.symmetric({ horizontal: 20 }),
-              decoration: BoxDecoration({
+              decoration: new BoxDecoration({
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(8)
               }),
               child: AspectRatio({
                 aspectRatio: 16/9,
                 child: Container({
-                  decoration: BoxDecoration({
+                  decoration: new BoxDecoration({
                     gradient: LinearGradient({
                       colors: [Colors.blue[400], Colors.purple[400]],
                       begin: Alignment.topLeft,
@@ -138,8 +138,8 @@ solved_files:
                         child: Container({
                           width: 60,
                           height: 60,
-                          decoration: BoxDecoration({
-                            color: Colors.white.withOpacity(0.8),
+                          decoration: new BoxDecoration({
+                            color: "rgba(255, 255, 255, 0.8)",
                             shape: BoxShape.circle
                           }),
                           child: Center({
@@ -158,8 +158,8 @@ solved_files:
                         right: 16,
                         child: Container({
                           padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 8 }),
-                          decoration: BoxDecoration({
-                            color: Colors.black.withOpacity(0.7),
+                          decoration: new BoxDecoration({
+                            color: "rgba(0, 0, 0, 0.7)",
                             borderRadius: BorderRadius.circular(4)
                           }),
                           child: Row({
@@ -171,8 +171,8 @@ solved_files:
                               Expanded({
                                 child: Container({
                                   height: 4,
-                                  decoration: BoxDecoration({
-                                    color: Colors.white.withOpacity(0.3),
+                                  decoration: new BoxDecoration({
+                                    color: "rgba(255, 255, 255, 0.3)",
                                     borderRadius: BorderRadius.circular(2)
                                   })
                                 })
@@ -298,11 +298,11 @@ solved_files:
                 Expanded({
                   child: Container({
                     margin: EdgeInsets.all(4),
-                    decoration: BoxDecoration({
+                    decoration: new BoxDecoration({
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [{
-                        color: Colors.black.withOpacity(0.1),
+                        color: "rgba(0, 0, 0, 0.1)",
                         blurRadius: 4,
                         offset: { x: 0, y: 2 }
                       }]
@@ -313,7 +313,7 @@ solved_files:
                         AspectRatio({
                           aspectRatio: 1.618, // Golden ratio
                           child: Container({
-                            decoration: BoxDecoration({
+                            decoration: new BoxDecoration({
                               color: Colors.indigo[100],
                               borderRadius: BorderRadius.only({
                                 topLeft: Radius.circular(8),
@@ -360,11 +360,11 @@ solved_files:
                 Expanded({
                   child: Container({
                     margin: EdgeInsets.all(4),
-                    decoration: BoxDecoration({
+                    decoration: new BoxDecoration({
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [{
-                        color: Colors.black.withOpacity(0.1),
+                        color: "rgba(0, 0, 0, 0.1)",
                         blurRadius: 4,
                         offset: { x: 0, y: 2 }
                       }]
@@ -375,7 +375,7 @@ solved_files:
                         AspectRatio({
                           aspectRatio: 1.618,
                           child: Container({
-                            decoration: BoxDecoration({
+                            decoration: new BoxDecoration({
                               color: Colors.teal[100],
                               borderRadius: BorderRadius.only({
                                 topLeft: Radius.circular(8),
@@ -516,7 +516,7 @@ AspectRatio({
 ```typescript
 Container({
   margin: EdgeInsets.all(16),
-  decoration: BoxDecoration({
+  decoration: new BoxDecoration({
     color: Colors.black,
     borderRadius: BorderRadius.circular(8)
   }),
@@ -526,7 +526,7 @@ Container({
       children: [
         // Video thumbnail
         Container({
-          decoration: BoxDecoration({
+          decoration: new BoxDecoration({
             image: DecorationImage({
               image: AssetImage("video_thumbnail.jpg"),
               fit: BoxFit.cover
@@ -539,8 +539,8 @@ Container({
           child: Container({
             width: 60,
             height: 60,
-            decoration: BoxDecoration({
-              color: Colors.white.withOpacity(0.9),
+            decoration: new BoxDecoration({
+              color: "rgba(255, 255, 255, 0.9)",
               shape: BoxShape.circle
             }),
             child: Center({
@@ -572,7 +572,7 @@ GridView({
       aspectRatio: 1.0,
       child: Container({
         margin: EdgeInsets.all(2),
-        decoration: BoxDecoration({
+        decoration: new BoxDecoration({
           image: DecorationImage({
             image: NetworkImage(image.url),
             fit: BoxFit.cover
@@ -590,11 +590,11 @@ GridView({
 ```typescript
 Container({
   width: 200,
-  decoration: BoxDecoration({
+  decoration: new BoxDecoration({
     color: Colors.white,
     borderRadius: BorderRadius.circular(8),
     boxShadow: [BoxShadow({
-      color: Colors.black.withOpacity(0.1),
+      color: "rgba(0, 0, 0, 0.1)",
       blurRadius: 4,
       offset: Offset(0, 2)
     })]
@@ -606,7 +606,7 @@ Container({
       AspectRatio({
         aspectRatio: 1.618,
         child: Container({
-          decoration: BoxDecoration({
+          decoration: new BoxDecoration({
             image: DecorationImage({
               image: AssetImage("product.jpg"),
               fit: BoxFit.cover
@@ -724,7 +724,7 @@ Column({
 AspectRatio({
   aspectRatio: 21/9,  // Ultra-wide for hero banners
   child: Container({
-    decoration: BoxDecoration({
+    decoration: new BoxDecoration({
       gradient: LinearGradient({
         colors: [Colors.purple[400], Colors.pink[400]],
         begin: Alignment.topLeft,
@@ -753,7 +753,7 @@ AspectRatio({
               Text("Discover amazing features", {
                 style: TextStyle({
                   fontSize: 20,
-                  color: Colors.white.withOpacity(0.9)
+                  color: "rgba(255, 255, 255, 0.9)"
                 })
               })
             ]

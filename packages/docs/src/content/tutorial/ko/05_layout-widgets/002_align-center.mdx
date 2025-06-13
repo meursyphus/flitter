@@ -162,14 +162,14 @@ solved_files:
                     child: Container({
                       width: 2,
                       height: 200,
-                      color: Colors.black.withOpacity(0.2)
+                      color: "rgba(0, 0, 0, 0.2)"
                     })
                   }),
                   Center({
                     child: Container({
                       width: 400,
                       height: 2,
-                      color: Colors.black.withOpacity(0.2)
+                      color: "rgba(0, 0, 0, 0.2)"
                     })
                   }),
                   // 커스텀 정렬 예제들
@@ -264,7 +264,7 @@ solved_files:
                         color: Colors.blue[500],
                         shape: BoxShape.circle,
                         boxShadow: [{
-                          color: Colors.black.withOpacity(0.2),
+                          color: "rgba(0, 0, 0, 0.2)",
                           blurRadius: 6,
                           offset: { x: 0, y: 3 }
                         }]
@@ -505,7 +505,7 @@ Stack({
     // 로딩 오버레이
     if (isLoading) Positioned.fill({
       child: Container({
-        color: Colors.black.withOpacity(0.5),
+        color: "rgba(0, 0, 0, 0.5)",
         child: Center({
           child: Container({
             padding: EdgeInsets.all(20),

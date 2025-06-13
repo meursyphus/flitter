@@ -1,0 +1,342 @@
+---
+nav_group: "Advanced Features"
+nav_order: 1
+title: "Dual Renderer Support"
+description: "Learn how to use Flitter's dual renderer support with SVG and Canvas rendering options"
+---
+
+# Dual Renderer Support
+
+Flitter provides seamless dual renderer support, allowing you to switch between SVG and Canvas rendering without changing your widget code. This flexibility lets you choose the optimal rendering method based on your application's specific needs.
+
+## Overview
+
+Flitter's architecture abstracts the rendering layer, enabling the same widget tree to be rendered using either SVG or Canvas. The renderer type is determined at runtime based on the view element provided to the AppRunner.
+
+## Using AppRunner Directly
+
+The `AppRunner` class is the core engine that manages the rendering pipeline. It automatically detects the renderer type based on the provided view element.
+
+### Basic Usage
+
+```typescript
+import { AppRunner } from "@meursyphus/flitter";
+import { Container, Text, Center } from "@meursyphus/flitter";
+
+// Create your widget
+const myWidget = Container({
+  width: 300,
+  height: 200,
+  color: Colors.blue,
+  child: Center({
+    child: Text("Hello, Flitter!", {
+      style: new TextStyle({ fontSize: 24, color: Colors.white })
+    })
+  })
+});
+
+// SVG Rendering
+const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+svgElement.setAttribute("width", "300");
+svgElement.setAttribute("height", "200");
+document.body.appendChild(svgElement);
+
+const svgRunner = new AppRunner({
+  view: svgElement,
+  window: window,
+  document: document
+});
+svgRunner.runApp(myWidget);
+
+// Canvas Rendering
+const canvasElement = document.createElement("canvas");
+canvasElement.width = 300;
+canvasElement.height = 200;
+document.body.appendChild(canvasElement);
+
+const canvasRunner = new AppRunner({
+  view: canvasElement,
+  window: window,
+  document: document
+});
+canvasRunner.runApp(myWidget);
+```
+
+### Advanced Configuration
+
+```typescript
+// With Server-Side Rendering (SSR) size hints
+const runner = new AppRunner({
+  view: element,
+  window: window,
+  document: document,
+  ssrSize: { width: 800, height: 600 } // Optional for SSR
+});
+
+// Cleanup when done
+runner.dispose();
+```
+
+## React Integration
+
+The `@meursyphus/flitter-react` package provides a React component that simplifies using Flitter widgets in React applications.
+
+### Installation
+
+```bash
+npm install @meursyphus/flitter-react
+# or
+yarn add @meursyphus/flitter-react
+```
+
+### Basic Usage
+
+```jsx
+import Widget from '@meursyphus/flitter-react';
+import { Container, Column, Text } from '@meursyphus/flitter';
+
+function MyComponent() {
+  const flitterWidget = Container({
+    padding: EdgeInsets.all(20),
+    child: Column({
+      children: [
+        Text("SVG Rendering", { style: new TextStyle({ fontSize: 20 }) }),
+        Text("Scalable and accessible", { style: new TextStyle({ fontSize: 14 }) })
+      ]
+    })
+  });
+
+  return (
+    <div>
+      {/* SVG Rendering (default) */}
+      <Widget 
+        widget={flitterWidget}
+        width="300px"
+        height="200px"
+      />
+
+      {/* Canvas Rendering */}
+      <Widget 
+        renderer="canvas"
+        widget={flitterWidget}
+        width="300px"
+        height="200px"
+      />
+    </div>
+  );
+}
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `widget` | `Widget` | Required | The Flitter widget to render |
+| `renderer` | `"svg" \| "canvas"` | `"svg"` | The rendering method to use |
+| `width` | `string` | `"100%"` | Width of the container |
+| `height` | `string` | `"100%"` | Height of the container |
+
+## Svelte Integration
+
+The `@meursyphus/flitter-svelte` package provides a Svelte component with additional features like server-side rendering support.
+
+### Installation
+
+```bash
+npm install @meursyphus/flitter-svelte
+# or
+yarn add @meursyphus/flitter-svelte
+```
+
+### Basic Usage
+
+```svelte
+<script>
+  import Widget from '@meursyphus/flitter-svelte';
+  import { Container, Center, Text } from '@meursyphus/flitter';
+  
+  const myWidget = Container({
+    decoration: {
+      color: Colors.purple,
+      borderRadius: BorderRadius.circular(10)
+    },
+    child: Center({
+      child: Text("Hello from Svelte!", {
+        style: new TextStyle({ 
+          fontSize: 24, 
+          color: Colors.white,
+          fontWeight: 'bold'
+        })
+      })
+    })
+  });
+</script>
+
+<!-- SVG Rendering -->
+<Widget 
+  widget={myWidget}
+  width="400px"
+  height="300px"
+/>
+
+<!-- Canvas Rendering -->
+<Widget 
+  renderer="canvas"
+  widget={myWidget}
+  width="400px"
+  height="300px"
+/>
+```
+
+### Server-Side Rendering (SSR)
+
+Svelte integration supports SSR with the SVG renderer:
+
+```svelte
+<script>
+  import Widget from '@meursyphus/flitter-svelte';
+  
+  // SSR configuration
+  const ssrConfig = {
+    size: { width: 800, height: 600 }
+  };
+</script>
+
+<Widget 
+  widget={myWidget}
+  renderer="svg"
+  width="100%"
+  height="600px"
+  ssr={ssrConfig}
+/>
+```
+
+## Choosing the Right Renderer
+
+### When to Use SVG
+
+Choose SVG rendering when you need:
+
+- **Scalability**: Graphics that scale perfectly at any resolution
+- **Accessibility**: Screen reader support and semantic markup
+- **Interactivity**: CSS styling and DOM event handling
+- **Text Selection**: Native text selection capabilities
+- **SEO**: Search engine indexable content
+
+Example use cases:
+- Data visualizations with tooltips
+- Interactive diagrams
+- Accessible infographics
+- Print-quality graphics
+
+### When to Use Canvas
+
+Choose Canvas rendering when you need:
+
+- **Performance**: High-performance animations with many elements
+- **Pixel Effects**: Image filters and pixel manipulation
+- **Gaming**: Real-time graphics and particle systems
+- **Complex Animations**: Smooth 60fps animations with thousands of elements
+
+Example use cases:
+- Games and simulations
+- Particle effects
+- Image editors
+- Performance-critical visualizations
+
+## Performance Considerations
+
+### Rendering Pipeline
+
+Both renderers use optimized pipelines:
+
+1. **SVG Pipeline**: Creates and updates DOM elements efficiently
+2. **Canvas Pipeline**: Batches draw calls and minimizes state changes
+
+### Benchmarking
+
+```typescript
+// Compare renderer performance
+import { AppRunner } from "@meursyphus/flitter";
+
+function benchmark(renderer: "svg" | "canvas") {
+  const element = renderer === "svg" 
+    ? document.createElementNS("http://www.w3.org/2000/svg", "svg")
+    : document.createElement("canvas");
+    
+  const runner = new AppRunner({ view: element });
+  
+  const start = performance.now();
+  runner.runApp(complexWidget);
+  const end = performance.now();
+  
+  console.log(`${renderer} rendering took ${end - start}ms`);
+  
+  return runner;
+}
+```
+
+## Best Practices
+
+1. **Start with SVG**: Default to SVG rendering for better accessibility and ease of development
+2. **Profile Before Switching**: Only switch to Canvas if you have measurable performance issues
+3. **Consider Hybrid Approaches**: Use multiple Flitter instances with different renderers for different parts of your app
+4. **Test on Target Devices**: Performance characteristics vary across devices and browsers
+
+## Example: Dynamic Renderer Switching
+
+```jsx
+import React, { useState } from 'react';
+import Widget from '@meursyphus/flitter-react';
+
+function DynamicRendererExample() {
+  const [renderer, setRenderer] = useState('svg');
+  
+  const widget = Container({
+    padding: EdgeInsets.all(20),
+    child: Column({
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(`Current Renderer: ${renderer.toUpperCase()}`, {
+          style: new TextStyle({ fontSize: 24, fontWeight: 'bold' })
+        }),
+        SizedBox({ height: 20 }),
+        Container({
+          width: 200,
+          height: 50,
+          decoration: {
+            color: renderer === 'svg' ? Colors.blue : Colors.green,
+            borderRadius: BorderRadius.circular(25)
+          },
+          child: Center({
+            child: Text("Switch Renderer", {
+              style: new TextStyle({ color: Colors.white, fontSize: 16 })
+            })
+          })
+        })
+      ]
+    })
+  });
+
+  return (
+    <div>
+      <button onClick={() => setRenderer(r => r === 'svg' ? 'canvas' : 'svg')}>
+        Toggle Renderer
+      </button>
+      
+      <Widget 
+        renderer={renderer}
+        widget={widget}
+        width="400px"
+        height="300px"
+      />
+    </div>
+  );
+}
+```
+
+## Conclusion
+
+Flitter's dual renderer support provides the flexibility to choose the optimal rendering method for your specific use case. Whether you need the scalability and accessibility of SVG or the performance and pixel-level control of Canvas, Flitter makes it easy to switch between renderers without changing your widget code.
+
+The abstraction of the rendering layer means you can develop your application logic once and deploy it with the most appropriate renderer for each scenario, making Flitter a versatile choice for a wide range of applications.
