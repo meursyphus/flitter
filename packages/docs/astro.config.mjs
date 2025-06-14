@@ -6,13 +6,13 @@ import mdx from "@astrojs/mdx";
 import sitemap from '@astrojs/sitemap';
 import cloudflare from "@astrojs/cloudflare";
 
+import netlify from "@astrojs/netlify";
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://flitter.dev",
   output: "server",
-  adapter: cloudflare({
-
-  }),
+  adapter: netlify(),
   integrations: [
     react({
       mode: 'production',
