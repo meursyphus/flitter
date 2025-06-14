@@ -4,7 +4,6 @@ import svelte from "@astrojs/svelte";
 import tailwind from "@astrojs/tailwind";
 import mdx from "@astrojs/mdx";
 import sitemap from '@astrojs/sitemap';
-import cloudflare from "@astrojs/cloudflare";
 
 import netlify from "@astrojs/netlify";
 
@@ -12,7 +11,9 @@ import netlify from "@astrojs/netlify";
 export default defineConfig({
   site: "https://flitter.dev",
   output: "server",
-  adapter: netlify(),
+  adapter: netlify({
+
+  }),
   integrations: [
     react({
       mode: 'production',
