@@ -31,7 +31,7 @@ const nextEntry = next?.original ?? null;
 ---
 
 <Layout
-  title={`${entry.data.nav_group ?? "Widgets"}/${entry.data.title} - Flitter`}
+  title={`${processedEntries.find(e => e.original.slug === entry.slug)?.navGroup ?? "Widgets"}/${entry.data.title} - Flitter`}
   description={entry.data.description}
   image={entry.data.image ?? "/og-docs.png"}
 >

@@ -45,15 +45,17 @@ export interface ProcessedEntry<T extends CollectionEntry<"docs"> | CollectionEn
 
 /**
  * Navigation group ordering
+ * Uses Title Case names matching getNavGroupFromSlug output
  */
 const NAV_GROUP_ORDER: Record<string, number> = {
   "Getting Started": 1,
   "Core Concepts": 2,
   "Basic Widgets": 3,
   "Layout": 4,
-  "Interactions and Animations": 5,
+  "Interactions And Animations": 5,
   "Advanced Features": 6,
   "Widgets": 999,
+  "General": 1000,
 };
 
 /**
@@ -64,6 +66,36 @@ export function getNavGroupOrder(navGroup: string): number {
 }
 
 /**
+ * Converts kebab-case to Title Case
+ * e.g., "getting-started" -> "Getting Started"
+ */
+export function kebabToTitleCase(str: string): string {
+  return str
+    .split("-")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+/**
+ * Gets navigation group from slug folder structure
+ * e.g., "en/01_widgets/container" -> "Widgets"
+ * e.g., "en/02_core-concepts/intro" -> "Core Concepts"
+ */
+export function getNavGroupFromSlug(slug: string): string {
+  const segments = slug.split("/");
+  // Skip language segment and get the folder name
+  if (segments.length > 2) {
+    // If it's in a subfolder, use the folder name as group
+    const folderName = removeNumericPrefix(segments[1]);
+    return kebabToTitleCase(folderName);
+  } else if (segments.length === 2) {
+    // If it's a direct file under language, use a default group
+    return "General";
+  }
+  return "Widgets";
+}
+
+/**
  * Processes a collection of entries with common transformations
  */
 export function processEntries<T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">>(
@@ -71,15 +103,21 @@ export function processEntries<T extends CollectionEntry<"docs"> | CollectionEnt
   options?: {
     filterLang?: string;
     resolveSlug?: boolean;
+    useSlugAsNavGroup?: boolean;
   }
 ): ProcessedEntry<T>[] {
-  const { filterLang, resolveSlug: shouldResolveSlug = true } = options || {};
+  const { filterLang, resolveSlug: shouldResolveSlug = true, useSlugAsNavGroup = true } = options || {};
 
   let processedEntries = entries.map((entry, index) => {
     const lang = getLangFromSlug(entry.slug);
     const segments = entry.slug.split("/");
     const order = segments.length > 1 ? getOrderFromSegment(segments[1]) : index;
-    const navGroup = entry.data.nav_group ?? "Widgets";
+    
+    // Use folder structure as nav_group if enabled, otherwise fall back to data
+    const navGroup = useSlugAsNavGroup 
+      ? getNavGroupFromSlug(entry.slug)
+      : (entry.data.nav_group ?? "Widgets");
+    
     const navGroupOrder = getNavGroupOrder(navGroup);
     const navOrder = entry.data.nav_order ?? order;
 
