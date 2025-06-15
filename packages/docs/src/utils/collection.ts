@@ -111,7 +111,17 @@ export function processEntries<T extends CollectionEntry<"docs"> | CollectionEnt
   let processedEntries = entries.map((entry, index) => {
     const lang = getLangFromSlug(entry.slug);
     const segments = entry.slug.split("/");
-    const order = segments.length > 1 ? getOrderFromSegment(segments[1]) : index;
+    
+    // Get order from the last segment (file name) or folder segment
+    let order = index;
+    if (segments.length > 2) {
+      // Try to get order from file name first
+      const fileOrder = getOrderFromSegment(segments[segments.length - 1]);
+      // If no order in file name, try folder
+      order = fileOrder > 0 ? fileOrder : getOrderFromSegment(segments[1]);
+    } else if (segments.length > 1) {
+      order = getOrderFromSegment(segments[1]);
+    }
     
     // Use folder structure as nav_group if enabled, otherwise fall back to data
     const navGroup = useSlugAsNavGroup 
