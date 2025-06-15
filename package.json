@@ -34,7 +34,7 @@
     "pretest:dev": "npm run flitter:build",
     "prestory:chromatic": "npm run flitter:build",
     "prestory:build": "npm run flitter:build",
-    "predocs:build": "npm run flitter:build",
+    "predocs:build": "npm run flitter:build && cd packages/flitter-svelte && npx svelte-kit sync && cd ../..",
     "lunaria:build": "lunaria build && cp -r dist/lunaria/index.html packages/docs/public/lunaria.html",
     "lunaria:preview": "lunaria preview"
   },
