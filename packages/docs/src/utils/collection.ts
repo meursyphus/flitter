@@ -152,29 +152,6 @@ export function processEntries<T extends CollectionEntry<"docs"> | CollectionEnt
   return processedEntries;
 }
 
-/**
- * Sorts processed entries by group order, then nav order, then title
- */
-export function sortEntries<T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">>(
-  entries: ProcessedEntry<T>[]
-): ProcessedEntry<T>[] {
-  return entries.sort((a, b) => {
-    // First sort by navigation group order
-    const groupOrderDiff = a.navGroupOrder - b.navGroupOrder;
-    if (groupOrderDiff !== 0) {
-      return groupOrderDiff;
-    }
-
-    // Within the same group, sort by nav order
-    const orderDiff = a.navOrder - b.navOrder;
-    if (orderDiff !== 0) {
-      return orderDiff;
-    }
-
-    // If order is the same, sort alphabetically by title
-    return a.title.localeCompare(b.title);
-  });
-}
 
 /**
  * Groups processed entries by navigation group

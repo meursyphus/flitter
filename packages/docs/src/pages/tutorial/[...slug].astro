@@ -3,26 +3,25 @@ import SandPack from "../../components/SandPack.tsx";
 import Layout from "../../layouts/TutorialLayout.astro";
 import { getCollection } from "astro:content";
 import TableOfContents from "./TableOfContents.astro";
-import { processEntries, sortEntries, findAdjacentEntries } from "../../utils/collection";
+import { processEntries, findAdjacentEntries } from "../../utils/collection";
 
 export const prerender = true;
 
 export const getStaticPaths = async () => {
   const tutorialEntries = await getCollection("tutorial");
 
-  // Process and sort entries
+  // Process entries
   const processedEntries = processEntries(tutorialEntries, { resolveSlug: true });
-  const sortedEntries = sortEntries(processedEntries);
 
   // 원본 슬러그와 변환된 슬러그를 로그로 출력
   console.log("===== Tutorial Entries =====");
-  sortedEntries.forEach(entry => {
+  processedEntries.forEach(entry => {
     console.log(`Original slug: ${entry.original.slug}`);
     console.log(`Resolved slug: ${entry.slug}`);
     console.log("---");
   });
 
-  const paths = sortedEntries.map((entry, i, arr) => {
+  const paths = processedEntries.map((entry, i, arr) => {
     const { prev, next } = findAdjacentEntries(arr, entry.slug);
     
     return {

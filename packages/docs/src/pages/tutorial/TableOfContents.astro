@@ -1,20 +1,19 @@
 ---
 import { getCollection } from "astro:content";
-import { processEntries, sortEntries, groupEntriesByNavGroup } from "../../utils/collection";
+import { processEntries, groupEntriesByNavGroup } from "../../utils/collection";
 
 const tutorials = await getCollection("tutorial");
 const { currentSlug } = Astro.props;
 const [lang] = currentSlug.split("/");
 
-// Process, filter, and sort tutorials using the common utility
+// Process and filter tutorials using the common utility
 const processedTutorials = processEntries(tutorials, { 
   filterLang: lang,
   resolveSlug: true 
 });
-const sortedTutorials = sortEntries(processedTutorials);
 
 // Group tutorials by nav_group
-const groupedTutorials = groupEntriesByNavGroup(sortedTutorials);
+const groupedTutorials = groupEntriesByNavGroup(processedTutorials);
 ---
 
 <div class="p-3 text-sm dark:bg-white">

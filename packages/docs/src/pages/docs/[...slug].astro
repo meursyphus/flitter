@@ -3,7 +3,7 @@ import Layout from "../../layouts/DocsLayout.astro";
 import SideBar from "./SideBar.astro";
 import Toc from "../../components/pages/docs/Toc.astro";
 import { getCollection } from "astro:content";
-import { processEntries, sortEntries, findAdjacentEntries } from "../../utils/collection";
+import { processEntries, findAdjacentEntries } from "../../utils/collection";
 
 export const prerender = true;
 
@@ -20,12 +20,11 @@ const { entry } = Astro.props;
 const { Content, headings } = await entry.render();
 const docsEntries = await getCollection("docs");
 
-// Process and sort entries using the common utility
+// Process entries using the common utility
 const processedEntries = processEntries(docsEntries, { resolveSlug: false });
-const sortedEntries = sortEntries(processedEntries);
 
 // Find adjacent entries
-const { prev, next } = findAdjacentEntries(sortedEntries, entry.slug);
+const { prev, next } = findAdjacentEntries(processedEntries, entry.slug);
 const prevEntry = prev?.original ?? null;
 const nextEntry = next?.original ?? null;
 ---
