@@ -3,54 +3,57 @@ import type { CollectionEntry } from "astro:content";
 /**
  * Removes numeric prefixes from path segments (e.g., "01_intro" -> "intro")
  */
-export function removeNumericPrefix(segment: string): string {
+function removeNumericPrefix(segment: string): string {
   return segment.replace(/^\d+_/, "");
 }
 
 /**
  * Resolves a slug by removing numeric prefixes from all segments
  */
-export function resolveSlug(slug: string): string {
+function resolveSlug(slug: string): string {
   const segments = slug.split("/");
-  const cleanedSegments = segments.map((segment) => removeNumericPrefix(segment));
+  const cleanedSegments = segments.map((segment) =>
+    removeNumericPrefix(segment),
+  );
   return cleanedSegments.join("/");
 }
 
 /**
  * Extracts the language code from a slug
  */
-export function getLangFromSlug(slug: string): string {
+function getLangFromSlug(slug: string): string {
   return slug.split("/")[0];
 }
 
 /**
  * Extracts the numeric order from a segment (e.g., "01_intro" -> 1)
  */
-export function getOrderFromSegment(segment: string): number {
+function getOrderFromSegment(segment: string): number {
   const match = segment.match(/^(\d+)_/);
   return match ? parseInt(match[1]) : 0;
 }
 
-export interface ProcessedEntry<T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">> {
+interface ProcessedEntry<
+  T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">,
+> {
   original: T;
   slug: string;
   lang: string;
-  order: number;
+
   navGroup: string;
-  navOrder: number;
+  description: string
   title: string;
   navTitle?: string;
 }
-
 
 /**
  * Converts kebab-case to Title Case
  * e.g., "getting-started" -> "Getting Started"
  */
-export function kebabToTitleCase(str: string): string {
+function kebabToTitleCase(str: string): string {
   return str
     .split("-")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 }
 
@@ -59,7 +62,7 @@ export function kebabToTitleCase(str: string): string {
  * e.g., "en/01_widgets/container" -> "Widgets"
  * e.g., "en/02_core-concepts/intro" -> "Core Concepts"
  */
-export function getNavGroupFromSlug(slug: string): string {
+function getNavGroupFromSlug(slug: string): string {
   const segments = slug.split("/");
   // Skip language segment and get the folder name
   if (segments.length > 2) {
@@ -74,83 +77,72 @@ export function getNavGroupFromSlug(slug: string): string {
 /**
  * Processes a collection of entries with common transformations
  */
-export function processEntries<T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">>(
+export function processEntries<
+  T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">,
+>(
   entries: T[],
   options?: {
     filterLang?: string;
-    resolveSlug?: boolean;
-  }
+  },
 ): ProcessedEntry<T>[] {
-  const { filterLang, resolveSlug: shouldResolveSlug = true } = options || {};
+  const { filterLang } = options || {};
+  const processedEntries = entries
+    .sort((a, b) => a.slug.localeCompare(b.slug)) //폴더랑 파일 배치 기준으로 정렬
+    .map((entry, index) => {
+      const lang = getLangFromSlug(entry.slug);
 
-  let processedEntries = entries.map((entry, index) => {
-    const lang = getLangFromSlug(entry.slug);
-    const segments = entry.slug.split("/");
-    
-    // Get order from the last segment (file name) or folder segment
-    let order = index;
-    if (segments.length > 2) {
-      // Try to get order from file name first
-      const fileOrder = getOrderFromSegment(segments[segments.length - 1]);
-      // If no order in file name, try folder
-      order = fileOrder > 0 ? fileOrder : getOrderFromSegment(segments[1]);
-    } else if (segments.length > 1) {
-      order = getOrderFromSegment(segments[1]);
-    }
-    
-    // Use folder structure as nav_group
-    const navGroup = getNavGroupFromSlug(entry.slug);
-    const navOrder = entry.data.nav_order ?? order;
+      return {
+        original: entry,
+        slug: resolveSlug(entry.slug),
+        lang,
+        navGroup: getNavGroupFromSlug(entry.slug),
+        title: entry.data.title,
+        navTitle: entry.data.nav_title ?? entry.data.title,
+        description: entry.data.description ?? ""
+      };
+    })
+    .filter((entry) => {
+      if (!filterLang) return true;
 
-    return {
-      original: entry,
-      slug: shouldResolveSlug ? resolveSlug(entry.slug) : entry.slug,
-      lang,
-      order,
-      navGroup,
-      navOrder,
-      title: entry.data.title,
-      navTitle: 'nav_title' in entry.data ? entry.data.nav_title : entry.data.title,
-    };
-  });
-
-  // Filter by language if specified
-  if (filterLang) {
-    processedEntries = processedEntries.filter((entry) => entry.lang === filterLang);
-  }
+      return entry.lang === filterLang;
+    });
 
   return processedEntries;
 }
 
-
 /**
  * Groups processed entries by navigation group
+ * Returns a Map with insertion order preserved
  */
-export function groupEntriesByNavGroup<T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">>(
-  entries: ProcessedEntry<T>[]
-): Record<string, ProcessedEntry<T>[]> {
-  return entries.reduce(
-    (acc, entry) => {
-      const group = entry.navGroup;
-      if (!acc[group]) {
-        acc[group] = [];
-      }
-      acc[group].push(entry);
-      return acc;
-    },
-    {} as Record<string, ProcessedEntry<T>[]>
-  );
+export function groupEntriesByNavGroup<
+  T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">,
+>(entries: ProcessedEntry<T>[]): Map<string, ProcessedEntry<T>[]> {
+  // Use Map to maintain insertion order
+  const groupMap = new Map<string, ProcessedEntry<T>[]>();
+
+  // Group entries by navGroup
+  entries.forEach((entry) => {
+    const group = entry.navGroup;
+    if (!groupMap.has(group)) {
+      groupMap.set(group, []);
+    }
+    groupMap.get(group)!.push(entry);
+  });
+
+  return groupMap;
 }
 
 /**
  * Helper function to find previous and next entries in a sorted array
  */
-export function findAdjacentEntries<T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">>(
+export function findAdjacentEntries<
+  T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">,
+>(
   entries: ProcessedEntry<T>[],
-  currentSlug: string
+  currentSlug: string,
 ): { prev: ProcessedEntry<T> | null; next: ProcessedEntry<T> | null } {
   const currentIndex = entries.findIndex((entry) => entry.slug === currentSlug);
-  
+
   return {
     prev: currentIndex > 0 ? entries[currentIndex - 1] : null,
     next: currentIndex < entries.length - 1 ? entries[currentIndex + 1] : null,
@@ -169,25 +161,6 @@ export interface NavigationItem {
   url: string;
   title: string;
   order: number;
-}
-
-export function createNavigationStructure<T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">>(
-  entries: ProcessedEntry<T>[],
-  urlPrefix: string = "/docs"
-): NavigationGroup[] {
-  const grouped = groupEntriesByNavGroup(entries);
-  
-  const navigation: NavigationGroup[] = Object.entries(grouped).map(([groupName, groupEntries]) => ({
-    name: groupName,
-    items: groupEntries.map((entry) => ({
-      url: `${urlPrefix}/${entry.slug}`,
-      title: entry.navTitle ?? entry.title,
-      order: entry.navOrder,
-    })).sort((a, b) => a.order - b.order),
-  }));
-
-  // Sort groups alphabetically by name
-  return navigation.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 /**

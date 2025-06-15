@@ -9,7 +9,6 @@ const [lang] = currentSlug.split("/");
 // Process and filter tutorials using the common utility
 const processedTutorials = processEntries(tutorials, { 
   filterLang: lang,
-  resolveSlug: true 
 });
 
 // Group tutorials by nav_group
@@ -18,7 +17,7 @@ const groupedTutorials = groupEntriesByNavGroup(processedTutorials);
 
 <div class="p-3 text-sm dark:bg-white">
   {
-    Object.entries(groupedTutorials).map(([group, tutorials]) => (
+    Array.from(groupedTutorials.entries()).map(([group, tutorials]) => (
       <div class="mb-6">
         <h3 class="mb-2 text-[16px] font-medium text-[rgb(75,85,99)]">
           {group}

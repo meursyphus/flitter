@@ -1,6 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import { processEntries, createNavigationStructure, normalizePath } from "../../utils/collection";
+import { processEntries, groupEntriesByNavGroup, normalizePath } from "../../utils/collection";
 
 const docsEntries = await getCollection("docs");
 const url = new URL(Astro.request.url);
@@ -11,7 +11,7 @@ const lang = pathSegments[1];
 const processedEntries = processEntries(docsEntries, { 
   filterLang: lang
 });
-const navigation = createNavigationStructure(processedEntries, "/docs");
+const groupedEntries = groupEntriesByNavGroup(processedEntries);
 
 const normalizedPathname = normalizePath(url.pathname);
 ---
@@ -20,21 +20,23 @@ const normalizedPathname = normalizePath(url.pathname);
   class="inline-flex w-80 shrink-0 flex-col items-end justify-start gap-6 px-8 pt-[20px] dark:bg-white"
 >
   {
-    navigation.map((group) => (
+    Array.from(groupedEntries.entries()).map(([groupName, entries]) => (
       <div class="flex flex-col items-start justify-start self-stretch">
         <div class="inline-flex items-start justify-start gap-2.5 self-stretch">
-          <div class="text-xl font-bold text-gray-300 dark:text-gray-700">{group.name}</div>
+          <div class="text-xl font-bold text-gray-300 dark:text-gray-700">{groupName}</div>
         </div>
-        {group.items.map((item) => (
-          <div class="mt-1 inline-flex items-start justify-start gap-2 self-stretch px-4">
-            <a
-              href={item.url}
-              class={`${normalizePath(item.url) === normalizedPathname ? "font-semibold text-purple-500" : "text-gray-400 dark:text-gray-800"} text-lg hover:text-purple-500`}
-            >
-              {item.title}
-            </a>
-          </div>
-        ))}
+        <div class="mt-2 flex flex-col items-start justify-start gap-2 self-stretch">
+          {entries.map((entry) => (
+            <div class="inline-flex items-start justify-start gap-2 self-stretch px-4">
+              <a
+                href={`/docs/${entry.slug}`}
+                class={`${normalizePath(`/docs/${entry.slug}`) === normalizedPathname ? "font-semibold text-purple-500" : "text-gray-400 dark:text-gray-800"} text-lg hover:text-purple-500`}
+              >
+                {entry.navTitle ?? entry.title}
+              </a>
+            </div>
+          ))}
+        </div>
       </div>
     ))
   }

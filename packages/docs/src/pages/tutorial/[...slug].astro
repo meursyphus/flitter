@@ -11,7 +11,7 @@ export const getStaticPaths = async () => {
   const tutorialEntries = await getCollection("tutorial");
 
   // Process entries
-  const processedEntries = processEntries(tutorialEntries, { resolveSlug: true });
+  const processedEntries = processEntries(tutorialEntries);
 
   // 원본 슬러그와 변환된 슬러그를 로그로 출력
   console.log("===== Tutorial Entries =====");
@@ -29,9 +29,9 @@ export const getStaticPaths = async () => {
         slug: entry.slug,
       },
       props: {
-        prev: prev?.original,
-        next: next?.original,
-        entry: entry.original,
+        prev: prev,
+        next: next,
+        entry: entry,
         lang: entry.lang,
       },
     };
@@ -49,13 +49,13 @@ export const getStaticPaths = async () => {
 
 const { entry, prev, next } = Astro.props;
 
-const { Content } = await entry.render();
+const { Content } = await entry.original.render();
 ---
 
 <Layout
-  title={`Tutorial/${entry.data.title} - Flitter`}
-  description={entry.data.description}
-  image={entry.data.image ?? "/og-tutorial.png"}
+  title={`Tutorial/${entry.title} - Flitter`}
+  description={entry.description}
+  image={entry.original.data.image ?? "/og-tutorial.png"}
 >
   <div
     class="grid h-[calc(100vh-var(--header))] grid-cols-1 lg:grid-cols-[220px_1fr_1fr] dark:bg-white"
@@ -92,7 +92,7 @@ const { Content } = await entry.render();
               <a
                 href={`/tutorial/${prev.slug}`}
                 class="flex h-10 w-10 items-center justify-center rounded text-gray-300 transition-colors hover:bg-gray-800 hover:text-white dark:text-black"
-                title={prev.data.title}
+                title={prev.title}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -116,7 +116,7 @@ const { Content } = await entry.render();
               <a
                 href={`/tutorial/${next.slug}`}
                 class="flex h-10 w-10 items-center justify-center rounded text-gray-300 transition-colors hover:bg-gray-800 hover:text-white dark:text-black"
-                title={next.data.title}
+                title={next.title}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -152,11 +152,11 @@ const { Content } = await entry.render();
 
     <div id="sandpackContainer" class="w-full overflow-auto bg-[#151515] hidden lg:block">
       <div id="originalSandpack" class="h-full">
-        <SandPack files={entry.data.files} client:only="react" />
+        <SandPack files={entry.original.data.files} client:only="react" />
       </div>
       <div id="solvedSandpack" class="hidden h-full">
         <SandPack
-          files={entry.data.solved_files ?? entry.data.files}
+          files={entry.original.data.solved_files ?? entry.original.data.files}
           client:only="react"
         />
       </div>
