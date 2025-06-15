@@ -3,7 +3,6 @@ import { defineCollection, z } from "astro:content";
 const docs = defineCollection({
   type: "content",
   schema: z.object({
-    nav_group: z.string().optional(),
     nav_order: z.number().optional(),
     nav_title: z.string().optional(),
     title: z.string(),
@@ -16,7 +15,6 @@ const docs = defineCollection({
 const tutorial = defineCollection({
   type: "content",
   schema: z.object({
-    nav_group: z.string(),
     nav_order: z.number().optional(),
     title: z.string(),
     image: z.string().optional(),

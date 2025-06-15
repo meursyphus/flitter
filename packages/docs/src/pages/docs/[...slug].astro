@@ -17,7 +17,7 @@ export async function getStaticPaths() {
   }));
 }
 
-const { entry } = Astro.props;
+const { entry, } = Astro.props;
 const { Content, headings } = await entry.render();
 const docsEntries = await getCollection("docs");
 
@@ -26,16 +26,14 @@ const processedEntries = processEntries(docsEntries);
 
 // Find the resolved slug for the current entry
 const currentProcessedEntry = processedEntries.find(e => e.original.slug === entry.slug);
-const resolvedSlug = currentProcessedEntry?.slug ?? entry.slug;
+const slug = currentProcessedEntry?.slug ?? entry.slug;
 
 // Find adjacent entries
-const { prev, next } = findAdjacentEntries(processedEntries, resolvedSlug);
-const prevEntry = prev?.original ?? null;
-const nextEntry = next?.original ?? null;
+const { prev, next } = findAdjacentEntries(processedEntries, slug);
 ---
 
 <Layout
-  title={`${currentProcessedEntry?.navGroup ?? "Widgets"}/${entry.data.title} - Flitter`}
+  title={`${currentProcessedEntry?.navGroup ?? "General"}/${entry.data.title} - Flitter`}
   description={entry.data.description}
   image={entry.data.image ?? "/og-docs.png"}
 >
@@ -70,18 +68,18 @@ const nextEntry = next?.original ?? null;
       <Content />
       <div class="flex justify-between py-4">
         {
-          prevEntry ? (
+          prev ? (
             <a class="move mr-auto dark:text-black dark:border-black" href={`/docs/${prev.slug}`}>
-              {prevEntry.data.nav_title ?? prevEntry.data.title}
+              {prev.navTitle}
             </a>
           ) : (
             <div class="move disabled mr-auto dark:text-gray-500" />
           )
         }
         {
-          nextEntry ? (
+          next ? (
             <a class="move ml-auto dark:text-black dark:border-black" href={`/docs/${next.slug}`}>
-              {nextEntry.data.nav_title ?? nextEntry.data.title}
+              {next.navTitle}
             </a>
           ) : (
             <div class="move disabled ml-auto dark:text-gray-500" />

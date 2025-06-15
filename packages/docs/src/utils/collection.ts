@@ -37,33 +37,11 @@ export interface ProcessedEntry<T extends CollectionEntry<"docs"> | CollectionEn
   lang: string;
   order: number;
   navGroup: string;
-  navGroupOrder: number;
   navOrder: number;
   title: string;
   navTitle?: string;
 }
 
-/**
- * Navigation group ordering
- * Uses Title Case names matching getNavGroupFromSlug output
- */
-const NAV_GROUP_ORDER: Record<string, number> = {
-  "Getting Started": 1,
-  "Core Concepts": 2,
-  "Basic Widgets": 3,
-  "Layout": 4,
-  "Interactions And Animations": 5,
-  "Advanced Features": 6,
-  "Widgets": 999,
-  "General": 1000,
-};
-
-/**
- * Gets the order for a navigation group
- */
-export function getNavGroupOrder(navGroup: string): number {
-  return NAV_GROUP_ORDER[navGroup] ?? 9999;
-}
 
 /**
  * Converts kebab-case to Title Case
@@ -88,11 +66,9 @@ export function getNavGroupFromSlug(slug: string): string {
     // If it's in a subfolder, use the folder name as group
     const folderName = removeNumericPrefix(segments[1]);
     return kebabToTitleCase(folderName);
-  } else if (segments.length === 2) {
-    // If it's a direct file under language, use a default group
-    return "General";
   }
-  return "Widgets";
+  // If it's a direct file under language, use a default group
+  return "General";
 }
 
 /**
@@ -103,10 +79,9 @@ export function processEntries<T extends CollectionEntry<"docs"> | CollectionEnt
   options?: {
     filterLang?: string;
     resolveSlug?: boolean;
-    useSlugAsNavGroup?: boolean;
   }
 ): ProcessedEntry<T>[] {
-  const { filterLang, resolveSlug: shouldResolveSlug = true, useSlugAsNavGroup = true } = options || {};
+  const { filterLang, resolveSlug: shouldResolveSlug = true } = options || {};
 
   let processedEntries = entries.map((entry, index) => {
     const lang = getLangFromSlug(entry.slug);
@@ -123,12 +98,8 @@ export function processEntries<T extends CollectionEntry<"docs"> | CollectionEnt
       order = getOrderFromSegment(segments[1]);
     }
     
-    // Use folder structure as nav_group if enabled, otherwise fall back to data
-    const navGroup = useSlugAsNavGroup 
-      ? getNavGroupFromSlug(entry.slug)
-      : (entry.data.nav_group ?? "Widgets");
-    
-    const navGroupOrder = getNavGroupOrder(navGroup);
+    // Use folder structure as nav_group
+    const navGroup = getNavGroupFromSlug(entry.slug);
     const navOrder = entry.data.nav_order ?? order;
 
     return {
@@ -137,7 +108,6 @@ export function processEntries<T extends CollectionEntry<"docs"> | CollectionEnt
       lang,
       order,
       navGroup,
-      navGroupOrder,
       navOrder,
       title: entry.data.title,
       navTitle: 'nav_title' in entry.data ? entry.data.nav_title : entry.data.title,
@@ -192,7 +162,6 @@ export function findAdjacentEntries<T extends CollectionEntry<"docs"> | Collecti
  */
 export interface NavigationGroup {
   name: string;
-  order: number;
   items: NavigationItem[];
 }
 
@@ -210,7 +179,6 @@ export function createNavigationStructure<T extends CollectionEntry<"docs"> | Co
   
   const navigation: NavigationGroup[] = Object.entries(grouped).map(([groupName, groupEntries]) => ({
     name: groupName,
-    order: getNavGroupOrder(groupName),
     items: groupEntries.map((entry) => ({
       url: `${urlPrefix}/${entry.slug}`,
       title: entry.navTitle ?? entry.title,
@@ -218,8 +186,8 @@ export function createNavigationStructure<T extends CollectionEntry<"docs"> | Co
     })).sort((a, b) => a.order - b.order),
   }));
 
-  // Sort groups by order
-  return navigation.sort((a, b) => a.order - b.order);
+  // Sort groups alphabetically by name
+  return navigation.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 /**
