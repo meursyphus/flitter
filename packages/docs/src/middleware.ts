@@ -3,7 +3,7 @@ import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from "./i18n";
 
 // Static redirects configuration
 const STATIC_REDIRECTS: Record<string, string> = {
-  "/docs": "/docs/introduction",
+  "/docs": "/docs/getting-started/introduction",
   "/tutorial": "/tutorial/quick-start/installation",
 };
 

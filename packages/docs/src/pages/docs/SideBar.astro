@@ -9,8 +9,7 @@ const lang = pathSegments[1];
 
 // Process entries and create navigation structure using the common utility
 const processedEntries = processEntries(docsEntries, { 
-  filterLang: lang,
-  resolveSlug: false 
+  filterLang: lang
 });
 const navigation = createNavigationStructure(processedEntries, "/docs");
 

@@ -9,10 +9,11 @@ export const prerender = true;
 
 export async function getStaticPaths() {
   const docsEntries = await getCollection("docs");
+  const processedEntries = processEntries(docsEntries);
 
-  return docsEntries.map((entry) => ({
+  return processedEntries.map((entry) => ({
     params: { slug: entry.slug },
-    props: { entry },
+    props: { entry: entry.original },
   }));
 }
 
@@ -21,16 +22,20 @@ const { Content, headings } = await entry.render();
 const docsEntries = await getCollection("docs");
 
 // Process entries using the common utility
-const processedEntries = processEntries(docsEntries, { resolveSlug: false });
+const processedEntries = processEntries(docsEntries);
+
+// Find the resolved slug for the current entry
+const currentProcessedEntry = processedEntries.find(e => e.original.slug === entry.slug);
+const resolvedSlug = currentProcessedEntry?.slug ?? entry.slug;
 
 // Find adjacent entries
-const { prev, next } = findAdjacentEntries(processedEntries, entry.slug);
+const { prev, next } = findAdjacentEntries(processedEntries, resolvedSlug);
 const prevEntry = prev?.original ?? null;
 const nextEntry = next?.original ?? null;
 ---
 
 <Layout
-  title={`${processedEntries.find(e => e.original.slug === entry.slug)?.navGroup ?? "Widgets"}/${entry.data.title} - Flitter`}
+  title={`${currentProcessedEntry?.navGroup ?? "Widgets"}/${entry.data.title} - Flitter`}
   description={entry.data.description}
   image={entry.data.image ?? "/og-docs.png"}
 >
@@ -66,7 +71,7 @@ const nextEntry = next?.original ?? null;
       <div class="flex justify-between py-4">
         {
           prevEntry ? (
-            <a class="move mr-auto dark:text-black dark:border-black" href={`/docs/${prevEntry.slug}`}>
+            <a class="move mr-auto dark:text-black dark:border-black" href={`/docs/${prev.slug}`}>
               {prevEntry.data.nav_title ?? prevEntry.data.title}
             </a>
           ) : (
@@ -75,7 +80,7 @@ const nextEntry = next?.original ?? null;
         }
         {
           nextEntry ? (
-            <a class="move ml-auto dark:text-black dark:border-black" href={`/docs/${nextEntry.slug}`}>
+            <a class="move ml-auto dark:text-black dark:border-black" href={`/docs/${next.slug}`}>
               {nextEntry.data.nav_title ?? nextEntry.data.title}
             </a>
           ) : (
