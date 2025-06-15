@@ -16,7 +16,7 @@ export default defineConfig({
   }),
   integrations: [
     react({
-      mode: 'production',
+      mode: "production",
     }),
     svelte(),
     tailwind(),
@@ -25,16 +25,12 @@ export default defineConfig({
   ],
   vite: {
     optimizeDeps: {
-      include: ['@monaco-editor/react', '@codesandbox/sandpack-react'],
-      force: true
+      include: ["@monaco-editor/react", "@codesandbox/sandpack-react"],
+      force: true,
     },
     ssr: {
-      noExternal: ['@codesandbox/sandpack-react', '@monaco-editor/react']
-    }
-  },
-  redirects: {
-    "/docs": "/docs/introduction",
-    "/tutorial": "/tutorial/introduction",
+      noExternal: ["@codesandbox/sandpack-react", "@monaco-editor/react"],
+    },
   },
   markdown: {
     shikiConfig: {

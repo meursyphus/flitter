@@ -1,6 +1,12 @@
 import type { MiddlewareHandler } from "astro";
 import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from "./i18n";
 
+// Static redirects configuration
+const STATIC_REDIRECTS: Record<string, string> = {
+  "/docs": "/docs/introduction",
+  "/tutorial": "/tutorial/quick-start/installation",
+};
+
 function detectLanguage(
   context: Parameters<MiddlewareHandler>[0],
 ): (typeof SUPPORTED_LANGUAGES)[number] {
@@ -25,10 +31,31 @@ function detectLanguage(
   return DEFAULT_LANGUAGE;
 }
 
+// Handle static redirects
+function handleStaticRedirects(
+  context: Parameters<MiddlewareHandler>[0],
+): Response | null {
+  const url = new URL(context.request.url);
+  const redirectPath = STATIC_REDIRECTS[url.pathname];
+  
+  if (redirectPath) {
+    return context.redirect(redirectPath);
+  }
+  
+  return null;
+}
+
 export const onRequest: MiddlewareHandler = async (context, next) => {
+  // Pipeline 1: Handle static redirects first
+  const staticRedirect = handleStaticRedirects(context);
+  if (staticRedirect) {
+    return staticRedirect;
+  }
+
+  // Pipeline 2: Handle language detection and routing
   const url = new URL(context.request.url);
 
-  // Only process /tutorial routes
+  // Only process /tutorial and /docs routes for language detection
   if (
     url.pathname.startsWith("/tutorial") ||
     url.pathname.startsWith("/docs")
