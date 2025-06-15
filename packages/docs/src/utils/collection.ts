@@ -1,0 +1,205 @@
+import type { CollectionEntry } from "astro:content";
+
+/**
+ * Removes numeric prefixes from path segments (e.g., "01_intro" -> "intro")
+ */
+export function removeNumericPrefix(segment: string): string {
+  return segment.replace(/^\d+_/, "");
+}
+
+/**
+ * Resolves a slug by removing numeric prefixes from all segments
+ */
+export function resolveSlug(slug: string): string {
+  const segments = slug.split("/");
+  const cleanedSegments = segments.map((segment) => removeNumericPrefix(segment));
+  return cleanedSegments.join("/");
+}
+
+/**
+ * Extracts the language code from a slug
+ */
+export function getLangFromSlug(slug: string): string {
+  return slug.split("/")[0];
+}
+
+/**
+ * Extracts the numeric order from a segment (e.g., "01_intro" -> 1)
+ */
+export function getOrderFromSegment(segment: string): number {
+  const match = segment.match(/^(\d+)_/);
+  return match ? parseInt(match[1]) : 0;
+}
+
+export interface ProcessedEntry<T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">> {
+  original: T;
+  slug: string;
+  lang: string;
+  order: number;
+  navGroup: string;
+  navGroupOrder: number;
+  navOrder: number;
+  title: string;
+  navTitle?: string;
+}
+
+/**
+ * Navigation group ordering
+ */
+const NAV_GROUP_ORDER: Record<string, number> = {
+  "Getting Started": 1,
+  "Core Concepts": 2,
+  "Basic Widgets": 3,
+  "Layout": 4,
+  "Interactions and Animations": 5,
+  "Advanced Features": 6,
+  "Widgets": 999,
+};
+
+/**
+ * Gets the order for a navigation group
+ */
+export function getNavGroupOrder(navGroup: string): number {
+  return NAV_GROUP_ORDER[navGroup] ?? 9999;
+}
+
+/**
+ * Processes a collection of entries with common transformations
+ */
+export function processEntries<T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">>(
+  entries: T[],
+  options?: {
+    filterLang?: string;
+    resolveSlug?: boolean;
+  }
+): ProcessedEntry<T>[] {
+  const { filterLang, resolveSlug: shouldResolveSlug = true } = options || {};
+
+  let processedEntries = entries.map((entry, index) => {
+    const lang = getLangFromSlug(entry.slug);
+    const segments = entry.slug.split("/");
+    const order = segments.length > 1 ? getOrderFromSegment(segments[1]) : index;
+    const navGroup = entry.data.nav_group ?? "Widgets";
+    const navGroupOrder = getNavGroupOrder(navGroup);
+    const navOrder = entry.data.nav_order ?? order;
+
+    return {
+      original: entry,
+      slug: shouldResolveSlug ? resolveSlug(entry.slug) : entry.slug,
+      lang,
+      order,
+      navGroup,
+      navGroupOrder,
+      navOrder,
+      title: entry.data.title,
+      navTitle: 'nav_title' in entry.data ? entry.data.nav_title : entry.data.title,
+    };
+  });
+
+  // Filter by language if specified
+  if (filterLang) {
+    processedEntries = processedEntries.filter((entry) => entry.lang === filterLang);
+  }
+
+  return processedEntries;
+}
+
+/**
+ * Sorts processed entries by group order, then nav order, then title
+ */
+export function sortEntries<T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">>(
+  entries: ProcessedEntry<T>[]
+): ProcessedEntry<T>[] {
+  return entries.sort((a, b) => {
+    // First sort by navigation group order
+    const groupOrderDiff = a.navGroupOrder - b.navGroupOrder;
+    if (groupOrderDiff !== 0) {
+      return groupOrderDiff;
+    }
+
+    // Within the same group, sort by nav order
+    const orderDiff = a.navOrder - b.navOrder;
+    if (orderDiff !== 0) {
+      return orderDiff;
+    }
+
+    // If order is the same, sort alphabetically by title
+    return a.title.localeCompare(b.title);
+  });
+}
+
+/**
+ * Groups processed entries by navigation group
+ */
+export function groupEntriesByNavGroup<T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">>(
+  entries: ProcessedEntry<T>[]
+): Record<string, ProcessedEntry<T>[]> {
+  return entries.reduce(
+    (acc, entry) => {
+      const group = entry.navGroup;
+      if (!acc[group]) {
+        acc[group] = [];
+      }
+      acc[group].push(entry);
+      return acc;
+    },
+    {} as Record<string, ProcessedEntry<T>[]>
+  );
+}
+
+/**
+ * Helper function to find previous and next entries in a sorted array
+ */
+export function findAdjacentEntries<T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">>(
+  entries: ProcessedEntry<T>[],
+  currentSlug: string
+): { prev: ProcessedEntry<T> | null; next: ProcessedEntry<T> | null } {
+  const currentIndex = entries.findIndex((entry) => entry.slug === currentSlug);
+  
+  return {
+    prev: currentIndex > 0 ? entries[currentIndex - 1] : null,
+    next: currentIndex < entries.length - 1 ? entries[currentIndex + 1] : null,
+  };
+}
+
+/**
+ * Creates navigation structure for sidebars
+ */
+export interface NavigationGroup {
+  name: string;
+  order: number;
+  items: NavigationItem[];
+}
+
+export interface NavigationItem {
+  url: string;
+  title: string;
+  order: number;
+}
+
+export function createNavigationStructure<T extends CollectionEntry<"docs"> | CollectionEntry<"tutorial">>(
+  entries: ProcessedEntry<T>[],
+  urlPrefix: string = "/docs"
+): NavigationGroup[] {
+  const grouped = groupEntriesByNavGroup(entries);
+  
+  const navigation: NavigationGroup[] = Object.entries(grouped).map(([groupName, groupEntries]) => ({
+    name: groupName,
+    order: getNavGroupOrder(groupName),
+    items: groupEntries.map((entry) => ({
+      url: `${urlPrefix}/${entry.slug}`,
+      title: entry.navTitle ?? entry.title,
+      order: entry.navOrder,
+    })).sort((a, b) => a.order - b.order),
+  }));
+
+  // Sort groups by order
+  return navigation.sort((a, b) => a.order - b.order);
+}
+
+/**
+ * Normalizes a path by removing trailing slashes
+ */
+export function normalizePath(path: string): string {
+  return path.endsWith("/") ? path.slice(0, -1) : path;
+}

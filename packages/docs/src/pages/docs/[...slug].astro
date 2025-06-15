@@ -3,7 +3,7 @@ import Layout from "../../layouts/DocsLayout.astro";
 import SideBar from "./SideBar.astro";
 import Toc from "../../components/pages/docs/Toc.astro";
 import { getCollection } from "astro:content";
-import { getNavOrder } from "./utils";
+import { processEntries, sortEntries, findAdjacentEntries } from "../../utils/collection";
 
 export const prerender = true;
 
@@ -20,29 +20,14 @@ const { entry } = Astro.props;
 const { Content, headings } = await entry.render();
 const docsEntries = await getCollection("docs");
 
-// Sort docsEntries by nav_group_order and nav_order
-const sortedEntries = docsEntries.sort((a, b) => {
-  const groupOrderDiff =
-    getNavOrder(a.data.nav_group ?? "Widgets") - getNavOrder(b.data.nav_group ?? "Widgets");
-  if (groupOrderDiff === 0) {
-    // Within the same group, sort by nav_order
-    const orderDiff = (a.data.nav_order ?? 0) - (b.data.nav_order ?? 0);
-    if (orderDiff === 0) {
-      return a.data.title.localeCompare(b.data.title);
-    }
-    return orderDiff;
-  }
-  return groupOrderDiff;
-});
-// Find the index of the current entry
-const currentIndex = sortedEntries.findIndex((it) => it.slug === entry.slug);
+// Process and sort entries using the common utility
+const processedEntries = processEntries(docsEntries, { resolveSlug: false });
+const sortedEntries = sortEntries(processedEntries);
 
-// Find the previous and next entry
-const prevEntry = currentIndex > 0 ? sortedEntries[currentIndex - 1] : null;
-const nextEntry =
-  currentIndex < sortedEntries.length - 1
-    ? sortedEntries[currentIndex + 1]
-    : null;
+// Find adjacent entries
+const { prev, next } = findAdjacentEntries(sortedEntries, entry.slug);
+const prevEntry = prev?.original ?? null;
+const nextEntry = next?.original ?? null;
 ---
 
 <Layout

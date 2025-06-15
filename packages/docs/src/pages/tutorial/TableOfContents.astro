@@ -1,41 +1,20 @@
 ---
 import { getCollection } from "astro:content";
+import { processEntries, sortEntries, groupEntriesByNavGroup } from "../../utils/collection";
 
 const tutorials = await getCollection("tutorial");
-const sortedTutorials = tutorials
-  .sort((a, b) => a.slug.localeCompare(b.slug))
-  .map((entry) => {
-    const segments = entry.slug.split("/");
-    const lang = segments[0];
-    return {
-      ...entry,
-      lang,
-      slug: segments.map((segment) => segment.replace(/^\d+_/, "")).join("/"),
-      order: parseInt(segments[1].split("_")[0]) || 0,
-      nav_group: entry.data.nav_group || "Others",
-    };
-  });
-
-// Group tutorials by nav_group and filter by language
 const { currentSlug } = Astro.props;
-
 const [lang] = currentSlug.split("/");
 
-const filteredTutorials = sortedTutorials.filter(
-  (tutorial) => tutorial.lang === lang,
-);
+// Process, filter, and sort tutorials using the common utility
+const processedTutorials = processEntries(tutorials, { 
+  filterLang: lang,
+  resolveSlug: true 
+});
+const sortedTutorials = sortEntries(processedTutorials);
 
-const groupedTutorials = filteredTutorials.reduce(
-  (acc, tutorial) => {
-    const group = tutorial.nav_group;
-    if (!acc[group]) {
-      acc[group] = [];
-    }
-    acc[group].push(tutorial);
-    return acc;
-  },
-  {} as Record<string, typeof filteredTutorials>,
-);
+// Group tutorials by nav_group
+const groupedTutorials = groupEntriesByNavGroup(sortedTutorials);
 ---
 
 <div class="p-3 text-sm dark:bg-white">
@@ -57,7 +36,7 @@ const groupedTutorials = filteredTutorials.reduce(
                     : "text-[rgb(156,163,175)] hover:text-[rgb(209,213,219)]",
                 ]}
               >
-                {tutorial.data.title}
+                {tutorial.title}
               </a>
             </li>
           ))}
