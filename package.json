@@ -39,7 +39,9 @@
     "lunaria:build": "lunaria build && cp -r dist/lunaria/index.html packages/docs/public/lunaria.html",
     "lunaria:preview": "lunaria preview",
     "solid:dev": "npm run dev --workspace=@meursyphus/flitter-solid",
-    "solid:build": "npm run build --workspace=@meursyphus/flitter-solid"
+    "solid:build": "npm run build --workspace=@meursyphus/flitter-solid",
+    "vue:dev": "npm run dev --workspace=@meursyphus/flitter-vue",
+    "vue:build": "npm run build --workspace=@meursyphus/flitter-vue"
   },
   "author": "meursyphus",
   "license": "MIT",
