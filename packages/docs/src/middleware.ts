@@ -4,7 +4,7 @@ import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from "./i18n";
 // Static redirects configuration
 const STATIC_REDIRECTS: Record<string, string> = {
   "/docs": "/docs/getting-started/introduction",
-  "/tutorial": "/tutorial/quick-start/installation",
+  "/tutorial": "/tutorial/getting-started/installation",
 };
 
 function detectLanguage(

@@ -20,7 +20,7 @@ files:
 solved_files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
-    import { Container, Center, Align, Alignment, Text, TextStyle, EdgeInsets } from "@meursyphus/flitter";
+    import { Container, Center, Align, Alignment, Text } from "@meursyphus/flitter";
     
     const widget = Container({
       width: 300,
@@ -29,14 +29,14 @@ solved_files:
       child: Align({
         alignment: Alignment.center,
         child: Container({
-          padding: EdgeInsets.all(20),
+          padding: 20,
           color: '#3B82F6',
           child: Center({
             child: Text("정렬된 텍스트", {
-              style: new TextStyle({
+              style: {
                 color: 'white',
                 fontSize: 16
-              })
+              }
             })
           })
         })

@@ -5,7 +5,7 @@ files:
   App.js: |
     import React from 'react';
     import Widget from "@meursyphus/flitter-react";
-    import { StatelessWidget, Container, Column, Text, Center, EdgeInsets, TextStyle } from "@meursyphus/flitter";
+    import { StatelessWidget, Container, Column, Text, Center, EdgeInsets } from "@meursyphus/flitter";
     
     class PaddingApp extends StatelessWidget {
       build(context) {
@@ -22,7 +22,7 @@ files:
                   height: 60,
                   color: '#FF6B6B',
                   child: Center({
-                    child: Text("첫 번째 박스", { style: new TextStyle({ color: 'white' }) })
+                    child: Text("첫 번째 박스", { style: { color: 'white' } })
                   })
                 }),
                 Container({
@@ -30,7 +30,7 @@ files:
                   height: 60,
                   color: '#4ECDC4',
                   child: Center({
-                    child: Text("두 번째 박스", { style: new TextStyle({ color: 'white' }) })
+                    child: Text("두 번째 박스", { style: { color: 'white' } })
                   })
                 }),
                 Container({
@@ -38,7 +38,7 @@ files:
                   height: 60,
                   color: '#45B7D1',
                   child: Center({
-                    child: Text("세 번째 박스", { style: new TextStyle({ color: 'white' }) })
+                    child: Text("세 번째 박스", { style: { color: 'white' } })
                   })
                 })
               ]
@@ -59,7 +59,7 @@ solved_files:
   App.js: |
     import React from 'react';
     import Widget from "@meursyphus/flitter-react";
-    import { StatelessWidget, Container, Column, Text, Center, EdgeInsets, TextStyle } from "@meursyphus/flitter";
+    import { StatelessWidget, Container, Column, Text, Center, EdgeInsets } from "@meursyphus/flitter";
     
     class PaddingApp extends StatelessWidget {
       build(context) {
@@ -78,7 +78,7 @@ solved_files:
                   margin: EdgeInsets.only({ bottom: 16 }),
                   padding: EdgeInsets.all(12),
                   child: Center({
-                    child: Text("첫 번째 박스", { style: new TextStyle({ color: 'white' }) })
+                    child: Text("첫 번째 박스", { style: { color: 'white' } })
                   })
                 }),
                 Container({
@@ -88,7 +88,7 @@ solved_files:
                   margin: EdgeInsets.only({ bottom: 16 }),
                   padding: EdgeInsets.all(12),
                   child: Center({
-                    child: Text("두 번째 박스", { style: new TextStyle({ color: 'white' }) })
+                    child: Text("두 번째 박스", { style: { color: 'white' } })
                   })
                 }),
                 Container({
@@ -97,7 +97,7 @@ solved_files:
                   color: '#45B7D1',
                   padding: EdgeInsets.all(12),
                   child: Center({
-                    child: Text("세 번째 박스", { style: new TextStyle({ color: 'white' }) })
+                    child: Text("세 번째 박스", { style: { color: 'white' } })
                   })
                 })
               ]
