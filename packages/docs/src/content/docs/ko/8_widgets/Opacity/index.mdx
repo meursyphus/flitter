@@ -1,0 +1,339 @@
+---
+nav_group: Widgets
+nav_group_order: 3
+nav_title: Opacity
+title: "Opacity"
+description: "자식 위젯의 투명도를 조절하는 위젯"
+---
+
+## 개요
+
+`Opacity`는 자식 위젯을 부분적으로 투명하게 만드는 위젯입니다. Flutter의 Opacity 위젯에서 영감을 받았으며, 페이드 인/아웃 효과나 시각적 계층을 만들 때 사용합니다.
+
+0.0 값일 때는 자식이 전혀 그려지지 않고, 1.0 값일 때는 완전 불투명하게 그려집니다. 0.0과 1.0 사이의 값은 중간 버퍼를 사용하므로 성능상 비용이 있을 수 있습니다.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/9hltevOHQBw"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowfullscreen
+></iframe>
+
+참고: [https://api.flutter.dev/flutter/widgets/Opacity-class.html](https://api.flutter.dev/flutter/widgets/Opacity-class.html)
+
+## 언제 사용하나요?
+
+- 위젯의 투명도를 조절해야 할 때
+- 페이드 인/아웃 효과를 만들 때
+- 비활성화된 UI 요소를 시각적으로 표현할 때
+- 오버레이나 모달 배경을 만들 때
+- 시각적 계층이나 깊이감을 표현할 때
+
+## 기본 사용법
+
+```typescript
+import { Opacity, Container } from '@meursyphus/flitter';
+
+// 반투명 상자
+const SemiTransparentBox = Opacity({
+  opacity: 0.5,
+  child: Container({
+    width: 100,
+    height: 100,
+    color: '#3498db'
+  })
+});
+
+// 거의 투명한 텍스트
+const FadedText = Opacity({
+  opacity: 0.3,
+  child: Text('흐릿한 텍스트', {
+    style: { fontSize: 18 }
+  })
+});
+```
+
+## Props
+
+### opacity (필수)
+**값: number**
+
+투명도 값을 0.0부터 1.0까지의 범위로 지정합니다.
+
+- **0.0**: 완전히 투명 (보이지 않음)
+- **1.0**: 완전히 불투명 (기본 상태)
+- **0.0 ~ 1.0**: 부분적으로 투명
+
+```typescript
+// 완전히 투명
+opacity: 0.0
+
+// 반투명
+opacity: 0.5
+
+// 거의 불투명
+opacity: 0.9
+
+// 완전히 불투명
+opacity: 1.0
+```
+
+### child (선택)
+**값: Widget**
+
+투명도가 적용될 자식 위젯입니다. 자식이 없으면 아무것도 렌더링되지 않습니다.
+
+## 실제 사용 예제
+
+### 예제 1: 다양한 투명도 단계
+
+```typescript
+import { Opacity, Container, Row, Column, Text } from '@meursyphus/flitter';
+
+const OpacityLevels = Row({
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0].map(opacity =>
+    Column({
+      children: [
+        Opacity({
+          opacity: opacity,
+          child: Container({
+            width: 60,
+            height: 60,
+            color: '#e74c3c'
+          })
+        }),
+        Text(`${opacity}`, {
+          style: { fontSize: 12, marginTop: 8 }
+        })
+      ]
+    })
+  )
+});
+```
+
+### 예제 2: 비활성화된 버튼 표현
+
+```typescript
+import { Opacity, GestureDetector, Container, Text } from '@meursyphus/flitter';
+
+const Button = ({ text, onPress, disabled = false }) => {
+  const buttonContent = Container({
+    padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+    decoration: new BoxDecoration({
+      color: '#3498db',
+      borderRadius: BorderRadius.circular(8)
+    }),
+    child: Text(text, {
+      style: { color: 'white', fontSize: 16 }
+    })
+  });
+
+  if (disabled) {
+    return Opacity({
+      opacity: 0.5,
+      child: buttonContent
+    });
+  }
+
+  return GestureDetector({
+    onTap: onPress,
+    child: buttonContent
+  });
+};
+```
+
+### 예제 3: 모달 오버레이
+
+```typescript
+import { Opacity, Stack, Positioned, Container, GestureDetector } from '@meursyphus/flitter';
+
+const Modal = ({ isVisible, onClose, child }) => {
+  if (!isVisible) return null;
+
+  return Stack({
+    children: [
+      // 배경 오버레이
+      Positioned({
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        child: GestureDetector({
+          onTap: onClose,
+          child: Opacity({
+            opacity: 0.5,
+            child: Container({
+              color: 'black'
+            })
+          })
+        })
+      }),
+      // 모달 컨텐츠
+      Center({
+        child: Container({
+          margin: EdgeInsets.all(40),
+          decoration: new BoxDecoration({
+            color: 'white',
+            borderRadius: BorderRadius.circular(12)
+          }),
+          child: child
+        })
+      })
+    ]
+  });
+};
+```
+
+### 예제 4: 애니메이션과 함께 사용 (AnimatedOpacity)
+
+```typescript
+import { AnimatedOpacity, Container, GestureDetector } from '@meursyphus/flitter';
+
+class FadeButton extends StatefulWidget {
+  createState() {
+    return new FadeButtonState();
+  }
+}
+
+class FadeButtonState extends State {
+  isVisible = true;
+  
+  toggleVisibility = () => {
+    this.setState(() => {
+      this.isVisible = !this.isVisible;
+    });
+  };
+  
+  build() {
+    return Column({
+      children: [
+        GestureDetector({
+          onTap: this.toggleVisibility,
+          child: Container({
+            padding: EdgeInsets.all(16),
+            decoration: new BoxDecoration({
+              color: '#9b59b6',
+              borderRadius: BorderRadius.circular(8)
+            }),
+            child: Text('토글 버튼', {
+              style: { color: 'white' }
+            })
+          })
+        }),
+        
+        SizedBox({ height: 20 }),
+        
+        AnimatedOpacity({
+          opacity: this.isVisible ? 1.0 : 0.0,
+          duration: 500,
+          child: Container({
+            width: 200,
+            height: 100,
+            decoration: new BoxDecoration({
+              color: '#e67e22',
+              borderRadius: BorderRadius.circular(8)
+            }),
+            child: Center({
+              child: Text('페이드 효과', {
+                style: { color: 'white', fontSize: 18 }
+              })
+            })
+          })
+        })
+      ]
+    });
+  }
+}
+```
+
+### 예제 5: 중첩된 투명도 (곱셈 효과)
+
+```typescript
+import { Opacity, Container, Row } from '@meursyphus/flitter';
+
+const NestedOpacityExample = Row({
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    // 단일 투명도
+    Container({
+      width: 100,
+      height: 100,
+      child: Opacity({
+        opacity: 0.5,
+        child: Container({ color: '#3498db' })
+      })
+    }),
+    
+    // 중첩된 투명도 (0.5 × 0.5 = 0.25)
+    Container({
+      width: 100,
+      height: 100,
+      child: Opacity({
+        opacity: 0.5,
+        child: Opacity({
+          opacity: 0.5,
+          child: Container({ color: '#3498db' })
+        })
+      })
+    })
+  ]
+});
+```
+
+### 예제 6: 조건부 투명도
+
+```typescript
+import { Opacity, Container, Text } from '@meursyphus/flitter';
+
+class ConditionalOpacity extends StatefulWidget {
+  constructor(private isHighlighted = false) {
+    super();
+  }
+  
+  createState() {
+    return new ConditionalOpacityState();
+  }
+}
+
+class ConditionalOpacityState extends State {
+  build() {
+    return GestureDetector({
+      onHover: (isHovered) => this.setState(() => {
+        this.widget.isHighlighted = isHovered;
+      }),
+      child: Opacity({
+        opacity: this.widget.isHighlighted ? 1.0 : 0.7,
+        child: Container({
+          padding: EdgeInsets.all(16),
+          decoration: new BoxDecoration({
+            color: '#2ecc71',
+            borderRadius: BorderRadius.circular(8)
+          }),
+          child: Text('호버 효과', {
+            style: { color: 'white' }
+          })
+        })
+      })
+    });
+  }
+}
+```
+
+## 주의사항
+
+- **성능**: 0.0과 1.0이 아닌 값은 중간 버퍼를 사용하므로 성능에 영향을 줄 수 있습니다
+- **중첩 효과**: 여러 Opacity 위젯이 중첩되면 투명도가 곱해집니다 (0.5 × 0.5 = 0.25)
+- **애니메이션**: 부드러운 투명도 변화가 필요하면 `AnimatedOpacity`를 사용하세요
+- **히트 테스트**: opacity가 0.0이어도 자식 위젯은 여전히 터치 이벤트를 받을 수 있습니다
+- **범위 검증**: opacity 값은 반드시 0.0과 1.0 사이여야 합니다
+
+## 관련 위젯
+
+- **AnimatedOpacity**: 부드러운 투명도 애니메이션이 필요할 때
+- **FadeTransition**: 더 복잡한 페이드 애니메이션 제어가 필요할 때
+- **Visibility**: 완전히 숨기거나 보여주는 단순한 제어가 필요할 때
+- **Container**: 배경색의 투명도만 조절하고 싶을 때

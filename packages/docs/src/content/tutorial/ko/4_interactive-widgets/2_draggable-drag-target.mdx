@@ -1,0 +1,1515 @@
+---
+title: "Draggable / DragTarget 완전 정복"
+description: "드래그 앤 드롭 기능을 구현하고, 드래그 가능한 위젯과 드롭 영역을 만들어 완전한 상호작용 시스템을 구축해보세요"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import { Container, Text, Draggable, DragTarget, StatefulWidget, State, Column, Row, EdgeInsets, BoxDecoration, Stack, Positioned, Transform, Alignment, Border, SizedBox, Center, classToFunction } from "@meursyphus/flitter";
+    
+    // TODO: 드래그 앤 드롭 시스템을 구현해보세요
+    class DragDropDemo extends StatefulWidget {
+      createState() {
+        return new DragDropDemoState();
+      }
+    }
+    
+    class DragDropDemoState extends State {
+      // TODO: 상태 변수들을 추가하세요
+      
+      build(context) {
+        return Container({
+          padding: EdgeInsets.all(20),
+          child: Column({
+            children: [
+              Text("Draggable과 DragTarget 실습을 시작해보세요!"),
+              Container({ height: 20 }),
+              // TODO: Draggable 위젯과 DragTarget을 만들어보세요
+              Container({
+                width: 100,
+                height: 100,
+                decoration: new BoxDecoration({
+                  color: '#3B82F6',
+                  borderRadius: 8
+                }),
+                child: Center({
+                  child: Text("드래그해보세요", {
+                    style: { color: '#FFFFFF' }
+                  })
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+    
+    export default classToFunction(DragDropDemo);
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import { Container, Text, Draggable, DragTarget, StatefulWidget, State, Column, Row, EdgeInsets, BoxDecoration, Stack, Positioned, Transform, Alignment, Border, SizedBox, Center, classToFunction } from "@meursyphus/flitter";
+    
+    class DragDropDemo extends StatefulWidget {
+      createState() {
+        return new DragDropDemoState();
+      }
+    }
+    
+    class DragDropDemoState extends State {
+      // 드래그 가능한 아이템들
+      items = [
+        { id: 1, text: '사과 🍎', color: '#EF4444', category: 'fruit' },
+        { id: 2, text: '바나나 🍌', color: '#F59E0B', category: 'fruit' },
+        { id: 3, text: '당근 🥕', color: '#F97316', category: 'vegetable' },
+        { id: 4, text: '브로콜리 🥦', color: '#10B981', category: 'vegetable' },
+        { id: 5, text: '우유 🥛', color: '#3B82F6', category: 'dairy' }
+      ];
+      
+      // 드롭 영역 상태
+      dropZones = {
+        fruit: { items: [], isHovering: false },
+        vegetable: { items: [], isHovering: false },
+        dairy: { items: [], isHovering: false }
+      };
+      
+      // 현재 드래그 중인 아이템
+      currentDragging = null;
+      
+      // 통계
+      stats = {
+        totalDrags: 0,
+        successfulDrops: 0,
+        wrongDrops: 0
+      };
+      
+      handleDragStart(item) {
+        this.setState(() => {
+          this.currentDragging = item;
+          this.stats.totalDrags++;
+        });
+      }
+      
+      handleDragEnd() {
+        this.setState(() => {
+          this.currentDragging = null;
+          // 모든 드롭 영역의 호버 상태 초기화
+          Object.keys(this.dropZones).forEach(key => {
+            this.dropZones[key].isHovering = false;
+          });
+        });
+      }
+      
+      handleDrop(zone, data) {
+        const item = data;
+        const isCorrect = item.category === zone;
+        
+        this.setState(() => {
+          if (isCorrect) {
+            this.dropZones[zone].items.push(item);
+            this.stats.successfulDrops++;
+            // 원본 목록에서 제거
+            this.items = this.items.filter(i => i.id !== item.id);
+          } else {
+            this.stats.wrongDrops++;
+          }
+          this.dropZones[zone].isHovering = false;
+        });
+        
+        return isCorrect;
+      }
+      
+      handleDragEnter(zone) {
+        this.setState(() => {
+          this.dropZones[zone].isHovering = true;
+        });
+      }
+      
+      handleDragLeave(zone) {
+        this.setState(() => {
+          this.dropZones[zone].isHovering = false;
+        });
+      }
+      
+      buildDraggableItem(item) {
+        return Draggable({
+          data: item,
+          onDragStart: () => this.handleDragStart(item),
+          onDragEnd: () => this.handleDragEnd(),
+          child: Container({
+            padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+            margin: EdgeInsets.all(4),
+            decoration: new BoxDecoration({
+              color: item.color,
+              borderRadius: 20,
+              boxShadow: [
+                { color: 'rgba(0,0,0,0.1)', blurRadius: 4, offset: { x: 0, y: 2 } }
+              ]
+            }),
+            child: Text(item.text, {
+              style: { color: '#FFFFFF', fontSize: 14, fontWeight: 'bold' }
+            })
+          }),
+          feedback: Container({
+            padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+            decoration: new BoxDecoration({
+              color: item.color,
+              borderRadius: 20,
+              border: Border.all({ color: '#FFFFFF', width: 2 }),
+              boxShadow: [
+                { color: 'rgba(0,0,0,0.3)', blurRadius: 10, offset: { x: 0, y: 5 } }
+              ]
+            }),
+            child: Text(item.text, {
+              style: { color: '#FFFFFF', fontSize: 14, fontWeight: 'bold' }
+            })
+          })
+        });
+      }
+      
+      buildDropZone(zone, title, emoji) {
+        const dropZone = this.dropZones[zone];
+        const isHovering = dropZone.isHovering;
+        const isCorrectTarget = this.currentDragging && this.currentDragging.category === zone;
+        
+        return DragTarget({
+          onAccept: (data) => this.handleDrop(zone, data),
+          onDragEnter: () => this.handleDragEnter(zone),
+          onDragLeave: () => this.handleDragLeave(zone),
+          builder: (context, candidateData, rejectedData) => {
+            return Container({
+              width: 200,
+              minHeight: 100,
+              padding: EdgeInsets.all(12),
+              decoration: new BoxDecoration({
+                color: isHovering ? (isCorrectTarget ? '#DCFCE7' : '#FEE2E2') : '#F9FAFB',
+                borderRadius: 12,
+                border: Border.all({ 
+                  color: isHovering ? (isCorrectTarget ? '#10B981' : '#EF4444') : '#E5E7EB',
+                  width: isHovering ? 2 : 1,
+                  style: isHovering ? 'solid' : 'dashed'
+                })
+              }),
+              child: Column({
+                children: [
+                  Row({
+                    mainAxisAlignment: 'center',
+                    children: [
+                      Text(emoji, { style: { fontSize: 24 } }),
+                      SizedBox({ width: 8 }),
+                      Text(title, {
+                        style: { fontSize: 16, fontWeight: 'bold', color: '#374151' }
+                      })
+                    ]
+                  }),
+                  SizedBox({ height: 10 }),
+                  
+                  // 드롭된 아이템들
+                  ...dropZone.items.map(item => 
+                    Container({
+                      padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 6 }),
+                      margin: EdgeInsets.only({ bottom: 4 }),
+                      decoration: new BoxDecoration({
+                        color: item.color,
+                        borderRadius: 16
+                      }),
+                      child: Text(item.text, {
+                        style: { color: '#FFFFFF', fontSize: 12 }
+                      })
+                    })
+                  ),
+                  
+                  // 빈 상태 메시지
+                  dropZone.items.length === 0 ? Text(
+                    isHovering ? "여기에 놓으세요!" : "아이템을 드래그해주세요",
+                    { style: { color: '#9CA3AF', fontSize: 12 } }
+                  ) : Container()
+                ]
+              })
+            });
+          }
+        });
+      }
+      
+      resetGame() {
+        this.setState(() => {
+          // 모든 아이템을 원래대로 복원
+          const allItems = [];
+          Object.values(this.dropZones).forEach(zone => {
+            allItems.push(...zone.items);
+            zone.items = [];
+          });
+          
+          this.items = [
+            ...this.items,
+            ...allItems
+          ].sort((a, b) => a.id - b.id);
+          
+          // 통계 초기화
+          this.stats = {
+            totalDrags: 0,
+            successfulDrops: 0,
+            wrongDrops: 0
+          };
+        });
+      }
+      
+      build(context) {
+        const isComplete = this.items.length === 0;
+        
+        return Container({
+          padding: EdgeInsets.all(20),
+          child: Column({
+            children: [
+              Text("🎯 드래그 앤 드롭 분류 게임", {
+                style: { fontSize: 20, fontWeight: 'bold' }
+              }),
+              SizedBox({ height: 10 }),
+              Text("음식을 올바른 카테고리로 드래그하세요!", {
+                style: { fontSize: 14, color: '#6B7280' }
+              }),
+              SizedBox({ height: 20 }),
+              
+              // 드래그 가능한 아이템들
+              Container({
+                padding: EdgeInsets.all(12),
+                decoration: new BoxDecoration({
+                  color: '#F3F4F6',
+                  borderRadius: 8
+                }),
+                child: Column({
+                  crossAxisAlignment: 'start',
+                  children: [
+                    Text("🛒 아이템 목록", {
+                      style: { fontSize: 14, fontWeight: 'bold' }
+                    }),
+                    SizedBox({ height: 8 }),
+                    Row({
+                      flexWrap: true,
+                      children: this.items.map(item => this.buildDraggableItem(item))
+                    }),
+                    
+                    // 완료 메시지
+                    isComplete ? Container({
+                      margin: EdgeInsets.only({ top: 10 }),
+                      child: Text("🎉 모든 아이템을 분류했습니다!", {
+                        style: { color: '#10B981', fontWeight: 'bold' }
+                      })
+                    }) : Container()
+                  ]
+                })
+              }),
+              
+              SizedBox({ height: 20 }),
+              
+              // 드롭 영역들
+              Row({
+                mainAxisAlignment: 'spaceEvenly',
+                children: [
+                  this.buildDropZone('fruit', '과일', '🍎'),
+                  this.buildDropZone('vegetable', '채소', '🥦'),
+                  this.buildDropZone('dairy', '유제품', '🥛')
+                ]
+              }),
+              
+              SizedBox({ height: 20 }),
+              
+              // 통계 및 리셋 버튼
+              Container({
+                padding: EdgeInsets.all(15),
+                decoration: new BoxDecoration({
+                  color: '#F9FAFB',
+                  borderRadius: 8,
+                  border: Border.all({ color: '#E5E7EB', width: 1 })
+                }),
+                child: Column({
+                  children: [
+                    Text("📊 게임 통계", {
+                      style: { fontSize: 16, fontWeight: 'bold' }
+                    }),
+                    SizedBox({ height: 10 }),
+                    Row({
+                      mainAxisAlignment: 'spaceEvenly',
+                      children: [
+                        Column({
+                          children: [
+                            Text("🎯 총 드래그", { style: { fontSize: 12, color: '#6B7280' } }),
+                            Text(`${this.stats.totalDrags}회`, {
+                              style: { fontSize: 18, fontWeight: 'bold' }
+                            })
+                          ]
+                        }),
+                        Column({
+                          children: [
+                            Text("✅ 성공", { style: { fontSize: 12, color: '#6B7280' } }),
+                            Text(`${this.stats.successfulDrops}개`, {
+                              style: { fontSize: 18, fontWeight: 'bold', color: '#10B981' }
+                            })
+                          ]
+                        }),
+                        Column({
+                          children: [
+                            Text("❌ 실패", { style: { fontSize: 12, color: '#6B7280' } }),
+                            Text(`${this.stats.wrongDrops}회`, {
+                              style: { fontSize: 18, fontWeight: 'bold', color: '#EF4444' }
+                            })
+                          ]
+                        })
+                      ]
+                    }),
+                    SizedBox({ height: 15 }),
+                    GestureDetector({
+                      onClick: () => this.resetGame(),
+                      child: Container({
+                        padding: EdgeInsets.symmetric({ vertical: 8, horizontal: 16 }),
+                        decoration: new BoxDecoration({
+                          color: '#6B7280',
+                          borderRadius: 6
+                        }),
+                        child: Text("🔄 다시 시작", {
+                          style: { color: '#FFFFFF', fontWeight: 'bold' }
+                        })
+                      })
+                    })
+                  ]
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+    
+    export default classToFunction(DragDropDemo);
+---
+
+# Draggable / DragTarget 완전 정복
+
+이 튜토리얼에서는 Flitter의 **Draggable** 위젯과 **DragTarget** 위젯을 함께 사용해서 완전한 드래그 앤 드롭 시스템을 구현하는 방법을 배워보겠습니다. 실제 사용 가능한 분류 게임을 만들면서 모든 기능을 익혀봅시다.
+
+## 🎯 학습 목표
+
+이 튜토리얼을 완료하면 다음을 할 수 있습니다:
+
+- [ ] **Draggable 위젯** 생성하고 드래그 가능한 UI 만들기
+- [ ] **DragTarget 위젯** 사용해서 드롭 영역 구현하기
+- [ ] **드래그 이벤트** 처리하고 시각적 피드백 제공하기
+- [ ] **데이터 전달** 시스템으로 드래그된 정보 처리하기
+- [ ] **완전한 드래그 앤 드롭 시스템** 구축하기
+
+## 📋 사전 요구사항
+
+- StatefulWidget과 setState() 사용법 이해
+- Transform과 위치 지정에 대한 기본 지식
+- Stack과 Positioned 위젯 사용 경험
+- 이전 Draggable 튜토리얼 완료 (권장)
+
+## 🎪 Draggable과 DragTarget 이해하기
+
+### 🔄 핵심 개념
+
+**Draggable**: 사용자가 드래그할 수 있는 위젯
+**DragTarget**: 드래그된 위젯을 받을 수 있는 드롭 영역
+
+```typescript
+// 기본 구조
+Draggable({
+  data: myData,          // 전달할 데이터
+  child: normalWidget,   // 평상시 표시되는 위젯
+  feedback: dragWidget,  // 드래그 중 표시되는 위젯
+  onDragStart: () => {}, // 드래그 시작 시
+  onDragEnd: () => {}    // 드래그 종료 시
+})
+
+DragTarget({
+  onAccept: (data) => {},     // 드롭 성공 시
+  onDragEnter: () => {},      // 드래그가 영역에 들어올 때
+  onDragLeave: () => {},      // 드래그가 영역을 벗어날 때
+  builder: (context, candidateData, rejectedData) => {
+    return yourWidget; // 드롭 영역 UI
+  }
+})
+```
+
+## 1. Draggable 위젯 완전 정복
+
+### 1.1 기본 Draggable 생성
+
+```typescript
+class SimpleDraggable extends StatelessWidget {
+  build(context) {
+    return Draggable({
+      // 전달할 데이터 (어떤 타입이든 가능)
+      data: { id: 1, name: "아이템 1" },
+      
+      // 평상시 표시되는 위젯
+      child: Container({
+        width: 100,
+        height: 100,
+        decoration: new BoxDecoration({
+          color: '#3B82F6',
+          borderRadius: 8
+        }),
+        child: Center({
+          child: Text("드래그하세요", {
+            style: { color: '#FFFFFF' }
+          })
+        })
+      }),
+      
+      // 드래그 중 마우스를 따라다니는 위젯
+      feedback: Container({
+        width: 100,
+        height: 100,
+        decoration: new BoxDecoration({
+          color: '#3B82F6',
+          borderRadius: 8,
+          opacity: 0.8,
+          boxShadow: [
+            { color: 'rgba(0,0,0,0.3)', blurRadius: 10, offset: { x: 0, y: 5 } }
+          ]
+        }),
+        child: Center({
+          child: Text("드래그 중...", {
+            style: { color: '#FFFFFF' }
+          })
+        })
+      }),
+      
+      // 드래그 후 원래 위치에 남는 위젯 (선택사항)
+      childWhenDragging: Container({
+        width: 100,
+        height: 100,
+        decoration: new BoxDecoration({
+          color: '#E5E7EB',
+          borderRadius: 8,
+          border: Border.all({ 
+            color: '#9CA3AF', 
+            width: 2, 
+            style: 'dashed' 
+          })
+        }),
+        child: Center({
+          child: Text("빈 자리", {
+            style: { color: '#6B7280' }
+          })
+        })
+      })
+    });
+  }
+}
+```
+
+### 1.2 Draggable 이벤트 처리
+
+```typescript
+class DraggableWithEvents extends StatefulWidget {
+  createState() {
+    return new DraggableWithEventsState();
+  }
+}
+
+class DraggableWithEventsState extends State {
+  isDragging = false;
+  dragCount = 0;
+  lastDragTime = null;
+  
+  build(context) {
+    return Draggable({
+      data: { id: 1, timestamp: Date.now() },
+      
+      onDragStart: () => {
+        console.log("드래그 시작!");
+        this.setState(() => {
+          this.isDragging = true;
+          this.dragCount++;
+          this.lastDragTime = new Date();
+        });
+      },
+      
+      onDragEnd: (details) => {
+        console.log("드래그 종료!");
+        console.log("종료 위치:", details);
+        this.setState(() => {
+          this.isDragging = false;
+        });
+      },
+      
+      onDragComplete: () => {
+        console.log("드래그 성공적으로 완료!");
+      },
+      
+      onDragCanceled: (velocity, offset) => {
+        console.log("드래그 취소됨");
+        console.log("속도:", velocity);
+        console.log("오프셋:", offset);
+      },
+      
+      child: Container({
+        padding: EdgeInsets.all(16),
+        decoration: new BoxDecoration({
+          color: this.isDragging ? '#7C3AED' : '#3B82F6',
+          borderRadius: 8
+        }),
+        child: Column({
+          children: [
+            Text("드래그 가능", {
+              style: { color: '#FFFFFF', fontWeight: 'bold' }
+            }),
+            Text(`횟수: ${this.dragCount}`, {
+              style: { color: '#FFFFFF', fontSize: 12 }
+            })
+          ]
+        })
+      })
+    });
+  }
+}
+```
+
+### 1.3 실습: 커스텀 Draggable 만들기
+
+위 코드 영역에서 다음을 구현해보세요:
+
+1. 여러 개의 Draggable 아이템 생성
+2. 각 아이템에 고유한 데이터 부여
+3. 드래그 시 시각적 효과 추가
+
+## 2. DragTarget 위젯 마스터하기
+
+### 2.1 기본 DragTarget 구현
+
+```typescript
+class SimpleDragTarget extends StatefulWidget {
+  createState() {
+    return new SimpleDragTargetState();
+  }
+}
+
+class SimpleDragTargetState extends State {
+  droppedItems = [];
+  isHovering = false;
+  
+  build(context) {
+    return DragTarget({
+      // 드롭을 받아들일지 결정하는 함수
+      onWillAccept: (data) => {
+        // true를 반환하면 드롭 허용, false면 거부
+        console.log("드롭 가능 여부 확인:", data);
+        return true; // 모든 드롭 허용
+      },
+      
+      // 드롭이 성공했을 때
+      onAccept: (data) => {
+        console.log("드롭 성공:", data);
+        this.setState(() => {
+          this.droppedItems.push(data);
+        });
+      },
+      
+      // 드래그가 영역에 들어왔을 때
+      onDragEnter: (data) => {
+        this.setState(() => {
+          this.isHovering = true;
+        });
+      },
+      
+      // 드래그가 영역을 벗어났을 때
+      onDragLeave: (data) => {
+        this.setState(() => {
+          this.isHovering = false;
+        });
+      },
+      
+      // UI 빌더
+      builder: (context, candidateData, rejectedData) => {
+        // candidateData: 현재 호버 중인 드래그 데이터
+        // rejectedData: 거부된 드래그 데이터
+        
+        return Container({
+          width: 200,
+          height: 200,
+          decoration: new BoxDecoration({
+            color: this.isHovering ? '#DBEAFE' : '#F3F4F6',
+            borderRadius: 12,
+            border: Border.all({
+              color: this.isHovering ? '#3B82F6' : '#D1D5DB',
+              width: 2,
+              style: candidateData.length > 0 ? 'solid' : 'dashed'
+            })
+          }),
+          child: Column({
+            mainAxisAlignment: 'center',
+            children: [
+              Text(this.isHovering ? "놓으세요!" : "여기에 드롭", {
+                style: { 
+                  fontSize: 16, 
+                  fontWeight: 'bold',
+                  color: this.isHovering ? '#1E40AF' : '#6B7280'
+                }
+              }),
+              Text(`아이템 수: ${this.droppedItems.length}`, {
+                style: { fontSize: 14, color: '#6B7280' }
+              })
+            ]
+          })
+        });
+      }
+    });
+  }
+}
+```
+
+### 2.2 조건부 드롭 허용
+
+```typescript
+class ConditionalDragTarget extends StatefulWidget {
+  constructor(private props: {
+    acceptedType: string;
+    onDrop: (data: any) => void;
+  }) {
+    super();
+  }
+  
+  createState() {
+    return new ConditionalDragTargetState();
+  }
+}
+
+class ConditionalDragTargetState extends State {
+  isHovering = false;
+  isValidTarget = false;
+  
+  build(context) {
+    const { acceptedType, onDrop } = this.widget.props;
+    
+    return DragTarget({
+      // 특정 타입만 받아들이기
+      onWillAccept: (data) => {
+        const isValid = data && data.type === acceptedType;
+        this.setState(() => {
+          this.isValidTarget = isValid;
+        });
+        return isValid;
+      },
+      
+      onAccept: (data) => {
+        onDrop(data);
+        this.setState(() => {
+          this.isHovering = false;
+          this.isValidTarget = false;
+        });
+      },
+      
+      onDragEnter: (data) => {
+        this.setState(() => {
+          this.isHovering = true;
+        });
+      },
+      
+      onDragLeave: (data) => {
+        this.setState(() => {
+          this.isHovering = false;
+          this.isValidTarget = false;
+        });
+      },
+      
+      builder: (context, candidateData, rejectedData) => {
+        const backgroundColor = this.isHovering 
+          ? (this.isValidTarget ? '#DCFCE7' : '#FEE2E2')
+          : '#F9FAFB';
+          
+        const borderColor = this.isHovering
+          ? (this.isValidTarget ? '#10B981' : '#EF4444')
+          : '#E5E7EB';
+        
+        return Container({
+          width: 150,
+          height: 150,
+          decoration: new BoxDecoration({
+            color: backgroundColor,
+            borderRadius: 12,
+            border: Border.all({
+              color: borderColor,
+              width: this.isHovering ? 3 : 1
+            })
+          }),
+          child: Column({
+            mainAxisAlignment: 'center',
+            children: [
+              Text(acceptedType.toUpperCase(), {
+                style: { fontSize: 18, fontWeight: 'bold' }
+              }),
+              SizedBox({ height: 8 }),
+              Text(
+                this.isHovering 
+                  ? (this.isValidTarget ? "✓ 올바른 타입" : "✗ 잘못된 타입")
+                  : "드롭 영역",
+                {
+                  style: { 
+                    fontSize: 12, 
+                    color: this.isHovering 
+                      ? (this.isValidTarget ? '#059669' : '#DC2626')
+                      : '#6B7280'
+                  }
+                }
+              )
+            ]
+          })
+        });
+      }
+    });
+  }
+}
+```
+
+## 3. 완전한 드래그 앤 드롭 시스템 구축
+
+### 3.1 데이터 전달 시스템
+
+```typescript
+// 드래그할 데이터 타입 정의
+type DragData = {
+  id: number;
+  type: 'task' | 'file' | 'user';
+  content: any;
+  metadata?: {
+    createdAt: Date;
+    priority: 'low' | 'medium' | 'high';
+  };
+};
+
+class DataTransferSystem extends StatefulWidget {
+  createState() {
+    return new DataTransferSystemState();
+  }
+}
+
+class DataTransferSystemState extends State {
+  sourceItems = [
+    { 
+      id: 1, 
+      type: 'task', 
+      content: '프로젝트 기획',
+      metadata: { priority: 'high' }
+    },
+    { 
+      id: 2, 
+      type: 'task', 
+      content: '디자인 검토',
+      metadata: { priority: 'medium' }
+    },
+    { 
+      id: 3, 
+      type: 'file', 
+      content: 'document.pdf',
+      metadata: { size: '2.5MB' }
+    }
+  ];
+  
+  targetContainers = {
+    todo: [],
+    inProgress: [],
+    done: []
+  };
+  
+  moveItem(item: DragData, targetContainer: string) {
+    this.setState(() => {
+      // 원본에서 제거
+      this.sourceItems = this.sourceItems.filter(i => i.id !== item.id);
+      Object.keys(this.targetContainers).forEach(key => {
+        this.targetContainers[key] = this.targetContainers[key].filter(
+          i => i.id !== item.id
+        );
+      });
+      
+      // 대상에 추가
+      if (targetContainer === 'source') {
+        this.sourceItems.push(item);
+      } else {
+        this.targetContainers[targetContainer].push(item);
+      }
+    });
+  }
+  
+  buildDraggableItem(item: DragData) {
+    const priorityColors = {
+      high: '#EF4444',
+      medium: '#F59E0B',
+      low: '#10B981'
+    };
+    
+    return Draggable({
+      data: item,
+      
+      child: Container({
+        padding: EdgeInsets.all(12),
+        margin: EdgeInsets.only({ bottom: 8 }),
+        decoration: new BoxDecoration({
+          color: '#FFFFFF',
+          borderRadius: 8,
+          border: Border.all({ color: '#E5E7EB', width: 1 }),
+          boxShadow: [
+            { color: 'rgba(0,0,0,0.05)', blurRadius: 2, offset: { x: 0, y: 1 } }
+          ]
+        }),
+        child: Row({
+          children: [
+            // 타입 아이콘
+            Container({
+              width: 32,
+              height: 32,
+              decoration: new BoxDecoration({
+                color: item.type === 'task' ? '#EBF5FF' : '#F3F4F6',
+                borderRadius: 16
+              }),
+              child: Center({
+                child: Text(item.type === 'task' ? '📋' : '📄', {
+                  style: { fontSize: 16 }
+                })
+              })
+            }),
+            SizedBox({ width: 12 }),
+            
+            // 콘텐츠
+            Container({
+              flex: 1,
+              child: Column({
+                crossAxisAlignment: 'start',
+                children: [
+                  Text(item.content, {
+                    style: { fontSize: 14, fontWeight: 'bold' }
+                  }),
+                  item.metadata?.priority ? Container({
+                    margin: EdgeInsets.only({ top: 4 }),
+                    padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 2 }),
+                    decoration: new BoxDecoration({
+                      color: priorityColors[item.metadata.priority],
+                      borderRadius: 12
+                    }),
+                    child: Text(item.metadata.priority, {
+                      style: { color: '#FFFFFF', fontSize: 10 }
+                    })
+                  }) : Container()
+                ]
+              })
+            })
+          ]
+        })
+      }),
+      
+      feedback: Container({
+        width: 250,
+        padding: EdgeInsets.all(12),
+        decoration: new BoxDecoration({
+          color: '#FFFFFF',
+          borderRadius: 8,
+          boxShadow: [
+            { color: 'rgba(0,0,0,0.2)', blurRadius: 10, offset: { x: 0, y: 4 } }
+          ]
+        }),
+        child: Text(item.content, {
+          style: { fontSize: 14, fontWeight: 'bold' }
+        })
+      })
+    });
+  }
+}
+```
+
+### 3.2 칸반 보드 구현
+
+```typescript
+class KanbanBoard extends StatefulWidget {
+  createState() {
+    return new KanbanBoardState();
+  }
+}
+
+class KanbanBoardState extends State {
+  columns = {
+    todo: { 
+      title: '할 일', 
+      color: '#3B82F6',
+      items: [
+        { id: 1, title: 'UI 디자인', assignee: '김철수' },
+        { id: 2, title: 'API 개발', assignee: '박영희' }
+      ]
+    },
+    inProgress: { 
+      title: '진행 중', 
+      color: '#F59E0B',
+      items: [
+        { id: 3, title: '테스트 작성', assignee: '이민수' }
+      ]
+    },
+    done: { 
+      title: '완료', 
+      color: '#10B981',
+      items: []
+    }
+  };
+  
+  dragInfo = {
+    isDragging: false,
+    sourceColumn: null,
+    targetColumn: null,
+    draggedItem: null
+  };
+  
+  handleDragStart(columnId, item) {
+    this.setState(() => {
+      this.dragInfo = {
+        isDragging: true,
+        sourceColumn: columnId,
+        targetColumn: null,
+        draggedItem: item
+      };
+    });
+  }
+  
+  handleDragEnd() {
+    this.setState(() => {
+      this.dragInfo = {
+        isDragging: false,
+        sourceColumn: null,
+        targetColumn: null,
+        draggedItem: null
+      };
+    });
+  }
+  
+  handleDrop(targetColumnId, item) {
+    const sourceColumnId = this.dragInfo.sourceColumn;
+    
+    if (sourceColumnId && sourceColumnId !== targetColumnId) {
+      this.setState(() => {
+        // 원본 칼럼에서 제거
+        this.columns[sourceColumnId].items = 
+          this.columns[sourceColumnId].items.filter(i => i.id !== item.id);
+        
+        // 대상 칼럼에 추가
+        this.columns[targetColumnId].items.push(item);
+      });
+    }
+  }
+  
+  buildColumn(columnId, column) {
+    const isTargetColumn = this.dragInfo.targetColumn === columnId;
+    
+    return DragTarget({
+      onWillAccept: (data) => true,
+      
+      onAccept: (data) => this.handleDrop(columnId, data),
+      
+      onDragEnter: () => {
+        this.setState(() => {
+          this.dragInfo.targetColumn = columnId;
+        });
+      },
+      
+      onDragLeave: () => {
+        this.setState(() => {
+          this.dragInfo.targetColumn = null;
+        });
+      },
+      
+      builder: (context, candidateData, rejectedData) => {
+        return Container({
+          width: 250,
+          minHeight: 400,
+          decoration: new BoxDecoration({
+            color: isTargetColumn ? '#F0F9FF' : '#F9FAFB',
+            borderRadius: 8,
+            border: Border.all({
+              color: isTargetColumn ? column.color : '#E5E7EB',
+              width: isTargetColumn ? 2 : 1
+            })
+          }),
+          child: Column({
+            children: [
+              // 헤더
+              Container({
+                padding: EdgeInsets.all(12),
+                decoration: new BoxDecoration({
+                  color: column.color,
+                  borderRadius: { topLeft: 8, topRight: 8 }
+                }),
+                child: Row({
+                  children: [
+                    Text(column.title, {
+                      style: { color: '#FFFFFF', fontWeight: 'bold' }
+                    }),
+                    Container({ flex: 1 }),
+                    Container({
+                      padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 2 }),
+                      decoration: new BoxDecoration({
+                        color: 'rgba(255,255,255,0.2)',
+                        borderRadius: 12
+                      }),
+                      child: Text(`${column.items.length}`, {
+                        style: { color: '#FFFFFF', fontSize: 12 }
+                      })
+                    })
+                  ]
+                })
+              }),
+              
+              // 아이템 목록
+              Container({
+                flex: 1,
+                padding: EdgeInsets.all(8),
+                child: Column({
+                  children: column.items.map(item => 
+                    Draggable({
+                      data: item,
+                      onDragStart: () => this.handleDragStart(columnId, item),
+                      onDragEnd: () => this.handleDragEnd(),
+                      
+                      child: Container({
+                        padding: EdgeInsets.all(12),
+                        margin: EdgeInsets.only({ bottom: 8 }),
+                        decoration: new BoxDecoration({
+                          color: '#FFFFFF',
+                          borderRadius: 6,
+                          boxShadow: [
+                            { 
+                              color: 'rgba(0,0,0,0.1)', 
+                              blurRadius: 2, 
+                              offset: { x: 0, y: 1 } 
+                            }
+                          ]
+                        }),
+                        child: Column({
+                          crossAxisAlignment: 'start',
+                          children: [
+                            Text(item.title, {
+                              style: { fontSize: 14, fontWeight: 'bold' }
+                            }),
+                            SizedBox({ height: 4 }),
+                            Text(`담당: ${item.assignee}`, {
+                              style: { fontSize: 12, color: '#6B7280' }
+                            })
+                          ]
+                        })
+                      }),
+                      
+                      feedback: Container({
+                        width: 200,
+                        padding: EdgeInsets.all(12),
+                        decoration: new BoxDecoration({
+                          color: '#FFFFFF',
+                          borderRadius: 6,
+                          boxShadow: [
+                            { 
+                              color: 'rgba(0,0,0,0.3)', 
+                              blurRadius: 10, 
+                              offset: { x: 0, y: 4 } 
+                            }
+                          ]
+                        }),
+                        child: Text(item.title, {
+                          style: { fontSize: 14, fontWeight: 'bold' }
+                        })
+                      })
+                    })
+                  )
+                })
+              })
+            ]
+          })
+        });
+      }
+    });
+  }
+  
+  build(context) {
+    return Container({
+      padding: EdgeInsets.all(20),
+      child: Column({
+        children: [
+          Text("📋 칸반 보드", {
+            style: { fontSize: 20, fontWeight: 'bold' }
+          }),
+          SizedBox({ height: 20 }),
+          
+          Row({
+            mainAxisAlignment: 'spaceEvenly',
+            children: Object.keys(this.columns).map(columnId => 
+              this.buildColumn(columnId, this.columns[columnId])
+            )
+          })
+        ]
+      })
+    });
+  }
+}
+```
+
+## 4. 종합 실습: 분류 게임 완성하기
+
+### 4.1 TODO: 실습 과제
+
+위 코드 영역에서 다음을 완성해보세요:
+
+**기본 기능:**
+1. 5개의 드래그 가능한 아이템 생성
+2. 3개의 드롭 영역 구성
+3. 올바른 카테고리로 분류하는 로직
+
+**고급 기능:**
+4. 잘못된 드롭 시 시각적 피드백
+5. 게임 통계 표시 (성공/실패 횟수)
+6. 리셋 기능 추가
+
+### 4.2 완성된 시스템의 특징
+
+**드래그 시스템:**
+- 부드러운 드래그 애니메이션
+- 시각적 피드백 (색상, 그림자)
+- 드래그 중 원본 위치 표시
+
+**드롭 시스템:**
+- 호버 시 영역 하이라이트
+- 올바른/잘못된 대상 구분
+- 드롭 성공/실패 피드백
+
+**데이터 관리:**
+- 아이템 상태 추적
+- 통계 실시간 업데이트
+- 완료 상태 감지
+
+## 5. 고급 드래그 앤 드롭 패턴
+
+### 5.1 다중 선택 드래그
+
+```typescript
+class MultiSelectDrag extends StatefulWidget {
+  createState() {
+    return new MultiSelectDragState();
+  }
+}
+
+class MultiSelectDragState extends State {
+  items = Array.from({ length: 10 }, (_, i) => ({
+    id: i + 1,
+    text: `아이템 ${i + 1}`,
+    selected: false
+  }));
+  
+  selectedItems = [];
+  
+  toggleSelection(itemId) {
+    this.setState(() => {
+      const item = this.items.find(i => i.id === itemId);
+      if (item) {
+        item.selected = !item.selected;
+        
+        if (item.selected) {
+          this.selectedItems.push(item);
+        } else {
+          this.selectedItems = this.selectedItems.filter(i => i.id !== itemId);
+        }
+      }
+    });
+  }
+  
+  buildMultiDraggable() {
+    if (this.selectedItems.length === 0) return Container();
+    
+    return Draggable({
+      data: this.selectedItems,
+      
+      child: Container({
+        padding: EdgeInsets.all(8),
+        decoration: new BoxDecoration({
+          color: '#3B82F6',
+          borderRadius: 20
+        }),
+        child: Text(`${this.selectedItems.length}개 선택됨`, {
+          style: { color: '#FFFFFF', fontSize: 12 }
+        })
+      }),
+      
+      feedback: Container({
+        padding: EdgeInsets.all(12),
+        decoration: new BoxDecoration({
+          color: '#3B82F6',
+          borderRadius: 8,
+          boxShadow: [
+            { color: 'rgba(0,0,0,0.3)', blurRadius: 10, offset: { x: 0, y: 4 } }
+          ]
+        }),
+        child: Column({
+          children: [
+            Text(`${this.selectedItems.length}개 아이템`, {
+              style: { color: '#FFFFFF', fontWeight: 'bold' }
+            }),
+            ...this.selectedItems.slice(0, 3).map(item => 
+              Text(item.text, {
+                style: { color: '#FFFFFF', fontSize: 10 }
+              })
+            ),
+            this.selectedItems.length > 3 ? Text("...", {
+              style: { color: '#FFFFFF' }
+            }) : Container()
+          ]
+        })
+      })
+    });
+  }
+}
+```
+
+### 5.2 드래그 중 스크롤
+
+```typescript
+class ScrollableDragArea extends StatefulWidget {
+  createState() {
+    return new ScrollableDragAreaState();
+  }
+}
+
+class ScrollableDragAreaState extends State {
+  scrollOffset = 0;
+  isAutoScrolling = false;
+  autoScrollTimer = null;
+  
+  handleDragUpdate(details) {
+    const scrollThreshold = 50; // 가장자리에서 스크롤 시작하는 거리
+    const scrollSpeed = 5;
+    
+    // 상단 가장자리 근처
+    if (details.globalPosition.y < scrollThreshold) {
+      this.startAutoScroll(-scrollSpeed);
+    }
+    // 하단 가장자리 근처
+    else if (details.globalPosition.y > window.innerHeight - scrollThreshold) {
+      this.startAutoScroll(scrollSpeed);
+    }
+    // 스크롤 중지
+    else {
+      this.stopAutoScroll();
+    }
+  }
+  
+  startAutoScroll(speed) {
+    if (this.isAutoScrolling) return;
+    
+    this.isAutoScrolling = true;
+    this.autoScrollTimer = setInterval(() => {
+      this.setState(() => {
+        this.scrollOffset = Math.max(0, this.scrollOffset + speed);
+      });
+    }, 16); // 60fps
+  }
+  
+  stopAutoScroll() {
+    if (this.autoScrollTimer) {
+      clearInterval(this.autoScrollTimer);
+      this.autoScrollTimer = null;
+      this.isAutoScrolling = false;
+    }
+  }
+  
+  dispose() {
+    this.stopAutoScroll();
+    super.dispose();
+  }
+}
+```
+
+## 6. 성능 최적화와 사용자 경험
+
+### 6.1 드래그 성능 최적화
+
+```typescript
+// 무거운 위젯의 드래그 최적화
+class OptimizedDraggable extends StatelessWidget {
+  build(context) {
+    return Draggable({
+      // 실제 복잡한 위젯
+      child: ComplexWidget(),
+      
+      // 간단한 피드백 위젯으로 성능 향상
+      feedback: Container({
+        width: 100,
+        height: 100,
+        decoration: new BoxDecoration({
+          color: '#3B82F6',
+          borderRadius: 8
+        }),
+        child: Center({
+          child: Text("이동 중", {
+            style: { color: '#FFFFFF' }
+          })
+        })
+      }),
+      
+      // 드래그 중 원본은 숨김
+      childWhenDragging: Container({
+        width: 100,
+        height: 100
+      })
+    });
+  }
+}
+```
+
+### 6.2 접근성 개선
+
+```typescript
+class AccessibleDragDrop extends StatelessWidget {
+  build(context) {
+    return Column({
+      children: [
+        // 드래그 가능 표시
+        Draggable({
+          child: Container({
+            padding: EdgeInsets.all(12),
+            decoration: new BoxDecoration({
+              color: '#3B82F6',
+              borderRadius: 8
+            }),
+            child: Row({
+              children: [
+                Text("📦", { style: { fontSize: 20 } }),
+                SizedBox({ width: 8 }),
+                Text("드래그 가능", {
+                  style: { color: '#FFFFFF' }
+                }),
+                SizedBox({ width: 8 }),
+                Text("🔀", { style: { fontSize: 16 } })
+              ]
+            })
+          })
+        }),
+        
+        // 드롭 영역 명확히 표시
+        DragTarget({
+          builder: (context, candidateData, rejectedData) => {
+            return Container({
+              padding: EdgeInsets.all(20),
+              decoration: new BoxDecoration({
+                color: '#F9FAFB',
+                borderRadius: 8,
+                border: Border.all({
+                  color: '#D1D5DB',
+                  width: 2,
+                  style: 'dashed'
+                })
+              }),
+              child: Column({
+                children: [
+                  Text("📥 드롭 영역", {
+                    style: { fontSize: 16, fontWeight: 'bold' }
+                  }),
+                  Text("여기에 아이템을 놓으세요", {
+                    style: { fontSize: 12, color: '#6B7280' }
+                  })
+                ]
+              })
+            });
+          }
+        })
+      ]
+    });
+  }
+}
+```
+
+## 7. 흔한 실수와 해결법
+
+### 7.1 데이터 타입 불일치
+
+```typescript
+// ❌ 잘못된 방법 - 데이터 타입 확인 안 함
+onAccept: (data) => {
+  this.items.push(data.item); // data.item이 없으면 에러!
+}
+
+// ✅ 올바른 방법 - 데이터 검증
+onAccept: (data) => {
+  if (data && data.item) {
+    this.items.push(data.item);
+  } else {
+    console.error("잘못된 데이터 형식");
+  }
+}
+```
+
+### 7.2 메모리 누수 방지
+
+```typescript
+class SafeDragDrop extends StatefulWidget {
+  createState() {
+    return new SafeDragDropState();
+  }
+}
+
+class SafeDragDropState extends State {
+  listeners = [];
+  timers = [];
+  
+  initState() {
+    super.initState();
+    // 리스너나 타이머 설정
+  }
+  
+  dispose() {
+    // 모든 리스너 정리
+    this.listeners.forEach(listener => listener.remove());
+    
+    // 모든 타이머 정리
+    this.timers.forEach(timer => clearTimeout(timer));
+    
+    super.dispose();
+  }
+}
+```
+
+## 🎯 예상 결과
+
+완성된 드래그 앤 드롭 시스템은 다음과 같이 동작해야 합니다:
+
+- **드래그 시작**: 아이템이 반투명해지고 그림자 효과
+- **드래그 중**: 마우스를 따라 이동하며 원본 위치에 플레이스홀더
+- **드롭 영역 호버**: 영역이 하이라이트되고 수용 가능 여부 표시
+- **드롭 성공**: 아이템이 새 위치로 이동하고 통계 업데이트
+- **드롭 실패**: 아이템이 원래 위치로 돌아감
+
+## 🚀 추가 도전 과제
+
+기본 실습을 완료했다면 다음에 도전해보세요:
+
+### 레벨 1: 기본 확장
+1. **되돌리기 기능** 구현 (Undo/Redo)
+2. **드래그 미리보기** 커스터마이징
+3. **애니메이션 효과** 추가
+
+### 레벨 2: 중급 기능
+4. **드래그 경로 제한** (특정 방향으로만 이동)
+5. **스냅 그리드** 구현
+6. **복사 드래그** (Ctrl+드래그)
+
+### 레벨 3: 고급 응용
+7. **파일 업로드** 드래그 앤 드롭
+8. **중첩 드래그** 시스템
+9. **터치 제스처** 지원
+
+## 📋 완주 체크리스트
+
+모든 학습 목표를 달성했는지 확인해보세요:
+
+- [ ] ✅ **Draggable 위젯** 완벽 이해
+- [ ] ✅ **DragTarget 위젯** 마스터
+- [ ] ✅ **이벤트 처리** 완전 정복
+- [ ] ✅ **데이터 전달** 시스템 구현
+- [ ] ✅ **완전한 시스템** 구축 완료
+
+## 🔗 다음 단계
+
+Draggable과 DragTarget을 완전히 마스터했다면 다음 튜토리얼로 진행하세요:
+
+- **StatefulWidget 고급 패턴** - 복잡한 상태 관리와 라이프사이클
+- **폼 입력 처리** - 사용자 입력과 유효성 검사
+- **애니메이션 시스템** - 부드러운 전환과 시각 효과

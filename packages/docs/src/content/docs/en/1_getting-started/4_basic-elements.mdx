@@ -1,0 +1,237 @@
+---
+nav_title: "Basic Elements"
+title: "Basic Elements - Shapes, Layout, Text"
+description: "Learn how to work with shapes, layouts, and text using Flitter's basic widgets"
+---
+
+import BasicShapesExample from '$components/pages/docs/01_getting-started/02-basic-shapes-example';
+import LayoutExample from '$components/pages/docs/01_getting-started/03-layout-example';
+import TextExample from '$components/pages/docs/01_getting-started/04-text-example';
+
+# Basic Elements - Shapes, Layout, Text
+
+Flitter는 Flutter와 유사한 위젯 시스템을 제공하여 복잡한 UI를 쉽게 구성할 수 있습니다. 
+이 문서에서는 가장 기본적인 요소들인 도형, 레이아웃, 텍스트를 다루는 방법을 알아봅니다.
+
+## 기본 도형 그리기
+
+Flitter에서 도형은 `Container` 위젯과 `BoxDecoration`을 사용하여 만듭니다.
+
+<BasicShapesExample
+  client:load
+  title="Container와 BoxDecoration"
+  description="다양한 도형과 스타일을 만들어보세요."
+/>
+
+### Container 위젯
+
+`Container`는 Flitter에서 가장 기본적이면서도 강력한 위젯입니다:
+
+- **크기 설정**: width, height 속성으로 크기 지정
+- **색상**: color 또는 decoration.color로 배경색 설정
+- **여백**: padding과 margin으로 내부/외부 여백 설정
+- **장식**: BoxDecoration으로 테두리, 둥근 모서리, 그림자 등 추가
+
+### BoxDecoration 활용
+
+```typescript
+Container({
+  decoration: new BoxDecoration({
+    color: '#3B82F6',
+    border: new Border({
+      top: new BorderSide({ color: '#1E40AF', width: 2 }),
+      // right, bottom, left도 동일하게 설정 가능
+    }),
+    borderRadius: BorderRadius.circular(8),
+    // 또는 개별 모서리 설정
+    borderRadius: BorderRadius.only({
+      topLeft: Radius.circular(16),
+      topRight: Radius.circular(16),
+      bottomLeft: Radius.circular(0),
+      bottomRight: Radius.circular(0)
+    })
+  })
+})
+```
+
+## 레이아웃 시스템
+
+Flitter는 세 가지 주요 레이아웃 위젯을 제공합니다.
+
+<LayoutExample
+  client:load
+  title="레이아웃 위젯들"
+  description="Row, Column, Stack을 사용하여 위젯을 배치하는 방법을 알아보세요."
+/>
+
+### Row와 Column
+
+**Row**는 자식 위젯들을 가로로, **Column**은 세로로 배치합니다:
+
+```typescript
+// 가로 배치
+Row({
+  mainAxisAlignment: MainAxisAlignment.spaceBetween, // 주축 정렬
+  crossAxisAlignment: CrossAxisAlignment.center,     // 교차축 정렬
+  children: [/* 위젯들 */]
+})
+
+// 세로 배치
+Column({
+  mainAxisAlignment: MainAxisAlignment.start,
+  crossAxisAlignment: CrossAxisAlignment.stretch,
+  children: [/* 위젯들 */]
+})
+```
+
+### Stack과 Positioned
+
+**Stack**은 위젯들을 겹쳐서 배치할 때 사용합니다:
+
+```typescript
+Stack({
+  children: [
+    Container({ /* 배경 */ }),
+    Positioned({
+      top: 10,
+      left: 10,
+      child: Container({ /* 절대 위치 지정 */ })
+    })
+  ]
+})
+```
+
+### Expanded와 Flexible
+
+남은 공간을 채우거나 비율에 따라 공간을 분배할 때 사용합니다:
+
+```typescript
+Row({
+  children: [
+    Container({ width: 100 }), // 고정 너비
+    Expanded({
+      flex: 2, // 2배의 공간 차지
+      child: Container({ /* 남은 공간 채우기 */ })
+    }),
+    Expanded({
+      flex: 1, // 1배의 공간 차지
+      child: Container({ /* 남은 공간 채우기 */ })
+    })
+  ]
+})
+```
+
+## 텍스트 처리
+
+Flitter의 Text 위젯은 다양한 스타일링과 레이아웃 옵션을 제공합니다.
+
+<TextExample
+  client:load
+  title="텍스트 스타일링과 처리"
+  description="다양한 텍스트 스타일과 오버플로우 처리 방법을 알아보세요."
+/>
+
+### TextStyle 속성
+
+```typescript
+Text('스타일이 적용된 텍스트', {
+  style: new TextStyle({
+    fontSize: 18,          // 글자 크기
+    fontWeight: 'bold',    // 굵기: 'normal', 'bold'
+    fontStyle: 'italic',   // 스타일: 'normal', 'italic'
+    fontFamily: 'Arial',   // 폰트 패밀리
+    color: '#3B82F6',      // 색상
+    letterSpacing: 1.5,    // 글자 간격
+    wordSpacing: 2.0,      // 단어 간격
+    height: 1.5,           // 줄 높이
+    decoration: 'underline' // 'none', 'underline', 'overline', 'lineThrough'
+  })
+})
+```
+
+### 텍스트 정렬과 오버플로우
+
+```typescript
+Container({
+  width: 200,
+  child: Text('긴 텍스트가 들어갑니다...', {
+    textAlign: TextAlign.center,    // 정렬: left, right, center, justify
+    maxLines: 2,                     // 최대 줄 수
+    overflow: TextOverflow.ellipsis, // 오버플로우 처리: clip, fade, ellipsis
+  })
+})
+```
+
+## 실전 예제: 카드 컴포넌트 만들기
+
+지금까지 배운 내용을 활용하여 카드 컴포넌트를 만들어봅시다:
+
+```typescript
+Container({
+  width: 300,
+  padding: EdgeInsets.all(16),
+  decoration: new BoxDecoration({
+    color: '#FFFFFF',
+    borderRadius: BorderRadius.circular(12),
+    border: new Border({
+      top: new BorderSide({ color: '#E5E7EB', width: 1 }),
+      right: new BorderSide({ color: '#E5E7EB', width: 1 }),
+      bottom: new BorderSide({ color: '#E5E7EB', width: 1 }),
+      left: new BorderSide({ color: '#E5E7EB', width: 1 })
+    })
+  }),
+  child: Column({
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text('카드 제목', {
+        style: new TextStyle({
+          fontSize: 20,
+          fontWeight: 'bold',
+          color: '#1F2937'
+        })
+      }),
+      SizedBox({ height: 8 }),
+      Text('카드 내용이 들어갑니다. 여러 줄의 텍스트를 포함할 수 있습니다.', {
+        style: new TextStyle({
+          fontSize: 14,
+          color: '#6B7280'
+        })
+      }),
+      SizedBox({ height: 16 }),
+      Row({
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container({
+            padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 6 }),
+            decoration: new BoxDecoration({
+              color: '#3B82F6',
+              borderRadius: BorderRadius.circular(6)
+            }),
+            child: Text('액션', {
+              style: new TextStyle({
+                fontSize: 14,
+                color: '#FFFFFF',
+                fontWeight: 'bold'
+              })
+            })
+          })
+        ]
+      })
+    ]
+  })
+})
+```
+
+## 다음 단계
+
+기본 요소들을 마스터했다면, 기본 상호작용에서 
+사용자 입력을 처리하는 방법을 알아보세요.
+
+## 요약
+
+- **Container**: 크기, 색상, 여백, 장식을 가진 기본 컨테이너
+- **BoxDecoration**: 테두리, 둥근 모서리 등 시각적 장식
+- **Row/Column**: 가로/세로 방향 레이아웃
+- **Stack**: 위젯 겹치기
+- **Text**: 다양한 스타일과 정렬 옵션을 가진 텍스트
+- **Expanded**: 남은 공간 채우기

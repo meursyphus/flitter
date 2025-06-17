@@ -3,50 +3,37 @@ import Layout from "../../layouts/DocsLayout.astro";
 import SideBar from "./SideBar.astro";
 import Toc from "../../components/pages/docs/Toc.astro";
 import { getCollection } from "astro:content";
-import { getNavOrder } from "./utils";
+import { processEntries, findAdjacentEntries } from "../../utils/collection";
 
 export const prerender = true;
 
 export async function getStaticPaths() {
   const docsEntries = await getCollection("docs");
+  const processedEntries = processEntries(docsEntries);
 
-  return docsEntries.map((entry) => ({
+  return processedEntries.map((entry) => ({
     params: { slug: entry.slug },
-    props: { entry },
+    props: { entry: entry.original },
   }));
 }
 
-const { entry } = Astro.props;
+const { entry, } = Astro.props;
 const { Content, headings } = await entry.render();
 const docsEntries = await getCollection("docs");
 
-// Sort docsEntries by nav_group_order and nav_order
-const sortedEntries = docsEntries.sort((a, b) => {
-  const groupOrderDiff =
-    getNavOrder(a.data.nav_group ?? "Widgets") - getNavOrder(b.data.nav_group ?? "Widgets");
-  if (groupOrderDiff === 0) {
-    // Within the same group, sort by nav_order
-    const orderDiff = (a.data.nav_order ?? 0) - (b.data.nav_order ?? 0);
-    if (orderDiff === 0) {
-      return a.data.title.localeCompare(b.data.title);
-    }
-    return orderDiff;
-  }
-  return groupOrderDiff;
-});
-// Find the index of the current entry
-const currentIndex = sortedEntries.findIndex((it) => it.slug === entry.slug);
+// Process entries using the common utility
+const processedEntries = processEntries(docsEntries);
 
-// Find the previous and next entry
-const prevEntry = currentIndex > 0 ? sortedEntries[currentIndex - 1] : null;
-const nextEntry =
-  currentIndex < sortedEntries.length - 1
-    ? sortedEntries[currentIndex + 1]
-    : null;
+// Find the resolved slug for the current entry
+const currentProcessedEntry = processedEntries.find(e => e.original.slug === entry.slug);
+const slug = currentProcessedEntry?.slug ?? entry.slug;
+
+// Find adjacent entries
+const { prev, next } = findAdjacentEntries(processedEntries, slug);
 ---
 
 <Layout
-  title={`${entry.data.nav_group ?? "Widgets"}/${entry.data.title} - Flitter`}
+  title={`${currentProcessedEntry?.navGroup ?? "General"}/${entry.data.title} - Flitter`}
   description={entry.data.description}
   image={entry.data.image ?? "/og-docs.png"}
 >
@@ -76,31 +63,33 @@ const nextEntry =
     </div>
     <div
       data-theme="pink"
-      class="prose prose-invert w-full max-w-full px-4 py-20 lg:px-8 lg:prose-lg dark:text-gray-800"
+      class="prose prose-invert w-full max-w-full min-w-0 flex-1 px-4 py-20 lg:px-8 lg:prose-lg dark:text-gray-800"
     >
-      <Content />
-      <div class="flex justify-between py-4">
+      <div class="w-full lg:w-[680px] xl:w-[720px] mx-auto">
+        <Content />
+        <div class="flex justify-between py-4">
         {
-          prevEntry ? (
-            <a class="move mr-auto dark:text-black dark:border-black" href={`/docs/${prevEntry.slug}`}>
-              {prevEntry.data.nav_title ?? prevEntry.data.title}
+          prev ? (
+            <a class="move mr-auto dark:text-black dark:border-black" href={`/docs/${prev.slug}`}>
+              {prev.navTitle}
             </a>
           ) : (
             <div class="move disabled mr-auto dark:text-gray-500" />
           )
         }
         {
-          nextEntry ? (
-            <a class="move ml-auto dark:text-black dark:border-black" href={`/docs/${nextEntry.slug}`}>
-              {nextEntry.data.nav_title ?? nextEntry.data.title}
+          next ? (
+            <a class="move ml-auto dark:text-black dark:border-black" href={`/docs/${next.slug}`}>
+              {next.navTitle}
             </a>
           ) : (
             <div class="move disabled ml-auto dark:text-gray-500" />
           )
         }
+        </div>
       </div>
     </div>
-    <div id="toc" class="fixed right-0 top-0 z-30 transform translate-x-full transition-transform duration-300 bg-[#151515] h-full w-[300px] lg:w-auto lg:relative lg:transform-none lg:translate-x-0">
+    <div id="toc" class="fixed right-0 top-0 z-30 transform translate-x-full transition-transform duration-300 bg-[#151515] h-full w-[300px] lg:w-auto lg:static lg:transform-none lg:translate-x-0 lg:h-auto">
       <Toc headings={headings} />
     </div>
   </main>

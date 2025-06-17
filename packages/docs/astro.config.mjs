@@ -16,25 +16,27 @@ export default defineConfig({
   }),
   integrations: [
     react({
-      mode: 'production',
+      mode: "production",
     }),
     svelte(),
     tailwind(),
-    mdx(),
+    mdx({
+      syntaxHighlight: 'shiki',
+      shikiConfig: {
+        theme: 'dracula',
+        wrap: true
+      }
+    }),
     sitemap(),
   ],
   vite: {
     optimizeDeps: {
-      include: ['@monaco-editor/react', '@codesandbox/sandpack-react'],
-      force: true
+      include: ["@monaco-editor/react", "@codesandbox/sandpack-react"],
+      force: true,
     },
     ssr: {
-      noExternal: ['@codesandbox/sandpack-react', '@monaco-editor/react']
-    }
-  },
-  redirects: {
-    "/docs": "/docs/introduction",
-    "/tutorial": "/tutorial/get-started/introduction",
+      noExternal: ["@codesandbox/sandpack-react", "@monaco-editor/react"],
+    },
   },
   markdown: {
     shikiConfig: {

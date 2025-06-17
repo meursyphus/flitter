@@ -3,7 +3,7 @@
   "compilerOptions": {
     "jsx": "preserve",
     "jsxImportSource": "react",
-    "baseUrl": "/Users/daeseungmoon/work/flitter/packages/docs",
+    "baseUrl": ".",
     "paths": {
       "$components/*": ["src/components/*"],
       "$layouts/*": ["src/layouts/*"],

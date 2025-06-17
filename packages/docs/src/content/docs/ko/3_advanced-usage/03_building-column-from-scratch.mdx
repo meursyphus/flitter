@@ -1,0 +1,268 @@
+---
+nav_title: "RenderObject 직접 커스텀하기"
+title: "RenderObject 직접 커스텀하기"
+description: "RenderObjectWidget을 상속하여 커스텀 위젯을 직접 구현하면서 레이아웃과 페인팅의 동작을 이해합니다"
+---
+
+## RenderObjectWidget 실습
+
+이제 앞서 배운 RenderObject와 Constraints 시스템을 활용하여 실제로 위젯을 만들어보겠습니다. Column의 간소화된 버전을 직접 구현하면서 Flitter의 내부 동작을 이해해봅시다.
+
+## RenderObjectWidget의 종류
+
+**SingleChildRenderObjectWidget**
+- 단일 자식을 가지는 위젯 (Container, Padding 등)
+- `createRenderObject()`: RenderObject 생성
+- `updateRenderObject()`: 속성 업데이트
+
+**MultiChildRenderObjectWidget**
+- 여러 자식을 가지는 위젯 (Row, Column, Stack 등)
+- 자식들의 리스트를 관리
+- 각 자식의 레이아웃을 조정
+
+### 언제 사용하나요?
+
+- 기존 위젯으로 구현할 수 없는 커스텀 레이아웃이 필요할 때
+- 성능이 중요한 복잡한 렌더링 로직이 필요할 때
+- 특별한 페인팅 동작이 필요할 때
+
+## SimpleColumn 구현하기
+
+### Widget 클래스 정의
+
+```typescript
+class SimpleColumn extends MultiChildRenderObjectWidget {
+  constructor(props: { children: Widget[] }) {
+    super(props);
+  }
+  
+  createRenderObject(): RenderObject {
+    return new RenderSimpleColumn();
+  }
+  
+  updateRenderObject(renderObject: RenderSimpleColumn) {
+    // 속성이 변경되었을 때 RenderObject 업데이트
+    // 이 예제에서는 특별한 속성이 없으므로 비어둠
+  }
+}
+
+export default function SimpleColumn(props: { children: Widget[] }): Widget {
+  return new _SimpleColumn(props);
+}
+```
+
+### RenderObject 클래스 구현
+
+```typescript
+class RenderSimpleColumn extends RenderBox {
+  performLayout() {
+    let height = 0;
+    let maxWidth = 0;
+    
+    // 각 자식의 레이아웃 수행
+    for (const child of this.children) {
+      // 자식에게 제약 전달 (높이 제약을 풀어줌)
+      child.layout(constraints.loosen({ height: true }));
+      
+      // 자식 위치 설정 (세로로 차례대로 배치)
+      child.offset = new Offset(0, height);
+      
+      // 다음 자식 위치 계산
+      height += child.size.height;
+      maxWidth = Math.max(maxWidth, child.size.width);
+    }
+    
+    // 자신의 크기 결정
+    this.size = constraints.constrain(new Size(maxWidth, height));
+  }
+  
+  // 자식들의 히트 테스트 (클릭 이벤트 등)
+  hitTestChildren(result: HitTestResult, position: Offset): boolean {
+    return this.defaultHitTestChildren(result, position);
+  }
+  
+  // 자식들 페인팅
+  paint(context: PaintingContext, offset: Offset) {
+    this.defaultPaint(context, offset);
+  }
+}
+```
+
+### 레이아웃 과정 상세 분석
+
+1. **제약 전달**:
+   ```typescript
+   // 부모로부터 받은 제약에서 높이 제약만 풀어서 전달
+   child.layout(constraints.loosen({ height: true }));
+   ```
+
+2. **위치 계산**:
+   ```typescript
+   // 이전 자식들의 높이를 누적하여 Y 위치 결정
+   child.offset = new Offset(0, height);
+   height += child.size.height;
+   ```
+
+3. **크기 결정**:
+   ```typescript
+   // 가장 넓은 자식의 너비와 모든 자식 높이의 합
+   this.size = constraints.constrain(new Size(maxWidth, height));
+   ```
+
+## 실제 Column과의 차이점
+
+실제 Column은 더 복잡한 기능들을 제공합니다:
+
+### MainAxisAlignment
+```typescript
+enum MainAxisAlignment {
+  start,    // 시작점 정렬
+  center,   // 중앙 정렬  
+  end,      // 끝점 정렬
+  spaceBetween,  // 균등 분배
+  spaceAround,   // 주변 공간 포함
+  spaceEvenly    // 완전 균등 분배
+}
+```
+
+### CrossAxisAlignment
+```typescript
+enum CrossAxisAlignment {
+  start,    // 교차축 시작점
+  center,   // 교차축 중앙
+  end,      // 교차축 끝점
+  stretch   // 교차축 전체 채우기
+}
+```
+
+### Flex 자식 처리
+- **Expanded**: 남은 공간을 차지
+- **Flexible**: 필요한 만큼만 차지
+
+### 오버플로우 처리
+- 자식들의 총 크기가 부모보다 클 때의 처리
+- 클리핑 또는 스크롤 제공
+
+## 페인팅 위젯 만들기
+
+RenderObject에서 직접 그리기 작업을 수행할 수도 있습니다. Flitter는 DecoratedBox와 같이 클래스 기반 Painter 패턴을 사용합니다:
+
+```typescript
+class RenderCustomShape extends RenderBox {
+  constructor() {
+    super({ isPainter: true }); // 페인터임을 표시
+  }
+  
+  performLayout() {
+    this.size = constraints.biggest;
+  }
+  
+  // SVG 페인터 생성
+  protected override createSvgPainter() {
+    return new CustomShapeSvgPainter(this);
+  }
+  
+  // Canvas 페인터 생성
+  protected override createCanvasPainter() {
+    return new CustomShapeCanvasPainter(this);
+  }
+}
+```
+
+### SVG Painter 구현
+
+```typescript
+class CustomShapeSvgPainter extends SvgPainter {
+  protected override createDefaultSvgEl({ createSvgEl }: SvgPaintContext) {
+    return {
+      shape: createSvgEl("path"),
+      border: createSvgEl("path"),
+    };
+  }
+  
+  protected override performPaint(svgEls: { shape: SVGPathElement; border: SVGPathElement }) {
+    const { shape, border } = svgEls;
+    
+    // SVG path 데이터 생성
+    const pathData = `M 10,10 L ${this.size.width-10},10 L ${this.size.width-10},${this.size.height-10} L 10,${this.size.height-10} Z`;
+    
+    shape.setAttribute('d', pathData);
+    shape.setAttribute('fill', '#3b82f6');
+    
+    border.setAttribute('d', pathData);
+    border.setAttribute('fill', 'none');
+    border.setAttribute('stroke', '#1e40af');
+    border.setAttribute('stroke-width', '2');
+  }
+}
+```
+
+### Canvas Painter 구현
+
+```typescript
+class CustomShapeCanvasPainter extends CanvasPainter {
+  override performPaint(context: CanvasPaintingContext, offset: Offset) {
+    const ctx = context.canvas;
+    
+    ctx.save();
+    ctx.translate(offset.x, offset.y);
+    
+    // 사각형 그리기
+    ctx.fillStyle = '#3b82f6';
+    ctx.fillRect(10, 10, this.size.width - 20, this.size.height - 20);
+    
+    // 테두리 그리기
+    ctx.strokeStyle = '#1e40af';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(10, 10, this.size.width - 20, this.size.height - 20);
+    
+    ctx.restore();
+  }
+}
+```
+
+### 간단한 페인팅이 필요하다면?
+
+복잡한 RenderObject 구현 대신 [CustomPaint 위젯](/docs/widgets/CustomPaint)을 사용하는 것이 더 간단합니다:
+
+```typescript
+CustomPaint({
+  painter: {
+    svg: {
+      createDefaultSvgEl: (context) => ({
+        shape: context.createSvgEl('rect')
+      }),
+      paint: (els, size) => {
+        els.shape.setAttribute('width', `${size.width}`);
+        els.shape.setAttribute('height', `${size.height}`);
+        els.shape.setAttribute('fill', '#3b82f6');
+      }
+    },
+    canvas: {
+      paint: (context, size) => {
+        context.canvas.fillStyle = '#3b82f6';
+        context.canvas.fillRect(0, 0, size.width, size.height);
+      }
+    }
+  }
+})
+```
+
+## 소스 코드 참고
+
+실제 구현을 참고하려면 다음 파일들을 확인하세요:
+
+- `packages/flitter/src/component/Column.ts`: 실제 Column 구현
+- `packages/flitter/src/renderobject/RenderFlex.ts`: Flex 레이아웃 로직
+- `packages/flitter/src/renderobject/RenderBox.ts`: RenderBox 기본 클래스
+- `packages/flitter/src/widget/MultiChildRenderObjectWidget.ts`: 다중 자식 위젯
+
+## 핵심 정리
+
+1. **RenderObjectWidget은 Widget과 RenderObject를 연결합니다**
+2. **performLayout()에서 자식들의 크기와 위치를 결정합니다**
+3. **paint()에서 실제 그리기 작업을 수행합니다**
+4. **SVG와 Canvas 두 렌더러를 모두 지원해야 합니다**
+5. **필요한 기능만 구현하면 됩니다**
+
+다음 장에서는 이러한 복잡한 작업을 간단하게 만들어주는 CustomPaint 위젯에 대해 알아보겠습니다.

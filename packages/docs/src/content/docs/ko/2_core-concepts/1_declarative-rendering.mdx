@@ -1,0 +1,351 @@
+---
+nav_title: "선언형 렌더링"
+title: "선언형 렌더링"
+description: "Flitter의 선언형 렌더링 방식과 명령형 방식의 차이를 이해하고, 더 직관적인 코드 작성법을 배웁니다"
+---
+
+import DeclarativeVsImperativeExample from '$components/pages/docs/02_core-concepts/01-declarative-vs-imperative-example';
+
+# 선언형 렌더링
+
+## 개요
+
+Flitter는 Flutter와 같은 **선언형(Declarative)** 렌더링 방식을 채택합니다. 이는 "화면이 어떻게 보여야 하는지"를 선언하면, Flitter가 알아서 렌더링을 처리하는 방식입니다. 이는 기존의 명령형(Imperative) 방식과는 근본적으로 다른 접근법입니다.
+
+## 왜 중요한가?
+
+선언형 프로그래밍은 다음과 같은 장점을 제공합니다:
+
+- **코드 가독성 향상**: UI가 어떻게 보일지 직관적으로 이해 가능
+- **버그 감소**: 상태 관리가 단순해져 예측 가능한 동작
+- **유지보수 용이**: 복잡한 DOM 조작 없이 UI 업데이트
+- **생산성 증가**: 더 적은 코드로 복잡한 UI 구현
+
+## 핵심 개념
+
+### 명령형 vs 선언형
+
+#### 명령형 방식 (D3.js 예시)
+명령형 방식에서는 각 단계별로 무엇을 해야 하는지 명시합니다:
+
+```javascript
+// D3.js로 텍스트를 가운데 정렬하기
+const svg = d3.select("svg");
+const width = 400;
+const height = 200;
+
+// 1. 텍스트 요소 생성
+const text = svg.append("text")
+  .text("Hello, World!");
+
+// 2. 텍스트 크기 측정
+const bbox = text.node().getBBox();
+
+// 3. 중앙 위치 계산
+const x = (width - bbox.width) / 2;
+const y = (height + bbox.height) / 2;
+
+// 4. 위치 설정
+text.attr("x", x)
+    .attr("y", y);
+
+// 상태가 변경되면 모든 계산을 다시 해야 함
+function updateText(newText) {
+  text.text(newText);
+  const newBbox = text.node().getBBox();
+  const newX = (width - newBbox.width) / 2;
+  const newY = (height + newBbox.height) / 2;
+  text.attr("x", newX).attr("y", newY);
+}
+```
+
+#### 선언형 방식 (Flitter 예시)
+선언형 방식에서는 원하는 결과만 선언합니다:
+
+```typescript
+// Flitter로 텍스트를 가운데 정렬하기
+Center({
+  child: Text("Hello, World!")
+})
+
+// 상태가 변경되어도 선언만 바꾸면 됨
+Center({
+  child: Text(isKorean ? "안녕하세요!" : "Hello, World!")
+})
+```
+
+<DeclarativeVsImperativeExample 
+  client:load
+  title="명령형 vs 선언형 비교"
+  description="D3.js와 Flitter로 동일한 기능을 구현한 예제입니다. 버튼을 클릭해 텍스트를 변경해보세요."
+  labels={{
+    imperativeTitle: "명령형 방식 (D3.js)",
+    imperativeDescription: "D3.js로 구현시 각 단계별로 DOM을 직접 조작해야 합니다:",
+    declarativeTitle: "선언형 방식 (Flitter)",
+    changeButton: "텍스트 변경",
+    keyDifferencesTitle: "핵심 차이점",
+    imperativeDescription2: "각 단계별로 무엇을 해야 하는지 명시적으로 지시",
+    declarativeDescription2: "원하는 결과만 선언하면 렌더링은 자동으로 처리"
+  }}
+/>
+
+### 선언형 렌더링의 작동 원리
+
+1. **상태(State) 정의**: 애플리케이션의 현재 상태를 정의
+2. **UI 선언**: 상태에 따라 UI가 어떻게 보여야 하는지 선언
+3. **자동 업데이트**: 상태가 변경되면 Flitter가 자동으로 UI 업데이트
+
+```typescript
+class _CounterWidget extends StatefulWidget {
+  createState() {
+    return new CounterWidgetState();
+  }
+}
+
+class CounterWidgetState extends State<_CounterWidget> {
+  count = 0;  // 상태 정의
+
+  build(context: BuildContext): Widget {
+    // UI 선언 - count 상태에 따라 UI가 결정됨
+    return Column({
+      children: [
+        Text(`현재 카운트: ${this.count}`),
+        GestureDetector({
+          onClick: () => {
+            this.setState(() => {
+              this.count++;  // 상태 변경시 자동 리렌더링
+            });
+          },
+          child: Container({
+            padding: EdgeInsets.all(8),
+            color: Colors.blue,
+            child: Text("증가", { style: TextStyle({ color: Colors.white }) })
+          })
+        })
+      ]
+    });
+  }
+}
+
+// 팩토리 함수로 내보내기
+export default function CounterWidget(): Widget {
+  return new _CounterWidget();
+}
+```
+
+## 실습 예제
+
+### 1. 조건부 렌더링
+
+선언형 방식에서는 조건문을 통해 쉽게 다른 UI를 보여줄 수 있습니다:
+
+```typescript
+class ConditionalExample extends StatefulWidget {
+  createState() {
+    return new ConditionalExampleState();
+  }
+}
+
+class ConditionalExampleState extends State<ConditionalExample> {
+  isLoggedIn = false;
+
+  build(context: BuildContext): Widget {
+    return Center({
+      child: this.isLoggedIn 
+        ? Column({
+            children: [
+              Text("환영합니다!"),
+              GestureDetector({
+                onClick: () => {
+                  this.setState(() => {
+                    this.isLoggedIn = false;
+                  });
+                },
+                child: Text("로그아웃", { 
+                  style: TextStyle({ color: Colors.red }) 
+                })
+              })
+            ]
+          })
+        : GestureDetector({
+            onClick: () => {
+              this.setState(() => {
+                this.isLoggedIn = true;
+              });
+            },
+            child: Container({
+              padding: EdgeInsets.all(12),
+              color: Colors.blue,
+              child: Text("로그인", { 
+                style: TextStyle({ color: Colors.white }) 
+              })
+            })
+          })
+    });
+  }
+}
+```
+
+### 2. 리스트 렌더링
+
+배열 데이터를 UI로 변환하는 것도 매우 직관적입니다:
+
+```typescript
+class TodoList extends StatefulWidget {
+  createState() {
+    return new TodoListState();
+  }
+}
+
+class TodoListState extends State<TodoList> {
+  todos = ["Flitter 학습하기", "선언형 UI 이해하기", "앱 만들기"];
+
+  build(context: BuildContext): Widget {
+    return Column({
+      children: [
+        Text("할 일 목록", { 
+          style: TextStyle({ fontSize: 20, fontWeight: FontWeight.bold }) 
+        }),
+        SizedBox({ height: 10 }),
+        ...this.todos.map((todo, index) => 
+          Container({
+            padding: EdgeInsets.all(8),
+            margin: EdgeInsets.only({ bottom: 4 }),
+            color: Colors.grey.shade200,
+            child: Row({
+              children: [
+                Text(`${index + 1}. ${todo}`),
+                Spacer(),
+                GestureDetector({
+                  onClick: () => {
+                    this.setState(() => {
+                      this.todos.splice(index, 1);
+                    });
+                  },
+                  child: Icon(Icons.delete, { color: Colors.red })
+                })
+              ]
+            })
+          })
+        )
+      ]
+    });
+  }
+}
+```
+
+### 3. 복잡한 상태 관리
+
+여러 상태가 서로 연관된 경우도 선언형으로 쉽게 처리할 수 있습니다:
+
+```typescript
+class ShoppingCart extends StatefulWidget {
+  createState() {
+    return new ShoppingCartState();
+  }
+}
+
+class ShoppingCartState extends State<ShoppingCart> {
+  items = [
+    { name: "사과", price: 1000, quantity: 0 },
+    { name: "바나나", price: 1500, quantity: 0 },
+    { name: "오렌지", price: 2000, quantity: 0 }
+  ];
+
+  get totalPrice() {
+    return this.items.reduce((sum, item) => 
+      sum + (item.price * item.quantity), 0
+    );
+  }
+
+  build(context: BuildContext): Widget {
+    return Column({
+      children: [
+        Text("장바구니", { 
+          style: TextStyle({ fontSize: 24, fontWeight: FontWeight.bold }) 
+        }),
+        SizedBox({ height: 20 }),
+        ...this.items.map(item => 
+          Row({
+            children: [
+              Text(item.name),
+              Spacer(),
+              Text(`${item.price}원`),
+              SizedBox({ width: 20 }),
+              Row({
+                children: [
+                  GestureDetector({
+                    onClick: () => {
+                      this.setState(() => {
+                        if (item.quantity > 0) item.quantity--;
+                      });
+                    },
+                    child: Icon(Icons.remove_circle)
+                  }),
+                  Padding({
+                    padding: EdgeInsets.symmetric({ horizontal: 10 }),
+                    child: Text(`${item.quantity}`)
+                  }),
+                  GestureDetector({
+                    onClick: () => {
+                      this.setState(() => {
+                        item.quantity++;
+                      });
+                    },
+                    child: Icon(Icons.add_circle)
+                  })
+                ]
+              })
+            ]
+          })
+        ),
+        Divider(),
+        Text(`총액: ${this.totalPrice}원`, {
+          style: TextStyle({ fontSize: 18, fontWeight: FontWeight.bold })
+        })
+      ]
+    });
+  }
+}
+```
+
+## 주의사항
+
+1. **불변성 유지**: 상태를 직접 수정하지 말고 항상 `setState`를 사용
+2. **순수 함수**: `build` 메서드는 부작용이 없는 순수 함수여야 함
+3. **성능 고려**: 불필요한 리렌더링을 피하기 위해 위젯을 적절히 분리
+
+```typescript
+// ❌ 잘못된 예 - 직접 상태 변경
+this.count++;  // UI가 업데이트되지 않음
+
+// ✅ 올바른 예 - setState 사용
+this.setState(() => {
+  this.count++;
+});
+
+// ❌ 잘못된 예 - build 메서드에서 부작용
+build(context: BuildContext): Widget {
+  // API 호출 같은 부작용은 initState에서
+  fetch('/api/data');  // 잘못됨!
+  return Text("...");
+}
+
+// ✅ 올바른 예 - initState에서 부작용 처리
+initState() {
+  super.initState();
+  fetch('/api/data').then(data => {
+    this.setState(() => {
+      this.data = data;
+    });
+  });
+}
+```
+
+## 다음 단계
+
+선언형 렌더링의 개념을 이해했다면, 다음으로 학습할 내용:
+
+- 위젯 시스템 - StatelessWidget과 StatefulWidget 이해하기
+- 상태 관리 - 복잡한 상태 관리 패턴
+- 애니메이션 기초 - 선언형 애니메이션 구현

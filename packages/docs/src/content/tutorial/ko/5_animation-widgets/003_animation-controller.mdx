@@ -1,0 +1,1027 @@
+---
+title: "AnimationController로 정밀한 애니메이션 제어하기"
+description: "AnimationController, Tween, CurvedAnimation을 사용해 복잡하고 정교한 애니메이션을 직접 제어하고 구현해보세요"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from "@meursyphus/flitter-react";
+    import { Container, Text, GestureDetector, Center, StatefulWidget, State, BuildContext, AnimationController, Tween, Animation } from "@meursyphus/flitter";
+
+    class MyWidget extends StatefulWidget {
+      createState() {
+        return new MyWidgetState();
+      }
+    }
+
+    class MyWidgetState extends State<MyWidget> {
+      controller = null;
+      animation = null;
+
+      initState(context) {
+        super.initState(context);
+        // TODO: AnimationController를 초기화하고
+        // Tween을 사용해서 0에서 300까지 애니메이션하는 
+        // 제어 가능한 애니메이션을 만들어보세요
+      }
+
+      dispose() {
+        // TODO: controller.dispose() 호출하기
+        super.dispose();
+      }
+
+      build(context) {
+        return Container({
+          width: 400,
+          height: 300,
+          child: Center({
+            child: Text("TODO: AnimationController 구현하기")
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new MyWidget();
+    }
+    
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+solved_files:
+  App.js: |
+    import React from 'react';
+    import Widget from "@meursyphus/flitter-react";
+    import { Container, Text, GestureDetector, Row, Center, SizedBox, Column, EdgeInsets, StatefulWidget, State, BuildContext, AnimationController, Tween, Animation, CurvedAnimation } from "@meursyphus/flitter";
+
+    class MyWidget extends StatefulWidget {
+      createState() {
+        return new MyWidgetState();
+      }
+    }
+
+    class MyWidgetState extends State<MyWidget> {
+      controller = null;
+      animation = null;
+
+      initState(context) {
+        super.initState(context);
+        
+        this.controller = AnimationController({ duration: 2000 });
+        this.animation = Tween({ begin: 0, end: 300 }).animated(
+          CurvedAnimation({
+            parent: this.controller,
+            curve: "bounceOut"
+          })
+        );
+        
+        this.controller.addListener(() => {
+          this.setState();
+        });
+      }
+
+      dispose() {
+        this.controller.dispose();
+        super.dispose();
+      }
+
+      build(context) {
+        return Row({
+          children: [
+            GestureDetector({
+              onClick: () => this.controller.forward(),
+              child: Container({
+                width: 80,
+                height: 40,
+                color: '#4CAF50',
+                child: Text("시작")
+              })
+            }),
+            
+            GestureDetector({
+              onClick: () => this.controller.reverse(),
+              child: Container({
+                width: 80,
+                height: 40,
+                color: '#FF5722',
+                child: Text("역재생")
+              })
+            }),
+            
+            Container({
+              width: this.animation.value,
+              height: 60,
+              color: '#2196F3',
+              child: Text(`${Math.round(this.animation.value)}px`)
+            })
+          ]
+        });
+      }
+    }
+
+    function createWidget() {
+      return new MyWidget();
+    }
+    
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+---
+
+# AnimationController로 정밀한 애니메이션 제어하기
+
+이번 튜토리얼에서는 Flitter의 AnimationController를 사용해 애니메이션을 정밀하게 제어하고, 복잡한 애니메이션 시퀀스를 구현하는 방법을 배워봅시다.
+
+## 🎯 학습 목표
+
+이 튜토리얼을 완료하면 다음을 할 수 있게 됩니다:
+
+- [ ] AnimationController의 기본 개념과 생명주기 이해하기
+- [ ] Tween을 사용해 시작값과 끝값 정의하기
+- [ ] CurvedAnimation으로 이징 효과 적용하기
+- [ ] 애니메이션 재생, 정지, 역재생, 반복 제어하기
+- [ ] 여러 애니메이션을 순차적으로 실행하기
+- [ ] 복잡한 애니메이션 시퀀스 구현하기
+
+## 🚀 명시적 애니메이션 vs 암시적 애니메이션
+
+지금까지 배운 AnimatedContainer, AnimatedOpacity 등은 **암시적 애니메이션**입니다:
+- 속성 값만 바꾸면 자동으로 애니메이션
+- 간단하고 사용하기 쉬움
+- 제어 기능이 제한적
+
+**명시적 애니메이션**은 AnimationController를 사용합니다:
+- 애니메이션을 직접 제어 (시작, 정지, 속도 등)
+- 복잡한 애니메이션 시퀀스 구현 가능
+- 더 정교한 제어가 필요할 때 사용
+
+## 🎨 AnimationController 기본 개념
+
+### 핵심 구성 요소
+
+1. **AnimationController**: 애니메이션의 진행 상태를 제어
+2. **Tween**: 시작값과 끝값을 정의
+3. **Animation**: Controller와 Tween을 연결
+4. **CurvedAnimation**: 이징 효과 적용 (선택사항)
+
+### 기본 구조
+
+```javascript
+class MyAnimationState extends State<MyAnimation> {
+  controller = null;
+  animation = null;
+
+  initState(context) {
+    super.initState(context);
+    
+    // 1. Controller 생성
+    this.controller = AnimationController({ 
+      duration: 1000  // 지속 시간 (밀리초)
+    });
+    
+    // 2. Tween과 Animation 생성
+    this.animation = Tween({ 
+      begin: 0, 
+      end: 100 
+    }).animated(this.controller);
+    
+    // 3. 리스너 등록 (setState 호출)
+    this.controller.addListener(() => {
+      this.setState();
+    });
+  }
+
+  dispose() {
+    // 4. 메모리 해제 (필수!)
+    this.controller.dispose();
+    super.dispose();
+  }
+}
+```
+
+## 📋 단계별 실습
+
+### 1단계: 기본 AnimationController 사용
+
+간단한 크기 애니메이션을 직접 제어해봅시다:
+
+```javascript
+import { AnimationController, Tween, Animation, CurvedAnimation } from "@meursyphus/flitter";
+
+class BasicControllerAnimation extends StatefulWidget {
+  createState() {
+    return new BasicControllerAnimationState();
+  }
+}
+
+class BasicControllerAnimationState extends State<BasicControllerAnimation> {
+  controller = null;
+  animation = null;
+
+  initState(context) {
+    super.initState(context);
+    
+    this.controller = AnimationController({ duration: 1000 });
+    this.animation = Tween({ begin: 50, end: 200 }).animated(this.controller);
+    
+    this.controller.addListener(() => {
+      this.setState();
+    });
+  }
+
+  dispose() {
+    this.controller.dispose();
+    super.dispose();
+  }
+
+  build(context) {
+    return Column({
+      children: [
+        // 제어 버튼들
+        Row({
+          children: [
+            GestureDetector({
+              onClick: () => this.controller.forward(),
+              child: Container({
+                width: 80,
+                height: 40,
+                color: '#4CAF50',
+                child: Text("시작")
+              })
+            }),
+            
+            GestureDetector({
+              onClick: () => this.controller.reverse(),
+              child: Container({
+                width: 80,
+                height: 40,
+                color: '#FF5722',
+                child: Text("역재생")
+              })
+            }),
+            
+            GestureDetector({
+              onClick: () => this.controller.reset(),
+              child: Container({
+                width: 80,
+                height: 40,
+                color: '#9E9E9E',
+                child: Text("리셋")
+              })
+            })
+          ]
+        }),
+        
+        // 애니메이션되는 박스
+        Container({
+          width: this.animation.value,
+          height: this.animation.value,
+          color: '#2196F3',
+          child: Text(`${Math.round(this.animation.value)}px`)
+        })
+      ]
+    });
+  }
+}
+```
+
+### 2단계: CurvedAnimation으로 이징 효과 추가
+
+애니메이션에 이징 효과를 적용해서 더 자연스럽게 만들어봅시다:
+
+```javascript
+class CurvedAnimationExample extends StatefulWidget {
+  createState() {
+    return CurvedAnimationExampleState();
+  }
+}
+
+class CurvedAnimationExampleState extends State<CurvedAnimationExample> {
+  controller = null;
+  linearAnimation = null;
+  curvedAnimation = null;
+
+  initState(context) {
+    super.initState(context);
+    
+    this.controller = AnimationController({ duration: 2000 });
+    
+    // 선형 애니메이션
+    this.linearAnimation = Tween({ 
+      begin: 0, 
+      end: 250 
+    }).animated(this.controller);
+    
+    // 곡선 애니메이션
+    this.curvedAnimation = Tween({ 
+      begin: 0, 
+      end: 250 
+    }).animated(CurvedAnimation({
+      parent: this.controller,
+      curve: "bounceOut"
+    }));
+    
+    this.controller.addListener(() => {
+      this.setState();
+    });
+  }
+
+  dispose() {
+    this.controller.dispose();
+    super.dispose();
+  }
+
+  build(context) {
+    return Column({
+      children: [
+        GestureDetector({
+          onClick: () => {
+            if (this.controller.isCompleted) {
+              this.controller.reverse();
+            } else {
+              this.controller.forward();
+            }
+          },
+          child: Container({
+            width: 120,
+            height: 50,
+            color: '#673AB7',
+            child: Text("애니메이션 토글")
+          })
+        }),
+        
+        // 선형 애니메이션
+        Container({
+          width: this.linearAnimation.value,
+          height: 40,
+          color: '#FF9800',
+          child: Text("Linear")
+        }),
+        
+        // 곡선 애니메이션
+        Container({
+          width: this.curvedAnimation.value,
+          height: 40,
+          color: '#E91E63',
+          child: Text("BounceOut")
+        })
+      ]
+    });
+  }
+}
+```
+
+### 3단계: 여러 속성 동시 애니메이션
+
+하나의 Controller로 여러 속성을 동시에 애니메이션해봅시다:
+
+```javascript
+class MultiPropertyAnimation extends StatefulWidget {
+  createState() {
+    return new MultiPropertyAnimationState();
+  }
+}
+
+class MultiPropertyAnimationState extends State<MultiPropertyAnimation> {
+  controller = null;
+  sizeAnimation = null;
+  colorAnimation = null;
+  rotationAnimation = null;
+
+  initState(context) {
+    super.initState(context);
+    
+    this.controller = AnimationController({ duration: 2000 });
+    
+    // 크기 애니메이션
+    this.sizeAnimation = Tween({ 
+      begin: 80, 
+      end: 160 
+    }).animated(CurvedAnimation({
+      parent: this.controller,
+      curve: "easeInOut"
+    }));
+    
+    // 색상 애니메이션 (0-1 값으로 색상 보간)
+    this.colorAnimation = Tween({ 
+      begin: 0, 
+      end: 1 
+    }).animated(this.controller);
+    
+    // 회전 애니메이션
+    this.rotationAnimation = Tween({ 
+      begin: 0, 
+      end: 2 
+    }).animated(CurvedAnimation({
+      parent: this.controller,
+      curve: "elasticOut"
+    }));
+    
+    this.controller.addListener(() => {
+      this.setState();
+    });
+  }
+
+  dispose() {
+    this.controller.dispose();
+    super.dispose();
+  }
+
+  getInterpolatedColor() {
+    const t = this.colorAnimation.value;
+    const r = Math.round(255 * (1 - t) + 100 * t);
+    const g = Math.round(150 * (1 - t) + 200 * t);
+    const b = Math.round(200 * (1 - t) + 50 * t);
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+
+  build(context) {
+    return Column({
+      children: [
+        GestureDetector({
+          onClick: () => {
+            if (this.controller.status === "completed") {
+              this.controller.reverse();
+            } else {
+              this.controller.forward();
+            }
+          },
+          child: Container({
+            width: 150,
+            height: 50,
+            color: '#607D8B',
+            child: Text("다중 속성 애니메이션")
+          })
+        }),
+        
+        Transform.rotate({
+          angle: this.rotationAnimation.value * Math.PI,  // 라디안으로 변환
+          child: Container({
+            width: this.sizeAnimation.value,
+            height: this.sizeAnimation.value,
+            color: this.getInterpolatedColor(),
+            child: Text("🎨")
+          })
+        })
+      ]
+    });
+  }
+}
+```
+
+### 4단계: 순차적 애니메이션 (Interval 사용)
+
+하나의 Controller로 순차적으로 실행되는 애니메이션을 만들어봅시다:
+
+```javascript
+import { Interval } from "@meursyphus/flitter";
+
+class SequentialAnimation extends StatefulWidget {
+  createState() {
+    return new SequentialAnimationState();
+  }
+}
+
+class SequentialAnimationState extends State<SequentialAnimation> {
+  controller = null;
+  slideAnimation = null;
+  fadeAnimation = null;
+  scaleAnimation = null;
+
+  initState(context) {
+    super.initState(context);
+    
+    this.controller = AnimationController({ duration: 3000 });
+    
+    // 0~1초: 슬라이드 애니메이션
+    this.slideAnimation = Tween({ 
+      begin: -200, 
+      end: 0 
+    }).animated(CurvedAnimation({
+      parent: this.controller,
+      curve: new Interval(0.0, 0.33, { curve: "easeOut" })
+    }));
+    
+    // 1~2초: 페이드 애니메이션
+    this.fadeAnimation = Tween({ 
+      begin: 0.0, 
+      end: 1.0 
+    }).animated(CurvedAnimation({
+      parent: this.controller,
+      curve: new Interval(0.33, 0.66, { curve: "easeIn" })
+    }));
+    
+    // 2~3초: 스케일 애니메이션
+    this.scaleAnimation = Tween({ 
+      begin: 0.5, 
+      end: 1.0 
+    }).animated(CurvedAnimation({
+      parent: this.controller,
+      curve: new Interval(0.66, 1.0, { curve: "bounceOut" })
+    }));
+    
+    this.controller.addListener(() => {
+      this.setState();
+    });
+  }
+
+  dispose() {
+    this.controller.dispose();
+    super.dispose();
+  }
+
+  build(context) {
+    return Column({
+      children: [
+        GestureDetector({
+          onClick: () => {
+            this.controller.reset();
+            this.controller.forward();
+          },
+          child: Container({
+            width: 150,
+            height: 50,
+            color: '#795548',
+            child: Text("순차 애니메이션 시작")
+          })
+        }),
+        
+        Transform.translate({
+          offset: new Offset(this.slideAnimation.value, 0),
+          child: Transform.scale({
+            scale: this.scaleAnimation.value,
+            child: AnimatedOpacity({
+              duration: 0,  // 즉시 변경 (Controller가 제어)
+              opacity: this.fadeAnimation.value,
+              child: Container({
+                width: 120,
+                height: 80,
+                color: '#009688',
+                child: Text("순차 등장!")
+              })
+            })
+          })
+        })
+      ]
+    });
+  }
+}
+```
+
+### 5단계: 반복 애니메이션
+
+자동으로 반복되는 애니메이션을 만들어봅시다:
+
+```javascript
+class RepeatAnimation extends StatefulWidget {
+  createState() {
+    return new RepeatAnimationState();
+  }
+}
+
+class RepeatAnimationState extends State<RepeatAnimation> {
+  controller = null;
+  animation = null;
+  isRunning = false;
+
+  initState(context) {
+    super.initState(context);
+    
+    this.controller = AnimationController({ duration: 1000 });
+    this.animation = Tween({ begin: -50, end: 50 }).animated(
+      CurvedAnimation({
+        parent: this.controller,
+        curve: "easeInOut"
+      })
+    );
+    
+    this.controller.addListener(() => {
+      this.setState();
+    });
+  }
+
+  dispose() {
+    this.controller.dispose();
+    super.dispose();
+  }
+
+  startRepeating() {
+    this.isRunning = true;
+    this.controller.repeat({ reverse: true });
+  }
+
+  stopRepeating() {
+    this.isRunning = false;
+    this.controller.stop();
+  }
+
+  build(context) {
+    return Column({
+      children: [
+        Row({
+          children: [
+            GestureDetector({
+              onClick: () => this.startRepeating(),
+              child: Container({
+                width: 80,
+                height: 40,
+                color: '#4CAF50',
+                child: Text("시작")
+              })
+            }),
+            
+            GestureDetector({
+              onClick: () => this.stopRepeating(),
+              child: Container({
+                width: 80,
+                height: 40,
+                color: '#F44336',
+                child: Text("정지")
+              })
+            })
+          ]
+        }),
+        
+        Container({
+          width: 200,
+          height: 100,
+          color: '#F5F5F5',
+          child: Stack({
+            children: [
+              Positioned({
+                left: 100 + this.animation.value,
+                top: 25,
+                child: Container({
+                  width: 50,
+                  height: 50,
+                  color: '#FF5722',
+                  child: Text("🏃‍♂️")
+                })
+              })
+            ]
+          })
+        })
+      ]
+    });
+  }
+}
+```
+
+## 🎯 실습 도전 과제
+
+### TODO 1: 진행률 표시가 있는 애니메이션
+
+애니메이션 진행률을 표시하는 프로그레스 바와 함께 제어하는 애니메이션을 만들어보세요:
+
+```javascript
+class ProgressAnimation extends StatefulWidget {
+  createState() {
+    return new ProgressAnimationState();
+  }
+}
+
+class ProgressAnimationState extends State<ProgressAnimation> {
+  controller = null;
+  animation = null;
+
+  initState(context) {
+    super.initState(context);
+    
+    this.controller = AnimationController({ duration: 3000 });
+    this.animation = Tween({ begin: 0, end: 300 }).animated(
+      CurvedAnimation({
+        parent: this.controller,
+        curve: "easeInOut"
+      })
+    );
+    
+    this.controller.addListener(() => {
+      this.setState();
+    });
+  }
+
+  dispose() {
+    this.controller.dispose();
+    super.dispose();
+  }
+
+  build(context) {
+    const progress = this.controller.value; // 0.0 ~ 1.0
+    
+    return Column({
+      children: [
+        // 진행률 표시
+        Container({
+          width: 300,
+          height: 20,
+          color: '#E0E0E0',
+          child: Container({
+            width: 300 * progress,
+            height: 20,
+            color: '#4CAF50'
+          })
+        }),
+        
+        Text(`진행률: ${Math.round(progress * 100)}%`),
+        
+        // 제어 버튼들
+        Row({
+          children: [
+            GestureDetector({
+              onClick: () => this.controller.forward(),
+              child: Container({
+                width: 60,
+                height: 40,
+                color: '#2196F3',
+                child: Text("▶")
+              })
+            }),
+            
+            GestureDetector({
+              onClick: () => this.controller.reverse(),
+              child: Container({
+                width: 60,
+                height: 40,
+                color: '#FF9800',
+                child: Text("◀")
+              })
+            }),
+            
+            GestureDetector({
+              onClick: () => this.controller.stop(),
+              child: Container({
+                width: 60,
+                height: 40,
+                color: '#F44336',
+                child: Text("⏸")
+              })
+            }),
+            
+            GestureDetector({
+              onClick: () => this.controller.reset(),
+              child: Container({
+                width: 60,
+                height: 40,
+                color: '#9E9E9E',
+                child: Text("⏹")
+              })
+            })
+          ]
+        }),
+        
+        // 애니메이션되는 요소
+        Container({
+          width: this.animation.value,
+          height: 60,
+          color: '#E91E63',
+          child: Text(`${Math.round(this.animation.value)}px`)
+        })
+      ]
+    });
+  }
+}
+```
+
+### TODO 2: 다단계 애니메이션 시퀀스
+
+버튼을 클릭할 때마다 다음 단계로 진행하는 다단계 애니메이션을 만들어보세요:
+
+```javascript
+class MultiStepAnimation extends StatefulWidget {
+  createState() {
+    return new MultiStepAnimationState();
+  }
+}
+
+class MultiStepAnimationState extends State<MultiStepAnimation> {
+  controllers = [];
+  animations = [];
+  currentStep = 0;
+  
+  steps = [
+    { name: "등장", duration: 500, curve: "easeOut" },
+    { name: "회전", duration: 800, curve: "elasticOut" },
+    { name: "확대", duration: 600, curve: "bounceOut" },
+    { name: "페이드", duration: 400, curve: "easeIn" }
+  ];
+
+  initState(context) {
+    super.initState(context);
+    
+    // 각 단계별 컨트롤러 생성
+    this.steps.forEach((step, index) => {
+      const controller = AnimationController({ duration: step.duration });
+      controller.addListener(() => this.setState());
+      this.controllers.push(controller);
+    });
+    
+    // 각 단계별 애니메이션 정의
+    this.animations = [
+      Tween({ begin: -200, end: 0 }).animated(
+        CurvedAnimation({
+          parent: this.controllers[0],
+          curve: "easeOut"
+        })
+      ),
+      Tween({ begin: 0, end: 1 }).animated(
+        CurvedAnimation({
+          parent: this.controllers[1],
+          curve: "elasticOut"
+        })
+      ),
+      Tween({ begin: 1, end: 2 }).animated(
+        CurvedAnimation({
+          parent: this.controllers[2],
+          curve: "bounceOut"
+        })
+      ),
+      Tween({ begin: 1, end: 0 }).animated(
+        CurvedAnimation({
+          parent: this.controllers[3],
+          curve: "easeIn"
+        })
+      )
+    ];
+  }
+
+  dispose() {
+    this.controllers.forEach(controller => controller.dispose());
+    super.dispose();
+  }
+
+  nextStep() {
+    if (this.currentStep < this.steps.length) {
+      this.controllers[this.currentStep].forward();
+      this.currentStep++;
+    }
+  }
+
+  reset() {
+    this.controllers.forEach(controller => controller.reset());
+    this.currentStep = 0;
+    this.setState();
+  }
+
+  build(context) {
+    return Column({
+      children: [
+        Text(`현재 단계: ${this.currentStep} / ${this.steps.length}`),
+        
+        Row({
+          children: [
+            GestureDetector({
+              onClick: () => this.nextStep(),
+              child: Container({
+                width: 100,
+                height: 40,
+                color: this.currentStep < this.steps.length ? '#4CAF50' : '#BDBDBD',
+                child: Text("다음 단계")
+              })
+            }),
+            
+            GestureDetector({
+              onClick: () => this.reset(),
+              child: Container({
+                width: 80,
+                height: 40,
+                color: '#FF5722',
+                child: Text("리셋")
+              })
+            })
+          ]
+        }),
+        
+        // 애니메이션 요소
+        Transform.translate({
+          offset: new Offset(this.animations[0].value, 0),
+          child: Transform.rotate({
+            angle: this.animations[1].value * Math.PI,
+            child: Transform.scale({
+              scale: this.animations[2].value,
+              child: AnimatedOpacity({
+                duration: 0,
+                opacity: this.animations[3].value,
+                child: Container({
+                  width: 80,
+                  height: 80,
+                  color: '#9C27B0',
+                  child: Text("🎭")
+                })
+              })
+            })
+          })
+        })
+      ]
+    });
+  }
+}
+```
+
+## 🎨 예상 결과
+
+완성하면 다음과 같은 기능들이 작동해야 합니다:
+
+1. **기본 제어**: forward, reverse, reset으로 애니메이션 제어
+2. **곡선 효과**: 선형과 곡선 애니메이션의 차이 확인
+3. **다중 속성**: 크기, 색상, 회전이 동시에 애니메이션
+4. **순차 실행**: 슬라이드 → 페이드 → 스케일 순서로 실행
+5. **반복 애니메이션**: 자동으로 앞뒤로 반복하는 효과
+6. **진행률 표시**: 실시간으로 애니메이션 진행률 확인
+
+## 💡 추가 도전
+
+더 도전하고 싶다면:
+
+1. **복잡한 시퀀스**: 5단계 이상의 복잡한 애니메이션 시퀀스
+2. **인터랙티브 제어**: 드래그로 애니메이션 진행률 직접 제어
+3. **조건부 애니메이션**: 특정 조건에 따라 다른 애니메이션 실행
+4. **물리 기반**: 스프링 효과나 중력 효과 시뮬레이션
+
+## ⚠️ 흔한 실수와 해결법
+
+### 1. dispose() 잊어버리기
+```javascript
+// ❌ dispose 안 함 - 메모리 누수!
+dispose() {
+  super.dispose();  // controller.dispose() 빠짐
+}
+
+// ✅ 반드시 dispose 호출
+dispose() {
+  this.controller.dispose();
+  super.dispose();
+}
+```
+
+### 2. addListener에서 setState 호출 안 함
+```javascript
+// ❌ setState 없음 - UI 업데이트 안됨
+this.controller.addListener(() => {
+  // setState() 호출 안 함
+});
+
+// ✅ setState로 UI 업데이트
+this.controller.addListener(() => {
+  this.setState();
+});
+```
+
+### 3. Tween 범위 잘못 설정
+```javascript
+// ❌ 의도하지 않은 범위
+Tween({ begin: 100, end: 0 })  // 감소하는 애니메이션
+
+// ✅ 의도한 범위 확인
+Tween({ begin: 0, end: 100 })  // 증가하는 애니메이션
+```
+
+### 4. Interval 범위 오류
+```javascript
+// ❌ 잘못된 범위 (0.0~1.0 벗어남)
+new Interval(0.5, 1.5)  // 1.0 초과
+
+// ✅ 올바른 범위
+new Interval(0.0, 0.5)  // 첫 절반
+new Interval(0.5, 1.0)  // 두 번째 절반
+```
+
+### 5. 회전각 단위 혼동
+```javascript
+// ❌ 도(degree) 단위 사용
+Transform.rotate({ angle: 90 })  // 90도가 아님!
+
+// ✅ 라디안(radian) 단위 사용
+Transform.rotate({ angle: Math.PI / 2 })  // 90도
+```
+
+## 🎓 핵심 정리
+
+### AnimationController 생명주기
+1. **initState()**: Controller 생성, Animation 설정, Listener 등록
+2. **build()**: animation.value 사용해서 UI 구성
+3. **dispose()**: Controller 메모리 해제 (필수!)
+
+### 제어 메서드들
+- **forward()**: 시작 → 끝으로 애니메이션
+- **reverse()**: 끝 → 시작으로 역방향 애니메이션
+- **reset()**: 시작 위치로 즉시 이동
+- **stop()**: 현재 위치에서 정지
+- **repeat()**: 반복 애니메이션
+- **animateTo(value)**: 특정 값으로 애니메이션
+
+### 상태 확인
+- **controller.value**: 현재 진행률 (0.0 ~ 1.0)
+- **controller.status**: 애니메이션 상태
+- **controller.isCompleted**: 완료 여부
+- **controller.isAnimating**: 진행 중 여부
+
+AnimationController는 Flitter에서 가장 강력한 애니메이션 도구입니다. 정밀한 제어와 복잡한 시퀀스가 필요한 고급 애니메이션을 구현할 때 필수적입니다.
+
+## 🚀 다음 단계
+
+다음 튜토리얼에서는 **커스텀 애니메이션**을 배워봅시다:
+- AnimatedWidget 상속으로 재사용 가능한 애니메이션 위젯 만들기
+- CustomPaint와 애니메이션 결합하기
+- 물리 기반 애니메이션 구현하기
+- 성능 최적화 기법 적용하기
+
+[다음: 커스텀 애니메이션 →](/tutorial/ko/5_animation-widgets/004_custom-animations/)

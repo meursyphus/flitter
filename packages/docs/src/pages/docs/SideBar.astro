@@ -1,55 +1,17 @@
 ---
 import { getCollection } from "astro:content";
-import { getNavOrder, normalizePath } from "./utils";
+import { processEntries, groupEntriesByNavGroup, normalizePath } from "../../utils/collection";
 
 const docsEntries = await getCollection("docs");
 const url = new URL(Astro.request.url);
 const pathSegments = url.pathname.split("/").filter(Boolean);
 const lang = pathSegments[1];
 
-// 현재 언어에 맞는 문서만 필터링
-const filteredDocs = docsEntries.filter((entry) =>
-  entry.slug.startsWith(lang + "/"),
-);
-
-// navigation 정보로 표현할 객체 만들기
-const navigation = filteredDocs.reduce(
-  (acc, entry, i) => {
-    const { nav_group, nav_order, title, nav_title } = entry.data;
-    const groupName = nav_group ?? "Widgets";
-    const nav_group_order = getNavOrder(groupName);
-
-    // 해당 navGroup이 이미 존재하는지 확인
-    let group = acc.find((g) => g.name === groupName);
-    if (!group) {
-      // 존재하지 않으면 새로운 그룹 생성
-      group = { name: groupName, order: nav_group_order, items: [] };
-      acc.push(group);
-    }
-
-    // 그룹에 문서 추가
-    group.items.push({
-      url: `/docs/${entry.slug}`,
-      title: nav_title ?? title,
-      order: nav_order ?? i,
-    });
-
-    return acc;
-  },
-  [] as {
-    name: string;
-    order: number;
-    items: { url: string; title: string; order: number }[];
-  }[],
-);
-
-// 그룹을 navGroupOrder에 따라 정렬
-navigation.sort((a, b) => a.order - b.order);
-
-// 각 그룹 내의 항목들을 navOrder에 따라 정렬
-navigation.forEach((group) => {
-  group.items.sort((a, b) => a.order - b.order);
+// Process entries and create navigation structure using the common utility
+const processedEntries = processEntries(docsEntries, { 
+  filterLang: lang
 });
+const groupedEntries = groupEntriesByNavGroup(processedEntries);
 
 const normalizedPathname = normalizePath(url.pathname);
 ---
@@ -58,21 +20,23 @@ const normalizedPathname = normalizePath(url.pathname);
   class="inline-flex w-80 shrink-0 flex-col items-end justify-start gap-6 px-8 pt-[20px] dark:bg-white"
 >
   {
-    navigation.map((group) => (
+    Array.from(groupedEntries.entries()).map(([groupName, entries]) => (
       <div class="flex flex-col items-start justify-start self-stretch">
         <div class="inline-flex items-start justify-start gap-2.5 self-stretch">
-          <div class="text-xl font-bold text-gray-300 dark:text-gray-700">{group.name}</div>
+          <div class="text-xl font-bold text-gray-300 dark:text-gray-700">{groupName}</div>
         </div>
-        {group.items.map((item) => (
-          <div class="mt-1 inline-flex items-start justify-start gap-2 self-stretch px-4">
-            <a
-              href={item.url}
-              class={`${normalizePath(item.url) === normalizedPathname ? "font-semibold text-purple-500" : "text-gray-400 dark:text-gray-800"} text-lg hover:text-purple-500`}
-            >
-              {item.title}
-            </a>
-          </div>
-        ))}
+        <div class="mt-2 flex flex-col items-start justify-start gap-2 self-stretch">
+          {entries.map((entry) => (
+            <div class="inline-flex items-start justify-start gap-2 self-stretch px-4">
+              <a
+                href={`/docs/${entry.slug}`}
+                class={`${normalizePath(`/docs/${entry.slug}`) === normalizedPathname ? "font-semibold text-purple-500" : "text-gray-400 dark:text-gray-800"} text-lg hover:text-purple-500`}
+              >
+                {entry.navTitle ?? entry.title}
+              </a>
+            </div>
+          ))}
+        </div>
       </div>
     ))
   }

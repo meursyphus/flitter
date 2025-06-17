@@ -1,0 +1,310 @@
+---
+title: "Row와 Column으로 레이아웃 구성하기"
+description: "위젯을 가로/세로로 배치하고 간단한 네비게이션 바를 만들어보세요"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { StatelessWidget, Container, Text, Row, Column, SizedBox, EdgeInsets } from '@meursyphus/flitter';
+
+    class LayoutApp extends StatelessWidget {
+      build(context) {
+        // TODO: Row와 Column을 사용해서 레이아웃을 구성해보세요
+        return Container({
+          width: 400,
+          height: 300,
+          padding: EdgeInsets.all(20),
+          child: Column({
+            children: [
+              Text("Row와 Column 레이아웃을 만들어보세요!"),
+              // TODO: 여기에 Row와 Column을 추가하세요
+            ]
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new LayoutApp();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+solved_files:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { StatelessWidget, Container, Text, Row, Column, SizedBox, EdgeInsets, MainAxisAlignment, CrossAxisAlignment, Center } from '@meursyphus/flitter';
+
+    class LayoutApp extends StatelessWidget {
+      build(context) {
+        return Container({
+          width: 400,
+          height: 300,
+          padding: EdgeInsets.all(20),
+          child: Column({
+            children: [
+              // 제목
+              Text("Row와 Column 레이아웃", {
+                style: new TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold'
+                })
+              }),
+              SizedBox({ height: 20 }),
+              
+              // Row 예제 - 가로 배치
+              Container({
+                padding: EdgeInsets.all(10),
+                color: '#f0f0f0',
+                child: Row({
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container({
+                      width: 60,
+                      height: 60,
+                      color: '#FF6B6B',
+                      child: Center({
+                        child: Text("1", {
+                          style: new TextStyle({ color: 'white' })
+                        })
+                      })
+                    }),
+                    Container({
+                      width: 60,
+                      height: 60,
+                      color: '#4ECDC4',
+                      child: Center({
+                        child: Text("2", {
+                          style: new TextStyle({ color: 'white' })
+                        })
+                      })
+                    }),
+                    Container({
+                      width: 60,
+                      height: 60,
+                      color: '#45B7D1',
+                      child: Center({
+                        child: Text("3", {
+                          style: new TextStyle({ color: 'white' })
+                        })
+                      })
+                    })
+                  ]
+                })
+              }),
+              
+              SizedBox({ height: 20 }),
+              
+              // 네비게이션 바 예제
+              Container({
+                height: 50,
+                decoration: new BoxDecoration({
+                  color: '#2c3e50',
+                  borderRadius: BorderRadius.circular(8)
+                }),
+                child: Row({
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text("홈", {
+                      style: new TextStyle({ 
+                        color: 'white',
+                        fontSize: 16
+                      })
+                    }),
+                    Text("제품", {
+                      style: new TextStyle({ 
+                        color: 'white',
+                        fontSize: 16
+                      })
+                    }),
+                    Text("서비스", {
+                      style: new TextStyle({ 
+                        color: 'white',
+                        fontSize: 16
+                      })
+                    }),
+                    Text("문의", {
+                      style: new TextStyle({ 
+                        color: 'white',
+                        fontSize: 16
+                      })
+                    })
+                  ]
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new LayoutApp();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+---
+
+# Row와 Column으로 레이아웃 구성하기
+
+웹 레이아웃의 기본은 요소들을 가로 또는 세로로 배치하는 것입니다. Flitter에서는 **Row**와 **Column** 위젯을 사용해 이러한 레이아웃을 쉽게 구성할 수 있습니다.
+
+## 🎯 학습 목표
+
+이 튜토리얼을 완료하면 다음을 할 수 있게 됩니다:
+
+- [ ] Row로 위젯을 가로로 배치하기
+- [ ] Column으로 위젯을 세로로 배치하기
+- [ ] MainAxisAlignment로 주축 정렬 제어하기
+- [ ] CrossAxisAlignment로 교차축 정렬 제어하기
+- [ ] 실용적인 네비게이션 바 만들기
+
+## 📚 Row 위젯 이해하기
+
+**Row**는 자식 위젯들을 가로 방향으로 배치합니다. HTML의 flexbox에서 `flex-direction: row`와 비슷합니다.
+
+### Row의 기본 구조
+
+```typescript
+Row({
+  mainAxisAlignment: MainAxisAlignment.start,  // 가로 정렬
+  crossAxisAlignment: CrossAxisAlignment.center, // 세로 정렬
+  children: [
+    // 자식 위젯들
+  ]
+})
+```
+
+### MainAxisAlignment (주축 정렬)
+
+Row에서 주축은 **가로 방향**입니다:
+
+- `MainAxisAlignment.start` - 왼쪽 정렬 (기본값)
+- `MainAxisAlignment.center` - 중앙 정렬
+- `MainAxisAlignment.end` - 오른쪽 정렬
+- `MainAxisAlignment.spaceBetween` - 양 끝에 배치하고 사이 공간 균등 분배
+- `MainAxisAlignment.spaceAround` - 각 위젯 주위에 균등한 공간
+- `MainAxisAlignment.spaceEvenly` - 모든 공간을 균등하게 분배
+
+## 📐 Column 위젯 이해하기
+
+**Column**은 자식 위젯들을 세로 방향으로 배치합니다. HTML의 flexbox에서 `flex-direction: column`과 비슷합니다.
+
+### Column의 기본 구조
+
+```typescript
+Column({
+  mainAxisAlignment: MainAxisAlignment.start,  // 세로 정렬
+  crossAxisAlignment: CrossAxisAlignment.center, // 가로 정렬
+  children: [
+    // 자식 위젯들
+  ]
+})
+```
+
+### Column에서의 축 방향
+
+Column에서는 축 방향이 Row와 반대입니다:
+- **주축(MainAxis)**: 세로 방향
+- **교차축(CrossAxis)**: 가로 방향
+
+## 🚀 실습 1: 기본 Row 레이아웃
+
+```typescript
+Row({
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    Container({
+      width: 80,
+      height: 80,
+      color: '#e74c3c',
+      child: Center({ child: Text("A") })
+    }),
+    Container({
+      width: 80,
+      height: 80,
+      color: '#3498db',
+      child: Center({ child: Text("B") })
+    }),
+    Container({
+      width: 80,
+      height: 80,
+      color: '#2ecc71',
+      child: Center({ child: Text("C") })
+    })
+  ]
+})
+```
+
+## 🚀 실습 2: 중첩된 Row와 Column
+
+Row와 Column을 중첩하여 복잡한 레이아웃을 만들 수 있습니다:
+
+```typescript
+Column({
+  children: [
+    Text("상단 제목"),
+    Row({
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text("왼쪽"),
+        SizedBox({ width: 20 }),
+        Text("중앙"),
+        SizedBox({ width: 20 }),
+        Text("오른쪽")
+      ]
+    }),
+    Text("하단 설명")
+  ]
+})
+```
+
+## 💡 실용적인 예제: 네비게이션 바
+
+```typescript
+Container({
+  height: 60,
+  decoration: new BoxDecoration({
+    color: '#34495e',
+    boxShadow: [
+      new BoxShadow({
+        color: 'rgba(0,0,0,0.1)',
+        offset: { x: 0, y: 2 },
+        blurRadius: 4
+      })
+    ]
+  }),
+  child: Row({
+    mainAxisAlignment: MainAxisAlignment.spaceAround,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Text("홈", { style: new TextStyle({ color: 'white', fontSize: 16 }) }),
+      Text("제품", { style: new TextStyle({ color: 'white', fontSize: 16 }) }),
+      Text("서비스", { style: new TextStyle({ color: 'white', fontSize: 16 }) }),
+      Text("문의", { style: new TextStyle({ color: 'white', fontSize: 16 }) })
+    ]
+  })
+})
+```
+
+## 🎨 연습 과제
+
+1. **3x3 그리드 만들기**: Column 안에 3개의 Row를 넣어 3x3 그리드를 만들어보세요
+2. **카드 레이아웃**: Row를 사용해 카드 3개를 가로로 배치해보세요
+3. **사이드바 레이아웃**: Row 안에 사이드바(Column)와 메인 콘텐츠를 배치해보세요
+
+## 🚨 주의사항
+
+1. **Overflow 방지**: Row나 Column의 자식들이 화면을 벗어나지 않도록 주의
+2. **Expanded 사용**: 남은 공간을 채우려면 Expanded 위젯 활용
+3. **성능**: 깊게 중첩된 Row/Column은 성능에 영향을 줄 수 있음
+
+## 🔗 다음 단계
+
+- [Stack과 위치 지정](./004_stack-positioning) - 위젯을 겹쳐서 배치하기
+- [Expanded와 Flexible](../3_layout-widgets/1_expanded-flexible) - 공간 분배하기
