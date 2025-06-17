@@ -1,6 +1,6 @@
 ---
-title: "첫 번째 Flitter 앱"
-description: "Container와 Text로 'Hello World'를 만들고 위젯 트리를 이해해보세요"
+title: "Your First Flitter App"
+description: "Create 'Hello World' with Container and Text, and understand the widget tree"
 files:
   App.js: |
     import React from 'react';
@@ -9,19 +9,19 @@ files:
 
     class HelloWorldApp extends StatelessWidget {
       build(context) {
-        // TODO: 여기에 위젯을 만들어보세요
+        // TODO: Create widgets here
         return Container({
           width: 400,
           height: 200,
           color: '#f8f9fa',
           child: Center({
-            child: Text('TODO: 위젯을 추가하세요')
+            child: Text('TODO: Add your widgets')
           })
         });
       }
     }
 
-    // 팩토리 함수
+    // Factory function
     function createWidget() {
       return new HelloWorldApp();
     }
@@ -55,7 +55,7 @@ solved_files:
                   })
                 }),
                 SizedBox({ height: 10 }),
-                Text('내 첫 번째 위젯 앱입니다', {
+                Text('My first widget app', {
                   style: new TextStyle({
                     fontSize: 16,
                     color: '#64748b'
@@ -68,7 +68,7 @@ solved_files:
       }
     }
 
-    // 팩토리 함수
+    // Factory function
     function createWidget() {
       return new HelloWorldApp();
     }
@@ -78,115 +78,115 @@ solved_files:
     }
 ---
 
-# 첫 번째 Flitter 앱
+# Your First Flitter App
 
-이제 설치가 완료되었으니 Flitter의 핵심 위젯인 Container와 Text를 사용해서 첫 번째 앱을 만들어보겠습니다. 이 튜토리얼을 통해 위젯 트리의 기본 개념과 위젯 조합 방법을 익힐 수 있습니다.
+Now that installation is complete, let's create your first app using Flitter's core widgets Container and Text. Through this tutorial, you'll learn the basic concepts of widget trees and how to combine widgets.
 
-## 🎯 학습 목표
+## 🎯 Learning Objectives
 
-이 튜토리얼을 완료하면 다음을 할 수 있습니다:
+After completing this tutorial, you'll be able to:
 
-- [ ] Container 위젯으로 박스 만들기
-- [ ] Text 위젯으로 텍스트 표시하기
-- [ ] 위젯을 중첩해서 트리 구조 만들기
-- [ ] 기본적인 레이아웃과 스타일링 적용하기
-- [ ] Column 위젯으로 세로 배치하기
+- [ ] Create boxes with Container widget
+- [ ] Display text with Text widget
+- [ ] Nest widgets to create tree structures
+- [ ] Apply basic layout and styling
+- [ ] Arrange widgets vertically with Column
 
-## 📚 핵심 개념: 위젯이란?
+## 📚 Core Concept: What are Widgets?
 
-Flitter에서 **위젯(Widget)**은 UI를 구성하는 기본 단위입니다. 모든 것이 위젯으로 이루어져 있으며, 위젯들을 조합해서 복잡한 UI를 만들 수 있습니다.
+In Flitter, **Widget** is the basic building block for constructing UI. Everything is made of widgets, and you can combine widgets to create complex UIs.
 
-### 위젯의 특징
+### Widget Characteristics
 
-1. **불변성**: 위젯은 한 번 생성되면 변경할 수 없습니다
-2. **조합 가능**: 위젯을 다른 위젯 안에 넣어서 복잡한 구조를 만들 수 있습니다
-3. **재사용 가능**: 같은 위젯을 여러 곳에서 사용할 수 있습니다
+1. **Immutable**: Once created, widgets cannot be changed
+2. **Composable**: Widgets can be nested inside other widgets to create complex structures
+3. **Reusable**: The same widget can be used in multiple places
 
-## 🏗️ Container 위젯 알아보기
+## 🏗️ Understanding Container Widget
 
-**Container**는 Flitter의 가장 기본적인 위젯 중 하나입니다. 박스를 만들고 스타일을 적용하는 데 사용됩니다.
+**Container** is one of Flitter's most fundamental widgets. It's used to create boxes and apply styling.
 
-### Container의 주요 속성
+### Key Properties of Container
 
 ```typescript
 Container({
-  // 크기 설정
-  width: 200,           // 너비 (픽셀)
-  height: 100,          // 높이 (픽셀)
+  // Size settings
+  width: 200,           // Width (pixels)
+  height: 100,          // Height (pixels)
   
-  // 색상과 스타일
-  color: '#ff0000',     // 배경색 (헥스 코드)
+  // Color and style
+  color: '#ff0000',     // Background color (hex code)
   
-  // 여백 설정
-  padding: EdgeInsets.all(16), // 안쪽 여백
-  margin: EdgeInsets.all(8),   // 바깥쪽 여백
+  // Margin settings
+  padding: EdgeInsets.all(16), // Inner spacing
+  margin: EdgeInsets.all(8),   // Outer spacing
   
-  // 자식 위젯
-  child: Text('Hello')  // 하나의 자식 위젯
+  // Child widget
+  child: Text('Hello')  // Single child widget
 })
 ```
 
-### 여백 설정 방법
+### Margin Setting Methods
 
 ```typescript
-// 모든 방향에 같은 여백
+// Same margin on all sides
 padding: EdgeInsets.all(16)
 
-// 가로/세로 다르게 설정
+// Different horizontal/vertical margins
 padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 10 })
 
-// 각 방향 개별 설정
+// Individual margin for each side
 padding: EdgeInsets.only({ top: 8, right: 16, bottom: 8, left: 16 })
 ```
 
-## 📝 Text 위젯 알아보기
+## 📝 Understanding Text Widget
 
-**Text**는 텍스트를 화면에 표시하는 위젯입니다.
+**Text** is a widget that displays text on screen.
 
-### Text의 기본 사용법
+### Basic Usage of Text
 
 ```typescript
-// 간단한 텍스트
+// Simple text
 Text('Hello, World!')
 
-// 스타일을 적용한 텍스트
-Text('스타일이 적용된 텍스트', {
+// Text with styling applied
+Text('Styled text', {
   style: new TextStyle({
-    fontSize: 20,        // 글자 크기
-    fontWeight: 'bold',  // 글자 굵기: 'normal', 'bold', '100'-'900'
-    color: '#1e40af',    // 텍스트 색상
-    fontFamily: 'Arial'  // 폰트 패밀리
+    fontSize: 20,        // Font size
+    fontWeight: 'bold',  // Font weight: 'normal', 'bold', '100'-'900'
+    color: '#1e40af',    // Text color
+    fontFamily: 'Arial'  // Font family
   })
 })
 ```
 
-### 텍스트 정렬 옵션
+### Text Alignment Options
 
 ```typescript
-Text('정렬된 텍스트', {
+Text('Aligned text', {
   textAlign: 'center'  // 'left', 'center', 'right', 'justify'
 })
 ```
 
-## 🔧 실습: Hello World 앱 만들기
+## 🔧 Practice: Creating Hello World App
 
-이제 Container와 Text를 조합해서 "Hello World" 앱을 만들어보겠습니다.
+Now let's combine Container and Text to create a "Hello World" app.
 
-### 1단계: 기본 구조 만들기
+### Step 1: Create Basic Structure
 
-먼저 파란색 배경의 Container를 만들어보겠습니다:
+First, let's create a Container with blue background:
 
 ```typescript
 const widget = Container({
-  color: '#f0f9ff',     // 연한 파란색 배경
-  padding: EdgeInsets.all(20), // 모든 방향에 20px 여백
+  color: '#f0f9ff',     // Light blue background
+  padding: EdgeInsets.all(20), // 20px padding on all sides
   child: Text('Hello, Flitter!')
 });
 ```
 
-### 2단계: 텍스트 스타일링 추가
+### Step 2: Add Text Styling
 
-이제 텍스트에 스타일을 추가해보겠습니다:
+Now let's add styling to the text:
 
 ```typescript
 const widget = Container({
@@ -202,9 +202,9 @@ const widget = Container({
 });
 ```
 
-### 3단계: 여러 텍스트 추가하기
+### Step 3: Add Multiple Texts
 
-Column 위젯을 사용해서 여러 개의 텍스트를 세로로 배치해보겠습니다:
+Let's use Column widget to arrange multiple texts vertically:
 
 ```typescript
 import { Container, Text, Column, SizedBox, EdgeInsets, MainAxisAlignment, CrossAxisAlignment, TextStyle } from '@meursyphus/flitter';
@@ -213,8 +213,8 @@ const widget = Container({
   color: '#f0f9ff',
   padding: EdgeInsets.all(20),
   child: Column({
-    mainAxisAlignment: MainAxisAlignment.center,    // 세로 중앙 정렬
-    crossAxisAlignment: CrossAxisAlignment.center,   // 가로 중앙 정렬
+    mainAxisAlignment: MainAxisAlignment.center,    // Vertical center alignment
+    crossAxisAlignment: CrossAxisAlignment.center,   // Horizontal center alignment
     children: [
       Text('Hello, Flitter!', {
         style: new TextStyle({
@@ -223,8 +223,8 @@ const widget = Container({
           color: '#1e40af'
         })
       }),
-      SizedBox({ height: 10 }),     // 10px 높이의 빈 공간
-      Text('내 첫 번째 위젯 앱입니다', {
+      SizedBox({ height: 10 }),     // 10px height empty space
+      Text('My first widget app', {
         style: new TextStyle({
           fontSize: 16,
           color: '#64748b'
@@ -235,48 +235,48 @@ const widget = Container({
 });
 ```
 
-## 🎨 Column 위젯으로 레이아웃 만들기
+## 🎨 Creating Layout with Column Widget
 
-**Column**은 여러 위젯을 세로로 배치하는 레이아웃 위젯입니다.
+**Column** is a layout widget that arranges multiple widgets vertically.
 
-### Column의 주요 속성
+### Key Properties of Column
 
 ```typescript
 Column({
-  // 세로 방향 정렬 (주축)
+  // Vertical alignment (main axis)
   mainAxisAlignment: MainAxisAlignment.center,
   
-  // 가로 방향 정렬 (교차축)
+  // Horizontal alignment (cross axis)
   crossAxisAlignment: CrossAxisAlignment.center,
   
-  // 자식 위젯들
+  // Child widgets
   children: [
-    Text('첫 번째'),
-    Text('두 번째'),
-    Text('세 번째')
+    Text('First'),
+    Text('Second'),
+    Text('Third')
   ]
 })
 ```
 
-### 정렬 옵션 설명
+### Alignment Options Explained
 
-**mainAxisAlignment** (세로 방향):
-- `MainAxisAlignment.start`: 위쪽 정렬
-- `MainAxisAlignment.center`: 중앙 정렬
-- `MainAxisAlignment.end`: 아래쪽 정렬
-- `MainAxisAlignment.spaceBetween`: 위젯들 사이에 균등한 간격
-- `MainAxisAlignment.spaceAround`: 위젯 주변에 균등한 간격
-- `MainAxisAlignment.spaceEvenly`: 모든 간격이 균등
+**mainAxisAlignment** (vertical direction):
+- `MainAxisAlignment.start`: Top alignment
+- `MainAxisAlignment.center`: Center alignment
+- `MainAxisAlignment.end`: Bottom alignment
+- `MainAxisAlignment.spaceBetween`: Equal spacing between widgets
+- `MainAxisAlignment.spaceAround`: Equal spacing around widgets
+- `MainAxisAlignment.spaceEvenly`: All spacing is equal
 
-**crossAxisAlignment** (가로 방향):
-- `CrossAxisAlignment.start`: 왼쫜 정렬
-- `CrossAxisAlignment.center`: 중앙 정렬
-- `CrossAxisAlignment.end`: 오른쫜 정렬
-- `CrossAxisAlignment.stretch`: 가로폭을 모두 채움
+**crossAxisAlignment** (horizontal direction):
+- `CrossAxisAlignment.start`: Left alignment
+- `CrossAxisAlignment.center`: Center alignment
+- `CrossAxisAlignment.end`: Right alignment
+- `CrossAxisAlignment.stretch`: Fill all horizontal space
 
-## 🔧 TODO: 코드 완성하기
+## 🔧 TODO: Complete the Code
 
-이제 여러분이 직접 코드를 완성해보세요:
+Now complete the code yourself:
 
 ```typescript
 import { StatelessWidget, Container, Text, Column, SizedBox, Center, EdgeInsets, MainAxisAlignment, CrossAxisAlignment, TextStyle } from '@meursyphus/flitter';
@@ -284,19 +284,19 @@ import { StatelessWidget, Container, Text, Column, SizedBox, Center, EdgeInsets,
 class HelloWorldApp extends StatelessWidget {
   build(context) {
     return Container({
-      // TODO: 연한 파란색 배경을 설정하세요 (#f0f9ff)
-      // TODO: EdgeInsets.all(20)으로 모든 방향에 20px 여백을 설정하세요
+      // TODO: Set light blue background (#f0f9ff)
+      // TODO: Set 20px padding on all sides with EdgeInsets.all(20)
       child: Center({
         child: Column({
-          // TODO: MainAxisAlignment.center와 CrossAxisAlignment.center로 중앙 정렬을 설정하세요
+          // TODO: Set center alignment with MainAxisAlignment.center and CrossAxisAlignment.center
           children: [
-            // TODO: "Hello, Flitter!" 텍스트를 만드세요
-            // 힌트: new TextStyle({ fontSize: 28, fontWeight: 'bold', color: '#1e40af' })
+            // TODO: Create "Hello, Flitter!" text
+            // Hint: new TextStyle({ fontSize: 28, fontWeight: 'bold', color: '#1e40af' })
             
-            // TODO: SizedBox({ height: 10 })으로 10px 높이의 빈 공간을 만드세요
+            // TODO: Create 10px height empty space with SizedBox({ height: 10 })
             
-            // TODO: "내 첫 번째 위젯 앱입니다" 텍스트를 만드세요
-            // 힌트: new TextStyle({ fontSize: 16, color: '#64748b' })
+            // TODO: Create "My first widget app" text
+            // Hint: new TextStyle({ fontSize: 16, color: '#64748b' })
           ]
         })
       })
@@ -309,35 +309,35 @@ export default function createApp() {
 }
 ```
 
-## 🎯 예상 결과
+## 🎯 Expected Results
 
-코드를 완성하고 실행하면 다음을 볼 수 있습니다:
+After completing and running the code, you should see:
 
-1. **연한 파란색 배경의 박스**: 400x200 크기의 Container
-2. **중앙 정렬된 텍스트**: "Hello, Flitter!" (큰 글씨, 파란색)
-3. **부제목**: "내 첫 번째 위젯 앱입니다" (작은 글씨, 회색)
-4. **적절한 간격**: 두 텍스트 사이에 10px 간격
+1. **Light blue background box**: 400x200 sized Container
+2. **Center-aligned text**: "Hello, Flitter!" (large font, blue)
+3. **Subtitle**: "My first widget app" (small font, gray)
+4. **Proper spacing**: 10px gap between the two texts
 
-## 🔧 연습 문제
+## 🔧 Practice Problems
 
-기본 Hello World를 완성했다면, 다음을 시도해보세요:
+If you've completed the basic Hello World, try the following:
 
-### 연습 1: 색상 테마 변경하기
-다른 색상 조합으로 변경해보세요:
+### Exercise 1: Change Color Themes
+Change to different color combinations:
 ```typescript
-// 연습 1-1: 초록색 테마
-color: '#f0fdf4'      // 연한 초록 배경
-color: '#16a34a'      // 진한 초록 텍스트
+// Exercise 1-1: Green theme
+color: '#f0fdf4'      // Light green background
+color: '#16a34a'      // Dark green text
 
-// 연습 1-2: 보라색 테마
-color: '#faf5ff'      // 연한 보라 배경
-color: '#9333ea'      // 진한 보라 텍스트
+// Exercise 1-2: Purple theme
+color: '#faf5ff'      // Light purple background
+color: '#9333ea'      // Dark purple text
 ```
 
-### 연습 2: 텍스트 추가하기
-세 번째 텍스트를 추가해보세요:
+### Exercise 2: Add Text
+Add a third text:
 ```typescript
-Text('React와 함께 사용 중입니다', {
+Text('Using with React', {
   style: new TextStyle({
     fontSize: 14,
     color: '#94a3b8',
@@ -346,85 +346,85 @@ Text('React와 함께 사용 중입니다', {
 })
 ```
 
-### 연습 3: 레이아웃 변경하기
-`mainAxisAlignment`를 다른 값으로 변경해서 결과를 확인해보세요:
-- `MainAxisAlignment.start`: 위쪽 정렬
-- `MainAxisAlignment.end`: 아래쪽 정렬
-- `MainAxisAlignment.spaceBetween`: 위아래 끝에 배치
+### Exercise 3: Change Layout
+Change `mainAxisAlignment` to different values and check the results:
+- `MainAxisAlignment.start`: Top alignment
+- `MainAxisAlignment.end`: Bottom alignment
+- `MainAxisAlignment.spaceBetween`: Positioned at top and bottom ends
 
-### 연습 4: 여백 조정하기
-Container의 `padding` 값을 변경해보세요:
+### Exercise 4: Adjust Margins
+Change the Container's `padding` value:
 ```typescript
-// 가로/세로 다르게
+// Different horizontal/vertical
 padding: EdgeInsets.symmetric({ horizontal: 40, vertical: 15 })
 
-// 각 방향 다르게
+// Different for each direction
 padding: EdgeInsets.only({ top: 30, right: 20, bottom: 30, left: 20 })
 ```
 
-## 🚨 흔한 실수와 해결법
+## 🚨 Common Mistakes and Solutions
 
-### 문제 1: 텍스트가 보이지 않음
-**원인**: Container에 `child`를 설정하지 않았거나 Text 위젯을 잘못 생성
+### Problem 1: Text not visible
+**Cause**: Container doesn't have `child` set or Text widget created incorrectly
 
-**해결법**: 
+**Solution**: 
 ```typescript
-// ❌ 잘못된 예
-Container({ color: 'blue' })  // child가 없음
+// ❌ Wrong example
+Container({ color: 'blue' })  // No child
 
-// ✅ 올바른 예
+// ✅ Correct example
 Container({ 
   color: 'blue',
-  child: Text('Hello')  // child 반드시 설정
+  child: Text('Hello')  // Child must be set
 })
 ```
 
-### 문제 2: Column에 children 대신 child 사용
-**원인**: Column은 여러 자식을 가지므로 `children` 배열을 사용해야 함
+### Problem 2: Using child instead of children in Column
+**Cause**: Column has multiple children, so `children` array must be used
 
-**해결법**:
+**Solution**:
 ```typescript
-// ❌ 잘못된 예
+// ❌ Wrong example
 Column({ child: Text('Hello') })
 
-// ✅ 올바른 예
+// ✅ Correct example
 Column({ children: [Text('Hello')] })
 ```
 
-### 문제 3: 색상이 적용되지 않음
-**원인**: 색상 형식이 잘못되었거나 따옴표를 빼먹음
+### Problem 3: Colors not applied
+**Cause**: Wrong color format or missing quotes
 
-**해결법**:
+**Solution**:
 ```typescript
-// ❌ 잘못된 예
-color: #ff0000     // 따옴표 없음
-color: 'ff0000'    // # 없음
+// ❌ Wrong examples
+color: #ff0000     // No quotes
+color: 'ff0000'    // No #
 
-// ✅ 올바른 예
-color: '#ff0000'   // 헥스 코드
-color: 'red'       // 색상 이름
-color: 'rgb(255, 0, 0)'  // RGB 값
+// ✅ Correct examples
+color: '#ff0000'   // Hex code
+color: 'red'       // Color name
+color: 'rgb(255, 0, 0)'  // RGB value
 ```
 
-### 문제 4: fontSize가 적용되지 않음
-**원인**: fontSize를 문자열로 설정했거나 style 객체 구조가 잘못됨
+### Problem 4: fontSize not applied
+**Cause**: fontSize set as string or wrong style object structure
 
-**해결법**:
+**Solution**:
 ```typescript
-// ❌ 잘못된 예
-Text('Hello', { fontSize: '20px' })           // 직접 속성
-Text('Hello', { style: { fontSize: '20' } })  // 문자열
+// ❌ Wrong examples
+Text('Hello', { fontSize: '20px' })           // Direct property
+Text('Hello', { style: { fontSize: '20' } })  // String
 
-// ✅ 올바른 예
-Text('Hello', { style: { fontSize: 20 } })    // 숫자로 설정
+// ✅ Correct example
+Text('Hello', { style: { fontSize: 20 } })    // Set as number
 ```
 
-## 🧠 위젯 트리 이해하기
+## 🧠 Understanding Widget Tree
 
-우리가 만든 앱의 위젯 트리 구조를 살펴보겠습니다:
+Let's look at the widget tree structure of our app:
 
 ```
-Container (루트)
+Container (root)
 ├── color: '#f0f9ff'
 ├── padding: EdgeInsets.all(20)
 └── child: Column
@@ -433,53 +433,53 @@ Container (루트)
     └── children:
         ├── Text('Hello, Flitter!')
         ├── SizedBox({ height: 10 })
-        └── Text('내 첫 번째 위젯 앱입니다')
+        └── Text('My first widget app')
 ```
 
-### 위젯 트리의 특징
+### Widget Tree Characteristics
 
-1. **부모-자식 관계**: Container가 Column을 포함하고, Column이 여러 Text를 포함
-2. **단방향 데이터 흐름**: 부모에서 자식으로 속성이 전달됨
-3. **조합 가능성**: 간단한 위젯들을 조합해서 복잡한 UI 구성
+1. **Parent-child relationship**: Container contains Column, Column contains multiple Texts
+2. **Unidirectional data flow**: Properties are passed from parent to child
+3. **Composability**: Complex UI built by combining simple widgets
 
-## 📏 크기와 제약 이해하기
+## 📏 Understanding Size and Constraints
 
-### Container의 크기 결정 방식
+### How Container Determines Size
 
 ```typescript
-// 1. 명시적 크기 지정
+// 1. Explicit size specification
 Container({
   width: 200,
   height: 100,
-  child: Text('고정 크기')
+  child: Text('Fixed size')
 })
 
-// 2. 자식 크기에 맞춤 (기본)
+// 2. Fit to child size (default)
 Container({
   padding: EdgeInsets.all(16),
-  child: Text('자식 크기에 맞춤')
+  child: Text('Fit to child size')
 })
 
-// 3. 사용 가능한 공간 모두 차지 (자식 없음)
+// 3. Take all available space (no child)
 Container({
-  color: 'red'  // 자식이 없으면 최대 크기
+  color: 'red'  // Maximum size if no child
 })
 ```
 
-## 🚀 다음 단계
+## 🚀 Next Steps
 
-Hello World 앱을 성공적으로 만들었다면, 다음 튜토리얼에서 상호작용을 추가해보겠습니다:
+If you've successfully created the Hello World app, let's add interaction in the next tutorial:
 
-- **다음**: [기본 상호작용](./3_basic-interactions) - 버튼 클릭과 상태 변경 배우기
-- **관련**: [Container 스타일링](../2_basic-widgets/1_container-styling) - Container의 고급 스타일링 배우기
-- **관련**: [Text 스타일링](../2_basic-widgets/2_text-styling) - Text의 다양한 스타일 옵션 배우기
+- **Next**: [Basic Interactions](./3_basic-interactions) - Learn button clicks and state changes
+- **Related**: [Container Styling](../2_basic-widgets/1_container-styling) - Learn advanced Container styling
+- **Related**: [Text Styling](../2_basic-widgets/2_text-styling) - Learn various Text style options
 
-## 💡 핵심 정리
+## 💡 Key Summary
 
-1. **Container**: 박스 만들기, 여백 설정, 색상 적용
-2. **Text**: 텍스트 표시, 폰트 스타일링
-3. **Column**: 여러 위젯을 세로로 배치
-4. **위젯 트리**: 위젯을 중첩해서 복잡한 UI 구성
-5. **조합**: 간단한 위젯들을 조합해서 원하는 UI 만들기
+1. **Container**: Create boxes, set margins, apply colors
+2. **Text**: Display text, font styling
+3. **Column**: Arrange multiple widgets vertically
+4. **Widget Tree**: Compose complex UI by nesting widgets
+5. **Composition**: Create desired UI by combining simple widgets
 
-이제 Flitter의 기본 위젯들을 사용할 수 있게 되었습니다! 다음 튜토리얼에서는 사용자 상호작용을 추가하는 방법을 배워보겠습니다.
+Now you can use Flitter's basic widgets! In the next tutorial, we'll learn how to add user interactions.

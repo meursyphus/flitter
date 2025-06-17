@@ -1,6 +1,6 @@
 ---
-title: "설치 및 환경 설정"
-description: "Flitter 개발을 위한 환경을 설정하고 첫 번째 프로젝트를 시작해보세요"
+title: "Installation and Environment Setup"
+description: "Set up your environment for Flitter development and start your first project"
 files:
   App.js: |
     import React from 'react';
@@ -18,13 +18,13 @@ files:
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('Flitter 설치를 시작해보세요!', {
+              Text('Get started with Flitter installation!', {
                 style: new TextStyle({
                   fontSize: 24,
                   fontWeight: 'bold'
                 })
               }),
-              Text('아래 단계를 따라 Flitter를 설치하고 설정하세요.', {
+              Text('Follow the steps below to install and set up Flitter.', {
                 style: new TextStyle({
                   fontSize: 14,
                   color: '#6b7280'
@@ -57,7 +57,7 @@ solved_files:
           color: '#e3f2fd',
           padding: EdgeInsets.all(20),
           child: Center({
-            child: Text('🎉 Flitter 설치 완료!', {
+            child: Text('🎉 Flitter Installation Complete!', {
               style: new TextStyle({
                 fontSize: 20,
                 fontWeight: 'bold'
@@ -77,101 +77,101 @@ solved_files:
     }
 ---
 
-# 설치 및 환경 설정
+# Installation and Environment Setup
 
-Flitter를 처음 시작하는 분들을 위한 단계별 설치 가이드입니다. 이 튜토리얼을 완료하면 React 프로젝트에서 Flitter를 사용할 수 있게 됩니다.
+This is a step-by-step installation guide for those who are new to Flitter. After completing this tutorial, you'll be able to use Flitter in React projects.
 
-## 🎯 학습 목표
+## 🎯 Learning Objectives
 
-이 튜토리얼을 완료하면 다음을 할 수 있습니다:
+After completing this tutorial, you'll be able to:
 
-- [ ] Node.js와 npm 환경이 올바르게 설정되어 있는지 확인
-- [ ] 새로운 React 프로젝트 생성
-- [ ] Flitter 패키지 설치
-- [ ] 첫 번째 Flitter 위젯 렌더링
-- [ ] 개발 서버 실행 및 결과 확인
+- [ ] Verify that Node.js and npm environment are properly set up
+- [ ] Create a new React project
+- [ ] Install Flitter packages
+- [ ] Render your first Flitter widget
+- [ ] Run the development server and see the results
 
-## 📋 사전 요구사항
+## 📋 Prerequisites
 
-- **Node.js 18 이상** - [Node.js 공식 사이트](https://nodejs.org/)에서 다운로드
-- **npm, yarn, 또는 pnpm** - Node.js와 함께 자동 설치됨
-- **기본적인 React 지식** - JSX와 컴포넌트 개념 이해
+- **Node.js 18 or higher** - Download from [Node.js official site](https://nodejs.org/)
+- **npm, yarn, or pnpm** - Automatically installed with Node.js
+- **Basic React knowledge** - Understanding of JSX and component concepts
 
-## 🚀 1단계: 환경 확인
+## 🚀 Step 1: Environment Check
 
-먼저 개발 환경이 올바르게 설정되어 있는지 확인해보겠습니다.
+First, let's verify that your development environment is properly set up.
 
-터미널을 열고 다음 명령어를 실행하세요:
+Open a terminal and run the following commands:
 
 ```bash
-# Node.js 버전 확인 (18 이상이어야 함)
+# Check Node.js version (should be 18 or higher)
 node --version
 
-# npm 버전 확인
+# Check npm version
 npm --version
 ```
 
-출력 예시:
+Expected output:
 ```
 v20.10.0
 10.2.3
 ```
 
-> ⚠️ **Node.js 버전이 18 미만이라면?**  
-> [Node.js 공식 사이트](https://nodejs.org/)에서 최신 LTS 버전을 설치해주세요.
+> ⚠️ **If your Node.js version is below 18?**  
+> Please install the latest LTS version from [Node.js official site](https://nodejs.org/).
 
-## 🏗️ 2단계: 새 프로젝트 생성
+## 🏗️ Step 2: Create New Project
 
-Vite를 사용해서 새로운 React 프로젝트를 생성합니다:
+Create a new React project using Vite:
 
 ```bash
-# 새 프로젝트 생성
+# Create new project
 npm create vite@latest my-flitter-app -- --template react
 
-# 프로젝트 폴더로 이동
+# Navigate to project folder
 cd my-flitter-app
 
-# 기본 의존성 설치
+# Install basic dependencies
 npm install
 ```
 
-## 📦 3단계: Flitter 패키지 설치
+## 📦 Step 3: Install Flitter Packages
 
-이제 Flitter 관련 패키지를 설치합니다:
+Now install the Flitter-related packages:
 
 ```bash
-# Flitter 핵심 패키지와 React 통합 패키지 설치
+# Install Flitter core package and React integration package
 npm install @meursyphus/flitter @meursyphus/flitter-react
 ```
 
-설치되는 패키지:
-- `@meursyphus/flitter`: Flitter 핵심 라이브러리
-- `@meursyphus/flitter-react`: React 통합을 위한 컴포넌트
+Packages being installed:
+- `@meursyphus/flitter`: Flitter core library
+- `@meursyphus/flitter-react`: Component for React integration
 
-## 🔧 4단계: 첫 번째 Flitter 위젯 만들기
+## 🔧 Step 4: Create Your First Flitter Widget
 
-이제 `src/App.jsx` 파일을 수정해서 첫 번째 Flitter 위젯을 만들어보겠습니다.
+Now let's modify the `src/App.jsx` file to create your first Flitter widget.
 
-### TODO: 코드 완성하기
+### TODO: Complete the Code
 
-아래 코드에서 `TODO` 부분을 완성해보세요:
+Complete the `TODO` sections in the code below:
 
 ```jsx
 import React from 'react';
-// TODO: Widget 컴포넌트를 import 하세요
-// TODO: Container와 Text 위젯을 import 하세요
+// TODO: Import the Widget component
+// TODO: Import Container and Text widgets
 
 function App() {
-  // TODO: Container 위젯을 만들어보세요
-  // 힌트: 파란색 배경(#e3f2fd)과 20px 여백을 가진 컨테이너
-  // 힌트: "🎉 Flitter 설치 완료!" 텍스트를 포함
+  // TODO: Create a Container widget
+  // Hint: Container with blue background (#e3f2fd) and 20px padding
+  // Hint: Include "🎉 Flitter Installation Complete!" text
   const widget = null;
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Flitter 설치 성공!</h1>
-      {/* TODO: Widget 컴포넌트로 위젯을 렌더링하세요 */}
-      {/* 힌트: canvas 렌더러 사용, 300x100 크기 */}
+      <h1>Flitter Installation Success!</h1>
+      {/* TODO: Render the widget using Widget component */}
+      {/* Hint: Use canvas renderer, 300x100 size */}
     </div>
   );
 }
@@ -179,7 +179,7 @@ function App() {
 export default App;
 ```
 
-### 완성된 코드
+### Complete Code
 
 ```jsx
 import React from 'react';
@@ -190,12 +190,12 @@ function App() {
   const widget = Container({
     color: '#e3f2fd',
     padding: { all: 20 },
-    child: Text('🎉 Flitter 설치 완료!')
+    child: Text('🎉 Flitter Installation Complete!')
   });
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Flitter 설치 성공!</h1>
+      <h1>Flitter Installation Success!</h1>
       <Widget 
         widget={widget}
         renderer="canvas"
@@ -213,76 +213,76 @@ function App() {
 export default App;
 ```
 
-## 🏃 5단계: 개발 서버 실행
+## 🏃 Step 5: Run Development Server
 
-이제 개발 서버를 실행해서 결과를 확인해보겠습니다:
+Now run the development server to see the results:
 
 ```bash
 npm run dev
 ```
 
-브라우저에서 `http://localhost:5173`을 열면 다음을 볼 수 있습니다:
+Open `http://localhost:5173` in your browser and you should see:
 
-- "Flitter 설치 성공!" 제목
-- 파란색 배경에 "🎉 Flitter 설치 완료!" 텍스트가 있는 박스
+- "Flitter Installation Success!" title
+- A box with blue background containing "🎉 Flitter Installation Complete!" text
 
-## 🎯 예상 결과
+## 🎯 Expected Results
 
-설치가 성공적으로 완료되면:
+If the installation is successfully completed:
 
-1. **개발 서버가 정상 실행됨**: 터미널에 "Local: http://localhost:5173" 표시
-2. **Flitter 위젯이 렌더링됨**: 파란색 배경의 박스가 화면에 표시
-3. **콘솔 에러 없음**: 브라우저 개발자 도구에서 에러 메시지 없음
+1. **Development server runs normally**: Terminal shows "Local: http://localhost:5173"
+2. **Flitter widget renders**: Blue background box appears on screen
+3. **No console errors**: No error messages in browser developer tools
 
-## 🔧 연습 문제
+## 🔧 Practice Problems
 
-기본 설치를 완료했다면, 다음을 시도해보세요:
+If you've completed the basic installation, try the following:
 
-### 연습 1: 색상 변경하기
-Container의 `color` 속성을 다른 색상으로 변경해보세요:
-- `'#ffebee'` (연한 빨강)
-- `'#f3e5f5'` (연한 보라)
-- `'#e8f5e8'` (연한 초록)
+### Exercise 1: Change Colors
+Change the Container's `color` property to different colors:
+- `'#ffebee'` (light red)
+- `'#f3e5f5'` (light purple)
+- `'#e8f5e8'` (light green)
 
-### 연습 2: 텍스트 변경하기
-Text 위젯의 내용을 자신만의 메시지로 변경해보세요.
+### Exercise 2: Change Text
+Change the Text widget content to your own message.
 
-### 연습 3: 크기 조정하기
-Widget 컴포넌트의 `style` 속성에서 `width`와 `height`를 다른 값으로 변경해보세요.
+### Exercise 3: Adjust Size
+Change the `width` and `height` values in the Widget component's `style` property.
 
-## 🚨 흔한 실수와 해결법
+## 🚨 Common Mistakes and Solutions
 
-### 문제 1: 모듈을 찾을 수 없다는 에러
+### Problem 1: Module not found error
 ```
 Error: Cannot resolve module '@meursyphus/flitter'
 ```
 
-**해결법**: 패키지가 올바르게 설치되었는지 확인하세요:
+**Solution**: Verify packages are properly installed:
 ```bash
 npm install @meursyphus/flitter @meursyphus/flitter-react
 ```
 
-### 문제 2: 빈 화면이 나타남
-**원인**: 위젯이 올바르게 생성되지 않았거나 Widget 컴포넌트에 전달되지 않음
+### Problem 2: Blank screen appears
+**Cause**: Widget not properly created or not passed to Widget component
 
-**해결법**: 
-- `widget` 변수가 `null`이 아닌지 확인
-- Widget 컴포넌트에 `widget` prop이 전달되었는지 확인
+**Solution**: 
+- Check that `widget` variable is not `null`
+- Verify that `widget` prop is passed to Widget component
 
-### 문제 3: Node.js 버전 에러
+### Problem 3: Node.js version error
 ```
 Error: Node.js version 16.x is not supported
 ```
 
-**해결법**: Node.js 18 이상으로 업데이트하세요.
+**Solution**: Update to Node.js 18 or higher.
 
-## 🚀 다음 단계
+## 🚀 Next Steps
 
-설치가 완료되었다면, 다음 튜토리얼에서 더 복잡한 위젯을 만들어보겠습니다:
+If installation is complete, let's move on to create more complex widgets in the next tutorial:
 
-- **다음**: [첫 번째 Flitter 앱](./2_hello-world) - 더 복잡한 위젯 구조 익히기
-- **관련 문서**: [위젯 기초](../3_widget-interface-basics/1_what-are-widgets) - 위젯 개념 자세히 알아보기
+- **Next**: [Your First Flitter App](./2_hello-world) - Learn more complex widget structures
+- **Related docs**: [Widget Basics](../3_widget-interface-basics/1_what-are-widgets) - Learn widget concepts in detail
 
-> 📚 **더 자세한 정보가 필요하다면?**  
-> 모든 프레임워크별 설치 방법과 고급 설정은 
-> [설치 문서](/docs/ko/getting-started/installation/)를 참고하세요.
+> 📚 **Need more detailed information?**  
+> For all framework-specific installation methods and advanced settings,
+> see the [Installation Documentation](/docs/en/getting-started/installation/).

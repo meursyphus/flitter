@@ -1,6 +1,6 @@
 ---
-title: "Container로 스타일링"
-description: "색깔 있는 사각형을 만들고 padding, margin, 테두리를 설정해보세요"
+title: "Styling with Container"
+description: "Create colored rectangles and set padding, margin, and borders"
 files:
   App.js: |
     import React from 'react';
@@ -9,12 +9,12 @@ files:
 
     class ContainerStylingApp extends StatelessWidget {
       build(context) {
-        // TODO: 빨간색 배경의 Container를 만들어보세요
+        // TODO: Create a Container with a red background
         return Container({
           width: 300,
           height: 200,
           child: Center({
-            child: Text('TODO: Container 스타일링')
+            child: Text('TODO: Container styling')
           })
         });
       }
@@ -64,144 +64,144 @@ solved_files:
     }
 ---
 
-# Container로 스타일링
+# Styling with Container
 
-Container는 Flitter에서 가장 기본적이면서도 강력한 위젯입니다. HTML의 div 태그와 비슷하게 다른 위젯을 감싸고, 색상, 테두리, 여백 등의 스타일을 적용할 수 있습니다. 이 튜토리얼에서는 Container의 모든 기능을 실습으로 배워보겠습니다.
+Container is the most fundamental yet powerful widget in Flitter. Similar to HTML's div tag, it wraps other widgets and allows you to apply styling such as colors, borders, padding, and more. In this tutorial, we'll learn all of Container's features through hands-on practice.
 
-## 🎯 학습 목표
+## 🎯 Learning Objectives
 
-이 튜토리얼을 마치면 다음을 할 수 있게 됩니다:
+After completing this tutorial, you'll be able to:
 
-- [ ] Container에 배경색과 장식 설정하기
-- [ ] padding과 margin으로 여백 조정하기
-- [ ] 테두리와 둥근 모서리 만들기
-- [ ] 크기를 지정한 박스 만들기
-- [ ] 그림자와 그라데이션 효과 적용하기
+- [ ] Set background colors and decorations on Container
+- [ ] Adjust spacing with padding and margin
+- [ ] Create borders and rounded corners
+- [ ] Make boxes with specified sizes
+- [ ] Apply shadow and gradient effects
 
-## 📚 Container의 핵심 개념
+## 📚 Core Container Concepts
 
-### Container가 하는 일
+### What Container Does
 
-Container는 다음과 같은 기능을 제공합니다:
+Container provides the following functionality:
 
-1. **박스 모델**: 크기, 여백, 테두리를 설정
-2. **장식**: 배경색, 그라데이션, 그림자 적용
-3. **정렬**: 자식 위젯의 위치 조정
-4. **제약**: 최소/최대 크기 제한
+1. **Box Model**: Set size, spacing, and borders
+2. **Decoration**: Apply background colors, gradients, and shadows
+3. **Alignment**: Position child widgets
+4. **Constraints**: Set minimum/maximum size limits
 
-### Container의 주요 속성 전체 목록
+### Complete List of Container Properties
 
 ```typescript
 Container({
-  // 크기 설정
-  width: 200,           // 너비 (픽셀)
-  height: 100,          // 높이 (픽셀)
+  // Size settings
+  width: 200,           // Width (pixels)
+  height: 100,          // Height (pixels)
   
-  // 여백 설정
-  padding: EdgeInsets.all(16),  // 안쪽 여백
-  margin: EdgeInsets.all(8),    // 바깥쪽 여백
+  // Spacing settings
+  padding: EdgeInsets.all(16),  // Inner padding
+  margin: EdgeInsets.all(8),    // Outer margin
   
-  // 장식 설정
+  // Decoration settings
   decoration: new BoxDecoration({
-    color: '#FF5722',                    // 배경색
-    border: Border.all({ color: '#000', width: 1 }),  // 테두리
-    borderRadius: BorderRadius.circular(8),           // 둥근 모서리
-    boxShadow: [new BoxShadow({ /* 그림자 */ })],    // 그림자
-    gradient: new LinearGradient({ /* 그라데이션 */ }) // 그라데이션
+    color: '#FF5722',                    // Background color
+    border: Border.all({ color: '#000', width: 1 }),  // Border
+    borderRadius: BorderRadius.circular(8),           // Rounded corners
+    boxShadow: [new BoxShadow({ /* shadow */ })],    // Shadow
+    gradient: new LinearGradient({ /* gradient */ }) // Gradient
   }),
   
-  // 정렬
-  alignment: Alignment.center,   // 자식 위젯 정렬
+  // Alignment
+  alignment: Alignment.center,   // Child widget alignment
   
-  // 제약
+  // Constraints
   constraints: new BoxConstraints({
-    minWidth: 100,       // 최소 너비
-    maxWidth: 300,       // 최대 너비
-    minHeight: 50,       // 최소 높이
-    maxHeight: 200       // 최대 높이
+    minWidth: 100,       // Minimum width
+    maxWidth: 300,       // Maximum width
+    minHeight: 50,       // Minimum height
+    maxHeight: 200       // Maximum height
   }),
   
-  // 변형
-  transform: Matrix4.rotationZ(0.1),  // 회전, 크기 조정 등
+  // Transform
+  transform: Matrix4.rotationZ(0.1),  // Rotation, scaling, etc.
   
-  // 자식 위젯
-  child: Text('Hello')  // 하나의 자식 위젯
+  // Child widget
+  child: Text('Hello')  // Single child widget
 })
 ```
 
-## 🚀 실습 1: 기본 색상 박스 만들기
+## 🚀 Practice 1: Creating Basic Color Boxes
 
-가장 간단한 Container부터 시작해봅시다.
+Let's start with the simplest Container.
 
 ```typescript
 import { Container, BoxDecoration } from "@meursyphus/flitter";
 
-// 빨간색 배경의 Container
+// Container with red background
 const redBox = Container({
   decoration: new BoxDecoration({
-    color: '#FF5722'  // 16진수 색상 코드
+    color: '#FF5722'  // Hexadecimal color code
   }),
   width: 100,
   height: 100
 });
 ```
 
-### 색상 지정 방법들
+### Color Specification Methods
 
 ```typescript
-// 16진수 색상 코드
+// Hexadecimal color codes
 color: '#FF5722'
 color: '#f57c00'
 
-// RGB 값
+// RGB values
 color: 'rgb(255, 87, 34)'
-color: 'rgba(255, 87, 34, 0.8)'  // 투명도 포함
+color: 'rgba(255, 87, 34, 0.8)'  // With transparency
 
-// HSL 값
+// HSL values
 color: 'hsl(14, 100%, 57%)'
 color: 'hsla(14, 100%, 57%, 0.8)'
 
-// CSS 색상 이름
+// CSS color names
 color: 'red'
 color: 'blue'
 color: 'transparent'
 ```
 
-### 💻 연습해보기
+### 💻 Try It Out
 
-1. 위 예제 코드를 `App.js`에 입력해보세요
-2. 색상을 다른 색으로 변경해보세요 (예: `'#2196F3'`, `'#4CAF50'`)
-3. 크기를 변경해보세요 (예: `width: 200, height: 150`)
+1. Enter the example code above into `App.js`
+2. Change the color to different colors (e.g., `'#2196F3'`, `'#4CAF50'`)
+3. Change the size (e.g., `width: 200, height: 150`)
 
-## 🚀 실습 2: EdgeInsets로 여백 설정
+## 🚀 Practice 2: Setting Spacing with EdgeInsets
 
-Container의 안쪽 여백(padding)과 바깥쪽 여백(margin)을 설정해봅시다.
+Let's set the inner padding and outer margin of the Container.
 
 ```typescript
 import { Container, Text, BoxDecoration, EdgeInsets } from "@meursyphus/flitter";
 
 const paddedContainer = Container({
   decoration: new BoxDecoration({
-    color: '#E3F2FD'  // 연한 파랑
+    color: '#E3F2FD'  // Light blue
   }),
-  padding: EdgeInsets.all(20),  // 모든 방향에 20픽셀 여백
-  child: Text("안녕하세요!")
+  padding: EdgeInsets.all(20),  // 20 pixel padding in all directions
+  child: Text("Hello!")
 });
 ```
 
-### EdgeInsets 사용법 완전 가이드
+### Complete EdgeInsets Usage Guide
 
 ```typescript
-// 1. 모든 방향에 같은 여백
+// 1. Same spacing in all directions
 EdgeInsets.all(20)
 
-// 2. 상하, 좌우 여백 따로 지정
+// 2. Separate vertical and horizontal spacing
 EdgeInsets.symmetric({ 
-  vertical: 16,    // 위아래 16픽셀
-  horizontal: 24   // 좌우 24픽셀
+  vertical: 16,    // Top and bottom 16 pixels
+  horizontal: 24   // Left and right 24 pixels
 })
 
-// 3. 각 방향 개별 지정
+// 3. Individual direction spacing
 EdgeInsets.only({ 
   top: 10, 
   right: 15, 
@@ -209,41 +209,41 @@ EdgeInsets.only({
   left: 15 
 })
 
-// 4. 생성자를 직접 사용
+// 4. Direct constructor usage
 new EdgeInsets({ top: 8, right: 16, bottom: 8, left: 16 })
 
-// 5. 자주 사용하는 패턴들
-EdgeInsets.zero                    // 여백 없음
-EdgeInsets.fromLTRB(10, 20, 10, 5) // 왼쪽, 위, 오른쪽, 아래 순서
+// 5. Common patterns
+EdgeInsets.zero                    // No spacing
+EdgeInsets.fromLTRB(10, 20, 10, 5) // Left, top, right, bottom order
 ```
 
-### padding vs margin 차이점
+### padding vs margin Differences
 
 ```typescript
-// padding: Container 안쪽 여백 (자식과 Container 경계 사이)
+// padding: Inner spacing (between child and Container boundary)
 Container({
   decoration: new BoxDecoration({ color: 'lightblue' }),
-  padding: EdgeInsets.all(20),  // 텍스트와 파란 박스 사이 간격
-  child: Text("패딩 예제")
+  padding: EdgeInsets.all(20),  // Space between text and blue box
+  child: Text("Padding example")
 })
 
-// margin: Container 바깥쪽 여백 (Container와 주변 요소 사이)
+// margin: Outer spacing (between Container and surrounding elements)
 Container({
   decoration: new BoxDecoration({ color: 'lightgreen' }),
-  margin: EdgeInsets.all(20),   // 초록 박스와 주변 요소 사이 간격
-  child: Text("마진 예제")
+  margin: EdgeInsets.all(20),   // Space between green box and surrounding elements
+  child: Text("Margin example")
 })
 ```
 
-### 💻 연습해보기
+### 💻 Try It Out
 
-1. padding 값을 바꿔보세요 (10, 30, 50 등)
-2. `EdgeInsets.symmetric`으로 상하/좌우 여백을 다르게 설정해보세요
-3. margin과 padding을 함께 사용해보세요
+1. Change the padding values (10, 30, 50, etc.)
+2. Set different vertical/horizontal spacing with `EdgeInsets.symmetric`
+3. Use both margin and padding together
 
-## 🚀 실습 3: Border와 BorderRadius로 테두리 설정
+## 🚀 Practice 3: Setting Borders and BorderRadius
 
-이제 테두리를 추가하고 모서리를 둥글게 만들어봅시다.
+Now let's add borders and make rounded corners.
 
 ```typescript
 import { 
@@ -253,26 +253,26 @@ import {
 
 const borderedContainer = Container({
   decoration: new BoxDecoration({
-    color: '#FFF3E0',  // 연한 주황
-    border: Border.all({ color: '#FF9800', width: 2 }),  // 주황 테두리
-    borderRadius: BorderRadius.circular(12)  // 둥근 모서리
+    color: '#FFF3E0',  // Light orange
+    border: Border.all({ color: '#FF9800', width: 2 }),  // Orange border
+    borderRadius: BorderRadius.circular(12)  // Rounded corners
   }),
   padding: EdgeInsets.all(16),
-  child: Text("둥근 모서리 박스")
+  child: Text("Rounded corner box")
 });
 ```
 
-### Border 설정 방법들
+### Border Setting Methods
 
 ```typescript
-// 1. 모든 방향에 같은 테두리
+// 1. Same border on all sides
 Border.all({ 
   color: '#FF9800', 
   width: 2,
   style: 'solid'  // 'solid', 'dotted', 'dashed', 'none'
 })
 
-// 2. 각 방향 개별 설정
+// 2. Individual side settings
 new Border({
   top: new BorderSide({ color: '#F44336', width: 3 }),
   right: new BorderSide({ color: '#4CAF50', width: 2 }),
@@ -280,25 +280,25 @@ new Border({
   left: new BorderSide({ color: '#FF9800', width: 2 })
 })
 
-// 3. 일부 방향만 설정 (다른 방향은 자동으로 none)
+// 3. Partial side settings (other sides automatically none)
 Border.symmetric({
-  vertical: new BorderSide({ color: '#9C27B0', width: 2 }),    // 위아래
-  horizontal: new BorderSide({ color: '#009688', width: 1 })   // 좌우
+  vertical: new BorderSide({ color: '#9C27B0', width: 2 }),    // Top and bottom
+  horizontal: new BorderSide({ color: '#009688', width: 1 })   // Left and right
 })
 
-// 4. 특정 방향만 설정
+// 4. Specific side only
 Border.only({
-  bottom: new BorderSide({ color: '#607D8B', width: 3 })  // 아래쪽만
+  bottom: new BorderSide({ color: '#607D8B', width: 3 })  // Bottom only
 })
 ```
 
-### BorderRadius 설정 방법들
+### BorderRadius Setting Methods
 
 ```typescript
-// 1. 모든 모서리 동일하게
+// 1. Same radius for all corners
 BorderRadius.circular(12)
 
-// 2. 각 모서리 개별 설정
+// 2. Individual corner settings
 BorderRadius.only({
   topLeft: 20,
   topRight: 20,
@@ -306,10 +306,10 @@ BorderRadius.only({
   bottomRight: 0
 })
 
-// 3. 타원형 모서리
-BorderRadius.elliptical(20, 10)  // 가로 20, 세로 10
+// 3. Elliptical corners
+BorderRadius.elliptical(20, 10)  // Width 20, height 10
 
-// 4. 생성자를 직접 사용
+// 4. Direct constructor usage
 new BorderRadius({
   topLeft: 15,
   topRight: 10,
@@ -318,16 +318,16 @@ new BorderRadius({
 })
 ```
 
-### 💻 연습해보기
+### 💻 Try It Out
 
-1. `borderRadius` 값을 바꿔보세요 (5, 20, 30 등)
-2. 테두리 색상과 두께를 변경해보세요
-3. `BorderRadius.only`로 일부 모서리만 둥글게 만들어보세요
-4. `Border.only`로 특정 방향에만 테두리를 적용해보세요
+1. Change the `borderRadius` value (5, 20, 30, etc.)
+2. Change border color and thickness
+3. Make only some corners rounded with `BorderRadius.only`
+4. Apply borders to specific directions with `Border.only`
 
-## 🚀 실습 4: BoxShadow로 그림자 효과
+## 🚀 Practice 4: Shadow Effects with BoxShadow
 
-박스에 그림자를 추가해서 입체감을 만들어봅시다.
+Let's add shadows to boxes to create depth.
 
 ```typescript
 import { Container, Text, BoxDecoration, BoxShadow, EdgeInsets } from "@meursyphus/flitter";
@@ -338,46 +338,46 @@ const shadowContainer = Container({
     borderRadius: BorderRadius.circular(8),
     boxShadow: [
       new BoxShadow({
-        color: 'rgba(0, 0, 0, 0.1)',  // 그림자 색상 (투명도 포함)
-        offset: { dx: 0, dy: 2 },     // 그림자 위치 (x, y)
-        blurRadius: 8,                // 흐림 정도
-        spreadRadius: 0               // 확산 정도
+        color: 'rgba(0, 0, 0, 0.1)',  // Shadow color (with transparency)
+        offset: { dx: 0, dy: 2 },     // Shadow position (x, y)
+        blurRadius: 8,                // Blur amount
+        spreadRadius: 0               // Spread amount
       })
     ]
   }),
   padding: EdgeInsets.all(16),
   margin: EdgeInsets.all(16),
-  child: Text("그림자가 있는 카드")
+  child: Text("Card with shadow")
 });
 ```
 
-### BoxShadow 속성 상세 설명
+### BoxShadow Properties Detail
 
 ```typescript
 new BoxShadow({
-  // 그림자 색상 (투명도 설정 필수)
-  color: 'rgba(0, 0, 0, 0.2)',     // 검은색 20% 투명도
-  color: 'rgba(255, 0, 0, 0.3)',   // 빨간색 30% 투명도
+  // Shadow color (transparency required)
+  color: 'rgba(0, 0, 0, 0.2)',     // Black with 20% transparency
+  color: 'rgba(255, 0, 0, 0.3)',   // Red with 30% transparency
   
-  // 그림자 위치 조정
-  offset: { dx: 2, dy: 4 },        // 오른쪽 2px, 아래쪽 4px
-  offset: { dx: -2, dy: -4 },      // 왼쪽 2px, 위쪽 4px
+  // Shadow position adjustment
+  offset: { dx: 2, dy: 4 },        // Right 2px, down 4px
+  offset: { dx: -2, dy: -4 },      // Left 2px, up 4px
   
-  // 흐림 정도 (값이 클수록 더 흐림)
-  blurRadius: 10,                  // 10px 흐림
+  // Blur amount (higher values = more blur)
+  blurRadius: 10,                  // 10px blur
   
-  // 그림자 크기 (양수: 확장, 음수: 축소)
-  spreadRadius: 2,                 // 2px 확장
+  // Shadow size (positive: expand, negative: shrink)
+  spreadRadius: 2,                 // 2px expansion
   
-  // 그림자 방향 (기본: 바깥쪽, true: 안쪽)
-  inset: false                     // false: 바깥 그림자, true: 안쪽 그림자
+  // Shadow direction (default: outward, true: inward)
+  inset: false                     // false: outer shadow, true: inner shadow
 })
 ```
 
-### 다양한 그림자 스타일 예제
+### Various Shadow Style Examples
 
 ```typescript
-// 1. 부드러운 그림자 (Material Design 스타일)
+// 1. Soft shadow (Material Design style)
 boxShadow: [
   new BoxShadow({
     color: 'rgba(0, 0, 0, 0.1)',
@@ -393,7 +393,7 @@ boxShadow: [
   })
 ]
 
-// 2. 강한 그림자
+// 2. Strong shadow
 boxShadow: [
   new BoxShadow({
     color: 'rgba(0, 0, 0, 0.3)',
@@ -403,7 +403,7 @@ boxShadow: [
   })
 ]
 
-// 3. 안쪽 그림자 (inset)
+// 3. Inner shadow (inset)
 boxShadow: [
   new BoxShadow({
     color: 'rgba(0, 0, 0, 0.2)',
@@ -414,10 +414,10 @@ boxShadow: [
   })
 ]
 
-// 4. 색상 그림자
+// 4. Colored shadow
 boxShadow: [
   new BoxShadow({
-    color: 'rgba(33, 150, 243, 0.4)',  // 파란색 그림자
+    color: 'rgba(33, 150, 243, 0.4)',  // Blue shadow
     offset: { dx: 0, dy: 4 },
     blurRadius: 12,
     spreadRadius: 0
@@ -425,122 +425,122 @@ boxShadow: [
 ]
 ```
 
-### 💻 연습해보기
+### 💻 Try It Out
 
-1. `offset` 값을 변경해서 그림자 방향을 바꿔보세요
-2. `blurRadius`를 조정해서 그림자 흐림 정도를 변경해보세요
-3. 여러 개의 BoxShadow를 조합해서 복합 그림자를 만들어보세요
-4. `inset: true`로 안쪽 그림자를 만들어보세요
+1. Change `offset` values to change shadow direction
+2. Adjust `blurRadius` to change shadow blur amount
+3. Combine multiple BoxShadows to create complex shadows
+4. Create inner shadows with `inset: true`
 
-## 🚀 실습 5: Gradient로 그라데이션 배경
+## 🚀 Practice 5: Gradient Backgrounds
 
-단색 배경 대신 그라데이션을 적용해봅시다.
+Let's apply gradients instead of solid colors.
 
 ```typescript
 import { Container, Text, BoxDecoration, LinearGradient, RadialGradient } from "@meursyphus/flitter";
 
-// 선형 그라데이션
+// Linear gradient
 const linearGradientContainer = Container({
   decoration: new BoxDecoration({
     gradient: new LinearGradient({
-      begin: 'topLeft',      // 시작점
-      end: 'bottomRight',    // 끝점
-      colors: ['#FF5722', '#FFC107']  // 색상 배열
+      begin: 'topLeft',      // Start point
+      end: 'bottomRight',    // End point
+      colors: ['#FF5722', '#FFC107']  // Color array
     }),
     borderRadius: BorderRadius.circular(12)
   }),
   padding: EdgeInsets.all(20),
-  child: Text("선형 그라데이션", {
+  child: Text("Linear Gradient", {
     style: new TextStyle({ color: 'white', fontWeight: 'bold' })
   })
 });
 
-// 원형 그라데이션
+// Radial gradient
 const radialGradientContainer = Container({
   decoration: new BoxDecoration({
     gradient: new RadialGradient({
-      center: 'center',      // 중심점
-      radius: 0.8,           // 반지름 (0.0 ~ 1.0)
+      center: 'center',      // Center point
+      radius: 0.8,           // Radius (0.0 ~ 1.0)
       colors: ['#2196F3', '#1976D2']
     }),
     borderRadius: BorderRadius.circular(12)
   }),
   padding: EdgeInsets.all(20),
-  child: Text("원형 그라데이션", {
+  child: Text("Radial Gradient", {
     style: new TextStyle({ color: 'white', fontWeight: 'bold' })
   })
 });
 ```
 
-### LinearGradient 설정 방법
+### LinearGradient Setup
 
 ```typescript
 new LinearGradient({
-  // 방향 설정 (문자열)
-  begin: 'topLeft',     // 시작점
-  end: 'bottomRight',   // 끝점
+  // Direction setting (string)
+  begin: 'topLeft',     // Start point
+  end: 'bottomRight',   // End point
   
-  // 또는 좌표로 설정 (0.0 ~ 1.0)
-  begin: { x: 0.0, y: 0.0 },    // 왼쪽 위
-  end: { x: 1.0, y: 1.0 },      // 오른쪽 아래
+  // Or coordinate setting (0.0 ~ 1.0)
+  begin: { x: 0.0, y: 0.0 },    // Top left
+  end: { x: 1.0, y: 1.0 },      // Bottom right
   
-  // 색상 배열 (최소 2개)
+  // Color array (minimum 2)
   colors: [
-    '#FF5722',    // 시작 색상
-    '#FFC107',    // 중간 색상 (선택사항)
-    '#4CAF50'     // 끝 색상
+    '#FF5722',    // Start color
+    '#FFC107',    // Middle color (optional)
+    '#4CAF50'     // End color
   ],
   
-  // 색상 위치 지정 (선택사항, 0.0 ~ 1.0)
-  stops: [0.0, 0.5, 1.0]  // 각 색상의 위치
+  // Color position specification (optional, 0.0 ~ 1.0)
+  stops: [0.0, 0.5, 1.0]  // Position of each color
 })
 ```
 
-### 그라데이션 방향 옵션
+### Gradient Direction Options
 
 ```typescript
-// 문자열로 지정
-begin: 'topLeft',     end: 'bottomRight'   // 대각선
-begin: 'topCenter',   end: 'bottomCenter'  // 세로
-begin: 'centerLeft',  end: 'centerRight'   // 가로
-begin: 'topRight',    end: 'bottomLeft'    // 반대 대각선
+// String specification
+begin: 'topLeft',     end: 'bottomRight'   // Diagonal
+begin: 'topCenter',   end: 'bottomCenter'  // Vertical
+begin: 'centerLeft',  end: 'centerRight'   // Horizontal
+begin: 'topRight',    end: 'bottomLeft'    // Opposite diagonal
 
-// 좌표로 지정 (더 정밀한 제어)
-begin: { x: 0.0, y: 0.0 }  // 왼쪽 위 (0,0)
-end: { x: 1.0, y: 0.0 }    // 오른쪽 위 (1,0)
-end: { x: 0.0, y: 1.0 }    // 왼쪽 아래 (0,1)
-end: { x: 1.0, y: 1.0 }    // 오른쪽 아래 (1,1)
+// Coordinate specification (more precise control)
+begin: { x: 0.0, y: 0.0 }  // Top left (0,0)
+end: { x: 1.0, y: 0.0 }    // Top right (1,0)
+end: { x: 0.0, y: 1.0 }    // Bottom left (0,1)
+end: { x: 1.0, y: 1.0 }    // Bottom right (1,1)
 ```
 
-### RadialGradient 설정 방법
+### RadialGradient Setup
 
 ```typescript
 new RadialGradient({
-  // 중심점 위치
+  // Center position
   center: 'center',           // 'center', 'topLeft', 'topRight', 'bottomLeft', 'bottomRight'
-  center: { x: 0.3, y: 0.7 }, // 또는 좌표로 지정
+  center: { x: 0.3, y: 0.7 }, // Or coordinate specification
   
-  // 반지름 (0.0 ~ 1.0)
+  // Radius (0.0 ~ 1.0)
   radius: 0.8,
   
-  // 색상 배열
+  // Color array
   colors: ['#E91E63', '#9C27B0'],
   
-  // 색상 위치 (선택사항)
+  // Color positions (optional)
   stops: [0.0, 1.0]
 })
 ```
 
-### 💻 연습해보기
+### 💻 Try It Out
 
-1. LinearGradient의 방향을 바꿔보세요
-2. 3개 이상의 색상으로 그라데이션을 만들어보세요
-3. RadialGradient의 중심점과 반지름을 조정해보세요
-4. stops를 사용해서 색상 위치를 조정해보세요
+1. Change LinearGradient direction
+2. Create gradients with 3 or more colors
+3. Adjust RadialGradient center point and radius
+4. Use stops to adjust color positions
 
-## 🚀 실습 6: 정렬과 크기 제약
+## 🚀 Practice 6: Alignment and Size Constraints
 
-Container 안에서 자식 위젯의 정렬과 크기 제약을 설정해봅시다.
+Let's set child widget alignment and size constraints within Container.
 
 ```typescript
 import { Container, Text, BoxDecoration, BoxConstraints, Alignment } from "@meursyphus/flitter";
@@ -552,8 +552,8 @@ const alignedContainer = Container({
     color: '#F5F5F5',
     border: Border.all({ color: '#BDBDBD', width: 1 })
   }),
-  alignment: Alignment.bottomRight,  // 오른쪽 아래 정렬
-  child: Text("정렬된 텍스트")
+  alignment: Alignment.bottomRight,  // Bottom right alignment
+  child: Text("Aligned text")
 });
 
 const constrainedContainer = Container({
@@ -564,59 +564,59 @@ const constrainedContainer = Container({
     maxHeight: 150
   }),
   decoration: new BoxDecoration({ color: '#E8F5E8' }),
-  child: Text("크기 제약이 있는 컨테이너")
+  child: Text("Container with size constraints")
 });
 ```
 
-### alignment 정렬 옵션
+### alignment Alignment Options
 
 ```typescript
-// Alignment 상수로 지정
-alignment: Alignment.topLeft        // 왼쪽 위
-alignment: Alignment.topCenter      // 위쪽 중앙
-alignment: Alignment.topRight       // 오른쪽 위
-alignment: Alignment.centerLeft     // 왼쪽 중앙
-alignment: Alignment.center         // 정중앙
-alignment: Alignment.centerRight    // 오른쪽 중앙
-alignment: Alignment.bottomLeft     // 왼쪽 아래
-alignment: Alignment.bottomCenter   // 아래쪽 중앙
-alignment: Alignment.bottomRight    // 오른쪽 아래
+// Alignment constants
+alignment: Alignment.topLeft        // Top left
+alignment: Alignment.topCenter      // Top center
+alignment: Alignment.topRight       // Top right
+alignment: Alignment.centerLeft     // Center left
+alignment: Alignment.center         // Center
+alignment: Alignment.centerRight    // Center right
+alignment: Alignment.bottomLeft     // Bottom left
+alignment: Alignment.bottomCenter   // Bottom center
+alignment: Alignment.bottomRight    // Bottom right
 
-// 사용자 정의 Alignment 생성 (-1.0 ~ 1.0)
-alignment: new Alignment({ x: -1.0, y: -1.0 })  // 왼쪽 위
-alignment: new Alignment({ x: 0.0, y: 0.0 })    // 정중앙
-alignment: new Alignment({ x: 1.0, y: 1.0 })    // 오른쪽 아래
-alignment: new Alignment({ x: 0.5, y: -0.5 })   // 사용자 정의 위치
+// Custom Alignment creation (-1.0 ~ 1.0)
+alignment: new Alignment({ x: -1.0, y: -1.0 })  // Top left
+alignment: new Alignment({ x: 0.0, y: 0.0 })    // Center
+alignment: new Alignment({ x: 1.0, y: 1.0 })    // Bottom right
+alignment: new Alignment({ x: 0.5, y: -0.5 })   // Custom position
 ```
 
-### BoxConstraints 크기 제약
+### BoxConstraints Size Constraints
 
 ```typescript
 new BoxConstraints({
-  // 최소 크기
-  minWidth: 100,     // 최소 너비
-  minHeight: 50,     // 최소 높이
+  // Minimum size
+  minWidth: 100,     // Minimum width
+  minHeight: 50,     // Minimum height
   
-  // 최대 크기
-  maxWidth: 300,     // 최대 너비
-  maxHeight: 200,    // 최대 높이
+  // Maximum size
+  maxWidth: 300,     // Maximum width
+  maxHeight: 200,    // Maximum height
 })
 
-// 자주 사용하는 패턴들
-BoxConstraints.tight({ width: 100, height: 100 })  // 고정 크기
-BoxConstraints.loose({ width: 200, height: 150 })  // 최대 크기만 제한
-BoxConstraints.expand()                             // 가능한 모든 공간 차지
+// Common patterns
+BoxConstraints.tight({ width: 100, height: 100 })  // Fixed size
+BoxConstraints.loose({ width: 200, height: 150 })  // Maximum size only
+BoxConstraints.expand()                             // Take all available space
 ```
 
-### 💻 연습해보기
+### 💻 Try It Out
 
-1. 다양한 alignment 값을 시도해보세요
-2. BoxConstraints로 크기 제약을 설정해보세요
-3. 좌표 기반 alignment를 사용해보세요
+1. Try different alignment values
+2. Set size constraints with BoxConstraints
+3. Use coordinate-based alignment
 
-## 🎨 실습 7: 완전한 카드 컴포넌트 만들기
+## 🎨 Practice 7: Creating Complete Card Components
 
-지금까지 배운 모든 내용을 조합해서 실제 사용할 수 있는 고급 카드를 만들어봅시다.
+Let's create an advanced card that can be used in real applications by combining everything we've learned.
 
 ```typescript
 import { 
@@ -645,7 +645,7 @@ const profileCard = Container({
   child: Column({
     crossAxisAlignment: 'start',
     children: [
-      // 헤더 영역
+      // Header area
       Container({
         padding: EdgeInsets.all(20),
         child: Row({
@@ -654,7 +654,7 @@ const profileCard = Container({
             Column({
               crossAxisAlignment: 'start',
               children: [
-                Text("김개발", {
+                Text("John Developer", {
                   style: new TextStyle({
                     fontSize: 24,
                     fontWeight: 'bold',
@@ -678,7 +678,7 @@ const profileCard = Container({
                 border: Border.all({ color: 'white', width: 2 })
               }),
               alignment: Alignment.center,
-              child: Text("김", {
+              child: Text("J", {
                 style: new TextStyle({
                   fontSize: 24,
                   fontWeight: 'bold',
@@ -690,7 +690,7 @@ const profileCard = Container({
         })
       }),
       
-      // 내용 영역
+      // Content area
       Container({
         padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 16 }),
         decoration: new BoxDecoration({
@@ -703,15 +703,15 @@ const profileCard = Container({
         child: Column({
           crossAxisAlignment: 'start',
           children: [
-            Text("경력", {
+            Text("Experience", {
               style: new TextStyle({
                 fontSize: 14,
                 fontWeight: 'bold',
                 color: '#666'
               })
             }),
-            Container({ height: 8 }),  // 간격
-            Text("React, TypeScript, Node.js를 활용한 웹 개발 3년 경험", {
+            Container({ height: 8 }),  // Spacing
+            Text("3 years of web development experience with React, TypeScript, and Node.js", {
               style: new TextStyle({
                 fontSize: 16,
                 color: '#333',
@@ -734,7 +734,7 @@ const profileCard = Container({
                     color: '#E8F5E8',
                     borderRadius: BorderRadius.circular(12)
                   }),
-                  child: Text("구직중", {
+                  child: Text("Available", {
                     style: new TextStyle({
                       fontSize: 12,
                       fontWeight: 'bold',
@@ -752,38 +752,38 @@ const profileCard = Container({
 });
 ```
 
-### 💻 연습해보기
+### 💻 Try It Out
 
-1. 그라데이션 색상을 다른 조합으로 변경해보세요
-2. 프로필 사진 영역의 크기와 스타일을 조정해보세요
-3. 상태 라벨의 색상과 텍스트를 변경해보세요
-4. 추가 정보 섹션을 만들어보세요
+1. Change gradient colors to different combinations
+2. Adjust the size and style of the profile picture area
+3. Change the color and text of the status label
+4. Create additional information sections
 
-## ⚠️ 흔한 실수와 해결법
+## ⚠️ Common Mistakes and Solutions
 
-### 1. 색상 값 실수
+### 1. Color Value Mistakes
 ```typescript
-// ❌ 잘못된 방법
-color: 0xFF1F2937,    // 숫자 형식 금지!
-color: 1F2937,        // # 또는 따옴표 없음
+// ❌ Wrong way
+color: 0xFF1F2937,    // Numeric format forbidden!
+color: 1F2937,        // No # or quotes
 
-// ✅ 올바른 방법  
-color: '#1F2937',     // HEX 문자열
-color: 'rgba(31, 41, 55, 0.8)',  // RGBA 문자열
-color: 'blue',        // CSS 색상명
+// ✅ Correct way  
+color: '#1F2937',     // HEX string
+color: 'rgba(31, 41, 55, 0.8)',  // RGBA string
+color: 'blue',        // CSS color name
 ```
 
-### 2. Border 설정 실수
+### 2. Border Setting Mistakes
 ```typescript
-// ❌ 잘못된 방법 - 일부 방향만 설정
+// ❌ Wrong way - Only setting some sides
 border: new Border({ 
-  top: new BorderSide({ color: '#000', width: 1 })  // 다른 방향 누락!
+  top: new BorderSide({ color: '#000', width: 1 })  // Other sides missing!
 })
 
-// ✅ 올바른 방법 - 모든 방향 명시 또는 all() 사용
+// ✅ Correct way - Specify all sides or use all()
 border: Border.all({ color: '#000', width: 1 })
 
-// 또는 모든 방향 명시
+// Or specify all sides
 border: new Border({
   top: new BorderSide({ color: '#000', width: 1 }),
   right: new BorderSide({ color: '#000', width: 1 }),
@@ -792,73 +792,73 @@ border: new Border({
 })
 ```
 
-### 3. EdgeInsets 생성 실수
+### 3. EdgeInsets Creation Mistakes
 ```typescript
-// ❌ 잘못된 방법 - 임포트 누락
-padding: EdgeInsets.all(20)  // EdgeInsets 임포트 안함
+// ❌ Wrong way - Missing import
+padding: EdgeInsets.all(20)  // EdgeInsets not imported
 
-// ❌ 잘못된 방법 - new 키워드 없음
+// ❌ Wrong way - No new keyword
 padding: EdgeInsets({ all: 20 })
 
-// ✅ 올바른 방법
+// ✅ Correct way
 import { EdgeInsets } from "@meursyphus/flitter";
 padding: EdgeInsets.all(20)
 
-// 또는 직접 생성
+// Or direct creation
 padding: new EdgeInsets({ top: 20, right: 20, bottom: 20, left: 20 })
 ```
 
-### 4. BoxShadow 색상 실수
+### 4. BoxShadow Color Mistakes
 ```typescript
-// ❌ 잘못된 방법 - 투명도 없는 색상
-color: '#000000'      // 그림자가 너무 진함
+// ❌ Wrong way - Color without transparency
+color: '#000000'      // Shadow too dark
 
-// ✅ 올바른 방법 - 투명도 포함
-color: 'rgba(0, 0, 0, 0.1)'   // 적절한 투명도
-color: 'rgba(0, 0, 0, 0.2)'   // 조금 더 진한 그림자
+// ✅ Correct way - Include transparency
+color: 'rgba(0, 0, 0, 0.1)'   // Appropriate transparency
+color: 'rgba(0, 0, 0, 0.2)'   // Slightly darker shadow
 ```
 
-### 5. 크기 설정 실수
+### 5. Size Setting Mistakes
 ```typescript
-// ❌ 잘못된 방법 - 문자열로 크기 지정
-width: '200px',       // 문자열 금지
+// ❌ Wrong way - Size as string
+width: '200px',       // String forbidden
 height: '100px'
 
-// ✅ 올바른 방법 - 숫자로 지정
-width: 200,           // 픽셀 단위 숫자
+// ✅ Correct way - Size as number
+width: 200,           // Number in pixels
 height: 100
 ```
 
-## 🏆 도전 과제
+## 🏆 Challenge
 
-다음 요구사항을 만족하는 고급 제품 카드를 만들어보세요:
+Create an advanced product card that meets the following requirements:
 
-### 카드 디자인 요구사항
+### Card Design Requirements
 
-1. **전체 구조**:
-   - 흰색 배경에 미묘한 그림자
-   - 둥근 모서리 (radius: 12)
-   - 적절한 여백과 패딩
+1. **Overall Structure**:
+   - White background with subtle shadow
+   - Rounded corners (radius: 12)
+   - Appropriate margin and padding
 
-2. **이미지 영역** (상단):
-   - 그라데이션 배경 (파란색 계열)
-   - 제품 이름을 중앙에 표시
-   - 모서리만 둥글게 (위쪽만)
+2. **Image Area** (top):
+   - Gradient background (blue tones)
+   - Product name displayed in center
+   - Only top corners rounded
 
-3. **정보 영역** (하단):
-   - 제품명 (큰 굵은 글씨)
-   - 가격 (빨간색, 굵은 글씨)
-   - 설명 (2줄, 회색 글씨)
-   - 재고 상태 라벨 (초록색 배경)
+3. **Information Area** (bottom):
+   - Product name (large bold text)
+   - Price (red, bold text)
+   - Description (2 lines, gray text)
+   - Stock status label (green background)
 
-4. **추가 요소**:
-   - 할인 배지 (오른쪽 위 모서리)
-   - 평점 표시 (별표와 숫자)
+4. **Additional Elements**:
+   - Discount badge (top right corner)
+   - Rating display (stars and numbers)
 
-### 힌트
+### Hint
 
 ```typescript
-// 참고할 수 있는 색상 팔레트
+// Color palette you can reference
 const colors = {
   primary: '#2196F3',
   secondary: '#FFC107', 
@@ -872,83 +872,83 @@ const colors = {
 };
 ```
 
-## 📖 성능 최적화 팁
+## 📖 Performance Optimization Tips
 
-### Container 사용 시 주의사항
+### Container Usage Considerations
 
-1. **불필요한 중첩 피하기**:
+1. **Avoid Unnecessary Nesting**:
 ```typescript
-// ❌ 불필요한 중첩
+// ❌ Unnecessary nesting
 Container({
   child: Container({
     child: Text("Hello")
   })
 })
 
-// ✅ 필요한 경우만 사용
+// ✅ Use only when necessary
 Container({
   decoration: new BoxDecoration({ color: 'blue' }),
   child: Text("Hello")
 })
 ```
 
-2. **복잡한 decoration 최소화**:
+2. **Minimize Complex decoration**:
 ```typescript
-// 성능에 영향을 줄 수 있는 요소들
-boxShadow: [/* 많은 그림자 */],  // 그림자 개수 최소화
-gradient: /* 복잡한 그라데이션 */,  // 단순한 그라데이션 선호
-borderRadius: /* 너무 큰 값 */     // 적절한 크기 사용
+// Performance affecting elements
+boxShadow: [/* many shadows */],  // Minimize shadow count
+gradient: /* complex gradient */,  // Prefer simple gradients
+borderRadius: /* too large value */     // Use appropriate sizes
 ```
 
-## 📏 Container의 크기 결정 원리
+## 📏 Container Size Determination Principles
 
-### Container 크기가 결정되는 순서
+### Container Size Determination Order
 
-1. **명시적 크기**: width, height가 설정된 경우
-2. **제약 조건**: constraints가 설정된 경우  
-3. **자식 크기**: child의 크기에 맞춤
-4. **부모 제약**: 부모가 허용하는 최대 크기
+1. **Explicit Size**: When width, height are set
+2. **Constraints**: When constraints are set  
+3. **Child Size**: Fits to child's size
+4. **Parent Constraints**: Maximum size allowed by parent
 
 ```typescript
-// 1. 명시적 크기 (최우선)
+// 1. Explicit size (highest priority)
 Container({
   width: 200,
   height: 100,
-  child: Text("고정 크기")
+  child: Text("Fixed size")
 })
 
-// 2. 제약 조건 적용
+// 2. Apply constraints
 Container({
   constraints: BoxConstraints.tight({ width: 150, height: 80 }),
-  child: Text("제약된 크기")
+  child: Text("Constrained size")
 })
 
-// 3. 자식 크기에 맞춤 (기본)
+// 3. Fit to child size (default)
 Container({
   padding: EdgeInsets.all(16),
   decoration: new BoxDecoration({ color: 'lightblue' }),
-  child: Text("자식 크기 + 패딩")
+  child: Text("Child size + padding")
 })
 
-// 4. 사용 가능한 공간 모두 차지 (자식 없을 때)
+// 4. Take all available space (when no child)
 Container({
-  color: 'red'  // 자식이 없으면 부모 크기만큼 확장
+  color: 'red'  // Expand to parent size when no child
 })
 ```
 
-## 🎨 다음 단계
+## 🎨 Next Steps
 
-Container의 모든 기능을 익혔다면 이제 텍스트 스타일링을 배워봅시다!
+Now that you've mastered all Container features, let's learn text styling!
 
-Container를 마스터했으니 다음 튜토리얼에서는 Text 위젯의 모든 기능을 배워보겠습니다. Text 위젯으로 다양한 텍스트 스타일과 정렬을 만들 수 있습니다.
+Having mastered Container, in the next tutorial we'll learn all the features of the Text widget. You can create various text styles and alignments with the Text widget.
 
-## 💡 핵심 정리
+## 💡 Key Summary
 
-1. **기본 사용법**: `Container({ child: ... })`로 박스 생성
-2. **장식**: `BoxDecoration`으로 색상, 테두리, 그림자, 그라데이션 적용
-3. **여백**: `EdgeInsets`로 padding/margin 설정
-4. **정렬**: `alignment`로 자식 위치 조정
-5. **제약**: `BoxConstraints`로 크기 범위 제한
-6. **성능**: 불필요한 중첩과 복잡한 효과 피하기
+1. **Basic Usage**: Create boxes with `Container({ child: ... })`
+2. **Decoration**: Apply colors, borders, shadows, gradients with `BoxDecoration`
+3. **Spacing**: Set padding/margin with `EdgeInsets`
+4. **Alignment**: Position children with `alignment`
+5. **Constraints**: Limit size ranges with `BoxConstraints`
+6. **Performance**: Avoid unnecessary nesting and complex effects
 
-이제 Container의 모든 기능을 사용해서 아름다운 UI를 만들 수 있습니다!
+Now you can create beautiful UIs using all of Container's features!

@@ -5,7 +5,7 @@ files:
   App.js: |
     import React from 'react';
     import Widget from "@meursyphus/flitter-react";
-    import { Container, Text, GestureDetector, Column, SizedBox, StatefulWidget, State } from "@meursyphus/flitter";
+    import { AnimatedOpacity, AnimatedPadding, AnimatedAlign, Container, Text, GestureDetector, Column, Center, SizedBox, StatefulWidget, State, EdgeInsets } from "@meursyphus/flitter";
 
     class MyWidget extends StatefulWidget {
       createState() {
@@ -53,7 +53,7 @@ solved_files:
   App.js: |
     import React from 'react';
     import Widget from "@meursyphus/flitter-react";
-    import { AnimatedOpacity, AnimatedPadding, AnimatedAlign, Container, Text, GestureDetector, Column, Center, SizedBox, StatefulWidget, State, EdgeInsets } from "@meursyphus/flitter";
+    import { Alignment, AnimatedOpacity, AnimatedPadding, AnimatedAlign, Container, Text, GestureDetector, Column, Center, SizedBox, StatefulWidget, State, EdgeInsets } from "@meursyphus/flitter";
 
     class MyWidget extends StatefulWidget {
       createState() {
@@ -117,9 +117,7 @@ solved_files:
                 color: '#F0F0F0',
                 child: AnimatedAlign({
                   duration: 600,
-                  alignment: this.isAligned 
-                    ? 'bottomRight' 
-                    : 'topLeft',
+                  alignment: Alignment.bottomRight,
                   child: Container({
                     width: 80,
                     height: 50,

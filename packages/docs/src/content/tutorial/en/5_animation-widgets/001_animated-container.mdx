@@ -40,7 +40,7 @@ solved_files:
   App.js: |
     import React from 'react';
     import Widget from "@meursyphus/flitter-react";
-    import { AnimatedContainer, Text, GestureDetector, Center, StatefulWidget, State } from "@meursyphus/flitter";
+    import { Curve, Container, AnimatedContainer, Text, GestureDetector, Center, StatefulWidget, State } from "@meursyphus/flitter";
 
     class MyWidget extends StatefulWidget {
       createState() {
@@ -48,7 +48,7 @@ solved_files:
       }
     }
 
-    class MyWidgetState extends State<MyWidget> {
+    class MyWidgetState extends State {
       isExpanded = false;
 
       build(context) {
@@ -70,7 +70,7 @@ solved_files:
                 child: Center({
                   child: Text("클릭해보세요!")
                 }),
-                curve: "easeInOut"
+                curve: Curve.easeInOut,
               })
             })
           })

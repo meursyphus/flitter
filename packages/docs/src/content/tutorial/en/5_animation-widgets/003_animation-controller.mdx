@@ -13,7 +13,7 @@ files:
       }
     }
 
-    class MyWidgetState extends State<MyWidget> {
+    class MyWidgetState extends State {
       controller = null;
       animation = null;
 
@@ -51,7 +51,7 @@ solved_files:
   App.js: |
     import React from 'react';
     import Widget from "@meursyphus/flitter-react";
-    import { Container, Text, GestureDetector, Row, Center, SizedBox, Column, EdgeInsets, StatefulWidget, State, BuildContext, AnimationController, Tween, Animation, CurvedAnimation } from "@meursyphus/flitter";
+    import { Curve, Container, Text, GestureDetector, Row, Center, SizedBox, Column, EdgeInsets, StatefulWidget, State, BuildContext, AnimationController, Tween, Animation, CurvedAnimation } from "@meursyphus/flitter";
 
     class MyWidget extends StatefulWidget {
       createState() {
@@ -59,18 +59,18 @@ solved_files:
       }
     }
 
-    class MyWidgetState extends State<MyWidget> {
+    class MyWidgetState extends State {
       controller = null;
       animation = null;
 
       initState(context) {
         super.initState(context);
         
-        this.controller = AnimationController({ duration: 2000 });
-        this.animation = Tween({ begin: 0, end: 300 }).animated(
-          CurvedAnimation({
+        this.controller = new AnimationController({ duration: 2000 });
+        this.animation = new Tween({ begin: 0, end: 300 }).animated(
+          new CurvedAnimation({
             parent: this.controller,
-            curve: "bounceOut"
+            curve: Curve.bounceOut
           })
         );
         

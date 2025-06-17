@@ -1,6 +1,6 @@
 ---
-title: "기본 상호작용"
-description: "GestureDetector와 StatefulWidget으로 간단한 카운터를 만들어보세요"
+title: "Basic Interactions"
+description: "Create a simple counter with GestureDetector and StatefulWidget"
 files:
   App.js: |
     import React from 'react';
@@ -9,7 +9,7 @@ files:
 
     class CounterApp extends StatelessWidget {
       build(context) {
-        // TODO: 여기에 카운터 위젯을 만들어보세요
+        // TODO: Create counter widget here
         return Container({
           width: 300,
           height: 200,
@@ -18,8 +18,8 @@ files:
           child: Column({
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('카운터: 0'),
-              Text('버튼을 만들어보세요!')
+              Text('Counter: 0'),
+              Text('Create a button!')
             ]
           })
         });
@@ -64,7 +64,7 @@ solved_files:
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(`카운터: ${this.count}`, {
+              Text(`Counter: ${this.count}`, {
                 style: new TextStyle({
                   fontSize: 24,
                   fontWeight: 'bold',
@@ -81,7 +81,7 @@ solved_files:
                     color: '#3b82f6',
                     borderRadius: BorderRadius.circular(8)
                   }),
-                  child: Text('클릭하세요!', {
+                  child: Text('Click me!', {
                     style: new TextStyle({
                       color: 'white',
                       fontSize: 16,
@@ -105,82 +105,82 @@ solved_files:
     }
 ---
 
-# 기본 상호작용
+# Basic Interactions
 
-지금까지 정적인 UI만 만들어봤다면, 이제 사용자와 상호작용하는 앱을 만들어보겠습니다. 이 튜토리얼에서는 버튼을 클릭하면 숫자가 증가하는 카운터 앱을 만들면서 GestureDetector와 StatefulWidget을 배워보겠습니다.
+So far we've only created static UIs. Now let's create an app that interacts with users. In this tutorial, we'll create a counter app where clicking a button increases a number, while learning about GestureDetector and StatefulWidget.
 
-## 🎯 학습 목표
+## 🎯 Learning Objectives
 
-이 튜토리얼을 완료하면 다음을 할 수 있습니다:
+After completing this tutorial, you'll be able to:
 
-- [ ] GestureDetector로 클릭 이벤트 처리하기
-- [ ] StatefulWidget으로 상태를 가진 위젯 만들기
-- [ ] setState()로 화면 업데이트하기
-- [ ] 간단한 버튼 스타일링하기
-- [ ] Flitter의 상태 관리 패턴 이해하기
+- [ ] Handle click events with GestureDetector
+- [ ] Create stateful widgets with StatefulWidget
+- [ ] Update the screen with setState()
+- [ ] Style simple buttons
+- [ ] Understand Flitter's state management patterns
 
-## 🤔 왜 상태 관리가 필요한가요?
+## 🤔 Why is State Management Needed?
 
-지금까지 만든 위젯들은 한 번 생성되면 변하지 않는 **정적 위젯**이었습니다. 하지만 실제 앱에서는 사용자의 행동에 따라 화면이 변해야 합니다:
+All the widgets we've created so far were **static widgets** that don't change once created. However, in real apps, the screen needs to change based on user actions:
 
-- 버튼을 클릭하면 숫자가 증가
-- 토글 버튼을 누르면 on/off 상태가 변경
-- 입력 필드에 텍스트를 입력하면 화면에 표시
+- Click a button to increase a number
+- Press a toggle button to change on/off state
+- Type in an input field to display text on screen
 
-이런 **동적인 변화**를 위해서는 **상태(State)**가 필요합니다.
+For such **dynamic changes**, we need **state**.
 
-## 🏗️ StatefulWidget 이해하기
+## 🏗️ Understanding StatefulWidget
 
-**StatefulWidget**은 상태를 가질 수 있는 위젯입니다. 상태가 변경되면 자동으로 화면이 다시 그려집니다.
+**StatefulWidget** is a widget that can have state. When state changes, the screen is automatically redrawn.
 
 ### StatefulWidget vs StatelessWidget
 
 ```typescript
-// StatelessWidget - 상태 없음, 변하지 않음
+// StatelessWidget - no state, doesn't change
 class GreetingWidget extends StatelessWidget {
   build() {
-    return Text('안녕하세요!'); // 항상 같은 텍스트
+    return Text('Hello!'); // Always the same text
   }
 }
 
-// StatefulWidget - 상태 있음, 변할 수 있음
+// StatefulWidget - has state, can change
 class CounterWidget extends StatefulWidget {
   createState() {
-    return new CounterWidgetState(); // 상태 클래스를 반환
+    return new CounterWidgetState(); // Return state class
   }
 }
 
 class CounterWidgetState extends State {
-  count = 0; // 상태 변수
+  count = 0; // State variable
 
   build() {
-    return Text(`카운터: ${this.count}`); // 상태에 따라 다른 텍스트
+    return Text(`Counter: ${this.count}`); // Different text based on state
   }
 }
 ```
 
-### StatefulWidget의 기본 구조
+### Basic Structure of StatefulWidget
 
-StatefulWidget은 두 개의 클래스로 구성됩니다:
+StatefulWidget consists of two classes:
 
-1. **위젯 클래스**: `StatefulWidget`을 상속받고 `createState()` 메서드를 구현
-2. **상태 클래스**: `State`를 상속받고 실제 상태와 UI 로직을 포함
+1. **Widget class**: Inherits from `StatefulWidget` and implements `createState()` method
+2. **State class**: Inherits from `State` and contains actual state and UI logic
 
 ```typescript
-// 1. 위젯 클래스
+// 1. Widget class
 class MyWidget extends StatefulWidget {
   createState() {
     return new MyWidgetState();
   }
 }
 
-// 2. 상태 클래스
+// 2. State class
 class MyWidgetState extends State {
-  // 상태 변수들 (클래스 속성으로 선언)
+  // State variables (declared as class properties)
   count = 0;
   isVisible = true;
   
-  // UI 구성 메서드
+  // UI composition method
   build() {
     return Container({
       child: Text(`Count: ${this.count}`)
@@ -189,72 +189,72 @@ class MyWidgetState extends State {
 }
 ```
 
-### 중요한 특징
+### Important Characteristics
 
-1. **상태 변수는 클래스 속성**: `this.count = 0` 형태로 선언
-2. **React hooks 사용 금지**: `useState`, `useEffect` 등은 Flitter에서 사용하지 않음
-3. **setState() 필수**: 상태를 변경할 때는 반드시 `setState()` 사용
+1. **State variables are class properties**: Declared as `this.count = 0`
+2. **No React hooks**: `useState`, `useEffect`, etc. are not used in Flitter
+3. **setState() required**: Must use `setState()` when changing state
 
-## 🎯 GestureDetector로 이벤트 처리하기
+## 🎯 Handling Events with GestureDetector
 
-**GestureDetector**는 사용자의 제스처(클릭, 드래그, 호버 등)를 감지하는 위젯입니다.
+**GestureDetector** is a widget that detects user gestures (click, drag, hover, etc.).
 
-### 기본 사용법
+### Basic Usage
 
 ```typescript
 GestureDetector({
   onClick: () => {
-    console.log('클릭됨!');
+    console.log('Clicked!');
   },
   child: Container({
-    child: Text('클릭하세요')
+    child: Text('Click me')
   })
 })
 ```
 
-### 주요 이벤트 속성
+### Main Event Properties
 
 ```typescript
 GestureDetector({
-  // 마우스 이벤트
-  onClick: (e) => { /* 클릭 시 */ },
-  onMouseDown: (e) => { /* 마우스 버튼 누를 때 */ },
-  onMouseUp: (e) => { /* 마우스 버튼 뗄 때 */ },
-  onMouseEnter: (e) => { /* 마우스가 영역에 들어올 때 */ },
-  onMouseLeave: (e) => { /* 마우스가 영역을 벗어날 때 */ },
+  // Mouse events
+  onClick: (e) => { /* On click */ },
+  onMouseDown: (e) => { /* When mouse button is pressed */ },
+  onMouseUp: (e) => { /* When mouse button is released */ },
+  onMouseEnter: (e) => { /* When mouse enters area */ },
+  onMouseLeave: (e) => { /* When mouse leaves area */ },
   
-  // 드래그 이벤트
-  onDragStart: (e) => { /* 드래그 시작 */ },
-  onDragMove: (e) => { /* 드래그 중 */ },
-  onDragEnd: (e) => { /* 드래그 끝 */ },
+  // Drag events
+  onDragStart: (e) => { /* Drag start */ },
+  onDragMove: (e) => { /* During drag */ },
+  onDragEnd: (e) => { /* Drag end */ },
   
-  // 기타 설정
-  cursor: 'pointer', // 커서 모양
+  // Other settings
+  cursor: 'pointer', // Cursor shape
   
-  child: /* 자식 위젯 */
+  child: /* child widget */
 })
 ```
 
-### 커서 종류
+### Cursor Types
 
 ```typescript
-cursor: 'pointer'      // 손가락 모양
-cursor: 'default'      // 기본 화살표
-cursor: 'move'         // 이동 표시
-cursor: 'text'         // 텍스트 선택
-cursor: 'wait'         // 대기 표시
-cursor: 'not-allowed'  // 금지 표시
-cursor: 'grab'         // 잡기 표시
-cursor: 'grabbing'     // 잡고 있는 표시
+cursor: 'pointer'      // Hand shape
+cursor: 'default'      // Default arrow
+cursor: 'move'         // Move indicator
+cursor: 'text'         // Text selection
+cursor: 'wait'         // Wait indicator
+cursor: 'not-allowed'  // Forbidden indicator
+cursor: 'grab'         // Grab indicator
+cursor: 'grabbing'     // Grabbing indicator
 ```
 
-## 🔧 실습: 카운터 앱 만들기
+## 🔧 Practice: Creating Counter App
 
-이제 실제로 클릭할 때마다 숫자가 증가하는 카운터 앱을 만들어보겠습니다.
+Now let's create a counter app where the number increases each time you click.
 
-### 1단계: StatefulWidget 클래스 만들기
+### Step 1: Create StatefulWidget Class
 
-먼저 StatefulWidget의 기본 구조를 만들어보겠습니다:
+First, let's create the basic structure of StatefulWidget:
 
 ```typescript
 import { StatefulWidget, State } from '@meursyphus/flitter';
@@ -266,42 +266,42 @@ class CounterWidget extends StatefulWidget {
 }
 
 class CounterWidgetState extends State {
-  count = 0; // 카운터 상태 변수
+  count = 0; // Counter state variable
   
   build() {
     return Container({
-      child: Text(`카운터: ${this.count}`)
+      child: Text(`Counter: ${this.count}`)
     });
   }
 }
 ```
 
-### 2단계: setState()로 상태 업데이트하기
+### Step 2: Update State with setState()
 
-버튼을 클릭했을 때 카운터를 증가시키는 메서드를 추가합니다:
+Add a method to increase the counter when the button is clicked:
 
 ```typescript
 class CounterWidgetState extends State {
   count = 0;
   
-  // 카운터 증가 메서드
+  // Counter increment method
   increment() {
     this.setState(() => {
-      this.count++; // setState 안에서 상태 변경
+      this.count++; // Change state inside setState
     });
   }
   
   build() {
     return Container({
-      child: Text(`카운터: ${this.count}`)
+      child: Text(`Counter: ${this.count}`)
     });
   }
 }
 ```
 
-### 3단계: GestureDetector로 클릭 이벤트 연결
+### Step 3: Connect Click Event with GestureDetector
 
-이제 GestureDetector를 사용해서 클릭 시 increment 메서드를 호출합니다:
+Now use GestureDetector to call the increment method on click:
 
 ```typescript
 class CounterWidgetState extends State {
@@ -317,11 +317,11 @@ class CounterWidgetState extends State {
     return Column({
       mainAxisAlignment: 'center',
       children: [
-        Text(`카운터: ${this.count}`),
+        Text(`Counter: ${this.count}`),
         GestureDetector({
-          onClick: () => this.increment(), // 클릭 시 increment 호출
+          onClick: () => this.increment(), // Call increment on click
           child: Container({
-            child: Text('클릭하세요!')
+            child: Text('Click me!')
           })
         })
       ]
@@ -330,23 +330,23 @@ class CounterWidgetState extends State {
 }
 ```
 
-### 4단계: 버튼 스타일링 추가
+### Step 4: Add Button Styling
 
-버튼을 더 예쁘게 만들어보겠습니다:
+Let's make the button prettier:
 
 ```typescript
 GestureDetector({
   onClick: () => this.increment(),
-  cursor: 'pointer', // 커서를 손가락 모양으로
+  cursor: 'pointer', // Make cursor hand-shaped
   child: Container({
-    padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 12 }), // 버튼 여백
+    padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 12 }), // Button padding
     decoration: new BoxDecoration({
-      color: '#3b82f6',           // 파란색 배경
-      borderRadius: BorderRadius.circular(8)    // 둥근 모서리
+      color: '#3b82f6',           // Blue background
+      borderRadius: BorderRadius.circular(8)    // Rounded corners
     }),
-    child: Text('클릭하세요!', {
+    child: Text('Click me!', {
       style: new TextStyle({
-        color: 'white',           // 흰색 텍스트
+        color: 'white',           // White text
         fontSize: 16,
         fontWeight: 'bold'
       })
@@ -355,9 +355,9 @@ GestureDetector({
 })
 ```
 
-## 🎨 완전한 카운터 앱
+## 🎨 Complete Counter App
 
-모든 단계를 결합한 완전한 카운터 앱입니다:
+Here's the complete counter app combining all steps:
 
 ```typescript
 import React from 'react';
@@ -401,7 +401,7 @@ class CounterWidgetState extends State {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(`카운터: ${this.count}`, {
+          Text(`Counter: ${this.count}`, {
             style: new TextStyle({
               fontSize: 24,
               fontWeight: 'bold',
@@ -418,7 +418,7 @@ class CounterWidgetState extends State {
                 color: '#3b82f6',
                 borderRadius: BorderRadius.circular(8)
               }),
-              child: Text('클릭하세요!', {
+              child: Text('Click me!', {
                 style: new TextStyle({
                   color: 'white',
                   fontSize: 16,
@@ -446,26 +446,26 @@ function App() {
 }
 ```
 
-## 🔧 TODO: 코드 완성하기
+## 🔧 TODO: Complete the Code
 
-이제 여러분이 직접 코드를 완성해보세요:
+Now complete the code yourself:
 
 ```typescript
 import React from 'react';
 import Widget from '@meursyphus/flitter-react';
 import { StatefulWidget, State, Container, Text, Column, GestureDetector, SizedBox } from '@meursyphus/flitter';
 
-// TODO: CounterWidget 클래스를 만드세요
+// TODO: Create CounterWidget class
 class CounterWidget extends StatefulWidget {
-  // TODO: createState 메서드를 구현하세요
+  // TODO: Implement createState method
 }
 
-// TODO: CounterWidgetState 클래스를 만드세요
+// TODO: Create CounterWidgetState class
 class CounterWidgetState extends State {
-  // TODO: count 상태 변수를 선언하세요 (초기값: 0)
+  // TODO: Declare count state variable (initial value: 0)
   
-  // TODO: increment 메서드를 만드세요
-  // 힌트: setState()를 사용해서 count를 1 증가시키세요
+  // TODO: Create increment method
+  // Hint: Use setState() to increase count by 1
   
   build() {
     return Container({
@@ -475,15 +475,15 @@ class CounterWidgetState extends State {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // TODO: 카운터 값을 표시하는 Text를 만드세요
-          // 힌트: `카운터: ${this.count}` 형태
+          // TODO: Create Text that displays counter value
+          // Hint: `Counter: ${this.count}` format
           
           SizedBox({ height: 20 }),
           
-          // TODO: GestureDetector로 클릭 가능한 버튼을 만드세요
-          // 힌트: onClick에서 this.increment() 호출
-          // 힌트: cursor: 'pointer' 설정
-          // 힌트: 파란색 배경(#3b82f6), 흰색 텍스트의 버튼
+          // TODO: Create clickable button with GestureDetector
+          // Hint: Call this.increment() in onClick
+          // Hint: Set cursor: 'pointer'
+          // Hint: Button with blue background (#3b82f6), white text
         ]
       })
     });
@@ -499,62 +499,62 @@ function App() {
 }
 ```
 
-## 🎯 예상 결과
+## 🎯 Expected Results
 
-코드를 완성하고 실행하면 다음을 볼 수 있습니다:
+After completing and running the code, you should see:
 
-1. **카운터 표시**: "카운터: 0"으로 시작
-2. **클릭 가능한 버튼**: 파란색 배경의 "클릭하세요!" 버튼
-3. **상호작용**: 버튼을 클릭할 때마다 숫자가 1씩 증가
-4. **커서 변화**: 버튼 위에 마우스를 올리면 커서가 손가락 모양으로 변경
+1. **Counter display**: Starting with "Counter: 0"
+2. **Clickable button**: Blue background "Click me!" button
+3. **Interaction**: Number increases by 1 each time button is clicked
+4. **Cursor change**: Cursor changes to hand shape when hovering over button
 
-## 🎨 setState() 심화 이해
+## 🎨 Advanced Understanding of setState()
 
-### setState()의 역할
+### Role of setState()
 
 ```typescript
-// ❌ 잘못된 방법 - UI가 업데이트되지 않음
+// ❌ Wrong way - UI won't update
 this.count++; 
 
-// ✅ 올바른 방법 - UI가 자동으로 업데이트됨
+// ✅ Correct way - UI automatically updates
 this.setState(() => {
   this.count++;
 });
 ```
 
-### setState() 내에서 여러 상태 변경
+### Multiple State Changes within setState()
 
 ```typescript
 this.setState(() => {
-  this.count++;           // 여러 상태를
-  this.isVisible = true;  // 동시에 변경 가능
+  this.count++;           // Multiple states can be
+  this.isVisible = true;  // changed simultaneously
   this.message = 'Updated!';
 });
 ```
 
-### setState() 후 콜백 실행
+### Callback After setState()
 
 ```typescript
 this.setState(() => {
   this.count++;
 }, () => {
-  // 상태 업데이트 완료 후 실행
-  console.log('카운터가 업데이트됨:', this.count);
+  // Executed after state update is complete
+  console.log('Counter updated:', this.count);
 });
 ```
 
-## 🔧 연습 문제
+## 🔧 Practice Problems
 
-기본 카운터를 완성했다면, 다음을 시도해보세요:
+If you've completed the basic counter, try the following:
 
-### 연습 1: 감소 버튼 추가하기
-증가 버튼 옆에 감소 버튼을 추가해보세요:
+### Exercise 1: Add Decrement Button
+Add a decrement button next to the increment button:
 
 ```typescript
 Row({
   mainAxisAlignment: MainAxisAlignment.center,
   children: [
-    // 감소 버튼
+    // Decrement button
     GestureDetector({
       onClick: () => this.decrement(),
       child: Container({
@@ -564,7 +564,7 @@ Row({
       })
     }),
     SizedBox({ width: 20 }),
-    // 증가 버튼
+    // Increment button
     GestureDetector({
       onClick: () => this.increment(),
       child: Container({
@@ -577,8 +577,8 @@ Row({
 })
 ```
 
-### 연습 2: 리셋 버튼 추가하기
-카운터를 0으로 초기화하는 버튼을 추가해보세요:
+### Exercise 2: Add Reset Button
+Add a button to reset the counter to 0:
 
 ```typescript
 reset() {
@@ -588,21 +588,21 @@ reset() {
 }
 ```
 
-### 연습 3: 조건부 스타일링
-카운터 값에 따라 텍스트 색상을 변경해보세요:
+### Exercise 3: Conditional Styling
+Change text color based on counter value:
 
 ```typescript
-Text(`카운터: ${this.count}`, {
+Text(`Counter: ${this.count}`, {
   style: new TextStyle({
     fontSize: 24,
     fontWeight: 'bold',
-    color: this.count > 10 ? '#ef4444' : '#1e293b' // 10 초과시 빨간색
+    color: this.count > 10 ? '#ef4444' : '#1e293b' // Red when over 10
   })
 })
 ```
 
-### 연습 4: 호버 효과 추가하기
-버튼에 마우스를 올렸을 때 색상이 변하도록 해보세요:
+### Exercise 4: Add Hover Effect
+Make button color change when mouse hovers over it:
 
 ```typescript
 class ButtonState extends State {
@@ -615,7 +615,7 @@ class ButtonState extends State {
       onClick: () => this.props.onTap(),
       child: Container({
         decoration: new BoxDecoration({
-          color: this.isHovered ? '#2563eb' : '#3b82f6', // 호버시 더 진한 파란색
+          color: this.isHovered ? '#2563eb' : '#3b82f6', // Darker blue on hover
           borderRadius: BorderRadius.circular(8)
         }),
         child: Text('Click me!')
@@ -625,16 +625,16 @@ class ButtonState extends State {
 }
 ```
 
-## 🚨 흔한 실수와 해결법
+## 🚨 Common Mistakes and Solutions
 
-### 문제 1: setState 없이 상태 변경
+### Problem 1: Changing State Without setState
 ```typescript
-// ❌ 잘못된 예 - UI가 업데이트되지 않음
+// ❌ Wrong example - UI won't update
 increment() {
-  this.count++; // setState 없음
+  this.count++; // No setState
 }
 
-// ✅ 올바른 예
+// ✅ Correct example
 increment() {
   this.setState(() => {
     this.count++;
@@ -642,95 +642,95 @@ increment() {
 }
 ```
 
-### 문제 2: React hooks 사용
+### Problem 2: Using React Hooks
 ```typescript
-// ❌ 잘못된 예 - Flitter에서는 사용 불가
-const [count, setCount] = useState(0); // React 패턴
+// ❌ Wrong example - Not available in Flitter
+const [count, setCount] = useState(0); // React pattern
 
-// ✅ 올바른 예 - Flitter 패턴
+// ✅ Correct example - Flitter pattern
 class MyState extends State {
-  count = 0; // 클래스 속성으로 상태 선언
+  count = 0; // Declare state as class property
 }
 ```
 
-### 문제 3: 클래스 직접 export
+### Problem 3: Directly Exporting Class
 ```typescript
-// ❌ 잘못된 예
-export default CounterWidget; // 클래스 직접 export
+// ❌ Wrong example
+export default CounterWidget; // Direct class export
 
-// ✅ 올바른 예 - 인스턴스 생성해서 사용
+// ✅ Correct example - Use by creating instance
 function App() {
-  const widget = new CounterWidget(); // new 키워드로 인스턴스 생성
+  const widget = new CounterWidget(); // Create instance with new keyword
   return <Widget widget={widget} />;
 }
 ```
 
-### 문제 4: GestureDetector 없이 이벤트 처리
+### Problem 4: Handling Events Without GestureDetector
 ```typescript
-// ❌ 잘못된 예
+// ❌ Wrong example
 Container({
-  onClick: () => {}, // Container는 클릭 이벤트 없음
-  child: Text('클릭')
+  onClick: () => {}, // Container has no click event
+  child: Text('Click')
 })
 
-// ✅ 올바른 예
+// ✅ Correct example
 GestureDetector({
   onClick: () => {},
   child: Container({
-    child: Text('클릭')
+    child: Text('Click')
   })
 })
 ```
 
-## 🧠 생명주기 메서드 이해하기
+## 🧠 Understanding Lifecycle Methods
 
-StatefulWidget에는 여러 생명주기 메서드가 있습니다:
+StatefulWidget has several lifecycle methods:
 
-### initState() - 초기화
+### initState() - Initialization
 ```typescript
 class CounterWidgetState extends State {
   count = 0;
   
   initState() {
     super.initState();
-    console.log('카운터 위젯이 생성됨');
-    // 애니메이션 컨트롤러, 타이머 등 초기화
+    console.log('Counter widget created');
+    // Initialize animation controllers, timers, etc.
   }
 }
 ```
 
-### didUpdateWidget() - 업데이트
+### didUpdateWidget() - Update
 ```typescript
 didUpdateWidget(oldWidget) {
   super.didUpdateWidget(oldWidget);
-  // 부모 위젯의 속성이 변경되었을 때
-  console.log('위젯이 업데이트됨');
+  // When parent widget's properties change
+  console.log('Widget updated');
 }
 ```
 
-### dispose() - 정리
+### dispose() - Cleanup
 ```typescript
 dispose() {
-  console.log('카운터 위젯이 제거됨');
-  // 타이머, 애니메이션 등 정리
+  console.log('Counter widget removed');
+  // Clean up timers, animations, etc.
   super.dispose();
 }
 ```
 
-## 🚀 다음 단계
+## 🚀 Next Steps
 
-기본 상호작용을 성공적으로 구현했다면, 다음 단계로 넘어가세요:
+If you've successfully implemented basic interactions, move on to the next step:
 
-- **다음**: [Container 스타일링](../2_basic-widgets/1_container-styling) - 더 다양한 스타일링 배우기
-- **관련**: [GestureDetector 완전 정복](../4_interactive-widgets/1_gesture-detector-complete) - 모든 제스처 이벤트 다루기
-- **관련**: [StatefulWidget 패턴들](../4_interactive-widgets/3_stateful-widget-patterns) - 고급 상태 관리 패턴
+- **Next**: [Container Styling](../2_basic-widgets/1_container-styling) - Learn more varied styling
+- **Related**: [Complete GestureDetector Guide](../4_interactive-widgets/1_gesture-detector-complete) - Handle all gesture events
+- **Related**: [StatefulWidget Patterns](../4_interactive-widgets/3_stateful-widget-patterns) - Advanced state management patterns
 
-## 💡 핵심 정리
+## 💡 Key Summary
 
-1. **StatefulWidget**: 상태를 가진 위젯, createState() 메서드로 상태 클래스 생성
-2. **State 클래스**: 실제 상태 변수와 UI 로직을 포함
-3. **setState()**: 상태 변경 시 반드시 사용, UI 자동 업데이트
-4. **GestureDetector**: 모든 사용자 상호작용 처리
-5. **생명주기**: initState, build, didUpdateWidget, dispose
+1. **StatefulWidget**: Widget with state, creates state class with createState() method
+2. **State class**: Contains actual state variables and UI logic
+3. **setState()**: Must be used when changing state, automatically updates UI
+4. **GestureDetector**: Handles all user interactions
+5. **Lifecycle**: initState, build, didUpdateWidget, dispose
 
-이제 상호작용하는 위젯을 만들 수 있게 되었습니다! 다음 튜토리얼에서는 더 복잡한 위젯들을 배워보겠습니다.
+Now you can create interactive widgets! In the next tutorial, we'll learn about more complex widgets.

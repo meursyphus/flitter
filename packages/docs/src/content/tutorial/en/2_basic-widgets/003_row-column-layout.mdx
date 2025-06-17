@@ -1,6 +1,6 @@
 ---
-title: "Row와 Column으로 레이아웃 구성하기"
-description: "위젯을 가로/세로로 배치하고 간단한 네비게이션 바를 만들어보세요"
+title: "Building Layouts with Row and Column"
+description: "Arrange widgets horizontally/vertically and create a simple navigation bar"
 files:
   App.js: |
     import React from 'react';
@@ -9,15 +9,15 @@ files:
 
     class LayoutApp extends StatelessWidget {
       build(context) {
-        // TODO: Row와 Column을 사용해서 레이아웃을 구성해보세요
+        // TODO: Use Row and Column to build layouts
         return Container({
           width: 400,
           height: 300,
           padding: EdgeInsets.all(20),
           child: Column({
             children: [
-              Text("Row와 Column 레이아웃을 만들어보세요!"),
-              // TODO: 여기에 Row와 Column을 추가하세요
+              Text("Create Row and Column layouts!"),
+              // TODO: Add Row and Column here
             ]
           })
         });
@@ -35,7 +35,7 @@ solved_files:
   App.js: |
     import React from 'react';
     import Widget from '@meursyphus/flitter-react';
-    import { StatelessWidget, Container, Text, Row, Column, SizedBox, EdgeInsets, MainAxisAlignment, CrossAxisAlignment, Center } from '@meursyphus/flitter';
+    import { StatelessWidget, Container, Text, Row, Column, SizedBox, EdgeInsets, MainAxisAlignment, CrossAxisAlignment, Center, TextStyle, BoxDecoration, BorderRadius } from '@meursyphus/flitter';
 
     class LayoutApp extends StatelessWidget {
       build(context) {
@@ -45,8 +45,8 @@ solved_files:
           padding: EdgeInsets.all(20),
           child: Column({
             children: [
-              // 제목
-              Text("Row와 Column 레이아웃", {
+              // Title
+              Text("Row and Column Layout", {
                 style: new TextStyle({
                   fontSize: 20,
                   fontWeight: 'bold'
@@ -54,7 +54,7 @@ solved_files:
               }),
               SizedBox({ height: 20 }),
               
-              // Row 예제 - 가로 배치
+              // Row example - horizontal arrangement
               Container({
                 padding: EdgeInsets.all(10),
                 color: '#f0f0f0',
@@ -97,40 +97,24 @@ solved_files:
               
               SizedBox({ height: 20 }),
               
-              // 네비게이션 바 예제
+              // Navigation bar example
               Container({
-                height: 50,
+                padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 12 }),
                 decoration: new BoxDecoration({
-                  color: '#2c3e50',
+                  color: '#2196F3',
                   borderRadius: BorderRadius.circular(8)
                 }),
                 child: Row({
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("홈", {
-                      style: new TextStyle({ 
-                        color: 'white',
-                        fontSize: 16
-                      })
+                    Text("Home", {
+                      style: new TextStyle({ color: 'white', fontWeight: 'bold' })
                     }),
-                    Text("제품", {
-                      style: new TextStyle({ 
-                        color: 'white',
-                        fontSize: 16
-                      })
+                    Text("About", {
+                      style: new TextStyle({ color: 'white', fontWeight: 'bold' })
                     }),
-                    Text("서비스", {
-                      style: new TextStyle({ 
-                        color: 'white',
-                        fontSize: 16
-                      })
-                    }),
-                    Text("문의", {
-                      style: new TextStyle({ 
-                        color: 'white',
-                        fontSize: 16
-                      })
+                    Text("Contact", {
+                      style: new TextStyle({ color: 'white', fontWeight: 'bold' })
                     })
                   ]
                 })
@@ -150,161 +134,540 @@ solved_files:
     }
 ---
 
-# Row와 Column으로 레이아웃 구성하기
+# Building Layouts with Row and Column
 
-웹 레이아웃의 기본은 요소들을 가로 또는 세로로 배치하는 것입니다. Flitter에서는 **Row**와 **Column** 위젯을 사용해 이러한 레이아웃을 쉽게 구성할 수 있습니다.
+Row and Column are the fundamental layout widgets in Flitter. Row arranges widgets horizontally, while Column arranges them vertically. These two widgets are the foundation for creating all UI layouts.
 
-## 🎯 학습 목표
+## 🎯 Learning Objectives
 
-이 튜토리얼을 완료하면 다음을 할 수 있게 됩니다:
+After completing this tutorial, you'll be able to:
 
-- [ ] Row로 위젯을 가로로 배치하기
-- [ ] Column으로 위젯을 세로로 배치하기
-- [ ] MainAxisAlignment로 주축 정렬 제어하기
-- [ ] CrossAxisAlignment로 교차축 정렬 제어하기
-- [ ] 실용적인 네비게이션 바 만들기
+- [ ] Arrange widgets horizontally with Row
+- [ ] Arrange widgets vertically with Column
+- [ ] Control spacing and alignment between widgets
+- [ ] Create navigation bars and simple layouts
 
-## 📚 Row 위젯 이해하기
+## 📚 Basic Concepts
 
-**Row**는 자식 위젯들을 가로 방향으로 배치합니다. HTML의 flexbox에서 `flex-direction: row`와 비슷합니다.
-
-### Row의 기본 구조
+### Row: Horizontal Arrangement
 
 ```typescript
 Row({
-  mainAxisAlignment: MainAxisAlignment.start,  // 가로 정렬
-  crossAxisAlignment: CrossAxisAlignment.center, // 세로 정렬
   children: [
-    // 자식 위젯들
-  ]
+    // Widgets to arrange horizontally
+  ],
+  mainAxisAlignment: MainAxisAlignment.center,  // Horizontal alignment
+  crossAxisAlignment: CrossAxisAlignment.center // Vertical alignment
 })
 ```
 
-### MainAxisAlignment (주축 정렬)
-
-Row에서 주축은 **가로 방향**입니다:
-
-- `MainAxisAlignment.start` - 왼쪽 정렬 (기본값)
-- `MainAxisAlignment.center` - 중앙 정렬
-- `MainAxisAlignment.end` - 오른쪽 정렬
-- `MainAxisAlignment.spaceBetween` - 양 끝에 배치하고 사이 공간 균등 분배
-- `MainAxisAlignment.spaceAround` - 각 위젯 주위에 균등한 공간
-- `MainAxisAlignment.spaceEvenly` - 모든 공간을 균등하게 분배
-
-## 📐 Column 위젯 이해하기
-
-**Column**은 자식 위젯들을 세로 방향으로 배치합니다. HTML의 flexbox에서 `flex-direction: column`과 비슷합니다.
-
-### Column의 기본 구조
+### Column: Vertical Arrangement
 
 ```typescript
 Column({
-  mainAxisAlignment: MainAxisAlignment.start,  // 세로 정렬
-  crossAxisAlignment: CrossAxisAlignment.center, // 가로 정렬
   children: [
-    // 자식 위젯들
-  ]
+    // Widgets to arrange vertically
+  ],
+  mainAxisAlignment: MainAxisAlignment.center,  // Vertical alignment
+  crossAxisAlignment: CrossAxisAlignment.center // Horizontal alignment
 })
 ```
 
-### Column에서의 축 방향
+## 🚀 Practice 1: Basic Row Layout
 
-Column에서는 축 방향이 Row와 반대입니다:
-- **주축(MainAxis)**: 세로 방향
-- **교차축(CrossAxis)**: 가로 방향
-
-## 🚀 실습 1: 기본 Row 레이아웃
+Let's start by arranging widgets horizontally.
 
 ```typescript
-Row({
-  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+import { Row, Container, Text, Center } from "@meursyphus/flitter";
+
+const basicRow = Row({
   children: [
     Container({
       width: 80,
       height: 80,
-      color: '#e74c3c',
-      child: Center({ child: Text("A") })
+      color: '#FF6B6B',
+      child: Center({
+        child: Text("Box 1")
+      })
     }),
     Container({
       width: 80,
       height: 80,
-      color: '#3498db',
-      child: Center({ child: Text("B") })
+      color: '#4ECDC4',
+      child: Center({
+        child: Text("Box 2")
+      })
     }),
     Container({
       width: 80,
       height: 80,
-      color: '#2ecc71',
-      child: Center({ child: Text("C") })
+      color: '#45B7D1',
+      child: Center({
+        child: Text("Box 3")
+      })
     })
   ]
-})
+});
 ```
 
-## 🚀 실습 2: 중첩된 Row와 Column
+### 💻 Try It Out
 
-Row와 Column을 중첩하여 복잡한 레이아웃을 만들 수 있습니다:
+1. Change the colors of each Container
+2. Modify the size of the Containers
+3. Change the text inside each box
+
+## 🚀 Practice 2: Row Alignment Options
+
+Let's learn how to control the spacing and alignment of widgets in a Row.
 
 ```typescript
-Column({
+import { Row, Container, Text, Center, MainAxisAlignment } from "@meursyphus/flitter";
+
+// Center alignment
+const centeredRow = Row({
+  mainAxisAlignment: MainAxisAlignment.center,
   children: [
-    Text("상단 제목"),
-    Row({
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text("왼쪽"),
-        SizedBox({ width: 20 }),
-        Text("중앙"),
-        SizedBox({ width: 20 }),
-        Text("오른쪽")
-      ]
-    }),
-    Text("하단 설명")
+    Container({ width: 50, height: 50, color: '#FF6B6B' }),
+    Container({ width: 50, height: 50, color: '#4ECDC4' }),
+    Container({ width: 50, height: 50, color: '#45B7D1' })
   ]
-})
+});
+
+// Space between
+const spaceBetweenRow = Row({
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    Container({ width: 50, height: 50, color: '#FF6B6B' }),
+    Container({ width: 50, height: 50, color: '#4ECDC4' }),
+    Container({ width: 50, height: 50, color: '#45B7D1' })
+  ]
+});
+
+// Space evenly
+const spaceEvenlyRow = Row({
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    Container({ width: 50, height: 50, color: '#FF6B6B' }),
+    Container({ width: 50, height: 50, color: '#4ECDC4' }),
+    Container({ width: 50, height: 50, color: '#45B7D1' })
+  ]
+});
 ```
 
-## 💡 실용적인 예제: 네비게이션 바
+### MainAxisAlignment Options
+
+- `MainAxisAlignment.start`: Align to start (left)
+- `MainAxisAlignment.end`: Align to end (right)
+- `MainAxisAlignment.center`: Center alignment
+- `MainAxisAlignment.spaceBetween`: Space between widgets
+- `MainAxisAlignment.spaceAround`: Space around widgets
+- `MainAxisAlignment.spaceEvenly`: Even spacing
+
+### 💻 Try It Out
+
+1. Try each MainAxisAlignment option
+2. Change the number of widgets
+3. Modify widget sizes to see alignment effects
+
+## 🚀 Practice 3: Basic Column Layout
+
+Now let's arrange widgets vertically.
 
 ```typescript
-Container({
-  height: 60,
+import { Column, Container, Text, Center } from "@meursyphus/flitter";
+
+const basicColumn = Column({
+  children: [
+    Container({
+      width: 150,
+      height: 60,
+      color: '#FF6B6B',
+      child: Center({
+        child: Text("Item 1")
+      })
+    }),
+    Container({
+      width: 150,
+      height: 60,
+      color: '#4ECDC4',
+      child: Center({
+        child: Text("Item 2")
+      })
+    }),
+    Container({
+      width: 150,
+      height: 60,
+      color: '#45B7D1',
+      child: Center({
+        child: Text("Item 3")
+      })
+    })
+  ]
+});
+```
+
+### 💻 Try It Out
+
+1. Change the height of each Container
+2. Try different colors
+3. Add more items to the Column
+
+## 🚀 Practice 4: Column Alignment Options
+
+Let's learn Column alignment options.
+
+```typescript
+import { Column, Container, MainAxisAlignment, CrossAxisAlignment } from "@meursyphus/flitter";
+
+// Vertical spacing control
+const spacedColumn = Column({
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    Container({ width: 100, height: 40, color: '#FF6B6B' }),
+    Container({ width: 100, height: 40, color: '#4ECDC4' }),
+    Container({ width: 100, height: 40, color: '#45B7D1' })
+  ]
+});
+
+// Horizontal alignment control
+const alignedColumn = Column({
+  crossAxisAlignment: CrossAxisAlignment.end,
+  children: [
+    Container({ width: 80, height: 40, color: '#FF6B6B' }),
+    Container({ width: 120, height: 40, color: '#4ECDC4' }),
+    Container({ width: 100, height: 40, color: '#45B7D1' })
+  ]
+});
+```
+
+### CrossAxisAlignment Options
+
+- `CrossAxisAlignment.start`: Align to start
+- `CrossAxisAlignment.end`: Align to end
+- `CrossAxisAlignment.center`: Center alignment
+- `CrossAxisAlignment.stretch`: Stretch to full width
+
+### 💻 Try It Out
+
+1. Try different CrossAxisAlignment options
+2. Use containers with different widths
+3. Combine MainAxisAlignment and CrossAxisAlignment
+
+## 🚀 Practice 5: Adding Spacing with SizedBox
+
+Let's learn how to add spacing between widgets.
+
+```typescript
+import { Column, Row, Container, Text, SizedBox, EdgeInsets } from "@meursyphus/flitter";
+
+const spacedLayout = Column({
+  children: [
+    Text("First section"),
+    SizedBox({ height: 20 }),  // Vertical spacing
+    
+    Container({
+      padding: EdgeInsets.all(16),
+      color: '#F5F5F5',
+      child: Row({
+        children: [
+          Container({ width: 50, height: 50, color: '#FF6B6B' }),
+          SizedBox({ width: 10 }),  // Horizontal spacing
+          Container({ width: 50, height: 50, color: '#4ECDC4' }),
+          SizedBox({ width: 10 }),
+          Container({ width: 50, height: 50, color: '#45B7D1' })
+        ]
+      })
+    }),
+    
+    SizedBox({ height: 20 }),
+    Text("Second section")
+  ]
+});
+```
+
+### SizedBox Usage
+
+- `SizedBox({ width: 10 })`: Horizontal spacing of 10 pixels
+- `SizedBox({ height: 20 })`: Vertical spacing of 20 pixels
+- `SizedBox({ width: 10, height: 20 })`: Both horizontal and vertical spacing
+
+### 💻 Try It Out
+
+1. Change SizedBox dimensions
+2. Add more SizedBoxes between widgets
+3. Remove SizedBoxes to see the difference
+
+## 🚀 Practice 6: Nesting Row and Column
+
+Let's create complex layouts by nesting Row and Column.
+
+```typescript
+import { Column, Row, Container, Text, SizedBox, EdgeInsets, TextStyle, Center } from "@meursyphus/flitter";
+
+const complexLayout = Container({
+  padding: EdgeInsets.all(20),
+  child: Column({
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // Header
+      Text("Dashboard", {
+        style: new TextStyle({
+          fontSize: 24,
+          fontWeight: 'bold'
+        })
+      }),
+      
+      SizedBox({ height: 20 }),
+      
+      // Statistics row
+      Row({
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Column({
+            children: [
+              Text("Users", {
+                style: new TextStyle({ color: '#666' })
+              }),
+              Text("1,234", {
+                style: new TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: '#2196F3'
+                })
+              })
+            ]
+          }),
+          Column({
+            children: [
+              Text("Orders", {
+                style: new TextStyle({ color: '#666' })
+              }),
+              Text("567", {
+                style: new TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: '#4CAF50'
+                })
+              })
+            ]
+          }),
+          Column({
+            children: [
+              Text("Revenue", {
+                style: new TextStyle({ color: '#666' })
+              }),
+              Text("$89,123", {
+                style: new TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: '#FF5722'
+                })
+              })
+            ]
+          })
+        ]
+      }),
+      
+      SizedBox({ height: 30 }),
+      
+      // Action buttons
+      Row({
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container({
+            padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+            decoration: new BoxDecoration({
+              color: '#2196F3',
+              borderRadius: BorderRadius.circular(4)
+            }),
+            child: Text("View Report", {
+              style: new TextStyle({ color: 'white' })
+            })
+          }),
+          Container({
+            padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+            decoration: new BoxDecoration({
+              color: '#4CAF50',
+              borderRadius: BorderRadius.circular(4)
+            }),
+            child: Text("Add New", {
+              style: new TextStyle({ color: 'white' })
+            })
+          })
+        ]
+      })
+    ]
+  })
+});
+```
+
+### 💻 Try It Out
+
+1. Add more statistics to the Row
+2. Change the layout structure
+3. Add more buttons or sections
+
+## 🎨 Practice 7: Creating a Navigation Bar
+
+Let's create a practical navigation bar using Row.
+
+```typescript
+import { Container, Row, Text, TextStyle, BoxDecoration, EdgeInsets, BorderRadius } from "@meursyphus/flitter";
+
+const navigationBar = Container({
   decoration: new BoxDecoration({
-    color: '#34495e',
+    color: '#1976D2',
     boxShadow: [
       new BoxShadow({
-        color: 'rgba(0,0,0,0.1)',
-        offset: { x: 0, y: 2 },
+        color: 'rgba(0, 0, 0, 0.1)',
+        offset: { dx: 0, dy: 2 },
         blurRadius: 4
       })
     ]
   }),
+  padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 16 }),
   child: Row({
-    mainAxisAlignment: MainAxisAlignment.spaceAround,
-    crossAxisAlignment: CrossAxisAlignment.center,
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      Text("홈", { style: new TextStyle({ color: 'white', fontSize: 16 }) }),
-      Text("제품", { style: new TextStyle({ color: 'white', fontSize: 16 }) }),
-      Text("서비스", { style: new TextStyle({ color: 'white', fontSize: 16 }) }),
-      Text("문의", { style: new TextStyle({ color: 'white', fontSize: 16 }) })
+      // Logo
+      Text("MyApp", {
+        style: new TextStyle({
+          fontSize: 20,
+          fontWeight: 'bold',
+          color: 'white'
+        })
+      }),
+      
+      // Navigation links
+      Row({
+        children: [
+          Text("Home", {
+            style: new TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          }),
+          SizedBox({ width: 24 }),
+          Text("About", {
+            style: new TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          }),
+          SizedBox({ width: 24 }),
+          Text("Services", {
+            style: new TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          }),
+          SizedBox({ width: 24 }),
+          Text("Contact", {
+            style: new TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          })
+        ]
+      }),
+      
+      // User menu
+      Container({
+        padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 6 }),
+        decoration: new BoxDecoration({
+          color: 'rgba(255, 255, 255, 0.2)',
+          borderRadius: BorderRadius.circular(16)
+        }),
+        child: Text("Login", {
+          style: new TextStyle({
+            color: 'white',
+            fontSize: 14
+          })
+        })
+      })
     ]
   })
+});
+```
+
+### 💻 Try It Out
+
+1. Change navigation link text
+2. Adjust colors and spacing
+3. Add more navigation items
+4. Try different button styles
+
+## ⚠️ Common Mistakes and Solutions
+
+### 1. Overflow Issues
+```typescript
+// ❌ Problem: Too many widgets causing overflow
+Row({
+  children: [
+    Container({ width: 200, height: 50, color: 'red' }),
+    Container({ width: 200, height: 50, color: 'blue' }),
+    Container({ width: 200, height: 50, color: 'green' })
+    // This might overflow on narrow screens
+  ]
+})
+
+// ✅ Solution: Use Flexible or Expanded
+Row({
+  children: [
+    Flexible({ child: Container({ height: 50, color: 'red' }) }),
+    Flexible({ child: Container({ height: 50, color: 'blue' }) }),
+    Flexible({ child: Container({ height: 50, color: 'green' }) })
+  ]
 })
 ```
 
-## 🎨 연습 과제
+### 2. Missing SizedBox Import
+```typescript
+// ❌ Using SizedBox without import
+SizedBox({ height: 20 })  // Error!
 
-1. **3x3 그리드 만들기**: Column 안에 3개의 Row를 넣어 3x3 그리드를 만들어보세요
-2. **카드 레이아웃**: Row를 사용해 카드 3개를 가로로 배치해보세요
-3. **사이드바 레이아웃**: Row 안에 사이드바(Column)와 메인 콘텐츠를 배치해보세요
+// ✅ Correct import
+import { SizedBox } from "@meursyphus/flitter";
+```
 
-## 🚨 주의사항
+### 3. Alignment Confusion
+```typescript
+// In Row:
+// mainAxisAlignment controls horizontal alignment
+// crossAxisAlignment controls vertical alignment
 
-1. **Overflow 방지**: Row나 Column의 자식들이 화면을 벗어나지 않도록 주의
-2. **Expanded 사용**: 남은 공간을 채우려면 Expanded 위젯 활용
-3. **성능**: 깊게 중첩된 Row/Column은 성능에 영향을 줄 수 있음
+// In Column:
+// mainAxisAlignment controls vertical alignment
+// crossAxisAlignment controls horizontal alignment
+```
 
-## 🔗 다음 단계
+## 🏆 Challenge
 
-- [Stack과 위치 지정](./004_stack-positioning) - 위젯을 겹쳐서 배치하기
-- [Expanded와 Flexible](../3_layout-widgets/1_expanded-flexible) - 공간 분배하기
+Create a mobile app layout that includes:
+
+1. **Header**: App title on the left, menu icon on the right
+2. **Main content**: 2x2 grid using nested Rows and Columns
+3. **Bottom navigation**: 3 tabs evenly spaced
+
+Requirements:
+- Use proper spacing between elements
+- Apply appropriate colors and text styles
+- Ensure proper alignment
+
+## 📖 Next Steps
+
+Now that you've mastered Row and Column layouts, let's learn about Stack positioning!
+
+> 🎯 **Next Tutorial**: [Stack Positioning](/tutorial/en/2_basic-widgets/4_stack-positioning/)  
+> Learn how to overlay widgets and create complex layered layouts.
+
+## 💡 Key Summary
+
+1. **Row**: Arranges widgets horizontally
+2. **Column**: Arranges widgets vertically
+3. **MainAxisAlignment**: Controls alignment along the main axis
+4. **CrossAxisAlignment**: Controls alignment along the cross axis
+5. **SizedBox**: Adds spacing between widgets
+6. **Nesting**: Combine Row and Column for complex layouts
+
+These layout widgets are the foundation of all Flitter UIs!

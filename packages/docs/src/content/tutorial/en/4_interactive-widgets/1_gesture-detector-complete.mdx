@@ -4,7 +4,7 @@ description: "클릭, 더블클릭, 롱프레스, 드래그, 호버 등 모든 �
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
-    import { Container, Text, GestureDetector, StatefulWidget, State, Column, EdgeInsets, BoxDecoration, Row, Center, SizedBox, Border, classToFunction } from "@meursyphus/flitter";
+    import { Container, Text, GestureDetector, StatefulWidget, State, Column, EdgeInsets, BoxDecoration, Row, Center, SizedBox, Border, BorderRadius, TextStyle, MainAxisAlignment, CrossAxisAlignment } from "@meursyphus/flitter";
     
     // TODO: 다양한 제스처를 감지하는 상호작용 위젯을 만들어보세요
     class InteractiveDemo extends StatefulWidget {
@@ -44,11 +44,17 @@ files:
       }
     }
     
-    export default classToFunction(InteractiveDemo);
+    function createWidget() {
+      return new InteractiveDemo();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
 solved_files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
-    import { Container, Text, GestureDetector, StatefulWidget, State, Column, EdgeInsets, BoxDecoration, Row, Center, SizedBox, Border, BorderRadius, TextStyle, classToFunction } from "@meursyphus/flitter";
+    import { Container, Text, GestureDetector, StatefulWidget, State, Column, EdgeInsets, BoxDecoration, Row, Center, SizedBox, Border, BorderRadius, TextStyle, MainAxisAlignment, CrossAxisAlignment } from "@meursyphus/flitter";
     
     class InteractiveDemo extends StatefulWidget {
       createState() {
@@ -111,11 +117,11 @@ solved_files:
       
       build(context) {
         return Container({
-          padding: new EdgeInsets.all(20),
+          padding: EdgeInsets.all(20),
           child: Column({
             children: [
               Text("🎯 GestureDetector 완전 정복", {
-                style: { fontSize: 20, fontWeight: 'bold' }
+                style: new TextStyle({ fontSize: 20, fontWeight: 'bold' })
               }),
               Container({ height: 20 }),
               
@@ -132,7 +138,7 @@ solved_files:
                   height: 120,
                   decoration: new BoxDecoration({
                     color: this.isDragging ? '#DC2626' : (this.isHovered ? '#7C3AED' : '#3B82F6'),
-                    borderRadius: 12,
+                    borderRadius: BorderRadius.circular(12),
                     border: this.isHovered ? Border.all({ color: '#FFFFFF', width: 2 }) : null
                   }),
                   child: Column({
