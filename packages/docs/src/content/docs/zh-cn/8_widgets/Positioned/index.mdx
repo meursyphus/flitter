@@ -1,0 +1,360 @@
+---
+nav_group: Widgets
+nav_group_order: 3
+nav_title: Positioned
+title: "Positioned"
+description: "A widget that controls child positioning within a Stack"
+---
+
+## Overview
+
+Positioned is a widget that controls where a child of a Stack is positioned.
+
+Positioned allows you to place child widgets absolutely by specifying distances from the edges of the Stack. Similar to CSS's `position: absolute`, it uses top, bottom, left, and right properties to control positioning. Positioned must be a direct child of a Stack widget.
+
+## When to use it?
+
+- When fixing widgets at specific positions within a Stack
+- When creating overlays or floating elements
+- When overlaying badges or notifications on other widgets
+- When building custom layouts
+- When placing UI elements like FABs (Floating Action Buttons)
+
+## Basic Usage
+
+```typescript
+Stack({
+  children: [
+    // Background widget
+    Container({ color: 'lightgray' }),
+    
+    // Positioned at top-left
+    Positioned({
+      top: 10,
+      left: 10,
+      child: Text('Top Left')
+    }),
+    
+    // Positioned at bottom-right
+    Positioned({
+      bottom: 10,
+      right: 10,
+      child: Text('Bottom Right')
+    })
+  ]
+})
+```
+
+## Props
+
+### Positioning Props
+
+#### top
+
+**Value: number | undefined**
+
+Distance from the top edge of the Stack in pixels.
+
+```typescript
+Positioned({
+  top: 20,
+  child: Text('20 pixels from top')
+})
+```
+
+#### bottom
+
+**Value: number | undefined**
+
+Distance from the bottom edge of the Stack in pixels.
+
+```typescript
+Positioned({
+  bottom: 20,
+  child: Text('20 pixels from bottom')
+})
+```
+
+#### left
+
+**Value: number | undefined**
+
+Distance from the left edge of the Stack in pixels.
+
+```typescript
+Positioned({
+  left: 20,
+  child: Text('20 pixels from left')
+})
+```
+
+#### right
+
+**Value: number | undefined**
+
+Distance from the right edge of the Stack in pixels.
+
+```typescript
+Positioned({
+  right: 20,
+  child: Text('20 pixels from right')
+})
+```
+
+### Sizing Props
+
+#### width
+
+**Value: number | undefined**
+
+Explicitly sets the width of the child widget. Ignored if both left and right are specified.
+
+```typescript
+Positioned({
+  top: 10,
+  left: 10,
+  width: 100,
+  height: 50,
+  child: Container({ color: 'blue' })
+})
+```
+
+#### height
+
+**Value: number | undefined**
+
+Explicitly sets the height of the child widget. Ignored if both top and bottom are specified.
+
+```typescript
+Positioned({
+  top: 10,
+  left: 10,
+  width: 100,
+  height: 50,
+  child: Container({ color: 'red' })
+})
+```
+
+### child (required)
+
+**Value: Widget**
+
+The child widget to be positioned.
+
+```typescript
+Positioned({
+  top: 50,
+  left: 50,
+  child: Icon({ icon: Icons.star, color: 'yellow' })
+})
+```
+
+## Static Methods
+
+### Positioned.fill()
+
+Creates a Positioned widget that fills the entire Stack. It has 0 distance from all edges.
+
+```typescript
+Stack({
+  children: [
+    Image({ src: 'background.jpg' }),
+    Positioned.fill({
+      child: Container({
+        color: 'rgba(0, 0, 0, 0.5)' // Semi-transparent overlay
+      })
+    })
+  ]
+})
+
+// Equivalent to:
+Positioned({
+  top: 0,
+  bottom: 0,
+  left: 0,
+  right: 0,
+  child: Container({ color: 'rgba(0, 0, 0, 0.5)' })
+})
+```
+
+## Position and Size Combinations
+
+### Sizing Through Opposing Constraints
+
+When both left and right are specified, width is automatically calculated. When both top and bottom are specified, height is automatically calculated.
+
+```typescript
+// Width is automatically calculated (Stack width - 40)
+Positioned({
+  top: 10,
+  left: 20,
+  right: 20,
+  child: Container({ height: 50, color: 'green' })
+})
+
+// Height is automatically calculated (Stack height - 40)
+Positioned({
+  top: 20,
+  bottom: 20,
+  left: 10,
+  child: Container({ width: 50, color: 'blue' })
+})
+```
+
+## Practical Examples
+
+### Example 1: Badge Display
+
+```typescript
+const notificationIcon = Container({
+  width: 50,
+  height: 50,
+  child: Stack({
+    children: [
+      Icon({ icon: Icons.notifications, size: 40 }),
+      Positioned({
+        top: 0,
+        right: 0,
+        child: Container({
+          width: 20,
+          height: 20,
+          decoration: BoxDecoration({
+            shape: 'circle',
+            color: 'red'
+          }),
+          alignment: Alignment.center,
+          child: Text('3', {
+            style: TextStyle({ color: 'white', fontSize: 12 })
+          })
+        })
+      })
+    ]
+  })
+});
+```
+
+### Example 2: Text Overlay on Image
+
+```typescript
+const imageWithOverlay = Container({
+  width: 300,
+  height: 200,
+  child: Stack({
+    fit: StackFit.expand,
+    children: [
+      Image({ src: 'landscape.jpg', fit: 'cover' }),
+      // Bottom gradient
+      Positioned({
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 80,
+        child: Container({
+          decoration: BoxDecoration({
+            gradient: LinearGradient({
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+              colors: ['rgba(0,0,0,0.8)', 'transparent']
+            })
+          })
+        })
+      }),
+      // Text
+      Positioned({
+        bottom: 20,
+        left: 20,
+        right: 20,
+        child: Column({
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Beautiful Landscape', {
+              style: TextStyle({
+                color: 'white',
+                fontSize: 24,
+                fontWeight: 'bold'
+              })
+            }),
+            Text('Photo by John Doe', {
+              style: TextStyle({
+                color: 'rgba(255,255,255,0.8)',
+                fontSize: 14
+              })
+            })
+          ]
+        })
+      })
+    ]
+  })
+});
+```
+
+### Example 3: Floating Action Button
+
+```typescript
+const screenWithFAB = Scaffold({
+  body: Stack({
+    children: [
+      // Main content
+      ListView({
+        children: List.generate(20, (i) => 
+          ListTile({ title: Text(`Item ${i + 1}`) })
+        )
+      }),
+      // FAB
+      Positioned({
+        bottom: 16,
+        right: 16,
+        child: FloatingActionButton({
+          onPressed: () => console.log('FAB clicked'),
+          child: Icon({ icon: Icons.add })
+        })
+      })
+    ]
+  })
+});
+```
+
+### Example 4: Tooltip Display
+
+```typescript
+const tooltipExample = Stack({
+  clipped: false, // Allow tooltip to extend beyond Stack bounds
+  children: [
+    ElevatedButton({
+      onPressed: () => {},
+      child: Text('Hover me')
+    }),
+    if (showTooltip) Positioned({
+      bottom: 40,
+      left: -20,
+      child: Container({
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration({
+          color: 'black',
+          borderRadius: BorderRadius.circular(4)
+        }),
+        child: Text('This is a tooltip', {
+          style: TextStyle({ color: 'white' })
+        })
+      })
+    })
+  ]
+});
+```
+
+## Important Notes
+
+- Positioned must be a direct child of Stack.
+- When both top and bottom are specified, height is ignored.
+- When both left and right are specified, width is ignored.
+- At least one positioning property (top, bottom, left, right) must be specified.
+- If the Stack's size is not determined, Positioned widget placement may be unexpected.
+- Positioned widgets don't contribute to the Stack's size calculation.
+
+## Related Widgets
+
+- **Stack**: The parent widget where Positioned is used
+- **Align**: A simpler way to align a single child
+- **Container**: Simple alignment possible with alignment property
+- **Transform**: Positioning through transformation instead of position
+- **CustomMultiChildLayout**: For more complex layout requirements

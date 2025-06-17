@@ -1,0 +1,590 @@
+---
+nav_group: Widgets
+nav_group_order: 3
+nav_title: GestureDetector
+title: "GestureDetector"
+description: "A widget that detects user gestures and mouse events"
+---
+
+## Overview
+
+GestureDetector is a widget that detects user gestures and mouse events.
+
+GestureDetector wraps a child widget to detect and handle various user interaction events. It provides various event handlers such as click, mouse movement, and drag to implement interactive UI. Events are detected only within the area of the child widget.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/WhVXkCFPmK4"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowfullscreen
+></iframe>
+
+See: [https://api.flutter.dev/flutter/widgets/GestureDetector-class.html](https://api.flutter.dev/flutter/widgets/GestureDetector-class.html)
+
+## When to use it?
+
+- When adding click events to buttons or cards
+- When implementing drag and drop functionality
+- When applying hover effects
+- When creating custom interactive widgets
+- When tracking mouse position
+
+## Basic Usage
+
+```typescript
+GestureDetector({
+  onClick: (e) => {
+    console.log('Clicked!');
+  },
+  child: Container({
+    width: 100,
+    height: 100,
+    color: 'blue',
+    child: Center({
+      child: Text('Click me')
+    })
+  })
+})
+```
+
+## Props
+
+### onClick
+
+**Value: ((e: MouseEvent) => void) | undefined**
+
+Callback function called when the mouse is clicked.
+
+```typescript
+GestureDetector({
+  onClick: (e) => {
+    console.log(`Click position: ${e.clientX}, ${e.clientY}`);
+  },
+  child: Text('Clickable text')
+})
+```
+
+### onMouseDown
+
+**Value: ((e: MouseEvent) => void) | undefined**
+
+Callback function called when the mouse button is pressed down.
+
+```typescript
+GestureDetector({
+  onMouseDown: (e) => {
+    console.log('Mouse button pressed');
+  },
+  child: Container({ width: 100, height: 100 })
+})
+```
+
+### onMouseUp
+
+**Value: ((e: MouseEvent) => void) | undefined**
+
+Callback function called when the mouse button is released.
+
+```typescript
+GestureDetector({
+  onMouseUp: (e) => {
+    console.log('Mouse button released');
+  },
+  child: Container({ width: 100, height: 100 })
+})
+```
+
+### onMouseMove
+
+**Value: ((e: MouseEvent) => void) | undefined**
+
+Callback function called when the mouse moves.
+
+```typescript
+GestureDetector({
+  onMouseMove: (e) => {
+    console.log(`Mouse position: ${e.clientX}, ${e.clientY}`);
+  },
+  child: Container({ width: 200, height: 200 })
+})
+```
+
+### onMouseEnter
+
+**Value: ((e: MouseEvent) => void) | undefined**
+
+Callback function called when the mouse enters the widget area.
+
+```typescript
+GestureDetector({
+  onMouseEnter: (e) => {
+    console.log('Mouse entered');
+  },
+  child: Container({ color: 'gray' })
+})
+```
+
+### onMouseLeave
+
+**Value: ((e: MouseEvent) => void) | undefined**
+
+Callback function called when the mouse leaves the widget area.
+
+```typescript
+GestureDetector({
+  onMouseLeave: (e) => {
+    console.log('Mouse left');
+  },
+  child: Container({ color: 'gray' })
+})
+```
+
+### onMouseOver
+
+**Value: ((e: MouseEvent) => void) | undefined**
+
+Callback function called when the mouse is over the widget.
+
+```typescript
+GestureDetector({
+  onMouseOver: (e) => {
+    console.log('Mouse over');
+  },
+  child: Container({ width: 100, height: 100 })
+})
+```
+
+### onDragStart
+
+**Value: ((e: MouseEvent) => void) | undefined**
+
+Callback function called when dragging starts. Occurs together with the onMouseDown event.
+
+```typescript
+GestureDetector({
+  onDragStart: (e) => {
+    console.log('Drag started');
+  },
+  child: Container({ width: 50, height: 50, color: 'red' })
+})
+```
+
+### onDragMove
+
+**Value: ((e: MouseEvent) => void) | undefined**
+
+Callback function called while dragging.
+
+```typescript
+let position = { x: 0, y: 0 };
+
+GestureDetector({
+  onDragMove: (e) => {
+    position.x += e.movementX;
+    position.y += e.movementY;
+    console.log(`Drag position: ${position.x}, ${position.y}`);
+  },
+  child: Container({ width: 50, height: 50 })
+})
+```
+
+### onDragEnd
+
+**Value: ((e: MouseEvent) => void) | undefined**
+
+Callback function called when dragging ends.
+
+```typescript
+GestureDetector({
+  onDragEnd: (e) => {
+    console.log('Drag ended');
+  },
+  child: Container({ width: 50, height: 50 })
+})
+```
+
+### onWheel
+
+**Value: ((e: WheelEvent) => void) | undefined**
+
+Callback function called when using the mouse wheel.
+
+```typescript
+GestureDetector({
+  onWheel: (e) => {
+    console.log(`Wheel delta: ${e.deltaY}`);
+    e.preventDefault(); // Prevent default scrolling
+  },
+  child: Container({ width: 200, height: 200 })
+})
+```
+
+### cursor
+
+**Value: Cursor** (default: **"pointer"**)
+
+Specifies the mouse cursor shape.
+
+Available cursor types:
+- `"pointer"`: Hand pointer (default)
+- `"default"`: Default arrow
+- `"move"`: Move cursor
+- `"text"`: Text selection cursor
+- `"wait"`: Wait cursor
+- `"help"`: Help cursor
+- `"crosshair"`: Crosshair
+- `"grab"`: Grab cursor
+- `"grabbing"`: Grabbing cursor
+- `"not-allowed"`: Not allowed cursor
+- Resize cursors: `"n-resize"`, `"e-resize"`, `"s-resize"`, `"w-resize"`, etc.
+
+```typescript
+class DraggableCursor extends StatefulWidget {
+  createState() {
+    return new DraggableCursorState();
+  }
+}
+
+class DraggableCursorState extends State<DraggableCursor> {
+  cursor = 'grab';
+  
+  build() {
+    return GestureDetector({
+      cursor: this.cursor,
+      onDragStart: () => this.setState(() => this.cursor = 'grabbing'),
+      onDragEnd: () => this.setState(() => this.cursor = 'grab'),
+      child: Container({ width: 100, height: 100 })
+    });
+  }
+}
+```
+
+### child
+
+**Value: Widget | undefined**
+
+The child widget to detect events on.
+
+```typescript
+GestureDetector({
+  onClick: () => console.log('Clicked!'),
+  child: Container({
+    padding: EdgeInsets.all(20),
+    color: 'blue',
+    child: Text('Clickable area')
+  })
+})
+```
+
+## Practical Examples
+
+### Example 1: Interactive Button
+
+```typescript
+class InteractiveButton extends StatefulWidget {
+  createState() {
+    return new InteractiveButtonState();
+  }
+}
+
+class InteractiveButtonState extends State<InteractiveButton> {
+  isPressed = false;
+  isHovered = false;
+  
+  build() {
+    return GestureDetector({
+      onMouseDown: () => this.setState(() => this.isPressed = true),
+      onMouseUp: () => this.setState(() => this.isPressed = false),
+      onMouseEnter: () => this.setState(() => this.isHovered = true),
+      onMouseLeave: () => {
+        this.setState(() => {
+          this.isHovered = false;
+          this.isPressed = false;
+        });
+      },
+      onClick: () => console.log('Button clicked!'),
+      cursor: 'pointer',
+      child: Container({
+        padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+        decoration: BoxDecoration({
+          color: this.isPressed ? '#1976D2' : (this.isHovered ? '#2196F3' : '#42A5F5'),
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: this.isPressed ? [] : [
+            BoxShadow({
+              color: 'rgba(0, 0, 0, 0.2)',
+              blurRadius: 4,
+              offset: { x: 0, y: 2 }
+            })
+          ]
+        }),
+        child: Text('Custom Button', {
+          style: TextStyle({ color: 'white', fontWeight: 'bold' })
+        })
+      })
+    });
+  }
+}
+```
+
+### Example 2: Draggable Element
+
+```typescript
+class DraggableBox extends StatefulWidget {
+  createState() {
+    return new DraggableBoxState();
+  }
+}
+
+class DraggableBoxState extends State<DraggableBox> {
+  position = { x: 0, y: 0 };
+  isDragging = false;
+  
+  build() {
+    return Transform({
+      transform: Matrix4.translation(this.position.x, this.position.y, 0),
+      child: GestureDetector({
+        onDragStart: () => this.setState(() => this.isDragging = true),
+        onDragMove: (e) => {
+          this.setState(() => {
+            this.position = {
+              x: this.position.x + e.movementX,
+              y: this.position.y + e.movementY
+            };
+          });
+        },
+        onDragEnd: () => this.setState(() => this.isDragging = false),
+        cursor: this.isDragging ? 'grabbing' : 'grab',
+        child: Container({
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration({
+            color: this.isDragging ? 'orange' : 'blue',
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow({
+                color: 'rgba(0, 0, 0, 0.3)',
+                blurRadius: this.isDragging ? 8 : 4,
+                offset: { x: 0, y: this.isDragging ? 4 : 2 }
+              })
+            ]
+          }),
+          child: Center({
+            child: Text('Drag me', {
+              style: TextStyle({ color: 'white' })
+            })
+          })
+        })
+      })
+    });
+  }
+}
+```
+
+### Example 3: Mouse Tracker
+
+```typescript
+class MouseTracker extends StatefulWidget {
+  createState() {
+    return new MouseTrackerState();
+  }
+}
+
+class MouseTrackerState extends State<MouseTracker> {
+  mousePosition = { x: 0, y: 0 };
+  isInside = false;
+  
+  build() {
+    return GestureDetector({
+      onMouseMove: (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        this.setState(() => {
+          this.mousePosition = {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+          };
+        });
+      },
+      onMouseEnter: () => this.setState(() => this.isInside = true),
+      onMouseLeave: () => this.setState(() => this.isInside = false),
+      child: Container({
+        width: 300,
+        height: 200,
+        color: 'lightgray',
+        child: Stack({
+          children: [
+            if (this.isInside) Positioned({
+              left: this.mousePosition.x - 10,
+              top: this.mousePosition.y - 10,
+              child: Container({
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration({
+                  color: 'red',
+                  borderRadius: BorderRadius.circular(10)
+                })
+              })
+            }),
+            Center({
+              child: Text(`Mouse position: ${Math.round(this.mousePosition.x)}, ${Math.round(this.mousePosition.y)}`)
+            })
+          ]
+        })
+      })
+    });
+  }
+}
+```
+
+### Example 4: Context Menu
+
+```typescript
+class ContextMenuExample extends StatefulWidget {
+  createState() {
+    return new ContextMenuExampleState();
+  }
+}
+
+class ContextMenuExampleState extends State<ContextMenuExample> {
+  showMenu = false;
+  menuPosition = { x: 0, y: 0 };
+  
+  build() {
+    return Stack({
+      children: [
+        GestureDetector({
+          onClick: (e) => {
+            e.preventDefault();
+            if (e.button === 2) { // Right click
+              this.setState(() => {
+                this.showMenu = true;
+                this.menuPosition = { x: e.clientX, y: e.clientY };
+              });
+            } else {
+              this.setState(() => this.showMenu = false);
+            }
+          },
+          child: Container({
+            width: 400,
+            height: 300,
+            color: 'white',
+            child: Center({
+              child: Text('Right-click to open menu')
+            })
+          })
+        }),
+        if (this.showMenu) Positioned({
+          left: this.menuPosition.x,
+          top: this.menuPosition.y,
+          child: Container({
+            width: 150,
+            padding: EdgeInsets.symmetric({ vertical: 8 }),
+            decoration: BoxDecoration({
+              color: 'white',
+              borderRadius: BorderRadius.circular(4),
+              boxShadow: [
+                BoxShadow({
+                  color: 'rgba(0, 0, 0, 0.2)',
+                  blurRadius: 8,
+                  offset: { x: 0, y: 2 }
+                })
+              ]
+            }),
+            child: Column({
+              children: ['Copy', 'Paste', 'Delete'].map(item =>
+                GestureDetector({
+                  onClick: () => {
+                    console.log(`${item} selected`);
+                    this.setState(() => this.showMenu = false);
+                  },
+                  cursor: 'pointer',
+                  child: Container({
+                    padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+                    child: Text(item)
+                  })
+                })
+              )
+            })
+          })
+        })
+      ]
+    });
+  }
+}
+```
+
+### Example 5: Zoomable Image
+
+```typescript
+class ZoomableImage extends StatefulWidget {
+  src: string;
+  
+  constructor({ src }: { src: string }) {
+    super();
+    this.src = src;
+  }
+  
+  createState() {
+    return new ZoomableImageState();
+  }
+}
+
+class ZoomableImageState extends State<ZoomableImage> {
+  scale = 1;
+  
+  build() {
+    return GestureDetector({
+      onWheel: (e) => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? 0.9 : 1.1;
+        this.setState(() => {
+          this.scale = Math.max(0.5, Math.min(3, this.scale * delta));
+        });
+      },
+      cursor: this.scale > 1 ? 'zoom-out' : 'zoom-in',
+      child: Container({
+        width: 400,
+        height: 300,
+        clipped: true,
+        child: Transform({
+          transform: Matrix4.identity().scaled(this.scale, this.scale, 1),
+          alignment: Alignment.center,
+          child: Image({ src: this.widget.src, fit: 'cover' })
+        })
+      })
+    });
+  }
+}
+```
+
+## MouseEvent Object
+
+All mouse event handlers receive a standard MouseEvent object:
+
+- **clientX, clientY**: Mouse position relative to viewport
+- **pageX, pageY**: Mouse position relative to page
+- **screenX, screenY**: Mouse position relative to screen
+- **movementX, movementY**: Movement distance from previous event
+- **button**: Button pressed (0: left, 1: middle, 2: right)
+- **buttons**: Bitmask of currently pressed buttons
+- **ctrlKey, shiftKey, altKey, metaKey**: Modifier key states
+- **currentTarget**: Element where the event occurred
+- **preventDefault()**: Prevent default action
+- **stopPropagation()**: Stop event bubbling
+
+## Important Notes
+
+- Events are not detected without a child.
+- Events are only detected within the actual rendered area of the child.
+- Drag events are tracked globally, so they continue even when the mouse leaves the widget.
+- onDragStart occurs together with onMouseDown, so be careful when handling both events.
+- Use e.preventDefault() to prevent browser default behavior.
+
+## Related Widgets
+
+- **InkWell**: Touch response widget with Material Design ripple effect
+- **Draggable**: Specialized widget for drag and drop
+- **MouseRegion**: Widget that tracks mouse hover state
+- **Listener**: Widget that handles low-level pointer events

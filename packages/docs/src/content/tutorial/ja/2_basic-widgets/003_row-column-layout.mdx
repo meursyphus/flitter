@@ -1,0 +1,673 @@
+---
+title: "Building Layouts with Row and Column"
+description: "Arrange widgets horizontally/vertically and create a simple navigation bar"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { StatelessWidget, Container, Text, Row, Column, SizedBox, EdgeInsets } from '@meursyphus/flitter';
+
+    class LayoutApp extends StatelessWidget {
+      build(context) {
+        // TODO: Use Row and Column to build layouts
+        return Container({
+          width: 400,
+          height: 300,
+          padding: EdgeInsets.all(20),
+          child: Column({
+            children: [
+              Text("Create Row and Column layouts!"),
+              // TODO: Add Row and Column here
+            ]
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new LayoutApp();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+solved_files:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { StatelessWidget, Container, Text, Row, Column, SizedBox, EdgeInsets, MainAxisAlignment, CrossAxisAlignment, Center, TextStyle, BoxDecoration, BorderRadius } from '@meursyphus/flitter';
+
+    class LayoutApp extends StatelessWidget {
+      build(context) {
+        return Container({
+          width: 400,
+          height: 300,
+          padding: EdgeInsets.all(20),
+          child: Column({
+            children: [
+              // Title
+              Text("Row and Column Layout", {
+                style: new TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold'
+                })
+              }),
+              SizedBox({ height: 20 }),
+              
+              // Row example - horizontal arrangement
+              Container({
+                padding: EdgeInsets.all(10),
+                color: '#f0f0f0',
+                child: Row({
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container({
+                      width: 60,
+                      height: 60,
+                      color: '#FF6B6B',
+                      child: Center({
+                        child: Text("1", {
+                          style: new TextStyle({ color: 'white' })
+                        })
+                      })
+                    }),
+                    Container({
+                      width: 60,
+                      height: 60,
+                      color: '#4ECDC4',
+                      child: Center({
+                        child: Text("2", {
+                          style: new TextStyle({ color: 'white' })
+                        })
+                      })
+                    }),
+                    Container({
+                      width: 60,
+                      height: 60,
+                      color: '#45B7D1',
+                      child: Center({
+                        child: Text("3", {
+                          style: new TextStyle({ color: 'white' })
+                        })
+                      })
+                    })
+                  ]
+                })
+              }),
+              
+              SizedBox({ height: 20 }),
+              
+              // Navigation bar example
+              Container({
+                padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 12 }),
+                decoration: new BoxDecoration({
+                  color: '#2196F3',
+                  borderRadius: BorderRadius.circular(8)
+                }),
+                child: Row({
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Home", {
+                      style: new TextStyle({ color: 'white', fontWeight: 'bold' })
+                    }),
+                    Text("About", {
+                      style: new TextStyle({ color: 'white', fontWeight: 'bold' })
+                    }),
+                    Text("Contact", {
+                      style: new TextStyle({ color: 'white', fontWeight: 'bold' })
+                    })
+                  ]
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new LayoutApp();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+---
+
+# Building Layouts with Row and Column
+
+Row and Column are the fundamental layout widgets in Flitter. Row arranges widgets horizontally, while Column arranges them vertically. These two widgets are the foundation for creating all UI layouts.
+
+## 🎯 Learning Objectives
+
+After completing this tutorial, you'll be able to:
+
+- [ ] Arrange widgets horizontally with Row
+- [ ] Arrange widgets vertically with Column
+- [ ] Control spacing and alignment between widgets
+- [ ] Create navigation bars and simple layouts
+
+## 📚 Basic Concepts
+
+### Row: Horizontal Arrangement
+
+```typescript
+Row({
+  children: [
+    // Widgets to arrange horizontally
+  ],
+  mainAxisAlignment: MainAxisAlignment.center,  // Horizontal alignment
+  crossAxisAlignment: CrossAxisAlignment.center // Vertical alignment
+})
+```
+
+### Column: Vertical Arrangement
+
+```typescript
+Column({
+  children: [
+    // Widgets to arrange vertically
+  ],
+  mainAxisAlignment: MainAxisAlignment.center,  // Vertical alignment
+  crossAxisAlignment: CrossAxisAlignment.center // Horizontal alignment
+})
+```
+
+## 🚀 Practice 1: Basic Row Layout
+
+Let's start by arranging widgets horizontally.
+
+```typescript
+import { Row, Container, Text, Center } from "@meursyphus/flitter";
+
+const basicRow = Row({
+  children: [
+    Container({
+      width: 80,
+      height: 80,
+      color: '#FF6B6B',
+      child: Center({
+        child: Text("Box 1")
+      })
+    }),
+    Container({
+      width: 80,
+      height: 80,
+      color: '#4ECDC4',
+      child: Center({
+        child: Text("Box 2")
+      })
+    }),
+    Container({
+      width: 80,
+      height: 80,
+      color: '#45B7D1',
+      child: Center({
+        child: Text("Box 3")
+      })
+    })
+  ]
+});
+```
+
+### 💻 Try It Out
+
+1. Change the colors of each Container
+2. Modify the size of the Containers
+3. Change the text inside each box
+
+## 🚀 Practice 2: Row Alignment Options
+
+Let's learn how to control the spacing and alignment of widgets in a Row.
+
+```typescript
+import { Row, Container, Text, Center, MainAxisAlignment } from "@meursyphus/flitter";
+
+// Center alignment
+const centeredRow = Row({
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Container({ width: 50, height: 50, color: '#FF6B6B' }),
+    Container({ width: 50, height: 50, color: '#4ECDC4' }),
+    Container({ width: 50, height: 50, color: '#45B7D1' })
+  ]
+});
+
+// Space between
+const spaceBetweenRow = Row({
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    Container({ width: 50, height: 50, color: '#FF6B6B' }),
+    Container({ width: 50, height: 50, color: '#4ECDC4' }),
+    Container({ width: 50, height: 50, color: '#45B7D1' })
+  ]
+});
+
+// Space evenly
+const spaceEvenlyRow = Row({
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    Container({ width: 50, height: 50, color: '#FF6B6B' }),
+    Container({ width: 50, height: 50, color: '#4ECDC4' }),
+    Container({ width: 50, height: 50, color: '#45B7D1' })
+  ]
+});
+```
+
+### MainAxisAlignment Options
+
+- `MainAxisAlignment.start`: Align to start (left)
+- `MainAxisAlignment.end`: Align to end (right)
+- `MainAxisAlignment.center`: Center alignment
+- `MainAxisAlignment.spaceBetween`: Space between widgets
+- `MainAxisAlignment.spaceAround`: Space around widgets
+- `MainAxisAlignment.spaceEvenly`: Even spacing
+
+### 💻 Try It Out
+
+1. Try each MainAxisAlignment option
+2. Change the number of widgets
+3. Modify widget sizes to see alignment effects
+
+## 🚀 Practice 3: Basic Column Layout
+
+Now let's arrange widgets vertically.
+
+```typescript
+import { Column, Container, Text, Center } from "@meursyphus/flitter";
+
+const basicColumn = Column({
+  children: [
+    Container({
+      width: 150,
+      height: 60,
+      color: '#FF6B6B',
+      child: Center({
+        child: Text("Item 1")
+      })
+    }),
+    Container({
+      width: 150,
+      height: 60,
+      color: '#4ECDC4',
+      child: Center({
+        child: Text("Item 2")
+      })
+    }),
+    Container({
+      width: 150,
+      height: 60,
+      color: '#45B7D1',
+      child: Center({
+        child: Text("Item 3")
+      })
+    })
+  ]
+});
+```
+
+### 💻 Try It Out
+
+1. Change the height of each Container
+2. Try different colors
+3. Add more items to the Column
+
+## 🚀 Practice 4: Column Alignment Options
+
+Let's learn Column alignment options.
+
+```typescript
+import { Column, Container, MainAxisAlignment, CrossAxisAlignment } from "@meursyphus/flitter";
+
+// Vertical spacing control
+const spacedColumn = Column({
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    Container({ width: 100, height: 40, color: '#FF6B6B' }),
+    Container({ width: 100, height: 40, color: '#4ECDC4' }),
+    Container({ width: 100, height: 40, color: '#45B7D1' })
+  ]
+});
+
+// Horizontal alignment control
+const alignedColumn = Column({
+  crossAxisAlignment: CrossAxisAlignment.end,
+  children: [
+    Container({ width: 80, height: 40, color: '#FF6B6B' }),
+    Container({ width: 120, height: 40, color: '#4ECDC4' }),
+    Container({ width: 100, height: 40, color: '#45B7D1' })
+  ]
+});
+```
+
+### CrossAxisAlignment Options
+
+- `CrossAxisAlignment.start`: Align to start
+- `CrossAxisAlignment.end`: Align to end
+- `CrossAxisAlignment.center`: Center alignment
+- `CrossAxisAlignment.stretch`: Stretch to full width
+
+### 💻 Try It Out
+
+1. Try different CrossAxisAlignment options
+2. Use containers with different widths
+3. Combine MainAxisAlignment and CrossAxisAlignment
+
+## 🚀 Practice 5: Adding Spacing with SizedBox
+
+Let's learn how to add spacing between widgets.
+
+```typescript
+import { Column, Row, Container, Text, SizedBox, EdgeInsets } from "@meursyphus/flitter";
+
+const spacedLayout = Column({
+  children: [
+    Text("First section"),
+    SizedBox({ height: 20 }),  // Vertical spacing
+    
+    Container({
+      padding: EdgeInsets.all(16),
+      color: '#F5F5F5',
+      child: Row({
+        children: [
+          Container({ width: 50, height: 50, color: '#FF6B6B' }),
+          SizedBox({ width: 10 }),  // Horizontal spacing
+          Container({ width: 50, height: 50, color: '#4ECDC4' }),
+          SizedBox({ width: 10 }),
+          Container({ width: 50, height: 50, color: '#45B7D1' })
+        ]
+      })
+    }),
+    
+    SizedBox({ height: 20 }),
+    Text("Second section")
+  ]
+});
+```
+
+### SizedBox Usage
+
+- `SizedBox({ width: 10 })`: Horizontal spacing of 10 pixels
+- `SizedBox({ height: 20 })`: Vertical spacing of 20 pixels
+- `SizedBox({ width: 10, height: 20 })`: Both horizontal and vertical spacing
+
+### 💻 Try It Out
+
+1. Change SizedBox dimensions
+2. Add more SizedBoxes between widgets
+3. Remove SizedBoxes to see the difference
+
+## 🚀 Practice 6: Nesting Row and Column
+
+Let's create complex layouts by nesting Row and Column.
+
+```typescript
+import { Column, Row, Container, Text, SizedBox, EdgeInsets, TextStyle, Center } from "@meursyphus/flitter";
+
+const complexLayout = Container({
+  padding: EdgeInsets.all(20),
+  child: Column({
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // Header
+      Text("Dashboard", {
+        style: new TextStyle({
+          fontSize: 24,
+          fontWeight: 'bold'
+        })
+      }),
+      
+      SizedBox({ height: 20 }),
+      
+      // Statistics row
+      Row({
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Column({
+            children: [
+              Text("Users", {
+                style: new TextStyle({ color: '#666' })
+              }),
+              Text("1,234", {
+                style: new TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: '#2196F3'
+                })
+              })
+            ]
+          }),
+          Column({
+            children: [
+              Text("Orders", {
+                style: new TextStyle({ color: '#666' })
+              }),
+              Text("567", {
+                style: new TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: '#4CAF50'
+                })
+              })
+            ]
+          }),
+          Column({
+            children: [
+              Text("Revenue", {
+                style: new TextStyle({ color: '#666' })
+              }),
+              Text("$89,123", {
+                style: new TextStyle({
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: '#FF5722'
+                })
+              })
+            ]
+          })
+        ]
+      }),
+      
+      SizedBox({ height: 30 }),
+      
+      // Action buttons
+      Row({
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container({
+            padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+            decoration: new BoxDecoration({
+              color: '#2196F3',
+              borderRadius: BorderRadius.circular(4)
+            }),
+            child: Text("View Report", {
+              style: new TextStyle({ color: 'white' })
+            })
+          }),
+          Container({
+            padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+            decoration: new BoxDecoration({
+              color: '#4CAF50',
+              borderRadius: BorderRadius.circular(4)
+            }),
+            child: Text("Add New", {
+              style: new TextStyle({ color: 'white' })
+            })
+          })
+        ]
+      })
+    ]
+  })
+});
+```
+
+### 💻 Try It Out
+
+1. Add more statistics to the Row
+2. Change the layout structure
+3. Add more buttons or sections
+
+## 🎨 Practice 7: Creating a Navigation Bar
+
+Let's create a practical navigation bar using Row.
+
+```typescript
+import { Container, Row, Text, TextStyle, BoxDecoration, EdgeInsets, BorderRadius } from "@meursyphus/flitter";
+
+const navigationBar = Container({
+  decoration: new BoxDecoration({
+    color: '#1976D2',
+    boxShadow: [
+      new BoxShadow({
+        color: 'rgba(0, 0, 0, 0.1)',
+        offset: { dx: 0, dy: 2 },
+        blurRadius: 4
+      })
+    ]
+  }),
+  padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 16 }),
+  child: Row({
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      // Logo
+      Text("MyApp", {
+        style: new TextStyle({
+          fontSize: 20,
+          fontWeight: 'bold',
+          color: 'white'
+        })
+      }),
+      
+      // Navigation links
+      Row({
+        children: [
+          Text("Home", {
+            style: new TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          }),
+          SizedBox({ width: 24 }),
+          Text("About", {
+            style: new TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          }),
+          SizedBox({ width: 24 }),
+          Text("Services", {
+            style: new TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          }),
+          SizedBox({ width: 24 }),
+          Text("Contact", {
+            style: new TextStyle({
+              color: 'white',
+              fontSize: 16
+            })
+          })
+        ]
+      }),
+      
+      // User menu
+      Container({
+        padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 6 }),
+        decoration: new BoxDecoration({
+          color: 'rgba(255, 255, 255, 0.2)',
+          borderRadius: BorderRadius.circular(16)
+        }),
+        child: Text("Login", {
+          style: new TextStyle({
+            color: 'white',
+            fontSize: 14
+          })
+        })
+      })
+    ]
+  })
+});
+```
+
+### 💻 Try It Out
+
+1. Change navigation link text
+2. Adjust colors and spacing
+3. Add more navigation items
+4. Try different button styles
+
+## ⚠️ Common Mistakes and Solutions
+
+### 1. Overflow Issues
+```typescript
+// ❌ Problem: Too many widgets causing overflow
+Row({
+  children: [
+    Container({ width: 200, height: 50, color: 'red' }),
+    Container({ width: 200, height: 50, color: 'blue' }),
+    Container({ width: 200, height: 50, color: 'green' })
+    // This might overflow on narrow screens
+  ]
+})
+
+// ✅ Solution: Use Flexible or Expanded
+Row({
+  children: [
+    Flexible({ child: Container({ height: 50, color: 'red' }) }),
+    Flexible({ child: Container({ height: 50, color: 'blue' }) }),
+    Flexible({ child: Container({ height: 50, color: 'green' }) })
+  ]
+})
+```
+
+### 2. Missing SizedBox Import
+```typescript
+// ❌ Using SizedBox without import
+SizedBox({ height: 20 })  // Error!
+
+// ✅ Correct import
+import { SizedBox } from "@meursyphus/flitter";
+```
+
+### 3. Alignment Confusion
+```typescript
+// In Row:
+// mainAxisAlignment controls horizontal alignment
+// crossAxisAlignment controls vertical alignment
+
+// In Column:
+// mainAxisAlignment controls vertical alignment
+// crossAxisAlignment controls horizontal alignment
+```
+
+## 🏆 Challenge
+
+Create a mobile app layout that includes:
+
+1. **Header**: App title on the left, menu icon on the right
+2. **Main content**: 2x2 grid using nested Rows and Columns
+3. **Bottom navigation**: 3 tabs evenly spaced
+
+Requirements:
+- Use proper spacing between elements
+- Apply appropriate colors and text styles
+- Ensure proper alignment
+
+## 📖 Next Steps
+
+Now that you've mastered Row and Column layouts, let's learn about Stack positioning!
+
+> 🎯 **Next Tutorial**: [Stack Positioning](/tutorial/en/2_basic-widgets/4_stack-positioning/)  
+> Learn how to overlay widgets and create complex layered layouts.
+
+## 💡 Key Summary
+
+1. **Row**: Arranges widgets horizontally
+2. **Column**: Arranges widgets vertically
+3. **MainAxisAlignment**: Controls alignment along the main axis
+4. **CrossAxisAlignment**: Controls alignment along the cross axis
+5. **SizedBox**: Adds spacing between widgets
+6. **Nesting**: Combine Row and Column for complex layouts
+
+These layout widgets are the foundation of all Flitter UIs!

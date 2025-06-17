@@ -1,0 +1,819 @@
+---
+title: "Expanded and Flexible - Dividing Space Proportionally"
+description: "Efficiently utilize remaining space to create ratio-based layouts"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from "@meursyphus/flitter-react";
+    import { StatelessWidget, Container, Row, Text, Center, EdgeInsets } from "@meursyphus/flitter";
+    
+    class ExpandedApp extends StatelessWidget {
+      build(context) {
+        // TODO: Use Expanded to make 3 boxes divide space equally
+        return Container({
+          width: 600,
+          height: 150,
+          padding: EdgeInsets.all(20),
+          child: Row({
+            children: [
+              Container({
+                width: 100,
+                height: 100,
+                color: '#FF6B6B',
+                child: Center({
+                  child: Text("Box 1")
+                })
+              }),
+              Container({
+                width: 100,
+                height: 100,
+                color: '#4ECDC4',
+                child: Center({
+                  child: Text("Box 2")
+                })
+              }),
+              Container({
+                width: 100,
+                height: 100,
+                color: '#45B7D1',
+                child: Center({
+                  child: Text("Box 3")
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+    
+    function createWidget() {
+      return new ExpandedApp();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+solved_files:
+  App.js: |
+    import React from 'react';
+    import Widget from "@meursyphus/flitter-react";
+    import { StatelessWidget, Container, Row, Text, Expanded, Center, EdgeInsets } from "@meursyphus/flitter";
+    
+    class ExpandedApp extends StatelessWidget {
+      build(context) {
+        return Container({
+          width: 600,
+          height: 150,
+          padding: EdgeInsets.all(20),
+          child: Row({
+            children: [
+              Expanded({
+                child: Container({
+                  height: 100,
+                  color: '#FF6B6B',
+                  child: Center({
+                    child: Text("Box 1")
+                  })
+                })
+              }),
+              Expanded({
+                child: Container({
+                  height: 100,
+                  color: '#4ECDC4',
+                  child: Center({
+                    child: Text("Box 2")
+                  })
+                })
+              }),
+              Expanded({
+                child: Container({
+                  height: 100,
+                  color: '#45B7D1',
+                  child: Center({
+                    child: Text("Box 3")
+                  })
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+    
+    function createWidget() {
+      return new ExpandedApp();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+---
+
+# Space Distribution with Expanded and Flexible
+
+Have you ever thought, "I wish this box would take up all the remaining space..." when building websites? Flitter's `Expanded` and `Flexible` widgets solve exactly that problem.
+
+## 🎯 Learning Objectives
+
+After completing this tutorial, you'll be able to:
+
+- [ ] Divide remaining space equally with Expanded
+- [ ] Adjust space ratios with flex properties
+- [ ] Understand the differences between Flexible and Expanded
+- [ ] Create practical layout patterns
+- [ ] Understand how FlexFit properties work
+
+## 🤔 Why is Space Distribution Important?
+
+Typically, when you place widgets in a Row or Column, each widget only takes up the space it needs. However, modern UIs need to flexibly utilize space according to screen size.
+
+**Real-world use cases:**
+- Navigation bar with logo on the left and menu on the right
+- Card layouts with multiple boxes distributed equally
+- Progress bars showing completed and remaining portions
+- Mobile app tab bars with equal width tabs
+- Dashboard with sidebar and main content area ratio adjustment
+
+## 🏗️ Complete Mastery of Expanded Widget
+
+### What is Expanded?
+
+`Expanded` is a widget that forces child widgets of Row, Column, or Flex widgets to fill all available space.
+
+### Basic Properties
+
+```typescript
+Expanded({
+  flex: 1,              // Space ratio (default: 1)
+  child: Widget         // Child widget (required)
+})
+```
+
+### 1. Basic Expanded Usage
+
+```typescript
+Row({
+  children: [
+    Container({
+      width: 100,
+      height: 50,
+      color: '#FF6B6B',
+      child: Text("Fixed Size")
+    }),
+    Expanded({
+      child: Container({
+        height: 50,
+        color: '#4ECDC4',
+        child: Text("Takes All Remaining Space")
+      })
+    })
+  ]
+})
+```
+
+**Result**: The first box has a 100px width, and the second box takes up all remaining space.
+
+### 2. Equal Distribution with Multiple Expanded Widgets
+
+```typescript
+Row({
+  children: [
+    Expanded({
+      child: Container({
+        height: 100,
+        color: '#FF6B6B',
+        child: Text("1/3")
+      })
+    }),
+    Expanded({
+      child: Container({
+        height: 100,
+        color: '#4ECDC4',
+        child: Text("1/3")
+      })
+    }),
+    Expanded({
+      child: Container({
+        height: 100,
+        color: '#45B7D1',
+        child: Text("1/3")
+      })
+    })
+  ]
+})
+```
+
+**Result**: Three boxes equally divide the screen width, each taking 1/3.
+
+## 🎨 Practice: Creating 3 Equally Divided Boxes
+
+In the starting code above, the three boxes have fixed sizes (`width: 100`). Modify this to use `Expanded` so they divide space equally.
+
+**Step-by-step hints:**
+1. Add `Expanded` widget to imports
+2. Wrap each Container with Expanded
+3. Remove width property from Container (Expanded handles this automatically)
+4. Keep height as is
+
+## ⚖️ Ratio Adjustment with flex Property
+
+You can use the `flex` property to determine the ratio of space each Expanded widget should occupy.
+
+### flex Ratio Calculation Principles
+
+```typescript
+Row({
+  children: [
+    Expanded({
+      flex: 1,  // 1 / (1 + 2 + 3) = 1/6
+      child: Container({
+        height: 100,
+        color: '#FF6B6B',
+        child: Text("1")
+      })
+    }),
+    Expanded({
+      flex: 2,  // 2 / (1 + 2 + 3) = 2/6 = 1/3
+      child: Container({
+        height: 100,
+        color: '#4ECDC4',
+        child: Text("2")
+      })
+    }),
+    Expanded({
+      flex: 3,  // 3 / (1 + 2 + 3) = 3/6 = 1/2
+      child: Container({
+        height: 100,
+        color: '#45B7D1',
+        child: Text("3")
+      })
+    })
+  ]
+})
+```
+
+**Calculation process:**
+- Total flex sum: 1 + 2 + 3 = 6
+- First box: 1/6 (about 16.7%)
+- Second box: 2/6 = 1/3 (about 33.3%)
+- Third box: 3/6 = 1/2 (50%)
+
+**Result:** The third box is largest, and the first box is smallest.
+
+### Practical Ratio Examples
+
+```typescript
+// Sidebar (1/4) and main content (3/4) layout
+Row({
+  children: [
+    Expanded({
+      flex: 1,  // 25%
+      child: Container({
+        color: '#F7FAFC',
+        child: Text("Sidebar")
+      })
+    }),
+    Expanded({
+      flex: 3,  // 75%
+      child: Container({
+        color: '#EDF2F7',
+        child: Text("Main Content")
+      })
+    })
+  ]
+})
+```
+
+## 🔄 Advanced Understanding of Flexible Widget
+
+### What is Flexible?
+
+`Flexible` provides more flexible space distribution than `Expanded`. It allows child widgets to only take up the space they actually need.
+
+### Flexible Properties
+
+```typescript
+Flexible({
+  flex: 1,                    // Space ratio (default: 1)
+  fit: FlexFit.loose,         // Space usage method (default: loose)
+  child: Widget               // Child widget (required)
+})
+```
+
+### FlexFit Options
+
+- **`FlexFit.loose`**: Use only the space needed (default)
+- **`FlexFit.tight`**: Use all allocated space (same as Expanded)
+
+### Expanded vs Flexible Comparison
+
+| Feature | Expanded | Flexible |
+|---------|----------|----------|
+| **Default Behavior** | Takes all allocated space | Takes only needed space |
+| **FlexFit** | Always `tight` | `loose` (default) or `tight` |
+| **Use Case** | When you want to completely fill space | When flexible size adjustment is needed |
+| **Relationship** | Special case of Flexible | More general widget |
+
+### Flexible Usage Example
+
+```typescript
+Row({
+  children: [
+    Flexible({
+      child: Container({
+        height: 50,
+        color: '#FF6B6B',
+        child: Text("Short Text")  // Takes only text size space
+      })
+    }),
+    Flexible({
+      child: Container({
+        height: 50,
+        color: '#4ECDC4',
+        child: Text("This is very long text")  // Takes text size space
+      })
+    }),
+    Container({
+      width: 100,
+      height: 50,
+      color: '#45B7D1',
+      child: Text("Fixed Size")
+    })
+  ]
+})
+```
+
+**Result**: The first box with short text takes small space, and the second box with long text takes more space.
+
+## 🏆 Real-world Examples Collection
+
+### 1. Modern Navigation Bar
+
+```typescript
+import { StatelessWidget, Container, Row, Text, Expanded, EdgeInsets, TextStyle } from "@meursyphus/flitter";
+
+class ModernNavigationBar extends StatelessWidget {
+  build(context) {
+    return Container({
+      height: 64,
+      color: '#1A202C',
+      padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+      child: Row({
+        children: [
+          // Logo area
+          Container({
+            padding: EdgeInsets.only({ right: 16 }),
+            child: Text("MyApp", {
+              style: new TextStyle({
+                color: 'white',
+                fontSize: 20,
+                fontWeight: 'bold'
+              })
+            })
+          }),
+          
+          // Middle empty space
+          Expanded({
+            child: Container()
+          }),
+          
+          // Menu area
+          Row({
+            children: [
+              Text("Home", { style: { color: 'white', marginRight: 24 } }),
+              Text("Products", { style: { color: 'white', marginRight: 24 } }),
+              Text("About", { style: { color: 'white', marginRight: 24 } }),
+              Text("Contact", { style: { color: 'white' } })
+            ]
+          })
+        ]
+      })
+    });
+  }
+}
+
+export default function ModernNavigationBar(props) {
+  return new _ModernNavigationBar(props);
+}
+```
+
+### 2. Interactive Progress Indicator
+
+```typescript
+import { StatefulWidget, State, Container, Column, Row, Text, Expanded, GestureDetector, EdgeInsets, BoxDecoration, BorderRadius, TextStyle, Center } from "@meursyphus/flitter";
+
+class InteractiveProgressBar extends StatefulWidget {
+  constructor({ initialProgress = 0.3, ...props } = {}) {
+    super(props);
+    this.initialProgress = initialProgress;
+  }
+
+  createState() {
+    return new _InteractiveProgressBarState();
+  }
+}
+
+class _InteractiveProgressBarState extends State {
+  progress = 0.3;
+
+  initState() {
+    super.initState();
+    this.progress = this.widget.initialProgress;
+  }
+
+  increaseProgress() {
+    this.setState(() => {
+      this.progress = Math.min(1.0, this.progress + 0.1);
+    });
+  }
+
+  decreaseProgress() {
+    this.setState(() => {
+      this.progress = Math.max(0.0, this.progress - 0.1);
+    });
+  }
+
+  build(context) {
+    return Column({
+      children: [
+        // Progress bar
+        Container({
+          height: 24,
+          margin: EdgeInsets.only({ bottom: 16 }),
+          decoration: new BoxDecoration({
+            color: '#E2E8F0',
+            borderRadius: BorderRadius.circular(12)
+          }),
+          child: Row({
+            children: [
+              Expanded({
+                flex: Math.round(this.progress * 100),
+                child: Container({
+                  decoration: new BoxDecoration({
+                    color: '#4299E1',
+                    borderRadius: BorderRadius.circular(12)
+                  })
+                })
+              }),
+              Expanded({
+                flex: Math.round((1 - this.progress) * 100),
+                child: Container()
+              })
+            ]
+          })
+        }),
+        
+        // Progress text
+        Text(`Progress: ${Math.round(this.progress * 100)}%`, {
+          style: new TextStyle({ fontSize: 16, fontWeight: 'bold' })
+        }),
+        
+        // Control buttons
+        Row({
+          children: [
+            Expanded({
+              child: GestureDetector({
+                onClick: () => this.decreaseProgress(),
+                child: Container({
+                  height: 40,
+                  margin: EdgeInsets.only({ right: 8 }),
+                  decoration: new BoxDecoration({
+                    color: '#E53E3E',
+                    borderRadius: BorderRadius.circular(4)
+                  }),
+                  child: Center({ child: Text("Decrease", { style: new TextStyle({ color: 'white' }) }) })
+                })
+              })
+            }),
+            Expanded({
+              child: GestureDetector({
+                onClick: () => this.increaseProgress(),
+                child: Container({
+                  height: 40,
+                  margin: EdgeInsets.only({ left: 8 }),
+                  decoration: new BoxDecoration({
+                    color: '#38A169',
+                    borderRadius: BorderRadius.circular(4)
+                  }),
+                  child: Center({ child: Text("Increase", { style: new TextStyle({ color: 'white' }) }) })
+                })
+              })
+            })
+          ]
+        })
+      ]
+    });
+  }
+}
+
+export default function InteractiveProgressBar(props) {
+  return new _InteractiveProgressBar(props);
+}
+```
+
+### 3. Responsive Card Grid
+
+```typescript
+import { StatelessWidget, Container, Row, Text, Column, Expanded, EdgeInsets, BoxDecoration, BorderRadius, BoxShadow, TextStyle, CrossAxisAlignment } from "@meursyphus/flitter";
+
+class ResponsiveCardGrid extends StatelessWidget {
+  constructor({ cards = [], ...props } = {}) {
+    super(props);
+    this.cards = cards;
+  }
+
+  build(context) {
+    return Row({
+      children: this.cards.map((card, index) => (
+        Expanded({
+          child: Container({
+            height: 120,
+            margin: EdgeInsets.only({ 
+              left: index > 0 ? 8 : 0,
+              right: index < this.cards.length - 1 ? 8 : 0
+            }),
+            decoration: new BoxDecoration({
+              color: card.color,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [new BoxShadow({
+                color: 'rgba(0, 0, 0, 0.1)',
+                offset: { dx: 0, dy: 2 },
+                blurRadius: 4
+              })]
+            }),
+            padding: EdgeInsets.all(16),
+            child: Column({
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(card.title, {
+                  style: new TextStyle({
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    color: 'white',
+                    marginBottom: 8
+                  }
+                }),
+                Text(card.description, {
+                  style: new TextStyle({
+                    fontSize: 14,
+                    color: 'rgba(255, 255, 255, 0.8)'
+                  })
+                })
+              ]
+            })
+          })
+        })
+      ))
+    });
+  }
+}
+
+export default function ResponsiveCardGrid(props) {
+  return new _ResponsiveCardGrid(props);
+}
+
+// Usage example
+const cardData = [
+  {
+    title: "Sales",
+    description: "This month's sales status",
+    color: '#4299E1'
+  },
+  {
+    title: "Orders",
+    description: "New order processing",
+    color: '#48BB78'
+  },
+  {
+    title: "Customers",
+    description: "Customer satisfaction survey",
+    color: '#ED8936'
+  }
+];
+
+const widget = Container({
+  padding: EdgeInsets.all(16),
+  child: ResponsiveCardGrid({ cards: cardData })
+});
+```
+
+## 🚀 Advanced Usage Patterns
+
+### 1. Nested Expanded Usage
+
+```typescript
+Column({
+  children: [
+    Container({
+      height: 60,
+      color: '#2D3748',
+      child: Text("Header")
+    }),
+    Expanded({
+      child: Row({
+        children: [
+          Container({
+            width: 200,
+            color: '#4A5568',
+            child: Text("Sidebar")
+          }),
+          Expanded({
+            child: Container({
+              color: '#F7FAFC',
+              child: Text("Main Content")
+            })
+          })
+        ]
+      })
+    }),
+    Container({
+      height: 40,
+      color: '#718096',
+      child: Text("Footer")
+    })
+  ]
+})
+```
+
+### 2. Spacer Widget Usage
+
+```typescript
+Row({
+  children: [
+    Text("Left Content"),
+    Spacer(),  // Same as Expanded({ child: Container() })
+    Text("Right Content")
+  ]
+})
+
+// Equal distribution with multiple Spacers
+Row({
+  children: [
+    Text("A"),
+    Spacer(),
+    Text("B"),
+    Spacer(),
+    Text("C")
+  ]
+})
+```
+
+## 📝 Practice Problems
+
+### Practice 1: Creating Tab Bar
+Create a tab bar with 4 tabs distributed equally.
+
+```typescript
+// TODO: Create a tab bar with 4 equally distributed tabs
+const tabNames = ["Home", "Search", "Notifications", "Profile"];
+
+// Hint: Use Row and Expanded
+const tabBar = Row({
+  children: [
+    // Write your code here
+  ]
+});
+```
+
+### Practice 2: Dashboard Layout
+Create a 3-column layout with left sidebar (1/4), main content (1/2), right panel (1/4).
+
+```typescript
+// TODO: Create a 1:2:1 ratio 3-column layout
+const dashboardLayout = Row({
+  children: [
+    // Write your code here
+  ]
+});
+```
+
+### Practice 3: Dynamic Progress Bar
+Create a progress bar that increases by 20% each time a button is clicked.
+
+```typescript
+// TODO: Create a dynamic progress bar using StatefulWidget
+class DynamicProgressBar extends StatefulWidget {
+  createState() {
+    return new _DynamicProgressBarState();
+  }
+}
+
+class _DynamicProgressBarState extends State {
+  // Write your code here
+}
+```
+
+## 🐛 Common Mistakes and Solutions
+
+### ❌ Mistake 1: Using Expanded Outside Row/Column
+```typescript
+// Error!
+Container({
+  child: Expanded({
+    child: Text("Hello")
+  })
+})
+```
+
+### ✅ Correct Method:
+```typescript
+// Expanded must be used inside Flex widgets (Row, Column, Flex)
+Row({
+  children: [
+    Expanded({
+      child: Text("Hello")
+    })
+  ]
+})
+```
+
+### ❌ Mistake 2: Setting Infinite Size Inside Expanded
+```typescript
+// Error!
+Row({
+  children: [
+    Expanded({
+      child: Container({ width: double.infinity })
+    })
+  ]
+})
+```
+
+### ✅ Correct Method:
+```typescript
+// Expanded already provides maximum size, no need to specify width
+Row({
+  children: [
+    Expanded({
+      child: Container()  // width is automatically determined
+    })
+  ]
+})
+```
+
+### ❌ Mistake 3: Trying Infinite Height in Column
+```typescript
+// Error!
+Column({
+  children: [
+    Container({ height: double.infinity })
+  ]
+})
+```
+
+### ✅ Correct Method:
+```typescript
+// Use Expanded to take all vertical space in Column
+Column({
+  children: [
+    Expanded({
+      child: Container()
+    })
+  ]
+})
+```
+
+### ❌ Mistake 4: Setting flex Value to 0
+```typescript
+// Wrong usage
+Expanded({
+  flex: 0,  // 0 is meaningless
+  child: Container()
+})
+```
+
+### ✅ Correct Method:
+```typescript
+// Use flex value of 1 or higher positive number
+Expanded({
+  flex: 1,  // Use default value or set appropriate ratio
+  child: Container()
+})
+```
+
+## 🎊 Completed Results
+
+After completing this tutorial:
+
+1. **Basic Implementation**: 3 boxes equally divide screen width
+2. **Responsive Behavior**: Ratios maintained even when window size changes
+3. **Visual Distinction**: Each box distinguished by different colors
+4. **Ratio Control**: Adjustable to desired ratios with flex properties
+
+## 🔥 Additional Challenges
+
+### 1. Creating Responsive Grid System
+Create a grid system where the number of columns changes based on screen size.
+
+### 2. Animated Progress Bar
+Create an animated progress bar where progress automatically increases over time.
+
+### 3. Complex Dashboard Layout
+Create a complete dashboard including header, sidebar, main content, right panel, and footer.
+
+### 4. Adding Touch Interactions
+Create an interactive layout where you can adjust the size of each area by dragging.
+
+## 🎯 Next Steps
+
+In the next tutorial, we'll learn about **[Padding and Margin Management](../2_padding-margin/)**. Master the core techniques for creating visually clean and professional layouts!

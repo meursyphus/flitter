@@ -1,0 +1,446 @@
+---
+title: "Text Widget Master"
+description: "Adjust text size, color, and alignment to create labels and headlines"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from "@meursyphus/flitter-react";
+    import { StatelessWidget, Container, Text, Center } from "@meursyphus/flitter";
+
+    class TextStylingApp extends StatelessWidget {
+      build(context) {
+        // TODO: Create a large, bold blue headline text
+        return Container({
+          width: 400,
+          height: 200,
+          child: Center({
+            child: Text("Basic text")
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new TextStylingApp();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+solved_files:
+  App.js: |
+    import React from 'react';
+    import Widget from "@meursyphus/flitter-react";
+    import { StatelessWidget, Container, Text, TextStyle, Center } from "@meursyphus/flitter";
+
+    class TextStylingApp extends StatelessWidget {
+      build(context) {
+        return Container({
+          width: 400,
+          height: 200,
+          child: Center({
+            child: Text("Hello! This is Flitter", {
+              style: new TextStyle({
+                fontSize: 24,
+                fontWeight: 'bold',
+                color: '#2196F3'
+              })
+            })
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new TextStylingApp();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+---
+
+# Text Widget Master
+
+Text is the most basic widget for displaying text on screen. It plays a similar role to HTML text tags on the web, but provides more powerful styling options.
+
+## 🎯 Learning Objectives
+
+After completing this tutorial, you'll be able to:
+
+- [ ] Adjust text size and color
+- [ ] Change font weight and style
+- [ ] Handle text alignment and line breaks
+- [ ] Create various text components like headings and labels
+
+## 📚 Basic Concepts
+
+### Text Widget Structure
+
+```typescript
+Text("Text to display", {
+  style: new TextStyle({
+    // Style options
+  }),
+  textAlign: TextAlign.center,  // Alignment
+  maxLines: 2          // Maximum number of lines
+})
+```
+
+### Key TextStyle Properties
+
+1. **fontSize**: Text size (number)
+2. **fontWeight**: Text weight ('bold', 'normal', etc.)
+3. **color**: Text color (string)
+4. **fontStyle**: Text style ('italic', 'normal')
+
+## 🚀 Practice 1: Basic Text Styling
+
+Let's start with the most basic text styling.
+
+```typescript
+import { Text, TextStyle } from "@meursyphus/flitter";
+
+// Basic text
+const basicText = Text("Hello!");
+
+// Styled text
+const styledText = Text("Beautiful text", {
+  style: new TextStyle({
+    fontSize: 20,
+    color: '#FF5722'
+  })
+});
+```
+
+### 💻 Try It Out
+
+1. Change fontSize to various values (12, 16, 24, 32, etc.)
+2. Change colors (e.g., `'#2196F3'`, `'#4CAF50'`, `'#9C27B0'`)
+3. Change the text content
+
+## 🚀 Practice 2: Font Weight and Style
+
+Let's learn how to emphasize or decorate text.
+
+```typescript
+import { Text, TextStyle, Column } from "@meursyphus/flitter";
+
+const fontWeightExample = Column({
+  children: [
+    Text("Normal text", {
+      style: new TextStyle({
+        fontSize: 18,
+        fontWeight: 'normal'
+      })
+    }),
+    Text("Bold text", {
+      style: new TextStyle({
+        fontSize: 18,
+        fontWeight: 'bold'
+      })
+    }),
+    Text("Italic text", {
+      style: new TextStyle({
+        fontSize: 18,
+        fontStyle: 'italic'
+      })
+    }),
+    Text("Bold italic", {
+      style: new TextStyle({
+        fontSize: 18,
+        fontWeight: 'bold',
+        fontStyle: 'italic'
+      })
+    })
+  ]
+});
+```
+
+### fontWeight Options
+
+- `'normal'`: Normal weight
+- `'bold'`: Bold
+- `'100'`, `'200'`, ..., `'900'`: Fine adjustment with numbers
+
+### 💻 Try It Out
+
+1. Try various fontWeight values
+2. Combine fontStyle and fontWeight
+3. Display the same text multiple times with different styles
+
+## 🚀 Practice 3: Text Alignment
+
+Let's learn how to align text.
+
+```typescript
+import { Text, TextStyle, Container, Column, BoxDecoration, TextAlign } from "@meursyphus/flitter";
+
+const textAlignExample = Column({
+  children: [
+    Container({
+      width: 300,
+      decoration: new BoxDecoration({ color: '#F5F5F5' }),
+      child: Text("Left aligned", {
+        textAlign: TextAlign.left,
+        style: new TextStyle({ fontSize: 16 })
+      })
+    }),
+    Container({
+      width: 300,
+      decoration: new BoxDecoration({ color: '#F5F5F5' }),
+      child: Text("Center aligned", {
+        textAlign: TextAlign.center,
+        style: new TextStyle({ fontSize: 16 })
+      })
+    }),
+    Container({
+      width: 300,
+      decoration: new BoxDecoration({ color: '#F5F5F5' }),
+      child: Text("Right aligned", {
+        textAlign: TextAlign.right,
+        style: new TextStyle({ fontSize: 16 })
+      })
+    })
+  ]
+});
+```
+
+### textAlign Options
+
+- `TextAlign.left`: Left alignment
+- `TextAlign.center`: Center alignment  
+- `TextAlign.right`: Right alignment
+- `TextAlign.start`: Start direction alignment (left in LTR, right in RTL)
+- `TextAlign.end`: End direction alignment (right in LTR, left in RTL)
+
+### 💻 Try It Out
+
+1. Try each alignment option
+2. Change Container size to see alignment effects
+3. Use long text to see alignment differences
+
+## 🚀 Practice 4: Line Breaks and Text Overflow
+
+Let's learn how to handle long text.
+
+```typescript
+import { Text, TextStyle, Container, Column, BoxDecoration, TextAlign } from "@meursyphus/flitter";
+
+const longTextExample = Column({
+  children: [
+    // Maximum 2 lines
+    Container({
+      width: 200,
+      decoration: new BoxDecoration({ color: '#E3F2FD' }),
+      child: Text("This is a very long text. It will be displayed across multiple lines.", {
+        maxLines: 2,
+        overflow: 'ellipsis',
+        style: new TextStyle({ fontSize: 14 })
+      })
+    }),
+    // Single line without line breaks
+    Container({
+      width: 200,
+      decoration: new BoxDecoration({ color: '#FFF3E0' }),
+      child: Text("This is a long text that will be displayed on only one line.", {
+        maxLines: 1,
+        overflow: 'ellipsis',
+        style: new TextStyle({ fontSize: 14 })
+      })
+    })
+  ]
+});
+```
+
+### Text Overflow Options
+
+- `'clip'`: Clip and hide
+- `'ellipsis'`: Show `...`
+- `'fade'`: Gradually transparent
+
+### 💻 Try It Out
+
+1. Change maxLines values (1, 3, 5, etc.)
+2. Try different overflow options
+3. Adjust Container size to see effects
+
+## 🚀 Practice 5: Creating Real Text Components
+
+Let's create text components that can be used in real apps with what we've learned so far.
+
+```typescript
+import { Text, TextStyle, Container, Column, BoxDecoration, EdgeInsets } from "@meursyphus/flitter";
+
+// Header title
+const headerTitle = Text("Flitter App", {
+  style: new TextStyle({
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#1976D2'
+  })
+});
+
+// Subtitle
+const subtitle = Text("Flutter-style web framework", {
+  style: new TextStyle({
+    fontSize: 16,
+    color: '#757575',
+    fontStyle: 'italic'
+  })
+});
+
+// Body text
+const bodyText = Text("Flitter is a web framework inspired by Flutter. It provides declarative UI and a powerful rendering engine.", {
+  style: new TextStyle({
+    fontSize: 14,
+    color: '#424242',
+    height: 1.5  // Line spacing
+  }),
+  maxLines: 3
+});
+
+// Highlight label
+const highlightLabel = Container({
+  decoration: new BoxDecoration({
+    color: '#FF5722',
+    borderRadius: BorderRadius.circular(4)
+  }),
+  padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
+  child: Text("NEW", {
+    style: new TextStyle({
+      fontSize: 12,
+      fontWeight: 'bold',
+      color: '#FFFFFF'
+    })
+  })
+});
+
+const textShowcase = Column({
+  crossAxisAlignment: 'start',
+  children: [
+    headerTitle,
+    subtitle,
+    bodyText,
+    highlightLabel
+  ]
+});
+```
+
+### 💻 Try It Out
+
+1. Change the style of each text
+2. Try different color combinations
+3. Add new text components
+
+## 🎨 Practice 6: Text Layout in Cards
+
+Let's properly arrange text within real card components.
+
+```typescript
+import { Text, TextStyle, Container, Column, Row, BoxDecoration, EdgeInsets, BorderRadius, Border } from "@meursyphus/flitter";
+
+const productCard = Container({
+  decoration: new BoxDecoration({
+    color: '#FFFFFF',
+    border: Border.all({ color: '#E0E0E0', width: 1 }),
+    borderRadius: BorderRadius.circular(12)
+  }),
+  padding: EdgeInsets.all(16),
+  child: Column({
+    crossAxisAlignment: 'start',
+    children: [
+      // Product name
+      Text("iPhone 15 Pro", {
+        style: new TextStyle({
+          fontSize: 20,
+          fontWeight: 'bold',
+          color: '#212121'
+        })
+      }),
+      // Price
+      Text("$1,199", {
+        style: new TextStyle({
+          fontSize: 18,
+          fontWeight: 'bold',
+          color: '#FF5722'
+        })
+      }),
+      // Description
+      Text("The latest smartphone with A17 Pro chip and innovative camera system.", {
+        style: new TextStyle({
+          fontSize: 14,
+          color: '#616161',
+          height: 1.4
+        }),
+        maxLines: 2
+      }),
+      // Status display
+      Row({
+        children: [
+          Text("In stock", {
+            style: new TextStyle({
+              fontSize: 12,
+              color: '#4CAF50',
+              fontWeight: 'bold'
+            })
+          })
+        ]
+      })
+    ]
+  })
+});
+```
+
+### 💻 Try It Out
+
+1. Create cards with different product information
+2. Adjust text colors and sizes
+3. Add text displaying additional information
+
+## ⚠️ Common Mistakes and Solutions
+
+### 1. TextStyle Creation Mistakes
+```typescript
+// ❌ Wrong way
+style: { fontSize: 16 }  // Direct object use forbidden!
+
+// ✅ Correct way
+style: new TextStyle({ fontSize: 16 })
+```
+
+### 2. Color Value Mistakes
+```typescript
+// ❌ Wrong way
+color: 0xFF000000,    // Numeric format forbidden!
+
+// ✅ Correct way
+color: '#000000',     // Use string format
+color: 'black',       // CSS color names also work
+```
+
+### 3. Missing Imports
+```typescript
+// ❌ Using TextStyle without import
+style: new TextStyle({ fontSize: 16 })  // Error!
+
+// ✅ Correct import
+import { TextStyle } from "@meursyphus/flitter";
+```
+
+## 🏆 Challenge
+
+Create a news card that meets the following requirements:
+
+1. **Headline**: Large bold title (fontSize: 18, bold)
+2. **Subtitle**: Small gray text (fontSize: 14, gray)
+3. **Date**: Right-aligned small text
+4. **Body**: Display only up to 2 lines, apply text overflow
+5. **Category tag**: Small label with background color
+
+## 📖 Next Steps
+
+Now that you've learned text styling, let's learn how to arrange multiple widgets!
+
+> 🎯 **Next Tutorial**: [Row and Column Layout](/tutorial/en/2_basic-widgets/3_row-column-layout/)  
+> Learn how to arrange multiple widgets horizontally and vertically.

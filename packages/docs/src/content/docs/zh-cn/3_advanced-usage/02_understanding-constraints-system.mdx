@@ -1,0 +1,217 @@
+---
+nav_title: "Constraints System"
+title: "Understanding the Constraints System"
+description: "Learn Flitter's core layout principle 'Constraints go down, Sizes go up' and explore various constraint patterns"
+---
+
+## Core of the Constraints System
+
+Flitter's layout system follows one simple rule:
+
+> **"Constraints go down, Sizes go up"**
+
+The parent passes constraints to the child, and the child determines its size within those constraints and reports back to the parent.
+
+## Constraints go down, Sizes go up
+
+```
+        Parent Widget
+             │
+    ┌────────▼────────┐
+    │   Constraints   │ (go down)
+    │   min: 0x0      │
+    │   max: 300x200  │
+    └────────┬────────┘
+             │
+        Child Widget
+             │
+    ┌────────▼────────┐
+    │   Decides Size  │ (goes up)
+    │   chosen: 150x80│
+    └─────────────────┘
+```
+
+### BoxConstraints의 구성 요소
+
+```typescript
+class BoxConstraints {
+  minWidth: number;   // 최소 너비
+  maxWidth: number;   // 최대 너비  
+  minHeight: number;  // 최소 높이
+  maxHeight: number;  // 최대 높이
+}
+```
+
+자식은 이 제약 내에서 자신의 크기를 선택할 수 있습니다:
+- `minWidth ≤ width ≤ maxWidth`
+- `minHeight ≤ height ≤ maxHeight`
+
+## 주요 Constraints 패턴
+
+### 1. Tight Constraints
+```typescript
+Constraints.tight(new Size(100, 50))
+// minWidth = maxWidth = 100
+// minHeight = maxHeight = 50
+```
+```
+┌─────────────┐
+│ 정확히 100x50 │  ← 자식은 이 크기로 강제됨
+└─────────────┘
+```
+
+### 2. Loose Constraints  
+```typescript
+Constraints.loose(new Size(100, 50))
+// minWidth = minHeight = 0
+// maxWidth = 100, maxHeight = 50
+```
+```
+┌─────────────┐
+│ 0x0 ~ 100x50│  ← 자식이 범위 내에서 자유롭게 선택
+└─────────────┘
+```
+
+### 3. Expand Constraints
+```typescript
+Constraints.expand()
+// minWidth = maxWidth = ∞
+// minHeight = maxHeight = ∞
+```
+```
+┌─────────────┐
+│ 가능한 최대크기│  ← 부모 공간을 모두 차지
+└─────────────┘
+```
+
+### 4. Unconstrained
+```typescript
+UnconstrainedBox({
+  child: Container({ width: 1000 })  // Ignores parent constraints
+})
+```
+```
+Parent: max 300px
+    │
+    ▼
+UnconstrainedBox  ──→  Child: 1000px (overflow possible)
+```
+
+## Understanding Real-World Behavior
+
+### Container vs SizedBox
+
+```typescript
+// Container's width/height are "wishes"
+Container({
+  width: 200,   // ← If parent only allows 100px, becomes 100px
+  height: 100,
+  child: Text("Hello")
+})
+
+// SizedBox "forces" its size
+SizedBox({
+  width: 200,   // ← Forces exactly 200px to child
+  height: 100,
+  child: Text("Hello")
+})
+```
+
+### Constraints Inside Column
+
+```
+Column (height: ∞)
+  │
+  ├─ Child 1 (height: tight natural size)
+  ├─ Child 2 (height: tight natural size)  
+  └─ Child 3 (height: tight natural size)
+```
+
+Column does not "tightly" constrain height for its children. Each child can take as much height as it wants.
+
+## Common Problems and Solutions
+
+### Problem 1: Infinite Size Error
+```typescript
+// ❌ Column inside Column receives infinite height
+Column({
+  children: [
+    Column({ children: [...] })  // RenderFlex overflowed!
+  ]
+})
+
+// ✅ Use Expanded to limit size
+Column({
+  children: [
+    Expanded({
+      child: Column({ children: [...] })
+    })
+  ]
+})
+```
+
+### Problem 2: Widget Doesn't Get Desired Size
+```typescript
+// ❌ Parent passes tight constraints
+Container({
+  width: 100,
+  height: 100,
+  child: Container({
+    width: 200,  // Ignored! (forced to 100px)
+    height: 200
+  })
+})
+
+// ✅ Release constraints with UnconstrainedBox
+Container({
+  width: 100,
+  height: 100,
+  child: UnconstrainedBox({
+    child: Container({
+      width: 200,  // Applied (overflow may occur)
+      height: 200
+    })
+  })
+})
+```
+
+### Problem 3: Center Alignment Doesn't Work
+```typescript
+// ❌ Container fits to parent size
+Row({
+  children: [
+    Container({
+      color: 'red',
+      child: Text('Hello')  // Container only takes text size
+    })
+  ]
+})
+
+// ✅ Explicit size or use Expanded
+Row({
+  children: [
+    Expanded({
+      child: Container({
+        color: 'red',
+        alignment: Alignment.center,
+        child: Text('Hello')
+      })
+    })
+  ]
+})
+```
+
+## Source Code Locations
+
+- `packages/flitter/src/type/constraints.ts`: BoxConstraints class
+- `packages/flitter/src/renderobject/RenderBox.ts`: Constraint handling logic  
+- `packages/flitter/src/component/Container.ts`: Container's constraint handling
+
+## Key Takeaways
+
+1. **Parent passes constraints** → child decides size → reports to parent
+2. **Constraints = size range** (min/max width/height)
+3. **tight**: forces exact size, **loose**: only limits maximum size
+4. **Understanding this makes layout problems easy to solve**
+
+In the next chapter, we'll use this constraint system to actually implement a RenderObject directly.

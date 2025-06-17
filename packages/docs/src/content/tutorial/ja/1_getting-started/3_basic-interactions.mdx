@@ -1,0 +1,736 @@
+---
+title: "Basic Interactions"
+description: "Create a simple counter with GestureDetector and StatefulWidget"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { StatelessWidget, Container, Text, Column, GestureDetector, EdgeInsets, MainAxisAlignment } from '@meursyphus/flitter';
+
+    class CounterApp extends StatelessWidget {
+      build(context) {
+        // TODO: Create counter widget here
+        return Container({
+          width: 300,
+          height: 200,
+          color: '#f8fafc',
+          padding: EdgeInsets.all(30),
+          child: Column({
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Counter: 0'),
+              Text('Create a button!')
+            ]
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new CounterApp();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+solved_files:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { StatefulWidget, State, Container, Text, Column, GestureDetector, SizedBox, EdgeInsets, BoxDecoration, BorderRadius, TextStyle, MainAxisAlignment, CrossAxisAlignment } from '@meursyphus/flitter';
+
+    class CounterWidget extends StatefulWidget {
+      createState() {
+        return new CounterWidgetState();
+      }
+    }
+
+    class CounterWidgetState extends State {
+      count = 0;
+
+      increment() {
+        this.setState(() => {
+          this.count++;
+        });
+      }
+
+      build(context) {
+        return Container({
+          width: 300,
+          height: 200,
+          color: '#f8fafc',
+          padding: EdgeInsets.all(30),
+          child: Column({
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(`Counter: ${this.count}`, {
+                style: new TextStyle({
+                  fontSize: 24,
+                  fontWeight: 'bold',
+                  color: '#1e293b'
+                })
+              }),
+              SizedBox({ height: 20 }),
+              GestureDetector({
+                onClick: () => this.increment(),
+                cursor: 'pointer',
+                child: Container({
+                  padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 12 }),
+                  decoration: new BoxDecoration({
+                    color: '#3b82f6',
+                    borderRadius: BorderRadius.circular(8)
+                  }),
+                  child: Text('Click me!', {
+                    style: new TextStyle({
+                      color: 'white',
+                      fontSize: 16,
+                      fontWeight: 'bold'
+                    })
+                  })
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new CounterWidget();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+---
+
+# Basic Interactions
+
+So far we've only created static UIs. Now let's create an app that interacts with users. In this tutorial, we'll create a counter app where clicking a button increases a number, while learning about GestureDetector and StatefulWidget.
+
+## 🎯 Learning Objectives
+
+After completing this tutorial, you'll be able to:
+
+- [ ] Handle click events with GestureDetector
+- [ ] Create stateful widgets with StatefulWidget
+- [ ] Update the screen with setState()
+- [ ] Style simple buttons
+- [ ] Understand Flitter's state management patterns
+
+## 🤔 Why is State Management Needed?
+
+All the widgets we've created so far were **static widgets** that don't change once created. However, in real apps, the screen needs to change based on user actions:
+
+- Click a button to increase a number
+- Press a toggle button to change on/off state
+- Type in an input field to display text on screen
+
+For such **dynamic changes**, we need **state**.
+
+## 🏗️ Understanding StatefulWidget
+
+**StatefulWidget** is a widget that can have state. When state changes, the screen is automatically redrawn.
+
+### StatefulWidget vs StatelessWidget
+
+```typescript
+// StatelessWidget - no state, doesn't change
+class GreetingWidget extends StatelessWidget {
+  build() {
+    return Text('Hello!'); // Always the same text
+  }
+}
+
+// StatefulWidget - has state, can change
+class CounterWidget extends StatefulWidget {
+  createState() {
+    return new CounterWidgetState(); // Return state class
+  }
+}
+
+class CounterWidgetState extends State {
+  count = 0; // State variable
+
+  build() {
+    return Text(`Counter: ${this.count}`); // Different text based on state
+  }
+}
+```
+
+### Basic Structure of StatefulWidget
+
+StatefulWidget consists of two classes:
+
+1. **Widget class**: Inherits from `StatefulWidget` and implements `createState()` method
+2. **State class**: Inherits from `State` and contains actual state and UI logic
+
+```typescript
+// 1. Widget class
+class MyWidget extends StatefulWidget {
+  createState() {
+    return new MyWidgetState();
+  }
+}
+
+// 2. State class
+class MyWidgetState extends State {
+  // State variables (declared as class properties)
+  count = 0;
+  isVisible = true;
+  
+  // UI composition method
+  build() {
+    return Container({
+      child: Text(`Count: ${this.count}`)
+    });
+  }
+}
+```
+
+### Important Characteristics
+
+1. **State variables are class properties**: Declared as `this.count = 0`
+2. **No React hooks**: `useState`, `useEffect`, etc. are not used in Flitter
+3. **setState() required**: Must use `setState()` when changing state
+
+## 🎯 Handling Events with GestureDetector
+
+**GestureDetector** is a widget that detects user gestures (click, drag, hover, etc.).
+
+### Basic Usage
+
+```typescript
+GestureDetector({
+  onClick: () => {
+    console.log('Clicked!');
+  },
+  child: Container({
+    child: Text('Click me')
+  })
+})
+```
+
+### Main Event Properties
+
+```typescript
+GestureDetector({
+  // Mouse events
+  onClick: (e) => { /* On click */ },
+  onMouseDown: (e) => { /* When mouse button is pressed */ },
+  onMouseUp: (e) => { /* When mouse button is released */ },
+  onMouseEnter: (e) => { /* When mouse enters area */ },
+  onMouseLeave: (e) => { /* When mouse leaves area */ },
+  
+  // Drag events
+  onDragStart: (e) => { /* Drag start */ },
+  onDragMove: (e) => { /* During drag */ },
+  onDragEnd: (e) => { /* Drag end */ },
+  
+  // Other settings
+  cursor: 'pointer', // Cursor shape
+  
+  child: /* child widget */
+})
+```
+
+### Cursor Types
+
+```typescript
+cursor: 'pointer'      // Hand shape
+cursor: 'default'      // Default arrow
+cursor: 'move'         // Move indicator
+cursor: 'text'         // Text selection
+cursor: 'wait'         // Wait indicator
+cursor: 'not-allowed'  // Forbidden indicator
+cursor: 'grab'         // Grab indicator
+cursor: 'grabbing'     // Grabbing indicator
+```
+
+## 🔧 Practice: Creating Counter App
+
+Now let's create a counter app where the number increases each time you click.
+
+### Step 1: Create StatefulWidget Class
+
+First, let's create the basic structure of StatefulWidget:
+
+```typescript
+import { StatefulWidget, State } from '@meursyphus/flitter';
+
+class CounterWidget extends StatefulWidget {
+  createState() {
+    return new CounterWidgetState();
+  }
+}
+
+class CounterWidgetState extends State {
+  count = 0; // Counter state variable
+  
+  build() {
+    return Container({
+      child: Text(`Counter: ${this.count}`)
+    });
+  }
+}
+```
+
+### Step 2: Update State with setState()
+
+Add a method to increase the counter when the button is clicked:
+
+```typescript
+class CounterWidgetState extends State {
+  count = 0;
+  
+  // Counter increment method
+  increment() {
+    this.setState(() => {
+      this.count++; // Change state inside setState
+    });
+  }
+  
+  build() {
+    return Container({
+      child: Text(`Counter: ${this.count}`)
+    });
+  }
+}
+```
+
+### Step 3: Connect Click Event with GestureDetector
+
+Now use GestureDetector to call the increment method on click:
+
+```typescript
+class CounterWidgetState extends State {
+  count = 0;
+  
+  increment() {
+    this.setState(() => {
+      this.count++;
+    });
+  }
+  
+  build() {
+    return Column({
+      mainAxisAlignment: 'center',
+      children: [
+        Text(`Counter: ${this.count}`),
+        GestureDetector({
+          onClick: () => this.increment(), // Call increment on click
+          child: Container({
+            child: Text('Click me!')
+          })
+        })
+      ]
+    });
+  }
+}
+```
+
+### Step 4: Add Button Styling
+
+Let's make the button prettier:
+
+```typescript
+GestureDetector({
+  onClick: () => this.increment(),
+  cursor: 'pointer', // Make cursor hand-shaped
+  child: Container({
+    padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 12 }), // Button padding
+    decoration: new BoxDecoration({
+      color: '#3b82f6',           // Blue background
+      borderRadius: BorderRadius.circular(8)    // Rounded corners
+    }),
+    child: Text('Click me!', {
+      style: new TextStyle({
+        color: 'white',           // White text
+        fontSize: 16,
+        fontWeight: 'bold'
+      })
+    })
+  })
+})
+```
+
+## 🎨 Complete Counter App
+
+Here's the complete counter app combining all steps:
+
+```typescript
+import React from 'react';
+import Widget from '@meursyphus/flitter-react';
+import { 
+  StatefulWidget, 
+  State, 
+  Container, 
+  Text, 
+  Column, 
+  GestureDetector, 
+  SizedBox,
+  EdgeInsets,
+  BoxDecoration,
+  BorderRadius,
+  TextStyle,
+  MainAxisAlignment,
+  CrossAxisAlignment
+} from '@meursyphus/flitter';
+
+class CounterWidget extends StatefulWidget {
+  createState() {
+    return new CounterWidgetState();
+  }
+}
+
+class CounterWidgetState extends State {
+  count = 0;
+
+  increment() {
+    this.setState(() => {
+      this.count++;
+    });
+  }
+
+  build() {
+    return Container({
+      color: '#f8fafc',
+      padding: EdgeInsets.all(30),
+      child: Column({
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(`Counter: ${this.count}`, {
+            style: new TextStyle({
+              fontSize: 24,
+              fontWeight: 'bold',
+              color: '#1e293b'
+            })
+          }),
+          SizedBox({ height: 20 }),
+          GestureDetector({
+            onClick: () => this.increment(),
+            cursor: 'pointer',
+            child: Container({
+              padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 12 }),
+              decoration: new BoxDecoration({
+                color: '#3b82f6',
+                borderRadius: BorderRadius.circular(8)
+              }),
+              child: Text('Click me!', {
+                style: new TextStyle({
+                  color: 'white',
+                  fontSize: 16,
+                  fontWeight: 'bold'
+                })
+              })
+            })
+          })
+        ]
+      })
+    });
+  }
+}
+
+function App() {
+  const widget = new CounterWidget();
+  
+  return (
+    <Widget 
+      widget={widget}
+      renderer="canvas"
+      style={{ width: '300px', height: '200px' }}
+    />
+  );
+}
+```
+
+## 🔧 TODO: Complete the Code
+
+Now complete the code yourself:
+
+```typescript
+import React from 'react';
+import Widget from '@meursyphus/flitter-react';
+import { StatefulWidget, State, Container, Text, Column, GestureDetector, SizedBox } from '@meursyphus/flitter';
+
+// TODO: Create CounterWidget class
+class CounterWidget extends StatefulWidget {
+  // TODO: Implement createState method
+}
+
+// TODO: Create CounterWidgetState class
+class CounterWidgetState extends State {
+  // TODO: Declare count state variable (initial value: 0)
+  
+  // TODO: Create increment method
+  // Hint: Use setState() to increase count by 1
+  
+  build() {
+    return Container({
+      color: '#f8fafc',
+      padding: EdgeInsets.all(30),
+      child: Column({
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // TODO: Create Text that displays counter value
+          // Hint: `Counter: ${this.count}` format
+          
+          SizedBox({ height: 20 }),
+          
+          // TODO: Create clickable button with GestureDetector
+          // Hint: Call this.increment() in onClick
+          // Hint: Set cursor: 'pointer'
+          // Hint: Button with blue background (#3b82f6), white text
+        ]
+      })
+    });
+  }
+}
+
+function App() {
+  const widget = new CounterWidget();
+  
+  return (
+    <Widget widget={widget} renderer="canvas" />
+  );
+}
+```
+
+## 🎯 Expected Results
+
+After completing and running the code, you should see:
+
+1. **Counter display**: Starting with "Counter: 0"
+2. **Clickable button**: Blue background "Click me!" button
+3. **Interaction**: Number increases by 1 each time button is clicked
+4. **Cursor change**: Cursor changes to hand shape when hovering over button
+
+## 🎨 Advanced Understanding of setState()
+
+### Role of setState()
+
+```typescript
+// ❌ Wrong way - UI won't update
+this.count++; 
+
+// ✅ Correct way - UI automatically updates
+this.setState(() => {
+  this.count++;
+});
+```
+
+### Multiple State Changes within setState()
+
+```typescript
+this.setState(() => {
+  this.count++;           // Multiple states can be
+  this.isVisible = true;  // changed simultaneously
+  this.message = 'Updated!';
+});
+```
+
+### Callback After setState()
+
+```typescript
+this.setState(() => {
+  this.count++;
+}, () => {
+  // Executed after state update is complete
+  console.log('Counter updated:', this.count);
+});
+```
+
+## 🔧 Practice Problems
+
+If you've completed the basic counter, try the following:
+
+### Exercise 1: Add Decrement Button
+Add a decrement button next to the increment button:
+
+```typescript
+Row({
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    // Decrement button
+    GestureDetector({
+      onClick: () => this.decrement(),
+      child: Container({
+        padding: EdgeInsets.all(12),
+        decoration: new BoxDecoration({ color: '#ef4444', borderRadius: BorderRadius.circular(8) }),
+        child: Text('-', { style: new TextStyle({ color: 'white', fontSize: 20 }) })
+      })
+    }),
+    SizedBox({ width: 20 }),
+    // Increment button
+    GestureDetector({
+      onClick: () => this.increment(),
+      child: Container({
+        padding: EdgeInsets.all(12),
+        decoration: new BoxDecoration({ color: '#22c55e', borderRadius: BorderRadius.circular(8) }),
+        child: Text('+', { style: new TextStyle({ color: 'white', fontSize: 20 }) })
+      })
+    })
+  ]
+})
+```
+
+### Exercise 2: Add Reset Button
+Add a button to reset the counter to 0:
+
+```typescript
+reset() {
+  this.setState(() => {
+    this.count = 0;
+  });
+}
+```
+
+### Exercise 3: Conditional Styling
+Change text color based on counter value:
+
+```typescript
+Text(`Counter: ${this.count}`, {
+  style: new TextStyle({
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: this.count > 10 ? '#ef4444' : '#1e293b' // Red when over 10
+  })
+})
+```
+
+### Exercise 4: Add Hover Effect
+Make button color change when mouse hovers over it:
+
+```typescript
+class ButtonState extends State {
+  isHovered = false;
+  
+  build() {
+    return GestureDetector({
+      onMouseEnter: () => this.setState(() => this.isHovered = true),
+      onMouseLeave: () => this.setState(() => this.isHovered = false),
+      onClick: () => this.props.onTap(),
+      child: Container({
+        decoration: new BoxDecoration({
+          color: this.isHovered ? '#2563eb' : '#3b82f6', // Darker blue on hover
+          borderRadius: BorderRadius.circular(8)
+        }),
+        child: Text('Click me!')
+      })
+    });
+  }
+}
+```
+
+## 🚨 Common Mistakes and Solutions
+
+### Problem 1: Changing State Without setState
+```typescript
+// ❌ Wrong example - UI won't update
+increment() {
+  this.count++; // No setState
+}
+
+// ✅ Correct example
+increment() {
+  this.setState(() => {
+    this.count++;
+  });
+}
+```
+
+### Problem 2: Using React Hooks
+```typescript
+// ❌ Wrong example - Not available in Flitter
+const [count, setCount] = useState(0); // React pattern
+
+// ✅ Correct example - Flitter pattern
+class MyState extends State {
+  count = 0; // Declare state as class property
+}
+```
+
+### Problem 3: Directly Exporting Class
+```typescript
+// ❌ Wrong example
+export default CounterWidget; // Direct class export
+
+// ✅ Correct example - Use by creating instance
+function App() {
+  const widget = new CounterWidget(); // Create instance with new keyword
+  return <Widget widget={widget} />;
+}
+```
+
+### Problem 4: Handling Events Without GestureDetector
+```typescript
+// ❌ Wrong example
+Container({
+  onClick: () => {}, // Container has no click event
+  child: Text('Click')
+})
+
+// ✅ Correct example
+GestureDetector({
+  onClick: () => {},
+  child: Container({
+    child: Text('Click')
+  })
+})
+```
+
+## 🧠 Understanding Lifecycle Methods
+
+StatefulWidget has several lifecycle methods:
+
+### initState() - Initialization
+```typescript
+class CounterWidgetState extends State {
+  count = 0;
+  
+  initState() {
+    super.initState();
+    console.log('Counter widget created');
+    // Initialize animation controllers, timers, etc.
+  }
+}
+```
+
+### didUpdateWidget() - Update
+```typescript
+didUpdateWidget(oldWidget) {
+  super.didUpdateWidget(oldWidget);
+  // When parent widget's properties change
+  console.log('Widget updated');
+}
+```
+
+### dispose() - Cleanup
+```typescript
+dispose() {
+  console.log('Counter widget removed');
+  // Clean up timers, animations, etc.
+  super.dispose();
+}
+```
+
+## 🚀 Next Steps
+
+If you've successfully implemented basic interactions, move on to the next step:
+
+- **Next**: [Container Styling](../2_basic-widgets/1_container-styling) - Learn more varied styling
+- **Related**: [Complete GestureDetector Guide](../4_interactive-widgets/1_gesture-detector-complete) - Handle all gesture events
+- **Related**: [StatefulWidget Patterns](../4_interactive-widgets/3_stateful-widget-patterns) - Advanced state management patterns
+
+## 💡 Key Summary
+
+1. **StatefulWidget**: Widget with state, creates state class with createState() method
+2. **State class**: Contains actual state variables and UI logic
+3. **setState()**: Must be used when changing state, automatically updates UI
+4. **GestureDetector**: Handles all user interactions
+5. **Lifecycle**: initState, build, didUpdateWidget, dispose
+
+Now you can create interactive widgets! In the next tutorial, we'll learn about more complex widgets.

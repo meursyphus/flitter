@@ -1,0 +1,236 @@
+---
+nav_title: "Basic Elements"
+title: "Basic Elements - Shapes, Layout, Text"
+description: "Learn how to work with shapes, layouts, and text using Flitter's basic widgets"
+---
+
+import BasicShapesExample from '$components/pages/docs/01_getting-started/02-basic-shapes-example';
+import LayoutExample from '$components/pages/docs/01_getting-started/03-layout-example';
+import TextExample from '$components/pages/docs/01_getting-started/04-text-example';
+
+# Basic Elements - Shapes, Layout, Text
+
+Flitter provides a widget system similar to Flutter, making it easy to build complex UIs.
+This document covers how to work with the most basic elements: shapes, layouts, and text.
+
+## Drawing Basic Shapes
+
+In Flitter, shapes are created using the `Container` widget and `BoxDecoration`.
+
+<BasicShapesExample
+  client:load
+  title="Container and BoxDecoration"
+  description="Create various shapes and styles."
+/>
+
+### Container Widget
+
+`Container` is the most basic yet powerful widget in Flitter:
+
+- **Size setting**: Specify size with width and height properties
+- **Color**: Set background color with color or decoration.color
+- **Spacing**: Set internal/external margins with padding and margin
+- **Decoration**: Add borders, rounded corners, shadows, etc. with BoxDecoration
+
+### Using BoxDecoration
+
+```typescript
+Container({
+  decoration: new BoxDecoration({
+    color: '#3B82F6',
+    border: new Border({
+      top: new BorderSide({ color: '#1E40AF', width: 2 }),
+      // right, bottom, left can be set the same way
+    }),
+    borderRadius: BorderRadius.circular(8),
+    // or set individual corners
+    borderRadius: BorderRadius.only({
+      topLeft: Radius.circular(16),
+      topRight: Radius.circular(16),
+      bottomLeft: Radius.circular(0),
+      bottomRight: Radius.circular(0)
+    })
+  })
+})
+```
+
+## Layout System
+
+Flitter provides three main layout widgets.
+
+<LayoutExample
+  client:load
+  title="Layout Widgets"
+  description="Learn how to arrange widgets using Row, Column, and Stack."
+/>
+
+### Row and Column
+
+**Row** arranges child widgets horizontally, while **Column** arranges them vertically:
+
+```typescript
+// Horizontal arrangement
+Row({
+  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Main axis alignment
+  crossAxisAlignment: CrossAxisAlignment.center,     // Cross axis alignment
+  children: [/* widgets */]
+})
+
+// Vertical arrangement
+Column({
+  mainAxisAlignment: MainAxisAlignment.start,
+  crossAxisAlignment: CrossAxisAlignment.stretch,
+  children: [/* widgets */]
+})
+```
+
+### Stack and Positioned
+
+**Stack** is used to overlay widgets on top of each other:
+
+```typescript
+Stack({
+  children: [
+    Container({ /* background */ }),
+    Positioned({
+      top: 10,
+      left: 10,
+      child: Container({ /* absolute positioning */ })
+    })
+  ]
+})
+```
+
+### Expanded and Flexible
+
+Used to fill remaining space or distribute space proportionally:
+
+```typescript
+Row({
+  children: [
+    Container({ width: 100 }), // Fixed width
+    Expanded({
+      flex: 2, // Takes 2x space
+      child: Container({ /* fill remaining space */ })
+    }),
+    Expanded({
+      flex: 1, // Takes 1x space
+      child: Container({ /* fill remaining space */ })
+    })
+  ]
+})
+```
+
+## Text Handling
+
+Flitter's Text widget provides various styling and layout options.
+
+<TextExample
+  client:load
+  title="Text Styling and Handling"
+  description="Learn about various text styles and overflow handling methods."
+/>
+
+### TextStyle Properties
+
+```typescript
+Text('Styled text', {
+  style: new TextStyle({
+    fontSize: 18,          // Font size
+    fontWeight: 'bold',    // Weight: 'normal', 'bold'
+    fontStyle: 'italic',   // Style: 'normal', 'italic'
+    fontFamily: 'Arial',   // Font family
+    color: '#3B82F6',      // Color
+    letterSpacing: 1.5,    // Letter spacing
+    wordSpacing: 2.0,      // Word spacing
+    height: 1.5,           // Line height
+    decoration: 'underline' // 'none', 'underline', 'overline', 'lineThrough'
+  })
+})
+```
+
+### Text Alignment and Overflow
+
+```typescript
+Container({
+  width: 200,
+  child: Text('Long text goes here...', {
+    textAlign: TextAlign.center,    // Alignment: left, right, center, justify
+    maxLines: 2,                     // Maximum lines
+    overflow: TextOverflow.ellipsis, // Overflow handling: clip, fade, ellipsis
+  })
+})
+```
+
+## Practical Example: Creating a Card Component
+
+Let's create a card component using what we've learned so far:
+
+```typescript
+Container({
+  width: 300,
+  padding: EdgeInsets.all(16),
+  decoration: new BoxDecoration({
+    color: '#FFFFFF',
+    borderRadius: BorderRadius.circular(12),
+    border: new Border({
+      top: new BorderSide({ color: '#E5E7EB', width: 1 }),
+      right: new BorderSide({ color: '#E5E7EB', width: 1 }),
+      bottom: new BorderSide({ color: '#E5E7EB', width: 1 }),
+      left: new BorderSide({ color: '#E5E7EB', width: 1 })
+    })
+  }),
+  child: Column({
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text('Card Title', {
+        style: new TextStyle({
+          fontSize: 20,
+          fontWeight: 'bold',
+          color: '#1F2937'
+        })
+      }),
+      SizedBox({ height: 8 }),
+      Text('Card content goes here. It can include multiple lines of text.', {
+        style: new TextStyle({
+          fontSize: 14,
+          color: '#6B7280'
+        })
+      }),
+      SizedBox({ height: 16 }),
+      Row({
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container({
+            padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 6 }),
+            decoration: new BoxDecoration({
+              color: '#3B82F6',
+              borderRadius: BorderRadius.circular(6)
+            }),
+            child: Text('Action', {
+              style: new TextStyle({
+                fontSize: 14,
+                color: '#FFFFFF',
+                fontWeight: 'bold'
+              })
+            })
+          })
+        ]
+      })
+    ]
+  })
+})
+```
+
+## Next Steps
+
+Once you've mastered the basic elements, learn how to handle user input in the Basic Interactions section.
+
+## Summary
+
+- **Container**: Basic container with size, color, spacing, and decoration
+- **BoxDecoration**: Visual decorations like borders and rounded corners
+- **Row/Column**: Horizontal/vertical direction layouts
+- **Stack**: Widget overlaying
+- **Text**: Text with various styles and alignment options
+- **Expanded**: Fill remaining space

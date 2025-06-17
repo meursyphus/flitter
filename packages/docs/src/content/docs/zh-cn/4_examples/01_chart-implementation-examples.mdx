@@ -1,0 +1,210 @@
+---
+nav_title: "Chart Implementation Examples"
+title: "Chart Implementation with headless-chart"
+description: "Learn how to create custom charts using Flitter and headless-chart"
+---
+
+import Charts01 from '$components/pages/docs/04_examples/charts01'
+import Charts02 from '$components/pages/docs/04_examples/charts02'
+
+## What is headless-chart?
+
+`@meursyphus/headless-chart` is a UI-less chart library. It provides only data and logic, while the actual UI is implemented directly by developers using Flitter widgets. This enables creating fully customizable charts.
+
+- **GitHub**: [https://github.com/meursyphus/headless-chart](https://github.com/meursyphus/headless-chart)
+- **Installation**: `npm install @meursyphus/headless-chart`
+
+## Core Concepts
+
+The core of headless-chart consists of **data structure** and **custom rendering functions**:
+
+- **Data Structure**: Composed of labels and datasets
+- **Custom Functions**: Render each part of the chart (axes, ticks, bars, lines, etc.) as Flitter widgets
+
+## Simple Bar Chart Example
+
+Below is a custom bar chart created with headless-chart. It reproduces the Highcharts style using Flitter:
+
+<Charts01 client:load />
+
+### Key Customization Points
+
+1. **Layout Customization**
+   - Define the overall chart structure with the `custom.layout` function
+   - Free element positioning with Stack and Positioned
+
+2. **Axis Label Styling**
+   - Apply text styles with `custom.xAxisLabel` and `custom.yAxisLabel`
+   - Set font, size, and color as desired
+
+3. **Bar Design**
+   - Utilize Container and BoxDecoration in the `custom.bar` function
+   - Freely design colors, rounded corners, shadows, etc.
+
+4. **Legend Customization**
+   - Position the legend as a floating box inside the chart
+   - Add depth with BoxShadow
+
+### Bar Chart Implementation Code Example
+
+```javascript
+const Bar = (...[{ legend, value }, { data }]) => {
+  const index = data.datasets.findIndex((d) => d.legend === legend);
+  const backgroundColor = backgroundColors[index];
+  
+  return Container({
+    width: Infinity,
+    height: 14,
+    alignment: Alignment.centerRight,
+    decoration: new BoxDecoration({
+      color: backgroundColor,
+      borderRadius: BorderRadius.only({
+        topRight: Radius.circular(7),
+        bottomRight: Radius.circular(7),
+      }),
+    }),
+    child: FractionalTranslation({
+      translation: { x: 1, y: 0 },
+      child: Padding({
+        padding: EdgeInsets.only({ left: 6 }),
+        child: Text(value.toLocaleString("ko-KR").replace(",", " "), {
+          style: new TextStyle({
+            fontFamily: "Noto Sans JP",
+            fontSize: 12,
+            fontWeight: "bold",
+            color: "#111827",
+          }),
+        }),
+      }),
+    }),
+  });
+};
+```
+
+In this code:
+- Draw bars using Flitter's Container and BoxDecoration
+- Position value text at the end of bars with FractionalTranslation
+- Apply different colors for each dataset
+
+## Line Chart Example
+
+Here's a Nivo-style line chart:
+
+<Charts02 client:load />
+
+### Line Chart Customization
+
+1. **Drawing Lines with CustomPaint**
+   ```javascript
+   custom.line: (...[{ values, index }, { scale }]) => {
+     return CustomPaint({
+       painter: {
+         svg: {
+           paint({ line, point }, { height, width }) {
+             const linePath = new Path();
+             const pointPath = new Path();
+             
+             // Calculate data points
+             const points = values.map((value, index) => {
+               const y = height - (height * (value - scale.min)) / (scale.max - scale.min);
+               const x = (index * width) / (values.length - 1);
+               return { x, y };
+             });
+             
+             // Draw lines
+             linePath.moveTo(points[0]);
+             points.slice(1).forEach((point) => {
+               linePath.lineTo(point);
+             });
+             
+             // Draw points
+             points.forEach((point) => {
+               pointPath.addOval(
+                 Rect.fromCircle({ center: new Offset(point), radius: 5 })
+               );
+             });
+             
+             // Set SVG attributes
+             line.setAttribute("fill", "none");
+             line.setAttribute("stroke", colors[index]);
+             line.setAttribute("stroke-width", "2");
+             line.setAttribute("d", linePath.getD());
+             
+             point.setAttribute("fill", "#1f2937");
+             point.setAttribute("stroke", colors[index]);
+             point.setAttribute("stroke-width", "1");
+             point.setAttribute("d", pointPath.getD());
+           }
+         }
+       }
+     });
+   }
+   ```
+
+2. **Color Palette Usage**
+   - Apply different colors for each dataset
+   - Harmonize colors between lines and points
+
+3. **Layout Flexibility**
+   - Side-by-side arrangement of chart and legend with Row
+   - Responsive layout implementation with Flexible
+
+## Advantages of headless-chart
+
+1. **Complete Customization**: Control all visual elements with Flitter widgets
+2. **Consistent Development Experience**: Use Flitter's widget system as-is
+3. **Performance Optimization**: Render only necessary parts
+4. **Reusability**: Easily reuse custom components
+
+## How to Use headless-chart
+
+### 1. Installation
+```bash
+npm install @meursyphus/headless-chart
+```
+
+### 2. Basic Usage
+```javascript
+import { BarChart, LineChart } from "@meursyphus/headless-chart";
+
+// Define data
+const data = {
+  labels: ["A", "B", "C", "D"],
+  datasets: [
+    {
+      legend: "Dataset 1",
+      values: [10, 20, 30, 40],
+    },
+  ],
+};
+
+// Create chart
+const chart = BarChart({
+  data,
+  custom: {
+    // Customize each element with Flitter widgets
+    bar: (...args) => Container({ /* ... */ }),
+    xAxisLabel: (...args) => Text(/* ... */),
+    // ... other customizations
+  },
+});
+```
+
+### 3. Supported Chart Types
+- **BarChart**: Bar charts (vertical/horizontal)
+- **LineChart**: Line charts
+- **PieChart**: Pie charts
+- **ScatterChart**: Scatter plot charts
+
+## Next Steps
+
+- Implementing more complex chart types (Pie, Scatter, Area, etc.)
+- Adding animations
+- Implementing interactive features (tooltips, zoom, pan, etc.)
+- Real-time data updates
+
+## References
+
+- [headless-chart GitHub](https://github.com/meursyphus/headless-chart)
+- [Flitter Documentation](/docs/getting-started/introduction)
+- [CustomPaint Widget Guide](/docs/advanced-usage/custom-paint로-쉽게-그리기)
