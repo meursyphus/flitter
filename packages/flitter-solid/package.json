@@ -1,0 +1,55 @@
+{
+  "name": "@meursyphus/flitter-solid",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/flitter-solid.js",
+  "module": "./dist/flitter-solid.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/flitter-solid.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build && tsc --emitDeclarationOnly --declaration",
+    "preview": "vite preview"
+  },
+  "peerDependencies": {
+    "@meursyphus/flitter": "*",
+    "solid-js": "^1.8.0"
+  },
+  "devDependencies": {
+    "@meursyphus/flitter": "^2.1.0",
+    "@types/node": "^20.11.17",
+    "solid-js": "^1.8.11",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12",
+    "vite-plugin-dts": "^3.7.2",
+    "vite-plugin-solid": "^2.10.2"
+  },
+  "keywords": [
+    "flitter",
+    "solid",
+    "solidjs",
+    "graphics",
+    "rendering",
+    "flutter",
+    "canvas",
+    "svg"
+  ],
+  "homepage": "https://flitter.dev",
+  "repository": "https://github.com/meursyphus/flitter",
+  "bugs": {
+    "url": "https://github.com/meursyphus/flitter/issues"
+  },
+  "author": {
+    "name": "meursyphus",
+    "email": "hanqkim96@gmail.com"
+  },
+  "license": "MIT"
+}
