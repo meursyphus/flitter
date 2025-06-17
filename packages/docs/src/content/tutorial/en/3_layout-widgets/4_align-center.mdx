@@ -1,12 +1,12 @@
 ---
-title: "Align과 Center"
-description: "위젯을 정렬하고 중앙에 배치하는 Align과 Center 위젯의 사용법을 학습하고 실제 예제를 통해 정렬 기법을 익혀보세요"
+title: "Align and Center - Perfect Widget Positioning"
+description: "Learn how to align and center widgets using Align and Center widgets, and master positioning techniques through practical examples"
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
     import { Container, Center, Text } from "@meursyphus/flitter";
     
-    // TODO: Center를 사용해서 텍스트를 중앙에 배치하기
+    // TODO: Use Center to place text in the center
     const widget = Container({
       width: 300,
       height: 200,
@@ -32,7 +32,7 @@ solved_files:
           padding: EdgeInsets.all(20),
           color: '#3B82F6',
           child: Center({
-            child: Text("정렬된 텍스트", {
+            child: Text("Aligned Text", {
               style: new TextStyle({
                 color: 'white',
                 fontSize: 16
@@ -48,39 +48,39 @@ solved_files:
     }
 ---
 
-# Align과 Center
+# Align and Center
 
-UI를 구성할 때 위젯을 적절한 위치에 배치하는 것은 매우 중요합니다. Flitter에서는 `Align`과 `Center` 위젯을 사용하여 자식 위젯을 원하는 위치에 정렬할 수 있습니다.
+Positioning widgets in appropriate locations is crucial when building UIs. Flitter provides `Align` and `Center` widgets to position child widgets exactly where you want them.
 
-## 학습 목표
+## 🎯 Learning Objectives
 
-이 튜토리얼을 완료하면 다음을 할 수 있습니다:
+After completing this tutorial, you'll be able to:
 
-- [ ] Center를 사용하여 위젯을 중앙에 배치
-- [ ] Align을 사용하여 위젯을 원하는 위치에 정렬
-- [ ] Alignment 상수를 사용하여 다양한 정렬 위치 설정
-- [ ] 복합 정렬을 통한 복잡한 레이아웃 구성
+- [ ] Center widgets using Center
+- [ ] Align widgets to desired positions using Align
+- [ ] Set various alignment positions using Alignment constants
+- [ ] Create complex layouts through composite alignment
 
-## 핵심 개념
+## 🧭 Core Concepts
 
 ### Center
 
-`Center`는 자식 위젯을 부모 위젯의 중앙에 배치하는 가장 간단한 방법입니다. 별도의 설정 없이 자동으로 가로 세로 중앙 정렬을 수행합니다.
+`Center` is the simplest way to place a child widget at the center of its parent widget. It automatically performs both horizontal and vertical center alignment without any additional configuration.
 
 ### Align
 
-`Align`은 더 세밀한 정렬 제어를 제공합니다. `alignment` 속성을 통해 자식 위젯을 부모 내에서 원하는 위치에 정확히 배치할 수 있습니다.
+`Align` provides more granular alignment control. Using the `alignment` property, you can precisely position child widgets anywhere within their parent.
 
 ### Alignment
 
-`Alignment`는 정렬 위치를 나타내는 상수들을 제공합니다:
+`Alignment` provides constants representing alignment positions:
 - `Alignment.topLeft`, `Alignment.topCenter`, `Alignment.topRight`
 - `Alignment.centerLeft`, `Alignment.center`, `Alignment.centerRight`
 - `Alignment.bottomLeft`, `Alignment.bottomCenter`, `Alignment.bottomRight`
 
-## 기본 사용법
+## 📖 Basic Usage
 
-### Center로 중앙 배치
+### Centering with Center
 
 ```javascript
 import { Center, Container, Text } from "@meursyphus/flitter";
@@ -90,12 +90,12 @@ const centeredWidget = Center({
     width: 100,
     height: 50,
     color: '#3B82F6',
-    child: Text("중앙 배치")
+    child: Text("Centered")
   })
 });
 ```
 
-### Align으로 위치 지정
+### Positioning with Align
 
 ```javascript
 import { Align, Alignment, Container, Text } from "@meursyphus/flitter";
@@ -106,16 +106,16 @@ const alignedWidget = Align({
     width: 100,
     height: 50,
     color: '#10B981',
-    child: Text("우상단 배치")
+    child: Text("Top Right")
   })
 });
 ```
 
-## 단계별 실습
+## 🏗️ Step-by-Step Practice
 
-### 1단계: Center 기본 사용
+### Step 1: Basic Center Usage
 
-먼저 Center를 사용하여 텍스트를 중앙에 배치해보겠습니다.
+Let's start by using Center to place text in the center.
 
 ```javascript
 import { Container, Center, Text } from "@meursyphus/flitter";
@@ -125,14 +125,14 @@ const widget = Container({
   height: 150,
   color: '#F3F4F6',
   child: Center({
-    child: Text("중앙 배치된 텍스트")
+    child: Text("Centered Text")
   })
 });
 ```
 
-### 2단계: Align으로 다양한 위치 배치
+### Step 2: Positioning with Align
 
-이제 Align을 사용하여 다양한 위치에 위젯을 배치해보겠습니다.
+Now let's use Align to position widgets at various locations.
 
 ```javascript
 import { Container, Align, Alignment, Text } from "@meursyphus/flitter";
@@ -146,15 +146,15 @@ const widget = Container({
     child: Container({
       padding: 10,
       color: '#EF4444',
-      child: Text("우하단 배치")
+      child: Text("Bottom Right")
     })
   })
 });
 ```
 
-### 3단계: 복합 정렬 구성
+### Step 3: Composite Alignment Layout
 
-여러 위젯을 다른 위치에 배치하는 복합 레이아웃을 만들어보겠습니다.
+Let's create a composite layout with multiple widgets positioned at different locations.
 
 ```javascript
 import { Container, Stack, Align, Center, Alignment, Text } from "@meursyphus/flitter";
@@ -170,14 +170,14 @@ const widget = Container({
         child: Container({
           padding: 8,
           color: '#3B82F6',
-          child: Text("좌상단")
+          child: Text("Top Left")
         })
       }),
       Center({
         child: Container({
           padding: 8,
           color: '#10B981',
-          child: Text("중앙")
+          child: Text("Center")
         })
       }),
       Align({
@@ -185,7 +185,7 @@ const widget = Container({
         child: Container({
           padding: 8,
           color: '#F59E0B',
-          child: Text("우하단")
+          child: Text("Bottom Right")
         })
       })
     ]
@@ -193,66 +193,66 @@ const widget = Container({
 });
 ```
 
-## 연습 문제
+## 📝 Practice Problems
 
-### 문제 1: 제목 중앙 배치
+### Problem 1: Centering a Title
 
-Center를 사용하여 제목을 화면 중앙에 배치하는 위젯을 만들어보세요.
-
-```javascript
-// TODO: Center를 사용하여 제목 중앙 배치
-const titleWidget = // 여기에 코드 작성
-```
-
-### 문제 2: 버튼 우하단 배치
-
-Align을 사용하여 버튼을 컨테이너의 우하단에 배치하는 위젯을 만들어보세요.
+Use Center to create a widget that places a title in the center of the screen.
 
 ```javascript
-// TODO: Align을 사용하여 버튼 우하단 배치
-const buttonWidget = // 여기에 코드 작성
+// TODO: Use Center to center the title
+const titleWidget = // Write your code here
 ```
 
-### 문제 3: 다중 정렬 레이아웃
+### Problem 2: Bottom Right Button Placement
 
-Stack과 Align을 조합하여 로고(좌상단), 제목(중앙), 설정 버튼(우상단)을 배치하는 헤더를 만들어보세요.
+Use Align to create a widget that places a button in the bottom right of the container.
 
 ```javascript
-// TODO: 다중 정렬 헤더 레이아웃 구현
-const headerWidget = // 여기에 코드 작성
+// TODO: Use Align to place button in bottom right
+const buttonWidget = // Write your code here
 ```
 
-## 예상 결과
+### Problem 3: Multi-Alignment Layout
 
-이 튜토리얼을 완료하면:
+Use Stack and Align to create a header with logo (top left), title (center), and settings button (top right).
 
-1. **중앙 배치**: Center로 위젯이 정확히 중앙에 위치
-2. **위치 지정**: Align으로 원하는 위치에 정확한 배치
-3. **복합 레이아웃**: 여러 위젯이 각각 다른 위치에 정렬된 복합 구조
+```javascript
+// TODO: Implement multi-alignment header layout
+const headerWidget = // Write your code here
+```
 
-## 추가 도전
+## 🎯 Expected Results
 
-### 사용자 정의 정렬
+After completing this tutorial:
 
-Alignment를 직접 생성하여 더 세밀한 위치 제어를 해보세요.
+1. **Center Placement**: Widget positioned exactly in the center using Center
+2. **Position Specification**: Precise placement at desired locations using Align
+3. **Composite Layout**: Complex structure with multiple widgets aligned at different positions
+
+## 🚀 Additional Challenges
+
+### Custom Alignment
+
+Create custom Alignment for more granular position control.
 
 ```javascript
 import { Align, Alignment, Container, Text } from "@meursyphus/flitter";
 
-// 사용자 정의 정렬 (-1.0 ~ 1.0 범위)
+// Custom alignment (range: -1.0 ~ 1.0)
 const customAlignedWidget = Align({
-  alignment: new Alignment(0.5, -0.8), // 우측으로 치우치고 상단 근처
+  alignment: new Alignment(0.5, -0.8), // Leaning right and near top
   child: Container({
     padding: 10,
     color: '#8B5CF6',
-    child: Text("사용자 정의 정렬")
+    child: Text("Custom Alignment")
   })
 });
 ```
 
-### 반응형 정렬
+### Responsive Alignment
 
-화면 크기나 조건에 따라 다른 정렬을 적용하는 위젯을 만들어보세요.
+Create widgets that apply different alignments based on screen size or conditions.
 
 ```javascript
 import { Container, Align, Center, Alignment, Text } from "@meursyphus/flitter";
@@ -276,7 +276,7 @@ class ResponsiveAlignWidgetState extends State<ResponsiveAlignWidget> {
             child: Container({
               padding: 10,
               color: '#06B6D4',
-              child: Text("큰 화면: 중앙 배치")
+              child: Text("Large Screen: Center")
             })
           })
         : Align({
@@ -284,7 +284,7 @@ class ResponsiveAlignWidgetState extends State<ResponsiveAlignWidget> {
             child: Container({
               padding: 10,
               color: '#EC4899',
-              child: Text("작은 화면: 좌상단 배치")
+              child: Text("Small Screen: Top Left")
             })
           })
     });
@@ -296,9 +296,9 @@ export default function ResponsiveAlignWidget(props) {
 }
 ```
 
-### 애니메이션과 정렬
+### Animation with Alignment
 
-정렬 위치가 변경되는 애니메이션 효과를 구현해보세요.
+Implement animation effects where alignment position changes.
 
 ```javascript
 import { Container, Align, Alignment, Text, GestureDetector } from "@meursyphus/flitter";
@@ -332,7 +332,7 @@ class AnimatedAlignWidgetState extends State<AnimatedAlignWidget> {
           child: Container({
             padding: 10,
             color: '#F59E0B',
-            child: Text("클릭하면 위치 변경")
+            child: Text("Click to Change Position")
           })
         })
       })
@@ -345,99 +345,99 @@ export default function AnimatedAlignWidget(props) {
 }
 ```
 
-## 흔한 실수
+## 🐛 Common Mistakes
 
-### 1. Center와 Align 혼동
+### 1. Confusing Center and Align
 
 ```javascript
-// ❌ 잘못된 예: Center에 alignment 속성 사용
+// ❌ Wrong: Using alignment property with Center
 const wrongCenter = Center({
-  alignment: Alignment.topLeft, // Center는 alignment 속성이 없음
-  child: Text("오류")
+  alignment: Alignment.topLeft, // Center doesn't have alignment property
+  child: Text("Error")
 });
 ```
 
 ```javascript
-// ✅ 올바른 예: 목적에 맞는 위젯 사용
+// ✅ Correct: Using appropriate widgets for the purpose
 const correctAlign = Align({
   alignment: Alignment.topLeft,
-  child: Text("정상")
+  child: Text("Correct")
 });
 
 const correctCenter = Center({
-  child: Text("중앙 배치")
+  child: Text("Centered")
 });
 ```
 
-### 2. Alignment 상수 오타
+### 2. Alignment Constant Typos
 
 ```javascript
-// ❌ 잘못된 예: Alignment 상수 오타
+// ❌ Wrong: Alignment constant typo
 const wrongAlignment = Align({
-  alignment: Alignment.topCenter, // 올바른 상수명
-  child: Text("정상")
+  alignment: Alignment.topCenter, // Correct constant name
+  child: Text("Correct")
 });
 
 const typoAlignment = Align({
-  alignment: Alignment.topCentre, // 오타 (영국식 철자)
-  child: Text("오류")
+  alignment: Alignment.topCentre, // Typo (British spelling)
+  child: Text("Error")
 });
 ```
 
 ```javascript
-// ✅ 올바른 예: 정확한 Alignment 상수 사용
+// ✅ Correct: Using accurate Alignment constants
 const correctAlignment = Align({
   alignment: Alignment.topCenter,
-  child: Text("정상")
+  child: Text("Correct")
 });
 ```
 
-### 3. Stack 없이 다중 정렬 시도
+### 3. Attempting Multi-Alignment Without Stack
 
 ```javascript
-// ❌ 잘못된 예: Container에 여러 child 배치 시도
+// ❌ Wrong: Attempting to place multiple children in Container
 const wrongMultiAlign = Container({
   child: [
-    Align({ alignment: Alignment.topLeft, child: Text("좌상단") }),
-    Align({ alignment: Alignment.bottomRight, child: Text("우하단") })
-  ] // Container는 단일 child만 가능
+    Align({ alignment: Alignment.topLeft, child: Text("Top Left") }),
+    Align({ alignment: Alignment.bottomRight, child: Text("Bottom Right") })
+  ] // Container can only have a single child
 });
 ```
 
 ```javascript
-// ✅ 올바른 예: Stack을 사용한 다중 정렬
+// ✅ Correct: Using Stack for multi-alignment
 const correctMultiAlign = Stack({
   children: [
-    Align({ alignment: Alignment.topLeft, child: Text("좌상단") }),
-    Align({ alignment: Alignment.bottomRight, child: Text("우하단") })
+    Align({ alignment: Alignment.topLeft, child: Text("Top Left") }),
+    Align({ alignment: Alignment.bottomRight, child: Text("Bottom Right") })
   ]
 });
 ```
 
-### 4. new Alignment 사용 시 범위 오류
+### 4. Range Error When Using new Alignment
 
 ```javascript
-// ❌ 잘못된 예: 범위를 벗어난 값
+// ❌ Wrong: Values outside range
 const outOfRangeAlignment = Align({
-  alignment: new Alignment(2.0, 3.0), // -1.0 ~ 1.0 범위 초과
-  child: Text("범위 초과")
+  alignment: new Alignment(2.0, 3.0), // Exceeds -1.0 ~ 1.0 range
+  child: Text("Out of Range")
 });
 ```
 
 ```javascript
-// ✅ 올바른 예: 올바른 범위의 값
+// ✅ Correct: Values within valid range
 const validAlignment = Align({
-  alignment: new Alignment(0.8, -0.5), // -1.0 ~ 1.0 범위 내
-  child: Text("정상 범위")
+  alignment: new Alignment(0.8, -0.5), // Within -1.0 ~ 1.0 range
+  child: Text("Valid Range")
 });
 ```
 
-## 다음 단계
+## 🎯 Next Steps
 
-정렬을 익혔다면 다음 단계로 진행하세요:
+Once you've mastered alignment, proceed to the next topics:
 
-1. **Interactive Widgets**: 사용자 상호작용을 처리하는 위젯들
-2. **GestureDetector**: 터치와 마우스 이벤트 처리
-3. **Animation**: 위젯의 동적 변화와 애니메이션
+1. **Interactive Widgets**: Widgets that handle user interactions
+2. **GestureDetector**: Touch and mouse event handling
+3. **Animation**: Dynamic changes and animations in widgets
 
-이제 Align과 Center를 사용하여 위젯을 원하는 위치에 정확하게 배치할 수 있습니다!
+Now you can precisely position widgets exactly where you want them using Align and Center!

@@ -1,12 +1,12 @@
 ---
-title: "SizedBox와 ConstrainedBox"
-description: "위젯의 크기를 제어하는 SizedBox와 ConstrainedBox의 사용법을 학습하고 실제 예제를 통해 레이아웃 크기 제어를 익혀보세요"
+title: "SizedBox and ConstrainedBox - Precise Size Control"
+description: "Learn how to control widget sizes using SizedBox and ConstrainedBox, and master layout size control through practical examples"
 files:
   App.js: |
     import Widget from "@meursyphus/flitter-react";
     import { Container, SizedBox, Text } from "@meursyphus/flitter";
     
-    // TODO: SizedBox를 사용해서 크기가 고정된 위젯 만들기
+    // TODO: Use SizedBox to create a fixed-size widget
     const widget = Container({
       child: Text("Hello World")
     });
@@ -32,7 +32,7 @@ solved_files:
           }),
           child: Container({
             color: '#3B82F6',
-            child: Text("크기 제어된 위젯")
+            child: Text("Size-controlled Widget")
           })
         })
       })
@@ -43,32 +43,32 @@ solved_files:
     }
 ---
 
-# SizedBox와 ConstrainedBox
+# SizedBox and ConstrainedBox
 
-위젯의 크기를 정확하게 제어하는 것은 UI 레이아웃에서 매우 중요합니다. Flitter에서는 `SizedBox`와 `ConstrainedBox`를 사용하여 위젯의 크기를 세밀하게 조정할 수 있습니다.
+Precisely controlling widget sizes is crucial in UI layout design. Flitter provides `SizedBox` and `ConstrainedBox` to fine-tune widget dimensions with precision.
 
-## 학습 목표
+## Learning Objectives
 
-이 튜토리얼을 완료하면 다음을 할 수 있습니다:
+After completing this tutorial, you'll be able to:
 
-- [ ] SizedBox를 사용하여 위젯의 고정 크기 설정
-- [ ] ConstrainedBox를 사용하여 위젯의 크기 제약 조건 설정
-- [ ] 크기 제어 위젯을 조합하여 복잡한 레이아웃 구성
-- [ ] 최소/최대 크기 제약 조건의 차이점 이해
+- [ ] Set fixed widget sizes using SizedBox
+- [ ] Apply size constraints to widgets using ConstrainedBox
+- [ ] Combine size control widgets to create complex layouts
+- [ ] Understand the differences between minimum and maximum size constraints
 
-## 핵심 개념
+## Core Concepts
 
 ### SizedBox
 
-`SizedBox`는 자식 위젯에게 고정된 크기를 제공하는 위젯입니다. 정확한 폭과 높이를 지정할 수 있으며, 크기가 고정되어야 하는 UI 요소에 적합합니다.
+`SizedBox` is a widget that provides fixed dimensions to its child widget. You can specify exact width and height, making it ideal for UI elements that require fixed sizing.
 
 ### ConstrainedBox
 
-`ConstrainedBox`는 자식 위젯에게 크기 제약 조건을 설정하는 위젯입니다. 최소/최대 크기를 지정하여 위젯이 특정 범위 내에서만 크기를 조정하도록 제한할 수 있습니다.
+`ConstrainedBox` is a widget that applies size constraints to its child widget. You can specify minimum and maximum sizes to limit the widget's size adjustment within a specific range.
 
-## 기본 사용법
+## Basic Usage
 
-### SizedBox로 고정 크기 설정
+### Setting Fixed Size with SizedBox
 
 ```javascript
 import { SizedBox, Container, Text } from "@meursyphus/flitter";
@@ -78,12 +78,12 @@ const fixedSizeWidget = SizedBox({
   height: 100,
   child: Container({
     color: '#3B82F6',
-    child: Text("200x100 고정 크기")
+    child: Text("200x100 Fixed Size")
   })
 });
 ```
 
-### ConstrainedBox로 크기 제약 설정
+### Setting Size Constraints with ConstrainedBox
 
 ```javascript
 import { ConstrainedBox, Constraints, Container, Text } from "@meursyphus/flitter";
@@ -97,16 +97,16 @@ const constrainedWidget = ConstrainedBox({
   }),
   child: Container({
     color: '#10B981',
-    child: Text("크기 제약이 있는 위젯")
+    child: Text("Size-constrained Widget")
   })
 });
 ```
 
-## 단계별 실습
+## Step-by-Step Practice
 
-### 1단계: SizedBox 기본 사용
+### Step 1: Basic SizedBox Usage
 
-먼저 간단한 SizedBox를 만들어보겠습니다.
+Let's start by creating a simple SizedBox.
 
 ```javascript
 import { SizedBox, Container, Text } from "@meursyphus/flitter";
@@ -116,14 +116,14 @@ const widget = SizedBox({
   height: 80,
   child: Container({
     color: '#EF4444',
-    child: Text("SizedBox 테스트")
+    child: Text("SizedBox Test")
   })
 });
 ```
 
-### 2단계: ConstrainedBox 적용
+### Step 2: Applying ConstrainedBox
 
-이제 ConstrainedBox를 사용하여 크기 제약을 추가해보겠습니다.
+Now let's use ConstrainedBox to add size constraints.
 
 ```javascript
 import { ConstrainedBox, Constraints, Container, Text } from "@meursyphus/flitter";
@@ -137,14 +137,14 @@ const widget = ConstrainedBox({
   }),
   child: Container({
     color: '#8B5CF6',
-    child: Text("제약 조건 테스트")
+    child: Text("Constraint Test")
   })
 });
 ```
 
-### 3단계: SizedBox와 ConstrainedBox 조합
+### Step 3: Combining SizedBox and ConstrainedBox
 
-두 위젯을 조합하여 더 복잡한 크기 제어를 구현해보겠습니다.
+Let's combine both widgets to implement more complex size control.
 
 ```javascript
 import { SizedBox, ConstrainedBox, Constraints, Container, Text } from "@meursyphus/flitter";
@@ -161,59 +161,59 @@ const widget = SizedBox({
     }),
     child: Container({
       color: '#F59E0B',
-      child: Text("조합된 크기 제어")
+      child: Text("Combined Size Control")
     })
   })
 });
 ```
 
-## 연습 문제
+## Practice Problems
 
-### 문제 1: 고정 크기 카드 만들기
+### Problem 1: Creating a Fixed-Size Card
 
-SizedBox를 사용하여 200x120 크기의 카드 위젯을 만들어보세요.
-
-```javascript
-// TODO: SizedBox를 사용하여 카드 위젯 구현
-const cardWidget = // 여기에 코드 작성
-```
-
-### 문제 2: 유연한 크기 제약 적용
-
-ConstrainedBox를 사용하여 최소 폭 100, 최대 폭 300, 최소 높이 50, 최대 높이 150인 위젯을 만들어보세요.
+Use SizedBox to create a card widget with dimensions 200x120.
 
 ```javascript
-// TODO: ConstrainedBox로 유연한 크기 제약 구현
-const flexibleWidget = // 여기에 코드 작성
+// TODO: Implement card widget using SizedBox
+const cardWidget = // Write your code here
 ```
 
-### 문제 3: 복합 크기 제어
+### Problem 2: Applying Flexible Size Constraints
 
-SizedBox와 ConstrainedBox를 조합하여 외부는 고정 크기, 내부는 유연한 크기를 가진 위젯을 만들어보세요.
+Use ConstrainedBox to create a widget with minimum width 100, maximum width 300, minimum height 50, and maximum height 150.
 
 ```javascript
-// TODO: 복합 크기 제어 위젯 구현
-const complexWidget = // 여기에 코드 작성
+// TODO: Implement flexible size constraints with ConstrainedBox
+const flexibleWidget = // Write your code here
 ```
 
-## 예상 결과
+### Problem 3: Complex Size Control
 
-이 튜토리얼을 완료하면:
+Combine SizedBox and ConstrainedBox to create a widget with fixed outer size and flexible inner size.
 
-1. **고정 크기 위젯**: SizedBox로 정확한 크기가 지정된 위젯
-2. **제약 조건 위젯**: ConstrainedBox로 크기 범위가 제한된 위젯
-3. **복합 크기 제어**: 두 위젯을 조합한 복잡한 레이아웃
+```javascript
+// TODO: Implement complex size control widget
+const complexWidget = // Write your code here
+```
 
-## 추가 도전
+## Expected Results
 
-### 반응형 크기 제어
+After completing this tutorial:
 
-화면 크기에 따라 다른 크기 제약을 적용하는 위젯을 만들어보세요.
+1. **Fixed-size Widget**: Widget with exact dimensions specified by SizedBox
+2. **Constrained Widget**: Widget with size range limited by ConstrainedBox
+3. **Complex Size Control**: Complex layout combining both widgets
+
+## Additional Challenges
+
+### Responsive Size Control
+
+Create a widget that applies different size constraints based on screen size.
 
 ```javascript
 import { ConstrainedBox, Constraints, Container, Text } from "@meursyphus/flitter";
 
-// 반응형 크기 제약 예제
+// Responsive size constraint example
 const responsiveWidget = ConstrainedBox({
   constraints: new Constraints({
     minWidth: 150,
@@ -223,14 +223,14 @@ const responsiveWidget = ConstrainedBox({
   }),
   child: Container({
     color: '#06B6D4',
-    child: Text("반응형 크기 제어")
+    child: Text("Responsive Size Control")
   })
 });
 ```
 
-### 중첩된 크기 제어
+### Nested Size Control
 
-여러 단계의 크기 제어를 중첩하여 복잡한 레이아웃을 구성해보세요.
+Create complex layouts by nesting multiple levels of size control.
 
 ```javascript
 import { SizedBox, ConstrainedBox, Constraints, Container, Text } from "@meursyphus/flitter";
@@ -250,47 +250,47 @@ const nestedSizeControl = SizedBox({
       height: 180,
       child: Container({
         color: '#8B5CF6',
-        child: Text("중첩된 크기 제어")
+        child: Text("Nested Size Control")
       })
     })
   })
 });
 ```
 
-## 흔한 실수
+## Common Mistakes
 
-### 1. 제약 조건 충돌
+### 1. Conflicting Constraints
 
 ```javascript
-// ❌ 잘못된 예: 제약 조건이 충돌
+// ❌ Wrong: Conflicting constraints
 const conflictingConstraints = ConstrainedBox({
   constraints: new Constraints({
     minWidth: 200,
-    maxWidth: 150, // 최소값보다 작은 최대값
+    maxWidth: 150, // Maximum smaller than minimum
   }),
   child: Container({
-    child: Text("오류 발생")
+    child: Text("Error occurs")
   })
 });
 ```
 
 ```javascript
-// ✅ 올바른 예: 일관된 제약 조건
+// ✅ Correct: Consistent constraints
 const validConstraints = ConstrainedBox({
   constraints: new Constraints({
     minWidth: 150,
-    maxWidth: 200, // 최소값보다 큰 최대값
+    maxWidth: 200, // Maximum larger than minimum
   }),
   child: Container({
-    child: Text("정상 작동")
+    child: Text("Works correctly")
   })
 });
 ```
 
-### 2. 불필요한 중첩
+### 2. Unnecessary Nesting
 
 ```javascript
-// ❌ 잘못된 예: 불필요한 SizedBox 중첩
+// ❌ Wrong: Unnecessary SizedBox nesting
 const unnecessaryNesting = SizedBox({
   width: 200,
   height: 100,
@@ -298,57 +298,57 @@ const unnecessaryNesting = SizedBox({
     width: 200,
     height: 100,
     child: Container({
-      child: Text("중복된 크기 설정")
+      child: Text("Duplicate size setting")
     })
   })
 });
 ```
 
 ```javascript
-// ✅ 올바른 예: 단순한 크기 설정
+// ✅ Correct: Simple size setting
 const simpleSize = SizedBox({
   width: 200,
   height: 100,
   child: Container({
-    child: Text("간단한 크기 설정")
+    child: Text("Simple size setting")
   })
 });
 ```
 
-### 3. Constraints 객체 생성 오류
+### 3. Constraints Object Creation Error
 
 ```javascript
-// ❌ 잘못된 예: new 키워드 누락
+// ❌ Wrong: Missing new keyword
 const wrongConstraints = ConstrainedBox({
   constraints: Constraints({
     minWidth: 100,
     maxWidth: 200,
   }),
   child: Container({
-    child: Text("오류 발생")
+    child: Text("Error occurs")
   })
 });
 ```
 
 ```javascript
-// ✅ 올바른 예: new 키워드 사용
+// ✅ Correct: Using new keyword
 const correctConstraints = ConstrainedBox({
   constraints: new Constraints({
     minWidth: 100,
     maxWidth: 200,
   }),
   child: Container({
-    child: Text("정상 작동")
+    child: Text("Works correctly")
   })
 });
 ```
 
-## 다음 단계
+## Next Steps
 
-크기 제어를 익혔다면 다음 단계로 진행하세요:
+Once you've mastered size control, proceed to the next topics:
 
-1. **Align과 Center**: 위젯의 정렬과 중앙 배치
-2. **Padding과 Margin**: 위젯 간격과 여백 제어
-3. **Expanded와 Flexible**: 유연한 레이아웃 구성
+1. **Align and Center**: Widget alignment and centering
+2. **Padding and Margin**: Widget spacing and margin control
+3. **Expanded and Flexible**: Flexible layout composition
 
-이제 SizedBox와 ConstrainedBox를 사용하여 위젯의 크기를 정확하게 제어할 수 있습니다!
+Now you can precisely control widget sizes using SizedBox and ConstrainedBox!

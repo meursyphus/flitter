@@ -1,6 +1,6 @@
 ---
-title: "Padding과 Margin - 위젯 간 여백 관리하기"
-description: "EdgeInsets와 Container를 활용하여 요소 간 완벽한 여백을 만들어보세요"
+title: "Padding and Margin - Managing Spacing Between Widgets"
+description: "Use EdgeInsets and Container to create perfect spacing between elements"
 files:
   App.js: |
     import React from 'react';
@@ -9,7 +9,7 @@ files:
     
     class PaddingApp extends StatelessWidget {
       build(context) {
-        // TODO: EdgeInsets를 사용해서 내부 여백(padding)과 외부 여백(margin)을 추가해보세요
+        // TODO: Use EdgeInsets to add inner padding and outer margin
         return Container({
           width: 400,
           height: 300,
@@ -22,7 +22,7 @@ files:
                   height: 60,
                   color: '#FF6B6B',
                   child: Center({
-                    child: Text("첫 번째 박스", { style: new TextStyle({ color: 'white' }) })
+                    child: Text("First Box", { style: new TextStyle({ color: 'white' }) })
                   })
                 }),
                 Container({
@@ -30,7 +30,7 @@ files:
                   height: 60,
                   color: '#4ECDC4',
                   child: Center({
-                    child: Text("두 번째 박스", { style: new TextStyle({ color: 'white' }) })
+                    child: Text("Second Box", { style: new TextStyle({ color: 'white' }) })
                   })
                 }),
                 Container({
@@ -38,7 +38,7 @@ files:
                   height: 60,
                   color: '#45B7D1',
                   child: Center({
-                    child: Text("세 번째 박스", { style: new TextStyle({ color: 'white' }) })
+                    child: Text("Third Box", { style: new TextStyle({ color: 'white' }) })
                   })
                 })
               ]
@@ -78,7 +78,7 @@ solved_files:
                   margin: EdgeInsets.only({ bottom: 16 }),
                   padding: EdgeInsets.all(12),
                   child: Center({
-                    child: Text("첫 번째 박스", { style: new TextStyle({ color: 'white' }) })
+                    child: Text("First Box", { style: new TextStyle({ color: 'white' }) })
                   })
                 }),
                 Container({
@@ -88,7 +88,7 @@ solved_files:
                   margin: EdgeInsets.only({ bottom: 16 }),
                   padding: EdgeInsets.all(12),
                   child: Center({
-                    child: Text("두 번째 박스", { style: new TextStyle({ color: 'white' }) })
+                    child: Text("Second Box", { style: new TextStyle({ color: 'white' }) })
                   })
                 }),
                 Container({
@@ -97,7 +97,7 @@ solved_files:
                   color: '#45B7D1',
                   padding: EdgeInsets.all(12),
                   child: Center({
-                    child: Text("세 번째 박스", { style: new TextStyle({ color: 'white' }) })
+                    child: Text("Third Box", { style: new TextStyle({ color: 'white' }) })
                   })
                 })
               ]
@@ -116,127 +116,127 @@ solved_files:
     }
 ---
 
-# Padding과 Margin으로 여백 관리하기
+# Managing Spacing with Padding and Margin
 
-"박스들이 너무 붙어있어서 답답해 보인다"고 생각해본 적 있나요? UI에서 여백은 단순히 빈 공간이 아닙니다. 콘텐츠를 돋보이게 하고, 사용자의 시선을 안내하며, 전체적인 완성도를 높이는 중요한 요소입니다.
+Have you ever thought "The boxes are too close together and look cramped"? In UI design, spacing isn't just empty space. It's an important element that highlights content, guides the user's gaze, and enhances overall completeness.
 
-## 🎯 학습 목표
+## 🎯 Learning Objectives
 
-이 튜토리얼을 완료하면 다음을 할 수 있습니다:
+After completing this tutorial, you'll be able to:
 
-- [ ] Padding과 Margin의 차이점 명확히 이해하기
-- [ ] EdgeInsets 클래스의 다양한 메서드 활용하기
-- [ ] 시각적으로 균형잡힌 레이아웃 만들기
-- [ ] 반응형 여백 패턴 구현하기
-- [ ] 컴포넌트 간 일관된 간격 유지하기
+- [ ] Clearly understand the differences between Padding and Margin
+- [ ] Utilize various methods of the EdgeInsets class
+- [ ] Create visually balanced layouts
+- [ ] Implement responsive spacing patterns
+- [ ] Maintain consistent spacing between components
 
-## 🤔 여백이 왜 중요할까요?
+## 🤔 Why is Spacing Important?
 
-여백은 디자인에서 "호흡"과 같은 역할을 합니다. 적절한 여백이 있어야 사용자가 콘텐츠를 편안하게 인식할 수 있습니다.
+Spacing plays a role like "breathing" in design. Users can comfortably perceive content only when there's appropriate spacing.
 
-**여백의 심리적 효과:**
-- **가독성 향상**: 텍스트와 요소 간 충분한 여백으로 읽기 편안함
-- **계층 구조 명확화**: 관련된 요소는 가깝게, 다른 그룹은 멀리 배치
-- **시각적 휴식**: 복잡한 인터페이스에서 사용자의 눈을 편안하게 함
-- **프리미엄 느낌**: 여유로운 여백은 고급스러운 인상을 줌
-- **터치 친화적**: 모바일에서 터치 타겟 간 충분한 간격 제공
+**Psychological effects of spacing:**
+- **Improved readability**: Comfortable reading with sufficient spacing between text and elements
+- **Clear hierarchy**: Related elements close together, different groups placed further apart
+- **Visual rest**: Comfortable for users' eyes in complex interfaces
+- **Premium feel**: Generous spacing gives a luxurious impression
+- **Touch-friendly**: Provides sufficient spacing between touch targets on mobile
 
-**실제 사용 사례:**
-- 카드 레이아웃에서 각 카드 간 구분
-- 폼 요소들 간의 논리적 그룹화
-- 헤더와 본문 콘텐츠 간 시각적 분리
-- 버튼과 텍스트 간 터치하기 편한 간격
-- 네비게이션 메뉴 항목들 간 명확한 구분
+**Real-world use cases:**
+- Distinction between cards in card layouts
+- Logical grouping of form elements
+- Visual separation between header and main content
+- Comfortable spacing between buttons and text for touch
+- Clear distinction between navigation menu items
 
-## 📏 Padding vs Margin 완전 정복
+## 📏 Complete Mastery of Padding vs Margin
 
-### 개념 차이
+### Conceptual Difference
 
 ```
 ┌─────── Container (margin) ───────┐
 │  ┌─── Container (padding) ───┐   │
 │  │                          │   │
-│  │    실제 콘텐츠 영역        │   │
+│  │    Actual Content Area    │   │
 │  │                          │   │
 │  └──────────────────────────┘   │
 └──────────────────────────────────┘
 ```
 
-- **Padding**: 컨테이너 내부의 콘텐츠와 테두리 사이의 여백
-- **Margin**: 컨테이너 외부의 다른 요소들과의 여백
+- **Padding**: Space between content inside the container and its border
+- **Margin**: Space outside the container with other elements
 
-### 시각적 비교
+### Visual Comparison
 
 ```typescript
-// Padding만 적용
+// Padding only
 Container({
   width: 200,
   height: 100,
   color: '#FF6B6B',
-  padding: EdgeInsets.all(20),  // 내부 여백
-  child: Text("콘텐츠")
+  padding: EdgeInsets.all(20),  // Inner spacing
+  child: Text("Content")
 })
 
-// Margin만 적용  
+// Margin only
 Container({
   width: 200,
   height: 100,
   color: '#4ECDC4',
-  margin: EdgeInsets.all(20),   // 외부 여백
-  child: Text("콘텐츠")
+  margin: EdgeInsets.all(20),   // Outer spacing
+  child: Text("Content")
 })
 
-// 둘 다 적용
+// Both applied
 Container({
   width: 200,
   height: 100,
   color: '#45B7D1',
-  margin: EdgeInsets.all(16),   // 외부 여백
-  padding: EdgeInsets.all(12),  // 내부 여백
-  child: Text("콘텐츠")
+  margin: EdgeInsets.all(16),   // Outer spacing
+  padding: EdgeInsets.all(12),  // Inner spacing
+  child: Text("Content")
 })
 ```
 
-## 🎨 EdgeInsets 클래스 마스터하기
+## 🎨 Mastering EdgeInsets Class
 
-### 모든 방향 동일한 여백
+### Same Spacing in All Directions
 
 ```typescript
-// 모든 방향에 20px 여백
+// 20px spacing in all directions
 EdgeInsets.all(20)
 
-// 실사용 예제
+// Real usage example
 Container({
   padding: EdgeInsets.all(16),
   margin: EdgeInsets.all(8),
-  child: Text("균등한 여백")
+  child: Text("Equal spacing")
 })
 ```
 
-### 대칭적 여백
+### Symmetric Spacing
 
 ```typescript
-// 가로(좌우)와 세로(상하) 여백을 각각 설정
+// Set horizontal (left-right) and vertical (top-bottom) spacing separately
 EdgeInsets.symmetric({
-  horizontal: 24,  // 좌우 24px
-  vertical: 12     // 상하 12px
+  horizontal: 24,  // 24px left-right
+  vertical: 12     // 12px top-bottom
 })
 
-// 실사용 예제 - 버튼 스타일
+// Real usage example - button style
 Container({
   padding: EdgeInsets.symmetric({ horizontal: 32, vertical: 12 }),
   decoration: new BoxDecoration({
     color: '#4299E1',
     borderRadius: BorderRadius.circular(6)
   }),
-  child: Text("버튼", { style: { color: 'white' } })
+  child: Text("Button", { style: { color: 'white' } })
 })
 ```
 
-### 개별 방향 여백
+### Individual Direction Spacing
 
 ```typescript
-// 각 방향을 개별적으로 설정
+// Set each direction individually
 EdgeInsets.only({
   top: 20,
   right: 16,
@@ -244,15 +244,15 @@ EdgeInsets.only({
   left: 12
 })
 
-// 일부만 설정 (나머지는 0)
-EdgeInsets.only({ bottom: 16 })        // 아래쪽만
-EdgeInsets.only({ left: 20, right: 20 }) // 좌우만
+// Set only some directions (others default to 0)
+EdgeInsets.only({ bottom: 16 })        // Bottom only
+EdgeInsets.only({ left: 20, right: 20 }) // Left and right only
 ```
 
-### 조합형 여백 패턴
+### Combined Spacing Patterns
 
 ```typescript
-// 카드 레이아웃 패턴
+// Card layout pattern
 Container({
   margin: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
   padding: EdgeInsets.all(20),
@@ -267,31 +267,31 @@ Container({
   }),
   child: Column({
     children: [
-      Text("제목", { style: { fontSize: 18, fontWeight: 'bold' } }),
-      Container({ height: 12 }), // Spacer 역할
-      Text("내용이 들어가는 곳입니다.")
+      Text("Title", { style: { fontSize: 18, fontWeight: 'bold' } }),
+      Container({ height: 12 }), // Acts as Spacer
+      Text("Content goes here.")
     ]
   })
 })
 ```
 
-## 🏗️ 실습: 여백이 있는 카드 레이아웃 만들기
+## 🏗️ Practice: Creating Card Layout with Spacing
 
-위의 시작 코드에서 박스들이 서로 붙어있어 답답해 보입니다. 이를 다음과 같이 개선해보세요:
+In the starting code above, the boxes are stuck together and look cramped. Let's improve this as follows:
 
-**단계별 힌트:**
-1. 바깥 Container에 `padding: EdgeInsets.all(20)` 추가
-2. 각 박스에 `margin: EdgeInsets.only({ bottom: 16 })` 추가 (마지막 박스 제외)
-3. 각 박스에 `padding: EdgeInsets.all(12)` 추가하여 텍스트 여백 확보
+**Step-by-step hints:**
+1. Add `padding: EdgeInsets.all(20)` to the outer Container
+2. Add `margin: EdgeInsets.only({ bottom: 16 })` to each box (except the last one)
+3. Add `padding: EdgeInsets.all(12)` to each box to secure text spacing
 
-**완성 후 결과:**
-- 전체 레이아웃에 바깥 여백이 생김
-- 박스들 간에 적절한 간격이 생김
-- 텍스트가 박스 가장자리에서 떨어져 보기 좋아짐
+**Results after completion:**
+- Outer spacing around the entire layout
+- Appropriate spacing between boxes
+- Text separated from box edges for better appearance
 
-## 🎨 실전 여백 패턴 모음
+## 🎨 Real-world Spacing Pattern Collection
 
-### 1. 모던 카드 리스트
+### 1. Modern Card List
 
 ```typescript
 import { StatelessWidget, Container, Column, Text, EdgeInsets, BoxDecoration, BorderRadius, BoxShadow, TextStyle } from "@meursyphus/flitter";
@@ -353,7 +353,7 @@ export default function ModernCardList(props) {
 }
 ```
 
-### 2. 폼 레이아웃
+### 2. Form Layout
 
 ```typescript
 import { StatefulWidget, State, Container, Column, Text, GestureDetector, EdgeInsets, BoxDecoration, BorderRadius, TextStyle, Center } from "@meursyphus/flitter";
@@ -371,8 +371,8 @@ class _FormLayoutState extends State {
       child: Column({
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 폼 제목
-          Text("회원가입", {
+          // Form title
+          Text("Sign Up", {
             style: new TextStyle({
               fontSize: 28,
               fontWeight: 'bold',
@@ -381,26 +381,26 @@ class _FormLayoutState extends State {
             })
           }),
           
-          Container({ height: 32 }), // 제목과 폼 사이 여백
+          Container({ height: 32 }), // Spacing between title and form
           
-          // 이메일 필드
-          this.buildFormField("이메일", "your@email.com"),
+          // Email field
+          this.buildFormField("Email", "your@email.com"),
           
-          Container({ height: 20 }), // 필드 간 여백
+          Container({ height: 20 }), // Spacing between fields
           
-          // 비밀번호 필드
-          this.buildFormField("비밀번호", "••••••••"),
+          // Password field
+          this.buildFormField("Password", "••••••••"),
           
           Container({ height: 20 }),
           
-          // 비밀번호 확인 필드
-          this.buildFormField("비밀번호 확인", "••••••••"),
+          // Confirm password field
+          this.buildFormField("Confirm Password", "••••••••"),
           
-          Container({ height: 32 }), // 필드와 버튼 사이 여백
+          Container({ height: 32 }), // Spacing between fields and button
           
-          // 가입 버튼
+          // Sign up button
           GestureDetector({
-            onClick: () => console.log("가입하기 클릭"),
+            onClick: () => console.log("Sign Up clicked"),
             child: Container({
               height: 48,
               decoration: new BoxDecoration({
@@ -408,7 +408,7 @@ class _FormLayoutState extends State {
                 borderRadius: BorderRadius.circular(8)
               }),
               child: Center({
-                child: Text("가입하기", {
+                child: Text("Sign Up", {
                   style: new TextStyle({
                     color: 'white',
                     fontSize: 16,
@@ -421,9 +421,9 @@ class _FormLayoutState extends State {
           
           Container({ height: 16 }),
           
-          // 로그인 링크
+          // Login link
           Center({
-            child: Text("이미 계정이 있으신가요? 로그인", {
+            child: Text("Already have an account? Log in", {
               style: new TextStyle({
                 color: '#4299E1',
                 fontSize: 14
@@ -472,7 +472,7 @@ export default function FormLayout(props) {
 }
 ```
 
-### 3. 반응형 그리드 시스템
+### 3. Responsive Grid System
 
 ```typescript
 import { StatelessWidget, Container, Row, Column, Text, Expanded, EdgeInsets, BoxDecoration, BorderRadius, TextStyle, Center } from "@meursyphus/flitter";
@@ -528,7 +528,7 @@ class ResponsiveGrid extends StatelessWidget {
                   })
                 })
               }),
-              // 빈 공간 채우기 (마지막 행에서 열이 부족할 때)
+              // Fill empty space (when last row has insufficient columns)
               ...Array(this.columns - rowItems.length).fill(null).map(() => 
                 Expanded({ child: Container() })
               )
@@ -549,12 +549,12 @@ export default function ResponsiveGrid(props) {
   return new _ResponsiveGrid(props);
 }
 
-// 사용 예제
+// Usage example
 const gridData = [
-  { title: "총 매출", value: "₩1,234만", color: '#4299E1' },
-  { title: "신규 주문", value: "156건", color: '#48BB78' },
-  { title: "활성 사용자", value: "2,340명", color: '#ED8936' },
-  { title: "전환율", value: "12.3%", color: '#9F7AEA' }
+  { title: "Total Sales", value: "₩12.34M", color: '#4299E1' },
+  { title: "New Orders", value: "156", color: '#48BB78' },
+  { title: "Active Users", value: "2,340", color: '#ED8936' },
+  { title: "Conversion Rate", value: "12.3%", color: '#9F7AEA' }
 ];
 
 const widget = ResponsiveGrid({ 
@@ -563,12 +563,12 @@ const widget = ResponsiveGrid({
 });
 ```
 
-## 📐 여백 시스템 설계 원칙
+## 📐 Spacing System Design Principles
 
-### 1. 일관된 스케일 시스템
+### 1. Consistent Scale System
 
 ```typescript
-// 여백 상수 정의
+// Define spacing constants
 const SPACING = {
   xs: 4,
   sm: 8,
@@ -578,17 +578,17 @@ const SPACING = {
   xxl: 48
 };
 
-// 사용 예
+// Usage example
 Container({
   padding: EdgeInsets.all(SPACING.md),        // 16px
   margin: EdgeInsets.only({ bottom: SPACING.lg }) // 24px
 })
 ```
 
-### 2. 컴포넌트별 여백 패턴
+### 2. Component-specific Spacing Patterns
 
 ```typescript
-// 카드 컴포넌트의 표준 여백
+// Standard spacing for card components
 class StandardCard extends StatelessWidget {
   static get SPACING() {
     return {
@@ -602,29 +602,29 @@ class StandardCard extends StatelessWidget {
     return Container({
       margin: StandardCard.SPACING.margin,
       padding: StandardCard.SPACING.content,
-      // ... 나머지 스타일
+      // ... other styles
     });
   }
 }
 ```
 
-### 3. 계층적 여백 설계
+### 3. Hierarchical Spacing Design
 
 ```typescript
-// 페이지 > 섹션 > 컴포넌트 순으로 여백 크기 감소
+// Spacing size decreases in order: page > section > component
 Container({
-  padding: EdgeInsets.all(32),  // 페이지 레벨 (가장 큰 여백)
+  padding: EdgeInsets.all(32),  // Page level (largest spacing)
   child: Column({
     children: [
       Container({
-        margin: EdgeInsets.only({ bottom: 24 }),  // 섹션 레벨
+        margin: EdgeInsets.only({ bottom: 24 }),  // Section level
         child: Column({
           children: [
             Container({
-              margin: EdgeInsets.only({ bottom: 12 }),  // 컴포넌트 레벨
-              child: Text("제목")
+              margin: EdgeInsets.only({ bottom: 12 }),  // Component level
+              child: Text("Title")
             }),
-            Text("내용")
+            Text("Content")
           ]
         })
       })
@@ -633,9 +633,9 @@ Container({
 })
 ```
 
-## 🚀 고급 여백 테크닉
+## 🚀 Advanced Spacing Techniques
 
-### 1. 조건부 여백
+### 1. Conditional Spacing
 
 ```typescript
 class ConditionalSpacing extends StatelessWidget {
@@ -662,10 +662,10 @@ class ConditionalSpacing extends StatelessWidget {
 }
 ```
 
-### 2. 네거티브 마진 효과
+### 2. Negative Margin Effect
 
 ```typescript
-// 겹치는 효과를 위한 음수 마진 시뮬레이션
+// Simulating negative margin for overlapping effects
 Stack({
   children: [
     Container({
@@ -686,7 +686,7 @@ Stack({
 })
 ```
 
-### 3. 반응형 여백
+### 3. Responsive Spacing
 
 ```typescript
 class ResponsiveSpacing extends StatelessWidget {
@@ -697,29 +697,29 @@ class ResponsiveSpacing extends StatelessWidget {
 
   get spacing() {
     if (this.screenWidth < 768) {
-      return { horizontal: 16, vertical: 12 }; // 모바일
+      return { horizontal: 16, vertical: 12 }; // Mobile
     } else if (this.screenWidth < 1024) {
-      return { horizontal: 24, vertical: 16 }; // 태블릿
+      return { horizontal: 24, vertical: 16 }; // Tablet
     } else {
-      return { horizontal: 32, vertical: 24 }; // 데스크톱
+      return { horizontal: 32, vertical: 24 }; // Desktop
     }
   }
 
   build(context) {
     return Container({
       padding: EdgeInsets.symmetric(this.spacing),
-      // ... 나머지 구현
+      // ... rest of implementation
     });
   }
 }
 ```
 
-## 📝 연습 문제
+## 📝 Practice Problems
 
-### 연습 1: 프로필 카드 만들기
+### Practice 1: Creating Profile Card
 
 ```typescript
-// TODO: 적절한 여백을 가진 프로필 카드를 만들어보세요
+// TODO: Create a profile card with appropriate spacing
 class ProfileCard extends StatelessWidget {
   constructor({ name, role, avatar, ...props } = {}) {
     super(props);
@@ -729,16 +729,16 @@ class ProfileCard extends StatelessWidget {
   }
 
   build(context) {
-    // 여기에 코드를 작성하세요
-    // 힌트: padding, margin을 사용해서 시각적으로 균형잡힌 카드를 만드세요
+    // Write your code here
+    // Hint: Use padding and margin to create a visually balanced card
   }
 }
 ```
 
-### 연습 2: 뉴스 피드 레이아웃
+### Practice 2: News Feed Layout
 
 ```typescript
-// TODO: 뉴스 아이템들 간에 적절한 간격이 있는 피드를 만들어보세요
+// TODO: Create a feed with appropriate spacing between news items
 class NewsFeed extends StatelessWidget {
   constructor({ articles = [], ...props } = {}) {
     super(props);
@@ -746,28 +746,28 @@ class NewsFeed extends StatelessWidget {
   }
 
   build(context) {
-    // 각 뉴스 아이템 간 간격, 카드 내부 여백 등을 고려해서 구현하세요
+    // Implement considering spacing between news items, card inner padding, etc.
   }
 }
 ```
 
-### 연습 3: 설정 메뉴 UI
+### Practice 3: Settings Menu UI
 
 ```typescript
-// TODO: 설정 항목들이 그룹화되고 적절한 여백을 가진 설정 메뉴를 만들어보세요
+// TODO: Create a settings menu with grouped items and appropriate spacing
 class SettingsMenu extends StatelessWidget {
   build(context) {
-    // 그룹 제목, 설정 항목들 간의 여백을 계층적으로 구성해보세요
+    // Hierarchically organize spacing between group titles and setting items
   }
 }
 ```
 
-## 🐛 흔한 실수와 해결법
+## 🐛 Common Mistakes and Solutions
 
-### ❌ 실수 1: 일관성 없는 여백
+### ❌ Mistake 1: Inconsistent Spacing
 
 ```typescript
-// 나쁜 예 - 여백이 들쭉날쭉
+// Bad example - irregular spacing
 Column({
   children: [
     Container({ margin: EdgeInsets.only({ bottom: 5 }) }),
@@ -777,10 +777,10 @@ Column({
 })
 ```
 
-### ✅ 올바른 방법:
+### ✅ Correct Method:
 
 ```typescript
-// 좋은 예 - 일관된 여백 시스템
+// Good example - consistent spacing system
 const ITEM_SPACING = 12;
 
 Column({
@@ -792,72 +792,72 @@ Column({
 })
 ```
 
-### ❌ 실수 2: 과도한 여백
+### ❌ Mistake 2: Excessive Spacing
 
 ```typescript
-// 너무 많은 여백으로 인한 공간 낭비
+// Too much spacing causing space waste
 Container({
-  padding: EdgeInsets.all(100),  // 너무 큼!
-  child: Text("작은 텍스트")
+  padding: EdgeInsets.all(100),  // Too large!
+  child: Text("Small text")
 })
 ```
 
-### ✅ 올바른 방법:
+### ✅ Correct Method:
 
 ```typescript
-// 콘텐츠에 적절한 여백
+// Appropriate spacing for content
 Container({
   padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
-  child: Text("작은 텍스트")
+  child: Text("Small text")
 })
 ```
 
-### ❌ 실수 3: 중복된 여백
+### ❌ Mistake 3: Duplicate Spacing
 
 ```typescript
-// margin과 padding이 중복되어 과도한 여백
+// Margin and padding overlapping causing excessive spacing
 Container({
   margin: EdgeInsets.all(20),
   child: Container({
-    padding: EdgeInsets.all(20),  // 중복!
-    child: Text("텍스트")
+    padding: EdgeInsets.all(20),  // Duplicate!
+    child: Text("Text")
   })
 })
 ```
 
-### ✅ 올바른 방법:
+### ✅ Correct Method:
 
 ```typescript
-// 목적에 맞게 하나만 사용
+// Use only one according to purpose
 Container({
   padding: EdgeInsets.all(20),
-  child: Text("텍스트")
+  child: Text("Text")
 })
 ```
 
-## 🎊 완성된 결과
+## 🎊 Completed Results
 
-이 튜토리얼을 완료하면:
+After completing this tutorial:
 
-1. **시각적 개선**: 박스들 간에 적절한 간격이 생겨 깔끔해짐
-2. **가독성 향상**: 텍스트가 박스 가장자리에서 떨어져 읽기 편함
-3. **전문적 외관**: 일관된 여백으로 완성도 높은 디자인
-4. **확장 가능**: 여백 패턴을 다른 프로젝트에도 적용 가능
+1. **Visual Improvement**: Clean appearance with appropriate spacing between boxes
+2. **Improved Readability**: Text separated from box edges for comfortable reading
+3. **Professional Appearance**: High-quality design with consistent spacing
+4. **Expandable**: Spacing patterns applicable to other projects
 
-## 🔥 추가 도전 과제
+## 🔥 Additional Challenges
 
-### 1. 다크 모드 지원 여백 시스템
-다크 모드에서도 적절한 시각적 분리를 제공하는 여백 시스템을 만들어보세요.
+### 1. Dark Mode Supporting Spacing System
+Create a spacing system that provides appropriate visual separation even in dark mode.
 
-### 2. 애니메이션 여백 변화
-호버나 클릭 시 여백이 부드럽게 변화하는 인터랙티브 컴포넌트를 만들어보세요.
+### 2. Animated Spacing Changes
+Create interactive components where spacing changes smoothly on hover or click.
 
-### 3. 접근성을 고려한 여백
-스크린 리더 사용자와 키보드 내비게이션을 고려한 여백 설계를 해보세요.
+### 3. Accessibility-Considered Spacing
+Design spacing considering screen reader users and keyboard navigation.
 
-### 4. 성능 최적화
-많은 수의 아이템에서도 효율적인 여백 관리 시스템을 구현해보세요.
+### 4. Performance Optimization
+Implement an efficient spacing management system even with many items.
 
-## 🎯 다음 단계
+## 🎯 Next Steps
 
-다음 튜토리얼에서는 **[SizedBox와 ConstrainedBox](../3_sized-constrained-box/)**를 배워보겠습니다. 정확한 크기 제어와 제약 조건을 통해 더욱 정교한 레이아웃을 만들어보세요!
+In the next tutorial, we'll learn about **[SizedBox and ConstrainedBox](../3_sized-constrained-box/)**. Create even more precise layouts through exact size control and constraints!
