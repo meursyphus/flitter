@@ -10,29 +10,29 @@ import TextExample from '$components/pages/docs/01_getting-started/04-text-examp
 
 # Basic Elements - Shapes, Layout, Text
 
-Flitter는 Flutter와 유사한 위젯 시스템을 제공하여 복잡한 UI를 쉽게 구성할 수 있습니다. 
-이 문서에서는 가장 기본적인 요소들인 도형, 레이아웃, 텍스트를 다루는 방법을 알아봅니다.
+Flitter provides a widget system similar to Flutter, making it easy to build complex UIs.
+This document covers how to work with the most basic elements: shapes, layouts, and text.
 
-## 기본 도형 그리기
+## Drawing Basic Shapes
 
-Flitter에서 도형은 `Container` 위젯과 `BoxDecoration`을 사용하여 만듭니다.
+In Flitter, shapes are created using the `Container` widget and `BoxDecoration`.
 
 <BasicShapesExample
   client:load
-  title="Container와 BoxDecoration"
-  description="다양한 도형과 스타일을 만들어보세요."
+  title="Container and BoxDecoration"
+  description="Create various shapes and styles."
 />
 
-### Container 위젯
+### Container Widget
 
-`Container`는 Flitter에서 가장 기본적이면서도 강력한 위젯입니다:
+`Container` is the most basic yet powerful widget in Flitter:
 
-- **크기 설정**: width, height 속성으로 크기 지정
-- **색상**: color 또는 decoration.color로 배경색 설정
-- **여백**: padding과 margin으로 내부/외부 여백 설정
-- **장식**: BoxDecoration으로 테두리, 둥근 모서리, 그림자 등 추가
+- **Size setting**: Specify size with width and height properties
+- **Color**: Set background color with color or decoration.color
+- **Spacing**: Set internal/external margins with padding and margin
+- **Decoration**: Add borders, rounded corners, shadows, etc. with BoxDecoration
 
-### BoxDecoration 활용
+### Using BoxDecoration
 
 ```typescript
 Container({
@@ -40,10 +40,10 @@ Container({
     color: '#3B82F6',
     border: new Border({
       top: new BorderSide({ color: '#1E40AF', width: 2 }),
-      // right, bottom, left도 동일하게 설정 가능
+      // right, bottom, left can be set the same way
     }),
     borderRadius: BorderRadius.circular(8),
-    // 또는 개별 모서리 설정
+    // or set individual corners
     borderRadius: BorderRadius.only({
       topLeft: Radius.circular(16),
       topRight: Radius.circular(16),
@@ -54,117 +54,117 @@ Container({
 })
 ```
 
-## 레이아웃 시스템
+## Layout System
 
-Flitter는 세 가지 주요 레이아웃 위젯을 제공합니다.
+Flitter provides three main layout widgets.
 
 <LayoutExample
   client:load
-  title="레이아웃 위젯들"
-  description="Row, Column, Stack을 사용하여 위젯을 배치하는 방법을 알아보세요."
+  title="Layout Widgets"
+  description="Learn how to arrange widgets using Row, Column, and Stack."
 />
 
-### Row와 Column
+### Row and Column
 
-**Row**는 자식 위젯들을 가로로, **Column**은 세로로 배치합니다:
+**Row** arranges child widgets horizontally, while **Column** arranges them vertically:
 
 ```typescript
-// 가로 배치
+// Horizontal arrangement
 Row({
-  mainAxisAlignment: MainAxisAlignment.spaceBetween, // 주축 정렬
-  crossAxisAlignment: CrossAxisAlignment.center,     // 교차축 정렬
-  children: [/* 위젯들 */]
+  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Main axis alignment
+  crossAxisAlignment: CrossAxisAlignment.center,     // Cross axis alignment
+  children: [/* widgets */]
 })
 
-// 세로 배치
+// Vertical arrangement
 Column({
   mainAxisAlignment: MainAxisAlignment.start,
   crossAxisAlignment: CrossAxisAlignment.stretch,
-  children: [/* 위젯들 */]
+  children: [/* widgets */]
 })
 ```
 
-### Stack과 Positioned
+### Stack and Positioned
 
-**Stack**은 위젯들을 겹쳐서 배치할 때 사용합니다:
+**Stack** is used to overlay widgets on top of each other:
 
 ```typescript
 Stack({
   children: [
-    Container({ /* 배경 */ }),
+    Container({ /* background */ }),
     Positioned({
       top: 10,
       left: 10,
-      child: Container({ /* 절대 위치 지정 */ })
+      child: Container({ /* absolute positioning */ })
     })
   ]
 })
 ```
 
-### Expanded와 Flexible
+### Expanded and Flexible
 
-남은 공간을 채우거나 비율에 따라 공간을 분배할 때 사용합니다:
+Used to fill remaining space or distribute space proportionally:
 
 ```typescript
 Row({
   children: [
-    Container({ width: 100 }), // 고정 너비
+    Container({ width: 100 }), // Fixed width
     Expanded({
-      flex: 2, // 2배의 공간 차지
-      child: Container({ /* 남은 공간 채우기 */ })
+      flex: 2, // Takes 2x space
+      child: Container({ /* fill remaining space */ })
     }),
     Expanded({
-      flex: 1, // 1배의 공간 차지
-      child: Container({ /* 남은 공간 채우기 */ })
+      flex: 1, // Takes 1x space
+      child: Container({ /* fill remaining space */ })
     })
   ]
 })
 ```
 
-## 텍스트 처리
+## Text Handling
 
-Flitter의 Text 위젯은 다양한 스타일링과 레이아웃 옵션을 제공합니다.
+Flitter's Text widget provides various styling and layout options.
 
 <TextExample
   client:load
-  title="텍스트 스타일링과 처리"
-  description="다양한 텍스트 스타일과 오버플로우 처리 방법을 알아보세요."
+  title="Text Styling and Handling"
+  description="Learn about various text styles and overflow handling methods."
 />
 
-### TextStyle 속성
+### TextStyle Properties
 
 ```typescript
-Text('스타일이 적용된 텍스트', {
+Text('Styled text', {
   style: new TextStyle({
-    fontSize: 18,          // 글자 크기
-    fontWeight: 'bold',    // 굵기: 'normal', 'bold'
-    fontStyle: 'italic',   // 스타일: 'normal', 'italic'
-    fontFamily: 'Arial',   // 폰트 패밀리
-    color: '#3B82F6',      // 색상
-    letterSpacing: 1.5,    // 글자 간격
-    wordSpacing: 2.0,      // 단어 간격
-    height: 1.5,           // 줄 높이
+    fontSize: 18,          // Font size
+    fontWeight: 'bold',    // Weight: 'normal', 'bold'
+    fontStyle: 'italic',   // Style: 'normal', 'italic'
+    fontFamily: 'Arial',   // Font family
+    color: '#3B82F6',      // Color
+    letterSpacing: 1.5,    // Letter spacing
+    wordSpacing: 2.0,      // Word spacing
+    height: 1.5,           // Line height
     decoration: 'underline' // 'none', 'underline', 'overline', 'lineThrough'
   })
 })
 ```
 
-### 텍스트 정렬과 오버플로우
+### Text Alignment and Overflow
 
 ```typescript
 Container({
   width: 200,
-  child: Text('긴 텍스트가 들어갑니다...', {
-    textAlign: TextAlign.center,    // 정렬: left, right, center, justify
-    maxLines: 2,                     // 최대 줄 수
-    overflow: TextOverflow.ellipsis, // 오버플로우 처리: clip, fade, ellipsis
+  child: Text('Long text goes here...', {
+    textAlign: TextAlign.center,    // Alignment: left, right, center, justify
+    maxLines: 2,                     // Maximum lines
+    overflow: TextOverflow.ellipsis, // Overflow handling: clip, fade, ellipsis
   })
 })
 ```
 
-## 실전 예제: 카드 컴포넌트 만들기
+## Practical Example: Creating a Card Component
 
-지금까지 배운 내용을 활용하여 카드 컴포넌트를 만들어봅시다:
+Let's create a card component using what we've learned so far:
 
 ```typescript
 Container({
@@ -183,7 +183,7 @@ Container({
   child: Column({
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text('카드 제목', {
+      Text('Card Title', {
         style: new TextStyle({
           fontSize: 20,
           fontWeight: 'bold',
@@ -191,7 +191,7 @@ Container({
         })
       }),
       SizedBox({ height: 8 }),
-      Text('카드 내용이 들어갑니다. 여러 줄의 텍스트를 포함할 수 있습니다.', {
+      Text('Card content goes here. It can include multiple lines of text.', {
         style: new TextStyle({
           fontSize: 14,
           color: '#6B7280'
@@ -207,7 +207,7 @@ Container({
               color: '#3B82F6',
               borderRadius: BorderRadius.circular(6)
             }),
-            child: Text('액션', {
+            child: Text('Action', {
               style: new TextStyle({
                 fontSize: 14,
                 color: '#FFFFFF',
@@ -222,16 +222,15 @@ Container({
 })
 ```
 
-## 다음 단계
+## Next Steps
 
-기본 요소들을 마스터했다면, 기본 상호작용에서 
-사용자 입력을 처리하는 방법을 알아보세요.
+Once you've mastered the basic elements, learn how to handle user input in the Basic Interactions section.
 
-## 요약
+## Summary
 
-- **Container**: 크기, 색상, 여백, 장식을 가진 기본 컨테이너
-- **BoxDecoration**: 테두리, 둥근 모서리 등 시각적 장식
-- **Row/Column**: 가로/세로 방향 레이아웃
-- **Stack**: 위젯 겹치기
-- **Text**: 다양한 스타일과 정렬 옵션을 가진 텍스트
-- **Expanded**: 남은 공간 채우기
+- **Container**: Basic container with size, color, spacing, and decoration
+- **BoxDecoration**: Visual decorations like borders and rounded corners
+- **Row/Column**: Horizontal/vertical direction layouts
+- **Stack**: Widget overlaying
+- **Text**: Text with various styles and alignment options
+- **Expanded**: Fill remaining space

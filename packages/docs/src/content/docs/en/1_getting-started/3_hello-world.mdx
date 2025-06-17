@@ -1,78 +1,78 @@
 ---
 nav_title: "Hello World"
-title: "Hello World - 텍스트 가운데 배치"
-description: "D3.js와 비교하여 Flitter의 선언적 프로그래밍이 얼마나 간단한지 알아봅니다"
+title: "Hello World - Centering Text"
+description: "Learn how simple Flitter's declarative programming is compared to D3.js"
 ---
 
 import HelloWorldExample from '$components/pages/docs/01_getting-started/01-hello-world-example';
 
-# Hello World - 텍스트 가운데 배치
+# Hello World - Centering Text
 
-웹에서 그래픽을 다룰 때 가장 기본적인 작업 중 하나는 텍스트를 화면 가운데에 배치하는 것입니다. 
-간단해 보이는 이 작업도 전통적인 방식으로는 꽤 복잡한 코드가 필요합니다.
+One of the most basic tasks when working with graphics on the web is centering text on the screen.
+Even this seemingly simple task requires quite complex code with traditional approaches.
 
-## 왜 이것이 문제일까요?
+## Why is this a problem?
 
 To center elements in SVG or Canvas:
 1. You need to know the container size
-2. 요소의 크기를 계산해야 합니다
-3. 중앙 좌표를 수동으로 계산해야 합니다
-4. 크기가 변경될 때마다 재계산해야 합니다
+2. You need to calculate the element's size
+3. You need to manually calculate the center coordinates
+4. You need to recalculate whenever the size changes
 
-이런 반복적이고 복잡한 작업은 실수하기 쉽고, 코드를 읽기 어렵게 만듭니다.
+These repetitive and complex tasks are error-prone and make code difficult to read.
 
-## 선언형 vs 명령형 프로그래밍
+## Declarative vs Imperative Programming
 
 <HelloWorldExample
   client:load
-  title="첫 번째 Flitter 애플리케이션"
-  description="동일한 결과를 얻기 위해 D3.js와 Flitter가 어떻게 다른지 비교해보세요."
+  title="Your First Flitter Application"
+  description="Compare how D3.js and Flitter differ in achieving the same result."
   labels={{
     flitterTab: "Flitter",
     d3Tab: "D3.js",
-    codeSection: "코드",
-    resultSection: "실행 결과",
-    flitterCodeTitle: "Flitter 코드 (40줄)",
-    d3CodeTitle: "D3.js 코드 (60줄)",
+    codeSection: "Code",
+    resultSection: "Result",
+    flitterCodeTitle: "Flitter Code (40 lines)",
+    d3CodeTitle: "D3.js Code (60 lines)",
     flitterAdvantages: "Flitter",
     d3Problems: "D3.js",
-    keyDifferences: "주요 차이점",
-    resultDescription: "* 버튼을 클릭해보세요! 두 코드 모두 동일한 결과를 만들지만, Flitter가 훨씬 간단합니다.",
+    keyDifferences: "Key Differences",
+    resultDescription: "* Try clicking the button! Both codes produce the same result, but Flitter is much simpler.",
     flitterBenefits: {
-      declarative: "선언적 UI로 레이아웃 자동 처리",
-      gestureDetector: "GestureDetector로 이벤트 간단 처리",
-      setState: "setState로 자동 리렌더링",
-      widgetComposition: "복잡한 레이아웃도 위젯 조합으로 해결"
+      declarative: "Automatic layout handling with declarative UI",
+      gestureDetector: "Simple event handling with GestureDetector",
+      setState: "Automatic re-rendering with setState",
+      widgetComposition: "Complex layouts solved through widget composition"
     },
     d3Issues: {
-      manualCoordinates: "SVG 요소를 직접 생성하고 위치 지정",
-      manualEvents: "이벤트 핸들러를 수동으로 바인딩",
-      directDOM: "상태 변경 시 DOM을 직접 조작",
-      separateHover: "호버 효과를 별도로 구현"
+      manualCoordinates: "Directly create SVG elements and position them",
+      manualEvents: "Manually bind event handlers",
+      directDOM: "Directly manipulate DOM on state changes",
+      separateHover: "Implement hover effects separately"
     }
   }}
 />
 
-## 핵심 개념 이해하기
+## Understanding Key Concepts
 
-### 1. Center 위젯
-Flitter의 `Center` 위젯은 자식 요소를 자동으로 중앙에 배치합니다:
+### 1. Center Widget
+Flitter's `Center` widget automatically centers its child element:
 
 ```typescript
 Center({
-  child: Text("가운데 정렬됩니다!")
+  child: Text("This will be centered!")
 })
 ```
 
-### 2. 자동 크기 조정
-Flitter는 부모 컨테이너의 크기가 변경되면 자동으로 레이아웃을 다시 계산합니다. 
-별도의 리사이즈 이벤트 핸들러를 작성할 필요가 없습니다.
+### 2. Automatic Sizing
+Flitter automatically recalculates the layout when the parent container size changes.
+There's no need to write separate resize event handlers.
 
-### 3. 선언적 스타일링
-`TextStyle`을 사용하여 텍스트의 모양을 선언적으로 정의합니다:
+### 3. Declarative Styling
+Use `TextStyle` to declaratively define the appearance of text:
 
 ```typescript
-Text("스타일이 적용된 텍스트", {
+Text("Styled text", {
   style: TextStyle({
     fontSize: 24,
     fontWeight: 'bold',
@@ -81,27 +81,27 @@ Text("스타일이 적용된 텍스트", {
 })
 ```
 
-## 실습: 다양한 정렬 방식
+## Practice: Various Alignment Methods
 
-### Align 위젯 사용하기
-`Center`는 사실 `Align` 위젯의 특별한 경우입니다. 더 세밀한 제어가 필요하다면:
+### Using the Align Widget
+`Center` is actually a special case of the `Align` widget. For more precise control:
 
 ```typescript
-// 오른쪽 상단에 배치
+// Position at top right
 Align({
   alignment: Alignment.topRight,
-  child: Text("오른쪽 상단")
+  child: Text("Top Right")
 })
 
-// 커스텀 위치 (중앙에서 약간 위로)
+// Custom position (slightly above center)
 Align({
   alignment: new Alignment(0, -0.5),
-  child: Text("중앙 위")
+  child: Text("Above Center")
 })
 ```
 
-### Container와 함께 사용하기
-실제 애플리케이션에서는 보통 `Container`와 함께 사용합니다:
+### Using with Container
+In real applications, it's usually used together with `Container`:
 
 ```typescript
 Container({
@@ -109,7 +109,7 @@ Container({
   height: 200,
   color: '#EFF6FF',
   child: Center({
-    child: Text("컨테이너 안의 텍스트", {
+    child: Text("Text in Container", {
       style: TextStyle({
         fontSize: 20,
         color: '#1E40AF'
@@ -119,21 +119,20 @@ Container({
 })
 ```
 
-## 이것이 왜 중요한가요?
+## Why is this important?
 
-1. **생산성**: 복잡한 계산 없이 원하는 레이아웃을 바로 구현
-2. **가독성**: 코드가 의도를 명확하게 표현
-3. **유지보수**: 레이아웃 로직이 캡슐화되어 있어 수정이 쉬움
-4. **확장성**: 복잡한 레이아웃도 위젯을 조합하여 쉽게 구현
+1. **Productivity**: Implement desired layouts directly without complex calculations
+2. **Readability**: Code clearly expresses intent
+3. **Maintainability**: Layout logic is encapsulated, making modifications easy
+4. **Scalability**: Complex layouts can be easily implemented by combining widgets
 
-## 다음 단계
+## Next Steps
 
-이제 Flitter의 기본을 이해했으니, 기본 요소들에서 
-다양한 도형과 레이아웃 위젯을 알아보겠습니다.
+Now that you understand the basics of Flitter, let's explore various shapes and layout widgets in the Basic Elements section.
 
-## 요약
+## Summary
 
-- Flitter는 선언적 프로그래밍으로 복잡한 레이아웃을 간단하게 만듭니다
-- `Center` 위젯으로 자동 중앙 정렬이 가능합니다
-- 크기 변경에 대한 반응형 처리가 자동으로 이루어집니다
-- D3.js 대비 훨씬 적은 코드로 동일한 결과를 얻을 수 있습니다
+- Flitter makes complex layouts simple with declarative programming
+- Automatic center alignment is possible with the `Center` widget
+- Responsive handling to size changes happens automatically
+- You can achieve the same results with much less code compared to D3.js

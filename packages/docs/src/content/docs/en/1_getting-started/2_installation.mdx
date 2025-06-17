@@ -1,18 +1,18 @@
 ---
-nav_title: "설치 가이드"
-title: "Flitter 설치 및 설정"
-description: "다양한 JavaScript 프레임워크에서 Flitter를 설치하고 설정하는 방법을 알아봅니다"
+nav_title: "Installation Guide"
+title: "Flitter Installation and Setup"
+description: "Learn how to install and set up Flitter in various JavaScript frameworks"
 ---
 
 import InstallationGuide from '$components/pages/docs/01_getting-started/installation-guide';
 
-# Flitter 설치 및 설정
+# Flitter Installation and Setup
 
-Flitter는 라이브러리입니다. npm으로 설치하고 바로 사용할 수 있습니다.
+Flitter is a library that can be installed via npm and used immediately.
 
-## 지원하는 프레임워크
+## Supported Frameworks
 
-Flitter는 다음과 같은 환경을 공식적으로 지원합니다:
+Flitter officially supports the following environments:
 
 - **Vanilla JavaScript** - Use with pure JavaScript without frameworks
 - **React** - Easy integration as React components
@@ -21,58 +21,58 @@ Flitter는 다음과 같은 환경을 공식적으로 지원합니다:
 - **SolidJS** - Perfect integration with reactive systems
 - **Qwik** - Use with optimized loading
 
-## 설치 가이드
+## Installation Guide
 
-아래 탭에서 사용하고자 하는 프레임워크를 선택하여 설치 방법과 기본 사용 예제를 확인하세요:
+Select the framework you want to use from the tabs below to view installation methods and basic usage examples:
 
 <InstallationGuide 
   client:load 
   defaultTab="react"
   labels={{
-    installation: '설치',
-    usageExample: '사용 예제',
-    importantNotes: '💡 중요 참고사항',
-    otherPackageManagers: '다른 패키지 매니저',
-    copy: '복사',
-    copied: '복사됨!'
+    installation: 'Installation',
+    usageExample: 'Usage Example',
+    importantNotes: '💡 Important Notes',
+    otherPackageManagers: 'Other Package Managers',
+    copy: 'Copy',
+    copied: 'Copied!'
   }}
 />
 
-## 렌더러 선택하기
+## Choosing a Renderer
 
-Flitter는 두 가지 렌더러를 지원합니다:
+Flitter supports two types of renderers:
 
-### Canvas 렌더러
-- **장점**: 높은 성능, 픽셀 단위 제어, 복잡한 애니메이션에 적합
-- **단점**: 텍스트 선택 불가, SEO 비친화적
-- **사용 사례**: 게임, 복잡한 시각화, 애니메이션이 많은 애플리케이션
+### Canvas Renderer
+- **Advantages**: High performance, pixel-level control, suitable for complex animations
+- **Disadvantages**: Text selection not possible, SEO unfriendly
+- **Use cases**: Games, complex visualizations, animation-heavy applications
 
-### SVG 렌더러
-- **장점**: 벡터 그래픽, 텍스트 선택 가능, SEO 친화적, CSS 스타일링 가능
-- **단점**: 복잡한 애니메이션에서 성능 저하 가능
-- **사용 사례**: 차트, 다이어그램, 정적인 시각화
+### SVG Renderer
+- **Advantages**: Vector graphics, text selection possible, SEO friendly, CSS styling possible
+- **Disadvantages**: Potential performance degradation with complex animations
+- **Use cases**: Charts, diagrams, static visualizations
 
-### 서버 사이드 렌더링
+### Server-Side Rendering
 
 ```typescript
-// 서버 사이드 모드를 사용하면
-// 1. 서버에서 SVG로 먼저 렌더링 
-// 2. 클라이언트에서 지정된 렌더러로 하이드레이션
+// When using server-side mode:
+// 1. First renders as SVG on the server
+// 2. Hydrates with the specified renderer on the client
 <Widget 
-  renderer="canvas"     // 클라이언트 렌더러
-  ssr={{                 // SSR 활성화 및 크기 지정
+  renderer="canvas"     // Client renderer
+  ssr={{                 // Enable SSR and specify size
     size: {
-      width: 800,      // 서버에서 렌더링할 너비
-      height: 600      // 서버에서 렌더링할 높이
+      width: 800,      // Width to render on server
+      height: 600      // Height to render on server
     }
   }}
   widget={...} 
 />
 ```
 
-## TypeScript 지원
+## TypeScript Support
 
-Flitter는 TypeScript로 작성되었으며, 완전한 타입 지원을 제공합니다.
+Flitter is written in TypeScript and provides complete type support.
 
 ```typescript
 import { Container, ContainerProps, EdgeInsets, Text } from '@meursyphus/flitter';
@@ -86,14 +86,14 @@ const props: ContainerProps = {
 const container = Container(props);
 ```
 
-## 다음 단계
+## Next Steps
 
-설치가 완료되었다면, Hello World 예제를 통해 첫 번째 Flitter 애플리케이션을 만들어보세요.
+Once installation is complete, create your first Flitter application through the Hello World example.
 
-## 커뮤니티 지원
+## Community Support
 
-도움이 필요하거나 질문이 있으신가요?
+Need help or have questions?
 
 - [GitHub Issues](https://github.com/meursyphus/flitter/issues)
-- [Discord 커뮤니티](https://discord.gg/kUZp4SaHzF)
+- [Discord Community](https://discord.gg/kUZp4SaHzF)
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/flitter)
