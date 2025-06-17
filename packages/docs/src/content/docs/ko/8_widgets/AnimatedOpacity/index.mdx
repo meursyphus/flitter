@@ -1,0 +1,467 @@
+---
+nav_group: Widgets
+nav_group_order: 3
+nav_title: AnimatedOpacity
+title: "AnimatedOpacity"
+description: "위젯의 투명도를 애니메이션으로 전환하는 위젯"
+---
+
+## 개요
+
+AnimatedOpacity는 자식 위젯의 투명도(opacity)가 변경될 때 자동으로 애니메이션을 적용하여 부드럽게 전환하는 위젯입니다. Flutter의 AnimatedOpacity 위젯에서 영감을 받아 구현되었습니다.
+
+> Animated version of Opacity which automatically transitions the child's opacity over a given duration whenever the given opacity changes.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/QZAvjqOqiLY"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowfullscreen
+></iframe>
+
+Flutter 참조: https://api.flutter.dev/flutter/widgets/AnimatedOpacity-class.html
+
+## 언제 사용하나요?
+
+- 위젯을 페이드 인/아웃 효과로 표시하거나 숨길 때
+- 사용자 인터랙션에 따라 위젯의 가시성을 부드럽게 조절할 때
+- 로딩 상태를 나타내기 위해 컨텐츠를 희미하게 표시할 때
+- 툴팁이나 힙트 메시지를 부드럽게 표시/숨김할 때
+- 화면 전환 시 자연스러운 페이드 효과를 제공할 때
+
+## 기본 사용법
+
+```typescript
+import { AnimatedOpacity, Container, StatefulWidget } from '@meursyphus/flitter';
+
+class OpacityExample extends StatefulWidget {
+  createState() {
+    return new OpacityExampleState();
+  }
+}
+
+class OpacityExampleState extends State<OpacityExample> {
+  isVisible = true;
+
+  build() {
+    return Column({
+      children: [
+        ElevatedButton({
+          onPressed: () => {
+            this.setState(() => {
+              this.isVisible = !this.isVisible;
+            });
+          },
+          child: Text(this.isVisible ? "숨기기" : "보이기"),
+        }),
+        AnimatedOpacity({
+          opacity: this.isVisible ? 1.0 : 0.0,
+          duration: 500, // 0.5초
+          child: Container({
+            width: 200,
+            height: 200,
+            color: "blue",
+            child: Center({
+              child: Text("페이드 효과", { style: TextStyle({ color: "white" }) }),
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
+
+## Props
+
+### opacity (필수)
+**값: number**
+
+위젯의 투명도를 설정합니다.
+- 0.0 = 완전히 투명 (보이지 않음)
+- 1.0 = 완전히 불투명 (완전히 보임)
+- 0.0과 1.0 사이의 값으로 부분 투명도 설정 가능
+
+### duration (필수)
+**값: number**
+
+애니메이션 지속 시간을 밀리초 단위로 지정합니다.
+
+### curve (선택)
+**값: Curve** (기본값: **Curves.linear**)
+
+애니메이션의 진행 곡선을 지정합니다. 사용 가능한 곡선:
+- `Curves.linear`: 일정한 속도
+- `Curves.easeIn`: 천천히 시작
+- `Curves.easeOut`: 천천히 종료
+- `Curves.easeInOut`: 천천히 시작하고 종료
+- `Curves.circIn`: 원형 가속 시작
+- `Curves.circOut`: 원형 감속 종료
+- `Curves.circInOut`: 원형 가속/감속
+- `Curves.backIn`: 뒤로 갔다가 시작
+- `Curves.backOut`: 목표를 지나쳤다가 돌아옴
+- `Curves.backInOut`: backIn + backOut
+- `Curves.anticipate`: 예비 동작 후 진행
+- `Curves.bounceIn`: 바운스하며 시작
+- `Curves.bounceOut`: 바운스하며 종료
+- `Curves.bounceInOut`: 바운스 시작/종료
+
+### child (선택)
+**값: Widget | undefined**
+
+투명도가 조절될 자식 위젯입니다.
+
+### key (선택)
+**값: any**
+
+위젯의 고유 식별자입니다.
+
+## 실제 사용 예제
+
+### 예제 1: 로딩 상태 표시
+
+```typescript
+import { AnimatedOpacity, CircularProgressIndicator, Container, Curves } from '@meursyphus/flitter';
+
+class LoadingOverlay extends StatefulWidget {
+  createState() {
+    return new LoadingOverlayState();
+  }
+}
+
+class LoadingOverlayState extends State<LoadingOverlay> {
+  isLoading = false;
+
+  async loadData() {
+    this.setState(() => {
+      this.isLoading = true;
+    });
+
+    // 데이터 로드 시뮬레이션
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    this.setState(() => {
+      this.isLoading = false;
+    });
+  }
+
+  build() {
+    return Stack({
+      children: [
+        // 메인 컨텐츠
+        Container({
+          width: double.infinity,
+          height: double.infinity,
+          child: Center({
+            child: ElevatedButton({
+              onPressed: () => this.loadData(),
+              child: Text("데이터 불러오기"),
+            }),
+          }),
+        }),
+        
+        // 로딩 오버레이
+        AnimatedOpacity({
+          opacity: this.isLoading ? 1.0 : 0.0,
+          duration: 300,
+          curve: Curves.easeInOut,
+          child: Container({
+            width: double.infinity,
+            height: double.infinity,
+            color: "rgba(0, 0, 0, 0.7)",
+            child: Center({
+              child: Column({
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator({
+                    color: "white",
+                  }),
+                  SizedBox({ height: 16 }),
+                  Text(
+                    "로딩 중...",
+                    { style: TextStyle({ color: "white", fontSize: 18 }) }
+                  ),
+                ],
+              }),
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
+
+### 예제 2: 툴팁 메시지
+
+```typescript
+import { AnimatedOpacity, Container, Tooltip, Curves } from '@meursyphus/flitter';
+
+class TooltipExample extends StatefulWidget {
+  createState() {
+    return new TooltipExampleState();
+  }
+}
+
+class TooltipExampleState extends State<TooltipExample> {
+  showTooltip = false;
+
+  build() {
+    return Container({
+      padding: EdgeInsets.all(20),
+      child: Column({
+        children: [
+          // 호버 영역
+          MouseRegion({
+            onEnter: () => {
+              this.setState(() => {
+                this.showTooltip = true;
+              });
+            },
+            onExit: () => {
+              this.setState(() => {
+                this.showTooltip = false;
+              });
+            },
+            child: Container({
+              padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+              decoration: BoxDecoration({
+                color: "blue",
+                borderRadius: BorderRadius.circular(8),
+              }),
+              child: Text(
+                "마우스를 올려보세요",
+                { style: TextStyle({ color: "white" }) }
+              ),
+            }),
+          }),
+          
+          SizedBox({ height: 8 }),
+          
+          // 툴팁 메시지
+          AnimatedOpacity({
+            opacity: this.showTooltip ? 1.0 : 0.0,
+            duration: 200,
+            curve: Curves.easeOut,
+            child: Container({
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration({
+                color: "rgba(0, 0, 0, 0.8)",
+                borderRadius: BorderRadius.circular(4),
+              }),
+              child: Text(
+                "이것은 툴팁 메시지입니다!",
+                { style: TextStyle({ color: "white", fontSize: 14 }) }
+              ),
+            }),
+          }),
+        ],
+      }),
+    });
+  }
+}
+```
+
+### 예제 3: 순차적 페이드 인 효과
+
+```typescript
+import { AnimatedOpacity, Container, Curves } from '@meursyphus/flitter';
+
+class SequentialFadeIn extends StatefulWidget {
+  createState() {
+    return new SequentialFadeInState();
+  }
+}
+
+class SequentialFadeInState extends State<SequentialFadeIn> {
+  item1Visible = false;
+  item2Visible = false;
+  item3Visible = false;
+
+  initState() {
+    super.initState();
+    
+    // 순차적으로 페이드 인
+    setTimeout(() => {
+      this.setState(() => this.item1Visible = true);
+    }, 500);
+    
+    setTimeout(() => {
+      this.setState(() => this.item2Visible = true);
+    }, 1000);
+    
+    setTimeout(() => {
+      this.setState(() => this.item3Visible = true);
+    }, 1500);
+  }
+
+  build() {
+    return Container({
+      padding: EdgeInsets.all(20),
+      child: Column({
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AnimatedOpacity({
+            opacity: this.item1Visible ? 1.0 : 0.0,
+            duration: 600,
+            curve: Curves.easeOut,
+            child: Container({
+              width: 300,
+              padding: EdgeInsets.all(16),
+              margin: EdgeInsets.only({ bottom: 16 }),
+              decoration: BoxDecoration({
+                color: "#FF6B6B",
+                borderRadius: BorderRadius.circular(8),
+              }),
+              child: Text(
+                "첫 번째 아이템",
+                { style: TextStyle({ color: "white", fontSize: 18 }) }
+              ),
+            }),
+          }),
+          
+          AnimatedOpacity({
+            opacity: this.item2Visible ? 1.0 : 0.0,
+            duration: 600,
+            curve: Curves.easeOut,
+            child: Container({
+              width: 300,
+              padding: EdgeInsets.all(16),
+              margin: EdgeInsets.only({ bottom: 16 }),
+              decoration: BoxDecoration({
+                color: "#4ECDC4",
+                borderRadius: BorderRadius.circular(8),
+              }),
+              child: Text(
+                "두 번째 아이템",
+                { style: TextStyle({ color: "white", fontSize: 18 }) }
+              ),
+            }),
+          }),
+          
+          AnimatedOpacity({
+            opacity: this.item3Visible ? 1.0 : 0.0,
+            duration: 600,
+            curve: Curves.easeOut,
+            child: Container({
+              width: 300,
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration({
+                color: "#45B7D1",
+                borderRadius: BorderRadius.circular(8),
+              }),
+              child: Text(
+                "세 번째 아이템",
+                { style: TextStyle({ color: "white", fontSize: 18 }) }
+              ),
+            }),
+          }),
+        ],
+      }),
+    });
+  }
+}
+```
+
+### 예제 4: 크로스페이드 전환
+
+```typescript
+import { AnimatedOpacity, Container, Curves } from '@meursyphus/flitter';
+
+class CrossFadeExample extends StatefulWidget {
+  createState() {
+    return new CrossFadeExampleState();
+  }
+}
+
+class CrossFadeExampleState extends State<CrossFadeExample> {
+  showFirst = true;
+
+  build() {
+    return GestureDetector({
+      onTap: () => {
+        this.setState(() => {
+          this.showFirst = !this.showFirst;
+        });
+      },
+      child: Container({
+        width: 300,
+        height: 300,
+        child: Stack({
+          children: [
+            // 첫 번째 이미지
+            AnimatedOpacity({
+              opacity: this.showFirst ? 1.0 : 0.0,
+              duration: 500,
+              curve: Curves.easeInOut,
+              child: Container({
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration({
+                  gradient: LinearGradient({
+                    colors: ["#667eea", "#764ba2"],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  }),
+                  borderRadius: BorderRadius.circular(16),
+                }),
+                child: Center({
+                  child: Icon({
+                    icon: Icons.sunny,
+                    size: 80,
+                    color: "white",
+                  }),
+                }),
+              }),
+            }),
+            
+            // 두 번째 이미지
+            AnimatedOpacity({
+              opacity: this.showFirst ? 0.0 : 1.0,
+              duration: 500,
+              curve: Curves.easeInOut,
+              child: Container({
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration({
+                  gradient: LinearGradient({
+                    colors: ["#f093fb", "#f5576c"],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  }),
+                  borderRadius: BorderRadius.circular(16),
+                }),
+                child: Center({
+                  child: Icon({
+                    icon: Icons.nightlight,
+                    size: 80,
+                    color: "white",
+                  }),
+                }),
+              }),
+            }),
+          ],
+        }),
+      }),
+    });
+  }
+}
+```
+
+## 주의사항
+
+- opacity 값은 0.0과 1.0 사이여야 합니다
+- opacity가 0.0이더라도 위젯은 여전히 레이아웃 공간을 차지합니다
+- 완전히 숨기고 공간도 제거하려면 조건부 렌더링을 사용하세요
+- 성능을 고려하여 너무 많은 위젯에 동시에 투명도 애니메이션을 적용하는 것은 피하세요
+- 애니메이션 도중 새로운 opacity 값이 설정되면 현재 값에서 새 값으로 부드럽게 전환됩니다
+
+## 관련 위젯
+
+- **Opacity**: 애니메이션 없이 투명도를 설정하는 기본 위젯
+- **AnimatedContainer**: 여러 속성을 동시에 애니메이션으로 전환
+- **FadeTransition**: 명시적인 Animation 객체를 사용하는 페이드 효과
+- **Visibility**: 위젯의 가시성을 제어하고 레이아웃 공간도 관리

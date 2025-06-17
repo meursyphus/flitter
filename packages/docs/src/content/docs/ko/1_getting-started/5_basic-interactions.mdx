@@ -1,0 +1,288 @@
+---
+nav_title: "기본 상호작용"
+title: "기본 상호작용 - GestureDetector"
+description: "GestureDetector를 사용하여 클릭, 호버, 드래그 등의 사용자 상호작용을 처리하는 방법을 알아봅니다"
+---
+
+import GestureDetectorExample from '$components/pages/docs/01_getting-started/06-gesture-detector-example';
+
+# 기본 상호작용 - GestureDetector
+
+웹 애플리케이션에서 사용자 상호작용은 필수적입니다. Flitter는 `GestureDetector` 위젯을 통해 
+다양한 사용자 입력을 간단하게 처리할 수 있도록 지원합니다.
+
+## GestureDetector란?
+
+`GestureDetector`는 자식 위젯에 대한 다양한 제스처를 감지하는 위젯입니다. 
+클릭, 더블클릭, 호버, 드래그 등 다양한 사용자 입력을 처리할 수 있습니다.
+
+### 기본 사용법
+
+```typescript
+GestureDetector({
+  onClick: () => {
+    console.log('클릭되었습니다!');
+  },
+  child: Container({
+    width: 100,
+    height: 100,
+    color: '#3B82F6',
+    child: Center({
+      child: Text('클릭하세요')
+    })
+  })
+})
+```
+
+## 실전 예제
+
+<GestureDetectorExample
+  client:load
+  title="GestureDetector 활용하기"
+  description="클릭 카운터, 호버 효과, 드래그 앤 드롭 등 다양한 상호작용을 구현해보세요."
+  labels={{
+    clickCounter: "클릭 카운터",
+    hoverEffect: "호버 효과",
+    dragAndDrop: "드래그 앤 드롭",
+    clickMe: "클릭하세요",
+    hoverMe: "마우스를 올려보세요",
+    dragMe: "드래그하세요",
+    count: "카운트",
+    normal: "일반",
+    hovered: "호버됨",
+    position: "위치",
+    gestureTypes: "제스처 타입",
+    examples: "예시",
+    interactions: "상호작용",
+    tryItOut: "직접 시도해보세요!"
+  }}
+/>
+
+## StatefulWidget과 함께 사용하기
+
+대부분의 상호작용은 상태 변화를 동반하므로, `StatefulWidget`과 함께 사용합니다:
+
+```typescript
+class InteractiveButton extends StatefulWidget {
+  createState() {
+    return new InteractiveButtonState();
+  }
+}
+
+class InteractiveButtonState extends State<InteractiveButton> {
+  isPressed = false;
+  isHovered = false;
+
+  build(context: BuildContext) {
+    return GestureDetector({
+      onClick: () => {
+        console.log('버튼 클릭!');
+      },
+      onMouseEnter: () => {
+        this.setState(() => {
+          this.isHovered = true;
+        });
+      },
+      onMouseLeave: () => {
+        this.setState(() => {
+          this.isHovered = false;
+        });
+      },
+      onPanStart: () => {
+        this.setState(() => {
+          this.isPressed = true;
+        });
+      },
+      onPanEnd: () => {
+        this.setState(() => {
+          this.isPressed = false;
+        });
+      },
+      child: Container({
+        padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+        decoration: new BoxDecoration({
+          color: this.isPressed 
+            ? '#1E40AF' 
+            : this.isHovered 
+              ? '#2563EB' 
+              : '#3B82F6',
+          borderRadius: BorderRadius.circular(8)
+        }),
+        child: Text('인터랙티브 버튼', {
+          style: new TextStyle({
+            color: '#FFFFFF',
+            fontWeight: 'bold'
+          })
+        })
+      })
+    });
+  }
+}
+```
+
+## 이벤트 종류 상세 설명
+
+### 클릭 관련 이벤트
+
+- **onClick**: 클릭 시 발생
+- **onDoubleClick**: 더블클릭 시 발생
+- **onLongPress**: 길게 누를 때 발생
+
+### 마우스 관련 이벤트
+
+- **onMouseEnter**: 마우스가 위젯 영역에 들어올 때
+- **onMouseLeave**: 마우스가 위젯 영역을 벗어날 때
+- **onMouseMove**: 마우스가 위젯 위에서 움직일 때
+
+### 드래그 관련 이벤트
+
+- **onPanStart**: 드래그 시작 시
+- **onPanUpdate**: 드래그 중 (delta 값 제공)
+- **onPanEnd**: 드래그 종료 시
+
+## 실용적인 활용 예제
+
+### 1. 토글 스위치
+
+```typescript
+class ToggleSwitch extends StatefulWidget {
+  createState() {
+    return new ToggleSwitchState();
+  }
+}
+
+class ToggleSwitchState extends State<ToggleSwitch> {
+  isOn = false;
+
+  build(context: BuildContext) {
+    return GestureDetector({
+      onClick: () => {
+        this.setState(() => {
+          this.isOn = !this.isOn;
+        });
+      },
+      child: Container({
+        width: 60,
+        height: 30,
+        decoration: new BoxDecoration({
+          color: this.isOn ? '#10B981' : '#6B7280',
+          borderRadius: BorderRadius.circular(15)
+        }),
+        child: Stack({
+          children: [
+            AnimatedPositioned({
+              duration: 200,
+              left: this.isOn ? 30 : 0,
+              child: Container({
+                width: 30,
+                height: 30,
+                decoration: new BoxDecoration({
+                  color: '#FFFFFF',
+                  borderRadius: BorderRadius.circular(15)
+                })
+              })
+            })
+          ]
+        })
+      })
+    });
+  }
+}
+```
+
+### 2. 드롭다운 메뉴
+
+```typescript
+class DropdownMenu extends StatefulWidget {
+  createState() {
+    return new DropdownMenuState();
+  }
+}
+
+class DropdownMenuState extends State<DropdownMenu> {
+  isOpen = false;
+
+  build(context: BuildContext) {
+    return Column({
+      children: [
+        GestureDetector({
+          onClick: () => {
+            this.setState(() => {
+              this.isOpen = !this.isOpen;
+            });
+          },
+          child: Container({
+            padding: EdgeInsets.all(12),
+            decoration: new BoxDecoration({
+              color: '#374151',
+              borderRadius: BorderRadius.circular(6)
+            }),
+            child: Row({
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('메뉴 선택', {
+                  style: new TextStyle({ color: '#E5E7EB' })
+                }),
+                Icon(this.isOpen ? 'arrow_up' : 'arrow_down')
+              ]
+            })
+          })
+        }),
+        if (this.isOpen) Container({
+          margin: EdgeInsets.only({ top: 4 }),
+          decoration: new BoxDecoration({
+            color: '#374151',
+            borderRadius: BorderRadius.circular(6)
+          }),
+          child: Column({
+            children: ['옵션 1', '옵션 2', '옵션 3'].map(option => 
+              GestureDetector({
+                onClick: () => {
+                  console.log(`선택: ${option}`);
+                  this.setState(() => {
+                    this.isOpen = false;
+                  });
+                },
+                child: Container({
+                  padding: EdgeInsets.all(12),
+                  child: Text(option, {
+                    style: new TextStyle({ color: '#E5E7EB' })
+                  })
+                })
+              })
+            )
+          })
+        })
+      ]
+    });
+  }
+}
+```
+
+## 성능 최적화 팁
+
+1. **적절한 렌더러 선택**: 복잡한 상호작용이 많다면 Canvas 렌더러 사용
+2. **이벤트 디바운싱**: 빈번한 이벤트(예: onMouseMove)는 디바운싱 고려
+3. **상태 업데이트 최적화**: 불필요한 setState 호출 줄이기
+
+## 접근성 고려사항
+
+GestureDetector를 사용할 때는 접근성을 고려해야 합니다:
+
+1. **키보드 지원**: 중요한 상호작용은 키보드로도 가능하게
+2. **포커스 표시**: 포커스된 요소를 시각적으로 구분
+3. **충분한 터치 영역**: 모바일에서 최소 44x44px 크기 확보
+
+## 다음 단계
+
+이제 Flitter의 기본기를 모두 익혔습니다! 
+핵심 개념에서 더 깊이 있는 내용을 학습하거나, 
+위젯 레퍼런스에서 다양한 위젯들을 살펴보세요.
+
+## 요약
+
+- **GestureDetector**: 사용자 입력을 처리하는 핵심 위젯
+- **StatefulWidget과 함께**: 상태 변화를 위해 필수적으로 사용
+- **다양한 이벤트**: 클릭, 호버, 드래그 등 지원
+- **setState 사용**: 이벤트 핸들러 내에서 상태 업데이트
+- **실용적 활용**: 버튼, 토글, 드롭다운 등 구현 가능

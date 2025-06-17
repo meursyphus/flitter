@@ -1,0 +1,396 @@
+---
+nav_group: Widgets
+nav_group_order: 3
+nav_title: RichText
+title: "RichText"
+description: "여러 스타일이 적용된 서식 있는 텍스트를 표시하는 위젯"
+---
+
+## 개요
+
+`RichText`는 여러 가지 다른 스타일을 사용하는 텍스트를 표시하는 위젯입니다. Flutter의 RichText에서 영감을 받았으며, TextSpan 객체의 트리를 사용하여 텍스트를 설명하고, 각 스팬마다 연관된 스타일을 적용할 수 있습니다.
+
+RichText의 모든 텍스트는 명시적으로 스타일이 지정되어야 합니다. 단일 스타일만 필요한 경우 Text 위젯을 사용하는 것이 더 간단하지만, 복잡한 텍스트 서식이나 하이라이트, 링크 등이 필요할 때는 RichText가 필수적입니다.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/rykDVh-QFfw"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowfullscreen
+></iframe>
+
+참고: [https://api.flutter.dev/flutter/widgets/RichText-class.html](https://api.flutter.dev/flutter/widgets/RichText-class.html)
+
+## 언제 사용하나요?
+
+- 하나의 텍스트 내에서 여러 다른 스타일이 필요할 때
+- 텍스트 일부를 하이라이트하거나 강조해야 할 때
+- 링크나 클릭 가능한 텍스트 영역을 만들 때
+- 복잡한 텍스트 서식(볼드, 이탤릭, 색상 등)이 필요할 때
+- 단락 내에서 다양한 폰트나 크기를 혼합해야 할 때
+
+## 기본 사용법
+
+```typescript
+import { RichText, TextSpan, TextStyle } from '@meursyphus/flitter';
+
+// 기본 서식 있는 텍스트
+const BasicRichText = RichText({
+  text: new TextSpan({
+    text: '안녕하세요, ',
+    style: new TextStyle({
+      fontSize: 16,
+      color: 'black'
+    }),
+    children: [
+      new TextSpan({
+        text: '볼드 텍스트',
+        style: new TextStyle({
+          fontWeight: 'bold',
+          color: '#e74c3c'
+        })
+      }),
+      new TextSpan({
+        text: '입니다!'
+      })
+    ]
+  })
+});
+```
+
+## Props
+
+### text (필수)
+**값: InlineSpan**
+
+표시할 텍스트를 설명하는 InlineSpan(주로 TextSpan) 객체입니다. 텍스트 내용과 스타일을 정의합니다.
+
+```typescript
+text: new TextSpan({
+  text: '메인 텍스트',
+  style: new TextStyle({ fontSize: 16 }),
+  children: [
+    new TextSpan({
+      text: '자식 텍스트',
+      style: new TextStyle({ fontWeight: 'bold' })
+    })
+  ]
+})
+```
+
+### textAlign (선택)
+**값: TextAlign** (기본값: **TextAlign.start**)
+
+텍스트의 정렬 방식을 지정합니다.
+
+- `TextAlign.start`: 텍스트 방향에 따른 시작 위치 (기본값)
+- `TextAlign.end`: 텍스트 방향에 따른 끝 위치
+- `TextAlign.left`: 왼쪽 정렬
+- `TextAlign.right`: 오른쪽 정렬
+- `TextAlign.center`: 가운데 정렬
+
+### overflow (선택)
+**값: TextOverflow** (기본값: **TextOverflow.clip**)
+
+텍스트가 영역을 벗어났을 때의 처리 방식입니다.
+
+- `TextOverflow.clip`: 벗어난 텍스트를 잘라냄
+- `TextOverflow.ellipsis`: 생략 부호(…)로 표시
+- `TextOverflow.visible`: 벗어난 텍스트도 표시
+
+### softWrap (선택)
+**값: boolean** (기본값: **true**)
+
+텍스트가 자동으로 줄바꿈되는지 여부를 결정합니다.
+
+- `true`: 공간이 부족하면 자동 줄바꿈
+- `false`: 한 줄로만 표시
+
+### maxLines (선택)
+**값: number**
+
+텍스트의 최대 줄 수를 제한합니다. 지정된 줄 수를 초과하면 overflow 설정에 따라 처리됩니다.
+
+### textWidthBasis (선택)
+**값: TextWidthBasis** (기본값: **TextWidthBasis.parent**)
+
+텍스트 너비 계산 방식을 결정합니다.
+
+- `TextWidthBasis.parent`: 부모 위젯의 너비를 기준으로 계산
+- `TextWidthBasis.longestLine`: 가장 긴 줄의 길이를 기준으로 계산
+
+### textDirection (선택)
+**값: TextDirection**
+
+텍스트의 방향을 지정합니다.
+
+- `TextDirection.ltr`: 왼쪽에서 오른쪽 (기본값)
+- `TextDirection.rtl`: 오른쪽에서 왼쪽
+
+### textScaleFactor (선택)
+**값: number**
+
+텍스트 크기의 배율을 조정합니다. 1.0이 기본 크기이며, 2.0은 두 배 크기입니다.
+
+## 실제 사용 예제
+
+### 예제 1: 다양한 스타일이 적용된 텍스트
+
+```typescript
+import { RichText, TextSpan, TextStyle } from '@meursyphus/flitter';
+
+const StyledText = RichText({
+  text: new TextSpan({
+    text: '이것은 ',
+    style: new TextStyle({
+      fontSize: 16,
+      color: '#2c3e50'
+    }),
+    children: [
+      new TextSpan({
+        text: '빨간색 ',
+        style: new TextStyle({
+          color: '#e74c3c',
+          fontWeight: 'bold'
+        })
+      }),
+      new TextSpan({
+        text: '그리고 ',
+        style: new TextStyle({
+          fontSize: 14,
+          fontStyle: 'italic'
+        })
+      }),
+      new TextSpan({
+        text: '파란색 ',
+        style: new TextStyle({
+          color: '#3498db',
+          fontSize: 20
+        })
+      }),
+      new TextSpan({
+        text: '텍스트입니다.',
+        style: new TextStyle({
+          textDecoration: 'underline'
+        })
+      })
+    ]
+  })
+});
+```
+
+### 예제 2: 클릭 가능한 링크 텍스트
+
+```typescript
+import { RichText, TextSpan, TextStyle, GestureDetector } from '@meursyphus/flitter';
+
+const LinkText = RichText({
+  text: new TextSpan({
+    text: '더 많은 정보는 ',
+    style: new TextStyle({
+      fontSize: 16,
+      color: 'black'
+    }),
+    children: [
+      new TextSpan({
+        text: '여기를 클릭',
+        style: new TextStyle({
+          color: '#3498db',
+          textDecoration: 'underline',
+          fontWeight: 'bold'
+        }),
+        recognizer: new TapGestureRecognizer({
+          onTap: () => {
+            console.log('링크가 클릭되었습니다!');
+            // 링크 처리 로직
+          }
+        })
+      }),
+      new TextSpan({
+        text: '하세요.'
+      })
+    ]
+  })
+});
+```
+
+### 예제 3: 코드 하이라이팅
+
+```typescript
+import { RichText, TextSpan, TextStyle } from '@meursyphus/flitter';
+
+const CodeHighlight = RichText({
+  text: new TextSpan({
+    text: '함수를 정의하려면 ',
+    style: new TextStyle({
+      fontSize: 14,
+      fontFamily: 'Arial'
+    }),
+    children: [
+      new TextSpan({
+        text: 'function',
+        style: new TextStyle({
+          fontFamily: 'Monaco, monospace',
+          backgroundColor: '#f1f2f6',
+          color: '#8e44ad',
+          fontWeight: 'bold'
+        })
+      }),
+      new TextSpan({
+        text: ' 키워드를 사용하고 ',
+      }),
+      new TextSpan({
+        text: '{ }',
+        style: new TextStyle({
+          fontFamily: 'Monaco, monospace',
+          backgroundColor: '#f1f2f6',
+          color: '#e67e22'
+        })
+      }),
+      new TextSpan({
+        text: ' 블록 안에 코드를 작성합니다.'
+      })
+    ]
+  })
+});
+```
+
+### 예제 4: 글자수 제한과 말줄임표
+
+```typescript
+import { RichText, TextSpan, TextStyle } from '@meursyphus/flitter';
+
+const TruncatedText = RichText({
+  maxLines: 2,
+  overflow: TextOverflow.ellipsis,
+  text: new TextSpan({
+    text: '이것은 매우 긴 텍스트입니다. ',
+    style: new TextStyle({
+      fontSize: 16
+    }),
+    children: [
+      new TextSpan({
+        text: '이 텍스트는 두 줄을 넘어가면 말줄임표로 표시됩니다. ',
+        style: new TextStyle({
+          fontWeight: 'bold'
+        })
+      }),
+      new TextSpan({
+        text: '추가적인 텍스트가 더 있지만 보이지 않을 것입니다.'
+      })
+    ]
+  })
+});
+```
+
+### 예제 5: 다국어 텍스트 방향
+
+```typescript
+import { RichText, TextSpan, TextStyle } from '@meursyphus/flitter';
+
+const MultiLanguageText = Column({
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    // 왼쪽에서 오른쪽 (한국어/영어)
+    RichText({
+      textDirection: TextDirection.ltr,
+      text: new TextSpan({
+        text: 'Hello ',
+        style: new TextStyle({ fontSize: 16 }),
+        children: [
+          new TextSpan({
+            text: '안녕하세요',
+            style: new TextStyle({
+              color: '#e74c3c',
+              fontWeight: 'bold'
+            })
+          })
+        ]
+      })
+    }),
+    
+    SizedBox({ height: 10 }),
+    
+    // 오른쪽에서 왼쪽 (아랍어 등)
+    RichText({
+      textDirection: TextDirection.rtl,
+      text: new TextSpan({
+        text: 'مرحبا ',
+        style: new TextStyle({ fontSize: 16 }),
+        children: [
+          new TextSpan({
+            text: 'World',
+            style: new TextStyle({
+              color: '#3498db',
+              fontWeight: 'bold'
+            })
+          })
+        ]
+      })
+    })
+  ]
+});
+```
+
+### 예제 6: 동적 스타일 변경
+
+```typescript
+import { RichText, TextSpan, TextStyle } from '@meursyphus/flitter';
+
+class DynamicRichText extends StatefulWidget {
+  createState() {
+    return new DynamicRichTextState();
+  }
+}
+
+class DynamicRichTextState extends State {
+  isHighlighted = false;
+  
+  build() {
+    return GestureDetector({
+      onTap: () => this.setState(() => {
+        this.isHighlighted = !this.isHighlighted;
+      }),
+      child: RichText({
+        text: new TextSpan({
+          text: '클릭하면 ',
+          style: new TextStyle({
+            fontSize: 16
+          }),
+          children: [
+            new TextSpan({
+              text: '이 부분이',
+              style: new TextStyle({
+                color: this.isHighlighted ? '#e74c3c' : '#3498db',
+                fontWeight: this.isHighlighted ? 'bold' : 'normal',
+                backgroundColor: this.isHighlighted ? '#f8f9fa' : 'transparent'
+              })
+            }),
+            new TextSpan({
+              text: ' 변경됩니다.'
+            })
+          ]
+        })
+      })
+    });
+  }
+}
+```
+
+## 주의사항
+
+- **명시적 스타일링**: RichText의 모든 텍스트는 명시적으로 스타일을 지정해야 합니다
+- **성능**: 복잡한 TextSpan 트리는 렌더링 성능에 영향을 줄 수 있습니다
+- **스타일 상속**: 자식 TextSpan은 부모의 스타일을 상속받습니다 (inherit: false로 비활성화 가능)
+- **제스처 인식**: TextSpan에 recognizer를 추가하여 터치 이벤트를 처리할 수 있습니다
+- **접근성**: 스크린 리더 등을 고려하여 의미 있는 텍스트 구조를 만드세요
+
+## 관련 위젯
+
+- **Text**: 단일 스타일 텍스트가 필요할 때
+- **SelectableText**: 선택 가능한 텍스트가 필요할 때
+- **TextField**: 편집 가능한 텍스트 입력이 필요할 때
+- **Container**: 텍스트 배경이나 패딩이 필요할 때

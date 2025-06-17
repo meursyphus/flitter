@@ -1,0 +1,319 @@
+---
+nav_group: Widgets
+nav_group_order: 3
+nav_title: AnimatedAlign
+title: "AnimatedAlign"
+description: "자식 위젯의 정렬을 애니메이션으로 전환하는 위젯"
+---
+
+## 개요
+
+AnimatedAlign는 자식 위젯의 정렬(alignment)이 변경될 때 자동으로 애니메이션을 적용하여 부드럽게 전환하는 위젯입니다. Flutter의 AnimatedAlign 위젯에서 영감을 받아 구현되었습니다.
+
+> Animated version of Align which automatically transitions the child's position over a given duration whenever the given alignment changes.
+
+Flutter 참조: https://api.flutter.dev/flutter/widgets/AnimatedAlign-class.html
+
+## 언제 사용하나요?
+
+- 위젯의 위치를 부드럽게 이동시키고 싶을 때
+- 사용자 인터랙션에 따라 위젯 정렬을 동적으로 변경할 때
+- 레이아웃 변경 시 시각적 연속성을 제공하고 싶을 때
+- 플로팅 버튼이나 팝업의 위치를 애니메이션으로 전환할 때
+
+## 기본 사용법
+
+```typescript
+import { AnimatedAlign, Alignment, Container, StatefulWidget } from '@meursyphus/flitter';
+
+class AlignmentExample extends StatefulWidget {
+  createState() {
+    return new AlignmentExampleState();
+  }
+}
+
+class AlignmentExampleState extends State<AlignmentExample> {
+  alignment = Alignment.topLeft;
+
+  build() {
+    return GestureDetector({
+      onTap: () => {
+        this.setState(() => {
+          // 탭할 때마다 정렬 위치 변경
+          this.alignment = this.alignment === Alignment.topLeft 
+            ? Alignment.bottomRight 
+            : Alignment.topLeft;
+        });
+      },
+      child: AnimatedAlign({
+        alignment: this.alignment,
+        duration: 1000, // 1초
+        child: Container({
+          width: 50,
+          height: 50,
+          color: "blue",
+        }),
+      }),
+    });
+  }
+}
+```
+
+## Props
+
+### alignment (필수)
+**값: Alignment**
+
+자식 위젯의 정렬 위치를 지정합니다. 사전 정의된 값들:
+- `Alignment.topLeft`: 좌상단 (-1, -1)
+- `Alignment.topCenter`: 상단 중앙 (0, -1)
+- `Alignment.topRight`: 우상단 (1, -1)
+- `Alignment.centerLeft`: 좌측 중앙 (-1, 0)
+- `Alignment.center`: 중앙 (0, 0)
+- `Alignment.centerRight`: 우측 중앙 (1, 0)
+- `Alignment.bottomLeft`: 좌하단 (-1, 1)
+- `Alignment.bottomCenter`: 하단 중앙 (0, 1)
+- `Alignment.bottomRight`: 우하단 (1, 1)
+
+커스텀 정렬도 가능합니다:
+```typescript
+Alignment.of({ x: 0.5, y: -0.5 }) // x: -1~1, y: -1~1
+```
+
+### duration (필수)
+**값: number**
+
+애니메이션 지속 시간을 밀리초 단위로 지정합니다.
+
+### curve (선택)
+**값: Curve** (기본값: **Curves.linear**)
+
+애니메이션의 진행 곡선을 지정합니다. 사용 가능한 곡선:
+- `Curves.linear`: 일정한 속도
+- `Curves.easeIn`: 천천히 시작
+- `Curves.easeOut`: 천천히 종료
+- `Curves.easeInOut`: 천천히 시작하고 종료
+- `Curves.circIn`: 원형 가속 시작
+- `Curves.circOut`: 원형 감속 종료
+- `Curves.circInOut`: 원형 가속/감속
+- `Curves.backIn`: 뒤로 갔다가 시작
+- `Curves.backOut`: 목표를 지나쳤다가 돌아옴
+- `Curves.backInOut`: backIn + backOut
+- `Curves.anticipate`: 예비 동작 후 진행
+- `Curves.bounceIn`: 바운스하며 시작
+- `Curves.bounceOut`: 바운스하며 종료
+- `Curves.bounceInOut`: 바운스 시작/종료
+
+### widthFactor (선택)
+**값: number | undefined**
+
+자식 위젯의 너비에 곱해질 계수입니다. 지정하지 않으면 부모의 전체 너비를 사용합니다.
+
+### heightFactor (선택)
+**값: number | undefined**
+
+자식 위젯의 높이에 곱해질 계수입니다. 지정하지 않으면 부모의 전체 높이를 사용합니다.
+
+### child (선택)
+**값: Widget | undefined**
+
+정렬될 자식 위젯입니다.
+
+### key (선택)
+**값: any**
+
+위젯의 고유 식별자입니다.
+
+## 실제 사용 예제
+
+### 예제 1: 인터랙티브 플로팅 버튼
+
+```typescript
+import { AnimatedAlign, Alignment, Container, FloatingActionButton, Curves } from '@meursyphus/flitter';
+
+class InteractiveFloatingButton extends StatefulWidget {
+  createState() {
+    return new InteractiveFloatingButtonState();
+  }
+}
+
+class InteractiveFloatingButtonState extends State<InteractiveFloatingButton> {
+  isExpanded = false;
+
+  build() {
+    return Stack({
+      children: [
+        // 메인 컨텐츠
+        Container({
+          color: "lightgray",
+        }),
+        
+        // 애니메이션 플로팅 버튼
+        AnimatedAlign({
+          alignment: this.isExpanded 
+            ? Alignment.center 
+            : Alignment.bottomRight,
+          duration: 500,
+          curve: Curves.easeInOut,
+          child: Padding({
+            padding: EdgeInsets.all(16),
+            child: FloatingActionButton({
+              onPressed: () => {
+                this.setState(() => {
+                  this.isExpanded = !this.isExpanded;
+                });
+              },
+              child: Icon(this.isExpanded ? Icons.close : Icons.add),
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
+
+### 예제 2: 다중 위치 전환 애니메이션
+
+```typescript
+import { AnimatedAlign, Alignment, Container, Row, Column, Curves } from '@meursyphus/flitter';
+
+class MultiPositionAnimation extends StatefulWidget {
+  createState() {
+    return new MultiPositionAnimationState();
+  }
+}
+
+class MultiPositionAnimationState extends State<MultiPositionAnimation> {
+  currentPosition = 0;
+  positions = [
+    Alignment.topLeft,
+    Alignment.topRight,
+    Alignment.bottomRight,
+    Alignment.bottomLeft,
+    Alignment.center,
+  ];
+
+  build() {
+    return Column({
+      children: [
+        // 컨트롤 버튼들
+        Row({
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton({
+              onPressed: () => this.moveToNext(),
+              child: Text("다음 위치"),
+            }),
+            ElevatedButton({
+              onPressed: () => this.moveToCenter(),
+              child: Text("중앙으로"),
+            }),
+          ],
+        }),
+        
+        // 애니메이션 영역
+        Expanded({
+          child: Container({
+            color: "#f0f0f0",
+            child: AnimatedAlign({
+              alignment: this.positions[this.currentPosition],
+              duration: 800,
+              curve: Curves.anticipate,
+              child: Container({
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration({
+                  color: "purple",
+                  borderRadius: BorderRadius.circular(40),
+                }),
+                child: Center({
+                  child: Text(
+                    (this.currentPosition + 1).toString(),
+                    style: TextStyle({ color: "white", fontSize: 24 }),
+                  ),
+                }),
+              }),
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+
+  moveToNext() {
+    this.setState(() => {
+      this.currentPosition = (this.currentPosition + 1) % this.positions.length;
+    });
+  }
+
+  moveToCenter() {
+    this.setState(() => {
+      this.currentPosition = 4; // center position
+    });
+  }
+}
+```
+
+### 예제 3: widthFactor와 heightFactor 활용
+
+```typescript
+import { AnimatedAlign, Alignment, Container, Curves } from '@meursyphus/flitter';
+
+class FactorAnimation extends StatefulWidget {
+  createState() {
+    return new FactorAnimationState();
+  }
+}
+
+class FactorAnimationState extends State<FactorAnimation> {
+  isCompact = false;
+
+  build() {
+    return GestureDetector({
+      onTap: () => {
+        this.setState(() => {
+          this.isCompact = !this.isCompact;
+        });
+      },
+      child: Container({
+        width: 300,
+        height: 300,
+        color: "lightblue",
+        child: AnimatedAlign({
+          alignment: Alignment.center,
+          widthFactor: this.isCompact ? 0.5 : 1.0,
+          heightFactor: this.isCompact ? 0.5 : 1.0,
+          duration: 600,
+          curve: Curves.bounceOut,
+          child: Container({
+            width: 100,
+            height: 100,
+            color: "red",
+            child: Center({
+              child: Text(
+                this.isCompact ? "축소" : "확대",
+                style: TextStyle({ color: "white" }),
+              ),
+            }),
+          }),
+        }),
+      }),
+    });
+  }
+}
+```
+
+## 주의사항
+
+- alignment 값이 변경될 때만 애니메이션이 발생합니다
+- widthFactor와 heightFactor는 자식 위젯의 크기에 영향을 주며, 부모 위젯의 크기 제약에도 영향을 줍니다
+- 애니메이션 도중 새로운 alignment 값이 설정되면, 현재 위치에서 새로운 목표 위치로 부드럽게 전환됩니다
+- duration이 0이면 애니메이션 없이 즉시 이동합니다
+
+## 관련 위젯
+
+- **Align**: 애니메이션 없이 자식을 정렬하는 기본 위젯
+- **AnimatedPositioned**: Stack 내에서 위치를 애니메이션으로 전환
+- **AnimatedContainer**: 여러 속성을 동시에 애니메이션으로 전환
+- **AnimatedPadding**: 패딩을 애니메이션으로 전환

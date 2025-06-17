@@ -1,0 +1,285 @@
+---
+nav_title: "소개"
+title: "왜 Flitter를 사용해야 하는가?"
+description: "복잡한 그래픽 문제를 Flutter의 선언적 문법으로 해결하는 JavaScript 렌더링 엔진"
+---
+
+import AutoTextWrapDemo from '$components/pages/docs/01_getting-started/auto-text-wrap-demo';
+
+# 왜 Flitter를 사용해야 하는가?
+
+## 당신이 겪고 있는 문제
+
+월요일 아침, 당신의 SaaS 스타트업 개발팀 회의실. PM이 새로운 기능 요구사항을 들고 왔습니다.
+
+> "이번에 우리 제품에 **워크플로우 에디터**를 추가해야 해요. 사용자가 노드를 드래그해서 연결하고, 실시간으로 업데이트되는 그런 거요. 노션이나 피그마처럼요!"
+
+팀원들의 표정이 굳어집니다. 프론트엔드 개발자가 조심스럽게 말합니다.
+
+> "D3.js로 해볼 수는 있는데... 노드 위치 계산하고, 연결선 그리고, 드래그 처리하고... 아마 2-3주는 걸릴 것 같아요. 그것도 기본 기능만요."
+
+다른 개발자가 덧붙입니다.
+
+> "Canvas API로 직접 그려야 하나? 아니면 SVG? 텍스트 처리는 어떻게 하지? 줄바꿈이랑 정렬도 다 수동으로 계산해야 하잖아..."
+
+## 익숙한 좌절감
+
+이런 상황, 익숙하지 않나요? 
+
+웹에서 복잡한 그래픽을 다루는 것은 늘 개발자들의 골칫거리였습니다. HTML/CSS로는 한계가 명확하고, D3.js나 Canvas API를 사용하면 마치 1990년대로 돌아간 것처럼 모든 것을 수동으로 계산해야 합니다.
+
+간단한 예를 들어볼까요? 텍스트를 박스 중앙에 배치하고 자동으로 줄바꿈하는 작업입니다.
+
+### D3.js로 하면 이렇게 복잡합니다:
+
+```javascript
+// 좌표 계산부터 시작...
+const svg = d3.select("svg");
+const boxWidth = 200;
+const boxHeight = 100;
+
+// 텍스트 요소 생성하고 위치 설정
+const text = svg.append("text")
+  .attr("x", boxWidth / 2)
+  .attr("y", boxHeight / 2)
+  .attr("text-anchor", "middle");
+
+// 줄바꿈을 위한 복잡한 함수 구현
+function wrapText(text, width) {
+  const words = text.text().split(/\s+/);
+  const lineHeight = 1.2;
+  let line = [];
+  let lineNumber = 0;
+  let tspan = text.text(null).append("tspan");
+  
+  words.forEach(word => {
+    line.push(word);
+    tspan.text(line.join(" "));
+    if (tspan.node().getComputedTextLength() > width) {
+      line.pop();
+      tspan.text(line.join(" "));
+      line = [word];
+      tspan = text.append("tspan")
+        .attr("x", boxWidth / 2)
+        .attr("dy", lineHeight + "em")
+        .text(word);
+    }
+  });
+  
+  // 전체 텍스트를 수직 중앙 정렬하기 위한 추가 계산...
+  const totalHeight = lineNumber * lineHeight * 16;
+  text.attr("transform", `translate(0, ${-totalHeight/2})`);
+}
+
+// 그리고 리사이즈 이벤트 처리까지...
+```
+
+50줄이 넘는 코드, 복잡한 계산, 그리고 여전히 완벽하지 않은 결과. 이게 2024년의 웹 개발이라니 믿어지나요?
+
+## Flitter로는 이렇게 간단합니다
+
+<AutoTextWrapDemo client:load />
+
+위의 데모를 보세요. 좌우 테두리를 드래그해서 크기를 조절하면 텍스트가 자동으로 줄바꿈됩니다. 
+
+**놀라운 점**: Canvas 렌더러인데도 마우스 포인터가 자동으로 변경되는 것을 보셨나요? 드래그 영역에서 resize 커서로 바뀝니다. 이런 복잡한 처리는 Flitter가 다 해결했습니다. 여러분은 비즈니스 로직에만 집중하세요.
+
+```typescript
+Center({
+  child: Container({
+    width: 200,
+    child: Text("긴 텍스트가 자동으로 줄바꿈되고 가운데 정렬됩니다", {
+      textAlign: TextAlign.center,
+    })
+  })
+})
+```
+
+## Flitter란 무엇인가?
+
+```
+┌─────────────────────────────────────────────────┐
+│                   Your App                       │
+├─────────────────────────────────────────────────┤
+│                Widget Layer                      │
+│         (Container, Text, Column...)             │
+├─────────────────────────────────────────────────┤
+│              RenderObject Tree                   │
+│         (Layout, Paint, Hit Testing)             │
+├─────────────────────────────────────────────────┤
+│            Flitter Engine Core                   │
+├─────────────┬───────────────────────────────────┤
+│  SVG Renderer │         Canvas Renderer          │
+└───────────────┴─────────────────────────────────┘
+```
+
+Flitter는 **웹에서 동작하는 선언적 UI 렌더링 엔진**입니다. Flutter의 강력한 위젯 시스템을 JavaScript로 구현했습니다.
+
+### 핵심 특징
+
+#### 🎯 듀얼 렌더러 시스템
+- **SVG**: SEO 친화적, 텍스트 선택 가능, CSS 애니메이션
+- **Canvas**: 고성능, 픽셀 단위 제어, 복잡한 애니메이션
+
+![svg-canvas](/svg-canvas.gif)
+
+#### 🚀 업계 유일의 SSR + Canvas 하이드레이션
+```typescript
+// 서버에서 SVG로 렌더링 → 클라이언트에서 Canvas로 전환
+<Widget 
+  renderer="canvas"
+  ssr={{
+    size: { width: 800, height: 600 }  // 서버 렌더링 크기
+  }}
+  widget={...} 
+/>
+```
+
+초기 로딩은 SVG로 빠르게, 인터랙션은 Canvas로 부드럽게. **이런 건 Flitter만 가능합니다.**
+
+## 다른 그래픽 라이브러리들과의 비교
+
+### 😫 기존 라이브러리들의 한계
+
+| 라이브러리 | 문제점 |
+|-----------|--------|
+| **D3.js** | 모든 것을 수동 계산. 좌표, 크기, 애니메이션... |
+| **Konva.js** | 객체 지향적이지만 여전히 명령형. 복잡한 레이아웃은 악몽 |
+| **Fabric.js** | 캔버스 조작엔 좋지만, UI 구성엔 부적합 |
+| **Paper.js** | 벡터 그래픽엔 강하지만, 일반 UI는 어려움 |
+| **Three.js** | 3D는 좋지만... 2D UI를 Three.js로? |
+
+### ✨ Flitter의 해결책
+
+```typescript
+// 다른 라이브러리: 수백 줄의 보일러플레이트
+// Flitter: 딱 필요한 것만
+
+Column({
+  children: [
+    Text("제목", { style: headerStyle }),
+    Container({
+      padding: EdgeInsets.all(20),
+      decoration: new BoxDecoration({
+        color: '#F3F4F6',
+        borderRadius: BorderRadius.circular(8)
+      }),
+      child: Row({
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [/* 복잡한 레이아웃도 간단히 */]
+      })
+    })
+  ]
+})
+```
+
+## 팀에 Flutter 개발자가 있다면?
+
+"아, 우리 팀에 Flutter 개발자 있는데..." 
+
+**축하합니다!** 그 분이 바로 Flitter 전문가입니다. 학습 곡선? 없습니다. 바로 생산성 100%로 시작할 수 있습니다.
+
+```dart
+// Flutter 코드
+Container(
+  padding: EdgeInsets.all(16),
+  child: Text("Hello Flutter"),
+)
+```
+
+```typescript
+// Flitter 코드 - 거의 동일!
+Container({
+  padding: EdgeInsets.all(16),
+  child: Text("Hello Flitter")
+})
+```
+
+## 실제 프로덕션 환경에서 검증됨
+
+### 🎯 사용 사례 1: 복잡한 다이어그램 에디터
+
+**문제**: "ERD 에디터를 만들어야 하는데, 노드 100개 이상에서도 부드럽게 동작해야 해요"
+
+**Flitter 솔루션**:
+```typescript
+// 노드 드래그, 연결선 그리기, 자동 정렬... 
+// 이 모든 게 위젯 조합으로 해결됩니다
+Stack({
+  children: [
+    ...nodes.map(node => 
+      Draggable({
+        child: NodeWidget(node),
+        onDrag: updateNodePosition
+      })
+    ),
+    CustomPaint({
+      painter: ConnectionPainter(connections)
+    })
+  ]
+})
+```
+
+![https://easyrd.dev](/easyrd.gif)
+
+실제로 [GitHub 오픈소스 프로젝트](https://github.com/meursyphus/easy-rd)로 공개되어 있으며, 프로덕션 환경에서도 활발히 사용 중입니다.
+
+### 🎯 사용 사례 2: 헤드리스 차트 라이브러리
+
+**문제**: "Chart.js는 커스터마이징이 제한적이고, D3.js는 너무 low-level이에요"
+
+**Flitter 솔루션**: [headless-chart](https://github.com/meursyphus/headless-chart) - 오픈소스로 공개된 완전히 커스터마이징 가능한 차트 라이브러리로, [공식 문서](https://headless-chart.pages.dev/)에서 자세한 정보를 확인하실 수 있으며 프로덕션에서도 활발히 사용 중입니다.
+
+![https://headless-chart.pages.dev](/headless-chart.gif)
+
+## 왜 지금 Flitter인가?
+
+### 📈 시장의 요구
+- SaaS 제품의 복잡도 증가
+- 대시보드, 워크플로우 에디터, 다이어그램 툴의 수요 폭증
+- "노션처럼", "피그마처럼" 만들어달라는 요구사항
+
+### 🚀 기술적 이점
+- **개발 속도**: D3.js 대비 5-10배 빠른 개발
+- **유지보수**: 선언적 코드로 이해하기 쉬움
+- **성능**: 필요한 부분만 다시 그리는 효율적 렌더링
+- **확장성**: 위젯 기반으로 무한 확장 가능
+
+## 이런 팀에게 완벽합니다
+
+✅ **복잡한 다이어그램이나 시각화**를 만들어야 하는 팀  
+✅ **노드 에디터, 플로우차트, 마인드맵**을 구현해야 하는 팀  
+✅ **커스텀 차트**가 필요한 데이터 시각화 팀  
+✅ D3.js의 복잡함에 **지친** 팀  
+✅ **Flutter 경험**이 있는 개발자가 있는 팀  
+✅ **성능과 개발 생산성** 둘 다 중요한 팀  
+
+## Flitter가 제공하는 가치
+
+```
+기존 방식 (D3.js, Canvas API)
+├─ 개발 시간: 3주
+├─ 코드량: 2000줄
+├─ 유지보수: 😱
+└─ 버그: 많음
+
+Flitter 방식
+├─ 개발 시간: 3일
+├─ 코드량: 200줄
+├─ 유지보수: 😊
+└─ 버그: 적음
+```
+
+## 시작하기
+
+```bash
+npm install @meursyphus/flitter
+```
+
+단 한 줄의 명령어로 시작할 수 있습니다. 
+
+**다음 장에서는** 각 프레임워크별 설치 방법과 첫 번째 Flitter 앱을 만드는 방법을 알아보겠습니다.
+
+---
+
+**🚀 준비되셨나요?** 복잡한 그래픽 문제를 단순하게 해결하는 여정을 시작해보세요!

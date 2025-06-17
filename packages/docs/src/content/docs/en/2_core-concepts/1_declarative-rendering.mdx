@@ -1,0 +1,351 @@
+---
+nav_title: "Declarative Rendering"
+title: "Declarative Rendering"
+description: "Understand the difference between Flitter's declarative rendering approach and imperative methods, and learn how to write more intuitive code"
+---
+
+import DeclarativeVsImperativeExample from '$components/pages/docs/02_core-concepts/01-declarative-vs-imperative-example';
+
+# Declarative Rendering
+
+## Overview
+
+Flitter adopts a **declarative** rendering approach, similar to Flutter. This means you declare "how the screen should look," and Flitter handles the rendering automatically. This is a fundamentally different approach from the traditional imperative method.
+
+## Why is it important?
+
+Declarative programming provides the following advantages:
+
+- **Improved Code Readability**: Intuitive understanding of how UI will appear
+- **Reduced Bugs**: Simplified state management leads to predictable behavior
+- **Easier Maintenance**: UI updates without complex DOM manipulation
+- **Increased Productivity**: Implement complex UIs with less code
+
+## Core Concepts
+
+### Imperative vs Declarative
+
+#### Imperative Approach (D3.js Example)
+In the imperative approach, you specify what to do at each step:
+
+```javascript
+// Centering text with D3.js
+const svg = d3.select("svg");
+const width = 400;
+const height = 200;
+
+// 1. Create text element
+const text = svg.append("text")
+  .text("Hello, World!");
+
+// 2. Measure text size
+const bbox = text.node().getBBox();
+
+// 3. Calculate center position
+const x = (width - bbox.width) / 2;
+const y = (height + bbox.height) / 2;
+
+// 4. Set position
+text.attr("x", x)
+    .attr("y", y);
+
+// When state changes, all calculations must be redone
+function updateText(newText) {
+  text.text(newText);
+  const newBbox = text.node().getBBox();
+  const newX = (width - newBbox.width) / 2;
+  const newY = (height + newBbox.height) / 2;
+  text.attr("x", newX).attr("y", newY);
+}
+```
+
+#### Declarative Approach (Flitter Example)
+In the declarative approach, you only declare the desired result:
+
+```typescript
+// Centering text with Flitter
+Center({
+  child: Text("Hello, World!")
+})
+
+// When state changes, just change the declaration
+Center({
+  child: Text(isKorean ? "안녕하세요!" : "Hello, World!")
+})
+```
+
+<DeclarativeVsImperativeExample 
+  client:load
+  title="Imperative vs Declarative Comparison"
+  description="Example implementing the same functionality with D3.js and Flitter. Click the button to change the text."
+  labels={{
+    imperativeTitle: "Imperative Approach (D3.js)",
+    imperativeDescription: "Implementation with D3.js requires direct DOM manipulation at each step:",
+    declarativeTitle: "Declarative Approach (Flitter)",
+    changeButton: "Change Text",
+    keyDifferencesTitle: "Key Differences",
+    imperativeDescription2: "Explicitly instruct what to do at each step",
+    declarativeDescription2: "Just declare the desired result and rendering is handled automatically"
+  }}
+/>
+
+### How Declarative Rendering Works
+
+1. **Define State**: Define the current state of the application
+2. **Declare UI**: Declare how the UI should look based on the state
+3. **Automatic Updates**: When state changes, Flitter automatically updates the UI
+
+```typescript
+class _CounterWidget extends StatefulWidget {
+  createState() {
+    return new CounterWidgetState();
+  }
+}
+
+class CounterWidgetState extends State<_CounterWidget> {
+  count = 0;  // State definition
+
+  build(context: BuildContext): Widget {
+    // UI declaration - UI is determined by count state
+    return Column({
+      children: [
+        Text(`Current count: ${this.count}`),
+        GestureDetector({
+          onClick: () => {
+            this.setState(() => {
+              this.count++;  // Automatic re-rendering when state changes
+            });
+          },
+          child: Container({
+            padding: EdgeInsets.all(8),
+            color: Colors.blue,
+            child: Text("Increment", { style: TextStyle({ color: Colors.white }) })
+          })
+        })
+      ]
+    });
+  }
+}
+
+// Export as factory function
+export default function CounterWidget(): Widget {
+  return new _CounterWidget();
+}
+```
+
+## Practical Examples
+
+### 1. Conditional Rendering
+
+In declarative approach, you can easily show different UIs using conditional statements:
+
+```typescript
+class ConditionalExample extends StatefulWidget {
+  createState() {
+    return new ConditionalExampleState();
+  }
+}
+
+class ConditionalExampleState extends State<ConditionalExample> {
+  isLoggedIn = false;
+
+  build(context: BuildContext): Widget {
+    return Center({
+      child: this.isLoggedIn 
+        ? Column({
+            children: [
+              Text("Welcome!"),
+              GestureDetector({
+                onClick: () => {
+                  this.setState(() => {
+                    this.isLoggedIn = false;
+                  });
+                },
+                child: Text("Logout", { 
+                  style: TextStyle({ color: Colors.red }) 
+                })
+              })
+            ]
+          })
+        : GestureDetector({
+            onClick: () => {
+              this.setState(() => {
+                this.isLoggedIn = true;
+              });
+            },
+            child: Container({
+              padding: EdgeInsets.all(12),
+              color: Colors.blue,
+              child: Text("Login", { 
+                style: TextStyle({ color: Colors.white }) 
+              })
+            })
+          })
+    });
+  }
+}
+```
+
+### 2. List Rendering
+
+Converting array data to UI is also very intuitive:
+
+```typescript
+class TodoList extends StatefulWidget {
+  createState() {
+    return new TodoListState();
+  }
+}
+
+class TodoListState extends State<TodoList> {
+  todos = ["Learn Flitter", "Understand Declarative UI", "Build an App"];
+
+  build(context: BuildContext): Widget {
+    return Column({
+      children: [
+        Text("Todo List", { 
+          style: TextStyle({ fontSize: 20, fontWeight: FontWeight.bold }) 
+        }),
+        SizedBox({ height: 10 }),
+        ...this.todos.map((todo, index) => 
+          Container({
+            padding: EdgeInsets.all(8),
+            margin: EdgeInsets.only({ bottom: 4 }),
+            color: Colors.grey.shade200,
+            child: Row({
+              children: [
+                Text(`${index + 1}. ${todo}`),
+                Spacer(),
+                GestureDetector({
+                  onClick: () => {
+                    this.setState(() => {
+                      this.todos.splice(index, 1);
+                    });
+                  },
+                  child: Icon(Icons.delete, { color: Colors.red })
+                })
+              ]
+            })
+          })
+        )
+      ]
+    });
+  }
+}
+```
+
+### 3. Complex State Management
+
+Even when multiple states are interconnected, they can be easily handled declaratively:
+
+```typescript
+class ShoppingCart extends StatefulWidget {
+  createState() {
+    return new ShoppingCartState();
+  }
+}
+
+class ShoppingCartState extends State<ShoppingCart> {
+  items = [
+    { name: "Apple", price: 1000, quantity: 0 },
+    { name: "Banana", price: 1500, quantity: 0 },
+    { name: "Orange", price: 2000, quantity: 0 }
+  ];
+
+  get totalPrice() {
+    return this.items.reduce((sum, item) => 
+      sum + (item.price * item.quantity), 0
+    );
+  }
+
+  build(context: BuildContext): Widget {
+    return Column({
+      children: [
+        Text("Shopping Cart", { 
+          style: TextStyle({ fontSize: 24, fontWeight: FontWeight.bold }) 
+        }),
+        SizedBox({ height: 20 }),
+        ...this.items.map(item => 
+          Row({
+            children: [
+              Text(item.name),
+              Spacer(),
+              Text(`₩${item.price}`),
+              SizedBox({ width: 20 }),
+              Row({
+                children: [
+                  GestureDetector({
+                    onClick: () => {
+                      this.setState(() => {
+                        if (item.quantity > 0) item.quantity--;
+                      });
+                    },
+                    child: Icon(Icons.remove_circle)
+                  }),
+                  Padding({
+                    padding: EdgeInsets.symmetric({ horizontal: 10 }),
+                    child: Text(`${item.quantity}`)
+                  }),
+                  GestureDetector({
+                    onClick: () => {
+                      this.setState(() => {
+                        item.quantity++;
+                      });
+                    },
+                    child: Icon(Icons.add_circle)
+                  })
+                ]
+              })
+            ]
+          })
+        ),
+        Divider(),
+        Text(`Total: ₩${this.totalPrice}`, {
+          style: TextStyle({ fontSize: 18, fontWeight: FontWeight.bold })
+        })
+      ]
+    });
+  }
+}
+```
+
+## Important Notes
+
+1. **Maintain Immutability**: Don't modify state directly, always use `setState`
+2. **Pure Functions**: The `build` method should be a pure function without side effects
+3. **Performance Considerations**: Properly separate widgets to avoid unnecessary re-rendering
+
+```typescript
+// ❌ Wrong - Direct state modification
+this.count++;  // UI won't update
+
+// ✅ Correct - Use setState
+this.setState(() => {
+  this.count++;
+});
+
+// ❌ Wrong - Side effects in build method
+build(context: BuildContext): Widget {
+  // Side effects like API calls should be in initState
+  fetch('/api/data');  // Wrong!
+  return Text("...");
+}
+
+// ✅ Correct - Handle side effects in initState
+initState() {
+  super.initState();
+  fetch('/api/data').then(data => {
+    this.setState(() => {
+      this.data = data;
+    });
+  });
+}
+```
+
+## Next Steps
+
+Once you understand the concept of declarative rendering, here's what to learn next:
+
+- Widget System - Understanding StatelessWidget and StatefulWidget
+- State Management - Complex state management patterns
+- Animation Basics - Implementing declarative animations

@@ -3,48 +3,59 @@ import SandPack from "../../components/SandPack.tsx";
 import Layout from "../../layouts/TutorialLayout.astro";
 import { getCollection } from "astro:content";
 import TableOfContents from "./TableOfContents.astro";
+import { processEntries, findAdjacentEntries } from "../../utils/collection";
 
 export const prerender = true;
 
 export const getStaticPaths = async () => {
   const tutorialEntries = await getCollection("tutorial");
 
-  function resolveSlug(slug: string) {
-    const segments = slug.split("/");
-    const cleanedSegments = segments.map((segment) =>
-      segment.replace(/^\d+_/, ""),
-    );
-    return cleanedSegments.join("/");
-  }
+  // Process entries
+  const processedEntries = processEntries(tutorialEntries);
 
-  return tutorialEntries
-    .map((entry) => ({
-      ...entry,
-      slug: resolveSlug(entry.slug),
-      lang: entry.slug.split("/")[0], // 언어 정보 추출
-    }))
-    .map((entry, i, arr) => ({
+  // 원본 슬러그와 변환된 슬러그를 로그로 출력
+  console.log("===== Tutorial Entries =====");
+  processedEntries.forEach(entry => {
+    console.log(`Original slug: ${entry.original.slug}`);
+    console.log(`Resolved slug: ${entry.slug}`);
+    console.log("---");
+  });
+
+  const paths = processedEntries.map((entry, i, arr) => {
+    const { prev, next } = findAdjacentEntries(arr, entry.slug);
+    
+    return {
       params: {
         slug: entry.slug,
       },
       props: {
-        prev: arr[i - 1],
-        next: arr[i + 1],
-        entry,
+        prev: prev,
+        next: next,
+        entry: entry,
         lang: entry.lang,
       },
-    }));
+    };
+  });
+  
+  // 최종 생성된 경로들 로그 출력
+  console.log("===== Generated Paths =====");
+  paths.forEach(path => {
+    console.log(`Path: /tutorial/${path.params.slug}`);
+    console.log("---");
+  });
+
+  return paths;
 };
 
 const { entry, prev, next } = Astro.props;
 
-const { Content } = await entry.render();
+const { Content } = await entry.original.render();
 ---
 
 <Layout
-  title={`${entry.data.nav_group}/${entry.data.title} - Flitter`}
-  description={entry.data.description}
-  image={entry.data.image ?? "/og-tutorial.png"}
+  title={`Tutorial/${entry.title} - Flitter`}
+  description={entry.description}
+  image={entry.original.data.image ?? "/og-tutorial.png"}
 >
   <div
     class="grid h-[calc(100vh-var(--header))] grid-cols-1 lg:grid-cols-[220px_1fr_1fr] dark:bg-white"
@@ -81,7 +92,7 @@ const { Content } = await entry.render();
               <a
                 href={`/tutorial/${prev.slug}`}
                 class="flex h-10 w-10 items-center justify-center rounded text-gray-300 transition-colors hover:bg-gray-800 hover:text-white dark:text-black"
-                title={prev.data.title}
+                title={prev.title}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -105,7 +116,7 @@ const { Content } = await entry.render();
               <a
                 href={`/tutorial/${next.slug}`}
                 class="flex h-10 w-10 items-center justify-center rounded text-gray-300 transition-colors hover:bg-gray-800 hover:text-white dark:text-black"
-                title={next.data.title}
+                title={next.title}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -134,18 +145,18 @@ const { Content } = await entry.render();
           </button>
         </div>
       </nav>
-      <div class="prose prose-invert prose-modern max-w-none p-8">
+      <div class="prose prose-invert max-w-none p-8">
         <Content />
       </div>
     </div>
 
     <div id="sandpackContainer" class="w-full overflow-auto bg-[#151515] hidden lg:block">
       <div id="originalSandpack" class="h-full">
-        <SandPack files={entry.data.files} client:only="react" />
+        <SandPack files={entry.original.data.files} client:only="react" />
       </div>
       <div id="solvedSandpack" class="hidden h-full">
         <SandPack
-          files={entry.data.solved_files ?? entry.data.files}
+          files={entry.original.data.solved_files ?? entry.original.data.files}
           client:only="react"
         />
       </div>

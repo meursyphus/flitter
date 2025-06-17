@@ -1,0 +1,6 @@
+[build]
+  command = "npm run docs:build"
+  publish = "packages/docs/dist"
+
+[build.environment]
+  NODE_OPTIONS = "--max_old_space_size=4096"

@@ -1,0 +1,642 @@
+---
+nav_group: Widgets
+nav_group_order: 3
+nav_title: AnimatedPositioned
+title: "AnimatedPositioned"
+description: "Stack 내에서 위치와 크기를 애니메이션으로 전환하는 위젯"
+---
+
+## 개요
+
+AnimatedPositioned는 Stack 위젯 내에서 자식 위젯의 위치와 크기가 변경될 때 자동으로 애니메이션을 적용하는 위젯입니다. Flutter의 AnimatedPositioned 위젯에서 영감을 받아 구현되었습니다.
+
+> Stack의 자식으로만 사용할 수 있습니다.
+>
+> 이 위젯은 애니메이션 결과로 자식의 크기가 변경될 때 좋은 선택입니다. 크기는 그대로 두고 위치만 변경하려면 SlideTransition을 고려하세요. SlideTransition은 애니메이션 프레임마다 리페인트만 트리거하지만, AnimatedPositioned는 리레이아웃도 함께 트리거합니다.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/hC3s2YdtWt8"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowfullscreen
+></iframe>
+
+Flutter 참조: https://api.flutter.dev/flutter/widgets/AnimatedPositioned-class.html
+
+## 언제 사용하나요?
+
+- Stack 내에서 위젯의 위치를 동적으로 이동시킬 때
+- 드래그 앤 드롭이나 이동 애니메이션을 구현할 때
+- 모달이나 팝업의 위치를 애니메이션으로 전환할 때
+- 플로팅 액션 버튼을 다른 위치로 이동시킬 때
+- 마이크로 인터랙션에 따라 이름지나 비번박 텐법을 이동시킬 때
+- 리사이즈 죄이나 크기 변경 효과를 애니메이션으로 구현할 때
+
+## 기본 사용법
+
+```typescript
+import { AnimatedPositioned, Stack, Container, StatefulWidget } from '@meursyphus/flitter';
+
+class PositionedExample extends StatefulWidget {
+  createState() {
+    return new PositionedExampleState();
+  }
+}
+
+class PositionedExampleState extends State<PositionedExample> {
+  isTopLeft = true;
+
+  build() {
+    return Column({
+      children: [
+        ElevatedButton({
+          onPressed: () => {
+            this.setState(() => {
+              this.isTopLeft = !this.isTopLeft;
+            });
+          },
+          child: Text("위치 이동"),
+        }),
+        Container({
+          width: 300,
+          height: 300,
+          child: Stack({
+            children: [
+              Container({
+                width: 300,
+                height: 300,
+                color: "lightgray",
+              }),
+              AnimatedPositioned({
+                top: this.isTopLeft ? 20 : 220,
+                left: this.isTopLeft ? 20 : 220,
+                width: 60,
+                height: 60,
+                duration: 1000, // 1초
+                child: Container({
+                  color: "blue",
+                  child: Center({
+                    child: Text("이동", {
+                      style: TextStyle({ color: "white" })
+                    }),
+                  }),
+                }),
+              }),
+            ],
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
+
+## Props
+
+### duration (필수)
+**값: number**
+
+애니메이션 지속 시간을 밀리초 단위로 지정합니다.
+
+### top (선택)
+**값: number | undefined**
+
+Stack의 상단에서의 거리를 지정합니다. bottom과 동시에 사용할 수 없습니다.
+
+### left (선택)
+**값: number | undefined**
+
+Stack의 좌측에서의 거리를 지정합니다. right와 동시에 사용할 수 없습니다.
+
+### right (선택)
+**값: number | undefined**
+
+Stack의 우측에서의 거리를 지정합니다. left와 동시에 사용할 수 없습니다.
+
+### bottom (선택)
+**값: number | undefined**
+
+Stack의 하단에서의 거리를 지정합니다. top과 동시에 사용할 수 없습니다.
+
+### width (선택)
+**값: number | undefined**
+
+위젯의 너비를 지정합니다. 지정하지 않으면 자식 위젯의 고유 너비를 사용합니다.
+
+### height (선택)
+**값: number | undefined**
+
+위젯의 높이를 지정합니다. 지정하지 않으면 자식 위젯의 고유 높이를 사용합니다.
+
+### curve (선택)
+**값: Curve** (기본값: **Curves.linear**)
+
+애니메이션의 진행 곡선을 지정합니다. 사용 가능한 곡선:
+- `Curves.linear`: 일정한 속도
+- `Curves.easeIn`: 천천히 시작
+- `Curves.easeOut`: 천천히 종료
+- `Curves.easeInOut`: 천천히 시작하고 종료
+- `Curves.circIn`: 원형 가속 시작
+- `Curves.circOut`: 원형 감속 종료
+- `Curves.circInOut`: 원형 가속/감속
+- `Curves.backIn`: 뒤로 갔다가 시작
+- `Curves.backOut`: 목표를 지나쳤다가 돌아옴
+- `Curves.backInOut`: backIn + backOut
+- `Curves.anticipate`: 예비 동작 후 진행
+- `Curves.bounceIn`: 바운스하며 시작
+- `Curves.bounceOut`: 바운스하며 종료
+- `Curves.bounceInOut`: 바운스 시작/종료
+
+### child (선택)
+**값: Widget | undefined**
+
+위치가 애니메이션될 자식 위젯입니다.
+
+### key (선택)
+**값: any**
+
+위젯의 고유 식별자입니다.
+
+## 실제 사용 예제
+
+### 예제 1: 드래그 앤 드롭 시뮬레이션
+
+```typescript
+import { AnimatedPositioned, Stack, Container, GestureDetector, Curves } from '@meursyphus/flitter';
+
+class DragDropSimulation extends StatefulWidget {
+  createState() {
+    return new DragDropSimulationState();
+  }
+}
+
+class DragDropSimulationState extends State<DragDropSimulation> {
+  boxPosition = { x: 50, y: 50 };
+  targetPosition = { x: 200, y: 200 };
+  isAtTarget = false;
+
+  build() {
+    return Container({
+      width: 400,
+      height: 400,
+      color: "#f0f0f0",
+      child: Stack({
+        children: [
+          // 타겟 영역
+          Positioned({
+            left: this.targetPosition.x,
+            top: this.targetPosition.y,
+            child: Container({
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration({
+                color: this.isAtTarget ? "green" : "lightgreen",
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all({ 
+                  color: "green", 
+                  width: 2, 
+                  style: "dashed" 
+                }),
+              }),
+              child: Center({
+                child: Text(
+                  "드롭 영역",
+                  { style: TextStyle({ color: "darkgreen", fontWeight: "bold" }) }
+                ),
+              }),
+            }),
+          }),
+          
+          // 드래그 가능한 박스
+          AnimatedPositioned({
+            left: this.boxPosition.x,
+            top: this.boxPosition.y,
+            width: 60,
+            height: 60,
+            duration: 500,
+            curve: Curves.easeInOut,
+            child: GestureDetector({
+              onTap: () => this.moveToTarget(),
+              child: Container({
+                decoration: BoxDecoration({
+                  color: "blue",
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow({
+                      color: "rgba(0,0,0,0.3)",
+                      blurRadius: 4,
+                      offset: Offset({ x: 2, y: 2 }),
+                    }),
+                  ],
+                }),
+                child: Center({
+                  child: Icon({
+                    icon: Icons.touch_app,
+                    color: "white",
+                    size: 24,
+                  }),
+                }),
+              }),
+            }),
+          }),
+          
+          // 설명 텍스트
+          Positioned({
+            bottom: 20,
+            left: 20,
+            child: Container({
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration({
+                color: "rgba(0,0,0,0.7)",
+                borderRadius: BorderRadius.circular(8),
+              }),
+              child: Text(
+                "파란 사각형을 클릭하여 이동시키세요",
+                { style: TextStyle({ color: "white", fontSize: 14 }) }
+              ),
+            }),
+          }),
+        ],
+      }),
+    });
+  }
+
+  moveToTarget() {
+    this.setState(() => {
+      if (!this.isAtTarget) {
+        this.boxPosition = { x: this.targetPosition.x + 20, y: this.targetPosition.y + 20 };
+        this.isAtTarget = true;
+      } else {
+        this.boxPosition = { x: 50, y: 50 };
+        this.isAtTarget = false;
+      }
+    });
+  }
+}
+```
+
+### 예제 2: 다중 위젯 오케스트레이션
+
+```typescript
+import { AnimatedPositioned, Stack, Container, Curves } from '@meursyphus/flitter';
+
+class MultiWidgetOrchestration extends StatefulWidget {
+  createState() {
+    return new MultiWidgetOrchestrationState();
+  }
+}
+
+class MultiWidgetOrchestrationState extends State<MultiWidgetOrchestration> {
+  pattern = 0; // 0: 원형, 1: 사각형, 2: 대각선, 3: 사선형
+  
+  getPositions(pattern: number) {
+    switch (pattern) {
+      case 0: // 원형
+        return [
+          { x: 150, y: 50 },   // 상단
+          { x: 250, y: 150 },  // 우측
+          { x: 150, y: 250 },  // 하단
+          { x: 50, y: 150 },   // 좌측
+        ];
+      case 1: // 사각형
+        return [
+          { x: 100, y: 100 },  // 좌상
+          { x: 200, y: 100 },  // 우상
+          { x: 200, y: 200 },  // 우하
+          { x: 100, y: 200 },  // 좌하
+        ];
+      case 2: // 대각선
+        return [
+          { x: 50, y: 50 },
+          { x: 120, y: 120 },
+          { x: 190, y: 190 },
+          { x: 260, y: 260 },
+        ];
+      case 3: // 사선형
+        return [
+          { x: 50, y: 200 },
+          { x: 120, y: 120 },
+          { x: 190, y: 180 },
+          { x: 260, y: 100 },
+        ];
+      default:
+        return [
+          { x: 150, y: 150 },
+          { x: 150, y: 150 },
+          { x: 150, y: 150 },
+          { x: 150, y: 150 },
+        ];
+    }
+  }
+
+  build() {
+    const positions = this.getPositions(this.pattern);
+    const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4"];
+    const icons = [Icons.star, Icons.favorite, Icons.diamond, Icons.hexagon];
+    
+    return Column({
+      children: [
+        // 패턴 선택 버튼들
+        Padding({
+          padding: EdgeInsets.all(16),
+          child: Row({
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton({
+                onPressed: () => this.changePattern(0),
+                child: Text("원형"),
+                style: ButtonStyle({
+                  backgroundColor: this.pattern === 0 ? "blue" : "gray",
+                }),
+              }),
+              ElevatedButton({
+                onPressed: () => this.changePattern(1),
+                child: Text("사각형"),
+                style: ButtonStyle({
+                  backgroundColor: this.pattern === 1 ? "blue" : "gray",
+                }),
+              }),
+              ElevatedButton({
+                onPressed: () => this.changePattern(2),
+                child: Text("대각선"),
+                style: ButtonStyle({
+                  backgroundColor: this.pattern === 2 ? "blue" : "gray",
+                }),
+              }),
+              ElevatedButton({
+                onPressed: () => this.changePattern(3),
+                child: Text("사선형"),
+                style: ButtonStyle({
+                  backgroundColor: this.pattern === 3 ? "blue" : "gray",
+                }),
+              }),
+            ],
+          }),
+        }),
+        
+        // 애니메이션 영역
+        Container({
+          width: 350,
+          height: 350,
+          decoration: BoxDecoration({
+            color: "#2C3E50",
+            borderRadius: BorderRadius.circular(16),
+          }),
+          child: Stack({
+            children: positions.map((pos, index) => {
+              return AnimatedPositioned({
+                key: ValueKey(index),
+                left: pos.x,
+                top: pos.y,
+                width: 50,
+                height: 50,
+                duration: 800 + (index * 100), // 시차를 두고 애니메이션
+                curve: Curves.easeInOut,
+                child: Container({
+                  decoration: BoxDecoration({
+                    color: colors[index],
+                    borderRadius: BorderRadius.circular(25),
+                    boxShadow: [
+                      BoxShadow({
+                        color: "rgba(0,0,0,0.3)",
+                        blurRadius: 8,
+                        offset: Offset({ x: 0, y: 4 }),
+                      }),
+                    ],
+                  }),
+                  child: Center({
+                    child: Icon({
+                      icon: icons[index],
+                      color: "white",
+                      size: 28,
+                    }),
+                  }),
+                }),
+              });
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+
+  changePattern(newPattern: number) {
+    this.setState(() => {
+      this.pattern = newPattern;
+    });
+  }
+}
+```
+
+### 예제 3: 모달 대화상자 애니메이션
+
+```typescript
+import { AnimatedPositioned, Stack, Container, Card, Curves } from '@meursyphus/flitter';
+
+class ModalAnimation extends StatefulWidget {
+  createState() {
+    return new ModalAnimationState();
+  }
+}
+
+class ModalAnimationState extends State<ModalAnimation> {
+  showModal = false;
+
+  build() {
+    return Stack({
+      children: [
+        // 메인 컨텐츠
+        Container({
+          width: double.infinity,
+          height: double.infinity,
+          color: "#f5f5f5",
+          child: Center({
+            child: ElevatedButton({
+              onPressed: () => {
+                this.setState(() => {
+                  this.showModal = true;
+                });
+              },
+              child: Text("모달 열기"),
+            }),
+          }),
+        }),
+        
+        // 모달 배경
+        if (this.showModal) AnimatedOpacity({
+          opacity: this.showModal ? 0.7 : 0.0,
+          duration: 300,
+          child: Container({
+            width: double.infinity,
+            height: double.infinity,
+            color: "black",
+          }),
+        }),
+        
+        // 모달 대화상자
+        AnimatedPositioned({
+          left: 50,
+          right: 50,
+          top: this.showModal ? 150 : 600, // 아래에서 올라오는 효과
+          duration: 400,
+          curve: Curves.easeOut,
+          child: this.showModal ? Card({
+            child: Container({
+              padding: EdgeInsets.all(20),
+              child: Column({
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "모달 대화상자",
+                    { style: TextStyle({ fontSize: 24, fontWeight: "bold" }) }
+                  ),
+                  SizedBox({ height: 16 }),
+                  Text(
+                    "이것은 애니메이션된 모달 대화상자입니다. "
+                    "아래에서 올라오는 효과로 나타납니다."
+                  ),
+                  SizedBox({ height: 20 }),
+                  Row({
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton({
+                        onPressed: () => {
+                          this.setState(() => {
+                            this.showModal = false;
+                          });
+                        },
+                        child: Text("취소"),
+                      }),
+                      SizedBox({ width: 8 }),
+                      ElevatedButton({
+                        onPressed: () => {
+                          this.setState(() => {
+                            this.showModal = false;
+                          });
+                        },
+                        child: Text("확인"),
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            }),
+          }) : SizedBox.shrink(),
+        }),
+      ],
+    });
+  }
+}
+```
+
+### 예제 4: 사이즈와 위치 동시 애니메이션
+
+```typescript
+import { AnimatedPositioned, Stack, Container, Curves } from '@meursyphus/flitter';
+
+class SizeAndPositionAnimation extends StatefulWidget {
+  createState() {
+    return new SizeAndPositionAnimationState();
+  }
+}
+
+class SizeAndPositionAnimationState extends State<SizeAndPositionAnimation> {
+  isExpanded = false;
+
+  build() {
+    return GestureDetector({
+      onTap: () => {
+        this.setState(() => {
+          this.isExpanded = !this.isExpanded;
+        });
+      },
+      child: Container({
+        width: 400,
+        height: 400,
+        color: "#34495e",
+        child: Stack({
+          children: [
+            AnimatedPositioned({
+              left: this.isExpanded ? 50 : 175,
+              top: this.isExpanded ? 50 : 175,
+              width: this.isExpanded ? 300 : 50,
+              height: this.isExpanded ? 300 : 50,
+              duration: 1000,
+              curve: Curves.elasticOut,
+              child: Container({
+                decoration: BoxDecoration({
+                  gradient: LinearGradient({
+                    colors: this.isExpanded 
+                      ? ["#e74c3c", "#c0392b"]
+                      : ["#3498db", "#2980b9"],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  }),
+                  borderRadius: BorderRadius.circular(this.isExpanded ? 16 : 25),
+                  boxShadow: [
+                    BoxShadow({
+                      color: "rgba(0,0,0,0.3)",
+                      blurRadius: this.isExpanded ? 20 : 10,
+                      offset: Offset({ x: 0, y: this.isExpanded ? 10 : 5 }),
+                    }),
+                  ],
+                }),
+                child: Center({
+                  child: Icon({
+                    icon: this.isExpanded ? Icons.close : Icons.add,
+                    color: "white",
+                    size: this.isExpanded ? 48 : 24,
+                  }),
+                }),
+              }),
+            }),
+            
+            // 안내 텍스트
+            Positioned({
+              bottom: 20,
+              left: 20,
+              right: 20,
+              child: Container({
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration({
+                  color: "rgba(255,255,255,0.9)",
+                  borderRadius: BorderRadius.circular(8),
+                }),
+                child: Text(
+                  "화면을 탭하여 사이즈와 위치 애니메이션을 확인하세요",
+                  { 
+                    style: TextStyle({ 
+                      color: "#2c3e50", 
+                      fontSize: 14,
+                      textAlign: "center"
+                    }) 
+                  }
+                ),
+              }),
+            }),
+          ],
+        }),
+      }),
+    });
+  }
+}
+```
+
+## 주의사항
+
+- **Stack의 직접 자식이어야 함**: AnimatedPositioned는 Stack 위젯의 직접 자식으로만 사용할 수 있습니다
+- **상촩되는 속성 주의**: top/bottom, left/right는 동시에 설정할 수 없습니다
+- **성능 고려사항**: 위치 변경 시 리레이아웃이 다시 계산되므로 많은 위젯에 동시 적용 시 성능 영향이 있을 수 있습니다
+- **애니메이션 중단**: 새로운 속성 값이 설정되면 현재 값에서 새 값으로 부드럽게 전환됩니다
+- **음수 값 허용**: left, top, right, bottom 속성은 음수 값도 가능합니다
+
+## 관련 위젯
+
+- **Positioned**: 애니메이션 없이 Stack 내에서 위치를 지정하는 기본 위젯
+- **AnimatedAlign**: 정렬을 애니메이션으로 전환
+- **SlideTransition**: 위치만 애니메이션하고 리레이아웃은 그대로 두는 경우 사용
+- **Stack**: AnimatedPositioned를 사용하기 위한 부모 위젯
+- **AnimatedContainer**: 다양한 속성을 동시에 애니메이션하는 범용 위젯

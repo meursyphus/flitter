@@ -1,0 +1,210 @@
+---
+nav_title: "차트 구현 사례"
+title: "headless-chart를 활용한 차트 구현"
+description: "Flitter와 headless-chart를 사용하여 커스텀 차트를 만드는 방법을 알아봅니다"
+---
+
+import Charts01 from '$components/pages/docs/04_examples/charts01'
+import Charts02 from '$components/pages/docs/04_examples/charts02'
+
+## headless-chart란?
+
+`@meursyphus/headless-chart`는 UI가 없는 차트 라이브러리입니다. 데이터와 로직만 제공하고, 실제 UI는 개발자가 Flitter 위젯으로 직접 구현합니다. 이를 통해 완전히 커스터마이즈 가능한 차트를 만들 수 있습니다.
+
+- **GitHub**: [https://github.com/meursyphus/headless-chart](https://github.com/meursyphus/headless-chart)
+- **설치**: `npm install @meursyphus/headless-chart`
+
+## 기본 개념
+
+headless-chart의 핵심은 **데이터 구조**와 **커스텀 렌더링 함수**입니다:
+
+- **데이터 구조**: labels와 datasets로 구성
+- **커스텀 함수**: 차트의 각 부분(축, 눈금, 막대, 선 등)을 Flitter 위젯으로 렌더링
+
+## 간단한 Bar Chart 예제
+
+아래는 headless-chart로 만든 커스텀 바 차트입니다. Highcharts 스타일을 Flitter로 재현했습니다:
+
+<Charts01 client:load />
+
+### 주요 커스터마이징 포인트
+
+1. **레이아웃 커스터마이징**
+   - `custom.layout` 함수로 전체 차트 구조 정의
+   - Stack과 Positioned로 자유로운 요소 배치
+
+2. **축 라벨 스타일링**
+   - `custom.xAxisLabel`, `custom.yAxisLabel`로 텍스트 스타일 적용
+   - 폰트, 크기, 색상을 원하는 대로 설정
+
+3. **막대 디자인**
+   - `custom.bar` 함수에서 Container와 BoxDecoration 활용
+   - 색상, 모서리 둥글기, 그림자 등 자유롭게 디자인
+
+4. **범례 커스터마이징**
+   - 범례 위치를 차트 내부에 떠있는 박스로 표현
+   - BoxShadow로 입체감 추가
+
+### Bar Chart 구현 코드 예시
+
+```javascript
+const Bar = (...[{ legend, value }, { data }]) => {
+  const index = data.datasets.findIndex((d) => d.legend === legend);
+  const backgroundColor = backgroundColors[index];
+  
+  return Container({
+    width: Infinity,
+    height: 14,
+    alignment: Alignment.centerRight,
+    decoration: new BoxDecoration({
+      color: backgroundColor,
+      borderRadius: BorderRadius.only({
+        topRight: Radius.circular(7),
+        bottomRight: Radius.circular(7),
+      }),
+    }),
+    child: FractionalTranslation({
+      translation: { x: 1, y: 0 },
+      child: Padding({
+        padding: EdgeInsets.only({ left: 6 }),
+        child: Text(value.toLocaleString("ko-KR").replace(",", " "), {
+          style: new TextStyle({
+            fontFamily: "Noto Sans JP",
+            fontSize: 12,
+            fontWeight: "bold",
+            color: "#111827",
+          }),
+        }),
+      }),
+    }),
+  });
+};
+```
+
+위 코드에서는:
+- Flitter의 Container와 BoxDecoration으로 막대를 그립니다
+- FractionalTranslation으로 값 텍스트를 막대 끝에 배치합니다
+- 각 데이터셋별로 다른 색상을 적용합니다
+
+## Line Chart 예제
+
+다음은 Nivo 스타일의 라인 차트입니다:
+
+<Charts02 client:load />
+
+### Line Chart 커스터마이징
+
+1. **CustomPaint로 선 그리기**
+   ```javascript
+   custom.line: (...[{ values, index }, { scale }]) => {
+     return CustomPaint({
+       painter: {
+         svg: {
+           paint({ line, point }, { height, width }) {
+             const linePath = new Path();
+             const pointPath = new Path();
+             
+             // 데이터 포인트 계산
+             const points = values.map((value, index) => {
+               const y = height - (height * (value - scale.min)) / (scale.max - scale.min);
+               const x = (index * width) / (values.length - 1);
+               return { x, y };
+             });
+             
+             // 선 그리기
+             linePath.moveTo(points[0]);
+             points.slice(1).forEach((point) => {
+               linePath.lineTo(point);
+             });
+             
+             // 점 그리기
+             points.forEach((point) => {
+               pointPath.addOval(
+                 Rect.fromCircle({ center: new Offset(point), radius: 5 })
+               );
+             });
+             
+             // SVG 속성 설정
+             line.setAttribute("fill", "none");
+             line.setAttribute("stroke", colors[index]);
+             line.setAttribute("stroke-width", "2");
+             line.setAttribute("d", linePath.getD());
+             
+             point.setAttribute("fill", "#1f2937");
+             point.setAttribute("stroke", colors[index]);
+             point.setAttribute("stroke-width", "1");
+             point.setAttribute("d", pointPath.getD());
+           }
+         }
+       }
+     });
+   }
+   ```
+
+2. **색상 팔레트 활용**
+   - 데이터셋별로 다른 색상 적용
+   - 선과 점의 색상 조화
+
+3. **레이아웃 유연성**
+   - Row로 차트와 범례 나란히 배치
+   - Flexible로 반응형 레이아웃 구현
+
+## headless-chart의 장점
+
+1. **완전한 커스터마이징**: 모든 시각적 요소를 Flitter 위젯으로 제어
+2. **일관된 개발 경험**: Flitter의 위젯 시스템 그대로 사용
+3. **성능 최적화**: 필요한 부분만 렌더링
+4. **재사용성**: 커스텀 컴포넌트를 쉽게 재사용
+
+## headless-chart 사용법
+
+### 1. 설치
+```bash
+npm install @meursyphus/headless-chart
+```
+
+### 2. 기본 사용법
+```javascript
+import { BarChart, LineChart } from "@meursyphus/headless-chart";
+
+// 데이터 정의
+const data = {
+  labels: ["A", "B", "C", "D"],
+  datasets: [
+    {
+      legend: "Dataset 1",
+      values: [10, 20, 30, 40],
+    },
+  ],
+};
+
+// 차트 생성
+const chart = BarChart({
+  data,
+  custom: {
+    // 각 요소를 Flitter 위젯으로 커스터마이징
+    bar: (...args) => Container({ /* ... */ }),
+    xAxisLabel: (...args) => Text(/* ... */),
+    // ... 기타 커스터마이징
+  },
+});
+```
+
+### 3. 지원하는 차트 타입
+- **BarChart**: 막대 차트 (수직/수평)
+- **LineChart**: 라인 차트
+- **PieChart**: 파이 차트
+- **ScatterChart**: 산점도 차트
+
+## 다음 단계
+
+- 더 복잡한 차트 타입 구현하기 (Pie, Scatter, Area 등)
+- 애니메이션 추가하기
+- 인터랙티브 기능 구현하기 (툴팁, 줌, 팬 등)
+- 실시간 데이터 업데이트
+
+## 참고 자료
+
+- [headless-chart GitHub](https://github.com/meursyphus/headless-chart)
+- [Flitter 문서](/docs/getting-started/introduction)
+- [CustomPaint 위젯 가이드](/docs/advanced-usage/custom-paint로-쉽게-그리기)

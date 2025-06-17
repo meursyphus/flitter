@@ -1,0 +1,503 @@
+---
+nav_title: "위젯 시스템"
+title: "위젯 시스템"
+description: "Flitter의 핵심인 위젯 시스템을 이해하고 StatelessWidget과 StatefulWidget의 차이점을 학습합니다"
+---
+
+import WidgetSystemExample from '$components/pages/docs/02_core-concepts/02-widget-system-example';
+
+# 위젯 시스템
+
+## 개요
+
+Flitter의 위젯(Widget)은 UI를 구성하는 기본 단위입니다. Flutter와 동일한 개념으로, 화면에 표시되는 모든 요소는 위젯으로 구성됩니다. 버튼, 텍스트, 레이아웃, 심지어 앱 자체도 위젯입니다.
+
+## 왜 중요한가?
+
+위젯 시스템을 이해하면:
+
+- **재사용 가능한 컴포넌트**: 한 번 만든 위젯을 어디서든 재사용
+- **조합 가능한 구조**: 작은 위젯들을 조합해 복잡한 UI 구성
+- **명확한 상태 관리**: StatelessWidget과 StatefulWidget으로 상태 관리 패턴 구분
+- **예측 가능한 동작**: 위젯 라이프사이클을 통한 체계적인 개발
+
+## 핵심 개념
+
+### 위젯의 종류
+
+Flitter에는 세 가지 주요 위젯 타입이 있습니다:
+
+1. **StatelessWidget**: 상태가 없는 정적 위젯
+2. **StatefulWidget**: 상태를 가지는 동적 위젯
+3. **RenderObjectWidget**: 직접 렌더링을 담당하는 저수준 위젯
+
+### StatelessWidget
+
+상태가 없고 한 번 생성되면 변하지 않는 위젯입니다:
+
+```typescript
+import { StatelessWidget, Text, Container, EdgeInsets, Colors, type BuildContext, type Widget } from '@meursyphus/flitter';
+
+class Greeting extends StatelessWidget {
+  constructor(private props: { name: string }) {
+    super();
+  }
+
+  build(context: BuildContext): Widget {
+    return Container({
+      padding: EdgeInsets.all(16),
+      color: Colors.blue.shade100,
+      child: Text(`안녕하세요, ${this.props.name}님!`)
+    });
+  }
+}
+
+// Factory function으로 export
+export default function GreetingWidget(props: { name: string }): Widget {
+  return new Greeting(props);
+}
+```
+
+### StatefulWidget
+
+상태를 가지고 있으며, 상태가 변경되면 UI가 자동으로 업데이트되는 위젯입니다:
+
+```typescript
+import { 
+  StatefulWidget, 
+  State, 
+  Container, 
+  Column, 
+  Text, 
+  GestureDetector,
+  EdgeInsets,
+  Colors,
+  TextStyle,
+  type BuildContext,
+  type Widget 
+} from '@meursyphus/flitter';
+
+class Counter extends StatefulWidget {
+  createState(): State<Counter> {
+    return new CounterState();
+  }
+}
+
+class CounterState extends State<Counter> {
+  count = 0;
+
+  build(context: BuildContext): Widget {
+    return Column({
+      children: [
+        Text(`카운트: ${this.count}`, {
+          style: TextStyle({ fontSize: 24 })
+        }),
+        GestureDetector({
+          onClick: () => {
+            this.setState(() => {
+              this.count++;
+            });
+          },
+          child: Container({
+            margin: EdgeInsets.only({ top: 16 }),
+            padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+            color: Colors.blue,
+            child: Text("증가", {
+              style: TextStyle({ color: Colors.white })
+            })
+          })
+        })
+      ]
+    });
+  }
+}
+
+// Factory function으로 export
+export default function CounterWidget(): Widget {
+  return new Counter();
+}
+```
+
+<WidgetSystemExample 
+  client:load
+  title="StatelessWidget vs StatefulWidget"
+  description="상태가 없는 위젯과 상태가 있는 위젯의 차이를 확인해보세요."
+/>
+
+### 위젯 라이프사이클
+
+#### StatefulWidget의 라이프사이클
+
+```typescript
+class MyWidgetState extends State<MyWidget> {
+  // 1. 상태 객체가 생성될 때 한 번 호출
+  initState(): void {
+    super.initState();
+    console.log("위젯이 초기화되었습니다");
+    // 애니메이션 컨트롤러, 스트림 구독 등 초기화
+  }
+
+  // 2. 부모 위젯이 변경되어 이 위젯을 업데이트해야 할 때
+  didUpdateWidget(oldWidget: MyWidget): void {
+    super.didUpdateWidget(oldWidget);
+    console.log("위젯 설정이 변경되었습니다");
+    // props 변경에 따른 상태 업데이트
+  }
+
+  // 3. setState가 호출될 때마다 실행
+  build(context: BuildContext): Widget {
+    console.log("UI를 렌더링합니다");
+    return Container({ /* ... */ });
+  }
+
+  // 4. 상태 객체가 제거될 때
+  dispose(): void {
+    console.log("위젯이 제거됩니다");
+    // 애니메이션 컨트롤러, 스트림 구독 등 정리
+    super.dispose();
+  }
+}
+```
+
+## 실습 예제
+
+### 1. Props를 받는 StatelessWidget
+
+```typescript
+class ProductCard extends StatelessWidget {
+  constructor(private props: {
+    title: string;
+    price: number;
+    imageUrl: string;
+  }) {
+    super();
+  }
+
+  build(context: BuildContext): Widget {
+    const { title, price, imageUrl } = this.props;
+    
+    return Container({
+      padding: EdgeInsets.all(16),
+      color: Colors.grey.shade900,
+      child: Column({
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image.network(imageUrl, {
+            height: 200,
+            width: double.infinity,
+            fit: BoxFit.cover
+          }),
+          SizedBox({ height: 8 }),
+          Text(title, {
+            style: TextStyle({ 
+              fontSize: 18, 
+              fontWeight: FontWeight.bold,
+              color: Colors.white 
+            })
+          }),
+          Text(`₩${price.toLocaleString()}`, {
+            style: TextStyle({ 
+              fontSize: 16, 
+              color: Colors.grey.shade400 
+            })
+          })
+        ]
+      })
+    });
+  }
+}
+
+export default function ProductCardWidget(props: {
+  title: string;
+  price: number;
+  imageUrl: string;
+}): Widget {
+  return new ProductCard(props);
+}
+```
+
+### 2. 복잡한 상태를 가진 StatefulWidget
+
+```typescript
+class TodoApp extends StatefulWidget {
+  createState(): State<TodoApp> {
+    return new TodoAppState();
+  }
+}
+
+class TodoAppState extends State<TodoApp> {
+  todos: Array<{ id: number; text: string; done: boolean }> = [];
+  nextId = 1;
+  inputText = "";
+
+  addTodo(text: string): void {
+    if (text.trim() === "") return;
+    
+    this.setState(() => {
+      this.todos.push({
+        id: this.nextId++,
+        text: text,
+        done: false
+      });
+      this.inputText = "";
+    });
+  }
+
+  toggleTodo(id: number): void {
+    this.setState(() => {
+      const todo = this.todos.find(t => t.id === id);
+      if (todo) {
+        todo.done = !todo.done;
+      }
+    });
+  }
+
+  deleteTodo(id: number): void {
+    this.setState(() => {
+      this.todos = this.todos.filter(t => t.id !== id);
+    });
+  }
+
+  build(context: BuildContext): Widget {
+    return Container({
+      padding: EdgeInsets.all(16),
+      child: Column({
+        children: [
+          Text("할 일 목록", {
+            style: TextStyle({ 
+              fontSize: 24, 
+              fontWeight: FontWeight.bold,
+              color: Colors.white 
+            })
+          }),
+          SizedBox({ height: 16 }),
+          
+          // 입력 필드 (실제로는 TextField 위젯 사용)
+          Container({
+            padding: EdgeInsets.all(12),
+            color: Colors.grey.shade800,
+            child: Text(this.inputText || "새로운 할 일을 입력하세요...", {
+              style: TextStyle({ color: Colors.grey.shade400 })
+            })
+          }),
+          
+          SizedBox({ height: 16 }),
+          
+          // 할 일 목록
+          ...this.todos.map(todo => 
+            Container({
+              margin: EdgeInsets.only({ bottom: 8 }),
+              padding: EdgeInsets.all(12),
+              color: todo.done ? Colors.grey.shade800 : Colors.grey.shade700,
+              child: Row({
+                children: [
+                  GestureDetector({
+                    onClick: () => this.toggleTodo(todo.id),
+                    child: Icon(
+                      todo.done ? Icons.check_box : Icons.check_box_outline_blank,
+                      { color: Colors.white }
+                    )
+                  }),
+                  SizedBox({ width: 12 }),
+                  Expanded({
+                    child: Text(todo.text, {
+                      style: TextStyle({
+                        color: Colors.white,
+                        decoration: todo.done ? TextDecoration.lineThrough : TextDecoration.none
+                      })
+                    })
+                  }),
+                  GestureDetector({
+                    onClick: () => this.deleteTodo(todo.id),
+                    child: Icon(Icons.delete, { color: Colors.red.shade400 })
+                  })
+                ]
+              })
+            })
+          )
+        ]
+      })
+    });
+  }
+}
+
+export default function TodoAppWidget(): Widget {
+  return new TodoApp();
+}
+```
+
+### 3. 라이프사이클 활용 예제
+
+```typescript
+class TimerWidget extends StatefulWidget {
+  constructor(private props: { duration: number }) {
+    super();
+  }
+
+  createState(): State<TimerWidget> {
+    return new TimerWidgetState();
+  }
+}
+
+class TimerWidgetState extends State<TimerWidget> {
+  timeLeft = 0;
+  timer?: NodeJS.Timeout;
+
+  initState(): void {
+    super.initState();
+    this.timeLeft = this.widget.props.duration;
+    this.startTimer();
+  }
+
+  startTimer(): void {
+    this.timer = setInterval(() => {
+      this.setState(() => {
+        if (this.timeLeft > 0) {
+          this.timeLeft--;
+        } else {
+          this.stopTimer();
+        }
+      });
+    }, 1000);
+  }
+
+  stopTimer(): void {
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = undefined;
+    }
+  }
+
+  didUpdateWidget(oldWidget: TimerWidget): void {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.props.duration !== this.widget.props.duration) {
+      this.stopTimer();
+      this.timeLeft = this.widget.props.duration;
+      this.startTimer();
+    }
+  }
+
+  dispose(): void {
+    this.stopTimer();
+    super.dispose();
+  }
+
+  build(context: BuildContext): Widget {
+    const minutes = Math.floor(this.timeLeft / 60);
+    const seconds = this.timeLeft % 60;
+    
+    return Container({
+      padding: EdgeInsets.all(24),
+      color: this.timeLeft === 0 ? Colors.red.shade900 : Colors.grey.shade900,
+      child: Column({
+        children: [
+          Text("타이머", {
+            style: TextStyle({ 
+              fontSize: 20, 
+              color: Colors.white 
+            })
+          }),
+          SizedBox({ height: 16 }),
+          Text(
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`,
+            {
+              style: TextStyle({ 
+                fontSize: 48, 
+                fontWeight: FontWeight.bold,
+                color: this.timeLeft === 0 ? Colors.red : Colors.white 
+              })
+            }
+          ),
+          if (this.timeLeft === 0)
+            Text("시간 종료!", {
+              style: TextStyle({ 
+                fontSize: 24, 
+                color: Colors.red.shade400 
+              })
+            })
+        ]
+      })
+    });
+  }
+}
+
+export default function TimerWidgetExample(props: { duration: number }): Widget {
+  return new TimerWidget(props);
+}
+```
+
+## 주의사항
+
+### 1. State 관리 규칙
+
+```typescript
+// ❌ 잘못된 예 - setState 없이 상태 변경
+this.count++;  // UI가 업데이트되지 않음!
+
+// ✅ 올바른 예 - setState 사용
+this.setState(() => {
+  this.count++;
+});
+
+// ❌ 잘못된 예 - setState 외부에서 상태 변경
+this.items.push(newItem);
+this.setState(() => {});  // 비어있는 setState
+
+// ✅ 올바른 예 - setState 내부에서 모든 변경
+this.setState(() => {
+  this.items.push(newItem);
+});
+```
+
+### 2. 위젯 재사용
+
+```typescript
+// ❌ 잘못된 예 - build 메서드 내에서 위젯 생성
+build(context: BuildContext): Widget {
+  // 매번 새로운 위젯 인스턴스 생성 (비효율적)
+  const button = new MyButton();
+  return Container({ child: button });
+}
+
+// ✅ 올바른 예 - 위젯을 적절히 분리
+build(context: BuildContext): Widget {
+  return Container({
+    child: MyButton({ onClick: this.handleClick })
+  });
+}
+```
+
+### 3. Props vs State
+
+- **Props**: 부모로부터 전달받는 불변 데이터
+- **State**: 위젯 내부에서 관리하는 가변 데이터
+
+```typescript
+class MyWidget extends StatefulWidget {
+  constructor(private props: { initialCount: number }) {
+    super();
+  }
+
+  createState(): State<MyWidget> {
+    return new MyWidgetState();
+  }
+}
+
+class MyWidgetState extends State<MyWidget> {
+  // props는 초기값으로만 사용
+  count = this.widget.props.initialCount;
+
+  build(context: BuildContext): Widget {
+    // props는 직접 읽기 가능
+    return Text(`초기값: ${this.widget.props.initialCount}, 현재값: ${this.count}`);
+  }
+}
+```
+
+## 다음 단계
+
+위젯 시스템을 이해했다면, 다음으로 학습할 내용:
+
+- 상태 관리 - Provider를 통한 복잡한 상태 관리
+- 애니메이션 기초 - 위젯에 애니메이션 적용하기
+- RenderObject 시스템 - 커스텀 렌더링 구현

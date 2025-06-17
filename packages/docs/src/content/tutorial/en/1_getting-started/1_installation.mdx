@@ -1,0 +1,288 @@
+---
+title: "Installation and Environment Setup"
+description: "Set up your environment for Flitter development and start your first project"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { StatelessWidget, Container, Column, Text, EdgeInsets, MainAxisAlignment, CrossAxisAlignment, TextStyle } from '@meursyphus/flitter';
+
+    class InstallationGuide extends StatelessWidget {
+      build(context) {
+        return Container({
+          width: 400,
+          height: 200,
+          color: '#f8f9fa',
+          padding: EdgeInsets.all(20),
+          child: Column({
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text('Get started with Flitter installation!', {
+                style: new TextStyle({
+                  fontSize: 24,
+                  fontWeight: 'bold'
+                })
+              }),
+              Text('Follow the steps below to install and set up Flitter.', {
+                style: new TextStyle({
+                  fontSize: 14,
+                  color: '#6b7280'
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new InstallationGuide();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+solved_files:
+  App.js: |
+    import React from 'react';
+    import Widget from '@meursyphus/flitter-react';
+    import { StatelessWidget, Container, Text, Center, EdgeInsets, TextStyle } from '@meursyphus/flitter';
+
+    class InstallationComplete extends StatelessWidget {
+      build(context) {
+        return Container({
+          width: 300,
+          height: 100,
+          color: '#e3f2fd',
+          padding: EdgeInsets.all(20),
+          child: Center({
+            child: Text('🎉 Flitter Installation Complete!', {
+              style: new TextStyle({
+                fontSize: 20,
+                fontWeight: 'bold'
+              })
+            })
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new InstallationComplete();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+---
+
+# Installation and Environment Setup
+
+This is a step-by-step installation guide for those who are new to Flitter. After completing this tutorial, you'll be able to use Flitter in React projects.
+
+## 🎯 Learning Objectives
+
+After completing this tutorial, you'll be able to:
+
+- [ ] Verify that Node.js and npm environment are properly set up
+- [ ] Create a new React project
+- [ ] Install Flitter packages
+- [ ] Render your first Flitter widget
+- [ ] Run the development server and see the results
+
+## 📋 Prerequisites
+
+- **Node.js 18 or higher** - Download from [Node.js official site](https://nodejs.org/)
+- **npm, yarn, or pnpm** - Automatically installed with Node.js
+- **Basic React knowledge** - Understanding of JSX and component concepts
+
+## 🚀 Step 1: Environment Check
+
+First, let's verify that your development environment is properly set up.
+
+Open a terminal and run the following commands:
+
+```bash
+# Check Node.js version (should be 18 or higher)
+node --version
+
+# Check npm version
+npm --version
+```
+
+Expected output:
+```
+v20.10.0
+10.2.3
+```
+
+> ⚠️ **If your Node.js version is below 18?**  
+> Please install the latest LTS version from [Node.js official site](https://nodejs.org/).
+
+## 🏗️ Step 2: Create New Project
+
+Create a new React project using Vite:
+
+```bash
+# Create new project
+npm create vite@latest my-flitter-app -- --template react
+
+# Navigate to project folder
+cd my-flitter-app
+
+# Install basic dependencies
+npm install
+```
+
+## 📦 Step 3: Install Flitter Packages
+
+Now install the Flitter-related packages:
+
+```bash
+# Install Flitter core package and React integration package
+npm install @meursyphus/flitter @meursyphus/flitter-react
+```
+
+Packages being installed:
+- `@meursyphus/flitter`: Flitter core library
+- `@meursyphus/flitter-react`: Component for React integration
+
+## 🔧 Step 4: Create Your First Flitter Widget
+
+Now let's modify the `src/App.jsx` file to create your first Flitter widget.
+
+### TODO: Complete the Code
+
+Complete the `TODO` sections in the code below:
+
+```jsx
+import React from 'react';
+// TODO: Import the Widget component
+// TODO: Import Container and Text widgets
+
+function App() {
+  // TODO: Create a Container widget
+  // Hint: Container with blue background (#e3f2fd) and 20px padding
+  // Hint: Include "🎉 Flitter Installation Complete!" text
+  const widget = null;
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <h1>Flitter Installation Success!</h1>
+      {/* TODO: Render the widget using Widget component */}
+      {/* Hint: Use canvas renderer, 300x100 size */}
+    </div>
+  );
+}
+
+export default App;
+```
+
+### Complete Code
+
+```jsx
+import React from 'react';
+import { Widget } from '@meursyphus/flitter-react';
+import { Container, Text } from '@meursyphus/flitter';
+
+function App() {
+  const widget = Container({
+    color: '#e3f2fd',
+    padding: { all: 20 },
+    child: Text('🎉 Flitter Installation Complete!')
+  });
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <h1>Flitter Installation Success!</h1>
+      <Widget 
+        widget={widget}
+        renderer="canvas"
+        style={{ 
+          width: '300px', 
+          height: '100px',
+          border: '1px solid #ddd',
+          borderRadius: '8px'
+        }}
+      />
+    </div>
+  );
+}
+
+export default App;
+```
+
+## 🏃 Step 5: Run Development Server
+
+Now run the development server to see the results:
+
+```bash
+npm run dev
+```
+
+Open `http://localhost:5173` in your browser and you should see:
+
+- "Flitter Installation Success!" title
+- A box with blue background containing "🎉 Flitter Installation Complete!" text
+
+## 🎯 Expected Results
+
+If the installation is successfully completed:
+
+1. **Development server runs normally**: Terminal shows "Local: http://localhost:5173"
+2. **Flitter widget renders**: Blue background box appears on screen
+3. **No console errors**: No error messages in browser developer tools
+
+## 🔧 Practice Problems
+
+If you've completed the basic installation, try the following:
+
+### Exercise 1: Change Colors
+Change the Container's `color` property to different colors:
+- `'#ffebee'` (light red)
+- `'#f3e5f5'` (light purple)
+- `'#e8f5e8'` (light green)
+
+### Exercise 2: Change Text
+Change the Text widget content to your own message.
+
+### Exercise 3: Adjust Size
+Change the `width` and `height` values in the Widget component's `style` property.
+
+## 🚨 Common Mistakes and Solutions
+
+### Problem 1: Module not found error
+```
+Error: Cannot resolve module '@meursyphus/flitter'
+```
+
+**Solution**: Verify packages are properly installed:
+```bash
+npm install @meursyphus/flitter @meursyphus/flitter-react
+```
+
+### Problem 2: Blank screen appears
+**Cause**: Widget not properly created or not passed to Widget component
+
+**Solution**: 
+- Check that `widget` variable is not `null`
+- Verify that `widget` prop is passed to Widget component
+
+### Problem 3: Node.js version error
+```
+Error: Node.js version 16.x is not supported
+```
+
+**Solution**: Update to Node.js 18 or higher.
+
+## 🚀 Next Steps
+
+If installation is complete, let's move on to create more complex widgets in the next tutorial:
+
+- **Next**: [Your First Flitter App](./2_hello-world) - Learn more complex widget structures
+- **Related docs**: [Widget Basics](../3_widget-interface-basics/1_what-are-widgets) - Learn widget concepts in detail
+
+> 📚 **Need more detailed information?**  
+> For all framework-specific installation methods and advanced settings,
+> see the [Installation Documentation](/docs/en/getting-started/installation/).
