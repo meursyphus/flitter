@@ -1,0 +1,954 @@
+---
+title: "Container로 스타일링"
+description: "색깔 있는 사각형을 만들고 padding, margin, 테두리를 설정해보세요"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from "@meursyphus/flitter-react";
+    import { StatelessWidget, Container, Text, Center } from "@meursyphus/flitter";
+
+    class ContainerStylingApp extends StatelessWidget {
+      build(context) {
+        // TODO: 빨간색 배경의 Container를 만들어보세요
+        return Container({
+          width: 300,
+          height: 200,
+          child: Center({
+            child: Text('TODO: Container 스타일링')
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new ContainerStylingApp();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+solved_files:
+  App.js: |
+    import React from 'react';
+    import Widget from "@meursyphus/flitter-react";
+    import { StatelessWidget, Container, Text, BoxDecoration, EdgeInsets, TextStyle, Center } from "@meursyphus/flitter";
+
+    class ContainerStylingApp extends StatelessWidget {
+      build(context) {
+        return Container({
+          width: 300,
+          height: 200,
+          decoration: new BoxDecoration({
+            color: '#FF5722'
+          }),
+          padding: EdgeInsets.all(20),
+          child: Center({
+            child: Text("Hello Container!", {
+              style: new TextStyle({
+                color: 'white',
+                fontSize: 18,
+                fontWeight: 'bold'
+              })
+            })
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new ContainerStylingApp();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+---
+
+# Container로 스타일링
+
+Container는 Flitter에서 가장 기본적이면서도 강력한 위젯입니다. HTML의 div 태그와 비슷하게 다른 위젯을 감싸고, 색상, 테두리, 여백 등의 스타일을 적용할 수 있습니다. 이 튜토리얼에서는 Container의 모든 기능을 실습으로 배워보겠습니다.
+
+## 🎯 학습 목표
+
+이 튜토리얼을 마치면 다음을 할 수 있게 됩니다:
+
+- [ ] Container에 배경색과 장식 설정하기
+- [ ] padding과 margin으로 여백 조정하기
+- [ ] 테두리와 둥근 모서리 만들기
+- [ ] 크기를 지정한 박스 만들기
+- [ ] 그림자와 그라데이션 효과 적용하기
+
+## 📚 Container의 핵심 개념
+
+### Container가 하는 일
+
+Container는 다음과 같은 기능을 제공합니다:
+
+1. **박스 모델**: 크기, 여백, 테두리를 설정
+2. **장식**: 배경색, 그라데이션, 그림자 적용
+3. **정렬**: 자식 위젯의 위치 조정
+4. **제약**: 최소/최대 크기 제한
+
+### Container의 주요 속성 전체 목록
+
+```typescript
+Container({
+  // 크기 설정
+  width: 200,           // 너비 (픽셀)
+  height: 100,          // 높이 (픽셀)
+  
+  // 여백 설정
+  padding: EdgeInsets.all(16),  // 안쪽 여백
+  margin: EdgeInsets.all(8),    // 바깥쪽 여백
+  
+  // 장식 설정
+  decoration: new BoxDecoration({
+    color: '#FF5722',                    // 배경색
+    border: Border.all({ color: '#000', width: 1 }),  // 테두리
+    borderRadius: BorderRadius.circular(8),           // 둥근 모서리
+    boxShadow: [new BoxShadow({ /* 그림자 */ })],    // 그림자
+    gradient: new LinearGradient({ /* 그라데이션 */ }) // 그라데이션
+  }),
+  
+  // 정렬
+  alignment: Alignment.center,   // 자식 위젯 정렬
+  
+  // 제약
+  constraints: new BoxConstraints({
+    minWidth: 100,       // 최소 너비
+    maxWidth: 300,       // 최대 너비
+    minHeight: 50,       // 최소 높이
+    maxHeight: 200       // 최대 높이
+  }),
+  
+  // 변형
+  transform: Matrix4.rotationZ(0.1),  // 회전, 크기 조정 등
+  
+  // 자식 위젯
+  child: Text('Hello')  // 하나의 자식 위젯
+})
+```
+
+## 🚀 실습 1: 기본 색상 박스 만들기
+
+가장 간단한 Container부터 시작해봅시다.
+
+```typescript
+import { Container, BoxDecoration } from "@meursyphus/flitter";
+
+// 빨간색 배경의 Container
+const redBox = Container({
+  decoration: new BoxDecoration({
+    color: '#FF5722'  // 16진수 색상 코드
+  }),
+  width: 100,
+  height: 100
+});
+```
+
+### 색상 지정 방법들
+
+```typescript
+// 16진수 색상 코드
+color: '#FF5722'
+color: '#f57c00'
+
+// RGB 값
+color: 'rgb(255, 87, 34)'
+color: 'rgba(255, 87, 34, 0.8)'  // 투명도 포함
+
+// HSL 값
+color: 'hsl(14, 100%, 57%)'
+color: 'hsla(14, 100%, 57%, 0.8)'
+
+// CSS 색상 이름
+color: 'red'
+color: 'blue'
+color: 'transparent'
+```
+
+### 💻 연습해보기
+
+1. 위 예제 코드를 `App.js`에 입력해보세요
+2. 색상을 다른 색으로 변경해보세요 (예: `'#2196F3'`, `'#4CAF50'`)
+3. 크기를 변경해보세요 (예: `width: 200, height: 150`)
+
+## 🚀 실습 2: EdgeInsets로 여백 설정
+
+Container의 안쪽 여백(padding)과 바깥쪽 여백(margin)을 설정해봅시다.
+
+```typescript
+import { Container, Text, BoxDecoration, EdgeInsets } from "@meursyphus/flitter";
+
+const paddedContainer = Container({
+  decoration: new BoxDecoration({
+    color: '#E3F2FD'  // 연한 파랑
+  }),
+  padding: EdgeInsets.all(20),  // 모든 방향에 20픽셀 여백
+  child: Text("안녕하세요!")
+});
+```
+
+### EdgeInsets 사용법 완전 가이드
+
+```typescript
+// 1. 모든 방향에 같은 여백
+EdgeInsets.all(20)
+
+// 2. 상하, 좌우 여백 따로 지정
+EdgeInsets.symmetric({ 
+  vertical: 16,    // 위아래 16픽셀
+  horizontal: 24   // 좌우 24픽셀
+})
+
+// 3. 각 방향 개별 지정
+EdgeInsets.only({ 
+  top: 10, 
+  right: 15, 
+  bottom: 10, 
+  left: 15 
+})
+
+// 4. 생성자를 직접 사용
+new EdgeInsets({ top: 8, right: 16, bottom: 8, left: 16 })
+
+// 5. 자주 사용하는 패턴들
+EdgeInsets.zero                    // 여백 없음
+EdgeInsets.fromLTRB(10, 20, 10, 5) // 왼쪽, 위, 오른쪽, 아래 순서
+```
+
+### padding vs margin 차이점
+
+```typescript
+// padding: Container 안쪽 여백 (자식과 Container 경계 사이)
+Container({
+  decoration: new BoxDecoration({ color: 'lightblue' }),
+  padding: EdgeInsets.all(20),  // 텍스트와 파란 박스 사이 간격
+  child: Text("패딩 예제")
+})
+
+// margin: Container 바깥쪽 여백 (Container와 주변 요소 사이)
+Container({
+  decoration: new BoxDecoration({ color: 'lightgreen' }),
+  margin: EdgeInsets.all(20),   // 초록 박스와 주변 요소 사이 간격
+  child: Text("마진 예제")
+})
+```
+
+### 💻 연습해보기
+
+1. padding 값을 바꿔보세요 (10, 30, 50 등)
+2. `EdgeInsets.symmetric`으로 상하/좌우 여백을 다르게 설정해보세요
+3. margin과 padding을 함께 사용해보세요
+
+## 🚀 실습 3: Border와 BorderRadius로 테두리 설정
+
+이제 테두리를 추가하고 모서리를 둥글게 만들어봅시다.
+
+```typescript
+import { 
+  Container, Text, BoxDecoration, EdgeInsets, 
+  Border, BorderSide, BorderRadius 
+} from "@meursyphus/flitter";
+
+const borderedContainer = Container({
+  decoration: new BoxDecoration({
+    color: '#FFF3E0',  // 연한 주황
+    border: Border.all({ color: '#FF9800', width: 2 }),  // 주황 테두리
+    borderRadius: BorderRadius.circular(12)  // 둥근 모서리
+  }),
+  padding: EdgeInsets.all(16),
+  child: Text("둥근 모서리 박스")
+});
+```
+
+### Border 설정 방법들
+
+```typescript
+// 1. 모든 방향에 같은 테두리
+Border.all({ 
+  color: '#FF9800', 
+  width: 2,
+  style: 'solid'  // 'solid', 'dotted', 'dashed', 'none'
+})
+
+// 2. 각 방향 개별 설정
+new Border({
+  top: new BorderSide({ color: '#F44336', width: 3 }),
+  right: new BorderSide({ color: '#4CAF50', width: 2 }),
+  bottom: new BorderSide({ color: '#2196F3', width: 3 }),
+  left: new BorderSide({ color: '#FF9800', width: 2 })
+})
+
+// 3. 일부 방향만 설정 (다른 방향은 자동으로 none)
+Border.symmetric({
+  vertical: new BorderSide({ color: '#9C27B0', width: 2 }),    // 위아래
+  horizontal: new BorderSide({ color: '#009688', width: 1 })   // 좌우
+})
+
+// 4. 특정 방향만 설정
+Border.only({
+  bottom: new BorderSide({ color: '#607D8B', width: 3 })  // 아래쪽만
+})
+```
+
+### BorderRadius 설정 방법들
+
+```typescript
+// 1. 모든 모서리 동일하게
+BorderRadius.circular(12)
+
+// 2. 각 모서리 개별 설정
+BorderRadius.only({
+  topLeft: 20,
+  topRight: 20,
+  bottomLeft: 0,
+  bottomRight: 0
+})
+
+// 3. 타원형 모서리
+BorderRadius.elliptical(20, 10)  // 가로 20, 세로 10
+
+// 4. 생성자를 직접 사용
+new BorderRadius({
+  topLeft: 15,
+  topRight: 10,
+  bottomRight: 15,
+  bottomLeft: 10
+})
+```
+
+### 💻 연습해보기
+
+1. `borderRadius` 값을 바꿔보세요 (5, 20, 30 등)
+2. 테두리 색상과 두께를 변경해보세요
+3. `BorderRadius.only`로 일부 모서리만 둥글게 만들어보세요
+4. `Border.only`로 특정 방향에만 테두리를 적용해보세요
+
+## 🚀 실습 4: BoxShadow로 그림자 효과
+
+박스에 그림자를 추가해서 입체감을 만들어봅시다.
+
+```typescript
+import { Container, Text, BoxDecoration, BoxShadow, EdgeInsets } from "@meursyphus/flitter";
+
+const shadowContainer = Container({
+  decoration: new BoxDecoration({
+    color: '#FFFFFF',
+    borderRadius: BorderRadius.circular(8),
+    boxShadow: [
+      new BoxShadow({
+        color: 'rgba(0, 0, 0, 0.1)',  // 그림자 색상 (투명도 포함)
+        offset: { dx: 0, dy: 2 },     // 그림자 위치 (x, y)
+        blurRadius: 8,                // 흐림 정도
+        spreadRadius: 0               // 확산 정도
+      })
+    ]
+  }),
+  padding: EdgeInsets.all(16),
+  margin: EdgeInsets.all(16),
+  child: Text("그림자가 있는 카드")
+});
+```
+
+### BoxShadow 속성 상세 설명
+
+```typescript
+new BoxShadow({
+  // 그림자 색상 (투명도 설정 필수)
+  color: 'rgba(0, 0, 0, 0.2)',     // 검은색 20% 투명도
+  color: 'rgba(255, 0, 0, 0.3)',   // 빨간색 30% 투명도
+  
+  // 그림자 위치 조정
+  offset: { dx: 2, dy: 4 },        // 오른쪽 2px, 아래쪽 4px
+  offset: { dx: -2, dy: -4 },      // 왼쪽 2px, 위쪽 4px
+  
+  // 흐림 정도 (값이 클수록 더 흐림)
+  blurRadius: 10,                  // 10px 흐림
+  
+  // 그림자 크기 (양수: 확장, 음수: 축소)
+  spreadRadius: 2,                 // 2px 확장
+  
+  // 그림자 방향 (기본: 바깥쪽, true: 안쪽)
+  inset: false                     // false: 바깥 그림자, true: 안쪽 그림자
+})
+```
+
+### 다양한 그림자 스타일 예제
+
+```typescript
+// 1. 부드러운 그림자 (Material Design 스타일)
+boxShadow: [
+  new BoxShadow({
+    color: 'rgba(0, 0, 0, 0.1)',
+    offset: { dx: 0, dy: 1 },
+    blurRadius: 3,
+    spreadRadius: 0
+  }),
+  new BoxShadow({
+    color: 'rgba(0, 0, 0, 0.08)',
+    offset: { dx: 0, dy: 1 },
+    blurRadius: 2,
+    spreadRadius: 0
+  })
+]
+
+// 2. 강한 그림자
+boxShadow: [
+  new BoxShadow({
+    color: 'rgba(0, 0, 0, 0.3)',
+    offset: { dx: 0, dy: 8 },
+    blurRadius: 16,
+    spreadRadius: 0
+  })
+]
+
+// 3. 안쪽 그림자 (inset)
+boxShadow: [
+  new BoxShadow({
+    color: 'rgba(0, 0, 0, 0.2)',
+    offset: { dx: 0, dy: 2 },
+    blurRadius: 4,
+    spreadRadius: 0,
+    inset: true
+  })
+]
+
+// 4. 색상 그림자
+boxShadow: [
+  new BoxShadow({
+    color: 'rgba(33, 150, 243, 0.4)',  // 파란색 그림자
+    offset: { dx: 0, dy: 4 },
+    blurRadius: 12,
+    spreadRadius: 0
+  })
+]
+```
+
+### 💻 연습해보기
+
+1. `offset` 값을 변경해서 그림자 방향을 바꿔보세요
+2. `blurRadius`를 조정해서 그림자 흐림 정도를 변경해보세요
+3. 여러 개의 BoxShadow를 조합해서 복합 그림자를 만들어보세요
+4. `inset: true`로 안쪽 그림자를 만들어보세요
+
+## 🚀 실습 5: Gradient로 그라데이션 배경
+
+단색 배경 대신 그라데이션을 적용해봅시다.
+
+```typescript
+import { Container, Text, BoxDecoration, LinearGradient, RadialGradient } from "@meursyphus/flitter";
+
+// 선형 그라데이션
+const linearGradientContainer = Container({
+  decoration: new BoxDecoration({
+    gradient: new LinearGradient({
+      begin: 'topLeft',      // 시작점
+      end: 'bottomRight',    // 끝점
+      colors: ['#FF5722', '#FFC107']  // 색상 배열
+    }),
+    borderRadius: BorderRadius.circular(12)
+  }),
+  padding: EdgeInsets.all(20),
+  child: Text("선형 그라데이션", {
+    style: new TextStyle({ color: 'white', fontWeight: 'bold' })
+  })
+});
+
+// 원형 그라데이션
+const radialGradientContainer = Container({
+  decoration: new BoxDecoration({
+    gradient: new RadialGradient({
+      center: 'center',      // 중심점
+      radius: 0.8,           // 반지름 (0.0 ~ 1.0)
+      colors: ['#2196F3', '#1976D2']
+    }),
+    borderRadius: BorderRadius.circular(12)
+  }),
+  padding: EdgeInsets.all(20),
+  child: Text("원형 그라데이션", {
+    style: new TextStyle({ color: 'white', fontWeight: 'bold' })
+  })
+});
+```
+
+### LinearGradient 설정 방법
+
+```typescript
+new LinearGradient({
+  // 방향 설정 (문자열)
+  begin: 'topLeft',     // 시작점
+  end: 'bottomRight',   // 끝점
+  
+  // 또는 좌표로 설정 (0.0 ~ 1.0)
+  begin: { x: 0.0, y: 0.0 },    // 왼쪽 위
+  end: { x: 1.0, y: 1.0 },      // 오른쪽 아래
+  
+  // 색상 배열 (최소 2개)
+  colors: [
+    '#FF5722',    // 시작 색상
+    '#FFC107',    // 중간 색상 (선택사항)
+    '#4CAF50'     // 끝 색상
+  ],
+  
+  // 색상 위치 지정 (선택사항, 0.0 ~ 1.0)
+  stops: [0.0, 0.5, 1.0]  // 각 색상의 위치
+})
+```
+
+### 그라데이션 방향 옵션
+
+```typescript
+// 문자열로 지정
+begin: 'topLeft',     end: 'bottomRight'   // 대각선
+begin: 'topCenter',   end: 'bottomCenter'  // 세로
+begin: 'centerLeft',  end: 'centerRight'   // 가로
+begin: 'topRight',    end: 'bottomLeft'    // 반대 대각선
+
+// 좌표로 지정 (더 정밀한 제어)
+begin: { x: 0.0, y: 0.0 }  // 왼쪽 위 (0,0)
+end: { x: 1.0, y: 0.0 }    // 오른쪽 위 (1,0)
+end: { x: 0.0, y: 1.0 }    // 왼쪽 아래 (0,1)
+end: { x: 1.0, y: 1.0 }    // 오른쪽 아래 (1,1)
+```
+
+### RadialGradient 설정 방법
+
+```typescript
+new RadialGradient({
+  // 중심점 위치
+  center: 'center',           // 'center', 'topLeft', 'topRight', 'bottomLeft', 'bottomRight'
+  center: { x: 0.3, y: 0.7 }, // 또는 좌표로 지정
+  
+  // 반지름 (0.0 ~ 1.0)
+  radius: 0.8,
+  
+  // 색상 배열
+  colors: ['#E91E63', '#9C27B0'],
+  
+  // 색상 위치 (선택사항)
+  stops: [0.0, 1.0]
+})
+```
+
+### 💻 연습해보기
+
+1. LinearGradient의 방향을 바꿔보세요
+2. 3개 이상의 색상으로 그라데이션을 만들어보세요
+3. RadialGradient의 중심점과 반지름을 조정해보세요
+4. stops를 사용해서 색상 위치를 조정해보세요
+
+## 🚀 실습 6: 정렬과 크기 제약
+
+Container 안에서 자식 위젯의 정렬과 크기 제약을 설정해봅시다.
+
+```typescript
+import { Container, Text, BoxDecoration, BoxConstraints, Alignment } from "@meursyphus/flitter";
+
+const alignedContainer = Container({
+  width: 200,
+  height: 100,
+  decoration: new BoxDecoration({
+    color: '#F5F5F5',
+    border: Border.all({ color: '#BDBDBD', width: 1 })
+  }),
+  alignment: Alignment.bottomRight,  // 오른쪽 아래 정렬
+  child: Text("정렬된 텍스트")
+});
+
+const constrainedContainer = Container({
+  constraints: new BoxConstraints({
+    minWidth: 100,
+    maxWidth: 300,
+    minHeight: 50,
+    maxHeight: 150
+  }),
+  decoration: new BoxDecoration({ color: '#E8F5E8' }),
+  child: Text("크기 제약이 있는 컨테이너")
+});
+```
+
+### alignment 정렬 옵션
+
+```typescript
+// Alignment 상수로 지정
+alignment: Alignment.topLeft        // 왼쪽 위
+alignment: Alignment.topCenter      // 위쪽 중앙
+alignment: Alignment.topRight       // 오른쪽 위
+alignment: Alignment.centerLeft     // 왼쪽 중앙
+alignment: Alignment.center         // 정중앙
+alignment: Alignment.centerRight    // 오른쪽 중앙
+alignment: Alignment.bottomLeft     // 왼쪽 아래
+alignment: Alignment.bottomCenter   // 아래쪽 중앙
+alignment: Alignment.bottomRight    // 오른쪽 아래
+
+// 사용자 정의 Alignment 생성 (-1.0 ~ 1.0)
+alignment: new Alignment({ x: -1.0, y: -1.0 })  // 왼쪽 위
+alignment: new Alignment({ x: 0.0, y: 0.0 })    // 정중앙
+alignment: new Alignment({ x: 1.0, y: 1.0 })    // 오른쪽 아래
+alignment: new Alignment({ x: 0.5, y: -0.5 })   // 사용자 정의 위치
+```
+
+### BoxConstraints 크기 제약
+
+```typescript
+new BoxConstraints({
+  // 최소 크기
+  minWidth: 100,     // 최소 너비
+  minHeight: 50,     // 최소 높이
+  
+  // 최대 크기
+  maxWidth: 300,     // 최대 너비
+  maxHeight: 200,    // 최대 높이
+})
+
+// 자주 사용하는 패턴들
+BoxConstraints.tight({ width: 100, height: 100 })  // 고정 크기
+BoxConstraints.loose({ width: 200, height: 150 })  // 최대 크기만 제한
+BoxConstraints.expand()                             // 가능한 모든 공간 차지
+```
+
+### 💻 연습해보기
+
+1. 다양한 alignment 값을 시도해보세요
+2. BoxConstraints로 크기 제약을 설정해보세요
+3. 좌표 기반 alignment를 사용해보세요
+
+## 🎨 실습 7: 완전한 카드 컴포넌트 만들기
+
+지금까지 배운 모든 내용을 조합해서 실제 사용할 수 있는 고급 카드를 만들어봅시다.
+
+```typescript
+import { 
+  Container, Column, Row, Text, BoxDecoration, EdgeInsets, 
+  BorderRadius, BoxShadow, TextStyle, LinearGradient
+} from "@meursyphus/flitter";
+
+const profileCard = Container({
+  margin: EdgeInsets.all(16),
+  decoration: new BoxDecoration({
+    gradient: new LinearGradient({
+      begin: 'topLeft',
+      end: 'bottomRight',
+      colors: ['#667eea', '#764ba2']
+    }),
+    borderRadius: BorderRadius.circular(16),
+    boxShadow: [
+      new BoxShadow({
+        color: 'rgba(0, 0, 0, 0.1)',
+        offset: { dx: 0, dy: 8 },
+        blurRadius: 24,
+        spreadRadius: 0
+      })
+    ]
+  }),
+  child: Column({
+    crossAxisAlignment: 'start',
+    children: [
+      // 헤더 영역
+      Container({
+        padding: EdgeInsets.all(20),
+        child: Row({
+          mainAxisAlignment: 'spaceBetween',
+          children: [
+            Column({
+              crossAxisAlignment: 'start',
+              children: [
+                Text("김개발", {
+                  style: new TextStyle({
+                    fontSize: 24,
+                    fontWeight: 'bold',
+                    color: 'white'
+                  })
+                }),
+                Text("Frontend Developer", {
+                  style: new TextStyle({
+                    fontSize: 16,
+                    color: 'rgba(255, 255, 255, 0.8)'
+                  })
+                })
+              ]
+            }),
+            Container({
+              width: 60,
+              height: 60,
+              decoration: new BoxDecoration({
+                color: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all({ color: 'white', width: 2 })
+              }),
+              alignment: Alignment.center,
+              child: Text("김", {
+                style: new TextStyle({
+                  fontSize: 24,
+                  fontWeight: 'bold',
+                  color: 'white'
+                })
+              })
+            })
+          ]
+        })
+      }),
+      
+      // 내용 영역
+      Container({
+        padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 16 }),
+        decoration: new BoxDecoration({
+          color: 'white',
+          borderRadius: BorderRadius.only({
+            bottomLeft: 16,
+            bottomRight: 16
+          })
+        }),
+        child: Column({
+          crossAxisAlignment: 'start',
+          children: [
+            Text("경력", {
+              style: new TextStyle({
+                fontSize: 14,
+                fontWeight: 'bold',
+                color: '#666'
+              })
+            }),
+            Container({ height: 8 }),  // 간격
+            Text("React, TypeScript, Node.js를 활용한 웹 개발 3년 경험", {
+              style: new TextStyle({
+                fontSize: 16,
+                color: '#333',
+                height: 1.5
+              })
+            }),
+            Container({ height: 16 }),
+            Row({
+              mainAxisAlignment: 'spaceBetween',
+              children: [
+                Text("Seoul, Korea", {
+                  style: new TextStyle({
+                    fontSize: 14,
+                    color: '#999'
+                  })
+                }),
+                Container({
+                  padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 6 }),
+                  decoration: new BoxDecoration({
+                    color: '#E8F5E8',
+                    borderRadius: BorderRadius.circular(12)
+                  }),
+                  child: Text("구직중", {
+                    style: new TextStyle({
+                      fontSize: 12,
+                      fontWeight: 'bold',
+                      color: '#4CAF50'
+                    })
+                  })
+                })
+              ]
+            })
+          ]
+        })
+      })
+    ]
+  })
+});
+```
+
+### 💻 연습해보기
+
+1. 그라데이션 색상을 다른 조합으로 변경해보세요
+2. 프로필 사진 영역의 크기와 스타일을 조정해보세요
+3. 상태 라벨의 색상과 텍스트를 변경해보세요
+4. 추가 정보 섹션을 만들어보세요
+
+## ⚠️ 흔한 실수와 해결법
+
+### 1. 색상 값 실수
+```typescript
+// ❌ 잘못된 방법
+color: 0xFF1F2937,    // 숫자 형식 금지!
+color: 1F2937,        // # 또는 따옴표 없음
+
+// ✅ 올바른 방법  
+color: '#1F2937',     // HEX 문자열
+color: 'rgba(31, 41, 55, 0.8)',  // RGBA 문자열
+color: 'blue',        // CSS 색상명
+```
+
+### 2. Border 설정 실수
+```typescript
+// ❌ 잘못된 방법 - 일부 방향만 설정
+border: new Border({ 
+  top: new BorderSide({ color: '#000', width: 1 })  // 다른 방향 누락!
+})
+
+// ✅ 올바른 방법 - 모든 방향 명시 또는 all() 사용
+border: Border.all({ color: '#000', width: 1 })
+
+// 또는 모든 방향 명시
+border: new Border({
+  top: new BorderSide({ color: '#000', width: 1 }),
+  right: new BorderSide({ color: '#000', width: 1 }),
+  bottom: new BorderSide({ color: '#000', width: 1 }),
+  left: new BorderSide({ color: '#000', width: 1 })
+})
+```
+
+### 3. EdgeInsets 생성 실수
+```typescript
+// ❌ 잘못된 방법 - 임포트 누락
+padding: EdgeInsets.all(20)  // EdgeInsets 임포트 안함
+
+// ❌ 잘못된 방법 - new 키워드 없음
+padding: EdgeInsets({ all: 20 })
+
+// ✅ 올바른 방법
+import { EdgeInsets } from "@meursyphus/flitter";
+padding: EdgeInsets.all(20)
+
+// 또는 직접 생성
+padding: new EdgeInsets({ top: 20, right: 20, bottom: 20, left: 20 })
+```
+
+### 4. BoxShadow 색상 실수
+```typescript
+// ❌ 잘못된 방법 - 투명도 없는 색상
+color: '#000000'      // 그림자가 너무 진함
+
+// ✅ 올바른 방법 - 투명도 포함
+color: 'rgba(0, 0, 0, 0.1)'   // 적절한 투명도
+color: 'rgba(0, 0, 0, 0.2)'   // 조금 더 진한 그림자
+```
+
+### 5. 크기 설정 실수
+```typescript
+// ❌ 잘못된 방법 - 문자열로 크기 지정
+width: '200px',       // 문자열 금지
+height: '100px'
+
+// ✅ 올바른 방법 - 숫자로 지정
+width: 200,           // 픽셀 단위 숫자
+height: 100
+```
+
+## 🏆 도전 과제
+
+다음 요구사항을 만족하는 고급 제품 카드를 만들어보세요:
+
+### 카드 디자인 요구사항
+
+1. **전체 구조**:
+   - 흰색 배경에 미묘한 그림자
+   - 둥근 모서리 (radius: 12)
+   - 적절한 여백과 패딩
+
+2. **이미지 영역** (상단):
+   - 그라데이션 배경 (파란색 계열)
+   - 제품 이름을 중앙에 표시
+   - 모서리만 둥글게 (위쪽만)
+
+3. **정보 영역** (하단):
+   - 제품명 (큰 굵은 글씨)
+   - 가격 (빨간색, 굵은 글씨)
+   - 설명 (2줄, 회색 글씨)
+   - 재고 상태 라벨 (초록색 배경)
+
+4. **추가 요소**:
+   - 할인 배지 (오른쪽 위 모서리)
+   - 평점 표시 (별표와 숫자)
+
+### 힌트
+
+```typescript
+// 참고할 수 있는 색상 팔레트
+const colors = {
+  primary: '#2196F3',
+  secondary: '#FFC107', 
+  success: '#4CAF50',
+  warning: '#FF9800',
+  error: '#F44336',
+  text: '#212121',
+  textSecondary: '#757575',
+  background: '#FFFFFF',
+  shadow: 'rgba(0, 0, 0, 0.1)'
+};
+```
+
+## 📖 성능 최적화 팁
+
+### Container 사용 시 주의사항
+
+1. **불필요한 중첩 피하기**:
+```typescript
+// ❌ 불필요한 중첩
+Container({
+  child: Container({
+    child: Text("Hello")
+  })
+})
+
+// ✅ 필요한 경우만 사용
+Container({
+  decoration: new BoxDecoration({ color: 'blue' }),
+  child: Text("Hello")
+})
+```
+
+2. **복잡한 decoration 최소화**:
+```typescript
+// 성능에 영향을 줄 수 있는 요소들
+boxShadow: [/* 많은 그림자 */],  // 그림자 개수 최소화
+gradient: /* 복잡한 그라데이션 */,  // 단순한 그라데이션 선호
+borderRadius: /* 너무 큰 값 */     // 적절한 크기 사용
+```
+
+## 📏 Container의 크기 결정 원리
+
+### Container 크기가 결정되는 순서
+
+1. **명시적 크기**: width, height가 설정된 경우
+2. **제약 조건**: constraints가 설정된 경우  
+3. **자식 크기**: child의 크기에 맞춤
+4. **부모 제약**: 부모가 허용하는 최대 크기
+
+```typescript
+// 1. 명시적 크기 (최우선)
+Container({
+  width: 200,
+  height: 100,
+  child: Text("고정 크기")
+})
+
+// 2. 제약 조건 적용
+Container({
+  constraints: BoxConstraints.tight({ width: 150, height: 80 }),
+  child: Text("제약된 크기")
+})
+
+// 3. 자식 크기에 맞춤 (기본)
+Container({
+  padding: EdgeInsets.all(16),
+  decoration: new BoxDecoration({ color: 'lightblue' }),
+  child: Text("자식 크기 + 패딩")
+})
+
+// 4. 사용 가능한 공간 모두 차지 (자식 없을 때)
+Container({
+  color: 'red'  // 자식이 없으면 부모 크기만큼 확장
+})
+```
+
+## 🎨 다음 단계
+
+Container의 모든 기능을 익혔다면 이제 텍스트 스타일링을 배워봅시다!
+
+Container를 마스터했으니 다음 튜토리얼에서는 Text 위젯의 모든 기능을 배워보겠습니다. Text 위젯으로 다양한 텍스트 스타일과 정렬을 만들 수 있습니다.
+
+## 💡 핵심 정리
+
+1. **기본 사용법**: `Container({ child: ... })`로 박스 생성
+2. **장식**: `BoxDecoration`으로 색상, 테두리, 그림자, 그라데이션 적용
+3. **여백**: `EdgeInsets`로 padding/margin 설정
+4. **정렬**: `alignment`로 자식 위치 조정
+5. **제약**: `BoxConstraints`로 크기 범위 제한
+6. **성능**: 불필요한 중첩과 복잡한 효과 피하기
+
+이제 Container의 모든 기능을 사용해서 아름다운 UI를 만들 수 있습니다!

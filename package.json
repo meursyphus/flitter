@@ -23,6 +23,7 @@
   },
   "scripts": {
     "flitter:build": "npm run build -workspace=@meursyphus/flitter",
+    "docs": "npm run docs:start",
     "docs:start": "npm run start --workspace=@meursyphus/flitter-docs",
     "docs:build": "npm run build --workspace=@meursyphus/flitter-docs",
     "story:start": "npm run storybook --workspace=@meursyphus/flitter-story",

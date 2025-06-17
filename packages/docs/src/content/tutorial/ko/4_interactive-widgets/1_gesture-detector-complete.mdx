@@ -1,0 +1,927 @@
+---
+title: "GestureDetector 완전 정복"
+description: "클릭, 더블클릭, 롱프레스, 드래그, 호버 등 모든 제스처 이벤트를 다뤄보고 완전한 상호작용 위젯을 만들어보세요"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import { Container, Text, GestureDetector, StatefulWidget, State, Column, EdgeInsets, BoxDecoration, Row, Center, SizedBox, Border, BorderRadius, TextStyle, MainAxisAlignment, CrossAxisAlignment } from "@meursyphus/flitter";
+    
+    // TODO: 다양한 제스처를 감지하는 상호작용 위젯을 만들어보세요
+    class InteractiveDemo extends StatefulWidget {
+      createState() {
+        return new InteractiveDemoState();
+      }
+    }
+    
+    class InteractiveDemoState extends State {
+      // TODO: 상태 변수들을 추가하세요
+      clickCount = 0;
+      
+      build(context) {
+        return Container({
+          width: 400,
+          height: 300,
+          padding: EdgeInsets.all(20),
+          child: Column({
+            children: [
+              Text("GestureDetector 실습을 시작해보세요!"),
+              Container({ height: 20 }),
+              // TODO: GestureDetector를 사용한 상호작용 위젯을 만들어보세요
+              Container({
+                width: 200,
+                height: 100,
+                decoration: new BoxDecoration({
+                  color: '#3B82F6',
+                  borderRadius: BorderRadius.circular(8)
+                }),
+                child: Center({
+                  child: Text("여기에 상호작용을 추가하세요")
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+    
+    function createWidget() {
+      return new InteractiveDemo();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import { Container, Text, GestureDetector, StatefulWidget, State, Column, EdgeInsets, BoxDecoration, Row, Center, SizedBox, Border, BorderRadius, TextStyle, MainAxisAlignment, CrossAxisAlignment } from "@meursyphus/flitter";
+    
+    class InteractiveDemo extends StatefulWidget {
+      createState() {
+        return new InteractiveDemoState();
+      }
+    }
+    
+    class InteractiveDemoState extends State {
+      clickCount = 0;
+      doubleClickCount = 0;
+      hoverCount = 0;
+      dragCount = 0;
+      isHovered = false;
+      isDragging = false;
+      lastEventType = "없음";
+      
+      handleClick() {
+        this.setState(() => {
+          this.clickCount++;
+          this.lastEventType = "클릭";
+        });
+      }
+      
+      handleDoubleClick() {
+        this.setState(() => {
+          this.doubleClickCount++;
+          this.lastEventType = "더블클릭";
+        });
+      }
+      
+      handleMouseEnter() {
+        this.setState(() => {
+          this.isHovered = true;
+          this.hoverCount++;
+          this.lastEventType = "호버 시작";
+        });
+      }
+      
+      handleMouseLeave() {
+        this.setState(() => {
+          this.isHovered = false;
+          this.lastEventType = "호버 종료";
+        });
+      }
+      
+      handleDragStart() {
+        this.setState(() => {
+          this.isDragging = true;
+          this.dragCount++;
+          this.lastEventType = "드래그 시작";
+        });
+      }
+      
+      handleDragEnd() {
+        this.setState(() => {
+          this.isDragging = false;
+          this.lastEventType = "드래그 종료";
+        });
+      }
+      
+      build(context) {
+        return Container({
+          padding: EdgeInsets.all(20),
+          child: Column({
+            children: [
+              Text("🎯 GestureDetector 완전 정복", {
+                style: new TextStyle({ fontSize: 20, fontWeight: 'bold' })
+              }),
+              Container({ height: 20 }),
+              
+              GestureDetector({
+                onClick: () => this.handleClick(),
+                onDoubleClick: () => this.handleDoubleClick(),
+                onMouseEnter: () => this.handleMouseEnter(),
+                onMouseLeave: () => this.handleMouseLeave(),
+                onDragStart: () => this.handleDragStart(),
+                onDragEnd: () => this.handleDragEnd(),
+                cursor: 'pointer',
+                child: Container({
+                  width: 250,
+                  height: 120,
+                  decoration: new BoxDecoration({
+                    color: this.isDragging ? '#DC2626' : (this.isHovered ? '#7C3AED' : '#3B82F6'),
+                    borderRadius: BorderRadius.circular(12),
+                    border: this.isHovered ? Border.all({ color: '#FFFFFF', width: 2 }) : null
+                  }),
+                  child: Column({
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("🖱️ 상호작용 영역", {
+                        style: new TextStyle({ color: '#FFFFFF', fontSize: 16, fontWeight: 'bold' })
+                      }),
+                      SizedBox({ height: 5 }),
+                      Text("클릭, 더블클릭, 호버, 드래그해보세요!", {
+                        style: new TextStyle({ color: '#FFFFFF', fontSize: 12 })
+                      })
+                    ]
+                  })
+                })
+              }),
+              
+              SizedBox({ height: 30 }),
+              
+              Container({
+                padding: EdgeInsets.all(15),
+                decoration: new BoxDecoration({
+                  color: '#F3F4F6',
+                  borderRadius: BorderRadius.circular(8)
+                }),
+                child: Column({
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("📊 이벤트 통계", {
+                      style: new TextStyle({ fontSize: 16, fontWeight: 'bold' })
+                    }),
+                    SizedBox({ height: 10 }),
+                    Text(`👆 클릭 횟수: ${this.clickCount}회`),
+                    Text(`👆👆 더블클릭 횟수: ${this.doubleClickCount}회`),
+                    Text(`🖱️ 호버 횟수: ${this.hoverCount}회`),
+                    Text(`🔄 드래그 횟수: ${this.dragCount}회`),
+                    SizedBox({ height: 5 }),
+                    Text(`🎯 현재 상태: ${this.isHovered ? '호버 중' : (this.isDragging ? '드래그 중' : '대기 중')}`),
+                    Text(`📋 마지막 이벤트: ${this.lastEventType}`)
+                  ]
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+    
+    function createWidget() {
+      return new InteractiveDemo();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+---
+
+# GestureDetector 완전 정복
+
+이 튜토리얼에서는 Flitter의 핵심 상호작용 위젯인 **GestureDetector**의 모든 기능을 완벽하게 익혀보겠습니다. 클릭부터 드래그까지, 모든 사용자 제스처를 처리하는 방법을 단계별로 배워봅시다.
+
+## 🎯 학습 목표
+
+이 튜토리얼을 완료하면 다음을 할 수 있습니다:
+
+- [ ] **기본 클릭 이벤트** 처리하고 화면 업데이트하기
+- [ ] **더블클릭과 마우스 호버** 이벤트로 고급 상호작용 구현하기
+- [ ] **드래그 제스처**를 활용한 동적 인터페이스 만들기
+- [ ] **여러 제스처를 조합**해서 복잡한 상호작용 시스템 구축하기
+- [ ] **커서 스타일과 시각적 피드백**으로 사용자 경험 향상하기
+
+## 📋 사전 요구사항
+
+- StatefulWidget과 setState() 사용법 이해
+- Container와 기본 스타일링 지식
+- 클래스 기반 상태 관리 패턴 숙지
+
+## 🎪 GestureDetector란 무엇인가?
+
+**GestureDetector**는 사용자의 모든 제스처(터치, 클릭, 드래그, 호버 등)를 감지하고 이에 반응할 수 있게 해주는 Flitter의 핵심 위젯입니다.
+
+### 🔄 중요한 개념
+
+Flitter에서는 Container나 Text 위젯에 직접 이벤트 핸들러를 추가할 수 없습니다. **반드시 GestureDetector로 감싸야** 상호작용이 가능합니다.
+
+```typescript
+// ❌ 잘못된 방법 - 작동하지 않음!
+Container({ 
+  onClick: () => {}, // 에러!
+  child: Text("클릭") 
+})
+
+// ✅ 올바른 방법
+GestureDetector({
+  onClick: () => {},
+  child: Container({
+    child: Text("클릭")
+  })
+})
+```
+
+## 1. 기본 클릭 이벤트 마스터하기
+
+### 1.1 onClick 이벤트 기초
+
+가장 기본적인 클릭 이벤트부터 시작해봅시다:
+
+```typescript
+class ClickCounter extends StatefulWidget {
+  createState() {
+    return new ClickCounterState();
+  }
+}
+
+class ClickCounterState extends State {
+  count = 0;
+  
+  build(context) {
+    return GestureDetector({
+      onClick: () => {
+        this.setState(() => {
+          this.count++;
+        });
+      },
+      child: Container({
+        width: 150,
+        height: 80,
+        decoration: new BoxDecoration({
+          color: '#3B82F6',
+          borderRadius: 8
+        }),
+        child: Text(`클릭 횟수: ${this.count}`, {
+          style: { color: '#FFFFFF', fontSize: 16 }
+        })
+      })
+    });
+  }
+}
+```
+
+### 1.2 마우스 이벤트 정보 활용하기
+
+onClick 이벤트는 MouseEvent 객체를 제공합니다:
+
+```typescript
+GestureDetector({
+  onClick: (event) => {
+    console.log(`클릭 위치: (${event.clientX}, ${event.clientY})`);
+    console.log(`사용된 버튼: ${event.button}`); // 0: 왼쪽, 1: 가운데, 2: 오른쪽
+    console.log(`Ctrl 키 눌림: ${event.ctrlKey}`);
+  },
+  child: yourWidget
+})
+```
+
+### 1.3 실습: 향상된 클릭 카운터
+
+위 코드 영역에서 다음을 구현해보세요:
+
+1. `clickCount` 상태 변수 추가
+2. 클릭할 때마다 카운트 증가하는 GestureDetector 구현
+3. 클릭 횟수를 실시간으로 보여주는 UI 구성
+
+## 2. 더블클릭과 고급 클릭 이벤트
+
+### 2.1 더블클릭 이벤트
+
+더블클릭은 onClick과 별도로 처리됩니다:
+
+```typescript
+GestureDetector({
+  onClick: () => {
+    console.log("한 번 클릭!");
+  },
+  onDoubleClick: () => {
+    console.log("더블 클릭!");
+  },
+  child: yourWidget
+})
+```
+
+### 2.2 마우스 버튼별 처리
+
+```typescript
+GestureDetector({
+  onMouseDown: (event) => {
+    switch(event.button) {
+      case 0: console.log("왼쪽 버튼 눌림"); break;
+      case 1: console.log("가운데 버튼 눌림"); break;
+      case 2: console.log("오른쪽 버튼 눌림"); break;
+    }
+  },
+  onMouseUp: (event) => {
+    console.log("마우스 버튼 해제");
+  },
+  child: yourWidget
+})
+```
+
+### 2.3 실습: 다양한 클릭 처리기
+
+1. `doubleClickCount` 상태 변수 추가
+2. 더블클릭 이벤트 핸들러 구현
+3. 클릭과 더블클릭을 구분해서 카운트하기
+
+## 3. 마우스 호버 이벤트와 시각적 피드백
+
+### 3.1 호버 이벤트 기초
+
+웹에서 중요한 호버 효과를 구현해봅시다:
+
+```typescript
+class HoverButton extends StatefulWidget {
+  createState() {
+    return new HoverButtonState();
+  }
+}
+
+class HoverButtonState extends State {
+  isHovered = false;
+  
+  build(context) {
+    return GestureDetector({
+      onMouseEnter: () => {
+        this.setState(() => {
+          this.isHovered = true;
+        });
+      },
+      onMouseLeave: () => {
+        this.setState(() => {
+          this.isHovered = false;
+        });
+      },
+      child: Container({
+        decoration: new BoxDecoration({
+          color: this.isHovered ? '#4F46E5' : '#3B82F6',
+          borderRadius: 8
+        }),
+        child: Text("호버해보세요!", {
+          style: { color: '#FFFFFF' }
+        })
+      })
+    });
+  }
+}
+```
+
+### 3.2 커서 스타일 변경하기
+
+GestureDetector는 다양한 커서 스타일을 지원합니다:
+
+```typescript
+GestureDetector({
+  cursor: 'pointer', // 기본 포인터
+  // 또는 다른 스타일들:
+  // 'grab', 'grabbing', 'move', 'not-allowed', 'help' 등
+  child: yourWidget
+})
+```
+
+### 3.3 사용 가능한 커서 스타일들
+
+```typescript
+// 기본 커서들
+'default' | 'pointer' | 'move' | 'text' | 'wait' | 'help'
+
+// 크기 조절 커서들  
+'e-resize' | 'ne-resize' | 'nw-resize' | 'n-resize' 
+'se-resize' | 'sw-resize' | 's-resize' | 'w-resize'
+
+// 특수 커서들
+'grab' | 'grabbing' | 'crosshair' | 'not-allowed'
+```
+
+### 3.4 실습: 호버 반응 버튼
+
+1. `isHovered`와 `hoverCount` 상태 변수 추가
+2. 호버 시 색상과 커서가 변하는 버튼 만들기
+3. 호버 횟수를 카운트하고 표시하기
+
+## 4. 드래그 제스처 완전 정복
+
+### 4.1 기본 드래그 이벤트
+
+드래그는 가장 복잡하지만 강력한 상호작용입니다:
+
+```typescript
+class DraggableBox extends StatefulWidget {
+  createState() {
+    return new DraggableBoxState();
+  }
+}
+
+class DraggableBoxState extends State {
+  isDragging = false;
+  dragStartPosition = { x: 0, y: 0 };
+  currentPosition = { x: 0, y: 0 };
+  
+  build(context) {
+    return GestureDetector({
+      onDragStart: (event) => {
+        this.setState(() => {
+          this.isDragging = true;
+          this.dragStartPosition = { 
+            x: event.clientX, 
+            y: event.clientY 
+          };
+        });
+      },
+      onDragMove: (event) => {
+        this.setState(() => {
+          this.currentPosition = {
+            x: event.clientX - this.dragStartPosition.x,
+            y: event.clientY - this.dragStartPosition.y
+          };
+        });
+      },
+      onDragEnd: () => {
+        this.setState(() => {
+          this.isDragging = false;
+        });
+      },
+      child: Container({
+        decoration: new BoxDecoration({
+          color: this.isDragging ? '#EF4444' : '#3B82F6'
+        }),
+        child: Text("드래그해보세요!")
+      })
+    });
+  }
+}
+```
+
+### 4.2 드래그 제약 조건 추가하기
+
+드래그 영역을 제한하거나 특정 방향으로만 움직이게 할 수 있습니다:
+
+```typescript
+// 수평 방향으로만 드래그
+onDragMove: (event) => {
+  this.setState(() => {
+    this.position = {
+      x: Math.max(0, Math.min(maxWidth, event.clientX - this.startX)),
+      y: this.position.y // Y 좌표는 고정
+    };
+  });
+}
+
+// 특정 영역 내에서만 드래그
+onDragMove: (event) => {
+  const newX = event.clientX - this.startX;
+  const newY = event.clientY - this.startY;
+  
+  this.setState(() => {
+    this.position = {
+      x: Math.max(0, Math.min(maxX, newX)),
+      y: Math.max(0, Math.min(maxY, newY))
+    };
+  });
+}
+```
+
+### 4.3 실습: 드래그 추적기
+
+1. `isDragging`, `dragCount`, `currentPosition` 상태 변수 추가
+2. 드래그 중일 때 색상이 변하는 위젯 만들기
+3. 드래그 위치와 횟수를 실시간으로 표시하기
+
+## 5. 종합 실습: 완전한 상호작용 위젯
+
+이제 모든 제스처를 조합해서 완전한 상호작용 위젯을 만들어봅시다!
+
+### 5.1 완성해야 할 기능들
+
+**상태 변수들:**
+```typescript
+class InteractiveDemoState extends State {
+  // 각 제스처별 카운터
+  clickCount = 0;
+  doubleClickCount = 0;
+  hoverCount = 0;
+  dragCount = 0;
+  
+  // 현재 상태
+  isHovered = false;
+  isDragging = false;
+  
+  // 추가 정보
+  lastEventType = "없음";
+  lastEventTime = null;
+}
+```
+
+**이벤트 핸들러들:**
+```typescript
+handleClick() {
+  this.setState(() => {
+    this.clickCount++;
+    this.lastEventType = "클릭";
+    this.lastEventTime = new Date().toLocaleTimeString();
+  });
+}
+
+handleDoubleClick() {
+  this.setState(() => {
+    this.doubleClickCount++;
+    this.lastEventType = "더블클릭";
+    this.lastEventTime = new Date().toLocaleTimeString();
+  });
+}
+
+// 나머지 핸들러들도 비슷하게 구현
+```
+
+### 5.2 완전한 GestureDetector 설정
+
+```typescript
+GestureDetector({
+  onClick: () => this.handleClick(),
+  onDoubleClick: () => this.handleDoubleClick(),
+  onMouseEnter: () => this.handleMouseEnter(),
+  onMouseLeave: () => this.handleMouseLeave(),
+  onDragStart: () => this.handleDragStart(),
+  onDragMove: (event) => this.handleDragMove(event),
+  onDragEnd: () => this.handleDragEnd(),
+  cursor: 'pointer',
+  child: Container({
+    width: 250,
+    height: 120,
+    decoration: new BoxDecoration({
+      color: this.getBoxColor(), // 상태에 따른 색상
+      borderRadius: 12,
+      border: this.isHovered ? Border.all({ color: '#FFFFFF', width: 2 }) : null
+    }),
+    child: this.buildBoxContent()
+  })
+})
+```
+
+### 5.3 상태별 색상 로직
+
+```typescript
+getBoxColor() {
+  if (this.isDragging) return '#DC2626'; // 빨간색
+  if (this.isHovered) return '#7C3AED';  // 보라색
+  return '#3B82F6'; // 기본 파란색
+}
+```
+
+### 5.4 TODO: 실습 과제
+
+위 코드 영역에서 다음을 완성해보세요:
+
+1. **상태 변수 정의**: 모든 제스처별 카운터와 상태 변수들
+2. **이벤트 핸들러 구현**: 각 제스처에 대한 완전한 처리 로직
+3. **시각적 피드백**: 상태에 따른 색상 변화와 테두리 효과
+4. **정보 표시**: 실시간 통계와 현재 상태 표시
+
+## 6. 고급 제스처 패턴과 팁
+
+### 6.1 제스처 우선순위 이해하기
+
+여러 제스처가 동시에 설정되어 있을 때의 우선순위:
+
+```typescript
+GestureDetector({
+  onClick: () => {
+    // 짧은 터치/클릭 후 바로 떼면 실행
+  },
+  onDragStart: () => {
+    // 터치/클릭 후 움직이면 실행 (onClick은 취소됨)
+  },
+  onDoubleClick: () => {
+    // 빠른 연속 클릭 시 실행 (첫 번째 onClick은 지연됨)
+  }
+})
+```
+
+### 6.2 이벤트 전파 제어하기
+
+```typescript
+onClick: (event) => {
+  event.preventDefault(); // 기본 브라우저 동작 방지
+  event.stopPropagation(); // 이벤트 버블링 중단
+  
+  // 사용자 정의 로직 실행
+  this.handleCustomClick();
+}
+```
+
+### 6.3 성능 최적화 팁
+
+**빈번한 이벤트 처리:**
+```typescript
+// onMouseMove 같은 빈번한 이벤트는 쓰로틀링 사용
+let lastUpdate = 0;
+onMouseMove: (event) => {
+  const now = Date.now();
+  if (now - lastUpdate < 16) return; // 60fps 제한
+  lastUpdate = now;
+  
+  this.updateMousePosition(event.clientX, event.clientY);
+}
+```
+
+**무거운 계산 최적화:**
+```typescript
+onClick: () => {
+  // 무거운 계산은 상태 업데이트와 분리
+  const result = this.expensiveCalculation();
+  
+  this.setState(() => {
+    this.result = result;
+  });
+}
+```
+
+## 7. 실전 응용 예제들
+
+### 7.1 반응형 버튼 컴포넌트
+
+```typescript
+class ResponsiveButton extends StatefulWidget {
+  constructor(private props: {
+    text: string;
+    onPressed: () => void;
+    color?: string;
+  }) {
+    super();
+  }
+  
+  createState() {
+    return new ResponsiveButtonState();
+  }
+}
+
+class ResponsiveButtonState extends State {
+  isHovered = false;
+  isPressed = false;
+  
+  build(context) {
+    return GestureDetector({
+      onClick: () => this.widget.props.onPressed(),
+      onMouseEnter: () => this.setState(() => this.isHovered = true),
+      onMouseLeave: () => this.setState(() => this.isHovered = false),
+      onMouseDown: () => this.setState(() => this.isPressed = true),
+      onMouseUp: () => this.setState(() => this.isPressed = false),
+      cursor: 'pointer',
+      child: Container({
+        padding: new EdgeInsets.symmetric({ vertical: 12, horizontal: 24 }),
+        decoration: new BoxDecoration({
+          color: this.getButtonColor(),
+          borderRadius: 8,
+          border: Border.all({ 
+            color: this.isPressed ? '#1E40AF' : 'transparent', 
+            width: 2 
+          })
+        }),
+        child: Text(this.widget.props.text, {
+          style: { 
+            color: '#FFFFFF', 
+            fontSize: 16, 
+            fontWeight: this.isPressed ? 'bold' : 'normal'
+          }
+        })
+      })
+    });
+  }
+  
+  getButtonColor() {
+    const baseColor = this.widget.props.color || '#3B82F6';
+    if (this.isPressed) return '#1E40AF';
+    if (this.isHovered) return '#2563EB';
+    return baseColor;
+  }
+}
+```
+
+### 7.2 드래그 가능한 카드
+
+```typescript
+class DraggableCard extends StatefulWidget {
+  createState() {
+    return new DraggableCardState();
+  }
+}
+
+class DraggableCardState extends State {
+  position = { x: 0, y: 0 };
+  isDragging = false;
+  startPosition = { x: 0, y: 0 };
+  
+  build(context) {
+    return Transform.translate({
+      offset: this.position,
+      child: GestureDetector({
+        onDragStart: (event) => {
+          this.setState(() => {
+            this.isDragging = true;
+            this.startPosition = { x: event.clientX, y: event.clientY };
+          });
+        },
+        onDragMove: (event) => {
+          this.setState(() => {
+            this.position = {
+              x: event.clientX - this.startPosition.x,
+              y: event.clientY - this.startPosition.y
+            };
+          });
+        },
+        onDragEnd: () => {
+          this.setState(() => {
+            this.isDragging = false;
+          });
+        },
+        cursor: this.isDragging ? 'grabbing' : 'grab',
+        child: Container({
+          width: 200,
+          height: 150,
+          decoration: new BoxDecoration({
+            color: '#FFFFFF',
+            borderRadius: 12,
+            boxShadow: this.isDragging ? 
+              [{ color: 'rgba(0,0,0,0.2)', blurRadius: 20, offset: { x: 0, y: 10 } }] :
+              [{ color: 'rgba(0,0,0,0.1)', blurRadius: 5, offset: { x: 0, y: 2 } }]
+          }),
+          child: Column({
+            mainAxisAlignment: 'center',
+            children: [
+              Text("🃏 드래그 카드", { style: { fontSize: 18 } }),
+              Text(this.isDragging ? "드래그 중..." : "드래그해보세요!", {
+                style: { fontSize: 12, color: '#6B7280' }
+              })
+            ]
+          })
+        })
+      })
+    });
+  }
+}
+```
+
+## 8. 흔한 실수와 해결법
+
+### 8.1 상태 관리 실수
+
+```typescript
+// ❌ 잘못된 방법 - setState 없이 직접 변경
+onClick: () => {
+  this.count++; // 화면이 업데이트되지 않음!
+}
+
+// ✅ 올바른 방법 - setState로 감싸기
+onClick: () => {
+  this.setState(() => {
+    this.count++;
+  });
+}
+```
+
+### 8.2 이벤트 핸들러 설정 실수
+
+```typescript
+// ❌ 잘못된 방법 - 함수 즉시 실행
+onClick: this.handleClick(), // 렌더링 시 즉시 실행됨!
+
+// ✅ 올바른 방법 - 함수 참조 전달
+onClick: () => this.handleClick(),
+// 또는
+onClick: this.handleClick.bind(this)
+```
+
+### 8.3 제스처 충돌 문제
+
+```typescript
+// 문제: 드래그와 클릭이 충돌
+// 해결: 드래그가 시작되면 클릭은 자동으로 취소됨 (정상 동작)
+
+// 문제: 더블클릭과 클릭이 충돌
+// 해결: 더블클릭 감지를 위해 첫 번째 클릭이 약간 지연됨 (정상 동작)
+```
+
+### 8.4 메모리 누수 방지
+
+```typescript
+class MyWidgetState extends State {
+  timer = null;
+  
+  initState() {
+    super.initState();
+    // 타이머나 구독 설정
+  }
+  
+  dispose() {
+    // 정리 작업 필수!
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    super.dispose();
+  }
+}
+```
+
+## 9. 접근성과 사용자 경험
+
+### 9.1 접근성 고려사항
+
+```typescript
+// 충분한 터치 영역 확보 (최소 44x44px)
+Container({
+  width: 44,
+  height: 44,
+  // 내용...
+})
+
+// 명확한 시각적 피드백 제공
+decoration: new BoxDecoration({
+  color: this.isPressed ? '#1E40AF' : '#3B82F6',
+  border: this.isFocused ? Border.all({ color: '#F59E0B', width: 2 }) : null
+})
+```
+
+### 9.2 부드러운 상호작용
+
+```typescript
+// 즉각적인 시각적 피드백
+onMouseDown: () => {
+  this.setState(() => this.isPressed = true);
+},
+
+// 애니메이션과 함께 사용
+AnimatedContainer({
+  duration: 150,
+  color: this.isHovered ? '#2563EB' : '#3B82F6',
+  // ...
+})
+```
+
+## 🎯 예상 결과
+
+완성된 상호작용 위젯은 다음과 같이 동작해야 합니다:
+
+- **파란색 박스**: 기본 대기 상태
+- **보라색 박스**: 마우스 호버 시 + 흰색 테두리
+- **빨간색 박스**: 드래그 중일 때
+- **실시간 통계**: 각 제스처별 발생 횟수 표시
+- **상태 표시**: 현재 상호작용 상태 (대기/호버/드래그)
+- **마지막 이벤트**: 가장 최근 발생한 제스처 타입
+
+## 🚀 추가 도전 과제
+
+기본 실습을 완료했다면 다음에 도전해보세요:
+
+### 레벨 1: 기본 확장
+1. **우클릭 메뉴** 구현하기 (onMouseDown에서 button === 2 체크)
+2. **키보드 조합** 감지하기 (Ctrl+클릭, Shift+드래그 등)
+3. **드래그 거리 측정**하고 표시하기
+
+### 레벨 2: 중급 기능
+4. **드래그 관성** 구현하기 (드래그 종료 후 계속 움직임)
+5. **스냅 기능** 추가하기 (격자에 맞춰 정렬)
+6. **다중 터치** 시뮬레이션 (여러 영역 동시 상호작용)
+
+### 레벨 3: 고급 응용
+7. **제스처 히스토리** 기록하고 재생하기
+8. **커스텀 제스처** 인식기 만들기 (원 그리기, 스와이프 패턴 등)
+9. **성능 모니터링** 추가하기 (이벤트 처리 시간 측정)
+
+## 📋 완주 체크리스트
+
+모든 학습 목표를 달성했는지 확인해보세요:
+
+- [ ] ✅ **기본 클릭 이벤트** 완벽 처리
+- [ ] ✅ **더블클릭과 호버** 고급 상호작용 구현
+- [ ] ✅ **드래그 제스처** 완전 정복
+- [ ] ✅ **여러 제스처 조합** 마스터
+- [ ] ✅ **시각적 피드백** 사용자 경험 향상
+- [ ] ✅ **성능과 접근성** 고려한 구현
+
+## 🔗 다음 단계
+
+GestureDetector를 완전히 마스터했다면 다음 튜토리얼로 진행하세요:
+
+- **Draggable 위젯 완전 정복** - 더 고급 드래그 앤 드롭 기능
+- **StatefulWidget 고급 패턴** - 복잡한 상태 관리와 라이프사이클
+- **폼 입력 처리** - 사용자 입력과 유효성 검사

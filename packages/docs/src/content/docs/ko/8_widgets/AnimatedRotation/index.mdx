@@ -1,0 +1,556 @@
+---
+nav_group: Widgets
+nav_group_order: 3
+nav_title: AnimatedRotation
+title: "AnimatedRotation"
+description: "위젯의 회전을 애니메이션으로 전환하는 위젯"
+---
+
+## 개요
+
+AnimatedRotation은 위젯의 회전각(turns)이 변경될 때 자동으로 애니메이션을 적용하여 부드럽게 회전하는 위젯입니다. Flutter의 AnimatedRotation 위젯에서 영감을 받아 구현되었습니다.
+
+> Animated version of Transform.rotate which automatically transitions the child's rotation over a given duration whenever the given rotation changes.
+
+Flutter 참조: https://api.flutter.dev/flutter/widgets/AnimatedRotation-class.html
+
+## 언제 사용하나요?
+
+- 로딩 인디케이터나 스피너를 만들 때
+- 아이콘이나 버튼의 상태 변화를 시각적으로 표현할 때
+- 사용자 인터랙션에 따라 요소를 회전시킬 때
+- 체크박스, 스위치 등의 전환 애니메이션을 만들 때
+- 기계식 컴포넌트의 움직임을 시뮬레이션할 때
+- 카드 플립이나 회전 효과를 구현할 때
+
+## 기본 사용법
+
+```typescript
+import { AnimatedRotation, Container, StatefulWidget } from '@meursyphus/flitter';
+
+class RotationExample extends StatefulWidget {
+  createState() {
+    return new RotationExampleState();
+  }
+}
+
+class RotationExampleState extends State<RotationExample> {
+  turns = 0;
+
+  build() {
+    return Column({
+      children: [
+        ElevatedButton({
+          onPressed: () => {
+            this.setState(() => {
+              this.turns += 0.25; // 90도 회전
+            });
+          },
+          child: Text("회전"),
+        }),
+        AnimatedRotation({
+          turns: this.turns,
+          duration: 500, // 0.5초
+          child: Container({
+            width: 100,
+            height: 100,
+            color: "blue",
+            child: Center({
+              child: Icon({
+                icon: Icons.star,
+                color: "white",
+                size: 40,
+              }),
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
+
+## Props
+
+### turns (필수)
+**값: number**
+
+회전의 양을 지정합니다. 1.0이 한 바퀴 전체 회전(360도)입니다.
+- 0.0 = 회전 없음
+- 0.25 = 90도 회전
+- 0.5 = 180도 회전
+- 1.0 = 360도 회전 (한 바퀴)
+- 2.0 = 720도 회전 (두 바퀴)
+- 음수 값은 반시계 방향 회전
+
+### duration (필수)
+**값: number**
+
+애니메이션 지속 시간을 밀리초 단위로 지정합니다.
+
+### alignment (선택)
+**값: Alignment** (기본값: **Alignment.center**)
+
+회전의 중심점을 지정합니다. 사용 가능한 값:
+- `Alignment.center`: 중앙을 기준으로 회전
+- `Alignment.topLeft`: 좌상단을 기준으로 회전
+- `Alignment.topRight`: 우상단을 기준으로 회전
+- `Alignment.bottomLeft`: 좌하단을 기준으로 회전
+- `Alignment.bottomRight`: 우하단을 기준으로 회전
+- 커스텀 정렬: `Alignment.of({ x: -0.5, y: 0.5 })`
+
+### curve (선택)
+**값: Curve** (기본값: **Curves.linear**)
+
+애니메이션의 진행 곡선을 지정합니다. 사용 가능한 곡선:
+- `Curves.linear`: 일정한 속도
+- `Curves.easeIn`: 천천히 시작
+- `Curves.easeOut`: 천천히 종료
+- `Curves.easeInOut`: 천천히 시작하고 종료
+- `Curves.circIn`: 원형 가속 시작
+- `Curves.circOut`: 원형 감속 종료
+- `Curves.circInOut`: 원형 가속/감속
+- `Curves.backIn`: 뒤로 갔다가 시작
+- `Curves.backOut`: 목표를 지나쳤다가 돌아옴
+- `Curves.backInOut`: backIn + backOut
+- `Curves.anticipate`: 예비 동작 후 진행
+- `Curves.bounceIn`: 바운스하며 시작
+- `Curves.bounceOut`: 바운스하며 종료
+- `Curves.bounceInOut`: 바운스 시작/종료
+
+### child (선택)
+**값: Widget | undefined**
+
+회전될 자식 위젯입니다.
+
+### key (선택)
+**값: any**
+
+위젯의 고유 식별자입니다.
+
+## 실제 사용 예제
+
+### 예제 1: 로딩 스피너
+
+```typescript
+import { AnimatedRotation, Container, Icon, Curves } from '@meursyphus/flitter';
+
+class LoadingSpinner extends StatefulWidget {
+  createState() {
+    return new LoadingSpinnerState();
+  }
+}
+
+class LoadingSpinnerState extends State<LoadingSpinner> {
+  turns = 0;
+  isLoading = false;
+
+  async startLoading() {
+    this.setState(() => {
+      this.isLoading = true;
+    });
+
+    // 지속적인 회전 애니메이션
+    const interval = setInterval(() => {
+      if (this.isLoading) {
+        this.setState(() => {
+          this.turns += 1; // 매번 한 바퀴 회전
+        });
+      } else {
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    // 5초 후 로딩 완료
+    setTimeout(() => {
+      this.setState(() => {
+        this.isLoading = false;
+      });
+      clearInterval(interval);
+    }, 5000);
+  }
+
+  build() {
+    return Column({
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        AnimatedRotation({
+          turns: this.turns,
+          duration: 1000,
+          curve: Curves.linear,
+          child: Container({
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration({
+              border: Border.all({ color: "blue", width: 4 }),
+              borderRadius: BorderRadius.circular(30),
+            }),
+            child: CustomPaint({
+              painter: SpinnerPainter(),
+            }),
+          }),
+        }),
+        SizedBox({ height: 20 }),
+        ElevatedButton({
+          onPressed: this.isLoading ? null : () => this.startLoading(),
+          child: Text(this.isLoading ? "로딩 중..." : "로딩 시작"),
+        }),
+      ],
+    });
+  }
+}
+```
+
+### 예제 2: 인터렉티브 아이콘 버튼
+
+```typescript
+import { AnimatedRotation, Container, GestureDetector, Icon, Curves } from '@meursyphus/flitter';
+
+class InteractiveIconButton extends StatefulWidget {
+  createState() {
+    return new InteractiveIconButtonState();
+  }
+}
+
+class InteractiveIconButtonState extends State<InteractiveIconButton> {
+  isExpanded = false;
+  rotation = 0;
+
+  toggle() {
+    this.setState(() => {
+      this.isExpanded = !this.isExpanded;
+      this.rotation += 0.5; // 180도 회전
+    });
+  }
+
+  build() {
+    return Column({
+      children: [
+        GestureDetector({
+          onTap: () => this.toggle(),
+          child: Container({
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration({
+              color: this.isExpanded ? "red" : "blue",
+              borderRadius: BorderRadius.circular(40),
+              boxShadow: [
+                BoxShadow({
+                  color: "rgba(0,0,0,0.3)",
+                  blurRadius: 8,
+                  offset: Offset({ x: 0, y: 4 }),
+                }),
+              ],
+            }),
+            child: AnimatedRotation({
+              turns: this.rotation,
+              duration: 300,
+              curve: Curves.easeInOut,
+              child: Icon({
+                icon: this.isExpanded ? Icons.close : Icons.add,
+                color: "white",
+                size: 32,
+              }),
+            }),
+          }),
+        }),
+        SizedBox({ height: 20 }),
+        AnimatedOpacity({
+          opacity: this.isExpanded ? 1.0 : 0.0,
+          duration: 200,
+          child: Column({
+            children: [
+              ListTile({
+                leading: Icon(Icons.photo),
+                title: Text("사진"),
+                onTap: () => {},
+              }),
+              ListTile({
+                leading: Icon(Icons.video),
+                title: Text("비디오"),
+                onTap: () => {},
+              }),
+              ListTile({
+                leading: Icon(Icons.file),
+                title: Text("파일"),
+                onTap: () => {},
+              }),
+            ],
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
+
+### 예제 3: 기계식 시계
+
+```typescript
+import { AnimatedRotation, Container, Stack, Curves } from '@meursyphus/flitter';
+
+class MechanicalClock extends StatefulWidget {
+  createState() {
+    return new MechanicalClockState();
+  }
+}
+
+class MechanicalClockState extends State<MechanicalClock> {
+  hourRotation = 0;
+  minuteRotation = 0;
+  secondRotation = 0;
+
+  initState() {
+    super.initState();
+    this.updateTime();
+    
+    // 매초 시간 업데이트
+    setInterval(() => {
+      this.updateTime();
+    }, 1000);
+  }
+
+  updateTime() {
+    const now = new Date();
+    const hours = now.getHours() % 12;
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    this.setState(() => {
+      this.hourRotation = (hours + minutes / 60) / 12; // 12시간에 한 바퀴
+      this.minuteRotation = minutes / 60; // 60분에 한 바퀴
+      this.secondRotation = seconds / 60; // 60초에 한 바퀴
+    });
+  }
+
+  build() {
+    return Container({
+      width: 200,
+      height: 200,
+      decoration: BoxDecoration({
+        border: Border.all({ color: "black", width: 4 }),
+        borderRadius: BorderRadius.circular(100),
+        color: "white",
+      }),
+      child: Stack({
+        children: [
+          // 시계 면
+          ...Array.from({ length: 12 }, (_, i) => {
+            const angle = (i * 30) * Math.PI / 180;
+            const x = 80 + 70 * Math.sin(angle);
+            const y = 80 - 70 * Math.cos(angle);
+            
+            return Positioned({
+              left: x,
+              top: y,
+              child: Container({
+                width: 20,
+                height: 20,
+                child: Center({
+                  child: Text(
+                    (i === 0 ? 12 : i).toString(),
+                    { style: TextStyle({ fontWeight: "bold", fontSize: 14 }) }
+                  ),
+                }),
+              }),
+            });
+          }),
+          
+          // 시침
+          Center({
+            child: AnimatedRotation({
+              turns: this.hourRotation,
+              duration: 1000,
+              curve: Curves.easeInOut,
+              alignment: Alignment.bottomCenter,
+              child: Container({
+                width: 4,
+                height: 50,
+                color: "black",
+                child: Container({
+                  width: 4,
+                  height: 40,
+                  color: "black",
+                }),
+              }),
+            }),
+          }),
+          
+          // 분침
+          Center({
+            child: AnimatedRotation({
+              turns: this.minuteRotation,
+              duration: 1000,
+              curve: Curves.easeInOut,
+              alignment: Alignment.bottomCenter,
+              child: Container({
+                width: 3,
+                height: 70,
+                color: "darkblue",
+              }),
+            }),
+          }),
+          
+          // 초침
+          Center({
+            child: AnimatedRotation({
+              turns: this.secondRotation,
+              duration: 100,
+              curve: Curves.linear,
+              alignment: Alignment.bottomCenter,
+              child: Container({
+                width: 1,
+                height: 80,
+                color: "red",
+              }),
+            }),
+          }),
+          
+          // 중심 점
+          Center({
+            child: Container({
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration({
+                color: "black",
+                borderRadius: BorderRadius.circular(4),
+              }),
+            }),
+          }),
+        ],
+      }),
+    });
+  }
+}
+```
+
+### 예제 4: 카드 플립 애니메이션
+
+```typescript
+import { AnimatedRotation, Container, GestureDetector, Curves } from '@meursyphus/flitter';
+
+class CardFlip extends StatefulWidget {
+  createState() {
+    return new CardFlipState();
+  }
+}
+
+class CardFlipState extends State<CardFlip> {
+  isFlipped = false;
+  rotation = 0;
+
+  flipCard() {
+    this.setState(() => {
+      this.isFlipped = !this.isFlipped;
+      this.rotation += 0.5; // 180도 회전
+    });
+  }
+
+  build() {
+    const showBack = (this.rotation % 1) > 0.25 && (this.rotation % 1) < 0.75;
+    
+    return GestureDetector({
+      onTap: () => this.flipCard(),
+      child: Container({
+        width: 200,
+        height: 300,
+        child: AnimatedRotation({
+          turns: this.rotation,
+          duration: 600,
+          curve: Curves.easeInOut,
+          child: Container({
+            decoration: BoxDecoration({
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow({
+                  color: "rgba(0,0,0,0.3)",
+                  blurRadius: 10,
+                  offset: Offset({ x: 0, y: 5 }),
+                }),
+              ],
+            }),
+            child: showBack ? 
+              // 카드 뒷면
+              Container({
+                decoration: BoxDecoration({
+                  gradient: LinearGradient({
+                    colors: ["#667eea", "#764ba2"],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  }),
+                  borderRadius: BorderRadius.circular(16),
+                }),
+                child: Center({
+                  child: Column({
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon({
+                        icon: Icons.star,
+                        color: "white",
+                        size: 64,
+                      }),
+                      SizedBox({ height: 16 }),
+                      Text(
+                        "카드 뒷면",
+                        { style: TextStyle({ color: "white", fontSize: 24, fontWeight: "bold" }) }
+                      ),
+                    ],
+                  }),
+                }),
+              }) :
+              // 카드 앞면
+              Container({
+                decoration: BoxDecoration({
+                  gradient: LinearGradient({
+                    colors: ["#f093fb", "#f5576c"],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  }),
+                  borderRadius: BorderRadius.circular(16),
+                }),
+                child: Center({
+                  child: Column({
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon({
+                        icon: Icons.favorite,
+                        color: "white",
+                        size: 64,
+                      }),
+                      SizedBox({ height: 16 }),
+                      Text(
+                        "카드 앞면",
+                        { style: TextStyle({ color: "white", fontSize: 24, fontWeight: "bold" }) }
+                      ),
+                      SizedBox({ height: 8 }),
+                      Text(
+                        "탭하여 플립",
+                        { style: TextStyle({ color: "white", fontSize: 14, opacity: 0.8 }) }
+                      ),
+                    ],
+                  }),
+                }),
+              })
+          ),
+        }),
+      }),
+    });
+  }
+}
+```
+
+## 주의사항
+
+- **turns 값의 의미**: 1.0이 완전한 한 바퀴(360도) 회전을 의미합니다
+- **연속 회전**: turns 값을 계속 증가시키면 연속적인 회전 애니메이션을 만들 수 있습니다
+- **방향 제어**: 음수 값을 사용하면 반시계 방향으로 회전합니다
+- **성능 고려**: 많은 위젯에 동시에 회전 애니메이션을 적용하면 성능에 영향을 줄 수 있습니다
+- **alignment 중요성**: 회전 중심점에 따라 시각적 효과가 크게 달라집니다
+
+## 관련 위젯
+
+- **Transform.rotate**: 애니메이션 없이 회전을 적용하는 기본 위젯
+- **AnimatedContainer**: 여러 변환을 동시에 애니메이션하는 범용 위젯
+- **RotationTransition**: 명시적인 Animation 컨트롤러를 사용하는 회전 애니메이션
+- **AnimatedScale**: 크기 변경을 애니메이션하는 위젯
+- **Transform**: 다양한 변환(회전, 크기, 위치)을 적용하는 기본 위젯

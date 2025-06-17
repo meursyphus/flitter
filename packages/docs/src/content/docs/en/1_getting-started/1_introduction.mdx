@@ -1,0 +1,285 @@
+---
+nav_title: "Introduction"
+title: "Why Should You Use Flitter?"
+description: "A JavaScript rendering engine that solves complex graphics problems with Flutter's declarative syntax"
+---
+
+import AutoTextWrapDemo from '$components/pages/docs/01_getting-started/auto-text-wrap-demo';
+
+# Why Should You Use Flitter?
+
+## The Problem You're Facing
+
+Monday morning in your SaaS startup's development team meeting room. The PM has arrived with new feature requirements.
+
+> "We need to add a **workflow editor** to our product. Users should be able to drag nodes and connect them, with real-time updates. You know, like Notion or Figma!"
+
+The team members' faces stiffen. The frontend developer speaks up cautiously.
+
+> "We could try D3.js, but... calculating node positions, drawing connection lines, handling drag... it'll probably take 2-3 weeks. And that's just for basic features."
+
+Another developer adds:
+
+> "Should we draw directly with Canvas API? Or SVG? How do we handle text? We'd have to manually calculate line breaks and alignment..."
+
+## Familiar Frustration
+
+Sound familiar?
+
+Handling complex graphics on the web has always been a developer's nightmare. HTML/CSS has clear limitations, and using D3.js or Canvas API feels like going back to the 1990s where you have to manually calculate everything.
+
+Let's take a simple example: centering text in a box and making it wrap automatically.
+
+### With D3.js, it's this complex:
+
+```javascript
+// Starting with coordinate calculations...
+const svg = d3.select("svg");
+const boxWidth = 200;
+const boxHeight = 100;
+
+// Create text element and set position
+const text = svg.append("text")
+  .attr("x", boxWidth / 2)
+  .attr("y", boxHeight / 2)
+  .attr("text-anchor", "middle");
+
+// Implement complex function for line wrapping
+function wrapText(text, width) {
+  const words = text.text().split(/\s+/);
+  const lineHeight = 1.2;
+  let line = [];
+  let lineNumber = 0;
+  let tspan = text.text(null).append("tspan");
+  
+  words.forEach(word => {
+    line.push(word);
+    tspan.text(line.join(" "));
+    if (tspan.node().getComputedTextLength() > width) {
+      line.pop();
+      tspan.text(line.join(" "));
+      line = [word];
+      tspan = text.append("tspan")
+        .attr("x", boxWidth / 2)
+        .attr("dy", lineHeight + "em")
+        .text(word);
+    }
+  });
+  
+  // Additional calculations for vertical centering...
+  const totalHeight = lineNumber * lineHeight * 16;
+  text.attr("transform", `translate(0, ${-totalHeight/2})`);
+}
+
+// And even resize event handling...
+```
+
+Over 50 lines of code, complex calculations, and still not perfect results. Can you believe this is web development in 2024?
+
+## With Flitter, It's This Simple
+
+<AutoTextWrapDemo client:load />
+
+Look at the demo above. Drag the left and right borders to resize, and the text automatically wraps.
+
+**Amazing part**: Did you notice that even though it's a Canvas renderer, the mouse cursor changes automatically? It becomes a resize cursor in the drag area. Flitter handles all this complex processing. You just focus on business logic.
+
+```typescript
+Center({
+  child: Container({
+    width: 200,
+    child: Text("Long text automatically wraps and centers", {
+      textAlign: TextAlign.center,
+    })
+  })
+})
+```
+
+## What is Flitter?
+
+```
+┌─────────────────────────────────────────────────┐
+│                   Your App                       │
+├─────────────────────────────────────────────────┤
+│                Widget Layer                      │
+│         (Container, Text, Column...)             │
+├─────────────────────────────────────────────────┤
+│              RenderObject Tree                   │
+│         (Layout, Paint, Hit Testing)             │
+├─────────────────────────────────────────────────┤
+│            Flitter Engine Core                   │
+├─────────────┬───────────────────────────────────┤
+│  SVG Renderer │         Canvas Renderer          │
+└───────────────┴─────────────────────────────────┘
+```
+
+Flitter is a **declarative UI rendering engine that works on the web**. It implements Flutter's powerful widget system in JavaScript.
+
+### Core Features
+
+#### 🎯 Dual Renderer System
+- **SVG**: SEO-friendly, text selectable, CSS animations
+- **Canvas**: High performance, pixel-level control, complex animations
+
+![svg-canvas](/svg-canvas.gif)
+
+#### 🚀 Industry-First SSR + Canvas Hydration
+```typescript
+// Render with SVG on server → Switch to Canvas on client
+<Widget 
+  renderer="canvas"
+  ssr={{
+    size: { width: 800, height: 600 }  // Server render size
+  }}
+  widget={...} 
+/>
+```
+
+Fast initial loading with SVG, smooth interactions with Canvas. **Only Flitter can do this.**
+
+## Comparison with Other Graphics Libraries
+
+### 😫 Limitations of Existing Libraries
+
+| Library | Problems |
+|---------|----------|
+| **D3.js** | Manual calculation of everything. Coordinates, sizes, animations... |
+| **Konva.js** | Object-oriented but still imperative. Complex layouts are nightmares |
+| **Fabric.js** | Good for canvas manipulation, but unsuitable for UI composition |
+| **Paper.js** | Strong in vector graphics, but difficult for general UI |
+| **Three.js** | Great for 3D, but... Three.js for 2D UI? |
+
+### ✨ Flitter's Solution
+
+```typescript
+// Other libraries: hundreds of lines of boilerplate
+// Flitter: just what you need
+
+Column({
+  children: [
+    Text("Title", { style: headerStyle }),
+    Container({
+      padding: EdgeInsets.all(20),
+      decoration: new BoxDecoration({
+        color: '#F3F4F6',
+        borderRadius: BorderRadius.circular(8)
+      }),
+      child: Row({
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [/* Complex layouts made simple */]
+      })
+    })
+  ]
+})
+```
+
+## Do You Have Flutter Developers on Your Team?
+
+"Oh, we have Flutter developers on our team..."
+
+**Congratulations!** They're already Flitter experts. Learning curve? None. They can start with 100% productivity immediately.
+
+```dart
+// Flutter code
+Container(
+  padding: EdgeInsets.all(16),
+  child: Text("Hello Flutter"),
+)
+```
+
+```typescript
+// Flitter code - almost identical!
+Container({
+  padding: EdgeInsets.all(16),
+  child: Text("Hello Flitter")
+})
+```
+
+## Proven in Real Production Environments
+
+### 🎯 Use Case 1: Complex Diagram Editor
+
+**Problem**: "We need to build an ERD editor that works smoothly with 100+ nodes"
+
+**Flitter Solution**:
+```typescript
+// Node dragging, connection drawing, auto-alignment...
+// All solved with widget composition
+Stack({
+  children: [
+    ...nodes.map(node => 
+      Draggable({
+        child: NodeWidget(node),
+        onDrag: updateNodePosition
+      })
+    ),
+    CustomPaint({
+      painter: ConnectionPainter(connections)
+    })
+  ]
+})
+```
+
+![easyrd](/easyrd.gif)
+
+Actually available as a [GitHub open source project](https://github.com/meursyphus/easy-rd) and actively used in production environments.
+
+### 🎯 Use Case 2: Headless Chart Library
+
+**Problem**: "Chart.js has limited customization, and D3.js is too low-level"
+
+**Flitter Solution**: [headless-chart](https://github.com/meursyphus/headless-chart) - A fully customizable chart library released as open source, with detailed information available in the [official documentation](https://headless-chart.pages.dev/) and actively used in production.
+
+![headless-chart](/headless-chart.gif)
+
+## Why Flitter Now?
+
+### 📈 Market Demand
+- Increasing complexity of SaaS products
+- Explosive demand for dashboards, workflow editors, diagram tools
+- Requirements like "make it like Notion" or "like Figma"
+
+### 🚀 Technical Advantages
+- **Development Speed**: 5-10x faster development compared to D3.js
+- **Maintenance**: Easy to understand with declarative code
+- **Performance**: Efficient rendering that only redraws necessary parts
+- **Scalability**: Infinitely extensible with widget-based architecture
+
+## Perfect for These Teams
+
+✅ Teams that need to build **complex diagrams or visualizations**  
+✅ Teams implementing **node editors, flowcharts, mind maps**  
+✅ Data visualization teams needing **custom charts**  
+✅ Teams **tired** of D3.js complexity  
+✅ Teams with developers who have **Flutter experience**  
+✅ Teams where both **performance and development productivity** matter  
+
+## Value Provided by Flitter
+
+```
+Traditional Approach (D3.js, Canvas API)
+├─ Development Time: 3 weeks
+├─ Lines of Code: 2000
+├─ Maintenance: 😱
+└─ Bugs: Many
+
+Flitter Approach
+├─ Development Time: 3 days
+├─ Lines of Code: 200
+├─ Maintenance: 😊
+└─ Bugs: Few
+```
+
+## Getting Started
+
+```bash
+npm install @meursyphus/flitter
+```
+
+You can start with just one line of command.
+
+**In the next chapter**, we'll learn about installation methods for each framework and how to create your first Flitter app.
+
+---
+
+**🚀 Ready?** Let's start the journey to solve complex graphics problems simply!
