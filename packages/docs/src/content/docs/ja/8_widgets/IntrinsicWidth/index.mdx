@@ -1,0 +1,325 @@
+---
+nav_group: Widgets
+nav_group_order: 3
+nav_title: IntrinsicWidth
+title: "IntrinsicWidth"
+description: "A widget that sizes its child to the child's intrinsic width"
+---
+
+## Overview
+
+IntrinsicWidth is a widget that sizes its child to the child's intrinsic width.
+
+IntrinsicWidth forces its child to have its intrinsic width. This is useful when you want to ensure that multiple children in a Column have the same width, or when you need to dynamically adjust width based on the child's content. Like IntrinsicHeight, this widget has a high performance cost and should be used carefully.
+
+## When to use it?
+
+- When children in a Column need to have the same width
+- When width should be determined by the child widget's content
+- When you need to match the widths of widgets with varying content
+- When button or chip width needs to fit content
+- When CrossAxisAlignment.stretch doesn't work as expected
+
+## Basic Usage
+
+```typescript
+IntrinsicWidth({
+  child: Column({
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Container({
+        color: 'blue',
+        height: 50,
+        child: Text('Short')
+      }),
+      Container({
+        color: 'red',
+        height: 50,
+        child: Text('This is much longer text')
+      })
+    ]
+  })
+})
+```
+
+## Props
+
+### child
+
+**Value: Widget | undefined**
+
+The child widget whose size will be adjusted to its intrinsic width.
+
+```typescript
+IntrinsicWidth({
+  child: Container({
+    color: 'blue',
+    child: Text('Width adjusts to content')
+  })
+})
+```
+
+## How it Works
+
+IntrinsicWidth works as follows:
+
+1. It asks the child widget "What is your minimum width at the given height?"
+2. It creates constraints using the width responded by the child
+3. It lays out the child with these constraints
+
+This process requires an additional layout pass, which incurs a performance cost.
+
+## Practical Examples
+
+### Example 1: Uniform Width Buttons
+
+```typescript
+const UniformWidthButtons = () => {
+  return IntrinsicWidth({
+    child: Column({
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ElevatedButton({
+          onPressed: () => console.log('Save'),
+          child: Text('Save')
+        }),
+        SizedBox({ height: 8 }),
+        ElevatedButton({
+          onPressed: () => console.log('Save and Continue'),
+          child: Text('Save and Continue')
+        }),
+        SizedBox({ height: 8 }),
+        ElevatedButton({
+          onPressed: () => console.log('Cancel'),
+          child: Text('Cancel')
+        })
+      ]
+    })
+  });
+};
+```
+
+### Example 2: Dynamic Width Badge
+
+```typescript
+const DynamicBadge = ({ text, color }) => {
+  return IntrinsicWidth({
+    child: Container({
+      padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 6 }),
+      decoration: BoxDecoration({
+        color: color || 'blue',
+        borderRadius: BorderRadius.circular(16)
+      }),
+      constraints: Constraints({ minWidth: 32 }),
+      child: Center({
+        child: Text(text, {
+          style: TextStyle({
+            color: 'white',
+            fontSize: 14,
+            fontWeight: 'bold'
+          })
+        })
+      })
+    })
+  });
+};
+
+// Usage example
+Row({
+  children: [
+    DynamicBadge({ text: '3', color: 'red' }),
+    SizedBox({ width: 8 }),
+    DynamicBadge({ text: '99+', color: 'orange' }),
+    SizedBox({ width: 8 }),
+    DynamicBadge({ text: 'NEW', color: 'green' })
+  ]
+})
+```
+
+### Example 3: Dropdown Menu
+
+```typescript
+const DropdownMenu = ({ items, selectedIndex }) => {
+  return IntrinsicWidth({
+    child: Container({
+      decoration: BoxDecoration({
+        border: Border.all({ color: '#E0E0E0' }),
+        borderRadius: BorderRadius.circular(8)
+      }),
+      child: Column({
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: items.map((item, index) => 
+          GestureDetector({
+            onTap: () => console.log(`Selected: ${item}`),
+            child: Container({
+              padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 12 }),
+              decoration: BoxDecoration({
+                color: index === selectedIndex ? '#E3F2FD' : 'white',
+                border: index > 0 ? Border({
+                  top: BorderSide({ color: '#E0E0E0' })
+                }) : null
+              }),
+              child: Row({
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(item, {
+                    style: TextStyle({
+                      color: index === selectedIndex ? '#2196F3' : '#333',
+                      fontWeight: index === selectedIndex ? 'bold' : 'normal'
+                    })
+                  }),
+                  if (index === selectedIndex) Icon({
+                    icon: Icons.check,
+                    size: 18,
+                    color: '#2196F3'
+                  })
+                ]
+              })
+            })
+          })
+        )
+      })
+    })
+  });
+};
+```
+
+### Example 4: Tooltip Container
+
+```typescript
+const TooltipContainer = ({ title, description }) => {
+  return IntrinsicWidth({
+    child: Container({
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration({
+        color: '#333333',
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow({
+            color: 'rgba(0, 0, 0, 0.2)',
+            blurRadius: 8,
+            offset: { x: 0, y: 4 }
+          })
+        ]
+      }),
+      constraints: Constraints({ maxWidth: 250 }),
+      child: Column({
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, {
+            style: TextStyle({
+              color: 'white',
+              fontSize: 14,
+              fontWeight: 'bold'
+            })
+          }),
+          if (description) ...[
+            SizedBox({ height: 4 }),
+            Text(description, {
+              style: TextStyle({
+                color: 'rgba(255, 255, 255, 0.8)',
+                fontSize: 12
+              })
+            })
+          ]
+        ]
+      })
+    })
+  });
+};
+```
+
+### Example 5: Price Table Header
+
+```typescript
+const PriceTableHeader = ({ plans }) => {
+  return Row({
+    children: plans.map((plan, index) => 
+      Expanded({
+        child: IntrinsicWidth({
+          child: Container({
+            margin: EdgeInsets.symmetric({ horizontal: 4 }),
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration({
+              color: plan.featured ? '#2196F3' : '#F5F5F5',
+              borderRadius: BorderRadius.circular(8),
+              border: plan.featured ? null : Border.all({ color: '#E0E0E0' })
+            }),
+            child: Column({
+              children: [
+                if (plan.featured) Container({
+                  padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
+                  margin: EdgeInsets.only({ bottom: 8 }),
+                  decoration: BoxDecoration({
+                    color: '#FF9800',
+                    borderRadius: BorderRadius.circular(4)
+                  }),
+                  child: Text('POPULAR', {
+                    style: TextStyle({
+                      color: 'white',
+                      fontSize: 12,
+                      fontWeight: 'bold'
+                    })
+                  })
+                }),
+                Text(plan.name, {
+                  style: TextStyle({
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    color: plan.featured ? 'white' : '#333'
+                  })
+                }),
+                SizedBox({ height: 8 }),
+                Text(`$${plan.price}`, {
+                  style: TextStyle({
+                    fontSize: 28,
+                    fontWeight: 'bold',
+                    color: plan.featured ? 'white' : '#2196F3'
+                  })
+                }),
+                Text('/month', {
+                  style: TextStyle({
+                    fontSize: 14,
+                    color: plan.featured ? 'rgba(255, 255, 255, 0.8)' : '#666'
+                  })
+                })
+              ]
+            })
+          })
+        })
+      })
+    )
+  });
+};
+```
+
+## Performance Considerations
+
+IntrinsicWidth has the same performance characteristics as IntrinsicHeight:
+
+1. **O(N²) complexity**: Deeply nested IntrinsicWidth widgets become exponentially slower
+2. **Layout passes**: Requires additional measurement steps
+3. **Caution in scroll views**: Avoid in lists with many items
+
+## Alternatives
+
+Consider these alternatives when performance is critical:
+
+1. **Fixed width**: Specify explicit widths when possible
+2. **ConstrainedBox**: When you only need min/max width constraints
+3. **Wrap widget**: For dynamic layouts
+4. **LayoutBuilder**: When adjustments based on parent size are needed
+
+## Important Notes
+
+- IntrinsicWidth has a high performance cost, so use it only when necessary
+- Avoid deeply nested IntrinsicWidth widgets
+- It doesn't work with infinite width constraints
+- Be careful when using with Expanded inside a Row
+
+## Related Widgets
+
+- **IntrinsicHeight**: Sizes to the child's intrinsic height
+- **Wrap**: Flexible layout with automatic wrapping
+- **FittedBox**: Fits child to available space
+- **ConstrainedBox**: Applies size constraints

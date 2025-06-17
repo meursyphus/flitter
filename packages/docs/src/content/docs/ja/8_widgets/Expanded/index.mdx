@@ -1,0 +1,300 @@
+---
+nav_group: Widgets
+nav_group_order: 3
+nav_title: Expanded
+title: "Expanded"
+description: "A widget that expands a child to fill available space within Row, Column, or Flex"
+---
+
+## Overview
+
+Expanded is a widget that expands its child to fill the available space along the main axis within a Row, Column, or Flex widget.
+
+Expanded is a special case of the Flexible widget with `fit: FlexFit.tight` applied. This means it forces the child widget to occupy all allocated space. When multiple Expanded widgets exist, space is distributed proportionally according to their flex values.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/_rnZaagadyo"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowfullscreen
+></iframe>
+
+See: [https://api.flutter.dev/flutter/widgets/Expanded-class.html](https://api.flutter.dev/flutter/widgets/Expanded-class.html)
+
+## When to use it?
+
+- When a widget needs to fill all remaining space within a Row/Column
+- When distributing space proportionally between multiple widgets
+- When making TextField or other input widgets use all available horizontal space
+- When creating responsive layouts
+- When using Spacer to push widgets apart
+
+## Basic Usage
+
+```typescript
+// Filling remaining space in a Row
+Row({
+  children: [
+    Container({ width: 100, height: 50, color: 'blue' }),
+    Expanded({
+      child: Container({ height: 50, color: 'red' })
+    }),
+    Container({ width: 100, height: 50, color: 'green' })
+  ]
+})
+
+// Using in Column
+Column({
+  children: [
+    Container({ height: 100, color: 'blue' }),
+    Expanded({
+      child: Container({ color: 'red' }) // Takes all remaining vertical space
+    }),
+    Container({ height: 100, color: 'green' })
+  ]
+})
+```
+
+## Props
+
+### child (required)
+
+**Value: Widget**
+
+The child widget to be expanded.
+
+```typescript
+Expanded({
+  child: Container({ color: 'blue' })
+})
+```
+
+### flex
+
+**Value: number** (default: **1**)
+
+Defines the proportion of space this widget should take compared to other Expanded/Flexible widgets. Higher values take more space.
+
+- Must be 0 or greater (negative values not allowed)
+- Default is 1
+- Space is distributed as a ratio with other flex children
+
+```typescript
+Row({
+  children: [
+    Expanded({
+      flex: 2, // Takes 2/3 of total space
+      child: Container({ color: 'red' })
+    }),
+    Expanded({
+      flex: 1, // Takes 1/3 of total space
+      child: Container({ color: 'blue' })
+    })
+  ]
+})
+```
+
+## Advanced Usage
+
+### Proportional Space Distribution
+
+```typescript
+Row({
+  children: [
+    Expanded({
+      flex: 3, // 3/6 = 50%
+      child: Container({ height: 100, color: 'red' })
+    }),
+    Expanded({
+      flex: 2, // 2/6 = 33.33%
+      child: Container({ height: 100, color: 'green' })
+    }),
+    Expanded({
+      flex: 1, // 1/6 = 16.67%
+      child: Container({ height: 100, color: 'blue' })
+    })
+  ]
+})
+```
+
+### Using with Fixed-Size Widgets
+
+```typescript
+Row({
+  children: [
+    Icon({ icon: Icons.menu }), // Fixed size
+    SizedBox({ width: 16 }), // Fixed spacing
+    Expanded({
+      child: Text('Long title that displays within available space')
+    }),
+    IconButton({ // Fixed size
+      icon: Icons.more_vert,
+      onPressed: () => {}
+    })
+  ]
+})
+```
+
+## Practical Examples
+
+### Example 1: Search Bar
+
+```typescript
+const searchBar = Container({
+  padding: EdgeInsets.all(16),
+  child: Row({
+    children: [
+      Expanded({
+        child: TextField({
+          decoration: InputDecoration({
+            hintText: 'Search...',
+            prefixIcon: Icon({ icon: Icons.search }),
+            border: OutlineInputBorder({
+              borderRadius: BorderRadius.circular(30)
+            })
+          })
+        })
+      }),
+      SizedBox({ width: 12 }),
+      IconButton({
+        icon: Icons.filter_list,
+        onPressed: () => console.log('Open filters')
+      })
+    ]
+  })
+});
+```
+
+### Example 2: Chat Input
+
+```typescript
+const chatInput = Container({
+  padding: EdgeInsets.all(8),
+  decoration: BoxDecoration({
+    color: 'white',
+    boxShadow: [
+      BoxShadow({
+        color: 'rgba(0, 0, 0, 0.1)',
+        blurRadius: 4,
+        offset: { x: 0, y: -2 }
+      })
+    ]
+  }),
+  child: Row({
+    children: [
+      IconButton({
+        icon: Icons.attach_file,
+        onPressed: () => {}
+      }),
+      Expanded({
+        child: TextField({
+          decoration: InputDecoration({
+            hintText: 'Type a message...',
+            border: InputBorder.none
+          }),
+          maxLines: 3
+        })
+      }),
+      IconButton({
+        icon: Icons.send,
+        onPressed: () => {}
+      })
+    ]
+  })
+});
+```
+
+### Example 3: Responsive Button Group
+
+```typescript
+const responsiveButtons = Container({
+  padding: EdgeInsets.all(16),
+  child: Row({
+    children: [
+      Expanded({
+        child: ElevatedButton({
+          onPressed: () => console.log('Cancel'),
+          style: ButtonStyle({
+            backgroundColor: 'gray'
+          }),
+          child: Text('Cancel')
+        })
+      }),
+      SizedBox({ width: 16 }),
+      Expanded({
+        flex: 2, // Confirm button is wider
+        child: ElevatedButton({
+          onPressed: () => console.log('Confirm'),
+          child: Text('Confirm')
+        })
+      })
+    ]
+  })
+});
+```
+
+### Example 4: Using Spacer
+
+```typescript
+// Spacer internally uses Expanded
+const header = Container({
+  padding: EdgeInsets.all(16),
+  color: 'blue',
+  child: Row({
+    children: [
+      Text('Logo', { style: TextStyle({ color: 'white', fontSize: 20 }) }),
+      Spacer(), // Same as Expanded({ child: Container() })
+      IconButton({
+        icon: Icons.notifications,
+        color: 'white',
+        onPressed: () => {}
+      }),
+      IconButton({
+        icon: Icons.account_circle,
+        color: 'white',
+        onPressed: () => {}
+      })
+    ]
+  })
+});
+```
+
+## Difference from Flexible
+
+Expanded is a special case of Flexible:
+
+```typescript
+// These two are identical
+Expanded({ 
+  flex: 2, 
+  child: widget 
+})
+
+Flexible({ 
+  flex: 2, 
+  fit: FlexFit.tight, // Key difference
+  child: widget 
+})
+```
+
+- **Expanded**: Always takes all allocated space (tight)
+- **Flexible**: By default takes only needed space (loose)
+
+## Important Notes
+
+- Expanded must be a direct child of Row, Column, or Flex.
+- Cannot nest Expanded directly inside another Expanded or Flexible.
+- An error occurs if the parent widget has unbounded size in the main axis.
+- The flex value must be 0 or greater; negative values cause errors.
+- When using Expanded in nested Column/Row structures, you may need to wrap the inner Column/Row with Expanded.
+
+## Related Widgets
+
+- **Flexible**: More flexible widget that Expanded is based on
+- **Spacer**: Special use of Expanded to create empty space
+- **Row**: Use Expanded in horizontal layouts
+- **Column**: Use Expanded in vertical layouts
+- **Flex**: Base widget for Row and Column

@@ -1,0 +1,485 @@
+---
+nav_title: "State Management"
+title: "Flitter State Management"
+description: "Efficient state management and data sharing between components using the Provider pattern"
+---
+
+import ProviderExample from '$components/pages/docs/02_core-concepts/03-provider-example';
+
+# State Management
+
+## Overview
+
+Flitter's Provider is a concept similar to React's Context API, enabling efficient state management and sharing throughout the widget tree. Provider is based on InheritedWidget and allows access to state from anywhere in the widget tree.
+
+```
+┌─────────────────────────────────────────────┐
+│              Provider Pattern                │
+│                                             │
+│   ┌─────────────────────────────────┐       │
+│   │     ChangeNotifierProvider      │       │
+│   │   (React's Context.Provider)    │       │
+│   └──────────────┬──────────────────┘       │
+│                  │                           │
+│                  ▼                           │
+│   ┌─────────────────────────────────┐       │
+│   │         Widget Tree             │       │
+│   │  ┌─────────────────────────┐   │       │
+│   │  │    Provider.of(context)  │   │       │
+│   │  │  (React's useContext)    │   │       │
+│   │  └─────────────────────────┘   │       │
+│   └─────────────────────────────────┘       │
+└─────────────────────────────────────────────┘
+```
+
+## Why is Provider needed?
+
+In complex applications, the following situations frequently occur:
+
+- **Deep widget trees**: Prop drilling issues where data must be passed through multiple levels
+- **State sharing**: When multiple widgets need to use and update the same state
+- **Global state**: Data used throughout the app such as user authentication info, theme settings
+- **Performance optimization**: Improve performance by rebuilding only necessary widgets when state changes
+
+## Core Concepts
+
+### 1. Defining Provider Key
+
+Define a unique key to identify the Provider:
+
+```typescript
+const COUNTER_KEY = Symbol('CounterProvider');
+```
+
+### 2. Providing Values with Provider
+
+Use `Provider` to provide values to the widget tree:
+
+```typescript
+// Simple value providing
+Provider({
+  value: { count: 0 },
+  providerKey: COUNTER_KEY,
+  child: MyApp({})
+})
+
+// Wrapping with Provider function
+function CounterProvider({ child }: { child: Widget }) {
+  return Provider({
+    value: { count: 0, increment: () => {} },
+    providerKey: COUNTER_KEY,
+    child
+  });
+}
+```
+
+### 3. Getting Values with Provider.of
+
+Use `Provider.of` to access Provider values:
+
+```typescript
+// Using Provider.of
+const counter = Provider.of(COUNTER_KEY, context);
+
+// Usage within widget
+class MyWidget extends StatelessWidget {
+  build(context: BuildContext): Widget {
+    const counter = Provider.of(COUNTER_KEY, context) as CounterData;
+    
+    return Text(`Count: ${counter.count}`);
+  }
+}
+
+// Adding of method to Provider function (convenience)
+function CounterProvider({ child }: { child: Widget }) {
+  return Provider({
+    value: { count: 0 },
+    providerKey: COUNTER_KEY,
+    child
+  });
+}
+
+CounterProvider.of = (context: BuildContext) => {
+  return Provider.of(COUNTER_KEY, context) as CounterData;
+};
+```
+
+## Code Examples
+
+### Basic Provider Usage
+
+<ProviderExample
+  client:load
+  title="Counter App using Provider"
+  description="Example sharing and updating the same state across multiple widgets"
+/>
+
+### Using Multiple Providers
+
+You can nest multiple Providers:
+
+```typescript
+const THEME_KEY = Symbol('ThemeProvider');
+const USER_KEY = Symbol('UserProvider');
+const CART_KEY = Symbol('CartProvider');
+
+function AppProviders({ child }: { child: Widget }) {
+  return Provider({
+    value: new ThemeController(),
+    providerKey: THEME_KEY,
+    child: Provider({
+      value: new UserController(),
+      providerKey: USER_KEY,
+      child: Provider({
+        value: new CartController(),
+        providerKey: CART_KEY,
+        child
+      })
+    })
+  });
+}
+
+// Usage
+AppProviders({
+  child: MyApp({})
+})
+```
+
+## Practical Examples
+
+### 1. Simple Counter Example
+
+```typescript
+const COUNTER_KEY = Symbol('CounterProvider');
+
+interface CounterData {
+  count: number;
+}
+
+// State management with StatefulWidget
+class CounterApp extends StatefulWidget {
+  createState() {
+    return new CounterAppState();
+  }
+}
+
+class CounterAppState extends State<CounterApp> {
+  count = 0;
+  
+  increment() {
+    this.setState(() => {
+      this.count++;
+    });
+  }
+  
+  build(context: BuildContext): Widget {
+    return Provider({
+      value: { count: this.count },
+      providerKey: COUNTER_KEY,
+      child: Column({
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CounterDisplay({}),
+          SizedBox({ height: 20 }),
+          GestureDetector({
+            onClick: () => this.increment(),
+            child: Container({
+              padding: EdgeInsets.all(12),
+              decoration: new BoxDecoration({
+                color: '#3b82f6',
+                borderRadius: BorderRadius.circular(8)
+              }),
+              child: Text("증가", {
+                style: new TextStyle({
+                  color: '#ffffff'
+                })
+              })
+            })
+          })
+        ]
+      })
+    });
+  }
+}
+
+// Separate widget that reads values from Provider
+class CounterDisplay extends StatelessWidget {
+  build(context: BuildContext): Widget {
+    const data = Provider.of(COUNTER_KEY, context) as CounterData;
+    
+    return Text(`Count: ${data.count}`, {
+      style: new TextStyle({
+        fontSize: 24,
+        color: '#ffffff'
+      })
+    });
+  }
+}
+```
+
+### 2. Provider Function Pattern
+
+```typescript
+const THEME_KEY = Symbol('ThemeProvider');
+
+interface ThemeData {
+  isDarkMode: boolean;
+  primaryColor: string;
+}
+
+// Define Provider function
+function ThemeProvider({ child }: { child: Widget }) {
+  return Provider({
+    value: {
+      isDarkMode: true,
+      primaryColor: '#3b82f6'
+    },
+    providerKey: THEME_KEY,
+    child
+  });
+}
+
+// Add of method
+ThemeProvider.of = (context: BuildContext) => {
+  return Provider.of(THEME_KEY, context) as ThemeData;
+};
+
+// Usage example
+class ThemedApp extends StatelessWidget {
+  build(context: BuildContext): Widget {
+    return ThemeProvider({
+      child: MainContent({})
+    });
+  }
+}
+
+class MainContent extends StatelessWidget {
+  build(context: BuildContext): Widget {
+    const theme = ThemeProvider.of(context);
+    
+    return Container({
+      color: theme.isDarkMode ? '#1a1a1a' : '#ffffff',
+      child: Text("Theme application example", {
+        style: new TextStyle({
+          color: theme.primaryColor,
+          fontSize: 24
+        })
+      })
+    });
+  }
+}
+```
+
+### 3. Complex State Management Example
+
+```typescript
+const APP_STATE_KEY = Symbol('AppStateProvider');
+
+class AppController {
+  user: User | null = null;
+  isDarkMode = false;
+  items: Item[] = [];
+  
+  constructor() {
+    // Initialization logic
+  }
+  
+  login(email: string, password: string) {
+    // Login logic
+    this.user = new User("1", "User", email);
+  }
+  
+  logout() {
+    this.user = null;
+  }
+  
+  toggleTheme() {
+    this.isDarkMode = !this.isDarkMode;
+  }
+  
+  addItem(item: Item) {
+    this.items.push(item);
+  }
+}
+
+// Provider function
+function AppStateProvider({ child }: { child: Widget }) {
+  return Provider({
+    value: new AppController(),
+    providerKey: APP_STATE_KEY,
+    child
+  });
+}
+
+AppStateProvider.of = (context: BuildContext) => {
+  return Provider.of(APP_STATE_KEY, context) as AppController;
+};
+
+// Using with StatefulWidget
+class MyApp extends StatefulWidget {
+  createState() {
+    return new MyAppState();
+  }
+}
+
+class MyAppState extends State<MyApp> {
+  controller = new AppController();
+  
+  build(context: BuildContext): Widget {
+    return Provider({
+      value: this.controller,
+      providerKey: APP_STATE_KEY,
+      child: AppContent({
+        onLogin: (email: string, password: string) => {
+          this.setState(() => {
+            this.controller.login(email, password);
+          });
+        },
+        onThemeToggle: () => {
+          this.setState(() => {
+            this.controller.toggleTheme();
+          });
+        }
+      })
+    });
+  }
+}
+```
+
+## Important Notes
+
+### 1. Provider Scope and Accessibility
+
+Provider is only accessible from below the position where it is provided in the widget tree:
+
+```typescript
+// ❌ Bad example: Trying to access before Provider is provided
+class BadExample extends StatelessWidget {
+  build(context: BuildContext): Widget {
+    const data = Provider.of(MY_KEY, context); // Error!
+    
+    return Provider({
+      value: { count: 0 },
+      providerKey: MY_KEY,
+      child: Text(`Count: ${data.count}`)
+    });
+  }
+}
+
+// ✅ Good example: Accessing from below Provider
+class GoodExample extends StatelessWidget {
+  build(context: BuildContext): Widget {
+    return Provider({
+      value: { count: 0 },
+      providerKey: MY_KEY,
+      child: ChildWidget({})  // Accessible here
+    });
+  }
+}
+
+class ChildWidget extends StatelessWidget {
+  build(context: BuildContext): Widget {
+    const data = Provider.of(MY_KEY, context);
+    return Text(`Count: ${data.count}`);
+  }
+}
+```
+
+### 2. Maintaining Type Safety
+
+When using Provider, type casting should be explicit:
+
+```typescript
+// Type definition
+interface UserData {
+  id: string;
+  name: string;
+  email: string;
+}
+
+const USER_KEY = Symbol('UserProvider');
+
+// Using generics in Provider function
+function UserProvider({ child }: { child: Widget }) {
+  const userData: UserData = {
+    id: '1',
+    name: '사용자',
+    email: 'user@example.com'
+  };
+  
+  return Provider({
+    value: userData,
+    providerKey: USER_KEY,
+    child
+  });
+}
+
+// Type-safe of method
+UserProvider.of = (context: BuildContext): UserData => {
+  return Provider.of(USER_KEY, context) as UserData;
+};
+
+// 사용
+const user = UserProvider.of(context);
+console.log(user.name); // Type safe!
+```
+
+### 3. Dynamic Provider Value Updates
+
+To update Provider values, you must use it with StatefulWidget:
+
+```typescript
+const SETTINGS_KEY = Symbol('SettingsProvider');
+
+interface Settings {
+  fontSize: number;
+  isDarkMode: boolean;
+}
+
+class SettingsWidget extends StatefulWidget {
+  createState() {
+    return new SettingsWidgetState();
+  }
+}
+
+class SettingsWidgetState extends State<SettingsWidget> {
+  settings: Settings = {
+    fontSize: 16,
+    isDarkMode: false
+  };
+  
+  updateFontSize(size: number) {
+    this.setState(() => {
+      this.settings = { ...this.settings, fontSize: size };
+    });
+  }
+  
+  toggleDarkMode() {
+    this.setState(() => {
+      this.settings = { 
+        ...this.settings, 
+        isDarkMode: !this.settings.isDarkMode 
+      };
+    });
+  }
+  
+  build(context: BuildContext): Widget {
+    return Provider({
+      value: this.settings,
+      providerKey: SETTINGS_KEY,
+      child: SettingsContent({
+        onFontSizeChange: (size) => this.updateFontSize(size),
+        onThemeToggle: () => this.toggleDarkMode()
+      })
+    });
+  }
+}
+```
+
+## Next Steps
+
+Once you've mastered the Provider pattern, learn these topics:
+
+- Animation Basics - Dynamic UI implementation using AnimationController
+- Advanced Widget Usage - Implementing custom rendering logic
+- Real-world Examples - Provider usage cases in actual projects

@@ -1,0 +1,506 @@
+---
+nav_group: Widgets
+nav_group_order: 3
+nav_title: Spacer
+title: "Spacer"
+description: "Creates adjustable empty space to tune spacing between widgets in Flex containers like Row or Column"
+---
+
+## Overview
+
+Spacer creates an adjustable, empty spacer that can be used to tune the spacing between widgets in a Flex container, like Row or Column.
+
+The Spacer widget will take up any available space, so setting the Flex.mainAxisAlignment on a flex container that contains a Spacer to MainAxisAlignment.spaceAround, MainAxisAlignment.spaceBetween, or MainAxisAlignment.spaceEvenly will not have any visible effect: the Spacer has taken up all of the additional space, therefore there is none left to redistribute.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/7FJgd7QN1zI"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowfullscreen
+></iframe>
+
+See: [https://api.flutter.dev/flutter/widgets/Spacer-class.html](https://api.flutter.dev/flutter/widgets/Spacer-class.html)
+
+## When to use it?
+
+- When you need flexible space between widgets in Row or Column
+- When you want to push widgets to opposite ends
+- When you need to distribute widgets evenly
+- When you want to allocate remaining space in specific ratios
+- When building responsive layouts that need dynamic spacing
+
+## Basic Usage
+
+```typescript
+// Basic usage: push widgets to opposite ends
+Row({
+  children: [
+    Text('Left'),
+    Spacer(),
+    Text('Right')
+  ]
+})
+
+// Multiple spacers for even distribution
+Row({
+  children: [
+    Spacer(),
+    Text('First'),
+    Spacer(),
+    Text('Second'),
+    Spacer(),
+    Text('Third'),
+    Spacer()
+  ]
+})
+
+// Using flex values to adjust space ratios
+Row({
+  children: [
+    Text('Start'),
+    Spacer({ flex: 1 }),
+    Text('Middle'),
+    Spacer({ flex: 2 }),  // Takes 2x space of first Spacer
+    Text('End')
+  ]
+})
+```
+
+## Props
+
+### flex
+
+**Value: number** (default: **1**)
+
+The flex factor to use for this child to determine how much space to take up relative to other Flexible children.
+
+```typescript
+// Default flex value (1)
+Spacer()
+
+// Custom flex value
+Spacer({ flex: 2 })  // Takes 2x space compared to flex: 1 widgets
+
+// Ratio example
+Row({
+  children: [
+    Container({ width: 50, height: 50, color: 'red' }),
+    Spacer({ flex: 1 }),  // 1 part
+    Container({ width: 50, height: 50, color: 'green' }),
+    Spacer({ flex: 3 }),  // 3 parts (3x the first)
+    Container({ width: 50, height: 50, color: 'blue' })
+  ]
+})
+```
+
+## Practical Examples
+
+### Example 1: Navigation Bar
+
+```typescript
+const NavigationBar = ({ title, onBack, onMenu }) => {
+  return Container({
+    height: 56,
+    padding: EdgeInsets.symmetric({ horizontal: 8 }),
+    decoration: BoxDecoration({
+      color: 'white',
+      boxShadow: [
+        BoxShadow({
+          color: 'rgba(0,0,0,0.1)',
+          blurRadius: 4,
+          offset: { x: 0, y: 2 }
+        })
+      ]
+    }),
+    child: Row({
+      children: [
+        IconButton({
+          icon: Icons.arrow_back,
+          onPressed: onBack
+        }),
+        SizedBox({ width: 16 }),
+        Text(title, {
+          style: TextStyle({
+            fontSize: 20,
+            fontWeight: 'bold'
+          })
+        }),
+        Spacer(),  // Pushes title left, menu right
+        IconButton({
+          icon: Icons.menu,
+          onPressed: onMenu
+        })
+      ]
+    })
+  });
+};
+```
+
+### Example 2: Card Footer
+
+```typescript
+const CardWithFooter = ({ title, content, primaryAction, secondaryAction }) => {
+  return Container({
+    margin: EdgeInsets.all(16),
+    decoration: BoxDecoration({
+      color: 'white',
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow({
+          color: 'rgba(0,0,0,0.1)',
+          blurRadius: 8,
+          offset: { x: 0, y: 2 }
+        })
+      ]
+    }),
+    child: Column({
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header
+        Container({
+          padding: EdgeInsets.all(16),
+          child: Text(title, {
+            style: TextStyle({
+              fontSize: 18,
+              fontWeight: 'bold'
+            })
+          })
+        }),
+        // Content
+        Container({
+          padding: EdgeInsets.symmetric({ horizontal: 16 }),
+          child: Text(content, {
+            style: TextStyle({
+              fontSize: 14,
+              color: '#666',
+              lineHeight: 1.4
+            })
+          })
+        }),
+        SizedBox({ height: 16 }),
+        // Footer
+        Container({
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration({
+            border: Border(top: BorderSide({ color: '#E0E0E0' }))
+          }),
+          child: Row({
+            children: [
+              TextButton({
+                onPressed: secondaryAction.onPressed,
+                child: Text(secondaryAction.label)
+              }),
+              Spacer(),  // Push buttons to opposite ends
+              ElevatedButton({
+                onPressed: primaryAction.onPressed,
+                child: Text(primaryAction.label)
+              })
+            ]
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### Example 3: Social Media Stats
+
+```typescript
+const SocialStats = ({ likes, comments, shares }) => {
+  return Container({
+    padding: EdgeInsets.all(16),
+    child: Row({
+      children: [
+        // Likes
+        Row({
+          children: [
+            Icon({ icon: Icons.favorite, color: '#E91E63', size: 20 }),
+            SizedBox({ width: 4 }),
+            Text(likes.toString(), {
+              style: TextStyle({ fontWeight: 'bold' })
+            })
+          ]
+        }),
+        Spacer({ flex: 1 }),
+        // Comments
+        Row({
+          children: [
+            Icon({ icon: Icons.comment, color: '#2196F3', size: 20 }),
+            SizedBox({ width: 4 }),
+            Text(comments.toString(), {
+              style: TextStyle({ fontWeight: 'bold' })
+            })
+          ]
+        }),
+        Spacer({ flex: 1 }),
+        // Shares
+        Row({
+          children: [
+            Icon({ icon: Icons.share, color: '#4CAF50', size: 20 }),
+            SizedBox({ width: 4 }),
+            Text(shares.toString(), {
+              style: TextStyle({ fontWeight: 'bold' })
+            })
+          ]
+        }),
+        Spacer({ flex: 2 }),  // More space on the right
+        // Bookmark
+        IconButton({
+          icon: Icons.bookmark_border,
+          onPressed: () => {}
+        })
+      ]
+    })
+  });
+};
+```
+
+### Example 4: Step Indicator
+
+```typescript
+const StepIndicator = ({ currentStep, totalSteps, labels }) => {
+  return Container({
+    padding: EdgeInsets.all(24),
+    child: Column({
+      children: [
+        // Step indicator bar
+        Row({
+          children: Array.from({ length: totalSteps }, (_, index) => {
+            const isActive = index <= currentStep;
+            const isLast = index === totalSteps - 1;
+            
+            return [
+              // Step circle
+              Container({
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration({
+                  shape: BoxShape.circle,
+                  color: isActive ? '#2196F3' : '#E0E0E0',
+                  border: isActive ? null : Border.all({ 
+                    color: '#BDBDBD', 
+                    width: 2 
+                  })
+                }),
+                child: Center({
+                  child: Text((index + 1).toString(), {
+                    style: TextStyle({
+                      color: isActive ? 'white' : '#757575',
+                      fontWeight: 'bold'
+                    })
+                  })
+                })
+              }),
+              // Connection line (except last)
+              if (!isLast) Expanded({
+                child: Container({
+                  height: 2,
+                  margin: EdgeInsets.symmetric({ horizontal: 8 }),
+                  color: isActive ? '#2196F3' : '#E0E0E0'
+                })
+              })
+            ];
+          }).flat()
+        }),
+        SizedBox({ height: 16 }),
+        // Labels
+        Row({
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: labels.map((label, index) => {
+            if (index === 0) {
+              return Text(label, {
+                style: TextStyle({ fontSize: 12 })
+              });
+            } else if (index === labels.length - 1) {
+              return Text(label, {
+                style: TextStyle({ fontSize: 12 })
+              });
+            } else {
+              return [
+                Spacer(),
+                Text(label, {
+                  style: TextStyle({ fontSize: 12 })
+                }),
+                Spacer()
+              ];
+            }
+          }).flat()
+        })
+      ]
+    })
+  });
+};
+```
+
+### Example 5: Dashboard Layout
+
+```typescript
+const DashboardHeader = ({ userName, notifications, onProfile, onNotifications }) => {
+  return Container({
+    padding: EdgeInsets.all(16),
+    decoration: BoxDecoration({
+      gradient: LinearGradient({
+        colors: ['#2196F3', '#1976D2'],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight
+      })
+    }),
+    child: Column({
+      children: [
+        // Top bar
+        Row({
+          children: [
+            Text('Dashboard', {
+              style: TextStyle({
+                color: 'white',
+                fontSize: 24,
+                fontWeight: 'bold'
+              })
+            }),
+            Spacer(),
+            // Notification icon
+            Stack({
+              children: [
+                IconButton({
+                  icon: Icons.notifications,
+                  color: 'white',
+                  onPressed: onNotifications
+                }),
+                if (notifications > 0) Positioned({
+                  top: 8,
+                  right: 8,
+                  child: Container({
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration({
+                      color: '#F44336',
+                      shape: BoxShape.circle
+                    }),
+                    child: Center({
+                      child: Text(notifications.toString(), {
+                        style: TextStyle({
+                          color: 'white',
+                          fontSize: 10,
+                          fontWeight: 'bold'
+                        })
+                      })
+                    })
+                  })
+                })
+              ]
+            }),
+            SizedBox({ width: 8 }),
+            // Profile button
+            GestureDetector({
+              onTap: onProfile,
+              child: CircleAvatar({
+                radius: 20,
+                backgroundColor: 'white',
+                child: Text(userName[0], {
+                  style: TextStyle({
+                    color: '#2196F3',
+                    fontWeight: 'bold'
+                  })
+                })
+              })
+            })
+          ]
+        }),
+        SizedBox({ height: 16 }),
+        // Welcome message
+        Row({
+          children: [
+            Column({
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(`Welcome back, ${userName}!`, {
+                  style: TextStyle({
+                    color: 'white',
+                    fontSize: 18
+                  })
+                }),
+                Text('Have a great day', {
+                  style: TextStyle({
+                    color: 'rgba(255,255,255,0.8)',
+                    fontSize: 14
+                  })
+                })
+              ]
+            }),
+            Spacer()
+          ]
+        })
+      ]
+    })
+  });
+};
+```
+
+## Spacer vs SizedBox
+
+### When to use which?
+
+```typescript
+// ✅ Spacer: When you need flexible space
+Row({
+  children: [
+    Text('Left'),
+    Spacer(),  // Takes all remaining space
+    Text('Right')
+  ]
+})
+
+// ✅ SizedBox: When you need fixed space
+Row({
+  children: [
+    Text('First'),
+    SizedBox({ width: 16 }),  // Exactly 16 pixels
+    Text('Second')
+  ]
+})
+
+// Comparison example
+Column({
+  children: [
+    // Spacer takes remaining space
+    Container({
+      height: 100,
+      child: Row({
+        children: [
+          Container({ width: 50, color: 'red' }),
+          Spacer(),  // Remaining space
+          Container({ width: 50, color: 'blue' })
+        ]
+      })
+    }),
+    // SizedBox has fixed size
+    Row({
+      children: [
+        Container({ width: 50, color: 'red' }),
+        SizedBox({ width: 30 }),  // Exactly 30
+        Container({ width: 50, color: 'blue' })
+      ]
+    })
+  ]
+})
+```
+
+## Important Notes
+
+- Spacer can only be used inside a Flex widget (Row, Column, Flex)
+- When Spacer is present, mainAxisAlignment space-related options are ignored
+- Multiple Spacers can be used with flex values to control ratios
+- Spacer is actually shorthand for Expanded(child: SizedBox.shrink())
+- Causes errors in unbounded space, so use with caution
+
+## Related Widgets
+
+- **Expanded**: Widget that expands a child within a Flex
+- **Flexible**: Widget that controls how a child flexes
+- **SizedBox**: Widget that creates fixed-size empty space
+- **Padding**: Widget that adds space around another widget
+- **Container**: Widget that can specify margin, padding, and size

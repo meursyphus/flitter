@@ -1,0 +1,682 @@
+---
+title: "Smooth Animations with AnimatedContainer"
+description: "Create implicit animations that smoothly transition size, color, and position using AnimatedContainer"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from "@meursyphus/flitter-react";
+    import { Container, Text, GestureDetector, Center, StatefulWidget, State } from "@meursyphus/flitter";
+
+    class MyWidget extends StatefulWidget {
+      createState() {
+        return new MyWidgetState();
+      }
+    }
+
+    class MyWidgetState extends State<MyWidget> {
+      isExpanded = false;
+
+      build(context) {
+        // TODO: Use AnimatedContainer to create a box that smoothly changes 
+        // size and color when clicked
+        return Container({
+          width: 300,
+          height: 300,
+          child: Center({
+            child: Text("TODO: Implement AnimatedContainer")
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new MyWidget();
+    }
+    
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+solved_files:
+  App.js: |
+    import React from 'react';
+    import Widget from "@meursyphus/flitter-react";
+    import { Curve, Container, AnimatedContainer, Text, GestureDetector, Center, StatefulWidget, State } from "@meursyphus/flitter";
+
+    class MyWidget extends StatefulWidget {
+      createState() {
+        return new MyWidgetState();
+      }
+    }
+
+    class MyWidgetState extends State {
+      isExpanded = false;
+
+      build(context) {
+        return Container({
+          width: 300,
+          height: 300,
+          child: Center({
+            child: GestureDetector({
+              onClick: () => {
+                this.setState(() => {
+                  this.isExpanded = !this.isExpanded;
+                });
+              },
+              child: AnimatedContainer({
+                duration: 300,
+                width: this.isExpanded ? 200 : 100,
+                height: this.isExpanded ? 200 : 100,
+                color: this.isExpanded ? '#FF6B6B' : '#4ECDC4',
+                child: Center({
+                  child: Text("Click me!")
+                }),
+                curve: Curve.easeInOut,
+              })
+            })
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new MyWidget();
+    }
+    
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+---
+
+# Smooth Animations with AnimatedContainer
+
+In this tutorial, we'll learn how to create smooth animations that bring life to web pages using Flitter's AnimatedContainer.
+
+## 🎯 Learning Goals
+
+After completing this tutorial, you'll be able to:
+
+- [ ] Understand the basic usage of AnimatedContainer
+- [ ] Control animation speed and feel with duration and curve
+- [ ] Implement size, color, and position animations
+- [ ] Combine StatefulWidget with AnimatedContainer
+- [ ] Trigger animations through user interactions
+
+## 🚀 What are Animations?
+
+Animations greatly enhance user experience on the web. Buttons smoothly changing when clicked, cards slightly expanding on hover - these are all examples of animations.
+
+Flitter provides two types of animations:
+- **Implicit animations**: AnimatedContainer, AnimatedOpacity, etc. (what we'll learn today)
+- **Explicit animations**: Using AnimationController (next tutorial)
+
+## 🎨 AnimatedContainer Basic Concepts
+
+AnimatedContainer is a special widget that can animate all properties of a Container. 
+Its biggest advantage is that it **automatically smoothly transitions when you just change property values**.
+
+### Basic Structure
+
+```javascript
+AnimatedContainer({
+  duration: 300,        // Animation duration (milliseconds)
+  width: 100,          // Properties to animate
+  height: 100,
+  color: '#4ECDC4',
+  curve: "easeInOut",  // Animation curve (optional)
+  child: Text("Content")
+})
+```
+
+### Key Properties of AnimatedContainer
+
+**Required properties:**
+- `duration` (number): Animation duration (milliseconds)
+
+**Animatable properties:**
+- `width`, `height` (number): Container size
+- `color` (string): Background color (cannot be used with decoration)
+- `decoration` (BoxDecoration): Borders, shadows, gradients, etc.
+- `margin`, `padding` (EdgeInsets): External/internal spacing
+- `alignment` (Alignment): Child widget alignment
+- `constraints` (Constraints): Constraint conditions
+- `transform` (Matrix4): Transform matrix (rotation, scale, translation)
+
+**Other properties:**
+- `curve` (string): Animation curve
+- `child` (Widget): Non-animated child widget
+- `clipped` (boolean): Whether to clip boundaries
+
+## 📋 Step-by-Step Practice
+
+### Step 1: Box that Changes Size on Click
+
+Let's first create a simple box that changes size when clicked:
+
+```javascript
+import { AnimatedContainer, Text, GestureDetector } from "@meursyphus/flitter";
+import { StatefulWidget, State } from "@meursyphus/flitter";
+
+class ExpandingBox extends StatefulWidget {
+  createState() {
+    return new ExpandingBoxState();
+  }
+}
+
+class ExpandingBoxState extends State<ExpandingBox> {
+  isLarge = false;
+
+  build(context) {
+    return GestureDetector({
+      onClick: () => {
+        this.setState(() => {
+          this.isLarge = !this.isLarge;
+        });
+      },
+      child: AnimatedContainer({
+        duration: 500,
+        width: this.isLarge ? 200 : 100,
+        height: this.isLarge ? 200 : 100,
+        color: '#4ECDC4',
+        child: Text(this.isLarge ? "Big box!" : "Small box")
+      })
+    });
+  }
+}
+
+// Export as factory function
+export default function ExpandingBox() {
+  return new _ExpandingBox();
+}
+```
+
+### Step 2: Change Color Along with Size
+
+Let's make the color change simultaneously with the size:
+
+```javascript
+class ColorfulBox extends StatefulWidget {
+  createState() {
+    return new ColorfulBoxState();
+  }
+}
+
+class ColorfulBoxState extends State<ColorfulBox> {
+  isExpanded = false;
+
+  build(context) {
+    return GestureDetector({
+      onClick: () => {
+        this.setState(() => {
+          this.isExpanded = !this.isExpanded;
+        });
+      },
+      child: AnimatedContainer({
+        duration: 600,
+        width: this.isExpanded ? 180 : 120,
+        height: this.isExpanded ? 180 : 120,
+        color: this.isExpanded ? '#FF6B6B' : '#4ECDC4',
+        curve: "bounceOut",  // Bounce effect
+        child: Text(
+          this.isExpanded ? "🎉 Expanded!" : "👆 Click me"
+        )
+      })
+    });
+  }
+}
+```
+
+### Step 3: Border and Rounded Corner Animations
+
+Let's use BoxDecoration for more sophisticated animations:
+
+```javascript
+import { AnimatedContainer, Text, GestureDetector, BoxDecoration, Border, BorderSide } from "@meursyphus/flitter";
+
+class FancyBox extends StatefulWidget {
+  createState() {
+    return new FancyBoxState();
+  }
+}
+
+class FancyBoxState extends State<FancyBox> {
+  isActive = false;
+
+  build(context) {
+    return GestureDetector({
+      onClick: () => {
+        this.setState(() => {
+          this.isActive = !this.isActive;
+        });
+      },
+      child: AnimatedContainer({
+        duration: 400,
+        width: this.isActive ? 200 : 150,
+        height: this.isActive ? 120 : 80,
+        decoration: BoxDecoration({
+          color: this.isActive ? '#FFE66D' : '#A8E6CF',
+          borderRadius: this.isActive ? 25 : 10,
+          border: Border.all({
+            color: this.isActive ? '#FF6B6B' : '#4ECDC4',
+            width: this.isActive ? 3 : 1
+          })
+        }),
+        child: Text(
+          this.isActive ? "✨ Activated!" : "💤 Inactive"
+        )
+      })
+    });
+  }
+}
+```
+
+### Step 4: Padding and Alignment Animations
+
+Internal padding and alignment can also be animated:
+
+```javascript
+import { EdgeInsets, Alignment } from "@meursyphus/flitter";
+
+class PaddingBox extends StatefulWidget {
+  createState() {
+    return new PaddingBoxState();
+  }
+}
+
+class PaddingBoxState extends State<PaddingBox> {
+  isPadded = false;
+
+  build(context) {
+    return GestureDetector({
+      onClick: () => {
+        this.setState(() => {
+          this.isPadded = !this.isPadded;
+        });
+      },
+      child: AnimatedContainer({
+        duration: 300,
+        width: 200,
+        height: 200,
+        color: '#E8F4FD',
+        padding: this.isPadded 
+          ? EdgeInsets.all(40) 
+          : EdgeInsets.all(10),
+        alignment: this.isPadded 
+          ? Alignment.center 
+          : Alignment.topLeft,
+        child: Container({
+          color: '#2196F3',
+          child: Text("Padding change!")
+        })
+      })
+    });
+  }
+}
+```
+
+## ⚙️ Complete Understanding of duration and curve
+
+### duration (Duration)
+Specifies the time it takes to complete the animation in milliseconds (ms).
+
+```javascript
+duration: 200   // Fast animation (0.2 seconds)
+duration: 500   // Normal speed (0.5 seconds)
+duration: 1000  // Slow animation (1 second)
+```
+
+**Recommendations:**
+- Too short (< 150ms): Hard to perceive the animation
+- Too long (> 1000ms): Users feel frustrated
+- Generally recommended: 200-800ms
+
+### curve (Animation Curve)
+Determines how the animation's progress speed changes over time.
+
+**Basic curves:**
+```javascript
+curve: "linear"      // Constant speed
+curve: "easeIn"      // Smooth start, fast end
+curve: "easeOut"     // Fast start, smooth end
+curve: "easeInOut"   // Smooth start and end
+```
+
+**Special effect curves:**
+```javascript
+curve: "bounceOut"   // Bounce effect
+curve: "bounceIn"    // Reverse bounce
+curve: "bounceInOut" // Bidirectional bounce
+
+curve: "elasticOut"  // Elastic effect
+curve: "elasticIn"   // Reverse elastic
+curve: "elasticInOut" // Bidirectional elastic
+
+curve: "backOut"     // Overshoot effect
+curve: "backIn"      // Reverse overshoot
+curve: "backInOut"   // Bidirectional overshoot
+```
+
+### Actual curve Comparison Example
+
+```javascript
+class CurveComparison extends StatefulWidget {
+  createState() {
+    return new CurveComparisonState();
+  }
+}
+
+class CurveComparisonState extends State<CurveComparison> {
+  isAnimated = false;
+
+  build(context) {
+    return Column({
+      children: [
+        // Linear
+        GestureDetector({
+          onClick: () => this.toggleAnimation(),
+          child: AnimatedContainer({
+            duration: 1000,
+            curve: "linear",
+            width: this.isAnimated ? 300 : 100,
+            height: 50,
+            color: '#FF5722',
+            child: Text("Linear")
+          })
+        }),
+        
+        // EaseInOut
+        GestureDetector({
+          onClick: () => this.toggleAnimation(),
+          child: AnimatedContainer({
+            duration: 1000,
+            curve: "easeInOut",
+            width: this.isAnimated ? 300 : 100,
+            height: 50,
+            color: '#2196F3',
+            child: Text("EaseInOut")
+          })
+        }),
+        
+        // BounceOut
+        GestureDetector({
+          onClick: () => this.toggleAnimation(),
+          child: AnimatedContainer({
+            duration: 1000,
+            curve: "bounceOut",
+            width: this.isAnimated ? 300 : 100,
+            height: 50,
+            color: '#4CAF50',
+            child: Text("BounceOut")
+          })
+        })
+      ]
+    });
+  }
+  
+  toggleAnimation() {
+    this.setState(() => {
+      this.isAnimated = !this.isAnimated;
+    });
+  }
+}
+```
+
+## 🎯 Practice Challenges
+
+### TODO 1: Create a Three-State Change Button
+
+Create a button that cycles through 3 states when clicked:
+
+```javascript
+class TripleStateButton extends StatefulWidget {
+  createState() {
+    return new TripleStateButtonState();
+  }
+}
+
+class TripleStateButtonState extends State<TripleStateButton> {
+  currentState = 0; // 0, 1, 2
+
+  getStateConfig() {
+    const states = [
+      { width: 120, height: 60, color: '#3498db', text: "Start" },
+      { width: 160, height: 80, color: '#f39c12', text: "In Progress" },
+      { width: 200, height: 100, color: '#27ae60', text: "Complete" }
+    ];
+    return states[this.currentState];
+  }
+
+  build(context) {
+    const config = this.getStateConfig();
+    
+    return GestureDetector({
+      onClick: () => {
+        this.setState(() => {
+          this.currentState = (this.currentState + 1) % 3;
+        });
+      },
+      child: AnimatedContainer({
+        duration: 400,
+        curve: "easeInOut",
+        width: config.width,
+        height: config.height,
+        color: config.color,
+        child: Text(config.text)
+      })
+    });
+  }
+}
+```
+
+### TODO 2: Card with Hover Effect
+
+Create a card that slightly enlarges when hovered:
+
+```javascript
+class HoverCard extends StatefulWidget {
+  createState() {
+    return new HoverCardState();
+  }
+}
+
+class HoverCardState extends State<HoverCard> {
+  isHovered = false;
+
+  build(context) {
+    return GestureDetector({
+      onMouseEnter: () => {
+        this.setState(() => {
+          this.isHovered = true;
+        });
+      },
+      onMouseLeave: () => {
+        this.setState(() => {
+          this.isHovered = false;
+        });
+      },
+      child: AnimatedContainer({
+        duration: 200,
+        curve: "easeOut",
+        width: this.isHovered ? 270 : 250,
+        height: this.isHovered ? 170 : 150,
+        decoration: BoxDecoration({
+          color: '#ffffff',
+          borderRadius: 10,
+          border: Border.all({
+            color: this.isHovered ? '#2196F3' : '#e0e0e0',
+            width: this.isHovered ? 2 : 1
+          })
+        }),
+        padding: EdgeInsets.all(20),
+        child: Text("Hover over me!")
+      })
+    });
+  }
+}
+```
+
+### TODO 3: Progress Bar
+
+Create a progress bar that increases with each button click:
+
+```javascript
+class ProgressBar extends StatefulWidget {
+  createState() {
+    return new ProgressBarState();
+  }
+}
+
+class ProgressBarState extends State<ProgressBar> {
+  progress = 0; // 0 ~ 100
+
+  build(context) {
+    return Column({
+      children: [
+        Container({
+          width: 300,
+          height: 20,
+          decoration: BoxDecoration({
+            color: '#f0f0f0',
+            borderRadius: 10
+          }),
+          child: Stack({
+            children: [
+              AnimatedContainer({
+                duration: 500,
+                curve: "easeOut",
+                width: (this.progress / 100) * 300,
+                height: 20,
+                decoration: BoxDecoration({
+                  color: '#4CAF50',
+                  borderRadius: 10
+                })
+              })
+            ]
+          })
+        }),
+        
+        GestureDetector({
+          onClick: () => {
+            this.setState(() => {
+              this.progress = Math.min(this.progress + 20, 100);
+              if (this.progress >= 100) {
+                // Reset after completion
+                setTimeout(() => {
+                  this.setState(() => {
+                    this.progress = 0;
+                  });
+                }, 1000);
+              }
+            });
+          },
+          child: Container({
+            width: 100,
+            height: 40,
+            color: '#2196F3',
+            child: Text("Progress +20%")
+          })
+        }),
+        
+        Text(`Progress: ${this.progress}%`)
+      ]
+    });
+  }
+}
+```
+
+## 🎨 Expected Results
+
+When completed, the following features should work:
+
+1. **Basic box**: Size smoothly changes when clicked
+2. **Colorful box**: Size and color change simultaneously
+3. **Advanced box**: Borders and rounded corners animate
+4. **Three-state button**: Cycles through 3 states with changes
+5. **Hover card**: Smooth response on mouse hover
+6. **Progress bar**: Progress visually increases with clicks
+
+## 💡 Additional Challenges
+
+For more challenges:
+
+1. **Chain animations**: Make multiple boxes animate in sequence
+2. **Complex animations**: Animate padding, margin, shadows all together
+3. **Conditional animations**: Execute animations only under specific conditions
+4. **Infinite animations**: Create automatically repeating animations
+
+## ⚠️ Common Mistakes and Solutions
+
+### 1. Animation Too Fast
+```javascript
+// ❌ Too fast to see
+duration: 50
+
+// ✅ Appropriate speed
+duration: 300
+```
+
+### 2. setState() Usage Mistake
+```javascript
+// ❌ Direct change without setState()
+this.isExpanded = !this.isExpanded;
+
+// ✅ Using setState()
+this.setState(() => {
+  this.isExpanded = !this.isExpanded;
+});
+```
+
+### 3. curve String Typo
+```javascript
+// ❌ Typo
+curve: "easeInout"  // 'O' should be uppercase
+
+// ✅ Correct string
+curve: "easeInOut"
+```
+
+### 4. Using color and decoration Together
+```javascript
+// ❌ Cannot use both
+AnimatedContainer({
+  color: '#FF0000',
+  decoration: BoxDecoration({
+    color: '#0000FF'  // Conflict!
+  })
+})
+
+// ✅ Use only decoration
+AnimatedContainer({
+  decoration: BoxDecoration({
+    color: '#FF0000'
+  })
+})
+```
+
+### 5. Using new Keyword with Widgets
+```javascript
+// ❌ Don't use new with widgets
+new AnimatedContainer({ ... })
+
+// ✅ Use factory function
+AnimatedContainer({ ... })
+```
+
+## 🎓 Key Summary
+
+1. **AnimatedContainer**: Widget that can animate all Container properties
+2. **duration**: Animation duration (milliseconds), 200-800ms recommended
+3. **curve**: Animation progression curve, creates natural movement
+4. **StatefulWidget**: Triggers animations through state changes
+5. **GestureDetector**: Handles user interactions
+
+AnimatedContainer is the easiest animation widget to use in Flitter. Without complex animation controllers, you can create smooth and natural animations that greatly improve UI/UX.
+
+## 🚀 Next Steps
+
+In the next tutorial, let's learn about **various Animated widgets**:
+- Transparency animations with AnimatedOpacity
+- Spacing animations with AnimatedPadding  
+- Position animations with AnimatedAlign
+- Running multiple animations simultaneously
+
+[Next: Various Animated Widgets →](/tutorial/en/5_animation-widgets/002_animated-widgets-collection/)

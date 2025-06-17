@@ -1,0 +1,706 @@
+---
+title: "Complete GestureDetector Mastery"
+description: "Handle all gesture events including click, double-click, long-press, drag, hover, and create complete interactive widgets"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import { Container, Text, GestureDetector, StatefulWidget, State, Column, EdgeInsets, BoxDecoration, Row, Center, SizedBox, Border, BorderRadius, TextStyle, MainAxisAlignment, CrossAxisAlignment } from "@meursyphus/flitter";
+    
+    // TODO: Create interactive widgets that detect various gestures
+    class InteractiveDemo extends StatefulWidget {
+      createState() {
+        return new InteractiveDemoState();
+      }
+    }
+    
+    class InteractiveDemoState extends State {
+      // TODO: Add state variables
+      clickCount = 0;
+      
+      build(context) {
+        return Container({
+          width: 400,
+          height: 300,
+          padding: EdgeInsets.all(20),
+          child: Column({
+            children: [
+              Text("Start practicing with GestureDetector!"),
+              Container({ height: 20 }),
+              // TODO: Create interactive widgets using GestureDetector
+              Container({
+                width: 200,
+                height: 100,
+                decoration: new BoxDecoration({
+                  color: '#3B82F6',
+                  borderRadius: BorderRadius.circular(8)
+                }),
+                child: Center({
+                  child: Text("Add interaction here")
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+    
+    function createWidget() {
+      return new InteractiveDemo();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import { Container, Text, GestureDetector, StatefulWidget, State, Column, EdgeInsets, BoxDecoration, Row, Center, SizedBox, Border, BorderRadius, TextStyle, MainAxisAlignment, CrossAxisAlignment } from "@meursyphus/flitter";
+    
+    class InteractiveDemo extends StatefulWidget {
+      createState() {
+        return new InteractiveDemoState();
+      }
+    }
+    
+    class InteractiveDemoState extends State {
+      clickCount = 0;
+      doubleClickCount = 0;
+      hoverCount = 0;
+      dragCount = 0;
+      isHovered = false;
+      isDragging = false;
+      lastEventType = "None";
+      
+      handleClick() {
+        this.setState(() => {
+          this.clickCount++;
+          this.lastEventType = "Click";
+        });
+      }
+      
+      handleDoubleClick() {
+        this.setState(() => {
+          this.doubleClickCount++;
+          this.lastEventType = "Double Click";
+        });
+      }
+      
+      handleMouseEnter() {
+        this.setState(() => {
+          this.isHovered = true;
+          this.hoverCount++;
+          this.lastEventType = "Hover Start";
+        });
+      }
+      
+      handleMouseLeave() {
+        this.setState(() => {
+          this.isHovered = false;
+          this.lastEventType = "Hover End";
+        });
+      }
+      
+      handleDragStart() {
+        this.setState(() => {
+          this.isDragging = true;
+          this.dragCount++;
+          this.lastEventType = "Drag Start";
+        });
+      }
+      
+      handleDragEnd() {
+        this.setState(() => {
+          this.isDragging = false;
+          this.lastEventType = "Drag End";
+        });
+      }
+      
+      build(context) {
+        return Container({
+          padding: EdgeInsets.all(20),
+          child: Column({
+            children: [
+              Text("🎯 Complete GestureDetector Mastery", {
+                style: new TextStyle({ fontSize: 20, fontWeight: 'bold' })
+              }),
+              Container({ height: 20 }),
+              
+              GestureDetector({
+                onClick: () => this.handleClick(),
+                onDoubleClick: () => this.handleDoubleClick(),
+                onMouseEnter: () => this.handleMouseEnter(),
+                onMouseLeave: () => this.handleMouseLeave(),
+                onDragStart: () => this.handleDragStart(),
+                onDragEnd: () => this.handleDragEnd(),
+                cursor: 'pointer',
+                child: Container({
+                  width: 250,
+                  height: 120,
+                  decoration: new BoxDecoration({
+                    color: this.isDragging ? '#DC2626' : (this.isHovered ? '#7C3AED' : '#3B82F6'),
+                    borderRadius: BorderRadius.circular(12),
+                    border: this.isHovered ? Border.all({ color: '#FFFFFF', width: 2 }) : null
+                  }),
+                  child: Column({
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("🖱️ Interactive Zone", {
+                        style: new TextStyle({ color: '#FFFFFF', fontSize: 16, fontWeight: 'bold' })
+                      }),
+                      SizedBox({ height: 5 }),
+                      Text("Try clicking, double-clicking, hovering, dragging!", {
+                        style: new TextStyle({ color: '#FFFFFF', fontSize: 12 })
+                      })
+                    ]
+                  })
+                })
+              }),
+              
+              SizedBox({ height: 30 }),
+              
+              Container({
+                padding: EdgeInsets.all(15),
+                decoration: new BoxDecoration({
+                  color: '#F3F4F6',
+                  borderRadius: BorderRadius.circular(8)
+                }),
+                child: Column({
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("📊 Event Statistics", {
+                      style: new TextStyle({ fontSize: 16, fontWeight: 'bold' })
+                    }),
+                    SizedBox({ height: 10 }),
+                    Text(`👆 Click count: ${this.clickCount} times`),
+                    Text(`👆👆 Double click count: ${this.doubleClickCount} times`),
+                    Text(`🖱️ Hover count: ${this.hoverCount} times`),
+                    Text(`🔄 Drag count: ${this.dragCount} times`),
+                    SizedBox({ height: 5 }),
+                    Text(`🎯 Current state: ${this.isHovered ? 'Hovering' : (this.isDragging ? 'Dragging' : 'Waiting')}`),
+                    Text(`📋 Last event: ${this.lastEventType}`)
+                  ]
+                })
+              })
+            ]
+          })
+        });
+      }
+    }
+    
+    function createWidget() {
+      return new InteractiveDemo();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+---
+
+# Complete GestureDetector Mastery
+
+In this tutorial, we'll completely master **GestureDetector**, Flitter's core interactive widget. Let's learn step by step how to handle all user gestures from clicking to dragging.
+
+## 🎯 Learning Objectives
+
+After completing this tutorial, you'll be able to:
+
+- [ ] **Handle basic click events** and update the screen
+- [ ] **Implement advanced interactions** with double-click and mouse hover events
+- [ ] **Create dynamic interfaces** using drag gestures
+- [ ] **Build complex interaction systems** by combining multiple gestures
+- [ ] **Enhance user experience** with cursor styles and visual feedback
+
+## 📋 Prerequisites
+
+- Understanding of StatefulWidget and setState() usage
+- Knowledge of Container and basic styling
+- Familiarity with class-based state management patterns
+
+## 🎪 What is GestureDetector?
+
+**GestureDetector** is Flitter's core widget that enables you to detect and respond to all user gestures (touch, click, drag, hover, etc.).
+
+### 🔄 Important Concept
+
+In Flitter, you cannot add event handlers directly to Container or Text widgets. **You must wrap them with GestureDetector** to enable interaction.
+
+```typescript
+// ❌ Wrong way - won't work!
+Container({ 
+  onClick: () => {}, // Error!
+  child: Text("Click") 
+})
+
+// ✅ Correct way
+GestureDetector({
+  onClick: () => {},
+  child: Container({
+    child: Text("Click")
+  })
+})
+```
+
+## 1. Mastering Basic Click Events
+
+### 1.1 onClick Event Basics
+
+Let's start with the most basic click event:
+
+```typescript
+class ClickCounter extends StatefulWidget {
+  createState() {
+    return new ClickCounterState();
+  }
+}
+
+class ClickCounterState extends State {
+  count = 0;
+  
+  build(context) {
+    return GestureDetector({
+      onClick: () => {
+        this.setState(() => {
+          this.count++;
+        });
+      },
+      child: Container({
+        width: 150,
+        height: 80,
+        decoration: new BoxDecoration({
+          color: '#3B82F6',
+          borderRadius: 8
+        }),
+        child: Text(`Click count: ${this.count}`, {
+          style: { color: '#FFFFFF', fontSize: 16 }
+        })
+      })
+    });
+  }
+}
+```
+
+### 1.2 Using Mouse Event Information
+
+The onClick event provides a MouseEvent object:
+
+```typescript
+GestureDetector({
+  onClick: (event) => {
+    console.log(`Click position: (${event.clientX}, ${event.clientY})`);
+    console.log(`Button used: ${event.button}`); // 0: left, 1: middle, 2: right
+    console.log(`Ctrl key pressed: ${event.ctrlKey}`);
+  },
+  child: yourWidget
+})
+```
+
+### 1.3 Practice: Enhanced Click Counter
+
+Implement the following in the code area above:
+
+1. Add `clickCount` state variable
+2. Implement GestureDetector that increments count on each click
+3. Create UI that shows click count in real-time
+
+## 2. Double-Click and Advanced Click Events
+
+### 2.1 Double-Click Events
+
+Double-clicks are handled separately from onClick:
+
+```typescript
+GestureDetector({
+  onClick: () => {
+    console.log("Single click!");
+  },
+  onDoubleClick: () => {
+    console.log("Double click!");
+  },
+  child: yourWidget
+})
+```
+
+### 2.2 Handling Different Mouse Buttons
+
+```typescript
+GestureDetector({
+  onMouseDown: (event) => {
+    switch(event.button) {
+      case 0: console.log("Left button pressed"); break;
+      case 1: console.log("Middle button pressed"); break;
+      case 2: console.log("Right button pressed"); break;
+    }
+  },
+  onMouseUp: (event) => {
+    console.log("Mouse button released");
+  },
+  child: yourWidget
+})
+```
+
+### 2.3 Practice: Various Click Handlers
+
+1. Add `doubleClickCount` state variable
+2. Implement double-click event handler
+3. Count clicks and double-clicks separately
+
+## 3. Mouse Hover Events and Visual Feedback
+
+### 3.1 Hover Event Basics
+
+Let's implement important hover effects for the web:
+
+```typescript
+class HoverButton extends StatefulWidget {
+  createState() {
+    return new HoverButtonState();
+  }
+}
+
+class HoverButtonState extends State {
+  isHovered = false;
+  
+  build(context) {
+    return GestureDetector({
+      onMouseEnter: () => {
+        this.setState(() => {
+          this.isHovered = true;
+        });
+      },
+      onMouseLeave: () => {
+        this.setState(() => {
+          this.isHovered = false;
+        });
+      },
+      child: Container({
+        decoration: new BoxDecoration({
+          color: this.isHovered ? '#4F46E5' : '#3B82F6',
+          borderRadius: 8
+        }),
+        child: Text("Hover me!", {
+          style: { color: '#FFFFFF' }
+        })
+      })
+    });
+  }
+}
+```
+
+### 3.2 Changing Cursor Styles
+
+GestureDetector supports various cursor styles:
+
+```typescript
+GestureDetector({
+  cursor: 'pointer', // Basic pointer
+  // Or other styles:
+  // 'grab', 'grabbing', 'move', 'not-allowed', 'help', etc.
+  child: yourWidget
+})
+```
+
+### 3.3 Available Cursor Styles
+
+```typescript
+// Basic cursors
+'default' | 'pointer' | 'move' | 'text' | 'wait' | 'help'
+
+// Resize cursors  
+'e-resize' | 'ne-resize' | 'nw-resize' | 'n-resize' 
+'se-resize' | 'sw-resize' | 's-resize' | 'w-resize'
+
+// Special cursors
+'grab' | 'grabbing' | 'crosshair' | 'not-allowed'
+```
+
+### 3.4 Practice: Hover-Reactive Button
+
+1. Add `isHovered` and `hoverCount` state variables
+2. Create button that changes color and cursor on hover
+3. Count and display hover occurrences
+
+## 4. Complete Drag Gesture Mastery
+
+### 4.1 Basic Drag Events
+
+Drag is the most complex but powerful interaction:
+
+```typescript
+class DraggableBox extends StatefulWidget {
+  createState() {
+    return new DraggableBoxState();
+  }
+}
+
+class DraggableBoxState extends State {
+  isDragging = false;
+  dragStartPosition = { x: 0, y: 0 };
+  currentPosition = { x: 0, y: 0 };
+  
+  build(context) {
+    return GestureDetector({
+      onDragStart: (event) => {
+        this.setState(() => {
+          this.isDragging = true;
+          this.dragStartPosition = { 
+            x: event.clientX, 
+            y: event.clientY 
+          };
+        });
+      },
+      onDragMove: (event) => {
+        this.setState(() => {
+          this.currentPosition = {
+            x: event.clientX - this.dragStartPosition.x,
+            y: event.clientY - this.dragStartPosition.y
+          };
+        });
+      },
+      onDragEnd: () => {
+        this.setState(() => {
+          this.isDragging = false;
+        });
+      },
+      child: Container({
+        decoration: new BoxDecoration({
+          color: this.isDragging ? '#EF4444' : '#3B82F6'
+        }),
+        child: Text("Try dragging!")
+      })
+    });
+  }
+}
+```
+
+### 4.2 Adding Drag Constraints
+
+You can limit drag areas or restrict movement to specific directions:
+
+```typescript
+// Drag only horizontally
+onDragMove: (event) => {
+  this.setState(() => {
+    this.position = {
+      x: Math.max(0, Math.min(maxWidth, event.clientX - this.startX)),
+      y: this.position.y // Y coordinate fixed
+    };
+  });
+}
+
+// Drag only within specific area
+onDragMove: (event) => {
+  const newX = event.clientX - this.startX;
+  const newY = event.clientY - this.startY;
+  
+  this.setState(() => {
+    this.position = {
+      x: Math.max(0, Math.min(maxX, newX)),
+      y: Math.max(0, Math.min(maxY, newY))
+    };
+  });
+}
+```
+
+### 4.3 Practice: Drag Tracker
+
+1. Add `isDragging`, `dragCount`, `currentPosition` state variables
+2. Create widget that changes color while dragging
+3. Display drag position and count in real-time
+
+## 5. Comprehensive Practice: Complete Interactive Widget
+
+Now let's combine all gestures to create a complete interactive widget!
+
+### 5.1 Features to Complete
+
+**State Variables:**
+```typescript
+class InteractiveDemoState extends State {
+  // Counters for each gesture
+  clickCount = 0;
+  doubleClickCount = 0;
+  hoverCount = 0;
+  dragCount = 0;
+  
+  // Current states
+  isHovered = false;
+  isDragging = false;
+  
+  // Additional info
+  lastEventType = "None";
+  lastEventTime = null;
+}
+```
+
+**Event Handlers:**
+```typescript
+handleClick() {
+  this.setState(() => {
+    this.clickCount++;
+    this.lastEventType = "Click";
+    this.lastEventTime = new Date().toLocaleTimeString();
+  });
+}
+
+handleDoubleClick() {
+  this.setState(() => {
+    this.doubleClickCount++;
+    this.lastEventType = "Double Click";
+    this.lastEventTime = new Date().toLocaleTimeString();
+  });
+}
+
+// Implement other handlers similarly
+```
+
+### 5.2 Complete GestureDetector Setup
+
+```typescript
+GestureDetector({
+  onClick: () => this.handleClick(),
+  onDoubleClick: () => this.handleDoubleClick(),
+  onMouseEnter: () => this.handleMouseEnter(),
+  onMouseLeave: () => this.handleMouseLeave(),
+  onDragStart: () => this.handleDragStart(),
+  onDragMove: (event) => this.handleDragMove(event),
+  onDragEnd: () => this.handleDragEnd(),
+  cursor: 'pointer',
+  child: Container({
+    width: 250,
+    height: 120,
+    decoration: new BoxDecoration({
+      color: this.getBoxColor(), // Color based on state
+      borderRadius: 12,
+      border: this.isHovered ? Border.all({ color: '#FFFFFF', width: 2 }) : null
+    }),
+    child: this.buildBoxContent()
+  })
+})
+```
+
+### 5.3 State-Based Color Logic
+
+```typescript
+getBoxColor() {
+  if (this.isDragging) return '#DC2626'; // Red
+  if (this.isHovered) return '#7C3AED';  // Purple
+  return '#3B82F6'; // Default blue
+}
+```
+
+### 5.4 TODO: Practice Assignment
+
+Complete the following in the code area above:
+
+1. **Define state variables**: All gesture-specific counters and state variables
+2. **Implement event handlers**: Complete processing logic for each gesture
+3. **Visual feedback**: Color changes and border effects based on state
+4. **Information display**: Real-time statistics and current state display
+
+## 6. Advanced Gesture Patterns and Tips
+
+### 6.1 Understanding Gesture Priority
+
+Priority when multiple gestures are set simultaneously:
+
+```typescript
+GestureDetector({
+  onClick: () => {
+    // Executes on short touch/click and immediate release
+  },
+  onDragStart: () => {
+    // Executes when moving after touch/click (onClick is cancelled)
+  },
+  onDoubleClick: () => {
+    // Executes on rapid consecutive clicks (first onClick is delayed)
+  }
+})
+```
+
+### 6.2 Controlling Event Propagation
+
+```typescript
+onClick: (event) => {
+  event.preventDefault(); // Prevent default browser behavior
+  event.stopPropagation(); // Stop event bubbling
+  
+  // Execute custom logic
+  this.handleCustomClick();
+}
+```
+
+### 6.3 Performance Optimization Tips
+
+**Handling frequent events:**
+```typescript
+// Use throttling for frequent events like onMouseMove
+let lastUpdate = 0;
+onMouseMove: (event) => {
+  const now = Date.now();
+  if (now - lastUpdate < 16) return; // 60fps limit
+  lastUpdate = now;
+  
+  this.updateMousePosition(event.clientX, event.clientY);
+}
+```
+
+**Optimizing heavy calculations:**
+```typescript
+onClick: () => {
+  // Separate heavy calculations from state updates
+  const result = this.expensiveCalculation();
+  
+  this.setState(() => {
+    this.result = result;
+  });
+}
+```
+
+## 🎯 Expected Results
+
+The completed interactive widget should behave as follows:
+
+- **Blue box**: Default waiting state
+- **Purple box**: On mouse hover + white border
+- **Red box**: While dragging
+- **Real-time statistics**: Display occurrence count for each gesture type
+- **State display**: Current interaction state (waiting/hover/drag)
+- **Last event**: Most recently occurred gesture type
+
+## 🚀 Additional Challenge Tasks
+
+If you've completed the basic practice, try these challenges:
+
+### Level 1: Basic Extensions
+1. **Right-click menu** implementation (check button === 2 in onMouseDown)
+2. **Keyboard combinations** detection (Ctrl+click, Shift+drag, etc.)
+3. **Measure and display drag distance**
+
+### Level 2: Intermediate Features
+4. **Drag momentum** implementation (continued movement after drag ends)
+5. **Snap functionality** addition (align to grid)
+6. **Multi-touch** simulation (simultaneous interaction in multiple areas)
+
+### Level 3: Advanced Applications
+7. **Gesture history** recording and playback
+8. **Custom gesture** recognizer creation (circle drawing, swipe patterns, etc.)
+9. **Performance monitoring** addition (measure event processing time)
+
+## 📋 Completion Checklist
+
+Check if you've achieved all learning objectives:
+
+- [ ] ✅ **Basic click events** perfectly handled
+- [ ] ✅ **Double-click and hover** advanced interactions implemented
+- [ ] ✅ **Drag gestures** completely mastered
+- [ ] ✅ **Multiple gesture combinations** mastered
+- [ ] ✅ **Visual feedback** user experience enhanced
+- [ ] ✅ **Performance and accessibility** considerations implemented
+
+## 🔗 Next Steps
+
+If you've completely mastered GestureDetector, proceed to the next tutorial:
+
+- **Complete Draggable Widget Mastery** - More advanced drag and drop functionality
+- **Advanced StatefulWidget Patterns** - Complex state management and lifecycle
+- **Form Input Processing** - User input and validation

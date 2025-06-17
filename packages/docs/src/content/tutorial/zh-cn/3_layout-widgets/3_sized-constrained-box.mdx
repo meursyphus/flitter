@@ -1,0 +1,354 @@
+---
+title: "SizedBox and ConstrainedBox - Precise Size Control"
+description: "Learn how to control widget sizes using SizedBox and ConstrainedBox, and master layout size control through practical examples"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import { Container, SizedBox, Text } from "@meursyphus/flitter";
+    
+    // TODO: Use SizedBox to create a fixed-size widget
+    const widget = Container({
+      child: Text("Hello World")
+    });
+    
+    export default function App() {
+      return <Widget widget={widget} />;
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import { Container, SizedBox, Text, ConstrainedBox, Constraints } from "@meursyphus/flitter";
+    
+    const widget = Container({
+      child: SizedBox({
+        width: 200,
+        height: 100,
+        child: ConstrainedBox({
+          constraints: new Constraints({
+            minWidth: 150,
+            maxWidth: 250,
+            minHeight: 80,
+            maxHeight: 120,
+          }),
+          child: Container({
+            color: '#3B82F6',
+            child: Text("Size-controlled Widget")
+          })
+        })
+      })
+    });
+    
+    export default function App() {
+      return <Widget widget={widget} />;
+    }
+---
+
+# SizedBox and ConstrainedBox
+
+Precisely controlling widget sizes is crucial in UI layout design. Flitter provides `SizedBox` and `ConstrainedBox` to fine-tune widget dimensions with precision.
+
+## Learning Objectives
+
+After completing this tutorial, you'll be able to:
+
+- [ ] Set fixed widget sizes using SizedBox
+- [ ] Apply size constraints to widgets using ConstrainedBox
+- [ ] Combine size control widgets to create complex layouts
+- [ ] Understand the differences between minimum and maximum size constraints
+
+## Core Concepts
+
+### SizedBox
+
+`SizedBox` is a widget that provides fixed dimensions to its child widget. You can specify exact width and height, making it ideal for UI elements that require fixed sizing.
+
+### ConstrainedBox
+
+`ConstrainedBox` is a widget that applies size constraints to its child widget. You can specify minimum and maximum sizes to limit the widget's size adjustment within a specific range.
+
+## Basic Usage
+
+### Setting Fixed Size with SizedBox
+
+```javascript
+import { SizedBox, Container, Text } from "@meursyphus/flitter";
+
+const fixedSizeWidget = SizedBox({
+  width: 200,
+  height: 100,
+  child: Container({
+    color: '#3B82F6',
+    child: Text("200x100 Fixed Size")
+  })
+});
+```
+
+### Setting Size Constraints with ConstrainedBox
+
+```javascript
+import { ConstrainedBox, Constraints, Container, Text } from "@meursyphus/flitter";
+
+const constrainedWidget = ConstrainedBox({
+  constraints: new Constraints({
+    minWidth: 100,
+    maxWidth: 300,
+    minHeight: 50,
+    maxHeight: 150,
+  }),
+  child: Container({
+    color: '#10B981',
+    child: Text("Size-constrained Widget")
+  })
+});
+```
+
+## Step-by-Step Practice
+
+### Step 1: Basic SizedBox Usage
+
+Let's start by creating a simple SizedBox.
+
+```javascript
+import { SizedBox, Container, Text } from "@meursyphus/flitter";
+
+const widget = SizedBox({
+  width: 150,
+  height: 80,
+  child: Container({
+    color: '#EF4444',
+    child: Text("SizedBox Test")
+  })
+});
+```
+
+### Step 2: Applying ConstrainedBox
+
+Now let's use ConstrainedBox to add size constraints.
+
+```javascript
+import { ConstrainedBox, Constraints, Container, Text } from "@meursyphus/flitter";
+
+const widget = ConstrainedBox({
+  constraints: new Constraints({
+    minWidth: 120,
+    maxWidth: 200,
+    minHeight: 60,
+    maxHeight: 100,
+  }),
+  child: Container({
+    color: '#8B5CF6',
+    child: Text("Constraint Test")
+  })
+});
+```
+
+### Step 3: Combining SizedBox and ConstrainedBox
+
+Let's combine both widgets to implement more complex size control.
+
+```javascript
+import { SizedBox, ConstrainedBox, Constraints, Container, Text } from "@meursyphus/flitter";
+
+const widget = SizedBox({
+  width: 250,
+  height: 150,
+  child: ConstrainedBox({
+    constraints: new Constraints({
+      minWidth: 200,
+      maxWidth: 300,
+      minHeight: 100,
+      maxHeight: 200,
+    }),
+    child: Container({
+      color: '#F59E0B',
+      child: Text("Combined Size Control")
+    })
+  })
+});
+```
+
+## Practice Problems
+
+### Problem 1: Creating a Fixed-Size Card
+
+Use SizedBox to create a card widget with dimensions 200x120.
+
+```javascript
+// TODO: Implement card widget using SizedBox
+const cardWidget = // Write your code here
+```
+
+### Problem 2: Applying Flexible Size Constraints
+
+Use ConstrainedBox to create a widget with minimum width 100, maximum width 300, minimum height 50, and maximum height 150.
+
+```javascript
+// TODO: Implement flexible size constraints with ConstrainedBox
+const flexibleWidget = // Write your code here
+```
+
+### Problem 3: Complex Size Control
+
+Combine SizedBox and ConstrainedBox to create a widget with fixed outer size and flexible inner size.
+
+```javascript
+// TODO: Implement complex size control widget
+const complexWidget = // Write your code here
+```
+
+## Expected Results
+
+After completing this tutorial:
+
+1. **Fixed-size Widget**: Widget with exact dimensions specified by SizedBox
+2. **Constrained Widget**: Widget with size range limited by ConstrainedBox
+3. **Complex Size Control**: Complex layout combining both widgets
+
+## Additional Challenges
+
+### Responsive Size Control
+
+Create a widget that applies different size constraints based on screen size.
+
+```javascript
+import { ConstrainedBox, Constraints, Container, Text } from "@meursyphus/flitter";
+
+// Responsive size constraint example
+const responsiveWidget = ConstrainedBox({
+  constraints: new Constraints({
+    minWidth: 150,
+    maxWidth: 400,
+    minHeight: 100,
+    maxHeight: 250,
+  }),
+  child: Container({
+    color: '#06B6D4',
+    child: Text("Responsive Size Control")
+  })
+});
+```
+
+### Nested Size Control
+
+Create complex layouts by nesting multiple levels of size control.
+
+```javascript
+import { SizedBox, ConstrainedBox, Constraints, Container, Text } from "@meursyphus/flitter";
+
+const nestedSizeControl = SizedBox({
+  width: 300,
+  height: 200,
+  child: ConstrainedBox({
+    constraints: new Constraints({
+      minWidth: 250,
+      maxWidth: 350,
+      minHeight: 150,
+      maxHeight: 250,
+    }),
+    child: SizedBox({
+      width: 280,
+      height: 180,
+      child: Container({
+        color: '#8B5CF6',
+        child: Text("Nested Size Control")
+      })
+    })
+  })
+});
+```
+
+## Common Mistakes
+
+### 1. Conflicting Constraints
+
+```javascript
+// ❌ Wrong: Conflicting constraints
+const conflictingConstraints = ConstrainedBox({
+  constraints: new Constraints({
+    minWidth: 200,
+    maxWidth: 150, // Maximum smaller than minimum
+  }),
+  child: Container({
+    child: Text("Error occurs")
+  })
+});
+```
+
+```javascript
+// ✅ Correct: Consistent constraints
+const validConstraints = ConstrainedBox({
+  constraints: new Constraints({
+    minWidth: 150,
+    maxWidth: 200, // Maximum larger than minimum
+  }),
+  child: Container({
+    child: Text("Works correctly")
+  })
+});
+```
+
+### 2. Unnecessary Nesting
+
+```javascript
+// ❌ Wrong: Unnecessary SizedBox nesting
+const unnecessaryNesting = SizedBox({
+  width: 200,
+  height: 100,
+  child: SizedBox({
+    width: 200,
+    height: 100,
+    child: Container({
+      child: Text("Duplicate size setting")
+    })
+  })
+});
+```
+
+```javascript
+// ✅ Correct: Simple size setting
+const simpleSize = SizedBox({
+  width: 200,
+  height: 100,
+  child: Container({
+    child: Text("Simple size setting")
+  })
+});
+```
+
+### 3. Constraints Object Creation Error
+
+```javascript
+// ❌ Wrong: Missing new keyword
+const wrongConstraints = ConstrainedBox({
+  constraints: Constraints({
+    minWidth: 100,
+    maxWidth: 200,
+  }),
+  child: Container({
+    child: Text("Error occurs")
+  })
+});
+```
+
+```javascript
+// ✅ Correct: Using new keyword
+const correctConstraints = ConstrainedBox({
+  constraints: new Constraints({
+    minWidth: 100,
+    maxWidth: 200,
+  }),
+  child: Container({
+    child: Text("Works correctly")
+  })
+});
+```
+
+## Next Steps
+
+Once you've mastered size control, proceed to the next topics:
+
+1. **Align and Center**: Widget alignment and centering
+2. **Padding and Margin**: Widget spacing and margin control
+3. **Expanded and Flexible**: Flexible layout composition
+
+Now you can precisely control widget sizes using SizedBox and ConstrainedBox!

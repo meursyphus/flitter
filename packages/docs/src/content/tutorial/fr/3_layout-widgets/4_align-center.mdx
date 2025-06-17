@@ -1,0 +1,443 @@
+---
+title: "Align and Center - Perfect Widget Positioning"
+description: "Learn how to align and center widgets using Align and Center widgets, and master positioning techniques through practical examples"
+files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import { Container, Center, Text } from "@meursyphus/flitter";
+    
+    // TODO: Use Center to place text in the center
+    const widget = Container({
+      width: 300,
+      height: 200,
+      color: '#F3F4F6',
+      child: Text("Hello World")
+    });
+    
+    export default function App() {
+      return <Widget widget={widget} />;
+    }
+solved_files:
+  App.js: |
+    import Widget from "@meursyphus/flitter-react";
+    import { Container, Center, Align, Alignment, Text, TextStyle, EdgeInsets } from "@meursyphus/flitter";
+    
+    const widget = Container({
+      width: 300,
+      height: 200,
+      color: '#F3F4F6',
+      child: Align({
+        alignment: Alignment.center,
+        child: Container({
+          padding: EdgeInsets.all(20),
+          color: '#3B82F6',
+          child: Center({
+            child: Text("Aligned Text", {
+              style: new TextStyle({
+                color: 'white',
+                fontSize: 16
+              })
+            })
+          })
+        })
+      })
+    });
+    
+    export default function App() {
+      return <Widget widget={widget} />;
+    }
+---
+
+# Align and Center
+
+Positioning widgets in appropriate locations is crucial when building UIs. Flitter provides `Align` and `Center` widgets to position child widgets exactly where you want them.
+
+## 🎯 Learning Objectives
+
+After completing this tutorial, you'll be able to:
+
+- [ ] Center widgets using Center
+- [ ] Align widgets to desired positions using Align
+- [ ] Set various alignment positions using Alignment constants
+- [ ] Create complex layouts through composite alignment
+
+## 🧭 Core Concepts
+
+### Center
+
+`Center` is the simplest way to place a child widget at the center of its parent widget. It automatically performs both horizontal and vertical center alignment without any additional configuration.
+
+### Align
+
+`Align` provides more granular alignment control. Using the `alignment` property, you can precisely position child widgets anywhere within their parent.
+
+### Alignment
+
+`Alignment` provides constants representing alignment positions:
+- `Alignment.topLeft`, `Alignment.topCenter`, `Alignment.topRight`
+- `Alignment.centerLeft`, `Alignment.center`, `Alignment.centerRight`
+- `Alignment.bottomLeft`, `Alignment.bottomCenter`, `Alignment.bottomRight`
+
+## 📖 Basic Usage
+
+### Centering with Center
+
+```javascript
+import { Center, Container, Text } from "@meursyphus/flitter";
+
+const centeredWidget = Center({
+  child: Container({
+    width: 100,
+    height: 50,
+    color: '#3B82F6',
+    child: Text("Centered")
+  })
+});
+```
+
+### Positioning with Align
+
+```javascript
+import { Align, Alignment, Container, Text } from "@meursyphus/flitter";
+
+const alignedWidget = Align({
+  alignment: Alignment.topRight,
+  child: Container({
+    width: 100,
+    height: 50,
+    color: '#10B981',
+    child: Text("Top Right")
+  })
+});
+```
+
+## 🏗️ Step-by-Step Practice
+
+### Step 1: Basic Center Usage
+
+Let's start by using Center to place text in the center.
+
+```javascript
+import { Container, Center, Text } from "@meursyphus/flitter";
+
+const widget = Container({
+  width: 200,
+  height: 150,
+  color: '#F3F4F6',
+  child: Center({
+    child: Text("Centered Text")
+  })
+});
+```
+
+### Step 2: Positioning with Align
+
+Now let's use Align to position widgets at various locations.
+
+```javascript
+import { Container, Align, Alignment, Text } from "@meursyphus/flitter";
+
+const widget = Container({
+  width: 300,
+  height: 200,
+  color: '#F3F4F6',
+  child: Align({
+    alignment: Alignment.bottomRight,
+    child: Container({
+      padding: 10,
+      color: '#EF4444',
+      child: Text("Bottom Right")
+    })
+  })
+});
+```
+
+### Step 3: Composite Alignment Layout
+
+Let's create a composite layout with multiple widgets positioned at different locations.
+
+```javascript
+import { Container, Stack, Align, Center, Alignment, Text } from "@meursyphus/flitter";
+
+const widget = Container({
+  width: 300,
+  height: 200,
+  color: '#F3F4F6',
+  child: Stack({
+    children: [
+      Align({
+        alignment: Alignment.topLeft,
+        child: Container({
+          padding: 8,
+          color: '#3B82F6',
+          child: Text("Top Left")
+        })
+      }),
+      Center({
+        child: Container({
+          padding: 8,
+          color: '#10B981',
+          child: Text("Center")
+        })
+      }),
+      Align({
+        alignment: Alignment.bottomRight,
+        child: Container({
+          padding: 8,
+          color: '#F59E0B',
+          child: Text("Bottom Right")
+        })
+      })
+    ]
+  })
+});
+```
+
+## 📝 Practice Problems
+
+### Problem 1: Centering a Title
+
+Use Center to create a widget that places a title in the center of the screen.
+
+```javascript
+// TODO: Use Center to center the title
+const titleWidget = // Write your code here
+```
+
+### Problem 2: Bottom Right Button Placement
+
+Use Align to create a widget that places a button in the bottom right of the container.
+
+```javascript
+// TODO: Use Align to place button in bottom right
+const buttonWidget = // Write your code here
+```
+
+### Problem 3: Multi-Alignment Layout
+
+Use Stack and Align to create a header with logo (top left), title (center), and settings button (top right).
+
+```javascript
+// TODO: Implement multi-alignment header layout
+const headerWidget = // Write your code here
+```
+
+## 🎯 Expected Results
+
+After completing this tutorial:
+
+1. **Center Placement**: Widget positioned exactly in the center using Center
+2. **Position Specification**: Precise placement at desired locations using Align
+3. **Composite Layout**: Complex structure with multiple widgets aligned at different positions
+
+## 🚀 Additional Challenges
+
+### Custom Alignment
+
+Create custom Alignment for more granular position control.
+
+```javascript
+import { Align, Alignment, Container, Text } from "@meursyphus/flitter";
+
+// Custom alignment (range: -1.0 ~ 1.0)
+const customAlignedWidget = Align({
+  alignment: new Alignment(0.5, -0.8), // Leaning right and near top
+  child: Container({
+    padding: 10,
+    color: '#8B5CF6',
+    child: Text("Custom Alignment")
+  })
+});
+```
+
+### Responsive Alignment
+
+Create widgets that apply different alignments based on screen size or conditions.
+
+```javascript
+import { Container, Align, Center, Alignment, Text } from "@meursyphus/flitter";
+
+class ResponsiveAlignWidget extends StatefulWidget {
+  createState() {
+    return new ResponsiveAlignWidgetState();
+  }
+}
+
+class ResponsiveAlignWidgetState extends State<ResponsiveAlignWidget> {
+  isLargeScreen = true;
+  
+  build(context) {
+    return Container({
+      width: 300,
+      height: 200,
+      color: '#F3F4F6',
+      child: this.isLargeScreen 
+        ? Center({
+            child: Container({
+              padding: 10,
+              color: '#06B6D4',
+              child: Text("Large Screen: Center")
+            })
+          })
+        : Align({
+            alignment: Alignment.topLeft,
+            child: Container({
+              padding: 10,
+              color: '#EC4899',
+              child: Text("Small Screen: Top Left")
+            })
+          })
+    });
+  }
+}
+
+export default function ResponsiveAlignWidget(props) {
+  return new ResponsiveAlignWidget(props);
+}
+```
+
+### Animation with Alignment
+
+Implement animation effects where alignment position changes.
+
+```javascript
+import { Container, Align, Alignment, Text, GestureDetector } from "@meursyphus/flitter";
+
+class AnimatedAlignWidget extends StatefulWidget {
+  createState() {
+    return new AnimatedAlignWidgetState();
+  }
+}
+
+class AnimatedAlignWidgetState extends State<AnimatedAlignWidget> {
+  currentAlignment = Alignment.center;
+  
+  toggleAlignment() {
+    this.setState(() => {
+      this.currentAlignment = this.currentAlignment === Alignment.center
+        ? Alignment.topRight
+        : Alignment.center;
+    });
+  }
+  
+  build(context) {
+    return Container({
+      width: 300,
+      height: 200,
+      color: '#F3F4F6',
+      child: GestureDetector({
+        onClick: () => this.toggleAlignment(),
+        child: Align({
+          alignment: this.currentAlignment,
+          child: Container({
+            padding: 10,
+            color: '#F59E0B',
+            child: Text("Click to Change Position")
+          })
+        })
+      })
+    });
+  }
+}
+
+export default function AnimatedAlignWidget(props) {
+  return new AnimatedAlignWidget(props);
+}
+```
+
+## 🐛 Common Mistakes
+
+### 1. Confusing Center and Align
+
+```javascript
+// ❌ Wrong: Using alignment property with Center
+const wrongCenter = Center({
+  alignment: Alignment.topLeft, // Center doesn't have alignment property
+  child: Text("Error")
+});
+```
+
+```javascript
+// ✅ Correct: Using appropriate widgets for the purpose
+const correctAlign = Align({
+  alignment: Alignment.topLeft,
+  child: Text("Correct")
+});
+
+const correctCenter = Center({
+  child: Text("Centered")
+});
+```
+
+### 2. Alignment Constant Typos
+
+```javascript
+// ❌ Wrong: Alignment constant typo
+const wrongAlignment = Align({
+  alignment: Alignment.topCenter, // Correct constant name
+  child: Text("Correct")
+});
+
+const typoAlignment = Align({
+  alignment: Alignment.topCentre, // Typo (British spelling)
+  child: Text("Error")
+});
+```
+
+```javascript
+// ✅ Correct: Using accurate Alignment constants
+const correctAlignment = Align({
+  alignment: Alignment.topCenter,
+  child: Text("Correct")
+});
+```
+
+### 3. Attempting Multi-Alignment Without Stack
+
+```javascript
+// ❌ Wrong: Attempting to place multiple children in Container
+const wrongMultiAlign = Container({
+  child: [
+    Align({ alignment: Alignment.topLeft, child: Text("Top Left") }),
+    Align({ alignment: Alignment.bottomRight, child: Text("Bottom Right") })
+  ] // Container can only have a single child
+});
+```
+
+```javascript
+// ✅ Correct: Using Stack for multi-alignment
+const correctMultiAlign = Stack({
+  children: [
+    Align({ alignment: Alignment.topLeft, child: Text("Top Left") }),
+    Align({ alignment: Alignment.bottomRight, child: Text("Bottom Right") })
+  ]
+});
+```
+
+### 4. Range Error When Using new Alignment
+
+```javascript
+// ❌ Wrong: Values outside range
+const outOfRangeAlignment = Align({
+  alignment: new Alignment(2.0, 3.0), // Exceeds -1.0 ~ 1.0 range
+  child: Text("Out of Range")
+});
+```
+
+```javascript
+// ✅ Correct: Values within valid range
+const validAlignment = Align({
+  alignment: new Alignment(0.8, -0.5), // Within -1.0 ~ 1.0 range
+  child: Text("Valid Range")
+});
+```
+
+## 🎯 Next Steps
+
+Once you've mastered alignment, proceed to the next topics:
+
+1. **Interactive Widgets**: Widgets that handle user interactions
+2. **GestureDetector**: Touch and mouse event handling
+3. **Animation**: Dynamic changes and animations in widgets
+
+Now you can precisely position widgets exactly where you want them using Align and Center!

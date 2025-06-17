@@ -1,0 +1,954 @@
+---
+title: "Styling with Container"
+description: "Create colored rectangles and set padding, margin, and borders"
+files:
+  App.js: |
+    import React from 'react';
+    import Widget from "@meursyphus/flitter-react";
+    import { StatelessWidget, Container, Text, Center } from "@meursyphus/flitter";
+
+    class ContainerStylingApp extends StatelessWidget {
+      build(context) {
+        // TODO: Create a Container with a red background
+        return Container({
+          width: 300,
+          height: 200,
+          child: Center({
+            child: Text('TODO: Container styling')
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new ContainerStylingApp();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+solved_files:
+  App.js: |
+    import React from 'react';
+    import Widget from "@meursyphus/flitter-react";
+    import { StatelessWidget, Container, Text, BoxDecoration, EdgeInsets, TextStyle, Center } from "@meursyphus/flitter";
+
+    class ContainerStylingApp extends StatelessWidget {
+      build(context) {
+        return Container({
+          width: 300,
+          height: 200,
+          decoration: new BoxDecoration({
+            color: '#FF5722'
+          }),
+          padding: EdgeInsets.all(20),
+          child: Center({
+            child: Text("Hello Container!", {
+              style: new TextStyle({
+                color: 'white',
+                fontSize: 18,
+                fontWeight: 'bold'
+              })
+            })
+          })
+        });
+      }
+    }
+
+    function createWidget() {
+      return new ContainerStylingApp();
+    }
+
+    export default function App() {
+      return <Widget widget={createWidget()} renderer="canvas" />;
+    }
+---
+
+# Styling with Container
+
+Container is the most fundamental yet powerful widget in Flitter. Similar to HTML's div tag, it wraps other widgets and allows you to apply styling such as colors, borders, padding, and more. In this tutorial, we'll learn all of Container's features through hands-on practice.
+
+## 🎯 Learning Objectives
+
+After completing this tutorial, you'll be able to:
+
+- [ ] Set background colors and decorations on Container
+- [ ] Adjust spacing with padding and margin
+- [ ] Create borders and rounded corners
+- [ ] Make boxes with specified sizes
+- [ ] Apply shadow and gradient effects
+
+## 📚 Core Container Concepts
+
+### What Container Does
+
+Container provides the following functionality:
+
+1. **Box Model**: Set size, spacing, and borders
+2. **Decoration**: Apply background colors, gradients, and shadows
+3. **Alignment**: Position child widgets
+4. **Constraints**: Set minimum/maximum size limits
+
+### Complete List of Container Properties
+
+```typescript
+Container({
+  // Size settings
+  width: 200,           // Width (pixels)
+  height: 100,          // Height (pixels)
+  
+  // Spacing settings
+  padding: EdgeInsets.all(16),  // Inner padding
+  margin: EdgeInsets.all(8),    // Outer margin
+  
+  // Decoration settings
+  decoration: new BoxDecoration({
+    color: '#FF5722',                    // Background color
+    border: Border.all({ color: '#000', width: 1 }),  // Border
+    borderRadius: BorderRadius.circular(8),           // Rounded corners
+    boxShadow: [new BoxShadow({ /* shadow */ })],    // Shadow
+    gradient: new LinearGradient({ /* gradient */ }) // Gradient
+  }),
+  
+  // Alignment
+  alignment: Alignment.center,   // Child widget alignment
+  
+  // Constraints
+  constraints: new BoxConstraints({
+    minWidth: 100,       // Minimum width
+    maxWidth: 300,       // Maximum width
+    minHeight: 50,       // Minimum height
+    maxHeight: 200       // Maximum height
+  }),
+  
+  // Transform
+  transform: Matrix4.rotationZ(0.1),  // Rotation, scaling, etc.
+  
+  // Child widget
+  child: Text('Hello')  // Single child widget
+})
+```
+
+## 🚀 Practice 1: Creating Basic Color Boxes
+
+Let's start with the simplest Container.
+
+```typescript
+import { Container, BoxDecoration } from "@meursyphus/flitter";
+
+// Container with red background
+const redBox = Container({
+  decoration: new BoxDecoration({
+    color: '#FF5722'  // Hexadecimal color code
+  }),
+  width: 100,
+  height: 100
+});
+```
+
+### Color Specification Methods
+
+```typescript
+// Hexadecimal color codes
+color: '#FF5722'
+color: '#f57c00'
+
+// RGB values
+color: 'rgb(255, 87, 34)'
+color: 'rgba(255, 87, 34, 0.8)'  // With transparency
+
+// HSL values
+color: 'hsl(14, 100%, 57%)'
+color: 'hsla(14, 100%, 57%, 0.8)'
+
+// CSS color names
+color: 'red'
+color: 'blue'
+color: 'transparent'
+```
+
+### 💻 Try It Out
+
+1. Enter the example code above into `App.js`
+2. Change the color to different colors (e.g., `'#2196F3'`, `'#4CAF50'`)
+3. Change the size (e.g., `width: 200, height: 150`)
+
+## 🚀 Practice 2: Setting Spacing with EdgeInsets
+
+Let's set the inner padding and outer margin of the Container.
+
+```typescript
+import { Container, Text, BoxDecoration, EdgeInsets } from "@meursyphus/flitter";
+
+const paddedContainer = Container({
+  decoration: new BoxDecoration({
+    color: '#E3F2FD'  // Light blue
+  }),
+  padding: EdgeInsets.all(20),  // 20 pixel padding in all directions
+  child: Text("Hello!")
+});
+```
+
+### Complete EdgeInsets Usage Guide
+
+```typescript
+// 1. Same spacing in all directions
+EdgeInsets.all(20)
+
+// 2. Separate vertical and horizontal spacing
+EdgeInsets.symmetric({ 
+  vertical: 16,    // Top and bottom 16 pixels
+  horizontal: 24   // Left and right 24 pixels
+})
+
+// 3. Individual direction spacing
+EdgeInsets.only({ 
+  top: 10, 
+  right: 15, 
+  bottom: 10, 
+  left: 15 
+})
+
+// 4. Direct constructor usage
+new EdgeInsets({ top: 8, right: 16, bottom: 8, left: 16 })
+
+// 5. Common patterns
+EdgeInsets.zero                    // No spacing
+EdgeInsets.fromLTRB(10, 20, 10, 5) // Left, top, right, bottom order
+```
+
+### padding vs margin Differences
+
+```typescript
+// padding: Inner spacing (between child and Container boundary)
+Container({
+  decoration: new BoxDecoration({ color: 'lightblue' }),
+  padding: EdgeInsets.all(20),  // Space between text and blue box
+  child: Text("Padding example")
+})
+
+// margin: Outer spacing (between Container and surrounding elements)
+Container({
+  decoration: new BoxDecoration({ color: 'lightgreen' }),
+  margin: EdgeInsets.all(20),   // Space between green box and surrounding elements
+  child: Text("Margin example")
+})
+```
+
+### 💻 Try It Out
+
+1. Change the padding values (10, 30, 50, etc.)
+2. Set different vertical/horizontal spacing with `EdgeInsets.symmetric`
+3. Use both margin and padding together
+
+## 🚀 Practice 3: Setting Borders and BorderRadius
+
+Now let's add borders and make rounded corners.
+
+```typescript
+import { 
+  Container, Text, BoxDecoration, EdgeInsets, 
+  Border, BorderSide, BorderRadius 
+} from "@meursyphus/flitter";
+
+const borderedContainer = Container({
+  decoration: new BoxDecoration({
+    color: '#FFF3E0',  // Light orange
+    border: Border.all({ color: '#FF9800', width: 2 }),  // Orange border
+    borderRadius: BorderRadius.circular(12)  // Rounded corners
+  }),
+  padding: EdgeInsets.all(16),
+  child: Text("Rounded corner box")
+});
+```
+
+### Border Setting Methods
+
+```typescript
+// 1. Same border on all sides
+Border.all({ 
+  color: '#FF9800', 
+  width: 2,
+  style: 'solid'  // 'solid', 'dotted', 'dashed', 'none'
+})
+
+// 2. Individual side settings
+new Border({
+  top: new BorderSide({ color: '#F44336', width: 3 }),
+  right: new BorderSide({ color: '#4CAF50', width: 2 }),
+  bottom: new BorderSide({ color: '#2196F3', width: 3 }),
+  left: new BorderSide({ color: '#FF9800', width: 2 })
+})
+
+// 3. Partial side settings (other sides automatically none)
+Border.symmetric({
+  vertical: new BorderSide({ color: '#9C27B0', width: 2 }),    // Top and bottom
+  horizontal: new BorderSide({ color: '#009688', width: 1 })   // Left and right
+})
+
+// 4. Specific side only
+Border.only({
+  bottom: new BorderSide({ color: '#607D8B', width: 3 })  // Bottom only
+})
+```
+
+### BorderRadius Setting Methods
+
+```typescript
+// 1. Same radius for all corners
+BorderRadius.circular(12)
+
+// 2. Individual corner settings
+BorderRadius.only({
+  topLeft: 20,
+  topRight: 20,
+  bottomLeft: 0,
+  bottomRight: 0
+})
+
+// 3. Elliptical corners
+BorderRadius.elliptical(20, 10)  // Width 20, height 10
+
+// 4. Direct constructor usage
+new BorderRadius({
+  topLeft: 15,
+  topRight: 10,
+  bottomRight: 15,
+  bottomLeft: 10
+})
+```
+
+### 💻 Try It Out
+
+1. Change the `borderRadius` value (5, 20, 30, etc.)
+2. Change border color and thickness
+3. Make only some corners rounded with `BorderRadius.only`
+4. Apply borders to specific directions with `Border.only`
+
+## 🚀 Practice 4: Shadow Effects with BoxShadow
+
+Let's add shadows to boxes to create depth.
+
+```typescript
+import { Container, Text, BoxDecoration, BoxShadow, EdgeInsets } from "@meursyphus/flitter";
+
+const shadowContainer = Container({
+  decoration: new BoxDecoration({
+    color: '#FFFFFF',
+    borderRadius: BorderRadius.circular(8),
+    boxShadow: [
+      new BoxShadow({
+        color: 'rgba(0, 0, 0, 0.1)',  // Shadow color (with transparency)
+        offset: { dx: 0, dy: 2 },     // Shadow position (x, y)
+        blurRadius: 8,                // Blur amount
+        spreadRadius: 0               // Spread amount
+      })
+    ]
+  }),
+  padding: EdgeInsets.all(16),
+  margin: EdgeInsets.all(16),
+  child: Text("Card with shadow")
+});
+```
+
+### BoxShadow Properties Detail
+
+```typescript
+new BoxShadow({
+  // Shadow color (transparency required)
+  color: 'rgba(0, 0, 0, 0.2)',     // Black with 20% transparency
+  color: 'rgba(255, 0, 0, 0.3)',   // Red with 30% transparency
+  
+  // Shadow position adjustment
+  offset: { dx: 2, dy: 4 },        // Right 2px, down 4px
+  offset: { dx: -2, dy: -4 },      // Left 2px, up 4px
+  
+  // Blur amount (higher values = more blur)
+  blurRadius: 10,                  // 10px blur
+  
+  // Shadow size (positive: expand, negative: shrink)
+  spreadRadius: 2,                 // 2px expansion
+  
+  // Shadow direction (default: outward, true: inward)
+  inset: false                     // false: outer shadow, true: inner shadow
+})
+```
+
+### Various Shadow Style Examples
+
+```typescript
+// 1. Soft shadow (Material Design style)
+boxShadow: [
+  new BoxShadow({
+    color: 'rgba(0, 0, 0, 0.1)',
+    offset: { dx: 0, dy: 1 },
+    blurRadius: 3,
+    spreadRadius: 0
+  }),
+  new BoxShadow({
+    color: 'rgba(0, 0, 0, 0.08)',
+    offset: { dx: 0, dy: 1 },
+    blurRadius: 2,
+    spreadRadius: 0
+  })
+]
+
+// 2. Strong shadow
+boxShadow: [
+  new BoxShadow({
+    color: 'rgba(0, 0, 0, 0.3)',
+    offset: { dx: 0, dy: 8 },
+    blurRadius: 16,
+    spreadRadius: 0
+  })
+]
+
+// 3. Inner shadow (inset)
+boxShadow: [
+  new BoxShadow({
+    color: 'rgba(0, 0, 0, 0.2)',
+    offset: { dx: 0, dy: 2 },
+    blurRadius: 4,
+    spreadRadius: 0,
+    inset: true
+  })
+]
+
+// 4. Colored shadow
+boxShadow: [
+  new BoxShadow({
+    color: 'rgba(33, 150, 243, 0.4)',  // Blue shadow
+    offset: { dx: 0, dy: 4 },
+    blurRadius: 12,
+    spreadRadius: 0
+  })
+]
+```
+
+### 💻 Try It Out
+
+1. Change `offset` values to change shadow direction
+2. Adjust `blurRadius` to change shadow blur amount
+3. Combine multiple BoxShadows to create complex shadows
+4. Create inner shadows with `inset: true`
+
+## 🚀 Practice 5: Gradient Backgrounds
+
+Let's apply gradients instead of solid colors.
+
+```typescript
+import { Container, Text, BoxDecoration, LinearGradient, RadialGradient } from "@meursyphus/flitter";
+
+// Linear gradient
+const linearGradientContainer = Container({
+  decoration: new BoxDecoration({
+    gradient: new LinearGradient({
+      begin: 'topLeft',      // Start point
+      end: 'bottomRight',    // End point
+      colors: ['#FF5722', '#FFC107']  // Color array
+    }),
+    borderRadius: BorderRadius.circular(12)
+  }),
+  padding: EdgeInsets.all(20),
+  child: Text("Linear Gradient", {
+    style: new TextStyle({ color: 'white', fontWeight: 'bold' })
+  })
+});
+
+// Radial gradient
+const radialGradientContainer = Container({
+  decoration: new BoxDecoration({
+    gradient: new RadialGradient({
+      center: 'center',      // Center point
+      radius: 0.8,           // Radius (0.0 ~ 1.0)
+      colors: ['#2196F3', '#1976D2']
+    }),
+    borderRadius: BorderRadius.circular(12)
+  }),
+  padding: EdgeInsets.all(20),
+  child: Text("Radial Gradient", {
+    style: new TextStyle({ color: 'white', fontWeight: 'bold' })
+  })
+});
+```
+
+### LinearGradient Setup
+
+```typescript
+new LinearGradient({
+  // Direction setting (string)
+  begin: 'topLeft',     // Start point
+  end: 'bottomRight',   // End point
+  
+  // Or coordinate setting (0.0 ~ 1.0)
+  begin: { x: 0.0, y: 0.0 },    // Top left
+  end: { x: 1.0, y: 1.0 },      // Bottom right
+  
+  // Color array (minimum 2)
+  colors: [
+    '#FF5722',    // Start color
+    '#FFC107',    // Middle color (optional)
+    '#4CAF50'     // End color
+  ],
+  
+  // Color position specification (optional, 0.0 ~ 1.0)
+  stops: [0.0, 0.5, 1.0]  // Position of each color
+})
+```
+
+### Gradient Direction Options
+
+```typescript
+// String specification
+begin: 'topLeft',     end: 'bottomRight'   // Diagonal
+begin: 'topCenter',   end: 'bottomCenter'  // Vertical
+begin: 'centerLeft',  end: 'centerRight'   // Horizontal
+begin: 'topRight',    end: 'bottomLeft'    // Opposite diagonal
+
+// Coordinate specification (more precise control)
+begin: { x: 0.0, y: 0.0 }  // Top left (0,0)
+end: { x: 1.0, y: 0.0 }    // Top right (1,0)
+end: { x: 0.0, y: 1.0 }    // Bottom left (0,1)
+end: { x: 1.0, y: 1.0 }    // Bottom right (1,1)
+```
+
+### RadialGradient Setup
+
+```typescript
+new RadialGradient({
+  // Center position
+  center: 'center',           // 'center', 'topLeft', 'topRight', 'bottomLeft', 'bottomRight'
+  center: { x: 0.3, y: 0.7 }, // Or coordinate specification
+  
+  // Radius (0.0 ~ 1.0)
+  radius: 0.8,
+  
+  // Color array
+  colors: ['#E91E63', '#9C27B0'],
+  
+  // Color positions (optional)
+  stops: [0.0, 1.0]
+})
+```
+
+### 💻 Try It Out
+
+1. Change LinearGradient direction
+2. Create gradients with 3 or more colors
+3. Adjust RadialGradient center point and radius
+4. Use stops to adjust color positions
+
+## 🚀 Practice 6: Alignment and Size Constraints
+
+Let's set child widget alignment and size constraints within Container.
+
+```typescript
+import { Container, Text, BoxDecoration, BoxConstraints, Alignment } from "@meursyphus/flitter";
+
+const alignedContainer = Container({
+  width: 200,
+  height: 100,
+  decoration: new BoxDecoration({
+    color: '#F5F5F5',
+    border: Border.all({ color: '#BDBDBD', width: 1 })
+  }),
+  alignment: Alignment.bottomRight,  // Bottom right alignment
+  child: Text("Aligned text")
+});
+
+const constrainedContainer = Container({
+  constraints: new BoxConstraints({
+    minWidth: 100,
+    maxWidth: 300,
+    minHeight: 50,
+    maxHeight: 150
+  }),
+  decoration: new BoxDecoration({ color: '#E8F5E8' }),
+  child: Text("Container with size constraints")
+});
+```
+
+### alignment Alignment Options
+
+```typescript
+// Alignment constants
+alignment: Alignment.topLeft        // Top left
+alignment: Alignment.topCenter      // Top center
+alignment: Alignment.topRight       // Top right
+alignment: Alignment.centerLeft     // Center left
+alignment: Alignment.center         // Center
+alignment: Alignment.centerRight    // Center right
+alignment: Alignment.bottomLeft     // Bottom left
+alignment: Alignment.bottomCenter   // Bottom center
+alignment: Alignment.bottomRight    // Bottom right
+
+// Custom Alignment creation (-1.0 ~ 1.0)
+alignment: new Alignment({ x: -1.0, y: -1.0 })  // Top left
+alignment: new Alignment({ x: 0.0, y: 0.0 })    // Center
+alignment: new Alignment({ x: 1.0, y: 1.0 })    // Bottom right
+alignment: new Alignment({ x: 0.5, y: -0.5 })   // Custom position
+```
+
+### BoxConstraints Size Constraints
+
+```typescript
+new BoxConstraints({
+  // Minimum size
+  minWidth: 100,     // Minimum width
+  minHeight: 50,     // Minimum height
+  
+  // Maximum size
+  maxWidth: 300,     // Maximum width
+  maxHeight: 200,    // Maximum height
+})
+
+// Common patterns
+BoxConstraints.tight({ width: 100, height: 100 })  // Fixed size
+BoxConstraints.loose({ width: 200, height: 150 })  // Maximum size only
+BoxConstraints.expand()                             // Take all available space
+```
+
+### 💻 Try It Out
+
+1. Try different alignment values
+2. Set size constraints with BoxConstraints
+3. Use coordinate-based alignment
+
+## 🎨 Practice 7: Creating Complete Card Components
+
+Let's create an advanced card that can be used in real applications by combining everything we've learned.
+
+```typescript
+import { 
+  Container, Column, Row, Text, BoxDecoration, EdgeInsets, 
+  BorderRadius, BoxShadow, TextStyle, LinearGradient
+} from "@meursyphus/flitter";
+
+const profileCard = Container({
+  margin: EdgeInsets.all(16),
+  decoration: new BoxDecoration({
+    gradient: new LinearGradient({
+      begin: 'topLeft',
+      end: 'bottomRight',
+      colors: ['#667eea', '#764ba2']
+    }),
+    borderRadius: BorderRadius.circular(16),
+    boxShadow: [
+      new BoxShadow({
+        color: 'rgba(0, 0, 0, 0.1)',
+        offset: { dx: 0, dy: 8 },
+        blurRadius: 24,
+        spreadRadius: 0
+      })
+    ]
+  }),
+  child: Column({
+    crossAxisAlignment: 'start',
+    children: [
+      // Header area
+      Container({
+        padding: EdgeInsets.all(20),
+        child: Row({
+          mainAxisAlignment: 'spaceBetween',
+          children: [
+            Column({
+              crossAxisAlignment: 'start',
+              children: [
+                Text("John Developer", {
+                  style: new TextStyle({
+                    fontSize: 24,
+                    fontWeight: 'bold',
+                    color: 'white'
+                  })
+                }),
+                Text("Frontend Developer", {
+                  style: new TextStyle({
+                    fontSize: 16,
+                    color: 'rgba(255, 255, 255, 0.8)'
+                  })
+                })
+              ]
+            }),
+            Container({
+              width: 60,
+              height: 60,
+              decoration: new BoxDecoration({
+                color: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all({ color: 'white', width: 2 })
+              }),
+              alignment: Alignment.center,
+              child: Text("J", {
+                style: new TextStyle({
+                  fontSize: 24,
+                  fontWeight: 'bold',
+                  color: 'white'
+                })
+              })
+            })
+          ]
+        })
+      }),
+      
+      // Content area
+      Container({
+        padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 16 }),
+        decoration: new BoxDecoration({
+          color: 'white',
+          borderRadius: BorderRadius.only({
+            bottomLeft: 16,
+            bottomRight: 16
+          })
+        }),
+        child: Column({
+          crossAxisAlignment: 'start',
+          children: [
+            Text("Experience", {
+              style: new TextStyle({
+                fontSize: 14,
+                fontWeight: 'bold',
+                color: '#666'
+              })
+            }),
+            Container({ height: 8 }),  // Spacing
+            Text("3 years of web development experience with React, TypeScript, and Node.js", {
+              style: new TextStyle({
+                fontSize: 16,
+                color: '#333',
+                height: 1.5
+              })
+            }),
+            Container({ height: 16 }),
+            Row({
+              mainAxisAlignment: 'spaceBetween',
+              children: [
+                Text("Seoul, Korea", {
+                  style: new TextStyle({
+                    fontSize: 14,
+                    color: '#999'
+                  })
+                }),
+                Container({
+                  padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 6 }),
+                  decoration: new BoxDecoration({
+                    color: '#E8F5E8',
+                    borderRadius: BorderRadius.circular(12)
+                  }),
+                  child: Text("Available", {
+                    style: new TextStyle({
+                      fontSize: 12,
+                      fontWeight: 'bold',
+                      color: '#4CAF50'
+                    })
+                  })
+                })
+              ]
+            })
+          ]
+        })
+      })
+    ]
+  })
+});
+```
+
+### 💻 Try It Out
+
+1. Change gradient colors to different combinations
+2. Adjust the size and style of the profile picture area
+3. Change the color and text of the status label
+4. Create additional information sections
+
+## ⚠️ Common Mistakes and Solutions
+
+### 1. Color Value Mistakes
+```typescript
+// ❌ Wrong way
+color: 0xFF1F2937,    // Numeric format forbidden!
+color: 1F2937,        // No # or quotes
+
+// ✅ Correct way  
+color: '#1F2937',     // HEX string
+color: 'rgba(31, 41, 55, 0.8)',  // RGBA string
+color: 'blue',        // CSS color name
+```
+
+### 2. Border Setting Mistakes
+```typescript
+// ❌ Wrong way - Only setting some sides
+border: new Border({ 
+  top: new BorderSide({ color: '#000', width: 1 })  // Other sides missing!
+})
+
+// ✅ Correct way - Specify all sides or use all()
+border: Border.all({ color: '#000', width: 1 })
+
+// Or specify all sides
+border: new Border({
+  top: new BorderSide({ color: '#000', width: 1 }),
+  right: new BorderSide({ color: '#000', width: 1 }),
+  bottom: new BorderSide({ color: '#000', width: 1 }),
+  left: new BorderSide({ color: '#000', width: 1 })
+})
+```
+
+### 3. EdgeInsets Creation Mistakes
+```typescript
+// ❌ Wrong way - Missing import
+padding: EdgeInsets.all(20)  // EdgeInsets not imported
+
+// ❌ Wrong way - No new keyword
+padding: EdgeInsets({ all: 20 })
+
+// ✅ Correct way
+import { EdgeInsets } from "@meursyphus/flitter";
+padding: EdgeInsets.all(20)
+
+// Or direct creation
+padding: new EdgeInsets({ top: 20, right: 20, bottom: 20, left: 20 })
+```
+
+### 4. BoxShadow Color Mistakes
+```typescript
+// ❌ Wrong way - Color without transparency
+color: '#000000'      // Shadow too dark
+
+// ✅ Correct way - Include transparency
+color: 'rgba(0, 0, 0, 0.1)'   // Appropriate transparency
+color: 'rgba(0, 0, 0, 0.2)'   // Slightly darker shadow
+```
+
+### 5. Size Setting Mistakes
+```typescript
+// ❌ Wrong way - Size as string
+width: '200px',       // String forbidden
+height: '100px'
+
+// ✅ Correct way - Size as number
+width: 200,           // Number in pixels
+height: 100
+```
+
+## 🏆 Challenge
+
+Create an advanced product card that meets the following requirements:
+
+### Card Design Requirements
+
+1. **Overall Structure**:
+   - White background with subtle shadow
+   - Rounded corners (radius: 12)
+   - Appropriate margin and padding
+
+2. **Image Area** (top):
+   - Gradient background (blue tones)
+   - Product name displayed in center
+   - Only top corners rounded
+
+3. **Information Area** (bottom):
+   - Product name (large bold text)
+   - Price (red, bold text)
+   - Description (2 lines, gray text)
+   - Stock status label (green background)
+
+4. **Additional Elements**:
+   - Discount badge (top right corner)
+   - Rating display (stars and numbers)
+
+### Hint
+
+```typescript
+// Color palette you can reference
+const colors = {
+  primary: '#2196F3',
+  secondary: '#FFC107', 
+  success: '#4CAF50',
+  warning: '#FF9800',
+  error: '#F44336',
+  text: '#212121',
+  textSecondary: '#757575',
+  background: '#FFFFFF',
+  shadow: 'rgba(0, 0, 0, 0.1)'
+};
+```
+
+## 📖 Performance Optimization Tips
+
+### Container Usage Considerations
+
+1. **Avoid Unnecessary Nesting**:
+```typescript
+// ❌ Unnecessary nesting
+Container({
+  child: Container({
+    child: Text("Hello")
+  })
+})
+
+// ✅ Use only when necessary
+Container({
+  decoration: new BoxDecoration({ color: 'blue' }),
+  child: Text("Hello")
+})
+```
+
+2. **Minimize Complex decoration**:
+```typescript
+// Performance affecting elements
+boxShadow: [/* many shadows */],  // Minimize shadow count
+gradient: /* complex gradient */,  // Prefer simple gradients
+borderRadius: /* too large value */     // Use appropriate sizes
+```
+
+## 📏 Container Size Determination Principles
+
+### Container Size Determination Order
+
+1. **Explicit Size**: When width, height are set
+2. **Constraints**: When constraints are set  
+3. **Child Size**: Fits to child's size
+4. **Parent Constraints**: Maximum size allowed by parent
+
+```typescript
+// 1. Explicit size (highest priority)
+Container({
+  width: 200,
+  height: 100,
+  child: Text("Fixed size")
+})
+
+// 2. Apply constraints
+Container({
+  constraints: BoxConstraints.tight({ width: 150, height: 80 }),
+  child: Text("Constrained size")
+})
+
+// 3. Fit to child size (default)
+Container({
+  padding: EdgeInsets.all(16),
+  decoration: new BoxDecoration({ color: 'lightblue' }),
+  child: Text("Child size + padding")
+})
+
+// 4. Take all available space (when no child)
+Container({
+  color: 'red'  // Expand to parent size when no child
+})
+```
+
+## 🎨 Next Steps
+
+Now that you've mastered all Container features, let's learn text styling!
+
+Having mastered Container, in the next tutorial we'll learn all the features of the Text widget. You can create various text styles and alignments with the Text widget.
+
+## 💡 Key Summary
+
+1. **Basic Usage**: Create boxes with `Container({ child: ... })`
+2. **Decoration**: Apply colors, borders, shadows, gradients with `BoxDecoration`
+3. **Spacing**: Set padding/margin with `EdgeInsets`
+4. **Alignment**: Position children with `alignment`
+5. **Constraints**: Limit size ranges with `BoxConstraints`
+6. **Performance**: Avoid unnecessary nesting and complex effects
+
+Now you can create beautiful UIs using all of Container's features!
