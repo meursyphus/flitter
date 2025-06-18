@@ -3,25 +3,25 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: AnimatedAlign
 title: "AnimatedAlign"
-description: "A widget that animates its child's alignment transition"
+description: "动画化子组件对齐过渡的组件"
 ---
 
-## Overview
+## 概述
 
-AnimatedAlign is a widget that automatically animates the transition when its child widget's alignment changes. It provides smooth transitions for position changes. This widget is inspired by Flutter's AnimatedAlign widget.
+AnimatedAlign 是一个在子组件对齐方式改变时自动动画化过渡的组件。它为位置变化提供平滑的过渡效果。这个组件受 Flutter 的 AnimatedAlign 组件启发。
 
-> Animated version of Align which automatically transitions the child's position over a given duration whenever the given alignment changes.
+> Align 的动画版本，当给定的对齐方式发生变化时，会在给定的持续时间内自动过渡子组件的位置。
 
-Flutter reference: https://api.flutter.dev/flutter/widgets/AnimatedAlign-class.html
+Flutter 参考：https://api.flutter.dev/flutter/widgets/AnimatedAlign-class.html
 
-## When to use?
+## 何时使用？
 
-- When you want to smoothly move a widget's position
-- When dynamically changing widget alignment based on user interaction
-- When you want to provide visual continuity during layout changes
-- When transitioning positions of floating buttons or popups with animation
+- 当您想要平滑地移动组件位置时
+- 当根据用户交互动态更改组件对齐方式时
+- 当您想要在布局变化期间提供视觉连续性时
+- 当使用动画过渡浮动按钮或弹出窗口的位置时
 
-## Basic usage
+## 基本用法
 
 ```typescript
 import { AnimatedAlign, Alignment, Container, StatefulWidget } from '@flitter/core';
@@ -39,7 +39,7 @@ class AlignmentExampleState extends State<AlignmentExample> {
     return GestureDetector({
       onTap: () => {
         this.setState(() => {
-          // Change alignment position on tap
+          // 点击时更改对齐位置
           this.alignment = this.alignment === Alignment.topLeft 
             ? Alignment.bottomRight 
             : Alignment.topLeft;
@@ -47,7 +47,7 @@ class AlignmentExampleState extends State<AlignmentExample> {
       },
       child: AnimatedAlign({
         alignment: this.alignment,
-        duration: 1000, // 1 second
+        duration: 1000, // 1 秒
         child: Container({
           width: 50,
           height: 50,
@@ -59,74 +59,74 @@ class AlignmentExampleState extends State<AlignmentExample> {
 }
 ```
 
-## Props
+## 属性
 
-### alignment (required)
-**Value: Alignment**
+### alignment（必需）
+**值：Alignment**
 
-Specifies the alignment position of the child widget. Predefined values:
-- `Alignment.topLeft`: Top left (-1, -1)
-- `Alignment.topCenter`: Top center (0, -1)
-- `Alignment.topRight`: Top right (1, -1)
-- `Alignment.centerLeft`: Center left (-1, 0)
-- `Alignment.center`: Center (0, 0)
-- `Alignment.centerRight`: Center right (1, 0)
-- `Alignment.bottomLeft`: Bottom left (-1, 1)
-- `Alignment.bottomCenter`: Bottom center (0, 1)
-- `Alignment.bottomRight`: Bottom right (1, 1)
+指定子组件的对齐位置。预定义值：
+- `Alignment.topLeft`：左上角 (-1, -1)
+- `Alignment.topCenter`：顶部中心 (0, -1)
+- `Alignment.topRight`：右上角 (1, -1)
+- `Alignment.centerLeft`：左侧中心 (-1, 0)
+- `Alignment.center`：中心 (0, 0)
+- `Alignment.centerRight`：右侧中心 (1, 0)
+- `Alignment.bottomLeft`：左下角 (-1, 1)
+- `Alignment.bottomCenter`：底部中心 (0, 1)
+- `Alignment.bottomRight`：右下角 (1, 1)
 
-Custom alignment is also possible:
+也可以自定义对齐：
 ```typescript
 Alignment.of({ x: 0.5, y: -0.5 }) // x: -1~1, y: -1~1
 ```
 
-### duration (required)
-**Value: number**
+### duration（必需）
+**值：number**
 
-Specifies the animation duration in milliseconds.
+指定动画持续时间（毫秒）。
 
-### curve (optional)
-**Value: Curve** (default: **Curves.linear**)
+### curve（可选）
+**值：Curve**（默认值：**Curves.linear**）
 
-Specifies the animation progression curve. Available curves:
-- `Curves.linear`: Constant speed
-- `Curves.easeIn`: Slow start
-- `Curves.easeOut`: Slow end
-- `Curves.easeInOut`: Slow start and end
-- `Curves.circIn`: Circular acceleration start
-- `Curves.circOut`: Circular deceleration end
-- `Curves.circInOut`: Circular acceleration/deceleration
-- `Curves.backIn`: Goes back then starts
-- `Curves.backOut`: Overshoots target then returns
-- `Curves.backInOut`: backIn + backOut
-- `Curves.anticipate`: Anticipatory motion before proceeding
-- `Curves.bounceIn`: Bounces at start
-- `Curves.bounceOut`: Bounces at end
-- `Curves.bounceInOut`: Bounces at start/end
+指定动画进程曲线。可用曲线：
+- `Curves.linear`：匀速
+- `Curves.easeIn`：缓慢开始
+- `Curves.easeOut`：缓慢结束
+- `Curves.easeInOut`：缓慢开始和结束
+- `Curves.circIn`：圆形加速开始
+- `Curves.circOut`：圆形减速结束
+- `Curves.circInOut`：圆形加速/减速
+- `Curves.backIn`：先后退然后开始
+- `Curves.backOut`：超过目标然后返回
+- `Curves.backInOut`：backIn + backOut
+- `Curves.anticipate`：在继续之前的预期运动
+- `Curves.bounceIn`：开始时弹跳
+- `Curves.bounceOut`：结束时弹跳
+- `Curves.bounceInOut`：开始/结束时弹跳
 
-### widthFactor (optional)
-**Value: number | undefined**
+### widthFactor（可选）
+**值：number | undefined**
 
-Multiplier for the child widget's width. If not specified, uses the full width of the parent.
+子组件宽度的乘数。如果未指定，则使用父组件的全宽。
 
-### heightFactor (optional)
-**Value: number | undefined**
+### heightFactor（可选）
+**值：number | undefined**
 
-Multiplier for the child widget's height. If not specified, uses the full height of the parent.
+子组件高度的乘数。如果未指定，则使用父组件的全高。
 
-### child (optional)
-**Value: Widget | undefined**
+### child（可选）
+**值：Widget | undefined**
 
-The child widget to be aligned.
+要对齐的子组件。
 
-### key (optional)
-**Value: any**
+### key（可选）
+**值：any**
 
-A unique identifier for the widget.
+组件的唯一标识符。
 
-## Real-world examples
+## 实际示例
 
-### Example 1: Interactive floating button
+### 示例 1：交互式浮动按钮
 
 ```typescript
 import { AnimatedAlign, Alignment, Container, FloatingActionButton, Curves } from '@flitter/core';
@@ -143,12 +143,12 @@ class InteractiveFloatingButtonState extends State<InteractiveFloatingButton> {
   build() {
     return Stack({
       children: [
-        // Main content
+        // 主内容
         Container({
           color: "lightgray",
         }),
         
-        // Animated floating button
+        // 动画浮动按钮
         AnimatedAlign({
           alignment: this.isExpanded 
             ? Alignment.center 
@@ -173,7 +173,7 @@ class InteractiveFloatingButtonState extends State<InteractiveFloatingButton> {
 }
 ```
 
-### Example 2: Multi-position transition animation
+### 示例 2：多位置过渡动画
 
 ```typescript
 import { AnimatedAlign, Alignment, Container, Row, Column, Curves } from '@flitter/core';
@@ -197,22 +197,22 @@ class MultiPositionAnimationState extends State<MultiPositionAnimation> {
   build() {
     return Column({
       children: [
-        // Control buttons
+        // 控制按钮
         Row({
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton({
               onPressed: () => this.moveToNext(),
-              child: Text("Next Position"),
+              child: Text("下一个位置"),
             }),
             ElevatedButton({
               onPressed: () => this.moveToCenter(),
-              child: Text("To Center"),
+              child: Text("到中心"),
             }),
           ],
         }),
         
-        // Animation area
+        // 动画区域
         Expanded({
           child: Container({
             color: "#f0f0f0",
@@ -249,13 +249,13 @@ class MultiPositionAnimationState extends State<MultiPositionAnimation> {
 
   moveToCenter() {
     this.setState(() => {
-      this.currentPosition = 4; // center position
+      this.currentPosition = 4; // 中心位置
     });
   }
 }
 ```
 
-### Example 3: Using widthFactor and heightFactor
+### 示例 3：使用 widthFactor 和 heightFactor
 
 ```typescript
 import { AnimatedAlign, Alignment, Container, Curves } from '@flitter/core';
@@ -292,7 +292,7 @@ class FactorAnimationState extends State<FactorAnimation> {
             color: "red",
             child: Center({
               child: Text(
-                this.isCompact ? "Shrink" : "Expand",
+                this.isCompact ? "收缩" : "展开",
                 style: TextStyle({ color: "white" }),
               ),
             }),
@@ -304,16 +304,16 @@ class FactorAnimationState extends State<FactorAnimation> {
 }
 ```
 
-## Notes
+## 注意事项
 
-- Animation only occurs when the alignment value changes
-- widthFactor and heightFactor affect the child widget's size and also influence the parent widget's size constraints
-- If a new alignment value is set during animation, it smoothly transitions from the current position to the new target position
-- If duration is 0, the widget moves immediately without animation
+- 动画仅在 alignment 值发生变化时触发
+- widthFactor 和 heightFactor 会影响子组件的尺寸，同时也会影响父组件的尺寸约束
+- 如果在动画过程中设置新的 alignment 值，它会从当前位置平滑过渡到新的目标位置
+- 如果 duration 为 0，组件会立即移动而没有动画
 
-## Related widgets
+## 相关组件
 
-- **Align**: Basic widget for aligning children without animation
-- **AnimatedPositioned**: Animates position transitions within a Stack
-- **AnimatedContainer**: Animates multiple properties simultaneously
-- **AnimatedPadding**: Animates padding transitions
+- **Align**：基本的对齐子组件的组件，没有动画
+- **AnimatedPositioned**：在 Stack 内动画化位置过渡
+- **AnimatedContainer**：同时动画化多个属性
+- **AnimatedPadding**：动画化填充过渡

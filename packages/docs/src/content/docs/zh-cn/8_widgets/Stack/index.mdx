@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Stack
 title: "Stack"
-description: "A layout widget that positions its children relative to its edges"
+description: "相对于其边缘定位其子组件的布局组件"
 ---
 
-## Overview
+## 概述
 
-Stack is a layout widget that allows you to overlay multiple children widgets.
+Stack 是一个允许您叠放多个子组件的布局组件。
 
-Stack lets you place widgets on top of each other in the z-axis direction. Children are painted in order, so the last element in the array appears on top. When used with the Positioned widget, you can specify exact positions for widgets within the Stack.
+Stack 让您在 z 轴方向上将组件一个叠一个放置。子组件按顺序绘制，所以数组中的最后一个元素显示在顶部。与 Positioned 组件一起使用时，您可以为 Stack 内的组件指定精确位置。
 
 <iframe
   width="560"
@@ -22,20 +22,20 @@ Stack lets you place widgets on top of each other in the z-axis direction. Child
   allowfullscreen
 ></iframe>
 
-See: https://api.flutter.dev/flutter/widgets/Stack-class.html
+参考: https://api.flutter.dev/flutter/widgets/Stack-class.html
 
-## When to use it?
+## 何时使用？
 
-- When placing text or buttons over background images
-- When creating floating action buttons at specific screen positions
-- When overlaying badges or notifications on icons
-- When displaying tags or labels on cards
-- When creating custom overlay effects
+- 当在背景图像上放置文本或按钮时
+- 当在特定屏幕位置创建浮动操作按钮时
+- 当在图标上叠放徽章或通知时
+- 当在卡片上显示标签或标签时
+- 当创建自定义覆盖效果时
 
-## Basic Usage
+## 基本用法
 
 ```typescript
-// Simple Stack example
+// 简单 Stack 示例
 const stack = Stack({
   children: [
     Container({ width: 200, height: 200, color: 'blue' }),
@@ -44,80 +44,80 @@ const stack = Stack({
   ]
 });
 
-// Using with Positioned
+// 与 Positioned 一起使用
 const positionedStack = Stack({
   children: [
-    Container({ color: 'lightgray' }), // Background
+    Container({ color: 'lightgray' }), // 背景
     Positioned({
       top: 20,
       left: 20,
-      child: Text('Top Left')
+      child: Text('左上')
     }),
     Positioned({
       bottom: 20,
       right: 20,
-      child: Text('Bottom Right')
+      child: Text('右下')
     })
   ]
 });
 ```
 
-## Props
+## 属性
 
-### children (required)
+### children（必需）
 
-**Value: Widget[]**
+**值: Widget[]**
 
-An array of child widgets to display in the Stack. They are stacked from bottom to top in array order.
+要在 Stack 中显示的子组件数组。它们按数组顺序从底部到顶部堆叠。
 
 ```typescript
 Stack({
   children: [
-    Image({ src: 'background.jpg' }), // Bottom layer
-    Container({ color: 'rgba(0,0,0,0.5)' }), // Middle layer (semi-transparent overlay)
-    Text('Overlay Text') // Top layer
+    Image({ src: 'background.jpg' }), // 底层
+    Container({ color: 'rgba(0,0,0,0.5)' }), // 中间层（半透明覆盖）
+    Text('覆盖文本') // 顶层
   ]
 })
 ```
 
 ### alignment
 
-**Value: Alignment** (default: **Alignment.topLeft**)
+**值: Alignment**（默认值: **Alignment.topLeft**）
 
-Defines how non-positioned children are aligned within the Stack.
+定义非定位子组件在 Stack 内的对齐方式。
 
-- **Alignment.topLeft**: Top-left alignment (default)
-- **Alignment.center**: Center alignment
-- **Alignment.bottomRight**: Bottom-right alignment
-- All other Alignment values are available
+- **Alignment.topLeft**: 左上对齐（默认）
+- **Alignment.center**: 居中对齐
+- **Alignment.bottomRight**: 右下对齐
+- 所有其他 Alignment 值都可用
 
 ```typescript
 Stack({
   alignment: Alignment.center,
   children: [
     Container({ width: 200, height: 200, color: 'blue' }),
-    Container({ width: 100, height: 100, color: 'red' }) // Centered
+    Container({ width: 100, height: 100, color: 'red' }) // 居中
   ]
 })
 ```
 
 ### fit
 
-**Value: StackFit** (default: **StackFit.loose**)
+**值: StackFit**（默认值: **StackFit.loose**）
 
-Defines how non-positioned children should be sized within the Stack.
+定义非定位子组件在 Stack 内应如何调整尺寸。
 
-- **StackFit.loose**: Children use only the space they need (default)
-- **StackFit.expand**: Children expand to fill the Stack
-- **StackFit.passthrough**: Stack constraints are passed to children unchanged
+- **StackFit.loose**: 子组件仅使用它们需要的空间（默认）
+- **StackFit.expand**: 子组件扩展以填满 Stack
+- **StackFit.passthrough**: Stack 约束原样传递给子组件
 
 ```typescript
 Stack({
   fit: StackFit.expand,
   children: [
-    Container({ color: 'blue' }), // Expands to full Stack size
+    Container({ color: 'blue' }), // 扩展到完整 Stack 尺寸
     Center({
-      child: Text('Centered Text')
+      child: Text('居中文本')
     })
   ]
 })
@@ -125,9 +125,9 @@ Stack({
 
 ### clipped
 
-**Value: boolean** (default: **false**)
+**值: boolean**（默认值: **false**）
 
-Determines whether to clip children that extend beyond the Stack bounds.
+确定是否裁剪超出 Stack 边界的子组件。
 
 ```typescript
 Stack({
@@ -135,7 +135,7 @@ Stack({
   children: [
     Container({ width: 100, height: 100, color: 'blue' }),
     Positioned({
-      top: -10, // Outside Stack bounds
+      top: -10, // 超出 Stack 边界
       left: -10,
       child: Container({ width: 50, height: 50, color: 'red' })
     })
@@ -143,19 +143,19 @@ Stack({
 })
 ```
 
-## Positioned Widget
+## Positioned 组件
 
-A widget that controls where a child of a Stack is positioned.
+一个控制 Stack 子组件位置的组件。
 
-### Positioned Props
+### Positioned 属性
 
-- **top**: Distance from the top
-- **bottom**: Distance from the bottom
-- **left**: Distance from the left
-- **right**: Distance from the right
-- **width**: Explicit width
-- **height**: Explicit height
-- **child**: The widget to position
+- **top**: 从顶部的距离
+- **bottom**: 从底部的距离
+- **left**: 从左侧的距离
+- **right**: 从右侧的距离
+- **width**: 明确的宽度
+- **height**: 明确的高度
+- **child**: 要定位的组件
 
 ```typescript
 Positioned({
@@ -169,7 +169,7 @@ Positioned({
 
 ### Positioned.fill()
 
-Creates a Positioned widget that fills the entire Stack.
+创建一个填满整个 Stack 的 Positioned 组件。
 
 ```typescript
 Stack({
@@ -177,16 +177,16 @@ Stack({
     Image({ src: 'background.jpg' }),
     Positioned.fill({
       child: Container({ 
-        color: 'rgba(0, 0, 0, 0.5)' // Semi-transparent overlay
+        color: 'rgba(0, 0, 0, 0.5)' // 半透明覆盖
       })
     })
   ]
 })
 ```
 
-## Practical Examples
+## 实际示例
 
-### Example 1: Profile Card with Badge
+### 示例 1：带徽章的个人资料卡
 
 ```typescript
 const profileCard = Container({
@@ -194,7 +194,7 @@ const profileCard = Container({
   height: 120,
   child: Stack({
     children: [
-      // Profile image
+      // 头像图像
       Container({
         decoration: BoxDecoration({
           shape: 'circle',
@@ -206,7 +206,7 @@ const profileCard = Container({
           color: 'white' 
         })
       }),
-      // Online status indicator
+      // 在线状态指示器
       Positioned({
         bottom: 0,
         right: 0,
@@ -225,7 +225,7 @@ const profileCard = Container({
 });
 ```
 
-### Example 2: Image Gallery with Overlay
+### 示例 2：带覆盖的图库
 
 ```typescript
 const galleryItem = Container({
@@ -234,12 +234,12 @@ const galleryItem = Container({
   child: Stack({
     fit: StackFit.expand,
     children: [
-      // Background image
+      // 背景图像
       Image({
         src: 'gallery-image.jpg',
         fit: 'cover'
       }),
-      // Gradient overlay
+      // 渐变覆盖
       Positioned.fill({
         child: Container({
           decoration: BoxDecoration({
@@ -251,7 +251,7 @@ const galleryItem = Container({
           })
         })
       }),
-      // Text information
+      // 文本信息
       Positioned({
         bottom: 20,
         left: 20,
@@ -259,14 +259,14 @@ const galleryItem = Container({
         child: Column({
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Image Title', {
+            Text('图像标题', {
               style: TextStyle({ 
                 color: 'white', 
                 fontSize: 20, 
                 fontWeight: 'bold' 
               })
             }),
-            Text('By Photographer Name', {
+            Text('摄影师名字', {
               style: TextStyle({ 
                 color: 'rgba(255,255,255,0.8)', 
                 fontSize: 14 
@@ -280,20 +280,20 @@ const galleryItem = Container({
 });
 ```
 
-### Example 3: Floating Action Button
+### 示例 3：浮动操作按钮
 
 ```typescript
 const screenWithFAB = Stack({
   children: [
-    // Main content
+    // 主要内容
     SingleChildScrollView({
       child: Column({
         children: [
-          // ... content widgets
+          // ... 内容组件
         ]
       })
     }),
-    // Floating action button
+    // 浮动操作按钮
     Positioned({
       bottom: 16,
       right: 16,
@@ -321,18 +321,18 @@ const screenWithFAB = Stack({
 })
 ```
 
-## Important Notes
+## 重要说明
 
-- The Stack's size is determined by the largest non-positioned child.
-- Positioned widgets must be direct children of Stack.
-- When both `top` and `bottom` are specified, `height` is ignored.
-- When both `left` and `right` are specified, `width` is ignored.
-- When using unbounded widgets (like ListView) inside Stack, you must provide explicit size constraints.
+- Stack 的尺寸由最大的非定位子组件决定。
+- Positioned 组件必须是 Stack 的直接子组件。
+- 当同时指定 `top` 和 `bottom` 时，`height` 被忽略。
+- 当同时指定 `left` 和 `right` 时，`width` 被忽略。
+- 在 Stack 内使用无边界组件（如 ListView）时，您必须提供明确的尺寸约束。
 
-## Related Widgets
+## 相关组件
 
-- **Positioned**: Controls child positioning within a Stack
-- **Align**: A simpler way to align a single child
-- **IndexedStack**: Shows only one child from multiple children
-- **CustomMultiChildLayout**: For more complex layouts
-- **Overlay**: For displaying widgets on top of the entire app
+- **Positioned**: 控制 Stack 内子组件的位置
+- **Align**: 对齐单个子组件的简单方法
+- **IndexedStack**: 从多个子组件中仅显示一个
+- **CustomMultiChildLayout**: 用于更复杂的布局
+- **Overlay**: 用于在整个应用上显示组件

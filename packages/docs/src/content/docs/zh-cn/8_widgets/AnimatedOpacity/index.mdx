@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: AnimatedOpacity
 title: "AnimatedOpacity"
-description: "A widget that animates opacity transitions"
+description: "动画化透明度过渡的组件"
 ---
 
-## Overview
+## 概述
 
-AnimatedOpacity is a widget that automatically animates when its child widget's opacity changes, providing smooth transitions. This widget is inspired by Flutter's AnimatedOpacity widget.
+AnimatedOpacity 是一个在子组件透明度发生变化时自动进行动画的组件，提供平滑的过渡效果。这个组件受 Flutter 的 AnimatedOpacity 组件启发。
 
-> Animated version of Opacity which automatically transitions the child's opacity over a given duration whenever the given opacity changes.
+> Opacity 的动画版本，当给定的透明度发生变化时，会在给定的持续时间内自动过渡子组件的透明度。
 
 <iframe
   width="560"
@@ -22,17 +22,17 @@ AnimatedOpacity is a widget that automatically animates when its child widget's 
   allowfullscreen
 ></iframe>
 
-Flutter reference: https://api.flutter.dev/flutter/widgets/AnimatedOpacity-class.html
+Flutter 参考: https://api.flutter.dev/flutter/widgets/AnimatedOpacity-class.html
 
-## When to use?
+## 何时使用？
 
-- When showing or hiding widgets with fade in/out effects
-- When smoothly adjusting widget visibility based on user interaction
-- When dimming content to indicate loading states
-- When smoothly showing/hiding tooltips or hint messages
-- When providing natural fade effects during screen transitions
+- 当需要通过淡入/淡出效果显示或隐藏组件时
+- 当需要根据用户交互平滑调整组件可见性时
+- 当需要调暗内容以指示加载状态时
+- 当需要平滑显示/隐藏工具提示或提示消息时
+- 当在屏幕过渡期间提供自然淡化效果时
 
-## Basic usage
+## 基本用法
 
 ```typescript
 import { AnimatedOpacity, Container, StatefulWidget } from '@flitter/core';
@@ -55,7 +55,7 @@ class OpacityExampleState extends State<OpacityExample> {
               this.isVisible = !this.isVisible;
             });
           },
-          child: Text(this.isVisible ? "Hide" : "Show"),
+          child: Text(this.isVisible ? "隐藏" : "显示"),
         }),
         AnimatedOpacity({
           opacity: this.isVisible ? 1.0 : 0.0,
@@ -65,7 +65,7 @@ class OpacityExampleState extends State<OpacityExample> {
             height: 200,
             color: "blue",
             child: Center({
-              child: Text("Fade Effect", { style: TextStyle({ color: "white" }) }),
+              child: Text("淡化效果", { style: TextStyle({ color: "white" }) }),
             }),
           }),
         }),
@@ -75,53 +75,53 @@ class OpacityExampleState extends State<OpacityExample> {
 }
 ```
 
-## Props
+## 属性
 
-### opacity (required)
-**Value: number**
+### opacity（必需）
+**值：number**
 
-Sets the widget's opacity.
-- 0.0 = Completely transparent (invisible)
-- 1.0 = Completely opaque (fully visible)
-- Values between 0.0 and 1.0 for partial transparency
+设置组件的透明度。
+- 0.0 = 完全透明（不可见）
+- 1.0 = 完全不透明（完全可见）
+- 0.0 到 1.0 之间的值为部分透明
 
-### duration (required)
-**Value: number**
+### duration（必需）
+**值：number**
 
-Specifies the animation duration in milliseconds.
+指定动画持续时间（毫秒）。
 
-### curve (optional)
-**Value: Curve** (default: **Curves.linear**)
+### curve（可选）
+**值：Curve**（默认值：**Curves.linear**）
 
-Specifies the animation progression curve. Available curves:
-- `Curves.linear`: Constant speed
-- `Curves.easeIn`: Slow start
-- `Curves.easeOut`: Slow end
-- `Curves.easeInOut`: Slow start and end
-- `Curves.circIn`: Circular acceleration start
-- `Curves.circOut`: Circular deceleration end
-- `Curves.circInOut`: Circular acceleration/deceleration
-- `Curves.backIn`: Goes back then starts
-- `Curves.backOut`: Overshoots target then returns
-- `Curves.backInOut`: backIn + backOut
-- `Curves.anticipate`: Anticipatory motion before proceeding
-- `Curves.bounceIn`: Bounces at start
-- `Curves.bounceOut`: Bounces at end
-- `Curves.bounceInOut`: Bounces at start/end
+指定动画进程曲线。可用曲线：
+- `Curves.linear`：匀速
+- `Curves.easeIn`：缓慢开始
+- `Curves.easeOut`：缓慢结束
+- `Curves.easeInOut`：缓慢开始和结束
+- `Curves.circIn`：圆形加速开始
+- `Curves.circOut`：圆形减速结束
+- `Curves.circInOut`：圆形加速/减速
+- `Curves.backIn`：先后退然后开始
+- `Curves.backOut`：超过目标然后返回
+- `Curves.backInOut`：backIn + backOut
+- `Curves.anticipate`：在继续之前的预期运动
+- `Curves.bounceIn`：开始时弹跳
+- `Curves.bounceOut`：结束时弹跳
+- `Curves.bounceInOut`：开始/结束时弹跳
 
-### child (optional)
-**Value: Widget | undefined**
+### child（可选）
+**值：Widget | undefined**
 
-The child widget whose opacity will be adjusted.
+将调整透明度的子组件。
 
-### key (optional)
-**Value: any**
+### key（可选）
+**值：any**
 
-A unique identifier for the widget.
+组件的唯一标识符。
 
-## Real-world examples
+## 实际示例
 
-### Example 1: Loading state display
+### 示例 1：加载状态显示
 
 ```typescript
 import { AnimatedOpacity, CircularProgressIndicator, Container, Curves } from '@flitter/core';
@@ -158,7 +158,7 @@ class LoadingOverlayState extends State<LoadingOverlay> {
           child: Center({
             child: ElevatedButton({
               onPressed: () => this.loadData(),
-              child: Text("Load Data"),
+              child: Text("加载数据"),
             }),
           }),
         }),
@@ -181,7 +181,7 @@ class LoadingOverlayState extends State<LoadingOverlay> {
                   }),
                   SizedBox({ height: 16 }),
                   Text(
-                    "Loading...",
+                    "加载中...",
                     { style: TextStyle({ color: "white", fontSize: 18 }) }
                   ),
                 ],
@@ -195,7 +195,7 @@ class LoadingOverlayState extends State<LoadingOverlay> {
 }
 ```
 
-### Example 2: Tooltip message
+### 示例 2：工具提示消息
 
 ```typescript
 import { AnimatedOpacity, Container, Tooltip, Curves } from '@flitter/core';
@@ -233,7 +233,7 @@ class TooltipExampleState extends State<TooltipExample> {
                 borderRadius: BorderRadius.circular(8),
               }),
               child: Text(
-                "Hover over me",
+                "悬停在我上面",
                 { style: TextStyle({ color: "white" }) }
               ),
             }),
@@ -253,7 +253,7 @@ class TooltipExampleState extends State<TooltipExample> {
                 borderRadius: BorderRadius.circular(4),
               }),
               child: Text(
-                "This is a tooltip message!",
+                "这是一个工具提示消息！",
                 { style: TextStyle({ color: "white", fontSize: 14 }) }
               ),
             }),
@@ -265,7 +265,7 @@ class TooltipExampleState extends State<TooltipExample> {
 }
 ```
 
-### Example 3: Sequential fade-in effect
+### 示例 3：顺序淡入效果
 
 ```typescript
 import { AnimatedOpacity, Container, Curves } from '@flitter/core';
@@ -317,7 +317,7 @@ class SequentialFadeInState extends State<SequentialFadeIn> {
                 borderRadius: BorderRadius.circular(8),
               }),
               child: Text(
-                "First Item",
+                "第一项",
                 { style: TextStyle({ color: "white", fontSize: 18 }) }
               ),
             }),
@@ -336,7 +336,7 @@ class SequentialFadeInState extends State<SequentialFadeIn> {
                 borderRadius: BorderRadius.circular(8),
               }),
               child: Text(
-                "Second Item",
+                "第二项",
                 { style: TextStyle({ color: "white", fontSize: 18 }) }
               ),
             }),
@@ -354,7 +354,7 @@ class SequentialFadeInState extends State<SequentialFadeIn> {
                 borderRadius: BorderRadius.circular(8),
               }),
               child: Text(
-                "Third Item",
+                "第三项",
                 { style: TextStyle({ color: "white", fontSize: 18 }) }
               ),
             }),
@@ -366,7 +366,7 @@ class SequentialFadeInState extends State<SequentialFadeIn> {
 }
 ```
 
-### Example 4: Cross-fade transition
+### 示例 4：交叉淡化过渡
 
 ```typescript
 import { AnimatedOpacity, Container, Curves } from '@flitter/core';
@@ -451,17 +451,17 @@ class CrossFadeExampleState extends State<CrossFadeExample> {
 }
 ```
 
-## Notes
+## 注意事项
 
-- Opacity values must be between 0.0 and 1.0
-- Even when opacity is 0.0, the widget still occupies layout space
-- To completely hide and remove space, use conditional rendering
-- For performance, avoid applying opacity animations to too many widgets simultaneously
-- If a new opacity value is set during animation, it smoothly transitions from the current value to the new value
+- 透明度值必须在 0.0 到 1.0 之间
+- 即使透明度为 0.0，组件仍然占据布局空间
+- 要完全隐藏并移除空间，请使用条件渲染
+- 为了性能考虑，避免同时对太多组件应用透明度动画
+- 如果在动画期间设置新的透明度值，它会从当前值平滑过渡到新值
 
-## Related widgets
+## 相关组件
 
-- **Opacity**: Basic widget for setting opacity without animation
-- **AnimatedContainer**: Animates multiple properties simultaneously
-- **FadeTransition**: Fade effect using explicit Animation objects
-- **Visibility**: Controls widget visibility and manages layout space
+- **Opacity**：用于设置透明度的基本组件，无动画
+- **AnimatedContainer**：同时动画化多个属性
+- **FadeTransition**：使用显式 Animation 对象的淡化效果
+- **Visibility**：控制组件可见性并管理布局空间

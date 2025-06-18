@@ -3,27 +3,27 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: AnimatedRotation
 title: "AnimatedRotation"
-description: "A widget that animates rotation transitions"
+description: "动画化旋转过渡的组件"
 ---
 
-## Overview
+## 概述
 
-AnimatedRotation is a widget that automatically animates when its rotation angle (turns) changes, providing smooth rotation transitions. This widget is inspired by Flutter's AnimatedRotation widget.
+AnimatedRotation 是一个在旋转角度（turns）变化时自动进行动画的组件，提供平滑的旋转过渡效果。这个组件受 Flutter 的 AnimatedRotation 组件启发。
 
-> Animated version of Transform.rotate which automatically transitions the child's rotation over a given duration whenever the given rotation changes.
+> Transform.rotate 的动画版本，当给定的旋转角度发生变化时，会在给定的持续时间内自动过渡子组件的旋转。
 
-Flutter reference: https://api.flutter.dev/flutter/widgets/AnimatedRotation-class.html
+Flutter 参考: https://api.flutter.dev/flutter/widgets/AnimatedRotation-class.html
 
-## When to use?
+## 何时使用？
 
-- When creating loading indicators or spinners
-- When visually representing state changes of icons or buttons
-- When rotating elements based on user interaction
-- When creating transition animations for checkboxes, switches, etc.
-- When simulating movement of mechanical components
-- When implementing card flip or rotation effects
+- 当创建加载指示器或旋转器时
+- 当可视化表示图标或按钮的状态变化时
+- 当根据用户交互旋转元素时
+- 当为复选框、开关等创建过渡动画时
+- 当模拟机械部件的运动时
+- 当实现卡片翻转或旋转效果时
 
-## Basic usage
+## 基本用法
 
 ```typescript
 import { AnimatedRotation, Container, StatefulWidget } from '@flitter/core';
@@ -46,7 +46,7 @@ class RotationExampleState extends State<RotationExample> {
               this.turns += 0.25; // 90-degree rotation
             });
           },
-          child: Text("Rotate"),
+          child: Text("旋转"),
         }),
         AnimatedRotation({
           turns: this.turns,
@@ -70,67 +70,67 @@ class RotationExampleState extends State<RotationExample> {
 }
 ```
 
-## Props
+## 属性
 
-### turns (required)
-**Value: number**
+### turns（必需）
+**值：number**
 
-Specifies the amount of rotation. 1.0 represents one complete full rotation (360 degrees).
-- 0.0 = No rotation
-- 0.25 = 90-degree rotation
-- 0.5 = 180-degree rotation
-- 1.0 = 360-degree rotation (one full turn)
-- 2.0 = 720-degree rotation (two full turns)
-- Negative values rotate counterclockwise
+指定旋转量。1.0 表示一次完整的全旋转（360度）。
+- 0.0 = 不旋转
+- 0.25 = 90度旋转
+- 0.5 = 180度旋转
+- 1.0 = 360度旋转（一圈）
+- 2.0 = 720度旋转（两圈）
+- 负值逆时针旋转
 
-### duration (required)
-**Value: number**
+### duration（必需）
+**值：number**
 
-Specifies the animation duration in milliseconds.
+指定动画持续时间（毫秒）。
 
-### alignment (optional)
-**Value: Alignment** (default: **Alignment.center**)
+### alignment（可选）
+**值：Alignment**（默认值：**Alignment.center**）
 
-Specifies the center point of rotation. Available values:
-- `Alignment.center`: Rotate around center
-- `Alignment.topLeft`: Rotate around top-left corner
-- `Alignment.topRight`: Rotate around top-right corner
-- `Alignment.bottomLeft`: Rotate around bottom-left corner
-- `Alignment.bottomRight`: Rotate around bottom-right corner
-- Custom alignment: `Alignment.of({ x: -0.5, y: 0.5 })`
+指定旋转的中心点。可用值：
+- `Alignment.center`：围绕中心旋转
+- `Alignment.topLeft`：围绕左上角旋转
+- `Alignment.topRight`：围绕右上角旋转
+- `Alignment.bottomLeft`：围绕左下角旋转
+- `Alignment.bottomRight`：围绕右下角旋转
+- 自定义对齐：`Alignment.of({ x: -0.5, y: 0.5 })`
 
-### curve (optional)
-**Value: Curve** (default: **Curves.linear**)
+### curve（可选）
+**值：Curve**（默认值：**Curves.linear**）
 
-Specifies the animation progression curve. Available curves:
-- `Curves.linear`: Constant speed
-- `Curves.easeIn`: Slow start
-- `Curves.easeOut`: Slow end
-- `Curves.easeInOut`: Slow start and end
-- `Curves.circIn`: Circular acceleration start
-- `Curves.circOut`: Circular deceleration end
-- `Curves.circInOut`: Circular acceleration/deceleration
-- `Curves.backIn`: Goes back then starts
-- `Curves.backOut`: Overshoots target then returns
-- `Curves.backInOut`: backIn + backOut
-- `Curves.anticipate`: Anticipatory motion before proceeding
-- `Curves.bounceIn`: Bounces at start
-- `Curves.bounceOut`: Bounces at end
-- `Curves.bounceInOut`: Bounces at start/end
+指定动画进程曲线。可用曲线：
+- `Curves.linear`：匀速
+- `Curves.easeIn`：缓慢开始
+- `Curves.easeOut`：缓慢结束
+- `Curves.easeInOut`：缓慢开始和结束
+- `Curves.circIn`：圆形加速开始
+- `Curves.circOut`：圆形减速结束
+- `Curves.circInOut`：圆形加速/减速
+- `Curves.backIn`：先后退然后开始
+- `Curves.backOut`：超过目标然后返回
+- `Curves.backInOut`：backIn + backOut
+- `Curves.anticipate`：在继续之前的预期运动
+- `Curves.bounceIn`：开始时弹跳
+- `Curves.bounceOut`：结束时弹跳
+- `Curves.bounceInOut`：开始/结束时弹跳
 
-### child (optional)
-**Value: Widget | undefined**
+### child（可选）
+**值：Widget | undefined**
 
-The child widget to be rotated.
+要旋转的子组件。
 
-### key (optional)
-**Value: any**
+### key（可选）
+**值：any**
 
-A unique identifier for the widget.
+组件的唯一标识符。
 
-## Real-world examples
+## 实际示例
 
-### Example 1: Loading spinner
+### 示例 1：加载旋转器
 
 ```typescript
 import { AnimatedRotation, Container, Icon, Curves } from '@flitter/core';
@@ -193,7 +193,7 @@ class LoadingSpinnerState extends State<LoadingSpinner> {
         SizedBox({ height: 20 }),
         ElevatedButton({
           onPressed: this.isLoading ? null : () => this.startLoading(),
-          child: Text(this.isLoading ? "Loading..." : "Start Loading"),
+          child: Text(this.isLoading ? "加载中..." : "开始加载"),
         }),
       ],
     });
@@ -201,7 +201,7 @@ class LoadingSpinnerState extends State<LoadingSpinner> {
 }
 ```
 
-### Example 2: Interactive icon button
+### 示例 2：交互式图标按钮
 
 ```typescript
 import { AnimatedRotation, Container, GestureDetector, Icon, Curves } from '@flitter/core';
@@ -262,17 +262,17 @@ class InteractiveIconButtonState extends State<InteractiveIconButton> {
             children: [
               ListTile({
                 leading: Icon(Icons.photo),
-                title: Text("Photo"),
+                title: Text("照片"),
                 onTap: () => {},
               }),
               ListTile({
                 leading: Icon(Icons.video),
-                title: Text("Video"),
+                title: Text("视频"),
                 onTap: () => {},
               }),
               ListTile({
                 leading: Icon(Icons.file),
-                title: Text("File"),
+                title: Text("文件"),
                 onTap: () => {},
               }),
             ],
@@ -284,7 +284,7 @@ class InteractiveIconButtonState extends State<InteractiveIconButton> {
 }
 ```
 
-### Example 3: Mechanical clock
+### 示例 3：机械时钟
 
 ```typescript
 import { AnimatedRotation, Container, Stack, Curves } from '@flitter/core';
@@ -424,7 +424,7 @@ class MechanicalClockState extends State<MechanicalClock> {
 }
 ```
 
-### Example 4: Card flip animation
+### 示例 4：卡片翻转动画
 
 ```typescript
 import { AnimatedRotation, Container, GestureDetector, Curves } from '@flitter/core';
@@ -491,7 +491,7 @@ class CardFlipState extends State<CardFlip> {
                       }),
                       SizedBox({ height: 16 }),
                       Text(
-                        "Card Back",
+                        "卡片背面",
                         { style: TextStyle({ color: "white", fontSize: 24, fontWeight: "bold" }) }
                       ),
                     ],
@@ -519,12 +519,12 @@ class CardFlipState extends State<CardFlip> {
                       }),
                       SizedBox({ height: 16 }),
                       Text(
-                        "Card Front",
+                        "卡片正面",
                         { style: TextStyle({ color: "white", fontSize: 24, fontWeight: "bold" }) }
                       ),
                       SizedBox({ height: 8 }),
                       Text(
-                        "Tap to flip",
+                        "点击翻转",
                         { style: TextStyle({ color: "white", fontSize: 14, opacity: 0.8 }) }
                       ),
                     ],
@@ -539,18 +539,18 @@ class CardFlipState extends State<CardFlip> {
 }
 ```
 
-## Notes
+## 注意事项
 
-- **turns value meaning**: 1.0 represents one complete full rotation (360 degrees)
-- **Continuous rotation**: Continuously increasing the turns value creates ongoing rotation animation
-- **Direction control**: Negative values rotate counterclockwise
-- **Performance considerations**: Applying rotation animation to many widgets simultaneously may impact performance
-- **Alignment importance**: The rotation center point significantly affects the visual effect
+- **turns 值含义**：1.0 表示一次完整的全旋转（360度）
+- **连续旋转**：持续增加 turns 值会创建持续的旋转动画
+- **方向控制**：负值逆时针旋转
+- **性能考虑**：同时对多个组件应用旋转动画可能影响性能
+- **对齐的重要性**：旋转中心点对视觉效果影响很大
 
-## Related widgets
+## 相关组件
 
-- **Transform.rotate**: Basic widget for applying rotation without animation
-- **AnimatedContainer**: General-purpose widget for animating multiple transformations simultaneously
-- **RotationTransition**: Rotation animation using explicit Animation controllers
-- **AnimatedScale**: Widget for animating size changes
-- **Transform**: Basic widget for applying various transformations (rotation, scale, position)
+- **Transform.rotate**：用于应用旋转的基本组件，无动画
+- **AnimatedContainer**：同时动画化多个变换的通用组件
+- **RotationTransition**：使用显式 Animation 控制器的旋转动画
+- **AnimatedScale**：用于动画化尺寸变化的组件
+- **Transform**：用于应用各种变换（旋转、缩放、位置）的基本组件

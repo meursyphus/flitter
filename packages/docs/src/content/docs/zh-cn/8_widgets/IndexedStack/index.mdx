@@ -1,7 +1,7 @@
 ---
 nav_group: Widgets
 title: IndexedStack
-description: Guide to using the IndexedStack widget for displaying one child from multiple children
+description: "用于从多个子组件中显示一个子组件的 IndexedStack 组件使用指南"
 sidebar:
   order: 9
 ---
@@ -9,63 +9,63 @@ sidebar:
 
 # IndexedStack
 
-`IndexedStack` is a stack widget that displays only one child widget from multiple children based on a specific index. It's useful for tab interfaces and page switching.
+`IndexedStack` 是一个堆叠组件，基于特定索引从多个子组件中仅显示一个子组件。它对于选项卡界面和页面切换非常有用。
 
-## Overview
+## 概述
 
-IndexedStack renders all child widgets but only shows the widget at the specified index on screen. Other widgets are hidden but maintain their state.
+IndexedStack 渲染所有子组件，但只在屏幕上显示指定索引处的组件。其他组件被隐藏但保持其状态。
 
-## When to Use
+## 何时使用
 
-- **Tab Interfaces**: When displaying only one tab at a time
-- **Page Switcher**: When transitioning between pages while preserving state
-- **Conditional Display**: When showing different widgets based on state
-- **Wizard UI**: When preserving previous step states during step-by-step progression
-- **Card Deck**: When displaying only a specific card from a deck
+- **选项卡界面**：当一次只显示一个选项卡时
+- **页面切换器**：当在页面之间转换同时保持状态时
+- **条件显示**：当根据状态显示不同组件时
+- **向导 UI**：当在逐步进行过程中保持之前步骤的状态时
+- **卡牌堆**：当从卡牌堆中只显示特定卡牌时
 
-## Basic Usage
+## 基本用法
 
 ```typescript
 import { IndexedStack, Container, Text } from '@meursyphus/flitter';
 
 IndexedStack({
-  index: 1, // Display the second child
+  index: 1, // 显示第二个子组件
   children: [
     Container({
       color: 'red',
-      child: Text('First Page')
+      child: Text('第一页')
     }),
     Container({
       color: 'blue', 
-      child: Text('Second Page')
+      child: Text('第二页')
     }),
     Container({
       color: 'green',
-      child: Text('Third Page')
+      child: Text('第三页')
     })
   ]
 })
 ```
 
-## Props
+## 属性
 
-| Property | Type | Default | Description |
+| 属性 | 类型 | 默认值 | 描述 |
 |----------|------|---------|-------------|
-| `index` | `number` | `0` | Index of the child widget to display |
-| `children` | `Widget[]` | - | Child widgets to include in the stack |
-| `alignment` | `Alignment?` | `Alignment.topLeft` | Alignment of child widgets |
-| `sizing` | `StackFit?` | `StackFit.loose` | Stack sizing behavior |
-| `clipped` | `boolean?` | `true` | Whether to clip children when they overflow |
+| `index` | `number` | `0` | 要显示的子组件索引 |
+| `children` | `Widget[]` | - | 包含在堆叠中的子组件 |
+| `alignment` | `Alignment?` | `Alignment.topLeft` | 子组件的对齐方式 |
+| `sizing` | `StackFit?` | `StackFit.loose` | 堆叠尺寸行为 |
+| `clipped` | `boolean?` | `true` | 子组件溢出时是否裁剪 |
 
-### StackFit Values
+### StackFit 值
 
-- `StackFit.loose`: Use children's natural size
-- `StackFit.expand`: Expand to maximum available size
-- `StackFit.passthrough`: Pass parent constraints directly
+- `StackFit.loose`：使用子组件的自然尺寸
+- `StackFit.expand`：扩展到最大可用尺寸
+- `StackFit.passthrough`：直接传递父约束
 
-## Real-world Examples
+## 实际示例
 
-### 1. Basic Indexed Stack
+### 1. 基本 IndexedStack
 
 
 
@@ -90,25 +90,25 @@ class BasicIndexedStackState extends State<BasicIndexedStack> {
   build() {
     return Column({
       children: [
-        // Page buttons
+        // 页面按钮
         Row({
           children: [
             Button({
               onPressed: () => this.switchPage(0),
-              child: Text('Page 1')
+              child: Text('页面 1')
             }),
             Button({
               onPressed: () => this.switchPage(1),
-              child: Text('Page 2')
+              child: Text('页面 2')
             }),
             Button({
               onPressed: () => this.switchPage(2),
-              child: Text('Page 3')
+              child: Text('页面 3')
             })
           ]
         }),
         
-        // Indexed stack
+        // 索引堆叠
         IndexedStack({
           index: this.currentIndex,
           children: [
@@ -116,7 +116,7 @@ class BasicIndexedStackState extends State<BasicIndexedStack> {
               width: 300,
               height: 200,
               color: '#ff6b6b',
-              child: Text('First Page', {
+              child: Text('第一页', {
                 style: { color: 'white', fontSize: 24 }
               })
             }),
@@ -124,7 +124,7 @@ class BasicIndexedStackState extends State<BasicIndexedStack> {
               width: 300,
               height: 200,
               color: '#4ecdc4',
-              child: Text('Second Page', {
+              child: Text('第二页', {
                 style: { color: 'white', fontSize: 24 }
               })
             }),
@@ -132,7 +132,7 @@ class BasicIndexedStackState extends State<BasicIndexedStack> {
               width: 300,
               height: 200,
               color: '#45b7d1',
-              child: Text('Third Page', {
+              child: Text('第三页', {
                 style: { color: 'white', fontSize: 24 }
               })
             })
@@ -146,7 +146,7 @@ class BasicIndexedStackState extends State<BasicIndexedStack> {
 
 
 
-### 2. Stateful Tab Interface
+### 2. 有状态的选项卡界面
 
 
 
@@ -165,35 +165,35 @@ class TabWithStateState extends State<TabWithState> {
   build() {
     return Column({
       children: [
-        // Tab header
+        // 选项卡头部
         Row({
           children: [
             Button({
               onPressed: () => this.setState(() => { this.activeTab = 0; }),
-              child: Text('Profile')
+              child: Text('个人资料')
             }),
             Button({
               onPressed: () => this.setState(() => { this.activeTab = 1; }),
-              child: Text('Settings')
+              child: Text('设置')
             }),
             Button({
               onPressed: () => this.setState(() => { this.activeTab = 2; }),
-              child: Text('Help')
+              child: Text('帮助')
             })
           ]
         }),
         
-        // Tab content (state preserved)
+        // 选项卡内容（状态被保持）
         IndexedStack({
           index: this.activeTab,
           children: [
-            // Profile tab
+            // 个人资料选项卡
             ProfileTab(),
             
-            // Settings tab  
+            // 设置选项卡
             SettingsTab(),
             
-            // Help tab
+            // 帮助选项卡
             HelpTab()
           ]
         })
@@ -216,7 +216,7 @@ class ProfileTabState extends State<ProfileTab> {
     return Column({
       children: [
         TextField({
-          placeholder: 'Name',
+          placeholder: '姓名',
           value: this.name,
           onChanged: (value) => {
             this.setState(() => {
@@ -225,7 +225,7 @@ class ProfileTabState extends State<ProfileTab> {
           }
         }),
         TextField({
-          placeholder: 'Email',
+          placeholder: '邮箱',
           value: this.email,
           onChanged: (value) => {
             this.setState(() => {
@@ -233,7 +233,7 @@ class ProfileTabState extends State<ProfileTab> {
             });
           }
         }),
-        Text(`Entered info: ${this.name}, ${this.email}`)
+        Text(`输入的信息: ${this.name}, ${this.email}`)
       ]
     });
   }
@@ -242,14 +242,14 @@ class ProfileTabState extends State<ProfileTab> {
 
 
 
-### 3. Stack Sizing Options
+### 3. 堆叠尺寸选项
 
 
 
 ```typescript
 import { IndexedStack, Container, Text, StackFit } from '@meursyphus/flitter';
 
-// loose: Natural size
+// loose：自然尺寸
 IndexedStack({
   index: 0,
   sizing: StackFit.loose,
@@ -258,25 +258,25 @@ IndexedStack({
       width: 100,
       height: 100,
       color: 'red',
-      child: Text('Small Box')
+      child: Text('小盒子')
     }),
     Container({
       width: 200,
       height: 150,
       color: 'blue',
-      child: Text('Large Box')
+      child: Text('大盒子')
     })
   ]
 })
 
-// expand: Expand to maximum size
+// expand：扩展到最大尺寸
 IndexedStack({
   index: 0,
   sizing: StackFit.expand,
   children: [
     Container({
       color: 'green',
-      child: Text('Expanded Box')
+      child: Text('扩展盒子')
     })
   ]
 })
@@ -284,7 +284,7 @@ IndexedStack({
 
 
 
-### 4. Alignment Options
+### 4. 对齐选项
 
 
 
@@ -293,13 +293,13 @@ import { IndexedStack, Container, Text, Alignment } from '@meursyphus/flitter';
 
 IndexedStack({
   index: 0,
-  alignment: Alignment.center, // Center alignment
+  alignment: Alignment.center, // 居中对齐
   children: [
     Container({
       width: 150,
       height: 100,
       color: '#9b59b6',
-      child: Text('Center Aligned', {
+      child: Text('居中对齐', {
         style: { color: 'white', textAlign: 'center' }
       })
     })
@@ -308,13 +308,13 @@ IndexedStack({
 
 IndexedStack({
   index: 0,
-  alignment: Alignment.bottomRight, // Bottom-right alignment
+  alignment: Alignment.bottomRight, // 右下对齐
   children: [
     Container({
       width: 120,
       height: 80,
       color: '#e67e22',
-      child: Text('Bottom-Right', {
+      child: Text('右下对齐', {
         style: { color: 'white', textAlign: 'center' }
       })
     })
@@ -324,7 +324,7 @@ IndexedStack({
 
 
 
-### 5. Animation Integration
+### 5. 动画集成
 
 
 
@@ -351,7 +351,7 @@ class AnimatedIndexedStackState extends State<AnimatedIndexedStack> {
       children: [
         Button({
           onPressed: this.nextPage,
-          child: Text('Next Page')
+          child: Text('下一页')
         }),
         
         IndexedStack({
@@ -362,21 +362,21 @@ class AnimatedIndexedStackState extends State<AnimatedIndexedStack> {
               width: this.currentPage === 0 ? 200 : 150,
               height: this.currentPage === 0 ? 200 : 150,
               color: '#e74c3c',
-              child: Text('Page 1')
+              child: Text('页面 1')
             }),
             AnimatedContainer({
               duration: 300,
               width: this.currentPage === 1 ? 200 : 150,
               height: this.currentPage === 1 ? 200 : 150,
               color: '#3498db',
-              child: Text('Page 2')
+              child: Text('页面 2')
             }),
             AnimatedContainer({
               duration: 300,
               width: this.currentPage === 2 ? 200 : 150,
               height: this.currentPage === 2 ? 200 : 150,
               color: '#2ecc71',
-              child: Text('Page 3')
+              child: Text('页面 3')
             })
           ]
         })
@@ -388,7 +388,7 @@ class AnimatedIndexedStackState extends State<AnimatedIndexedStack> {
 
 
 
-### 6. Wizard-style Interface
+### 6. 向导风格界面
 
 
 
@@ -424,61 +424,61 @@ class WizardInterfaceState extends State<WizardInterface> {
   build() {
     return Column({
       children: [
-        // Progress indicator
-        Text(`Step ${this.currentStep + 1} / ${this.totalSteps}`),
+        // 进度指示器
+        Text(`步骤 ${this.currentStep + 1} / ${this.totalSteps}`),
         
-        // Main content
+        // 主内容
         IndexedStack({
           index: this.currentStep,
           children: [
-            // Step 1
+            // 步骤 1
             Container({
               padding: EdgeInsets.all(20),
               child: Column({
                 children: [
-                  Text('Step 1: Basic Info', { style: { fontSize: 18, fontWeight: 'bold' } }),
-                  TextField({ placeholder: 'Enter your name' }),
-                  TextField({ placeholder: 'Enter your email' })
+                  Text('步骤 1：基本信息', { style: { fontSize: 18, fontWeight: 'bold' } }),
+                  TextField({ placeholder: '输入您的姓名' }),
+                  TextField({ placeholder: '输入您的邮箱' })
                 ]
               })
             }),
             
-            // Step 2
+            // 步骤 2
             Container({
               padding: EdgeInsets.all(20),
               child: Column({
                 children: [
-                  Text('Step 2: Additional Info', { style: { fontSize: 18, fontWeight: 'bold' } }),
-                  TextField({ placeholder: 'Enter your phone' }),
-                  TextField({ placeholder: 'Enter your address' })
+                  Text('步骤 2：附加信息', { style: { fontSize: 18, fontWeight: 'bold' } }),
+                  TextField({ placeholder: '输入您的电话' }),
+                  TextField({ placeholder: '输入您的地址' })
                 ]
               })
             }),
             
-            // Step 3
+            // 步骤 3
             Container({
               padding: EdgeInsets.all(20),
               child: Column({
                 children: [
-                  Text('Step 3: Complete', { style: { fontSize: 18, fontWeight: 'bold' } }),
-                  Text('All information has been entered.'),
-                  Text('Would you like to complete registration?')
+                  Text('步骤 3：完成', { style: { fontSize: 18, fontWeight: 'bold' } }),
+                  Text('所有信息已输入。'),
+                  Text('您希望完成注册吗？')
                 ]
               })
             })
           ]
         }),
         
-        // Navigation buttons
+        // 导航按钮
         Row({
           children: [
             Button({
               onPressed: this.currentStep > 0 ? this.prevStep : null,
-              child: Text('Previous')
+              child: Text('上一步')
             }),
             Button({
               onPressed: this.currentStep < this.totalSteps - 1 ? this.nextStep : null,
-              child: Text(this.currentStep === this.totalSteps - 1 ? 'Complete' : 'Next')
+              child: Text(this.currentStep === this.totalSteps - 1 ? '完成' : '下一步')
             })
           ]
         })
@@ -490,21 +490,21 @@ class WizardInterfaceState extends State<WizardInterface> {
 
 
 
-## Important Notes
+## 重要说明
 
-1. **Memory Usage**: All child widgets are kept in memory, so be cautious with many widgets.
+1. **内存使用**：所有子组件都保存在内存中，所以对于多个组件要谨慎。
 
-2. **Index Range**: If the index is outside the children array range, nothing will be displayed.
+2. **索引范围**：如果索引超出 children 数组范围，将不会显示任何内容。
 
-3. **State Preservation**: Hidden widgets maintain their state, consuming memory.
+3. **状态保持**：隐藏的组件保持其状态，消耗内存。
 
-4. **Performance Consideration**: Consider lazy loading when dealing with many complex widgets.
+4. **性能考虑**：处理多个复杂组件时考虑懒加载。
 
-5. **Clipping**: Setting `clipped: false` allows children to overflow boundaries.
+5. **裁剪**：设置 `clipped: false` 允许子组件溢出边界。
 
-## Related Widgets
+## 相关组件
 
-- **Stack**: Display multiple widgets overlapped
-- **Column/Row**: Linear arrangement of widgets
-- **TabView**: Tab interface implementation
-- **AnimatedSwitcher**: Provides animations during widget transitions
+- **Stack**：显示多个重叠的组件
+- **Column/Row**：组件的线性排列
+- **TabView**：选项卡界面实现
+- **AnimatedSwitcher**：在组件转换期间提供动画

@@ -1,39 +1,39 @@
 ---
-nav_title: "Widget System"
-title: "Widget System"
-description: "Understand Flitter's core widget system and learn the differences between StatelessWidget and StatefulWidget"
+nav_title: "ウィジェットシステム"
+title: "ウィジェットシステム"
+description: "Flitterのコアウィジェットシステムを理解し、StatelessWidgetとStatefulWidgetの違いを学ぶ"
 ---
 
 import WidgetSystemExample from '$components/pages/docs/02_core-concepts/02-widget-system-example';
 
-# Widget System
+# ウィジェットシステム
 
-## Overview
+## 概要
 
-Flitter's Widget is the basic unit that composes the UI. Like Flutter, every element displayed on screen is composed of widgets. Buttons, text, layouts, and even the app itself are all widgets.
+FlitterのWidgetはUIを構成する基本単位です。Flutterと同様に、画面に表示されるすべての要素はウィジェットで構成されています。ボタン、テキスト、レイアウト、さらにはアプリ自体もすべてウィジェットです。
 
-## Why is it important?
+## なぜ重要なのか？
 
-Understanding the widget system enables:
+ウィジェットシステムを理解することで以下が可能になります：
 
-- **Reusable Components**: Reuse widgets anywhere once created
-- **Composable Structure**: Build complex UIs by combining small widgets
-- **Clear State Management**: Distinguish state management patterns with StatelessWidget and StatefulWidget
-- **Predictable Behavior**: Systematic development through widget lifecycle
+- **再利用可能なコンポーネント**: 一度作成したウィジェットをどこでも再利用
+- **コンポーザブルな構造**: 小さなウィジェットを組み合わせて複雑なUIを構築
+- **明確な状態管理**: StatelessWidgetとStatefulWidgetで状態管理パターンを区別
+- **予測可能な動作**: ウィジェットライフサイクルによる体系的な開発
 
-## Core Concepts
+## コアコンセプト
 
-### Widget Types
+### ウィジェットタイプ
 
-Flitter has three main widget types:
+Flitterには3つの主要なウィジェットタイプがあります：
 
-1. **StatelessWidget**: Static widget without state
-2. **StatefulWidget**: Dynamic widget with state
-3. **RenderObjectWidget**: Low-level widget responsible for direct rendering
+1. **StatelessWidget**: 状態を持たない静的なウィジェット
+2. **StatefulWidget**: 状態を持つ動的なウィジェット
+3. **RenderObjectWidget**: 直接的なレンダリングを担当する低レベルウィジェット
 
 ### StatelessWidget
 
-A widget without state that doesn't change once created:
+一度作成されると変更されない、状態を持たないウィジェット：
 
 ```typescript
 import { StatelessWidget, Text, Container, EdgeInsets, Colors, type BuildContext, type Widget } from '@meursyphus/flitter';
@@ -52,7 +52,7 @@ class Greeting extends StatelessWidget {
   }
 }
 
-// Factory function으로 export
+// ファクトリー関数としてエクスポート
 export default function GreetingWidget(props: { name: string }): Widget {
   return new Greeting(props);
 }
@@ -60,7 +60,7 @@ export default function GreetingWidget(props: { name: string }): Widget {
 
 ### StatefulWidget
 
-A widget that has state and automatically updates the UI when state changes:
+状態を持ち、状態が変更されると自動的にUIが更新されるウィジェット：
 
 ```typescript
 import { 
@@ -102,7 +102,7 @@ class CounterState extends State<Counter> {
             margin: EdgeInsets.only({ top: 16 }),
             padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
             color: Colors.blue,
-            child: Text("Increment", {
+            child: Text("増加", {
               style: TextStyle({ color: Colors.white })
             })
           })
@@ -112,7 +112,7 @@ class CounterState extends State<Counter> {
   }
 }
 
-// Factory function으로 export
+// ファクトリー関数としてエクスポート
 export default function CounterWidget(): Widget {
   return new Counter();
 }
@@ -121,47 +121,47 @@ export default function CounterWidget(): Widget {
 <WidgetSystemExample 
   client:load
   title="StatelessWidget vs StatefulWidget"
-  description="Check the difference between stateless and stateful widgets."
+  description="ステートレスウィジェットとステートフルウィジェットの違いを確認してください。"
 />
 
-### Widget Lifecycle
+### ウィジェットライフサイクル
 
-#### StatefulWidget Lifecycle
+#### StatefulWidgetライフサイクル
 
 ```typescript
 class MyWidgetState extends State<MyWidget> {
-  // 1. Called once when state object is created
+  // 1. ステートオブジェクトが作成されるときに一度だけ呼ばれる
   initState(): void {
     super.initState();
-    console.log("Widget initialized");
-    // Initialize animation controllers, stream subscriptions, etc.
+    console.log("ウィジェットが初期化されました");
+    // アニメーションコントローラーやストリームサブスクリプションなどを初期化
   }
 
-  // 2. When parent widget changes and this widget needs to be updated
+  // 2. 親ウィジェットが変更され、このウィジェットを更新する必要があるとき
   didUpdateWidget(oldWidget: MyWidget): void {
     super.didUpdateWidget(oldWidget);
-    console.log("Widget configuration changed");
-    // Update state based on props changes
+    console.log("ウィジェット設定が変更されました");
+    // プロパティの変更に基づいて状態を更新
   }
 
-  // 3. Executed every time setState is called
+  // 3. setStateが呼ばれるたびに実行される
   build(context: BuildContext): Widget {
-    console.log("Rendering UI");
+    console.log("UIをレンダリング中");
     return Container({ /* ... */ });
   }
 
-  // 4. When state object is removed
+  // 4. ステートオブジェクトが削除されるとき
   dispose(): void {
-    console.log("Widget disposed");
-    // Clean up animation controllers, stream subscriptions, etc.
+    console.log("ウィジェットが破棄されました");
+    // アニメーションコントローラーやストリームサブスクリプションなどをクリーンアップ
     super.dispose();
   }
 }
 ```
 
-## Practical Examples
+## 実践例
 
-### 1. StatelessWidget with Props
+### 1. プロパティを持つStatelessWidget
 
 ```typescript
 class ProductCard extends StatelessWidget {
@@ -216,7 +216,7 @@ export default function ProductCardWidget(props: {
 }
 ```
 
-### 2. StatefulWidget with Complex State
+### 2. 複雑な状態を持つStatefulWidget
 
 ```typescript
 class TodoApp extends StatefulWidget {
@@ -263,7 +263,7 @@ class TodoAppState extends State<TodoApp> {
       padding: EdgeInsets.all(16),
       child: Column({
         children: [
-          Text("Todo List", {
+          Text("Todoリスト", {
             style: TextStyle({ 
               fontSize: 24, 
               fontWeight: FontWeight.bold,
@@ -272,18 +272,18 @@ class TodoAppState extends State<TodoApp> {
           }),
           SizedBox({ height: 16 }),
           
-          // Input field (actually use TextField widget)
+          // 入力フィールド（実際にはTextFieldウィジェットを使用）
           Container({
             padding: EdgeInsets.all(12),
             color: Colors.grey.shade800,
-            child: Text(this.inputText || "Enter a new todo...", {
+            child: Text(this.inputText || "新しいTodoを入力...", {
               style: TextStyle({ color: Colors.grey.shade400 })
             })
           }),
           
           SizedBox({ height: 16 }),
           
-          // Todo list
+          // Todoリスト
           ...this.todos.map(todo => 
             Container({
               margin: EdgeInsets.only({ bottom: 8 }),
@@ -326,7 +326,7 @@ export default function TodoAppWidget(): Widget {
 }
 ```
 
-### 3. Lifecycle Usage Example
+### 3. ライフサイクル使用例
 
 ```typescript
 class TimerWidget extends StatefulWidget {
@@ -391,7 +391,7 @@ class TimerWidgetState extends State<TimerWidget> {
       color: this.timeLeft === 0 ? Colors.red.shade900 : Colors.grey.shade900,
       child: Column({
         children: [
-          Text("Timer", {
+          Text("タイマー", {
             style: TextStyle({ 
               fontSize: 20, 
               color: Colors.white 
@@ -409,7 +409,7 @@ class TimerWidgetState extends State<TimerWidget> {
             }
           ),
           if (this.timeLeft === 0)
-            Text("Time's up!", {
+            Text("時間切れ！", {
               style: TextStyle({ 
                 fontSize: 24, 
                 color: Colors.red.shade400 
@@ -426,40 +426,40 @@ export default function TimerWidgetExample(props: { duration: number }): Widget 
 }
 ```
 
-## Important Notes
+## 重要な注意事項
 
-### 1. State Management Rules
+### 1. 状態管理のルール
 
 ```typescript
-// ❌ Wrong - State change without setState
-this.count++;  // UI won't update!
+// ❌ 間違い - setStateなしでの状態変更
+this.count++;  // UIは更新されません！
 
-// ✅ Correct - Use setState
+// ✅ 正しい - setStateを使用
 this.setState(() => {
   this.count++;
 });
 
-// ❌ Wrong - State change outside setState
+// ❌ 間違い - setState外での状態変更
 this.items.push(newItem);
-this.setState(() => {});  // Empty setState
+this.setState(() => {});  // 空のsetState
 
-// ✅ Correct - All changes inside setState
+// ✅ 正しい - すべての変更をsetState内で
 this.setState(() => {
   this.items.push(newItem);
 });
 ```
 
-### 2. Widget Reuse
+### 2. ウィジェットの再利用
 
 ```typescript
-// ❌ Wrong - Creating widgets inside build method
+// ❌ 間違い - buildメソッド内でウィジェットを作成
 build(context: BuildContext): Widget {
-  // Creating new widget instance every time (inefficient)
+  // 毎回新しいウィジェットインスタンスを作成（非効率）
   const button = new MyButton();
   return Container({ child: button });
 }
 
-// ✅ Correct - Properly separate widgets
+// ✅ 正しい - ウィジェットを適切に分離
 build(context: BuildContext): Widget {
   return Container({
     child: MyButton({ onClick: this.handleClick })
@@ -467,10 +467,10 @@ build(context: BuildContext): Widget {
 }
 ```
 
-### 3. Props vs State
+### 3. プロパティ vs 状態
 
-- **Props**: Immutable data passed from parent
-- **State**: Mutable data managed within the widget
+- **プロパティ**: 親から渡される不変のデータ
+- **状態**: ウィジェット内で管理される可変のデータ
 
 ```typescript
 class MyWidget extends StatefulWidget {
@@ -484,20 +484,20 @@ class MyWidget extends StatefulWidget {
 }
 
 class MyWidgetState extends State<MyWidget> {
-  // props are used only as initial values
+  // プロパティは初期値としてのみ使用
   count = this.widget.props.initialCount;
 
   build(context: BuildContext): Widget {
-    // props can be read directly
-    return Text(`Initial: ${this.widget.props.initialCount}, Current: ${this.count}`);
+    // プロパティは直接読み取ることができる
+    return Text(`初期値: ${this.widget.props.initialCount}, 現在値: ${this.count}`);
   }
 }
 ```
 
-## Next Steps
+## 次のステップ
 
-Once you understand the widget system, here's what to learn next:
+ウィジェットシステムを理解したら、次に学ぶべきことは：
 
-- State Management - Complex state management through Provider
-- Animation Basics - Applying animations to widgets
-- RenderObject System - Implementing custom rendering
+- 状態管理 - Providerを通じた複雑な状態管理
+- アニメーションの基礎 - ウィジェットへのアニメーション適用
+- RenderObjectシステム - カスタムレンダリングの実装

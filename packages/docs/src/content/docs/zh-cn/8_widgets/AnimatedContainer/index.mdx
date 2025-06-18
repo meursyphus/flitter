@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: AnimatedContainer
 title: "AnimatedContainer"
-description: "An animated container that smoothly transitions its properties over time"
+description: "一个可以平滑过渡其属性的动画容器"
 ---
 
-## Overview
+## 概述
 
-AnimatedContainer is an animated version of Container that automatically applies animations when property values change.
+AnimatedContainer 是 Container 的动画版本，当属性值发生变化时会自动应用动画。
 
-AnimatedContainer automatically animates between the old and new values of properties when they change using the provided curve and duration. Properties that are null are not animated. Its child and descendants are not animated. This class is useful for generating simple implicit transitions between different parameters to Container with its internal AnimationController.
+AnimatedContainer 在属性值发生变化时，使用提供的曲线和持续时间自动在旧值和新值之间进行动画。null 属性不会被动画化。其子组件和后代不会被动画化。这个类对于在 Container 的不同参数之间生成简单的隐式过渡非常有用，它使用内部的 AnimationController。
 
 <iframe
   width="560"
@@ -22,20 +22,20 @@ AnimatedContainer automatically animates between the old and new values of prope
   allowfullscreen
 ></iframe>
 
-See: https://api.flutter.dev/flutter/widgets/AnimatedContainer-class.html
+参见：https://api.flutter.dev/flutter/widgets/AnimatedContainer-class.html
 
-## When to use it?
+## 何时使用？
 
-- When smoothly transitioning widget size, color, padding, etc.
-- When providing visual feedback in response to user interactions
-- When expressing state changes smoothly
-- When simple animations are needed without complex AnimationController
-- When expressing hover effects or selected states
+- 当需要平滑过渡组件大小、颜色、内边距等时
+- 当需要为用户交互提供视觉反馈时
+- 当需要平滑地表达状态变化时
+- 当需要简单动画而不需要复杂的 AnimationController 时
+- 当需要表达悬停效果或选中状态时
 
-## Basic Usage
+## 基本用法
 
 ```typescript
-// Create a StatefulWidget to manage state
+// 创建一个 StatefulWidget 来管理状态
 class AnimatedContainerExample extends StatefulWidget {
   createState() {
     return new AnimatedContainerExampleState();
@@ -53,34 +53,34 @@ class AnimatedContainerExampleState extends State<AnimatedContainerExample> {
         });
       },
       child: AnimatedContainer({
-        duration: 300, // 300ms
+        duration: 300, // 300毫秒
         curve: Curves.easeInOut,
         width: this.isExpanded ? 200 : 100,
         height: this.isExpanded ? 200 : 100,
         color: this.isExpanded ? 'blue' : 'red',
         child: Center({
-          child: Text('Tap me')
+          child: Text('点击我')
         })
       })
     });
   }
 }
 
-// Export as factory function
+// 导出为工厂函数
 export default classToFunction(AnimatedContainerExample);
 ```
 
-## Props
+## 属性
 
-### duration (required)
+### duration（必需）
 
-**Value: number**
+**值：number**
 
-The duration over which to animate the parameters of this container (in milliseconds).
+动画化此容器参数的持续时间（以毫秒为单位）。
 
 ```typescript
 AnimatedContainer({
-  duration: 500, // 0.5 seconds
+  duration: 500, // 0.5 秒
   width: 100,
   height: 100
 })
@@ -88,35 +88,35 @@ AnimatedContainer({
 
 ### curve
 
-**Value: Curve** (default: **Curves.linear**)
+**值：Curve**（默认值：**Curves.linear**）
 
-Defines the animation progression curve. Various built-in curves are available.
+定义动画进程曲线。有各种内置曲线可用。
 
 ```typescript
 AnimatedContainer({
   duration: 300,
-  curve: Curves.easeInOut, // Smooth start and end
+  curve: Curves.easeInOut, // 平滑开始和结束
   width: expanded ? 200 : 100
 })
 ```
 
-Available Curves:
-- **Curves.linear**: Constant speed
-- **Curves.easeIn**: Starts slowly
-- **Curves.easeOut**: Ends slowly
-- **Curves.easeInOut**: Starts and ends slowly
-- **Curves.bounceIn**: Bounces at the start
-- **Curves.bounceOut**: Bounces at the end
-- **Curves.bounceInOut**: Bounces at start and end
-- **Curves.anticipate**: Goes backward then forward
-- **Curves.backIn**: Pulls back then starts
-- **Curves.backOut**: Overshoots then returns
+可用曲线：
+- **Curves.linear**：匀速
+- **Curves.easeIn**：缓慢开始
+- **Curves.easeOut**：缓慢结束
+- **Curves.easeInOut**：缓慢开始和结束
+- **Curves.bounceIn**：开始时弹跳
+- **Curves.bounceOut**：结束时弹跳
+- **Curves.bounceInOut**：开始和结束时弹跳
+- **Curves.anticipate**：先后退然后前进
+- **Curves.backIn**：先拉回然后开始
+- **Curves.backOut**：超过目标然后返回
 
 ### width
 
-**Value: number | undefined**
+**值：number | undefined**
 
-The container's width. Animates when changed.
+容器的宽度。改变时会动画化。
 
 ```typescript
 AnimatedContainer({
@@ -128,9 +128,9 @@ AnimatedContainer({
 
 ### height
 
-**Value: number | undefined**
+**值：number | undefined**
 
-The container's height. Animates when changed.
+容器的高度。改变时会动画化。
 
 ```typescript
 AnimatedContainer({
@@ -142,23 +142,23 @@ AnimatedContainer({
 
 ### color
 
-**Value: string | undefined**
+**值：string | undefined**
 
-The container's background color. Cannot be used with decoration.
+容器的背景颜色。不能与 decoration 一起使用。
 
 ```typescript
 AnimatedContainer({
   duration: 300,
   color: isActive ? 'blue' : 'gray',
-  child: Text('Status indicator')
+  child: Text('状态指示器')
 })
 ```
 
 ### decoration
 
-**Value: Decoration | undefined**
+**值：Decoration | undefined**
 
-The decoration to paint behind the child. All BoxDecoration properties animate.
+在子组件后面绘制的装饰。所有 BoxDecoration 属性都会动画化。
 
 ```typescript
 AnimatedContainer({
@@ -179,9 +179,9 @@ AnimatedContainer({
 
 ### margin
 
-**Value: EdgeInsets | undefined**
+**值：EdgeInsets | undefined**
 
-Empty space to surround the container. Animates when changed.
+容器周围的空白空间。改变时会动画化。
 
 ```typescript
 AnimatedContainer({
@@ -193,23 +193,23 @@ AnimatedContainer({
 
 ### padding
 
-**Value: EdgeInsets | undefined**
+**值：EdgeInsets | undefined**
 
-Empty space to inscribe inside the container. Animates when changed.
+容器内部的空白空间。改变时会动画化。
 
 ```typescript
 AnimatedContainer({
   duration: 300,
   padding: EdgeInsets.all(isExpanded ? 20 : 10),
-  child: Text('Content')
+  child: Text('内容')
 })
 ```
 
 ### alignment
 
-**Value: Alignment | undefined**
+**值：Alignment | undefined**
 
-Aligns the child within the container. Animates when changed.
+在容器内对齐子组件。改变时会动画化。
 
 ```typescript
 AnimatedContainer({
@@ -221,9 +221,9 @@ AnimatedContainer({
 
 ### constraints
 
-**Value: Constraints | undefined**
+**值：Constraints | undefined**
 
-Additional constraints to apply to the child. Min/max sizes animate.
+应用于子组件的额外约束。最小/最大尺寸会动画化。
 
 ```typescript
 AnimatedContainer({
@@ -239,9 +239,9 @@ AnimatedContainer({
 
 ### clipped
 
-**Value: boolean** (default: **false**)
+**值：boolean**（默认值：**false**）
 
-Whether to clip children to the container's bounds.
+是否将子组件裁剪到容器的边界内。
 
 ```typescript
 AnimatedContainer({
@@ -255,15 +255,15 @@ AnimatedContainer({
 
 ### transform
 
-**Value: Matrix4 | undefined**
+**值：Matrix4 | undefined**
 
-The transformation matrix to apply. Rotation, scaling, and translation animate.
+要应用的变换矩阵。旋转、缩放和平移会动画化。
 
 ```typescript
 AnimatedContainer({
   duration: 600,
   transform: isRotated 
-    ? Matrix4.rotationZ(Math.PI / 4) // 45 degree rotation
+    ? Matrix4.rotationZ(Math.PI / 4) // 45 度旋转
     : Matrix4.identity(),
   child: Icon({ icon: Icons.refresh })
 })
@@ -271,24 +271,24 @@ AnimatedContainer({
 
 ### transformAlignment
 
-**Value: Alignment | undefined**
+**值：Alignment | undefined**
 
-The alignment of the origin for the transform. Used with transform.
+变换原点的对齐方式。与 transform 一起使用。
 
 ```typescript
 AnimatedContainer({
   duration: 500,
   transform: Matrix4.rotationZ(angle),
-  transformAlignment: Alignment.center, // Rotate around center
-  child: Text('Rotating')
+  transformAlignment: Alignment.center, // 围绕中心旋转
+  child: Text('旋转中')
 })
 ```
 
 ### child
 
-**Value: Widget | undefined**
+**值：Widget | undefined**
 
-The child widget, which is not animated.
+子组件，不会被动画化。
 
 ```typescript
 AnimatedContainer({
@@ -301,29 +301,29 @@ AnimatedContainer({
 
 ### onEnd
 
-**Value: () => void | undefined**
+**值：() => void | undefined**
 
-A callback that is called when the animation completes.
+动画完成时调用的回调函数。
 
 ```typescript
 AnimatedContainer({
   duration: 500,
   width: expanded ? 200 : 100,
   onEnd: () => {
-    console.log('Animation completed');
-    // Trigger next animation or state change
+    console.log('动画完成');
+    // 触发下一个动画或状态变化
   }
 })
 ```
 
-## Common Use Cases
+## 常见用例
 
-### State-based UI Changes
+### 基于状态的 UI 变化
 
-AnimatedContainer excels at smoothly transitioning between different UI states:
+AnimatedContainer 擅长在不同 UI 状态之间平滑过渡：
 
 ```typescript
-// Theme switching
+// 主题切换
 AnimatedContainer({
   duration: 300,
   decoration: BoxDecoration({
@@ -333,7 +333,7 @@ AnimatedContainer({
   child: content
 })
 
-// Selection states
+// 选中状态
 AnimatedContainer({
   duration: 200,
   decoration: BoxDecoration({
@@ -344,7 +344,7 @@ AnimatedContainer({
   })
 })
 
-// Loading states
+// 加载状态
 AnimatedContainer({
   duration: 400,
   height: isLoading ? 200 : 0,
@@ -353,19 +353,19 @@ AnimatedContainer({
 })
 ```
 
-### Interactive Components
+### 交互组件
 
-Create engaging interactive elements with smooth transitions:
+创建具有平滑过渡的吸引人的交互元素：
 
 ```typescript
-// Expandable cards
+// 可展开卡片
 AnimatedContainer({
   duration: 300,
   height: isExpanded ? null : 100,
   child: content
 })
 
-// Hover effects
+// 悬停效果
 AnimatedContainer({
   duration: 200,
   transform: Matrix4.identity()
@@ -373,7 +373,7 @@ AnimatedContainer({
   boxShadow: isHovered ? elevatedShadow : flatShadow
 })
 
-// Press feedback
+// 按压反馈
 AnimatedContainer({
   duration: 100,
   transform: Matrix4.identity()
@@ -381,9 +381,9 @@ AnimatedContainer({
 })
 ```
 
-## Practical Examples
+## 实际示例
 
-### Example 1: Hover Effect Card
+### 示例 1：悬停效果卡片
 
 ```typescript
 class HoverCard extends StatefulWidget {
@@ -425,7 +425,7 @@ class HoverCardState extends State<HoverCard> {
                 color: this.isHovered ? 'blue' : 'gray'
               }),
               SizedBox({ height: 12 }),
-              Text('Product Card')
+              Text('产品卡片')
             ]
           })
         })
@@ -435,7 +435,7 @@ class HoverCardState extends State<HoverCard> {
 }
 ```
 
-### Example 2: Expandable Panel
+### 示例 2：可展开面板
 
 ```typescript
 class ExpandablePanel extends StatefulWidget {
@@ -468,7 +468,7 @@ class ExpandablePanelState extends State<ExpandablePanel> {
               child: Row({
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Panel Title'),
+                  Text('面板标题'),
                   AnimatedContainer({
                     duration: 300,
                     transform: Matrix4.rotationZ(this.isExpanded ? Math.PI : 0),
@@ -482,7 +482,7 @@ class ExpandablePanelState extends State<ExpandablePanel> {
           if (this.isExpanded) Expanded({
             child: Padding({
               padding: EdgeInsets.all(16),
-              child: Text('Expanded content goes here.')
+              child: Text('展开的内容在这里。')
             })
           })
         ]
@@ -492,7 +492,7 @@ class ExpandablePanelState extends State<ExpandablePanel> {
 }
 ```
 
-### Example 3: Progress Indicator
+### 示例 3：进度指示器
 
 ```typescript
 const ProgressIndicator = ({ progress }: { progress: number }) => {
@@ -526,7 +526,7 @@ const ProgressIndicator = ({ progress }: { progress: number }) => {
 };
 ```
 
-### Example 4: Selectable Chip
+### 示例 4：可选择的芯片
 
 ```typescript
 const SelectableChip = ({ label, selected, onTap }) => {
@@ -555,7 +555,7 @@ const SelectableChip = ({ label, selected, onTap }) => {
 };
 ```
 
-### Example 5: Loading Skeleton
+### 示例 5：加载骨架屏
 
 ```typescript
 class LoadingSkeleton extends StatefulWidget {
@@ -602,7 +602,7 @@ class LoadingSkeletonState extends State<LoadingSkeleton> {
 }
 ```
 
-### Example 6: Multi-step Onboarding Screen
+### 示例 6：多步骤引导界面
 
 ```typescript
 class OnboardingScreen extends StatefulWidget {
@@ -615,10 +615,10 @@ class OnboardingScreenState extends State<OnboardingScreen> {
   currentStep = 0;
   
   steps = [
-    { color: '#3F51B5', icon: Icons.rocket_launch, title: 'Get Started', description: 'Build amazing apps with Flitter' },
-    { color: '#00BCD4', icon: Icons.palette, title: 'Design', description: 'Create beautiful UIs easily' },
-    { color: '#4CAF50', icon: Icons.speed, title: 'Performance', description: 'Fast and smooth animations' },
-    { color: '#FF5722', icon: Icons.done_all, title: 'Complete', description: 'Your first app is ready!' }
+    { color: '#3F51B5', icon: Icons.rocket_launch, title: '开始使用', description: '使用 Flitter 构建令人惊叹的应用' },
+    { color: '#00BCD4', icon: Icons.palette, title: '设计', description: '轻松创建美观的 UI' },
+    { color: '#4CAF50', icon: Icons.speed, title: '性能', description: '快速流畅的动画' },
+    { color: '#FF5722', icon: Icons.done_all, title: '完成', description: '您的第一个应用已准备就绪！' }
   ];
 
   build() {
@@ -629,7 +629,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
       height: 600,
       child: Column({
         children: [
-          // Animated background
+          // 动画背景
           AnimatedContainer({
             duration: 600,
             curve: Curves.easeInOut,
@@ -658,7 +658,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
             }),
           }),
           
-          // Text area
+          // 文本区域
           Expanded({
             child: Container({
               padding: EdgeInsets.all(24),
@@ -694,10 +694,10 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                     ],
                   }),
                   
-                  // Progress indicators and buttons
+                  // 进度指示器和按钮
                   Column({
                     children: [
-                      // Progress dots
+                      // 进度点
                       Row({
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: this.steps.map((_, index) => {
@@ -718,7 +718,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                       
                       SizedBox({ height: 24 }),
                       
-                      // Navigation buttons
+                      // 导航按钮
                       Row({
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -733,7 +733,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                                   });
                                 }
                               },
-                              child: Text('Previous'),
+                              child: Text('上一步'),
                             }),
                           }),
                           
@@ -760,7 +760,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                                 ],
                               }),
                               child: Text(
-                                this.currentStep === this.steps.length - 1 ? 'Get Started' : 'Next',
+                                this.currentStep === this.steps.length - 1 ? '开始使用' : '下一步',
                                 { style: TextStyle({ color: 'white', fontWeight: 'bold' }) }
                               ),
                             }),
@@ -779,7 +779,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
   }
   
   darkenColor(color: string): string {
-    // Simple helper to darken colors
+    // 简单的颜色加深辅助函数
     const colors: { [key: string]: string } = {
       '#3F51B5': '#303F9F',
       '#00BCD4': '#0097A7',
@@ -791,7 +791,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
 }
 ```
 
-### Example 7: Responsive Grid Item
+### 示例 7：响应式网格项
 
 ```typescript
 class ResponsiveGridItem extends StatefulWidget {
@@ -844,7 +844,7 @@ class ResponsiveGridItemState extends State<ResponsiveGridItem> {
         }),
         child: Stack({
           children: [
-            // Background pattern
+            // 背景图案
             Positioned({
               right: -20,
               bottom: -20,
@@ -863,7 +863,7 @@ class ResponsiveGridItemState extends State<ResponsiveGridItem> {
               }),
             }),
             
-            // Content
+            // 内容
             Padding({
               padding: EdgeInsets.all(20),
               child: Column({
@@ -901,7 +901,7 @@ class ResponsiveGridItemState extends State<ResponsiveGridItem> {
                   AnimatedContainer({
                     duration: 300,
                     height: this.isHovered ? 20 : 0,
-                    child: this.isHovered ? Text('Learn more →', {
+                    child: this.isHovered ? Text('了解更多 →', {
                       style: TextStyle({
                         color: 'rgba(255,255,255,0.8)',
                         fontSize: 14,
@@ -918,24 +918,24 @@ class ResponsiveGridItemState extends State<ResponsiveGridItem> {
   }
 }
 
-// Usage example
+// 使用示例
 GridView.count({
   crossAxisCount: 3,
   crossAxisSpacing: 16,
   mainAxisSpacing: 16,
   padding: EdgeInsets.all(16),
   children: [
-    { id: '1', title: 'Dashboard', color: '#3F51B5', icon: Icons.dashboard },
-    { id: '2', title: 'Analytics', color: '#00BCD4', icon: Icons.analytics },
-    { id: '3', title: 'Reports', color: '#4CAF50', icon: Icons.description },
-    { id: '4', title: 'Settings', color: '#FF5722', icon: Icons.settings },
-    { id: '5', title: 'Users', color: '#9C27B0', icon: Icons.people },
-    { id: '6', title: 'Notifications', color: '#FF9800', icon: Icons.notifications },
+    { id: '1', title: '仪表板', color: '#3F51B5', icon: Icons.dashboard },
+    { id: '2', title: '分析', color: '#00BCD4', icon: Icons.analytics },
+    { id: '3', title: '报告', color: '#4CAF50', icon: Icons.description },
+    { id: '4', title: '设置', color: '#FF5722', icon: Icons.settings },
+    { id: '5', title: '用户', color: '#9C27B0', icon: Icons.people },
+    { id: '6', title: '通知', color: '#FF9800', icon: Icons.notifications },
   ].map(item => ResponsiveGridItem({ item })),
 });
 ```
 
-### Example 8: Floating Action Menu
+### 示例 8：浮动操作菜单
 
 ```typescript
 class FloatingActionMenu extends StatefulWidget {
@@ -948,10 +948,10 @@ class FloatingActionMenuState extends State<FloatingActionMenu> {
   isOpen = false;
   
   menuItems = [
-    { icon: Icons.photo_camera, label: 'Photo', color: '#4CAF50' },
-    { icon: Icons.videocam, label: 'Video', color: '#2196F3' },
-    { icon: Icons.mic, label: 'Audio', color: '#FF5722' },
-    { icon: Icons.attach_file, label: 'File', color: '#FF9800' },
+    { icon: Icons.photo_camera, label: '照片', color: '#4CAF50' },
+    { icon: Icons.videocam, label: '视频', color: '#2196F3' },
+    { icon: Icons.mic, label: '音频', color: '#FF5722' },
+    { icon: Icons.attach_file, label: '文件', color: '#FF9800' },
   ];
   
   build() {
@@ -961,7 +961,7 @@ class FloatingActionMenuState extends State<FloatingActionMenu> {
       child: Stack({
         alignment: Alignment.bottomRight,
         children: [
-          // Menu items
+          // 菜单项
           ...this.menuItems.map((item, index) => {
             const angle = (Math.PI / 2) * (index / (this.menuItems.length - 1));
             const distance = 80;
@@ -1029,7 +1029,7 @@ class FloatingActionMenuState extends State<FloatingActionMenu> {
             });
           }),
           
-          // Main FAB
+          // 主浮动操作按钮
           GestureDetector({
             onTap: () => {
               this.setState(() => {
@@ -1070,14 +1070,14 @@ class FloatingActionMenuState extends State<FloatingActionMenu> {
 }
 ```
 
-## Performance Best Practices
+## 性能最佳实践
 
-### 1. Optimize Animated Properties
+### 1. 优化动画属性
 
-Avoid animating too many properties simultaneously:
+避免同时动画化太多属性：
 
 ```typescript
-// ❌ Bad: Animating many properties at once
+// ❌ 错误：同时动画化许多属性
 AnimatedContainer({
   duration: 300,
   width: isExpanded ? 300 : 100,
@@ -1092,7 +1092,7 @@ AnimatedContainer({
   transform: Matrix4.rotationZ(isExpanded ? Math.PI : 0)
 })
 
-// ✅ Good: Animate only necessary properties
+// ✅ 正确：仅动画化必要的属性
 AnimatedContainer({
   duration: 300,
   width: isExpanded ? 300 : 100,
@@ -1104,36 +1104,36 @@ AnimatedContainer({
 })
 ```
 
-### 2. Use Appropriate Curves
+### 2. 使用适当的曲线
 
-Choose curves that match your animation intent:
+选择与动画意图匹配的曲线：
 
 ```typescript
-// Quick interactions
+// 快速交互
 AnimatedContainer({
   duration: 200,
-  curve: Curves.easeOut,  // Fast start, smooth end
+  curve: Curves.easeOut,  // 快速开始，平滑结束
   ...
 })
 
-// Smooth transitions
+// 平滑过渡
 AnimatedContainer({
   duration: 400,
-  curve: Curves.easeInOut,  // Smooth start and end
+  curve: Curves.easeInOut,  // 平滑开始和结束
   ...
 })
 
-// Playful animations
+// 活泼的动画
 AnimatedContainer({
   duration: 600,
-  curve: Curves.bounceOut,  // Bounce effect
+  curve: Curves.bounceOut,  // 弹跳效果
   ...
 })
 ```
 
-### 3. Avoid Frequent State Changes
+### 3. 避免频繁的状态变化
 
-Debounce rapid state changes to prevent animation interruptions:
+防抖快速状态变化以防止动画中断：
 
 ```typescript
 class DebouncedAnimation extends StatefulWidget {
@@ -1164,9 +1164,9 @@ class DebouncedAnimationState extends State<DebouncedAnimation> {
 }
 ```
 
-### 4. Consider Using AnimatedBuilder for Complex Animations
+### 4. 考虑为复杂动画使用 AnimatedBuilder
 
-For complex animations that require more control:
+对于需要更多控制的复杂动画：
 
 ```typescript
 class ComplexAnimation extends StatefulWidget {
@@ -1221,42 +1221,42 @@ class ComplexAnimationState extends State<ComplexAnimation>
 }
 ```
 
-## Important Notes
+## 重要注意事项
 
-- duration is a required property. You must specify the animation duration.
-- color and decoration cannot be used together.
-- Child widgets are not animated. To animate children, use separate AnimatedWidgets.
-- Animating too many properties simultaneously can affect performance.
-- When state changes rapidly, the current animation is interrupted and a new one starts.
-- transform does not change the layout size. Use width/height for animations that need to occupy space.
-- Complex decoration animations can impact performance, so use them judiciously.
+- duration 是必需属性。您必须指定动画持续时间。
+- color 和 decoration 不能同时使用。
+- 子组件不会被动画化。要动画化子组件，请使用单独的 AnimatedWidget。
+- 同时动画化太多属性可能会影响性能。
+- 当状态快速变化时，当前动画会被中断并开始新的动画。
+- transform 不会改变布局大小。对于需要占用空间的动画，请使用 width/height。
+- 复杂的装饰动画可能会影响性能，因此请谨慎使用。
 
-## Troubleshooting
+## 故障排除
 
-### Animation Not Smooth
+### 动画不流畅
 
-If animations appear jerky:
+如果动画显得卡顿：
 
 ```typescript
-// ❌ Problem: Too short duration
+// ❌ 问题：持续时间太短
 AnimatedContainer({
-  duration: 50,  // Too fast
+  duration: 50,  // 太快
   width: expanded ? 300 : 100
 })
 
-// ✅ Solution: Use appropriate duration
+// ✅ 解决方案：使用适当的持续时间
 AnimatedContainer({
-  duration: 300,  // Smooth transition
+  duration: 300,  // 平滑过渡
   width: expanded ? 300 : 100
 })
 ```
 
-### Animation Not Triggering
+### 动画未触发
 
-Ensure state changes are properly managed:
+确保状态变化被正确管理：
 
 ```typescript
-// ❌ Problem: Direct mutation
+// ❌ 问题：直接修改
 class MyWidget extends StatefulWidget {
   createState() => new MyWidgetState();
 }
@@ -1265,12 +1265,12 @@ class MyWidgetState extends State<MyWidget> {
   expanded = false;
   
   build() {
-    // Wrong: Direct mutation without setState
-    this.expanded = true;  // No re-render
+    // 错误：没有 setState 的直接修改
+    this.expanded = true;  // 不会重新渲染
   }
 }
 
-// ✅ Solution: Use setState
+// ✅ 解决方案：使用 setState
 class MyWidget extends StatefulWidget {
   createState() => new MyWidgetState();
 }
@@ -1282,7 +1282,7 @@ class MyWidgetState extends State<MyWidget> {
     return GestureDetector({
       onTap: () => {
         this.setState(() => {
-          this.expanded = true;  // Triggers re-render
+          this.expanded = true;  // 触发重新渲染
         });
       },
       child: AnimatedContainer({
@@ -1295,29 +1295,29 @@ class MyWidgetState extends State<MyWidget> {
 }
 ```
 
-### Conflicting Properties
+### 属性冲突
 
-Watch for property conflicts:
+注意属性冲突：
 
 ```typescript
-// ❌ Problem: color and decoration conflict
+// ❌ 问题：color 和 decoration 冲突
 AnimatedContainer({
   color: 'blue',
-  decoration: BoxDecoration({ color: 'red' })  // Error!
+  decoration: BoxDecoration({ color: 'red' })  // 错误！
 })
 
-// ✅ Solution: Use decoration only
+// ✅ 解决方案：仅使用 decoration
 AnimatedContainer({
   decoration: BoxDecoration({ color: 'blue' })
 })
 ```
 
-## Related Widgets
+## 相关组件
 
-- **Container**: Basic container without animation
-- **AnimatedPadding**: Widget that only animates padding
-- **AnimatedAlign**: Widget that only animates alignment
-- **AnimatedOpacity**: Widget that only animates opacity
-- **AnimatedPositioned**: Widget that animates position within a Stack
-- **AnimatedPhysicalModel**: Widget that animates shadows and elevation
-- **AnimatedDefaultTextStyle**: Widget that animates text styles
+- **Container**：没有动画的基本容器
+- **AnimatedPadding**：仅动画化内边距的组件
+- **AnimatedAlign**：仅动画化对齐的组件
+- **AnimatedOpacity**：仅动画化不透明度的组件
+- **AnimatedPositioned**：在 Stack 内动画化位置的组件
+- **AnimatedPhysicalModel**：动画化阴影和高程的组件
+- **AnimatedDefaultTextStyle**：动画化文本样式的组件

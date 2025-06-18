@@ -1,38 +1,38 @@
 ---
-nav_title: "Basic Elements"
-title: "Basic Elements - Shapes, Layout, Text"
-description: "Learn how to work with shapes, layouts, and text using Flitter's basic widgets"
+nav_title: "基本元素"
+title: "基本元素 - 形状、布局、文本"
+description: "学习如何使用 Flitter 的基本组件处理形状、布局和文本"
 ---
 
 import BasicShapesExample from '$components/pages/docs/01_getting-started/02-basic-shapes-example';
 import LayoutExample from '$components/pages/docs/01_getting-started/03-layout-example';
 import TextExample from '$components/pages/docs/01_getting-started/04-text-example';
 
-# Basic Elements - Shapes, Layout, Text
+# 基本元素 - 形状、布局、文本
 
-Flitter provides a widget system similar to Flutter, making it easy to build complex UIs.
-This document covers how to work with the most basic elements: shapes, layouts, and text.
+Flitter 提供了类似于 Flutter 的组件系统，使构建复杂 UI 变得容易。
+本文档介绍如何使用最基本的元素：形状、布局和文本。
 
-## Drawing Basic Shapes
+## 绘制基本形状
 
-In Flitter, shapes are created using the `Container` widget and `BoxDecoration`.
+在 Flitter 中，形状是使用 `Container` 组件和 `BoxDecoration` 创建的。
 
 <BasicShapesExample
   client:load
-  title="Container and BoxDecoration"
-  description="Create various shapes and styles."
+  title="Container 和 BoxDecoration"
+  description="创建各种形状和样式。"
 />
 
-### Container Widget
+### Container 组件
 
-`Container` is the most basic yet powerful widget in Flitter:
+`Container` 是 Flitter 中最基本但功能强大的组件：
 
-- **Size setting**: Specify size with width and height properties
-- **Color**: Set background color with color or decoration.color
-- **Spacing**: Set internal/external margins with padding and margin
-- **Decoration**: Add borders, rounded corners, shadows, etc. with BoxDecoration
+- **尺寸设置**：使用 width 和 height 属性指定尺寸
+- **颜色**：使用 color 或 decoration.color 设置背景颜色
+- **间距**：使用 padding 和 margin 设置内部/外部边距
+- **装饰**：使用 BoxDecoration 添加边框、圆角、阴影等
 
-### Using BoxDecoration
+### 使用 BoxDecoration
 
 ```typescript
 Container({
@@ -40,10 +40,10 @@ Container({
     color: '#3B82F6',
     border: new Border({
       top: new BorderSide({ color: '#1E40AF', width: 2 }),
-      // right, bottom, left can be set the same way
+      // right、bottom、left 可以以相同方式设置
     }),
     borderRadius: BorderRadius.circular(8),
-    // or set individual corners
+    // 或设置单个角
     borderRadius: BorderRadius.only({
       topLeft: Radius.circular(16),
       topRight: Radius.circular(16),
@@ -54,117 +54,117 @@ Container({
 })
 ```
 
-## Layout System
+## 布局系统
 
-Flitter provides three main layout widgets.
+Flitter 提供三个主要的布局组件。
 
 <LayoutExample
   client:load
-  title="Layout Widgets"
-  description="Learn how to arrange widgets using Row, Column, and Stack."
+  title="布局组件"
+  description="学习如何使用 Row、Column 和 Stack 排列组件。"
 />
 
-### Row and Column
+### Row 和 Column
 
-**Row** arranges child widgets horizontally, while **Column** arranges them vertically:
+**Row** 水平排列子组件，而 **Column** 垂直排列子组件：
 
 ```typescript
-// Horizontal arrangement
+// 水平排列
 Row({
-  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Main axis alignment
-  crossAxisAlignment: CrossAxisAlignment.center,     // Cross axis alignment
-  children: [/* widgets */]
+  mainAxisAlignment: MainAxisAlignment.spaceBetween, // 主轴对齐
+  crossAxisAlignment: CrossAxisAlignment.center,     // 交叉轴对齐
+  children: [/* 组件 */]
 })
 
-// Vertical arrangement
+// 垂直排列
 Column({
   mainAxisAlignment: MainAxisAlignment.start,
   crossAxisAlignment: CrossAxisAlignment.stretch,
-  children: [/* widgets */]
+  children: [/* 组件 */]
 })
 ```
 
-### Stack and Positioned
+### Stack 和 Positioned
 
-**Stack** is used to overlay widgets on top of each other:
+**Stack** 用于将组件叠加在一起：
 
 ```typescript
 Stack({
   children: [
-    Container({ /* background */ }),
+    Container({ /* 背景 */ }),
     Positioned({
       top: 10,
       left: 10,
-      child: Container({ /* absolute positioning */ })
+      child: Container({ /* 绝对定位 */ })
     })
   ]
 })
 ```
 
-### Expanded and Flexible
+### Expanded 和 Flexible
 
-Used to fill remaining space or distribute space proportionally:
+用于填充剩余空间或按比例分配空间：
 
 ```typescript
 Row({
   children: [
-    Container({ width: 100 }), // Fixed width
+    Container({ width: 100 }), // 固定宽度
     Expanded({
-      flex: 2, // Takes 2x space
-      child: Container({ /* fill remaining space */ })
+      flex: 2, // 占用 2 倍空间
+      child: Container({ /* 填充剩余空间 */ })
     }),
     Expanded({
-      flex: 1, // Takes 1x space
-      child: Container({ /* fill remaining space */ })
+      flex: 1, // 占用 1 倍空间
+      child: Container({ /* 填充剩余空间 */ })
     })
   ]
 })
 ```
 
-## Text Handling
+## 文本处理
 
-Flitter's Text widget provides various styling and layout options.
+Flitter 的 Text 组件提供各种样式和布局选项。
 
 <TextExample
   client:load
-  title="Text Styling and Handling"
-  description="Learn about various text styles and overflow handling methods."
+  title="文本样式和处理"
+  description="了解各种文本样式和溢出处理方法。"
 />
 
-### TextStyle Properties
+### TextStyle 属性
 
 ```typescript
-Text('Styled text', {
+Text('样式化文本', {
   style: new TextStyle({
-    fontSize: 18,          // Font size
-    fontWeight: 'bold',    // Weight: 'normal', 'bold'
-    fontStyle: 'italic',   // Style: 'normal', 'italic'
-    fontFamily: 'Arial',   // Font family
-    color: '#3B82F6',      // Color
-    letterSpacing: 1.5,    // Letter spacing
-    wordSpacing: 2.0,      // Word spacing
-    height: 1.5,           // Line height
-    decoration: 'underline' // 'none', 'underline', 'overline', 'lineThrough'
+    fontSize: 18,          // 字体大小
+    fontWeight: 'bold',    // 粗细：'normal'、'bold'
+    fontStyle: 'italic',   // 样式：'normal'、'italic'
+    fontFamily: 'Arial',   // 字体系列
+    color: '#3B82F6',      // 颜色
+    letterSpacing: 1.5,    // 字母间距
+    wordSpacing: 2.0,      // 单词间距
+    height: 1.5,           // 行高
+    decoration: 'underline' // 'none'、'underline'、'overline'、'lineThrough'
   })
 })
 ```
 
-### Text Alignment and Overflow
+### 文本对齐和溢出
 
 ```typescript
 Container({
   width: 200,
-  child: Text('Long text goes here...', {
-    textAlign: TextAlign.center,    // Alignment: left, right, center, justify
-    maxLines: 2,                     // Maximum lines
-    overflow: TextOverflow.ellipsis, // Overflow handling: clip, fade, ellipsis
+  child: Text('长文本在这里...', {
+    textAlign: TextAlign.center,    // 对齐：left、right、center、justify
+    maxLines: 2,                     // 最大行数
+    overflow: TextOverflow.ellipsis, // 溢出处理：clip、fade、ellipsis
   })
 })
 ```
 
-## Practical Example: Creating a Card Component
+## 实际示例：创建卡片组件
 
-Let's create a card component using what we've learned so far:
+让我们使用目前学到的内容创建一个卡片组件：
 
 ```typescript
 Container({
@@ -183,7 +183,7 @@ Container({
   child: Column({
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text('Card Title', {
+      Text('卡片标题', {
         style: new TextStyle({
           fontSize: 20,
           fontWeight: 'bold',
@@ -191,7 +191,7 @@ Container({
         })
       }),
       SizedBox({ height: 8 }),
-      Text('Card content goes here. It can include multiple lines of text.', {
+      Text('卡片内容在这里。它可以包含多行文本。', {
         style: new TextStyle({
           fontSize: 14,
           color: '#6B7280'
@@ -207,7 +207,7 @@ Container({
               color: '#3B82F6',
               borderRadius: BorderRadius.circular(6)
             }),
-            child: Text('Action', {
+            child: Text('操作', {
               style: new TextStyle({
                 fontSize: 14,
                 color: '#FFFFFF',
@@ -222,15 +222,15 @@ Container({
 })
 ```
 
-## Next Steps
+## 下一步
 
-Once you've mastered the basic elements, learn how to handle user input in the Basic Interactions section.
+掌握基本元素后，在基本交互部分学习如何处理用户输入。
 
-## Summary
+## 总结
 
-- **Container**: Basic container with size, color, spacing, and decoration
-- **BoxDecoration**: Visual decorations like borders and rounded corners
-- **Row/Column**: Horizontal/vertical direction layouts
-- **Stack**: Widget overlaying
-- **Text**: Text with various styles and alignment options
-- **Expanded**: Fill remaining space
+- **Container**：具有尺寸、颜色、间距和装饰的基本容器
+- **BoxDecoration**：边框和圆角等视觉装饰
+- **Row/Column**：水平/垂直方向布局
+- **Stack**：组件叠加
+- **Text**：具有各种样式和对齐选项的文本
+- **Expanded**：填充剩余空间

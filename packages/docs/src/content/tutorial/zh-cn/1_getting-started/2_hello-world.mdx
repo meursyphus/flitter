@@ -1,6 +1,6 @@
 ---
-title: "Your First Flitter App"
-description: "Create 'Hello World' with Container and Text, and understand the widget tree"
+title: "您的第一个 Flitter 应用"
+description: "使用 Container 和 Text 创建 'Hello World'，并理解组件树"
 files:
   App.js: |
     import React from 'react';
@@ -9,19 +9,19 @@ files:
 
     class HelloWorldApp extends StatelessWidget {
       build(context) {
-        // TODO: Create widgets here
+        // TODO: 在这里创建组件
         return Container({
           width: 400,
           height: 200,
           color: '#f8f9fa',
           child: Center({
-            child: Text('TODO: Add your widgets')
+            child: Text('TODO: 添加您的组件')
           })
         });
       }
     }
 
-    // Factory function
+    // 工厂函数
     function createWidget() {
       return new HelloWorldApp();
     }
@@ -55,7 +55,7 @@ solved_files:
                   })
                 }),
                 SizedBox({ height: 10 }),
-                Text('My first widget app', {
+                Text('我的第一个组件应用', {
                   style: new TextStyle({
                     fontSize: 16,
                     color: '#64748b'
@@ -68,7 +68,7 @@ solved_files:
       }
     }
 
-    // Factory function
+    // 工厂函数
     function createWidget() {
       return new HelloWorldApp();
     }
@@ -78,115 +78,115 @@ solved_files:
     }
 ---
 
-# Your First Flitter App
+# 您的第一个 Flitter 应用
 
-Now that installation is complete, let's create your first app using Flitter's core widgets Container and Text. Through this tutorial, you'll learn the basic concepts of widget trees and how to combine widgets.
+现在安装已完成，让我们使用 Flitter 的核心组件 Container 和 Text 创建您的第一个应用。通过本教程，您将学习组件树的基本概念以及如何组合组件。
 
-## 🎯 Learning Objectives
+## 🎯 学习目标
 
-After completing this tutorial, you'll be able to:
+完成本教程后，您将能够：
 
-- [ ] Create boxes with Container widget
-- [ ] Display text with Text widget
-- [ ] Nest widgets to create tree structures
-- [ ] Apply basic layout and styling
-- [ ] Arrange widgets vertically with Column
+- [ ] 使用 Container 组件创建盒子
+- [ ] 使用 Text 组件显示文本
+- [ ] 嵌套组件以创建树结构
+- [ ] 应用基本布局和样式
+- [ ] 使用 Column 垂直排列组件
 
-## 📚 Core Concept: What are Widgets?
+## 📚 核心概念：什么是组件？
 
-In Flitter, **Widget** is the basic building block for constructing UI. Everything is made of widgets, and you can combine widgets to create complex UIs.
+在 Flitter 中，**Widget（组件）**是构建 UI 的基本单元。一切都由组件构成，您可以组合组件来创建复杂的 UI。
 
-### Widget Characteristics
+### 组件特性
 
-1. **Immutable**: Once created, widgets cannot be changed
-2. **Composable**: Widgets can be nested inside other widgets to create complex structures
-3. **Reusable**: The same widget can be used in multiple places
+1. **不可变性**：一旦创建，组件就不能更改
+2. **可组合性**：组件可以嵌套在其他组件内部以创建复杂结构
+3. **可重用性**：同一个组件可以在多个地方使用
 
-## 🏗️ Understanding Container Widget
+## 🏗️ 理解 Container 组件
 
-**Container** is one of Flitter's most fundamental widgets. It's used to create boxes and apply styling.
+**Container** 是 Flitter 中最基础的组件之一。它用于创建盒子并应用样式。
 
-### Key Properties of Container
+### Container 的主要属性
 
 ```typescript
 Container({
-  // Size settings
-  width: 200,           // Width (pixels)
-  height: 100,          // Height (pixels)
+  // 尺寸设置
+  width: 200,           // 宽度（像素）
+  height: 100,          // 高度（像素）
   
-  // Color and style
-  color: '#ff0000',     // Background color (hex code)
+  // 颜色和样式
+  color: '#ff0000',     // 背景颜色（十六进制代码）
   
-  // Margin settings
-  padding: EdgeInsets.all(16), // Inner spacing
-  margin: EdgeInsets.all(8),   // Outer spacing
+  // 边距设置
+  padding: EdgeInsets.all(16), // 内边距
+  margin: EdgeInsets.all(8),   // 外边距
   
-  // Child widget
-  child: Text('Hello')  // Single child widget
+  // 子组件
+  child: Text('Hello')  // 单个子组件
 })
 ```
 
-### Margin Setting Methods
+### 边距设置方法
 
 ```typescript
-// Same margin on all sides
+// 所有边相同的边距
 padding: EdgeInsets.all(16)
 
-// Different horizontal/vertical margins
+// 不同的水平/垂直边距
 padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 10 })
 
-// Individual margin for each side
+// 每边单独的边距
 padding: EdgeInsets.only({ top: 8, right: 16, bottom: 8, left: 16 })
 ```
 
-## 📝 Understanding Text Widget
+## 📝 理解 Text 组件
 
-**Text** is a widget that displays text on screen.
+**Text** 是在屏幕上显示文本的组件。
 
-### Basic Usage of Text
+### Text 的基本用法
 
 ```typescript
-// Simple text
+// 简单文本
 Text('Hello, World!')
 
-// Text with styling applied
-Text('Styled text', {
+// 应用样式的文本
+Text('样式化文本', {
   style: new TextStyle({
-    fontSize: 20,        // Font size
-    fontWeight: 'bold',  // Font weight: 'normal', 'bold', '100'-'900'
-    color: '#1e40af',    // Text color
-    fontFamily: 'Arial'  // Font family
+    fontSize: 20,        // 字体大小
+    fontWeight: 'bold',  // 字体粗细：'normal', 'bold', '100'-'900'
+    color: '#1e40af',    // 文本颜色
+    fontFamily: 'Arial'  // 字体系列
   })
 })
 ```
 
-### Text Alignment Options
+### 文本对齐选项
 
 ```typescript
-Text('Aligned text', {
+Text('对齐的文本', {
   textAlign: 'center'  // 'left', 'center', 'right', 'justify'
 })
 ```
 
-## 🔧 Practice: Creating Hello World App
+## 🔧 练习：创建 Hello World 应用
 
-Now let's combine Container and Text to create a "Hello World" app.
+现在让我们组合 Container 和 Text 来创建一个 "Hello World" 应用。
 
-### Step 1: Create Basic Structure
+### 步骤 1：创建基本结构
 
-First, let's create a Container with blue background:
+首先，让我们创建一个带有蓝色背景的 Container：
 
 ```typescript
 const widget = Container({
-  color: '#f0f9ff',     // Light blue background
-  padding: EdgeInsets.all(20), // 20px padding on all sides
+  color: '#f0f9ff',     // 浅蓝色背景
+  padding: EdgeInsets.all(20), // 所有边 20px 内边距
   child: Text('Hello, Flitter!')
 });
 ```
 
-### Step 2: Add Text Styling
+### 步骤 2：添加文本样式
 
-Now let's add styling to the text:
+现在让我们为文本添加样式：
 
 ```typescript
 const widget = Container({
@@ -202,9 +202,9 @@ const widget = Container({
 });
 ```
 
-### Step 3: Add Multiple Texts
+### 步骤 3：添加多个文本
 
-Let's use Column widget to arrange multiple texts vertically:
+让我们使用 Column 组件垂直排列多个文本：
 
 ```typescript
 import { Container, Text, Column, SizedBox, EdgeInsets, MainAxisAlignment, CrossAxisAlignment, TextStyle } from '@meursyphus/flitter';
@@ -213,8 +213,8 @@ const widget = Container({
   color: '#f0f9ff',
   padding: EdgeInsets.all(20),
   child: Column({
-    mainAxisAlignment: MainAxisAlignment.center,    // Vertical center alignment
-    crossAxisAlignment: CrossAxisAlignment.center,   // Horizontal center alignment
+    mainAxisAlignment: MainAxisAlignment.center,    // 垂直居中对齐
+    crossAxisAlignment: CrossAxisAlignment.center,   // 水平居中对齐
     children: [
       Text('Hello, Flitter!', {
         style: new TextStyle({
@@ -223,8 +223,8 @@ const widget = Container({
           color: '#1e40af'
         })
       }),
-      SizedBox({ height: 10 }),     // 10px height empty space
-      Text('My first widget app', {
+      SizedBox({ height: 10 }),     // 10px 高度的空白间距
+      Text('我的第一个组件应用', {
         style: new TextStyle({
           fontSize: 16,
           color: '#64748b'
@@ -235,48 +235,48 @@ const widget = Container({
 });
 ```
 
-## 🎨 Creating Layout with Column Widget
+## 🎨 使用 Column 组件创建布局
 
-**Column** is a layout widget that arranges multiple widgets vertically.
+**Column** 是垂直排列多个组件的布局组件。
 
-### Key Properties of Column
+### Column 的主要属性
 
 ```typescript
 Column({
-  // Vertical alignment (main axis)
+  // 垂直对齐（主轴）
   mainAxisAlignment: MainAxisAlignment.center,
   
-  // Horizontal alignment (cross axis)
+  // 水平对齐（交叉轴）
   crossAxisAlignment: CrossAxisAlignment.center,
   
-  // Child widgets
+  // 子组件
   children: [
-    Text('First'),
-    Text('Second'),
-    Text('Third')
+    Text('第一个'),
+    Text('第二个'),
+    Text('第三个')
   ]
 })
 ```
 
-### Alignment Options Explained
+### 对齐选项说明
 
-**mainAxisAlignment** (vertical direction):
-- `MainAxisAlignment.start`: Top alignment
-- `MainAxisAlignment.center`: Center alignment
-- `MainAxisAlignment.end`: Bottom alignment
-- `MainAxisAlignment.spaceBetween`: Equal spacing between widgets
-- `MainAxisAlignment.spaceAround`: Equal spacing around widgets
-- `MainAxisAlignment.spaceEvenly`: All spacing is equal
+**mainAxisAlignment**（垂直方向）：
+- `MainAxisAlignment.start`：顶部对齐
+- `MainAxisAlignment.center`：中心对齐
+- `MainAxisAlignment.end`：底部对齐
+- `MainAxisAlignment.spaceBetween`：组件之间平均分配间距
+- `MainAxisAlignment.spaceAround`：组件周围平均分配间距
+- `MainAxisAlignment.spaceEvenly`：所有间距相等
 
-**crossAxisAlignment** (horizontal direction):
-- `CrossAxisAlignment.start`: Left alignment
-- `CrossAxisAlignment.center`: Center alignment
-- `CrossAxisAlignment.end`: Right alignment
-- `CrossAxisAlignment.stretch`: Fill all horizontal space
+**crossAxisAlignment**（水平方向）：
+- `CrossAxisAlignment.start`：左对齐
+- `CrossAxisAlignment.center`：中心对齐
+- `CrossAxisAlignment.end`：右对齐
+- `CrossAxisAlignment.stretch`：填充所有水平空间
 
-## 🔧 TODO: Complete the Code
+## 🔧 TODO：完成代码
 
-Now complete the code yourself:
+现在自己完成代码：
 
 ```typescript
 import { StatelessWidget, Container, Text, Column, SizedBox, Center, EdgeInsets, MainAxisAlignment, CrossAxisAlignment, TextStyle } from '@meursyphus/flitter';
@@ -284,19 +284,19 @@ import { StatelessWidget, Container, Text, Column, SizedBox, Center, EdgeInsets,
 class HelloWorldApp extends StatelessWidget {
   build(context) {
     return Container({
-      // TODO: Set light blue background (#f0f9ff)
-      // TODO: Set 20px padding on all sides with EdgeInsets.all(20)
+      // TODO: 设置浅蓝色背景 (#f0f9ff)
+      // TODO: 使用 EdgeInsets.all(20) 设置所有边 20px 内边距
       child: Center({
         child: Column({
-          // TODO: Set center alignment with MainAxisAlignment.center and CrossAxisAlignment.center
+          // TODO: 使用 MainAxisAlignment.center 和 CrossAxisAlignment.center 设置中心对齐
           children: [
-            // TODO: Create "Hello, Flitter!" text
-            // Hint: new TextStyle({ fontSize: 28, fontWeight: 'bold', color: '#1e40af' })
+            // TODO: 创建 "Hello, Flitter!" 文本
+            // 提示：new TextStyle({ fontSize: 28, fontWeight: 'bold', color: '#1e40af' })
             
-            // TODO: Create 10px height empty space with SizedBox({ height: 10 })
+            // TODO: 使用 SizedBox({ height: 10 }) 创建 10px 高度的空白间距
             
-            // TODO: Create "My first widget app" text
-            // Hint: new TextStyle({ fontSize: 16, color: '#64748b' })
+            // TODO: 创建 "我的第一个组件应用" 文本
+            // 提示：new TextStyle({ fontSize: 16, color: '#64748b' })
           ]
         })
       })
@@ -309,35 +309,35 @@ export default function createApp() {
 }
 ```
 
-## 🎯 Expected Results
+## 🎯 预期结果
 
-After completing and running the code, you should see:
+完成并运行代码后，您应该看到：
 
-1. **Light blue background box**: 400x200 sized Container
-2. **Center-aligned text**: "Hello, Flitter!" (large font, blue)
-3. **Subtitle**: "My first widget app" (small font, gray)
-4. **Proper spacing**: 10px gap between the two texts
+1. **浅蓝色背景框**：400x200 尺寸的 Container
+2. **居中对齐的文本**："Hello, Flitter!"（大字体，蓝色）
+3. **副标题**："我的第一个组件应用"（小字体，灰色）
+4. **适当的间距**：两个文本之间有 10px 间隙
 
-## 🔧 Practice Problems
+## 🔧 练习题
 
-If you've completed the basic Hello World, try the following:
+如果您已完成基本的 Hello World，请尝试以下练习：
 
-### Exercise 1: Change Color Themes
-Change to different color combinations:
+### 练习 1：更改颜色主题
+更改为不同的颜色组合：
 ```typescript
-// Exercise 1-1: Green theme
-color: '#f0fdf4'      // Light green background
-color: '#16a34a'      // Dark green text
+// 练习 1-1：绿色主题
+color: '#f0fdf4'      // 浅绿色背景
+color: '#16a34a'      // 深绿色文本
 
-// Exercise 1-2: Purple theme
-color: '#faf5ff'      // Light purple background
-color: '#9333ea'      // Dark purple text
+// 练习 1-2：紫色主题
+color: '#faf5ff'      // 浅紫色背景
+color: '#9333ea'      // 深紫色文本
 ```
 
-### Exercise 2: Add Text
-Add a third text:
+### 练习 2：添加文本
+添加第三个文本：
 ```typescript
-Text('Using with React', {
+Text('与 React 一起使用', {
   style: new TextStyle({
     fontSize: 14,
     color: '#94a3b8',
@@ -346,85 +346,85 @@ Text('Using with React', {
 })
 ```
 
-### Exercise 3: Change Layout
-Change `mainAxisAlignment` to different values and check the results:
-- `MainAxisAlignment.start`: Top alignment
-- `MainAxisAlignment.end`: Bottom alignment
-- `MainAxisAlignment.spaceBetween`: Positioned at top and bottom ends
+### 练习 3：更改布局
+将 `mainAxisAlignment` 更改为不同的值并检查结果：
+- `MainAxisAlignment.start`：顶部对齐
+- `MainAxisAlignment.end`：底部对齐
+- `MainAxisAlignment.spaceBetween`：位于顶部和底部两端
 
-### Exercise 4: Adjust Margins
-Change the Container's `padding` value:
+### 练习 4：调整边距
+更改 Container 的 `padding` 值：
 ```typescript
-// Different horizontal/vertical
+// 不同的水平/垂直边距
 padding: EdgeInsets.symmetric({ horizontal: 40, vertical: 15 })
 
-// Different for each direction
+// 每个方向不同
 padding: EdgeInsets.only({ top: 30, right: 20, bottom: 30, left: 20 })
 ```
 
-## 🚨 Common Mistakes and Solutions
+## 🚨 常见错误和解决方案
 
-### Problem 1: Text not visible
-**Cause**: Container doesn't have `child` set or Text widget created incorrectly
+### 问题 1：文本不可见
+**原因**：Container 没有设置 `child` 或 Text 组件创建不正确
 
-**Solution**: 
+**解决方案**：
 ```typescript
-// ❌ Wrong example
-Container({ color: 'blue' })  // No child
+// ❌ 错误示例
+Container({ color: 'blue' })  // 没有 child
 
-// ✅ Correct example
+// ✅ 正确示例
 Container({ 
   color: 'blue',
-  child: Text('Hello')  // Child must be set
+  child: Text('Hello')  // 必须设置 child
 })
 ```
 
-### Problem 2: Using child instead of children in Column
-**Cause**: Column has multiple children, so `children` array must be used
+### 问题 2：在 Column 中使用 child 而不是 children
+**原因**：Column 有多个子组件，因此必须使用 `children` 数组
 
-**Solution**:
+**解决方案**：
 ```typescript
-// ❌ Wrong example
+// ❌ 错误示例
 Column({ child: Text('Hello') })
 
-// ✅ Correct example
+// ✅ 正确示例
 Column({ children: [Text('Hello')] })
 ```
 
-### Problem 3: Colors not applied
-**Cause**: Wrong color format or missing quotes
+### 问题 3：颜色未应用
+**原因**：错误的颜色格式或缺少引号
 
-**Solution**:
+**解决方案**：
 ```typescript
-// ❌ Wrong examples
-color: #ff0000     // No quotes
-color: 'ff0000'    // No #
+// ❌ 错误示例
+color: #ff0000     // 没有引号
+color: 'ff0000'    // 没有 #
 
-// ✅ Correct examples
-color: '#ff0000'   // Hex code
-color: 'red'       // Color name
-color: 'rgb(255, 0, 0)'  // RGB value
+// ✅ 正确示例
+color: '#ff0000'   // 十六进制代码
+color: 'red'       // 颜色名称
+color: 'rgb(255, 0, 0)'  // RGB 值
 ```
 
-### Problem 4: fontSize not applied
-**Cause**: fontSize set as string or wrong style object structure
+### 问题 4：fontSize 未应用
+**原因**：fontSize 设置为字符串或错误的样式对象结构
 
-**Solution**:
+**解决方案**：
 ```typescript
-// ❌ Wrong examples
-Text('Hello', { fontSize: '20px' })           // Direct property
-Text('Hello', { style: { fontSize: '20' } })  // String
+// ❌ 错误示例
+Text('Hello', { fontSize: '20px' })           // 直接属性
+Text('Hello', { style: { fontSize: '20' } })  // 字符串
 
-// ✅ Correct example
-Text('Hello', { style: { fontSize: 20 } })    // Set as number
+// ✅ 正确示例
+Text('Hello', { style: { fontSize: 20 } })    // 设置为数字
 ```
 
-## 🧠 Understanding Widget Tree
+## 🧠 理解组件树
 
-Let's look at the widget tree structure of our app:
+让我们看看我们应用的组件树结构：
 
 ```
-Container (root)
+Container (根)
 ├── color: '#f0f9ff'
 ├── padding: EdgeInsets.all(20)
 └── child: Column
@@ -433,53 +433,53 @@ Container (root)
     └── children:
         ├── Text('Hello, Flitter!')
         ├── SizedBox({ height: 10 })
-        └── Text('My first widget app')
+        └── Text('我的第一个组件应用')
 ```
 
-### Widget Tree Characteristics
+### 组件树特性
 
-1. **Parent-child relationship**: Container contains Column, Column contains multiple Texts
-2. **Unidirectional data flow**: Properties are passed from parent to child
-3. **Composability**: Complex UI built by combining simple widgets
+1. **父子关系**：Container 包含 Column，Column 包含多个 Text
+2. **单向数据流**：属性从父组件传递到子组件
+3. **可组合性**：通过组合简单组件构建复杂 UI
 
-## 📏 Understanding Size and Constraints
+## 📏 理解尺寸和约束
 
-### How Container Determines Size
+### Container 如何确定尺寸
 
 ```typescript
-// 1. Explicit size specification
+// 1. 显式尺寸指定
 Container({
   width: 200,
   height: 100,
-  child: Text('Fixed size')
+  child: Text('固定尺寸')
 })
 
-// 2. Fit to child size (default)
+// 2. 适应子组件尺寸（默认）
 Container({
   padding: EdgeInsets.all(16),
-  child: Text('Fit to child size')
+  child: Text('适应子组件尺寸')
 })
 
-// 3. Take all available space (no child)
+// 3. 占用所有可用空间（无子组件）
 Container({
-  color: 'red'  // Maximum size if no child
+  color: 'red'  // 如果没有子组件则最大尺寸
 })
 ```
 
-## 🚀 Next Steps
+## 🚀 下一步
 
-If you've successfully created the Hello World app, let's add interaction in the next tutorial:
+如果您已成功创建 Hello World 应用，让我们在下一个教程中添加交互：
 
-- **Next**: [Basic Interactions](./3_basic-interactions) - Learn button clicks and state changes
-- **Related**: [Container Styling](../2_basic-widgets/1_container-styling) - Learn advanced Container styling
-- **Related**: [Text Styling](../2_basic-widgets/2_text-styling) - Learn various Text style options
+- **下一篇**：[基本交互](./3_basic-interactions) - 学习按钮点击和状态更改
+- **相关**：[Container 样式](../2_basic-widgets/1_container-styling) - 学习高级 Container 样式
+- **相关**：[Text 样式](../2_basic-widgets/2_text-styling) - 学习各种 Text 样式选项
 
-## 💡 Key Summary
+## 💡 关键总结
 
-1. **Container**: Create boxes, set margins, apply colors
-2. **Text**: Display text, font styling
-3. **Column**: Arrange multiple widgets vertically
-4. **Widget Tree**: Compose complex UI by nesting widgets
-5. **Composition**: Create desired UI by combining simple widgets
+1. **Container**：创建盒子、设置边距、应用颜色
+2. **Text**：显示文本、字体样式
+3. **Column**：垂直排列多个组件
+4. **组件树**：通过嵌套组件组成复杂 UI
+5. **组合**：通过组合简单组件创建所需的 UI
 
-Now you can use Flitter's basic widgets! In the next tutorial, we'll learn how to add user interactions.
+现在您可以使用 Flitter 的基本组件了！在下一个教程中，我们将学习如何添加用户交互。

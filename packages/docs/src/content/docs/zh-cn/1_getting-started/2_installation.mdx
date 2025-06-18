@@ -1,78 +1,78 @@
 ---
-nav_title: "Installation Guide"
-title: "Flitter Installation and Setup"
-description: "Learn how to install and set up Flitter in various JavaScript frameworks"
+nav_title: "安装指南"
+title: "Flitter 安装和设置"
+description: "了解如何在各种 JavaScript 框架中安装和设置 Flitter"
 ---
 
 import InstallationGuide from '$components/pages/docs/01_getting-started/installation-guide';
 
-# Flitter Installation and Setup
+# Flitter 安装和设置
 
-Flitter is a library that can be installed via npm and used immediately.
+Flitter 是一个可以通过 npm 安装并立即使用的库。
 
-## Supported Frameworks
+## 支持的框架
 
-Flitter officially supports the following environments:
+Flitter 官方支持以下环境：
 
-- **Vanilla JavaScript** - Use with pure JavaScript without frameworks
-- **React** - Easy integration as React components
-- **Svelte** - Natural use as Svelte components
-- **Vue** - Use with Vue 3 Composition API
-- **SolidJS** - Perfect integration with reactive systems
-- **Qwik** - Use with optimized loading
+- **Vanilla JavaScript** - 无需框架即可使用纯 JavaScript
+- **React** - 轻松集成为 React 组件
+- **Svelte** - 自然地用作 Svelte 组件
+- **Vue** - 与 Vue 3 Composition API 一起使用
+- **SolidJS** - 与响应式系统完美集成
+- **Qwik** - 以优化的加载方式使用
 
-## Installation Guide
+## 安装指南
 
-Select the framework you want to use from the tabs below to view installation methods and basic usage examples:
+从下面的选项卡中选择您要使用的框架，查看安装方法和基本使用示例：
 
 <InstallationGuide 
   client:load 
   defaultTab="react"
   labels={{
-    installation: 'Installation',
-    usageExample: 'Usage Example',
-    importantNotes: '💡 Important Notes',
-    otherPackageManagers: 'Other Package Managers',
-    copy: 'Copy',
-    copied: 'Copied!'
+    installation: '安装',
+    usageExample: '使用示例',
+    importantNotes: '💡 重要提示',
+    otherPackageManagers: '其他包管理器',
+    copy: '复制',
+    copied: '已复制！'
   }}
 />
 
-## Choosing a Renderer
+## 选择渲染器
 
-Flitter supports two types of renderers:
+Flitter 支持两种类型的渲染器：
 
-### Canvas Renderer
-- **Advantages**: High performance, pixel-level control, suitable for complex animations
-- **Disadvantages**: Text selection not possible, SEO unfriendly
-- **Use cases**: Games, complex visualizations, animation-heavy applications
+### Canvas 渲染器
+- **优点**：高性能、像素级控制、适合复杂动画
+- **缺点**：无法选择文本、对 SEO 不友好
+- **用例**：游戏、复杂可视化、动画密集型应用
 
-### SVG Renderer
-- **Advantages**: Vector graphics, text selection possible, SEO friendly, CSS styling possible
-- **Disadvantages**: Potential performance degradation with complex animations
-- **Use cases**: Charts, diagrams, static visualizations
+### SVG 渲染器
+- **优点**：矢量图形、可选择文本、SEO 友好、可使用 CSS 样式
+- **缺点**：复杂动画可能导致性能下降
+- **用例**：图表、图表、静态可视化
 
-### Server-Side Rendering
+### 服务器端渲染
 
 ```typescript
-// When using server-side mode:
-// 1. First renders as SVG on the server
-// 2. Hydrates with the specified renderer on the client
+// 使用服务器端模式时：
+// 1. 首先在服务器上渲染为 SVG
+// 2. 在客户端使用指定的渲染器进行水合
 <Widget 
-  renderer="canvas"     // Client renderer
-  ssr={{                 // Enable SSR and specify size
+  renderer="canvas"     // 客户端渲染器
+  ssr={{                 // 启用 SSR 并指定尺寸
     size: {
-      width: 800,      // Width to render on server
-      height: 600      // Height to render on server
+      width: 800,      // 在服务器上渲染的宽度
+      height: 600      // 在服务器上渲染的高度
     }
   }}
   widget={...} 
 />
 ```
 
-## TypeScript Support
+## TypeScript 支持
 
-Flitter is written in TypeScript and provides complete type support.
+Flitter 使用 TypeScript 编写，提供完整的类型支持。
 
 ```typescript
 import { Container, ContainerProps, EdgeInsets, Text } from '@meursyphus/flitter';
@@ -80,20 +80,20 @@ import { Container, ContainerProps, EdgeInsets, Text } from '@meursyphus/flitter
 const props: ContainerProps = {
   color: 'lightblue',
   padding: EdgeInsets.all(20),
-  child: Text('Hello, TypeScript!')
+  child: Text('你好，TypeScript！')
 };
 
 const container = Container(props);
 ```
 
-## Next Steps
+## 下一步
 
-Once installation is complete, create your first Flitter application through the Hello World example.
+安装完成后，通过 Hello World 示例创建您的第一个 Flitter 应用程序。
 
-## Community Support
+## 社区支持
 
-Need help or have questions?
+需要帮助或有疑问？
 
 - [GitHub Issues](https://github.com/meursyphus/flitter/issues)
-- [Discord Community](https://discord.gg/kUZp4SaHzF)
+- [Discord 社区](https://discord.gg/kUZp4SaHzF)
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/flitter)

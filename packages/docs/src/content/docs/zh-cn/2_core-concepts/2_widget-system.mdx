@@ -1,39 +1,39 @@
 ---
-nav_title: "Widget System"
-title: "Widget System"
-description: "Understand Flitter's core widget system and learn the differences between StatelessWidget and StatefulWidget"
+nav_title: "Widget 系统"
+title: "Widget 系统"
+description: "了解 Flitter 的核心 widget 系统，学习 StatelessWidget 和 StatefulWidget 之间的区别"
 ---
 
 import WidgetSystemExample from '$components/pages/docs/02_core-concepts/02-widget-system-example';
 
-# Widget System
+# Widget 系统
 
-## Overview
+## 概述
 
-Flitter's Widget is the basic unit that composes the UI. Like Flutter, every element displayed on screen is composed of widgets. Buttons, text, layouts, and even the app itself are all widgets.
+Flitter 的 Widget 是组成 UI 的基本单元。像 Flutter 一样，屏幕上显示的每个元素都由 widget 组成。按钮、文本、布局，甚至应用程序本身都是 widget。
 
-## Why is it important?
+## 为什么重要？
 
-Understanding the widget system enables:
+理解 widget 系统可以实现：
 
-- **Reusable Components**: Reuse widgets anywhere once created
-- **Composable Structure**: Build complex UIs by combining small widgets
-- **Clear State Management**: Distinguish state management patterns with StatelessWidget and StatefulWidget
-- **Predictable Behavior**: Systematic development through widget lifecycle
+- **可重用组件**：一旦创建，可以在任何地方重用 widget
+- **可组合结构**：通过组合小型 widget 构建复杂的 UI
+- **清晰的状态管理**：使用 StatelessWidget 和 StatefulWidget 区分状态管理模式
+- **可预测的行为**：通过 widget 生命周期进行系统化开发
 
-## Core Concepts
+## 核心概念
 
-### Widget Types
+### Widget 类型
 
-Flitter has three main widget types:
+Flitter 有三种主要的 widget 类型：
 
-1. **StatelessWidget**: Static widget without state
-2. **StatefulWidget**: Dynamic widget with state
-3. **RenderObjectWidget**: Low-level widget responsible for direct rendering
+1. **StatelessWidget**：没有状态的静态 widget
+2. **StatefulWidget**：具有状态的动态 widget
+3. **RenderObjectWidget**：负责直接渲染的低级 widget
 
 ### StatelessWidget
 
-A widget without state that doesn't change once created:
+没有状态的 widget，一旦创建就不会改变：
 
 ```typescript
 import { StatelessWidget, Text, Container, EdgeInsets, Colors, type BuildContext, type Widget } from '@meursyphus/flitter';
@@ -47,12 +47,12 @@ class Greeting extends StatelessWidget {
     return Container({
       padding: EdgeInsets.all(16),
       color: Colors.blue.shade100,
-      child: Text(`Hello, ${this.props.name}!`)
+      child: Text(`你好，${this.props.name}！`)
     });
   }
 }
 
-// Factory function으로 export
+// 导出为工厂函数
 export default function GreetingWidget(props: { name: string }): Widget {
   return new Greeting(props);
 }
@@ -60,7 +60,7 @@ export default function GreetingWidget(props: { name: string }): Widget {
 
 ### StatefulWidget
 
-A widget that has state and automatically updates the UI when state changes:
+具有状态的 widget，当状态改变时会自动更新 UI：
 
 ```typescript
 import { 
@@ -89,7 +89,7 @@ class CounterState extends State<Counter> {
   build(context: BuildContext): Widget {
     return Column({
       children: [
-        Text(`Count: ${this.count}`, {
+        Text(`计数：${this.count}`, {
           style: TextStyle({ fontSize: 24 })
         }),
         GestureDetector({
@@ -102,7 +102,7 @@ class CounterState extends State<Counter> {
             margin: EdgeInsets.only({ top: 16 }),
             padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
             color: Colors.blue,
-            child: Text("Increment", {
+            child: Text("增加", {
               style: TextStyle({ color: Colors.white })
             })
           })
@@ -112,7 +112,7 @@ class CounterState extends State<Counter> {
   }
 }
 
-// Factory function으로 export
+// 导出为工厂函数
 export default function CounterWidget(): Widget {
   return new Counter();
 }
@@ -121,47 +121,47 @@ export default function CounterWidget(): Widget {
 <WidgetSystemExample 
   client:load
   title="StatelessWidget vs StatefulWidget"
-  description="Check the difference between stateless and stateful widgets."
+  description="查看无状态和有状态 widget 之间的区别。"
 />
 
-### Widget Lifecycle
+### Widget 生命周期
 
-#### StatefulWidget Lifecycle
+#### StatefulWidget 生命周期
 
 ```typescript
 class MyWidgetState extends State<MyWidget> {
-  // 1. Called once when state object is created
+  // 1. 创建状态对象时调用一次
   initState(): void {
     super.initState();
-    console.log("Widget initialized");
-    // Initialize animation controllers, stream subscriptions, etc.
+    console.log("Widget 初始化");
+    // 初始化动画控制器、流订阅等
   }
 
-  // 2. When parent widget changes and this widget needs to be updated
+  // 2. 当父 widget 改变且此 widget 需要更新时
   didUpdateWidget(oldWidget: MyWidget): void {
     super.didUpdateWidget(oldWidget);
-    console.log("Widget configuration changed");
-    // Update state based on props changes
+    console.log("Widget 配置已更改");
+    // 基于 props 变化更新状态
   }
 
-  // 3. Executed every time setState is called
+  // 3. 每次调用 setState 时执行
   build(context: BuildContext): Widget {
-    console.log("Rendering UI");
+    console.log("渲染 UI");
     return Container({ /* ... */ });
   }
 
-  // 4. When state object is removed
+  // 4. 当状态对象被移除时
   dispose(): void {
-    console.log("Widget disposed");
-    // Clean up animation controllers, stream subscriptions, etc.
+    console.log("Widget 已销毁");
+    // 清理动画控制器、流订阅等
     super.dispose();
   }
 }
 ```
 
-## Practical Examples
+## 实际示例
 
-### 1. StatelessWidget with Props
+### 1. 带 Props 的 StatelessWidget
 
 ```typescript
 class ProductCard extends StatelessWidget {
@@ -195,7 +195,7 @@ class ProductCard extends StatelessWidget {
               color: Colors.white 
             })
           }),
-          Text(`₩${price.toLocaleString()}`, {
+          Text(`¥${price.toLocaleString()}`, {
             style: TextStyle({ 
               fontSize: 16, 
               color: Colors.grey.shade400 
@@ -216,7 +216,7 @@ export default function ProductCardWidget(props: {
 }
 ```
 
-### 2. StatefulWidget with Complex State
+### 2. 具有复杂状态的 StatefulWidget
 
 ```typescript
 class TodoApp extends StatefulWidget {
@@ -263,7 +263,7 @@ class TodoAppState extends State<TodoApp> {
       padding: EdgeInsets.all(16),
       child: Column({
         children: [
-          Text("Todo List", {
+          Text("待办事项列表", {
             style: TextStyle({ 
               fontSize: 24, 
               fontWeight: FontWeight.bold,
@@ -272,18 +272,18 @@ class TodoAppState extends State<TodoApp> {
           }),
           SizedBox({ height: 16 }),
           
-          // Input field (actually use TextField widget)
+          // 输入框（实际使用 TextField widget）
           Container({
             padding: EdgeInsets.all(12),
             color: Colors.grey.shade800,
-            child: Text(this.inputText || "Enter a new todo...", {
+            child: Text(this.inputText || "输入新的待办事项...", {
               style: TextStyle({ color: Colors.grey.shade400 })
             })
           }),
           
           SizedBox({ height: 16 }),
           
-          // Todo list
+          // 待办事项列表
           ...this.todos.map(todo => 
             Container({
               margin: EdgeInsets.only({ bottom: 8 }),
@@ -326,7 +326,7 @@ export default function TodoAppWidget(): Widget {
 }
 ```
 
-### 3. Lifecycle Usage Example
+### 3. 生命周期使用示例
 
 ```typescript
 class TimerWidget extends StatefulWidget {
@@ -391,7 +391,7 @@ class TimerWidgetState extends State<TimerWidget> {
       color: this.timeLeft === 0 ? Colors.red.shade900 : Colors.grey.shade900,
       child: Column({
         children: [
-          Text("Timer", {
+          Text("计时器", {
             style: TextStyle({ 
               fontSize: 20, 
               color: Colors.white 
@@ -409,7 +409,7 @@ class TimerWidgetState extends State<TimerWidget> {
             }
           ),
           if (this.timeLeft === 0)
-            Text("Time's up!", {
+            Text("时间到！", {
               style: TextStyle({ 
                 fontSize: 24, 
                 color: Colors.red.shade400 
@@ -426,40 +426,40 @@ export default function TimerWidgetExample(props: { duration: number }): Widget 
 }
 ```
 
-## Important Notes
+## 重要注意事项
 
-### 1. State Management Rules
+### 1. 状态管理规则
 
 ```typescript
-// ❌ Wrong - State change without setState
-this.count++;  // UI won't update!
+// ❌ 错误 - 不使用 setState 的状态更改
+this.count++;  // UI 不会更新！
 
-// ✅ Correct - Use setState
+// ✅ 正确 - 使用 setState
 this.setState(() => {
   this.count++;
 });
 
-// ❌ Wrong - State change outside setState
+// ❌ 错误 - setState 外的状态更改
 this.items.push(newItem);
-this.setState(() => {});  // Empty setState
+this.setState(() => {});  // 空的 setState
 
-// ✅ Correct - All changes inside setState
+// ✅ 正确 - 所有更改都在 setState 内
 this.setState(() => {
   this.items.push(newItem);
 });
 ```
 
-### 2. Widget Reuse
+### 2. Widget 重用
 
 ```typescript
-// ❌ Wrong - Creating widgets inside build method
+// ❌ 错误 - 在 build 方法内创建 widget
 build(context: BuildContext): Widget {
-  // Creating new widget instance every time (inefficient)
+  // 每次都创建新的 widget 实例（低效）
   const button = new MyButton();
   return Container({ child: button });
 }
 
-// ✅ Correct - Properly separate widgets
+// ✅ 正确 - 正确分离 widget
 build(context: BuildContext): Widget {
   return Container({
     child: MyButton({ onClick: this.handleClick })
@@ -469,8 +469,8 @@ build(context: BuildContext): Widget {
 
 ### 3. Props vs State
 
-- **Props**: Immutable data passed from parent
-- **State**: Mutable data managed within the widget
+- **Props**：从父级传递的不可变数据
+- **State**：在 widget 内部管理的可变数据
 
 ```typescript
 class MyWidget extends StatefulWidget {
@@ -484,20 +484,20 @@ class MyWidget extends StatefulWidget {
 }
 
 class MyWidgetState extends State<MyWidget> {
-  // props are used only as initial values
+  // props 仅用作初始值
   count = this.widget.props.initialCount;
 
   build(context: BuildContext): Widget {
-    // props can be read directly
-    return Text(`Initial: ${this.widget.props.initialCount}, Current: ${this.count}`);
+    // 可以直接读取 props
+    return Text(`初始值：${this.widget.props.initialCount}，当前值：${this.count}`);
   }
 }
 ```
 
-## Next Steps
+## 下一步
 
-Once you understand the widget system, here's what to learn next:
+理解 widget 系统后，接下来要学习的内容：
 
-- State Management - Complex state management through Provider
-- Animation Basics - Applying animations to widgets
-- RenderObject System - Implementing custom rendering
+- 状态管理 - 通过 Provider 进行复杂状态管理
+- 动画基础 - 为 widget 应用动画
+- RenderObject 系统 - 实现自定义渲染

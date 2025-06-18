@@ -1,50 +1,50 @@
 ---
-nav_title: "Introduction"
-title: "Why Should You Use Flitter?"
-description: "A JavaScript rendering engine that solves complex graphics problems with Flutter's declarative syntax"
+nav_title: "简介"
+title: "为什么要使用 Flitter？"
+description: "使用 Flutter 的声明式语法解决复杂图形问题的 JavaScript 渲染引擎"
 ---
 
 import AutoTextWrapDemo from '$components/pages/docs/01_getting-started/auto-text-wrap-demo';
 
-# Why Should You Use Flitter?
+# 为什么要使用 Flitter？
 
-## The Problem You're Facing
+## 您面临的问题
 
-Monday morning in your SaaS startup's development team meeting room. The PM has arrived with new feature requirements.
+周一早上，您的 SaaS 创业公司开发团队会议室。产品经理带着新的功能需求到来。
 
-> "We need to add a **workflow editor** to our product. Users should be able to drag nodes and connect them, with real-time updates. You know, like Notion or Figma!"
+> "我们需要为产品添加一个**工作流编辑器**。用户应该能够拖动节点并连接它们，实时更新。你知道的，就像 Notion 或 Figma 那样！"
 
-The team members' faces stiffen. The frontend developer speaks up cautiously.
+团队成员的脸色变得僵硬。前端开发人员小心翼翼地说道。
 
-> "We could try D3.js, but... calculating node positions, drawing connection lines, handling drag... it'll probably take 2-3 weeks. And that's just for basic features."
+> "我们可以试试 D3.js，但是...计算节点位置、绘制连接线、处理拖动...可能需要 2-3 周。而且这只是基本功能。"
 
-Another developer adds:
+另一位开发人员补充道：
 
-> "Should we draw directly with Canvas API? Or SVG? How do we handle text? We'd have to manually calculate line breaks and alignment..."
+> "我们应该直接使用 Canvas API 绘制吗？还是 SVG？如何处理文本？我们必须手动计算换行和对齐..."
 
-## Familiar Frustration
+## 熟悉的挫折感
 
-Sound familiar?
+听起来很熟悉吗？
 
-Handling complex graphics on the web has always been a developer's nightmare. HTML/CSS has clear limitations, and using D3.js or Canvas API feels like going back to the 1990s where you have to manually calculate everything.
+在 Web 上处理复杂图形一直是开发人员的噩梦。HTML/CSS 有明显的局限性，使用 D3.js 或 Canvas API 感觉就像回到了 1990 年代，你必须手动计算一切。
 
-Let's take a simple example: centering text in a box and making it wrap automatically.
+让我们看一个简单的例子：在框中居中文本并使其自动换行。
 
-### With D3.js, it's this complex:
+### 使用 D3.js，是这样复杂的：
 
 ```javascript
-// Starting with coordinate calculations...
+// 从坐标计算开始...
 const svg = d3.select("svg");
 const boxWidth = 200;
 const boxHeight = 100;
 
-// Create text element and set position
+// 创建文本元素并设置位置
 const text = svg.append("text")
   .attr("x", boxWidth / 2)
   .attr("y", boxHeight / 2)
   .attr("text-anchor", "middle");
 
-// Implement complex function for line wrapping
+// 实现复杂的换行函数
 function wrapText(text, width) {
   const words = text.text().split(/\s+/);
   const lineHeight = 1.2;
@@ -66,98 +66,98 @@ function wrapText(text, width) {
     }
   });
   
-  // Additional calculations for vertical centering...
+  // 垂直居中的额外计算...
   const totalHeight = lineNumber * lineHeight * 16;
   text.attr("transform", `translate(0, ${-totalHeight/2})`);
 }
 
-// And even resize event handling...
+// 还有调整大小事件处理...
 ```
 
-Over 50 lines of code, complex calculations, and still not perfect results. Can you believe this is web development in 2024?
+超过 50 行代码，复杂的计算，结果仍然不完美。您能相信这是 2024 年的 Web 开发吗？
 
-## With Flitter, It's This Simple
+## 使用 Flitter，就是这么简单
 
 <AutoTextWrapDemo client:load />
 
-Look at the demo above. Drag the left and right borders to resize, and the text automatically wraps.
+看看上面的演示。拖动左右边框来调整大小，文本会自动换行。
 
-**Amazing part**: Did you notice that even though it's a Canvas renderer, the mouse cursor changes automatically? It becomes a resize cursor in the drag area. Flitter handles all this complex processing. You just focus on business logic.
+**令人惊讶的部分**：您是否注意到，即使它是 Canvas 渲染器，鼠标光标也会自动更改？在拖动区域变成调整大小光标。Flitter 处理所有这些复杂的处理。您只需专注于业务逻辑。
 
 ```typescript
 Center({
   child: Container({
     width: 200,
-    child: Text("Long text automatically wraps and centers", {
+    child: Text("长文本自动换行并居中", {
       textAlign: TextAlign.center,
     })
   })
 })
 ```
 
-## What is Flitter?
+## 什么是 Flitter？
 
 ```
 ┌─────────────────────────────────────────────────┐
-│                   Your App                       │
+│                   您的应用                       │
 ├─────────────────────────────────────────────────┤
-│                Widget Layer                      │
+│                Widget 层                         │
 │         (Container, Text, Column...)             │
 ├─────────────────────────────────────────────────┤
-│              RenderObject Tree                   │
-│         (Layout, Paint, Hit Testing)             │
+│              RenderObject 树                     │
+│         (布局、绘制、命中测试)                  │
 ├─────────────────────────────────────────────────┤
-│            Flitter Engine Core                   │
+│            Flitter 引擎核心                      │
 ├─────────────┬───────────────────────────────────┤
-│  SVG Renderer │         Canvas Renderer          │
+│  SVG 渲染器   │         Canvas 渲染器            │
 └───────────────┴─────────────────────────────────┘
 ```
 
-Flitter is a **declarative UI rendering engine that works on the web**. It implements Flutter's powerful widget system in JavaScript.
+Flitter 是一个**在 Web 上工作的声明式 UI 渲染引擎**。它在 JavaScript 中实现了 Flutter 强大的 widget 系统。
 
-### Core Features
+### 核心特性
 
-#### 🎯 Dual Renderer System
-- **SVG**: SEO-friendly, text selectable, CSS animations
-- **Canvas**: High performance, pixel-level control, complex animations
+#### 🎯 双渲染器系统
+- **SVG**：SEO 友好、可选择文本、CSS 动画
+- **Canvas**：高性能、像素级控制、复杂动画
 
 ![svg-canvas](/svg-canvas.gif)
 
-#### 🚀 Industry-First SSR + Canvas Hydration
+#### 🚀 业界首创的 SSR + Canvas Hydration
 ```typescript
-// Render with SVG on server → Switch to Canvas on client
+// 在服务器上使用 SVG 渲染 → 在客户端切换到 Canvas
 <Widget 
   renderer="canvas"
   ssr={{
-    size: { width: 800, height: 600 }  // Server render size
+    size: { width: 800, height: 600 }  // 服务器渲染尺寸
   }}
   widget={...} 
 />
 ```
 
-Fast initial loading with SVG, smooth interactions with Canvas. **Only Flitter can do this.**
+使用 SVG 快速初始加载，使用 Canvas 流畅交互。**只有 Flitter 能做到这一点。**
 
-## Comparison with Other Graphics Libraries
+## 与其他图形库的比较
 
-### 😫 Limitations of Existing Libraries
+### 😫 现有库的局限性
 
-| Library | Problems |
+| 库 | 问题 |
 |---------|----------|
-| **D3.js** | Manual calculation of everything. Coordinates, sizes, animations... |
-| **Konva.js** | Object-oriented but still imperative. Complex layouts are nightmares |
-| **Fabric.js** | Good for canvas manipulation, but unsuitable for UI composition |
-| **Paper.js** | Strong in vector graphics, but difficult for general UI |
-| **Three.js** | Great for 3D, but... Three.js for 2D UI? |
+| **D3.js** | 手动计算一切。坐标、尺寸、动画... |
+| **Konva.js** | 面向对象但仍然是命令式的。复杂布局是噩梦 |
+| **Fabric.js** | 适合画布操作，但不适合 UI 组合 |
+| **Paper.js** | 在矢量图形方面很强，但对于一般 UI 很困难 |
+| **Three.js** | 非常适合 3D，但是...用 Three.js 做 2D UI？ |
 
-### ✨ Flitter's Solution
+### ✨ Flitter 的解决方案
 
 ```typescript
-// Other libraries: hundreds of lines of boilerplate
-// Flitter: just what you need
+// 其他库：数百行样板代码
+// Flitter：只需要您需要的
 
 Column({
   children: [
-    Text("Title", { style: headerStyle }),
+    Text("标题", { style: headerStyle }),
     Container({
       padding: EdgeInsets.all(20),
       decoration: new BoxDecoration({
@@ -166,21 +166,21 @@ Column({
       }),
       child: Row({
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [/* Complex layouts made simple */]
+        children: [/* 复杂布局变得简单 */]
       })
     })
   ]
 })
 ```
 
-## Do You Have Flutter Developers on Your Team?
+## 您的团队中有 Flutter 开发人员吗？
 
-"Oh, we have Flutter developers on our team..."
+"哦，我们团队中有 Flutter 开发人员..."
 
-**Congratulations!** They're already Flitter experts. Learning curve? None. They can start with 100% productivity immediately.
+**恭喜！** 他们已经是 Flitter 专家了。学习曲线？没有。他们可以立即以 100% 的生产力开始。
 
 ```dart
-// Flutter code
+// Flutter 代码
 Container(
   padding: EdgeInsets.all(16),
   child: Text("Hello Flutter"),
@@ -188,23 +188,23 @@ Container(
 ```
 
 ```typescript
-// Flitter code - almost identical!
+// Flitter 代码 - 几乎相同！
 Container({
   padding: EdgeInsets.all(16),
   child: Text("Hello Flitter")
 })
 ```
 
-## Proven in Real Production Environments
+## 在真实生产环境中得到验证
 
-### 🎯 Use Case 1: Complex Diagram Editor
+### 🎯 用例 1：复杂的图表编辑器
 
-**Problem**: "We need to build an ERD editor that works smoothly with 100+ nodes"
+**问题**："我们需要构建一个可以流畅处理 100+ 节点的 ERD 编辑器"
 
-**Flitter Solution**:
+**Flitter 解决方案**：
 ```typescript
-// Node dragging, connection drawing, auto-alignment...
-// All solved with widget composition
+// 节点拖动、连接绘制、自动对齐...
+// 全部通过 widget 组合解决
 Stack({
   children: [
     ...nodes.map(node => 
@@ -222,64 +222,64 @@ Stack({
 
 ![easyrd](/easyrd.gif)
 
-Actually available as a [GitHub open source project](https://github.com/meursyphus/easy-rd) and actively used in production environments.
+实际上作为 [GitHub 开源项目](https://github.com/meursyphus/easy-rd) 可用，并在生产环境中积极使用。
 
-### 🎯 Use Case 2: Headless Chart Library
+### 🎯 用例 2：无头图表库
 
-**Problem**: "Chart.js has limited customization, and D3.js is too low-level"
+**问题**："Chart.js 的自定义有限，D3.js 太低级"
 
-**Flitter Solution**: [headless-chart](https://github.com/meursyphus/headless-chart) - A fully customizable chart library released as open source, with detailed information available in the [official documentation](https://headless-chart.pages.dev/) and actively used in production.
+**Flitter 解决方案**：[headless-chart](https://github.com/meursyphus/headless-chart) - 作为开源发布的完全可定制图表库，详细信息可在[官方文档](https://headless-chart.pages.dev/)中获得，并在生产中积极使用。
 
 ![headless-chart](/headless-chart.gif)
 
-## Why Flitter Now?
+## 为什么现在选择 Flitter？
 
-### 📈 Market Demand
-- Increasing complexity of SaaS products
-- Explosive demand for dashboards, workflow editors, diagram tools
-- Requirements like "make it like Notion" or "like Figma"
+### 📈 市场需求
+- SaaS 产品的复杂性不断增加
+- 仪表板、工作流编辑器、图表工具的需求爆炸性增长
+- 像"做得像 Notion 一样"或"像 Figma 一样"的需求
 
-### 🚀 Technical Advantages
-- **Development Speed**: 5-10x faster development compared to D3.js
-- **Maintenance**: Easy to understand with declarative code
-- **Performance**: Efficient rendering that only redraws necessary parts
-- **Scalability**: Infinitely extensible with widget-based architecture
+### 🚀 技术优势
+- **开发速度**：与 D3.js 相比，开发速度快 5-10 倍
+- **维护**：声明式代码易于理解
+- **性能**：仅重新绘制必要部分的高效渲染
+- **可扩展性**：基于 widget 架构无限可扩展
 
-## Perfect for These Teams
+## 适合这些团队
 
-✅ Teams that need to build **complex diagrams or visualizations**  
-✅ Teams implementing **node editors, flowcharts, mind maps**  
-✅ Data visualization teams needing **custom charts**  
-✅ Teams **tired** of D3.js complexity  
-✅ Teams with developers who have **Flutter experience**  
-✅ Teams where both **performance and development productivity** matter  
+✅ 需要构建**复杂图表或可视化**的团队  
+✅ 实现**节点编辑器、流程图、思维导图**的团队  
+✅ 需要**自定义图表**的数据可视化团队  
+✅ **厌倦了** D3.js 复杂性的团队  
+✅ 有**Flutter 经验**的开发人员的团队  
+✅ **性能和开发生产力**都很重要的团队  
 
-## Value Provided by Flitter
+## Flitter 提供的价值
 
 ```
-Traditional Approach (D3.js, Canvas API)
-├─ Development Time: 3 weeks
-├─ Lines of Code: 2000
-├─ Maintenance: 😱
-└─ Bugs: Many
+传统方法（D3.js、Canvas API）
+├─ 开发时间：3 周
+├─ 代码行数：2000
+├─ 维护：😱
+└─ Bug：很多
 
-Flitter Approach
-├─ Development Time: 3 days
-├─ Lines of Code: 200
-├─ Maintenance: 😊
-└─ Bugs: Few
+Flitter 方法
+├─ 开发时间：3 天
+├─ 代码行数：200
+├─ 维护：😊
+└─ Bug：很少
 ```
 
-## Getting Started
+## 开始使用
 
 ```bash
 npm install @meursyphus/flitter
 ```
 
-You can start with just one line of command.
+您只需一行命令即可开始。
 
-**In the next chapter**, we'll learn about installation methods for each framework and how to create your first Flitter app.
+**在下一章中**，我们将学习每个框架的安装方法以及如何创建您的第一个 Flitter 应用。
 
 ---
 
-**🚀 Ready?** Let's start the journey to solve complex graphics problems simply!
+**🚀 准备好了吗？** 让我们开始简单解决复杂图形问题的旅程！

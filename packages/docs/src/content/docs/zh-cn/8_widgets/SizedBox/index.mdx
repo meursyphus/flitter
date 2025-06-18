@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: SizedBox
 title: "SizedBox"
-description: "A simple box widget with a specified size"
+description: "一个具有指定尺寸的简单盒子组件"
 ---
 
-## Overview
+## 概述
 
-SizedBox is a simple widget that creates a box with a specific width and height.
+SizedBox 是一个创建具有特定宽度和高度的盒子的简单组件。
 
-SizedBox is a single-purpose widget focused solely on sizing, making it lighter and more efficient than Container. It's commonly used to create spacing between widgets, constrain child widget sizes, or create empty space in conditional rendering. Internally, it uses ConstrainedBox with tight constraints.
+SizedBox 是一个专为尺寸设置而设计的单一目的组件，比 Container 更轻量、更高效。它通常用于在组件之间创建间距、限制子组件尺寸或在条件渲染中创建空空间。在内部，它使用带严格约束的 ConstrainedBox。
 
 <iframe
   width="560"
@@ -22,78 +22,78 @@ SizedBox is a single-purpose widget focused solely on sizing, making it lighter 
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/SizedBox-class.html](https://api.flutter.dev/flutter/widgets/SizedBox-class.html)
+参考: [https://api.flutter.dev/flutter/widgets/SizedBox-class.html](https://api.flutter.dev/flutter/widgets/SizedBox-class.html)
 
-## When to use it?
+## 何时使用？
 
-- When creating fixed spacing between widgets
-- When forcing a fixed size on child widgets
-- When needing empty space in conditional rendering
-- When you don't need Container's other features (color, padding, decoration, etc.)
-- When performance matters and you only need to specify size
+- 当在组件之间创建固定间距时
+- 当强制子组件为固定尺寸时
+- 当在条件渲染中需要空空间时
+- 当您不需要 Container 的其他功能（颜色、内边距、装饰等）时
+- 当性能很重要且您只需要指定尺寸时
 
-## Basic Usage
+## 基本用法
 
 ```typescript
-// Fixed size box
+// 固定尺寸盒子
 SizedBox({
   width: 200,
   height: 100,
-  child: Text('Fixed size')
+  child: Text('固定尺寸')
 })
 
-// Creating spacing (most common use)
+// 创建间距（最常见的用法）
 Column({
   children: [
-    Text('Top'),
-    SizedBox({ height: 20 }), // 20 pixel vertical spacing
-    Text('Bottom')
+    Text('顶部'),
+    SizedBox({ height: 20 }), // 20 像素垂直间距
+    Text('底部')
   ]
 })
 
-// Horizontal spacing
+// 水平间距
 Row({
   children: [
     Icon({ icon: Icons.star }),
-    SizedBox({ width: 8 }), // 8 pixel horizontal spacing
-    Text('Star')
+    SizedBox({ width: 8 }), // 8 像素水平间距
+    Text('星号')
   ]
 })
 ```
 
-## Props
+## 属性
 
 ### width
 
-**Value: number | undefined**
+**值: number | undefined**
 
-Specifies the width of the box in pixels. If not specified, it depends on the child's width.
+以像素为单位指定盒子的宽度。如果未指定，则取决于子组件的宽度。
 
 ```typescript
 SizedBox({
   width: 100,
-  child: Text('Width 100px')
+  child: Text('宽度 100px')
 })
 ```
 
 ### height
 
-**Value: number | undefined**
+**值: number | undefined**
 
-Specifies the height of the box in pixels. If not specified, it depends on the child's height.
+以像素为单位指定盒子的高度。如果未指定，则取决于子组件的高度。
 
 ```typescript
 SizedBox({
   height: 50,
-  child: Text('Height 50px')
+  child: Text('高度 50px')
 })
 ```
 
 ### child
 
-**Value: Widget | undefined**
+**值: Widget | undefined**
 
-The child widget to place inside the SizedBox. If there's no child, it creates empty space.
+要放置在 SizedBox 内的子组件。如果没有子组件，则创建空空间。
 
 ```typescript
 SizedBox({
@@ -103,86 +103,86 @@ SizedBox({
 })
 ```
 
-## Static Methods
+## 静态方法
 
 ### SizedBox.shrink()
 
-Creates a SizedBox with zero size. Useful when you don't want to display anything in conditional rendering.
+创建一个尺寸为零的 SizedBox。在条件渲染中不想显示任何内容时很有用。
 
 ```typescript
-// Conditional rendering
+// 条件渲染
 const widget = showButton 
-  ? ElevatedButton({ child: Text('Click') })
+  ? ElevatedButton({ child: Text('点击') })
   : SizedBox.shrink();
 
-// Basic usage
+// 基本用法
 SizedBox.shrink() // width: 0, height: 0
 
-// With child
+// 带子组件
 SizedBox.shrink({
-  child: Text('Not visible') // Not displayed due to zero size
+  child: Text('不可见') // 由于尺寸为零而不显示
 })
 ```
 
 ### SizedBox.expand()
 
-Creates a SizedBox that takes up all available space.
+创建一个占用所有可用空间的 SizedBox。
 
 ```typescript
-// Take up all space
+// 占用所有空间
 SizedBox.expand({
   child: Container({ color: 'red' })
 })
 
-// Expand only in one direction
+// 仅在一个方向上扩展
 SizedBox.expand({
-  width: 100, // Fixed width
-  child: Container({ color: 'blue' }) // Only height expands
+  width: 100, // 固定宽度
+  child: Container({ color: 'blue' }) // 仅高度扩展
 })
 ```
 
 ### SizedBox.fromSize()
 
-Creates a SizedBox from a Size object.
+从 Size 对象创建 SizedBox。
 
 ```typescript
 const size = Size({ width: 150, height: 75 });
 
 SizedBox.fromSize({
   size: size,
-  child: Text('Using Size object')
+  child: Text('使用 Size 对象')
 })
 ```
 
 ### SizedBox.square()
 
-Creates a square SizedBox.
+创建一个正方形的 SizedBox。
 
 ```typescript
-// 100x100 square
+// 100x100 正方形
 SizedBox.square({
   dimension: 100,
   child: Container({ color: 'green' })
 })
 ```
 
-## Practical Examples
+## 实际示例
 
-### Example 1: List Item Spacing
+### 示例 1：列表项间距
 
 ```typescript
 const listWithSpacing = Column({
   children: [
-    ListTile({ title: Text('Item 1') }),
+    ListTile({ title: Text('项目 1') }),
     SizedBox({ height: 8 }),
-    ListTile({ title: Text('Item 2') }),
+    ListTile({ title: Text('项目 2') }),
     SizedBox({ height: 8 }),
-    ListTile({ title: Text('Item 3') })
+    ListTile({ title: Text('项目 3') })
   ]
 });
 ```
 
-### Example 2: Button Group
+### 示例 2：按钮组
 
 ```typescript
 const buttonGroup = Row({
@@ -190,32 +190,32 @@ const buttonGroup = Row({
   children: [
     ElevatedButton({
       onPressed: () => {},
-      child: Text('Previous')
+      child: Text('上一个')
     }),
-    SizedBox({ width: 16 }), // Space between buttons
+    SizedBox({ width: 16 }), // 按钮之间的间距
     ElevatedButton({
       onPressed: () => {},
-      child: Text('Next')
+      child: Text('下一个')
     })
   ]
 });
 ```
 
-### Example 3: Conditional Spacing
+### 示例 3：条件间距
 
 ```typescript
 const conditionalSpacing = Column({
   children: [
-    Text('Title'),
+    Text('标题'),
     hasSubtitle ? SizedBox({ height: 8 }) : SizedBox.shrink(),
-    hasSubtitle ? Text('Subtitle') : SizedBox.shrink(),
+    hasSubtitle ? Text('子标题') : SizedBox.shrink(),
     SizedBox({ height: 16 }),
-    Text('Body')
+    Text('正文')
   ]
 });
 ```
 
-### Example 4: Fixed Size Image Container
+### 示例 4：固定尺寸图像容器
 
 ```typescript
 const imageGrid = GridView({
@@ -235,7 +235,7 @@ const imageGrid = GridView({
 });
 ```
 
-### Example 5: Constraining Loading Indicator
+### 示例 5：约束加载指示器
 
 ```typescript
 const loadingIndicator = Center({
@@ -247,11 +247,11 @@ const loadingIndicator = Center({
 });
 ```
 
-## Difference from Container
+## 与 Container 的区别
 
-### Use SizedBox
+### 使用 SizedBox
 ```typescript
-// When you only need size
+// 当您只需要尺寸时
 SizedBox({ 
   width: 100, 
   height: 50,
@@ -259,9 +259,9 @@ SizedBox({
 })
 ```
 
-### Use Container
+### 使用 Container
 ```typescript
-// When you need other styling besides size
+// 当您除了尺寸还需要其他样式时
 Container({ 
   width: 100, 
   height: 50,
@@ -271,19 +271,19 @@ Container({
 })
 ```
 
-**Performance difference**: SizedBox creates only a single ConstrainedBox, while Container combines multiple widgets, making SizedBox more efficient.
+**性能差异**: SizedBox 仅创建一个 ConstrainedBox，而 Container 组合多个组件，使 SizedBox 更高效。
 
-## Important Notes
+## 重要说明
 
-- If only width or height is specified, the other dimension follows the child's size.
-- SizedBox.expand() can cause errors if the parent allows infinite size.
-- A SizedBox without a child creates empty space of the specified size.
-- Negative sizes are not allowed.
+- 如果只指定了宽度或高度，另一个维度将跟随子组件的尺寸。
+- 如果父组件允许无限尺寸，SizedBox.expand() 可能会导致错误。
+- 没有子组件的 SizedBox 会创建指定尺寸的空空间。
+- 不允许负数尺寸。
 
-## Related Widgets
+## 相关组件
 
-- **Container**: When you need various styling besides size
-- **ConstrainedBox**: When you need min/max size constraints
-- **AspectRatio**: When you need to maintain aspect ratio
-- **FractionallySizedBox**: When sizing based on parent's size percentage
-- **Spacer**: When creating flexible space in Row/Column
+- **Container**: 当您除了尺寸还需要各种样式时
+- **ConstrainedBox**: 当您需要最小/最大尺寸约束时
+- **AspectRatio**: 当您需要保持纵横比时
+- **FractionallySizedBox**: 当基于父组件尺寸百分比进行尺寸设置时
+- **Spacer**: 当在 Row/Column 中创建灵活空间时

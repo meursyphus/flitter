@@ -1,43 +1,43 @@
 ---
-nav_title: "Easy Drawing with CustomPaint"
-title: "Simplifying Drawing with CustomPaint"
-description: "Learn how to implement custom drawing simply using the CustomPaint widget instead of complex RenderObject"
+nav_title: "CustomPaintで簡単に描画"
+title: "CustomPaintで描画を簡素化"
+description: "複雑なRenderObjectの代わりにCustomPaintウィジェットを使用してカスタム描画を簡単に実装する方法を学ぶ"
 ---
 
 import CustomPaintBackground from '$components/pages/docs/3_advanced-usage/09-custom-paint-background';
 import CustomPaintUsage from '$components/pages/docs/3_advanced-usage/10-custom-paint-usage';
 
-## Background of CustomPaint Widget
+## CustomPaintウィジェットの背景
 
-The RenderObjectWidget we learned earlier is powerful but complex. Even when you simply want to draw something, you need to inherit from RenderObject, implement createRenderObject, and override the paint method.
+以前学んだRenderObjectWidgetは強力ですが複雑です。単に何かを描画したいだけでも、RenderObjectを継承し、createRenderObjectを実装し、paintメソッドをオーバーライドする必要があります。
 
-CustomPaint solves this complexity. Just pass the paint behavior as a first-class function and you're done!
+CustomPaintはこの複雑さを解決します。ペイント動作を関数として渡すだけで完了です！
 
 <CustomPaintBackground
   client:load
-  title="Why CustomPaint?"
-  description="Avoid the complexity of RenderObjectWidget and focus only on drawing"
+  title="なぜCustomPaint？"
+  description="RenderObjectWidgetの複雑さを避け、描画のみに集中"
 />
 
-### Advantages of CustomPaint
+### CustomPaintの利点
 
-1. **Simple API**: Just pass the painter function
-2. **Fast Prototyping**: No complex class structure needed
-3. **Reusability**: Easy to replace painter functions
-4. **Performance**: Uses internally optimized RenderObject
+1. **シンプルAPI**: painter関数を渡すだけ
+2. **高速プロトタイピング**: 複雑なクラス構造が不要
+3. **再利用性**: painter関数を簡単に差し替え可能
+4. **パフォーマンス**: 内部で最適化されたRenderObjectを使用
 
-## Using CustomPaint
+## CustomPaintの使用
 
 <CustomPaintUsage
   client:load
-  title="Basic CustomPaint Usage"
-  description="Implement custom drawing by passing a function to the painter property"
+  title="基本的なCustomPaintの使用"
+  description="painterプロパティに関数を渡してカスタム描画を実装"
 />
 
-### Basic Usage
+### 基本的な使用法
 
 ```typescript
-// For SVG renderer
+// SVGレンダラー用
 CustomPaint({
   size: new Size(300, 200),
   painter: {
@@ -57,7 +57,7 @@ CustomPaint({
   }
 })
 
-// For Canvas renderer
+// Canvasレンダラー用
 CustomPaint({
   size: new Size(300, 200),
   painter: {
@@ -74,38 +74,38 @@ CustomPaint({
 })
 ```
 
-### shouldRepaint Optimization
+### shouldRepaint最適化
 
-You can control when to repaint for performance:
+パフォーマンスのために再描画のタイミングを制御できます：
 
 ```typescript
 CustomPaint({
   painter: {
-    dependencies: myData, // Dependency data
+    dependencies: myData, // 依存データ
     shouldRepaint: (oldPainter) => {
-      // Return true to repaint
-      // Return false to keep previous painting
+      // trueを返すと再描画
+      // falseを返すと以前の描画を保持
       return oldPainter.dependencies !== myData;
     },
     svg: {
-      // SVG implementation
+      // SVG実装
     },
     canvas: {
-      // Canvas implementation
+      // Canvas実装
     }
   }
 })
 ```
 
-## SVG vs Canvas Rendering
+## SVG vs Canvasレンダリング
 
-Flitter's CustomPaint supports two rendering methods:
+FlitterのCustomPaintは2つのレンダリング方法をサポートしています：
 
-### SVG Rendering
-- **Maintains quality when scaling**
-- **Suitable for vector graphics**
-- **Create SVG elements with createDefaultSvgEl()**
-- **Set attributes with setAttribute in paint()**
+### SVGレンダリング
+- **スケーリング時の品質を維持**
+- **ベクターグラフィックスに適している**
+- **createDefaultSvgEl()でSVG要素を作成**
+- **paint()内でsetAttributeで属性を設定**
 
 ```typescript
 svg: {
@@ -124,10 +124,10 @@ svg: {
 }
 ```
 
-### Canvas Rendering
-- **Suitable for complex pixel manipulation**
-- **Advantageous for high-performance animations**
-- **Same approach as web Canvas API**
+### Canvasレンダリング
+- **複雑なピクセル操作に適している**
+- **高パフォーマンスアニメーションに有利**
+- **Web Canvas APIと同じアプローチ**
 
 ```typescript
 canvas: {
@@ -145,21 +145,21 @@ canvas: {
 }
 ```
 
-## Source Code Location
+## ソースコードの場所
 
-To examine the implementation of CustomPaint:
+CustomPaintの実装を調べるには：
 
-- `packages/flitter/src/component/CustomPaint.ts`: CustomPaint 위젯
-- `packages/flitter/src/engine/canvas/`: Canvas 구현
-- `packages/flitter/src/engine/paint.ts`: Paint 클래스
+- `packages/flitter/src/component/CustomPaint.ts`: CustomPaintウィジェット
+- `packages/flitter/src/engine/canvas/`: Canvas実装
+- `packages/flitter/src/engine/paint.ts`: Paintクラス
 
-## Key Summary
+## 主要なまとめ
 
-1. **CustomPaint hides the complexity of RenderObject**
-2. **Provides separate svg/canvas implementations in the painter object**
-3. **Performance can be optimized with dependencies and shouldRepaint**
-4. **Supports both SVG and Canvas rendering methods**
-5. **You only need to provide implementation for the renderer you use**
-6. **Can be easily combined with animations**
+1. **CustomPaintはRenderObjectの複雑さを隠蔽**
+2. **painterオブジェクト内でsvg/canvasの別々の実装を提供**
+3. **dependenciesとshouldRepaintでパフォーマンスを最適化可能**
+4. **SVGとCanvasの両レンダリング方法をサポート**
+5. **使用するレンダラーの実装のみ提供すればよい**
+6. **アニメーションと簡単に組み合わせ可能**
 
-In the next chapter, we will examine practical examples that utilize everything we have learned so far.
+次の章では、これまで学んだすべてを活用した実践例を調べます。

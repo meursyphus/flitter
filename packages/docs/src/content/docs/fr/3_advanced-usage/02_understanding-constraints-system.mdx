@@ -1,54 +1,54 @@
 ---
-nav_title: "Constraints System"
-title: "Understanding the Constraints System"
-description: "Learn Flitter's core layout principle 'Constraints go down, Sizes go up' and explore various constraint patterns"
+nav_title: "Système de contraintes"
+title: "Comprendre le système de contraintes"
+description: "Apprenez le principe de mise en page fondamental de Flitter 'Les contraintes descendent, les tailles remontent' et explorez différents modèles de contraintes"
 ---
 
-## Core of the Constraints System
+## Au cœur du système de contraintes
 
-Flitter's layout system follows one simple rule:
+Le système de mise en page de Flitter suit une règle simple :
 
-> **"Constraints go down, Sizes go up"**
+> **"Les contraintes descendent, les tailles remontent"**
 
-The parent passes constraints to the child, and the child determines its size within those constraints and reports back to the parent.
+Le parent passe des contraintes à l'enfant, et l'enfant détermine sa taille dans ces contraintes et la rapporte au parent.
 
-## Constraints go down, Sizes go up
+## Les contraintes descendent, les tailles remontent
 
 ```
-        Parent Widget
+        Widget Parent
              │
     ┌────────▼────────┐
-    │   Constraints   │ (go down)
+    │   Contraintes   │ (descendent)
     │   min: 0x0      │
     │   max: 300x200  │
     └────────┬────────┘
              │
-        Child Widget
+        Widget Enfant
              │
     ┌────────▼────────┐
-    │   Decides Size  │ (goes up)
-    │   chosen: 150x80│
+    │  Décide la taille│ (remonte)
+    │   choisie: 150x80│
     └─────────────────┘
 ```
 
-### BoxConstraints의 구성 요소
+### Composants de BoxConstraints
 
 ```typescript
 class BoxConstraints {
-  minWidth: number;   // 최소 너비
-  maxWidth: number;   // 최대 너비  
-  minHeight: number;  // 최소 높이
-  maxHeight: number;  // 최대 높이
+  minWidth: number;   // Largeur minimale
+  maxWidth: number;   // Largeur maximale  
+  minHeight: number;  // Hauteur minimale
+  maxHeight: number;  // Hauteur maximale
 }
 ```
 
-자식은 이 제약 내에서 자신의 크기를 선택할 수 있습니다:
+L'enfant peut choisir sa taille dans ces contraintes :
 - `minWidth ≤ width ≤ maxWidth`
 - `minHeight ≤ height ≤ maxHeight`
 
-## 주요 Constraints 패턴
+## Principaux modèles de contraintes
 
-### 1. Tight Constraints
+### 1. Contraintes strictes (Tight)
 ```typescript
 Constraints.tight(new Size(100, 50))
 // minWidth = maxWidth = 100
@@ -56,11 +56,11 @@ Constraints.tight(new Size(100, 50))
 ```
 ```
 ┌─────────────┐
-│ 정확히 100x50 │  ← 자식은 이 크기로 강제됨
+│ Exactement 100x50 │  ← L'enfant est forcé à cette taille
 └─────────────┘
 ```
 
-### 2. Loose Constraints  
+### 2. Contraintes souples (Loose)
 ```typescript
 Constraints.loose(new Size(100, 50))
 // minWidth = minHeight = 0
@@ -68,11 +68,11 @@ Constraints.loose(new Size(100, 50))
 ```
 ```
 ┌─────────────┐
-│ 0x0 ~ 100x50│  ← 자식이 범위 내에서 자유롭게 선택
+│ 0x0 ~ 100x50│  ← L'enfant choisit librement dans cette plage
 └─────────────┘
 ```
 
-### 3. Expand Constraints
+### 3. Contraintes expansées
 ```typescript
 Constraints.expand()
 // minWidth = maxWidth = ∞
@@ -80,67 +80,67 @@ Constraints.expand()
 ```
 ```
 ┌─────────────┐
-│ 가능한 최대크기│  ← 부모 공간을 모두 차지
+│ Taille maximale│  ← Occupe tout l'espace parent
 └─────────────┘
 ```
 
-### 4. Unconstrained
+### 4. Sans contraintes
 ```typescript
 UnconstrainedBox({
-  child: Container({ width: 1000 })  // Ignores parent constraints
+  child: Container({ width: 1000 })  // Ignore les contraintes parent
 })
 ```
 ```
 Parent: max 300px
     │
     ▼
-UnconstrainedBox  ──→  Child: 1000px (overflow possible)
+UnconstrainedBox  ──→  Enfant: 1000px (débordement possible)
 ```
 
-## Understanding Real-World Behavior
+## Comprendre le comportement réel
 
 ### Container vs SizedBox
 
 ```typescript
-// Container's width/height are "wishes"
+// La largeur/hauteur du Container sont des "souhaits"
 Container({
-  width: 200,   // ← If parent only allows 100px, becomes 100px
+  width: 200,   // ← Si le parent n'autorise que 100px, devient 100px
   height: 100,
-  child: Text("Hello")
+  child: Text("Bonjour")
 })
 
-// SizedBox "forces" its size
+// SizedBox "force" sa taille
 SizedBox({
-  width: 200,   // ← Forces exactly 200px to child
+  width: 200,   // ← Force exactement 200px à l'enfant
   height: 100,
-  child: Text("Hello")
+  child: Text("Bonjour")
 })
 ```
 
-### Constraints Inside Column
+### Contraintes dans Column
 
 ```
-Column (height: ∞)
+Column (hauteur: ∞)
   │
-  ├─ Child 1 (height: tight natural size)
-  ├─ Child 2 (height: tight natural size)  
-  └─ Child 3 (height: tight natural size)
+  ├─ Enfant 1 (hauteur: taille naturelle stricte)
+  ├─ Enfant 2 (hauteur: taille naturelle stricte)  
+  └─ Enfant 3 (hauteur: taille naturelle stricte)
 ```
 
-Column does not "tightly" constrain height for its children. Each child can take as much height as it wants.
+Column ne contraint pas "strictement" la hauteur de ses enfants. Chaque enfant peut prendre la hauteur qu'il souhaite.
 
-## Common Problems and Solutions
+## Problèmes courants et solutions
 
-### Problem 1: Infinite Size Error
+### Problème 1 : Erreur de taille infinie
 ```typescript
-// ❌ Column inside Column receives infinite height
+// ❌ Column dans Column reçoit une hauteur infinie
 Column({
   children: [
     Column({ children: [...] })  // RenderFlex overflowed!
   ]
 })
 
-// ✅ Use Expanded to limit size
+// ✅ Utiliser Expanded pour limiter la taille
 Column({
   children: [
     Expanded({
@@ -150,68 +150,68 @@ Column({
 })
 ```
 
-### Problem 2: Widget Doesn't Get Desired Size
+### Problème 2 : Le widget n'obtient pas la taille désirée
 ```typescript
-// ❌ Parent passes tight constraints
+// ❌ Le parent passe des contraintes strictes
 Container({
   width: 100,
   height: 100,
   child: Container({
-    width: 200,  // Ignored! (forced to 100px)
+    width: 200,  // Ignoré ! (forcé à 100px)
     height: 200
   })
 })
 
-// ✅ Release constraints with UnconstrainedBox
+// ✅ Libérer les contraintes avec UnconstrainedBox
 Container({
   width: 100,
   height: 100,
   child: UnconstrainedBox({
     child: Container({
-      width: 200,  // Applied (overflow may occur)
+      width: 200,  // Appliqué (un débordement peut survenir)
       height: 200
     })
   })
 })
 ```
 
-### Problem 3: Center Alignment Doesn't Work
+### Problème 3 : L'alignement au centre ne fonctionne pas
 ```typescript
-// ❌ Container fits to parent size
+// ❌ Container s'ajuste à la taille parent
 Row({
   children: [
     Container({
       color: 'red',
-      child: Text('Hello')  // Container only takes text size
+      child: Text('Bonjour')  // Container ne prend que la taille du texte
     })
   ]
 })
 
-// ✅ Explicit size or use Expanded
+// ✅ Taille explicite ou utiliser Expanded
 Row({
   children: [
     Expanded({
       child: Container({
         color: 'red',
         alignment: Alignment.center,
-        child: Text('Hello')
+        child: Text('Bonjour')
       })
     })
   ]
 })
 ```
 
-## Source Code Locations
+## Emplacements du code source
 
-- `packages/flitter/src/type/constraints.ts`: BoxConstraints class
-- `packages/flitter/src/renderobject/RenderBox.ts`: Constraint handling logic  
-- `packages/flitter/src/component/Container.ts`: Container's constraint handling
+- `packages/flitter/src/type/constraints.ts` : Classe BoxConstraints
+- `packages/flitter/src/renderobject/RenderBox.ts` : Logique de gestion des contraintes
+- `packages/flitter/src/component/Container.ts` : Gestion des contraintes du Container
 
-## Key Takeaways
+## Points clés à retenir
 
-1. **Parent passes constraints** → child decides size → reports to parent
-2. **Constraints = size range** (min/max width/height)
-3. **tight**: forces exact size, **loose**: only limits maximum size
-4. **Understanding this makes layout problems easy to solve**
+1. **Le parent passe les contraintes** → l'enfant décide de sa taille → rapporte au parent
+2. **Contraintes = plage de taille** (largeur/hauteur min/max)
+3. **tight** : force une taille exacte, **loose** : limite seulement la taille maximale
+4. **Comprendre cela rend les problèmes de mise en page faciles à résoudre**
 
-In the next chapter, we'll use this constraint system to actually implement a RenderObject directly.
+Dans le prochain chapitre, nous utiliserons ce système de contraintes pour implémenter directement un RenderObject.

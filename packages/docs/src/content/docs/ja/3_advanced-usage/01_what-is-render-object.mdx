@@ -1,90 +1,90 @@
 ---
-nav_title: "What is RenderObject"
-title: "Understanding the RenderObject System"
-description: "Learn about RenderObject, Flitter's core rendering system, and understand the relationships between Widget, Element, and RenderObject trees"
+nav_title: "RenderObjectとは"
+title: "RenderObjectシステムの理解"
+description: "FlitterのコアレンダリングシステムであるRenderObjectについて学び、Widget、Element、RenderObjectツリーの関係を理解する"
 ---
 
 import TreeDiagramExample from '$components/pages/docs/3_advanced-usage/01-tree-diagram-example';
 import LayoutPaintExample from '$components/pages/docs/3_advanced-usage/02-layout-paint-example';
 
-## Understanding the RenderObject System
+## RenderObjectシステムの理解
 
-Flitter uses the same rendering architecture as Flutter. To draw something on the screen, you need to understand three tree structures.
+FlitterはFlutterと同じレンダリングアーキテクチャを使用しています。画面に何かを描画するには、3つのツリー構造を理解する必要があります。
 
 ## Widget Tree → Element Tree → RenderObject Tree
 
 <TreeDiagramExample
   client:load
-  title="Three Tree Structures"
-  description="Widget is the blueprint, Element is the instance, and RenderObject handles the actual rendering"
+  title="3つのツリー構造"
+  description="Widgetは設計図、Elementはインスタンス、RenderObjectは実際のレンダリングを担当"
 />
 
-### Role of Each Tree
+### 各ツリーの役割
 
-**Widget Tree (Blueprint)**
-- Immutable objects that declaratively express UI structure
-- Code written by developers
-- Can be recreated every frame
+**Widget Tree（設計図）**
+- UI構造を宣言的に表現する不変オブジェクト
+- 開発者が書くコード
+- 毎フレーム再作成されることが可能
 
-**Element Tree (Instance)**
-- Intermediate layer connecting Widget and RenderObject
-- Manages state and handles lifecycle
-- Elements are reused even when Widgets change
+**Element Tree（インスタンス）**
+- WidgetとRenderObjectをつなぐ中間層
+- 状態を管理し、ライフサイクルを処理
+- Widgetが変更されてもElementは再利用される
 
-**RenderObject Tree (Rendering)**
-- Handles actual layout calculation and drawing
-- Contains size, position, and painting information
-- Performance-critical part, reused whenever possible
+**RenderObject Tree（レンダリング）**
+- 実際のレイアウト計算と描画を担当
+- サイズ、位置、ペイント情報を保持
+- パフォーマンス上重要な部分で、可能な限り再利用
 
-## Separation of Layout and Paint
+## レイアウトとペイントの分離
 
 <LayoutPaintExample
   client:load
-  title="Layout and Paint Process"
-  description="performLayout() calculates size and position, paint() does the actual drawing"
+  title="レイアウトとペイントのプロセス"
+  description="performLayout()はサイズと位置を計算し、paint()は実際の描画を行う"
 />
 
-### performLayout(): Size and Position Calculation
+### performLayout(): サイズと位置の計算
 
 ```typescript
 class RenderBox {
   performLayout() {
-    // 1. Perform layout for children
-    // 2. Determine own size based on children's sizes
-    // 3. Determine children's positions
+    // 1. 子要素のレイアウトを実行
+    // 2. 子要素のサイズに基づいて自身のサイズを決定
+    // 3. 子要素の位置を決定
   }
 }
 ```
 
-### paint(): Actual Drawing on Screen
+### paint(): 画面への実際の描画
 
 ```typescript
 class RenderBox {
   paint(context: PaintingContext, offset: Offset) {
-    // 1. Draw own content (background, borders, etc.)
-    // 2. Request paint from children
+    // 1. 自身のコンテンツを描画（背景、ボーダーなど）
+    // 2. 子要素にペイントをリクエスト
   }
 }
 ```
 
-### Why Are They Separated?
+### なぜ分離されているのか？
 
-Layout and Paint are separated for **performance optimization**:
+レイアウトとペイントは**パフォーマンス最適化**のために分離されています：
 
-1. **Layout Caching**: Layout is not recalculated if size or position doesn't change
-2. **Partial Repaint**: Only paint is performed without layout when only colors change
-3. **Layer Optimization**: Unchanged parts are cached as layers
+1. **レイアウトキャッシュ**: サイズや位置が変わらなければレイアウトは再計算されない
+2. **部分的な再描画**: 色のみが変更された場合、レイアウトなしでペイントのみ実行
+3. **レイヤー最適化**: 変更されない部分はレイヤーとしてキャッシュ
 
-## Exploring the Source Code
+## ソースコードを探る
 
-Flitter's RenderObject implementation can be found in the `packages/flitter/src/renderobject/` directory:
+FlitterのRenderObject実装は`packages/flitter/src/renderobject/`ディレクトリにあります：
 
-- `RenderObject.ts`: Base RenderObject class
-- `RenderBox.ts`: RenderBox implementing 2D box model
-- `RenderFlex.ts`: Flex layout that forms the basis of Row and Column
+- `RenderObject.ts`: ベースとなるRenderObjectクラス
+- `RenderBox.ts`: 2Dボックスモデルを実装するRenderBox
+- `RenderFlex.ts`: RowやColumnの基礎となるFlexレイアウト
 
-Looking at the actual implementation, you can see it has almost identical structure to Flutter.
+実際の実装を見ると、Flutterとほぼ同じ構造であることがわかります。
 
-## Next Steps
+## 次のステップ
 
-Now that you understand the basic concepts of RenderObject, in the next chapter we'll explore the **Constraints system**, which is the core of layout. We'll examine in detail how constraints are passed from parent to child and how sizes are determined.
+RenderObjectの基本概念を理解したところで、次の章ではレイアウトのコアである**Constraintsシステム**を探ります。制約が親から子へどのように渡され、サイズがどのように決定されるのかを詳しく見ていきます。

@@ -1,6 +1,6 @@
 ---
-title: "Basic Interactions"
-description: "Create a simple counter with GestureDetector and StatefulWidget"
+title: "基本的なインタラクション"
+description: "GestureDetectorとStatefulWidgetでシンプルなカウンターを作成"
 files:
   App.js: |
     import React from 'react';
@@ -9,7 +9,7 @@ files:
 
     class CounterApp extends StatelessWidget {
       build(context) {
-        // TODO: Create counter widget here
+        // TODO: カウンターウィジェットをここに作成
         return Container({
           width: 300,
           height: 200,
@@ -18,8 +18,8 @@ files:
           child: Column({
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Counter: 0'),
-              Text('Create a button!')
+              Text('カウンター: 0'),
+              Text('ボタンを作成してください！')
             ]
           })
         });
@@ -64,7 +64,7 @@ solved_files:
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(`Counter: ${this.count}`, {
+              Text(`カウンター: ${this.count}`, {
                 style: new TextStyle({
                   fontSize: 24,
                   fontWeight: 'bold',
@@ -81,7 +81,7 @@ solved_files:
                     color: '#3b82f6',
                     borderRadius: BorderRadius.circular(8)
                   }),
-                  child: Text('Click me!', {
+                  child: Text('クリックして！', {
                     style: new TextStyle({
                       color: 'white',
                       fontSize: 16,
@@ -105,152 +105,152 @@ solved_files:
     }
 ---
 
-# Basic Interactions
+# 基本的なインタラクション
 
-So far we've only created static UIs. Now let's create an app that interacts with users. In this tutorial, we'll create a counter app where clicking a button increases a number, while learning about GestureDetector and StatefulWidget.
+これまで静的なUIしか作成していませんでした。今度はユーザーとインタラクションするアプリを作成しましょう。このチュートリアルでは、ボタンをクリックすると数値が増えるカウンターアプリを作成しながら、GestureDetectorとStatefulWidgetについて学びます。
 
-## 🎯 Learning Objectives
+## 🎯 学習目標
 
-After completing this tutorial, you'll be able to:
+このチュートリアルを完了すると、以下のことができるようになります：
 
-- [ ] Handle click events with GestureDetector
-- [ ] Create stateful widgets with StatefulWidget
-- [ ] Update the screen with setState()
-- [ ] Style simple buttons
-- [ ] Understand Flitter's state management patterns
+- [ ] GestureDetectorでクリックイベントを処理
+- [ ] StatefulWidgetで状態を持つウィジェットを作成
+- [ ] setState()で画面を更新
+- [ ] シンプルなボタンのスタイリング
+- [ ] Flitterの状態管理パターンの理解
 
-## 🤔 Why is State Management Needed?
+## 🤔 状態管理が必要な理由
 
-All the widgets we've created so far were **static widgets** that don't change once created. However, in real apps, the screen needs to change based on user actions:
+これまで作成したウィジェットはすべて一度作成されると変化しない**静的ウィジェット**でした。しかし実際のアプリではユーザーの操作に応じて画面が変化する必要があります：
 
-- Click a button to increase a number
-- Press a toggle button to change on/off state
-- Type in an input field to display text on screen
+- ボタンをクリックして数値を増やす
+- トグルボタンを押してオン/オフ状態を変更
+- 入力フィールドに文字を入力して画面にテキストを表示
 
-For such **dynamic changes**, we need **state**.
+このような**動的な変化**のためには**状態**が必要です。
 
-## 🏗️ Understanding StatefulWidget
+## 🏗️ StatefulWidgetの理解
 
-**StatefulWidget** is a widget that can have state. When state changes, the screen is automatically redrawn.
+**StatefulWidget**は状態を持つことができるウィジェットです。状態が変化すると画面が自動で再描画されます。
 
 ### StatefulWidget vs StatelessWidget
 
 ```typescript
-// StatelessWidget - no state, doesn't change
+// StatelessWidget - 状態なし、変化しない
 class GreetingWidget extends StatelessWidget {
   build() {
-    return Text('Hello!'); // Always the same text
+    return Text('こんにちは！'); // 常に同じテキスト
   }
 }
 
-// StatefulWidget - has state, can change
+// StatefulWidget - 状態あり、変化する
 class CounterWidget extends StatefulWidget {
   createState() {
-    return new CounterWidgetState(); // Return state class
+    return new CounterWidgetState(); // 状態クラスを返す
   }
 }
 
 class CounterWidgetState extends State {
-  count = 0; // State variable
+  count = 0; // 状態変数
 
   build() {
-    return Text(`Counter: ${this.count}`); // Different text based on state
+    return Text(`カウンター: ${this.count}`); // 状態に基づいて異なるテキスト
   }
 }
 ```
 
-### Basic Structure of StatefulWidget
+### StatefulWidgetの基本構造
 
-StatefulWidget consists of two classes:
+StatefulWidgetは2つのクラスで構成されます：
 
-1. **Widget class**: Inherits from `StatefulWidget` and implements `createState()` method
-2. **State class**: Inherits from `State` and contains actual state and UI logic
+1. **ウィジェットクラス**: `StatefulWidget`を継承し、`createState()`メソッドを実装
+2. **状態クラス**: `State`を継承し、実際の状態とUIロジックを含む
 
 ```typescript
-// 1. Widget class
+// 1. ウィジェットクラス
 class MyWidget extends StatefulWidget {
   createState() {
     return new MyWidgetState();
   }
 }
 
-// 2. State class
+// 2. 状態クラス
 class MyWidgetState extends State {
-  // State variables (declared as class properties)
+  // 状態変数（クラスプロパティとして宣言）
   count = 0;
   isVisible = true;
   
-  // UI composition method
+  // UI構成メソッド
   build() {
     return Container({
-      child: Text(`Count: ${this.count}`)
+      child: Text(`カウント: ${this.count}`)
     });
   }
 }
 ```
 
-### Important Characteristics
+### 重要な特徴
 
-1. **State variables are class properties**: Declared as `this.count = 0`
-2. **No React hooks**: `useState`, `useEffect`, etc. are not used in Flitter
-3. **setState() required**: Must use `setState()` when changing state
+1. **状態変数はクラスプロパティ**: `this.count = 0`として宣言
+2. **Reactフックは使用しない**: `useState`、`useEffect`などはFlitterでは使用しない
+3. **setState()が必要**: 状態を変更する時は`setState()`を使用する必要がある
 
-## 🎯 Handling Events with GestureDetector
+## 🎯 GestureDetectorでイベント処理
 
-**GestureDetector** is a widget that detects user gestures (click, drag, hover, etc.).
+**GestureDetector**はユーザーのジェスチャー（クリック、ドラッグ、ホバーなど）を検出するウィジェットです。
 
-### Basic Usage
+### 基本的な使用法
 
 ```typescript
 GestureDetector({
   onClick: () => {
-    console.log('Clicked!');
+    console.log('クリックされました！');
   },
   child: Container({
-    child: Text('Click me')
+    child: Text('クリックして')
   })
 })
 ```
 
-### Main Event Properties
+### 主要なイベントプロパティ
 
 ```typescript
 GestureDetector({
-  // Mouse events
-  onClick: (e) => { /* On click */ },
-  onMouseDown: (e) => { /* When mouse button is pressed */ },
-  onMouseUp: (e) => { /* When mouse button is released */ },
-  onMouseEnter: (e) => { /* When mouse enters area */ },
-  onMouseLeave: (e) => { /* When mouse leaves area */ },
+  // マウスイベント
+  onClick: (e) => { /* クリック時 */ },
+  onMouseDown: (e) => { /* マウスボタンを押した時 */ },
+  onMouseUp: (e) => { /* マウスボタンを離した時 */ },
+  onMouseEnter: (e) => { /* マウスが領域に入った時 */ },
+  onMouseLeave: (e) => { /* マウスが領域を出た時 */ },
   
-  // Drag events
-  onDragStart: (e) => { /* Drag start */ },
-  onDragMove: (e) => { /* During drag */ },
-  onDragEnd: (e) => { /* Drag end */ },
+  // ドラッグイベント
+  onDragStart: (e) => { /* ドラッグ開始 */ },
+  onDragMove: (e) => { /* ドラッグ中 */ },
+  onDragEnd: (e) => { /* ドラッグ終了 */ },
   
-  // Other settings
-  cursor: 'pointer', // Cursor shape
+  // その他の設定
+  cursor: 'pointer', // カーソルの形
   
-  child: /* child widget */
+  child: /* 子ウィジェット */
 })
 ```
 
-### Cursor Types
+### カーソルの種類
 
 ```typescript
-cursor: 'pointer'      // Hand shape
-cursor: 'default'      // Default arrow
-cursor: 'move'         // Move indicator
-cursor: 'text'         // Text selection
-cursor: 'wait'         // Wait indicator
-cursor: 'not-allowed'  // Forbidden indicator
-cursor: 'grab'         // Grab indicator
-cursor: 'grabbing'     // Grabbing indicator
+cursor: 'pointer'      // 手の形
+cursor: 'default'      // デフォルト矢印
+cursor: 'move'         // 移動表示
+cursor: 'text'         // テキスト選択
+cursor: 'wait'         // 待機表示
+cursor: 'not-allowed'  // 禁止表示
+cursor: 'grab'         // つかみ表示
+cursor: 'grabbing'     // つかんでいる表示
 ```
 
-## 🔧 Practice: Creating Counter App
+## 🔧 練習: カウンターアプリの作成
 
-Now let's create a counter app where the number increases each time you click.
+今度はクリックするたびに数値が増えるカウンターアプリを作成しましょう。
 
 ### Step 1: Create StatefulWidget Class
 
@@ -446,26 +446,26 @@ function App() {
 }
 ```
 
-## 🔧 TODO: Complete the Code
+## 🔧 TODO: コードを完成させる
 
-Now complete the code yourself:
+以下のコードを自分で完成させてください：
 
 ```typescript
 import React from 'react';
 import Widget from '@meursyphus/flitter-react';
 import { StatefulWidget, State, Container, Text, Column, GestureDetector, SizedBox } from '@meursyphus/flitter';
 
-// TODO: Create CounterWidget class
+// TODO: CounterWidgetクラスを作成
 class CounterWidget extends StatefulWidget {
-  // TODO: Implement createState method
+  // TODO: createStateメソッドを実装
 }
 
-// TODO: Create CounterWidgetState class
+// TODO: CounterWidgetStateクラスを作成
 class CounterWidgetState extends State {
-  // TODO: Declare count state variable (initial value: 0)
+  // TODO: count状態変数を宣言（初期値: 0）
   
-  // TODO: Create increment method
-  // Hint: Use setState() to increase count by 1
+  // TODO: incrementメソッドを作成
+  // ヒント: setState()を使用してcountを1増やす
   
   build() {
     return Container({
@@ -475,15 +475,15 @@ class CounterWidgetState extends State {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // TODO: Create Text that displays counter value
-          // Hint: `Counter: ${this.count}` format
+          // TODO: カウンター値を表示するTextを作成
+          // ヒント: `カウンター: ${this.count}`フォーマット
           
           SizedBox({ height: 20 }),
           
-          // TODO: Create clickable button with GestureDetector
-          // Hint: Call this.increment() in onClick
-          // Hint: Set cursor: 'pointer'
-          // Hint: Button with blue background (#3b82f6), white text
+          // TODO: GestureDetectorでクリック可能なボタンを作成
+          // ヒント: onClickでthis.increment()を呼び出し
+          // ヒント: cursor: 'pointer'を設定
+          // ヒント: 青い背景(#3b82f6)、白いテキストのボタン
         ]
       })
     });
@@ -499,14 +499,14 @@ function App() {
 }
 ```
 
-## 🎯 Expected Results
+## 🎯 期待される結果
 
-After completing and running the code, you should see:
+コードを完成させて実行すると、以下が表示されるはずです：
 
-1. **Counter display**: Starting with "Counter: 0"
-2. **Clickable button**: Blue background "Click me!" button
-3. **Interaction**: Number increases by 1 each time button is clicked
-4. **Cursor change**: Cursor changes to hand shape when hovering over button
+1. **カウンター表示**: "カウンター: 0"から開始
+2. **クリック可能なボタン**: 青い背景の"クリックして！"ボタン
+3. **インタラクション**: ボタンをクリックするたびに数値が1づつ増加
+4. **カーソル変化**: ボタンにマウスをホバーするとカーソルが手の形に変化
 
 ## 🎨 Advanced Understanding of setState()
 
@@ -717,20 +717,20 @@ dispose() {
 }
 ```
 
-## 🚀 Next Steps
+## 🚀 次のステップ
 
-If you've successfully implemented basic interactions, move on to the next step:
+基本的なインタラクションを正常に実装できたら、次のステップに進みましょう：
 
-- **Next**: [Container Styling](../2_basic-widgets/1_container-styling) - Learn more varied styling
-- **Related**: [Complete GestureDetector Guide](../4_interactive-widgets/1_gesture-detector-complete) - Handle all gesture events
-- **Related**: [StatefulWidget Patterns](../4_interactive-widgets/3_stateful-widget-patterns) - Advanced state management patterns
+- **次へ**: [Containerのスタイリング](../2_basic-widgets/1_container-styling) - より多様なスタイリングを学ぶ
+- **関連**: [GestureDetector完全ガイド](../4_interactive-widgets/1_gesture-detector-complete) - すべてのジェスチャーイベントを処理
+- **関連**: [StatefulWidgetパターン](../4_interactive-widgets/3_stateful-widget-patterns) - 高度な状態管理パターン
 
-## 💡 Key Summary
+## 💡 重要なまとめ
 
-1. **StatefulWidget**: Widget with state, creates state class with createState() method
-2. **State class**: Contains actual state variables and UI logic
-3. **setState()**: Must be used when changing state, automatically updates UI
-4. **GestureDetector**: Handles all user interactions
-5. **Lifecycle**: initState, build, didUpdateWidget, dispose
+1. **StatefulWidget**: 状態を持つウィジェット、createState()メソッドで状態クラスを作成
+2. **状態クラス**: 実際の状態変数とUIロジックを含む
+3. **setState()**: 状態を変更する時に使用必須、UIを自動更新
+4. **GestureDetector**: すべてのユーザーインタラクションを処理
+5. **ライフサイクル**: initState、build、didUpdateWidget、dispose
 
-Now you can create interactive widgets! In the next tutorial, we'll learn about more complex widgets.
+これでインタラクティブなウィジェットを作成できるようになりました！次のチュートリアルでは、より複雑なウィジェットについて学びます。

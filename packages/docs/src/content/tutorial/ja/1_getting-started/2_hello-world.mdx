@@ -1,6 +1,6 @@
 ---
-title: "Your First Flitter App"
-description: "Create 'Hello World' with Container and Text, and understand the widget tree"
+title: "最初のFlitterアプリ"
+description: "ContainerとTextで'Hello World'を作成し、ウィジェットツリーを理解する"
 files:
   App.js: |
     import React from 'react';
@@ -9,19 +9,19 @@ files:
 
     class HelloWorldApp extends StatelessWidget {
       build(context) {
-        // TODO: Create widgets here
+        // TODO: ここにウィジェットを作成
         return Container({
           width: 400,
           height: 200,
           color: '#f8f9fa',
           child: Center({
-            child: Text('TODO: Add your widgets')
+            child: Text('TODO: ウィジェットを追加')
           })
         });
       }
     }
 
-    // Factory function
+    // ファクトリー関数
     function createWidget() {
       return new HelloWorldApp();
     }
@@ -55,7 +55,7 @@ solved_files:
                   })
                 }),
                 SizedBox({ height: 10 }),
-                Text('My first widget app', {
+                Text('私の最初のウィジェットアプリ', {
                   style: new TextStyle({
                     fontSize: 16,
                     color: '#64748b'
@@ -68,7 +68,7 @@ solved_files:
       }
     }
 
-    // Factory function
+    // ファクトリー関数
     function createWidget() {
       return new HelloWorldApp();
     }
@@ -78,115 +78,115 @@ solved_files:
     }
 ---
 
-# Your First Flitter App
+# 最初のFlitterアプリ
 
-Now that installation is complete, let's create your first app using Flitter's core widgets Container and Text. Through this tutorial, you'll learn the basic concepts of widget trees and how to combine widgets.
+インストールが完了したので、FlitterのコアウィジェットであるContainerとTextを使用して最初のアプリを作成しましょう。このチュートリアルを通して、ウィジェットツリーの基本概念とウィジェットの組み合わせ方を学びます。
 
-## 🎯 Learning Objectives
+## 🎯 学習目標
 
-After completing this tutorial, you'll be able to:
+このチュートリアルを完了すると、以下のことができるようになります：
 
-- [ ] Create boxes with Container widget
-- [ ] Display text with Text widget
-- [ ] Nest widgets to create tree structures
-- [ ] Apply basic layout and styling
-- [ ] Arrange widgets vertically with Column
+- [ ] Containerウィジェットでボックスを作成
+- [ ] Textウィジェットでテキストを表示
+- [ ] ウィジェットをネストしてツリー構造を作成
+- [ ] 基本的なレイアウトとスタイリングを適用
+- [ ] Columnでウィジェットを縦に並べる
 
-## 📚 Core Concept: What are Widgets?
+## 📚 コアコンセプト: ウィジェットとは？
 
-In Flitter, **Widget** is the basic building block for constructing UI. Everything is made of widgets, and you can combine widgets to create complex UIs.
+Flitterでは、**ウィジェット**はUIを構築するための基本的なビルディングブロックです。すべてがウィジェットで作られており、ウィジェットを組み合わせて複雑なUIを作成できます。
 
-### Widget Characteristics
+### ウィジェットの特徴
 
-1. **Immutable**: Once created, widgets cannot be changed
-2. **Composable**: Widgets can be nested inside other widgets to create complex structures
-3. **Reusable**: The same widget can be used in multiple places
+1. **不変**: 一度作成されたウィジェットは変更できません
+2. **コンポーザブル**: ウィジェットを他のウィジェット内にネストして複雑な構造を作成できます
+3. **再利用可能**: 同じウィジェットを複数の場所で使用できます
 
-## 🏗️ Understanding Container Widget
+## 🏗️ Containerウィジェットの理解
 
-**Container** is one of Flitter's most fundamental widgets. It's used to create boxes and apply styling.
+**Container**はFlitterの最も基本的なウィジェットの1つです。ボックスを作成し、スタイリングを適用するために使用されます。
 
-### Key Properties of Container
+### Containerの主要プロパティ
 
 ```typescript
 Container({
-  // Size settings
-  width: 200,           // Width (pixels)
-  height: 100,          // Height (pixels)
+  // サイズ設定
+  width: 200,           // 幅（ピクセル）
+  height: 100,          // 高さ（ピクセル）
   
-  // Color and style
-  color: '#ff0000',     // Background color (hex code)
+  // 色とスタイル
+  color: '#ff0000',     // 背景色（16進数コード）
   
-  // Margin settings
-  padding: EdgeInsets.all(16), // Inner spacing
-  margin: EdgeInsets.all(8),   // Outer spacing
+  // 余白設定
+  padding: EdgeInsets.all(16), // 内部余白
+  margin: EdgeInsets.all(8),   // 外部余白
   
-  // Child widget
-  child: Text('Hello')  // Single child widget
+  // 子ウィジェット
+  child: Text('Hello')  // 単一の子ウィジェット
 })
 ```
 
-### Margin Setting Methods
+### 余白設定方法
 
 ```typescript
-// Same margin on all sides
+// 全辺同じ余白
 padding: EdgeInsets.all(16)
 
-// Different horizontal/vertical margins
+// 水平/垂直方向に異なる余白
 padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 10 })
 
-// Individual margin for each side
+// 各辺個別の余白
 padding: EdgeInsets.only({ top: 8, right: 16, bottom: 8, left: 16 })
 ```
 
-## 📝 Understanding Text Widget
+## 📝 Textウィジェットの理解
 
-**Text** is a widget that displays text on screen.
+**Text**は画面にテキストを表示するウィジェットです。
 
-### Basic Usage of Text
+### Textの基本的な使用法
 
 ```typescript
-// Simple text
+// シンプルなテキスト
 Text('Hello, World!')
 
-// Text with styling applied
-Text('Styled text', {
+// スタイリングを適用したテキスト
+Text('スタイル付きテキスト', {
   style: new TextStyle({
-    fontSize: 20,        // Font size
-    fontWeight: 'bold',  // Font weight: 'normal', 'bold', '100'-'900'
-    color: '#1e40af',    // Text color
-    fontFamily: 'Arial'  // Font family
+    fontSize: 20,        // フォントサイズ
+    fontWeight: 'bold',  // フォントの太さ: 'normal', 'bold', '100'-'900'
+    color: '#1e40af',    // テキストの色
+    fontFamily: 'Arial'  // フォントファミリー
   })
 })
 ```
 
-### Text Alignment Options
+### テキスト配置オプション
 
 ```typescript
-Text('Aligned text', {
+Text('配置されたテキスト', {
   textAlign: 'center'  // 'left', 'center', 'right', 'justify'
 })
 ```
 
-## 🔧 Practice: Creating Hello World App
+## 🔧 練習: Hello Worldアプリの作成
 
-Now let's combine Container and Text to create a "Hello World" app.
+さて、ContainerとTextを組み合わせて"Hello World"アプリを作成しましょう。
 
-### Step 1: Create Basic Structure
+### ステップ1: 基本構造の作成
 
-First, let's create a Container with blue background:
+まず、青い背景を持つContainerを作成しましょう：
 
 ```typescript
 const widget = Container({
-  color: '#f0f9ff',     // Light blue background
-  padding: EdgeInsets.all(20), // 20px padding on all sides
+  color: '#f0f9ff',     // 淡い青の背景
+  padding: EdgeInsets.all(20), // 全辺に20pxのパディング
   child: Text('Hello, Flitter!')
 });
 ```
 
-### Step 2: Add Text Styling
+### ステップ2: テキストスタイリングの追加
 
-Now let's add styling to the text:
+さて、テキストにスタイリングを追加しましょう：
 
 ```typescript
 const widget = Container({
@@ -202,9 +202,9 @@ const widget = Container({
 });
 ```
 
-### Step 3: Add Multiple Texts
+### ステップ3: 複数のテキストを追加
 
-Let's use Column widget to arrange multiple texts vertically:
+Columnウィジェットを使用して複数のテキストを縦に並べましょう：
 
 ```typescript
 import { Container, Text, Column, SizedBox, EdgeInsets, MainAxisAlignment, CrossAxisAlignment, TextStyle } from '@meursyphus/flitter';
@@ -213,8 +213,8 @@ const widget = Container({
   color: '#f0f9ff',
   padding: EdgeInsets.all(20),
   child: Column({
-    mainAxisAlignment: MainAxisAlignment.center,    // Vertical center alignment
-    crossAxisAlignment: CrossAxisAlignment.center,   // Horizontal center alignment
+    mainAxisAlignment: MainAxisAlignment.center,    // 垂直方向の中央揃え
+    crossAxisAlignment: CrossAxisAlignment.center,   // 水平方向の中央揃え
     children: [
       Text('Hello, Flitter!', {
         style: new TextStyle({
@@ -223,8 +223,8 @@ const widget = Container({
           color: '#1e40af'
         })
       }),
-      SizedBox({ height: 10 }),     // 10px height empty space
-      Text('My first widget app', {
+      SizedBox({ height: 10 }),     // 10pxの高さの空白
+      Text('私の最初のウィジェットアプリ', {
         style: new TextStyle({
           fontSize: 16,
           color: '#64748b'
@@ -235,48 +235,48 @@ const widget = Container({
 });
 ```
 
-## 🎨 Creating Layout with Column Widget
+## 🎨 Columnウィジェットでレイアウトを作成
 
-**Column** is a layout widget that arranges multiple widgets vertically.
+**Column**は複数のウィジェットを縦に並べるレイアウトウィジェットです。
 
-### Key Properties of Column
+### Columnの主要プロパティ
 
 ```typescript
 Column({
-  // Vertical alignment (main axis)
+  // 垂直方向の配置（メイン軸）
   mainAxisAlignment: MainAxisAlignment.center,
   
-  // Horizontal alignment (cross axis)
+  // 水平方向の配置（クロス軸）
   crossAxisAlignment: CrossAxisAlignment.center,
   
-  // Child widgets
+  // 子ウィジェット
   children: [
-    Text('First'),
-    Text('Second'),
-    Text('Third')
+    Text('最初'),
+    Text('2番目'),
+    Text('3番目')
   ]
 })
 ```
 
-### Alignment Options Explained
+### 配置オプションの説明
 
-**mainAxisAlignment** (vertical direction):
-- `MainAxisAlignment.start`: Top alignment
-- `MainAxisAlignment.center`: Center alignment
-- `MainAxisAlignment.end`: Bottom alignment
-- `MainAxisAlignment.spaceBetween`: Equal spacing between widgets
-- `MainAxisAlignment.spaceAround`: Equal spacing around widgets
-- `MainAxisAlignment.spaceEvenly`: All spacing is equal
+**mainAxisAlignment**（垂直方向）：
+- `MainAxisAlignment.start`: 上揃え
+- `MainAxisAlignment.center`: 中央揃え
+- `MainAxisAlignment.end`: 下揃え
+- `MainAxisAlignment.spaceBetween`: ウィジェット間の均等配置
+- `MainAxisAlignment.spaceAround`: ウィジェットの周囲に均等配置
+- `MainAxisAlignment.spaceEvenly`: すべての間隔が均等
 
-**crossAxisAlignment** (horizontal direction):
-- `CrossAxisAlignment.start`: Left alignment
-- `CrossAxisAlignment.center`: Center alignment
-- `CrossAxisAlignment.end`: Right alignment
-- `CrossAxisAlignment.stretch`: Fill all horizontal space
+**crossAxisAlignment**（水平方向）：
+- `CrossAxisAlignment.start`: 左揃え
+- `CrossAxisAlignment.center`: 中央揃え
+- `CrossAxisAlignment.end`: 右揃え
+- `CrossAxisAlignment.stretch`: すべての水平空間を埋める
 
-## 🔧 TODO: Complete the Code
+## 🔧 TODO: コードを完成させる
 
-Now complete the code yourself:
+以下のコードを自分で完成させてください：
 
 ```typescript
 import { StatelessWidget, Container, Text, Column, SizedBox, Center, EdgeInsets, MainAxisAlignment, CrossAxisAlignment, TextStyle } from '@meursyphus/flitter';
@@ -284,19 +284,19 @@ import { StatelessWidget, Container, Text, Column, SizedBox, Center, EdgeInsets,
 class HelloWorldApp extends StatelessWidget {
   build(context) {
     return Container({
-      // TODO: Set light blue background (#f0f9ff)
-      // TODO: Set 20px padding on all sides with EdgeInsets.all(20)
+      // TODO: 淡い青の背景を設定 (#f0f9ff)
+      // TODO: EdgeInsets.all(20)で全辺に20pxのパディングを設定
       child: Center({
         child: Column({
-          // TODO: Set center alignment with MainAxisAlignment.center and CrossAxisAlignment.center
+          // TODO: MainAxisAlignment.centerとCrossAxisAlignment.centerで中央揃えを設定
           children: [
-            // TODO: Create "Hello, Flitter!" text
-            // Hint: new TextStyle({ fontSize: 28, fontWeight: 'bold', color: '#1e40af' })
+            // TODO: "Hello, Flitter!"テキストを作成
+            // ヒント: new TextStyle({ fontSize: 28, fontWeight: 'bold', color: '#1e40af' })
             
-            // TODO: Create 10px height empty space with SizedBox({ height: 10 })
+            // TODO: SizedBox({ height: 10 })で10pxの高さの空白を作成
             
-            // TODO: Create "My first widget app" text
-            // Hint: new TextStyle({ fontSize: 16, color: '#64748b' })
+            // TODO: "私の最初のウィジェットアプリ"テキストを作成
+            // ヒント: new TextStyle({ fontSize: 16, color: '#64748b' })
           ]
         })
       })
@@ -309,35 +309,35 @@ export default function createApp() {
 }
 ```
 
-## 🎯 Expected Results
+## 🎯 期待される結果
 
-After completing and running the code, you should see:
+コードを完成させて実行すると、以下が表示されるはずです：
 
-1. **Light blue background box**: 400x200 sized Container
-2. **Center-aligned text**: "Hello, Flitter!" (large font, blue)
-3. **Subtitle**: "My first widget app" (small font, gray)
-4. **Proper spacing**: 10px gap between the two texts
+1. **淡い青の背景のボックス**: 400x200サイズのContainer
+2. **中央揃えのテキスト**: "Hello, Flitter!"（大きなフォント、青）
+3. **サブタイトル**: "私の最初のウィジェットアプリ"（小さなフォント、グレー）
+4. **適切な間隔**: 2つのテキスト間に10pxの隙間
 
-## 🔧 Practice Problems
+## 🔧 練習問題
 
-If you've completed the basic Hello World, try the following:
+基本的なHello Worldを完成させたら、以下を試してみましょう：
 
-### Exercise 1: Change Color Themes
-Change to different color combinations:
+### 演習1: カラーテーマの変更
+異なる色の組み合わせに変更：
 ```typescript
-// Exercise 1-1: Green theme
-color: '#f0fdf4'      // Light green background
-color: '#16a34a'      // Dark green text
+// 演習1-1: グリーンテーマ
+color: '#f0fdf4'      // 淡い緑の背景
+color: '#16a34a'      // 濃い緑のテキスト
 
-// Exercise 1-2: Purple theme
-color: '#faf5ff'      // Light purple background
-color: '#9333ea'      // Dark purple text
+// 演習1-2: パープルテーマ
+color: '#faf5ff'      // 淡い紫の背景
+color: '#9333ea'      // 濃い紫のテキスト
 ```
 
-### Exercise 2: Add Text
-Add a third text:
+### 演習2: テキストの追加
+3つ目のテキストを追加：
 ```typescript
-Text('Using with React', {
+Text('Reactと一緒に使用', {
   style: new TextStyle({
     fontSize: 14,
     color: '#94a3b8',
@@ -346,85 +346,85 @@ Text('Using with React', {
 })
 ```
 
-### Exercise 3: Change Layout
-Change `mainAxisAlignment` to different values and check the results:
-- `MainAxisAlignment.start`: Top alignment
-- `MainAxisAlignment.end`: Bottom alignment
-- `MainAxisAlignment.spaceBetween`: Positioned at top and bottom ends
+### 演習3: レイアウトの変更
+`mainAxisAlignment`を異なる値に変更して結果を確認：
+- `MainAxisAlignment.start`: 上揃え
+- `MainAxisAlignment.end`: 下揃え
+- `MainAxisAlignment.spaceBetween`: 上端と下端に配置
 
-### Exercise 4: Adjust Margins
-Change the Container's `padding` value:
+### 演習4: 余白の調整
+Containerの`padding`値を変更：
 ```typescript
-// Different horizontal/vertical
+// 水平/垂直方向で異なる
 padding: EdgeInsets.symmetric({ horizontal: 40, vertical: 15 })
 
-// Different for each direction
+// 各方向で異なる
 padding: EdgeInsets.only({ top: 30, right: 20, bottom: 30, left: 20 })
 ```
 
-## 🚨 Common Mistakes and Solutions
+## 🚨 よくある間違いと解決策
 
-### Problem 1: Text not visible
-**Cause**: Container doesn't have `child` set or Text widget created incorrectly
+### 問題1: テキストが表示されない
+**原因**: Containerに`child`が設定されていないか、Textウィジェットが正しく作成されていない
 
-**Solution**: 
+**解決策**： 
 ```typescript
-// ❌ Wrong example
-Container({ color: 'blue' })  // No child
+// ❌ 間違った例
+Container({ color: 'blue' })  // childなし
 
-// ✅ Correct example
+// ✅ 正しい例
 Container({ 
   color: 'blue',
-  child: Text('Hello')  // Child must be set
+  child: Text('Hello')  // childを必ず設定
 })
 ```
 
-### Problem 2: Using child instead of children in Column
-**Cause**: Column has multiple children, so `children` array must be used
+### 問題2: Columnでchildrenの代わりにchildを使用
+**原因**: Columnには複数の子があるため、`children`配列を使用する必要がある
 
-**Solution**:
+**解決策**：
 ```typescript
-// ❌ Wrong example
+// ❌ 間違った例
 Column({ child: Text('Hello') })
 
-// ✅ Correct example
+// ✅ 正しい例
 Column({ children: [Text('Hello')] })
 ```
 
-### Problem 3: Colors not applied
-**Cause**: Wrong color format or missing quotes
+### 問題3: 色が適用されない
+**原因**: 間違った色のフォーマットまたは引用符の欠落
 
-**Solution**:
+**解決策**：
 ```typescript
-// ❌ Wrong examples
-color: #ff0000     // No quotes
-color: 'ff0000'    // No #
+// ❌ 間違った例
+color: #ff0000     // 引用符なし
+color: 'ff0000'    // #なし
 
-// ✅ Correct examples
-color: '#ff0000'   // Hex code
-color: 'red'       // Color name
-color: 'rgb(255, 0, 0)'  // RGB value
+// ✅ 正しい例
+color: '#ff0000'   // 16進数コード
+color: 'red'       // 色の名前
+color: 'rgb(255, 0, 0)'  // RGB値
 ```
 
-### Problem 4: fontSize not applied
-**Cause**: fontSize set as string or wrong style object structure
+### 問題4: fontSizeが適用されない
+**原因**: fontSizeが文字列として設定されているか、スタイルオブジェクトの構造が間違っている
 
-**Solution**:
+**解決策**：
 ```typescript
-// ❌ Wrong examples
-Text('Hello', { fontSize: '20px' })           // Direct property
-Text('Hello', { style: { fontSize: '20' } })  // String
+// ❌ 間違った例
+Text('Hello', { fontSize: '20px' })           // 直接のプロパティ
+Text('Hello', { style: { fontSize: '20' } })  // 文字列
 
-// ✅ Correct example
-Text('Hello', { style: { fontSize: 20 } })    // Set as number
+// ✅ 正しい例
+Text('Hello', { style: { fontSize: 20 } })    // 数値として設定
 ```
 
-## 🧠 Understanding Widget Tree
+## 🧠 ウィジェットツリーの理解
 
-Let's look at the widget tree structure of our app:
+アプリのウィジェットツリー構造を見てみましょう：
 
 ```
-Container (root)
+Container（ルート）
 ├── color: '#f0f9ff'
 ├── padding: EdgeInsets.all(20)
 └── child: Column
@@ -433,53 +433,53 @@ Container (root)
     └── children:
         ├── Text('Hello, Flitter!')
         ├── SizedBox({ height: 10 })
-        └── Text('My first widget app')
+        └── Text('私の最初のウィジェットアプリ')
 ```
 
-### Widget Tree Characteristics
+### ウィジェットツリーの特徴
 
-1. **Parent-child relationship**: Container contains Column, Column contains multiple Texts
-2. **Unidirectional data flow**: Properties are passed from parent to child
-3. **Composability**: Complex UI built by combining simple widgets
+1. **親子関係**: ContainerがColumnを含み、Columnが複数のTextを含む
+2. **単方向データフロー**: プロパティは親から子に渡される
+3. **構成可能性**: シンプルなウィジェットを組み合わせて複雑なUIを構築
 
-## 📏 Understanding Size and Constraints
+## 📏 サイズと制約の理解
 
-### How Container Determines Size
+### Containerがサイズを決定する方法
 
 ```typescript
-// 1. Explicit size specification
+// 1. 明示的なサイズ指定
 Container({
   width: 200,
   height: 100,
-  child: Text('Fixed size')
+  child: Text('固定サイズ')
 })
 
-// 2. Fit to child size (default)
+// 2. 子のサイズに合わせる（デフォルト）
 Container({
   padding: EdgeInsets.all(16),
-  child: Text('Fit to child size')
+  child: Text('子のサイズに合わせる')
 })
 
-// 3. Take all available space (no child)
+// 3. 利用可能なすべての空間を取る（子なし）
 Container({
-  color: 'red'  // Maximum size if no child
+  color: 'red'  // 子がない場合は最大サイズ
 })
 ```
 
-## 🚀 Next Steps
+## 🚀 次のステップ
 
-If you've successfully created the Hello World app, let's add interaction in the next tutorial:
+Hello Worldアプリを正常に作成できたら、次のチュートリアルでインタラクションを追加しましょう：
 
-- **Next**: [Basic Interactions](./3_basic-interactions) - Learn button clicks and state changes
-- **Related**: [Container Styling](../2_basic-widgets/1_container-styling) - Learn advanced Container styling
-- **Related**: [Text Styling](../2_basic-widgets/2_text-styling) - Learn various Text style options
+- **次へ**: [基本的なインタラクション](./3_basic-interactions) - ボタンクリックと状態変更を学ぶ
+- **関連**: [Containerのスタイリング](../2_basic-widgets/1_container-styling) - 高度なContainerスタイリングを学ぶ
+- **関連**: [Textのスタイリング](../2_basic-widgets/2_text-styling) - 様々なTextスタイルオプションを学ぶ
 
-## 💡 Key Summary
+## 💡 重要なまとめ
 
-1. **Container**: Create boxes, set margins, apply colors
-2. **Text**: Display text, font styling
-3. **Column**: Arrange multiple widgets vertically
-4. **Widget Tree**: Compose complex UI by nesting widgets
-5. **Composition**: Create desired UI by combining simple widgets
+1. **Container**: ボックスを作成、余白を設定、色を適用
+2. **Text**: テキストを表示、フォントスタイリング
+3. **Column**: 複数のウィジェットを縦に配置
+4. **ウィジェットツリー**: ウィジェットをネストして複雑なUIを構成
+5. **構成**: シンプルなウィジェットを組み合わせて望むUIを作成
 
-Now you can use Flitter's basic widgets! In the next tutorial, we'll learn how to add user interactions.
+これでFlitterの基本的なウィジェットを使用できるようになりました！次のチュートリアルでは、ユーザーインタラクションを追加する方法を学びます。

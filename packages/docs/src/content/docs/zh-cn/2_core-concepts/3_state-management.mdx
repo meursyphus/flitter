@@ -1,69 +1,69 @@
 ---
-nav_title: "State Management"
-title: "Flitter State Management"
-description: "Efficient state management and data sharing between components using the Provider pattern"
+nav_title: "状态管理"
+title: "Flitter 状态管理"
+description: "使用 Provider 模式在组件之间进行高效的状态管理和数据共享"
 ---
 
 import ProviderExample from '$components/pages/docs/02_core-concepts/03-provider-example';
 
-# State Management
+# 状态管理
 
-## Overview
+## 概述
 
-Flitter's Provider is a concept similar to React's Context API, enabling efficient state management and sharing throughout the widget tree. Provider is based on InheritedWidget and allows access to state from anywhere in the widget tree.
+Flitter 的 Provider 是一个类似于 React Context API 的概念，能够在整个 widget 树中进行高效的状态管理和共享。Provider 基于 InheritedWidget，允许从 widget 树的任何地方访问状态。
 
 ```
 ┌─────────────────────────────────────────────┐
-│              Provider Pattern                │
+│              Provider 模式                   │
 │                                             │
 │   ┌─────────────────────────────────┐       │
 │   │     ChangeNotifierProvider      │       │
-│   │   (React's Context.Provider)    │       │
+│   │   (React 的 Context.Provider)   │       │
 │   └──────────────┬──────────────────┘       │
 │                  │                           │
 │                  ▼                           │
 │   ┌─────────────────────────────────┐       │
-│   │         Widget Tree             │       │
+│   │         Widget 树               │       │
 │   │  ┌─────────────────────────┐   │       │
 │   │  │    Provider.of(context)  │   │       │
-│   │  │  (React's useContext)    │   │       │
+│   │  │  (React 的 useContext)   │   │       │
 │   │  └─────────────────────────┘   │       │
 │   └─────────────────────────────────┘       │
 └─────────────────────────────────────────────┘
 ```
 
-## Why is Provider needed?
+## 为什么需要 Provider？
 
-In complex applications, the following situations frequently occur:
+在复杂的应用程序中，经常会出现以下情况：
 
-- **Deep widget trees**: Prop drilling issues where data must be passed through multiple levels
-- **State sharing**: When multiple widgets need to use and update the same state
-- **Global state**: Data used throughout the app such as user authentication info, theme settings
-- **Performance optimization**: Improve performance by rebuilding only necessary widgets when state changes
+- **深层 widget 树**：必须通过多个层级传递数据的属性钻取问题
+- **状态共享**：当多个 widget 需要使用和更新相同的状态时
+- **全局状态**：整个应用中使用的数据，如用户认证信息、主题设置
+- **性能优化**：通过在状态改变时仅重建必要的 widget 来提高性能
 
-## Core Concepts
+## 核心概念
 
-### 1. Defining Provider Key
+### 1. 定义 Provider Key
 
-Define a unique key to identify the Provider:
+定义一个唯一的键来标识 Provider：
 
 ```typescript
 const COUNTER_KEY = Symbol('CounterProvider');
 ```
 
-### 2. Providing Values with Provider
+### 2. 使用 Provider 提供值
 
-Use `Provider` to provide values to the widget tree:
+使用 `Provider` 向 widget 树提供值：
 
 ```typescript
-// Simple value providing
+// 简单的值提供
 Provider({
   value: { count: 0 },
   providerKey: COUNTER_KEY,
   child: MyApp({})
 })
 
-// Wrapping with Provider function
+// 使用 Provider 函数包装
 function CounterProvider({ child }: { child: Widget }) {
   return Provider({
     value: { count: 0, increment: () => {} },
@@ -73,24 +73,24 @@ function CounterProvider({ child }: { child: Widget }) {
 }
 ```
 
-### 3. Getting Values with Provider.of
+### 3. 使用 Provider.of 获取值
 
-Use `Provider.of` to access Provider values:
+使用 `Provider.of` 访问 Provider 值：
 
 ```typescript
-// Using Provider.of
+// 使用 Provider.of
 const counter = Provider.of(COUNTER_KEY, context);
 
-// Usage within widget
+// 在 widget 中使用
 class MyWidget extends StatelessWidget {
   build(context: BuildContext): Widget {
     const counter = Provider.of(COUNTER_KEY, context) as CounterData;
     
-    return Text(`Count: ${counter.count}`);
+    return Text(`计数：${counter.count}`);
   }
 }
 
-// Adding of method to Provider function (convenience)
+// 向 Provider 函数添加 of 方法（便利性）
 function CounterProvider({ child }: { child: Widget }) {
   return Provider({
     value: { count: 0 },
@@ -104,19 +104,19 @@ CounterProvider.of = (context: BuildContext) => {
 };
 ```
 
-## Code Examples
+## 代码示例
 
-### Basic Provider Usage
+### 基本 Provider 用法
 
 <ProviderExample
   client:load
-  title="Counter App using Provider"
-  description="Example sharing and updating the same state across multiple widgets"
+  title="使用 Provider 的计数器应用"
+  description="跨多个 widget 共享和更新相同状态的示例"
 />
 
-### Using Multiple Providers
+### 使用多个 Provider
 
-You can nest multiple Providers:
+您可以嵌套多个 Provider：
 
 ```typescript
 const THEME_KEY = Symbol('ThemeProvider');
@@ -139,15 +139,15 @@ function AppProviders({ child }: { child: Widget }) {
   });
 }
 
-// Usage
+// 使用
 AppProviders({
   child: MyApp({})
 })
 ```
 
-## Practical Examples
+## 实际示例
 
-### 1. Simple Counter Example
+### 1. 简单计数器示例
 
 ```typescript
 const COUNTER_KEY = Symbol('CounterProvider');
@@ -156,7 +156,7 @@ interface CounterData {
   count: number;
 }
 
-// State management with StatefulWidget
+// 使用 StatefulWidget 进行状态管理
 class CounterApp extends StatefulWidget {
   createState() {
     return new CounterAppState();
@@ -189,7 +189,7 @@ class CounterAppState extends State<CounterApp> {
                 color: '#3b82f6',
                 borderRadius: BorderRadius.circular(8)
               }),
-              child: Text("증가", {
+              child: Text("增加", {
                 style: new TextStyle({
                   color: '#ffffff'
                 })
@@ -202,12 +202,12 @@ class CounterAppState extends State<CounterApp> {
   }
 }
 
-// Separate widget that reads values from Provider
+// 从 Provider 读取值的独立 widget
 class CounterDisplay extends StatelessWidget {
   build(context: BuildContext): Widget {
     const data = Provider.of(COUNTER_KEY, context) as CounterData;
     
-    return Text(`Count: ${data.count}`, {
+    return Text(`计数：${data.count}`, {
       style: new TextStyle({
         fontSize: 24,
         color: '#ffffff'
@@ -217,7 +217,7 @@ class CounterDisplay extends StatelessWidget {
 }
 ```
 
-### 2. Provider Function Pattern
+### 2. Provider 函数模式
 
 ```typescript
 const THEME_KEY = Symbol('ThemeProvider');
@@ -227,7 +227,7 @@ interface ThemeData {
   primaryColor: string;
 }
 
-// Define Provider function
+// 定义 Provider 函数
 function ThemeProvider({ child }: { child: Widget }) {
   return Provider({
     value: {
@@ -239,12 +239,12 @@ function ThemeProvider({ child }: { child: Widget }) {
   });
 }
 
-// Add of method
+// 添加 of 方法
 ThemeProvider.of = (context: BuildContext) => {
   return Provider.of(THEME_KEY, context) as ThemeData;
 };
 
-// Usage example
+// 使用示例
 class ThemedApp extends StatelessWidget {
   build(context: BuildContext): Widget {
     return ThemeProvider({
@@ -259,7 +259,7 @@ class MainContent extends StatelessWidget {
     
     return Container({
       color: theme.isDarkMode ? '#1a1a1a' : '#ffffff',
-      child: Text("Theme application example", {
+      child: Text("主题应用示例", {
         style: new TextStyle({
           color: theme.primaryColor,
           fontSize: 24
@@ -270,7 +270,7 @@ class MainContent extends StatelessWidget {
 }
 ```
 
-### 3. Complex State Management Example
+### 3. 复杂状态管理示例
 
 ```typescript
 const APP_STATE_KEY = Symbol('AppStateProvider');
@@ -281,12 +281,12 @@ class AppController {
   items: Item[] = [];
   
   constructor() {
-    // Initialization logic
+    // 初始化逻辑
   }
   
   login(email: string, password: string) {
-    // Login logic
-    this.user = new User("1", "User", email);
+    // 登录逻辑
+    this.user = new User("1", "用户", email);
   }
   
   logout() {
@@ -302,7 +302,7 @@ class AppController {
   }
 }
 
-// Provider function
+// Provider 函数
 function AppStateProvider({ child }: { child: Widget }) {
   return Provider({
     value: new AppController(),
@@ -315,7 +315,7 @@ AppStateProvider.of = (context: BuildContext) => {
   return Provider.of(APP_STATE_KEY, context) as AppController;
 };
 
-// Using with StatefulWidget
+// 与 StatefulWidget 一起使用
 class MyApp extends StatefulWidget {
   createState() {
     return new MyAppState();
@@ -346,33 +346,33 @@ class MyAppState extends State<MyApp> {
 }
 ```
 
-## Important Notes
+## 重要注意事项
 
-### 1. Provider Scope and Accessibility
+### 1. Provider 范围和可访问性
 
-Provider is only accessible from below the position where it is provided in the widget tree:
+Provider 只能从 widget 树中提供它的位置以下访问：
 
 ```typescript
-// ❌ Bad example: Trying to access before Provider is provided
+// ❌ 错误示例：在 Provider 提供之前尝试访问
 class BadExample extends StatelessWidget {
   build(context: BuildContext): Widget {
-    const data = Provider.of(MY_KEY, context); // Error!
+    const data = Provider.of(MY_KEY, context); // 错误！
     
     return Provider({
       value: { count: 0 },
       providerKey: MY_KEY,
-      child: Text(`Count: ${data.count}`)
+      child: Text(`计数：${data.count}`)
     });
   }
 }
 
-// ✅ Good example: Accessing from below Provider
+// ✅ 正确示例：从 Provider 下方访问
 class GoodExample extends StatelessWidget {
   build(context: BuildContext): Widget {
     return Provider({
       value: { count: 0 },
       providerKey: MY_KEY,
-      child: ChildWidget({})  // Accessible here
+      child: ChildWidget({})  // 这里可以访问
     });
   }
 }
@@ -380,17 +380,17 @@ class GoodExample extends StatelessWidget {
 class ChildWidget extends StatelessWidget {
   build(context: BuildContext): Widget {
     const data = Provider.of(MY_KEY, context);
-    return Text(`Count: ${data.count}`);
+    return Text(`计数：${data.count}`);
   }
 }
 ```
 
-### 2. Maintaining Type Safety
+### 2. 保持类型安全
 
-When using Provider, type casting should be explicit:
+使用 Provider 时，类型转换应该是明确的：
 
 ```typescript
-// Type definition
+// 类型定义
 interface UserData {
   id: string;
   name: string;
@@ -399,11 +399,11 @@ interface UserData {
 
 const USER_KEY = Symbol('UserProvider');
 
-// Using generics in Provider function
+// 在 Provider 函数中使用泛型
 function UserProvider({ child }: { child: Widget }) {
   const userData: UserData = {
     id: '1',
-    name: '사용자',
+    name: '用户',
     email: 'user@example.com'
   };
   
@@ -414,19 +414,19 @@ function UserProvider({ child }: { child: Widget }) {
   });
 }
 
-// Type-safe of method
+// 类型安全的 of 方法
 UserProvider.of = (context: BuildContext): UserData => {
   return Provider.of(USER_KEY, context) as UserData;
 };
 
-// 사용
+// 使用
 const user = UserProvider.of(context);
-console.log(user.name); // Type safe!
+console.log(user.name); // 类型安全！
 ```
 
-### 3. Dynamic Provider Value Updates
+### 3. 动态 Provider 值更新
 
-To update Provider values, you must use it with StatefulWidget:
+要更新 Provider 值，必须与 StatefulWidget 一起使用：
 
 ```typescript
 const SETTINGS_KEY = Symbol('SettingsProvider');
@@ -476,10 +476,10 @@ class SettingsWidgetState extends State<SettingsWidget> {
 }
 ```
 
-## Next Steps
+## 下一步
 
-Once you've mastered the Provider pattern, learn these topics:
+掌握 Provider 模式后，学习这些主题：
 
-- Animation Basics - Dynamic UI implementation using AnimationController
-- Advanced Widget Usage - Implementing custom rendering logic
-- Real-world Examples - Provider usage cases in actual projects
+- 动画基础 - 使用 AnimationController 实现动态 UI
+- 高级 Widget 用法 - 实现自定义渲染逻辑
+- 实际示例 - 实际项目中的 Provider 用例

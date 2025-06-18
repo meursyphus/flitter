@@ -3,26 +3,26 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: AnimatedFractionallySizedBox
 title: "AnimatedFractionallySizedBox"
-description: "A widget that animates size transitions proportional to parent size"
+description: "一个根据父组件尺寸比例动画过渡尺寸的组件"
 ---
 
-## Overview
+## 概述
 
-AnimatedFractionallySizedBox is a widget that sizes its child relative to the parent widget's size and automatically animates when widthFactor or heightFactor changes. It also animates position changes when alignment is modified. This widget is inspired by Flutter's AnimatedFractionallySizedBox widget.
+AnimatedFractionallySizedBox 是一个根据父组件尺寸相对调整子组件大小，并在 widthFactor 或 heightFactor 变化时自动进行动画的组件。它还会在对齐方式修改时动画化位置变化。这个组件受 Flutter 的 AnimatedFractionallySizedBox 组件启发。
 
-> Animated version of FractionallySizedBox which automatically transitions the child's size over a given duration whenever the given widthFactor or heightFactor changes, as well as the position whenever the given alignment changes.
+> FractionallySizedBox 的动画版本，当给定的 widthFactor 或 heightFactor 发生变化时，会在给定的持续时间内自动过渡子组件的尺寸，以及当给定的对齐方式发生变化时过渡位置。
 
-Flutter reference: https://api.flutter.dev/flutter/widgets/AnimatedFractionallySizedBox-class.html
+Flutter 参考: https://api.flutter.dev/flutter/widgets/AnimatedFractionallySizedBox-class.html
 
-## When to use?
+## 何时使用？
 
-- When dynamically adjusting widget size relative to parent size
-- When smoothly transitioning sizes in responsive layouts
-- When animating content size based on screen dimensions
-- When implementing smooth expand/collapse effects
-- When transitioning modal or dialog sizes in stages
+- 当需要动态调整组件相对于父组件的尺寸时
+- 当在响应式布局中平滑过渡尺寸时
+- 当根据屏幕尺寸动画化内容大小时
+- 当实现平滑展开/收起效果时
+- 当分阶段过渡模态框或对话框尺寸时
 
-## Basic usage
+## 基本用法
 
 ```typescript
 import { AnimatedFractionallySizedBox, Container, StatefulWidget } from '@flitter/core';
@@ -61,75 +61,75 @@ class SizeAnimationExampleState extends State<SizeAnimationExample> {
 }
 ```
 
-## Props
+## 属性
 
-### duration (required)
-**Value: number**
+### duration（必需）
+**值：number**
 
-Specifies the animation duration in milliseconds.
+指定动画持续时间（毫秒）。
 
-### widthFactor (optional)
-**Value: number | undefined**
+### widthFactor（可选）
+**值：number | undefined**
 
-Sets the child widget's width as a ratio of the parent widget's width.
-- 0.5 = 50% of parent width
-- 1.0 = 100% of parent width
-- If not specified, uses the child's intrinsic width
+将子组件的宽度设置为父组件宽度的比例。
+- 0.5 = 父组件宽度的 50%
+- 1.0 = 父组件宽度的 100%
+- 如果未指定，则使用子组件的固有宽度
 
-### heightFactor (optional)
-**Value: number | undefined**
+### heightFactor（可选）
+**值：number | undefined**
 
-Sets the child widget's height as a ratio of the parent widget's height.
-- 0.5 = 50% of parent height
-- 1.0 = 100% of parent height
-- If not specified, uses the child's intrinsic height
+将子组件的高度设置为父组件高度的比例。
+- 0.5 = 父组件高度的 50%
+- 1.0 = 父组件高度的 100%
+- 如果未指定，则使用子组件的固有高度
 
-### alignment (optional)
-**Value: Alignment** (default: **Alignment.center**)
+### alignment（可选）
+**值：Alignment**（默认值：**Alignment.center**）
 
-Specifies the alignment position of the child widget. Predefined values:
-- `Alignment.topLeft`: Top left
-- `Alignment.topCenter`: Top center
-- `Alignment.topRight`: Top right
-- `Alignment.centerLeft`: Center left
-- `Alignment.center`: Center
-- `Alignment.centerRight`: Center right
-- `Alignment.bottomLeft`: Bottom left
-- `Alignment.bottomCenter`: Bottom center
-- `Alignment.bottomRight`: Bottom right
+指定子组件的对齐位置。预定义值：
+- `Alignment.topLeft`：左上角
+- `Alignment.topCenter`：顶部中心
+- `Alignment.topRight`：右上角
+- `Alignment.centerLeft`：左侧中心
+- `Alignment.center`：中心
+- `Alignment.centerRight`：右侧中心
+- `Alignment.bottomLeft`：左下角
+- `Alignment.bottomCenter`：底部中心
+- `Alignment.bottomRight`：右下角
 
-### curve (optional)
-**Value: Curve** (default: **Curves.linear**)
+### curve（可选）
+**值：Curve**（默认值：**Curves.linear**）
 
-Specifies the animation progression curve. Available curves:
-- `Curves.linear`: Constant speed
-- `Curves.easeIn`: Slow start
-- `Curves.easeOut`: Slow end
-- `Curves.easeInOut`: Slow start and end
-- `Curves.circIn`: Circular acceleration start
-- `Curves.circOut`: Circular deceleration end
-- `Curves.circInOut`: Circular acceleration/deceleration
-- `Curves.backIn`: Goes back then starts
-- `Curves.backOut`: Overshoots target then returns
-- `Curves.backInOut`: backIn + backOut
-- `Curves.anticipate`: Anticipatory motion before proceeding
-- `Curves.bounceIn`: Bounces at start
-- `Curves.bounceOut`: Bounces at end
-- `Curves.bounceInOut`: Bounces at start/end
+指定动画进程曲线。可用曲线：
+- `Curves.linear`：匀速
+- `Curves.easeIn`：缓慢开始
+- `Curves.easeOut`：缓慢结束
+- `Curves.easeInOut`：缓慢开始和结束
+- `Curves.circIn`：圆形加速开始
+- `Curves.circOut`：圆形减速结束
+- `Curves.circInOut`：圆形加速/减速
+- `Curves.backIn`：先后退然后开始
+- `Curves.backOut`：超过目标然后返回
+- `Curves.backInOut`：backIn + backOut
+- `Curves.anticipate`：在继续之前的预期运动
+- `Curves.bounceIn`：开始时弹跳
+- `Curves.bounceOut`：结束时弹跳
+- `Curves.bounceInOut`：开始/结束时弹跳
 
-### child (optional)
-**Value: Widget | undefined**
+### child（可选）
+**值：Widget | undefined**
 
-The child widget whose size will be adjusted.
+将调整尺寸的子组件。
 
-### key (optional)
-**Value: any**
+### key（可选）
+**值：any**
 
-A unique identifier for the widget.
+组件的唯一标识符。
 
-## Real-world examples
+## 实际示例
 
-### Example 1: Responsive card expand/collapse
+### 示例 1：响应式卡片展开/收起
 
 ```typescript
 import { AnimatedFractionallySizedBox, Container, Card, Curves } from '@flitter/core';
@@ -182,7 +182,7 @@ class ResponsiveCardState extends State<ResponsiveCard> {
                       }),
                       SizedBox({ height: 16 }),
                       Text(
-                        this.isExpanded ? "Click to Collapse" : "Click to Expand",
+                        this.isExpanded ? "点击收起" : "点击展开",
                         { style: TextStyle({ color: "white", fontSize: 18 }) }
                       ),
                     ],
@@ -198,7 +198,7 @@ class ResponsiveCardState extends State<ResponsiveCard> {
 }
 ```
 
-### Example 2: Multi-stage size transitions
+### 示例 2：多阶段尺寸过渡
 
 ```typescript
 import { AnimatedFractionallySizedBox, Container, Row, Curves } from '@flitter/core';
@@ -228,7 +228,7 @@ class MultiSizeTransitionState extends State<MultiSizeTransition> {
           children: [
             ElevatedButton({
               onPressed: () => this.changeSize(0),
-              child: Text("Small"),
+              child: Text("小"),
               style: ButtonStyle({
                 backgroundColor: this.sizeLevel === 0 ? "blue" : "gray",
               }),
@@ -236,7 +236,7 @@ class MultiSizeTransitionState extends State<MultiSizeTransition> {
             SizedBox({ width: 8 }),
             ElevatedButton({
               onPressed: () => this.changeSize(1),
-              child: Text("Medium"),
+              child: Text("中"),
               style: ButtonStyle({
                 backgroundColor: this.sizeLevel === 1 ? "blue" : "gray",
               }),
@@ -244,7 +244,7 @@ class MultiSizeTransitionState extends State<MultiSizeTransition> {
             SizedBox({ width: 8 }),
             ElevatedButton({
               onPressed: () => this.changeSize(2),
-              child: Text("Large"),
+              child: Text("大"),
               style: ButtonStyle({
                 backgroundColor: this.sizeLevel === 2 ? "blue" : "gray",
               }),
@@ -296,7 +296,7 @@ class MultiSizeTransitionState extends State<MultiSizeTransition> {
 }
 ```
 
-### Example 3: Alignment and size animation combined
+### 示例 3：对齐和尺寸动画组合
 
 ```typescript
 import { AnimatedFractionallySizedBox, Container, Alignment, Curves } from '@flitter/core';
@@ -343,12 +343,12 @@ class AlignmentAndSizeAnimationState extends State<AlignmentAndSizeAnimation> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    `Position ${this.currentIndex + 1}/5`,
+                    `位置 ${this.currentIndex + 1}/5`,
                     { style: TextStyle({ fontSize: 20, fontWeight: "bold" }) }
                   ),
                   SizedBox({ height: 8 }),
                   Text(
-                    "Tap for Next",
+                    "点击下一个",
                     { style: TextStyle({ fontSize: 16 }) }
                   ),
                 ],
@@ -368,7 +368,7 @@ class AlignmentAndSizeAnimationState extends State<AlignmentAndSizeAnimation> {
 }
 ```
 
-### Example 4: Aspect ratio preserved image container
+### 示例 4：保持纵横比的图片容器
 
 ```typescript
 import { AnimatedFractionallySizedBox, Container, Image, Curves } from '@flitter/core';
@@ -424,17 +424,17 @@ class AspectRatioImageContainerState extends State<AspectRatioImageContainer> {
 }
 ```
 
-## Notes
+## 注意事项
 
-- widthFactor and heightFactor must be greater than or equal to 0
-- If both widthFactor and heightFactor are undefined, the child widget's intrinsic size is used
-- When the parent widget's size changes, AnimatedFractionallySizedBox's actual size automatically adjusts
-- When alignment and factor values change simultaneously, they all animate together
-- For performance considerations, avoid too frequent size changes
+- widthFactor 和 heightFactor 必须大于或等于 0
+- 如果 widthFactor 和 heightFactor 都未定义，则使用子组件的固有尺寸
+- 当父组件的尺寸发生变化时，AnimatedFractionallySizedBox 的实际尺寸会自动调整
+- 当对齐和因子值同时变化时，它们会一起动画
+- 为了性能考虑，避免过于频繁的尺寸变化
 
-## Related widgets
+## 相关组件
 
-- **FractionallySizedBox**: Basic widget that sets size proportional to parent without animation
-- **AnimatedContainer**: Animates multiple properties simultaneously
-- **AnimatedAlign**: Animates only alignment transitions
-- **SizedBox**: Widget for setting fixed size
+- **FractionallySizedBox**：设置与父组件成比例尺寸的基本组件，无动画
+- **AnimatedContainer**：同时动画化多个属性
+- **AnimatedAlign**：仅动画化对齐过渡
+- **SizedBox**：用于设置固定尺寸的组件

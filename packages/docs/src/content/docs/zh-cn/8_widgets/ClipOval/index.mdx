@@ -3,16 +3,16 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: ClipOval
 title: "ClipOval"
-description: "A widget that clips its child using an oval shape"
+description: "使用椭圆形状裁剪其子组件的组件"
 ---
 
-## Overview
+## 概述
 
-ClipOval is a widget that clips its child using an elliptical or circular shape. It is commonly used to create circular profile images, avatars, or when an elliptical shape is needed for design purposes.
+ClipOval 是一个使用椭圆形或圆形裁剪其子组件的组件。它通常用于创建圆形的头像、用户头像，或在设计中需要椭圆形状时使用。
 
-> A widget that clips its child using an oval shape.
+> 使用椭圆形状裁剪其子组件的组件。
 
-Flutter reference: https://api.flutter.dev/flutter/widgets/ClipOval-class.html
+Flutter 参考: https://api.flutter.dev/flutter/widgets/ClipOval-class.html
 
 <iframe
   width="560"
@@ -24,21 +24,21 @@ Flutter reference: https://api.flutter.dev/flutter/widgets/ClipOval-class.html
   allowfullscreen
 ></iframe>
 
-## When to use
+## 何时使用？
 
-- Creating circular profile images or avatars
-- Clipping images or containers into an elliptical shape
-- Making buttons or cards circular or elliptical
-- When smooth curved shapes are needed for design
-- Placing logos or icons on a circular background
-- Creating round status indicators or badges
+- 创建圆形的头像或用户头像
+- 将图像或容器裁剪成椭圆形
+- 将按钮或卡片做成圆形或椭圆形
+- 当设计中需要平滑的曲线形状时
+- 在圆形背景上放置徽标或图标
+- 创建圆形的状态指示器或徽章
 
-## Basic usage
+## 基本用法
 
 ```typescript
 import { ClipOval, Container, Image } from '@flitter/core';
 
-// Basic circular clip
+// 基本圆形裁剪
 ClipOval({
   clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
   child: Container({
@@ -46,12 +46,12 @@ ClipOval({
     height: 100,
     color: "blue",
     child: Center({
-      child: Text("Circle", { style: TextStyle({ color: "white", fontSize: 16 }) }),
+      child: Text("圆形", { style: TextStyle({ color: "white", fontSize: 16 }) }),
     }),
   }),
 });
 
-// Clipping an image into a circle
+// 将图像裁剪成圆形
 ClipOval({
   clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
   child: Image({
@@ -63,35 +63,35 @@ ClipOval({
 });
 ```
 
-## Props
+## 属性
 
-### child (required)
-**Type: Widget**
+### child（必需）
+**类型: Widget**
 
-The child widget to be clipped.
+要裁剪的子组件。
 
-### clipper (required)
-**Type: (size: Size) => Rect**
+### clipper（必需）
+**类型: (size: Size) => Rect**
 
-A function that defines the clip region. It receives the widget's size and returns the rectangular area where the oval will be drawn.
-- `Rect.fromLTWH(0, 0, size.width, size.height)`: Clips the entire area as an oval
-- `Rect.fromLTWH(10, 10, size.width-20, size.height-20)`: Clips as an oval with margins
+定义裁剪区域的函数。它接收组件的尺寸并返回将绘制椭圆的矩形区域。
+- `Rect.fromLTWH(0, 0, size.width, size.height)`: 将整个区域裁剪为椭圆形
+- `Rect.fromLTWH(10, 10, size.width-20, size.height-20)`: 带边距的椭圆裁剪
 
-### clipped (optional)
-**Type: boolean** (default: **true**)
+### clipped（可选）
+**类型: boolean**（默认值: **true**）
 
-Specifies whether to enable the clipping effect.
-- `true`: Apply clipping
-- `false`: Disable clipping (child widget displays normally)
+指定是否启用裁剪效果。
+- `true`: 应用裁剪
+- `false`: 禁用裁剪（子组件正常显示）
 
-### key (optional)
-**Type: any**
+### key（可选）
+**类型: any**
 
-Unique identifier for the widget.
+组件的唯一标识符。
 
-## Real-world examples
+## 实际示例
 
-### Example 1: Profile avatar list
+### 示例 1：头像列表
 
 ```typescript
 import { ClipOval, Container, Image, Row, Column } from '@flitter/core';
@@ -108,7 +108,7 @@ class ProfileAvatars extends StatelessWidget {
     return Column({
       children: [
         Text(
-          "Team Members",
+          "团队成员",
           { style: TextStyle({ fontSize: 20, fontWeight: "bold", marginBottom: 20 }) }
         ),
         Row({
@@ -136,7 +136,7 @@ class ProfileAvatars extends StatelessWidget {
                         }),
                       }),
                     }),
-                    // Status indicator dot
+                    // 状态指示器点
                     Positioned({
                       right: 2,
                       bottom: 2,
@@ -174,25 +174,25 @@ class ProfileAvatars extends StatelessWidget {
 }
 ```
 
-### Example 2: Various sized circular buttons
+### 示例 2：各种尺寸的圆形按钮
 
 ```typescript
 import { ClipOval, Container, GestureDetector, Icon } from '@flitter/core';
 
 class CircularButtons extends StatelessWidget {
   buttons = [
-    { icon: Icons.home, color: "#2196F3", size: 80, label: "Home" },
-    { icon: Icons.search, color: "#4CAF50", size: 60, label: "Search" },
-    { icon: Icons.favorite, color: "#E91E63", size: 70, label: "Favorite" },
-    { icon: Icons.settings, color: "#FF9800", size: 65, label: "Settings" },
-    { icon: Icons.add, color: "#9C27B0", size: 75, label: "Add" },
+    { icon: Icons.home, color: "#2196F3", size: 80, label: "首页" },
+    { icon: Icons.search, color: "#4CAF50", size: 60, label: "搜索" },
+    { icon: Icons.favorite, color: "#E91E63", size: 70, label: "收藏" },
+    { icon: Icons.settings, color: "#FF9800", size: 65, label: "设置" },
+    { icon: Icons.add, color: "#9C27B0", size: 75, label: "添加" },
   ];
 
   build() {
     return Column({
       children: [
         Text(
-          "Circular Action Buttons",
+          "圆形操作按钮",
           { style: TextStyle({ fontSize: 20, fontWeight: "bold", marginBottom: 30 }) }
         ),
         Wrap({
@@ -262,7 +262,7 @@ class CircularButtons extends StatelessWidget {
 }
 ```
 
-### Example 3: Progress rings and circular charts
+### 示例 3：进度环和圆形图表
 
 ```typescript
 import { ClipOval, Container, Stack, CustomPaint } from '@flitter/core';
@@ -285,7 +285,7 @@ class CircularProgressState extends State<CircularProgress> {
     return Column({
       children: [
         Text(
-          "Skill Proficiency",
+          "技能熔熟度",
           { style: TextStyle({ fontSize: 20, fontWeight: "bold", marginBottom: 30 }) }
         ),
         GridView.count({
@@ -303,7 +303,7 @@ class CircularProgressState extends State<CircularProgress> {
                   child: Stack({
                     alignment: Alignment.center,
                     children: [
-                      // Background circle
+                      // 背景圆形
                       ClipOval({
                         clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
                         child: Container({
@@ -312,7 +312,7 @@ class CircularProgressState extends State<CircularProgress> {
                           color: "#F5F5F5",
                         }),
                       }),
-                      // Progress circle
+                      // 进度圆形
                       ClipOval({
                         clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
                         child: Container({
@@ -326,7 +326,7 @@ class CircularProgressState extends State<CircularProgress> {
                           }),
                         }),
                       }),
-                      // Center text
+                      // 中心文本
                       ClipOval({
                         clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
                         child: Container({
@@ -376,7 +376,7 @@ class CircularProgressPainter extends CustomPainter {
     const center = Offset(size.width / 2, size.height / 2);
     const radius = size.width / 2 - 10;
 
-    // Draw progress arc
+    // 绘制进度圆弧
     const paint = Paint()
       .setColor(this.color)
       .setStyle(PaintingStyle.stroke)
@@ -401,7 +401,7 @@ class CircularProgressPainter extends CustomPainter {
 }
 ```
 
-### Example 4: Circular image gallery
+### 示例 4：圆形图像库
 
 ```typescript
 import { ClipOval, Container, GestureDetector, Image, PageView } from '@flitter/core';
@@ -427,11 +427,11 @@ class CircularImageGalleryState extends State<CircularImageGallery> {
     return Column({
       children: [
         Text(
-          "Circular Image Gallery",
+          "圆形图像库",
           { style: TextStyle({ fontSize: 20, fontWeight: "bold", marginBottom: 20 }) }
         ),
         
-        // Main image
+        // 主图像
         Container({
           margin: EdgeInsets.symmetric({ horizontal: 40 }),
           child: ClipOval({
@@ -464,7 +464,7 @@ class CircularImageGalleryState extends State<CircularImageGallery> {
         
         SizedBox({ height: 30 }),
         
-        // Thumbnail list
+        // 缩略图列表
         Container({
           height: 80,
           child: ListView.builder({
@@ -529,18 +529,18 @@ class CircularImageGalleryState extends State<CircularImageGallery> {
 }
 ```
 
-## Important notes
+## 重要说明
 
-- **Clipping performance**: Complex shape clipping can affect rendering performance
-- **Boundary handling**: Touch events outside the clipped area are not detected
-- **Animation**: Consider performance when using clipping with animations
-- **Clipper function**: The clipper function is called whenever the widget size changes, so avoid heavy computations
-- **Nested clipping**: Performance degradation may occur when nesting multiple clipping widgets
+- **裁剪性能**: 复杂形状裁剪可能影响渲染性能
+- **边界处理**: 裁剪区域外的触摸事件不会被检测到
+- **动画**: 将裁剪与动画一起使用时要考虑性能
+- **裁剪器函数**: 当组件尺寸变化时会调用裁剪器函数，所以要避免繁重的计算
+- **嵌套裁剪**: 嵌套多个裁剪组件时可能会出现性能下降
 
-## Related widgets
+## 相关组件
 
-- **ClipRRect**: Widget that clips with rounded corners
-- **ClipRect**: Widget that clips with a rectangle
-- **ClipPath**: Widget that clips with custom paths
-- **Container**: Can create circular shapes using the shape property of decoration
-- **CircleAvatar**: Dedicated widget for creating circular avatars
+- **ClipRRect**: 使用圆角裁剪的组件
+- **ClipRect**: 使用矩形裁剪的组件
+- **ClipPath**: 使用自定义路径裁剪的组件
+- **Container**: 可以使用 decoration 的 shape 属性创建圆形
+- **CircleAvatar**: 专门用于创建圆形头像的组件

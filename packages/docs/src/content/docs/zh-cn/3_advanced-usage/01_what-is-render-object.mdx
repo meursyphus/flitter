@@ -1,90 +1,90 @@
 ---
-nav_title: "What is RenderObject"
-title: "Understanding the RenderObject System"
-description: "Learn about RenderObject, Flitter's core rendering system, and understand the relationships between Widget, Element, and RenderObject trees"
+nav_title: "什么是 RenderObject"
+title: "理解 RenderObject 系统"
+description: "了解 RenderObject，Flitter 的核心渲染系统，并理解 Widget、Element 和 RenderObject 树之间的关系"
 ---
 
 import TreeDiagramExample from '$components/pages/docs/3_advanced-usage/01-tree-diagram-example';
 import LayoutPaintExample from '$components/pages/docs/3_advanced-usage/02-layout-paint-example';
 
-## Understanding the RenderObject System
+## 理解 RenderObject 系统
 
-Flitter uses the same rendering architecture as Flutter. To draw something on the screen, you need to understand three tree structures.
+Flitter 使用与 Flutter 相同的渲染架构。要在屏幕上绘制内容，您需要理解三个树结构。
 
-## Widget Tree → Element Tree → RenderObject Tree
+## Widget 树 → Element 树 → RenderObject 树
 
 <TreeDiagramExample
   client:load
-  title="Three Tree Structures"
-  description="Widget is the blueprint, Element is the instance, and RenderObject handles the actual rendering"
+  title="三个树结构"
+  description="Widget 是蓝图，Element 是实例，RenderObject 处理实际渲染"
 />
 
-### Role of Each Tree
+### 每个树的作用
 
-**Widget Tree (Blueprint)**
-- Immutable objects that declaratively express UI structure
-- Code written by developers
-- Can be recreated every frame
+**Widget 树（蓝图）**
+- 声明式表达 UI 结构的不可变对象
+- 开发者编写的代码
+- 可以每帧重新创建
 
-**Element Tree (Instance)**
-- Intermediate layer connecting Widget and RenderObject
-- Manages state and handles lifecycle
-- Elements are reused even when Widgets change
+**Element 树（实例）**
+- 连接 Widget 和 RenderObject 的中间层
+- 管理状态并处理生命周期
+- 即使 Widget 发生变化，Element 也会被重用
 
-**RenderObject Tree (Rendering)**
-- Handles actual layout calculation and drawing
-- Contains size, position, and painting information
-- Performance-critical part, reused whenever possible
+**RenderObject 树（渲染）**
+- 处理实际的布局计算和绘制
+- 包含尺寸、位置和绘制信息
+- 性能关键部分，尽可能重用
 
-## Separation of Layout and Paint
+## 布局和绘制的分离
 
 <LayoutPaintExample
   client:load
-  title="Layout and Paint Process"
-  description="performLayout() calculates size and position, paint() does the actual drawing"
+  title="布局和绘制过程"
+  description="performLayout() 计算尺寸和位置，paint() 执行实际绘制"
 />
 
-### performLayout(): Size and Position Calculation
+### performLayout()：尺寸和位置计算
 
 ```typescript
 class RenderBox {
   performLayout() {
-    // 1. Perform layout for children
-    // 2. Determine own size based on children's sizes
-    // 3. Determine children's positions
+    // 1. 对子节点执行布局
+    // 2. 根据子节点的尺寸确定自身尺寸
+    // 3. 确定子节点的位置
   }
 }
 ```
 
-### paint(): Actual Drawing on Screen
+### paint()：屏幕上的实际绘制
 
 ```typescript
 class RenderBox {
   paint(context: PaintingContext, offset: Offset) {
-    // 1. Draw own content (background, borders, etc.)
-    // 2. Request paint from children
+    // 1. 绘制自身内容（背景、边框等）
+    // 2. 请求子节点绘制
   }
 }
 ```
 
-### Why Are They Separated?
+### 为什么要分离？
 
-Layout and Paint are separated for **performance optimization**:
+布局和绘制分离是为了**性能优化**：
 
-1. **Layout Caching**: Layout is not recalculated if size or position doesn't change
-2. **Partial Repaint**: Only paint is performed without layout when only colors change
-3. **Layer Optimization**: Unchanged parts are cached as layers
+1. **布局缓存**：如果尺寸或位置没有改变，则不重新计算布局
+2. **部分重绘**：当只有颜色改变时，只执行绘制而不进行布局
+3. **层优化**：未改变的部分作为层进行缓存
 
-## Exploring the Source Code
+## 探索源代码
 
-Flitter's RenderObject implementation can be found in the `packages/flitter/src/renderobject/` directory:
+Flitter 的 RenderObject 实现可以在 `packages/flitter/src/renderobject/` 目录中找到：
 
-- `RenderObject.ts`: Base RenderObject class
-- `RenderBox.ts`: RenderBox implementing 2D box model
-- `RenderFlex.ts`: Flex layout that forms the basis of Row and Column
+- `RenderObject.ts`：基础 RenderObject 类
+- `RenderBox.ts`：实现 2D 盒模型的 RenderBox
+- `RenderFlex.ts`：构成 Row 和 Column 基础的 Flex 布局
 
-Looking at the actual implementation, you can see it has almost identical structure to Flutter.
+查看实际实现，您可以看到它与 Flutter 的结构几乎相同。
 
-## Next Steps
+## 下一步
 
-Now that you understand the basic concepts of RenderObject, in the next chapter we'll explore the **Constraints system**, which is the core of layout. We'll examine in detail how constraints are passed from parent to child and how sizes are determined.
+现在您已经理解了 RenderObject 的基本概念，在下一章中我们将探索**约束系统**，它是布局的核心。我们将详细研究约束如何从父节点传递到子节点，以及尺寸是如何确定的。

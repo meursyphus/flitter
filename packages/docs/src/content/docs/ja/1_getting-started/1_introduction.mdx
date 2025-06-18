@@ -1,50 +1,50 @@
 ---
-nav_title: "Introduction"
-title: "Why Should You Use Flitter?"
-description: "A JavaScript rendering engine that solves complex graphics problems with Flutter's declarative syntax"
+nav_title: "はじめに"
+title: "なぜFlitterを使うべきか？"
+description: "Flutterの宣言的構文で複雑なグラフィックス問題を解決するJavaScriptレンダリングエンジン"
 ---
 
 import AutoTextWrapDemo from '$components/pages/docs/01_getting-started/auto-text-wrap-demo';
 
-# Why Should You Use Flitter?
+# なぜFlitterを使うべきか？
 
-## The Problem You're Facing
+## あなたが直面している問題
 
-Monday morning in your SaaS startup's development team meeting room. The PM has arrived with new feature requirements.
+月曜日の朝、SaaSスタートアップの開発チーム会議室。PMが新機能の要件を持ってやってきました。
 
-> "We need to add a **workflow editor** to our product. Users should be able to drag nodes and connect them, with real-time updates. You know, like Notion or Figma!"
+> 「製品に**ワークフローエディタ**を追加する必要があります。ユーザーはノードをドラッグして接続でき、リアルタイムで更新されるようにしたいです。NotionやFigmaみたいな感じで！」
 
-The team members' faces stiffen. The frontend developer speaks up cautiously.
+チームメンバーの顔が固まります。フロントエンド開発者が慎重に口を開きます。
 
-> "We could try D3.js, but... calculating node positions, drawing connection lines, handling drag... it'll probably take 2-3 weeks. And that's just for basic features."
+> 「D3.jsを試すこともできますが...ノードの位置計算、接続線の描画、ドラッグ処理...基本機能だけでも2〜3週間はかかるでしょう。」
 
-Another developer adds:
+別の開発者が付け加えます：
 
-> "Should we draw directly with Canvas API? Or SVG? How do we handle text? We'd have to manually calculate line breaks and alignment..."
+> 「Canvas APIで直接描画すべきでしょうか？それともSVG？テキストはどう扱いますか？改行や配置を手動で計算しなければなりません...」
 
-## Familiar Frustration
+## 馴染みのあるフラストレーション
 
-Sound familiar?
+心当たりはありませんか？
 
-Handling complex graphics on the web has always been a developer's nightmare. HTML/CSS has clear limitations, and using D3.js or Canvas API feels like going back to the 1990s where you have to manually calculate everything.
+ウェブ上で複雑なグラフィックスを扱うことは、常に開発者の悪夢でした。HTML/CSSには明確な限界があり、D3.jsやCanvas APIを使うのは、すべてを手動で計算しなければならない1990年代に戻るような感覚です。
 
-Let's take a simple example: centering text in a box and making it wrap automatically.
+簡単な例を見てみましょう：ボックス内でテキストを中央揃えにし、自動的に折り返すようにする。
 
-### With D3.js, it's this complex:
+### D3.jsでは、これほど複雑です：
 
 ```javascript
-// Starting with coordinate calculations...
+// 座標計算から始めて...
 const svg = d3.select("svg");
 const boxWidth = 200;
 const boxHeight = 100;
 
-// Create text element and set position
+// テキスト要素を作成して位置を設定
 const text = svg.append("text")
   .attr("x", boxWidth / 2)
   .attr("y", boxHeight / 2)
   .attr("text-anchor", "middle");
 
-// Implement complex function for line wrapping
+// 改行のための複雑な関数を実装
 function wrapText(text, width) {
   const words = text.text().split(/\s+/);
   const lineHeight = 1.2;
@@ -66,98 +66,98 @@ function wrapText(text, width) {
     }
   });
   
-  // Additional calculations for vertical centering...
+  // 垂直方向の中央揃えのための追加計算...
   const totalHeight = lineNumber * lineHeight * 16;
   text.attr("transform", `translate(0, ${-totalHeight/2})`);
 }
 
-// And even resize event handling...
+// さらにリサイズイベントの処理も...
 ```
 
-Over 50 lines of code, complex calculations, and still not perfect results. Can you believe this is web development in 2024?
+50行以上のコード、複雑な計算、それでも完璧ではない結果。これが2024年のウェブ開発だと信じられますか？
 
-## With Flitter, It's This Simple
+## Flitterなら、こんなにシンプル
 
 <AutoTextWrapDemo client:load />
 
-Look at the demo above. Drag the left and right borders to resize, and the text automatically wraps.
+上のデモを見てください。左右の境界をドラッグしてリサイズすると、テキストが自動的に折り返されます。
 
-**Amazing part**: Did you notice that even though it's a Canvas renderer, the mouse cursor changes automatically? It becomes a resize cursor in the drag area. Flitter handles all this complex processing. You just focus on business logic.
+**驚くべき点**：Canvasレンダラーであるにもかかわらず、マウスカーソルが自動的に変わることに気づきましたか？ドラッグエリアではリサイズカーソルになります。Flitterはこれらすべての複雑な処理を行います。あなたはビジネスロジックに集中するだけです。
 
 ```typescript
 Center({
   child: Container({
     width: 200,
-    child: Text("Long text automatically wraps and centers", {
+    child: Text("長いテキストは自動的に折り返され中央揃えになります", {
       textAlign: TextAlign.center,
     })
   })
 })
 ```
 
-## What is Flitter?
+## Flitterとは？
 
 ```
 ┌─────────────────────────────────────────────────┐
-│                   Your App                       │
+│               あなたのアプリ                        │
 ├─────────────────────────────────────────────────┤
-│                Widget Layer                      │
+│              ウィジェットレイヤー                    │
 │         (Container, Text, Column...)             │
 ├─────────────────────────────────────────────────┤
-│              RenderObject Tree                   │
-│         (Layout, Paint, Hit Testing)             │
+│           RenderObjectツリー                      │
+│     (レイアウト、ペイント、ヒットテスト)                │
 ├─────────────────────────────────────────────────┤
-│            Flitter Engine Core                   │
+│          Flitterエンジンコア                       │
 ├─────────────┬───────────────────────────────────┤
-│  SVG Renderer │         Canvas Renderer          │
+│  SVGレンダラー  │       Canvasレンダラー             │
 └───────────────┴─────────────────────────────────┘
 ```
 
-Flitter is a **declarative UI rendering engine that works on the web**. It implements Flutter's powerful widget system in JavaScript.
+Flitterは**ウェブ上で動作する宣言的UIレンダリングエンジン**です。FlutterのパワフルなウィジェットシステムをJavaScriptで実装しています。
 
-### Core Features
+### コア機能
 
-#### 🎯 Dual Renderer System
-- **SVG**: SEO-friendly, text selectable, CSS animations
-- **Canvas**: High performance, pixel-level control, complex animations
+#### 🎯 デュアルレンダラーシステム
+- **SVG**: SEOフレンドリー、テキスト選択可能、CSSアニメーション
+- **Canvas**: 高パフォーマンス、ピクセルレベルの制御、複雑なアニメーション
 
 ![svg-canvas](/svg-canvas.gif)
 
-#### 🚀 Industry-First SSR + Canvas Hydration
+#### 🚀 業界初のSSR + Canvasハイドレーション
 ```typescript
-// Render with SVG on server → Switch to Canvas on client
+// サーバーではSVGでレンダリング → クライアントでCanvasに切り替え
 <Widget 
   renderer="canvas"
   ssr={{
-    size: { width: 800, height: 600 }  // Server render size
+    size: { width: 800, height: 600 }  // サーバーレンダリングサイズ
   }}
   widget={...} 
 />
 ```
 
-Fast initial loading with SVG, smooth interactions with Canvas. **Only Flitter can do this.**
+SVGで高速な初期ロード、Canvasでスムーズなインタラクション。**これができるのはFlitterだけです。**
 
-## Comparison with Other Graphics Libraries
+## 他のグラフィックスライブラリとの比較
 
-### 😫 Limitations of Existing Libraries
+### 😫 既存ライブラリの限界
 
-| Library | Problems |
+| ライブラリ | 問題点 |
 |---------|----------|
-| **D3.js** | Manual calculation of everything. Coordinates, sizes, animations... |
-| **Konva.js** | Object-oriented but still imperative. Complex layouts are nightmares |
-| **Fabric.js** | Good for canvas manipulation, but unsuitable for UI composition |
-| **Paper.js** | Strong in vector graphics, but difficult for general UI |
-| **Three.js** | Great for 3D, but... Three.js for 2D UI? |
+| **D3.js** | すべてを手動で計算。座標、サイズ、アニメーション... |
+| **Konva.js** | オブジェクト指向だが依然として命令的。複雑なレイアウトは悪夢 |
+| **Fabric.js** | キャンバス操作には良いが、UIコンポジションには不適切 |
+| **Paper.js** | ベクターグラフィックスに強いが、一般的なUIには困難 |
+| **Three.js** | 3Dには素晴らしいが... 2D UIにThree.js？ |
 
-### ✨ Flitter's Solution
+### ✨ Flitterの解決策
 
 ```typescript
-// Other libraries: hundreds of lines of boilerplate
-// Flitter: just what you need
+// 他のライブラリ：何百行ものボイラープレート
+// Flitter：必要なものだけ
 
 Column({
   children: [
-    Text("Title", { style: headerStyle }),
+    Text("タイトル", { style: headerStyle }),
     Container({
       padding: EdgeInsets.all(20),
       decoration: new BoxDecoration({
@@ -166,21 +166,21 @@ Column({
       }),
       child: Row({
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [/* Complex layouts made simple */]
+        children: [/* 複雑なレイアウトがシンプルに */]
       })
     })
   ]
 })
 ```
 
-## Do You Have Flutter Developers on Your Team?
+## チームにFlutter開発者はいますか？
 
-"Oh, we have Flutter developers on our team..."
+「ああ、私たちのチームにはFlutter開発者がいます...」
 
-**Congratulations!** They're already Flitter experts. Learning curve? None. They can start with 100% productivity immediately.
+**おめでとうございます！** 彼らはすでにFlitterのエキスパートです。学習曲線？ありません。すぐに100%の生産性で開始できます。
 
 ```dart
-// Flutter code
+// Flutterコード
 Container(
   padding: EdgeInsets.all(16),
   child: Text("Hello Flutter"),
@@ -188,23 +188,23 @@ Container(
 ```
 
 ```typescript
-// Flitter code - almost identical!
+// Flitterコード - ほぼ同じ！
 Container({
   padding: EdgeInsets.all(16),
   child: Text("Hello Flitter")
 })
 ```
 
-## Proven in Real Production Environments
+## 実際の本番環境で実証済み
 
-### 🎯 Use Case 1: Complex Diagram Editor
+### 🎯 ユースケース1：複雑なダイアグラムエディタ
 
-**Problem**: "We need to build an ERD editor that works smoothly with 100+ nodes"
+**問題**：「100以上のノードでスムーズに動作するERDエディタを構築する必要があります」
 
-**Flitter Solution**:
+**Flitterの解決策**：
 ```typescript
-// Node dragging, connection drawing, auto-alignment...
-// All solved with widget composition
+// ノードのドラッグ、接続の描画、自動配置...
+// すべてウィジェットコンポジションで解決
 Stack({
   children: [
     ...nodes.map(node => 
@@ -222,64 +222,64 @@ Stack({
 
 ![easyrd](/easyrd.gif)
 
-Actually available as a [GitHub open source project](https://github.com/meursyphus/easy-rd) and actively used in production environments.
+実際に[GitHubオープンソースプロジェクト](https://github.com/meursyphus/easy-rd)として利用可能で、本番環境で積極的に使用されています。
 
-### 🎯 Use Case 2: Headless Chart Library
+### 🎯 ユースケース2：ヘッドレスチャートライブラリ
 
-**Problem**: "Chart.js has limited customization, and D3.js is too low-level"
+**問題**：「Chart.jsはカスタマイズが限定的で、D3.jsは低レベルすぎる」
 
-**Flitter Solution**: [headless-chart](https://github.com/meursyphus/headless-chart) - A fully customizable chart library released as open source, with detailed information available in the [official documentation](https://headless-chart.pages.dev/) and actively used in production.
+**Flitterの解決策**：[headless-chart](https://github.com/meursyphus/headless-chart) - 完全にカスタマイズ可能なチャートライブラリとしてオープンソースで公開され、[公式ドキュメント](https://headless-chart.pages.dev/)で詳細情報が利用可能で、本番環境で積極的に使用されています。
 
 ![headless-chart](/headless-chart.gif)
 
-## Why Flitter Now?
+## なぜ今Flitterなのか？
 
-### 📈 Market Demand
-- Increasing complexity of SaaS products
-- Explosive demand for dashboards, workflow editors, diagram tools
-- Requirements like "make it like Notion" or "like Figma"
+### 📈 市場の需要
+- SaaS製品の複雑化の増加
+- ダッシュボード、ワークフローエディタ、ダイアグラムツールへの爆発的な需要
+- 「Notionのようにして」や「Figmaのようにして」といった要件
 
-### 🚀 Technical Advantages
-- **Development Speed**: 5-10x faster development compared to D3.js
-- **Maintenance**: Easy to understand with declarative code
-- **Performance**: Efficient rendering that only redraws necessary parts
-- **Scalability**: Infinitely extensible with widget-based architecture
+### 🚀 技術的な利点
+- **開発速度**：D3.jsと比較して5〜10倍速い開発
+- **メンテナンス**：宣言的コードで理解しやすい
+- **パフォーマンス**：必要な部分のみを再描画する効率的なレンダリング
+- **スケーラビリティ**：ウィジェットベースのアーキテクチャで無限に拡張可能
 
-## Perfect for These Teams
+## こんなチームに最適
 
-✅ Teams that need to build **complex diagrams or visualizations**  
-✅ Teams implementing **node editors, flowcharts, mind maps**  
-✅ Data visualization teams needing **custom charts**  
-✅ Teams **tired** of D3.js complexity  
-✅ Teams with developers who have **Flutter experience**  
-✅ Teams where both **performance and development productivity** matter  
+✅ **複雑なダイアグラムや視覚化**を構築する必要があるチーム  
+✅ **ノードエディタ、フローチャート、マインドマップ**を実装するチーム  
+✅ **カスタムチャート**が必要なデータ視覚化チーム  
+✅ D3.jsの複雑さに**疲れた**チーム  
+✅ **Flutter経験**のある開発者がいるチーム  
+✅ **パフォーマンスと開発生産性**の両方が重要なチーム  
 
-## Value Provided by Flitter
+## Flitterが提供する価値
 
 ```
-Traditional Approach (D3.js, Canvas API)
-├─ Development Time: 3 weeks
-├─ Lines of Code: 2000
-├─ Maintenance: 😱
-└─ Bugs: Many
+従来のアプローチ（D3.js、Canvas API）
+├─ 開発時間：3週間
+├─ コード行数：2000
+├─ メンテナンス：😱
+└─ バグ：多い
 
-Flitter Approach
-├─ Development Time: 3 days
-├─ Lines of Code: 200
-├─ Maintenance: 😊
-└─ Bugs: Few
+Flitterアプローチ
+├─ 開発時間：3日
+├─ コード行数：200
+├─ メンテナンス：😊
+└─ バグ：少ない
 ```
 
-## Getting Started
+## はじめに
 
 ```bash
 npm install @meursyphus/flitter
 ```
 
-You can start with just one line of command.
+たった1行のコマンドで始められます。
 
-**In the next chapter**, we'll learn about installation methods for each framework and how to create your first Flitter app.
+**次の章では**、各フレームワークのインストール方法と、最初のFlitterアプリの作成方法を学びます。
 
 ---
 
-**🚀 Ready?** Let's start the journey to solve complex graphics problems simply!
+**🚀 準備はいいですか？** 複雑なグラフィックス問題をシンプルに解決する旅を始めましょう！

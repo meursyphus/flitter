@@ -1,78 +1,78 @@
 ---
 nav_title: "Hello World"
-title: "Hello World - Centering Text"
-description: "Learn how simple Flitter's declarative programming is compared to D3.js"
+title: "Hello World - 居中文本"
+description: "了解 Flitter 的声明式编程相比 D3.js 有多简单"
 ---
 
 import HelloWorldExample from '$components/pages/docs/01_getting-started/01-hello-world-example';
 
-# Hello World - Centering Text
+# Hello World - 居中文本
 
-One of the most basic tasks when working with graphics on the web is centering text on the screen.
-Even this seemingly simple task requires quite complex code with traditional approaches.
+在 Web 上处理图形时，最基本的任务之一是在屏幕上居中文本。
+即使是这个看似简单的任务，使用传统方法也需要相当复杂的代码。
 
-## Why is this a problem?
+## 为什么这是个问题？
 
-To center elements in SVG or Canvas:
-1. You need to know the container size
-2. You need to calculate the element's size
-3. You need to manually calculate the center coordinates
-4. You need to recalculate whenever the size changes
+要在 SVG 或 Canvas 中居中元素：
+1. 您需要知道容器大小
+2. 您需要计算元素的大小
+3. 您需要手动计算中心坐标
+4. 每当大小改变时，您需要重新计算
 
-These repetitive and complex tasks are error-prone and make code difficult to read.
+这些重复且复杂的任务容易出错，并使代码难以阅读。
 
-## Declarative vs Imperative Programming
+## 声明式 vs 命令式编程
 
 <HelloWorldExample
   client:load
-  title="Your First Flitter Application"
-  description="Compare how D3.js and Flitter differ in achieving the same result."
+  title="您的第一个 Flitter 应用程序"
+  description="比较 D3.js 和 Flitter 在实现相同结果上的差异。"
   labels={{
     flitterTab: "Flitter",
     d3Tab: "D3.js",
-    codeSection: "Code",
-    resultSection: "Result",
-    flitterCodeTitle: "Flitter Code (40 lines)",
-    d3CodeTitle: "D3.js Code (60 lines)",
+    codeSection: "代码",
+    resultSection: "结果",
+    flitterCodeTitle: "Flitter 代码（40 行）",
+    d3CodeTitle: "D3.js 代码（60 行）",
     flitterAdvantages: "Flitter",
     d3Problems: "D3.js",
-    keyDifferences: "Key Differences",
-    resultDescription: "* Try clicking the button! Both codes produce the same result, but Flitter is much simpler.",
+    keyDifferences: "关键差异",
+    resultDescription: "* 试试点击按钮！两段代码产生相同的结果，但 Flitter 简单得多。",
     flitterBenefits: {
-      declarative: "Automatic layout handling with declarative UI",
-      gestureDetector: "Simple event handling with GestureDetector",
-      setState: "Automatic re-rendering with setState",
-      widgetComposition: "Complex layouts solved through widget composition"
+      declarative: "通过声明式 UI 自动处理布局",
+      gestureDetector: "使用 GestureDetector 简单处理事件",
+      setState: "使用 setState 自动重新渲染",
+      widgetComposition: "通过组件组合解决复杂布局"
     },
     d3Issues: {
-      manualCoordinates: "Directly create SVG elements and position them",
-      manualEvents: "Manually bind event handlers",
-      directDOM: "Directly manipulate DOM on state changes",
-      separateHover: "Implement hover effects separately"
+      manualCoordinates: "直接创建 SVG 元素并定位它们",
+      manualEvents: "手动绑定事件处理程序",
+      directDOM: "状态改变时直接操作 DOM",
+      separateHover: "单独实现悬停效果"
     }
   }}
 />
 
-## Understanding Key Concepts
+## 理解关键概念
 
-### 1. Center Widget
-Flitter's `Center` widget automatically centers its child element:
+### 1. Center 组件
+Flitter 的 `Center` 组件自动将其子元素居中：
 
 ```typescript
 Center({
-  child: Text("This will be centered!")
+  child: Text("这将被居中！")
 })
 ```
 
-### 2. Automatic Sizing
-Flitter automatically recalculates the layout when the parent container size changes.
-There's no need to write separate resize event handlers.
+### 2. 自动调整大小
+当父容器大小改变时，Flitter 会自动重新计算布局。
+无需编写单独的调整大小事件处理程序。
 
-### 3. Declarative Styling
-Use `TextStyle` to declaratively define the appearance of text:
+### 3. 声明式样式
+使用 `TextStyle` 声明式地定义文本的外观：
 
 ```typescript
-Text("Styled text", {
+Text("样式化文本", {
   style: TextStyle({
     fontSize: 24,
     fontWeight: 'bold',
@@ -81,27 +81,27 @@ Text("Styled text", {
 })
 ```
 
-## Practice: Various Alignment Methods
+## 练习：各种对齐方法
 
-### Using the Align Widget
-`Center` is actually a special case of the `Align` widget. For more precise control:
+### 使用 Align 组件
+`Center` 实际上是 `Align` 组件的特例。要进行更精确的控制：
 
 ```typescript
-// Position at top right
+// 定位在右上角
 Align({
   alignment: Alignment.topRight,
-  child: Text("Top Right")
+  child: Text("右上角")
 })
 
-// Custom position (slightly above center)
+// 自定义位置（稍微在中心上方）
 Align({
   alignment: new Alignment(0, -0.5),
-  child: Text("Above Center")
+  child: Text("中心上方")
 })
 ```
 
-### Using with Container
-In real applications, it's usually used together with `Container`:
+### 与 Container 一起使用
+在实际应用中，通常与 `Container` 一起使用：
 
 ```typescript
 Container({
@@ -109,7 +109,7 @@ Container({
   height: 200,
   color: '#EFF6FF',
   child: Center({
-    child: Text("Text in Container", {
+    child: Text("Container 中的文本", {
       style: TextStyle({
         fontSize: 20,
         color: '#1E40AF'
@@ -119,20 +119,20 @@ Container({
 })
 ```
 
-## Why is this important?
+## 为什么这很重要？
 
-1. **Productivity**: Implement desired layouts directly without complex calculations
-2. **Readability**: Code clearly expresses intent
-3. **Maintainability**: Layout logic is encapsulated, making modifications easy
-4. **Scalability**: Complex layouts can be easily implemented by combining widgets
+1. **生产力**：无需复杂计算即可直接实现所需布局
+2. **可读性**：代码清楚地表达意图
+3. **可维护性**：布局逻辑被封装，易于修改
+4. **可扩展性**：通过组合组件可以轻松实现复杂布局
 
-## Next Steps
+## 下一步
 
-Now that you understand the basics of Flitter, let's explore various shapes and layout widgets in the Basic Elements section.
+现在您了解了 Flitter 的基础知识，让我们在基本元素部分探索各种形状和布局组件。
 
-## Summary
+## 总结
 
-- Flitter makes complex layouts simple with declarative programming
-- Automatic center alignment is possible with the `Center` widget
-- Responsive handling to size changes happens automatically
-- You can achieve the same results with much less code compared to D3.js
+- Flitter 通过声明式编程使复杂布局变得简单
+- 使用 `Center` 组件可以实现自动居中对齐
+- 自动响应尺寸变化
+- 相比 D3.js，您可以用更少的代码实现相同的结果

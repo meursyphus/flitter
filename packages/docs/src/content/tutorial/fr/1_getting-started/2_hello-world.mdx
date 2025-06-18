@@ -1,6 +1,6 @@
 ---
-title: "Your First Flitter App"
-description: "Create 'Hello World' with Container and Text, and understand the widget tree"
+title: "Votre première application Flitter"
+description: "Créez 'Hello World' avec Container et Text, et comprenez l'arbre de widgets"
 files:
   App.js: |
     import React from 'react';
@@ -9,19 +9,19 @@ files:
 
     class HelloWorldApp extends StatelessWidget {
       build(context) {
-        // TODO: Create widgets here
+        // TODO: Créer des widgets ici
         return Container({
           width: 400,
           height: 200,
           color: '#f8f9fa',
           child: Center({
-            child: Text('TODO: Add your widgets')
+            child: Text('TODO: Ajoutez vos widgets')
           })
         });
       }
     }
 
-    // Factory function
+    // Fonction factory
     function createWidget() {
       return new HelloWorldApp();
     }
@@ -47,7 +47,7 @@ solved_files:
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('Hello, Flitter!', {
+                Text('Bonjour, Flitter !', {
                   style: new TextStyle({
                     fontSize: 28,
                     fontWeight: 'bold',
@@ -55,7 +55,7 @@ solved_files:
                   })
                 }),
                 SizedBox({ height: 10 }),
-                Text('My first widget app', {
+                Text('Ma première application widget', {
                   style: new TextStyle({
                     fontSize: 16,
                     color: '#64748b'
@@ -68,7 +68,7 @@ solved_files:
       }
     }
 
-    // Factory function
+    // Fonction factory
     function createWidget() {
       return new HelloWorldApp();
     }
@@ -78,121 +78,121 @@ solved_files:
     }
 ---
 
-# Your First Flitter App
+# Votre première application Flitter
 
-Now that installation is complete, let's create your first app using Flitter's core widgets Container and Text. Through this tutorial, you'll learn the basic concepts of widget trees and how to combine widgets.
+Maintenant que l'installation est terminée, créons votre première application en utilisant les widgets principaux de Flitter : Container et Text. À travers ce tutoriel, vous apprendrez les concepts de base des arbres de widgets et comment combiner les widgets.
 
-## 🎯 Learning Objectives
+## 🎯 Objectifs d'apprentissage
 
-After completing this tutorial, you'll be able to:
+Après avoir terminé ce tutoriel, vous serez capable de :
 
-- [ ] Create boxes with Container widget
-- [ ] Display text with Text widget
-- [ ] Nest widgets to create tree structures
-- [ ] Apply basic layout and styling
-- [ ] Arrange widgets vertically with Column
+- [ ] Créer des boîtes avec le widget Container
+- [ ] Afficher du texte avec le widget Text
+- [ ] Imbriquer des widgets pour créer des structures arborescentes
+- [ ] Appliquer une mise en page et un style de base
+- [ ] Organiser les widgets verticalement avec Column
 
-## 📚 Core Concept: What are Widgets?
+## 📚 Concept clé : Que sont les widgets ?
 
-In Flitter, **Widget** is the basic building block for constructing UI. Everything is made of widgets, and you can combine widgets to create complex UIs.
+Dans Flitter, **Widget** est le bloc de construction de base pour construire une interface utilisateur. Tout est fait de widgets, et vous pouvez combiner des widgets pour créer des interfaces utilisateur complexes.
 
-### Widget Characteristics
+### Caractéristiques des widgets
 
-1. **Immutable**: Once created, widgets cannot be changed
-2. **Composable**: Widgets can be nested inside other widgets to create complex structures
-3. **Reusable**: The same widget can be used in multiple places
+1. **Immuables** : Une fois créés, les widgets ne peuvent pas être modifiés
+2. **Composables** : Les widgets peuvent être imbriqués dans d'autres widgets pour créer des structures complexes
+3. **Réutilisables** : Le même widget peut être utilisé à plusieurs endroits
 
-## 🏗️ Understanding Container Widget
+## 🏗️ Comprendre le widget Container
 
-**Container** is one of Flitter's most fundamental widgets. It's used to create boxes and apply styling.
+**Container** est l'un des widgets les plus fondamentaux de Flitter. Il est utilisé pour créer des boîtes et appliquer des styles.
 
-### Key Properties of Container
+### Propriétés clés de Container
 
 ```typescript
 Container({
-  // Size settings
-  width: 200,           // Width (pixels)
-  height: 100,          // Height (pixels)
+  // Paramètres de taille
+  width: 200,           // Largeur (pixels)
+  height: 100,          // Hauteur (pixels)
   
-  // Color and style
-  color: '#ff0000',     // Background color (hex code)
+  // Couleur et style
+  color: '#ff0000',     // Couleur de fond (code hexadécimal)
   
-  // Margin settings
-  padding: EdgeInsets.all(16), // Inner spacing
-  margin: EdgeInsets.all(8),   // Outer spacing
+  // Paramètres de marge
+  padding: EdgeInsets.all(16), // Espacement intérieur
+  margin: EdgeInsets.all(8),   // Espacement extérieur
   
-  // Child widget
-  child: Text('Hello')  // Single child widget
+  // Widget enfant
+  child: Text('Bonjour')  // Widget enfant unique
 })
 ```
 
-### Margin Setting Methods
+### Méthodes de configuration des marges
 
 ```typescript
-// Same margin on all sides
+// Même marge de tous les côtés
 padding: EdgeInsets.all(16)
 
-// Different horizontal/vertical margins
+// Marges horizontales/verticales différentes
 padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 10 })
 
-// Individual margin for each side
+// Marge individuelle pour chaque côté
 padding: EdgeInsets.only({ top: 8, right: 16, bottom: 8, left: 16 })
 ```
 
-## 📝 Understanding Text Widget
+## 📝 Comprendre le widget Text
 
-**Text** is a widget that displays text on screen.
+**Text** est un widget qui affiche du texte à l'écran.
 
-### Basic Usage of Text
+### Utilisation de base de Text
 
 ```typescript
-// Simple text
-Text('Hello, World!')
+// Texte simple
+Text('Bonjour, le monde !')
 
-// Text with styling applied
-Text('Styled text', {
+// Texte avec style appliqué
+Text('Texte stylisé', {
   style: new TextStyle({
-    fontSize: 20,        // Font size
-    fontWeight: 'bold',  // Font weight: 'normal', 'bold', '100'-'900'
-    color: '#1e40af',    // Text color
-    fontFamily: 'Arial'  // Font family
+    fontSize: 20,        // Taille de police
+    fontWeight: 'bold',  // Poids de police : 'normal', 'bold', '100'-'900'
+    color: '#1e40af',    // Couleur du texte
+    fontFamily: 'Arial'  // Famille de polices
   })
 })
 ```
 
-### Text Alignment Options
+### Options d'alignement du texte
 
 ```typescript
-Text('Aligned text', {
+Text('Texte aligné', {
   textAlign: 'center'  // 'left', 'center', 'right', 'justify'
 })
 ```
 
-## 🔧 Practice: Creating Hello World App
+## 🔧 Pratique : Créer une application Hello World
 
-Now let's combine Container and Text to create a "Hello World" app.
+Maintenant, combinons Container et Text pour créer une application "Hello World".
 
-### Step 1: Create Basic Structure
+### Étape 1 : Créer la structure de base
 
-First, let's create a Container with blue background:
+D'abord, créons un Container avec un fond bleu :
 
 ```typescript
 const widget = Container({
-  color: '#f0f9ff',     // Light blue background
-  padding: EdgeInsets.all(20), // 20px padding on all sides
-  child: Text('Hello, Flitter!')
+  color: '#f0f9ff',     // Fond bleu clair
+  padding: EdgeInsets.all(20), // 20px de padding de tous les côtés
+  child: Text('Bonjour, Flitter !')
 });
 ```
 
-### Step 2: Add Text Styling
+### Étape 2 : Ajouter un style au texte
 
-Now let's add styling to the text:
+Maintenant, ajoutons un style au texte :
 
 ```typescript
 const widget = Container({
   color: '#f0f9ff',
   padding: EdgeInsets.all(20),
-  child: Text('Hello, Flitter!', {
+  child: Text('Bonjour, Flitter !', {
     style: new TextStyle({
       fontSize: 28,
       fontWeight: 'bold',
@@ -202,9 +202,9 @@ const widget = Container({
 });
 ```
 
-### Step 3: Add Multiple Texts
+### Étape 3 : Ajouter plusieurs textes
 
-Let's use Column widget to arrange multiple texts vertically:
+Utilisons le widget Column pour organiser plusieurs textes verticalement :
 
 ```typescript
 import { Container, Text, Column, SizedBox, EdgeInsets, MainAxisAlignment, CrossAxisAlignment, TextStyle } from '@meursyphus/flitter';
@@ -213,18 +213,18 @@ const widget = Container({
   color: '#f0f9ff',
   padding: EdgeInsets.all(20),
   child: Column({
-    mainAxisAlignment: MainAxisAlignment.center,    // Vertical center alignment
-    crossAxisAlignment: CrossAxisAlignment.center,   // Horizontal center alignment
+    mainAxisAlignment: MainAxisAlignment.center,    // Alignement vertical au centre
+    crossAxisAlignment: CrossAxisAlignment.center,   // Alignement horizontal au centre
     children: [
-      Text('Hello, Flitter!', {
+      Text('Bonjour, Flitter !', {
         style: new TextStyle({
           fontSize: 28,
           fontWeight: 'bold',
           color: '#1e40af'
         })
       }),
-      SizedBox({ height: 10 }),     // 10px height empty space
-      Text('My first widget app', {
+      SizedBox({ height: 10 }),     // Espace vide de 10px de hauteur
+      Text('Ma première application widget', {
         style: new TextStyle({
           fontSize: 16,
           color: '#64748b'
@@ -235,48 +235,48 @@ const widget = Container({
 });
 ```
 
-## 🎨 Creating Layout with Column Widget
+## 🎨 Créer une mise en page avec le widget Column
 
-**Column** is a layout widget that arranges multiple widgets vertically.
+**Column** est un widget de mise en page qui organise plusieurs widgets verticalement.
 
-### Key Properties of Column
+### Propriétés clés de Column
 
 ```typescript
 Column({
-  // Vertical alignment (main axis)
+  // Alignement vertical (axe principal)
   mainAxisAlignment: MainAxisAlignment.center,
   
-  // Horizontal alignment (cross axis)
+  // Alignement horizontal (axe transversal)
   crossAxisAlignment: CrossAxisAlignment.center,
   
-  // Child widgets
+  // Widgets enfants
   children: [
-    Text('First'),
-    Text('Second'),
-    Text('Third')
+    Text('Premier'),
+    Text('Deuxième'),
+    Text('Troisième')
   ]
 })
 ```
 
-### Alignment Options Explained
+### Explication des options d'alignement
 
-**mainAxisAlignment** (vertical direction):
-- `MainAxisAlignment.start`: Top alignment
-- `MainAxisAlignment.center`: Center alignment
-- `MainAxisAlignment.end`: Bottom alignment
-- `MainAxisAlignment.spaceBetween`: Equal spacing between widgets
-- `MainAxisAlignment.spaceAround`: Equal spacing around widgets
-- `MainAxisAlignment.spaceEvenly`: All spacing is equal
+**mainAxisAlignment** (direction verticale) :
+- `MainAxisAlignment.start` : Alignement en haut
+- `MainAxisAlignment.center` : Alignement au centre
+- `MainAxisAlignment.end` : Alignement en bas
+- `MainAxisAlignment.spaceBetween` : Espacement égal entre les widgets
+- `MainAxisAlignment.spaceAround` : Espacement égal autour des widgets
+- `MainAxisAlignment.spaceEvenly` : Tous les espacements sont égaux
 
-**crossAxisAlignment** (horizontal direction):
-- `CrossAxisAlignment.start`: Left alignment
-- `CrossAxisAlignment.center`: Center alignment
-- `CrossAxisAlignment.end`: Right alignment
-- `CrossAxisAlignment.stretch`: Fill all horizontal space
+**crossAxisAlignment** (direction horizontale) :
+- `CrossAxisAlignment.start` : Alignement à gauche
+- `CrossAxisAlignment.center` : Alignement au centre
+- `CrossAxisAlignment.end` : Alignement à droite
+- `CrossAxisAlignment.stretch` : Remplir tout l'espace horizontal
 
-## 🔧 TODO: Complete the Code
+## 🔧 TODO : Compléter le code
 
-Now complete the code yourself:
+Maintenant, complétez le code vous-même :
 
 ```typescript
 import { StatelessWidget, Container, Text, Column, SizedBox, Center, EdgeInsets, MainAxisAlignment, CrossAxisAlignment, TextStyle } from '@meursyphus/flitter';
@@ -284,19 +284,19 @@ import { StatelessWidget, Container, Text, Column, SizedBox, Center, EdgeInsets,
 class HelloWorldApp extends StatelessWidget {
   build(context) {
     return Container({
-      // TODO: Set light blue background (#f0f9ff)
-      // TODO: Set 20px padding on all sides with EdgeInsets.all(20)
+      // TODO : Définir un fond bleu clair (#f0f9ff)
+      // TODO : Définir un padding de 20px de tous les côtés avec EdgeInsets.all(20)
       child: Center({
         child: Column({
-          // TODO: Set center alignment with MainAxisAlignment.center and CrossAxisAlignment.center
+          // TODO : Définir l'alignement au centre avec MainAxisAlignment.center et CrossAxisAlignment.center
           children: [
-            // TODO: Create "Hello, Flitter!" text
-            // Hint: new TextStyle({ fontSize: 28, fontWeight: 'bold', color: '#1e40af' })
+            // TODO : Créer le texte "Bonjour, Flitter !"
+            // Indice : new TextStyle({ fontSize: 28, fontWeight: 'bold', color: '#1e40af' })
             
-            // TODO: Create 10px height empty space with SizedBox({ height: 10 })
+            // TODO : Créer un espace vide de 10px de hauteur avec SizedBox({ height: 10 })
             
-            // TODO: Create "My first widget app" text
-            // Hint: new TextStyle({ fontSize: 16, color: '#64748b' })
+            // TODO : Créer le texte "Ma première application widget"
+            // Indice : new TextStyle({ fontSize: 16, color: '#64748b' })
           ]
         })
       })
@@ -309,35 +309,35 @@ export default function createApp() {
 }
 ```
 
-## 🎯 Expected Results
+## 🎯 Résultats attendus
 
-After completing and running the code, you should see:
+Après avoir complété et exécuté le code, vous devriez voir :
 
-1. **Light blue background box**: 400x200 sized Container
-2. **Center-aligned text**: "Hello, Flitter!" (large font, blue)
-3. **Subtitle**: "My first widget app" (small font, gray)
-4. **Proper spacing**: 10px gap between the two texts
+1. **Boîte avec fond bleu clair** : Container de taille 400x200
+2. **Texte centré** : "Bonjour, Flitter !" (grande police, bleu)
+3. **Sous-titre** : "Ma première application widget" (petite police, gris)
+4. **Espacement approprié** : Écart de 10px entre les deux textes
 
-## 🔧 Practice Problems
+## 🔧 Exercices pratiques
 
-If you've completed the basic Hello World, try the following:
+Si vous avez terminé le Hello World de base, essayez ce qui suit :
 
-### Exercise 1: Change Color Themes
-Change to different color combinations:
+### Exercice 1 : Changer les thèmes de couleur
+Changez pour différentes combinaisons de couleurs :
 ```typescript
-// Exercise 1-1: Green theme
-color: '#f0fdf4'      // Light green background
-color: '#16a34a'      // Dark green text
+// Exercice 1-1 : Thème vert
+color: '#f0fdf4'      // Fond vert clair
+color: '#16a34a'      // Texte vert foncé
 
-// Exercise 1-2: Purple theme
-color: '#faf5ff'      // Light purple background
-color: '#9333ea'      // Dark purple text
+// Exercice 1-2 : Thème violet
+color: '#faf5ff'      // Fond violet clair
+color: '#9333ea'      // Texte violet foncé
 ```
 
-### Exercise 2: Add Text
-Add a third text:
+### Exercice 2 : Ajouter du texte
+Ajoutez un troisième texte :
 ```typescript
-Text('Using with React', {
+Text('Utilisation avec React', {
   style: new TextStyle({
     fontSize: 14,
     color: '#94a3b8',
@@ -346,140 +346,140 @@ Text('Using with React', {
 })
 ```
 
-### Exercise 3: Change Layout
-Change `mainAxisAlignment` to different values and check the results:
-- `MainAxisAlignment.start`: Top alignment
-- `MainAxisAlignment.end`: Bottom alignment
-- `MainAxisAlignment.spaceBetween`: Positioned at top and bottom ends
+### Exercice 3 : Changer la mise en page
+Changez `mainAxisAlignment` pour différentes valeurs et vérifiez les résultats :
+- `MainAxisAlignment.start` : Alignement en haut
+- `MainAxisAlignment.end` : Alignement en bas
+- `MainAxisAlignment.spaceBetween` : Positionné aux extrémités haut et bas
 
-### Exercise 4: Adjust Margins
-Change the Container's `padding` value:
+### Exercice 4 : Ajuster les marges
+Changez la valeur `padding` du Container :
 ```typescript
-// Different horizontal/vertical
+// Différent horizontal/vertical
 padding: EdgeInsets.symmetric({ horizontal: 40, vertical: 15 })
 
-// Different for each direction
+// Différent pour chaque direction
 padding: EdgeInsets.only({ top: 30, right: 20, bottom: 30, left: 20 })
 ```
 
-## 🚨 Common Mistakes and Solutions
+## 🚨 Erreurs courantes et solutions
 
-### Problem 1: Text not visible
-**Cause**: Container doesn't have `child` set or Text widget created incorrectly
+### Problème 1 : Texte non visible
+**Cause** : Container n'a pas de `child` défini ou widget Text créé incorrectement
 
-**Solution**: 
+**Solution** : 
 ```typescript
-// ❌ Wrong example
-Container({ color: 'blue' })  // No child
+// ❌ Mauvais exemple
+Container({ color: 'blue' })  // Pas d'enfant
 
-// ✅ Correct example
+// ✅ Bon exemple
 Container({ 
   color: 'blue',
-  child: Text('Hello')  // Child must be set
+  child: Text('Bonjour')  // L'enfant doit être défini
 })
 ```
 
-### Problem 2: Using child instead of children in Column
-**Cause**: Column has multiple children, so `children` array must be used
+### Problème 2 : Utiliser child au lieu de children dans Column
+**Cause** : Column a plusieurs enfants, donc le tableau `children` doit être utilisé
 
-**Solution**:
+**Solution** :
 ```typescript
-// ❌ Wrong example
-Column({ child: Text('Hello') })
+// ❌ Mauvais exemple
+Column({ child: Text('Bonjour') })
 
-// ✅ Correct example
-Column({ children: [Text('Hello')] })
+// ✅ Bon exemple
+Column({ children: [Text('Bonjour')] })
 ```
 
-### Problem 3: Colors not applied
-**Cause**: Wrong color format or missing quotes
+### Problème 3 : Couleurs non appliquées
+**Cause** : Mauvais format de couleur ou guillemets manquants
 
-**Solution**:
+**Solution** :
 ```typescript
-// ❌ Wrong examples
-color: #ff0000     // No quotes
-color: 'ff0000'    // No #
+// ❌ Mauvais exemples
+color: #ff0000     // Pas de guillemets
+color: 'ff0000'    // Pas de #
 
-// ✅ Correct examples
-color: '#ff0000'   // Hex code
-color: 'red'       // Color name
-color: 'rgb(255, 0, 0)'  // RGB value
+// ✅ Bons exemples
+color: '#ff0000'   // Code hexadécimal
+color: 'red'       // Nom de couleur
+color: 'rgb(255, 0, 0)'  // Valeur RGB
 ```
 
-### Problem 4: fontSize not applied
-**Cause**: fontSize set as string or wrong style object structure
+### Problème 4 : fontSize non appliqué
+**Cause** : fontSize défini comme chaîne ou mauvaise structure d'objet style
 
-**Solution**:
+**Solution** :
 ```typescript
-// ❌ Wrong examples
-Text('Hello', { fontSize: '20px' })           // Direct property
-Text('Hello', { style: { fontSize: '20' } })  // String
+// ❌ Mauvais exemples
+Text('Bonjour', { fontSize: '20px' })           // Propriété directe
+Text('Bonjour', { style: { fontSize: '20' } })  // Chaîne
 
-// ✅ Correct example
-Text('Hello', { style: { fontSize: 20 } })    // Set as number
+// ✅ Bon exemple
+Text('Bonjour', { style: { fontSize: 20 } })    // Définir comme nombre
 ```
 
-## 🧠 Understanding Widget Tree
+## 🧠 Comprendre l'arbre de widgets
 
-Let's look at the widget tree structure of our app:
+Regardons la structure de l'arbre de widgets de notre application :
 
 ```
-Container (root)
+Container (racine)
 ├── color: '#f0f9ff'
 ├── padding: EdgeInsets.all(20)
 └── child: Column
     ├── mainAxisAlignment: MainAxisAlignment.center
     ├── crossAxisAlignment: CrossAxisAlignment.center
     └── children:
-        ├── Text('Hello, Flitter!')
+        ├── Text('Bonjour, Flitter !')
         ├── SizedBox({ height: 10 })
-        └── Text('My first widget app')
+        └── Text('Ma première application widget')
 ```
 
-### Widget Tree Characteristics
+### Caractéristiques de l'arbre de widgets
 
-1. **Parent-child relationship**: Container contains Column, Column contains multiple Texts
-2. **Unidirectional data flow**: Properties are passed from parent to child
-3. **Composability**: Complex UI built by combining simple widgets
+1. **Relation parent-enfant** : Container contient Column, Column contient plusieurs Texts
+2. **Flux de données unidirectionnel** : Les propriétés sont transmises du parent à l'enfant
+3. **Composabilité** : Interface utilisateur complexe construite en combinant des widgets simples
 
-## 📏 Understanding Size and Constraints
+## 📏 Comprendre la taille et les contraintes
 
-### How Container Determines Size
+### Comment Container détermine sa taille
 
 ```typescript
-// 1. Explicit size specification
+// 1. Spécification de taille explicite
 Container({
   width: 200,
   height: 100,
-  child: Text('Fixed size')
+  child: Text('Taille fixe')
 })
 
-// 2. Fit to child size (default)
+// 2. S'adapter à la taille de l'enfant (par défaut)
 Container({
   padding: EdgeInsets.all(16),
-  child: Text('Fit to child size')
+  child: Text('S\'adapter à la taille de l\'enfant')
 })
 
-// 3. Take all available space (no child)
+// 3. Prendre tout l'espace disponible (pas d'enfant)
 Container({
-  color: 'red'  // Maximum size if no child
+  color: 'red'  // Taille maximale si pas d'enfant
 })
 ```
 
-## 🚀 Next Steps
+## 🚀 Prochaines étapes
 
-If you've successfully created the Hello World app, let's add interaction in the next tutorial:
+Si vous avez créé avec succès l'application Hello World, ajoutons de l'interaction dans le prochain tutoriel :
 
-- **Next**: [Basic Interactions](./3_basic-interactions) - Learn button clicks and state changes
-- **Related**: [Container Styling](../2_basic-widgets/1_container-styling) - Learn advanced Container styling
-- **Related**: [Text Styling](../2_basic-widgets/2_text-styling) - Learn various Text style options
+- **Suivant** : [Interactions de base](./3_basic-interactions) - Apprenez les clics de bouton et les changements d'état
+- **Connexe** : [Style Container](../2_basic-widgets/1_container-styling) - Apprenez le style avancé de Container
+- **Connexe** : [Style Text](../2_basic-widgets/2_text-styling) - Apprenez diverses options de style Text
 
-## 💡 Key Summary
+## 💡 Résumé clé
 
-1. **Container**: Create boxes, set margins, apply colors
-2. **Text**: Display text, font styling
-3. **Column**: Arrange multiple widgets vertically
-4. **Widget Tree**: Compose complex UI by nesting widgets
-5. **Composition**: Create desired UI by combining simple widgets
+1. **Container** : Créer des boîtes, définir des marges, appliquer des couleurs
+2. **Text** : Afficher du texte, style de police
+3. **Column** : Organiser plusieurs widgets verticalement
+4. **Arbre de widgets** : Composer une interface utilisateur complexe en imbriquant des widgets
+5. **Composition** : Créer l'interface utilisateur souhaitée en combinant des widgets simples
 
-Now you can use Flitter's basic widgets! In the next tutorial, we'll learn how to add user interactions.
+Maintenant vous pouvez utiliser les widgets de base de Flitter ! Dans le prochain tutoriel, nous apprendrons comment ajouter des interactions utilisateur.

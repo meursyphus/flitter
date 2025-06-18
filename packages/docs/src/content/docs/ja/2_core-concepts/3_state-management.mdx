@@ -1,16 +1,16 @@
 ---
-nav_title: "State Management"
-title: "Flitter State Management"
-description: "Efficient state management and data sharing between components using the Provider pattern"
+nav_title: "状態管理"
+title: "Flitterの状態管理"
+description: "Providerパターンを使用したコンポーネント間の効率的な状態管理とデータ共有"
 ---
 
 import ProviderExample from '$components/pages/docs/02_core-concepts/03-provider-example';
 
-# State Management
+# 状態管理
 
-## Overview
+## 概要
 
-Flitter's Provider is a concept similar to React's Context API, enabling efficient state management and sharing throughout the widget tree. Provider is based on InheritedWidget and allows access to state from anywhere in the widget tree.
+FlitterのProviderは、ReactのContext APIに似た概念で、ウィジェットツリー全体で効率的な状態管理と共有を可能にします。ProviderはInheritedWidgetをベースにしており、ウィジェットツリーのどこからでも状態にアクセスできます。
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -32,38 +32,38 @@ Flitter's Provider is a concept similar to React's Context API, enabling efficie
 └─────────────────────────────────────────────┘
 ```
 
-## Why is Provider needed?
+## なぜProviderが必要なのか？
 
-In complex applications, the following situations frequently occur:
+複雑なアプリケーションでは、以下のような状況がよく発生します：
 
-- **Deep widget trees**: Prop drilling issues where data must be passed through multiple levels
-- **State sharing**: When multiple widgets need to use and update the same state
-- **Global state**: Data used throughout the app such as user authentication info, theme settings
-- **Performance optimization**: Improve performance by rebuilding only necessary widgets when state changes
+- **深いウィジェットツリー**: データを複数のレベルを通して渡す必要があるProp drillingの問題
+- **状態の共有**: 複数のウィジェットが同じ状態を使用し、更新する必要がある場合
+- **グローバル状態**: ユーザー認証情報やテーマ設定など、アプリ全体で使用されるデータ
+- **パフォーマンス最適化**: 状態が変更されたときに必要なウィジェットのみを再構築してパフォーマンスを向上
 
-## Core Concepts
+## コアコンセプト
 
-### 1. Defining Provider Key
+### 1. Providerキーの定義
 
-Define a unique key to identify the Provider:
+Providerを識別するためのユニークなキーを定義します：
 
 ```typescript
 const COUNTER_KEY = Symbol('CounterProvider');
 ```
 
-### 2. Providing Values with Provider
+### 2. Providerで値を提供
 
-Use `Provider` to provide values to the widget tree:
+`Provider`を使用してウィジェットツリーに値を提供します：
 
 ```typescript
-// Simple value providing
+// シンプルな値の提供
 Provider({
   value: { count: 0 },
   providerKey: COUNTER_KEY,
   child: MyApp({})
 })
 
-// Wrapping with Provider function
+// Provider関数でラップ
 function CounterProvider({ child }: { child: Widget }) {
   return Provider({
     value: { count: 0, increment: () => {} },
@@ -73,15 +73,15 @@ function CounterProvider({ child }: { child: Widget }) {
 }
 ```
 
-### 3. Getting Values with Provider.of
+### 3. Provider.ofで値を取得
 
-Use `Provider.of` to access Provider values:
+`Provider.of`を使用してProviderの値にアクセスします：
 
 ```typescript
-// Using Provider.of
+// Provider.ofの使用
 const counter = Provider.of(COUNTER_KEY, context);
 
-// Usage within widget
+// ウィジェット内での使用
 class MyWidget extends StatelessWidget {
   build(context: BuildContext): Widget {
     const counter = Provider.of(COUNTER_KEY, context) as CounterData;
@@ -90,7 +90,7 @@ class MyWidget extends StatelessWidget {
   }
 }
 
-// Adding of method to Provider function (convenience)
+// Provider関数にofメソッドを追加（便利機能）
 function CounterProvider({ child }: { child: Widget }) {
   return Provider({
     value: { count: 0 },
@@ -104,19 +104,19 @@ CounterProvider.of = (context: BuildContext) => {
 };
 ```
 
-## Code Examples
+## コード例
 
-### Basic Provider Usage
+### 基本的なProviderの使用
 
 <ProviderExample
   client:load
-  title="Counter App using Provider"
-  description="Example sharing and updating the same state across multiple widgets"
+  title="Providerを使用したカウンターアプリ"
+  description="複数のウィジェットで同じ状態を共有し、更新する例"
 />
 
-### Using Multiple Providers
+### 複数のProviderの使用
 
-You can nest multiple Providers:
+複数のProviderをネストできます：
 
 ```typescript
 const THEME_KEY = Symbol('ThemeProvider');
@@ -139,15 +139,15 @@ function AppProviders({ child }: { child: Widget }) {
   });
 }
 
-// Usage
+// 使用例
 AppProviders({
   child: MyApp({})
 })
 ```
 
-## Practical Examples
+## 実践例
 
-### 1. Simple Counter Example
+### 1. シンプルなカウンターの例
 
 ```typescript
 const COUNTER_KEY = Symbol('CounterProvider');
@@ -156,7 +156,7 @@ interface CounterData {
   count: number;
 }
 
-// State management with StatefulWidget
+// StatefulWidgetでの状態管理
 class CounterApp extends StatefulWidget {
   createState() {
     return new CounterAppState();
@@ -189,7 +189,7 @@ class CounterAppState extends State<CounterApp> {
                 color: '#3b82f6',
                 borderRadius: BorderRadius.circular(8)
               }),
-              child: Text("증가", {
+              child: Text("増加", {
                 style: new TextStyle({
                   color: '#ffffff'
                 })
@@ -202,7 +202,7 @@ class CounterAppState extends State<CounterApp> {
   }
 }
 
-// Separate widget that reads values from Provider
+// Providerから値を読み取る別のウィジェット
 class CounterDisplay extends StatelessWidget {
   build(context: BuildContext): Widget {
     const data = Provider.of(COUNTER_KEY, context) as CounterData;
@@ -217,7 +217,7 @@ class CounterDisplay extends StatelessWidget {
 }
 ```
 
-### 2. Provider Function Pattern
+### 2. Provider関数パターン
 
 ```typescript
 const THEME_KEY = Symbol('ThemeProvider');
@@ -227,7 +227,7 @@ interface ThemeData {
   primaryColor: string;
 }
 
-// Define Provider function
+// Provider関数の定義
 function ThemeProvider({ child }: { child: Widget }) {
   return Provider({
     value: {
@@ -239,12 +239,12 @@ function ThemeProvider({ child }: { child: Widget }) {
   });
 }
 
-// Add of method
+// ofメソッドの追加
 ThemeProvider.of = (context: BuildContext) => {
   return Provider.of(THEME_KEY, context) as ThemeData;
 };
 
-// Usage example
+// 使用例
 class ThemedApp extends StatelessWidget {
   build(context: BuildContext): Widget {
     return ThemeProvider({
@@ -259,7 +259,7 @@ class MainContent extends StatelessWidget {
     
     return Container({
       color: theme.isDarkMode ? '#1a1a1a' : '#ffffff',
-      child: Text("Theme application example", {
+      child: Text("テーマアプリケーションの例", {
         style: new TextStyle({
           color: theme.primaryColor,
           fontSize: 24
@@ -270,7 +270,7 @@ class MainContent extends StatelessWidget {
 }
 ```
 
-### 3. Complex State Management Example
+### 3. 複雑な状態管理の例
 
 ```typescript
 const APP_STATE_KEY = Symbol('AppStateProvider');
@@ -281,11 +281,11 @@ class AppController {
   items: Item[] = [];
   
   constructor() {
-    // Initialization logic
+    // 初期化ロジック
   }
   
   login(email: string, password: string) {
-    // Login logic
+    // ログインロジック
     this.user = new User("1", "User", email);
   }
   
@@ -302,7 +302,7 @@ class AppController {
   }
 }
 
-// Provider function
+// Provider関数
 function AppStateProvider({ child }: { child: Widget }) {
   return Provider({
     value: new AppController(),
@@ -315,7 +315,7 @@ AppStateProvider.of = (context: BuildContext) => {
   return Provider.of(APP_STATE_KEY, context) as AppController;
 };
 
-// Using with StatefulWidget
+// StatefulWidgetでの使用
 class MyApp extends StatefulWidget {
   createState() {
     return new MyAppState();
@@ -346,17 +346,17 @@ class MyAppState extends State<MyApp> {
 }
 ```
 
-## Important Notes
+## 重要な注意事項
 
-### 1. Provider Scope and Accessibility
+### 1. Providerのスコープとアクセシビリティ
 
-Provider is only accessible from below the position where it is provided in the widget tree:
+Providerはウィジェットツリーで提供された位置より下からのみアクセス可能です：
 
 ```typescript
-// ❌ Bad example: Trying to access before Provider is provided
+// ❌ 悪い例: Providerが提供される前にアクセスしようとしている
 class BadExample extends StatelessWidget {
   build(context: BuildContext): Widget {
-    const data = Provider.of(MY_KEY, context); // Error!
+    const data = Provider.of(MY_KEY, context); // エラー！
     
     return Provider({
       value: { count: 0 },
@@ -366,13 +366,13 @@ class BadExample extends StatelessWidget {
   }
 }
 
-// ✅ Good example: Accessing from below Provider
+// ✅ 良い例: Providerの下からアクセス
 class GoodExample extends StatelessWidget {
   build(context: BuildContext): Widget {
     return Provider({
       value: { count: 0 },
       providerKey: MY_KEY,
-      child: ChildWidget({})  // Accessible here
+      child: ChildWidget({})  // ここからアクセス可能
     });
   }
 }
@@ -385,12 +385,12 @@ class ChildWidget extends StatelessWidget {
 }
 ```
 
-### 2. Maintaining Type Safety
+### 2. 型安全性の維持
 
-When using Provider, type casting should be explicit:
+Providerを使用する際は、型キャストを明示的に行う必要があります：
 
 ```typescript
-// Type definition
+// 型定義
 interface UserData {
   id: string;
   name: string;
@@ -399,11 +399,11 @@ interface UserData {
 
 const USER_KEY = Symbol('UserProvider');
 
-// Using generics in Provider function
+// Provider関数でジェネリクスを使用
 function UserProvider({ child }: { child: Widget }) {
   const userData: UserData = {
     id: '1',
-    name: '사용자',
+    name: 'ユーザー',
     email: 'user@example.com'
   };
   
@@ -414,19 +414,19 @@ function UserProvider({ child }: { child: Widget }) {
   });
 }
 
-// Type-safe of method
+// 型安全なofメソッド
 UserProvider.of = (context: BuildContext): UserData => {
   return Provider.of(USER_KEY, context) as UserData;
 };
 
-// 사용
+// 使用
 const user = UserProvider.of(context);
-console.log(user.name); // Type safe!
+console.log(user.name); // 型安全！
 ```
 
-### 3. Dynamic Provider Value Updates
+### 3. Providerの値の動的更新
 
-To update Provider values, you must use it with StatefulWidget:
+Providerの値を更新するには、StatefulWidgetと一緒に使用する必要があります：
 
 ```typescript
 const SETTINGS_KEY = Symbol('SettingsProvider');
@@ -476,10 +476,10 @@ class SettingsWidgetState extends State<SettingsWidget> {
 }
 ```
 
-## Next Steps
+## 次のステップ
 
-Once you've mastered the Provider pattern, learn these topics:
+Providerパターンをマスターしたら、次のトピックを学びましょう：
 
-- Animation Basics - Dynamic UI implementation using AnimationController
-- Advanced Widget Usage - Implementing custom rendering logic
-- Real-world Examples - Provider usage cases in actual projects
+- アニメーションの基礎 - AnimationControllerを使用した動的UIの実装
+- 高度なウィジェットの使用 - カスタムレンダリングロジックの実装
+- 実世界の例 - 実際のプロジェクトでのProviderの使用例

@@ -1,34 +1,34 @@
 ---
-nav_title: "Custom RenderObject Tutorial"
-title: "Building Custom RenderObjects"
-description: "Learn how to implement custom widgets by inheriting from RenderObjectWidget while understanding layout and painting behavior"
+nav_title: "Tutoriel RenderObject personnalisé"
+title: "Créer des RenderObjects personnalisés"
+description: "Apprenez à implémenter des widgets personnalisés en héritant de RenderObjectWidget tout en comprenant le comportement de mise en page et de peinture"
 ---
 
-## RenderObjectWidget Hands-On
+## Pratique avec RenderObjectWidget
 
-Now let's use the RenderObject and Constraints system we learned earlier to actually create widgets. We'll implement a simplified version of Column to understand Flitter's internal workings.
+Utilisons maintenant le système RenderObject et de contraintes que nous avons appris pour créer réellement des widgets. Nous implémenterons une version simplifiée de Column pour comprendre le fonctionnement interne de Flitter.
 
-## Types of RenderObjectWidget
+## Types de RenderObjectWidget
 
 **SingleChildRenderObjectWidget**
-- Widgets with a single child (Container, Padding, etc.)
-- `createRenderObject()`: Creates RenderObject
-- `updateRenderObject()`: Updates properties
+- Widgets avec un seul enfant (Container, Padding, etc.)
+- `createRenderObject()` : Crée le RenderObject
+- `updateRenderObject()` : Met à jour les propriétés
 
 **MultiChildRenderObjectWidget**
-- Widgets with multiple children (Row, Column, Stack, etc.)
-- Manages list of children
-- Coordinates layout of each child
+- Widgets avec plusieurs enfants (Row, Column, Stack, etc.)
+- Gère une liste d'enfants
+- Coordonne la mise en page de chaque enfant
 
-### When to Use?
+### Quand les utiliser ?
 
-- When you need custom layouts that can't be implemented with existing widgets
-- When performance-critical complex rendering logic is needed
-- When special painting behavior is required
+- Quand vous avez besoin de mises en page personnalisées impossibles avec les widgets existants
+- Quand une logique de rendu complexe critique pour les performances est nécessaire
+- Quand un comportement de peinture spécial est requis
 
-## Implementing SimpleColumn
+## Implémenter SimpleColumn
 
-### Defining the Widget Class
+### Définir la classe Widget
 
 ```typescript
 class SimpleColumn extends MultiChildRenderObjectWidget {
@@ -41,8 +41,8 @@ class SimpleColumn extends MultiChildRenderObjectWidget {
   }
   
   updateRenderObject(renderObject: RenderSimpleColumn) {
-    // Update RenderObject when properties change
-    // This example has no special properties, so left empty
+    // Mettre à jour RenderObject quand les propriétés changent
+    // Cet exemple n'a pas de propriétés spéciales, donc laissé vide
   }
 }
 
@@ -51,7 +51,7 @@ export default function SimpleColumn(props: { children: Widget[] }): Widget {
 }
 ```
 
-### RenderObject Class Implementation
+### Implémentation de la classe RenderObject
 
 ```typescript
 class RenderSimpleColumn extends RenderBox {
@@ -59,117 +59,117 @@ class RenderSimpleColumn extends RenderBox {
     let height = 0;
     let maxWidth = 0;
     
-    // Perform layout for each child
+    // Effectuer la mise en page pour chaque enfant
     for (const child of this.children) {
-      // Pass constraints to child (loosening height constraint)
+      // Passer les contraintes à l'enfant (relâcher la contrainte de hauteur)
       child.layout(constraints.loosen({ height: true }));
       
-      // Set child position (arrange vertically in order)
+      // Définir la position de l'enfant (organiser verticalement dans l'ordre)
       child.offset = new Offset(0, height);
       
-      // Calculate next child position
+      // Calculer la position du prochain enfant
       height += child.size.height;
       maxWidth = Math.max(maxWidth, child.size.width);
     }
     
-    // Determine own size
+    // Déterminer sa propre taille
     this.size = constraints.constrain(new Size(maxWidth, height));
   }
   
-  // Hit test for children (click events, etc.)
+  // Test de collision pour les enfants (événements de clic, etc.)
   hitTestChildren(result: HitTestResult, position: Offset): boolean {
     return this.defaultHitTestChildren(result, position);
   }
   
-  // Paint children
+  // Peindre les enfants
   paint(context: PaintingContext, offset: Offset) {
     this.defaultPaint(context, offset);
   }
 }
 ```
 
-### Detailed Layout Process Analysis
+### Analyse détaillée du processus de mise en page
 
-1. **Constraint Passing**:
+1. **Passage des contraintes** :
    ```typescript
-   // Pass constraints from parent with only height constraint loosened
+   // Passer les contraintes du parent avec seulement la contrainte de hauteur relâchée
    child.layout(constraints.loosen({ height: true }));
    ```
 
-2. **Position Calculation**:
+2. **Calcul de position** :
    ```typescript
-   // Determine Y position by accumulating heights of previous children
+   // Déterminer la position Y en accumulant les hauteurs des enfants précédents
    child.offset = new Offset(0, height);
    height += child.size.height;
    ```
 
-3. **Size Determination**:
+3. **Détermination de la taille** :
    ```typescript
-   // Width of widest child and sum of all children heights
+   // Largeur de l'enfant le plus large et somme des hauteurs de tous les enfants
    this.size = constraints.constrain(new Size(maxWidth, height));
    ```
 
-## Differences from Actual Column
+## Différences avec Column réel
 
-The actual Column provides more complex features:
+Le Column réel fournit des fonctionnalités plus complexes :
 
 ### MainAxisAlignment
 ```typescript
 enum MainAxisAlignment {
-  start,    // Align to start
-  center,   // Align to center  
-  end,      // Align to end
-  spaceBetween,  // Even distribution
-  spaceAround,   // Include surrounding space
-  spaceEvenly    // Complete even distribution
+  start,    // Aligner au début
+  center,   // Aligner au centre  
+  end,      // Aligner à la fin
+  spaceBetween,  // Distribution uniforme
+  spaceAround,   // Inclure l'espace environnant
+  spaceEvenly    // Distribution complètement uniforme
 }
 ```
 
 ### CrossAxisAlignment
 ```typescript
 enum CrossAxisAlignment {
-  start,    // Cross axis start
-  center,   // Cross axis center
-  end,      // Cross axis end
-  stretch   // Fill entire cross axis
+  start,    // Début de l'axe transversal
+  center,   // Centre de l'axe transversal
+  end,      // Fin de l'axe transversal
+  stretch   // Remplir tout l'axe transversal
 }
 ```
 
-### Flex Child Handling
-- **Expanded**: Takes up remaining space
-- **Flexible**: Takes only as much as needed
+### Gestion des enfants Flex
+- **Expanded** : Prend l'espace restant
+- **Flexible** : Ne prend que ce qui est nécessaire
 
-### Overflow Handling
-- Handles when total size of children exceeds parent
-- Provides clipping or scrolling
+### Gestion du débordement
+- Gère quand la taille totale des enfants dépasse le parent
+- Fournit le découpage ou le défilement
 
-## Creating Painting Widgets
+## Créer des widgets de peinture
 
-You can also perform drawing operations directly in RenderObject. Flitter uses a class-based Painter pattern like DecoratedBox:
+Vous pouvez aussi effectuer des opérations de dessin directement dans RenderObject. Flitter utilise un pattern Painter basé sur des classes comme DecoratedBox :
 
 ```typescript
 class RenderCustomShape extends RenderBox {
   constructor() {
-    super({ isPainter: true }); // Indicate this is a painter
+    super({ isPainter: true }); // Indiquer que c'est un painter
   }
   
   performLayout() {
     this.size = constraints.biggest;
   }
   
-  // Create SVG painter
+  // Créer le painter SVG
   protected override createSvgPainter() {
     return new CustomShapeSvgPainter(this);
   }
   
-  // Create Canvas painter
+  // Créer le painter Canvas
   protected override createCanvasPainter() {
     return new CustomShapeCanvasPainter(this);
   }
 }
 ```
 
-### SVG Painter Implementation
+### Implémentation du Painter SVG
 
 ```typescript
 class CustomShapeSvgPainter extends SvgPainter {
@@ -183,7 +183,7 @@ class CustomShapeSvgPainter extends SvgPainter {
   protected override performPaint(svgEls: { shape: SVGPathElement; border: SVGPathElement }) {
     const { shape, border } = svgEls;
     
-    // Generate SVG path data
+    // Générer les données du chemin SVG
     const pathData = `M 10,10 L ${this.size.width-10},10 L ${this.size.width-10},${this.size.height-10} L 10,${this.size.height-10} Z`;
     
     shape.setAttribute('d', pathData);
@@ -197,7 +197,7 @@ class CustomShapeSvgPainter extends SvgPainter {
 }
 ```
 
-### Canvas Painter Implementation
+### Implémentation du Painter Canvas
 
 ```typescript
 class CustomShapeCanvasPainter extends CanvasPainter {
@@ -207,11 +207,11 @@ class CustomShapeCanvasPainter extends CanvasPainter {
     ctx.save();
     ctx.translate(offset.x, offset.y);
     
-    // Draw rectangle
+    // Dessiner le rectangle
     ctx.fillStyle = '#3b82f6';
     ctx.fillRect(10, 10, this.size.width - 20, this.size.height - 20);
     
-    // Draw border
+    // Dessiner la bordure
     ctx.strokeStyle = '#1e40af';
     ctx.lineWidth = 2;
     ctx.strokeRect(10, 10, this.size.width - 20, this.size.height - 20);
@@ -221,9 +221,9 @@ class CustomShapeCanvasPainter extends CanvasPainter {
 }
 ```
 
-### Need Simple Painting?
+### Besoin d'une peinture simple ?
 
-Instead of complex RenderObject implementation, using the [CustomPaint widget](/docs/widgets/CustomPaint) is simpler:
+Au lieu d'une implémentation RenderObject complexe, utiliser le [widget CustomPaint](/docs/widgets/CustomPaint) est plus simple :
 
 ```typescript
 CustomPaint({
@@ -248,21 +248,21 @@ CustomPaint({
 })
 ```
 
-## Source Code Reference
+## Référence du code source
 
-To refer to actual implementation, check these files:
+Pour consulter l'implémentation réelle, vérifiez ces fichiers :
 
-- `packages/flitter/src/component/Column.ts`: Actual Column implementation
-- `packages/flitter/src/renderobject/RenderFlex.ts`: Flex layout logic
-- `packages/flitter/src/renderobject/RenderBox.ts`: RenderBox base class
-- `packages/flitter/src/widget/MultiChildRenderObjectWidget.ts`: Multi-child widget
+- `packages/flitter/src/component/Column.ts` : Implémentation réelle de Column
+- `packages/flitter/src/renderobject/RenderFlex.ts` : Logique de mise en page Flex
+- `packages/flitter/src/renderobject/RenderBox.ts` : Classe de base RenderBox
+- `packages/flitter/src/widget/MultiChildRenderObjectWidget.ts` : Widget multi-enfants
 
-## Key Summary
+## Résumé des points clés
 
-1. **RenderObjectWidget connects Widget and RenderObject**
-2. **performLayout() determines the size and position of children**
-3. **paint() performs the actual drawing operations**
-4. **Must support both SVG and Canvas renderers**
-5. **Only need to implement required features**
+1. **RenderObjectWidget connecte Widget et RenderObject**
+2. **performLayout() détermine la taille et la position des enfants**
+3. **paint() effectue les opérations de dessin réelles**
+4. **Doit supporter les renderers SVG et Canvas**
+5. **Il suffit d'implémenter les fonctionnalités requises**
 
-In the next chapter, we'll learn about the CustomPaint widget that simplifies these complex operations.
+Dans le prochain chapitre, nous apprendrons le widget CustomPaint qui simplifie ces opérations complexes.

@@ -3,27 +3,27 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: ConstraintsTransformBox
 title: "ConstraintsTransformBox"
-description: "A widget that transforms constraints before passing them to its child"
+description: "在将约束传递给子组件之前转换约束的组件"
 ---
 
-## Overview
+## 概述
 
-ConstraintsTransformBox is a widget that transforms the constraints received from its parent before passing them to its child. This allows you to dynamically modify the constraints that a child widget receives.
+ConstraintsTransformBox 是一个将从父组件接收的约束进行转换后再传递给子组件的组件。这使你能够动态修改子组件接收的约束。
 
-Reference: [https://api.flutter.dev/flutter/widgets/ConstraintsTransformBox-class.html](https://api.flutter.dev/flutter/widgets/ConstraintsTransformBox-class.html)
+参考: [https://api.flutter.dev/flutter/widgets/ConstraintsTransformBox-class.html](https://api.flutter.dev/flutter/widgets/ConstraintsTransformBox-class.html)
 
-## When to Use
+## 何时使用
 
-- When you need to customize the constraints a child widget receives
-- When allowing a child to have infinite height in a scrollable area
-- When temporarily removing constraints in specific dimensions
-- When debugging constraints in complex layouts
-- When you need more fine-grained control than UnconstrainedBox provides
+- 当需要自定义子组件接收的约束时
+- 当允许子组件在可滚动区域中具有无限高度时
+- 当临时移除特定维度的约束时
+- 当在复杂布局中调试约束时
+- 当需要比 UnconstrainedBox 更精细的控制时
 
-## Basic Usage
+## 基本用法
 
 ```typescript
-// Remove all constraints
+// 移除所有约束
 ConstraintsTransformBox({
   constraintsTransform: ConstraintsTransformBox.unconstrained,
   child: Container({
@@ -33,18 +33,18 @@ ConstraintsTransformBox({
   })
 })
 
-// Remove only height constraints
+// 仅移除高度约束
 ConstraintsTransformBox({
   constraintsTransform: ConstraintsTransformBox.heightUnconstrained,
   child: Column({
     children: [
-      Text('Free height'),
-      // ... many children
+      Text('自由高度'),
+      // ... 更多子组件
     ]
   })
 })
 
-// Custom transformation
+// 自定义转换
 ConstraintsTransformBox({
   constraintsTransform: (constraints) => {
     return new Constraints({
@@ -58,17 +58,17 @@ ConstraintsTransformBox({
 })
 ```
 
-## Props
+## 属性
 
-### constraintsTransform (required)
-**Type: (constraints: Constraints) => Constraints**
+### constraintsTransform（必需）
+**类型：(constraints: Constraints) => Constraints**
 
-A function that transforms the constraints received from the parent. This function takes the original constraints and should return new constraints.
+一个转换从父组件接收的约束的函数。该函数接受原始约束并应返回新约束。
 
 ```typescript
 ConstraintsTransformBox({
   constraintsTransform: (constraints) => {
-    // Set minimum width to 200
+    // 设置最小宽度为 200
     return constraints.copyWith({
       minWidth: 200
     });
@@ -77,15 +77,15 @@ ConstraintsTransformBox({
 })
 ```
 
-### child (optional)
-**Type: Widget | undefined**
+### child（可选）
+**类型：Widget | undefined**
 
-The child widget to which the transformed constraints will be applied.
+将应用转换后的约束的子组件。
 
-### alignment (optional)
-**Type: Alignment** (default: **Alignment.center**)
+### alignment（可选）
+**类型：Alignment**（默认值：**Alignment.center**）
 
-How to align the child when its size differs from the parent.
+当子组件的大小与父组件不同时如何对齐子组件。
 
 ```typescript
 ConstraintsTransformBox({
@@ -99,15 +99,15 @@ ConstraintsTransformBox({
 })
 ```
 
-### clipped (optional)
-**Type: boolean** (default: **false**)
+### clipped（可选）
+**类型：boolean**（默认值：**false**）
 
-Whether to clip the child when it exceeds the parent's boundaries.
+当子组件超出父组件边界时是否裁剪子组件。
 
 ```typescript
 ConstraintsTransformBox({
   constraintsTransform: ConstraintsTransformBox.unconstrained,
-  clipped: true,  // Clip overflow
+  clipped: true,  // 裁剪溢出
   child: Container({
     width: 500,
     height: 500,
@@ -116,41 +116,41 @@ ConstraintsTransformBox({
 })
 ```
 
-### textDirection (optional)
-**Type: TextDirection** (default: **TextDirection.ltr**)
+### textDirection（可选）
+**类型：TextDirection**（默认值：**TextDirection.ltr**）
 
-The text direction used to resolve the alignment.
+用于解析对齐的文本方向。
 
-## Static Helper Methods
+## 静态辅助方法
 
-ConstraintsTransformBox provides several static methods for common transformations:
+ConstraintsTransformBox 为常见转换提供了几个静态方法：
 
 ```typescript
-// Leave constraints unchanged
+// 保持约束不变
 ConstraintsTransformBox.unmodified
 
-// Remove all constraints (infinite size)
+// 移除所有约束（无限大小）
 ConstraintsTransformBox.unconstrained
 
-// Remove only width constraints
+// 仅移除宽度约束
 ConstraintsTransformBox.widthUnconstrained
 
-// Remove only height constraints
+// 仅移除高度约束
 ConstraintsTransformBox.heightUnconstrained
 
-// Remove max height constraint
+// 移除最大高度约束
 ConstraintsTransformBox.maxHeightUnconstrained
 
-// Remove max width constraint
+// 移除最大宽度约束
 ConstraintsTransformBox.maxWidthUnconstrained
 
-// Remove both max width and height constraints
+// 移除最大宽度和高度约束
 ConstraintsTransformBox.maxUnconstrained
 ```
 
-## Practical Examples
+## 实际示例
 
-### Example 1: Removing Height Constraints in Scrollable List
+### 示例 1：在可滚动列表中移除高度约束
 
 ```typescript
 const ScrollableList = ({ items }) => {
@@ -170,7 +170,7 @@ const ScrollableList = ({ items }) => {
 };
 ```
 
-### Example 2: Ensuring Minimum Size While Transforming
+### 示例 2：在转换时确保最小尺寸
 
 ```typescript
 const MinSizeTransform = ({ minSize = 150, child }) => {
@@ -187,17 +187,17 @@ const MinSizeTransform = ({ minSize = 150, child }) => {
   });
 };
 
-// Usage
+// 用法
 MinSizeTransform({
   minSize: 200,
   child: Container({
     color: 'blue',
-    child: Text('Minimum 200x200 size guaranteed')
+    child: Text('保证最小 200x200 尺寸')
   })
 })
 ```
 
-### Example 3: Aspect Ratio Constraint Transform
+### 示例 3：纵横比约束转换
 
 ```typescript
 const AspectRatioTransform = ({ aspectRatio = 1, child }) => {
@@ -219,28 +219,28 @@ const AspectRatioTransform = ({ aspectRatio = 1, child }) => {
 };
 ```
 
-### Example 4: Debug Constraint Logging
+### 示例 4：调试约束日志
 
 ```typescript
 const DebugConstraints = ({ label, child }) => {
   return ConstraintsTransformBox({
     constraintsTransform: (constraints) => {
-      console.log(`${label} constraints:`, {
+      console.log(`${label} 约束:`, {
         minWidth: constraints.minWidth,
         maxWidth: constraints.maxWidth,
         minHeight: constraints.minHeight,
         maxHeight: constraints.maxHeight
       });
       
-      return constraints;  // Return unchanged
+      return constraints;  // 保持不变返回
     },
     child: child
   });
 };
 
-// Usage
+// 用法
 DebugConstraints({
-  label: 'Container',
+  label: '容器',
   child: Container({
     width: 200,
     height: 200,
@@ -249,7 +249,7 @@ DebugConstraints({
 })
 ```
 
-### Example 5: Conditional Constraint Transform
+### 示例 5：条件约束转换
 
 ```typescript
 const ConditionalConstraints = ({ 
@@ -260,10 +260,10 @@ const ConditionalConstraints = ({
   return ConstraintsTransformBox({
     constraintsTransform: (constraints) => {
       if (isExpanded) {
-        return constraints;  // Use original constraints in expanded mode
+        return constraints;  // 展开模式下使用原始约束
       }
       
-      // Limit max width in collapsed mode
+      // 收起模式下限制最大宽度
       return constraints.copyWith({
         maxWidth: Math.min(constraints.maxWidth, maxWidth)
       });
@@ -277,50 +277,50 @@ const ConditionalConstraints = ({
 };
 ```
 
-## Constraint Transform Patterns
+## 约束转换模式
 
-### Common Transform Patterns
+### 常见转换模式
 
 ```typescript
-// 1. Force minimum size
+// 1. 强制最小尺寸
 (constraints) => constraints.copyWith({
   minWidth: 100,
   minHeight: 100
 })
 
-// 2. Limit maximum size
+// 2. 限制最大尺寸
 (constraints) => constraints.copyWith({
   maxWidth: Math.min(constraints.maxWidth, 500),
   maxHeight: Math.min(constraints.maxHeight, 500)
 })
 
-// 3. Force square
+// 3. 强制正方形
 (constraints) => {
   const size = Math.min(constraints.maxWidth, constraints.maxHeight);
   return Constraints.tight({ width: size, height: size });
 }
 
-// 4. Maintain ratio
+// 4. 保持比例
 (constraints) => {
-  const ratio = 0.5; // Height is half of width
+  const ratio = 0.5; // 高度是宽度的一半
   return constraints.copyWith({
     maxHeight: constraints.maxWidth * ratio
   });
 }
 ```
 
-## Important Notes
+## 重要说明
 
-- Invalid transformed constraints can cause layout errors
-- When using infinite constraints, the child must have an intrinsic size
-- When clipped is false, the child can overflow its parent
-- Complex transformations can impact layout performance
-- Transform functions should be pure functions without side effects
+- 无效的转换约束可能导致布局错误
+- 使用无限约束时，子组件必须具有固有尺寸
+- 当 clipped 为 false 时，子组件可能溢出其父组件
+- 复杂的转换可能影响布局性能
+- 转换函数应该是没有副作用的纯函数
 
-## Related Widgets
+## 相关组件
 
-- **UnconstrainedBox**: Simple way to remove all constraints
-- **ConstrainedBox**: Apply additional constraints
-- **OverflowBox**: Allow child to exceed parent constraints
-- **SizedBox**: Specify fixed size
-- **FractionallySizedBox**: Size based on parent's dimensions
+- **UnconstrainedBox**：移除所有约束的简单方法
+- **ConstrainedBox**：应用额外约束
+- **OverflowBox**：允许子组件超出父约束
+- **SizedBox**：指定固定尺寸
+- **FractionallySizedBox**：基于父组件尺寸的大小

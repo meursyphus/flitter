@@ -3,24 +3,436 @@ nav_group: "Widgets"
 nav_group_order: 3
 nav_title: Tooltip
 title: "Tooltip"
-description: ""
+description: "提供悬停提示信息的组件"
 ---
 
-# Tooltip
+## 概述
 
-This widget is motivated by Tooltip in Flutter.
-But It can render any widget as tooltip meessage (Flutter tooltip can only render message)
+Tooltip 是一个在用户悬停时显示提示信息的组件。
 
-## Props
+这个组件的灵感来自 Flutter 中的 Tooltip，但它可以将任何组件渲染为工具提示消息（Flutter 的 Tooltip 只能渲染文本消息）。
 
-### width
+参考: [https://api.flutter.dev/flutter/material/Tooltip-class.html](https://api.flutter.dev/flutter/material/Tooltip-class.html)
 
-**child: Widget**
+## 何时使用？
 
-### tootip: Widget\*\*
+- 当需要为按钮或图标提供额外说明时
+- 当显示简短的帮助信息时
+- 当需要显示复杂工具提示内容（图像、图标等）时
+- 当提供功能或操作的上下文信息时
+- 当显示截断文本的完整内容时
 
-**child: Widget**
+## 基本用法
+
+```typescript
+// 简单文本工具提示
+Tooltip({
+  tooltip: Text('这是一个工具提示'),
+  child: Icon({ icon: Icons.info })
+})
+
+// 复杂工具提示内容
+Tooltip({
+  tooltip: Container({
+    padding: EdgeInsets.all(8),
+    decoration: BoxDecoration({
+      color: 'black',
+      borderRadius: BorderRadius.circular(4)
+    }),
+    child: Row({
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon({ icon: Icons.warning, color: 'yellow', size: 16 }),
+        SizedBox({ width: 8 }),
+        Text('警告：这是重要信息', {
+          style: TextStyle({ color: 'white' })
+        })
+      ]
+    })
+  }),
+  child: ElevatedButton({
+    onPressed: () => {},
+    child: Text('悬停查看警告')
+  })
+})
+```
+
+## 属性
+
+### child
+
+**类型：Widget**
+
+触发工具提示显示的子组件。当鼠标悬停在此组件上时，工具提示会显示。
+
+```typescript
+Tooltip({
+  tooltip: Text('点击保存文档'),
+  child: IconButton({
+    icon: Icons.save,
+    onPressed: () => {}
+  })
+})
+```
+
+### tooltip
+
+**类型：Widget**
+
+工具提示的内容组件。可以是任何 Widget，包括文本、图标、容器等。
+
+```typescript
+// 文本工具提示
+Tooltip({
+  tooltip: Text('简单提示'),
+  child: Button()
+})
+
+// 复杂工具提示
+Tooltip({
+  tooltip: Column({
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Image({ src: 'icon.png', width: 24, height: 24 }),
+      SizedBox({ height: 4 }),
+      Text('用户头像', { style: TextStyle({ fontSize: 12 }) })
+    ]
+  }),
+  child: Avatar()
+})
+```
 
 ### position
 
-**Value: 'topLeft' | 'topCenter' | 'topRight' ...etc (default: 'bottomCenter') **
+**值：'topLeft' | 'topCenter' | 'topRight' | 'centerLeft' | 'center' | 'centerRight' | 'bottomLeft' | 'bottomCenter' | 'bottomRight'**（默认：**'bottomCenter'**）
+
+工具提示相对于子组件的显示位置。
+
+```typescript
+// 在上方显示
+Tooltip({
+  position: 'topCenter',
+  tooltip: Text('显示在上方'),
+  child: Button()
+})
+
+// 在右侧显示
+Tooltip({
+  position: 'centerRight',
+  tooltip: Text('显示在右侧'),
+  child: Icon({ icon: Icons.help })
+})
+```
+
+## 实际示例
+
+### 示例 1：工具栏按钮
+
+```typescript
+const ToolbarButton = ({ icon, tooltip, onPressed }) => {
+  return Tooltip({
+    tooltip: Container({
+      padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
+      decoration: BoxDecoration({
+        color: 'rgba(0,0,0,0.8)',
+        borderRadius: BorderRadius.circular(4)
+      }),
+      child: Text(tooltip, {
+        style: TextStyle({ 
+          color: 'white', 
+          fontSize: 12 
+        })
+      })
+    }),
+    position: 'bottomCenter',
+    child: IconButton({
+      icon: icon,
+      onPressed: onPressed,
+      style: ButtonStyle({
+        padding: EdgeInsets.all(8)
+      })
+    })
+  });
+};
+
+// 使用示例
+Row({
+  children: [
+    ToolbarButton({
+      icon: Icons.copy,
+      tooltip: '复制 (Ctrl+C)',
+      onPressed: () => console.log('复制')
+    }),
+    ToolbarButton({
+      icon: Icons.paste,
+      tooltip: '粘贴 (Ctrl+V)',
+      onPressed: () => console.log('粘贴')
+    }),
+    ToolbarButton({
+      icon: Icons.cut,
+      tooltip: '剪切 (Ctrl+X)',
+      onPressed: () => console.log('剪切')
+    })
+  ]
+})
+```
+
+### 示例 2：信息卡片
+
+```typescript
+const InfoCard = ({ title, description, details }) => {
+  return Container({
+    padding: EdgeInsets.all(16),
+    decoration: BoxDecoration({
+      color: 'white',
+      borderRadius: BorderRadius.circular(8),
+      boxShadow: [
+        BoxShadow({
+          color: 'rgba(0,0,0,0.1)',
+          blurRadius: 4,
+          offset: { x: 0, y: 2 }
+        })
+      ]
+    }),
+    child: Row({
+      children: [
+        Expanded({
+          child: Column({
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, {
+                style: TextStyle({ 
+                  fontSize: 18, 
+                  fontWeight: 'bold' 
+                })
+              }),
+              SizedBox({ height: 8 }),
+              Text(description, {
+                style: TextStyle({ color: '#666' })
+              })
+            ]
+          })
+        }),
+        Tooltip({
+          tooltip: Container({
+            constraints: BoxConstraints({ maxWidth: 300 }),
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration({
+              color: 'white',
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all({ color: '#E0E0E0' }),
+              boxShadow: [
+                BoxShadow({
+                  color: 'rgba(0,0,0,0.15)',
+                  blurRadius: 8,
+                  offset: { x: 0, y: 4 }
+                })
+              ]
+            }),
+            child: Column({
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('详细信息', {
+                  style: TextStyle({ 
+                    fontWeight: 'bold',
+                    fontSize: 14
+                  })
+                }),
+                SizedBox({ height: 8 }),
+                Text(details, {
+                  style: TextStyle({ fontSize: 12 })
+                })
+              ]
+            })
+          }),
+          position: 'centerLeft',
+          child: Icon({
+            icon: Icons.info_outline,
+            color: '#2196F3'
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### 示例 3：表单帮助
+
+```typescript
+const FormFieldWithHelp = ({ label, placeholder, helpText }) => {
+  return Column({
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row({
+        children: [
+          Text(label, {
+            style: TextStyle({ 
+              fontWeight: 'bold',
+              fontSize: 14
+            })
+          }),
+          SizedBox({ width: 8 }),
+          Tooltip({
+            tooltip: Container({
+              constraints: BoxConstraints({ maxWidth: 250 }),
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration({
+                color: '#FFF3E0',
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all({ color: '#FFB74D' })
+              }),
+              child: Row({
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon({
+                    icon: Icons.lightbulb_outline,
+                    color: '#FF9800',
+                    size: 16
+                  }),
+                  SizedBox({ width: 6 }),
+                  Expanded({
+                    child: Text(helpText, {
+                      style: TextStyle({ 
+                        fontSize: 12,
+                        color: '#F57C00'
+                      })
+                    })
+                  })
+                ]
+              })
+            }),
+            position: 'topCenter',
+            child: Icon({
+              icon: Icons.help_outline,
+              size: 16,
+              color: '#666'
+            })
+          })
+        ]
+      }),
+      SizedBox({ height: 8 }),
+      TextField({
+        decoration: InputDecoration({
+          hintText: placeholder,
+          border: OutlineInputBorder()
+        })
+      })
+    ]
+  });
+};
+```
+
+### 示例 4：状态指示器
+
+```typescript
+const StatusIndicator = ({ status, details }) => {
+  const getStatusConfig = () => {
+    switch (status) {
+      case 'success':
+        return {
+          color: '#4CAF50',
+          icon: Icons.check_circle,
+          text: '成功'
+        };
+      case 'warning':
+        return {
+          color: '#FF9800',
+          icon: Icons.warning,
+          text: '警告'
+        };
+      case 'error':
+        return {
+          color: '#F44336',
+          icon: Icons.error,
+          text: '错误'
+        };
+      default:
+        return {
+          color: '#9E9E9E',
+          icon: Icons.info,
+          text: '信息'
+        };
+    }
+  };
+  
+  const config = getStatusConfig();
+  
+  return Tooltip({
+    tooltip: Container({
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration({
+        color: 'white',
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all({ color: config.color }),
+        boxShadow: [
+          BoxShadow({
+            color: 'rgba(0,0,0,0.1)',
+            blurRadius: 6,
+            offset: { x: 0, y: 3 }
+          })
+        ]
+      }),
+      child: Column({
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row({
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon({
+                icon: config.icon,
+                color: config.color,
+                size: 18
+              }),
+              SizedBox({ width: 8 }),
+              Text(config.text, {
+                style: TextStyle({
+                  fontWeight: 'bold',
+                  color: config.color
+                })
+              })
+            ]
+          }),
+          if (details) ...[
+            SizedBox({ height: 8 }),
+            Text(details, {
+              style: TextStyle({ fontSize: 12 })
+            })
+          ]
+        ]
+      })
+    }),
+    position: 'topCenter',
+    child: Container({
+      width: 24,
+      height: 24,
+      decoration: BoxDecoration({
+        color: config.color,
+        borderRadius: BorderRadius.circular(12)
+      }),
+      child: Icon({
+        icon: config.icon,
+        color: 'white',
+        size: 16
+      })
+    })
+  });
+};
+```
+
+## 重要说明
+
+- 工具提示在鼠标悬停时显示，鼠标离开时隐藏
+- 可以包含任何 Widget 作为工具提示内容
+- 位置会根据屏幕边界自动调整以确保可见性
+- 在移动设备上，工具提示行为可能不同
+- 避免在工具提示中放置交互元素
+
+## 相关组件
+
+- **PopupMenuButton**: 显示弹出菜单的按钮
+- **DropdownButton**: 下拉选择组件
+- **Dialog**: 模态对话框
+- **Overlay**: 覆盖层组件

@@ -1,78 +1,78 @@
 ---
 nav_title: "Hello World"
-title: "Hello World - Centering Text"
-description: "Learn how simple Flitter's declarative programming is compared to D3.js"
+title: "Hello World - テキストの中央揃え"
+description: "D3.jsと比較してFlitterの宣言的プログラミングがいかにシンプルかを学びます"
 ---
 
 import HelloWorldExample from '$components/pages/docs/01_getting-started/01-hello-world-example';
 
-# Hello World - Centering Text
+# Hello World - テキストの中央揃え
 
-One of the most basic tasks when working with graphics on the web is centering text on the screen.
-Even this seemingly simple task requires quite complex code with traditional approaches.
+ウェブでグラフィックスを扱う際の最も基本的なタスクの1つは、画面上でテキストを中央揃えにすることです。
+この一見単純なタスクでさえ、従来のアプローチではかなり複雑なコードが必要です。
 
-## Why is this a problem?
+## なぜこれが問題なのか？
 
-To center elements in SVG or Canvas:
-1. You need to know the container size
-2. You need to calculate the element's size
-3. You need to manually calculate the center coordinates
-4. You need to recalculate whenever the size changes
+SVGやCanvasで要素を中央揃えにするには：
+1. コンテナのサイズを知る必要があります
+2. 要素のサイズを計算する必要があります
+3. 中心座標を手動で計算する必要があります
+4. サイズが変わるたびに再計算する必要があります
 
-These repetitive and complex tasks are error-prone and make code difficult to read.
+これらの繰り返しで複雑なタスクはエラーが発生しやすく、コードを読みにくくします。
 
-## Declarative vs Imperative Programming
+## 宣言的プログラミング vs 命令的プログラミング
 
 <HelloWorldExample
   client:load
-  title="Your First Flitter Application"
-  description="Compare how D3.js and Flitter differ in achieving the same result."
+  title="最初のFlitterアプリケーション"
+  description="D3.jsとFlitterが同じ結果を達成する方法の違いを比較してください。"
   labels={{
     flitterTab: "Flitter",
     d3Tab: "D3.js",
-    codeSection: "Code",
-    resultSection: "Result",
-    flitterCodeTitle: "Flitter Code (40 lines)",
-    d3CodeTitle: "D3.js Code (60 lines)",
+    codeSection: "コード",
+    resultSection: "結果",
+    flitterCodeTitle: "Flitterコード（40行）",
+    d3CodeTitle: "D3.jsコード（60行）",
     flitterAdvantages: "Flitter",
     d3Problems: "D3.js",
-    keyDifferences: "Key Differences",
-    resultDescription: "* Try clicking the button! Both codes produce the same result, but Flitter is much simpler.",
+    keyDifferences: "主な違い",
+    resultDescription: "* ボタンをクリックしてみてください！両方のコードは同じ結果を生成しますが、Flitterははるかにシンプルです。",
     flitterBenefits: {
-      declarative: "Automatic layout handling with declarative UI",
-      gestureDetector: "Simple event handling with GestureDetector",
-      setState: "Automatic re-rendering with setState",
-      widgetComposition: "Complex layouts solved through widget composition"
+      declarative: "宣言的UIで自動レイアウト処理",
+      gestureDetector: "GestureDetectorでシンプルなイベント処理",
+      setState: "setStateで自動再レンダリング",
+      widgetComposition: "ウィジェットコンポジションで複雑なレイアウトを解決"
     },
     d3Issues: {
-      manualCoordinates: "Directly create SVG elements and position them",
-      manualEvents: "Manually bind event handlers",
-      directDOM: "Directly manipulate DOM on state changes",
-      separateHover: "Implement hover effects separately"
+      manualCoordinates: "SVG要素を直接作成して配置",
+      manualEvents: "イベントハンドラを手動でバインド",
+      directDOM: "状態変更時にDOMを直接操作",
+      separateHover: "ホバー効果を別途実装"
     }
   }}
 />
 
-## Understanding Key Concepts
+## 主要概念の理解
 
-### 1. Center Widget
-Flitter's `Center` widget automatically centers its child element:
+### 1. Centerウィジェット
+Flitterの`Center`ウィジェットは、子要素を自動的に中央揃えにします：
 
 ```typescript
 Center({
-  child: Text("This will be centered!")
+  child: Text("これは中央揃えになります！")
 })
 ```
 
-### 2. Automatic Sizing
-Flitter automatically recalculates the layout when the parent container size changes.
-There's no need to write separate resize event handlers.
+### 2. 自動サイジング
+Flitterは親コンテナのサイズが変更されると、レイアウトを自動的に再計算します。
+別途リサイズイベントハンドラを書く必要はありません。
 
-### 3. Declarative Styling
-Use `TextStyle` to declaratively define the appearance of text:
+### 3. 宣言的スタイリング
+`TextStyle`を使用してテキストの外観を宣言的に定義します：
 
 ```typescript
-Text("Styled text", {
+Text("スタイル付きテキスト", {
   style: TextStyle({
     fontSize: 24,
     fontWeight: 'bold',
@@ -81,27 +81,27 @@ Text("Styled text", {
 })
 ```
 
-## Practice: Various Alignment Methods
+## 実践：様々な配置方法
 
-### Using the Align Widget
-`Center` is actually a special case of the `Align` widget. For more precise control:
+### Alignウィジェットの使用
+`Center`は実際には`Align`ウィジェットの特殊なケースです。より正確な制御のために：
 
 ```typescript
-// Position at top right
+// 右上に配置
 Align({
   alignment: Alignment.topRight,
-  child: Text("Top Right")
+  child: Text("右上")
 })
 
-// Custom position (slightly above center)
+// カスタム位置（中央より少し上）
 Align({
   alignment: new Alignment(0, -0.5),
-  child: Text("Above Center")
+  child: Text("中央の上")
 })
 ```
 
-### Using with Container
-In real applications, it's usually used together with `Container`:
+### Containerと一緒に使用
+実際のアプリケーションでは、通常`Container`と一緒に使用されます：
 
 ```typescript
 Container({
@@ -109,7 +109,7 @@ Container({
   height: 200,
   color: '#EFF6FF',
   child: Center({
-    child: Text("Text in Container", {
+    child: Text("コンテナ内のテキスト", {
       style: TextStyle({
         fontSize: 20,
         color: '#1E40AF'
@@ -119,20 +119,20 @@ Container({
 })
 ```
 
-## Why is this important?
+## なぜこれが重要なのか？
 
-1. **Productivity**: Implement desired layouts directly without complex calculations
-2. **Readability**: Code clearly expresses intent
-3. **Maintainability**: Layout logic is encapsulated, making modifications easy
-4. **Scalability**: Complex layouts can be easily implemented by combining widgets
+1. **生産性**：複雑な計算なしに望むレイアウトを直接実装
+2. **可読性**：コードが意図を明確に表現
+3. **保守性**：レイアウトロジックがカプセル化され、修正が簡単
+4. **スケーラビリティ**：ウィジェットを組み合わせることで複雑なレイアウトを簡単に実装
 
-## Next Steps
+## 次のステップ
 
-Now that you understand the basics of Flitter, let's explore various shapes and layout widgets in the Basic Elements section.
+Flitterの基本を理解したので、基本要素セクションで様々な図形とレイアウトウィジェットを探索しましょう。
 
-## Summary
+## まとめ
 
-- Flitter makes complex layouts simple with declarative programming
-- Automatic center alignment is possible with the `Center` widget
-- Responsive handling to size changes happens automatically
-- You can achieve the same results with much less code compared to D3.js
+- Flitterは宣言的プログラミングで複雑なレイアウトをシンプルにします
+- `Center`ウィジェットで自動的な中央揃えが可能です
+- サイズ変更への対応が自動的に行われます
+- D3.jsと比較してはるかに少ないコードで同じ結果を達成できます

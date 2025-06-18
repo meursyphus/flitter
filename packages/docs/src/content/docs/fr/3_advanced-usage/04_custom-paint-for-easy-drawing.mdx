@@ -1,43 +1,43 @@
 ---
-nav_title: "Easy Drawing with CustomPaint"
-title: "Simplifying Drawing with CustomPaint"
-description: "Learn how to implement custom drawing simply using the CustomPaint widget instead of complex RenderObject"
+nav_title: "Dessin facile avec CustomPaint"
+title: "Simplifier le dessin avec CustomPaint"
+description: "Apprenez à implémenter des dessins personnalisés simplement en utilisant le widget CustomPaint au lieu du complexe RenderObject"
 ---
 
 import CustomPaintBackground from '$components/pages/docs/3_advanced-usage/09-custom-paint-background';
 import CustomPaintUsage from '$components/pages/docs/3_advanced-usage/10-custom-paint-usage';
 
-## Background of CustomPaint Widget
+## Contexte du widget CustomPaint
 
-The RenderObjectWidget we learned earlier is powerful but complex. Even when you simply want to draw something, you need to inherit from RenderObject, implement createRenderObject, and override the paint method.
+Le RenderObjectWidget que nous avons appris précédemment est puissant mais complexe. Même quand vous voulez simplement dessiner quelque chose, vous devez hériter de RenderObject, implémenter createRenderObject et surcharger la méthode paint.
 
-CustomPaint solves this complexity. Just pass the paint behavior as a first-class function and you're done!
+CustomPaint résout cette complexité. Il suffit de passer le comportement de peinture comme fonction de première classe et c'est terminé !
 
 <CustomPaintBackground
   client:load
-  title="Why CustomPaint?"
-  description="Avoid the complexity of RenderObjectWidget and focus only on drawing"
+  title="Pourquoi CustomPaint ?"
+  description="Évitez la complexité de RenderObjectWidget et concentrez-vous uniquement sur le dessin"
 />
 
-### Advantages of CustomPaint
+### Avantages de CustomPaint
 
-1. **Simple API**: Just pass the painter function
-2. **Fast Prototyping**: No complex class structure needed
-3. **Reusability**: Easy to replace painter functions
-4. **Performance**: Uses internally optimized RenderObject
+1. **API simple** : Il suffit de passer la fonction painter
+2. **Prototypage rapide** : Pas besoin de structure de classe complexe
+3. **Réutilisabilité** : Facile de remplacer les fonctions painter
+4. **Performance** : Utilise un RenderObject optimisé en interne
 
-## Using CustomPaint
+## Utiliser CustomPaint
 
 <CustomPaintUsage
   client:load
-  title="Basic CustomPaint Usage"
-  description="Implement custom drawing by passing a function to the painter property"
+  title="Utilisation basique de CustomPaint"
+  description="Implémentez un dessin personnalisé en passant une fonction à la propriété painter"
 />
 
-### Basic Usage
+### Utilisation de base
 
 ```typescript
-// For SVG renderer
+// Pour le renderer SVG
 CustomPaint({
   size: new Size(300, 200),
   painter: {
@@ -57,7 +57,7 @@ CustomPaint({
   }
 })
 
-// For Canvas renderer
+// Pour le renderer Canvas
 CustomPaint({
   size: new Size(300, 200),
   painter: {
@@ -74,38 +74,38 @@ CustomPaint({
 })
 ```
 
-### shouldRepaint Optimization
+### Optimisation shouldRepaint
 
-You can control when to repaint for performance:
+Vous pouvez contrôler quand repeindre pour les performances :
 
 ```typescript
 CustomPaint({
   painter: {
-    dependencies: myData, // Dependency data
+    dependencies: myData, // Données de dépendance
     shouldRepaint: (oldPainter) => {
-      // Return true to repaint
-      // Return false to keep previous painting
+      // Retourner true pour repeindre
+      // Retourner false pour garder la peinture précédente
       return oldPainter.dependencies !== myData;
     },
     svg: {
-      // SVG implementation
+      // Implémentation SVG
     },
     canvas: {
-      // Canvas implementation
+      // Implémentation Canvas
     }
   }
 })
 ```
 
-## SVG vs Canvas Rendering
+## Rendu SVG vs Canvas
 
-Flitter's CustomPaint supports two rendering methods:
+CustomPaint de Flitter supporte deux méthodes de rendu :
 
-### SVG Rendering
-- **Maintains quality when scaling**
-- **Suitable for vector graphics**
-- **Create SVG elements with createDefaultSvgEl()**
-- **Set attributes with setAttribute in paint()**
+### Rendu SVG
+- **Maintient la qualité lors du redimensionnement**
+- **Convient aux graphiques vectoriels**
+- **Créer des éléments SVG avec createDefaultSvgEl()**
+- **Définir les attributs avec setAttribute dans paint()**
 
 ```typescript
 svg: {
@@ -124,10 +124,10 @@ svg: {
 }
 ```
 
-### Canvas Rendering
-- **Suitable for complex pixel manipulation**
-- **Advantageous for high-performance animations**
-- **Same approach as web Canvas API**
+### Rendu Canvas
+- **Convient à la manipulation complexe de pixels**
+- **Avantageux pour les animations haute performance**
+- **Même approche que l'API Canvas web**
 
 ```typescript
 canvas: {
@@ -145,21 +145,21 @@ canvas: {
 }
 ```
 
-## Source Code Location
+## Emplacement du code source
 
-To examine the implementation of CustomPaint:
+Pour examiner l'implémentation de CustomPaint :
 
-- `packages/flitter/src/component/CustomPaint.ts`: CustomPaint 위젯
-- `packages/flitter/src/engine/canvas/`: Canvas 구현
-- `packages/flitter/src/engine/paint.ts`: Paint 클래스
+- `packages/flitter/src/component/CustomPaint.ts` : Widget CustomPaint
+- `packages/flitter/src/engine/canvas/` : Implémentation Canvas
+- `packages/flitter/src/engine/paint.ts` : Classe Paint
 
-## Key Summary
+## Résumé des points clés
 
-1. **CustomPaint hides the complexity of RenderObject**
-2. **Provides separate svg/canvas implementations in the painter object**
-3. **Performance can be optimized with dependencies and shouldRepaint**
-4. **Supports both SVG and Canvas rendering methods**
-5. **You only need to provide implementation for the renderer you use**
-6. **Can be easily combined with animations**
+1. **CustomPaint cache la complexité de RenderObject**
+2. **Fournit des implémentations svg/canvas séparées dans l'objet painter**
+3. **Les performances peuvent être optimisées avec dependencies et shouldRepaint**
+4. **Supporte les méthodes de rendu SVG et Canvas**
+5. **Vous n'avez besoin de fournir l'implémentation que pour le renderer que vous utilisez**
+6. **Peut être facilement combiné avec des animations**
 
-In the next chapter, we will examine practical examples that utilize everything we have learned so far.
+Dans le prochain chapitre, nous examinerons des exemples pratiques qui utilisent tout ce que nous avons appris jusqu'à présent.
