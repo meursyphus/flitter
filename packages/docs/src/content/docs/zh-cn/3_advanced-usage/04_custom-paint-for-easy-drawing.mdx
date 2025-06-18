@@ -1,43 +1,43 @@
 ---
-nav_title: "Easy Drawing with CustomPaint"
-title: "Simplifying Drawing with CustomPaint"
-description: "Learn how to implement custom drawing simply using the CustomPaint widget instead of complex RenderObject"
+nav_title: "使用 CustomPaint 轻松绘制"
+title: "使用 CustomPaint 简化绘制"
+description: "学习如何使用 CustomPaint 组件简单地实现自定义绘制，而不是复杂的 RenderObject"
 ---
 
 import CustomPaintBackground from '$components/pages/docs/3_advanced-usage/09-custom-paint-background';
 import CustomPaintUsage from '$components/pages/docs/3_advanced-usage/10-custom-paint-usage';
 
-## Background of CustomPaint Widget
+## CustomPaint 组件的背景
 
-The RenderObjectWidget we learned earlier is powerful but complex. Even when you simply want to draw something, you need to inherit from RenderObject, implement createRenderObject, and override the paint method.
+我们之前学习的 RenderObjectWidget 虽然强大但很复杂。即使您只是想简单地绘制一些东西，也需要继承 RenderObject，实现 createRenderObject，并重写 paint 方法。
 
-CustomPaint solves this complexity. Just pass the paint behavior as a first-class function and you're done!
+CustomPaint 解决了这种复杂性。只需将绘制行为作为一级函数传递即可！
 
 <CustomPaintBackground
   client:load
-  title="Why CustomPaint?"
-  description="Avoid the complexity of RenderObjectWidget and focus only on drawing"
+  title="为什么使用 CustomPaint？"
+  description="避免 RenderObjectWidget 的复杂性，仅专注于绘制"
 />
 
-### Advantages of CustomPaint
+### CustomPaint 的优势
 
-1. **Simple API**: Just pass the painter function
-2. **Fast Prototyping**: No complex class structure needed
-3. **Reusability**: Easy to replace painter functions
-4. **Performance**: Uses internally optimized RenderObject
+1. **简单的 API**：只需传递绘制函数
+2. **快速原型开发**：不需要复杂的类结构
+3. **可重用性**：易于替换绘制函数
+4. **性能**：使用内部优化的 RenderObject
 
-## Using CustomPaint
+## 使用 CustomPaint
 
 <CustomPaintUsage
   client:load
-  title="Basic CustomPaint Usage"
-  description="Implement custom drawing by passing a function to the painter property"
+  title="CustomPaint 基本用法"
+  description="通过向 painter 属性传递函数来实现自定义绘制"
 />
 
-### Basic Usage
+### 基本用法
 
 ```typescript
-// For SVG renderer
+// 为 SVG 渲染器
 CustomPaint({
   size: new Size(300, 200),
   painter: {
@@ -57,7 +57,7 @@ CustomPaint({
   }
 })
 
-// For Canvas renderer
+// 为 Canvas 渲染器
 CustomPaint({
   size: new Size(300, 200),
   painter: {
@@ -74,38 +74,38 @@ CustomPaint({
 })
 ```
 
-### shouldRepaint Optimization
+### shouldRepaint 优化
 
-You can control when to repaint for performance:
+您可以控制何时重绘以优化性能：
 
 ```typescript
 CustomPaint({
   painter: {
-    dependencies: myData, // Dependency data
+    dependencies: myData, // 依赖数据
     shouldRepaint: (oldPainter) => {
-      // Return true to repaint
-      // Return false to keep previous painting
+      // 返回 true 以重绘
+      // 返回 false 以保持之前的绘制
       return oldPainter.dependencies !== myData;
     },
     svg: {
-      // SVG implementation
+      // SVG 实现
     },
     canvas: {
-      // Canvas implementation
+      // Canvas 实现
     }
   }
 })
 ```
 
-## SVG vs Canvas Rendering
+## SVG vs Canvas 渲染
 
-Flitter's CustomPaint supports two rendering methods:
+Flitter 的 CustomPaint 支持两种渲染方法：
 
-### SVG Rendering
-- **Maintains quality when scaling**
-- **Suitable for vector graphics**
-- **Create SVG elements with createDefaultSvgEl()**
-- **Set attributes with setAttribute in paint()**
+### SVG 渲染
+- **缩放时保持质量**
+- **适合矢量图形**
+- **使用 createDefaultSvgEl() 创建 SVG 元素**
+- **在 paint() 中使用 setAttribute 设置属性**
 
 ```typescript
 svg: {
@@ -124,10 +124,10 @@ svg: {
 }
 ```
 
-### Canvas Rendering
-- **Suitable for complex pixel manipulation**
-- **Advantageous for high-performance animations**
-- **Same approach as web Canvas API**
+### Canvas 渲染
+- **适合复杂的像素操作**
+- **高性能动画的优势**
+- **与 Web Canvas API 相同的方法**
 
 ```typescript
 canvas: {
@@ -145,21 +145,21 @@ canvas: {
 }
 ```
 
-## Source Code Location
+## 源代码位置
 
-To examine the implementation of CustomPaint:
+要查看 CustomPaint 的实现：
 
-- `packages/flitter/src/component/CustomPaint.ts`: CustomPaint 위젯
-- `packages/flitter/src/engine/canvas/`: Canvas 구현
-- `packages/flitter/src/engine/paint.ts`: Paint 클래스
+- `packages/flitter/src/component/CustomPaint.ts`：CustomPaint 组件
+- `packages/flitter/src/engine/canvas/`：Canvas 实现
+- `packages/flitter/src/engine/paint.ts`：Paint 类
 
-## Key Summary
+## 关键总结
 
-1. **CustomPaint hides the complexity of RenderObject**
-2. **Provides separate svg/canvas implementations in the painter object**
-3. **Performance can be optimized with dependencies and shouldRepaint**
-4. **Supports both SVG and Canvas rendering methods**
-5. **You only need to provide implementation for the renderer you use**
-6. **Can be easily combined with animations**
+1. **CustomPaint 隐藏了 RenderObject 的复杂性**
+2. **在 painter 对象中提供单独的 svg/canvas 实现**
+3. **可以使用 dependencies 和 shouldRepaint 优化性能**
+4. **支持 SVG 和 Canvas 两种渲染方法**
+5. **您只需要为使用的渲染器提供实现**
+6. **可以轻松与动画结合**
 
-In the next chapter, we will examine practical examples that utilize everything we have learned so far.
+在下一章中，我们将研究利用我们迄今为止学到的一切的实际示例。

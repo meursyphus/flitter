@@ -1,51 +1,51 @@
 ---
-nav_title: "Chart Implementation Examples"
-title: "Chart Implementation with headless-chart"
-description: "Learn how to create custom charts using Flitter and headless-chart"
+nav_title: "Exemples d'implémentation de graphiques"
+title: "Implémentation de graphiques avec headless-chart"
+description: "Apprenez à créer des graphiques personnalisés avec Flitter et headless-chart"
 ---
 
 import Charts01 from '$components/pages/docs/04_examples/charts01'
 import Charts02 from '$components/pages/docs/04_examples/charts02'
 
-## What is headless-chart?
+## Qu'est-ce que headless-chart ?
 
-`@meursyphus/headless-chart` is a UI-less chart library. It provides only data and logic, while the actual UI is implemented directly by developers using Flitter widgets. This enables creating fully customizable charts.
+`@meursyphus/headless-chart` est une bibliothèque de graphiques sans UI. Elle fournit uniquement les données et la logique, tandis que l'interface utilisateur réelle est implémentée directement par les développeurs en utilisant les widgets Flitter. Cela permet de créer des graphiques entièrement personnalisables.
 
-- **GitHub**: [https://github.com/meursyphus/headless-chart](https://github.com/meursyphus/headless-chart)
-- **Installation**: `npm install @meursyphus/headless-chart`
+- **GitHub** : [https://github.com/meursyphus/headless-chart](https://github.com/meursyphus/headless-chart)
+- **Installation** : `npm install @meursyphus/headless-chart`
 
-## Core Concepts
+## Concepts fondamentaux
 
-The core of headless-chart consists of **data structure** and **custom rendering functions**:
+Le cœur de headless-chart se compose de **structure de données** et de **fonctions de rendu personnalisées** :
 
-- **Data Structure**: Composed of labels and datasets
-- **Custom Functions**: Render each part of the chart (axes, ticks, bars, lines, etc.) as Flitter widgets
+- **Structure de données** : Composée d'étiquettes et de jeux de données
+- **Fonctions personnalisées** : Rendre chaque partie du graphique (axes, graduations, barres, lignes, etc.) sous forme de widgets Flitter
 
-## Simple Bar Chart Example
+## Exemple simple de graphique à barres
 
-Below is a custom bar chart created with headless-chart. It reproduces the Highcharts style using Flitter:
+Voici un graphique à barres personnalisé créé avec headless-chart. Il reproduit le style Highcharts en utilisant Flitter :
 
 <Charts01 client:load />
 
-### Key Customization Points
+### Points de personnalisation clés
 
-1. **Layout Customization**
-   - Define the overall chart structure with the `custom.layout` function
-   - Free element positioning with Stack and Positioned
+1. **Personnalisation de la mise en page**
+   - Définir la structure globale du graphique avec la fonction `custom.layout`
+   - Positionnement libre des éléments avec Stack et Positioned
 
-2. **Axis Label Styling**
-   - Apply text styles with `custom.xAxisLabel` and `custom.yAxisLabel`
-   - Set font, size, and color as desired
+2. **Style des étiquettes d'axes**
+   - Appliquer des styles de texte avec `custom.xAxisLabel` et `custom.yAxisLabel`
+   - Définir la police, la taille et la couleur selon vos souhaits
 
-3. **Bar Design**
-   - Utilize Container and BoxDecoration in the `custom.bar` function
-   - Freely design colors, rounded corners, shadows, etc.
+3. **Design des barres**
+   - Utiliser Container et BoxDecoration dans la fonction `custom.bar`
+   - Concevoir librement les couleurs, coins arrondis, ombres, etc.
 
-4. **Legend Customization**
-   - Position the legend as a floating box inside the chart
-   - Add depth with BoxShadow
+4. **Personnalisation de la légende**
+   - Positionner la légende comme une boîte flottante à l'intérieur du graphique
+   - Ajouter de la profondeur avec BoxShadow
 
-### Bar Chart Implementation Code Example
+### Exemple de code d'implémentation d'un graphique à barres
 
 ```javascript
 const Bar = (...[{ legend, value }, { data }]) => {
@@ -81,20 +81,20 @@ const Bar = (...[{ legend, value }, { data }]) => {
 };
 ```
 
-In this code:
-- Draw bars using Flitter's Container and BoxDecoration
-- Position value text at the end of bars with FractionalTranslation
-- Apply different colors for each dataset
+Dans ce code :
+- Dessiner des barres en utilisant Container et BoxDecoration de Flitter
+- Positionner le texte de valeur à la fin des barres avec FractionalTranslation
+- Appliquer différentes couleurs pour chaque jeu de données
 
-## Line Chart Example
+## Exemple de graphique linéaire
 
-Here's a Nivo-style line chart:
+Voici un graphique linéaire de style Nivo :
 
 <Charts02 client:load />
 
-### Line Chart Customization
+### Personnalisation du graphique linéaire
 
-1. **Drawing Lines with CustomPaint**
+1. **Dessiner des lignes avec CustomPaint**
    ```javascript
    custom.line: (...[{ values, index }, { scale }]) => {
      return CustomPaint({
@@ -104,27 +104,27 @@ Here's a Nivo-style line chart:
              const linePath = new Path();
              const pointPath = new Path();
              
-             // Calculate data points
+             // Calculer les points de données
              const points = values.map((value, index) => {
                const y = height - (height * (value - scale.min)) / (scale.max - scale.min);
                const x = (index * width) / (values.length - 1);
                return { x, y };
              });
              
-             // Draw lines
+             // Dessiner les lignes
              linePath.moveTo(points[0]);
              points.slice(1).forEach((point) => {
                linePath.lineTo(point);
              });
              
-             // Draw points
+             // Dessiner les points
              points.forEach((point) => {
                pointPath.addOval(
                  Rect.fromCircle({ center: new Offset(point), radius: 5 })
                );
              });
              
-             // Set SVG attributes
+             // Définir les attributs SVG
              line.setAttribute("fill", "none");
              line.setAttribute("stroke", colors[index]);
              line.setAttribute("stroke-width", "2");
@@ -141,70 +141,70 @@ Here's a Nivo-style line chart:
    }
    ```
 
-2. **Color Palette Usage**
-   - Apply different colors for each dataset
-   - Harmonize colors between lines and points
+2. **Utilisation de la palette de couleurs**
+   - Appliquer différentes couleurs pour chaque jeu de données
+   - Harmoniser les couleurs entre les lignes et les points
 
-3. **Layout Flexibility**
-   - Side-by-side arrangement of chart and legend with Row
-   - Responsive layout implementation with Flexible
+3. **Flexibilité de la mise en page**
+   - Arrangement côte à côte du graphique et de la légende avec Row
+   - Implémentation d'une mise en page responsive avec Flexible
 
-## Advantages of headless-chart
+## Avantages de headless-chart
 
-1. **Complete Customization**: Control all visual elements with Flitter widgets
-2. **Consistent Development Experience**: Use Flitter's widget system as-is
-3. **Performance Optimization**: Render only necessary parts
-4. **Reusability**: Easily reuse custom components
+1. **Personnalisation complète** : Contrôler tous les éléments visuels avec les widgets Flitter
+2. **Expérience de développement cohérente** : Utiliser le système de widgets de Flitter tel quel
+3. **Optimisation des performances** : Rendre uniquement les parties nécessaires
+4. **Réutilisabilité** : Réutiliser facilement les composants personnalisés
 
-## How to Use headless-chart
+## Comment utiliser headless-chart
 
 ### 1. Installation
 ```bash
 npm install @meursyphus/headless-chart
 ```
 
-### 2. Basic Usage
+### 2. Utilisation de base
 ```javascript
 import { BarChart, LineChart } from "@meursyphus/headless-chart";
 
-// Define data
+// Définir les données
 const data = {
   labels: ["A", "B", "C", "D"],
   datasets: [
     {
-      legend: "Dataset 1",
+      legend: "Jeu de données 1",
       values: [10, 20, 30, 40],
     },
   ],
 };
 
-// Create chart
+// Créer le graphique
 const chart = BarChart({
   data,
   custom: {
-    // Customize each element with Flitter widgets
+    // Personnaliser chaque élément avec des widgets Flitter
     bar: (...args) => Container({ /* ... */ }),
     xAxisLabel: (...args) => Text(/* ... */),
-    // ... other customizations
+    // ... autres personnalisations
   },
 });
 ```
 
-### 3. Supported Chart Types
-- **BarChart**: Bar charts (vertical/horizontal)
-- **LineChart**: Line charts
-- **PieChart**: Pie charts
-- **ScatterChart**: Scatter plot charts
+### 3. Types de graphiques supportés
+- **BarChart** : Graphiques à barres (vertical/horizontal)
+- **LineChart** : Graphiques linéaires
+- **PieChart** : Graphiques en secteurs
+- **ScatterChart** : Graphiques en nuage de points
 
-## Next Steps
+## Prochaines étapes
 
-- Implementing more complex chart types (Pie, Scatter, Area, etc.)
-- Adding animations
-- Implementing interactive features (tooltips, zoom, pan, etc.)
-- Real-time data updates
+- Implémentation de types de graphiques plus complexes (secteurs, nuage de points, aires, etc.)
+- Ajout d'animations
+- Implémentation de fonctionnalités interactives (infobulles, zoom, panoramique, etc.)
+- Mises à jour de données en temps réel
 
-## References
+## Références
 
-- [headless-chart GitHub](https://github.com/meursyphus/headless-chart)
-- [Flitter Documentation](/docs/getting-started/introduction)
-- [CustomPaint Widget Guide](/docs/advanced-usage/custom-paint로-쉽게-그리기)
+- [GitHub headless-chart](https://github.com/meursyphus/headless-chart)
+- [Documentation Flitter](/docs/getting-started/introduction)
+- [Guide du widget CustomPaint](/docs/advanced-usage/custom-paint로-쉽게-그리기)

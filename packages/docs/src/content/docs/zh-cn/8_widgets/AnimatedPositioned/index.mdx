@@ -3,16 +3,16 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: AnimatedPositioned
 title: "AnimatedPositioned"
-description: "A widget that animates position and size transitions within a Stack"
+description: "在 Stack 中动画化位置和尺寸过渡的组件"
 ---
 
-## Overview
+## 概述
 
-AnimatedPositioned is a widget that automatically animates when its child widget's position and size change within a Stack widget. This widget is inspired by Flutter's AnimatedPositioned widget.
+AnimatedPositioned 是一个在 Stack 组件中子组件的位置和尺寸发生变化时自动进行动画的组件。这个组件受 Flutter 的 AnimatedPositioned 组件启发。
 
-> Only works if it's the child of a Stack.
+> 仅在作为 Stack 的子组件时才能工作。
 >
-> This widget is a good choice if the size of the child would end up changing as a result of this animation. If the size is intended to remain the same, with only the position changing over time, then consider SlideTransition instead. SlideTransition only triggers a repaint each frame of the animation, whereas AnimatedPositioned will trigger a relayout as well.
+> 如果子组件的尺寸会因此动画而改变，这个组件是一个好选择。如果尺寸意图保持不变，只有位置随时间变化，那么请考虑使用 SlideTransition。SlideTransition 只会在动画的每一帧触发重绘，而 AnimatedPositioned 也会触发重新布局。
 
 <iframe
   width="560"
@@ -26,16 +26,16 @@ AnimatedPositioned is a widget that automatically animates when its child widget
 
 Flutter reference: https://api.flutter.dev/flutter/widgets/AnimatedPositioned-class.html
 
-## When to use?
+## 何时使用？
 
-- When dynamically moving widget positions within a Stack
-- When implementing drag and drop or movement animations
-- When animating modal or popup position transitions
-- When moving floating action buttons to different positions
-- When implementing micro-interactions based on moving nameplates or masonry layouts
-- When implementing resize handles or size change effects with animation
+- 当需要在 Stack 中动态移动组件位置时
+- 当实现拖放或移动动画时
+- 当动画化模态框或弹窗位置过渡时
+- 当将浮动操作按钮移动到不同位置时
+- 当实现基于移动名牌或石工布局的微交互时
+- 当实现带动画的调整手柄或尺寸更改效果时
 
-## Basic usage
+## 基本用法
 
 ```typescript
 import { AnimatedPositioned, Stack, Container, StatefulWidget } from '@flitter/core';
@@ -58,7 +58,7 @@ class PositionedExampleState extends State<PositionedExample> {
               this.isTopLeft = !this.isTopLeft;
             });
           },
-          child: Text("Move Position"),
+          child: Text("移动位置"),
         }),
         Container({
           width: 300,
@@ -79,7 +79,7 @@ class PositionedExampleState extends State<PositionedExample> {
                 child: Container({
                   color: "blue",
                   child: Center({
-                    child: Text("Move", {
+                    child: Text("移动", {
                       style: TextStyle({ color: "white" })
                     }),
                   }),
@@ -94,75 +94,75 @@ class PositionedExampleState extends State<PositionedExample> {
 }
 ```
 
-## Props
+## 属性
 
-### duration (required)
-**Value: number**
+### duration（必需）
+**值：number**
 
-Specifies the animation duration in milliseconds.
+指定动画持续时间（毫秒）。
 
-### top (optional)
-**Value: number | undefined**
+### top（可选）
+**值：number | undefined**
 
-Specifies the distance from the top of the Stack. Cannot be used simultaneously with bottom.
+指定从 Stack 顶部的距离。不能与 bottom 同时使用。
 
-### left (optional)
-**Value: number | undefined**
+### left（可选）
+**值：number | undefined**
 
-Specifies the distance from the left of the Stack. Cannot be used simultaneously with right.
+指定从 Stack 左侧的距离。不能与 right 同时使用。
 
-### right (optional)
-**Value: number | undefined**
+### right（可选）
+**值：number | undefined**
 
-Specifies the distance from the right of the Stack. Cannot be used simultaneously with left.
+指定从 Stack 右侧的距离。不能与 left 同时使用。
 
-### bottom (optional)
-**Value: number | undefined**
+### bottom（可选）
+**值：number | undefined**
 
-Specifies the distance from the bottom of the Stack. Cannot be used simultaneously with top.
+指定从 Stack 底部的距离。不能与 top 同时使用。
 
-### width (optional)
-**Value: number | undefined**
+### width（可选）
+**值：number | undefined**
 
-Specifies the widget's width. If not specified, uses the child widget's intrinsic width.
+指定组件的宽度。如果未指定，则使用子组件的固有宽度。
 
-### height (optional)
-**Value: number | undefined**
+### height（可选）
+**值：number | undefined**
 
-Specifies the widget's height. If not specified, uses the child widget's intrinsic height.
+指定组件的高度。如果未指定，则使用子组件的固有高度。
 
-### curve (optional)
-**Value: Curve** (default: **Curves.linear**)
+### curve（可选）
+**值：Curve**（默认值：**Curves.linear**）
 
-Specifies the animation progression curve. Available curves:
-- `Curves.linear`: Constant speed
-- `Curves.easeIn`: Slow start
-- `Curves.easeOut`: Slow end
-- `Curves.easeInOut`: Slow start and end
-- `Curves.circIn`: Circular acceleration start
-- `Curves.circOut`: Circular deceleration end
-- `Curves.circInOut`: Circular acceleration/deceleration
-- `Curves.backIn`: Goes back then starts
-- `Curves.backOut`: Overshoots target then returns
-- `Curves.backInOut`: backIn + backOut
-- `Curves.anticipate`: Anticipatory motion before proceeding
-- `Curves.bounceIn`: Bounces at start
-- `Curves.bounceOut`: Bounces at end
-- `Curves.bounceInOut`: Bounces at start/end
+指定动画进程曲线。可用曲线：
+- `Curves.linear`：匀速
+- `Curves.easeIn`：缓慢开始
+- `Curves.easeOut`：缓慢结束
+- `Curves.easeInOut`：缓慢开始和结束
+- `Curves.circIn`：圆形加速开始
+- `Curves.circOut`：圆形减速结束
+- `Curves.circInOut`：圆形加速/减速
+- `Curves.backIn`：先后退然后开始
+- `Curves.backOut`：超过目标然后返回
+- `Curves.backInOut`：backIn + backOut
+- `Curves.anticipate`：在继续之前的预期运动
+- `Curves.bounceIn`：开始时弹跳
+- `Curves.bounceOut`：结束时弹跳
+- `Curves.bounceInOut`：开始/结束时弹跳
 
-### child (optional)
-**Value: Widget | undefined**
+### child（可选）
+**值：Widget | undefined**
 
-The child widget whose position will be animated.
+将进行位置动画的子组件。
 
-### key (optional)
-**Value: any**
+### key（可选）
+**值：any**
 
-A unique identifier for the widget.
+组件的唯一标识符。
 
-## Real-world examples
+## 实际示例
 
-### Example 1: Drag and drop simulation
+### 示例 1：拖放模拟
 
 ```typescript
 import { AnimatedPositioned, Stack, Container, GestureDetector, Curves } from '@flitter/core';
@@ -203,7 +203,7 @@ class DragDropSimulationState extends State<DragDropSimulation> {
               }),
               child: Center({
                 child: Text(
-                  "Drop Zone",
+                  "放置区域",
                   { style: TextStyle({ color: "darkgreen", fontWeight: "bold" }) }
                 ),
               }),
@@ -254,7 +254,7 @@ class DragDropSimulationState extends State<DragDropSimulation> {
                 borderRadius: BorderRadius.circular(8),
               }),
               child: Text(
-                "Click the blue square to move it",
+                "点击蓝色方块移动它",
                 { style: TextStyle({ color: "white", fontSize: 14 }) }
               ),
             }),
@@ -278,7 +278,7 @@ class DragDropSimulationState extends State<DragDropSimulation> {
 }
 ```
 
-### Example 2: Multi-widget orchestration
+### 示例 2：多组件编排
 
 ```typescript
 import { AnimatedPositioned, Stack, Container, Curves } from '@flitter/core';
@@ -347,28 +347,28 @@ class MultiWidgetOrchestrationState extends State<MultiWidgetOrchestration> {
             children: [
               ElevatedButton({
                 onPressed: () => this.changePattern(0),
-                child: Text("Circle"),
+                child: Text("圆形"),
                 style: ButtonStyle({
                   backgroundColor: this.pattern === 0 ? "blue" : "gray",
                 }),
               }),
               ElevatedButton({
                 onPressed: () => this.changePattern(1),
-                child: Text("Square"),
+                child: Text("方形"),
                 style: ButtonStyle({
                   backgroundColor: this.pattern === 1 ? "blue" : "gray",
                 }),
               }),
               ElevatedButton({
                 onPressed: () => this.changePattern(2),
-                child: Text("Diagonal"),
+                child: Text("对角线"),
                 style: ButtonStyle({
                   backgroundColor: this.pattern === 2 ? "blue" : "gray",
                 }),
               }),
               ElevatedButton({
                 onPressed: () => this.changePattern(3),
-                child: Text("Wave"),
+                child: Text("波浪"),
                 style: ButtonStyle({
                   backgroundColor: this.pattern === 3 ? "blue" : "gray",
                 }),
@@ -431,7 +431,7 @@ class MultiWidgetOrchestrationState extends State<MultiWidgetOrchestration> {
 }
 ```
 
-### Example 3: Modal dialog animation
+### 示例 3：模态对话框动画
 
 ```typescript
 import { AnimatedPositioned, Stack, Container, Card, Curves } from '@flitter/core';
@@ -460,7 +460,7 @@ class ModalAnimationState extends State<ModalAnimation> {
                   this.showModal = true;
                 });
               },
-              child: Text("Open Modal"),
+              child: Text("打开模态框"),
             }),
           }),
         }),
@@ -490,12 +490,12 @@ class ModalAnimationState extends State<ModalAnimation> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Modal Dialog",
+                    "模态对话框",
                     { style: TextStyle({ fontSize: 24, fontWeight: "bold" }) }
                   ),
                   SizedBox({ height: 16 }),
                   Text(
-                    "This is an animated modal dialog that appears with a slide-up effect from the bottom."
+                    "这是一个动画模态对话框，会从底部以上滑效果出现。"
                   ),
                   SizedBox({ height: 20 }),
                   Row({
@@ -507,7 +507,7 @@ class ModalAnimationState extends State<ModalAnimation> {
                             this.showModal = false;
                           });
                         },
-                        child: Text("Cancel"),
+                        child: Text("取消"),
                       }),
                       SizedBox({ width: 8 }),
                       ElevatedButton({
@@ -516,7 +516,7 @@ class ModalAnimationState extends State<ModalAnimation> {
                             this.showModal = false;
                           });
                         },
-                        child: Text("Confirm"),
+                        child: Text("确认"),
                       }),
                     ],
                   }),
@@ -531,7 +531,7 @@ class ModalAnimationState extends State<ModalAnimation> {
 }
 ```
 
-### Example 4: Size and position simultaneous animation
+### 示例 4：尺寸和位置同时动画
 
 ```typescript
 import { AnimatedPositioned, Stack, Container, Curves } from '@flitter/core';
@@ -605,7 +605,7 @@ class SizeAndPositionAnimationState extends State<SizeAndPositionAnimation> {
                   borderRadius: BorderRadius.circular(8),
                 }),
                 child: Text(
-                  "Tap the screen to see size and position animation",
+                  "点击屏幕查看尺寸和位置动画",
                   { 
                     style: TextStyle({ 
                       color: "#2c3e50", 
@@ -624,18 +624,18 @@ class SizeAndPositionAnimationState extends State<SizeAndPositionAnimation> {
 }
 ```
 
-## Notes
+## 注意事项
 
-- **Must be direct child of Stack**: AnimatedPositioned can only be used as a direct child of a Stack widget
-- **Conflicting properties**: top/bottom and left/right cannot be set simultaneously
-- **Performance considerations**: Position changes trigger layout recalculation, so applying to many widgets simultaneously may impact performance
-- **Animation interruption**: If new property values are set during animation, it smoothly transitions from the current value to the new value
-- **Negative values allowed**: left, top, right, bottom properties can accept negative values
+- **必须是 Stack 的直接子组件**：AnimatedPositioned 只能作为 Stack 组件的直接子组件使用
+- **冲突属性**：top/bottom 和 left/right 不能同时设置
+- **性能考虑**：位置变化会触发布局重新计算，因此同时应用于多个组件可能影响性能
+- **动画中断**：如果在动画期间设置新的属性值，它会从当前值平滑过渡到新值
+- **允许负值**：left、top、right、bottom 属性可以接受负值
 
-## Related widgets
+## 相关组件
 
-- **Positioned**: Basic widget for specifying position within Stack without animation
-- **AnimatedAlign**: Animates alignment transitions
-- **SlideTransition**: Use when only animating position while keeping layout unchanged
-- **Stack**: Parent widget required for using AnimatedPositioned
-- **AnimatedContainer**: General-purpose widget for animating multiple properties simultaneously
+- **Positioned**：在 Stack 中指定位置的基本组件，无动画
+- **AnimatedAlign**：动画化对齐过渡
+- **SlideTransition**：当仅动画化位置而保持布局不变时使用
+- **Stack**：使用 AnimatedPositioned 所需的父组件
+- **AnimatedContainer**：同时动画化多个属性的通用组件

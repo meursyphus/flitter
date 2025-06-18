@@ -1,38 +1,38 @@
 ---
-nav_title: "Basic Elements"
-title: "Basic Elements - Shapes, Layout, Text"
-description: "Learn how to work with shapes, layouts, and text using Flitter's basic widgets"
+nav_title: "基本要素"
+title: "基本要素 - 図形、レイアウト、テキスト"
+description: "Flitterの基本ウィジェットを使用して図形、レイアウト、テキストを扱う方法を学びます"
 ---
 
 import BasicShapesExample from '$components/pages/docs/01_getting-started/02-basic-shapes-example';
 import LayoutExample from '$components/pages/docs/01_getting-started/03-layout-example';
 import TextExample from '$components/pages/docs/01_getting-started/04-text-example';
 
-# Basic Elements - Shapes, Layout, Text
+# 基本要素 - 図形、レイアウト、テキスト
 
-Flitter provides a widget system similar to Flutter, making it easy to build complex UIs.
-This document covers how to work with the most basic elements: shapes, layouts, and text.
+FlitterはFlutterに似たウィジェットシステムを提供し、複雑なUIを簡単に構築できます。
+このドキュメントでは、最も基本的な要素である図形、レイアウト、テキストの扱い方について説明します。
 
-## Drawing Basic Shapes
+## 基本的な図形の描画
 
-In Flitter, shapes are created using the `Container` widget and `BoxDecoration`.
+Flitterでは、`Container`ウィジェットと`BoxDecoration`を使用して図形を作成します。
 
 <BasicShapesExample
   client:load
-  title="Container and BoxDecoration"
-  description="Create various shapes and styles."
+  title="ContainerとBoxDecoration"
+  description="様々な図形とスタイルを作成します。"
 />
 
-### Container Widget
+### Containerウィジェット
 
-`Container` is the most basic yet powerful widget in Flitter:
+`Container`はFlitterで最も基本的でありながら強力なウィジェットです：
 
-- **Size setting**: Specify size with width and height properties
-- **Color**: Set background color with color or decoration.color
-- **Spacing**: Set internal/external margins with padding and margin
-- **Decoration**: Add borders, rounded corners, shadows, etc. with BoxDecoration
+- **サイズ設定**：widthとheightプロパティでサイズを指定
+- **色**：colorまたはdecoration.colorで背景色を設定
+- **間隔**：paddingとmarginで内部/外部の余白を設定
+- **装飾**：BoxDecorationで境界線、角丸、シャドウなどを追加
 
-### Using BoxDecoration
+### BoxDecorationの使用
 
 ```typescript
 Container({
@@ -40,10 +40,10 @@ Container({
     color: '#3B82F6',
     border: new Border({
       top: new BorderSide({ color: '#1E40AF', width: 2 }),
-      // right, bottom, left can be set the same way
+      // right、bottom、leftも同様に設定可能
     }),
     borderRadius: BorderRadius.circular(8),
-    // or set individual corners
+    // または個別の角を設定
     borderRadius: BorderRadius.only({
       topLeft: Radius.circular(16),
       topRight: Radius.circular(16),
@@ -54,117 +54,117 @@ Container({
 })
 ```
 
-## Layout System
+## レイアウトシステム
 
-Flitter provides three main layout widgets.
+Flitterは3つの主要なレイアウトウィジェットを提供します。
 
 <LayoutExample
   client:load
-  title="Layout Widgets"
-  description="Learn how to arrange widgets using Row, Column, and Stack."
+  title="レイアウトウィジェット"
+  description="Row、Column、Stackを使用してウィジェットを配置する方法を学びます。"
 />
 
-### Row and Column
+### RowとColumn
 
-**Row** arranges child widgets horizontally, while **Column** arranges them vertically:
+**Row**は子ウィジェットを水平に配置し、**Column**は垂直に配置します：
 
 ```typescript
-// Horizontal arrangement
+// 水平配置
 Row({
-  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Main axis alignment
-  crossAxisAlignment: CrossAxisAlignment.center,     // Cross axis alignment
-  children: [/* widgets */]
+  mainAxisAlignment: MainAxisAlignment.spaceBetween, // 主軸の配置
+  crossAxisAlignment: CrossAxisAlignment.center,     // 交差軸の配置
+  children: [/* ウィジェット */]
 })
 
-// Vertical arrangement
+// 垂直配置
 Column({
   mainAxisAlignment: MainAxisAlignment.start,
   crossAxisAlignment: CrossAxisAlignment.stretch,
-  children: [/* widgets */]
+  children: [/* ウィジェット */]
 })
 ```
 
-### Stack and Positioned
+### StackとPositioned
 
-**Stack** is used to overlay widgets on top of each other:
+**Stack**はウィジェットを重ねて配置するために使用されます：
 
 ```typescript
 Stack({
   children: [
-    Container({ /* background */ }),
+    Container({ /* 背景 */ }),
     Positioned({
       top: 10,
       left: 10,
-      child: Container({ /* absolute positioning */ })
+      child: Container({ /* 絶対位置指定 */ })
     })
   ]
 })
 ```
 
-### Expanded and Flexible
+### ExpandedとFlexible
 
-Used to fill remaining space or distribute space proportionally:
+残りのスペースを埋めたり、比例的にスペースを配分するために使用されます：
 
 ```typescript
 Row({
   children: [
-    Container({ width: 100 }), // Fixed width
+    Container({ width: 100 }), // 固定幅
     Expanded({
-      flex: 2, // Takes 2x space
-      child: Container({ /* fill remaining space */ })
+      flex: 2, // 2倍のスペースを占有
+      child: Container({ /* 残りのスペースを埋める */ })
     }),
     Expanded({
-      flex: 1, // Takes 1x space
-      child: Container({ /* fill remaining space */ })
+      flex: 1, // 1倍のスペースを占有
+      child: Container({ /* 残りのスペースを埋める */ })
     })
   ]
 })
 ```
 
-## Text Handling
+## テキストの扱い
 
-Flitter's Text widget provides various styling and layout options.
+FlitterのTextウィジェットは様々なスタイリングとレイアウトオプションを提供します。
 
 <TextExample
   client:load
-  title="Text Styling and Handling"
-  description="Learn about various text styles and overflow handling methods."
+  title="テキストのスタイリングと処理"
+  description="様々なテキストスタイルとオーバーフロー処理方法について学びます。"
 />
 
-### TextStyle Properties
+### TextStyleプロパティ
 
 ```typescript
-Text('Styled text', {
+Text('スタイル付きテキスト', {
   style: new TextStyle({
-    fontSize: 18,          // Font size
-    fontWeight: 'bold',    // Weight: 'normal', 'bold'
-    fontStyle: 'italic',   // Style: 'normal', 'italic'
-    fontFamily: 'Arial',   // Font family
-    color: '#3B82F6',      // Color
-    letterSpacing: 1.5,    // Letter spacing
-    wordSpacing: 2.0,      // Word spacing
-    height: 1.5,           // Line height
-    decoration: 'underline' // 'none', 'underline', 'overline', 'lineThrough'
+    fontSize: 18,          // フォントサイズ
+    fontWeight: 'bold',    // 太さ：'normal'、'bold'
+    fontStyle: 'italic',   // スタイル：'normal'、'italic'
+    fontFamily: 'Arial',   // フォントファミリー
+    color: '#3B82F6',      // 色
+    letterSpacing: 1.5,    // 文字間隔
+    wordSpacing: 2.0,      // 単語間隔
+    height: 1.5,           // 行の高さ
+    decoration: 'underline' // 'none'、'underline'、'overline'、'lineThrough'
   })
 })
 ```
 
-### Text Alignment and Overflow
+### テキストの配置とオーバーフロー
 
 ```typescript
 Container({
   width: 200,
-  child: Text('Long text goes here...', {
-    textAlign: TextAlign.center,    // Alignment: left, right, center, justify
-    maxLines: 2,                     // Maximum lines
-    overflow: TextOverflow.ellipsis, // Overflow handling: clip, fade, ellipsis
+  child: Text('長いテキストがここに入ります...', {
+    textAlign: TextAlign.center,    // 配置：left、right、center、justify
+    maxLines: 2,                     // 最大行数
+    overflow: TextOverflow.ellipsis, // オーバーフロー処理：clip、fade、ellipsis
   })
 })
 ```
 
-## Practical Example: Creating a Card Component
+## 実践例：カードコンポーネントの作成
 
-Let's create a card component using what we've learned so far:
+これまでに学んだ内容を使用してカードコンポーネントを作成してみましょう：
 
 ```typescript
 Container({
@@ -183,7 +183,7 @@ Container({
   child: Column({
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text('Card Title', {
+      Text('カードタイトル', {
         style: new TextStyle({
           fontSize: 20,
           fontWeight: 'bold',
@@ -191,7 +191,7 @@ Container({
         })
       }),
       SizedBox({ height: 8 }),
-      Text('Card content goes here. It can include multiple lines of text.', {
+      Text('カードのコンテンツがここに入ります。複数行のテキストを含めることができます。', {
         style: new TextStyle({
           fontSize: 14,
           color: '#6B7280'
@@ -207,7 +207,7 @@ Container({
               color: '#3B82F6',
               borderRadius: BorderRadius.circular(6)
             }),
-            child: Text('Action', {
+            child: Text('アクション', {
               style: new TextStyle({
                 fontSize: 14,
                 color: '#FFFFFF',
@@ -222,15 +222,15 @@ Container({
 })
 ```
 
-## Next Steps
+## 次のステップ
 
-Once you've mastered the basic elements, learn how to handle user input in the Basic Interactions section.
+基本要素をマスターしたら、基本的なインタラクションセクションでユーザー入力の処理方法を学びましょう。
 
-## Summary
+## まとめ
 
-- **Container**: Basic container with size, color, spacing, and decoration
-- **BoxDecoration**: Visual decorations like borders and rounded corners
-- **Row/Column**: Horizontal/vertical direction layouts
-- **Stack**: Widget overlaying
-- **Text**: Text with various styles and alignment options
-- **Expanded**: Fill remaining space
+- **Container**：サイズ、色、間隔、装飾を持つ基本コンテナ
+- **BoxDecoration**：境界線や角丸などの視覚的装飾
+- **Row/Column**：水平/垂直方向のレイアウト
+- **Stack**：ウィジェットの重ね合わせ
+- **Text**：様々なスタイルと配置オプションを持つテキスト
+- **Expanded**：残りのスペースを埋める

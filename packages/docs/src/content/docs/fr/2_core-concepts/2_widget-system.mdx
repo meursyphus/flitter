@@ -1,39 +1,39 @@
 ---
-nav_title: "Widget System"
-title: "Widget System"
-description: "Understand Flitter's core widget system and learn the differences between StatelessWidget and StatefulWidget"
+nav_title: "Système de Widgets"
+title: "Système de Widgets"
+description: "Comprenez le système de widgets de base de Flitter et apprenez les différences entre StatelessWidget et StatefulWidget"
 ---
 
 import WidgetSystemExample from '$components/pages/docs/02_core-concepts/02-widget-system-example';
 
-# Widget System
+# Système de Widgets
 
-## Overview
+## Vue d'ensemble
 
-Flitter's Widget is the basic unit that composes the UI. Like Flutter, every element displayed on screen is composed of widgets. Buttons, text, layouts, and even the app itself are all widgets.
+Le Widget de Flitter est l'unité de base qui compose l'interface utilisateur. Comme Flutter, chaque élément affiché à l'écran est composé de widgets. Les boutons, le texte, les mises en page et même l'application elle-même sont tous des widgets.
 
-## Why is it important?
+## Pourquoi est-ce important ?
 
-Understanding the widget system enables:
+Comprendre le système de widgets permet :
 
-- **Reusable Components**: Reuse widgets anywhere once created
-- **Composable Structure**: Build complex UIs by combining small widgets
-- **Clear State Management**: Distinguish state management patterns with StatelessWidget and StatefulWidget
-- **Predictable Behavior**: Systematic development through widget lifecycle
+- **Composants réutilisables** : Réutiliser les widgets n'importe où une fois créés
+- **Structure composable** : Construire des interfaces complexes en combinant de petits widgets
+- **Gestion d'état claire** : Distinguer les modèles de gestion d'état avec StatelessWidget et StatefulWidget
+- **Comportement prévisible** : Développement systématique grâce au cycle de vie des widgets
 
-## Core Concepts
+## Concepts fondamentaux
 
-### Widget Types
+### Types de Widgets
 
-Flitter has three main widget types:
+Flitter a trois types de widgets principaux :
 
-1. **StatelessWidget**: Static widget without state
-2. **StatefulWidget**: Dynamic widget with state
-3. **RenderObjectWidget**: Low-level widget responsible for direct rendering
+1. **StatelessWidget** : Widget statique sans état
+2. **StatefulWidget** : Widget dynamique avec état
+3. **RenderObjectWidget** : Widget de bas niveau responsable du rendu direct
 
 ### StatelessWidget
 
-A widget without state that doesn't change once created:
+Un widget sans état qui ne change pas une fois créé :
 
 ```typescript
 import { StatelessWidget, Text, Container, EdgeInsets, Colors, type BuildContext, type Widget } from '@meursyphus/flitter';
@@ -47,12 +47,12 @@ class Greeting extends StatelessWidget {
     return Container({
       padding: EdgeInsets.all(16),
       color: Colors.blue.shade100,
-      child: Text(`Hello, ${this.props.name}!`)
+      child: Text(`Bonjour, ${this.props.name} !`)
     });
   }
 }
 
-// Factory function으로 export
+// Exporter en tant que fonction factory
 export default function GreetingWidget(props: { name: string }): Widget {
   return new Greeting(props);
 }
@@ -60,7 +60,7 @@ export default function GreetingWidget(props: { name: string }): Widget {
 
 ### StatefulWidget
 
-A widget that has state and automatically updates the UI when state changes:
+Un widget qui a un état et met automatiquement à jour l'interface quand l'état change :
 
 ```typescript
 import { 
@@ -89,7 +89,7 @@ class CounterState extends State<Counter> {
   build(context: BuildContext): Widget {
     return Column({
       children: [
-        Text(`Count: ${this.count}`, {
+        Text(`Compteur : ${this.count}`, {
           style: TextStyle({ fontSize: 24 })
         }),
         GestureDetector({
@@ -102,7 +102,7 @@ class CounterState extends State<Counter> {
             margin: EdgeInsets.only({ top: 16 }),
             padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
             color: Colors.blue,
-            child: Text("Increment", {
+            child: Text("Incrémenter", {
               style: TextStyle({ color: Colors.white })
             })
           })
@@ -112,7 +112,7 @@ class CounterState extends State<Counter> {
   }
 }
 
-// Factory function으로 export
+// Exporter en tant que fonction factory
 export default function CounterWidget(): Widget {
   return new Counter();
 }
@@ -121,47 +121,47 @@ export default function CounterWidget(): Widget {
 <WidgetSystemExample 
   client:load
   title="StatelessWidget vs StatefulWidget"
-  description="Check the difference between stateless and stateful widgets."
+  description="Vérifiez la différence entre les widgets sans état et avec état."
 />
 
-### Widget Lifecycle
+### Cycle de vie des Widgets
 
-#### StatefulWidget Lifecycle
+#### Cycle de vie de StatefulWidget
 
 ```typescript
 class MyWidgetState extends State<MyWidget> {
-  // 1. Called once when state object is created
+  // 1. Appelé une fois quand l'objet d'état est créé
   initState(): void {
     super.initState();
-    console.log("Widget initialized");
-    // Initialize animation controllers, stream subscriptions, etc.
+    console.log("Widget initialisé");
+    // Initialiser les contrôleurs d'animation, les abonnements aux flux, etc.
   }
 
-  // 2. When parent widget changes and this widget needs to be updated
+  // 2. Quand le widget parent change et que ce widget doit être mis à jour
   didUpdateWidget(oldWidget: MyWidget): void {
     super.didUpdateWidget(oldWidget);
-    console.log("Widget configuration changed");
-    // Update state based on props changes
+    console.log("Configuration du widget modifiée");
+    // Mettre à jour l'état en fonction des changements de props
   }
 
-  // 3. Executed every time setState is called
+  // 3. Exécuté à chaque fois que setState est appelé
   build(context: BuildContext): Widget {
-    console.log("Rendering UI");
+    console.log("Rendu de l'interface");
     return Container({ /* ... */ });
   }
 
-  // 4. When state object is removed
+  // 4. Quand l'objet d'état est supprimé
   dispose(): void {
-    console.log("Widget disposed");
-    // Clean up animation controllers, stream subscriptions, etc.
+    console.log("Widget supprimé");
+    // Nettoyer les contrôleurs d'animation, les abonnements aux flux, etc.
     super.dispose();
   }
 }
 ```
 
-## Practical Examples
+## Exemples pratiques
 
-### 1. StatelessWidget with Props
+### 1. StatelessWidget avec Props
 
 ```typescript
 class ProductCard extends StatelessWidget {
@@ -195,7 +195,7 @@ class ProductCard extends StatelessWidget {
               color: Colors.white 
             })
           }),
-          Text(`₩${price.toLocaleString()}`, {
+          Text(`${price.toLocaleString()} €`, {
             style: TextStyle({ 
               fontSize: 16, 
               color: Colors.grey.shade400 
@@ -216,7 +216,7 @@ export default function ProductCardWidget(props: {
 }
 ```
 
-### 2. StatefulWidget with Complex State
+### 2. StatefulWidget avec État Complexe
 
 ```typescript
 class TodoApp extends StatefulWidget {
@@ -263,7 +263,7 @@ class TodoAppState extends State<TodoApp> {
       padding: EdgeInsets.all(16),
       child: Column({
         children: [
-          Text("Todo List", {
+          Text("Liste de tâches", {
             style: TextStyle({ 
               fontSize: 24, 
               fontWeight: FontWeight.bold,
@@ -272,18 +272,18 @@ class TodoAppState extends State<TodoApp> {
           }),
           SizedBox({ height: 16 }),
           
-          // Input field (actually use TextField widget)
+          // Champ de saisie (utiliser normalement le widget TextField)
           Container({
             padding: EdgeInsets.all(12),
             color: Colors.grey.shade800,
-            child: Text(this.inputText || "Enter a new todo...", {
+            child: Text(this.inputText || "Entrez une nouvelle tâche...", {
               style: TextStyle({ color: Colors.grey.shade400 })
             })
           }),
           
           SizedBox({ height: 16 }),
           
-          // Todo list
+          // Liste des tâches
           ...this.todos.map(todo => 
             Container({
               margin: EdgeInsets.only({ bottom: 8 }),
@@ -326,7 +326,7 @@ export default function TodoAppWidget(): Widget {
 }
 ```
 
-### 3. Lifecycle Usage Example
+### 3. Exemple d'utilisation du cycle de vie
 
 ```typescript
 class TimerWidget extends StatefulWidget {
@@ -391,7 +391,7 @@ class TimerWidgetState extends State<TimerWidget> {
       color: this.timeLeft === 0 ? Colors.red.shade900 : Colors.grey.shade900,
       child: Column({
         children: [
-          Text("Timer", {
+          Text("Minuteur", {
             style: TextStyle({ 
               fontSize: 20, 
               color: Colors.white 
@@ -409,7 +409,7 @@ class TimerWidgetState extends State<TimerWidget> {
             }
           ),
           if (this.timeLeft === 0)
-            Text("Time's up!", {
+            Text("Temps écoulé !", {
               style: TextStyle({ 
                 fontSize: 24, 
                 color: Colors.red.shade400 
@@ -426,40 +426,40 @@ export default function TimerWidgetExample(props: { duration: number }): Widget 
 }
 ```
 
-## Important Notes
+## Points importants
 
-### 1. State Management Rules
+### 1. Règles de gestion d'état
 
 ```typescript
-// ❌ Wrong - State change without setState
-this.count++;  // UI won't update!
+// ❌ Incorrect - Changement d'état sans setState
+this.count++;  // L'interface ne se mettra pas à jour !
 
-// ✅ Correct - Use setState
+// ✅ Correct - Utiliser setState
 this.setState(() => {
   this.count++;
 });
 
-// ❌ Wrong - State change outside setState
+// ❌ Incorrect - Changement d'état en dehors de setState
 this.items.push(newItem);
-this.setState(() => {});  // Empty setState
+this.setState(() => {});  // setState vide
 
-// ✅ Correct - All changes inside setState
+// ✅ Correct - Tous les changements à l'intérieur de setState
 this.setState(() => {
   this.items.push(newItem);
 });
 ```
 
-### 2. Widget Reuse
+### 2. Réutilisation des Widgets
 
 ```typescript
-// ❌ Wrong - Creating widgets inside build method
+// ❌ Incorrect - Créer des widgets dans la méthode build
 build(context: BuildContext): Widget {
-  // Creating new widget instance every time (inefficient)
+  // Création d'une nouvelle instance de widget à chaque fois (inefficace)
   const button = new MyButton();
   return Container({ child: button });
 }
 
-// ✅ Correct - Properly separate widgets
+// ✅ Correct - Séparer correctement les widgets
 build(context: BuildContext): Widget {
   return Container({
     child: MyButton({ onClick: this.handleClick })
@@ -467,10 +467,10 @@ build(context: BuildContext): Widget {
 }
 ```
 
-### 3. Props vs State
+### 3. Props vs État
 
-- **Props**: Immutable data passed from parent
-- **State**: Mutable data managed within the widget
+- **Props** : Données immuables passées par le parent
+- **État** : Données mutables gérées au sein du widget
 
 ```typescript
 class MyWidget extends StatefulWidget {
@@ -484,20 +484,20 @@ class MyWidget extends StatefulWidget {
 }
 
 class MyWidgetState extends State<MyWidget> {
-  // props are used only as initial values
+  // les props sont utilisées uniquement comme valeurs initiales
   count = this.widget.props.initialCount;
 
   build(context: BuildContext): Widget {
-    // props can be read directly
-    return Text(`Initial: ${this.widget.props.initialCount}, Current: ${this.count}`);
+    // les props peuvent être lues directement
+    return Text(`Initial : ${this.widget.props.initialCount}, Actuel : ${this.count}`);
   }
 }
 ```
 
-## Next Steps
+## Prochaines étapes
 
-Once you understand the widget system, here's what to learn next:
+Une fois que vous comprenez le système de widgets, voici ce qu'il faut apprendre ensuite :
 
-- State Management - Complex state management through Provider
-- Animation Basics - Applying animations to widgets
-- RenderObject System - Implementing custom rendering
+- Gestion d'État - Gestion d'état complexe via Provider
+- Bases de l'Animation - Appliquer des animations aux widgets
+- Système RenderObject - Implémenter un rendu personnalisé

@@ -1,78 +1,78 @@
 ---
-nav_title: "Installation Guide"
-title: "Flitter Installation and Setup"
-description: "Learn how to install and set up Flitter in various JavaScript frameworks"
+nav_title: "インストールガイド"
+title: "Flitterのインストールとセットアップ"
+description: "様々なJavaScriptフレームワークでFlitterをインストールしてセットアップする方法を学びます"
 ---
 
 import InstallationGuide from '$components/pages/docs/01_getting-started/installation-guide';
 
-# Flitter Installation and Setup
+# Flitterのインストールとセットアップ
 
-Flitter is a library that can be installed via npm and used immediately.
+Flitterはnpmでインストールしてすぐに使用できるライブラリです。
 
-## Supported Frameworks
+## サポートされているフレームワーク
 
-Flitter officially supports the following environments:
+Flitterは以下の環境を公式にサポートしています：
 
-- **Vanilla JavaScript** - Use with pure JavaScript without frameworks
-- **React** - Easy integration as React components
-- **Svelte** - Natural use as Svelte components
-- **Vue** - Use with Vue 3 Composition API
-- **SolidJS** - Perfect integration with reactive systems
-- **Qwik** - Use with optimized loading
+- **Vanilla JavaScript** - フレームワークなしの純粋なJavaScriptで使用
+- **React** - Reactコンポーネントとして簡単に統合
+- **Svelte** - Svelteコンポーネントとして自然に使用
+- **Vue** - Vue 3 Composition APIで使用
+- **SolidJS** - リアクティブシステムとの完璧な統合
+- **Qwik** - 最適化されたローディングで使用
 
-## Installation Guide
+## インストールガイド
 
-Select the framework you want to use from the tabs below to view installation methods and basic usage examples:
+以下のタブから使用したいフレームワークを選択して、インストール方法と基本的な使用例を確認してください：
 
 <InstallationGuide 
   client:load 
   defaultTab="react"
   labels={{
-    installation: 'Installation',
-    usageExample: 'Usage Example',
-    importantNotes: '💡 Important Notes',
-    otherPackageManagers: 'Other Package Managers',
-    copy: 'Copy',
-    copied: 'Copied!'
+    installation: 'インストール',
+    usageExample: '使用例',
+    importantNotes: '💡 重要な注意事項',
+    otherPackageManagers: 'その他のパッケージマネージャー',
+    copy: 'コピー',
+    copied: 'コピーしました！'
   }}
 />
 
-## Choosing a Renderer
+## レンダラーの選択
 
-Flitter supports two types of renderers:
+Flitterは2種類のレンダラーをサポートしています：
 
-### Canvas Renderer
-- **Advantages**: High performance, pixel-level control, suitable for complex animations
-- **Disadvantages**: Text selection not possible, SEO unfriendly
-- **Use cases**: Games, complex visualizations, animation-heavy applications
+### Canvasレンダラー
+- **利点**：高パフォーマンス、ピクセルレベルの制御、複雑なアニメーションに適している
+- **欠点**：テキスト選択不可、SEOに不向き
+- **使用例**：ゲーム、複雑な視覚化、アニメーション重視のアプリケーション
 
-### SVG Renderer
-- **Advantages**: Vector graphics, text selection possible, SEO friendly, CSS styling possible
-- **Disadvantages**: Potential performance degradation with complex animations
-- **Use cases**: Charts, diagrams, static visualizations
+### SVGレンダラー
+- **利点**：ベクターグラフィックス、テキスト選択可能、SEOフレンドリー、CSSスタイリング可能
+- **欠点**：複雑なアニメーションでパフォーマンス低下の可能性
+- **使用例**：チャート、ダイアグラム、静的な視覚化
 
-### Server-Side Rendering
+### サーバーサイドレンダリング
 
 ```typescript
-// When using server-side mode:
-// 1. First renders as SVG on the server
-// 2. Hydrates with the specified renderer on the client
+// サーバーサイドモードを使用する場合：
+// 1. 最初にサーバーでSVGとしてレンダリング
+// 2. クライアントで指定されたレンダラーでハイドレート
 <Widget 
-  renderer="canvas"     // Client renderer
-  ssr={{                 // Enable SSR and specify size
+  renderer="canvas"     // クライアントレンダラー
+  ssr={{                 // SSRを有効にしてサイズを指定
     size: {
-      width: 800,      // Width to render on server
-      height: 600      // Height to render on server
+      width: 800,      // サーバーでレンダリングする幅
+      height: 600      // サーバーでレンダリングする高さ
     }
   }}
   widget={...} 
 />
 ```
 
-## TypeScript Support
+## TypeScriptサポート
 
-Flitter is written in TypeScript and provides complete type support.
+FlitterはTypeScriptで書かれており、完全な型サポートを提供しています。
 
 ```typescript
 import { Container, ContainerProps, EdgeInsets, Text } from '@meursyphus/flitter';
@@ -80,20 +80,20 @@ import { Container, ContainerProps, EdgeInsets, Text } from '@meursyphus/flitter
 const props: ContainerProps = {
   color: 'lightblue',
   padding: EdgeInsets.all(20),
-  child: Text('Hello, TypeScript!')
+  child: Text('こんにちは、TypeScript!')
 };
 
 const container = Container(props);
 ```
 
-## Next Steps
+## 次のステップ
 
-Once installation is complete, create your first Flitter application through the Hello World example.
+インストールが完了したら、Hello World例を通じて最初のFlitterアプリケーションを作成しましょう。
 
-## Community Support
+## コミュニティサポート
 
-Need help or have questions?
+ヘルプが必要ですか？質問がありますか？
 
 - [GitHub Issues](https://github.com/meursyphus/flitter/issues)
-- [Discord Community](https://discord.gg/kUZp4SaHzF)
+- [Discordコミュニティ](https://discord.gg/kUZp4SaHzF)
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/flitter)

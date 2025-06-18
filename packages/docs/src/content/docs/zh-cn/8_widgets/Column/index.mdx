@@ -3,54 +3,54 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Column
 title: "Column"
-description: "A layout widget that arranges its children vertically"
+description: "垂直排列其子组件的布局组件"
 ---
 
-## Overview
+## 概述
 
-Column is a layout widget that arranges its children in a vertical direction.
+Column 是一个将其子组件垂直排列的布局组件。
 
-Column is a convenience wrapper around the Flex widget with the direction fixed to vertical. It's used to place multiple widgets one below another and provides various alignment options. By default, Column takes up all available vertical space, but you can adjust `mainAxisSize` to only take up as much space as needed.
+Column 是 Flex 组件的便利包装器，方向固定为垂直。它用于将多个组件上下放置，并提供各种对齐选项。默认情况下，Column 占用所有可用的垂直空间，但您可以调整 `mainAxisSize` 以仅占用所需的空间。
 
-## When to use it?
+## 何时使用？
 
-- When arranging form fields vertically
-- When structuring content in list items
-- When creating vertical layouts for cards or dialogs
-- When arranging menu items vertically
-- When displaying title, subtitle, and body text in sequence
+- 当垂直排列表单字段时
+- 当在列表项中结构化内容时
+- 当为卡片或对话框创建垂直布局时
+- 当垂直排列菜单项时
+- 当按顺序显示标题、子标题和正文时
 
-## Basic Usage
+## 基本用法
 
 ```typescript
-// Simple example
+// 简单示例
 const column = Column({
   children: [
-    Text('Title'),
-    Text('Subtitle'),
-    Text('Body')
+    Text('标题'),
+    Text('子标题'),
+    Text('正文')
   ]
 });
 
-// Using alignment options
+// 使用对齐选项
 const alignedColumn = Column({
   mainAxisAlignment: MainAxisAlignment.center,
   crossAxisAlignment: CrossAxisAlignment.start,
   children: [
-    Text('Left aligned'),
-    Text('Vertically centered'),
-    Text('Text widgets')
+    Text('左对齐'),
+    Text('垂直居中'),
+    Text('文本组件')
   ]
 });
 ```
 
-## Props
+## 属性
 
-### children (required)
+### children（必需）
 
-**Value: Widget[]**
+**值: Widget[]**
 
-An array of child widgets to display in the Column. They are arranged from top to bottom in array order.
+要在 Column 中显示的子组件数组。它们按数组顺序从上到下排列。
 
 ```typescript
 Column({
@@ -64,19 +64,19 @@ Column({
 
 ### mainAxisAlignment
 
-**Value: MainAxisAlignment** (default: **MainAxisAlignment.start**)
+**值: MainAxisAlignment**（默认值: **MainAxisAlignment.start**）
 
-Defines the vertical alignment of child widgets.
+定义子组件的垂直对齐。
 
-- **start**: Top alignment (default)
-- **end**: Bottom alignment
-- **center**: Center alignment
-- **spaceBetween**: Place first and last widgets at edges, distribute remaining space evenly
-- **spaceAround**: Distribute equal space around each widget
-- **spaceEvenly**: Distribute equal space between all widgets and edges
+- **start**: 顶部对齐（默认）
+- **end**: 底部对齐
+- **center**: 居中对齐
+- **spaceBetween**: 将第一个和最后一个组件放在边缘，平均分配剩余空间
+- **spaceAround**: 在每个组件周围分配相等空间
+- **spaceEvenly**: 在所有组件和边缘之间分配相等空间
 
 ```typescript
-// Center alignment
+// 居中对齐
 Column({
   mainAxisAlignment: MainAxisAlignment.center,
   children: [
@@ -86,7 +86,7 @@ Column({
   ]
 })
 
-// Space evenly
+// 等距分布
 Column({
   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
   children: [
@@ -99,14 +99,14 @@ Column({
 
 ### crossAxisAlignment
 
-**Value: CrossAxisAlignment** (default: **CrossAxisAlignment.center**)
+**值: CrossAxisAlignment**（默认值: **CrossAxisAlignment.center**）
 
-Defines the horizontal alignment of child widgets.
+定义子组件的水平对齐。
 
-- **start**: Left alignment
-- **end**: Right alignment
-- **center**: Horizontal center alignment (default)
-- **stretch**: Stretch to fill available horizontal space
+- **start**: 左对齐
+- **end**: 右对齐
+- **center**: 水平居中对齐（默认）
+- **stretch**: 拉伸以填满可用的水平空间
 
 ```typescript
 Column({
@@ -121,22 +121,22 @@ Column({
 
 ### mainAxisSize
 
-**Value: MainAxisSize** (default: **MainAxisSize.max**)
+**值: MainAxisSize**（默认值: **MainAxisSize.max**）
 
-Controls the amount of vertical space the Column takes up.
+控制 Column 占用的垂直空间量。
 
-- **max**: Take up all available vertical space (default)
-- **min**: Take up only the minimum space needed by children
+- **max**: 占用所有可用的垂直空间（默认）
+- **min**: 仅占用子组件所需的最小空间
 
 ```typescript
-// Take up only necessary space
+// 仅占用必要空间
 Container({
   color: 'lightgray',
   child: Column({
     mainAxisSize: MainAxisSize.min,
     children: [
-      Text('Compact'),
-      Text('Column')
+      Text('紧凑'),
+      Text('列')
     ]
   })
 })
@@ -144,27 +144,27 @@ Container({
 
 ### verticalDirection
 
-**Value: VerticalDirection** (default: **VerticalDirection.down**)
+**值: VerticalDirection**（默认值: **VerticalDirection.down**）
 
-Defines the vertical layout order of child widgets.
+定义子组件的垂直布局顺序。
 
-- **down**: From top to bottom (default)
-- **up**: From bottom to top
+- **down**: 从上到下（默认）
+- **up**: 从下到上
 
 ```typescript
 Column({
   verticalDirection: VerticalDirection.up,
   children: [
-    Text('1st'), // Displayed at bottom
-    Text('2nd'), // Displayed in middle
-    Text('3rd')  // Displayed at top
+    Text('第1个'), // 在底部显示
+    Text('第2个'), // 在中间显示
+    Text('第3个')  // 在顶部显示
   ]
 })
 ```
 
-## Advanced Usage
+## 高级用法
 
-### Using with Expanded
+### 与 Expanded 一起使用
 
 ```typescript
 Column({
@@ -176,10 +176,10 @@ Column({
     Container({ width: 100, height: 50, color: 'blue' })
   ]
 })
-// The green Container takes up all remaining vertical space
+// 绿色 Container 占用所有剩余的垂直空间
 ```
 
-### Proportional Space Distribution
+### 按比例分配空间
 
 ```typescript
 Column({
@@ -198,12 +198,12 @@ Column({
     })
   ]
 })
-// Red takes 25%, green takes 50%, blue takes 25% of height
+// 红色占 25%，绿色占 50%，蓝色占 25% 的高度
 ```
 
-## Practical Examples
+## 实际示例
 
-### Example 1: Login Form
+### 示例 1：登录表单
 
 ```typescript
 const loginForm = Container({
@@ -212,13 +212,13 @@ const loginForm = Container({
     mainAxisAlignment: MainAxisAlignment.center,
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      Text('Login', {
+      Text('登录', {
         style: TextStyle({ fontSize: 24, fontWeight: 'bold' })
       }),
       SizedBox({ height: 30 }),
       TextField({
         decoration: InputDecoration({
-          labelText: 'Email',
+          labelText: '邮箱',
           border: OutlineInputBorder()
         })
       }),
@@ -226,26 +226,26 @@ const loginForm = Container({
       TextField({
         obscureText: true,
         decoration: InputDecoration({
-          labelText: 'Password',
+          labelText: '密码',
           border: OutlineInputBorder()
         })
       }),
       SizedBox({ height: 24 }),
       ElevatedButton({
         onPressed: () => console.log('Login'),
-        child: Text('Login')
+        child: Text('登录')
       }),
       SizedBox({ height: 16 }),
       TextButton({
         onPressed: () => console.log('Sign up'),
-        child: Text("Don't have an account? Sign up")
+        child: Text('没有账户？注册')
       })
     ]
   })
 });
 ```
 
-### Example 2: Card Content
+### 示例 2：卡片内容
 
 ```typescript
 const card = Container({
@@ -271,11 +271,11 @@ const card = Container({
         fit: 'cover'
       }),
       SizedBox({ height: 16 }),
-      Text('Product Name', {
+      Text('产品名称', {
         style: TextStyle({ fontSize: 20, fontWeight: 'bold' })
       }),
       SizedBox({ height: 8 }),
-      Text('Product description goes here...', {
+      Text('产品描述在这里...', {
         style: TextStyle({ color: 'gray' })
       }),
       SizedBox({ height: 16 }),
@@ -296,21 +296,21 @@ const card = Container({
 });
 ```
 
-### Example 3: Settings Menu
+### 示例 3：设置菜单
 
 ```typescript
 const settingsMenu = Column({
   children: [
     ListTile({
       leading: Icon({ icon: Icons.person }),
-      title: Text('Profile'),
+      title: Text('个人资料'),
       trailing: Icon({ icon: Icons.arrow_forward_ios }),
       onTap: () => console.log('Profile')
     }),
     Divider(),
     ListTile({
       leading: Icon({ icon: Icons.notifications }),
-      title: Text('Notifications'),
+      title: Text('通知'),
       trailing: Switch({
         value: true,
         onChanged: (value) => {}
@@ -319,14 +319,14 @@ const settingsMenu = Column({
     Divider(),
     ListTile({
       leading: Icon({ icon: Icons.lock }),
-      title: Text('Privacy'),
+      title: Text('隐私'),
       trailing: Icon({ icon: Icons.arrow_forward_ios }),
       onTap: () => console.log('Privacy')
     }),
     Divider(),
     ListTile({
       leading: Icon({ icon: Icons.help }),
-      title: Text('Help'),
+      title: Text('帮助'),
       trailing: Icon({ icon: Icons.arrow_forward_ios }),
       onTap: () => console.log('Help')
     })
@@ -334,18 +334,18 @@ const settingsMenu = Column({
 });
 ```
 
-## Important Notes
+## 重要说明
 
-- If child widgets exceed vertical space, an overflow error occurs. Use `SingleChildScrollView` or `Flexible`/`Expanded` in such cases.
-- When using `crossAxisAlignment.stretch`, child widgets can expand infinitely if their width is unconstrained.
-- Column doesn't support scrolling. Use `SingleChildScrollView` or `ListView` if scrolling is needed.
-- Use the `Row` widget for horizontal layouts.
+- 如果子组件超出垂直空间，会发生溢出错误。在这种情况下使用 `SingleChildScrollView` 或 `Flexible`/`Expanded`。
+- 使用 `crossAxisAlignment.stretch` 时，如果子组件的宽度没有约束，它们可能会无限扩展。
+- Column 不支持滚动。如果需要滚动，请使用 `SingleChildScrollView` 或 `ListView`。
+- 使用 `Row` 组件进行水平布局。
 
-## Related Widgets
+## 相关组件
 
-- **Row**: Arranges children horizontally
-- **Flex**: More flexible layout widget that Column and Row are based on
-- **ListView**: Scrollable vertical list
-- **Stack**: Overlays children on top of each other
-- **Expanded**: Takes up remaining space within a Column
-- **Flexible**: Allows flexible sizing within a Column
+- **Row**: 水平排列子组件
+- **Flex**: Column 和 Row 基于的更灵活的布局组件
+- **ListView**: 可滚动的垂直列表
+- **Stack**: 将子组件叠放在一起
+- **Expanded**: 在 Column 内占用剩余空间
+- **Flexible**: 允许在 Column 内灵活调整尺寸

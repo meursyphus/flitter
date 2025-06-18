@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Expanded
 title: "Expanded"
-description: "A widget that expands a child to fill available space within Row, Column, or Flex"
+description: "在 Row、Column 或 Flex 中将子组件扩展以填充可用空间的组件"
 ---
 
-## Overview
+## 概述
 
-Expanded is a widget that expands its child to fill the available space along the main axis within a Row, Column, or Flex widget.
+Expanded 是一个在 Row、Column 或 Flex 组件中沿主轴将其子组件扩展以填充可用空间的组件。
 
-Expanded is a special case of the Flexible widget with `fit: FlexFit.tight` applied. This means it forces the child widget to occupy all allocated space. When multiple Expanded widgets exist, space is distributed proportionally according to their flex values.
+Expanded 是 Flexible 组件应用 `fit: FlexFit.tight` 的特殊情况。这意味着它强制子组件占据所有分配的空间。当存在多个 Expanded 组件时，空间会按照它们的 flex 值按比例分配。
 
 <iframe
   width="560"
@@ -22,20 +22,20 @@ Expanded is a special case of the Flexible widget with `fit: FlexFit.tight` appl
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/Expanded-class.html](https://api.flutter.dev/flutter/widgets/Expanded-class.html)
+参考: [https://api.flutter.dev/flutter/widgets/Expanded-class.html](https://api.flutter.dev/flutter/widgets/Expanded-class.html)
 
-## When to use it?
+## 何时使用？
 
-- When a widget needs to fill all remaining space within a Row/Column
-- When distributing space proportionally between multiple widgets
-- When making TextField or other input widgets use all available horizontal space
-- When creating responsive layouts
-- When using Spacer to push widgets apart
+- 当组件需要填充 Row/Column 中所有剩余空间时
+- 当在多个组件之间按比例分配空间时
+- 当让 TextField 或其他输入组件使用所有可用水平空间时
+- 当创建响应式布局时
+- 当使用 Spacer 将组件推开时
 
-## Basic Usage
+## 基本用法
 
 ```typescript
-// Filling remaining space in a Row
+// 在 Row 中填充剩余空间
 Row({
   children: [
     Container({ width: 100, height: 50, color: 'blue' }),
@@ -46,25 +46,25 @@ Row({
   ]
 })
 
-// Using in Column
+// 在 Column 中使用
 Column({
   children: [
     Container({ height: 100, color: 'blue' }),
     Expanded({
-      child: Container({ color: 'red' }) // Takes all remaining vertical space
+      child: Container({ color: 'red' }) // 占据所有剩余的垂直空间
     }),
     Container({ height: 100, color: 'green' })
   ]
 })
 ```
 
-## Props
+## 属性
 
-### child (required)
+### child（必需）
 
-**Value: Widget**
+**值：Widget**
 
-The child widget to be expanded.
+要扩展的子组件。
 
 ```typescript
 Expanded({
@@ -74,32 +74,32 @@ Expanded({
 
 ### flex
 
-**Value: number** (default: **1**)
+**值：number**（默认值：**1**）
 
-Defines the proportion of space this widget should take compared to other Expanded/Flexible widgets. Higher values take more space.
+定义这个组件相对于其他 Expanded/Flexible 组件应该占据的空间比例。数值越大占据的空间越多。
 
-- Must be 0 or greater (negative values not allowed)
-- Default is 1
-- Space is distributed as a ratio with other flex children
+- 必须是 0 或更大（不允许负值）
+- 默认值为 1
+- 空间作为与其他 flex 子组件的比例进行分配
 
 ```typescript
 Row({
   children: [
     Expanded({
-      flex: 2, // Takes 2/3 of total space
+      flex: 2, // 占总空间的 2/3
       child: Container({ color: 'red' })
     }),
     Expanded({
-      flex: 1, // Takes 1/3 of total space
+      flex: 1, // 占总空间的 1/3
       child: Container({ color: 'blue' })
     })
   ]
 })
 ```
 
-## Advanced Usage
+## 高级用法
 
-### Proportional Space Distribution
+### 按比例分配空间
 
 ```typescript
 Row({
@@ -120,17 +120,17 @@ Row({
 })
 ```
 
-### Using with Fixed-Size Widgets
+### 与固定尺寸组件一起使用
 
 ```typescript
 Row({
   children: [
-    Icon({ icon: Icons.menu }), // Fixed size
-    SizedBox({ width: 16 }), // Fixed spacing
+    Icon({ icon: Icons.menu }), // 固定尺寸
+    SizedBox({ width: 16 }), // 固定间距
     Expanded({
-      child: Text('Long title that displays within available space')
+      child: Text('在可用空间内显示的长标题')
     }),
-    IconButton({ // Fixed size
+    IconButton({ // 固定尺寸
       icon: Icons.more_vert,
       onPressed: () => {}
     })
@@ -138,9 +138,9 @@ Row({
 })
 ```
 
-## Practical Examples
+## 实际示例
 
-### Example 1: Search Bar
+### 示例 1：搜索栏
 
 ```typescript
 const searchBar = Container({
@@ -150,7 +150,7 @@ const searchBar = Container({
       Expanded({
         child: TextField({
           decoration: InputDecoration({
-            hintText: 'Search...',
+            hintText: '搜索...',
             prefixIcon: Icon({ icon: Icons.search }),
             border: OutlineInputBorder({
               borderRadius: BorderRadius.circular(30)
@@ -161,14 +161,14 @@ const searchBar = Container({
       SizedBox({ width: 12 }),
       IconButton({
         icon: Icons.filter_list,
-        onPressed: () => console.log('Open filters')
+        onPressed: () => console.log('打开筛选器')
       })
     ]
   })
 });
 ```
 
-### Example 2: Chat Input
+### 示例 2：聊天输入
 
 ```typescript
 const chatInput = Container({
@@ -192,7 +192,7 @@ const chatInput = Container({
       Expanded({
         child: TextField({
           decoration: InputDecoration({
-            hintText: 'Type a message...',
+            hintText: '输入消息...',
             border: InputBorder.none
           }),
           maxLines: 3
@@ -207,7 +207,7 @@ const chatInput = Container({
 });
 ```
 
-### Example 3: Responsive Button Group
+### 示例 3：响应式按钮组
 
 ```typescript
 const responsiveButtons = Container({
@@ -216,19 +216,19 @@ const responsiveButtons = Container({
     children: [
       Expanded({
         child: ElevatedButton({
-          onPressed: () => console.log('Cancel'),
+          onPressed: () => console.log('取消'),
           style: ButtonStyle({
             backgroundColor: 'gray'
           }),
-          child: Text('Cancel')
+          child: Text('取消')
         })
       }),
       SizedBox({ width: 16 }),
       Expanded({
-        flex: 2, // Confirm button is wider
+        flex: 2, // 确认按钮更宽
         child: ElevatedButton({
-          onPressed: () => console.log('Confirm'),
-          child: Text('Confirm')
+          onPressed: () => console.log('确认'),
+          child: Text('确认')
         })
       })
     ]
@@ -236,17 +236,17 @@ const responsiveButtons = Container({
 });
 ```
 
-### Example 4: Using Spacer
+### 示例 4：使用 Spacer
 
 ```typescript
-// Spacer internally uses Expanded
+// Spacer 内部使用 Expanded
 const header = Container({
   padding: EdgeInsets.all(16),
   color: 'blue',
   child: Row({
     children: [
-      Text('Logo', { style: TextStyle({ color: 'white', fontSize: 20 }) }),
-      Spacer(), // Same as Expanded({ child: Container() })
+      Text('标志', { style: TextStyle({ color: 'white', fontSize: 20 }) }),
+      Spacer(), // 等同于 Expanded({ child: Container() })
       IconButton({
         icon: Icons.notifications,
         color: 'white',
@@ -262,12 +262,12 @@ const header = Container({
 });
 ```
 
-## Difference from Flexible
+## 与 Flexible 的区别
 
-Expanded is a special case of Flexible:
+Expanded 是 Flexible 的特殊情况：
 
 ```typescript
-// These two are identical
+// 这两者是相同的
 Expanded({ 
   flex: 2, 
   child: widget 
@@ -275,26 +275,26 @@ Expanded({
 
 Flexible({ 
   flex: 2, 
-  fit: FlexFit.tight, // Key difference
+  fit: FlexFit.tight, // 关键区别
   child: widget 
 })
 ```
 
-- **Expanded**: Always takes all allocated space (tight)
-- **Flexible**: By default takes only needed space (loose)
+- **Expanded**：始终占据所有分配的空间（tight）
+- **Flexible**：默认情况下仅占据所需空间（loose）
 
-## Important Notes
+## 重要说明
 
-- Expanded must be a direct child of Row, Column, or Flex.
-- Cannot nest Expanded directly inside another Expanded or Flexible.
-- An error occurs if the parent widget has unbounded size in the main axis.
-- The flex value must be 0 or greater; negative values cause errors.
-- When using Expanded in nested Column/Row structures, you may need to wrap the inner Column/Row with Expanded.
+- Expanded 必须是 Row、Column 或 Flex 的直接子组件。
+- 不能将 Expanded 直接嵌套在另一个 Expanded 或 Flexible 内部。
+- 如果父组件在主轴上具有无界尺寸，将发生错误。
+- flex 值必须是 0 或更大；负值会导致错误。
+- 在嵌套的 Column/Row 结构中使用 Expanded 时，可能需要将内部的 Column/Row 用 Expanded 包装。
 
-## Related Widgets
+## 相关组件
 
-- **Flexible**: More flexible widget that Expanded is based on
-- **Spacer**: Special use of Expanded to create empty space
-- **Row**: Use Expanded in horizontal layouts
-- **Column**: Use Expanded in vertical layouts
-- **Flex**: Base widget for Row and Column
+- **Flexible**：Expanded 基于的更灵活的组件
+- **Spacer**：Expanded 的特殊用法，用于创建空间
+- **Row**：在水平布局中使用 Expanded
+- **Column**：在垂直布局中使用 Expanded
+- **Flex**：Row 和 Column 的基础组件

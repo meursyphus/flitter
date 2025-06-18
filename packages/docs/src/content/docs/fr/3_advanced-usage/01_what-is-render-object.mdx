@@ -1,90 +1,90 @@
 ---
-nav_title: "What is RenderObject"
-title: "Understanding the RenderObject System"
-description: "Learn about RenderObject, Flitter's core rendering system, and understand the relationships between Widget, Element, and RenderObject trees"
+nav_title: "Qu'est-ce que RenderObject"
+title: "Comprendre le système RenderObject"
+description: "Découvrez RenderObject, le système de rendu au cœur de Flitter, et comprenez les relations entre les arbres Widget, Element et RenderObject"
 ---
 
 import TreeDiagramExample from '$components/pages/docs/3_advanced-usage/01-tree-diagram-example';
 import LayoutPaintExample from '$components/pages/docs/3_advanced-usage/02-layout-paint-example';
 
-## Understanding the RenderObject System
+## Comprendre le système RenderObject
 
-Flitter uses the same rendering architecture as Flutter. To draw something on the screen, you need to understand three tree structures.
+Flitter utilise la même architecture de rendu que Flutter. Pour afficher quelque chose à l'écran, vous devez comprendre trois structures arborescentes.
 
-## Widget Tree → Element Tree → RenderObject Tree
+## Arbre Widget → Arbre Element → Arbre RenderObject
 
 <TreeDiagramExample
   client:load
-  title="Three Tree Structures"
-  description="Widget is the blueprint, Element is the instance, and RenderObject handles the actual rendering"
+  title="Trois structures arborescentes"
+  description="Widget est le plan, Element est l'instance, et RenderObject gère le rendu réel"
 />
 
-### Role of Each Tree
+### Rôle de chaque arbre
 
-**Widget Tree (Blueprint)**
-- Immutable objects that declaratively express UI structure
-- Code written by developers
-- Can be recreated every frame
+**Arbre Widget (Plan)**
+- Objets immuables qui expriment de manière déclarative la structure de l'interface
+- Code écrit par les développeurs
+- Peut être recréé à chaque frame
 
-**Element Tree (Instance)**
-- Intermediate layer connecting Widget and RenderObject
-- Manages state and handles lifecycle
-- Elements are reused even when Widgets change
+**Arbre Element (Instance)**
+- Couche intermédiaire connectant Widget et RenderObject
+- Gère l'état et le cycle de vie
+- Les éléments sont réutilisés même quand les Widgets changent
 
-**RenderObject Tree (Rendering)**
-- Handles actual layout calculation and drawing
-- Contains size, position, and painting information
-- Performance-critical part, reused whenever possible
+**Arbre RenderObject (Rendu)**
+- Gère le calcul de mise en page et le dessin réels
+- Contient les informations de taille, position et peinture
+- Partie critique pour les performances, réutilisée autant que possible
 
-## Separation of Layout and Paint
+## Séparation entre Layout et Paint
 
 <LayoutPaintExample
   client:load
-  title="Layout and Paint Process"
-  description="performLayout() calculates size and position, paint() does the actual drawing"
+  title="Processus de Layout et Paint"
+  description="performLayout() calcule la taille et la position, paint() effectue le dessin réel"
 />
 
-### performLayout(): Size and Position Calculation
+### performLayout() : Calcul de taille et position
 
 ```typescript
 class RenderBox {
   performLayout() {
-    // 1. Perform layout for children
-    // 2. Determine own size based on children's sizes
-    // 3. Determine children's positions
+    // 1. Effectuer la mise en page des enfants
+    // 2. Déterminer sa propre taille en fonction de la taille des enfants
+    // 3. Déterminer la position des enfants
   }
 }
 ```
 
-### paint(): Actual Drawing on Screen
+### paint() : Dessin réel à l'écran
 
 ```typescript
 class RenderBox {
   paint(context: PaintingContext, offset: Offset) {
-    // 1. Draw own content (background, borders, etc.)
-    // 2. Request paint from children
+    // 1. Dessiner son propre contenu (arrière-plan, bordures, etc.)
+    // 2. Demander aux enfants de se dessiner
   }
 }
 ```
 
-### Why Are They Separated?
+### Pourquoi sont-ils séparés ?
 
-Layout and Paint are separated for **performance optimization**:
+Layout et Paint sont séparés pour **l'optimisation des performances** :
 
-1. **Layout Caching**: Layout is not recalculated if size or position doesn't change
-2. **Partial Repaint**: Only paint is performed without layout when only colors change
-3. **Layer Optimization**: Unchanged parts are cached as layers
+1. **Mise en cache du Layout** : Le layout n'est pas recalculé si la taille ou la position ne change pas
+2. **Repaint partiel** : Seul le paint est effectué sans layout quand seules les couleurs changent
+3. **Optimisation par couches** : Les parties inchangées sont mises en cache comme couches
 
-## Exploring the Source Code
+## Explorer le code source
 
-Flitter's RenderObject implementation can be found in the `packages/flitter/src/renderobject/` directory:
+L'implémentation RenderObject de Flitter se trouve dans le répertoire `packages/flitter/src/renderobject/` :
 
-- `RenderObject.ts`: Base RenderObject class
-- `RenderBox.ts`: RenderBox implementing 2D box model
-- `RenderFlex.ts`: Flex layout that forms the basis of Row and Column
+- `RenderObject.ts` : Classe RenderObject de base
+- `RenderBox.ts` : RenderBox implémentant le modèle de boîte 2D
+- `RenderFlex.ts` : Mise en page Flex qui forme la base de Row et Column
 
-Looking at the actual implementation, you can see it has almost identical structure to Flutter.
+En regardant l'implémentation réelle, vous pouvez voir qu'elle a une structure presque identique à Flutter.
 
-## Next Steps
+## Prochaines étapes
 
-Now that you understand the basic concepts of RenderObject, in the next chapter we'll explore the **Constraints system**, which is the core of layout. We'll examine in detail how constraints are passed from parent to child and how sizes are determined.
+Maintenant que vous comprenez les concepts de base de RenderObject, dans le prochain chapitre nous explorerons le **système de contraintes**, qui est au cœur de la mise en page. Nous examinerons en détail comment les contraintes sont passées du parent à l'enfant et comment les tailles sont déterminées.

@@ -3,29 +3,29 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: ClipRect
 title: "ClipRect"
-description: "A widget that clips its child using a rectangle"
+description: "使用矩形裁剪其子组件的组件"
 ---
 
-## Overview
+## 概述
 
-ClipRect is a widget that clips its child widget using a rectangular area.
+ClipRect 是一个使用矩形区域裁剪其子组件的组件。
 
-This widget takes a clipper callback function that returns a Rect object, allowing you to clip the child widget to any desired rectangular area. Internally, it uses ClipPath to perform the clipping.
+这个组件接受一个返回 Rect 对象的裁剪器回调函数，允许您将子组件裁剪到任何所需的矩形区域。在内部，它使用 ClipPath 来执行裁剪。
 
-See: [https://api.flutter.dev/flutter/widgets/ClipRect-class.html](https://api.flutter.dev/flutter/widgets/ClipRect-class.html)
+参考: [https://api.flutter.dev/flutter/widgets/ClipRect-class.html](https://api.flutter.dev/flutter/widgets/ClipRect-class.html)
 
-## When to use it?
+## 何时使用？
 
-- When you want to show only a portion of a widget
-- When you need to hide overflowing content
-- When defining boundaries for scrollable areas
-- When displaying only specific regions of images or videos
-- When implementing custom crop functionality
+- 当您只想显示组件的一部分时
+- 当您需要隐藏溢出内容时
+- 当为可滚动区域定义边界时
+- 当仅显示图像或视频的特定区域时
+- 当实现自定义裁剪功能时
 
-## Basic Usage
+## 基本用法
 
 ```typescript
-// Full area clipping (default)
+// 全区域裁剪（默认）
 ClipRect({
   clipper: (size) => Rect.fromLTWH({
     left: 0,
@@ -40,7 +40,7 @@ ClipRect({
   })
 })
 
-// Clip only center portion
+// 仅裁剪中心部分
 ClipRect({
   clipper: (size) => Rect.fromCenter({
     center: { x: size.width / 2, y: size.height / 2 },
@@ -54,7 +54,7 @@ ClipRect({
   })
 })
 
-// Show only top half
+// 仅显示上半部分
 ClipRect({
   clipper: (size) => Rect.fromLTRB({
     left: 0,
@@ -66,18 +66,19 @@ ClipRect({
 })
 ```
 
-## Props Details
+## 属性详情
 
-### clipper (required)
+### clipper（必需）
 
-**Value: (size: Size) => Rect**
+**值：(size: Size) => Rect**
 
-A callback function that defines the clipping area. It receives the widget's size as a parameter and must return a Rect object.
+定义裁剪区域的回调函数。它接收组件的尺寸作为参数，并必须返回一个 Rect 对象。
 
 ```typescript
-// Various clipping pattern examples
+// 各种裁剪模式示例
 ClipRect({
-  // Top-left quarter only
+  // 仅左上象限
+clipRect({
   clipper: (size) => Rect.fromLTWH({
     left: 0,
     top: 0,
@@ -87,7 +88,7 @@ ClipRect({
   child: child
 })
 
-// Horizontal center strip
+// 水平中央条带
 ClipRect({
   clipper: (size) => Rect.fromLTRB({
     left: 0,
@@ -98,7 +99,7 @@ ClipRect({
   child: child
 })
 
-// Clipping with margins
+// 带边距的裁剪
 ClipRect({
   clipper: (size) => Rect.fromLTWH({
     left: 20,
@@ -112,12 +113,12 @@ ClipRect({
 
 ### clipped
 
-**Value: boolean** (default: **true**)
+**值：boolean**（默认值：**true**）
 
-Enables/disables the clipping effect.
+启用/禁用裁剪效果。
 
-- `true`: Apply clipping
-- `false`: Disable clipping (child widget displays normally)
+- `true`：应用裁剪
+- `false`：禁用裁剪（子组件正常显示）
 
 ```typescript
 ClipRect({
@@ -134,16 +135,16 @@ ClipRect({
 
 ### child
 
-**Value: Widget**
+**值：Widget**
 
-The child widget to be clipped.
+要裁剪的子组件。
 
-## Understanding Rect API
+## 理解 Rect API
 
-### Rect Creation Methods
+### Rect 创建方法
 
 ```typescript
-// Create from left, top, width, height
+// 从左、上、宽、高创建
 Rect.fromLTWH({
   left: 10,
   top: 10,
@@ -151,7 +152,7 @@ Rect.fromLTWH({
   height: 100
 });
 
-// Create from left, top, right, bottom coordinates
+// 从左、上、右、下坐标创建
 Rect.fromLTRB({
   left: 10,
   top: 10,
@@ -159,29 +160,29 @@ Rect.fromLTRB({
   bottom: 110
 });
 
-// Create from center point and size
+// 从中心点和尺寸创建
 Rect.fromCenter({
   center: { x: 60, y: 60 },
   width: 100,
   height: 100
 });
 
-// Rectangle enclosing a circle
+// 包围圆形的矩形
 Rect.fromCircle({
   center: { x: 50, y: 50 },
   radius: 50
 });
 
-// Create from two points
+// 从两个点创建
 Rect.fromPoints(
-  { x: 10, y: 10 },  // First point
-  { x: 110, y: 110 } // Second point
+  { x: 10, y: 10 },  // 第一个点
+  { x: 110, y: 110 } // 第二个点
 );
 ```
 
-## Practical Examples
+## 实际示例
 
-### Example 1: Image Crop Tool
+### 示例 1：图像裁剪工具
 
 ```typescript
 class ImageCropper extends StatefulWidget {
@@ -211,7 +212,7 @@ class ImageCropperState extends State<ImageCropper> {
       height: 400,
       child: Stack({
         children: [
-          // Original image (dimmed)
+          // 原始图像（变暗）
           Opacity({
             opacity: 0.3,
             child: Image({
@@ -221,7 +222,7 @@ class ImageCropperState extends State<ImageCropper> {
               objectFit: 'cover'
             })
           }),
-          // Cropped area
+          // 裁剪区域
           Positioned({
             left: this.cropRect.x,
             top: this.cropRect.y,
@@ -243,7 +244,7 @@ class ImageCropperState extends State<ImageCropper> {
               })
             })
           }),
-          // Crop area border
+          // 裁剪区域边框
           Positioned({
             left: this.cropRect.x,
             top: this.cropRect.y,
@@ -265,7 +266,7 @@ class ImageCropperState extends State<ImageCropper> {
 }
 ```
 
-### Example 2: Text Overflow Handling
+### 示例 2：文本溢出处理
 
 ```typescript
 function TextPreview({ text, maxLines = 3, lineHeight = 24 }): Widget {
@@ -289,7 +290,7 @@ function TextPreview({ text, maxLines = 3, lineHeight = 24 }): Widget {
             })
           })
         }),
-        // Fade out effect
+        // 淡出效果
         Positioned({
           bottom: 0,
           left: 0,
@@ -311,7 +312,7 @@ function TextPreview({ text, maxLines = 3, lineHeight = 24 }): Widget {
 };
 ```
 
-### Example 3: Progress Indicator
+### 示例 3：进度指示器
 
 ```typescript
 function ProgressBar({ progress, height = 20 }): Widget {
@@ -326,7 +327,7 @@ function ProgressBar({ progress, height = 20 }): Widget {
       borderRadius: BorderRadius.circular(height / 2),
       child: Stack({
         children: [
-          // Progress bar
+          // 进度条
           ClipRect({
             clipper: (size) => Rect.fromLTWH({
               left: 0,
@@ -344,7 +345,7 @@ function ProgressBar({ progress, height = 20 }): Widget {
               })
             })
           }),
-          // Text
+          // 文本
           Center({
             child: Text(`${Math.round(progress * 100)}%`, {
               style: TextStyle({
@@ -361,7 +362,7 @@ function ProgressBar({ progress, height = 20 }): Widget {
 };
 ```
 
-### Example 4: Viewport Simulation
+### 示例 4：视口模拟
 
 ```typescript
 function ViewportSimulator({ content, viewportSize, scrollOffset }): Widget {
@@ -392,7 +393,7 @@ function ViewportSimulator({ content, viewportSize, scrollOffset }): Widget {
   });
 };
 
-// Usage example
+// 使用示例
 ViewportSimulator({
   viewportSize: { width: 300, height: 400 },
   scrollOffset: { x: 0, y: 100 },
@@ -406,7 +407,7 @@ ViewportSimulator({
           margin: EdgeInsets.all(5),
           color: i % 2 === 0 ? '#E3F2FD' : '#BBDEFB',
           child: Center({
-            child: Text(`Item ${i + 1}`)
+            child: Text(`项目 ${i + 1}`)
           })
         })
       )
@@ -415,7 +416,7 @@ ViewportSimulator({
 });
 ```
 
-### Example 5: Image Comparison Slider
+### 示例 5：图像对比滑块
 
 ```typescript
 class ImageComparisonSlider extends StatefulWidget {
@@ -451,14 +452,14 @@ class ImageComparisonSliderState extends State<ImageComparisonSlider> {
         height: 300,
         child: Stack({
           children: [
-            // After image (full)
+            // 后图像（完整）
             Image({
               src: this.widget.afterImage,
               width: 400,
               height: 300,
               objectFit: 'cover'
             }),
-            // Before image (clipped)
+            // 前图像（裁剪）
             ClipRect({
               clipper: (size) => Rect.fromLTWH({
                 left: 0,
@@ -473,7 +474,7 @@ class ImageComparisonSliderState extends State<ImageComparisonSlider> {
                 objectFit: 'cover'
               })
             }),
-            // Slider line
+            // 滑块线
             Positioned({
               left: 400 * this.sliderPosition - 2,
               top: 0,
@@ -514,18 +515,18 @@ class ImageComparisonSliderState extends State<ImageComparisonSlider> {
 }
 ```
 
-## Important Notes
+## 重要说明
 
-- ClipRect can affect rendering performance, so use it only when necessary
-- Touch events outside the clipped area are not detected
-- The clipper function is called whenever the widget size changes, so avoid complex calculations
-- Consider performance optimization when using with animations
-- Nested clipping can cause performance issues, so use with caution
+- ClipRect 可能影响渲染性能，所以仅在必要时使用
+- 裁剪区域外的触摸事件不会被检测到
+- 当组件尺寸变化时会调用 clipper 函数，所以要避免复杂计算
+- 与动画一起使用时要考虑性能优化
+- 嵌套裁剪可能导致性能问题，请谨慎使用
 
-## Related Widgets
+## 相关组件
 
-- **ClipOval**: Clips with an oval
-- **ClipRRect**: Clips with a rounded rectangle
-- **ClipPath**: Clips with a custom path
-- **CustomClipper**: Implements custom clipping logic
-- **Viewport**: Defines scrollable areas
+- **ClipOval**：使用椭圆裁剪
+- **ClipRRect**：使用圆角矩形裁剪
+- **ClipPath**：使用自定义路径裁剪
+- **CustomClipper**：实现自定义裁剪逻辑
+- **Viewport**：定义可滚动区域

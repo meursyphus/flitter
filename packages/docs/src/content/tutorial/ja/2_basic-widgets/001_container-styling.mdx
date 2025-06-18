@@ -1,6 +1,6 @@
 ---
-title: "Styling with Container"
-description: "Create colored rectangles and set padding, margin, and borders"
+title: "Containerでスタイリング"
+description: "色付きの矩形を作成し、パディング、マージン、ボーダーを設定"
 files:
   App.js: |
     import React from 'react';
@@ -9,12 +9,12 @@ files:
 
     class ContainerStylingApp extends StatelessWidget {
       build(context) {
-        // TODO: Create a Container with a red background
+        // TODO: 赤い背景のContainerを作成
         return Container({
           width: 300,
           height: 200,
           child: Center({
-            child: Text('TODO: Container styling')
+            child: Text('TODO: Containerのスタイリング')
           })
         });
       }
@@ -43,7 +43,7 @@ solved_files:
           }),
           padding: EdgeInsets.all(20),
           child: Center({
-            child: Text("Hello Container!", {
+            child: Text("こんにちは Container！", {
               style: new TextStyle({
                 color: 'white',
                 fontSize: 18,

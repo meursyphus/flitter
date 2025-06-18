@@ -424,7 +424,7 @@ class SideMenuState extends State<SideMenu> {
                       ],
                     }),
                   }),
-                  ...["Home", "Profile", "Settings", "Help", "Logout"].map((item, index) => {
+                  ...["主页", "个人资料", "设置", "帮助", "退出登录"].map((item, index) => {
                     const icons = [Icons.home, Icons.person, Icons.settings, Icons.help, Icons.exit_to_app];
                     
                     return ListTile({
@@ -475,10 +475,10 @@ class SwipeableCard extends StatefulWidget {
 
 class SwipeableCardState extends State<SwipeableCard> {
   cards = [
-    { title: "Card 1", color: "#e74c3c", content: "This is the first card." },
-    { title: "Card 2", color: "#f39c12", content: "This is the second card." },
-    { title: "Card 3", color: "#27ae60", content: "This is the third card." },
-    { title: "Card 4", color: "#3498db", content: "This is the fourth card." },
+    { title: "卡片 1", color: "#e74c3c", content: "这是第一张卡片。" },
+    { title: "卡片 2", color: "#f39c12", content: "这是第二张卡片。" },
+    { title: "卡片 3", color: "#27ae60", content: "这是第三张卡片。" },
+    { title: "卡片 4", color: "#3498db", content: "这是第四张卡片。" },
   ];
   
   currentIndex = 0;
@@ -587,7 +587,7 @@ class SwipeableCardState extends State<SwipeableCard> {
                 children: [
                   Icon(Icons.arrow_back),
                   SizedBox({ width: 8 }),
-                  Text("Previous"),
+                  Text("上一个"),
                 ],
               }),
             }),
@@ -600,7 +600,7 @@ class SwipeableCardState extends State<SwipeableCard> {
               child: Row({
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("Next"),
+                  Text("下一个"),
                   SizedBox({ width: 8 }),
                   Icon(Icons.arrow_forward),
                 ],

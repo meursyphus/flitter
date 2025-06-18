@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Container
 title: "Container"
-description: "A convenience widget that combines common painting, positioning, and sizing widgets"
+description: "一个结合了常见绘制、定位和尺寸调整功能的便利组件"
 ---
 
-## Overview
+## 概述
 
-Container is a convenience widget that combines common painting, positioning, and sizing widgets for its child.
+Container 是一个便利组件，它为其子组件结合了常见的绘制、定位和尺寸调整功能。
 
-Container combines several basic widgets (Padding, Align, ColoredBox, DecoratedBox, ConstrainedBox, Transform, etc.) into a single widget, simplifying common layout and styling tasks. An empty Container tries to occupy as much space as possible, but when it has a child, it sizes itself to the child.
+Container 将几个基本组件（Padding、Align、ColoredBox、DecoratedBox、ConstrainedBox、Transform 等）组合成一个单一组件，简化了常见的布局和样式任务。空的 Container 会尝试占用尽可能多的空间，但当它有子组件时，会根据子组件调整自身大小。
 
 <iframe
   width="560"
@@ -22,43 +22,43 @@ Container combines several basic widgets (Padding, Align, ColoredBox, DecoratedB
   allowfullscreen
 ></iframe>
 
-See: https://api.flutter.dev/flutter/widgets/Container-class.html
+参见：https://api.flutter.dev/flutter/widgets/Container-class.html
 
-## When to use it?
+## 何时使用？
 
-- When applying styles like background color, borders, shadows to a widget
-- When adding margin or padding around a widget
-- When constraining or fixing a widget's size
-- When applying multiple layout properties at once
-- When creating card UIs, button backgrounds, section dividers, etc.
+- 为组件应用背景色、边框、阴影等样式时
+- 为组件添加外边距或内边距时
+- 限制或固定组件尺寸时
+- 同时应用多个布局属性时
+- 创建卡片 UI、按钮背景、区域分隔符等时
 
-## Basic Usage
+## 基本用法
 
 ```typescript
-// Simplest example
+// 最简单的例子
 const widget = Container({
   width: 200,
   height: 100,
   color: 'blue',
-  child: Text('Hello Container!')
+  child: Text('你好 Container！')
 });
 
-// Using padding and margin
+// 使用内边距和外边距
 const paddedContainer = Container({
   margin: EdgeInsets.all(10),
   padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 10 }),
   color: 'lightgray',
-  child: Text('Padded Text')
+  child: Text('有内边距的文本')
 });
 ```
 
-## Props
+## 属性
 
 ### width
 
-**Value: number | undefined**
+**值：number | undefined**
 
-Specifies the width of the Container in pixels. If not specified, it's determined by the child's size or parent's constraints.
+以像素为单位指定 Container 的宽度。如果未指定，则由子组件的大小或父组件的约束决定。
 
 ```typescript
 Container({ width: 300, color: 'red' })
@@ -66,9 +66,9 @@ Container({ width: 300, color: 'red' })
 
 ### height
 
-**Value: number | undefined**
+**值：number | undefined**
 
-Specifies the height of the Container in pixels. If not specified, it's determined by the child's size or parent's constraints.
+以像素为单位指定 Container 的高度。如果未指定，则由子组件的大小或父组件的约束决定。
 
 ```typescript
 Container({ height: 150, color: 'green' })
@@ -76,9 +76,9 @@ Container({ height: 150, color: 'green' })
 
 ### constraints
 
-**Value: Constraints | undefined**
+**值：Constraints | undefined**
 
-Specifies the minimum/maximum width and height of the Container. Provides more flexible size control than width/height.
+指定 Container 的最小/最大宽度和高度。提供比 width/height 更灵活的尺寸控制。
 
 ```typescript
 Container({
@@ -94,19 +94,19 @@ Container({
 
 ### padding
 
-**Value: EdgeInsets** (default: **none**)
+**值：EdgeInsets**（默认值：**无**）
 
-The spacing between the Container's edge and its child widget.
+Container 边缘与其子组件之间的间距。
 
 ```typescript
-// Same padding on all sides
+// 所有边相同的内边距
 Container({
   padding: EdgeInsets.all(16),
   color: 'lightblue',
-  child: Text('Padded')
+  child: Text('有内边距')
 })
 
-// Different padding per side
+// 每边不同的内边距
 Container({
   padding: EdgeInsets.only({ top: 20, left: 10, right: 10, bottom: 5 }),
   color: 'pink'
@@ -115,23 +115,23 @@ Container({
 
 ### margin
 
-**Value: EdgeInsets** (default: **none**)
+**值：EdgeInsets**（默认值：**无**）
 
-The spacing between the Container and other widgets outside it.
+Container 与其外部其他组件之间的间距。
 
 ```typescript
 Container({
   margin: EdgeInsets.symmetric({ horizontal: 20, vertical: 10 }),
   color: 'yellow',
-  child: Text('Margined')
+  child: Text('有外边距')
 })
 ```
 
 ### alignment
 
-**Value: Alignment | undefined**
+**值：Alignment | undefined**
 
-Specifies the alignment position of the child widget within the Container. x and y values range from -1 to 1.
+指定子组件在 Container 内的对齐位置。x 和 y 值范围从 -1 到 1。
 
 ```typescript
 Container({
@@ -139,10 +139,10 @@ Container({
   height: 200,
   color: 'gray',
   alignment: Alignment.center,
-  child: Text('Centered')
+  child: Text('居中')
 })
 
-// Available alignment constants
+// 可用的对齐常量
 // Alignment.topLeft, Alignment.topCenter, Alignment.topRight
 // Alignment.centerLeft, Alignment.center, Alignment.centerRight
 // Alignment.bottomLeft, Alignment.bottomCenter, Alignment.bottomRight
@@ -150,11 +150,11 @@ Container({
 
 ### color
 
-**Value: string | undefined**
+**值：string | undefined**
 
-Specifies the background color of the Container. Cannot be used with decoration.
+指定 Container 的背景颜色。不能与 decoration 一起使用。
 
-⚠️ **Warning**: Using with decoration prop will cause an error.
+⚠️ **警告**：与 decoration 属性一起使用会导致错误。
 
 ```typescript
 Container({
@@ -166,11 +166,11 @@ Container({
 
 ### decoration
 
-**Value: Decoration | undefined**
+**值：Decoration | undefined**
 
-Specifies complex styling for the Container (borders, rounded corners, shadows, etc.).
+为 Container 指定复杂样式（边框、圆角、阴影等）。
 
-⚠️ **Warning**: Cannot be used with color prop. Specify color inside decoration instead.
+⚠️ **警告**：不能与 color 属性一起使用。请在 decoration 内部指定颜色。
 
 ```typescript
 Container({
@@ -188,17 +188,17 @@ Container({
       })
     ]
   }),
-  child: Text('Decorated')
+  child: Text('装饰过的')
 })
 ```
 
 ### clipped
 
-**Value: boolean | undefined** (default: **false**)
+**值：boolean | undefined**（默认值：**false**）
 
-Determines whether to clip the child widget according to the decoration's shape.
+决定是否根据 decoration 的形状裁剪子组件。
 
-⚠️ **Warning**: When clipped is true, decoration is required.
+⚠️ **警告**：当 clipped 为 true 时，必须提供 decoration。
 
 ```typescript
 Container({
@@ -215,23 +215,23 @@ Container({
 
 ### transform
 
-**Value: Matrix4 | undefined**
+**值：Matrix4 | undefined**
 
-Applies transformations like rotation, scaling, skewing to the Container.
+对 Container 应用旋转、缩放、倾斜等变换。
 
 ```typescript
 Container({
   color: 'purple',
-  transform: Matrix4.rotationZ(Math.PI / 4), // 45 degree rotation
-  child: Text('Rotated')
+  transform: Matrix4.rotationZ(Math.PI / 4), // 45 度旋转
+  child: Text('旋转的')
 })
 ```
 
 ### transformAlignment
 
-**Value: Alignment | undefined**
+**值：Alignment | undefined**
 
-Specifies the origin point for transformations. Defaults to the Container's center.
+指定变换的原点。默认为 Container 的中心。
 
 ```typescript
 Container({
@@ -239,16 +239,16 @@ Container({
   height: 100,
   color: 'green',
   transform: Matrix4.rotationZ(Math.PI / 6),
-  transformAlignment: Alignment.topLeft, // Rotate around top-left corner
-  child: Text('Transform')
+  transformAlignment: Alignment.topLeft, // 围绕左上角旋转
+  child: Text('变换')
 })
 ```
 
 ### child
 
-**Value: Widget | undefined**
+**值：Widget | undefined**
 
-The child widget to display inside the Container.
+要在 Container 内显示的子组件。
 
 ```typescript
 Container({
@@ -256,16 +256,16 @@ Container({
   color: 'lightgray',
   child: Column({
     children: [
-      Text('Title'),
-      Text('Subtitle')
+      Text('标题'),
+      Text('副标题')
     ]
   })
 })
 ```
 
-## Practical Examples
+## 实际示例
 
-### Creating a Card UI
+### 创建卡片 UI
 
 ```typescript
 const card = Container({
@@ -285,15 +285,15 @@ const card = Container({
   child: Column({
     crossAxisAlignment: 'start',
     children: [
-      Text('Card Title', { style: TextStyle({ fontSize: 18, fontWeight: 'bold' }) }),
+      Text('卡片标题', { style: TextStyle({ fontSize: 18, fontWeight: 'bold' }) }),
       SizedBox({ height: 8 }),
-      Text('Card content goes here...')
+      Text('卡片内容在这里...')
     ]
   })
 });
 ```
 
-### Creating a Circular Avatar
+### 创建圆形头像
 
 ```typescript
 const avatar = Container({
@@ -311,37 +311,37 @@ const avatar = Container({
 });
 ```
 
-### Styling a Button
+### 设计按钮样式
 
 ```typescript
 const customButton = GestureDetector({
-  onTap: () => console.log('Button tapped'),
+  onTap: () => console.log('按钮被点击'),
   child: Container({
     padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
     decoration: BoxDecoration({
       color: 'blue',
       borderRadius: BorderRadius.circular(8)
     }),
-    child: Text('Click Me', {
+    child: Text('点击我', {
       style: TextStyle({ color: 'white', fontSize: 16 })
     })
   })
 });
 ```
 
-## Important Notes
+## 重要注意事项
 
-- Cannot use `color` and `decoration` simultaneously. When using decoration, specify color inside it.
-- When `clipped` is set to true, `decoration` is required.
-- A Container without a child and without size constraints tries to occupy as much space as possible.
-- When using `transform`, be aware that the transformed Container might overlap with other widgets.
-- Using border in decoration automatically adds padding.
+- 不能同时使用 `color` 和 `decoration`。使用 decoration 时，请在其内部指定颜色。
+- 当 `clipped` 设置为 true 时，必须提供 `decoration`。
+- 没有子组件且没有尺寸约束的 Container 会尝试占用尽可能多的空间。
+- 使用 `transform` 时，请注意变换后的 Container 可能会与其他组件重叠。
+- 在 decoration 中使用 border 会自动添加内边距。
 
-## Related Widgets
+## 相关组件
 
-- **DecoratedBox**: Use when only decoration is needed
-- **ColoredBox**: Use when only background color is needed
-- **Padding**: Use when only margin or padding is needed
-- **SizedBox**: Use when only fixed size is needed
-- **ConstrainedBox**: Use when only size constraints are needed
-- **Align**: Use when only alignment is needed
+- **DecoratedBox**：仅需要装饰时使用
+- **ColoredBox**：仅需要背景颜色时使用
+- **Padding**：仅需要外边距或内边距时使用
+- **SizedBox**：仅需要固定尺寸时使用
+- **ConstrainedBox**：仅需要尺寸约束时使用
+- **Align**：仅需要对齐时使用

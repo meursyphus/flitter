@@ -1,6 +1,6 @@
 ---
-title: "Basic Interactions"
-description: "Create a simple counter with GestureDetector and StatefulWidget"
+title: "基本交互"
+description: "使用 GestureDetector 和 StatefulWidget 创建一个简单的计数器"
 files:
   App.js: |
     import React from 'react';
@@ -9,7 +9,7 @@ files:
 
     class CounterApp extends StatelessWidget {
       build(context) {
-        // TODO: Create counter widget here
+        // TODO: 在这里创建计数器组件
         return Container({
           width: 300,
           height: 200,
@@ -18,8 +18,8 @@ files:
           child: Column({
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Counter: 0'),
-              Text('Create a button!')
+              Text('计数器：0'),
+              Text('创建一个按钮！')
             ]
           })
         });
@@ -64,7 +64,7 @@ solved_files:
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(`Counter: ${this.count}`, {
+              Text(`计数器：${this.count}`, {
                 style: new TextStyle({
                   fontSize: 24,
                   fontWeight: 'bold',
@@ -81,7 +81,7 @@ solved_files:
                     color: '#3b82f6',
                     borderRadius: BorderRadius.circular(8)
                   }),
-                  child: Text('Click me!', {
+                  child: Text('点击我！', {
                     style: new TextStyle({
                       color: 'white',
                       fontSize: 16,
@@ -105,156 +105,156 @@ solved_files:
     }
 ---
 
-# Basic Interactions
+# 基本交互
 
-So far we've only created static UIs. Now let's create an app that interacts with users. In this tutorial, we'll create a counter app where clicking a button increases a number, while learning about GestureDetector and StatefulWidget.
+到目前为止，我们只创建了静态 UI。现在让我们创建一个与用户交互的应用。在本教程中，我们将创建一个计数器应用，点击按钮时数字会增加，同时学习 GestureDetector 和 StatefulWidget。
 
-## 🎯 Learning Objectives
+## 🎯 学习目标
 
-After completing this tutorial, you'll be able to:
+完成本教程后，您将能够：
 
-- [ ] Handle click events with GestureDetector
-- [ ] Create stateful widgets with StatefulWidget
-- [ ] Update the screen with setState()
-- [ ] Style simple buttons
-- [ ] Understand Flitter's state management patterns
+- [ ] 使用 GestureDetector 处理点击事件
+- [ ] 使用 StatefulWidget 创建有状态的组件
+- [ ] 使用 setState() 更新屏幕
+- [ ] 设计简单的按钮样式
+- [ ] 理解 Flitter 的状态管理模式
 
-## 🤔 Why is State Management Needed?
+## 🤔 为什么需要状态管理？
 
-All the widgets we've created so far were **static widgets** that don't change once created. However, in real apps, the screen needs to change based on user actions:
+我们迄今为止创建的所有组件都是**静态组件**，一旦创建就不会改变。然而，在真实的应用中，屏幕需要根据用户操作而改变：
 
-- Click a button to increase a number
-- Press a toggle button to change on/off state
-- Type in an input field to display text on screen
+- 点击按钮增加数字
+- 按下切换按钮改变开/关状态
+- 在输入框中输入以在屏幕上显示文本
 
-For such **dynamic changes**, we need **state**.
+对于这种**动态变化**，我们需要**状态**。
 
-## 🏗️ Understanding StatefulWidget
+## 🏗️ 理解 StatefulWidget
 
-**StatefulWidget** is a widget that can have state. When state changes, the screen is automatically redrawn.
+**StatefulWidget** 是一个可以拥有状态的组件。当状态改变时，屏幕会自动重新绘制。
 
 ### StatefulWidget vs StatelessWidget
 
 ```typescript
-// StatelessWidget - no state, doesn't change
+// StatelessWidget - 没有状态，不会改变
 class GreetingWidget extends StatelessWidget {
   build() {
-    return Text('Hello!'); // Always the same text
+    return Text('你好！'); // 总是相同的文本
   }
 }
 
-// StatefulWidget - has state, can change
+// StatefulWidget - 有状态，可以改变
 class CounterWidget extends StatefulWidget {
   createState() {
-    return new CounterWidgetState(); // Return state class
+    return new CounterWidgetState(); // 返回状态类
   }
 }
 
 class CounterWidgetState extends State {
-  count = 0; // State variable
+  count = 0; // 状态变量
 
   build() {
-    return Text(`Counter: ${this.count}`); // Different text based on state
+    return Text(`计数器：${this.count}`); // 根据状态显示不同的文本
   }
 }
 ```
 
-### Basic Structure of StatefulWidget
+### StatefulWidget 的基本结构
 
-StatefulWidget consists of two classes:
+StatefulWidget 由两个类组成：
 
-1. **Widget class**: Inherits from `StatefulWidget` and implements `createState()` method
-2. **State class**: Inherits from `State` and contains actual state and UI logic
+1. **Widget 类**：继承自 `StatefulWidget` 并实现 `createState()` 方法
+2. **State 类**：继承自 `State` 并包含实际的状态和 UI 逻辑
 
 ```typescript
-// 1. Widget class
+// 1. Widget 类
 class MyWidget extends StatefulWidget {
   createState() {
     return new MyWidgetState();
   }
 }
 
-// 2. State class
+// 2. State 类
 class MyWidgetState extends State {
-  // State variables (declared as class properties)
+  // 状态变量（声明为类属性）
   count = 0;
   isVisible = true;
   
-  // UI composition method
+  // UI 组合方法
   build() {
     return Container({
-      child: Text(`Count: ${this.count}`)
+      child: Text(`计数：${this.count}`)
     });
   }
 }
 ```
 
-### Important Characteristics
+### 重要特性
 
-1. **State variables are class properties**: Declared as `this.count = 0`
-2. **No React hooks**: `useState`, `useEffect`, etc. are not used in Flitter
-3. **setState() required**: Must use `setState()` when changing state
+1. **状态变量是类属性**：声明为 `this.count = 0`
+2. **不使用 React hooks**：在 Flitter 中不使用 `useState`、`useEffect` 等
+3. **必须使用 setState()**：改变状态时必须使用 `setState()`
 
-## 🎯 Handling Events with GestureDetector
+## 🎯 使用 GestureDetector 处理事件
 
-**GestureDetector** is a widget that detects user gestures (click, drag, hover, etc.).
+**GestureDetector** 是一个检测用户手势（点击、拖动、悬停等）的组件。
 
-### Basic Usage
+### 基本用法
 
 ```typescript
 GestureDetector({
   onClick: () => {
-    console.log('Clicked!');
+    console.log('点击了！');
   },
   child: Container({
-    child: Text('Click me')
+    child: Text('点击我')
   })
 })
 ```
 
-### Main Event Properties
+### 主要事件属性
 
 ```typescript
 GestureDetector({
-  // Mouse events
-  onClick: (e) => { /* On click */ },
-  onMouseDown: (e) => { /* When mouse button is pressed */ },
-  onMouseUp: (e) => { /* When mouse button is released */ },
-  onMouseEnter: (e) => { /* When mouse enters area */ },
-  onMouseLeave: (e) => { /* When mouse leaves area */ },
+  // 鼠标事件
+  onClick: (e) => { /* 点击时 */ },
+  onMouseDown: (e) => { /* 鼠标按下时 */ },
+  onMouseUp: (e) => { /* 鼠标释放时 */ },
+  onMouseEnter: (e) => { /* 鼠标进入区域时 */ },
+  onMouseLeave: (e) => { /* 鼠标离开区域时 */ },
   
-  // Drag events
-  onDragStart: (e) => { /* Drag start */ },
-  onDragMove: (e) => { /* During drag */ },
-  onDragEnd: (e) => { /* Drag end */ },
+  // 拖动事件
+  onDragStart: (e) => { /* 拖动开始 */ },
+  onDragMove: (e) => { /* 拖动中 */ },
+  onDragEnd: (e) => { /* 拖动结束 */ },
   
-  // Other settings
-  cursor: 'pointer', // Cursor shape
+  // 其他设置
+  cursor: 'pointer', // 光标形状
   
-  child: /* child widget */
+  child: /* 子组件 */
 })
 ```
 
-### Cursor Types
+### 光标类型
 
 ```typescript
-cursor: 'pointer'      // Hand shape
-cursor: 'default'      // Default arrow
-cursor: 'move'         // Move indicator
-cursor: 'text'         // Text selection
-cursor: 'wait'         // Wait indicator
-cursor: 'not-allowed'  // Forbidden indicator
-cursor: 'grab'         // Grab indicator
-cursor: 'grabbing'     // Grabbing indicator
+cursor: 'pointer'      // 手形
+cursor: 'default'      // 默认箭头
+cursor: 'move'         // 移动指示器
+cursor: 'text'         // 文本选择
+cursor: 'wait'         // 等待指示器
+cursor: 'not-allowed'  // 禁止指示器
+cursor: 'grab'         // 抓取指示器
+cursor: 'grabbing'     // 抓取中指示器
 ```
 
-## 🔧 Practice: Creating Counter App
+## 🔧 练习：创建计数器应用
 
-Now let's create a counter app where the number increases each time you click.
+现在让我们创建一个计数器应用，每次点击时数字都会增加。
 
-### Step 1: Create StatefulWidget Class
+### 步骤 1：创建 StatefulWidget 类
 
-First, let's create the basic structure of StatefulWidget:
+首先，让我们创建 StatefulWidget 的基本结构：
 
 ```typescript
 import { StatefulWidget, State } from '@meursyphus/flitter';
@@ -266,42 +266,42 @@ class CounterWidget extends StatefulWidget {
 }
 
 class CounterWidgetState extends State {
-  count = 0; // Counter state variable
+  count = 0; // 计数器状态变量
   
   build() {
     return Container({
-      child: Text(`Counter: ${this.count}`)
+      child: Text(`计数器：${this.count}`)
     });
   }
 }
 ```
 
-### Step 2: Update State with setState()
+### 步骤 2：使用 setState() 更新状态
 
-Add a method to increase the counter when the button is clicked:
+添加一个方法，在点击按钮时增加计数器：
 
 ```typescript
 class CounterWidgetState extends State {
   count = 0;
   
-  // Counter increment method
+  // 计数器增加方法
   increment() {
     this.setState(() => {
-      this.count++; // Change state inside setState
+      this.count++; // 在 setState 内改变状态
     });
   }
   
   build() {
     return Container({
-      child: Text(`Counter: ${this.count}`)
+      child: Text(`计数器：${this.count}`)
     });
   }
 }
 ```
 
-### Step 3: Connect Click Event with GestureDetector
+### 步骤 3：使用 GestureDetector 连接点击事件
 
-Now use GestureDetector to call the increment method on click:
+现在使用 GestureDetector 在点击时调用 increment 方法：
 
 ```typescript
 class CounterWidgetState extends State {
@@ -317,11 +317,11 @@ class CounterWidgetState extends State {
     return Column({
       mainAxisAlignment: 'center',
       children: [
-        Text(`Counter: ${this.count}`),
+        Text(`计数器：${this.count}`),
         GestureDetector({
-          onClick: () => this.increment(), // Call increment on click
+          onClick: () => this.increment(), // 点击时调用 increment
           child: Container({
-            child: Text('Click me!')
+            child: Text('点击我！')
           })
         })
       ]
@@ -330,23 +330,23 @@ class CounterWidgetState extends State {
 }
 ```
 
-### Step 4: Add Button Styling
+### 步骤 4：添加按钮样式
 
-Let's make the button prettier:
+让我们让按钮更漂亮：
 
 ```typescript
 GestureDetector({
   onClick: () => this.increment(),
-  cursor: 'pointer', // Make cursor hand-shaped
+  cursor: 'pointer', // 使光标变成手形
   child: Container({
-    padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 12 }), // Button padding
+    padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 12 }), // 按钮内边距
     decoration: new BoxDecoration({
-      color: '#3b82f6',           // Blue background
-      borderRadius: BorderRadius.circular(8)    // Rounded corners
+      color: '#3b82f6',           // 蓝色背景
+      borderRadius: BorderRadius.circular(8)    // 圆角
     }),
-    child: Text('Click me!', {
+    child: Text('点击我！', {
       style: new TextStyle({
-        color: 'white',           // White text
+        color: 'white',           // 白色文本
         fontSize: 16,
         fontWeight: 'bold'
       })
@@ -355,9 +355,9 @@ GestureDetector({
 })
 ```
 
-## 🎨 Complete Counter App
+## 🎨 完整的计数器应用
 
-Here's the complete counter app combining all steps:
+这是结合所有步骤的完整计数器应用：
 
 ```typescript
 import React from 'react';
@@ -401,7 +401,7 @@ class CounterWidgetState extends State {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(`Counter: ${this.count}`, {
+          Text(`计数器：${this.count}`, {
             style: new TextStyle({
               fontSize: 24,
               fontWeight: 'bold',
@@ -418,7 +418,7 @@ class CounterWidgetState extends State {
                 color: '#3b82f6',
                 borderRadius: BorderRadius.circular(8)
               }),
-              child: Text('Click me!', {
+              child: Text('点击我！', {
                 style: new TextStyle({
                   color: 'white',
                   fontSize: 16,
@@ -446,26 +446,26 @@ function App() {
 }
 ```
 
-## 🔧 TODO: Complete the Code
+## 🔧 TODO：完成代码
 
-Now complete the code yourself:
+现在自己完成代码：
 
 ```typescript
 import React from 'react';
 import Widget from '@meursyphus/flitter-react';
 import { StatefulWidget, State, Container, Text, Column, GestureDetector, SizedBox } from '@meursyphus/flitter';
 
-// TODO: Create CounterWidget class
+// TODO: 创建 CounterWidget 类
 class CounterWidget extends StatefulWidget {
-  // TODO: Implement createState method
+  // TODO: 实现 createState 方法
 }
 
-// TODO: Create CounterWidgetState class
+// TODO: 创建 CounterWidgetState 类
 class CounterWidgetState extends State {
-  // TODO: Declare count state variable (initial value: 0)
+  // TODO: 声明 count 状态变量（初始值：0）
   
-  // TODO: Create increment method
-  // Hint: Use setState() to increase count by 1
+  // TODO: 创建 increment 方法
+  // 提示：使用 setState() 将 count 增加 1
   
   build() {
     return Container({
@@ -475,15 +475,15 @@ class CounterWidgetState extends State {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // TODO: Create Text that displays counter value
-          // Hint: `Counter: ${this.count}` format
+          // TODO: 创建显示计数器值的 Text
+          // 提示：`计数器：${this.count}` 格式
           
           SizedBox({ height: 20 }),
           
-          // TODO: Create clickable button with GestureDetector
-          // Hint: Call this.increment() in onClick
-          // Hint: Set cursor: 'pointer'
-          // Hint: Button with blue background (#3b82f6), white text
+          // TODO: 使用 GestureDetector 创建可点击的按钮
+          // 提示：在 onClick 中调用 this.increment()
+          // 提示：设置 cursor: 'pointer'
+          // 提示：蓝色背景（#3b82f6）、白色文本的按钮
         ]
       })
     });
@@ -499,62 +499,62 @@ function App() {
 }
 ```
 
-## 🎯 Expected Results
+## 🎯 预期结果
 
-After completing and running the code, you should see:
+完成并运行代码后，您应该看到：
 
-1. **Counter display**: Starting with "Counter: 0"
-2. **Clickable button**: Blue background "Click me!" button
-3. **Interaction**: Number increases by 1 each time button is clicked
-4. **Cursor change**: Cursor changes to hand shape when hovering over button
+1. **计数器显示**：从"计数器：0"开始
+2. **可点击按钮**：蓝色背景的"点击我！"按钮
+3. **交互**：每次点击按钮数字增加 1
+4. **光标变化**：鼠标悬停在按钮上时光标变成手形
 
-## 🎨 Advanced Understanding of setState()
+## 🎨 深入理解 setState()
 
-### Role of setState()
+### setState() 的作用
 
 ```typescript
-// ❌ Wrong way - UI won't update
+// ❌ 错误方式 - UI 不会更新
 this.count++; 
 
-// ✅ Correct way - UI automatically updates
+// ✅ 正确方式 - UI 自动更新
 this.setState(() => {
   this.count++;
 });
 ```
 
-### Multiple State Changes within setState()
+### 在 setState() 内进行多个状态更改
 
 ```typescript
 this.setState(() => {
-  this.count++;           // Multiple states can be
-  this.isVisible = true;  // changed simultaneously
-  this.message = 'Updated!';
+  this.count++;           // 可以同时
+  this.isVisible = true;  // 更改多个状态
+  this.message = '已更新！';
 });
 ```
 
-### Callback After setState()
+### setState() 后的回调
 
 ```typescript
 this.setState(() => {
   this.count++;
 }, () => {
-  // Executed after state update is complete
-  console.log('Counter updated:', this.count);
+  // 状态更新完成后执行
+  console.log('计数器已更新：', this.count);
 });
 ```
 
-## 🔧 Practice Problems
+## 🔧 练习题
 
-If you've completed the basic counter, try the following:
+如果您已完成基本计数器，请尝试以下练习：
 
-### Exercise 1: Add Decrement Button
-Add a decrement button next to the increment button:
+### 练习 1：添加减少按钮
+在增加按钮旁边添加一个减少按钮：
 
 ```typescript
 Row({
   mainAxisAlignment: MainAxisAlignment.center,
   children: [
-    // Decrement button
+    // 减少按钮
     GestureDetector({
       onClick: () => this.decrement(),
       child: Container({
@@ -564,7 +564,7 @@ Row({
       })
     }),
     SizedBox({ width: 20 }),
-    // Increment button
+    // 增加按钮
     GestureDetector({
       onClick: () => this.increment(),
       child: Container({
@@ -577,8 +577,8 @@ Row({
 })
 ```
 
-### Exercise 2: Add Reset Button
-Add a button to reset the counter to 0:
+### 练习 2：添加重置按钮
+添加一个将计数器重置为 0 的按钮：
 
 ```typescript
 reset() {
@@ -588,21 +588,21 @@ reset() {
 }
 ```
 
-### Exercise 3: Conditional Styling
-Change text color based on counter value:
+### 练习 3：条件样式
+根据计数器值更改文本颜色：
 
 ```typescript
-Text(`Counter: ${this.count}`, {
+Text(`计数器：${this.count}`, {
   style: new TextStyle({
     fontSize: 24,
     fontWeight: 'bold',
-    color: this.count > 10 ? '#ef4444' : '#1e293b' // Red when over 10
+    color: this.count > 10 ? '#ef4444' : '#1e293b' // 超过 10 时为红色
   })
 })
 ```
 
-### Exercise 4: Add Hover Effect
-Make button color change when mouse hovers over it:
+### 练习 4：添加悬停效果
+当鼠标悬停在按钮上时改变按钮颜色：
 
 ```typescript
 class ButtonState extends State {
@@ -615,26 +615,26 @@ class ButtonState extends State {
       onClick: () => this.props.onTap(),
       child: Container({
         decoration: new BoxDecoration({
-          color: this.isHovered ? '#2563eb' : '#3b82f6', // Darker blue on hover
+          color: this.isHovered ? '#2563eb' : '#3b82f6', // 悬停时深蓝色
           borderRadius: BorderRadius.circular(8)
         }),
-        child: Text('Click me!')
+        child: Text('点击我！')
       })
     });
   }
 }
 ```
 
-## 🚨 Common Mistakes and Solutions
+## 🚨 常见错误和解决方案
 
-### Problem 1: Changing State Without setState
+### 问题 1：不使用 setState 更改状态
 ```typescript
-// ❌ Wrong example - UI won't update
+// ❌ 错误示例 - UI 不会更新
 increment() {
-  this.count++; // No setState
+  this.count++; // 没有 setState
 }
 
-// ✅ Correct example
+// ✅ 正确示例
 increment() {
   this.setState(() => {
     this.count++;
@@ -642,95 +642,95 @@ increment() {
 }
 ```
 
-### Problem 2: Using React Hooks
+### 问题 2：使用 React Hooks
 ```typescript
-// ❌ Wrong example - Not available in Flitter
-const [count, setCount] = useState(0); // React pattern
+// ❌ 错误示例 - Flitter 中不可用
+const [count, setCount] = useState(0); // React 模式
 
-// ✅ Correct example - Flitter pattern
+// ✅ 正确示例 - Flitter 模式
 class MyState extends State {
-  count = 0; // Declare state as class property
+  count = 0; // 将状态声明为类属性
 }
 ```
 
-### Problem 3: Directly Exporting Class
+### 问题 3：直接导出类
 ```typescript
-// ❌ Wrong example
-export default CounterWidget; // Direct class export
+// ❌ 错误示例
+export default CounterWidget; // 直接导出类
 
-// ✅ Correct example - Use by creating instance
+// ✅ 正确示例 - 通过创建实例使用
 function App() {
-  const widget = new CounterWidget(); // Create instance with new keyword
+  const widget = new CounterWidget(); // 使用 new 关键字创建实例
   return <Widget widget={widget} />;
 }
 ```
 
-### Problem 4: Handling Events Without GestureDetector
+### 问题 4：不使用 GestureDetector 处理事件
 ```typescript
-// ❌ Wrong example
+// ❌ 错误示例
 Container({
-  onClick: () => {}, // Container has no click event
-  child: Text('Click')
+  onClick: () => {}, // Container 没有点击事件
+  child: Text('点击')
 })
 
-// ✅ Correct example
+// ✅ 正确示例
 GestureDetector({
   onClick: () => {},
   child: Container({
-    child: Text('Click')
+    child: Text('点击')
   })
 })
 ```
 
-## 🧠 Understanding Lifecycle Methods
+## 🧠 理解生命周期方法
 
-StatefulWidget has several lifecycle methods:
+StatefulWidget 有几个生命周期方法：
 
-### initState() - Initialization
+### initState() - 初始化
 ```typescript
 class CounterWidgetState extends State {
   count = 0;
   
   initState() {
     super.initState();
-    console.log('Counter widget created');
-    // Initialize animation controllers, timers, etc.
+    console.log('计数器组件已创建');
+    // 初始化动画控制器、计时器等
   }
 }
 ```
 
-### didUpdateWidget() - Update
+### didUpdateWidget() - 更新
 ```typescript
 didUpdateWidget(oldWidget) {
   super.didUpdateWidget(oldWidget);
-  // When parent widget's properties change
-  console.log('Widget updated');
+  // 当父组件的属性改变时
+  console.log('组件已更新');
 }
 ```
 
-### dispose() - Cleanup
+### dispose() - 清理
 ```typescript
 dispose() {
-  console.log('Counter widget removed');
-  // Clean up timers, animations, etc.
+  console.log('计数器组件已移除');
+  // 清理计时器、动画等
   super.dispose();
 }
 ```
 
-## 🚀 Next Steps
+## 🚀 下一步
 
-If you've successfully implemented basic interactions, move on to the next step:
+如果您已成功实现基本交互，请继续下一步：
 
-- **Next**: [Container Styling](../2_basic-widgets/1_container-styling) - Learn more varied styling
-- **Related**: [Complete GestureDetector Guide](../4_interactive-widgets/1_gesture-detector-complete) - Handle all gesture events
-- **Related**: [StatefulWidget Patterns](../4_interactive-widgets/3_stateful-widget-patterns) - Advanced state management patterns
+- **下一篇**：[Container 样式](../2_basic-widgets/1_container-styling) - 学习更多样式
+- **相关**：[完整的 GestureDetector 指南](../4_interactive-widgets/1_gesture-detector-complete) - 处理所有手势事件
+- **相关**：[StatefulWidget 模式](../4_interactive-widgets/3_stateful-widget-patterns) - 高级状态管理模式
 
-## 💡 Key Summary
+## 💡 关键总结
 
-1. **StatefulWidget**: Widget with state, creates state class with createState() method
-2. **State class**: Contains actual state variables and UI logic
-3. **setState()**: Must be used when changing state, automatically updates UI
-4. **GestureDetector**: Handles all user interactions
-5. **Lifecycle**: initState, build, didUpdateWidget, dispose
+1. **StatefulWidget**：具有状态的组件，使用 createState() 方法创建状态类
+2. **State 类**：包含实际的状态变量和 UI 逻辑
+3. **setState()**：更改状态时必须使用，自动更新 UI
+4. **GestureDetector**：处理所有用户交互
+5. **生命周期**：initState、build、didUpdateWidget、dispose
 
-Now you can create interactive widgets! In the next tutorial, we'll learn about more complex widgets.
+现在您可以创建交互式组件了！在下一个教程中，我们将学习更复杂的组件。

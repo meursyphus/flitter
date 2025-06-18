@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: ClipRRect
 title: "ClipRRect"
-description: "A widget that clips its child using a rounded rectangle"
+description: "使用圆角矩形裁剪其子组件的组件"
 ---
 
-## Overview
+## 概述
 
-ClipRRect is a widget that clips its child using a rounded rectangle. 
+ClipRRect 是一个使用圆角矩形裁剪其子组件的组件。
 
-By default, ClipRRect uses its own bounds as the base rectangle for the clip, but the size and location of the clip can be customized using a custom clipper. The borderRadius property allows you to individually set the roundness of each corner.
+默认情况下，ClipRRect 使用自己的边界作为裁剪的基础矩形，但可以使用自定义裁剪器来定制裁剪的大小和位置。borderRadius 属性允许您单独设置每个角的圆度。
 
 <iframe
   width="560"
@@ -22,20 +22,20 @@ By default, ClipRRect uses its own bounds as the base rectangle for the clip, bu
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/ClipRRect-class.html](https://api.flutter.dev/flutter/widgets/ClipRRect-class.html)
+参考: [https://api.flutter.dev/flutter/widgets/ClipRRect-class.html](https://api.flutter.dev/flutter/widgets/ClipRRect-class.html)
 
-## When to Use
+## 何时使用？
 
-- When you want to apply rounded corners to images or containers
-- When creating card UI or buttons with smooth corner effects
-- When you need to clip overflowing content with rounded corners
-- When you want to set different radii for each corner
-- When applying rounded effects to profile images or thumbnails
+- 当您想为图像或容器应用圆角时
+- 当创建具有平滑角效果的卡片 UI 或按钮时
+- 当您需要用圆角裁剪溢出内容时
+- 当您想为每个角设置不同半径时
+- 当为头像或缩略图应用圆角效果时
 
-## Basic Usage
+## 基本用法
 
 ```typescript
-// Same radius for all corners
+// 所有角使用相同半径
 ClipRRect({
   borderRadius: BorderRadius.circular(16),
   child: Image({
@@ -46,7 +46,7 @@ ClipRRect({
   })
 })
 
-// Rounded specific corners only
+// 仅特定角圆角
 ClipRRect({
   borderRadius: BorderRadius.only({
     topLeft: Radius.circular(20),
@@ -61,7 +61,7 @@ ClipRRect({
   })
 })
 
-// Elliptical corners
+// 椭圆角
 ClipRRect({
   borderRadius: BorderRadius.all(Radius.elliptical(40, 20)),
   child: Container({
@@ -72,34 +72,34 @@ ClipRRect({
 })
 ```
 
-## Props Details
+## 属性详情
 
 ### borderRadius
 
-**Type: BorderRadius** (Default: **BorderRadius.zero**)
+**类型: BorderRadius**（默认值: **BorderRadius.zero**）
 
-Defines the roundness of each corner. The BorderRadius class provides various factory methods:
+定义每个角的圆度。BorderRadius 类提供了各种工厂方法：
 
-- `BorderRadius.circular(radius)`: Apply the same circular radius to all corners
-- `BorderRadius.all(Radius)`: Apply the same Radius to all corners
-- `BorderRadius.only({topLeft?, topRight?, bottomLeft?, bottomRight?})`: Set each corner individually
-- `BorderRadius.vertical({top?, bottom?})`: Set top and bottom corners
-- `BorderRadius.horizontal({left?, right?})`: Set left and right corners
+- `BorderRadius.circular(radius)`: 对所有角应用相同的圆形半径
+- `BorderRadius.all(Radius)`: 对所有角应用相同的半径
+- `BorderRadius.only({topLeft?, topRight?, bottomLeft?, bottomRight?})`: 单独设置每个角
+- `BorderRadius.vertical({top?, bottom?})`: 设置上下角
+- `BorderRadius.horizontal({left?, right?})`: 设置左右角
 
 ```typescript
-// Circular radius
+// 圆形半径
 ClipRRect({
   borderRadius: BorderRadius.circular(20),
   child: child
 })
 
-// Elliptical radius
+// 椭圆半径
 ClipRRect({
   borderRadius: BorderRadius.all(Radius.elliptical(30, 15)),
   child: child
 })
 
-// Individual corner settings
+// 单独角设置
 ClipRRect({
   borderRadius: BorderRadius.only({
     topLeft: Radius.circular(30),
@@ -113,14 +113,14 @@ ClipRRect({
 
 ### clipper
 
-**Type: (size: Size) => RRect** (Optional)
+**类型: (size: Size) => RRect**（可选）
 
-A callback function that defines a custom clipping area. It receives the widget's size and must return an RRect (rounded rectangle) object.
+定义自定义裁剪区域的回调函数。它接收组件的尺寸并必须返回一个 RRect（圆角矩形）对象。
 
 ```typescript
 ClipRRect({
   clipper: (size) => {
-    // Clip to a smaller rounded rectangle in the center
+    // 裁剪到中心的较小圆角矩形
     return RRect.fromRectAndRadius({
       rect: Rect.fromCenter({
         center: { x: size.width / 2, y: size.height / 2 },
@@ -136,12 +136,12 @@ ClipRRect({
 
 ### clipped
 
-**Type: boolean** (Default: **true**)
+**类型: boolean**（默认值: **true**）
 
-Enables or disables the clipping effect.
+启用或禁用裁剪效果。
 
-- `true`: Apply clipping
-- `false`: Disable clipping (child widget displays normally)
+- `true`: 应用裁剪
+- `false`: 禁用裁剪（子组件正常显示）
 
 ```typescript
 ClipRRect({
@@ -153,13 +153,13 @@ ClipRRect({
 
 ### child
 
-**Type: Widget**
+**类型: Widget**
 
-The child widget to be clipped.
+要裁剪的子组件。
 
-## Practical Examples
+## 实际示例
 
-### Example 1: Card UI Composition
+### 示例 1：卡片 UI 组合
 
 ```typescript
 const CardWithImage = ({ image, title, description, onTap }) => {
@@ -182,7 +182,7 @@ const CardWithImage = ({ image, title, description, onTap }) => {
       child: Column({
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top image
+          // 顶部图像
           ClipRRect({
             borderRadius: BorderRadius.only({
               topLeft: Radius.circular(16),
@@ -195,7 +195,7 @@ const CardWithImage = ({ image, title, description, onTap }) => {
               objectFit: 'cover'
             })
           }),
-          // Content area
+          // 内容区域
           Padding({
             padding: EdgeInsets.all(16),
             child: Column({
@@ -224,7 +224,7 @@ const CardWithImage = ({ image, title, description, onTap }) => {
 };
 ```
 
-### Example 2: Profile Avatar Variations
+### 示例 2：头像变体
 
 ```typescript
 const ProfileAvatar = ({ imageUrl, size, status }) => {
@@ -239,7 +239,7 @@ const ProfileAvatar = ({ imageUrl, size, status }) => {
   
   return Stack({
     children: [
-      // Profile image
+      // 头像图像
       Container({
         width: size,
         height: size,
@@ -261,7 +261,7 @@ const ProfileAvatar = ({ imageUrl, size, status }) => {
           })
         })
       }),
-      // Status indicator
+      // 状态指示器
       Positioned({
         right: 0,
         bottom: 0,
@@ -282,7 +282,7 @@ const ProfileAvatar = ({ imageUrl, size, status }) => {
   });
 };
 
-// Usage example
+// 使用示例
 ProfileAvatar({
   imageUrl: 'https://example.com/avatar.jpg',
   size: 80,
@@ -290,7 +290,7 @@ ProfileAvatar({
 });
 ```
 
-### Example 3: Message Bubble
+### 示例 3：消息气泡
 
 ```typescript
 const MessageBubble = ({ message, isMe, time, hasImage }) => {
@@ -354,7 +354,7 @@ const MessageBubble = ({ message, isMe, time, hasImage }) => {
 };
 ```
 
-### Example 4: Gradient Button
+### 示例 4：渐变按钮
 
 ```typescript
 const GradientButton = ({ text, onPressed, disabled = false }) => {
@@ -376,14 +376,14 @@ const GradientButton = ({ text, onPressed, disabled = false }) => {
           }),
           child: Stack({
             children: [
-              // Overlay for hover effect
+              // 悬停效果覆盖层
               AnimatedContainer({
                 duration: Duration.milliseconds(200),
                 decoration: BoxDecoration({
                   color: 'rgba(255,255,255,0.1)'
                 })
               }),
-              // Text
+              // 文本
               Center({
                 child: Text(text, {
                   style: TextStyle({
@@ -402,7 +402,7 @@ const GradientButton = ({ text, onPressed, disabled = false }) => {
 };
 ```
 
-### Example 5: Image Gallery Thumbnail
+### 示例 5：图库缩略图
 
 ```typescript
 const GalleryThumbnail = ({ images, title }) => {
@@ -478,12 +478,12 @@ const GalleryThumbnail = ({ images, title }) => {
 };
 ```
 
-## Understanding RRect API
+## 理解 RRect API
 
-### RRect Creation Methods
+### RRect 创建方法
 
 ```typescript
-// Basic constructors
+// 基本构造函数
 RRect.fromLTRBR({
   left: 0,
   top: 0,
@@ -505,23 +505,23 @@ RRect.fromRectAndCorners({
   bottomRight: Radius.circular(15)
 });
 
-// Inflate/Deflate
-const inflatedRRect = rrect.inflate(10);  // Expand by 10 pixels
-const deflatedRRect = rrect.deflate(5);   // Shrink by 5 pixels
+// 膨胀/收缩
+const inflatedRRect = rrect.inflate(10);  // 扩展 10 像素
+const deflatedRRect = rrect.deflate(5);   // 收缩 5 像素
 ```
 
-## Important Notes
+## 重要说明
 
-- Clipping can affect rendering performance, so use it only when necessary
-- If the borderRadius value is larger than the widget size, unexpected results may occur
-- Touch events outside the clipped area are not detected
-- Be careful when using Container's decoration with ClipRRect in complex layouts
-- Use placeholders during image loading to prevent layout shifts
+- 裁剪可能影响渲染性能，所以仅在必要时使用
+- 如果 borderRadius 值大于组件尺寸，可能会出现意外结果
+- 裁剪区域外的触摸事件不会被检测到
+- 在复杂布局中使用 Container 的 decoration 与 ClipRRect 时要小心
+- 在图像加载期间使用占位符以防止布局移位
 
-## Related Widgets
+## 相关组件
 
-- **ClipRect**: Clips with a rectangle
-- **ClipOval**: Clips with an oval shape
-- **ClipPath**: Clips with a custom path
-- **Container**: Can implement rounded corners with the decoration property
-- **Card**: Material design card with rounded corners by default
+- **ClipRect**: 使用矩形裁剪
+- **ClipOval**: 使用椭圆形状裁剪
+- **ClipPath**: 使用自定义路径裁剪
+- **Container**: 可以通过 decoration 属性实现圆角
+- **Card**: 默认带圆角的 Material Design 卡片

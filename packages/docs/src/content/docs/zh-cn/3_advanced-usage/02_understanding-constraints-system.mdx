@@ -1,54 +1,54 @@
 ---
-nav_title: "Constraints System"
-title: "Understanding the Constraints System"
-description: "Learn Flitter's core layout principle 'Constraints go down, Sizes go up' and explore various constraint patterns"
+nav_title: "约束系统"
+title: "理解约束系统"
+description: "学习 Flitter 的核心布局原则“约束向下传递，尺寸向上传递”并探索各种约束模式"
 ---
 
-## Core of the Constraints System
+## 约束系统的核心
 
-Flitter's layout system follows one simple rule:
+Flitter 的布局系统遵循一个简单的规则：
 
-> **"Constraints go down, Sizes go up"**
+> **“约束向下传递，尺寸向上传递”**
 
-The parent passes constraints to the child, and the child determines its size within those constraints and reports back to the parent.
+父节点向子节点传递约束，子节点在这些约束内确定自身尺寸并向父节点报告。
 
-## Constraints go down, Sizes go up
+## 约束向下传递，尺寸向上传递
 
 ```
-        Parent Widget
+        父组件
              │
     ┌────────▼────────┐
-    │   Constraints   │ (go down)
-    │   min: 0x0      │
-    │   max: 300x200  │
+    │   约束条件     │ (向下传递)
+    │   最小: 0x0    │
+    │   最大: 300x200│
     └────────┬────────┘
              │
-        Child Widget
+        子组件
              │
     ┌────────▼────────┐
-    │   Decides Size  │ (goes up)
-    │   chosen: 150x80│
+    │   决定尺寸    │ (向上报告)
+    │   选择: 150x80│
     └─────────────────┘
 ```
 
-### BoxConstraints의 구성 요소
+### BoxConstraints 的组成部分
 
 ```typescript
 class BoxConstraints {
-  minWidth: number;   // 최소 너비
-  maxWidth: number;   // 최대 너비  
-  minHeight: number;  // 최소 높이
-  maxHeight: number;  // 최대 높이
+  minWidth: number;   // 最小宽度
+  maxWidth: number;   // 最大宽度  
+  minHeight: number;  // 最小高度
+  maxHeight: number;  // 最大高度
 }
 ```
 
-자식은 이 제약 내에서 자신의 크기를 선택할 수 있습니다:
+子节点可以在这些约束内选择自身尺寸：
 - `minWidth ≤ width ≤ maxWidth`
 - `minHeight ≤ height ≤ maxHeight`
 
-## 주요 Constraints 패턴
+## 主要约束模式
 
-### 1. Tight Constraints
+### 1. 紧约束（Tight Constraints）
 ```typescript
 Constraints.tight(new Size(100, 50))
 // minWidth = maxWidth = 100
@@ -56,11 +56,11 @@ Constraints.tight(new Size(100, 50))
 ```
 ```
 ┌─────────────┐
-│ 정확히 100x50 │  ← 자식은 이 크기로 강제됨
+│ 精确 100x50 │  ← 子节点被强制为这个尺寸
 └─────────────┘
 ```
 
-### 2. Loose Constraints  
+### 2. 松约束（Loose Constraints）  
 ```typescript
 Constraints.loose(new Size(100, 50))
 // minWidth = minHeight = 0
@@ -68,11 +68,11 @@ Constraints.loose(new Size(100, 50))
 ```
 ```
 ┌─────────────┐
-│ 0x0 ~ 100x50│  ← 자식이 범위 내에서 자유롭게 선택
+│ 0x0 ~ 100x50│  ← 子节点在范围内自由选择
 └─────────────┘
 ```
 
-### 3. Expand Constraints
+### 3. 扩展约束（Expand Constraints）
 ```typescript
 Constraints.expand()
 // minWidth = maxWidth = ∞
@@ -80,67 +80,67 @@ Constraints.expand()
 ```
 ```
 ┌─────────────┐
-│ 가능한 최대크기│  ← 부모 공간을 모두 차지
+│ 尽可能最大尺寸│  ← 占满父节点空间
 └─────────────┘
 ```
 
-### 4. Unconstrained
+### 4. 无约束（Unconstrained）
 ```typescript
 UnconstrainedBox({
-  child: Container({ width: 1000 })  // Ignores parent constraints
+  child: Container({ width: 1000 })  // 忽略父节点约束
 })
 ```
 ```
-Parent: max 300px
+父节点: 最大 300px
     │
     ▼
-UnconstrainedBox  ──→  Child: 1000px (overflow possible)
+UnconstrainedBox  ──→  子节点: 1000px (可能溢出)
 ```
 
-## Understanding Real-World Behavior
+## 理解实际行为
 
 ### Container vs SizedBox
 
 ```typescript
-// Container's width/height are "wishes"
+// Container 的 width/height 是“愿望”
 Container({
-  width: 200,   // ← If parent only allows 100px, becomes 100px
+  width: 200,   // ← 如果父节点只允许 100px，则变为 100px
   height: 100,
-  child: Text("Hello")
+  child: Text("你好")
 })
 
-// SizedBox "forces" its size
+// SizedBox “强制”其尺寸
 SizedBox({
-  width: 200,   // ← Forces exactly 200px to child
+  width: 200,   // ← 对子节点强制精确 200px
   height: 100,
-  child: Text("Hello")
+  child: Text("你好")
 })
 ```
 
-### Constraints Inside Column
+### Column 内的约束
 
 ```
-Column (height: ∞)
+Column (高度: ∞)
   │
-  ├─ Child 1 (height: tight natural size)
-  ├─ Child 2 (height: tight natural size)  
-  └─ Child 3 (height: tight natural size)
+  ├─ 子节点 1 (高度: 紧贴自然尺寸)
+  ├─ 子节点 2 (高度: 紧贴自然尺寸)  
+  └─ 子节点 3 (高度: 紧贴自然尺寸)
 ```
 
-Column does not "tightly" constrain height for its children. Each child can take as much height as it wants.
+Column 不会对子节点“紧约束”高度。每个子节点可以占用它想要的高度。
 
-## Common Problems and Solutions
+## 常见问题及解决方案
 
-### Problem 1: Infinite Size Error
+### 问题 1：无限尺寸错误
 ```typescript
-// ❌ Column inside Column receives infinite height
+// ❌ Column 内的 Column 接收到无限高度
 Column({
   children: [
-    Column({ children: [...] })  // RenderFlex overflowed!
+    Column({ children: [...] })  // RenderFlex 溢出！
   ]
 })
 
-// ✅ Use Expanded to limit size
+// ✅ 使用 Expanded 限制尺寸
 Column({
   children: [
     Expanded({
@@ -150,68 +150,68 @@ Column({
 })
 ```
 
-### Problem 2: Widget Doesn't Get Desired Size
+### 问题 2：组件未获得期望尺寸
 ```typescript
-// ❌ Parent passes tight constraints
+// ❌ 父节点传递紧约束
 Container({
   width: 100,
   height: 100,
   child: Container({
-    width: 200,  // Ignored! (forced to 100px)
+    width: 200,  // 被忽略！（被强制为 100px）
     height: 200
   })
 })
 
-// ✅ Release constraints with UnconstrainedBox
+// ✅ 使用 UnconstrainedBox 释放约束
 Container({
   width: 100,
   height: 100,
   child: UnconstrainedBox({
     child: Container({
-      width: 200,  // Applied (overflow may occur)
+      width: 200,  // 被应用（可能发生溢出）
       height: 200
     })
   })
 })
 ```
 
-### Problem 3: Center Alignment Doesn't Work
+### 问题 3：居中对齐不起作用
 ```typescript
-// ❌ Container fits to parent size
+// ❌ Container 适应父节点尺寸
 Row({
   children: [
     Container({
       color: 'red',
-      child: Text('Hello')  // Container only takes text size
+      child: Text('你好')  // Container 只占文本尺寸
     })
   ]
 })
 
-// ✅ Explicit size or use Expanded
+// ✅ 明确尺寸或使用 Expanded
 Row({
   children: [
     Expanded({
       child: Container({
         color: 'red',
         alignment: Alignment.center,
-        child: Text('Hello')
+        child: Text('你好')
       })
     })
   ]
 })
 ```
 
-## Source Code Locations
+## 源代码位置
 
-- `packages/flitter/src/type/constraints.ts`: BoxConstraints class
-- `packages/flitter/src/renderobject/RenderBox.ts`: Constraint handling logic  
-- `packages/flitter/src/component/Container.ts`: Container's constraint handling
+- `packages/flitter/src/type/constraints.ts`：BoxConstraints 类
+- `packages/flitter/src/renderobject/RenderBox.ts`：约束处理逻辑  
+- `packages/flitter/src/component/Container.ts`：Container 的约束处理
 
-## Key Takeaways
+## 关键要点
 
-1. **Parent passes constraints** → child decides size → reports to parent
-2. **Constraints = size range** (min/max width/height)
-3. **tight**: forces exact size, **loose**: only limits maximum size
-4. **Understanding this makes layout problems easy to solve**
+1. **父节点传递约束** → 子节点决定尺寸 → 向父节点报告
+2. **约束 = 尺寸范围**（最小/最大 宽度/高度）
+3. **紧约束**：强制精确尺寸，**松约束**：仅限制最大尺寸
+4. **理解这一点可以轻松解决布局问题**
 
-In the next chapter, we'll use this constraint system to actually implement a RenderObject directly.
+在下一章中，我们将使用这个约束系统直接实现一个 RenderObject。

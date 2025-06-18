@@ -3,39 +3,39 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Center
 title: "Center"
-description: "A widget that centers its child within itself"
+description: "将其子组件在内部居中的组件"
 ---
 
-## Overview
+## 概述
 
-Center is a widget that centers its child within itself. It's a convenience version of the Align widget with `alignment: Alignment.center` set, providing a simple way to center content.
+Center 是一个将其子组件在内部居中的组件。它是 Align 组件的便利版本，设置了 `alignment: Alignment.center`，提供了一种简单的内容居中方式。
 
-Reference: [https://api.flutter.dev/flutter/widgets/Center-class.html](https://api.flutter.dev/flutter/widgets/Center-class.html)
+参考: [https://api.flutter.dev/flutter/widgets/Center-class.html](https://api.flutter.dev/flutter/widgets/Center-class.html)
 
-## When to Use
+## 何时使用？
 
-- When centering content within a container
-- When displaying loading indicators in the center of the screen
-- When placing empty state messages in the center
-- When center-aligning dialog or modal content
-- When centering icons or logos
+- 当在容器内居中内容时
+- 当在屏幕中央显示加载指示器时
+- 当在中心放置空状态消息时
+- 当居中对齐对话框或模态内容时
+- 当居中图标或徽标时
 
-## Basic Usage
+## 基本用法
 
 ```typescript
-// Simple center alignment
+// 简单居中对齐
 Center({
-  child: Text('Centered text')
+  child: Text('居中文本')
 })
 
-// Using with size factors
+// 使用尺寸因子
 Center({
   widthFactor: 1.5,
   heightFactor: 2.0,
   child: Icon(Icons.star, { size: 48 })
 })
 
-// Full screen centering
+// 全屏居中
 Scaffold({
   body: Center({
     child: CircularProgressIndicator()
@@ -43,80 +43,80 @@ Scaffold({
 })
 ```
 
-## Props
+## 属性
 
-### child (optional)
-**Type: Widget | undefined**
+### child（可选）
+**类型: Widget | undefined**
 
-The child widget to be centered.
+要居中的子组件。
 
-### widthFactor (optional)
-**Type: number | undefined**
+### widthFactor（可选）
+**类型: number | undefined**
 
-Sets this widget's width as a multiple of the child widget's width. If null, expands to available width.
+将此组件的宽度设置为子组件宽度的倍数。如果为 null，则扩展到可用宽度。
 
 ```typescript
 Center({
-  widthFactor: 2.0,  // 2 times the child's width
+  widthFactor: 2.0,  // 子组件宽度的 2 倍
   child: Container({
     width: 100,
     height: 100,
     color: 'blue'
   })
 })
-// Center's width will be 200
+// Center 的宽度将为 200
 ```
 
-### heightFactor (optional)
-**Type: number | undefined**
+### heightFactor（可选）
+**类型: number | undefined**
 
-Sets this widget's height as a multiple of the child widget's height. If null, expands to available height.
+将此组件的高度设置为子组件高度的倍数。如果为 null，则扩展到可用高度。
 
 ```typescript
 Center({
-  heightFactor: 1.5,  // 1.5 times the child's height
+  heightFactor: 1.5,  // 子组件高度的 1.5 倍
   child: Container({
     width: 100,
     height: 100,
     color: 'green'
   })
 })
-// Center's height will be 150
+// Center 的高度将为 150
 ```
 
 ## Center vs Align
 
-Center is a special case of Align:
+Center 是 Align 的特殊情况：
 
 ```typescript
-// These two are equivalent
+// 这两者是等价的
 Center({
-  child: Text('Hello')
+  child: Text('你好')
 })
 
 Align({
   alignment: Alignment.center,
-  child: Text('Hello')
+  child: Text('你好')
 })
 ```
 
-## Layout Behavior
+## 布局行为
 
-How Center widget determines its size:
+Center 组件如何确定其尺寸：
 
-1. **With tight constraints**: Uses the constraint's size
-2. **With loose constraints and null factors**: Expands as much as possible
-3. **With infinite constraints and null factors**: Uses the child's size
-4. **With specified factors**: Child size × factor
+1. **严格约束**：使用约束的尺寸
+2. **宽松约束且因子为 null**：尽可能扩展
+3. **无限约束且因子为 null**：使用子组件的尺寸
+4. **指定因子**：子组件尺寸 × 因子
 
 ```typescript
-// Various scenarios
+// 各种场景
 Container({
   width: 200,
   height: 200,
   color: 'lightgray',
   child: Center({
-    // Center expands to 200x200
+    // Center 扩展到 200x200
     child: Container({
       width: 50,
       height: 50,
@@ -128,7 +128,7 @@ Container({
 Center({
   widthFactor: 2.0,
   heightFactor: 2.0,
-  // Center is 100x100 (2x the child)
+  // Center 为 100x100（子组件的 2 倍）
   child: Container({
     width: 50,
     height: 50,
@@ -137,12 +137,12 @@ Center({
 })
 ```
 
-## Practical Examples
+## 实际示例
 
-### Example 1: Loading Screen
+### 示例 1：加载屏幕
 
 ```typescript
-const LoadingScreen = ({ message = 'Loading...' }) => {
+const LoadingScreen = ({ message = '加载中...' }) => {
   return Scaffold({
     body: Center({
       child: Column({
@@ -166,7 +166,7 @@ const LoadingScreen = ({ message = 'Loading...' }) => {
 };
 ```
 
-### Example 2: Empty State Display
+### 示例 2：空状态显示
 
 ```typescript
 const EmptyState = ({ icon, title, description, action }) => {
@@ -209,7 +209,7 @@ const EmptyState = ({ icon, title, description, action }) => {
 };
 ```
 
-### Example 3: Splash Screen
+### 示例 3：启动屏幕
 
 ```typescript
 const SplashScreen = ({ logoUrl, appName }) => {
@@ -261,7 +261,7 @@ const SplashScreen = ({ logoUrl, appName }) => {
 };
 ```
 
-### Example 4: Error Message
+### 示例 4：错误消息
 
 ```typescript
 const ErrorMessage = ({ error, onRetry }) => {
@@ -287,7 +287,7 @@ const ErrorMessage = ({ error, onRetry }) => {
               color: '#F44336'
             }),
             SizedBox({ height: 16 }),
-            Text('An error occurred', {
+            Text('发生了错误', {
               style: TextStyle({
                 fontSize: 18,
                 fontWeight: 'bold',
@@ -306,7 +306,7 @@ const ErrorMessage = ({ error, onRetry }) => {
               SizedBox({ height: 20 }),
               ElevatedButton({
                 onPressed: onRetry,
-                child: Text('Try Again'),
+                child: Text('重试'),
                 style: ButtonStyle({
                   backgroundColor: '#F44336'
                 })
@@ -320,7 +320,7 @@ const ErrorMessage = ({ error, onRetry }) => {
 };
 ```
 
-### Example 5: Dialog Content
+### 示例 5：对话框内容
 
 ```typescript
 const DialogContent = ({ icon, title, message, actions }) => {
@@ -378,18 +378,18 @@ const DialogContent = ({ icon, title, message, actions }) => {
 };
 ```
 
-## Important Notes
+## 重要说明
 
-- Center expands as much as possible by default, so be careful in Stack or infinite size containers
-- widthFactor and heightFactor must be greater than 0
-- Nesting multiple Centers is generally unnecessary
-- For complex alignment needs, use Align widget directly
-- When there's no child and factor is null, size may become 0
+- Center 默认尽可能扩展，所以在 Stack 或无限尺寸容器中要小心
+- widthFactor 和 heightFactor 必须大于 0
+- 嵌套多个 Center 通常是不必要的
+- 对于复杂的对齐需求，直接使用 Align 组件
+- 当没有子组件且因子为 null 时，尺寸可能变为 0
 
-## Related Widgets
+## 相关组件
 
-- **Align**: Parent widget providing more alignment options
-- **Container**: Can center align with alignment property
-- **Positioned**: Position within Stack
-- **Padding**: When centering with margins is needed
-- **Column/Row**: Align with mainAxisAlignment and crossAxisAlignment
+- **Align**：提供更多对齐选项的父组件
+- **Container**：可以通过 alignment 属性居中对齐
+- **Positioned**：在 Stack 内定位
+- **Padding**：当需要带边距的居中时
+- **Column/Row**：通过 mainAxisAlignment 和 crossAxisAlignment 对齐

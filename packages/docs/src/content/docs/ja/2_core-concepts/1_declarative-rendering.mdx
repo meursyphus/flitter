@@ -1,55 +1,55 @@
 ---
-nav_title: "Declarative Rendering"
-title: "Declarative Rendering"
-description: "Understand the difference between Flitter's declarative rendering approach and imperative methods, and learn how to write more intuitive code"
+nav_title: "宣言的レンダリング"
+title: "宣言的レンダリング"
+description: "Flitterの宣言的レンダリングアプローチと命令的手法の違いを理解し、より直感的なコードの書き方を学びます"
 ---
 
 import DeclarativeVsImperativeExample from '$components/pages/docs/02_core-concepts/01-declarative-vs-imperative-example';
 
-# Declarative Rendering
+# 宣言的レンダリング
 
-## Overview
+## 概要
 
-Flitter adopts a **declarative** rendering approach, similar to Flutter. This means you declare "how the screen should look," and Flitter handles the rendering automatically. This is a fundamentally different approach from the traditional imperative method.
+FlitterはFlutterと同様に**宣言的**レンダリングアプローチを採用しています。これは「画面がどのように見えるべきか」を宣言すると、Flitterが自動的にレンダリングを処理することを意味します。これは従来の命令的手法とは根本的に異なるアプローチです。
 
-## Why is it important?
+## なぜ重要なのか？
 
-Declarative programming provides the following advantages:
+宣言的プログラミングは以下の利点を提供します：
 
-- **Improved Code Readability**: Intuitive understanding of how UI will appear
-- **Reduced Bugs**: Simplified state management leads to predictable behavior
-- **Easier Maintenance**: UI updates without complex DOM manipulation
-- **Increased Productivity**: Implement complex UIs with less code
+- **コードの可読性向上**：UIがどのように表示されるかを直感的に理解できる
+- **バグの削減**：状態管理が簡素化され、予測可能な動作を実現
+- **メンテナンスの容易さ**：複雑なDOM操作なしにUIを更新
+- **生産性の向上**：より少ないコードで複雑なUIを実装
 
-## Core Concepts
+## コアコンセプト
 
-### Imperative vs Declarative
+### 命令的 vs 宣言的
 
-#### Imperative Approach (D3.js Example)
-In the imperative approach, you specify what to do at each step:
+#### 命令的アプローチ（D3.jsの例）
+命令的アプローチでは、各ステップで何をすべきかを指定します：
 
 ```javascript
-// Centering text with D3.js
+// D3.jsでテキストを中央揃えにする
 const svg = d3.select("svg");
 const width = 400;
 const height = 200;
 
-// 1. Create text element
+// 1. テキスト要素を作成
 const text = svg.append("text")
   .text("Hello, World!");
 
-// 2. Measure text size
+// 2. テキストサイズを測定
 const bbox = text.node().getBBox();
 
-// 3. Calculate center position
+// 3. 中心位置を計算
 const x = (width - bbox.width) / 2;
 const y = (height + bbox.height) / 2;
 
-// 4. Set position
+// 4. 位置を設定
 text.attr("x", x)
     .attr("y", y);
 
-// When state changes, all calculations must be redone
+// 状態が変更されたときは、すべての計算をやり直す必要がある
 function updateText(newText) {
   text.text(newText);
   const newBbox = text.node().getBBox();
@@ -59,41 +59,41 @@ function updateText(newText) {
 }
 ```
 
-#### Declarative Approach (Flitter Example)
-In the declarative approach, you only declare the desired result:
+#### 宣言的アプローチ（Flitterの例）
+宣言的アプローチでは、望む結果だけを宣言します：
 
 ```typescript
-// Centering text with Flitter
+// Flitterでテキストを中央揃えにする
 Center({
   child: Text("Hello, World!")
 })
 
-// When state changes, just change the declaration
+// 状態が変更されたときは、宣言を変更するだけ
 Center({
-  child: Text(isKorean ? "안녕하세요!" : "Hello, World!")
+  child: Text(isJapanese ? "こんにちは！" : "Hello, World!")
 })
 ```
 
 <DeclarativeVsImperativeExample 
   client:load
-  title="Imperative vs Declarative Comparison"
-  description="Example implementing the same functionality with D3.js and Flitter. Click the button to change the text."
+  title="命令的 vs 宣言的の比較"
+  description="D3.jsとFlitterで同じ機能を実装した例。ボタンをクリックしてテキストを変更してください。"
   labels={{
-    imperativeTitle: "Imperative Approach (D3.js)",
-    imperativeDescription: "Implementation with D3.js requires direct DOM manipulation at each step:",
-    declarativeTitle: "Declarative Approach (Flitter)",
-    changeButton: "Change Text",
-    keyDifferencesTitle: "Key Differences",
-    imperativeDescription2: "Explicitly instruct what to do at each step",
-    declarativeDescription2: "Just declare the desired result and rendering is handled automatically"
+    imperativeTitle: "命令的アプローチ（D3.js）",
+    imperativeDescription: "D3.jsでの実装では、各ステップで直接DOM操作が必要です：",
+    declarativeTitle: "宣言的アプローチ（Flitter）",
+    changeButton: "テキストを変更",
+    keyDifferencesTitle: "主な違い",
+    imperativeDescription2: "各ステップで何をすべきかを明示的に指示",
+    declarativeDescription2: "望む結果を宣言するだけで、レンダリングは自動的に処理される"
   }}
 />
 
-### How Declarative Rendering Works
+### 宣言的レンダリングの仕組み
 
-1. **Define State**: Define the current state of the application
-2. **Declare UI**: Declare how the UI should look based on the state
-3. **Automatic Updates**: When state changes, Flitter automatically updates the UI
+1. **状態を定義**：アプリケーションの現在の状態を定義
+2. **UIを宣言**：状態に基づいてUIがどのように見えるべきかを宣言
+3. **自動更新**：状態が変更されると、FlitterがUIを自動的に更新
 
 ```typescript
 class _CounterWidget extends StatefulWidget {
@@ -103,23 +103,23 @@ class _CounterWidget extends StatefulWidget {
 }
 
 class CounterWidgetState extends State<_CounterWidget> {
-  count = 0;  // State definition
+  count = 0;  // 状態定義
 
   build(context: BuildContext): Widget {
-    // UI declaration - UI is determined by count state
+    // UI宣言 - UIはcount状態によって決定される
     return Column({
       children: [
-        Text(`Current count: ${this.count}`),
+        Text(`現在のカウント: ${this.count}`),
         GestureDetector({
           onClick: () => {
             this.setState(() => {
-              this.count++;  // Automatic re-rendering when state changes
+              this.count++;  // 状態変更時に自動再レンダリング
             });
           },
           child: Container({
             padding: EdgeInsets.all(8),
             color: Colors.blue,
-            child: Text("Increment", { style: TextStyle({ color: Colors.white }) })
+            child: Text("増加", { style: TextStyle({ color: Colors.white }) })
           })
         })
       ]
@@ -127,17 +127,17 @@ class CounterWidgetState extends State<_CounterWidget> {
   }
 }
 
-// Export as factory function
+// ファクトリー関数としてエクスポート
 export default function CounterWidget(): Widget {
   return new _CounterWidget();
 }
 ```
 
-## Practical Examples
+## 実践例
 
-### 1. Conditional Rendering
+### 1. 条件付きレンダリング
 
-In declarative approach, you can easily show different UIs using conditional statements:
+宣言的アプローチでは、条件文を使用して異なるUIを簡単に表示できます：
 
 ```typescript
 class ConditionalExample extends StatefulWidget {
@@ -154,14 +154,14 @@ class ConditionalExampleState extends State<ConditionalExample> {
       child: this.isLoggedIn 
         ? Column({
             children: [
-              Text("Welcome!"),
+              Text("ようこそ！"),
               GestureDetector({
                 onClick: () => {
                   this.setState(() => {
                     this.isLoggedIn = false;
                   });
                 },
-                child: Text("Logout", { 
+                child: Text("ログアウト", { 
                   style: TextStyle({ color: Colors.red }) 
                 })
               })
@@ -176,7 +176,7 @@ class ConditionalExampleState extends State<ConditionalExample> {
             child: Container({
               padding: EdgeInsets.all(12),
               color: Colors.blue,
-              child: Text("Login", { 
+              child: Text("ログイン", { 
                 style: TextStyle({ color: Colors.white }) 
               })
             })
@@ -186,9 +186,9 @@ class ConditionalExampleState extends State<ConditionalExample> {
 }
 ```
 
-### 2. List Rendering
+### 2. リストレンダリング
 
-Converting array data to UI is also very intuitive:
+配列データをUIに変換することも非常に直感的です：
 
 ```typescript
 class TodoList extends StatefulWidget {
@@ -198,12 +198,12 @@ class TodoList extends StatefulWidget {
 }
 
 class TodoListState extends State<TodoList> {
-  todos = ["Learn Flitter", "Understand Declarative UI", "Build an App"];
+  todos = ["Flitterを学ぶ", "宣言的UIを理解する", "アプリを構築する"];
 
   build(context: BuildContext): Widget {
     return Column({
       children: [
-        Text("Todo List", { 
+        Text("Todoリスト", { 
           style: TextStyle({ fontSize: 20, fontWeight: FontWeight.bold }) 
         }),
         SizedBox({ height: 10 }),
@@ -234,9 +234,9 @@ class TodoListState extends State<TodoList> {
 }
 ```
 
-### 3. Complex State Management
+### 3. 複雑な状態管理
 
-Even when multiple states are interconnected, they can be easily handled declaratively:
+複数の状態が相互に関連している場合でも、宣言的に簡単に処理できます：
 
 ```typescript
 class ShoppingCart extends StatefulWidget {
@@ -247,9 +247,9 @@ class ShoppingCart extends StatefulWidget {
 
 class ShoppingCartState extends State<ShoppingCart> {
   items = [
-    { name: "Apple", price: 1000, quantity: 0 },
-    { name: "Banana", price: 1500, quantity: 0 },
-    { name: "Orange", price: 2000, quantity: 0 }
+    { name: "リンゴ", price: 100, quantity: 0 },
+    { name: "バナナ", price: 150, quantity: 0 },
+    { name: "オレンジ", price: 200, quantity: 0 }
   ];
 
   get totalPrice() {
@@ -261,7 +261,7 @@ class ShoppingCartState extends State<ShoppingCart> {
   build(context: BuildContext): Widget {
     return Column({
       children: [
-        Text("Shopping Cart", { 
+        Text("ショッピングカート", { 
           style: TextStyle({ fontSize: 24, fontWeight: FontWeight.bold }) 
         }),
         SizedBox({ height: 20 }),
@@ -270,7 +270,7 @@ class ShoppingCartState extends State<ShoppingCart> {
             children: [
               Text(item.name),
               Spacer(),
-              Text(`₩${item.price}`),
+              Text(`¥${item.price}`),
               SizedBox({ width: 20 }),
               Row({
                 children: [
@@ -300,7 +300,7 @@ class ShoppingCartState extends State<ShoppingCart> {
           })
         ),
         Divider(),
-        Text(`Total: ₩${this.totalPrice}`, {
+        Text(`合計: ¥${this.totalPrice}`, {
           style: TextStyle({ fontSize: 18, fontWeight: FontWeight.bold })
         })
       ]
@@ -309,29 +309,29 @@ class ShoppingCartState extends State<ShoppingCart> {
 }
 ```
 
-## Important Notes
+## 重要な注意事項
 
-1. **Maintain Immutability**: Don't modify state directly, always use `setState`
-2. **Pure Functions**: The `build` method should be a pure function without side effects
-3. **Performance Considerations**: Properly separate widgets to avoid unnecessary re-rendering
+1. **不変性を保つ**：状態を直接変更せず、常に`setState`を使用する
+2. **純粋関数**：`build`メソッドは副作用のない純粋関数であるべき
+3. **パフォーマンスの考慮**：不要な再レンダリングを避けるため、ウィジェットを適切に分離する
 
 ```typescript
-// ❌ Wrong - Direct state modification
-this.count++;  // UI won't update
+// ❌ 間違い - 状態の直接変更
+this.count++;  // UIは更新されません
 
-// ✅ Correct - Use setState
+// ✅ 正しい - setStateを使用
 this.setState(() => {
   this.count++;
 });
 
-// ❌ Wrong - Side effects in build method
+// ❌ 間違い - buildメソッド内での副作用
 build(context: BuildContext): Widget {
-  // Side effects like API calls should be in initState
-  fetch('/api/data');  // Wrong!
+  // API呼び出しなどの副作用はinitStateで行うべき
+  fetch('/api/data');  // 間違い！
   return Text("...");
 }
 
-// ✅ Correct - Handle side effects in initState
+// ✅ 正しい - initStateで副作用を処理
 initState() {
   super.initState();
   fetch('/api/data').then(data => {
@@ -342,10 +342,10 @@ initState() {
 }
 ```
 
-## Next Steps
+## 次のステップ
 
-Once you understand the concept of declarative rendering, here's what to learn next:
+宣言的レンダリングの概念を理解したら、次に学ぶべきこと：
 
-- Widget System - Understanding StatelessWidget and StatefulWidget
-- State Management - Complex state management patterns
-- Animation Basics - Implementing declarative animations
+- ウィジェットシステム - StatelessWidgetとStatefulWidgetの理解
+- 状態管理 - 複雑な状態管理パターン
+- アニメーションの基本 - 宣言的アニメーションの実装

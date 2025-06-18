@@ -1,6 +1,6 @@
 ---
-title: "Installation and Environment Setup"
-description: "Set up your environment for Flitter development and start your first project"
+title: "インストールと環境設定"
+description: "Flitter開発のための環境を設定し、最初のプロジェクトを開始する"
 files:
   App.js: |
     import React from 'react';
@@ -18,13 +18,13 @@ files:
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('Get started with Flitter installation!', {
+              Text('Flitterのインストールを始めましょう！', {
                 style: new TextStyle({
                   fontSize: 24,
                   fontWeight: 'bold'
                 })
               }),
-              Text('Follow the steps below to install and set up Flitter.', {
+              Text('Flitterをインストールして設定する手順を以下に示します。', {
                 style: new TextStyle({
                   fontSize: 14,
                   color: '#6b7280'
@@ -57,7 +57,7 @@ solved_files:
           color: '#e3f2fd',
           padding: EdgeInsets.all(20),
           child: Center({
-            child: Text('🎉 Flitter Installation Complete!', {
+            child: Text('🎉 Flitterのインストール完了！', {
               style: new TextStyle({
                 fontSize: 20,
                 fontWeight: 'bold'
@@ -77,101 +77,101 @@ solved_files:
     }
 ---
 
-# Installation and Environment Setup
+# インストールと環境設定
 
-This is a step-by-step installation guide for those who are new to Flitter. After completing this tutorial, you'll be able to use Flitter in React projects.
+Flitterを初めて使う方のためのステップバイステップのインストールガイドです。このチュートリアルを完了すると、ReactプロジェクトでFlitterを使用できるようになります。
 
-## 🎯 Learning Objectives
+## 🎯 学習目標
 
-After completing this tutorial, you'll be able to:
+このチュートリアルを完了すると、以下のことができるようになります：
 
-- [ ] Verify that Node.js and npm environment are properly set up
-- [ ] Create a new React project
-- [ ] Install Flitter packages
-- [ ] Render your first Flitter widget
-- [ ] Run the development server and see the results
+- [ ] Node.jsとnpmの環境が正しく設定されていることを確認
+- [ ] 新しいReactプロジェクトを作成
+- [ ] Flitterパッケージをインストール
+- [ ] 最初のFlitterウィジェットをレンダリング
+- [ ] 開発サーバーを実行して結果を確認
 
-## 📋 Prerequisites
+## 📋 前提条件
 
-- **Node.js 18 or higher** - Download from [Node.js official site](https://nodejs.org/)
-- **npm, yarn, or pnpm** - Automatically installed with Node.js
-- **Basic React knowledge** - Understanding of JSX and component concepts
+- **Node.js 18以上** - [Node.js公式サイト](https://nodejs.org/)からダウンロード
+- **npm、yarn、またはpnpm** - Node.jsと一緒に自動でインストールされます
+- **Reactの基本知識** - JSXとコンポーネントの概念の理解
 
-## 🚀 Step 1: Environment Check
+## 🚀 ステップ1: 環境チェック
 
-First, let's verify that your development environment is properly set up.
+まず、開発環境が正しく設定されているか確認しましょう。
 
-Open a terminal and run the following commands:
+ターミナルを開いて、以下のコマンドを実行してください：
 
 ```bash
-# Check Node.js version (should be 18 or higher)
+# Node.jsのバージョンを確認（18以上である必要があります）
 node --version
 
-# Check npm version
+# npmのバージョンを確認
 npm --version
 ```
 
-Expected output:
+期待される出力:
 ```
 v20.10.0
 10.2.3
 ```
 
-> ⚠️ **If your Node.js version is below 18?**  
-> Please install the latest LTS version from [Node.js official site](https://nodejs.org/).
+> ⚠️ **Node.jsのバージョンが18未満の場合？**  
+> [Node.js公式サイト](https://nodejs.org/)から最新のLTSバージョンをインストールしてください。
 
-## 🏗️ Step 2: Create New Project
+## 🏗️ ステップ2: 新しいプロジェクトの作成
 
-Create a new React project using Vite:
+Viteを使用して新しいReactプロジェクトを作成します：
 
 ```bash
-# Create new project
+# 新しいプロジェクトを作成
 npm create vite@latest my-flitter-app -- --template react
 
-# Navigate to project folder
+# プロジェクトフォルダに移動
 cd my-flitter-app
 
-# Install basic dependencies
+# 基本的な依存関係をインストール
 npm install
 ```
 
-## 📦 Step 3: Install Flitter Packages
+## 📦 ステップ3: Flitterパッケージのインストール
 
-Now install the Flitter-related packages:
+さて、Flitter関連のパッケージをインストールしましょう：
 
 ```bash
-# Install Flitter core package and React integration package
+# FlitterコアパッケージとReact統合パッケージをインストール
 npm install @meursyphus/flitter @meursyphus/flitter-react
 ```
 
-Packages being installed:
-- `@meursyphus/flitter`: Flitter core library
-- `@meursyphus/flitter-react`: Component for React integration
+インストールされるパッケージ:
+- `@meursyphus/flitter`: Flitterコアライブラリ
+- `@meursyphus/flitter-react`: React統合用のコンポーネント
 
-## 🔧 Step 4: Create Your First Flitter Widget
+## 🔧 ステップ4: 最初のFlitterウィジェットを作成
 
-Now let's modify the `src/App.jsx` file to create your first Flitter widget.
+さて、`src/App.jsx`ファイルを修正して、最初のFlitterウィジェットを作成しましょう。
 
-### TODO: Complete the Code
+### TODO: コードを完成させる
 
-Complete the `TODO` sections in the code below:
+以下のコードの`TODO`セクションを完成させてください：
 
 ```jsx
 import React from 'react';
-// TODO: Import the Widget component
-// TODO: Import Container and Text widgets
+// TODO: Widgetコンポーネントをインポート
+// TODO: ContainerとTextウィジェットをインポート
 
 function App() {
-  // TODO: Create a Container widget
-  // Hint: Container with blue background (#e3f2fd) and 20px padding
-  // Hint: Include "🎉 Flitter Installation Complete!" text
+  // TODO: Containerウィジェットを作成
+  // ヒント: 青い背景(#e3f2fd)、20pxのパディングを持つContainer
+  // ヒント: "🎉 Flitterのインストール完了！"テキストを含む
   const widget = null;
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Flitter Installation Success!</h1>
-      {/* TODO: Render the widget using Widget component */}
-      {/* Hint: Use canvas renderer, 300x100 size */}
+      <h1>Flitterインストール成功！</h1>
+      {/* TODO: Widgetコンポーネントを使用してウィジェットをレンダリング */}
+      {/* ヒント: canvasレンダラー、300x100サイズを使用 */}
     </div>
   );
 }
@@ -179,7 +179,7 @@ function App() {
 export default App;
 ```
 
-### Complete Code
+### 完成コード
 
 ```jsx
 import React from 'react';
@@ -190,12 +190,12 @@ function App() {
   const widget = Container({
     color: '#e3f2fd',
     padding: { all: 20 },
-    child: Text('🎉 Flitter Installation Complete!')
+    child: Text('🎉 Flitterのインストール完了！')
   });
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Flitter Installation Success!</h1>
+      <h1>Flitterインストール成功！</h1>
       <Widget 
         widget={widget}
         renderer="canvas"
@@ -213,76 +213,76 @@ function App() {
 export default App;
 ```
 
-## 🏃 Step 5: Run Development Server
+## 🏃 ステップ5: 開発サーバーの実行
 
-Now run the development server to see the results:
+さて、開発サーバーを実行して結果を確認しましょう：
 
 ```bash
 npm run dev
 ```
 
-Open `http://localhost:5173` in your browser and you should see:
+ブラウザで`http://localhost:5173`を開くと、以下が表示されるはずです：
 
-- "Flitter Installation Success!" title
-- A box with blue background containing "🎉 Flitter Installation Complete!" text
+- "Flitterインストール成功！"タイトル
+- "🎉 Flitterのインストール完了！"テキストを含む青い背景のボックス
 
-## 🎯 Expected Results
+## 🎯 期待される結果
 
-If the installation is successfully completed:
+インストールが正常に完了した場合：
 
-1. **Development server runs normally**: Terminal shows "Local: http://localhost:5173"
-2. **Flitter widget renders**: Blue background box appears on screen
-3. **No console errors**: No error messages in browser developer tools
+1. **開発サーバーが正常に動作**: ターミナルに"Local: http://localhost:5173"が表示される
+2. **Flitterウィジェットがレンダリング**: 画面に青い背景のボックスが表示される
+3. **コンソールエラーなし**: ブラウザの開発者ツールにエラーメッセージが表示されない
 
-## 🔧 Practice Problems
+## 🔧 練習問題
 
-If you've completed the basic installation, try the following:
+基本的なインストールが完了したら、次のことを試してみましょう：
 
-### Exercise 1: Change Colors
-Change the Container's `color` property to different colors:
-- `'#ffebee'` (light red)
-- `'#f3e5f5'` (light purple)
-- `'#e8f5e8'` (light green)
+### 演習1: 色の変更
+Containerの`color`プロパティを別の色に変更してみましょう：
+- `'#ffebee'`（淡い赤）
+- `'#f3e5f5'`（淡い紫）
+- `'#e8f5e8'`（淡い緑）
 
-### Exercise 2: Change Text
-Change the Text widget content to your own message.
+### 演習2: テキストの変更
+Textウィジェットの内容を自分のメッセージに変更してみましょう。
 
-### Exercise 3: Adjust Size
-Change the `width` and `height` values in the Widget component's `style` property.
+### 演習3: サイズの調整
+Widgetコンポーネントの`style`プロパティの`width`と`height`の値を変更してみましょう。
 
-## 🚨 Common Mistakes and Solutions
+## 🚨 よくある間違いと解決策
 
-### Problem 1: Module not found error
+### 問題1: モジュールが見つからないエラー
 ```
 Error: Cannot resolve module '@meursyphus/flitter'
 ```
 
-**Solution**: Verify packages are properly installed:
+**解決策**: パッケージが正しくインストールされているか確認：
 ```bash
 npm install @meursyphus/flitter @meursyphus/flitter-react
 ```
 
-### Problem 2: Blank screen appears
-**Cause**: Widget not properly created or not passed to Widget component
+### 問題2: 空白の画面が表示される
+**原因**: ウィジェットが正しく作成されていないか、Widgetコンポーネントに渡されていない
 
-**Solution**: 
-- Check that `widget` variable is not `null`
-- Verify that `widget` prop is passed to Widget component
+**解決策**: 
+- `widget`変数が`null`でないことを確認
+- `widget`プロップがWidgetコンポーネントに渡されていることを確認
 
-### Problem 3: Node.js version error
+### 問題3: Node.jsバージョンエラー
 ```
 Error: Node.js version 16.x is not supported
 ```
 
-**Solution**: Update to Node.js 18 or higher.
+**解決策**: Node.js 18以上にアップデートしてください。
 
-## 🚀 Next Steps
+## 🚀 次のステップ
 
-If installation is complete, let's move on to create more complex widgets in the next tutorial:
+インストールが完了したら、次のチュートリアルでより複雑なウィジェットを作成しましょう：
 
-- **Next**: [Your First Flitter App](./2_hello-world) - Learn more complex widget structures
-- **Related docs**: [Widget Basics](../3_widget-interface-basics/1_what-are-widgets) - Learn widget concepts in detail
+- **次へ**: [最初のFlitterアプリ](./2_hello-world) - より複雑なウィジェット構造を学ぶ
+- **関連ドキュメント**: [ウィジェットの基礎](../3_widget-interface-basics/1_what-are-widgets) - ウィジェットの概念を詳しく学ぶ
 
-> 📚 **Need more detailed information?**  
-> For all framework-specific installation methods and advanced settings,
-> see the [Installation Documentation](/docs/en/getting-started/installation/).
+> 📚 **より詳細な情報が必要ですか？**  
+> すべてのフレームワーク固有のインストール方法と高度な設定については、
+> [インストールドキュメント](/docs/ja/getting-started/installation/)を参照してください。

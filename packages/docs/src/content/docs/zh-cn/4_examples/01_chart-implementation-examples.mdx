@@ -1,51 +1,51 @@
 ---
-nav_title: "Chart Implementation Examples"
-title: "Chart Implementation with headless-chart"
-description: "Learn how to create custom charts using Flitter and headless-chart"
+nav_title: "图表实现示例"
+title: "使用 headless-chart 实现图表"
+description: "学习如何使用 Flitter 和 headless-chart 创建自定义图表"
 ---
 
 import Charts01 from '$components/pages/docs/04_examples/charts01'
 import Charts02 from '$components/pages/docs/04_examples/charts02'
 
-## What is headless-chart?
+## 什么是 headless-chart？
 
-`@meursyphus/headless-chart` is a UI-less chart library. It provides only data and logic, while the actual UI is implemented directly by developers using Flitter widgets. This enables creating fully customizable charts.
+`@meursyphus/headless-chart` 是一个无 UI 图表库。它只提供数据和逻辑，而实际的 UI 由开发者直接使用 Flitter 组件实现。这使得创建完全可定制的图表成为可能。
 
 - **GitHub**: [https://github.com/meursyphus/headless-chart](https://github.com/meursyphus/headless-chart)
-- **Installation**: `npm install @meursyphus/headless-chart`
+- **安装**: `npm install @meursyphus/headless-chart`
 
-## Core Concepts
+## 核心概念
 
-The core of headless-chart consists of **data structure** and **custom rendering functions**:
+headless-chart 的核心由**数据结构**和**自定义渲染函数**组成：
 
-- **Data Structure**: Composed of labels and datasets
-- **Custom Functions**: Render each part of the chart (axes, ticks, bars, lines, etc.) as Flitter widgets
+- **数据结构**：由标签和数据集组成
+- **自定义函数**：将图表的每个部分（坐标轴、刻度、柱状图、线条等）渲染为 Flitter 组件
 
-## Simple Bar Chart Example
+## 简单柱状图示例
 
-Below is a custom bar chart created with headless-chart. It reproduces the Highcharts style using Flitter:
+下面是使用 headless-chart 创建的自定义柱状图。它使用 Flitter 重现了 Highcharts 风格：
 
 <Charts01 client:load />
 
-### Key Customization Points
+### 关键自定义要点
 
-1. **Layout Customization**
-   - Define the overall chart structure with the `custom.layout` function
-   - Free element positioning with Stack and Positioned
+1. **布局自定义**
+   - 使用 `custom.layout` 函数定义整体图表结构
+   - 使用 Stack 和 Positioned 自由定位元素
 
-2. **Axis Label Styling**
-   - Apply text styles with `custom.xAxisLabel` and `custom.yAxisLabel`
-   - Set font, size, and color as desired
+2. **坐标轴标签样式**
+   - 使用 `custom.xAxisLabel` 和 `custom.yAxisLabel` 应用文本样式
+   - 随意设置字体、大小和颜色
 
-3. **Bar Design**
-   - Utilize Container and BoxDecoration in the `custom.bar` function
-   - Freely design colors, rounded corners, shadows, etc.
+3. **柱状图设计**
+   - 在 `custom.bar` 函数中使用 Container 和 BoxDecoration
+   - 自由设计颜色、圆角、阴影等
 
-4. **Legend Customization**
-   - Position the legend as a floating box inside the chart
-   - Add depth with BoxShadow
+4. **图例自定义**
+   - 将图例定位为图表内的浮动框
+   - 使用 BoxShadow 增加深度
 
-### Bar Chart Implementation Code Example
+### 柱状图实现代码示例
 
 ```javascript
 const Bar = (...[{ legend, value }, { data }]) => {
@@ -81,20 +81,20 @@ const Bar = (...[{ legend, value }, { data }]) => {
 };
 ```
 
-In this code:
-- Draw bars using Flitter's Container and BoxDecoration
-- Position value text at the end of bars with FractionalTranslation
-- Apply different colors for each dataset
+在这段代码中：
+- 使用 Flitter 的 Container 和 BoxDecoration 绘制柱状图
+- 使用 FractionalTranslation 将数值文本定位在柱状图末端
+- 为每个数据集应用不同颜色
 
-## Line Chart Example
+## 折线图示例
 
-Here's a Nivo-style line chart:
+这里是一个 Nivo 风格的折线图：
 
 <Charts02 client:load />
 
-### Line Chart Customization
+### 折线图自定义
 
-1. **Drawing Lines with CustomPaint**
+1. **使用 CustomPaint 绘制线条**
    ```javascript
    custom.line: (...[{ values, index }, { scale }]) => {
      return CustomPaint({
@@ -141,70 +141,70 @@ Here's a Nivo-style line chart:
    }
    ```
 
-2. **Color Palette Usage**
-   - Apply different colors for each dataset
-   - Harmonize colors between lines and points
+2. **调色板使用**
+   - 为每个数据集应用不同颜色
+   - 协调线条和点之间的颜色
 
-3. **Layout Flexibility**
-   - Side-by-side arrangement of chart and legend with Row
-   - Responsive layout implementation with Flexible
+3. **布局灵活性**
+   - 使用 Row 并排排列图表和图例
+   - 使用 Flexible 实现响应式布局
 
-## Advantages of headless-chart
+## headless-chart 的优势
 
-1. **Complete Customization**: Control all visual elements with Flitter widgets
-2. **Consistent Development Experience**: Use Flitter's widget system as-is
-3. **Performance Optimization**: Render only necessary parts
-4. **Reusability**: Easily reuse custom components
+1. **完全自定义**：使用 Flitter 组件控制所有视觉元素
+2. **一致的开发体验**：按原样使用 Flitter 的组件系统
+3. **性能优化**：仅渲染必要部分
+4. **可重用性**：轻松重用自定义组件
 
-## How to Use headless-chart
+## 如何使用 headless-chart
 
-### 1. Installation
+### 1. 安装
 ```bash
 npm install @meursyphus/headless-chart
 ```
 
-### 2. Basic Usage
+### 2. 基本使用
 ```javascript
 import { BarChart, LineChart } from "@meursyphus/headless-chart";
 
-// Define data
+// 定义数据
 const data = {
   labels: ["A", "B", "C", "D"],
   datasets: [
     {
-      legend: "Dataset 1",
+      legend: "数据集 1",
       values: [10, 20, 30, 40],
     },
   ],
 };
 
-// Create chart
+// 创建图表
 const chart = BarChart({
   data,
   custom: {
-    // Customize each element with Flitter widgets
+    // 使用 Flitter 组件自定义每个元素
     bar: (...args) => Container({ /* ... */ }),
     xAxisLabel: (...args) => Text(/* ... */),
-    // ... other customizations
+    // ... 其他自定义
   },
 });
 ```
 
-### 3. Supported Chart Types
-- **BarChart**: Bar charts (vertical/horizontal)
-- **LineChart**: Line charts
-- **PieChart**: Pie charts
-- **ScatterChart**: Scatter plot charts
+### 3. 支持的图表类型
+- **BarChart**：柱状图（垂直/水平）
+- **LineChart**：折线图
+- **PieChart**：饼图
+- **ScatterChart**：散点图
 
-## Next Steps
+## 下一步
 
-- Implementing more complex chart types (Pie, Scatter, Area, etc.)
-- Adding animations
-- Implementing interactive features (tooltips, zoom, pan, etc.)
-- Real-time data updates
+- 实现更复杂的图表类型（饼图、散点图、面积图等）
+- 添加动画
+- 实现交互功能（工具提示、缩放、平移等）
+- 实时数据更新
 
-## References
+## 参考资料
 
 - [headless-chart GitHub](https://github.com/meursyphus/headless-chart)
-- [Flitter Documentation](/docs/getting-started/introduction)
-- [CustomPaint Widget Guide](/docs/advanced-usage/custom-paint로-쉽게-그리기)
+- [Flitter 文档](/docs/getting-started/introduction)
+- [CustomPaint 组件指南](/docs/advanced-usage/custom-paint-for-easy-drawing)

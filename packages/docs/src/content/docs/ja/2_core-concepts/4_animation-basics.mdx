@@ -1,32 +1,32 @@
 ---
-nav_title: "Animation Basics"
-title: "Flitter's Animation System"
-description: "Implementing smooth animations using AnimationController and Tween"
+nav_title: "アニメーションの基礎"
+title: "Flitterのアニメーションシステム"
+description: "AnimationControllerとTweenを使用したスムーズなアニメーションの実装"
 ---
 
 import AnimationControllerExample from '$components/pages/docs/02_core-concepts/04-animation-controller-example';
 
-# Animation Basics
+# アニメーションの基礎
 
-## Overview
+## 概要
 
-Flitter provides the same powerful animation system as Flutter. You can easily implement smooth and natural animations by combining AnimationController, Tween, and Curve.
+FlitterはFlutterと同じ強力なアニメーションシステムを提供します。AnimationController、Tween、Curveを組み合わせることで、スムーズで自然なアニメーションを簡単に実装できます。
 
-## Why are animations important?
+## なぜアニメーションが重要なのか？
 
-Well-designed animations greatly improve user experience:
+よくデザインされたアニメーションはユーザーエクスペリエンスを大幅に向上させます：
 
-- **Visual Feedback**: Provide immediate response to user actions
-- **State Transitions**: Smoothly express changes in screens or elements
-- **Attention Guidance**: Draw user focus to important information or changes
-- **Brand Identity**: Express app personality through unique animations
-- **Cognitive Continuity**: Naturally show element movement or transformation
+- **視覚的フィードバック**: ユーザーアクションに即座に応答を提供
+- **状態の遷移**: 画面や要素の変化をスムーズに表現
+- **注意の誘導**: 重要な情報や変化にユーザーの焦点を引きつける
+- **ブランドアイデンティティ**: ユニークなアニメーションでアプリの個性を表現
+- **認知的連続性**: 要素の移動や変形を自然に示す
 
-## Core Concepts
+## コアコンセプト
 
 ### 1. AnimationController
 
-The core class that controls animation playback, stopping, repeating, etc.:
+アニメーションの再生、停止、繰り返しなどを制御するコアクラス：
 
 ```typescript
 class MyWidgetState extends State<MyWidget> {
@@ -34,9 +34,9 @@ class MyWidgetState extends State<MyWidget> {
   
   initState(context: BuildContext) {
     super.initState(context);
-    // duration is specified in milliseconds
+    // durationはミリ秒で指定
     this.controller = new AnimationController({
-      duration: 1000  // 1 second
+      duration: 1000  // 1秒
     });
   }
   
@@ -49,22 +49,22 @@ class MyWidgetState extends State<MyWidget> {
 
 ### 2. Tween
 
-Defines interpolation between start and end values:
+開始値と終了値の間の補間を定義：
 
 ```typescript
-// Number Tween
+// 数値のTween
 const sizeTween = new Tween({
   begin: 50,
   end: 200
 });
 
-// Color Tween
+// 色のTween
 const colorTween = new ColorTween({
   begin: '#3b82f6',
   end: '#ef4444'
 });
 
-// Offset Tween (position movement)
+// Offset Tween（位置の移動）
 const positionTween = new Tween({
   begin: new Offset(0, 0),
   end: new Offset(100, 100)
@@ -73,12 +73,12 @@ const positionTween = new Tween({
 
 ### 3. Animation
 
-Connects Tween and AnimationController to generate actual animation values:
+TweenとAnimationControllerを接続して実際のアニメーション値を生成：
 
 ```typescript
 const animation = sizeTween.animated(this.controller);
 
-// Apply easing effects with CurvedAnimation
+// CurvedAnimationでイージング効果を適用
 const curvedAnimation = new CurvedAnimation({
   parent: this.controller,
   curve: Curves.easeInOut
@@ -87,9 +87,9 @@ const curvedAnimation = new CurvedAnimation({
 const animation = sizeTween.animated(curvedAnimation);
 ```
 
-### 4. Animation Listeners
+### 4. アニメーションリスナー
 
-Add listeners to rebuild widgets whenever animation values change:
+アニメーション値が変化するたびにウィジェットを再構築するリスナーを追加：
 
 ```typescript
 class MyWidgetState extends State<MyWidget> {
@@ -101,7 +101,7 @@ class MyWidgetState extends State<MyWidget> {
     this.controller = new AnimationController({ duration: 1000 });
     this.animation = new Tween({ begin: 0, end: 100 }).animated(this.controller);
     
-    // Add listener - call setState whenever animation value changes
+    // リスナーを追加 - アニメーション値が変化するたびにsetStateを呼び出す
     this.controller.addListener(() => {
       this.setState();
     });
@@ -117,41 +117,41 @@ class MyWidgetState extends State<MyWidget> {
 }
 ```
 
-## Code Examples
+## コード例
 
-### Basic Animation Implementation
+### 基本的なアニメーションの実装
 
 <AnimationControllerExample
   client:load
-  title="AnimationController Basic Example"
-  description="Example animating size, color, and rotation simultaneously"
+  title="AnimationController基本例"
+  description="サイズ、色、回転を同時にアニメーションする例"
 />
 
-### Animation Control
+### アニメーションコントロール
 
 ```typescript
-// Start animation
+// アニメーションを開始
 this.controller.forward();
 
-// Reverse animation
+// アニメーションを逆再生
 this.controller.reverse();
 
-// Repeat animation
+// アニメーションを繰り返し
 this.controller.repeat();
 
-// Animate to specific value
+// 特定の値にアニメーション
 this.controller.animateTo(0.5);
 
-// Stop animation
+// アニメーションを停止
 this.controller.stop();
 
-// Reset animation
+// アニメーションをリセット
 this.controller.reset();
 ```
 
-## Practical Examples
+## 実践例
 
-### 1. Pulse Animation
+### 1. パルスアニメーション
 
 ```typescript
 class PulseAnimation extends StatefulWidget {
@@ -168,7 +168,7 @@ class PulseAnimationState extends State<PulseAnimation> {
     super.initState(context);
     
     this.controller = new AnimationController({
-      duration: 1000  // 1 second
+      duration: 1000  // 1秒
     });
     
     this.animation = new Tween({
@@ -203,7 +203,7 @@ class PulseAnimationState extends State<PulseAnimation> {
 }
 ```
 
-### 2. Sequential Animation
+### 2. シーケンシャルアニメーション
 
 ```typescript
 class SequentialAnimation extends StatefulWidget {
@@ -221,10 +221,10 @@ class SequentialAnimationState extends State<SequentialAnimation> {
     super.initState(context);
     
     this.controller = new AnimationController({
-      duration: 2000  // 2 seconds
+      duration: 2000  // 2秒
     });
     
-    // Slide animation
+    // スライドアニメーション
     this.slideAnimation = new Tween({
       begin: new Offset(-1, 0),
       end: new Offset(0, 0)
@@ -233,7 +233,7 @@ class SequentialAnimationState extends State<SequentialAnimation> {
       curve: Curves.easeOut
     }));
     
-    // Fade animation
+    // フェードアニメーション
     this.fadeAnimation = new Tween({
       begin: 0.0,
       end: 1.0
@@ -242,7 +242,7 @@ class SequentialAnimationState extends State<SequentialAnimation> {
       curve: Curves.easeIn
     }));
     
-    // Add animation listener
+    // アニメーションリスナーを追加
     this.controller.addListener(() => {
       this.setState();
     });
@@ -258,8 +258,8 @@ class SequentialAnimationState extends State<SequentialAnimation> {
   build(context: BuildContext): Widget {
     return Transform.translate({
       offset: new Offset(
-        this.slideAnimation.value.dx * 200,  // x-axis movement
-        this.slideAnimation.value.dy * 0     // y-axis movement
+        this.slideAnimation.value.dx * 200,  // x軸の移動
+        this.slideAnimation.value.dy * 0     // y軸の移動
       ),
       child: Opacity({
         opacity: this.fadeAnimation.value,
@@ -268,7 +268,7 @@ class SequentialAnimationState extends State<SequentialAnimation> {
           height: 100,
           color: '#10b981',
           child: Center({
-            child: Text("Sequential Animation", {
+            child: Text("シーケンシャルアニメーション", {
               style: new TextStyle({
                 color: '#ffffff',
                 fontSize: 18
@@ -282,7 +282,7 @@ class SequentialAnimationState extends State<SequentialAnimation> {
 }
 ```
 
-### 3. Custom Curve Animation
+### 3. カスタムカーブアニメーション
 
 ```typescript
 class CustomCurveAnimation extends StatefulWidget {
@@ -299,10 +299,10 @@ class CustomCurveAnimationState extends State<CustomCurveAnimation> {
     super.initState(context);
     
     this.controller = new AnimationController({
-      duration: 1500  // 1.5 seconds
+      duration: 1500  // 1.5秒
     });
     
-    // Custom curve for bounce effect
+    // バウンス効果のためのカスタムカーブ
     this.bounceAnimation = new Tween({
       begin: 0,
       end: 300
@@ -311,7 +311,7 @@ class CustomCurveAnimationState extends State<CustomCurveAnimation> {
       curve: Curves.bounceOut
     }));
     
-    // Add animation listener
+    // アニメーションリスナーを追加
     this.controller.addListener(() => {
       this.setState();
     });
@@ -340,19 +340,19 @@ class CustomCurveAnimationState extends State<CustomCurveAnimation> {
 }
 ```
 
-## Important Notes
+## 重要な注意事項
 
-### 1. Performance Optimization
+### 1. パフォーマンス最適化
 
-Animations can impact performance, so optimization is important:
+アニメーションはパフォーマンスに影響を与える可能性があるため、最適化が重要です：
 
 ```typescript
-// ❌ Bad example: Rebuilding entire widget tree
+// ❌ 悪い例: ウィジェットツリー全体を再構築
 class MyWidgetState extends State<MyWidget> {
   build(context: BuildContext): Widget {
     return Column({
       children: [
-        ComplexWidget({}),  // Recreated every time
+        ComplexWidget({}),  // 毎回再作成される
         Container({
           width: this.animation.value,
           height: 100
@@ -362,14 +362,14 @@ class MyWidgetState extends State<MyWidget> {
   }
 }
 
-// ✅ Good example: Separate only parts affected by animation
+// ✅ 良い例: アニメーションに影響を受ける部分のみを分離
 class MyWidgetState extends State<MyWidget> {
-  complexWidget = ComplexWidget({});  // Created only once
+  complexWidget = ComplexWidget({});  // 一度だけ作成
   
   build(context: BuildContext): Widget {
     return Column({
       children: [
-        this.complexWidget,  // Reused
+        this.complexWidget,  // 再利用
         Container({
           width: this.animation.value,
           height: 100
@@ -380,24 +380,24 @@ class MyWidgetState extends State<MyWidget> {
 }
 ```
 
-### 2. Memory Management
+### 2. メモリ管理
 
-AnimationController must be disposed:
+AnimationControllerは必ずdisposeする必要があります：
 
 ```typescript
 dispose() {
-  this.controller.dispose();  // Required!
+  this.controller.dispose();  // 必須！
   super.dispose();
 }
 ```
 
-### 3. vsync Configuration
+### 3. vsyncの設定
 
-You should use SingleTickerProviderStateMixin or TickerProviderStateMixin:
+SingleTickerProviderStateMixinまたはTickerProviderStateMixinを使用する必要があります：
 
 ```typescript
-// Flitter does not use mixins
-// Create and manage AnimationController directly
+// Flitterはmixinを使用しません
+// AnimationControllerを直接作成して管理します
 class MyState extends State<MyWidget> {
   controller!: AnimationController;
   
@@ -415,23 +415,23 @@ class MyState extends State<MyWidget> {
 }
 ```
 
-## Built-in Animation Widgets
+## 組み込みアニメーションウィジェット
 
-Flitter provides built-in widgets for commonly used animations:
+Flitterはよく使用されるアニメーション用の組み込みウィジェットを提供しています：
 
-- **AnimatedContainer**: Automatic animation when properties change
-- **AnimatedOpacity**: Opacity animation
-- **AnimatedPositioned**: Position animation within Stack
-- **AnimatedScale**: Size animation
-- **AnimatedRotation**: Rotation animation
-- **AnimatedSlide**: Slide animation
+- **AnimatedContainer**: プロパティが変更されたときの自動アニメーション
+- **AnimatedOpacity**: 不透明度のアニメーション
+- **AnimatedPositioned**: Stack内での位置アニメーション
+- **AnimatedScale**: サイズアニメーション
+- **AnimatedRotation**: 回転アニメーション
+- **AnimatedSlide**: スライドアニメーション
 
-These widgets enable simple animations without AnimationController.
+これらのウィジェットはAnimationControllerなしでシンプルなアニメーションを可能にします。
 
-## Next Steps
+## 次のステップ
 
-Once you've mastered animation basics, learn these topics:
+アニメーションの基礎をマスターしたら、次のトピックを学びましょう：
 
-- Advanced Animations - Complex animation patterns and optimization
-- Custom Painting - Advanced graphics implementation with CustomPaint
-- Widget Reference - Detailed guide for built-in animation widgets
+- 高度なアニメーション - 複雑なアニメーションパターンと最適化
+- カスタムペインティング - CustomPaintを使用した高度なグラフィックスの実装
+- ウィジェットリファレンス - 組み込みアニメーションウィジェットの詳細ガイド

@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: GestureDetector
 title: "GestureDetector"
-description: "A widget that detects user gestures and mouse events"
+description: "检测用户手势和鼠标事件的组件"
 ---
 
-## Overview
+## 概述
 
-GestureDetector is a widget that detects user gestures and mouse events.
+GestureDetector 是一个检测用户手势和鼠标事件的组件。
 
-GestureDetector wraps a child widget to detect and handle various user interaction events. It provides various event handlers such as click, mouse movement, and drag to implement interactive UI. Events are detected only within the area of the child widget.
+GestureDetector 包装子组件以检测和处理各种用户交互事件。它提供点击、鼠标移动和拖拽等各种事件处理器来实现交互式 UI。事件仅在子组件区域内被检测。
 
 <iframe
   width="560"
@@ -22,61 +22,61 @@ GestureDetector wraps a child widget to detect and handle various user interacti
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/GestureDetector-class.html](https://api.flutter.dev/flutter/widgets/GestureDetector-class.html)
+参考: [https://api.flutter.dev/flutter/widgets/GestureDetector-class.html](https://api.flutter.dev/flutter/widgets/GestureDetector-class.html)
 
-## When to use it?
+## 何时使用？
 
-- When adding click events to buttons or cards
-- When implementing drag and drop functionality
-- When applying hover effects
-- When creating custom interactive widgets
-- When tracking mouse position
+- 当为按钮或卡片添加点击事件时
+- 当实现拖放功能时
+- 当应用悬停效果时
+- 当创建自定义交互组件时
+- 当跟踪鼠标位置时
 
-## Basic Usage
+## 基本用法
 
 ```typescript
 GestureDetector({
   onClick: (e) => {
-    console.log('Clicked!');
+    console.log('点击了!');
   },
   child: Container({
     width: 100,
     height: 100,
     color: 'blue',
     child: Center({
-      child: Text('Click me')
+      child: Text('点击我')
     })
   })
 })
 ```
 
-## Props
+## 属性
 
 ### onClick
 
-**Value: ((e: MouseEvent) => void) | undefined**
+**值: ((e: MouseEvent) => void) | undefined**
 
-Callback function called when the mouse is clicked.
+鼠标点击时调用的回调函数。
 
 ```typescript
 GestureDetector({
   onClick: (e) => {
-    console.log(`Click position: ${e.clientX}, ${e.clientY}`);
+    console.log(`点击位置: ${e.clientX}, ${e.clientY}`);
   },
-  child: Text('Clickable text')
+  child: Text('可点击文本')
 })
 ```
 
 ### onMouseDown
 
-**Value: ((e: MouseEvent) => void) | undefined**
+**值: ((e: MouseEvent) => void) | undefined**
 
-Callback function called when the mouse button is pressed down.
+鼠标按钮按下时调用的回调函数。
 
 ```typescript
 GestureDetector({
   onMouseDown: (e) => {
-    console.log('Mouse button pressed');
+    console.log('鼠标按钮按下');
   },
   child: Container({ width: 100, height: 100 })
 })
@@ -84,14 +84,14 @@ GestureDetector({
 
 ### onMouseUp
 
-**Value: ((e: MouseEvent) => void) | undefined**
+**值: ((e: MouseEvent) => void) | undefined**
 
-Callback function called when the mouse button is released.
+鼠标按钮释放时调用的回调函数。
 
 ```typescript
 GestureDetector({
   onMouseUp: (e) => {
-    console.log('Mouse button released');
+    console.log('鼠标按钮释放');
   },
   child: Container({ width: 100, height: 100 })
 })
@@ -99,14 +99,14 @@ GestureDetector({
 
 ### onMouseMove
 
-**Value: ((e: MouseEvent) => void) | undefined**
+**值: ((e: MouseEvent) => void) | undefined**
 
-Callback function called when the mouse moves.
+鼠标移动时调用的回调函数。
 
 ```typescript
 GestureDetector({
   onMouseMove: (e) => {
-    console.log(`Mouse position: ${e.clientX}, ${e.clientY}`);
+    console.log(`鼠标位置: ${e.clientX}, ${e.clientY}`);
   },
   child: Container({ width: 200, height: 200 })
 })
@@ -114,14 +114,14 @@ GestureDetector({
 
 ### onMouseEnter
 
-**Value: ((e: MouseEvent) => void) | undefined**
+**值: ((e: MouseEvent) => void) | undefined**
 
-Callback function called when the mouse enters the widget area.
+鼠标进入组件区域时调用的回调函数。
 
 ```typescript
 GestureDetector({
   onMouseEnter: (e) => {
-    console.log('Mouse entered');
+    console.log('鼠标进入');
   },
   child: Container({ color: 'gray' })
 })
@@ -129,14 +129,14 @@ GestureDetector({
 
 ### onMouseLeave
 
-**Value: ((e: MouseEvent) => void) | undefined**
+**值: ((e: MouseEvent) => void) | undefined**
 
-Callback function called when the mouse leaves the widget area.
+鼠标离开组件区域时调用的回调函数。
 
 ```typescript
 GestureDetector({
   onMouseLeave: (e) => {
-    console.log('Mouse left');
+    console.log('鼠标离开');
   },
   child: Container({ color: 'gray' })
 })
@@ -144,14 +144,14 @@ GestureDetector({
 
 ### onMouseOver
 
-**Value: ((e: MouseEvent) => void) | undefined**
+**值: ((e: MouseEvent) => void) | undefined**
 
-Callback function called when the mouse is over the widget.
+鼠标在组件上方时调用的回调函数。
 
 ```typescript
 GestureDetector({
   onMouseOver: (e) => {
-    console.log('Mouse over');
+    console.log('鼠标悬停');
   },
   child: Container({ width: 100, height: 100 })
 })
@@ -159,14 +159,14 @@ GestureDetector({
 
 ### onDragStart
 
-**Value: ((e: MouseEvent) => void) | undefined**
+**值: ((e: MouseEvent) => void) | undefined**
 
-Callback function called when dragging starts. Occurs together with the onMouseDown event.
+拖拽开始时调用的回调函数。与 onMouseDown 事件一起发生。
 
 ```typescript
 GestureDetector({
   onDragStart: (e) => {
-    console.log('Drag started');
+    console.log('拖拽开始');
   },
   child: Container({ width: 50, height: 50, color: 'red' })
 })
@@ -174,9 +174,9 @@ GestureDetector({
 
 ### onDragMove
 
-**Value: ((e: MouseEvent) => void) | undefined**
+**值: ((e: MouseEvent) => void) | undefined**
 
-Callback function called while dragging.
+拖拽过程中调用的回调函数。
 
 ```typescript
 let position = { x: 0, y: 0 };
@@ -185,7 +185,7 @@ GestureDetector({
   onDragMove: (e) => {
     position.x += e.movementX;
     position.y += e.movementY;
-    console.log(`Drag position: ${position.x}, ${position.y}`);
+    console.log(`拖拽位置: ${position.x}, ${position.y}`);
   },
   child: Container({ width: 50, height: 50 })
 })
@@ -193,14 +193,14 @@ GestureDetector({
 
 ### onDragEnd
 
-**Value: ((e: MouseEvent) => void) | undefined**
+**值: ((e: MouseEvent) => void) | undefined**
 
-Callback function called when dragging ends.
+拖拽结束时调用的回调函数。
 
 ```typescript
 GestureDetector({
   onDragEnd: (e) => {
-    console.log('Drag ended');
+    console.log('拖拽结束');
   },
   child: Container({ width: 50, height: 50 })
 })
@@ -208,15 +208,15 @@ GestureDetector({
 
 ### onWheel
 
-**Value: ((e: WheelEvent) => void) | undefined**
+**值: ((e: WheelEvent) => void) | undefined**
 
-Callback function called when using the mouse wheel.
+使用鼠标滚轮时调用的回调函数。
 
 ```typescript
 GestureDetector({
   onWheel: (e) => {
-    console.log(`Wheel delta: ${e.deltaY}`);
-    e.preventDefault(); // Prevent default scrolling
+    console.log(`滚轮增量: ${e.deltaY}`);
+    e.preventDefault(); // 阻止默认滚动
   },
   child: Container({ width: 200, height: 200 })
 })
@@ -224,22 +224,22 @@ GestureDetector({
 
 ### cursor
 
-**Value: Cursor** (default: **"pointer"**)
+**值: Cursor**（默认值: **"pointer"**）
 
-Specifies the mouse cursor shape.
+指定鼠标光标形状。
 
-Available cursor types:
-- `"pointer"`: Hand pointer (default)
-- `"default"`: Default arrow
-- `"move"`: Move cursor
-- `"text"`: Text selection cursor
-- `"wait"`: Wait cursor
-- `"help"`: Help cursor
-- `"crosshair"`: Crosshair
-- `"grab"`: Grab cursor
-- `"grabbing"`: Grabbing cursor
-- `"not-allowed"`: Not allowed cursor
-- Resize cursors: `"n-resize"`, `"e-resize"`, `"s-resize"`, `"w-resize"`, etc.
+可用光标类型：
+- `"pointer"`: 手形指针（默认）
+- `"default"`: 默认箭头
+- `"move"`: 移动光标
+- `"text"`: 文本选择光标
+- `"wait"`: 等待光标
+- `"help"`: 帮助光标
+- `"crosshair"`: 十字光标
+- `"grab"`: 抓取光标
+- `"grabbing"`: 抓取中光标
+- `"not-allowed"`: 禁止光标
+- 调整大小光标: `"n-resize"`, `"e-resize"`, `"s-resize"`, `"w-resize"` 等
 
 ```typescript
 class DraggableCursor extends StatefulWidget {
@@ -264,24 +264,24 @@ class DraggableCursorState extends State<DraggableCursor> {
 
 ### child
 
-**Value: Widget | undefined**
+**值: Widget | undefined**
 
-The child widget to detect events on.
+要检测事件的子组件。
 
 ```typescript
 GestureDetector({
-  onClick: () => console.log('Clicked!'),
+  onClick: () => console.log('点击了!'),
   child: Container({
     padding: EdgeInsets.all(20),
     color: 'blue',
-    child: Text('Clickable area')
+    child: Text('可点击区域')
   })
 })
 ```
 
-## Practical Examples
+## 实际示例
 
-### Example 1: Interactive Button
+### 示例 1: 交互式按钮
 
 ```typescript
 class InteractiveButton extends StatefulWidget {
@@ -305,7 +305,7 @@ class InteractiveButtonState extends State<InteractiveButton> {
           this.isPressed = false;
         });
       },
-      onClick: () => console.log('Button clicked!'),
+      onClick: () => console.log('按钮被点击!'),
       cursor: 'pointer',
       child: Container({
         padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
@@ -320,7 +320,7 @@ class InteractiveButtonState extends State<InteractiveButton> {
             })
           ]
         }),
-        child: Text('Custom Button', {
+        child: Text('自定义按钮', {
           style: TextStyle({ color: 'white', fontWeight: 'bold' })
         })
       })
@@ -329,7 +329,7 @@ class InteractiveButtonState extends State<InteractiveButton> {
 }
 ```
 
-### Example 2: Draggable Element
+### 示例 2: 可拖拽元素
 
 ```typescript
 class DraggableBox extends StatefulWidget {
@@ -372,7 +372,7 @@ class DraggableBoxState extends State<DraggableBox> {
             ]
           }),
           child: Center({
-            child: Text('Drag me', {
+            child: Text('拖拽我', {
               style: TextStyle({ color: 'white' })
             })
           })
@@ -383,7 +383,7 @@ class DraggableBoxState extends State<DraggableBox> {
 }
 ```
 
-### Example 3: Mouse Tracker
+### 示例 3: 鼠标跟踪器
 
 ```typescript
 class MouseTracker extends StatefulWidget {
@@ -428,7 +428,7 @@ class MouseTrackerState extends State<MouseTracker> {
               })
             }),
             Center({
-              child: Text(`Mouse position: ${Math.round(this.mousePosition.x)}, ${Math.round(this.mousePosition.y)}`)
+              child: Text(`鼠标位置: ${Math.round(this.mousePosition.x)}, ${Math.round(this.mousePosition.y)}`)
             })
           ]
         })
@@ -438,7 +438,7 @@ class MouseTrackerState extends State<MouseTracker> {
 }
 ```
 
-### Example 4: Context Menu
+### 示例 4: 上下文菜单
 
 ```typescript
 class ContextMenuExample extends StatefulWidget {
@@ -471,7 +471,7 @@ class ContextMenuExampleState extends State<ContextMenuExample> {
             height: 300,
             color: 'white',
             child: Center({
-              child: Text('Right-click to open menu')
+              child: Text('右键点击打开菜单')
             })
           })
         }),
@@ -493,10 +493,10 @@ class ContextMenuExampleState extends State<ContextMenuExample> {
               ]
             }),
             child: Column({
-              children: ['Copy', 'Paste', 'Delete'].map(item =>
+              children: ['复制', '粘贴', '删除'].map(item =>
                 GestureDetector({
                   onClick: () => {
-                    console.log(`${item} selected`);
+                    console.log(`${item} 被选中`);
                     this.setState(() => this.showMenu = false);
                   },
                   cursor: 'pointer',
@@ -515,7 +515,7 @@ class ContextMenuExampleState extends State<ContextMenuExample> {
 }
 ```
 
-### Example 5: Zoomable Image
+### 示例 5: 可缩放图像
 
 ```typescript
 class ZoomableImage extends StatefulWidget {
@@ -559,32 +559,32 @@ class ZoomableImageState extends State<ZoomableImage> {
 }
 ```
 
-## MouseEvent Object
+## MouseEvent 对象
 
-All mouse event handlers receive a standard MouseEvent object:
+所有鼠标事件处理器都接收一个标准的 MouseEvent 对象：
 
-- **clientX, clientY**: Mouse position relative to viewport
-- **pageX, pageY**: Mouse position relative to page
-- **screenX, screenY**: Mouse position relative to screen
-- **movementX, movementY**: Movement distance from previous event
-- **button**: Button pressed (0: left, 1: middle, 2: right)
-- **buttons**: Bitmask of currently pressed buttons
-- **ctrlKey, shiftKey, altKey, metaKey**: Modifier key states
-- **currentTarget**: Element where the event occurred
-- **preventDefault()**: Prevent default action
-- **stopPropagation()**: Stop event bubbling
+- **clientX, clientY**: 相对于视口的鼠标位置
+- **pageX, pageY**: 相对于页面的鼠标位置
+- **screenX, screenY**: 相对于屏幕的鼠标位置
+- **movementX, movementY**: 与前一个事件的移动距离
+- **button**: 按下的按钮（0: 左键, 1: 中键, 2: 右键）
+- **buttons**: 当前按下按钮的位掩码
+- **ctrlKey, shiftKey, altKey, metaKey**: 修饰键状态
+- **currentTarget**: 事件发生的元素
+- **preventDefault()**: 阻止默认操作
+- **stopPropagation()**: 阻止事件冒泡
 
-## Important Notes
+## 重要说明
 
-- Events are not detected without a child.
-- Events are only detected within the actual rendered area of the child.
-- Drag events are tracked globally, so they continue even when the mouse leaves the widget.
-- onDragStart occurs together with onMouseDown, so be careful when handling both events.
-- Use e.preventDefault() to prevent browser default behavior.
+- 没有子组件时不会检测事件。
+- 事件仅在子组件的实际渲染区域内被检测。
+- 拖拽事件是全局跟踪的，所以即使鼠标离开组件也会继续。
+- onDragStart 与 onMouseDown 一起发生，处理两个事件时要小心。
+- 使用 e.preventDefault() 来阻止浏览器默认行为。
 
-## Related Widgets
+## 相关组件
 
-- **InkWell**: Touch response widget with Material Design ripple effect
-- **Draggable**: Specialized widget for drag and drop
-- **MouseRegion**: Widget that tracks mouse hover state
-- **Listener**: Widget that handles low-level pointer events
+- **InkWell**: 具有 Material Design 涟漪效果的触摸响应组件
+- **Draggable**: 专门用于拖放的组件
+- **MouseRegion**: 跟踪鼠标悬停状态的组件
+- **Listener**: 处理低级指针事件的组件

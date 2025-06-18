@@ -3,12 +3,12 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Align
 title: "Align"
-description: "A widget that aligns its child within itself and optionally sizes itself based on the child's size"
+description: "在自身内部对齐子组件，并可选择根据子组件的尺寸调整自身尺寸的组件"
 ---
 
-## Overview
+## 概述
 
-Align is a widget that aligns its child within itself and optionally sizes itself based on the child's size. It uses a normalized coordinate system to flexibly position the child.
+Align 是一个在自身内部对齐子组件的组件，并可选择根据子组件的尺寸调整自身尺寸。它使用标准化的坐标系统来灵活地定位子组件。
 
 <iframe
   width="560"
@@ -20,31 +20,31 @@ Align is a widget that aligns its child within itself and optionally sizes itsel
   allowfullscreen
 ></iframe>
 
-Reference: [https://api.flutter.dev/flutter/widgets/Align-class.html](https://api.flutter.dev/flutter/widgets/Align-class.html)
+参考：[https://api.flutter.dev/flutter/widgets/Align-class.html](https://api.flutter.dev/flutter/widgets/Align-class.html)
 
-## When to Use
+## 何时使用
 
-- When you need to align a child widget at a specific position within its parent
-- When creating specific ratio margins around a child widget
-- When center-aligning content in dialogs or popups
-- When positioning buttons or icons at specific locations
-- When adjusting parent size proportionally to the child widget's size
+- 当需要在父组件内将子组件对齐到特定位置时
+- 当创建子组件周围的特定比例边距时
+- 当在对话框或弹出窗口中居中对齐内容时
+- 当在特定位置放置按钮或图标时
+- 当根据子组件的尺寸按比例调整父组件尺寸时
 
-## Basic Usage
+## 基本用法
 
 ```typescript
-// Center alignment (default)
+// 居中对齐（默认）
 Align({
-  child: Text('Centered text')
+  child: Text('居中文本')
 })
 
-// Top-right alignment
+// 右上角对齐
 Align({
   alignment: Alignment.topRight,
   child: Icon(Icons.close)
 })
 
-// Using size factors
+// 使用尺寸因子
 Align({
   widthFactor: 2.0,
   heightFactor: 1.5,
@@ -56,91 +56,91 @@ Align({
 })
 ```
 
-## Props
+## 属性
 
-### child (optional)
-**Type: Widget | undefined**
+### child（可选）
+**类型：Widget | undefined**
 
-The child widget to align.
+要对齐的子组件。
 
-### alignment (optional)
-**Type: Alignment** (default: **Alignment.center**)
+### alignment（可选）
+**类型：Alignment**（默认值：**Alignment.center**）
 
-Specifies the alignment position of the child widget. Alignment consists of x and y values, each ranging from -1.0 to 1.0.
+指定子组件的对齐位置。Alignment 由 x 和 y 值组成，每个值的范围为 -1.0 到 1.0。
 
-Main Alignment constants:
-- `Alignment.topLeft`: (-1.0, -1.0)
-- `Alignment.topCenter`: (0.0, -1.0)
-- `Alignment.topRight`: (1.0, -1.0)
-- `Alignment.centerLeft`: (-1.0, 0.0)
-- `Alignment.center`: (0.0, 0.0)
-- `Alignment.centerRight`: (1.0, 0.0)
-- `Alignment.bottomLeft`: (-1.0, 1.0)
-- `Alignment.bottomCenter`: (0.0, 1.0)
-- `Alignment.bottomRight`: (1.0, 1.0)
+主要的 Alignment 常量：
+- `Alignment.topLeft`：(-1.0, -1.0)
+- `Alignment.topCenter`：(0.0, -1.0)
+- `Alignment.topRight`：(1.0, -1.0)
+- `Alignment.centerLeft`：(-1.0, 0.0)
+- `Alignment.center`：(0.0, 0.0)
+- `Alignment.centerRight`：(1.0, 0.0)
+- `Alignment.bottomLeft`：(-1.0, 1.0)
+- `Alignment.bottomCenter`：(0.0, 1.0)
+- `Alignment.bottomRight`：(1.0, 1.0)
 
 ```typescript
-// Custom alignment
+// 自定义对齐
 Align({
-  alignment: Alignment.of({ x: 0.5, y: -0.5 }), // Towards top-right
-  child: Text('Custom alignment')
+  alignment: Alignment.of({ x: 0.5, y: -0.5 }), // 偏向右上方
+  child: Text('自定义对齐')
 })
 ```
 
-### widthFactor (optional)
-**Type: number | undefined**
+### widthFactor（可选）
+**类型：number | undefined**
 
-Sets this widget's width as a multiple of the child widget's width. If null, expands to available width.
+将此组件的宽度设置为子组件宽度的倍数。如果为 null，则扩展到可用宽度。
 
 ```typescript
 Align({
-  widthFactor: 1.5, // 1.5 times child's width
+  widthFactor: 1.5, // 子组件宽度的 1.5 倍
   child: Container({
     width: 100,
     height: 50,
     color: 'red'
   })
 })
-// Align's width becomes 150
+// Align 的宽度变为 150
 ```
 
-### heightFactor (optional)
-**Type: number | undefined**
+### heightFactor（可选）
+**类型：number | undefined**
 
-Sets this widget's height as a multiple of the child widget's height. If null, expands to available height.
+将此组件的高度设置为子组件高度的倍数。如果为 null，则扩展到可用高度。
 
 ```typescript
 Align({
-  heightFactor: 2.0, // 2 times child's height
+  heightFactor: 2.0, // 子组件高度的 2 倍
   child: Container({
     width: 100,
     height: 50,
     color: 'green'
   })
 })
-// Align's height becomes 100
+// Align 的高度变为 100
 ```
 
-## Layout Behavior
+## 布局行为
 
-### Size Constraint Handling
+### 尺寸约束处理
 
-1. **Under bounded constraints**:
-   - If widthFactor and heightFactor are null, expands to available size
-   - Layouts child with loosened constraints
-   - Positions child according to alignment
+1. **在有界约束下**：
+   - 如果 widthFactor 和 heightFactor 为 null，则扩展到可用尺寸
+   - 以松弛的约束布局子组件
+   - 根据 alignment 定位子组件
 
-2. **Under unbounded constraints**:
-   - If widthFactor and heightFactor are null, shrinks to child size
-   - If factors are specified, size is determined by child size × factor
+2. **在无界约束下**：
+   - 如果 widthFactor 和 heightFactor 为 null，则收缩到子组件尺寸
+   - 如果指定了因子，则尺寸由子组件尺寸 × 因子决定
 
-3. **When using size factors**:
-   - Always sizes to child size × factor
-   - Works independently of parent constraints
+3. **使用尺寸因子时**：
+   - 始终调整为子组件尺寸 × 因子
+   - 独立于父组件约束工作
 
-## Practical Examples
+## 实际示例
 
-### Example 1: Close Button Alignment
+### 示例 1：关闭按钮对齐
 
 ```typescript
 const DialogWithCloseButton = ({ title, content, onClose }) => {
@@ -185,7 +185,7 @@ const DialogWithCloseButton = ({ title, content, onClose }) => {
 };
 ```
 
-### Example 2: Centered Loading Indicator
+### 示例 2：居中加载指示器
 
 ```typescript
 const LoadingOverlay = ({ isLoading, child }) => {
@@ -207,7 +207,7 @@ const LoadingOverlay = ({ isLoading, child }) => {
               children: [
                 CircularProgressIndicator(),
                 SizedBox({ height: 16 }),
-                Text('Loading...')
+                Text('加载中...')
               ]
             })
           })
@@ -218,7 +218,7 @@ const LoadingOverlay = ({ isLoading, child }) => {
 };
 ```
 
-### Example 3: Badge Positioning
+### 示例 3：徽章定位
 
 ```typescript
 const IconWithBadge = ({ icon, badgeCount }) => {
@@ -259,7 +259,7 @@ const IconWithBadge = ({ icon, badgeCount }) => {
 };
 ```
 
-### Example 4: Tooltip Alignment
+### 示例 4：工具提示对齐
 
 ```typescript
 class TooltipWidget extends StatefulWidget {
@@ -325,7 +325,7 @@ class TooltipWidgetState extends State<TooltipWidget> {
 }
 ```
 
-### Example 5: Responsive Card Layout
+### 示例 5：响应式卡片布局
 
 ```typescript
 const ResponsiveCard = ({ title, subtitle, action }) => {
@@ -368,19 +368,19 @@ const ResponsiveCard = ({ title, subtitle, action }) => {
 };
 ```
 
-## Important Notes
+## 重要注意事项
 
-- widthFactor and heightFactor must be greater than 0
-- alignment x and y values must be between -1.0 and 1.0
-- When there's no child and widthFactor or heightFactor is null, size may become 0
-- Understand the difference between Align and Positioned when using within Stack
-- Using size factors can impact layout performance
-- Loosens constraints to allow the child to have its desired size
+- widthFactor 和 heightFactor 必须大于 0
+- alignment 的 x 和 y 值必须在 -1.0 到 1.0 之间
+- 当没有子组件且 widthFactor 或 heightFactor 为 null 时，尺寸可能变为 0
+- 在 Stack 中使用时，要理解 Align 和 Positioned 之间的区别
+- 使用尺寸因子可能会影响布局性能
+- 放松约束以允许子组件拥有其期望的尺寸
 
-## Related Widgets
+## 相关组件
 
-- **Center**: Special case of Align, always centers content
-- **Positioned**: Absolute positioning within Stack
-- **Container**: Can align children using alignment property
-- **FractionallySizedBox**: Sizes based on parent's dimensions ratio
-- **AnimatedAlign**: Animated transitions between alignments
+- **Center**：Align 的特殊情况，始终居中内容
+- **Positioned**：在 Stack 内的绝对定位
+- **Container**：可以使用 alignment 属性对齐子组件
+- **FractionallySizedBox**：根据父组件尺寸比例调整尺寸
+- **AnimatedAlign**：对齐之间的动画过渡

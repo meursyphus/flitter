@@ -3,29 +3,29 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: OverflowBox
 title: "OverflowBox"
-description: "A widget that imposes different constraints on its child than it gets from its parent, possibly allowing overflow"
+description: "对其子组件强加与从父组件获得的不同约束，可能允许溢出的组件"
 ---
 
-## Overview
+## 概述
 
-OverflowBox is a widget that imposes different constraints on its child than it gets from its parent, possibly allowing the child to overflow the parent.
+OverflowBox 是一个对其子组件强加与从父组件获得的不同约束的组件，可能允许子组件溢出父组件。
 
-This widget is useful when you want a child to have a different size than what the parent allows, either larger or smaller. For example, it can be used to display large icons or images inside small containers.
+当您希望子组件具有与父组件允许的不同尺寸（更大或更小）时，这个组件非常有用。例如，它可以用于在小容器内显示大图标或图像。
 
-See: [https://api.flutter.dev/flutter/widgets/OverflowBox-class.html](https://api.flutter.dev/flutter/widgets/OverflowBox-class.html)
+参考: [https://api.flutter.dev/flutter/widgets/OverflowBox-class.html](https://api.flutter.dev/flutter/widgets/OverflowBox-class.html)
 
-## When to use it?
+## 何时使用？
 
-- When a child needs to exceed the parent's size
-- When creating UI elements like popups or tooltips that extend outside the parent area
-- When creating effects where size temporarily expands during animations
-- When you need a fixed size that ignores parent constraints
-- When creating elements like overlays or badges that cross parent boundaries
+- 当子组件需要超过父组件尺寸时
+- 当创建在父区域外延伸的 UI 元素（如弹出框或工具提示）时
+- 当创建在动画期间尺寸临时扩展的效果时
+- 当需要忽略父约束的固定尺寸时
+- 当创建跨越父边界的元素（如覆盖层或徽章）时
 
-## Basic Usage
+## 基本用法
 
 ```typescript
-// Allow child larger than parent
+// 允许子组件大于父组件
 Container({
   width: 100,
   height: 100,
@@ -41,7 +41,7 @@ Container({
   })
 })
 
-// Force child smaller than parent
+// 强制子组件小于父组件
 Container({
   width: 200,
   height: 200,
@@ -55,7 +55,7 @@ Container({
   })
 })
 
-// Fix to specific size
+// 固定为特定尺寸
 OverflowBox({
   minWidth: 150,
   maxWidth: 150,
@@ -67,92 +67,92 @@ OverflowBox({
 })
 ```
 
-## Props
+## 属性
 
 ### minWidth
 
-**Value: number | undefined**
+**值: number | undefined**
 
-The minimum width constraint to apply to the child.
+应用于子组件的最小宽度约束。
 
-When `undefined`, uses the parent's minimum width constraint.
+当为 `undefined` 时，使用父组件的最小宽度约束。
 
 ```typescript
 OverflowBox({
-  minWidth: 100,  // Child has minimum width of 100
+  minWidth: 100,  // 子组件最小宽度为 100
   child: child
 })
 ```
 
 ### maxWidth
 
-**Value: number | undefined**
+**值: number | undefined**
 
-The maximum width constraint to apply to the child.
+应用于子组件的最大宽度约束。
 
-When `undefined`, uses the parent's maximum width constraint.
+当为 `undefined` 时，使用父组件的最大宽度约束。
 
 ```typescript
 OverflowBox({
-  maxWidth: 300,  // Child has maximum width of 300
+  maxWidth: 300,  // 子组件最大宽度为 300
   child: child
 })
 ```
 
 ### minHeight
 
-**Value: number | undefined**
+**值: number | undefined**
 
-The minimum height constraint to apply to the child.
+应用于子组件的最小高度约束。
 
-When `undefined`, uses the parent's minimum height constraint.
+当为 `undefined` 时，使用父组件的最小高度约束。
 
 ```typescript
 OverflowBox({
-  minHeight: 50,  // Child has minimum height of 50
+  minHeight: 50,  // 子组件最小高度为 50
   child: child
 })
 ```
 
 ### maxHeight
 
-**Value: number | undefined**
+**值: number | undefined**
 
-The maximum height constraint to apply to the child.
+应用于子组件的最大高度约束。
 
-When `undefined`, uses the parent's maximum height constraint.
+当为 `undefined` 时，使用父组件的最大高度约束。
 
 ```typescript
 OverflowBox({
-  maxHeight: 200,  // Child has maximum height of 200
+  maxHeight: 200,  // 子组件最大高度为 200
   child: child
 })
 ```
 
 ### alignment
 
-**Value: Alignment** (default: **Alignment.center**)
+**值: Alignment**（默认值: **Alignment.center**）
 
-How to align the child when it has a different size than the parent.
+当子组件与父组件尺寸不同时如何对齐子组件。
 
 ```typescript
 OverflowBox({
   maxWidth: 200,
   maxHeight: 200,
-  alignment: Alignment.topRight,  // Align to top right
+  alignment: Alignment.topRight,  // 对齐到右上角
   child: child
 })
 ```
 
 ### child
 
-**Value: Widget | undefined**
+**值: Widget | undefined**
 
-The child widget to which the new constraints will be applied.
+将应用新约束的子组件。
 
-## Practical Examples
+## 实际示例
 
-### Example 1: Floating Action Button Badge
+### 示例 1：浮动操作按钮徽章
 
 ```typescript
 const FloatingActionButtonWithBadge = ({ count, onPressed }) => {
@@ -166,7 +166,7 @@ const FloatingActionButtonWithBadge = ({ count, onPressed }) => {
           onPressed,
           child: Icon(Icons.shopping_cart)
         }),
-        // Badge (overflows parent area)
+        // 徽章（溢出父区域）
         Positioned({
           top: 0,
           right: 0,
@@ -202,7 +202,7 @@ const FloatingActionButtonWithBadge = ({ count, onPressed }) => {
 };
 ```
 
-### Example 2: Zoom Preview
+### 示例 2：缩放预览
 
 ```typescript
 const ZoomPreview = ({ image, zoomLevel = 2.0 }) => {
@@ -220,12 +220,12 @@ const ZoomPreview = ({ image, zoomLevel = 2.0 }) => {
       height: 300,
       child: Stack({
         children: [
-          // Original image
+          // 原始图像
           Image({
             src: image,
             objectFit: 'cover'
           }),
-          // Zoomed area
+          // 缩放区域
           if (isHovering) Positioned({
             left: mousePosition.x - 50,
             top: mousePosition.y - 50,
@@ -274,7 +274,7 @@ const ZoomPreview = ({ image, zoomLevel = 2.0 }) => {
 };
 ```
 
-### Example 3: Custom Tooltip
+### 示例 3：自定义工具提示
 
 ```typescript
 const CustomTooltip = ({ text, child }) => {
@@ -292,7 +292,7 @@ const CustomTooltip = ({ text, child }) => {
           left: 0,
           right: 0,
           child: OverflowBox({
-            maxWidth: 300,  // Allow tooltip wider than parent
+            maxWidth: 300,  // 允许工具提示比父组件更宽
             child: Container({
               padding: EdgeInsets.symmetric({ 
                 horizontal: 12, 
@@ -335,7 +335,7 @@ const CustomTooltip = ({ text, child }) => {
 };
 ```
 
-### Example 4: Pulse Animation Effect
+### 示例 4：脉冲动画效果
 
 ```typescript
 const PulseAnimation = ({ child, color = 'blue' }) => {
@@ -356,7 +356,7 @@ const PulseAnimation = ({ child, color = 'blue' }) => {
     height: 100,
     child: Stack({
       children: [
-        // Pulse effect (larger than parent)
+        // 脉冲效果（大于父组件）
         Center({
           child: OverflowBox({
             maxWidth: 150,
@@ -373,7 +373,7 @@ const PulseAnimation = ({ child, color = 'blue' }) => {
             })
           })
         }),
-        // Actual content
+        // 实际内容
         Center({ child })
       ]
     })
@@ -381,7 +381,7 @@ const PulseAnimation = ({ child, color = 'blue' }) => {
 };
 ```
 
-### Example 5: Dropdown Menu
+### 示例 5：下拉菜单
 
 ```typescript
 const CustomDropdown = ({ options, value, onChange }) => {
@@ -393,7 +393,7 @@ const CustomDropdown = ({ options, value, onChange }) => {
     child: Stack({
       clipBehavior: Clip.none,
       children: [
-        // Dropdown button
+        // 下拉按钮
         GestureDetector({
           onTap: () => setIsOpen(!isOpen),
           child: Container({
@@ -406,7 +406,7 @@ const CustomDropdown = ({ options, value, onChange }) => {
             child: Row({
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(value || 'Select...'),
+                Text(value || '选择...'),
                 Icon({
                   icon: isOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down
                 })
@@ -414,15 +414,15 @@ const CustomDropdown = ({ options, value, onChange }) => {
             })
           })
         }),
-        // Dropdown menu (can exceed parent width)
+        // 下拉菜单（可以超过父组件宽度）
         if (isOpen) Positioned({
           top: 52,
           left: 0,
           child: OverflowBox({
-            maxWidth: 300,  // Allow longer options to display
+            maxWidth: 300,  // 允许更长的选项显示
             child: Container({
               constraints: BoxConstraints({
-                minWidth: 200  // At least parent width
+                minWidth: 200  // 至少父组件宽度
               }),
               decoration: BoxDecoration({
                 color: 'white',
@@ -470,12 +470,12 @@ const CustomDropdown = ({ options, value, onChange }) => {
 };
 ```
 
-## Understanding Size Behavior
+## 理解尺寸行为
 
-### OverflowBox Size Determination
+### OverflowBox 尺寸确定
 
 ```typescript
-// OverflowBox itself follows parent constraints
+// OverflowBox 本身遵循父约束
 Container({
   width: 100,
   height: 100,
@@ -486,28 +486,28 @@ Container({
     child: Container({
       width: 150,
       height: 150,
-      color: 'red'  // Appears outside blue area
+      color: 'red'  // 出现在蓝色区域外
     })
   })
 })
 
-// OverflowBox size: 100x100 (parent constraints)
-// Child size: 150x150 (OverflowBox constraints)
+// OverflowBox 尺寸: 100x100（父约束）
+// 子组件尺寸: 150x150（OverflowBox 约束）
 ```
 
-### Constraint Inheritance
+### 约束继承
 
 ```typescript
-// Change only some constraints
+// 仅改变某些约束
 OverflowBox({
-  maxWidth: 300,  // Change width only
-  // minWidth: inherited from parent
-  // minHeight: inherited from parent
-  // maxHeight: inherited from parent
+  maxWidth: 300,  // 仅改变宽度
+  // minWidth: 从父组件继承
+  // minHeight: 从父组件继承
+  // maxHeight: 从父组件继承
   child: child
 })
 
-// Change all constraints
+// 改变所有约束
 OverflowBox({
   minWidth: 100,
   maxWidth: 200,
@@ -517,18 +517,18 @@ OverflowBox({
 })
 ```
 
-## Important Notes
+## 重要说明
 
-- OverflowBox allows children to overflow parent area, which can cause layout issues
-- Overflowed areas are not clipped and may overlap other widgets
-- When using with Stack, set `clipBehavior: Clip.none`
-- Touch events are only detected within the parent area
-- Avoid excessive overflow for performance reasons
+- OverflowBox 允许子组件溢出父区域，这可能导致布局问题
+- 溢出区域不会被裁剪，可能与其他组件重叠
+- 与 Stack 一起使用时，设置 `clipBehavior: Clip.none`
+- 触摸事件仅在父区域内被检测
+- 出于性能考虑，避免过度溢出
 
-## Related Widgets
+## 相关组件
 
-- **UnconstrainedBox**: Widget that removes all constraints
-- **ConstrainedBox**: Widget that applies additional constraints
-- **SizedBox**: Widget that specifies fixed size
-- **LimitedBox**: Widget that limits size only in infinite constraints
-- **FittedBox**: Widget that scales child to fit parent
+- **UnconstrainedBox**: 移除所有约束的组件
+- **ConstrainedBox**: 应用额外约束的组件
+- **SizedBox**: 指定固定尺寸的组件
+- **LimitedBox**: 仅在无限约束中限制尺寸的组件
+- **FittedBox**: 缩放子组件以适应父组件的组件

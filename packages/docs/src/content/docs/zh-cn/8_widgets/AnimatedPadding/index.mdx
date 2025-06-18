@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: AnimatedPadding
 title: "AnimatedPadding"
-description: "A widget that animates padding transitions"
+description: "动画化内边距过渡的组件"
 ---
 
-## Overview
+## 概述
 
-AnimatedPadding is a widget that automatically animates when its padding changes, providing smooth transitions. This widget is inspired by Flutter's AnimatedPadding widget.
+AnimatedPadding 是一个在内边距发生变化时自动进行动画的组件，提供平滑的过渡效果。这个组件受 Flutter 的 AnimatedPadding 组件启发。
 
-> Animated version of Padding which automatically transitions the indentation over a given duration whenever the given inset changes.
+> Padding 的动画版本，当给定的内边距发生变化时，会在给定的持续时间内自动过渡缩进。
 
 <iframe
   width="560"
@@ -22,17 +22,17 @@ AnimatedPadding is a widget that automatically animates when its padding changes
   allowfullscreen
 ></iframe>
 
-Flutter reference: https://api.flutter.dev/flutter/widgets/AnimatedPadding-class.html
+Flutter 参考: https://api.flutter.dev/flutter/widgets/AnimatedPadding-class.html
 
-## When to use?
+## 何时使用？
 
-- When dynamically adjusting widget spacing based on user interaction
-- When smoothly changing internal margins during card or container expansion/collapse
-- When dynamically adjusting item spacing in masonry lists
-- When adjusting spacing based on screen size in responsive design
-- When transitioning padding in foldable content with animation
+- 当需要根据用户交互动态调整组件间距时
+- 当在卡片或容器展开/收起期间平滑改变内部边距时
+- 当在石工列表中动态调整项目间距时
+- 当在响应式设计中根据屏幕大小调整间距时
+- 当在可折叠内容中使用动画过渡内边距时
 
-## Basic usage
+## 基本用法
 
 ```typescript
 import { AnimatedPadding, Container, EdgeInsets, StatefulWidget } from '@flitter/core';
@@ -55,7 +55,7 @@ class PaddingExampleState extends State<PaddingExample> {
               this.isExpanded = !this.isExpanded;
             });
           },
-          child: Text(this.isExpanded ? "Collapse" : "Expand"),
+          child: Text(this.isExpanded ? "收起" : "展开"),
         }),
         Container({
           width: 300,
@@ -69,7 +69,7 @@ class PaddingExampleState extends State<PaddingExample> {
             child: Container({
               color: "blue",
               child: Center({
-                child: Text("Animated Padding", {
+                child: Text("动画内边距", {
                   style: TextStyle({ color: "white" })
                 }),
               }),
@@ -82,71 +82,71 @@ class PaddingExampleState extends State<PaddingExample> {
 }
 ```
 
-## Props
+## 属性
 
-### duration (required)
-**Value: number**
+### duration（必需）
+**值：number**
 
-Specifies the animation duration in milliseconds.
+指定动画持续时间（毫秒）。
 
-### padding (optional)
-**Value: EdgeInsetsGeometry** (default: **EdgeInsets.all(0)**)
+### padding（可选）
+**值：EdgeInsetsGeometry**（默认值：**EdgeInsets.all(0)**）
 
-Sets the internal spacing of the widget. Available methods:
+设置组件的内部间距。可用方法：
 
-#### EdgeInsets methods
-- `EdgeInsets.all(value)`: Same spacing in all directions
-- `EdgeInsets.symmetric({ horizontal, vertical })`: Horizontal/vertical symmetric spacing
-- `EdgeInsets.only({ top, bottom, left, right })`: Specify spacing for each direction
-- `EdgeInsets.fromLTRB({ left, top, right, bottom })`: Specify in left/top/right/bottom order
+#### EdgeInsets 方法
+- `EdgeInsets.all(value)`：所有方向相同间距
+- `EdgeInsets.symmetric({ horizontal, vertical })`：水平/垂直对称间距
+- `EdgeInsets.only({ top, bottom, left, right })`：指定每个方向的间距
+- `EdgeInsets.fromLTRB({ left, top, right, bottom })`：按左/上/右/下顺序指定
 
-#### Usage examples
+#### 使用示例
 ```typescript
-// 20 spacing in all directions
+// 所有方向 20 间距
 EdgeInsets.all(20)
 
-// Horizontal 16, vertical 8 spacing
+// 水平 16，垂直 8 间距
 EdgeInsets.symmetric({ horizontal: 16, vertical: 8 })
 
-// Different spacing for each direction
+// 每个方向不同间距
 EdgeInsets.only({ top: 10, left: 20, right: 20, bottom: 30 })
 
-// Specify in LTRB order
+// 按 LTRB 顺序指定
 EdgeInsets.fromLTRB({ left: 10, top: 20, right: 10, bottom: 20 })
 ```
 
-### curve (optional)
-**Value: Curve** (default: **Curves.linear**)
+### curve（可选）
+**值：Curve**（默认值：**Curves.linear**）
 
-Specifies the animation progression curve. Available curves:
-- `Curves.linear`: Constant speed
-- `Curves.easeIn`: Slow start
-- `Curves.easeOut`: Slow end
-- `Curves.easeInOut`: Slow start and end
-- `Curves.circIn`: Circular acceleration start
-- `Curves.circOut`: Circular deceleration end
-- `Curves.circInOut`: Circular acceleration/deceleration
-- `Curves.backIn`: Goes back then starts
-- `Curves.backOut`: Overshoots target then returns
-- `Curves.backInOut`: backIn + backOut
-- `Curves.anticipate`: Anticipatory motion before proceeding
-- `Curves.bounceIn`: Bounces at start
-- `Curves.bounceOut`: Bounces at end
-- `Curves.bounceInOut`: Bounces at start/end
+指定动画进程曲线。可用曲线：
+- `Curves.linear`：匀速
+- `Curves.easeIn`：缓慢开始
+- `Curves.easeOut`：缓慢结束
+- `Curves.easeInOut`：缓慢开始和结束
+- `Curves.circIn`：圆形加速开始
+- `Curves.circOut`：圆形减速结束
+- `Curves.circInOut`：圆形加速/减速
+- `Curves.backIn`：先后退然后开始
+- `Curves.backOut`：超过目标然后返回
+- `Curves.backInOut`：backIn + backOut
+- `Curves.anticipate`：在继续之前的预期运动
+- `Curves.bounceIn`：开始时弹跳
+- `Curves.bounceOut`：结束时弹跳
+- `Curves.bounceInOut`：开始/结束时弹跳
 
-### child (optional)
-**Value: Widget | undefined**
+### child（可选）
+**值：Widget | undefined**
 
-The child widget to which padding will be applied.
+将应用内边距的子组件。
 
-### key (optional)
-**Value: any**
+### key（可选）
+**值：any**
 
-A unique identifier for the widget.
+组件的唯一标识符。
 
-## Real-world examples
+## 实际示例
 
-### Example 1: Foldable card
+### 示例 1：可折叠卡片
 
 ```typescript
 import { AnimatedPadding, Container, Card, EdgeInsets, Curves } from '@flitter/core';
@@ -166,7 +166,7 @@ class FoldableCardState extends State<FoldableCard> {
         children: [
           // Header
           ListTile({
-            title: Text("Foldable Card"),
+            title: Text("可折叠卡片"),
             trailing: Icon(
               this.isExpanded ? Icons.expand_less : Icons.expand_more
             ),
@@ -188,25 +188,24 @@ class FoldableCardState extends State<FoldableCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Detailed Content",
+                  "详细内容",
                   { style: TextStyle({ fontWeight: "bold", fontSize: 16 }) }
                 ),
                 SizedBox({ height: 8 }),
                 Text(
-                  "This card expands when clicked, and the internal content padding "
-                  "animates smoothly to appear naturally."
+                  "点击时此卡片会展开，内部内容的内边距会平滑动画，看起来很自然。"
                 ),
                 SizedBox({ height: 12 }),
                 Row({
                   children: [
                     ElevatedButton({
                       onPressed: () => {},
-                      child: Text("Action 1"),
+                      child: Text("操作 1"),
                     }),
                     SizedBox({ width: 8 }),
                     OutlinedButton({
                       onPressed: () => {},
-                      child: Text("Action 2"),
+                      child: Text("操作 2"),
                     }),
                   ],
                 }),
@@ -220,7 +219,7 @@ class FoldableCardState extends State<FoldableCard> {
 }
 ```
 
-### Example 2: Responsive margins
+### 示例 2：响应式边距
 
 ```typescript
 import { AnimatedPadding, Container, EdgeInsets, Curves } from '@flitter/core';
@@ -256,7 +255,7 @@ class ResponsiveMarginState extends State<ResponsiveMargin> {
           children: [
             ElevatedButton({
               onPressed: () => this.changeScreenSize("mobile"),
-              child: Text("Mobile"),
+              child: Text("手机"),
               style: ButtonStyle({
                 backgroundColor: this.screenSize === "mobile" ? "blue" : "gray",
               }),
@@ -264,7 +263,7 @@ class ResponsiveMarginState extends State<ResponsiveMargin> {
             SizedBox({ width: 8 }),
             ElevatedButton({
               onPressed: () => this.changeScreenSize("tablet"),
-              child: Text("Tablet"),
+              child: Text("平板"),
               style: ButtonStyle({
                 backgroundColor: this.screenSize === "tablet" ? "blue" : "gray",
               }),
@@ -272,7 +271,7 @@ class ResponsiveMarginState extends State<ResponsiveMargin> {
             SizedBox({ width: 8 }),
             ElevatedButton({
               onPressed: () => this.changeScreenSize("desktop"),
-              child: Text("Desktop"),
+              child: Text("桌面"),
               style: ButtonStyle({
                 backgroundColor: this.screenSize === "desktop" ? "blue" : "gray",
               }),
@@ -307,12 +306,12 @@ class ResponsiveMarginState extends State<ResponsiveMargin> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      `Current mode: ${this.screenSize}`,
+                      `当前模式: ${this.screenSize}`,
                       { style: TextStyle({ fontSize: 18, fontWeight: "bold" }) }
                     ),
                     SizedBox({ height: 8 }),
                     Text(
-                      `Padding: ${this.currentPadding.top}px`,
+                      `内边距: ${this.currentPadding.top}px`,
                       { style: TextStyle({ color: "gray" }) }
                     ),
                   ],
@@ -333,7 +332,7 @@ class ResponsiveMarginState extends State<ResponsiveMargin> {
 }
 ```
 
-### Example 3: Dynamic list item spacing
+### 示例 3：动态列表项目间距
 
 ```typescript
 import { AnimatedPadding, Container, ListView, EdgeInsets, Curves } from '@flitter/core';
@@ -347,11 +346,11 @@ class DynamicListSpacing extends StatefulWidget {
 class DynamicListSpacingState extends State<DynamicListSpacing> {
   isCompact = false;
   items = [
-    { title: "First Item", color: "#FF6B6B" },
-    { title: "Second Item", color: "#4ECDC4" },
-    { title: "Third Item", color: "#45B7D1" },
-    { title: "Fourth Item", color: "#96CEB4" },
-    { title: "Fifth Item", color: "#FFEAA7" },
+    { title: "第一项", color: "#FF6B6B" },
+    { title: "第二项", color: "#4ECDC4" },
+    { title: "第三项", color: "#45B7D1" },
+    { title: "第四项", color: "#96CEB4" },
+    { title: "第五项", color: "#FFEAA7" },
   ];
 
   build() {
@@ -364,7 +363,7 @@ class DynamicListSpacingState extends State<DynamicListSpacing> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "List Density",
+                "列表密度",
                 { style: TextStyle({ fontSize: 18, fontWeight: "bold" }) }
               ),
               Switch({
@@ -413,7 +412,7 @@ class DynamicListSpacingState extends State<DynamicListSpacing> {
 }
 ```
 
-### Example 4: Asymmetric padding animation
+### 示例 4：非对称内边距动画
 
 ```typescript
 import { AnimatedPadding, Container, EdgeInsets, Curves } from '@flitter/core';
@@ -461,7 +460,7 @@ class AsymmetricPaddingState extends State<AsymmetricPadding> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Asymmetric Padding",
+                    "非对称内边距",
                     { style: TextStyle({ color: "white", fontSize: 20, fontWeight: "bold" }) }
                   ),
                   SizedBox({ height: 8 }),
@@ -471,7 +470,7 @@ class AsymmetricPaddingState extends State<AsymmetricPadding> {
                   ),
                   SizedBox({ height: 16 }),
                   Text(
-                    "Tap for next padding",
+                    "点击切换内边距",
                     { style: TextStyle({ color: "white", fontSize: 12, opacity: 0.8 }) }
                   ),
                 ],
@@ -491,17 +490,17 @@ class AsymmetricPaddingState extends State<AsymmetricPadding> {
 }
 ```
 
-## Notes
+## 注意事项
 
-- Padding values cannot be negative
-- All properties of EdgeInsetsGeometry animate simultaneously
-- Very large padding values can impact performance
-- If a new padding value is set during animation, it smoothly transitions from the current value to the new value
-- Padding space is maintained even without child widgets
+- 内边距值不能为负数
+- EdgeInsetsGeometry 的所有属性同时动画
+- 过大的内边距值可能影响性能
+- 如果在动画期间设置新的内边距值，它会从当前值平滑过渡到新值
+- 即使没有子组件，内边距空间仍然会保持
 
-## Related widgets
+## 相关组件
 
-- **Padding**: Basic widget for setting padding without animation
-- **AnimatedContainer**: Animates multiple properties simultaneously
-- **AnimatedAlign**: Animates alignment transitions
-- **Container**: Versatile widget that can set both padding and margin simultaneously
+- **Padding**：用于设置内边距的基本组件，无动画
+- **AnimatedContainer**：同时动画化多个属性
+- **AnimatedAlign**：动画化对齐过渡
+- **Container**：可同时设置内边距和外边距的多功能组件

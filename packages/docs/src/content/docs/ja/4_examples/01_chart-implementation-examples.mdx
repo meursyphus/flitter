@@ -1,51 +1,51 @@
 ---
-nav_title: "Chart Implementation Examples"
-title: "Chart Implementation with headless-chart"
-description: "Learn how to create custom charts using Flitter and headless-chart"
+nav_title: "チャート実装例"
+title: "headless-chartを使用したチャート実装"
+description: "Flitterとheadless-chartを使用してカスタムチャートを作成する方法を学ぶ"
 ---
 
 import Charts01 from '$components/pages/docs/04_examples/charts01'
 import Charts02 from '$components/pages/docs/04_examples/charts02'
 
-## What is headless-chart?
+## headless-chartとは？
 
-`@meursyphus/headless-chart` is a UI-less chart library. It provides only data and logic, while the actual UI is implemented directly by developers using Flitter widgets. This enables creating fully customizable charts.
+`@meursyphus/headless-chart`はUIを持たないチャートライブラリです。データとロジックのみを提供し、実際のUIは開発者がFlitterウィジェットを使用して直接実装します。これにより、完全にカスタマイズ可能なチャートを作成できます。
 
 - **GitHub**: [https://github.com/meursyphus/headless-chart](https://github.com/meursyphus/headless-chart)
-- **Installation**: `npm install @meursyphus/headless-chart`
+- **インストール**: `npm install @meursyphus/headless-chart`
 
-## Core Concepts
+## コアコンセプト
 
-The core of headless-chart consists of **data structure** and **custom rendering functions**:
+headless-chartのコアは**データ構造**と**カスタムレンダリング関数**で構成されています：
 
-- **Data Structure**: Composed of labels and datasets
-- **Custom Functions**: Render each part of the chart (axes, ticks, bars, lines, etc.) as Flitter widgets
+- **データ構造**: ラベルとデータセットで構成
+- **カスタム関数**: チャートの各部分（軸、目盛り、バー、ラインなど）をFlitterウィジェットとしてレンダリング
 
-## Simple Bar Chart Example
+## シンプルなバーチャートの例
 
-Below is a custom bar chart created with headless-chart. It reproduces the Highcharts style using Flitter:
+以下はheadless-chartで作成したカスタムバーチャートです。Flitterを使用してHighchartsスタイルを再現しています：
 
 <Charts01 client:load />
 
-### Key Customization Points
+### 主要なカスタマイズポイント
 
-1. **Layout Customization**
-   - Define the overall chart structure with the `custom.layout` function
-   - Free element positioning with Stack and Positioned
+1. **レイアウトのカスタマイズ**
+   - `custom.layout`関数でチャート全体の構造を定義
+   - StackとPositionedで自由な要素配置
 
-2. **Axis Label Styling**
-   - Apply text styles with `custom.xAxisLabel` and `custom.yAxisLabel`
-   - Set font, size, and color as desired
+2. **軸ラベルのスタイリング**
+   - `custom.xAxisLabel`と`custom.yAxisLabel`でテキストスタイルを適用
+   - フォント、サイズ、色を自由に設定
 
-3. **Bar Design**
-   - Utilize Container and BoxDecoration in the `custom.bar` function
-   - Freely design colors, rounded corners, shadows, etc.
+3. **バーのデザイン**
+   - `custom.bar`関数でContainerとBoxDecorationを活用
+   - 色、角丸、シャドウなどを自由にデザイン
 
-4. **Legend Customization**
-   - Position the legend as a floating box inside the chart
-   - Add depth with BoxShadow
+4. **凡例のカスタマイズ**
+   - チャート内にフローティングボックスとして凡例を配置
+   - BoxShadowで深みを追加
 
-### Bar Chart Implementation Code Example
+### バーチャート実装コード例
 
 ```javascript
 const Bar = (...[{ legend, value }, { data }]) => {
@@ -81,20 +81,20 @@ const Bar = (...[{ legend, value }, { data }]) => {
 };
 ```
 
-In this code:
-- Draw bars using Flitter's Container and BoxDecoration
-- Position value text at the end of bars with FractionalTranslation
-- Apply different colors for each dataset
+このコードでは：
+- FlitterのContainerとBoxDecorationを使用してバーを描画
+- FractionalTranslationでバーの末端に値テキストを配置
+- 各データセットに異なる色を適用
 
-## Line Chart Example
+## ラインチャートの例
 
-Here's a Nivo-style line chart:
+こちらはNivoスタイルのラインチャートです：
 
 <Charts02 client:load />
 
-### Line Chart Customization
+### ラインチャートのカスタマイズ
 
-1. **Drawing Lines with CustomPaint**
+1. **CustomPaintでラインを描画**
    ```javascript
    custom.line: (...[{ values, index }, { scale }]) => {
      return CustomPaint({
@@ -104,27 +104,27 @@ Here's a Nivo-style line chart:
              const linePath = new Path();
              const pointPath = new Path();
              
-             // Calculate data points
+             // データポイントを計算
              const points = values.map((value, index) => {
                const y = height - (height * (value - scale.min)) / (scale.max - scale.min);
                const x = (index * width) / (values.length - 1);
                return { x, y };
              });
              
-             // Draw lines
+             // ラインを描画
              linePath.moveTo(points[0]);
              points.slice(1).forEach((point) => {
                linePath.lineTo(point);
              });
              
-             // Draw points
+             // ポイントを描画
              points.forEach((point) => {
                pointPath.addOval(
                  Rect.fromCircle({ center: new Offset(point), radius: 5 })
                );
              });
              
-             // Set SVG attributes
+             // SVG属性を設定
              line.setAttribute("fill", "none");
              line.setAttribute("stroke", colors[index]);
              line.setAttribute("stroke-width", "2");
@@ -141,33 +141,33 @@ Here's a Nivo-style line chart:
    }
    ```
 
-2. **Color Palette Usage**
-   - Apply different colors for each dataset
-   - Harmonize colors between lines and points
+2. **カラーパレットの使用**
+   - 各データセットに異なる色を適用
+   - ラインとポイントの色を調和
 
-3. **Layout Flexibility**
-   - Side-by-side arrangement of chart and legend with Row
-   - Responsive layout implementation with Flexible
+3. **レイアウトの柔軟性**
+   - Rowでチャートと凡例を並べて配置
+   - Flexibleでレスポンシブレイアウトを実装
 
-## Advantages of headless-chart
+## headless-chartの利点
 
-1. **Complete Customization**: Control all visual elements with Flitter widgets
-2. **Consistent Development Experience**: Use Flitter's widget system as-is
-3. **Performance Optimization**: Render only necessary parts
-4. **Reusability**: Easily reuse custom components
+1. **完全なカスタマイズ**: Flitterウィジェットですべての視覚要素を制御
+2. **一貫した開発体験**: Flitterのウィジェットシステムをそのまま使用
+3. **パフォーマンス最適化**: 必要な部分のみレンダリング
+4. **再利用性**: カスタムコンポーネントを簡単に再利用
 
-## How to Use headless-chart
+## headless-chartの使い方
 
-### 1. Installation
+### 1. インストール
 ```bash
 npm install @meursyphus/headless-chart
 ```
 
-### 2. Basic Usage
+### 2. 基本的な使用法
 ```javascript
 import { BarChart, LineChart } from "@meursyphus/headless-chart";
 
-// Define data
+// データを定義
 const data = {
   labels: ["A", "B", "C", "D"],
   datasets: [
@@ -178,33 +178,33 @@ const data = {
   ],
 };
 
-// Create chart
+// チャートを作成
 const chart = BarChart({
   data,
   custom: {
-    // Customize each element with Flitter widgets
+    // Flitterウィジェットで各要素をカスタマイズ
     bar: (...args) => Container({ /* ... */ }),
     xAxisLabel: (...args) => Text(/* ... */),
-    // ... other customizations
+    // ... その他のカスタマイズ
   },
 });
 ```
 
-### 3. Supported Chart Types
-- **BarChart**: Bar charts (vertical/horizontal)
-- **LineChart**: Line charts
-- **PieChart**: Pie charts
-- **ScatterChart**: Scatter plot charts
+### 3. サポートされているチャートタイプ
+- **BarChart**: バーチャート（縦/横）
+- **LineChart**: ラインチャート
+- **PieChart**: 円グラフ
+- **ScatterChart**: 散布図
 
-## Next Steps
+## 次のステップ
 
-- Implementing more complex chart types (Pie, Scatter, Area, etc.)
-- Adding animations
-- Implementing interactive features (tooltips, zoom, pan, etc.)
-- Real-time data updates
+- より複雑なチャートタイプの実装（円グラフ、散布図、エリアチャートなど）
+- アニメーションの追加
+- インタラクティブ機能の実装（ツールチップ、ズーム、パンなど）
+- リアルタイムデータ更新
 
-## References
+## 参考資料
 
 - [headless-chart GitHub](https://github.com/meursyphus/headless-chart)
-- [Flitter Documentation](/docs/getting-started/introduction)
-- [CustomPaint Widget Guide](/docs/advanced-usage/custom-paint로-쉽게-그리기)
+- [Flitterドキュメント](/docs/getting-started/introduction)
+- [CustomPaintウィジェットガイド](/docs/advanced-usage/custom-paintで簡単に描画)

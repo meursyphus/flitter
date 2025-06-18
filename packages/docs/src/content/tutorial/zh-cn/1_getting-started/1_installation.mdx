@@ -1,6 +1,6 @@
 ---
-title: "Installation and Environment Setup"
-description: "Set up your environment for Flitter development and start your first project"
+title: "安装与环境设置"
+description: "为 Flitter 开发设置您的环境并开始您的第一个项目"
 files:
   App.js: |
     import React from 'react';
@@ -18,13 +18,13 @@ files:
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('Get started with Flitter installation!', {
+              Text('开始 Flitter 安装！', {
                 style: new TextStyle({
                   fontSize: 24,
                   fontWeight: 'bold'
                 })
               }),
-              Text('Follow the steps below to install and set up Flitter.', {
+              Text('按照以下步骤安装和设置 Flitter。', {
                 style: new TextStyle({
                   fontSize: 14,
                   color: '#6b7280'
@@ -57,7 +57,7 @@ solved_files:
           color: '#e3f2fd',
           padding: EdgeInsets.all(20),
           child: Center({
-            child: Text('🎉 Flitter Installation Complete!', {
+            child: Text('🎉 Flitter 安装完成！', {
               style: new TextStyle({
                 fontSize: 20,
                 fontWeight: 'bold'
@@ -77,101 +77,101 @@ solved_files:
     }
 ---
 
-# Installation and Environment Setup
+# 安装与环境设置
 
-This is a step-by-step installation guide for those who are new to Flitter. After completing this tutorial, you'll be able to use Flitter in React projects.
+这是为 Flitter 新手准备的分步安装指南。完成本教程后，您将能够在 React 项目中使用 Flitter。
 
-## 🎯 Learning Objectives
+## 🎯 学习目标
 
-After completing this tutorial, you'll be able to:
+完成本教程后，您将能够：
 
-- [ ] Verify that Node.js and npm environment are properly set up
-- [ ] Create a new React project
-- [ ] Install Flitter packages
-- [ ] Render your first Flitter widget
-- [ ] Run the development server and see the results
+- [ ] 验证 Node.js 和 npm 环境是否正确设置
+- [ ] 创建新的 React 项目
+- [ ] 安装 Flitter 包
+- [ ] 渲染您的第一个 Flitter 组件
+- [ ] 运行开发服务器并查看结果
 
-## 📋 Prerequisites
+## 📋 先决条件
 
-- **Node.js 18 or higher** - Download from [Node.js official site](https://nodejs.org/)
-- **npm, yarn, or pnpm** - Automatically installed with Node.js
-- **Basic React knowledge** - Understanding of JSX and component concepts
+- **Node.js 18 或更高版本** - 从 [Node.js 官方网站](https://nodejs.org/) 下载
+- **npm、yarn 或 pnpm** - 随 Node.js 自动安装
+- **基础 React 知识** - 了解 JSX 和组件概念
 
-## 🚀 Step 1: Environment Check
+## 🚀 步骤 1：环境检查
 
-First, let's verify that your development environment is properly set up.
+首先，让我们验证您的开发环境是否正确设置。
 
-Open a terminal and run the following commands:
+打开终端并运行以下命令：
 
 ```bash
-# Check Node.js version (should be 18 or higher)
+# 检查 Node.js 版本（应为 18 或更高）
 node --version
 
-# Check npm version
+# 检查 npm 版本
 npm --version
 ```
 
-Expected output:
+预期输出：
 ```
 v20.10.0
 10.2.3
 ```
 
-> ⚠️ **If your Node.js version is below 18?**  
-> Please install the latest LTS version from [Node.js official site](https://nodejs.org/).
+> ⚠️ **如果您的 Node.js 版本低于 18？**  
+> 请从 [Node.js 官方网站](https://nodejs.org/) 安装最新的 LTS 版本。
 
-## 🏗️ Step 2: Create New Project
+## 🏗️ 步骤 2：创建新项目
 
-Create a new React project using Vite:
+使用 Vite 创建新的 React 项目：
 
 ```bash
-# Create new project
+# 创建新项目
 npm create vite@latest my-flitter-app -- --template react
 
-# Navigate to project folder
+# 导航到项目文件夹
 cd my-flitter-app
 
-# Install basic dependencies
+# 安装基础依赖
 npm install
 ```
 
-## 📦 Step 3: Install Flitter Packages
+## 📦 步骤 3：安装 Flitter 包
 
-Now install the Flitter-related packages:
+现在安装 Flitter 相关包：
 
 ```bash
-# Install Flitter core package and React integration package
+# 安装 Flitter 核心包和 React 集成包
 npm install @meursyphus/flitter @meursyphus/flitter-react
 ```
 
-Packages being installed:
-- `@meursyphus/flitter`: Flitter core library
-- `@meursyphus/flitter-react`: Component for React integration
+正在安装的包：
+- `@meursyphus/flitter`：Flitter 核心库
+- `@meursyphus/flitter-react`：React 集成组件
 
-## 🔧 Step 4: Create Your First Flitter Widget
+## 🔧 步骤 4：创建您的第一个 Flitter 组件
 
-Now let's modify the `src/App.jsx` file to create your first Flitter widget.
+现在让我们修改 `src/App.jsx` 文件来创建您的第一个 Flitter 组件。
 
-### TODO: Complete the Code
+### TODO：完成代码
 
-Complete the `TODO` sections in the code below:
+完成下面代码中的 `TODO` 部分：
 
 ```jsx
 import React from 'react';
-// TODO: Import the Widget component
-// TODO: Import Container and Text widgets
+// TODO: 导入 Widget 组件
+// TODO: 导入 Container 和 Text 组件
 
 function App() {
-  // TODO: Create a Container widget
-  // Hint: Container with blue background (#e3f2fd) and 20px padding
-  // Hint: Include "🎉 Flitter Installation Complete!" text
+  // TODO: 创建一个 Container 组件
+  // 提示：带蓝色背景 (#e3f2fd) 和 20px 内边距的 Container
+  // 提示：包含 "🎉 Flitter 安装完成！" 文本
   const widget = null;
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Flitter Installation Success!</h1>
-      {/* TODO: Render the widget using Widget component */}
-      {/* Hint: Use canvas renderer, 300x100 size */}
+      <h1>Flitter 安装成功！</h1>
+      {/* TODO: 使用 Widget 组件渲染组件 */}
+      {/* 提示：使用 canvas 渲染器，300x100 尺寸 */}
     </div>
   );
 }
@@ -179,7 +179,7 @@ function App() {
 export default App;
 ```
 
-### Complete Code
+### 完整代码
 
 ```jsx
 import React from 'react';
@@ -190,12 +190,12 @@ function App() {
   const widget = Container({
     color: '#e3f2fd',
     padding: { all: 20 },
-    child: Text('🎉 Flitter Installation Complete!')
+    child: Text('🎉 Flitter 安装完成！')
   });
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Flitter Installation Success!</h1>
+      <h1>Flitter 安装成功！</h1>
       <Widget 
         widget={widget}
         renderer="canvas"
@@ -213,76 +213,76 @@ function App() {
 export default App;
 ```
 
-## 🏃 Step 5: Run Development Server
+## 🏃 步骤 5：运行开发服务器
 
-Now run the development server to see the results:
+现在运行开发服务器查看结果：
 
 ```bash
 npm run dev
 ```
 
-Open `http://localhost:5173` in your browser and you should see:
+在浏览器中打开 `http://localhost:5173`，您应该看到：
 
-- "Flitter Installation Success!" title
-- A box with blue background containing "🎉 Flitter Installation Complete!" text
+- "Flitter 安装成功！" 标题
+- 一个带有蓝色背景的框，包含 "🎉 Flitter 安装完成！" 文本
 
-## 🎯 Expected Results
+## 🎯 预期结果
 
-If the installation is successfully completed:
+如果安装成功完成：
 
-1. **Development server runs normally**: Terminal shows "Local: http://localhost:5173"
-2. **Flitter widget renders**: Blue background box appears on screen
-3. **No console errors**: No error messages in browser developer tools
+1. **开发服务器正常运行**：终端显示 "Local: http://localhost:5173"
+2. **Flitter 组件渲染**：屏幕上出现蓝色背景框
+3. **无控制台错误**：浏览器开发者工具中无错误消息
 
-## 🔧 Practice Problems
+## 🔧 练习题
 
-If you've completed the basic installation, try the following:
+如果您已完成基础安装，请尝试以下练习：
 
-### Exercise 1: Change Colors
-Change the Container's `color` property to different colors:
-- `'#ffebee'` (light red)
-- `'#f3e5f5'` (light purple)
-- `'#e8f5e8'` (light green)
+### 练习 1：更改颜色
+将 Container 的 `color` 属性更改为不同的颜色：
+- `'#ffebee'`（浅红色）
+- `'#f3e5f5'`（浅紫色）
+- `'#e8f5e8'`（浅绿色）
 
-### Exercise 2: Change Text
-Change the Text widget content to your own message.
+### 练习 2：更改文本
+将 Text 组件内容更改为您自己的消息。
 
-### Exercise 3: Adjust Size
-Change the `width` and `height` values in the Widget component's `style` property.
+### 练习 3：调整尺寸
+更改 Widget 组件 `style` 属性中的 `width` 和 `height` 值。
 
-## 🚨 Common Mistakes and Solutions
+## 🚨 常见问题和解决方案
 
-### Problem 1: Module not found error
+### 问题 1：模块未找到错误
 ```
 Error: Cannot resolve module '@meursyphus/flitter'
 ```
 
-**Solution**: Verify packages are properly installed:
+**解决方案**：验证包是否正确安装：
 ```bash
 npm install @meursyphus/flitter @meursyphus/flitter-react
 ```
 
-### Problem 2: Blank screen appears
-**Cause**: Widget not properly created or not passed to Widget component
+### 问题 2：出现空白屏幕
+**原因**：组件未正确创建或未传递给 Widget 组件
 
-**Solution**: 
-- Check that `widget` variable is not `null`
-- Verify that `widget` prop is passed to Widget component
+**解决方案**：
+- 检查 `widget` 变量不是 `null`
+- 验证 `widget` 属性已传递给 Widget 组件
 
-### Problem 3: Node.js version error
+### 问题 3：Node.js 版本错误
 ```
 Error: Node.js version 16.x is not supported
 ```
 
-**Solution**: Update to Node.js 18 or higher.
+**解决方案**：更新到 Node.js 18 或更高版本。
 
-## 🚀 Next Steps
+## 🚀 下一步
 
-If installation is complete, let's move on to create more complex widgets in the next tutorial:
+如果安装完成，让我们在下一个教程中创建更复杂的组件：
 
-- **Next**: [Your First Flitter App](./2_hello-world) - Learn more complex widget structures
-- **Related docs**: [Widget Basics](../3_widget-interface-basics/1_what-are-widgets) - Learn widget concepts in detail
+- **下一篇**：[您的第一个 Flitter 应用](./2_hello-world) - 学习更复杂的组件结构
+- **相关文档**：[组件基础](../3_widget-interface-basics/1_what-are-widgets) - 详细了解组件概念
 
-> 📚 **Need more detailed information?**  
-> For all framework-specific installation methods and advanced settings,
-> see the [Installation Documentation](/docs/en/getting-started/installation/).
+> 📚 **需要更多详细信息？**  
+> 有关所有框架特定的安装方法和高级设置，
+> 请参阅[安装文档](/docs/zh-cn/getting-started/installation/)。

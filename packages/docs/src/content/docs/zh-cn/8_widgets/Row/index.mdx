@@ -3,54 +3,54 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Row
 title: "Row"
-description: "A layout widget that arranges its children horizontally"
+description: "水平排列其子组件的布局组件"
 ---
 
-## Overview
+## 概述
 
-Row is a layout widget that arranges its children in a horizontal direction.
+Row 是一个将其子组件水平排列的布局组件。
 
-Row is a convenience wrapper around the Flex widget with the direction fixed to horizontal. It's used to place multiple widgets side by side and provides various alignment options. By default, Row takes up all available horizontal space, but you can adjust `mainAxisSize` to only take up as much space as needed.
+Row 是 Flex 组件的便利包装器，方向固定为水平。它用于将多个组件并排放置，并提供各种对齐选项。默认情况下，Row 占用所有可用的水平空间，但您可以调整 `mainAxisSize` 以仅占用所需的空间。
 
-## When to use it?
+## 何时使用？
 
-- When arranging buttons, icons, or text horizontally
-- When creating navigation bars or toolbars
-- When placing form fields and labels side by side
-- When structuring horizontal layouts for cards or list items
-- When displaying icons alongside text
+- 当水平排列按钮、图标或文本时
+- 当创建导航栏或工具栏时
+- 当将表单字段和标签并排放置时
+- 当为卡片或列表项构建水平布局时
+- 当在文本旁边显示图标时
 
-## Basic Usage
+## 基本用法
 
 ```typescript
-// Simple example
+// 简单示例
 const row = Row({
   children: [
-    Text('First'),
-    Text('Second'),
-    Text('Third')
+    Text('第一个'),
+    Text('第二个'),
+    Text('第三个')
   ]
 });
 
-// Using alignment options
+// 使用对齐选项
 const alignedRow = Row({
   mainAxisAlignment: MainAxisAlignment.spaceBetween,
   crossAxisAlignment: CrossAxisAlignment.start,
   children: [
     Icon({ icon: Icons.home }),
-    Text('Home'),
+    Text('首页'),
     Icon({ icon: Icons.settings })
   ]
 });
 ```
 
-## Props
+## 属性
 
-### children (required)
+### children（必需）
 
-**Value: Widget[]**
+**值: Widget[]**
 
-An array of child widgets to display in the Row. They are arranged from left to right in array order.
+要在 Row 中显示的子组件数组。它们按数组顺序从左到右排列。
 
 ```typescript
 Row({
@@ -64,19 +64,19 @@ Row({
 
 ### mainAxisAlignment
 
-**Value: MainAxisAlignment** (default: **MainAxisAlignment.start**)
+**值: MainAxisAlignment**（默认值: **MainAxisAlignment.start**）
 
-Defines the horizontal alignment of child widgets.
+定义子组件的水平对齐。
 
-- **start**: Left alignment (default)
-- **end**: Right alignment
-- **center**: Center alignment
-- **spaceBetween**: Place first and last widgets at edges, distribute remaining space evenly
-- **spaceAround**: Distribute equal space around each widget
-- **spaceEvenly**: Distribute equal space between all widgets and edges
+- **start**: 左对齐（默认）
+- **end**: 右对齐
+- **center**: 居中对齐
+- **spaceBetween**: 将第一个和最后一个组件放在边缘，平均分配剩余空间
+- **spaceAround**: 在每个组件周围分配相等空间
+- **spaceEvenly**: 在所有组件和边缘之间分配相等空间
 
 ```typescript
-// Center alignment
+// 居中对齐
 Row({
   mainAxisAlignment: MainAxisAlignment.center,
   children: [
@@ -86,26 +86,26 @@ Row({
   ]
 })
 
-// Space between
+// 间距分布
 Row({
   mainAxisAlignment: MainAxisAlignment.spaceBetween,
   children: [
-    Text('Left'),
-    Text('Right')
+    Text('左'),
+    Text('右')
   ]
 })
 ```
 
 ### crossAxisAlignment
 
-**Value: CrossAxisAlignment** (default: **CrossAxisAlignment.center**)
+**值: CrossAxisAlignment**（默认值: **CrossAxisAlignment.center**）
 
-Defines the vertical alignment of child widgets.
+定义子组件的垂直对齐。
 
-- **start**: Top alignment
-- **end**: Bottom alignment
-- **center**: Vertical center alignment (default)
-- **stretch**: Stretch to fill available vertical space
+- **start**: 顶部对齐
+- **end**: 底部对齐
+- **center**: 垂直居中对齐（默认）
+- **stretch**: 拉伸以填满可用的垂直空间
 
 ```typescript
 Row({
@@ -120,21 +120,21 @@ Row({
 
 ### mainAxisSize
 
-**Value: MainAxisSize** (default: **MainAxisSize.max**)
+**值: MainAxisSize**（默认值: **MainAxisSize.max**）
 
-Controls the amount of horizontal space the Row takes up.
+控制 Row 占用的水平空间量。
 
-- **max**: Take up all available horizontal space (default)
-- **min**: Take up only the minimum space needed by children
+- **max**: 占用所有可用的水平空间（默认）
+- **min**: 仅占用子组件所需的最小空间
 
 ```typescript
-// Take up only necessary space
+// 仅占用必要空间
 Container({
   color: 'lightgray',
   child: Row({
     mainAxisSize: MainAxisSize.min,
     children: [
-      Text('Compact'),
+      Text('紧凑'),
       Icon({ icon: Icons.star })
     ]
   })
@@ -143,18 +143,18 @@ Container({
 
 ### verticalDirection
 
-**Value: VerticalDirection** (default: **VerticalDirection.down**)
+**值: VerticalDirection**（默认值: **VerticalDirection.down**）
 
-Defines the vertical layout order of child widgets.
+定义子组件的垂直布局顺序。
 
-- **down**: From top to bottom (default)
-- **up**: From bottom to top
+- **down**: 从上到下（默认）
+- **up**: 从下到上
 
-This property is mainly used in conjunction with `crossAxisAlignment`.
+此属性主要与 `crossAxisAlignment` 一起使用。
 
-## Advanced Usage
+## 高级用法
 
-### Using with Expanded
+### 与 Expanded 一起使用
 
 ```typescript
 Row({
@@ -166,10 +166,10 @@ Row({
     Container({ width: 50, height: 50, color: 'blue' })
   ]
 })
-// The green Container takes up all remaining space
+// 绿色 Container 占用所有剩余空间
 ```
 
-### Responsive Layout
+### 响应式布局
 
 ```typescript
 Row({
@@ -189,12 +189,12 @@ Row({
     })
   ]
 })
-// Red takes 50%, green and blue each take 25%
+// 红色占 50%，绿色和蓝色各占 25%
 ```
 
-## Practical Examples
+## 实际示例
 
-### Example 1: Navigation Bar
+### 示例 1：导航栏
 
 ```typescript
 const navbar = Container({
@@ -208,7 +208,7 @@ const navbar = Container({
         children: [
           Icon({ icon: Icons.menu }),
           SizedBox({ width: 16 }),
-          Text('My App', { style: TextStyle({ fontSize: 20, fontWeight: 'bold' }) })
+          Text('我的应用', { style: TextStyle({ fontSize: 20, fontWeight: 'bold' }) })
         ]
       }),
       Row({
@@ -224,7 +224,7 @@ const navbar = Container({
 });
 ```
 
-### Example 2: Form Field
+### 示例 2：表单字段
 
 ```typescript
 const formField = Container({
@@ -234,12 +234,12 @@ const formField = Container({
     children: [
       Container({
         width: 100,
-        child: Text('Name:', { style: TextStyle({ fontWeight: 'bold' }) })
+        child: Text('姓名:', { style: TextStyle({ fontWeight: 'bold' }) })
       }),
       Expanded({
         child: TextField({
           decoration: InputDecoration({
-            hintText: 'Enter your name',
+            hintText: '请输入您的姓名',
             border: OutlineInputBorder()
           })
         })
@@ -249,7 +249,7 @@ const formField = Container({
 });
 ```
 
-### Example 3: Card Layout
+### 示例 3：卡片布局
 
 ```typescript
 const card = Container({
@@ -281,8 +281,8 @@ const card = Container({
         child: Column({
           crossAxisAlignment: 'start',
           children: [
-            Text('Title', { style: TextStyle({ fontSize: 16, fontWeight: 'bold' }) }),
-            Text('Subtitle', { style: TextStyle({ color: 'gray' }) })
+            Text('标题', { style: TextStyle({ fontSize: 16, fontWeight: 'bold' }) }),
+            Text('子标题', { style: TextStyle({ color: 'gray' }) })
           ]
         })
       }),
@@ -292,18 +292,18 @@ const card = Container({
 });
 ```
 
-## Important Notes
+## 重要说明
 
-- If child widgets exceed horizontal space, an overflow error occurs. Use `Flexible` or `Expanded` in such cases.
-- When using `crossAxisAlignment.stretch`, child widgets can expand infinitely if their height is unconstrained.
-- Row doesn't support scrolling. Use with `SingleChildScrollView` if scrolling is needed.
-- Use the `Column` widget for vertical layouts.
+- 如果子组件超出水平空间，会发生溢出错误。在这种情况下使用 `Flexible` 或 `Expanded`。
+- 使用 `crossAxisAlignment.stretch` 时，如果子组件的高度没有约束，它们可能会无限扩展。
+- Row 不支持滚动。如果需要滚动，请与 `SingleChildScrollView` 一起使用。
+- 使用 `Column` 组件进行垂直布局。
 
-## Related Widgets
+## 相关组件
 
-- **Column**: Arranges children vertically
-- **Flex**: More flexible layout widget that Row and Column are based on
-- **Wrap**: Automatically wraps to next line when space is insufficient
-- **Stack**: Overlays children on top of each other
-- **Expanded**: Takes up remaining space within a Row
-- **Flexible**: Allows flexible sizing within a Row
+- **Column**: 垂直排列子组件
+- **Flex**: Row 和 Column 基于的更灵活的布局组件
+- **Wrap**: 当空间不足时自动换行
+- **Stack**: 将子组件叠放在一起
+- **Expanded**: 在 Row 内占用剩余空间
+- **Flexible**: 允许在 Row 内灵活调整尺寸
