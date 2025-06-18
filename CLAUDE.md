@@ -28,61 +28,21 @@ shared/               # Shared diagram components
 
 ## Development Commands
 
-### Core Development
 ```bash
 # Build core library
 npm run flitter:build
 
-# Lint core library
-cd packages/flitter && npm run lint
+# Documentation
+npm run docs:start      # Start dev server
+npm run docs:build      # Build site
 
-# Format code
-cd packages/flitter && npm run format
-```
+# Storybook
+npm run story:start     # Start Storybook
+npm run story:build     # Build Storybook
 
-### Documentation
-```bash
-# Start documentation dev server
-npm run docs:start
-
-# Build documentation site
-npm run docs:build
-
-# Build Lunaria localization dashboard
-npm run lunaria:build
-
-# Preview Lunaria dashboard
-npm run lunaria:preview
-```
-
-### Testing
-```bash
-# Run tests in development mode
-npm run test:dev
-
-# Run integration tests with Playwright
-npm run test:playwright
-
-# Run specific test suite
-cd packages/test && npm run test:integration
-
-# Run unit tests
-cd packages/test && npm run test:unit
-
-# Run a single test file
-cd packages/test && npx playwright test tests/specific-test.test.ts
-```
-
-### Storybook
-```bash
-# Start Storybook dev server
-npm run story:start
-
-# Build Storybook
-npm run story:build
-
-# Deploy to Chromatic (visual regression)
-npm run story:chromatic
+# Testing
+npm run test:dev        # Run tests in dev mode
+npm run test:playwright # Run integration tests
 ```
 
 ## Code Patterns
@@ -101,10 +61,6 @@ class MyRenderWidget extends SingleChildRenderObjectWidget {
   createRenderObject(): RenderObject {
     return new MyRenderObject();
   }
-  
-  updateRenderObject(renderObject: MyRenderObject): void {
-    // Update render object properties
-  }
 }
 ```
 
@@ -115,15 +71,6 @@ class MyWidget extends StatefulWidget {
     return new MyWidgetState();
   }
 }
-
-class MyWidgetState extends State<MyWidget> {
-  // State variables as class properties
-  myState = initialValue;
-  
-  build(context: BuildContext): Widget {
-    return Container({ /* ... */ });
-  }
-}
 ```
 
 ## Key Development Areas
@@ -131,66 +78,19 @@ class MyWidgetState extends State<MyWidget> {
 - **Widget Development**: `packages/flitter/src/component/`
 - **Render Objects**: `packages/flitter/src/renderobject/`
 - **Animation System**: `packages/flitter/src/animation/`
-- **Type Definitions**: `packages/flitter/src/type/`
-- **Core Engine**: `packages/flitter/src/framework/`
 - **Tests**: `packages/test/tests/`
 - **Documentation**: `packages/docs/src/content/`
-- **Shared Components**: `shared/`
 
 ## Testing & Quality
 
-### Test Structure
-- **Integration Tests**: `packages/test/tests/` - Playwright-based UI tests
-- **Performance Tests**: `packages/test/tests/tracking-performance.test.ts`
-- **Visual Tests**: Storybook with Chromatic integration
-- **Performance History**: `packages/test/performance-history/`
-
-### Quality Tools
-- **TypeScript**: Strict mode enabled
-- **ESLint**: Configured with TypeScript rules
-- **Prettier**: Auto-formatting with pre-commit hooks
-- **Husky**: Git hooks for quality checks
-- **DeepSource**: Code quality analysis
-
-### Writing Tests
-```typescript
-// Integration test example
-import { test, expect } from '@playwright/test';
-
-test('widget interaction', async ({ page }) => {
-  await page.goto('/test-route');
-  await page.click('[data-testid="button"]');
-  await expect(page.locator('[data-testid="result"]')).toBeVisible();
-});
-```
-
-## Build System
-
-### Core Library Build
-- **Bundler**: tsup (TypeScript bundler)
-- **Output**: CommonJS and ESM formats
-- **Types**: Generated .d.ts files
-
-### Documentation Build
-- **Framework**: Astro
-- **Styling**: Tailwind CSS
-- **Content**: MDX files with components
-
-### Package Publishing
-```bash
-# Build and prepare for publishing
-cd packages/flitter
-npm run build
-cd dist
-npm publish
-```
+- Write integration tests in `packages/test/tests/`
+- Add Storybook stories for visual components
+- Performance benchmarks tracked in `packages/test/performance-history/`
+- Use TypeScript strict mode
 
 ## Localization
 
-The project supports 14 languages using Lunaria:
-- Documentation is localized in `packages/docs/src/content/[lang]/`
-- Lunaria dashboard tracks translation progress
-- Use `npm run lunaria:build` to update the dashboard
+The project supports 14 languages using Lunaria. Documentation is localized in respective language folders under `packages/docs/src/content/`.
 
 ## Important Documentation Guidelines
 
@@ -377,43 +277,3 @@ import type { BuildContext } from "../element";
 import type { Widget } from "../widget";
 import type { RenderObject } from "../renderobject";
 ```
-
-## Performance Optimization
-
-### Key Considerations
-- Use `const` constructors where possible
-- Implement `shouldRepaint` in custom painters
-- Use keys for list items to optimize reconciliation
-- Profile with Chrome DevTools Performance tab
-
-### Performance Testing
-```bash
-# Run performance benchmarks
-cd packages/test
-npx playwright test tracking-performance.test.ts
-
-# Results stored in performance-history/
-```
-
-## CI/CD Workflow
-
-### GitHub Actions
-- **Playwright Tests**: Run on every PR
-- **Chromatic Deployment**: Visual regression on main branch
-- **Documentation Build**: Deploy to production on release
-
-### Pre-commit Hooks
-- Prettier formatting via lint-staged
-- Runs on staged files matching: `packages/**/*.{astro,js,jsx,ts,tsx,svelte,mdx}`
-
-## Debugging Tips
-
-### Development Tools
-- Use Chrome DevTools for performance profiling
-- Enable React DevTools for widget tree inspection
-- Use `console.log` in render methods to trace rendering
-
-### Common Issues
-- **Widget not updating**: Check setState() usage
-- **Layout issues**: Verify constraints propagation
-- **Performance**: Profile render object paint methods
