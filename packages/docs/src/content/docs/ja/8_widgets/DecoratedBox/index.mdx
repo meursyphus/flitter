@@ -3,31 +3,31 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: DecoratedBox
 title: "DecoratedBox"
-description: "A widget that adds background decoration to a child widget"
+description: "子ウィジェットに背景装飾を追加するウィジェット"
 ---
 
-## Overview
+## 概要
 
-`DecoratedBox` is a widget that paints decorations (background color, border, shadow, etc.) behind its child widget. Inspired by Flutter's DecoratedBox, it's used to add visual styling to widgets.
+`DecoratedBox`は、子ウィジェットの背後に装飾（背景色、境界線、影など）を描画するウィジェットです。FlutterのDecoratedBoxにインスパイアされており、ウィジェットにビジュアルスタイリングを追加するために使用されます。
 
-The `Container` widget internally uses DecoratedBox when a decoration property is provided. If you only need decoration without other layout properties, using DecoratedBox directly is more efficient.
+`Container`ウィジェットは、decorationプロパティが提供されたときに内部的にDecoratedBoxを使用します。他のレイアウトプロパティが不要で装飾のみが必要な場合は、DecoratedBoxを直接使用する方が効率的です。
 
 See: [https://api.flutter.dev/flutter/widgets/DecoratedBox-class.html](https://api.flutter.dev/flutter/widgets/DecoratedBox-class.html)
 
-## When to Use?
+## 使用場面
 
-- When adding background color or gradients to widgets
-- When you need to draw borders
-- When creating rounded corners (border radius)
-- When adding shadow effects
-- When clipping is needed in circular or rectangular shapes
+- ウィジェットに背景色やグラデーションを追加する場合
+- 境界線を描画する必要がある場合
+- 角の丸み（境界線の半径）を作成する場合
+- 影の効果を追加する場合
+- 円形や矩形のクリッピングが必要な場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
 import { DecoratedBox, BoxDecoration } from 'flitter';
 
-// Basic background color
+// 基本的な背景色
 const ColoredBox = DecoratedBox({
   decoration: new BoxDecoration({
     color: '#3498db'
@@ -35,7 +35,7 @@ const ColoredBox = DecoratedBox({
   child: SizedBox({ width: 100, height: 100 })
 });
 
-// Border with rounded corners
+// 角丸の境界線
 const RoundedBox = DecoratedBox({
   decoration: new BoxDecoration({
     color: 'white',
@@ -49,10 +49,10 @@ const RoundedBox = DecoratedBox({
 });
 ```
 
-## Props
+## プロパティ
 
-### decoration (required)
-**Value: Decoration (BoxDecoration)**
+### decoration（必須）
+**値: Decoration (BoxDecoration)**
 
 Defines the decoration to apply to the widget. Currently only `BoxDecoration` is supported.
 
@@ -64,14 +64,14 @@ Defines the decoration to apply to the widget. Currently only `BoxDecoration` is
 - **boxShadow**: `BoxShadow[]` - Array of shadow effects
 - **shape**: `"rectangle" | "circle"` - Shape (default: "rectangle")
 
-### child (optional)
-**Value: Widget**
+### child（オプション）
+**値: Widget**
 
 The child widget to be displayed on top of the decoration. The decoration is always painted behind the child.
 
-## Real-World Examples
+## 実践的な例
 
-### Example 1: Various Background Colors and Shapes
+### 例1: 様々な背景色と形状
 
 ```typescript
 import { DecoratedBox, BoxDecoration, SizedBox, Row } from 'flitter';
@@ -107,7 +107,7 @@ const ColorExamples = Row({
 });
 ```
 
-### Example 2: Border Styling
+### 例2: 境界線のスタイリング
 
 ```typescript
 import { DecoratedBox, BoxDecoration, Border, BorderRadius } from 'flitter';
@@ -160,7 +160,7 @@ const BorderExamples = Column({
 });
 ```
 
-### Example 3: Shadow Effects
+### 例3: 影の効果
 
 ```typescript
 import { DecoratedBox, BoxDecoration, BoxShadow, Offset } from 'flitter';
@@ -191,7 +191,7 @@ const ShadowExample = DecoratedBox({
 });
 ```
 
-### Example 4: Complex Card Design
+### 例4: 複雑なカードデザイン
 
 ```typescript
 import { DecoratedBox, BoxDecoration, Column, Row } from 'flitter';
@@ -249,7 +249,7 @@ const Card = ({ title, content, color }) => DecoratedBox({
 });
 ```
 
-### Example 5: Using with Animation
+### 例5: アニメーションとの組み合わせ
 
 ```typescript
 import { AnimatedContainer, BoxDecoration } from 'flitter';
@@ -297,7 +297,7 @@ class AnimatedDecorationState extends State {
 }
 ```
 
-## Best Practices
+## ベストプラクティス
 
 - When using `shape: 'circle'`, the child widget should have equal width and height for a perfect circle
 - `borderRadius` only applies when `shape: 'rectangle'`
@@ -305,7 +305,7 @@ class AnimatedDecorationState extends State {
 - Consider `CustomPaint` for complex decorations
 - `Container` widget also supports decoration, so use Container if you need additional layout properties
 
-## Related Widgets
+## 関連ウィジェット
 
 - **Container**: When you need decoration along with padding, margin, and other layout properties
 - **ClipRRect**: When you only need to clip with rounded corners

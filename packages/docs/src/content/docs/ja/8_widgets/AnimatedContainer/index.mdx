@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: AnimatedContainer
 title: "AnimatedContainer"
-description: "An animated container that smoothly transitions its properties over time"
+description: "プロパティの変更を時間をかけてスムーズに遷移させるアニメーションコンテナ"
 ---
 
-## Overview
+## 概要
 
-AnimatedContainer is an animated version of Container that automatically applies animations when property values change.
+AnimatedContainerは、プロパティ値が変更された際に自動的にアニメーションを適用するContainerのアニメーション版です。
 
-AnimatedContainer automatically animates between the old and new values of properties when they change using the provided curve and duration. Properties that are null are not animated. Its child and descendants are not animated. This class is useful for generating simple implicit transitions between different parameters to Container with its internal AnimationController.
+AnimatedContainerは、指定されたカーブと継続時間を使用して、プロパティが変更された際に古い値から新しい値へ自動的にアニメーションします。nullのプロパティはアニメーションされません。子ウィジェットとその子孫ウィジェットはアニメーションされません。このクラスは内部のAnimationControllerを使用してContainerの異なるパラメータ間のシンプルな暗黙的遷移を生成するのに便利です。
 
 <iframe
   width="560"
@@ -24,18 +24,18 @@ AnimatedContainer automatically animates between the old and new values of prope
 
 See: https://api.flutter.dev/flutter/widgets/AnimatedContainer-class.html
 
-## When to use it?
+## いつ使うか？
 
-- When smoothly transitioning widget size, color, padding, etc.
-- When providing visual feedback in response to user interactions
-- When expressing state changes smoothly
-- When simple animations are needed without complex AnimationController
-- When expressing hover effects or selected states
+- ウィジェットのサイズ、色、パディングなどをスムーズに遷移させたい場合
+- ユーザーの操作に応じて視覚的なフィードバックを提供したい場合
+- 状態変化をスムーズに表現したい場合
+- 複雑なAnimationControllerを使わずにシンプルなアニメーションが必要な場合
+- ホバー効果や選択状態を表現したい場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
-// Create a StatefulWidget to manage state
+// 状態管理のためのStatefulWidgetを作成
 class AnimatedContainerExample extends StatefulWidget {
   createState() {
     return new AnimatedContainerExampleState();
@@ -53,34 +53,34 @@ class AnimatedContainerExampleState extends State<AnimatedContainerExample> {
         });
       },
       child: AnimatedContainer({
-        duration: 300, // 300ms
+        duration: 300, // 300ミリ秒
         curve: Curves.easeInOut,
         width: this.isExpanded ? 200 : 100,
         height: this.isExpanded ? 200 : 100,
         color: this.isExpanded ? 'blue' : 'red',
         child: Center({
-          child: Text('Tap me')
+          child: Text('タップしてください')
         })
       })
     });
   }
 }
 
-// Export as factory function
+// ファクトリー関数としてエクスポート
 export default classToFunction(AnimatedContainerExample);
 ```
 
-## Props
+## プロパティ
 
-### duration (required)
+### duration （必須）
 
-**Value: number**
+**値: number**
 
-The duration over which to animate the parameters of this container (in milliseconds).
+このコンテナのパラメータをアニメーションする継続時間（ミリ秒）です。
 
 ```typescript
 AnimatedContainer({
-  duration: 500, // 0.5 seconds
+  duration: 500, // 0.5秒
   width: 100,
   height: 100
 })
@@ -88,35 +88,35 @@ AnimatedContainer({
 
 ### curve
 
-**Value: Curve** (default: **Curves.linear**)
+**値: Curve** （デフォルト: **Curves.linear**）
 
-Defines the animation progression curve. Various built-in curves are available.
+アニメーションの進行カーブを定義します。様々な組み込みカーブが利用可能です。
 
 ```typescript
 AnimatedContainer({
   duration: 300,
-  curve: Curves.easeInOut, // Smooth start and end
+  curve: Curves.easeInOut, // スムーズな開始と終了
   width: expanded ? 200 : 100
 })
 ```
 
-Available Curves:
-- **Curves.linear**: Constant speed
-- **Curves.easeIn**: Starts slowly
-- **Curves.easeOut**: Ends slowly
-- **Curves.easeInOut**: Starts and ends slowly
-- **Curves.bounceIn**: Bounces at the start
-- **Curves.bounceOut**: Bounces at the end
-- **Curves.bounceInOut**: Bounces at start and end
-- **Curves.anticipate**: Goes backward then forward
-- **Curves.backIn**: Pulls back then starts
-- **Curves.backOut**: Overshoots then returns
+利用可能なカーブ:
+- **Curves.linear**: 一定速度
+- **Curves.easeIn**: ゆっくり開始
+- **Curves.easeOut**: ゆっくり終了
+- **Curves.easeInOut**: ゆっくり開始・終了
+- **Curves.bounceIn**: 開始時にバウンス
+- **Curves.bounceOut**: 終了時にバウンス
+- **Curves.bounceInOut**: 開始・終了時にバウンス
+- **Curves.anticipate**: 後方に下がってから前進
+- **Curves.backIn**: 引き戻してから開始
+- **Curves.backOut**: 目標を越えてから戻る
 
 ### width
 
-**Value: number | undefined**
+**値: number | undefined**
 
-The container's width. Animates when changed.
+コンテナの幅です。変更時にアニメーションします。
 
 ```typescript
 AnimatedContainer({
@@ -128,9 +128,9 @@ AnimatedContainer({
 
 ### height
 
-**Value: number | undefined**
+**値: number | undefined**
 
-The container's height. Animates when changed.
+コンテナの高さです。変更時にアニメーションします。
 
 ```typescript
 AnimatedContainer({
@@ -142,23 +142,23 @@ AnimatedContainer({
 
 ### color
 
-**Value: string | undefined**
+**値: string | undefined**
 
-The container's background color. Cannot be used with decoration.
+コンテナの背景色です。decorationと同時に使用できません。
 
 ```typescript
 AnimatedContainer({
   duration: 300,
   color: isActive ? 'blue' : 'gray',
-  child: Text('Status indicator')
+  child: Text('状態インジケータ')
 })
 ```
 
 ### decoration
 
-**Value: Decoration | undefined**
+**値: Decoration | undefined**
 
-The decoration to paint behind the child. All BoxDecoration properties animate.
+子ウィジェットの背景に描画する装飾です。BoxDecorationのすべてのプロパティがアニメーションします。
 
 ```typescript
 AnimatedContainer({
@@ -179,9 +179,9 @@ AnimatedContainer({
 
 ### margin
 
-**Value: EdgeInsets | undefined**
+**値: EdgeInsets | undefined**
 
-Empty space to surround the container. Animates when changed.
+コンテナを囲む空白スペースです。変更時にアニメーションします。
 
 ```typescript
 AnimatedContainer({
@@ -193,23 +193,23 @@ AnimatedContainer({
 
 ### padding
 
-**Value: EdgeInsets | undefined**
+**値: EdgeInsets | undefined**
 
-Empty space to inscribe inside the container. Animates when changed.
+コンテナ内部に書き込む空白スペースです。変更時にアニメーションします。
 
 ```typescript
 AnimatedContainer({
   duration: 300,
   padding: EdgeInsets.all(isExpanded ? 20 : 10),
-  child: Text('Content')
+  child: Text('コンテンツ')
 })
 ```
 
 ### alignment
 
-**Value: Alignment | undefined**
+**値: Alignment | undefined**
 
-Aligns the child within the container. Animates when changed.
+コンテナ内で子ウィジェットを配置します。変更時にアニメーションします。
 
 ```typescript
 AnimatedContainer({
@@ -221,9 +221,9 @@ AnimatedContainer({
 
 ### constraints
 
-**Value: Constraints | undefined**
+**値: Constraints | undefined**
 
-Additional constraints to apply to the child. Min/max sizes animate.
+子ウィジェットに適用する追加の制約です。最小・最大サイズがアニメーションします。
 
 ```typescript
 AnimatedContainer({
@@ -239,9 +239,9 @@ AnimatedContainer({
 
 ### clipped
 
-**Value: boolean** (default: **false**)
+**値: boolean** （デフォルト: **false**）
 
-Whether to clip children to the container's bounds.
+子ウィジェットをコンテナの境界にクリップするかどうかです。
 
 ```typescript
 AnimatedContainer({
@@ -255,15 +255,15 @@ AnimatedContainer({
 
 ### transform
 
-**Value: Matrix4 | undefined**
+**値: Matrix4 | undefined**
 
-The transformation matrix to apply. Rotation, scaling, and translation animate.
+適用する変換マトリックスです。回転、スケール、平移がアニメーションします。
 
 ```typescript
 AnimatedContainer({
   duration: 600,
   transform: isRotated 
-    ? Matrix4.rotationZ(Math.PI / 4) // 45 degree rotation
+    ? Matrix4.rotationZ(Math.PI / 4) // 45度回転
     : Matrix4.identity(),
   child: Icon({ icon: Icons.refresh })
 })
@@ -271,24 +271,24 @@ AnimatedContainer({
 
 ### transformAlignment
 
-**Value: Alignment | undefined**
+**値: Alignment | undefined**
 
-The alignment of the origin for the transform. Used with transform.
+変換の原点の配置です。transformと組み合わせて使用します。
 
 ```typescript
 AnimatedContainer({
   duration: 500,
   transform: Matrix4.rotationZ(angle),
-  transformAlignment: Alignment.center, // Rotate around center
-  child: Text('Rotating')
+  transformAlignment: Alignment.center, // 中心を軸に回転
+  child: Text('回転中')
 })
 ```
 
 ### child
 
-**Value: Widget | undefined**
+**値: Widget | undefined**
 
-The child widget, which is not animated.
+子ウィジェットです。これはアニメーションされません。
 
 ```typescript
 AnimatedContainer({
@@ -301,29 +301,29 @@ AnimatedContainer({
 
 ### onEnd
 
-**Value: () => void | undefined**
+**値: () => void | undefined**
 
-A callback that is called when the animation completes.
+アニメーションが完了した時に呼び出されるコールバックです。
 
 ```typescript
 AnimatedContainer({
   duration: 500,
   width: expanded ? 200 : 100,
   onEnd: () => {
-    console.log('Animation completed');
-    // Trigger next animation or state change
+    console.log('アニメーション完了');
+    // 次のアニメーションや状態変更をトリガー
   }
 })
 ```
 
-## Common Use Cases
+## 一般的な使用例
 
-### State-based UI Changes
+### 状態ベースのUI変更
 
-AnimatedContainer excels at smoothly transitioning between different UI states:
+AnimatedContainerは異なるUI状態間のスムーズな遷移に優れています：
 
 ```typescript
-// Theme switching
+// テーマ切り替え
 AnimatedContainer({
   duration: 300,
   decoration: BoxDecoration({
@@ -333,7 +333,7 @@ AnimatedContainer({
   child: content
 })
 
-// Selection states
+// 選択状態
 AnimatedContainer({
   duration: 200,
   decoration: BoxDecoration({
@@ -344,7 +344,7 @@ AnimatedContainer({
   })
 })
 
-// Loading states
+// ローディング状態
 AnimatedContainer({
   duration: 400,
   height: isLoading ? 200 : 0,
@@ -353,19 +353,19 @@ AnimatedContainer({
 })
 ```
 
-### Interactive Components
+### インタラクティブなコンポーネント
 
-Create engaging interactive elements with smooth transitions:
+スムーズな遷移で魅力的なインタラクティブ要素を作成します：
 
 ```typescript
-// Expandable cards
+// 展開可能なカード
 AnimatedContainer({
   duration: 300,
   height: isExpanded ? null : 100,
   child: content
 })
 
-// Hover effects
+// ホバー効果
 AnimatedContainer({
   duration: 200,
   transform: Matrix4.identity()
@@ -373,7 +373,7 @@ AnimatedContainer({
   boxShadow: isHovered ? elevatedShadow : flatShadow
 })
 
-// Press feedback
+// プレスフィードバック
 AnimatedContainer({
   duration: 100,
   transform: Matrix4.identity()
@@ -1221,42 +1221,42 @@ class ComplexAnimationState extends State<ComplexAnimation>
 }
 ```
 
-## Important Notes
+## 重要な注意事項
 
-- duration is a required property. You must specify the animation duration.
-- color and decoration cannot be used together.
-- Child widgets are not animated. To animate children, use separate AnimatedWidgets.
-- Animating too many properties simultaneously can affect performance.
-- When state changes rapidly, the current animation is interrupted and a new one starts.
-- transform does not change the layout size. Use width/height for animations that need to occupy space.
-- Complex decoration animations can impact performance, so use them judiciously.
+- durationは必須プロパティです。アニメーション継続時間を指定する必要があります。
+- colorとdecorationは同時に使用できません。
+- 子ウィジェットはアニメーションされません。子ウィジェットをアニメーションするには別のAnimatedWidgetを使用してください。
+- 同時に多くのプロパティをアニメーションするとパフォーマンスに影響する可能性があります。
+- 状態が急速に変化する場合、現在のアニメーションが中断され、新しいアニメーションが開始されます。
+- transformはレイアウトサイズを変更しません。スペースを占有する必要があるアニメーションにはwidth/heightを使用してください。
+- 複雑なdecorationアニメーションはパフォーマンスに影響する可能性があるため、慎重に使用してください。
 
-## Troubleshooting
+## トラブルシューティング
 
-### Animation Not Smooth
+### アニメーションがスムーズでない場合
 
-If animations appear jerky:
+アニメーションがカクカクして見える場合：
 
 ```typescript
-// ❌ Problem: Too short duration
+// ❌ 問題: 継続時間が短すぎる
 AnimatedContainer({
-  duration: 50,  // Too fast
+  duration: 50,  // 速すぎる
   width: expanded ? 300 : 100
 })
 
-// ✅ Solution: Use appropriate duration
+// ✅ 解決策: 適切な継続時間を使用
 AnimatedContainer({
-  duration: 300,  // Smooth transition
+  duration: 300,  // スムーズな遷移
   width: expanded ? 300 : 100
 })
 ```
 
-### Animation Not Triggering
+### アニメーションがトリガーされない場合
 
-Ensure state changes are properly managed:
+状態変更が適切に管理されていることを確認してください：
 
 ```typescript
-// ❌ Problem: Direct mutation
+// ❌ 問題: 直接変更
 class MyWidget extends StatefulWidget {
   createState() => new MyWidgetState();
 }
@@ -1265,12 +1265,12 @@ class MyWidgetState extends State<MyWidget> {
   expanded = false;
   
   build() {
-    // Wrong: Direct mutation without setState
-    this.expanded = true;  // No re-render
+    // 間違い: setStateを使わない直接変更
+    this.expanded = true;  // 再レンダーされない
   }
 }
 
-// ✅ Solution: Use setState
+// ✅ 解決策: setStateを使用
 class MyWidget extends StatefulWidget {
   createState() => new MyWidgetState();
 }
@@ -1282,7 +1282,7 @@ class MyWidgetState extends State<MyWidget> {
     return GestureDetector({
       onTap: () => {
         this.setState(() => {
-          this.expanded = true;  // Triggers re-render
+          this.expanded = true;  // 再レンダーをトリガー
         });
       },
       child: AnimatedContainer({
@@ -1295,29 +1295,29 @@ class MyWidgetState extends State<MyWidget> {
 }
 ```
 
-### Conflicting Properties
+### プロパティの競合
 
-Watch for property conflicts:
+プロパティの競合に注意してください：
 
 ```typescript
-// ❌ Problem: color and decoration conflict
+// ❌ 問題: colorとdecorationの競合
 AnimatedContainer({
   color: 'blue',
-  decoration: BoxDecoration({ color: 'red' })  // Error!
+  decoration: BoxDecoration({ color: 'red' })  // エラー！
 })
 
-// ✅ Solution: Use decoration only
+// ✅ 解決策: decorationのみ使用
 AnimatedContainer({
   decoration: BoxDecoration({ color: 'blue' })
 })
 ```
 
-## Related Widgets
+## 関連ウィジェット
 
-- **Container**: Basic container without animation
-- **AnimatedPadding**: Widget that only animates padding
-- **AnimatedAlign**: Widget that only animates alignment
-- **AnimatedOpacity**: Widget that only animates opacity
-- **AnimatedPositioned**: Widget that animates position within a Stack
-- **AnimatedPhysicalModel**: Widget that animates shadows and elevation
-- **AnimatedDefaultTextStyle**: Widget that animates text styles
+- **Container**: アニメーションなしの基本コンテナ
+- **AnimatedPadding**: パディングのみアニメーションするウィジェット
+- **AnimatedAlign**: 配置のみアニメーションするウィジェット
+- **AnimatedOpacity**: 不透明度のみアニメーションするウィジェット
+- **AnimatedPositioned**: Stack内で位置をアニメーションするウィジェット
+- **AnimatedPhysicalModel**: 影と昇降をアニメーションするウィジェット
+- **AnimatedDefaultTextStyle**: テキストスタイルをアニメーションするウィジェット

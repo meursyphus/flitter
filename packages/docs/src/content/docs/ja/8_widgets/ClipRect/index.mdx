@@ -3,21 +3,21 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: ClipRect
 title: "ClipRect"
-description: "A widget that clips its child using a rectangle"
+description: "矩形を使用して子要素をクリップするウィジェット"
 ---
 
-## Overview
+## 概要
 
-ClipRect is a widget that clips its child widget using a rectangular area.
+ClipRectは、子ウィジェットを矩形領域でクリップするウィジェットです。
 
-This widget takes a clipper callback function that returns a Rect object, allowing you to clip the child widget to any desired rectangular area. Internally, it uses ClipPath to perform the clipping.
+このウィジェットはRectオブジェクトを返すクリッパーコールバック関数を受け取り、子ウィジェットを任意の矩形領域にクリップできます。内部的にはClipPathを使用してクリッピングを実行します。
 
-See: [https://api.flutter.dev/flutter/widgets/ClipRect-class.html](https://api.flutter.dev/flutter/widgets/ClipRect-class.html)
+参考: [https://api.flutter.dev/flutter/widgets/ClipRect-class.html](https://api.flutter.dev/flutter/widgets/ClipRect-class.html)
 
-## When to use it?
+## 使用場面
 
-- When you want to show only a portion of a widget
-- When you need to hide overflowing content
+- ウィジェットの一部だけを表示したい場合
+- オーバーフローするコンテンツを非表示にしたい場合
 - When defining boundaries for scrollable areas
 - When displaying only specific regions of images or videos
 - When implementing custom crop functionality

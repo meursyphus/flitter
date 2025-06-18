@@ -3,24 +3,24 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: ColoredBox
 title: "ColoredBox"
-description: "A widget that paints a box with a solid color"
+description: "単色でボックスを塗りつぶすウィジェット"
 ---
 
-## Overview
+## 概要
 
-ColoredBox is a widget that paints a box with a solid color.
+ColoredBoxは、単色でボックスを塗りつぶすウィジェットです。
 
-ColoredBox provides the same effect as Container's color property but is lighter and more efficient. It offers performance benefits when you only need a color and don't require Container's other features (padding, margin, decoration, etc.).
+ColoredBoxはContainerのcolorプロパティと同じ効果を提供しますが、より軽量で効率的です。色のみが必要で、Containerの他の機能（パディング、マージン、デコレーションなど）が不要な場合にパフォーマンスの利点を提供します。
 
-## When to use it?
+## 使用場面
 
-- When only a simple color background is needed
-- When a lighter widget than Container is required
-- When performance optimization is important
-- When creating color overlays
-- When specifying background colors for list items
+- シンプルな色背景のみが必要な場合
+- Containerより軽量なウィジェットが必要な場合
+- パフォーマンス最適化が重要な場合
+- 色のオーバーレイを作成する場合
+- リストアイテムの背景色を指定する場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
 // Solid color background
@@ -39,13 +39,13 @@ ColoredBox({
 })
 ```
 
-## Props
+## プロパティ
 
-### color (required)
+### color（必須）
 
-**Value: string**
+**型: string**
 
-The background color of the box. CSS color values can be used.
+ボックスの背景色。CSSカラー値を使用できます。
 
 ```typescript
 ColoredBox({
@@ -66,9 +66,9 @@ ColoredBox({
 
 ### child
 
-**Value: Widget | undefined**
+**型: Widget | undefined**
 
-The child widget to be displayed on top of the color background.
+色背景の上に表示される子ウィジェット。
 
 ```typescript
 ColoredBox({
@@ -79,9 +79,9 @@ ColoredBox({
 })
 ```
 
-## Difference from Container
+## Containerとの違い
 
-### Use ColoredBox
+### ColoredBoxを使用
 ```typescript
 // When only color is needed
 ColoredBox({
@@ -90,7 +90,7 @@ ColoredBox({
 })
 ```
 
-### Use Container
+### Containerを使用
 ```typescript
 // When color and other styling are needed
 Container({
@@ -101,9 +101,9 @@ Container({
 })
 ```
 
-## Practical Examples
+## 実用的な例
 
-### Example 1: Status Badge
+### 例1: ステータスバッジ
 
 ```typescript
 const StatusBadge = ({ status }) => {
@@ -132,7 +132,7 @@ const StatusBadge = ({ status }) => {
 };
 ```
 
-### Example 2: Striped Background
+### 例2: ストライプ背景
 
 ```typescript
 const StripedBackground = ({ children }) => {
@@ -153,7 +153,7 @@ const StripedBackground = ({ children }) => {
 };
 ```
 
-### Example 3: Color Palette
+### 例3: カラーパレット
 
 ```typescript
 const ColorPalette = ({ colors, onColorSelect }) => {
@@ -179,7 +179,7 @@ const ColorPalette = ({ colors, onColorSelect }) => {
 };
 ```
 
-### Example 4: Loading Skeleton
+### 例4: ローディングスケルトン
 
 ```typescript
 const SkeletonLoader = () => {
@@ -212,7 +212,7 @@ const SkeletonLoader = () => {
 };
 ```
 
-### Example 5: Overlay Effect
+### 例5: オーバーレイ効果
 
 ```typescript
 const ImageWithOverlay = ({ imageUrl, text }) => {
@@ -243,13 +243,13 @@ const ImageWithOverlay = ({ imageUrl, text }) => {
 };
 ```
 
-## Performance Considerations
+## パフォーマンスの考慮事項
 
-ColoredBox is lighter than Container:
+ColoredBoxはContainerより軽量です：
 
-1. **Memory usage**: Uses less memory than Container
-2. **Rendering performance**: Fast processing with simple rendering logic
-3. **Useful in lists**: Particularly effective in lists with many items
+1. **メモリ使用量**: Containerよりメモリ使用量が少ない
+2. **レンダリングパフォーマンス**: シンプルなレンダリングロジックで高速処理
+3. **リストでの有効性**: 多数のアイテムを持つリストで特に効果的
 
 ```typescript
 // In performance-critical lists
@@ -263,16 +263,16 @@ ListView({
 })
 ```
 
-## Important Notes
+## 重要な注意事項
 
-- ColoredBox can only specify colors. Use Container or DecoratedBox for gradients, images, borders, etc.
-- The size of ColoredBox is determined by the size of its child widget.
-- Consider blending with the background when using colors with transparency.
-- Works properly in SVG rendering mode as well.
+- ColoredBoxは色のみを指定できます。グラデーション、画像、ボーダーなどにはContainerまたはDecoratedBoxを使用してください
+- ColoredBoxのサイズは子ウィジェットのサイズによって決まります
+- 透明度を持つ色を使用する場合は背景とのブレンドを考慮してください
+- SVGレンダリングモードでも正常に動作します
 
-## Related Widgets
+## 関連ウィジェット
 
-- **Container**: When more styling options are needed
-- **DecoratedBox**: When complex decoration is required
-- **Opacity**: To adjust the transparency of the entire widget
-- **AnimatedContainer**: To animate color changes
+- **Container**: より多くのスタイリングオプションが必要な場合
+- **DecoratedBox**: 複雑なデコレーションが必要な場合
+- **Opacity**: ウィジェット全体の透明度を調整する場合
+- **AnimatedContainer**: 色の変化をアニメーションする場合

@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Spacer
 title: "Spacer"
-description: "Creates adjustable empty space to tune spacing between widgets in Flex containers like Row or Column"
+description: "RowやColumnなどのFlexコンテナ内でウィジェット間の間隔を調整する可変の空白スペースを作成"
 ---
 
-## Overview
+## 概要
 
-Spacer creates an adjustable, empty spacer that can be used to tune the spacing between widgets in a Flex container, like Row or Column.
+Spacerは、RowやColumnなどのFlexコンテナ内でウィジェット間の間隔を調整するために使用できる、調整可能な空のスペーサーを作成します。
 
-The Spacer widget will take up any available space, so setting the Flex.mainAxisAlignment on a flex container that contains a Spacer to MainAxisAlignment.spaceAround, MainAxisAlignment.spaceBetween, or MainAxisAlignment.spaceEvenly will not have any visible effect: the Spacer has taken up all of the additional space, therefore there is none left to redistribute.
+Spacerウィジェットは利用可能なすべてのスペースを占めるため、Spacerを含むFlexコンテナのFlex.mainAxisAlignmentをMainAxisAlignment.spaceAround、MainAxisAlignment.spaceBetween、またはMainAxisAlignment.spaceEvenlyに設定しても、目に見える効果はありません：Spacerがすべての追加スペースを占めてしまうため、再配分するスペースが残っていないからです。
 
 <iframe
   width="560"
@@ -24,81 +24,81 @@ The Spacer widget will take up any available space, so setting the Flex.mainAxis
 
 See: [https://api.flutter.dev/flutter/widgets/Spacer-class.html](https://api.flutter.dev/flutter/widgets/Spacer-class.html)
 
-## When to use it?
+## 使用する場面
 
-- When you need flexible space between widgets in Row or Column
-- When you want to push widgets to opposite ends
-- When you need to distribute widgets evenly
-- When you want to allocate remaining space in specific ratios
-- When building responsive layouts that need dynamic spacing
+- RowやColumn内のウィジェット間に柔軟なスペースが必要な場合
+- ウィジェットを反対端に押し出したい場合
+- ウィジェットを均等に配置する必要がある場合
+- 残りのスペースを特定の比率で割り当てたい場合
+- 動的な間隔が必要なレスポンシブレイアウトを構築する場合
 
 ## Basic Usage
 
 ```typescript
-// Basic usage: push widgets to opposite ends
+// 基本的な使用：ウィジェットを反対端に押し出し
 Row({
   children: [
-    Text('Left'),
+    Text('左'),
     Spacer(),
-    Text('Right')
+    Text('右')
   ]
 })
 
-// Multiple spacers for even distribution
+// 複数のスペーサーで均等配置
 Row({
   children: [
     Spacer(),
-    Text('First'),
+    Text('最初'),
     Spacer(),
-    Text('Second'),
+    Text('二番目'),
     Spacer(),
-    Text('Third'),
+    Text('三番目'),
     Spacer()
   ]
 })
 
-// Using flex values to adjust space ratios
+// flex値を使用してスペース比率を調整
 Row({
   children: [
-    Text('Start'),
+    Text('開始'),
     Spacer({ flex: 1 }),
-    Text('Middle'),
-    Spacer({ flex: 2 }),  // Takes 2x space of first Spacer
-    Text('End')
+    Text('中央'),
+    Spacer({ flex: 2 }),  // 最初のSpacerの2倍のスペースを取る
+    Text('終了')
   ]
 })
 ```
 
-## Props
+## プロパティ
 
 ### flex
 
-**Value: number** (default: **1**)
+**値: number** (デフォルト: **1**)
 
-The flex factor to use for this child to determine how much space to take up relative to other Flexible children.
+この子ウィジェットが他のFlexibleな子ウィジェットと比較してどの程度のスペースを占めるかを決定するフレックスファクター。
 
 ```typescript
-// Default flex value (1)
+// デフォルトflex値 (1)
 Spacer()
 
-// Custom flex value
-Spacer({ flex: 2 })  // Takes 2x space compared to flex: 1 widgets
+// カスタムflex値
+Spacer({ flex: 2 })  // flex: 1のウィジェットと比較して2倍のスペースを取る
 
-// Ratio example
+// 比率の例
 Row({
   children: [
     Container({ width: 50, height: 50, color: 'red' }),
-    Spacer({ flex: 1 }),  // 1 part
+    Spacer({ flex: 1 }),  // 1部分
     Container({ width: 50, height: 50, color: 'green' }),
-    Spacer({ flex: 3 }),  // 3 parts (3x the first)
+    Spacer({ flex: 3 }),  // 3部分（最初の3倍）
     Container({ width: 50, height: 50, color: 'blue' })
   ]
 })
 ```
 
-## Practical Examples
+## 実用的な例
 
-### Example 1: Navigation Bar
+### 例1: ナビゲーションバー
 
 ```typescript
 const NavigationBar = ({ title, onBack, onMenu }) => {
@@ -128,7 +128,7 @@ const NavigationBar = ({ title, onBack, onMenu }) => {
             fontWeight: 'bold'
           })
         }),
-        Spacer(),  // Pushes title left, menu right
+        Spacer(),  // タイトルを左に、メニューを右に押し出し
         IconButton({
           icon: Icons.menu,
           onPressed: onMenu
@@ -139,7 +139,7 @@ const NavigationBar = ({ title, onBack, onMenu }) => {
 };
 ```
 
-### Example 2: Card Footer
+### 例2: カードフッター
 
 ```typescript
 const CardWithFooter = ({ title, content, primaryAction, secondaryAction }) => {
@@ -193,7 +193,7 @@ const CardWithFooter = ({ title, content, primaryAction, secondaryAction }) => {
                 onPressed: secondaryAction.onPressed,
                 child: Text(secondaryAction.label)
               }),
-              Spacer(),  // Push buttons to opposite ends
+              Spacer(),  // ボタンを反対端に押し出し
               ElevatedButton({
                 onPressed: primaryAction.onPressed,
                 child: Text(primaryAction.label)
@@ -207,7 +207,7 @@ const CardWithFooter = ({ title, content, primaryAction, secondaryAction }) => {
 };
 ```
 
-### Example 3: Social Media Stats
+### 例3: ソーシャルメディア統計
 
 ```typescript
 const SocialStats = ({ likes, comments, shares }) => {
@@ -247,7 +247,7 @@ const SocialStats = ({ likes, comments, shares }) => {
             })
           ]
         }),
-        Spacer({ flex: 2 }),  // More space on the right
+        Spacer({ flex: 2 }),  // 右側により多くのスペース
         // Bookmark
         IconButton({
           icon: Icons.bookmark_border,
@@ -259,7 +259,7 @@ const SocialStats = ({ likes, comments, shares }) => {
 };
 ```
 
-### Example 4: Step Indicator
+### 例4: ステップインジケーター
 
 ```typescript
 const StepIndicator = ({ currentStep, totalSteps, labels }) => {
@@ -295,7 +295,7 @@ const StepIndicator = ({ currentStep, totalSteps, labels }) => {
                   })
                 })
               }),
-              // Connection line (except last)
+              // 接続線（最後以外）
               if (!isLast) Expanded({
                 child: Container({
                   height: 2,
@@ -336,7 +336,7 @@ const StepIndicator = ({ currentStep, totalSteps, labels }) => {
 };
 ```
 
-### Example 5: Dashboard Layout
+### 例5: ダッシュボードレイアウト
 
 ```typescript
 const DashboardHeader = ({ userName, notifications, onProfile, onNotifications }) => {
@@ -354,7 +354,7 @@ const DashboardHeader = ({ userName, notifications, onProfile, onNotifications }
         // Top bar
         Row({
           children: [
-            Text('Dashboard', {
+            Text('ダッシュボード', {
               style: TextStyle({
                 color: 'white',
                 fontSize: 24,
@@ -417,13 +417,13 @@ const DashboardHeader = ({ userName, notifications, onProfile, onNotifications }
             Column({
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(`Welcome back, ${userName}!`, {
+                Text(`おかえりなさい、${userName}さん！`, {
                   style: TextStyle({
                     color: 'white',
                     fontSize: 18
                   })
                 }),
-                Text('Have a great day', {
+                Text('素晴らしい一日をお過ごしください', {
                   style: TextStyle({
                     color: 'rgba(255,255,255,0.8)',
                     fontSize: 14
@@ -442,46 +442,46 @@ const DashboardHeader = ({ userName, notifications, onProfile, onNotifications }
 
 ## Spacer vs SizedBox
 
-### When to use which?
+### どちらを使用するか？
 
 ```typescript
-// ✅ Spacer: When you need flexible space
+// ✅ Spacer: 柔軟なスペースが必要な場合
 Row({
   children: [
-    Text('Left'),
-    Spacer(),  // Takes all remaining space
-    Text('Right')
+    Text('左'),
+    Spacer(),  // 残りのすべてのスペースを取る
+    Text('右')
   ]
 })
 
-// ✅ SizedBox: When you need fixed space
+// ✅ SizedBox: 固定スペースが必要な場合
 Row({
   children: [
-    Text('First'),
-    SizedBox({ width: 16 }),  // Exactly 16 pixels
-    Text('Second')
+    Text('最初'),
+    SizedBox({ width: 16 }),  // 正確に16ピクセル
+    Text('二番目')
   ]
 })
 
-// Comparison example
+// 比較例
 Column({
   children: [
-    // Spacer takes remaining space
+    // Spacerは残りのスペースを取る
     Container({
       height: 100,
       child: Row({
         children: [
           Container({ width: 50, color: 'red' }),
-          Spacer(),  // Remaining space
+          Spacer(),  // 残りのスペース
           Container({ width: 50, color: 'blue' })
         ]
       })
     }),
-    // SizedBox has fixed size
+    // SizedBoxは固定サイズ
     Row({
       children: [
         Container({ width: 50, color: 'red' }),
-        SizedBox({ width: 30 }),  // Exactly 30
+        SizedBox({ width: 30 }),  // 正確に30
         Container({ width: 50, color: 'blue' })
       ]
     })
@@ -489,18 +489,18 @@ Column({
 })
 ```
 
-## Important Notes
+## 重要な注意事項
 
-- Spacer can only be used inside a Flex widget (Row, Column, Flex)
-- When Spacer is present, mainAxisAlignment space-related options are ignored
-- Multiple Spacers can be used with flex values to control ratios
-- Spacer is actually shorthand for Expanded(child: SizedBox.shrink())
-- Causes errors in unbounded space, so use with caution
+- SpacerはFlexウィジェット（Row、Column、Flex）内でのみ使用できます
+- Spacerが存在する場合、mainAxisAlignmentのスペース関連オプションは無視されます
+- 複数のSpacerをflex値と共に使用して比率を制御できます
+- Spacerは実際にはExpanded(child: SizedBox.shrink())の短縮形です
+- 無制限のスペースでエラーを引き起こすため、慎重に使用してください
 
-## Related Widgets
+## 関連ウィジェット
 
-- **Expanded**: Widget that expands a child within a Flex
-- **Flexible**: Widget that controls how a child flexes
-- **SizedBox**: Widget that creates fixed-size empty space
-- **Padding**: Widget that adds space around another widget
-- **Container**: Widget that can specify margin, padding, and size
+- **Expanded**: Flex内で子ウィジェットを拡張するウィジェット
+- **Flexible**: 子ウィジェットのフレックス動作を制御するウィジェット
+- **SizedBox**: 固定サイズの空白スペースを作成するウィジェット
+- **Padding**: 他のウィジェットの周りにスペースを追加するウィジェット
+- **Container**: マージン、パディング、サイズを指定できるウィジェット

@@ -3,24 +3,24 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Column
 title: "Column"
-description: "A layout widget that arranges its children vertically"
+description: "子要素を垂直に配置するレイアウトウィジェット"
 ---
 
-## Overview
+## 概要
 
-Column is a layout widget that arranges its children in a vertical direction.
+Columnは、子要素を垂直方向に配置するレイアウトウィジェットです。
 
-Column is a convenience wrapper around the Flex widget with the direction fixed to vertical. It's used to place multiple widgets one below another and provides various alignment options. By default, Column takes up all available vertical space, but you can adjust `mainAxisSize` to only take up as much space as needed.
+Columnは、方向が垂直に固定されたFlexウィジェットの便利なラッパーです。複数のウィジェットを上から下に配置するために使用され、様々な配置オプションを提供します。デフォルトでは、Columnは利用可能なすべての垂直スペースを占めますが、`mainAxisSize`を調整して必要な分だけのスペースを占めるようにできます。
 
-## When to use it?
+## 使用場面
 
-- When arranging form fields vertically
-- When structuring content in list items
-- When creating vertical layouts for cards or dialogs
-- When arranging menu items vertically
-- When displaying title, subtitle, and body text in sequence
+- フォームフィールドを垂直に配置する場合
+- リストアイテム内のコンテンツを構造化する場合
+- カードやダイアログの垂直レイアウトを作成する場合
+- メニューアイテムを垂直に配置する場合
+- タイトル、サブタイトル、本文を順番に表示する場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
 // Simple example
@@ -44,13 +44,13 @@ const alignedColumn = Column({
 });
 ```
 
-## Props
+## プロパティ
 
-### children (required)
+### children（必須）
 
-**Value: Widget[]**
+**型: Widget[]**
 
-An array of child widgets to display in the Column. They are arranged from top to bottom in array order.
+Columnに表示する子ウィジェットの配列。配列の順序で上から下に配置されます。
 
 ```typescript
 Column({
@@ -162,9 +162,9 @@ Column({
 })
 ```
 
-## Advanced Usage
+## 高度な使用方法
 
-### Using with Expanded
+### Expandedとの併用
 
 ```typescript
 Column({
@@ -179,7 +179,7 @@ Column({
 // The green Container takes up all remaining vertical space
 ```
 
-### Proportional Space Distribution
+### 比例配分スペース配分
 
 ```typescript
 Column({
@@ -201,9 +201,9 @@ Column({
 // Red takes 25%, green takes 50%, blue takes 25% of height
 ```
 
-## Practical Examples
+## 実用的な例
 
-### Example 1: Login Form
+### 例1: ログインフォーム
 
 ```typescript
 const loginForm = Container({
@@ -245,7 +245,7 @@ const loginForm = Container({
 });
 ```
 
-### Example 2: Card Content
+### 例2: カードコンテンツ
 
 ```typescript
 const card = Container({
@@ -296,7 +296,7 @@ const card = Container({
 });
 ```
 
-### Example 3: Settings Menu
+### 例3: 設定メニュー
 
 ```typescript
 const settingsMenu = Column({
@@ -334,18 +334,18 @@ const settingsMenu = Column({
 });
 ```
 
-## Important Notes
+## 重要な注意事項
 
-- If child widgets exceed vertical space, an overflow error occurs. Use `SingleChildScrollView` or `Flexible`/`Expanded` in such cases.
-- When using `crossAxisAlignment.stretch`, child widgets can expand infinitely if their width is unconstrained.
-- Column doesn't support scrolling. Use `SingleChildScrollView` or `ListView` if scrolling is needed.
-- Use the `Row` widget for horizontal layouts.
+- 子ウィジェットが垂直スペースを超えるとオーバーフローエラーが発生します。そのような場合は`SingleChildScrollView`や`Flexible`/`Expanded`を使用してください。
+- `crossAxisAlignment.stretch`を使用する場合、子ウィジェットの幅が制約されていないと無限に拡張する可能性があります。
+- Columnはスクロールをサポートしません。スクロールが必要な場合は`SingleChildScrollView`や`ListView`を使用してください。
+- 水平レイアウトには`Row`ウィジェットを使用してください。
 
-## Related Widgets
+## 関連ウィジェット
 
-- **Row**: Arranges children horizontally
-- **Flex**: More flexible layout widget that Column and Row are based on
-- **ListView**: Scrollable vertical list
-- **Stack**: Overlays children on top of each other
-- **Expanded**: Takes up remaining space within a Column
-- **Flexible**: Allows flexible sizing within a Column
+- **Row**: 子要素を水平に配置
+- **Flex**: ColumnとRowのベースとなるより柔軟なレイアウトウィジェット
+- **ListView**: スクロール可能な垂直リスト
+- **Stack**: 子要素を上下に重ねて表示
+- **Expanded**: Column内の残りスペースを占有
+- **Flexible**: Column内で柔軟なサイズ調整を可能に

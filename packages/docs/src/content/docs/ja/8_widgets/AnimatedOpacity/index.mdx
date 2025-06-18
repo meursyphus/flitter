@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: AnimatedOpacity
 title: "AnimatedOpacity"
-description: "A widget that animates opacity transitions"
+description: "不透明度の遷移をアニメーションするウィジェット"
 ---
 
-## Overview
+## 概要
 
-AnimatedOpacity is a widget that automatically animates when its child widget's opacity changes, providing smooth transitions. This widget is inspired by Flutter's AnimatedOpacity widget.
+AnimatedOpacityは、子ウィジェットの不透明度が変更された際に自動的にアニメーションし、スムーズな遷移を提供するウィジェットです。このウィジェットはFlutterのAnimatedOpacityウィジェットにインスパイアされています。
 
-> Animated version of Opacity which automatically transitions the child's opacity over a given duration whenever the given opacity changes.
+> 不透明度が変更された際に、指定された継続時間で子ウィジェットの不透明度を自動的に遷移させるOpacityのアニメーション版です。
 
 <iframe
   width="560"
@@ -24,15 +24,15 @@ AnimatedOpacity is a widget that automatically animates when its child widget's 
 
 Flutter reference: https://api.flutter.dev/flutter/widgets/AnimatedOpacity-class.html
 
-## When to use?
+## いつ使うか？
 
-- When showing or hiding widgets with fade in/out effects
-- When smoothly adjusting widget visibility based on user interaction
-- When dimming content to indicate loading states
-- When smoothly showing/hiding tooltips or hint messages
-- When providing natural fade effects during screen transitions
+- フェードイン・フェードアウト効果でウィジェットを表示・非表示したい場合
+- ユーザーの操作に基づいてウィジェットの可視性をスムーズに調整したい場合
+- ローディング状態を示すためにコンテンツを暗くしたい場合
+- ツールチップやヒントメッセージをスムーズに表示・非表示したい場合
+- スクリーン遷移時に自然なフェード効果を提供したい場合
 
-## Basic usage
+## 基本的な使用方法
 
 ```typescript
 import { AnimatedOpacity, Container, StatefulWidget } from '@flitter/core';
@@ -55,17 +55,17 @@ class OpacityExampleState extends State<OpacityExample> {
               this.isVisible = !this.isVisible;
             });
           },
-          child: Text(this.isVisible ? "Hide" : "Show"),
+          child: Text(this.isVisible ? "非表示" : "表示"),
         }),
         AnimatedOpacity({
           opacity: this.isVisible ? 1.0 : 0.0,
-          duration: 500, // 0.5 seconds
+          duration: 500, // 0.5秒
           child: Container({
             width: 200,
             height: 200,
             color: "blue",
             child: Center({
-              child: Text("Fade Effect", { style: TextStyle({ color: "white" }) }),
+              child: Text("フェード効果", { style: TextStyle({ color: "white" }) }),
             }),
           }),
         }),
@@ -75,53 +75,53 @@ class OpacityExampleState extends State<OpacityExample> {
 }
 ```
 
-## Props
+## プロパティ
 
-### opacity (required)
-**Value: number**
+### opacity （必須）
+**値: number**
 
-Sets the widget's opacity.
-- 0.0 = Completely transparent (invisible)
-- 1.0 = Completely opaque (fully visible)
-- Values between 0.0 and 1.0 for partial transparency
+ウィジェットの不透明度を設定します。
+- 0.0 = 完全に透明（非表示）
+- 1.0 = 完全に不透明（完全表示）
+- 0.0と1.0の間の値で部分的な透明性
 
-### duration (required)
-**Value: number**
+### duration （必須）
+**値: number**
 
-Specifies the animation duration in milliseconds.
+アニメーションの継続時間をミリ秒で指定します。
 
-### curve (optional)
-**Value: Curve** (default: **Curves.linear**)
+### curve （オプション）
+**値: Curve** （デフォルト: **Curves.linear**）
 
-Specifies the animation progression curve. Available curves:
-- `Curves.linear`: Constant speed
-- `Curves.easeIn`: Slow start
-- `Curves.easeOut`: Slow end
-- `Curves.easeInOut`: Slow start and end
-- `Curves.circIn`: Circular acceleration start
-- `Curves.circOut`: Circular deceleration end
-- `Curves.circInOut`: Circular acceleration/deceleration
-- `Curves.backIn`: Goes back then starts
-- `Curves.backOut`: Overshoots target then returns
+アニメーションの進行カーブを指定します。利用可能なカーブ：
+- `Curves.linear`: 一定速度
+- `Curves.easeIn`: ゆっくり開始
+- `Curves.easeOut`: ゆっくり終了
+- `Curves.easeInOut`: ゆっくり開始・終了
+- `Curves.circIn`: 円形加速開始
+- `Curves.circOut`: 円形減速終了
+- `Curves.circInOut`: 円形加速・減速
+- `Curves.backIn`: 戻ってから開始
+- `Curves.backOut`: 目標を越えてから戻る
 - `Curves.backInOut`: backIn + backOut
-- `Curves.anticipate`: Anticipatory motion before proceeding
-- `Curves.bounceIn`: Bounces at start
-- `Curves.bounceOut`: Bounces at end
-- `Curves.bounceInOut`: Bounces at start/end
+- `Curves.anticipate`: 進む前の予備動作
+- `Curves.bounceIn`: 開始時にバウンス
+- `Curves.bounceOut`: 終了時にバウンス
+- `Curves.bounceInOut`: 開始・終了時にバウンス
 
-### child (optional)
-**Value: Widget | undefined**
+### child （オプション）
+**値: Widget | undefined**
 
-The child widget whose opacity will be adjusted.
+不透明度が調整される子ウィジェットです。
 
-### key (optional)
-**Value: any**
+### key （オプション）
+**値: any**
 
-A unique identifier for the widget.
+ウィジェットの一意な識別子です。
 
-## Real-world examples
+## 実用的な例
 
-### Example 1: Loading state display
+### 例1: ローディング状態表示
 
 ```typescript
 import { AnimatedOpacity, CircularProgressIndicator, Container, Curves } from '@flitter/core';
@@ -140,7 +140,7 @@ class LoadingOverlayState extends State<LoadingOverlay> {
       this.isLoading = true;
     });
 
-    // Simulate data loading
+    // データ読み込みをシミュレート
     await new Promise(resolve => setTimeout(resolve, 3000));
 
     this.setState(() => {
@@ -151,19 +151,19 @@ class LoadingOverlayState extends State<LoadingOverlay> {
   build() {
     return Stack({
       children: [
-        // Main content
+        // メインコンテンツ
         Container({
           width: double.infinity,
           height: double.infinity,
           child: Center({
             child: ElevatedButton({
               onPressed: () => this.loadData(),
-              child: Text("Load Data"),
+              child: Text("データ読み込み"),
             }),
           }),
         }),
         
-        // Loading overlay
+        // ローディングオーバーレイ
         AnimatedOpacity({
           opacity: this.isLoading ? 1.0 : 0.0,
           duration: 300,
@@ -181,7 +181,7 @@ class LoadingOverlayState extends State<LoadingOverlay> {
                   }),
                   SizedBox({ height: 16 }),
                   Text(
-                    "Loading...",
+                    "読み込み中...",
                     { style: TextStyle({ color: "white", fontSize: 18 }) }
                   ),
                 ],
@@ -195,7 +195,7 @@ class LoadingOverlayState extends State<LoadingOverlay> {
 }
 ```
 
-### Example 2: Tooltip message
+### 例2: ツールチップメッセージ
 
 ```typescript
 import { AnimatedOpacity, Container, Tooltip, Curves } from '@flitter/core';
@@ -214,7 +214,7 @@ class TooltipExampleState extends State<TooltipExample> {
       padding: EdgeInsets.all(20),
       child: Column({
         children: [
-          // Hover area
+          // ホバーエリア
           MouseRegion({
             onEnter: () => {
               this.setState(() => {
@@ -233,7 +233,7 @@ class TooltipExampleState extends State<TooltipExample> {
                 borderRadius: BorderRadius.circular(8),
               }),
               child: Text(
-                "Hover over me",
+                "ホバーしてください",
                 { style: TextStyle({ color: "white" }) }
               ),
             }),
@@ -241,7 +241,7 @@ class TooltipExampleState extends State<TooltipExample> {
           
           SizedBox({ height: 8 }),
           
-          // Tooltip message
+          // ツールチップメッセージ
           AnimatedOpacity({
             opacity: this.showTooltip ? 1.0 : 0.0,
             duration: 200,
@@ -253,7 +253,7 @@ class TooltipExampleState extends State<TooltipExample> {
                 borderRadius: BorderRadius.circular(4),
               }),
               child: Text(
-                "This is a tooltip message!",
+                "これはツールチップメッセージです！",
                 { style: TextStyle({ color: "white", fontSize: 14 }) }
               ),
             }),
@@ -265,7 +265,7 @@ class TooltipExampleState extends State<TooltipExample> {
 }
 ```
 
-### Example 3: Sequential fade-in effect
+### 例3: 連続フェードイン効果
 
 ```typescript
 import { AnimatedOpacity, Container, Curves } from '@flitter/core';
@@ -284,7 +284,7 @@ class SequentialFadeInState extends State<SequentialFadeIn> {
   initState() {
     super.initState();
     
-    // Sequential fade in
+    // 連続フェードイン
     setTimeout(() => {
       this.setState(() => this.item1Visible = true);
     }, 500);
@@ -317,7 +317,7 @@ class SequentialFadeInState extends State<SequentialFadeIn> {
                 borderRadius: BorderRadius.circular(8),
               }),
               child: Text(
-                "First Item",
+                "最初のアイテム",
                 { style: TextStyle({ color: "white", fontSize: 18 }) }
               ),
             }),
@@ -336,7 +336,7 @@ class SequentialFadeInState extends State<SequentialFadeIn> {
                 borderRadius: BorderRadius.circular(8),
               }),
               child: Text(
-                "Second Item",
+                "二番目のアイテム",
                 { style: TextStyle({ color: "white", fontSize: 18 }) }
               ),
             }),
@@ -354,7 +354,7 @@ class SequentialFadeInState extends State<SequentialFadeIn> {
                 borderRadius: BorderRadius.circular(8),
               }),
               child: Text(
-                "Third Item",
+                "三番目のアイテム",
                 { style: TextStyle({ color: "white", fontSize: 18 }) }
               ),
             }),
@@ -366,7 +366,7 @@ class SequentialFadeInState extends State<SequentialFadeIn> {
 }
 ```
 
-### Example 4: Cross-fade transition
+### 例4: クロスフェード遷移
 
 ```typescript
 import { AnimatedOpacity, Container, Curves } from '@flitter/core';
@@ -392,7 +392,7 @@ class CrossFadeExampleState extends State<CrossFadeExample> {
         height: 300,
         child: Stack({
           children: [
-            // First image
+            // 最初の画像
             AnimatedOpacity({
               opacity: this.showFirst ? 1.0 : 0.0,
               duration: 500,
@@ -418,7 +418,7 @@ class CrossFadeExampleState extends State<CrossFadeExample> {
               }),
             }),
             
-            // Second image
+            // 二番目の画像
             AnimatedOpacity({
               opacity: this.showFirst ? 0.0 : 1.0,
               duration: 500,
@@ -451,17 +451,17 @@ class CrossFadeExampleState extends State<CrossFadeExample> {
 }
 ```
 
-## Notes
+## 注意事項
 
-- Opacity values must be between 0.0 and 1.0
-- Even when opacity is 0.0, the widget still occupies layout space
-- To completely hide and remove space, use conditional rendering
-- For performance, avoid applying opacity animations to too many widgets simultaneously
-- If a new opacity value is set during animation, it smoothly transitions from the current value to the new value
+- 不透明度の値は0.0と1.0の間である必要があります
+- 不透明度が0.0であっても、ウィジェットはレイアウトスペースを占有したままです
+- 完全に非表示にしてスペースを除去するには、条件付きレンダリングを使用してください
+- パフォーマンスのため、同時に多くのウィジェットに不透明度アニメーションを適用することは避けてください
+- アニメーション中に新しい不透明度値が設定された場合、現在の値から新しい値へスムーズに遷移します
 
-## Related widgets
+## 関連ウィジェット
 
-- **Opacity**: Basic widget for setting opacity without animation
-- **AnimatedContainer**: Animates multiple properties simultaneously
-- **FadeTransition**: Fade effect using explicit Animation objects
-- **Visibility**: Controls widget visibility and manages layout space
+- **Opacity**: アニメーションなしで不透明度を設定する基本ウィジェット
+- **AnimatedContainer**: 複数のプロパティを同時にアニメーション
+- **FadeTransition**: 明示的なAnimationオブジェクトを使用したフェード効果
+- **Visibility**: ウィジェットの可視性を制御し、レイアウトスペースを管理

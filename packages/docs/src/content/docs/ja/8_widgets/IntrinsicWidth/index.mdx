@@ -3,22 +3,22 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: IntrinsicWidth
 title: "IntrinsicWidth"
-description: "A widget that sizes its child to the child's intrinsic width"
+description: "子ウィジェットを固有の幅にサイズ調整するウィジェット"
 ---
 
-## Overview
+## 概要
 
-IntrinsicWidth is a widget that sizes its child to the child's intrinsic width.
+IntrinsicWidthは、子ウィジェットを固有の幅にサイズ調整するウィジェットです。
 
-IntrinsicWidth forces its child to have its intrinsic width. This is useful when you want to ensure that multiple children in a Column have the same width, or when you need to dynamically adjust width based on the child's content. Like IntrinsicHeight, this widget has a high performance cost and should be used carefully.
+IntrinsicWidthは子ウィジェットに固有の幅を強制します。これは、Columnの複数の子ウィジェットが同じ幅を持つようにしたい場合や、子ウィジェットのコンテンツに基づいて幅を動的に調整する必要がある場合に便利です。IntrinsicHeightと同様に、このウィジェットは高いパフォーマンスコストがあり、慎重に使用する必要があります。
 
-## When to use it?
+## 使用する場面
 
-- When children in a Column need to have the same width
-- When width should be determined by the child widget's content
-- When you need to match the widths of widgets with varying content
-- When button or chip width needs to fit content
-- When CrossAxisAlignment.stretch doesn't work as expected
+- Columnの子ウィジェットが同じ幅を持つ必要がある場合
+- 幅が子ウィジェットのコンテンツによって決定される必要がある場合
+- 様々なコンテンツを持つウィジェットの幅を一致させる必要がある場合
+- ボタンやチップの幅をコンテンツに合わせる必要がある場合
+- CrossAxisAlignment.stretchが期待通りに動作しない場合
 
 ## Basic Usage
 
@@ -30,48 +30,48 @@ IntrinsicWidth({
       Container({
         color: 'blue',
         height: 50,
-        child: Text('Short')
+        child: Text('短い')
       }),
       Container({
         color: 'red',
         height: 50,
-        child: Text('This is much longer text')
+        child: Text('これはより長いテキスト')
       })
     ]
   })
 })
 ```
 
-## Props
+## プロパティ
 
 ### child
 
-**Value: Widget | undefined**
+**値: Widget | undefined**
 
-The child widget whose size will be adjusted to its intrinsic width.
+サイズが固有の幅に調整される子ウィジェット。
 
 ```typescript
 IntrinsicWidth({
   child: Container({
     color: 'blue',
-    child: Text('Width adjusts to content')
+    child: Text('幅がコンテンツに調整されます')
   })
 })
 ```
 
-## How it Works
+## 動作原理
 
-IntrinsicWidth works as follows:
+IntrinsicWidthは以下のように動作します：
 
-1. It asks the child widget "What is your minimum width at the given height?"
-2. It creates constraints using the width responded by the child
-3. It lays out the child with these constraints
+1. 子ウィジェットに「指定された高さでの最小幅は何ですか？」と尋ねます
+2. 子ウィジェットが回答した幅を使用して制約を作成します
+3. これらの制約で子ウィジェットをレイアウトします
 
-This process requires an additional layout pass, which incurs a performance cost.
+このプロセスには追加のレイアウトパスが必要で、パフォーマンスコストが発生します。
 
-## Practical Examples
+## 実用的な例
 
-### Example 1: Uniform Width Buttons
+### 例1: 統一幅のボタン
 
 ```typescript
 const UniformWidthButtons = () => {
@@ -81,17 +81,17 @@ const UniformWidthButtons = () => {
       children: [
         ElevatedButton({
           onPressed: () => console.log('Save'),
-          child: Text('Save')
+          child: Text('保存')
         }),
         SizedBox({ height: 8 }),
         ElevatedButton({
           onPressed: () => console.log('Save and Continue'),
-          child: Text('Save and Continue')
+          child: Text('保存して続行')
         }),
         SizedBox({ height: 8 }),
         ElevatedButton({
           onPressed: () => console.log('Cancel'),
-          child: Text('Cancel')
+          child: Text('キャンセル')
         })
       ]
     })
@@ -99,7 +99,7 @@ const UniformWidthButtons = () => {
 };
 ```
 
-### Example 2: Dynamic Width Badge
+### 例2: 動的幅のバッジ
 
 ```typescript
 const DynamicBadge = ({ text, color }) => {
@@ -136,7 +136,7 @@ Row({
 })
 ```
 
-### Example 3: Dropdown Menu
+### 例3: ドロップダウンメニュー
 
 ```typescript
 const DropdownMenu = ({ items, selectedIndex }) => {
@@ -150,7 +150,7 @@ const DropdownMenu = ({ items, selectedIndex }) => {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: items.map((item, index) => 
           GestureDetector({
-            onTap: () => console.log(`Selected: ${item}`),
+            onTap: () => console.log(`選択されました: ${item}`),
             child: Container({
               padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 12 }),
               decoration: BoxDecoration({
@@ -184,7 +184,7 @@ const DropdownMenu = ({ items, selectedIndex }) => {
 };
 ```
 
-### Example 4: Tooltip Container
+### 例4: ツールチップコンテナ
 
 ```typescript
 const TooltipContainer = ({ title, description }) => {
@@ -229,7 +229,7 @@ const TooltipContainer = ({ title, description }) => {
 };
 ```
 
-### Example 5: Price Table Header
+### 例5: 価格テーブルヘッダー
 
 ```typescript
 const PriceTableHeader = ({ plans }) => {
@@ -293,33 +293,33 @@ const PriceTableHeader = ({ plans }) => {
 };
 ```
 
-## Performance Considerations
+## パフォーマンスに関する考慮事項
 
-IntrinsicWidth has the same performance characteristics as IntrinsicHeight:
+IntrinsicWidthはIntrinsicHeightと同じパフォーマンス特性を持っています：
 
-1. **O(N²) complexity**: Deeply nested IntrinsicWidth widgets become exponentially slower
-2. **Layout passes**: Requires additional measurement steps
-3. **Caution in scroll views**: Avoid in lists with many items
+1. **O(N²)の複雑性**: 深くネストされたIntrinsicWidthウィジェットは指数関数的に遅くなります
+2. **レイアウトパス**: 追加の測定ステップが必要です
+3. **スクロールビューでの注意**: 多くのアイテムを持つリストでは避けてください
 
-## Alternatives
+## 代替案
 
-Consider these alternatives when performance is critical:
+パフォーマンスが重要な場合は、これらの代替案を検討してください：
 
-1. **Fixed width**: Specify explicit widths when possible
-2. **ConstrainedBox**: When you only need min/max width constraints
-3. **Wrap widget**: For dynamic layouts
-4. **LayoutBuilder**: When adjustments based on parent size are needed
+1. **固定幅**: 可能な場合は明示的な幅を指定
+2. **ConstrainedBox**: 最小/最大幅の制約のみが必要な場合
+3. **Wrapウィジェット**: 動的レイアウトの場合
+4. **LayoutBuilder**: 親のサイズに基づいた調整が必要な場合
 
-## Important Notes
+## 重要な注意事項
 
-- IntrinsicWidth has a high performance cost, so use it only when necessary
-- Avoid deeply nested IntrinsicWidth widgets
-- It doesn't work with infinite width constraints
-- Be careful when using with Expanded inside a Row
+- IntrinsicWidthは高いパフォーマンスコストがあるため、必要な場合のみ使用してください
+- 深くネストされたIntrinsicWidthウィジェットは避けてください
+- 無限の幅制約では動作しません
+- Row内でExpandedと一緒に使用する場合は注意が必要です
 
-## Related Widgets
+## 関連ウィジェット
 
-- **IntrinsicHeight**: Sizes to the child's intrinsic height
-- **Wrap**: Flexible layout with automatic wrapping
-- **FittedBox**: Fits child to available space
-- **ConstrainedBox**: Applies size constraints
+- **IntrinsicHeight**: 子ウィジェットの固有の高さにサイズ調整
+- **Wrap**: 自動折り返しを行う柔軟なレイアウト
+- **FittedBox**: 子ウィジェットを利用可能なスペースにフィット
+- **ConstrainedBox**: サイズ制約を適用

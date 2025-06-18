@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Container
 title: "Container"
-description: "A convenience widget that combines common painting, positioning, and sizing widgets"
+description: "一般的な描画、配置、サイズ設定ウィジェットを結合した便利なウィジェット"
 ---
 
-## Overview
+## 概要
 
-Container is a convenience widget that combines common painting, positioning, and sizing widgets for its child.
+Containerは、子要素のために一般的な描画、配置、サイズ設定ウィジェットを結合した便利なウィジェットです。
 
-Container combines several basic widgets (Padding, Align, ColoredBox, DecoratedBox, ConstrainedBox, Transform, etc.) into a single widget, simplifying common layout and styling tasks. An empty Container tries to occupy as much space as possible, but when it has a child, it sizes itself to the child.
+Containerは、いくつかの基本ウィジェット（Padding、Align、ColoredBox、DecoratedBox、ConstrainedBox、Transformなど）を単一のウィジェットに結合し、一般的なレイアウトとスタイリングタスクを簡素化します。空のContainerは可能な限り多くのスペースを占めようとしますが、子要素を持つ場合は子要素に合わせてサイズを調整します。
 
 <iframe
   width="560"
@@ -22,17 +22,17 @@ Container combines several basic widgets (Padding, Align, ColoredBox, DecoratedB
   allowfullscreen
 ></iframe>
 
-See: https://api.flutter.dev/flutter/widgets/Container-class.html
+参考: https://api.flutter.dev/flutter/widgets/Container-class.html
 
-## When to use it?
+## 使用場面
 
-- When applying styles like background color, borders, shadows to a widget
-- When adding margin or padding around a widget
-- When constraining or fixing a widget's size
-- When applying multiple layout properties at once
-- When creating card UIs, button backgrounds, section dividers, etc.
+- ウィジェットに背景色、ボーダー、影などのスタイルを適用する場合
+- ウィジェットの周りにマージンやパディングを追加する場合
+- ウィジェットのサイズを制約または固定する場合
+- 複数のレイアウトプロパティを一度に適用する場合
+- カードUI、ボタン背景、セクション区切り線などを作成する場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
 // Simplest example
@@ -52,13 +52,13 @@ const paddedContainer = Container({
 });
 ```
 
-## Props
+## プロパティ
 
 ### width
 
-**Value: number | undefined**
+**型: number | undefined**
 
-Specifies the width of the Container in pixels. If not specified, it's determined by the child's size or parent's constraints.
+Containerの幅をピクセル単位で指定します。指定しない場合は、子要素のサイズまたは親の制約によって決まります。
 
 ```typescript
 Container({ width: 300, color: 'red' })
@@ -66,9 +66,9 @@ Container({ width: 300, color: 'red' })
 
 ### height
 
-**Value: number | undefined**
+**型: number | undefined**
 
-Specifies the height of the Container in pixels. If not specified, it's determined by the child's size or parent's constraints.
+Containerの高さをピクセル単位で指定します。指定しない場合は、子要素のサイズまたは親の制約によって決まります。
 
 ```typescript
 Container({ height: 150, color: 'green' })
@@ -76,9 +76,9 @@ Container({ height: 150, color: 'green' })
 
 ### constraints
 
-**Value: Constraints | undefined**
+**型: Constraints | undefined**
 
-Specifies the minimum/maximum width and height of the Container. Provides more flexible size control than width/height.
+Containerの最小/最大幅と高さを指定します。width/heightよりも柔軟なサイズ制御を提供します。
 
 ```typescript
 Container({
@@ -94,9 +94,9 @@ Container({
 
 ### padding
 
-**Value: EdgeInsets** (default: **none**)
+**型: EdgeInsets**（デフォルト: **なし**）
 
-The spacing between the Container's edge and its child widget.
+Containerの縁と子ウィジェットの間のスペーシング。
 
 ```typescript
 // Same padding on all sides
@@ -115,9 +115,9 @@ Container({
 
 ### margin
 
-**Value: EdgeInsets** (default: **none**)
+**型: EdgeInsets**（デフォルト: **なし**）
 
-The spacing between the Container and other widgets outside it.
+Containerとその外側の他のウィジェットとの間のスペーシング。
 
 ```typescript
 Container({
@@ -129,9 +129,9 @@ Container({
 
 ### alignment
 
-**Value: Alignment | undefined**
+**型: Alignment | undefined**
 
-Specifies the alignment position of the child widget within the Container. x and y values range from -1 to 1.
+Container内の子ウィジェットの配置位置を指定します。xとyの値は-1から1の範囲です。
 
 ```typescript
 Container({
@@ -150,11 +150,11 @@ Container({
 
 ### color
 
-**Value: string | undefined**
+**型: string | undefined**
 
-Specifies the background color of the Container. Cannot be used with decoration.
+Containerの背景色を指定します。decorationと同時に使用できません。
 
-⚠️ **Warning**: Using with decoration prop will cause an error.
+⚠️ **警告**: decorationプロパティと一緒に使用するとエラーが発生します。
 
 ```typescript
 Container({
@@ -166,11 +166,11 @@ Container({
 
 ### decoration
 
-**Value: Decoration | undefined**
+**型: Decoration | undefined**
 
-Specifies complex styling for the Container (borders, rounded corners, shadows, etc.).
+Containerの複雑なスタイリング（ボーダー、角丸、影など）を指定します。
 
-⚠️ **Warning**: Cannot be used with color prop. Specify color inside decoration instead.
+⚠️ **警告**: colorプロパティと一緒に使用できません。代わりにdecoration内で色を指定してください。
 
 ```typescript
 Container({
@@ -194,11 +194,11 @@ Container({
 
 ### clipped
 
-**Value: boolean | undefined** (default: **false**)
+**型: boolean | undefined**（デフォルト: **false**）
 
-Determines whether to clip the child widget according to the decoration's shape.
+decorationの形状に従って子ウィジェットをクリップするかどうかを決定します。
 
-⚠️ **Warning**: When clipped is true, decoration is required.
+⚠️ **警告**: clippedがtrueの場合、decorationが必要です。
 
 ```typescript
 Container({
@@ -215,9 +215,9 @@ Container({
 
 ### transform
 
-**Value: Matrix4 | undefined**
+**型: Matrix4 | undefined**
 
-Applies transformations like rotation, scaling, skewing to the Container.
+Containerに回転、スケール、歪みなどの変換を適用します。
 
 ```typescript
 Container({
@@ -229,9 +229,9 @@ Container({
 
 ### transformAlignment
 
-**Value: Alignment | undefined**
+**型: Alignment | undefined**
 
-Specifies the origin point for transformations. Defaults to the Container's center.
+変換の原点を指定します。デフォルトはContainerの中心です。
 
 ```typescript
 Container({
@@ -246,9 +246,9 @@ Container({
 
 ### child
 
-**Value: Widget | undefined**
+**型: Widget | undefined**
 
-The child widget to display inside the Container.
+Container内に表示する子ウィジェット。
 
 ```typescript
 Container({
@@ -263,9 +263,9 @@ Container({
 })
 ```
 
-## Practical Examples
+## 実用的な例
 
-### Creating a Card UI
+### カードUIの作成
 
 ```typescript
 const card = Container({
@@ -293,7 +293,7 @@ const card = Container({
 });
 ```
 
-### Creating a Circular Avatar
+### 円形アバターの作成
 
 ```typescript
 const avatar = Container({
@@ -311,7 +311,7 @@ const avatar = Container({
 });
 ```
 
-### Styling a Button
+### ボタンのスタイリング
 
 ```typescript
 const customButton = GestureDetector({
@@ -329,19 +329,19 @@ const customButton = GestureDetector({
 });
 ```
 
-## Important Notes
+## 重要な注意事項
 
-- Cannot use `color` and `decoration` simultaneously. When using decoration, specify color inside it.
-- When `clipped` is set to true, `decoration` is required.
-- A Container without a child and without size constraints tries to occupy as much space as possible.
-- When using `transform`, be aware that the transformed Container might overlap with other widgets.
-- Using border in decoration automatically adds padding.
+- `color`と`decoration`を同時に使用することはできません。decorationを使用する場合は、その中で色を指定してください。
+- `clipped`をtrueに設定する場合、`decoration`が必要です。
+- 子要素を持たずサイズ制約もないContainerは、可能な限り多くのスペースを占めようとします。
+- `transform`を使用する場合、変換されたContainerが他のウィジェットと重なる可能性があることに注意してください。
+- decorationでボーダーを使用すると自動的にパディングが追加されます。
 
-## Related Widgets
+## 関連ウィジェット
 
-- **DecoratedBox**: Use when only decoration is needed
-- **ColoredBox**: Use when only background color is needed
-- **Padding**: Use when only margin or padding is needed
-- **SizedBox**: Use when only fixed size is needed
-- **ConstrainedBox**: Use when only size constraints are needed
-- **Align**: Use when only alignment is needed
+- **DecoratedBox**: デコレーションのみが必要な場合に使用
+- **ColoredBox**: 背景色のみが必要な場合に使用
+- **Padding**: マージンやパディングのみが必要な場合に使用
+- **SizedBox**: 固定サイズのみが必要な場合に使用
+- **ConstrainedBox**: サイズ制約のみが必要な場合に使用
+- **Align**: 配置のみが必要な場合に使用

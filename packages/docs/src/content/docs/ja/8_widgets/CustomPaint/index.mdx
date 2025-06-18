@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: CustomPaint
 title: "CustomPaint"
-description: "A widget that provides custom graphics drawing using Canvas or SVG"
+description: "CanvasやSVGを使ったカスタムグラフィック描画を提供するウィジェット"
 ---
 
-## Overview
+## 概要
 
-`CustomPaint` is a widget that allows you to draw custom graphics using Canvas API or SVG. Inspired by Flutter's CustomPaint, it's used when you need to draw complex graphics, charts, diagrams, or any custom visual elements.
+`CustomPaint`は、Canvas APIやSVGを使ってカスタムグラフィックを描画できるウィジェットです。FlutterのCustomPaintにインスパイアされており、複雑なグラフィック、チャート、図、またはカスタムビジュアル要素を描画する必要がある場合に使用されます。
 
-A unique feature of Flitter's CustomPaint is its support for both SVG and Canvas rendering. While the interface differs slightly from Flutter due to SVG support, the layout rules remain the same.
+FlitterのCustomPaintの独特な機能は、SVGとCanvasの両方のレンダリングをサポートしていることです。SVGサポートによりFlutterとはインターフェースが若干異なりますが、レイアウトルールは同じです。
 
 <iframe
   width="560"
@@ -24,20 +24,20 @@ A unique feature of Flitter's CustomPaint is its support for both SVG and Canvas
 
 See: [https://api.flutter.dev/flutter/widgets/CustomPaint-class.html](https://api.flutter.dev/flutter/widgets/CustomPaint-class.html)
 
-## When to Use?
+## 使用場面
 
-- When you need to draw complex graphics or shapes
-- When implementing custom charts or graphs
-- When creating custom UI with animations
-- When developing games or visualization tools
-- When existing widgets can't express your specific UI requirements
+- 複雑なグラフィックや図形を描画する必要がある場合
+- カスタムチャートやグラフを実装する場合
+- アニメーション付きのカスタムUIを作成する場合
+- ゲームや可視化ツールを開発する場合
+- 既存のウィジェットでは特定のUI要件を表現できない場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
 import { CustomPaint, Size } from 'flitter';
 
-// Canvas rendering example
+// Canvasレンダリングの例
 const MyCanvasPaint = CustomPaint({
   size: new Size(200, 200),
   painter: {
@@ -51,7 +51,7 @@ const MyCanvasPaint = CustomPaint({
   }
 });
 
-// SVG rendering example
+// SVGレンダリングの例
 const MySvgPaint = CustomPaint({
   size: new Size(200, 200),
   painter: {
@@ -71,10 +71,10 @@ const MySvgPaint = CustomPaint({
 });
 ```
 
-## Props
+## プロパティ
 
-### size (optional)
-**Value: Size** (default: **Size.zero**)
+### size（オプション）
+**値: Size**（デフォルト: **Size.zero**）
 
 Specifies the size of the CustomPaint area. When `Size.zero`, it follows the child widget's size. Use `Size.infinite` to expand to the maximum available size.
 
@@ -89,8 +89,8 @@ size: Size.infinite
 size: Size.zero
 ```
 
-### painter (required)
-**Value: Painter**
+### painter（必須）
+**値: Painter**
 
 The Painter object containing the graphics drawing logic. You can implement SVG, Canvas, or both.
 
@@ -119,14 +119,14 @@ type CustomSvgPainter<T> = {
 };
 ```
 
-### child (optional)
-**Value: Widget**
+### child（オプション）
+**値: Widget**
 
 The child widget to be drawn on top of the CustomPaint. When a child is present, CustomPaint is drawn behind it.
 
-## Real-World Examples
+## 実践的な例
 
-### Example 1: Drawing Simple Shapes
+### 例1: 簡単な図形の描画
 
 ```typescript
 import { CustomPaint, Size } from 'flitter';
@@ -166,7 +166,7 @@ const SimpleShapes = CustomPaint({
 });
 ```
 
-### Example 2: Animated Chart
+### 例2: アニメーションチャート
 
 ```typescript
 import { CustomPaint, Size, StatefulWidget, State } from 'flitter';
@@ -305,7 +305,7 @@ const BackgroundPattern = CustomPaint({
 });
 ```
 
-## Best Practices
+## ベストプラクティス
 
 - Implement `shouldRepaint` method properly to avoid unnecessary repainting
 - When using Canvas API, pre-calculate complex computations for better performance
@@ -313,7 +313,7 @@ const BackgroundPattern = CustomPaint({
 - Don't forget to clean up animations to prevent memory leaks
 - Use `dependencies` to efficiently manage painter state changes
 
-## Related Widgets
+## 関連ウィジェット
 
 - **Container**: When you only need simple background color or border
 - **DecoratedBox**: When you need complex decoration but not custom drawing

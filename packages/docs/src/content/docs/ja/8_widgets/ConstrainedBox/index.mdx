@@ -3,12 +3,12 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: ConstrainedBox
 title: "ConstrainedBox"
-description: "A widget that imposes additional constraints on its child"
+description: "子ウィジェットに追加制約を課すウィジェット"
 ---
 
-## Overview
+## 概要
 
-ConstrainedBox is a widget that imposes additional constraints on its child widget. It combines the constraints from its parent with its own defined constraints to control the child's size.
+ConstrainedBoxは、子ウィジェットに追加の制約を課すウィジェットです。親からの制約と独自に定義した制約を組み合わせて、子のサイズを制御します。
 
 <iframe
   width="560"
@@ -22,18 +22,18 @@ ConstrainedBox is a widget that imposes additional constraints on its child widg
 
 Reference: [https://api.flutter.dev/flutter/widgets/ConstrainedBox-class.html](https://api.flutter.dev/flutter/widgets/ConstrainedBox-class.html)
 
-## When to Use
+## 使用場面
 
-- When you want to limit the minimum or maximum size of a widget
-- When child widgets should only have sizes within a specific range
-- When size constraints are needed in responsive layouts
-- When you want to ensure minimum height in scrollable areas
-- When limiting the maximum size of images or videos
+- ウィジェットの最小・最大サイズを制限したい場合
+- 子ウィジェットのサイズを特定の範囲内に制限したい場合
+- レスポンシブレイアウトでサイズ制約が必要な場合
+- スクロール可能エリアで最小高さを確保したい場合
+- 画像や動画の最大サイズを制限したい場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
-// Setting minimum size
+// 最小サイズの設定
 ConstrainedBox({
   constraints: new Constraints({
     minWidth: 100,
@@ -44,7 +44,7 @@ ConstrainedBox({
   })
 })
 
-// Setting maximum size
+// 最大サイズの設定
 ConstrainedBox({
   constraints: new Constraints({
     maxWidth: 200,
@@ -52,12 +52,12 @@ ConstrainedBox({
   }),
   child: Container({
     color: 'red',
-    width: 300,  // Limited to 200
-    height: 300  // Limited to 200
+    width: 300,  // 200に制限される
+    height: 300  // 200に制限される
   })
 })
 
-// Setting fixed size
+// 固定サイズの設定
 ConstrainedBox({
   constraints: Constraints.tight({ width: 150, height: 150 }),
   child: Container({
@@ -66,20 +66,20 @@ ConstrainedBox({
 })
 ```
 
-## Props
+## プロパティ
 
-### constraints (required)
-**Type: Constraints**
+### constraints（必須）
+**型: Constraints**
 
-The constraints to impose on the child widget. Constraints has the following properties:
+子ウィジェットに課す制約。Constraintsには以下のプロパティがあります：
 
-- `minWidth`: Minimum width (default: 0)
-- `maxWidth`: Maximum width (default: Infinity)
-- `minHeight`: Minimum height (default: 0)
-- `maxHeight`: Maximum height (default: Infinity)
+- `minWidth`: 最小幅（デフォルト: 0）
+- `maxWidth`: 最大幅（デフォルト: Infinity）
+- `minHeight`: 最小高さ（デフォルト: 0）
+- `maxHeight`: 最大高さ（デフォルト: Infinity）
 
 ```typescript
-// Various constraint examples
+// 様々な制約の例
 ConstrainedBox({
   constraints: new Constraints({
     minWidth: 100,
@@ -91,17 +91,17 @@ ConstrainedBox({
 })
 ```
 
-### child (optional)
-**Type: Widget | undefined**
+### child（オプション）
+**型: Widget | undefined**
 
-The child widget to which the constraints will be applied.
+制約が適用される子ウィジェット。
 
-## Constraints Constructors
+## 制約のコンストラクタ
 
-Constraints provides several convenience constructors:
+Constraintsはいくつかの便利なコンストラクタを提供します：
 
 ```typescript
-// Default constructor
+// デフォルトコンストラクタ
 new Constraints({
   minWidth: 0,
   maxWidth: Infinity,
@@ -109,19 +109,19 @@ new Constraints({
   maxHeight: Infinity
 })
 
-// Tight constraints (fixed size)
+// タイト制約（固定サイズ）
 Constraints.tight({ width: 100, height: 100 })
 
-// Loose constraints (only max size limited)
+// ルーズ制約（最大サイズのみ制限）
 Constraints.loose({ width: 200, height: 200 })
 
-// Expand (expand to parent size)
+// 拡張（親サイズまで拡張）
 Constraints.expand()  // Expand in all directions
-Constraints.expand({ width: 300 })  // Width is 300, height expands
-Constraints.expand({ height: 400 })  // Height is 400, width expands
+Constraints.expand({ width: 300 })  // 幅は300、高さは拡張
+Constraints.expand({ height: 400 })  // 高さは400、幅は拡張
 ```
 
-## Constraint Combination
+## 制約の組み合わせ
 
 ConstrainedBox combines parent constraints with its own constraints:
 
@@ -149,9 +149,9 @@ Container({
 })
 ```
 
-## Practical Examples
+## 実践的な例
 
-### Example 1: Ensuring Minimum Button Size
+### 例1: ボタンの最小サイズ確保
 
 ```typescript
 const MinSizeButton = ({ onPressed, child, minWidth = 88, minHeight = 36 }) => {
@@ -299,7 +299,7 @@ ConstrainedBox({
 // Result: Minimum size is 200x200
 ```
 
-## Important Notes
+## 重要な注意事項
 
 - Parent constraints always take precedence
 - Conflicting constraints result in the most restrictive being applied
@@ -307,7 +307,7 @@ ConstrainedBox({
 - Too much nesting can impact layout performance
 - Tight constraints completely ignore the child's size
 
-## Related Widgets
+## 関連ウィジェット
 
 - **Container**: Provides the same functionality with constraints property
 - **SizedBox**: Simple way to set fixed size

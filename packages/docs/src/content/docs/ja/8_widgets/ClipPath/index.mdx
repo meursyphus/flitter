@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: ClipPath
 title: "ClipPath"
-description: "A widget that clips its child using a custom path"
+description: "カスタムパスを使用して子要素をクリップするウィジェット"
 ---
 
-## Overview
+## 概要
 
-ClipPath is a widget that clips its child using a custom path defined by the user.
+ClipPathは、ユーザーが定義したカスタムパスを使用して子要素をクリップするウィジェットです。
 
-It takes a clipper callback function that returns a Path object, allowing you to clip child widgets into any desired shape. Complex shapes, curves, polygons, and various other clipping shapes are possible.
+Pathオブジェクトを返すクリッパーコールバック関数を受け取り、子ウィジェットを任意の形状にクリップできます。複雑な形状、曲線、多角形、その他様々なクリッピング形状が可能です。
 
 <iframe
   width="560"
@@ -22,20 +22,20 @@ It takes a clipper callback function that returns a Path object, allowing you to
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/ClipPath-class.html](https://api.flutter.dev/flutter/widgets/ClipPath-class.html)
+参考: [https://api.flutter.dev/flutter/widgets/ClipPath-class.html](https://api.flutter.dev/flutter/widgets/ClipPath-class.html)
 
-## When to use it?
+## 使用場面
 
-- When you want to clip images or content into custom shapes
-- When creating special design effects (waves, diagonals, star shapes, etc.)
-- When complex masking effects are needed
-- When implementing dynamic clipping effects with animations
-- When shapes that are impossible with built-in clipping widgets (ClipRect, ClipOval, ClipRRect) are needed
+- 画像やコンテンツをカスタム形状にクリップしたい場合
+- 特殊なデザイン効果（波、対角線、星形など）を作成する場合
+- 複雑なマスキング効果が必要な場合
+- アニメーションで動的なクリッピング効果を実装する場合
+- 組み込みクリップウィジェット（ClipRect、ClipOval、ClipRRect）では不可能な形状が必要な場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
-// Triangle clipping
+// 三角形クリッピング
 ClipPath({
   clipper: (size) => {
     return new Path()
@@ -51,7 +51,7 @@ ClipPath({
   })
 })
 
-// Circular clipping
+// 円形クリッピング
 ClipPath({
   clipper: (size) => {
     const rect = Rect.fromLTWH({
@@ -66,13 +66,13 @@ ClipPath({
 })
 ```
 
-## Props Details
+## プロパティの詳細
 
-### clipper (required)
+### clipper（必須）
 
-**Value: (size: Size) => Path**
+**型: (size: Size) => Path**
 
-A callback function that defines the clipping path. It receives the widget's size as a parameter and must return a Path object.
+クリッピングパスを定義するコールバック関数。ウィジェットのサイズをパラメータとして受け取り、Pathオブジェクトを返す必要があります。
 
 ```typescript
 // Star shape clipping
@@ -103,12 +103,12 @@ ClipPath({
 
 ### clipped
 
-**Value: boolean** (default: **true**)
+**型: boolean**（デフォルト: **true**）
 
-Enables/disables the clipping effect.
+クリッピング効果を有効/無効にします。
 
-- `true`: Apply clipping
-- `false`: Disable clipping (child widget displays normally)
+- `true`: クリッピングを適用
+- `false`: クリッピングを無効化（子ウィジェットは通常通り表示）
 
 ```typescript
 ClipPath({
@@ -120,13 +120,13 @@ ClipPath({
 
 ### child
 
-**Value: Widget | undefined**
+**型: Widget | undefined**
 
-The child widget to be clipped.
+クリップされる子ウィジェット。
 
-## Understanding Path API
+## Path API の理解
 
-### Main Path Methods
+### 主要なPathメソッド
 
 ```typescript
 const path = new Path();
@@ -170,9 +170,9 @@ path.addPolygons(points);                // Add polygon
 path.close();
 ```
 
-## Practical Examples
+## 実用的な例
 
-### Example 1: Wave Header
+### 例1: 波型ヘッダー
 
 ```typescript
 const WaveHeader = ({ height, color, child }) => {
@@ -229,7 +229,7 @@ WaveHeader({
 });
 ```
 
-### Example 2: Diagonal Image Gallery
+### 例2: 対角線画像ギャラリー
 
 ```typescript
 const DiagonalImageCard = ({ image, title, onTap }) => {
@@ -287,7 +287,7 @@ const DiagonalImageCard = ({ image, title, onTap }) => {
 };
 ```
 
-### Example 3: Animated Morph Effect
+### 例3: アニメーション変形効果
 
 ```typescript
 const MorphingShape = ({ progress }) => {
@@ -340,7 +340,7 @@ const MorphingShape = ({ progress }) => {
 };
 ```
 
-### Example 4: Message Bubble
+### 例4: メッセージバブル
 
 ```typescript
 const MessageBubble = ({ message, isMe, time }) => {
@@ -403,7 +403,7 @@ const MessageBubble = ({ message, isMe, time }) => {
 };
 ```
 
-### Example 5: Hexagonal Profile Grid
+### 例5: 六角形プロフィールグリッド
 
 ```typescript
 const HexagonalProfile = ({ profiles }) => {
@@ -493,18 +493,18 @@ const HexagonalProfile = ({ profiles }) => {
 };
 ```
 
-## Important Notes
+## 重要な注意事項
 
-- Complex paths can affect rendering performance, so use them carefully
-- The clipper function is called whenever the widget size changes, so avoid heavy computations
-- Touch events outside the clipped area are not detected
-- Consider performance when using with animations
-- Path objects can be reused, so consider caching when necessary
+- 複雑なパスはレンダリングパフォーマンスに影響する可能性があるため、慎重に使用してください
+- クリッパー関数はウィジェットのサイズが変更されるたびに呼ばれるため、重い計算は避けてください
+- クリップされた領域外のタッチイベントは検出されません
+- アニメーションと組み合わせて使用する場合はパフォーマンスを考慮してください
+- Pathオブジェクトは再利用できるため、必要に応じてキャッシュを検討してください
 
-## Related Widgets
+## 関連ウィジェット
 
-- **ClipRect**: Clips with a rectangle
-- **ClipOval**: Clips with an oval
-- **ClipRRect**: Clips with a rounded rectangle
-- **CustomPaint**: Custom drawing
-- **ShaderMask**: Masking using shaders
+- **ClipRect**: 矩形でクリップ
+- **ClipOval**: 楕円でクリップ
+- **ClipRRect**: 角丸矩形でクリップ
+- **CustomPaint**: カスタム描画
+- **ShaderMask**: シェーダーを使用したマスキング

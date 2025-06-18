@@ -1,7 +1,7 @@
 ---
 nav_group: Widgets
 title: IndexedStack
-description: Guide to using the IndexedStack widget for displaying one child from multiple children
+description: 複数の子要素から1つを表示するIndexedStackウィジェットの使用ガイド
 sidebar:
   order: 9
 ---
@@ -9,27 +9,27 @@ sidebar:
 
 # IndexedStack
 
-`IndexedStack` is a stack widget that displays only one child widget from multiple children based on a specific index. It's useful for tab interfaces and page switching.
+`IndexedStack`は、特定のインデックスに基づいて複数の子要素から1つだけを表示するスタックウィジェットです。タブインターフェースやページ切り替えに便利です。
 
-## Overview
+## 概要
 
-IndexedStack renders all child widgets but only shows the widget at the specified index on screen. Other widgets are hidden but maintain their state.
+IndexedStackはすべての子ウィジェットをレンダリングしますが、指定されたインデックスのウィジェットのみを画面に表示します。他のウィジェットは非表示ですが、状態を維持します。
 
-## When to Use
+## 使用場面
 
-- **Tab Interfaces**: When displaying only one tab at a time
-- **Page Switcher**: When transitioning between pages while preserving state
-- **Conditional Display**: When showing different widgets based on state
-- **Wizard UI**: When preserving previous step states during step-by-step progression
-- **Card Deck**: When displaying only a specific card from a deck
+- **タブインターフェース**: 一度に1つのタブのみを表示する場合
+- **ページスイッチャー**: 状態を保持しながらページ間を切り替える場合
+- **条件付き表示**: 状態に基づいて異なるウィジェットを表示する場合
+- **ウィザードUI**: 段階的な進行中に前のステップの状態を保持する場合
+- **カードデッキ**: デッキから特定のカードのみを表示する場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
 import { IndexedStack, Container, Text } from '@meursyphus/flitter';
 
 IndexedStack({
-  index: 1, // Display the second child
+  index: 1, // 2番目の子要素を表示
   children: [
     Container({
       color: 'red',
@@ -47,7 +47,7 @@ IndexedStack({
 })
 ```
 
-## Props
+## プロパティ
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
@@ -63,9 +63,9 @@ IndexedStack({
 - `StackFit.expand`: Expand to maximum available size
 - `StackFit.passthrough`: Pass parent constraints directly
 
-## Real-world Examples
+## 実践的な例
 
-### 1. Basic Indexed Stack
+### 1. 基本的なIndexed Stack
 
 
 
@@ -490,7 +490,7 @@ class WizardInterfaceState extends State<WizardInterface> {
 
 
 
-## Important Notes
+## 重要な注意事項
 
 1. **Memory Usage**: All child widgets are kept in memory, so be cautious with many widgets.
 
@@ -502,7 +502,7 @@ class WizardInterfaceState extends State<WizardInterface> {
 
 5. **Clipping**: Setting `clipped: false` allows children to overflow boundaries.
 
-## Related Widgets
+## 関連ウィジェット
 
 - **Stack**: Display multiple widgets overlapped
 - **Column/Row**: Linear arrangement of widgets

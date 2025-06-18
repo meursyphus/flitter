@@ -1,16 +1,16 @@
 ---
-nav_group: Widgets
+nav_group: ウィジェット
 nav_group_order: 3
 nav_title: AnimatedPadding
 title: "AnimatedPadding"
-description: "A widget that animates padding transitions"
+description: "パディングの変化をアニメーションで遷移するウィジェット"
 ---
 
-## Overview
+## 概要
 
-AnimatedPadding is a widget that automatically animates when its padding changes, providing smooth transitions. This widget is inspired by Flutter's AnimatedPadding widget.
+AnimatedPaddingは、パディングが変更されたときに自動的にアニメーションを行い、スムーズな遷移を提供するウィジェットです。このウィジェットはFlutterのAnimatedPaddingウィジェットにインスパイアされています。
 
-> Animated version of Padding which automatically transitions the indentation over a given duration whenever the given inset changes.
+> 指定されたインデントが変更されるたびに、指定された期間にわたってインデントを自動的に遷移するPaddingのアニメーション版。
 
 <iframe
   width="560"
@@ -22,17 +22,17 @@ AnimatedPadding is a widget that automatically animates when its padding changes
   allowfullscreen
 ></iframe>
 
-Flutter reference: https://api.flutter.dev/flutter/widgets/AnimatedPadding-class.html
+Flutter参考: https://api.flutter.dev/flutter/widgets/AnimatedPadding-class.html
 
-## When to use?
+## いつ使うか？
 
-- When dynamically adjusting widget spacing based on user interaction
-- When smoothly changing internal margins during card or container expansion/collapse
-- When dynamically adjusting item spacing in masonry lists
-- When adjusting spacing based on screen size in responsive design
-- When transitioning padding in foldable content with animation
+- ユーザーインタラクションに基づいてウィジェット間隔を動的に調整する場合
+- カードやコンテナの展開/折りたたみ時に内部マージンをスムーズに変更する場合
+- メイソンリーリストでアイテム間隔を動的に調整する場合
+- レスポンシブデザインで画面サイズに基づいて間隔を調整する場合
+- 折りたたみ可能なコンテンツでアニメーション付きのパディング遷移を行う場合
 
-## Basic usage
+## 基本的な使用法
 
 ```typescript
 import { AnimatedPadding, Container, EdgeInsets, StatefulWidget } from '@flitter/core';
@@ -55,7 +55,7 @@ class PaddingExampleState extends State<PaddingExample> {
               this.isExpanded = !this.isExpanded;
             });
           },
-          child: Text(this.isExpanded ? "Collapse" : "Expand"),
+          child: Text(this.isExpanded ? "折りたたむ" : "展開する"),
         }),
         Container({
           width: 300,
@@ -65,11 +65,11 @@ class PaddingExampleState extends State<PaddingExample> {
             padding: this.isExpanded 
               ? EdgeInsets.all(50) 
               : EdgeInsets.all(10),
-            duration: 500, // 0.5 seconds
+            duration: 500, // 0.5秒
             child: Container({
               color: "blue",
               child: Center({
-                child: Text("Animated Padding", {
+                child: Text("アニメーションパディング", {
                   style: TextStyle({ color: "white" })
                 }),
               }),
@@ -82,426 +82,417 @@ class PaddingExampleState extends State<PaddingExample> {
 }
 ```
 
-## Props
+## プロパティ
 
-### duration (required)
-**Value: number**
+### duration（必須）
+**値: number**
 
-Specifies the animation duration in milliseconds.
+アニメーション期間をミリ秒で指定します。
 
-### padding (optional)
-**Value: EdgeInsetsGeometry** (default: **EdgeInsets.all(0)**)
+### padding（オプション）
+**値: EdgeInsetsGeometry**（デフォルト: **EdgeInsets.all(0)**）
 
-Sets the internal spacing of the widget. Available methods:
+ウィジェットの内部間隔を設定します。利用可能なメソッド：
 
-#### EdgeInsets methods
-- `EdgeInsets.all(value)`: Same spacing in all directions
-- `EdgeInsets.symmetric({ horizontal, vertical })`: Horizontal/vertical symmetric spacing
-- `EdgeInsets.only({ top, bottom, left, right })`: Specify spacing for each direction
-- `EdgeInsets.fromLTRB({ left, top, right, bottom })`: Specify in left/top/right/bottom order
+#### EdgeInsetsメソッド
+- `EdgeInsets.all(value)`: 全方向に同じ間隔
+- `EdgeInsets.symmetric({ horizontal, vertical })`: 水平/垂直対称の間隔
+- `EdgeInsets.only({ top, bottom, left, right })`: 各方向の間隔を個別指定
 
-#### Usage examples
 ```typescript
-// 20 spacing in all directions
-EdgeInsets.all(20)
-
-// Horizontal 16, vertical 8 spacing
-EdgeInsets.symmetric({ horizontal: 16, vertical: 8 })
-
-// Different spacing for each direction
-EdgeInsets.only({ top: 10, left: 20, right: 20, bottom: 30 })
-
-// Specify in LTRB order
-EdgeInsets.fromLTRB({ left: 10, top: 20, right: 10, bottom: 20 })
+// 様々なパディングタイプ
+AnimatedPadding({
+  padding: EdgeInsets.all(20),           // 全方向20
+  padding: EdgeInsets.symmetric({        // 水平10、垂直20
+    horizontal: 10, 
+    vertical: 20 
+  }),
+  padding: EdgeInsets.only({             // 個別指定
+    top: 10, 
+    bottom: 15, 
+    left: 5, 
+    right: 25 
+  }),
+  duration: 300,
+  child: Container({ /* ... */ })
+})
 ```
 
-### curve (optional)
-**Value: Curve** (default: **Curves.linear**)
+### child（オプション）
+**値: Widget**
 
-Specifies the animation progression curve. Available curves:
-- `Curves.linear`: Constant speed
-- `Curves.easeIn`: Slow start
-- `Curves.easeOut`: Slow end
-- `Curves.easeInOut`: Slow start and end
-- `Curves.circIn`: Circular acceleration start
-- `Curves.circOut`: Circular deceleration end
-- `Curves.circInOut`: Circular acceleration/deceleration
-- `Curves.backIn`: Goes back then starts
-- `Curves.backOut`: Overshoots target then returns
-- `Curves.backInOut`: backIn + backOut
-- `Curves.anticipate`: Anticipatory motion before proceeding
-- `Curves.bounceIn`: Bounces at start
-- `Curves.bounceOut`: Bounces at end
-- `Curves.bounceInOut`: Bounces at start/end
+パディングが適用される子ウィジェット。
 
-### child (optional)
-**Value: Widget | undefined**
+### curve（オプション）
+**値: Curve**（デフォルト: **Curves.linear**）
 
-The child widget to which padding will be applied.
-
-### key (optional)
-**Value: any**
-
-A unique identifier for the widget.
-
-## Real-world examples
-
-### Example 1: Foldable card
+アニメーションカーブを指定します。利用可能なカーブ：
 
 ```typescript
-import { AnimatedPadding, Container, Card, EdgeInsets, Curves } from '@flitter/core';
+// カーブの例
+AnimatedPadding({
+  padding: EdgeInsets.all(padding),
+  duration: 500,
+  curve: Curves.easeInOut,    // 滑らかな開始と終了
+  curve: Curves.bounceIn,     // バウンス効果
+  curve: Curves.elasticOut,   // 弾性効果
+  child: myWidget
+})
+```
 
-class FoldableCard extends StatefulWidget {
+### onEnd（オプション）
+**値: () => void**
+
+アニメーション完了時に呼び出されるコールバック関数。
+
+```typescript
+AnimatedPadding({
+  padding: EdgeInsets.all(padding),
+  duration: 300,
+  onEnd: () => {
+    console.log('パディングアニメーション完了');
+  },
+  child: myWidget
+})
+```
+
+## 実践例
+
+### 例1: カード展開効果
+
+```typescript
+class ExpandableCard extends StatefulWidget {
+  title: string;
+  content: string;
+
+  constructor({ title, content }) {
+    super();
+    this.title = title;
+    this.content = content;
+  }
+
   createState() {
-    return new FoldableCardState();
+    return new ExpandableCardState();
   }
 }
 
-class FoldableCardState extends State<FoldableCard> {
+class ExpandableCardState extends State<ExpandableCard> {
   isExpanded = false;
 
   build() {
-    return Card({
+    return Container({
+      margin: EdgeInsets.all(8),
+      decoration: BoxDecoration({
+        color: 'white',
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow({
+            color: 'rgba(0, 0, 0, 0.1)',
+            blurRadius: 8,
+            offset: { x: 0, y: 2 }
+          })
+        ]
+      }),
       child: Column({
         children: [
-          // Header
-          ListTile({
-            title: Text("Foldable Card"),
-            trailing: Icon(
-              this.isExpanded ? Icons.expand_less : Icons.expand_more
-            ),
+          GestureDetector({
             onTap: () => {
               this.setState(() => {
                 this.isExpanded = !this.isExpanded;
               });
             },
+            child: Container({
+              padding: EdgeInsets.all(16),
+              child: Row({
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(this.widget.title, {
+                    style: TextStyle({
+                      fontSize: 18,
+                      fontWeight: 'bold'
+                    })
+                  }),
+                  Icon(this.isExpanded ? Icons.expand_less : Icons.expand_more)
+                ]
+              })
+            })
           }),
-          
-          // Expandable content
           AnimatedPadding({
             padding: this.isExpanded 
-              ? EdgeInsets.fromLTRB({ left: 16, top: 0, right: 16, bottom: 16 })
-              : EdgeInsets.all(0),
+              ? EdgeInsets.fromLTRB(16, 0, 16, 16)
+              : EdgeInsets.zero,
             duration: 300,
-            curve: Curves.easeOut,
-            child: this.isExpanded ? Column({
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Detailed Content",
-                  { style: TextStyle({ fontWeight: "bold", fontSize: 16 }) }
-                ),
-                SizedBox({ height: 8 }),
-                Text(
-                  "This card expands when clicked, and the internal content padding "
-                  "animates smoothly to appear naturally."
-                ),
-                SizedBox({ height: 12 }),
-                Row({
-                  children: [
-                    ElevatedButton({
-                      onPressed: () => {},
-                      child: Text("Action 1"),
-                    }),
-                    SizedBox({ width: 8 }),
-                    OutlinedButton({
-                      onPressed: () => {},
-                      child: Text("Action 2"),
-                    }),
-                  ],
-                }),
-              ],
-            }) : SizedBox.shrink(),
-          }),
-        ],
-      }),
+            curve: Curves.easeInOut,
+            child: this.isExpanded 
+              ? Text(this.widget.content, {
+                  style: TextStyle({ fontSize: 14, color: '#666' })
+                })
+              : SizedBox.shrink()
+          })
+        ]
+      })
     });
   }
 }
 ```
 
-### Example 2: Responsive margins
+### 例2: レスポンシブマージン
 
 ```typescript
-import { AnimatedPadding, Container, EdgeInsets, Curves } from '@flitter/core';
+class ResponsiveContainer extends StatefulWidget {
+  child: Widget;
 
-class ResponsiveMargin extends StatefulWidget {
+  constructor({ child }) {
+    super();
+    this.child = child;
+  }
+
   createState() {
-    return new ResponsiveMarginState();
+    return new ResponsiveContainerState();
   }
 }
 
-class ResponsiveMarginState extends State<ResponsiveMargin> {
-  screenSize = "mobile"; // mobile, tablet, desktop
+class ResponsiveContainerState extends State<ResponsiveContainer> {
+  screenWidth = 1200; // 仮の画面幅
 
-  get currentPadding() {
-    switch (this.screenSize) {
-      case "mobile":
-        return EdgeInsets.all(8);
-      case "tablet":
-        return EdgeInsets.all(16);
-      case "desktop":
-        return EdgeInsets.all(32);
-      default:
-        return EdgeInsets.all(8);
+  get responsivePadding() {
+    if (this.screenWidth < 600) {
+      return EdgeInsets.all(8);
+    } else if (this.screenWidth < 1200) {
+      return EdgeInsets.all(16);
+    } else {
+      return EdgeInsets.all(24);
     }
   }
 
   build() {
+    return AnimatedPadding({
+      padding: this.responsivePadding,
+      duration: 250,
+      curve: Curves.easeOut,
+      child: Container({
+        color: '#F5F5F5',
+        child: this.widget.child
+      })
+    });
+  }
+}
+```
+
+### 例3: インタラクティブボタンパディング
+
+```typescript
+class InteractiveButton extends StatefulWidget {
+  text: string;
+  onPressed: () => void;
+
+  constructor({ text, onPressed }) {
+    super();
+    this.text = text;
+    this.onPressed = onPressed;
+  }
+
+  createState() {
+    return new InteractiveButtonState();
+  }
+}
+
+class InteractiveButtonState extends State<InteractiveButton> {
+  isPressed = false;
+  isHovered = false;
+
+  get buttonPadding() {
+    if (this.isPressed) {
+      return EdgeInsets.symmetric({ horizontal: 12, vertical: 6 });
+    } else if (this.isHovered) {
+      return EdgeInsets.symmetric({ horizontal: 20, vertical: 12 });
+    } else {
+      return EdgeInsets.symmetric({ horizontal: 16, vertical: 8 });
+    }
+  }
+
+  build() {
+    return GestureDetector({
+      onTapDown: () => {
+        this.setState(() => {
+          this.isPressed = true;
+        });
+      },
+      onTapUp: () => {
+        this.setState(() => {
+          this.isPressed = false;
+        });
+        this.widget.onPressed();
+      },
+      onMouseEnter: () => {
+        this.setState(() => {
+          this.isHovered = true;
+        });
+      },
+      onMouseLeave: () => {
+        this.setState(() => {
+          this.isHovered = false;
+          this.isPressed = false;
+        });
+      },
+      child: Container({
+        decoration: BoxDecoration({
+          color: this.isPressed ? '#1976D2' : '#2196F3',
+          borderRadius: BorderRadius.circular(8)
+        }),
+        child: AnimatedPadding({
+          padding: this.buttonPadding,
+          duration: 150,
+          curve: Curves.easeInOut,
+          child: Center({
+            child: Text(this.widget.text, {
+              style: TextStyle({
+                color: 'white',
+                fontWeight: 'bold'
+              })
+            })
+          })
+        })
+      })
+    });
+  }
+}
+```
+
+### 例4: ギャラリーアイテム間隔調整
+
+```typescript
+class GalleryView extends StatefulWidget {
+  items: string[];
+
+  constructor({ items }) {
+    super();
+    this.items = items;
+  }
+
+  createState() {
+    return new GalleryViewState();
+  }
+}
+
+class GalleryViewState extends State<GalleryView> {
+  viewMode = 'grid'; // 'grid' または 'list'
+
+  get itemPadding() {
+    return this.viewMode === 'grid' 
+      ? EdgeInsets.all(4)
+      : EdgeInsets.symmetric({ horizontal: 16, vertical: 8 });
+  }
+
+  build() {
     return Column({
       children: [
-        // Screen size selection
         Row({
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton({
-              onPressed: () => this.changeScreenSize("mobile"),
-              child: Text("Mobile"),
-              style: ButtonStyle({
-                backgroundColor: this.screenSize === "mobile" ? "blue" : "gray",
-              }),
+              onPressed: () => {
+                this.setState(() => {
+                  this.viewMode = 'grid';
+                });
+              },
+              child: Text('グリッド表示')
             }),
             SizedBox({ width: 8 }),
             ElevatedButton({
-              onPressed: () => this.changeScreenSize("tablet"),
-              child: Text("Tablet"),
-              style: ButtonStyle({
-                backgroundColor: this.screenSize === "tablet" ? "blue" : "gray",
-              }),
-            }),
-            SizedBox({ width: 8 }),
-            ElevatedButton({
-              onPressed: () => this.changeScreenSize("desktop"),
-              child: Text("Desktop"),
-              style: ButtonStyle({
-                backgroundColor: this.screenSize === "desktop" ? "blue" : "gray",
-              }),
-            }),
-          ],
+              onPressed: () => {
+                this.setState(() => {
+                  this.viewMode = 'list';
+                });
+              },
+              child: Text('リスト表示')
+            })
+          ]
         }),
-        SizedBox({ height: 20 }),
-        
-        // Responsive container
-        Container({
-          width: 400,
-          height: 300,
-          color: "#f0f0f0",
-          child: AnimatedPadding({
-            padding: this.currentPadding,
-            duration: 400,
-            curve: Curves.easeInOut,
-            child: Container({
-              decoration: BoxDecoration({
-                color: "white",
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow({
-                    color: "rgba(0,0,0,0.1)",
-                    blurRadius: 4,
-                    offset: Offset({ x: 0, y: 2 }),
-                  }),
-                ],
-              }),
-              child: Center({
-                child: Column({
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      `Current mode: ${this.screenSize}`,
-                      { style: TextStyle({ fontSize: 18, fontWeight: "bold" }) }
-                    ),
-                    SizedBox({ height: 8 }),
-                    Text(
-                      `Padding: ${this.currentPadding.top}px`,
-                      { style: TextStyle({ color: "gray" }) }
-                    ),
-                  ],
-                }),
-              }),
-            }),
-          }),
-        }),
-      ],
-    });
-  }
-
-  changeScreenSize(size: string) {
-    this.setState(() => {
-      this.screenSize = size;
-    });
-  }
-}
-```
-
-### Example 3: Dynamic list item spacing
-
-```typescript
-import { AnimatedPadding, Container, ListView, EdgeInsets, Curves } from '@flitter/core';
-
-class DynamicListSpacing extends StatefulWidget {
-  createState() {
-    return new DynamicListSpacingState();
-  }
-}
-
-class DynamicListSpacingState extends State<DynamicListSpacing> {
-  isCompact = false;
-  items = [
-    { title: "First Item", color: "#FF6B6B" },
-    { title: "Second Item", color: "#4ECDC4" },
-    { title: "Third Item", color: "#45B7D1" },
-    { title: "Fourth Item", color: "#96CEB4" },
-    { title: "Fifth Item", color: "#FFEAA7" },
-  ];
-
-  build() {
-    return Column({
-      children: [
-        // Density control
-        Padding({
-          padding: EdgeInsets.all(16),
-          child: Row({
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "List Density",
-                { style: TextStyle({ fontSize: 18, fontWeight: "bold" }) }
-              ),
-              Switch({
-                value: this.isCompact,
-                onChanged: (value) => {
-                  this.setState(() => {
-                    this.isCompact = value;
-                  });
-                },
-              }),
-            ],
-          }),
-        }),
-        
-        // List
+        SizedBox({ height: 16 }),
         Expanded({
-          child: ListView({
-            children: this.items.map((item, index) => {
-              return AnimatedPadding({
-                key: ValueKey(index),
-                padding: this.isCompact 
-                  ? EdgeInsets.symmetric({ horizontal: 16, vertical: 4 })
-                  : EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
-                duration: 200,
-                curve: Curves.easeOut,
-                child: Container({
-                  height: this.isCompact ? 60 : 80,
-                  decoration: BoxDecoration({
-                    color: item.color,
-                    borderRadius: BorderRadius.circular(8),
-                  }),
-                  child: Center({
-                    child: Text(
-                      item.title,
-                      { style: TextStyle({ color: "white", fontSize: 16 }) }
-                    ),
-                  }),
-                }),
-              });
-            }),
-          }),
-        }),
-      ],
+          child: this.viewMode === 'grid'
+            ? GridView.count({
+                crossAxisCount: 3,
+                children: this.widget.items.map(item => 
+                  AnimatedPadding({
+                    padding: this.itemPadding,
+                    duration: 300,
+                    curve: Curves.easeInOut,
+                    child: Container({
+                      decoration: BoxDecoration({
+                        color: '#E3F2FD',
+                        borderRadius: BorderRadius.circular(8)
+                      }),
+                      child: Center({
+                        child: Text(item)
+                      })
+                    })
+                  })
+                )
+              })
+            : ListView({
+                children: this.widget.items.map(item => 
+                  AnimatedPadding({
+                    padding: this.itemPadding,
+                    duration: 300,
+                    curve: Curves.easeInOut,
+                    child: Container({
+                      height: 60,
+                      decoration: BoxDecoration({
+                        color: '#E8F5E8',
+                        borderRadius: BorderRadius.circular(8)
+                      }),
+                      child: Center({
+                        child: Text(item, {
+                          style: TextStyle({ fontSize: 16 })
+                        })
+                      })
+                    })
+                  })
+                )
+              })
+        })
+      ]
     });
   }
 }
 ```
 
-### Example 4: Asymmetric padding animation
+## 重要な注意事項
+
+1. **パフォーマンス**: 頻繁なパディング変更はパフォーマンスに影響する可能性があります
+2. **レイアウト再計算**: パディング変更時に親ウィジェットのレイアウトが再計算されます
+3. **アニメーション期間**: 適切な期間（200-500ms）を選択してユーザビリティを向上させます
+4. **カーブ選択**: コンテキストに適したアニメーションカーブを使用します
+
+## よくある間違い
 
 ```typescript
-import { AnimatedPadding, Container, EdgeInsets, Curves } from '@flitter/core';
+// ❌ 間違い - 状態を直接変更
+this.padding = EdgeInsets.all(20); // UIは更新されません
 
-class AsymmetricPadding extends StatefulWidget {
-  createState() {
-    return new AsymmetricPaddingState();
-  }
-}
+// ✅ 正しい - setStateを使用
+this.setState(() => {
+  this.padding = EdgeInsets.all(20);
+});
 
-class AsymmetricPaddingState extends State<AsymmetricPadding> {
-  paddingIndex = 0;
-  paddingConfigs = [
-    EdgeInsets.all(20),
-    EdgeInsets.only({ left: 50, right: 10, top: 20, bottom: 20 }),
-    EdgeInsets.only({ left: 10, right: 50, top: 40, bottom: 10 }),
-    EdgeInsets.symmetric({ horizontal: 30, vertical: 10 }),
-    EdgeInsets.fromLTRB({ left: 60, top: 10, right: 20, bottom: 40 }),
-  ];
+// ❌ 間違い - 極端に短いアニメーション期間
+AnimatedPadding({
+  duration: 50, // 短すぎる
+  // ...
+})
 
-  build() {
-    const currentPadding = this.paddingConfigs[this.paddingIndex];
-    
-    return GestureDetector({
-      onTap: () => this.nextPadding(),
-      child: Container({
-        width: 350,
-        height: 250,
-        color: "#2C3E50",
-        child: AnimatedPadding({
-          padding: currentPadding,
-          duration: 800,
-          curve: Curves.backOut,
-          child: Container({
-            decoration: BoxDecoration({
-              gradient: LinearGradient({
-                colors: ["#74b9ff", "#0984e3"],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              }),
-              borderRadius: BorderRadius.circular(12),
-            }),
-            child: Center({
-              child: Column({
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Asymmetric Padding",
-                    { style: TextStyle({ color: "white", fontSize: 20, fontWeight: "bold" }) }
-                  ),
-                  SizedBox({ height: 8 }),
-                  Text(
-                    `L:${currentPadding.left} T:${currentPadding.top} R:${currentPadding.right} B:${currentPadding.bottom}`,
-                    { style: TextStyle({ color: "white", fontSize: 14 }) }
-                  ),
-                  SizedBox({ height: 16 }),
-                  Text(
-                    "Tap for next padding",
-                    { style: TextStyle({ color: "white", fontSize: 12, opacity: 0.8 }) }
-                  ),
-                ],
-              }),
-            }),
-          }),
-        }),
-      }),
-    });
-  }
-
-  nextPadding() {
-    this.setState(() => {
-      this.paddingIndex = (this.paddingIndex + 1) % this.paddingConfigs.length;
-    });
-  }
-}
+// ✅ 正しい - 適切なアニメーション期間
+AnimatedPadding({
+  duration: 250, // 適切
+  // ...
+})
 ```
 
-## Notes
+## 関連ウィジェット
 
-- Padding values cannot be negative
-- All properties of EdgeInsetsGeometry animate simultaneously
-- Very large padding values can impact performance
-- If a new padding value is set during animation, it smoothly transitions from the current value to the new value
-- Padding space is maintained even without child widgets
-
-## Related widgets
-
-- **Padding**: Basic widget for setting padding without animation
-- **AnimatedContainer**: Animates multiple properties simultaneously
-- **AnimatedAlign**: Animates alignment transitions
-- **Container**: Versatile widget that can set both padding and margin simultaneously
+- **Padding**: 静的パディングの場合
+- **AnimatedContainer**: パディングを含む複数のプロパティをアニメーション
+- **AnimatedPositioned**: Stack内での位置アニメーション
+- **Container**: パディングを含む基本コンテナウィジェット

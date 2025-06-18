@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Opacity
 title: "Opacity"
-description: "A widget that controls the transparency of its child widget"
+description: "子ウィジェットの透明度を制御するウィジェット"
 ---
 
-## Overview
+## 概要
 
-`Opacity` is a widget that makes its child partially transparent. Inspired by Flutter's Opacity widget, it's used for creating fade in/out effects or visual layering.
+`Opacity`は、子ウィジェットを部分的に透明にするウィジェットです。FlutterのOpacityウィジェットにインスパイアされており、フェードイン/アウト効果や視覚的なレイヤリングを作成するために使用されます。
 
-When the value is 0.0, the child is not painted at all. When the value is 1.0, the child is painted completely opaque. Values between 0.0 and 1.0 use an intermediate buffer and may have performance costs.
+値が0.0の場合、子ウィジェットは全く描画されません。値が1.0の場合、子ウィジェットは完全に不透明に描画されます。0.0と1.0の間の値は中間バッファを使用し、パフォーマンスコストが発生する可能性があります。
 
 <iframe
   width="560"
@@ -24,20 +24,20 @@ When the value is 0.0, the child is not painted at all. When the value is 1.0, t
 
 See: [https://api.flutter.dev/flutter/widgets/Opacity-class.html](https://api.flutter.dev/flutter/widgets/Opacity-class.html)
 
-## When to Use?
+## 使用する場面
 
-- When you need to control widget transparency
-- When creating fade in/out effects
-- When visually representing disabled UI elements
-- When creating overlays or modal backgrounds
-- When expressing visual hierarchy or depth
+- ウィジェットの透明度を制御する必要がある場合
+- フェードイン/アウト効果を作成する場合
+- 無効化されたUI要素を視覚的に表現する場合
+- オーバーレイやモーダル背景を作成する場合
+- 視覚的な階層や深度を表現する場合
 
 ## Basic Usage
 
 ```typescript
 import { Opacity, Container } from 'flitter';
 
-// Semi-transparent box
+// 半透明ボックス
 const SemiTransparentBox = Opacity({
   opacity: 0.5,
   child: Container({
@@ -47,48 +47,48 @@ const SemiTransparentBox = Opacity({
   })
 });
 
-// Faded text
+// フェードされたテキスト
 const FadedText = Opacity({
   opacity: 0.3,
-  child: Text('Faded text', {
+  child: Text('フェードされたテキスト', {
     style: { fontSize: 18 }
   })
 });
 ```
 
-## Props
+## プロパティ
 
-### opacity (required)
-**Value: number**
+### opacity (必須)
+**値: number**
 
-Specifies the transparency value from 0.0 to 1.0.
+0.0から1.0までの透明度値を指定します。
 
-- **0.0**: Completely transparent (invisible)
-- **1.0**: Completely opaque (default state)
-- **0.0 ~ 1.0**: Partially transparent
+- **0.0**: 完全に透明（非表示）
+- **1.0**: 完全に不透明（デフォルト状態）
+- **0.0 ~ 1.0**: 部分的に透明
 
 ```typescript
-// Completely transparent
+// 完全に透明
 opacity: 0.0
 
-// Semi-transparent
+// 半透明
 opacity: 0.5
 
-// Almost opaque
+// ほぼ不透明
 opacity: 0.9
 
-// Completely opaque
+// 完全に不透明
 opacity: 1.0
 ```
 
-### child (optional)
-**Value: Widget**
+### child (オプション)
+**値: Widget**
 
-The child widget to which transparency will be applied. If there's no child, nothing is rendered.
+透明度が適用される子ウィジェット。子ウィジェットがない場合、何もレンダリングされません。
 
-## Real-World Examples
+## 実世界の例
 
-### Example 1: Various Transparency Levels
+### 例1: 様々な透明度レベル
 
 ```typescript
 import { Opacity, Container, Row, Column, Text } from 'flitter';
@@ -115,7 +115,7 @@ const OpacityLevels = Row({
 });
 ```
 
-### Example 2: Disabled Button Representation
+### 例2: 無効化ボタンの表現
 
 ```typescript
 import { Opacity, GestureDetector, Container, Text } from 'flitter';
@@ -146,7 +146,7 @@ const Button = ({ text, onPress, disabled = false }) => {
 };
 ```
 
-### Example 3: Modal Overlay
+### 例3: モーダルオーバーレイ
 
 ```typescript
 import { Opacity, Stack, Positioned, Container, GestureDetector } from 'flitter';
@@ -188,7 +188,7 @@ const Modal = ({ isVisible, onClose, child }) => {
 };
 ```
 
-### Example 4: Using with Animation (AnimatedOpacity)
+### 例4: アニメーションとの使用（AnimatedOpacity）
 
 ```typescript
 import { AnimatedOpacity, Container, GestureDetector } from 'flitter';
@@ -219,7 +219,7 @@ class FadeButtonState extends State {
               color: '#9b59b6',
               borderRadius: BorderRadius.circular(8)
             }),
-            child: Text('Toggle Button', {
+            child: Text('トグルボタン', {
               style: { color: 'white' }
             })
           })
@@ -238,7 +238,7 @@ class FadeButtonState extends State {
               borderRadius: BorderRadius.circular(8)
             }),
             child: Center({
-              child: Text('Fade Effect', {
+              child: Text('フェード効果', {
                 style: { color: 'white', fontSize: 18 }
               })
             })
@@ -250,7 +250,7 @@ class FadeButtonState extends State {
 }
 ```
 
-### Example 5: Nested Opacity (Multiplication Effect)
+### 例5: ネストしたOpacity（乗算効果）
 
 ```typescript
 import { Opacity, Container, Row } from 'flitter';
@@ -258,7 +258,7 @@ import { Opacity, Container, Row } from 'flitter';
 const NestedOpacityExample = Row({
   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
   children: [
-    // Single opacity
+    // 単一の透明度
     Container({
       width: 100,
       height: 100,
@@ -268,7 +268,7 @@ const NestedOpacityExample = Row({
       })
     }),
     
-    // Nested opacity (0.5 × 0.5 = 0.25)
+    // ネストされた透明度 (0.5 × 0.5 = 0.25)
     Container({
       width: 100,
       height: 100,
@@ -284,7 +284,7 @@ const NestedOpacityExample = Row({
 });
 ```
 
-### Example 6: Conditional Opacity
+### 例6: 条件付き透明度
 
 ```typescript
 import { Opacity, Container, Text } from 'flitter';
@@ -313,7 +313,7 @@ class ConditionalOpacityState extends State {
             color: '#2ecc71',
             borderRadius: BorderRadius.circular(8)
           }),
-          child: Text('Hover Effect', {
+          child: Text('ホバー効果', {
             style: { color: 'white' }
           })
         })
@@ -323,17 +323,17 @@ class ConditionalOpacityState extends State {
 }
 ```
 
-## Best Practices
+## ベストプラクティス
 
-- **Performance**: Values other than 0.0 and 1.0 use an intermediate buffer and may impact performance
-- **Nesting Effect**: Multiple Opacity widgets nested will multiply transparency (0.5 × 0.5 = 0.25)
-- **Animation**: Use `AnimatedOpacity` for smooth transparency changes
-- **Hit Testing**: Even when opacity is 0.0, child widgets can still receive touch events
-- **Range Validation**: Opacity value must be between 0.0 and 1.0
+- **パフォーマンス**: 0.0と1.0以外の値は中間バッファを使用し、パフォーマンスに影響を与える可能性があります
+- **ネスト効果**: 複数のOpacityウィジェットをネストすると透明度が乗算されます (0.5 × 0.5 = 0.25)
+- **アニメーション**: スムーズな透明度変化には`AnimatedOpacity`を使用してください
+- **ヒットテスト**: 透明度が0.0の場合でも、子ウィジェットはタッチイベントを受信できます
+- **範囲検証**: 透明度値は0.0から1.0の間でなければなりません
 
-## Related Widgets
+## 関連ウィジェット
 
-- **AnimatedOpacity**: When you need smooth opacity animations
-- **FadeTransition**: When you need more complex fade animation control
-- **Visibility**: When you need simple show/hide control
-- **Container**: When you only need to control background color transparency
+- **AnimatedOpacity**: スムーズな透明度アニメーションが必要な場合
+- **FadeTransition**: より複雑なフェードアニメーション制御が必要な場合
+- **Visibility**: シンプルな表示/非表示制御が必要な場合
+- **Container**: 背景色の透明度のみを制御する必要がある場合

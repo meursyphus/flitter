@@ -3,24 +3,24 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Text
 title: "Text"
-description: "A basic widget that displays styled text"
+description: "スタイル付きテキストを表示する基本ウィジェット"
 ---
 
-## Overview
+## 概要
 
-Text is a basic widget that displays styled text.
+Textは、スタイル付きテキストを表示する基本ウィジェットです。
 
-The Text widget displays text with a single style. The string might break across multiple lines or might all be displayed on the same line depending on the layout constraints. You can customize the appearance of text using the style property. If you need to use multiple styles, you can use the Text.rich constructor or use the RichText widget directly.
+Textウィジェットは単一スタイルのテキストを表示します。文字列はレイアウト制約によって複数行に分かれるか、すべて同じ行に表示される可能性があります。styleプロパティを使用してテキストの外観をカスタマイズできます。複数のスタイルを使用する必要がある場合は、Text.richコンストラクタを使用するか、RichTextウィジェットを直接使用できます。
 
-## When to use it?
+## 使用場面
 
-- When displaying text on the screen
-- When showing titles, body text, labels, etc.
-- When single-styled text is needed
-- When text overflow handling is required
-- When text alignment is needed
+- 画面上にテキストを表示する場合
+- タイトル、本文、ラベルなどを表示する場合
+- 単一スタイルのテキストが必要な場合
+- テキストオーバーフローの処理が必要な場合
+- テキストの配置が必要な場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
 // Basic text
@@ -50,11 +50,11 @@ Text.rich(
 )
 ```
 
-## Constructors
+## コンストラクタ
 
 ### Text(data, props?)
 
-The default constructor creates single-styled text.
+デフォルトコンストラクタは単一スタイルのテキストを作成します。
 
 ```typescript
 Text('Basic text')
@@ -63,7 +63,7 @@ Text('Styled text', { style: TextStyle({ fontSize: 18 }) })
 
 ### Text.rich(textSpan, props?)
 
-Creates text with multiple styles.
+複数のスタイルを持つテキストを作成します。
 
 ```typescript
 Text.rich(
@@ -80,13 +80,13 @@ Text.rich(
 )
 ```
 
-## Props
+## プロパティ
 
 ### style
 
-**Value: TextStyle | undefined**
+**型: TextStyle | undefined**
 
-Defines the text style. If null, the default text style is used.
+テキストスタイルを定義します。nullの場合、デフォルトのテキストスタイルが使用されます。
 
 ```typescript
 Text('Styled text', {
@@ -184,9 +184,9 @@ Text('Multi-line\ntext', {
 })
 ```
 
-## TextStyle Properties
+## TextStyleプロパティ
 
-TextStyle defines the visual properties of text.
+TextStyleはテキストの視覚的プロパティを定義します。
 
 ### color
 
@@ -278,9 +278,9 @@ TextStyle({
 })
 ```
 
-## Practical Examples
+## 実用的な例
 
-### Example 1: Title and Body
+### 例1: タイトルと本文
 
 ```typescript
 const ArticleHeader = () => {
@@ -314,7 +314,7 @@ const ArticleHeader = () => {
 };
 ```
 
-### Example 2: Card with Ellipsis
+### 例2: 省略表示付きカード
 
 ```typescript
 const ProductCard = ({ title, description, price }) => {
@@ -365,7 +365,7 @@ const ProductCard = ({ title, description, price }) => {
 };
 ```
 
-### Example 3: Mixed Style Text
+### 例3: 混合スタイルテキスト
 
 ```typescript
 const TermsText = () => {
@@ -396,7 +396,7 @@ const TermsText = () => {
 };
 ```
 
-### Example 4: Chat Message
+### 例4: チャットメッセージ
 
 ```typescript
 const ChatMessage = ({ message, isMe, time }) => {
@@ -433,7 +433,7 @@ const ChatMessage = ({ message, isMe, time }) => {
 };
 ```
 
-### Example 5: Price Display
+### 例5: 価格表示
 
 ```typescript
 const PriceDisplay = ({ originalPrice, salePrice, discountRate }) => {
@@ -473,16 +473,16 @@ const PriceDisplay = ({ originalPrice, salePrice, discountRate }) => {
 };
 ```
 
-## Important Notes
+## 重要な注意事項
 
-- The overflow property is most effective when softWrap is false or text is limited to one line.
-- When using fontFamily, ensure the font is installed on the system or included in the app.
-- The height property adjusts line spacing and works as a multiple of fontSize.
-- When using Text.rich, the base style is inherited by all TextSpans (when inherit is true).
+- overflowプロパティはsoftWrapがfalseまたはテキストが1行に制限されている場合に最も効果的です。
+- fontFamilyを使用する場合、フォントがシステムにインストールされているか、アプリに含まれていることを確認してください。
+- heightプロパティは行間を調整し、fontSizeの倍数として動作します。
+- Text.richを使用する場合、ベーススタイルはすべてのTextSpanに継承されます（inheritがtrueの場合）。
 
-## Related Widgets
+## 関連ウィジェット
 
-- **RichText**: For more complex text styling needs
-- **TextField**: For user input
-- **SelectableText**: When selectable text is needed
-- **DefaultTextStyle**: To define default text style for a subtree
+- **RichText**: より複雑なテキストスタイリングが必要な場合
+- **TextField**: ユーザー入力用
+- **SelectableText**: 選択可能なテキストが必要な場合
+- **DefaultTextStyle**: サブツリーのデフォルトテキストスタイルを定義する場合

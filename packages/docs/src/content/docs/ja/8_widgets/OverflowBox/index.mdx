@@ -3,29 +3,29 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: OverflowBox
 title: "OverflowBox"
-description: "A widget that imposes different constraints on its child than it gets from its parent, possibly allowing overflow"
+description: "親から受け取る制約とは異なる制約を子に課し、オーバーフローを許可する可能性があるウィジェット"
 ---
 
-## Overview
+## 概要
 
-OverflowBox is a widget that imposes different constraints on its child than it gets from its parent, possibly allowing the child to overflow the parent.
+OverflowBoxは、親から受け取る制約とは異なる制約を子に課し、子が親をオーバーフローすることを可能にするウィジェットです。
 
-This widget is useful when you want a child to have a different size than what the parent allows, either larger or smaller. For example, it can be used to display large icons or images inside small containers.
+このウィジェットは、子が親が許可するサイズとは異なるサイズ（大きいまたは小さい）を持たせたい場合に便利です。例えば、小さなコンテナ内に大きなアイコンや画像を表示する場合に使用できます。
 
 See: [https://api.flutter.dev/flutter/widgets/OverflowBox-class.html](https://api.flutter.dev/flutter/widgets/OverflowBox-class.html)
 
-## When to use it?
+## 使用場面
 
-- When a child needs to exceed the parent's size
-- When creating UI elements like popups or tooltips that extend outside the parent area
-- When creating effects where size temporarily expands during animations
-- When you need a fixed size that ignores parent constraints
-- When creating elements like overlays or badges that cross parent boundaries
+- 子が親のサイズを超える必要がある場合
+- 親領域の外側に拡張するポップアップやツールチップのようなUI要素を作成する場合
+- アニメーション中にサイズが一時的に拡大する効果を作成する場合
+- 親の制約を無視した固定サイズが必要な場合
+- 親の境界を跨ぐオーバーレイやバッジのような要素を作成する場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
-// Allow child larger than parent
+// 親よりも大きな子を許可
 Container({
   width: 100,
   height: 100,
@@ -41,7 +41,7 @@ Container({
   })
 })
 
-// Force child smaller than parent
+// 子を親よりも小さく強制
 Container({
   width: 200,
   height: 200,
@@ -55,7 +55,7 @@ Container({
   })
 })
 
-// Fix to specific size
+// 特定のサイズに固定
 OverflowBox({
   minWidth: 150,
   maxWidth: 150,
@@ -67,7 +67,7 @@ OverflowBox({
 })
 ```
 
-## Props
+## プロパティ
 
 ### minWidth
 
@@ -150,9 +150,9 @@ OverflowBox({
 
 The child widget to which the new constraints will be applied.
 
-## Practical Examples
+## 実践的な例
 
-### Example 1: Floating Action Button Badge
+### 例1: フローティングアクションボタンのバッジ
 
 ```typescript
 const FloatingActionButtonWithBadge = ({ count, onPressed }) => {
@@ -517,7 +517,7 @@ OverflowBox({
 })
 ```
 
-## Important Notes
+## 重要な注意事項
 
 - OverflowBox allows children to overflow parent area, which can cause layout issues
 - Overflowed areas are not clipped and may overlap other widgets
@@ -525,7 +525,7 @@ OverflowBox({
 - Touch events are only detected within the parent area
 - Avoid excessive overflow for performance reasons
 
-## Related Widgets
+## 関連ウィジェット
 
 - **UnconstrainedBox**: Widget that removes all constraints
 - **ConstrainedBox**: Widget that applies additional constraints

@@ -3,16 +3,16 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: ClipOval
 title: "ClipOval"
-description: "A widget that clips its child using an oval shape"
+description: "楕円形または円形で子要素をクリップするウィジェット"
 ---
 
-## Overview
+## 概要
 
-ClipOval is a widget that clips its child using an elliptical or circular shape. It is commonly used to create circular profile images, avatars, or when an elliptical shape is needed for design purposes.
+ClipOvalは、子要素を楕円形または円形でクリップするウィジェットです。プロフィール画像やアバターの円形表示、デザイン目的での楕円形状が必要な場合によく使用されます。
 
-> A widget that clips its child using an oval shape.
+> 楕円形を使用して子要素をクリップするウィジェット。
 
-Flutter reference: https://api.flutter.dev/flutter/widgets/ClipOval-class.html
+Flutter参考: https://api.flutter.dev/flutter/widgets/ClipOval-class.html
 
 <iframe
   width="560"
@@ -24,21 +24,21 @@ Flutter reference: https://api.flutter.dev/flutter/widgets/ClipOval-class.html
   allowfullscreen
 ></iframe>
 
-## When to use
+## 使用場面
 
-- Creating circular profile images or avatars
-- Clipping images or containers into an elliptical shape
-- Making buttons or cards circular or elliptical
-- When smooth curved shapes are needed for design
-- Placing logos or icons on a circular background
-- Creating round status indicators or badges
+- 円形のプロフィール画像やアバターを作成する場合
+- 画像やコンテナを楕円形にクリップする場合
+- ボタンやカードを円形や楕円形にする場合
+- デザインで滑らかな曲線形状が必要な場合
+- ロゴやアイコンを円形の背景に配置する場合
+- 丸い状態インジケーターやバッジを作成する場合
 
-## Basic usage
+## 基本的な使用方法
 
 ```typescript
 import { ClipOval, Container, Image } from '@flitter/core';
 
-// Basic circular clip
+// 基本的な円形クリップ
 ClipOval({
   clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
   child: Container({
@@ -51,7 +51,7 @@ ClipOval({
   }),
 });
 
-// Clipping an image into a circle
+// 画像を円形にクリップ
 ClipOval({
   clipper: (size) => Rect.fromLTWH(0, 0, size.width, size.height),
   child: Image({
@@ -63,35 +63,35 @@ ClipOval({
 });
 ```
 
-## Props
+## プロパティ
 
-### child (required)
-**Type: Widget**
+### child（必須）
+**型: Widget**
 
-The child widget to be clipped.
+クリップされる子ウィジェット。
 
-### clipper (required)
-**Type: (size: Size) => Rect**
+### clipper（必須）
+**型: (size: Size) => Rect**
 
-A function that defines the clip region. It receives the widget's size and returns the rectangular area where the oval will be drawn.
-- `Rect.fromLTWH(0, 0, size.width, size.height)`: Clips the entire area as an oval
-- `Rect.fromLTWH(10, 10, size.width-20, size.height-20)`: Clips as an oval with margins
+クリップ領域を定義する関数。ウィジェットのサイズを受け取り、楕円が描画される矩形領域を返します。
+- `Rect.fromLTWH(0, 0, size.width, size.height)`: 全体領域を楕円としてクリップ
+- `Rect.fromLTWH(10, 10, size.width-20, size.height-20)`: マージンを持つ楕円としてクリップ
 
-### clipped (optional)
-**Type: boolean** (default: **true**)
+### clipped（オプション）
+**型: boolean**（デフォルト: **true**）
 
-Specifies whether to enable the clipping effect.
-- `true`: Apply clipping
-- `false`: Disable clipping (child widget displays normally)
+クリップ効果を有効にするかどうかを指定します。
+- `true`: クリップを適用
+- `false`: クリップを無効化（子ウィジェットは通常通り表示）
 
-### key (optional)
-**Type: any**
+### key（オプション）
+**型: any**
 
-Unique identifier for the widget.
+ウィジェットの一意識別子。
 
-## Real-world examples
+## 実用的な例
 
-### Example 1: Profile avatar list
+### 例1: プロフィールアバターリスト
 
 ```typescript
 import { ClipOval, Container, Image, Row, Column } from '@flitter/core';
@@ -174,7 +174,7 @@ class ProfileAvatars extends StatelessWidget {
 }
 ```
 
-### Example 2: Various sized circular buttons
+### 例2: 様々なサイズの円形ボタン
 
 ```typescript
 import { ClipOval, Container, GestureDetector, Icon } from '@flitter/core';
@@ -262,7 +262,7 @@ class CircularButtons extends StatelessWidget {
 }
 ```
 
-### Example 3: Progress rings and circular charts
+### 例3: プログレスリングと円形チャート
 
 ```typescript
 import { ClipOval, Container, Stack, CustomPaint } from '@flitter/core';
@@ -401,7 +401,7 @@ class CircularProgressPainter extends CustomPainter {
 }
 ```
 
-### Example 4: Circular image gallery
+### 例4: 円形画像ギャラリー
 
 ```typescript
 import { ClipOval, Container, GestureDetector, Image, PageView } from '@flitter/core';
@@ -529,18 +529,18 @@ class CircularImageGalleryState extends State<CircularImageGallery> {
 }
 ```
 
-## Important notes
+## 重要な注意事項
 
-- **Clipping performance**: Complex shape clipping can affect rendering performance
-- **Boundary handling**: Touch events outside the clipped area are not detected
-- **Animation**: Consider performance when using clipping with animations
-- **Clipper function**: The clipper function is called whenever the widget size changes, so avoid heavy computations
-- **Nested clipping**: Performance degradation may occur when nesting multiple clipping widgets
+- **クリップのパフォーマンス**: 複雑な形状のクリップはレンダリングパフォーマンスに影響する可能性があります
+- **境界の処理**: クリップされた領域外のタッチイベントは検出されません
+- **アニメーション**: アニメーションとクリップを組み合わせる場合はパフォーマンスを考慮してください
+- **クリッパー関数**: クリッパー関数はウィジェットのサイズが変更されるたびに呼ばれるため、重い計算は避けてください
+- **ネストしたクリップ**: 複数のクリップウィジェットをネストするとパフォーマンスが低下する可能性があります
 
-## Related widgets
+## 関連ウィジェット
 
-- **ClipRRect**: Widget that clips with rounded corners
-- **ClipRect**: Widget that clips with a rectangle
-- **ClipPath**: Widget that clips with custom paths
-- **Container**: Can create circular shapes using the shape property of decoration
-- **CircleAvatar**: Dedicated widget for creating circular avatars
+- **ClipRRect**: 角丸でクリップするウィジェット
+- **ClipRect**: 矩形でクリップするウィジェット
+- **ClipPath**: カスタムパスでクリップするウィジェット
+- **Container**: decorationのshapeプロパティで円形形状を作成可能
+- **CircleAvatar**: 円形アバター作成専用ウィジェット
