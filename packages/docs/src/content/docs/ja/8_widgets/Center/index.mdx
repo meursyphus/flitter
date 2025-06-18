@@ -3,39 +3,39 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Center
 title: "Center"
-description: "A widget that centers its child within itself"
+description: "子要素を自身の中央に配置するウィジェット"
 ---
 
-## Overview
+## 概要
 
-Center is a widget that centers its child within itself. It's a convenience version of the Align widget with `alignment: Alignment.center` set, providing a simple way to center content.
+Centerは、子要素を自身の中央に配置するウィジェットです。`alignment: Alignment.center`が設定されたAlignウィジェットの便利版で、コンテンツを簡単に中央配置する方法を提供します。
 
-Reference: [https://api.flutter.dev/flutter/widgets/Center-class.html](https://api.flutter.dev/flutter/widgets/Center-class.html)
+参考: [https://api.flutter.dev/flutter/widgets/Center-class.html](https://api.flutter.dev/flutter/widgets/Center-class.html)
 
-## When to Use
+## 使用場面
 
-- When centering content within a container
-- When displaying loading indicators in the center of the screen
-- When placing empty state messages in the center
-- When center-aligning dialog or modal content
-- When centering icons or logos
+- コンテナ内のコンテンツを中央配置したい場合
+- 画面の中央にローディングインジケーターを表示する場合
+- 空の状態メッセージを中央に配置する場合
+- ダイアログやモーダルのコンテンツを中央揃えする場合
+- アイコンやロゴを中央配置する場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
-// Simple center alignment
+// シンプルな中央配置
 Center({
   child: Text('Centered text')
 })
 
-// Using with size factors
+// サイズファクターを使用
 Center({
   widthFactor: 1.5,
   heightFactor: 2.0,
   child: Icon(Icons.star, { size: 48 })
 })
 
-// Full screen centering
+// 全画面中央配置
 Scaffold({
   body: Center({
     child: CircularProgressIndicator()
@@ -43,17 +43,17 @@ Scaffold({
 })
 ```
 
-## Props
+## プロパティ
 
-### child (optional)
-**Type: Widget | undefined**
+### child（オプション）
+**型: Widget | undefined**
 
-The child widget to be centered.
+中央配置される子ウィジェット。
 
-### widthFactor (optional)
-**Type: number | undefined**
+### widthFactor（オプション）
+**型: number | undefined**
 
-Sets this widget's width as a multiple of the child widget's width. If null, expands to available width.
+子ウィジェットの幅の倍数として、このウィジェットの幅を設定します。nullの場合、利用可能な幅まで拡張します。
 
 ```typescript
 Center({
@@ -64,13 +64,13 @@ Center({
     color: 'blue'
   })
 })
-// Center's width will be 200
+// Centerの幅は200になります
 ```
 
-### heightFactor (optional)
-**Type: number | undefined**
+### heightFactor（オプション）
+**型: number | undefined**
 
-Sets this widget's height as a multiple of the child widget's height. If null, expands to available height.
+子ウィジェットの高さの倍数として、このウィジェットの高さを設定します。nullの場合、利用可能な高さまで拡張します。
 
 ```typescript
 Center({
@@ -81,15 +81,15 @@ Center({
     color: 'green'
   })
 })
-// Center's height will be 150
+// Centerの高さは150になります
 ```
 
 ## Center vs Align
 
-Center is a special case of Align:
+CenterはAlignの特殊ケースです：
 
 ```typescript
-// These two are equivalent
+// これらの二つは同等です
 Center({
   child: Text('Hello')
 })
@@ -100,23 +100,23 @@ Align({
 })
 ```
 
-## Layout Behavior
+## レイアウト動作
 
-How Center widget determines its size:
+Centerウィジェットがサイズを決定する方法：
 
-1. **With tight constraints**: Uses the constraint's size
-2. **With loose constraints and null factors**: Expands as much as possible
-3. **With infinite constraints and null factors**: Uses the child's size
-4. **With specified factors**: Child size × factor
+1. **タイトな制約の場合**: 制約のサイズを使用
+2. **ルースな制約とnullファクターの場合**: 可能な限り拡張
+3. **無限制約とnullファクターの場合**: 子のサイズを使用
+4. **指定されたファクターの場合**: 子のサイズ × ファクター
 
 ```typescript
-// Various scenarios
+// 様々なシナリオ
 Container({
   width: 200,
   height: 200,
   color: 'lightgray',
   child: Center({
-    // Center expands to 200x200
+    // Centerは200x200まで拡張
     child: Container({
       width: 50,
       height: 50,
@@ -128,7 +128,7 @@ Container({
 Center({
   widthFactor: 2.0,
   heightFactor: 2.0,
-  // Center is 100x100 (2x the child)
+  // Centerは100x100（子の2倍）
   child: Container({
     width: 50,
     height: 50,
@@ -137,9 +137,9 @@ Center({
 })
 ```
 
-## Practical Examples
+## 実用的な例
 
-### Example 1: Loading Screen
+### 例1: ローディング画面
 
 ```typescript
 const LoadingScreen = ({ message = 'Loading...' }) => {
@@ -166,7 +166,7 @@ const LoadingScreen = ({ message = 'Loading...' }) => {
 };
 ```
 
-### Example 2: Empty State Display
+### 例2: 空の状態表示
 
 ```typescript
 const EmptyState = ({ icon, title, description, action }) => {
@@ -209,7 +209,7 @@ const EmptyState = ({ icon, title, description, action }) => {
 };
 ```
 
-### Example 3: Splash Screen
+### 例3: スプラッシュ画面
 
 ```typescript
 const SplashScreen = ({ logoUrl, appName }) => {
@@ -261,7 +261,7 @@ const SplashScreen = ({ logoUrl, appName }) => {
 };
 ```
 
-### Example 4: Error Message
+### 例4: エラーメッセージ
 
 ```typescript
 const ErrorMessage = ({ error, onRetry }) => {
@@ -320,7 +320,7 @@ const ErrorMessage = ({ error, onRetry }) => {
 };
 ```
 
-### Example 5: Dialog Content
+### 例5: ダイアログコンテンツ
 
 ```typescript
 const DialogContent = ({ icon, title, message, actions }) => {
@@ -378,18 +378,18 @@ const DialogContent = ({ icon, title, message, actions }) => {
 };
 ```
 
-## Important Notes
+## 重要な注意事項
 
-- Center expands as much as possible by default, so be careful in Stack or infinite size containers
-- widthFactor and heightFactor must be greater than 0
-- Nesting multiple Centers is generally unnecessary
-- For complex alignment needs, use Align widget directly
-- When there's no child and factor is null, size may become 0
+- Centerはデフォルトで可能な限り拡張するため、Stackや無限サイズコンテナでは注意が必要です
+- widthFactorとheightFactorは0より大きい必要があります
+- 複数のCenterをネストすることは一般的に不要です
+- 複雑な配置ニーズには、Alignウィジェットを直接使用してください
+- 子要素がなくファクターがnullの場合、サイズが0になる可能性があります
 
-## Related Widgets
+## 関連ウィジェット
 
-- **Align**: Parent widget providing more alignment options
-- **Container**: Can center align with alignment property
-- **Positioned**: Position within Stack
-- **Padding**: When centering with margins is needed
-- **Column/Row**: Align with mainAxisAlignment and crossAxisAlignment
+- **Align**: より多くの配置オプションを提供する親ウィジェット
+- **Container**: alignmentプロパティで中央配置可能
+- **Positioned**: Stack内での位置指定
+- **Padding**: マージンを含めた中央配置が必要な場合
+- **Column/Row**: mainAxisAlignmentとcrossAxisAlignmentで配置

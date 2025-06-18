@@ -3,39 +3,39 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Image
 title: "Image"
-description: "A widget that displays an image"
+description: "画像を表示するウィジェット"
 ---
 
-## Overview
+## 概要
 
-Image is a widget that displays an image.
+Imageは画像を表示するウィジェットです。
 
-The Image widget loads and displays images from network, local files, or assets. It supports various image formats and provides sizing and positioning options. You can control how the image fits into the allocated space using the objectFit property.
+Imageウィジェットは、ネットワーク、ローカルファイル、またはアセットから画像を読み込んで表示します。様々な画像フォーマットをサポートし、サイズ調整や位置オプションを提供します。objectFitプロパティを使用して、画像が割り当てられたスペースにどのようにフィットするかを制御できます。
 
-## When to use it?
+## 使用場面
 
-- When displaying images in your app
-- When showing thumbnails or profile pictures
-- When displaying background images or illustrations
-- When actual images are needed instead of icons
-- When responsive image layouts are required
+- アプリで画像を表示する場合
+- サムネイルやプロフィール写真を表示する場合
+- 背景画像やイラストを表示する場合
+- アイコンではなく実際の画像が必要な場合
+- レスポンシブな画像レイアウトが必要な場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
-// Basic image
+// 基本的な画像
 Image({
   src: 'https://example.com/image.jpg'
 })
 
-// Image with specified size
+// サイズ指定ありの画像
 Image({
   src: '/assets/profile.png',
   width: 100,
   height: 100
 })
 
-// Image with fit options
+// フィットオプション付きの画像
 Image({
   src: '/assets/banner.jpg',
   width: 300,
@@ -45,9 +45,9 @@ Image({
 })
 ```
 
-## Props
+## プロパティ
 
-### src (required)
+### src（必須）
 
 **Value: string**
 
@@ -138,9 +138,9 @@ Image({
 })
 ```
 
-## Practical Examples
+## 実践的な例
 
-### Example 1: Profile Image
+### 例1: プロフィール画像
 
 ```typescript
 const ProfileImage = ({ imageUrl, name, size = 80 }) => {
@@ -420,7 +420,7 @@ const ImageWithLoader = ({ src, width, height }) => {
 - Network images may be affected by CORS policies
 - Some features may be limited in SVG rendering mode
 
-## Related Widgets
+## 関連ウィジェット
 
 - **Container**: When additional styling is needed for images
 - **ClipRRect**: To clip images with rounded corners

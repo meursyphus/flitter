@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: RichText
 title: "RichText"
-description: "A widget that displays formatted text with multiple styles"
+description: "複数のスタイルでフォーマットされたテキストを表示するウィジェット"
 ---
 
-## Overview
+## 概要
 
-`RichText` is a widget that displays text using multiple different styles. Inspired by Flutter's RichText, it describes text using a tree of TextSpan objects, where each span has an associated style applied to that subtree.
+`RichText`は、複数の異なるスタイルを使用してテキストを表示するウィジェットです。FlutterのRichTextにインスパイアされており、TextSpanオブジェクトのツリーを使用してテキストを記述し、各スパンはそのサブツリーに関連付けられたスタイルを持っています。
 
-All text in RichText must be explicitly styled. While the Text widget is simpler for single-style text, RichText is essential when you need complex text formatting, highlights, links, or mixed styles within a single text block.
+RichTextのすべてのテキストは明示的にスタイルを設定する必要があります。Textウィジェットは単一スタイルのテキストにはよりシンプルですが、複雑なテキストフォーマット、ハイライト、リンク、または単一のテキストブロック内での混合スタイルが必要な場合にはRichTextが不可欠です。
 
 <iframe
   width="560"
@@ -24,120 +24,120 @@ All text in RichText must be explicitly styled. While the Text widget is simpler
 
 See: [https://api.flutter.dev/flutter/widgets/RichText-class.html](https://api.flutter.dev/flutter/widgets/RichText-class.html)
 
-## When to Use?
+## 使用する場面
 
-- When you need multiple different styles within a single text
-- When highlighting or emphasizing parts of text
-- When creating links or clickable text areas
-- When complex text formatting (bold, italic, colors) is needed
-- When mixing various fonts or sizes within a paragraph
+- 単一のテキスト内で複数の異なるスタイルが必要な場合
+- テキストの一部をハイライトや強調する必要がある場合
+- リンクやクリック可能なテキスト領域を作成する場合
+- 複雑なテキストフォーマット（太字、斜体、色）が必要な場合
+- 段落内で様々なフォントやサイズを混合する必要がある場合
 
 ## Basic Usage
 
 ```typescript
 import { RichText, TextSpan, TextStyle } from 'flitter';
 
-// Basic rich text
+// 基本的なリッチテキスト
 const BasicRichText = RichText({
   text: new TextSpan({
-    text: 'Hello, ',
+    text: 'こんにちは、',
     style: new TextStyle({
       fontSize: 16,
       color: 'black'
     }),
     children: [
       new TextSpan({
-        text: 'bold text',
+        text: '太字テキスト',
         style: new TextStyle({
           fontWeight: 'bold',
           color: '#e74c3c'
         })
       }),
       new TextSpan({
-        text: '!'
+        text: '！'
       })
     ]
   })
 });
 ```
 
-## Props
+## プロパティ
 
-### text (required)
-**Value: InlineSpan**
+### text (必須)
+**値: InlineSpan**
 
-The InlineSpan object (typically TextSpan) that describes the text to display. Defines both text content and styling.
+表示するテキストを記述するInlineSpanオブジェクト（通常はTextSpan）。テキストコンテンツとスタイリングの両方を定義します。
 
 ```typescript
 text: new TextSpan({
-  text: 'Main text',
+  text: 'メインテキスト',
   style: new TextStyle({ fontSize: 16 }),
   children: [
     new TextSpan({
-      text: 'Child text',
+      text: '子テキスト',
       style: new TextStyle({ fontWeight: 'bold' })
     })
   ]
 })
 ```
 
-### textAlign (optional)
-**Value: TextAlign** (default: **TextAlign.start**)
+### textAlign (オプション)
+**値: TextAlign** (デフォルト: **TextAlign.start**)
 
-Specifies how text should be aligned.
+テキストの配置方法を指定します。
 
-- `TextAlign.start`: Start position based on text direction (default)
-- `TextAlign.end`: End position based on text direction
-- `TextAlign.left`: Left-aligned
-- `TextAlign.right`: Right-aligned
-- `TextAlign.center`: Center-aligned
+- `TextAlign.start`: テキスト方向に基づく開始位置（デフォルト）
+- `TextAlign.end`: テキスト方向に基づく終了位置
+- `TextAlign.left`: 左寄せ
+- `TextAlign.right`: 右寄せ
+- `TextAlign.center`: 中央寄せ
 
-### overflow (optional)
-**Value: TextOverflow** (default: **TextOverflow.clip**)
+### overflow (オプション)
+**値: TextOverflow** (デフォルト: **TextOverflow.clip**)
 
-How to handle text that overflows its container.
+コンテナからはみ出すテキストの処理方法。
 
-- `TextOverflow.clip`: Clip overflowing text
-- `TextOverflow.ellipsis`: Show ellipsis (…) for overflow
-- `TextOverflow.visible`: Display overflowing text outside container
+- `TextOverflow.clip`: はみ出しテキストをクリップ
+- `TextOverflow.ellipsis`: はみ出しに省略記号（…）を表示
+- `TextOverflow.visible`: はみ出しテキストをコンテナ外に表示
 
-### softWrap (optional)
-**Value: boolean** (default: **true**)
+### softWrap (オプション)
+**値: boolean** (デフォルト: **true**)
 
-Whether text should wrap automatically when it runs out of space.
+スペースがなくなったときにテキストを自動的に折り返すかどうか。
 
-- `true`: Automatically wrap to new lines
-- `false`: Keep text on a single line
+- `true`: 自動的に新しい行に折り返す
+- `false`: テキストを単一行に保つ
 
-### maxLines (optional)
-**Value: number**
+### maxLines (オプション)
+**値: number**
 
-Limits the maximum number of lines for the text. If exceeded, overflow settings determine handling.
+テキストの最大行数を制限します。超過した場合は、オーバーフロー設定が処理を決定します。
 
-### textWidthBasis (optional)
-**Value: TextWidthBasis** (default: **TextWidthBasis.parent**)
+### textWidthBasis (オプション)
+**値: TextWidthBasis** (デフォルト: **TextWidthBasis.parent**)
 
-Determines how text width is calculated.
+テキスト幅の計算方法を決定します。
 
-- `TextWidthBasis.parent`: Calculate based on parent widget width
-- `TextWidthBasis.longestLine`: Calculate based on longest line length
+- `TextWidthBasis.parent`: 親ウィジェットの幅に基づいて計算
+- `TextWidthBasis.longestLine`: 最長行の長さに基づいて計算
 
-### textDirection (optional)
-**Value: TextDirection**
+### textDirection (オプション)
+**値: TextDirection**
 
-Specifies the text direction.
+テキストの方向を指定します。
 
-- `TextDirection.ltr`: Left-to-right (default)
-- `TextDirection.rtl`: Right-to-left
+- `TextDirection.ltr`: 左から右（デフォルト）
+- `TextDirection.rtl`: 右から左
 
-### textScaleFactor (optional)
-**Value: number**
+### textScaleFactor (オプション)
+**値: number**
 
-Adjusts the scale factor for text size. 1.0 is default size, 2.0 is double size.
+テキストサイズのスケールファクターを調整します。1.0がデフォルトサイズ、2.0が倍サイズです。
 
-## Real-World Examples
+## 実世界の例
 
-### Example 1: Multi-styled Text
+### 例1: マルチスタイルテキスト
 
 ```typescript
 import { RichText, TextSpan, TextStyle } from 'flitter';
@@ -151,28 +151,28 @@ const StyledText = RichText({
     }),
     children: [
       new TextSpan({
-        text: 'red ',
+        text: '赤い ',
         style: new TextStyle({
           color: '#e74c3c',
           fontWeight: 'bold'
         })
       }),
       new TextSpan({
-        text: 'and ',
+        text: 'そして ',
         style: new TextStyle({
           fontSize: 14,
           fontStyle: 'italic'
         })
       }),
       new TextSpan({
-        text: 'blue ',
+        text: '青い ',
         style: new TextStyle({
           color: '#3498db',
           fontSize: 20
         })
       }),
       new TextSpan({
-        text: 'text.',
+        text: 'テキスト。',
         style: new TextStyle({
           textDecoration: 'underline'
         })
@@ -182,21 +182,21 @@ const StyledText = RichText({
 });
 ```
 
-### Example 2: Clickable Link Text
+### 例2: クリック可能なリンクテキスト
 
 ```typescript
 import { RichText, TextSpan, TextStyle, GestureDetector } from 'flitter';
 
 const LinkText = RichText({
   text: new TextSpan({
-    text: 'For more information, ',
+    text: '詳細情報については、',
     style: new TextStyle({
       fontSize: 16,
       color: 'black'
     }),
     children: [
       new TextSpan({
-        text: 'click here',
+        text: 'こちらをクリック',
         style: new TextStyle({
           color: '#3498db',
           textDecoration: 'underline',
@@ -204,27 +204,27 @@ const LinkText = RichText({
         }),
         recognizer: new TapGestureRecognizer({
           onTap: () => {
-            console.log('Link clicked!');
-            // Handle link logic
+            console.log('リンクがクリックされました！');
+            // リンクロジックを処理
           }
         })
       }),
       new TextSpan({
-        text: '.'
+        text: 'してください。'
       })
     ]
   })
 });
 ```
 
-### Example 3: Code Highlighting
+### 例3: コードハイライト
 
 ```typescript
 import { RichText, TextSpan, TextStyle } from 'flitter';
 
 const CodeHighlight = RichText({
   text: new TextSpan({
-    text: 'To define a function, use the ',
+    text: '関数を定義するには、',
     style: new TextStyle({
       fontSize: 14,
       fontFamily: 'Arial'
@@ -240,7 +240,7 @@ const CodeHighlight = RichText({
         })
       }),
       new TextSpan({
-        text: ' keyword and write code inside ',
+        text: ' キーワードを使用し、',
       }),
       new TextSpan({
         text: '{ }',
@@ -251,14 +251,14 @@ const CodeHighlight = RichText({
         })
       }),
       new TextSpan({
-        text: ' blocks.'
+        text: ' ブロック内にコードを書きます。'
       })
     ]
   })
 });
 ```
 
-### Example 4: Text Truncation with Ellipsis
+### 例4: 省略記号でのテキスト切り默め
 
 ```typescript
 import { RichText, TextSpan, TextStyle } from 'flitter';
@@ -267,26 +267,26 @@ const TruncatedText = RichText({
   maxLines: 2,
   overflow: TextOverflow.ellipsis,
   text: new TextSpan({
-    text: 'This is very long text. ',
+    text: 'これは非常に長いテキストです。',
     style: new TextStyle({
       fontSize: 16
     }),
     children: [
       new TextSpan({
-        text: 'This text will be truncated with ellipsis if it exceeds two lines. ',
+        text: 'このテキストは2行を超えると省略記号で切り黙められます。',
         style: new TextStyle({
           fontWeight: 'bold'
         })
       }),
       new TextSpan({
-        text: 'Additional text that may not be visible.'
+        text: '表示されない可能性がある追加テキスト。'
       })
     ]
   })
 });
 ```
 
-### Example 5: Multi-language Text Direction
+### 例5: 多言語テキスト方向
 
 ```typescript
 import { RichText, TextSpan, TextStyle } from 'flitter';
@@ -294,15 +294,15 @@ import { RichText, TextSpan, TextStyle } from 'flitter';
 const MultiLanguageText = Column({
   crossAxisAlignment: CrossAxisAlignment.start,
   children: [
-    // Left-to-right (English/Korean)
+    // 左から右（日本語/英語）
     RichText({
       textDirection: TextDirection.ltr,
       text: new TextSpan({
-        text: 'Hello ',
+        text: 'こんにちは ',
         style: new TextStyle({ fontSize: 16 }),
         children: [
           new TextSpan({
-            text: '안녕하세요',
+            text: 'Hello',
             style: new TextStyle({
               color: '#e74c3c',
               fontWeight: 'bold'
@@ -314,7 +314,7 @@ const MultiLanguageText = Column({
     
     SizedBox({ height: 10 }),
     
-    // Right-to-left (Arabic, etc.)
+    // 右から左（アラビア語など）
     RichText({
       textDirection: TextDirection.rtl,
       text: new TextSpan({
@@ -322,7 +322,7 @@ const MultiLanguageText = Column({
         style: new TextStyle({ fontSize: 16 }),
         children: [
           new TextSpan({
-            text: 'World',
+            text: '世界',
             style: new TextStyle({
               color: '#3498db',
               fontWeight: 'bold'
@@ -335,7 +335,7 @@ const MultiLanguageText = Column({
 });
 ```
 
-### Example 6: Dynamic Style Changes
+### 例6: 動的スタイル変更
 
 ```typescript
 import { RichText, TextSpan, TextStyle } from 'flitter';
@@ -356,13 +356,13 @@ class DynamicRichTextState extends State {
       }),
       child: RichText({
         text: new TextSpan({
-          text: 'Click to change ',
+          text: 'クリックして ',
           style: new TextStyle({
             fontSize: 16
           }),
           children: [
             new TextSpan({
-              text: 'this part',
+              text: 'この部分',
               style: new TextStyle({
                 color: this.isHighlighted ? '#e74c3c' : '#3498db',
                 fontWeight: this.isHighlighted ? 'bold' : 'normal',
@@ -370,7 +370,7 @@ class DynamicRichTextState extends State {
               })
             }),
             new TextSpan({
-              text: ' dynamically.'
+              text: ' を動的に変更します。'
             })
           ]
         })
@@ -380,17 +380,17 @@ class DynamicRichTextState extends State {
 }
 ```
 
-## Best Practices
+## ベストプラクティス
 
-- **Explicit Styling**: All text in RichText must be explicitly styled
-- **Performance**: Complex TextSpan trees can impact rendering performance
-- **Style Inheritance**: Child TextSpans inherit parent styles (can be disabled with inherit: false)
-- **Gesture Recognition**: Add recognizers to TextSpans to handle touch events
-- **Accessibility**: Consider screen readers and create meaningful text structure
+- **明示的スタイリング**: RichTextのすべてのテキストは明示的にスタイルを設定する必要があります
+- **パフォーマンス**: 複雑なTextSpanツリーはレンダリングパフォーマンスに影響を与える可能性があります
+- **スタイル継承**: 子TextSpanは親のスタイルを継承します（inherit: falseで無効化可能）
+- **ジェスチャ認識**: TextSpanにレコグナイザーを追加してタッチイベントを処理します
+- **アクセシビリティ**: スクリーンリーダーを考慮し、意味のあるテキスト構造を作成してください
 
-## Related Widgets
+## 関連ウィジェット
 
-- **Text**: When you need single-style text
-- **SelectableText**: When you need selectable text
-- **TextField**: When you need editable text input
-- **Container**: When you need text background or padding
+- **Text**: 単一スタイルのテキストが必要な場合
+- **SelectableText**: 選択可能なテキストが必要な場合
+- **TextField**: 編集可能なテキスト入力が必要な場合
+- **Container**: テキストの背景やパディングが必要な場合

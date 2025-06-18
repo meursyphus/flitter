@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Stack
 title: "Stack"
-description: "A layout widget that positions its children relative to its edges"
+description: "子要素を端に相対的に配置するレイアウトウィジェット"
 ---
 
-## Overview
+## 概要
 
-Stack is a layout widget that allows you to overlay multiple children widgets.
+Stackは、複数の子ウィジェットを重ねて表示できるレイアウトウィジェットです。
 
-Stack lets you place widgets on top of each other in the z-axis direction. Children are painted in order, so the last element in the array appears on top. When used with the Positioned widget, you can specify exact positions for widgets within the Stack.
+Stackでは、z軸方向にウィジェットを重ねて配置できます。子要素は順番に描画されるため、配列の最後の要素が一番上に表示されます。Positionedウィジェットと組み合わせることで、Stack内のウィジェットの正確な位置を指定できます。
 
 <iframe
   width="560"
@@ -24,18 +24,18 @@ Stack lets you place widgets on top of each other in the z-axis direction. Child
 
 See: https://api.flutter.dev/flutter/widgets/Stack-class.html
 
-## When to use it?
+## 使用場面
 
-- When placing text or buttons over background images
-- When creating floating action buttons at specific screen positions
-- When overlaying badges or notifications on icons
-- When displaying tags or labels on cards
-- When creating custom overlay effects
+- 背景画像の上にテキストやボタンを配置する場合
+- 画面の特定の位置にフローティングアクションボタンを作成する場合
+- アイコンにバッジや通知を重ねる場合
+- カードにタグやラベルを表示する場合
+- カスタムオーバーレイ効果を作成する場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
-// Simple Stack example
+// 簡単なStackの例
 const stack = Stack({
   children: [
     Container({ width: 200, height: 200, color: 'blue' }),
@@ -44,10 +44,10 @@ const stack = Stack({
   ]
 });
 
-// Using with Positioned
+// Positionedとの組み合わせ
 const positionedStack = Stack({
   children: [
-    Container({ color: 'lightgray' }), // Background
+    Container({ color: 'lightgray' }), // 背景
     Positioned({
       top: 20,
       left: 20,
@@ -62,9 +62,9 @@ const positionedStack = Stack({
 });
 ```
 
-## Props
+## プロパティ
 
-### children (required)
+### children（必須）
 
 **Value: Widget[]**
 
@@ -73,9 +73,9 @@ An array of child widgets to display in the Stack. They are stacked from bottom 
 ```typescript
 Stack({
   children: [
-    Image({ src: 'background.jpg' }), // Bottom layer
-    Container({ color: 'rgba(0,0,0,0.5)' }), // Middle layer (semi-transparent overlay)
-    Text('Overlay Text') // Top layer
+    Image({ src: 'background.jpg' }), // 最下層
+    Container({ color: 'rgba(0,0,0,0.5)' }), // 中間層（半透明オーバーレイ）
+    Text('Overlay Text') // 最上層
   ]
 })
 ```
@@ -184,9 +184,9 @@ Stack({
 })
 ```
 
-## Practical Examples
+## 実践的な例
 
-### Example 1: Profile Card with Badge
+### 例1: バッジ付きプロフィールカード
 
 ```typescript
 const profileCard = Container({
@@ -225,7 +225,7 @@ const profileCard = Container({
 });
 ```
 
-### Example 2: Image Gallery with Overlay
+### 例2: オーバーレイ付き画像ギャラリー
 
 ```typescript
 const galleryItem = Container({
@@ -280,7 +280,7 @@ const galleryItem = Container({
 });
 ```
 
-### Example 3: Floating Action Button
+### 例3: フローティングアクションボタン
 
 ```typescript
 const screenWithFAB = Stack({
@@ -321,7 +321,7 @@ const screenWithFAB = Stack({
 })
 ```
 
-## Important Notes
+## 重要な注意事項
 
 - The Stack's size is determined by the largest non-positioned child.
 - Positioned widgets must be direct children of Stack.
@@ -329,7 +329,7 @@ const screenWithFAB = Stack({
 - When both `left` and `right` are specified, `width` is ignored.
 - When using unbounded widgets (like ListView) inside Stack, you must provide explicit size constraints.
 
-## Related Widgets
+## 関連ウィジェット
 
 - **Positioned**: Controls child positioning within a Stack
 - **Align**: A simpler way to align a single child

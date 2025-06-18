@@ -3,25 +3,25 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: AnimatedAlign
 title: "AnimatedAlign"
-description: "A widget that animates its child's alignment transition"
+description: "子ウィジェットの配置変更をアニメーション化するウィジェット"
 ---
 
-## Overview
+## 概要
 
-AnimatedAlign is a widget that automatically animates the transition when its child widget's alignment changes. It provides smooth transitions for position changes. This widget is inspired by Flutter's AnimatedAlign widget.
+AnimatedAlignは、子ウィジェットの配置が変更された際に自動的にアニメーション遷移を行うウィジェットです。位置変更をスムーズに表現します。このウィジェットはFlutterのAnimatedAlignウィジェットにインスパイアされています。
 
-> Animated version of Align which automatically transitions the child's position over a given duration whenever the given alignment changes.
+> Alignのアニメーション版で、配置が変更された際に指定された期間で子ウィジェットの位置を自動的に遷移させます。
 
-Flutter reference: https://api.flutter.dev/flutter/widgets/AnimatedAlign-class.html
+Flutter リファレンス: https://api.flutter.dev/flutter/widgets/AnimatedAlign-class.html
 
-## When to use?
+## いつ使うか？
 
-- When you want to smoothly move a widget's position
-- When dynamically changing widget alignment based on user interaction
-- When you want to provide visual continuity during layout changes
-- When transitioning positions of floating buttons or popups with animation
+- ウィジェットの位置をスムーズに移動させたい場合
+- ユーザーの操作に基づいてウィジェットの配置を動的に変更する場合
+- レイアウト変更時に視覚的な連続性を提供したい場合
+- フローティングボタンやポップアップの位置をアニメーション付きで切り替える場合
 
-## Basic usage
+## 基本的な使用方法
 
 ```typescript
 import { AnimatedAlign, Alignment, Container, StatefulWidget } from '@flitter/core';
@@ -39,7 +39,7 @@ class AlignmentExampleState extends State<AlignmentExample> {
     return GestureDetector({
       onTap: () => {
         this.setState(() => {
-          // Change alignment position on tap
+          // タップで配置位置を変更
           this.alignment = this.alignment === Alignment.topLeft 
             ? Alignment.bottomRight 
             : Alignment.topLeft;
@@ -47,7 +47,7 @@ class AlignmentExampleState extends State<AlignmentExample> {
       },
       child: AnimatedAlign({
         alignment: this.alignment,
-        duration: 1000, // 1 second
+        duration: 1000, // 1秒
         child: Container({
           width: 50,
           height: 50,
@@ -59,74 +59,74 @@ class AlignmentExampleState extends State<AlignmentExample> {
 }
 ```
 
-## Props
+## プロパティ
 
-### alignment (required)
-**Value: Alignment**
+### alignment （必須）
+**値: Alignment**
 
-Specifies the alignment position of the child widget. Predefined values:
-- `Alignment.topLeft`: Top left (-1, -1)
-- `Alignment.topCenter`: Top center (0, -1)
-- `Alignment.topRight`: Top right (1, -1)
-- `Alignment.centerLeft`: Center left (-1, 0)
-- `Alignment.center`: Center (0, 0)
-- `Alignment.centerRight`: Center right (1, 0)
-- `Alignment.bottomLeft`: Bottom left (-1, 1)
-- `Alignment.bottomCenter`: Bottom center (0, 1)
-- `Alignment.bottomRight`: Bottom right (1, 1)
+子ウィジェットの配置位置を指定します。定義済みの値：
+- `Alignment.topLeft`: 左上 (-1, -1)
+- `Alignment.topCenter`: 上中央 (0, -1)
+- `Alignment.topRight`: 右上 (1, -1)
+- `Alignment.centerLeft`: 左中央 (-1, 0)
+- `Alignment.center`: 中央 (0, 0)
+- `Alignment.centerRight`: 右中央 (1, 0)
+- `Alignment.bottomLeft`: 左下 (-1, 1)
+- `Alignment.bottomCenter`: 下中央 (0, 1)
+- `Alignment.bottomRight`: 右下 (1, 1)
 
-Custom alignment is also possible:
+カスタム配置も可能です：
 ```typescript
 Alignment.of({ x: 0.5, y: -0.5 }) // x: -1~1, y: -1~1
 ```
 
-### duration (required)
-**Value: number**
+### duration （必須）
+**値: number**
 
-Specifies the animation duration in milliseconds.
+アニメーションの継続時間をミリ秒で指定します。
 
-### curve (optional)
-**Value: Curve** (default: **Curves.linear**)
+### curve （オプション）
+**値: Curve** （デフォルト: **Curves.linear**）
 
-Specifies the animation progression curve. Available curves:
-- `Curves.linear`: Constant speed
-- `Curves.easeIn`: Slow start
-- `Curves.easeOut`: Slow end
-- `Curves.easeInOut`: Slow start and end
-- `Curves.circIn`: Circular acceleration start
-- `Curves.circOut`: Circular deceleration end
-- `Curves.circInOut`: Circular acceleration/deceleration
-- `Curves.backIn`: Goes back then starts
-- `Curves.backOut`: Overshoots target then returns
+アニメーションの進行カーブを指定します。利用可能なカーブ：
+- `Curves.linear`: 一定速度
+- `Curves.easeIn`: ゆっくり開始
+- `Curves.easeOut`: ゆっくり終了
+- `Curves.easeInOut`: ゆっくり開始・終了
+- `Curves.circIn`: 円形加速開始
+- `Curves.circOut`: 円形減速終了
+- `Curves.circInOut`: 円形加速・減速
+- `Curves.backIn`: 戻ってから開始
+- `Curves.backOut`: 目標を越えてから戻る
 - `Curves.backInOut`: backIn + backOut
-- `Curves.anticipate`: Anticipatory motion before proceeding
-- `Curves.bounceIn`: Bounces at start
-- `Curves.bounceOut`: Bounces at end
-- `Curves.bounceInOut`: Bounces at start/end
+- `Curves.anticipate`: 進む前の予備動作
+- `Curves.bounceIn`: 開始時にバウンス
+- `Curves.bounceOut`: 終了時にバウンス
+- `Curves.bounceInOut`: 開始・終了時にバウンス
 
-### widthFactor (optional)
-**Value: number | undefined**
+### widthFactor （オプション）
+**値: number | undefined**
 
-Multiplier for the child widget's width. If not specified, uses the full width of the parent.
+子ウィジェットの幅の倍率です。指定されない場合は親の全幅を使用します。
 
-### heightFactor (optional)
-**Value: number | undefined**
+### heightFactor （オプション）
+**値: number | undefined**
 
-Multiplier for the child widget's height. If not specified, uses the full height of the parent.
+子ウィジェットの高さの倍率です。指定されない場合は親の全高を使用します。
 
-### child (optional)
-**Value: Widget | undefined**
+### child （オプション）
+**値: Widget | undefined**
 
-The child widget to be aligned.
+配置される子ウィジェットです。
 
-### key (optional)
-**Value: any**
+### key （オプション）
+**値: any**
 
-A unique identifier for the widget.
+ウィジェットの一意な識別子です。
 
-## Real-world examples
+## 実用的な例
 
-### Example 1: Interactive floating button
+### 例1: インタラクティブなフローティングボタン
 
 ```typescript
 import { AnimatedAlign, Alignment, Container, FloatingActionButton, Curves } from '@flitter/core';
@@ -143,12 +143,12 @@ class InteractiveFloatingButtonState extends State<InteractiveFloatingButton> {
   build() {
     return Stack({
       children: [
-        // Main content
+        // メインコンテンツ
         Container({
           color: "lightgray",
         }),
         
-        // Animated floating button
+        // アニメーション付きフローティングボタン
         AnimatedAlign({
           alignment: this.isExpanded 
             ? Alignment.center 
@@ -173,7 +173,7 @@ class InteractiveFloatingButtonState extends State<InteractiveFloatingButton> {
 }
 ```
 
-### Example 2: Multi-position transition animation
+### 例2: 複数位置のトランジションアニメーション
 
 ```typescript
 import { AnimatedAlign, Alignment, Container, Row, Column, Curves } from '@flitter/core';
@@ -197,22 +197,22 @@ class MultiPositionAnimationState extends State<MultiPositionAnimation> {
   build() {
     return Column({
       children: [
-        // Control buttons
+        // コントロールボタン
         Row({
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton({
               onPressed: () => this.moveToNext(),
-              child: Text("Next Position"),
+              child: Text("次の位置"),
             }),
             ElevatedButton({
               onPressed: () => this.moveToCenter(),
-              child: Text("To Center"),
+              child: Text("中央へ"),
             }),
           ],
         }),
         
-        // Animation area
+        // アニメーションエリア
         Expanded({
           child: Container({
             color: "#f0f0f0",
@@ -249,13 +249,13 @@ class MultiPositionAnimationState extends State<MultiPositionAnimation> {
 
   moveToCenter() {
     this.setState(() => {
-      this.currentPosition = 4; // center position
+      this.currentPosition = 4; // 中央位置
     });
   }
 }
 ```
 
-### Example 3: Using widthFactor and heightFactor
+### 例3: widthFactorとheightFactorの使用
 
 ```typescript
 import { AnimatedAlign, Alignment, Container, Curves } from '@flitter/core';
@@ -292,7 +292,7 @@ class FactorAnimationState extends State<FactorAnimation> {
             color: "red",
             child: Center({
               child: Text(
-                this.isCompact ? "Shrink" : "Expand",
+                this.isCompact ? "収縮" : "拡張",
                 style: TextStyle({ color: "white" }),
               ),
             }),
@@ -304,16 +304,16 @@ class FactorAnimationState extends State<FactorAnimation> {
 }
 ```
 
-## Notes
+## 注意事項
 
-- Animation only occurs when the alignment value changes
-- widthFactor and heightFactor affect the child widget's size and also influence the parent widget's size constraints
-- If a new alignment value is set during animation, it smoothly transitions from the current position to the new target position
-- If duration is 0, the widget moves immediately without animation
+- アニメーションは配置値が変更された時のみ発生します
+- widthFactorとheightFactorは子ウィジェットのサイズに影響し、親ウィジェットのサイズ制約にも影響します
+- アニメーション中に新しい配置値が設定された場合、現在位置から新しい目標位置へスムーズに遷移します
+- durationが0の場合、ウィジェットはアニメーションなしで即座に移動します
 
-## Related widgets
+## 関連ウィジェット
 
-- **Align**: Basic widget for aligning children without animation
-- **AnimatedPositioned**: Animates position transitions within a Stack
-- **AnimatedContainer**: Animates multiple properties simultaneously
-- **AnimatedPadding**: Animates padding transitions
+- **Align**: アニメーションなしで子ウィジェットを配置する基本ウィジェット
+- **AnimatedPositioned**: Stack内での位置遷移をアニメーション化
+- **AnimatedContainer**: 複数のプロパティを同時にアニメーション化
+- **AnimatedPadding**: パディングの遷移をアニメーション化

@@ -3,22 +3,22 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: IntrinsicHeight
 title: "IntrinsicHeight"
-description: "A widget that sizes its child to the child's intrinsic height"
+description: "子ウィジェットを固有の高さにサイズ調整するウィジェット"
 ---
 
-## Overview
+## 概要
 
-IntrinsicHeight is a widget that sizes its child to the child's intrinsic height.
+IntrinsicHeightは、子ウィジェットを固有の高さにサイズ調整するウィジェットです。
 
-IntrinsicHeight forces its child to have its intrinsic height. This is useful when you want to ensure that multiple children in a Row have the same height, or when you need to dynamically adjust height based on the child's content. However, this widget has a high performance cost and should be used carefully.
+IntrinsicHeightは子ウィジェットに固有の高さを強制します。これは、Rowの複数の子ウィジェットが同じ高さになるようにしたい場合や、子ウィジェットのコンテンツに基づいて高さを動的に調整する必要がある場合に便利です。ただし、このウィジェットは高いパフォーマンスコストがあるため、慎重に使用する必要があります。
 
-## When to use it?
+## 使用する場面
 
-- When children in a Row need to have the same height
-- When height should be determined by the child widget's content
-- When you need to match the heights of widgets with varying content
-- When Divider or VerticalDivider needs appropriate height
-- When CrossAxisAlignment.stretch doesn't work as expected
+- Rowの子ウィジェットが同じ高さを持つ必要がある場合
+- 高さが子ウィジェットのコンテンツによって決定される必要がある場合
+- 様々なコンテンツを持つウィジェットの高さを一致させる必要がある場合
+- DividerやVerticalDividerが適切な高さを必要とする場合
+- CrossAxisAlignment.stretchが期待通りに動作しない場合
 
 ## Basic Usage
 
@@ -30,48 +30,48 @@ IntrinsicHeight({
       Container({
         color: 'blue',
         width: 100,
-        child: Text('Short text')
+        child: Text('短いテキスト')
       }),
       Container({
         color: 'red',
         width: 100,
-        child: Text('This is much longer text that will span multiple lines')
+        child: Text('これはより長いテキストで、複数行にまたがります')
       })
     ]
   })
 })
 ```
 
-## Props
+## プロパティ
 
 ### child
 
-**Value: Widget | undefined**
+**値: Widget | undefined**
 
-The child widget whose size will be adjusted to its intrinsic height.
+サイズが固有の高さに調整される子ウィジェット。
 
 ```typescript
 IntrinsicHeight({
   child: Container({
     color: 'blue',
-    child: Text('Height adjusts to content')
+    child: Text('高さがコンテンツに調整されます')
   })
 })
 ```
 
-## How it Works
+## 動作原理
 
-IntrinsicHeight works as follows:
+IntrinsicHeightは以下のように動作します：
 
-1. It asks the child widget "What is your minimum height at the given width?"
-2. It creates constraints using the height responded by the child
-3. It lays out the child with these constraints
+1. 子ウィジェットに「指定された幅での最小高さは何ですか？」と尋ねます
+2. 子ウィジェットが回答した高さを使用して制約を作成します
+3. これらの制約で子ウィジェットをレイアウトします
 
-This process requires an additional layout pass, which incurs a performance cost.
+このプロセスには追加のレイアウトパスが必要で、パフォーマンスコストが発生します。
 
-## Practical Examples
+## 実用的な例
 
-### Example 1: Equal Height Cards
+### 例1: 等しい高さのカード
 
 ```typescript
 const EqualHeightCards = () => {
@@ -85,11 +85,11 @@ const EqualHeightCards = () => {
               padding: EdgeInsets.all(16),
               child: Column({
                 children: [
-                  Text('Card 1', {
+                  Text('カード1', {
                     style: TextStyle({ fontSize: 18, fontWeight: 'bold' })
                   }),
                   SizedBox({ height: 8 }),
-                  Text('Short content')
+                  Text('短いコンテンツ')
                 ]
               })
             })
@@ -102,11 +102,11 @@ const EqualHeightCards = () => {
               padding: EdgeInsets.all(16),
               child: Column({
                 children: [
-                  Text('Card 2', {
+                  Text('カード2', {
                     style: TextStyle({ fontSize: 18, fontWeight: 'bold' })
                   }),
                   SizedBox({ height: 8 }),
-                  Text('This card has more content so it would naturally be taller. Thanks to IntrinsicHeight, Card 1 will have the same height.')
+                  Text('このカードはより多くのコンテンツを持っているため、自然により高くなります。IntrinsicHeightのおかげで、カード1は同じ高さになります。')
                 ]
               })
             })
@@ -118,7 +118,7 @@ const EqualHeightCards = () => {
 };
 ```
 
-### Example 2: Row with Vertical Divider
+### 例2: 垂直分割線を持つ行
 
 ```typescript
 const RowWithDivider = () => {
@@ -131,10 +131,10 @@ const RowWithDivider = () => {
             child: Column({
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Section 1', {
+                Text('セクション1', {
                   style: TextStyle({ fontWeight: 'bold' })
                 }),
-                Text('Content for this section')
+                Text('このセクションのコンテンツ')
               ]
             })
           })
@@ -146,12 +146,12 @@ const RowWithDivider = () => {
             child: Column({
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Section 2', {
+                Text('セクション2', {
                   style: TextStyle({ fontWeight: 'bold' })
                 }),
-                Text('Section with more content'),
-                Text('Additional line'),
-                Text('Another line')
+                Text('より多くのコンテンツを持つセクション'),
+                Text('追加の行'),
+                Text('もう一つの行')
               ]
             })
           })
@@ -162,7 +162,7 @@ const RowWithDivider = () => {
 };
 ```
 
-### Example 3: Stats Dashboard
+### 例3: 統計ダッシュボード
 
 ```typescript
 const StatsDashboard = () => {
@@ -188,7 +188,7 @@ const StatsDashboard = () => {
                   })
                 }),
                 SizedBox({ height: 8 }),
-                Text('Total Users')
+                Text('総ユーザー数')
               ]
             })
           })
@@ -212,8 +212,8 @@ const StatsDashboard = () => {
                   })
                 }),
                 SizedBox({ height: 8 }),
-                Text('Active Users'),
-                Text('+12% from last week', {
+                Text('アクティブユーザー'),
+                Text('先週から+12%', {
                   style: TextStyle({ 
                     fontSize: 12,
                     color: '#666'
@@ -229,7 +229,7 @@ const StatsDashboard = () => {
 };
 ```
 
-### Example 4: Sidebar Menu Item
+### 例4: サイドバーメニューアイテム
 
 ```typescript
 const SidebarMenuItem = ({ icon, title, subtitle, isSelected }) => {
@@ -294,7 +294,7 @@ const SidebarMenuItem = ({ icon, title, subtitle, isSelected }) => {
 };
 ```
 
-### Example 5: Comparison Table Row
+### 例5: 比較テーブル行
 
 ```typescript
 const ComparisonRow = ({ feature, basic, pro, enterprise }) => {
@@ -360,33 +360,33 @@ const ComparisonRow = ({ feature, basic, pro, enterprise }) => {
 };
 ```
 
-## Performance Considerations
+## パフォーマンスに関する考慮事項
 
-IntrinsicHeight incurs a performance cost because it requires an additional layout pass:
+IntrinsicHeightは追加のレイアウトパスが必要なため、パフォーマンスコストが発生します：
 
-1. **O(N²) complexity**: Deeply nested IntrinsicHeight widgets become exponentially slower
-2. **Consider alternatives**: Try other approaches first when possible
-3. **Caution in scroll views**: Be especially careful in ListView or scrollable areas
+1. **O(N²)の複雑性**: 深くネストされたIntrinsicHeightウィジェットは指数関数的に遅くなります
+2. **代替案を検討**: 可能な場合はまず他のアプローチを試してください
+3. **スクロールビューでの注意**: ListViewやスクロール可能な領域では特に注意が必要です
 
-## Alternatives
+## 代替案
 
-Consider these alternatives when performance is critical:
+パフォーマンスが重要な場合は、これらの代替案を検討してください：
 
-1. **Fixed height**: Specify explicit heights when possible
-2. **AspectRatio**: When the aspect ratio is constant
-3. **Table widget**: For table-style layouts
-4. **Custom RenderObject**: For complex layout logic
+1. **固定高さ**: 可能な場合は明示的な高さを指定
+2. **AspectRatio**: アスペクト比が一定の場合
+3. **Tableウィジェット**: テーブル形式のレイアウトの場合
+4. **カスタムRenderObject**: 複雑なレイアウトロジックの場合
 
-## Important Notes
+## 重要な注意事項
 
-- IntrinsicHeight has a high performance cost, so use it only when necessary
-- Avoid deeply nested IntrinsicHeight widgets
-- It doesn't work with infinite height constraints
-- Unexpected results may occur if the child's intrinsic height is undefined
+- IntrinsicHeightは高いパフォーマンスコストがあるため、必要な場合のみ使用してください
+- 深くネストされたIntrinsicHeightウィジェットは避けてください
+- 無限の高さ制約では動作しません
+- 子ウィジェットの固有の高さが未定義の場合、予期しない結果が発生する可能性があります
 
-## Related Widgets
+## 関連ウィジェット
 
-- **IntrinsicWidth**: Sizes to the child's intrinsic width
-- **AspectRatio**: Maintains aspect ratio
-- **Table**: Table layout
-- **CustomMultiChildLayout**: Complex custom layouts
+- **IntrinsicWidth**: 子ウィジェットの固有の幅にサイズ調整
+- **AspectRatio**: アスペクト比を維持
+- **Table**: テーブルレイアウト
+- **CustomMultiChildLayout**: 複雑なカスタムレイアウト

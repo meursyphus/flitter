@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Transform
 title: "Transform"
-description: "A widget that applies transformations (rotation, scaling, translation, etc.) to its child"
+description: "子ウィジェットに変換（回転、スケーリング、平移など）を適用するウィジェット"
 ---
 
-## Overview
+## 概要
 
-`Transform` is a widget that applies transformations to its child before painting. Inspired by Flutter's Transform, it uses Matrix4 to apply various transformations including rotation, scaling, translation, and skewing.
+`Transform`は、描画前に子ウィジェットに変換を適用するウィジェットです。FlutterのTransformにインスパイアされており、Matrix4を使用して回転、スケーリング、平移、歪みなどの様々な変換を適用します。
 
-Unlike RotatedBox, Transform applies transformations just before painting rather than before layout, meaning the transformation is not considered when calculating the widget's space consumption. This provides performance benefits but requires careful consideration of layout implications.
+RotatedBoxとは異なり、Transformはレイアウト前ではなく描画の直前に変換を適用します。これはウィジェットのスペース消費を計算する際に変換が考慮されないことを意味します。これによりパフォーマンス上の利益が得られますが、レイアウトへの影響を慎重に考慮する必要があります。
 
 <iframe
   width="560"
@@ -24,23 +24,23 @@ Unlike RotatedBox, Transform applies transformations just before painting rather
 
 See: [https://api.flutter.dev/flutter/widgets/Transform-class.html](https://api.flutter.dev/flutter/widgets/Transform-class.html)
 
-## When to Use?
+## 使用する場面
 
-- When you need to rotate a widget
-- When you need to scale (resize) a widget
-- When you need to translate (move) a widget
-- When creating 3D effects or perspective
-- When creating animation effects
-- When adding visual effects or decorations
+- ウィジェットを回転させる必要がある場合
+- ウィジェットをスケール（サイズ変更）する必要がある場合
+- ウィジェットを平移（移動）させる必要がある場合
+- 3D効果やパースペクティブを作成する場合
+- アニメーション効果を作成する場合
+- 視覚的効果や装飾を追加する場合
 
 ## Basic Usage
 
 ```typescript
 import { Transform, Matrix4, Container } from 'flitter';
 
-// 45-degree rotation
+// 45度回転
 const RotatedBox = Transform.rotate({
-  angle: Math.PI / 4,  // Radians
+  angle: Math.PI / 4,  // ラジアン
   child: Container({
     width: 100,
     height: 100,
@@ -48,9 +48,9 @@ const RotatedBox = Transform.rotate({
   })
 });
 
-// Scaling
+// スケーリング
 const ScaledBox = Transform.scale({
-  scale: 1.5,  // 1.5x scale
+  scale: 1.5,  // 1.5倍スケール
   child: Container({
     width: 100,
     height: 100,
@@ -58,7 +58,7 @@ const ScaledBox = Transform.scale({
   })
 });
 
-// Translation
+// 平移
 const TranslatedBox = Transform.translate({
   offset: new Offset({ x: 50, y: 30 }),
   child: Container({
@@ -69,68 +69,68 @@ const TranslatedBox = Transform.translate({
 });
 ```
 
-## Props
+## プロパティ
 
-### transform (required)
-**Value: Matrix4**
+### transform (必須)
+**値: Matrix4**
 
-A 4x4 transformation matrix representing the transformation to apply. Can be created using various static methods of the Matrix4 class.
+適用する変換を表す4x4変換マトリックス。Matrix4クラスの様々な静的メソッドを使用して作成できます。
 
 ```typescript
-// Translation transform
+// 平移変換
 transform: Matrix4.translationValues(50, 30, 0)
 
-// Scaling transform
-transform: Matrix4.diagonal3Values(2.0, 1.5, 1.0)  // 2x X-axis, 1.5x Y-axis
+// スケーリング変換
+transform: Matrix4.diagonal3Values(2.0, 1.5, 1.0)  // X軸を2倍、Y軸を1.5倍
 
-// Skew transform
-transform: Matrix4.skewX(0.5)  // Skew along X-axis
+// 歪み変換
+transform: Matrix4.skewX(0.5)  // X軸に沿って歪み
 ```
 
-### origin (optional)
-**Value: Offset**
+### origin (オプション)
+**値: Offset**
 
-Specifies the origin point for the transformation. If not specified, it's determined by alignment.
+変換の原点を指定します。指定しない場合は、alignmentによって決定されます。
 
 ```typescript
-// Rotate around top-left corner
+// 左上角を中心に回転
 origin: new Offset({ x: 0, y: 0 })
 
-// Rotate around bottom-right corner
+// 右下角を中心に回転
 origin: new Offset({ x: 100, y: 100 })
 ```
 
-### alignment (optional)
-**Value: Alignment** (default: **Alignment.center**)
+### alignment (オプション)
+**値: Alignment** (デフォルト: **Alignment.center**)
 
-Specifies the alignment reference point for the transformation. Used when origin is not specified.
+変換の配置基準点を指定します。originが指定されていない場合に使用されます。
 
 ```typescript
-// Center reference (default)
+// 中央基準（デフォルト）
 alignment: Alignment.center
 
-// Top-left reference
+// 左上基準
 alignment: Alignment.topLeft
 
-// Bottom-right reference
+// 右下基準
 alignment: Alignment.bottomRight
 ```
 
-### child (optional)
-**Value: Widget**
+### child (オプション)
+**値: Widget**
 
-The child widget to which the transformation will be applied.
+変換が適用される子ウィジェット。
 
-## Convenience Methods
+## 便利メソッド
 
-Transform widget provides static methods for common transformations:
+Transformウィジェットは、一般的な変換のための静的メソッドを提供します：
 
 ### Transform.rotate()
 ```typescript
 Transform.rotate({
-  angle: number,          // Rotation angle in radians
-  origin?: Offset,        // Rotation origin point
-  alignment?: Alignment,  // Alignment reference
+  angle: number,          // 回転角度（ラジアン）
+  origin?: Offset,        // 回転原点
+  alignment?: Alignment,  // 配置基準
   child?: Widget
 })
 ```
@@ -138,11 +138,11 @@ Transform.rotate({
 ### Transform.scale()
 ```typescript
 Transform.scale({
-  scale?: number,         // Uniform scaling
-  scaleX?: number,        // X-axis scaling
-  scaleY?: number,        // Y-axis scaling
-  origin?: Offset,        // Scale origin point
-  alignment?: Alignment,  // Alignment reference
+  scale?: number,         // 均等スケーリング
+  scaleX?: number,        // X軸スケーリング
+  scaleY?: number,        // Y軸スケーリング
+  origin?: Offset,        // スケーリング原点
+  alignment?: Alignment,  // 配置基準
   child?: Widget
 })
 ```
@@ -150,14 +150,14 @@ Transform.scale({
 ### Transform.translate()
 ```typescript
 Transform.translate({
-  offset: Offset,         // Translation distance
+  offset: Offset,         // 平移距離
   child?: Widget
 })
 ```
 
-## Real-World Examples
+## 実践的な例
 
-### Example 1: Various Rotation Transformations
+### 例1: 様々な回転変換
 
 ```typescript
 import { Transform, Container, Row, Column, Text } from 'flitter';
@@ -168,7 +168,7 @@ const RotationExamples = Row({
     Column({
       children: [
         Transform.rotate({
-          angle: Math.PI / 6,  // 30 degrees
+          angle: Math.PI / 6,  // 30度
           child: Container({
             width: 80,
             height: 80,
@@ -178,14 +178,14 @@ const RotationExamples = Row({
             })
           })
         }),
-        Text('30° Rotation')
+        Text('30° 回転')
       ]
     }),
     
     Column({
       children: [
         Transform.rotate({
-          angle: Math.PI / 4,  // 45 degrees
+          angle: Math.PI / 4,  // 45度
           child: Container({
             width: 80,
             height: 80,
@@ -195,14 +195,14 @@ const RotationExamples = Row({
             })
           })
         }),
-        Text('45° Rotation')
+        Text('45° 回転')
       ]
     }),
     
     Column({
       children: [
         Transform.rotate({
-          angle: Math.PI / 2,  // 90 degrees
+          angle: Math.PI / 2,  // 90度
           child: Container({
             width: 80,
             height: 80,
@@ -212,14 +212,14 @@ const RotationExamples = Row({
             })
           })
         }),
-        Text('90° Rotation')
+        Text('90° 回転')
       ]
     })
   ]
 });
 ```
 
-### Example 2: Scaling Transformations
+### 例2: スケーリング変換
 
 ```typescript
 import { Transform, Container, Row } from 'flitter';
@@ -227,7 +227,7 @@ import { Transform, Container, Row } from 'flitter';
 const ScaleExamples = Row({
   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
   children: [
-    // Uniform scaling
+    // 均等スケーリング
     Transform.scale({
       scale: 1.5,
       child: Container({
@@ -237,7 +237,7 @@ const ScaleExamples = Row({
       })
     }),
     
-    // X-axis only scaling
+    // X軸のみスケーリング
     Transform.scale({
       scaleX: 2.0,
       scaleY: 1.0,
@@ -248,7 +248,7 @@ const ScaleExamples = Row({
       })
     }),
     
-    // Y-axis only scaling
+    // Y軸のみスケーリング
     Transform.scale({
       scaleX: 1.0,
       scaleY: 2.0,
@@ -259,7 +259,7 @@ const ScaleExamples = Row({
       })
     }),
     
-    // Scaling down
+    // 縮小
     Transform.scale({
       scale: 0.5,
       child: Container({
@@ -272,17 +272,17 @@ const ScaleExamples = Row({
 });
 ```
 
-### Example 3: Combined Transformations (Rotation + Scaling)
+### 例3: 複合変換（回転 + スケーリング）
 
 ```typescript
 import { Transform, Matrix4, Container } from 'flitter';
 
 const CombinedTransform = () => {
-  // Direct Matrix4 manipulation for combined transforms
+  // 複合変換のための直接Matrix4操作
   const matrix = Matrix4.identity();
-  matrix.translate(50, 0, 0);           // Translation
-  matrix.rotateZ(Math.PI / 4);          // 45-degree rotation
-  matrix.scale(1.5, 1.5, 1.0);         // 1.5x scaling
+  matrix.translate(50, 0, 0);           // 平移
+  matrix.rotateZ(Math.PI / 4);          // 45度回転
+  matrix.scale(1.5, 1.5, 1.0);         // 1.5倍スケーリング
   
   return Transform({
     transform: matrix,
@@ -291,7 +291,7 @@ const CombinedTransform = () => {
       height: 80,
       color: '#e74c3c',
       child: Center({
-        child: Text('Combined\nTransform', {
+        child: Text('複合\n変換', {
           style: { 
             color: 'white', 
             fontSize: 12,
@@ -304,7 +304,7 @@ const CombinedTransform = () => {
 };
 ```
 
-### Example 4: 3D Perspective Effect
+### 例4: 3Dパースペクティブ効果
 
 ```typescript
 import { Transform, Matrix4, Container } from 'flitter';
@@ -312,8 +312,8 @@ import { Transform, Matrix4, Container } from 'flitter';
 const PerspectiveCard = Transform({
   transform: (() => {
     const matrix = Matrix4.identity();
-    matrix.setEntry(3, 2, 0.001);  // Perspective effect
-    matrix.rotateX(Math.PI / 6);   // 30-degree X-axis rotation
+    matrix.setEntry(3, 2, 0.001);  // パースペクティブ効果
+    matrix.rotateX(Math.PI / 6);   // X軸30度回転
     return matrix;
   })(),
   alignment: Alignment.center,
@@ -332,7 +332,7 @@ const PerspectiveCard = Transform({
       ]
     }),
     child: Center({
-      child: Text('3D Card', {
+      child: Text('3Dカード', {
         style: { 
           color: 'white', 
           fontSize: 18,
@@ -344,7 +344,7 @@ const PerspectiveCard = Transform({
 });
 ```
 
-### Example 5: Animation with Transform
+### 例5: Transformアニメーション
 
 ```typescript
 import { Transform, AnimationController, Tween } from 'flitter';
@@ -403,7 +403,7 @@ class AnimatedTransformState extends State {
           borderRadius: BorderRadius.circular(12)
         }),
         child: Center({
-          child: Text('Animation', {
+          child: Text('アニメーション', {
             style: { color: 'white', fontWeight: 'bold' }
           })
         })
@@ -413,7 +413,7 @@ class AnimatedTransformState extends State {
 }
 ```
 
-### Example 6: Card Flip Effect
+### 例6: カードフリップ効果
 
 ```typescript
 import { Transform, Matrix4, GestureDetector } from 'flitter';
@@ -459,7 +459,7 @@ class FlipCardState extends State {
           }),
           child: Center({
             child: Text(
-              this.isFlipped ? 'Back' : 'Front',
+              this.isFlipped ? '裏' : '表',
               { 
                 style: { 
                   color: 'white', 
@@ -476,19 +476,19 @@ class FlipCardState extends State {
 }
 ```
 
-## Best Practices
+## ベストプラクティス
 
-- **No Layout Impact**: Transform doesn't affect widget space consumption, which may cause overlapping with other widgets
-- **Performance**: Complex transformations or many Transform widgets can impact performance
-- **Angle Units**: Rotation angles use radians (degrees * Math.PI / 180)
-- **Understanding Reference Points**: Understand the difference between origin and alignment and use appropriately
-- **3D Transformations**: Z-axis transformations may require perspective settings
-- **Animation**: Use with AnimationController for smooth transformation animations
+- **レイアウトへの影響なし**: Transformはウィジェットのスペース消費に影響せず、他のウィジェットと重なる可能性があります
+- **パフォーマンス**: 複雑な変換や多数のTransformウィジェットはパフォーマンスに影響する可能性があります
+- **角度の単位**: 回転角度はラジアンを使用します（度数 * Math.PI / 180）
+- **基準点の理解**: originとalignmentの違いを理解し、適切に使用してください
+- **3D変換**: Z軸変換にはパースペクティブ設定が必要な場合があります
+- **アニメーション**: スムーズな変換アニメーションにはAnimationControllerと併用してください
 
-## Related Widgets
+## 関連ウィジェット
 
-- **AnimatedContainer**: When you need automatically animated transformations
-- **RotatedBox**: When you need rotation that affects layout
-- **FractionalTranslation**: When you need size-ratio-based translation
-- **AnimatedRotation**: When you need rotation animations
-- **AnimatedScale**: When you need scale animations
+- **AnimatedContainer**: 自動アニメーション変換が必要な場合
+- **RotatedBox**: レイアウトに影響する回転が必要な場合
+- **FractionalTranslation**: サイズ比率ベースの平移が必要な場合
+- **AnimatedRotation**: 回転アニメーションが必要な場合
+- **AnimatedScale**: スケールアニメーションが必要な場合

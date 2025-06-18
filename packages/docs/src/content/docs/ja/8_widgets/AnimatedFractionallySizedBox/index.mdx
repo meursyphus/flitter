@@ -3,26 +3,26 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: AnimatedFractionallySizedBox
 title: "AnimatedFractionallySizedBox"
-description: "A widget that animates size transitions proportional to parent size"
+description: "親サイズに比例してサイズ変更をアニメーションするウィジェット"
 ---
 
-## Overview
+## 概要
 
-AnimatedFractionallySizedBox is a widget that sizes its child relative to the parent widget's size and automatically animates when widthFactor or heightFactor changes. It also animates position changes when alignment is modified. This widget is inspired by Flutter's AnimatedFractionallySizedBox widget.
+AnimatedFractionallySizedBoxは、親ウィジェットのサイズに対して相対的に子ウィジェットのサイズを設定し、widthFactorやheightFactorが変更された際に自動的にアニメーションするウィジェットです。また、alignmentが変更された際には位置変更もアニメーションします。このウィジェットはFlutterのAnimatedFractionallySizedBoxウィジェットにインスパイアされています。
 
-> Animated version of FractionallySizedBox which automatically transitions the child's size over a given duration whenever the given widthFactor or heightFactor changes, as well as the position whenever the given alignment changes.
+> widthFactorやheightFactorが変更された際に子ウィジェットのサイズを、またalignmentが変更された際に位置を、指定された継続時間で自動的に遷移させるFractionallySizedBoxのアニメーション版です。
 
 Flutter reference: https://api.flutter.dev/flutter/widgets/AnimatedFractionallySizedBox-class.html
 
-## When to use?
+## いつ使うか？
 
-- When dynamically adjusting widget size relative to parent size
-- When smoothly transitioning sizes in responsive layouts
-- When animating content size based on screen dimensions
-- When implementing smooth expand/collapse effects
-- When transitioning modal or dialog sizes in stages
+- 親サイズに対して相対的にウィジェットサイズを動的に調整したい場合
+- レスポンシブレイアウトでサイズをスムーズに遷移させたい場合
+- スクリーンサイズに基づいてコンテンツサイズをアニメーションしたい場合
+- スムーズな展開・折りたたみ効果を実装したい場合
+- モーダルやダイアログのサイズを段階的に遷移させたい場合
 
-## Basic usage
+## 基本的な使用方法
 
 ```typescript
 import { AnimatedFractionallySizedBox, Container, StatefulWidget } from '@flitter/core';
@@ -50,7 +50,7 @@ class SizeAnimationExampleState extends State<SizeAnimationExample> {
         child: AnimatedFractionallySizedBox({
           widthFactor: this.isExpanded ? 0.8 : 0.4,
           heightFactor: this.isExpanded ? 0.8 : 0.4,
-          duration: 1000, // 1 second
+          duration: 1000, // 1秒
           child: Container({
             color: "blue",
           }),
@@ -61,75 +61,75 @@ class SizeAnimationExampleState extends State<SizeAnimationExample> {
 }
 ```
 
-## Props
+## プロパティ
 
-### duration (required)
-**Value: number**
+### duration （必須）
+**値: number**
 
-Specifies the animation duration in milliseconds.
+アニメーションの継続時間をミリ秒で指定します。
 
-### widthFactor (optional)
-**Value: number | undefined**
+### widthFactor （オプション）
+**値: number | undefined**
 
-Sets the child widget's width as a ratio of the parent widget's width.
-- 0.5 = 50% of parent width
-- 1.0 = 100% of parent width
-- If not specified, uses the child's intrinsic width
+親ウィジェットの幅に対する比率で子ウィジェットの幅を設定します。
+- 0.5 = 親の幅の50%
+- 1.0 = 親の幅の100%
+- 指定されない場合は子ウィジェットの固有幅を使用
 
-### heightFactor (optional)
-**Value: number | undefined**
+### heightFactor （オプション）
+**値: number | undefined**
 
-Sets the child widget's height as a ratio of the parent widget's height.
-- 0.5 = 50% of parent height
-- 1.0 = 100% of parent height
-- If not specified, uses the child's intrinsic height
+親ウィジェットの高さに対する比率で子ウィジェットの高さを設定します。
+- 0.5 = 親の高さの50%
+- 1.0 = 親の高さの100%
+- 指定されない場合は子ウィジェットの固有高を使用
 
-### alignment (optional)
-**Value: Alignment** (default: **Alignment.center**)
+### alignment （オプション）
+**値: Alignment** （デフォルト: **Alignment.center**）
 
-Specifies the alignment position of the child widget. Predefined values:
-- `Alignment.topLeft`: Top left
-- `Alignment.topCenter`: Top center
-- `Alignment.topRight`: Top right
-- `Alignment.centerLeft`: Center left
-- `Alignment.center`: Center
-- `Alignment.centerRight`: Center right
-- `Alignment.bottomLeft`: Bottom left
-- `Alignment.bottomCenter`: Bottom center
-- `Alignment.bottomRight`: Bottom right
+子ウィジェットの配置位置を指定します。定義済みの値：
+- `Alignment.topLeft`: 左上
+- `Alignment.topCenter`: 上中央
+- `Alignment.topRight`: 右上
+- `Alignment.centerLeft`: 左中央
+- `Alignment.center`: 中央
+- `Alignment.centerRight`: 右中央
+- `Alignment.bottomLeft`: 左下
+- `Alignment.bottomCenter`: 下中央
+- `Alignment.bottomRight`: 右下
 
-### curve (optional)
-**Value: Curve** (default: **Curves.linear**)
+### curve （オプション）
+**値: Curve** （デフォルト: **Curves.linear**）
 
-Specifies the animation progression curve. Available curves:
-- `Curves.linear`: Constant speed
-- `Curves.easeIn`: Slow start
-- `Curves.easeOut`: Slow end
-- `Curves.easeInOut`: Slow start and end
-- `Curves.circIn`: Circular acceleration start
-- `Curves.circOut`: Circular deceleration end
-- `Curves.circInOut`: Circular acceleration/deceleration
-- `Curves.backIn`: Goes back then starts
-- `Curves.backOut`: Overshoots target then returns
+アニメーションの進行カーブを指定します。利用可能なカーブ：
+- `Curves.linear`: 一定速度
+- `Curves.easeIn`: ゆっくり開始
+- `Curves.easeOut`: ゆっくり終了
+- `Curves.easeInOut`: ゆっくり開始・終了
+- `Curves.circIn`: 円形加速開始
+- `Curves.circOut`: 円形減速終了
+- `Curves.circInOut`: 円形加速・減速
+- `Curves.backIn`: 戻ってから開始
+- `Curves.backOut`: 目標を越えてから戻る
 - `Curves.backInOut`: backIn + backOut
-- `Curves.anticipate`: Anticipatory motion before proceeding
-- `Curves.bounceIn`: Bounces at start
-- `Curves.bounceOut`: Bounces at end
-- `Curves.bounceInOut`: Bounces at start/end
+- `Curves.anticipate`: 進む前の予備動作
+- `Curves.bounceIn`: 開始時にバウンス
+- `Curves.bounceOut`: 終了時にバウンス
+- `Curves.bounceInOut`: 開始・終了時にバウンス
 
-### child (optional)
-**Value: Widget | undefined**
+### child （オプション）
+**値: Widget | undefined**
 
-The child widget whose size will be adjusted.
+サイズが調整される子ウィジェットです。
 
-### key (optional)
-**Value: any**
+### key （オプション）
+**値: any**
 
-A unique identifier for the widget.
+ウィジェットの一意な識別子です。
 
-## Real-world examples
+## 実用的な例
 
-### Example 1: Responsive card expand/collapse
+### 例1: レスポンシブカードの展開・折りたたみ
 
 ```typescript
 import { AnimatedFractionallySizedBox, Container, Card, Curves } from '@flitter/core';
@@ -182,7 +182,7 @@ class ResponsiveCardState extends State<ResponsiveCard> {
                       }),
                       SizedBox({ height: 16 }),
                       Text(
-                        this.isExpanded ? "Click to Collapse" : "Click to Expand",
+                        this.isExpanded ? "クリックで折りたたむ" : "クリックで展開",
                         { style: TextStyle({ color: "white", fontSize: 18 }) }
                       ),
                     ],
@@ -198,7 +198,7 @@ class ResponsiveCardState extends State<ResponsiveCard> {
 }
 ```
 
-### Example 2: Multi-stage size transitions
+### 例2: 多段階サイズ遷移
 
 ```typescript
 import { AnimatedFractionallySizedBox, Container, Row, Curves } from '@flitter/core';
@@ -210,7 +210,7 @@ class MultiSizeTransition extends StatefulWidget {
 }
 
 class MultiSizeTransitionState extends State<MultiSizeTransition> {
-  sizeLevel = 0; // 0: small, 1: medium, 2: large
+  sizeLevel = 0; // 0: 小, 1: 中, 2: 大
   sizes = [
     { width: 0.3, height: 0.3 },
     { width: 0.6, height: 0.5 },
@@ -222,13 +222,13 @@ class MultiSizeTransitionState extends State<MultiSizeTransition> {
     
     return Column({
       children: [
-        // Control buttons
+        // コントロールボタン
         Row({
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton({
               onPressed: () => this.changeSize(0),
-              child: Text("Small"),
+              child: Text("小"),
               style: ButtonStyle({
                 backgroundColor: this.sizeLevel === 0 ? "blue" : "gray",
               }),
@@ -236,7 +236,7 @@ class MultiSizeTransitionState extends State<MultiSizeTransition> {
             SizedBox({ width: 8 }),
             ElevatedButton({
               onPressed: () => this.changeSize(1),
-              child: Text("Medium"),
+              child: Text("中"),
               style: ButtonStyle({
                 backgroundColor: this.sizeLevel === 1 ? "blue" : "gray",
               }),
@@ -244,7 +244,7 @@ class MultiSizeTransitionState extends State<MultiSizeTransition> {
             SizedBox({ width: 8 }),
             ElevatedButton({
               onPressed: () => this.changeSize(2),
-              child: Text("Large"),
+              child: Text("大"),
               style: ButtonStyle({
                 backgroundColor: this.sizeLevel === 2 ? "blue" : "gray",
               }),
@@ -253,7 +253,7 @@ class MultiSizeTransitionState extends State<MultiSizeTransition> {
         }),
         SizedBox({ height: 20 }),
         
-        // Animation area
+        // アニメーションエリア
         Expanded({
           child: Container({
             color: "#e0e0e0",
@@ -296,7 +296,7 @@ class MultiSizeTransitionState extends State<MultiSizeTransition> {
 }
 ```
 
-### Example 3: Alignment and size animation combined
+### 例3: 配置とサイズアニメーションの組み合わせ
 
 ```typescript
 import { AnimatedFractionallySizedBox, Container, Alignment, Curves } from '@flitter/core';
@@ -343,12 +343,12 @@ class AlignmentAndSizeAnimationState extends State<AlignmentAndSizeAnimation> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    `Position ${this.currentIndex + 1}/5`,
+                    `位置 ${this.currentIndex + 1}/5`,
                     { style: TextStyle({ fontSize: 20, fontWeight: "bold" }) }
                   ),
                   SizedBox({ height: 8 }),
                   Text(
-                    "Tap for Next",
+                    "タップで次へ",
                     { style: TextStyle({ fontSize: 16 }) }
                   ),
                 ],
@@ -368,7 +368,7 @@ class AlignmentAndSizeAnimationState extends State<AlignmentAndSizeAnimation> {
 }
 ```
 
-### Example 4: Aspect ratio preserved image container
+### 例4: アスペクト比保持画像コンテナ
 
 ```typescript
 import { AnimatedFractionallySizedBox, Container, Image, Curves } from '@flitter/core';
@@ -424,17 +424,17 @@ class AspectRatioImageContainerState extends State<AspectRatioImageContainer> {
 }
 ```
 
-## Notes
+## 注意事項
 
-- widthFactor and heightFactor must be greater than or equal to 0
-- If both widthFactor and heightFactor are undefined, the child widget's intrinsic size is used
-- When the parent widget's size changes, AnimatedFractionallySizedBox's actual size automatically adjusts
-- When alignment and factor values change simultaneously, they all animate together
-- For performance considerations, avoid too frequent size changes
+- widthFactorとheightFactorは0以上である必要があります
+- widthFactorとheightFactorの両方がundefinedの場合、子ウィジェットの固有サイズが使用されます
+- 親ウィジェットのサイズが変更されると、AnimatedFractionallySizedBoxの実際のサイズも自動的に調整されます
+- alignmentとfactor値が同時に変更される場合、すべてが一緒にアニメーションします
+- パフォーマンスを考慮して、頻繁なサイズ変更は避けてください
 
-## Related widgets
+## 関連ウィジェット
 
-- **FractionallySizedBox**: Basic widget that sets size proportional to parent without animation
-- **AnimatedContainer**: Animates multiple properties simultaneously
-- **AnimatedAlign**: Animates only alignment transitions
-- **SizedBox**: Widget for setting fixed size
+- **FractionallySizedBox**: アニメーションなしで親に比例してサイズを設定する基本ウィジェット
+- **AnimatedContainer**: 複数のプロパティを同時にアニメーション
+- **AnimatedAlign**: 配置の遷移のみアニメーション
+- **SizedBox**: 固定サイズを設定するウィジェット

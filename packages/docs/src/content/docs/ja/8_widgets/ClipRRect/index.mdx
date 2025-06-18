@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: ClipRRect
 title: "ClipRRect"
-description: "A widget that clips its child using a rounded rectangle"
+description: "角丸矩形を使用して子要素をクリップするウィジェット"
 ---
 
-## Overview
+## 概要
 
-ClipRRect is a widget that clips its child using a rounded rectangle. 
+ClipRRectは、角丸矩形を使用して子要素をクリップするウィジェットです。
 
-By default, ClipRRect uses its own bounds as the base rectangle for the clip, but the size and location of the clip can be customized using a custom clipper. The borderRadius property allows you to individually set the roundness of each corner.
+デフォルトでは、ClipRRectは自身の境界をクリップの基準矩形として使用しますが、カスタムクリッパーを使用してクリップのサイズと位置をカスタマイズできます。borderRadiusプロパティにより、各角の丸みを個別に設定できます。
 
 <iframe
   width="560"
@@ -22,17 +22,17 @@ By default, ClipRRect uses its own bounds as the base rectangle for the clip, bu
   allowfullscreen
 ></iframe>
 
-See: [https://api.flutter.dev/flutter/widgets/ClipRRect-class.html](https://api.flutter.dev/flutter/widgets/ClipRRect-class.html)
+参考: [https://api.flutter.dev/flutter/widgets/ClipRRect-class.html](https://api.flutter.dev/flutter/widgets/ClipRRect-class.html)
 
-## When to Use
+## 使用場面
 
-- When you want to apply rounded corners to images or containers
-- When creating card UI or buttons with smooth corner effects
-- When you need to clip overflowing content with rounded corners
-- When you want to set different radii for each corner
-- When applying rounded effects to profile images or thumbnails
+- 画像やコンテナに角丸を適用したい場合
+- スムーズな角丸効果を持つカードUIやボタンを作成する場合
+- オーバーフローするコンテンツを角丸でクリップする必要がある場合
+- 各角に異なる半径を設定したい場合
+- プロフィール画像やサムネイルに角丸効果を適用する場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
 // Same radius for all corners
@@ -72,13 +72,13 @@ ClipRRect({
 })
 ```
 
-## Props Details
+## プロパティの詳細
 
 ### borderRadius
 
-**Type: BorderRadius** (Default: **BorderRadius.zero**)
+**型: BorderRadius**（デフォルト: **BorderRadius.zero**）
 
-Defines the roundness of each corner. The BorderRadius class provides various factory methods:
+各角の丸みを定義します。BorderRadiusクラスは様々なファクトリーメソッドを提供します：
 
 - `BorderRadius.circular(radius)`: Apply the same circular radius to all corners
 - `BorderRadius.all(Radius)`: Apply the same Radius to all corners
@@ -113,9 +113,9 @@ ClipRRect({
 
 ### clipper
 
-**Type: (size: Size) => RRect** (Optional)
+**型: (size: Size) => RRect**（オプション）
 
-A callback function that defines a custom clipping area. It receives the widget's size and must return an RRect (rounded rectangle) object.
+カスタムクリッピング領域を定義するコールバック関数。ウィジェットのサイズを受け取り、RRect（角丸矩形）オブジェクトを返す必要があります。
 
 ```typescript
 ClipRRect({
@@ -136,12 +136,12 @@ ClipRRect({
 
 ### clipped
 
-**Type: boolean** (Default: **true**)
+**型: boolean**（デフォルト: **true**）
 
-Enables or disables the clipping effect.
+クリッピング効果を有効または無効にします。
 
-- `true`: Apply clipping
-- `false`: Disable clipping (child widget displays normally)
+- `true`: クリッピングを適用
+- `false`: クリッピングを無効化（子ウィジェットは通常通り表示）
 
 ```typescript
 ClipRRect({
@@ -153,13 +153,13 @@ ClipRRect({
 
 ### child
 
-**Type: Widget**
+**型: Widget**
 
-The child widget to be clipped.
+クリップされる子ウィジェット。
 
-## Practical Examples
+## 実用的な例
 
-### Example 1: Card UI Composition
+### 例1: カードUI構成
 
 ```typescript
 const CardWithImage = ({ image, title, description, onTap }) => {
@@ -224,7 +224,7 @@ const CardWithImage = ({ image, title, description, onTap }) => {
 };
 ```
 
-### Example 2: Profile Avatar Variations
+### 例2: プロフィールアバターのバリエーション
 
 ```typescript
 const ProfileAvatar = ({ imageUrl, size, status }) => {
@@ -290,7 +290,7 @@ ProfileAvatar({
 });
 ```
 
-### Example 3: Message Bubble
+### 例3: メッセージバブル
 
 ```typescript
 const MessageBubble = ({ message, isMe, time, hasImage }) => {
@@ -354,7 +354,7 @@ const MessageBubble = ({ message, isMe, time, hasImage }) => {
 };
 ```
 
-### Example 4: Gradient Button
+### 例4: グラデーションボタン
 
 ```typescript
 const GradientButton = ({ text, onPressed, disabled = false }) => {
@@ -402,7 +402,7 @@ const GradientButton = ({ text, onPressed, disabled = false }) => {
 };
 ```
 
-### Example 5: Image Gallery Thumbnail
+### 例5: 画像ギャラリーサムネイル
 
 ```typescript
 const GalleryThumbnail = ({ images, title }) => {
@@ -478,9 +478,9 @@ const GalleryThumbnail = ({ images, title }) => {
 };
 ```
 
-## Understanding RRect API
+## RRect APIの理解
 
-### RRect Creation Methods
+### RRect作成メソッド
 
 ```typescript
 // Basic constructors
@@ -510,18 +510,18 @@ const inflatedRRect = rrect.inflate(10);  // Expand by 10 pixels
 const deflatedRRect = rrect.deflate(5);   // Shrink by 5 pixels
 ```
 
-## Important Notes
+## 重要な注意事項
 
-- Clipping can affect rendering performance, so use it only when necessary
-- If the borderRadius value is larger than the widget size, unexpected results may occur
-- Touch events outside the clipped area are not detected
-- Be careful when using Container's decoration with ClipRRect in complex layouts
-- Use placeholders during image loading to prevent layout shifts
+- クリッピングはレンダリングパフォーマンスに影響する可能性があるため、必要な場合のみ使用してください
+- borderRadius値がウィジェットサイズより大きい場合、予期しない結果が生じる可能性があります
+- クリップされた領域外のタッチイベントは検出されません
+- 複雑なレイアウトでContainerのdecorationとClipRRectを併用する際は注意してください
+- 画像読み込み中はプレースホルダーを使用してレイアウトシフトを防いでください
 
-## Related Widgets
+## 関連ウィジェット
 
-- **ClipRect**: Clips with a rectangle
-- **ClipOval**: Clips with an oval shape
-- **ClipPath**: Clips with a custom path
-- **Container**: Can implement rounded corners with the decoration property
-- **Card**: Material design card with rounded corners by default
+- **ClipRect**: 矩形でクリップ
+- **ClipOval**: 楕円形でクリップ
+- **ClipPath**: カスタムパスでクリップ
+- **Container**: decorationプロパティで角丸を実装可能
+- **Card**: デフォルトで角丸を持つマテリアルデザインカード

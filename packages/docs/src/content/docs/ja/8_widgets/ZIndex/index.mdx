@@ -3,29 +3,29 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: ZIndex
 title: "ZIndex"
-description: "A widget that controls the layering order of its child widget"
+description: "子ウィジェットのレイヤー順序を制御するウィジェット"
 ---
 
-## Overview
+## 概要
 
-`ZIndex` is a widget that controls the layering order (z-index) of its child widget. This is a unique widget specific to Flitter (not available in Flutter itself), allowing you to determine the front-to-back order of widgets similar to CSS z-index.
+`ZIndex`は、子ウィジェットのレイヤー順序（z-index）を制御するウィジェットです。これはFlitter独自のウィジェット（Flutter自体には存在しない）で、CSSのz-indexと似たようにウィジェットの前後関係を決定できます。
 
-Use it when you need to display specific widgets on top of others or create complex layer structures. When used together with Stack widget, you can implement more sophisticated layouts.
+特定のウィジェットを他のウィジェットの上に表示したり、複雑なレイヤー構造を作成する必要がある場合に使用します。Stackウィジェットと一緒に使用することで、より洗練されたレイアウトを実装できます。
 
-## When to Use?
+## 使用する場面
 
-- When you need to explicitly control widget rendering order
-- When displaying popups or overlays on top of other widgets
-- When bringing specific widgets to the front in complex layer structures
-- When moving selected elements to the top during drag and drop
-- When managing element depth in diagrams or games
+- ウィジェットのレンダリング順序を明示的に制御する必要がある場合
+- ポップアップやオーバーレイを他のウィジェットの上に表示する場合
+- 複雑なレイヤー構造で特定のウィジェットを前面に持ってくる場合
+- ドラッグアンドドロップ時に選択された要素を最前面に移動する場合
+- 図表やゲームで要素の深度を管理する場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
 import { ZIndex, Container, Stack } from 'flitter';
 
-// Basic z-index application
+// 基本的なz-index適用
 const LayeredWidget = Stack({
   children: [
     Container({
@@ -45,46 +45,46 @@ const LayeredWidget = Stack({
 });
 ```
 
-## Props
+## プロパティ
 
-### zIndex (required)
-**Value: number**
+### zIndex (必須)
+**値: number**
 
-A number representing the layer order of the widget. Higher values render in front (on top).
+ウィジェットのレイヤー順序を表す数値。高い値ほど前面（上部）にレンダリングされます。
 
-- **Positive numbers**: Display in front of the default layer
-- **0**: Default layer (baseline)
-- **Negative numbers**: Display behind the default layer
+- **正の数値**: デフォルトレイヤーより前面に表示
+- **0**: デフォルトレイヤー（ベースライン）
+- **負の数値**: デフォルトレイヤーより背面に表示
 
 ```typescript
-// Display at the very front
+// 最前面に表示
 zIndex: 9999
 
-// Default layer
+// デフォルトレイヤー
 zIndex: 0
 
-// Display at the very back
+// 最背面に表示
 zIndex: -1
 ```
 
-### child (optional)
-**Value: Widget**
+### child (オプション)
+**値: Widget**
 
-The child widget to which the z-index will be applied. Can only have one child.
+z-indexが適用される子ウィジェット。子ウィジェットは1つだけ持つことができます。
 
-## Stacking Context
+## スタッキングコンテキスト
 
-ZIndex uses a system similar to CSS stacking contexts:
+ZIndexはCSSのスタッキングコンテキストと似たシステムを使用します：
 
-### Basic Rules
-1. **Higher z-index displays in front of lower z-index**
-2. **When z-index values are equal, document order (creation order) determines precedence**
-3. **Nested ZIndex widgets are constrained by their parent's stacking context**
+### 基本ルール
+1. **高いz-indexは低いz-indexより前面に表示される**
+2. **z-index値が同じ場合は、ドキュメント順序（作成順序）が優先される**
+3. **ネストされたZIndexウィジェットは親のスタッキングコンテキストに制約される**
 
-### Context Isolation
+### コンテキストの分離
 ```typescript
-// If parent zIndex is 1, child zIndex 9999 may still 
-// appear behind another sibling with zIndex 2
+// 親zIndexが1の場合、子のzIndex 9999は
+// 他の兄弟要素のzIndex 2よりも背面に表示される可能性がある
 ZIndex({
   zIndex: 1,
   child: ZIndex({
@@ -94,23 +94,23 @@ ZIndex({
 })
 ```
 
-## Real-World Examples
+## 実践的な例
 
-### Example 1: Basic Layering
+### 例1: 基本レイヤリング
 
 ```typescript
 import { ZIndex, Container, Stack, Positioned } from 'flitter';
 
 const BasicLayering = Stack({
   children: [
-    // Background (no z-index, default 0)
+    // 背景（z-indexなし、デフォルト0）
     Container({
       width: 300,
       height: 300,
       color: '#ecf0f1'
     }),
     
-    // Middle layer
+    // 中間レイヤー
     Positioned({
       top: 50,
       left: 50,
@@ -121,7 +121,7 @@ const BasicLayering = Stack({
           height: 200,
           color: '#3498db',
           child: Center({
-            child: Text('Middle Layer', {
+            child: Text('中間レイヤー', {
               style: { color: 'white', fontSize: 16 }
             })
           })
@@ -129,7 +129,7 @@ const BasicLayering = Stack({
       })
     }),
     
-    // Top layer
+    // 上位レイヤー
     Positioned({
       top: 100,
       left: 100,
@@ -140,7 +140,7 @@ const BasicLayering = Stack({
           height: 100,
           color: '#e74c3c',
           child: Center({
-            child: Text('Top', {
+            child: Text('上', {
               style: { color: 'white', fontSize: 14 }
             })
           })
@@ -148,7 +148,7 @@ const BasicLayering = Stack({
       })
     }),
     
-    // Behind background (negative z-index)
+    // 背景の後ろ（負のz-index）
     Positioned({
       top: 25,
       left: 25,
@@ -159,7 +159,7 @@ const BasicLayering = Stack({
           height: 50,
           color: '#95a5a6',
           child: Center({
-            child: Text('Back', {
+            child: Text('後ろ', {
               style: { color: 'white', fontSize: 12 }
             })
           })
@@ -170,7 +170,7 @@ const BasicLayering = Stack({
 });
 ```
 
-### Example 2: Dropdown Menu
+### 例2: ドロップダウンメニュー
 
 ```typescript
 import { ZIndex, Container, Column, GestureDetector } from 'flitter';
@@ -193,7 +193,7 @@ class DropdownMenuState extends State {
   build() {
     return Stack({
       children: [
-        // Main button
+        // メインボタン
         GestureDetector({
           onTap: this.toggleDropdown,
           child: Container({
@@ -205,7 +205,7 @@ class DropdownMenuState extends State {
             child: Row({
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Menu', { style: { color: 'white' } }),
+                Text('メニュー', { style: { color: 'white' } }),
                 SizedBox({ width: 8 }),
                 Icon(
                   this.isOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down,
@@ -216,13 +216,13 @@ class DropdownMenuState extends State {
           })
         }),
         
-        // Dropdown menu (high z-index to display above other elements)
+        // ドロップダウンメニュー（他の要素の上に表示するための高いz-index）
         if (this.isOpen)
           Positioned({
             top: 50,
             left: 0,
             child: ZIndex({
-              zIndex: 1000,  // High z-index to display above all elements
+              zIndex: 1000,  // すべての要素の上に表示するための高いz-index
               child: Container({
                 width: 150,
                 decoration: new BoxDecoration({
@@ -239,9 +239,9 @@ class DropdownMenuState extends State {
                 child: Column({
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _buildMenuItem('Option 1'),
-                    _buildMenuItem('Option 2'),
-                    _buildMenuItem('Option 3')
+                    _buildMenuItem('オプション1'),
+                    _buildMenuItem('オプション2'),
+                    _buildMenuItem('オプション3')
                   ]
                 })
               })
@@ -254,7 +254,7 @@ class DropdownMenuState extends State {
   _buildMenuItem(text: string) {
     return GestureDetector({
       onTap: () => {
-        console.log(`${text} selected`);
+        console.log(`${text} が選択されました`);
         this.toggleDropdown();
       },
       child: Container({
@@ -266,7 +266,7 @@ class DropdownMenuState extends State {
 }
 ```
 
-### Example 3: Modal Dialog
+### 例3: モーダルダイアログ
 
 ```typescript
 import { ZIndex, Container, Stack, Positioned, GestureDetector } from 'flitter';
@@ -276,7 +276,7 @@ const Modal = ({ isVisible, onClose, children }) => {
   
   return Stack({
     children: [
-      // Background overlay (medium z-index)
+      // 背景オーバーレイ（中程度のz-index）
       Positioned.fill({
         child: ZIndex({
           zIndex: 100,
@@ -289,7 +289,7 @@ const Modal = ({ isVisible, onClose, children }) => {
         })
       }),
       
-      // Modal content (highest z-index)
+      // モーダルコンテンツ（最高z-index）
       Center({
         child: ZIndex({
           zIndex: 200,
@@ -316,7 +316,7 @@ const Modal = ({ isVisible, onClose, children }) => {
 };
 ```
 
-### Example 4: Draggable Card System
+### 例4: ドラッグ可能カードシステム
 
 ```typescript
 import { ZIndex, Container, GestureDetector } from 'flitter';
@@ -340,7 +340,7 @@ class DraggableCardState extends State {
   position = new Offset({ x: 0, y: 0 });
   
   get currentZIndex() {
-    // Use highest z-index while dragging
+    // ドラッグ中は最高z-indexを使用
     return this.isDragging ? 9999 : this.widget.initialZIndex;
   }
   
@@ -405,17 +405,17 @@ class DraggableCardState extends State {
   }
 }
 
-// Usage example
+// 使用例
 const DraggableCards = Stack({
   children: [
-    DraggableCard('#e74c3c', 1, 'Card 1'),
-    DraggableCard('#3498db', 2, 'Card 2'),
-    DraggableCard('#2ecc71', 3, 'Card 3')
+    DraggableCard('#e74c3c', 1, 'カード1'),
+    DraggableCard('#3498db', 2, 'カード2'),
+    DraggableCard('#2ecc71', 3, 'カード3')
   ]
 });
 ```
 
-### Example 5: Tooltip System
+### 例5: ツールチップシステム
 
 ```typescript
 import { ZIndex, Container, Positioned, GestureDetector } from 'flitter';
@@ -439,7 +439,7 @@ class TooltipWidgetState extends State {
   build() {
     return Stack({
       children: [
-        // Base widget
+        // ベースウィジェット
         GestureDetector({
           onLongPress: () => this.setState(() => {
             this.showTooltip = true;
@@ -450,7 +450,7 @@ class TooltipWidgetState extends State {
           child: this.widget.child
         }),
         
-        // Tooltip (very high z-index)
+        // ツールチップ（非常に高いz-index）
         if (this.showTooltip)
           Positioned({
             bottom: 0,
@@ -481,14 +481,14 @@ class TooltipWidgetState extends State {
 }
 ```
 
-### Example 6: Game Object Layering
+### 例6: ゲームオブジェクトレイヤリング
 
 ```typescript
 import { ZIndex, Container, Stack } from 'flitter';
 
 const GameScene = Stack({
   children: [
-    // Background layer (farthest back)
+    // 背景レイヤー（最も奥）
     ZIndex({
       zIndex: -10,
       child: Container({
@@ -502,31 +502,31 @@ const GameScene = Stack({
       })
     }),
     
-    // Terrain layer
+    // 地形レイヤー
     ZIndex({
       zIndex: 0,
       child: TerrainWidget()
     }),
     
-    // Game object layer
+    // ゲームオブジェクトレイヤー
     ZIndex({
       zIndex: 10,
       child: PlayerWidget()
     }),
     
-    // Enemy character layer
+    // 敵キャラクターレイヤー
     ZIndex({
       zIndex: 15,
       child: EnemyWidget()
     }),
     
-    // Particle effect layer
+    // パーティクルエフェクトレイヤー
     ZIndex({
       zIndex: 20,
       child: ParticleEffectWidget()
     }),
     
-    // UI layer (frontmost)
+    // UIレイヤー（最前面）
     ZIndex({
       zIndex: 100,
       child: GameUIWidget()
@@ -535,17 +535,17 @@ const GameScene = Stack({
 });
 ```
 
-## Best Practices
+## ベストプラクティス
 
-- **Performance**: Excessive ZIndex usage can impact rendering performance
-- **Complexity**: Nested stacking contexts can produce unexpected results
-- **Debugging**: When z-index doesn't work as expected, check the stacking context hierarchy
-- **Accessibility**: Visual order and focus order may differ, so consider accessibility
-- **Consistency**: Maintain a consistent z-index value system throughout your project
+- **パフォーマンス**: ZIndexの過度な使用はレンダリングパフォーマンスに影響を与える可能性があります
+- **複雑性**: ネストしたスタッキングコンテキストは予期しない結果を生み出す可能性があります
+- **デバッグ**: z-indexが期待通りに動作しない場合は、スタッキングコンテキストの階層を確認してください
+- **アクセシビリティ**: 視覚的順序とフォーカス順序が異なる可能性があるため、アクセシビリティを考慮してください
+- **一貫性**: プロジェクト全体で一貫したz-index値システムを維持してください
 
-## Related Widgets
+## 関連ウィジェット
 
-- **Stack**: When managing spatial positioning of widgets
-- **Positioned**: When specifying absolute positions within Stack
-- **Overlay**: When you need app-wide overlays
-- **Transform**: When expressing depth with 3D transformations
+- **Stack**: ウィジェットの空間的配置を管理する場合
+- **Positioned**: Stack内で絶対位置を指定する場合
+- **Overlay**: アプリ全体のオーバーレイが必要な場合
+- **Transform**: 3D変換で深度を表現する場合

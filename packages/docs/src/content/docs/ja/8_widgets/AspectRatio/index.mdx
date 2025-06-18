@@ -3,12 +3,12 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: AspectRatio
 title: "AspectRatio"
-description: "A widget that sizes its child to a specific aspect ratio"
+description: "子要素を特定のアスペクト比でサイズ調整するウィジェット"
 ---
 
-## Overview
+## 概要
 
-AspectRatio is a widget that sizes its child to a specific aspect ratio (width-to-height ratio). It maintains a consistent ratio between width and height while displaying the child at the largest possible size.
+AspectRatioは、子要素を特定のアスペクト比（横幅と高さの比率）でサイズ調整するウィジェットです。子要素を可能な限り大きなサイズで表示しながら、幅と高さの一定の比率を維持します。
 
 <iframe
   width="560"
@@ -20,20 +20,20 @@ AspectRatio is a widget that sizes its child to a specific aspect ratio (width-t
   allowfullscreen
 ></iframe>
 
-Reference: [https://api.flutter.dev/flutter/widgets/AspectRatio-class.html](https://api.flutter.dev/flutter/widgets/AspectRatio-class.html)
+参考: [https://api.flutter.dev/flutter/widgets/AspectRatio-class.html](https://api.flutter.dev/flutter/widgets/AspectRatio-class.html)
 
-## When to Use
+## 使用場面
 
-- When maintaining original aspect ratios of images or videos
-- When creating elements with consistent ratios in responsive design
-- When maintaining consistent appearance of cards or tiles
-- When fixing aspect ratios of charts or graphs
-- When preserving logo or icon proportions
+- 画像や動画の元のアスペクト比を維持したい場合
+- レスポンシブデザインで一定の比率を持つ要素を作成する場合
+- カードやタイルの一貫した外観を維持する場合
+- チャートやグラフのアスペクト比を固定する場合
+- ロゴやアイコンの比例を保持する場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
-// 16:9 ratio
+// 16:9の比率
 AspectRatio({
   aspectRatio: 16 / 9,
   child: Container({
@@ -44,7 +44,7 @@ AspectRatio({
   })
 })
 
-// Square (1:1 ratio)
+// 正方形（1:1の比率）
 AspectRatio({
   aspectRatio: 1.0,
   child: Image({
@@ -53,7 +53,7 @@ AspectRatio({
   })
 })
 
-// Golden ratio
+// 黄金比
 AspectRatio({
   aspectRatio: 1.618,
   child: Card({
@@ -64,57 +64,57 @@ AspectRatio({
 })
 ```
 
-## Props
+## プロパティ
 
-### aspectRatio (required)
-**Type: number**
+### aspectRatio（必須）
+**型: number**
 
-The ratio of width to height. Must be greater than 0 and finite.
+横幅と高さの比率。0より大きく、有限である必要があります。
 
-Common aspect ratios:
-- `1.0`: Square (1:1)
-- `16/9` (~1.78): Widescreen video
-- `4/3` (~1.33): Traditional TV/monitor
-- `3/2` (1.5): 35mm film
-- `1.618`: Golden ratio
-- `9/16` (~0.56): Portrait mobile screen
+一般的なアスペクト比:
+- `1.0`: 正方形（1:1）
+- `16/9`（〜1.78）: ワイドスクリーン動画
+- `4/3`（〜1.33）: 従来のテレビ/モニター
+- `3/2`（1.5）: 35mmフィルム
+- `1.618`: 黄金比
+- `9/16`（〜0.56）: ポートレートモバイル画面
 
 ```typescript
-// Various aspect ratio examples
+// 様々なアスペクト比の例
 AspectRatio({
-  aspectRatio: 16 / 9,  // Widescreen
+  aspectRatio: 16 / 9,  // ワイドスクリーン
   child: VideoPlayer({ url: 'video.mp4' })
 })
 
 AspectRatio({
-  aspectRatio: 1.0,  // Square
+  aspectRatio: 1.0,  // 正方形
   child: ProfileImage({ src: 'avatar.jpg' })
 })
 
 AspectRatio({
-  aspectRatio: 3 / 4,  // Portrait
+  aspectRatio: 3 / 4,  // ポートレート
   child: ProductCard({ product })
 })
 ```
 
-### child (optional)
-**Type: Widget | undefined**
+### child（オプション）
+**型: Widget | undefined**
 
-The child widget to which the aspect ratio will be applied. Even without a child, AspectRatio will occupy space with the specified ratio.
+アスペクト比が適用される子ウィジェット。子要素がなくても、AspectRatioは指定された比率でスペースを占有します。
 
-## Size Calculation
+## サイズ計算
 
-AspectRatio determines its size in the following order:
+AspectRatioは以下の順序でサイズを決定します：
 
-1. If constraints are tight, use those dimensions
-2. If max width is finite, calculate height based on width
-3. If width is infinite, calculate width based on max height
-4. Adjust if calculated size exceeds constraints
-5. Finally maintain ratio within min/max constraints
+1. 制約がタイトの場合、その寸法を使用
+2. 最大幅が有限の場合、幅に基づいて高さを計算
+3. 幅が無限の場合、最大高さに基づいて幅を計算
+4. 計算されたサイズが制約を超える場合は調整
+5. 最終的に最小/最大制約内で比率を維持
 
-## Practical Examples
+## 実用的な例
 
-### Example 1: Video Player
+### 例1: ビデオプレイヤー
 
 ```typescript
 const VideoContainer = ({ videoUrl, title }) => {
@@ -158,7 +158,7 @@ const VideoContainer = ({ videoUrl, title }) => {
 };
 ```
 
-### Example 2: Responsive Card Grid
+### 例2: レスポンシブカードグリッド
 
 ```typescript
 const ResponsiveCardGrid = ({ items }) => {
@@ -232,7 +232,7 @@ const ResponsiveCardGrid = ({ items }) => {
 };
 ```
 
-### Example 3: Profile Image
+### 例3: プロフィール画像
 
 ```typescript
 const ProfileAvatar = ({ imageUrl, name, size = 120 }) => {
@@ -278,7 +278,7 @@ const ProfileAvatar = ({ imageUrl, name, size = 120 }) => {
 };
 ```
 
-### Example 4: Chart Container
+### 例4: チャートコンテナ
 
 ```typescript
 const ChartContainer = ({ chartData, title }) => {
@@ -317,7 +317,7 @@ const ChartContainer = ({ chartData, title }) => {
 };
 ```
 
-### Example 5: Banner Image
+### 例5: バナー画像
 
 ```typescript
 const PromotionBanner = ({ imageUrl, title, subtitle, onTap }) => {
@@ -390,18 +390,18 @@ const PromotionBanner = ({ imageUrl, title, subtitle, onTap }) => {
 };
 ```
 
-## Important Notes
+## 重要な注意事項
 
-- aspectRatio must be greater than 0 and finite
-- May not maintain desired ratio if parent constraints are insufficient
-- Size is determined based on child size with infinite constraints
-- Can impact performance during intrinsic size calculations
-- Proper constraints must be provided when used within Stack
+- aspectRatioは0より大きく、有限である必要があります
+- 親の制約が不十分な場合、望ましい比率を維持できない可能性があります
+- 無限制約での子のサイズに基づいてサイズが決定されます
+- 固有サイズ計算時にパフォーマンスに影響を与える可能性があります
+- Stack内で使用する場合は適切な制約を提供する必要があります
 
-## Related Widgets
+## 関連ウィジェット
 
-- **FractionallySizedBox**: Sizes based on parent's dimensions
-- **SizedBox**: Specifies fixed dimensions
-- **Container**: Can control ratio with constraints
-- **FittedBox**: Scales child to fit parent
-- **Align**: Sizes using widthFactor and heightFactor
+- **FractionallySizedBox**: 親の寸法に基づいてサイズを決定
+- **SizedBox**: 固定の寸法を指定
+- **Container**: 制約で比率を制御可能
+- **FittedBox**: 子を親に合わせてスケール
+- **Align**: widthFactorとheightFactorを使用してサイズ調整

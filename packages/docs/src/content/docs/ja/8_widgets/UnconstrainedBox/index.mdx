@@ -3,29 +3,29 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: UnconstrainedBox
 title: "UnconstrainedBox"
-description: "A widget that imposes no constraints on its child, allowing it to render at its 'natural' size"
+description: "子ウィジェットに制約を課さず、'自然な'サイズでレンダリングできるようにするウィジェット"
 ---
 
-## Overview
+## 概要
 
-UnconstrainedBox is a widget that imposes no constraints on its child, allowing it to render at its "natural" size.
+UnconstrainedBoxは、子ウィジェットに制約を課さず、「自然な」サイズでレンダリングできるようにするウィジェットです。
 
-This allows a child to render at the size it would render if it were alone on an infinite canvas with no constraints. This container will then attempt to adopt the same size, within the limits of its own constraints. If it ends up with a different size, it will align the child based on alignment. If the box cannot expand enough to accommodate the entire child, the child will be clipped.
+これにより、子ウィジェットは制約のない無限キャンバス上に単独で置かれた場合と同じサイズでレンダリングできます。このコンテナは、独自の制約の範囲内で同じサイズを採用しようとします。異なるサイズになった場合は、alignmentに基づいて子ウィジェットを配置します。ボックスが子ウィジェット全体を収容するのに十分に拡張できない場合、子ウィジェットはクリップされます。
 
 See: [https://api.flutter.dev/flutter/widgets/UnconstrainedBox-class.html](https://api.flutter.dev/flutter/widgets/UnconstrainedBox-class.html)
 
-## When to use it?
+## 使用する場面
 
-- When a child needs to render at its own size without being affected by parent constraints
-- When you want to remove constraints only on a specific axis (horizontal or vertical)
-- When temporarily removing constraints for overflow debugging
-- When you need to determine the actual size of a child widget
-- When you want a child to have a flexible size ignoring parent's tight constraints
+- 子ウィジェットが親の制約に影響されることなく、独自のサイズでレンダリングする必要がある場合
+- 特定の軸（水平または垂直）のみ制約を取り除きたい場合
+- オーバーフローのデバッグのために一時的に制約を取り除く場合
+- 子ウィジェットの実際のサイズを確認する必要がある場合
+- 親の厳しい制約を無視して、子ウィジェットに柔軟なサイズを持たせたい場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
-// Remove all constraints
+// すべての制約を取り除く
 UnconstrainedBox({
   child: Container({
     width: 200,
@@ -34,17 +34,17 @@ UnconstrainedBox({
   })
 })
 
-// Remove constraints only on vertical axis (horizontal follows parent)
+// 垂直軸のみ制約を取り除く（水平は親に従う）
 UnconstrainedBox({
   constrainedAxis: 'horizontal',
   child: Container({
-    width: 200,  // Follows parent width
-    height: 100, // Freely set to 100
+    width: 200,  // 親の幅に従う
+    height: 100, // 自由に100に設定
     color: 'green'
   })
 })
 
-// Use with alignment
+// 配置と併用
 UnconstrainedBox({
   alignment: Alignment.topLeft,
   child: Container({
@@ -55,35 +55,35 @@ UnconstrainedBox({
 })
 ```
 
-## Props Details
+## プロパティ詳細
 
 ### constrainedAxis
 
-**Value: 'vertical' | 'horizontal' | undefined**
+**値: 'vertical' | 'horizontal' | undefined**
 
-Use when you want to maintain constraints on a specific axis only.
+特定の軸のみ制約を維持したい場合に使用します。
 
-- `undefined` (default): Remove constraints on all axes
-- `'vertical'`: Keep vertical constraints, remove horizontal constraints only
-- `'horizontal'`: Keep horizontal constraints, remove vertical constraints only
+- `undefined` (デフォルト): すべての軸の制約を取り除く
+- `'vertical'`: 垂直制約を維持し、水平制約のみ取り除く
+- `'horizontal'`: 水平制約を維持し、垂直制約のみ取り除く
 
 ```typescript
-// Keep vertical constraints (horizontal is free)
+// 垂直制約を維持（水平は自由）
 UnconstrainedBox({
   constrainedAxis: 'vertical',
   child: Container({
-    width: 300,   // Can be set freely
-    height: 100,  // Follows parent's vertical constraints
+    width: 300,   // 自由に設定可能
+    height: 100,  // 親の垂直制約に従う
     color: 'blue'
   })
 })
 
-// Keep horizontal constraints (vertical is free)
+// 水平制約を維持（垂直は自由）
 UnconstrainedBox({
   constrainedAxis: 'horizontal',
   child: Container({
-    width: 300,   // Follows parent's horizontal constraints
-    height: 100,  // Can be set freely
+    width: 300,   // 親の水平制約に従う
+    height: 100,  // 自由に設定可能
     color: 'green'
   })
 })
@@ -91,9 +91,9 @@ UnconstrainedBox({
 
 ### alignment
 
-**Value: Alignment** (default: **Alignment.center**)
+**値: Alignment** (デフォルト: **Alignment.center**)
 
-Specifies how to align the child when it's smaller than the UnconstrainedBox.
+子ウィジェットがUnconstrainedBoxより小さい場合の配置方法を指定します。
 
 ```typescript
 UnconstrainedBox({
@@ -113,15 +113,15 @@ UnconstrainedBox({
 
 ### clipped
 
-**Value: boolean** (default: **false**)
+**値: boolean** (デフォルト: **false**)
 
-Determines whether to clip when the child overflows the UnconstrainedBox boundaries.
+子ウィジェットがUnconstrainedBoxの境界をオーバーフローした際にクリップするかどうかを決定します。
 
-- `false`: Allow overflow (useful for debugging)
-- `true`: Clip parts that exceed boundaries
+- `false`: オーバーフローを許可（デバッグに有用）
+- `true`: 境界を超えた部分をクリップ
 
 ```typescript
-// Allow overflow
+// オーバーフローを許可
 UnconstrainedBox({
   clipped: false,
   child: Container({
@@ -131,7 +131,7 @@ UnconstrainedBox({
   })
 })
 
-// Clip overflow
+// オーバーフローをクリップ
 UnconstrainedBox({
   clipped: true,
   child: Container({
@@ -144,11 +144,11 @@ UnconstrainedBox({
 
 ### child
 
-**Value: Widget | undefined**
+**値: Widget | undefined**
 
-The child widget from which constraints will be removed.
+制約が取り除かれる子ウィジェット。
 
-## Practical Examples
+## 実践的な例
 
 ### Example 1: Responsive Button Group
 
@@ -182,7 +182,7 @@ const ResponsiveButtonGroup = ({ buttons }) => {
 };
 ```
 
-### Example 2: Overflow Detection Debug Tool
+### 例2: オーバーフロー検出デバッグツール
 
 ```typescript
 const DebugOverflowWrapper = ({ child, showBounds }) => {
@@ -208,7 +208,7 @@ const DebugOverflowWrapper = ({ child, showBounds }) => {
   });
 };
 
-// Usage example
+// 使用例
 DebugOverflowWrapper({
   showBounds: true,
   child: Container({
@@ -216,13 +216,13 @@ DebugOverflowWrapper({
     height: 100,
     color: 'rgba(0, 0, 255, 0.3)',
     child: Center({
-      child: Text('This container can be larger than its parent')
+      child: Text('このコンテナは親よりも大きくできます')
     })
   })
 });
 ```
 
-### Example 3: Dynamic Size Card
+### 例3: 動的サイズカード
 
 ```typescript
 const DynamicSizeCard = ({ title, content, maxWidth }) => {
@@ -267,7 +267,7 @@ const DynamicSizeCard = ({ title, content, maxWidth }) => {
               alignment: Alignment.centerRight,
               child: ElevatedButton({
                 onPressed: () => console.log('Clicked'),
-                child: Text('Learn More')
+                child: Text('詳細を見る')
               })
             })
           ]
@@ -278,7 +278,7 @@ const DynamicSizeCard = ({ title, content, maxWidth }) => {
 };
 ```
 
-### Example 4: Axis-Specific Constraint Removal Layout
+### 例4: 軸特有の制約除去レイアウト
 
 ```typescript
 const FlexibleLayout = ({ orientation, children }) => {
@@ -287,12 +287,12 @@ const FlexibleLayout = ({ orientation, children }) => {
     padding: EdgeInsets.all(16),
     child: Column({
       children: [
-        // Header uses full width
+        // ヘッダーは全幅を使用
         Container({
           height: 60,
           color: '#2196F3',
           child: Center({
-            child: Text('Header', {
+            child: Text('ヘッダー', {
               style: TextStyle({
                 color: 'white',
                 fontSize: 20
@@ -301,12 +301,12 @@ const FlexibleLayout = ({ orientation, children }) => {
           })
         }),
         SizedBox({ height: 16 }),
-        // Content has horizontal constraints removed
+        // コンテンツは水平制約が除去される
         UnconstrainedBox({
           constrainedAxis: 'vertical',
           alignment: Alignment.topCenter,
           child: Container({
-            width: 800, // Can be wider than parent
+            width: 800, // 親よりも幅広にできる
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration({
               color: 'white',
@@ -323,7 +323,7 @@ const FlexibleLayout = ({ orientation, children }) => {
 };
 ```
 
-### Example 5: Tooltip Positioning
+### 例5: ツールチップ配置
 
 ```typescript
 const TooltipWithUnconstrainedBox = ({ target, tooltip, isVisible }) => {
@@ -359,10 +359,10 @@ const TooltipWithUnconstrainedBox = ({ target, tooltip, isVisible }) => {
   });
 };
 
-// Usage example
+// 使用例
 TooltipWithUnconstrainedBox({
   isVisible: showTooltip,
-  tooltip: 'This is an unconstrained tooltip. Size auto-adjusts based on content.',
+  tooltip: 'これは制約のないツールチップです。コンテンツに基づいてサイズが自動調整されます。',
   target: IconButton({
     icon: Icons.info,
     onPressed: () => setShowTooltip(!showTooltip)
@@ -370,18 +370,18 @@ TooltipWithUnconstrainedBox({
 });
 ```
 
-## Important Notes
+## 重要な注意事項
 
-- Excessive use of UnconstrainedBox can cause layout overflow
-- In production environments, use `clipped: true` to prevent overflow
-- For debugging purposes, use only in development environments
-- Nested UnconstrainedBoxes can cause unexpected layout issues
-- Use carefully in performance-sensitive areas
+- UnconstrainedBoxの過度な使用はレイアウトオーバーフローを引き起こす可能性があります
+- プロダクション環境では、オーバーフローを防ぐために`clipped: true`を使用してください
+- デバッグ目的の場合は、開発環境でのみ使用してください
+- ネストしたUnconstrainedBoxは予期しないレイアウト問題を引き起こす可能性があります
+- パフォーマンスが重要な領域では慎重に使用してください
 
-## Related Widgets
+## 関連ウィジェット
 
-- **ConstrainedBox**: Imposes additional constraints on its child
-- **LimitedBox**: Applies size limits only when unconstrained
-- **OverflowBox**: Ignores parent constraints and imposes different constraints
-- **SizedBox**: Specifies a fixed size
-- **FittedBox**: Scales child to fit parent
+- **ConstrainedBox**: 子ウィジェットに追加の制約を課す場合
+- **LimitedBox**: 制約がない場合のみサイズ制限を適用する場合
+- **OverflowBox**: 親の制約を無視して異なる制約を課す場合
+- **SizedBox**: 固定サイズを指定する場合
+- **FittedBox**: 子ウィジェットを親に合わせてスケーリングする場合

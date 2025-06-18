@@ -3,24 +3,24 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: Row
 title: "Row"
-description: "A layout widget that arranges its children horizontally"
+description: "子要素を水平に配置するレイアウトウィジェット"
 ---
 
-## Overview
+## 概要
 
-Row is a layout widget that arranges its children in a horizontal direction.
+Rowは、子要素を水平方向に配置するレイアウトウィジェットです。
 
-Row is a convenience wrapper around the Flex widget with the direction fixed to horizontal. It's used to place multiple widgets side by side and provides various alignment options. By default, Row takes up all available horizontal space, but you can adjust `mainAxisSize` to only take up as much space as needed.
+Rowは、方向が水平に固定されたFlexウィジェットの便利なラッパーです。複数のウィジェットを並んで配置するために使用され、様々な配置オプションを提供します。デフォルトでは、Rowは利用可能なすべての水平スペースを占めますが、`mainAxisSize`を調整して必要な分だけのスペースを占めるようにできます。
 
-## When to use it?
+## 使用場面
 
-- When arranging buttons, icons, or text horizontally
-- When creating navigation bars or toolbars
-- When placing form fields and labels side by side
-- When structuring horizontal layouts for cards or list items
-- When displaying icons alongside text
+- ボタン、アイコン、テキストを水平に配置する場合
+- ナビゲーションバーやツールバーを作成する場合
+- フォームフィールドとラベルを並べて配置する場合
+- カードやリストアイテムの水平レイアウトを構造化する場合
+- アイコンとテキストを並べて表示する場合
 
-## Basic Usage
+## 基本的な使用方法
 
 ```typescript
 // Simple example
@@ -44,13 +44,13 @@ const alignedRow = Row({
 });
 ```
 
-## Props
+## プロパティ
 
-### children (required)
+### children（必須）
 
-**Value: Widget[]**
+**型: Widget[]**
 
-An array of child widgets to display in the Row. They are arranged from left to right in array order.
+Rowに表示する子ウィジェットの配列。配列の順序で左から右に配置されます。
 
 ```typescript
 Row({
@@ -152,9 +152,9 @@ Defines the vertical layout order of child widgets.
 
 This property is mainly used in conjunction with `crossAxisAlignment`.
 
-## Advanced Usage
+## 高度な使用方法
 
-### Using with Expanded
+### Expandedとの併用
 
 ```typescript
 Row({
@@ -169,7 +169,7 @@ Row({
 // The green Container takes up all remaining space
 ```
 
-### Responsive Layout
+### レスポンシブレイアウト
 
 ```typescript
 Row({
@@ -192,9 +192,9 @@ Row({
 // Red takes 50%, green and blue each take 25%
 ```
 
-## Practical Examples
+## 実用的な例
 
-### Example 1: Navigation Bar
+### 例1: ナビゲーションバー
 
 ```typescript
 const navbar = Container({
@@ -224,7 +224,7 @@ const navbar = Container({
 });
 ```
 
-### Example 2: Form Field
+### 例2: フォームフィールド
 
 ```typescript
 const formField = Container({
@@ -249,7 +249,7 @@ const formField = Container({
 });
 ```
 
-### Example 3: Card Layout
+### 例3: カードレイアウト
 
 ```typescript
 const card = Container({
@@ -292,18 +292,18 @@ const card = Container({
 });
 ```
 
-## Important Notes
+## 重要な注意事項
 
-- If child widgets exceed horizontal space, an overflow error occurs. Use `Flexible` or `Expanded` in such cases.
-- When using `crossAxisAlignment.stretch`, child widgets can expand infinitely if their height is unconstrained.
-- Row doesn't support scrolling. Use with `SingleChildScrollView` if scrolling is needed.
-- Use the `Column` widget for vertical layouts.
+- 子ウィジェットが水平スペースを超えるとオーバーフローエラーが発生します。そのような場合は`Flexible`や`Expanded`を使用してください。
+- `crossAxisAlignment.stretch`を使用する場合、子ウィジェットの高さが制約されていないと無限に拡張する可能性があります。
+- Rowはスクロールをサポートしません。スクロールが必要な場合は`SingleChildScrollView`と組み合わせて使用してください。
+- 垂直レイアウトには`Column`ウィジェットを使用してください。
 
-## Related Widgets
+## 関連ウィジェット
 
-- **Column**: Arranges children vertically
-- **Flex**: More flexible layout widget that Row and Column are based on
-- **Wrap**: Automatically wraps to next line when space is insufficient
-- **Stack**: Overlays children on top of each other
-- **Expanded**: Takes up remaining space within a Row
-- **Flexible**: Allows flexible sizing within a Row
+- **Column**: 子要素を垂直に配置
+- **Flex**: RowとColumnのベースとなるより柔軟なレイアウトウィジェット
+- **Wrap**: スペースが不足すると自動的に次の行に折り返し
+- **Stack**: 子要素を上下に重ねて表示
+- **Expanded**: Row内の残りスペースを占有
+- **Flexible**: Row内で柔軟なサイズ調整を可能に

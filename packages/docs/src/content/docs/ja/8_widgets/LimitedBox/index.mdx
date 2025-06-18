@@ -3,14 +3,14 @@ nav_group: Widgets
 nav_group_order: 3
 nav_title: LimitedBox
 title: "LimitedBox"
-description: "A widget that applies size limits only when constraints are unbounded"
+description: "制約が無制限のときのみサイズ制限を適用するウィジェット"
 ---
 
-## Overview
+## 概要
 
-LimitedBox is a widget that applies size limits to its child only when it receives unbounded constraints.
+LimitedBoxは、無制限の制約を受け取ったときのみ、その子ウィジェットにサイズ制限を適用するウィジェットです。
 
-This widget is primarily used to prevent children from growing indefinitely within scrollable widgets like ListView, Row, Column, or other widgets that provide infinite space. When the parent already provides finite constraints, LimitedBox does nothing.
+このウィジェットは主に、ListView、Row、Columnなどのスクロール可能なウィジェットや無限のスペースを提供する他のウィジェット内で子ウィジェットが無限に成長するのを防ぐために使用されます。親ウィジェットが既に有限の制約を提供している場合、LimitedBoxは何もしません。
 
 <iframe
   width="560"
@@ -24,31 +24,31 @@ This widget is primarily used to prevent children from growing indefinitely with
 
 See: [https://api.flutter.dev/flutter/widgets/LimitedBox-class.html](https://api.flutter.dev/flutter/widgets/LimitedBox-class.html)
 
-## When to use it?
+## 使用する場面
 
-- When you want to prevent infinite expansion in ListView, Column, Row, etc.
-- When you need to limit child size within scrollable containers
-- When you want to selectively apply size limits only in unbounded constraint environments
-- When you want to prevent containers from becoming too large while maintaining flexibility
-- When setting safe maximum sizes in responsive layouts
+- ListView、Column、Rowなどでの無限拡張を防ぐ場合
+- スクロール可能なコンテナ内で子ウィジェットのサイズを制限する必要がある場合
+- 無制限の制約環境でのみ選択的にサイズ制限を適用したい場合
+- 柔軟性を維持しながらコンテナが大きくなりすぎるのを防ぐ場合
+- レスポンシブレイアウトで安全な最大サイズを設定する場合
 
 ## Basic Usage
 
 ```typescript
-// Limit width within vertical scroll list
+// 垂直スクロールリスト内での幅制限
 ListView({
   children: [
     LimitedBox({
       maxWidth: 300,
       child: Container({
         color: 'blue',
-        child: Text('Width limited to 300')
+        child: Text('幅が300に制限されています')
       })
     })
   ]
 })
 
-// Limit height within horizontal scroll list
+// 水平スクロールリスト内での高さ制限
 SingleChildScrollView({
   scrollDirection: Axis.horizontal,
   child: Row({
@@ -57,14 +57,14 @@ SingleChildScrollView({
         maxHeight: 200,
         child: Container({
           color: 'red',
-          child: Text('Height limited to 200')
+          child: Text('高さが200に制限されています')
         })
       })
     ]
   })
 })
 
-// Limit both dimensions
+// 両方向の制限
 Column({
   children: [
     LimitedBox({
@@ -72,64 +72,64 @@ Column({
       maxHeight: 300,
       child: Container({
         color: 'green',
-        child: Text('Width 400, height 300 limited')
+        child: Text('幅400、高さ300に制限')
       })
     })
   ]
 })
 ```
 
-## Props
+## プロパティ
 
 ### maxWidth
 
-**Value: number** (default: **Infinity**)
+**値: number** (デフォルト: **Infinity**)
 
-The maximum width to apply when width constraints are unbounded.
+幅制約が無制限のときに適用する最大幅。
 
-This value is ignored if the parent already provides finite width constraints.
+親ウィジェットが既に有限の幅制約を提供している場合、この値は無視されます。
 
 ```typescript
 LimitedBox({
-  maxWidth: 300,    // Max 300 in unbounded width constraints
+  maxWidth: 300,    // 無制限幅制約で最大300
   child: child
 })
 
 LimitedBox({
-  maxWidth: Infinity,  // No width limit (default)
+  maxWidth: Infinity,  // 幅制限なし（デフォルト）
   child: child
 })
 ```
 
 ### maxHeight
 
-**Value: number** (default: **Infinity**)
+**値: number** (デフォルト: **Infinity**)
 
-The maximum height to apply when height constraints are unbounded.
+高さ制約が無制限のときに適用する最大高さ。
 
-This value is ignored if the parent already provides finite height constraints.
+親ウィジェットが既に有限の高さ制約を提供している場合、この値は無視されます。
 
 ```typescript
 LimitedBox({
-  maxHeight: 200,   // Max 200 in unbounded height constraints
+  maxHeight: 200,   // 無制限高さ制約で最大200
   child: child
 })
 
 LimitedBox({
-  maxHeight: Infinity,  // No height limit (default)
+  maxHeight: Infinity,  // 高さ制限なし（デフォルト）
   child: child
 })
 ```
 
 ### child
 
-**Value: Widget | undefined**
+**値: Widget | undefined**
 
-The child widget to which size limits will be applied.
+サイズ制限が適用される子ウィジェット。
 
-## Practical Examples
+## 実用的な例
 
-### Example 1: Limited Card Size in List View
+### 例1: リストビューでのカードサイズ制限
 
 ```typescript
 const LimitedCardList = ({ cards }) => {
@@ -139,7 +139,7 @@ const LimitedCardList = ({ cards }) => {
       Container({
         margin: EdgeInsets.only({ bottom: 16 }),
         child: LimitedBox({
-          maxWidth: 600,  // Limit card maximum width
+          maxWidth: 600,  // カードの最大幅を制限
           child: Container({
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration({
@@ -176,7 +176,7 @@ const LimitedCardList = ({ cards }) => {
                   children: [
                     TextButton({
                       onPressed: card.onAction,
-                      child: Text('Read More')
+                      child: Text('詳細を見る')
                     })
                   ]
                 })
@@ -190,7 +190,7 @@ const LimitedCardList = ({ cards }) => {
 };
 ```
 
-### Example 2: Horizontal Scroll Image Gallery
+### 例2: 水平スクロール画像ギャラリー
 
 ```typescript
 const HorizontalImageGallery = ({ images }) => {
@@ -204,7 +204,7 @@ const HorizontalImageGallery = ({ images }) => {
             right: index < images.length - 1 ? 16 : 0 
           }),
           child: LimitedBox({
-            maxHeight: 300,  // Limit image maximum height
+            maxHeight: 300,  // 画像の最大高さを制限
             child: AspectRatio({
               aspectRatio: image.aspectRatio || 1.0,
               child: Container({
@@ -235,7 +235,7 @@ const HorizontalImageGallery = ({ images }) => {
 };
 ```
 
-### Example 3: Responsive Text Editor
+### 例3: レスポンシブテキストエディタ
 
 ```typescript
 const ResponsiveTextEditor = ({ content, onChange }) => {
@@ -271,8 +271,8 @@ const ResponsiveTextEditor = ({ content, onChange }) => {
         // Editor area
         Expanded({
           child: LimitedBox({
-            maxWidth: 800,   // Don't get too wide on desktop
-            maxHeight: 600,  // Limit max height in infinite height
+            maxWidth: 800,   // デスクトップで幅が広くなりすぎないように
+            maxHeight: 600,  // 無限高さでの最大高さを制限
             child: Container({
               width: double.infinity,
               padding: EdgeInsets.all(16),
@@ -291,7 +291,7 @@ const ResponsiveTextEditor = ({ content, onChange }) => {
                 maxLines: null,
                 decoration: InputDecoration({
                   border: InputBorder.none,
-                  hintText: 'Enter your content here...'
+                  hintText: 'コンテンツをここに入力してください...'
                 })
               })
             })
@@ -303,7 +303,7 @@ const ResponsiveTextEditor = ({ content, onChange }) => {
 };
 ```
 
-### Example 4: Infinite Scroll Feed
+### 例4: 無限スクロールフィード
 
 ```typescript
 const InfiniteScrollFeed = ({ posts, onLoadMore }) => {
@@ -331,7 +331,7 @@ const InfiniteScrollFeed = ({ posts, onLoadMore }) => {
         return Container({
           margin: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
           child: LimitedBox({
-            maxWidth: 700,  // Limit post maximum width
+            maxWidth: 700,  // 投稿の最大幅を制限
             child: Container({
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration({
@@ -374,7 +374,7 @@ const InfiniteScrollFeed = ({ posts, onLoadMore }) => {
                   if (post.image) ...[
                     SizedBox({ height: 12 }),
                     LimitedBox({
-                      maxHeight: 400,  // Limit image maximum height
+                      maxHeight: 400,  // 画像の最大高さを制限
                       child: ClipRRect({
                         borderRadius: BorderRadius.circular(8),
                         child: Image({
@@ -396,7 +396,7 @@ const InfiniteScrollFeed = ({ posts, onLoadMore }) => {
 };
 ```
 
-### Example 5: Variable Grid Layout
+### 例5: 可変グリッドレイアウト
 
 ```typescript
 const VariableGridLayout = ({ items }) => {
@@ -406,8 +406,8 @@ const VariableGridLayout = ({ items }) => {
       runSpacing: 16,
       children: items.map((item, index) => 
         LimitedBox({
-          maxWidth: 300,   // Max width for each grid item
-          maxHeight: 400,  // Max height for each grid item
+          maxWidth: 300,   // 各グリッドアイテムの最大幅
+          maxHeight: 400,  // 各グリッドアイテムの最大高さ
           child: Container({
             width: double.infinity,
             padding: EdgeInsets.all(16),
@@ -461,7 +461,7 @@ const VariableGridLayout = ({ items }) => {
                       backgroundColor: 'rgba(255,255,255,0.2)',
                       foregroundColor: 'white'
                     }),
-                    child: Text('View')
+                    child: Text('表示')
                   })
                 })
               ]
@@ -474,77 +474,77 @@ const VariableGridLayout = ({ items }) => {
 };
 ```
 
-## Understanding Constraint Behavior
+## 制約の動作理解
 
-### Finite vs Infinite Constraints
+### 有限制約 vs 無限制約
 
 ```typescript
-// Finite constraint environment (LimitedBox has no effect)
+// 有限制約環境（LimitedBoxは効果なし）
 Container({
-  width: 400,    // Clear width constraint
-  height: 300,   // Clear height constraint
+  width: 400,    // 明確な幅制約
+  height: 300,   // 明確な高さ制約
   child: LimitedBox({
-    maxWidth: 200,   // This value is ignored (parent already has finite constraint)
-    maxHeight: 150,  // This value is ignored (parent already has finite constraint)
+    maxWidth: 200,   // この値は無視される（親に既に有限制約あり）
+    maxHeight: 150,  // この値は無視される（親に既に有限制約あり）
     child: Container({ color: 'blue' })
   })
 })
 
-// Infinite constraint environment (LimitedBox has effect)
-Column({  // Column provides infinite vertical space
+// 無限制約環境（LimitedBoxは効果あり）
+Column({  // Columnは無限の垂直スペースを提供
   children: [
     LimitedBox({
-      maxHeight: 200,  // This value is applied
+      maxHeight: 200,  // この値が適用される
       child: Container({ color: 'red' })
     })
   ]
 })
 ```
 
-### When Does It Take Effect?
+### いつ効果を発揮するか？
 
 ```typescript
-// ✅ Cases where it has effect
-ListView({  // Infinite vertical space
+// ✅ 効果があるケース
+ListView({  // 無限の垂直スペース
   children: [
     LimitedBox({ maxHeight: 300, child: child })
   ]
 })
 
-Row({  // Infinite horizontal space
+Row({  // 無限の水平スペース
   children: [
     LimitedBox({ maxWidth: 200, child: child })
   ]
 })
 
-SingleChildScrollView({  // Infinite space in scroll direction
+SingleChildScrollView({  // スクロール方向の無限スペース
   child: LimitedBox({ maxHeight: 400, child: child })
 })
 
-// ❌ Cases where it has no effect
+// ❌ 効果がないケース
 Container({
-  width: 300,  // Already finite constraint
-  child: LimitedBox({ maxWidth: 200, child: child })  // Ignored
+  width: 300,  // 既に有限制約
+  child: LimitedBox({ maxWidth: 200, child: child })  // 無視される
 })
 
 SizedBox({
-  height: 200,  // Already finite constraint
-  child: LimitedBox({ maxHeight: 100, child: child })  // Ignored
+  height: 200,  // 既に有限制約
+  child: LimitedBox({ maxHeight: 100, child: child })  // 無視される
 })
 ```
 
-## Important Notes
+## 重要な注意事項
 
-- LimitedBox only works with infinite constraints
-- Has no effect if parent already provides finite constraints
-- Works conditionally, unlike ConstrainedBox
-- Negative values are not allowed
-- Using Infinity values removes the limit
+- LimitedBoxは無限制約でのみ動作します
+- 親ウィジェットが既に有限制約を提供している場合は効果がありません
+- ConstrainedBoxとは異なり、条件付きで動作します
+- 負の値は許可されません
+- Infinity値を使用すると制限が解除されます
 
-## Related Widgets
+## 関連ウィジェット
 
-- **ConstrainedBox**: Widget that always applies constraints
-- **SizedBox**: Widget that specifies fixed size
-- **UnconstrainedBox**: Widget that completely removes constraints
-- **OverflowBox**: Widget that allows child size ignoring parent size
-- **FractionallySizedBox**: Widget that sets child size as ratio of parent size
+- **ConstrainedBox**: 常に制約を適用するウィジェット
+- **SizedBox**: 固定サイズを指定するウィジェット
+- **UnconstrainedBox**: 制約を完全に除去するウィジェット
+- **OverflowBox**: 親のサイズを無視して子のサイズを許可するウィジェット
+- **FractionallySizedBox**: 子のサイズを親のサイズの比率で設定するウィジェット
