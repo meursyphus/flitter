@@ -2,7 +2,7 @@ export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 
 export const DEFAULT_LANGUAGE = "en";
 
-export const LANGUAGE_LIST = [
+export const LANGUAGE_LIST: { title: string; locale: string }[] = [
   {
     title: "English",
     locale: "en",
@@ -20,8 +20,8 @@ export const LANGUAGE_LIST = [
     locale: "ja",
   },
   {
-    label: "Français",
-    lang: "fr",
+    title: "Français",
+    locale: "fr",
   },
 ];
 
