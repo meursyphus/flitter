@@ -7,7 +7,8 @@
     "start": "astro dev",
     "build": "NODE_OPTIONS='--max_old_space_size=8192' astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "preinstall": "npm install @rollup/rollup-linux-x64-gnu || true"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
