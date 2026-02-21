@@ -253,7 +253,14 @@ class TransformCanvasPainter extends CanvasPainter {
     return (this.renderObject as RenderTransform)._effectiveTransform;
   }
 
-  protected performPaint(context: CanvasPaintingContext, offset: Offset): void {
+  override get hasCanvasState(): boolean {
+    return true;
+  }
+
+  override applyCanvasState(
+    ctx: CanvasRenderingContext2D,
+    offset: Offset,
+  ): void {
     const arr = this.effectiveTransform._m4storage;
     const a = arr[0],
       b = arr[1],
@@ -261,11 +268,14 @@ class TransformCanvasPainter extends CanvasPainter {
       d = arr[5],
       e = arr[12],
       f = arr[13];
+    ctx.translate(offset.x, offset.y);
+    ctx.transform(a, b, c, d, e, f);
+    ctx.translate(-offset.x, -offset.y);
+  }
 
+  protected performPaint(context: CanvasPaintingContext, offset: Offset): void {
     context.canvas.save();
-    context.canvas.translate(offset.x, offset.y);
-    context.canvas.transform(a, b, c, d, e, f);
-    context.canvas.translate(-offset.x, -offset.y);
+    this.applyCanvasState(context.canvas, offset);
     this.defaultPaint(context, offset);
     context.canvas.restore();
   }

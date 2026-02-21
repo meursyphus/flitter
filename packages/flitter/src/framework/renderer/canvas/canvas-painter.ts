@@ -5,7 +5,6 @@ import type { CanvasRenderPipeline } from "./canvas-renderer";
 import type { CanvasPaintingContext } from "./canvas-painting-context";
 import { OffsetLayer, type ContainerLayer } from "./layer";
 import { assert } from "../../../utils";
-import type { RenderObject } from "../../../renderobject";
 
 export class CanvasPainter extends Painter {
   get renderOwner(): CanvasRenderPipeline {
@@ -25,14 +24,29 @@ export class CanvasPainter extends Painter {
   }
 
   protected defaultPaint(context: CanvasPaintingContext, offset: Offset) {
-    const children: RenderObject[] = [];
-    this.renderObject.visitChildren(child => children.push(child));
-    children.sort(
-      (a, b) => a.minDescendantZOrder - b.minDescendantZOrder,
-    );
-    for (const child of children) {
+    this.renderObject.visitChildren(child => {
       context.paintChild(child, offset.plus(child.offset));
-    }
+    });
+  }
+
+  /**
+   * Whether this painter modifies canvas state (transform, clip, opacity)
+   * that descendants need to inherit. Override in subclasses.
+   */
+  get hasCanvasState(): boolean {
+    return false;
+  }
+
+  /**
+   * Apply this painter's canvas state modifications without painting children.
+   * Called during z-ordered painting to replay ancestor state chain.
+   * Override in subclasses that modify canvas state.
+   */
+  applyCanvasState(
+    _ctx: CanvasRenderingContext2D,
+    _offset: Offset,
+  ): void {
+    // Base: no-op
   }
 
   get paintBounds(): Rect {
