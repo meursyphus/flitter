@@ -18,6 +18,14 @@ export class CanvasPaintingContext {
   }
   #currentLayer: PictureLayer | null;
 
+  /**
+   * When true, paintChild becomes a no-op. Used during z-ordered
+   * painting so that each painter's performPaint only draws itself
+   * without recursing into children (children are painted separately
+   * in z-order).
+   */
+  #skipChildPainting = false;
+
   static repaintCompositedChild(node: RenderObject): void {
     assert(
       node.canvasPainter.isRepaintBoundary,
@@ -41,8 +49,47 @@ export class CanvasPaintingContext {
       childLayer,
       node.canvasPainter.paintBounds,
     );
-    node.canvasPainter.paint(childContext, Offset.Constants.zero);
+
+    // Phase 1: Collect all painter render objects with their offsets
+    const painters: { renderObject: RenderObject; offset: Offset }[] = [];
+    CanvasPaintingContext.#collectPainters(
+      node,
+      Offset.Constants.zero,
+      painters,
+    );
+
+    // Phase 2: Sort by z-order (calculated by ZOrderCalculatorVisitor)
+    painters.sort((a, b) => a.renderObject.zOrder - b.renderObject.zOrder);
+
+    // Phase 3: Paint each painter in z-order, skipping child traversal
+    childContext.#skipChildPainting = true;
+    for (const { renderObject, offset } of painters) {
+      renderObject.canvasPainter.paint(childContext, offset);
+    }
+    childContext.#skipChildPainting = false;
+
     childContext.stopRecording();
+  }
+
+  /**
+   * Walk the render object tree and collect all painter render objects
+   * with their accumulated offsets.
+   */
+  static #collectPainters(
+    node: RenderObject,
+    offset: Offset,
+    result: { renderObject: RenderObject; offset: Offset }[],
+  ) {
+    if (node.isPainter) {
+      result.push({ renderObject: node, offset });
+    }
+    node.visitChildren(child => {
+      CanvasPaintingContext.#collectPainters(
+        child,
+        offset.plus(child.offset),
+        result,
+      );
+    });
   }
 
   static updateLayerProperties(_: RenderObject): void {
@@ -82,15 +129,14 @@ export class CanvasPaintingContext {
   }
 
   /**
-   * 
-   * @param child   /// Paint a child [RenderObject].
-   * @param offset 
-  ///
-  /// @todo: If the child has its own composited layer, the child will be composited
-  /// into the layer subtree associated with this painting context. Otherwise,
-  /// the child will be painted into the current PictureLayer for this context.
+   * Paint a child RenderObject.
+   *
+   * When #skipChildPainting is true (during z-ordered paint phase),
+   * this is a no-op because each painter is invoked individually
+   * in z-order from repaintCompositedChild.
    */
   paintChild(child: RenderObject, offset: Offset) {
+    if (this.#skipChildPainting) return;
     child.canvasPainter.paint(this, offset);
   }
 }
