@@ -5,6 +5,7 @@ import type { CanvasRenderPipeline } from "./canvas-renderer";
 import type { CanvasPaintingContext } from "./canvas-painting-context";
 import { OffsetLayer, type ContainerLayer } from "./layer";
 import { assert } from "../../../utils";
+import type { RenderObject } from "../../../renderobject";
 
 export class CanvasPainter extends Painter {
   get renderOwner(): CanvasRenderPipeline {
@@ -24,9 +25,14 @@ export class CanvasPainter extends Painter {
   }
 
   protected defaultPaint(context: CanvasPaintingContext, offset: Offset) {
-    this.renderObject.visitChildren(child => {
+    const children: RenderObject[] = [];
+    this.renderObject.visitChildren(child => children.push(child));
+    children.sort(
+      (a, b) => a.minDescendantZOrder - b.minDescendantZOrder,
+    );
+    for (const child of children) {
       context.paintChild(child, offset.plus(child.offset));
-    });
+    }
   }
 
   get paintBounds(): Rect {

@@ -147,7 +147,20 @@ export abstract class RenderPipeline {
       const renderObject = painterRenderObjects[i];
       renderObject.updateZOrder(i);
     }
+
+    // Compute minDescendantZOrder bottom-up for canvas z-ordered tree walk
+    RenderPipeline.#computeMinDescendantZOrder(this.renderView);
+
     return painterRenderObjects;
+  }
+
+  static #computeMinDescendantZOrder(node: RenderObject): number {
+    let min = node.isPainter ? node.zOrder : Infinity;
+    node.visitChildren(child => {
+      min = Math.min(min, RenderPipeline.#computeMinDescendantZOrder(child));
+    });
+    node.minDescendantZOrder = min === Infinity ? (node.zOrder ?? 0) : min;
+    return node.minDescendantZOrder;
   }
 
   abstract drawFrame(): void;
