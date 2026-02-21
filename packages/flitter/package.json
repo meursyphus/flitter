@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "color-rgba": "^3.0.0",
-    "popmotion": "^11.0.5",
     "short-unique-id": "^5.0.3"
   },
   "repository": {

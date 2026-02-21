@@ -1,6 +1,7 @@
-import { animate, linear } from "popmotion";
+import { ticker } from "./Ticker";
 import Utils from "../utils";
 import Animation from "./Animation";
+
 class AnimationController extends Animation<number> {
   isAnimating = false;
   get isDismissed() {
@@ -35,9 +36,7 @@ class AnimationController extends Animation<number> {
   private readonly lowerBound: number;
   private readonly upperBound: number;
   duration: number;
-  private animation: {
-    stop: () => void;
-  } | null = null;
+  private unsubscribe: (() => void) | null = null;
   private listeners: (() => void)[] = [];
   constructor({
     value,
@@ -102,12 +101,20 @@ class AnimationController extends Animation<number> {
   }
 
   stop() {
-    this.animation?.stop();
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      this.unsubscribe = null;
+    }
+    this.isAnimating = false;
     this.status = "dismissed";
   }
 
   dispose() {
-    this.animation?.stop();
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      this.unsubscribe = null;
+    }
+    this.isAnimating = false;
   }
 
   private animate(
@@ -115,29 +122,51 @@ class AnimationController extends Animation<number> {
     overrideOptions: { onComplete?: () => void } = {},
   ) {
     if (typeof window === "undefined") return;
-    this.animation?.stop();
-    this.animation = animate({
-      from: this.value,
-      to: target,
-      duration:
-        this.duration *
-        (Math.abs(this.value - target) / (this.upperBound - this.lowerBound)),
-      ease: linear,
-      onPlay: () => {
-        this.isAnimating = true;
-      },
-      onUpdate: latest => {
-        this.internalSetValue(latest);
-        this.notifyListeners();
-      },
-      onStop: () => {
+
+    // Stop any existing animation
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      this.unsubscribe = null;
+    }
+
+    const from = this.value;
+    const range = this.upperBound - this.lowerBound;
+    const animationDuration =
+      this.duration * (Math.abs(from - target) / range);
+
+    if (animationDuration === 0) {
+      this.internalSetValue(target);
+      this.notifyListeners();
+      overrideOptions.onComplete?.();
+      return;
+    }
+
+    const durationInSeconds = animationDuration / 1000;
+    let elapsedTime = 0;
+
+    this.isAnimating = true;
+
+    const tickCallback = (deltaTime: number) => {
+      elapsedTime += deltaTime;
+      const progress = Math.min(elapsedTime / durationInSeconds, 1);
+
+      // Linear interpolation
+      const current = from + (target - from) * progress;
+
+      this.internalSetValue(current);
+      this.notifyListeners();
+
+      if (progress >= 1) {
+        if (this.unsubscribe) {
+          this.unsubscribe();
+          this.unsubscribe = null;
+        }
         this.isAnimating = false;
-      },
-      onComplete: () => {
-        this.isAnimating = false;
-      },
-      ...overrideOptions,
-    });
+        overrideOptions.onComplete?.();
+      }
+    };
+
+    this.unsubscribe = ticker.subscribe(tickCallback);
   }
   addListener(callback: () => void) {
     this.listeners.push(callback);
