@@ -133,6 +133,7 @@ class ClipPathCanvasPainter extends CanvasPainter {
       this.renderObject.size,
     );
   }
+
   protected override performPaint(
     context: CanvasPaintingContext,
     offset: Offset,
