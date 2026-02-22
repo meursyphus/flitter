@@ -29,26 +29,6 @@ export class CanvasPainter extends Painter {
     });
   }
 
-  /**
-   * Whether this painter modifies canvas state (transform, clip, opacity)
-   * that descendants need to inherit. Override in subclasses.
-   */
-  get hasCanvasState(): boolean {
-    return false;
-  }
-
-  /**
-   * Apply this painter's canvas state modifications without painting children.
-   * Called during z-ordered painting to replay ancestor state chain.
-   * Override in subclasses that modify canvas state.
-   */
-  applyCanvasState(
-    _ctx: CanvasRenderingContext2D,
-    _offset: Offset,
-  ): void {
-    // Base: no-op
-  }
-
   get paintBounds(): Rect {
     return Rect.fromLTWH({
       left: this.offset.x,

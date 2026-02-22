@@ -8,15 +8,63 @@ import {
   type Layer,
 } from "./layer";
 import { NotImplementedError } from "../../../exception";
-import type { CanvasPainter } from "./canvas-painter";
 
-type AncestorState = { painter: CanvasPainter; offset: Offset };
+type AncestorNode = { node: RenderObject; offset: Offset };
 
 type CollectedPainter = {
   renderObject: RenderObject;
   offset: Offset;
-  ancestors: AncestorState[];
+  ancestors: AncestorNode[];
 };
+
+type CanvasProxy = CanvasRenderingContext2D & {
+  __enterSuppress: () => void;
+  __exitSuppress: () => void;
+  __raw: CanvasRenderingContext2D;
+};
+
+function createCanvasProxy(ctx: CanvasRenderingContext2D): CanvasProxy {
+  let suppressDepth = 0;
+  let suppressing = false;
+
+  const proxy = new Proxy(ctx, {
+    get(target, prop, receiver) {
+      if (prop === "__enterSuppress")
+        return () => {
+          suppressing = true;
+          suppressDepth = 0;
+        };
+      if (prop === "__exitSuppress")
+        return () => {
+          suppressing = false;
+        };
+      if (prop === "__raw") return target;
+
+      if (suppressing) {
+        if (prop === "save") {
+          return () => {
+            suppressDepth++;
+            if (suppressDepth > 1) target.save();
+          };
+        }
+        if (prop === "restore") {
+          return () => {
+            if (suppressDepth > 1) target.restore();
+            suppressDepth--;
+          };
+        }
+      }
+
+      const val = Reflect.get(target, prop, receiver);
+      return typeof val === "function" ? val.bind(target) : val;
+    },
+    set(target, prop, value) {
+      return Reflect.set(target, prop, value);
+    },
+  });
+
+  return proxy as CanvasProxy;
+}
 
 export class CanvasPaintingContext {
   #estimateBound: Rect;
@@ -59,7 +107,7 @@ export class CanvasPaintingContext {
       node.canvasPainter.paintBounds,
     );
 
-    // Phase 1: Collect all painter render objects with ancestor state chains
+    // Phase 1: Collect all painter render objects with ancestor node chains
     const painters: CollectedPainter[] = [];
     CanvasPaintingContext.#collectPainters(
       node,
@@ -72,15 +120,19 @@ export class CanvasPaintingContext {
     painters.sort((a, b) => a.renderObject.zOrder - b.renderObject.zOrder);
 
     // Phase 3: Paint each painter in z-order with ancestor ctx state replayed
+    const proxyCanvas = childContext.canvas as unknown as CanvasProxy;
     childContext.#skipChildPainting = true;
     for (const { renderObject, offset, ancestors } of painters) {
-      const ctx = childContext.canvas;
-      ctx.save();
-      for (const ancestor of ancestors) {
-        ancestor.painter.applyCanvasState(ctx, ancestor.offset);
+      proxyCanvas.__raw.save();
+      // Replay ancestors with suppressed save/restore
+      for (const { node: ancestorNode, offset: ancOffset } of ancestors) {
+        proxyCanvas.__enterSuppress();
+        ancestorNode.canvasPainter.paint(childContext, ancOffset);
+        proxyCanvas.__exitSuppress();
       }
+      // Paint the actual painter
       renderObject.canvasPainter.paint(childContext, offset);
-      ctx.restore();
+      proxyCanvas.__raw.restore();
     }
     childContext.#skipChildPainting = false;
 
@@ -89,12 +141,12 @@ export class CanvasPaintingContext {
 
   /**
    * Walk the render object tree and collect all painter render objects
-   * with their accumulated offsets and ancestor canvas state chains.
+   * with their accumulated offsets and ancestor node chains.
    */
   static #collectPainters(
     node: RenderObject,
     offset: Offset,
-    ancestorChain: AncestorState[],
+    ancestorChain: AncestorNode[],
     result: CollectedPainter[],
   ) {
     if (node.isPainter) {
@@ -105,13 +157,7 @@ export class CanvasPaintingContext {
       });
     }
 
-    // If this node's canvas painter modifies ctx state, add it to the
-    // ancestor chain so descendants will inherit the state.
-    let childAncestorChain = ancestorChain;
-    const painter = node.canvasPainter;
-    if (painter.hasCanvasState) {
-      childAncestorChain = [...ancestorChain, { painter, offset }];
-    }
+    const childAncestorChain = [...ancestorChain, { node, offset }];
 
     node.visitChildren(child => {
       CanvasPaintingContext.#collectPainters(
@@ -128,7 +174,7 @@ export class CanvasPaintingContext {
   }
 
   #recorder: PictureRecorder;
-  #ctx: CanvasRenderingContext2D | null;
+  #ctx: CanvasProxy | null;
   get canvas(): CanvasRenderingContext2D {
     if (this.#ctx == null) {
       this.#startRecording();
@@ -139,7 +185,7 @@ export class CanvasPaintingContext {
   #startRecording() {
     this.#currentLayer = new PictureLayer(this.#estimateBound);
     this.#recorder = new PictureRecorder(this.#estimateBound);
-    this.#ctx = this.#recorder.createCanvasContext();
+    this.#ctx = createCanvasProxy(this.#recorder.createCanvasContext());
     this.#containerLayer.append(this.#currentLayer!);
   }
 

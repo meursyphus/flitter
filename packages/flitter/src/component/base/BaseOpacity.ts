@@ -80,22 +80,11 @@ class CanvasPainterOpacity extends CanvasPainter {
     return (this.renderObject as RenderOpacity).opacityProp;
   }
 
-  override get hasCanvasState(): boolean {
-    return true;
-  }
-
-  override applyCanvasState(
-    ctx: CanvasRenderingContext2D,
-    _offset: Offset,
-  ): void {
-    ctx.globalAlpha *= this.opacity;
-  }
-
   override performPaint(context: CanvasPaintingContext, offset: Offset) {
-    const oldAlpha = context.canvas.globalAlpha;
-    context.canvas.globalAlpha = oldAlpha * this.opacity;
+    context.canvas.save();
+    context.canvas.globalAlpha *= this.opacity;
     this.defaultPaint(context, offset);
-    context.canvas.globalAlpha = oldAlpha;
+    context.canvas.restore();
   }
 }
 

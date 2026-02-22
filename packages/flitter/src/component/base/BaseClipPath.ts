@@ -134,25 +134,14 @@ class ClipPathCanvasPainter extends CanvasPainter {
     );
   }
 
-  override get hasCanvasState(): boolean {
-    return true;
-  }
-
-  override applyCanvasState(
-    ctx: CanvasRenderingContext2D,
-    offset: Offset,
-  ): void {
-    ctx.translate(offset.x, offset.y);
-    ctx.clip(this.clipper.toCanvasPath());
-    ctx.translate(-offset.x, -offset.y);
-  }
-
   protected override performPaint(
     context: CanvasPaintingContext,
     offset: Offset,
   ): void {
     context.canvas.save();
-    this.applyCanvasState(context.canvas, offset);
+    context.canvas.translate(offset.x, offset.y);
+    context.canvas.clip(this.clipper.toCanvasPath());
+    context.canvas.translate(-offset.x, -offset.y);
     this.defaultPaint(context, offset);
     context.canvas.restore();
   }
