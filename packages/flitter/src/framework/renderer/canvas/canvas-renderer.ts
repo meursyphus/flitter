@@ -9,14 +9,16 @@ export class CanvasRenderPipeline extends RenderPipeline {
   override drawFrame(): void {
     this.flushLayout();
     this.flushPaintTransformUpdate();
-    this.flushPaint();
     this.recalculateZOrder();
+    this.flushPaint();
     this.#compositeFrame();
   }
 
   override reinitializeFrame(): void {
     this.renderView.layout(Constraints.tight(this.renderContext.viewSize));
     this.renderView.updatePaintTransform();
+    this.notifyZOrderChanged();
+    this.recalculateZOrder();
     CanvasPaintingContext.repaintCompositedChild(this.renderView);
     this.#compositeFrame();
   }

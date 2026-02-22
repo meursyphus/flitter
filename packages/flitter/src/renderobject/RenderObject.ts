@@ -28,6 +28,12 @@ export class RenderObject {
   get zOrder() {
     return this.#zOrder;
   }
+
+  /**
+   * The minimum zOrder among all painter descendants (or own zOrder if painter).
+   * Used by canvas renderer to sort children for z-ordered tree walk painting.
+   */
+  minDescendantZOrder: number = 0;
   updateZOrder(value: number) {
     if (this.#zOrder === value) return;
     this.#zOrder = value;

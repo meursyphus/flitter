@@ -14,6 +14,7 @@ export class CanvasPainter extends Painter {
     return false;
   }
 
+
   paint(context: CanvasPaintingContext, offset: Offset) {
     this.needsPaint = false;
     this.performPaint(context, offset);
