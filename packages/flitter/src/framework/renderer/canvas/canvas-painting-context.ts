@@ -23,6 +23,22 @@ type CanvasProxy = CanvasRenderingContext2D & {
   __raw: CanvasRenderingContext2D;
 };
 
+// Drawing operations that produce pixels — suppressed during ancestor replay
+// so that only canvas state changes (transforms, clips, opacity) persist.
+const DRAWING_OPS: ReadonlySet<string | symbol> = new Set([
+  "fillRect",
+  "strokeRect",
+  "clearRect",
+  "fill",
+  "stroke",
+  "fillText",
+  "strokeText",
+  "drawImage",
+  "putImageData",
+]);
+
+const NOOP = () => {};
+
 function createCanvasProxy(ctx: CanvasRenderingContext2D): CanvasProxy {
   let suppressDepth = 0;
   let suppressing = false;
@@ -53,9 +69,13 @@ function createCanvasProxy(ctx: CanvasRenderingContext2D): CanvasProxy {
             suppressDepth--;
           };
         }
+        // Suppress pixel-drawing operations during ancestor replay
+        if (DRAWING_OPS.has(prop)) {
+          return NOOP;
+        }
       }
 
-      const val = Reflect.get(target, prop, receiver);
+      const val = Reflect.get(target, prop, target);
       return typeof val === "function" ? val.bind(target) : val;
     },
     set(target, prop, value) {
@@ -157,13 +177,13 @@ export class CanvasPaintingContext {
       });
     }
 
-    // Only non-painter nodes go into the ancestor chain.
-    // Painter nodes (Container, DecoratedBox, etc.) would draw pixels
-    // during ancestor replay, which is undesirable. Non-painter nodes
-    // that modify ctx state (Transform, Opacity) are safely replayed.
-    const childAncestorChain = node.isPainter
-      ? ancestorChain
-      : [...ancestorChain, { node, offset }];
+    // All nodes go into the ancestor chain. During ancestor replay,
+    // the proxy suppresses pixel-drawing operations (fillRect, fill,
+    // stroke, etc.) so only canvas state changes (transforms, clips,
+    // opacity) persist. This means any node type — whether it draws
+    // pixels (Container) or only modifies state (Transform, ClipPath)
+    // — can safely be replayed as an ancestor.
+    const childAncestorChain = [...ancestorChain, { node, offset }];
 
     node.visitChildren(child => {
       CanvasPaintingContext.#collectPainters(
