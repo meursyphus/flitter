@@ -157,7 +157,13 @@ export class CanvasPaintingContext {
       });
     }
 
-    const childAncestorChain = [...ancestorChain, { node, offset }];
+    // Only non-painter nodes go into the ancestor chain.
+    // Painter nodes (Container, DecoratedBox, etc.) would draw pixels
+    // during ancestor replay, which is undesirable. Non-painter nodes
+    // that modify ctx state (Transform, Opacity) are safely replayed.
+    const childAncestorChain = node.isPainter
+      ? ancestorChain
+      : [...ancestorChain, { node, offset }];
 
     node.visitChildren(child => {
       CanvasPaintingContext.#collectPainters(
