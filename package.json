@@ -12,6 +12,7 @@
     "lint": "turbo lint",
     "clean": "turbo clean",
     "docs:dev": "turbo dev --filter=flitter-docs",
+    "docs:build": "turbo build --filter=flitter-docs",
     "story:dev": "turbo dev --filter=flitter-storybook",
     "chart-story:dev": "turbo dev --filter=chart-storybook",
     "perf:dev": "turbo dev --filter=flitter-performance",
