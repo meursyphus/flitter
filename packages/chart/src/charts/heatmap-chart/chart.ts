@@ -146,6 +146,14 @@ class YAxisTick extends StatelessWidget {
   }
 }
 
+class AxisCorner extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const config = HeatmapConfigProvider.of(context);
+    const { custom } = config;
+    return custom.axisCorner(undefined, config);
+  }
+}
+
 class PlotWidget extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const config = HeatmapConfigProvider.of(context);
@@ -155,6 +163,7 @@ class PlotWidget extends StatelessWidget {
         xAxis: new XAxis(),
         yAxis: new YAxis(),
         heatmap: new HeatmapWidget(),
+        axisCorner: new AxisCorner(),
       },
       config,
     );

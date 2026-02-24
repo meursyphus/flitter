@@ -27,6 +27,7 @@ class HeatmapChart extends StatelessWidget {
       title: titleWidget = Default.Title,
       xAxisLine = Default.XAxisLine,
       yAxisLine = Default.YAxisLine,
+      axisCorner = Default.AxisCorner,
     } = {},
     getScale = Default.getScale,
     data,
@@ -55,6 +56,7 @@ class HeatmapChart extends StatelessWidget {
       heatmap,
       segment,
       title: titleWidget,
+      axisCorner,
     };
   }
 

@@ -56,6 +56,14 @@ class TitleWidget extends StatelessWidget {
   }
 }
 
+class AxisCorner extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const config = BubbleChartConfigProvider.of(context);
+    const { custom } = config;
+    return custom.axisCorner(undefined, config);
+  }
+}
+
 class Plot extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const config = BubbleChartConfigProvider.of(context);
@@ -66,6 +74,7 @@ class Plot extends StatelessWidget {
         yAxis: new YAxis(),
         series: new Series(),
         grid: new Grid(),
+        axisCorner: new AxisCorner(),
       },
       config,
     );

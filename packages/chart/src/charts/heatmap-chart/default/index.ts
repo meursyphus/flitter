@@ -12,3 +12,4 @@ export * from "./y-axis-line";
 export * from './plot'
 export * from './heatmap'
 export * from './segment'
+export { AxisCorner } from '@shared/cartesian/index'

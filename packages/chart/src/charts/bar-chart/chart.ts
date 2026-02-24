@@ -276,12 +276,20 @@ class Bar extends StatelessWidget {
   }
 }
 
+class AxisCorner extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const config = BarChartConfigProvider.of(context);
+    const { custom } = config;
+    return custom.axisCorner(undefined, config);
+  }
+}
+
 class Plot extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const config = BarChartConfigProvider.of(context);
     const { custom } = config;
     return custom.plot(
-      { xAxis: new XAxis(), yAxis: new YAxis(), series: new Series(), grid: new Grid() },
+      { xAxis: new XAxis(), yAxis: new YAxis(), series: new Series(), grid: new Grid(), axisCorner: new AxisCorner() },
       config,
     );
   }

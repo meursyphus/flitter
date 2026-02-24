@@ -1,6 +1,5 @@
 import type { CartesianCustom } from "./types";
 import {
-  Container,
   FractionalTranslation,
   Stack,
   Positioned,
@@ -12,6 +11,7 @@ export function Plot({
   xAxis,
   yAxis,
   grid,
+  axisCorner,
 }: Parameters<CartesianCustom["plot"]>[0]): Widget {
   return Stack({
     children: [
@@ -38,11 +38,7 @@ export function Plot({
         left: 0,
         child: FractionalTranslation({
           translation: { x: -1, y: 1 },
-          child: Container({
-            color: "black",
-            width: 1,
-            height: 1,
-          }),
+          child: axisCorner,
         }),
       }),
       grid,

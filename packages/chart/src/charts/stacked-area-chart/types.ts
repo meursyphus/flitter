@@ -25,12 +25,14 @@ export type StackedAreaChartCustom = {
     yAxis: Widget;
     series: Widget;
     grid: Widget;
+    axisCorner: Widget;
   }>;
   legend: ConfigArgs<{ name: string; index: number }>;
   title: ConfigArgs<{ name: string }>;
   dataLabel: ConfigArgs<{ value: number; label: string; legend: string }>;
   xAxisLine: ConfigArgs;
   yAxisLine: ConfigArgs;
+  axisCorner: ConfigArgs;
   grid: ConfigArgs<{ xLine: Widget; yLine: Widget }>;
   gridXLine: ConfigArgs;
   gridYLine: ConfigArgs;

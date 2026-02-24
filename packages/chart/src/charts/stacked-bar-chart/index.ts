@@ -32,7 +32,8 @@ class StackedBarChart extends StatelessWidget {
 			yAxisLine = Default.YAxisLine,
 			grid = Default.Grid,
 			gridXLine = Default.GridXLine,
-			gridYLine = Default.GridYLine
+			gridYLine = Default.GridYLine,
+			axisCorner = Default.AxisCorner
 		} = {},
 		getScale = Default.getScale,
 		data,
@@ -69,7 +70,8 @@ class StackedBarChart extends StatelessWidget {
 			dataLabel,
 			grid,
 			gridXLine,
-			gridYLine
+			gridYLine,
+			axisCorner
 		};
 	}
 

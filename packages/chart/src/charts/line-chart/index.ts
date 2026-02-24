@@ -31,6 +31,7 @@ class BarChart extends StatelessWidget {
       grid = Default.Grid,
       gridXLine = Default.GridXLine,
       gridYLine = Default.GridYLine,
+      axisCorner = Default.AxisCorner,
     } = {},
     getScale = Default.getScale,
     data,
@@ -64,6 +65,7 @@ class BarChart extends StatelessWidget {
       grid,
       gridXLine,
       gridYLine,
+      axisCorner,
     };
   }
 

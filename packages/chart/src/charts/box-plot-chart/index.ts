@@ -31,7 +31,8 @@ class BoxPlotChart extends StatelessWidget {
 			yAxisLine = Default.YAxisLine,
 			grid = Default.Grid,
 			gridXLine = Default.GridXLine,
-			gridYLine = Default.GridYLine
+			gridYLine = Default.GridYLine,
+			axisCorner = Default.AxisCorner
 		} = {},
 		getScale = Default.getScale,
 		data,
@@ -65,7 +66,8 @@ class BoxPlotChart extends StatelessWidget {
 			title: titleWidget,
 			grid,
 			gridXLine,
-			gridYLine
+			gridYLine,
+			axisCorner
 		};
 	}
 

@@ -4,7 +4,7 @@ type ConfigArgs<T = undefined> = (args: T, context: HeatmapConfig) => Widget;
 
 export type HeatmapCustom = {
   layout: ConfigArgs<{ title: Widget; plot: Widget }>;
-  plot: ConfigArgs<{ xAxis: Widget; yAxis: Widget; heatmap: Widget }>;
+  plot: ConfigArgs<{ xAxis: Widget; yAxis: Widget; heatmap: Widget; axisCorner: Widget }>;
 
   xAxis: ConfigArgs<{ line: Widget; labels: Widget[]; tick: Widget }>;
   yAxis: ConfigArgs<{ line: Widget; labels: Widget[]; tick: Widget }>;
@@ -12,6 +12,7 @@ export type HeatmapCustom = {
   yAxisLabel: ConfigArgs<{ name: string; index: number }>;
   xAxisLine: ConfigArgs;
   yAxisLine: ConfigArgs;
+  axisCorner: ConfigArgs;
   xAxisTick: ConfigArgs;
   yAxisTick: ConfigArgs;
 

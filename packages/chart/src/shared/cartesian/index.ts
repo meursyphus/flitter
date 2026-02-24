@@ -15,4 +15,5 @@ export * from './y-axis-line'
 export * from './grid'
 export * from './grid-x-line'
 export * from './grid-y-line'
+export * from './axis-corner'
 

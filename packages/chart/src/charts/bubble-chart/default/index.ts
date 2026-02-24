@@ -17,3 +17,4 @@ export * from "./y-axis-line";
 export * from "./grid";
 export * from "./gridXLine";
 export * from "./gridYLine";
+export { AxisCorner } from "@shared/cartesian/index";

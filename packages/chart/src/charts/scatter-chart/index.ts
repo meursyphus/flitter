@@ -38,6 +38,7 @@ export default function BubbleChart({
     grid: custom.grid ?? Default.Grid,
     gridXLine: custom.gridXLine ?? Default.GridXLine,
     gridYLine: custom.gridYLine ?? Default.GridYLine,
+    axisCorner: custom.axisCorner ?? Default.AxisCorner,
   };
 
   const scale = getScale(data);

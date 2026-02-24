@@ -35,6 +35,7 @@ class StackedAreaChart extends StatelessWidget {
       grid = Default.Grid,
       gridXLine = Default.GridXLine,
       gridYLine = Default.GridYLine,
+      axisCorner = Default.AxisCorner,
     } = {},
     getScale = Default.getScale,
     data,
@@ -68,6 +69,7 @@ class StackedAreaChart extends StatelessWidget {
       grid,
       gridXLine,
       gridYLine,
+      axisCorner,
     };
   }
 
