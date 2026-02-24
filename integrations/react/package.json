@@ -1,0 +1,37 @@
+{
+  "name": "@flitterjs/react",
+  "version": "1.0.0",
+  "private": false,
+  "type": "module",
+  "description": "React integration for Flitter",
+  "keywords": ["flitter", "react", "data-visualization", "svg", "canvas"],
+  "homepage": "https://flitter.dev",
+  "repository": "https://github.com/meursyphus/flitter",
+  "license": "MIT",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "lint": "eslint . --ext ts,tsx"
+  },
+  "main": "src/lib/index.ts",
+  "dependencies": {
+    "flitter-core": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.0.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5",
+    "vite-plugin-dts": "^3.6.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

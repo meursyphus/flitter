@@ -1,10 +1,12 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/index.ts"],
-  splitting: true,
-  sourcemap: false,
-  clean: true,
+  entry: {
+    index: "src/index.ts",
+    chart: "src/chart.ts",
+  },
+  format: ["cjs", "esm"],
   dts: true,
-  format: ["iife", "cjs", "esm"],
+  clean: true,
+  external: ["flitter-core", "flitter-chart"],
 });

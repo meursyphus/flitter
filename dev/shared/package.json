@@ -1,0 +1,11 @@
+{
+  "name": "shared",
+  "version": "0.0.1",
+  "private": true,
+  "main": "index.ts",
+  "type": "module",
+  "dependencies": {
+    "flitter-core": "workspace:*",
+    "@flitterjs/svelte": "workspace:*"
+  }
+}

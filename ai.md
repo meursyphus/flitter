@@ -8,10 +8,10 @@ Flitter is a JavaScript rendering engine inspired by Flutter. This guide helps A
 ### React Widget Import
 ```typescript
 // ✅ CORRECT - Default import only
-import Widget from '@meursyphus/flitter-react';
+import Widget from '@flitterjs/react';
 
 // ❌ WRONG - Never destructure
-import { Widget } from '@meursyphus/flitter-react';  // ERROR!
+import { Widget } from '@flitterjs/react';  // ERROR!
 ```
 
 ### Flitter Components Import
@@ -23,7 +23,7 @@ import {
   Row, 
   Column,
   // ... other components
-} from '@meursyphus/flitter';
+} from 'flitter-core';
 ```
 
 ## 🎯 Object Creation Rules
@@ -219,8 +219,8 @@ Reference: https://github.com/meursyphus/flitter/blob/latest/packages/docs/src/c
 
 ```typescript
 import React from 'react';
-import Widget from '@meursyphus/flitter-react';
-import { Container, Text } from '@meursyphus/flitter';
+import Widget from '@flitterjs/react';
+import { Container, Text } from 'flitter-core';
 
 export default function App() {
   const flitterWidget = Container({

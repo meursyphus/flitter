@@ -1,58 +1,39 @@
 {
-  "name": "@meursyphus/flitter",
-  "version": "2.2.0",
-  "description": "Flitter: A high-performance JavaScript rendering engine and framework inspired by Flutter. Features declarative programming, SVG and Canvas support, and optimized for complex data visualizations, interactive charts, and graphic editors in web applications.",
-  "keywords": [
-    "rendering-engine",
-    "data-visualization",
-    "svg",
-    "canvas",
-    "flutter-like",
-    "javascript",
-    "interactive-charts",
-    "graphics",
-    "ui-framework"
-  ],
+  "name": "flitter",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Flitter - A high-performance JavaScript rendering engine inspired by Flutter",
+  "keywords": ["rendering-engine", "data-visualization", "svg", "canvas", "flutter-like"],
   "homepage": "https://flitter.dev",
+  "repository": "https://github.com/meursyphus/flitter",
+  "license": "MIT",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsup && npm run copy-package && npm run copy-readme && cd dist && npm run fix-package",
-    "copy-package": "cp package.json dist/package.json",
-    "copy-readme": "cp README.md dist/README.md",
-    "fix-package": "npm pkg set main=./index.cjs module=./index.js exports.import=./index.js exports.default=./index.js  types=./index.d.ts",
-    "lint": "eslint src/**",
-    "postbuild": "echo \"Build complete. Please run: \n\ncd dist\nnpm publish\n\"",
-    "format": "prettier --write ."
-  },
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.16.0",
-    "cp": "^0.2.0",
-    "eslint": "^8.56.0",
-    "eslint-config-standard-with-typescript": "^43.0.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-n": "^16.6.0",
-    "eslint-plugin-promise": "^6.1.1",
-    "prettier": "^3.2.5",
-    "tsup": "^8.0.1",
-    "typescript": "^5.3.3"
+    "build": "tsup"
   },
   "dependencies": {
-    "color-rgba": "^3.0.0",
-    "short-unique-id": "^5.0.3"
+    "flitter-core": "workspace:*",
+    "flitter-chart": "workspace:*"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/meursyphus/flitter.git"
-  },
-  "author": "meursyphus",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/meursyphus/flitter/issues"
+  "devDependencies": {
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./chart": {
+      "types": "./dist/chart.d.ts",
+      "import": "./dist/chart.js",
+      "require": "./dist/chart.cjs"
+    }
+  },
+  "files": ["dist"],
   "publishConfig": {
     "access": "public"
   }
