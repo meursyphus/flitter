@@ -3,7 +3,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "package/**", ".next/**"]
+      "outputs": ["dist/**", "package/**", ".next/**", "storybook-static/**", ".svelte-kit/**"]
     },
     "dev": {
       "cache": false,

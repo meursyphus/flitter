@@ -5,11 +5,18 @@
   "description": "Flitter monorepo",
   "scripts": {
     "build": "turbo build",
+    "build:core": "turbo build --filter=flitter-core",
+    "build:chart": "turbo build --filter=flitter-chart",
+    "build:flitter": "turbo build --filter=flitter",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "clean": "turbo clean",
     "docs:dev": "turbo dev --filter=flitter-docs",
-    "story:dev": "turbo dev --filter=flitter-storybook"
+    "story:dev": "turbo dev --filter=flitter-storybook",
+    "chart-story:dev": "turbo dev --filter=chart-storybook",
+    "perf:dev": "turbo dev --filter=flitter-performance",
+    "test": "turbo test --filter=flitter-performance",
+    "test:integration": "pnpm --filter flitter-performance test:integration"
   },
   "devDependencies": {
     "turbo": "^2.4.0"
