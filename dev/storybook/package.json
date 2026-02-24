@@ -39,6 +39,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.3",
     "@eslint/compat": "^1.2.3",
+    "@storybook/addon-docs": "^8.6.14",
     "@storybook/addon-essentials": "^8.4.7",
     "@storybook/addon-interactions": "^8.4.7",
     "@storybook/addon-svelte-csf": "^5.0.0-next.21",
@@ -68,9 +69,9 @@
     "vite": "^5.4.11"
   },
   "dependencies": {
+    "@flitterjs/svelte": "workspace:*",
     "@tailwindcss/typography": "^0.5.15",
     "chromatic": "^11.20.2",
-    "flitter-core": "workspace:*",
-    "@flitterjs/svelte": "workspace:*"
+    "flitter-core": "workspace:*"
   }
 }

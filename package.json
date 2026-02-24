@@ -17,7 +17,8 @@
     "chart-story:dev": "turbo dev --filter=chart-storybook",
     "perf:dev": "turbo dev --filter=flitter-performance",
     "test": "turbo test --filter=flitter-performance",
-    "test:integration": "pnpm --filter flitter-performance test:integration"
+    "test:integration": "pnpm --filter flitter-performance test:integration",
+    "chromatic": "turbo build --filter=flitter-storybook^... && pnpm --filter flitter-storybook chromatic"
   },
   "devDependencies": {
     "turbo": "^2.4.0"
