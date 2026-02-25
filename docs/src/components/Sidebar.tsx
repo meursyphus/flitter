@@ -5,14 +5,20 @@ import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import type { NavSection } from "@/lib/navigation";
 
-export default function Sidebar({ sections }: { sections: NavSection[] }) {
+export default function Sidebar({
+  sections,
+  onLinkClick,
+}: {
+  sections: NavSection[];
+  onLinkClick?: () => void;
+}) {
   const pathname = usePathname();
 
   return (
-    <nav className="sticky top-16 h-[calc(100vh-4rem)] w-60 shrink-0 overflow-y-auto border-r border-gray-200 py-6 pr-4 pl-4">
+    <nav className="h-full overflow-y-auto py-5 pl-4 pr-3">
       {sections.map((section) => (
-        <div key={section.title} className="mb-6">
-          <h3 className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+        <div key={section.title} className="mb-5">
+          <h3 className="mb-1.5 px-2 text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
             {section.title}
           </h3>
           <ul className="space-y-0.5">
@@ -22,11 +28,12 @@ export default function Sidebar({ sections }: { sections: NavSection[] }) {
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    onClick={onLinkClick}
                     className={clsx(
-                      "block rounded-md px-2 py-1.5 text-sm transition-colors",
+                      "block rounded-md px-2 py-1 text-[13px] transition-colors",
                       isActive
-                        ? "bg-indigo-50 font-medium text-indigo-700"
-                        : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                        ? "bg-neutral-100 font-medium text-neutral-900"
+                        : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900"
                     )}
                   >
                     {item.title}
