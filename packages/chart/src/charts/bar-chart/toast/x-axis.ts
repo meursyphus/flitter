@@ -10,56 +10,57 @@ import {
   ConstraintsTransformBox,
   Alignment,
   FractionallySizedBox,
+  FractionalTranslation,
+  Offset,
   MainAxisSize,
   MainAxisAlignment,
   CrossAxisAlignment,
   SizedBox,
   Tween,
-  FractionalTranslation,
   type Widget,
 } from "flitter-core";
-import type { BarChartContext } from "@headless/bar-chart/types";
+import type { BarChartContext, BarChartDirection } from "@headless/bar-chart/types";
 import type { ToastBarChartConfig } from "./config";
 
-function IgnoreChildWidth({
-  child,
-  isEdge = false,
-}: {
-  child: Widget;
-  isEdge?: boolean;
-}): Widget {
+function IgnoreChildWidth({ child }: { child: Widget }): Widget {
   return Container({
     width: 0,
     child: ConstraintsTransformBox({
       constraintsTransform: ConstraintsTransformBox.unconstrained,
-      alignment: isEdge ? Alignment.centerRight : Alignment.center,
+      alignment: Alignment.center,
       child,
     }),
   });
 }
+
+type AxisType = "label" | "value";
 
 class _AnimatedXAxis extends StatefulWidget {
   line: Widget;
   labels: Widget[];
   tick: Widget;
   config: ToastBarChartConfig;
+  axisType: AxisType;
 
   constructor({
     line,
     labels,
     tick,
     config,
+    axisType,
   }: {
     line: Widget;
     labels: Widget[];
     tick: Widget;
     config: ToastBarChartConfig;
+    axisType: AxisType;
   }) {
     super();
     this.line = line;
     this.labels = labels;
     this.tick = tick;
     this.config = config;
+    this.axisType = axisType;
   }
 
   createState() {
@@ -97,9 +98,15 @@ class _AnimatedXAxisState extends State<_AnimatedXAxis> {
   }
 
   override build() {
-    const { line, labels, tick } = this.widget;
+    const { line, labels, tick, axisType } = this.widget;
     const { axis } = this.widget.config;
     const animValue = this.tweenAnimation.value;
+
+    const isLabel = axisType === "label";
+    const tickAlignment = isLabel
+      ? MainAxisAlignment.spaceAround
+      : MainAxisAlignment.spaceBetween;
+    const tickCount = isLabel ? labels.length : labels.length;
 
     return Column({
       mainAxisSize: MainAxisSize.min,
@@ -110,15 +117,15 @@ class _AnimatedXAxisState extends State<_AnimatedXAxis> {
           widthFactor: animValue,
           alignment: Alignment.centerRight,
           child: Row({
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: Array(labels.length)
-              .fill(0)
-              .map((_, index) =>
-                FractionalTranslation({
-                  translation: { x: index === 0 ? -1 : 0, y: 0 },
-                  child: tick,
-                })
-              ),
+            mainAxisAlignment: tickAlignment,
+            children: Array.from({ length: tickCount }, (_, index) =>
+              isLabel
+                ? tick
+                : FractionalTranslation({
+                    translation: new Offset({ x: index === 0 ? -1 : 0, y: 0 }),
+                    child: tick,
+                  })
+            ),
           }),
         }),
         SizedBox({ height: axis.label.gap }),
@@ -126,7 +133,9 @@ class _AnimatedXAxisState extends State<_AnimatedXAxis> {
           widthFactor: animValue,
           alignment: Alignment.centerRight,
           child: Row({
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: isLabel
+              ? MainAxisAlignment.spaceAround
+              : MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: labels.map((label) =>
               IgnoreChildWidth({ child: label })
@@ -146,5 +155,6 @@ export function toastXAxis(
   }: { line: Widget; labels: Widget[]; tick: Widget },
   context: BarChartContext<ToastBarChartConfig>
 ): Widget {
-  return new _AnimatedXAxis({ line, labels, tick, config: context.config });
+  const axisType: AxisType = context.direction === "vertical" ? "label" : "value";
+  return new _AnimatedXAxis({ line, labels, tick, config: context.config, axisType });
 }

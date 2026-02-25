@@ -10,11 +10,14 @@ import {
   ConstraintsTransformBox,
   Alignment,
   FractionallySizedBox,
+  FractionalTranslation,
+  Offset,
   MainAxisSize,
   MainAxisAlignment,
   CrossAxisAlignment,
   SizedBox,
   Tween,
+  VerticalDirection,
   type Widget,
 } from "flitter-core";
 import type { BarChartContext } from "@headless/bar-chart/types";
@@ -31,28 +34,34 @@ function IgnoreChildHeight({ child }: { child: Widget }): Widget {
   });
 }
 
+type AxisType = "label" | "value";
+
 class _AnimatedYAxis extends StatefulWidget {
   line: Widget;
   labels: Widget[];
   tick: Widget;
   config: ToastBarChartConfig;
+  axisType: AxisType;
 
   constructor({
     line,
     labels,
     tick,
     config,
+    axisType,
   }: {
     line: Widget;
     labels: Widget[];
     tick: Widget;
     config: ToastBarChartConfig;
+    axisType: AxisType;
   }) {
     super();
     this.line = line;
     this.labels = labels;
     this.tick = tick;
     this.config = config;
+    this.axisType = axisType;
   }
 
   createState() {
@@ -90,9 +99,12 @@ class _AnimatedYAxisState extends State<_AnimatedYAxis> {
   }
 
   override build() {
-    const { line, labels, tick } = this.widget;
+    const { line, labels, tick, axisType } = this.widget;
     const { axis } = this.widget.config;
     const animValue = this.tweenAnimation.value;
+
+    const isLabel = axisType === "label";
+    const tickCount = labels.length + (isLabel ? 1 : 0);
 
     return Row({
       mainAxisSize: MainAxisSize.min,
@@ -102,7 +114,10 @@ class _AnimatedYAxisState extends State<_AnimatedYAxis> {
           heightFactor: animValue,
           alignment: Alignment.bottomCenter,
           child: Column({
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            verticalDirection: isLabel ? VerticalDirection.down : VerticalDirection.up,
+            mainAxisAlignment: isLabel
+              ? MainAxisAlignment.spaceAround
+              : MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: labels.map((label) =>
               IgnoreChildHeight({ child: label })
@@ -115,9 +130,15 @@ class _AnimatedYAxisState extends State<_AnimatedYAxis> {
           alignment: Alignment.bottomCenter,
           child: Column({
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: Array(labels.length)
-              .fill(0)
-              .map(() => tick),
+            children: Array.from({ length: tickCount }, (_, index) =>
+              FractionalTranslation({
+                translation: new Offset({
+                  y: index === tickCount - 1 ? 1 : 0,
+                  x: 0,
+                }),
+                child: tick,
+              })
+            ),
           }),
         }),
         line,
@@ -134,5 +155,6 @@ export function toastYAxis(
   }: { line: Widget; labels: Widget[]; tick: Widget },
   context: BarChartContext<ToastBarChartConfig>
 ): Widget {
-  return new _AnimatedYAxis({ line, labels, tick, config: context.config });
+  const axisType: AxisType = context.direction === "vertical" ? "value" : "label";
+  return new _AnimatedYAxis({ line, labels, tick, config: context.config, axisType });
 }

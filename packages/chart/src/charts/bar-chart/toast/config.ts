@@ -17,9 +17,10 @@ export type ToastBarChartConfig = {
     fontSize: number;
   };
 
-  /** Legend visibility */
+  /** Legend settings */
   legend: {
     visible: boolean;
+    position: "top" | "bottom";
   };
 
   /** Axis styling (applies to both x and y axes) */
@@ -67,8 +68,8 @@ export type ToastBarChartConfig = {
 export const defaultToastConfig: ToastBarChartConfig = {
   colors: TOAST_COLORS,
   font: { family: "Noto Sans JP", size: 11 },
-  title: { visible: false, color: "#999999", fontSize: 13 },
-  legend: { visible: false },
+  title: { visible: true, color: "#999999", fontSize: 13 },
+  legend: { visible: true, position: "bottom" },
   axis: {
     color: "#BBBBBB",
     thickness: 1,

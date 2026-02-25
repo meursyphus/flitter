@@ -16,12 +16,16 @@ import { toastGridXLine } from "./grid-x-line";
 import { toastGridYLine } from "./grid-y-line";
 import { toastXAxis } from "./x-axis";
 import { toastYAxis } from "./y-axis";
+import { toastTitle } from "./title";
+import { toastAxisCorner } from "./axis-corner";
 
 const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
   layout: toastLayout,
   bar: toastBar,
   barGroup: toastBarGroup,
   legend: toastLegend,
+  title: toastTitle,
+  axisCorner: toastAxisCorner,
   xAxisLabel: toastXAxisLabel,
   yAxisLabel: toastYAxisLabel,
   xAxisTick: toastXAxisTick,
