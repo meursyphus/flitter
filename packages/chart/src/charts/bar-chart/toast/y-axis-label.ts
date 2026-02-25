@@ -6,14 +6,14 @@ export function toastYAxisLabel(
   { name }: { name: string; index: number },
   context: BarChartContext<ToastBarChartConfig>
 ): Widget {
-  const { font, labelColor } = context.config;
+  const { axis, font } = context.config;
   return Padding({
-    padding: EdgeInsets.only({ right: 1 }),
+    padding: EdgeInsets.only({ right: axis.label.gap }),
     child: Text(name, {
       style: new TextStyle({
         fontFamily: font.family,
-        fontSize: font.size,
-        color: labelColor,
+        fontSize: axis.label.fontSize,
+        color: axis.label.color,
       }),
     }),
   });

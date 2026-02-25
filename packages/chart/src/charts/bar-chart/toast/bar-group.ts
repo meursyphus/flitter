@@ -72,10 +72,15 @@ class _AnimatedBarGroupState extends State<_AnimatedBarGroup> {
         curve: Curves.easeOut,
       })
     );
-    setTimeout(
-      () => this.animationController.forward(),
-      groupIndex * animationConfig.staggerDelay
-    );
+    if (animationConfig.enabled) {
+      setTimeout(
+        () => this.animationController.forward(),
+        groupIndex * animationConfig.staggerDelay
+      );
+    } else {
+      this.animationController.duration = 0;
+      this.animationController.forward();
+    }
   }
 
   override dispose() {

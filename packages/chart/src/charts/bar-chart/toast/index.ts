@@ -14,6 +14,8 @@ import { toastXAxisLine } from "./x-axis-line";
 import { toastYAxisLine } from "./y-axis-line";
 import { toastGridXLine } from "./grid-x-line";
 import { toastGridYLine } from "./grid-y-line";
+import { toastXAxis } from "./x-axis";
+import { toastYAxis } from "./y-axis";
 
 const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
   layout: toastLayout,
@@ -28,6 +30,8 @@ const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
   yAxisLine: toastYAxisLine,
   gridXLine: toastGridXLine,
   gridYLine: toastGridYLine,
+  xAxis: toastXAxis,
+  yAxis: toastYAxis,
 };
 
 export { type ToastBarChartConfig } from "./config";
