@@ -1,0 +1,390 @@
+export const metadata = {
+  title: "What is Flitter?",
+  description: "A JavaScript rendering engine that solves complex graphics problems with Flutter's declarative syntax",
+};
+
+# What is Flitter?
+
+## The Problem You're Facing
+
+Monday morning in your SaaS startup's development team meeting room. The PM has arrived with new feature requirements.
+
+> "We need to add a **workflow editor** to our product. Users should be able to drag nodes and connect them, with real-time updates. You know, like Notion or Figma!"
+
+The team members' faces stiffen. The frontend developer speaks up cautiously.
+
+> "We could try D3.js, but... calculating node positions, drawing connection lines, handling drag... it'll probably take 2-3 weeks. And that's just for basic features."
+
+Another developer adds:
+
+> "Should we draw directly with Canvas API? Or SVG? How do we handle text? We'd have to manually calculate line breaks and alignment..."
+
+## Familiar Frustration
+
+Sound familiar?
+
+Handling complex graphics on the web has always been a developer's nightmare. HTML/CSS has clear limitations, and using D3.js or Canvas API feels like going back to the 1990s where you have to manually calculate everything.
+
+Let's take a simple example: centering text in a box and making it wrap automatically.
+
+### With D3.js, it's this complex:
+
+```javascript
+// Starting with coordinate calculations...
+const svg = d3.select("svg");
+const boxWidth = 200;
+const boxHeight = 100;
+
+// Create text element and set position
+const text = svg.append("text")
+  .attr("x", boxWidth / 2)
+  .attr("y", boxHeight / 2)
+  .attr("text-anchor", "middle");
+
+// Implement complex function for line wrapping
+function wrapText(text, width) {
+  const words = text.text().split(/\s+/);
+  const lineHeight = 1.2;
+  let line = [];
+  let lineNumber = 0;
+  let tspan = text.text(null).append("tspan");
+
+  words.forEach(word => {
+    line.push(word);
+    tspan.text(line.join(" "));
+    if (tspan.node().getComputedTextLength() > width) {
+      line.pop();
+      tspan.text(line.join(" "));
+      line = [word];
+      tspan = text.append("tspan")
+        .attr("x", boxWidth / 2)
+        .attr("dy", lineHeight + "em")
+        .text(word);
+    }
+  });
+
+  // Additional calculations for vertical centering...
+  const totalHeight = lineNumber * lineHeight * 16;
+  text.attr("transform", `translate(0, ${-totalHeight/2})`);
+}
+
+// And even resize event handling...
+```
+
+Over 50 lines of code, complex calculations, and still not perfect results.
+
+## With Flitter, It's This Simple
+
+```typescript
+Center({
+  child: Container({
+    width: 200,
+    child: Text("Long text automatically wraps and centers", {
+      textAlign: TextAlign.center,
+    })
+  })
+})
+```
+
+Even though it's a Canvas renderer, the mouse cursor changes automatically -- it becomes a resize cursor in the drag area. Flitter handles all this complex processing. You just focus on business logic.
+
+## Architecture
+
+```
++---------------------------------------------------+
+|                   Your App                         |
++---------------------------------------------------+
+|                Widget Layer                        |
+|         (Container, Text, Column...)               |
++---------------------------------------------------+
+|              RenderObject Tree                     |
+|         (Layout, Paint, Hit Testing)               |
++---------------------------------------------------+
+|            Flitter Engine Core                     |
++-----------------+---------------------------------+
+|  SVG Renderer   |         Canvas Renderer          |
++-----------------+---------------------------------+
+```
+
+Flitter is a **declarative UI rendering engine that works on the web**. It implements Flutter's powerful widget system in JavaScript.
+
+### Core Features
+
+#### Dual Renderer System
+- **SVG**: SEO-friendly, text selectable, CSS animations
+- **Canvas**: High performance, pixel-level control, complex animations
+
+#### Industry-First SSR + Canvas Hydration
+```typescript
+// Render with SVG on server, switch to Canvas on client
+<Widget
+  renderer="canvas"
+  ssr={{
+    size: { width: 800, height: 600 }
+  }}
+  widget={...}
+/>
+```
+
+Fast initial loading with SVG, smooth interactions with Canvas. Only Flitter can do this.
+
+## Comparison with Other Graphics Libraries
+
+### Limitations of Existing Libraries
+
+| Library | Problems |
+|---------|----------|
+| **D3.js** | Manual calculation of everything. Coordinates, sizes, animations... |
+| **Konva.js** | Object-oriented but still imperative. Complex layouts are nightmares |
+| **Fabric.js** | Good for canvas manipulation, but unsuitable for UI composition |
+| **Paper.js** | Strong in vector graphics, but difficult for general UI |
+| **Three.js** | Great for 3D, but... Three.js for 2D UI? |
+
+### Flitter's Solution
+
+```typescript
+// Other libraries: hundreds of lines of boilerplate
+// Flitter: just what you need
+
+Column({
+  children: [
+    Text("Title", { style: headerStyle }),
+    Container({
+      padding: EdgeInsets.all(20),
+      decoration: new BoxDecoration({
+        color: '#F3F4F6',
+        borderRadius: BorderRadius.circular(8)
+      }),
+      child: Row({
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [/* Complex layouts made simple */]
+      })
+    })
+  ]
+})
+```
+
+## Declarative Rendering
+
+Flitter adopts a **declarative** rendering approach, similar to Flutter. This means you declare "how the screen should look," and Flitter handles the rendering automatically. This is a fundamentally different approach from the traditional imperative method.
+
+### Why Declarative?
+
+Declarative programming provides the following advantages:
+
+- **Improved Code Readability**: Intuitive understanding of how UI will appear
+- **Reduced Bugs**: Simplified state management leads to predictable behavior
+- **Easier Maintenance**: UI updates without complex DOM manipulation
+- **Increased Productivity**: Implement complex UIs with less code
+
+### Imperative vs Declarative
+
+#### Imperative Approach (D3.js Example)
+In the imperative approach, you specify what to do at each step:
+
+```javascript
+// Centering text with D3.js
+const svg = d3.select("svg");
+const width = 400;
+const height = 200;
+
+// 1. Create text element
+const text = svg.append("text")
+  .text("Hello, World!");
+
+// 2. Measure text size
+const bbox = text.node().getBBox();
+
+// 3. Calculate center position
+const x = (width - bbox.width) / 2;
+const y = (height + bbox.height) / 2;
+
+// 4. Set position
+text.attr("x", x)
+    .attr("y", y);
+
+// When state changes, all calculations must be redone
+function updateText(newText) {
+  text.text(newText);
+  const newBbox = text.node().getBBox();
+  const newX = (width - newBbox.width) / 2;
+  const newY = (height + newBbox.height) / 2;
+  text.attr("x", newX).attr("y", newY);
+}
+```
+
+#### Declarative Approach (Flitter Example)
+In the declarative approach, you only declare the desired result:
+
+```typescript
+// Centering text with Flitter
+Center({
+  child: Text("Hello, World!")
+})
+
+// When state changes, just change the declaration
+Center({
+  child: Text(isKorean ? "Hello!" : "Hello, World!")
+})
+```
+
+### How Declarative Rendering Works
+
+1. **Define State**: Define the current state of the application
+2. **Declare UI**: Declare how the UI should look based on the state
+3. **Automatic Updates**: When state changes, Flitter automatically updates the UI
+
+```typescript
+class _CounterWidget extends StatefulWidget {
+  createState() {
+    return new CounterWidgetState();
+  }
+}
+
+class CounterWidgetState extends State<_CounterWidget> {
+  count = 0;  // State definition
+
+  build(context: BuildContext): Widget {
+    // UI declaration - UI is determined by count state
+    return Column({
+      children: [
+        Text(`Current count: ${this.count}`),
+        GestureDetector({
+          onClick: () => {
+            this.setState(() => {
+              this.count++;  // Automatic re-rendering when state changes
+            });
+          },
+          child: Container({
+            padding: EdgeInsets.all(8),
+            color: Colors.blue,
+            child: Text("Increment", { style: TextStyle({ color: Colors.white }) })
+          })
+        })
+      ]
+    });
+  }
+}
+
+// Export as factory function
+export default function CounterWidget(): Widget {
+  return new _CounterWidget();
+}
+```
+
+## Do You Have Flutter Developers on Your Team?
+
+"Oh, we have Flutter developers on our team..."
+
+**Congratulations!** They're already Flitter experts. Learning curve? None. They can start with 100% productivity immediately.
+
+```dart
+// Flutter code
+Container(
+  padding: EdgeInsets.all(16),
+  child: Text("Hello Flutter"),
+)
+```
+
+```typescript
+// Flitter code - almost identical!
+Container({
+  padding: EdgeInsets.all(16),
+  child: Text("Hello Flitter")
+})
+```
+
+## Proven in Real Production Environments
+
+### Use Case 1: Complex Diagram Editor
+
+**Problem**: "We need to build an ERD editor that works smoothly with 100+ nodes"
+
+**Flitter Solution**:
+```typescript
+// Node dragging, connection drawing, auto-alignment...
+// All solved with widget composition
+Stack({
+  children: [
+    ...nodes.map(node =>
+      Draggable({
+        child: NodeWidget(node),
+        onDrag: updateNodePosition
+      })
+    ),
+    CustomPaint({
+      painter: ConnectionPainter(connections)
+    })
+  ]
+})
+```
+
+Actually available as a [GitHub open source project](https://github.com/meursyphus/easy-rd) and actively used in production environments.
+
+### Use Case 2: Headless Chart Library
+
+**Problem**: "Chart.js has limited customization, and D3.js is too low-level"
+
+**Flitter Solution**: [headless-chart](https://github.com/meursyphus/headless-chart) - A fully customizable chart library released as open source, with detailed information available in the [official documentation](https://headless-chart.pages.dev/) and actively used in production.
+
+## Why Flitter Now?
+
+### Market Demand
+- Increasing complexity of SaaS products
+- Explosive demand for dashboards, workflow editors, diagram tools
+- Requirements like "make it like Notion" or "like Figma"
+
+### Technical Advantages
+- **Development Speed**: 5-10x faster development compared to D3.js
+- **Maintenance**: Easy to understand with declarative code
+- **Performance**: Efficient rendering that only redraws necessary parts
+- **Scalability**: Infinitely extensible with widget-based architecture
+
+## Perfect for These Teams
+
+- Teams that need to build **complex diagrams or visualizations**
+- Teams implementing **node editors, flowcharts, mind maps**
+- Data visualization teams needing **custom charts**
+- Teams **tired** of D3.js complexity
+- Teams with developers who have **Flutter experience**
+- Teams where both **performance and development productivity** matter
+
+## Getting Started
+
+```bash
+npm install @meursyphus/flitter
+```
+
+You can start with just one line of command.
+
+## Important Notes
+
+1. **Maintain Immutability**: Don't modify state directly, always use `setState`
+2. **Pure Functions**: The `build` method should be a pure function without side effects
+3. **Performance Considerations**: Properly separate widgets to avoid unnecessary re-rendering
+
+```typescript
+// Wrong - Direct state modification
+this.count++;  // UI won't update
+
+// Correct - Use setState
+this.setState(() => {
+  this.count++;
+});
+
+// Wrong - Side effects in build method
+build(context: BuildContext): Widget {
+  fetch('/api/data');  // Wrong!
+  return Text("...");
+}
+
+// Correct - Handle side effects in initState
+initState() {
+  super.initState();
+  fetch('/api/data').then(data => {
+    this.setState(() => {
+      this.data = data;
+    });
+  });
+}
+```

@@ -1,0 +1,504 @@
+export const metadata = { title: "IndexedStack", description: "Guide to using the IndexedStack widget for displaying one child from multiple children" };
+
+
+# IndexedStack
+
+`IndexedStack` is a stack widget that displays only one child widget from multiple children based on a specific index. It's useful for tab interfaces and page switching.
+
+## Overview
+
+IndexedStack renders all child widgets but only shows the widget at the specified index on screen. Other widgets are hidden but maintain their state.
+
+## When to Use
+
+- **Tab Interfaces**: When displaying only one tab at a time
+- **Page Switcher**: When transitioning between pages while preserving state
+- **Conditional Display**: When showing different widgets based on state
+- **Wizard UI**: When preserving previous step states during step-by-step progression
+- **Card Deck**: When displaying only a specific card from a deck
+
+## Basic Usage
+
+```typescript
+import { IndexedStack, Container, Text } from '@meursyphus/flitter';
+
+IndexedStack({
+  index: 1, // Display the second child
+  children: [
+    Container({
+      color: 'red',
+      child: Text('First Page')
+    }),
+    Container({
+      color: 'blue', 
+      child: Text('Second Page')
+    }),
+    Container({
+      color: 'green',
+      child: Text('Third Page')
+    })
+  ]
+})
+```
+
+## Props
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `index` | `number` | `0` | Index of the child widget to display |
+| `children` | `Widget[]` | - | Child widgets to include in the stack |
+| `alignment` | `Alignment?` | `Alignment.topLeft` | Alignment of child widgets |
+| `sizing` | `StackFit?` | `StackFit.loose` | Stack sizing behavior |
+| `clipped` | `boolean?` | `true` | Whether to clip children when they overflow |
+
+### StackFit Values
+
+- `StackFit.loose`: Use children's natural size
+- `StackFit.expand`: Expand to maximum available size
+- `StackFit.passthrough`: Pass parent constraints directly
+
+## Real-world Examples
+
+### 1. Basic Indexed Stack
+
+
+
+```typescript
+import { StatefulWidget, State, IndexedStack, Container, Text, Column, Button } from '@meursyphus/flitter';
+
+class BasicIndexedStack extends StatefulWidget {
+  createState() {
+    return new BasicIndexedStackState();
+  }
+}
+
+class BasicIndexedStackState extends State<BasicIndexedStack> {
+  currentIndex = 0;
+
+  switchPage = (index: number) => {
+    this.setState(() => {
+      this.currentIndex = index;
+    });
+  }
+
+  build() {
+    return Column({
+      children: [
+        // Page buttons
+        Row({
+          children: [
+            Button({
+              onPressed: () => this.switchPage(0),
+              child: Text('Page 1')
+            }),
+            Button({
+              onPressed: () => this.switchPage(1),
+              child: Text('Page 2')
+            }),
+            Button({
+              onPressed: () => this.switchPage(2),
+              child: Text('Page 3')
+            })
+          ]
+        }),
+        
+        // Indexed stack
+        IndexedStack({
+          index: this.currentIndex,
+          children: [
+            Container({
+              width: 300,
+              height: 200,
+              color: '#ff6b6b',
+              child: Text('First Page', {
+                style: { color: 'white', fontSize: 24 }
+              })
+            }),
+            Container({
+              width: 300,
+              height: 200,
+              color: '#4ecdc4',
+              child: Text('Second Page', {
+                style: { color: 'white', fontSize: 24 }
+              })
+            }),
+            Container({
+              width: 300,
+              height: 200,
+              color: '#45b7d1',
+              child: Text('Third Page', {
+                style: { color: 'white', fontSize: 24 }
+              })
+            })
+          ]
+        })
+      ]
+    });
+  }
+}
+```
+
+
+
+### 2. Stateful Tab Interface
+
+
+
+```typescript
+import { StatefulWidget, State, IndexedStack, Column, TextField, Text } from '@meursyphus/flitter';
+
+class TabWithState extends StatefulWidget {
+  createState() {
+    return new TabWithStateState();
+  }
+}
+
+class TabWithStateState extends State<TabWithState> {
+  activeTab = 0;
+
+  build() {
+    return Column({
+      children: [
+        // Tab header
+        Row({
+          children: [
+            Button({
+              onPressed: () => this.setState(() => { this.activeTab = 0; }),
+              child: Text('Profile')
+            }),
+            Button({
+              onPressed: () => this.setState(() => { this.activeTab = 1; }),
+              child: Text('Settings')
+            }),
+            Button({
+              onPressed: () => this.setState(() => { this.activeTab = 2; }),
+              child: Text('Help')
+            })
+          ]
+        }),
+        
+        // Tab content (state preserved)
+        IndexedStack({
+          index: this.activeTab,
+          children: [
+            // Profile tab
+            ProfileTab(),
+            
+            // Settings tab  
+            SettingsTab(),
+            
+            // Help tab
+            HelpTab()
+          ]
+        })
+      ]
+    });
+  }
+}
+
+class ProfileTab extends StatefulWidget {
+  createState() {
+    return new ProfileTabState();
+  }
+}
+
+class ProfileTabState extends State<ProfileTab> {
+  name = '';
+  email = '';
+
+  build() {
+    return Column({
+      children: [
+        TextField({
+          placeholder: 'Name',
+          value: this.name,
+          onChanged: (value) => {
+            this.setState(() => {
+              this.name = value;
+            });
+          }
+        }),
+        TextField({
+          placeholder: 'Email',
+          value: this.email,
+          onChanged: (value) => {
+            this.setState(() => {
+              this.email = value;
+            });
+          }
+        }),
+        Text(`Entered info: ${this.name}, ${this.email}`)
+      ]
+    });
+  }
+}
+```
+
+
+
+### 3. Stack Sizing Options
+
+
+
+```typescript
+import { IndexedStack, Container, Text, StackFit } from '@meursyphus/flitter';
+
+// loose: Natural size
+IndexedStack({
+  index: 0,
+  sizing: StackFit.loose,
+  children: [
+    Container({
+      width: 100,
+      height: 100,
+      color: 'red',
+      child: Text('Small Box')
+    }),
+    Container({
+      width: 200,
+      height: 150,
+      color: 'blue',
+      child: Text('Large Box')
+    })
+  ]
+})
+
+// expand: Expand to maximum size
+IndexedStack({
+  index: 0,
+  sizing: StackFit.expand,
+  children: [
+    Container({
+      color: 'green',
+      child: Text('Expanded Box')
+    })
+  ]
+})
+```
+
+
+
+### 4. Alignment Options
+
+
+
+```typescript
+import { IndexedStack, Container, Text, Alignment } from '@meursyphus/flitter';
+
+IndexedStack({
+  index: 0,
+  alignment: Alignment.center, // Center alignment
+  children: [
+    Container({
+      width: 150,
+      height: 100,
+      color: '#9b59b6',
+      child: Text('Center Aligned', {
+        style: { color: 'white', textAlign: 'center' }
+      })
+    })
+  ]
+})
+
+IndexedStack({
+  index: 0,
+  alignment: Alignment.bottomRight, // Bottom-right alignment
+  children: [
+    Container({
+      width: 120,
+      height: 80,
+      color: '#e67e22',
+      child: Text('Bottom-Right', {
+        style: { color: 'white', textAlign: 'center' }
+      })
+    })
+  ]
+})
+```
+
+
+
+### 5. Animation Integration
+
+
+
+```typescript
+import { StatefulWidget, State, IndexedStack, AnimatedContainer, Text } from '@meursyphus/flitter';
+
+class AnimatedIndexedStack extends StatefulWidget {
+  createState() {
+    return new AnimatedIndexedStackState();
+  }
+}
+
+class AnimatedIndexedStackState extends State<AnimatedIndexedStack> {
+  currentPage = 0;
+  
+  nextPage = () => {
+    this.setState(() => {
+      this.currentPage = (this.currentPage + 1) % 3;
+    });
+  }
+
+  build() {
+    return Column({
+      children: [
+        Button({
+          onPressed: this.nextPage,
+          child: Text('Next Page')
+        }),
+        
+        IndexedStack({
+          index: this.currentPage,
+          children: [
+            AnimatedContainer({
+              duration: 300,
+              width: this.currentPage === 0 ? 200 : 150,
+              height: this.currentPage === 0 ? 200 : 150,
+              color: '#e74c3c',
+              child: Text('Page 1')
+            }),
+            AnimatedContainer({
+              duration: 300,
+              width: this.currentPage === 1 ? 200 : 150,
+              height: this.currentPage === 1 ? 200 : 150,
+              color: '#3498db',
+              child: Text('Page 2')
+            }),
+            AnimatedContainer({
+              duration: 300,
+              width: this.currentPage === 2 ? 200 : 150,
+              height: this.currentPage === 2 ? 200 : 150,
+              color: '#2ecc71',
+              child: Text('Page 3')
+            })
+          ]
+        })
+      ]
+    });
+  }
+}
+```
+
+
+
+### 6. Wizard-style Interface
+
+
+
+```typescript
+import { StatefulWidget, State, IndexedStack, Column, Text, Button, Row } from '@meursyphus/flitter';
+
+class WizardInterface extends StatefulWidget {
+  createState() {
+    return new WizardInterfaceState();
+  }
+}
+
+class WizardInterfaceState extends State<WizardInterface> {
+  currentStep = 0;
+  totalSteps = 3;
+
+  nextStep = () => {
+    if (this.currentStep < this.totalSteps - 1) {
+      this.setState(() => {
+        this.currentStep++;
+      });
+    }
+  }
+
+  prevStep = () => {
+    if (this.currentStep > 0) {
+      this.setState(() => {
+        this.currentStep--;
+      });
+    }
+  }
+
+  build() {
+    return Column({
+      children: [
+        // Progress indicator
+        Text(`Step ${this.currentStep + 1} / ${this.totalSteps}`),
+        
+        // Main content
+        IndexedStack({
+          index: this.currentStep,
+          children: [
+            // Step 1
+            Container({
+              padding: EdgeInsets.all(20),
+              child: Column({
+                children: [
+                  Text('Step 1: Basic Info', { style: { fontSize: 18, fontWeight: 'bold' } }),
+                  TextField({ placeholder: 'Enter your name' }),
+                  TextField({ placeholder: 'Enter your email' })
+                ]
+              })
+            }),
+            
+            // Step 2
+            Container({
+              padding: EdgeInsets.all(20),
+              child: Column({
+                children: [
+                  Text('Step 2: Additional Info', { style: { fontSize: 18, fontWeight: 'bold' } }),
+                  TextField({ placeholder: 'Enter your phone' }),
+                  TextField({ placeholder: 'Enter your address' })
+                ]
+              })
+            }),
+            
+            // Step 3
+            Container({
+              padding: EdgeInsets.all(20),
+              child: Column({
+                children: [
+                  Text('Step 3: Complete', { style: { fontSize: 18, fontWeight: 'bold' } }),
+                  Text('All information has been entered.'),
+                  Text('Would you like to complete registration?')
+                ]
+              })
+            })
+          ]
+        }),
+        
+        // Navigation buttons
+        Row({
+          children: [
+            Button({
+              onPressed: this.currentStep > 0 ? this.prevStep : null,
+              child: Text('Previous')
+            }),
+            Button({
+              onPressed: this.currentStep < this.totalSteps - 1 ? this.nextStep : null,
+              child: Text(this.currentStep === this.totalSteps - 1 ? 'Complete' : 'Next')
+            })
+          ]
+        })
+      ]
+    });
+  }
+}
+```
+
+
+
+## Important Notes
+
+1. **Memory Usage**: All child widgets are kept in memory, so be cautious with many widgets.
+
+2. **Index Range**: If the index is outside the children array range, nothing will be displayed.
+
+3. **State Preservation**: Hidden widgets maintain their state, consuming memory.
+
+4. **Performance Consideration**: Consider lazy loading when dealing with many complex widgets.
+
+5. **Clipping**: Setting `clipped: false` allows children to overflow boundaries.
+
+## Related Widgets
+
+- **Stack**: Display multiple widgets overlapped
+- **Column/Row**: Linear arrangement of widgets
+- **TabView**: Tab interface implementation
+- **AnimatedSwitcher**: Provides animations during widget transitions

@@ -1,0 +1,504 @@
+export const metadata = { title: "ClipPath", description: "A widget that clips its child using a custom path" };
+
+## Overview
+
+ClipPath is a widget that clips its child using a custom path defined by the user.
+
+It takes a clipper callback function that returns a Path object, allowing you to clip child widgets into any desired shape. Complex shapes, curves, polygons, and various other clipping shapes are possible.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/oAUebVIb-7s"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowFullScreen
+></iframe>
+
+See: [https://api.flutter.dev/flutter/widgets/ClipPath-class.html](https://api.flutter.dev/flutter/widgets/ClipPath-class.html)
+
+## When to use it?
+
+- When you want to clip images or content into custom shapes
+- When creating special design effects (waves, diagonals, star shapes, etc.)
+- When complex masking effects are needed
+- When implementing dynamic clipping effects with animations
+- When shapes that are impossible with built-in clipping widgets (ClipRect, ClipOval, ClipRRect) are needed
+
+## Basic Usage
+
+```typescript
+// Triangle clipping
+ClipPath({
+  clipper: (size) => {
+    return new Path()
+      .moveTo({ x: size.width / 2, y: 0 })
+      .lineTo({ x: 0, y: size.height })
+      .lineTo({ x: size.width, y: size.height })
+      .close();
+  },
+  child: Container({
+    width: 200,
+    height: 200,
+    color: 'blue'
+  })
+})
+
+// Circular clipping
+ClipPath({
+  clipper: (size) => {
+    const rect = Rect.fromLTWH({
+      left: 0,
+      top: 0,
+      width: size.width,
+      height: size.height
+    });
+    return new Path().addOval(rect);
+  },
+  child: Image({ src: 'profile.jpg' })
+})
+```
+
+## Props Details
+
+### clipper (required)
+
+**Value: (size: Size) => Path**
+
+A callback function that defines the clipping path. It receives the widget's size as a parameter and must return a Path object.
+
+```typescript
+// Star shape clipping
+ClipPath({
+  clipper: (size) => {
+    const path = new Path();
+    const halfWidth = size.width / 2;
+    const halfHeight = size.height / 2;
+    
+    // Draw a 5-pointed star
+    for (let i = 0; i < 5; i++) {
+      const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+      const x = halfWidth + halfWidth * 0.8 * Math.cos(angle);
+      const y = halfHeight + halfHeight * 0.8 * Math.sin(angle);
+      
+      if (i === 0) {
+        path.moveTo({ x, y });
+      } else {
+        path.lineTo({ x, y });
+      }
+    }
+    
+    return path.close();
+  },
+  child: child
+})
+```
+
+### clipped
+
+**Value: boolean** (default: **true**)
+
+Enables/disables the clipping effect.
+
+- `true`: Apply clipping
+- `false`: Disable clipping (child widget displays normally)
+
+```typescript
+ClipPath({
+  clipped: isClippingEnabled,
+  clipper: (size) => createCustomPath(size),
+  child: content
+})
+```
+
+### child
+
+**Value: Widget | undefined**
+
+The child widget to be clipped.
+
+## Understanding Path API
+
+### Main Path Methods
+
+```typescript
+const path = new Path();
+
+// Movement
+path.moveTo({ x: 10, y: 10 });           // Move to absolute position
+path.relativeMoveTo({ x: 5, y: 5 });     // Move to relative position
+
+// Lines
+path.lineTo({ x: 50, y: 50 });           // Line to absolute position
+path.relativeLineTo({ x: 20, y: 0 });    // Line to relative position
+
+// Curves
+path.quadraticBezierTo({                 // Quadratic Bezier curve
+  controlPoint: { x: 25, y: 0 },
+  endPoint: { x: 50, y: 25 }
+});
+
+path.cubicTo({                           // Cubic Bezier curve
+  startControlPoint: { x: 20, y: 0 },
+  endControlPoint: { x: 40, y: 50 },
+  endPoint: { x: 60, y: 30 }
+});
+
+// Arcs
+path.arcToPoint({
+  endPoint: { x: 100, y: 100 },
+  radius: { x: 50, y: 50 },
+  rotation: 0,
+  largeArc: false,
+  clockwise: true
+});
+
+// Shapes
+path.addRect(rect);                      // Add rectangle
+path.addOval(rect);                      // Add oval
+path.addRRect(roundedRect);              // Add rounded rectangle
+path.addPolygons(points);                // Add polygon
+
+// Close path
+path.close();
+```
+
+## Practical Examples
+
+### Example 1: Wave Header
+
+```typescript
+const WaveHeader = ({ height, color, child }) => {
+  return ClipPath({
+    clipper: (size) => {
+      const path = new Path();
+      
+      path.moveTo({ x: 0, y: 0 });
+      path.lineTo({ x: 0, y: size.height - 40 });
+      
+      // Draw wave shape
+      path.quadraticBezierTo({
+        controlPoint: { x: size.width / 4, y: size.height },
+        endPoint: { x: size.width / 2, y: size.height - 40 }
+      });
+      
+      path.quadraticBezierTo({
+        controlPoint: { x: size.width * 3 / 4, y: size.height - 80 },
+        endPoint: { x: size.width, y: size.height - 40 }
+      });
+      
+      path.lineTo({ x: size.width, y: 0 });
+      path.close();
+      
+      return path;
+    },
+    child: Container({
+      height: height,
+      decoration: BoxDecoration({
+        gradient: LinearGradient({
+          colors: [color, lightenColor(color)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter
+        })
+      }),
+      child: child
+    })
+  });
+};
+
+// Usage example
+WaveHeader({
+  height: 200,
+  color: '#2196F3',
+  child: Center({
+    child: Text('Welcome', {
+      style: TextStyle({
+        color: 'white',
+        fontSize: 32,
+        fontWeight: 'bold'
+      })
+    })
+  })
+});
+```
+
+### Example 2: Diagonal Image Gallery
+
+```typescript
+const DiagonalImageCard = ({ image, title, onTap }) => {
+  return GestureDetector({
+    onTap: onTap,
+    child: Container({
+      width: 300,
+      height: 200,
+      margin: EdgeInsets.all(16),
+      child: Stack({
+        children: [
+          // Diagonally clipped image
+          ClipPath({
+            clipper: (size) => {
+              return new Path()
+                .moveTo({ x: 0, y: 0 })
+                .lineTo({ x: size.width, y: 0 })
+                .lineTo({ x: size.width, y: size.height * 0.7 })
+                .lineTo({ x: 0, y: size.height })
+                .close();
+            },
+            child: Image({
+              src: image,
+              width: 300,
+              height: 200,
+              objectFit: 'cover'
+            })
+          }),
+          // Text area
+          Positioned({
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container({
+              height: 60,
+              padding: EdgeInsets.symmetric({ horizontal: 20 }),
+              decoration: BoxDecoration({
+                color: 'rgba(0,0,0,0.7)'
+              }),
+              child: Center({
+                child: Text(title, {
+                  style: TextStyle({
+                    color: 'white',
+                    fontSize: 18,
+                    fontWeight: 'bold'
+                  })
+                })
+              })
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### Example 3: Animated Morph Effect
+
+```typescript
+const MorphingShape = ({ progress }) => {
+  return ClipPath({
+    clipper: (size) => {
+      const path = new Path();
+      const center = { x: size.width / 2, y: size.height / 2 };
+      const radius = Math.min(size.width, size.height) / 2 - 20;
+      
+      // Morph from circle to star based on progress
+      const sides = Math.floor(3 + progress * 3); // From triangle to hexagon
+      
+      for (let i = 0; i < sides; i++) {
+        const angle = (i * 2 * Math.PI) / sides - Math.PI / 2;
+        const innerRadius = radius * (0.5 + progress * 0.5);
+        
+        // Outer points of star
+        const outerX = center.x + radius * Math.cos(angle);
+        const outerY = center.y + radius * Math.sin(angle);
+        
+        // Inner points of star
+        const innerAngle = angle + Math.PI / sides;
+        const innerX = center.x + innerRadius * Math.cos(innerAngle);
+        const innerY = center.y + innerRadius * Math.sin(innerAngle);
+        
+        if (i === 0) {
+          path.moveTo({ x: outerX, y: outerY });
+        } else {
+          path.lineTo({ x: outerX, y: outerY });
+        }
+        
+        if (progress > 0) {
+          path.lineTo({ x: innerX, y: innerY });
+        }
+      }
+      
+      return path.close();
+    },
+    child: Container({
+      width: 200,
+      height: 200,
+      decoration: BoxDecoration({
+        gradient: RadialGradient({
+          colors: ['#FF6B6B', '#4ECDC4'],
+          center: Alignment.center
+        })
+      })
+    })
+  });
+};
+```
+
+### Example 4: Message Bubble
+
+```typescript
+const MessageBubble = ({ message, isMe, time }) => {
+  return ClipPath({
+    clipper: (size) => {
+      const path = new Path();
+      const radius = 16;
+      const tailSize = 10;
+      
+      // Rounded rectangle body
+      const rect = RRect.fromLTRBR({
+        left: isMe ? 0 : tailSize,
+        top: 0,
+        right: isMe ? size.width - tailSize : size.width,
+        bottom: size.height,
+        radius: Radius.circular(radius)
+      });
+      
+      path.addRRect(rect);
+      
+      // Tail part
+      if (isMe) {
+        path.moveTo({ x: size.width - tailSize, y: size.height - 20 });
+        path.lineTo({ x: size.width, y: size.height - 15 });
+        path.lineTo({ x: size.width - tailSize, y: size.height - 10 });
+      } else {
+        path.moveTo({ x: tailSize, y: size.height - 20 });
+        path.lineTo({ x: 0, y: size.height - 15 });
+        path.lineTo({ x: tailSize, y: size.height - 10 });
+      }
+      
+      return path;
+    },
+    child: Container({
+      padding: EdgeInsets.all(12),
+      constraints: BoxConstraints({ maxWidth: 250 }),
+      decoration: BoxDecoration({
+        color: isMe ? '#007AFF' : '#E5E5EA'
+      }),
+      child: Column({
+        crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Text(message, {
+            style: TextStyle({
+              color: isMe ? 'white' : 'black',
+              fontSize: 16
+            })
+          }),
+          SizedBox({ height: 4 }),
+          Text(time, {
+            style: TextStyle({
+              color: isMe ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)',
+              fontSize: 12
+            })
+          })
+        ]
+      })
+    })
+  });
+};
+```
+
+### Example 5: Hexagonal Profile Grid
+
+```typescript
+const HexagonalProfile = ({ profiles }) => {
+  const createHexagonPath = (size: Size) => {
+    const path = new Path();
+    const radius = Math.min(size.width, size.height) / 2;
+    const center = { x: size.width / 2, y: size.height / 2 };
+    
+    for (let i = 0; i < 6; i++) {
+      const angle = (i * Math.PI) / 3 - Math.PI / 2;
+      const x = center.x + radius * Math.cos(angle);
+      const y = center.y + radius * Math.sin(angle);
+      
+      if (i === 0) {
+        path.moveTo({ x, y });
+      } else {
+        path.lineTo({ x, y });
+      }
+    }
+    
+    return path.close();
+  };
+  
+  return Wrap({
+    spacing: 10,
+    runSpacing: 10,
+    children: profiles.map((profile, index) => 
+      Stack({
+        children: [
+          ClipPath({
+            clipper: createHexagonPath,
+            child: Container({
+              width: 100,
+              height: 100,
+              child: Image({
+                src: profile.avatar,
+                objectFit: 'cover'
+              })
+            })
+          }),
+          Positioned({
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: ClipPath({
+              clipper: (size) => {
+                const path = new Path();
+                path.moveTo({ x: 0, y: size.height * 0.3 });
+                path.lineTo({ x: 0, y: size.height });
+                path.lineTo({ x: size.width, y: size.height });
+                path.lineTo({ x: size.width, y: size.height * 0.3 });
+                
+                // Bottom part of hexagon
+                const radius = size.width / 2;
+                const centerX = size.width / 2;
+                
+                path.lineTo({ 
+                  x: centerX + radius * Math.cos(Math.PI / 6), 
+                  y: size.height * 0.3 
+                });
+                path.lineTo({ 
+                  x: centerX - radius * Math.cos(Math.PI / 6), 
+                  y: size.height * 0.3 
+                });
+                
+                return path.close();
+              },
+              child: Container({
+                height: 35,
+                color: 'rgba(0,0,0,0.7)',
+                child: Center({
+                  child: Text(profile.name, {
+                    style: TextStyle({
+                      color: 'white',
+                      fontSize: 12,
+                      fontWeight: 'bold'
+                    })
+                  })
+                })
+              })
+            })
+          })
+        ]
+      })
+    )
+  });
+};
+```
+
+## Important Notes
+
+- Complex paths can affect rendering performance, so use them carefully
+- The clipper function is called whenever the widget size changes, so avoid heavy computations
+- Touch events outside the clipped area are not detected
+- Consider performance when using with animations
+- Path objects can be reused, so consider caching when necessary
+
+## Related Widgets
+
+- **ClipRect**: Clips with a rectangle
+- **ClipOval**: Clips with an oval
+- **ClipRRect**: Clips with a rounded rectangle
+- **CustomPaint**: Custom drawing
+- **ShaderMask**: Masking using shaders

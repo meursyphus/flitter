@@ -1,0 +1,517 @@
+export const metadata = { title: "AnimatedScale", description: "A widget that animates scale transitions" };
+
+## Overview
+
+AnimatedScale is a widget that automatically animates when its scale value changes, providing smooth size transition effects. This widget is inspired by Flutter's AnimatedScale widget.
+
+> Animated version of Transform.scale which automatically transitions the child's scale over a given duration whenever the given scale changes.
+
+Flutter reference: https://api.flutter.dev/flutter/widgets/AnimatedScale-class.html
+
+## When to use?
+
+- When implementing click effects for buttons or icons
+- When emphasizing elements on hover
+- When providing visual feedback during loading states or updates
+- When creating zoom in/out effects for images or cards
+- When visually expressing element importance based on interaction
+- When implementing entrance/exit effects for menus or overlays
+
+## Basic usage
+
+```typescript
+import { AnimatedScale, Container, StatefulWidget } from '@flitter/core';
+
+class ScaleExample extends StatefulWidget {
+  createState() {
+    return new ScaleExampleState();
+  }
+}
+
+class ScaleExampleState extends State<ScaleExample> {
+  scale = 1.0;
+
+  build() {
+    return Column({
+      children: [
+        ElevatedButton({
+          onPressed: () => {
+            this.setState(() => {
+              this.scale = this.scale === 1.0 ? 1.5 : 1.0;
+            });
+          },
+          child: Text("Change Scale"),
+        }),
+        AnimatedScale({
+          scale: this.scale,
+          duration: 300, // 0.3 seconds
+          child: Container({
+            width: 100,
+            height: 100,
+            color: "blue",
+            child: Center({
+              child: Icon({
+                icon: Icons.star,
+                color: "white",
+                size: 40,
+              }),
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+}
+```
+
+## Props
+
+### scale (required)
+**Value: number**
+
+Specifies the scale ratio of the widget.
+- 1.0 = Original size (100%)
+- 0.5 = Half size (50%)
+- 1.5 = 1.5 times size (150%)
+- 2.0 = Double size (200%)
+- 0.0 = Invisible
+- Negative values create horizontal/vertical flip effects
+
+### duration (required)
+**Value: number**
+
+Specifies the animation duration in milliseconds.
+
+### alignment (optional)
+**Value: Alignment** (default: **Alignment.center**)
+
+Specifies the anchor point for scaling. Available values:
+- `Alignment.center`: Scale from center
+- `Alignment.topLeft`: Scale from top-left corner
+- `Alignment.topRight`: Scale from top-right corner
+- `Alignment.bottomLeft`: Scale from bottom-left corner
+- `Alignment.bottomRight`: Scale from bottom-right corner
+- Custom alignment: `Alignment.of({ x: -0.5, y: 0.5 })`
+
+### curve (optional)
+**Value: Curve** (default: **Curves.linear**)
+
+Specifies the animation progression curve. Available curves:
+- `Curves.linear`: Constant speed
+- `Curves.easeIn`: Slow start
+- `Curves.easeOut`: Slow end
+- `Curves.easeInOut`: Slow start and end
+- `Curves.circIn`: Circular acceleration start
+- `Curves.circOut`: Circular deceleration end
+- `Curves.circInOut`: Circular acceleration/deceleration
+- `Curves.backIn`: Goes back then starts
+- `Curves.backOut`: Overshoots target then returns
+- `Curves.backInOut`: backIn + backOut
+- `Curves.anticipate`: Anticipatory motion before proceeding
+- `Curves.bounceIn`: Bounces at start
+- `Curves.bounceOut`: Bounces at end
+- `Curves.bounceInOut`: Bounces at start/end
+
+### child (optional)
+**Value: Widget | undefined**
+
+The child widget to be scaled.
+
+### key (optional)
+**Value: any**
+
+A unique identifier for the widget.
+
+## Real-world examples
+
+### Example 1: Interactive button effect
+
+```typescript
+import { AnimatedScale, Container, GestureDetector, Curves } from '@flitter/core';
+
+class InteractiveButton extends StatefulWidget {
+  createState() {
+    return new InteractiveButtonState();
+  }
+}
+
+class InteractiveButtonState extends State<InteractiveButton> {
+  isPressed = false;
+  scale = 1.0;
+
+  handleTapDown() {
+    this.setState(() => {
+      this.isPressed = true;
+      this.scale = 0.95; // Slightly smaller
+    });
+  }
+
+  handleTapUp() {
+    this.setState(() => {
+      this.isPressed = false;
+      this.scale = 1.0; // Return to original size
+    });
+  }
+
+  handleTapCancel() {
+    this.setState(() => {
+      this.isPressed = false;
+      this.scale = 1.0;
+    });
+  }
+
+  build() {
+    return GestureDetector({
+      onTapDown: () => this.handleTapDown(),
+      onTapUp: () => this.handleTapUp(),
+      onTapCancel: () => this.handleTapCancel(),
+      child: AnimatedScale({
+        scale: this.scale,
+        duration: 100,
+        curve: Curves.easeInOut,
+        child: Container({
+          width: 160,
+          height: 50,
+          decoration: BoxDecoration({
+            gradient: LinearGradient({
+              colors: this.isPressed 
+                ? ["#4A90E2", "#357ABD"]
+                : ["#5BA0F2", "#4A90E2"],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            }),
+            borderRadius: BorderRadius.circular(25),
+            boxShadow: this.isPressed ? [] : [
+              BoxShadow({
+                color: "rgba(0,0,0,0.3)",
+                blurRadius: 8,
+                offset: Offset({ x: 0, y: 4 }),
+              }),
+            ],
+          }),
+          child: Center({
+            child: Text(
+              "Pressable Button",
+              { style: TextStyle({ color: "white", fontSize: 16, fontWeight: "bold" }) }
+            ),
+          }),
+        }),
+      }),
+    });
+  }
+}
+```
+
+### Example 2: Hover effect
+
+```typescript
+import { AnimatedScale, Container, MouseRegion, Curves } from '@flitter/core';
+
+class HoverEffect extends StatefulWidget {
+  createState() {
+    return new HoverEffectState();
+  }
+}
+
+class HoverEffectState extends State<HoverEffect> {
+  items = [
+    { icon: Icons.home, label: "Home", color: "#FF6B6B" },
+    { icon: Icons.search, label: "Search", color: "#4ECDC4" },
+    { icon: Icons.favorite, label: "Favorite", color: "#45B7D1" },
+    { icon: Icons.settings, label: "Settings", color: "#96CEB4" },
+  ];
+  
+  hoveredIndex = -1;
+
+  build() {
+    return Row({
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: this.items.map((item, index) => {
+        const isHovered = this.hoveredIndex === index;
+        
+        return MouseRegion({
+          key: ValueKey(index),
+          onEnter: () => {
+            this.setState(() => {
+              this.hoveredIndex = index;
+            });
+          },
+          onExit: () => {
+            this.setState(() => {
+              this.hoveredIndex = -1;
+            });
+          },
+          child: AnimatedScale({
+            scale: isHovered ? 1.2 : 1.0,
+            duration: 200,
+            curve: Curves.easeOut,
+            child: Container({
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration({
+                color: item.color,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: isHovered ? [
+                  BoxShadow({
+                    color: "rgba(0,0,0,0.3)",
+                    blurRadius: 12,
+                    offset: Offset({ x: 0, y: 6 }),
+                  }),
+                ] : [
+                  BoxShadow({
+                    color: "rgba(0,0,0,0.1)",
+                    blurRadius: 4,
+                    offset: Offset({ x: 0, y: 2 }),
+                  }),
+                ],
+              }),
+              child: Column({
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon({
+                    icon: item.icon,
+                    color: "white",
+                    size: 32,
+                  }),
+                  SizedBox({ height: 4 }),
+                  Text(
+                    item.label,
+                    { style: TextStyle({ color: "white", fontSize: 12, fontWeight: "bold" }) }
+                  ),
+                ],
+              }),
+            }),
+          }),
+        });
+      }),
+    });
+  }
+}
+```
+
+### Example 3: Loading state indicator
+
+```typescript
+import { AnimatedScale, Container, CircularProgressIndicator, Curves } from '@flitter/core';
+
+class LoadingStateIndicator extends StatefulWidget {
+  createState() {
+    return new LoadingStateIndicatorState();
+  }
+}
+
+class LoadingStateIndicatorState extends State<LoadingStateIndicator> {
+  isLoading = false;
+  scale = 1.0;
+
+  async startLoading() {
+    this.setState(() => {
+      this.isLoading = true;
+      this.scale = 0.8;
+    });
+
+    // Pulsing effect
+    const pulseInterval = setInterval(() => {
+      if (this.isLoading) {
+        this.setState(() => {
+          this.scale = this.scale === 0.8 ? 1.0 : 0.8;
+        });
+      } else {
+        clearInterval(pulseInterval);
+      }
+    }, 600);
+
+    // Complete loading after 3 seconds
+    setTimeout(() => {
+      this.setState(() => {
+        this.isLoading = false;
+        this.scale = 1.0;
+      });
+      clearInterval(pulseInterval);
+    }, 3000);
+  }
+
+  build() {
+    return Column({
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        AnimatedScale({
+          scale: this.scale,
+          duration: 600,
+          curve: Curves.easeInOut,
+          child: Container({
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration({
+              color: this.isLoading ? "#3498db" : "#2ecc71",
+              borderRadius: BorderRadius.circular(60),
+              boxShadow: [
+                BoxShadow({
+                  color: "rgba(0,0,0,0.2)",
+                  blurRadius: 10,
+                  offset: Offset({ x: 0, y: 5 }),
+                }),
+              ],
+            }),
+            child: this.isLoading 
+              ? Center({
+                  child: CircularProgressIndicator({
+                    color: "white",
+                    strokeWidth: 3,
+                  }),
+                })
+              : Center({
+                  child: Icon({
+                    icon: Icons.check,
+                    color: "white",
+                    size: 48,
+                  }),
+                }),
+          }),
+        }),
+        SizedBox({ height: 20 }),
+        Text(
+          this.isLoading ? "Loading..." : "Complete!",
+          { style: TextStyle({ fontSize: 18, fontWeight: "bold" }) }
+        ),
+        SizedBox({ height: 20 }),
+        ElevatedButton({
+          onPressed: this.isLoading ? null : () => this.startLoading(),
+          child: Text("Start Loading"),
+        }),
+      ],
+    });
+  }
+}
+```
+
+### Example 4: Image gallery effect
+
+```typescript
+import { AnimatedScale, Container, GestureDetector, Curves } from '@flitter/core';
+
+class ImageGallery extends StatefulWidget {
+  createState() {
+    return new ImageGalleryState();
+  }
+}
+
+class ImageGalleryState extends State<ImageGallery> {
+  selectedIndex = -1;
+  images = [
+    { url: "https://picsum.photos/200/200?random=1", title: "Image 1" },
+    { url: "https://picsum.photos/200/200?random=2", title: "Image 2" },
+    { url: "https://picsum.photos/200/200?random=3", title: "Image 3" },
+    { url: "https://picsum.photos/200/200?random=4", title: "Image 4" },
+    { url: "https://picsum.photos/200/200?random=5", title: "Image 5" },
+    { url: "https://picsum.photos/200/200?random=6", title: "Image 6" },
+  ];
+
+  build() {
+    return Column({
+      children: [
+        Text(
+          "Click an image to select",
+          { style: TextStyle({ fontSize: 18, fontWeight: "bold", marginBottom: 20 }) }
+        ),
+        GridView.count({
+          crossAxisCount: 3,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          shrinkWrap: true,
+          children: this.images.map((image, index) => {
+            const isSelected = this.selectedIndex === index;
+            
+            return GestureDetector({
+              key: ValueKey(index),
+              onTap: () => {
+                this.setState(() => {
+                  this.selectedIndex = isSelected ? -1 : index;
+                });
+              },
+              child: AnimatedScale({
+                scale: isSelected ? 1.1 : 1.0,
+                duration: 300,
+                curve: Curves.easeInOut,
+                child: Container({
+                  decoration: BoxDecoration({
+                    borderRadius: BorderRadius.circular(12),
+                    border: isSelected 
+                      ? Border.all({ color: "#3498db", width: 3 })
+                      : null,
+                    boxShadow: isSelected ? [
+                      BoxShadow({
+                        color: "rgba(52, 152, 219, 0.4)",
+                        blurRadius: 15,
+                        offset: Offset({ x: 0, y: 8 }),
+                      }),
+                    ] : [
+                      BoxShadow({
+                        color: "rgba(0,0,0,0.1)",
+                        blurRadius: 5,
+                        offset: Offset({ x: 0, y: 2 }),
+                      }),
+                    ],
+                  }),
+                  child: ClipRRect({
+                    borderRadius: BorderRadius.circular(12),
+                    child: Stack({
+                      children: [
+                        Image({
+                          src: image.url,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: "cover",
+                        }),
+                        if (isSelected) Positioned({
+                          top: 8,
+                          right: 8,
+                          child: Container({
+                            padding: EdgeInsets.all(4),
+                            decoration: BoxDecoration({
+                              color: "#3498db",
+                              borderRadius: BorderRadius.circular(12),
+                            }),
+                            child: Icon({
+                              icon: Icons.check,
+                              color: "white",
+                              size: 16,
+                            }),
+                          }),
+                        }),
+                      ],
+                    }),
+                  }),
+                }),
+              }),
+            });
+          }),
+        }),
+        if (this.selectedIndex >= 0) Padding({
+          padding: EdgeInsets.only({ top: 20 }),
+          child: Text(
+            `Selected image: ${this.images[this.selectedIndex].title}`,
+            { style: TextStyle({ fontSize: 16, color: "#3498db", fontWeight: "bold" }) }
+          ),
+        }),
+      ],
+    });
+  }
+}
+```
+
+## Notes
+
+- **Scale value range**: Can range from 0.0 to infinity, but very large values may cause visual issues
+- **Layout impact**: Scale only affects visual appearance and does not influence layout
+- **Alignment importance**: The scale anchor point significantly affects the visual effect
+- **Performance considerations**: Applying scale animation to many widgets simultaneously may impact performance
+- **Negative values**: Negative scale values will flip the image
+
+## Related widgets
+
+- **Transform.scale**: Basic widget for applying scale without animation
+- **AnimatedContainer**: General-purpose widget for animating multiple transformations simultaneously
+- **ScaleTransition**: Scale animation using explicit Animation controllers
+- **AnimatedRotation**: Widget for animating rotation
+- **Transform**: Basic widget for applying various transformations (rotation, scale, position)

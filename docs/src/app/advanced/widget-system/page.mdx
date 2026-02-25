@@ -1,0 +1,479 @@
+export const metadata = {
+  title: "Widget System",
+  description: "Understand Flitter's core widget system and learn the differences between StatelessWidget and StatefulWidget",
+};
+
+# Widget System
+
+## Overview
+
+Flitter's Widget is the basic unit that composes the UI. Like Flutter, every element displayed on screen is composed of widgets. Buttons, text, layouts, and even the app itself are all widgets.
+
+## Why is it important?
+
+Understanding the widget system enables:
+
+- **Reusable Components**: Reuse widgets anywhere once created
+- **Composable Structure**: Build complex UIs by combining small widgets
+- **Clear State Management**: Distinguish state management patterns with StatelessWidget and StatefulWidget
+- **Predictable Behavior**: Systematic development through widget lifecycle
+
+## Core Concepts
+
+### Widget Types
+
+Flitter has three main widget types:
+
+1. **StatelessWidget**: Static widget without state
+2. **StatefulWidget**: Dynamic widget with state
+3. **RenderObjectWidget**: Low-level widget responsible for direct rendering
+
+### StatelessWidget
+
+A widget without state that doesn't change once created:
+
+```typescript
+import { StatelessWidget, Text, Container, EdgeInsets, Colors, type BuildContext, type Widget } from '@meursyphus/flitter';
+
+class Greeting extends StatelessWidget {
+  constructor(private props: { name: string }) {
+    super();
+  }
+
+  build(context: BuildContext): Widget {
+    return Container({
+      padding: EdgeInsets.all(16),
+      color: Colors.blue.shade100,
+      child: Text(`Hello, ${this.props.name}!`)
+    });
+  }
+}
+
+// Export as factory function
+export default function GreetingWidget(props: { name: string }): Widget {
+  return new Greeting(props);
+}
+```
+
+### StatefulWidget
+
+A widget that has state and automatically updates the UI when state changes:
+
+```typescript
+import {
+  StatefulWidget,
+  State,
+  Container,
+  Column,
+  Text,
+  GestureDetector,
+  EdgeInsets,
+  Colors,
+  TextStyle,
+  type BuildContext,
+  type Widget
+} from '@meursyphus/flitter';
+
+class Counter extends StatefulWidget {
+  createState(): State<Counter> {
+    return new CounterState();
+  }
+}
+
+class CounterState extends State<Counter> {
+  count = 0;
+
+  build(context: BuildContext): Widget {
+    return Column({
+      children: [
+        Text(`Count: ${this.count}`, {
+          style: TextStyle({ fontSize: 24 })
+        }),
+        GestureDetector({
+          onClick: () => {
+            this.setState(() => {
+              this.count++;
+            });
+          },
+          child: Container({
+            margin: EdgeInsets.only({ top: 16 }),
+            padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+            color: Colors.blue,
+            child: Text("Increment", {
+              style: TextStyle({ color: Colors.white })
+            })
+          })
+        })
+      ]
+    });
+  }
+}
+
+// Export as factory function
+export default function CounterWidget(): Widget {
+  return new Counter();
+}
+```
+
+### Widget Lifecycle
+
+#### StatefulWidget Lifecycle
+
+```typescript
+class MyWidgetState extends State<MyWidget> {
+  // 1. Called once when state object is created
+  initState(): void {
+    super.initState();
+    console.log("Widget initialized");
+    // Initialize animation controllers, stream subscriptions, etc.
+  }
+
+  // 2. When parent widget changes and this widget needs to be updated
+  didUpdateWidget(oldWidget: MyWidget): void {
+    super.didUpdateWidget(oldWidget);
+    console.log("Widget configuration changed");
+    // Update state based on props changes
+  }
+
+  // 3. Executed every time setState is called
+  build(context: BuildContext): Widget {
+    console.log("Rendering UI");
+    return Container({ /* ... */ });
+  }
+
+  // 4. When state object is removed
+  dispose(): void {
+    console.log("Widget disposed");
+    // Clean up animation controllers, stream subscriptions, etc.
+    super.dispose();
+  }
+}
+```
+
+## Practical Examples
+
+### 1. StatelessWidget with Props
+
+```typescript
+class ProductCard extends StatelessWidget {
+  constructor(private props: {
+    title: string;
+    price: number;
+    imageUrl: string;
+  }) {
+    super();
+  }
+
+  build(context: BuildContext): Widget {
+    const { title, price, imageUrl } = this.props;
+
+    return Container({
+      padding: EdgeInsets.all(16),
+      color: Colors.grey.shade900,
+      child: Column({
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image.network(imageUrl, {
+            height: 200,
+            width: double.infinity,
+            fit: BoxFit.cover
+          }),
+          SizedBox({ height: 8 }),
+          Text(title, {
+            style: TextStyle({
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white
+            })
+          }),
+          Text(`$${price.toLocaleString()}`, {
+            style: TextStyle({
+              fontSize: 16,
+              color: Colors.grey.shade400
+            })
+          })
+        ]
+      })
+    });
+  }
+}
+
+export default function ProductCardWidget(props: {
+  title: string;
+  price: number;
+  imageUrl: string;
+}): Widget {
+  return new ProductCard(props);
+}
+```
+
+### 2. StatefulWidget with Complex State
+
+```typescript
+class TodoApp extends StatefulWidget {
+  createState(): State<TodoApp> {
+    return new TodoAppState();
+  }
+}
+
+class TodoAppState extends State<TodoApp> {
+  todos: Array<{ id: number; text: string; done: boolean }> = [];
+  nextId = 1;
+  inputText = "";
+
+  addTodo(text: string): void {
+    if (text.trim() === "") return;
+
+    this.setState(() => {
+      this.todos.push({
+        id: this.nextId++,
+        text: text,
+        done: false
+      });
+      this.inputText = "";
+    });
+  }
+
+  toggleTodo(id: number): void {
+    this.setState(() => {
+      const todo = this.todos.find(t => t.id === id);
+      if (todo) {
+        todo.done = !todo.done;
+      }
+    });
+  }
+
+  deleteTodo(id: number): void {
+    this.setState(() => {
+      this.todos = this.todos.filter(t => t.id !== id);
+    });
+  }
+
+  build(context: BuildContext): Widget {
+    return Container({
+      padding: EdgeInsets.all(16),
+      child: Column({
+        children: [
+          Text("Todo List", {
+            style: TextStyle({
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white
+            })
+          }),
+          SizedBox({ height: 16 }),
+
+          // Input field
+          Container({
+            padding: EdgeInsets.all(12),
+            color: Colors.grey.shade800,
+            child: Text(this.inputText || "Enter a new todo...", {
+              style: TextStyle({ color: Colors.grey.shade400 })
+            })
+          }),
+
+          SizedBox({ height: 16 }),
+
+          // Todo list
+          ...this.todos.map(todo =>
+            Container({
+              margin: EdgeInsets.only({ bottom: 8 }),
+              padding: EdgeInsets.all(12),
+              color: todo.done ? Colors.grey.shade800 : Colors.grey.shade700,
+              child: Row({
+                children: [
+                  GestureDetector({
+                    onClick: () => this.toggleTodo(todo.id),
+                    child: Icon(
+                      todo.done ? Icons.check_box : Icons.check_box_outline_blank,
+                      { color: Colors.white }
+                    )
+                  }),
+                  SizedBox({ width: 12 }),
+                  Expanded({
+                    child: Text(todo.text, {
+                      style: TextStyle({
+                        color: Colors.white,
+                        decoration: todo.done ? TextDecoration.lineThrough : TextDecoration.none
+                      })
+                    })
+                  }),
+                  GestureDetector({
+                    onClick: () => this.deleteTodo(todo.id),
+                    child: Icon(Icons.delete, { color: Colors.red.shade400 })
+                  })
+                ]
+              })
+            })
+          )
+        ]
+      })
+    });
+  }
+}
+
+export default function TodoAppWidget(): Widget {
+  return new TodoApp();
+}
+```
+
+### 3. Lifecycle Usage Example
+
+```typescript
+class TimerWidget extends StatefulWidget {
+  constructor(private props: { duration: number }) {
+    super();
+  }
+
+  createState(): State<TimerWidget> {
+    return new TimerWidgetState();
+  }
+}
+
+class TimerWidgetState extends State<TimerWidget> {
+  timeLeft = 0;
+  timer?: NodeJS.Timeout;
+
+  initState(): void {
+    super.initState();
+    this.timeLeft = this.widget.props.duration;
+    this.startTimer();
+  }
+
+  startTimer(): void {
+    this.timer = setInterval(() => {
+      this.setState(() => {
+        if (this.timeLeft > 0) {
+          this.timeLeft--;
+        } else {
+          this.stopTimer();
+        }
+      });
+    }, 1000);
+  }
+
+  stopTimer(): void {
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = undefined;
+    }
+  }
+
+  didUpdateWidget(oldWidget: TimerWidget): void {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.props.duration !== this.widget.props.duration) {
+      this.stopTimer();
+      this.timeLeft = this.widget.props.duration;
+      this.startTimer();
+    }
+  }
+
+  dispose(): void {
+    this.stopTimer();
+    super.dispose();
+  }
+
+  build(context: BuildContext): Widget {
+    const minutes = Math.floor(this.timeLeft / 60);
+    const seconds = this.timeLeft % 60;
+
+    return Container({
+      padding: EdgeInsets.all(24),
+      color: this.timeLeft === 0 ? Colors.red.shade900 : Colors.grey.shade900,
+      child: Column({
+        children: [
+          Text("Timer", {
+            style: TextStyle({
+              fontSize: 20,
+              color: Colors.white
+            })
+          }),
+          SizedBox({ height: 16 }),
+          Text(
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`,
+            {
+              style: TextStyle({
+                fontSize: 48,
+                fontWeight: FontWeight.bold,
+                color: this.timeLeft === 0 ? Colors.red : Colors.white
+              })
+            }
+          )
+        ]
+      })
+    });
+  }
+}
+
+export default function TimerWidgetExample(props: { duration: number }): Widget {
+  return new TimerWidget(props);
+}
+```
+
+## Important Notes
+
+### 1. State Management Rules
+
+```typescript
+// Wrong - State change without setState
+this.count++;  // UI won't update!
+
+// Correct - Use setState
+this.setState(() => {
+  this.count++;
+});
+
+// Wrong - State change outside setState
+this.items.push(newItem);
+this.setState(() => {});  // Empty setState
+
+// Correct - All changes inside setState
+this.setState(() => {
+  this.items.push(newItem);
+});
+```
+
+### 2. Widget Reuse
+
+```typescript
+// Wrong - Creating widgets inside build method
+build(context: BuildContext): Widget {
+  // Creating new widget instance every time (inefficient)
+  const button = new MyButton();
+  return Container({ child: button });
+}
+
+// Correct - Properly separate widgets
+build(context: BuildContext): Widget {
+  return Container({
+    child: MyButton({ onClick: this.handleClick })
+  });
+}
+```
+
+### 3. Props vs State
+
+- **Props**: Immutable data passed from parent
+- **State**: Mutable data managed within the widget
+
+```typescript
+class MyWidget extends StatefulWidget {
+  constructor(private props: { initialCount: number }) {
+    super();
+  }
+
+  createState(): State<MyWidget> {
+    return new MyWidgetState();
+  }
+}
+
+class MyWidgetState extends State<MyWidget> {
+  // props are used only as initial values
+  count = this.widget.props.initialCount;
+
+  build(context: BuildContext): Widget {
+    // props can be read directly
+    return Text(`Initial: ${this.widget.props.initialCount}, Current: ${this.count}`);
+  }
+}
+```
