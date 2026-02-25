@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { StackedAreaChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import { cartesianToastCustom, TOAST_COLORS } from "./toastUtils";
 import {
   CustomPaint,
@@ -137,7 +137,7 @@ class AnimatedStackedAreaState extends State<AnimatedStackedArea> {
 export default function ToastStackedAreaChart() {
   return (
     <Widget
-      widget={StackedAreaChart({
+      widget={Headless.StackedAreaChart({
         data,
         custom: {
           ...cartesianToastCustom,

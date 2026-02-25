@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { BarChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import { cartesianToastCustom, TOAST_COLORS } from "./toastUtils";
 import {
   Container,
@@ -114,7 +114,7 @@ class AnimatedBarGroupState extends State<AnimatedBarGroup> {
 export default function ToastBarChart() {
   return (
     <Widget
-      widget={BarChart({
+      widget={Headless.BarChart({
         data,
         custom: {
           ...cartesianToastCustom,

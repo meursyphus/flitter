@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { HeatmapChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import {
   Text,
   Container,
@@ -90,7 +90,7 @@ class AnimatedHeatmapCellState extends State<AnimatedHeatmapCell> {
 export default function ToastHeatmapChart() {
   return (
     <Widget
-      widget={HeatmapChart({
+      widget={Headless.HeatmapChart({
         data,
         custom: {
           layout: ({ plot }: any) =>

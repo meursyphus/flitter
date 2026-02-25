@@ -22,7 +22,8 @@
     "baseUrl": "./",
     "paths": {
       "@shared/*": ["./src/shared/*"],
-      "@utils/*": ["./src/utils/*"]
+      "@utils/*": ["./src/utils/*"],
+      "@headless/*": ["./src/headless/*"]
     },
     "outDir": "./dist"
   },

@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { BubbleChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import { cartesianToastCustom, TOAST_COLORS } from "./toastUtils";
 import {
   Container,
@@ -133,7 +133,7 @@ export default function ToastBubbleChart() {
   bubbleCounter = 0;
   return (
     <Widget
-      widget={BubbleChart({
+      widget={Headless.BubbleChart({
         data,
         custom: {
           ...cartesianToastCustom,

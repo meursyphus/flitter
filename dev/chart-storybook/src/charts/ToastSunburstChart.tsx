@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { SunburstChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import {
   Text,
   Container,
@@ -103,7 +103,7 @@ class AnimatedSunburstState extends State<AnimatedSunburst> {
 export default function ToastSunburstChart() {
   return (
     <Widget
-      widget={SunburstChart({
+      widget={Headless.SunburstChart({
         data,
         custom: {
           layout: ({ sunburst }: any) =>

@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { AreaChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import { cartesianToastCustom, TOAST_COLORS } from "./toastUtils";
 import {
   CustomPaint,
@@ -113,7 +113,7 @@ class AnimatedAreaState extends State<AnimatedArea> {
 export default function ToastAreaChart() {
   return (
     <Widget
-      widget={AreaChart({
+      widget={Headless.AreaChart({
         data,
         custom: {
           ...cartesianToastCustom,

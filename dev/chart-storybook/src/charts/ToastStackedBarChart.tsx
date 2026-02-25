@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { StackedBarChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import { cartesianToastCustom, TOAST_COLORS } from "./toastUtils";
 import {
   Container,
@@ -85,7 +85,7 @@ class AnimatedStackedBarState extends State<AnimatedStackedBar> {
 export default function ToastStackedBarChart() {
   return (
     <Widget
-      widget={StackedBarChart({
+      widget={Headless.StackedBarChart({
         data,
         direction: "horizontal",
         custom: {

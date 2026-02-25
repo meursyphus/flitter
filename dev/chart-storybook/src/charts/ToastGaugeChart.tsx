@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { GaugeChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import {
   Text,
   Container,
@@ -117,7 +117,7 @@ class AnimatedValueLabelState extends State<AnimatedValueLabel> {
 export default function ToastGaugeChart() {
   return (
     <Widget
-      widget={GaugeChart({
+      widget={Headless.GaugeChart({
         data: {
           value: 72,
           min: 0,

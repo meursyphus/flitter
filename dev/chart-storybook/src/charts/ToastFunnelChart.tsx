@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { FunnelChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import {
   Text,
   TextStyle,
@@ -90,7 +90,7 @@ class AnimatedStageState extends State<AnimatedStage> {
 export default function ToastFunnelChart() {
   return (
     <Widget
-      widget={FunnelChart({
+      widget={Headless.FunnelChart({
         data,
         custom: {
           layout: ({ funnel }: any) =>

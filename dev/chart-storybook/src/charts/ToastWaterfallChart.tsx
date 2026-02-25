@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { WaterfallChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import { cartesianToastCustom } from "./toastUtils";
 import {
   Container,
@@ -92,7 +92,7 @@ class AnimatedWaterfallBarState extends State<AnimatedWaterfallBar> {
 export default function ToastWaterfallChart() {
   return (
     <Widget
-      widget={WaterfallChart({
+      widget={Headless.WaterfallChart({
         data,
         custom: {
           ...cartesianToastCustom,

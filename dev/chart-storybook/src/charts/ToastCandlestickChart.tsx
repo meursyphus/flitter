@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { CandlestickChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import { cartesianToastCustom } from "./toastUtils";
 import {
   StatefulWidget,
@@ -93,7 +93,7 @@ class AnimatedCandlestickState extends State<AnimatedCandlestick> {
 export default function ToastCandlestickChart() {
   return (
     <Widget
-      widget={CandlestickChart({
+      widget={Headless.CandlestickChart({
         data,
         custom: {
           ...cartesianToastCustom,

@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { ScatterChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import { cartesianToastCustom, TOAST_COLORS } from "./toastUtils";
 import {
   Container,
@@ -186,7 +186,7 @@ export default function ToastScatterChart() {
   scatterCounter = 0;
   return (
     <Widget
-      widget={ScatterChart({
+      widget={Headless.ScatterChart({
         data,
         custom: {
           ...cartesianToastCustom,

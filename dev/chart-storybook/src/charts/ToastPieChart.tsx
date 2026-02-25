@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { PieChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import { TOAST_COLORS } from "./toastUtils";
 import {
   Text,
@@ -82,7 +82,7 @@ class AnimatedPieState extends State<AnimatedPie> {
 export default function ToastPieChart() {
   return (
     <Widget
-      widget={PieChart({
+      widget={Headless.PieChart({
         data,
         custom: {
           layout: ({ pie }: any) =>

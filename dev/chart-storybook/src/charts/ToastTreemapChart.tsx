@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { TreemapChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import { TOAST_COLORS } from "./toastUtils";
 import {
   Text,
@@ -94,7 +94,7 @@ class AnimatedTreemapNodeState extends State<AnimatedTreemapNode> {
 export default function ToastTreemapChart() {
   return (
     <Widget
-      widget={TreemapChart({
+      widget={Headless.TreemapChart({
         data,
         custom: {
           layout: ({ treemap }: any) =>

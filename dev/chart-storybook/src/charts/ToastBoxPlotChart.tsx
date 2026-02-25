@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { BoxPlotChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import { cartesianToastCustom } from "./toastUtils";
 import {
   StatefulWidget,
@@ -110,7 +110,7 @@ class AnimatedBoxPlotGroupState extends State<AnimatedBoxPlotGroup> {
 export default function ToastBoxPlotChart() {
   return (
     <Widget
-      widget={BoxPlotChart({
+      widget={Headless.BoxPlotChart({
         data,
         custom: {
           ...cartesianToastCustom,

@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { RadarChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import {
   Text,
   Container,
@@ -162,7 +162,7 @@ function datasetCustom(_args: any, config: any) {
 export default function ToastRadarChart() {
   return (
     <Widget
-      widget={RadarChart({
+      widget={Headless.RadarChart({
         data,
         custom: {
           layout: ({ radar, legends }: any) =>

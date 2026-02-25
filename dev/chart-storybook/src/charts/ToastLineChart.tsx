@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { LineChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import { cartesianToastCustom, TOAST_COLORS } from "./toastUtils";
 import {
   CustomPaint,
@@ -77,7 +77,7 @@ class AnimatedLineClipState extends State<AnimatedLineClip> {
 export default function ToastLineChart() {
   return (
     <Widget
-      widget={LineChart({
+      widget={Headless.LineChart({
         data,
         custom: {
           ...cartesianToastCustom,

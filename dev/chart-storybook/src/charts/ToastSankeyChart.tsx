@@ -1,6 +1,6 @@
 
 import Widget from "@flitterjs/react";
-import { SankeyChart } from "flitter-chart";
+import { Headless } from "flitter-chart";
 import {
   Text,
   Container,
@@ -99,7 +99,7 @@ const data = {
 export default function ToastSankeyChart() {
   return (
     <Widget
-      widget={SankeyChart({
+      widget={Headless.SankeyChart({
         data,
         custom: {
           layout: ({ sankey }: any) =>
