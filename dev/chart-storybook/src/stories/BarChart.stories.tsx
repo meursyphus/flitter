@@ -24,7 +24,7 @@ function ToastBarChart() {
 }
 
 const meta: Meta<typeof ToastBarChart> = {
-  title: "BarChart/Toast",
+  title: "BarChart",
   component: ToastBarChart,
   parameters: {
     layout: "centered",
@@ -34,4 +34,4 @@ const meta: Meta<typeof ToastBarChart> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Toast: Story = {};

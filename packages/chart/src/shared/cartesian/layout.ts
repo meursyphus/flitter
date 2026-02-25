@@ -4,6 +4,7 @@ import {
   Container,
   CrossAxisAlignment,
   EdgeInsets,
+  Expanded,
   MainAxisAlignment,
   MainAxisSize,
   Row,
@@ -15,8 +16,6 @@ export function Layout(
 ): Widget {
   return Container({
     padding: EdgeInsets.only({
-      left: 20,
-      bottom: 60,
       right: 10,
     }),
     child: Column({
@@ -34,7 +33,7 @@ export function Layout(
             }),
           ],
         }),
-        plot,
+        Expanded({ child: plot }),
       ],
     }),
   });

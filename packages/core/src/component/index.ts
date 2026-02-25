@@ -51,6 +51,7 @@ import ZIndex from "./ZIndex";
 import Painter from "./base/BaseCustomPaint";
 import TextField from "./TextField";
 import Image from "./Image";
+import DockLayout from "./DockLayout";
 
 export {
   Painter,
@@ -106,4 +107,5 @@ export {
   ZIndex,
   TextField,
   Image,
+  DockLayout,
 };
