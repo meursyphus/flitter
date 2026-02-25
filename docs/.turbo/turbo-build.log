@@ -1,0 +1,89 @@
+
+> flitter-docs@0.0.1 build /Users/moon/work/flitter/docs
+> next build
+
+   ▲ Next.js 15.5.12
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 958ms
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/64) ...
+   Generating static pages (16/64) 
+   Generating static pages (32/64) 
+   Generating static pages (48/64) 
+ ✓ Generating static pages (64/64)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                               Size  First Load JS
+┌ ○ /                                                    164 B         105 kB
+├ ○ /_not-found                                          997 B         103 kB
+├ ○ /advanced/animation                                  276 B         102 kB
+├ ○ /advanced/custom-paint                               276 B         102 kB
+├ ○ /advanced/integrations/react                         276 B         102 kB
+├ ○ /advanced/integrations/svelte                        276 B         102 kB
+├ ○ /advanced/layout-constraints                         276 B         102 kB
+├ ○ /advanced/render-object                              276 B         102 kB
+├ ○ /advanced/state-management                           276 B         102 kB
+├ ○ /advanced/what-is-flitter                            276 B         102 kB
+├ ○ /advanced/widget-system                              276 B         102 kB
+├ ○ /advanced/widgets/align                              276 B         102 kB
+├ ○ /advanced/widgets/animated-align                     276 B         102 kB
+├ ○ /advanced/widgets/animated-container                 276 B         102 kB
+├ ○ /advanced/widgets/animated-fractionally-sized-box    276 B         102 kB
+├ ○ /advanced/widgets/animated-opacity                   276 B         102 kB
+├ ○ /advanced/widgets/animated-padding                   276 B         102 kB
+├ ○ /advanced/widgets/animated-positioned                276 B         102 kB
+├ ○ /advanced/widgets/animated-rotation                  276 B         102 kB
+├ ○ /advanced/widgets/animated-scale                     276 B         102 kB
+├ ○ /advanced/widgets/animated-slide                     276 B         102 kB
+├ ○ /advanced/widgets/aspect-ratio                       276 B         102 kB
+├ ○ /advanced/widgets/center                             276 B         102 kB
+├ ○ /advanced/widgets/clip-oval                          276 B         102 kB
+├ ○ /advanced/widgets/clip-path                          276 B         102 kB
+├ ○ /advanced/widgets/clip-rect                          276 B         102 kB
+├ ○ /advanced/widgets/clip-rrect                         276 B         102 kB
+├ ○ /advanced/widgets/colored-box                        276 B         102 kB
+├ ○ /advanced/widgets/column                             276 B         102 kB
+├ ○ /advanced/widgets/constrained-box                    276 B         102 kB
+├ ○ /advanced/widgets/constraints-transform-box          276 B         102 kB
+├ ○ /advanced/widgets/container                          276 B         102 kB
+├ ○ /advanced/widgets/custom-paint                       276 B         102 kB
+├ ○ /advanced/widgets/decorated-box                      276 B         102 kB
+├ ○ /advanced/widgets/draggable                          276 B         102 kB
+├ ○ /advanced/widgets/expanded                           276 B         102 kB
+├ ○ /advanced/widgets/flex                               276 B         102 kB
+├ ○ /advanced/widgets/flexible                           276 B         102 kB
+├ ○ /advanced/widgets/fractional-translation             276 B         102 kB
+├ ○ /advanced/widgets/fractionally-sized-box             276 B         102 kB
+├ ○ /advanced/widgets/gesture-detector                   276 B         102 kB
+├ ○ /advanced/widgets/image                              276 B         102 kB
+├ ○ /advanced/widgets/indexed-stack                      276 B         102 kB
+├ ○ /advanced/widgets/intrinsic-height                   276 B         102 kB
+├ ○ /advanced/widgets/intrinsic-width                    276 B         102 kB
+├ ○ /advanced/widgets/limited-box                        276 B         102 kB
+├ ○ /advanced/widgets/opacity                            276 B         102 kB
+├ ○ /advanced/widgets/overflow-box                       276 B         102 kB
+├ ○ /advanced/widgets/padding                            276 B         102 kB
+├ ○ /advanced/widgets/positioned                         276 B         102 kB
+├ ○ /advanced/widgets/rich-text                          276 B         102 kB
+├ ○ /advanced/widgets/row                                276 B         102 kB
+├ ○ /advanced/widgets/sized-box                          276 B         102 kB
+├ ○ /advanced/widgets/spacer                             276 B         102 kB
+├ ○ /advanced/widgets/stack                              276 B         102 kB
+├ ○ /advanced/widgets/text                               276 B         102 kB
+├ ○ /advanced/widgets/tooltip                            276 B         102 kB
+├ ○ /advanced/widgets/transform                          276 B         102 kB
+├ ○ /advanced/widgets/unconstrained-box                  276 B         102 kB
+├ ○ /advanced/widgets/z-index                            276 B         102 kB
+├ ○ /chart/bar-chart                                     276 B         102 kB
+└ ○ /chart/getting-started                               276 B         102 kB
++ First Load JS shared by all                           102 kB
+  ├ chunks/9821-205b3b2384a48c11.js                    45.5 kB
+  ├ chunks/d32a7886-5566cf33315ec918.js                54.2 kB
+  └ other shared chunks (total)                        1.87 kB
+
+
+○  (Static)  prerendered as static content
+

@@ -1,0 +1,60 @@
+
+> flitter-core@0.0.1 build /Users/moon/work/flitter/packages/core
+> tsup && npm run copy-package && npm run copy-readme && cd dist && npm run fix-package
+
+CLI Building entry: src/index.ts
+CLI Using tsconfig: tsconfig.json
+CLI tsup v8.5.1
+CLI Using tsup config: /Users/moon/work/flitter/packages/core/tsup.config.ts
+CLI Target: es6
+CLI Cleaning output folder
+IIFE Build start
+CJS Build start
+ESM Build start
+IIFE dist/index.global.js 588.32 KB
+IIFE ⚡️ Build success in 32ms
+ESM dist/index.js 541.44 KB
+ESM ⚡️ Build success in 130ms
+CJS dist/index.cjs 543.05 KB
+CJS ⚡️ Build success in 130ms
+DTS Build start
+DTS ⚡️ Build success in 1187ms
+DTS dist/index.d.ts  139.46 KB
+DTS dist/index.d.cts 139.46 KB
+npm warn Unknown env config "npm-globalconfig". This will stop working in the next major version of npm.
+npm warn Unknown env config "verify-deps-before-run". This will stop working in the next major version of npm.
+npm warn Unknown env config "_jsr-registry". This will stop working in the next major version of npm.
+
+> flitter-core@0.0.1 copy-package
+> cp package.json dist/package.json
+
+npm warn Unknown env config "npm-globalconfig". This will stop working in the next major version of npm.
+npm warn Unknown env config "verify-deps-before-run". This will stop working in the next major version of npm.
+npm warn Unknown env config "_jsr-registry". This will stop working in the next major version of npm.
+
+> flitter-core@0.0.1 copy-readme
+> cp README.md dist/README.md
+
+npm warn Unknown env config "npm-globalconfig". This will stop working in the next major version of npm.
+npm warn Unknown env config "verify-deps-before-run". This will stop working in the next major version of npm.
+npm warn Unknown env config "_jsr-registry". This will stop working in the next major version of npm.
+
+> flitter-core@0.0.1 fix-package
+> npm pkg set main=./index.cjs module=./index.js exports.import=./index.js exports.default=./index.js  types=./index.d.ts
+
+npm warn Unknown env config "npm-globalconfig". This will stop working in the next major version of npm.
+npm warn Unknown env config "verify-deps-before-run". This will stop working in the next major version of npm.
+npm warn Unknown env config "_jsr-registry". This will stop working in the next major version of npm.
+
+> flitter-core@0.0.1 postbuild /Users/moon/work/flitter/packages/core
+> echo "Build complete. Please run: 
+
+cd dist
+npm publish
+"
+
+Build complete. Please run: 
+
+cd dist
+npm publish
+
