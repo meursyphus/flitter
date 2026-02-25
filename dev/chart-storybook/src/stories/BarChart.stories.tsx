@@ -7,6 +7,7 @@ function ToastBarChart() {
     <Widget
       widget={BarChart({
         style: "toast",
+        title: "Population by City",
         data: {
           labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
           datasets: [

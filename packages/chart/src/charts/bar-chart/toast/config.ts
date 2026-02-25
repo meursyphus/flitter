@@ -15,6 +15,10 @@ export type ToastBarChartConfig = {
     visible: boolean;
     color: string;
     fontSize: number;
+    fontFamily?: string;
+    fontWeight?: string;
+    position: "top" | "bottom";
+    alignment: "start" | "center" | "end";
   };
 
   /** Legend settings */
@@ -68,7 +72,7 @@ export type ToastBarChartConfig = {
 export const defaultToastConfig: ToastBarChartConfig = {
   colors: TOAST_COLORS,
   font: { family: "Noto Sans JP", size: 11 },
-  title: { visible: true, color: "#999999", fontSize: 13 },
+  title: { visible: true, color: "#000000", fontSize: 16, fontWeight: "bold", position: "top", alignment: "center" },
   legend: { visible: true, position: "bottom" },
   axis: {
     color: "#BBBBBB",

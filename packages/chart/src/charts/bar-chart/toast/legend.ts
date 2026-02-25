@@ -17,19 +17,10 @@ import type { ToastBarChartConfig } from "./config";
 
 function Checkbox({ color }: { color: string }): Widget {
   return Container({
-    width: 18,
-    height: 18,
+    width: 12,
+    height: 12,
     decoration: new BoxDecoration({
-      border: Border.all({ color: "#CCCCCC", width: 1 }),
-    }),
-    child: Center({
-      child: Container({
-        width: 10,
-        height: 10,
-        decoration: new BoxDecoration({
-          color,
-        }),
-      }),
+      color,
     }),
   });
 }

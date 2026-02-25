@@ -9,8 +9,9 @@ export function toastTitle(
   const { title: titleConfig, font } = context.config;
   return Text(name, {
     style: new TextStyle({
-      fontFamily: font.family,
+      fontFamily: titleConfig.fontFamily ?? font.family,
       fontSize: titleConfig.fontSize,
+      fontWeight: titleConfig.fontWeight,
       color: titleConfig.color,
     }),
   });
