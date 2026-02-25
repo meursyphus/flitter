@@ -1,5 +1,5 @@
 import type { CartesianCustom } from "./types";
-import { DockLayout, Stack, type Widget } from "flitter-core";
+import { Align, Alignment, DockLayout, Stack, type Widget } from "flitter-core";
 
 export function Plot({
   series,
@@ -11,7 +11,10 @@ export function Plot({
   return DockLayout({
     left: yAxis,
     bottom: xAxis,
-    corner: axisCorner,
+    corner: Align({
+      alignment: Alignment.topRight,
+      child: axisCorner,
+    }),
     fill: Stack({ children: [grid, series] }),
   });
 }

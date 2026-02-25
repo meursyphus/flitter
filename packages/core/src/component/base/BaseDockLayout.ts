@@ -36,17 +36,27 @@ export class RenderDockLayout extends MultiChildRenderObject {
     const corner = this.children[DockSlot.corner];
     const fill = this.children[DockSlot.fill];
 
-    // 1. Layout left: tight height, loose width
+    // 1. Layout bottom first (loose) to determine bottomHeight
+    bottom.layout(
+      new Constraints({
+        maxWidth: this.size.width,
+        maxHeight: this.size.height,
+      }),
+    );
+    const bottomHeight = bottom.size.height;
+
+    // 2. Layout left with correct height (total - bottomHeight)
+    const leftHeight = this.size.height - bottomHeight;
     left.layout(
       new Constraints({
-        minHeight: this.size.height,
-        maxHeight: this.size.height,
+        minHeight: leftHeight,
+        maxHeight: leftHeight,
         maxWidth: this.size.width,
       }),
     );
     const leftWidth = left.size.width;
 
-    // 2. Layout bottom: tight width (total - left.width), loose height
+    // 3. Re-layout bottom with correct width (total - leftWidth)
     const bottomWidth = this.size.width - leftWidth;
     bottom.layout(
       new Constraints({
@@ -55,19 +65,18 @@ export class RenderDockLayout extends MultiChildRenderObject {
         maxHeight: this.size.height,
       }),
     );
-    const bottomHeight = bottom.size.height;
 
-    // 3. Layout corner: tight(left.width, bottom.height)
+    // 4. Layout corner: tight(left.width, bottom.height)
     corner.layout(Constraints.tight(new Size({ width: leftWidth, height: bottomHeight })));
 
-    // 4. Layout fill: tight(total - left.width, total - bottom.height)
+    // 5. Layout fill: tight(total - left.width, total - bottom.height)
     const fillWidth = this.size.width - leftWidth;
     const fillHeight = this.size.height - bottomHeight;
     fill.layout(
       Constraints.tight(new Size({ width: fillWidth, height: fillHeight })),
     );
 
-    // 5. Position children
+    // 6. Position children
     left.offset = new Offset({ x: 0, y: 0 });
     fill.offset = new Offset({ x: leftWidth, y: 0 });
     corner.offset = new Offset({ x: 0, y: this.size.height - bottomHeight });
