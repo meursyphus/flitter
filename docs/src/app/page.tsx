@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import ScrollReveal from "@/components/ScrollReveal";
 
@@ -6,7 +8,7 @@ const sections = [
     title: "Chart",
     description:
       "One chart library, every style. Fully customizable and headless — cover any chart style you need with a single dependency.",
-    href: "/chart/getting-started",
+    href: "/chart",
     demoId: "chart-demo",
     icon: (
       <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -60,7 +62,7 @@ export default function Home() {
             style={{ animationDelay: "0.4s" }}
           >
             <Link
-              href="/chart/getting-started"
+              href="/chart"
               className="inline-flex items-center gap-2 rounded-full bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-neutral-700 hover:shadow-lg hover:shadow-neutral-900/10"
             >
               Get Started

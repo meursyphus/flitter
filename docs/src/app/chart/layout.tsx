@@ -6,5 +6,9 @@ export default function ChartLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <DocsLayout sections={chartNav}>{children}</DocsLayout>;
+  return (
+    <DocsLayout sections={chartNav.sections} home={chartNav.home} noProse>
+      {children}
+    </DocsLayout>
+  );
 }

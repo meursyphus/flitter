@@ -1,0 +1,312 @@
+export const metadata = {
+  title: "Integration",
+  description: "Use Flitter Chart with React, Svelte, or vanilla JavaScript.",
+};
+
+# Integration
+
+Flitter Chart works with React, Svelte, and vanilla JavaScript. The chart itself is framework-agnostic — you create a widget, then mount it using the integration layer for your framework.
+
+## React
+
+### Install
+
+```bash
+npm install @flitterjs/chart @flitterjs/react
+```
+
+### Usage
+
+```tsx
+import Widget from "@flitterjs/react";
+import { BarChart } from "@flitterjs/chart";
+
+function MyChart() {
+  const chart = BarChart({
+    style: "toast",
+    title: "Monthly Revenue",
+    data: {
+      labels: ["Jan", "Feb", "Mar", "Apr"],
+      datasets: [
+        { legend: "Revenue", values: [40, 65, 50, 80] },
+      ],
+    },
+  });
+
+  return <Widget widget={chart} width="100%" height="400px" />;
+}
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `widget` | `Widget` | — | The Flitter widget to render |
+| `width` | `string` | `"100%"` | Container width (CSS value) |
+| `height` | `string` | `"300px"` | Container height (CSS value) |
+| `renderer` | `"svg" \| "canvas"` | `"svg"` | Rendering backend |
+
+### How It Works
+
+The `Widget` component creates a container `div` with the specified dimensions and mounts an SVG or Canvas element inside it. It uses `AppRunner` from `flitter-core` to drive the render loop and automatically handles resizing.
+
+<details>
+<summary className="cursor-pointer text-sm font-medium text-neutral-600 hover:text-neutral-900">View React Widget source</summary>
+
+```tsx
+import { useEffect, useRef } from "react";
+import { type Widget, Alignment, AppRunner, Container, Text } from "flitter-core";
+
+type WidgetComponentProps = {
+  widget?: Widget;
+  width?: string;
+  height?: string;
+  renderer?: "canvas" | "svg";
+};
+
+function WidgetComponent({
+  width = "100%",
+  height = "300px",
+  renderer = "svg",
+  widget = Container({
+    width: Infinity,
+    height: Infinity,
+    alignment: Alignment.center,
+    child: Text("Hello World"),
+  }),
+}: WidgetComponentProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<SVGSVGElement | HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    const runner = new AppRunner({
+      view: ref.current!,
+      window: window,
+      document: document,
+    });
+    runner.runApp(widget);
+    runner.onMount({ resizeTarget: containerRef.current! });
+
+    return () => { runner.dispose(); };
+  }, [widget, renderer]);
+
+  return (
+    <div style={{ width, height }} ref={containerRef}>
+      {renderer === "canvas" ? (
+        <canvas style={{ width: "100%", height: "100%" }} ref={ref} />
+      ) : (
+        <svg style={{ width: "100%", height: "100%" }} ref={ref} />
+      )}
+    </div>
+  );
+}
+
+export default WidgetComponent;
+```
+
+</details>
+
+---
+
+## Svelte
+
+### Install
+
+```bash
+npm install @flitterjs/chart @flitterjs/svelte
+```
+
+### Usage
+
+```svelte
+<script>
+  import Widget from "@flitterjs/svelte";
+  import { BarChart } from "@flitterjs/chart";
+
+  const chart = BarChart({
+    style: "toast",
+    title: "Monthly Revenue",
+    data: {
+      labels: ["Jan", "Feb", "Mar", "Apr"],
+      datasets: [
+        { legend: "Revenue", values: [40, 65, 50, 80] },
+      ],
+    },
+  });
+</script>
+
+<Widget widget={chart} width="100%" height="400px" />
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `widget` | `Widget` | — | The Flitter widget to render |
+| `width` | `string` | `"100%"` | Container width (CSS value) |
+| `height` | `string` | `"300px"` | Container height (CSS value) |
+| `renderer` | `"svg" \| "canvas"` | `"svg"` | Rendering backend |
+| `ssr` | `{ size: { width, height } }?` | `undefined` | Enable server-side rendering with fixed dimensions |
+
+### Server-Side Rendering
+
+The Svelte integration supports SSR out of the box using `linkedom`:
+
+```svelte
+<Widget
+  widget={chart}
+  width="600px"
+  height="400px"
+  ssr={{ size: { width: 600, height: 400 } }}
+/>
+```
+
+<details>
+<summary className="cursor-pointer text-sm font-medium text-neutral-600 hover:text-neutral-900">View Svelte Widget source</summary>
+
+```svelte
+<script lang="ts">
+  import { onMount } from "svelte";
+  import { parseHTML } from "linkedom";
+  import { type Widget, Alignment, AppRunner, Container, Text } from "flitter-core";
+  const browser = typeof window !== "undefined";
+
+  export let renderer: "svg" | "canvas" = "svg";
+  export let widget: Widget = Container({
+    width: Infinity, height: Infinity,
+    alignment: Alignment.center,
+    child: Text("implement widget here"),
+  });
+  export let ssr: { size: { width: number; height: number } } | undefined = undefined;
+  export let width = "100%";
+  export let height = "300px";
+
+  let renderEl: SVGSVGElement | HTMLCanvasElement;
+  let containerEl: HTMLElement;
+  let runner: AppRunner;
+  let innerHTML: string = "";
+
+  if (!browser) {
+    const { document: _document, window: _window } = parseHTML("<svg></svg>");
+    const _svg = _document.querySelector("svg")!;
+    runner = new AppRunner({ view: _svg, window: _window, document: _document, ssrSize: ssr?.size });
+    innerHTML = runner.runApp(widget);
+  }
+
+  $: { [mounted, widget, runner]; rerender(); }
+
+  let mounted = false;
+  onMount(() => {
+    mounted = true;
+    runner = new AppRunner({ view: renderEl, window, document, ssrSize: ssr?.size });
+    renderEl.innerHTML = "";
+    runner.onMount({ resizeTarget: containerEl });
+    return () => { runner.dispose(); };
+  });
+
+  const rerender = () => {
+    if (!browser || !mounted || !runner) return;
+    runner.runApp(widget);
+  };
+</script>
+
+<div bind:this={containerEl} style="--width: {width}; --height: {height}">
+  {#if renderer === "canvas" && browser}
+    <canvas class="flitter" bind:this={renderEl} />
+  {:else}
+    <svg class="flitter" bind:this={renderEl}>{@html innerHTML}</svg>
+  {/if}
+</div>
+
+<style>
+  div { width: var(--width); height: var(--height); }
+  .flitter { width: 100%; height: 100%; }
+</style>
+```
+
+</details>
+
+---
+
+## Vanilla JavaScript
+
+No framework? Use `AppRunner` directly.
+
+### Install
+
+```bash
+npm install @flitterjs/chart flitter-core
+```
+
+### Usage
+
+```html
+<div id="chart-container" style="width: 600px; height: 400px;">
+  <svg id="chart" style="width: 100%; height: 100%;"></svg>
+</div>
+```
+
+```typescript
+import { AppRunner } from "flitter-core";
+import { BarChart } from "@flitterjs/chart";
+
+const chart = BarChart({
+  style: "toast",
+  data: {
+    labels: ["Jan", "Feb", "Mar", "Apr"],
+    datasets: [
+      { legend: "Revenue", values: [40, 65, 50, 80] },
+    ],
+  },
+});
+
+const svg = document.getElementById("chart") as SVGSVGElement;
+const container = document.getElementById("chart-container") as HTMLElement;
+
+const runner = new AppRunner({
+  view: svg,
+  window: window,
+  document: document,
+});
+
+runner.runApp(chart);
+runner.onMount({ resizeTarget: container });
+
+// Clean up when done
+// runner.dispose();
+```
+
+### Canvas Renderer
+
+Switch to Canvas by using a `<canvas>` element instead:
+
+```html
+<div id="chart-container" style="width: 600px; height: 400px;">
+  <canvas id="chart" style="width: 100%; height: 100%;"></canvas>
+</div>
+```
+
+```typescript
+const canvas = document.getElementById("chart") as HTMLCanvasElement;
+const runner = new AppRunner({
+  view: canvas,
+  window: window,
+  document: document,
+});
+runner.runApp(chart);
+runner.onMount({ resizeTarget: container });
+```
+
+---
+
+## SVG vs Canvas
+
+| Feature | SVG | Canvas |
+|---------|-----|--------|
+| DOM integration | Full DOM nodes, inspectable | Single element |
+| Performance (few elements) | Good | Good |
+| Performance (many elements) | Degrades | Better |
+| Text rendering | Native | Rendered |
+| SSR support | Yes (Svelte) | No |
+
+**Recommendation**: Use SVG (default) unless you have performance issues with large datasets, then switch to Canvas.

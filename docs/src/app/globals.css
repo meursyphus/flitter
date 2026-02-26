@@ -139,3 +139,53 @@ figure[data-rehype-pretty-code-figure] [data-line] {
   background-image: radial-gradient(circle, #d4d4d4 0.75px, transparent 0.75px);
   background-size: 24px 24px;
 }
+
+/* ── Infinite carousel ── */
+@keyframes carousel-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-1 * var(--carousel-total-width)));
+  }
+}
+
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  /* Fade edges */
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 80px,
+    black calc(100% - 80px),
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 80px,
+    black calc(100% - 80px),
+    transparent
+  );
+}
+
+.carousel-track {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  /* 18 items * (480px + 24px gap) per set; we scroll one set */
+  --carousel-total-width: calc(18 * (480px + 24px));
+  animation: carousel-scroll 90s linear infinite;
+}
+
+.carousel-track:hover {
+  animation-play-state: paused;
+}
+
+.carousel-item {
+  flex-shrink: 0;
+  width: 480px;
+  display: block;
+  text-decoration: none;
+}

@@ -4,7 +4,9 @@ import rehypePrettyCode from "rehype-pretty-code";
 import remarkGfm from "remark-gfm";
 
 const nextConfig: NextConfig = {
+  output: "export",
   pageExtensions: ["ts", "tsx", "md", "mdx"],
+  trailingSlash: true,
 };
 
 const withMDX = createMDX({

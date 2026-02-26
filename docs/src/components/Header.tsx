@@ -51,7 +51,7 @@ export default function Header() {
             </div>
             <div className="px-3 py-4 space-y-1">
               <Link
-                href="/chart/getting-started"
+                href="/chart"
                 onClick={() => setMenuOpen(false)}
                 className={clsx(
                   "block rounded-md px-3 py-2 text-sm transition-colors",
@@ -59,6 +59,16 @@ export default function Header() {
                 )}
               >
                 Chart
+              </Link>
+              <Link
+                href="/integration"
+                onClick={() => setMenuOpen(false)}
+                className={clsx(
+                  "block rounded-md px-3 py-2 text-sm transition-colors",
+                  pathname.startsWith("/integration") ? "bg-neutral-100 font-medium text-neutral-900" : "text-neutral-600 hover:bg-neutral-50"
+                )}
+              >
+                Integration
               </Link>
               <Link
                 href="/advanced/what-is-flitter"

@@ -3,6 +3,8 @@ export type NavItem = {
   href: string;
   status?: "available" | "coming" | "new" | "beta" | "alpha";
   children?: NavItem[];
+  /** Visual hint: "style" items are grouped as siblings, others render normally */
+  kind?: "style";
 };
 
 export type NavSection = {
@@ -10,21 +12,53 @@ export type NavSection = {
   items: NavItem[];
 };
 
+export type Navigation = {
+  home?: NavItem;
+  sections: NavSection[];
+};
+
 // Global sidebar for landing — library catalog
 export const libraryNav: NavItem[] = [
-  { title: "Chart", href: "/chart/getting-started", status: "available" },
+  { title: "Chart", href: "/chart", status: "available" },
   { title: "Diagram", href: "#", status: "coming" },
 ];
 
-export const chartNav: NavSection[] = [
+export const chartNav: Navigation = {
+  home: { title: "Chart", href: "/chart" },
+  sections: [
   {
-    title: "Chart",
+    title: "Charts",
     items: [
-      { title: "Getting Started", href: "/chart/getting-started" },
-      { title: "BarChart", href: "/chart/bar-chart" },
+      {
+        title: "Bar Chart",
+        href: "/chart/bar-chart",
+        children: [
+          { title: "Toast", href: "/chart/bar-chart/toast", kind: "style" },
+          { title: "High", href: "/chart/bar-chart/high", kind: "style", status: "coming" },
+          { title: "Advanced", href: "/chart/bar-chart/advanced" },
+        ],
+      },
+      { title: "Line Chart", href: "/chart/line-chart", status: "coming" },
+      { title: "Area Chart", href: "/chart/area-chart", status: "coming" },
+      { title: "Pie Chart", href: "/chart/pie-chart", status: "coming" },
+      { title: "Scatter Chart", href: "/chart/scatter-chart", status: "coming" },
+      { title: "Radar Chart", href: "/chart/radar-chart", status: "coming" },
+      { title: "Bubble Chart", href: "/chart/bubble-chart", status: "coming" },
+      { title: "Heatmap Chart", href: "/chart/heatmap-chart", status: "coming" },
+      { title: "Candlestick Chart", href: "/chart/candlestick-chart", status: "coming" },
+      { title: "Box Plot Chart", href: "/chart/box-plot-chart", status: "coming" },
+      { title: "Waterfall Chart", href: "/chart/waterfall-chart", status: "coming" },
+      { title: "Funnel Chart", href: "/chart/funnel-chart", status: "coming" },
+      { title: "Gauge Chart", href: "/chart/gauge-chart", status: "coming" },
+      { title: "Treemap Chart", href: "/chart/treemap-chart", status: "coming" },
+      { title: "Sunburst Chart", href: "/chart/sunburst-chart", status: "coming" },
+      { title: "Sankey Chart", href: "/chart/sankey-chart", status: "coming" },
+      { title: "Stacked Bar Chart", href: "/chart/stacked-bar-chart", status: "coming" },
+      { title: "Stacked Area Chart", href: "/chart/stacked-area-chart", status: "coming" },
     ],
   },
-];
+  ],
+};
 
 export const advancedNav: NavSection[] = [
   {

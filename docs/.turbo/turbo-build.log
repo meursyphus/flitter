@@ -5,19 +5,21 @@
    ▲ Next.js 15.5.12
 
    Creating an optimized production build ...
- ✓ Compiled successfully in 958ms
+ ✓ Compiled successfully in 7.3s
    Linting and checking validity of types ...
    Collecting page data ...
-   Generating static pages (0/64) ...
-   Generating static pages (16/64) 
-   Generating static pages (32/64) 
-   Generating static pages (48/64) 
- ✓ Generating static pages (64/64)
+   Generating static pages (0/85) ...
+   Generating static pages (21/85) 
+   Generating static pages (42/85) 
+   Generating static pages (63/85) 
+ ✓ Generating static pages (85/85)
    Finalizing page optimization ...
    Collecting build traces ...
+   Exporting (0/2) ...
+ ✓ Exporting (2/2)
 
 Route (app)                                               Size  First Load JS
-┌ ○ /                                                    164 B         105 kB
+┌ ○ /                                                    488 B         106 kB
 ├ ○ /_not-found                                          997 B         103 kB
 ├ ○ /advanced/animation                                  276 B         102 kB
 ├ ○ /advanced/custom-paint                               276 B         102 kB
@@ -77,13 +79,19 @@ Route (app)                                               Size  First Load JS
 ├ ○ /advanced/widgets/transform                          276 B         102 kB
 ├ ○ /advanced/widgets/unconstrained-box                  276 B         102 kB
 ├ ○ /advanced/widgets/z-index                            276 B         102 kB
-├ ○ /chart/bar-chart                                     276 B         102 kB
-└ ○ /chart/getting-started                               276 B         102 kB
+├ ○ /chart                                               164 B         105 kB
+├ ● /chart/[...slug]                                     164 B         105 kB
+├   ├ /chart/bar-chart
+├   ├ /chart/bar-chart/toast
+├   ├ /chart/bar-chart/high
+├   └ [+18 more paths]
+└ ○ /integration                                         276 B         102 kB
 + First Load JS shared by all                           102 kB
-  ├ chunks/9821-205b3b2384a48c11.js                    45.5 kB
+  ├ chunks/9821-73e9dc33bc906033.js                    45.6 kB
   ├ chunks/d32a7886-5566cf33315ec918.js                54.2 kB
   └ other shared chunks (total)                        1.87 kB
 
 
 ○  (Static)  prerendered as static content
+●  (SSG)     prerendered as static HTML (uses generateStaticParams)
 

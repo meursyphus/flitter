@@ -19,7 +19,7 @@ export default function GlobalSidebar() {
 
         <div className="space-y-1">
           <Link
-            href="/chart/getting-started"
+            href="/chart"
             className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] font-medium text-neutral-900 transition-colors hover:bg-neutral-50"
           >
             Chart
@@ -27,6 +27,20 @@ export default function GlobalSidebar() {
           <span className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] text-neutral-300 cursor-default">
             Diagram
           </span>
+        </div>
+
+        <div className="mt-6 border-t border-neutral-100 pt-5">
+          <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-neutral-400">
+            Guide
+          </p>
+          <div className="space-y-1">
+            <Link
+              href="/integration"
+              className="flex items-center gap-2 rounded-md px-2 py-1.5 text-[13px] text-neutral-500 transition-colors hover:bg-neutral-50 hover:text-neutral-900"
+            >
+              Integration
+            </Link>
+          </div>
         </div>
 
         <div className="mt-6 border-t border-neutral-100 pt-5">

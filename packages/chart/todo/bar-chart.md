@@ -35,3 +35,4 @@
 
 #### 결론: ChangeNotifierProvider + 컨트롤러 패턴
 
+- tick의 step은 레이아웃 constraint에 따라 달라져야 한다

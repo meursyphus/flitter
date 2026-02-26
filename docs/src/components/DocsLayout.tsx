@@ -3,13 +3,17 @@
 import { useState, useCallback, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Sidebar from "./Sidebar";
-import type { NavSection } from "@/lib/navigation";
+import type { NavItem, NavSection } from "@/lib/navigation";
 
 export default function DocsLayout({
   sections,
+  home,
+  noProse = false,
   children,
 }: {
   sections: NavSection[];
+  home?: NavItem;
+  noProse?: boolean;
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -25,7 +29,7 @@ export default function DocsLayout({
     <div className="flex min-h-[calc(100vh-3.5rem)]">
       {/* Desktop sidebar */}
       <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-52 shrink-0 border-r border-neutral-100 bg-white md:block">
-        <Sidebar sections={sections} />
+        <Sidebar sections={sections} home={home} />
       </aside>
 
       {/* Mobile sidebar overlay */}
@@ -45,7 +49,7 @@ export default function DocsLayout({
                 </svg>
               </button>
             </div>
-            <Sidebar sections={sections} onLinkClick={closeSidebar} />
+            <Sidebar sections={sections} home={home} onLinkClick={closeSidebar} />
           </aside>
         </div>
       )}
@@ -65,7 +69,7 @@ export default function DocsLayout({
             Menu
           </button>
         </div>
-        <article className="prose prose-neutral prose-sm mx-auto max-w-3xl prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-code:rounded prose-code:bg-neutral-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-[13px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-pre:rounded-lg prose-pre:text-sm prose-a:text-neutral-900 prose-a:no-underline hover:prose-a:underline">
+        <article className={noProse ? "mx-auto max-w-3xl" : "prose prose-neutral prose-sm mx-auto max-w-3xl prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-code:rounded prose-code:bg-neutral-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-[13px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-pre:rounded-lg prose-pre:text-sm prose-a:text-neutral-900 prose-a:no-underline hover:prose-a:underline"}>
           {children}
         </article>
       </main>
