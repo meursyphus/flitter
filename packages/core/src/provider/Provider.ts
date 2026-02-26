@@ -74,7 +74,7 @@ class ProviderElement extends Element {
 
   protected override performRebuild(): void {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.child = this.updateChild(this.child, this.child.widget)!;
+    this.child = this.updateChild(this.child, this.widget.child)!;
   }
 
   constructor(widget: Provider<unknown, unknown>) {
