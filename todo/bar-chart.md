@@ -31,67 +31,199 @@
 
 ## 노트
 
-### 상태 관리 설계 (레전드 필터 + 스케일 재계산)
+### [선결] Provider 자식 전파 버그
 
-#### 현재 구조의 한계
+#### 문제
 
-- headless `_BarChart.build()`에서 스케일 한 번 계산 → Provider로 내려줌
-- Provider는 정적 lookup (`Provider.of`). 값 변경해도 자동 리빌드 없음
-- 레전드는 순수 표시용. 필터링 로직/상태 없음
-
-#### 결론: 내부 상태는 headless가 아닌 스타일 레이어(Toast/High)에서 각자 관리
-
-이유:
-- UX가 스타일마다 다름 (Toast: 부드러운 트랜지션, High: 즉시 반영 등)
-- headless가 상태 가지면 스타일 레이어 자유도 줄어듦
-- headless는 순수 로직(getScale 등) + 레이아웃 골격만 제공
-
-#### 방법: StatefulWidget 래퍼 + 클로저 기반 콜백
-
-Toast가 headless를 감싸는 StatefulWidget을 두고, custom 렌더러가 클로저로 setState를 캡처:
+`ProviderElement.performRebuild()` 가 새 위젯의 child 대신 기존 child의 widget을 넘김:
 
 ```typescript
-// Toast 레이어
-class _ToastBarChart extends StatefulWidget { ... }
+// packages/core/src/provider/Provider.ts:77
+// 현재 (버그):
+this.child = this.updateChild(this.child, this.child.widget)!;
+//                                        ^^^^^^^^^^^^^^^^^ 기존 자식의 옛 위젯 → no-op
 
-class _ToastBarChartState extends State<_ToastBarChart> {
-  filteredLegends = new Set<string>();
+// 수정:
+this.child = this.updateChild(this.child, this.widget.child)!;
+//                                        ^^^^^^^^^^^^^^^^^ 새 Provider 위젯의 child
+```
+
+#### 왜 문제인가
+
+ComponentElement.performRebuild() 는 `this.build()` 결과(새 위젯)를 updateChild에 넘기는 게 정상.
+그런데 ProviderElement은 `this.child.widget` (기존 자식이 이미 가진 위젯)을 넘기니까
+부모가 리빌드해도 Provider 아래 트리가 절대 갱신 안 됨.
+
+```
+부모 setState → build() → 새 Provider({ value: 새값, child: new Chart() })
+  → ProviderElement.update() → performRebuild()
+  → updateChild(기존ChartElement, 기존ChartElement.widget)  // 같은 인스턴스 → no-op
+  → Chart 이하 리빌드 안 됨 💀
+```
+
+**이래서 ChangeNotifierProvider든 StatefulWidget 래퍼든 Provider 통과 시 자식이 안 바뀜.**
+현재 차트가 초기 렌더만 되고 리액티브가 안 되는 근본 원인.
+
+#### 수정 범위
+
+1줄 변경. `this.child.widget` → `this.widget.child`. Flutter의 ProxyElement과 동일하게 됨.
+이 수정이 들어가야 아래 설계가 전부 동작함.
+
+---
+
+### 상태 관리 설계 (레전드 필터 + 스케일 재계산)
+
+#### 결론: ChangeNotifierProvider + 컨트롤러 패턴
+
+headless가 컨트롤러(ChangeNotifier)를 소유하고, 스타일 레이어는 커스텀 렌더러로 비주얼만 담당.
+Flutter의 ScrollController/TabController 패턴과 동일.
+
+#### 1. headless: BarChartController (ChangeNotifier 서브클래스)
+
+```typescript
+class BarChartController extends ChangeNotifier {
+  #data: BarChartData;
+  #getScale: (data: BarChartData) => BarChartScale;
+  #filteredLegends = new Set<string>();
+
+  constructor(data: BarChartData, getScale: GetScaleFn) {
+    super();
+    this.#data = data;
+    this.#getScale = getScale;
+  }
+
+  // 파생 데이터 — build()에서 읽기만
+  get filteredData(): BarChartData {
+    return {
+      labels: this.#data.labels,
+      datasets: this.#data.datasets.filter(d => !this.#filteredLegends.has(d.legend))
+    };
+  }
+
+  get scale(): BarChartScale {
+    return this.#getScale(this.filteredData);
+  }
+
+  get allLegends(): string[] {
+    return this.#data.datasets.map(d => d.legend);
+  }
+
+  isFiltered(name: string): boolean {
+    return this.#filteredLegends.has(name);
+  }
+
+  toggleLegend(name: string) {
+    this.#filteredLegends.has(name)
+      ? this.#filteredLegends.delete(name)
+      : this.#filteredLegends.add(name);
+    this.notifyListeners();  // → setState → 전체 차트 리빌드
+  }
+}
+```
+
+#### 2. headless: _BarChart → StatefulWidget으로 변경
+
+```typescript
+class _BarChart extends StatefulWidget {
+  createState() { return new _BarChartState(); }
+}
+
+class _BarChartState extends State<_BarChart> {
+  controller!: BarChartController;
+
+  initState() {
+    this.controller = new BarChartController(this.widget.data, this.widget.getScale);
+    this.controller.addListener(() => this.setState());
+  }
+
+  didUpdateWidget(oldWidget: _BarChart) {
+    // 외부에서 data가 바뀌면 컨트롤러 갱신
+    if (oldWidget.data !== this.widget.data) {
+      this.controller.updateData(this.widget.data);
+    }
+  }
+
+  dispose() {
+    // controller cleanup if needed
+    super.dispose();
+  }
 
   build(context: BuildContext): Widget {
-    const { data, ...rest } = this.widget;
-
-    // 1) 필터된 데이터
-    const filteredData = {
-      ...data,
-      datasets: data.datasets.filter(d => !this.filteredLegends.has(d.legend))
-    };
-
-    // 2) 필터 기준으로 스케일 재계산 (매 build마다)
-    const scale = getScale({ datasets: filteredData.datasets });
-
-    // 3) 레전드 렌더러 — 클로저로 this.setState 캡처
-    const legendRenderer = ({ name, index }, ctx) => {
-      const isFiltered = this.filteredLegends.has(name);
-      return GestureDetector({
-        onClick: () => {
-          this.setState(() => {
-            isFiltered
-              ? this.filteredLegends.delete(name)
-              : this.filteredLegends.add(name);
-          });
-        },
-        child: toastLegendVisual({ name, index }, ctx, isFiltered)
-      });
-    };
-
-    // 4) headless에 필터된 데이터 + 재계산된 스케일 전달
-    return HeadlessBarChart({
-      data: filteredData,
-      scale,                     // ← getScale prop으로 오버라이드
-      custom: { ...toastCustom, legend: legendRenderer },
-      ...rest,
+    return BarChartConfigProvider({
+      value: {
+        custom: this.widget.custom,
+        data: this.controller.filteredData,   // 필터된 데이터
+        scale: this.controller.scale,         // 재계산된 스케일
+        title: this.widget.title,
+        direction: this.widget.direction,
+        config: this.widget.userConfig,
+        controller: this.controller,          // 컨트롤러 노출
+      },
+      child: new Chart()
     });
   }
+}
+```
+
+#### 3. headless: Legend에 GestureDetector + isFiltered 추가
+
+```typescript
+// chart.ts — Legend 클래스 변경
+class Legend extends StatelessWidget {
+  #name: string;
+  #index: number;
+
+  build(context: BuildContext): Widget {
+    const config = BarChartConfigProvider.of(context);
+    const { custom, controller } = config;
+    return GestureDetector({
+      onClick: () => controller.toggleLegend(this.#name),
+      child: custom.legend(
+        { name: this.#name, index: this.#index, isFiltered: controller.isFiltered(this.#name) },
+        config
+      )
+    });
+  }
+}
+```
+
+headless가 클릭 동작을 처리 → 커스텀 렌더러는 비주얼만 제공.
+
+#### 4. 커스텀 렌더러 시그니처 변경
+
+```typescript
+// types.ts
+legend: CustomArgs<{ name: string; index: number; isFiltered: boolean }, TConfig>;
+
+// BarChartContext에 controller 추가
+type BarChartContext<TConfig = {}> = {
+  // ... 기존 필드 ...
+  controller: BarChartController;
+};
+```
+
+#### 5. Toast 스타일 레이어 (변경 최소)
+
+```typescript
+// Toast는 커스텀 렌더러만 제공. 상태 관리 코드 없음.
+const toastCustom = {
+  legend: ({ name, index, isFiltered }, ctx) => {
+    return Container({
+      opacity: isFiltered ? 0.3 : 1.0,
+      child: Row({
+        children: [
+          Container({ width: 12, height: 12, color: TOAST_COLORS[index] }),
+          Text(name, { style: new TextStyle({ fontSize: 12 }) })
+        ]
+      })
+    });
+  },
+  // ... 다른 커스텀 렌더러
+};
+
+// Toast 바 차트 — 그냥 headless 호출. StatefulWidget 래퍼 불필요.
+export default function ToastBarChart(props) {
+  return HeadlessBarChart({ ...props, custom: toastCustom });
 }
 ```
 
@@ -99,46 +231,35 @@ class _ToastBarChartState extends State<_ToastBarChart> {
 
 ```
 레전드 클릭
-  → setState({ filteredLegends 토글 })
-  → build() 재실행
-  → filteredData 재계산
-  → getScale(filteredData) → 새 스케일
-  → HeadlessBarChart에 새 data + scale 전달
-  → Provider 값 갱신 → 하위 위젯 전부 리빌드
-  → AnimatedBarGroup이 이전 ratio → 새 ratio 트랜지션
+  → headless Legend의 GestureDetector onClick
+  → controller.toggleLegend("매출")
+  → notifyListeners()
+  → _BarChartState.setState()     ← addListener에서 등록됨
+  → _BarChartState.build() 재실행
+  → controller.filteredData → 필터된 데이터
+  → controller.scale → 재계산된 스케일
+  → Provider({ value: 새 context }) → [Provider 버그 수정 후] 자식 트리 리빌드
+  → Legend가 isFiltered=true → Toast 렌더러가 opacity 0.3 적용
+  → Series가 새 data로 bar ratio 재계산 → 트랜지션 애니메이션
 ```
 
-#### headless 수정 필요?
+#### headless 수정 항목 정리
 
-거의 없음. 현재 headless는 이미:
-- `getScale` 외부 주입 가능 (prop)
-- `custom` 렌더러 오버라이드 가능
-- `data`는 외부에서 받음
+| 파일 | 변경 |
+|------|------|
+| `Provider.ts` (core) | `performRebuild` 1줄 수정 — 선결 조건 |
+| `index.ts` | StatelessWidget → StatefulWidget, controller 생성 |
+| `chart.ts` | Legend에 GestureDetector + isFiltered 전달 |
+| `types.ts` | legend args에 `isFiltered` 추가, context에 `controller` 추가 |
+| `controller.ts` (신규) | BarChartController 클래스 |
+| `provider.ts` | BarChartContext 타입만 변경 |
 
-유일하게 확인할 것: headless `_BarChart`가 `scale` prop을 직접 받을 수 있는지.
-현재는 `getScale(data)` 호출 결과를 쓰는데, 외부에서 계산된 scale을 바로 넘기는 경로가 있으면 OK.
-없으면 headless에 `scale` prop 추가 or `getScale`에 filteredData를 넘기면 됨.
+#### 다른 차트에 적용
 
-#### 대안: ChangeNotifierProvider (더 복잡한 차트용)
+이 패턴은 **Cartesian 계열** (bar, line, area) 공통:
+- `CartesianChartController extends ChangeNotifier` — 공통 필터 로직
+- `BarChartController extends CartesianChartController` — bar 전용 로직
+- headless가 controller 소유, 스타일은 비주얼만 제공
+- 모든 차트에서 동일한 legend 필터링 UX 기본 제공
 
-```typescript
-class BarChartStateNotifier extends ChangeNotifier {
-  filteredLegends = new Set<string>();
-
-  toggleLegend(name: string) {
-    this.filteredLegends.has(name)
-      ? this.filteredLegends.delete(name)
-      : this.filteredLegends.add(name);
-    this.notifyListeners(); // → ChangeNotifierProvider가 자동 setState
-  }
-}
-```
-
-장점: 여러 위젯에서 동일 상태 접근 가능 (Provider.of로)
-단점: 오버엔지니어링 우려. bar chart 수준에서는 StatefulWidget + 클로저로 충분.
-향후 복잡한 차트(sankey 노드 드래그 등)에서 고려.
-
-#### ReactiveChangeNotifier (참고)
-
-Flitter에 Proxy 기반 자동 반응형도 있음. 속성 변경만으로 notifyListeners 자동 호출.
-편하지만 암시적이라 디버깅 어려울 수 있음. 명시적 setState 패턴 우선.
+비 Cartesian (pie, sankey 등)도 같은 컨트롤러 패턴으로 확장 가능.
