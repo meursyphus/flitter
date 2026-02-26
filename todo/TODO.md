@@ -32,26 +32,28 @@
 
 > 상세 → `todo/{chart-name}.md`
 
-| 차트 | Headless | Toast (pkg) | Toast (story) | High (pkg) | High (story) | 예제 |
-|------|----------|-------------|---------------|------------|--------------|------|
-| bar-chart | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| line-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| area-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| pie-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| scatter-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| radar-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| bubble-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| heatmap-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| candlestick-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| box-plot-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| waterfall-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| funnel-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| gauge-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| treemap-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| sunburst-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| sankey-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| stacked-bar-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| stacked-area-chart | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| 차트 | 컨트랙트 | Headless | Toast (pkg) | Toast (story) | High (pkg) | High (story) | 예제 |
+|------|----------|----------|-------------|---------------|------------|--------------|------|
+| bar-chart | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| line-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| area-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| pie-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| scatter-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| radar-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| bubble-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| heatmap-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| candlestick-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| box-plot-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| waterfall-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| funnel-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| gauge-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| treemap-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| sunburst-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| sankey-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| stacked-bar-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| stacked-area-chart | 🔸 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+
+> 컨트랙트: ✅ 확정 / 🔸 유추 (검토 필요) / ❌ 미작성
 
 > legacy 참고: dev/chart-storybook/src/charts/ 에 Toast 구현체 18개 있음
 
