@@ -36,3 +36,9 @@
 #### 결론: ChangeNotifierProvider + 컨트롤러 패턴
 
 - tick의 step은 레이아웃 constraint에 따라 달라져야 한다
+- headless에 상태 관리 인프라 (ChangeNotifierProvider + 컨트롤러), toast/high는 표현만
+  - hiddenSeries, visibleData, scale 재계산 → headless (데이터 로직)
+  - 트랜지션 duration/curve, AnimatedFractionallySizedBox 등 → toast/high (표현 로직)
+- 바 높이 트랜지션: FractionallySizedBox → AnimatedFractionallySizedBox 교체로 해결 가능
+- LayoutBuilder 필요: constraint 기반 tick step 동적 결정용 (flitter core에 미구현 → 새로 만들어야 함)
+- Flutter 참고: AnimatedSize (render object 레벨 자동 감지) 도 있지만 당장은 implicit animation으로 충분

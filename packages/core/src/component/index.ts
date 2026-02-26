@@ -52,6 +52,7 @@ import Painter from "./base/BaseCustomPaint";
 import TextField from "./TextField";
 import Image from "./Image";
 import DockLayout from "./DockLayout";
+import LayoutBuilder from "./LayoutBuilder";
 
 export {
   Painter,
@@ -108,4 +109,5 @@ export {
   TextField,
   Image,
   DockLayout,
+  LayoutBuilder,
 };
