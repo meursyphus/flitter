@@ -1,4 +1,5 @@
 import type { Widget } from 'flitter-core';
+import type { BarChartController } from './controller';
 
 type CustomArgs<T = undefined, TConfig = {}> = (args: T, context: BarChartContext<TConfig>) => Widget;
 
@@ -45,6 +46,7 @@ export type BarChartContext<TConfig = {}> = {
 	title: string;
 	direction: BarChartDirection;
 	config: TConfig;
+	controller: BarChartController;
 };
 
 // Keep backward compat alias

@@ -6,6 +6,7 @@ export { default as ScatterChart } from "./scatter-chart";
 export { default as HeatmapChart } from "./heatmap-chart";
 export { default as TreemapChart } from "./treemap-chart";
 export * from "./bar-chart/types";
+export { BarChartController } from "./bar-chart/controller";
 export * from "./line-chart/types";
 export * from "./bubble-chart/types";
 export * from "./area-chart/types";
