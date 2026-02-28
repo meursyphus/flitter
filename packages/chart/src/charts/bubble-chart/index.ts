@@ -1,12 +1,22 @@
 import type { Widget } from "flitter-core";
-import { bubbleChartStyles, type BubbleChartStyleMap } from "./plugin";
-import type { BubbleChartCustom, BubbleChartData, BubbleChartScale } from "@headless/bubble-chart/types";
+import { HeadlessBubbleChart } from "./headless";
+import type {
+  BubbleChartCustom,
+  BubbleChartData,
+  GetScaleFn,
+  GetScaleOptionsFn,
+} from "./headless";
+import {
+  bubbleChartStyleConfigs,
+  type BubbleChartStyleMap,
+} from "./plugin";
 
 export default function BubbleChart<S extends keyof BubbleChartStyleMap>({
   style,
   config,
   data,
   custom,
+  getScaleOptions,
   ...rest
 }: {
   style: S;
@@ -14,8 +24,15 @@ export default function BubbleChart<S extends keyof BubbleChartStyleMap>({
   data: BubbleChartData;
   custom?: Partial<BubbleChartCustom<BubbleChartStyleMap[S]>>;
   title?: string;
-  getScale?: (data: BubbleChartData) => BubbleChartScale;
+  getScale?: GetScaleFn;
+  getScaleOptions?: GetScaleOptionsFn;
 }): Widget {
-  const factory = bubbleChartStyles[style];
-  return factory({ data, config, custom, ...rest } as any);
+  const sc = bubbleChartStyleConfigs[style];
+  return HeadlessBubbleChart({
+    data,
+    config: sc.createConfig(config),
+    custom: { ...sc.custom, ...custom },
+    getScaleOptions: getScaleOptions ?? sc.getScaleOptions,
+    ...rest,
+  });
 }

@@ -1,12 +1,14 @@
 import type { Widget } from "flitter-core";
-import { areaChartStyles, type AreaChartStyleMap } from "./plugin";
-import type { LineChartCustom, LineChartData } from "@headless/line-chart/types";
+import { HeadlessLineChart } from "./headless";
+import type { LineChartCustom, LineChartData, GetScaleFn, GetScaleOptionsFn } from "./headless";
+import { areaChartStyleConfigs, type AreaChartStyleMap } from "./plugin";
 
 export default function AreaChart<S extends keyof AreaChartStyleMap>({
   style,
   config,
   data,
   custom,
+  getScaleOptions,
   ...rest
 }: {
   style: S;
@@ -14,7 +16,15 @@ export default function AreaChart<S extends keyof AreaChartStyleMap>({
   data: LineChartData;
   custom?: Partial<LineChartCustom<AreaChartStyleMap[S]>>;
   title?: string;
+  getScale?: GetScaleFn;
+  getScaleOptions?: GetScaleOptionsFn;
 }): Widget {
-  const factory = areaChartStyles[style];
-  return factory({ data, config, custom, ...rest } as any);
+  const sc = areaChartStyleConfigs[style];
+  return HeadlessLineChart({
+    data,
+    config: sc.createConfig(config),
+    custom: { ...sc.custom, ...custom },
+    getScaleOptions: getScaleOptions ?? sc.getScaleOptions,
+    ...rest,
+  });
 }

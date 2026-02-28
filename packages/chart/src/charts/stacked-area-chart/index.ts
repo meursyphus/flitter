@@ -1,13 +1,14 @@
 import type { Widget } from "flitter-core";
-import {
-  stackedAreaChartStyles,
-  type StackedAreaChartStyleMap,
-} from "./plugin";
+import { HeadlessStackedAreaChart } from "./headless";
 import type {
   StackedAreaChartCustom,
   StackedAreaChartData,
   StackedAreaChartScale,
-} from "@headless/stacked-area-chart/types";
+} from "./headless";
+import {
+  stackedAreaChartStyleConfigs,
+  type StackedAreaChartStyleMap,
+} from "./plugin";
 
 export default function StackedAreaChart<
   S extends keyof StackedAreaChartStyleMap,
@@ -25,6 +26,11 @@ export default function StackedAreaChart<
   title?: string;
   getScale?: (data: StackedAreaChartData) => StackedAreaChartScale;
 }): Widget {
-  const factory = stackedAreaChartStyles[style];
-  return factory({ data, config, custom, ...rest } as any);
+  const sc = stackedAreaChartStyleConfigs[style];
+  const resolvedConfig = sc.createConfig(config);
+  return HeadlessStackedAreaChart({
+    data,
+    custom: { ...sc.custom(resolvedConfig), ...custom },
+    ...rest,
+  });
 }

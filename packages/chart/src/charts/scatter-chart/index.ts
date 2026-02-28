@@ -1,12 +1,14 @@
 import type { Widget } from "flitter-core";
-import { scatterChartStyles, type ScatterChartStyleMap } from "./plugin";
-import type { ScatterChartCustom, ScatterChartData, ScatterChartScale } from "@headless/scatter-chart/types";
+import { HeadlessScatterChart } from "./headless";
+import type { ScatterChartCustom, ScatterChartData, GetScaleFn, GetScaleOptionsFn } from "./headless";
+import { scatterChartStyleConfigs, type ScatterChartStyleMap } from "./plugin";
 
 export default function ScatterChart<S extends keyof ScatterChartStyleMap>({
   style,
   config,
   data,
   custom,
+  getScaleOptions,
   ...rest
 }: {
   style: S;
@@ -14,8 +16,15 @@ export default function ScatterChart<S extends keyof ScatterChartStyleMap>({
   data: ScatterChartData;
   custom?: Partial<ScatterChartCustom<ScatterChartStyleMap[S]>>;
   title?: string;
-  getScale?: (data: ScatterChartData) => ScatterChartScale;
+  getScale?: GetScaleFn;
+  getScaleOptions?: GetScaleOptionsFn;
 }): Widget {
-  const factory = scatterChartStyles[style];
-  return factory({ data, config, custom, ...rest } as any);
+  const sc = scatterChartStyleConfigs[style];
+  return HeadlessScatterChart({
+    data,
+    config: sc.createConfig(config),
+    custom: { ...sc.custom, ...custom },
+    getScaleOptions: getScaleOptions ?? sc.getScaleOptions,
+    ...rest,
+  });
 }

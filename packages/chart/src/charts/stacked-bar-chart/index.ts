@@ -23,8 +23,8 @@ export default function StackedBarChart<S extends keyof StackedBarChartStyleMap>
   const sc = stackedBarChartStyleConfigs[style];
   return HeadlessStackedBarChart({
     data,
-    config: { ...sc.defaults, ...config },
-    custom: { ...sc.custom, ...custom } as any,
+    config: sc.createConfig(config),
+    custom: { ...sc.custom, ...custom },
     getScaleOptions: getScaleOptions ?? sc.getScaleOptions,
     ...rest,
   });
