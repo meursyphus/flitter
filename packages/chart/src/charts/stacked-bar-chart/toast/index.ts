@@ -18,7 +18,9 @@ import { toastYAxisLine } from "../../bar-chart/toast/parts/y-axis-line";
 import { toastGridXLine } from "../../bar-chart/toast/parts/grid-x-line";
 import { toastGridYLine } from "../../bar-chart/toast/parts/grid-y-line";
 import { toastXAxis } from "../../bar-chart/toast/parts/x-axis";
+import { toastXAxisBox } from "../../bar-chart/toast/parts/x-axis-box";
 import { toastYAxis } from "../../bar-chart/toast/parts/y-axis";
+import { toastYAxisBox } from "../../bar-chart/toast/parts/y-axis-box";
 import { toastTitle } from "../../bar-chart/toast/parts/title";
 import { toastAxisCorner } from "../../bar-chart/toast/parts/axis-corner";
 
@@ -41,7 +43,9 @@ const toastCustom: Partial<BarChartCustom<ToastStackedBarChartConfig>> = {
   gridXLine: toastGridXLine as any,
   gridYLine: toastGridYLine as any,
   xAxis: toastXAxis as any,
+  xAxisBox: toastXAxisBox as any,
   yAxis: toastYAxis as any,
+  yAxisBox: toastYAxisBox as any,
 };
 
 import { toastScaleOptions } from "@shared/toast";

@@ -92,7 +92,10 @@ class XAxis extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const ctx = BubbleChartProvider.of(context);
     const { scale } = ctx;
-    if (scale == null) return ctx.custom.xAxis({ labels: [], tick: new XAxisTick(), line: new XAxisLine() }, ctx);
+    if (scale == null) {
+      const axis = ctx.custom.xAxis({ labels: [], tick: new XAxisTick(), line: new XAxisLine() }, ctx);
+      return ctx.custom.xAxisBox({ child: axis }, ctx);
+    }
 
     const xSteps = (scale.x.max - scale.x.min) / scale.x.step;
     const labels = [];
@@ -100,7 +103,7 @@ class XAxis extends StatelessWidget {
       labels.push(scale.x.min + i * scale.x.step);
     }
 
-    return ctx.custom.xAxis(
+    const axis = ctx.custom.xAxis(
       {
         labels: labels.map((name, index) => new XAxisLabel({ name: `${name}`, index })),
         tick: new XAxisTick(),
@@ -108,6 +111,7 @@ class XAxis extends StatelessWidget {
       },
       ctx,
     );
+    return ctx.custom.xAxisBox({ child: axis }, ctx);
   }
 }
 
@@ -115,7 +119,10 @@ class YAxis extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const ctx = BubbleChartProvider.of(context);
     const { scale } = ctx;
-    if (scale == null) return ctx.custom.yAxis({ labels: [], tick: new YAxisTick(), line: new YAxisLine() }, ctx);
+    if (scale == null) {
+      const axis = ctx.custom.yAxis({ labels: [], tick: new YAxisTick(), line: new YAxisLine() }, ctx);
+      return ctx.custom.yAxisBox({ child: axis }, ctx);
+    }
 
     const ySteps = (scale.y.max - scale.y.min) / scale.y.step;
     const labels = [];
@@ -123,7 +130,7 @@ class YAxis extends StatelessWidget {
       labels.push(scale.y.min + i * scale.y.step);
     }
 
-    return ctx.custom.yAxis(
+    const axis = ctx.custom.yAxis(
       {
         labels: labels.map((name, index) => new YAxisLabel({ name: `${name}`, index })),
         tick: new YAxisTick(),
@@ -131,6 +138,7 @@ class YAxis extends StatelessWidget {
       },
       ctx,
     );
+    return ctx.custom.yAxisBox({ child: axis }, ctx);
   }
 }
 

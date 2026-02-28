@@ -86,7 +86,7 @@ class XAxis extends Axis {
   override build(context: BuildContext): Widget {
     const ctx = LineChartProvider.of(context);
     const labels = this.getCategoryLabels(context);
-    return ctx.custom.xAxis(
+    const axis = ctx.custom.xAxis(
       {
         labels: labels.map(
           (label, index) => new XAxisLabel({ index, name: label }),
@@ -96,6 +96,7 @@ class XAxis extends Axis {
       },
       ctx,
     );
+    return ctx.custom.xAxisBox({ child: axis }, ctx);
   }
 }
 
@@ -109,7 +110,7 @@ class XAxisLine extends StatelessWidget {
 class YAxis extends Axis {
   override build(context: BuildContext): Widget {
     const ctx = LineChartProvider.of(context);
-    return ctx.custom.yAxis(
+    const axis = ctx.custom.yAxis(
       {
         labels: this.getValueLabels(context).map(
           (label, index) => new YAxisLabel({ index, name: label }),
@@ -119,6 +120,7 @@ class YAxis extends Axis {
       },
       ctx,
     );
+    return ctx.custom.yAxisBox({ child: axis }, ctx);
   }
 }
 

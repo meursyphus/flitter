@@ -96,7 +96,7 @@ class XAxis extends Axis {
   override build(context: BuildContext): Widget {
     const ctx = BarChartProvider.of(context);
     const labels = this.#getLabels(context);
-    return ctx.custom.xAxis(
+    const axis = ctx.custom.xAxis(
       {
         labels: labels.map(
           (label, index) => new XAxisLabel({ index, name: label }),
@@ -106,6 +106,7 @@ class XAxis extends Axis {
       },
       ctx,
     );
+    return ctx.custom.xAxisBox({ child: axis }, ctx);
   }
 }
 
@@ -128,7 +129,7 @@ class YAxis extends Axis {
 
   override build(context: BuildContext): Widget {
     const ctx = BarChartProvider.of(context);
-    return ctx.custom.yAxis(
+    const axis = ctx.custom.yAxis(
       {
         labels: this.#getLabels(context).map(
           (label, index) => new YAxisLabel({ index, name: label }),
@@ -138,6 +139,7 @@ class YAxis extends Axis {
       },
       ctx,
     );
+    return ctx.custom.yAxisBox({ child: axis }, ctx);
   }
 }
 

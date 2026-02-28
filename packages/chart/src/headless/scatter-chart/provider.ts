@@ -34,10 +34,12 @@ export function ScatterChartProvider({
   const defaults = {
     scatter: Default.Scatter,
     xAxis: Default.XAxis,
+    xAxisBox: Default.XAxisBox,
     xAxisLabel: Default.XAxisLabel,
     xAxisTick: Default.XAxisTick,
     xAxisLine: Default.XAxisLine,
     yAxis: Default.YAxis,
+    yAxisBox: Default.YAxisBox,
     yAxisLabel: Default.YAxisLabel,
     yAxisTick: Default.YAxisTick,
     yAxisLine: Default.YAxisLine,

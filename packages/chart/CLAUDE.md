@@ -1,45 +1,57 @@
-# Chart Package Architecture
+# @flitter/chart
 
-## Chart 폴더 구조 원칙
+A styled chart library built on top of Flitter. It provides ready-to-use chart widgets (BarChart, LineChart, etc.) with pluggable visual styles (currently: "toast"). Each chart is a thin styling layer over a headless chart component that handles layout, scales, and data binding.
 
-각 차트는 `src/charts/{chart-name}/` 아래에 동일한 구조를 따른다.
+## Architecture
 
-### 폴더 구조
+Three layers, from bottom to top:
+
+```
+src/headless/       Headless chart components (layout, scales, controllers)
+                    Pure logic, no visual styling. Each chart defines a
+                    Custom type with slots for every visual part.
+
+src/shared/toast/   Shared "toast" style parts (axis, grid, legend, title, layout)
+                    Reusable across all chart types.
+
+src/charts/         Styled chart entry points. Each chart folder wires a
+                    headless component to one or more style implementations.
+```
+
+## Chart Folder Structure
+
+Every chart in `src/charts/{chart-name}/` follows this layout:
 
 ```
 src/charts/{chart-name}/
-├── index.ts          # 공개 진입점 (factory function)
-├── plugin.ts         # 스타일 레지스트리 (StyleConfig 패턴)
-├── headless.ts       # headless 컴포넌트/타입 re-export
-└── {style-name}/     # 스타일별 구현 폴더 (예: toast/)
-    ├── config.ts     # 스타일 전용 config 타입 + 기본값
-    ├── index.ts      # custom 객체, getScaleOptions 등 export
-    └── parts/        # 개별 시각 요소 렌더러
-        ├── layout.ts
-        ├── {data-part}.ts   # 차트 고유 데이터 파트 (bar, line, scatter 등)
-        ├── legend.ts
-        ├── title.ts
-        ├── x-axis.ts, y-axis.ts
-        ├── x-axis-label.ts, y-axis-label.ts
-        ├── x-axis-tick.ts, y-axis-tick.ts
-        ├── x-axis-line.ts, y-axis-line.ts
-        ├── grid-x-line.ts, grid-y-line.ts
-        └── axis-corner.ts
+  index.ts          Public entry point (factory function widget)
+  plugin.ts         Style registry (StyleConfig + StyleMap types)
+  headless.ts       Re-exports from @headless/{chart-name}
+  toast/            "toast" style implementation
+    config.ts       Style-specific config type + defaults
+    index.ts        Exports toastStyleConfig (single StyleConfig object)
+    parts/          Individual visual part renderers
+      layout.ts
+      {data-part}.ts   Chart-specific data part (bar, line, area, bubble, etc.)
+      legend.ts, title.ts, axis-corner.ts
+      x-axis.ts, y-axis.ts
+      x-axis-label.ts, y-axis-label.ts
+      x-axis-tick.ts, y-axis-tick.ts
+      x-axis-line.ts, y-axis-line.ts
+      grid-x-line.ts, grid-y-line.ts
 ```
 
-### 각 파일의 역할
+### File Roles
 
-#### `index.ts` - 공개 진입점
-- `style` 파라미터로 스타일 선택
-- `plugin.ts`에서 해당 스타일의 `StyleConfig`를 가져옴
-- `HeadlessXxxChart`에 resolved config와 custom을 전달
+**`index.ts`** - Public widget factory. Resolves style config from the registry, merges user overrides, and delegates to the headless component.
 
 ```typescript
-export default function XxxChart<S extends keyof XxxChartStyleMap>({
+// From bar-chart/index.ts
+export default function BarChart<S extends keyof BarChartStyleMap>({
   style, config, data, custom, getScaleOptions, ...rest
 }: { ... }): Widget {
-  const sc = xxxChartStyleConfigs[style];
-  return HeadlessXxxChart({
+  const sc = barChartStyleConfigs[style];
+  return HeadlessBarChart({
     data,
     config: sc.createConfig(config),
     custom: { ...sc.custom, ...custom },
@@ -49,72 +61,179 @@ export default function XxxChart<S extends keyof XxxChartStyleMap>({
 }
 ```
 
-#### `plugin.ts` - 스타일 레지스트리
-- `StyleConfig<TConfig>` 타입: `{ custom, createConfig, getScaleOptions }`
-- 스타일 이름 → Config 타입 매핑 (`XxxChartStyleMap`)
-- `deepMerge`로 config 병합
+**`plugin.ts`** - Defines `StyleConfig<TConfig>` and the style map. Each style entry is a `StyleConfig` object.
 
 ```typescript
+// From bar-chart/plugin.ts
 export type StyleConfig<TConfig> = {
-  custom: Partial<XxxChartCustom<TConfig>>;
+  custom: Partial<BarChartCustom<TConfig>>;
   createConfig: (config?: Partial<TConfig>) => TConfig;
   getScaleOptions: GetScaleOptionsFn;
 };
 
-export type XxxChartStyleMap = {
-  toast: ToastXxxChartConfig;
+export type BarChartStyleMap = {
+  toast: ToastBarChartConfig;
 };
 
-export const xxxChartStyleConfigs: { [S in keyof XxxChartStyleMap]: StyleConfig<XxxChartStyleMap[S]> } = {
-  toast: {
-    custom: toastCustom,
-    createConfig: (config) => deepMerge(defaultToastConfig, config),
-    getScaleOptions: toastGetScaleOptions,
-  },
+export const barChartStyleConfigs: {
+  [S in keyof BarChartStyleMap]: StyleConfig<BarChartStyleMap[S]>
+} = {
+  toast: toastStyleConfig,
 };
 ```
 
-#### `headless.ts` - headless re-export
-- `@headless/{chart-name}`에서 컴포넌트, 타입, 컨트롤러 re-export
-- charts 레벨에서의 headless 접근 레이어
+**`headless.ts`** - Re-exports the headless component, types, and controller.
 
 ```typescript
-export { default as HeadlessXxxChart } from "@headless/xxx-chart";
-export type { XxxChartCustom, XxxChartData, ... } from "@headless/xxx-chart/types";
-export { XxxChartController } from "@headless/xxx-chart/controller";
+// From bar-chart/headless.ts
+export { default as HeadlessBarChart } from "@headless/bar-chart";
+export type { BarChartCustom, BarChartData, ... } from "@headless/bar-chart/types";
+export { BarChartController } from "@headless/bar-chart/controller";
 ```
 
-#### `{style}/index.ts` - 스타일 custom 객체
-- `toastCustom` 객체: 모든 custom 렌더러 매핑
-- `toastGetScaleOptions`: 스케일 옵션 계산 함수
-- `defaultToastConfig` re-export
-- **팩토리 함수를 export하지 않는다** - custom 객체와 config만 export
+**`toast/index.ts`** - Assembles the `toastStyleConfig` object. Imports all part renderers and wires them into the custom object.
 
 ```typescript
-export const toastCustom: Partial<XxxChartCustom<ToastXxxChartConfig>> = {
+// From bar-chart/toast/index.ts
+const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
   layout: toastLayout,
-  // ... 각 파트 매핑
+  bar: toastBar,
+  barGroupBox: toastBarGroupBox,
+  barBox: toastBarBox,
+  legend: toastLegend,
+  // ... all parts
 };
 
-export const toastGetScaleOptions: GetScaleOptionsFn = (ctx) => ({ ... });
+const toastGetScaleOptions: GetScaleOptionsFn = (ctx) =>
+  toastScaleOptions(ctx.direction === "vertical" ? ctx.height : ctx.width);
 
-export { defaultToastConfig, type ToastXxxChartConfig } from "./config";
+export const toastStyleConfig: StyleConfig<ToastBarChartConfig> = {
+  custom: toastCustom,
+  createConfig: (config) => deepMerge(defaultToastConfig, config),
+  getScaleOptions: toastGetScaleOptions,
+};
 ```
 
-#### `{style}/config.ts` - 스타일 config
-- `ToastBaseConfig`을 확장한 차트 전용 config 타입
-- 기본값 객체
+**`toast/config.ts`** - Extends `ToastBaseConfig` with chart-specific fields + defaults.
 
-### 새 스타일 추가 시
+```typescript
+// From bar-chart/toast/config.ts
+export type ToastBarChartConfig = ToastBaseConfig & {
+  bar: { gap: number; cornerRadius: number };
+};
 
-1. `{style-name}/` 폴더 생성 (config.ts, index.ts, parts/)
-2. `plugin.ts`의 `StyleMap`에 새 스타일 추가
-3. `index.ts`는 수정 불필요 (제네릭으로 자동 확장)
+export const defaultToastConfig: ToastBarChartConfig = {
+  colors: TOAST_COLORS,
+  font: { family: "Noto Sans JP", size: 11 },
+  // ... base config fields
+  bar: { gap: 1, cornerRadius: 0 },
+  animation: { enabled: true, duration: 300, staggerDelay: 60 },
+};
+```
 
-### 핵심 설계 원칙
+## Key Patterns
 
-- **관심사 분리**: headless(로직) / style(시각) / plugin(연결) 분리
-- **팩토리 금지**: toast/index.ts에서 위젯 팩토리 함수 대신 config 객체만 export
-- **deepMerge 사용**: config 병합 시 spread 대신 `deepMerge` 사용 (중첩 객체 보존)
-- **shared 위임**: 공통 요소(axis, grid, legend 등)는 `@shared/toast/`에 위임
-- **context 기반**: custom 함수는 `(args, context)` 형태로 config와 controller에 접근
+### Single `toastStyleConfig` Export
+
+Each `toast/index.ts` exports a single `toastStyleConfig` object (not individual custom/config/getScaleOptions). The plugin.ts consumes it directly:
+
+```typescript
+// plugin.ts
+import { toastStyleConfig } from "./toast";
+export const barChartStyleConfigs = { toast: toastStyleConfig };
+```
+
+### `toastScaleOptions` Shared Utility
+
+Scale options computation is shared via `@shared/toast`:
+
+```typescript
+import { toastScaleOptions } from "@shared/toast";
+// Uses axis length to calculate roughStepCount based on DEFAULT_TICK_SPACING (80px)
+const toastGetScaleOptions: GetScaleOptionsFn = (ctx) =>
+  toastScaleOptions(ctx.direction === "vertical" ? ctx.height : ctx.width);
+```
+
+### `deepMerge` for Config
+
+Always use `deepMerge` (from `@utils/index`) instead of spread when merging configs. It preserves nested objects:
+
+```typescript
+createConfig: (config) => deepMerge(defaultToastConfig, config),
+```
+
+### Shared Toast Parts
+
+Common visual parts (axis labels, ticks, lines, grid, legend, title, layout) are in `src/shared/toast/` and re-exported from `src/shared/toast/index.ts`. Chart-specific `toast/parts/` files can either import and re-export these directly or wrap them with chart-specific logic.
+
+### Stacked-bar-chart Reuses bar-chart Types
+
+`stacked-bar-chart` imports `StyleConfig` and headless types from `bar-chart` rather than defining its own, since it shares the same `BarChartCustom` interface:
+
+```typescript
+// stacked-bar-chart/plugin.ts
+import type { StyleConfig } from "../bar-chart/plugin";
+```
+
+## Special Case: Curried Custom Pattern (stacked-area-chart)
+
+When a headless chart's `Custom` type has no `TConfig` generic (i.e., `StackedAreaChartCustom` instead of `BarChartCustom<TConfig>`), the config cannot be accessed via the custom function signature. In this case, `toast/index.ts` uses a **currying pattern**: `createToastCustom(config)` returns the custom object with config captured in closure.
+
+```typescript
+// stacked-area-chart/toast/index.ts
+const createToastCustom = (
+  config: ToastStackedAreaChartConfig,
+): Partial<StackedAreaChartCustom> => ({
+  layout: createToastLayout(config),
+  area: createToastArea(config),
+  // ... all parts are factory functions taking config
+});
+
+export const toastStyleConfig: StyleConfig<ToastStackedAreaChartConfig> = {
+  custom: createToastCustom,  // function, not object
+  createConfig: (config) => deepMerge(defaultToastConfig, config),
+};
+```
+
+This changes the `StyleConfig` type in the plugin -- `custom` becomes a function:
+
+```typescript
+// stacked-area-chart/plugin.ts
+export type StyleConfig<TConfig> = {
+  custom: (config: TConfig) => Partial<StackedAreaChartCustom>;  // function, not object
+  createConfig: (config?: Partial<TConfig>) => TConfig;
+};
+```
+
+And the entry point calls it differently:
+
+```typescript
+// stacked-area-chart/index.ts
+const resolvedConfig = sc.createConfig(config);
+return HeadlessStackedAreaChart({
+  data,
+  custom: { ...sc.custom(resolvedConfig), ...custom },  // call custom as function
+  ...rest,
+});
+```
+
+## How to Add a New Style
+
+1. Create `{chart-name}/toast/` (or your style name) with `config.ts`, `index.ts`, and `parts/`.
+2. Define your config type extending `ToastBaseConfig` (or your own base) in `config.ts`.
+3. Implement part renderers in `parts/`, reusing `@shared/toast/` where possible.
+4. Export a single `toastStyleConfig: StyleConfig<YourConfig>` from `index.ts`.
+5. Add the style to the `StyleMap` in `plugin.ts`.
+6. `index.ts` entry point needs no changes (generic over `StyleMap` keys).
+
+## Available Charts
+
+| Chart | Folder | Headless Source |
+|-------|--------|-----------------|
+| BarChart | `bar-chart/` | `@headless/bar-chart` |
+| StackedBarChart | `stacked-bar-chart/` | `@headless/bar-chart` (shared) |
+| LineChart | `line-chart/` | `@headless/line-chart` |
+| AreaChart | `area-chart/` | `@headless/line-chart` (shared) |
+| ScatterChart | `scatter-chart/` | `@headless/scatter-chart` |
+| BubbleChart | `bubble-chart/` | `@headless/bubble-chart` |
+| StackedAreaChart | `stacked-area-chart/` | `@headless/stacked-area-chart` |

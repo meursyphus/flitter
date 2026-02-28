@@ -34,10 +34,12 @@ export function LineChartProvider({
   const defaults = {
     line: Default.Line,
     xAxis: Default.XAxis,
+    xAxisBox: Default.XAxisBox,
     xAxisLabel: Default.XAxisLabel,
     xAxisTick: Default.XAxisTick,
     xAxisLine: Default.XAxisLine,
     yAxis: Default.YAxis,
+    yAxisBox: Default.YAxisBox,
     yAxisLabel: Default.YAxisLabel,
     yAxisTick: Default.YAxisTick,
     yAxisLine: Default.YAxisLine,
