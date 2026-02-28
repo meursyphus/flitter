@@ -3,13 +3,13 @@ import type { BarChartCustom, BarChartData, GetScaleFn, GetScaleOptionsFn } from
 import { BarChartProvider } from "./provider";
 
 export default function BarChart<TConfig = {}>(props: {
-  custom?: Partial<BarChartCustom<TConfig>>;
+  custom: BarChartCustom<TConfig>;
   title?: string;
   data: BarChartData;
   direction?: "vertical" | "horizontal";
-  getScale?: GetScaleFn;
+  getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
   config?: TConfig;
 }): Widget {
-  return BarChartProvider(props);
+  return BarChartProvider(props as any);
 }

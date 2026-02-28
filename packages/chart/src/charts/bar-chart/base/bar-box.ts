@@ -1,4 +1,4 @@
-import type { BarChartCustom } from '../types';
+import type { BarChartCustom } from '@headless/bar-chart/types';
 import {
 	EdgeInsets,
 	FractionallySizedBox,

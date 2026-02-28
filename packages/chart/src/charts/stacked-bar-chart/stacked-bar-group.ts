@@ -10,7 +10,7 @@ import {
   SizedBox,
   type Widget,
 } from "flitter-core";
-import type { BarChartCustom } from "../bar-chart/headless";
+import type { BarChartCustom } from "../bar-chart/base";
 
 export function stackedBarGroup(
   ...[{ bars }, ctx]: Parameters<BarChartCustom['barGroup']>

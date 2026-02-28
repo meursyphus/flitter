@@ -1,4 +1,4 @@
-import type { BarChartData, BarChartScale } from "../types";
+import type { BarChartData, BarChartScale } from "@headless/bar-chart/types";
 import * as Cartesian from "@shared/cartesian/index";
 
 export function getScale(

@@ -1,5 +1,5 @@
 import { TOAST_COLORS } from "@shared/styles/toast/utils";
-import type { ToastBarChartConfig } from "../../bar-chart/toast/config";
+import type { ToastBarChartConfig } from "../../bar-chart/styles/toast/config";
 
 export type ToastStackedBarChartConfig = ToastBarChartConfig;
 

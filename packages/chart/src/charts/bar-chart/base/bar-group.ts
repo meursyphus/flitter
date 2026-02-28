@@ -10,7 +10,7 @@ import {
 	SizedBox,
 	type Widget,
 } from 'flitter-core';
-import type { BarChartCustom } from '../types';
+import type { BarChartCustom } from '@headless/bar-chart/types';
 
 export function BarGroup(
 	...[{ bars }, ctx]: Parameters<BarChartCustom['barGroup']>

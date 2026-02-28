@@ -1,5 +1,5 @@
 import * as Cartesian from "@shared/cartesian/index";
-import { BarChartCustom } from "../types";
+import type { BarChartCustom } from "@headless/bar-chart/types";
 
 export function Grid(
   ...[{ xLine, yLine }, { direction, scale: _scale, data }]: Parameters<

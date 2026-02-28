@@ -1,6 +1,6 @@
 export { default as BarChart } from "./bar-chart";
 export type { BarChartStyleMap } from "./bar-chart/plugin";
-export { type ToastBarChartConfig } from "./bar-chart/toast/config";
+export { type ToastBarChartConfig } from "./bar-chart/styles/toast/config";
 
 export { default as StackedBarChart } from "./stacked-bar-chart";
 export type { StackedBarChartStyleMap } from "./stacked-bar-chart/plugin";

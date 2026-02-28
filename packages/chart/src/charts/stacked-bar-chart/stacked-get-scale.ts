@@ -1,4 +1,4 @@
-import type { BarChartData, BarChartScale, BarChartScaleOptions } from "../bar-chart/headless";
+import type { BarChartData, BarChartScale, BarChartScaleOptions } from "../bar-chart/base";
 
 export function stackedGetScale(
   { datasets, labels }: BarChartData,

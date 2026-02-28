@@ -1,5 +1,5 @@
-import type { BarChartCustom, GetScaleOptionsFn } from "./headless";
-import { toastStyleConfig, type ToastBarChartConfig } from "./toast";
+import type { BarChartCustom, GetScaleOptionsFn } from "./base";
+import { toastStyleConfig, type ToastBarChartConfig } from "./styles/toast";
 
 export type StyleConfig<TConfig> = {
   custom: Partial<BarChartCustom<TConfig>>;

@@ -1,6 +1,6 @@
 import type { Widget } from "flitter-core";
-import { HeadlessBarChart } from "./headless";
-import type { BarChartCustom, BarChartData, BarChartScale, GetScaleFn, GetScaleOptionsFn } from "./headless";
+import { BaseBarChart } from "./base";
+import type { BarChartCustom, BarChartData, BarChartScale, GetScaleFn, GetScaleOptionsFn } from "./base";
 import { barChartStyleConfigs, type BarChartStyleMap } from "./plugin";
 
 export default function BarChart<S extends keyof BarChartStyleMap>({
@@ -21,7 +21,7 @@ export default function BarChart<S extends keyof BarChartStyleMap>({
   getScaleOptions?: GetScaleOptionsFn;
 }): Widget {
   const sc = barChartStyleConfigs[style];
-  return HeadlessBarChart({
+  return BaseBarChart({
     data,
     config: sc.createConfig(config),
     custom: { ...sc.custom, ...custom },

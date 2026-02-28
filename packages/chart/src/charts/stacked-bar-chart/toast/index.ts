@@ -4,9 +4,9 @@ import type { StyleConfig } from "../../bar-chart/plugin";
 import type { ToastStackedBarChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
-import { toastBar } from "../../bar-chart/toast/parts/bar";
-import { toastBarGroupBox } from "../../bar-chart/toast/parts/bar-group-box";
-import { toastBarBox } from "../../bar-chart/toast/parts/bar-box";
+import { toastBar } from "../../bar-chart/styles/toast/parts/bar";
+import { toastBarGroupBox } from "../../bar-chart/styles/toast/parts/bar-group-box";
+import { toastBarBox } from "../../bar-chart/styles/toast/parts/bar-box";
 import {
   toastLayout,
   toastTitle,

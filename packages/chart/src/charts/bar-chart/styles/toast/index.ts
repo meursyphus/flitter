@@ -1,6 +1,6 @@
 import type { BarChartCustom } from "@headless/bar-chart/types";
 import type { GetScaleOptionsFn } from "@headless/bar-chart/types";
-import type { StyleConfig } from "../plugin";
+import type { StyleConfig } from "../../plugin";
 import type { ToastBarChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
