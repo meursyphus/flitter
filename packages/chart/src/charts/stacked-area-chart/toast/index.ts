@@ -3,42 +3,86 @@ import type { StyleConfig } from "../plugin";
 import type { ToastStackedAreaChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
-import { createToastLayout } from "./parts/layout";
 import { createToastArea } from "./parts/area";
-import { createToastLegend } from "./parts/legend";
-import { createToastTitle } from "./parts/title";
-import { createToastAxisCorner } from "./parts/axis-corner";
-import { createToastXAxisLabel } from "./parts/x-axis-label";
-import { createToastYAxisLabel } from "./parts/y-axis-label";
-import { createToastXAxisTick } from "./parts/x-axis-tick";
-import { createToastYAxisTick } from "./parts/y-axis-tick";
-import { createToastXAxisLine } from "./parts/x-axis-line";
-import { createToastYAxisLine } from "./parts/y-axis-line";
-import { createToastGridXLine } from "./parts/grid-x-line";
-import { createToastGridYLine } from "./parts/grid-y-line";
-import { createToastXAxis } from "./parts/x-axis";
-import { createToastYAxis } from "./parts/y-axis";
+import {
+  Row,
+  SizedBox,
+  Text,
+  TextStyle,
+  EdgeInsets,
+  Padding,
+  MainAxisSize,
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  type Widget,
+} from "flitter-core";
+import {
+  toastLayout,
+  toastTitle,
+  toastAxisCorner,
+  toastXAxisLabel,
+  toastYAxisLabel,
+  toastXAxisTick,
+  toastYAxisTick,
+  toastXAxisLine,
+  toastYAxisLine,
+  toastGridXLine,
+  toastGridYLine,
+  toastXAxis,
+  toastYAxis,
+} from "@shared/toast";
 
 export { type ToastStackedAreaChartConfig } from "./config";
 
 const createToastCustom = (
   config: ToastStackedAreaChartConfig,
 ): Partial<StackedAreaChartCustom> => ({
-  layout: createToastLayout(config),
+  layout: (args) => toastLayout(args, { config }),
   area: createToastArea(config),
-  legend: createToastLegend(config),
-  title: createToastTitle(config),
-  axisCorner: createToastAxisCorner(config),
-  xAxisLabel: createToastXAxisLabel(config),
-  yAxisLabel: createToastYAxisLabel(config),
-  xAxisTick: createToastXAxisTick(config),
-  yAxisTick: createToastYAxisTick(config),
-  xAxisLine: createToastXAxisLine(config),
-  yAxisLine: createToastYAxisLine(config),
-  gridXLine: createToastGridXLine(config),
-  gridYLine: createToastGridYLine(config),
-  xAxis: createToastXAxis(config),
-  yAxis: createToastYAxis(config),
+  legend: ({ name, index }) => {
+    const { colors, font } = config;
+    const color = colors[index % colors.length];
+
+    return Padding({
+      padding: EdgeInsets.symmetric({ horizontal: 8 }),
+      child: Row({
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container({
+            width: 12,
+            height: 12,
+            decoration: new BoxDecoration({
+              color,
+              borderRadius: BorderRadius.circular(2),
+            }),
+          }),
+          SizedBox({ width: 6 }),
+          Text(name, {
+            style: new TextStyle({
+              fontFamily: font.family,
+              fontSize: font.size,
+              color: "#333333",
+            }),
+          }),
+        ],
+      }),
+    });
+  },
+  title: ({ name }) => toastTitle({ name }, { config }),
+  axisCorner: (_args) => toastAxisCorner(_args, { config }),
+  xAxisLabel: (args) => toastXAxisLabel(args, { config }),
+  yAxisLabel: (args) => toastYAxisLabel(args, { config }),
+  xAxisTick: (_args) => toastXAxisTick(_args, { config }),
+  yAxisTick: (_args) => toastYAxisTick(_args, { config }),
+  xAxisLine: (_args) => toastXAxisLine(_args, { config }),
+  yAxisLine: (_args) => toastYAxisLine(_args, { config }),
+  gridXLine: (_args) => toastGridXLine(_args, { config }),
+  gridYLine: (_args) => toastGridYLine(_args, { config }),
+  xAxis: ({ line, labels, tick }) =>
+    toastXAxis({ line, labels, tick }, { type: "label" }, { config }),
+  yAxis: ({ line, labels, tick }) =>
+    toastYAxis({ line, labels, tick }, { type: "value" }, { config }),
 });
 
 export const toastStyleConfig: StyleConfig<ToastStackedAreaChartConfig> = {

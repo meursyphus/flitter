@@ -3,21 +3,26 @@ import type { StyleConfig } from "../plugin";
 import type { ToastBubbleChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
-import { toastLayout } from "./parts/layout";
 import { toastBubble } from "./parts/bubble";
-import { toastLegend } from "./parts/legend";
-import { toastXAxisLabel } from "./parts/x-axis-label";
-import { toastYAxisLabel } from "./parts/y-axis-label";
-import { toastXAxisTick } from "./parts/x-axis-tick";
-import { toastYAxisTick } from "./parts/y-axis-tick";
-import { toastXAxisLine } from "./parts/x-axis-line";
-import { toastYAxisLine } from "./parts/y-axis-line";
-import { toastGridXLine } from "./parts/grid-x-line";
-import { toastGridYLine } from "./parts/grid-y-line";
-import { toastXAxis } from "./parts/x-axis";
-import { toastYAxis } from "./parts/y-axis";
-import { toastTitle } from "./parts/title";
-import { toastAxisCorner } from "./parts/axis-corner";
+import {
+  toastLayout,
+  toastTitle,
+  toastLegend,
+  toastXAxisLabel,
+  toastYAxisLabel,
+  toastXAxisTick,
+  toastYAxisTick,
+  toastXAxisLine,
+  toastYAxisLine,
+  toastGridXLine,
+  toastGridYLine,
+  toastAxisCorner,
+  toastXAxis,
+  toastYAxis,
+  toastXAxisBox,
+  toastYAxisBox,
+  toastScaleOptions,
+} from "@shared/toast";
 
 export { type ToastBubbleChartConfig } from "./config";
 
@@ -35,11 +40,13 @@ const toastCustom: Partial<BubbleChartCustom<ToastBubbleChartConfig>> = {
   yAxisLine: toastYAxisLine,
   gridXLine: toastGridXLine,
   gridYLine: toastGridYLine,
-  xAxis: toastXAxis,
-  yAxis: toastYAxis,
+  xAxis: (args, context) =>
+    toastXAxis(args, { type: "value" }, context),
+  yAxis: (args, context) =>
+    toastYAxis(args, { type: "value" }, context),
+  xAxisBox: toastXAxisBox,
+  yAxisBox: toastYAxisBox,
 };
-
-import { toastScaleOptions } from "@shared/toast";
 
 const toastGetScaleOptions: GetScaleOptionsFn = (ctx) =>
   toastScaleOptions(Math.min(ctx.width, ctx.height));
