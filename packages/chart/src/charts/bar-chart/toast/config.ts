@@ -1,71 +1,11 @@
 import { TOAST_COLORS } from "@utils/toast";
+import type { ToastBaseConfig } from "@shared/toast";
 
-export type ToastBarChartConfig = {
-  /** Color palette for data series */
-  colors: string[];
-
-  /** Base typography settings */
-  font: {
-    family: string;
-    size: number;
-  };
-
-  /** Title area (e.g. branding text above chart) */
-  title: {
-    visible: boolean;
-    color: string;
-    fontSize: number;
-    fontFamily?: string;
-    fontWeight?: string;
-    position: "top" | "bottom";
-    alignment: "start" | "center" | "end";
-  };
-
-  /** Legend settings */
-  legend: {
-    visible: boolean;
-    position: "top" | "bottom";
-  };
-
-  /** Axis styling (applies to both x and y axes) */
-  axis: {
-    color: string;
-    thickness: number;
-    label: {
-      color: string;
-      fontSize: number;
-      gap: number;
-    };
-    tick: {
-      size: number;
-    };
-  };
-
-  /** Grid line styling */
-  grid: {
-    color: string;
-    thickness: number;
-  };
-
-  /** Chart area padding */
-  padding: {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
-  };
-
+export type ToastBarChartConfig = ToastBaseConfig & {
   /** Bar-specific styling */
   bar: {
     gap: number;
     cornerRadius: number;
-  };
-
-  /** Animation settings */
-  animation: {
-    enabled: boolean;
-    duration: number;
-    staggerDelay: number;
   };
 };
 

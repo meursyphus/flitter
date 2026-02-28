@@ -1,11 +1,11 @@
 import type { Widget } from "flitter-core";
 import type { BarChartCustom, BarChartData, GetScaleFn, GetScaleOptionsFn } from "../bar-chart/types";
-import BarChart from "../bar-chart";
+import { StackedBarChartProvider } from "./provider";
 import * as StackedDefault from "./default";
 
 /**
- * StackedBarChart is a thin wrapper around BarChart.
- * It overrides getScale and barGroup defaults to render stacked bars.
+ * StackedBarChart uses its own provider with stacked layout logic.
+ * It overrides getScale to compute stacked totals.
  */
 export default function StackedBarChart<TConfig = {}>(props: {
   custom?: Partial<BarChartCustom<TConfig>>;
@@ -17,17 +17,12 @@ export default function StackedBarChart<TConfig = {}>(props: {
   config?: TConfig;
 }): Widget {
   const {
-    custom = {},
     getScale = StackedDefault.getScale as unknown as GetScaleFn,
     ...rest
   } = props;
 
-  return BarChart({
+  return StackedBarChartProvider({
     ...rest,
     getScale,
-    custom: {
-      barGroup: StackedDefault.BarGroup,
-      ...custom,
-    } as Partial<BarChartCustom<TConfig>>,
   });
 }
