@@ -8,6 +8,13 @@ class ChangeNotifier extends Listenable {
     this.listners.push(listener);
   }
 
+  removeListener(listener: VoidCallback): void {
+    const index = this.listners.indexOf(listener);
+    if (index !== -1) {
+      this.listners.splice(index, 1);
+    }
+  }
+
   notifyListeners() {
     this.listners.forEach(listner => {
       listner();

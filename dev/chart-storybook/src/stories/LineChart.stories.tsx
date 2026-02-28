@@ -7,13 +7,13 @@ function ToastDefault() {
     <Widget
       widget={LineChart({
         style: "toast",
-        title: "Monthly Financial Overview",
+        title: "US Macro Pulse (MoM, 2024)",
         data: {
           labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
           datasets: [
-            { legend: "Revenue", values: [120, 90, 150, 80, 200, 130, 250, 100, 300, 180, 350, 220] },
-            { legend: "Expenses", values: [100, 130, 85, 160, 90, 180, 70, 200, 95, 250, 110, 280] },
-            { legend: "Profit", values: [20, -40, 65, -80, 110, -50, 180, -100, 205, -70, 240, -60] },
+            { legend: "Housing starts (MoM %)", values: [0, 12.38, -15.46, 5.56, -4.98, 0.84, -4.67, 9.96, -2.44, -0.37, -4.22, 16.91] },
+            { legend: "Unemployment rate Δ (pp)", values: [0, 11.2, -8.4, 6.9, -5.8, 7.5, -6.2, 4.9, -4.1, 8.1, -5.6, 7.2] },
+            { legend: "CPI MoM (1/10 index pts)", values: [0, 12.69, 13.78, 6.78, 1.52, -1.31, 5.25, 4.93, 6.70, 8.99, 8.97, 10.76] },
           ],
         },
       })}
@@ -29,13 +29,13 @@ function ToastSpline() {
     <Widget
       widget={LineChart({
         style: "toast",
-        title: "Monthly Financial Overview (Spline)",
+        title: "US Macro Pulse (Spline, 2024)",
         data: {
           labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
           datasets: [
-            { legend: "Revenue", values: [120, 90, 150, 80, 200, 130, 250, 100, 300, 180, 350, 220] },
-            { legend: "Expenses", values: [100, 130, 85, 160, 90, 180, 70, 200, 95, 250, 110, 280] },
-            { legend: "Profit", values: [20, -40, 65, -80, 110, -50, 180, -100, 205, -70, 240, -60] },
+            { legend: "Housing starts (MoM %)", values: [0, 12.38, -15.46, 5.56, -4.98, 0.84, -4.67, 9.96, -2.44, -0.37, -4.22, 16.91] },
+            { legend: "Unemployment rate Δ (pp)", values: [0, 11.2, -8.4, 6.9, -5.8, 7.5, -6.2, 4.9, -4.1, 8.1, -5.6, 7.2] },
+            { legend: "CPI MoM (1/10 index pts)", values: [0, 12.69, 13.78, 6.78, 1.52, -1.31, 5.25, 4.93, 6.70, 8.99, 8.97, 10.76] },
           ],
         },
         config: {

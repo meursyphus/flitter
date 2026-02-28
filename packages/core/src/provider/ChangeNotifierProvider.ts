@@ -37,11 +37,18 @@ class ChangeNotifierProvider extends StatefulWidget {
 
 class ChangeNotifierProviderState extends State<ChangeNotifierProvider> {
   value: ChangeNotifier;
+  private listener: () => void;
   initState(_: BuildContext): void {
     this.value = this.widget.create();
-    this.value.addListener(() => {
+    this.listener = () => {
       this.setState();
-    });
+    };
+    this.value.addListener(this.listener);
+  }
+
+  override dispose(): void {
+    this.value.removeListener(this.listener);
+    super.dispose();
   }
 
   didUpdateWidget(oldWidget: ChangeNotifierProvider): void {

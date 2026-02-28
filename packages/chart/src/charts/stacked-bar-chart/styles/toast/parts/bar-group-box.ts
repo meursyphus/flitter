@@ -2,71 +2,62 @@ import {
   StatefulWidget,
   State,
   AnimationController,
-  Tween,
   CurvedAnimation,
   Curves,
+  Tween,
   ClipRect,
-  Rect,
   type Widget,
 } from "flitter-core";
+import { Rect } from "flitter-core";
 import type { BarChartContext } from "@headless/bar-chart/types";
 import type { ToastStackedBarChartConfig } from "../config";
 
-class _AnimatedBarGroup extends StatefulWidget {
+class _MountRevealBarGroup extends StatefulWidget {
   child: Widget;
-  groupIndex: number;
-  animationConfig: ToastStackedBarChartConfig["animation"];
-  direction: "vertical" | "horizontal";
+  duration: number;
+  isVertical: boolean;
+  baselineRatio: number;
 
   constructor({
     child,
-    groupIndex,
-    animationConfig,
-    direction,
+    duration,
+    isVertical,
+    baselineRatio,
   }: {
     child: Widget;
-    groupIndex: number;
-    animationConfig: ToastStackedBarChartConfig["animation"];
-    direction: "vertical" | "horizontal";
+    duration: number;
+    isVertical: boolean;
+    baselineRatio: number;
   }) {
     super();
     this.child = child;
-    this.groupIndex = groupIndex;
-    this.animationConfig = animationConfig;
-    this.direction = direction;
+    this.duration = duration;
+    this.isVertical = isVertical;
+    this.baselineRatio = baselineRatio;
   }
 
   createState() {
-    return new _AnimatedBarGroupState();
+    return new _MountRevealBarGroupState();
   }
 }
 
-class _AnimatedBarGroupState extends State<_AnimatedBarGroup> {
+class _MountRevealBarGroupState extends State<_MountRevealBarGroup> {
   animationController!: AnimationController;
   tweenAnimation!: { value: number };
 
   override initState() {
-    const { groupIndex, animationConfig } = this.widget;
     this.animationController = new AnimationController({
-      duration: animationConfig.duration,
+      duration: this.widget.duration,
     });
     this.animationController.addListener(() => this.setState());
     const tween = new Tween({ begin: 0, end: 1 });
     this.tweenAnimation = tween.animated(
       new CurvedAnimation({
         parent: this.animationController,
-        curve: Curves.easeOut,
-      })
+        curve: Curves.easeInOut,
+      }),
     );
-    if (animationConfig.enabled) {
-      setTimeout(
-        () => this.animationController.forward(),
-        groupIndex * animationConfig.staggerDelay
-      );
-    } else {
-      this.animationController.duration = 0;
-      this.animationController.forward();
-    }
+    this.animationController.forward();
   }
 
   override dispose() {
@@ -74,16 +65,32 @@ class _AnimatedBarGroupState extends State<_AnimatedBarGroup> {
   }
 
   override build() {
-    const { child, direction } = this.widget;
-    const isHorizontal = direction === "horizontal";
+    const { child, isVertical, baselineRatio } = this.widget;
+    const t = this.tweenAnimation.value;
 
     return ClipRect({
-      clipped: true,
-      clipper: ({ width, height }: { width: number; height: number }) => {
-        const v = this.tweenAnimation.value;
-        return isHorizontal
-          ? Rect.fromLTRB({ left: 0, top: 0, right: width * v, bottom: height })
-          : Rect.fromLTRB({ left: 0, top: height * (1 - v), right: width, bottom: height });
+      clipper: (size) => {
+        if (isVertical) {
+          const baselineY = size.height * (1 - baselineRatio);
+          const top = baselineY * (1 - t);
+          const bottom = baselineY + (size.height - baselineY) * t;
+          return Rect.fromLTRB({
+            left: 0,
+            top,
+            right: size.width,
+            bottom,
+          });
+        } else {
+          const baselineX = size.width * baselineRatio;
+          const left = baselineX * (1 - t);
+          const right = baselineX + (size.width - baselineX) * t;
+          return Rect.fromLTRB({
+            left,
+            top: 0,
+            right,
+            bottom: size.height,
+          });
+        }
       },
       child,
     });
@@ -91,13 +98,18 @@ class _AnimatedBarGroupState extends State<_AnimatedBarGroup> {
 }
 
 export function toastBarGroupBox(
-  { child, index }: { child: Widget; index: number; label: string },
-  context: BarChartContext<ToastStackedBarChartConfig>
+  { child }: { child: Widget; index: number; label: string },
+  context: BarChartContext<ToastStackedBarChartConfig>,
 ) {
-  return new _AnimatedBarGroup({
+  const scale = context.scale;
+  const isVertical = context.direction === "vertical";
+  const baselineRatio =
+    scale ? Math.max(0, Math.min(1, (0 - scale.min) / (scale.max - scale.min))) : 0;
+
+  return new _MountRevealBarGroup({
     child,
-    groupIndex: index,
-    animationConfig: context.config.animation,
-    direction: context.direction,
+    duration: context.config.animation.duration,
+    isVertical,
+    baselineRatio,
   });
 }
