@@ -1,6 +1,6 @@
 export { CheckBox } from "./checkbox";
 export { type ToastBaseConfig } from "./config";
-export { toastAxisLabel } from "./axis-label";
+export { toastXAxisLabel, toastYAxisLabel } from "./axis-label";
 export { toastXAxisTick, toastYAxisTick } from "./axis-tick";
 export { toastXAxisLine, toastYAxisLine } from "./axis-line";
 export { toastGridXLine, toastGridYLine } from "./grid-line";

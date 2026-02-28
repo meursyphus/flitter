@@ -9,20 +9,22 @@ import { toastBar } from "../../bar-chart/toast/parts/bar";
 import { toastBarGroupBox } from "../../bar-chart/toast/parts/bar-group-box";
 import { toastBarBox } from "../../bar-chart/toast/parts/bar-box";
 import { toastLegend } from "../../bar-chart/toast/parts/legend";
-import { toastXAxisLabel } from "../../bar-chart/toast/parts/x-axis-label";
-import { toastYAxisLabel } from "../../bar-chart/toast/parts/y-axis-label";
-import { toastXAxisTick } from "../../bar-chart/toast/parts/x-axis-tick";
-import { toastYAxisTick } from "../../bar-chart/toast/parts/y-axis-tick";
-import { toastXAxisLine } from "../../bar-chart/toast/parts/x-axis-line";
-import { toastYAxisLine } from "../../bar-chart/toast/parts/y-axis-line";
-import { toastGridXLine } from "../../bar-chart/toast/parts/grid-x-line";
-import { toastGridYLine } from "../../bar-chart/toast/parts/grid-y-line";
+import {
+  toastXAxisLabel,
+  toastYAxisLabel,
+  toastXAxisTick,
+  toastYAxisTick,
+  toastXAxisLine,
+  toastYAxisLine,
+  toastGridXLine,
+  toastGridYLine,
+  toastAxisCorner,
+} from "@shared/toast";
 import { toastXAxis } from "../../bar-chart/toast/parts/x-axis";
 import { toastXAxisBox } from "../../bar-chart/toast/parts/x-axis-box";
 import { toastYAxis } from "../../bar-chart/toast/parts/y-axis";
 import { toastYAxisBox } from "../../bar-chart/toast/parts/y-axis-box";
 import { toastTitle } from "../../bar-chart/toast/parts/title";
-import { toastAxisCorner } from "../../bar-chart/toast/parts/axis-corner";
 
 export { type ToastStackedBarChartConfig } from "./config";
 

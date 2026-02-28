@@ -7,6 +7,5 @@ export function toastAxisCorner(
   _args: undefined,
   context: LineChartContext<ToastAreaChartConfig>
 ): Widget {
-  const { axis } = context.config;
-  return sharedAxisCorner({ color: axis.color, thickness: axis.thickness });
+  return sharedAxisCorner(_args, context);
 }

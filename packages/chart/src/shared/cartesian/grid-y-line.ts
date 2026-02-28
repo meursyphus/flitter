@@ -1,8 +1,11 @@
 import { Container, type Widget } from "flitter-core";
 
-export function GridYLine({ color = "black" }: { color?: string } = {}): Widget {
+export function GridYLine({
+  thickness = 1,
+  color = "black",
+}: { thickness?: number; color?: string } = {}): Widget {
   return Container({
-    width: 1,
+    width: thickness,
     height: Infinity,
     color,
   });

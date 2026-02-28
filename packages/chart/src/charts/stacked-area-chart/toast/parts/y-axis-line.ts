@@ -5,9 +5,8 @@ import { toastYAxisLine as sharedYAxisLine } from "@shared/toast";
 
 export function createToastYAxisLine(vc: ToastStackedAreaChartConfig) {
   return function toastYAxisLine(
-    ..._args: Parameters<StackedAreaChartCustom["yAxisLine"]>
+    ...[_args]: Parameters<StackedAreaChartCustom["yAxisLine"]>
   ): Widget {
-    const { axis } = vc;
-    return sharedYAxisLine({ color: axis.color, thickness: axis.thickness });
+    return sharedYAxisLine(_args, { config: vc });
   };
 }

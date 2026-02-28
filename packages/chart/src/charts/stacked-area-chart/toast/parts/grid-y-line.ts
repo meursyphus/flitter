@@ -5,9 +5,8 @@ import { toastGridYLine as sharedGridYLine } from "@shared/toast";
 
 export function createToastGridYLine(vc: ToastStackedAreaChartConfig) {
   return function toastGridYLine(
-    ..._args: Parameters<StackedAreaChartCustom["gridYLine"]>
+    ...[_args]: Parameters<StackedAreaChartCustom["gridYLine"]>
   ): Widget {
-    const { grid } = vc;
-    return sharedGridYLine({ thickness: grid.thickness, color: grid.color });
+    return sharedGridYLine(_args, { config: vc });
   };
 }

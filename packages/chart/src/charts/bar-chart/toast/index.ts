@@ -9,20 +9,22 @@ import { toastBar } from "./parts/bar";
 import { toastBarGroupBox } from "./parts/bar-group-box";
 import { toastBarBox } from "./parts/bar-box";
 import { toastLegend } from "./parts/legend";
-import { toastXAxisLabel } from "./parts/x-axis-label";
-import { toastYAxisLabel } from "./parts/y-axis-label";
-import { toastXAxisTick } from "./parts/x-axis-tick";
-import { toastYAxisTick } from "./parts/y-axis-tick";
-import { toastXAxisLine } from "./parts/x-axis-line";
-import { toastYAxisLine } from "./parts/y-axis-line";
-import { toastGridXLine } from "./parts/grid-x-line";
-import { toastGridYLine } from "./parts/grid-y-line";
+import {
+  toastXAxisLabel,
+  toastYAxisLabel,
+  toastXAxisTick,
+  toastYAxisTick,
+  toastXAxisLine,
+  toastYAxisLine,
+  toastGridXLine,
+  toastGridYLine,
+  toastAxisCorner,
+} from "@shared/toast";
 import { toastXAxis } from "./parts/x-axis";
 import { toastXAxisBox } from "./parts/x-axis-box";
 import { toastYAxis } from "./parts/y-axis";
 import { toastYAxisBox } from "./parts/y-axis-box";
 import { toastTitle } from "./parts/title";
-import { toastAxisCorner } from "./parts/axis-corner";
 
 export { type ToastBarChartConfig } from "./config";
 

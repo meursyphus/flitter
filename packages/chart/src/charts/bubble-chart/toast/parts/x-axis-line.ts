@@ -7,6 +7,5 @@ export function toastXAxisLine(
   _args: undefined,
   context: BubbleChartContext<ToastBubbleChartConfig>
 ): Widget {
-  const { axis } = context.config;
-  return sharedXAxisLine({ color: axis.color, thickness: axis.thickness });
+  return sharedXAxisLine(_args, context);
 }

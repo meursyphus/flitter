@@ -1,10 +1,17 @@
 import type { CartesianCustom } from "./types";
 import { Container, type Widget } from "flitter-core";
 
-export function YAxisTick(_: Parameters<CartesianCustom["yAxisTick"]>[0]): Widget {
+export function YAxisTick(
+  _: Parameters<CartesianCustom["yAxisTick"]>[0],
+  {
+    size = 4,
+    thickness = 1,
+    color = "black",
+  }: { size?: number; thickness?: number; color?: string } = {},
+): Widget {
   return Container({
-    width: 4,
-    height: 1,
-    color: "black",
+    width: size,
+    height: thickness,
+    color,
   });
 }

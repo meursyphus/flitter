@@ -7,6 +7,5 @@ export function toastGridXLine(
   _args: undefined,
   context: BubbleChartContext<ToastBubbleChartConfig>
 ): Widget {
-  const { grid } = context.config;
-  return sharedGridXLine({ thickness: grid.thickness, color: grid.color });
+  return sharedGridXLine(_args, context);
 }

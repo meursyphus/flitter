@@ -7,10 +7,5 @@ export function toastYAxisTick(
   _args: undefined,
   context: ScatterChartContext<ToastScatterChartConfig>
 ): Widget {
-  const { axis } = context.config;
-  return sharedYAxisTick({
-    tickSize: axis.tick.size,
-    thickness: axis.thickness,
-    color: axis.color,
-  });
+  return sharedYAxisTick(_args, context);
 }

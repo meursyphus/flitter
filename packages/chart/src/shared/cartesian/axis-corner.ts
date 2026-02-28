@@ -1,9 +1,12 @@
 import { Container, type Widget } from "flitter-core";
 
-export function AxisCorner(): Widget {
+export function AxisCorner({
+  size = 1,
+  color = "black",
+}: { size?: number; color?: string } = {}): Widget {
   return Container({
-    color: "black",
-    width: 1,
-    height: 1,
+    color,
+    width: size,
+    height: size,
   });
 }

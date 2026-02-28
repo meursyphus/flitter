@@ -1,21 +1,19 @@
-import { Container, type Widget } from "flitter-core";
+import type { Widget } from "flitter-core";
+import type { ToastBaseConfig } from "./config";
+import { GridXLine, GridYLine } from "../cartesian";
 
-export function toastGridXLine({
-  thickness,
-  color,
-}: {
-  thickness: number;
-  color: string;
-}): Widget {
-  return Container({ height: thickness, color });
+export function toastGridXLine(
+  args: undefined,
+  context: { config: ToastBaseConfig },
+): Widget {
+  const { grid } = context.config;
+  return GridXLine({ thickness: grid.thickness, color: grid.color });
 }
 
-export function toastGridYLine({
-  thickness,
-  color,
-}: {
-  thickness: number;
-  color: string;
-}): Widget {
-  return Container({ width: thickness, color });
+export function toastGridYLine(
+  args: undefined,
+  context: { config: ToastBaseConfig },
+): Widget {
+  const { grid } = context.config;
+  return GridYLine({ thickness: grid.thickness, color: grid.color });
 }

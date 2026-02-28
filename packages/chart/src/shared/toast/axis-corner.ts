@@ -1,11 +1,11 @@
-import { Container, type Widget } from "flitter-core";
+import type { Widget } from "flitter-core";
+import type { ToastBaseConfig } from "./config";
+import { AxisCorner } from "../cartesian";
 
-export function toastAxisCorner({
-  color,
-  thickness,
-}: {
-  color: string;
-  thickness: number;
-}): Widget {
-  return Container({ color, width: thickness, height: thickness });
+export function toastAxisCorner(
+  args: undefined,
+  context: { config: ToastBaseConfig },
+): Widget {
+  const { axis } = context.config;
+  return AxisCorner({ color: axis.color, size: axis.thickness });
 }

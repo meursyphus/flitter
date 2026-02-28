@@ -7,10 +7,5 @@ export function toastXAxisTick(
   _args: undefined,
   context: LineChartContext<ToastLineChartConfig>
 ): Widget {
-  const { axis } = context.config;
-  return sharedXAxisTick({
-    tickSize: axis.tick.size,
-    thickness: axis.thickness,
-    color: axis.color,
-  });
+  return sharedXAxisTick(_args, context);
 }

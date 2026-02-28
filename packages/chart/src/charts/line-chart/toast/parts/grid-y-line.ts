@@ -7,6 +7,5 @@ export function toastGridYLine(
   _args: undefined,
   context: LineChartContext<ToastLineChartConfig>
 ): Widget {
-  const { grid } = context.config;
-  return sharedGridYLine({ thickness: grid.thickness, color: grid.color });
+  return sharedGridYLine(_args, context);
 }

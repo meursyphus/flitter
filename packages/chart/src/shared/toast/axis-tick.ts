@@ -1,25 +1,27 @@
-import { Container, type Widget } from "flitter-core";
+import type { Widget } from "flitter-core";
+import type { ToastBaseConfig } from "./config";
+import { XAxisTick, YAxisTick } from "../cartesian";
 
-export function toastXAxisTick({
-  tickSize,
-  thickness,
-  color,
-}: {
-  tickSize: number;
-  thickness: number;
-  color: string;
-}): Widget {
-  return Container({ height: tickSize, width: thickness, color });
+export function toastXAxisTick(
+  args: undefined,
+  context: { config: ToastBaseConfig },
+): Widget {
+  const { axis } = context.config;
+  return XAxisTick(args, {
+    size: axis.tick.size,
+    thickness: axis.thickness,
+    color: axis.color,
+  });
 }
 
-export function toastYAxisTick({
-  tickSize,
-  thickness,
-  color,
-}: {
-  tickSize: number;
-  thickness: number;
-  color: string;
-}): Widget {
-  return Container({ height: thickness, width: tickSize, color });
+export function toastYAxisTick(
+  args: undefined,
+  context: { config: ToastBaseConfig },
+): Widget {
+  const { axis } = context.config;
+  return YAxisTick(args, {
+    size: axis.tick.size,
+    thickness: axis.thickness,
+    color: axis.color,
+  });
 }

@@ -5,13 +5,8 @@ import { toastXAxisTick as sharedXAxisTick } from "@shared/toast";
 
 export function createToastXAxisTick(vc: ToastStackedAreaChartConfig) {
   return function toastXAxisTick(
-    ..._args: Parameters<StackedAreaChartCustom["xAxisTick"]>
+    ...[_args]: Parameters<StackedAreaChartCustom["xAxisTick"]>
   ): Widget {
-    const { axis } = vc;
-    return sharedXAxisTick({
-      tickSize: axis.tick.size,
-      thickness: axis.thickness,
-      color: axis.color,
-    });
+    return sharedXAxisTick(_args, { config: vc });
   };
 }
