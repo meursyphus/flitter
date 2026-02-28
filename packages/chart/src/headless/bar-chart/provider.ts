@@ -35,6 +35,7 @@ export function BarChartProvider({
 }): Widget {
   const defaults = {
     barGroup: Default.BarGroup,
+    barGroupBox: Default.BarGroupBox,
     barBox: Default.BarBox,
     bar: Default.Bar,
     xAxis: Default.XAxis,

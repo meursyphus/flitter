@@ -1,13 +1,7 @@
 import { TOAST_COLORS } from "@utils/toast";
-import type { ToastBaseConfig } from "@shared/toast";
+import type { ToastBarChartConfig } from "../../bar-chart/toast/config";
 
-export type ToastStackedBarChartConfig = ToastBaseConfig & {
-  /** Bar-specific styling */
-  bar: {
-    gap: number;
-    cornerRadius: number;
-  };
-};
+export type ToastStackedBarChartConfig = ToastBarChartConfig;
 
 export const defaultToastConfig: ToastStackedBarChartConfig = {
   colors: TOAST_COLORS,

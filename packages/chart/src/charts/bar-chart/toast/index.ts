@@ -1,10 +1,10 @@
-import type { Widget } from "flitter-core";
-import HeadlessBarChart from "@headless/bar-chart";
-import type { BarChartCustom, BarChartData, GetScaleFn, GetScaleOptionsFn } from "@headless/bar-chart/types";
-import { defaultToastConfig, type ToastBarChartConfig } from "./config";
+import type { BarChartCustom } from "@headless/bar-chart/types";
+import type { GetScaleOptionsFn } from "@headless/bar-chart/types";
+import type { ToastBarChartConfig } from "./config";
+import { defaultToastConfig } from "./config";
 import { toastLayout } from "./parts/layout";
 import { toastBar } from "./parts/bar";
-import { toastBarGroup } from "./parts/bar-group";
+import { toastBarGroupBox } from "./parts/bar-group-box";
 import { toastBarBox } from "./parts/bar-box";
 import { toastLegend } from "./parts/legend";
 import { toastXAxisLabel } from "./parts/x-axis-label";
@@ -20,10 +20,12 @@ import { toastYAxis } from "./parts/y-axis";
 import { toastTitle } from "./parts/title";
 import { toastAxisCorner } from "./parts/axis-corner";
 
-const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
+export { defaultToastConfig, type ToastBarChartConfig } from "./config";
+
+export const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
   layout: toastLayout,
   bar: toastBar,
-  barGroup: toastBarGroup,
+  barGroupBox: toastBarGroupBox,
   barBox: toastBarBox,
   legend: toastLegend,
   title: toastTitle,
@@ -40,38 +42,11 @@ const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
   yAxis: toastYAxis,
 };
 
-export { type ToastBarChartConfig } from "./config";
-
 const DEFAULT_TICK_SPACING = 40;
 
-const toastGetScaleOptions: GetScaleOptionsFn = (ctx) => {
+export const toastGetScaleOptions: GetScaleOptionsFn = (ctx) => {
   const axisLength = ctx.direction === "vertical" ? ctx.height : ctx.width;
   return {
     roughStepCount: axisLength > 0 ? Math.max(2, Math.floor(axisLength / DEFAULT_TICK_SPACING)) : 10,
   };
 };
-
-export function ToastBarChart({
-  data,
-  config,
-  custom,
-  getScaleOptions = toastGetScaleOptions,
-  ...rest
-}: {
-  data: BarChartData;
-  config?: Partial<ToastBarChartConfig>;
-  custom?: Partial<BarChartCustom<ToastBarChartConfig>>;
-  title?: string;
-  direction?: "vertical" | "horizontal";
-  getScale?: GetScaleFn;
-  getScaleOptions?: GetScaleOptionsFn;
-}): Widget {
-  const mergedConfig = { ...defaultToastConfig, ...config };
-  return HeadlessBarChart<ToastBarChartConfig>({
-    data,
-    config: mergedConfig,
-    custom: { ...toastCustom, ...custom },
-    getScaleOptions,
-    ...rest,
-  });
-}

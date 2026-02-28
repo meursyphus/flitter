@@ -90,7 +90,7 @@ class _AnimatedBarGroupState extends State<_AnimatedBarGroup> {
   }
 }
 
-export function toastBarGroup(
+export function toastBarGroupBox(
   { child, index }: { child: Widget; index: number; label: string },
   context: BarChartContext<ToastBarChartConfig>
 ) {

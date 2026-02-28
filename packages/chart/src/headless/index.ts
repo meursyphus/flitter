@@ -67,9 +67,6 @@ export { default as PieChart } from "./pie-chart";
 export * from "./pie-chart/types";
 export { default as SunburstChart } from "./sunburst-chart";
 export * from "./sunburst-chart/types";
-export { default as StackedBarChart } from "./stacked-bar-chart";
-export * from "./stacked-bar-chart/types";
-
 export { default as CandlestickChart } from "./candlestick-chart";
 export * from "./candlestick-chart/types";
 export { default as BoxPlotChart } from "./box-plot-chart";

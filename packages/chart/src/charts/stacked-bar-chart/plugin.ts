@@ -1,9 +1,13 @@
-import { ToastStackedBarChart, type ToastStackedBarChartConfig } from "./toast";
+import { toastCustom, toastGetScaleOptions, defaultToastConfig, type ToastStackedBarChartConfig } from "./toast";
 
 export type StackedBarChartStyleMap = {
   toast: ToastStackedBarChartConfig;
 };
 
-export const stackedBarChartStyles = {
-  toast: ToastStackedBarChart,
+export const stackedBarChartStyleConfigs = {
+  toast: {
+    custom: toastCustom,
+    defaults: defaultToastConfig,
+    getScaleOptions: toastGetScaleOptions,
+  },
 } as const;

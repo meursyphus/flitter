@@ -1,9 +1,9 @@
-import type { StackedBarChartData, StackedBarChartScale, StackedBarChartScaleOptions } from "../types";
+import type { BarChartData, BarChartScale, BarChartScaleOptions } from "../bar-chart/headless";
 
-export function getScale(
-  { datasets, labels }: StackedBarChartData,
-  options?: StackedBarChartScaleOptions,
-): StackedBarChartScale {
+export function stackedGetScale(
+  { datasets, labels }: BarChartData,
+  options?: BarChartScaleOptions,
+): BarChartScale {
   const stackedTotals: number[] = [];
   const labelCount = labels.length;
 
