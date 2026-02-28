@@ -1,9 +1,14 @@
-import type { ScatterChartData, ScatterChartScale } from "../types";
+import type { ScatterChartData, ScatterChartScale, ScatterChartScaleOptions } from "../types";
 import { getValueEdge, refineScale } from "@shared/utils/scale";
 
-export function getScale({ datasets }: ScatterChartData): ScatterChartScale {
+export function getScale(
+  { datasets }: ScatterChartData,
+  options?: ScatterChartScaleOptions,
+): ScatterChartScale {
   const xValues: number[] = [];
   const yValues: number[] = [];
+
+  const roughStepCount = options?.roughStepCount ?? 10;
 
   datasets.forEach((d) => {
     d.data.forEach((p) => {
@@ -14,8 +19,6 @@ export function getScale({ datasets }: ScatterChartData): ScatterChartScale {
 
   const xEdge = getValueEdge(xValues);
   const yEdge = getValueEdge(yValues);
-
-  const roughStepCount = 10;
 
   const xScale = refineScale({
     min: xEdge.min,
@@ -28,7 +31,6 @@ export function getScale({ datasets }: ScatterChartData): ScatterChartScale {
     max: yEdge.max,
     step: (yEdge.max - yEdge.min) / roughStepCount,
   });
-
 
   return {
     x: xScale,

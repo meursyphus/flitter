@@ -2,9 +2,12 @@ import type { BubbleChartCustom } from "../types";
 import { Container, BoxDecoration } from "flitter-core";
 
 export function Bubble(
-  ...[{ value, label, legend, index }, { scale }]: Parameters<BubbleChartCustom["bubble"]>
+  ...[{ value }, ctx]: Parameters<BubbleChartCustom["bubble"]>
 ) {
-  const normValue = (value - scale.value.min) / (scale.value.max - scale.value.min);
+  const { scale } = ctx;
+  const normValue = scale != null
+    ? (value - scale.value.min) / (scale.value.max - scale.value.min)
+    : 0.5;
   const radius = 5 + normValue * 20;
 
   return Container({

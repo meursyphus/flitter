@@ -1,56 +1,59 @@
 import type { Widget } from "flitter-core";
+import type { BubbleChartController } from "./controller";
 
-type ConfigArgs<T = undefined> = (args: T, context: BubbleChartConfig) => Widget;
+type CustomArgs<T = undefined, TConfig = {}> = (args: T, context: BubbleChartContext<TConfig>) => Widget;
+
+export type BubbleChartContext<TConfig = {}> = BubbleChartController & { config: TConfig };
 
 export type BubbleChartData = {
-  datasets: {
-    legend: string;
-    data: {
-      x: number;
-      y: number;
-      value: number;
-      label: string;
-    }[];
-  }[];
+	datasets: {
+		legend: string;
+		data: {
+			x: number;
+			y: number;
+			value: number;
+			label: string;
+		}[];
+	}[];
 };
 
 export type BubbleScale = {
-  min: number;
-  max: number;
-  step: number;
-}
+	min: number;
+	max: number;
+	step: number;
+};
 
 export type BubbleChartScale = {
-  x: BubbleScale;
-  y: BubbleScale;
-  value: BubbleScale;
+	x: BubbleScale;
+	y: BubbleScale;
+	value: BubbleScale;
 };
 
-export type BubbleChartCustom = {
-  xAxis: ConfigArgs<{ line: Widget; labels: Widget[]; tick: Widget }>;
-  yAxis: ConfigArgs<{ line: Widget; labels: Widget[]; tick: Widget }>;
-  xAxisLabel: ConfigArgs<{ name: string; index: number }>;
-  yAxisLabel: ConfigArgs<{ name: string; index: number }>;
-  xAxisTick: ConfigArgs;
-  yAxisTick: ConfigArgs;
-  series: ConfigArgs<{ points: {x:number; y:number; value:number; label:string; legend:string; index:number}[]; scale: BubbleChartScale }>;
-  bubble: ConfigArgs<{ value:number; label:string; legend:string; index:number }>;
-  layout: ConfigArgs<{ title: Widget; legends: Widget[]; plot: Widget }>;
-  plot: ConfigArgs<{ xAxis: Widget; yAxis: Widget; series: Widget; grid: Widget; axisCorner: Widget }>;
-  legend: ConfigArgs<{ name: string; index: number }>;
-  title: ConfigArgs<{ name: string }>;
-  dataLabel: ConfigArgs<{ x:number; y:number; value: number; label: string; legend: string }>;
-  xAxisLine: ConfigArgs;
-  yAxisLine: ConfigArgs;
-  axisCorner: ConfigArgs;
-  grid: ConfigArgs<{ xLine: Widget; yLine: Widget }>;
-  gridXLine: ConfigArgs;
-  gridYLine: ConfigArgs;
+export type BubbleChartCustom<TConfig = {}> = {
+	bubble: CustomArgs<{ value: number; label: string; legend: string; index: number }, TConfig>;
+	xAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
+	yAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
+	xAxisLabel: CustomArgs<{ name: string; index: number }, TConfig>;
+	yAxisLabel: CustomArgs<{ name: string; index: number }, TConfig>;
+	xAxisTick: CustomArgs<undefined, TConfig>;
+	yAxisTick: CustomArgs<undefined, TConfig>;
+	series: CustomArgs<{ points: { x: number; y: number; value: number; label: string; legend: string; index: number }[]; scale: BubbleChartScale }, TConfig>;
+	layout: CustomArgs<{ title: Widget; legends: Widget[]; plot: Widget }, TConfig>;
+	plot: CustomArgs<{ xAxis: Widget; yAxis: Widget; series: Widget; grid: Widget; axisCorner: Widget }, TConfig>;
+	legend: CustomArgs<{ name: string; index: number }, TConfig>;
+	title: CustomArgs<{ name: string }, TConfig>;
+	dataLabel: CustomArgs<{ x: number; y: number; value: number; label: string; legend: string }, TConfig>;
+	xAxisLine: CustomArgs<undefined, TConfig>;
+	yAxisLine: CustomArgs<undefined, TConfig>;
+	axisCorner: CustomArgs<undefined, TConfig>;
+	grid: CustomArgs<{ xLine: Widget; yLine: Widget }, TConfig>;
+	gridXLine: CustomArgs<undefined, TConfig>;
+	gridYLine: CustomArgs<undefined, TConfig>;
 };
 
-export type BubbleChartConfig = {
-  custom: BubbleChartCustom;
-  data: BubbleChartData;
-  scale: BubbleChartScale;
-  title: string;
+export type BubbleChartScaleOptions = {
+	roughStepCount?: number;
 };
+
+export type GetScaleFn = (data: BubbleChartData, options?: BubbleChartScaleOptions) => BubbleChartScale;
+export type GetScaleOptionsFn = (context: BubbleChartController) => BubbleChartScaleOptions;

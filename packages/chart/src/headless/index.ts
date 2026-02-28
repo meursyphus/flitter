@@ -1,16 +1,17 @@
 export { default as BarChart } from "./bar-chart";
 export { default as LineChart } from "./line-chart";
 export { default as BubbleChart } from "./bubble-chart";
-export { default as AreaChart } from "./area-chart";
 export { default as ScatterChart } from "./scatter-chart";
 export { default as HeatmapChart } from "./heatmap-chart";
 export { default as TreemapChart } from "./treemap-chart";
 export * from "./bar-chart/types";
 export { BarChartController } from "./bar-chart/controller";
 export * from "./line-chart/types";
+export { LineChartController } from "./line-chart/controller";
 export * from "./bubble-chart/types";
-export * from "./area-chart/types";
+export { BubbleChartController } from "./bubble-chart/controller";
 export * from "./scatter-chart/types";
+export { ScatterChartController } from "./scatter-chart/controller";
 export * from "./heatmap-chart/types";
 export * from "./treemap-chart/types";
 export { default as FunnelChart } from "./funnel-chart";
@@ -27,6 +28,7 @@ export { default as SunburstChart } from "./sunburst-chart";
 export * from "./sunburst-chart/types";
 export { default as StackedBarChart } from "./stacked-bar-chart";
 export * from "./stacked-bar-chart/types";
+
 export { default as CandlestickChart } from "./candlestick-chart";
 export * from "./candlestick-chart/types";
 export { default as BoxPlotChart } from "./box-plot-chart";

@@ -1,32 +1,43 @@
-import { StatelessWidget, Widget, BuildContext } from "flitter-core";
-import { ScatterChartConfigProvider } from "./provider";
+import {
+  StatelessWidget,
+  type Widget,
+  type BuildContext,
+  LayoutBuilder,
+} from "flitter-core";
+import { ScatterChartProvider } from "./provider";
 
 class Chart extends StatelessWidget {
   override build(_: BuildContext): Widget {
-    return new Layout();
+    return new SizeTracker();
+  }
+}
+
+class SizeTracker extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = ScatterChartProvider.of(context);
+    return LayoutBuilder({
+      builder: (_ctx: BuildContext, constraints) => {
+        ctx.setSize(constraints.maxWidth, constraints.maxHeight);
+        return new Layout();
+      },
+    });
   }
 }
 
 export default Chart;
 
 class Layout extends StatelessWidget {
-  #getLegends(context: BuildContext): string[] {
-    const { data } = ScatterChartConfigProvider.of(context);
-    return data.datasets.map(({ legend }) => legend);
-  }
-
   override build(context: BuildContext): Widget {
-    const config = ScatterChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.layout(
+    const ctx = ScatterChartProvider.of(context);
+    return ctx.custom.layout(
       {
-        title: new TitleWidget(),
-        legends: this.#getLegends(context).map(
+        title: new Title(),
+        legends: ctx.legends.map(
           (name, index) => new Legend({ name, index }),
         ),
         plot: new Plot(),
       },
-      config,
+      ctx,
     );
   }
 }
@@ -42,33 +53,29 @@ class Legend extends StatelessWidget {
   }
 
   override build(context: BuildContext): Widget {
-    const config = ScatterChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.legend({ name: this.#name, index: this.#index }, config);
+    const ctx = ScatterChartProvider.of(context);
+    return ctx.custom.legend({ name: this.#name, index: this.#index }, ctx);
   }
 }
 
-class TitleWidget extends StatelessWidget {
+class Title extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = ScatterChartConfigProvider.of(context);
-    const { custom, title } = config;
-    return custom.title({ name: title }, config);
+    const ctx = ScatterChartProvider.of(context);
+    return ctx.custom.title({ name: ctx.title }, ctx);
   }
 }
 
 class AxisCorner extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = ScatterChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.axisCorner(undefined, config);
+    const ctx = ScatterChartProvider.of(context);
+    return ctx.custom.axisCorner(undefined, ctx);
   }
 }
 
 class Plot extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = ScatterChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.plot(
+    const ctx = ScatterChartProvider.of(context);
+    return ctx.custom.plot(
       {
         xAxis: new XAxis(),
         yAxis: new YAxis(),
@@ -76,143 +83,116 @@ class Plot extends StatelessWidget {
         grid: new Grid(),
         axisCorner: new AxisCorner(),
       },
-      config,
+      ctx,
     );
   }
 }
 
 class XAxis extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = ScatterChartConfigProvider.of(context);
-    const { custom } = config;
-    const { scale } = config;
+    const ctx = ScatterChartProvider.of(context);
+    const { scale } = ctx;
+    if (scale == null) return ctx.custom.xAxis({ labels: [], tick: new XAxisTick(), line: new XAxisLine() }, ctx);
+
     const xSteps = (scale.x.max - scale.x.min) / scale.x.step;
     const labels = [];
     for (let i = 0; i <= xSteps; i++) {
       labels.push(scale.x.min + i * scale.x.step);
     }
 
-    return custom.xAxis(
+    return ctx.custom.xAxis(
       {
-        labels: labels.map(
-          (name, index) => new XAxisLabel({ name: `${name}`, index }),
-        ),
+        labels: labels.map((name, index) => new XAxisLabel({ name: `${name}`, index })),
         tick: new XAxisTick(),
         line: new XAxisLine(),
       },
-      config,
+      ctx,
     );
   }
 }
 
 class YAxis extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = ScatterChartConfigProvider.of(context);
-    const { custom } = config;
-    const { scale } = config;
+    const ctx = ScatterChartProvider.of(context);
+    const { scale } = ctx;
+    if (scale == null) return ctx.custom.yAxis({ labels: [], tick: new YAxisTick(), line: new YAxisLine() }, ctx);
+
     const ySteps = (scale.y.max - scale.y.min) / scale.y.step;
     const labels = [];
     for (let i = 0; i <= ySteps; i++) {
       labels.push(scale.y.min + i * scale.y.step);
     }
 
-    return custom.yAxis(
+    return ctx.custom.yAxis(
       {
-        labels: labels.map(
-          (name, index) => new YAxisLabel({ name: `${name}`, index }),
-        ),
+        labels: labels.map((name, index) => new YAxisLabel({ name: `${name}`, index })),
         tick: new YAxisTick(),
         line: new YAxisLine(),
       },
-      config,
+      ctx,
     );
   }
 }
 
-class AxisLabel extends StatelessWidget {
-  #name: string;
-  #index: number;
-  #renderer: (args: any, config: any) => Widget;
+abstract class Label extends StatelessWidget {
+  protected name: string;
+  protected index: number;
 
-  constructor({
-    name,
-    index,
-    renderer,
-  }: {
-    name: string;
-    index: number;
-    renderer: (args: any, config: any) => Widget;
-  }) {
+  constructor({ name, index }: { name: string; index: number }) {
     super();
-    this.#name = name;
-    this.#index = index;
-    this.#renderer = renderer;
+    this.name = name;
+    this.index = index;
   }
+}
 
+class XAxisLabel extends Label {
   override build(context: BuildContext): Widget {
-    const config = ScatterChartConfigProvider.of(context);
-    return this.#renderer({ name: this.#name, index: this.#index }, config);
+    const ctx = ScatterChartProvider.of(context);
+    return ctx.custom.xAxisLabel({ name: this.name, index: this.index }, ctx);
   }
 }
 
-class XAxisLabel extends AxisLabel {
-  constructor({ name, index }: { name: string; index: number }) {
-    super({
-      name,
-      index,
-      renderer: (args, config) => config.custom.xAxisLabel(args, config),
-    });
-  }
-}
-
-class YAxisLabel extends AxisLabel {
-  constructor({ name, index }: { name: string; index: number }) {
-    super({
-      name,
-      index,
-      renderer: (args, config) => config.custom.yAxisLabel(args, config),
-    });
+class YAxisLabel extends Label {
+  override build(context: BuildContext): Widget {
+    const ctx = ScatterChartProvider.of(context);
+    return ctx.custom.yAxisLabel({ name: this.name, index: this.index }, ctx);
   }
 }
 
 class XAxisTick extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = ScatterChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.xAxisTick(undefined, config);
+    const ctx = ScatterChartProvider.of(context);
+    return ctx.custom.xAxisTick(undefined, ctx);
   }
 }
 
 class YAxisTick extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = ScatterChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.yAxisTick(undefined, config);
+    const ctx = ScatterChartProvider.of(context);
+    return ctx.custom.yAxisTick(undefined, ctx);
   }
 }
 
 class XAxisLine extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = ScatterChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.xAxisLine(undefined, config);
+    const ctx = ScatterChartProvider.of(context);
+    return ctx.custom.xAxisLine(undefined, ctx);
   }
 }
 
 class YAxisLine extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = ScatterChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.yAxisLine(undefined, config);
+    const ctx = ScatterChartProvider.of(context);
+    return ctx.custom.yAxisLine(undefined, ctx);
   }
 }
 
 class Series extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = ScatterChartConfigProvider.of(context);
-    const { custom, data, scale } = config;
+    const ctx = ScatterChartProvider.of(context);
+    const { data, scale } = ctx;
+    if (scale == null) return ctx.custom.series({ points: [], scale: { x: { min: 0, max: 0, step: 1 }, y: { min: 0, max: 0, step: 1 } } }, ctx);
 
-    // 모든 dataset의 points를 하나의 배열로 합치기
     const points = data.datasets.flatMap((dataset, datasetIndex) =>
       dataset.data.map((pt) => ({
         ...pt,
@@ -221,37 +201,30 @@ class Series extends StatelessWidget {
       })),
     );
 
-    // custom.series에 { points, scale } 형태로 전달
-    return custom.series({ points, scale }, config);
+    return ctx.custom.series({ points, scale }, ctx);
   }
 }
 
 class Grid extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = ScatterChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.grid(
-      {
-        xLine: new GridXLine(),
-        yLine: new GridYLine(),
-      },
-      config,
+    const ctx = ScatterChartProvider.of(context);
+    return ctx.custom.grid(
+      { xLine: new GridXLine(), yLine: new GridYLine() },
+      ctx,
     );
   }
 }
 
 class GridXLine extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = ScatterChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.gridXLine(undefined, config);
+    const ctx = ScatterChartProvider.of(context);
+    return ctx.custom.gridXLine(undefined, ctx);
   }
 }
 
 class GridYLine extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = ScatterChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.gridYLine(undefined, config);
+    const ctx = ScatterChartProvider.of(context);
+    return ctx.custom.gridYLine(undefined, ctx);
   }
 }

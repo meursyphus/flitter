@@ -1,11 +1,12 @@
 import * as Cartesian from "@shared/cartesian/index";
-import { StackedBarChartCustom } from "../types";
+import type { StackedBarChartCustom } from "../types";
 
 export function Grid(
-  ...[{ xLine, yLine }, { data, direction, scale }]: Parameters<
-    StackedBarChartCustom["grid"]
-  >
+  ...[{ xLine, yLine }, ctx]: Parameters<StackedBarChartCustom["grid"]>
 ) {
+  const { data, direction, scale } = ctx;
+  if (scale == null) return Cartesian.Grid({ xLine, yLine, x: 0, y: 0 });
+
   const labelCount = data.labels.length;
   const valueCount = (scale.max - scale.min) / scale.step;
 

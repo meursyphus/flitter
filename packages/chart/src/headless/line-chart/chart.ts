@@ -2,35 +2,42 @@ import {
   StatelessWidget,
   type Widget,
   type BuildContext,
+  LayoutBuilder,
 } from "flitter-core";
-import { LineChartConfigProvider } from "./provider";
+import { LineChartProvider } from "./provider";
 
 class Chart extends StatelessWidget {
   override build(_: BuildContext): Widget {
-    return new Layout();
+    return new SizeTracker();
+  }
+}
+
+class SizeTracker extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = LineChartProvider.of(context);
+    return LayoutBuilder({
+      builder: (_ctx: BuildContext, constraints) => {
+        ctx.setSize(constraints.maxWidth, constraints.maxHeight);
+        return new Layout();
+      },
+    });
   }
 }
 
 export default Chart;
 
 class Layout extends StatelessWidget {
-  #getLegends(context: BuildContext): string[] {
-    const { data } = LineChartConfigProvider.of(context);
-    return data.datasets.map(({ legend }) => legend);
-  }
-
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.layout(
+    const ctx = LineChartProvider.of(context);
+    return ctx.custom.layout(
       {
         title: new Title(),
         plot: new Plot(),
-        legends: this.#getLegends(context).map(
+        legends: ctx.legends.map(
           (name, index) => new Legend({ name, index }),
         ),
       },
-      config,
+      ctx,
     );
   }
 }
@@ -46,25 +53,23 @@ class Legend extends StatelessWidget {
   }
 
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.legend({ name: this.#name, index: this.#index }, config);
+    const ctx = LineChartProvider.of(context);
+    return ctx.custom.legend({ name: this.#name, index: this.#index }, ctx);
   }
 }
 
 class Title extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom, title } = config;
-    return custom.title({ name: title }, config);
+    const ctx = LineChartProvider.of(context);
+    return ctx.custom.title({ name: ctx.title }, ctx);
   }
 }
 
 abstract class Axis extends StatelessWidget {
   protected getValueLabels(context: BuildContext): string[] {
-    const {
-      scale: { min, max, step },
-    } = LineChartConfigProvider.of(context);
+    const { scale } = LineChartProvider.of(context);
+    if (scale == null) return [];
+    const { min, max, step } = scale;
     const labels = [];
     for (let i = 0; i <= (max - min) / step; i++) {
       labels.push(min + step * i);
@@ -72,25 +77,16 @@ abstract class Axis extends StatelessWidget {
     return labels.map((label) => label.toString());
   }
   protected getCategoryLabels(context: BuildContext): string[] {
-    const { data } = LineChartConfigProvider.of(context);
-    return data.labels;
-  }
-  protected getLabels(context: BuildContext): string[] {
-    const { data } = LineChartConfigProvider.of(context);
+    const { data } = LineChartProvider.of(context);
     return data.labels;
   }
 }
 
 class XAxis extends Axis {
-  #getLabels(context: BuildContext): string[] {
-    return this.getCategoryLabels(context);
-  }
-
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom } = config;
-    const labels = this.#getLabels(context);
-    return custom.xAxis(
+    const ctx = LineChartProvider.of(context);
+    const labels = this.getCategoryLabels(context);
+    return ctx.custom.xAxis(
       {
         labels: labels.map(
           (label, index) => new XAxisLabel({ index, name: label }),
@@ -98,45 +94,38 @@ class XAxis extends Axis {
         tick: new XAxisTick(),
         line: new XAxisLine(),
       },
-      config,
+      ctx,
     );
   }
 }
 
 class XAxisLine extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.xAxisLine(undefined, config);
+    const ctx = LineChartProvider.of(context);
+    return ctx.custom.xAxisLine(undefined, ctx);
   }
 }
 
 class YAxis extends Axis {
-  #getLabels(context: BuildContext): string[] {
-    return this.getValueLabels(context);
-  }
-
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.yAxis(
+    const ctx = LineChartProvider.of(context);
+    return ctx.custom.yAxis(
       {
-        labels: this.#getLabels(context).map(
+        labels: this.getValueLabels(context).map(
           (label, index) => new YAxisLabel({ index, name: label }),
         ),
         tick: new YAxisTick(),
         line: new YAxisLine(),
       },
-      config,
+      ctx,
     );
   }
 }
 
 class YAxisLine extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.yAxisLine(undefined, config);
+    const ctx = LineChartProvider.of(context);
+    return ctx.custom.yAxisLine(undefined, ctx);
   }
 }
 
@@ -153,9 +142,8 @@ abstract class Label extends StatelessWidget {
 
 class XAxisLabel extends Label {
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.xAxisLabel({ name: this.name, index: this.index }, config);
+    const ctx = LineChartProvider.of(context);
+    return ctx.custom.xAxisLabel({ name: this.name, index: this.index }, ctx);
   }
 }
 
@@ -170,25 +158,22 @@ class YAxisLabel extends StatelessWidget {
   }
 
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.yAxisLabel({ name: this.#name, index: this.#index }, config);
+    const ctx = LineChartProvider.of(context);
+    return ctx.custom.yAxisLabel({ name: this.#name, index: this.#index }, ctx);
   }
 }
 
 class XAxisTick extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.xAxisTick(undefined, config);
+    const ctx = LineChartProvider.of(context);
+    return ctx.custom.xAxisTick(undefined, ctx);
   }
 }
 
 class YAxisTick extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.yAxisTick(undefined, config);
+    const ctx = LineChartProvider.of(context);
+    return ctx.custom.yAxisTick(undefined, ctx);
   }
 }
 
@@ -213,32 +198,29 @@ class Line extends StatelessWidget {
   }
 
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.line(
+    const ctx = LineChartProvider.of(context);
+    return ctx.custom.line(
       {
         values: this.#values,
         legend: this.#legend,
         index: this.#index,
       },
-      config,
+      ctx,
     );
   }
 }
 
 class AxisCorner extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.axisCorner(undefined, config);
+    const ctx = LineChartProvider.of(context);
+    return ctx.custom.axisCorner(undefined, ctx);
   }
 }
 
 class Plot extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.plot(
+    const ctx = LineChartProvider.of(context);
+    return ctx.custom.plot(
       {
         xAxis: new XAxis(),
         yAxis: new YAxis(),
@@ -246,16 +228,16 @@ class Plot extends StatelessWidget {
         grid: new Grid(),
         axisCorner: new AxisCorner(),
       },
-      config,
+      ctx,
     );
   }
 }
 
 class Series extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom, data } = config;
-    return custom.series(
+    const ctx = LineChartProvider.of(context);
+    const { data } = ctx;
+    return ctx.custom.series(
       {
         lines: data.datasets.map(
           (dataset, index) =>
@@ -266,34 +248,31 @@ class Series extends StatelessWidget {
             }),
         ),
       },
-      config,
+      ctx,
     );
   }
 }
 
 class Grid extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.grid(
+    const ctx = LineChartProvider.of(context);
+    return ctx.custom.grid(
       { xLine: new GridXLine(), yLine: new GridYLine() },
-      config,
+      ctx,
     );
   }
 }
 
 class GridXLine extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.gridXLine(undefined, config);
+    const ctx = LineChartProvider.of(context);
+    return ctx.custom.gridXLine(undefined, ctx);
   }
 }
 
 class GridYLine extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = LineChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.gridYLine(undefined, config);
+    const ctx = LineChartProvider.of(context);
+    return ctx.custom.gridYLine(undefined, ctx);
   }
 }

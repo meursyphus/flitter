@@ -1,9 +1,12 @@
 import * as Cartesian from "@shared/cartesian/index";
-import { LineChartCustom } from "../types";
+import type { LineChartCustom } from "../types";
 
 export function Grid(
-  ...[{ xLine, yLine }, { data, scale }]: Parameters<LineChartCustom["grid"]>
+  ...[{ xLine, yLine }, ctx]: Parameters<LineChartCustom["grid"]>
 ) {
+  const { data, scale } = ctx;
+  if (scale == null) return Cartesian.Grid({ xLine, yLine, x: 0, y: 0 });
+
   const labelCount = data.labels.length - 1;
   const valueCount = (scale.max - scale.min) / scale.step;
 

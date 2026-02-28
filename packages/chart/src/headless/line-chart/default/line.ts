@@ -2,8 +2,11 @@ import type { LineChartCustom, LineChartScale } from "../types";
 import { CustomPaint, Path } from "flitter-core";
 
 export function Line(
-  ...[{ values }, { scale }]: Parameters<LineChartCustom["line"]>
+  ...[{ values }, ctx]: Parameters<LineChartCustom["line"]>
 ) {
+  const { scale } = ctx;
+  if (scale == null) return CustomPaint({});
+
   return CustomPaint({
     painter: {
       svg: {

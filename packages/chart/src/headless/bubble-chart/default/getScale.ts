@@ -1,10 +1,15 @@
-import type { BubbleChartData, BubbleChartScale } from "../types";
+import type { BubbleChartData, BubbleChartScale, BubbleChartScaleOptions } from "../types";
 import { getValueEdge, refineScale } from "@shared/utils/scale";
 
-export function getScale({ datasets }: BubbleChartData): BubbleChartScale {
+export function getScale(
+  { datasets }: BubbleChartData,
+  options?: BubbleChartScaleOptions,
+): BubbleChartScale {
   const xValues: number[] = [];
   const yValues: number[] = [];
   const values: number[] = [];
+
+  const roughStepCount = options?.roughStepCount ?? 10;
 
   datasets.forEach((d) => {
     d.data.forEach((p) => {
@@ -17,8 +22,6 @@ export function getScale({ datasets }: BubbleChartData): BubbleChartScale {
   const xEdge = getValueEdge(xValues);
   const yEdge = getValueEdge(yValues);
   const valueEdge = getValueEdge(values);
-
-  const roughStepCount = 10;
 
   const xScale = refineScale({
     min: xEdge.min,

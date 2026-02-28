@@ -1,56 +1,14 @@
-import { type Widget, StatelessWidget } from "flitter-core";
-import type {
-  BubbleChartCustom,
-  BubbleChartData,
-  BubbleChartScale,
-} from "./types";
-import { BubbleChartConfigProvider } from "./provider";
-import * as Default from "./default";
-import Chart from "./chart";
+import type { Widget } from "flitter-core";
+import type { BubbleChartCustom, BubbleChartData, GetScaleFn, GetScaleOptionsFn } from "./types";
+import { BubbleChartProvider } from "./provider";
 
-
-export default function BubbleChart({
-  custom = {},
-  data,
-  title = "",
-  getScale = Default.getScale,
-}: {
-  custom?: Partial<BubbleChartCustom>;
+export default function BubbleChart<TConfig = {}>(props: {
+  custom?: Partial<BubbleChartCustom<TConfig>>;
   title?: string;
   data: BubbleChartData;
-  getScale?: (data: BubbleChartData) => BubbleChartScale;
+  getScale?: GetScaleFn;
+  getScaleOptions?: GetScaleOptionsFn;
+  config?: TConfig;
 }): Widget {
-  const mergedConfig: BubbleChartCustom = {
-    bubble: custom.bubble ?? Default.Bubble,
-    xAxis: custom.xAxis ?? Default.XAxis,
-    xAxisLabel: custom.xAxisLabel ?? Default.XAxisLabel,
-    xAxisTick: custom.xAxisTick ?? Default.XAxisTick,
-    xAxisLine: custom.xAxisLine ?? Default.XAxisLine,
-    yAxis: custom.yAxis ?? Default.YAxis,
-    yAxisLabel: custom.yAxisLabel ?? Default.YAxisLabel,
-    yAxisTick: custom.yAxisTick ?? Default.YAxisTick,
-    yAxisLine: custom.yAxisLine ?? Default.YAxisLine,
-    series: custom.series ?? Default.Series,
-    layout: custom.layout ?? Default.Layout,
-    plot: custom.plot ?? Default.Plot,
-    legend: custom.legend ?? Default.Legend,
-    title: custom.title ?? Default.Title,
-    dataLabel: custom.dataLabel ?? Default.DataLabel,
-    grid: custom.grid ?? Default.Grid,
-    gridXLine: custom.gridXLine ?? Default.GridXLine,
-    gridYLine: custom.gridYLine ?? Default.GridYLine,
-    axisCorner: custom.axisCorner ?? Default.AxisCorner,
-  };
-
-  const scale = getScale(data);
-
-  return BubbleChartConfigProvider({
-    value: {
-      custom: mergedConfig,
-      data,
-      scale,
-      title,
-    },
-    child: new Chart(),
-  });
+  return BubbleChartProvider(props);
 }

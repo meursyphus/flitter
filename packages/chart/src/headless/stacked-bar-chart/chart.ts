@@ -2,35 +2,42 @@ import {
   StatelessWidget,
   type Widget,
   type BuildContext,
+  LayoutBuilder,
 } from "flitter-core";
-import { StackedBarChartConfigProvider } from "./provider";
+import { StackedBarChartProvider } from "./provider";
 
 class Chart extends StatelessWidget {
   override build(_: BuildContext): Widget {
-    return new Layout();
+    return new SizeTracker();
+  }
+}
+
+class SizeTracker extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = StackedBarChartProvider.of(context);
+    return LayoutBuilder({
+      builder: (_ctx: BuildContext, constraints) => {
+        ctx.setSize(constraints.maxWidth, constraints.maxHeight);
+        return new Layout();
+      },
+    });
   }
 }
 
 export default Chart;
 
 class Layout extends StatelessWidget {
-  #getLegends(context: BuildContext): string[] {
-    const { data } = StackedBarChartConfigProvider.of(context);
-    return data.datasets.map(({ legend }) => legend);
-  }
-
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.layout(
+    const ctx = StackedBarChartProvider.of(context);
+    return ctx.custom.layout(
       {
         title: new Title(),
         plot: new Plot(),
-        legends: this.#getLegends(context).map(
+        legends: ctx.legends.map(
           (name, index) => new Legend({ name, index }),
         ),
       },
-      config,
+      ctx,
     );
   }
 }
@@ -46,25 +53,23 @@ class Legend extends StatelessWidget {
   }
 
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.legend({ name: this.#name, index: this.#index }, config);
+    const ctx = StackedBarChartProvider.of(context);
+    return ctx.custom.legend({ name: this.#name, index: this.#index }, ctx);
   }
 }
 
 class Title extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom, title } = config;
-    return custom.title({ name: title }, config);
+    const ctx = StackedBarChartProvider.of(context);
+    return ctx.custom.title({ name: ctx.title }, ctx);
   }
 }
 
 abstract class Axis extends StatelessWidget {
   protected getValueLabels(context: BuildContext): string[] {
-    const {
-      scale: { min, max, step },
-    } = StackedBarChartConfigProvider.of(context);
+    const { scale } = StackedBarChartProvider.of(context);
+    if (scale == null) return [];
+    const { min, max, step } = scale;
     const labels = [];
     for (let i = 0; i <= (max - min) / step; i++) {
       labels.push(min + step * i);
@@ -72,20 +77,15 @@ abstract class Axis extends StatelessWidget {
     return labels.map((label) => label.toString());
   }
   protected getCategoryLabels(context: BuildContext): string[] {
-    const { data } = StackedBarChartConfigProvider.of(context);
-    return data.labels;
-  }
-  protected getLabels(context: BuildContext): string[] {
-    const { data } = StackedBarChartConfigProvider.of(context);
+    const { data } = StackedBarChartProvider.of(context);
     return data.labels;
   }
 }
 
 class XAxis extends Axis {
   #getLabels(context: BuildContext): string[] {
-    const config = StackedBarChartConfigProvider.of(context);
-
-    if (config.direction === "vertical") {
+    const { direction } = StackedBarChartProvider.of(context);
+    if (direction === "vertical") {
       return this.getCategoryLabels(context);
     } else {
       return this.getValueLabels(context);
@@ -93,10 +93,9 @@ class XAxis extends Axis {
   }
 
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom } = config;
+    const ctx = StackedBarChartProvider.of(context);
     const labels = this.#getLabels(context);
-    return custom.xAxis(
+    return ctx.custom.xAxis(
       {
         labels: labels.map(
           (label, index) => new XAxisLabel({ index, name: label }),
@@ -104,24 +103,22 @@ class XAxis extends Axis {
         tick: new XAxisTick(),
         line: new XAxisLine(),
       },
-      config,
+      ctx,
     );
   }
 }
 
 class XAxisLine extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.xAxisLine(undefined, config);
+    const ctx = StackedBarChartProvider.of(context);
+    return ctx.custom.xAxisLine(undefined, ctx);
   }
 }
 
 class YAxis extends Axis {
   #getLabels(context: BuildContext): string[] {
-    const config = StackedBarChartConfigProvider.of(context);
-
-    if (config.direction === "vertical") {
+    const { direction } = StackedBarChartProvider.of(context);
+    if (direction === "vertical") {
       return this.getValueLabels(context);
     } else {
       return this.getCategoryLabels(context);
@@ -129,9 +126,8 @@ class YAxis extends Axis {
   }
 
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.yAxis(
+    const ctx = StackedBarChartProvider.of(context);
+    return ctx.custom.yAxis(
       {
         labels: this.#getLabels(context).map(
           (label, index) => new YAxisLabel({ index, name: label }),
@@ -139,16 +135,15 @@ class YAxis extends Axis {
         tick: new YAxisTick(),
         line: new YAxisLine(),
       },
-      config,
+      ctx,
     );
   }
 }
 
 class YAxisLine extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.yAxisLine(undefined, config);
+    const ctx = StackedBarChartProvider.of(context);
+    return ctx.custom.yAxisLine(undefined, ctx);
   }
 }
 
@@ -165,9 +160,8 @@ abstract class Label extends StatelessWidget {
 
 class XAxisLabel extends Label {
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.xAxisLabel({ name: this.name, index: this.index }, config);
+    const ctx = StackedBarChartProvider.of(context);
+    return ctx.custom.xAxisLabel({ name: this.name, index: this.index }, ctx);
   }
 }
 
@@ -182,25 +176,22 @@ class YAxisLabel extends StatelessWidget {
   }
 
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.yAxisLabel({ name: this.#name, index: this.#index }, config);
+    const ctx = StackedBarChartProvider.of(context);
+    return ctx.custom.yAxisLabel({ name: this.#name, index: this.#index }, ctx);
   }
 }
 
 class XAxisTick extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.xAxisTick(undefined, config);
+    const ctx = StackedBarChartProvider.of(context);
+    return ctx.custom.xAxisTick(undefined, ctx);
   }
 }
 
 class YAxisTick extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.yAxisTick(undefined, config);
+    const ctx = StackedBarChartProvider.of(context);
+    return ctx.custom.yAxisTick(undefined, ctx);
   }
 }
 
@@ -215,9 +206,9 @@ class BarGroup extends StatelessWidget {
   }
 
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom, data } = config;
-    return custom.barGroup(
+    const ctx = StackedBarChartProvider.of(context);
+    const { data } = ctx;
+    return ctx.custom.barGroup(
       {
         index: this.#index,
         label: data.labels[this.#index],
@@ -232,7 +223,7 @@ class BarGroup extends StatelessWidget {
             }),
         ),
       },
-      config,
+      ctx,
     );
   }
 }
@@ -262,44 +253,41 @@ class Bar extends StatelessWidget {
   }
 
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.bar(
+    const ctx = StackedBarChartProvider.of(context);
+    return ctx.custom.bar(
       {
         value: this.#value,
         index: this.#index,
         legend: this.#legend,
         label: this.#label,
       },
-      config,
+      ctx,
     );
   }
 }
 
 class AxisCorner extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.axisCorner(undefined, config);
+    const ctx = StackedBarChartProvider.of(context);
+    return ctx.custom.axisCorner(undefined, ctx);
   }
 }
 
 class Plot extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.plot(
+    const ctx = StackedBarChartProvider.of(context);
+    return ctx.custom.plot(
       { xAxis: new XAxis(), yAxis: new YAxis(), series: new Series(), grid: new Grid(), axisCorner: new AxisCorner() },
-      config,
+      ctx,
     );
   }
 }
 
 class Series extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom, data } = config;
-    return custom.series(
+    const ctx = StackedBarChartProvider.of(context);
+    const { data } = ctx;
+    return ctx.custom.series(
       {
         barGroups: Array.from(
           { length: data.labels.length },
@@ -310,34 +298,31 @@ class Series extends StatelessWidget {
             }),
         ),
       },
-      config,
+      ctx,
     );
   }
 }
 
 class Grid extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.grid(
+    const ctx = StackedBarChartProvider.of(context);
+    return ctx.custom.grid(
       { xLine: new GridXLine(), yLine: new GridYLine() },
-      config,
+      ctx,
     );
   }
 }
 
 class GridXLine extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.gridXLine(undefined, config);
+    const ctx = StackedBarChartProvider.of(context);
+    return ctx.custom.gridXLine(undefined, ctx);
   }
 }
 
 class GridYLine extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = StackedBarChartConfigProvider.of(context);
-    const { custom } = config;
-    return custom.gridYLine(undefined, config);
+    const ctx = StackedBarChartProvider.of(context);
+    return ctx.custom.gridYLine(undefined, ctx);
   }
 }

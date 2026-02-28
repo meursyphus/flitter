@@ -1,9 +1,9 @@
-import type { StackedBarChartData, StackedBarChartScale } from "../types";
+import type { StackedBarChartData, StackedBarChartScale, StackedBarChartScaleOptions } from "../types";
 
-export function getScale({
-  datasets,
-  labels,
-}: StackedBarChartData): StackedBarChartScale {
+export function getScale(
+  { datasets, labels }: StackedBarChartData,
+  options?: StackedBarChartScaleOptions,
+): StackedBarChartScale {
   const stackedTotals: number[] = [];
   const labelCount = labels.length;
 
@@ -18,7 +18,7 @@ export function getScale({
   const max = Math.max(...stackedTotals, 0);
   const min = 0;
 
-  const roughStepCount = 10;
+  const roughStepCount = options?.roughStepCount ?? 10;
   const roughStep = (max - min) / roughStepCount;
 
   return refineScale({ min, max, step: roughStep });

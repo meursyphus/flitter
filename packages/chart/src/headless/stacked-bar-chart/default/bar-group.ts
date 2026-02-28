@@ -4,16 +4,18 @@ import {
 	Axis,
 	Container,
 	CrossAxisAlignment,
-	EdgeInsets,
 	Flex,
 	FractionallySizedBox,
 	MainAxisAlignment,
-	Padding
+	SizedBox,
 } from 'flitter-core';
 
 export function BarGroup(
-	...[{ bars, values }, { direction, scale }]: Parameters<StackedBarChartCustom['barGroup']>
+	...[{ bars, values }, ctx]: Parameters<StackedBarChartCustom['barGroup']>
 ) {
+	const { direction, scale } = ctx;
+	if (scale == null) return SizedBox.shrink();
+
 	const total = scale.max - scale.min;
 	const ratios = values.map((value) => value / total);
 

@@ -1,43 +1,46 @@
 import type { Widget } from "flitter-core";
+import type { LineChartController } from "./controller";
 
-type ConfigArgs<T = undefined> = (args: T, context: LineChartConfig) => Widget;
+type CustomArgs<T = undefined, TConfig = {}> = (args: T, context: LineChartContext<TConfig>) => Widget;
 
-export type LineChartCustom = {
-  xAxis: ConfigArgs<{ line: Widget; labels: Widget[]; tick: Widget }>;
-  yAxis: ConfigArgs<{ line: Widget; labels: Widget[]; tick: Widget }>;
-  xAxisLabel: ConfigArgs<{ name: string; index: number }>;
-  yAxisLabel: ConfigArgs<{ name: string; index: number }>;
-  xAxisTick: ConfigArgs;
-  yAxisTick: ConfigArgs;
-  series: ConfigArgs<{ lines: Widget[] }>;
-  line: ConfigArgs<{ values: number[]; legend: string; index: number }>;
-  layout: ConfigArgs<{ title: Widget; legends: Widget[]; plot: Widget }>;
-  plot: ConfigArgs<{ xAxis: Widget; yAxis: Widget; series: Widget; grid: Widget; axisCorner: Widget }>;
-  legend: ConfigArgs<{ name: string; index: number }>;
-  title: ConfigArgs<{ name: string }>;
-  dataLabel: ConfigArgs<{ value: number; label: string; legend: string }>;
-  xAxisLine: ConfigArgs;
-  yAxisLine: ConfigArgs;
-  axisCorner: ConfigArgs;
-	grid: ConfigArgs<{ xLine: Widget; yLine: Widget }>;
-	gridXLine: ConfigArgs;
-	gridYLine: ConfigArgs;
+export type LineChartContext<TConfig = {}> = LineChartController & { config: TConfig };
+
+export type LineChartCustom<TConfig = {}> = {
+	line: CustomArgs<{ values: number[]; legend: string; index: number }, TConfig>;
+	xAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
+	yAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
+	xAxisLabel: CustomArgs<{ name: string; index: number }, TConfig>;
+	yAxisLabel: CustomArgs<{ name: string; index: number }, TConfig>;
+	xAxisTick: CustomArgs<undefined, TConfig>;
+	yAxisTick: CustomArgs<undefined, TConfig>;
+	series: CustomArgs<{ lines: Widget[] }, TConfig>;
+	layout: CustomArgs<{ title: Widget; legends: Widget[]; plot: Widget }, TConfig>;
+	plot: CustomArgs<{ xAxis: Widget; yAxis: Widget; series: Widget; grid: Widget; axisCorner: Widget }, TConfig>;
+	legend: CustomArgs<{ name: string; index: number }, TConfig>;
+	title: CustomArgs<{ name: string }, TConfig>;
+	dataLabel: CustomArgs<{ value: number; label: string; legend: string }, TConfig>;
+	xAxisLine: CustomArgs<undefined, TConfig>;
+	yAxisLine: CustomArgs<undefined, TConfig>;
+	axisCorner: CustomArgs<undefined, TConfig>;
+	grid: CustomArgs<{ xLine: Widget; yLine: Widget }, TConfig>;
+	gridXLine: CustomArgs<undefined, TConfig>;
+	gridYLine: CustomArgs<undefined, TConfig>;
 };
 
 export type LineChartData = {
-  labels: string[];
-  datasets: { legend: string; values: number[] }[];
+	labels: string[];
+	datasets: { legend: string; values: number[] }[];
 };
 
 export type LineChartScale = {
-  min: number;
-  max: number;
-  step: number;
+	min: number;
+	max: number;
+	step: number;
 };
 
-export type LineChartConfig = {
-  custom: LineChartCustom;
-  data: LineChartData;
-  scale: LineChartScale;
-  title: string;
+export type LineChartScaleOptions = {
+	roughStepCount?: number;
 };
+
+export type GetScaleFn = (data: LineChartData, options?: LineChartScaleOptions) => LineChartScale;
+export type GetScaleOptionsFn = (context: LineChartController) => LineChartScaleOptions;
