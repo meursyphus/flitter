@@ -1,4 +1,4 @@
-import { TOAST_COLORS } from "@utils/toast";
+import { TOAST_COLORS } from "@shared/styles/toast/utils";
 import type { ToastBaseConfig } from "@shared/toast";
 
 export type ToastBubbleChartConfig = ToastBaseConfig & {

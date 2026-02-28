@@ -1,4 +1,4 @@
-import { TOAST_COLORS } from "@utils/toast";
+import { TOAST_COLORS } from "@shared/styles/toast/utils";
 import type { ToastBarChartConfig } from "../../bar-chart/toast/config";
 
 export type ToastStackedBarChartConfig = ToastBarChartConfig;
