@@ -6,14 +6,11 @@ import type {
   GetScaleFn,
   GetScaleOptionsFn,
 } from "@headless/bar-chart/types";
+import * as Cartesian from "@shared/cartesian/index";
 import { BarGroup } from "./bar-group";
 import { BarBox } from "./bar-box";
-import { BarGroupBox } from "./bar-group-box";
 import { Series } from "./series";
-import { Plot } from "./plot";
-import { DataLabel } from "./data-label";
 import { Grid } from "./grid";
-import { getScale as defaultGetScale } from "./get-scale";
 
 export type { BarChartCustom, BarChartData, BarChartScale, BarChartDirection, BarChartScaleOptions, BarChartContext, GetScaleFn, GetScaleOptionsFn } from "@headless/bar-chart/types";
 export { BarChartController } from "@headless/bar-chart/controller";
@@ -22,12 +19,15 @@ export { BarChartController } from "@headless/bar-chart/controller";
 const baseDefaults: Partial<BarChartCustom> = {
   barGroup: BarGroup,
   barBox: BarBox,
-  barGroupBox: BarGroupBox,
+  barGroupBox: (...[{ child }]) => child,
   series: Series,
-  plot: Plot,
-  dataLabel: DataLabel,
+  plot: (...args) => Cartesian.Plot(args[0]),
+  dataLabel: (...args) => Cartesian.DataLabel(args[0]),
   grid: Grid,
 };
+
+const defaultGetScale: GetScaleFn = ({ datasets }, options) =>
+  Cartesian.getScale({ datasets }, options);
 
 export function BaseBarChart<TConfig = {}>({
   custom,
