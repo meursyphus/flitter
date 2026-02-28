@@ -31,7 +31,7 @@ import {
   toastGridYLine,
   toastXAxis,
   toastYAxis,
-} from "@shared/toast";
+} from "@shared/styles/toast";
 
 export { type ToastStackedAreaChartConfig } from "./config";
 

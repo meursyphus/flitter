@@ -1,12 +1,12 @@
 import type { BarChartCustom } from "@headless/bar-chart/types";
 import type { GetScaleOptionsFn } from "@headless/bar-chart/types";
-import type { StyleConfig } from "../../../bar-chart/plugin";
+import type { StyleConfig } from "../../plugin";
 import type { ToastStackedBarChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
-import { toastBar } from "../../../bar-chart/styles/toast/parts/bar";
-import { toastBarGroupBox } from "../../../bar-chart/styles/toast/parts/bar-group-box";
-import { toastBarBox } from "../../../bar-chart/styles/toast/parts/bar-box";
+import { toastBar } from "./parts/bar";
+import { toastBarGroupBox } from "./parts/bar-group-box";
+import { toastBarBox } from "./parts/bar-box";
 import {
   toastLayout,
   toastTitle,
@@ -25,32 +25,32 @@ import {
   toastXAxisBox,
   toastYAxisBox,
   toastScaleOptions,
-} from "@shared/toast";
+} from "@shared/styles/toast";
 
 export { type ToastStackedBarChartConfig } from "./config";
 
 const toastCustom: Partial<BarChartCustom<ToastStackedBarChartConfig>> = {
-  layout: toastLayout as any,
-  bar: toastBar as any,
-  barGroupBox: toastBarGroupBox as any,
-  barBox: toastBarBox as any,
-  legend: toastLegend as any,
-  title: toastTitle as any,
-  axisCorner: toastAxisCorner as any,
-  xAxisLabel: toastXAxisLabel as any,
-  yAxisLabel: toastYAxisLabel as any,
-  xAxisTick: toastXAxisTick as any,
-  yAxisTick: toastYAxisTick as any,
-  xAxisLine: toastXAxisLine as any,
-  yAxisLine: toastYAxisLine as any,
-  gridXLine: toastGridXLine as any,
-  gridYLine: toastGridYLine as any,
-  xAxis: ((args: any, context: any) =>
-    toastXAxis(args, { type: context.direction === "vertical" ? "label" : "value" }, context)) as any,
-  yAxis: ((args: any, context: any) =>
-    toastYAxis(args, { type: context.direction === "vertical" ? "value" : "label" }, context)) as any,
-  xAxisBox: toastXAxisBox as any,
-  yAxisBox: toastYAxisBox as any,
+  layout: toastLayout,
+  bar: toastBar,
+  barGroupBox: toastBarGroupBox,
+  barBox: toastBarBox,
+  legend: toastLegend,
+  title: toastTitle,
+  axisCorner: toastAxisCorner,
+  xAxisLabel: toastXAxisLabel,
+  yAxisLabel: toastYAxisLabel,
+  xAxisTick: toastXAxisTick,
+  yAxisTick: toastYAxisTick,
+  xAxisLine: toastXAxisLine,
+  yAxisLine: toastYAxisLine,
+  gridXLine: toastGridXLine,
+  gridYLine: toastGridYLine,
+  xAxis: (args, context) =>
+    toastXAxis(args, { type: context.direction === "vertical" ? "label" : "value" }, context),
+  yAxis: (args, context) =>
+    toastYAxis(args, { type: context.direction === "vertical" ? "value" : "label" }, context),
+  xAxisBox: toastXAxisBox,
+  yAxisBox: toastYAxisBox,
 };
 
 const toastGetScaleOptions: GetScaleOptionsFn = (ctx) =>

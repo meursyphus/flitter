@@ -1,10 +1,10 @@
 import type { Widget } from "flitter-core";
 import { BaseBarChart } from "../../bar-chart/base";
-import type { BarChartCustom, BarChartData, GetScaleFn, GetScaleOptionsFn } from "../../bar-chart/base";
+import type { BarChartCustom, BarChartData, GetScaleFn, GetScaleOptionsFn } from "@headless/bar-chart/types";
 import { stackedBarGroup } from "./stacked-bar-group";
 import { stackedGetScale } from "./stacked-get-scale";
 
-export type { BarChartCustom, BarChartData, BarChartScale, BarChartDirection, BarChartScaleOptions, BarChartContext, GetScaleFn, GetScaleOptionsFn } from "../../bar-chart/base";
+export type { BarChartCustom, BarChartData, BarChartScale, BarChartDirection, BarChartScaleOptions, BarChartContext, GetScaleFn, GetScaleOptionsFn } from "@headless/bar-chart/types";
 export { BarChartController } from "@headless/bar-chart/controller";
 
 export function BaseStackedBarChart<TConfig = {}>(props: {
@@ -17,7 +17,7 @@ export function BaseStackedBarChart<TConfig = {}>(props: {
   config?: TConfig;
 }): Widget {
   const {
-    getScale = stackedGetScale as unknown as GetScaleFn,
+    getScale = stackedGetScale,
     custom,
     ...rest
   } = props;
@@ -25,6 +25,6 @@ export function BaseStackedBarChart<TConfig = {}>(props: {
   return BaseBarChart<TConfig>({
     ...rest,
     getScale,
-    custom: { barGroup: stackedBarGroup as any, ...custom },
+    custom: { barGroup: stackedBarGroup, ...custom },
   });
 }

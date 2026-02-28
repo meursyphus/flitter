@@ -1,6 +1,6 @@
 import type { Widget } from "flitter-core";
 import type { ToastBaseConfig } from "./config";
-import { XAxisTick, YAxisTick } from "../cartesian";
+import { XAxisTick, YAxisTick } from "../../cartesian";
 
 export function toastXAxisTick(
   args: undefined,

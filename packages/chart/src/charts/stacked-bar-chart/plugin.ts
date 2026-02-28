@@ -1,5 +1,11 @@
-import type { StyleConfig } from "../bar-chart/plugin";
+import type { BarChartCustom, GetScaleOptionsFn } from "./base";
 import { toastStyleConfig, type ToastStackedBarChartConfig } from "./styles/toast";
+
+export type StyleConfig<TConfig> = {
+  custom: Partial<BarChartCustom<TConfig>>;
+  createConfig: (config?: Partial<TConfig>) => TConfig;
+  getScaleOptions: GetScaleOptionsFn;
+};
 
 export type StackedBarChartStyleMap = {
   toast: ToastStackedBarChartConfig;

@@ -25,7 +25,7 @@ import {
   toastXAxisBox,
   toastYAxisBox,
   toastScaleOptions,
-} from "@shared/toast";
+} from "@shared/styles/toast";
 
 export { type ToastBarChartConfig } from "./config";
 

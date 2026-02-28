@@ -1,5 +1,5 @@
 import type { Widget } from "flitter-core";
-import type { ToastBaseConfig } from "../toast/config";
+import type { ToastBaseConfig } from "../styles/toast/config";
 
 export type CartesianContext<TConfig extends ToastBaseConfig = ToastBaseConfig> = {
   config: TConfig;
