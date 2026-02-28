@@ -1,5 +1,5 @@
 {
-  "name": "flitter",
+  "name": "flitter-ui",
   "version": "0.0.1",
   "type": "module",
   "description": "Flitter - A high-performance JavaScript rendering engine inspired by Flutter",
