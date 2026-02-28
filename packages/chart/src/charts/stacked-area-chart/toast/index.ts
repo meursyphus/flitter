@@ -9,21 +9,21 @@ import {
   defaultToastConfig,
   type ToastStackedAreaChartConfig,
 } from "./config";
-import { createToastLayout } from "./layout";
-import { createToastArea } from "./area";
-import { createToastLegend } from "./legend";
-import { createToastTitle } from "./title";
-import { createToastAxisCorner } from "./axis-corner";
-import { createToastXAxisLabel } from "./x-axis-label";
-import { createToastYAxisLabel } from "./y-axis-label";
-import { createToastXAxisTick } from "./x-axis-tick";
-import { createToastYAxisTick } from "./y-axis-tick";
-import { createToastXAxisLine } from "./x-axis-line";
-import { createToastYAxisLine } from "./y-axis-line";
-import { createToastGridXLine } from "./grid-x-line";
-import { createToastGridYLine } from "./grid-y-line";
-import { createToastXAxis } from "./x-axis";
-import { createToastYAxis } from "./y-axis";
+import { createToastLayout } from "./parts/layout";
+import { createToastArea } from "./parts/area";
+import { createToastLegend } from "./parts/legend";
+import { createToastTitle } from "./parts/title";
+import { createToastAxisCorner } from "./parts/axis-corner";
+import { createToastXAxisLabel } from "./parts/x-axis-label";
+import { createToastYAxisLabel } from "./parts/y-axis-label";
+import { createToastXAxisTick } from "./parts/x-axis-tick";
+import { createToastYAxisTick } from "./parts/y-axis-tick";
+import { createToastXAxisLine } from "./parts/x-axis-line";
+import { createToastYAxisLine } from "./parts/y-axis-line";
+import { createToastGridXLine } from "./parts/grid-x-line";
+import { createToastGridYLine } from "./parts/grid-y-line";
+import { createToastXAxis } from "./parts/x-axis";
+import { createToastYAxis } from "./parts/y-axis";
 
 export { type ToastStackedAreaChartConfig } from "./config";
 

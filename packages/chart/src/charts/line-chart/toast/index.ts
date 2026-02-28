@@ -2,21 +2,21 @@ import type { Widget } from "flitter-core";
 import HeadlessLineChart from "@headless/line-chart";
 import type { LineChartCustom, LineChartData, GetScaleFn, GetScaleOptionsFn } from "@headless/line-chart/types";
 import { defaultToastConfig, type ToastLineChartConfig } from "./config";
-import { toastLayout } from "./layout";
-import { toastLine } from "./line";
-import { toastLegend } from "./legend";
-import { toastXAxisLabel } from "./x-axis-label";
-import { toastYAxisLabel } from "./y-axis-label";
-import { toastXAxisTick } from "./x-axis-tick";
-import { toastYAxisTick } from "./y-axis-tick";
-import { toastXAxisLine } from "./x-axis-line";
-import { toastYAxisLine } from "./y-axis-line";
-import { toastGridXLine } from "./grid-x-line";
-import { toastGridYLine } from "./grid-y-line";
-import { toastXAxis } from "./x-axis";
-import { toastYAxis } from "./y-axis";
-import { toastTitle } from "./title";
-import { toastAxisCorner } from "./axis-corner";
+import { toastLayout } from "./parts/layout";
+import { toastLine } from "./parts/line";
+import { toastLegend } from "./parts/legend";
+import { toastXAxisLabel } from "./parts/x-axis-label";
+import { toastYAxisLabel } from "./parts/y-axis-label";
+import { toastXAxisTick } from "./parts/x-axis-tick";
+import { toastYAxisTick } from "./parts/y-axis-tick";
+import { toastXAxisLine } from "./parts/x-axis-line";
+import { toastYAxisLine } from "./parts/y-axis-line";
+import { toastGridXLine } from "./parts/grid-x-line";
+import { toastGridYLine } from "./parts/grid-y-line";
+import { toastXAxis } from "./parts/x-axis";
+import { toastYAxis } from "./parts/y-axis";
+import { toastTitle } from "./parts/title";
+import { toastAxisCorner } from "./parts/axis-corner";
 
 const toastCustom: Partial<LineChartCustom<ToastLineChartConfig>> = {
   layout: toastLayout,

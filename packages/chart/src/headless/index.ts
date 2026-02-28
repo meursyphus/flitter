@@ -4,16 +4,57 @@ export { default as BubbleChart } from "./bubble-chart";
 export { default as ScatterChart } from "./scatter-chart";
 export { default as HeatmapChart } from "./heatmap-chart";
 export { default as TreemapChart } from "./treemap-chart";
-export * from "./bar-chart/types";
+
+export type {
+  BarChartContext,
+  BarChartCustom,
+  BarChartData,
+  BarChartScale,
+  BarChartDirection,
+  BarChartScaleOptions,
+  GetScaleFn as BarChartGetScaleFn,
+  GetScaleOptionsFn as BarChartGetScaleOptionsFn,
+} from "./bar-chart/types";
 export { BarChartController } from "./bar-chart/controller";
-export * from "./line-chart/types";
+
+export type {
+  LineChartContext,
+  LineChartCustom,
+  LineChartData,
+  LineChartScale,
+  LineChartScaleOptions,
+  GetScaleFn as LineChartGetScaleFn,
+  GetScaleOptionsFn as LineChartGetScaleOptionsFn,
+} from "./line-chart/types";
 export { LineChartController } from "./line-chart/controller";
-export * from "./bubble-chart/types";
+
+export type {
+  BubbleChartContext,
+  BubbleChartCustom,
+  BubbleChartData,
+  BubbleScale,
+  BubbleChartScale,
+  BubbleChartScaleOptions,
+  GetScaleFn as BubbleChartGetScaleFn,
+  GetScaleOptionsFn as BubbleChartGetScaleOptionsFn,
+} from "./bubble-chart/types";
 export { BubbleChartController } from "./bubble-chart/controller";
-export * from "./scatter-chart/types";
+
+export type {
+  ScatterChartContext,
+  ScatterChartCustom,
+  ScatterChartData,
+  ScatterScale,
+  ScatterChartScale,
+  ScatterChartScaleOptions,
+  GetScaleFn as ScatterChartGetScaleFn,
+  GetScaleOptionsFn as ScatterChartGetScaleOptionsFn,
+} from "./scatter-chart/types";
 export { ScatterChartController } from "./scatter-chart/controller";
+
 export * from "./heatmap-chart/types";
 export * from "./treemap-chart/types";
+
 export { default as FunnelChart } from "./funnel-chart";
 export * from "./funnel-chart/types";
 export { default as RadarChart } from "./radar-chart";

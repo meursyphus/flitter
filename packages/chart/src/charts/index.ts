@@ -18,6 +18,10 @@ export { default as BubbleChart } from "./bubble-chart";
 export type { BubbleChartStyleMap } from "./bubble-chart/plugin";
 export { type ToastBubbleChartConfig } from "./bubble-chart/toast";
 
+export { default as AreaChart } from "./area-chart";
+export type { AreaChartStyleMap } from "./area-chart/plugin";
+export { type ToastAreaChartConfig } from "./area-chart/toast";
+
 export { default as StackedAreaChart } from "./stacked-area-chart";
 export type { StackedAreaChartStyleMap } from "./stacked-area-chart/plugin";
 export { type ToastStackedAreaChartConfig } from "./stacked-area-chart/toast";

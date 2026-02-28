@@ -9,6 +9,7 @@ const preview: Preview = {
           "BarChart",
           "StackedBarChart",
           "LineChart",
+          "AreaChart",
           "ScatterChart",
           "BubbleChart",
           "StackedAreaChart",

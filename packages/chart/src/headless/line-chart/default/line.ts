@@ -1,11 +1,11 @@
 import type { LineChartCustom, LineChartScale } from "../types";
-import { CustomPaint, Path } from "flitter-core";
+import { CustomPaint, Path, SizedBox } from "flitter-core";
 
 export function Line(
   ...[{ values }, ctx]: Parameters<LineChartCustom["line"]>
 ) {
   const { scale } = ctx;
-  if (scale == null) return CustomPaint({});
+  if (scale == null) return SizedBox.shrink();
 
   return CustomPaint({
     painter: {
