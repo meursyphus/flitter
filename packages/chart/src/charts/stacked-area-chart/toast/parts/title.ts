@@ -7,13 +7,6 @@ export function createToastTitle(vc: ToastStackedAreaChartConfig) {
   return function toastTitle(
     ...[{ name }]: Parameters<StackedAreaChartCustom["title"]>
   ): Widget {
-    const { title, font } = vc;
-    return sharedTitle({
-      name,
-      fontFamily: title.fontFamily ?? font.family,
-      fontSize: title.fontSize,
-      fontWeight: title.fontWeight ?? "bold",
-      color: title.color,
-    });
+    return sharedTitle({ name }, { config: vc });
   };
 }

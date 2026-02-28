@@ -9,19 +9,18 @@ import {
   Tween,
   type Widget,
 } from "flitter-core";
-import type { BarChartContext } from "@headless/bar-chart/types";
-import type { ToastBarChartConfig } from "../config";
+import type { ToastBaseConfig } from "./config";
 
 class _AnimatedYAxisBox extends StatefulWidget {
   child: Widget;
-  animationConfig: ToastBarChartConfig["animation"];
+  animationConfig: ToastBaseConfig["animation"];
 
   constructor({
     child,
     animationConfig,
   }: {
     child: Widget;
-    animationConfig: ToastBarChartConfig["animation"];
+    animationConfig: ToastBaseConfig["animation"];
   }) {
     super();
     this.child = child;
@@ -74,7 +73,7 @@ class _AnimatedYAxisBoxState extends State<_AnimatedYAxisBox> {
 
 export function toastYAxisBox(
   { child }: { child: Widget },
-  context: BarChartContext<ToastBarChartConfig>
+  context: { config: ToastBaseConfig },
 ): Widget {
   return new _AnimatedYAxisBox({
     child,

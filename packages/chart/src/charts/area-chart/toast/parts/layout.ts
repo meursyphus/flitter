@@ -4,16 +4,8 @@ import type { ToastAreaChartConfig } from "../config";
 import { toastLayout as sharedLayout } from "@shared/toast";
 
 export function toastLayout(
-  { title, plot, legends }: { title: Widget; legends: Widget[]; plot: Widget },
+  args: { title: Widget; legends: Widget[]; plot: Widget },
   context: LineChartContext<ToastAreaChartConfig>
 ): Widget {
-  const { padding, title: titleConfig, legend: legendConfig } = context.config;
-  return sharedLayout({
-    title,
-    plot,
-    legends,
-    padding,
-    titleConfig,
-    legendConfig,
-  });
+  return sharedLayout(args, context);
 }

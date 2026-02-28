@@ -4,15 +4,8 @@ import type { ToastAreaChartConfig } from "../config";
 import { toastTitle as sharedTitle } from "@shared/toast";
 
 export function toastTitle(
-  { name }: { name: string },
+  args: { name: string },
   context: LineChartContext<ToastAreaChartConfig>
 ): Widget {
-  const { title, font } = context.config;
-  return sharedTitle({
-    name,
-    fontFamily: title.fontFamily ?? font.family,
-    fontSize: title.fontSize,
-    fontWeight: title.fontWeight,
-    color: title.color,
-  });
+  return sharedTitle(args, context);
 }

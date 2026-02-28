@@ -4,12 +4,13 @@ import type { StyleConfig } from "../plugin";
 import type { ToastBarChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
-import { toastLayout } from "./parts/layout";
 import { toastBar } from "./parts/bar";
 import { toastBarGroupBox } from "./parts/bar-group-box";
 import { toastBarBox } from "./parts/bar-box";
-import { toastLegend } from "./parts/legend";
 import {
+  toastLayout,
+  toastTitle,
+  toastLegend,
   toastXAxisLabel,
   toastYAxisLabel,
   toastXAxisTick,
@@ -19,12 +20,12 @@ import {
   toastGridXLine,
   toastGridYLine,
   toastAxisCorner,
+  toastXAxis,
+  toastYAxis,
+  toastXAxisBox,
+  toastYAxisBox,
+  toastScaleOptions,
 } from "@shared/toast";
-import { toastXAxis } from "./parts/x-axis";
-import { toastXAxisBox } from "./parts/x-axis-box";
-import { toastYAxis } from "./parts/y-axis";
-import { toastYAxisBox } from "./parts/y-axis-box";
-import { toastTitle } from "./parts/title";
 
 export { type ToastBarChartConfig } from "./config";
 
@@ -44,13 +45,13 @@ const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
   yAxisLine: toastYAxisLine,
   gridXLine: toastGridXLine,
   gridYLine: toastGridYLine,
-  xAxis: toastXAxis,
+  xAxis: (args, context) =>
+    toastXAxis(args, { type: context.direction === "vertical" ? "label" : "value" }, context),
+  yAxis: (args, context) =>
+    toastYAxis(args, { type: context.direction === "vertical" ? "value" : "label" }, context),
   xAxisBox: toastXAxisBox,
-  yAxis: toastYAxis,
   yAxisBox: toastYAxisBox,
 };
-
-import { toastScaleOptions } from "@shared/toast";
 
 const toastGetScaleOptions: GetScaleOptionsFn = (ctx) =>
   toastScaleOptions(ctx.direction === "vertical" ? ctx.height : ctx.width);

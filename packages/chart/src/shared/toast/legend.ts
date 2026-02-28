@@ -11,22 +11,20 @@ import {
   type Widget,
 } from "flitter-core";
 import { CheckBox } from "./checkbox";
+import type { ToastBaseConfig } from "./config";
 
-export function toastLegend({
-  name,
-  visible,
-  color,
-  fontFamily,
-  fontSize,
-  onToggle,
-}: {
-  name: string;
-  visible: boolean;
-  color: string;
-  fontFamily: string;
-  fontSize: number;
-  onToggle: () => void;
-}): Widget {
+export function toastLegend(
+  { name, index }: { name: string; index: number },
+  context: {
+    config: ToastBaseConfig;
+    isSeriesVisible(legend: string): boolean;
+    toggleSeries(legend: string): void;
+  },
+): Widget {
+  const { colors, font } = context.config;
+  const color = colors[index % colors.length];
+  const visible = context.isSeriesVisible(name);
+
   const content = Padding({
     padding: EdgeInsets.symmetric({ horizontal: 8 }),
     child: Row({
@@ -36,8 +34,8 @@ export function toastLegend({
         SizedBox({ width: 6 }),
         Text(name, {
           style: new TextStyle({
-            fontFamily,
-            fontSize,
+            fontFamily: font.family,
+            fontSize: font.size,
             color: "#333333",
           }),
         }),
@@ -46,7 +44,7 @@ export function toastLegend({
   });
 
   return GestureDetector({
-    onClick: onToggle,
+    onClick: () => context.toggleSeries(name),
     child: visible
       ? content
       : Opacity({

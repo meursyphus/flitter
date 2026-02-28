@@ -10,6 +10,7 @@ import {
   SizedBox,
   type Widget,
 } from "flitter-core";
+import type { ToastBaseConfig } from "./config";
 
 const titleAlignmentMap = {
   start: CrossAxisAlignment.start,
@@ -17,21 +18,12 @@ const titleAlignmentMap = {
   end: CrossAxisAlignment.end,
 } as const;
 
-export function toastLayout({
-  title,
-  plot,
-  legends,
-  padding,
-  titleConfig,
-  legendConfig,
-}: {
-  title: Widget;
-  plot: Widget;
-  legends: Widget[];
-  padding: { top: number; right: number; bottom: number; left: number };
-  titleConfig: { visible: boolean; position: string; alignment: string };
-  legendConfig: { visible: boolean; position: string };
-}): Widget {
+export function toastLayout(
+  { title, plot, legends }: { title: Widget; legends: Widget[]; plot: Widget },
+  context: { config: ToastBaseConfig },
+): Widget {
+  const { padding, title: titleConfig, legend: legendConfig } = context.config;
+
   const legendRow = legendConfig.visible
     ? legendConfig.position === "right"
       ? Column({

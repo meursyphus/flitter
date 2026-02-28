@@ -1,4 +1,11 @@
 import type { Widget } from "flitter-core";
+import type { ToastBaseConfig } from "../toast/config";
+
+export type CartesianContext<TConfig extends ToastBaseConfig = ToastBaseConfig> = {
+  config: TConfig;
+  isSeriesVisible(legend: string): boolean;
+  toggleSeries(legend: string): void;
+};
 
 type ConfigArgs<T = undefined, OPTION = void> = (
   args: T,

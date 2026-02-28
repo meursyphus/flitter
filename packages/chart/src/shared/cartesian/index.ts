@@ -1,3 +1,4 @@
+export type { CartesianContext } from './types'
 export * from './getScale'
 export * from './data-label'
 export * from './layout'
