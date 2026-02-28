@@ -3,7 +3,8 @@ import { BaseStackedAreaChart } from "./base";
 import type {
   StackedAreaChartCustom,
   StackedAreaChartData,
-  StackedAreaChartScale,
+  GetScaleFn,
+  GetScaleOptionsFn,
 } from "./base";
 import {
   stackedAreaChartStyleConfigs,
@@ -17,20 +18,23 @@ export default function StackedAreaChart<
   config,
   data,
   custom,
+  getScaleOptions,
   ...rest
 }: {
   style: S;
   config?: Partial<StackedAreaChartStyleMap[S]>;
   data: StackedAreaChartData;
-  custom?: Partial<StackedAreaChartCustom>;
+  custom?: Partial<StackedAreaChartCustom<StackedAreaChartStyleMap[S]>>;
   title?: string;
-  getScale?: (data: StackedAreaChartData) => StackedAreaChartScale;
+  getScale?: GetScaleFn;
+  getScaleOptions?: GetScaleOptionsFn;
 }): Widget {
   const sc = stackedAreaChartStyleConfigs[style];
-  const resolvedConfig = sc.createConfig(config);
   return BaseStackedAreaChart({
     data,
-    custom: { ...sc.custom(resolvedConfig), ...custom },
+    config: sc.createConfig(config),
+    custom: { ...sc.custom, ...custom },
+    getScaleOptions: getScaleOptions ?? sc.getScaleOptions,
     ...rest,
   });
 }

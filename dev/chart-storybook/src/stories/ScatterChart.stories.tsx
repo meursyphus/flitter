@@ -12,6 +12,8 @@ type ScatterChartArgs = {
   legendPosition: (typeof LEGEND_POSITIONS)[number];
   legendGap: number;
   scatterSize: number;
+  scatterFill: boolean;
+  scatterStrokeWidth: number;
   animationEnabled: boolean;
   animationDuration: number;
 };
@@ -131,49 +133,14 @@ const defaultData = {
   ],
 };
 
-const negativeData = {
-  datasets: [
-    {
-      legend: "Mountain",
-      data: [
-        { x: -10, y: 3000, label: "M1" },
-        { x: -5, y: 2500, label: "M2" },
-        { x: 0, y: 2000, label: "M3" },
-        { x: 5, y: 1500, label: "M4" },
-        { x: 10, y: 1000, label: "M5" },
-      ],
-    },
-    {
-      legend: "Valley",
-      data: [
-        { x: -15, y: -100, label: "V1" },
-        { x: -8, y: -50, label: "V2" },
-        { x: 3, y: -200, label: "V3" },
-        { x: 12, y: -150, label: "V4" },
-        { x: 20, y: -80, label: "V5" },
-      ],
-    },
-    {
-      legend: "Coastal",
-      data: [
-        { x: -3, y: 50, label: "C1" },
-        { x: 8, y: 100, label: "C2" },
-        { x: 15, y: -30, label: "C3" },
-        { x: 22, y: 80, label: "C4" },
-        { x: -7, y: -20, label: "C5" },
-      ],
-    },
-  ],
-};
-
-function ToastScatterChart({ args, data }: { args: ScatterChartArgs; data: typeof defaultData }) {
+function ToastScatterChart({ args }: { args: ScatterChartArgs }) {
   const { position, alignment } = parseTitlePlacement(args.titlePlacement);
   return (
     <Widget
       widget={ScatterChart({
         style: "toast",
         title: args.title,
-        data,
+        data: defaultData,
         config: {
           title: { position, alignment },
           legend: {
@@ -183,6 +150,8 @@ function ToastScatterChart({ args, data }: { args: ScatterChartArgs; data: typeo
           },
           scatter: {
             size: args.scatterSize,
+            fill: args.scatterFill,
+            strokeWidth: args.scatterStrokeWidth,
           },
           animation: {
             enabled: args.animationEnabled,
@@ -207,6 +176,8 @@ const meta: Meta<ScatterChartArgs> = {
     legendPosition: { control: "select", options: LEGEND_POSITIONS },
     legendGap: { control: { type: "range", min: 0, max: 40, step: 2 } },
     scatterSize: { control: { type: "range", min: 2, max: 30, step: 1 } },
+    scatterFill: { control: "boolean" },
+    scatterStrokeWidth: { control: { type: "range", min: 1, max: 6, step: 0.5 } },
     animationEnabled: { control: "boolean" },
     animationDuration: { control: { type: "range", min: 0, max: 2000, step: 100 } },
   },
@@ -217,6 +188,8 @@ const meta: Meta<ScatterChartArgs> = {
     legendPosition: "bottom",
     legendGap: 12,
     scatterSize: 10,
+    scatterFill: false,
+    scatterStrokeWidth: 2,
     animationEnabled: true,
     animationDuration: 300,
   },
@@ -226,10 +199,5 @@ export default meta;
 type Story = StoryObj<ScatterChartArgs>;
 
 export const Default: Story = {
-  render: (args) => <ToastScatterChart args={args} data={defaultData} />,
-};
-
-export const Negative: Story = {
-  args: { title: "Temperature vs Altitude" },
-  render: (args) => <ToastScatterChart args={args} data={negativeData} />,
+  render: (args) => <ToastScatterChart args={args} />,
 };

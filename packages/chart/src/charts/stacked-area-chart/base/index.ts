@@ -3,13 +3,15 @@ import HeadlessStackedAreaChart from "@headless/stacked-area-chart";
 import type {
   StackedAreaChartCustom,
   StackedAreaChartData,
-  StackedAreaChartScale,
+  GetScaleFn,
+  GetScaleOptionsFn,
 } from "@headless/stacked-area-chart/types";
 import * as Cartesian from "@shared/cartesian/index";
 import { Series } from "./series";
 import { Grid } from "./grid";
 
-export type { StackedAreaChartCustom, StackedAreaChartData, StackedAreaChartScale, StackedAreaChartConfig } from "@headless/stacked-area-chart/types";
+export type { StackedAreaChartCustom, StackedAreaChartData, StackedAreaChartScale, StackedAreaChartScaleOptions, StackedAreaChartContext, GetScaleFn, GetScaleOptionsFn } from "@headless/stacked-area-chart/types";
+export { StackedAreaChartController } from "@headless/stacked-area-chart/controller";
 
 /** Structural (non-visual) defaults provided by base */
 const baseDefaults: Partial<StackedAreaChartCustom> = {
@@ -17,9 +19,11 @@ const baseDefaults: Partial<StackedAreaChartCustom> = {
   plot: (...args) => Cartesian.Plot(args[0]),
   dataLabel: (...args) => Cartesian.DataLabel(args[0]),
   grid: Grid,
+  xAxisBox: (...[{ child }]) => child,
+  yAxisBox: (...[{ child }]) => child,
 };
 
-const defaultGetScale = ({ datasets }: Omit<StackedAreaChartData, "labels">): StackedAreaChartScale => {
+const defaultGetScale: GetScaleFn = ({ datasets }, options) => {
   const pointCount = datasets[0]?.values.length ?? 0;
   const stackedTotals: number[] = new Array(pointCount).fill(0);
 
@@ -29,24 +33,27 @@ const defaultGetScale = ({ datasets }: Omit<StackedAreaChartData, "labels">): St
     });
   }
 
-  return Cartesian.getScale({
-    datasets: [{ legend: "", values: stackedTotals }],
-  });
+  return Cartesian.getScale(
+    { datasets: [{ legend: "", values: stackedTotals }] },
+    options,
+  );
 };
 
-export function BaseStackedAreaChart({
-  custom = {},
+export function BaseStackedAreaChart<TConfig = {}>({
+  custom,
   getScale = defaultGetScale,
   ...rest
 }: {
-  custom?: Partial<StackedAreaChartCustom>;
+  custom: Partial<StackedAreaChartCustom<TConfig>>;
   title?: string;
   data: StackedAreaChartData;
-  getScale?: (data: StackedAreaChartData) => StackedAreaChartScale;
+  getScale?: GetScaleFn;
+  getScaleOptions?: GetScaleOptionsFn;
+  config?: TConfig;
 }): Widget {
   return HeadlessStackedAreaChart({
     ...rest,
     getScale,
-    custom: { ...baseDefaults, ...custom } as StackedAreaChartCustom,
+    custom: { ...baseDefaults, ...custom } as StackedAreaChartCustom<TConfig>,
   });
 }

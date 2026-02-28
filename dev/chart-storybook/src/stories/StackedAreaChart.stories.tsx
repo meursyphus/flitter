@@ -32,15 +32,6 @@ const defaultData = {
   ],
 };
 
-const negativeData = {
-  labels: ["Q1 '24", "Q2 '24", "Q3 '24", "Q4 '24", "Q1 '25", "Q2 '25", "Q3 '25"],
-  datasets: [
-    { legend: "Product A", values: [-20, 15, -5, 30, -10, 25, 8] },
-    { legend: "Product B", values: [10, -12, 22, -8, 18, -15, 30] },
-    { legend: "Product C", values: [5, -25, 12, 20, -18, 10, -7] },
-  ],
-};
-
 function ToastStackedAreaChart({ args, data }: { args: StackedAreaChartArgs; data: typeof defaultData }) {
   const { position, alignment } = parseTitlePlacement(args.titlePlacement);
   return (
@@ -105,9 +96,4 @@ type Story = StoryObj<StackedAreaChartArgs>;
 
 export const Default: Story = {
   render: (args) => <ToastStackedAreaChart args={args} data={defaultData} />,
-};
-
-export const NegativeDefault: Story = {
-  args: { title: "Quarterly Profit / Loss" },
-  render: (args) => <ToastStackedAreaChart args={args} data={negativeData} />,
 };

@@ -1,11 +1,14 @@
 import * as Cartesian from "@shared/cartesian/index";
+import { SizedBox } from "flitter-core";
 import type { StackedAreaChartCustom } from "@headless/stacked-area-chart/types";
 
 export function Grid(
-  ...[{ xLine, yLine }, { data, scale }]: Parameters<
-    StackedAreaChartCustom["grid"]
-  >
+  ...[{ xLine, yLine }, ctx]: Parameters<
+    StackedAreaChartCustom["grid"]>
 ) {
+  const { data, scale } = ctx;
+  if (scale == null) return SizedBox.shrink();
+
   const labelCount = data.labels.length - 1;
   const valueCount = (scale.max - scale.min) / scale.step;
 

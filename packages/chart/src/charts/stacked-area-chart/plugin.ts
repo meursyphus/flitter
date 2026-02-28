@@ -1,9 +1,10 @@
-import type { StackedAreaChartCustom } from "./base";
+import type { StackedAreaChartCustom, GetScaleOptionsFn } from "./base";
 import { toastStyleConfig, type ToastStackedAreaChartConfig } from "./styles/toast";
 
 export type StyleConfig<TConfig> = {
-  custom: (config: TConfig) => Partial<StackedAreaChartCustom>;
+  custom: Partial<StackedAreaChartCustom<TConfig>>;
   createConfig: (config?: Partial<TConfig>) => TConfig;
+  getScaleOptions: GetScaleOptionsFn;
 };
 
 export type StackedAreaChartStyleMap = {
