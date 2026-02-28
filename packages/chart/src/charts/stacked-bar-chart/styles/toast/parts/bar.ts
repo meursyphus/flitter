@@ -4,7 +4,7 @@ import type { ToastStackedBarChartConfig } from "../config";
 
 export function toastBar(
   { legend }: { value: number; label: string; legend: string; index: number },
-  context: BarChartContext<ToastStackedBarChartConfig>
+  context: BarChartContext<ToastStackedBarChartConfig>,
 ): Widget {
   const { colors, bar } = context.config;
   const idx = context.legends.indexOf(legend);

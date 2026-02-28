@@ -3,11 +3,10 @@ import { type ToastBaseConfig, defaultToastBaseConfig } from "@shared/styles/toa
 export type ToastStackedBarChartConfig = ToastBaseConfig & {
   bar: {
     gap: number;
-    cornerRadius: number;
   };
 };
 
 export const defaultToastConfig: ToastStackedBarChartConfig = {
   ...defaultToastBaseConfig,
-  bar: { gap: 0, cornerRadius: 0 },
+  bar: { gap: 0 },
 };

@@ -18,7 +18,8 @@ export type ToastBaseConfig = {
   };
   legend: {
     visible: boolean;
-    position: "top" | "bottom" | "right";
+    position: "top" | "bottom" | "right" | "right-top" | "right-center" | "right-bottom";
+    gap: number;
   };
   axis: {
     color: string;
@@ -40,7 +41,7 @@ export const defaultToastBaseConfig: ToastBaseConfig = {
   colors: TOAST_COLORS,
   font: { family: "Noto Sans JP", size: 11 },
   title: { visible: true, color: "#000000", fontSize: 16, fontWeight: "bold", position: "top", alignment: "center" },
-  legend: { visible: true, position: "bottom" },
+  legend: { visible: true, position: "bottom", gap: 12 },
   axis: {
     color: "#BBBBBB",
     thickness: 1,
