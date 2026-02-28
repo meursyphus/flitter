@@ -36,17 +36,19 @@ export function stackedBarGroup<TConfig>(
   const buildStack = (
     items: { bar: Widget; value: number; datasetIndex: number }[],
     baseAlignment: Alignment,
+    rangeMax: number,
+    mainAxisAlign: MainAxisAlignment,
   ) => {
     const stackChildren = [...items].reverse().map(({ bar, value, datasetIndex }) => {
-      const flexValue = Math.abs(value);
-      return Expanded({
-        flex: flexValue,
-        child: ctx.custom.barBox({ bar, value, ratio: 1.0, alignment: baseAlignment, index: datasetIndex }, ctx),
-      });
+      const ratio = Math.abs(value) / rangeMax;
+      return ctx.custom.barBox(
+        { bar, value, ratio, alignment: baseAlignment, index: datasetIndex },
+        ctx,
+      );
     });
 
     return Flex({
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: mainAxisAlign,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       direction: isVertical ? FlexAxis.vertical : FlexAxis.horizontal,
       children: stackChildren,
@@ -59,13 +61,15 @@ export function stackedBarGroup<TConfig>(
     const alignment = isVertical
       ? Alignment.bottomCenter
       : Alignment.centerLeft;
-    const stackSum = positiveValues.reduce((sum, item) => sum + Math.abs(item.value), 0);
-    const stackRatio = stackSum / total;
     innerChild = FractionallySizedBox({
-      alignment,
-      widthFactor: isVertical ? 0.6 : stackRatio,
-      heightFactor: isVertical ? stackRatio : 0.6,
-      child: buildStack(positiveValues, alignment),
+      widthFactor: isVertical ? 0.6 : undefined,
+      heightFactor: isVertical ? undefined : 0.6,
+      child: buildStack(
+        positiveValues,
+        alignment,
+        total,
+        isVertical ? MainAxisAlignment.end : MainAxisAlignment.start,
+      ),
     });
   } else {
     const positiveMax = scale.max;
@@ -78,47 +82,44 @@ export function stackedBarGroup<TConfig>(
       ? Alignment.topCenter
       : Alignment.centerRight;
 
-    const positiveSum = positiveValues.reduce((sum, item) => sum + item.value, 0);
-    const negativeSum = negativeValues.reduce((sum, item) => sum + Math.abs(item.value), 0);
-    const positiveRatio = positiveMax > 0 ? positiveSum / positiveMax : 0;
-    const negativeRatio = negativeMax > 0 ? negativeSum / negativeMax : 0;
-
     const positiveChild =
       positiveValues.length > 0
-        ? FractionallySizedBox({
-            alignment: positiveAlignment,
-            widthFactor: isVertical ? 0.6 : positiveRatio,
-            heightFactor: isVertical ? positiveRatio : 0.6,
-            child: buildStack(positiveValues, positiveAlignment),
-          })
+        ? buildStack(
+            positiveValues,
+            positiveAlignment,
+            positiveMax,
+            isVertical ? MainAxisAlignment.end : MainAxisAlignment.start,
+          )
         : SizedBox.shrink();
     const negativeChild =
       negativeValues.length > 0
-        ? FractionallySizedBox({
-            alignment: negativeAlignment,
-            widthFactor: isVertical ? 0.6 : negativeRatio,
-            heightFactor: isVertical ? negativeRatio : 0.6,
-            child: buildStack(negativeValues, negativeAlignment),
-          })
+        ? buildStack(
+            negativeValues,
+            negativeAlignment,
+            negativeMax,
+            isVertical ? MainAxisAlignment.start : MainAxisAlignment.end,
+          )
         : SizedBox.shrink();
 
-    if (isVertical) {
-      innerChild = Flex({
-        direction: FlexAxis.vertical,
-        children: [
-          Expanded({ flex: positiveMax, child: positiveChild }),
-          Expanded({ flex: negativeMax, child: negativeChild }),
-        ],
-      });
-    } else {
-      innerChild = Flex({
-        direction: FlexAxis.horizontal,
-        children: [
-          Expanded({ flex: negativeMax, child: negativeChild }),
-          Expanded({ flex: positiveMax, child: positiveChild }),
-        ],
-      });
-    }
+    innerChild = FractionallySizedBox({
+      widthFactor: isVertical ? 0.6 : undefined,
+      heightFactor: isVertical ? undefined : 0.6,
+      child: isVertical
+        ? Flex({
+            direction: FlexAxis.vertical,
+            children: [
+              Expanded({ flex: positiveMax, child: positiveChild }),
+              Expanded({ flex: negativeMax, child: negativeChild }),
+            ],
+          })
+        : Flex({
+            direction: FlexAxis.horizontal,
+            children: [
+              Expanded({ flex: negativeMax, child: negativeChild }),
+              Expanded({ flex: positiveMax, child: positiveChild }),
+            ],
+          }),
+    });
   }
 
   return Container({

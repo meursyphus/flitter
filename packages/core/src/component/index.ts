@@ -45,6 +45,7 @@ import AnimatedPositioned from "./AnimatedPositioned";
 import AnimatedRotation from "./AnimatedRotation";
 import AnimatedSlide from "./AnimatedSlide";
 import AnimatedContainer from "./AnimatedContainer";
+import AnimatedSize from "./AnimatedSize";
 import Draggable from "./Draggable";
 import Tooltip from "./Tooltip";
 import ZIndex from "./ZIndex";
@@ -103,6 +104,7 @@ export {
   AnimatedRotation,
   AnimatedSlide,
   AnimatedContainer,
+  AnimatedSize,
   Draggable,
   Tooltip,
   ZIndex,
