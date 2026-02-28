@@ -1,4 +1,4 @@
-import type { Widget } from 'flitter-core';
+import type { Widget, Alignment } from 'flitter-core';
 import type { BarChartController } from './controller';
 
 type CustomArgs<T = undefined, TConfig = {}> = (args: T, context: BarChartContext<TConfig>) => Widget;
@@ -6,7 +6,8 @@ type CustomArgs<T = undefined, TConfig = {}> = (args: T, context: BarChartContex
 export type BarChartContext<TConfig = {}> = BarChartController & { config: TConfig };
 
 export type BarChartCustom<TConfig = {}> = {
-	barGroup: CustomArgs<{ bars: Widget[]; index: number; label: string; values: number[] }, TConfig>;
+	barGroup: CustomArgs<{ child: Widget; index: number; label: string }, TConfig>;
+	barBox: CustomArgs<{ bar: Widget; value: number; ratio: number; alignment: Alignment; index: number }, TConfig>;
 	bar: CustomArgs<{ value: number; label: string; legend: string; index: number }, TConfig>;
 	xAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
 	yAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;

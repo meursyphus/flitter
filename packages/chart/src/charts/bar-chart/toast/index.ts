@@ -5,6 +5,7 @@ import { defaultToastConfig, type ToastBarChartConfig } from "./config";
 import { toastLayout } from "./layout";
 import { toastBar } from "./bar";
 import { toastBarGroup } from "./bar-group";
+import { toastBarBox } from "./bar-box";
 import { toastLegend } from "./legend";
 import { toastXAxisLabel } from "./x-axis-label";
 import { toastYAxisLabel } from "./y-axis-label";
@@ -23,6 +24,7 @@ const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
   layout: toastLayout,
   bar: toastBar,
   barGroup: toastBarGroup,
+  barBox: toastBarBox,
   legend: toastLegend,
   title: toastTitle,
   axisCorner: toastAxisCorner,

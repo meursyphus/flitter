@@ -7,8 +7,8 @@ import {
 import type {
   StackedBarChartCustom,
   StackedBarChartData,
-  GetScaleFn,
-  GetScaleOptionsFn,
+  StackedGetScaleFn,
+  StackedGetScaleOptionsFn,
 } from "./types";
 import { StackedBarChartController } from "./controller";
 import Chart from "./chart";
@@ -29,12 +29,13 @@ export function StackedBarChartProvider({
   title?: string;
   data: StackedBarChartData;
   direction?: "vertical" | "horizontal";
-  getScale?: GetScaleFn;
-  getScaleOptions?: GetScaleOptionsFn;
+  getScale?: StackedGetScaleFn;
+  getScaleOptions?: StackedGetScaleOptionsFn;
   config?: any;
 }): Widget {
   const defaults = {
     barGroup: Default.BarGroup,
+    barBox: Default.BarBox,
     bar: Default.Bar,
     xAxis: Default.XAxis,
     xAxisLabel: Default.XAxisLabel,

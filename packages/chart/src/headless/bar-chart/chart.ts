@@ -3,6 +3,15 @@ import {
   type Widget,
   type BuildContext,
   LayoutBuilder,
+  Alignment,
+  Axis as FlexAxis,
+  Container,
+  CrossAxisAlignment,
+  Expanded,
+  Flex,
+  Flexible,
+  MainAxisAlignment,
+  SizedBox,
 } from "flitter-core";
 import { BarChartProvider } from "./provider";
 
@@ -195,6 +204,49 @@ class YAxisTick extends StatelessWidget {
   }
 }
 
+class BarBox extends StatelessWidget {
+  #bar: Widget;
+  #value: number;
+  #ratio: number;
+  #alignment: Alignment;
+  #index: number;
+
+  constructor({
+    bar,
+    value,
+    ratio,
+    alignment,
+    index,
+  }: {
+    bar: Widget;
+    value: number;
+    ratio: number;
+    alignment: Alignment;
+    index: number;
+  }) {
+    super();
+    this.#bar = bar;
+    this.#value = value;
+    this.#ratio = ratio;
+    this.#alignment = alignment;
+    this.#index = index;
+  }
+
+  override build(context: BuildContext): Widget {
+    const ctx = BarChartProvider.of(context);
+    return ctx.custom.barBox(
+      {
+        bar: this.#bar,
+        value: this.#value,
+        ratio: this.#ratio,
+        alignment: this.#alignment,
+        index: this.#index,
+      },
+      ctx,
+    );
+  }
+}
+
 class BarGroup extends StatelessWidget {
   #values: number[];
   #index: number;
@@ -207,21 +259,101 @@ class BarGroup extends StatelessWidget {
 
   override build(context: BuildContext): Widget {
     const ctx = BarChartProvider.of(context);
-    const { data } = ctx;
+    const { data, scale, direction } = ctx;
+    if (scale == null) return SizedBox.shrink();
+
+    const isVertical = direction === "vertical";
+    const total = scale.max - scale.min;
+    const hasNegative = scale.min < 0;
+
+    const barChildren = this.#values.map((value, datasetIndex) => {
+      const bar = new Bar({
+        value,
+        index: this.#index,
+        legend: data.datasets[datasetIndex].legend,
+        label: data.labels[this.#index],
+      });
+
+      if (!hasNegative) {
+        const ratio = value / total;
+        const alignment = isVertical
+          ? Alignment.bottomCenter
+          : Alignment.centerLeft;
+        return Flexible({
+          flex: 1,
+          child: new BarBox({ bar, value, ratio, alignment, index: datasetIndex }),
+        });
+      }
+
+      const positiveMax = scale.max;
+      const negativeMax = Math.abs(scale.min);
+      const isPositive = value >= 0;
+
+      const ratio = isPositive
+        ? value / positiveMax
+        : Math.abs(value) / negativeMax;
+      const alignment = isPositive
+        ? isVertical
+          ? Alignment.bottomCenter
+          : Alignment.centerLeft
+        : isVertical
+          ? Alignment.topCenter
+          : Alignment.centerRight;
+
+      const barBox = new BarBox({
+        bar,
+        value,
+        ratio,
+        alignment,
+        index: datasetIndex,
+      });
+
+      const positiveChild = isPositive ? barBox : SizedBox.shrink();
+      const negativeChild = !isPositive ? barBox : SizedBox.shrink();
+
+      if (isVertical) {
+        return Flexible({
+          flex: 1,
+          child: Flex({
+            direction: FlexAxis.vertical,
+            children: [
+              Expanded({ flex: positiveMax, child: positiveChild }),
+              Expanded({ flex: negativeMax, child: negativeChild }),
+            ],
+          }),
+        });
+      } else {
+        return Flexible({
+          flex: 1,
+          child: Flex({
+            direction: FlexAxis.horizontal,
+            children: [
+              Expanded({ flex: negativeMax, child: negativeChild }),
+              Expanded({ flex: positiveMax, child: positiveChild }),
+            ],
+          }),
+        });
+      }
+    });
+
+    const child = Container({
+      width: Infinity,
+      height: Infinity,
+      child: Flex({
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: isVertical
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
+        direction: isVertical ? FlexAxis.horizontal : FlexAxis.vertical,
+        children: barChildren,
+      }),
+    });
+
     return ctx.custom.barGroup(
       {
+        child,
         index: this.#index,
         label: data.labels[this.#index],
-        values: this.#values,
-        bars: this.#values.map(
-          (value, index) =>
-            new Bar({
-              value,
-              index: this.#index,
-              legend: data.datasets[index].legend,
-              label: data.labels[this.#index],
-            }),
-        ),
       },
       ctx,
     );

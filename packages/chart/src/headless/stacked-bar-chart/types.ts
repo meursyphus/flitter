@@ -7,4 +7,6 @@ export type {
 	BarChartDirection as StackedBarChartDirection,
 	BarChartScaleOptions as StackedBarChartScaleOptions,
 	BarChartContext as StackedBarChartContext,
+	GetScaleFn as StackedGetScaleFn,
+	GetScaleOptionsFn as StackedGetScaleOptionsFn,
 } from "../bar-chart/types";
