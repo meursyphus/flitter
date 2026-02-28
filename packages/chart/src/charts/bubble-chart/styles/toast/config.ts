@@ -10,5 +10,5 @@ export type ToastBubbleChartConfig = ToastBaseConfig & {
 
 export const defaultToastConfig: ToastBubbleChartConfig = {
   ...defaultToastBaseConfig,
-  bubble: { minRadius: 5, maxRadius: 25, opacity: 0.6 },
+  bubble: { minRadius: 5, maxRadius: 50, opacity: 0.6 },
 };

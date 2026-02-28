@@ -1,20 +1,75 @@
-import { CustomPaint, Path, Rect, Offset } from "flitter-core";
+import {
+  CustomPaint,
+  Path,
+  Rect,
+  Offset,
+  StatefulWidget,
+  State,
+  AnimationController,
+  CurvedAnimation,
+  Curves,
+  Tween,
+  Transform,
+  Alignment,
+  type Widget,
+} from "flitter-core";
 import type { ScatterChartCustom } from "@headless/scatter-chart/types";
 import type { ToastScatterChartConfig } from "../config";
 
 const SHAPES = ["circle", "star", "square", "triangle"] as const;
 type Shape = (typeof SHAPES)[number];
 
+class _MountScale extends StatefulWidget {
+  child: Widget;
+  duration: number;
+
+  constructor({ key, child, duration }: { key?: any; child: Widget; duration: number }) {
+    super(key);
+    this.child = child;
+    this.duration = duration;
+  }
+
+  createState() {
+    return new _MountScaleState();
+  }
+}
+
+class _MountScaleState extends State<_MountScale> {
+  controller!: AnimationController;
+  tween!: { value: number };
+
+  override initState() {
+    this.controller = new AnimationController({ duration: this.widget.duration });
+    this.controller.addListener(() => this.setState());
+    this.tween = new Tween({ begin: 0, end: 1 }).animated(
+      new CurvedAnimation({ parent: this.controller, curve: Curves.easeOut }),
+    );
+    this.controller.forward();
+  }
+
+  override dispose() {
+    this.controller.dispose();
+  }
+
+  override build() {
+    return Transform.scale({
+      scale: this.tween.value,
+      alignment: Alignment.center,
+      child: this.widget.child,
+    });
+  }
+}
+
 export function toastScatter(
-  ...[{ legend }, ctx]: Parameters<ScatterChartCustom<ToastScatterChartConfig>["scatter"]>
+  ...[{ legend, label }, ctx]: Parameters<ScatterChartCustom<ToastScatterChartConfig>["scatter"]>
 ) {
-  const { colors, scatter: scatterConfig } = ctx.config;
+  const { colors, scatter: scatterConfig, animation } = ctx.config;
   const idx = ctx.legends.indexOf(legend);
   const color = colors[idx % colors.length];
   const shape = SHAPES[idx % SHAPES.length];
-  const size = scatterConfig.size;
+  const { size, fill, strokeWidth } = scatterConfig;
 
-  return CustomPaint({
+  const point = CustomPaint({
     painter: {
       svg: {
         createDefaultSvgEl: (context) => ({
@@ -22,18 +77,40 @@ export function toastScatter(
         }),
         paint: ({ scatter }) => {
           const path = createShapePath({ shape, size });
-          scatter.setAttribute("fill", color);
+          if (fill) {
+            scatter.setAttribute("fill", color);
+            scatter.removeAttribute("stroke");
+            scatter.removeAttribute("stroke-width");
+          } else {
+            scatter.setAttribute("fill", "none");
+            scatter.setAttribute("stroke", color);
+            scatter.setAttribute("stroke-width", String(strokeWidth));
+          }
           scatter.setAttribute("d", path.getD());
         },
       },
       canvas: {
         paint: (context, _size) => {
           const path = createShapePath({ shape, size });
-          context.canvas.fillStyle = color;
-          context.canvas.fill(path.toCanvasPath());
+          if (fill) {
+            context.canvas.fillStyle = color;
+            context.canvas.fill(path.toCanvasPath());
+          } else {
+            context.canvas.strokeStyle = color;
+            context.canvas.lineWidth = strokeWidth;
+            context.canvas.stroke(path.toCanvasPath());
+          }
         },
       },
     },
+  });
+
+  if (!animation.enabled) return point;
+
+  return new _MountScale({
+    key: `${legend}-${label}`,
+    duration: animation.duration,
+    child: point,
   });
 }
 
