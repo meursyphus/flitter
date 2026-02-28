@@ -98,7 +98,7 @@ class _MountRevealBarGroupState extends State<_MountRevealBarGroup> {
 }
 
 export function toastBarGroupBox(
-  { child }: { child: Widget; index: number; label: string },
+  { child, index, label }: { child: Widget; index: number; label: string },
   context: BarChartContext<ToastStackedBarChartConfig>,
 ) {
   const scale = context.scale;

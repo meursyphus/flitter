@@ -68,6 +68,8 @@ class _MountRevealBarGroupState extends State<_MountRevealBarGroup> {
     const { child, isVertical, baselineRatio } = this.widget;
     const t = this.tweenAnimation.value;
 
+    if (t >= 1) return child;
+
     return ClipRect({
       clipper: (size) => {
         if (isVertical) {
@@ -98,7 +100,7 @@ class _MountRevealBarGroupState extends State<_MountRevealBarGroup> {
 }
 
 export function toastBarGroupBox(
-  { child }: { child: Widget; index: number; label: string },
+  { child, index, label }: { child: Widget; index: number; label: string },
   context: BarChartContext<ToastBarChartConfig>,
 ) {
   const scale = context.scale;

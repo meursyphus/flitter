@@ -13,6 +13,7 @@ export { toastYAxis } from "./y-axis";
 export { toastXAxisBox } from "./x-axis-box";
 export { toastYAxisBox } from "./y-axis-box";
 export { drawSplineLine } from "./draw-spline-line";
+export { tooltipContent } from "./tooltip";
 
 const DEFAULT_TICK_SPACING = 80;
 

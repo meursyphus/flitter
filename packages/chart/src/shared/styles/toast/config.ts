@@ -35,6 +35,13 @@ export type ToastBaseConfig = {
   grid: { color: string; thickness: number };
   padding: { top: number; right: number; bottom: number; left: number };
   animation: { enabled: boolean; duration: number; staggerDelay: number };
+  tooltip: {
+    enabled: boolean;
+    backgroundColor: string;
+    textColor: string;
+    borderRadius: number;
+    padding: number;
+  };
 };
 
 export const defaultToastBaseConfig: ToastBaseConfig = {
@@ -51,4 +58,11 @@ export const defaultToastBaseConfig: ToastBaseConfig = {
   grid: { color: "#EEEEEE", thickness: 1 },
   padding: { top: 30, right: 20, bottom: 40, left: 60 },
   animation: { enabled: true, duration: 300, staggerDelay: 60 },
+  tooltip: {
+    enabled: true,
+    backgroundColor: "rgba(50,50,50,0.95)",
+    textColor: "white",
+    borderRadius: 6,
+    padding: 12,
+  },
 };
