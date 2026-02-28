@@ -3,12 +3,12 @@ import type { LineChartCustom, LineChartData, GetScaleFn, GetScaleOptionsFn } fr
 import { LineChartProvider } from "./provider";
 
 export default function LineChart<TConfig = {}>(props: {
-  custom?: Partial<LineChartCustom<TConfig>>;
+  custom: LineChartCustom<TConfig>;
   title?: string;
   data: LineChartData;
-  getScale?: GetScaleFn;
+  getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
   config?: TConfig;
 }): Widget {
-  return LineChartProvider(props);
+  return LineChartProvider(props as any);
 }

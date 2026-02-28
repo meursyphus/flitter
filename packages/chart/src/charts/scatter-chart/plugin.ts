@@ -1,5 +1,5 @@
-import type { ScatterChartCustom, GetScaleOptionsFn } from "./headless";
-import { toastStyleConfig, type ToastScatterChartConfig } from "./toast";
+import type { ScatterChartCustom, GetScaleOptionsFn } from "./base";
+import { toastStyleConfig, type ToastScatterChartConfig } from "./styles/toast";
 
 export type StyleConfig<TConfig> = {
   custom: Partial<ScatterChartCustom<TConfig>>;

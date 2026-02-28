@@ -3,12 +3,12 @@ import type { BubbleChartCustom, BubbleChartData, GetScaleFn, GetScaleOptionsFn 
 import { BubbleChartProvider } from "./provider";
 
 export default function BubbleChart<TConfig = {}>(props: {
-  custom?: Partial<BubbleChartCustom<TConfig>>;
+  custom: BubbleChartCustom<TConfig>;
   title?: string;
   data: BubbleChartData;
-  getScale?: GetScaleFn;
+  getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
   config?: TConfig;
 }): Widget {
-  return BubbleChartProvider(props);
+  return BubbleChartProvider(props as any);
 }

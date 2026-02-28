@@ -1,5 +1,5 @@
-import type { StackedAreaChartCustom } from "./headless";
-import { toastStyleConfig, type ToastStackedAreaChartConfig } from "./toast";
+import type { StackedAreaChartCustom } from "./base";
+import { toastStyleConfig, type ToastStackedAreaChartConfig } from "./styles/toast";
 
 export type StyleConfig<TConfig> = {
   custom: (config: TConfig) => Partial<StackedAreaChartCustom>;

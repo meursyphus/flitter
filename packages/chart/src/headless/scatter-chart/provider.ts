@@ -12,50 +12,24 @@ import type {
 } from "./types";
 import { ScatterChartController } from "./controller";
 import Chart from "./chart";
-import * as Default from "./default";
 
 const SCATTER_CHART_KEY = Symbol("ScatterChartKey");
 
 export function ScatterChartProvider({
-  custom = {},
-  getScale = Default.getScale,
+  custom,
+  getScale,
   getScaleOptions,
   data,
   title = "",
   config = {},
 }: {
-  custom?: Partial<ScatterChartCustom<any>>;
+  custom: ScatterChartCustom<any>;
   title?: string;
   data: ScatterChartData;
-  getScale?: GetScaleFn;
+  getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
   config?: any;
 }): Widget {
-  const defaults = {
-    scatter: Default.Scatter,
-    xAxis: Default.XAxis,
-    xAxisBox: Default.XAxisBox,
-    xAxisLabel: Default.XAxisLabel,
-    xAxisTick: Default.XAxisTick,
-    xAxisLine: Default.XAxisLine,
-    yAxis: Default.YAxis,
-    yAxisBox: Default.YAxisBox,
-    yAxisLabel: Default.YAxisLabel,
-    yAxisTick: Default.YAxisTick,
-    yAxisLine: Default.YAxisLine,
-    series: Default.Series,
-    layout: Default.Layout,
-    plot: Default.Plot,
-    legend: Default.Legend,
-    title: Default.Title,
-    dataLabel: Default.DataLabel,
-    grid: Default.Grid,
-    gridXLine: Default.GridXLine,
-    gridYLine: Default.GridYLine,
-    axisCorner: Default.AxisCorner,
-  };
-  const mergedCustom = { ...defaults, ...custom } as ScatterChartCustom<any>;
-
   return ChangeNotifierProvider({
     providerKey: SCATTER_CHART_KEY,
     create: () =>
@@ -63,14 +37,14 @@ export function ScatterChartProvider({
         data,
         getScale,
         getScaleOptions,
-        custom: mergedCustom,
+        custom,
         title,
         config,
       }),
     update: (notifier) => {
       const controller = notifier as ScatterChartController;
       controller.data = data;
-      controller.custom = mergedCustom;
+      controller.custom = custom;
       controller.title = title;
       controller.config = config;
     },

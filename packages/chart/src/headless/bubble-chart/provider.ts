@@ -12,50 +12,24 @@ import type {
 } from "./types";
 import { BubbleChartController } from "./controller";
 import Chart from "./chart";
-import * as Default from "./default";
 
 const BUBBLE_CHART_KEY = Symbol("BubbleChartKey");
 
 export function BubbleChartProvider({
-  custom = {},
-  getScale = Default.getScale,
+  custom,
+  getScale,
   getScaleOptions,
   data,
   title = "",
   config = {},
 }: {
-  custom?: Partial<BubbleChartCustom<any>>;
+  custom: BubbleChartCustom<any>;
   title?: string;
   data: BubbleChartData;
-  getScale?: GetScaleFn;
+  getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
   config?: any;
 }): Widget {
-  const defaults = {
-    bubble: Default.Bubble,
-    xAxis: Default.XAxis,
-    xAxisBox: Default.XAxisBox,
-    xAxisLabel: Default.XAxisLabel,
-    xAxisTick: Default.XAxisTick,
-    xAxisLine: Default.XAxisLine,
-    yAxis: Default.YAxis,
-    yAxisBox: Default.YAxisBox,
-    yAxisLabel: Default.YAxisLabel,
-    yAxisTick: Default.YAxisTick,
-    yAxisLine: Default.YAxisLine,
-    series: Default.Series,
-    layout: Default.Layout,
-    plot: Default.Plot,
-    legend: Default.Legend,
-    title: Default.Title,
-    dataLabel: Default.DataLabel,
-    grid: Default.Grid,
-    gridXLine: Default.GridXLine,
-    gridYLine: Default.GridYLine,
-    axisCorner: Default.AxisCorner,
-  };
-  const mergedCustom = { ...defaults, ...custom } as BubbleChartCustom<any>;
-
   return ChangeNotifierProvider({
     providerKey: BUBBLE_CHART_KEY,
     create: () =>
@@ -63,14 +37,14 @@ export function BubbleChartProvider({
         data,
         getScale,
         getScaleOptions,
-        custom: mergedCustom,
+        custom,
         title,
         config,
       }),
     update: (notifier) => {
       const controller = notifier as BubbleChartController;
       controller.data = data;
-      controller.custom = mergedCustom;
+      controller.custom = custom;
       controller.title = title;
       controller.config = config;
     },

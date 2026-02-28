@@ -1,5 +1,5 @@
-import type { LineChartCustom, GetScaleOptionsFn } from "./headless";
-import { toastStyleConfig, type ToastLineChartConfig } from "./toast";
+import type { LineChartCustom, GetScaleOptionsFn } from "./base";
+import { toastStyleConfig, type ToastLineChartConfig } from "./styles/toast";
 
 export type StyleConfig<TConfig> = {
   custom: Partial<LineChartCustom<TConfig>>;

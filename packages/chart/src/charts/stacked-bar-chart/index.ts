@@ -1,6 +1,6 @@
 import type { Widget } from "flitter-core";
-import { HeadlessStackedBarChart } from "./headless";
-import type { BarChartCustom, BarChartData, BarChartScale, GetScaleFn, GetScaleOptionsFn } from "../bar-chart/base";
+import { BaseStackedBarChart } from "./base";
+import type { BarChartCustom, BarChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
 import { stackedBarChartStyleConfigs, type StackedBarChartStyleMap } from "./plugin";
 
 export default function StackedBarChart<S extends keyof StackedBarChartStyleMap>({
@@ -21,7 +21,7 @@ export default function StackedBarChart<S extends keyof StackedBarChartStyleMap>
   getScaleOptions?: GetScaleOptionsFn;
 }): Widget {
   const sc = stackedBarChartStyleConfigs[style];
-  return HeadlessStackedBarChart({
+  return BaseStackedBarChart({
     data,
     config: sc.createConfig(config),
     custom: { ...sc.custom, ...custom },

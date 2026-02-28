@@ -1,6 +1,6 @@
 import type { Widget } from "flitter-core";
-import { HeadlessScatterChart } from "./headless";
-import type { ScatterChartCustom, ScatterChartData, GetScaleFn, GetScaleOptionsFn } from "./headless";
+import { BaseScatterChart } from "./base";
+import type { ScatterChartCustom, ScatterChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
 import { scatterChartStyleConfigs, type ScatterChartStyleMap } from "./plugin";
 
 export default function ScatterChart<S extends keyof ScatterChartStyleMap>({
@@ -20,7 +20,7 @@ export default function ScatterChart<S extends keyof ScatterChartStyleMap>({
   getScaleOptions?: GetScaleOptionsFn;
 }): Widget {
   const sc = scatterChartStyleConfigs[style];
-  return HeadlessScatterChart({
+  return BaseScatterChart({
     data,
     config: sc.createConfig(config),
     custom: { ...sc.custom, ...custom },
