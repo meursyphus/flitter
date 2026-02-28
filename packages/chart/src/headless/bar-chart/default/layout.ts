@@ -10,7 +10,7 @@ import {
 } from 'flitter-core';
 
 export function Layout(
-	...[{ title, legends, plot }, { data, direction }]: Parameters<BarChartCustom['layout']>
+	...[{ title, legends, plot }, { direction, data }]: Parameters<BarChartCustom['layout']>
 ) {
 	const maxLabelLength = Math.max(...data.labels.map((label) => label.length));
 	return Container({

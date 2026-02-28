@@ -1,33 +1,112 @@
 import { ChangeNotifier } from "flitter-core";
-import type { BarChartData, BarChartScale } from "./types";
+import type { BarChartCustom, BarChartData, BarChartDirection, BarChartScale, GetScaleFn, GetScaleOptionsFn } from "./types";
 
 export class BarChartController extends ChangeNotifier {
-  #data: BarChartData;
-  #getScale: (data: BarChartData) => BarChartScale;
+  #rawData: BarChartData;
+  #direction: BarChartDirection;
   #hiddenSeries: Set<string> = new Set();
   #hoveredBar: { index: number; legend: string } | null = null;
+  #scale: BarChartScale | null = null;
+  #getScale: GetScaleFn;
+  #getScaleOptions: GetScaleOptionsFn | null;
+  #width: number = 0;
+  #height: number = 0;
+
+  // static config
+  custom!: BarChartCustom<any>;
+  title: string;
+  config: any;
 
   constructor({
     data,
     getScale,
+    getScaleOptions = null,
+    direction = "vertical",
+    custom,
+    title = "",
+    config = {},
   }: {
     data: BarChartData;
-    getScale: (data: BarChartData) => BarChartScale;
+    getScale: GetScaleFn;
+    getScaleOptions?: GetScaleOptionsFn | null;
+    direction?: BarChartDirection;
+    custom: BarChartCustom<any>;
+    title?: string;
+    config?: any;
   }) {
     super();
-    this.#data = data;
+    this.#rawData = data;
     this.#getScale = getScale;
+    this.#getScaleOptions = getScaleOptions;
+    this.#direction = direction;
+    this.custom = custom;
+    this.title = title;
+    this.config = config;
   }
 
-  // --- 원본 데이터 ---
+  // --- internal scale 재계산 (notify 안 함) ---
 
-  get data(): BarChartData {
-    return this.#data;
+  #recalcScale(): void {
+    const options = this.#getScaleOptions?.(this) ?? { roughStepCount: 10 };
+    this.#scale = this.#getScale(this.data, options);
   }
+
+  // --- data ---
 
   set data(value: BarChartData) {
-    this.#data = value;
+    this.#rawData = value;
+    this.#recalcScale();
     this.notifyListeners();
+  }
+
+  get data(): BarChartData {
+    return {
+      labels: this.#rawData.labels,
+      datasets: this.#rawData.datasets.filter(
+        (d) => !this.#hiddenSeries.has(d.legend),
+      ),
+    };
+  }
+
+  get legends(): string[] {
+    return this.#rawData.datasets.map((d) => d.legend);
+  }
+
+  // --- direction ---
+
+  get direction(): BarChartDirection {
+    return this.#direction;
+  }
+
+  set direction(value: BarChartDirection) {
+    if (this.#direction === value) return;
+    this.#direction = value;
+    this.#recalcScale();
+    this.notifyListeners();
+  }
+
+  // --- 차트 크기 ---
+
+  get width(): number {
+    return this.#width;
+  }
+
+  get height(): number {
+    return this.#height;
+  }
+
+  setSize(width: number, height: number): void {
+    if (this.#width === width && this.#height === height) return;
+    this.#width = width;
+    this.#height = height;
+    this.#recalcScale();
+    this.notifyListeners();
+  }
+
+  // --- scale ---
+
+  get scale(): BarChartScale | null {
+    return this.#scale;
   }
 
   // --- 레전드 필터 ---
@@ -46,40 +125,29 @@ export class BarChartController extends ChangeNotifier {
     } else {
       this.#hiddenSeries.add(legend);
     }
+    this.#recalcScale();
     this.notifyListeners();
   }
 
   showSeries(legend: string): void {
     if (!this.#hiddenSeries.has(legend)) return;
     this.#hiddenSeries.delete(legend);
+    this.#recalcScale();
     this.notifyListeners();
   }
 
   hideSeries(legend: string): void {
     if (this.#hiddenSeries.has(legend)) return;
     this.#hiddenSeries.add(legend);
+    this.#recalcScale();
     this.notifyListeners();
   }
 
   showAllSeries(): void {
     if (this.#hiddenSeries.size === 0) return;
     this.#hiddenSeries.clear();
+    this.#recalcScale();
     this.notifyListeners();
-  }
-
-  // --- 파생 데이터 ---
-
-  get visibleData(): BarChartData {
-    return {
-      labels: this.#data.labels,
-      datasets: this.#data.datasets.filter(
-        (d) => !this.#hiddenSeries.has(d.legend),
-      ),
-    };
-  }
-
-  get visibleScale(): BarChartScale {
-    return this.#getScale(this.visibleData);
   }
 
   // --- 호버 ---

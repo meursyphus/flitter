@@ -103,10 +103,7 @@ class _AnimatedXAxisState extends State<_AnimatedXAxis> {
     const animValue = this.tweenAnimation.value;
 
     const isLabel = axisType === "label";
-    const tickAlignment = isLabel
-      ? MainAxisAlignment.spaceAround
-      : MainAxisAlignment.spaceBetween;
-    const tickCount = isLabel ? labels.length : labels.length;
+    const tickCount = isLabel ? labels.length + 1 : labels.length;
 
     return Column({
       mainAxisSize: MainAxisSize.min,
@@ -117,10 +114,13 @@ class _AnimatedXAxisState extends State<_AnimatedXAxis> {
           widthFactor: animValue,
           alignment: Alignment.centerRight,
           child: Row({
-            mainAxisAlignment: tickAlignment,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: Array.from({ length: tickCount }, (_, index) =>
               isLabel
-                ? tick
+                ? FractionalTranslation({
+                    translation: new Offset({ x: index === 0 ? -0.5 : index === tickCount - 1 ? 0.5 : 0, y: 0 }),
+                    child: tick,
+                  })
                 : FractionalTranslation({
                     translation: new Offset({ x: index === 0 ? -1 : 0, y: 0 }),
                     child: tick,

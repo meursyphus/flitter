@@ -1,6 +1,6 @@
 import type { Widget } from "flitter-core";
 import HeadlessBarChart from "@headless/bar-chart";
-import type { BarChartCustom, BarChartData, BarChartScale } from "@headless/bar-chart/types";
+import type { BarChartCustom, BarChartData, GetScaleFn, GetScaleOptionsFn } from "@headless/bar-chart/types";
 import { defaultToastConfig, type ToastBarChartConfig } from "./config";
 import { toastLayout } from "./layout";
 import { toastBar } from "./bar";
@@ -40,10 +40,20 @@ const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
 
 export { type ToastBarChartConfig } from "./config";
 
+const DEFAULT_TICK_SPACING = 40;
+
+const toastGetScaleOptions: GetScaleOptionsFn = (ctx) => {
+  const axisLength = ctx.direction === "vertical" ? ctx.height : ctx.width;
+  return {
+    roughStepCount: axisLength > 0 ? Math.max(2, Math.floor(axisLength / DEFAULT_TICK_SPACING)) : 10,
+  };
+};
+
 export function ToastBarChart({
   data,
   config,
   custom,
+  getScaleOptions = toastGetScaleOptions,
   ...rest
 }: {
   data: BarChartData;
@@ -51,13 +61,15 @@ export function ToastBarChart({
   custom?: Partial<BarChartCustom<ToastBarChartConfig>>;
   title?: string;
   direction?: "vertical" | "horizontal";
-  getScale?: (data: BarChartData) => BarChartScale;
+  getScale?: GetScaleFn;
+  getScaleOptions?: GetScaleOptionsFn;
 }): Widget {
   const mergedConfig = { ...defaultToastConfig, ...config };
   return HeadlessBarChart<ToastBarChartConfig>({
     data,
     config: mergedConfig,
     custom: { ...toastCustom, ...custom },
+    getScaleOptions,
     ...rest,
   });
 }

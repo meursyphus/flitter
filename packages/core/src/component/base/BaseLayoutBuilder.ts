@@ -74,6 +74,7 @@ class LayoutBuilderElement extends RenderObjectElement {
     this._child?.unmount();
     this._renderObject.dispose();
     this.parent = undefined;
+    this._renderObject.markNeedsParentLayout();
   }
 }
 

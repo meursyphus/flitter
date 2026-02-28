@@ -7,7 +7,7 @@ export function toastBar(
   context: BarChartContext<ToastBarChartConfig>
 ): Widget {
   const { colors, bar } = context.config;
-  const idx = context.data.datasets.findIndex((d) => d.legend === legend);
+  const idx = context.legends.indexOf(legend);
   return Container({
     margin: EdgeInsets.symmetric({ horizontal: bar.gap }),
     decoration: new BoxDecoration({

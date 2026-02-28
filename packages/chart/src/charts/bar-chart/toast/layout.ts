@@ -36,7 +36,7 @@ export function toastLayout(
   const titleWidget = titleConfig.visible
     ? Column({
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: titleAlignmentMap[titleConfig.alignment],
+        crossAxisAlignment: titleAlignmentMap[titleConfig.alignment as keyof typeof titleAlignmentMap],
         children: [title, SizedBox({ height: 8 })],
       })
     : null;

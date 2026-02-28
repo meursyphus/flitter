@@ -1,16 +1,18 @@
 import type { CartesianData, CartesianScale } from "./types";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function getScale({
-  datasets,
-}: Omit<CartesianData, "labels">): CartesianScale {
+export function getScale(
+  {
+    datasets,
+  }: Omit<CartesianData, "labels">,
+  { roughStepCount = 10 }: { roughStepCount?: number } = {},
+): CartesianScale {
   const valueEdge = getValueEdge(datasets.map(({ values }) => values));
 
   const roughEdge = {
     min: valueEdge.min > 0 ? 0 : valueEdge.min,
     max: valueEdge.max < 0 ? 0 : valueEdge.max,
   };
-  const roughStepCount = 10;
 
   const roughScale: Scale = {
     min: roughEdge.min,

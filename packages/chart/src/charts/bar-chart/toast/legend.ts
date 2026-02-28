@@ -1,29 +1,18 @@
 import {
-  Container,
   Row,
   SizedBox,
   Text,
   TextStyle,
   EdgeInsets,
   Padding,
-  BoxDecoration,
-  Border,
-  Center,
   MainAxisSize,
+  Opacity,
+  GestureDetector,
   type Widget,
 } from "flitter-core";
 import type { BarChartContext } from "@headless/bar-chart/types";
 import type { ToastBarChartConfig } from "./config";
-
-function Checkbox({ color }: { color: string }): Widget {
-  return Container({
-    width: 12,
-    height: 12,
-    decoration: new BoxDecoration({
-      color,
-    }),
-  });
-}
+import { CheckBox } from "@shared/toast/checkbox";
 
 export function toastLegend(
   { name, index }: { name: string; index: number },
@@ -31,12 +20,14 @@ export function toastLegend(
 ): Widget {
   const { colors, font } = context.config;
   const color = colors[index % colors.length];
-  return Padding({
+  const visible = context.isSeriesVisible(name);
+
+  const content = Padding({
     padding: EdgeInsets.symmetric({ horizontal: 8 }),
     child: Row({
       mainAxisSize: MainAxisSize.min,
       children: [
-        Checkbox({ color }),
+        CheckBox({ checked: visible, color, size: 14 }),
         SizedBox({ width: 6 }),
         Text(name, {
           style: new TextStyle({
@@ -47,5 +38,17 @@ export function toastLegend(
         }),
       ],
     }),
+  });
+
+  return GestureDetector({
+    onClick: () => {
+      context.toggleSeries(name);
+    },
+    child: visible
+      ? content
+      : Opacity({
+          opacity: 0.4,
+          child: content,
+        }),
   });
 }

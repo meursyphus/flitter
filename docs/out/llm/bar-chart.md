@@ -98,9 +98,24 @@ BarChart({
   custom?: Partial<BarChartCustom<ToastBarChartConfig>>,  // Optional - override renderers
   title?: string,                    // Optional - chart title text
   direction?: "vertical" | "horizontal",  // Optional - default "vertical"
-  getScale?: (data: BarChartData) => BarChartScale,  // Optional - custom scale calculation
+  getScale?: GetScaleFn,             // Optional - core scale calculation logic (swap for stacked, etc.)
+  getScaleOptions?: GetScaleOptionsFn, // Optional - style-dependent scale params (roughStepCount, etc.)
 })
 ```
+
+### Scale Customization (2 levels)
+
+| Prop | Purpose | When to override |
+|------|---------|------------------|
+| `getScale` | Core logic: data → scale | Different chart type (e.g. StackedBarChart) |
+| `getScaleOptions` | Style params: controller → options | Different tick spacing per style |
+
+```typescript
+type GetScaleFn = (data: BarChartData, options?: { roughStepCount?: number }) => BarChartScale;
+type GetScaleOptionsFn = (context: BarChartController) => { roughStepCount?: number };
+```
+
+Toast default: `roughStepCount = Math.floor(axisLength / 40px)`. Headless default: `{ roughStepCount: 10 }`.
 
 ---
 
@@ -189,14 +204,22 @@ All properties are optional when passed as `config`. Defaults are shown.
 Override any visual element by providing a custom renderer function. Each function receives its specific args and the full `BarChartContext`.
 
 ```typescript
-type BarChartContext<TConfig> = {
-  custom: BarChartCustom<TConfig>;
-  data: BarChartData;
-  scale: BarChartScale;
-  title: string;
-  direction: BarChartDirection;
-  config: TConfig;
-};
+type BarChartContext<TConfig> = BarChartController & { config: TConfig };
+// Accessible properties:
+//   data: BarChartData          — legend-filtered data
+//   scale: BarChartScale | null — auto-calculated scale
+//   legends: string[]           — all legend names (unfiltered)
+//   width / height: number      — chart size
+//   direction: BarChartDirection — vertical / horizontal
+//   custom: BarChartCustom<TConfig>
+//   title: string
+//   config: TConfig
+// Methods:
+//   toggleSeries(legend)        — toggle legend filter
+//   hoverBar(index, legend)     — set hovered bar
+//   unhoverBar()                — clear hover
+//   isSeriesVisible(legend)     — check visibility
+//   isBarHovered(index, legend) — check hover state
 ```
 
 ### Element Reference
@@ -344,6 +367,52 @@ BarChart({
   getScale: (data) => ({ min: 0, max: 50, step: 10 }),
 });
 ```
+
+### Custom Scale Options (tick spacing)
+
+```typescript
+BarChart({
+  style: "toast",
+  data: { labels: ["A", "B"], datasets: [{ legend: "v1", values: [15, 25] }] },
+  getScaleOptions: (ctx) => ({
+    roughStepCount: Math.floor(
+      (ctx.direction === "vertical" ? ctx.height : ctx.width) / 60
+    ),
+  }),
+});
+```
+
+---
+
+## Widget Tree Structure
+
+```
+BarChart (factory)
+  └── ChangeNotifierProvider (controller 생성/관리)
+      └── Chart
+          └── SizeTracker (LayoutBuilder → controller.setSize)
+              └── custom.layout({ title, legends, plot })
+                  ├── custom.title({ name })
+                  ├── custom.legend({ name, index }) × N
+                  └── custom.plot({ xAxis, yAxis, series, grid, axisCorner })
+                      ├── custom.xAxis({ line, labels, tick })
+                      │   ├── custom.xAxisLine()
+                      │   ├── custom.xAxisLabel({ name, index }) × N
+                      │   └── custom.xAxisTick() × N
+                      ├── custom.yAxis({ line, labels, tick })
+                      │   ├── custom.yAxisLine()
+                      │   ├── custom.yAxisLabel({ name, index }) × N
+                      │   └── custom.yAxisTick() × N
+                      ├── custom.series({ barGroups })
+                      │   └── custom.barGroup({ bars, index, label, values }) × N
+                      │       └── custom.bar({ value, label, legend, index }) × N
+                      ├── custom.grid({ xLine, yLine })
+                      │   ├── custom.gridXLine() × N
+                      │   └── custom.gridYLine() × N
+                      └── custom.axisCorner()
+```
+
+Every `custom.*` function receives `(args, context: BarChartContext<TConfig>)`. The context provides full access to the controller's state and methods.
 
 ---
 

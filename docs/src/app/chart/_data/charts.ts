@@ -357,9 +357,18 @@ BarChart({
   data: { /* ... */ },
   custom: {
     bar: (args, context) => {
+      // args: { value, label, legend, index }
+      // context: BarChartController & { config }
+      //   - context.data, context.scale, context.direction
+      //   - context.width, context.height, context.legends
+      //   - context.toggleSeries(), context.hoverBar(), ...
       // Return any Flitter Widget
     },
   },
+  getScale: (data, options) => { /* core scale logic */ },
+  getScaleOptions: (ctx) => ({
+    roughStepCount: Math.floor(ctx.height / 40),
+  }),
 });`,
     },
     customElements: barChartCustomElements,

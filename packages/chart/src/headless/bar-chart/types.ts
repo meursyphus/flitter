@@ -3,6 +3,8 @@ import type { BarChartController } from './controller';
 
 type CustomArgs<T = undefined, TConfig = {}> = (args: T, context: BarChartContext<TConfig>) => Widget;
 
+export type BarChartContext<TConfig = {}> = BarChartController & { config: TConfig };
+
 export type BarChartCustom<TConfig = {}> = {
 	barGroup: CustomArgs<{ bars: Widget[]; index: number; label: string; values: number[] }, TConfig>;
 	bar: CustomArgs<{ value: number; label: string; legend: string; index: number }, TConfig>;
@@ -39,15 +41,9 @@ export type BarChartScale = {
 
 export type BarChartDirection = 'vertical' | 'horizontal';
 
-export type BarChartContext<TConfig = {}> = {
-	custom: BarChartCustom<TConfig>;
-	data: BarChartData;
-	scale: BarChartScale;
-	title: string;
-	direction: BarChartDirection;
-	config: TConfig;
-	controller: BarChartController;
+export type BarChartScaleOptions = {
+	roughStepCount?: number;
 };
 
-// Keep backward compat alias
-export type BarChartConfig = BarChartContext;
+export type GetScaleFn = (data: BarChartData, options?: BarChartScaleOptions) => BarChartScale;
+export type GetScaleOptionsFn = (context: BarChartController) => BarChartScaleOptions;
