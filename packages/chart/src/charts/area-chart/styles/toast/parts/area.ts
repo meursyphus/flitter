@@ -1,5 +1,6 @@
 import type { LineChartCustom, LineChartScale } from "@headless/line-chart/types";
 import { CustomPaint, Path, SizedBox } from "flitter-core";
+import { drawSplineLine } from "@shared/styles/toast";
 import type { ToastAreaChartConfig } from "../config";
 
 export function toastArea(
@@ -20,8 +21,8 @@ export function toastArea(
           line: context.createSvgEl("path"),
         }),
         paint: ({ area, line }, { width, height }) => {
-          const linePath = createLinePath({ values, scale, width, height });
-          const areaPath = createAreaPath({ values, scale, width, height });
+          const linePath = createLinePath({ values, scale, width, height, spline: areaConfig.spline });
+          const areaPath = createAreaPath({ values, scale, width, height, spline: areaConfig.spline });
 
           area.setAttribute("fill", color);
           area.setAttribute("opacity", String(areaConfig.opacity));
@@ -37,8 +38,8 @@ export function toastArea(
       },
       canvas: {
         paint: (context, { width, height }) => {
-          const linePath = createLinePath({ values, scale, width, height });
-          const areaPath = createAreaPath({ values, scale, width, height });
+          const linePath = createLinePath({ values, scale, width, height, spline: areaConfig.spline });
+          const areaPath = createAreaPath({ values, scale, width, height, spline: areaConfig.spline });
 
           context.canvas.globalAlpha = areaConfig.opacity;
           context.canvas.fillStyle = color;
@@ -61,13 +62,27 @@ function createLinePath({
   scale,
   width,
   height,
+  spline,
 }: {
   values: number[];
   scale: LineChartScale;
   width: number;
   height: number;
+  spline: boolean;
 }) {
   const path = new Path();
+
+  if (spline) {
+    drawSplineLine(path, {
+      width,
+      height,
+      minValue: scale.min,
+      maxValue: scale.max,
+      values,
+    });
+    return path;
+  }
+
   const range = scale.max - scale.min;
   const points = values.map((value, index) => {
     const y = height - (height * (value - scale.min)) / range;
@@ -85,11 +100,13 @@ function createAreaPath({
   scale,
   width,
   height,
+  spline,
 }: {
   values: number[];
   scale: LineChartScale;
   width: number;
   height: number;
+  spline: boolean;
 }) {
   const path = new Path();
   const range = scale.max - scale.min;
@@ -101,8 +118,18 @@ function createAreaPath({
   if (points.length === 0) return path;
 
   // Top line (left to right)
-  path.moveTo(points[0]);
-  points.slice(1).forEach((point) => path.lineTo(point));
+  if (spline) {
+    drawSplineLine(path, {
+      width,
+      height,
+      minValue: scale.min,
+      maxValue: scale.max,
+      values,
+    });
+  } else {
+    path.moveTo(points[0]);
+    points.slice(1).forEach((point) => path.lineTo(point));
+  }
 
   // Bottom line (right to left along baseline)
   const baseline = height - (height * (0 - scale.min)) / range;

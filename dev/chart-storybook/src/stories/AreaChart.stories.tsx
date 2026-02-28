@@ -7,14 +7,39 @@ function ToastDefault() {
     <Widget
       widget={AreaChart({
         style: "toast",
-        title: "Monthly Sales Trend",
+        title: "Monthly Cashflow",
         data: {
           labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
           datasets: [
-            { legend: "2024", values: [65, 72, 80, 75, 90, 85, 95, 88, 92, 100, 105, 110] },
-            { legend: "2025", values: [70, 78, 85, 82, 95, 92, 100, 95, 98, 108, 112, 120] },
-            { legend: "2026", values: [55, 60, 68, 72, 80, 78, 85, 82, 88, 95, 100, 105] },
+            { legend: "Operating", values: [50, 35, 80, -20, 120, 45, -30, 95, 60, -15, 110, 70] },
+            { legend: "Investing", values: [-40, -60, 20, -80, 10, -50, 30, -70, 15, -45, 25, -35] },
+            { legend: "Financing", values: [30, -10, -25, 60, -40, 80, -55, 40, -30, 70, -20, 50] },
           ],
+        },
+      })}
+      width="800px"
+      height="500px"
+      renderer="svg"
+    />
+  );
+}
+
+function ToastSpline() {
+  return (
+    <Widget
+      widget={AreaChart({
+        style: "toast",
+        title: "Monthly Cashflow (Spline)",
+        data: {
+          labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          datasets: [
+            { legend: "Operating", values: [50, 35, 80, -20, 120, 45, -30, 95, 60, -15, 110, 70] },
+            { legend: "Investing", values: [-40, -60, 20, -80, 10, -50, 30, -70, 15, -45, 25, -35] },
+            { legend: "Financing", values: [30, -10, -25, 60, -40, 80, -55, 40, -30, 70, -20, 50] },
+          ],
+        },
+        config: {
+          area: { spline: true },
         },
       })}
       width="800px"
@@ -36,4 +61,8 @@ type Story = StoryObj;
 
 export const Default: Story = {
   render: () => <ToastDefault />,
+};
+
+export const Spline: Story = {
+  render: () => <ToastSpline />,
 };

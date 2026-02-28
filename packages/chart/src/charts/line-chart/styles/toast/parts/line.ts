@@ -1,5 +1,6 @@
 import type { LineChartCustom, LineChartScale } from "@headless/line-chart/types";
 import { CustomPaint, Path, SizedBox } from "flitter-core";
+import { drawSplineLine } from "@shared/styles/toast";
 import type { ToastLineChartConfig } from "../config";
 
 export function toastLine(
@@ -19,7 +20,7 @@ export function toastLine(
           line: context.createSvgEl("path"),
         }),
         paint: ({ line }, { width, height }) => {
-          const path = createLinePath({ values, scale, width, height });
+          const path = createLinePath({ values, scale, width, height, spline: lineConfig.spline });
           line.setAttribute("fill", "none");
           line.setAttribute("stroke", color);
           line.setAttribute("stroke-width", String(lineConfig.strokeWidth));
@@ -30,7 +31,7 @@ export function toastLine(
       },
       canvas: {
         paint: (context, { width, height }) => {
-          const path = createLinePath({ values, scale, width, height });
+          const path = createLinePath({ values, scale, width, height, spline: lineConfig.spline });
           context.canvas.strokeStyle = color;
           context.canvas.lineWidth = lineConfig.strokeWidth;
           context.canvas.lineCap = "round";
@@ -47,13 +48,27 @@ function createLinePath({
   scale,
   width,
   height,
+  spline,
 }: {
   values: number[];
   scale: LineChartScale;
   width: number;
   height: number;
+  spline: boolean;
 }) {
   const path = new Path();
+
+  if (spline) {
+    drawSplineLine(path, {
+      width,
+      height,
+      minValue: scale.min,
+      maxValue: scale.max,
+      values,
+    });
+    return path;
+  }
+
   const range = scale.max - scale.min;
   const points = values.map((value, index) => {
     const y = height - (height * (value - scale.min)) / range;

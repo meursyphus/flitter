@@ -4,19 +4,24 @@ export function stackedGetScale(
   { datasets, labels }: BarChartData,
   options?: BarChartScaleOptions,
 ): BarChartScale {
-  const stackedTotals: number[] = [];
+  const positiveTotals: number[] = [];
+  const negativeTotals: number[] = [];
   const labelCount = labels.length;
 
   for (let i = 0; i < labelCount; i++) {
-    let sum = 0;
+    let positiveSum = 0;
+    let negativeSum = 0;
     for (const dataset of datasets) {
-      sum += dataset.values[i];
+      const val = dataset.values[i];
+      if (val >= 0) positiveSum += val;
+      else negativeSum += val;
     }
-    stackedTotals.push(sum);
+    positiveTotals.push(positiveSum);
+    negativeTotals.push(negativeSum);
   }
 
-  const max = Math.max(...stackedTotals, 0);
-  const min = 0;
+  const max = Math.max(...positiveTotals, 0);
+  const min = Math.min(...negativeTotals, 0);
 
   const roughStepCount = options?.roughStepCount ?? 10;
   const roughStep = (max - min) / roughStepCount;

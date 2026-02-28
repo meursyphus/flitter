@@ -42,7 +42,7 @@ const toastCustom: Partial<LineChartCustom<ToastAreaChartConfig>> = {
   gridXLine: toastGridXLine,
   gridYLine: toastGridYLine,
   xAxis: (args, context) =>
-    toastXAxis(args, { type: "label" }, context),
+    toastXAxis(args, { type: "value" }, context),
   yAxis: (args, context) =>
     toastYAxis(args, { type: "value" }, context),
   xAxisBox: toastXAxisBox,

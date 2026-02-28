@@ -65,7 +65,7 @@ class _AnimatedXAxisBoxState extends State<_AnimatedXAxisBox> {
     const { child } = this.widget;
     return FractionallySizedBox({
       widthFactor: this.tweenAnimation.value,
-      alignment: Alignment.centerRight,
+      alignment: Alignment.centerLeft,
       child,
     });
   }

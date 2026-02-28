@@ -7,13 +7,13 @@ function ToastDefault() {
     <Widget
       widget={LineChart({
         style: "toast",
-        title: "Monthly Sales Trend",
+        title: "Monthly Financial Overview",
         data: {
           labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
           datasets: [
-            { legend: "2024", values: [65, 72, 80, 75, 90, 85, 95, 88, 92, 100, 105, 110] },
-            { legend: "2025", values: [70, 78, 85, 82, 95, 92, 100, 95, 98, 108, 112, 120] },
-            { legend: "2026", values: [55, 60, 68, 72, 80, 78, 85, 82, 88, 95, 100, 105] },
+            { legend: "Revenue", values: [120, 90, 150, 80, 200, 130, 250, 100, 300, 180, 350, 220] },
+            { legend: "Expenses", values: [100, 130, 85, 160, 90, 180, 70, 200, 95, 250, 110, 280] },
+            { legend: "Profit", values: [20, -40, 65, -80, 110, -50, 180, -100, 205, -70, 240, -60] },
           ],
         },
       })}
@@ -24,18 +24,22 @@ function ToastDefault() {
   );
 }
 
-function ToastFewPoints() {
+function ToastSpline() {
   return (
     <Widget
       widget={LineChart({
         style: "toast",
-        title: "Quarterly Revenue",
+        title: "Monthly Financial Overview (Spline)",
         data: {
-          labels: ["Q1", "Q2", "Q3", "Q4"],
+          labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
           datasets: [
-            { legend: "Revenue", values: [250, 310, 280, 350] },
-            { legend: "Target", values: [300, 300, 300, 300] },
+            { legend: "Revenue", values: [120, 90, 150, 80, 200, 130, 250, 100, 300, 180, 350, 220] },
+            { legend: "Expenses", values: [100, 130, 85, 160, 90, 180, 70, 200, 95, 250, 110, 280] },
+            { legend: "Profit", values: [20, -40, 65, -80, 110, -50, 180, -100, 205, -70, 240, -60] },
           ],
+        },
+        config: {
+          line: { spline: true },
         },
       })}
       width="800px"
@@ -59,6 +63,6 @@ export const Default: Story = {
   render: () => <ToastDefault />,
 };
 
-export const FewPoints: Story = {
-  render: () => <ToastFewPoints />,
+export const Spline: Story = {
+  render: () => <ToastSpline />,
 };

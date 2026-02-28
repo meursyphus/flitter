@@ -25,6 +25,28 @@ function ToastDefault() {
   );
 }
 
+function ToastNegativeDefault() {
+  return (
+    <Widget
+      widget={StackedAreaChart({
+        style: "toast",
+        title: "Quarterly Profit / Loss",
+        data: {
+          labels: ["Q1 '24", "Q2 '24", "Q3 '24", "Q4 '24", "Q1 '25", "Q2 '25", "Q3 '25"],
+          datasets: [
+            { legend: "Product A", values: [-20, 15, -5, 30, -10, 25, 8] },
+            { legend: "Product B", values: [10, -12, 22, -8, 18, -15, 30] },
+            { legend: "Product C", values: [5, -25, 12, 20, -18, 10, -7] },
+          ],
+        },
+      })}
+      width="800px"
+      height="500px"
+      renderer="svg"
+    />
+  );
+}
+
 const meta: Meta = {
   title: "StackedAreaChart/Toast",
   parameters: {
@@ -37,4 +59,8 @@ type Story = StoryObj;
 
 export const Default: Story = {
   render: () => <ToastDefault />,
+};
+
+export const NegativeDefault: Story = {
+  render: () => <ToastNegativeDefault />,
 };

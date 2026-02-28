@@ -78,13 +78,28 @@ export function stackedBarGroup<TConfig>(
       ? Alignment.topCenter
       : Alignment.centerRight;
 
+    const positiveSum = positiveValues.reduce((sum, item) => sum + item.value, 0);
+    const negativeSum = negativeValues.reduce((sum, item) => sum + Math.abs(item.value), 0);
+    const positiveRatio = positiveMax > 0 ? positiveSum / positiveMax : 0;
+    const negativeRatio = negativeMax > 0 ? negativeSum / negativeMax : 0;
+
     const positiveChild =
       positiveValues.length > 0
-        ? buildStack(positiveValues, positiveAlignment)
+        ? FractionallySizedBox({
+            alignment: positiveAlignment,
+            widthFactor: isVertical ? 0.6 : positiveRatio,
+            heightFactor: isVertical ? positiveRatio : 0.6,
+            child: buildStack(positiveValues, positiveAlignment),
+          })
         : SizedBox.shrink();
     const negativeChild =
       negativeValues.length > 0
-        ? buildStack(negativeValues, negativeAlignment)
+        ? FractionallySizedBox({
+            alignment: negativeAlignment,
+            widthFactor: isVertical ? 0.6 : negativeRatio,
+            heightFactor: isVertical ? negativeRatio : 0.6,
+            child: buildStack(negativeValues, negativeAlignment),
+          })
         : SizedBox.shrink();
 
     if (isVertical) {
