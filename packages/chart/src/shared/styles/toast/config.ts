@@ -23,7 +23,12 @@ export type ToastBaseConfig = {
   axis: {
     color: string;
     thickness: number;
-    label: { color: string; fontSize: number; gap: number };
+    label: {
+      color: string;
+      fontSize: number;
+      gap: number;
+      format: (name: string, index: number, axis: "x" | "y") => string;
+    };
     tick: { size: number };
   };
   grid: { color: string; thickness: number };
@@ -39,7 +44,7 @@ export const defaultToastBaseConfig: ToastBaseConfig = {
   axis: {
     color: "#BBBBBB",
     thickness: 1,
-    label: { color: "#666666", fontSize: 11, gap: 8 },
+    label: { color: "#666666", fontSize: 11, gap: 8, format: (name) => name },
     tick: { size: 6 },
   },
   grid: { color: "#EEEEEE", thickness: 1 },

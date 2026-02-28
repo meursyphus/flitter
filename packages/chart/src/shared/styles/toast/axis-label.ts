@@ -7,7 +7,8 @@ export function toastXAxisLabel(
   context: { config: ToastBaseConfig },
 ): Widget {
   const { font, axis } = context.config;
-  return XAxisLabel(args, {
+  const formatted = { ...args, name: axis.label.format(args.name, args.index, "x") };
+  return XAxisLabel(formatted, {
     fontFamily: font.family,
     fontSize: axis.label.fontSize,
     color: axis.label.color,
@@ -19,7 +20,8 @@ export function toastYAxisLabel(
   context: { config: ToastBaseConfig },
 ): Widget {
   const { font, axis } = context.config;
-  return YAxisLabel(args, {
+  const formatted = { ...args, name: axis.label.format(args.name, args.index, "y") };
+  return YAxisLabel(formatted, {
     fontFamily: font.family,
     fontSize: axis.label.fontSize,
     color: axis.label.color,
