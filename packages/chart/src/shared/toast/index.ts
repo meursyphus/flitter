@@ -8,3 +8,9 @@ export { toastAxisCorner } from "./axis-corner";
 export { toastTitle } from "./title";
 export { toastLegend } from "./legend";
 export { toastLayout } from "./layout";
+
+const DEFAULT_TICK_SPACING = 40;
+
+export const toastScaleOptions = (axisLength: number) => ({
+  roughStepCount: axisLength > 0 ? Math.max(2, Math.floor(axisLength / DEFAULT_TICK_SPACING)) : 10,
+});

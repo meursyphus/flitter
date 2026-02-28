@@ -1,5 +1,8 @@
 import type { ScatterChartCustom, GetScaleOptionsFn } from "@headless/scatter-chart/types";
+import type { StyleConfig } from "../plugin";
 import type { ToastScatterChartConfig } from "./config";
+import { defaultToastConfig } from "./config";
+import { deepMerge } from "@utils/index";
 import { toastLayout } from "./parts/layout";
 import { toastScatter } from "./parts/scatter";
 import { toastLegend } from "./parts/legend";
@@ -16,7 +19,9 @@ import { toastYAxis } from "./parts/y-axis";
 import { toastTitle } from "./parts/title";
 import { toastAxisCorner } from "./parts/axis-corner";
 
-export const toastCustom: Partial<ScatterChartCustom<ToastScatterChartConfig>> = {
+export { type ToastScatterChartConfig } from "./config";
+
+const toastCustom: Partial<ScatterChartCustom<ToastScatterChartConfig>> = {
   layout: toastLayout,
   scatter: toastScatter,
   legend: toastLegend,
@@ -34,10 +39,13 @@ export const toastCustom: Partial<ScatterChartCustom<ToastScatterChartConfig>> =
   yAxis: toastYAxis,
 };
 
-export { defaultToastConfig, type ToastScatterChartConfig } from "./config";
+import { toastScaleOptions } from "@shared/toast";
 
-const DEFAULT_TICK_SPACING = 40;
+const toastGetScaleOptions: GetScaleOptionsFn = (ctx) =>
+  toastScaleOptions(Math.min(ctx.width, ctx.height));
 
-export const toastGetScaleOptions: GetScaleOptionsFn = (ctx) => ({
-  roughStepCount: Math.max(2, Math.floor(Math.min(ctx.width, ctx.height) / DEFAULT_TICK_SPACING)),
-});
+export const toastStyleConfig: StyleConfig<ToastScatterChartConfig> = {
+  custom: toastCustom,
+  createConfig: (config) => deepMerge(defaultToastConfig, config),
+  getScaleOptions: toastGetScaleOptions,
+};

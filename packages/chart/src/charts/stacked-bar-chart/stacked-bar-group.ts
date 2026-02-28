@@ -38,8 +38,11 @@ export function stackedBarGroup(
     baseAlignment: Alignment,
   ) => {
     const stackChildren = [...items].reverse().map(({ bar, value, datasetIndex }) => {
-      const ratio = Math.abs(value) / total;
-      return ctx.custom.barBox({ bar, value, ratio, alignment: baseAlignment, index: datasetIndex }, ctx);
+      const flexValue = Math.abs(value);
+      return Expanded({
+        flex: flexValue,
+        child: ctx.custom.barBox({ bar, value, ratio: 1.0, alignment: baseAlignment, index: datasetIndex }, ctx),
+      });
     });
 
     return Flex({
@@ -56,10 +59,12 @@ export function stackedBarGroup(
     const alignment = isVertical
       ? Alignment.bottomCenter
       : Alignment.centerLeft;
+    const stackSum = positiveValues.reduce((sum, item) => sum + Math.abs(item.value), 0);
+    const stackRatio = stackSum / total;
     innerChild = FractionallySizedBox({
       alignment,
-      widthFactor: isVertical ? 0.6 : undefined,
-      heightFactor: isVertical ? undefined : 0.6,
+      widthFactor: isVertical ? 0.6 : stackRatio,
+      heightFactor: isVertical ? stackRatio : 0.6,
       child: buildStack(positiveValues, alignment),
     });
   } else {

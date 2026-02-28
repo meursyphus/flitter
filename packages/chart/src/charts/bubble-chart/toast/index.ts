@@ -1,5 +1,8 @@
 import type { BubbleChartCustom, GetScaleOptionsFn } from "@headless/bubble-chart/types";
+import type { StyleConfig } from "../plugin";
 import type { ToastBubbleChartConfig } from "./config";
+import { defaultToastConfig } from "./config";
+import { deepMerge } from "@utils/index";
 import { toastLayout } from "./parts/layout";
 import { toastBubble } from "./parts/bubble";
 import { toastLegend } from "./parts/legend";
@@ -16,7 +19,9 @@ import { toastYAxis } from "./parts/y-axis";
 import { toastTitle } from "./parts/title";
 import { toastAxisCorner } from "./parts/axis-corner";
 
-export const toastCustom: Partial<BubbleChartCustom<ToastBubbleChartConfig>> = {
+export { type ToastBubbleChartConfig } from "./config";
+
+const toastCustom: Partial<BubbleChartCustom<ToastBubbleChartConfig>> = {
   layout: toastLayout,
   bubble: toastBubble,
   legend: toastLegend,
@@ -34,13 +39,13 @@ export const toastCustom: Partial<BubbleChartCustom<ToastBubbleChartConfig>> = {
   yAxis: toastYAxis,
 };
 
-export { defaultToastConfig, type ToastBubbleChartConfig } from "./config";
+import { toastScaleOptions } from "@shared/toast";
 
-const DEFAULT_TICK_SPACING = 40;
+const toastGetScaleOptions: GetScaleOptionsFn = (ctx) =>
+  toastScaleOptions(Math.min(ctx.width, ctx.height));
 
-export const toastGetScaleOptions: GetScaleOptionsFn = (ctx) => {
-  const axisLength = Math.min(ctx.width, ctx.height);
-  return {
-    roughStepCount: axisLength > 0 ? Math.max(2, Math.floor(axisLength / DEFAULT_TICK_SPACING)) : 10,
-  };
+export const toastStyleConfig: StyleConfig<ToastBubbleChartConfig> = {
+  custom: toastCustom,
+  createConfig: (config) => deepMerge(defaultToastConfig, config),
+  getScaleOptions: toastGetScaleOptions,
 };

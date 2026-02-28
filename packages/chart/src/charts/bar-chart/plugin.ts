@@ -1,6 +1,5 @@
 import type { BarChartCustom, GetScaleOptionsFn } from "./headless";
-import { deepMerge } from "@utils/index";
-import { toastCustom, toastGetScaleOptions, defaultToastConfig, type ToastBarChartConfig } from "./toast";
+import { toastStyleConfig, type ToastBarChartConfig } from "./toast";
 
 export type StyleConfig<TConfig> = {
   custom: Partial<BarChartCustom<TConfig>>;
@@ -13,9 +12,5 @@ export type BarChartStyleMap = {
 };
 
 export const barChartStyleConfigs: { [S in keyof BarChartStyleMap]: StyleConfig<BarChartStyleMap[S]> } = {
-  toast: {
-    custom: toastCustom,
-    createConfig: (config) => deepMerge(defaultToastConfig, config),
-    getScaleOptions: toastGetScaleOptions,
-  },
+  toast: toastStyleConfig,
 };

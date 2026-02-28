@@ -1,11 +1,5 @@
 import type { BubbleChartCustom, GetScaleOptionsFn } from "./headless";
-import { deepMerge } from "@utils/index";
-import {
-  toastCustom,
-  toastGetScaleOptions,
-  defaultToastConfig,
-  type ToastBubbleChartConfig,
-} from "./toast";
+import { toastStyleConfig, type ToastBubbleChartConfig } from "./toast";
 
 export type StyleConfig<TConfig> = {
   custom: Partial<BubbleChartCustom<TConfig>>;
@@ -20,9 +14,5 @@ export type BubbleChartStyleMap = {
 export const bubbleChartStyleConfigs: {
   [S in keyof BubbleChartStyleMap]: StyleConfig<BubbleChartStyleMap[S]>;
 } = {
-  toast: {
-    custom: toastCustom,
-    createConfig: (config) => deepMerge(defaultToastConfig, config),
-    getScaleOptions: toastGetScaleOptions,
-  },
+  toast: toastStyleConfig,
 };

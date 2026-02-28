@@ -1,6 +1,9 @@
 import type { LineChartCustom } from "@headless/line-chart/types";
 import type { GetScaleOptionsFn } from "@headless/line-chart/types";
+import type { StyleConfig } from "../plugin";
 import type { ToastAreaChartConfig } from "./config";
+import { defaultToastConfig } from "./config";
+import { deepMerge } from "@utils/index";
 import { toastLayout } from "./parts/layout";
 import { toastArea } from "./parts/area";
 import { toastLegend } from "./parts/legend";
@@ -17,9 +20,9 @@ import { toastYAxis } from "./parts/y-axis";
 import { toastTitle } from "./parts/title";
 import { toastAxisCorner } from "./parts/axis-corner";
 
-export { defaultToastConfig, type ToastAreaChartConfig } from "./config";
+export { type ToastAreaChartConfig } from "./config";
 
-export const toastCustom: Partial<LineChartCustom<ToastAreaChartConfig>> = {
+const toastCustom: Partial<LineChartCustom<ToastAreaChartConfig>> = {
   layout: toastLayout,
   line: toastArea,
   legend: toastLegend,
@@ -37,8 +40,13 @@ export const toastCustom: Partial<LineChartCustom<ToastAreaChartConfig>> = {
   yAxis: toastYAxis,
 };
 
-const DEFAULT_TICK_SPACING = 40;
+import { toastScaleOptions } from "@shared/toast";
 
-export const toastGetScaleOptions: GetScaleOptionsFn = (ctx) => ({
-  roughStepCount: ctx.height > 0 ? Math.max(2, Math.floor(ctx.height / DEFAULT_TICK_SPACING)) : 10,
-});
+const toastGetScaleOptions: GetScaleOptionsFn = (ctx) =>
+  toastScaleOptions(ctx.height);
+
+export const toastStyleConfig: StyleConfig<ToastAreaChartConfig> = {
+  custom: toastCustom,
+  createConfig: (config) => deepMerge(defaultToastConfig, config),
+  getScaleOptions: toastGetScaleOptions,
+};

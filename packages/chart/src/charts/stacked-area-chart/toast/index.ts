@@ -1,5 +1,8 @@
 import type { StackedAreaChartCustom } from "@headless/stacked-area-chart/types";
+import type { StyleConfig } from "../plugin";
 import type { ToastStackedAreaChartConfig } from "./config";
+import { defaultToastConfig } from "./config";
+import { deepMerge } from "@utils/index";
 import { createToastLayout } from "./parts/layout";
 import { createToastArea } from "./parts/area";
 import { createToastLegend } from "./parts/legend";
@@ -16,9 +19,9 @@ import { createToastGridYLine } from "./parts/grid-y-line";
 import { createToastXAxis } from "./parts/x-axis";
 import { createToastYAxis } from "./parts/y-axis";
 
-export { defaultToastConfig, type ToastStackedAreaChartConfig } from "./config";
+export { type ToastStackedAreaChartConfig } from "./config";
 
-export const createToastCustom = (
+const createToastCustom = (
   config: ToastStackedAreaChartConfig,
 ): Partial<StackedAreaChartCustom> => ({
   layout: createToastLayout(config),
@@ -37,3 +40,8 @@ export const createToastCustom = (
   xAxis: createToastXAxis(config),
   yAxis: createToastYAxis(config),
 });
+
+export const toastStyleConfig: StyleConfig<ToastStackedAreaChartConfig> = {
+  custom: createToastCustom,
+  createConfig: (config) => deepMerge(defaultToastConfig, config),
+};

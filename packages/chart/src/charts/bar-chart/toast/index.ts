@@ -1,7 +1,9 @@
 import type { BarChartCustom } from "@headless/bar-chart/types";
 import type { GetScaleOptionsFn } from "@headless/bar-chart/types";
+import type { StyleConfig } from "../plugin";
 import type { ToastBarChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
+import { deepMerge } from "@utils/index";
 import { toastLayout } from "./parts/layout";
 import { toastBar } from "./parts/bar";
 import { toastBarGroupBox } from "./parts/bar-group-box";
@@ -20,9 +22,9 @@ import { toastYAxis } from "./parts/y-axis";
 import { toastTitle } from "./parts/title";
 import { toastAxisCorner } from "./parts/axis-corner";
 
-export { defaultToastConfig, type ToastBarChartConfig } from "./config";
+export { type ToastBarChartConfig } from "./config";
 
-export const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
+const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
   layout: toastLayout,
   bar: toastBar,
   barGroupBox: toastBarGroupBox,
@@ -42,11 +44,13 @@ export const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
   yAxis: toastYAxis,
 };
 
-const DEFAULT_TICK_SPACING = 40;
+import { toastScaleOptions } from "@shared/toast";
 
-export const toastGetScaleOptions: GetScaleOptionsFn = (ctx) => {
-  const axisLength = ctx.direction === "vertical" ? ctx.height : ctx.width;
-  return {
-    roughStepCount: axisLength > 0 ? Math.max(2, Math.floor(axisLength / DEFAULT_TICK_SPACING)) : 10,
-  };
+const toastGetScaleOptions: GetScaleOptionsFn = (ctx) =>
+  toastScaleOptions(ctx.direction === "vertical" ? ctx.height : ctx.width);
+
+export const toastStyleConfig: StyleConfig<ToastBarChartConfig> = {
+  custom: toastCustom,
+  createConfig: (config) => deepMerge(defaultToastConfig, config),
+  getScaleOptions: toastGetScaleOptions,
 };
