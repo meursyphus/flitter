@@ -4,6 +4,7 @@ import type { ToastScatterChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { toastScatter } from "./parts/scatter";
+import { toastSeries } from "./parts/series";
 import {
   toastLayout,
   toastTitle,
@@ -29,6 +30,7 @@ export { type ToastScatterChartConfig } from "./config";
 const toastCustom: Partial<ScatterChartCustom<ToastScatterChartConfig>> = {
   layout: toastLayout,
   scatter: toastScatter,
+  series: toastSeries,
   legend: toastLegend,
   title: toastTitle,
   axisCorner: toastAxisCorner,

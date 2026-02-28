@@ -5,6 +5,7 @@ import type { ToastAreaChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { toastArea } from "./parts/area";
+import { toastSeries } from "./parts/series";
 import {
   toastLayout,
   toastTitle,
@@ -30,6 +31,7 @@ export { type ToastAreaChartConfig } from "./config";
 const toastCustom: Partial<LineChartCustom<ToastAreaChartConfig>> = {
   layout: toastLayout,
   line: toastArea,
+  series: toastSeries,
   legend: toastLegend,
   title: toastTitle,
   axisCorner: toastAxisCorner,
