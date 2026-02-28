@@ -27,11 +27,9 @@ src/charts/{chart-name}/
   index.ts              Public entry point (factory function widget)
   plugin.ts             Style registry (StyleConfig + StyleMap types)
   base/                 Structural defaults (wraps headless + non-visual parts)
-    index.ts            BaseXxxChart() wrapper + type re-exports
-    bar-group.ts        Layout logic (non-visual)
-    series.ts, plot.ts  Structural composition
-    grid.ts, ...        Other structural parts
-    get-scale.ts        Default scale computation
+    index.ts            BaseXxxChart() wrapper + type re-exports + 단순 래핑 인라인
+    bar-group.ts        차트 전용 로직이 있는 것만 별도 파일
+    series.ts, grid.ts  (차트 전용 로직이 있을 때만)
   styles/
     toast/              "toast" style implementation
       config.ts         Style-specific config type + defaults
@@ -39,6 +37,12 @@ src/charts/{chart-name}/
       parts/            Chart-specific visual part renderers only
         bar.ts, bar-box.ts, bar-group-box.ts, ...
 ```
+
+### base/ 파일 분리 기준
+
+- **별도 파일**: 차트 전용 로직이 있는 것 (bar-group.ts, series.ts, grid.ts, bar-box.ts 등)
+- **index.ts 인라인**: Cartesian을 그대로 래핑하거나 trivial한 것 (`(...args) => Cartesian.Plot(args[0])`, `(...[{ child }]) => child` 등)
+- 단순 래핑을 별도 파일로 만들면 괜히 특별해 보이므로, index.ts의 baseDefaults 객체에 인라인 람다로 처리
 
 ### Three-Layer Flow
 
@@ -76,10 +80,24 @@ export default function BarChart<S extends keyof BarChartStyleMap>({
 
 ```typescript
 // From bar-chart/base/index.ts
+import * as Cartesian from "@shared/cartesian/index";
+import { BarGroup } from "./bar-group";  // 차트 전용 로직 → 별도 파일
+import { BarBox } from "./bar-box";
+import { Series } from "./series";
+import { Grid } from "./grid";
+
 const baseDefaults: Partial<BarChartCustom> = {
-  barGroup: BarGroup, barBox: BarBox, barGroupBox: BarGroupBox,
-  series: Series, plot: Plot, dataLabel: DataLabel, grid: Grid,
+  barGroup: BarGroup,                          // 별도 파일 (80줄 bar 레이아웃)
+  barBox: BarBox,                              // 별도 파일 (bar 전용 로직)
+  barGroupBox: (...[{ child }]) => child,      // 인라인 (trivial)
+  series: Series,                              // 별도 파일 (bar series 배치)
+  plot: (...args) => Cartesian.Plot(args[0]),  // 인라인 (단순 Cartesian 래핑)
+  dataLabel: (...args) => Cartesian.DataLabel(args[0]),  // 인라인
+  grid: Grid,                                 // 별도 파일 (direction/scale 계산)
 };
+
+const defaultGetScale: GetScaleFn = ({ datasets }, options) =>
+  Cartesian.getScale({ datasets }, options);   // 인라인 (단순 래핑)
 
 export function BaseBarChart<TConfig>({ custom, getScale = defaultGetScale, ...rest }) {
   return HeadlessBarChart({
@@ -254,7 +272,7 @@ return HeadlessStackedAreaChart({
 
 Each chart listed as TODO above needs the same refactoring applied to bar-chart:
 
-1. **Create `base/` folder** — Move structural (non-visual) default implementations from `headless/{chart}/default/` into `charts/{chart}/base/`. Create `base/index.ts` that wraps the headless component with structural defaults pre-filled and re-exports types.
+1. **Create `base/` folder** — Move structural (non-visual) default implementations from `headless/{chart}/default/` into `charts/{chart}/base/`. Create `base/index.ts` that wraps the headless component with structural defaults pre-filled and re-exports types. 단순 Cartesian 래핑이나 trivial한 것은 별도 파일 없이 `base/index.ts`에 인라인 람다로 넣고, 차트 전용 로직이 있는 것만 별도 파일로 분리.
 2. **Move `toast/` → `styles/toast/`** — Move the toast style folder under `styles/` for clarity. Update import paths in `plugin.ts` and `charts/index.ts`.
 3. **Delete `headless.ts`** — Replace with imports from `./base` in `index.ts` and `plugin.ts`.
 4. **Update headless provider** — Remove `default/` folder from `headless/{chart}/`, make `custom` and `getScale` Required (not optional) in the headless layer.
