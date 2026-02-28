@@ -3,12 +3,12 @@ import type { ScatterChartCustom, ScatterChartData, GetScaleFn, GetScaleOptionsF
 import { ScatterChartProvider } from "./provider";
 
 export default function ScatterChart<TConfig = {}>(props: {
-  custom?: Partial<ScatterChartCustom<TConfig>>;
+  custom: ScatterChartCustom<TConfig>;
   title?: string;
   data: ScatterChartData;
-  getScale?: GetScaleFn;
+  getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
   config?: TConfig;
 }): Widget {
-  return ScatterChartProvider(props);
+  return ScatterChartProvider(props as any);
 }

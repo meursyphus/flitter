@@ -1,5 +1,5 @@
-import type { BubbleChartCustom, GetScaleOptionsFn } from "./headless";
-import { toastStyleConfig, type ToastBubbleChartConfig } from "./toast";
+import type { BubbleChartCustom, GetScaleOptionsFn } from "./base";
+import { toastStyleConfig, type ToastBubbleChartConfig } from "./styles/toast";
 
 export type StyleConfig<TConfig> = {
   custom: Partial<BubbleChartCustom<TConfig>>;

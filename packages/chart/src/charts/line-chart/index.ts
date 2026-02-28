@@ -1,6 +1,6 @@
 import type { Widget } from "flitter-core";
-import { HeadlessLineChart } from "./headless";
-import type { LineChartCustom, LineChartData, LineChartScale, GetScaleFn, GetScaleOptionsFn } from "./headless";
+import { BaseLineChart } from "./base";
+import type { LineChartCustom, LineChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
 import { lineChartStyleConfigs, type LineChartStyleMap } from "./plugin";
 
 export default function LineChart<S extends keyof LineChartStyleMap>({
@@ -20,7 +20,7 @@ export default function LineChart<S extends keyof LineChartStyleMap>({
   getScaleOptions?: GetScaleOptionsFn;
 }): Widget {
   const sc = lineChartStyleConfigs[style];
-  return HeadlessLineChart({
+  return BaseLineChart({
     data,
     config: sc.createConfig(config),
     custom: { ...sc.custom, ...custom },

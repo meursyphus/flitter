@@ -1,5 +1,5 @@
 import type { StyleConfig } from "../bar-chart/plugin";
-import { toastStyleConfig, type ToastStackedBarChartConfig } from "./toast";
+import { toastStyleConfig, type ToastStackedBarChartConfig } from "./styles/toast";
 
 export type StackedBarChartStyleMap = {
   toast: ToastStackedBarChartConfig;

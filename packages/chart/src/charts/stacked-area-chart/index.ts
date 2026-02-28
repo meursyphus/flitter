@@ -1,10 +1,10 @@
 import type { Widget } from "flitter-core";
-import { HeadlessStackedAreaChart } from "./headless";
+import { BaseStackedAreaChart } from "./base";
 import type {
   StackedAreaChartCustom,
   StackedAreaChartData,
   StackedAreaChartScale,
-} from "./headless";
+} from "./base";
 import {
   stackedAreaChartStyleConfigs,
   type StackedAreaChartStyleMap,
@@ -28,7 +28,7 @@ export default function StackedAreaChart<
 }): Widget {
   const sc = stackedAreaChartStyleConfigs[style];
   const resolvedConfig = sc.createConfig(config);
-  return HeadlessStackedAreaChart({
+  return BaseStackedAreaChart({
     data,
     custom: { ...sc.custom(resolvedConfig), ...custom },
     ...rest,
