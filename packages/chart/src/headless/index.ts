@@ -2,8 +2,8 @@ export { default as BarChart } from "./bar-chart";
 export { default as LineChart } from "./line-chart";
 export { default as BubbleChart } from "./bubble-chart";
 export { default as ScatterChart } from "./scatter-chart";
-export { default as HeatmapChart } from "./heatmap-chart";
-export { default as TreemapChart } from "./treemap-chart";
+export { default as HeatmapChart } from "./_todo/heatmap-chart";
+export { default as TreemapChart } from "./_todo/treemap-chart";
 
 export type {
   BarChartContext,
@@ -52,26 +52,26 @@ export type {
 } from "./scatter-chart/types";
 export { ScatterChartController } from "./scatter-chart/controller";
 
-export * from "./heatmap-chart/types";
-export * from "./treemap-chart/types";
+export * from "./_todo/heatmap-chart/types";
+export * from "./_todo/treemap-chart/types";
 
-export { default as FunnelChart } from "./funnel-chart";
-export * from "./funnel-chart/types";
-export { default as RadarChart } from "./radar-chart";
-export * from "./radar-chart/types";
-export { default as GaugeChart } from "./gauge-chart";
-export * from "./gauge-chart/types";
+export { default as FunnelChart } from "./_todo/funnel-chart";
+export * from "./_todo/funnel-chart/types";
+export { default as RadarChart } from "./_todo/radar-chart";
+export * from "./_todo/radar-chart/types";
+export { default as GaugeChart } from "./_todo/gauge-chart";
+export * from "./_todo/gauge-chart/types";
 export { default as StackedAreaChart } from "./stacked-area-chart";
 export * from "./stacked-area-chart/types";
-export { default as PieChart } from "./pie-chart";
-export * from "./pie-chart/types";
-export { default as SunburstChart } from "./sunburst-chart";
-export * from "./sunburst-chart/types";
-export { default as CandlestickChart } from "./candlestick-chart";
-export * from "./candlestick-chart/types";
-export { default as BoxPlotChart } from "./box-plot-chart";
-export * from "./box-plot-chart/types";
-export { default as WaterfallChart } from "./waterfall-chart";
-export * from "./waterfall-chart/types";
-export { default as SankeyChart } from "./sankey-chart";
-export * from "./sankey-chart/types";
+export { default as PieChart } from "./_todo/pie-chart";
+export * from "./_todo/pie-chart/types";
+export { default as SunburstChart } from "./_todo/sunburst-chart";
+export * from "./_todo/sunburst-chart/types";
+export { default as CandlestickChart } from "./_todo/candlestick-chart";
+export * from "./_todo/candlestick-chart/types";
+export { default as BoxPlotChart } from "./_todo/box-plot-chart";
+export * from "./_todo/box-plot-chart/types";
+export { default as WaterfallChart } from "./_todo/waterfall-chart";
+export * from "./_todo/waterfall-chart/types";
+export { default as SankeyChart } from "./_todo/sankey-chart";
+export * from "./_todo/sankey-chart/types";
