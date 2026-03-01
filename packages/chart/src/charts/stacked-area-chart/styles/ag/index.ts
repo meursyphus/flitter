@@ -1,0 +1,61 @@
+import type { StackedAreaChartCustom } from "@headless/stacked-area-chart/types";
+import type { GetScaleOptionsFn } from "@headless/stacked-area-chart/types";
+import type { StyleConfig } from "../../plugin";
+import type { AgStackedAreaChartConfig } from "./config";
+import { defaultAgConfig } from "./config";
+import { deepMerge } from "@utils/index";
+import { agArea } from "./parts/area";
+import { agSeries } from "./parts/series";
+import {
+  agLayout,
+  agTitle,
+  agLegend,
+  agXAxisLabel,
+  agYAxisLabel,
+  agXAxisTick,
+  agYAxisTick,
+  agXAxisLine,
+  agYAxisLine,
+  agGridXLine,
+  agGridYLine,
+  agAxisCorner,
+  agXAxis,
+  agYAxis,
+  agXAxisBox,
+  agYAxisBox,
+  agScaleOptions,
+} from "@shared/styles/ag";
+
+export { type AgStackedAreaChartConfig } from "./config";
+
+const agCustom: Partial<StackedAreaChartCustom<AgStackedAreaChartConfig>> = {
+  layout: agLayout,
+  area: agArea,
+  series: agSeries,
+  legend: agLegend,
+  title: agTitle,
+  axisCorner: agAxisCorner,
+  xAxisLabel: agXAxisLabel,
+  yAxisLabel: agYAxisLabel,
+  xAxisTick: agXAxisTick,
+  yAxisTick: agYAxisTick,
+  xAxisLine: agXAxisLine,
+  yAxisLine: agYAxisLine,
+  gridXLine: agGridXLine,
+  gridYLine: agGridYLine,
+  xAxis: (args, context) =>
+    agXAxis(args, { type: "value" }, context),
+  yAxis: (args, context) =>
+    agYAxis(args, { type: "value" }, context),
+  xAxisBox: agXAxisBox,
+  yAxisBox: agYAxisBox,
+};
+
+const agGetScaleOptions: GetScaleOptionsFn = (ctx) =>
+  agScaleOptions(ctx.height);
+
+export const agStyleConfig: StyleConfig<AgStackedAreaChartConfig> = {
+  custom: agCustom,
+  createConfig: (config) => deepMerge(defaultAgConfig, config),
+  getScaleOptions: agGetScaleOptions,
+};

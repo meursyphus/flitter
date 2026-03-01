@@ -1,5 +1,6 @@
 import type { LineChartCustom, GetScaleOptionsFn } from "./base";
 import { toastStyleConfig, type ToastLineChartConfig } from "./styles/toast";
+import { agStyleConfig, type AgLineChartConfig } from "./styles/ag";
 
 export type StyleConfig<TConfig> = {
   custom: Partial<LineChartCustom<TConfig>>;
@@ -9,8 +10,10 @@ export type StyleConfig<TConfig> = {
 
 export type LineChartStyleMap = {
   toast: ToastLineChartConfig;
+  ag: AgLineChartConfig;
 };
 
 export const lineChartStyleConfigs: { [S in keyof LineChartStyleMap]: StyleConfig<LineChartStyleMap[S]> } = {
   toast: toastStyleConfig,
+  ag: agStyleConfig,
 };
