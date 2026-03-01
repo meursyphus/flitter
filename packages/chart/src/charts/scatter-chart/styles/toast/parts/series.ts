@@ -26,5 +26,5 @@ export function toastSeries(
     });
   });
 
-  return Stack({ children });
+  return Stack({ clipped: false, children });
 }
