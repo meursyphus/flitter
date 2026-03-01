@@ -377,23 +377,26 @@ class _HoverableBarState extends State<_HoverableBar> {
           child: tooltip,
         }),
       }),
-      child: GestureDetector({
-        cursor: "default",
-        child: Container({
-          margin: EdgeInsets.symmetric({ horizontal: gap }),
-          decoration,
+      child: ZIndex({
+        zIndex: this.hovered ? 1 : 0,
+        child: GestureDetector({
+          cursor: "default",
+          child: Container({
+            margin: EdgeInsets.symmetric({ horizontal: gap }),
+            decoration,
+          }),
+          onMouseEnter: () => {
+            this.computeLayout();
+            this.setState(() => {
+              this.hovered = true;
+            });
+          },
+          onMouseLeave: () => {
+            this.setState(() => {
+              this.hovered = false;
+            });
+          },
         }),
-        onMouseEnter: () => {
-          this.computeLayout();
-          this.setState(() => {
-            this.hovered = true;
-          });
-        },
-        onMouseLeave: () => {
-          this.setState(() => {
-            this.hovered = false;
-          });
-        },
       }),
     });
   }
