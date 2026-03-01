@@ -378,7 +378,7 @@ class _HoverableBarState extends State<_HoverableBar> {
         }),
       }),
       child: GestureDetector({
-        cursor: "pointer",
+        cursor: "default",
         child: Container({
           margin: EdgeInsets.symmetric({ horizontal: gap }),
           decoration,

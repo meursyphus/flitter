@@ -198,6 +198,27 @@ function lerpScale(from: LineChartScale, to: LineChartScale, t: number): LineCha
   };
 }
 
+export function computeDataPointPosition({
+  index,
+  value,
+  numPoints,
+  scale,
+  width,
+  height,
+}: {
+  index: number;
+  value: number;
+  numPoints: number;
+  scale: LineChartScale;
+  width: number;
+  height: number;
+}): { x: number; y: number } {
+  const range = scale.max - scale.min;
+  const x = numPoints > 1 ? (index * width) / (numPoints - 1) : width / 2;
+  const y = height - (height * (value - scale.min)) / range;
+  return { x, y };
+}
+
 function createLinePath({
   values,
   scale,
