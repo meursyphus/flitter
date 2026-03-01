@@ -25,7 +25,6 @@ export default function StackedAreaChart<
   config?: Partial<StackedAreaChartStyleMap[S]>;
   data: StackedAreaChartData;
   custom?: Partial<StackedAreaChartCustom<StackedAreaChartStyleMap[S]>>;
-  title?: string;
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
 }): Widget {

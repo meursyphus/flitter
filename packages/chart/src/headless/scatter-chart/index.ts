@@ -4,7 +4,6 @@ import { ScatterChartProvider } from "./provider";
 
 export default function ScatterChart<TConfig = {}>(props: {
   custom: ScatterChartCustom<TConfig>;
-  title?: string;
   data: ScatterChartData;
   getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;

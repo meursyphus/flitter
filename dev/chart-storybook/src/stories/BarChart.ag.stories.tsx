@@ -48,11 +48,10 @@ function AgBarChart({ args, data }: { args: BarChartArgs; data: typeof defaultDa
     <Widget
       widget={BarChart({
         style: "ag",
-        title: args.title,
         direction: args.direction,
         data,
         config: {
-          title: { position, alignment },
+          title: { text: args.title, position, alignment },
           legend: {
             visible: args.legendVisible,
             position: args.legendPosition,

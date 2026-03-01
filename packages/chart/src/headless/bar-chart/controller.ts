@@ -14,7 +14,6 @@ export class BarChartController extends ChangeNotifier {
 
   // static config
   custom!: BarChartCustom<any>;
-  title: string;
   config: any;
 
   constructor({
@@ -23,7 +22,6 @@ export class BarChartController extends ChangeNotifier {
     getScaleOptions = null,
     direction = "vertical",
     custom,
-    title = "",
     config = {},
   }: {
     data: BarChartData;
@@ -31,7 +29,6 @@ export class BarChartController extends ChangeNotifier {
     getScaleOptions?: GetScaleOptionsFn | null;
     direction?: BarChartDirection;
     custom: BarChartCustom<any>;
-    title?: string;
     config?: any;
   }) {
     super();
@@ -40,7 +37,6 @@ export class BarChartController extends ChangeNotifier {
     this.#getScaleOptions = getScaleOptions;
     this.#direction = direction;
     this.custom = custom;
-    this.title = title;
     this.config = config;
   }
 

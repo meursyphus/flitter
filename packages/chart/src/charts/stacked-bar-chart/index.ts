@@ -15,7 +15,6 @@ export default function StackedBarChart<S extends keyof StackedBarChartStyleMap>
   config?: Partial<StackedBarChartStyleMap[S]>;
   data: BarChartData;
   custom?: Partial<BarChartCustom<StackedBarChartStyleMap[S]>>;
-  title?: string;
   direction?: "vertical" | "horizontal";
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;

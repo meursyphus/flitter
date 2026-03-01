@@ -4,7 +4,6 @@ import { StackedAreaChartProvider } from "./provider";
 
 export default function StackedAreaChart<TConfig = {}>(props: {
   custom: StackedAreaChartCustom<TConfig>;
-  title?: string;
   data: StackedAreaChartData;
   getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;

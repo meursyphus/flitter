@@ -20,11 +20,9 @@ export function LineChartProvider({
   getScale,
   getScaleOptions,
   data,
-  title = "",
   config = {},
 }: {
   custom: LineChartCustom<any>;
-  title?: string;
   data: LineChartData;
   getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
@@ -38,14 +36,12 @@ export function LineChartProvider({
         getScale,
         getScaleOptions,
         custom,
-        title,
         config,
       }),
     update: (notifier) => {
       const controller = notifier as LineChartController;
       controller.data = data;
       controller.custom = custom;
-      controller.title = title;
       controller.config = config;
     },
     child: new Chart(),

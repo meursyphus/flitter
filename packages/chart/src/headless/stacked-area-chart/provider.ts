@@ -20,11 +20,9 @@ export function StackedAreaChartProvider({
   getScale,
   getScaleOptions,
   data,
-  title = "",
   config = {},
 }: {
   custom: StackedAreaChartCustom<any>;
-  title?: string;
   data: StackedAreaChartData;
   getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
@@ -38,14 +36,12 @@ export function StackedAreaChartProvider({
         getScale,
         getScaleOptions,
         custom,
-        title,
         config,
       }),
     update: (notifier) => {
       const controller = notifier as StackedAreaChartController;
       controller.data = data;
       controller.custom = custom;
-      controller.title = title;
       controller.config = config;
     },
     child: new Chart(),

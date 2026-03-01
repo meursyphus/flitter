@@ -47,11 +47,10 @@ function ToastStackedBarChart({ args, data }: { args: StackedBarChartArgs; data:
     <Widget
       widget={StackedBarChart({
         style: "toast",
-        title: args.title,
         direction: args.direction,
         data,
         config: {
-          title: { position, alignment },
+          title: { text: args.title, position, alignment },
           legend: {
             visible: args.legendVisible,
             position: args.legendPosition,

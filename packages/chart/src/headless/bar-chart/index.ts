@@ -4,7 +4,6 @@ import { BarChartProvider } from "./provider";
 
 export default function BarChart<TConfig = {}>(props: {
   custom: BarChartCustom<TConfig>;
-  title?: string;
   data: BarChartData;
   direction?: "vertical" | "horizontal";
   getScale: GetScaleFn;

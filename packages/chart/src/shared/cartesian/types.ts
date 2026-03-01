@@ -28,7 +28,7 @@ export type CartesianCustom = {
   layout: ConfigArgs<{ title: Widget; legends: Widget[]; plot: Widget }>;
   plot: ConfigArgs<{ xAxis: Widget; yAxis: Widget; series: Widget, grid: Widget, axisCorner: Widget }>;
   legend: ConfigArgs<{ name: string; index: number }>;
-  title: ConfigArgs<{ name: string }>;
+  title: ConfigArgs;
   dataLabel: ConfigArgs<{ value: number; label: string; legend: string }>;
   xAxisLine: ConfigArgs;
   yAxisLine: ConfigArgs;

@@ -68,7 +68,6 @@ export function BaseBubbleChart<TConfig = {}>({
   ...rest
 }: {
   custom: Partial<BubbleChartCustom<TConfig>>;
-  title?: string;
   data: BubbleChartData;
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;

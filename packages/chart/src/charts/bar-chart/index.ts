@@ -15,7 +15,6 @@ export default function BarChart<S extends keyof BarChartStyleMap>({
   config?: Partial<BarChartStyleMap[S]>;
   data: BarChartData;
   custom?: Partial<BarChartCustom<BarChartStyleMap[S]>>;
-  title?: string;
   direction?: "vertical" | "horizontal";
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;

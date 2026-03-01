@@ -45,7 +45,6 @@ export function BaseStackedAreaChart<TConfig = {}>({
   ...rest
 }: {
   custom: Partial<StackedAreaChartCustom<TConfig>>;
-  title?: string;
   data: StackedAreaChartData;
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;

@@ -20,11 +20,9 @@ export function ScatterChartProvider({
   getScale,
   getScaleOptions,
   data,
-  title = "",
   config = {},
 }: {
   custom: ScatterChartCustom<any>;
-  title?: string;
   data: ScatterChartData;
   getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
@@ -38,14 +36,12 @@ export function ScatterChartProvider({
         getScale,
         getScaleOptions,
         custom,
-        title,
         config,
       }),
     update: (notifier) => {
       const controller = notifier as ScatterChartController;
       controller.data = data;
       controller.custom = custom;
-      controller.title = title;
       controller.config = config;
     },
     child: new Chart(),

@@ -39,10 +39,9 @@ function AgStackedAreaChart({ args, data }: { args: StackedAreaChartArgs; data: 
     <Widget
       widget={StackedAreaChart({
         style: "ag",
-        title: args.title,
         data,
         config: {
-          title: { position, alignment },
+          title: { text: args.title, position, alignment },
           legend: {
             visible: args.legendVisible,
             position: args.legendPosition,

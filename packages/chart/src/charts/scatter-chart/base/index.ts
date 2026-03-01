@@ -59,7 +59,6 @@ export function BaseScatterChart<TConfig = {}>({
   ...rest
 }: {
   custom: Partial<ScatterChartCustom<TConfig>>;
-  title?: string;
   data: ScatterChartData;
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;

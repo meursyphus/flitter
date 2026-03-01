@@ -38,10 +38,9 @@ function ToastLineChart({ args }: { args: LineChartArgs }) {
     <Widget
       widget={LineChart({
         style: "toast",
-        title: args.title,
         data: defaultData,
         config: {
-          title: { position, alignment },
+          title: { text: args.title, position, alignment },
           legend: {
             visible: args.legendVisible,
             position: args.legendPosition,

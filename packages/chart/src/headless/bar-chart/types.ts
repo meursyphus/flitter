@@ -22,7 +22,7 @@ export type BarChartCustom<TConfig = {}> = {
 	layout: CustomArgs<{ title: Widget; legends: Widget[]; plot: Widget }, TConfig>;
 	plot: CustomArgs<{ xAxis: Widget; yAxis: Widget; series: Widget; grid: Widget; axisCorner: Widget }, TConfig>;
 	legend: CustomArgs<{ name: string; index: number }, TConfig>;
-	title: CustomArgs<{ name: string }, TConfig>;
+	title: CustomArgs<undefined, TConfig>;
 	dataLabel: CustomArgs<{ value: number; label: string; legend: string }, TConfig>;
 	xAxisLine: CustomArgs<undefined, TConfig>;
 	yAxisLine: CustomArgs<undefined, TConfig>;

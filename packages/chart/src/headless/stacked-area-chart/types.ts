@@ -31,7 +31,7 @@ export type StackedAreaChartCustom<TConfig = {}> = {
 		axisCorner: Widget;
 	}, TConfig>;
 	legend: CustomArgs<{ name: string; index: number }, TConfig>;
-	title: CustomArgs<{ name: string }, TConfig>;
+	title: CustomArgs<undefined, TConfig>;
 	dataLabel: CustomArgs<{ value: number; label: string; legend: string }, TConfig>;
 	xAxisLine: CustomArgs<undefined, TConfig>;
 	yAxisLine: CustomArgs<undefined, TConfig>;

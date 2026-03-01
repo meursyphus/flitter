@@ -9,7 +9,6 @@ export { BarChartController } from "@headless/bar-chart/controller";
 
 export function BaseStackedBarChart<TConfig = {}>(props: {
   custom: Partial<BarChartCustom<TConfig>>;
-  title?: string;
   data: BarChartData;
   direction?: "vertical" | "horizontal";
   getScale?: GetScaleFn;

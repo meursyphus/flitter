@@ -4,7 +4,6 @@ import { LineChartProvider } from "./provider";
 
 export default function LineChart<TConfig = {}>(props: {
   custom: LineChartCustom<TConfig>;
-  title?: string;
   data: LineChartData;
   getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;

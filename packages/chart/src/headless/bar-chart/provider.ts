@@ -20,12 +20,10 @@ export function BarChartProvider({
   getScale,
   getScaleOptions,
   data,
-  title = "",
   direction = "vertical",
   config = {},
 }: {
   custom: BarChartCustom<any>;
-  title?: string;
   data: BarChartData;
   direction?: "vertical" | "horizontal";
   getScale: GetScaleFn;
@@ -41,7 +39,6 @@ export function BarChartProvider({
         getScaleOptions,
         direction,
         custom,
-        title,
         config,
       }),
     update: (notifier) => {
@@ -49,7 +46,6 @@ export function BarChartProvider({
       controller.data = data;
       controller.direction = direction;
       controller.custom = custom;
-      controller.title = title;
       controller.config = config;
     },
     child: new Chart(),

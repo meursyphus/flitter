@@ -62,7 +62,7 @@ class Legend extends StatelessWidget {
 class Title extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const ctx = BarChartProvider.of(context);
-    return ctx.custom.title({ name: ctx.title }, ctx);
+    return ctx.custom.title(undefined, ctx);
   }
 }
 

@@ -15,7 +15,6 @@ export default function LineChart<S extends keyof LineChartStyleMap>({
   config?: Partial<LineChartStyleMap[S]>;
   data: LineChartData;
   custom?: Partial<LineChartCustom<LineChartStyleMap[S]>>;
-  title?: string;
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
 }): Widget {

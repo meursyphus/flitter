@@ -23,7 +23,6 @@ export default function BubbleChart<S extends keyof BubbleChartStyleMap>({
   config?: Partial<BubbleChartStyleMap[S]>;
   data: BubbleChartData;
   custom?: Partial<BubbleChartCustom<BubbleChartStyleMap[S]>>;
-  title?: string;
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
 }): Widget {

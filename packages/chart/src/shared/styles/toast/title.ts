@@ -2,11 +2,11 @@ import { Text, TextStyle, type Widget } from "flitter-core";
 import type { ToastBaseConfig } from "./config";
 
 export function toastTitle(
-  { name }: { name: string },
+  _args: undefined,
   context: { config: ToastBaseConfig },
 ): Widget {
   const { title, font } = context.config;
-  return Text(name, {
+  return Text(title.text, {
     style: new TextStyle({
       fontFamily: title.fontFamily ?? font.family,
       fontSize: title.fontSize,

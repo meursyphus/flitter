@@ -15,7 +15,6 @@ export default function AreaChart<S extends keyof AreaChartStyleMap>({
   config?: Partial<AreaChartStyleMap[S]>;
   data: LineChartData;
   custom?: Partial<LineChartCustom<AreaChartStyleMap[S]>>;
-  title?: string;
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
 }): Widget {

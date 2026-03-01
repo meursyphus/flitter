@@ -20,11 +20,9 @@ export function BubbleChartProvider({
   getScale,
   getScaleOptions,
   data,
-  title = "",
   config = {},
 }: {
   custom: BubbleChartCustom<any>;
-  title?: string;
   data: BubbleChartData;
   getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
@@ -38,14 +36,12 @@ export function BubbleChartProvider({
         getScale,
         getScaleOptions,
         custom,
-        title,
         config,
       }),
     update: (notifier) => {
       const controller = notifier as BubbleChartController;
       controller.data = data;
       controller.custom = custom;
-      controller.title = title;
       controller.config = config;
     },
     child: new Chart(),

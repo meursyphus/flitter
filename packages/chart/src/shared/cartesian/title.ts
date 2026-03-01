@@ -1,6 +1,5 @@
-import type { CartesianCustom } from "./types";
-import { Text, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitter-core";
 
-export function Title({ name }: Parameters<CartesianCustom["title"]>[0]): Widget {
-  return Text(name);
+export function Title(): Widget {
+  return SizedBox.shrink();
 }

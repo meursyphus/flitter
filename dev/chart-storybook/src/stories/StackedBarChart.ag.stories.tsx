@@ -47,11 +47,10 @@ function AgStackedBarChart({ args, data }: { args: StackedBarChartArgs; data: ty
     <Widget
       widget={StackedBarChart({
         style: "ag",
-        title: args.title,
         direction: args.direction,
         data,
         config: {
-          title: { position, alignment },
+          title: { text: args.title, position, alignment },
           legend: {
             visible: args.legendVisible,
             position: args.legendPosition,

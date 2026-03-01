@@ -39,10 +39,9 @@ function ToastStackedAreaChart({ args, data }: { args: StackedAreaChartArgs; dat
     <Widget
       widget={StackedAreaChart({
         style: "toast",
-        title: args.title,
         data,
         config: {
-          title: { position, alignment },
+          title: { text: args.title, position, alignment },
           legend: {
             visible: args.legendVisible,
             position: args.legendPosition,

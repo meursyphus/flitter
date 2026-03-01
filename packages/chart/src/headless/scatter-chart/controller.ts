@@ -13,7 +13,6 @@ export class ScatterChartController extends ChangeNotifier {
 
   // static config
   custom!: ScatterChartCustom<any>;
-  title: string;
   config: any;
 
   constructor({
@@ -21,14 +20,12 @@ export class ScatterChartController extends ChangeNotifier {
     getScale,
     getScaleOptions = null,
     custom,
-    title = "",
     config = {},
   }: {
     data: ScatterChartData;
     getScale: GetScaleFn;
     getScaleOptions?: GetScaleOptionsFn | null;
     custom: ScatterChartCustom<any>;
-    title?: string;
     config?: any;
   }) {
     super();
@@ -36,7 +33,6 @@ export class ScatterChartController extends ChangeNotifier {
     this.#getScale = getScale;
     this.#getScaleOptions = getScaleOptions;
     this.custom = custom;
-    this.title = title;
     this.config = config;
   }
 

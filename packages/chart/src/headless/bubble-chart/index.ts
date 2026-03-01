@@ -4,7 +4,6 @@ import { BubbleChartProvider } from "./provider";
 
 export default function BubbleChart<TConfig = {}>(props: {
   custom: BubbleChartCustom<TConfig>;
-  title?: string;
   data: BubbleChartData;
   getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;

@@ -8,6 +8,7 @@ export type ToastBaseConfig = {
   colors: string[];
   font: { family: string; size: number };
   title: {
+    text: string;
     visible: boolean;
     color: string;
     fontSize: number;
@@ -47,7 +48,7 @@ export type ToastBaseConfig = {
 export const defaultToastBaseConfig: ToastBaseConfig = {
   colors: TOAST_COLORS,
   font: { family: "Noto Sans JP", size: 11 },
-  title: { visible: true, color: "#000000", fontSize: 16, fontWeight: "bold", position: "top", alignment: "center" },
+  title: { text: "", visible: true, color: "#000000", fontSize: 16, fontWeight: "bold", position: "top", alignment: "center" },
   legend: { visible: true, position: "bottom", gap: 12 },
   axis: {
     color: "#BBBBBB",

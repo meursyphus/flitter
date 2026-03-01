@@ -11,6 +11,7 @@ export type AgBaseConfig = {
   colors: { fills: string[]; strokes: string[] };
   font: { family: string; size: number };
   title: {
+    text: string;
     visible: boolean;
     color: string;
     fontSize: number;
@@ -24,6 +25,8 @@ export type AgBaseConfig = {
     text: string;
     color: string;
     fontSize: number;
+    fontFamily?: string;
+    fontWeight?: string;
   };
   legend: {
     visible: boolean;
@@ -67,6 +70,7 @@ export const defaultAgBaseConfig: AgBaseConfig = {
   colors: { fills: AG_FILLS, strokes: AG_STROKES },
   font: { family: "Verdana, sans-serif", size: 13 },
   title: {
+    text: "",
     visible: true,
     color: "#181d1f",
     fontSize: 18,

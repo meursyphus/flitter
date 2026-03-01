@@ -15,7 +15,6 @@ export default function ScatterChart<S extends keyof ScatterChartStyleMap>({
   config?: Partial<ScatterChartStyleMap[S]>;
   data: ScatterChartData;
   custom?: Partial<ScatterChartCustom<ScatterChartStyleMap[S]>>;
-  title?: string;
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
 }): Widget {

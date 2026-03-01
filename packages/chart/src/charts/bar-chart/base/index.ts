@@ -35,7 +35,6 @@ export function BaseBarChart<TConfig = {}>({
   ...rest
 }: {
   custom: Partial<BarChartCustom<TConfig>>;
-  title?: string;
   data: BarChartData;
   direction?: "vertical" | "horizontal";
   getScale?: GetScaleFn;
