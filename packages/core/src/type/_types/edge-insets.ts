@@ -33,7 +33,7 @@ export class EdgeInsetsGeometry extends Calculable {
   }
 
   equals(other: EdgeInsetsGeometry): boolean {
-    if (this === other) return;
+    if (this === other) return true;
     return (
       this.top === other.top &&
       this.bottom === other.bottom &&

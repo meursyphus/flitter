@@ -119,7 +119,7 @@ class Transform extends SingleChildRenderObjectWidget {
   updateRenderObject(renderObject: RenderTransform): void {
     renderObject.transform = this.transform;
     renderObject.origin = this.origin;
-    renderObject.alignment = this.alignment;
+    renderObject.alignment = this.alignment!;
   }
 
   private static _computeRotation(radians: number) {
@@ -170,15 +170,15 @@ class RenderTransform extends SingleChildRenderObject {
       this._origin.y === value.y
     )
       return;
-    this._origin = value;
+    this._origin = value ?? undefined;
     this.markNeedsLayout();
   }
   _alignment?: Alignment;
   get alignment(): Alignment {
-    return this._alignment;
+    return this._alignment!;
   }
   set alignment(value: Alignment) {
-    if (this._alignment.equal(value)) return;
+    if (this._alignment!.equal(value)) return;
     this._alignment = value;
     this.markNeedsLayout();
   }

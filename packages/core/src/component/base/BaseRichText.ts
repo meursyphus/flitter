@@ -55,13 +55,13 @@ class RichText extends RenderObjectWidget {
   }: RichTextProps & { key?: any }) {
     super({ children: [], key });
     this.text = text;
-    this.textAlign = textAlign;
+    this.textAlign = textAlign!;
     this.textDirection = textDirection;
     this.softWrap = softWrap;
     this.overflow = overflow;
-    this.textScaleFactor = textScaleFactor;
+    this.textScaleFactor = textScaleFactor!;
     this.maxLines = maxLines;
-    this.textWidthBasis = textWidthBasis;
+    this.textWidthBasis = textWidthBasis!;
     this.textPainter = textPainter;
   }
 
@@ -165,7 +165,7 @@ export class RenderParagraph extends RenderObject {
   }
 
   set text(value: InlineSpan) {
-    if (this.textPainter.text.equals(value)) return;
+    if (this.textPainter.text!.equals(value)) return;
     this.textPainter.text = value;
     this.markNeedsLayout();
   }
@@ -234,9 +234,9 @@ export class RenderParagraph extends RenderObject {
     );
   }
 
-  previousWidth: number;
-  previousHeight: number;
-  changedLayout: boolean;
+  previousWidth!: number;
+  previousHeight!: number;
+  changedLayout!: boolean;
 
   private layoutText({
     maxWidth = Infinity,
@@ -314,9 +314,9 @@ class ParagraphSvgPainter extends SvgPainter {
       /^(?!.*Chrome).*Safari.*/i.test(navigator.userAgent)
     ) {
       const newTextEl = context.createSvgEl("text") as SVGTextElement;
-      newTextEl.setAttribute("style", textEl.getAttribute("style"));
+      newTextEl.setAttribute("style", textEl.getAttribute("style")!);
       newTextEl.setAttribute("data-render-name", "text");
-      textEl.parentNode.appendChild(newTextEl);
+      textEl.parentNode!.appendChild(newTextEl);
       textEl.remove();
       this.textPainter.paintOnSvg(newTextEl, context);
       return;

@@ -5,7 +5,7 @@ import { ElementType } from "./ElementType";
 import { NotImplementedError } from "../exception";
 
 class Element {
-  scheduler: Scheduler;
+  scheduler!: Scheduler;
   buildOwner!: BuildOwner;
   widget: Widget;
   parent?: Element;

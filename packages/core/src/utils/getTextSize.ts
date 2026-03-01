@@ -29,7 +29,7 @@ function getCtxOrNull(): CanvasRenderingContext2D | null {
   }
 
   if (_ctx == null) {
-    _ctx = document.createElement("canvas").getContext("2d");
+    _ctx = document.createElement("canvas").getContext("2d")!;
   }
 
   return _ctx;

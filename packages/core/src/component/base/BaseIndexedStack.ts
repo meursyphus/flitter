@@ -25,7 +25,7 @@ class IndexedStack extends StatelessWidget {
     super(key);
     this.index = index;
     this.fit = sizing;
-    this.alignment = alignment;
+    this.alignment = alignment!;
     this.children = children;
   }
 

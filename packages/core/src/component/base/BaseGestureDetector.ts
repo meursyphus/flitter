@@ -308,7 +308,7 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     backendRefCount--;
     if (backendRefCount === 0) {
       getSingletonDragBackend().teardown();
-      globalDragBackend = null;
+      globalDragBackend = null as any;
     }
     super.dispose();
     this.renderOwner.hitTestDispatcher.removeDetector(this);

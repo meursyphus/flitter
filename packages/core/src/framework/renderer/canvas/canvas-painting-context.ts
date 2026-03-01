@@ -93,7 +93,7 @@ export class CanvasPaintingContext {
     this.#containerLayer = containerLayer;
     this.#estimateBound = estimateBound;
   }
-  #currentLayer: PictureLayer | null;
+  #currentLayer!: PictureLayer | null;
 
   /**
    * When true, paintChild becomes a no-op. Used during z-ordered
@@ -199,13 +199,13 @@ export class CanvasPaintingContext {
     throw new NotImplementedError("updateLayerProperties is not implemented");
   }
 
-  #recorder: PictureRecorder;
-  #ctx: CanvasProxy | null;
+  #recorder!: PictureRecorder;
+  #ctx!: CanvasProxy | null;
   get canvas(): CanvasRenderingContext2D {
     if (this.#ctx == null) {
       this.#startRecording();
     }
-    return this.#ctx;
+    return this.#ctx!;
   }
 
   #startRecording() {
@@ -216,8 +216,8 @@ export class CanvasPaintingContext {
   }
 
   stopRecording() {
-    this.#currentLayer.picture = this.#recorder.endRecording();
-    this.#recorder = null;
+    this.#currentLayer!.picture = this.#recorder.endRecording();
+    this.#recorder = null as unknown as PictureRecorder;
     this.#ctx = null;
     this.#currentLayer = null;
   }

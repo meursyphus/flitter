@@ -28,7 +28,7 @@ class BorderRadiusGeometry extends Calculable {
     this.topRight = topRight;
   }
 
-  static lerp(a: BorderRadiusGeometry, b: BorderRadiusGeometry, t) {
+  static lerp(a: BorderRadiusGeometry, b: BorderRadiusGeometry, t: number) {
     const result = Utils.lerp(a, b, t);
     return result;
   }

@@ -38,8 +38,8 @@ export default ImplicitlyAnimatedWidget;
 export class ImplicitlyAnimatedWidgetState<
   T extends ImplicitlyAnimatedWidget,
 > extends State<T> {
-  protected controller: AnimationController;
-  protected animation: CurvedAnimation;
+  protected controller!: AnimationController;
+  protected animation!: CurvedAnimation;
 
   constructor() {
     super();

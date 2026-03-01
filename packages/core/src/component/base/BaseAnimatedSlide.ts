@@ -36,7 +36,7 @@ class BaseAnimatedSlide extends ImplicitlyAnimatedWidget {
 }
 
 class BaseAnimatedSlideState extends AnimatedBaseWidgetState<BaseAnimatedSlide> {
-  private offset: Tween<Offset>;
+  private offset!: Tween<Offset>;
 
   forEachTween(
     visitor: <V extends number | Data, T extends Tween<V>>(props: {

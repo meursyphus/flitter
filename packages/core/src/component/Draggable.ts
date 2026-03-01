@@ -35,7 +35,7 @@ class Draggable extends StatefulWidget {
 
 class DraggableState extends State<Draggable> {
   origin?: Offset;
-  state: "start" | "update" | "end";
+  state!: "start" | "update" | "end";
   get active() {
     return this.origin != null;
   }

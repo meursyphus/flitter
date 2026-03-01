@@ -36,7 +36,7 @@ class BuildOwner {
   }
 
   findByGlobalKey(key: GlobalKey): Element {
-    const result = this.globalKeyRegistry.get(key);
+    const result = this.globalKeyRegistry.get(key)!;
     return result;
   }
 }

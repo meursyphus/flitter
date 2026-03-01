@@ -53,7 +53,7 @@ export class CanvasRenderPipeline extends RenderPipeline {
   override markNeedsPaint(renderObject: RenderObject): void {
     let parent = renderObject;
     while (parent != null && !parent.canvasPainter.isRepaintBoundary) {
-      parent = parent.parent;
+      parent = parent.parent!;
     }
     if (parent != null) {
       if (!parent.needsPaint) {
@@ -87,7 +87,7 @@ export class CanvasRenderPipeline extends RenderPipeline {
     const dpr = window.devicePixelRatio;
     canvas.width = size.width * dpr;
     canvas.height = size.height * dpr;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d")!;
     ctx.scale(dpr, dpr);
     return ctx;
   }

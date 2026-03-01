@@ -39,7 +39,7 @@ export class CanvasPainter extends Painter {
     });
   }
 
-  #layer: ContainerLayer;
+  #layer!: ContainerLayer;
   get layer() {
     return this.#layer;
   }

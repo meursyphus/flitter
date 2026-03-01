@@ -43,7 +43,7 @@ class Constraints extends Data {
   }
 
   private static validateInterpolation(a: Constraints, b: Constraints) {
-    const dimensions = ["minWidth", "maxWidth", "minHeight", "maxHeight"];
+    const dimensions: (keyof Constraints)[] = ["minWidth", "maxWidth", "minHeight", "maxHeight"];
     dimensions.forEach(dimension => {
       assert(
         (Number.isFinite(a[dimension]) && Number.isFinite(b[dimension])) ||

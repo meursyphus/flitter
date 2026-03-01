@@ -15,7 +15,7 @@ export class HitTestDispatcher {
   #activated = typeof window !== "undefined";
   #detectors: RenderGestureDetector[] = [];
   #rootPosition: Offset | null = null;
-  #renderContext: RenderContext;
+  #renderContext!: RenderContext;
   #hitPosition: Offset = new Offset({ x: 0, y: 0 });
 
   init({ renderContext }: { renderContext: RenderContext }) {
@@ -136,15 +136,16 @@ export class HitTestDispatcher {
   };
 
   #wrapEvent =
-    <E extends Event>(callback: (e: E) => void) =>
-    (e: Wrapped<E>) => {
-      const stopPropagation = e.stopPropagation;
-      e.stopPropagation = function () {
-        e.isPropagationStopped = true;
-        stopPropagation.call(e);
+    <E extends Event>(callback: (e: Wrapped<E>) => void) =>
+    ((e: E) => {
+      const wrapped = e as Wrapped<E>;
+      const stopPropagation = wrapped.stopPropagation.bind(wrapped);
+      wrapped.stopPropagation = function () {
+        wrapped.isPropagationStopped = true;
+        stopPropagation();
       };
-      return callback(e);
-    };
+      return callback(wrapped);
+    }) as EventListener;
 
   /**
    * This code is for batch processing. The intention is not to perform the sorting operation every time this method is called,

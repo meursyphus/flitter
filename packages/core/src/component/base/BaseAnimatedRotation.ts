@@ -51,7 +51,7 @@ class BaseAnimatedRotationState extends AnimatedBaseWidgetState<BaseAnimatedRota
     }) => T,
   ): void {
     this.turns = visitor({
-      tween: this.turns,
+      tween: this.turns!,
       targetValue: this.widget.turns,
       constructor: value => new Tween({ begin: value }),
     });

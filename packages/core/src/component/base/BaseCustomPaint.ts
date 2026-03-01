@@ -73,7 +73,7 @@ export class RenderCustomPaint<
     this._painter = value;
     this.didUpdatePainter(this._painter, oldPainter);
   }
-  private didUpdatePainter(newPainter, oldPainter) {
+  private didUpdatePainter(newPainter: Painter<T>, oldPainter: Painter<T>) {
     const { shouldRepaint } = newPainter;
     if (shouldRepaint == null) return;
     if (!shouldRepaint(oldPainter)) return;

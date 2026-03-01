@@ -9,7 +9,7 @@ import type Widget from "./Widget";
 class RenderObjectToWidgetAdapter extends RenderObjectWidget {
   renderPipeline: RenderPipeline;
   buildOwner: BuildOwner;
-  renderContext: RenderContext;
+  renderContext!: RenderContext;
   scheduler: Scheduler;
   constructor({
     app,

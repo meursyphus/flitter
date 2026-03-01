@@ -178,7 +178,7 @@ class TextFieldState extends State<TextField> {
       this.widget.onChanged?.(this.#nativeInput.value);
     });
 
-    this.#nativeInput.addEventListener("keydown", (e: KeyboardEvent) => {
+    this.#nativeInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
         this.widget.onSubmitted?.(this.#nativeInput.value);
         return;
@@ -262,8 +262,8 @@ class TextFieldState extends State<TextField> {
 
   #syncBlur = () => {
     this.#selection = [0, 0];
-    this.#currentCharUI = null;
-    this.#selectionUI = null;
+    this.#currentCharUI = undefined;
+    this.#selectionUI = [];
     this.#focused = false;
     this.#render();
   };
@@ -282,7 +282,7 @@ class TextFieldState extends State<TextField> {
   }
 
   #calculateLineInfo(): LineInfo[] {
-    const lines = this.#textPainter.paragraph.lines;
+    const lines = this.#textPainter.paragraph!.lines;
     let accumulatedChars = 0;
     let accumulatedHeight = 0;
 
@@ -410,9 +410,9 @@ class TextFieldState extends State<TextField> {
 
     if (this.#hasSelection) {
       this.#selectionUI = this.#calculateSelectionUI(start, end);
-      this.#currentCharUI = null;
+      this.#currentCharUI = undefined;
     } else {
-      this.#selectionUI = null;
+      this.#selectionUI = [];
       this.#currentCharUI = this.#calculateCurrentCharRect(caretLocation);
     }
     this.#render();
@@ -549,7 +549,7 @@ class TextFieldState extends State<TextField> {
       padding: this.widget.padding,
       decoration: !this.#focused
         ? this.widget.decoration
-        : this.widget.decoration.copyWith({
+        : this.widget.decoration!.copyWith({
             border: this.widget.focusedBorder,
           }),
       child: GestureDetector({
@@ -566,7 +566,7 @@ class TextFieldState extends State<TextField> {
                 constraintsTransform: constraints => {
                   return new Constraints({
                     minHeight: Math.max(
-                      this.widget.height,
+                      this.widget.height!,
                       constraints.minHeight,
                     ),
                     minWidth: constraints.minWidth,
@@ -763,7 +763,7 @@ class NativeInput {
       "position: absolute; opacity: 0; height: 0; width: 0;",
     );
 
-    el.addEventListener("input", (e: InputEvent) => {
+    el.addEventListener("input", ((e: InputEvent) => {
       this.#dispatch("input", { value: this.value });
 
       /**
@@ -775,7 +775,7 @@ class NativeInput {
       }
 
       this.#setComposing(e.isComposing);
-    });
+    }) as EventListener);
 
     el.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.key === "Enter" && !e.shiftKey) {

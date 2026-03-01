@@ -71,35 +71,35 @@ class BaseAnimatedPositionedState extends AnimatedBaseWidgetState<BaseAnimatedPo
     }) => T,
   ): void {
     this.width = visitor({
-      tween: this.width,
-      targetValue: this.widget.width,
+      tween: this.width as Tween<number>,
+      targetValue: this.widget.width as number,
       constructor: value => new Tween({ begin: value }),
-    });
+    }) as Tween<number>;
     this.height = visitor({
-      tween: this.height,
-      targetValue: this.widget.height,
+      tween: this.height as Tween<number>,
+      targetValue: this.widget.height as number,
       constructor: value => new Tween({ begin: value }),
-    });
+    }) as Tween<number>;
     this.top = visitor({
-      tween: this.top,
-      targetValue: this.widget.top,
+      tween: this.top as Tween<number>,
+      targetValue: this.widget.top as number,
       constructor: value => new Tween({ begin: value }),
-    });
+    }) as Tween<number>;
     this.left = visitor({
-      tween: this.left,
-      targetValue: this.widget.left,
+      tween: this.left as Tween<number>,
+      targetValue: this.widget.left as number,
       constructor: value => new Tween({ begin: value }),
-    });
+    }) as Tween<number>;
     this.right = visitor({
-      tween: this.right,
-      targetValue: this.widget.right,
+      tween: this.right as Tween<number>,
+      targetValue: this.widget.right as number,
       constructor: value => new Tween({ begin: value }),
-    });
+    }) as Tween<number>;
     this.bottom = visitor({
-      tween: this.bottom,
-      targetValue: this.widget.bottom,
+      tween: this.bottom as Tween<number>,
+      targetValue: this.widget.bottom as number,
       constructor: value => new Tween({ begin: value }),
-    });
+    }) as Tween<number>;
   }
 
   build(): Widget {
@@ -110,7 +110,7 @@ class BaseAnimatedPositionedState extends AnimatedBaseWidgetState<BaseAnimatedPo
       left: this.left?.evaluate(this.animation),
       right: this.right?.evaluate(this.animation),
       bottom: this.bottom?.evaluate(this.animation),
-      child: this.widget.child,
+      child: this.widget.child!,
     });
   }
 }

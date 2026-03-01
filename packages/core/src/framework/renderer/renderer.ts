@@ -14,7 +14,7 @@ export class RenderContext {
     scale: 1,
   };
   viewSize: Size = new Size({ width: 0, height: 0 });
-  private resizeObserver: ResizeObserver;
+  private resizeObserver!: ResizeObserver;
   #resizeHandlers: ((size: Size) => void)[] = [];
 
   constructor({
@@ -71,7 +71,7 @@ export class RenderContext {
   dispose() {
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
-      this.resizeObserver = null;
+      this.resizeObserver = null as unknown as ResizeObserver;
     }
   }
 

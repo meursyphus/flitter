@@ -95,10 +95,10 @@ class RenderObjectElement extends Element {
     this.children.forEach(child => visitor(child));
   }
 
-  private ancestorRenderObjectElement: RenderObjectElement | null;
+  private ancestorRenderObjectElement!: RenderObjectElement | null;
 
   private findAncestorRenderObjectElement(): RenderObjectElement | null {
-    let ancestor: Element | null = this.parent;
+    let ancestor: Element | undefined = this.parent;
     while (ancestor != null && ancestor.type !== ElementType.render) {
       ancestor = ancestor.parent;
     }

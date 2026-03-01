@@ -11,7 +11,7 @@ class InlineSpan {
 
   equals(other: InlineSpan): boolean {
     if (this.style != null || other.style != null) {
-      return this.style.equals(other.style);
+      return this.style!.equals(other.style!);
     }
 
     if (this.style == null && other.style == null) return true;

@@ -9,7 +9,8 @@ function Grid({
   key?: any;
   childrenByRow: (Widget | null | undefined)[][];
 }): BaseGrid {
-  return new BaseGrid({ childrenByRow, key, ...props });
+  const filteredChildrenByRow = childrenByRow.map(row => row.filter((child): child is Widget => child != null));
+  return new BaseGrid({ childrenByRow: filteredChildrenByRow, key, ...props });
 }
 
 Grid.Fr = GridTemplate.Fr;

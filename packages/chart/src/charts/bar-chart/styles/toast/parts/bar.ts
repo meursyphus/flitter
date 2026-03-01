@@ -10,6 +10,7 @@ import {
   BoxShadow,
   GestureDetector,
   Tooltip,
+  ZIndex,
   type Widget,
 } from "flitter-core";
 import type { BarChartContext } from "@headless/bar-chart/types";
@@ -78,33 +79,36 @@ class _HoverableBarState extends State<_HoverableBar> {
       ? new BoxDecoration({
           color,
           borderRadius,
-          border: Border.all({ color: "white", width: 2, strokeAlign: -1 }),
+          border: Border.all({ color: "white", width: 2, strokeAlign: 1 }),
           boxShadow: [
             new BoxShadow({ color: "rgba(0,0,0,0.3)", blurRadius: 8 }),
           ],
         })
       : new BoxDecoration({ color, borderRadius });
 
-    return Tooltip({
-      position: tooltipPosition,
-      tooltip: tooltip,
-      child: GestureDetector({
-        cursor: "pointer",
+    return GestureDetector({
+      cursor: "pointer",
+      child: Tooltip({
+        position: tooltipPosition,
+        tooltip: ZIndex({
+          zIndex: 9999,
+          child: tooltip,
+        }),
         child: Container({
           margin: EdgeInsets.symmetric({ horizontal: gap }),
           decoration,
         }),
-        onMouseEnter: () => {
-          this.setState(() => {
-            this.hovered = true;
-          });
-        },
-        onMouseLeave: () => {
-          this.setState(() => {
-            this.hovered = false;
-          });
-        },
       }),
+      onMouseEnter: () => {
+        this.setState(() => {
+          this.hovered = true;
+        });
+      },
+      onMouseLeave: () => {
+        this.setState(() => {
+          this.hovered = false;
+        });
+      },
     });
   }
 }

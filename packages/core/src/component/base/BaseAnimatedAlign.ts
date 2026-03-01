@@ -60,20 +60,20 @@ class BaseAnimatedAlignWidgetState extends AnimatedBaseWidgetState<BaseAnimatedA
     }) => T,
   ): void {
     this.alignmentTween = visitor({
-      tween: this.alignmentTween,
+      tween: this.alignmentTween!,
       targetValue: this.widget.alignment,
       constructor: value => new CalculableTween({ begin: value, end: value }),
     });
     this.widthFactorTween = visitor({
-      tween: this.widthFactorTween,
-      targetValue: this.widget.widthFactor,
+      tween: this.widthFactorTween as Tween<number>,
+      targetValue: this.widget.widthFactor as number,
       constructor: value => new Tween({ begin: value, end: value }),
-    });
+    }) as Tween<number>;
     this.heightFactorTween = visitor({
-      tween: this.heightFactorTween,
-      targetValue: this.widget.heightFactor,
+      tween: this.heightFactorTween as Tween<number>,
+      targetValue: this.widget.heightFactor as number,
       constructor: value => new Tween({ begin: value, end: value }),
-    });
+    }) as Tween<number>;
   }
 
   build(): Widget {

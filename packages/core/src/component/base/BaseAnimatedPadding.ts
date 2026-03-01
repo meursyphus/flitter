@@ -12,7 +12,7 @@ import type { EdgeInsetsGeometry } from "../../type/_types/edge-insets";
 import EdgeInsets from "../../type/_types/edge-insets";
 
 class BaseAnimatedPadding extends ImplicitlyAnimatedWidget {
-  opacity: number;
+  opacity!: number;
   padding: EdgeInsetsGeometry;
   child?: Widget;
 
@@ -49,7 +49,7 @@ class BaseAnimatedPaddingState extends AnimatedBaseWidgetState<BaseAnimatedPaddi
     }) => T,
   ): void {
     this.paddingTween = visitor({
-      tween: this.paddingTween,
+      tween: this.paddingTween!,
       targetValue: this.widget.padding,
       constructor: value => new CalculableTween({ begin: value, end: value }),
     });

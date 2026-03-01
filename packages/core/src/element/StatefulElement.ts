@@ -34,8 +34,8 @@ export class StatefulElement extends ComponentElement {
 }
 
 export class State<T extends StatefulWidget> {
-  widget: T;
-  element: StatefulElement;
+  widget!: T;
+  element!: StatefulElement;
   initState(_context: BuildContext) {}
   build(_context: BuildContext): Widget {
     throw Error("not implemented state build");

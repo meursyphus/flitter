@@ -53,7 +53,7 @@ export class AppRunner {
       onNeedVisualUpdate: () => this.scheduler.ensureVisualUpdate(),
       renderContext: this.renderContext,
       hitTestDispatcher: new HitTestDispatcher(),
-    }).get(this.rendererType);
+    }).get(this.rendererType)!;
 
     this.scheduler.addPersistenceCallbacks(() => this.buildOwner.flushBuild());
     this.scheduler.addPersistenceCallbacks(() =>
@@ -74,7 +74,7 @@ export class AppRunner {
 
     if (this.root) {
       this.root.unmount();
-      this.root = null;
+      this.root = null as unknown as RenderObjectElement;
     }
 
     this.root = new RenderObjectToWidgetAdapter({
@@ -114,7 +114,7 @@ export class AppRunner {
   dispose() {
     if (this.root) {
       this.root.unmount();
-      this.root = null;
+      this.root = null as unknown as RenderObjectElement;
     }
     this.renderContext.dispose();
   }

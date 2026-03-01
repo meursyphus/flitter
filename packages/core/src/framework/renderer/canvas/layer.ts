@@ -2,18 +2,18 @@ import type { Offset, Matrix4, Rect } from "../../../type";
 import type { CanvasRenderPipeline } from "./canvas-renderer";
 export abstract class Layer {
   attached: boolean = false;
-  owner: CanvasRenderPipeline;
+  owner!: CanvasRenderPipeline;
 
   attach(owner: CanvasRenderPipeline) {
     this.attached = true;
     this.owner = owner;
   }
-  abstract addToScene(builder: SceneBuilder);
+  abstract addToScene(builder: SceneBuilder): void;
 }
 
 export class PictureLayer extends Layer {
   #paintBounds: Rect;
-  picture: Picture;
+  picture!: Picture;
   constructor(paintBounds: Rect) {
     super();
     this.#paintBounds = paintBounds;
@@ -55,10 +55,10 @@ export class ContainerLayer extends Layer {
 }
 
 export class OffsetLayer extends ContainerLayer {
-  offset: Offset;
+  offset!: Offset;
 }
 export class TransformLayer extends OffsetLayer {
-  transform: Matrix4;
+  transform!: Matrix4;
 }
 
 export class SceneBuilder {
@@ -122,13 +122,13 @@ export class PictureRecorder {
    * When endRecording is called, the recorded content will be returned as a Picture.
    */
   createCanvasContext(): CanvasRenderingContext2D {
-    const ctx = this.#source.getContext("2d");
+    const ctx = this.#source!.getContext("2d")!;
     ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
     return ctx;
   }
 
   endRecording() {
-    const picture = new Picture(this.#source);
+    const picture = new Picture(this.#source!);
     this.#source = null;
     return picture;
   }

@@ -1,4 +1,5 @@
 import Calculable from "./_calculable";
+// @ts-ignore no declaration file for color-rgba
 import rgba from "color-rgba";
 
 class Color extends Calculable {

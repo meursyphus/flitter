@@ -40,14 +40,14 @@ export class RenderObject {
       this.#svgPainter.didDomOrderChange();
     }
   }
-  #svgPainter: SvgPainter;
+  #svgPainter!: SvgPainter;
   get svgPainter() {
     if (this.#svgPainter == null) {
       this.#svgPainter = this.createSvgPainter();
     }
     return this.#svgPainter;
   }
-  #canvasPainter: CanvasPainter;
+  #canvasPainter!: CanvasPainter;
   get canvasPainter() {
     if (this.#canvasPainter == null) {
       this.#canvasPainter = this.createCanvasPainter();
