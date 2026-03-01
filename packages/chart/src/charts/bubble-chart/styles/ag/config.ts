@@ -19,5 +19,5 @@ export const defaultAgConfig: AgBubbleChartConfig = {
     xLine: { visible: true },
     yLine: { visible: true },
   },
-  bubble: { minRadius: 5, maxRadius: 50, opacity: 0.7 },
+  bubble: { minRadius: 3, maxRadius: 25, opacity: 0.7 },
 };

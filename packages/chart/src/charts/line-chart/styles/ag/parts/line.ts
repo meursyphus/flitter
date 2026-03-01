@@ -2,11 +2,15 @@ import type { LineChartCustom, LineChartScale } from "@headless/line-chart/types
 import {
   CustomPaint,
   Path,
+  Rect,
+  Offset,
   SizedBox,
   type Widget,
 } from "flitter-core";
 import { drawSplineLine } from "@shared/styles/toast";
 import type { AgLineChartConfig } from "../config";
+
+const DOT_RADIUS = 4;
 
 export function agLine(
   ...[{ values, legend }, ctx]: Parameters<LineChartCustom<AgLineChartConfig>["line"]>
@@ -25,8 +29,9 @@ export function agLine(
       svg: {
         createDefaultSvgEl: (context) => ({
           line: context.createSvgEl("path"),
+          dots: context.createSvgEl("path"),
         }),
-        paint: ({ line }, { width, height }) => {
+        paint: ({ line, dots }, { width, height }) => {
           const path = createLinePath({ values, scale, width, height, spline: lineConfig.spline });
           line.setAttribute("fill", "none");
           line.setAttribute("stroke", color);
@@ -34,6 +39,10 @@ export function agLine(
           line.setAttribute("stroke-linecap", "round");
           line.setAttribute("stroke-linejoin", "round");
           line.setAttribute("d", path.getD());
+
+          const dotsPath = createDotsPath({ values, scale, width, height });
+          dots.setAttribute("fill", color);
+          dots.setAttribute("d", dotsPath.getD());
         },
       },
       canvas: {
@@ -44,6 +53,10 @@ export function agLine(
           context.canvas.lineCap = "round";
           context.canvas.lineJoin = "round";
           context.canvas.stroke(path.toCanvasPath());
+
+          const dotsPath = createDotsPath({ values, scale, width, height });
+          context.canvas.fillStyle = color;
+          context.canvas.fill(dotsPath.toCanvasPath());
         },
       },
     },
@@ -106,5 +119,31 @@ function createLinePath({
   if (points.length === 0) return path;
   path.moveTo(points[0]);
   points.slice(1).forEach((point) => path.lineTo(point));
+  return path;
+}
+
+function createDotsPath({
+  values,
+  scale,
+  width,
+  height,
+}: {
+  values: number[];
+  scale: LineChartScale;
+  width: number;
+  height: number;
+}) {
+  const path = new Path();
+  const range = scale.max - scale.min;
+  values.forEach((value, index) => {
+    const x = values.length > 1 ? (index * width) / (values.length - 1) : width / 2;
+    const y = height - (height * (value - scale.min)) / range;
+    path.addOval(
+      Rect.fromCircle({
+        center: new Offset({ x, y }),
+        radius: DOT_RADIUS,
+      }),
+    );
+  });
   return path;
 }

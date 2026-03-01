@@ -3,7 +3,6 @@ import { type AgBaseConfig, defaultAgBaseConfig } from "@shared/styles/ag";
 export type AgScatterChartConfig = AgBaseConfig & {
   scatter: {
     size: number;
-    fill: boolean;
     strokeWidth: number;
   };
 };
@@ -19,5 +18,5 @@ export const defaultAgConfig: AgScatterChartConfig = {
     xLine: { visible: true },
     yLine: { visible: true },
   },
-  scatter: { size: 10, fill: true, strokeWidth: 2 },
+  scatter: { size: 10, strokeWidth: 2 },
 };
