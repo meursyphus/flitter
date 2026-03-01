@@ -2,6 +2,7 @@ import type { LineChartCustom, LineChartScale } from "@headless/line-chart/types
 import {
   CustomPaint,
   Path,
+  Opacity,
   SizedBox,
   type Widget,
 } from "flitter-core";
@@ -11,14 +12,19 @@ import type { AgAreaChartConfig } from "../config";
 export function agArea(
   ...[{ values, legend }, ctx]: Parameters<LineChartCustom<AgAreaChartConfig>["line"]>
 ) {
-  const { scale, config } = ctx;
+  const { scale, config, hoveredPoint } = ctx;
   if (scale == null) return SizedBox.shrink();
 
   const { colors, area: areaConfig } = config;
   const idx = ctx.legends.indexOf(legend);
   const color = colors.fills[idx % colors.fills.length];
 
-  return CustomPaint({
+  let opacity = 1;
+  if (hoveredPoint != null) {
+    opacity = hoveredPoint.legend === legend ? 1 : 0.3;
+  }
+
+  const paint = CustomPaint({
     key: legend,
     painter: {
       shouldRepaint: () => true,
@@ -62,6 +68,8 @@ export function agArea(
       },
     },
   });
+
+  return opacity < 1 ? Opacity({ opacity, child: paint }) : paint;
 }
 
 export function computeDataPointPosition({

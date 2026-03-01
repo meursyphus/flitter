@@ -6,6 +6,7 @@ import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { agArea } from "./parts/area";
 import { agSeries } from "./parts/series";
+import { AreaTooltipOverlay } from "./parts/tooltip-overlay";
 import {
   agLayout,
   agTitle,
@@ -31,7 +32,11 @@ export { type AgAreaChartConfig } from "./config";
 const agCustom: Partial<LineChartCustom<AgAreaChartConfig>> = {
   layout: agLayout,
   line: agArea,
-  series: agSeries,
+  series: (args, context) =>
+    AreaTooltipOverlay({
+      child: agSeries(args, context),
+      config: context.config,
+    }),
   legend: agLegend,
   title: agTitle,
   axisCorner: agAxisCorner,

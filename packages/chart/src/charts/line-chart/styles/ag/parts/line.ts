@@ -4,6 +4,7 @@ import {
   Path,
   Rect,
   Offset,
+  Opacity,
   SizedBox,
   type Widget,
 } from "flitter-core";
@@ -15,14 +16,19 @@ const DOT_RADIUS = 4;
 export function agLine(
   ...[{ values, legend }, ctx]: Parameters<LineChartCustom<AgLineChartConfig>["line"]>
 ) {
-  const { scale, config } = ctx;
+  const { scale, config, hoveredPoint } = ctx;
   if (scale == null) return SizedBox.shrink();
 
   const { colors, line: lineConfig } = config;
   const idx = ctx.legends.indexOf(legend);
   const color = colors.fills[idx % colors.fills.length];
 
-  return CustomPaint({
+  let opacity = 1;
+  if (hoveredPoint != null) {
+    opacity = hoveredPoint.legend === legend ? 1 : 0.3;
+  }
+
+  const paint = CustomPaint({
     key: legend,
     painter: {
       shouldRepaint: () => true,
@@ -61,6 +67,8 @@ export function agLine(
       },
     },
   });
+
+  return opacity < 1 ? Opacity({ opacity, child: paint }) : paint;
 }
 
 export function computeDataPointPosition({
