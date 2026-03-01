@@ -70,7 +70,7 @@ export function CheckBox({
 
 function createBorderPath(width: number, height: number): Path {
   const path = new Path();
-  const r = Math.min(width, height) * 0.15;
+  const r = 0;
   const inset = 0.75;
   path.addRRect(
     RRect.fromLTRBXY({

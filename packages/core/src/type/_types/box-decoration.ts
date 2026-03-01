@@ -190,6 +190,11 @@ class BoxDecorationSvgPainter {
           borderRadius: this.decoration.borderRadius,
         },
       );
+    } else {
+      svgEls.topBorder.setAttribute("d", "");
+      svgEls.bottomBorder.setAttribute("d", "");
+      svgEls.leftBorder.setAttribute("d", "");
+      svgEls.rightBorder.setAttribute("d", "");
     }
   }
 

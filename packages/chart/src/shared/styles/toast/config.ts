@@ -62,7 +62,7 @@ export const defaultToastBaseConfig: ToastBaseConfig = {
     enabled: true,
     backgroundColor: "rgba(50,50,50,0.95)",
     textColor: "white",
-    borderRadius: 6,
+    borderRadius: 0,
     padding: 12,
   },
 };

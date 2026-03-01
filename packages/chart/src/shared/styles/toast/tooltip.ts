@@ -35,7 +35,7 @@ export function tooltipContent({
     padding: EdgeInsets.all(tooltip.padding),
     decoration: new BoxDecoration({
       color: tooltip.backgroundColor,
-      borderRadius: BorderRadius.all(Radius.circular(tooltip.borderRadius)),
+      borderRadius: tooltip.borderRadius > 0 ? BorderRadius.all(Radius.circular(tooltip.borderRadius)) : undefined,
       boxShadow: [
         new BoxShadow({
           color: "rgba(0,0,0,0.15)",

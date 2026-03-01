@@ -14,7 +14,7 @@ import {
 } from "../";
 import { classToFunction } from "../utils";
 
-type TooltipPosition =
+export type TooltipPosition =
   | "topLeft"
   | "topRight"
   | "topCenter"
@@ -41,21 +41,29 @@ class ToolTip extends StatefulWidget {
   child: Widget;
   tooltip: Widget;
   position: TooltipPosition;
+  offset: Offset;
+  translation: Offset | undefined;
   constructor({
     key,
     child,
     tooltip,
     position,
+    offset,
+    translation,
   }: {
     key?: any;
     child: Widget;
     tooltip: Widget;
     position?: TooltipPosition;
+    offset?: Offset;
+    translation?: Offset;
   }) {
     super(key);
     this.child = child;
     this.tooltip = tooltip;
     this.position = position ?? "bottomCenter";
+    this.offset = offset ?? Offset.Constants.zero;
+    this.translation = translation;
   }
 
   createState(): State<StatefulWidget> {
@@ -94,12 +102,15 @@ class ToolTipState extends State<ToolTip> {
         }),
         this.show
           ? Positioned.fill({
-              child: ConstraintsTransformBox({
-                constraintsTransform: ConstraintsTransformBox.unconstrained,
-                alignment: Alignment[this.widget.position],
-                child: FractionalTranslation({
-                  translation: positionHelper[this.widget.position],
-                  child: this.widget.tooltip,
+              child: FractionalTranslation({
+                translation: this.widget.offset,
+                child: ConstraintsTransformBox({
+                  constraintsTransform: ConstraintsTransformBox.unconstrained,
+                  alignment: Alignment[this.widget.position],
+                  child: FractionalTranslation({
+                    translation: this.widget.translation ?? positionHelper[this.widget.position],
+                    child: this.widget.tooltip,
+                  }),
                 }),
               }),
             })

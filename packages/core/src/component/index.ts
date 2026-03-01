@@ -48,6 +48,7 @@ import AnimatedContainer from "./AnimatedContainer";
 import AnimatedSize from "./AnimatedSize";
 import Draggable from "./Draggable";
 import Tooltip from "./Tooltip";
+export type { TooltipPosition } from "./Tooltip";
 import ZIndex from "./ZIndex";
 import Painter from "./base/BaseCustomPaint";
 import TextField from "./TextField";
