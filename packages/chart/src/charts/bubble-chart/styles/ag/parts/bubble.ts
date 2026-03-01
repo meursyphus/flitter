@@ -6,12 +6,6 @@ import {
   Opacity,
   StatefulWidget,
   State,
-  AnimationController,
-  CurvedAnimation,
-  Curves,
-  Tween,
-  Transform,
-  Alignment,
   Stack,
   StackFit,
   Positioned,
@@ -20,6 +14,7 @@ import {
   Padding,
   FractionalTranslation,
   ConstraintsTransformBox,
+  Alignment,
   SizedBox,
   Row,
   MainAxisSize,
@@ -138,49 +133,6 @@ function bubbleTooltipContent({
   });
 }
 
-// --- Mount animation ---
-
-class _MountScale extends StatefulWidget {
-  child: Widget;
-  duration: number;
-
-  constructor({ key, child, duration }: { key?: any; child: Widget; duration: number }) {
-    super(key);
-    this.child = child;
-    this.duration = duration;
-  }
-
-  createState() {
-    return new _MountScaleState();
-  }
-}
-
-class _MountScaleState extends State<_MountScale> {
-  controller!: AnimationController;
-  tween!: { value: number };
-
-  override initState() {
-    this.controller = new AnimationController({ duration: this.widget.duration });
-    this.controller.addListener(() => this.setState());
-    this.tween = new Tween({ begin: 0, end: 1 }).animated(
-      new CurvedAnimation({ parent: this.controller, curve: Curves.easeOut }),
-    );
-    this.controller.forward();
-  }
-
-  override dispose() {
-    this.controller.dispose();
-  }
-
-  override build() {
-    return Transform.scale({
-      scale: this.tween.value,
-      alignment: Alignment.center,
-      child: this.widget.child,
-    });
-  }
-}
-
 // --- Hoverable bubble ---
 
 class _HoverableBubble extends StatefulWidget {
@@ -253,7 +205,7 @@ class _HoverableBubbleState extends State<_HoverableBubble> {
 
     const children: Widget[] = [];
 
-    // Always keep bubbleWidget in tree (prevents animation re-trigger)
+    // Always keep bubbleWidget in tree
     children.push(bubbleWidget);
 
     // GestureDetector overlay for hover detection
@@ -355,7 +307,7 @@ class _HoverableBubbleState extends State<_HoverableBubble> {
 export function agBubble(
   ...[{ value, legend, label, index }, ctx]: Parameters<BubbleChartCustom<AgBubbleChartConfig>["bubble"]>
 ) {
-  const { colors, bubble: bubbleConfig, animation, tooltip } = ctx.config;
+  const { colors, bubble: bubbleConfig, tooltip } = ctx.config;
   const idx = ctx.legends.indexOf(legend);
   const fillColor = colors.fills[idx % colors.fills.length];
   const strokeColor = colors.strokes[idx % colors.strokes.length];
@@ -378,17 +330,7 @@ export function agBubble(
     }),
   });
 
-  let wrapped: Widget = bubble;
-
-  if (animation.enabled) {
-    wrapped = new _MountScale({
-      key: `${legend}-${label}`,
-      duration: animation.duration,
-      child: bubble,
-    });
-  }
-
-  if (!tooltip.enabled) return wrapped;
+  if (!tooltip.enabled) return bubble;
 
   // Lookup x, y from data
   const dataset = ctx.data.datasets.find((d) => d.legend === legend);
@@ -396,7 +338,7 @@ export function agBubble(
 
   return new _HoverableBubble({
     key: `hover-${legend}-${label}`,
-    bubbleWidget: wrapped,
+    bubbleWidget: bubble,
     legend,
     fillColor,
     strokeColor,

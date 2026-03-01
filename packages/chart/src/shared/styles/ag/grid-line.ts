@@ -11,6 +11,7 @@ export function agGridXLine(
   context: { config: AgBaseConfig },
 ): Widget {
   const { grid } = context.config;
+  if (!grid.xLine.visible) return SizedBox({ width: 0, height: 0 });
   return SizedBox({
     width: Infinity,
     height: grid.thickness,
@@ -54,6 +55,7 @@ export function agGridYLine(
   context: { config: AgBaseConfig },
 ): Widget {
   const { grid } = context.config;
+  if (!grid.yLine.visible) return SizedBox({ width: 0, height: 0 });
   return SizedBox({
     width: grid.thickness,
     height: Infinity,

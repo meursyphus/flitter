@@ -5,12 +5,6 @@ import {
   Offset,
   StatefulWidget,
   State,
-  AnimationController,
-  CurvedAnimation,
-  Curves,
-  Tween,
-  Transform,
-  Alignment,
   Stack,
   StackFit,
   Positioned,
@@ -19,6 +13,7 @@ import {
   Padding,
   FractionalTranslation,
   ConstraintsTransformBox,
+  Alignment,
   Container,
   SizedBox,
   Row,
@@ -30,7 +25,6 @@ import {
   BoxShadow,
   BorderRadius,
   Border,
-  BorderSide,
   Radius,
   EdgeInsets,
   type Widget,
@@ -152,49 +146,6 @@ function agScatterTooltipContent({
   });
 }
 
-// --- Mount animation ---
-
-class _MountScale extends StatefulWidget {
-  child: Widget;
-  duration: number;
-
-  constructor({ key, child, duration }: { key?: any; child: Widget; duration: number }) {
-    super(key);
-    this.child = child;
-    this.duration = duration;
-  }
-
-  createState() {
-    return new _MountScaleState();
-  }
-}
-
-class _MountScaleState extends State<_MountScale> {
-  controller!: AnimationController;
-  tween!: { value: number };
-
-  override initState() {
-    this.controller = new AnimationController({ duration: this.widget.duration });
-    this.controller.addListener(() => this.setState());
-    this.tween = new Tween({ begin: 0, end: 1 }).animated(
-      new CurvedAnimation({ parent: this.controller, curve: Curves.easeOut }),
-    );
-    this.controller.forward();
-  }
-
-  override dispose() {
-    this.controller.dispose();
-  }
-
-  override build() {
-    return Transform.scale({
-      scale: this.tween.value,
-      alignment: Alignment.center,
-      child: this.widget.child,
-    });
-  }
-}
-
 // --- Hoverable scatter ---
 
 class _HoverableScatter extends StatefulWidget {
@@ -264,7 +215,7 @@ class _HoverableScatterState extends State<_HoverableScatter> {
 
     const children: Widget[] = [];
 
-    // Always keep pointWidget in tree (prevents animation re-trigger)
+    // Always keep pointWidget in tree
     children.push(pointWidget);
 
     // Transparent hit area (Positioned around the 0x0 CustomPaint center)
@@ -386,7 +337,7 @@ class _HoverableScatterState extends State<_HoverableScatter> {
 export function agScatter(
   ...[{ legend, label, index }, ctx]: Parameters<ScatterChartCustom<AgScatterChartConfig>["scatter"]>
 ) {
-  const { colors, scatter: scatterConfig, animation, tooltip } = ctx.config;
+  const { colors, scatter: scatterConfig, tooltip } = ctx.config;
   const idx = ctx.legends.indexOf(legend);
   const fill = colors.fills[idx % colors.fills.length];
   const stroke = colors.strokes[idx % colors.strokes.length];
@@ -430,17 +381,7 @@ export function agScatter(
     },
   });
 
-  let wrapped: Widget = point;
-
-  if (animation.enabled) {
-    wrapped = new _MountScale({
-      key: `${legend}-${label}`,
-      duration: animation.duration,
-      child: point,
-    });
-  }
-
-  if (!tooltip.enabled) return wrapped;
+  if (!tooltip.enabled) return point;
 
   // Lookup x, y from data
   const dataset = ctx.data.datasets.find((d) => d.legend === legend);
@@ -450,7 +391,7 @@ export function agScatter(
 
   return new _HoverableScatter({
     key: `hover-${legend}-${label}`,
-    pointWidget: wrapped,
+    pointWidget: point,
     legend,
     color,
     shape,

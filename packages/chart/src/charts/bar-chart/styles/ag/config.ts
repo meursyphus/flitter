@@ -9,5 +9,5 @@ export type AgBarChartConfig = AgBaseConfig & {
 
 export const defaultAgConfig: AgBarChartConfig = {
   ...defaultAgBaseConfig,
-  bar: { gap: 1, cornerRadius: 4 },
+  bar: { gap: 1, cornerRadius: 0 },
 };

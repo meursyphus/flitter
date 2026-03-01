@@ -10,5 +10,9 @@ export type AgStackedAreaChartConfig = AgBaseConfig & {
 
 export const defaultAgConfig: AgStackedAreaChartConfig = {
   ...defaultAgBaseConfig,
+  axis: {
+    ...defaultAgBaseConfig.axis,
+    yLine: { visible: false },
+  },
   area: { opacity: 0.7, strokeWidth: 2, spline: false },
 };

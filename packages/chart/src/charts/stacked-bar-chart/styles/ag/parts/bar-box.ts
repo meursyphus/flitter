@@ -1,5 +1,5 @@
 import {
-  AnimatedFractionallySizedBox,
+  FractionallySizedBox,
   EdgeInsets,
   Padding,
 } from "flitter-core";
@@ -7,11 +7,10 @@ import type { BarChartCustom } from "@headless/bar-chart/types";
 import type { AgStackedBarChartConfig } from "../config";
 
 export function agBarBox(
-  ...[{ bar, ratio, alignment }, { direction, config }]: Parameters<BarChartCustom<AgStackedBarChartConfig>['barBox']>
+  ...[{ bar, ratio, alignment }, { direction }]: Parameters<BarChartCustom<AgStackedBarChartConfig>['barBox']>
 ) {
   const isVertical = direction === "vertical";
-  return AnimatedFractionallySizedBox({
-    duration: config.animation.duration,
+  return FractionallySizedBox({
     alignment,
     widthFactor: isVertical ? undefined : ratio,
     heightFactor: isVertical ? ratio : undefined,

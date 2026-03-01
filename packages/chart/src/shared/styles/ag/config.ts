@@ -41,10 +41,17 @@ export type AgBaseConfig = {
       format: (name: string, index: number, axis: "x" | "y") => string;
     };
     tick: { enabled: boolean; size: number };
+    xLine: { visible: boolean };
+    yLine: { visible: boolean };
   };
-  grid: { color: string; thickness: number; dash: number[] };
+  grid: {
+    color: string;
+    thickness: number;
+    dash: number[];
+    xLine: { visible: boolean };
+    yLine: { visible: boolean };
+  };
   padding: { top: number; right: number; bottom: number; left: number };
-  animation: { enabled: boolean; duration: number; staggerDelay: number };
   tooltip: {
     enabled: boolean;
     backgroundColor: string;
@@ -56,12 +63,12 @@ export type AgBaseConfig = {
 };
 
 export const defaultAgBaseConfig: AgBaseConfig = {
-  background: "#192232",
+  background: "white",
   colors: { fills: AG_FILLS, strokes: AG_STROKES },
   font: { family: "Verdana, sans-serif", size: 13 },
   title: {
     visible: true,
-    color: "#ffffff",
+    color: "#181d1f",
     fontSize: 18,
     fontWeight: "bold",
     position: "top",
@@ -73,21 +80,28 @@ export const defaultAgBaseConfig: AgBaseConfig = {
     color: "#8d949a",
     fontSize: 14,
   },
-  legend: { visible: true, position: "bottom", gap: 16, color: "#a0aab4" },
+  legend: { visible: true, position: "bottom", gap: 16, color: "#585858" },
   axis: {
-    color: "#586274",
+    color: "#cccccc",
     thickness: 1,
-    label: { color: "#a0aab4", fontSize: 13, gap: 11, format: (name) => name },
+    label: { color: "#585858", fontSize: 13, gap: 11, format: (name) => name },
     tick: { enabled: false, size: 6 },
+    xLine: { visible: true },
+    yLine: { visible: true },
   },
-  grid: { color: "#2d3a4a", thickness: 1, dash: [4, 2] },
+  grid: {
+    color: "#e2e2e2",
+    thickness: 1,
+    dash: [],
+    xLine: { visible: false },
+    yLine: { visible: true },
+  },
   padding: { top: 20, right: 20, bottom: 20, left: 20 },
-  animation: { enabled: true, duration: 400, staggerDelay: 40 },
   tooltip: {
     enabled: true,
-    backgroundColor: "#28313e",
-    textColor: "#ffffff",
-    borderColor: "#3a4a5c",
+    backgroundColor: "white",
+    textColor: "#181d1f",
+    borderColor: "#e2e2e2",
     borderRadius: 4,
     padding: 12,
   },

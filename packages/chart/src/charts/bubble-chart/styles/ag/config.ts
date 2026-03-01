@@ -10,5 +10,14 @@ export type AgBubbleChartConfig = AgBaseConfig & {
 
 export const defaultAgConfig: AgBubbleChartConfig = {
   ...defaultAgBaseConfig,
+  axis: {
+    ...defaultAgBaseConfig.axis,
+    color: defaultAgBaseConfig.grid.color,
+  },
+  grid: {
+    ...defaultAgBaseConfig.grid,
+    xLine: { visible: true },
+    yLine: { visible: true },
+  },
   bubble: { minRadius: 5, maxRadius: 50, opacity: 0.7 },
 };

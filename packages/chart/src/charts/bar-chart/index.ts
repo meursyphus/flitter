@@ -21,9 +21,10 @@ export default function BarChart<S extends keyof BarChartStyleMap>({
   getScaleOptions?: GetScaleOptionsFn;
 }): Widget {
   const sc = barChartStyleConfigs[style];
+  const direction = rest.direction ?? "vertical";
   return BaseBarChart({
     data,
-    config: sc.createConfig(config),
+    config: sc.createConfig(config, direction),
     custom: { ...sc.custom, ...custom },
     getScaleOptions: getScaleOptions ?? sc.getScaleOptions,
     ...rest,

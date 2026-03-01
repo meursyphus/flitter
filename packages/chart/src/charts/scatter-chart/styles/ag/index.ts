@@ -31,7 +31,7 @@ const agCustom: Partial<ScatterChartCustom<AgScatterChartConfig>> = {
   layout: agLayout,
   scatter: agScatter,
   series: agSeries,
-  legend: agLegend,
+  legend: (args, context) => agLegend(args, context, { markerShape: "circle" }),
   title: agTitle,
   axisCorner: agAxisCorner,
   xAxisLabel: agXAxisLabel,

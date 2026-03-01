@@ -21,9 +21,10 @@ export default function StackedBarChart<S extends keyof StackedBarChartStyleMap>
   getScaleOptions?: GetScaleOptionsFn;
 }): Widget {
   const sc = stackedBarChartStyleConfigs[style];
+  const direction = rest.direction ?? "vertical";
   return BaseStackedBarChart({
     data,
-    config: sc.createConfig(config),
+    config: sc.createConfig(config, direction),
     custom: { ...sc.custom, ...custom },
     getScaleOptions: getScaleOptions ?? sc.getScaleOptions,
     ...rest,

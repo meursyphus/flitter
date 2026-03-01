@@ -4,7 +4,7 @@ import { agStyleConfig, type AgBarChartConfig } from "./styles/ag";
 
 export type StyleConfig<TConfig> = {
   custom: Partial<BarChartCustom<TConfig>>;
-  createConfig: (config?: Partial<TConfig>) => TConfig;
+  createConfig: (config?: Partial<TConfig>, direction?: "vertical" | "horizontal") => TConfig;
   getScaleOptions: GetScaleOptionsFn;
 };
 

@@ -58,6 +58,18 @@ const agGetScaleOptions: GetScaleOptionsFn = (ctx) =>
 
 export const agStyleConfig: StyleConfig<AgStackedBarChartConfig> = {
   custom: agCustom,
-  createConfig: (config) => deepMerge(defaultAgConfig, config),
+  createConfig: (config, direction = "vertical") => {
+    const directionOverrides = direction === "vertical"
+      ? {
+          grid: { ...defaultAgConfig.grid, xLine: { visible: true }, yLine: { visible: false } },
+          axis: { ...defaultAgConfig.axis, xLine: { visible: true }, yLine: { visible: false } },
+        }
+      : {
+          grid: { ...defaultAgConfig.grid, xLine: { visible: false }, yLine: { visible: true } },
+          axis: { ...defaultAgConfig.axis, xLine: { visible: false }, yLine: { visible: true } },
+        };
+    const base = deepMerge(defaultAgConfig, directionOverrides as Partial<AgStackedBarChartConfig>);
+    return deepMerge(base, config);
+  },
   getScaleOptions: agGetScaleOptions,
 };

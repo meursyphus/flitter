@@ -9,5 +9,9 @@ export type AgLineChartConfig = AgBaseConfig & {
 
 export const defaultAgConfig: AgLineChartConfig = {
   ...defaultAgBaseConfig,
+  axis: {
+    ...defaultAgBaseConfig.axis,
+    yLine: { visible: false },
+  },
   line: { strokeWidth: 2, spline: false },
 };

@@ -10,5 +10,14 @@ export type AgScatterChartConfig = AgBaseConfig & {
 
 export const defaultAgConfig: AgScatterChartConfig = {
   ...defaultAgBaseConfig,
+  axis: {
+    ...defaultAgBaseConfig.axis,
+    color: defaultAgBaseConfig.grid.color,
+  },
+  grid: {
+    ...defaultAgBaseConfig.grid,
+    xLine: { visible: true },
+    yLine: { visible: true },
+  },
   scatter: { size: 10, fill: true, strokeWidth: 2 },
 };

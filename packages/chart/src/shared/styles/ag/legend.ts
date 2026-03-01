@@ -10,14 +10,12 @@ import {
   GestureDetector,
   Container,
   BoxDecoration,
-  BorderRadius,
-  Radius,
   type Widget,
 } from "flitter-core";
 import type { AgBaseConfig } from "./config";
 
 /**
- * AG Charts legend uses a colored square marker (not checkbox).
+ * AG Charts legend uses a colored marker (square or circle).
  * Click toggles series visibility with dimmed opacity.
  */
 export function agLegend(
@@ -27,6 +25,7 @@ export function agLegend(
     isSeriesVisible(legend: string): boolean;
     toggleSeries(legend: string): void;
   },
+  { markerShape = "rectangle" }: { markerShape?: "rectangle" | "circle" } = {},
 ): Widget {
   const { colors, font } = context.config;
   const color = colors.fills[index % colors.fills.length];
@@ -42,7 +41,7 @@ export function agLegend(
           height: 14,
           decoration: new BoxDecoration({
             color,
-            borderRadius: BorderRadius.all(Radius.circular(2)),
+            shape: markerShape,
           }),
         }),
         SizedBox({ width: 8 }),
