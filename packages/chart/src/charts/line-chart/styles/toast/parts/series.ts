@@ -446,6 +446,7 @@ class _MountRevealState extends State<_MountReveal> {
   override build() {
     const t = this.tween.value;
     return ClipRect({
+      clipped: t < 1,
       clipper: (size) =>
         Rect.fromLTRB({
           left: 0,
