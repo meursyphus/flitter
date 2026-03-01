@@ -115,7 +115,7 @@ export function agLayout(
       bottom: padding.bottom,
     }),
     decoration: new BoxDecoration({
-      color: "white",
+      color: context.config.background,
     }),
     child: Column({
       crossAxisAlignment: CrossAxisAlignment.stretch,

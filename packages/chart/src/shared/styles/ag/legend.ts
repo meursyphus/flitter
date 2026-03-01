@@ -50,7 +50,7 @@ export function agLegend(
           style: new TextStyle({
             fontFamily: font.family,
             fontSize: font.size,
-            color: "#585858",
+            color: context.config.legend.color,
           }),
         }),
       ],

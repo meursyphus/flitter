@@ -1,8 +1,0 @@
-[     200ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:6007/favicon.svg:0
-[     488ms] [ERROR] SB_PREVIEW_API_0009 (NoStoryMatchError): Couldn't find story matching 'barchart--default'.
-
-- Are you sure a story with that id exists?
-- Please check your stories field of your main.js config.
-- Also check the browser console and terminal for error messages.
-    at ns2.selectSpecifiedStory (http://localhost:6007/node_modules/.cache/storybook/eb8a07fa7ac21dcc261ba11eaedee8db716aa4623967f77b8d5299c4a596b1c0/sb-vite/deps/storybook_internal_preview_runtime.js?v=cf77ce1b:9149:9)
-    at ns2.initializeWithStoryIndex (http://localhost:6007/node_modules/.cache/storybook/eb8a07fa7ac21dcc261ba11eaedee8db716aa4623967f77b8d5299c4a596b1c0/sb-vite/deps/storybook_internal_preview_runtime.js?v=cf77ce1b:9129:58) @ http://localhost:6007/node_modules/.cache/storybook/eb8a07fa7ac21dcc261ba11eaedee8db716aa4623967f77b8d5299c4a596b1c0/sb-vite/deps/storybook_internal_preview_runtime.js?v=cf77ce1b:4636
