@@ -32,14 +32,14 @@ export function tooltipContent({
   const { tooltip, font } = config;
 
   return Container({
-    padding: EdgeInsets.all(tooltip.padding),
+    padding: EdgeInsets.symmetric({ horizontal: tooltip.padding + 2, vertical: tooltip.padding }),
     decoration: new BoxDecoration({
       color: tooltip.backgroundColor,
       borderRadius: tooltip.borderRadius > 0 ? BorderRadius.all(Radius.circular(tooltip.borderRadius)) : undefined,
       boxShadow: [
         new BoxShadow({
-          color: "rgba(0,0,0,0.15)",
-          blurRadius: 12,
+          color: "rgba(0,0,0,0.2)",
+          blurRadius: 16,
         }),
       ],
     }),
@@ -50,33 +50,36 @@ export function tooltipContent({
         Text(label, {
           style: new TextStyle({
             fontFamily: font.family,
-            fontSize: 12,
+            fontSize: 13,
             fontWeight: "bold",
             color: tooltip.textColor,
           }),
         }),
-        SizedBox({ height: 6 }),
+        SizedBox({ height: 14 }),
         Row({
           mainAxisSize: MainAxisSize.min,
           children: [
             Container({
-              width: 10,
-              height: 10,
-              decoration: new BoxDecoration({ color }),
+              width: 12,
+              height: 12,
+              decoration: new BoxDecoration({
+                color,
+                borderRadius: BorderRadius.all(Radius.circular(2)),
+              }),
             }),
-            SizedBox({ width: 8 }),
+            SizedBox({ width: 10 }),
             Text(legend, {
               style: new TextStyle({
                 fontFamily: font.family,
-                fontSize: 11,
+                fontSize: 12,
                 color: tooltip.textColor,
               }),
             }),
-            SizedBox({ width: 12 }),
+            SizedBox({ width: 16 }),
             Text(`${value}`, {
               style: new TextStyle({
                 fontFamily: font.family,
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: "bold",
                 color: tooltip.textColor,
               }),

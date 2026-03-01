@@ -60,9 +60,9 @@ export const defaultToastBaseConfig: ToastBaseConfig = {
   animation: { enabled: true, duration: 300, staggerDelay: 60 },
   tooltip: {
     enabled: true,
-    backgroundColor: "rgba(50,50,50,0.95)",
+    backgroundColor: "rgba(50,50,50,0.6)",
     textColor: "white",
-    borderRadius: 0,
-    padding: 12,
+    borderRadius: 4,
+    padding: 14,
   },
 };
