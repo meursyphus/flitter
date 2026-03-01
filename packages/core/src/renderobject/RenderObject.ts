@@ -35,7 +35,6 @@ export class RenderObject {
    */
   minDescendantZOrder: number = 0;
   updateZOrder(value: number) {
-    if (this.#zOrder === value) return;
     this.#zOrder = value;
     if (this.#svgPainter != null) {
       this.#svgPainter.didDomOrderChange();

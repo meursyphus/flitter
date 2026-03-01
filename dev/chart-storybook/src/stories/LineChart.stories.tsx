@@ -6,6 +6,7 @@ const TITLE_OPTIONS = ["top-start", "top-center", "top-end", "bottom-start", "bo
 const LEGEND_POSITIONS = ["top", "bottom", "right", "right-top", "right-center", "right-bottom"] as const;
 
 type LineChartArgs = {
+  renderer: "svg" | "canvas";
   title: string;
   titlePlacement: (typeof TITLE_OPTIONS)[number];
   legendVisible: boolean;
@@ -58,7 +59,7 @@ function ToastLineChart({ args }: { args: LineChartArgs }) {
       })}
       width="800px"
       height="500px"
-      renderer="svg"
+      renderer={args.renderer}
     />
   );
 }
@@ -67,6 +68,7 @@ const meta: Meta<LineChartArgs> = {
   title: "LineChart/Toast",
   parameters: { layout: "centered" },
   argTypes: {
+    renderer: { control: "inline-radio", options: ["svg", "canvas"] },
     title: { control: "text" },
     titlePlacement: { control: "select", options: TITLE_OPTIONS },
     legendVisible: { control: "boolean" },
@@ -78,6 +80,7 @@ const meta: Meta<LineChartArgs> = {
     animationDuration: { control: { type: "range", min: 0, max: 2000, step: 100 } },
   },
   args: {
+    renderer: "svg",
     title: "US Macro Pulse (MoM, 2024)",
     titlePlacement: "top-center",
     legendVisible: true,

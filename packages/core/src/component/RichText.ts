@@ -26,7 +26,7 @@ class RichText extends StatelessWidget {
           left: 0,
           top: 0,
           width: size.width,
-          height: size.width,
+          height: size.height,
         }),
       child: new _RichText({
         overflow: this.overflow,

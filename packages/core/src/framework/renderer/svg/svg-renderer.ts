@@ -44,10 +44,11 @@ export class SvgRenderPipeline extends RenderPipeline {
   };
 
   #rearrangeDomOrder(painterRenderObjects: RenderObject[]) {
-    painterRenderObjects.reverse();
-    painterRenderObjects.forEach(child => {
-      child.svgPainter.rearrangeDomOrder();
-    });
+    for (const renderObject of painterRenderObjects) {
+      if (renderObject.isPainter) {
+        this.renderContext.view.appendChild(renderObject.svgPainter.domNode);
+      }
+    }
   }
 
   override flushPaint() {
@@ -65,6 +66,7 @@ export class SvgRenderPipeline extends RenderPipeline {
   override disposeRenderObject(renderObject: RenderObject): void {
     if (renderObject.isPainter) {
       renderObject.svgPainter.domNode.remove();
+      this.notifyZOrderChanged();
     }
   }
 

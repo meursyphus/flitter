@@ -6,6 +6,7 @@ const TITLE_OPTIONS = ["top-start", "top-center", "top-end", "bottom-start", "bo
 const LEGEND_POSITIONS = ["top", "bottom", "right", "right-top", "right-center", "right-bottom"] as const;
 
 type BarChartArgs = {
+  renderer: "svg" | "canvas";
   title: string;
   direction: "vertical" | "horizontal";
   titlePlacement: (typeof TITLE_OPTIONS)[number];
@@ -69,7 +70,7 @@ function ToastBarChart({ args, data }: { args: BarChartArgs; data: typeof defaul
       })}
       width="800px"
       height="500px"
-      renderer="svg"
+      renderer={args.renderer}
     />
   );
 }
@@ -78,6 +79,7 @@ const meta: Meta<BarChartArgs> = {
   title: "BarChart/Toast",
   parameters: { layout: "centered" },
   argTypes: {
+    renderer: { control: "inline-radio", options: ["svg", "canvas"] },
     title: { control: "text" },
     direction: { control: "inline-radio", options: ["vertical", "horizontal"] },
     titlePlacement: { control: "select", options: TITLE_OPTIONS },
@@ -90,6 +92,7 @@ const meta: Meta<BarChartArgs> = {
     animationDuration: { control: { type: "range", min: 0, max: 2000, step: 100 } },
   },
   args: {
+    renderer: "svg",
     title: "Monthly Revenue by Region",
     direction: "vertical",
     titlePlacement: "top-center",

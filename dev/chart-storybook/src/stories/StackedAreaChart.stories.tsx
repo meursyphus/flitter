@@ -6,6 +6,7 @@ const TITLE_OPTIONS = ["top-start", "top-center", "top-end", "bottom-start", "bo
 const LEGEND_POSITIONS = ["top", "bottom", "right", "right-top", "right-center", "right-bottom"] as const;
 
 type StackedAreaChartArgs = {
+  renderer: "svg" | "canvas";
   title: string;
   titlePlacement: (typeof TITLE_OPTIONS)[number];
   legendVisible: boolean;
@@ -59,7 +60,7 @@ function ToastStackedAreaChart({ args, data }: { args: StackedAreaChartArgs; dat
       })}
       width="800px"
       height="500px"
-      renderer="svg"
+      renderer={args.renderer}
     />
   );
 }
@@ -68,6 +69,7 @@ const meta: Meta<StackedAreaChartArgs> = {
   title: "StackedAreaChart/Toast",
   parameters: { layout: "centered" },
   argTypes: {
+    renderer: { control: "inline-radio", options: ["svg", "canvas"] },
     title: { control: "text" },
     titlePlacement: { control: "select", options: TITLE_OPTIONS },
     legendVisible: { control: "boolean" },
@@ -79,6 +81,7 @@ const meta: Meta<StackedAreaChartArgs> = {
     animationDuration: { control: { type: "range", min: 0, max: 2000, step: 100 } },
   },
   args: {
+    renderer: "svg",
     title: "Website Traffic Sources",
     titlePlacement: "top-center",
     legendVisible: true,
