@@ -1,6 +1,7 @@
 import type { StackedAreaChartCustom, StackedAreaChartScale } from "@headless/stacked-area-chart/types";
 import {
   CustomPaint,
+  Opacity,
   Path,
   SizedBox,
   type Widget,
@@ -19,7 +20,14 @@ export function agArea(
   const fillColor = colors.fills[idx % colors.fills.length];
   const strokeColor = colors.strokes[idx % colors.strokes.length];
 
-  return CustomPaint({
+  // Hover opacity
+  const { hoveredPoint } = ctx;
+  let opacity = 1;
+  if (hoveredPoint != null) {
+    opacity = hoveredPoint.legend === legend ? 1 : 0.3;
+  }
+
+  const paint = CustomPaint({
     key: legend,
     painter: {
       shouldRepaint: () => true,
@@ -89,6 +97,8 @@ export function agArea(
       },
     },
   });
+
+  return opacity < 1 ? Opacity({ opacity, child: paint }) : paint;
 }
 
 function createLinePath({

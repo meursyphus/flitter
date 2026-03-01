@@ -4,6 +4,7 @@ import type { StackedAreaChartCustom, StackedAreaChartData, StackedAreaChartScal
 export class StackedAreaChartController extends ChangeNotifier {
   #rawData: StackedAreaChartData;
   #hiddenSeries: Set<string> = new Set();
+  #hoveredPoint: { index: number; legend: string } | null = null;
   #scale: StackedAreaChartScale | null = null;
   #getScale: GetScaleFn;
   #getScaleOptions: GetScaleOptionsFn | null;
@@ -130,5 +131,28 @@ export class StackedAreaChartController extends ChangeNotifier {
     this.#hiddenSeries.clear();
     this.#recalcScale();
     this.notifyListeners();
+  }
+
+  // --- hover ---
+
+  get hoveredPoint(): { index: number; legend: string } | null {
+    return this.#hoveredPoint;
+  }
+
+  hoverPoint(index: number, legend: string): void {
+    this.#hoveredPoint = { index, legend };
+    this.notifyListeners();
+  }
+
+  unhoverPoint(): void {
+    if (this.#hoveredPoint === null) return;
+    this.#hoveredPoint = null;
+    this.notifyListeners();
+  }
+
+  isPointHovered(index: number, legend: string): boolean {
+    return (
+      this.#hoveredPoint?.index === index && this.#hoveredPoint?.legend === legend
+    );
   }
 }
