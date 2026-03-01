@@ -82,7 +82,7 @@ export const defaultAgBaseConfig: AgBaseConfig = {
   },
   legend: { visible: true, position: "bottom", gap: 16, color: "#585858" },
   axis: {
-    color: "#cccccc",
+    color: "#8a8c8c",
     thickness: 1,
     label: { color: "#585858", fontSize: 13, gap: 11, format: (name) => name },
     tick: { enabled: false, size: 6 },
