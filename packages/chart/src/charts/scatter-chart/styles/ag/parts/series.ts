@@ -8,7 +8,6 @@ export function agSeries(
   const children = points.map((pt) => {
     const normX = (pt.x - scale.x.min) / (scale.x.max - scale.x.min);
     const normY = (pt.y - scale.y.min) / (scale.y.max - scale.y.min);
-
     const alignmentX = normX * 2 - 1;
     const alignmentY = 1 - normY * 2;
 
@@ -16,11 +15,7 @@ export function agSeries(
       key: `${pt.legend}-${pt.label}`,
       alignment: new Alignment({ x: alignmentX, y: alignmentY }),
       child: context.custom.scatter(
-        {
-          label: pt.label,
-          legend: pt.legend,
-          index: pt.index,
-        },
+        { label: pt.label, legend: pt.legend, index: pt.index },
         context,
       ),
     });

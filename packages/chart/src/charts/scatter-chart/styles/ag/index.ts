@@ -5,6 +5,7 @@ import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { agScatter } from "./parts/scatter";
 import { agSeries } from "./parts/series";
+import { ScatterTooltipOverlay } from "./parts/tooltip-overlay";
 import {
   agLayout,
   agTitle,
@@ -30,7 +31,11 @@ export { type AgScatterChartConfig } from "./config";
 const agCustom: Partial<ScatterChartCustom<AgScatterChartConfig>> = {
   layout: agLayout,
   scatter: agScatter,
-  series: agSeries,
+  series: (args, context) =>
+    ScatterTooltipOverlay({
+      child: agSeries(args, context),
+      config: context.config,
+    }),
   legend: (args, context) => agLegend(args, context, { markerShape: "circle" }),
   title: agTitle,
   axisCorner: agAxisCorner,

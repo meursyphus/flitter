@@ -13,6 +13,7 @@ export function agBubble(
   const { colors, bubble: bubbleConfig } = ctx.config;
   const idx = ctx.legends.indexOf(legend);
   const fillColor = colors.fills[idx % colors.fills.length];
+  const { hoveredBubble } = ctx;
 
   const { scale } = ctx;
   const normValue = scale != null
@@ -20,15 +21,26 @@ export function agBubble(
     : 0.5;
   const radius = bubbleConfig.minRadius + normValue * (bubbleConfig.maxRadius - bubbleConfig.minRadius);
 
-  return Opacity({
-    opacity: bubbleConfig.opacity,
-    child: Container({
-      width: radius * 2,
-      height: radius * 2,
-      decoration: new BoxDecoration({
-        color: fillColor,
-        shape: "circle",
-      }),
+  // Hovered bubble gets full opacity; others use base × hover
+  let finalOpacity = bubbleConfig.opacity;
+  if (hoveredBubble != null) {
+    if (ctx.isBubbleHovered(index, legend)) {
+      finalOpacity = 1;
+    } else if (hoveredBubble.legend === legend) {
+      finalOpacity = bubbleConfig.opacity * 0.8;
+    } else {
+      finalOpacity = bubbleConfig.opacity * 0.3;
+    }
+  }
+
+  const bubble = Container({
+    width: radius * 2,
+    height: radius * 2,
+    decoration: new BoxDecoration({
+      color: fillColor,
+      shape: "circle",
     }),
   });
+
+  return finalOpacity < 1 ? Opacity({ opacity: finalOpacity, child: bubble }) : bubble;
 }

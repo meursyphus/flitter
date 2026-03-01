@@ -5,6 +5,7 @@ import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { agBubble } from "./parts/bubble";
 import { agSeries } from "./parts/series";
+import { BubbleTooltipOverlay } from "./parts/tooltip-overlay";
 import {
   agLayout,
   agTitle,
@@ -30,7 +31,11 @@ export { type AgBubbleChartConfig } from "./config";
 const agCustom: Partial<BubbleChartCustom<AgBubbleChartConfig>> = {
   layout: agLayout,
   bubble: agBubble,
-  series: agSeries,
+  series: (args, context) =>
+    BubbleTooltipOverlay({
+      child: agSeries(args, context),
+      config: context.config,
+    }),
   legend: (args, context) => agLegend(args, context, { markerShape: "circle" }),
   title: agTitle,
   axisCorner: agAxisCorner,
