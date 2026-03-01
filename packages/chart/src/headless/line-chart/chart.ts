@@ -96,7 +96,7 @@ class XAxis extends Axis {
       },
       ctx,
     );
-    return ctx.custom.xAxisBox({ child: axis }, ctx);
+    return axis;
   }
 }
 
@@ -120,7 +120,7 @@ class YAxis extends Axis {
       },
       ctx,
     );
-    return ctx.custom.yAxisBox({ child: axis }, ctx);
+    return axis;
   }
 }
 

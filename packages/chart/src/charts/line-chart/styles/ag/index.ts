@@ -22,8 +22,6 @@ import {
   agAxisCorner,
   agXAxis,
   agYAxis,
-  agXAxisBox,
-  agYAxisBox,
   agScaleOptions,
 } from "@shared/styles/ag";
 
@@ -52,8 +50,6 @@ const agCustom: Partial<LineChartCustom<AgLineChartConfig>> = {
     agXAxis(args, { type: "value" }, context),
   yAxis: (args, context) =>
     agYAxis(args, { type: "value" }, context),
-  xAxisBox: agXAxisBox,
-  yAxisBox: agYAxisBox,
 };
 
 const agGetScaleOptions: GetScaleOptionsFn = (ctx) =>

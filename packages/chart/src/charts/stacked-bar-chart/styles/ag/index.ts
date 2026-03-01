@@ -22,8 +22,6 @@ import {
   agAxisCorner,
   agXAxis,
   agYAxis,
-  agXAxisBox,
-  agYAxisBox,
   agScaleOptions,
   AgTooltipOverlay,
 } from "@shared/styles/ag";
@@ -54,8 +52,6 @@ const agCustom: Partial<BarChartCustom<AgStackedBarChartConfig>> = {
     agXAxis(args, { type: context.direction === "vertical" ? "label" : "value" }, context),
   yAxis: (args, context) =>
     agYAxis(args, { type: context.direction === "vertical" ? "value" : "label" }, context),
-  xAxisBox: agXAxisBox,
-  yAxisBox: agYAxisBox,
 };
 
 const agGetScaleOptions: GetScaleOptionsFn = (ctx) =>

@@ -30,9 +30,7 @@ export type ScatterChartScale = {
 export type ScatterChartCustom<TConfig = {}> = {
 	scatter: CustomArgs<{ label: string; legend: string; index: number }, TConfig>;
 	xAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
-	xAxisBox: CustomArgs<{ child: Widget }, TConfig>;
 	yAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
-	yAxisBox: CustomArgs<{ child: Widget }, TConfig>;
 	xAxisLabel: CustomArgs<{ name: string; index: number }, TConfig>;
 	yAxisLabel: CustomArgs<{ name: string; index: number }, TConfig>;
 	xAxisTick: CustomArgs<undefined, TConfig>;

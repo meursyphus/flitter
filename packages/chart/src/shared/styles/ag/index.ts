@@ -9,8 +9,6 @@ export { agLegend } from "./legend";
 export { agLayout } from "./layout";
 export { agXAxis } from "./x-axis";
 export { agYAxis } from "./y-axis";
-export { agXAxisBox } from "./x-axis-box";
-export { agYAxisBox } from "./y-axis-box";
 export { tooltipContent as agTooltipContent } from "./tooltip";
 export { AgTooltipOverlay } from "./tooltip-overlay";
 

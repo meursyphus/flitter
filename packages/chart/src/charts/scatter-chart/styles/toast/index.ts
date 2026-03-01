@@ -20,8 +20,6 @@ import {
   toastAxisCorner,
   toastXAxis,
   toastYAxis,
-  toastXAxisBox,
-  toastYAxisBox,
   toastScaleOptions,
 } from "@shared/styles/toast";
 
@@ -44,8 +42,6 @@ const toastCustom: Partial<ScatterChartCustom<ToastScatterChartConfig>> = {
   gridYLine: toastGridYLine,
   xAxis: (args, context) => toastXAxis(args, { type: "value" }, context),
   yAxis: (args, context) => toastYAxis(args, { type: "value" }, context),
-  xAxisBox: toastXAxisBox,
-  yAxisBox: toastYAxisBox,
 };
 
 const toastGetScaleOptions: GetScaleOptionsFn = (ctx) =>

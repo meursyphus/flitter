@@ -22,8 +22,6 @@ import {
   toastAxisCorner,
   toastXAxis,
   toastYAxis,
-  toastXAxisBox,
-  toastYAxisBox,
   toastScaleOptions,
 } from "@shared/styles/toast";
 
@@ -49,8 +47,6 @@ const toastCustom: Partial<BarChartCustom<ToastStackedBarChartConfig>> = {
     toastXAxis(args, { type: context.direction === "vertical" ? "label" : "value" }, context),
   yAxis: (args, context) =>
     toastYAxis(args, { type: context.direction === "vertical" ? "value" : "label" }, context),
-  xAxisBox: toastXAxisBox,
-  yAxisBox: toastYAxisBox,
 };
 
 const toastGetScaleOptions: GetScaleOptionsFn = (ctx) =>

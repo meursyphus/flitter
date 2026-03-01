@@ -19,8 +19,6 @@ const baseDefaults: Partial<StackedAreaChartCustom> = {
   plot: (...args) => Cartesian.Plot(args[0]),
   dataLabel: (...args) => Cartesian.DataLabel(args[0]),
   grid: Grid,
-  xAxisBox: (...[{ child }]) => child,
-  yAxisBox: (...[{ child }]) => child,
 };
 
 const defaultGetScale: GetScaleFn = ({ datasets }, options) => {

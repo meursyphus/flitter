@@ -21,8 +21,6 @@ import {
   agAxisCorner,
   agXAxis,
   agYAxis,
-  agXAxisBox,
-  agYAxisBox,
   agScaleOptions,
 } from "@shared/styles/ag";
 
@@ -49,8 +47,6 @@ const agCustom: Partial<BubbleChartCustom<AgBubbleChartConfig>> = {
   gridYLine: agGridYLine,
   xAxis: (args, context) => agXAxis(args, { type: "value" }, context),
   yAxis: (args, context) => agYAxis(args, { type: "value" }, context),
-  xAxisBox: agXAxisBox,
-  yAxisBox: agYAxisBox,
 };
 
 const agGetScaleOptions: GetScaleOptionsFn = (ctx) =>

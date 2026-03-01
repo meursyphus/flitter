@@ -7,9 +7,7 @@ export type StackedAreaChartContext<TConfig = {}> = StackedAreaChartController &
 
 export type StackedAreaChartCustom<TConfig = {}> = {
 	xAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
-	xAxisBox: CustomArgs<{ child: Widget }, TConfig>;
 	yAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
-	yAxisBox: CustomArgs<{ child: Widget }, TConfig>;
 	xAxisLabel: CustomArgs<{ name: string; index: number }, TConfig>;
 	yAxisLabel: CustomArgs<{ name: string; index: number }, TConfig>;
 	xAxisTick: CustomArgs<undefined, TConfig>;

@@ -94,7 +94,7 @@ class XAxis extends StatelessWidget {
     const { scale } = ctx;
     if (scale == null) {
       const axis = ctx.custom.xAxis({ labels: [], tick: new XAxisTick(), line: new XAxisLine() }, ctx);
-      return ctx.custom.xAxisBox({ child: axis }, ctx);
+      return axis;
     }
 
     const xSteps = (scale.x.max - scale.x.min) / scale.x.step;
@@ -111,7 +111,7 @@ class XAxis extends StatelessWidget {
       },
       ctx,
     );
-    return ctx.custom.xAxisBox({ child: axis }, ctx);
+    return axis;
   }
 }
 
@@ -121,7 +121,7 @@ class YAxis extends StatelessWidget {
     const { scale } = ctx;
     if (scale == null) {
       const axis = ctx.custom.yAxis({ labels: [], tick: new YAxisTick(), line: new YAxisLine() }, ctx);
-      return ctx.custom.yAxisBox({ child: axis }, ctx);
+      return axis;
     }
 
     const ySteps = (scale.y.max - scale.y.min) / scale.y.step;
@@ -138,7 +138,7 @@ class YAxis extends StatelessWidget {
       },
       ctx,
     );
-    return ctx.custom.yAxisBox({ child: axis }, ctx);
+    return axis;
   }
 }
 
