@@ -9,14 +9,7 @@ import {
   Border,
   BoxShadow,
   GestureDetector,
-  Stack,
-  StackFit,
-  Positioned,
-  ConstraintsTransformBox,
-  FractionalTranslation,
-  Offset,
-  SizedBox,
-  Alignment,
+  Tooltip,
   type Widget,
 } from "flitter-core";
 import type { BarChartContext } from "@headless/bar-chart/types";
@@ -85,52 +78,33 @@ class _HoverableBarState extends State<_HoverableBar> {
       ? new BoxDecoration({
           color,
           borderRadius,
-          border: Border.all({ color: "white", width: 2 }),
+          border: Border.all({ color: "white", width: 2, strokeAlign: -1 }),
           boxShadow: [
             new BoxShadow({ color: "rgba(0,0,0,0.3)", blurRadius: 8 }),
           ],
         })
       : new BoxDecoration({ color, borderRadius });
 
-    const bar = Container({
-      margin: EdgeInsets.symmetric({ horizontal: gap }),
-      decoration,
-    });
-
-    return Stack({
-      fit: StackFit.passthrough,
-      clipped: false,
-      children: [
-        GestureDetector({
-          cursor: "pointer",
-          child: bar,
-          onMouseEnter: () => {
-            this.setState(() => {
-              this.hovered = true;
-            });
-          },
-          onMouseLeave: () => {
-            this.setState(() => {
-              this.hovered = false;
-            });
-          },
+    return Tooltip({
+      position: tooltipPosition,
+      tooltip: tooltip,
+      child: GestureDetector({
+        cursor: "pointer",
+        child: Container({
+          margin: EdgeInsets.symmetric({ horizontal: gap }),
+          decoration,
         }),
-        this.hovered
-          ? Positioned.fill({
-              child: ConstraintsTransformBox({
-                constraintsTransform: ConstraintsTransformBox.unconstrained,
-                alignment: Alignment[tooltipPosition],
-                child: FractionalTranslation({
-                  translation:
-                    tooltipPosition === "topCenter"
-                      ? new Offset({ x: 0, y: -1 })
-                      : new Offset({ x: 1, y: 0 }),
-                  child: tooltip,
-                }),
-              }),
-            })
-          : SizedBox.shrink(),
-      ],
+        onMouseEnter: () => {
+          this.setState(() => {
+            this.hovered = true;
+          });
+        },
+        onMouseLeave: () => {
+          this.setState(() => {
+            this.hovered = false;
+          });
+        },
+      }),
     });
   }
 }
