@@ -67,8 +67,10 @@ class _MountRevealBarGroupState extends State<_MountRevealBarGroup> {
   override build() {
     const { child, isVertical, baselineRatio } = this.widget;
     const t = this.tweenAnimation.value;
+    const done = t >= 1;
 
     return ClipRect({
+      clipped: !done,
       clipper: (size) => {
         if (isVertical) {
           const baselineY = size.height * (1 - baselineRatio);
