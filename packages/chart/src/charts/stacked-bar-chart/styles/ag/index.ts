@@ -25,12 +25,17 @@ import {
   agXAxisBox,
   agYAxisBox,
   agScaleOptions,
+  AgTooltipOverlay,
 } from "@shared/styles/ag";
 
 export { type AgStackedBarChartConfig } from "./config";
 
 const agCustom: Partial<BarChartCustom<AgStackedBarChartConfig>> = {
-  layout: agLayout,
+  layout: (args, context) =>
+    agLayout(
+      { ...args, plot: AgTooltipOverlay({ child: args.plot, config: context.config }) },
+      context,
+    ),
   bar: agBar,
   barGroupBox: agBarGroupBox,
   barBox: agBarBox,

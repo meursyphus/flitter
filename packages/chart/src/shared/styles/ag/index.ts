@@ -12,6 +12,7 @@ export { agYAxis } from "./y-axis";
 export { agXAxisBox } from "./x-axis-box";
 export { agYAxisBox } from "./y-axis-box";
 export { tooltipContent as agTooltipContent } from "./tooltip";
+export { AgTooltipOverlay } from "./tooltip-overlay";
 
 const DEFAULT_TICK_SPACING = 160;
 

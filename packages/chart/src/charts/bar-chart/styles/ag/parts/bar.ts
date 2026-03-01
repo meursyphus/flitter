@@ -25,7 +25,7 @@ export function agBar(
     } else if (hoveredBar.legend === legend) {
       opacity = 0.8;
     } else {
-      opacity = 0.5;
+      opacity = 0.3;
     }
   }
 
@@ -37,7 +37,6 @@ export function agBar(
   return GestureDetector({
     cursor: "default",
     onMouseEnter: () => context.hoverBar(index, legend),
-    onMouseLeave: () => context.unhoverBar(),
     child: opacity < 1
       ? Opacity({ opacity, child: barWidget })
       : barWidget,

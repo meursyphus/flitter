@@ -14,15 +14,20 @@ import {
   Radius,
   MainAxisSize,
   CrossAxisAlignment,
+  Transform,
+  Offset,
   type Widget,
 } from "flitter-core";
 import type { AgBaseConfig } from "./config";
+import { tooltipArrow } from "./tooltip-arrow";
+
+const ARROW_WIDTH = 16;
+const ARROW_HEIGHT = 8;
 
 /**
- * AG Charts tooltip: white background, border, shadow.
- * Different from toast (which uses dark semi-transparent bg).
+ * Tooltip box: white background, border, shadow.
  */
-export function tooltipContent({
+function tooltipBox({
   label,
   legend,
   color,
@@ -95,5 +100,42 @@ export function tooltipContent({
         }),
       ],
     }),
+  });
+}
+
+/**
+ * AG Charts tooltip with downward-pointing arrow.
+ * The arrow overlaps the tooltip border by 1px for a seamless look.
+ */
+export function tooltipContent({
+  label,
+  legend,
+  color,
+  value,
+  config,
+}: {
+  label: string;
+  legend: string;
+  color: string;
+  value: number;
+  config: AgBaseConfig;
+}): Widget {
+  const { tooltip } = config;
+
+  return Column({
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      tooltipBox({ label, legend, color, value, config }),
+      Transform.translate({
+        offset: new Offset({ x: 0, y: -1 }),
+        child: tooltipArrow({
+          width: ARROW_WIDTH,
+          height: ARROW_HEIGHT,
+          fillColor: tooltip.backgroundColor,
+          borderColor: tooltip.borderColor,
+        }),
+      }),
+    ],
   });
 }
