@@ -57,12 +57,24 @@ export * from "./_todo/treemap-chart/types";
 
 export { default as FunnelChart } from "./_todo/funnel-chart";
 export * from "./_todo/funnel-chart/types";
-export { default as RadarChart } from "./_todo/radar-chart";
-export * from "./_todo/radar-chart/types";
+export { default as RadarChart } from "./radar-chart";
+export type {
+	RadarChartContext,
+	RadarChartCustom,
+	RadarChartData,
+	RadarChartScale,
+	GetScaleFn as RadarChartGetScaleFn,
+} from "./radar-chart/types";
+export { RadarChartController } from "./radar-chart/controller";
 export { default as GaugeChart } from "./_todo/gauge-chart";
 export * from "./_todo/gauge-chart/types";
-export { default as PieChart } from "./_todo/pie-chart";
-export * from "./_todo/pie-chart/types";
+export { default as PieChart } from "./pie-chart";
+export type {
+	PieChartContext,
+	PieChartCustom,
+	PieChartData,
+} from "./pie-chart/types";
+export { PieChartController } from "./pie-chart/controller";
 export { default as SunburstChart } from "./_todo/sunburst-chart";
 export * from "./_todo/sunburst-chart/types";
 export { default as CandlestickChart } from "./_todo/candlestick-chart";

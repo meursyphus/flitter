@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
+import FlitterLogo from "./FlitterLogo";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -13,7 +14,8 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-50 border-b border-neutral-200 bg-white/80 backdrop-blur-md">
         <div className="flex h-14 items-center justify-between px-5">
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center gap-2">
+            <FlitterLogo size={22} />
             <span className="text-[22px] font-bold tracking-tight text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
               flitter
             </span>

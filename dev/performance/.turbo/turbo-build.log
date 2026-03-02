@@ -4,74 +4,81 @@
 
 vite v5.4.21 building SSR bundle for production...
 transforming...
-../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_a964f82c25af8adc1501ac6228c28764/node_modules/@sveltejs/kit/src/runtime/client/client.js (6:23): "untrack" is not exported by "../../node_modules/.pnpm/svelte@4.2.20/node_modules/svelte/src/runtime/ssr.js", imported by "../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_a964f82c25af8adc1501ac6228c28764/node_modules/@sveltejs/kit/src/runtime/client/client.js".
-../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_a964f82c25af8adc1501ac6228c28764/node_modules/@sveltejs/kit/src/runtime/client/client.js (333:26): "fork" is not exported by "../../node_modules/.pnpm/svelte@4.2.20/node_modules/svelte/src/runtime/ssr.js", imported by "../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_a964f82c25af8adc1501ac6228c28764/node_modules/@sveltejs/kit/src/runtime/client/client.js".
-../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_a964f82c25af8adc1501ac6228c28764/node_modules/@sveltejs/kit/src/runtime/client/client.js (1176:30): "settled" is not exported by "../../node_modules/.pnpm/svelte@4.2.20/node_modules/svelte/src/runtime/ssr.js", imported by "../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_a964f82c25af8adc1501ac6228c28764/node_modules/@sveltejs/kit/src/runtime/client/client.js".
-✓ 416 modules transformed.
+../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_520dc1edeb043b118c1b82495ef175bc/node_modules/@sveltejs/kit/src/runtime/client/client.js (6:23): "untrack" is not exported by "../../node_modules/.pnpm/svelte@4.2.20/node_modules/svelte/src/runtime/ssr.js", imported by "../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_520dc1edeb043b118c1b82495ef175bc/node_modules/@sveltejs/kit/src/runtime/client/client.js".
+../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_520dc1edeb043b118c1b82495ef175bc/node_modules/@sveltejs/kit/src/runtime/client/client.js (333:26): "fork" is not exported by "../../node_modules/.pnpm/svelte@4.2.20/node_modules/svelte/src/runtime/ssr.js", imported by "../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_520dc1edeb043b118c1b82495ef175bc/node_modules/@sveltejs/kit/src/runtime/client/client.js".
+../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_520dc1edeb043b118c1b82495ef175bc/node_modules/@sveltejs/kit/src/runtime/client/client.js (1176:30): "settled" is not exported by "../../node_modules/.pnpm/svelte@4.2.20/node_modules/svelte/src/runtime/ssr.js", imported by "../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_520dc1edeb043b118c1b82495ef175bc/node_modules/@sveltejs/kit/src/runtime/client/client.js".
+✓ 625 modules transformed.
+Export "default" of module "../../packages/core/src/component/Tooltip.ts" was reexported through module "../../packages/core/src/component/index.ts" while both modules are dependencies of each other and will end up in different chunks by current Rollup settings. This scenario is not well supported at the moment as it will produce a circular dependency between chunks and will likely lead to broken execution order.
+Either change the import in "src/routes/interaction/hover-effect/+page.svelte" to point directly to the exporting module or reconfigure "output.manualChunks" to ensure these modules end up in the same chunk.
 rendering chunks...
 vite v5.4.21 building for production...
 transforming...
 [plugin:vite:resolve] [plugin vite:resolve] Module "perf_hooks" has been externalized for browser compatibility, imported by "/Users/moon/work/flitter/node_modules/.pnpm/linkedom@0.14.26/node_modules/linkedom/commonjs/perf_hooks.cjs". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
 [plugin:vite:resolve] [plugin vite:resolve] Module "perf_hooks" has been externalized for browser compatibility, imported by "/Users/moon/work/flitter/node_modules/.pnpm/linkedom@0.14.26/node_modules/linkedom/commonjs/perf_hooks.cjs". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
-../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_a964f82c25af8adc1501ac6228c28764/node_modules/@sveltejs/kit/src/runtime/client/client.js (5:23): "untrack" is not exported by "../../node_modules/.pnpm/svelte@4.2.20/node_modules/svelte/src/runtime/index.js", imported by "../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_a964f82c25af8adc1501ac6228c28764/node_modules/@sveltejs/kit/src/runtime/client/client.js".
-../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_a964f82c25af8adc1501ac6228c28764/node_modules/@sveltejs/kit/src/runtime/client/client.js (332:26): "fork" is not exported by "../../node_modules/.pnpm/svelte@4.2.20/node_modules/svelte/src/runtime/index.js", imported by "../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_a964f82c25af8adc1501ac6228c28764/node_modules/@sveltejs/kit/src/runtime/client/client.js".
-../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_a964f82c25af8adc1501ac6228c28764/node_modules/@sveltejs/kit/src/runtime/client/client.js (1175:30): "settled" is not exported by "../../node_modules/.pnpm/svelte@4.2.20/node_modules/svelte/src/runtime/index.js", imported by "../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_a964f82c25af8adc1501ac6228c28764/node_modules/@sveltejs/kit/src/runtime/client/client.js".
-✓ 387 modules transformed.
+../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_520dc1edeb043b118c1b82495ef175bc/node_modules/@sveltejs/kit/src/runtime/client/client.js (5:23): "untrack" is not exported by "../../node_modules/.pnpm/svelte@4.2.20/node_modules/svelte/src/runtime/index.js", imported by "../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_520dc1edeb043b118c1b82495ef175bc/node_modules/@sveltejs/kit/src/runtime/client/client.js".
+../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_520dc1edeb043b118c1b82495ef175bc/node_modules/@sveltejs/kit/src/runtime/client/client.js (332:26): "fork" is not exported by "../../node_modules/.pnpm/svelte@4.2.20/node_modules/svelte/src/runtime/index.js", imported by "../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_520dc1edeb043b118c1b82495ef175bc/node_modules/@sveltejs/kit/src/runtime/client/client.js".
+../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_520dc1edeb043b118c1b82495ef175bc/node_modules/@sveltejs/kit/src/runtime/client/client.js (1175:30): "settled" is not exported by "../../node_modules/.pnpm/svelte@4.2.20/node_modules/svelte/src/runtime/index.js", imported by "../../node_modules/.pnpm/@sveltejs+kit@2.53.0_@sveltejs+vite-plugin-svelte@3.1.2_svelte@4.2.20_vite@5.4.21_@type_520dc1edeb043b118c1b82495ef175bc/node_modules/@sveltejs/kit/src/runtime/client/client.js".
+✓ 596 modules transformed.
+Export "default" of module "../../packages/core/src/component/Tooltip.ts" was reexported through module "../../packages/core/src/component/index.ts" while both modules are dependencies of each other and will end up in different chunks by current Rollup settings. This scenario is not well supported at the moment as it will produce a circular dependency between chunks and will likely lead to broken execution order.
+Either change the import in "src/routes/interaction/hover-effect/+page.svelte" to point directly to the exporting module or reconfigure "output.manualChunks" to ensure these modules end up in the same chunk.
 rendering chunks...
 computing gzip size...
 .svelte-kit/output/client/_app/version.json                            0.03 kB │ gzip:   0.05 kB
-.svelte-kit/output/client/.vite/manifest.json                          6.02 kB │ gzip:   0.82 kB
+.svelte-kit/output/client/.vite/manifest.json                          6.45 kB │ gzip:   0.87 kB
 .svelte-kit/output/client/_app/immutable/assets/9.C1FyH9La.css         0.05 kB │ gzip:   0.07 kB
 .svelte-kit/output/client/_app/immutable/assets/Widget.CRY69j9W.css    0.11 kB │ gzip:   0.09 kB
 .svelte-kit/output/client/_app/immutable/assets/10.CZXgJ_ea.css        0.15 kB │ gzip:   0.14 kB
-.svelte-kit/output/client/_app/immutable/entry/start.76-3uFCg.js       0.08 kB │ gzip:   0.09 kB
+.svelte-kit/output/client/_app/immutable/entry/start.CD-EU9Ng.js       0.08 kB │ gzip:   0.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/BEPZq0uR.js            0.18 kB │ gzip:   0.15 kB
 .svelte-kit/output/client/_app/immutable/nodes/0.BEvZe3Gx.js           0.58 kB │ gzip:   0.38 kB
-.svelte-kit/output/client/_app/immutable/nodes/5.FgbhSGkR.js           0.58 kB │ gzip:   0.37 kB
+.svelte-kit/output/client/_app/immutable/nodes/5.Dh3mpohC.js           0.61 kB │ gzip:   0.37 kB
 .svelte-kit/output/client/_app/immutable/nodes/3.DKMBncbT.js           0.91 kB │ gzip:   0.51 kB
-.svelte-kit/output/client/_app/immutable/nodes/1.DleYfkSj.js           1.00 kB │ gzip:   0.58 kB
-.svelte-kit/output/client/_app/immutable/nodes/8.BNJ1udkK.js           1.07 kB │ gzip:   0.62 kB
-.svelte-kit/output/client/_app/immutable/nodes/4.Bt31dbHf.js           1.08 kB │ gzip:   0.62 kB
-.svelte-kit/output/client/_app/immutable/nodes/6.Bt31dbHf.js           1.08 kB │ gzip:   0.62 kB
-.svelte-kit/output/client/_app/immutable/nodes/7.BMZKBoiq.js           1.11 kB │ gzip:   0.64 kB
+.svelte-kit/output/client/_app/immutable/nodes/1.B994O19t.js           1.00 kB │ gzip:   0.58 kB
+.svelte-kit/output/client/_app/immutable/nodes/8.Bl4hCBp7.js           1.10 kB │ gzip:   0.63 kB
+.svelte-kit/output/client/_app/immutable/nodes/4.B3QLjMzk.js           1.12 kB │ gzip:   0.63 kB
+.svelte-kit/output/client/_app/immutable/nodes/6.B3QLjMzk.js           1.12 kB │ gzip:   0.63 kB
+.svelte-kit/output/client/_app/immutable/nodes/7.bdlX_eZ5.js           1.14 kB │ gzip:   0.64 kB
 .svelte-kit/output/client/_app/immutable/nodes/2.BFOJjByx.js           1.18 kB │ gzip:   0.70 kB
 .svelte-kit/output/client/_app/immutable/chunks/B2QSKqcC.js            1.96 kB │ gzip:   0.94 kB
 .svelte-kit/output/client/_app/immutable/chunks/LfBNsOeO.js            6.90 kB │ gzip:   2.82 kB
-.svelte-kit/output/client/_app/immutable/entry/app.BtsTXxzI.js         7.78 kB │ gzip:   2.96 kB
-.svelte-kit/output/client/_app/immutable/nodes/9.DKRC6rne.js          20.09 kB │ gzip:   5.93 kB
-.svelte-kit/output/client/_app/immutable/chunks/CmgL7XMA.js           32.23 kB │ gzip:  12.47 kB
-.svelte-kit/output/client/_app/immutable/nodes/10.BRKGGv18.js         48.74 kB │ gzip:  11.80 kB
-.svelte-kit/output/client/_app/immutable/chunks/HUKZueio.js          420.06 kB │ gzip: 116.88 kB
-✓ built in 703ms
-.svelte-kit/output/server/.vite/manifest.json                                                            7.77 kB
+.svelte-kit/output/client/_app/immutable/entry/app.BT0sBZdT.js         7.85 kB │ gzip:   2.99 kB
+.svelte-kit/output/client/_app/immutable/chunks/DeoKiCBU.js           30.82 kB │ gzip:   7.60 kB
+.svelte-kit/output/client/_app/immutable/chunks/Caj_njcy.js           32.23 kB │ gzip:  12.47 kB
+.svelte-kit/output/client/_app/immutable/nodes/10.BQqPiP4Z.js         49.83 kB │ gzip:  12.19 kB
+.svelte-kit/output/client/_app/immutable/nodes/9.BzGY2b5M.js          78.13 kB │ gzip:  20.56 kB
+.svelte-kit/output/client/_app/immutable/chunks/CeeW1_PA.js          379.64 kB │ gzip: 105.86 kB
+✓ built in 3.87s
+.svelte-kit/output/server/.vite/manifest.json                                                            8.04 kB
 .svelte-kit/output/server/_app/immutable/assets/_page.C1FyH9La.css                                       0.05 kB
 .svelte-kit/output/server/_app/immutable/assets/Widget.CRY69j9W.css                                      0.11 kB
 .svelte-kit/output/server/_app/immutable/assets/_page.DgiOGeCc.css                                       0.12 kB
 .svelte-kit/output/server/chunks/ssr2.js                                                                 0.10 kB
 .svelte-kit/output/server/entries/fallbacks/layout.svelte.js                                             0.24 kB
+.svelte-kit/output/server/chunks/Center.js                                                               0.31 kB
 .svelte-kit/output/server/internal.js                                                                    0.33 kB
 .svelte-kit/output/server/chunks/escape.js                                                               0.53 kB
 .svelte-kit/output/server/chunks/environment.js                                                          0.62 kB
 .svelte-kit/output/server/entries/pages/interaction/_page.svelte.js                                      0.69 kB
-.svelte-kit/output/server/entries/pages/interaction/hover-effect/_page.svelte.js                         0.75 kB
+.svelte-kit/output/server/entries/pages/interaction/hover-effect/_page.svelte.js                         0.74 kB
 .svelte-kit/output/server/entries/pages/_page.svelte.js                                                  0.81 kB
 .svelte-kit/output/server/chunks/utils.js                                                                1.15 kB
 .svelte-kit/output/server/entries/pages/performance/diagram/_page.svelte.js                              1.38 kB
 .svelte-kit/output/server/entries/fallbacks/error.svelte.js                                              1.42 kB
-.svelte-kit/output/server/entries/pages/interaction/stop-bubbling-on-nest-child-click/_page.svelte.js    1.47 kB
-.svelte-kit/output/server/entries/pages/interaction/bubbling-on-nest-child-click/_page.svelte.js         1.50 kB
-.svelte-kit/output/server/entries/pages/interaction/number-change-on-click/_page.svelte.js               1.50 kB
-.svelte-kit/output/server/entries/pages/interaction/set-state-on-post-frame-callback/_page.svelte.js     1.50 kB
+.svelte-kit/output/server/entries/pages/interaction/stop-bubbling-on-nest-child-click/_page.svelte.js    1.43 kB
+.svelte-kit/output/server/entries/pages/interaction/bubbling-on-nest-child-click/_page.svelte.js         1.45 kB
+.svelte-kit/output/server/entries/pages/interaction/number-change-on-click/_page.svelte.js               1.45 kB
+.svelte-kit/output/server/entries/pages/interaction/set-state-on-post-frame-callback/_page.svelte.js     1.47 kB
 .svelte-kit/output/server/entries/pages/performance/_page.server.ts.js                                   2.74 kB
 .svelte-kit/output/server/chunks/ssr.js                                                                  2.91 kB
-.svelte-kit/output/server/chunks/Widget.js                                                               4.35 kB
 .svelte-kit/output/server/chunks/exports.js                                                              5.54 kB
 .svelte-kit/output/server/chunks/internal.js                                                             5.95 kB
 .svelte-kit/output/server/remote-entry.js                                                               18.94 kB
-.svelte-kit/output/server/entries/pages/performance/_page.svelte.js                                     34.77 kB
+.svelte-kit/output/server/chunks/Widget.js                                                              42.82 kB
 .svelte-kit/output/server/chunks/shared.js                                                              44.96 kB
 .svelte-kit/output/server/index.js                                                                     144.12 kB
-.svelte-kit/output/server/chunks/Widget.svelte_svelte_type_style_lang.js                               733.14 kB
-✓ built in 1.86s
+.svelte-kit/output/server/entries/pages/performance/_page.svelte.js                                    174.30 kB
+.svelte-kit/output/server/chunks/Widget.svelte_svelte_type_style_lang.js                               630.31 kB
+✓ built in 13.45s
 
 Run npm run preview to preview your production build locally.
 

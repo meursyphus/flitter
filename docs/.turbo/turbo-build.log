@@ -5,7 +5,7 @@
    ▲ Next.js 15.5.12
 
    Creating an optimized production build ...
- ✓ Compiled successfully in 7.3s
+ ✓ Compiled successfully in 16.7s
    Linting and checking validity of types ...
    Collecting page data ...
    Generating static pages (0/85) ...
@@ -19,7 +19,7 @@
  ✓ Exporting (2/2)
 
 Route (app)                                               Size  First Load JS
-┌ ○ /                                                    488 B         106 kB
+┌ ○ /                                                  2.29 kB         107 kB
 ├ ○ /_not-found                                          997 B         103 kB
 ├ ○ /advanced/animation                                  276 B         102 kB
 ├ ○ /advanced/custom-paint                               276 B         102 kB
@@ -79,7 +79,7 @@ Route (app)                                               Size  First Load JS
 ├ ○ /advanced/widgets/transform                          276 B         102 kB
 ├ ○ /advanced/widgets/unconstrained-box                  276 B         102 kB
 ├ ○ /advanced/widgets/z-index                            276 B         102 kB
-├ ○ /chart                                               164 B         105 kB
+├ ○ /chart                                               516 B         106 kB
 ├ ● /chart/[...slug]                                     164 B         105 kB
 ├   ├ /chart/bar-chart
 ├   ├ /chart/bar-chart/toast
