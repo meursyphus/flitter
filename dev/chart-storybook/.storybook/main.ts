@@ -16,6 +16,7 @@ const config: StorybookConfig = {
       ...config.resolve.alias,
       "flitter-chart": path.resolve(chartRoot, "src/index.ts"),
       "@shared": path.resolve(chartRoot, "src/shared"),
+      "@styles": path.resolve(chartRoot, "src/styles"),
       "@utils": path.resolve(chartRoot, "src/shared/utils"),
       "@headless": path.resolve(chartRoot, "src/headless"),
     };
