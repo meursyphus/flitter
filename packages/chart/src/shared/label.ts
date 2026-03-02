@@ -1,8 +1,7 @@
-import type { CartesianCustom } from "./types";
 import { Text, TextStyle, type Widget } from "flitter-core";
 
-export function YAxisLabel(
-  { name }: Parameters<CartesianCustom["yAxisLabel"]>[0],
+export function Label(
+  { name }: { name: string; index: number },
   {
     fontSize = 12,
     color = "black",
