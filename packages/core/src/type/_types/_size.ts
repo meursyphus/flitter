@@ -40,6 +40,15 @@ class Size {
     return Math.max(this.width, this.height);
   }
 
+  contains(offset: Offset): boolean {
+    return (
+      offset.x >= 0 &&
+      offset.x < this.width &&
+      offset.y >= 0 &&
+      offset.y < this.height
+    );
+  }
+
   minus(other: Size): Offset {
     return new Offset({
       x: this.width - other.width,

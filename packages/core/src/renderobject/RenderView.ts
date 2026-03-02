@@ -9,6 +9,7 @@ class RenderView extends RenderObject {
     super({ isPainter: false });
     this.renderOwner = renderOwner;
     this.renderOwner.renderView = this;
+    this.renderOwner.hitTestDispatcher.setRenderView(this);
     this.constraints = Constraints.tight({ width: 0, height: 0 });
   }
   preformLayout(): void {

@@ -1,5 +1,6 @@
 import type { Constraints } from "../type";
-import { Size } from "../type";
+import { Offset, Size } from "../type";
+import type { HitTestResult } from "../hit-test/HitTestResult";
 import RenderObject from "./RenderObject";
 
 /*
@@ -21,6 +22,17 @@ export class SingleChildRenderObject extends RenderObject {
 
   protected computeSizeForNoChild(constraints: Constraints) {
     return constraints.constrain(Size.zero);
+  }
+
+  override hitTestChildren(result: HitTestResult, position: Offset): boolean {
+    const child = this.child;
+    if (child == null) return false;
+    const childOffset = child.offset;
+    const childPosition = new Offset({
+      x: position.x - childOffset.x,
+      y: position.y - childOffset.y,
+    });
+    return child.hitTest(result, childPosition);
   }
 
   override getIntrinsicWidth(height: number): number {

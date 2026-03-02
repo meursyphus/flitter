@@ -1,10 +1,11 @@
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
-import type { Offset } from "../../type";
+import { Offset } from "../../type";
 import { Alignment, Matrix4, TextDirection } from "../../type";
 import { assert } from "../../utils";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 import { CanvasPainter, type CanvasPaintingContext } from "../../framework";
+import type { HitTestResult } from "../../hit-test/HitTestResult";
 
 class Transform extends SingleChildRenderObjectWidget {
   origin?: Offset;
@@ -237,6 +238,32 @@ class RenderTransform extends SingleChildRenderObject {
     result.translate(-effectiveOrigin.x, -effectiveOrigin.y);
 
     return result;
+  }
+
+  override hitTestChildren(result: HitTestResult, position: Offset): boolean {
+    const child = this.child;
+    if (child == null) return false;
+
+    const inverse = Matrix4.identity();
+    const det = inverse.copyInverse(this._effectiveTransform);
+    if (det === 0.0) return false;
+
+    const childOffset = child.offset;
+    const localPosition = new Offset({
+      x: position.x - childOffset.x,
+      y: position.y - childOffset.y,
+    });
+    const transformed = new Offset({
+      x:
+        inverse.storage[0] * localPosition.x +
+        inverse.storage[4] * localPosition.y +
+        inverse.storage[12],
+      y:
+        inverse.storage[1] * localPosition.x +
+        inverse.storage[5] * localPosition.y +
+        inverse.storage[13],
+    });
+    return child.hitTest(result, transformed);
   }
 
   override applyPaintTransform(transform: Matrix4): Matrix4 {

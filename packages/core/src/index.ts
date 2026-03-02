@@ -10,5 +10,6 @@ export * from "./animation";
 export * from "./listenable";
 export * from "./utils/type";
 export * from "./framework";
+export * from "./hit-test";
 import Utils from "./utils";
 export { Utils };

@@ -300,7 +300,6 @@ export class RenderGestureDetector extends SingleChildRenderObject {
   attach(ownerElement: RenderObjectElement): void {
     super.attach(ownerElement);
     this.addEventListeners();
-    this.renderOwner.hitTestDispatcher.addDetector(this);
   }
 
   dispose(): void {
@@ -311,7 +310,6 @@ export class RenderGestureDetector extends SingleChildRenderObject {
       globalDragBackend = null as any;
     }
     super.dispose();
-    this.renderOwner.hitTestDispatcher.removeDetector(this);
   }
 
   private removeEventListeners() {
@@ -333,27 +331,8 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     });
   }
 
-  hitTest({ globalPoint }: { globalPoint: Offset }): boolean {
-    const viewPort = this.renderOwner.renderContext.viewPort;
-    const { translation, scale } = viewPort;
-    const left = (this.paintTransform.storage[12] + translation.x) * scale;
-    const top = (this.paintTransform.storage[13] + translation.y) * scale;
-    const right = left + this.size.width * scale;
-    const bottom = top + this.size.height * scale;
-
-    return (
-      globalPoint.x >= left &&
-      globalPoint.x <= right &&
-      globalPoint.y >= top &&
-      globalPoint.y <= bottom
-    );
-  }
-
-  override updateZOrder(value: number) {
-    if (value !== this.zOrder) {
-      this.renderOwner.hitTestDispatcher.didZOrderChange();
-    }
-    super.updateZOrder(value);
+  override hitTestSelf(_position: Offset): boolean {
+    return true;
   }
 
   override accept(visitor: RenderObjectVisitor): void {

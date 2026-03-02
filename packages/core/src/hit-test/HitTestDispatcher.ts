@@ -1,6 +1,8 @@
 import type { RenderContext } from "../framework/renderer/renderer";
 import type { RenderGestureDetector } from "../component/base/BaseGestureDetector";
+import type { RenderObject } from "../renderobject/RenderObject";
 import { Offset } from "../type";
+import { HitTestResult } from "./HitTestResult";
 
 type EventHandlerType =
   | "onClick"
@@ -13,10 +15,9 @@ type EventHandlerType =
 
 export class HitTestDispatcher {
   #activated = typeof window !== "undefined";
-  #detectors: RenderGestureDetector[] = [];
   #rootPosition: Offset | null = null;
   #renderContext!: RenderContext;
-  #hitPosition: Offset = new Offset({ x: 0, y: 0 });
+  #renderView: RenderObject | null = null;
 
   init({ renderContext }: { renderContext: RenderContext }) {
     if (!this.#activated) return;
@@ -33,56 +34,55 @@ export class HitTestDispatcher {
     view.addEventListener("mouseleave", this.#handleMouseLeave);
   }
 
+  setRenderView(renderView: RenderObject) {
+    this.#renderView = renderView;
+  }
+
   #handleMouseDown = (e: Wrapped<MouseEvent>) => {
-    this.hitTest(e, "onMouseDown");
+    this.#dispatchEvent(e, "onMouseDown");
   };
 
   #handleClick = (e: Wrapped<MouseEvent>) => {
-    this.hitTest(e, "onClick");
+    this.#dispatchEvent(e, "onClick");
   };
 
-  #hitHistory: boolean[] = [];
+  #previousHits: Set<RenderGestureDetector> = new Set();
   #previousCursorDetector: RenderGestureDetector | null = null;
+
   #handleMouseMove = (e: Wrapped<MouseEvent>) => {
-    this.traceHitPosition(e);
-    this.hitTest(e, "onMouseMove");
+    const hitDetectors = this.#performHitTest(e);
 
-    // trigger mouseenter event
+    // dispatch onMouseMove
+    for (const detector of hitDetectors) {
+      if (e.isPropagationStopped) break;
+      detector.invokeCallback("onMouseMove", e);
+    }
+
+    const currentHits = new Set(hitDetectors);
+
+    // trigger mouseenter for newly hit detectors
     e.isPropagationStopped = false;
-    for (const i in this.#detectors) {
-      const detector = this.#detectors[i];
-      if (e.isPropagationStopped) return;
-      if (
-        !this.#hitHistory[i] &&
-        detector.hitTest({ globalPoint: this.#hitPosition })
-      ) {
-        detector.onMouseEnter(e);
+    for (const detector of hitDetectors) {
+      if (e.isPropagationStopped) break;
+      if (!this.#previousHits.has(detector)) {
+        detector.invokeCallback("onMouseEnter", e);
       }
     }
 
-    // trigger mouseleave event
+    // trigger mouseleave for previously hit detectors that are no longer hit
     e.isPropagationStopped = false;
-    for (const i in this.#detectors) {
-      const detector = this.#detectors[i];
-      if (e.isPropagationStopped) return;
-      if (
-        this.#hitHistory[i] &&
-        !detector.hitTest({ globalPoint: this.#hitPosition })
-      ) {
-        detector.onMouseLeave(e);
+    for (const detector of this.#previousHits) {
+      if (e.isPropagationStopped) break;
+      if (!currentHits.has(detector)) {
+        detector.invokeCallback("onMouseLeave", e);
       }
     }
 
-    this.#detectors.forEach((detector, i) => {
-      this.#hitHistory[i] = detector.hitTest({
-        globalPoint: this.#hitPosition,
-      });
-    });
+    this.#previousHits = currentHits;
 
-    // set cursor
-    const cursorDetectorIndex = this.#hitHistory.findIndex(hit => hit);
+    // set cursor based on topmost hit detector
     const cursorDetector: RenderGestureDetector | null =
-      this.#detectors[cursorDetectorIndex] ?? null;
+      hitDetectors[0] ?? null;
 
     if (cursorDetector !== this.#previousCursorDetector) {
       this.#previousCursorDetector = cursorDetector;
@@ -92,20 +92,11 @@ export class HitTestDispatcher {
   };
 
   #handleMouseUp = (e: Wrapped<MouseEvent>) => {
-    this.hitTest(e, "onMouseUp");
+    this.#dispatchEvent(e, "onMouseUp");
   };
 
   #handleMouseWheel = (e: Wrapped<WheelEvent>) => {
-    this.hitTest(e, "onWheel");
-    e.isPropagationStopped = false;
-
-    for (const detector of this.#detectors) {
-      if (e.isPropagationStopped) return;
-      if (!detector.hitTest({ globalPoint: this.#hitPosition })) continue;
-      detector.onMouseEnter(e);
-    }
-
-    e.isPropagationStopped = false;
+    this.#dispatchEvent(e, "onWheel");
   };
 
   #handleMouseEnter = () => {
@@ -116,21 +107,56 @@ export class HitTestDispatcher {
     });
   };
 
-  #handleMouseLeave = () => {
+  #handleMouseLeave = (e: MouseEvent) => {
+    // trigger mouseleave for all previously hit detectors
+    for (const detector of this.#previousHits) {
+      detector.invokeCallback("onMouseLeave", e);
+    }
+    this.#previousHits = new Set();
     this.#rootPosition = null;
+
+    if (this.#previousCursorDetector != null) {
+      this.#previousCursorDetector = null;
+      this.#renderContext.view.style.cursor = "default";
+    }
   };
 
-  traceHitPosition(e: MouseEvent) {
-    if (this.#rootPosition == null) return;
-    this.#hitPosition.x = e.clientX - this.#rootPosition.x;
-    this.#hitPosition.y = e.clientY - this.#rootPosition.y;
+  #convertToLocalPosition(e: MouseEvent): Offset {
+    if (this.#rootPosition == null) {
+      return new Offset({ x: 0, y: 0 });
+    }
+    const { translation, scale } = this.#renderContext.viewPort;
+    const domX = e.clientX - this.#rootPosition.x;
+    const domY = e.clientY - this.#rootPosition.y;
+    return new Offset({
+      x: domX / scale - translation.x,
+      y: domY / scale - translation.y,
+    });
   }
 
-  hitTest = (e: Wrapped<MouseEvent | WheelEvent>, type: EventHandlerType) => {
-    for (const detector of this.#detectors) {
-      if (e.isPropagationStopped) return;
-      if (!detector.hitTest({ globalPoint: this.#hitPosition })) continue;
+  #performHitTest(e: MouseEvent): RenderGestureDetector[] {
+    if (this.#renderView == null) return [];
+    const position = this.#convertToLocalPosition(e);
+    const result = new HitTestResult();
+    this.#renderView.hitTest(result, position);
 
+    // extract gesture detectors from result path (child-first order)
+    const detectors: RenderGestureDetector[] = [];
+    for (const entry of result.path) {
+      if (isGestureDetector(entry.target)) {
+        detectors.push(entry.target);
+      }
+    }
+    return detectors;
+  }
+
+  #dispatchEvent = (
+    e: Wrapped<MouseEvent | WheelEvent>,
+    type: EventHandlerType,
+  ) => {
+    const detectors = this.#performHitTest(e);
+    for (const detector of detectors) {
+      if (e.isPropagationStopped) return;
       detector.invokeCallback(type, e);
     }
   };
@@ -146,32 +172,12 @@ export class HitTestDispatcher {
       };
       return callback(wrapped);
     }) as EventListener;
+}
 
-  /**
-   * This code is for batch processing. The intention is not to perform the sorting operation every time this method is called,
-   * but rather to ensure that the sorting happens only once in a batch manner. This is achieved by wrapping the sorting logic
-   * inside a setTimeout, which defers the execution until the current call stack is clear, effectively coalescing multiple calls
-   * into a single operation.
-   */
-  #didDomOrderChangeState: "idle" | "processing" = "idle";
-  didZOrderChange() {
-    if (this.#didDomOrderChangeState === "processing") return;
-    this.#didDomOrderChangeState = "processing";
-    setTimeout(() => {
-      this.#detectors = this.#detectors.sort((a, b) => b.zOrder - a.zOrder);
-      this.#didDomOrderChangeState = "idle";
-    }, 0);
-  }
-
-  addDetector(detector: RenderGestureDetector) {
-    if (!this.#activated) return;
-    this.#detectors.push(detector);
-  }
-
-  removeDetector(detector: RenderGestureDetector) {
-    if (!this.#activated) return;
-    this.#detectors = this.#detectors.filter(d => d !== detector);
-  }
+function isGestureDetector(
+  target: RenderObject,
+): target is RenderGestureDetector {
+  return (target as any).isRenderGestureDetector === true;
 }
 
 type Wrapped<E extends Event> = E & { isPropagationStopped: boolean };

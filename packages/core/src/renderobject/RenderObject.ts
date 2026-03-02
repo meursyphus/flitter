@@ -3,6 +3,7 @@ import type { RenderObjectElement } from "../element";
 import { CanvasPainter, type RenderPipeline, SvgPainter } from "../framework";
 import { NotImplementedError } from "../exception";
 import type { RenderObjectVisitor } from "./RenderObjectVisitor";
+import { HitTestEntry, HitTestResult } from "../hit-test/HitTestResult";
 
 /*
   It does more things than flutters' RenderObject 
@@ -203,6 +204,34 @@ export class RenderObject {
     this.visitChildren(child => {
       child.updatePaintTransform(childPaintTransform);
     });
+  }
+
+  hitTest(result: HitTestResult, position: Offset): boolean {
+    if (this.size.contains(position)) {
+      if (this.hitTestChildren(result, position) || this.hitTestSelf(position)) {
+        result.add(new HitTestEntry(this));
+        return true;
+      }
+    }
+    return false;
+  }
+
+  hitTestChildren(result: HitTestResult, position: Offset): boolean {
+    const children = this.children;
+    for (let i = children.length - 1; i >= 0; i--) {
+      const child = children[i];
+      const childOffset = child.offset;
+      const childPosition = new Offset({
+        x: position.x - childOffset.x,
+        y: position.y - childOffset.y,
+      });
+      if (child.hitTest(result, childPosition)) return true;
+    }
+    return false;
+  }
+
+  hitTestSelf(_position: Offset): boolean {
+    return false;
   }
 
   #didChangePaintTransform(): void {
