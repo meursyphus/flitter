@@ -6,7 +6,7 @@ import { AG_FILLS, AG_STROKES } from "../utils";
  *
  * Modeled after AG Charts (ag-grid.com/charts) default theme.
  */
-export type AgBaseConfig = {
+export type AgCartesianBaseConfig = {
   background: string;
   colors: { fills: string[]; strokes: string[] };
   font: { family: string; size: number };
@@ -65,7 +65,7 @@ export type AgBaseConfig = {
   };
 };
 
-export const defaultAgBaseConfig: AgBaseConfig = {
+export const defaultAgCartesianBaseConfig: AgCartesianBaseConfig = {
   background: "white",
   colors: { fills: AG_FILLS, strokes: AG_STROKES },
   font: { family: "Verdana, sans-serif", size: 13 },

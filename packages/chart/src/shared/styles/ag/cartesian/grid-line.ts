@@ -1,5 +1,5 @@
 import { CustomPaint, SizedBox, Size, type Widget } from "flitter-core";
-import type { AgBaseConfig } from "./config";
+import type { AgCartesianBaseConfig } from "./config";
 
 /**
  * AG Charts uses dashed grid lines (unlike toast which uses solid lines).
@@ -8,7 +8,7 @@ import type { AgBaseConfig } from "./config";
 
 export function agGridXLine(
   args: undefined,
-  context: { config: AgBaseConfig },
+  context: { config: AgCartesianBaseConfig },
 ): Widget {
   const { grid } = context.config;
   if (!grid.xLine.visible) return SizedBox({ width: 0, height: 0 });
@@ -52,7 +52,7 @@ export function agGridXLine(
 
 export function agGridYLine(
   args: undefined,
-  context: { config: AgBaseConfig },
+  context: { config: AgCartesianBaseConfig },
 ): Widget {
   const { grid } = context.config;
   if (!grid.yLine.visible) return SizedBox({ width: 0, height: 0 });

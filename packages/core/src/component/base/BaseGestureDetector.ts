@@ -5,6 +5,9 @@ import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectW
 import type Widget from "../../widget/Widget";
 import type { Offset } from "../../type";
 import type { RenderObjectVisitor } from "../../renderobject/RenderObjectVisitor";
+import { HitTestEntry, HitTestResult } from "../../hit-test/HitTestResult";
+
+export type HitTestBehavior = "deferToChild" | "opaque" | "translucent";
 
 type Cursor =
   | "pointer"
@@ -72,6 +75,7 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
   onDragEnd: (e: MouseEvent) => void;
   onWheel: (e: WheelEvent) => void;
   cursor: Cursor;
+  behavior: HitTestBehavior;
   constructor({
     child,
     onClick,
@@ -87,6 +91,7 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
     onDragMove,
     onDragStart,
     onWheel,
+    behavior,
   }: {
     child?: Widget;
     onClick?: (e: MouseEvent) => void;
@@ -102,6 +107,7 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
     onWheel?: (e: WheelEvent) => void;
     cursor?: Cursor;
     key?: any;
+    behavior?: HitTestBehavior;
 
     /**
      * @deprecated
@@ -122,6 +128,7 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
     this.onDragEnd = onDragEnd ?? emptyCallback;
     this.onWheel = onWheel ?? emptyCallback;
     this.cursor = cursor ?? "pointer";
+    this.behavior = behavior ?? "opaque";
   }
 
   override createRenderObject(): RenderGestureDetector {
@@ -138,6 +145,7 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
       onDragEnd: this.onDragEnd,
       onWheel: this.onWheel,
       cursor: this.cursor,
+      behavior: this.behavior,
     });
   }
 
@@ -151,12 +159,14 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
     renderObject.onDragMove = this.onDragMove;
     renderObject.onDragEnd = this.onDragEnd;
     renderObject.onWheel = this.onWheel;
+    renderObject.behavior = this.behavior;
   }
 }
 
 export class RenderGestureDetector extends SingleChildRenderObject {
   isRenderGestureDetector = true;
   id = createUniqueId();
+  behavior: HitTestBehavior;
   private _cursor: Cursor;
   get cursor(): Cursor {
     return this._cursor;
@@ -268,6 +278,7 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     onDragStart,
     cursor,
     onWheel,
+    behavior,
   }: {
     onClick: MouseEventCallback;
     onMouseUp: MouseEventCallback;
@@ -281,6 +292,7 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     onDragEnd: MouseEventCallback;
     onWheel: (e: WheelEvent) => void;
     cursor: Cursor;
+    behavior: HitTestBehavior;
   }) {
     super({ isPainter: false });
     this._onClick = onClick;
@@ -295,6 +307,7 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     this._onDragStart = onDragStart;
     this._onWheel = onWheel;
     this._cursor = cursor;
+    this.behavior = behavior;
   }
 
   attach(ownerElement: RenderObjectElement): void {
@@ -331,8 +344,21 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     });
   }
 
+  override hitTest(result: HitTestResult, position: Offset): boolean {
+    if (!this.size.contains(position)) return false;
+
+    const hitTarget =
+      this.hitTestChildren(result, position) || this.hitTestSelf(position);
+
+    if (hitTarget || this.behavior === "translucent") {
+      result.add(new HitTestEntry(this));
+    }
+
+    return hitTarget;
+  }
+
   override hitTestSelf(_position: Offset): boolean {
-    return true;
+    return this.behavior === "opaque";
   }
 
   override accept(visitor: RenderObjectVisitor): void {

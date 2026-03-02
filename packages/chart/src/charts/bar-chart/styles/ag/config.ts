@@ -1,6 +1,6 @@
-import { type AgBaseConfig, defaultAgBaseConfig } from "@shared/styles/ag";
+import { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "@shared/styles/ag";
 
-export type AgBarChartConfig = AgBaseConfig & {
+export type AgBarChartConfig = AgCartesianBaseConfig & {
   bar: {
     gap: number;
     cornerRadius: number;
@@ -8,6 +8,6 @@ export type AgBarChartConfig = AgBaseConfig & {
 };
 
 export const defaultAgConfig: AgBarChartConfig = {
-  ...defaultAgBaseConfig,
+  ...defaultAgCartesianBaseConfig,
   bar: { gap: 1, cornerRadius: 0 },
 };

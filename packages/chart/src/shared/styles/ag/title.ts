@@ -1,5 +1,5 @@
 import { Column, MainAxisSize, CrossAxisAlignment, SizedBox, Text, TextStyle, type Widget } from "flitter-core";
-import type { AgBaseConfig } from "./cartesian/config";
+import type { AgCartesianBaseConfig } from "./cartesian/config";
 
 const titleAlignmentMap = {
   start: CrossAxisAlignment.start,
@@ -9,7 +9,7 @@ const titleAlignmentMap = {
 
 export function agTitle(
   _args: undefined,
-  context: { config: AgBaseConfig },
+  context: { config: AgCartesianBaseConfig },
 ): Widget {
   const { title, subtitle, font } = context.config;
   const titleWidget = Text(title.text, {

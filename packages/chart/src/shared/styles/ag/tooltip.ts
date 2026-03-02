@@ -16,10 +16,11 @@ import {
   CrossAxisAlignment,
   Transform,
   Offset,
+  CustomPaint,
+  Size,
   type Widget,
 } from "flitter-core";
-import type { AgBaseConfig } from "./cartesian/config";
-import { tooltipArrow } from "./tooltip-arrow";
+import type { AgCartesianBaseConfig } from "./cartesian/config";
 
 const ARROW_WIDTH = 16;
 const ARROW_HEIGHT = 8;
@@ -40,7 +41,7 @@ function tooltipBox({
 }: {
   label: string;
   items: TooltipItem[];
-  config: AgBaseConfig;
+  config: AgCartesianBaseConfig;
 }): Widget {
   const { tooltip, font } = config;
 
@@ -120,7 +121,7 @@ export function tooltipContent({
 }: {
   label: string;
   items: TooltipItem | TooltipItem[];
-  config: AgBaseConfig;
+  config: AgCartesianBaseConfig;
 }): Widget {
   const { tooltip } = config;
   const itemList = Array.isArray(items) ? items : [items];
@@ -132,11 +133,68 @@ export function tooltipContent({
       tooltipBox({ label, items: itemList, config }),
       Transform.translate({
         offset: new Offset({ x: 0, y: -1 }),
-        child: tooltipArrow({
+        child: SizedBox({
           width: ARROW_WIDTH,
           height: ARROW_HEIGHT,
-          fillColor: tooltip.backgroundColor,
-          borderColor: tooltip.borderColor,
+          child: CustomPaint({
+            size: new Size({ width: ARROW_WIDTH, height: ARROW_HEIGHT }),
+            painter: {
+              svg: {
+                createDefaultSvgEl: (ctx) => ({
+                  fill: ctx.createSvgEl("polygon"),
+                  borderLeft: ctx.createSvgEl("line"),
+                  borderRight: ctx.createSvgEl("line"),
+                }),
+                paint: ({ fill, borderLeft, borderRight }, size) => {
+                  const w = size.width;
+                  const h = size.height;
+                  const cx = w / 2;
+
+                  fill.setAttribute("points", `0,0 ${w},0 ${cx},${h}`);
+                  fill.setAttribute("fill", tooltip.backgroundColor);
+                  fill.setAttribute("stroke", "none");
+
+                  borderLeft.setAttribute("x1", "0");
+                  borderLeft.setAttribute("y1", "0");
+                  borderLeft.setAttribute("x2", `${cx}`);
+                  borderLeft.setAttribute("y2", `${h}`);
+                  borderLeft.setAttribute("stroke", tooltip.borderColor);
+                  borderLeft.setAttribute("stroke-width", "1");
+
+                  borderRight.setAttribute("x1", `${w}`);
+                  borderRight.setAttribute("y1", "0");
+                  borderRight.setAttribute("x2", `${cx}`);
+                  borderRight.setAttribute("y2", `${h}`);
+                  borderRight.setAttribute("stroke", tooltip.borderColor);
+                  borderRight.setAttribute("stroke-width", "1");
+                },
+              },
+              canvas: {
+                paint: (ctx, size) => {
+                  const c = ctx.canvas;
+                  const w = size.width;
+                  const h = size.height;
+                  const cx = w / 2;
+
+                  c.beginPath();
+                  c.moveTo(0, 0);
+                  c.lineTo(w, 0);
+                  c.lineTo(cx, h);
+                  c.closePath();
+                  c.fillStyle = tooltip.backgroundColor;
+                  c.fill();
+
+                  c.beginPath();
+                  c.moveTo(0, 0);
+                  c.lineTo(cx, h);
+                  c.lineTo(w, 0);
+                  c.strokeStyle = tooltip.borderColor;
+                  c.lineWidth = 1;
+                  c.stroke();
+                },
+              },
+            },
+          }),
         }),
       }),
     ],

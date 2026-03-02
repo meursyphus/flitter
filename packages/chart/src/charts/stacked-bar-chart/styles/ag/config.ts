@@ -1,12 +1,12 @@
-import { type AgBaseConfig, defaultAgBaseConfig } from "@shared/styles/ag";
+import { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "@shared/styles/ag";
 
-export type AgStackedBarChartConfig = AgBaseConfig & {
+export type AgStackedBarChartConfig = AgCartesianBaseConfig & {
   bar: {
     gap: number;
   };
 };
 
 export const defaultAgConfig: AgStackedBarChartConfig = {
-  ...defaultAgBaseConfig,
+  ...defaultAgCartesianBaseConfig,
   bar: { gap: 0 },
 };

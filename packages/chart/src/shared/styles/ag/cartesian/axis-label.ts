@@ -1,10 +1,10 @@
 import type { Widget } from "flitter-core";
-import type { AgBaseConfig } from "./config";
+import type { AgCartesianBaseConfig } from "./config";
 import { XAxisLabel, YAxisLabel } from "../../../cartesian";
 
 export function agXAxisLabel(
   args: { name: string; index: number },
-  context: { config: AgBaseConfig },
+  context: { config: AgCartesianBaseConfig },
 ): Widget {
   const { font, axis } = context.config;
   const formatted = { ...args, name: axis.label.format(args.name, args.index, "x") };
@@ -17,7 +17,7 @@ export function agXAxisLabel(
 
 export function agYAxisLabel(
   args: { name: string; index: number },
-  context: { config: AgBaseConfig },
+  context: { config: AgCartesianBaseConfig },
 ): Widget {
   const { font, axis } = context.config;
   const formatted = { ...args, name: axis.label.format(args.name, args.index, "y") };

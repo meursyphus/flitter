@@ -1,6 +1,6 @@
-import { type AgBaseConfig, defaultAgBaseConfig } from "@shared/styles/ag";
+import { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "@shared/styles/ag";
 
-export type AgBubbleChartConfig = AgBaseConfig & {
+export type AgBubbleChartConfig = AgCartesianBaseConfig & {
   bubble: {
     minRadius: number;
     maxRadius: number;
@@ -9,13 +9,13 @@ export type AgBubbleChartConfig = AgBaseConfig & {
 };
 
 export const defaultAgConfig: AgBubbleChartConfig = {
-  ...defaultAgBaseConfig,
+  ...defaultAgCartesianBaseConfig,
   axis: {
-    ...defaultAgBaseConfig.axis,
-    color: defaultAgBaseConfig.grid.color,
+    ...defaultAgCartesianBaseConfig.axis,
+    color: defaultAgCartesianBaseConfig.grid.color,
   },
   grid: {
-    ...defaultAgBaseConfig.grid,
+    ...defaultAgCartesianBaseConfig.grid,
     xLine: { visible: true },
     yLine: { visible: true },
   },

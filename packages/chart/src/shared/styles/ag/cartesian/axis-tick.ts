@@ -1,5 +1,5 @@
 import { SizedBox, type Widget } from "flitter-core";
-import type { AgBaseConfig } from "./config";
+import type { AgCartesianBaseConfig } from "./config";
 import { XAxisTick, YAxisTick } from "../../../cartesian";
 
 /**
@@ -8,7 +8,7 @@ import { XAxisTick, YAxisTick } from "../../../cartesian";
  */
 export function agXAxisTick(
   args: undefined,
-  context: { config: AgBaseConfig },
+  context: { config: AgCartesianBaseConfig },
 ): Widget {
   const { axis } = context.config;
   if (!axis.tick.enabled) {
@@ -23,7 +23,7 @@ export function agXAxisTick(
 
 export function agYAxisTick(
   args: undefined,
-  context: { config: AgBaseConfig },
+  context: { config: AgCartesianBaseConfig },
 ): Widget {
   const { axis } = context.config;
   if (!axis.tick.enabled) {

@@ -1,6 +1,6 @@
-import { type AgBaseConfig, defaultAgBaseConfig } from "@shared/styles/ag";
+import { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "@shared/styles/ag";
 
-export type AgAreaChartConfig = AgBaseConfig & {
+export type AgAreaChartConfig = AgCartesianBaseConfig & {
   area: {
     strokeWidth: number;
     opacity: number;
@@ -9,9 +9,9 @@ export type AgAreaChartConfig = AgBaseConfig & {
 };
 
 export const defaultAgConfig: AgAreaChartConfig = {
-  ...defaultAgBaseConfig,
+  ...defaultAgCartesianBaseConfig,
   axis: {
-    ...defaultAgBaseConfig.axis,
+    ...defaultAgCartesianBaseConfig.axis,
     yLine: { visible: false },
   },
   area: { strokeWidth: 2, opacity: 0.3, spline: false },

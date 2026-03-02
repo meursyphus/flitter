@@ -11,7 +11,7 @@ import {
   BoxDecoration,
   type Widget,
 } from "flitter-core";
-import type { AgBaseConfig } from "./config";
+import type { AgCartesianBaseConfig } from "./config";
 
 function interleave(items: Widget[], separator: () => Widget): Widget[] {
   return items.flatMap((item, i) => (i < items.length - 1 ? [item, separator()] : [item]));
@@ -39,7 +39,7 @@ const rightAlignmentMap: Record<string, MainAxisAlignment> = {
  */
 export function agLayout(
   { title, plot, legends }: { title: Widget; legends: Widget[]; plot: Widget },
-  context: { config: AgBaseConfig },
+  context: { config: AgCartesianBaseConfig },
 ): Widget {
   const { padding, title: titleConfig, subtitle: subtitleConfig, legend: legendConfig } = context.config;
   const legendGap = legendConfig.gap;

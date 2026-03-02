@@ -1,6 +1,6 @@
-import { type AgBaseConfig, defaultAgBaseConfig } from "@shared/styles/ag";
+import { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "@shared/styles/ag";
 
-export type AgStackedAreaChartConfig = AgBaseConfig & {
+export type AgStackedAreaChartConfig = AgCartesianBaseConfig & {
   area: {
     opacity: number;
     strokeWidth: number;
@@ -9,9 +9,9 @@ export type AgStackedAreaChartConfig = AgBaseConfig & {
 };
 
 export const defaultAgConfig: AgStackedAreaChartConfig = {
-  ...defaultAgBaseConfig,
+  ...defaultAgCartesianBaseConfig,
   axis: {
-    ...defaultAgBaseConfig.axis,
+    ...defaultAgCartesianBaseConfig.axis,
     yLine: { visible: false },
   },
   area: { opacity: 0.7, strokeWidth: 2, spline: false },

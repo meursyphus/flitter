@@ -49,6 +49,7 @@ import AnimatedSize from "./AnimatedSize";
 import Draggable from "./Draggable";
 import Tooltip from "./Tooltip";
 export type { TooltipPosition } from "./Tooltip";
+export type { HitTestBehavior } from "./base/BaseGestureDetector";
 import ZIndex from "./ZIndex";
 import Painter from "./base/BaseCustomPaint";
 import TextField from "./TextField";

@@ -1,6 +1,6 @@
-import { type AgBaseConfig, defaultAgBaseConfig } from "@shared/styles/ag";
+import { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "@shared/styles/ag";
 
-export type AgLineChartConfig = AgBaseConfig & {
+export type AgLineChartConfig = AgCartesianBaseConfig & {
   line: {
     strokeWidth: number;
     spline: boolean;
@@ -8,9 +8,9 @@ export type AgLineChartConfig = AgBaseConfig & {
 };
 
 export const defaultAgConfig: AgLineChartConfig = {
-  ...defaultAgBaseConfig,
+  ...defaultAgCartesianBaseConfig,
   axis: {
-    ...defaultAgBaseConfig.axis,
+    ...defaultAgCartesianBaseConfig.axis,
     yLine: { visible: false },
   },
   line: { strokeWidth: 2, spline: false },

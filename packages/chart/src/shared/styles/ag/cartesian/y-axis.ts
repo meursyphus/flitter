@@ -1,11 +1,11 @@
 import type { Widget } from "flitter-core";
-import type { AgBaseConfig } from "./config";
+import type { AgCartesianBaseConfig } from "./config";
 import { YAxis } from "../../../cartesian";
 
 export function agYAxis(
   { line, labels, tick }: { line: Widget; labels: Widget[]; tick: Widget },
   options: { type: "label" | "value" },
-  context: { config: AgBaseConfig },
+  context: { config: AgCartesianBaseConfig },
 ): Widget {
   return YAxis({ line, labels, tick }, {
     type: options.type,

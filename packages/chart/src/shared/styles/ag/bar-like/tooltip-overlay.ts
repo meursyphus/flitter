@@ -15,8 +15,8 @@ import {
   ZIndex,
   type Widget,
 } from "flitter-core";
-import type { AgBaseConfig } from "./cartesian/config";
-import { tooltipContent } from "./tooltip";
+import type { AgCartesianBaseConfig } from "../cartesian/config";
+import { tooltipContent } from "../tooltip";
 
 const TOOLTIP_OFFSET = 12;
 const ANIMATION_DURATION = 150;
@@ -27,7 +27,7 @@ type BarChartLikeContext = {
   unhoverBar(): void;
   data: { datasets: { legend: string; values: number[] }[]; labels: string[] };
   legends: string[];
-  config: AgBaseConfig;
+  config: AgCartesianBaseConfig;
 };
 
 class _AgTooltipOverlay extends StatefulWidget {
@@ -110,9 +110,10 @@ class _AgTooltipOverlayState extends State<_AgTooltipOverlay> {
     const children: Widget[] = [
       this.widget.child,
 
-      // Transparent mouse-tracking layer
+      // Transparent mouse-tracking layer (translucent so bars below still receive hit tests)
       Positioned.fill({
         child: GestureDetector({
+          behavior: "translucent",
           cursor: "default",
           onMouseMove: (e: MouseEvent) => {
             const local = this.getLocalPosition(e);

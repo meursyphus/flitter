@@ -17,13 +17,13 @@ import {
   type BuildContext,
 } from "flitter-core";
 import { LineChartProvider } from "@headless/line-chart/provider";
-import type { AgBaseConfig } from "@shared/styles/ag/cartesian/config";
-import { agTooltipContent } from "@shared/styles/ag";
+import type { AgCartesianBaseConfig } from "../cartesian/config";
+import { tooltipContent } from "../tooltip";
 
 const ANIMATION_DURATION = 150;
 const FADE_DURATION = 100;
 
-class _LineTooltipOverlay extends StatefulWidget {
+class _AgLineLikeTooltipOverlay extends StatefulWidget {
   child: Widget;
 
   constructor({ child }: { child: Widget }) {
@@ -32,11 +32,11 @@ class _LineTooltipOverlay extends StatefulWidget {
   }
 
   createState() {
-    return new _LineTooltipOverlayState();
+    return new _AgLineLikeTooltipOverlayState();
   }
 }
 
-class _LineTooltipOverlayState extends State<_LineTooltipOverlay> {
+class _AgLineLikeTooltipOverlayState extends State<_AgLineLikeTooltipOverlay> {
   pointPixelX = 0;
   pointPixelY = 0;
   wasVisible = false;
@@ -62,7 +62,7 @@ class _LineTooltipOverlayState extends State<_LineTooltipOverlay> {
 
   override build(context: BuildContext): Widget {
     const ctx = LineChartProvider.of(context);
-    const config: AgBaseConfig = ctx.config;
+    const config: AgCartesianBaseConfig = ctx.config;
     const { tooltip } = config;
     const { hoveredPoint } = ctx;
 
@@ -116,9 +116,10 @@ class _LineTooltipOverlayState extends State<_LineTooltipOverlay> {
     const children: Widget[] = [
       this.widget.child,
 
-      // Mouse tracking layer for closest-point hover detection
+      // Mouse tracking layer for closest-point hover detection (translucent so children below still receive hit tests)
       Positioned.fill({
         child: GestureDetector({
+          behavior: "translucent",
           cursor: "default",
           onMouseMove: (e: MouseEvent) => {
             const local = this.getLocalPosition(e);
@@ -183,7 +184,7 @@ class _LineTooltipOverlayState extends State<_LineTooltipOverlay> {
                 constraintsTransform: ConstraintsTransformBox.unconstrained,
                 child: ZIndex({
                   zIndex: 9999,
-                  child: agTooltipContent({
+                  child: tooltipContent({
                     label: showData.label,
                     items: { legend: showData.legend, color: showData.color, value: showData.value },
                     config,
@@ -204,13 +205,17 @@ class _LineTooltipOverlayState extends State<_LineTooltipOverlay> {
   }
 }
 
-export function LineTooltipOverlay({
+/**
+ * Wraps a series widget with an AG-style tooltip overlay for line-like charts
+ * (line chart, area chart). Uses LineChartProvider for hover state.
+ */
+export function AgLineLikeTooltipOverlay({
   child,
   config,
 }: {
   child: Widget;
-  config: AgBaseConfig;
+  config: AgCartesianBaseConfig;
 }): Widget {
   if (!config.tooltip.enabled) return child;
-  return new _LineTooltipOverlay({ child });
+  return new _AgLineLikeTooltipOverlay({ child });
 }

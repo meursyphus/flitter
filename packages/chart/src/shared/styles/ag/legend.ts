@@ -12,7 +12,7 @@ import {
   BoxDecoration,
   type Widget,
 } from "flitter-core";
-import type { AgBaseConfig } from "./cartesian/config";
+import type { AgCartesianBaseConfig } from "./cartesian/config";
 
 /**
  * AG Charts legend uses a colored marker (square or circle).
@@ -21,7 +21,7 @@ import type { AgBaseConfig } from "./cartesian/config";
 export function agLegend(
   { name, index }: { name: string; index: number },
   context: {
-    config: AgBaseConfig;
+    config: AgCartesianBaseConfig;
     isSeriesVisible(legend: string): boolean;
     toggleSeries(legend: string): void;
   },
