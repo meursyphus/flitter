@@ -420,7 +420,7 @@ export function toastBar(
   return new _HoverableBar({
     color,
     gap: bar.gap,
-    tooltip: tooltipContent({ label, legend, color, value, config: context.config }),
+    tooltip: tooltipContent({ label, items: { legend, color, value }, config: context.config }),
     direction: context.direction,
     value,
     chartWidth: context.width,

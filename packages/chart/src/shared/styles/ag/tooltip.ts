@@ -24,23 +24,58 @@ import { tooltipArrow } from "./tooltip-arrow";
 const ARROW_WIDTH = 16;
 const ARROW_HEIGHT = 8;
 
+type TooltipItem = {
+  legend: string;
+  color: string;
+  value: number;
+};
+
 /**
  * Tooltip box: white background, border, shadow.
  */
 function tooltipBox({
   label,
-  legend,
-  color,
-  value,
+  items,
   config,
 }: {
   label: string;
-  legend: string;
-  color: string;
-  value: number;
+  items: TooltipItem[];
   config: AgBaseConfig;
 }): Widget {
   const { tooltip, font } = config;
+
+  const rows: Widget[] = items.map((item) =>
+    Row({
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container({
+          width: 12,
+          height: 12,
+          decoration: new BoxDecoration({
+            color: item.color,
+            borderRadius: BorderRadius.all(Radius.circular(2)),
+          }),
+        }),
+        SizedBox({ width: 8 }),
+        Text(item.legend, {
+          style: new TextStyle({
+            fontFamily: font.family,
+            fontSize: 12,
+            color: tooltip.textColor,
+          }),
+        }),
+        SizedBox({ width: 12 }),
+        Text(`${item.value}`, {
+          style: new TextStyle({
+            fontFamily: font.family,
+            fontSize: 12,
+            fontWeight: "bold",
+            color: tooltip.textColor,
+          }),
+        }),
+      ],
+    }),
+  );
 
   return Container({
     padding: EdgeInsets.symmetric({ horizontal: tooltip.padding, vertical: tooltip.padding }),
@@ -68,36 +103,7 @@ function tooltipBox({
           }),
         }),
         SizedBox({ height: 10 }),
-        Row({
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container({
-              width: 12,
-              height: 12,
-              decoration: new BoxDecoration({
-                color,
-                borderRadius: BorderRadius.all(Radius.circular(2)),
-              }),
-            }),
-            SizedBox({ width: 8 }),
-            Text(legend, {
-              style: new TextStyle({
-                fontFamily: font.family,
-                fontSize: 12,
-                color: tooltip.textColor,
-              }),
-            }),
-            SizedBox({ width: 12 }),
-            Text(`${value}`, {
-              style: new TextStyle({
-                fontFamily: font.family,
-                fontSize: 12,
-                fontWeight: "bold",
-                color: tooltip.textColor,
-              }),
-            }),
-          ],
-        }),
+        ...rows,
       ],
     }),
   });
@@ -109,24 +115,21 @@ function tooltipBox({
  */
 export function tooltipContent({
   label,
-  legend,
-  color,
-  value,
+  items,
   config,
 }: {
   label: string;
-  legend: string;
-  color: string;
-  value: number;
+  items: TooltipItem | TooltipItem[];
   config: AgBaseConfig;
 }): Widget {
   const { tooltip } = config;
+  const itemList = Array.isArray(items) ? items : [items];
 
   return Column({
     mainAxisSize: MainAxisSize.min,
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
-      tooltipBox({ label, legend, color, value, config }),
+      tooltipBox({ label, items: itemList, config }),
       Transform.translate({
         offset: new Offset({ x: 0, y: -1 }),
         child: tooltipArrow({

@@ -149,9 +149,7 @@ class _AgTooltipOverlayState extends State<_AgTooltipOverlay> {
                   zIndex: 9999,
                   child: tooltipContent({
                     label: showData.label,
-                    legend: showData.legend,
-                    color: showData.color,
-                    value: showData.value,
+                    items: { legend: showData.legend, color: showData.color, value: showData.value },
                     config,
                   }),
                 }),

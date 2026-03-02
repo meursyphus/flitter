@@ -465,7 +465,7 @@ export function toastBar(
     color,
     borderRadius,
     gap: bar.gap,
-    tooltip: tooltipContent({ label, legend, color, value, config: context.config }),
+    tooltip: tooltipContent({ label, items: { legend, color, value }, config: context.config }),
     direction: context.direction,
     value,
     chartWidth: context.width,

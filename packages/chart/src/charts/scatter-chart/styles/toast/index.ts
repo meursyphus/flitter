@@ -27,7 +27,7 @@ export { type ToastScatterChartConfig } from "./config";
 const toastCustom: Partial<ScatterChartCustom<ToastScatterChartConfig>> = {
   layout: toastLayout,
   scatter: toastScatter,
-  legend: toastLegend,
+  legend: (args, context) => toastLegend(args, context, { markerShape: "circle" }),
   title: toastTitle,
   axisCorner: toastAxisCorner,
   xAxisLabel: toastXAxisLabel,

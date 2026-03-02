@@ -8,6 +8,8 @@ import {
   MainAxisSize,
   Opacity,
   GestureDetector,
+  Container,
+  BoxDecoration,
   type Widget,
 } from "flitter-core";
 import { CheckBox } from "./checkbox";
@@ -20,17 +22,27 @@ export function toastLegend(
     isSeriesVisible(legend: string): boolean;
     toggleSeries(legend: string): void;
   },
+  { markerShape }: { markerShape?: "checkbox" | "circle" } = {},
 ): Widget {
   const { colors, font } = context.config;
   const color = colors[index % colors.length];
   const visible = context.isSeriesVisible(name);
+
+  const marker =
+    markerShape === "circle"
+      ? Container({
+          width: 10,
+          height: 10,
+          decoration: new BoxDecoration({ color, shape: "circle" }),
+        })
+      : CheckBox({ checked: visible, color, size: 14 });
 
   const content = Padding({
     padding: EdgeInsets.symmetric({ horizontal: 8 }),
     child: Row({
       mainAxisSize: MainAxisSize.min,
       children: [
-        CheckBox({ checked: visible, color, size: 14 }),
+        marker,
         SizedBox({ width: 6 }),
         Text(name, {
           style: new TextStyle({

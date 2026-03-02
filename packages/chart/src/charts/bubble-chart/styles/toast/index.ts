@@ -27,7 +27,7 @@ export { type ToastBubbleChartConfig } from "./config";
 const toastCustom: Partial<BubbleChartCustom<ToastBubbleChartConfig>> = {
   layout: toastLayout,
   bubble: toastBubble,
-  legend: toastLegend,
+  legend: (args, context) => toastLegend(args, context, { markerShape: "circle" }),
   title: toastTitle,
   axisCorner: toastAxisCorner,
   xAxisLabel: toastXAxisLabel,

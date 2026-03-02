@@ -251,9 +251,7 @@ class _HoverableColumnState extends State<_HoverableColumn> {
           padding: layout?.padding ?? EdgeInsets.only({ left: TOOLTIP_GAP }),
           child: tooltipContent({
             label,
-            legend: p.legend,
-            color: p.color,
-            value: p.value,
+            items: { legend: p.legend, color: p.color, value: p.value },
             config,
           }),
         }),

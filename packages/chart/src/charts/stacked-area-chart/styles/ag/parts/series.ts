@@ -226,9 +226,7 @@ class _StackedAreaTooltipOverlayState extends State<_StackedAreaTooltipOverlay> 
                   zIndex: 9999,
                   child: agTooltipContent({
                     label: showData.label,
-                    legend: showData.legend,
-                    color: showData.color,
-                    value: showData.value,
+                    items: { legend: showData.legend, color: showData.color, value: showData.value },
                     config,
                   }),
                 }),

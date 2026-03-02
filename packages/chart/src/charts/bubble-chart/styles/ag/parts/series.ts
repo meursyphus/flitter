@@ -195,9 +195,7 @@ class _BubbleTooltipOverlayState extends State<_BubbleTooltipOverlay> {
                   zIndex: 9999,
                   child: agTooltipContent({
                     label: showData.label,
-                    legend: showData.legend,
-                    color: showData.color,
-                    value: showData.value,
+                    items: { legend: showData.legend, color: showData.color, value: showData.value },
                     config,
                   }),
                 }),

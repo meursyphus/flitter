@@ -16,20 +16,56 @@ import {
 } from "flitter-core";
 import type { ToastBaseConfig } from "./config";
 
-export function tooltipContent({
-  label,
-  legend,
-  color,
-  value,
-  config,
-}: {
-  label: string;
+type TooltipItem = {
   legend: string;
   color: string;
   value: number;
+};
+
+export function tooltipContent({
+  label,
+  items,
+  config,
+}: {
+  label: string;
+  items: TooltipItem | TooltipItem[];
   config: ToastBaseConfig;
 }): Widget {
   const { tooltip, font } = config;
+  const itemList = Array.isArray(items) ? items : [items];
+
+  const rows: Widget[] = itemList.map((item) =>
+    Row({
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container({
+          width: 12,
+          height: 12,
+          decoration: new BoxDecoration({
+            color: item.color,
+            borderRadius: BorderRadius.all(Radius.circular(2)),
+          }),
+        }),
+        SizedBox({ width: 10 }),
+        Text(item.legend, {
+          style: new TextStyle({
+            fontFamily: font.family,
+            fontSize: 12,
+            color: tooltip.textColor,
+          }),
+        }),
+        SizedBox({ width: 16 }),
+        Text(`${item.value}`, {
+          style: new TextStyle({
+            fontFamily: font.family,
+            fontSize: 12,
+            fontWeight: "bold",
+            color: tooltip.textColor,
+          }),
+        }),
+      ],
+    }),
+  );
 
   return Container({
     padding: EdgeInsets.symmetric({ horizontal: tooltip.padding + 2, vertical: tooltip.padding }),
@@ -56,36 +92,7 @@ export function tooltipContent({
           }),
         }),
         SizedBox({ height: 14 }),
-        Row({
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container({
-              width: 12,
-              height: 12,
-              decoration: new BoxDecoration({
-                color,
-                borderRadius: BorderRadius.all(Radius.circular(2)),
-              }),
-            }),
-            SizedBox({ width: 10 }),
-            Text(legend, {
-              style: new TextStyle({
-                fontFamily: font.family,
-                fontSize: 12,
-                color: tooltip.textColor,
-              }),
-            }),
-            SizedBox({ width: 16 }),
-            Text(`${value}`, {
-              style: new TextStyle({
-                fontFamily: font.family,
-                fontSize: 12,
-                fontWeight: "bold",
-                color: tooltip.textColor,
-              }),
-            }),
-          ],
-        }),
+        ...rows,
       ],
     }),
   });
