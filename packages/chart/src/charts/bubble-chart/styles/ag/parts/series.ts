@@ -20,7 +20,7 @@ import type { BubbleChartCustom } from "@headless/bubble-chart/types";
 import type { AgBubbleChartConfig } from "../config";
 import { Series } from "../../../base/series";
 import { BubbleChartProvider } from "@headless/bubble-chart/provider";
-import { agTooltipContent } from "@shared/styles/ag";
+import { agTooltipContent } from "@styles/ag";
 
 export function agSeries(
   ...[args, context]: Parameters<BubbleChartCustom<AgBubbleChartConfig>["series"]>

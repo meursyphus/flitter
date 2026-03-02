@@ -9,7 +9,7 @@ import type {
 import * as Cartesian from "@shared/cartesian/index";
 import { getValueEdge, refineScale } from "@shared/utils/scale";
 import { Series } from "./series";
-import { Grid } from "./grid";
+import { Grid as PointLikeGrid } from "@shared/point-like";
 
 export type { BubbleChartCustom, BubbleChartData, BubbleChartScale, BubbleChartContext, BubbleChartScaleOptions, GetScaleFn, GetScaleOptionsFn } from "@headless/bubble-chart/types";
 export { BubbleChartController } from "@headless/bubble-chart/controller";
@@ -19,7 +19,8 @@ const baseDefaults: Partial<BubbleChartCustom> = {
   series: Series,
   plot: (...args) => Cartesian.Plot(args[0]),
   dataLabel: (...args) => Cartesian.DataLabel(args[0]),
-  grid: Grid,
+  grid: (...[{ xLine, yLine }, ctx]) =>
+    PointLikeGrid({ xLine, yLine, scale: ctx.scale }),
 };
 
 const defaultGetScale: GetScaleFn = ({ datasets }, options) => {

@@ -19,7 +19,7 @@ import {
 import type { LineChartCustom } from "@headless/line-chart/types";
 import type { AgStackedAreaChartConfig } from "../config";
 import { LineChartProvider } from "@headless/line-chart/provider";
-import { agTooltipContent } from "@shared/styles/ag";
+import { agTooltipContent } from "@styles/ag";
 
 export function agSeries(
   ...[args, ctx]: Parameters<LineChartCustom<AgStackedAreaChartConfig>["series"]>

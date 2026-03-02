@@ -22,6 +22,7 @@
     "baseUrl": "./",
     "paths": {
       "@shared/*": ["./src/shared/*"],
+      "@styles/*": ["./src/styles/*"],
       "@utils/*": ["./src/shared/utils/*"],
       "@headless/*": ["./src/headless/*"]
     },

@@ -6,7 +6,7 @@ import {
   SizedBox,
   type Widget,
 } from "flitter-core";
-import { drawSplineLine } from "@shared/styles/toast";
+import { drawSplineLine } from "@styles/toast";
 import type { AgAreaChartConfig } from "../config";
 
 export function agArea(

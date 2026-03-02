@@ -16,7 +16,7 @@ import {
 } from "flitter-core";
 import type { BarChartContext } from "@headless/bar-chart/types";
 import type { ToastStackedBarChartConfig } from "../config";
-import { tooltipContent } from "@shared/styles/toast";
+import { tooltipContent } from "@styles/toast";
 
 const TOOLTIP_GAP = 4;
 const ESTIMATED_TOOLTIP_WIDTH = 220;

@@ -1,4 +1,4 @@
-import { type ToastBaseConfig, defaultToastBaseConfig } from "@shared/styles/toast";
+import { type ToastBaseConfig, defaultToastBaseConfig } from "@styles/toast";
 
 export type ToastAreaChartConfig = ToastBaseConfig & {
   area: {

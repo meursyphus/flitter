@@ -9,9 +9,7 @@ import type {
 import * as Cartesian from "@shared/cartesian/index";
 import { stackedBarGroup } from "./stacked-bar-group";
 import { stackedGetScale } from "./stacked-get-scale";
-import { BarBox } from "./bar-box";
-import { Series } from "./series";
-import { Grid } from "./grid";
+import { BarBox, Series, Grid } from "@shared/bar-like";
 
 export type { BarChartCustom, BarChartData, BarChartScale, BarChartDirection, BarChartScaleOptions, BarChartContext, GetScaleFn, GetScaleOptionsFn } from "@headless/bar-chart/types";
 export { BarChartController } from "@headless/bar-chart/controller";

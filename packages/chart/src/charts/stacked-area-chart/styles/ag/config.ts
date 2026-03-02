@@ -1,4 +1,4 @@
-import { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "@shared/styles/ag";
+import { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "@styles/ag";
 
 export type AgStackedAreaChartConfig = AgCartesianBaseConfig & {
   area: {

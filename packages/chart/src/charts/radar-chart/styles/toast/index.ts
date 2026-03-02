@@ -8,7 +8,7 @@ import { toastAxisLabel } from "./parts/axis-label";
 import {
 	toastTitle,
 	toastLegend,
-} from "@shared/styles/toast";
+} from "@styles/toast";
 
 export { type ToastRadarChartConfig } from "./config";
 

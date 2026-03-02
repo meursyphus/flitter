@@ -20,7 +20,7 @@ import type { ScatterChartCustom } from "@headless/scatter-chart/types";
 import type { AgScatterChartConfig } from "../config";
 import { Series } from "../../../base/series";
 import { ScatterChartProvider } from "@headless/scatter-chart/provider";
-import { agTooltipContent } from "@shared/styles/ag";
+import { agTooltipContent } from "@styles/ag";
 
 export function agSeries(
   ...[args, context]: Parameters<ScatterChartCustom<AgScatterChartConfig>["series"]>

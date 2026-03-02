@@ -18,7 +18,7 @@ import {
 } from "flitter-core";
 import type { BarChartContext } from "@headless/bar-chart/types";
 import type { ToastBarChartConfig } from "../config";
-import { tooltipContent } from "@shared/styles/toast";
+import { tooltipContent } from "@styles/toast";
 
 function barBorderRadius(
   cornerRadius: number,

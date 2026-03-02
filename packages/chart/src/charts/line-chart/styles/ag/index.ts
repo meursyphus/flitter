@@ -12,7 +12,7 @@ import {
   agScaleOptions,
   cartesian,
   AgLineLikeTooltipOverlay,
-} from "@shared/styles/ag";
+} from "@styles/ag";
 
 export { type AgLineChartConfig } from "./config";
 

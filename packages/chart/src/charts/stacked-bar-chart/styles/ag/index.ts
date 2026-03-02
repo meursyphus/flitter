@@ -12,7 +12,7 @@ import {
   agLegend,
   agScaleOptions,
   cartesian,
-} from "@shared/styles/ag";
+} from "@styles/ag";
 
 export { type AgStackedBarChartConfig } from "./config";
 

@@ -9,7 +9,7 @@ import {
   toastLegend,
   toastScaleOptions,
   cartesian,
-} from "@shared/styles/toast";
+} from "@styles/toast";
 
 export { type ToastScatterChartConfig } from "./config";
 

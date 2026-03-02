@@ -6,7 +6,7 @@ import { toastPie } from "./parts/pie";
 import {
 	toastTitle,
 	toastLegend,
-} from "@shared/styles/toast";
+} from "@styles/toast";
 
 export { type ToastPieChartConfig } from "./config";
 

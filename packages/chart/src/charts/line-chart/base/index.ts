@@ -7,8 +7,7 @@ import type {
   GetScaleOptionsFn,
 } from "@headless/line-chart/types";
 import * as Cartesian from "@shared/cartesian/index";
-import { Series } from "./series";
-import { Grid } from "./grid";
+import { Series, Grid } from "@shared/line-like";
 
 export type { LineChartCustom, LineChartData, LineChartScale, LineChartScaleOptions, LineChartContext, GetScaleFn, GetScaleOptionsFn } from "@headless/line-chart/types";
 export { LineChartController } from "@headless/line-chart/controller";

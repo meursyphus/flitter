@@ -1,8 +1,8 @@
 import type { Widget } from "flitter-core";
 import type { BarChartCustom } from "@headless/bar-chart/types";
 import type { ToastStackedBarChartConfig } from "../config";
-import { Series } from "../../../base/series";
-import { AnimatedSeries } from "@shared/styles/toast/cartesian/animated-series";
+import { Series } from "@shared/bar-like";
+import { AnimatedSeries } from "@styles/toast/cartesian/animated-series";
 
 export function toastSeries(
   ...[args, context]: Parameters<BarChartCustom<ToastStackedBarChartConfig>["series"]>

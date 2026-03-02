@@ -8,7 +8,7 @@ import {
   SizedBox,
   type Widget,
 } from "flitter-core";
-import { drawSplineLine } from "@shared/styles/toast";
+import { drawSplineLine } from "@styles/toast";
 import type { AgLineChartConfig } from "../config";
 
 const DOT_RADIUS = 4;

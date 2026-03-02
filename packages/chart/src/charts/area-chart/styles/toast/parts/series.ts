@@ -24,9 +24,9 @@ import {
 } from "flitter-core";
 import type { LineChartCustom, LineChartScale } from "@headless/line-chart/types";
 import type { ToastAreaChartConfig } from "../config";
-import { AnimatedSeries } from "@shared/styles/toast/cartesian/animated-series";
+import { AnimatedSeries } from "@styles/toast/cartesian/animated-series";
 import { computeDataPointPosition } from "./area";
-import { tooltipContent } from "@shared/styles/toast";
+import { tooltipContent } from "@styles/toast";
 
 // --- Tooltip layout ---
 

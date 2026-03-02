@@ -11,7 +11,7 @@ import {
   Tween,
   type Widget,
 } from "flitter-core";
-import { drawSplineLine } from "@shared/styles/toast";
+import { drawSplineLine } from "@styles/toast";
 import type { ToastLineChartConfig } from "../config";
 
 class _AnimatedLine extends StatefulWidget {

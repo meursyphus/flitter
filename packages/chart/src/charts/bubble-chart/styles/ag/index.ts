@@ -10,7 +10,7 @@ import {
   agLegend,
   agScaleOptions,
   cartesian,
-} from "@shared/styles/ag";
+} from "@styles/ag";
 
 export { type AgBubbleChartConfig } from "./config";
 
