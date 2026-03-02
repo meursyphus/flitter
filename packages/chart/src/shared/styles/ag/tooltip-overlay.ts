@@ -14,9 +14,7 @@ import {
   SizedBox,
   ZIndex,
   type Widget,
-  type BuildContext,
 } from "flitter-core";
-import { BarChartProvider } from "@headless/bar-chart/provider";
 import type { AgBaseConfig } from "./config";
 import { tooltipContent } from "./tooltip";
 
@@ -24,12 +22,22 @@ const TOOLTIP_OFFSET = 12;
 const ANIMATION_DURATION = 150;
 const FADE_DURATION = 100;
 
+type BarChartLikeContext = {
+  hoveredBar: { index: number; legend: string } | null;
+  unhoverBar(): void;
+  data: { datasets: { legend: string; values: number[] }[]; labels: string[] };
+  legends: string[];
+  config: AgBaseConfig;
+};
+
 class _AgTooltipOverlay extends StatefulWidget {
   child: Widget;
+  chartContext: BarChartLikeContext;
 
-  constructor({ child }: { child: Widget }) {
+  constructor({ child, chartContext }: { child: Widget; chartContext: BarChartLikeContext }) {
     super();
     this.child = child;
+    this.chartContext = chartContext;
   }
 
   createState() {
@@ -61,10 +69,9 @@ class _AgTooltipOverlayState extends State<_AgTooltipOverlay> {
     };
   }
 
-  override build(context: BuildContext): Widget {
-    const ctx = BarChartProvider.of(context);
-    const config: AgBaseConfig = ctx.config;
-    const { tooltip } = config;
+  override build(): Widget {
+    const ctx = this.widget.chartContext;
+    const config = ctx.config;
     const { hoveredBar } = ctx;
 
     // Resolve tooltip data from hovered bar
@@ -101,7 +108,6 @@ class _AgTooltipOverlayState extends State<_AgTooltipOverlay> {
     const showData = this.lastTooltipData;
 
     const children: Widget[] = [
-      // Plot (original child)
       this.widget.child,
 
       // Transparent mouse-tracking layer
@@ -165,17 +171,17 @@ class _AgTooltipOverlayState extends State<_AgTooltipOverlay> {
 }
 
 /**
- * Wraps a plot widget with an AG-style mouse-following tooltip overlay.
- * Uses BarChartProvider to read hover state and data.
+ * Wraps a series widget with an AG-style mouse-following tooltip overlay.
+ * Reads hover state directly from the chart context (2nd arg of series slot).
  * If tooltip.enabled is false, returns the child as-is.
  */
 export function AgTooltipOverlay({
   child,
-  config,
+  context,
 }: {
   child: Widget;
-  config: AgBaseConfig;
+  context: BarChartLikeContext;
 }): Widget {
-  if (!config.tooltip.enabled) return child;
-  return new _AgTooltipOverlay({ child });
+  if (!context.config.tooltip.enabled) return child;
+  return new _AgTooltipOverlay({ child, chartContext: context });
 }

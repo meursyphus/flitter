@@ -6,6 +6,7 @@ import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { agBar } from "./parts/bar";
 import { agBarGroup } from "./parts/bar-group";
+import { agSeries } from "./parts/series";
 import {
   agLayout,
   agTitle,
@@ -22,19 +23,15 @@ import {
   agXAxis,
   agYAxis,
   agScaleOptions,
-  AgTooltipOverlay,
 } from "@shared/styles/ag";
 
 export { type AgStackedBarChartConfig } from "./config";
 
 const agCustom: Partial<BarChartCustom<AgStackedBarChartConfig>> = {
-  layout: (args, context) =>
-    agLayout(
-      { ...args, plot: AgTooltipOverlay({ child: args.plot, config: context.config }) },
-      context,
-    ),
+  layout: agLayout,
   bar: agBar,
   barGroup: agBarGroup,
+  series: agSeries,
   legend: agLegend,
   title: agTitle,
   axisCorner: agAxisCorner,
