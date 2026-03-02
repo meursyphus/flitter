@@ -5,7 +5,7 @@ import {
   AppRunner,
   Container,
   Text,
-} from "flitter-core";
+} from "flitter-ui";
 
 type WidgetComponentProps = {
   widget?: Widget;

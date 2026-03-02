@@ -47,16 +47,16 @@ export type ToastBaseConfig = {
 
 export const defaultToastBaseConfig: ToastBaseConfig = {
   colors: TOAST_COLORS,
-  font: { family: "Noto Sans JP", size: 11 },
-  title: { text: "", visible: true, color: "#000000", fontSize: 16, fontWeight: "bold", position: "top", alignment: "center" },
+  font: { family: "Arial", size: 11 },
+  title: { text: "", visible: true, color: "#333333", fontSize: 18, fontWeight: "bold", position: "top", alignment: "start" },
   legend: { visible: true, position: "bottom", gap: 12 },
   axis: {
-    color: "#BBBBBB",
+    color: "#333333",
     thickness: 1,
-    label: { color: "#666666", fontSize: 11, gap: 8, format: (name) => name },
+    label: { color: "#333333", fontSize: 11, gap: 8, format: (name) => name },
     tick: { size: 6 },
   },
-  grid: { color: "#EEEEEE", thickness: 1 },
+  grid: { color: "rgba(0, 0, 0, 0.05)", thickness: 1 },
   padding: { top: 30, right: 20, bottom: 40, left: 60 },
   animation: { enabled: true, duration: 300, staggerDelay: 60 },
   tooltip: {

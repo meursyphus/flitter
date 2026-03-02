@@ -5,12 +5,12 @@ Flitter-Svelte is a library designed to simplify the integration of Flitter, a w
 For more details, visit [here](https://flitter.dev).
 
 ```bash
-npm i flitter-core @flitterjs/svelte
+npm i flitter-ui @flitterjs/svelte
 ```
 
 ```svelte
 <script>
-  import { Container, Alignment, Text, TextStyle } from 'flitter-core';
+  import { Container, Alignment, Text, TextStyle } from 'flitter-ui';
   import Widget from '@flitterjs/svelte';
 </script>
 

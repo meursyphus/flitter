@@ -167,7 +167,7 @@ function AgBubbleChart({ args }: { args: BubbleChartArgs }) {
 }
 
 const meta: Meta<BubbleChartArgs> = {
-  title: "BubbleChart/Ag",
+  title: "Charts/BubbleChart/Ag",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },

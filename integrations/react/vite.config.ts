@@ -12,7 +12,7 @@ export default defineConfig({
       formats: ["es"],
     },
     rollupOptions: {
-      external: ["react", "react/jsx-runtime", "flitter-core"],
+      external: ["react", "react/jsx-runtime", "flitter-ui"],
     },
   },
 });

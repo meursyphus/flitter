@@ -8,8 +8,12 @@
   "homepage": "https://flitter.dev",
   "repository": "https://github.com/meursyphus/flitter",
   "license": "MIT",
-  "main": "./package/index.js",
-  "types": "./package/index.d.ts",
+  "main": "./src/lib/index.ts",
+  "publishConfig": {
+    "main": "./package/index.js",
+    "types": "./package/index.d.ts",
+    "access": "public"
+  },
   "files": ["package"],
   "scripts": {
     "dev": "vite dev",
@@ -32,8 +36,5 @@
     "tslib": "^2.4.1",
     "typescript": "^5.0.0",
     "vite": "^5.0.0"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

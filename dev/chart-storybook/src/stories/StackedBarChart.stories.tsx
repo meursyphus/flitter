@@ -73,7 +73,7 @@ function ToastStackedBarChart({ args, data }: { args: StackedBarChartArgs; data:
 }
 
 const meta: Meta<StackedBarChartArgs> = {
-  title: "StackedBarChart/Toast",
+  title: "Charts/StackedBarChart/Toast",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },

@@ -66,7 +66,7 @@ function ToastAreaChart({ args }: { args: AreaChartArgs }) {
 }
 
 const meta: Meta<AreaChartArgs> = {
-  title: "AreaChart/Toast",
+  title: "Charts/AreaChart/Toast",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },

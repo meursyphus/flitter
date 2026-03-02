@@ -167,7 +167,7 @@ function AgScatterChart({ args }: { args: ScatterChartArgs }) {
 }
 
 const meta: Meta<ScatterChartArgs> = {
-  title: "ScatterChart/Ag",
+  title: "Charts/ScatterChart/Ag",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },

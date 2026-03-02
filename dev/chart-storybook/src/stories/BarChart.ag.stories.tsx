@@ -75,7 +75,7 @@ function AgBarChart({ args, data }: { args: BarChartArgs; data: typeof defaultDa
 }
 
 const meta: Meta<BarChartArgs> = {
-  title: "BarChart/Ag",
+  title: "Charts/BarChart/Ag",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },

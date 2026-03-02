@@ -167,7 +167,7 @@ function ToastScatterChart({ args }: { args: ScatterChartArgs }) {
 }
 
 const meta: Meta<ScatterChartArgs> = {
-  title: "ScatterChart/Toast",
+  title: "Charts/ScatterChart/Toast",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },

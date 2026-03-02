@@ -6,13 +6,16 @@ const preview: Preview = {
     options: {
       storySort: {
         order: [
-          "BarChart",
-          "StackedBarChart",
-          "LineChart",
-          "AreaChart",
-          "ScatterChart",
-          "BubbleChart",
-          "StackedAreaChart",
+          "Charts",
+          [
+            "BarChart",
+            "StackedBarChart",
+            "LineChart",
+            "AreaChart",
+            "ScatterChart",
+            "BubbleChart",
+            "StackedAreaChart",
+          ],
           "Legacy",
         ],
       },

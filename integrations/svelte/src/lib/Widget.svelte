@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { parseHTML } from 'linkedom';
-	import { type Widget, Alignment, AppRunner, Container, Text } from 'flitter-core';
+	import { type Widget, Alignment, AppRunner, Container, Text } from 'flitter-ui';
 	const browser = typeof window !== 'undefined';
 
 	export let renderer: 'svg' | 'canvas' = 'svg';

@@ -167,7 +167,7 @@ function ToastBubbleChart({ args }: { args: BubbleChartArgs }) {
 }
 
 const meta: Meta<BubbleChartArgs> = {
-  title: "BubbleChart/Toast",
+  title: "Charts/BubbleChart/Toast",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },

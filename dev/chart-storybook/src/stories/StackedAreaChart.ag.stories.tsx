@@ -65,7 +65,7 @@ function AgStackedAreaChart({ args, data }: { args: StackedAreaChartArgs; data: 
 }
 
 const meta: Meta<StackedAreaChartArgs> = {
-  title: "StackedAreaChart/Ag",
+  title: "Charts/StackedAreaChart/Ag",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },

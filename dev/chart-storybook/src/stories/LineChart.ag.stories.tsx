@@ -64,7 +64,7 @@ function AgLineChart({ args }: { args: LineChartArgs }) {
 }
 
 const meta: Meta<LineChartArgs> = {
-  title: "LineChart/Ag",
+  title: "Charts/LineChart/Ag",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },

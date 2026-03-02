@@ -270,9 +270,9 @@ importers:
 
   integrations/react:
     dependencies:
-      flitter-core:
-        specifier: workspace:*
-        version: link:../../packages/core
+      flitter-ui:
+        specifier: workspace:^
+        version: link:../../packages/flitter
     devDependencies:
       '@types/react':
         specifier: ^18.2.15
@@ -301,9 +301,9 @@ importers:
 
   integrations/svelte:
     dependencies:
-      flitter-core:
-        specifier: workspace:*
-        version: link:../../packages/core
+      flitter-ui:
+        specifier: workspace:^
+        version: link:../../packages/flitter
       linkedom:
         specifier: ^0.14.21
         version: 0.14.26

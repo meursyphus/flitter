@@ -73,7 +73,7 @@ function AgStackedBarChart({ args, data }: { args: StackedBarChartArgs; data: ty
 }
 
 const meta: Meta<StackedBarChartArgs> = {
-  title: "StackedBarChart/Ag",
+  title: "Charts/StackedBarChart/Ag",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },

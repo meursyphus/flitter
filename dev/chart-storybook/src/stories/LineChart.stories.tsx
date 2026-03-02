@@ -64,7 +64,7 @@ function ToastLineChart({ args }: { args: LineChartArgs }) {
 }
 
 const meta: Meta<LineChartArgs> = {
-  title: "LineChart/Toast",
+  title: "Charts/LineChart/Toast",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },

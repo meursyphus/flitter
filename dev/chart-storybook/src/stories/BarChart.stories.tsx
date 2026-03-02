@@ -75,7 +75,7 @@ function ToastBarChart({ args, data }: { args: BarChartArgs; data: typeof defaul
 }
 
 const meta: Meta<BarChartArgs> = {
-  title: "BarChart/Toast",
+  title: "Charts/BarChart/Toast",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },

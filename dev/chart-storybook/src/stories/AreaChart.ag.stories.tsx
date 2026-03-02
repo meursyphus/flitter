@@ -66,7 +66,7 @@ function AgAreaChart({ args }: { args: AreaChartArgs }) {
 }
 
 const meta: Meta<AreaChartArgs> = {
-  title: "AreaChart/Ag",
+  title: "Charts/AreaChart/Ag",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },

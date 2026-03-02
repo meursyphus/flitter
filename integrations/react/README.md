@@ -5,12 +5,12 @@ Flitter-React is a library designed to simplify the integration of Flitter, a wi
 For more details, visit [here](https://flitter.dev).
 
 ```bash
-npm i flitter-core @flitterjs/react
+npm i flitter-ui @flitterjs/react
 ```
 Example of using Flitter widgets in a React component:
 
 ```javascript
-import { Container, Alignment, Text, TextStyle } from 'flitter-core';
+import { Container, Alignment, Text, TextStyle } from 'flitter-ui';
 import Widget from '@flitterjs/react';
 
 const App = () => {
