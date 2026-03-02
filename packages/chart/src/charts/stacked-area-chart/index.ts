@@ -1,8 +1,8 @@
 import type { Widget } from "flitter-core";
 import { BaseStackedAreaChart } from "./base";
 import type {
-  StackedAreaChartCustom,
-  StackedAreaChartData,
+  LineChartCustom,
+  LineChartData,
   GetScaleFn,
   GetScaleOptionsFn,
 } from "./base";
@@ -23,8 +23,8 @@ export default function StackedAreaChart<
 }: {
   style: S;
   config?: Partial<StackedAreaChartStyleMap[S]>;
-  data: StackedAreaChartData;
-  custom?: Partial<StackedAreaChartCustom<StackedAreaChartStyleMap[S]>>;
+  data: LineChartData;
+  custom?: Partial<LineChartCustom<StackedAreaChartStyleMap[S]>>;
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
 }): Widget {

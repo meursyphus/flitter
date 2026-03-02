@@ -36,7 +36,7 @@ import {
   type TooltipPosition,
   Rect,
 } from "flitter-core";
-import type { StackedAreaChartCustom, StackedAreaChartScale } from "@headless/stacked-area-chart/types";
+import type { LineChartCustom, LineChartScale } from "@headless/line-chart/types";
 import type { ToastStackedAreaChartConfig } from "../config";
 
 // --- Tooltip layout ---
@@ -373,7 +373,7 @@ class _HoverableColumnState extends State<_HoverableColumn> {
 class _HoverOverlay extends StatelessWidget {
   datasets: { legend: string; values: number[] }[];
   labels: string[];
-  scale: StackedAreaChartScale;
+  scale: LineChartScale;
   colors: string[];
   legends: string[];
   config: ToastStackedAreaChartConfig;
@@ -388,7 +388,7 @@ class _HoverOverlay extends StatelessWidget {
   }: {
     datasets: { legend: string; values: number[] }[];
     labels: string[];
-    scale: StackedAreaChartScale;
+    scale: LineChartScale;
     colors: string[];
     legends: string[];
     config: ToastStackedAreaChartConfig;
@@ -541,21 +541,21 @@ class _MountRevealState extends State<_MountReveal> {
 // --- Toast series ---
 
 export function toastSeries(
-  ...[args, ctx]: Parameters<StackedAreaChartCustom<ToastStackedAreaChartConfig>["series"]>
+  ...[args, ctx]: Parameters<LineChartCustom<ToastStackedAreaChartConfig>["series"]>
 ) {
-  const { areas } = args;
+  const { lines } = args;
   const datasets = ctx.data.datasets;
   const { animation, tooltip, colors } = ctx.config;
   const scale = ctx.scale;
 
-  const children: Widget[] = areas.map((area, i) =>
+  const children: Widget[] = lines.map((line, i) =>
     Positioned({
       key: datasets[i]?.legend ?? i,
       top: 0,
       left: 0,
       bottom: 0,
       right: 0,
-      child: area,
+      child: line,
     }),
   );
 

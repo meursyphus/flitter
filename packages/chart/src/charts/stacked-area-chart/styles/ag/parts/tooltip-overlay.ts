@@ -16,7 +16,7 @@ import {
   type Widget,
   type BuildContext,
 } from "flitter-core";
-import { StackedAreaChartProvider } from "@headless/stacked-area-chart/provider";
+import { LineChartProvider } from "@headless/line-chart/provider";
 import type { AgBaseConfig } from "@shared/styles/ag/config";
 import { agTooltipContent } from "@shared/styles/ag";
 
@@ -61,7 +61,7 @@ class _StackedAreaTooltipOverlayState extends State<_StackedAreaTooltipOverlay> 
   }
 
   override build(context: BuildContext): Widget {
-    const ctx = StackedAreaChartProvider.of(context);
+    const ctx = LineChartProvider.of(context);
     const config: AgBaseConfig = ctx.config;
     const { tooltip } = config;
     const { hoveredPoint } = ctx;

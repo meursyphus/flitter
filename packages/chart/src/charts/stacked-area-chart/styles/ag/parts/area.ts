@@ -1,4 +1,4 @@
-import type { StackedAreaChartCustom, StackedAreaChartScale } from "@headless/stacked-area-chart/types";
+import type { LineChartCustom, LineChartScale } from "@headless/line-chart/types";
 import {
   CustomPaint,
   Opacity,
@@ -10,10 +10,22 @@ import { drawSplineLine } from "@shared/styles/toast";
 import type { AgStackedAreaChartConfig } from "../config";
 
 export function agArea(
-  ...[{ cumulativeValues, previousCumulative, legend }, ctx]: Parameters<StackedAreaChartCustom<AgStackedAreaChartConfig>["area"]>
+  ...[{ values, legend, index }, ctx]: Parameters<LineChartCustom<AgStackedAreaChartConfig>["line"]>
 ) {
-  const { scale, config } = ctx;
+  const { scale, config, data } = ctx;
   if (scale == null) return SizedBox.shrink();
+
+  // Compute cumulative values for stacking
+  const datasets = data.datasets;
+  const numPoints = values.length;
+  const cumulativeValues: number[] = new Array(numPoints).fill(0);
+  const previousCumulative: number[] = new Array(numPoints).fill(0);
+  for (let d = 0; d <= index; d++) {
+    for (let p = 0; p < numPoints; p++) {
+      if (d < index) previousCumulative[p] += datasets[d].values[p];
+      cumulativeValues[p] += datasets[d].values[p];
+    }
+  }
 
   const { colors, area: areaConfig } = config;
   const idx = ctx.legends.indexOf(legend);
@@ -109,7 +121,7 @@ function createLinePath({
   spline,
 }: {
   values: number[];
-  scale: StackedAreaChartScale;
+  scale: LineChartScale;
   width: number;
   height: number;
   spline: boolean;
@@ -148,7 +160,7 @@ function createStackedAreaPath({
 }: {
   topValues: number[];
   bottomValues: number[];
-  scale: StackedAreaChartScale;
+  scale: LineChartScale;
   width: number;
   height: number;
   spline: boolean;

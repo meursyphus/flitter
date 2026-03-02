@@ -61,8 +61,6 @@ export { default as RadarChart } from "./_todo/radar-chart";
 export * from "./_todo/radar-chart/types";
 export { default as GaugeChart } from "./_todo/gauge-chart";
 export * from "./_todo/gauge-chart/types";
-export { default as StackedAreaChart } from "./stacked-area-chart";
-export * from "./stacked-area-chart/types";
 export { default as PieChart } from "./_todo/pie-chart";
 export * from "./_todo/pie-chart/types";
 export { default as SunburstChart } from "./_todo/sunburst-chart";

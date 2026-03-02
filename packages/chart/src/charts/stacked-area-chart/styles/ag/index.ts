@@ -1,5 +1,5 @@
-import type { StackedAreaChartCustom } from "@headless/stacked-area-chart/types";
-import type { GetScaleOptionsFn } from "@headless/stacked-area-chart/types";
+import type { LineChartCustom } from "@headless/line-chart/types";
+import type { GetScaleOptionsFn } from "@headless/line-chart/types";
 import type { StyleConfig } from "../../plugin";
 import type { AgStackedAreaChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
@@ -27,9 +27,9 @@ import {
 
 export { type AgStackedAreaChartConfig } from "./config";
 
-const agCustom: Partial<StackedAreaChartCustom<AgStackedAreaChartConfig>> = {
+const agCustom: Partial<LineChartCustom<AgStackedAreaChartConfig>> = {
   layout: agLayout,
-  area: agArea,
+  line: agArea,
   series: (args, context) =>
     StackedAreaTooltipOverlay({
       child: agSeries(args, context),

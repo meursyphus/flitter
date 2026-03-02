@@ -1,4 +1,4 @@
-import type { StackedAreaChartCustom, StackedAreaChartScale } from "@headless/stacked-area-chart/types";
+import type { LineChartCustom, LineChartScale } from "@headless/line-chart/types";
 import {
   CustomPaint,
   Path,
@@ -17,7 +17,7 @@ import type { ToastStackedAreaChartConfig } from "../config";
 class _AnimatedStackedArea extends StatefulWidget {
   cumulativeValues: number[];
   previousCumulative: number[];
-  scale: StackedAreaChartScale;
+  scale: LineChartScale;
   color: string;
   strokeWidth: number;
   opacity: number;
@@ -40,7 +40,7 @@ class _AnimatedStackedArea extends StatefulWidget {
     key: string;
     cumulativeValues: number[];
     previousCumulative: number[];
-    scale: StackedAreaChartScale;
+    scale: LineChartScale;
     color: string;
     strokeWidth: number;
     opacity: number;
@@ -70,7 +70,7 @@ class _AnimatedStackedAreaState extends State<_AnimatedStackedArea> {
   tween!: { value: number };
   prevCumulativeValues: number[] | null = null;
   prevPreviousCumulative: number[] | null = null;
-  prevScale: StackedAreaChartScale | null = null;
+  prevScale: LineChartScale | null = null;
 
   override initState() {
     this.controller = new AnimationController({ duration: this.widget.duration });
@@ -196,10 +196,22 @@ class _AnimatedStackedAreaState extends State<_AnimatedStackedArea> {
 }
 
 export function toastArea(
-  ...[{ cumulativeValues, previousCumulative, legend }, ctx]: Parameters<StackedAreaChartCustom<ToastStackedAreaChartConfig>["area"]>
+  ...[{ values, legend, index }, ctx]: Parameters<LineChartCustom<ToastStackedAreaChartConfig>["line"]>
 ) {
-  const { scale, config } = ctx;
+  const { scale, config, data } = ctx;
   if (scale == null) return SizedBox.shrink();
+
+  // Compute cumulative values for stacking
+  const datasets = data.datasets;
+  const numPoints = values.length;
+  const cumulativeValues: number[] = new Array(numPoints).fill(0);
+  const previousCumulative: number[] = new Array(numPoints).fill(0);
+  for (let d = 0; d <= index; d++) {
+    for (let p = 0; p < numPoints; p++) {
+      if (d < index) previousCumulative[p] += datasets[d].values[p];
+      cumulativeValues[p] += datasets[d].values[p];
+    }
+  }
 
   const { colors, area: areaConfig, animation } = config;
   const idx = ctx.legends.indexOf(legend);
@@ -234,7 +246,7 @@ function lerpValues(from: number[], to: number[], t: number): number[] {
   return result;
 }
 
-function lerpScale(from: StackedAreaChartScale, to: StackedAreaChartScale, t: number): StackedAreaChartScale {
+function lerpScale(from: LineChartScale, to: LineChartScale, t: number): LineChartScale {
   return {
     min: lerp(from.min, to.min, t),
     max: lerp(from.max, to.max, t),
@@ -250,7 +262,7 @@ function createLinePath({
   spline,
 }: {
   values: number[];
-  scale: StackedAreaChartScale;
+  scale: LineChartScale;
   width: number;
   height: number;
   spline: boolean;
@@ -289,7 +301,7 @@ function createStackedAreaPath({
 }: {
   topValues: number[];
   bottomValues: number[];
-  scale: StackedAreaChartScale;
+  scale: LineChartScale;
   width: number;
   height: number;
   spline: boolean;

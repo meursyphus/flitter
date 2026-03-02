@@ -1,5 +1,5 @@
-import type { StackedAreaChartCustom } from "@headless/stacked-area-chart/types";
-import type { GetScaleOptionsFn } from "@headless/stacked-area-chart/types";
+import type { LineChartCustom } from "@headless/line-chart/types";
+import type { GetScaleOptionsFn } from "@headless/line-chart/types";
 import type { StyleConfig } from "../../plugin";
 import type { ToastStackedAreaChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
@@ -26,9 +26,9 @@ import {
 
 export { type ToastStackedAreaChartConfig } from "./config";
 
-const toastCustom: Partial<StackedAreaChartCustom<ToastStackedAreaChartConfig>> = {
+const toastCustom: Partial<LineChartCustom<ToastStackedAreaChartConfig>> = {
   layout: toastLayout,
-  area: toastArea,
+  line: toastArea,
   series: toastSeries,
   legend: toastLegend,
   title: toastTitle,
