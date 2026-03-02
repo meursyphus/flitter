@@ -1,6 +1,6 @@
 {
   "name": "@flitterjs/svelte",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "private": false,
   "type": "module",
   "description": "Svelte integration for Flitter",
@@ -8,17 +8,19 @@
   "homepage": "https://flitter.dev",
   "repository": "https://github.com/meursyphus/flitter",
   "license": "MIT",
-  "main": "src/lib/index.ts",
+  "main": "./package/index.js",
+  "types": "./package/index.d.ts",
+  "files": ["package"],
   "scripts": {
     "dev": "vite dev",
     "build": "svelte-kit sync && svelte-package",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "flitter-core": "workspace:*",
     "linkedom": "^0.14.21"
   },
   "peerDependencies": {
+    "flitter-ui": "workspace:^",
     "svelte": "^4.0.0 || ^5.0.0"
   },
   "devDependencies": {
