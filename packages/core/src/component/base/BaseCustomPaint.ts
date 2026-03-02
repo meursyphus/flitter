@@ -12,6 +12,7 @@ export type Painter<
 > = {
   dependencies?: D;
   shouldRepaint?: (oldPainter: Painter<SVGEls, D>) => boolean;
+  hitTest?: (position: { x: number; y: number }, size: Size) => boolean;
   svg?: CustomSvgPainter<SVGEls>;
   canvas?: CustomCanvasPainter;
 };
@@ -99,6 +100,12 @@ export class RenderCustomPaint<
     super({ isPainter: true });
     this._painter = painter;
     this._preferredSize = preferredSize;
+  }
+
+  override hitTestSelf(position: { x: number; y: number }): boolean {
+    const { hitTest } = this._painter;
+    if (hitTest == null) return false;
+    return hitTest(position, this.size);
   }
 
   protected computeSizeForNoChild(constraints: Constraints): Size {

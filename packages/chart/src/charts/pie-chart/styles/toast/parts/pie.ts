@@ -3,27 +3,35 @@ import {
 	Path,
 	Offset,
 	Radius,
-	StatefulWidget,
-	State,
 	GestureDetector,
-	Tooltip,
 	ZIndex,
+	Stack,
+	StackFit,
+	Positioned,
+	FractionalTranslation,
+	ConstraintsTransformBox,
+	Alignment,
 	EdgeInsets,
 	Padding,
+	SizedBox,
 	type Widget,
+	type Size,
 } from "flitter-core";
-import type { PieChartCustom, PieChartContext } from "@headless/pie-chart/types";
+import type { PieChartCustom } from "@headless/pie-chart/types";
 import type { ToastPieChartConfig } from "../config";
 import { tooltipContent } from "@styles/toast";
 
-function createPieSlice(
-	color: string,
-	pieConfig: ToastPieChartConfig["pie"],
-	sweepAngle: number,
-	hovered: boolean,
+export function toastPie(
+	...[{ index, name, value, percentage, sweepAngle }, ctx]: Parameters<PieChartCustom<ToastPieChartConfig>["pie"]>
 ): Widget {
-	return CustomPaint({
+	const { colors, pie: pieConfig } = ctx.config;
+	const color = colors[index % colors.length];
+	const hovered = ctx.isSliceHovered(index);
+
+	const paint = CustomPaint({
 		painter: {
+			hitTest: (position, size) =>
+				isPointInSlice(position, size, pieConfig.innerRadiusRatio, sweepAngle),
 			svg: {
 				createDefaultSvgEl: (context) => ({
 					slice: context.createSvgEl("path"),
@@ -74,97 +82,77 @@ function createPieSlice(
 			},
 		},
 	});
-}
 
-class _HoverablePieSlice extends StatefulWidget {
-	color: string;
-	pieConfig: ToastPieChartConfig["pie"];
-	sweepAngle: number;
-	tooltip: Widget;
+	const detector = GestureDetector({
+		behavior: "deferToChild",
+		cursor: "default",
+		child: paint,
+		onMouseEnter: () => ctx.hoverSlice(index),
+		onMouseLeave: () => {
+			if (ctx.hoveredIndex === index) ctx.unhoverSlice();
+		},
+	});
 
-	constructor({
-		color,
-		pieConfig,
-		sweepAngle,
-		tooltip,
-	}: {
-		color: string;
-		pieConfig: ToastPieChartConfig["pie"];
-		sweepAngle: number;
-		tooltip: Widget;
-	}) {
-		super();
-		this.color = color;
-		this.pieConfig = pieConfig;
-		this.sweepAngle = sweepAngle;
-		this.tooltip = tooltip;
-	}
+	const showTooltip = hovered && ctx.config.tooltip.enabled;
 
-	createState() {
-		return new _HoverablePieSliceState();
-	}
-}
-
-class _HoverablePieSliceState extends State<_HoverablePieSlice> {
-	hovered = false;
-
-	override build() {
-		const { color, pieConfig, sweepAngle, tooltip } = this.widget;
-		const slice = createPieSlice(color, pieConfig, sweepAngle, this.hovered);
-
-		const child = GestureDetector({
-			behavior: "opaque",
-			cursor: "default",
-			child: slice,
-			onMouseEnter: () => {
-				this.setState(() => {
-					this.hovered = true;
-				});
-			},
-			onMouseLeave: () => {
-				this.setState(() => {
-					this.hovered = false;
-				});
-			},
-		});
-
-		if (!this.hovered) return child;
-
-		return ZIndex({
-			zIndex: 9999,
-			child: Tooltip({
-				position: "topCenter",
-				translation: new Offset({ x: 0, y: -1 }),
-				tooltip: Padding({
-					padding: EdgeInsets.only({ bottom: 4 }),
-					child: tooltip,
-				}),
-				child,
-			}),
-		});
-	}
-}
-
-export function toastPie(
-	...[{ index, name, value, percentage, sweepAngle }, ctx]: Parameters<PieChartCustom<ToastPieChartConfig>["pie"]>
-): Widget {
-	const { colors, pie: pieConfig } = ctx.config;
-	const color = colors[index % colors.length];
-
-	if (!ctx.config.tooltip.enabled) {
-		return createPieSlice(color, pieConfig, sweepAngle, false);
-	}
-
-	return new _HoverablePieSlice({
-		color,
-		pieConfig,
-		sweepAngle,
-		tooltip: tooltipContent({
-			label: name,
-			items: { legend: name, color, value },
-			config: ctx.config,
+	return ZIndex({
+		zIndex: hovered ? 9999 : 0,
+		child: Stack({
+			fit: StackFit.passthrough,
+			clipped: false,
+			children: [
+				detector,
+				showTooltip
+					? Positioned.fill({
+							child: FractionalTranslation({
+								translation: Offset.Constants.zero,
+								child: ConstraintsTransformBox({
+									constraintsTransform: ConstraintsTransformBox.unconstrained,
+									alignment: Alignment.topCenter,
+									child: FractionalTranslation({
+										translation: new Offset({ x: 0, y: -1 }),
+										child: Padding({
+											padding: EdgeInsets.only({ bottom: 4 }),
+											child: tooltipContent({
+												label: name,
+												items: { legend: name, color, value },
+												config: ctx.config,
+											}),
+										}),
+									}),
+								}),
+							}),
+						})
+					: SizedBox.shrink(),
+			],
 		}),
 	});
+}
+
+function isPointInSlice(
+	position: { x: number; y: number },
+	size: Size,
+	innerRadiusRatio: number,
+	sweepAngle: number,
+): boolean {
+	const cx = size.width / 2;
+	const cy = size.height / 2;
+	const dx = position.x - cx;
+	const dy = position.y - cy;
+	const distance = Math.sqrt(dx * dx + dy * dy);
+
+	const outerRadius = Math.min(cx, cy);
+	const innerRadius = outerRadius * innerRadiusRatio;
+
+	if (distance < innerRadius || distance > outerRadius) return false;
+
+	// slice는 -π/2(12시)에서 시작, sweepAngle만큼 시계방향
+	// atan2는 양의 x축 기준, 반시계 양수
+	let angle = Math.atan2(dy, dx);
+	let relativeAngle = angle - (-Math.PI / 2);
+	if (relativeAngle < 0) relativeAngle += 2 * Math.PI;
+
+	return relativeAngle <= sweepAngle;
 }
 
 function createSlicePath(
