@@ -12,6 +12,7 @@ export function Series(
     const alignmentY = 1 - normY * 2;
 
     return Align({
+      key: `${pt.legend}-${pt.label}`,
       alignment: new Alignment({ x: alignmentX, y: alignmentY }),
       child: context.custom.scatter(
         {
@@ -24,5 +25,5 @@ export function Series(
     });
   });
 
-  return Stack({ children });
+  return Stack({ clipped: false, children });
 }

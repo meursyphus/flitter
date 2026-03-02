@@ -4,7 +4,6 @@ import type { ToastBubbleChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { toastBubble } from "./parts/bubble";
-import { toastSeries } from "./parts/series";
 import {
   toastLayout,
   toastTitle,
@@ -28,7 +27,6 @@ export { type ToastBubbleChartConfig } from "./config";
 const toastCustom: Partial<BubbleChartCustom<ToastBubbleChartConfig>> = {
   layout: toastLayout,
   bubble: toastBubble,
-  series: toastSeries,
   legend: toastLegend,
   title: toastTitle,
   axisCorner: toastAxisCorner,
