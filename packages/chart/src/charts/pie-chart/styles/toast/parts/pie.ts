@@ -5,21 +5,11 @@ import {
 	Radius,
 	GestureDetector,
 	ZIndex,
-	Stack,
-	StackFit,
-	Positioned,
-	FractionalTranslation,
-	ConstraintsTransformBox,
-	Alignment,
-	EdgeInsets,
-	Padding,
-	SizedBox,
 	type Widget,
 	type Size,
 } from "flitter-core";
 import type { PieChartCustom } from "@headless/pie-chart/types";
 import type { ToastPieChartConfig } from "../config";
-import { tooltipContent } from "@styles/toast";
 
 export function toastPie(
 	...[{ index, name, value, percentage, sweepAngle }, ctx]: Parameters<PieChartCustom<ToastPieChartConfig>["pie"]>
@@ -93,39 +83,9 @@ export function toastPie(
 		},
 	});
 
-	const showTooltip = hovered && ctx.config.tooltip.enabled;
-
 	return ZIndex({
 		zIndex: hovered ? 9999 : 0,
-		child: Stack({
-			fit: StackFit.passthrough,
-			clipped: false,
-			children: [
-				detector,
-				showTooltip
-					? Positioned.fill({
-							child: FractionalTranslation({
-								translation: Offset.Constants.zero,
-								child: ConstraintsTransformBox({
-									constraintsTransform: ConstraintsTransformBox.unconstrained,
-									alignment: Alignment.topCenter,
-									child: FractionalTranslation({
-										translation: new Offset({ x: 0, y: -1 }),
-										child: Padding({
-											padding: EdgeInsets.only({ bottom: 4 }),
-											child: tooltipContent({
-												label: name,
-												items: { legend: name, color, value },
-												config: ctx.config,
-											}),
-										}),
-									}),
-								}),
-							}),
-						})
-					: SizedBox.shrink(),
-			],
-		}),
+		child: detector,
 	});
 }
 

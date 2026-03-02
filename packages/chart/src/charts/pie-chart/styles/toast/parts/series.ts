@@ -9,11 +9,20 @@ import {
 	Path,
 	Offset,
 	Radius,
+	Stack,
+	StackFit,
+	Align,
+	Alignment,
+	ConstraintsTransformBox,
+	FractionalTranslation,
+	ZIndex,
+	SizedBox,
 	type Widget,
 } from "flitter-core";
 import type { PieChartCustom } from "@headless/pie-chart/types";
 import type { ToastPieChartConfig } from "../config";
 import { Series } from "../../../base/series";
+import { tooltipContent } from "@styles/toast";
 
 class AnimatedPieSeries extends StatefulWidget {
 	child: Widget;
@@ -95,7 +104,9 @@ class _AnimatedPieSeriesState extends State<AnimatedPieSeries> {
 export function toastSeries(
 	...[args, context]: Parameters<PieChartCustom<ToastPieChartConfig>["series"]>
 ): Widget {
-	const child = Series(args, context);
+	const seriesWidget = Series(args, context);
+
+	const child = buildSeriesTooltipOverlay(seriesWidget, args, context);
 
 	if (!context.config.animation.enabled) {
 		return child;
@@ -104,5 +115,55 @@ export function toastSeries(
 	return new AnimatedPieSeries({
 		child,
 		duration: context.config.animation.duration,
+	});
+}
+
+function buildSeriesTooltipOverlay(
+	seriesWidget: Widget,
+	args: Parameters<PieChartCustom<ToastPieChartConfig>["series"]>[0],
+	context: Parameters<PieChartCustom<ToastPieChartConfig>["series"]>[1],
+): Widget {
+	const { hoveredIndex, config } = context;
+	const showTooltip = hoveredIndex != null && config.tooltip.enabled;
+
+	let tooltipWidget: Widget;
+
+	if (showTooltip && args.pies[hoveredIndex]) {
+		const { startAngle, sweepAngle, name, value, index } = args.pies[hoveredIndex];
+		const color = config.colors[index % config.colors.length];
+
+		// actual mid angle in world space: slice draws from -π/2 inside rotated frame
+		const midAngle = -Math.PI / 2 + startAngle + sweepAngle / 2;
+
+		const ax = Math.cos(midAngle);
+		const ay = Math.sin(midAngle);
+
+		tooltipWidget = ZIndex({
+			zIndex: 99999,
+			child: Align({
+				alignment: new Alignment({ x: ax, y: ay }),
+				child: ConstraintsTransformBox({
+					constraintsTransform: ConstraintsTransformBox.unconstrained,
+					alignment: new Alignment({ x: -ax, y: -ay }),
+					child: FractionalTranslation({
+						translation: new Offset({ x: ax * 0.15, y: ay * 0.15 }),
+						child: tooltipContent({
+							label: name,
+							items: { legend: name, color, value },
+							config,
+						}),
+					}),
+				}),
+			}),
+		});
+	} else {
+		tooltipWidget = SizedBox.shrink();
+	}
+
+	// Always return Stack to keep widget tree structure stable (prevents remount flicker)
+	return Stack({
+		fit: StackFit.expand,
+		clipped: false,
+		children: [seriesWidget, tooltipWidget],
 	});
 }
