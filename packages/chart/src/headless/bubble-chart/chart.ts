@@ -199,17 +199,20 @@ class Series extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const ctx = BubbleChartProvider.of(context);
     const { data, scale } = ctx;
-    if (scale == null) return ctx.custom.series({ points: [], scale: { x: { min: 0, max: 0, step: 1 }, y: { min: 0, max: 0, step: 1 }, value: { min: 0, max: 0, step: 1 } } }, ctx);
+    if (scale == null) return ctx.custom.series({ bubbles: [], scale: { x: { min: 0, max: 0, step: 1 }, y: { min: 0, max: 0, step: 1 }, value: { min: 0, max: 0, step: 1 } } }, ctx);
 
-    const points = data.datasets.flatMap((dataset, datasetIndex) =>
+    const bubbles = data.datasets.flatMap((dataset, datasetIndex) =>
       dataset.data.map((pt) => ({
-        ...pt,
-        legend: dataset.legend,
-        index: datasetIndex,
+        widget: ctx.custom.bubble(
+          { value: pt.value, label: pt.label, legend: dataset.legend, index: datasetIndex },
+          ctx,
+        ),
+        x: pt.x,
+        y: pt.y,
       })),
     );
 
-    return ctx.custom.series({ points, scale }, ctx);
+    return ctx.custom.series({ bubbles, scale }, ctx);
   }
 }
 

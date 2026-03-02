@@ -37,7 +37,7 @@ export type BubbleChartCustom<TConfig = {}> = {
 	yAxisLabel: CustomArgs<{ name: string; index: number }, TConfig>;
 	xAxisTick: CustomArgs<undefined, TConfig>;
 	yAxisTick: CustomArgs<undefined, TConfig>;
-	series: CustomArgs<{ points: { x: number; y: number; value: number; label: string; legend: string; index: number }[]; scale: BubbleChartScale }, TConfig>;
+	series: CustomArgs<{ bubbles: { widget: Widget; x: number; y: number }[]; scale: BubbleChartScale }, TConfig>;
 	layout: CustomArgs<{ title: Widget; legends: Widget[]; plot: Widget }, TConfig>;
 	plot: CustomArgs<{ xAxis: Widget; yAxis: Widget; series: Widget; grid: Widget; axisCorner: Widget }, TConfig>;
 	legend: CustomArgs<{ name: string; index: number }, TConfig>;
