@@ -6,7 +6,6 @@ import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { agArea } from "./parts/area";
 import { agSeries } from "./parts/series";
-import { StackedAreaTooltipOverlay } from "./parts/tooltip-overlay";
 import {
   agLayout,
   agTitle,
@@ -30,11 +29,7 @@ export { type AgStackedAreaChartConfig } from "./config";
 const agCustom: Partial<LineChartCustom<AgStackedAreaChartConfig>> = {
   layout: agLayout,
   line: agArea,
-  series: (args, context) =>
-    StackedAreaTooltipOverlay({
-      child: agSeries(args, context),
-      config: context.config,
-    }),
+  series: agSeries,
   legend: agLegend,
   title: agTitle,
   axisCorner: agAxisCorner,
