@@ -3,6 +3,7 @@ import type { ToastPieChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { toastPie } from "./parts/pie";
+import { toastSeries } from "./parts/series";
 import {
 	toastTitle,
 	toastLegend,
@@ -12,6 +13,7 @@ export { type ToastPieChartConfig } from "./config";
 
 const toastCustom: Partial<PieChartCustom<ToastPieChartConfig>> = {
 	pie: toastPie,
+	series: toastSeries,
 	legend: (args, context) => toastLegend(args, context, { markerShape: "circle" }),
 	title: toastTitle,
 };
