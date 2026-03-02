@@ -201,10 +201,10 @@ class Series extends StatelessWidget {
     const { data, scale } = ctx;
     if (scale == null) return ctx.custom.series({ scatters: [], scale: { x: { min: 0, max: 0, step: 1 }, y: { min: 0, max: 0, step: 1 } } }, ctx);
 
-    const scatters = data.datasets.flatMap((dataset, datasetIndex) =>
-      dataset.data.map((pt) => ({
+    const scatters = data.datasets.flatMap((dataset) =>
+      dataset.data.map((pt, pointIndex) => ({
         widget: ctx.custom.scatter(
-          { label: pt.label, legend: dataset.legend, index: datasetIndex },
+          { label: pt.label, legend: dataset.legend, index: pointIndex },
           ctx,
         ),
         x: pt.x,
