@@ -129,8 +129,9 @@ function buildSeriesTooltipOverlay(
 	let tooltipWidget: Widget;
 
 	if (showTooltip && args.pies[hoveredIndex]) {
-		const { startAngle, sweepAngle, name, value, index } = args.pies[hoveredIndex];
-		const color = config.colors[index % config.colors.length];
+		const { startAngle, sweepAngle, name, value } = args.pies[hoveredIndex];
+		const colorIndex = context.legends.indexOf(name);
+		const color = config.colors[(colorIndex >= 0 ? colorIndex : 0) % config.colors.length];
 
 		// actual mid angle in world space: slice draws from -π/2 inside rotated frame
 		const midAngle = -Math.PI / 2 + startAngle + sweepAngle / 2;

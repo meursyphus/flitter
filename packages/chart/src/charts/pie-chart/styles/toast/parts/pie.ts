@@ -15,7 +15,8 @@ export function toastPie(
 	...[{ index, name, value, percentage, sweepAngle }, ctx]: Parameters<PieChartCustom<ToastPieChartConfig>["pie"]>
 ): Widget {
 	const { colors, pie: pieConfig } = ctx.config;
-	const color = colors[index % colors.length];
+	const colorIndex = ctx.legends.indexOf(name);
+	const color = colors[(colorIndex >= 0 ? colorIndex : index) % colors.length];
 	const hovered = ctx.isSliceHovered(index);
 
 	const paint = CustomPaint({
