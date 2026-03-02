@@ -7,7 +7,6 @@ export type BarChartContext<TConfig = {}> = BarChartController & { config: TConf
 
 export type BarChartCustom<TConfig = {}> = {
 	barGroup: CustomArgs<{ bars: { bar: Widget; value: number; datasetIndex: number }[]; index: number; label: string }, TConfig>;
-	barGroupBox: CustomArgs<{ child: Widget; index: number; label: string }, TConfig>;
 	barBox: CustomArgs<{ bar: Widget; value: number; ratio: number; alignment: Alignment; index: number }, TConfig>;
 	bar: CustomArgs<{ value: number; label: string; legend: string; index: number }, TConfig>;
 	xAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;

@@ -35,7 +35,7 @@ src/charts/{chart-name}/
       config.ts         Style-specific config type + defaults
       index.ts          Exports toastStyleConfig (single StyleConfig object)
       parts/            Chart-specific visual part renderers only
-        bar.ts, bar-box.ts, bar-group-box.ts, ...
+        bar.ts, bar-box.ts, bar-group.ts, ...
 ```
 
 ### base/ 파일 분리 기준
@@ -89,7 +89,6 @@ import { Grid } from "./grid";
 const baseDefaults: Partial<BarChartCustom> = {
   barGroup: BarGroup,                          // 별도 파일 (80줄 bar 레이아웃)
   barBox: BarBox,                              // 별도 파일 (bar 전용 로직)
-  barGroupBox: (...[{ child }]) => child,      // 인라인 (trivial)
   series: Series,                              // 별도 파일 (bar series 배치)
   plot: (...args) => Cartesian.Plot(args[0]),  // 인라인 (단순 Cartesian 래핑)
   dataLabel: (...args) => Cartesian.DataLabel(args[0]),  // 인라인
@@ -125,7 +124,7 @@ import { toastStyleConfig, type ToastBarChartConfig } from "./styles/toast";
 const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
   layout: toastLayout,
   bar: toastBar,
-  barGroupBox: toastBarGroupBox,
+  barGroup: toastBarGroup,
   barBox: toastBarBox,
   legend: toastLegend,
   // ... all visual parts

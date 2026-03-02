@@ -278,7 +278,6 @@ const barChartCustomElements = [
   { element: "legend", args: "{ name: string, index: number }", description: "Individual legend item rendering" },
   { element: "series", args: "{ barGroups: Widget[] }", description: "Series container — wraps all bar groups" },
   { element: "barGroup", args: "{ bars: { bar: Widget, value: number, datasetIndex: number }[], index: number, label: string }", description: "Bar group layout — arranges individual bars within a category (default: side-by-side Flex, stacked: stacked layout)" },
-  { element: "barGroupBox", args: "{ child: Widget, index: number, label: string }", description: "Bar group wrapper — wraps the completed group (toast adds ClipRect animation)" },
   { element: "barBox", args: "{ bar: Widget, value: number, ratio: number, alignment: Alignment, index: number }", description: "Individual bar sizing — wraps a bar with FractionallySizedBox (toast uses AnimatedFractionallySizedBox)" },
   { element: "bar", args: "{ value: number, label: string, legend: string, index: number }", description: "Individual bar element" },
   { element: "dataLabel", args: "{ value: number, label: string, legend: string }", description: "Data label displayed on or near a bar" },

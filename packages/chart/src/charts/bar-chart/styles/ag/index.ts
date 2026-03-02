@@ -5,8 +5,6 @@ import type { AgBarChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { agBar } from "./parts/bar";
-import { agBarGroupBox } from "./parts/bar-group-box";
-import { agBarBox } from "./parts/bar-box";
 import {
   agLayout,
   agTitle,
@@ -35,8 +33,6 @@ const agCustom: Partial<BarChartCustom<AgBarChartConfig>> = {
       context,
     ),
   bar: agBar,
-  barGroupBox: agBarGroupBox,
-  barBox: agBarBox,
   legend: agLegend,
   title: agTitle,
   axisCorner: agAxisCorner,

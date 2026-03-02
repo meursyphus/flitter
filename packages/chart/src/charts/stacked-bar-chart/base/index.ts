@@ -19,7 +19,6 @@ export { BarChartController } from "@headless/bar-chart/controller";
 const baseDefaults: Partial<BarChartCustom> = {
   barGroup: stackedBarGroup,
   barBox: BarBox,
-  barGroupBox: (...[{ child }]) => child,
   series: Series,
   plot: (...args) => Cartesian.Plot(args[0]),
   dataLabel: (...args) => Cartesian.DataLabel(args[0]),

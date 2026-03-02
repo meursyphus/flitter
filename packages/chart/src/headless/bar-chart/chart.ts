@@ -224,13 +224,8 @@ class BarGroup extends StatelessWidget {
       datasetIndex,
     }));
 
-    const group = ctx.custom.barGroup(
+    return ctx.custom.barGroup(
       { bars, index: this.#index, label: data.labels[this.#index] },
-      ctx,
-    );
-
-    return ctx.custom.barGroupBox(
-      { child: group, index: this.#index, label: data.labels[this.#index] },
       ctx,
     );
   }

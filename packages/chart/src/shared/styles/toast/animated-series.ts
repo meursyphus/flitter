@@ -9,10 +9,8 @@ import {
   type Widget,
 } from "flitter-core";
 import { Rect } from "flitter-core";
-import type { BarChartContext } from "@headless/bar-chart/types";
-import type { ToastBarChartConfig } from "../config";
 
-class _MountRevealBarGroup extends StatefulWidget {
+export class AnimatedSeries extends StatefulWidget {
   child: Widget;
   duration: number;
   isVertical: boolean;
@@ -37,11 +35,11 @@ class _MountRevealBarGroup extends StatefulWidget {
   }
 
   createState() {
-    return new _MountRevealBarGroupState();
+    return new _AnimatedSeriesState();
   }
 }
 
-class _MountRevealBarGroupState extends State<_MountRevealBarGroup> {
+class _AnimatedSeriesState extends State<AnimatedSeries> {
   animationController!: AnimationController;
   tweenAnimation!: { value: number };
 
@@ -67,10 +65,10 @@ class _MountRevealBarGroupState extends State<_MountRevealBarGroup> {
   override build() {
     const { child, isVertical, baselineRatio } = this.widget;
     const t = this.tweenAnimation.value;
-
-    if (t >= 1) return child;
+    const done = t >= 1;
 
     return ClipRect({
+      clipped: !done,
       clipper: (size) => {
         if (isVertical) {
           const baselineY = size.height * (1 - baselineRatio);
@@ -97,21 +95,4 @@ class _MountRevealBarGroupState extends State<_MountRevealBarGroup> {
       child,
     });
   }
-}
-
-export function toastBarGroupBox(
-  { child, index, label }: { child: Widget; index: number; label: string },
-  context: BarChartContext<ToastBarChartConfig>,
-) {
-  const scale = context.scale;
-  const isVertical = context.direction === "vertical";
-  const baselineRatio =
-    scale ? Math.max(0, Math.min(1, (0 - scale.min) / (scale.max - scale.min))) : 0;
-
-  return new _MountRevealBarGroup({
-    child,
-    duration: context.config.animation.duration,
-    isVertical,
-    baselineRatio,
-  });
 }

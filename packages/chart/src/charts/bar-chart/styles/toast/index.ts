@@ -5,7 +5,7 @@ import type { ToastBarChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { toastBar } from "./parts/bar";
-import { toastBarGroupBox } from "./parts/bar-group-box";
+import { toastSeries } from "./parts/series";
 import { toastBarBox } from "./parts/bar-box";
 import {
   toastLayout,
@@ -30,7 +30,7 @@ export { type ToastBarChartConfig } from "./config";
 const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
   layout: toastLayout,
   bar: toastBar,
-  barGroupBox: toastBarGroupBox,
+  series: toastSeries,
   barBox: toastBarBox,
   legend: toastLegend,
   title: toastTitle,
