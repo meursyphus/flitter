@@ -19,18 +19,40 @@ import {
 	SizedBox,
 	type Widget,
 } from "flitter-core";
-import type { PieChartCustom } from "@headless/pie-chart/types";
+import type { PieChartCustom, PieChartContext } from "@headless/pie-chart/types";
 import type { ToastPieChartConfig } from "../config";
 import { Series } from "../../../base/series";
 import { tooltipContent } from "@styles/toast";
 
+type PieSlice = {
+	widget: Widget;
+	startAngle: number;
+	sweepAngle: number;
+	percentage: number;
+	index: number;
+	name: string;
+	value: number;
+};
+
+type AngleSnapshot = { startAngle: number; sweepAngle: number };
+
 class AnimatedPieSeries extends StatefulWidget {
-	child: Widget;
+	pies: PieSlice[];
+	context: PieChartContext<ToastPieChartConfig>;
 	duration: number;
 
-	constructor({ child, duration }: { child: Widget; duration: number }) {
+	constructor({
+		pies,
+		context,
+		duration,
+	}: {
+		pies: PieSlice[];
+		context: PieChartContext<ToastPieChartConfig>;
+		duration: number;
+	}) {
 		super();
-		this.child = child;
+		this.pies = pies;
+		this.context = context;
 		this.duration = duration;
 	}
 
@@ -40,80 +62,130 @@ class AnimatedPieSeries extends StatefulWidget {
 }
 
 class _AnimatedPieSeriesState extends State<AnimatedPieSeries> {
-	animationController!: AnimationController;
-	tweenAnimation!: { value: number };
+	controller!: AnimationController;
+	tween!: { value: number };
+	isMountAnimation = true;
+	prevAngleMap: Map<string, AngleSnapshot> | null = null;
 
 	override initState() {
-		this.animationController = new AnimationController({
+		this.controller = new AnimationController({
 			duration: this.widget.duration,
 		});
-		this.animationController.addListener(() => this.setState());
-		const tween = new Tween({ begin: 0, end: 1 });
-		this.tweenAnimation = tween.animated(
+		this.controller.addListener(() => this.setState());
+		this.tween = new Tween({ begin: 0, end: 1 }).animated(
 			new CurvedAnimation({
-				parent: this.animationController,
+				parent: this.controller,
 				curve: Curves.easeInOut,
 			}),
 		);
-		this.animationController.forward();
+		this.isMountAnimation = true;
+		this.controller.forward();
+	}
+
+	override didUpdateWidget(oldWidget: AnimatedPieSeries) {
+		const anglesChanged =
+			oldWidget.pies.length !== this.widget.pies.length ||
+			oldWidget.pies.some(
+				(p, i) =>
+					p.startAngle !== this.widget.pies[i]?.startAngle ||
+					p.sweepAngle !== this.widget.pies[i]?.sweepAngle,
+			);
+
+		if (anglesChanged) {
+			this.prevAngleMap = new Map(
+				oldWidget.pies.map((p) => [
+					p.name,
+					{ startAngle: p.startAngle, sweepAngle: p.sweepAngle },
+				]),
+			);
+			this.isMountAnimation = false;
+			this.controller.reset();
+			this.controller.forward();
+		}
 	}
 
 	override dispose() {
-		this.animationController.dispose();
+		this.controller.dispose();
 	}
 
 	override build() {
-		const { child } = this.widget;
-		const t = this.tweenAnimation.value;
-		const done = t >= 1;
+		const { pies, context } = this.widget;
+		const t = this.tween.value;
 
-		return ClipPath({
-			clipped: !done,
-			clipper: (size) => {
-				const cx = size.width / 2;
-				const cy = size.height / 2;
-				const r = Math.max(size.width, size.height);
-				const sweepAngle = t * Math.PI * 2;
+		if (this.isMountAnimation) {
+			// Mount animation: ClipPath sweep from 0 → 360°
+			const child = buildSeriesTooltipOverlay(
+				Series({ pies }, context),
+				{ pies },
+				context,
+			);
+			const done = t >= 1;
 
-				const path = new Path();
-				path.moveTo(new Offset({ x: cx, y: cy }));
-				// 12시 방향 (top center)
-				path.lineTo(new Offset({ x: cx, y: cy - r }));
-				if (sweepAngle > 0) {
-					// startAngle = -PI/2 (12시), sweep clockwise
-					const startAngle = -Math.PI / 2;
-					const endAngle = startAngle + sweepAngle;
-					const endX = cx + r * Math.cos(endAngle);
-					const endY = cy + r * Math.sin(endAngle);
-					path.arcToPoint({
-						endPoint: new Offset({ x: endX, y: endY }),
-						radius: Radius.circular(r),
-						rotation: 0,
-						largeArc: sweepAngle > Math.PI,
-						clockwise: true,
-					});
-				}
-				path.close();
-				return path;
-			},
-			child,
+			return ClipPath({
+				clipped: !done,
+				clipper: (size) => {
+					const cx = size.width / 2;
+					const cy = size.height / 2;
+					const r = Math.max(size.width, size.height);
+					const sweepAngle = t * Math.PI * 2;
+
+					const path = new Path();
+					path.moveTo(new Offset({ x: cx, y: cy }));
+					// 12시 방향 (top center)
+					path.lineTo(new Offset({ x: cx, y: cy - r }));
+					if (sweepAngle > 0) {
+						// startAngle = -PI/2 (12시), sweep clockwise
+						const startAngle = -Math.PI / 2;
+						const endAngle = startAngle + sweepAngle;
+						const endX = cx + r * Math.cos(endAngle);
+						const endY = cy + r * Math.sin(endAngle);
+						path.arcToPoint({
+							endPoint: new Offset({ x: endX, y: endY }),
+							radius: Radius.circular(r),
+							rotation: 0,
+							largeArc: sweepAngle > Math.PI,
+							clockwise: true,
+						});
+					}
+					path.close();
+					return path;
+				},
+				child,
+			});
+		}
+
+		// Filter transition: lerp angles for remaining slices
+		const interpolatedPies = pies.map((pie) => {
+			const prev = this.prevAngleMap?.get(pie.name);
+			if (prev == null) return pie;
+			return {
+				...pie,
+				startAngle: lerp(prev.startAngle, pie.startAngle, t),
+				sweepAngle: lerp(prev.sweepAngle, pie.sweepAngle, t),
+			};
 		});
+
+		const seriesWidget = Series({ pies: interpolatedPies }, context);
+		return buildSeriesTooltipOverlay(seriesWidget, { pies }, context);
 	}
+}
+
+function lerp(a: number, b: number, t: number): number {
+	return a + (b - a) * t;
 }
 
 export function toastSeries(
 	...[args, context]: Parameters<PieChartCustom<ToastPieChartConfig>["series"]>
 ): Widget {
-	const seriesWidget = Series(args, context);
-
-	const child = buildSeriesTooltipOverlay(seriesWidget, args, context);
-
 	if (!context.config.animation.enabled) {
+		const seriesWidget = Series(args, context);
+		const child = buildSeriesTooltipOverlay(seriesWidget, args, context);
 		return child;
 	}
 
 	return new AnimatedPieSeries({
-		child,
+		pies: args.pies,
+		context,
 		duration: context.config.animation.duration,
 	});
 }
