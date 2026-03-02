@@ -10,9 +10,9 @@ import {
   type Widget,
 } from "flitter-core";
 import type { ToastBaseConfig } from "./config";
-import { XAxis } from "../../cartesian";
+import { YAxis } from "../../../cartesian";
 
-class _AnimatedXAxis extends StatefulWidget {
+class _AnimatedYAxis extends StatefulWidget {
   child: Widget;
   animationConfig: ToastBaseConfig["animation"];
 
@@ -29,11 +29,11 @@ class _AnimatedXAxis extends StatefulWidget {
   }
 
   createState() {
-    return new _AnimatedXAxisState();
+    return new _AnimatedYAxisState();
   }
 }
 
-class _AnimatedXAxisState extends State<_AnimatedXAxis> {
+class _AnimatedYAxisState extends State<_AnimatedYAxis> {
   animationController!: AnimationController;
   tweenAnimation!: { value: number };
 
@@ -65,23 +65,23 @@ class _AnimatedXAxisState extends State<_AnimatedXAxis> {
   override build() {
     const { child } = this.widget;
     return FractionallySizedBox({
-      widthFactor: this.tweenAnimation.value,
-      alignment: Alignment.centerLeft,
+      heightFactor: this.tweenAnimation.value,
+      alignment: Alignment.topCenter,
       child,
     });
   }
 }
 
-export function toastXAxis(
+export function toastYAxis(
   { line, labels, tick }: { line: Widget; labels: Widget[]; tick: Widget },
   options: { type: "label" | "value" },
   context: { config: ToastBaseConfig },
 ): Widget {
-  const axis = XAxis({ line, labels, tick }, {
+  const axis = YAxis({ line, labels, tick }, {
     type: options.type,
     gap: context.config.axis.label.gap,
   });
-  return new _AnimatedXAxis({
+  return new _AnimatedYAxis({
     child: axis,
     animationConfig: context.config.animation,
   });

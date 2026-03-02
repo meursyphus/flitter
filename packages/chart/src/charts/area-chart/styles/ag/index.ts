@@ -8,27 +8,16 @@ import { agArea } from "./parts/area";
 import { agSeries } from "./parts/series";
 import { AreaTooltipOverlay } from "./parts/tooltip-overlay";
 import {
-  agLayout,
   agTitle,
   agLegend,
-  agXAxisLabel,
-  agYAxisLabel,
-  agXAxisTick,
-  agYAxisTick,
-  agXAxisLine,
-  agYAxisLine,
-  agGridXLine,
-  agGridYLine,
-  agAxisCorner,
-  agXAxis,
-  agYAxis,
   agScaleOptions,
+  cartesian,
 } from "@shared/styles/ag";
 
 export { type AgAreaChartConfig } from "./config";
 
 const agCustom: Partial<LineChartCustom<AgAreaChartConfig>> = {
-  layout: agLayout,
+  layout: cartesian.agLayout,
   line: agArea,
   series: (args, context) =>
     AreaTooltipOverlay({
@@ -37,19 +26,19 @@ const agCustom: Partial<LineChartCustom<AgAreaChartConfig>> = {
     }),
   legend: agLegend,
   title: agTitle,
-  axisCorner: agAxisCorner,
-  xAxisLabel: agXAxisLabel,
-  yAxisLabel: agYAxisLabel,
-  xAxisTick: agXAxisTick,
-  yAxisTick: agYAxisTick,
-  xAxisLine: agXAxisLine,
-  yAxisLine: agYAxisLine,
-  gridXLine: agGridXLine,
-  gridYLine: agGridYLine,
+  axisCorner: cartesian.agAxisCorner,
+  xAxisLabel: cartesian.agXAxisLabel,
+  yAxisLabel: cartesian.agYAxisLabel,
+  xAxisTick: cartesian.agXAxisTick,
+  yAxisTick: cartesian.agYAxisTick,
+  xAxisLine: cartesian.agXAxisLine,
+  yAxisLine: cartesian.agYAxisLine,
+  gridXLine: cartesian.agGridXLine,
+  gridYLine: cartesian.agGridYLine,
   xAxis: (args, context) =>
-    agXAxis(args, { type: "value" }, context),
+    cartesian.agXAxis(args, { type: "value" }, context),
   yAxis: (args, context) =>
-    agYAxis(args, { type: "value" }, context),
+    cartesian.agYAxis(args, { type: "value" }, context),
 };
 
 const agGetScaleOptions: GetScaleOptionsFn = (ctx) =>

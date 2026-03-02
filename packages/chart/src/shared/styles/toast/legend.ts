@@ -13,7 +13,7 @@ import {
   type Widget,
 } from "flitter-core";
 import { CheckBox } from "./checkbox";
-import type { ToastBaseConfig } from "./config";
+import type { ToastBaseConfig } from "./cartesian/config";
 
 export function toastLegend(
   { name, index }: { name: string; index: number },

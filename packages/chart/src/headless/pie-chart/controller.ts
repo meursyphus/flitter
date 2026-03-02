@@ -35,20 +35,15 @@ export class PieChartController extends ChangeNotifier {
 	}
 
 	get data(): PieChartData {
-		const visibleIndices: number[] = [];
-		this.#rawData.labels.forEach((label, i) => {
-			if (!this.#hiddenSeries.has(label)) {
-				visibleIndices.push(i);
-			}
-		});
 		return {
-			labels: visibleIndices.map((i) => this.#rawData.labels[i]),
-			values: visibleIndices.map((i) => this.#rawData.values[i]),
+			datasets: this.#rawData.datasets.filter(
+				(d) => !this.#hiddenSeries.has(d.name),
+			),
 		};
 	}
 
 	get legends(): string[] {
-		return this.#rawData.labels;
+		return this.#rawData.datasets.map((d) => d.name);
 	}
 
 	// --- 차트 크기 ---
@@ -74,28 +69,28 @@ export class PieChartController extends ChangeNotifier {
 		return this.#hiddenSeries;
 	}
 
-	isSeriesVisible(label: string): boolean {
-		return !this.#hiddenSeries.has(label);
+	isSeriesVisible(name: string): boolean {
+		return !this.#hiddenSeries.has(name);
 	}
 
-	toggleSeries(label: string): void {
-		if (this.#hiddenSeries.has(label)) {
-			this.#hiddenSeries.delete(label);
+	toggleSeries(name: string): void {
+		if (this.#hiddenSeries.has(name)) {
+			this.#hiddenSeries.delete(name);
 		} else {
-			this.#hiddenSeries.add(label);
+			this.#hiddenSeries.add(name);
 		}
 		this.notifyListeners();
 	}
 
-	showSeries(label: string): void {
-		if (!this.#hiddenSeries.has(label)) return;
-		this.#hiddenSeries.delete(label);
+	showSeries(name: string): void {
+		if (!this.#hiddenSeries.has(name)) return;
+		this.#hiddenSeries.delete(name);
 		this.notifyListeners();
 	}
 
-	hideSeries(label: string): void {
-		if (this.#hiddenSeries.has(label)) return;
-		this.#hiddenSeries.add(label);
+	hideSeries(name: string): void {
+		if (this.#hiddenSeries.has(name)) return;
+		this.#hiddenSeries.add(name);
 		this.notifyListeners();
 	}
 

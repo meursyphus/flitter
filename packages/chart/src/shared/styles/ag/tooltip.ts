@@ -18,7 +18,7 @@ import {
   Offset,
   type Widget,
 } from "flitter-core";
-import type { AgBaseConfig } from "./config";
+import type { AgBaseConfig } from "./cartesian/config";
 import { tooltipArrow } from "./tooltip-arrow";
 
 const ARROW_WIDTH = 16;

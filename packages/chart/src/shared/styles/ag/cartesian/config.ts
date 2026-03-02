@@ -1,4 +1,4 @@
-import { AG_FILLS, AG_STROKES } from "./utils";
+import { AG_FILLS, AG_STROKES } from "../utils";
 
 /**
  * Common config shape shared by all ag-style chart configs.

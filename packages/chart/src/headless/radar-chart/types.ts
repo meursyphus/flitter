@@ -7,7 +7,7 @@ export type RadarChartContext<TConfig = {}> = RadarChartController & { config: T
 
 export type RadarChartData = {
 	labels: string[];
-	datasets: { legend: string; values: number[] }[];
+	datasets: { name: string; values: number[] }[];
 };
 
 export type RadarChartScale = {
@@ -16,28 +16,48 @@ export type RadarChartScale = {
 	step: number;
 };
 
+export type RadarVertex = {
+	/** Normalized x position (0..1) relative to the plot area center */
+	nx: number;
+	/** Normalized y position (0..1) relative to the plot area center */
+	ny: number;
+	/** The angle in radians from 12 o'clock (top) */
+	angle: number;
+	/** The ratio of the value to the max scale value (0..1) */
+	ratio: number;
+	/** The data value */
+	value: number;
+	/** The axis label */
+	label: string;
+	/** The axis index */
+	index: number;
+};
+
 export type RadarChartCustom<TConfig = {}> = {
 	layout: CustomArgs<{ title: Widget; legends: Widget[]; series: Widget }, TConfig>;
 	series: CustomArgs<
 		{
+			datasets: {
+				widget: Widget;
+				name: string;
+				index: number;
+				vertices: RadarVertex[];
+			}[];
 			grid: Widget;
-			axes: Widget;
-			datasets: Widget[];
-			axisLabels: Widget;
+			axisLabels: Widget[];
 		},
 		TConfig
 	>;
-	grid: CustomArgs<{ levels: number }, TConfig>;
-	axis: CustomArgs<{ index: number; label: string }, TConfig>;
-	axisLabel: CustomArgs<{ index: number; label: string }, TConfig>;
 	dataset: CustomArgs<
 		{
-			values: number[];
-			legend: string;
+			name: string;
 			index: number;
+			vertices: RadarVertex[];
 		},
 		TConfig
 	>;
+	grid: CustomArgs<{ levels: number; axisCount: number }, TConfig>;
+	axisLabel: CustomArgs<{ index: number; label: string; angle: number; nx: number; ny: number }, TConfig>;
 	legend: CustomArgs<{ name: string; index: number }, TConfig>;
 	title: CustomArgs<undefined, TConfig>;
 };

@@ -6,8 +6,7 @@ type CustomArgs<T = undefined, TConfig = {}> = (args: T, context: PieChartContex
 export type PieChartContext<TConfig = {}> = PieChartController & { config: TConfig };
 
 export type PieChartData = {
-	labels: string[];
-	values: number[];
+	datasets: { name: string; value: number }[];
 };
 
 export type PieChartCustom<TConfig = {}> = {
@@ -20,21 +19,16 @@ export type PieChartCustom<TConfig = {}> = {
 				sweepAngle: number;
 				percentage: number;
 				index: number;
-				label: string;
+				name: string;
 				value: number;
 			}[];
-			dataLabels: Widget[];
 		},
 		TConfig
 	>;
 	pie: CustomArgs<
-		{ index: number; label: string; value: number; percentage: number; startAngle: number; sweepAngle: number },
+		{ index: number; name: string; value: number; percentage: number; sweepAngle: number },
 		TConfig
 	>;
 	legend: CustomArgs<{ name: string; index: number }, TConfig>;
 	title: CustomArgs<undefined, TConfig>;
-	dataLabel: CustomArgs<
-		{ label: string; value: number; percentage: number; index: number; startAngle: number; sweepAngle: number },
-		TConfig
-	>;
 };

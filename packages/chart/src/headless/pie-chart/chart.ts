@@ -70,136 +70,29 @@ class Series extends StatelessWidget {
 		const ctx = PieChartProvider.of(context);
 		const { data } = ctx;
 
-		const total = data.values.reduce((sum, v) => sum + v, 0);
-		let currentAngle = -Math.PI / 2;
+		const total = data.datasets.reduce((sum, d) => sum + d.value, 0);
+		let currentAngle = 0;
 
-		const pies = data.values.map((value, index) => {
-			const percentage = total > 0 ? (value / total) * 100 : 0;
-			const sweepAngle = total > 0 ? (value / total) * Math.PI * 2 : 0;
+		const pies = data.datasets.map((d, index) => {
+			const percentage = total > 0 ? (d.value / total) * 100 : 0;
+			const sweepAngle = total > 0 ? (d.value / total) * Math.PI * 2 : 0;
 			const startAngle = currentAngle;
 			currentAngle += sweepAngle;
 
-			const label = data.labels[index];
-			const widget = new Pie({
-				index,
-				label,
-				value,
-				percentage,
+			return {
+				widget: ctx.custom.pie(
+					{ index, name: d.name, value: d.value, percentage, sweepAngle },
+					ctx,
+				),
 				startAngle,
 				sweepAngle,
-			});
-
-			return { widget, startAngle, sweepAngle, percentage, index, label, value };
-		});
-
-		const dataLabels = data.values.map((value, index) => {
-			const pie = pies[index];
-			return new DataLabel({
-				label: pie.label,
-				value,
-				percentage: pie.percentage,
+				percentage,
 				index,
-				startAngle: pie.startAngle,
-				sweepAngle: pie.sweepAngle,
-			});
+				name: d.name,
+				value: d.value,
+			};
 		});
 
-		return ctx.custom.series({ pies, dataLabels }, ctx);
-	}
-}
-
-class Pie extends StatelessWidget {
-	#index: number;
-	#label: string;
-	#value: number;
-	#percentage: number;
-	#startAngle: number;
-	#sweepAngle: number;
-
-	constructor({
-		index,
-		label,
-		value,
-		percentage,
-		startAngle,
-		sweepAngle,
-	}: {
-		index: number;
-		label: string;
-		value: number;
-		percentage: number;
-		startAngle: number;
-		sweepAngle: number;
-	}) {
-		super();
-		this.#index = index;
-		this.#label = label;
-		this.#value = value;
-		this.#percentage = percentage;
-		this.#startAngle = startAngle;
-		this.#sweepAngle = sweepAngle;
-	}
-
-	override build(context: BuildContext): Widget {
-		const ctx = PieChartProvider.of(context);
-		return ctx.custom.pie(
-			{
-				index: this.#index,
-				label: this.#label,
-				value: this.#value,
-				percentage: this.#percentage,
-				startAngle: this.#startAngle,
-				sweepAngle: this.#sweepAngle,
-			},
-			ctx,
-		);
-	}
-}
-
-class DataLabel extends StatelessWidget {
-	#label: string;
-	#value: number;
-	#percentage: number;
-	#index: number;
-	#startAngle: number;
-	#sweepAngle: number;
-
-	constructor({
-		label,
-		value,
-		percentage,
-		index,
-		startAngle,
-		sweepAngle,
-	}: {
-		label: string;
-		value: number;
-		percentage: number;
-		index: number;
-		startAngle: number;
-		sweepAngle: number;
-	}) {
-		super();
-		this.#label = label;
-		this.#value = value;
-		this.#percentage = percentage;
-		this.#index = index;
-		this.#startAngle = startAngle;
-		this.#sweepAngle = sweepAngle;
-	}
-
-	override build(context: BuildContext): Widget {
-		const ctx = PieChartProvider.of(context);
-		return ctx.custom.dataLabel(
-			{
-				label: this.#label,
-				value: this.#value,
-				percentage: this.#percentage,
-				index: this.#index,
-				startAngle: this.#startAngle,
-				sweepAngle: this.#sweepAngle,
-			},
-			ctx,
-		);
+		return ctx.custom.series({ pies }, ctx);
 	}
 }

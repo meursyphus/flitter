@@ -4,7 +4,7 @@ import type { RadarChartCustom, RadarChartData, RadarChartScale, GetScaleFn } fr
 export class RadarChartController extends ChangeNotifier {
 	#rawData: RadarChartData;
 	#hiddenSeries: Set<string> = new Set();
-	#hoveredDataset: { index: number; legend: string } | null = null;
+	#hoveredDataset: { index: number; name: string } | null = null;
 	#scale: RadarChartScale | null = null;
 	#getScale: GetScaleFn;
 	#width: number = 0;
@@ -51,13 +51,13 @@ export class RadarChartController extends ChangeNotifier {
 		return {
 			labels: this.#rawData.labels,
 			datasets: this.#rawData.datasets.filter(
-				(d) => !this.#hiddenSeries.has(d.legend),
+				(d) => !this.#hiddenSeries.has(d.name),
 			),
 		};
 	}
 
 	get legends(): string[] {
-		return this.#rawData.datasets.map((d) => d.legend);
+		return this.#rawData.datasets.map((d) => d.name);
 	}
 
 	// --- chart size ---
@@ -89,30 +89,30 @@ export class RadarChartController extends ChangeNotifier {
 		return this.#hiddenSeries;
 	}
 
-	isSeriesVisible(legend: string): boolean {
-		return !this.#hiddenSeries.has(legend);
+	isSeriesVisible(name: string): boolean {
+		return !this.#hiddenSeries.has(name);
 	}
 
-	toggleSeries(legend: string): void {
-		if (this.#hiddenSeries.has(legend)) {
-			this.#hiddenSeries.delete(legend);
+	toggleSeries(name: string): void {
+		if (this.#hiddenSeries.has(name)) {
+			this.#hiddenSeries.delete(name);
 		} else {
-			this.#hiddenSeries.add(legend);
+			this.#hiddenSeries.add(name);
 		}
 		this.#recalcScale();
 		this.notifyListeners();
 	}
 
-	showSeries(legend: string): void {
-		if (!this.#hiddenSeries.has(legend)) return;
-		this.#hiddenSeries.delete(legend);
+	showSeries(name: string): void {
+		if (!this.#hiddenSeries.has(name)) return;
+		this.#hiddenSeries.delete(name);
 		this.#recalcScale();
 		this.notifyListeners();
 	}
 
-	hideSeries(legend: string): void {
-		if (this.#hiddenSeries.has(legend)) return;
-		this.#hiddenSeries.add(legend);
+	hideSeries(name: string): void {
+		if (this.#hiddenSeries.has(name)) return;
+		this.#hiddenSeries.add(name);
 		this.#recalcScale();
 		this.notifyListeners();
 	}
@@ -126,12 +126,12 @@ export class RadarChartController extends ChangeNotifier {
 
 	// --- hover ---
 
-	get hoveredDataset(): { index: number; legend: string } | null {
+	get hoveredDataset(): { index: number; name: string } | null {
 		return this.#hoveredDataset;
 	}
 
-	hoverDataset(index: number, legend: string): void {
-		this.#hoveredDataset = { index, legend };
+	hoverDataset(index: number, name: string): void {
+		this.#hoveredDataset = { index, name };
 		this.notifyListeners();
 	}
 
@@ -141,9 +141,9 @@ export class RadarChartController extends ChangeNotifier {
 		this.notifyListeners();
 	}
 
-	isDatasetHovered(index: number, legend: string): boolean {
+	isDatasetHovered(index: number, name: string): boolean {
 		return (
-			this.#hoveredDataset?.index === index && this.#hoveredDataset?.legend === legend
+			this.#hoveredDataset?.index === index && this.#hoveredDataset?.name === name
 		);
 	}
 }

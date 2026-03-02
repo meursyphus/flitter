@@ -25,3 +25,9 @@ export { type ToastAreaChartConfig } from "./area-chart/styles/toast";
 export { default as StackedAreaChart } from "./stacked-area-chart";
 export type { StackedAreaChartStyleMap } from "./stacked-area-chart/plugin";
 export { type ToastStackedAreaChartConfig } from "./stacked-area-chart/styles/toast";
+
+export { default as PieChart } from "./pie-chart";
+export { type ToastPieChartConfig } from "./pie-chart";
+
+export { default as RadarChart } from "./radar-chart";
+export { type ToastRadarChartConfig } from "./radar-chart";

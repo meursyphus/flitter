@@ -1,6 +1,6 @@
 import type { Widget } from "flitter-core";
 import type { AgBaseConfig } from "./config";
-import { AxisCorner } from "../../cartesian";
+import { AxisCorner } from "../../../cartesian";
 
 export function agAxisCorner(
   args: undefined,

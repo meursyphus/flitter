@@ -1,17 +1,13 @@
+// Common (used by all chart types)
 export { CheckBox } from "./checkbox";
-export { type ToastBaseConfig, defaultToastBaseConfig } from "./config";
-export { toastXAxisLabel, toastYAxisLabel } from "./axis-label";
-export { toastXAxisTick, toastYAxisTick } from "./axis-tick";
-export { toastXAxisLine, toastYAxisLine } from "./axis-line";
-export { toastGridXLine, toastGridYLine } from "./grid-line";
-export { toastAxisCorner } from "./axis-corner";
+export { type ToastBaseConfig, defaultToastBaseConfig } from "./cartesian/config";
 export { toastTitle } from "./title";
 export { toastLegend } from "./legend";
-export { toastLayout } from "./layout";
-export { toastXAxis } from "./x-axis";
-export { toastYAxis } from "./y-axis";
-export { drawSplineLine } from "./draw-spline-line";
+export { drawSplineLine } from "../../draw-spline-line";
 export { tooltipContent } from "./tooltip";
+
+// Cartesian-specific (axis, grid, layout for cartesian charts)
+export * as cartesian from "./cartesian";
 
 const DEFAULT_TICK_SPACING = 80;
 

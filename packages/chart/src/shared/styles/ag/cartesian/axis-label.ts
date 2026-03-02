@@ -1,6 +1,6 @@
 import type { Widget } from "flitter-core";
 import type { AgBaseConfig } from "./config";
-import { XAxisLabel, YAxisLabel } from "../../cartesian";
+import { XAxisLabel, YAxisLabel } from "../../../cartesian";
 
 export function agXAxisLabel(
   args: { name: string; index: number },

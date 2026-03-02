@@ -1,5 +1,5 @@
 import { Text, TextStyle, type Widget } from "flitter-core";
-import type { ToastBaseConfig } from "./config";
+import type { ToastBaseConfig } from "./cartesian/config";
 
 export function toastTitle(
   _args: undefined,

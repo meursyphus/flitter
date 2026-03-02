@@ -24,7 +24,7 @@ import {
 } from "flitter-core";
 import type { LineChartCustom, LineChartScale } from "@headless/line-chart/types";
 import type { ToastStackedAreaChartConfig } from "../config";
-import { AnimatedSeries } from "@shared/styles/toast/animated-series";
+import { AnimatedSeries } from "@shared/styles/toast/cartesian/animated-series";
 import { tooltipContent } from "@shared/styles/toast";
 
 // --- Tooltip layout ---

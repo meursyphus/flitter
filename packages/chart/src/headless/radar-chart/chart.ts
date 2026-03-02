@@ -5,6 +5,7 @@ import {
 	LayoutBuilder,
 } from "flitter-core";
 import { RadarChartProvider } from "./provider";
+import type { RadarVertex } from "./types";
 
 class Chart extends StatelessWidget {
 	override build(_: BuildContext): Widget {
@@ -65,22 +66,66 @@ class Title extends StatelessWidget {
 	}
 }
 
+/**
+ * Computes normalized vertex positions for a set of values.
+ * Each vertex is on a spoke from the center, with the first spoke pointing up (12 o'clock).
+ */
+function computeVertices(
+	values: number[],
+	labels: string[],
+	maxValue: number,
+): RadarVertex[] {
+	const axisCount = labels.length;
+	const angleStep = (2 * Math.PI) / axisCount;
+	const startAngle = -Math.PI / 2; // 12 o'clock
+
+	return labels.map((label, i) => {
+		const angle = startAngle + i * angleStep;
+		const value = values[i] ?? 0;
+		const ratio = maxValue > 0 ? Math.min(value / maxValue, 1) : 0;
+		// Normalized positions: 0.5 is center, range is 0..1
+		const nx = 0.5 + 0.5 * ratio * Math.cos(angle);
+		const ny = 0.5 + 0.5 * ratio * Math.sin(angle);
+		return { nx, ny, angle, ratio, value, label, index: i };
+	});
+}
+
 class Series extends StatelessWidget {
 	override build(context: BuildContext): Widget {
 		const ctx = RadarChartProvider.of(context);
 		const { data, scale } = ctx;
+		const maxValue = scale?.max ?? 0;
+		const axisCount = data.labels.length;
 		const levels = scale != null ? Math.round((scale.max - scale.min) / scale.step) : 0;
 
-		const datasets = data.datasets.map((ds, index) =>
-			new Dataset({ values: ds.values, legend: ds.legend, index }),
-		);
+		const datasets = data.datasets.map((ds, index) => {
+			const vertices = computeVertices(ds.values, data.labels, maxValue);
+			return {
+				widget: ctx.custom.dataset(
+					{ name: ds.name, index, vertices },
+					ctx,
+				),
+				name: ds.name,
+				index,
+				vertices,
+			};
+		});
+
+		// Axis labels sit on the outer ring (ratio = 1)
+		const angleStep = (2 * Math.PI) / axisCount;
+		const startAngle = -Math.PI / 2;
+		const axisLabels = data.labels.map((label, i) => {
+			const angle = startAngle + i * angleStep;
+			const nx = 0.5 + 0.5 * Math.cos(angle);
+			const ny = 0.5 + 0.5 * Math.sin(angle);
+			return new AxisLabel({ index: i, label, angle, nx, ny });
+		});
 
 		return ctx.custom.series(
 			{
-				grid: new Grid({ levels }),
-				axes: new Axes(),
 				datasets,
-				axisLabels: new AxisLabels(),
+				grid: new Grid({ levels, axisCount }),
+				axisLabels,
 			},
 			ctx,
 		);
@@ -89,78 +134,40 @@ class Series extends StatelessWidget {
 
 class Grid extends StatelessWidget {
 	#levels: number;
+	#axisCount: number;
 
-	constructor({ levels }: { levels: number }) {
+	constructor({ levels, axisCount }: { levels: number; axisCount: number }) {
 		super();
 		this.#levels = levels;
+		this.#axisCount = axisCount;
 	}
 
 	override build(context: BuildContext): Widget {
 		const ctx = RadarChartProvider.of(context);
-		return ctx.custom.grid({ levels: this.#levels }, ctx);
+		return ctx.custom.grid({ levels: this.#levels, axisCount: this.#axisCount }, ctx);
 	}
 }
 
-class Axes extends StatelessWidget {
-	override build(context: BuildContext): Widget {
-		const ctx = RadarChartProvider.of(context);
-		const { data } = ctx;
-		// Render all axes as a single composite widget via the axis slot
-		// The axis slot receives each individual axis
-		const axisWidgets = data.labels.map((label, index) =>
-			new Axis({ index, label }),
-		);
-		// We render axes by calling the axis custom for each label
-		// But the old pattern passed all axes at once to the radar slot.
-		// In the new pattern, each axis is rendered individually.
-		// Since axes is a single Widget in the series slot, we use the first axis call
-		// to represent the collection. However, looking at the old code,
-		// the `axis` custom was called once with index: -1 for the whole set.
-		// Let's follow the old pattern: axis is called once for the whole set.
-		return ctx.custom.axis({ index: -1, label: "" }, ctx);
-	}
-}
-
-class Axis extends StatelessWidget {
+class AxisLabel extends StatelessWidget {
 	#index: number;
 	#label: string;
+	#angle: number;
+	#nx: number;
+	#ny: number;
 
-	constructor({ index, label }: { index: number; label: string }) {
+	constructor({ index, label, angle, nx, ny }: { index: number; label: string; angle: number; nx: number; ny: number }) {
 		super();
 		this.#index = index;
 		this.#label = label;
+		this.#angle = angle;
+		this.#nx = nx;
+		this.#ny = ny;
 	}
 
 	override build(context: BuildContext): Widget {
 		const ctx = RadarChartProvider.of(context);
-		return ctx.custom.axis({ index: this.#index, label: this.#label }, ctx);
-	}
-}
-
-class AxisLabels extends StatelessWidget {
-	override build(context: BuildContext): Widget {
-		const ctx = RadarChartProvider.of(context);
-		// Same pattern as axes: called once with index: -1 for the whole set
-		return ctx.custom.axisLabel({ index: -1, label: "" }, ctx);
-	}
-}
-
-class Dataset extends StatelessWidget {
-	#values: number[];
-	#legend: string;
-	#index: number;
-
-	constructor({ values, legend, index }: { values: number[]; legend: string; index: number }) {
-		super();
-		this.#values = values;
-		this.#legend = legend;
-		this.#index = index;
-	}
-
-	override build(context: BuildContext): Widget {
-		const ctx = RadarChartProvider.of(context);
-		return ctx.custom.dataset(
-			{ values: this.#values, legend: this.#legend, index: this.#index },
+		return ctx.custom.axisLabel(
+			{ index: this.#index, label: this.#label, angle: this.#angle, nx: this.#nx, ny: this.#ny },
 			ctx,
 		);
 	}

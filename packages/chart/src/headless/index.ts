@@ -63,6 +63,7 @@ export type {
 	RadarChartCustom,
 	RadarChartData,
 	RadarChartScale,
+	RadarVertex,
 	GetScaleFn as RadarChartGetScaleFn,
 } from "./radar-chart/types";
 export { RadarChartController } from "./radar-chart/controller";

@@ -5,43 +5,32 @@ import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { toastBubble } from "./parts/bubble";
 import {
-  toastLayout,
   toastTitle,
   toastLegend,
-  toastXAxisLabel,
-  toastYAxisLabel,
-  toastXAxisTick,
-  toastYAxisTick,
-  toastXAxisLine,
-  toastYAxisLine,
-  toastGridXLine,
-  toastGridYLine,
-  toastAxisCorner,
-  toastXAxis,
-  toastYAxis,
   toastScaleOptions,
+  cartesian,
 } from "@shared/styles/toast";
 
 export { type ToastBubbleChartConfig } from "./config";
 
 const toastCustom: Partial<BubbleChartCustom<ToastBubbleChartConfig>> = {
-  layout: toastLayout,
+  layout: cartesian.toastLayout,
   bubble: toastBubble,
   legend: (args, context) => toastLegend(args, context, { markerShape: "circle" }),
   title: toastTitle,
-  axisCorner: toastAxisCorner,
-  xAxisLabel: toastXAxisLabel,
-  yAxisLabel: toastYAxisLabel,
-  xAxisTick: toastXAxisTick,
-  yAxisTick: toastYAxisTick,
-  xAxisLine: toastXAxisLine,
-  yAxisLine: toastYAxisLine,
-  gridXLine: toastGridXLine,
-  gridYLine: toastGridYLine,
+  axisCorner: cartesian.toastAxisCorner,
+  xAxisLabel: cartesian.toastXAxisLabel,
+  yAxisLabel: cartesian.toastYAxisLabel,
+  xAxisTick: cartesian.toastXAxisTick,
+  yAxisTick: cartesian.toastYAxisTick,
+  xAxisLine: cartesian.toastXAxisLine,
+  yAxisLine: cartesian.toastYAxisLine,
+  gridXLine: cartesian.toastGridXLine,
+  gridYLine: cartesian.toastGridYLine,
   xAxis: (args, context) =>
-    toastXAxis(args, { type: "value" }, context),
+    cartesian.toastXAxis(args, { type: "value" }, context),
   yAxis: (args, context) =>
-    toastYAxis(args, { type: "value" }, context),
+    cartesian.toastYAxis(args, { type: "value" }, context),
 };
 
 const toastGetScaleOptions: GetScaleOptionsFn = (ctx) =>

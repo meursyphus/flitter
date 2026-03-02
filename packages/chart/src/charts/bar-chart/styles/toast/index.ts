@@ -8,45 +8,34 @@ import { toastBar } from "./parts/bar";
 import { toastSeries } from "./parts/series";
 import { toastBarBox } from "./parts/bar-box";
 import {
-  toastLayout,
   toastTitle,
   toastLegend,
-  toastXAxisLabel,
-  toastYAxisLabel,
-  toastXAxisTick,
-  toastYAxisTick,
-  toastXAxisLine,
-  toastYAxisLine,
-  toastGridXLine,
-  toastGridYLine,
-  toastAxisCorner,
-  toastXAxis,
-  toastYAxis,
   toastScaleOptions,
+  cartesian,
 } from "@shared/styles/toast";
 
 export { type ToastBarChartConfig } from "./config";
 
 const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
-  layout: toastLayout,
+  layout: cartesian.toastLayout,
   bar: toastBar,
   series: toastSeries,
   barBox: toastBarBox,
   legend: toastLegend,
   title: toastTitle,
-  axisCorner: toastAxisCorner,
-  xAxisLabel: toastXAxisLabel,
-  yAxisLabel: toastYAxisLabel,
-  xAxisTick: toastXAxisTick,
-  yAxisTick: toastYAxisTick,
-  xAxisLine: toastXAxisLine,
-  yAxisLine: toastYAxisLine,
-  gridXLine: toastGridXLine,
-  gridYLine: toastGridYLine,
+  axisCorner: cartesian.toastAxisCorner,
+  xAxisLabel: cartesian.toastXAxisLabel,
+  yAxisLabel: cartesian.toastYAxisLabel,
+  xAxisTick: cartesian.toastXAxisTick,
+  yAxisTick: cartesian.toastYAxisTick,
+  xAxisLine: cartesian.toastXAxisLine,
+  yAxisLine: cartesian.toastYAxisLine,
+  gridXLine: cartesian.toastGridXLine,
+  gridYLine: cartesian.toastGridYLine,
   xAxis: (args, context) =>
-    toastXAxis(args, { type: context.direction === "vertical" ? "label" : "value" }, context),
+    cartesian.toastXAxis(args, { type: context.direction === "vertical" ? "label" : "value" }, context),
   yAxis: (args, context) =>
-    toastYAxis(args, { type: context.direction === "vertical" ? "value" : "label" }, context),
+    cartesian.toastYAxis(args, { type: context.direction === "vertical" ? "value" : "label" }, context),
 };
 
 const toastGetScaleOptions: GetScaleOptionsFn = (ctx) =>

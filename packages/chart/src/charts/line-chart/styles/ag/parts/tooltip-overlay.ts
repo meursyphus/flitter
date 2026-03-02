@@ -17,7 +17,7 @@ import {
   type BuildContext,
 } from "flitter-core";
 import { LineChartProvider } from "@headless/line-chart/provider";
-import type { AgBaseConfig } from "@shared/styles/ag/config";
+import type { AgBaseConfig } from "@shared/styles/ag/cartesian/config";
 import { agTooltipContent } from "@shared/styles/ag";
 
 const ANIMATION_DURATION = 150;

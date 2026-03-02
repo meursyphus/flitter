@@ -1,6 +1,6 @@
 import { SizedBox, type Widget } from "flitter-core";
 import type { AgBaseConfig } from "./config";
-import { XAxisLine, YAxisLine } from "../../cartesian";
+import { XAxisLine, YAxisLine } from "../../../cartesian";
 
 export function agXAxisLine(
   args: undefined,

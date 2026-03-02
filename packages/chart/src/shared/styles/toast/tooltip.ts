@@ -14,7 +14,7 @@ import {
   CrossAxisAlignment,
   type Widget,
 } from "flitter-core";
-import type { ToastBaseConfig } from "./config";
+import type { ToastBaseConfig } from "./cartesian/config";
 
 type TooltipItem = {
   legend: string;

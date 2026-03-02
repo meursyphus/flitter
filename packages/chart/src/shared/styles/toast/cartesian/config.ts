@@ -1,4 +1,4 @@
-import { TOAST_COLORS } from "./utils";
+import { TOAST_COLORS } from "../utils";
 
 /**
  * Common config shape shared by all toast-style chart configs.

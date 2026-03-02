@@ -7,44 +7,33 @@ import { deepMerge } from "@utils/index";
 import { agBar } from "./parts/bar";
 import { agSeries } from "./parts/series";
 import {
-  agLayout,
   agTitle,
   agLegend,
-  agXAxisLabel,
-  agYAxisLabel,
-  agXAxisTick,
-  agYAxisTick,
-  agXAxisLine,
-  agYAxisLine,
-  agGridXLine,
-  agGridYLine,
-  agAxisCorner,
-  agXAxis,
-  agYAxis,
   agScaleOptions,
+  cartesian,
 } from "@shared/styles/ag";
 
 export { type AgBarChartConfig } from "./config";
 
 const agCustom: Partial<BarChartCustom<AgBarChartConfig>> = {
-  layout: agLayout,
+  layout: cartesian.agLayout,
   bar: agBar,
   series: agSeries,
   legend: agLegend,
   title: agTitle,
-  axisCorner: agAxisCorner,
-  xAxisLabel: agXAxisLabel,
-  yAxisLabel: agYAxisLabel,
-  xAxisTick: agXAxisTick,
-  yAxisTick: agYAxisTick,
-  xAxisLine: agXAxisLine,
-  yAxisLine: agYAxisLine,
-  gridXLine: agGridXLine,
-  gridYLine: agGridYLine,
+  axisCorner: cartesian.agAxisCorner,
+  xAxisLabel: cartesian.agXAxisLabel,
+  yAxisLabel: cartesian.agYAxisLabel,
+  xAxisTick: cartesian.agXAxisTick,
+  yAxisTick: cartesian.agYAxisTick,
+  xAxisLine: cartesian.agXAxisLine,
+  yAxisLine: cartesian.agYAxisLine,
+  gridXLine: cartesian.agGridXLine,
+  gridYLine: cartesian.agGridYLine,
   xAxis: (args, context) =>
-    agXAxis(args, { type: context.direction === "vertical" ? "label" : "value" }, context),
+    cartesian.agXAxis(args, { type: context.direction === "vertical" ? "label" : "value" }, context),
   yAxis: (args, context) =>
-    agYAxis(args, { type: context.direction === "vertical" ? "value" : "label" }, context),
+    cartesian.agYAxis(args, { type: context.direction === "vertical" ? "value" : "label" }, context),
 };
 
 const agGetScaleOptions: GetScaleOptionsFn = (ctx) =>

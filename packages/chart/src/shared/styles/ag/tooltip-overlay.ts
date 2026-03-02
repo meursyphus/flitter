@@ -15,7 +15,7 @@ import {
   ZIndex,
   type Widget,
 } from "flitter-core";
-import type { AgBaseConfig } from "./config";
+import type { AgBaseConfig } from "./cartesian/config";
 import { tooltipContent } from "./tooltip";
 
 const TOOLTIP_OFFSET = 12;

@@ -1,16 +1,12 @@
-export { type AgBaseConfig, defaultAgBaseConfig } from "./config";
-export { agXAxisLabel, agYAxisLabel } from "./axis-label";
-export { agXAxisTick, agYAxisTick } from "./axis-tick";
-export { agXAxisLine, agYAxisLine } from "./axis-line";
-export { agGridXLine, agGridYLine } from "./grid-line";
-export { agAxisCorner } from "./axis-corner";
+// Common (used by all chart types)
+export { type AgBaseConfig, defaultAgBaseConfig } from "./cartesian/config";
 export { agTitle } from "./title";
 export { agLegend } from "./legend";
-export { agLayout } from "./layout";
-export { agXAxis } from "./x-axis";
-export { agYAxis } from "./y-axis";
 export { tooltipContent as agTooltipContent } from "./tooltip";
 export { AgTooltipOverlay } from "./tooltip-overlay";
+
+// Cartesian-specific (axis, grid, layout for cartesian charts)
+export * as cartesian from "./cartesian";
 
 const DEFAULT_TICK_SPACING = 160;
 
