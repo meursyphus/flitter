@@ -11,7 +11,8 @@ export function toastRadar(
 	...[{ legend, index, vertices }, ctx]: Parameters<RadarChartCustom<ToastRadarChartConfig>["radar"]>
 ): Widget {
 	const { colors, radar: radarConfig } = ctx.config;
-	const color = colors[index % colors.length];
+	const colorIndex = ctx.legends.indexOf(legend);
+	const color = colors[(colorIndex >= 0 ? colorIndex : index) % colors.length];
 
 	return CustomPaint({
 		painter: {
