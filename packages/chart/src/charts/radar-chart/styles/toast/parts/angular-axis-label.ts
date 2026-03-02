@@ -9,8 +9,8 @@ import {
 import type { RadarChartCustom } from "@headless/radar-chart/types";
 import type { ToastRadarChartConfig } from "../config";
 
-export function toastAxisLabel(
-	...[{ label, angle, nx, ny }, ctx]: Parameters<RadarChartCustom<ToastRadarChartConfig>["axisLabel"]>
+export function toastAngularAxisLabel(
+	...[{ label, angle, nx, ny }, ctx]: Parameters<RadarChartCustom<ToastRadarChartConfig>["angularAxisLabel"]>
 ): Widget {
 	const { font, axis } = ctx.config;
 

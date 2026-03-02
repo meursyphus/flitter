@@ -1,15 +1,20 @@
 import type { Widget } from "flitter-core";
 import HeadlessRadarChart from "@headless/radar-chart";
 import type { RadarChartCustom, RadarChartData, GetScaleFn } from "@headless/radar-chart/types";
-import { Series } from "./series";
+import { Plot, Series } from "./series";
 import { Layout } from "./layout";
+import { AngularAxis } from "./angular-axis";
+import { RadialAxis } from "./radial-axis";
 
 export type { RadarChartCustom, RadarChartData, RadarChartContext, RadarChartScale, RadarVertex } from "@headless/radar-chart/types";
 export { RadarChartController } from "@headless/radar-chart/controller";
 
 const baseDefaults: Partial<RadarChartCustom> = {
 	layout: Layout,
+	plot: Plot,
 	series: Series,
+	angularAxis: AngularAxis,
+	radialAxis: RadialAxis,
 };
 
 export function BaseRadarChart<TConfig = {}>({

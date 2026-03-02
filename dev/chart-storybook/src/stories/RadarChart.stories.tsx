@@ -23,50 +23,14 @@ function parseTitlePlacement(placement: string) {
 	return { position, alignment };
 }
 
-const pokemonData = {
-	labels: ["Attack", "Defense", "Speed", "HP", "Sp.Atk", "Sp.Def"],
-	datasets: [
-		{ name: "Pikachu", values: [55, 40, 90, 35, 50, 50] },
-		{ name: "Bulbasaur", values: [49, 49, 45, 45, 65, 65] },
-	],
-};
-
 const skillData = {
 	labels: ["JavaScript", "TypeScript", "React", "Node.js", "CSS", "GraphQL", "Testing", "DevOps"],
 	datasets: [
-		{ name: "Senior Dev", values: [95, 90, 85, 80, 70, 75, 80, 65] },
-		{ name: "Junior Dev", values: [70, 50, 60, 40, 65, 30, 35, 20] },
-		{ name: "Full Stack", values: [80, 75, 70, 85, 60, 65, 70, 80] },
+		{ legend: "Senior Dev", values: [95, 90, 85, 80, 70, 75, 80, 65] },
+		{ legend: "Junior Dev", values: [70, 50, 60, 40, 65, 30, 35, 20] },
+		{ legend: "Full Stack", values: [80, 75, 70, 85, 60, 65, 70, 80] },
 	],
 };
-
-function ToastRadarChart({ args }: { args: RadarChartArgs }) {
-	const { position, alignment } = parseTitlePlacement(args.titlePlacement);
-	return (
-		<Widget
-			widget={RadarChart({
-				data: pokemonData,
-				config: {
-					title: { text: args.title, position, alignment },
-					legend: {
-						visible: args.legendVisible,
-						position: args.legendPosition,
-						gap: args.legendGap,
-					},
-					radar: {
-						fillOpacity: args.fillOpacity,
-						strokeWidth: args.strokeWidth,
-						gridColor: args.gridColor,
-						gridWidth: args.gridWidth,
-					},
-				},
-			})}
-			width="500px"
-			height="400px"
-			renderer={args.renderer}
-		/>
-	);
-}
 
 const meta: Meta<RadarChartArgs> = {
 	title: "Charts/RadarChart/Toast",
@@ -85,7 +49,7 @@ const meta: Meta<RadarChartArgs> = {
 	},
 	args: {
 		renderer: "svg",
-		title: "Pokemon Stats",
+		title: "Developer Skills",
 		titlePlacement: "top-start",
 		legendVisible: true,
 		legendPosition: "right-top",
@@ -101,13 +65,6 @@ export default meta;
 type Story = StoryObj<RadarChartArgs>;
 
 export const Default: Story = {
-	render: (args) => <ToastRadarChart args={args} />,
-};
-
-export const MultiDataset: Story = {
-	args: {
-		title: "Developer Skills",
-	},
 	render: (args) => {
 		const { position, alignment } = parseTitlePlacement(args.titlePlacement);
 		return (

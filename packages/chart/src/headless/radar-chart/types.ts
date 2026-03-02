@@ -7,7 +7,7 @@ export type RadarChartContext<TConfig = {}> = RadarChartController & { config: T
 
 export type RadarChartData = {
 	labels: string[];
-	datasets: { name: string; values: number[] }[];
+	datasets: { legend: string; values: number[] }[];
 };
 
 export type RadarChartScale = {
@@ -34,30 +34,25 @@ export type RadarVertex = {
 };
 
 export type RadarChartCustom<TConfig = {}> = {
-	layout: CustomArgs<{ title: Widget; legends: Widget[]; series: Widget }, TConfig>;
-	series: CustomArgs<
-		{
-			datasets: {
-				widget: Widget;
-				name: string;
-				index: number;
-				vertices: RadarVertex[];
-			}[];
-			grid: Widget;
-			axisLabels: Widget[];
-		},
-		TConfig
-	>;
-	dataset: CustomArgs<
-		{
-			name: string;
-			index: number;
-			vertices: RadarVertex[];
-		},
-		TConfig
-	>;
-	grid: CustomArgs<{ levels: number; axisCount: number }, TConfig>;
-	axisLabel: CustomArgs<{ index: number; label: string; angle: number; nx: number; ny: number }, TConfig>;
+	// Structure
+	layout: CustomArgs<{ title: Widget; legends: Widget[]; plot: Widget }, TConfig>;
+	plot: CustomArgs<{ angularAxis: Widget; radialAxis: Widget; series: Widget }, TConfig>;
+
+	// Angular axis (spokes + category labels)
+	angularAxis: CustomArgs<{ line: Widget; labels: Widget[] }, TConfig>;
+	angularAxisLine: CustomArgs<{ axisCount: number }, TConfig>;
+	angularAxisLabel: CustomArgs<{ index: number; label: string; angle: number; nx: number; ny: number }, TConfig>;
+
+	// Radial axis (concentric polygons + scale labels)
+	radialAxis: CustomArgs<{ line: Widget; labels: Widget[] }, TConfig>;
+	radialAxisLine: CustomArgs<{ levels: number; axisCount: number }, TConfig>;
+	radialAxisLabel: CustomArgs<{ value: number; index: number }, TConfig>;
+
+	// Data
+	series: CustomArgs<{ radars: Widget[] }, TConfig>;
+	radar: CustomArgs<{ legend: string; index: number; vertices: RadarVertex[] }, TConfig>;
+
+	// Decorations
 	legend: CustomArgs<{ name: string; index: number }, TConfig>;
 	title: CustomArgs<undefined, TConfig>;
 };

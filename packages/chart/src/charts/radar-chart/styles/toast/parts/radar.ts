@@ -7,8 +7,8 @@ import {
 import type { RadarChartCustom } from "@headless/radar-chart/types";
 import type { ToastRadarChartConfig } from "../config";
 
-export function toastDataset(
-	...[{ name, index, vertices }, ctx]: Parameters<RadarChartCustom<ToastRadarChartConfig>["dataset"]>
+export function toastRadar(
+	...[{ legend, index, vertices }, ctx]: Parameters<RadarChartCustom<ToastRadarChartConfig>["radar"]>
 ): Widget {
 	const { colors, radar: radarConfig } = ctx.config;
 	const color = colors[index % colors.length];

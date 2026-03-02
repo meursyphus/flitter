@@ -36,7 +36,7 @@ class Layout extends StatelessWidget {
 				legends: ctx.legends.map(
 					(name, index) => new Legend({ name, index }),
 				),
-				series: new Series(),
+				plot: new Plot(),
 			},
 			ctx,
 		);
@@ -90,65 +90,62 @@ function computeVertices(
 	});
 }
 
-class Series extends StatelessWidget {
+class Plot extends StatelessWidget {
 	override build(context: BuildContext): Widget {
 		const ctx = RadarChartProvider.of(context);
-		const { data, scale } = ctx;
-		const maxValue = scale?.max ?? 0;
-		const axisCount = data.labels.length;
-		const levels = scale != null ? Math.round((scale.max - scale.min) / scale.step) : 0;
-
-		const datasets = data.datasets.map((ds, index) => {
-			const vertices = computeVertices(ds.values, data.labels, maxValue);
-			return {
-				widget: ctx.custom.dataset(
-					{ name: ds.name, index, vertices },
-					ctx,
-				),
-				name: ds.name,
-				index,
-				vertices,
-			};
-		});
-
-		// Axis labels sit on the outer ring (ratio = 1)
-		const angleStep = (2 * Math.PI) / axisCount;
-		const startAngle = -Math.PI / 2;
-		const axisLabels = data.labels.map((label, i) => {
-			const angle = startAngle + i * angleStep;
-			const nx = 0.5 + 0.5 * Math.cos(angle);
-			const ny = 0.5 + 0.5 * Math.sin(angle);
-			return new AxisLabel({ index: i, label, angle, nx, ny });
-		});
-
-		return ctx.custom.series(
+		return ctx.custom.plot(
 			{
-				datasets,
-				grid: new Grid({ levels, axisCount }),
-				axisLabels,
+				angularAxis: new AngularAxis(),
+				radialAxis: new RadialAxis(),
+				series: new Series(),
 			},
 			ctx,
 		);
 	}
 }
 
-class Grid extends StatelessWidget {
-	#levels: number;
+// --- Angular axis (spokes + category labels) ---
+
+class AngularAxis extends StatelessWidget {
+	override build(context: BuildContext): Widget {
+		const ctx = RadarChartProvider.of(context);
+		const { data } = ctx;
+		const axisCount = data.labels.length;
+		const angleStep = (2 * Math.PI) / axisCount;
+		const startAngle = -Math.PI / 2;
+
+		const labels = data.labels.map((label, i) => {
+			const angle = startAngle + i * angleStep;
+			const nx = 0.5 + 0.5 * Math.cos(angle);
+			const ny = 0.5 + 0.5 * Math.sin(angle);
+			return new AngularAxisLabel({ index: i, label, angle, nx, ny });
+		});
+
+		return ctx.custom.angularAxis(
+			{
+				line: new AngularAxisLine({ axisCount }),
+				labels,
+			},
+			ctx,
+		);
+	}
+}
+
+class AngularAxisLine extends StatelessWidget {
 	#axisCount: number;
 
-	constructor({ levels, axisCount }: { levels: number; axisCount: number }) {
+	constructor({ axisCount }: { axisCount: number }) {
 		super();
-		this.#levels = levels;
 		this.#axisCount = axisCount;
 	}
 
 	override build(context: BuildContext): Widget {
 		const ctx = RadarChartProvider.of(context);
-		return ctx.custom.grid({ levels: this.#levels, axisCount: this.#axisCount }, ctx);
+		return ctx.custom.angularAxisLine({ axisCount: this.#axisCount }, ctx);
 	}
 }
 
-class AxisLabel extends StatelessWidget {
+class AngularAxisLabel extends StatelessWidget {
 	#index: number;
 	#label: string;
 	#angle: number;
@@ -166,8 +163,111 @@ class AxisLabel extends StatelessWidget {
 
 	override build(context: BuildContext): Widget {
 		const ctx = RadarChartProvider.of(context);
-		return ctx.custom.axisLabel(
+		return ctx.custom.angularAxisLabel(
 			{ index: this.#index, label: this.#label, angle: this.#angle, nx: this.#nx, ny: this.#ny },
+			ctx,
+		);
+	}
+}
+
+// --- Radial axis (concentric polygons + scale labels) ---
+
+class RadialAxis extends StatelessWidget {
+	override build(context: BuildContext): Widget {
+		const ctx = RadarChartProvider.of(context);
+		const { data, scale } = ctx;
+		const axisCount = data.labels.length;
+		const levels = scale != null ? Math.round((scale.max - scale.min) / scale.step) : 0;
+
+		const labels: Widget[] = [];
+		if (scale != null) {
+			for (let i = 0; i <= levels; i++) {
+				const value = scale.min + scale.step * i;
+				labels.push(new RadialAxisLabel({ value, index: i }));
+			}
+		}
+
+		return ctx.custom.radialAxis(
+			{
+				line: new RadialAxisLine({ levels, axisCount }),
+				labels,
+			},
+			ctx,
+		);
+	}
+}
+
+class RadialAxisLine extends StatelessWidget {
+	#levels: number;
+	#axisCount: number;
+
+	constructor({ levels, axisCount }: { levels: number; axisCount: number }) {
+		super();
+		this.#levels = levels;
+		this.#axisCount = axisCount;
+	}
+
+	override build(context: BuildContext): Widget {
+		const ctx = RadarChartProvider.of(context);
+		return ctx.custom.radialAxisLine(
+			{ levels: this.#levels, axisCount: this.#axisCount },
+			ctx,
+		);
+	}
+}
+
+class RadialAxisLabel extends StatelessWidget {
+	#value: number;
+	#index: number;
+
+	constructor({ value, index }: { value: number; index: number }) {
+		super();
+		this.#value = value;
+		this.#index = index;
+	}
+
+	override build(context: BuildContext): Widget {
+		const ctx = RadarChartProvider.of(context);
+		return ctx.custom.radialAxisLabel(
+			{ value: this.#value, index: this.#index },
+			ctx,
+		);
+	}
+}
+
+// --- Series ---
+
+class Series extends StatelessWidget {
+	override build(context: BuildContext): Widget {
+		const ctx = RadarChartProvider.of(context);
+		const { data, scale } = ctx;
+		const maxValue = scale?.max ?? 0;
+
+		const radars = data.datasets.map((ds, index) => {
+			const vertices = computeVertices(ds.values, data.labels, maxValue);
+			return new Radar({ legend: ds.legend, index, vertices });
+		});
+
+		return ctx.custom.series({ radars }, ctx);
+	}
+}
+
+class Radar extends StatelessWidget {
+	#legend: string;
+	#index: number;
+	#vertices: RadarVertex[];
+
+	constructor({ legend, index, vertices }: { legend: string; index: number; vertices: RadarVertex[] }) {
+		super();
+		this.#legend = legend;
+		this.#index = index;
+		this.#vertices = vertices;
+	}
+
+	override build(context: BuildContext): Widget {
+		const ctx = RadarChartProvider.of(context);
+		return ctx.custom.radar(
+			{ legend: this.#legend, index: this.#index, vertices: this.#vertices },
 			ctx,
 		);
 	}

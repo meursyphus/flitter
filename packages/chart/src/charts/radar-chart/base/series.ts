@@ -7,8 +7,8 @@ import {
 } from "flitter-core";
 import type { RadarChartCustom } from "@headless/radar-chart/types";
 
-export function Series(
-	...[{ datasets, grid, axisLabels }]: Parameters<RadarChartCustom["series"]>
+export function Plot(
+	...[{ angularAxis, radialAxis, series }]: Parameters<RadarChartCustom["plot"]>
 ): Widget {
 	return Center({
 		child: AspectRatio({
@@ -16,11 +16,20 @@ export function Series(
 			child: Stack({
 				fit: StackFit.expand,
 				children: [
-					grid,
-					...datasets.map((ds) => ds.widget),
-					...axisLabels,
+					radialAxis,
+					angularAxis,
+					series,
 				],
 			}),
 		}),
+	});
+}
+
+export function Series(
+	...[{ radars }]: Parameters<RadarChartCustom["series"]>
+): Widget {
+	return Stack({
+		fit: StackFit.expand,
+		children: radars,
 	});
 }
