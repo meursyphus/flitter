@@ -12,10 +12,14 @@ export function classToFn<V extends new (...arr: any[]) => any>(
     new Constructor(...arr) as InstanceType<V>;
 }
 
+type NoInfer<T> = [T][T extends any ? 0 : never];
+
 export type DeepPartial<T> = T extends (...args: any[]) => any
   ? T
   : T extends Date
     ? Date
+    : T extends Array<infer U>
+      ? DeepPartial<U>[]
     : T extends object
       ? { [K in keyof T]?: DeepPartial<T[K]> }
       : T;
@@ -27,16 +31,17 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
-export function deepMerge<T extends Record<string, unknown>>(
+export function deepMerge<T extends object>(
   base: T,
-  override?: DeepPartial<T>,
+  override?: DeepPartial<NoInfer<T>>,
 ): T {
   if (!override) return base;
   const result = { ...base } as Record<string, unknown>;
-  for (const key of Object.keys(override)) {
-    const ov = override[key as keyof typeof override];
-    if (isPlainObject(ov) && isPlainObject(result[key])) {
-      result[key] = deepMerge(result[key] as Record<string, unknown>, ov as Record<string, unknown>);
+  for (const key of Object.keys(override as Record<string, unknown>)) {
+    const ov = (override as Record<string, unknown>)[key];
+    const current = result[key];
+    if (isPlainObject(ov) && isPlainObject(current)) {
+      result[key] = deepMerge(current, ov as Record<string, unknown>);
     } else if (ov !== undefined) {
       result[key] = ov;
     }

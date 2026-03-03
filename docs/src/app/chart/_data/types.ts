@@ -40,6 +40,8 @@ export type StyleSummary = {
   title: string;
   tagline: string;
   inspiration?: string;
+  /** Link to the original reference */
+  reference?: string;
   /** Representative chart component rendered on the overview page */
   chart?: React.ReactNode;
 };
@@ -72,6 +74,7 @@ export type StylePageData = ChartPageBase & {
     tagline: string;
     features: string[];
     inspiration?: string;
+    reference?: string;
   };
   configSections: ConfigSection[];
   /** Chart examples displayed on the style page */

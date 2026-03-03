@@ -6,13 +6,15 @@ import type { ChartExample, ConfigSection, StylePageData, StyleSummary } from ".
 export const toast = {
   name: "toast",
   title: "Toast Style",
-  tagline: "Clean, minimal, smooth animations",
+  tagline: "Pastel tones, smooth staggered animations, hover focus effects",
   inspiration: "Inspired by Toast UI Chart",
+  reference: "https://ui.toast.com/tui-chart",
   features: [
+    "Soft pastel color palette",
     "Staggered entry animations",
+    "Hover focus effect with dimming",
     "Vertical and horizontal directions",
     "Multi-dataset support",
-    "Configurable colors, fonts, padding",
   ],
 };
 
@@ -112,6 +114,7 @@ export function toastSummary(
     title: toast.title,
     tagline: toast.tagline,
     inspiration: toast.inspiration,
+    reference: toast.reference,
     chart,
   };
 }
@@ -136,6 +139,7 @@ export function toastStylePage(
     styleMeta: {
       tagline: toast.tagline,
       inspiration: toast.inspiration,
+      reference: toast.reference,
       features: [...toast.features],
     },
     configSections: [

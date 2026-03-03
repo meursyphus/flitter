@@ -62,48 +62,44 @@ export default async function OverviewPage({
       {/* Styles */}
       {styles && styles.length > 0 && (
         <section className="px-6 pt-14 md:px-10">
-          <div className="space-y-20">
-            {styles.map((style, index) => {
-              const isEven = index % 2 === 0;
-              return (
-                <div key={style.slug.join("/")}>
-                  <div
-                    className={`flex flex-col md:flex-row md:items-stretch gap-6 ${
-                      isEven ? "" : "md:flex-row-reverse"
-                    }`}
-                  >
-                    {/* Text side */}
-                    <div className="md:w-52 shrink-0 flex flex-col justify-center py-4 md:pr-6">
-                      <h3 className="text-lg font-semibold text-neutral-900">
-                        {style.title}
-                      </h3>
-                      {style.inspiration && (
-                        <p className="mt-1 text-[11px] text-neutral-400">
-                          {style.inspiration}
-                        </p>
-                      )}
-                      <p className="mt-2 text-sm text-neutral-500">
-                        {style.tagline}
-                      </p>
-                      <div className="mt-3">
-                        <Link
-                          href={`/chart/${style.slug.join("/")}`}
-                          className="text-[13px] font-medium text-neutral-500 transition-colors hover:text-neutral-900"
-                        >
-                          Details &rarr;
-                        </Link>
-                      </div>
-                    </div>
-
-                    {/* Chart side — fills remaining space */}
-                    <div className="min-w-0 flex-1 h-95">{style.chart}</div>
+          <div className="space-y-12">
+            {styles.map((style) => (
+              <div key={style.slug.join("/")}>
+                <div className="mb-3">
+                  <div className="flex items-baseline gap-3">
+                    <h3 className="text-lg font-semibold text-neutral-900">
+                      {style.title}
+                    </h3>
+                    {style.inspiration && (
+                      <span className="text-[11px] text-neutral-400">
+                        {style.reference ? (
+                          <a
+                            href={style.reference}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline underline-offset-2 hover:text-neutral-600"
+                          >
+                            {style.inspiration}
+                          </a>
+                        ) : (
+                          style.inspiration
+                        )}
+                      </span>
+                    )}
+                    <Link
+                      href={`/chart/${style.slug.join("/")}`}
+                      className="ml-auto text-[13px] font-medium text-neutral-500 transition-colors hover:text-neutral-900"
+                    >
+                      Details &rarr;
+                    </Link>
                   </div>
-
-                  {/* Divider */}
-                  <div className="mt-20 h-px bg-neutral-100" />
+                  <p className="mt-1 text-sm text-neutral-500">
+                    {style.tagline}
+                  </p>
                 </div>
-              );
-            })}
+                <div className="h-[">{style.chart}</div>
+              </div>
+            ))}
           </div>
         </section>
       )}

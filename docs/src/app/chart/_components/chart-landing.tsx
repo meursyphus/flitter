@@ -1,25 +1,22 @@
 import Link from "next/link";
 import ChartCarousel from "./chart-carousel";
+import type { ChartItem } from "./chart-carousel";
+import {
+  VerticalToastBarChart,
+  HorizontalToastBarChart,
+} from "../_data/bar-chart/toast/examples";
+import {
+  VerticalAgBarChart,
+  HorizontalAgBarChart,
+} from "../_data/bar-chart/ag/examples";
 
-const allCharts = [
-  { title: "Bar Chart", href: "/chart/bar-chart" },
-  { title: "Line Chart", href: "/chart/line-chart" },
-  { title: "Area Chart", href: "/chart/area-chart" },
-  { title: "Pie Chart", href: "/chart/pie-chart" },
-  { title: "Scatter Chart", href: "/chart/scatter-chart" },
-  { title: "Bubble Chart", href: "/chart/bubble-chart" },
-  { title: "Radar Chart", href: "/chart/radar-chart" },
-  { title: "Heatmap Chart", href: "/chart/heatmap-chart" },
-  { title: "Candlestick Chart", href: "/chart/candlestick-chart" },
-  { title: "Box Plot Chart", href: "/chart/box-plot-chart" },
-  { title: "Waterfall Chart", href: "/chart/waterfall-chart" },
-  { title: "Funnel Chart", href: "/chart/funnel-chart" },
-  { title: "Gauge Chart", href: "/chart/gauge-chart" },
-  { title: "Treemap Chart", href: "/chart/treemap-chart" },
-  { title: "Sunburst Chart", href: "/chart/sunburst-chart" },
-  { title: "Sankey Chart", href: "/chart/sankey-chart" },
-  { title: "Stacked Bar Chart", href: "/chart/stacked-bar-chart" },
-  { title: "Stacked Area Chart", href: "/chart/stacked-area-chart" },
+const chartShowcase: ChartItem[] = [
+  {
+    title: "Bar Chart",
+    subtitle: "Toast Style",
+    chart: <VerticalToastBarChart />,
+  },
+  { title: "Bar Chart", subtitle: "AG Style", chart: <VerticalAgBarChart /> },
 ];
 
 export default function ChartLanding() {
@@ -145,7 +142,7 @@ export default function ChartLanding() {
             className="animate-fade-up mt-3 text-lg tracking-tight text-neutral-900 sm:text-xl"
             style={{ animationDelay: "0.7s" }}
           >
-            <span className="font-bold">18 chart types,</span>{" "}
+            <span className="font-bold">Multiple styles,</span>{" "}
             <span
               className="italic text-neutral-700"
               style={{ fontFamily: "var(--font-display)" }}
@@ -156,10 +153,10 @@ export default function ChartLanding() {
         </div>
 
         <div
-          className="animate-fade-up mt-8"
+          className="animate-fade-up mt-8 w-full overflow-hidden px-6 md:px-10"
           style={{ animationDelay: "0.8s" }}
         >
-          <ChartCarousel charts={allCharts} />
+          <ChartCarousel charts={chartShowcase} />
         </div>
       </section>
     </div>

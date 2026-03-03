@@ -13,7 +13,9 @@ import {
 import type { ToastBaseConfig } from "./config";
 
 function interleave(items: Widget[], separator: () => Widget): Widget[] {
-  return items.flatMap((item, i) => (i < items.length - 1 ? [item, separator()] : [item]));
+  return items.flatMap((item, i) =>
+    i < items.length - 1 ? [item, separator()] : [item],
+  );
 }
 
 const titleAlignmentMap = {
@@ -27,7 +29,7 @@ function isRightPosition(position: string): boolean {
 }
 
 const rightAlignmentMap: Record<string, MainAxisAlignment> = {
-  "right": MainAxisAlignment.center,
+  right: MainAxisAlignment.center,
   "right-top": MainAxisAlignment.start,
   "right-center": MainAxisAlignment.center,
   "right-bottom": MainAxisAlignment.end,
@@ -44,7 +46,9 @@ export function toastLayout(
   const legendWidget = legendConfig.visible
     ? isRight
       ? Column({
-          mainAxisAlignment: rightAlignmentMap[legendConfig.position] ?? MainAxisAlignment.center,
+          mainAxisAlignment:
+            rightAlignmentMap[legendConfig.position] ??
+            MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: interleave(legends, () => SizedBox({ height: legendGap })),
         })
@@ -88,7 +92,7 @@ export function toastLayout(
             legendWidget,
           ],
         }),
-      })
+      }),
     );
   } else {
     columnChildren.push(Expanded({ child: plot }));

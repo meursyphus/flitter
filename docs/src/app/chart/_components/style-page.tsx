@@ -6,7 +6,7 @@ export default async function StylePage({
 }: {
   data: StylePageData;
 }) {
-  const { title, description, configSections, examples, parent } = data;
+  const { title, description, configSections, examples, parent, styleMeta } = data;
 
   return (
     <div className="-mx-6 -mt-8 md:-mx-10">
@@ -35,6 +35,22 @@ export default async function StylePage({
         <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
           {title}
         </h1>
+        {styleMeta?.inspiration && (
+          <p className="mt-1 text-[11px] text-neutral-400">
+            {styleMeta.reference ? (
+              <a
+                href={styleMeta.reference}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 hover:text-neutral-600"
+              >
+                {styleMeta.inspiration}
+              </a>
+            ) : (
+              styleMeta.inspiration
+            )}
+          </p>
+        )}
         <p className="mt-2 text-sm leading-relaxed text-neutral-500">
           {description}
         </p>

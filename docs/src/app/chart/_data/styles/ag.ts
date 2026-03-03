@@ -6,15 +6,16 @@ import type { ChartExample, ConfigSection, StylePageData, StyleSummary } from ".
 export const ag = {
   name: "ag",
   title: "AG Style",
-  tagline: "Professional, data-dense, enterprise-ready",
+  tagline: "Muted tones, minimal animation, clean business dashboard look",
   inspiration: "Inspired by AG Charts",
+  reference: "https://www.ag-grid.com/charts/",
   features: [
-    "Opacity-based hover effects",
+    "Muted, desaturated color palette",
+    "Minimal animation for concise presentation",
     "Subtitle support",
-    "Dashed grid lines",
     "Mouse-following tooltips with arrow",
     "Flexible legend positioning (top, bottom, right variants)",
-    "Configurable axis line & grid visibility per direction",
+    "Dashed grid line support",
   ],
 };
 
@@ -149,6 +150,7 @@ export function agSummary(
     title: ag.title,
     tagline: ag.tagline,
     inspiration: ag.inspiration,
+    reference: ag.reference,
     chart,
   };
 }
@@ -172,6 +174,7 @@ export function agStylePage(
     styleMeta: {
       tagline: ag.tagline,
       inspiration: ag.inspiration,
+      reference: ag.reference,
       features: [...ag.features],
     },
     configSections: [
