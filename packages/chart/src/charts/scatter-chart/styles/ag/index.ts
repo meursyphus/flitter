@@ -4,7 +4,7 @@ import type { AgScatterChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { agScatter } from "./parts/scatter";
-import { agSeries } from "./parts/series";
+import { agDataView } from "./parts/data-view";
 import {
   agTitle,
   agLegend,
@@ -17,7 +17,7 @@ export { type AgScatterChartConfig } from "./config";
 const agCustom: Partial<ScatterChartCustom<AgScatterChartConfig>> = {
   layout: cartesian.agLayout,
   scatter: agScatter,
-  series: agSeries,
+  dataView: agDataView,
   legend: (args, context) => agLegend(args, context, { markerShape: "circle" }),
   title: agTitle,
   axisCorner: cartesian.agAxisCorner,

@@ -15,9 +15,9 @@ export type BarChartCustom<TConfig = {}> = {
 	yAxisLabel: CustomArgs<{ name: string; index: number }, TConfig>;
 	xAxisTick: CustomArgs<undefined, TConfig>;
 	yAxisTick: CustomArgs<undefined, TConfig>;
-	series: CustomArgs<{ barGroups: Widget[] }, TConfig>;
+	dataView: CustomArgs<{ barGroups: Widget[] }, TConfig>;
 	layout: CustomArgs<{ title: Widget; legends: Widget[]; plot: Widget }, TConfig>;
-	plot: CustomArgs<{ xAxis: Widget; yAxis: Widget; series: Widget; grid: Widget; axisCorner: Widget }, TConfig>;
+	plot: CustomArgs<{ xAxis: Widget; yAxis: Widget; dataView: Widget; grid: Widget; axisCorner: Widget }, TConfig>;
 	legend: CustomArgs<{ name: string; index: number }, TConfig>;
 	title: CustomArgs<undefined, TConfig>;
 	dataLabel: CustomArgs<{ value: number; label: string; legend: string }, TConfig>;

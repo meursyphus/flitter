@@ -7,10 +7,10 @@ import {
 } from "flitter-core";
 import type { PieChartCustom } from "@headless/pie-chart/types";
 
-export function Series(
-	...[{ pies }]: Parameters<PieChartCustom["series"]>
+export function DataView(
+	...[{ slices }]: Parameters<PieChartCustom["dataView"]>
 ): Widget {
-	const children = pies.map((pie) =>
+	const children = slices.map((pie) =>
 		Transform.rotate({
 			angle: pie.startAngle,
 			alignment: Alignment.center,

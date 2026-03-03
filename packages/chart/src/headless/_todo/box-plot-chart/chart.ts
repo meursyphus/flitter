@@ -264,17 +264,17 @@ class Plot extends StatelessWidget {
     const config = BoxPlotChartConfigProvider.of(context);
     const { custom } = config;
     return custom.plot(
-      { xAxis: new XAxis(), yAxis: new YAxis(), series: new Series(), grid: new Grid(), axisCorner: new AxisCorner() },
+      { xAxis: new XAxis(), yAxis: new YAxis(), dataView: new DataView(), grid: new Grid(), axisCorner: new AxisCorner() },
       config,
     );
   }
 }
 
-class Series extends StatelessWidget {
+class DataView extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const config = BoxPlotChartConfigProvider.of(context);
     const { custom, data } = config;
-    return custom.series(
+    return custom.dataView(
       {
         boxPlotGroups: Array.from(
           { length: data.labels.length },

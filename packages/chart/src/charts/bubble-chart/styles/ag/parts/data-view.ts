@@ -16,25 +16,25 @@ import {
   type Widget,
   type BuildContext,
 } from "flitter-core";
-import type { ScatterChartCustom } from "@headless/scatter-chart/types";
-import type { AgScatterChartConfig } from "../config";
-import { Series } from "../../../base/series";
-import { ScatterChartProvider } from "@headless/scatter-chart/provider";
+import type { BubbleChartCustom } from "@headless/bubble-chart/types";
+import type { AgBubbleChartConfig } from "../config";
+import { DataView } from "../../../base/data-view";
+import { BubbleChartProvider } from "@headless/bubble-chart/provider";
 import { agTooltipContent } from "@styles/ag";
 
-export function agSeries(
-  ...[args, context]: Parameters<ScatterChartCustom<AgScatterChartConfig>["series"]>
+export function agDataView(
+  ...[args, context]: Parameters<BubbleChartCustom<AgBubbleChartConfig>["dataView"]>
 ): Widget {
-  const child = Series(args, context);
+  const child = DataView(args, context);
   const config = context.config;
   if (!config.tooltip.enabled) return child;
-  return new _ScatterTooltipOverlay({ child });
+  return new _BubbleTooltipOverlay({ child });
 }
 
 const ANIMATION_DURATION = 150;
 const FADE_DURATION = 100;
 
-class _ScatterTooltipOverlay extends StatefulWidget {
+class _BubbleTooltipOverlay extends StatefulWidget {
   child: Widget;
 
   constructor({ child }: { child: Widget }) {
@@ -43,11 +43,11 @@ class _ScatterTooltipOverlay extends StatefulWidget {
   }
 
   createState() {
-    return new _ScatterTooltipOverlayState();
+    return new _BubbleTooltipOverlayState();
   }
 }
 
-class _ScatterTooltipOverlayState extends State<_ScatterTooltipOverlay> {
+class _BubbleTooltipOverlayState extends State<_BubbleTooltipOverlay> {
   pointPixelX = 0;
   pointPixelY = 0;
   wasVisible = false;
@@ -72,12 +72,12 @@ class _ScatterTooltipOverlayState extends State<_ScatterTooltipOverlay> {
   }
 
   override build(context: BuildContext): Widget {
-    const ctx = ScatterChartProvider.of(context);
-    const config: AgScatterChartConfig = ctx.config;
+    const ctx = BubbleChartProvider.of(context);
+    const config: AgBubbleChartConfig = ctx.config;
     const { tooltip } = config;
-    const { hoveredPoint } = ctx;
+    const { hoveredBubble } = ctx;
 
-    // Resolve tooltip data from hovered point
+    // Resolve tooltip data from hovered bubble
     let tooltipData: {
       label: string;
       legend: string;
@@ -87,8 +87,8 @@ class _ScatterTooltipOverlayState extends State<_ScatterTooltipOverlay> {
       normY: number;
     } | null = null;
 
-    if (hoveredPoint != null && ctx.scale != null) {
-      const { index, legend } = hoveredPoint;
+    if (hoveredBubble != null && ctx.scale != null) {
+      const { index, legend } = hoveredBubble;
       const dataset = ctx.data.datasets.find((d) => d.legend === legend);
       const point = dataset?.data[index];
       if (point != null) {
@@ -97,7 +97,7 @@ class _ScatterTooltipOverlayState extends State<_ScatterTooltipOverlay> {
         const scale = ctx.scale;
         const normX = (point.x - scale.x.min) / (scale.x.max - scale.x.min);
         const normY = (point.y - scale.y.min) / (scale.y.max - scale.y.min);
-        tooltipData = { label: point.label, legend, color, value: point.y, normX, normY };
+        tooltipData = { label: point.label, legend, color, value: point.value, normX, normY };
       }
     }
 
@@ -161,14 +161,14 @@ class _ScatterTooltipOverlayState extends State<_ScatterTooltipOverlay> {
             }
 
             if (closestIndex >= 0) {
-              const hp = ctx.hoveredPoint;
-              if (hp == null || hp.index !== closestIndex || hp.legend !== closestLegend) {
-                ctx.hoverPoint(closestIndex, closestLegend);
+              const hb = ctx.hoveredBubble;
+              if (hb == null || hb.index !== closestIndex || hb.legend !== closestLegend) {
+                ctx.hoverBubble(closestIndex, closestLegend);
               }
             }
           },
           onMouseLeave: () => {
-            ctx.unhoverPoint();
+            ctx.unhoverBubble();
           },
           child: SizedBox.expand(),
         }),

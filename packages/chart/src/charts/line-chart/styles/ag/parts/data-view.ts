@@ -6,8 +6,8 @@ import {
 import type { LineChartCustom } from "@headless/line-chart/types";
 import type { AgLineChartConfig } from "../config";
 
-export function agSeries(
-  ...[args, ctx]: Parameters<LineChartCustom<AgLineChartConfig>["series"]>
+export function agDataView(
+  ...[args, ctx]: Parameters<LineChartCustom<AgLineChartConfig>["dataView"]>
 ) {
   const { lines } = args;
   const datasets = ctx.data.datasets;

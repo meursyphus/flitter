@@ -2,8 +2,8 @@ import type { PieChartCustom } from "@headless/pie-chart/types";
 import type { ToastPieChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
-import { toastPie } from "./parts/pie";
-import { toastSeries } from "./parts/series";
+import { toastSlice } from "./parts/slice";
+import { toastDataView } from "./parts/data-view";
 import {
 	toastTitle,
 	toastLegend,
@@ -12,8 +12,8 @@ import {
 export { type ToastPieChartConfig } from "./config";
 
 const toastCustom: Partial<PieChartCustom<ToastPieChartConfig>> = {
-	pie: toastPie,
-	series: toastSeries,
+	slice: toastSlice,
+	dataView: toastDataView,
 	legend: (args, context) => toastLegend(args, context, { markerShape: "circle" }),
 	title: toastTitle,
 };

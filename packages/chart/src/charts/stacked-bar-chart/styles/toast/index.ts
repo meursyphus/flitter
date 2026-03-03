@@ -5,7 +5,7 @@ import type { ToastStackedBarChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { toastBar } from "./parts/bar";
-import { toastSeries } from "./parts/series";
+import { toastDataView } from "./parts/data-view";
 import { toastBarBox } from "./parts/bar-box";
 import {
   toastTitle,
@@ -19,7 +19,7 @@ export { type ToastStackedBarChartConfig } from "./config";
 const toastCustom: Partial<BarChartCustom<ToastStackedBarChartConfig>> = {
   layout: cartesian.toastLayout,
   bar: toastBar,
-  series: toastSeries,
+  dataView: toastDataView,
   barBox: toastBarBox,
   legend: toastLegend,
   title: toastTitle,

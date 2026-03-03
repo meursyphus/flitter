@@ -21,9 +21,9 @@ export type BoxPlotChartCustom = {
 	yAxisLabel: ConfigArgs<{ name: string; index: number }>;
 	xAxisTick: ConfigArgs;
 	yAxisTick: ConfigArgs;
-	series: ConfigArgs<{ boxPlotGroups: Widget[] }>;
+	dataView: ConfigArgs<{ boxPlotGroups: Widget[] }>;
 	layout: ConfigArgs<{ title: Widget; legends: Widget[]; plot: Widget }>;
-	plot: ConfigArgs<{ xAxis: Widget; yAxis: Widget; series: Widget; grid: Widget; axisCorner: Widget }>;
+	plot: ConfigArgs<{ xAxis: Widget; yAxis: Widget; dataView: Widget; grid: Widget; axisCorner: Widget }>;
 	legend: ConfigArgs<{ name: string; index: number }>;
 	title: ConfigArgs<{ name: string }>;
 	xAxisLine: ConfigArgs;

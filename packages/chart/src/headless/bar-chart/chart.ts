@@ -280,17 +280,17 @@ class Plot extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const ctx = BarChartProvider.of(context);
     return ctx.custom.plot(
-      { xAxis: new XAxis(), yAxis: new YAxis(), series: new Series(), grid: new Grid(), axisCorner: new AxisCorner() },
+      { xAxis: new XAxis(), yAxis: new YAxis(), dataView: new DataView(), grid: new Grid(), axisCorner: new AxisCorner() },
       ctx,
     );
   }
 }
 
-class Series extends StatelessWidget {
+class DataView extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const ctx = BarChartProvider.of(context);
     const { data } = ctx;
-    return ctx.custom.series(
+    return ctx.custom.dataView(
       {
         barGroups: Array.from(
           { length: data.labels.length },

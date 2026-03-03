@@ -2,7 +2,7 @@ import type { CartesianCustom } from "./types";
 import { Align, Alignment, DockLayout, Stack, type Widget } from "flitter-core";
 
 export function Plot({
-  series,
+  dataView,
   xAxis,
   yAxis,
   grid,
@@ -15,6 +15,6 @@ export function Plot({
       alignment: Alignment.topRight,
       child: axisCorner,
     }),
-    fill: Stack({ children: [grid, series] }),
+    fill: Stack({ children: [grid, dataView] }),
   });
 }

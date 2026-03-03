@@ -5,7 +5,7 @@ import type { AgStackedAreaChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { agArea } from "./parts/area";
-import { agSeries } from "./parts/series";
+import { agDataView } from "./parts/data-view";
 import {
   agTitle,
   agLegend,
@@ -18,7 +18,7 @@ export { type AgStackedAreaChartConfig } from "./config";
 const agCustom: Partial<LineChartCustom<AgStackedAreaChartConfig>> = {
   layout: cartesian.agLayout,
   line: agArea,
-  series: agSeries,
+  dataView: agDataView,
   legend: agLegend,
   title: agTitle,
   axisCorner: cartesian.agAxisCorner,

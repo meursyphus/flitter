@@ -264,13 +264,13 @@ class Plot extends StatelessWidget {
 		const config = WaterfallChartConfigProvider.of(context);
 		const { custom } = config;
 		return custom.plot(
-			{ xAxis: new XAxis(), yAxis: new YAxis(), series: new Series(), grid: new Grid(), axisCorner: new AxisCorner() },
+			{ xAxis: new XAxis(), yAxis: new YAxis(), dataView: new DataView(), grid: new Grid(), axisCorner: new AxisCorner() },
 			config
 		);
 	}
 }
 
-class Series extends StatelessWidget {
+class DataView extends StatelessWidget {
 	override build(context: BuildContext): Widget {
 		const config = WaterfallChartConfigProvider.of(context);
 		const { custom, data, cumulativeValues } = config;
@@ -302,7 +302,7 @@ class Series extends StatelessWidget {
 			);
 		}
 
-		return custom.series({ bars, connectors }, config);
+		return custom.dataView({ bars, connectors }, config);
 	}
 }
 

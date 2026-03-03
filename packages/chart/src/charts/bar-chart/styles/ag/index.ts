@@ -5,7 +5,7 @@ import type { AgBarChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { agBar } from "./parts/bar";
-import { agSeries } from "./parts/series";
+import { agDataView } from "./parts/data-view";
 import {
   agTitle,
   agLegend,
@@ -18,7 +18,7 @@ export { type AgBarChartConfig } from "./config";
 const agCustom: Partial<BarChartCustom<AgBarChartConfig>> = {
   layout: cartesian.agLayout,
   bar: agBar,
-  series: agSeries,
+  dataView: agDataView,
   legend: agLegend,
   title: agTitle,
   axisCorner: cartesian.agAxisCorner,

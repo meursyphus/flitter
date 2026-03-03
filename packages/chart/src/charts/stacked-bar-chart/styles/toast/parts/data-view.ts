@@ -1,20 +1,20 @@
 import type { Widget } from "flitter-core";
 import type { BarChartCustom } from "@headless/bar-chart/types";
 import type { ToastStackedBarChartConfig } from "../config";
-import { Series } from "@shared/bar-like";
-import { AnimatedSeries } from "@styles/toast/cartesian/animated-series";
+import { DataView } from "@shared/bar-like";
+import { AnimatedDataView } from "@styles/toast/cartesian/animated-data-view";
 
-export function toastSeries(
-  ...[args, context]: Parameters<BarChartCustom<ToastStackedBarChartConfig>["series"]>
+export function toastDataView(
+  ...[args, context]: Parameters<BarChartCustom<ToastStackedBarChartConfig>["dataView"]>
 ): Widget {
-  const child = Series(args, context);
+  const child = DataView(args, context);
 
   const scale = context.scale;
   const isVertical = context.direction === "vertical";
   const baselineRatio =
     scale ? Math.max(0, Math.min(1, (0 - scale.min) / (scale.max - scale.min))) : 0;
 
-  return new AnimatedSeries({
+  return new AnimatedDataView({
     child,
     duration: context.config.animation.duration,
     isVertical,

@@ -21,8 +21,8 @@ import type { AgStackedAreaChartConfig } from "../config";
 import { LineChartProvider } from "@headless/line-chart/provider";
 import { agTooltipContent } from "@styles/ag";
 
-export function agSeries(
-  ...[args, ctx]: Parameters<LineChartCustom<AgStackedAreaChartConfig>["series"]>
+export function agDataView(
+  ...[args, ctx]: Parameters<LineChartCustom<AgStackedAreaChartConfig>["dataView"]>
 ) {
   const { lines } = args;
   const datasets = ctx.data.datasets;

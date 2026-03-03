@@ -8,7 +8,7 @@ import {
 import type { RadarChartCustom } from "@headless/radar-chart/types";
 
 export function Plot(
-	...[{ angularAxis, radialAxis, series }]: Parameters<RadarChartCustom["plot"]>
+	...[{ angularAxis, radialAxis, dataView }]: Parameters<RadarChartCustom["plot"]>
 ): Widget {
 	return Center({
 		child: AspectRatio({
@@ -18,15 +18,15 @@ export function Plot(
 				children: [
 					radialAxis,
 					angularAxis,
-					series,
+					dataView,
 				],
 			}),
 		}),
 	});
 }
 
-export function Series(
-	...[{ radars }]: Parameters<RadarChartCustom["series"]>
+export function DataView(
+	...[{ radars }]: Parameters<RadarChartCustom["dataView"]>
 ): Widget {
 	return Stack({
 		fit: StackFit.expand,

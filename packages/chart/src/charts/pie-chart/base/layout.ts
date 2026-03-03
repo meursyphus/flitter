@@ -48,7 +48,7 @@ const rightAlignmentMap: Record<string, MainAxisAlignment> = {
 };
 
 export function Layout(
-	...[{ title, legends, series }, context]: Parameters<PieChartCustom<{ config: LayoutConfig }>["layout"]>
+	...[{ title, legends, dataView }, context]: Parameters<PieChartCustom<{ config: LayoutConfig }>["layout"]>
 ): Widget {
 	const { padding, title: titleConfig, legend: legendConfig } = (context as any).config as LayoutConfig;
 	const legendGap = legendConfig.gap;
@@ -94,7 +94,7 @@ export function Layout(
 				child: Row({
 					crossAxisAlignment: CrossAxisAlignment.stretch,
 					children: [
-						Expanded({ child: series }),
+						Expanded({ child: dataView }),
 						SizedBox({ width: legendGap }),
 						legendWidget,
 					],
@@ -102,7 +102,7 @@ export function Layout(
 			}),
 		);
 	} else {
-		columnChildren.push(Expanded({ child: series }));
+		columnChildren.push(Expanded({ child: dataView }));
 	}
 
 	if (legendWidget && legendConfig.position === "bottom") {

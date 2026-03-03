@@ -226,7 +226,7 @@ class Plot extends StatelessWidget {
       {
         xAxis: new XAxis(),
         yAxis: new YAxis(),
-        series: new Series(),
+        dataView: new DataView(),
         grid: new Grid(),
         axisCorner: new AxisCorner(),
       },
@@ -235,11 +235,11 @@ class Plot extends StatelessWidget {
   }
 }
 
-class Series extends StatelessWidget {
+class DataView extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const ctx = LineChartProvider.of(context);
     const { data } = ctx;
-    return ctx.custom.series(
+    return ctx.custom.dataView(
       {
         lines: data.datasets.map(
           (dataset, index) =>

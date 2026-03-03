@@ -36,7 +36,7 @@ export type RadarVertex = {
 export type RadarChartCustom<TConfig = {}> = {
 	// Structure
 	layout: CustomArgs<{ title: Widget; legends: Widget[]; plot: Widget }, TConfig>;
-	plot: CustomArgs<{ angularAxis: Widget; radialAxis: Widget; series: Widget }, TConfig>;
+	plot: CustomArgs<{ angularAxis: Widget; radialAxis: Widget; dataView: Widget }, TConfig>;
 
 	// Angular axis (spokes + category labels)
 	angularAxis: CustomArgs<{ line: Widget; labels: Widget[] }, TConfig>;
@@ -49,7 +49,7 @@ export type RadarChartCustom<TConfig = {}> = {
 	radialAxisLabel: CustomArgs<{ value: number; index: number }, TConfig>;
 
 	// Data
-	series: CustomArgs<{ radars: Widget[] }, TConfig>;
+	dataView: CustomArgs<{ radars: Widget[] }, TConfig>;
 	radar: CustomArgs<{ legend: string; index: number; vertices: RadarVertex[] }, TConfig>;
 
 	// Decorations

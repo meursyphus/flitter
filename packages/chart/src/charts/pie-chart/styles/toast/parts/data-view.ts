@@ -21,7 +21,7 @@ import {
 } from "flitter-core";
 import type { PieChartCustom, PieChartContext } from "@headless/pie-chart/types";
 import type { ToastPieChartConfig } from "../config";
-import { Series } from "../../../base/series";
+import { DataView } from "../../../base/data-view";
 import { tooltipContent } from "@styles/toast";
 
 type PieSlice = {
@@ -36,7 +36,7 @@ type PieSlice = {
 
 type AngleSnapshot = { startAngle: number; sweepAngle: number };
 
-class AnimatedPieSeries extends StatefulWidget {
+class AnimatedPieDataView extends StatefulWidget {
 	pies: PieSlice[];
 	context: PieChartContext<ToastPieChartConfig>;
 	duration: number;
@@ -57,11 +57,11 @@ class AnimatedPieSeries extends StatefulWidget {
 	}
 
 	createState() {
-		return new _AnimatedPieSeriesState();
+		return new _AnimatedPieDataViewState();
 	}
 }
 
-class _AnimatedPieSeriesState extends State<AnimatedPieSeries> {
+class _AnimatedPieDataViewState extends State<AnimatedPieDataView> {
 	controller!: AnimationController;
 	tween!: { value: number };
 	isMountAnimation = true;
@@ -82,7 +82,7 @@ class _AnimatedPieSeriesState extends State<AnimatedPieSeries> {
 		this.controller.forward();
 	}
 
-	override didUpdateWidget(oldWidget: AnimatedPieSeries) {
+	override didUpdateWidget(oldWidget: AnimatedPieDataView) {
 		const anglesChanged =
 			oldWidget.pies.length !== this.widget.pies.length ||
 			oldWidget.pies.some(
@@ -114,9 +114,9 @@ class _AnimatedPieSeriesState extends State<AnimatedPieSeries> {
 
 		if (this.isMountAnimation) {
 			// Mount animation: ClipPath sweep from 0 → 360°
-			const child = buildSeriesTooltipOverlay(
-				Series({ pies }, context),
-				{ pies },
+			const child = buildDataViewTooltipOverlay(
+				DataView({ slices: pies }, context),
+				{ slices: pies },
 				context,
 			);
 			const done = t >= 1;
@@ -165,8 +165,8 @@ class _AnimatedPieSeriesState extends State<AnimatedPieSeries> {
 			};
 		});
 
-		const seriesWidget = Series({ pies: interpolatedPies }, context);
-		return buildSeriesTooltipOverlay(seriesWidget, { pies }, context);
+		const dataViewWidget = DataView({ slices: interpolatedPies }, context);
+		return buildDataViewTooltipOverlay(dataViewWidget, { slices: pies }, context);
 	}
 }
 
@@ -174,34 +174,34 @@ function lerp(a: number, b: number, t: number): number {
 	return a + (b - a) * t;
 }
 
-export function toastSeries(
-	...[args, context]: Parameters<PieChartCustom<ToastPieChartConfig>["series"]>
+export function toastDataView(
+	...[args, context]: Parameters<PieChartCustom<ToastPieChartConfig>["dataView"]>
 ): Widget {
 	if (!context.config.animation.enabled) {
-		const seriesWidget = Series(args, context);
-		const child = buildSeriesTooltipOverlay(seriesWidget, args, context);
+		const dataViewWidget = DataView(args, context);
+		const child = buildDataViewTooltipOverlay(dataViewWidget, args, context);
 		return child;
 	}
 
-	return new AnimatedPieSeries({
-		pies: args.pies,
+	return new AnimatedPieDataView({
+		pies: args.slices,
 		context,
 		duration: context.config.animation.duration,
 	});
 }
 
-function buildSeriesTooltipOverlay(
-	seriesWidget: Widget,
-	args: Parameters<PieChartCustom<ToastPieChartConfig>["series"]>[0],
-	context: Parameters<PieChartCustom<ToastPieChartConfig>["series"]>[1],
+function buildDataViewTooltipOverlay(
+	dataViewWidget: Widget,
+	args: Parameters<PieChartCustom<ToastPieChartConfig>["dataView"]>[0],
+	context: Parameters<PieChartCustom<ToastPieChartConfig>["dataView"]>[1],
 ): Widget {
 	const { hoveredIndex, config } = context;
 	const showTooltip = hoveredIndex != null && config.tooltip.enabled;
 
 	let tooltipWidget: Widget;
 
-	if (showTooltip && args.pies[hoveredIndex]) {
-		const { startAngle, sweepAngle, name, value } = args.pies[hoveredIndex];
+	if (showTooltip && args.slices[hoveredIndex]) {
+		const { startAngle, sweepAngle, name, value } = args.slices[hoveredIndex];
 		const colorIndex = context.legends.indexOf(name);
 		const color = config.colors[(colorIndex >= 0 ? colorIndex : 0) % config.colors.length];
 
@@ -237,6 +237,6 @@ function buildSeriesTooltipOverlay(
 	return Stack({
 		fit: StackFit.expand,
 		clipped: false,
-		children: [seriesWidget, tooltipWidget],
+		children: [dataViewWidget, tooltipWidget],
 	});
 }

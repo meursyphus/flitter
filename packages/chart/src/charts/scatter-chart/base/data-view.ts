@@ -1,10 +1,10 @@
-import type { BubbleChartCustom } from "@headless/bubble-chart/types";
+import type { ScatterChartCustom } from "@headless/scatter-chart/types";
 import { Stack, Align, Alignment } from "flitter-core";
 
-export function Series(
-  ...[{ bubbles, scale }]: Parameters<BubbleChartCustom["series"]>
+export function DataView(
+  ...[{ scatters, scale }]: Parameters<ScatterChartCustom["dataView"]>
 ) {
-  const children = bubbles.map((pt) => {
+  const children = scatters.map((pt) => {
     const normX = (pt.x - scale.x.min) / (scale.x.max - scale.x.min);
     const normY = (pt.y - scale.y.min) / (scale.y.max - scale.y.min);
 

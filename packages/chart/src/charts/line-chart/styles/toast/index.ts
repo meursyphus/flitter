@@ -5,7 +5,7 @@ import type { ToastLineChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { toastLine } from "./parts/line";
-import { toastSeries } from "./parts/series";
+import { toastDataView } from "./parts/data-view";
 import {
   toastTitle,
   toastLegend,
@@ -18,7 +18,7 @@ export { type ToastLineChartConfig } from "./config";
 const toastCustom: Partial<LineChartCustom<ToastLineChartConfig>> = {
   layout: cartesian.toastLayout,
   line: toastLine,
-  series: toastSeries,
+  dataView: toastDataView,
   legend: toastLegend,
   title: toastTitle,
   axisCorner: cartesian.toastAxisCorner,

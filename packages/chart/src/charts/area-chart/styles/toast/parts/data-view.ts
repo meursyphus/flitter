@@ -23,15 +23,16 @@ import {
   type TooltipPosition,
 } from "flitter-core";
 import type { LineChartCustom, LineChartScale } from "@headless/line-chart/types";
-import type { ToastStackedAreaChartConfig } from "../config";
-import { AnimatedSeries } from "@styles/toast/cartesian/animated-series";
+import type { ToastAreaChartConfig } from "../config";
+import { AnimatedDataView } from "@styles/toast/cartesian/animated-data-view";
+import { computeDataPointPosition } from "./area";
 import { tooltipContent } from "@styles/toast";
 
 // --- Tooltip layout ---
 
 const TOOLTIP_GAP = 4;
 const ESTIMATED_TOOLTIP_WIDTH = 220;
-const ESTIMATED_TOOLTIP_HEIGHT = 120;
+const ESTIMATED_TOOLTIP_HEIGHT = 80;
 const DOT_SIZE = 10;
 
 type TooltipLayout = {
@@ -41,17 +42,19 @@ type TooltipLayout = {
   padding: EdgeInsets;
 };
 
-function computeColumnTooltipLayout({
+function computePointTooltipLayout({
   pointX,
+  pointY,
   plotWidth,
   plotHeight,
 }: {
   pointX: number;
+  pointY: number;
   plotWidth: number;
   plotHeight: number;
 }): TooltipLayout {
   const fitsRight = plotWidth - pointX >= ESTIMATED_TOOLTIP_WIDTH + TOOLTIP_GAP;
-  const fitsTop = plotHeight / 2 >= ESTIMATED_TOOLTIP_HEIGHT;
+  const fitsTop = pointY >= ESTIMATED_TOOLTIP_HEIGHT;
 
   if (fitsRight) {
     return {
@@ -69,8 +72,7 @@ function computeColumnTooltipLayout({
   };
 }
 
-
-// --- Point info for stacked area ---
+// --- Point info for a single x-column ---
 
 type ColumnPoint = {
   y: number;
@@ -89,7 +91,7 @@ class _HoverableColumn extends StatefulWidget {
   plotWidth: number;
   plotHeight: number;
   pointX: number;
-  config: ToastStackedAreaChartConfig;
+  config: ToastAreaChartConfig;
 
   constructor({
     key,
@@ -110,7 +112,7 @@ class _HoverableColumn extends StatefulWidget {
     plotWidth: number;
     plotHeight: number;
     pointX: number;
-    config: ToastStackedAreaChartConfig;
+    config: ToastAreaChartConfig;
   }) {
     super(key);
     this.points = points;
@@ -129,18 +131,81 @@ class _HoverableColumn extends StatefulWidget {
 }
 
 class _HoverableColumnState extends State<_HoverableColumn> {
-  hovered = false;
+  hoveredIndex: number | null = null;
   tooltipLayout: TooltipLayout | null = null;
 
+  private findNearestIndex(mouseY: number): number {
+    const { points } = this.widget;
+    let bestIdx = 0;
+    let bestDist = Math.abs(mouseY - points[0].y);
+    for (let i = 1; i < points.length; i++) {
+      const dist = Math.abs(mouseY - points[i].y);
+      if (dist < bestDist) {
+        bestDist = dist;
+        bestIdx = i;
+      }
+    }
+    return bestIdx;
+  }
+
+  private findPlotGlobal(): { x: number; y: number } | null {
+    const { plotWidth, plotHeight } = this.widget;
+    let node = this.element.renderObject.parent;
+    while (node) {
+      const s = node.size;
+      if (
+        s &&
+        Math.abs(s.width - plotWidth) < 1 &&
+        Math.abs(s.height - plotHeight) < 1
+      ) {
+        return node.localToGlobal();
+      }
+      node = node.parent;
+    }
+    return null;
+  }
+
+  private computeMouseY(e: MouseEvent): number | null {
+    const plotGlobal = this.findPlotGlobal();
+    if (!plotGlobal) return null;
+    const renderObject = this.element.renderObject;
+    const viewPort = renderObject.renderOwner.renderContext.viewPort;
+    const { translation, scale } = viewPort;
+    const view = renderObject.renderOwner.renderContext.view;
+    const rect = view.getBoundingClientRect();
+    const flitterY = (e.clientY - rect.top) / scale - translation.y;
+    return flitterY - plotGlobal.y;
+  }
+
+  private handleHover(e: MouseEvent) {
+    const { points, plotWidth, plotHeight, pointX } = this.widget;
+    if (points.length === 0) return;
+    const mouseY = this.computeMouseY(e);
+    if (mouseY == null) return;
+
+    const idx = this.findNearestIndex(mouseY);
+    if (idx === this.hoveredIndex) return;
+
+    this.tooltipLayout = computePointTooltipLayout({
+      pointX,
+      pointY: points[idx].y,
+      plotWidth,
+      plotHeight,
+    });
+    this.setState(() => {
+      this.hoveredIndex = idx;
+    });
+  }
+
   override build(): Widget {
-    const { points, label, colLeft, colWidth, plotWidth, plotHeight, pointX, config } =
-      this.widget;
+    const { points, label, colLeft, colWidth, plotWidth, plotHeight, pointX, config } = this.widget;
+    const hi = this.hoveredIndex;
 
     const dotLocalX = pointX - colLeft;
 
     const children: Widget[] = [];
 
-    // Full-height GestureDetector for hit detection
+    // Full-height GestureDetector for this column
     children.push(
       Positioned({
         key: "__hit__",
@@ -151,81 +216,42 @@ class _HoverableColumnState extends State<_HoverableColumn> {
         child: GestureDetector({
           cursor: "default",
           child: SizedBox.expand(),
-          onMouseEnter: () => {
-            this.tooltipLayout = computeColumnTooltipLayout({
-              pointX,
-              plotWidth,
-              plotHeight,
-            });
-            this.setState(() => {
-              this.hovered = true;
-            });
-          },
+          onMouseMove: (e: MouseEvent) => this.handleHover(e),
+          onMouseEnter: (e: MouseEvent) => this.handleHover(e),
           onMouseLeave: () => {
             this.setState(() => {
-              this.hovered = false;
+              this.hoveredIndex = null;
             });
           },
         }),
       }),
     );
 
-    if (this.hovered && points.length > 0) {
+    // Show dot + tooltip for hovered point
+    if (hi != null && hi >= 0 && hi < points.length) {
+      const p = points[hi];
       const layout = this.tooltipLayout;
 
-      // Vertical line
-      children.push(
-        Positioned({
-          key: "__vline__",
-          left: dotLocalX,
-          top: 0,
-          bottom: 0,
-          child: Container({
-            width: 1,
-            decoration: new BoxDecoration({
-              color: "rgba(0,0,0,0.15)",
-            }),
-          }),
+      const dot = Container({
+        width: DOT_SIZE,
+        height: DOT_SIZE,
+        decoration: new BoxDecoration({
+          color: p.color,
+          shape: "circle",
+          border: Border.all({ color: "white", width: 2, strokeAlign: 1 }),
+          boxShadow: [
+            new BoxShadow({ color: "rgba(0,0,0,0.3)", blurRadius: 6 }),
+          ],
         }),
-      );
+      });
 
-      // Dots for ALL points
-      for (let i = 0; i < points.length; i++) {
-        const p = points[i];
-        children.push(
-          Positioned({
-            key: `__dot_${i}__`,
-            left: dotLocalX - DOT_SIZE / 2,
-            top: p.y - DOT_SIZE / 2,
-            child: Container({
-              width: DOT_SIZE,
-              height: DOT_SIZE,
-              decoration: new BoxDecoration({
-                color: p.color,
-                shape: "circle",
-                border: Border.all({ color: "white", width: 2, strokeAlign: 1 }),
-                boxShadow: [
-                  new BoxShadow({ color: "rgba(0,0,0,0.3)", blurRadius: 6 }),
-                ],
-              }),
-            }),
-          }),
-        );
-      }
-
-      // Tooltip anchored to the middle of the plot height
-      const anchorY = plotHeight / 2;
       const tooltipWidget = ZIndex({
         zIndex: 9999,
         child: Padding({
           padding: layout?.padding ?? EdgeInsets.only({ left: TOOLTIP_GAP }),
           child: tooltipContent({
             label,
-            items: points.map((p) => ({
-              legend: p.legend,
-              color: p.color,
-              value: p.value,
-            })),
+            items: { legend: p.legend, color: p.color, value: p.value },
             config,
           }),
         }),
@@ -233,14 +259,14 @@ class _HoverableColumnState extends State<_HoverableColumn> {
 
       children.push(
         Positioned({
-          key: "__tooltip__",
+          key: "__dot__",
           left: dotLocalX - DOT_SIZE / 2,
-          top: anchorY - DOT_SIZE / 2,
+          top: p.y - DOT_SIZE / 2,
           child: Stack({
             fit: StackFit.passthrough,
             clipped: false,
             children: [
-              SizedBox({ width: DOT_SIZE, height: DOT_SIZE }),
+              dot,
               Positioned.fill({
                 child: FractionalTranslation({
                   translation: layout?.offset ?? Offset.Constants.zero,
@@ -248,8 +274,7 @@ class _HoverableColumnState extends State<_HoverableColumn> {
                     constraintsTransform: ConstraintsTransformBox.unconstrained,
                     alignment: Alignment[layout?.position ?? "topRight"],
                     child: FractionalTranslation({
-                      translation:
-                        layout?.translation ?? new Offset({ x: 1, y: 0 }),
+                      translation: layout?.translation ?? new Offset({ x: 1, y: 0 }),
                       child: tooltipWidget,
                     }),
                   }),
@@ -268,7 +293,7 @@ class _HoverableColumnState extends State<_HoverableColumn> {
   }
 }
 
-// --- Hover overlay ---
+// --- Hover overlay: row of columns ---
 
 class _HoverOverlay extends StatelessWidget {
   datasets: { legend: string; values: number[] }[];
@@ -276,7 +301,7 @@ class _HoverOverlay extends StatelessWidget {
   scale: LineChartScale;
   colors: string[];
   legends: string[];
-  config: ToastStackedAreaChartConfig;
+  config: ToastAreaChartConfig;
 
   constructor({
     datasets,
@@ -291,7 +316,7 @@ class _HoverOverlay extends StatelessWidget {
     scale: LineChartScale;
     colors: string[];
     legends: string[];
-    config: ToastStackedAreaChartConfig;
+    config: ToastAreaChartConfig;
   }) {
     super();
     this.datasets = datasets;
@@ -308,47 +333,31 @@ class _HoverOverlay extends StatelessWidget {
         const width = constraints.maxWidth;
         const height = constraints.maxHeight;
         const numLabels = this.labels.length;
-        const { scale } = this;
-        const range = scale.max - scale.min;
 
         if (numLabels === 0) return SizedBox.expand();
-
-        // Build cumulative values for stacking
-        const numPoints = this.datasets[0]?.values.length ?? 0;
-        const cumulativeByDataset: number[][] = [];
-        let prevCumulative: number[] = new Array(numPoints).fill(0);
-
-        for (const dataset of this.datasets) {
-          const cumulative = dataset.values.map(
-            (value, i) => prevCumulative[i] + value,
-          );
-          cumulativeByDataset.push(cumulative);
-          prevCumulative = cumulative;
-        }
 
         const columns: Widget[] = [];
 
         for (let li = 0; li < numLabels; li++) {
-          const pointX =
-            numLabels > 1 ? (li * width) / (numLabels - 1) : width / 2;
+          const pointX = numLabels > 1 ? (li * width) / (numLabels - 1) : width / 2;
 
-          // Gather all dataset points at this label index using cumulative y
           const colPoints: ColumnPoint[] = [];
-          for (let di = 0; di < this.datasets.length; di++) {
-            const dataset = this.datasets[di];
+          for (const dataset of this.datasets) {
             if (li >= dataset.values.length) continue;
             const value = dataset.values[li];
-            const cumulativeValue = cumulativeByDataset[di][li];
             const legendIdx = this.legends.indexOf(dataset.legend);
             const color = this.colors[legendIdx % this.colors.length];
-            const y =
-              range > 0
-                ? height - (height * (cumulativeValue - scale.min)) / range
-                : height / 2;
-            colPoints.push({ y, value, legend: dataset.legend, color });
+            const pos = computeDataPointPosition({
+              index: li,
+              value,
+              numPoints: dataset.values.length,
+              scale: this.scale,
+              width,
+              height,
+            });
+            colPoints.push({ y: pos.y, value, legend: dataset.legend, color });
           }
 
-          // Column boundaries
           let colLeft: number;
           let colRight: number;
           if (numLabels <= 1) {
@@ -388,10 +397,10 @@ class _HoverOverlay extends StatelessWidget {
   }
 }
 
-// --- Toast series ---
+// --- Toast dataView ---
 
-export function toastSeries(
-  ...[args, ctx]: Parameters<LineChartCustom<ToastStackedAreaChartConfig>["series"]>
+export function toastDataView(
+  ...[args, ctx]: Parameters<LineChartCustom<ToastAreaChartConfig>["dataView"]>
 ) {
   const { lines } = args;
   const datasets = ctx.data.datasets;
@@ -409,7 +418,6 @@ export function toastSeries(
     }),
   );
 
-  // Add hover overlay if tooltip enabled
   if (tooltip.enabled && scale != null) {
     children.push(
       Positioned({
@@ -434,7 +442,7 @@ export function toastSeries(
 
   if (!animation.enabled) return stack;
 
-  return new AnimatedSeries({
+  return new AnimatedDataView({
     child: stack,
     duration: animation.duration,
     isVertical: false,

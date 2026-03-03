@@ -79,7 +79,7 @@ class Plot extends StatelessWidget {
       {
         xAxis: new XAxis(),
         yAxis: new YAxis(),
-        series: new Series(),
+        dataView: new DataView(),
         grid: new Grid(),
         axisCorner: new AxisCorner(),
       },
@@ -195,11 +195,11 @@ class YAxisLine extends StatelessWidget {
   }
 }
 
-class Series extends StatelessWidget {
+class DataView extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const ctx = ScatterChartProvider.of(context);
     const { data, scale } = ctx;
-    if (scale == null) return ctx.custom.series({ scatters: [], scale: { x: { min: 0, max: 0, step: 1 }, y: { min: 0, max: 0, step: 1 } } }, ctx);
+    if (scale == null) return ctx.custom.dataView({ scatters: [], scale: { x: { min: 0, max: 0, step: 1 }, y: { min: 0, max: 0, step: 1 } } }, ctx);
 
     const scatters = data.datasets.flatMap((dataset) =>
       dataset.data.map((pt, pointIndex) => ({
@@ -212,7 +212,7 @@ class Series extends StatelessWidget {
       })),
     );
 
-    return ctx.custom.series({ scatters, scale }, ctx);
+    return ctx.custom.dataView({ scatters, scale }, ctx);
   }
 }
 

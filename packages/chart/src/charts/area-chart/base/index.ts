@@ -7,14 +7,14 @@ import type {
   GetScaleOptionsFn,
 } from "@headless/line-chart/types";
 import * as Cartesian from "@shared/cartesian/index";
-import { Series, Grid } from "@shared/line-like";
+import { DataView, Grid } from "@shared/line-like";
 
 export type { LineChartCustom, LineChartData, LineChartScale, LineChartScaleOptions, LineChartContext, GetScaleFn, GetScaleOptionsFn } from "@headless/line-chart/types";
 export { LineChartController } from "@headless/line-chart/controller";
 
 /** Structural (non-visual) defaults provided by base */
 const baseDefaults: Partial<LineChartCustom> = {
-  series: Series,
+  dataView: DataView,
   plot: (...args) => Cartesian.Plot(args[0]),
   dataLabel: (...args) => Cartesian.DataLabel(args[0]),
   grid: Grid,

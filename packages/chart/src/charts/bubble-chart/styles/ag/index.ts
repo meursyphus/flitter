@@ -4,7 +4,7 @@ import type { AgBubbleChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { agBubble } from "./parts/bubble";
-import { agSeries } from "./parts/series";
+import { agDataView } from "./parts/data-view";
 import {
   agTitle,
   agLegend,
@@ -17,7 +17,7 @@ export { type AgBubbleChartConfig } from "./config";
 const agCustom: Partial<BubbleChartCustom<AgBubbleChartConfig>> = {
   layout: cartesian.agLayout,
   bubble: agBubble,
-  series: agSeries,
+  dataView: agDataView,
   legend: (args, context) => agLegend(args, context, { markerShape: "circle" }),
   title: agTitle,
   axisCorner: cartesian.agAxisCorner,

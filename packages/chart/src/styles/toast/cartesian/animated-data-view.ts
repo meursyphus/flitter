@@ -10,7 +10,7 @@ import {
 } from "flitter-core";
 import { Rect } from "flitter-core";
 
-export class AnimatedSeries extends StatefulWidget {
+export class AnimatedDataView extends StatefulWidget {
   child: Widget;
   duration: number;
   isVertical: boolean;
@@ -35,11 +35,11 @@ export class AnimatedSeries extends StatefulWidget {
   }
 
   createState() {
-    return new _AnimatedSeriesState();
+    return new _AnimatedDataViewState();
   }
 }
 
-class _AnimatedSeriesState extends State<AnimatedSeries> {
+class _AnimatedDataViewState extends State<AnimatedDataView> {
   animationController!: AnimationController;
   tweenAnimation!: { value: number };
 

@@ -196,7 +196,7 @@ class Plot extends StatelessWidget {
       {
         xAxis: new XAxis(),
         yAxis: new YAxis(),
-        series: new Series(),
+        dataView: new DataView(),
         grid: new Grid(),
         axisCorner: new AxisCorner(),
       },
@@ -205,11 +205,11 @@ class Plot extends StatelessWidget {
   }
 }
 
-class Series extends StatelessWidget {
+class DataView extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const config = CandlestickChartConfigProvider.of(context);
     const { custom, data } = config;
-    return custom.series(
+    return custom.dataView(
       {
         candlesticks: Array.from({ length: data.datasets.length }, (_, index) =>
           new Candlestick({ index }),

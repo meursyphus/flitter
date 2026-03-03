@@ -10,10 +10,10 @@ export type PieChartData = {
 };
 
 export type PieChartCustom<TConfig = {}> = {
-	layout: CustomArgs<{ title: Widget; legends: Widget[]; series: Widget }, TConfig>;
-	series: CustomArgs<
+	layout: CustomArgs<{ title: Widget; legends: Widget[]; dataView: Widget }, TConfig>;
+	dataView: CustomArgs<
 		{
-			pies: {
+			slices: {
 				widget: Widget;
 				startAngle: number;
 				sweepAngle: number;
@@ -25,7 +25,7 @@ export type PieChartCustom<TConfig = {}> = {
 		},
 		TConfig
 	>;
-	pie: CustomArgs<
+	slice: CustomArgs<
 		{ index: number; name: string; value: number; percentage: number; sweepAngle: number },
 		TConfig
 	>;

@@ -11,8 +11,8 @@ import {
 import type { PieChartCustom } from "@headless/pie-chart/types";
 import type { ToastPieChartConfig } from "../config";
 
-export function toastPie(
-	...[{ index, name, value, percentage, sweepAngle }, ctx]: Parameters<PieChartCustom<ToastPieChartConfig>["pie"]>
+export function toastSlice(
+	...[{ index, name, value, percentage, sweepAngle }, ctx]: Parameters<PieChartCustom<ToastPieChartConfig>["slice"]>
 ): Widget {
 	const { colors, pie: pieConfig } = ctx.config;
 	const colorIndex = ctx.legends.indexOf(name);

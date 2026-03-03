@@ -97,7 +97,7 @@ class Plot extends StatelessWidget {
 			{
 				angularAxis: new AngularAxis(),
 				radialAxis: new RadialAxis(),
-				series: new Series(),
+				dataView: new DataView(),
 			},
 			ctx,
 		);
@@ -235,9 +235,9 @@ class RadialAxisLabel extends StatelessWidget {
 	}
 }
 
-// --- Series ---
+// --- DataView ---
 
-class Series extends StatelessWidget {
+class DataView extends StatelessWidget {
 	override build(context: BuildContext): Widget {
 		const ctx = RadarChartProvider.of(context);
 		const { data, scale } = ctx;
@@ -248,7 +248,7 @@ class Series extends StatelessWidget {
 			return new Radar({ legend: ds.legend, index, vertices });
 		});
 
-		return ctx.custom.series({ radars }, ctx);
+		return ctx.custom.dataView({ radars }, ctx);
 	}
 }
 

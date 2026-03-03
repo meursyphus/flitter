@@ -35,7 +35,7 @@ class Layout extends StatelessWidget {
 				legends: ctx.legends.map(
 					(name, index) => new Legend({ name, index }),
 				),
-				series: new Series(),
+				dataView: new DataView(),
 			},
 			ctx,
 		);
@@ -65,7 +65,7 @@ class Title extends StatelessWidget {
 	}
 }
 
-class Series extends StatelessWidget {
+class DataView extends StatelessWidget {
 	override build(context: BuildContext): Widget {
 		const ctx = PieChartProvider.of(context);
 		const { data } = ctx;
@@ -73,14 +73,14 @@ class Series extends StatelessWidget {
 		const total = data.datasets.reduce((sum, d) => sum + d.value, 0);
 		let currentAngle = 0;
 
-		const pies = data.datasets.map((d, index) => {
+		const slices = data.datasets.map((d, index) => {
 			const percentage = total > 0 ? (d.value / total) * 100 : 0;
 			const sweepAngle = total > 0 ? (d.value / total) * Math.PI * 2 : 0;
 			const startAngle = currentAngle;
 			currentAngle += sweepAngle;
 
 			return {
-				widget: ctx.custom.pie(
+				widget: ctx.custom.slice(
 					{ index, name: d.name, value: d.value, percentage, sweepAngle },
 					ctx,
 				),
@@ -93,6 +93,6 @@ class Series extends StatelessWidget {
 			};
 		});
 
-		return ctx.custom.series({ pies }, ctx);
+		return ctx.custom.dataView({ slices }, ctx);
 	}
 }

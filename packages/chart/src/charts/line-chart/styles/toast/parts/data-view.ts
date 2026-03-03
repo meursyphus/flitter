@@ -24,7 +24,7 @@ import {
 } from "flitter-core";
 import type { LineChartCustom, LineChartScale } from "@headless/line-chart/types";
 import type { ToastLineChartConfig } from "../config";
-import { AnimatedSeries } from "@styles/toast/cartesian/animated-series";
+import { AnimatedDataView } from "@styles/toast/cartesian/animated-data-view";
 import { computeDataPointPosition } from "./line";
 import { tooltipContent } from "@styles/toast";
 
@@ -402,10 +402,10 @@ class _HoverOverlay extends StatelessWidget {
   }
 }
 
-// --- Toast series ---
+// --- Toast dataView ---
 
-export function toastSeries(
-  ...[args, ctx]: Parameters<LineChartCustom<ToastLineChartConfig>["series"]>
+export function toastDataView(
+  ...[args, ctx]: Parameters<LineChartCustom<ToastLineChartConfig>["dataView"]>
 ) {
   const { lines } = args;
   const datasets = ctx.data.datasets;
@@ -447,7 +447,7 @@ export function toastSeries(
 
   if (!animation.enabled) return stack;
 
-  return new AnimatedSeries({
+  return new AnimatedDataView({
     child: stack,
     duration: animation.duration,
     isVertical: false,

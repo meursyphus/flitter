@@ -1,18 +1,16 @@
-import type { WaterfallChartCustom } from '../types';
+import type { BoxPlotChartCustom } from '../types';
 import { Container, Flexible, Flex, Axis } from 'flitter-core';
 
-export function Series(
-	...[{ bars }, _config]: Parameters<WaterfallChartCustom['series']>
-) {
+export function DataView(...[{ boxPlotGroups }]: Parameters<BoxPlotChartCustom['dataView']>) {
 	return Container({
 		height: Infinity,
 		width: Infinity,
 		child: Flex({
 			direction: Axis.horizontal,
-			children: bars.map((bar) =>
+			children: boxPlotGroups.map((group) =>
 				Flexible({
 					flex: 1,
-					child: bar
+					child: group
 				})
 			)
 		})

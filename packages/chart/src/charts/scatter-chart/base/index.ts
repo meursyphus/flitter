@@ -8,7 +8,7 @@ import type {
 } from "@headless/scatter-chart/types";
 import * as Cartesian from "@shared/cartesian/index";
 import { getValueEdge, refineScale } from "@shared/utils/scale";
-import { Series } from "./series";
+import { DataView } from "./data-view";
 import { Grid as PointLikeGrid } from "@shared/point-like";
 
 export type { ScatterChartCustom, ScatterChartData, ScatterChartScale, ScatterChartContext, ScatterChartScaleOptions, GetScaleFn, GetScaleOptionsFn } from "@headless/scatter-chart/types";
@@ -16,7 +16,7 @@ export { ScatterChartController } from "@headless/scatter-chart/controller";
 
 /** Structural (non-visual) defaults provided by base */
 const baseDefaults: Partial<ScatterChartCustom> = {
-  series: Series,
+  dataView: DataView,
   plot: (...args) => Cartesian.Plot(args[0]),
   dataLabel: (...args) => Cartesian.DataLabel(args[0]),
   grid: (...[{ xLine, yLine }, ctx]) =>

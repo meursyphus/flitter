@@ -1,7 +1,7 @@
 import type { Widget } from "flitter-core";
 import HeadlessPieChart from "@headless/pie-chart";
 import type { PieChartCustom, PieChartData } from "@headless/pie-chart/types";
-import { Series } from "./series";
+import { DataView } from "./data-view";
 import { Layout } from "./layout";
 
 export type { PieChartCustom, PieChartData, PieChartContext } from "@headless/pie-chart/types";
@@ -9,7 +9,7 @@ export { PieChartController } from "@headless/pie-chart/controller";
 
 const baseDefaults: Partial<PieChartCustom> = {
 	layout: Layout,
-	series: Series,
+	dataView: DataView,
 };
 
 export function BasePieChart<TConfig = {}>({

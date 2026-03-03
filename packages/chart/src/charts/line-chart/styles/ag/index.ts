@@ -5,7 +5,7 @@ import type { AgLineChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { agLine } from "./parts/line";
-import { agSeries } from "./parts/series";
+import { agDataView } from "./parts/data-view";
 import {
   agTitle,
   agLegend,
@@ -19,9 +19,9 @@ export { type AgLineChartConfig } from "./config";
 const agCustom: Partial<LineChartCustom<AgLineChartConfig>> = {
   layout: cartesian.agLayout,
   line: agLine,
-  series: (args, context) =>
+  dataView: (args, context) =>
     AgLineLikeTooltipOverlay({
-      child: agSeries(args, context),
+      child: agDataView(args, context),
       config: context.config,
     }),
   legend: agLegend,

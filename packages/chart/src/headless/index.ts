@@ -2,7 +2,7 @@ export { default as BarChart } from "./bar-chart";
 export { default as LineChart } from "./line-chart";
 export { default as BubbleChart } from "./bubble-chart";
 export { default as ScatterChart } from "./scatter-chart";
-export { default as HeatmapChart } from "./_todo/heatmap-chart";
+export { default as HeatmapChart } from "./heatmap-chart";
 export { default as TreemapChart } from "./treemap-chart";
 
 export type {
@@ -52,7 +52,13 @@ export type {
 } from "./scatter-chart/types";
 export { ScatterChartController } from "./scatter-chart/controller";
 
-export * from "./_todo/heatmap-chart/types";
+export type {
+	HeatmapContext,
+	HeatmapCustom,
+	HeatmapData,
+	HeatmapScale,
+} from "./heatmap-chart/types";
+export { HeatmapController } from "./heatmap-chart/controller";
 export type {
 	TreemapContext,
 	TreemapCustom,

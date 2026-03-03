@@ -9,7 +9,7 @@ import type {
 import * as Cartesian from "@shared/cartesian/index";
 import { stackedBarGroup } from "./stacked-bar-group";
 import { stackedGetScale } from "./stacked-get-scale";
-import { BarBox, Series, Grid } from "@shared/bar-like";
+import { BarBox, DataView, Grid } from "@shared/bar-like";
 
 export type { BarChartCustom, BarChartData, BarChartScale, BarChartDirection, BarChartScaleOptions, BarChartContext, GetScaleFn, GetScaleOptionsFn } from "@headless/bar-chart/types";
 export { BarChartController } from "@headless/bar-chart/controller";
@@ -17,7 +17,7 @@ export { BarChartController } from "@headless/bar-chart/controller";
 const baseDefaults: Partial<BarChartCustom> = {
   barGroup: stackedBarGroup,
   barBox: BarBox,
-  series: Series,
+  dataView: DataView,
   plot: (...args) => Cartesian.Plot(args[0]),
   dataLabel: (...args) => Cartesian.DataLabel(args[0]),
   grid: Grid,
