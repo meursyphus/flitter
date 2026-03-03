@@ -132,7 +132,7 @@ class TextFieldState extends State<TextField> {
   #textFieldPosition: { x: number; y: number } | null = null;
   #focused = false;
   #isTyping = false;
-  #typingTimer?: NodeJS.Timeout;
+	  #typingTimer?: ReturnType<typeof setTimeout>;
   #isComposing = false;
   #lineInfo: LineInfo[] = [];
   #currentCharUI?: CurrentCharUI;
@@ -664,7 +664,7 @@ class Caret extends StatefulWidget {
 
 class CaretState extends State<Caret> {
   visible = true;
-  interval?: NodeJS.Timeout;
+	  interval?: ReturnType<typeof setInterval>;
 
   initState(): void {
     this.startBlinking();

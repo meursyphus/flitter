@@ -32,7 +32,7 @@ class Provider<ProviderKey, Value> extends Widget {
       return (current as ProviderElement).value as V;
     }
 
-    throw { message: "can not find requested provider value" };
+    throw new Error("can not find requested provider value");
   }
 
   override createElement(): ProviderElement {

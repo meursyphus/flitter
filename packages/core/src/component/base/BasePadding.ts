@@ -18,7 +18,7 @@ export default class Padding extends SingleChildRenderObjectWidget {
     super({ child, key });
 
     if ((child as Flexible)?.isFlexible && (child as Flexible).fit === "tight")
-      throw { message: "Padding must not have a Expanded Widget" };
+      throw new Error("Padding must not have a Expanded Widget");
     this.padding = padding;
   }
 

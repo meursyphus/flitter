@@ -11,6 +11,7 @@ class Element {
   parent?: Element;
   dirty = true;
   depth = 0;
+  protected mounted = false;
   constructor(widget: Widget) {
     this.widget = widget;
   }
@@ -71,10 +72,12 @@ class Element {
   }
 
   unmount() {
+    this.mounted = false;
     this.parent = undefined;
   }
 
   mount(newParent?: Element) {
+    this.mounted = true;
     if (newParent) {
       this.buildOwner = newParent.buildOwner;
       this.depth = newParent.depth + 1;
@@ -98,6 +101,7 @@ class Element {
   }
 
   rebuild({ force = false }: { force?: boolean } = {}) {
+    if (!this.mounted) return;
     if (!this.dirty && !force) return;
     this.dirty = false;
     this.performRebuild();
@@ -108,6 +112,7 @@ class Element {
   }
 
   markNeedsBuild() {
+    if (!this.mounted) return;
     this.dirty = true;
     this.buildOwner.scheduleFor(this);
   }

@@ -88,10 +88,10 @@ class TreemapWidget extends StatelessWidget {
 			});
 		});
 
-		return ctx.custom.treemap(
-			{ nodes: nodes.filter((n): n is Widget => n !== null) },
-			ctx,
-		);
+			return ctx.custom.treemap(
+				{ nodes: nodes.filter((n): n is NodeWidget => n !== null) },
+				ctx,
+			);
 	}
 }
 

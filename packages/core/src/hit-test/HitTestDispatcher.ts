@@ -30,8 +30,8 @@ export class HitTestDispatcher {
     view.addEventListener("mouseup", this.#wrapEvent(this.#handleMouseUp));
     view.addEventListener("wheel", this.#wrapEvent(this.#handleMouseWheel));
 
-    view.addEventListener("mouseenter", this.#handleMouseEnter);
-    view.addEventListener("mouseleave", this.#handleMouseLeave);
+    view.addEventListener("mouseenter", this.#wrapEvent(this.#handleMouseEnter));
+    view.addEventListener("mouseleave", this.#wrapEvent(this.#handleMouseLeave));
   }
 
   setRenderView(renderView: RenderObject) {
@@ -99,7 +99,7 @@ export class HitTestDispatcher {
     this.#dispatchEvent(e, "onWheel");
   };
 
-  #handleMouseEnter = () => {
+  #handleMouseEnter = (_e: Wrapped<MouseEvent>) => {
     const rect = this.#renderContext.view.getBoundingClientRect();
     this.#rootPosition = new Offset({
       x: rect.left,
@@ -107,7 +107,7 @@ export class HitTestDispatcher {
     });
   };
 
-  #handleMouseLeave = (e: MouseEvent) => {
+  #handleMouseLeave = (e: Wrapped<MouseEvent>) => {
     // trigger mouseleave for all previously hit detectors
     for (const detector of this.#previousHits) {
       detector.invokeCallback("onMouseLeave", e);

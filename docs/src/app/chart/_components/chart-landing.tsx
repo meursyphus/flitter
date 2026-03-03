@@ -1,23 +1,6 @@
 import Link from "next/link";
 import ChartCarousel from "./chart-carousel";
-import type { ChartItem } from "./chart-carousel";
-import {
-  VerticalToastBarChart,
-  HorizontalToastBarChart,
-} from "../_data/bar-chart/toast/examples";
-import {
-  VerticalAgBarChart,
-  HorizontalAgBarChart,
-} from "../_data/bar-chart/ag/examples";
-
-const chartShowcase: ChartItem[] = [
-  {
-    title: "Bar Chart",
-    subtitle: "Toast Style",
-    chart: <VerticalToastBarChart />,
-  },
-  { title: "Bar Chart", subtitle: "AG Style", chart: <VerticalAgBarChart /> },
-];
+import { chartShowcase } from "./chart-showcase";
 
 export default function ChartLanding() {
   return (

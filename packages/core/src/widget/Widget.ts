@@ -8,7 +8,7 @@ class Widget {
   }
   runtimeType = this.constructor.name;
   createElement(): Element {
-    throw { message: "not implemented" };
+    throw new Error("not implemented");
   }
 
   static canUpdate(oldWidget: Widget, newWidget: Widget): boolean {
