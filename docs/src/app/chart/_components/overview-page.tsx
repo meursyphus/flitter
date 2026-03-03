@@ -97,7 +97,7 @@ export default async function OverviewPage({
                     {style.tagline}
                   </p>
                 </div>
-                <div className="h-[">{style.chart}</div>
+                <div className="h-125">{style.chart}</div>
               </div>
             ))}
           </div>

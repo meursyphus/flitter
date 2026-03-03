@@ -34,18 +34,79 @@ export const chartNav: Navigation = {
         href: "/chart/bar-chart",
         children: [
           { title: "Toast", href: "/chart/bar-chart/toast", kind: "style" },
+          { title: "AG", href: "/chart/bar-chart/ag", kind: "style" },
           { title: "Advanced", href: "/chart/bar-chart/advanced" },
         ],
       },
-      { title: "Line Chart", href: "/chart/line-chart" },
-      { title: "Area Chart", href: "/chart/area-chart" },
-      { title: "Pie Chart", href: "/chart/pie-chart" },
-      { title: "Scatter Chart", href: "/chart/scatter-chart" },
-      { title: "Radar Chart", href: "/chart/radar-chart" },
-      { title: "Bubble Chart", href: "/chart/bubble-chart" },
-      { title: "Heatmap Chart", href: "/chart/heatmap-chart" },
-      { title: "Stacked Bar Chart", href: "/chart/stacked-bar-chart" },
-      { title: "Stacked Area Chart", href: "/chart/stacked-area-chart" },
+      {
+        title: "Line Chart",
+        href: "/chart/line-chart",
+        children: [
+          { title: "Toast", href: "/chart/line-chart/toast", kind: "style" },
+          { title: "AG", href: "/chart/line-chart/ag", kind: "style" },
+        ],
+      },
+      {
+        title: "Area Chart",
+        href: "/chart/area-chart",
+        children: [
+          { title: "Toast", href: "/chart/area-chart/toast", kind: "style" },
+          { title: "AG", href: "/chart/area-chart/ag", kind: "style" },
+        ],
+      },
+      {
+        title: "Pie Chart",
+        href: "/chart/pie-chart",
+        children: [
+          { title: "Toast", href: "/chart/pie-chart/toast", kind: "style" },
+        ],
+      },
+      {
+        title: "Scatter Chart",
+        href: "/chart/scatter-chart",
+        children: [
+          { title: "Toast", href: "/chart/scatter-chart/toast", kind: "style" },
+          { title: "AG", href: "/chart/scatter-chart/ag", kind: "style" },
+        ],
+      },
+      {
+        title: "Radar Chart",
+        href: "/chart/radar-chart",
+        children: [
+          { title: "Toast", href: "/chart/radar-chart/toast", kind: "style" },
+        ],
+      },
+      {
+        title: "Bubble Chart",
+        href: "/chart/bubble-chart",
+        children: [
+          { title: "Toast", href: "/chart/bubble-chart/toast", kind: "style" },
+          { title: "AG", href: "/chart/bubble-chart/ag", kind: "style" },
+        ],
+      },
+      {
+        title: "Heatmap Chart",
+        href: "/chart/heatmap-chart",
+        children: [
+          { title: "Toast", href: "/chart/heatmap-chart/toast", kind: "style" },
+        ],
+      },
+      {
+        title: "Stacked Bar Chart",
+        href: "/chart/stacked-bar-chart",
+        children: [
+          { title: "Toast", href: "/chart/stacked-bar-chart/toast", kind: "style" },
+          { title: "AG", href: "/chart/stacked-bar-chart/ag", kind: "style" },
+        ],
+      },
+      {
+        title: "Stacked Area Chart",
+        href: "/chart/stacked-area-chart",
+        children: [
+          { title: "Toast", href: "/chart/stacked-area-chart/toast", kind: "style" },
+          { title: "AG", href: "/chart/stacked-area-chart/ag", kind: "style" },
+        ],
+      },
     ],
   },
   ],
