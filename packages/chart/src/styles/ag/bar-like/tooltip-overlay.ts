@@ -21,6 +21,7 @@ import { tooltipContent } from "../tooltip";
 const TOOLTIP_OFFSET = 12;
 const ANIMATION_DURATION = 150;
 const FADE_DURATION = 100;
+const MOUSE_THRESHOLD = 3; // px – ignore movements smaller than this to reduce hand-tremor jitter
 
 type BarChartLikeContext = {
   hoveredBar: { index: number; legend: string } | null;
@@ -117,6 +118,9 @@ class _AgTooltipOverlayState extends State<_AgTooltipOverlay> {
           cursor: "default",
           onMouseMove: (e: MouseEvent) => {
             const local = this.getLocalPosition(e);
+            const dx = local.x - this.mouseX;
+            const dy = local.y - this.mouseY;
+            if (dx * dx + dy * dy < MOUSE_THRESHOLD * MOUSE_THRESHOLD) return;
             this.setState(() => {
               this.mouseX = local.x;
               this.mouseY = local.y;
