@@ -1,8 +1,8 @@
 import { Column, Flexible, Row } from "flitter-core";
 import type { HeatmapCustom } from "@headless/heatmap-chart/types";
 
-export function Heatmap(
-  ...[{ segments }]: Parameters<HeatmapCustom["heatmap"]>
+export function DataView(
+  ...[{ segments }]: Parameters<HeatmapCustom["dataView"]>
 ) {
   return Column({
     children: segments.map((row) =>

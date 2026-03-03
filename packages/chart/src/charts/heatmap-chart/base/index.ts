@@ -6,19 +6,19 @@ import type {
 	HeatmapData,
 } from "@headless/heatmap-chart/types";
 import * as Cartesian from "@shared/cartesian/index";
-import { Heatmap } from "./heatmap";
+import { DataView } from "./data-view";
 
 export type { HeatmapCustom, HeatmapData, HeatmapScale, HeatmapContext } from "@headless/heatmap-chart/types";
 export { HeatmapController } from "@headless/heatmap-chart/controller";
 
 /** Structural (non-visual) defaults provided by base */
 const baseDefaults: Partial<HeatmapCustom> = {
-	heatmap: Heatmap,
+	dataView: DataView,
 	plot: (...args) =>
 		Cartesian.Plot({
 			xAxis: args[0].xAxis,
 			yAxis: args[0].yAxis,
-			dataView: args[0].heatmap,
+			dataView: args[0].dataView,
 			grid: SizedBox.shrink(),
 			axisCorner: args[0].axisCorner,
 		}),

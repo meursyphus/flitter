@@ -11,7 +11,7 @@ export type HeatmapContext<TConfig = {}> = HeatmapController & { config: TConfig
 export type HeatmapCustom<TConfig = {}> = {
 	layout: CustomArgs<{ title: Widget; legend: Widget; plot: Widget }, TConfig>;
 	plot: CustomArgs<
-		{ xAxis: Widget; yAxis: Widget; heatmap: Widget; axisCorner: Widget },
+		{ xAxis: Widget; yAxis: Widget; dataView: Widget; axisCorner: Widget },
 		TConfig
 	>;
 
@@ -25,7 +25,7 @@ export type HeatmapCustom<TConfig = {}> = {
 	xAxisTick: CustomArgs<undefined, TConfig>;
 	yAxisTick: CustomArgs<undefined, TConfig>;
 
-	heatmap: CustomArgs<{ segments: Widget[][] }, TConfig>;
+	dataView: CustomArgs<{ segments: Widget[][] }, TConfig>;
 	segment: CustomArgs<{ value: number; xIndex: number; yIndex: number }, TConfig>;
 
 	legend: CustomArgs<undefined, TConfig>;

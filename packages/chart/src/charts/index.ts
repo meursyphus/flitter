@@ -31,3 +31,6 @@ export { type ToastPieChartConfig } from "./pie-chart";
 
 export { default as RadarChart } from "./radar-chart";
 export { type ToastRadarChartConfig } from "./radar-chart";
+
+export { default as HeatmapChart } from "./heatmap-chart";
+export { type ToastHeatmapChartConfig } from "./heatmap-chart";

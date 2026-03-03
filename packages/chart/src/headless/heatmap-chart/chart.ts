@@ -61,7 +61,7 @@ class PlotWidget extends StatelessWidget {
 			{
 				xAxis: new XAxis(),
 				yAxis: new YAxis(),
-				heatmap: new HeatmapWidget(),
+				dataView: new HeatmapWidget(),
 				axisCorner: new AxisCorner(),
 			},
 			ctx,
@@ -186,7 +186,7 @@ class HeatmapWidget extends StatelessWidget {
 		const segments: Widget[][] = ctx.data.values.map((row, yIndex) =>
 			row.map((value, xIndex) => new SegmentWidget({ value, xIndex, yIndex })),
 		);
-		return ctx.custom.heatmap({ segments }, ctx);
+		return ctx.custom.dataView({ segments }, ctx);
 	}
 }
 

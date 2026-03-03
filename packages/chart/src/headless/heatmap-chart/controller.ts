@@ -1,10 +1,20 @@
 import { ChangeNotifier } from "flitter-core";
 import type { HeatmapCustom, HeatmapData, HeatmapScale } from "./types";
 
+export type HeatmapHoverInfo = {
+	value: number;
+	xIndex: number;
+	yIndex: number;
+	xLabel: string;
+	yLabel: string;
+} | null;
+
 export class HeatmapController extends ChangeNotifier {
 	#rawData: HeatmapData;
 	#width: number = 0;
 	#height: number = 0;
+	#hovered: HeatmapHoverInfo = null;
+	#hoverListeners: Set<() => void> = new Set();
 
 	// static config
 	custom!: HeatmapCustom<any>;
@@ -44,6 +54,30 @@ export class HeatmapController extends ChangeNotifier {
 			min: flat.length > 0 ? Math.min(...flat) : 0,
 			max: flat.length > 0 ? Math.max(...flat) : 0,
 		};
+	}
+
+	// --- hover (separate listener to avoid full tree rebuild) ---
+
+	get hovered(): HeatmapHoverInfo {
+		return this.#hovered;
+	}
+
+	setHovered(info: HeatmapHoverInfo): void {
+		if (
+			this.#hovered?.xIndex === info?.xIndex &&
+			this.#hovered?.yIndex === info?.yIndex
+		)
+			return;
+		this.#hovered = info;
+		for (const fn of this.#hoverListeners) fn();
+	}
+
+	addHoverListener(fn: () => void): void {
+		this.#hoverListeners.add(fn);
+	}
+
+	removeHoverListener(fn: () => void): void {
+		this.#hoverListeners.delete(fn);
 	}
 
 	// --- chart size ---

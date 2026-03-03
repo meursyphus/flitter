@@ -3,7 +3,7 @@ export { default as LineChart } from "./line-chart";
 export { default as BubbleChart } from "./bubble-chart";
 export { default as ScatterChart } from "./scatter-chart";
 export { default as HeatmapChart } from "./heatmap-chart";
-export { default as TreemapChart } from "./treemap-chart";
+export { default as TreemapChart } from "./_todo/treemap-chart";
 
 export type {
   BarChartContext,
@@ -65,8 +65,8 @@ export type {
 	TreemapData,
 	TreemapNode,
 	TreemapLayout,
-} from "./treemap-chart/types";
-export { TreemapController } from "./treemap-chart/controller";
+} from "./_todo/treemap-chart/types";
+export { TreemapController } from "./_todo/treemap-chart/controller";
 
 export { default as FunnelChart } from "./_todo/funnel-chart";
 export * from "./_todo/funnel-chart/types";
