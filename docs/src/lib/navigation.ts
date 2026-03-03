@@ -44,6 +44,7 @@ export const chartNav: Navigation = {
         children: [
           { title: "Toast", href: "/chart/line-chart/toast", kind: "style" },
           { title: "AG", href: "/chart/line-chart/ag", kind: "style" },
+          { title: "Advanced", href: "/chart/line-chart/advanced" },
         ],
       },
       {
@@ -52,6 +53,7 @@ export const chartNav: Navigation = {
         children: [
           { title: "Toast", href: "/chart/area-chart/toast", kind: "style" },
           { title: "AG", href: "/chart/area-chart/ag", kind: "style" },
+          { title: "Advanced", href: "/chart/area-chart/advanced" },
         ],
       },
       {
@@ -59,6 +61,7 @@ export const chartNav: Navigation = {
         href: "/chart/pie-chart",
         children: [
           { title: "Toast", href: "/chart/pie-chart/toast", kind: "style" },
+          { title: "Advanced", href: "/chart/pie-chart/advanced" },
         ],
       },
       {
@@ -67,6 +70,7 @@ export const chartNav: Navigation = {
         children: [
           { title: "Toast", href: "/chart/scatter-chart/toast", kind: "style" },
           { title: "AG", href: "/chart/scatter-chart/ag", kind: "style" },
+          { title: "Advanced", href: "/chart/scatter-chart/advanced" },
         ],
       },
       {
@@ -74,6 +78,7 @@ export const chartNav: Navigation = {
         href: "/chart/radar-chart",
         children: [
           { title: "Toast", href: "/chart/radar-chart/toast", kind: "style" },
+          { title: "Advanced", href: "/chart/radar-chart/advanced" },
         ],
       },
       {
@@ -82,6 +87,7 @@ export const chartNav: Navigation = {
         children: [
           { title: "Toast", href: "/chart/bubble-chart/toast", kind: "style" },
           { title: "AG", href: "/chart/bubble-chart/ag", kind: "style" },
+          { title: "Advanced", href: "/chart/bubble-chart/advanced" },
         ],
       },
       {
@@ -89,6 +95,7 @@ export const chartNav: Navigation = {
         href: "/chart/heatmap-chart",
         children: [
           { title: "Toast", href: "/chart/heatmap-chart/toast", kind: "style" },
+          { title: "Advanced", href: "/chart/heatmap-chart/advanced" },
         ],
       },
       {
@@ -97,6 +104,7 @@ export const chartNav: Navigation = {
         children: [
           { title: "Toast", href: "/chart/stacked-bar-chart/toast", kind: "style" },
           { title: "AG", href: "/chart/stacked-bar-chart/ag", kind: "style" },
+          { title: "Advanced", href: "/chart/stacked-bar-chart/advanced" },
         ],
       },
       {
@@ -105,6 +113,7 @@ export const chartNav: Navigation = {
         children: [
           { title: "Toast", href: "/chart/stacked-area-chart/toast", kind: "style" },
           { title: "AG", href: "/chart/stacked-area-chart/ag", kind: "style" },
+          { title: "Advanced", href: "/chart/stacked-area-chart/advanced" },
         ],
       },
     ],

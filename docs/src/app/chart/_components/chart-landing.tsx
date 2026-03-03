@@ -112,7 +112,7 @@ export default function ChartLanding() {
       {/* Accent line */}
       <div className="accent-line mx-6 md:mx-10" />
 
-      {/* Chart demos — infinite carousel */}
+      {/* Chart demos */}
       <section className="py-16">
         <div className="px-6 md:px-10">
           <p
@@ -136,7 +136,7 @@ export default function ChartLanding() {
         </div>
 
         <div
-          className="animate-fade-up mt-8 w-full overflow-hidden px-6 md:px-10"
+          className="animate-fade-up mt-8 w-full px-6 md:px-10"
           style={{ animationDelay: "0.8s" }}
         >
           <ChartCarousel charts={chartShowcase} />

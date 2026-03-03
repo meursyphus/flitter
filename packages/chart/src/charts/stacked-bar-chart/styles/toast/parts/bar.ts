@@ -192,38 +192,38 @@ function horizontalNegative_R_B(): TooltipLayout {
 
 function verticalPositive(space: SpaceAround, tooltipSize: TooltipSize): TooltipLayout {
   const fitsRight = space.right >= tooltipSize.width + TOOLTIP_GAP;
-  const fitsBottom = space.bottom >= tooltipSize.height;
+  const fitsTop = space.top >= tooltipSize.height;
   if (fitsRight) {
-    return fitsBottom ? verticalPositive_R_T() : verticalPositive_R_B();
+    return fitsTop ? verticalPositive_R_T() : verticalPositive_R_B();
   }
-  return fitsBottom ? verticalPositive_L_T() : verticalPositive_L_B();
+  return fitsTop ? verticalPositive_L_T() : verticalPositive_L_B();
 }
 
 function verticalNegative(space: SpaceAround, tooltipSize: TooltipSize): TooltipLayout {
   const fitsRight = space.right >= tooltipSize.width + TOOLTIP_GAP;
-  const fitsBottom = space.bottom >= tooltipSize.height;
+  const fitsTop = space.top >= tooltipSize.height;
   if (fitsRight) {
-    return fitsBottom ? verticalNegative_R_T() : verticalNegative_R_B();
+    return fitsTop ? verticalNegative_R_T() : verticalNegative_R_B();
   }
-  return fitsBottom ? verticalNegative_L_T() : verticalNegative_L_B();
+  return fitsTop ? verticalNegative_L_T() : verticalNegative_L_B();
 }
 
 function horizontalPositive(space: SpaceAround, tooltipSize: TooltipSize): TooltipLayout {
   const fitsRight = space.right >= tooltipSize.width + TOOLTIP_GAP;
-  const fitsBottom = space.bottom >= tooltipSize.height;
+  const fitsTop = space.top >= tooltipSize.height;
   if (fitsRight) {
-    return fitsBottom ? horizontalPositive_R_T() : horizontalPositive_R_B();
+    return fitsTop ? horizontalPositive_R_T() : horizontalPositive_R_B();
   }
-  return fitsBottom ? horizontalPositive_L_T() : horizontalPositive_L_B();
+  return fitsTop ? horizontalPositive_L_T() : horizontalPositive_L_B();
 }
 
 function horizontalNegative(space: SpaceAround, tooltipSize: TooltipSize): TooltipLayout {
   const fitsLeft = space.left >= tooltipSize.width + TOOLTIP_GAP;
-  const fitsBottom = space.bottom >= tooltipSize.height;
+  const fitsTop = space.top >= tooltipSize.height;
   if (fitsLeft) {
-    return fitsBottom ? horizontalNegative_L_T() : horizontalNegative_L_B();
+    return fitsTop ? horizontalNegative_L_T() : horizontalNegative_L_B();
   }
-  return fitsBottom ? horizontalNegative_R_T() : horizontalNegative_R_B();
+  return fitsTop ? horizontalNegative_R_T() : horizontalNegative_R_B();
 }
 
 // --- Router ---
