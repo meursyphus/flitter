@@ -1,10 +1,9 @@
-// chart.ts
 import {
   StatelessWidget,
   type Widget,
   type BuildContext,
 } from "flitter-core";
-import { HeatmapConfigProvider } from "./provider";
+import { HeatmapContextProvider } from "./provider";
 
 class HeatmapChart extends StatelessWidget {
   override build(_: BuildContext): Widget {
@@ -16,66 +15,89 @@ export default HeatmapChart;
 
 class Layout extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = HeatmapConfigProvider.of(context);
-    const { custom } = config;
+    const ctx = HeatmapContextProvider.of(context);
+    const { custom } = ctx;
     return custom.layout(
       {
         title: new TitleWidget(),
+        legend: new LegendWidget(),
         plot: new PlotWidget(),
       },
-      config,
+      ctx,
     );
   }
 }
 
 class TitleWidget extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = HeatmapConfigProvider.of(context);
-    const { custom, title } = config;
-    return custom.title({ name: title }, config);
+    const ctx = HeatmapContextProvider.of(context);
+    return ctx.custom.title(undefined, ctx);
+  }
+}
+
+class LegendWidget extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = HeatmapContextProvider.of(context);
+    return ctx.custom.legend(undefined, ctx);
+  }
+}
+
+class PlotWidget extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = HeatmapContextProvider.of(context);
+    const { custom } = ctx;
+    return custom.plot(
+      {
+        xAxis: new XAxis(),
+        yAxis: new YAxis(),
+        heatmap: new HeatmapWidget(),
+        axisCorner: new AxisCorner(),
+      },
+      ctx,
+    );
   }
 }
 
 abstract class AxisBase extends StatelessWidget {
   protected getXLabels(context: BuildContext): Widget[] {
-    const config = HeatmapConfigProvider.of(context);
-    const { data, custom } = config;
-    return data.xLabels.map((name, index) => new XAxisLabel({ name, index }));
+    const ctx = HeatmapContextProvider.of(context);
+    return ctx.data.xLabels.map(
+      (name, index) => new XAxisLabel({ name, index }),
+    );
   }
 
   protected getYLabels(context: BuildContext): Widget[] {
-    const config = HeatmapConfigProvider.of(context);
-    const { data, custom } = config;
-    return data.yLabels.map((name, index) => new YAxisLabel({ name, index }));
+    const ctx = HeatmapContextProvider.of(context);
+    return ctx.data.yLabels.map(
+      (name, index) => new YAxisLabel({ name, index }),
+    );
   }
 }
 
 class XAxis extends AxisBase {
   override build(context: BuildContext): Widget {
-    const config = HeatmapConfigProvider.of(context);
-    const { custom } = config;
-    return custom.xAxis(
+    const ctx = HeatmapContextProvider.of(context);
+    return ctx.custom.xAxis(
       {
         line: new XAxisLine(),
         labels: this.getXLabels(context),
         tick: new XAxisTick(),
       },
-      config,
+      ctx,
     );
   }
 }
 
 class YAxis extends AxisBase {
   override build(context: BuildContext): Widget {
-    const config = HeatmapConfigProvider.of(context);
-    const { custom } = config;
-    return custom.yAxis(
+    const ctx = HeatmapContextProvider.of(context);
+    return ctx.custom.yAxis(
       {
         line: new YAxisLine(),
         labels: this.getYLabels(context),
         tick: new YAxisTick(),
       },
-      config,
+      ctx,
     );
   }
 }
@@ -91,9 +113,8 @@ class XAxisLabel extends StatelessWidget {
   }
 
   override build(context: BuildContext): Widget {
-    const config = HeatmapConfigProvider.of(context);
-    const { custom } = config;
-    return custom.xAxisLabel({ name: this.#name, index: this.#index }, config);
+    const ctx = HeatmapContextProvider.of(context);
+    return ctx.custom.xAxisLabel({ name: this.#name, index: this.#index }, ctx);
   }
 }
 
@@ -108,79 +129,53 @@ class YAxisLabel extends StatelessWidget {
   }
 
   override build(context: BuildContext): Widget {
-    const config = HeatmapConfigProvider.of(context);
-    const { custom } = config;
-    return custom.yAxisLabel({ name: this.#name, index: this.#index }, config);
+    const ctx = HeatmapContextProvider.of(context);
+    return ctx.custom.yAxisLabel({ name: this.#name, index: this.#index }, ctx);
   }
 }
 
 class XAxisLine extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = HeatmapConfigProvider.of(context);
-    const { custom } = config;
-    return custom.xAxisLine(undefined, config);
+    const ctx = HeatmapContextProvider.of(context);
+    return ctx.custom.xAxisLine(undefined, ctx);
   }
 }
 
 class XAxisTick extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = HeatmapConfigProvider.of(context);
-    const { custom } = config;
-    return custom.xAxisTick(undefined, config);
+    const ctx = HeatmapContextProvider.of(context);
+    return ctx.custom.xAxisTick(undefined, ctx);
   }
 }
 
 class YAxisLine extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = HeatmapConfigProvider.of(context);
-    const { custom } = config;
-    return custom.yAxisLine(undefined, config);
+    const ctx = HeatmapContextProvider.of(context);
+    return ctx.custom.yAxisLine(undefined, ctx);
   }
 }
 
 class YAxisTick extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = HeatmapConfigProvider.of(context);
-    const { custom } = config;
-    return custom.yAxisTick(undefined, config);
+    const ctx = HeatmapContextProvider.of(context);
+    return ctx.custom.yAxisTick(undefined, ctx);
   }
 }
 
 class AxisCorner extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = HeatmapConfigProvider.of(context);
-    const { custom } = config;
-    return custom.axisCorner(undefined, config);
-  }
-}
-
-class PlotWidget extends StatelessWidget {
-  override build(context: BuildContext): Widget {
-    const config = HeatmapConfigProvider.of(context);
-    const { custom } = config;
-    return custom.plot(
-      {
-        xAxis: new XAxis(),
-        yAxis: new YAxis(),
-        heatmap: new HeatmapWidget(),
-        axisCorner: new AxisCorner(),
-      },
-      config,
-    );
+    const ctx = HeatmapContextProvider.of(context);
+    return ctx.custom.axisCorner(undefined, ctx);
   }
 }
 
 class HeatmapWidget extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const config = HeatmapConfigProvider.of(context);
-    const { custom, data } = config;
-    // data.values: number[yIndex][xIndex]
-    // segments: Widget[][] 형태로 변환
-    const segments: Widget[][] = data.values.map((row, yIndex) =>
+    const ctx = HeatmapContextProvider.of(context);
+    const segments: Widget[][] = ctx.data.values.map((row, yIndex) =>
       row.map((value, xIndex) => new SegmentWidget({ value, xIndex, yIndex })),
     );
-
-    return custom.heatmap({ segments }, config);
+    return ctx.custom.heatmap({ segments }, ctx);
   }
 }
 
@@ -205,11 +200,10 @@ class SegmentWidget extends StatelessWidget {
   }
 
   override build(context: BuildContext): Widget {
-    const config = HeatmapConfigProvider.of(context);
-    const { custom } = config;
-    return custom.segment(
+    const ctx = HeatmapContextProvider.of(context);
+    return ctx.custom.segment(
       { value: this.#value, xIndex: this.#xIndex, yIndex: this.#yIndex },
-      config,
+      ctx,
     );
   }
 }
