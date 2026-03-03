@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import Sidebar from "./Sidebar";
+import Sidebar from "./sidebar";
 import type { NavItem, NavSection } from "@/lib/navigation";
 
 export default function DocsLayout({

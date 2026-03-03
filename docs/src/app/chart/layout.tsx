@@ -1,4 +1,4 @@
-import DocsLayout from "@/components/DocsLayout";
+import DocsLayout from "@/components/docs-layout";
 import { chartNav } from "@/lib/navigation";
 
 export default function ChartLayout({

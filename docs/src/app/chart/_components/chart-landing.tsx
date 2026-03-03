@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ChartCarousel from "./ChartCarousel";
+import ChartCarousel from "./chart-carousel";
 
 const allCharts = [
   { title: "Bar Chart", href: "/chart/bar-chart" },
@@ -119,7 +119,7 @@ export default function ChartLanding() {
               <path d="M5 1h4v2H5z" />
             </svg>
             <code className="text-sm text-neutral-600">
-              comwit.io/llm/chart.md
+              ui.flitter.dev/llm/chart.md
             </code>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-neutral-400">

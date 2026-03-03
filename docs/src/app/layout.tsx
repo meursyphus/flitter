@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Instrument_Serif } from "next/font/google";
-import Header from "@/components/Header";
-import GlobalSidebar from "@/components/GlobalSidebar";
+import Header from "@/components/header";
+import GlobalSidebar from "@/components/global-sidebar";
 import "./globals.css";
 
 const pretendard = localFont({

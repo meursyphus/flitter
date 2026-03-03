@@ -1,11 +1,8 @@
 import { notFound } from "next/navigation";
-import { findChartPage, getAllSlugs } from "../_data/charts";
-import OverviewPage from "../_components/OverviewPage";
-import StylePage from "../_components/StylePage";
-import type { ChartExample } from "../_components/StylePage";
-import AdvancedPage from "../_components/AdvancedPage";
-import ComingSoonPage from "../_components/ComingSoonPage";
-import ChartPreview from "@/components/ChartPreview";
+import { findChartPage, getAllSlugs } from "../_data";
+import OverviewPage from "../_components/overview-page";
+import StylePage from "../_components/style-page";
+import AdvancedPage from "../_components/advanced-page";
 
 type Props = {
   params: Promise<{ slug: string[] }>;
@@ -25,29 +22,6 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-/**
- * Returns placeholder examples for a style page.
- * Replace with real chart components as they become available.
- */
-function getStyleExamples(slug: string[]): ChartExample[] {
-  const key = slug.join("/");
-
-  const exampleMap: Record<string, ChartExample[]> = {
-    "bar-chart/toast": [
-      { label: "Basic", component: <ChartPreview height={240} /> },
-      { label: "Multi-Dataset", component: <ChartPreview height={240} /> },
-      {
-        label: "Horizontal Direction",
-        component: <ChartPreview height={240} />,
-      },
-      { label: "Custom Colors", component: <ChartPreview height={240} /> },
-      { label: "Rounded Bars", component: <ChartPreview height={240} /> },
-    ],
-  };
-
-  return exampleMap[key] ?? [];
-}
-
 export default async function ChartDynamicPage({ params }: Props) {
   const { slug } = await params;
   const page = findChartPage(slug);
@@ -56,18 +30,11 @@ export default async function ChartDynamicPage({ params }: Props) {
     notFound();
   }
 
-  // Coming soon pages
-  if (page.status === "coming") {
-    return <ComingSoonPage data={page} />;
-  }
-
   switch (page.pageType) {
     case "overview":
       return <OverviewPage data={page} />;
     case "style":
-      return (
-        <StylePage data={page} examples={getStyleExamples(page.slug)} />
-      );
+      return <StylePage data={page} />;
     case "advanced":
       return <AdvancedPage data={page} />;
     default:

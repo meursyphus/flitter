@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ChartPageData } from "../_data/charts";
+import type { ChartPageData } from "../_data";
 
 export default function ComingSoonPage({ data }: { data: ChartPageData }) {
   return (

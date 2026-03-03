@@ -1,4 +1,4 @@
-import ChartLanding from "./_components/ChartLanding";
+import ChartLanding from "./_components/chart-landing";
 
 export const metadata = {
   title: "Chart",

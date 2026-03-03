@@ -1,44 +1,38 @@
 import Link from "next/link";
-import ChartPreview from "@/components/ChartPreview";
-import CodeBlock from "@/components/CodeBlock";
-import type { ChartPageData } from "../_data/charts";
+import ChartPreview from "@/components/chart-preview";
+import CodeBlock from "@/components/code-block";
+import type { AdvancedPageData } from "../_data";
 
-export default async function AdvancedPage({ data }: { data: ChartPageData }) {
+export default async function AdvancedPage({ data }: { data: AdvancedPageData }) {
   const { title, description, code, customElements, parent } = data;
 
   const parentLabel = parent
-    ? parent
-        .split("-")
-        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(" ")
-    : "";
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
 
-  const llmUrl = parent
-    ? `comwit.io/llm/chart/${parent}.md`
-    : null;
+  const llmUrl = `ui.flitter.dev/llm/chart/${parent}.md`;
 
   return (
     <div className="-mx-6 -mt-8 md:-mx-10">
       {/* Header */}
       <section className="px-6 pt-10 pb-8 md:px-10">
-        {parent && (
-          <Link
-            href={`/chart/${parent}`}
-            className="mb-3 inline-flex items-center gap-1 text-xs text-neutral-400 transition-colors hover:text-neutral-600"
+        <Link
+          href={`/chart/${parent}`}
+          className="mb-3 inline-flex items-center gap-1 text-xs text-neutral-400 transition-colors hover:text-neutral-600"
+        >
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
           >
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 12 12"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            >
-              <path d="M7.5 9L4.5 6l3-3" />
-            </svg>
-            Back to {parentLabel}
-          </Link>
-        )}
+            <path d="M7.5 9L4.5 6l3-3" />
+          </svg>
+          Back to {parentLabel}
+        </Link>
         <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
           {title}
         </h1>
@@ -48,38 +42,36 @@ export default async function AdvancedPage({ data }: { data: ChartPageData }) {
       </section>
 
       {/* LLM Native hint */}
-      {llmUrl && (
-        <section className="px-6 pb-4 md:px-10">
-          <div className="flex flex-col gap-2">
-            <p className="text-sm text-neutral-500">
-              Tell your AI agent what you want to customize.
-            </p>
-            <div className="inline-flex items-center gap-2 self-start rounded-full bg-neutral-100 px-4 py-1.5">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 14 14"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-neutral-400"
-              >
-                <path d="M10 1.5H11.5A1.5 1.5 0 0 1 13 3v8a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 1 11V3a1.5 1.5 0 0 1 1.5-1.5H4" />
-                <path d="M5 1h4v2H5z" />
-              </svg>
-              <code className="text-sm text-neutral-600">{llmUrl}</code>
-            </div>
-            <p className="text-xs text-neutral-400">
-              Paste this URL into Claude Code or Cursor to generate custom renderers instantly.
-            </p>
+      <section className="px-6 pb-4 md:px-10">
+        <div className="flex flex-col gap-2">
+          <p className="text-sm text-neutral-500">
+            Tell your AI agent what you want to customize.
+          </p>
+          <div className="inline-flex items-center gap-2 self-start rounded-full bg-neutral-100 px-4 py-1.5">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-neutral-400"
+            >
+              <path d="M10 1.5H11.5A1.5 1.5 0 0 1 13 3v8a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 1 11V3a1.5 1.5 0 0 1 1.5-1.5H4" />
+              <path d="M5 1h4v2H5z" />
+            </svg>
+            <code className="text-sm text-neutral-600">{llmUrl}</code>
           </div>
-        </section>
-      )}
+          <p className="text-xs text-neutral-400">
+            Paste this URL into Claude Code or Cursor to generate custom renderers instantly.
+          </p>
+        </div>
+      </section>
 
       {/* Customizable Elements — collapsible */}
-      {customElements && customElements.length > 0 && (
+      {customElements.length > 0 && (
         <section className="px-6 md:px-10">
           <details className="group">
             <summary className="cursor-pointer select-none list-none text-lg font-semibold tracking-tight text-neutral-900 [&::-webkit-details-marker]:hidden">
@@ -152,23 +144,21 @@ export default async function AdvancedPage({ data }: { data: ChartPageData }) {
       )}
 
       {/* Custom Example */}
-      {code?.basic && (
-        <section className="px-6 pt-10 md:px-10">
-          <h2 className="text-lg font-semibold tracking-tight text-neutral-900">
-            Usage
-          </h2>
-          <p className="mt-2 text-sm text-neutral-500">
-            Override any element by passing a{" "}
-            <code className="rounded bg-neutral-100 px-1.5 py-0.5 text-[12px] text-neutral-700">
-              custom
-            </code>{" "}
-            object.
-          </p>
-          <div className="mt-4">
-            <CodeBlock code={code.basic} />
-          </div>
-        </section>
-      )}
+      <section className="px-6 pt-10 md:px-10">
+        <h2 className="text-lg font-semibold tracking-tight text-neutral-900">
+          Usage
+        </h2>
+        <p className="mt-2 text-sm text-neutral-500">
+          Override any element by passing a{" "}
+          <code className="rounded bg-neutral-100 px-1.5 py-0.5 text-[12px] text-neutral-700">
+            custom
+          </code>{" "}
+          object.
+        </p>
+        <div className="mt-4">
+          <CodeBlock code={code.basic} />
+        </div>
+      </section>
 
       {/* Preview */}
       <section className="px-6 pt-10 md:px-10">
@@ -184,14 +174,12 @@ export default async function AdvancedPage({ data }: { data: ChartPageData }) {
       <section className="px-6 pt-10 pb-16 md:px-10">
         <div className="border-t border-neutral-100 pt-6">
           <div className="flex flex-wrap gap-4 text-sm">
-            {parent && (
-              <Link
-                href={`/chart/${parent}`}
-                className="text-neutral-500 transition-colors hover:text-neutral-900"
-              >
-                &larr; {title.replace(" — Advanced", "")}
-              </Link>
-            )}
+            <Link
+              href={`/chart/${parent}`}
+              className="text-neutral-500 transition-colors hover:text-neutral-900"
+            >
+              &larr; {title.replace(" \u2014 Advanced", "")}
+            </Link>
           </div>
         </div>
       </section>
