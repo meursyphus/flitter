@@ -6,6 +6,7 @@ import type {
   GetScaleFn,
   GetScaleOptionsFn,
 } from "./base";
+import type { DeepPartial } from "@utils/index";
 import {
   bubbleChartStyleConfigs,
   type BubbleChartStyleMap,
@@ -20,7 +21,7 @@ export default function BubbleChart<S extends keyof BubbleChartStyleMap>({
   ...rest
 }: {
   style: S;
-  config?: Partial<BubbleChartStyleMap[S]>;
+  config?: DeepPartial<BubbleChartStyleMap[S]>;
   data: BubbleChartData;
   custom?: Partial<BubbleChartCustom<BubbleChartStyleMap[S]>>;
   getScale?: GetScaleFn;

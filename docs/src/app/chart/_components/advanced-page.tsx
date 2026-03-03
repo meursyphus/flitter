@@ -1,5 +1,4 @@
 import Link from "next/link";
-import ChartPreview from "@/components/chart-preview";
 import CodeBlock from "@/components/code-block";
 import type { AdvancedPageData } from "../_data";
 
@@ -157,16 +156,6 @@ export default async function AdvancedPage({ data }: { data: AdvancedPageData })
         </p>
         <div className="mt-4">
           <CodeBlock code={code.basic} />
-        </div>
-      </section>
-
-      {/* Preview */}
-      <section className="px-6 pt-10 md:px-10">
-        <h2 className="text-lg font-semibold tracking-tight text-neutral-900">
-          Preview
-        </h2>
-        <div className="mt-4">
-          <ChartPreview height={300} />
         </div>
       </section>
 

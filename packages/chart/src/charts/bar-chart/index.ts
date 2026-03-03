@@ -1,6 +1,7 @@
 import type { Widget } from "flitter-core";
 import { BaseBarChart } from "./base";
 import type { BarChartCustom, BarChartData, BarChartScale, GetScaleFn, GetScaleOptionsFn } from "./base";
+import type { DeepPartial } from "@utils/index";
 import { barChartStyleConfigs, type BarChartStyleMap } from "./plugin";
 
 export default function BarChart<S extends keyof BarChartStyleMap>({
@@ -12,7 +13,7 @@ export default function BarChart<S extends keyof BarChartStyleMap>({
   ...rest
 }: {
   style: S;
-  config?: Partial<BarChartStyleMap[S]>;
+  config?: DeepPartial<BarChartStyleMap[S]>;
   data: BarChartData;
   custom?: Partial<BarChartCustom<BarChartStyleMap[S]>>;
   direction?: "vertical" | "horizontal";

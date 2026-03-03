@@ -209,6 +209,9 @@ importers:
 
   docs:
     dependencies:
+      '@flitterjs/react':
+        specifier: workspace:*
+        version: link:../integrations/react
       '@mdx-js/loader':
         specifier: ^3.1.1
         version: 3.1.1
@@ -221,6 +224,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      flitter-chart:
+        specifier: workspace:*
+        version: link:../packages/chart
       next:
         specifier: ^15.0.0
         version: 15.5.12(@playwright/test@1.58.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)

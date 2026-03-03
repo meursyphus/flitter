@@ -1,10 +1,11 @@
 import type { LineChartCustom, GetScaleOptionsFn } from "./base";
 import { toastStyleConfig, type ToastLineChartConfig } from "./styles/toast";
 import { agStyleConfig, type AgLineChartConfig } from "./styles/ag";
+import type { DeepPartial } from "@utils/index";
 
 export type StyleConfig<TConfig> = {
   custom: Partial<LineChartCustom<TConfig>>;
-  createConfig: (config?: Partial<TConfig>) => TConfig;
+  createConfig: (config?: DeepPartial<TConfig>) => TConfig;
   getScaleOptions: GetScaleOptionsFn;
 };
 

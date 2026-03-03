@@ -2,7 +2,7 @@ import { GestureDetector } from "flitter-core";
 import type { HeatmapCustom } from "@headless/heatmap-chart/types";
 import type { ToastHeatmapChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge } from "@utils/index";
+import { deepMerge, type DeepPartial } from "@utils/index";
 import { toastSegment } from "./parts/segment";
 import { toastHeatmapLegend } from "./parts/legend";
 import { DataView } from "../../base/data-view";
@@ -42,6 +42,6 @@ const toastCustom: Partial<HeatmapCustom<ToastHeatmapChartConfig>> = {
 
 export const toastStyleConfig = {
 	custom: toastCustom,
-	createConfig: (config?: Partial<ToastHeatmapChartConfig>): ToastHeatmapChartConfig =>
+	createConfig: (config?: DeepPartial<ToastHeatmapChartConfig>): ToastHeatmapChartConfig =>
 		deepMerge(defaultToastConfig, config),
 };

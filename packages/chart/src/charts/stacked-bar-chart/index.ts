@@ -1,6 +1,7 @@
 import type { Widget } from "flitter-core";
 import { BaseStackedBarChart } from "./base";
 import type { BarChartCustom, BarChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
+import type { DeepPartial } from "@utils/index";
 import { stackedBarChartStyleConfigs, type StackedBarChartStyleMap } from "./plugin";
 
 export default function StackedBarChart<S extends keyof StackedBarChartStyleMap>({
@@ -12,7 +13,7 @@ export default function StackedBarChart<S extends keyof StackedBarChartStyleMap>
   ...rest
 }: {
   style: S;
-  config?: Partial<StackedBarChartStyleMap[S]>;
+  config?: DeepPartial<StackedBarChartStyleMap[S]>;
   data: BarChartData;
   custom?: Partial<BarChartCustom<StackedBarChartStyleMap[S]>>;
   direction?: "vertical" | "horizontal";

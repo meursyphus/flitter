@@ -1,5 +1,10 @@
 import type { ChartModule } from "../types";
+import { toastSummary } from "../styles/toast";
+import { agSummary } from "../styles/ag";
 import { toastStyle } from "./toast";
+import { agStyle } from "./ag";
+import { VerticalToastBarChart } from "./toast/examples";
+import { VerticalAgBarChart } from "./ag/examples";
 import { advancedPage } from "./advanced";
 
 const basicCode = `import { BarChart } from "flitter-ui/chart";
@@ -28,15 +33,12 @@ export const pages: ChartModule = [
     pageType: "overview",
     quickStartCode: basicCode,
     styles: [
-      {
-        slug: ["bar-chart", "toast"],
-        title: "Toast Style",
-        tagline: "Clean, minimal, smooth animations",
-        inspiration: "Inspired by Toast UI Chart",
-      },
+      toastSummary("bar-chart", <VerticalToastBarChart />),
+      agSummary("bar-chart", <VerticalAgBarChart />),
     ],
     hasAdvanced: true,
   },
-  toastStyle(basicCode),
+  toastStyle,
+  agStyle,
   advancedPage,
 ];

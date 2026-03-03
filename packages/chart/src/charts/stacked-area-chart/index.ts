@@ -6,6 +6,7 @@ import type {
   GetScaleFn,
   GetScaleOptionsFn,
 } from "./base";
+import type { DeepPartial } from "@utils/index";
 import {
   stackedAreaChartStyleConfigs,
   type StackedAreaChartStyleMap,
@@ -22,7 +23,7 @@ export default function StackedAreaChart<
   ...rest
 }: {
   style: S;
-  config?: Partial<StackedAreaChartStyleMap[S]>;
+  config?: DeepPartial<StackedAreaChartStyleMap[S]>;
   data: LineChartData;
   custom?: Partial<LineChartCustom<StackedAreaChartStyleMap[S]>>;
   getScale?: GetScaleFn;

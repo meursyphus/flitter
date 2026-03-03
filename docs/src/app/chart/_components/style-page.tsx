@@ -1,21 +1,12 @@
 import Link from "next/link";
-import ChartPreview from "@/components/chart-preview";
-import CodeBlock from "@/components/code-block";
 import type { StylePageData } from "../_data";
-
-export type ChartExample = {
-  label: string;
-  component: React.ReactNode;
-};
 
 export default async function StylePage({
   data,
-  examples,
 }: {
   data: StylePageData;
-  examples?: ChartExample[];
 }) {
-  const { title, description, code, parent } = data;
+  const { title, description, configSections, examples, parent } = data;
 
   return (
     <div className="-mx-6 -mt-8 md:-mx-10">
@@ -49,61 +40,87 @@ export default async function StylePage({
         </p>
       </section>
 
-      {/* Config Type — collapsible */}
-      {code.fullConfigType && (
+      {/* Config Sections (collapsible) */}
+      {configSections.length > 0 && (
         <section className="px-6 pt-6 md:px-10">
           <details className="group">
-            <summary className="cursor-pointer select-none list-none text-lg font-semibold tracking-tight text-neutral-900 [&::-webkit-details-marker]:hidden">
-              <span className="inline-flex items-center gap-2">
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 12 12"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  className="transition-transform group-open:rotate-90"
-                >
-                  <path d="M4.5 3l3 3-3 3" />
-                </svg>
-                Config Type
-              </span>
+            <summary className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-neutral-900 select-none">
+              <svg
+                className="h-3.5 w-3.5 text-neutral-400 transition-transform group-open:rotate-90"
+                viewBox="0 0 12 12"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M4.5 2.5l4 3.5-4 3.5" />
+              </svg>
+              Configuration
             </summary>
-            <p className="mt-2 text-sm text-neutral-500">
-              All configuration fields with their types and defaults.
-            </p>
-            <div className="mt-4">
-              <CodeBlock code={code.fullConfigType} />
+            <div className="mt-6 space-y-8">
+              {configSections.map((section) => (
+                <div key={section.title}>
+                  <h3 className="text-sm font-semibold text-neutral-900">
+                    {section.title}
+                  </h3>
+                  {section.description && (
+                    <p className="mt-1 text-[13px] text-neutral-500">
+                      {section.description}
+                    </p>
+                  )}
+                  <div className="mt-3 overflow-x-auto">
+                    <table className="w-full text-[13px]">
+                      <thead>
+                        <tr className="border-b border-neutral-200 text-left">
+                          <th className="pb-2 pr-4 font-medium text-neutral-500">Property</th>
+                          <th className="pb-2 pr-4 font-medium text-neutral-500">Type</th>
+                          <th className="pb-2 pr-4 font-medium text-neutral-500">Default</th>
+                          <th className="pb-2 font-medium text-neutral-500">Description</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {section.rows.map((row) => (
+                          <tr key={row.property} className="border-b border-neutral-100 last:border-0">
+                            <td className="py-2 pr-4">
+                              <code className="rounded bg-neutral-100 px-1.5 py-0.5 text-[12px] text-neutral-700">
+                                {row.property}
+                              </code>
+                            </td>
+                            <td className="py-2 pr-4 text-neutral-600">
+                              <code className="text-[12px]">{row.type}</code>
+                            </td>
+                            <td className="py-2 pr-4 text-neutral-600">
+                              <code className="text-[12px]">{row.default}</code>
+                            </td>
+                            <td className="py-2 text-neutral-500">
+                              {row.description}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ))}
             </div>
           </details>
         </section>
       )}
 
-      {/* Usage Example */}
-      {code.config && (
-        <section className="px-6 pt-10 md:px-10">
-          <h2 className="text-lg font-semibold tracking-tight text-neutral-900">
-            Usage
-          </h2>
-          <div className="mt-4">
-            <CodeBlock code={code.config} />
-          </div>
-        </section>
-      )}
-
-      {/* Examples — from props */}
+      {/* Chart Examples */}
       {examples && examples.length > 0 && (
-        <section className="px-6 pt-10 md:px-10">
-          <h2 className="text-lg font-semibold tracking-tight text-neutral-900">
-            Examples
-          </h2>
-          <div className="mt-6 space-y-8">
-            {examples.map((ex) => (
-              <div key={ex.label}>
-                <h3 className="text-sm font-medium text-neutral-700">
-                  {ex.label}
+        <section className="px-6 pt-8 md:px-10">
+          <div className="space-y-6">
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="mb-3 text-sm font-semibold text-neutral-900">
+                  {example.title}
                 </h3>
-                <div className="mt-3">{ex.component}</div>
+                <div
+                  className="rounded-lg border border-neutral-100 bg-white p-4"
+                  style={{ height: example.height ?? 500 }}
+                >
+                  {example.chart}
+                </div>
               </div>
             ))}
           </div>

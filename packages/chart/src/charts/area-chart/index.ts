@@ -1,6 +1,7 @@
 import type { Widget } from "flitter-core";
 import { BaseAreaChart } from "./base";
 import type { LineChartCustom, LineChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
+import type { DeepPartial } from "@utils/index";
 import { areaChartStyleConfigs, type AreaChartStyleMap } from "./plugin";
 
 export default function AreaChart<S extends keyof AreaChartStyleMap>({
@@ -12,7 +13,7 @@ export default function AreaChart<S extends keyof AreaChartStyleMap>({
   ...rest
 }: {
   style: S;
-  config?: Partial<AreaChartStyleMap[S]>;
+  config?: DeepPartial<AreaChartStyleMap[S]>;
   data: LineChartData;
   custom?: Partial<LineChartCustom<AreaChartStyleMap[S]>>;
   getScale?: GetScaleFn;

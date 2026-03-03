@@ -1,7 +1,7 @@
 import type { PieChartCustom } from "@headless/pie-chart/types";
 import type { ToastPieChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge } from "@utils/index";
+import { deepMerge, type DeepPartial } from "@utils/index";
 import { toastSlice } from "./parts/slice";
 import { toastDataView } from "./parts/data-view";
 import {
@@ -20,6 +20,6 @@ const toastCustom: Partial<PieChartCustom<ToastPieChartConfig>> = {
 
 export const toastStyleConfig = {
 	custom: toastCustom,
-	createConfig: (config?: Partial<ToastPieChartConfig>): ToastPieChartConfig =>
+	createConfig: (config?: DeepPartial<ToastPieChartConfig>): ToastPieChartConfig =>
 		deepMerge(defaultToastConfig, config),
 };

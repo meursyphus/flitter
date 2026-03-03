@@ -1,5 +1,4 @@
 import Link from "next/link";
-import ChartPreview from "@/components/chart-preview";
 import CodeBlock from "@/components/code-block";
 import type { OverviewPageData } from "../_data";
 
@@ -8,7 +7,8 @@ export default async function OverviewPage({
 }: {
   data: OverviewPageData;
 }) {
-  const { title, description, quickStartCode, slug, styles, hasAdvanced } = data;
+  const { title, description, quickStartCode, slug, styles, hasAdvanced } =
+    data;
 
   return (
     <div className="-mx-6 -mt-8 md:-mx-10">
@@ -68,24 +68,24 @@ export default async function OverviewPage({
               return (
                 <div key={style.slug.join("/")}>
                   <div
-                    className={`flex flex-col gap-8 md:flex-row md:items-center md:gap-12 ${
+                    className={`flex flex-col md:flex-row md:items-stretch gap-6 ${
                       isEven ? "" : "md:flex-row-reverse"
                     }`}
                   >
                     {/* Text side */}
-                    <div className="md:w-2/5 shrink-0">
-                      <h3 className="text-xl font-semibold text-neutral-900">
+                    <div className="md:w-52 shrink-0 flex flex-col justify-center py-4 md:pr-6">
+                      <h3 className="text-lg font-semibold text-neutral-900">
                         {style.title}
                       </h3>
                       {style.inspiration && (
-                        <p className="mt-1 text-[12px] text-neutral-400">
+                        <p className="mt-1 text-[11px] text-neutral-400">
                           {style.inspiration}
                         </p>
                       )}
-                      <p className="mt-3 text-sm text-neutral-500">
+                      <p className="mt-2 text-sm text-neutral-500">
                         {style.tagline}
                       </p>
-                      <div className="mt-4">
+                      <div className="mt-3">
                         <Link
                           href={`/chart/${style.slug.join("/")}`}
                           className="text-[13px] font-medium text-neutral-500 transition-colors hover:text-neutral-900"
@@ -95,10 +95,8 @@ export default async function OverviewPage({
                       </div>
                     </div>
 
-                    {/* Chart preview side */}
-                    <div className="md:w-3/5">
-                      <ChartPreview height={380} />
-                    </div>
+                    {/* Chart side — fills remaining space */}
+                    <div className="min-w-0 flex-1 h-95">{style.chart}</div>
                   </div>
 
                   {/* Divider */}

@@ -1,7 +1,7 @@
 import type { RadarChartCustom } from "@headless/radar-chart/types";
 import type { ToastRadarChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge } from "@utils/index";
+import { deepMerge, type DeepPartial } from "@utils/index";
 import { toastRadar } from "./parts/radar";
 import { toastAngularAxisLine } from "./parts/angular-axis-line";
 import { toastAngularAxisLabel } from "./parts/angular-axis-label";
@@ -26,6 +26,6 @@ const toastCustom: Partial<RadarChartCustom<ToastRadarChartConfig>> = {
 
 export const toastStyleConfig = {
 	custom: toastCustom,
-	createConfig: (config?: Partial<ToastRadarChartConfig>): ToastRadarChartConfig =>
+	createConfig: (config?: DeepPartial<ToastRadarChartConfig>): ToastRadarChartConfig =>
 		deepMerge(defaultToastConfig, config),
 };

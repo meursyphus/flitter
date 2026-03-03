@@ -57,7 +57,7 @@ export const defaultToastBaseConfig: ToastBaseConfig = {
     tick: { size: 6 },
   },
   grid: { color: "rgba(0, 0, 0, 0.05)", thickness: 1 },
-  padding: { top: 30, right: 20, bottom: 40, left: 60 },
+  padding: { top: 20, right: 20, bottom: 20, left: 20 },
   animation: { enabled: true, duration: 300, staggerDelay: 60 },
   tooltip: {
     enabled: true,

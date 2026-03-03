@@ -40,6 +40,8 @@ export type StyleSummary = {
   title: string;
   tagline: string;
   inspiration?: string;
+  /** Representative chart component rendered on the overview page */
+  chart?: React.ReactNode;
 };
 
 export type OverviewPageData = ChartPageBase & {
@@ -56,6 +58,13 @@ export type OverviewPageData = ChartPageBase & {
 // Style — a specific visual style (toast, high, …)
 // ---------------------------------------------------------------------------
 
+export type ChartExample = {
+  title: string;
+  chart: React.ReactNode;
+  /** Chart container height in px (default: 500) */
+  height?: number;
+};
+
 export type StylePageData = ChartPageBase & {
   pageType: "style";
   parent: string;
@@ -64,13 +73,9 @@ export type StylePageData = ChartPageBase & {
     features: string[];
     inspiration?: string;
   };
-  code: {
-    basic: string;
-    config: string;
-    fullConfigType: string;
-    examples: { title: string; code: string }[];
-  };
   configSections: ConfigSection[];
+  /** Chart examples displayed on the style page */
+  examples?: ChartExample[];
 };
 
 // ---------------------------------------------------------------------------

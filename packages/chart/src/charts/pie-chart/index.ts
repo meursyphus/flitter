@@ -2,6 +2,7 @@ import type { Widget } from "flitter-core";
 import { BasePieChart } from "./base";
 import type { PieChartCustom, PieChartData } from "./base";
 import { toastStyleConfig, type ToastPieChartConfig } from "./styles/toast";
+import type { DeepPartial } from "@utils/index";
 
 export type { PieChartCustom, PieChartData, PieChartContext } from "./base";
 export { PieChartController } from "./base";
@@ -12,7 +13,7 @@ export default function PieChart({
 	data,
 	custom,
 }: {
-	config?: Partial<ToastPieChartConfig>;
+	config?: DeepPartial<ToastPieChartConfig>;
 	data: PieChartData;
 	custom?: Partial<PieChartCustom<ToastPieChartConfig>>;
 }): Widget {

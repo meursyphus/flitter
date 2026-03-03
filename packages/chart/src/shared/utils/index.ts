@@ -12,6 +12,14 @@ export function classToFn<V extends new (...arr: any[]) => any>(
     new Constructor(...arr) as InstanceType<V>;
 }
 
+export type DeepPartial<T> = T extends (...args: any[]) => any
+  ? T
+  : T extends Date
+    ? Date
+    : T extends object
+      ? { [K in keyof T]?: DeepPartial<T[K]> }
+      : T;
+
 export type PickPartial<T, K extends keyof T> = Omit<T, K> &
   Partial<Pick<T, K>>;
 
@@ -21,7 +29,7 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 
 export function deepMerge<T extends Record<string, unknown>>(
   base: T,
-  override?: Partial<T>,
+  override?: DeepPartial<T>,
 ): T {
   if (!override) return base;
   const result = { ...base } as Record<string, unknown>;

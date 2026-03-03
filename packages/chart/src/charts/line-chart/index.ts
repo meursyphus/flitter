@@ -1,6 +1,7 @@
 import type { Widget } from "flitter-core";
 import { BaseLineChart } from "./base";
 import type { LineChartCustom, LineChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
+import type { DeepPartial } from "@utils/index";
 import { lineChartStyleConfigs, type LineChartStyleMap } from "./plugin";
 
 export default function LineChart<S extends keyof LineChartStyleMap>({
@@ -12,7 +13,7 @@ export default function LineChart<S extends keyof LineChartStyleMap>({
   ...rest
 }: {
   style: S;
-  config?: Partial<LineChartStyleMap[S]>;
+  config?: DeepPartial<LineChartStyleMap[S]>;
   data: LineChartData;
   custom?: Partial<LineChartCustom<LineChartStyleMap[S]>>;
   getScale?: GetScaleFn;
