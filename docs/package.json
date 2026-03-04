@@ -30,6 +30,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "postcss": "^8.5.6",
+    "react-grab": "^0.1.21",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.3.0"
   }
