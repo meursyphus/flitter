@@ -17,7 +17,7 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-2">
             <FlitterLogo size={22} />
             <span className="text-[22px] font-bold tracking-tight text-neutral-900" style={{ fontFamily: "var(--font-display)" }}>
-              flitter-ui
+              flitter-ui (지금 베타입니다잉)
             </span>
           </Link>
 
