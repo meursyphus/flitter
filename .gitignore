@@ -20,3 +20,4 @@ packages/*/node_modules/
 .netlify
 .turbo/
 .next/
+out/
