@@ -15,6 +15,7 @@
     "docs:build": "turbo build --filter=flitter-docs",
     "story:dev": "turbo dev --filter=flitter-storybook",
     "chart-story:dev": "turbo dev --filter=chart-storybook",
+    "chart-story:validate": "pnpm --dir dev/performance exec playwright test --config playwright.chart-storybook.config.ts tests/chart-storybook-llm-evaluation.spec.ts",
     "perf:dev": "turbo dev --filter=flitter-performance",
     "test": "turbo test --filter=flitter-performance",
     "test:integration": "pnpm --filter flitter-performance test:integration",

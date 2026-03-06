@@ -2,6 +2,7 @@
 import Widget from "@flitterjs/react";
 import { Headless } from "flitter-chart";
 import { cartesianToastCustom } from "./toastUtils";
+import type { StoryFrameProps } from "./storyTypes";
 import {
   Container,
   FractionallySizedBox,
@@ -89,7 +90,11 @@ class AnimatedWaterfallBarState extends State<AnimatedWaterfallBar> {
   }
 }
 
-export default function ToastWaterfallChart() {
+export default function ToastWaterfallChart({
+  renderer = "svg",
+  width = "500px",
+  height = "350px",
+}: StoryFrameProps) {
   return (
     <Widget
       widget={Headless.WaterfallChart({
@@ -142,9 +147,9 @@ export default function ToastWaterfallChart() {
           },
         },
       })}
-      width="500px"
-      height="350px"
-      renderer="svg"
+      width={width}
+      height={height}
+      renderer={renderer}
     />
   );
 }

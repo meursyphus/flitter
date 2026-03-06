@@ -1,0 +1,425 @@
+[
+  {
+    "id": "executive-ranking",
+    "storyExport": "ExecutiveRanking",
+    "prompt": "Make an executive ranking chart for platform migration risk by business unit. The category names are long, so optimize readability, sort from highest risk to lowest, and use a muted dashboard style.",
+    "expected": [
+      "BarChart",
+      "style: \"ag\"",
+      "direction: \"horizontal\"",
+      "long labels remain readable"
+    ],
+    "rejectIf": [
+      "the agent chooses a vertical bar chart despite the long labels",
+      "the agent uses toast",
+      "the agent turns this into a table, line chart, or pie chart"
+    ]
+  },
+  {
+    "id": "regional-revenue-pulse",
+    "storyExport": "RegionalRevenuePulse",
+    "prompt": "Make a friendly default chart for monthly revenue by region from January to July.",
+    "expected": [
+      "BarChart",
+      "style: \"toast\"",
+      "vertical orientation",
+      "multi-series categorical data"
+    ],
+    "rejectIf": [
+      "the agent turns it into a line chart without justification",
+      "the agent omits regional series grouping",
+      "the agent uses an analytical AG style instead of a friendly default"
+    ]
+  },
+  {
+    "id": "profit-variance-horizontal",
+    "storyExport": "ProfitVarianceHorizontal",
+    "prompt": "Show quarterly profit and loss by product as a horizontal chart with negative bars.",
+    "expected": [
+      "BarChart",
+      "direction: \"horizontal\"",
+      "negative values preserved"
+    ],
+    "rejectIf": [
+      "the agent flips back to vertical without reason",
+      "negative values are clamped away",
+      "the agent switches to stacked or waterfall semantics"
+    ]
+  },
+  {
+    "id": "negative-contribution-mix",
+    "storyExport": "NegativeContributionMix",
+    "prompt": "Show quarterly profit contribution by product line as a stacked chart, including negative contributions where a product dragged performance down.",
+    "expected": [
+      "StackedBarChart",
+      "negative values preserved",
+      "stacking used instead of grouping"
+    ],
+    "rejectIf": [
+      "the agent switches to grouped bars",
+      "the agent switches to WaterfallChart",
+      "negative values are removed or converted to absolute values"
+    ]
+  },
+  {
+    "id": "market-share-stacked-columns",
+    "storyExport": "MarketShareStackedColumns",
+    "prompt": "Create a stacked dashboard chart for quarterly revenue mix by product family with an analytical business look.",
+    "expected": [
+      "StackedBarChart",
+      "style: \"ag\"",
+      "stacked categorical composition"
+    ],
+    "rejectIf": [
+      "the agent picks toast without justification",
+      "the agent splits the chart into grouped bars",
+      "the output stops reading as a part-to-whole comparison"
+    ]
+  },
+  {
+    "id": "retention-trend-soft",
+    "storyExport": "RetentionTrendSoft",
+    "prompt": "Make me a soft pastel line chart for retention over 12 months.",
+    "expected": [
+      "LineChart",
+      "style: \"toast\"",
+      "continuous time trend"
+    ],
+    "rejectIf": [
+      "the agent chooses bars or an area chart without explanation",
+      "the output drops the monthly continuity",
+      "the style reads analytical instead of soft"
+    ]
+  },
+  {
+    "id": "incident-latency-trend",
+    "storyExport": "IncidentLatencyTrend",
+    "prompt": "Plot p95 incident response latency month by month for three services using a clean analytical style.",
+    "expected": [
+      "LineChart",
+      "style: \"ag\"",
+      "multiple series over time"
+    ],
+    "rejectIf": [
+      "the agent chooses toast without justification",
+      "the agent collapses the services into a single line",
+      "the result reads like categorical bars instead of a trend"
+    ]
+  },
+  {
+    "id": "signup-momentum-area",
+    "storyExport": "SignupMomentumArea",
+    "prompt": "Show how qualified signups and activated accounts accumulated through the year with a soft area treatment.",
+    "expected": [
+      "AreaChart",
+      "style: \"toast\"",
+      "filled time-series presentation"
+    ],
+    "rejectIf": [
+      "the agent switches to a plain line chart",
+      "the filled area treatment disappears",
+      "the output reads as stacked part-to-whole composition"
+    ]
+  },
+  {
+    "id": "margin-envelope-area",
+    "storyExport": "MarginEnvelopeArea",
+    "prompt": "Create an analytical area chart for monthly gross and net margin envelopes.",
+    "expected": [
+      "AreaChart",
+      "style: \"ag\"",
+      "filled analytical comparison"
+    ],
+    "rejectIf": [
+      "the agent uses toast without reason",
+      "the chart is rendered as bars",
+      "the fill layer is removed entirely"
+    ]
+  },
+  {
+    "id": "traffic-share-shift",
+    "storyExport": "TrafficShareShift",
+    "prompt": "Create a soft default chart showing how traffic source share changed month by month across the year as one continuous yearly trend.",
+    "expected": [
+      "StackedAreaChart",
+      "style: \"toast\"",
+      "composition over time"
+    ],
+    "rejectIf": [
+      "the agent chooses LineChart",
+      "the agent chooses StackedBarChart",
+      "the chart no longer reads as a continuous trend over time"
+    ]
+  },
+  {
+    "id": "revenue-mix-rebalance",
+    "storyExport": "RevenueMixRebalance",
+    "prompt": "Show how revenue mix rebalanced across product families over the year in a polished analytical dashboard style.",
+    "expected": [
+      "StackedAreaChart",
+      "style: \"ag\"",
+      "continuous share shift over time"
+    ],
+    "rejectIf": [
+      "the agent switches to a single-series area chart",
+      "the agent uses stacked bars instead of a continuous trend",
+      "the style loses the analytical dashboard feel"
+    ]
+  },
+  {
+    "id": "satisfaction-scatter-matrix",
+    "storyExport": "SatisfactionScatterMatrix",
+    "prompt": "Plot product breadth against customer satisfaction for several segments in a softer default style.",
+    "expected": [
+      "ScatterChart",
+      "style: \"toast\"",
+      "numeric x and y by segment"
+    ],
+    "rejectIf": [
+      "the agent converts it into a bubble chart without a sizing variable",
+      "the agent uses categorical bars instead of points",
+      "the output loses the multi-segment grouping"
+    ]
+  },
+  {
+    "id": "market-opportunity",
+    "storyExport": "MarketOpportunity",
+    "prompt": "Plot market opportunity as GDP per capita versus retention potential, and size each point by active account volume. Use a clean analytical look.",
+    "expected": [
+      "BubbleChart",
+      "style: \"ag\"",
+      "x, y, and value all numeric"
+    ],
+    "rejectIf": [
+      "the agent chooses ScatterChart",
+      "the agent omits bubble sizing data",
+      "the agent uses toast without justification"
+    ]
+  },
+  {
+    "id": "pipeline-capacity-bubbles",
+    "storyExport": "PipelineCapacityBubbles",
+    "prompt": "Show pipeline capacity by channel with win rate on one axis, deal size on the other, and bubble size representing rep capacity.",
+    "expected": [
+      "BubbleChart",
+      "style: \"toast\"",
+      "bubble sizing retained"
+    ],
+    "rejectIf": [
+      "the agent falls back to scatter points without size",
+      "the chart becomes a grouped bar comparison",
+      "the data no longer uses numeric x, y, and value"
+    ]
+  },
+  {
+    "id": "response-load-heatmap",
+    "storyExport": "ResponseLoadHeatmap",
+    "prompt": "Build a heatmap of average response load by weekday and month. Months should run left to right, weekdays should run top to bottom, and the axes must not be flipped.",
+    "expected": [
+      "HeatmapChart",
+      "months on x-axis",
+      "weekdays on y-axis",
+      "values[y][x] orientation preserved"
+    ],
+    "rejectIf": [
+      "xLabels and yLabels are swapped",
+      "the matrix is transposed",
+      "the result is a bar or line chart instead of a heatmap"
+    ]
+  },
+  {
+    "id": "engineering-profile-radar",
+    "storyExport": "EngineeringProfileRadar",
+    "prompt": "Compare three engineering team profiles across architecture, delivery, testing, DX, reliability, observability, security, and collaboration.",
+    "expected": [
+      "RadarChart",
+      "shared labels across three profiles",
+      "profile comparison rather than Cartesian substitution"
+    ],
+    "rejectIf": [
+      "the agent chooses a Cartesian chart",
+      "each profile does not share the same label set",
+      "the output collapses the data into a single series"
+    ]
+  },
+  {
+    "id": "browser-usage-donut",
+    "storyExport": "BrowserUsageDonut",
+    "prompt": "Create a donut chart for browser usage share.",
+    "expected": [
+      "PieChart",
+      "donut treatment",
+      "single snapshot share"
+    ],
+    "rejectIf": [
+      "the agent chooses stacked areas or bars",
+      "innerRadiusRatio stays at zero",
+      "the result invents a time axis"
+    ]
+  },
+  {
+    "id": "channel-mix-snapshot",
+    "storyExport": "ChannelMixSnapshot",
+    "prompt": "Show traffic source share for this one quarter only.",
+    "expected": [
+      "PieChart",
+      "single snapshot share",
+      "no time axis"
+    ],
+    "rejectIf": [
+      "the agent chooses StackedAreaChart",
+      "the agent invents a yearly progression",
+      "the output stops reading as a part-to-whole snapshot"
+    ]
+  },
+  {
+    "id": "operating-profit-bridge",
+    "storyExport": "OperatingProfitBridge",
+    "prompt": "Build a running bridge chart that shows how each factor increased or decreased operating profit from Q1 to Q2.",
+    "expected": [
+      "waterfall semantics",
+      "cumulative increases and decreases",
+      "bridge chart structure"
+    ],
+    "rejectIf": [
+      "the agent rewrites this as grouped bars",
+      "the cumulative bridge logic disappears",
+      "the semantic increase or decrease steps are lost"
+    ]
+  },
+  {
+    "id": "acquisition-flow-sankey",
+    "storyExport": "AcquisitionFlowSankey",
+    "prompt": "I need a sankey-like flow view for acquisition sources moving into product funnels and then into paid plans.",
+    "expected": [
+      "sankey or flow-diagram semantics",
+      "nodes and links",
+      "multi-stage directional flow"
+    ],
+    "rejectIf": [
+      "the agent forces the request into bars or lines",
+      "the flow links disappear",
+      "the output loses the staged movement between nodes"
+    ]
+  },
+  {
+    "id": "pipeline-dropoff-funnel",
+    "storyExport": "PipelineDropoffFunnel",
+    "prompt": "Show sales pipeline drop-off from visitors to closed deals.",
+    "expected": [
+      "funnel semantics",
+      "ordered conversion stages",
+      "shrinking stage widths"
+    ],
+    "rejectIf": [
+      "the stage order is lost",
+      "the result turns into a plain bar chart",
+      "conversion drop-off is no longer visually obvious"
+    ]
+  },
+  {
+    "id": "service-health-gauge",
+    "storyExport": "ServiceHealthGauge",
+    "prompt": "Build a service health gauge with warning zones and a current utilization value.",
+    "expected": [
+      "gauge semantics",
+      "value against min/max",
+      "colored threshold zones"
+    ],
+    "rejectIf": [
+      "the agent substitutes a progress bar without gauge framing",
+      "warning zones are removed",
+      "the chart no longer emphasizes the current value"
+    ]
+  },
+  {
+    "id": "release-window-candlestick",
+    "storyExport": "ReleaseWindowCandlestick",
+    "prompt": "Show daily deployment risk windows with open, high, low, and close values.",
+    "expected": [
+      "candlestick semantics",
+      "OHLC encoding",
+      "time-ordered sessions"
+    ],
+    "rejectIf": [
+      "the agent renders this as a line chart",
+      "open and close values are collapsed away",
+      "the wick or body distinction disappears"
+    ]
+  },
+  {
+    "id": "compensation-spread-box-plot",
+    "storyExport": "CompensationSpreadBoxPlot",
+    "prompt": "Compare compensation spread across departments with medians, quartiles, whiskers, and outliers.",
+    "expected": [
+      "box plot semantics",
+      "quartile distribution",
+      "outliers retained"
+    ],
+    "rejectIf": [
+      "the agent turns it into bars or lines",
+      "quartiles are not represented",
+      "outliers disappear from the output"
+    ]
+  },
+  {
+    "id": "product-revenue-treemap",
+    "storyExport": "ProductRevenueTreemap",
+    "prompt": "Create a treemap of revenue concentration across product categories.",
+    "expected": [
+      "treemap semantics",
+      "area encodes magnitude",
+      "hierarchical category blocks"
+    ],
+    "rejectIf": [
+      "the agent renders simple bars instead of a treemap",
+      "area no longer corresponds to value",
+      "the category blocks stop reading as a packed layout"
+    ]
+  },
+  {
+    "id": "capability-sunburst",
+    "storyExport": "CapabilitySunburst",
+    "prompt": "Show organizational capability breakdown as a concentric sunburst hierarchy.",
+    "expected": [
+      "sunburst semantics",
+      "concentric hierarchy",
+      "radial depth encoding"
+    ],
+    "rejectIf": [
+      "the agent turns it into a pie chart with no hierarchy",
+      "depth layers disappear",
+      "the output loses the parent-child structure"
+    ]
+  },
+  {
+    "id": "strategic-scorecard-composite",
+    "storyExport": "StrategicScorecardComposite",
+    "prompt": "Create a custom scorecard-style visualization combining ranked bars, threshold markers, and hover details for each business unit.",
+    "expected": [
+      "custom composed visualization",
+      "ranked bars and threshold markers",
+      "hover detail affordance"
+    ],
+    "rejectIf": [
+      "the agent collapses the request into a plain bar chart without thresholds",
+      "the composed nature of the request is ignored",
+      "hover or detail affordance disappears entirely"
+    ]
+  },
+  {
+    "id": "portfolio-benchmark-scatter",
+    "storyExport": "PortfolioBenchmarkScatter",
+    "prompt": "Plot portfolio growth against gross margin for product groups in a clean analytical scatter chart.",
+    "expected": [
+      "ScatterChart",
+      "style: \"ag\"",
+      "numeric x and y across grouped datasets"
+    ],
+    "rejectIf": [
+      "the agent introduces bubble sizing without a third metric",
+      "the chart becomes categorical bars",
+      "the analytical scatter framing is lost"
+    ]
+  }
+]

@@ -2,6 +2,7 @@
 import Widget from "@flitterjs/react";
 import { Headless } from "flitter-chart";
 import { TOAST_COLORS } from "./toastUtils";
+import type { StoryFrameProps } from "./storyTypes";
 import {
   Text,
   Container,
@@ -91,7 +92,11 @@ class AnimatedTreemapNodeState extends State<AnimatedTreemapNode> {
   }
 }
 
-export default function ToastTreemapChart() {
+export default function ToastTreemapChart({
+  renderer = "svg",
+  width = "500px",
+  height = "350px",
+}: StoryFrameProps) {
   return (
     <Widget
       widget={Headless.TreemapChart({
@@ -115,6 +120,10 @@ export default function ToastTreemapChart() {
                   }),
                 ],
               }),
+            }),
+          treemap: ({ nodes }: any) =>
+            Stack({
+              children: nodes,
             }),
           node: ({ label, value, color, index, x, y, width, height }: any) =>
             Positioned({
@@ -155,9 +164,9 @@ export default function ToastTreemapChart() {
         },
         colors: TOAST_COLORS,
       })}
-      width="500px"
-      height="350px"
-      renderer="svg"
+      width={width}
+      height={height}
+      renderer={renderer}
     />
   );
 }

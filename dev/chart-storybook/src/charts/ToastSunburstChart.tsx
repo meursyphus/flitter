@@ -1,6 +1,7 @@
 
 import Widget from "@flitterjs/react";
 import { Headless } from "flitter-chart";
+import type { StoryFrameProps } from "./storyTypes";
 import {
   Text,
   Container,
@@ -100,7 +101,11 @@ class AnimatedSunburstState extends State<AnimatedSunburst> {
   }
 }
 
-export default function ToastSunburstChart() {
+export default function ToastSunburstChart({
+  renderer = "svg",
+  width = "500px",
+  height = "350px",
+}: StoryFrameProps) {
   return (
     <Widget
       widget={Headless.SunburstChart({
@@ -130,9 +135,9 @@ export default function ToastSunburstChart() {
             }),
         },
       })}
-      width="500px"
-      height="350px"
-      renderer="svg"
+      width={width}
+      height={height}
+      renderer={renderer}
     />
   );
 }

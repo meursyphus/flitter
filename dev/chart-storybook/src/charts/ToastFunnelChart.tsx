@@ -1,6 +1,7 @@
 
 import Widget from "@flitterjs/react";
 import { Headless } from "flitter-chart";
+import type { StoryFrameProps } from "./storyTypes";
 import {
   Text,
   TextStyle,
@@ -87,7 +88,11 @@ class AnimatedStageState extends State<AnimatedStage> {
   }
 }
 
-export default function ToastFunnelChart() {
+export default function ToastFunnelChart({
+  renderer = "svg",
+  width = "500px",
+  height = "350px",
+}: StoryFrameProps) {
   return (
     <Widget
       widget={Headless.FunnelChart({
@@ -155,9 +160,9 @@ export default function ToastFunnelChart() {
             }),
         },
       })}
-      width="500px"
-      height="350px"
-      renderer="svg"
+      width={width}
+      height={height}
+      renderer={renderer}
     />
   );
 }

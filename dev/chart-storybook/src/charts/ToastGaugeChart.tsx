@@ -1,6 +1,7 @@
 
 import Widget from "@flitterjs/react";
 import { Headless } from "flitter-chart";
+import type { StoryFrameProps } from "./storyTypes";
 import {
   Text,
   Container,
@@ -114,7 +115,11 @@ class AnimatedValueLabelState extends State<AnimatedValueLabel> {
   }
 }
 
-export default function ToastGaugeChart() {
+export default function ToastGaugeChart({
+  renderer = "svg",
+  width = "500px",
+  height = "350px",
+}: StoryFrameProps) {
   return (
     <Widget
       widget={Headless.GaugeChart({
@@ -184,9 +189,9 @@ export default function ToastGaugeChart() {
           valueLabel: ({ value }: any) => new AnimatedValueLabel({ value }),
         },
       })}
-      width="500px"
-      height="350px"
-      renderer="svg"
+      width={width}
+      height={height}
+      renderer={renderer}
     />
   );
 }

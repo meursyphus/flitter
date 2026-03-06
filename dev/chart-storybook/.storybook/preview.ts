@@ -8,6 +8,7 @@ const preview: Preview = {
         order: [
           "Charts",
           [
+            "LLMEvaluation",
             "BarChart",
             "StackedBarChart",
             "LineChart",
@@ -15,6 +16,9 @@ const preview: Preview = {
             "ScatterChart",
             "BubbleChart",
             "StackedAreaChart",
+            "PieChart",
+            "RadarChart",
+            "HeatmapChart",
           ],
           "Legacy",
         ],

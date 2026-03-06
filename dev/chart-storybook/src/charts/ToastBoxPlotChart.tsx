@@ -2,6 +2,7 @@
 import Widget from "@flitterjs/react";
 import { Headless } from "flitter-chart";
 import { cartesianToastCustom } from "./toastUtils";
+import type { StoryFrameProps } from "./storyTypes";
 import {
   StatefulWidget,
   State,
@@ -107,7 +108,11 @@ class AnimatedBoxPlotGroupState extends State<AnimatedBoxPlotGroup> {
   }
 }
 
-export default function ToastBoxPlotChart() {
+export default function ToastBoxPlotChart({
+  renderer = "svg",
+  width = "500px",
+  height = "350px",
+}: StoryFrameProps) {
   return (
     <Widget
       widget={Headless.BoxPlotChart({
@@ -139,9 +144,9 @@ export default function ToastBoxPlotChart() {
             }),
         },
       })}
-      width="500px"
-      height="350px"
-      renderer="svg"
+      width={width}
+      height={height}
+      renderer={renderer}
     />
   );
 }

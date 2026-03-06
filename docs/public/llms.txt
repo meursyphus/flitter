@@ -1,0 +1,113 @@
+# Flitter chart generation guide for LLMs
+
+This guide is for agents that need to generate or edit chart code in the Flitter monorepo.
+
+Repository: https://github.com/meursyphus/flitter
+Preferred branch rule: always inspect the exact branch you were told to use, not the default branch.
+Local branch at authoring time (2026-03-06): renewal-2
+
+Primary output target:
+
+- build charts directly with `flitter-ui` primitives
+- render them with `@flitterjs/react`
+
+Reference-only target:
+
+- read `packages/chart` to learn chart structure, cartesian layout, scale logic, slot boundaries, and style ideas
+- do not assume the final output should import `flitter-chart` or `flitter-ui/chart`
+
+Start with project setup before chart authoring.
+
+## Core Path
+
+Read these first and in this order:
+
+1. `/llm/setup.md`
+   Install dependencies, run the workspace, and open the playgrounds.
+
+2. `/llm/fast-path.md`
+   Get from plain-language intent to a build strategy quickly.
+
+3. `/llm/request-parser.md`
+   Parse the prompt into structure, interaction, complexity, and data mode.
+
+4. `/llm/authoring-rules.md`
+   Follow repo-specific rules and avoid the wrong abstractions.
+
+5. `/llm/intent-traps.md`
+   Resolve ambiguous wording and bad default instincts.
+
+## Build Path
+
+Read these when writing the chart:
+
+6. `/llm/core-primitives.md`
+   Core `flitter-ui` building blocks.
+
+7. `/llm/cartesian-skeleton.md`
+   Strong default cartesian composition.
+
+8. `/llm/interaction-patterns.md`
+   Hover, tooltip, filtering, selection, dense-data UX.
+
+9. `/llm/advanced-patterns.md`
+   Stacking, negatives, overlays, derived scales, composed views.
+
+10. `/llm/beyond-headless.md`
+   Charts outside the current headless set.
+
+11. `/llm/novel-chart-design.md`
+   Design from semantics when no standard chart mapping is enough.
+
+## Reference Path
+
+Use these as supporting references:
+
+12. `/llm/repo-map.md`
+   Source-of-truth file map.
+
+13. `/llm/headless-architecture.md`
+   How chart-package internals are structured.
+
+14. `/llm/customization-patterns.md`
+   Decide whether a change belongs in config, custom renderers, or logic.
+
+15. `/llm/preset-reference.md`
+   Optional preset code references and extractable ideas.
+
+16. `/llm/chart-selection.md`
+   Quick family/style chooser.
+
+17. Chart references:
+   - `/llm/bar-chart.md`
+   - `/llm/line-area-chart.md`
+   - `/llm/scatter-bubble-chart.md`
+   - `/llm/pie-chart.md`
+   - `/llm/radar-chart.md`
+   - `/llm/heatmap-chart.md`
+
+18. `/llm/playground.md`
+   Validate the result in Storybook.
+
+Fast rules:
+
+- Set up the repo itself first with `pnpm install`.
+- Use `packages/chart` as a reference architecture, not as the default consumption API.
+- Prefer direct chart construction with `flitter-ui` primitives over importing a ready-made chart package.
+- The default render surface is `import Widget from "@flitterjs/react";`.
+- The default primitive surface is `import { ... } from "flitter-ui";`.
+- Do not invent chart package APIs that are not meant to be consumed directly.
+- If the user gives intent but no numeric data, synthesize a small illustrative dataset and clearly label it as illustrative or mock.
+- When an example in docs disagrees with Storybook or the package source, trust Storybook and `packages/chart/src`.
+- Use `Charts/LLMEvaluation` in Storybook as the first golden reference set for complex prompt validation.
+
+Internal-only evaluation assets:
+
+- `/llm/evaluation-loop.md`
+- `/llm/testing-prompts.md`
+- `/llm/validation-report.md`
+- `/llm/evaluation-cases.json`
+- `/llm/user-prompt-cookbook.md`
+- `/llm/critic-checklist.md`
+
+These are for developing and tightening the docs, not for the agent's normal first-read path.

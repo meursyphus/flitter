@@ -1,6 +1,7 @@
 
 import Widget from "@flitterjs/react";
 import { Headless } from "flitter-chart";
+import type { StoryFrameProps } from "./storyTypes";
 import {
   Text,
   Container,
@@ -96,7 +97,11 @@ const data = {
   ],
 };
 
-export default function ToastSankeyChart() {
+export default function ToastSankeyChart({
+  renderer = "svg",
+  width = "500px",
+  height = "350px",
+}: StoryFrameProps) {
   return (
     <Widget
       widget={Headless.SankeyChart({
@@ -122,9 +127,9 @@ export default function ToastSankeyChart() {
             }),
         },
       })}
-      width="500px"
-      height="350px"
-      renderer="svg"
+      width={width}
+      height={height}
+      renderer={renderer}
     />
   );
 }
