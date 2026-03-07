@@ -1,0 +1,42 @@
+import {
+	type Widget,
+	Provider,
+	BuildContext,
+	ChangeNotifierProvider,
+} from "flitter-core";
+import type { FunnelChartCustom, FunnelChartData } from "./types";
+import { FunnelChartController } from "./controller";
+import Chart from "./chart";
+
+const FUNNEL_CHART_KEY = Symbol("FunnelChartKey");
+
+export function FunnelChartProvider({
+	custom,
+	data,
+	config = {},
+}: {
+	custom: FunnelChartCustom<any>;
+	data: FunnelChartData;
+	config?: any;
+}): Widget {
+	return ChangeNotifierProvider({
+		providerKey: FUNNEL_CHART_KEY,
+		create: () =>
+			new FunnelChartController({
+				data,
+				custom,
+				config,
+			}),
+		update: (notifier) => {
+			const controller = notifier as FunnelChartController;
+			controller.data = data;
+			controller.custom = custom;
+			controller.config = config;
+		},
+		child: new Chart(),
+	});
+}
+
+FunnelChartProvider.of = (context: BuildContext): FunnelChartController => {
+	return Provider.of(FUNNEL_CHART_KEY, context) as FunnelChartController;
+};

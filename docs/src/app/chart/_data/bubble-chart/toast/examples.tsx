@@ -1,7 +1,7 @@
 "use client";
 
 import Widget from "@flitterjs/react";
-import { BubbleChart } from "flitter-chart";
+import { BubbleChart } from "chart-styles";
 
 const defaultData = {
   datasets: [

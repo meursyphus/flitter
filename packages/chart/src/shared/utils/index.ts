@@ -4,6 +4,10 @@ import {
   Widget,
   SizedBox,
 } from "flitter-core";
+export * from "./scale";
+export * from "./draw-spline-line";
+export * from "./color";
+export * from "./angle";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function classToFn<V extends new (...arr: any[]) => any>(
   Constructor: V,

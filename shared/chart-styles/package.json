@@ -1,0 +1,17 @@
+{
+  "name": "chart-styles",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "module": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./*": "./*"
+  },
+  "dependencies": {
+    "flitter-chart": "workspace:*",
+    "flitter-core": "workspace:*"
+  }
+}

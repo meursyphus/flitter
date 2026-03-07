@@ -22,10 +22,10 @@
     "baseUrl": "./",
     "paths": {
       "@shared/*": ["./src/shared/*"],
-      "@styles/*": ["./src/styles/*"],
       "@utils/*": ["./src/shared/utils/*"],
       "@headless/*": ["./src/headless/*"]
     },
     "outDir": "./dist"
   },
+  "include": ["src/index.ts", "src/headless/**/*", "src/shared/**/*"]
 }

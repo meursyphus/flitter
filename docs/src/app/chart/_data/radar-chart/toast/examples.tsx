@@ -1,7 +1,7 @@
 "use client";
 
 import Widget from "@flitterjs/react";
-import { RadarChart } from "flitter-chart";
+import { RadarChart } from "chart-styles";
 
 const skillData = {
   labels: ["JavaScript", "TypeScript", "React", "Node.js", "CSS", "GraphQL", "Testing", "DevOps"],

@@ -12,6 +12,7 @@
   "dependencies": {
     "flitter-core": "workspace:*",
     "flitter-chart": "workspace:*",
+    "chart-styles": "workspace:*",
     "@flitterjs/react": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

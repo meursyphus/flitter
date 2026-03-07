@@ -9,7 +9,17 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "flitter-core": ["../../packages/core/src/index.ts"],
+      "chart-styles": ["../../shared/chart-styles/index.ts"],
+      "chart-styles/*": ["../../shared/chart-styles/*"],
+      "@headless/*": ["../../packages/chart/src/headless/*"],
+      "@shared/*": ["../../packages/chart/src/shared/*"],
+      "@styles/*": ["../../shared/chart-styles/styles/*"],
+      "@utils/*": ["../../packages/chart/src/shared/utils/*"]
+    }
   },
   "include": ["src"]
 }

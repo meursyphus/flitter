@@ -1,0 +1,22 @@
+Flitter chart reading order:
+
+1. docs/llm/headless-pattern.md
+2. docs/llm/widget-reference.md
+3. docs/llm/building-blocks.md
+4. docs/llm/recipes/cartesian-recipe.md
+5. docs/llm/recipes/non-cartesian-recipe.md
+6. docs/llm/recipes/complex-recipe.md
+
+Chart category guide:
+
+- Cartesian with axes: use `Headless.BarChart`, `Headless.LineChart`, `Headless.HistogramChart`, `Headless.ComboChart`, then compose with `Cartesian`, `BarLike`, `LineLike`, `PointLike`.
+- Non-cartesian radial: use `Headless.PieChart`, `Headless.DonutChart`, `Headless.PolarAreaChart`, `Headless.ProgressChart`.
+- Hierarchical / flow: use `Headless.TreemapChart`, `Headless.SankeyChart`, `Headless.SunburstChart`, `Headless.NetworkChart`.
+
+Do not:
+
+- invent React hooks inside headless chart files
+- export controller state as mutable objects without setters
+- mutate chart state outside controller setters / methods
+- put fixed colors, fonts, or theme defaults inside `packages/chart/src/headless/*`
+- import `shared/chart-styles` back into `packages/chart/src/headless/*`

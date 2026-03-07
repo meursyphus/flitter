@@ -1,7 +1,6 @@
 import type { Widget } from "flitter-core";
-import type { ToastBaseConfig } from "@styles/toast/cartesian/config";
 
-export type CartesianContext<TConfig extends ToastBaseConfig = ToastBaseConfig> = {
+export type CartesianContext<TConfig = Record<string, unknown>> = {
   config: TConfig;
   isSeriesVisible(legend: string): boolean;
   toggleSeries(legend: string): void;

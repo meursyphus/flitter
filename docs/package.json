@@ -6,14 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "llm:build": "node ./scripts/build-llm-pack.mjs"
   },
   "dependencies": {
     "@flitterjs/react": "workspace:*",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
     "@next/mdx": "^16.1.6",
+    "chart-styles": "workspace:*",
     "clsx": "^2.1.1",
+    "flitter-core": "workspace:*",
     "flitter-chart": "workspace:*",
     "next": "^15.0.0",
     "react": "^19.0.0",

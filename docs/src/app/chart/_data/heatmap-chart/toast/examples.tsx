@@ -1,7 +1,7 @@
 "use client";
 
 import Widget from "@flitterjs/react";
-import { HeatmapChart } from "flitter-chart";
+import { HeatmapChart } from "chart-styles";
 
 const defaultData = {
   xLabels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],

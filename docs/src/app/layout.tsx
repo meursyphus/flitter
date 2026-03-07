@@ -20,8 +20,7 @@ const instrumentSerif = Instrument_Serif({
 
 export const metadata: Metadata = {
   title: "Flitter",
-  description:
-    "High-performance Canvas/SVG rendering engine for the web.",
+  description: "High-performance Canvas/SVG rendering engine for the web.",
 };
 
 export default function RootLayout({
@@ -30,7 +29,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${pretendard.variable} ${instrumentSerif.variable}`}>
+    <html
+      lang="en"
+      className={`${pretendard.variable} ${instrumentSerif.variable}`}
+    >
       <head>
         {process.env.NODE_ENV === "development" && (
           <Script
@@ -40,7 +42,10 @@ export default function RootLayout({
           />
         )}
       </head>
-      <body className="bg-white text-neutral-900 antialiased" style={{ fontFamily: "var(--font-body)" }}>
+      <body
+        className="bg-white text-neutral-900 antialiased"
+        style={{ fontFamily: "var(--font-body)" }}
+      >
         <Header />
         <div className="flex">
           <GlobalSidebar />

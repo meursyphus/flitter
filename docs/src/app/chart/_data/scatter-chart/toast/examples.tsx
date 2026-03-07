@@ -1,7 +1,7 @@
 "use client";
 
 import Widget from "@flitterjs/react";
-import { ScatterChart } from "flitter-chart";
+import { ScatterChart } from "chart-styles";
 
 const defaultData = {
   datasets: [
