@@ -14,7 +14,6 @@
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
     "@next/mdx": "^16.1.6",
-    "chart-styles": "workspace:*",
     "clsx": "^2.1.1",
     "flitter-core": "workspace:*",
     "flitter-chart": "workspace:*",
@@ -23,6 +22,7 @@
     "react-dom": "^19.0.0",
     "rehype-pretty-code": "^0.14.1",
     "remark-gfm": "^4.0.1",
+    "shared": "workspace:*",
     "shiki": "^3.23.0"
   },
   "devDependencies": {

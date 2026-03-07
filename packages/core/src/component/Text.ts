@@ -7,8 +7,8 @@ import type {
 } from "../type";
 import { type TextAlign, TextSpan } from "../type";
 import type InlineSpan from "../type/_types/Inline-span";
-import type { BuildContext } from "../widget";
-import { StatelessWidget } from "../widget";
+import type { BuildContext } from "../element";
+import StatelessWidget from "../widget/StatelessWidget";
 import type Widget from "../widget/Widget";
 import RichText from "./RichText";
 

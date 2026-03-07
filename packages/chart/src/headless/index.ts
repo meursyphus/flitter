@@ -1,4 +1,5 @@
 export { default as BarChart } from "./bar-chart";
+export { BarChartProvider } from "./bar-chart/provider";
 export type {
 	BarChartContext,
 	BarChartCustom,
@@ -12,6 +13,7 @@ export type {
 export { BarChartController } from "./bar-chart/controller";
 
 export { default as LineChart } from "./line-chart";
+export { LineChartProvider } from "./line-chart/provider";
 export type {
 	LineChartContext,
 	LineChartCustom,
@@ -24,6 +26,7 @@ export type {
 export { LineChartController } from "./line-chart/controller";
 
 export { default as BubbleChart } from "./bubble-chart";
+export { BubbleChartProvider } from "./bubble-chart/provider";
 export type {
 	BubbleChartContext,
 	BubbleChartCustom,
@@ -37,6 +40,7 @@ export type {
 export { BubbleChartController } from "./bubble-chart/controller";
 
 export { default as ScatterChart } from "./scatter-chart";
+export { ScatterChartProvider } from "./scatter-chart/provider";
 export type {
 	ScatterChartContext,
 	ScatterChartCustom,
@@ -50,6 +54,7 @@ export type {
 export { ScatterChartController } from "./scatter-chart/controller";
 
 export { default as HeatmapChart } from "./heatmap-chart";
+export { HeatmapChartProvider } from "./heatmap-chart/provider";
 export type {
 	HeatmapContext,
 	HeatmapCustom,
@@ -59,6 +64,7 @@ export type {
 export { HeatmapController } from "./heatmap-chart/controller";
 
 export { default as PieChart } from "./pie-chart";
+export { PieChartProvider } from "./pie-chart/provider";
 export type {
 	PieChartContext,
 	PieChartCustom,
@@ -67,6 +73,7 @@ export type {
 export { PieChartController } from "./pie-chart/controller";
 
 export { default as RadarChart } from "./radar-chart";
+export { RadarChartProvider } from "./radar-chart/provider";
 export type {
 	RadarChartContext,
 	RadarChartCustom,
@@ -78,6 +85,7 @@ export type {
 export { RadarChartController } from "./radar-chart/controller";
 
 export { default as BoxPlotChart } from "./box-plot-chart";
+export { BoxPlotChartProvider } from "./box-plot-chart/provider";
 export type {
 	BoxPlotChartContext,
 	BoxPlotChartCustom,
@@ -92,6 +100,7 @@ export type {
 export { BoxPlotChartController } from "./box-plot-chart/controller";
 
 export { default as CandlestickChart } from "./candlestick-chart";
+export { CandlestickChartProvider } from "./candlestick-chart/provider";
 export type {
 	CandlestickChartContext,
 	CandlestickChartCustom,
@@ -105,6 +114,7 @@ export type {
 export { CandlestickChartController } from "./candlestick-chart/controller";
 
 export { default as WaterfallChart } from "./waterfall-chart";
+export { WaterfallChartProvider } from "./waterfall-chart/provider";
 export type {
 	WaterfallChartContext,
 	WaterfallBarType,
@@ -115,6 +125,7 @@ export type {
 export { WaterfallChartController } from "./waterfall-chart/controller";
 
 export { default as FunnelChart } from "./funnel-chart";
+export { FunnelChartProvider } from "./funnel-chart/provider";
 export type {
 	FunnelChartContext,
 	FunnelChartStage,
@@ -125,6 +136,7 @@ export type {
 export { FunnelChartController } from "./funnel-chart/controller";
 
 export { default as GaugeChart } from "./gauge-chart";
+export { GaugeChartProvider } from "./gauge-chart/provider";
 export type {
 	GaugeChartContext,
 	GaugeChartZone,
@@ -134,6 +146,7 @@ export type {
 export { GaugeChartController } from "./gauge-chart/controller";
 
 export { default as TreemapChart } from "./treemap-chart";
+export { TreemapChartProvider } from "./treemap-chart/provider";
 export type {
 	TreemapContext,
 	TreemapCustom,
@@ -144,6 +157,7 @@ export type {
 export { TreemapController } from "./treemap-chart/controller";
 
 export { default as SankeyChart } from "./sankey-chart";
+export { SankeyChartProvider } from "./sankey-chart/provider";
 export type {
 	SankeyChartContext,
 	SankeyChartCustom,
@@ -155,6 +169,7 @@ export type {
 export { SankeyChartController } from "./sankey-chart/controller";
 
 export { default as SunburstChart } from "./sunburst-chart";
+export { SunburstChartProvider } from "./sunburst-chart/provider";
 export type {
 	SunburstChartContext,
 	SunburstChartNode,
@@ -167,6 +182,7 @@ export type {
 export { SunburstChartController } from "./sunburst-chart/controller";
 
 export { default as DonutChart } from "./donut-chart";
+export { DonutChartProvider } from "./donut-chart/provider";
 export type {
 	DonutChartContext,
 	DonutChartData,
@@ -175,6 +191,7 @@ export type {
 export { DonutChartController } from "./donut-chart/controller";
 
 export { default as HistogramChart } from "./histogram-chart";
+export { HistogramChartProvider } from "./histogram-chart/provider";
 export type {
 	HistogramChartContext,
 	HistogramBin,
@@ -185,6 +202,7 @@ export type {
 export { HistogramChartController } from "./histogram-chart/controller";
 
 export { default as PolarAreaChart } from "./polar-area-chart";
+export { PolarAreaChartProvider } from "./polar-area-chart/provider";
 export type {
 	PolarAreaChartContext,
 	PolarAreaChartData,
@@ -193,6 +211,7 @@ export type {
 export { PolarAreaChartController } from "./polar-area-chart/controller";
 
 export { default as ComboChart } from "./combo-chart";
+export { ComboChartProvider } from "./combo-chart/provider";
 export type {
 	ComboChartContext,
 	ComboDataset,
@@ -204,6 +223,7 @@ export type {
 export { ComboChartController } from "./combo-chart/controller";
 
 export { default as GanttChart } from "./gantt-chart";
+export { GanttChartProvider } from "./gantt-chart/provider";
 export type {
 	GanttChartContext,
 	GanttTask,
@@ -214,6 +234,7 @@ export type {
 export { GanttChartController } from "./gantt-chart/controller";
 
 export { default as NetworkChart } from "./network-chart";
+export { NetworkChartProvider } from "./network-chart/provider";
 export type {
 	NetworkChartContext,
 	NetworkNode,
@@ -227,6 +248,7 @@ export type {
 export { NetworkChartController } from "./network-chart/controller";
 
 export { default as ProgressChart } from "./progress-chart";
+export { ProgressChartProvider } from "./progress-chart/provider";
 export type {
 	ProgressChartContext,
 	ProgressChartData,

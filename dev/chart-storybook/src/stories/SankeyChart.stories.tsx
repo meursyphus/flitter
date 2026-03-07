@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Widget from "@flitterjs/react";
-import { SankeyChart } from "chart-styles";
+import { SankeyChart } from "shared/chart";
 
 type StoryArgs = {
   renderer: "svg" | "canvas";

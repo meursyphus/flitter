@@ -15,6 +15,7 @@ export * from './grid-y-line'
 export * from './axis-corner'
 
 // Re-export from @shared level (moved out of cartesian)
+export { Label } from '../label'
 export { Label as XAxisLabel, Label as YAxisLabel } from '../label'
 export { Title } from '../title'
 export { Legend } from '../legend'

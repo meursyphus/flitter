@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "type": "module",
   "description": "Flitter - A high-performance JavaScript rendering engine inspired by Flutter",
+  "bin": {
+    "flitter": "./cli/index.mjs"
+  },
   "keywords": ["rendering-engine", "data-visualization", "svg", "canvas", "flutter-like"],
   "homepage": "https://flitter.dev",
   "repository": "https://github.com/meursyphus/flitter",
@@ -33,7 +36,7 @@
       "require": "./dist/chart.cjs"
     }
   },
-  "files": ["dist"],
+  "files": ["dist", "cli"],
   "publishConfig": {
     "access": "public"
   }

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Widget from "@flitterjs/react";
-import { DonutChart } from "chart-styles";
+import { DonutChart } from "shared/chart";
 
 type StoryArgs = {
   renderer: "svg" | "canvas";

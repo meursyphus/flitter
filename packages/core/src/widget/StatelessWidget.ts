@@ -1,4 +1,4 @@
-import type { BuildContext } from ".";
+import type { BuildContext } from "../element";
 import { StatelessElement } from "../element";
 import Widget from "./Widget";
 

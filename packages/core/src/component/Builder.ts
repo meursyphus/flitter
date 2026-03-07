@@ -1,5 +1,5 @@
-import type { BuildContext } from "../widget";
-import { StatelessWidget } from "../widget";
+import type { BuildContext } from "../element";
+import StatelessWidget from "../widget/StatelessWidget";
 import type Widget from "../widget/Widget";
 
 function Builder(...props: ConstructorParameters<typeof _Builder>) {

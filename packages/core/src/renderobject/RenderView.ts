@@ -1,6 +1,7 @@
 import { ContainerLayer } from "../framework/renderer/canvas/layer";
 import type { CanvasRenderPipeline } from "../framework/renderer/canvas/canvas-renderer";
-import { type RenderPipeline, CanvasPainter } from "../framework";
+import { RenderPipeline } from "../framework/renderer/renderer";
+import { CanvasPainter } from "../framework/renderer/canvas/canvas-painter";
 import { Size, Constraints } from "../type";
 import RenderObject from "./RenderObject";
 

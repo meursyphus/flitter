@@ -4,7 +4,8 @@ import { Alignment, Matrix4, TextDirection } from "../../type";
 import { assert } from "../../utils";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
-import { CanvasPainter, type CanvasPaintingContext } from "../../framework";
+import { CanvasPainter } from "../../framework/renderer/canvas/canvas-painter";
+import type { CanvasPaintingContext } from "../../framework/renderer/canvas/canvas-painting-context";
 import type { HitTestResult } from "../../hit-test/HitTestResult";
 
 class Transform extends SingleChildRenderObjectWidget {

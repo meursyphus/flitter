@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Widget from "@flitterjs/react";
-import { FunnelChart } from "chart-styles";
+import { FunnelChart } from "shared/chart";
 
 type StoryArgs = {
   renderer: "svg" | "canvas";

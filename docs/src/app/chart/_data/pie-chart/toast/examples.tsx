@@ -1,7 +1,7 @@
 "use client";
 
 import Widget from "@flitterjs/react";
-import { PieChart } from "chart-styles";
+import { PieChart } from "shared/chart";
 
 const defaultData = {
   datasets: [

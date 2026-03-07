@@ -13,7 +13,9 @@ export default defineConfig({
     rollupOptions: {
       external: ["flitter-core"],
       output: {
-        globals: {},
+        globals: {
+          "flitter-core": "flitterCore",
+        },
       },
     },
   },

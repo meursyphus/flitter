@@ -16,13 +16,32 @@ const config: StorybookConfig = {
     config.resolve = config.resolve || {};
     config.resolve.alias = {
       ...config.resolve.alias,
+      "flitter-core/component/Tooltip": path.resolve(coreRoot, "src/component/Tooltip.ts"),
       "flitter-chart": path.resolve(chartRoot, "src/index.ts"),
       "flitter-core": path.resolve(coreRoot, "src/index.ts"),
+      "shared/chart": path.resolve(__dirname, "../../shared/chart.ts"),
       "chart-styles": path.resolve(chartStylesRoot, "index.ts"),
       "@shared": path.resolve(chartRoot, "src/shared"),
       "@styles": path.resolve(chartStylesRoot, "styles"),
       "@utils": path.resolve(chartRoot, "src/shared/utils"),
       "@headless": path.resolve(chartRoot, "src/headless"),
+    };
+    config.build = {
+      ...config.build,
+      chunkSizeWarningLimit: 1200,
+      rollupOptions: {
+        ...config.build?.rollupOptions,
+        onwarn(warning, warn) {
+          const message = typeof warning === "string" ? warning : warning.message ?? "";
+          if (
+            message.includes("@storybook/core/dist/preview/runtime.js") &&
+            message.includes("Use of eval")
+          ) {
+            return;
+          }
+          warn(warning);
+        },
+      },
     };
     return config;
   },

@@ -1,7 +1,7 @@
 import type Widget from "../widget/Widget";
 import ComponentElement from "./ComponentElement";
 import type StatefulWidget from "../widget/StatefulWidget";
-import type { BuildContext } from "../widget";
+import type { BuildContext } from "./index";
 
 export class StatefulElement extends ComponentElement {
   state: State<StatefulWidget>;

@@ -12,19 +12,19 @@
   "dependencies": {
     "flitter-core": "workspace:*",
     "flitter-chart": "workspace:*",
-    "chart-styles": "workspace:*",
     "@flitterjs/react": "workspace:*",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "shared": "workspace:*"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "^8.4.7",
-    "@storybook/react": "^8.4.7",
-    "@storybook/react-vite": "^8.4.7",
+    "@storybook/addon-essentials": "^8.6.18",
+    "@storybook/react": "^8.6.18",
+    "@storybook/react-vite": "^8.6.18",
     "@types/react": "^18.3.14",
     "@types/react-dom": "^18.3.2",
     "@vitejs/plugin-react": "^4.2.1",
-    "storybook": "^8.4.7",
+    "storybook": "^8.6.18",
     "typescript": "^5.2.2",
     "vite": "^5.0.8"
   }

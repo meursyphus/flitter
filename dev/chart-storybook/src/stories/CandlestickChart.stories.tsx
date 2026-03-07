@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Widget from "@flitterjs/react";
-import { CandlestickChart } from "chart-styles";
+import { CandlestickChart } from "shared/chart";
 
 type StoryArgs = {
   renderer: "svg" | "canvas";

@@ -1,8 +1,10 @@
-import { CanvasPainter, SvgPainter } from "../../framework";
+import { CanvasPainter } from "../../framework/renderer/canvas/canvas-painter";
+import { SvgPainter } from "../../framework/renderer/svg/svg-painter";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import type { Constraints, Offset } from "../../type";
 import { Size } from "../../type";
-import type { SvgPaintContext, CanvasPaintingContext } from "../../framework";
+import type { SvgPaintContext } from "../../framework/renderer/svg/svg-painter";
+import type { CanvasPaintingContext } from "../../framework/renderer/canvas/canvas-painting-context";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 

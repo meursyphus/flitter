@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Widget from "@flitterjs/react";
-import { ProgressChart } from "chart-styles";
+import { ProgressChart } from "shared/chart";
 
 type StoryArgs = {
   renderer: "svg" | "canvas";

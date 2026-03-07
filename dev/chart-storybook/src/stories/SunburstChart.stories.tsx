@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Widget from "@flitterjs/react";
-import { SunburstChart } from "chart-styles";
+import { SunburstChart } from "shared/chart";
 
 type StoryArgs = {
   renderer: "svg" | "canvas";

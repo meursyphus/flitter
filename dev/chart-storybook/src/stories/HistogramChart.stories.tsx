@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Widget from "@flitterjs/react";
-import { HistogramChart } from "chart-styles";
+import { HistogramChart } from "shared/chart";
 
 type StoryArgs = {
   renderer: "svg" | "canvas";

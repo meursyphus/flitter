@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Widget from "@flitterjs/react";
-import { BoxPlotChart } from "chart-styles";
+import { BoxPlotChart } from "shared/chart";
 
 type StoryArgs = {
   renderer: "svg" | "canvas";

@@ -9,7 +9,7 @@ Flitter chart reading order:
 
 Chart category guide:
 
-- Cartesian with axes: use `Headless.BarChart`, `Headless.LineChart`, `Headless.HistogramChart`, `Headless.ComboChart`, then compose with `Cartesian`, `BarLike`, `LineLike`, `PointLike`.
+- Cartesian with axes: use `Headless.BarChart`, `Headless.LineChart`, `Headless.HistogramChart`, `Headless.ComboChart`, then compose with `Cartesian` plus local structural helpers. `BarLike`, `LineLike`, `PointLike` are internal to `shared/chart`.
 - Non-cartesian radial: use `Headless.PieChart`, `Headless.DonutChart`, `Headless.PolarAreaChart`, `Headless.ProgressChart`.
 - Hierarchical / flow: use `Headless.TreemapChart`, `Headless.SankeyChart`, `Headless.SunburstChart`, `Headless.NetworkChart`.
 
