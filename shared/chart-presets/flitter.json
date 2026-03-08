@@ -1,0 +1,9 @@
+{
+  "$schema": "https://flitter.dev/schema/flitter.json",
+  "tsx": true,
+  "framework": "react",
+  "defaultChartStyle": "ag",
+  "aliases": {
+    "charts": "."
+  }
+}

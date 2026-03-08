@@ -47,7 +47,6 @@ function AgBarChart({ args, data }: { args: BarChartArgs; data: typeof defaultDa
   return (
     <Widget
       widget={BarChart({
-        style: "ag",
         direction: args.direction,
         data,
         config: {
@@ -60,10 +59,6 @@ function AgBarChart({ args, data }: { args: BarChartArgs; data: typeof defaultDa
           bar: {
             gap: args.barGap,
             cornerRadius: args.barCornerRadius,
-          },
-          animation: {
-            enabled: args.animationEnabled,
-            duration: args.animationDuration,
           },
         },
       })}

@@ -1,1 +1,1 @@
-export * from "chart-styles";
+export * from "chart-presets";

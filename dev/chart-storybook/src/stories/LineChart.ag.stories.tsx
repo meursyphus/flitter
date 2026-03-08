@@ -37,7 +37,6 @@ function AgLineChart({ args }: { args: LineChartArgs }) {
   return (
     <Widget
       widget={LineChart({
-        style: "ag",
         data: defaultData,
         config: {
           title: { text: args.title, position, alignment },
@@ -49,10 +48,6 @@ function AgLineChart({ args }: { args: LineChartArgs }) {
           line: {
             strokeWidth: args.lineStrokeWidth,
             spline: args.lineSpline,
-          },
-          animation: {
-            enabled: args.animationEnabled,
-            duration: args.animationDuration,
           },
         },
       })}

@@ -38,7 +38,6 @@ function AgAreaChart({ args }: { args: AreaChartArgs }) {
   return (
     <Widget
       widget={AreaChart({
-        style: "ag",
         data: defaultData,
         config: {
           title: { text: args.title, position, alignment },
@@ -51,10 +50,6 @@ function AgAreaChart({ args }: { args: AreaChartArgs }) {
             strokeWidth: args.areaStrokeWidth,
             opacity: args.areaOpacity,
             spline: args.areaSpline,
-          },
-          animation: {
-            enabled: args.animationEnabled,
-            duration: args.animationDuration,
           },
         },
       })}

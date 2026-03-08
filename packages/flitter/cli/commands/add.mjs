@@ -1,5 +1,6 @@
 import path from "node:path";
 import {
+  getDefaultChartStyle,
   readFlitterConfig,
   resolveChartsDirectory,
 } from "../lib/config.mjs";
@@ -16,6 +17,7 @@ import {
   generateStyleBaseOverrides,
   loadRegistry,
   renderTemplateFile,
+  resolveItemOutputDir,
   resolveRegistryItems,
 } from "../lib/registry.mjs";
 
@@ -31,8 +33,14 @@ export async function runAdd({
     throw new Error("flitter.json not found. Run `flitter init` first.");
   }
 
+  const defaultStyle = getDefaultChartStyle(flitterConfig.value);
   const registry = await loadRegistry();
-  const selectedItem = findRegistryItem(registry, chartName, style);
+  const selectedItem = findRegistryItem(
+    registry,
+    chartName,
+    style,
+    defaultStyle,
+  );
   if (!selectedItem) {
     const styleLabel = style ? ` with style ${style}` : "";
     throw new Error(`Registry item not found for ${chartName}${styleLabel}`);
@@ -45,10 +53,14 @@ export async function runAdd({
   await ensureDirectory(outputRoot);
 
   const itemsToWrite = resolveRegistryItems(registry, selectedItem);
+  const targetDirs = new Map(
+    itemsToWrite.map((item) => [item.id, resolveItemOutputDir(item, defaultStyle)]),
+  );
   const plannedWrites = [];
 
   for (const item of itemsToWrite) {
-    const itemRoot = path.join(outputRoot, item.outputDir);
+    const itemOutputDir = targetDirs.get(item.id) ?? item.outputDir;
+    const itemRoot = path.join(outputRoot, itemOutputDir);
     const itemExists = await fileExists(itemRoot);
 
     if (item.id !== selectedItem.id && itemExists) {
@@ -72,13 +84,22 @@ export async function runAdd({
     }
 
     for (const file of item.files) {
-      plannedWrites.push(await renderTemplateFile({ registry, item, file, outputRoot }));
+      plannedWrites.push(
+        await renderTemplateFile({
+          registry,
+          item,
+          file,
+          outputRoot,
+          targetOutputDir: itemOutputDir,
+          targetDirs,
+        }),
+      );
     }
 
     if (item.kind === "plugin-chart") {
       const metadata = registry.pluginChartMetadata[item.name];
       plannedWrites.push({
-        targetPath: path.join(outputRoot, item.outputDir, "index.ts"),
+        targetPath: path.join(outputRoot, itemOutputDir, "index.ts"),
         content: generatePluginIndex(item, metadata),
       });
     }
@@ -100,5 +121,6 @@ export async function runAdd({
     await ensureDependencies(cwd, dependencies);
   }
 
-  console.log(`Added ${selectedItem.id} into ${path.relative(cwd, outputRoot) || "."}`);
+  const selectedOutputDir = targetDirs.get(selectedItem.id) ?? selectedItem.outputDir;
+  console.log(`Added ${selectedOutputDir} into ${path.relative(cwd, outputRoot) || "."}`);
 }

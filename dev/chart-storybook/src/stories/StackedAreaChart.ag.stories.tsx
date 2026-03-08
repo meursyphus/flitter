@@ -38,7 +38,6 @@ function AgStackedAreaChart({ args, data }: { args: StackedAreaChartArgs; data: 
   return (
     <Widget
       widget={StackedAreaChart({
-        style: "ag",
         data,
         config: {
           title: { text: args.title, position, alignment },
@@ -50,10 +49,6 @@ function AgStackedAreaChart({ args, data }: { args: StackedAreaChartArgs; data: 
           area: {
             opacity: args.areaOpacity,
             strokeWidth: args.areaStrokeWidth,
-          },
-          animation: {
-            enabled: args.animationEnabled,
-            duration: args.animationDuration,
           },
         },
       })}

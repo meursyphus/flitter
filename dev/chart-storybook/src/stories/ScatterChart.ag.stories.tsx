@@ -139,7 +139,6 @@ function AgScatterChart({ args }: { args: ScatterChartArgs }) {
   return (
     <Widget
       widget={ScatterChart({
-        style: "ag",
         data: defaultData,
         config: {
           title: { text: args.title, position, alignment },
@@ -150,12 +149,7 @@ function AgScatterChart({ args }: { args: ScatterChartArgs }) {
           },
           scatter: {
             size: args.scatterSize,
-            fill: args.scatterFill,
             strokeWidth: args.scatterStrokeWidth,
-          },
-          animation: {
-            enabled: args.animationEnabled,
-            duration: args.animationDuration,
           },
         },
       })}

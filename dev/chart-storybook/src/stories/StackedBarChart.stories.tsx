@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Widget from "@flitterjs/react";
-import { StackedBarChart } from "shared/chart";
+import { ToastStackedBarChart as ToastStackedBarChartWidget } from "shared/chart";
 
 const TITLE_OPTIONS = ["top-start", "top-center", "top-end", "bottom-start", "bottom-center", "bottom-end"] as const;
 const LEGEND_POSITIONS = ["top", "bottom", "right", "right-top", "right-center", "right-bottom"] as const;
@@ -45,8 +45,7 @@ function ToastStackedBarChart({ args, data }: { args: StackedBarChartArgs; data:
   const { position, alignment } = parseTitlePlacement(args.titlePlacement);
   return (
     <Widget
-      widget={StackedBarChart({
-        style: "toast",
+      widget={ToastStackedBarChartWidget({
         direction: args.direction,
         data,
         config: {

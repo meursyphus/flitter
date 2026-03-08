@@ -46,7 +46,6 @@ function AgStackedBarChart({ args, data }: { args: StackedBarChartArgs; data: ty
   return (
     <Widget
       widget={StackedBarChart({
-        style: "ag",
         direction: args.direction,
         data,
         config: {
@@ -58,10 +57,6 @@ function AgStackedBarChart({ args, data }: { args: StackedBarChartArgs; data: ty
           },
           bar: {
             gap: args.barGap,
-          },
-          animation: {
-            enabled: args.animationEnabled,
-            duration: args.animationDuration,
           },
         },
       })}

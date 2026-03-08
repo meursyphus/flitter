@@ -9,7 +9,7 @@
     "./chart": "./chart.ts"
   },
   "dependencies": {
-    "chart-styles": "workspace:*",
+    "chart-presets": "workspace:*",
     "flitter-core": "workspace:*",
     "@flitterjs/svelte": "workspace:*"
   }

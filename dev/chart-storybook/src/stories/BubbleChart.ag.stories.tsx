@@ -139,7 +139,6 @@ function AgBubbleChart({ args }: { args: BubbleChartArgs }) {
   return (
     <Widget
       widget={BubbleChart({
-        style: "ag",
         data: defaultData,
         config: {
           title: { text: args.title, position, alignment },
@@ -152,10 +151,6 @@ function AgBubbleChart({ args }: { args: BubbleChartArgs }) {
             minRadius: args.bubbleMinRadius,
             maxRadius: args.bubbleMaxRadius,
             opacity: args.bubbleOpacity,
-          },
-          animation: {
-            enabled: args.animationEnabled,
-            duration: args.animationDuration,
           },
         },
       })}

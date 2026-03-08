@@ -97,7 +97,7 @@ export async function loadRegistry() {
   return module.getRegistry ? module.getRegistry() : module.default;
 }
 
-export function findRegistryItem(registry, chartName, style) {
+export function findRegistryItem(registry, chartName, style, preferredStyle = "ag") {
   if (style != null) {
     return registry.items.find((item) => item.name === chartName && item.style === style) ?? null;
   }
@@ -119,9 +119,18 @@ export function findRegistryItem(registry, chartName, style) {
   }
 
   return (
+    candidates.find((item) => item.style === preferredStyle) ??
     candidates.find((item) => item.style === "toast") ??
     (candidates.length === 1 ? candidates[0] : null)
   );
+}
+
+export function resolveItemOutputDir(item, defaultStyle) {
+  if (item.kind === "style-base" || item.kind === "support" || item.style == null) {
+    return item.outputDir;
+  }
+
+  return item.style === defaultStyle ? item.name : item.outputDir;
 }
 
 export function resolveRegistryItems(registry, selectedItem) {
@@ -281,10 +290,17 @@ export async function renderTemplateFile({
   item,
   file,
   outputRoot,
+  targetOutputDir = item.outputDir,
+  targetDirs = new Map(),
 }) {
   const sourcePath = registry.resolveTemplatePath(file.source);
   let content = await readText(sourcePath);
-  const targetPath = path.join(outputRoot, file.target);
+  const relativeTarget = path.posix.relative(item.outputDir, file.target);
+  const normalizedTarget =
+    relativeTarget === "" || relativeTarget === "."
+      ? targetOutputDir
+      : path.join(targetOutputDir, relativeTarget);
+  const targetPath = path.join(outputRoot, normalizedTarget);
 
   const relativeTo = (destination) =>
     toRelativeImport(targetPath, path.join(outputRoot, destination));
@@ -342,7 +358,10 @@ export async function renderTemplateFile({
     )
     .replace(
       /(['"])\.\.\/pie-chart\/([^'"]+)\1/gu,
-      (_, quote, subpath) => `${quote}${relativeTo(`toast-pie-chart/${subpath}`)}${quote}`,
+      (_, quote, subpath) => {
+        const pieOutputDir = targetDirs.get("toast-pie-chart") ?? "toast-pie-chart";
+        return `${quote}${relativeTo(path.join(pieOutputDir, subpath))}${quote}`;
+      },
     );
 
   if (isPluginStyleIndex) {

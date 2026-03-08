@@ -4,11 +4,78 @@ import { fileExists, readJson, writeJson } from "./fs.mjs";
 export const FLITTER_CONFIG_FILENAME = "flitter.json";
 
 function parseJsonc(raw) {
-  return JSON.parse(
-    raw
-      .replace(/\/\*[\s\S]*?\*\//gu, "")
-      .replace(/^\s*\/\/.*$/gmu, ""),
-  );
+  let output = "";
+  let inString = false;
+  let escaping = false;
+  let inLineComment = false;
+  let inBlockComment = false;
+
+  for (let index = 0; index < raw.length; index += 1) {
+    const char = raw[index];
+    const next = raw[index + 1];
+
+    if (inLineComment) {
+      if (char === "\n") {
+        inLineComment = false;
+        output += char;
+      }
+      continue;
+    }
+
+    if (inBlockComment) {
+      if (char === "*" && next === "/") {
+        inBlockComment = false;
+        index += 1;
+        continue;
+      }
+
+      if (char === "\n") {
+        output += char;
+      }
+      continue;
+    }
+
+    if (inString) {
+      output += char;
+
+      if (escaping) {
+        escaping = false;
+        continue;
+      }
+
+      if (char === "\\") {
+        escaping = true;
+        continue;
+      }
+
+      if (char === "\"") {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (char === "\"") {
+      inString = true;
+      output += char;
+      continue;
+    }
+
+    if (char === "/" && next === "/") {
+      inLineComment = true;
+      index += 1;
+      continue;
+    }
+
+    if (char === "/" && next === "*") {
+      inBlockComment = true;
+      index += 1;
+      continue;
+    }
+
+    output += char;
+  }
+
+  return JSON.parse(output);
 }
 
 export async function readPackageJson(projectRoot) {
@@ -56,10 +123,15 @@ export async function createDefaultFlitterConfig(projectRoot) {
     $schema: "https://flitter.dev/schema/flitter.json",
     tsx: tsconfig != null,
     framework: detectFramework(packageJson),
+    defaultChartStyle: "ag",
     aliases: {
       charts: "@/components/chart",
     },
   };
+}
+
+export function getDefaultChartStyle(config) {
+  return config?.defaultChartStyle ?? "ag";
 }
 
 export async function readFlitterConfig(projectRoot) {

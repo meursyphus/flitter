@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Widget from "@flitterjs/react";
-import { AreaChart } from "shared/chart";
+import { ToastAreaChart as ToastAreaChartWidget } from "shared/chart";
 
 const TITLE_OPTIONS = ["top-start", "top-center", "top-end", "bottom-start", "bottom-center", "bottom-end"] as const;
 const LEGEND_POSITIONS = ["top", "bottom", "right", "right-top", "right-center", "right-bottom"] as const;
@@ -37,8 +37,7 @@ function ToastAreaChart({ args }: { args: AreaChartArgs }) {
   const { position, alignment } = parseTitlePlacement(args.titlePlacement);
   return (
     <Widget
-      widget={AreaChart({
-        style: "toast",
+      widget={ToastAreaChartWidget({
         data: defaultData,
         config: {
           title: { text: args.title, position, alignment },
