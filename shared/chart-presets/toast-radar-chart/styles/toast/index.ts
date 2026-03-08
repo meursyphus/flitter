@@ -1,7 +1,7 @@
-import type { RadarChartCustom } from "../../../_flitter/headless/radar-chart";
+import type { RadarChartCustom } from "flitter-ui/chart";
 import type { ToastRadarChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge, type DeepPartial } from "../../../_flitter/shared/utils/index";
+import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { toastRadar } from "./parts/radar";
 import { toastAngularAxisLine } from "./parts/angular-axis-line";
 import { toastAngularAxisLabel } from "./parts/angular-axis-label";

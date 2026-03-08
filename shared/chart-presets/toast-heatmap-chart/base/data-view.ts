@@ -1,5 +1,5 @@
 import { Column, Flexible, Row } from "flitter-core";
-import type { HeatmapCustom } from "../../_flitter/headless/heatmap-chart";
+import type { HeatmapCustom } from "flitter-ui/chart";
 
 export function DataView(
   ...[{ segments }]: Parameters<HeatmapCustom["dataView"]>

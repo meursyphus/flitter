@@ -4,7 +4,7 @@ import {
 	Offset,
 	type Widget,
 } from "flitter-core";
-import type { RadarChartCustom } from "../../../../_flitter/headless/radar-chart";
+import type { RadarChartCustom } from "flitter-ui/chart";
 import type { ToastRadarChartConfig } from "../config";
 
 export function toastRadialAxisLine(

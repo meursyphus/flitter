@@ -1,4 +1,4 @@
-import type { LineChartCustom, LineChartScale } from "../../../../_flitter/headless/line-chart";
+import type { LineChartCustom, LineChartScale } from "flitter-ui/chart";
 import {
   CustomPaint,
   Path,

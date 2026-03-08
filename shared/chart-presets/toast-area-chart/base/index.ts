@@ -1,16 +1,16 @@
 import type { Widget } from "flitter-core";
-import HeadlessLineChart from "../../_flitter/headless/line-chart";
+import { LineChart as HeadlessLineChart } from "flitter-ui/chart";
 import type {
   LineChartCustom,
   LineChartData,
-  GetScaleFn,
-  GetScaleOptionsFn,
-} from "../../_flitter/headless/line-chart";
-import * as Cartesian from "../../_flitter/shared/cartesian/index";
+  LineChartGetScaleFn as GetScaleFn,
+  LineChartGetScaleOptionsFn as GetScaleOptionsFn,
+} from "flitter-ui/chart";
+import * as Cartesian from "flitter-ui/chart";
 import { DataView, Grid } from "../../toast-base/line-like/index";
 
-export type { LineChartCustom, LineChartData, LineChartScale, LineChartScaleOptions, LineChartContext, GetScaleFn, GetScaleOptionsFn } from "../../_flitter/headless/line-chart";
-export { LineChartController } from "../../_flitter/headless/line-chart";
+export type { LineChartCustom, LineChartData, LineChartScale, LineChartScaleOptions, LineChartContext, LineChartGetScaleFn as GetScaleFn, LineChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
+export { LineChartController } from "flitter-ui/chart";
 
 /** Structural (non-visual) defaults provided by base */
 const baseDefaults: Partial<LineChartCustom> = {

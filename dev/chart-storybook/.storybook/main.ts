@@ -2,6 +2,7 @@ import type { StorybookConfig } from "@storybook/react-vite";
 import path from "path";
 
 const chartRoot = path.resolve(__dirname, "../../../packages/chart");
+const flitterUiRoot = path.resolve(__dirname, "../../../packages/flitter");
 const chartPresetsRoot = path.resolve(__dirname, "../../../shared/chart-presets");
 const coreRoot = path.resolve(__dirname, "../../../packages/core");
 
@@ -17,6 +18,7 @@ const config: StorybookConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       "flitter-core/component/Tooltip": path.resolve(coreRoot, "src/component/Tooltip.ts"),
+      "flitter-ui/chart": path.resolve(flitterUiRoot, "src/chart.ts"),
       "flitter-chart": path.resolve(chartRoot, "src/index.ts"),
       "flitter-core": path.resolve(coreRoot, "src/index.ts"),
       "shared/chart": path.resolve(__dirname, "../../shared/chart.ts"),

@@ -1,4 +1,4 @@
-import * as Cartesian from "../../_flitter/shared/cartesian/index";
+import * as Cartesian from "flitter-ui/chart";
 import { BoxPlotChartCustom } from "../types";
 
 export function Grid(

@@ -12,7 +12,7 @@ import {
 	CrossAxisAlignment,
 	SizedBox,
 } from 'flitter-core';
-import { HoverTooltip } from '../../_flitter/shared/interaction/hover-tooltip';
+import { HoverTooltip } from 'flitter-ui/chart';
 import { agTooltipContent, defaultAgCartesianBaseConfig } from '../../ag-base/index';
 
 export function Candlestick(

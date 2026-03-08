@@ -16,9 +16,9 @@ import {
   type Widget,
   type BuildContext,
 } from "flitter-core";
-import type { LineChartCustom } from "../../../../_flitter/headless/line-chart";
+import type { LineChartCustom } from "flitter-ui/chart";
 import type { AgStackedAreaChartConfig } from "../config";
-import { LineChartProvider } from "../../../../_flitter/headless/line-chart";
+import { LineChartProvider } from "flitter-ui/chart";
 import { agTooltipContent } from "../../../../ag-base/index";
 
 export function agDataView(

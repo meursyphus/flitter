@@ -1,5 +1,5 @@
-import type { BarChartCustom } from "../../_flitter/headless/bar-chart";
-import * as Cartesian from "../../_flitter/shared/cartesian/index";
+import type { BarChartCustom } from "flitter-ui/chart";
+import * as Cartesian from "flitter-ui/chart";
 
 export function Grid(
   ...[{ xLine, yLine }, { direction, scale: _scale, data }]: Parameters<

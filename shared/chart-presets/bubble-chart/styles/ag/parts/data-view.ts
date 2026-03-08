@@ -16,10 +16,10 @@ import {
   type Widget,
   type BuildContext,
 } from "flitter-core";
-import type { BubbleChartCustom } from "../../../../_flitter/headless/bubble-chart";
+import type { BubbleChartCustom } from "flitter-ui/chart";
 import type { AgBubbleChartConfig } from "../config";
 import { DataView } from "../../../base/data-view";
-import { BubbleChartProvider } from "../../../../_flitter/headless/bubble-chart";
+import { BubbleChartProvider } from "flitter-ui/chart";
 import { agTooltipContent } from "../../../../ag-base/index";
 
 export function agDataView(

@@ -19,7 +19,7 @@ import {
 	SizedBox,
 	type Widget,
 } from "flitter-core";
-import type { PieChartCustom, PieChartContext } from "../../../../_flitter/headless/pie-chart";
+import type { PieChartCustom, PieChartContext } from "flitter-ui/chart";
 import type { ToastPieChartConfig } from "../config";
 import { DataView } from "../../../base/data-view";
 import { tooltipContent } from "../../../../toast-base/index";

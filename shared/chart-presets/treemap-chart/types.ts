@@ -4,5 +4,5 @@ export type {
   TreemapData,
   TreemapNode,
   TreemapLayout,
-} from "../_flitter/headless/treemap-chart";
-export { TreemapController } from "../_flitter/headless/treemap-chart";
+} from "flitter-ui/chart";
+export { TreemapController } from "flitter-ui/chart";

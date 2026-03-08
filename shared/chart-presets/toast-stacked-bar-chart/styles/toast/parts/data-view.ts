@@ -1,5 +1,5 @@
 import type { Widget } from "flitter-core";
-import type { BarChartCustom } from "../../../../_flitter/headless/bar-chart";
+import type { BarChartCustom } from "flitter-ui/chart";
 import type { ToastStackedBarChartConfig } from "../config";
 import { DataView } from "../../../../toast-base/bar-like/index";
 import { AnimatedDataView } from "../../../../toast-base/cartesian/animated-data-view";

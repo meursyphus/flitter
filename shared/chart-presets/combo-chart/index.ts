@@ -12,10 +12,10 @@ import {
   Border,
   BoxShadow,
 } from "flitter-core";
-import HeadlessComboChart from "../_flitter/headless/combo-chart";
+import { ComboChart as HeadlessComboChart } from "flitter-ui/chart";
 import type { ComboChartCustom, ComboChartData } from "./types";
-import * as Cartesian from "../_flitter/shared/cartesian/index";
-import { HoverTooltip } from "../_flitter/shared/interaction/hover-tooltip";
+import * as Cartesian from "flitter-ui/chart";
+import { HoverTooltip } from "flitter-ui/chart";
 import { agLegend, agTooltipContent, defaultAgCartesianBaseConfig } from "../ag-base/index";
 
 export type {

@@ -22,7 +22,7 @@ import {
   type Widget,
   type TooltipPosition,
 } from "flitter-core";
-import type { LineChartCustom, LineChartScale } from "../../../../_flitter/headless/line-chart";
+import type { LineChartCustom, LineChartScale } from "flitter-ui/chart";
 import type { ToastLineChartConfig } from "../config";
 import { AnimatedDataView } from "../../../../toast-base/cartesian/animated-data-view";
 import { computeDataPointPosition } from "./line";

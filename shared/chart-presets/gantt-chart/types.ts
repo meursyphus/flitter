@@ -4,5 +4,5 @@ export type {
   GanttChartData,
   GanttChartScale,
   GanttChartCustom,
-} from "../_flitter/headless/gantt-chart";
-export { GanttChartController } from "../_flitter/headless/gantt-chart";
+} from "flitter-ui/chart";
+export { GanttChartController } from "flitter-ui/chart";

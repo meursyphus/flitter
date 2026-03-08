@@ -16,10 +16,10 @@ import {
   type Widget,
   type BuildContext,
 } from "flitter-core";
-import type { ScatterChartCustom } from "../../../../_flitter/headless/scatter-chart";
+import type { ScatterChartCustom } from "flitter-ui/chart";
 import type { AgScatterChartConfig } from "../config";
 import { DataView } from "../../../base/data-view";
-import { ScatterChartProvider } from "../../../../_flitter/headless/scatter-chart";
+import { ScatterChartProvider } from "flitter-ui/chart";
 import { agTooltipContent } from "../../../../ag-base/index";
 
 export function agDataView(

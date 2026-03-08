@@ -5,7 +5,7 @@ export type {
   CandlestickChartData,
   CandlestickChartScale,
   CandlestickChartScaleOptions,
-  GetScaleFn,
-  GetScaleOptionsFn,
-} from "../_flitter/headless/candlestick-chart";
-export { CandlestickChartController } from "../_flitter/headless/candlestick-chart";
+  CandlestickChartGetScaleFn as GetScaleFn,
+  CandlestickChartGetScaleOptionsFn as GetScaleOptionsFn,
+} from "flitter-ui/chart";
+export { CandlestickChartController } from "flitter-ui/chart";

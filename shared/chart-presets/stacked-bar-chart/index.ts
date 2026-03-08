@@ -1,5 +1,5 @@
 import type { Widget } from "flitter-core";
-import type { DeepPartial } from "flitter-chart";
+import type { DeepPartial } from "flitter-ui/chart";
 import { BaseStackedBarChart } from "./base";
 import type { BarChartCustom, BarChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
 import { agStyleConfig, type AgStackedBarChartConfig } from "./styles/ag";

@@ -1,4 +1,4 @@
-import type { BubbleChartCustom } from "../../_flitter/headless/bubble-chart";
+import type { BubbleChartCustom } from "flitter-ui/chart";
 import { Stack, Align, Alignment } from "flitter-core";
 
 export function DataView(

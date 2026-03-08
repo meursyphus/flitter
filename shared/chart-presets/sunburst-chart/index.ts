@@ -1,5 +1,5 @@
 import type { Widget } from "flitter-core";
-import HeadlessSunburstChart from "../_flitter/headless/sunburst-chart";
+import { SunburstChart as HeadlessSunburstChart } from "flitter-ui/chart";
 import type { SunburstChartCustom, SunburstChartData } from "./types";
 import * as Base from "./base";
 

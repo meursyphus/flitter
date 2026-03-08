@@ -8,7 +8,7 @@ import {
 	type Widget,
 	type Size,
 } from "flitter-core";
-import type { PieChartCustom } from "../../../../_flitter/headless/pie-chart";
+import type { PieChartCustom } from "flitter-ui/chart";
 import type { ToastPieChartConfig } from "../config";
 
 export function toastSlice(

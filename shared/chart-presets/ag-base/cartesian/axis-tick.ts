@@ -1,6 +1,6 @@
 import { SizedBox, type Widget } from "flitter-core";
 import type { AgCartesianBaseConfig } from "./config";
-import { XAxisTick, YAxisTick } from "../../_flitter/shared/cartesian/index";
+import { XAxisTick, YAxisTick } from "flitter-ui/chart";
 
 /**
  * AG Charts hides axis ticks by default (tick.enabled = false).

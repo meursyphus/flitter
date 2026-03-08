@@ -1,6 +1,6 @@
 import type { FlatSegment, SunburstCustom } from "../types";
 import { CustomPaint, Offset, Path, Radius, type Widget } from "flitter-core";
-import { HoverTooltip } from "../../_flitter/shared/interaction/hover-tooltip";
+import { HoverTooltip } from "flitter-ui/chart";
 import { agTooltipContent, defaultAgCartesianBaseConfig } from "../../ag-base/index";
 
 export function Segment(

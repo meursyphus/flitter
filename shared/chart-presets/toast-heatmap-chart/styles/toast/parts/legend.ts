@@ -23,8 +23,8 @@ import {
 	type Widget,
 	type BuildContext,
 } from "flitter-core";
-import type { HeatmapContext } from "../../../../_flitter/headless/heatmap-chart";
-import type { HeatmapController } from "../../../../_flitter/headless/heatmap-chart";
+import type { HeatmapContext } from "flitter-ui/chart";
+import type { HeatmapController } from "flitter-ui/chart";
 import type { ToastHeatmapChartConfig } from "../config";
 import { interpolateColor } from "./segment";
 

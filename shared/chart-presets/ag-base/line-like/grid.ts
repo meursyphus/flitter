@@ -1,5 +1,5 @@
-import type { LineChartCustom } from "../../_flitter/headless/line-chart";
-import * as Cartesian from "../../_flitter/shared/cartesian/index";
+import type { LineChartCustom } from "flitter-ui/chart";
+import * as Cartesian from "flitter-ui/chart";
 
 export function Grid(
   ...[{ xLine, yLine }, ctx]: Parameters<LineChartCustom["grid"]>

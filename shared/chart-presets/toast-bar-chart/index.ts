@@ -1,5 +1,5 @@
 import type { Widget } from "flitter-core";
-import type { DeepPartial } from "flitter-chart";
+import type { DeepPartial } from "flitter-ui/chart";
 import { BaseBarChart } from "./base";
 import type { BarChartCustom, BarChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
 import { toastStyleConfig, type ToastBarChartConfig } from "./styles/toast";

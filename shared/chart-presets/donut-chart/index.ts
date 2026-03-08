@@ -1,12 +1,12 @@
 import type { Widget } from "flitter-core";
 import { Stack, StackFit, Center, Text, TextStyle } from "flitter-core";
-import HeadlessDonutChart from "../_flitter/headless/donut-chart";
+import { DonutChart as HeadlessDonutChart } from "flitter-ui/chart";
 import type { DonutChartCustom, DonutChartData } from "./types";
 import { Layout } from "../toast-pie-chart/base/layout";
 import { DataView as PieDataView } from "../toast-pie-chart/base/data-view";
 import { toastSlice } from "../toast-pie-chart/styles/toast/parts/slice";
 import { toastLegend, toastTitle } from "../toast-base/index";
-import { deepMerge, type DeepPartial } from "../_flitter/shared/utils/index";
+import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import type { ToastPieChartConfig } from "../toast-pie-chart/styles/toast/config";
 import { defaultToastConfig } from "../toast-pie-chart/styles/toast/config";
 

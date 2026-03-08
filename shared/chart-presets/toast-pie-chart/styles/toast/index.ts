@@ -1,7 +1,7 @@
-import type { PieChartCustom } from "../../../_flitter/headless/pie-chart";
+import type { PieChartCustom } from "flitter-ui/chart";
 import type { ToastPieChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge, type DeepPartial } from "../../../_flitter/shared/utils/index";
+import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { toastSlice } from "./parts/slice";
 import { toastDataView } from "./parts/data-view";
 import {

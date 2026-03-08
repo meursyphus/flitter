@@ -5,7 +5,7 @@ import {
 	AspectRatio,
 	type Widget,
 } from "flitter-core";
-import type { RadarChartCustom } from "../../_flitter/headless/radar-chart";
+import type { RadarChartCustom } from "flitter-ui/chart";
 
 export function Plot(
 	...[{ angularAxis, radialAxis, dataView }]: Parameters<RadarChartCustom["plot"]>

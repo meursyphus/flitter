@@ -1,15 +1,15 @@
 import type { Widget } from "flitter-core";
 import { SizedBox } from "flitter-core";
-import HeadlessHeatmapChart from "../../_flitter/headless/heatmap-chart";
+import { HeatmapChart as HeadlessHeatmapChart } from "flitter-ui/chart";
 import type {
 	HeatmapCustom,
 	HeatmapData,
-} from "../../_flitter/headless/heatmap-chart";
-import * as Cartesian from "../../_flitter/shared/cartesian/index";
+} from "flitter-ui/chart";
+import * as Cartesian from "flitter-ui/chart";
 import { DataView } from "./data-view";
 
-export type { HeatmapCustom, HeatmapData, HeatmapScale, HeatmapContext } from "../../_flitter/headless/heatmap-chart";
-export { HeatmapController } from "../../_flitter/headless/heatmap-chart";
+export type { HeatmapCustom, HeatmapData, HeatmapScale, HeatmapContext } from "flitter-ui/chart";
+export { HeatmapController } from "flitter-ui/chart";
 
 /** Structural (non-visual) defaults provided by base */
 const baseDefaults: Partial<HeatmapCustom> = {

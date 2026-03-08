@@ -1,11 +1,11 @@
 import type { Widget } from "flitter-core";
-import HeadlessPieChart from "../../_flitter/headless/pie-chart";
-import type { PieChartCustom, PieChartData } from "../../_flitter/headless/pie-chart";
+import { PieChart as HeadlessPieChart } from "flitter-ui/chart";
+import type { PieChartCustom, PieChartData } from "flitter-ui/chart";
 import { DataView } from "./data-view";
 import { Layout } from "./layout";
 
-export type { PieChartCustom, PieChartData, PieChartContext } from "../../_flitter/headless/pie-chart";
-export { PieChartController } from "../../_flitter/headless/pie-chart";
+export type { PieChartCustom, PieChartData, PieChartContext } from "flitter-ui/chart";
+export { PieChartController } from "flitter-ui/chart";
 
 const baseDefaults: Partial<PieChartCustom> = {
 	layout: Layout,

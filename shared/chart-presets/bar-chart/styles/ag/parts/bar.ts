@@ -6,7 +6,7 @@ import {
   Opacity,
   type Widget,
 } from "flitter-core";
-import type { BarChartContext } from "../../../../_flitter/headless/bar-chart";
+import type { BarChartContext } from "flitter-ui/chart";
 import type { AgBarChartConfig } from "../config";
 
 export function agBar(

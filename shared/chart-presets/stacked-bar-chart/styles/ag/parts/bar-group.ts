@@ -1,5 +1,5 @@
 import { GestureDetector, type Widget } from "flitter-core";
-import type { BarChartCustom } from "../../../../_flitter/headless/bar-chart";
+import type { BarChartCustom } from "flitter-ui/chart";
 import type { AgStackedBarChartConfig } from "../config";
 import { stackedBarGroup } from "../../../base/stacked-bar-group";
 

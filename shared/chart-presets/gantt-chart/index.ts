@@ -16,9 +16,9 @@ import {
   BoxShadow,
   Radius,
 } from "flitter-core";
-import HeadlessGanttChart from "../_flitter/headless/gantt-chart";
+import { GanttChart as HeadlessGanttChart } from "flitter-ui/chart";
 import type { GanttChartCustom, GanttChartData } from "./types";
-import { HoverTooltip } from "../_flitter/shared/interaction/hover-tooltip";
+import { HoverTooltip } from "flitter-ui/chart";
 import { agTooltipContent, defaultAgCartesianBaseConfig } from "../ag-base/index";
 
 export type {

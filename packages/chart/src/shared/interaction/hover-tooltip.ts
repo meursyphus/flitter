@@ -43,6 +43,8 @@ export class HoverTooltip extends StatefulWidget {
   offset: Offset;
   translation?: Offset;
   cursor: "default" | "pointer";
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 
   constructor({
     renderChild,
@@ -51,6 +53,8 @@ export class HoverTooltip extends StatefulWidget {
     offset = Offset.Constants.zero,
     translation,
     cursor = "default",
+    onMouseEnter,
+    onMouseLeave,
   }: {
     renderChild: (hovered: boolean) => Widget;
     tooltip?: Widget;
@@ -58,6 +62,8 @@ export class HoverTooltip extends StatefulWidget {
     offset?: Offset;
     translation?: Offset;
     cursor?: "default" | "pointer";
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
   }) {
     super();
     this.renderChild = renderChild;
@@ -66,6 +72,8 @@ export class HoverTooltip extends StatefulWidget {
     this.offset = offset;
     this.translation = translation;
     this.cursor = cursor;
+    this.onMouseEnter = onMouseEnter;
+    this.onMouseLeave = onMouseLeave;
   }
 
   createState() {
@@ -85,11 +93,13 @@ class HoverTooltipState extends State<HoverTooltip> {
           cursor: this.widget.cursor,
           child: this.widget.renderChild(this.hovered),
           onMouseEnter: () => {
+            this.widget.onMouseEnter?.();
             this.setState(() => {
               this.hovered = true;
             });
           },
           onMouseLeave: () => {
+            this.widget.onMouseLeave?.();
             this.setState(() => {
               this.hovered = false;
             });

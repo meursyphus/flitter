@@ -1,6 +1,6 @@
 import type { Widget } from "flitter-core";
 import type { AgCartesianBaseConfig } from "./config";
-import { XAxis } from "../../_flitter/shared/cartesian/index";
+import { XAxis } from "flitter-ui/chart";
 
 export function agXAxis(
   { line, labels, tick }: { line: Widget; labels: Widget[]; tick: Widget },

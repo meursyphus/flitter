@@ -4,5 +4,5 @@ export type {
   HistogramChartData,
   HistogramChartScale,
   HistogramChartCustom,
-} from "../_flitter/headless/histogram-chart";
-export { HistogramChartController } from "../_flitter/headless/histogram-chart";
+} from "flitter-ui/chart";
+export { HistogramChartController } from "flitter-ui/chart";

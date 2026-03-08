@@ -1,6 +1,6 @@
 import type { Widget } from "flitter-core";
 import type { ToastBaseConfig } from "./config";
-import { GridXLine, GridYLine } from "../../_flitter/shared/cartesian/index";
+import { GridXLine, GridYLine } from "flitter-ui/chart";
 
 export function toastGridXLine(
   args: undefined,

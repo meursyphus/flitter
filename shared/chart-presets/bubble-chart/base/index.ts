@@ -1,18 +1,18 @@
 import type { Widget } from "flitter-core";
-import HeadlessBubbleChart from "../../_flitter/headless/bubble-chart";
+import { BubbleChart as HeadlessBubbleChart } from "flitter-ui/chart";
 import type {
   BubbleChartCustom,
   BubbleChartData,
-  GetScaleFn,
-  GetScaleOptionsFn,
-} from "../../_flitter/headless/bubble-chart";
-import * as Cartesian from "../../_flitter/shared/cartesian/index";
-import { getValueEdge, refineScale } from "../../_flitter/shared/utils/scale";
+  BubbleChartGetScaleFn as GetScaleFn,
+  BubbleChartGetScaleOptionsFn as GetScaleOptionsFn,
+} from "flitter-ui/chart";
+import * as Cartesian from "flitter-ui/chart";
+import { getValueEdge, refineScale } from "flitter-ui/chart";
 import { Grid as PointLikeGrid } from "../../ag-base/point-like/index";
 import { DataView } from "./data-view";
 
-export type { BubbleChartCustom, BubbleChartData, BubbleChartScale, BubbleChartContext, BubbleChartScaleOptions, GetScaleFn, GetScaleOptionsFn } from "../../_flitter/headless/bubble-chart";
-export { BubbleChartController } from "../../_flitter/headless/bubble-chart";
+export type { BubbleChartCustom, BubbleChartData, BubbleChartScale, BubbleChartContext, BubbleChartScaleOptions, BubbleChartGetScaleFn as GetScaleFn, BubbleChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
+export { BubbleChartController } from "flitter-ui/chart";
 
 /** Structural (non-visual) defaults provided by base */
 const baseDefaults: Partial<BubbleChartCustom> = {

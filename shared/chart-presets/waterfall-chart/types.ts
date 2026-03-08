@@ -4,5 +4,5 @@ export type {
   WaterfallChartCustom,
   WaterfallChartData,
   WaterfallChartScale,
-} from "../_flitter/headless/waterfall-chart";
-export { WaterfallChartController } from "../_flitter/headless/waterfall-chart";
+} from "flitter-ui/chart";
+export { WaterfallChartController } from "flitter-ui/chart";

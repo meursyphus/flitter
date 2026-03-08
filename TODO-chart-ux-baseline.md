@@ -58,14 +58,11 @@ Primary references:
 - [x] `radar-chart`
 - [x] `treemap-chart`
 - [x] `waterfall-chart`
-- [~] `sankey-chart`
-  - Node hover/tooltip is in place
-  - Link-level hover / tooltip / focus remains to be added
+- [x] `sankey-chart`
 - [x] `sunburst-chart`
 
 ## Remaining Hard Problems
 
-- [ ] Sankey link hit testing and tooltip placement that follows curved ribbons
 - [ ] Shared overlay component for:
   - no data
   - all hidden series

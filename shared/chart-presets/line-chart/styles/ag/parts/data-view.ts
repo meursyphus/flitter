@@ -3,7 +3,7 @@ import {
   Positioned,
   type Widget,
 } from "flitter-core";
-import type { LineChartCustom } from "../../../../_flitter/headless/line-chart";
+import type { LineChartCustom } from "flitter-ui/chart";
 import type { AgLineChartConfig } from "../config";
 
 export function agDataView(

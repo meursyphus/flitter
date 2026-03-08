@@ -4,7 +4,7 @@ import {
   Opacity,
   type Widget,
 } from "flitter-core";
-import type { BubbleChartCustom } from "../../../../_flitter/headless/bubble-chart";
+import type { BubbleChartCustom } from "flitter-ui/chart";
 import type { AgBubbleChartConfig } from "../config";
 
 export function agBubble(

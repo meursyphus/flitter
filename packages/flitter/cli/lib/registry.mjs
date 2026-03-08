@@ -92,6 +92,64 @@ const HEADLESS_SHIMS = {
   "waterfall-chart": { symbol: "WaterfallChart", aliases: {} },
 };
 
+const ROOT_PRIMITIVES_IMPORT = "flitter-ui/chart";
+
+function getHeadlessTypeAliases(chartName) {
+  switch (chartName) {
+    case "bar-chart":
+    case "stacked-bar-chart":
+      return {
+        GetScaleFn: "BarChartGetScaleFn",
+        GetScaleOptionsFn: "BarChartGetScaleOptionsFn",
+      };
+    case "line-chart":
+    case "area-chart":
+    case "stacked-area-chart":
+      return {
+        GetScaleFn: "LineChartGetScaleFn",
+        GetScaleOptionsFn: "LineChartGetScaleOptionsFn",
+      };
+    case "scatter-chart":
+      return {
+        GetScaleFn: "ScatterChartGetScaleFn",
+        GetScaleOptionsFn: "ScatterChartGetScaleOptionsFn",
+      };
+    case "bubble-chart":
+      return {
+        GetScaleFn: "BubbleChartGetScaleFn",
+        GetScaleOptionsFn: "BubbleChartGetScaleOptionsFn",
+      };
+    case "box-plot-chart":
+      return {
+        GetScaleFn: "BoxPlotChartGetScaleFn",
+        GetScaleOptionsFn: "BoxPlotChartGetScaleOptionsFn",
+      };
+    case "candlestick-chart":
+      return {
+        GetScaleFn: "CandlestickChartGetScaleFn",
+        GetScaleOptionsFn: "CandlestickChartGetScaleOptionsFn",
+      };
+    case "radar-chart":
+      return {
+        GetScaleFn: "RadarChartGetScaleFn",
+      };
+    default:
+      return {};
+  }
+}
+
+function rewriteHeadlessTypeSpecifiers(specifiers, chartName) {
+  const aliases = getHeadlessTypeAliases(chartName);
+  return specifiers
+    .replace(/\bGetScaleFn\b/gu, aliases.GetScaleFn ? `${aliases.GetScaleFn} as GetScaleFn` : "GetScaleFn")
+    .replace(
+      /\bGetScaleOptionsFn\b/gu,
+      aliases.GetScaleOptionsFn
+        ? `${aliases.GetScaleOptionsFn} as GetScaleOptionsFn`
+        : "GetScaleOptionsFn",
+    );
+}
+
 export async function loadRegistry() {
   const module = await import("flitter-chart/registry");
   return module.getRegistry ? module.getRegistry() : module.default;
@@ -249,6 +307,8 @@ export class HoverTooltip extends StatefulWidget {
   offset: Offset;
   translation?: Offset;
   cursor: "default" | "pointer";
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 
   constructor({
     renderChild,
@@ -257,6 +317,8 @@ export class HoverTooltip extends StatefulWidget {
     offset = Offset.Constants.zero,
     translation,
     cursor = "default",
+    onMouseEnter,
+    onMouseLeave,
   }: {
     renderChild: (hovered: boolean) => Widget;
     tooltip?: Widget;
@@ -264,6 +326,8 @@ export class HoverTooltip extends StatefulWidget {
     offset?: Offset;
     translation?: Offset;
     cursor?: "default" | "pointer";
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
   }) {
     super();
     this.renderChild = renderChild;
@@ -272,6 +336,8 @@ export class HoverTooltip extends StatefulWidget {
     this.offset = offset;
     this.translation = translation;
     this.cursor = cursor;
+    this.onMouseEnter = onMouseEnter;
+    this.onMouseLeave = onMouseLeave;
   }
 
   createState() {
@@ -291,11 +357,13 @@ class HoverTooltipState extends State<HoverTooltip> {
           cursor: this.widget.cursor,
           child: this.widget.renderChild(this.hovered),
           onMouseEnter: () => {
+            this.widget.onMouseEnter?.();
             this.setState(() => {
               this.hovered = true;
             });
           },
           onMouseLeave: () => {
+            this.widget.onMouseLeave?.();
             this.setState(() => {
               this.hovered = false;
             });
@@ -325,45 +393,7 @@ class HoverTooltipState extends State<HoverTooltip> {
 }
 
 export function generateSupportFiles(outputRoot) {
-  const files = [
-    {
-      target: path.join(outputRoot, "_flitter/shared/cartesian/index.ts"),
-      content: buildCartesianShim(),
-    },
-    {
-      target: path.join(outputRoot, "_flitter/shared/label.ts"),
-      content: `export { Label } from "flitter-chart";\n`,
-    },
-    {
-      target: path.join(outputRoot, "_flitter/shared/interaction/hover-tooltip.ts"),
-      content: buildHoverTooltipShim(),
-    },
-    {
-      target: path.join(outputRoot, "_flitter/shared/utils/index.ts"),
-      content: `export { IgnoreSize, classToFn, deepMerge } from "flitter-chart";
-export type { DeepPartial, PickPartial } from "flitter-chart";
-`,
-    },
-    {
-      target: path.join(outputRoot, "_flitter/shared/utils/scale.ts"),
-      content: `export { getValueEdge, refineScale } from "flitter-chart";
-export type { ValueEdge } from "flitter-chart";
-`,
-    },
-    {
-      target: path.join(outputRoot, "_flitter/shared/utils/draw-spline-line.ts"),
-      content: `export { drawSplineLine } from "flitter-chart";\n`,
-    },
-  ];
-
-  for (const chartName of Object.keys(HEADLESS_SHIMS).sort()) {
-    files.push({
-      target: path.join(outputRoot, `_flitter/headless/${chartName}.ts`),
-      content: buildHeadlessShim(chartName),
-    });
-  }
-
-  return files;
+  return [];
 }
 
 export function generateStyleBaseOverrides(item, outputRoot) {
@@ -436,37 +466,65 @@ export async function renderTemplateFile({
 
   content = content
     .replace(
+      /import\s+([A-Za-z_$][\w$]*)\s+from\s+(['"])@headless\/([^/'"]+)\2/gu,
+      (_, localName, quote, chartName) => {
+        const symbol = HEADLESS_SHIMS[chartName]?.symbol;
+        if (!symbol) {
+          throw new Error(`Missing headless export mapping for ${chartName}`);
+        }
+        return `import { ${symbol} as ${localName} } from ${quote}${ROOT_PRIMITIVES_IMPORT}${quote}`;
+      },
+    )
+    .replace(
+      /import\s+type\s+\{([^}]+)\}\s+from\s+(['"])@headless\/([^/'"]+)\/types\2/gu,
+      (_, specifiers, quote, chartName) =>
+        `import type {${rewriteHeadlessTypeSpecifiers(specifiers, chartName)}} from ${quote}${ROOT_PRIMITIVES_IMPORT}${quote}`,
+    )
+    .replace(
+      /export\s+type\s+\{([^}]+)\}\s+from\s+(['"])@headless\/([^/'"]+)\/types\2/gu,
+      (_, specifiers, quote, chartName) =>
+        `export type {${rewriteHeadlessTypeSpecifiers(specifiers, chartName)}} from ${quote}${ROOT_PRIMITIVES_IMPORT}${quote}`,
+    )
+    .replace(
+      /import\s+\{([^}]+)\}\s+from\s+(['"])@headless\/([^/'"]+)\/(controller|provider)\2/gu,
+      (_, specifiers, quote) => `import {${specifiers}} from ${quote}${ROOT_PRIMITIVES_IMPORT}${quote}`,
+    )
+    .replace(
+      /export\s+\{([^}]+)\}\s+from\s+(['"])@headless\/([^/'"]+)\/(controller|provider)\2/gu,
+      (_, specifiers, quote) => `export {${specifiers}} from ${quote}${ROOT_PRIMITIVES_IMPORT}${quote}`,
+    )
+    .replace(
       /import type \{ StyleConfig \} from "\.\.\/\.\.\/plugin";\n?/gu,
       "",
     )
     .replace(/: StyleConfig<[^>]+> =/gu, " =")
     .replace(
       /(['"])@headless\/([^/'"]+)(?:\/(?:types|provider|controller))?\1/gu,
-      (_, quote, chartName) => `${quote}${relativeTo(`_flitter/headless/${chartName}.ts`)}${quote}`,
+      (_, quote) => `${quote}${ROOT_PRIMITIVES_IMPORT}${quote}`,
     )
     .replace(
       /(['"])@shared\/cartesian(?:\/index)?\1/gu,
-      (_, quote) => `${quote}${relativeTo("_flitter/shared/cartesian/index.ts")}${quote}`,
+      (_, quote) => `${quote}${ROOT_PRIMITIVES_IMPORT}${quote}`,
     )
     .replace(
       /(['"])@shared\/interaction\/hover-tooltip\1/gu,
-      (_, quote) => `${quote}${relativeTo("_flitter/shared/interaction/hover-tooltip.ts")}${quote}`,
+      (_, quote) => `${quote}${ROOT_PRIMITIVES_IMPORT}${quote}`,
     )
     .replace(
       /(['"])@shared\/label\1/gu,
-      (_, quote) => `${quote}${relativeTo("_flitter/shared/label.ts")}${quote}`,
+      (_, quote) => `${quote}${ROOT_PRIMITIVES_IMPORT}${quote}`,
     )
     .replace(
       /(['"])@shared\/utils\/scale\1/gu,
-      (_, quote) => `${quote}${relativeTo("_flitter/shared/utils/scale.ts")}${quote}`,
+      (_, quote) => `${quote}${ROOT_PRIMITIVES_IMPORT}${quote}`,
     )
     .replace(
       /(['"])@utils\/index\1/gu,
-      (_, quote) => `${quote}${relativeTo("_flitter/shared/utils/index.ts")}${quote}`,
+      (_, quote) => `${quote}${ROOT_PRIMITIVES_IMPORT}${quote}`,
     )
     .replace(
       /(['"])@utils\/draw-spline-line\1/gu,
-      (_, quote) => `${quote}${relativeTo("_flitter/shared/utils/draw-spline-line.ts")}${quote}`,
+      (_, quote) => `${quote}${ROOT_PRIMITIVES_IMPORT}${quote}`,
     )
     .replace(
       /(['"])@styles\/toast(?:\/([^'"]+))?\1/gu,
@@ -521,7 +579,7 @@ export function generatePluginIndex(item, metadata) {
   const createConfigCall = `${styleConfigConst}.createConfig(config)`;
 
   return `import type { Widget } from "flitter-core";
-import type { DeepPartial } from "flitter-chart";
+import type { DeepPartial } from "${ROOT_PRIMITIVES_IMPORT}";
 import { ${metadata.baseName} } from "./base";
 import type { ${metadata.customType}, ${metadata.dataType}${metadata.supportsGetScale ? ", GetScaleFn" : ""}${metadata.supportsGetScaleOptions ? ", GetScaleOptionsFn" : ""} } from "./base";
 import { ${styleConfigConst}, type ${configType} } from "./styles/${styleName}";

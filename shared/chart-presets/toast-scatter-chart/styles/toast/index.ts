@@ -1,7 +1,7 @@
-import type { ScatterChartCustom, GetScaleOptionsFn } from "../../../_flitter/headless/scatter-chart";
+import type { ScatterChartCustom, ScatterChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
 import type { ToastScatterChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge, type DeepPartial } from "../../../_flitter/shared/utils/index";
+import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { toastScatter } from "./parts/scatter";
 import {
   toastTitle,

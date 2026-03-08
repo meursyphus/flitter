@@ -1,4 +1,4 @@
-import type { BarChartCustom } from "../../_flitter/headless/bar-chart";
+import type { BarChartCustom } from "flitter-ui/chart";
 import { EdgeInsets, FractionallySizedBox, Padding } from "flitter-core";
 
 export function BarBox(

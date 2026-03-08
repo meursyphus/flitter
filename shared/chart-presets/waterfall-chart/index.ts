@@ -1,5 +1,5 @@
 import type { Widget } from "flitter-core";
-import HeadlessWaterfallChart from "../_flitter/headless/waterfall-chart";
+import { WaterfallChart as HeadlessWaterfallChart } from "flitter-ui/chart";
 import type { WaterfallChartCustom, WaterfallChartData } from "./types";
 import * as Base from "./base";
 

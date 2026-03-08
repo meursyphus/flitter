@@ -2,5 +2,5 @@ export type {
   DonutChartContext,
   DonutChartData,
   DonutChartCustom,
-} from "../_flitter/headless/donut-chart";
-export { DonutChartController } from "../_flitter/headless/donut-chart";
+} from "flitter-ui/chart";
+export { DonutChartController } from "flitter-ui/chart";

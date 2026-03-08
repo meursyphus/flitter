@@ -16,7 +16,7 @@ Concrete chart package for local development and Storybook.
 
 ## Layout
 
-- `_flitter/`: support shims used by generated chart code.
+- `flitter-ui/chart`: runtime primitive import surface used directly by generated chart code.
 - `ag-base/`, `toast-base/`: style-base primitives reused by concrete charts.
 - `<chart>/`: default AG concrete charts.
 - `toast-<chart>/`: optional Toast concrete charts.

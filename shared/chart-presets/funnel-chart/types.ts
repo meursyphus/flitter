@@ -4,5 +4,5 @@ export type {
   FunnelChartStageView,
   FunnelChartData,
   FunnelChartCustom,
-} from "../_flitter/headless/funnel-chart";
-export { FunnelChartController } from "../_flitter/headless/funnel-chart";
+} from "flitter-ui/chart";
+export { FunnelChartController } from "flitter-ui/chart";

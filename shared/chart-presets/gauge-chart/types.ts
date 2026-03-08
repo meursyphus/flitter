@@ -3,5 +3,5 @@ export type {
   GaugeChartZone,
   GaugeChartData,
   GaugeChartCustom,
-} from "../_flitter/headless/gauge-chart";
-export { GaugeChartController } from "../_flitter/headless/gauge-chart";
+} from "flitter-ui/chart";
+export { GaugeChartController } from "flitter-ui/chart";

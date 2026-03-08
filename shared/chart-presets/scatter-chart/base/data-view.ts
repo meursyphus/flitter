@@ -1,4 +1,4 @@
-import type { ScatterChartCustom } from "../../_flitter/headless/scatter-chart";
+import type { ScatterChartCustom } from "flitter-ui/chart";
 import { Stack, Align, Alignment } from "flitter-core";
 
 export function DataView(

@@ -10,7 +10,7 @@ import {
 	SizedBox,
 	type Widget,
 } from "flitter-core";
-import type { PieChartCustom } from "../../_flitter/headless/pie-chart";
+import type { PieChartCustom } from "flitter-ui/chart";
 
 type LayoutConfig = {
 	padding: { top: number; right: number; bottom: number; left: number };

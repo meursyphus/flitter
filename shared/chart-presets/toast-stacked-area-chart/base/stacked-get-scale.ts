@@ -1,5 +1,5 @@
-import type { LineChartData, LineChartScale, LineChartScaleOptions } from "../../_flitter/headless/line-chart";
-import * as Cartesian from "../../_flitter/shared/cartesian/index";
+import type { LineChartData, LineChartScale, LineChartScaleOptions } from "flitter-ui/chart";
+import * as Cartesian from "flitter-ui/chart";
 
 export function stackedGetScale(
   { datasets }: LineChartData,

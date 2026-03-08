@@ -8,12 +8,12 @@ import {
   FractionallySizedBox,
   Container,
 } from "flitter-core";
-import HeadlessPolarAreaChart from "../_flitter/headless/polar-area-chart";
+import { PolarAreaChart as HeadlessPolarAreaChart } from "flitter-ui/chart";
 import type { PolarAreaChartCustom, PolarAreaChartData } from "./types";
 import { Layout } from "../toast-pie-chart/base/layout";
 import { toastLegend, toastTitle } from "../toast-base/index";
 import { toastSlice } from "../toast-pie-chart/styles/toast/parts/slice";
-import { deepMerge, type DeepPartial } from "../_flitter/shared/utils/index";
+import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import type { ToastPieChartConfig } from "../toast-pie-chart/styles/toast/config";
 import { defaultToastConfig } from "../toast-pie-chart/styles/toast/config";
 

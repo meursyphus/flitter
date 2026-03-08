@@ -7,5 +7,5 @@ export type {
   NetworkEdgeLayout,
   NetworkLayout,
   NetworkChartCustom,
-} from "../_flitter/headless/network-chart";
-export { NetworkChartController } from "../_flitter/headless/network-chart";
+} from "flitter-ui/chart";
+export { NetworkChartController } from "flitter-ui/chart";

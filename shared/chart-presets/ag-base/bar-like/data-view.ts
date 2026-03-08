@@ -1,4 +1,4 @@
-import type { BarChartCustom } from "../../_flitter/headless/bar-chart";
+import type { BarChartCustom } from "flitter-ui/chart";
 import { Axis, Container, Flex, Flexible } from "flitter-core";
 
 export function DataView(...[{ barGroups }, { direction }]: Parameters<BarChartCustom["dataView"]>) {

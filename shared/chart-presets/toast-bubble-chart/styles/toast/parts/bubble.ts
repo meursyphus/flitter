@@ -32,7 +32,7 @@ import {
   type Widget,
   type TooltipPosition,
 } from "flitter-core";
-import type { BubbleChartCustom } from "../../../../_flitter/headless/bubble-chart";
+import type { BubbleChartCustom } from "flitter-ui/chart";
 import type { ToastBubbleChartConfig } from "../config";
 
 // --- Tooltip layout ---

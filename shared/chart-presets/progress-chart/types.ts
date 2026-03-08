@@ -3,5 +3,5 @@ export type {
   ProgressChartData,
   ProgressSegment,
   ProgressChartCustom,
-} from "../_flitter/headless/progress-chart";
-export { ProgressChartController } from "../_flitter/headless/progress-chart";
+} from "flitter-ui/chart";
+export { ProgressChartController } from "flitter-ui/chart";

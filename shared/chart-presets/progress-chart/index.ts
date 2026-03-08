@@ -15,9 +15,9 @@ import {
   Border,
   BoxShadow,
 } from "flitter-core";
-import HeadlessProgressChart from "../_flitter/headless/progress-chart";
+import { ProgressChart as HeadlessProgressChart } from "flitter-ui/chart";
 import type { ProgressChartCustom, ProgressChartData } from "./types";
-import { HoverTooltip } from "../_flitter/shared/interaction/hover-tooltip";
+import { HoverTooltip } from "flitter-ui/chart";
 import { agTooltipContent, defaultAgCartesianBaseConfig } from "../ag-base/index";
 
 export type {

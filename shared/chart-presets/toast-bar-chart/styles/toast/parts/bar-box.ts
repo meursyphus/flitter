@@ -3,7 +3,7 @@ import {
   EdgeInsets,
   Padding,
 } from "flitter-core";
-import type { BarChartCustom } from "../../../../_flitter/headless/bar-chart";
+import type { BarChartCustom } from "flitter-ui/chart";
 import type { ToastBarChartConfig } from "../config";
 
 export function toastBarBox(

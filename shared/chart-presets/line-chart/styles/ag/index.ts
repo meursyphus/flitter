@@ -1,8 +1,8 @@
-import type { LineChartCustom } from "../../../_flitter/headless/line-chart";
-import type { GetScaleOptionsFn } from "../../../_flitter/headless/line-chart";
+import type { LineChartCustom } from "flitter-ui/chart";
+import type { LineChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
 import type { AgLineChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
-import { deepMerge, type DeepPartial } from "../../../_flitter/shared/utils/index";
+import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { agLine } from "./parts/line";
 import { agDataView } from "./parts/data-view";
 import {

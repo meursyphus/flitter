@@ -14,7 +14,7 @@ import {
   type TooltipPosition,
 } from "flitter-core";
 import Tooltip from "flitter-core/component/Tooltip";
-import type { BarChartContext } from "../../../../_flitter/headless/bar-chart";
+import type { BarChartContext } from "flitter-ui/chart";
 import type { ToastStackedBarChartConfig } from "../config";
 import { tooltipContent } from "../../../../toast-base/index";
 

@@ -2,7 +2,7 @@ import type { Widget } from "flitter-core";
 import { BaseHeatmapChart } from "./base";
 import type { HeatmapCustom, HeatmapData } from "./base";
 import { toastStyleConfig, type ToastHeatmapChartConfig } from "./styles/toast";
-import type { DeepPartial } from "../_flitter/shared/utils/index";
+import type { DeepPartial } from "flitter-ui/chart";
 
 export type { HeatmapCustom, HeatmapData, HeatmapContext } from "./base";
 export { HeatmapController } from "./base";

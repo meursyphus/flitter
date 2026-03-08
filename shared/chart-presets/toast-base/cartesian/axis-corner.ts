@@ -1,6 +1,6 @@
 import type { Widget } from "flitter-core";
 import type { ToastBaseConfig } from "./config";
-import { AxisCorner } from "../../_flitter/shared/cartesian/index";
+import { AxisCorner } from "flitter-ui/chart";
 
 export function toastAxisCorner(
   args: undefined,

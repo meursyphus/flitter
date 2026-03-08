@@ -1,8 +1,8 @@
 import type { Widget } from "flitter-core";
-import HeadlessGaugeChart from "../_flitter/headless/gauge-chart";
+import { GaugeChart as HeadlessGaugeChart } from "flitter-ui/chart";
 import type { GaugeChartCustom, GaugeChartData } from "./types";
 import * as Base from "./base";
-import { HoverTooltip } from "../_flitter/shared/interaction/hover-tooltip";
+import { HoverTooltip } from "flitter-ui/chart";
 import { agTooltipContent, defaultAgCartesianBaseConfig } from "../ag-base/index";
 
 export type {

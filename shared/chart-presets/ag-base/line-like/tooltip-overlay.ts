@@ -16,7 +16,7 @@ import {
   type Widget,
   type BuildContext,
 } from "flitter-core";
-import { LineChartProvider } from "../../_flitter/headless/line-chart";
+import { LineChartProvider } from "flitter-ui/chart";
 import type { AgCartesianBaseConfig } from "../cartesian/config";
 import { tooltipContent } from "../tooltip";
 

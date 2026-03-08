@@ -5,7 +5,7 @@ import {
 	Alignment,
 	type Widget,
 } from "flitter-core";
-import type { PieChartCustom } from "../../_flitter/headless/pie-chart";
+import type { PieChartCustom } from "flitter-ui/chart";
 
 export function DataView(
 	...[{ slices }]: Parameters<PieChartCustom["dataView"]>

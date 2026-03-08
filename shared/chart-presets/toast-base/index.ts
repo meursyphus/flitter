@@ -3,7 +3,7 @@ export { CheckBox } from "./checkbox";
 export { type ToastBaseConfig, defaultToastBaseConfig } from "./cartesian/config";
 export { toastTitle } from "./title";
 export { toastLegend } from "./legend";
-export { drawSplineLine } from "../_flitter/shared/utils/draw-spline-line";
+export { drawSplineLine } from "flitter-ui/chart";
 export { tooltipContent } from "./tooltip";
 
 // Cartesian-specific (axis, grid, layout for cartesian charts)

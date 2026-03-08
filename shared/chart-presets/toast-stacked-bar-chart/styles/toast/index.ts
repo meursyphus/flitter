@@ -1,8 +1,8 @@
-import type { BarChartCustom } from "../../../_flitter/headless/bar-chart";
-import type { GetScaleOptionsFn } from "../../../_flitter/headless/bar-chart";
+import type { BarChartCustom } from "flitter-ui/chart";
+import type { BarChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
 import type { ToastStackedBarChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge, type DeepPartial } from "../../../_flitter/shared/utils/index";
+import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { toastBar } from "./parts/bar";
 import { toastDataView } from "./parts/data-view";
 import { toastBarBox } from "./parts/bar-box";

@@ -1,5 +1,5 @@
 import type { Widget } from "flitter-core";
-import type { DeepPartial } from "flitter-chart";
+import type { DeepPartial } from "flitter-ui/chart";
 import { BaseBubbleChart } from "./base";
 import type { BubbleChartCustom, BubbleChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
 import { toastStyleConfig, type ToastBubbleChartConfig } from "./styles/toast";

@@ -1,7 +1,7 @@
-import type { ScatterChartCustom, GetScaleOptionsFn } from "../../../_flitter/headless/scatter-chart";
+import type { ScatterChartCustom, ScatterChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
 import type { AgScatterChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
-import { deepMerge, type DeepPartial } from "../../../_flitter/shared/utils/index";
+import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { agScatter } from "./parts/scatter";
 import { agDataView } from "./parts/data-view";
 import {

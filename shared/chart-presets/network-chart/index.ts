@@ -11,9 +11,9 @@ import {
   Border,
   BoxShadow,
 } from "flitter-core";
-import HeadlessNetworkChart from "../_flitter/headless/network-chart";
+import { NetworkChart as HeadlessNetworkChart } from "flitter-ui/chart";
 import type { NetworkChartCustom, NetworkChartData } from "./types";
-import { HoverTooltip } from "../_flitter/shared/interaction/hover-tooltip";
+import { HoverTooltip } from "flitter-ui/chart";
 import { agTooltipContent, defaultAgCartesianBaseConfig } from "../ag-base/index";
 
 export type {

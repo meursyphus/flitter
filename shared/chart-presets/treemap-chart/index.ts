@@ -15,9 +15,9 @@ import {
   Border,
   BoxShadow,
 } from "flitter-core";
-import HeadlessTreemapChart from "../_flitter/headless/treemap-chart";
+import { TreemapChart as HeadlessTreemapChart } from "flitter-ui/chart";
 import type { TreemapCustom, TreemapData } from "./types";
-import { HoverTooltip } from "../_flitter/shared/interaction/hover-tooltip";
+import { HoverTooltip } from "flitter-ui/chart";
 import { agLegend, agTooltipContent, defaultAgCartesianBaseConfig } from "../ag-base/index";
 
 export type {

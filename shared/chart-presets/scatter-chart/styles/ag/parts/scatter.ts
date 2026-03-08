@@ -5,7 +5,7 @@ import {
   Opacity,
   type Widget,
 } from "flitter-core";
-import type { ScatterChartCustom } from "../../../../_flitter/headless/scatter-chart";
+import type { ScatterChartCustom } from "flitter-ui/chart";
 import type { AgScatterChartConfig } from "../config";
 
 export function agScatter(

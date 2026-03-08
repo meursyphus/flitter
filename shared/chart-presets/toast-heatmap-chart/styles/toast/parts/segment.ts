@@ -14,8 +14,8 @@ import {
 	type TooltipPosition,
 } from "flitter-core";
 import Tooltip from "flitter-core/component/Tooltip";
-import type { HeatmapContext } from "../../../../_flitter/headless/heatmap-chart";
-import { HeatmapChartProvider } from "../../../../_flitter/headless/heatmap-chart";
+import type { HeatmapContext } from "flitter-ui/chart";
+import { HeatmapChartProvider } from "flitter-ui/chart";
 import type { ToastHeatmapChartConfig } from "../config";
 import { tooltipContent } from "../../../../toast-base/index";
 

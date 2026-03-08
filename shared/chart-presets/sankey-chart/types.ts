@@ -5,5 +5,5 @@ export type {
   SankeyNodeLayout,
   SankeyLinkLayout,
   SankeyLayout,
-} from "../_flitter/headless/sankey-chart";
-export { SankeyChartController } from "../_flitter/headless/sankey-chart";
+} from "flitter-ui/chart";
+export { SankeyChartController } from "flitter-ui/chart";

@@ -1,8 +1,8 @@
-import type { BarChartCustom } from "../../../_flitter/headless/bar-chart";
-import type { GetScaleOptionsFn } from "../../../_flitter/headless/bar-chart";
+import type { BarChartCustom } from "flitter-ui/chart";
+import type { BarChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
 import type { AgStackedBarChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
-import { deepMerge, type DeepPartial } from "../../../_flitter/shared/utils/index";
+import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { agBar } from "./parts/bar";
 import { agBarGroup } from "./parts/bar-group";
 import { agDataView } from "./parts/data-view";

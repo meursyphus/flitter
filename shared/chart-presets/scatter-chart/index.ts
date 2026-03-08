@@ -1,5 +1,5 @@
 import type { Widget } from "flitter-core";
-import type { DeepPartial } from "flitter-chart";
+import type { DeepPartial } from "flitter-ui/chart";
 import { BaseScatterChart } from "./base";
 import type { ScatterChartCustom, ScatterChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
 import { agStyleConfig, type AgScatterChartConfig } from "./styles/ag";

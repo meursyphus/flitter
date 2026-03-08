@@ -1,7 +1,7 @@
-import type { BubbleChartCustom, GetScaleOptionsFn } from "../../../_flitter/headless/bubble-chart";
+import type { BubbleChartCustom, BubbleChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
 import type { AgBubbleChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
-import { deepMerge, type DeepPartial } from "../../../_flitter/shared/utils/index";
+import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { agBubble } from "./parts/bubble";
 import { agDataView } from "./parts/data-view";
 import {

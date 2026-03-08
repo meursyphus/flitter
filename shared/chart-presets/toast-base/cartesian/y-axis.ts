@@ -10,7 +10,7 @@ import {
   type Widget,
 } from "flitter-core";
 import type { ToastBaseConfig } from "./config";
-import { YAxis } from "../../_flitter/shared/cartesian/index";
+import { YAxis } from "flitter-ui/chart";
 
 class _AnimatedYAxis extends StatefulWidget {
   child: Widget;

@@ -33,7 +33,7 @@ import {
   type Widget,
   type TooltipPosition,
 } from "flitter-core";
-import type { ScatterChartCustom, ScatterChartContext } from "../../../../_flitter/headless/scatter-chart";
+import type { ScatterChartCustom, ScatterChartContext } from "flitter-ui/chart";
 import type { ToastScatterChartConfig } from "../config";
 
 export const SHAPES = ["circle", "star", "square", "triangle"] as const;

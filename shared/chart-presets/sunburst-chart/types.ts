@@ -6,5 +6,5 @@ export type {
   FlatSegment,
   SunburstNode,
   SunburstCustom,
-} from "../_flitter/headless/sunburst-chart";
-export { SunburstChartController } from "../_flitter/headless/sunburst-chart";
+} from "flitter-ui/chart";
+export { SunburstChartController } from "flitter-ui/chart";

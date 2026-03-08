@@ -1,8 +1,8 @@
 import { GestureDetector } from "flitter-core";
-import type { HeatmapCustom } from "../../../_flitter/headless/heatmap-chart";
+import type { HeatmapCustom } from "flitter-ui/chart";
 import type { ToastHeatmapChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge, type DeepPartial } from "../../../_flitter/shared/utils/index";
+import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { toastSegment } from "./parts/segment";
 import { toastHeatmapLegend } from "./parts/legend";
 import { DataView } from "../../base/data-view";

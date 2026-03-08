@@ -1,7 +1,7 @@
 import type { Widget } from "flitter-core";
 import { BaseRadarChart } from "./base";
 import type { RadarChartCustom, RadarChartData } from "./base";
-import type { DeepPartial } from "../_flitter/shared/utils/index";
+import type { DeepPartial } from "flitter-ui/chart";
 import { toastStyleConfig, type ToastRadarChartConfig } from "./styles/toast";
 
 export type { RadarChartCustom, RadarChartData, RadarChartContext, RadarChartScale, RadarVertex } from "./base";

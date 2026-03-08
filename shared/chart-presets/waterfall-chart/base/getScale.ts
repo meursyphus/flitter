@@ -1,5 +1,5 @@
 import type { WaterfallChartData, WaterfallChartScale } from '../types';
-import { getScale as cartesianGetScale } from '../../_flitter/shared/cartesian/index';
+import { getScale as cartesianGetScale } from 'flitter-ui/chart';
 
 export function getScale(data: WaterfallChartData): {
 	scale: WaterfallChartScale;

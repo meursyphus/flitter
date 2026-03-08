@@ -5,5 +5,5 @@ export type {
   ComboAxisScale,
   ComboChartScale,
   ComboChartCustom,
-} from "../_flitter/headless/combo-chart";
-export { ComboChartController } from "../_flitter/headless/combo-chart";
+} from "flitter-ui/chart";
+export { ComboChartController } from "flitter-ui/chart";

@@ -49,7 +49,7 @@ function styleBaseItem(style) {
     name: `${style}-base`,
     style,
     outputDir,
-    dependencies: ["flitter-chart", "flitter-core"],
+    dependencies: ["flitter-ui", "flitter-core"],
     registryDependencies: ["flitter-base"],
     files: [
       ...mapDir(`styles/${style}`, outputDir),
@@ -103,7 +103,7 @@ function pluginChartItem(chart, style, family) {
     style,
     family,
     outputDir,
-    dependencies: ["flitter-chart", "flitter-core"],
+    dependencies: ["flitter-ui", "flitter-core"],
     registryDependencies: [`${style}-base`],
     files: [
       ...mapDir(`charts/${chart}/base`, `${outputDir}/base`),
@@ -123,7 +123,7 @@ function presetChartItem(chart, style) {
     name: chart,
     style,
     outputDir,
-    dependencies: ["flitter-chart", "flitter-core"],
+    dependencies: ["flitter-ui", "flitter-core"],
     registryDependencies: [`${style}-base`],
     files: mapDir(`charts/${chart}`, outputDir),
   };
@@ -136,7 +136,7 @@ function standaloneChartItem(chart, registryDependencies = ["flitter-base"]) {
     name: chart,
     style: null,
     outputDir: chart,
-    dependencies: ["flitter-chart", "flitter-core"],
+    dependencies: ["flitter-ui", "flitter-core"],
     registryDependencies,
     files: mapDir(`charts/${chart}`, chart),
   };
@@ -243,7 +243,7 @@ export const registryItems = [
     name: "flitter-base",
     style: null,
     outputDir: "_flitter",
-    dependencies: ["flitter-chart", "flitter-core"],
+    dependencies: ["flitter-ui", "flitter-core"],
     registryDependencies: [],
     files: [],
   },
