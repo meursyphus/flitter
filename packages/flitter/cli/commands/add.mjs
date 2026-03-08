@@ -105,7 +105,7 @@ export async function runAdd({
     }
 
     plannedWrites.push(
-      ...generateStyleBaseOverrides(item, outputRoot).map((file) => ({
+      ...generateStyleBaseOverrides(item, outputRoot, defaultStyle).map((file) => ({
         targetPath: file.target,
         content: file.content,
       })),

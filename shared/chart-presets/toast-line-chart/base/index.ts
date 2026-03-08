@@ -7,7 +7,7 @@ import type {
   LineChartGetScaleOptionsFn as GetScaleOptionsFn,
 } from "flitter-ui/chart";
 import * as Cartesian from "flitter-ui/chart";
-import { DataView, Grid } from "../../toast-base/line-like/index";
+import { DataView, Grid } from "../../_styles/toast/line-like/index";
 
 export type { LineChartCustom, LineChartData, LineChartScale, LineChartScaleOptions, LineChartContext, LineChartGetScaleFn as GetScaleFn, LineChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
 export { LineChartController } from "flitter-ui/chart";

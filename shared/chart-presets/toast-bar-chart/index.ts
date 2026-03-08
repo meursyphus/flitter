@@ -2,10 +2,10 @@ import type { Widget } from "flitter-core";
 import type { DeepPartial } from "flitter-ui/chart";
 import { BaseBarChart } from "./base";
 import type { BarChartCustom, BarChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
-import { toastStyleConfig, type ToastBarChartConfig } from "./styles/toast";
+import { toastStyleConfig, type ToastBarChartConfig } from "./style";
 
 export * from "./base";
-export { type ToastBarChartConfig } from "./styles/toast";
+export { type ToastBarChartConfig } from "./style";
 
 export default function ToastBarChart({
   config,

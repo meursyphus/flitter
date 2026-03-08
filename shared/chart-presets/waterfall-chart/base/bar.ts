@@ -11,7 +11,7 @@ import {
 	SizedBox,
 } from 'flitter-core';
 import { HoverTooltip } from 'flitter-ui/chart';
-import { agTooltipContent, defaultAgCartesianBaseConfig } from '../../ag-base/index';
+import { agTooltipContent, defaultAgCartesianBaseConfig } from '../../_styles/ag/index';
 
 const COLORS = {
 	increase: '#4CAF50',

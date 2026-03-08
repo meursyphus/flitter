@@ -14,7 +14,7 @@ import {
 import { NetworkChart as HeadlessNetworkChart } from "flitter-ui/chart";
 import type { NetworkChartCustom, NetworkChartData } from "./types";
 import { HoverTooltip } from "flitter-ui/chart";
-import { agTooltipContent, defaultAgCartesianBaseConfig } from "../ag-base/index";
+import { agTooltipContent, defaultAgCartesianBaseConfig } from "../_styles/ag/index";
 
 export type {
   NetworkChartContext,

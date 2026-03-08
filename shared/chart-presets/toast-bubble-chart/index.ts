@@ -2,10 +2,10 @@ import type { Widget } from "flitter-core";
 import type { DeepPartial } from "flitter-ui/chart";
 import { BaseBubbleChart } from "./base";
 import type { BubbleChartCustom, BubbleChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
-import { toastStyleConfig, type ToastBubbleChartConfig } from "./styles/toast";
+import { toastStyleConfig, type ToastBubbleChartConfig } from "./style";
 
 export * from "./base";
-export { type ToastBubbleChartConfig } from "./styles/toast";
+export { type ToastBubbleChartConfig } from "./style";
 
 export default function ToastBubbleChart({
   config,

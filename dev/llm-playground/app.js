@@ -38,7 +38,7 @@ function buildReaderPrompt(testCase) {
     "5. Source paths to inspect",
     "",
     "Rules:",
-    "- Start with chart-styles presets.",
+    "- Start with chart-presets first.",
     "- Ask only the questions that materially change chart family, scale semantics, or layout semantics.",
     "- If presets do not fit, say so explicitly instead of inventing APIs.",
   ].join("\n");

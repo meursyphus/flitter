@@ -2,10 +2,10 @@ import type { Widget } from "flitter-core";
 import type { DeepPartial } from "flitter-ui/chart";
 import { BaseScatterChart } from "./base";
 import type { ScatterChartCustom, ScatterChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
-import { agStyleConfig, type AgScatterChartConfig } from "./styles/ag";
+import { agStyleConfig, type AgScatterChartConfig } from "./style";
 
 export * from "./base";
-export { type AgScatterChartConfig } from "./styles/ag";
+export { type AgScatterChartConfig } from "./style";
 
 export default function AgScatterChart({
   config,

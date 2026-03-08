@@ -2,11 +2,11 @@ import type { Widget } from "flitter-core";
 import { BaseRadarChart } from "./base";
 import type { RadarChartCustom, RadarChartData } from "./base";
 import type { DeepPartial } from "flitter-ui/chart";
-import { toastStyleConfig, type ToastRadarChartConfig } from "./styles/toast";
+import { toastStyleConfig, type ToastRadarChartConfig } from "./style";
 
 export type { RadarChartCustom, RadarChartData, RadarChartContext, RadarChartScale, RadarVertex } from "./base";
 export { RadarChartController } from "./base";
-export { type ToastRadarChartConfig } from "./styles/toast";
+export { type ToastRadarChartConfig } from "./style";
 
 function defaultGetScale(data: RadarChartData) {
 	const allValues = data.datasets.flatMap((d) => d.values);

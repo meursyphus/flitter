@@ -150,9 +150,9 @@ importers:
       '@flitterjs/svelte':
         specifier: workspace:*
         version: link:../../integrations/svelte
-      chart-styles:
+      chart-presets:
         specifier: workspace:*
-        version: link:../../shared/chart-styles
+        version: link:../../shared/chart-presets
       flitter-core:
         specifier: workspace:*
         version: link:../../packages/core
@@ -436,14 +436,14 @@ importers:
         specifier: ^5.3.3
         version: 5.9.3
 
-  shared/chart-styles:
+  shared/chart-presets:
     dependencies:
-      flitter-chart:
-        specifier: workspace:*
-        version: link:../../packages/chart
       flitter-core:
         specifier: workspace:*
         version: link:../../packages/core
+      flitter-ui:
+        specifier: workspace:*
+        version: link:../../packages/flitter
 
 packages:
 

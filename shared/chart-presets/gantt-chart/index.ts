@@ -19,7 +19,7 @@ import {
 import { GanttChart as HeadlessGanttChart } from "flitter-ui/chart";
 import type { GanttChartCustom, GanttChartData } from "./types";
 import { HoverTooltip } from "flitter-ui/chart";
-import { agTooltipContent, defaultAgCartesianBaseConfig } from "../ag-base/index";
+import { agTooltipContent, defaultAgCartesianBaseConfig } from "../_styles/ag/index";
 
 export type {
   GanttChartContext,

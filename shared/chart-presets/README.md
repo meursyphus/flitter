@@ -17,11 +17,25 @@ Concrete chart package for local development and Storybook.
 ## Layout
 
 - `flitter-ui/chart`: runtime primitive import surface used directly by generated chart code.
-- `ag-base/`, `toast-base/`: style-base primitives reused by concrete charts.
+- `_styles/ag/`, `_styles/toast/`: internal style-base primitives reused by concrete charts.
 - `<chart>/`: default AG concrete charts.
 - `toast-<chart>/`: optional Toast concrete charts.
+- `<chart>/style/`: concrete style implementation for that chart variant.
 
 ## Source Of Truth
 
 - `packages/chart/registry/templates/` remains the template source for the CLI.
 - This package is a generated-like consumer package used by `chart-storybook`.
+- `pnpm --dir shared/chart-presets run sync` regenerates the chart directories and root `index.ts` from the internal `flitter` CLI while keeping package-level boilerplate files in place.
+
+Sync variants:
+
+- full sync: `pnpm --dir shared/chart-presets run sync`
+- specific chart: `pnpm --dir shared/chart-presets run sync -- --chart bar-chart`
+- specific chart + style: `pnpm --dir shared/chart-presets run sync -- --chart bar-chart --style toast`
+- changed-only: `pnpm --dir shared/chart-presets run sync -- --changed`
+
+## Structure Note
+
+- The generated directory tree matches what `flitter add` would write for the current registry items.
+- Package-level files such as `README.md`, `package.json`, `tsconfig.json`, and `flitter.json` are maintained alongside that generated output.

@@ -2,10 +2,10 @@ import type { Widget } from "flitter-core";
 import type { DeepPartial } from "flitter-ui/chart";
 import { BaseStackedAreaChart } from "./base";
 import type { LineChartCustom, LineChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
-import { toastStyleConfig, type ToastStackedAreaChartConfig } from "./styles/toast";
+import { toastStyleConfig, type ToastStackedAreaChartConfig } from "./style";
 
 export * from "./base";
-export { type ToastStackedAreaChartConfig } from "./styles/toast";
+export { type ToastStackedAreaChartConfig } from "./style";
 
 export default function ToastStackedAreaChart({
   config,

@@ -1,12 +1,12 @@
 import type { Widget } from "flitter-core";
 import { BaseHeatmapChart } from "./base";
 import type { HeatmapCustom, HeatmapData } from "./base";
-import { toastStyleConfig, type ToastHeatmapChartConfig } from "./styles/toast";
+import { toastStyleConfig, type ToastHeatmapChartConfig } from "./style";
 import type { DeepPartial } from "flitter-ui/chart";
 
 export type { HeatmapCustom, HeatmapData, HeatmapContext } from "./base";
 export { HeatmapController } from "./base";
-export { type ToastHeatmapChartConfig } from "./styles/toast";
+export { type ToastHeatmapChartConfig } from "./style";
 
 export default function HeatmapChart({
 	config,

@@ -16,7 +16,7 @@ import { ComboChart as HeadlessComboChart } from "flitter-ui/chart";
 import type { ComboChartCustom, ComboChartData } from "./types";
 import * as Cartesian from "flitter-ui/chart";
 import { HoverTooltip } from "flitter-ui/chart";
-import { agLegend, agTooltipContent, defaultAgCartesianBaseConfig } from "../ag-base/index";
+import { agLegend, agTooltipContent, defaultAgCartesianBaseConfig } from "../_styles/ag/index";
 
 export type {
   ComboChartContext,

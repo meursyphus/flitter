@@ -13,7 +13,7 @@ import {
 	SizedBox,
 } from 'flitter-core';
 import { HoverTooltip } from 'flitter-ui/chart';
-import { agTooltipContent, defaultAgCartesianBaseConfig } from '../../ag-base/index';
+import { agTooltipContent, defaultAgCartesianBaseConfig } from '../../_styles/ag/index';
 
 export function Candlestick(
 	...[{ open, high, low, close, label, legend }, { scale }]: Parameters<CandlestickChartCustom['candlestick']>

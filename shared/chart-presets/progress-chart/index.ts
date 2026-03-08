@@ -18,7 +18,7 @@ import {
 import { ProgressChart as HeadlessProgressChart } from "flitter-ui/chart";
 import type { ProgressChartCustom, ProgressChartData } from "./types";
 import { HoverTooltip } from "flitter-ui/chart";
-import { agTooltipContent, defaultAgCartesianBaseConfig } from "../ag-base/index";
+import { agTooltipContent, defaultAgCartesianBaseConfig } from "../_styles/ag/index";
 
 export type {
   ProgressChartContext,

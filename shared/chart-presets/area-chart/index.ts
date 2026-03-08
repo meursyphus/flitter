@@ -2,10 +2,10 @@ import type { Widget } from "flitter-core";
 import type { DeepPartial } from "flitter-ui/chart";
 import { BaseAreaChart } from "./base";
 import type { LineChartCustom, LineChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
-import { agStyleConfig, type AgAreaChartConfig } from "./styles/ag";
+import { agStyleConfig, type AgAreaChartConfig } from "./style";
 
 export * from "./base";
-export { type AgAreaChartConfig } from "./styles/ag";
+export { type AgAreaChartConfig } from "./style";
 
 export default function AgAreaChart({
   config,

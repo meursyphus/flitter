@@ -183,8 +183,16 @@ export function findRegistryItem(registry, chartName, style, preferredStyle = "a
   );
 }
 
+function resolveStyleBaseOutputDir(style) {
+  return `_styles/${style}`;
+}
+
 export function resolveItemOutputDir(item, defaultStyle) {
-  if (item.kind === "style-base" || item.kind === "support" || item.style == null) {
+  if (item.kind === "style-base") {
+    return resolveStyleBaseOutputDir(item.style);
+  }
+
+  if (item.kind === "support" || item.style == null) {
     return item.outputDir;
   }
 
@@ -396,14 +404,16 @@ export function generateSupportFiles(outputRoot) {
   return [];
 }
 
-export function generateStyleBaseOverrides(item, outputRoot) {
+export function generateStyleBaseOverrides(item, outputRoot, defaultStyle = "ag") {
   if (item.kind !== "style-base" || item.style !== "ag") {
     return [];
   }
 
+  const styleBaseDir = resolveItemOutputDir(item, defaultStyle);
+
   return [
     {
-      target: path.join(outputRoot, "ag-base/index.ts"),
+      target: path.join(outputRoot, styleBaseDir, "index.ts"),
       content: `export { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "./cartesian/config";
 export { agTitle } from "./title";
 export { agLegend } from "./legend";
@@ -423,7 +433,7 @@ export const agScaleOptions = (axisLength: number) => ({
 `,
     },
     {
-      target: path.join(outputRoot, "ag-base/bar-like/index.ts"),
+      target: path.join(outputRoot, styleBaseDir, "bar-like/index.ts"),
       content: `export { AgTooltipOverlay } from "./tooltip-overlay";
 export { DataView } from "./data-view";
 export { Grid } from "./grid";
@@ -431,7 +441,7 @@ export { BarBox } from "./bar-box";
 `,
     },
     {
-      target: path.join(outputRoot, "ag-base/line-like/index.ts"),
+      target: path.join(outputRoot, styleBaseDir, "line-like/index.ts"),
       content: `export { AgLineLikeTooltipOverlay } from "./tooltip-overlay";
 export { DataView } from "./data-view";
 export { Grid } from "./grid";
@@ -451,18 +461,26 @@ export async function renderTemplateFile({
   const sourcePath = registry.resolveTemplatePath(file.source);
   let content = await readText(sourcePath);
   const relativeTarget = path.posix.relative(item.outputDir, file.target);
+  const flattenedRelativeTarget =
+    item.style != null && relativeTarget.startsWith(`styles/${item.style}/`)
+      ? `style/${relativeTarget.slice(`styles/${item.style}/`.length)}`
+      : relativeTarget;
   const normalizedTarget =
-    relativeTarget === "" || relativeTarget === "."
+    flattenedRelativeTarget === "" || flattenedRelativeTarget === "."
       ? targetOutputDir
-      : path.join(targetOutputDir, relativeTarget);
+      : path.join(targetOutputDir, flattenedRelativeTarget);
   const targetPath = path.join(outputRoot, normalizedTarget);
 
   const relativeTo = (destination) =>
     toRelativeImport(targetPath, path.join(outputRoot, destination));
 
+  const agBaseOutputDir = targetDirs.get("ag-base") ?? resolveStyleBaseOutputDir("ag");
+  const toastBaseOutputDir =
+    targetDirs.get("toast-base") ?? resolveStyleBaseOutputDir("toast");
+
   const isPluginStyleIndex =
     item.kind === "plugin-chart" &&
-    targetPath.endsWith(`${path.sep}styles${path.sep}${item.style}${path.sep}index.ts`);
+    file.source.endsWith(`/styles/${item.style}/index.ts`);
 
   content = content
     .replace(
@@ -529,19 +547,37 @@ export async function renderTemplateFile({
     .replace(
       /(['"])@styles\/toast(?:\/([^'"]+))?\1/gu,
       (_, quote, subpath) =>
-        `${quote}${relativeTo(subpath ? `toast-base/${subpath}` : "toast-base/index.ts")}${quote}`,
+        `${quote}${relativeTo(subpath ? `${toastBaseOutputDir}/${subpath}` : `${toastBaseOutputDir}/index.ts`)}${quote}`,
     )
     .replace(
       /(['"])@styles\/ag(?:\/([^'"]+))?\1/gu,
       (_, quote, subpath) =>
-        `${quote}${relativeTo(subpath ? `ag-base/${subpath}` : "ag-base/index.ts")}${quote}`,
+        `${quote}${relativeTo(subpath ? `${agBaseOutputDir}/${subpath}` : `${agBaseOutputDir}/index.ts`)}${quote}`,
     )
     .replace(
       /(['"])(?:\.\.\/)+shared\/(bar-like|line-like|point-like)(?:\/index)?\1/gu,
       (_, quote, helperName) => {
-        const styleBase = item.style ? `${item.style}-base` : "toast-base";
+        const styleBase =
+          item.style === "ag"
+            ? agBaseOutputDir
+            : item.style === "toast"
+              ? toastBaseOutputDir
+              : toastBaseOutputDir;
         return `${quote}${relativeTo(`${styleBase}/${helperName}/index.ts`)}${quote}`;
       },
+    )
+    .replace(
+      new RegExp(`(['"])\\.\\/styles\\/${item.style}(?:\\/([^'"]+))?\\1`, "gu"),
+      (_, quote, subpath) =>
+        `${quote}./style${subpath ? `/${subpath}` : ""}${quote}`,
+    )
+    .replace(
+      /(['"])(\.\.\/[^'"]+\/)styles\/(?:ag|toast)\/([^'"]+)\1/gu,
+      (_, quote, prefix, subpath) => `${quote}${prefix}style/${subpath}${quote}`,
+    )
+    .replace(
+      /(['"])(\.\.\/[^'"]+\/)styles\/(?:ag|toast)\1/gu,
+      (_, quote, prefix) => `${quote}${prefix}style${quote}`,
     )
     .replace(
       /(['"])\.\.\/pie-chart\/([^'"]+)\1/gu,
@@ -550,6 +586,17 @@ export async function renderTemplateFile({
         return `${quote}${relativeTo(path.join(pieOutputDir, subpath))}${quote}`;
       },
     );
+
+  if (item.style != null) {
+    if (file.source.includes(`/styles/${item.style}/parts/`)) {
+      content = content.replace(
+        /(['"])\.\.\/\.\.\/\.\.\/base\//gu,
+        "$1../../base/",
+      );
+    } else if (file.source.endsWith(`/styles/${item.style}/index.ts`)) {
+      content = content.replace(/(['"])\.\.\/\.\.\/base\//gu, "$1../base/");
+    }
+  }
 
   if (isPluginStyleIndex) {
     const configType = registry.pluginChartMetadata[item.name].configTypes[item.style];
@@ -582,10 +629,10 @@ export function generatePluginIndex(item, metadata) {
 import type { DeepPartial } from "${ROOT_PRIMITIVES_IMPORT}";
 import { ${metadata.baseName} } from "./base";
 import type { ${metadata.customType}, ${metadata.dataType}${metadata.supportsGetScale ? ", GetScaleFn" : ""}${metadata.supportsGetScaleOptions ? ", GetScaleOptionsFn" : ""} } from "./base";
-import { ${styleConfigConst}, type ${configType} } from "./styles/${styleName}";
+import { ${styleConfigConst}, type ${configType} } from "./style";
 
 export * from "./base";
-export { type ${configType} } from "./styles/${styleName}";
+export { type ${configType} } from "./style";
 
 export default function ${componentName}({
   config,

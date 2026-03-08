@@ -3,7 +3,7 @@ import { GaugeChart as HeadlessGaugeChart } from "flitter-ui/chart";
 import type { GaugeChartCustom, GaugeChartData } from "./types";
 import * as Base from "./base";
 import { HoverTooltip } from "flitter-ui/chart";
-import { agTooltipContent, defaultAgCartesianBaseConfig } from "../ag-base/index";
+import { agTooltipContent, defaultAgCartesianBaseConfig } from "../_styles/ag/index";
 
 export type {
   GaugeChartContext,

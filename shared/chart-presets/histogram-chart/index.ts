@@ -14,7 +14,7 @@ import { HistogramChart as HeadlessHistogramChart } from "flitter-ui/chart";
 import type { HistogramChartCustom, HistogramChartData } from "./types";
 import * as Cartesian from "flitter-ui/chart";
 import { HoverTooltip } from "flitter-ui/chart";
-import { agTooltipContent, defaultAgCartesianBaseConfig } from "../ag-base/index";
+import { agTooltipContent, defaultAgCartesianBaseConfig } from "../_styles/ag/index";
 
 export type {
   HistogramChartContext,

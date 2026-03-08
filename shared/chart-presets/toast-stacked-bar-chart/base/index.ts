@@ -7,7 +7,7 @@ import type {
   BarChartGetScaleOptionsFn as GetScaleOptionsFn,
 } from "flitter-ui/chart";
 import * as Cartesian from "flitter-ui/chart";
-import { BarBox, DataView, Grid } from "../../toast-base/bar-like/index";
+import { BarBox, DataView, Grid } from "../../_styles/toast/bar-like/index";
 import { stackedBarGroup } from "./stacked-bar-group";
 import { stackedGetScale } from "./stacked-get-scale";
 

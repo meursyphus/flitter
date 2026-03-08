@@ -4,11 +4,11 @@ import { DonutChart as HeadlessDonutChart } from "flitter-ui/chart";
 import type { DonutChartCustom, DonutChartData } from "./types";
 import { Layout } from "../toast-pie-chart/base/layout";
 import { DataView as PieDataView } from "../toast-pie-chart/base/data-view";
-import { toastSlice } from "../toast-pie-chart/styles/toast/parts/slice";
-import { toastLegend, toastTitle } from "../toast-base/index";
+import { toastSlice } from "../toast-pie-chart/style/parts/slice";
+import { toastLegend, toastTitle } from "../_styles/toast/index";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
-import type { ToastPieChartConfig } from "../toast-pie-chart/styles/toast/config";
-import { defaultToastConfig } from "../toast-pie-chart/styles/toast/config";
+import type { ToastPieChartConfig } from "../toast-pie-chart/style/config";
+import { defaultToastConfig } from "../toast-pie-chart/style/config";
 
 type DonutChartConfig = ToastPieChartConfig & {
   centerText?: string;

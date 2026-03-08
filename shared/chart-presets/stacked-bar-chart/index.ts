@@ -2,10 +2,10 @@ import type { Widget } from "flitter-core";
 import type { DeepPartial } from "flitter-ui/chart";
 import { BaseStackedBarChart } from "./base";
 import type { BarChartCustom, BarChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
-import { agStyleConfig, type AgStackedBarChartConfig } from "./styles/ag";
+import { agStyleConfig, type AgStackedBarChartConfig } from "./style";
 
 export * from "./base";
-export { type AgStackedBarChartConfig } from "./styles/ag";
+export { type AgStackedBarChartConfig } from "./style";
 
 export default function AgStackedBarChart({
   config,

@@ -15,7 +15,7 @@ import {
   type Widget,
 } from "flitter-core";
 import { HoverTooltip } from "flitter-ui/chart";
-import { agTooltipContent, defaultAgCartesianBaseConfig } from "../../ag-base/index";
+import { agTooltipContent, defaultAgCartesianBaseConfig } from "../../_styles/ag/index";
 
 export function Stage(
   ...[{ index, label, value, ratio, color, stageLabel, dataLabel }]: Parameters<

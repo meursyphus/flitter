@@ -1,7 +1,7 @@
 import type { SankeyChartCustom } from "../types";
 import { CustomPaint, Path } from "flitter-core";
 import { HoverTooltip } from "flitter-ui/chart";
-import { agTooltipContent, defaultAgCartesianBaseConfig } from "../../ag-base/index";
+import { agTooltipContent, defaultAgCartesianBaseConfig } from "../../_styles/ag/index";
 
 export function Link(
   ...[{
