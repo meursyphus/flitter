@@ -26,7 +26,7 @@ const conversionData = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Charts/FunnelChart/Toast",
+  title: "Charts/FunnelChart/Ag",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {

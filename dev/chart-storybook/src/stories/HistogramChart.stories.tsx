@@ -16,7 +16,7 @@ const denseValues = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Charts/HistogramChart/Toast",
+  title: "Charts/HistogramChart/Ag",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {

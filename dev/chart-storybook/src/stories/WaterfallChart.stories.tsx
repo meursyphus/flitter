@@ -19,7 +19,7 @@ const negativeData = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Charts/WaterfallChart/Toast",
+  title: "Charts/WaterfallChart/Ag",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {

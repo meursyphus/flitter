@@ -46,7 +46,7 @@ const comparisonData = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Charts/BoxPlotChart/Toast",
+  title: "Charts/BoxPlotChart/Ag",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {
