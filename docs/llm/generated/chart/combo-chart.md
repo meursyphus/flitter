@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Base-wrapper chart. Start with `chart-styles ComboChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
+Base-wrapper chart. Start with `chart-presets ComboChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Base-wrapper chart. Start with `chart-styles ComboChart` for structural defaults
 
 ```ts
 import Widget from "@flitterjs/react";
-import { ComboChart } from "chart-styles";
+import { ComboChart } from "chart-presets";
 
 const widget = ComboChart({
   data: {
@@ -59,7 +59,7 @@ const widget = ComboChart({
 
 ## Implementation Notes
 
-- Use chart-styles ComboChart as a composition-ready base wrapper.
+- Use chart-presets ComboChart as a composition-ready base wrapper.
 - Do not jump to combo unless the prompt genuinely needs mixed marks.
 - Secondary axis usage should be justified, not automatic.
 
@@ -76,5 +76,5 @@ Go headless when the hybrid behavior needs cross-series coordination, novel over
 
 ## Source Paths
 
-- `shared/chart-styles/charts/combo-chart`
+- `shared/chart-presets/charts/combo-chart`
 - `packages/chart/src/headless/combo-chart`

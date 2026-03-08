@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Base-wrapper chart. Start with `chart-styles DonutChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
+Base-wrapper chart. Start with `chart-presets DonutChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Base-wrapper chart. Start with `chart-styles DonutChart` for structural defaults
 
 ```ts
 import Widget from "@flitterjs/react";
-import { DonutChart } from "chart-styles";
+import { DonutChart } from "chart-presets";
 
 const widget = DonutChart({
   data: {
@@ -59,7 +59,7 @@ const widget = DonutChart({
 
 ## Implementation Notes
 
-- chart-styles DonutChart already reuses pie-style defaults, including a center-content slot.
+- chart-presets DonutChart already reuses pie-style defaults, including a center-content slot.
 - Treat donut as composition plus summary, not only as a decorative pie variant.
 - If the center becomes interactive or highly custom, you may need to leave the base wrapper.
 
@@ -76,5 +76,5 @@ Go headless if the center content becomes a true composite experience or the arc
 
 ## Source Paths
 
-- `shared/chart-styles/charts/donut-chart`
+- `shared/chart-presets/charts/donut-chart`
 - `packages/chart/src/headless/donut-chart`

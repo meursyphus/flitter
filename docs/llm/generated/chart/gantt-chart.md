@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Base-wrapper chart. Start with `chart-styles GanttChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
+Base-wrapper chart. Start with `chart-presets GanttChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Base-wrapper chart. Start with `chart-styles GanttChart` for structural defaults
 
 ```ts
 import Widget from "@flitterjs/react";
-import { GanttChart } from "chart-styles";
+import { GanttChart } from "chart-presets";
 
 const widget = GanttChart({
   data: {
@@ -59,7 +59,7 @@ const widget = GanttChart({
 
 ## Implementation Notes
 
-- Use chart-styles GanttChart as a base wrapper.
+- Use chart-presets GanttChart as a base wrapper.
 - Time scale and dependency rendering are the first constraints to clarify.
 - If the layout becomes a true project board, consider direct composition or a novel pattern.
 
@@ -76,5 +76,5 @@ Go headless if scheduling logic, grouped swimlanes, or dependency routing exceed
 
 ## Source Paths
 
-- `shared/chart-styles/charts/gantt-chart`
+- `shared/chart-presets/charts/gantt-chart`
 - `packages/chart/src/headless/gantt-chart`

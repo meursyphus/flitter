@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Base-wrapper chart. Start with `chart-styles CandlestickChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
+Base-wrapper chart. Start with `chart-presets CandlestickChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Base-wrapper chart. Start with `chart-styles CandlestickChart` for structural de
 
 ```ts
 import Widget from "@flitterjs/react";
-import { CandlestickChart } from "chart-styles";
+import { CandlestickChart } from "chart-presets";
 
 const widget = CandlestickChart({
   data: {
@@ -73,7 +73,7 @@ const widget = CandlestickChart({
 
 ## Implementation Notes
 
-- chart-styles CandlestickChart gives a base structural wrapper.
+- chart-presets CandlestickChart gives a base structural wrapper.
 - Treat color semantics and interval labeling as first-class questions.
 - Use combo only if the request adds extra layers like moving averages or volume bars.
 
@@ -90,5 +90,5 @@ Go headless if financial overlays, custom scales, or bespoke interaction rules e
 
 ## Source Paths
 
-- `shared/chart-styles/charts/candlestick-chart`
+- `shared/chart-presets/charts/candlestick-chart`
 - `packages/chart/src/headless/candlestick-chart`

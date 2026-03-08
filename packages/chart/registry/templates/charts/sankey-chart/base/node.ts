@@ -1,43 +1,60 @@
 import type { SankeyChartCustom } from "../types";
-import { CustomPaint } from "flitter-core";
+import {
+  Align,
+  Alignment,
+  Border,
+  BorderRadius,
+  BoxDecoration,
+  BoxShadow,
+  Container,
+  FractionallySizedBox,
+  Radius,
+} from "flitter-core";
+import { HoverTooltip } from "@shared/interaction/hover-tooltip";
+import { agTooltipContent, defaultAgCartesianBaseConfig } from "@styles/ag";
 
 export function Node(
-  ...[{ color, x, y, width, height }]: Parameters<SankeyChartCustom["node"]>
+  ...[{ label, color, x, y, width, height }]: Parameters<SankeyChartCustom["node"]>
 ) {
-  return CustomPaint({
-    painter: {
-      svg: {
-        createDefaultSvgEl: (context) => {
-          return {
-            rect: context.createSvgEl("rect"),
-          };
-        },
-        paint: ({ rect }, size) => {
-          const px = x * size.width;
-          const py = y * size.height;
-          const pw = width * size.width;
-          const ph = height * size.height;
-          rect.setAttribute("x", `${px}`);
-          rect.setAttribute("y", `${py}`);
-          rect.setAttribute("width", `${pw}`);
-          rect.setAttribute("height", `${ph}`);
-          rect.setAttribute("fill", color);
-          rect.setAttribute("rx", "2");
-        },
-      },
-      canvas: {
-        paint: (context, size) => {
-          const px = x * size.width;
-          const py = y * size.height;
-          const pw = width * size.width;
-          const ph = height * size.height;
-          const ctx = context.canvas;
-          ctx.fillStyle = color;
-          ctx.beginPath();
-          ctx.roundRect(px, py, pw, ph, 2);
-          ctx.fill();
-        },
-      },
-    },
+  const centerX = x + width / 2;
+  const centerY = y + height / 2;
+
+  return Container({
+    width: Infinity,
+    height: Infinity,
+    child: Align({
+      alignment: new Alignment({
+        x: centerX * 2 - 1,
+        y: centerY * 2 - 1,
+      }),
+      child: FractionallySizedBox({
+        widthFactor: width,
+        heightFactor: height,
+        child: new HoverTooltip({
+          position: "topCenter",
+          tooltip: agTooltipContent({
+            label,
+            items: { legend: "Node", color, value: Math.round(height * 100) },
+            config: defaultAgCartesianBaseConfig,
+          }),
+          renderChild: (hovered) =>
+            Container({
+              width: Infinity,
+              height: Infinity,
+              decoration: new BoxDecoration({
+                color,
+                borderRadius: BorderRadius.all(Radius.circular(2)),
+                border:
+                  hovered
+                    ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
+                    : undefined,
+                boxShadow: hovered
+                  ? [new BoxShadow({ color: "rgba(0,0,0,0.18)", blurRadius: 10 })]
+                  : undefined,
+              }),
+            }),
+        }),
+      }),
+    }),
   });
 }

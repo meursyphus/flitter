@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Preset chart. Start with `chart-styles PieChart`. The wrapper already has a default visual direction, so style switching is not the first decision.
+Preset chart. Start with `chart-presets PieChart`. The wrapper already has a default visual direction, so style switching is not the first decision.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Preset chart. Start with `chart-styles PieChart`. The wrapper already has a defa
 
 ```ts
 import Widget from "@flitterjs/react";
-import { PieChart } from "chart-styles";
+import { PieChart } from "chart-presets";
 
 const widget = PieChart({
   data: {
@@ -58,7 +58,7 @@ const widget = PieChart({
 
 ## Implementation Notes
 
-- Use chart-styles PieChart for straightforward composition views.
+- Use chart-presets PieChart for straightforward composition views.
 - There is only toast today, so custom visual direction usually starts by overriding slots rather than switching presets.
 - Keep the slice count disciplined.
 
@@ -75,6 +75,6 @@ Go headless if the prompt really wants a donut, polar area, radial progress, or 
 
 ## Source Paths
 
-- `shared/chart-styles/charts/pie-chart`
+- `shared/chart-presets/charts/pie-chart`
 - `packages/chart/src/headless/pie-chart`
 - `docs/src/app/chart/_data/pie-chart`

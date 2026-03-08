@@ -8,10 +8,15 @@ import {
   Row,
   Expanded,
   MainAxisAlignment,
+  BoxDecoration,
+  Border,
+  BoxShadow,
 } from "flitter-core";
 import HeadlessComboChart from "@headless/combo-chart";
 import type { ComboChartCustom, ComboChartData } from "./types";
 import * as Cartesian from "@shared/cartesian";
+import { HoverTooltip } from "@shared/interaction/hover-tooltip";
+import { agLegend, agTooltipContent, defaultAgCartesianBaseConfig } from "@styles/ag";
 
 export type {
   ComboChartContext,
@@ -35,23 +40,42 @@ const baseDefaults: Partial<ComboChartCustom> = {
     Stack({
       children: [...areas, ...bars, ...lines],
     }),
-  bar: ({ value, yAxisId }, ctx) => {
+  bar: ({ value, label, yAxisId }, ctx) => {
     const scale = getAxisScale(ctx, yAxisId);
     const ratio =
       scale && scale.max > scale.min ? (value - scale.min) / (scale.max - scale.min) : 0;
+    const color = defaultAgCartesianBaseConfig.colors.fills[0];
 
-    return Container({
-      width: Infinity,
-      height: Infinity,
-      alignment: Alignment.bottomCenter,
-      child: FractionallySizedBox({
-        heightFactor: Math.max(0, Math.min(1, ratio)),
-        child: Container({
+    return new HoverTooltip({
+      position: "topCenter",
+      tooltip: agTooltipContent({
+        label,
+        items: { legend: yAxisId, color, value },
+        config: defaultAgCartesianBaseConfig,
+      }),
+      renderChild: (hovered) =>
+        Container({
           width: Infinity,
           height: Infinity,
-          color: "#00a9ff",
+          alignment: Alignment.bottomCenter,
+          child: FractionallySizedBox({
+            heightFactor: Math.max(0, Math.min(1, ratio)),
+            child: Container({
+              width: Infinity,
+              height: Infinity,
+              decoration: new BoxDecoration({
+                color,
+                border:
+                  hovered
+                    ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
+                    : undefined,
+                boxShadow: hovered
+                  ? [new BoxShadow({ color: "rgba(0,0,0,0.16)", blurRadius: 10 })]
+                  : undefined,
+              }),
+            }),
+          }),
         }),
-      }),
     });
   },
   line: ({ points }) =>
@@ -59,26 +83,49 @@ const baseDefaults: Partial<ComboChartCustom> = {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: points.map((point) => Expanded({ child: point })),
     }),
-  linePoint: ({ value, yAxisId }, ctx) => {
+  linePoint: ({ value, label, legend, datasetIndex, yAxisId }, ctx) => {
     const scale = getAxisScale(ctx, yAxisId);
     const ratio =
       scale && scale.max > scale.min ? (value - scale.min) / (scale.max - scale.min) : 0;
+    const color =
+      defaultAgCartesianBaseConfig.colors.strokes[
+        datasetIndex % defaultAgCartesianBaseConfig.colors.strokes.length
+      ];
 
-    return Container({
-      width: Infinity,
-      height: Infinity,
-      child: Align({
-        alignment: Alignment.bottomCenter,
-        child: FractionallySizedBox({
-          heightFactor: Math.max(0, Math.min(1, ratio)),
-          alignment: Alignment.topCenter,
-          child: Container({
-            width: 10,
-            height: 10,
-            color: "#ff5a46",
+    return new HoverTooltip({
+      position: "topCenter",
+      tooltip: agTooltipContent({
+        label,
+        items: { legend, color, value },
+        config: defaultAgCartesianBaseConfig,
+      }),
+      renderChild: (hovered) =>
+        Container({
+          width: Infinity,
+          height: Infinity,
+          child: Align({
+            alignment: Alignment.bottomCenter,
+            child: FractionallySizedBox({
+              heightFactor: Math.max(0, Math.min(1, ratio)),
+              alignment: Alignment.topCenter,
+              child: Container({
+                width: hovered ? 12 : 10,
+                height: hovered ? 12 : 10,
+                decoration: new BoxDecoration({
+                  color,
+                  shape: "circle",
+                  border:
+                    hovered
+                      ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
+                      : undefined,
+                  boxShadow: hovered
+                    ? [new BoxShadow({ color: "rgba(0,0,0,0.16)", blurRadius: 10 })]
+                    : undefined,
+                }),
+              }),
+            }),
           }),
         }),
-      }),
     });
   },
   area: ({ points }) =>
@@ -106,7 +153,12 @@ const baseDefaults: Partial<ComboChartCustom> = {
   gridXLine: () => Cartesian.GridXLine(),
   gridYLine: () => Cartesian.GridYLine(),
   axisCorner: () => Cartesian.AxisCorner(),
-  legend: ({ name }) => Container({ width: 0, height: 0, child: undefined }),
+  legend: (args, ctx) =>
+    agLegend(args, {
+      config: defaultAgCartesianBaseConfig,
+      isSeriesVisible: ctx.isSeriesVisible.bind(ctx),
+      toggleSeries: ctx.toggleSeries.bind(ctx),
+    }),
   title: () => Cartesian.Title(),
   dataLabel: () => Container({ width: 0, height: 0 }),
 };

@@ -10,9 +10,16 @@ import {
   Align,
   Alignment,
   FractionallySizedBox,
+  BoxDecoration,
+  Border,
+  BorderRadius,
+  BoxShadow,
+  Radius,
 } from "flitter-core";
 import HeadlessGanttChart from "../_flitter/headless/gantt-chart";
 import type { GanttChartCustom, GanttChartData } from "./types";
+import { HoverTooltip } from "../_flitter/shared/interaction/hover-tooltip";
+import { agTooltipContent, defaultAgCartesianBaseConfig } from "../ag-base/index";
 
 export type {
   GanttChartContext,
@@ -66,10 +73,33 @@ const baseDefaults: Partial<GanttChartCustom> = {
             alignment: Alignment.centerRight,
             child: FractionallySizedBox({
               widthFactor: widthRatio / Math.max(0.001, startRatio + widthRatio),
-              child: Container({
-                width: Infinity,
-                height: 18,
-                color: "#00a9ff",
+              child: new HoverTooltip({
+                position: "topCenter",
+                tooltip: agTooltipContent({
+                  label: task.label,
+                  items: {
+                    legend: task.group ?? "Task",
+                    color: "#00a9ff",
+                    value: task.end - task.start,
+                  },
+                  config: defaultAgCartesianBaseConfig,
+                }),
+                renderChild: (hovered) =>
+                  Container({
+                    width: Infinity,
+                    height: 18,
+                    decoration: new BoxDecoration({
+                      color: "#00a9ff",
+                      borderRadius: BorderRadius.all(Radius.circular(4)),
+                      border:
+                        hovered
+                          ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
+                          : undefined,
+                      boxShadow: hovered
+                        ? [new BoxShadow({ color: "rgba(0,0,0,0.16)", blurRadius: 10 })]
+                        : undefined,
+                    }),
+                  }),
               }),
             }),
           }),

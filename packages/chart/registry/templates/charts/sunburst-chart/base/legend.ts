@@ -11,6 +11,8 @@ import {
   CrossAxisAlignment,
   type Widget,
 } from "flitter-core";
+import { HoverTooltip } from "@shared/interaction/hover-tooltip";
+import { agTooltipContent, defaultAgCartesianBaseConfig } from "@styles/ag";
 
 export function Legend(
   ...[{ items }]: Parameters<SunburstCustom["legend"]>
@@ -27,21 +29,30 @@ export function Legend(
 export function LegendItem(
   ...[{ label, color }]: Parameters<SunburstCustom["legendItem"]>
 ): Widget {
-  return Padding({
-    padding: EdgeInsets.symmetric({ horizontal: 6 }),
-    child: Row({
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container({
-          width: 12,
-          height: 12,
-          color,
-        }),
-        SizedBox({ width: 4 }),
-        Text(label, {
-          style: new TextStyle({ fontSize: 12 }),
-        }),
-      ],
+  return new HoverTooltip({
+    position: "topCenter",
+    tooltip: agTooltipContent({
+      label,
+      items: { legend: "Segment", color, value: 1 },
+      config: defaultAgCartesianBaseConfig,
     }),
+    renderChild: () =>
+      Padding({
+        padding: EdgeInsets.symmetric({ horizontal: 6 }),
+        child: Row({
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container({
+              width: 12,
+              height: 12,
+              color,
+            }),
+            SizedBox({ width: 4 }),
+            Text(label, {
+              style: new TextStyle({ fontSize: 12 }),
+            }),
+          ],
+        }),
+      }),
   });
 }

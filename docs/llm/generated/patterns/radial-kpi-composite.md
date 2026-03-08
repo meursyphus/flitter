@@ -25,6 +25,6 @@ Generated: 2026-03-07
 
 ## Source Paths
 
-- `shared/chart-styles/charts/donut-chart`
-- `shared/chart-styles/charts/gauge-chart`
+- `shared/chart-presets/charts/donut-chart`
+- `shared/chart-presets/charts/gauge-chart`
 - `packages/core/src/component/CustomPaint.ts`

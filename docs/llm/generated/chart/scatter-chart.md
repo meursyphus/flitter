@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Preset chart. Start with `chart-styles ScatterChart` and choose from `toast`, `ag`.
+Preset chart. Start with `chart-presets ScatterChart` and choose from `toast`, `ag`.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Preset chart. Start with `chart-styles ScatterChart` and choose from `toast`, `a
 
 ```ts
 import Widget from "@flitterjs/react";
-import { ScatterChart } from "chart-styles";
+import { ScatterChart } from "chart-presets";
 
 const widget = ScatterChart({
   style: "toast",
@@ -69,7 +69,7 @@ const widget = ScatterChart({
 
 ## Implementation Notes
 
-- Use chart-styles ScatterChart first.
+- Use chart-presets ScatterChart first.
 - Ag is often a better fit for dense analytical scatter plots.
 - If points need custom hit areas, annotations, or overlays, use the custom scatter slot before changing chart architecture.
 
@@ -86,6 +86,6 @@ Go headless if the chart becomes a map-like plot, quadrant workspace, or mixed s
 
 ## Source Paths
 
-- `shared/chart-styles/charts/scatter-chart`
+- `shared/chart-presets/charts/scatter-chart`
 - `packages/chart/src/headless/scatter-chart`
 - `docs/src/app/chart/_data/scatter-chart`

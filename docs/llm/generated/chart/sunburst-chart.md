@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Base-wrapper chart. Start with `chart-styles SunburstChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
+Base-wrapper chart. Start with `chart-presets SunburstChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Base-wrapper chart. Start with `chart-styles SunburstChart` for structural defau
 
 ```ts
 import Widget from "@flitterjs/react";
-import { SunburstChart } from "chart-styles";
+import { SunburstChart } from "chart-presets";
 
 const widget = SunburstChart({
   data: {
@@ -63,7 +63,7 @@ const widget = SunburstChart({
 
 ## Implementation Notes
 
-- Use chart-styles SunburstChart as a base wrapper.
+- Use chart-presets SunburstChart as a base wrapper.
 - Label density is the first thing that breaks on sunbursts.
 - This is a good candidate for novel label behavior or legend composition.
 
@@ -80,5 +80,5 @@ Go headless if depth, label routing, or interaction exceed the base wrapper.
 
 ## Source Paths
 
-- `shared/chart-styles/charts/sunburst-chart`
+- `shared/chart-presets/charts/sunburst-chart`
 - `packages/chart/src/headless/sunburst-chart`

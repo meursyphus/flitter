@@ -1,7 +1,7 @@
 "use client";
 
 import Widget from "@flitterjs/react";
-import { ScatterChart } from "shared/chart";
+import { ToastScatterChart as ToastScatterChartWidget } from "shared/chart";
 
 const defaultData = {
   datasets: [
@@ -79,8 +79,7 @@ const defaultData = {
 export function DefaultToastScatterChart() {
   return (
     <Widget
-      widget={ScatterChart({
-        style: "toast",
+      widget={ToastScatterChartWidget({
         data: defaultData,
         config: {},
       })}
@@ -93,8 +92,7 @@ export function DefaultToastScatterChart() {
 export function FilledToastScatterChart() {
   return (
     <Widget
-      widget={ScatterChart({
-        style: "toast",
+      widget={ToastScatterChartWidget({
         data: defaultData,
         config: {
           scatter: { fill: true, size: 8 },
@@ -109,8 +107,7 @@ export function FilledToastScatterChart() {
 export function LargeToastScatterChart() {
   return (
     <Widget
-      widget={ScatterChart({
-        style: "toast",
+      widget={ToastScatterChartWidget({
         data: defaultData,
         config: {
           scatter: { size: 16, strokeWidth: 3 },

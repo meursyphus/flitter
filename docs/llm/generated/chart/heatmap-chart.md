@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Preset chart. Start with `chart-styles HeatmapChart`. The wrapper already has a default visual direction, so style switching is not the first decision.
+Preset chart. Start with `chart-presets HeatmapChart`. The wrapper already has a default visual direction, so style switching is not the first decision.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Preset chart. Start with `chart-styles HeatmapChart`. The wrapper already has a 
 
 ```ts
 import Widget from "@flitterjs/react";
-import { HeatmapChart } from "chart-styles";
+import { HeatmapChart } from "chart-presets";
 
 const widget = HeatmapChart({
   data: {
@@ -66,7 +66,7 @@ const widget = HeatmapChart({
 
 ## Implementation Notes
 
-- Use chart-styles HeatmapChart first.
+- Use chart-presets HeatmapChart first.
 - Because only toast exists today, custom direction usually means slot overrides rather than preset switching.
 - Always explain the scale and legend semantics if the prompt is not explicit.
 
@@ -83,6 +83,6 @@ Go headless if the chart becomes a calendar grid, timetable, or matrix with rich
 
 ## Source Paths
 
-- `shared/chart-styles/charts/heatmap-chart`
+- `shared/chart-presets/charts/heatmap-chart`
 - `packages/chart/src/headless/heatmap-chart`
 - `docs/src/app/chart/_data/heatmap-chart`

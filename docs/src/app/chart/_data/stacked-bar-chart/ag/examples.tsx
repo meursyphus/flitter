@@ -31,7 +31,6 @@ function AgStackedBarChart({
   return (
     <Widget
       widget={StackedBarChart({
-        style: "ag",
         direction,
         data,
         config: {},

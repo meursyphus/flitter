@@ -12,7 +12,7 @@ Generated: 2026-03-07
 
 ## Build Path
 
-- Use chart-styles only for sub-parts that still map to a real chart family.
+- Use chart-presets only for sub-parts that still map to a real chart family.
 - Use Container, Column, Row, Stack, Text, and GestureDetector for the shell.
 - Treat the result as direct composition, not as a disguised preset chart.
 

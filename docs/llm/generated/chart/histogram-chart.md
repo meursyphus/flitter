@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Base-wrapper chart. Start with `chart-styles HistogramChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
+Base-wrapper chart. Start with `chart-presets HistogramChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Base-wrapper chart. Start with `chart-styles HistogramChart` for structural defa
 
 ```ts
 import Widget from "@flitterjs/react";
-import { HistogramChart } from "chart-styles";
+import { HistogramChart } from "chart-presets";
 
 const widget = HistogramChart({
   data: {
@@ -53,7 +53,7 @@ const widget = HistogramChart({
 
 ## Implementation Notes
 
-- Use chart-styles HistogramChart as a base wrapper.
+- Use chart-presets HistogramChart as a base wrapper.
 - Bin strategy changes interpretation, so do not guess quietly.
 - If the prompt starts asking for KDE curves or multiple distributions, you may need a novel hybrid pattern.
 
@@ -70,5 +70,5 @@ Go headless if binning logic, overlays, or distribution interaction go beyond th
 
 ## Source Paths
 
-- `shared/chart-styles/charts/histogram-chart`
+- `shared/chart-presets/charts/histogram-chart`
 - `packages/chart/src/headless/histogram-chart`

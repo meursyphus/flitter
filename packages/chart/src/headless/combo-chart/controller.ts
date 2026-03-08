@@ -85,6 +85,10 @@ export class ComboChartController extends ChangeNotifier {
 		return this.#rawData.datasets.map((dataset) => dataset.legend);
 	}
 
+	isSeriesVisible(legend: string): boolean {
+		return !this.#hiddenSeries.has(legend);
+	}
+
 	get scale(): ComboChartScale | null {
 		return this.#scale;
 	}

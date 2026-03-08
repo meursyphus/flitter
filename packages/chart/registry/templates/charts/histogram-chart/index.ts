@@ -6,10 +6,15 @@ import {
   Axis,
   Alignment,
   FractionallySizedBox,
+  BoxDecoration,
+  Border,
+  BoxShadow,
 } from "flitter-core";
 import HeadlessHistogramChart from "@headless/histogram-chart";
 import type { HistogramChartCustom, HistogramChartData } from "./types";
 import * as Cartesian from "@shared/cartesian";
+import { HoverTooltip } from "@shared/interaction/hover-tooltip";
+import { agTooltipContent, defaultAgCartesianBaseConfig } from "@styles/ag";
 
 export type {
   HistogramChartContext,
@@ -38,23 +43,42 @@ const baseDefaults: Partial<HistogramChartCustom> = {
         ),
       }),
     }),
-  bar: ({ count }, ctx) => {
+  bar: ({ binMin, binMax, count }, ctx) => {
     const scale = ctx.scale;
     const ratio =
       scale && scale.max > scale.min ? (count - scale.min) / (scale.max - scale.min) : 0;
+    const color = defaultAgCartesianBaseConfig.colors.fills[0];
 
-    return Container({
-      width: Infinity,
-      height: Infinity,
-      alignment: Alignment.bottomCenter,
-      child: FractionallySizedBox({
-        heightFactor: Math.max(0, Math.min(1, ratio)),
-        child: Container({
+    return new HoverTooltip({
+      position: "topCenter",
+      tooltip: agTooltipContent({
+        label: `${binMin} - ${binMax}`,
+        items: { legend: "Count", color, value: count },
+        config: defaultAgCartesianBaseConfig,
+      }),
+      renderChild: (hovered) =>
+        Container({
           width: Infinity,
           height: Infinity,
-          color: "#00a9ff",
+          alignment: Alignment.bottomCenter,
+          child: FractionallySizedBox({
+            heightFactor: Math.max(0, Math.min(1, ratio)),
+            child: Container({
+              width: Infinity,
+              height: Infinity,
+              decoration: new BoxDecoration({
+                color,
+                border:
+                  hovered
+                    ? Border.all({ color: "white", width: 3, strokeAlign: 1 })
+                    : undefined,
+                boxShadow: hovered
+                  ? [new BoxShadow({ color: "rgba(0,0,0,0.18)", blurRadius: 12 })]
+                  : undefined,
+              }),
+            }),
+          }),
         }),
-      }),
     });
   },
   xAxis: ({ line, labels, tick }) => Cartesian.XAxis({ line, labels, tick }, { type: "label" }),

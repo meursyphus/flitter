@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Preset chart. Start with `chart-styles StackedAreaChart` and choose from `toast`, `ag`.
+Preset chart. Start with `chart-presets StackedAreaChart` and choose from `toast`, `ag`.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Preset chart. Start with `chart-styles StackedAreaChart` and choose from `toast`
 
 ```ts
 import Widget from "@flitterjs/react";
-import { StackedAreaChart } from "chart-styles";
+import { StackedAreaChart } from "chart-presets";
 
 const widget = StackedAreaChart({
   style: "toast",
@@ -61,7 +61,7 @@ const widget = StackedAreaChart({
 
 ## Implementation Notes
 
-- Use chart-styles StackedAreaChart first.
+- Use chart-presets StackedAreaChart first.
 - Ag works well for dense operational views; toast works well for presentation surfaces.
 - Pay attention to series ordering because it changes readability and perception.
 
@@ -78,6 +78,6 @@ Go headless if you need percent stacking, mixed overlays, or novel stacking sema
 
 ## Source Paths
 
-- `shared/chart-styles/charts/stacked-area-chart`
+- `shared/chart-presets/charts/stacked-area-chart`
 - `packages/chart/src/headless/line-chart`
 - `docs/src/app/chart/_data/stacked-area-chart`

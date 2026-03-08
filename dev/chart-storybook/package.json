@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "storybook dev -p 6007",
+    "dev": "storybook dev -p 6007 --no-open",
     "build": "storybook build",
-    "storybook": "storybook dev -p 6007",
+    "storybook": "storybook dev -p 6007 --no-open",
     "build-storybook": "storybook build"
   },
   "dependencies": {

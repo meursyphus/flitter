@@ -1,7 +1,7 @@
 "use client";
 
 import Widget from "@flitterjs/react";
-import { LineChart } from "shared/chart";
+import { ToastLineChart as ToastLineChartWidget } from "shared/chart";
 
 const defaultData = {
   labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
@@ -15,8 +15,7 @@ const defaultData = {
 function ToastLineChart({ spline }: { spline?: boolean }) {
   return (
     <Widget
-      widget={LineChart({
-        style: "toast",
+      widget={ToastLineChartWidget({
         data: defaultData,
         config: {
           line: {

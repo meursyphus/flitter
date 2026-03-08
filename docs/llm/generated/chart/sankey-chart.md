@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Base-wrapper chart. Start with `chart-styles SankeyChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
+Base-wrapper chart. Start with `chart-presets SankeyChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Base-wrapper chart. Start with `chart-styles SankeyChart` for structural default
 
 ```ts
 import Widget from "@flitterjs/react";
-import { SankeyChart } from "chart-styles";
+import { SankeyChart } from "chart-presets";
 
 const widget = SankeyChart({
   data: {
@@ -67,7 +67,7 @@ const widget = SankeyChart({
 
 ## Implementation Notes
 
-- Use chart-styles SankeyChart as a base wrapper on top of controller-owned layout.
+- Use chart-presets SankeyChart as a base wrapper on top of controller-owned layout.
 - This is one of the clearest cases where the controller does real geometry work.
 - If the request becomes an interactive flow editor, leave chart framing behind.
 
@@ -84,5 +84,5 @@ Go headless if the layout, routing, or interaction model needs to diverge from t
 
 ## Source Paths
 
-- `shared/chart-styles/charts/sankey-chart`
+- `shared/chart-presets/charts/sankey-chart`
 - `packages/chart/src/headless/sankey-chart`

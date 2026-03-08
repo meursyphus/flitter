@@ -1,7 +1,7 @@
 "use client";
 
 import Widget from "@flitterjs/react";
-import { AreaChart } from "shared/chart";
+import { ToastAreaChart as ToastAreaChartWidget } from "shared/chart";
 
 const defaultData = {
   labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
@@ -15,8 +15,7 @@ const defaultData = {
 function ToastAreaChart({ spline }: { spline?: boolean }) {
   return (
     <Widget
-      widget={AreaChart({
-        style: "toast",
+      widget={ToastAreaChartWidget({
         data: defaultData,
         config: {
           area: {

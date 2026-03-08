@@ -17,7 +17,6 @@ function AgStackedAreaChart({ data }: { data: typeof defaultData }) {
   return (
     <Widget
       widget={StackedAreaChart({
-        style: "ag",
         data,
         config: {},
       })}

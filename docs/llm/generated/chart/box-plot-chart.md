@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Base-wrapper chart. Start with `chart-styles BoxPlotChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
+Base-wrapper chart. Start with `chart-presets BoxPlotChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Base-wrapper chart. Start with `chart-styles BoxPlotChart` for structural defaul
 
 ```ts
 import Widget from "@flitterjs/react";
-import { BoxPlotChart } from "chart-styles";
+import { BoxPlotChart } from "chart-presets";
 
 const widget = BoxPlotChart({
   data: {
@@ -69,7 +69,7 @@ const widget = BoxPlotChart({
 
 ## Implementation Notes
 
-- chart-styles BoxPlotChart gives structural defaults but not a branded preset system.
+- chart-presets BoxPlotChart gives structural defaults but not a branded preset system.
 - Expect to own custom rendering sooner than with bar or line charts.
 - Use the base wrapper first before dropping all the way to headless.
 
@@ -86,5 +86,5 @@ Go headless if the distribution logic itself, orientation rules, or custom inter
 
 ## Source Paths
 
-- `shared/chart-styles/charts/box-plot-chart`
+- `shared/chart-presets/charts/box-plot-chart`
 - `packages/chart/src/headless/box-plot-chart`

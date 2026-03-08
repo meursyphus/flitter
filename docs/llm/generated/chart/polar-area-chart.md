@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Base-wrapper chart. Start with `chart-styles PolarAreaChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
+Base-wrapper chart. Start with `chart-presets PolarAreaChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Base-wrapper chart. Start with `chart-styles PolarAreaChart` for structural defa
 
 ```ts
 import Widget from "@flitterjs/react";
-import { PolarAreaChart } from "chart-styles";
+import { PolarAreaChart } from "chart-presets";
 
 const widget = PolarAreaChart({
   data: {
@@ -61,7 +61,7 @@ const widget = PolarAreaChart({
 
 ## Implementation Notes
 
-- Use chart-styles PolarAreaChart as a base wrapper that reuses pie-style visuals.
+- Use chart-presets PolarAreaChart as a base wrapper that reuses pie-style visuals.
 - Explain why this is not a pie chart; otherwise the user may just want donut or pie.
 - Keep the scale semantics explicit.
 
@@ -78,5 +78,5 @@ Go headless if the radial scale, layering, or composite interaction exceeds the 
 
 ## Source Paths
 
-- `shared/chart-styles/charts/polar-area-chart`
+- `shared/chart-presets/charts/polar-area-chart`
 - `packages/chart/src/headless/polar-area-chart`

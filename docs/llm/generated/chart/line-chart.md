@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Preset chart. Start with `chart-styles LineChart` and choose from `toast`, `ag`.
+Preset chart. Start with `chart-presets LineChart` and choose from `toast`, `ag`.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Preset chart. Start with `chart-styles LineChart` and choose from `toast`, `ag`.
 
 ```ts
 import Widget from "@flitterjs/react";
-import { LineChart } from "chart-styles";
+import { LineChart } from "chart-presets";
 
 const widget = LineChart({
   style: "toast",
@@ -59,7 +59,7 @@ const widget = LineChart({
 
 ## Implementation Notes
 
-- Use chart-styles LineChart first.
+- Use chart-presets LineChart first.
 - Stay in preset mode when the request is standard line comparison with config-level changes.
 - If the user wants bands, thresholds, or bespoke point rendering, push those through custom slots before rewriting the whole chart.
 
@@ -76,6 +76,6 @@ Go headless if the chart becomes a composed line system with custom point logic,
 
 ## Source Paths
 
-- `shared/chart-styles/charts/line-chart`
+- `shared/chart-presets/charts/line-chart`
 - `packages/chart/src/headless/line-chart`
 - `docs/src/app/chart/_data/line-chart`

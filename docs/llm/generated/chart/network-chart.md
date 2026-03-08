@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Base-wrapper chart. Start with `chart-styles NetworkChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
+Base-wrapper chart. Start with `chart-presets NetworkChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Base-wrapper chart. Start with `chart-styles NetworkChart` for structural defaul
 
 ```ts
 import Widget from "@flitterjs/react";
-import { NetworkChart } from "chart-styles";
+import { NetworkChart } from "chart-presets";
 
 const widget = NetworkChart({
   data: {
@@ -67,7 +67,7 @@ const widget = NetworkChart({
 
 ## Implementation Notes
 
-- Use chart-styles NetworkChart as a base wrapper.
+- Use chart-presets NetworkChart as a base wrapper.
 - This is controller-owned layout territory, so source-path honesty matters.
 - If the chart is drifting toward a node editor, stop pretending it is just a chart.
 
@@ -84,5 +84,5 @@ Go headless or direct-flitter if the graph becomes a full interactive diagram su
 
 ## Source Paths
 
-- `shared/chart-styles/charts/network-chart`
+- `shared/chart-presets/charts/network-chart`
 - `packages/chart/src/headless/network-chart`

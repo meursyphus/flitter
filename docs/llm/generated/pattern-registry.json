@@ -16,7 +16,7 @@
     "sourcePaths": [
       "packages/core/src/component",
       "packages/core/src/provider",
-      "shared/chart-styles/charts"
+      "shared/chart-presets/charts"
     ],
     "relatedCharts": [
       "bar-chart",
@@ -91,7 +91,7 @@
       "A canned family would force the wrong abstraction"
     ],
     "buildPath": [
-      "Use chart-styles only for sub-parts that still map to a real chart family.",
+      "Use chart-presets only for sub-parts that still map to a real chart family.",
       "Use Container, Column, Row, Stack, Text, and GestureDetector for the shell.",
       "Treat the result as direct composition, not as a disguised preset chart."
     ],
@@ -121,8 +121,8 @@
       "Keep each radial layer semantically separate instead of faking one giant custom chart too early."
     ],
     "sourcePaths": [
-      "shared/chart-styles/charts/donut-chart",
-      "shared/chart-styles/charts/gauge-chart",
+      "shared/chart-presets/charts/donut-chart",
+      "shared/chart-presets/charts/gauge-chart",
       "packages/core/src/component/CustomPaint.ts"
     ],
     "relatedCharts": [

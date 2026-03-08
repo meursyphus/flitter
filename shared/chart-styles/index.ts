@@ -1,2 +1,1 @@
-export * from "./charts";
-export * as Styles from "./styles";
+export * from "chart-presets";

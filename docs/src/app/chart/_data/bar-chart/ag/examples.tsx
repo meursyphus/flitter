@@ -31,7 +31,6 @@ function AgBarChart({
   return (
     <Widget
       widget={BarChart({
-        style: "ag",
         direction,
         data,
         config: {

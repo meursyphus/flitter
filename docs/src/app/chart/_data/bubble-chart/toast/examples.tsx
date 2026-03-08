@@ -1,7 +1,7 @@
 "use client";
 
 import Widget from "@flitterjs/react";
-import { BubbleChart } from "shared/chart";
+import { ToastBubbleChart as ToastBubbleChartWidget } from "shared/chart";
 
 const defaultData = {
   datasets: [
@@ -72,8 +72,7 @@ const defaultData = {
 export function DefaultToastBubbleChart() {
   return (
     <Widget
-      widget={BubbleChart({
-        style: "toast",
+      widget={ToastBubbleChartWidget({
         data: defaultData,
         config: {},
       })}
@@ -86,8 +85,7 @@ export function DefaultToastBubbleChart() {
 export function SmallBubblestoastBubbleChart() {
   return (
     <Widget
-      widget={BubbleChart({
-        style: "toast",
+      widget={ToastBubbleChartWidget({
         data: defaultData,
         config: {
           bubble: { minRadius: 3, maxRadius: 25, opacity: 0.8 },
@@ -102,8 +100,7 @@ export function SmallBubblestoastBubbleChart() {
 export function HighOpacityToastBubbleChart() {
   return (
     <Widget
-      widget={BubbleChart({
-        style: "toast",
+      widget={ToastBubbleChartWidget({
         data: defaultData,
         config: {
           bubble: { opacity: 1.0 },

@@ -75,7 +75,7 @@ Starter tool:
 
 Rules:
 
-- Prefer `chart-styles` first.
+- Prefer `chart-presets` first.
 - Distinguish preset charts from base-wrapper charts.
 - Use patterns when one chart family is the wrong abstraction.
 - Use Flitter core knowledge only when you need custom composition or novel charts.

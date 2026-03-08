@@ -1,7 +1,7 @@
 "use client";
 
 import Widget from "@flitterjs/react";
-import { StackedBarChart } from "shared/chart";
+import { ToastStackedBarChart as ToastStackedBarChartWidget } from "shared/chart";
 
 const defaultData = {
   labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
@@ -30,8 +30,7 @@ function ToastStackedBarChart({
 }) {
   return (
     <Widget
-      widget={StackedBarChart({
-        style: "toast",
+      widget={ToastStackedBarChartWidget({
         direction,
         data,
         config: {},

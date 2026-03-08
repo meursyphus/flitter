@@ -1,6 +1,11 @@
 import type { BoxPlotChartCustom } from '../types';
-import * as Cartesian from '@shared/cartesian/index';
+import { agLegend, defaultAgCartesianBaseConfig } from '@styles/ag';
 
 export function Legend(...args: Parameters<BoxPlotChartCustom['legend']>) {
-	return Cartesian.Legend(args[0]);
+	const [legend, context] = args;
+	return agLegend(legend, {
+		config: defaultAgCartesianBaseConfig,
+		isSeriesVisible: context.isSeriesVisible.bind(context),
+		toggleSeries: context.toggleSeries.bind(context),
+	});
 }

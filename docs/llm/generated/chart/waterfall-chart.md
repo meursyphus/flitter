@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Base-wrapper chart. Start with `chart-styles WaterfallChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
+Base-wrapper chart. Start with `chart-presets WaterfallChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Base-wrapper chart. Start with `chart-styles WaterfallChart` for structural defa
 
 ```ts
 import Widget from "@flitterjs/react";
-import { WaterfallChart } from "chart-styles";
+import { WaterfallChart } from "chart-presets";
 
 const widget = WaterfallChart({
   data: {
@@ -55,7 +55,7 @@ const widget = WaterfallChart({
 
 ## Implementation Notes
 
-- Use chart-styles WaterfallChart as a base wrapper.
+- Use chart-presets WaterfallChart as a base wrapper.
 - Total indices are not optional semantics; clarify them early.
 - This is a cumulative story, not just a signed bar chart.
 
@@ -72,5 +72,5 @@ Go headless if cumulative rules, subtotals, or hybrid overlays exceed the base w
 
 ## Source Paths
 
-- `shared/chart-styles/charts/waterfall-chart`
+- `shared/chart-presets/charts/waterfall-chart`
 - `packages/chart/src/headless/waterfall-chart`

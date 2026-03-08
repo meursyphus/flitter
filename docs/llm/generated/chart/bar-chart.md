@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Preset chart. Start with `chart-styles BarChart` and choose from `toast`, `ag`.
+Preset chart. Start with `chart-presets BarChart` and choose from `toast`, `ag`.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Preset chart. Start with `chart-styles BarChart` and choose from `toast`, `ag`.
 
 ```ts
 import Widget from "@flitterjs/react";
-import { BarChart } from "chart-styles";
+import { BarChart } from "chart-presets";
 
 const widget = BarChart({
   style: "toast",
@@ -59,7 +59,7 @@ const widget = BarChart({
 
 ## Implementation Notes
 
-- Start with chart-styles BarChart and only drop to headless when layout or bar rendering stops fitting.
+- Start with chart-presets BarChart and only drop to headless when layout or bar rendering stops fitting.
 - Prefer toast for expressive product UI; switch to ag for analyst dashboards.
 - If the request asks for custom bar shapes, threshold markers, or label logic, use the custom slot surface before rewriting the chart.
 
@@ -76,6 +76,6 @@ Go headless if categories need non-standard spatial layout, mixed chart layers, 
 
 ## Source Paths
 
-- `shared/chart-styles/charts/bar-chart`
+- `shared/chart-presets/charts/bar-chart`
 - `packages/chart/src/headless/bar-chart`
 - `docs/src/app/chart/_data/bar-chart`

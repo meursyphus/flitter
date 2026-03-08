@@ -61,7 +61,7 @@ function buildQuickStart(chart) {
       : "";
 
   return `import Widget from "@flitterjs/react";
-import { ${chart.importName} } from "chart-styles";
+import { ${chart.importName} } from "chart-presets";
 
 const widget = ${chart.importName}({
 ${styleLine}  data: ${chart.dataShape.trim()},
@@ -73,12 +73,12 @@ ${styleLine}  data: ${chart.dataShape.trim()},
 function buildSurfaceSummary(chart) {
   if (chart.surface === "preset") {
     if (chart.supportsStyleArg && chart.supportedStyles.length > 0) {
-      return `Preset chart. Start with \`chart-styles ${chart.importName}\` and choose from ${chart.supportedStyles.map((style) => `\`${style}\``).join(", ")}.`;
+      return `Preset chart. Start with \`chart-presets ${chart.importName}\` and choose from ${chart.supportedStyles.map((style) => `\`${style}\``).join(", ")}.`;
     }
-    return `Preset chart. Start with \`chart-styles ${chart.importName}\`. The wrapper already has a default visual direction, so style switching is not the first decision.`;
+    return `Preset chart. Start with \`chart-presets ${chart.importName}\`. The wrapper already has a default visual direction, so style switching is not the first decision.`;
   }
 
-  return `Base-wrapper chart. Start with \`chart-styles ${chart.importName}\` for structural defaults, but expect to own \`custom\` and \`config\` sooner than with fully themed preset charts.`;
+  return `Base-wrapper chart. Start with \`chart-presets ${chart.importName}\` for structural defaults, but expect to own \`custom\` and \`config\` sooner than with fully themed preset charts.`;
 }
 
 function buildChartOverviewMarkdown() {
@@ -122,7 +122,7 @@ ${list(
 
 ### Base-Wrapper Charts
 
-These still have a \`chart-styles\` entry point, but they behave more like structural wrappers around headless logic than polished theme presets.
+These still have a \`chart-presets\` entry point, but they behave more like structural wrappers around headless logic than polished theme presets.
 
 ${list(
     baseCharts.map(
@@ -149,7 +149,7 @@ ${styles
 
 ## Core Rules
 
-- Start with \`chart-styles\` before using headless controllers directly.
+- Start with \`chart-presets\` before using headless controllers directly.
 - Treat fully themed presets and base wrappers differently.
 - Only use direct Flitter primitives when the request clearly exceeds canonical chart families.
 - Do not invent missing style systems or unsupported props.
@@ -175,7 +175,7 @@ Use \`/llm/core/concepts.md\` and \`/llm/core/widget-catalog.md\` when:
 
 ## Source Map
 
-- Presets and base wrappers: \`shared/chart-styles\`
+- Presets and base wrappers: \`shared/chart-presets\`
 - Headless logic: \`packages/chart/src/headless\`
 - Chart docs data: \`docs/src/app/chart/_data\`
 - Flitter primitives: \`packages/core/src\`
@@ -477,7 +477,7 @@ Use this after the first-read agent has already proposed an implementation.
 
 ## API Honesty
 
-- Did it stay inside \`chart-styles\` before escalating?
+- Did it stay inside \`chart-presets\` before escalating?
 - Did it invent props, styles, or helper APIs that do not exist?
 - Did it point to the right source paths for the chosen escape hatch?
 
@@ -625,7 +625,7 @@ Starter tool:
 
 Rules:
 
-- Prefer \`chart-styles\` first.
+- Prefer \`chart-presets\` first.
 - Distinguish preset charts from base-wrapper charts.
 - Use patterns when one chart family is the wrong abstraction.
 - Use Flitter core knowledge only when you need custom composition or novel charts.

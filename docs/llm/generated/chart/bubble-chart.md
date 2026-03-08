@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Preset chart. Start with `chart-styles BubbleChart` and choose from `toast`, `ag`.
+Preset chart. Start with `chart-presets BubbleChart` and choose from `toast`, `ag`.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Preset chart. Start with `chart-styles BubbleChart` and choose from `toast`, `ag
 
 ```ts
 import Widget from "@flitterjs/react";
-import { BubbleChart } from "chart-styles";
+import { BubbleChart } from "chart-presets";
 
 const widget = BubbleChart({
   style: "toast",
@@ -69,7 +69,7 @@ const widget = BubbleChart({
 
 ## Implementation Notes
 
-- Use chart-styles BubbleChart first.
+- Use chart-presets BubbleChart first.
 - Toast works well when the chart is presentation-heavy; ag works well for decision matrices.
 - Bubble size semantics should be explained in title, legend, or hover copy if the prompt is ambiguous.
 
@@ -86,6 +86,6 @@ Go headless if the plot needs collision management, complex labeling, or custom 
 
 ## Source Paths
 
-- `shared/chart-styles/charts/bubble-chart`
+- `shared/chart-presets/charts/bubble-chart`
 - `packages/chart/src/headless/bubble-chart`
 - `docs/src/app/chart/_data/bubble-chart`

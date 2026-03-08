@@ -13,7 +13,7 @@ Use this after the first-read agent has already proposed an implementation.
 
 ## API Honesty
 
-- Did it stay inside `chart-styles` before escalating?
+- Did it stay inside `chart-presets` before escalating?
 - Did it invent props, styles, or helper APIs that do not exist?
 - Did it point to the right source paths for the chosen escape hatch?
 

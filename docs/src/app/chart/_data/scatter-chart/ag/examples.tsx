@@ -80,7 +80,6 @@ export function DefaultAgScatterChart() {
   return (
     <Widget
       widget={ScatterChart({
-        style: "ag",
         data: defaultData,
         config: {},
       })}
@@ -94,7 +93,6 @@ export function FilledAgScatterChart() {
   return (
     <Widget
       widget={ScatterChart({
-        style: "ag",
         data: defaultData,
         config: {
           scatter: { size: 8 },

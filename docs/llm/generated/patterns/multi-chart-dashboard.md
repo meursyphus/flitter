@@ -27,4 +27,4 @@ Generated: 2026-03-07
 
 - `packages/core/src/component`
 - `packages/core/src/provider`
-- `shared/chart-styles/charts`
+- `shared/chart-presets/charts`

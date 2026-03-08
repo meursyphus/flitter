@@ -16,7 +16,6 @@ function AgLineChart({ spline }: { spline?: boolean }) {
   return (
     <Widget
       widget={LineChart({
-        style: "ag",
         data: defaultData,
         config: {
           line: {

@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import Widget from "@flitterjs/react";
-import { BarChart } from "shared/chart";
+import { ToastBarChart as ToastBarChartWidget } from "shared/chart";
 
 const defaultData = {
   labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
@@ -38,8 +38,7 @@ function ToastBarChart({
 }) {
   return (
     <Widget
-      widget={BarChart({
-        style: "toast",
+      widget={ToastBarChartWidget({
         direction,
         data,
         config: {},

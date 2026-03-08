@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Preset chart. Start with `chart-styles AreaChart` and choose from `toast`, `ag`.
+Preset chart. Start with `chart-presets AreaChart` and choose from `toast`, `ag`.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Preset chart. Start with `chart-styles AreaChart` and choose from `toast`, `ag`.
 
 ```ts
 import Widget from "@flitterjs/react";
-import { AreaChart } from "chart-styles";
+import { AreaChart } from "chart-presets";
 
 const widget = AreaChart({
   style: "toast",
@@ -59,7 +59,7 @@ const widget = AreaChart({
 
 ## Implementation Notes
 
-- Use chart-styles AreaChart for standard filled trend requests.
+- Use chart-presets AreaChart for standard filled trend requests.
 - Toast is usually the best first pass because the softer visual language fits area charts well.
 - If overlays or focus interactions are heavy, consider headless composition after using slots.
 
@@ -76,6 +76,6 @@ Go headless if the chart needs custom bands, mixed line-area layering, or annota
 
 ## Source Paths
 
-- `shared/chart-styles/charts/area-chart`
+- `shared/chart-presets/charts/area-chart`
 - `packages/chart/src/headless/line-chart`
 - `docs/src/app/chart/_data/area-chart`

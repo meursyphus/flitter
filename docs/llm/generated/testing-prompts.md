@@ -28,7 +28,7 @@ Pack links:
 Success criteria:
 - Chooses stacked bar instead of grouped bar
 - Calls out percent-stack ambiguity if not specified
-- Keeps the solution in chart-styles unless stack semantics become custom
+- Keeps the solution in chart-presets unless stack semantics become custom
 
 ## Lead and activation trend comparison
 

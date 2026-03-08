@@ -12,9 +12,13 @@ import {
   Expanded,
   Positioned,
   Stack,
+  Border,
+  BoxShadow,
 } from "flitter-core";
 import HeadlessTreemapChart from "../_flitter/headless/treemap-chart";
 import type { TreemapCustom, TreemapData } from "./types";
+import { HoverTooltip } from "../_flitter/shared/interaction/hover-tooltip";
+import { agLegend, agTooltipContent, defaultAgCartesianBaseConfig } from "../ag-base/index";
 
 export type {
   TreemapContext,
@@ -49,32 +53,56 @@ const baseDefaults: Partial<TreemapCustom> = {
       ],
     }),
   title: () => Container({ width: 0, height: 0 }),
-  legend: ({ name }) =>
-    Text(name, {
-      style: new TextStyle({ fontSize: 11, color: "#666666" }),
+  legend: (args, ctx) =>
+    agLegend(args, {
+      config: defaultAgCartesianBaseConfig,
+      isSeriesVisible: ctx.isSeriesVisible.bind(ctx),
+      toggleSeries: ctx.toggleSeries.bind(ctx),
     }),
   treemap: ({ nodes }) => Stack({ children: nodes }),
-  node: ({ label, value, color, x, y, width, height }) =>
+  node: ({ label, value, color, x, y, width, height, index }) =>
     Positioned({
       left: x,
       top: y,
       width,
       height,
-      child: Container({
-        decoration: new BoxDecoration({ color: color || DEFAULT_COLORS[0] }),
-        alignment: Alignment.center,
-        child: Column({
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(label, {
-              style: new TextStyle({ fontSize: 11, color: "#ffffff" }),
-            }),
-            Text(String(value), {
-              style: new TextStyle({ fontSize: 10, color: "rgba(255,255,255,0.8)" }),
-            }),
-          ],
+      child: new HoverTooltip({
+        position: "topCenter",
+        tooltip: agTooltipContent({
+          label,
+          items: {
+            legend: "Value",
+            color: color || DEFAULT_COLORS[index % DEFAULT_COLORS.length],
+            value,
+          },
+          config: defaultAgCartesianBaseConfig,
         }),
+        renderChild: (hovered) =>
+          Container({
+            decoration: new BoxDecoration({
+              color: color || DEFAULT_COLORS[index % DEFAULT_COLORS.length],
+              border:
+                hovered
+                  ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
+                  : undefined,
+              boxShadow: hovered
+                ? [new BoxShadow({ color: "rgba(0,0,0,0.18)", blurRadius: 12 })]
+                : undefined,
+            }),
+            alignment: Alignment.center,
+            child: Column({
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(label, {
+                  style: new TextStyle({ fontSize: 11, color: "#ffffff" }),
+                }),
+                Text(String(value), {
+                  style: new TextStyle({ fontSize: 10, color: "rgba(255,255,255,0.8)" }),
+                }),
+              ],
+            }),
+          }),
       }),
     }),
 };

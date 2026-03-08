@@ -10,11 +10,11 @@ export const styles = [
     strengths: [
       "Good default title, legend, and animation behavior",
       "Easy first pass for most dashboard and marketing charts",
-      "Strong preset surface in shared/chart-styles",
+      "Strong preset surface in shared/chart-presets",
     ],
     sourcePaths: [
-      "shared/chart-styles/styles/toast",
-      "shared/chart-styles/charts/*/styles/toast",
+      "shared/chart-presets/styles/toast",
+      "shared/chart-presets/charts/*/styles/toast",
     ],
   },
   {
@@ -29,8 +29,8 @@ export const styles = [
       "Useful when the user says AG-like, dashboard, or analyst-facing",
     ],
     sourcePaths: [
-      "shared/chart-styles/styles/ag",
-      "shared/chart-styles/charts/*/styles/ag",
+      "shared/chart-presets/styles/ag",
+      "shared/chart-presets/charts/*/styles/ag",
     ],
   },
 ];
@@ -64,7 +64,7 @@ export const chartFamilies = [
       "Do negative values or diverging bars need special treatment?",
     ],
     implementationNotes: [
-      "Start with chart-styles BarChart and only drop to headless when layout or bar rendering stops fitting.",
+      "Start with chart-presets BarChart and only drop to headless when layout or bar rendering stops fitting.",
       "Prefer toast for expressive product UI; switch to ag for analyst dashboards.",
       "If the request asks for custom bar shapes, threshold markers, or label logic, use the custom slot surface before rewriting the chart.",
     ],
@@ -84,7 +84,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/bar-chart",
+      "shared/chart-presets/charts/bar-chart",
       "packages/chart/src/headless/bar-chart",
       "docs/src/app/chart/_data/bar-chart",
     ],
@@ -132,7 +132,7 @@ export const chartFamilies = [
       "Do negative values exist, and if so should they diverge around zero?",
     ],
     implementationNotes: [
-      "Use chart-styles StackedBarChart first.",
+      "Use chart-presets StackedBarChart first.",
       "Choose ag when the chart is dense and mostly analytical.",
       "If segment labeling or stack math gets custom, check the advanced surface before moving to headless.",
     ],
@@ -153,7 +153,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/stacked-bar-chart",
+      "shared/chart-presets/charts/stacked-bar-chart",
       "packages/chart/src/headless/bar-chart",
       "docs/src/app/chart/_data/stacked-bar-chart",
     ],
@@ -168,7 +168,7 @@ export const chartFamilies = [
       successCriteria: [
         "Chooses stacked bar instead of grouped bar",
         "Calls out percent-stack ambiguity if not specified",
-        "Keeps the solution in chart-styles unless stack semantics become custom",
+        "Keeps the solution in chart-presets unless stack semantics become custom",
       ],
       criticFocus: [
         "Did the reader default to grouped bars?",
@@ -200,7 +200,7 @@ export const chartFamilies = [
       "Is an overlay line enough, or does the prompt really want area or combo behavior?",
     ],
     implementationNotes: [
-      "Use chart-styles LineChart first.",
+      "Use chart-presets LineChart first.",
       "Stay in preset mode when the request is standard line comparison with config-level changes.",
       "If the user wants bands, thresholds, or bespoke point rendering, push those through custom slots before rewriting the whole chart.",
     ],
@@ -220,7 +220,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/line-chart",
+      "shared/chart-presets/charts/line-chart",
       "packages/chart/src/headless/line-chart",
       "docs/src/app/chart/_data/line-chart",
     ],
@@ -267,7 +267,7 @@ export const chartFamilies = [
       "Are point markers or thresholds required on top of the area?",
     ],
     implementationNotes: [
-      "Use chart-styles AreaChart for standard filled trend requests.",
+      "Use chart-presets AreaChart for standard filled trend requests.",
       "Toast is usually the best first pass because the softer visual language fits area charts well.",
       "If overlays or focus interactions are heavy, consider headless composition after using slots.",
     ],
@@ -287,7 +287,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/area-chart",
+      "shared/chart-presets/charts/area-chart",
       "packages/chart/src/headless/line-chart",
       "docs/src/app/chart/_data/area-chart",
     ],
@@ -334,7 +334,7 @@ export const chartFamilies = [
       "Does the user need totals, contributions, or both labeled?",
     ],
     implementationNotes: [
-      "Use chart-styles StackedAreaChart first.",
+      "Use chart-presets StackedAreaChart first.",
       "Ag works well for dense operational views; toast works well for presentation surfaces.",
       "Pay attention to series ordering because it changes readability and perception.",
     ],
@@ -355,7 +355,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/stacked-area-chart",
+      "shared/chart-presets/charts/stacked-area-chart",
       "packages/chart/src/headless/line-chart",
       "docs/src/app/chart/_data/stacked-area-chart",
     ],
@@ -402,7 +402,7 @@ export const chartFamilies = [
       "Are the axes shared units, or do they need custom formatting?",
     ],
     implementationNotes: [
-      "Use chart-styles ScatterChart first.",
+      "Use chart-presets ScatterChart first.",
       "Ag is often a better fit for dense analytical scatter plots.",
       "If points need custom hit areas, annotations, or overlays, use the custom scatter slot before changing chart architecture.",
     ],
@@ -427,7 +427,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/scatter-chart",
+      "shared/chart-presets/charts/scatter-chart",
       "packages/chart/src/headless/scatter-chart",
       "docs/src/app/chart/_data/scatter-chart",
     ],
@@ -474,7 +474,7 @@ export const chartFamilies = [
       "Will overlap require jitter, transparency, or a different chart family?",
     ],
     implementationNotes: [
-      "Use chart-styles BubbleChart first.",
+      "Use chart-presets BubbleChart first.",
       "Toast works well when the chart is presentation-heavy; ag works well for decision matrices.",
       "Bubble size semantics should be explained in title, legend, or hover copy if the prompt is ambiguous.",
     ],
@@ -499,7 +499,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/bubble-chart",
+      "shared/chart-presets/charts/bubble-chart",
       "packages/chart/src/headless/bubble-chart",
       "docs/src/app/chart/_data/bubble-chart",
     ],
@@ -546,7 +546,7 @@ export const chartFamilies = [
       "Would donut or stacked bar communicate the same story more clearly?",
     ],
     implementationNotes: [
-      "Use chart-styles PieChart for straightforward composition views.",
+      "Use chart-presets PieChart for straightforward composition views.",
       "There is only toast today, so custom visual direction usually starts by overriding slots rather than switching presets.",
       "Keep the slice count disciplined.",
     ],
@@ -566,7 +566,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/pie-chart",
+      "shared/chart-presets/charts/pie-chart",
       "packages/chart/src/headless/pie-chart",
       "docs/src/app/chart/_data/pie-chart",
     ],
@@ -613,7 +613,7 @@ export const chartFamilies = [
       "Does the chart need filled polygons, outline-only polygons, or highlighted vertices?",
     ],
     implementationNotes: [
-      "Use chart-styles RadarChart when the request clearly maps to shared radial dimensions.",
+      "Use chart-presets RadarChart when the request clearly maps to shared radial dimensions.",
       "There is only toast today, so novel visual direction usually means slot overrides.",
       "The scale choice changes interpretation; do not guess when the prompt hints at a fixed benchmark.",
     ],
@@ -633,7 +633,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/radar-chart",
+      "shared/chart-presets/charts/radar-chart",
       "packages/chart/src/headless/radar-chart",
       "docs/src/app/chart/_data/radar-chart",
     ],
@@ -680,7 +680,7 @@ export const chartFamilies = [
       "Are missing cells real zeros or truly missing data?",
     ],
     implementationNotes: [
-      "Use chart-styles HeatmapChart first.",
+      "Use chart-presets HeatmapChart first.",
       "Because only toast exists today, custom direction usually means slot overrides rather than preset switching.",
       "Always explain the scale and legend semantics if the prompt is not explicit.",
     ],
@@ -704,7 +704,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/heatmap-chart",
+      "shared/chart-presets/charts/heatmap-chart",
       "packages/chart/src/headless/heatmap-chart",
       "docs/src/app/chart/_data/heatmap-chart",
     ],
@@ -751,7 +751,7 @@ export const chartFamilies = [
       "Is the chart vertical or horizontal?",
     ],
     implementationNotes: [
-      "chart-styles BoxPlotChart gives structural defaults but not a branded preset system.",
+      "chart-presets BoxPlotChart gives structural defaults but not a branded preset system.",
       "Expect to own custom rendering sooner than with bar or line charts.",
       "Use the base wrapper first before dropping all the way to headless.",
     ],
@@ -776,7 +776,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/box-plot-chart",
+      "shared/chart-presets/charts/box-plot-chart",
       "packages/chart/src/headless/box-plot-chart",
     ],
     evaluation: {
@@ -822,7 +822,7 @@ export const chartFamilies = [
       "Do we need volume, moving averages, or overlays, which may turn this into a combo chart?",
     ],
     implementationNotes: [
-      "chart-styles CandlestickChart gives a base structural wrapper.",
+      "chart-presets CandlestickChart gives a base structural wrapper.",
       "Treat color semantics and interval labeling as first-class questions.",
       "Use combo only if the request adds extra layers like moving averages or volume bars.",
     ],
@@ -849,7 +849,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/candlestick-chart",
+      "shared/chart-presets/charts/candlestick-chart",
       "packages/chart/src/headless/candlestick-chart",
     ],
     evaluation: {
@@ -895,7 +895,7 @@ export const chartFamilies = [
       "Would linked small multiples communicate the story better than one hybrid chart?",
     ],
     implementationNotes: [
-      "Use chart-styles ComboChart as a composition-ready base wrapper.",
+      "Use chart-presets ComboChart as a composition-ready base wrapper.",
       "Do not jump to combo unless the prompt genuinely needs mixed marks.",
       "Secondary axis usage should be justified, not automatic.",
     ],
@@ -915,7 +915,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/combo-chart",
+      "shared/chart-presets/charts/combo-chart",
       "packages/chart/src/headless/combo-chart",
     ],
     evaluation: {
@@ -961,7 +961,7 @@ export const chartFamilies = [
       "Would pie or progress communicate the story more cleanly?",
     ],
     implementationNotes: [
-      "chart-styles DonutChart already reuses pie-style defaults, including a center-content slot.",
+      "chart-presets DonutChart already reuses pie-style defaults, including a center-content slot.",
       "Treat donut as composition plus summary, not only as a decorative pie variant.",
       "If the center becomes interactive or highly custom, you may need to leave the base wrapper.",
     ],
@@ -981,7 +981,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/donut-chart",
+      "shared/chart-presets/charts/donut-chart",
       "packages/chart/src/headless/donut-chart",
     ],
     evaluation: {
@@ -1027,7 +1027,7 @@ export const chartFamilies = [
       "Does the chart need stage-to-stage conversion labels?",
     ],
     implementationNotes: [
-      "Use chart-styles FunnelChart as a base wrapper.",
+      "Use chart-presets FunnelChart as a base wrapper.",
       "Clarify whether this is raw-stage volume, conversion, or both.",
       "Branching flows are not funnel charts; use sankey instead.",
     ],
@@ -1048,7 +1048,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/funnel-chart",
+      "shared/chart-presets/charts/funnel-chart",
       "packages/chart/src/headless/funnel-chart",
     ],
     evaluation: {
@@ -1094,7 +1094,7 @@ export const chartFamilies = [
       "Should the layout prioritize schedule density or readability?",
     ],
     implementationNotes: [
-      "Use chart-styles GanttChart as a base wrapper.",
+      "Use chart-presets GanttChart as a base wrapper.",
       "Time scale and dependency rendering are the first constraints to clarify.",
       "If the layout becomes a true project board, consider direct composition or a novel pattern.",
     ],
@@ -1114,7 +1114,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/gantt-chart",
+      "shared/chart-presets/charts/gantt-chart",
       "packages/chart/src/headless/gantt-chart",
     ],
     evaluation: {
@@ -1160,7 +1160,7 @@ export const chartFamilies = [
       "Would a progress chart communicate the same KPI more cleanly?",
     ],
     implementationNotes: [
-      "Use chart-styles GaugeChart as a base wrapper.",
+      "Use chart-presets GaugeChart as a base wrapper.",
       "Gauge charts are easy to misuse; confirm the bounded-range story first.",
       "Zones are often the real reason to choose gauge over progress.",
     ],
@@ -1183,7 +1183,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/gauge-chart",
+      "shared/chart-presets/charts/gauge-chart",
       "packages/chart/src/headless/gauge-chart",
     ],
     evaluation: {
@@ -1229,7 +1229,7 @@ export const chartFamilies = [
       "Are we showing count, density, or a normalized frequency?",
     ],
     implementationNotes: [
-      "Use chart-styles HistogramChart as a base wrapper.",
+      "Use chart-presets HistogramChart as a base wrapper.",
       "Bin strategy changes interpretation, so do not guess quietly.",
       "If the prompt starts asking for KDE curves or multiple distributions, you may need a novel hybrid pattern.",
     ],
@@ -1246,7 +1246,7 @@ export const chartFamilies = [
   binCount: 6
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/histogram-chart",
+      "shared/chart-presets/charts/histogram-chart",
       "packages/chart/src/headless/histogram-chart",
     ],
     evaluation: {
@@ -1292,7 +1292,7 @@ export const chartFamilies = [
       "How dense can labels be before they need hover-only treatment?",
     ],
     implementationNotes: [
-      "Use chart-styles NetworkChart as a base wrapper.",
+      "Use chart-presets NetworkChart as a base wrapper.",
       "This is controller-owned layout territory, so source-path honesty matters.",
       "If the chart is drifting toward a node editor, stop pretending it is just a chart.",
     ],
@@ -1316,7 +1316,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/network-chart",
+      "shared/chart-presets/charts/network-chart",
       "packages/chart/src/headless/network-chart",
     ],
     evaluation: {
@@ -1362,7 +1362,7 @@ export const chartFamilies = [
       "Would pie or radar be easier to read for this audience?",
     ],
     implementationNotes: [
-      "Use chart-styles PolarAreaChart as a base wrapper that reuses pie-style visuals.",
+      "Use chart-presets PolarAreaChart as a base wrapper that reuses pie-style visuals.",
       "Explain why this is not a pie chart; otherwise the user may just want donut or pie.",
       "Keep the scale semantics explicit.",
     ],
@@ -1383,7 +1383,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/polar-area-chart",
+      "shared/chart-presets/charts/polar-area-chart",
       "packages/chart/src/headless/polar-area-chart",
     ],
     evaluation: {
@@ -1429,7 +1429,7 @@ export const chartFamilies = [
       "Do segment labels live on-track, off-track, or only in surrounding text?",
     ],
     implementationNotes: [
-      "Use chart-styles ProgressChart as a base wrapper.",
+      "Use chart-presets ProgressChart as a base wrapper.",
       "Gauge is not the default; choose progress when a linear bounded track is clearer.",
       "Segmented progress often drifts toward composite scorecards, so watch scope creep.",
     ],
@@ -1450,7 +1450,7 @@ export const chartFamilies = [
   max: 100
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/progress-chart",
+      "shared/chart-presets/charts/progress-chart",
       "packages/chart/src/headless/progress-chart",
     ],
     evaluation: {
@@ -1496,7 +1496,7 @@ export const chartFamilies = [
       "How dense can node labels be before truncation or hover is needed?",
     ],
     implementationNotes: [
-      "Use chart-styles SankeyChart as a base wrapper on top of controller-owned layout.",
+      "Use chart-presets SankeyChart as a base wrapper on top of controller-owned layout.",
       "This is one of the clearest cases where the controller does real geometry work.",
       "If the request becomes an interactive flow editor, leave chart framing behind.",
     ],
@@ -1520,7 +1520,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/sankey-chart",
+      "shared/chart-presets/charts/sankey-chart",
       "packages/chart/src/headless/sankey-chart",
     ],
     evaluation: {
@@ -1566,7 +1566,7 @@ export const chartFamilies = [
       "Would treemap be more readable for this audience?",
     ],
     implementationNotes: [
-      "Use chart-styles SunburstChart as a base wrapper.",
+      "Use chart-presets SunburstChart as a base wrapper.",
       "Label density is the first thing that breaks on sunbursts.",
       "This is a good candidate for novel label behavior or legend composition.",
     ],
@@ -1588,7 +1588,7 @@ export const chartFamilies = [
   }
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/sunburst-chart",
+      "shared/chart-presets/charts/sunburst-chart",
       "packages/chart/src/headless/sunburst-chart",
     ],
     evaluation: {
@@ -1634,7 +1634,7 @@ export const chartFamilies = [
       "Is the data flat or should it behave like hierarchy externally even if the current type is flat?",
     ],
     implementationNotes: [
-      "Use chart-styles TreemapChart as a base wrapper.",
+      "Use chart-presets TreemapChart as a base wrapper.",
       "Current data type is flat node-based, so do not invent deeper hierarchy support without saying so.",
       "Treemap label density and color semantics are the main design pressure points.",
     ],
@@ -1655,7 +1655,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/treemap-chart",
+      "shared/chart-presets/charts/treemap-chart",
       "packages/chart/src/headless/treemap-chart",
     ],
     evaluation: {
@@ -1701,7 +1701,7 @@ export const chartFamilies = [
       "Should connectors be visible or subdued?",
     ],
     implementationNotes: [
-      "Use chart-styles WaterfallChart as a base wrapper.",
+      "Use chart-presets WaterfallChart as a base wrapper.",
       "Total indices are not optional semantics; clarify them early.",
       "This is a cumulative story, not just a signed bar chart.",
     ],
@@ -1719,7 +1719,7 @@ export const chartFamilies = [
   totalIndices: [0, 4]
 }`,
     sourcePaths: [
-      "shared/chart-styles/charts/waterfall-chart",
+      "shared/chart-presets/charts/waterfall-chart",
       "packages/chart/src/headless/waterfall-chart",
     ],
     evaluation: {
@@ -1761,7 +1761,7 @@ export const novelPatterns = [
     sourcePaths: [
       "packages/core/src/component",
       "packages/core/src/provider",
-      "shared/chart-styles/charts",
+      "shared/chart-presets/charts",
     ],
     relatedCharts: ["bar-chart", "line-chart", "heatmap-chart", "progress-chart"],
   },
@@ -1818,7 +1818,7 @@ export const novelPatterns = [
       "A canned family would force the wrong abstraction",
     ],
     buildPath: [
-      "Use chart-styles only for sub-parts that still map to a real chart family.",
+      "Use chart-presets only for sub-parts that still map to a real chart family.",
       "Use Container, Column, Row, Stack, Text, and GestureDetector for the shell.",
       "Treat the result as direct composition, not as a disguised preset chart.",
     ],
@@ -1844,8 +1844,8 @@ export const novelPatterns = [
       "Keep each radial layer semantically separate instead of faking one giant custom chart too early.",
     ],
     sourcePaths: [
-      "shared/chart-styles/charts/donut-chart",
-      "shared/chart-styles/charts/gauge-chart",
+      "shared/chart-presets/charts/donut-chart",
+      "shared/chart-presets/charts/gauge-chart",
       "packages/core/src/component/CustomPaint.ts",
     ],
     relatedCharts: ["donut-chart", "gauge-chart", "progress-chart", "polar-area-chart"],

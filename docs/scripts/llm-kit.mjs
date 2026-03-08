@@ -19,7 +19,7 @@ function quickStart(chart) {
       : "";
 
   return `import Widget from "@flitterjs/react";
-import { ${chart.importName} } from "chart-styles";
+import { ${chart.importName} } from "chart-presets";
 
 const widget = ${chart.importName}({
 ${styleLine}  data: ${chart.dataShape.trim()},

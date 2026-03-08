@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Base-wrapper chart. Start with `chart-styles ProgressChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
+Base-wrapper chart. Start with `chart-presets ProgressChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Base-wrapper chart. Start with `chart-styles ProgressChart` for structural defau
 
 ```ts
 import Widget from "@flitterjs/react";
-import { ProgressChart } from "chart-styles";
+import { ProgressChart } from "chart-presets";
 
 const widget = ProgressChart({
   data: {
@@ -61,7 +61,7 @@ const widget = ProgressChart({
 
 ## Implementation Notes
 
-- Use chart-styles ProgressChart as a base wrapper.
+- Use chart-presets ProgressChart as a base wrapper.
 - Gauge is not the default; choose progress when a linear bounded track is clearer.
 - Segmented progress often drifts toward composite scorecards, so watch scope creep.
 
@@ -78,5 +78,5 @@ Go headless or direct composition if the progress track becomes part of a richer
 
 ## Source Paths
 
-- `shared/chart-styles/charts/progress-chart`
+- `shared/chart-presets/charts/progress-chart`
 - `packages/chart/src/headless/progress-chart`

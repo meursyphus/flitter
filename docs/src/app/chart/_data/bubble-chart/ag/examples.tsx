@@ -73,7 +73,6 @@ export function DefaultAgBubbleChart() {
   return (
     <Widget
       widget={BubbleChart({
-        style: "ag",
         data: defaultData,
         config: {},
       })}
@@ -87,7 +86,6 @@ export function SmallAgBubbleChart() {
   return (
     <Widget
       widget={BubbleChart({
-        style: "ag",
         data: defaultData,
         config: {
           bubble: { minRadius: 2, maxRadius: 20, opacity: 0.8 },

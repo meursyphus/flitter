@@ -9,9 +9,16 @@ import {
   Align,
   Alignment,
   FractionallySizedBox,
+  BoxDecoration,
+  BorderRadius,
+  Radius,
+  Border,
+  BoxShadow,
 } from "flitter-core";
 import HeadlessProgressChart from "../_flitter/headless/progress-chart";
 import type { ProgressChartCustom, ProgressChartData } from "./types";
+import { HoverTooltip } from "../_flitter/shared/interaction/hover-tooltip";
+import { agTooltipContent, defaultAgCartesianBaseConfig } from "../ag-base/index";
 
 export type {
   ProgressChartContext,
@@ -47,15 +54,34 @@ const baseDefaults: Partial<ProgressChartCustom> = {
         ),
       }),
     }),
-  fill: ({ ratio, color }) =>
-    FractionallySizedBox({
-      widthFactor: Math.max(0, Math.min(1, ratio)),
-      alignment: Alignment.centerLeft,
-      child: Container({
-        width: Infinity,
-        height: Infinity,
-        color: color ?? "#00a9ff",
+  fill: ({ ratio, color, label, value }) =>
+    new HoverTooltip({
+      position: "topCenter",
+      tooltip: agTooltipContent({
+        label: label || "Progress",
+        items: { legend: label || "Value", color: color ?? "#00a9ff", value },
+        config: defaultAgCartesianBaseConfig,
       }),
+      renderChild: (hovered) =>
+        FractionallySizedBox({
+          widthFactor: Math.max(0, Math.min(1, ratio)),
+          alignment: Alignment.centerLeft,
+          child: Container({
+            width: Infinity,
+            height: Infinity,
+            decoration: new BoxDecoration({
+              color: color ?? "#00a9ff",
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              border:
+                hovered
+                  ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
+                  : undefined,
+              boxShadow: hovered
+                ? [new BoxShadow({ color: "rgba(0,0,0,0.16)", blurRadius: 10 })]
+                : undefined,
+            }),
+          }),
+        }),
     }),
   valueLabel: ({ value, ratio }) =>
     Text(`${Math.round(ratio * 100)}% (${value})`, {

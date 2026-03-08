@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Base-wrapper chart. Start with `chart-styles TreemapChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
+Base-wrapper chart. Start with `chart-presets TreemapChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Base-wrapper chart. Start with `chart-styles TreemapChart` for structural defaul
 
 ```ts
 import Widget from "@flitterjs/react";
-import { TreemapChart } from "chart-styles";
+import { TreemapChart } from "chart-presets";
 
 const widget = TreemapChart({
   data: {
@@ -61,7 +61,7 @@ const widget = TreemapChart({
 
 ## Implementation Notes
 
-- Use chart-styles TreemapChart as a base wrapper.
+- Use chart-presets TreemapChart as a base wrapper.
 - Current data type is flat node-based, so do not invent deeper hierarchy support without saying so.
 - Treemap label density and color semantics are the main design pressure points.
 
@@ -78,5 +78,5 @@ Go headless if layout strategy, label routing, or pseudo-hierarchy support need 
 
 ## Source Paths
 
-- `shared/chart-styles/charts/treemap-chart`
+- `shared/chart-presets/charts/treemap-chart`
 - `packages/chart/src/headless/treemap-chart`

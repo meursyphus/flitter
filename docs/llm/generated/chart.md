@@ -39,7 +39,7 @@ These have stronger ready-made defaults and are the first stop for common chart 
 
 ### Base-Wrapper Charts
 
-These still have a `chart-styles` entry point, but they behave more like structural wrappers around headless logic than polished theme presets.
+These still have a `chart-presets` entry point, but they behave more like structural wrappers around headless logic than polished theme presets.
 
 - `box-plot-chart`: Show distribution through quartiles, whiskers, and optional outliers.
 - `candlestick-chart`: Represent open-high-low-close movement for each interval.
@@ -67,7 +67,7 @@ Use when: Use when the prompt wants something expressive, product-facing, or pre
 
 - Good default title, legend, and animation behavior
 - Easy first pass for most dashboard and marketing charts
-- Strong preset surface in shared/chart-styles
+- Strong preset surface in shared/chart-presets
 
 ### AG Style (`ag`)
 
@@ -81,7 +81,7 @@ Use when: Use when the request sounds operational, enterprise, financial, or nee
 
 ## Core Rules
 
-- Start with `chart-styles` before using headless controllers directly.
+- Start with `chart-presets` before using headless controllers directly.
 - Treat fully themed presets and base wrappers differently.
 - Only use direct Flitter primitives when the request clearly exceeds canonical chart families.
 - Do not invent missing style systems or unsupported props.
@@ -107,7 +107,7 @@ Use `/llm/core/concepts.md` and `/llm/core/widget-catalog.md` when:
 
 ## Source Map
 
-- Presets and base wrappers: `shared/chart-styles`
+- Presets and base wrappers: `shared/chart-presets`
 - Headless logic: `packages/chart/src/headless`
 - Chart docs data: `docs/src/app/chart/_data`
 - Flitter primitives: `packages/core/src`

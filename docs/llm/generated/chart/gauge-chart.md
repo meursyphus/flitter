@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Base-wrapper chart. Start with `chart-styles GaugeChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
+Base-wrapper chart. Start with `chart-presets GaugeChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Base-wrapper chart. Start with `chart-styles GaugeChart` for structural defaults
 
 ```ts
 import Widget from "@flitterjs/react";
-import { GaugeChart } from "chart-styles";
+import { GaugeChart } from "chart-presets";
 
 const widget = GaugeChart({
   data: {
@@ -65,7 +65,7 @@ const widget = GaugeChart({
 
 ## Implementation Notes
 
-- Use chart-styles GaugeChart as a base wrapper.
+- Use chart-presets GaugeChart as a base wrapper.
 - Gauge charts are easy to misuse; confirm the bounded-range story first.
 - Zones are often the real reason to choose gauge over progress.
 
@@ -82,5 +82,5 @@ Go headless if the gauge becomes a composite radial dashboard or needs non-stand
 
 ## Source Paths
 
-- `shared/chart-styles/charts/gauge-chart`
+- `shared/chart-presets/charts/gauge-chart`
 - `packages/chart/src/headless/gauge-chart`

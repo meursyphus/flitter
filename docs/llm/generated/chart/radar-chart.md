@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Preset chart. Start with `chart-styles RadarChart`. The wrapper already has a default visual direction, so style switching is not the first decision.
+Preset chart. Start with `chart-presets RadarChart`. The wrapper already has a default visual direction, so style switching is not the first decision.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Preset chart. Start with `chart-styles RadarChart`. The wrapper already has a de
 
 ```ts
 import Widget from "@flitterjs/react";
-import { RadarChart } from "chart-styles";
+import { RadarChart } from "chart-presets";
 
 const widget = RadarChart({
   data: {
@@ -58,7 +58,7 @@ const widget = RadarChart({
 
 ## Implementation Notes
 
-- Use chart-styles RadarChart when the request clearly maps to shared radial dimensions.
+- Use chart-presets RadarChart when the request clearly maps to shared radial dimensions.
 - There is only toast today, so novel visual direction usually means slot overrides.
 - The scale choice changes interpretation; do not guess when the prompt hints at a fixed benchmark.
 
@@ -75,6 +75,6 @@ Go headless if the chart needs custom radial geometry, non-polygon profiles, or 
 
 ## Source Paths
 
-- `shared/chart-styles/charts/radar-chart`
+- `shared/chart-presets/charts/radar-chart`
 - `packages/chart/src/headless/radar-chart`
 - `docs/src/app/chart/_data/radar-chart`

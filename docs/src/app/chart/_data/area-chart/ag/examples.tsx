@@ -16,7 +16,6 @@ function AgAreaChart({ spline }: { spline?: boolean }) {
   return (
     <Widget
       widget={AreaChart({
-        style: "ag",
         data: defaultData,
         config: {
           area: {

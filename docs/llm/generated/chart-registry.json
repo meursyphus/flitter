@@ -24,11 +24,11 @@
       "strengths": [
         "Good default title, legend, and animation behavior",
         "Easy first pass for most dashboard and marketing charts",
-        "Strong preset surface in shared/chart-styles"
+        "Strong preset surface in shared/chart-presets"
       ],
       "sourcePaths": [
-        "shared/chart-styles/styles/toast",
-        "shared/chart-styles/charts/*/styles/toast"
+        "shared/chart-presets/styles/toast",
+        "shared/chart-presets/charts/*/styles/toast"
       ]
     },
     {
@@ -42,8 +42,8 @@
         "Useful when the user says AG-like, dashboard, or analyst-facing"
       ],
       "sourcePaths": [
-        "shared/chart-styles/styles/ag",
-        "shared/chart-styles/charts/*/styles/ag"
+        "shared/chart-presets/styles/ag",
+        "shared/chart-presets/charts/*/styles/ag"
       ]
     }
   ],
@@ -75,7 +75,7 @@
         "Do negative values or diverging bars need special treatment?"
       ],
       "implementationNotes": [
-        "Start with chart-styles BarChart and only drop to headless when layout or bar rendering stops fitting.",
+        "Start with chart-presets BarChart and only drop to headless when layout or bar rendering stops fitting.",
         "Prefer toast for expressive product UI; switch to ag for analyst dashboards.",
         "If the request asks for custom bar shapes, threshold markers, or label logic, use the custom slot surface before rewriting the chart."
       ],
@@ -88,7 +88,7 @@
       "escapeHatch": "Go headless if categories need non-standard spatial layout, mixed chart layers, or custom interactions that no longer map cleanly to grouped bars.",
       "dataShape": "{\n  labels: [\"Jan\", \"Feb\", \"Mar\", \"Apr\"],\n  datasets: [\n    { legend: \"Revenue\", values: [42, 58, 49, 73] },\n    { legend: \"Cost\", values: [30, 35, 38, 46] }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/bar-chart",
+        "shared/chart-presets/charts/bar-chart",
         "packages/chart/src/headless/bar-chart",
         "docs/src/app/chart/_data/bar-chart"
       ],
@@ -139,7 +139,7 @@
         "Do negative values exist, and if so should they diverge around zero?"
       ],
       "implementationNotes": [
-        "Use chart-styles StackedBarChart first.",
+        "Use chart-presets StackedBarChart first.",
         "Choose ag when the chart is dense and mostly analytical.",
         "If segment labeling or stack math gets custom, check the advanced surface before moving to headless."
       ],
@@ -152,7 +152,7 @@
       "escapeHatch": "Go headless if the request needs normalized stacks, waterfall-like transitions, or hybrid overlays on top of the stack.",
       "dataShape": "{\n  labels: [\"Q1\", \"Q2\", \"Q3\", \"Q4\"],\n  datasets: [\n    { legend: \"Product\", values: [24, 28, 31, 36] },\n    { legend: \"Services\", values: [11, 14, 15, 18] },\n    { legend: \"Support\", values: [4, 5, 6, 7] }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/stacked-bar-chart",
+        "shared/chart-presets/charts/stacked-bar-chart",
         "packages/chart/src/headless/bar-chart",
         "docs/src/app/chart/_data/stacked-bar-chart"
       ],
@@ -166,7 +166,7 @@
         "successCriteria": [
           "Chooses stacked bar instead of grouped bar",
           "Calls out percent-stack ambiguity if not specified",
-          "Keeps the solution in chart-styles unless stack semantics become custom"
+          "Keeps the solution in chart-presets unless stack semantics become custom"
         ],
         "criticFocus": [
           "Did the reader default to grouped bars?",
@@ -202,7 +202,7 @@
         "Is an overlay line enough, or does the prompt really want area or combo behavior?"
       ],
       "implementationNotes": [
-        "Use chart-styles LineChart first.",
+        "Use chart-presets LineChart first.",
         "Stay in preset mode when the request is standard line comparison with config-level changes.",
         "If the user wants bands, thresholds, or bespoke point rendering, push those through custom slots before rewriting the whole chart."
       ],
@@ -215,7 +215,7 @@
       "escapeHatch": "Go headless if the chart becomes a composed line system with custom point logic, confidence intervals, or non-standard hover behavior.",
       "dataShape": "{\n  labels: [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\"],\n  datasets: [\n    { legend: \"Signups\", values: [18, 24, 21, 29, 33] },\n    { legend: \"Trials\", values: [12, 16, 15, 20, 25] }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/line-chart",
+        "shared/chart-presets/charts/line-chart",
         "packages/chart/src/headless/line-chart",
         "docs/src/app/chart/_data/line-chart"
       ],
@@ -265,7 +265,7 @@
         "Are point markers or thresholds required on top of the area?"
       ],
       "implementationNotes": [
-        "Use chart-styles AreaChart for standard filled trend requests.",
+        "Use chart-presets AreaChart for standard filled trend requests.",
         "Toast is usually the best first pass because the softer visual language fits area charts well.",
         "If overlays or focus interactions are heavy, consider headless composition after using slots."
       ],
@@ -278,7 +278,7 @@
       "escapeHatch": "Go headless if the chart needs custom bands, mixed line-area layering, or annotation systems that exceed the preset surface.",
       "dataShape": "{\n  labels: [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\"],\n  datasets: [\n    { legend: \"Traffic\", values: [120, 148, 142, 176, 190] },\n    { legend: \"Activated\", values: [82, 96, 101, 118, 130] }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/area-chart",
+        "shared/chart-presets/charts/area-chart",
         "packages/chart/src/headless/line-chart",
         "docs/src/app/chart/_data/area-chart"
       ],
@@ -328,7 +328,7 @@
         "Does the user need totals, contributions, or both labeled?"
       ],
       "implementationNotes": [
-        "Use chart-styles StackedAreaChart first.",
+        "Use chart-presets StackedAreaChart first.",
         "Ag works well for dense operational views; toast works well for presentation surfaces.",
         "Pay attention to series ordering because it changes readability and perception."
       ],
@@ -341,7 +341,7 @@
       "escapeHatch": "Go headless if you need percent stacking, mixed overlays, or novel stacking semantics not covered by the preset controller.",
       "dataShape": "{\n  labels: [\"Week 1\", \"Week 2\", \"Week 3\", \"Week 4\"],\n  datasets: [\n    { legend: \"Organic\", values: [34, 38, 42, 46] },\n    { legend: \"Paid\", values: [18, 21, 19, 24] },\n    { legend: \"Referral\", values: [6, 8, 9, 11] }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/stacked-area-chart",
+        "shared/chart-presets/charts/stacked-area-chart",
         "packages/chart/src/headless/line-chart",
         "docs/src/app/chart/_data/stacked-area-chart"
       ],
@@ -391,7 +391,7 @@
         "Are the axes shared units, or do they need custom formatting?"
       ],
       "implementationNotes": [
-        "Use chart-styles ScatterChart first.",
+        "Use chart-presets ScatterChart first.",
         "Ag is often a better fit for dense analytical scatter plots.",
         "If points need custom hit areas, annotations, or overlays, use the custom scatter slot before changing chart architecture."
       ],
@@ -404,7 +404,7 @@
       "escapeHatch": "Go headless if the chart becomes a map-like plot, quadrant workspace, or mixed scatter-plus-annotation canvas.",
       "dataShape": "{\n  datasets: [\n    {\n      legend: \"Series A\",\n      data: [\n        { x: 12, y: 24, label: \"A1\" },\n        { x: 18, y: 31, label: \"A2\" },\n        { x: 30, y: 28, label: \"A3\" }\n      ]\n    }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/scatter-chart",
+        "shared/chart-presets/charts/scatter-chart",
         "packages/chart/src/headless/scatter-chart",
         "docs/src/app/chart/_data/scatter-chart"
       ],
@@ -454,7 +454,7 @@
         "Will overlap require jitter, transparency, or a different chart family?"
       ],
       "implementationNotes": [
-        "Use chart-styles BubbleChart first.",
+        "Use chart-presets BubbleChart first.",
         "Toast works well when the chart is presentation-heavy; ag works well for decision matrices.",
         "Bubble size semantics should be explained in title, legend, or hover copy if the prompt is ambiguous."
       ],
@@ -467,7 +467,7 @@
       "escapeHatch": "Go headless if the plot needs collision management, complex labeling, or custom spatial annotations beyond the preset surface.",
       "dataShape": "{\n  datasets: [\n    {\n      legend: \"Accounts\",\n      data: [\n        { x: 18, y: 42, value: 240, label: \"North\" },\n        { x: 30, y: 28, value: 160, label: \"West\" },\n        { x: 44, y: 55, value: 320, label: \"Enterprise\" }\n      ]\n    }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/bubble-chart",
+        "shared/chart-presets/charts/bubble-chart",
         "packages/chart/src/headless/bubble-chart",
         "docs/src/app/chart/_data/bubble-chart"
       ],
@@ -516,7 +516,7 @@
         "Would donut or stacked bar communicate the same story more clearly?"
       ],
       "implementationNotes": [
-        "Use chart-styles PieChart for straightforward composition views.",
+        "Use chart-presets PieChart for straightforward composition views.",
         "There is only toast today, so custom visual direction usually starts by overriding slots rather than switching presets.",
         "Keep the slice count disciplined."
       ],
@@ -529,7 +529,7 @@
       "escapeHatch": "Go headless if the prompt really wants a donut, polar area, radial progress, or a novel circular composition pattern.",
       "dataShape": "{\n  datasets: [\n    { name: \"Desktop\", value: 42 },\n    { name: \"Mobile\", value: 36 },\n    { name: \"Tablet\", value: 22 }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/pie-chart",
+        "shared/chart-presets/charts/pie-chart",
         "packages/chart/src/headless/pie-chart",
         "docs/src/app/chart/_data/pie-chart"
       ],
@@ -578,7 +578,7 @@
         "Does the chart need filled polygons, outline-only polygons, or highlighted vertices?"
       ],
       "implementationNotes": [
-        "Use chart-styles RadarChart when the request clearly maps to shared radial dimensions.",
+        "Use chart-presets RadarChart when the request clearly maps to shared radial dimensions.",
         "There is only toast today, so novel visual direction usually means slot overrides.",
         "The scale choice changes interpretation; do not guess when the prompt hints at a fixed benchmark."
       ],
@@ -591,7 +591,7 @@
       "escapeHatch": "Go headless if the chart needs custom radial geometry, non-polygon profiles, or heavy annotation logic.",
       "dataShape": "{\n  labels: [\"Speed\", \"Quality\", \"Adoption\", \"Reliability\", \"Cost\"],\n  datasets: [\n    { legend: \"Current\", values: [72, 81, 66, 88, 54] },\n    { legend: \"Target\", values: [80, 84, 74, 92, 62] }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/radar-chart",
+        "shared/chart-presets/charts/radar-chart",
         "packages/chart/src/headless/radar-chart",
         "docs/src/app/chart/_data/radar-chart"
       ],
@@ -640,7 +640,7 @@
         "Are missing cells real zeros or truly missing data?"
       ],
       "implementationNotes": [
-        "Use chart-styles HeatmapChart first.",
+        "Use chart-presets HeatmapChart first.",
         "Because only toast exists today, custom direction usually means slot overrides rather than preset switching.",
         "Always explain the scale and legend semantics if the prompt is not explicit."
       ],
@@ -653,7 +653,7 @@
       "escapeHatch": "Go headless if the chart becomes a calendar grid, timetable, or matrix with rich cell widgets and custom interactions.",
       "dataShape": "{\n  xLabels: [\"Jan\", \"Feb\", \"Mar\", \"Apr\"],\n  yLabels: [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\"],\n  values: [\n    [4, 6, 9, 12],\n    [3, 7, 10, 14],\n    [2, 5, 8, 11],\n    [4, 8, 12, 16],\n    [5, 9, 13, 18]\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/heatmap-chart",
+        "shared/chart-presets/charts/heatmap-chart",
         "packages/chart/src/headless/heatmap-chart",
         "docs/src/app/chart/_data/heatmap-chart"
       ],
@@ -700,7 +700,7 @@
         "Is the chart vertical or horizontal?"
       ],
       "implementationNotes": [
-        "chart-styles BoxPlotChart gives structural defaults but not a branded preset system.",
+        "chart-presets BoxPlotChart gives structural defaults but not a branded preset system.",
         "Expect to own custom rendering sooner than with bar or line charts.",
         "Use the base wrapper first before dropping all the way to headless."
       ],
@@ -713,7 +713,7 @@
       "escapeHatch": "Go headless if the distribution logic itself, orientation rules, or custom interaction model exceed the base wrapper.",
       "dataShape": "{\n  labels: [\"Control\", \"Experiment\"],\n  datasets: [\n    {\n      legend: \"Latency\",\n      data: [\n        { min: 72, q1: 88, median: 96, q3: 112, max: 140, outliers: [156] },\n        { min: 60, q1: 74, median: 85, q3: 99, max: 120, outliers: [132, 138] }\n      ]\n    }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/box-plot-chart",
+        "shared/chart-presets/charts/box-plot-chart",
         "packages/chart/src/headless/box-plot-chart"
       ],
       "evaluation": {
@@ -759,7 +759,7 @@
         "Do we need volume, moving averages, or overlays, which may turn this into a combo chart?"
       ],
       "implementationNotes": [
-        "chart-styles CandlestickChart gives a base structural wrapper.",
+        "chart-presets CandlestickChart gives a base structural wrapper.",
         "Treat color semantics and interval labeling as first-class questions.",
         "Use combo only if the request adds extra layers like moving averages or volume bars."
       ],
@@ -772,7 +772,7 @@
       "escapeHatch": "Go headless if financial overlays, custom scales, or bespoke interaction rules exceed the base wrapper.",
       "dataShape": "{\n  labels: [\"Mon\", \"Tue\", \"Wed\", \"Thu\"],\n  datasets: [\n    {\n      legend: \"AAPL\",\n      data: [\n        { open: 182, high: 188, low: 179, close: 186 },\n        { open: 186, high: 191, low: 184, close: 185 },\n        { open: 185, high: 189, low: 180, close: 183 },\n        { open: 183, high: 187, low: 181, close: 186 }\n      ]\n    }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/candlestick-chart",
+        "shared/chart-presets/charts/candlestick-chart",
         "packages/chart/src/headless/candlestick-chart"
       ],
       "evaluation": {
@@ -818,7 +818,7 @@
         "Would linked small multiples communicate the story better than one hybrid chart?"
       ],
       "implementationNotes": [
-        "Use chart-styles ComboChart as a composition-ready base wrapper.",
+        "Use chart-presets ComboChart as a composition-ready base wrapper.",
         "Do not jump to combo unless the prompt genuinely needs mixed marks.",
         "Secondary axis usage should be justified, not automatic."
       ],
@@ -831,7 +831,7 @@
       "escapeHatch": "Go headless when the hybrid behavior needs cross-series coordination, novel overlays, or interaction beyond the base wrapper.",
       "dataShape": "{\n  labels: [\"Jan\", \"Feb\", \"Mar\", \"Apr\"],\n  datasets: [\n    { legend: \"Revenue\", type: \"bar\", values: [120, 142, 136, 168], yAxisId: \"primary\" },\n    { legend: \"Margin\", type: \"line\", values: [28, 31, 30, 34], yAxisId: \"secondary\" }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/combo-chart",
+        "shared/chart-presets/charts/combo-chart",
         "packages/chart/src/headless/combo-chart"
       ],
       "evaluation": {
@@ -877,7 +877,7 @@
         "Would pie or progress communicate the story more cleanly?"
       ],
       "implementationNotes": [
-        "chart-styles DonutChart already reuses pie-style defaults, including a center-content slot.",
+        "chart-presets DonutChart already reuses pie-style defaults, including a center-content slot.",
         "Treat donut as composition plus summary, not only as a decorative pie variant.",
         "If the center becomes interactive or highly custom, you may need to leave the base wrapper."
       ],
@@ -890,7 +890,7 @@
       "escapeHatch": "Go headless if the center content becomes a true composite experience or the arc behavior stops resembling a donut chart.",
       "dataShape": "{\n  datasets: [\n    { name: \"Completed\", value: 64 },\n    { name: \"In Progress\", value: 24 },\n    { name: \"Blocked\", value: 12 }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/donut-chart",
+        "shared/chart-presets/charts/donut-chart",
         "packages/chart/src/headless/donut-chart"
       ],
       "evaluation": {
@@ -936,7 +936,7 @@
         "Does the chart need stage-to-stage conversion labels?"
       ],
       "implementationNotes": [
-        "Use chart-styles FunnelChart as a base wrapper.",
+        "Use chart-presets FunnelChart as a base wrapper.",
         "Clarify whether this is raw-stage volume, conversion, or both.",
         "Branching flows are not funnel charts; use sankey instead."
       ],
@@ -949,7 +949,7 @@
       "escapeHatch": "Go headless if the funnel needs novel geometry, interactive stage expansion, or hybrid scorecard behavior.",
       "dataShape": "{\n  stages: [\n    { label: \"Visited\", value: 12000 },\n    { label: \"Signed Up\", value: 4800 },\n    { label: \"Activated\", value: 2100 },\n    { label: \"Paid\", value: 840 }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/funnel-chart",
+        "shared/chart-presets/charts/funnel-chart",
         "packages/chart/src/headless/funnel-chart"
       ],
       "evaluation": {
@@ -995,7 +995,7 @@
         "Should the layout prioritize schedule density or readability?"
       ],
       "implementationNotes": [
-        "Use chart-styles GanttChart as a base wrapper.",
+        "Use chart-presets GanttChart as a base wrapper.",
         "Time scale and dependency rendering are the first constraints to clarify.",
         "If the layout becomes a true project board, consider direct composition or a novel pattern."
       ],
@@ -1008,7 +1008,7 @@
       "escapeHatch": "Go headless if scheduling logic, grouped swimlanes, or dependency routing exceed the base wrapper.",
       "dataShape": "{\n  tasks: [\n    { id: \"design\", label: \"Design\", start: 0, end: 4, progress: 1 },\n    { id: \"build\", label: \"Build\", start: 3, end: 10, progress: 0.6, dependencies: [\"design\"] },\n    { id: \"qa\", label: \"QA\", start: 9, end: 12, progress: 0.2, dependencies: [\"build\"] }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/gantt-chart",
+        "shared/chart-presets/charts/gantt-chart",
         "packages/chart/src/headless/gantt-chart"
       ],
       "evaluation": {
@@ -1054,7 +1054,7 @@
         "Would a progress chart communicate the same KPI more cleanly?"
       ],
       "implementationNotes": [
-        "Use chart-styles GaugeChart as a base wrapper.",
+        "Use chart-presets GaugeChart as a base wrapper.",
         "Gauge charts are easy to misuse; confirm the bounded-range story first.",
         "Zones are often the real reason to choose gauge over progress."
       ],
@@ -1067,7 +1067,7 @@
       "escapeHatch": "Go headless if the gauge becomes a composite radial dashboard or needs non-standard arc behavior.",
       "dataShape": "{\n  value: 72,\n  min: 0,\n  max: 100,\n  zones: [\n    { min: 0, max: 50, color: \"#ff6b6b\" },\n    { min: 50, max: 80, color: \"#ffd166\" },\n    { min: 80, max: 100, color: \"#06d6a0\" }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/gauge-chart",
+        "shared/chart-presets/charts/gauge-chart",
         "packages/chart/src/headless/gauge-chart"
       ],
       "evaluation": {
@@ -1113,7 +1113,7 @@
         "Are we showing count, density, or a normalized frequency?"
       ],
       "implementationNotes": [
-        "Use chart-styles HistogramChart as a base wrapper.",
+        "Use chart-presets HistogramChart as a base wrapper.",
         "Bin strategy changes interpretation, so do not guess quietly.",
         "If the prompt starts asking for KDE curves or multiple distributions, you may need a novel hybrid pattern."
       ],
@@ -1126,7 +1126,7 @@
       "escapeHatch": "Go headless if binning logic, overlays, or distribution interaction go beyond the base wrapper.",
       "dataShape": "{\n  values: [12, 14, 14, 18, 21, 24, 24, 25, 27, 31, 33, 36],\n  binCount: 6\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/histogram-chart",
+        "shared/chart-presets/charts/histogram-chart",
         "packages/chart/src/headless/histogram-chart"
       ],
       "evaluation": {
@@ -1172,7 +1172,7 @@
         "How dense can labels be before they need hover-only treatment?"
       ],
       "implementationNotes": [
-        "Use chart-styles NetworkChart as a base wrapper.",
+        "Use chart-presets NetworkChart as a base wrapper.",
         "This is controller-owned layout territory, so source-path honesty matters.",
         "If the chart is drifting toward a node editor, stop pretending it is just a chart."
       ],
@@ -1185,7 +1185,7 @@
       "escapeHatch": "Go headless or direct-flitter if the graph becomes a full interactive diagram surface.",
       "dataShape": "{\n  nodes: [\n    { id: \"api\", label: \"API\", group: \"backend\", size: 2 },\n    { id: \"worker\", label: \"Worker\", group: \"backend\", size: 1 },\n    { id: \"db\", label: \"DB\", group: \"storage\", size: 3 }\n  ],\n  edges: [\n    { source: \"api\", target: \"worker\", weight: 2 },\n    { source: \"worker\", target: \"db\", weight: 1 }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/network-chart",
+        "shared/chart-presets/charts/network-chart",
         "packages/chart/src/headless/network-chart"
       ],
       "evaluation": {
@@ -1231,7 +1231,7 @@
         "Would pie or radar be easier to read for this audience?"
       ],
       "implementationNotes": [
-        "Use chart-styles PolarAreaChart as a base wrapper that reuses pie-style visuals.",
+        "Use chart-presets PolarAreaChart as a base wrapper that reuses pie-style visuals.",
         "Explain why this is not a pie chart; otherwise the user may just want donut or pie.",
         "Keep the scale semantics explicit."
       ],
@@ -1244,7 +1244,7 @@
       "escapeHatch": "Go headless if the radial scale, layering, or composite interaction exceeds the base wrapper.",
       "dataShape": "{\n  datasets: [\n    { name: \"North\", value: 18 },\n    { name: \"South\", value: 12 },\n    { name: \"West\", value: 22 },\n    { name: \"East\", value: 15 }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/polar-area-chart",
+        "shared/chart-presets/charts/polar-area-chart",
         "packages/chart/src/headless/polar-area-chart"
       ],
       "evaluation": {
@@ -1290,7 +1290,7 @@
         "Do segment labels live on-track, off-track, or only in surrounding text?"
       ],
       "implementationNotes": [
-        "Use chart-styles ProgressChart as a base wrapper.",
+        "Use chart-presets ProgressChart as a base wrapper.",
         "Gauge is not the default; choose progress when a linear bounded track is clearer.",
         "Segmented progress often drifts toward composite scorecards, so watch scope creep."
       ],
@@ -1303,7 +1303,7 @@
       "escapeHatch": "Go headless or direct composition if the progress track becomes part of a richer scorecard or dashboard module.",
       "dataShape": "{\n  segments: [\n    { label: \"Complete\", value: 64, color: \"#06d6a0\" },\n    { label: \"In Review\", value: 20, color: \"#ffd166\" },\n    { label: \"Blocked\", value: 16, color: \"#ef476f\" }\n  ],\n  max: 100\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/progress-chart",
+        "shared/chart-presets/charts/progress-chart",
         "packages/chart/src/headless/progress-chart"
       ],
       "evaluation": {
@@ -1349,7 +1349,7 @@
         "How dense can node labels be before truncation or hover is needed?"
       ],
       "implementationNotes": [
-        "Use chart-styles SankeyChart as a base wrapper on top of controller-owned layout.",
+        "Use chart-presets SankeyChart as a base wrapper on top of controller-owned layout.",
         "This is one of the clearest cases where the controller does real geometry work.",
         "If the request becomes an interactive flow editor, leave chart framing behind."
       ],
@@ -1362,7 +1362,7 @@
       "escapeHatch": "Go headless if the layout, routing, or interaction model needs to diverge from the default sankey controller.",
       "dataShape": "{\n  nodes: [\n    { id: \"visit\", label: \"Visit\" },\n    { id: \"signup\", label: \"Sign Up\" },\n    { id: \"paid\", label: \"Paid\" }\n  ],\n  links: [\n    { source: \"visit\", target: \"signup\", value: 4800 },\n    { source: \"signup\", target: \"paid\", value: 840 }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/sankey-chart",
+        "shared/chart-presets/charts/sankey-chart",
         "packages/chart/src/headless/sankey-chart"
       ],
       "evaluation": {
@@ -1408,7 +1408,7 @@
         "Would treemap be more readable for this audience?"
       ],
       "implementationNotes": [
-        "Use chart-styles SunburstChart as a base wrapper.",
+        "Use chart-presets SunburstChart as a base wrapper.",
         "Label density is the first thing that breaks on sunbursts.",
         "This is a good candidate for novel label behavior or legend composition."
       ],
@@ -1421,7 +1421,7 @@
       "escapeHatch": "Go headless if depth, label routing, or interaction exceed the base wrapper.",
       "dataShape": "{\n  root: {\n    label: \"Company\",\n    children: [\n      { label: \"Product\", children: [{ label: \"Core\", value: 42 }, { label: \"Add-ons\", value: 18 }] },\n      { label: \"Services\", children: [{ label: \"Support\", value: 24 }, { label: \"Consulting\", value: 16 }] }\n    ]\n  }\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/sunburst-chart",
+        "shared/chart-presets/charts/sunburst-chart",
         "packages/chart/src/headless/sunburst-chart"
       ],
       "evaluation": {
@@ -1467,7 +1467,7 @@
         "Is the data flat or should it behave like hierarchy externally even if the current type is flat?"
       ],
       "implementationNotes": [
-        "Use chart-styles TreemapChart as a base wrapper.",
+        "Use chart-presets TreemapChart as a base wrapper.",
         "Current data type is flat node-based, so do not invent deeper hierarchy support without saying so.",
         "Treemap label density and color semantics are the main design pressure points."
       ],
@@ -1480,7 +1480,7 @@
       "escapeHatch": "Go headless if layout strategy, label routing, or pseudo-hierarchy support need to change materially.",
       "dataShape": "{\n  nodes: [\n    { label: \"Enterprise\", value: 42, color: \"#4e79a7\" },\n    { label: \"SMB\", value: 26, color: \"#f28e2b\" },\n    { label: \"Mid-Market\", value: 18, color: \"#59a14f\" },\n    { label: \"Channel\", value: 14, color: \"#e15759\" }\n  ]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/treemap-chart",
+        "shared/chart-presets/charts/treemap-chart",
         "packages/chart/src/headless/treemap-chart"
       ],
       "evaluation": {
@@ -1526,7 +1526,7 @@
         "Should connectors be visible or subdued?"
       ],
       "implementationNotes": [
-        "Use chart-styles WaterfallChart as a base wrapper.",
+        "Use chart-presets WaterfallChart as a base wrapper.",
         "Total indices are not optional semantics; clarify them early.",
         "This is a cumulative story, not just a signed bar chart."
       ],
@@ -1539,7 +1539,7 @@
       "escapeHatch": "Go headless if cumulative rules, subtotals, or hybrid overlays exceed the base wrapper.",
       "dataShape": "{\n  labels: [\"Start\", \"Upsell\", \"Churn\", \"Expansion\", \"End\"],\n  values: [120, 24, -18, 12, 0],\n  totalIndices: [0, 4]\n}",
       "sourcePaths": [
-        "shared/chart-styles/charts/waterfall-chart",
+        "shared/chart-presets/charts/waterfall-chart",
         "packages/chart/src/headless/waterfall-chart"
       ],
       "evaluation": {
@@ -1580,7 +1580,7 @@
       "sourcePaths": [
         "packages/core/src/component",
         "packages/core/src/provider",
-        "shared/chart-styles/charts"
+        "shared/chart-presets/charts"
       ],
       "relatedCharts": [
         "bar-chart",
@@ -1655,7 +1655,7 @@
         "A canned family would force the wrong abstraction"
       ],
       "buildPath": [
-        "Use chart-styles only for sub-parts that still map to a real chart family.",
+        "Use chart-presets only for sub-parts that still map to a real chart family.",
         "Use Container, Column, Row, Stack, Text, and GestureDetector for the shell.",
         "Treat the result as direct composition, not as a disguised preset chart."
       ],
@@ -1685,8 +1685,8 @@
         "Keep each radial layer semantically separate instead of faking one giant custom chart too early."
       ],
       "sourcePaths": [
-        "shared/chart-styles/charts/donut-chart",
-        "shared/chart-styles/charts/gauge-chart",
+        "shared/chart-presets/charts/donut-chart",
+        "shared/chart-presets/charts/gauge-chart",
         "packages/core/src/component/CustomPaint.ts"
       ],
       "relatedCharts": [
@@ -2121,7 +2121,7 @@
       "successCriteria": [
         "Chooses stacked bar instead of grouped bar",
         "Calls out percent-stack ambiguity if not specified",
-        "Keeps the solution in chart-styles unless stack semantics become custom"
+        "Keeps the solution in chart-presets unless stack semantics become custom"
       ],
       "criticFocus": [
         "Did the reader default to grouped bars?",

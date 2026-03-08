@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Base-wrapper chart. Start with `chart-styles FunnelChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
+Base-wrapper chart. Start with `chart-presets FunnelChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Base-wrapper chart. Start with `chart-styles FunnelChart` for structural default
 
 ```ts
 import Widget from "@flitterjs/react";
-import { FunnelChart } from "chart-styles";
+import { FunnelChart } from "chart-presets";
 
 const widget = FunnelChart({
   data: {
@@ -61,7 +61,7 @@ const widget = FunnelChart({
 
 ## Implementation Notes
 
-- Use chart-styles FunnelChart as a base wrapper.
+- Use chart-presets FunnelChart as a base wrapper.
 - Clarify whether this is raw-stage volume, conversion, or both.
 - Branching flows are not funnel charts; use sankey instead.
 
@@ -78,5 +78,5 @@ Go headless if the funnel needs novel geometry, interactive stage expansion, or 
 
 ## Source Paths
 
-- `shared/chart-styles/charts/funnel-chart`
+- `shared/chart-presets/charts/funnel-chart`
 - `packages/chart/src/headless/funnel-chart`

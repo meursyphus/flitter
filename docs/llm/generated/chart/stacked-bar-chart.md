@@ -6,7 +6,7 @@ Generated: 2026-03-07
 
 ## Surface
 
-Preset chart. Start with `chart-styles StackedBarChart` and choose from `toast`, `ag`.
+Preset chart. Start with `chart-presets StackedBarChart` and choose from `toast`, `ag`.
 
 ## Use When
 
@@ -23,7 +23,7 @@ Preset chart. Start with `chart-styles StackedBarChart` and choose from `toast`,
 
 ```ts
 import Widget from "@flitterjs/react";
-import { StackedBarChart } from "chart-styles";
+import { StackedBarChart } from "chart-presets";
 
 const widget = StackedBarChart({
   style: "toast",
@@ -61,7 +61,7 @@ const widget = StackedBarChart({
 
 ## Implementation Notes
 
-- Use chart-styles StackedBarChart first.
+- Use chart-presets StackedBarChart first.
 - Choose ag when the chart is dense and mostly analytical.
 - If segment labeling or stack math gets custom, check the advanced surface before moving to headless.
 
@@ -78,6 +78,6 @@ Go headless if the request needs normalized stacks, waterfall-like transitions, 
 
 ## Source Paths
 
-- `shared/chart-styles/charts/stacked-bar-chart`
+- `shared/chart-presets/charts/stacked-bar-chart`
 - `packages/chart/src/headless/bar-chart`
 - `docs/src/app/chart/_data/stacked-bar-chart`

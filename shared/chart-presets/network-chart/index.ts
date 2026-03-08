@@ -7,9 +7,14 @@ import {
   TextStyle,
   Stack,
   Positioned,
+  BoxDecoration,
+  Border,
+  BoxShadow,
 } from "flitter-core";
 import HeadlessNetworkChart from "../_flitter/headless/network-chart";
 import type { NetworkChartCustom, NetworkChartData } from "./types";
+import { HoverTooltip } from "../_flitter/shared/interaction/hover-tooltip";
+import { agTooltipContent, defaultAgCartesianBaseConfig } from "../ag-base/index";
 
 export type {
   NetworkChartContext,
@@ -32,16 +37,45 @@ const baseDefaults: Partial<NetworkChartCustom> = {
     Stack({
       children: [...nodes, ...nodeLabels],
     }),
-  node: ({ x, y, size }) =>
+  node: ({ label, x, y, size, group, index }) =>
     Positioned({
       left: x * 100,
       top: y * 100,
       width: 24 + size * 4,
       height: 24 + size * 4,
-      child: Container({
-        width: Infinity,
-        height: Infinity,
-        color: "#00a9ff",
+      child: new HoverTooltip({
+        position: "topCenter",
+        tooltip: agTooltipContent({
+          label,
+          items: {
+            legend: group ?? "Node size",
+            color:
+              defaultAgCartesianBaseConfig.colors.fills[
+                index % defaultAgCartesianBaseConfig.colors.fills.length
+              ],
+            value: size,
+          },
+          config: defaultAgCartesianBaseConfig,
+        }),
+        renderChild: (hovered) =>
+          Container({
+            width: Infinity,
+            height: Infinity,
+            decoration: new BoxDecoration({
+              color:
+                defaultAgCartesianBaseConfig.colors.fills[
+                  index % defaultAgCartesianBaseConfig.colors.fills.length
+                ],
+              shape: "circle",
+              border:
+                hovered
+                  ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
+                  : undefined,
+              boxShadow: hovered
+                ? [new BoxShadow({ color: "rgba(0,0,0,0.18)", blurRadius: 12 })]
+                : undefined,
+            }),
+          }),
       }),
     }),
   edge: () => Container({ width: 0, height: 0 }),
