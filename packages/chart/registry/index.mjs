@@ -68,30 +68,17 @@ const pluginCharts = [
   { name: "stacked-area-chart", styles: ["toast", "ag"], family: "line" },
   { name: "scatter-chart", styles: ["toast", "ag"], family: "point" },
   { name: "bubble-chart", styles: ["toast", "ag"], family: "point" },
+  { name: "pie-chart", styles: ["toast", "ag"], family: "radial" },
+  { name: "radar-chart", styles: ["toast", "ag"], family: "radial" },
+  { name: "heatmap-chart", styles: ["toast", "ag"], family: "matrix" },
 ];
 
 const presetCharts = [
-  { name: "pie-chart", style: "toast" },
-  { name: "radar-chart", style: "toast" },
-  { name: "heatmap-chart", style: "toast" },
 ];
 
 const standaloneCharts = [
   { name: "box-plot-chart" },
-  { name: "candlestick-chart" },
-  { name: "combo-chart" },
-  { name: "donut-chart", registryDependencies: ["toast-base", "toast-pie-chart"] },
-  { name: "funnel-chart" },
-  { name: "gantt-chart" },
-  { name: "gauge-chart" },
-  { name: "histogram-chart" },
-  { name: "network-chart" },
-  { name: "polar-area-chart", registryDependencies: ["toast-base", "toast-pie-chart"] },
-  { name: "progress-chart" },
-  { name: "sankey-chart" },
   { name: "sunburst-chart" },
-  { name: "treemap-chart" },
-  { name: "waterfall-chart" },
 ];
 
 function pluginChartItem(chart, style, family) {
@@ -125,7 +112,27 @@ function presetChartItem(chart, style) {
     outputDir,
     dependencies: ["flitter-ui", "flitter-core"],
     registryDependencies: [`${style}-base`],
-    files: mapDir(`charts/${chart}`, outputDir),
+    files: mapDir(`charts/${chart}`, outputDir, (file) => {
+      if (!file.startsWith(`charts/${chart}/styles/`)) return true;
+      return file.startsWith(`charts/${chart}/styles/${style}/`);
+    }),
+  };
+}
+
+function styledCopyChartItem(chart, style, registryDependencies) {
+  const outputDir = `${style}-${chart}`;
+  return {
+    id: outputDir,
+    kind: "copy-chart",
+    name: chart,
+    style,
+    outputDir,
+    dependencies: ["flitter-ui", "flitter-core"],
+    registryDependencies,
+    files: mapDir(`charts/${chart}`, outputDir, (file) => {
+      if (!file.startsWith(`charts/${chart}/styles/`)) return true;
+      return file.startsWith(`charts/${chart}/styles/${style}/`);
+    }),
   };
 }
 
@@ -234,6 +241,45 @@ export const pluginChartMetadata = {
     supportsGetScale: true,
     supportsGetScaleOptions: true,
   },
+  "pie-chart": {
+    componentName: "PieChart",
+    baseName: "BasePieChart",
+    customType: "PieChartCustom",
+    dataType: "PieChartData",
+    configTypes: {
+      toast: "ToastPieChartConfig",
+      ag: "AgPieChartConfig",
+    },
+    supportsDirection: false,
+    supportsGetScale: false,
+    supportsGetScaleOptions: false,
+  },
+  "radar-chart": {
+    componentName: "RadarChart",
+    baseName: "BaseRadarChart",
+    customType: "RadarChartCustom",
+    dataType: "RadarChartData",
+    configTypes: {
+      toast: "ToastRadarChartConfig",
+      ag: "AgRadarChartConfig",
+    },
+    supportsDirection: false,
+    supportsGetScale: true,
+    supportsGetScaleOptions: false,
+  },
+  "heatmap-chart": {
+    componentName: "HeatmapChart",
+    baseName: "BaseHeatmapChart",
+    customType: "HeatmapCustom",
+    dataType: "HeatmapData",
+    configTypes: {
+      toast: "ToastHeatmapChartConfig",
+      ag: "AgHeatmapChartConfig",
+    },
+    supportsDirection: false,
+    supportsGetScale: false,
+    supportsGetScaleOptions: false,
+  },
 };
 
 export const registryItems = [
@@ -253,6 +299,32 @@ export const registryItems = [
     styles.map((style) => pluginChartItem(name, style, family)),
   ),
   ...presetCharts.map(({ name, style }) => presetChartItem(name, style)),
+  styledCopyChartItem("donut-chart", "ag", ["ag-base", "ag-pie-chart"]),
+  styledCopyChartItem("donut-chart", "toast", ["toast-base", "toast-pie-chart"]),
+  styledCopyChartItem("gauge-chart", "ag", ["ag-base"]),
+  styledCopyChartItem("gauge-chart", "toast", ["toast-base"]),
+  styledCopyChartItem("histogram-chart", "ag", ["ag-base"]),
+  styledCopyChartItem("histogram-chart", "toast", ["toast-base"]),
+  styledCopyChartItem("polar-area-chart", "ag", ["ag-base", "ag-pie-chart"]),
+  styledCopyChartItem("polar-area-chart", "toast", ["toast-base", "toast-pie-chart"]),
+  styledCopyChartItem("progress-chart", "ag", ["ag-base"]),
+  styledCopyChartItem("progress-chart", "toast", ["toast-base"]),
+  styledCopyChartItem("waterfall-chart", "ag", ["ag-base"]),
+  styledCopyChartItem("waterfall-chart", "toast", ["toast-base"]),
+  styledCopyChartItem("candlestick-chart", "ag", ["ag-base"]),
+  styledCopyChartItem("candlestick-chart", "toast", ["toast-base"]),
+  styledCopyChartItem("funnel-chart", "ag", ["ag-base"]),
+  styledCopyChartItem("funnel-chart", "toast", ["toast-base"]),
+  styledCopyChartItem("gantt-chart", "ag", ["ag-base"]),
+  styledCopyChartItem("gantt-chart", "toast", ["toast-base"]),
+  styledCopyChartItem("combo-chart", "ag", ["ag-base"]),
+  styledCopyChartItem("combo-chart", "toast", ["toast-base"]),
+  styledCopyChartItem("network-chart", "ag", ["ag-base"]),
+  styledCopyChartItem("network-chart", "toast", ["toast-base"]),
+  styledCopyChartItem("sankey-chart", "ag", ["ag-base"]),
+  styledCopyChartItem("sankey-chart", "toast", ["toast-base"]),
+  styledCopyChartItem("treemap-chart", "ag", ["ag-base"]),
+  styledCopyChartItem("treemap-chart", "toast", ["toast-base"]),
   ...standaloneCharts.map(({ name, registryDependencies }) =>
     standaloneChartItem(name, registryDependencies),
   ),

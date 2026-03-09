@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Widget from "@flitterjs/react";
-import { PolarAreaChart } from "shared/chart";
+import { ToastPolarAreaChart } from "shared/chart";
 
 type StoryArgs = {
   renderer: "svg" | "canvas";
@@ -41,12 +41,12 @@ type Story = StoryObj<StoryArgs>;
 
 export const Basic: Story = {
   render: (args) => (
-    <Widget widget={PolarAreaChart({ data: categoryData })} width="560px" height="420px" renderer={args.renderer} />
+    <Widget widget={ToastPolarAreaChart({ data: categoryData })} width="560px" height="420px" renderer={args.renderer} />
   ),
 };
 
 export const ManyCategories: Story = {
   render: (args) => (
-    <Widget widget={PolarAreaChart({ data: denseData })} width="560px" height="420px" renderer={args.renderer} />
+    <Widget widget={ToastPolarAreaChart({ data: denseData })} width="560px" height="420px" renderer={args.renderer} />
   ),
 };

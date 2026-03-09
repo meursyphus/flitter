@@ -1,7 +1,8 @@
 import type { Widget } from "flitter-core";
-import HeadlessSankeyChart from "@headless/sankey-chart";
+import { SankeyChart as HeadlessSankeyChart } from "flitter-ui/chart";
 import type { SankeyChartCustom, SankeyChartData } from "./types";
-import * as Base from "./base";
+import { styleConfig, type SankeyChartConfig } from "./style";
+import type { DeepPartial } from "@utils/index";
 
 export type {
   SankeyChartContext,
@@ -12,26 +13,20 @@ export type {
   SankeyLayout,
 } from "./types";
 export { SankeyChartController } from "./types";
+export { type SankeyChartConfig } from "./style";
 
-const baseDefaults: Partial<SankeyChartCustom> = {
-  layout: Base.Layout,
-  sankey: Base.Sankey,
-  node: Base.Node,
-  link: Base.Link,
-  nodeLabel: Base.NodeLabel,
-  title: Base.Title,
-};
-
-export default function SankeyChart<TConfig = {}>({
+export default function SankeyChart({
+  data,
+  config,
   custom,
-  ...rest
 }: {
-  custom?: Partial<SankeyChartCustom<TConfig>>;
+  custom?: Partial<SankeyChartCustom<SankeyChartConfig>>;
   data: SankeyChartData;
-  config?: TConfig;
+  config?: DeepPartial<SankeyChartConfig>;
 }): Widget {
   return HeadlessSankeyChart({
-    ...rest,
-    custom: { ...baseDefaults, ...custom } as SankeyChartCustom<TConfig>,
+    data,
+    config: styleConfig.createConfig(config),
+    custom: { ...styleConfig.custom, ...custom } as SankeyChartCustom<SankeyChartConfig>,
   });
 }

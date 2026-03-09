@@ -2,6 +2,7 @@ import type { GaugeChartCustom } from "../types";
 import {
   Stack,
   Alignment,
+  Positioned,
   SizedBox,
 } from "flitter-core";
 
@@ -13,7 +14,10 @@ export function Gauge(
     height: 150,
     child: Stack({
       alignment: Alignment.bottomCenter,
-      children: [scale, needle],
+      children: [
+        Positioned.fill({ child: scale }),
+        Positioned.fill({ child: needle }),
+      ],
     }),
   });
 }

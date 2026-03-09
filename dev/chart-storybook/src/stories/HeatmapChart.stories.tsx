@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Widget from "@flitterjs/react";
-import { HeatmapChart } from "shared/chart";
+import { ToastHeatmapChart } from "shared/chart";
 
 const LEGEND_POSITIONS = ["top", "bottom", "right", "right-top", "right-center", "right-bottom"] as const;
 const TITLE_OPTIONS = ["top-start", "top-center", "top-end", "bottom-start", "bottom-center", "bottom-end"] as const;
@@ -36,11 +36,11 @@ const defaultData = {
 	],
 };
 
-function ToastHeatmapChart({ args }: { args: HeatmapChartArgs }) {
+function ToastHeatmapChartStory({ args }: { args: HeatmapChartArgs }) {
 	const { position, alignment } = parseTitlePlacement(args.titlePlacement);
 	return (
 		<Widget
-			widget={HeatmapChart({
+			widget={ToastHeatmapChart({
 				data: defaultData,
 				config: {
 					title: { text: args.title, position, alignment },
@@ -96,5 +96,5 @@ export default meta;
 type Story = StoryObj<HeatmapChartArgs>;
 
 export const Default: Story = {
-	render: (args) => <ToastHeatmapChart args={args} />,
+	render: (args) => <ToastHeatmapChartStory args={args} />,
 };

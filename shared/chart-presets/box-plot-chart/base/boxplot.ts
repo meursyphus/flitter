@@ -7,14 +7,16 @@ import {
 	Column,
 	CrossAxisAlignment,
 	Flexible,
+	Opacity,
 	SizedBox,
 } from 'flitter-core';
 import { HoverTooltip } from 'flitter-ui/chart';
 import { agTooltipContent, defaultAgCartesianBaseConfig } from '../../_styles/ag/index';
 
 export function BoxPlot(
-	...[{ dataPoint, legend, label, datasetIndex }, { scale }]: Parameters<BoxPlotChartCustom['boxPlot']>
+	...[{ dataPoint, index, legend, label, datasetIndex }, ctx]: Parameters<BoxPlotChartCustom['boxPlot']>
 ) {
+	const { scale } = ctx;
 	if (scale == null) return SizedBox.shrink();
 	const total = scale.max - scale.min;
 	const boxColor =
@@ -41,6 +43,9 @@ export function BoxPlot(
 	const medianToQ3 = q3Ratio - medianRatio;
 	const q3ToMax = maxRatio - q3Ratio;
 	const aboveMax = 1 - maxRatio;
+	const hoveredBoxPlot = ctx.hoveredBoxPlot;
+	const isHovered = ctx.isBoxPlotHovered(index, legend);
+	const activeOpacity = hoveredBoxPlot == null || isHovered ? 1 : 0.3;
 
 	return new HoverTooltip({
 		position: 'topCenter',
@@ -55,53 +60,58 @@ export function BoxPlot(
 			],
 			config: defaultAgCartesianBaseConfig,
 		}),
+		onMouseEnter: () => ctx.hoverBoxPlot(index, legend),
+		onMouseLeave: () => ctx.unhoverBoxPlot(),
 		renderChild: (hovered) =>
-			Container({
-				width: boxWidth + 8,
-				height: Infinity,
-				decoration: hovered
-					? new BoxDecoration({
-							border: Border.all({ color: 'rgba(255,255,255,0.35)', width: 1 }),
-							boxShadow: [new BoxShadow({ color: 'rgba(0,0,0,0.18)', blurRadius: 10 })],
-						})
-					: undefined,
-				child: Column({
-					crossAxisAlignment: CrossAxisAlignment.center,
-					children: [
-						...(aboveMax > 0
-							? [Flexible({ flex: aboveMax, child: SizedBox({ width: 1 }) })]
-							: []),
-						Container({ width: whiskerWidth, height: 1, color: whiskerColor }),
-						...(q3ToMax > 0
-							? [Flexible({
-									flex: q3ToMax,
-									child: Container({ width: hovered ? 2 : 1, color: whiskerColor, height: Infinity }),
-								})]
-							: []),
-						...(medianToQ3 > 0
-							? [Flexible({
-									flex: medianToQ3,
-									child: Container({ width: boxWidth, color: boxColor, height: Infinity }),
-								})]
-							: []),
-						Container({ width: boxWidth, height: hovered ? 3 : 2, color: medianColor }),
-						...(q1ToMedian > 0
-							? [Flexible({
-									flex: q1ToMedian,
-									child: Container({ width: boxWidth, color: boxColor, height: Infinity }),
-								})]
-							: []),
-						...(minToQ1 > 0
-							? [Flexible({
-									flex: minToQ1,
-									child: Container({ width: hovered ? 2 : 1, color: whiskerColor, height: Infinity }),
-								})]
-							: []),
-						Container({ width: whiskerWidth, height: 1, color: whiskerColor }),
-						...(belowMin > 0
-							? [Flexible({ flex: belowMin, child: SizedBox({ width: 1 }) })]
-							: []),
-					],
+			Opacity({
+				opacity: activeOpacity,
+				child: Container({
+					width: boxWidth + 8,
+					height: Infinity,
+					decoration: hovered
+						? new BoxDecoration({
+								border: Border.all({ color: 'rgba(255,255,255,0.35)', width: 1 }),
+								boxShadow: [new BoxShadow({ color: 'rgba(0,0,0,0.18)', blurRadius: 10 })],
+							})
+						: undefined,
+					child: Column({
+						crossAxisAlignment: CrossAxisAlignment.center,
+						children: [
+							...(aboveMax > 0
+								? [Flexible({ flex: aboveMax, child: SizedBox({ width: 1 }) })]
+								: []),
+							Container({ width: whiskerWidth, height: 1, color: whiskerColor }),
+							...(q3ToMax > 0
+								? [Flexible({
+										flex: q3ToMax,
+										child: Container({ width: hovered ? 2 : 1, color: whiskerColor, height: Infinity }),
+									})]
+								: []),
+							...(medianToQ3 > 0
+								? [Flexible({
+										flex: medianToQ3,
+										child: Container({ width: boxWidth, color: boxColor, height: Infinity }),
+									})]
+								: []),
+							Container({ width: boxWidth, height: hovered ? 3 : 2, color: medianColor }),
+							...(q1ToMedian > 0
+								? [Flexible({
+										flex: q1ToMedian,
+										child: Container({ width: boxWidth, color: boxColor, height: Infinity }),
+									})]
+								: []),
+							...(minToQ1 > 0
+								? [Flexible({
+										flex: minToQ1,
+										child: Container({ width: hovered ? 2 : 1, color: whiskerColor, height: Infinity }),
+									})]
+								: []),
+							Container({ width: whiskerWidth, height: 1, color: whiskerColor }),
+							...(belowMin > 0
+								? [Flexible({ flex: belowMin, child: SizedBox({ width: 1 }) })]
+								: []),
+						],
+					}),
 				}),
 			}),
 	});

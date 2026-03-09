@@ -1,5 +1,5 @@
 import type { Widget } from "flitter-core";
-import HeadlessCandlestickChart from "@headless/candlestick-chart";
+import { CandlestickChart as HeadlessCandlestickChart } from "flitter-ui/chart";
 import type {
   CandlestickChartCustom,
   CandlestickChartData,
@@ -7,6 +7,8 @@ import type {
   GetScaleOptionsFn,
 } from "./types";
 import * as Base from "./base";
+import { styleConfig, type CandlestickChartConfig } from "./style";
+import type { DeepPartial } from "@utils/index";
 
 export type {
   CandlestickChartContext,
@@ -19,43 +21,24 @@ export type {
   GetScaleOptionsFn,
 } from "./types";
 export { CandlestickChartController } from "./types";
+export { type CandlestickChartConfig } from "./style";
 
-const baseDefaults: Partial<CandlestickChartCustom> = {
-  candlestick: Base.Candlestick,
-  xAxis: Base.XAxis,
-  xAxisLabel: Base.XAxisLabel,
-  xAxisTick: Base.XAxisTick,
-  yAxis: Base.YAxis,
-  yAxisLabel: Base.YAxisLabel,
-  yAxisTick: Base.YAxisTick,
-  dataView: Base.DataView,
-  layout: Base.Layout,
-  plot: Base.Plot,
-  legend: Base.Legend,
-  title: Base.Title,
-  dataLabel: Base.DataLabel,
-  xAxisLine: Base.XAxisLine,
-  yAxisLine: Base.YAxisLine,
-  grid: Base.Grid,
-  gridXLine: Base.GridXLine,
-  gridYLine: Base.GridYLine,
-  axisCorner: Base.AxisCorner,
-};
-
-export default function CandlestickChart<TConfig = {}>({
+export default function CandlestickChart({
+  data,
+  config,
   custom,
   getScale = Base.getScale,
-  ...rest
 }: {
-  custom?: Partial<CandlestickChartCustom<TConfig>>;
+  custom?: Partial<CandlestickChartCustom<CandlestickChartConfig>>;
   data: CandlestickChartData;
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
-  config?: TConfig;
+  config?: DeepPartial<CandlestickChartConfig>;
 }): Widget {
   return HeadlessCandlestickChart({
-    ...rest,
+    data,
+    config: styleConfig.createConfig(config),
     getScale,
-    custom: { ...baseDefaults, ...custom } as CandlestickChartCustom<TConfig>,
+    custom: { ...styleConfig.custom, ...custom } as CandlestickChartCustom<CandlestickChartConfig>,
   });
 }

@@ -51,6 +51,9 @@ function parseArgs(argv) {
 
   for (let index = 0; index < argv.length; index += 1) {
     const token = argv[index];
+    if (token === "--") {
+      continue;
+    }
     if (token === "--help" || token === "-h") {
       args.help = true;
       continue;

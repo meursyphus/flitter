@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Widget from "@flitterjs/react";
-import { PieChart } from "shared/chart";
+import { ToastPieChart } from "shared/chart";
 
 const LEGEND_POSITIONS = ["top", "bottom", "right", "right-top", "right-center", "right-bottom"] as const;
 const TITLE_OPTIONS = ["top-start", "top-center", "top-end", "bottom-start", "bottom-center", "bottom-end"] as const;
@@ -32,11 +32,11 @@ const defaultData = {
 	],
 };
 
-function ToastPieChart({ args }: { args: PieChartArgs }) {
+function ToastPieChartStory({ args }: { args: PieChartArgs }) {
 	const { position, alignment } = parseTitlePlacement(args.titlePlacement);
 	return (
 		<Widget
-			widget={PieChart({
+			widget={ToastPieChart({
 				data: defaultData,
 				config: {
 					title: { text: args.title, position, alignment },
@@ -90,7 +90,7 @@ export default meta;
 type Story = StoryObj<PieChartArgs>;
 
 export const Default: Story = {
-	render: (args) => <ToastPieChart args={args} />,
+	render: (args) => <ToastPieChartStory args={args} />,
 };
 
 export const Donut: Story = {
@@ -98,5 +98,5 @@ export const Donut: Story = {
 		innerRadiusRatio: 0.5,
 		title: "Browser Usage (Donut)",
 	},
-	render: (args) => <ToastPieChart args={args} />,
+	render: (args) => <ToastPieChartStory args={args} />,
 };

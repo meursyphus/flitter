@@ -1,9 +1,8 @@
 import type { Widget } from "flitter-core";
-import HeadlessGaugeChart from "@headless/gauge-chart";
+import { GaugeChart as HeadlessGaugeChart } from "flitter-ui/chart";
 import type { GaugeChartCustom, GaugeChartData } from "./types";
-import * as Base from "./base";
-import { HoverTooltip } from "@shared/interaction/hover-tooltip";
-import { agTooltipContent, defaultAgCartesianBaseConfig } from "@styles/ag";
+import { styleConfig, type GaugeChartConfig } from "./style";
+import type { DeepPartial } from "@utils/index";
 
 export type {
   GaugeChartContext,
@@ -12,35 +11,20 @@ export type {
   GaugeChartCustom,
 } from "./types";
 export { GaugeChartController } from "./types";
+export { type GaugeChartConfig } from "./style";
 
-const baseDefaults: Partial<GaugeChartCustom> = {
-  layout: Base.Layout,
-  title: Base.Title,
-  gauge: (args, ctx) =>
-    new HoverTooltip({
-      position: "topCenter",
-      tooltip: agTooltipContent({
-        label: "Gauge",
-        items: { legend: "Value", color: "#00a9ff", value: ctx.data.value },
-        config: defaultAgCartesianBaseConfig,
-      }),
-      renderChild: () => Base.Gauge(args, ctx),
-    }),
-  needle: Base.Needle,
-  valueLabel: Base.ValueLabel,
-  scale: Base.Scale,
-};
-
-export default function GaugeChart<TConfig = {}>({
+export default function GaugeChart({
+  config,
+  data,
   custom,
-  ...rest
 }: {
-  custom?: Partial<GaugeChartCustom<TConfig>>;
+  config?: DeepPartial<GaugeChartConfig>;
   data: GaugeChartData;
-  config?: TConfig;
+  custom?: Partial<GaugeChartCustom<GaugeChartConfig>>;
 }): Widget {
   return HeadlessGaugeChart({
-    ...rest,
-    custom: { ...baseDefaults, ...custom } as GaugeChartCustom<TConfig>,
+    data,
+    config: styleConfig.createConfig(config),
+    custom: { ...styleConfig.custom, ...custom } as GaugeChartCustom<GaugeChartConfig>,
   });
 }

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Widget from "@flitterjs/react";
-import { DonutChart } from "shared/chart";
+import { ToastDonutChart } from "shared/chart";
 
 type StoryArgs = {
   renderer: "svg" | "canvas";
@@ -38,14 +38,14 @@ type Story = StoryObj<StoryArgs>;
 
 export const Basic: Story = {
   render: (args) => (
-    <Widget widget={DonutChart({ data })} width="560px" height="400px" renderer={args.renderer} />
+    <Widget widget={ToastDonutChart({ data })} width="560px" height="400px" renderer={args.renderer} />
   ),
 };
 
 export const CenterLabel: Story = {
   render: (args) => (
     <Widget
-      widget={DonutChart({ data: altData, config: { centerText: "100%" } })}
+      widget={ToastDonutChart({ data: altData, config: { centerText: "100%" } })}
       width="560px"
       height="400px"
       renderer={args.renderer}

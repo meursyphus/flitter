@@ -4,25 +4,21 @@ import {
   Container,
   CrossAxisAlignment,
   EdgeInsets,
-  MainAxisAlignment,
-  Row,
+  Expanded,
 } from "flitter-core";
 
 export function Layout(
-  ...[{ title, sunburst, legend }]: Parameters<SunburstCustom["layout"]>
+  ...[{ title, sunburst }]: Parameters<SunburstCustom["layout"]>
 ) {
   return Container({
+    width: Infinity,
+    height: Infinity,
     padding: EdgeInsets.all(20),
     child: Column({
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Row({
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [title],
-        }),
-        sunburst,
-        legend,
+        title,
+        Expanded({ child: sunburst }),
       ],
     }),
   });

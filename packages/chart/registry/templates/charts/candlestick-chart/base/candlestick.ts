@@ -10,14 +10,16 @@ import {
 	FractionallySizedBox,
 	MainAxisAlignment,
 	CrossAxisAlignment,
+	Opacity,
 	SizedBox,
 } from 'flitter-core';
 import { HoverTooltip } from '@shared/interaction/hover-tooltip';
 import { agTooltipContent, defaultAgCartesianBaseConfig } from '@styles/ag';
 
 export function Candlestick(
-	...[{ open, high, low, close, label, legend }, { scale }]: Parameters<CandlestickChartCustom['candlestick']>
+	...[{ open, high, low, close, label, index, legend }, ctx]: Parameters<CandlestickChartCustom['candlestick']>
 ) {
+	const { scale } = ctx;
 	if (scale == null) return SizedBox.shrink();
 	const total = scale.max - scale.min;
 	const isUp = close >= open;
@@ -32,6 +34,9 @@ export function Candlestick(
 	const bottomWickRatio = (bodyBottom - low) / total;
 	const belowRatio = (low - scale.min) / total;
 	const aboveRatio = (scale.max - high) / total;
+	const hoveredCandlestick = ctx.hoveredCandlestick;
+	const isHovered = ctx.isCandlestickHovered(index, legend);
+	const activeOpacity = hoveredCandlestick == null || isHovered ? 1 : 0.3;
 
 	return new HoverTooltip({
 		position: 'topCenter',
@@ -45,60 +50,65 @@ export function Candlestick(
 			],
 			config: defaultAgCartesianBaseConfig,
 		}),
+		onMouseEnter: () => ctx.hoverCandlestick(index, legend),
+		onMouseLeave: () => ctx.unhoverCandlestick(),
 		renderChild: (hovered) =>
-			Container({
-				width: Infinity,
-				height: Infinity,
-				alignment: Alignment.center,
-				child: FractionallySizedBox({
-					widthFactor: hovered ? 0.72 : 0.6,
-					child: Container({
-						decoration: hovered
-							? new BoxDecoration({
-									border: Border.all({ color: 'rgba(255,255,255,0.35)', width: 1 }),
-									boxShadow: [new BoxShadow({ color: 'rgba(0,0,0,0.18)', blurRadius: 10 })],
-								})
-							: undefined,
-						child: Column({
-							mainAxisAlignment: MainAxisAlignment.end,
-							crossAxisAlignment: CrossAxisAlignment.center,
-							children: [
-								...(aboveRatio > 0
-									? [Expanded({ flex: Math.max(aboveRatio, 0.001), child: Container({}) })]
-									: []),
-								...(topWickRatio > 0
-									? [
-											Expanded({
-												flex: Math.max(topWickRatio, 0.001),
-												child: Container({
-													width: hovered ? 2 : 1,
-													color: wickColor,
+			Opacity({
+				opacity: activeOpacity,
+				child: Container({
+					width: Infinity,
+					height: Infinity,
+					alignment: Alignment.center,
+					child: FractionallySizedBox({
+						widthFactor: hovered ? 0.72 : 0.6,
+						child: Container({
+							decoration: hovered
+								? new BoxDecoration({
+										border: Border.all({ color: 'rgba(255,255,255,0.35)', width: 1 }),
+										boxShadow: [new BoxShadow({ color: 'rgba(0,0,0,0.18)', blurRadius: 10 })],
+									})
+								: undefined,
+							child: Column({
+								mainAxisAlignment: MainAxisAlignment.end,
+								crossAxisAlignment: CrossAxisAlignment.center,
+								children: [
+									...(aboveRatio > 0
+										? [Expanded({ flex: Math.max(aboveRatio, 0.001), child: Container({}) })]
+										: []),
+									...(topWickRatio > 0
+										? [
+												Expanded({
+													flex: Math.max(topWickRatio, 0.001),
+													child: Container({
+														width: hovered ? 2 : 1,
+														color: wickColor,
+													}),
 												}),
-											}),
-									  ]
-									: []),
-								Expanded({
-									flex: Math.max(bodyRatio, 0.001),
-									child: Container({
-										width: Infinity,
-										color,
+										  ]
+										: []),
+									Expanded({
+										flex: Math.max(bodyRatio, 0.001),
+										child: Container({
+											width: Infinity,
+											color,
+										}),
 									}),
-								}),
-								...(bottomWickRatio > 0
-									? [
-											Expanded({
-												flex: Math.max(bottomWickRatio, 0.001),
-												child: Container({
-													width: hovered ? 2 : 1,
-													color: wickColor,
+									...(bottomWickRatio > 0
+										? [
+												Expanded({
+													flex: Math.max(bottomWickRatio, 0.001),
+													child: Container({
+														width: hovered ? 2 : 1,
+														color: wickColor,
+													}),
 												}),
-											}),
-									  ]
-									: []),
-								...(belowRatio > 0
-									? [Expanded({ flex: Math.max(belowRatio, 0.001), child: Container({}) })]
-									: []),
-							],
+										  ]
+										: []),
+									...(belowRatio > 0
+										? [Expanded({ flex: Math.max(belowRatio, 0.001), child: Container({}) })]
+										: []),
+								],
+							}),
 						}),
 					}),
 				}),

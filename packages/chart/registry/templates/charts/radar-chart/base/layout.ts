@@ -70,12 +70,12 @@ export function Layout(
 
 	const titleWidget = titleConfig.visible
 		? Column({
-				mainAxisSize: MainAxisSize.min,
-				crossAxisAlignment:
-					titleAlignmentMap[titleConfig.alignment as keyof typeof titleAlignmentMap],
-				children: [title, SizedBox({ height: 8 })],
-			})
-		: null;
+					mainAxisSize: MainAxisSize.min,
+					crossAxisAlignment:
+						titleAlignmentMap[titleConfig.alignment as keyof typeof titleAlignmentMap],
+					children: [title, SizedBox({ height: 16 })],
+				})
+			: null;
 
 	const columnChildren: Widget[] = [];
 

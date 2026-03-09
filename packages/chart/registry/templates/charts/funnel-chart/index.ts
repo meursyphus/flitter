@@ -1,7 +1,8 @@
 import type { Widget } from "flitter-core";
-import HeadlessFunnelChart from "@headless/funnel-chart";
+import { FunnelChart as HeadlessFunnelChart } from "flitter-ui/chart";
 import type { FunnelChartCustom, FunnelChartData } from "./types";
-import * as Base from "./base";
+import { styleConfig, type FunnelChartConfig } from "./style";
+import type { DeepPartial } from "@utils/index";
 
 export type {
   FunnelChartContext,
@@ -11,27 +12,20 @@ export type {
   FunnelChartCustom,
 } from "./types";
 export { FunnelChartController } from "./types";
+export { type FunnelChartConfig } from "./style";
 
-const baseDefaults: Partial<FunnelChartCustom> = {
-  layout: Base.Layout,
-  funnel: Base.Funnel,
-  stage: Base.Stage,
-  stageLabel: Base.StageLabel,
-  dataLabel: Base.DataLabel,
-  legend: Base.Legend,
-  title: Base.Title,
-};
-
-export default function FunnelChart<TConfig = {}>({
+export default function FunnelChart({
+  data,
+  config,
   custom,
-  ...rest
 }: {
-  custom?: Partial<FunnelChartCustom<TConfig>>;
+  custom?: Partial<FunnelChartCustom<FunnelChartConfig>>;
   data: FunnelChartData;
-  config?: TConfig;
+  config?: DeepPartial<FunnelChartConfig>;
 }): Widget {
   return HeadlessFunnelChart({
-    ...rest,
-    custom: { ...baseDefaults, ...custom } as FunnelChartCustom<TConfig>,
+    data,
+    config: styleConfig.createConfig(config),
+    custom: { ...styleConfig.custom, ...custom } as FunnelChartCustom<FunnelChartConfig>,
   });
 }
