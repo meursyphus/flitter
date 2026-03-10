@@ -151,9 +151,10 @@ Do not treat a chart as complete just because one style is complete.
 
 ## Feedback Checklist
 
-- [x] `PieChart / Ag`
-- [x] `PieChart / Toast`
-- [ ] `HeatmapChart / Ag`
+- [ㅅ] `PieChart / Ag`
+- [ㅅ] `PieChart / Toast`
+ㄴ 데이터 라벨 표시를 각각 하면 됨, 
+- [x] `HeatmapChart / Ag`
 - [x] `HeatmapChart / Toast`
 - [ ] `BoxPlotBar / Ag`
 - [ ] `BoxPlotBar / Toast`

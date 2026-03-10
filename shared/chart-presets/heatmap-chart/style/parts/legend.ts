@@ -1,37 +1,91 @@
 import {
   Column,
+  ConstraintsTransformBox,
   CrossAxisAlignment,
   CustomPaint,
+  FractionalTranslation,
   LayoutBuilder,
   MainAxisAlignment,
   MainAxisSize,
+  Offset,
+  Positioned,
   Row,
+  Size,
   SizedBox,
+  Stack,
+  State,
+  StatefulWidget,
   Text,
   TextStyle,
   type Widget,
 } from "flitter-core";
 import type { HeatmapContext } from "flitter-ui/chart";
+import type { HeatmapController } from "flitter-ui/chart";
 import type { AgHeatmapChartConfig } from "../config";
 
 const BAR_HEIGHT = 12;
 const LABEL_GAP = 6;
 const MAX_BAR_WIDTH = 360;
+const TRIANGLE_WIDTH = 10;
+const TRIANGLE_HEIGHT = 6;
+const INDICATOR_GAP = 2;
 
-function generateTicks(min: number, max: number, count: number = 3): number[] {
-  if (min === max) return [min];
-  const step = (max - min) / (count - 1);
-  const isInt = Number.isInteger(min) && Number.isInteger(max);
-  return Array.from({ length: count }, (_, i) => {
-    const v = min + i * step;
-    return isInt ? Math.round(v) : Math.round(v * 10) / 10;
+function generateNiceTicks(min: number, max: number): number[] {
+  const range = max - min;
+  if (range === 0) return [min];
+
+  const rawStep = range / 4;
+  const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
+  const niceStep =
+    [1, 2, 5, 10].map((m) => m * magnitude).find((s) => s >= rawStep) ??
+    rawStep;
+
+  const start = Math.ceil(min / niceStep) * niceStep;
+  const ticks: number[] = [];
+  for (let v = start; v < max; v += niceStep) {
+    ticks.push(Math.round(v * 1000) / 1000);
+  }
+  return ticks.length > 0 ? ticks : [Math.round((min + max) / 2)];
+}
+
+function blackTriangle(): Widget {
+  return SizedBox({
+    width: TRIANGLE_WIDTH,
+    height: TRIANGLE_HEIGHT,
+    child: CustomPaint({
+      size: new Size({ width: TRIANGLE_WIDTH, height: TRIANGLE_HEIGHT }),
+      painter: {
+        svg: {
+          createDefaultSvgEl: (ctx) => ({
+            fill: ctx.createSvgEl("polygon"),
+          }),
+          paint: ({ fill }, size) => {
+            const w = size.width;
+            const h = size.height;
+            fill.setAttribute("points", `0,0 ${w},0 ${w / 2},${h}`);
+            fill.setAttribute("fill", "#333");
+          },
+        },
+        canvas: {
+          paint: (ctx, size) => {
+            const c = ctx.canvas;
+            const w = size.width;
+            const h = size.height;
+            c.beginPath();
+            c.moveTo(0, 0);
+            c.lineTo(w, 0);
+            c.lineTo(w / 2, h);
+            c.closePath();
+            c.fillStyle = "#333";
+            c.fill();
+          },
+        },
+      },
+    }),
   });
 }
 
-function gradientBar(
-  colorRange: [string, string, string],
-  barWidth: number,
-): Widget {
+function gradientBar(colorRange: [string, string, string]): Widget {
   return SizedBox({
     height: BAR_HEIGHT,
     child: CustomPaint({
@@ -75,54 +129,140 @@ function gradientBar(
   });
 }
 
-function buildTickLabels(
-  ticks: number[],
-  font: { family: string; size: number },
-  color: string,
-): Widget {
-  const style = new TextStyle({
-    fontFamily: font.family,
-    fontSize: font.size,
-    color,
-  });
-  return Row({
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: ticks.map((t) => Text(`${t}`, { style })),
-  });
+class _AgHeatmapLegend extends StatefulWidget {
+  context: HeatmapContext<AgHeatmapChartConfig>;
+
+  constructor({ context }: { context: HeatmapContext<AgHeatmapChartConfig> }) {
+    super();
+    this.context = context;
+  }
+
+  createState() {
+    return new _AgHeatmapLegendState();
+  }
+}
+
+class _AgHeatmapLegendState extends State<_AgHeatmapLegend> {
+  #onHoverChange = () => {
+    this.setState(() => {});
+  };
+
+  override initState(): void {
+    (this.widget.context as unknown as HeatmapController).addHoverListener(
+      this.#onHoverChange,
+    );
+  }
+
+  override didUpdateWidget(oldWidget: _AgHeatmapLegend): void {
+    if (oldWidget.context !== this.widget.context) {
+      (oldWidget.context as unknown as HeatmapController).removeHoverListener(
+        this.#onHoverChange,
+      );
+      (this.widget.context as unknown as HeatmapController).addHoverListener(
+        this.#onHoverChange,
+      );
+    }
+  }
+
+  override dispose(): void {
+    (this.widget.context as unknown as HeatmapController).removeHoverListener(
+      this.#onHoverChange,
+    );
+  }
+
+  override build(): Widget {
+    const { context } = this.widget;
+    const { scale, config } = context;
+    const hovered = context.hovered;
+    const ticks = generateNiceTicks(scale.min, scale.max);
+    const range = scale.max - scale.min;
+
+    const textStyle = new TextStyle({
+      fontFamily: config.font.family,
+      fontSize: config.font.size,
+      color: config.axis.label.color,
+    });
+
+    return LayoutBuilder({
+      builder: (_ctx, constraints) => {
+        const availableWidth =
+          Number.isFinite(constraints.maxWidth) && constraints.maxWidth > 0
+            ? constraints.maxWidth
+            : MAX_BAR_WIDTH;
+        const barWidth = Math.min(MAX_BAR_WIDTH, availableWidth);
+
+        const indicatorRow = SizedBox({
+          height: TRIANGLE_HEIGHT + INDICATOR_GAP,
+          child:
+            hovered != null && range > 0
+              ? Stack({
+                  clipped: false,
+                  children: [
+                    SizedBox.expand(),
+                    Positioned({
+                      left:
+                        ((hovered.value - scale.min) / range) * barWidth -
+                        TRIANGLE_WIDTH / 2,
+                      bottom: INDICATOR_GAP,
+                      child: blackTriangle(),
+                    }),
+                  ],
+                })
+              : SizedBox.shrink(),
+        });
+
+        const tickRow = SizedBox({
+          height: 20,
+          child: Stack({
+            clipped: false,
+            children: [
+              SizedBox.expand(),
+              ...ticks.map((tick) => {
+                const fraction =
+                  range > 0 ? (tick - scale.min) / range : 0.5;
+                return Positioned({
+                  left: fraction * barWidth,
+                  top: 0,
+                  child: FractionalTranslation({
+                    translation: new Offset({ x: -0.5, y: 0 }),
+                    child: ConstraintsTransformBox({
+                      constraintsTransform:
+                        ConstraintsTransformBox.unconstrained,
+                      child: Text(`${tick}`, { style: textStyle }),
+                    }),
+                  }),
+                });
+              }),
+            ],
+          }),
+        });
+
+        return Row({
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox({
+              width: barWidth,
+              child: Column({
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  indicatorRow,
+                  gradientBar(config.heatmap.colorRange),
+                  SizedBox({ height: LABEL_GAP }),
+                  tickRow,
+                ],
+              }),
+            }),
+          ],
+        });
+      },
+    });
+  }
 }
 
 export function agHeatmapLegend(
   _args: undefined,
   context: HeatmapContext<AgHeatmapChartConfig>,
 ): Widget {
-  const { scale, config } = context;
-  const ticks = generateTicks(scale.min, scale.max);
-
-  return LayoutBuilder({
-    builder: (_ctx, constraints) => {
-      const availableWidth =
-        Number.isFinite(constraints.maxWidth) && constraints.maxWidth > 0
-          ? constraints.maxWidth
-          : MAX_BAR_WIDTH;
-      const barWidth = Math.min(MAX_BAR_WIDTH, availableWidth);
-
-      return Row({
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox({
-            width: barWidth,
-            child: Column({
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                gradientBar(config.heatmap.colorRange, barWidth),
-                SizedBox({ height: LABEL_GAP }),
-                buildTickLabels(ticks, config.font, config.axis.label.color),
-              ],
-            }),
-          }),
-        ],
-      });
-    },
-  });
+  return new _AgHeatmapLegend({ context });
 }

@@ -8,6 +8,7 @@ const TITLE_OPTIONS = ["top-start", "top-center", "top-end", "bottom-start", "bo
 type HeatmapChartArgs = {
 	renderer: "svg" | "canvas";
 	title: string;
+	subtitle: string;
 	titlePlacement: (typeof TITLE_OPTIONS)[number];
 	legendVisible: boolean;
 	legendPosition: (typeof LEGEND_POSITIONS)[number];
@@ -42,6 +43,7 @@ function AgHeatmapChartStory({ args }: { args: HeatmapChartArgs }) {
 				data: defaultData,
 				config: {
 					title: { text: args.title, position, alignment },
+					subtitle: { text: args.subtitle, visible: !!args.subtitle },
 					legend: {
 						visible: args.legendVisible,
 						position: args.legendPosition,
@@ -65,6 +67,7 @@ const meta: Meta<HeatmapChartArgs> = {
 	argTypes: {
 		renderer: { control: "inline-radio", options: ["svg", "canvas"] },
 		title: { control: "text" },
+		subtitle: { control: "text" },
 		titlePlacement: { control: "select", options: TITLE_OPTIONS },
 		legendVisible: { control: "boolean" },
 		legendPosition: { control: "select", options: LEGEND_POSITIONS },
@@ -74,10 +77,11 @@ const meta: Meta<HeatmapChartArgs> = {
 	args: {
 		renderer: "svg",
 		title: "Average Daily Temperature (°C)",
+		subtitle: "Monthly breakdown by day of week",
 		titlePlacement: "top-center",
 		legendVisible: true,
 		legendPosition: "bottom",
-		legendGap: 16,
+		legendGap: 20,
 		segmentGap: 0,
 	},
 };

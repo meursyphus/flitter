@@ -5,7 +5,6 @@ import {
   Container,
   EdgeInsets,
   GestureDetector,
-  Offset,
   Opacity,
   StatefulWidget,
   State,
@@ -15,8 +14,6 @@ import {
 import type { HeatmapCustom } from "@headless/heatmap-chart/types";
 import type { HeatmapController } from "@headless/heatmap-chart/controller";
 import type { AgHeatmapChartConfig } from "../config";
-import { agTooltipContent } from "@styles/ag";
-import { HoverTooltip } from "@shared/interaction/hover-tooltip";
 
 export function interpolateColor(
   colorRange: [string, string, string],
@@ -61,7 +58,6 @@ class _AgHoverableSegment extends StatefulWidget {
   yIndex: number;
   xLabel: string;
   yLabel: string;
-  tooltip: Widget | null;
 
   constructor(props: {
     controller: HeatmapController;
@@ -72,7 +68,6 @@ class _AgHoverableSegment extends StatefulWidget {
     yIndex: number;
     xLabel: string;
     yLabel: string;
-    tooltip: Widget | null;
   }) {
     super();
     this.controller = props.controller;
@@ -83,7 +78,6 @@ class _AgHoverableSegment extends StatefulWidget {
     this.yIndex = props.yIndex;
     this.xLabel = props.xLabel;
     this.yLabel = props.yLabel;
-    this.tooltip = props.tooltip;
   }
 
   createState() {
@@ -112,17 +106,8 @@ class _AgHoverableSegmentState extends State<_AgHoverableSegment> {
   }
 
   override build(): Widget {
-    const {
-      controller,
-      color,
-      gap,
-      tooltip,
-      value,
-      xIndex,
-      yIndex,
-      xLabel,
-      yLabel,
-    } = this.widget;
+    const { controller, color, gap, xIndex, yIndex, value, xLabel, yLabel } =
+      this.widget;
     const hovered = controller.hovered;
     const isActive = hovered?.xIndex === xIndex && hovered?.yIndex === yIndex;
     const isDimmed = hovered != null && !isActive;
@@ -140,49 +125,27 @@ class _AgHoverableSegmentState extends State<_AgHoverableSegment> {
       }),
     });
 
-    const content = ZIndex({
-      zIndex: isActive ? 1 : 0,
-      child: Opacity({
-        opacity: isDimmed ? 0.3 : 1,
-        child: segment,
-      }),
-    });
-
-    const onMouseEnter = () =>
-      controller.setHovered({
-        value,
-        xIndex,
-        yIndex,
-        xLabel,
-        yLabel,
-      });
-    const onMouseLeave = () => controller.setHovered(null);
-
-    if (tooltip == null) {
-      return GestureDetector({
-        cursor: "default",
-        onMouseEnter,
-        onMouseLeave,
-        child: content,
-      });
-    }
-
-    return new HoverTooltip({
-      position: "topCenter",
-      offset: new Offset({ x: 0, y: -0.1 }),
-      tooltip,
-      renderChild: () => content,
-      onMouseEnter,
-      onMouseLeave,
+    return GestureDetector({
       cursor: "default",
+      onMouseEnter: () =>
+        controller.setHovered({ value, xIndex, yIndex, xLabel, yLabel }),
+      child: ZIndex({
+        zIndex: isActive ? 1 : 0,
+        child: Opacity({
+          opacity: isDimmed ? 0.5 : 1,
+          child: segment,
+        }),
+      }),
     });
   }
 }
 
 export function agSegment(
-  ...[{ value, xIndex, yIndex }, ctx]: Parameters<HeatmapCustom<AgHeatmapChartConfig>["segment"]>
+  ...[{ value, xIndex, yIndex }, ctx]: Parameters<
+    HeatmapCustom<AgHeatmapChartConfig>["segment"]
+  >
 ): Widget {
-  const { heatmap, tooltip } = ctx.config;
+  const { heatmap } = ctx.config;
   const { min, max } = ctx.scale;
   const fraction = max === min ? 0.5 : (value - min) / (max - min);
   const color = interpolateColor(heatmap.colorRange, fraction);
@@ -198,12 +161,5 @@ export function agSegment(
     yIndex,
     xLabel,
     yLabel,
-    tooltip: tooltip.enabled
-      ? agTooltipContent({
-          label: `${yLabel} / ${xLabel}`,
-          items: { legend: "Value", color, value },
-          config: ctx.config as any,
-        })
-      : null,
   });
 }

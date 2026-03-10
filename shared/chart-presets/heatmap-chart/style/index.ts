@@ -1,10 +1,10 @@
-import { GestureDetector } from "flitter-core";
 import type { HeatmapCustom } from "flitter-ui/chart";
 import type { AgHeatmapChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { agSegment } from "./parts/segment";
 import { agHeatmapLegend } from "./parts/legend";
+import { AgHeatmapTooltipOverlay } from "./parts/tooltip-overlay";
 import { DataView } from "../base/data-view";
 import {
   agTitle,
@@ -20,9 +20,9 @@ const agCustom: Partial<HeatmapCustom<AgHeatmapChartConfig>> = {
       ctx as any,
     ),
   dataView: (args, ctx) =>
-    GestureDetector({
-      onMouseLeave: () => ctx.setHovered(null),
+    AgHeatmapTooltipOverlay({
       child: DataView(args, ctx),
+      context: ctx,
     }),
   segment: agSegment,
   legend: agHeatmapLegend,

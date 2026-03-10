@@ -26,7 +26,7 @@ export const defaultAgConfig: AgHeatmapChartConfig = {
     color: defaultAgCartesianBaseConfig.grid.color,
   },
   heatmap: {
-    colorRange: ["#F6B73C", "#CDD23B", "#67B65B"],
+    colorRange: ["#1D4ED8", "#FDE047", "#DC2626"],
     segment: { gap: 0 },
   },
 };
