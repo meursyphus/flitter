@@ -12,12 +12,19 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "flitter-ui/chart": ["../../../../packages/flitter/src/chart.ts"],
-      "@headless/*": ["../../../src/headless/*"],
-      "@shared/*": ["../../../src/shared/*"],
-      "@utils/*": ["../../../src/shared/utils/*"],
+      "flitter-ui/chart": ["../../../flitter/src/chart.ts"],
+      "@headless/*": ["../../src/headless/*"],
+      "@shared/*": ["../../src/shared/*"],
+      "@utils/*": ["../../src/shared/utils/*"],
       "@styles/*": ["./styles/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": [
+    "shared/**/*.ts",
+    "styles/**/*.ts",
+    "charts/*/base/**/*.ts",
+    "charts/*/types.ts",
+    "charts/*/plugin.ts",
+    "charts/*/styles/*/parts/**/*.ts"
+  ]
 }
