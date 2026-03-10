@@ -151,8 +151,14 @@ Do not treat a chart as complete just because one style is complete.
 
 ## Feedback Checklist
 
-- [ ] `PieChart / Ag`
-- [ ] `PieChart / Toast`
+- [x] `PieChart / Ag`
+- [x] `PieChart / Toast`
+- [ ] `HeatmapChart / Ag`
+- [x] `HeatmapChart / Toast`
+- [ ] `BoxPlotBar / Ag`
+- [ ] `BoxPlotBar / Toast`
+- [ ] `RadarChart / Ag`
+- [ ] `RadarChart / Toast`
 - [ ] `DonutChart / Ag`
 - [ ] `DonutChart / Toast`
 - [ ] `PolarAreaChart / Ag`
@@ -161,12 +167,8 @@ Do not treat a chart as complete just because one style is complete.
 - [ ] `ProgressChart / Toast`
 - [ ] `GaugeChart / Ag`
 - [ ] `GaugeChart / Toast`
-- [ ] `RadarChart / Ag`
-- [ ] `RadarChart / Toast`
 - [ ] `HistogramChart / Ag`
 - [ ] `HistogramChart / Toast`
-- [ ] `HeatmapChart / Ag`
-- [x] `HeatmapChart / Toast`
 - [ ] `TreemapChart / Ag`
 - [ ] `TreemapChart / Toast`
 - [ ] `SunburstChart / Ag`
