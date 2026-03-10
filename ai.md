@@ -104,6 +104,26 @@ Relevant mental model:
 - sync target: `shared/chart-presets`
 - Storybook surface: `dev/chart-storybook`
 
+### Sync Command
+
+After editing any file under `packages/chart/registry/templates`, run the sync command to regenerate `shared/chart-presets`:
+
+```bash
+# Sync a specific chart (both styles)
+pnpm --dir shared/chart-presets run sync -- --chart <chart-name>
+
+# Sync a specific chart and style
+pnpm --dir shared/chart-presets run sync -- --chart <chart-name> --style <toast|ag>
+
+# Sync only charts that have git changes
+pnpm --dir shared/chart-presets run sync -- --changed
+
+# Full sync (all charts)
+pnpm --dir shared/chart-presets run sync
+```
+
+**IMPORTANT**: Never edit `shared/chart-presets` files directly. Always edit `packages/chart/registry/templates` first, then run sync.
+
 When in doubt, inspect shared config first, then the chart-specific style implementation, then the preset output.
 
 ## Completed Charts
