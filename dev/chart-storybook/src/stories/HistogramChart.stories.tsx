@@ -29,12 +29,28 @@ type Story = StoryObj<StoryArgs>;
 
 export const Basic: Story = {
   render: (args) => (
-    <Widget widget={HistogramChart({ data: values })} width="720px" height="400px" renderer={args.renderer} />
+    <Widget
+      widget={HistogramChart({
+        data: values,
+        config: { title: { text: "Distribution of Sample Values", alignment: "center" } },
+      })}
+      width="720px"
+      height="400px"
+      renderer={args.renderer}
+    />
   ),
 };
 
 export const CustomBins: Story = {
   render: (args) => (
-    <Widget widget={HistogramChart({ data: denseValues })} width="720px" height="400px" renderer={args.renderer} />
+    <Widget
+      widget={HistogramChart({
+        data: denseValues,
+        config: { title: { text: "Distribution with Custom Bins", alignment: "center" } },
+      })}
+      width="720px"
+      height="400px"
+      renderer={args.renderer}
+    />
   ),
 };

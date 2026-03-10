@@ -1,5 +1,5 @@
 import type { DonutChartCustom } from "@headless/donut-chart/types";
-import { Center, Stack, StackFit, Text, TextStyle } from "flitter-core";
+import { Center, SizedBox, Stack, StackFit, Text, TextStyle } from "flitter-core";
 import { agDataView as PieDataView } from "../../pie-chart/styles/ag/parts/data-view";
 import { agSlice } from "../../pie-chart/styles/ag/parts/slice";
 import { Layout } from "../../pie-chart/base/layout";
@@ -24,14 +24,16 @@ const agCustom: Partial<DonutChartCustom<DonutChartConfig>> = {
   legend: (args, ctx) => agLegend(args as any, ctx as any, { markerShape: "circle" }),
   title: (args, ctx) => agTitle(args as any, ctx as any),
   centerContent: ({ total }, ctx) =>
-    Text((ctx.config.centerText ?? total.toString()).toString(), {
-      style: new TextStyle({
-        fontFamily: ctx.config.font.family,
-        fontSize: 22,
-        fontWeight: "700",
-        color: ctx.config.title.color,
-      }),
-    }),
+    ctx.config.centerText == null
+      ? SizedBox.shrink()
+      : Text(ctx.config.centerText.toString(), {
+          style: new TextStyle({
+            fontFamily: ctx.config.font.family,
+            fontSize: 22,
+            fontWeight: "700",
+            color: ctx.config.title.color,
+          }),
+        }),
 };
 
 export const styleConfig = {

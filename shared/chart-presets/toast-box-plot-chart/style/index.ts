@@ -45,7 +45,6 @@ export const toastStyleConfig = {
   createConfig: (config: DeepPartial<ToastBoxPlotChartConfig> | undefined) => {
     const base: ToastBoxPlotChartConfig = {
       ...defaultToastConfig,
-      grid: { ...defaultToastConfig.grid, xLine: { visible: false }, yLine: { visible: true } },
     };
     return deepMerge(base, config);
   },

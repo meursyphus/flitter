@@ -5,11 +5,22 @@ type AgNetworkSharedConfig = Pick<
   "font" | "title" | "tooltip" | "colors"
 >;
 
-export type NetworkChartConfig = AgNetworkSharedConfig;
+export type NetworkChartConfig = AgNetworkSharedConfig & {
+  network: {
+    edgeColor: string;
+    edgeWidth: number;
+    labelOffset: number;
+  };
+};
 
 export const defaultAgConfig: NetworkChartConfig = {
   font: defaultAgCartesianBaseConfig.font,
   title: defaultAgCartesianBaseConfig.title,
   tooltip: defaultAgCartesianBaseConfig.tooltip,
   colors: defaultAgCartesianBaseConfig.colors,
+  network: {
+    edgeColor: "#b8c0cc",
+    edgeWidth: 1.5,
+    labelOffset: 18,
+  },
 };

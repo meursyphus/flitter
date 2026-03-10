@@ -24,6 +24,8 @@ export function Segment(
       },
       config: defaultAgCartesianBaseConfig,
     }),
+    onMouseEnter: () => ctx.hoverSegment(segment),
+    onMouseLeave: () => ctx.unhoverSegment(),
     renderChild: () =>
       CustomPaint({
         painter: {

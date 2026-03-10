@@ -7,5 +7,6 @@ export type DonutChartConfig = AgPieChartConfig & {
 
 export const defaultAgConfig: DonutChartConfig = {
   ...defaultAgPieConfig,
+  legend: { ...defaultAgPieConfig.legend, position: "bottom" },
   pie: { ...defaultAgPieConfig.pie, innerRadiusRatio: 0.6 },
 };

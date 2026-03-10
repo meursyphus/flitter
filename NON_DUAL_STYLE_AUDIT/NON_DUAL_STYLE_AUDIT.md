@@ -4,33 +4,38 @@
 
 상세 스펙은 `NON_DUAL_STYLE_AUDIT/` 폴더의 각 차트별 md 참조.
 
-| Chart | AG | Toast |
-|---|---|---|
-| `BarChart` | [x] | [x] |
-| `StackedBarChart` | [x] | [x] |
-| `LineChart` | [x] | [x] |
-| `AreaChart` | [x] | [x] |
-| `StackedAreaChart` | [x] | [x] |
-| `ScatterChart` | [x] | [x] |
-| `BubbleChart` | [x] | [x] |
-| `PieChart` | [ ] | [x] |
-| `RadarChart` | [ ] | [ ] |
+| Chart | AG | Toast | Review |
+|---|---|---|---|
+| `BarChart` | [x] | [x] | [x] |
+| `StackedBarChart` | [x] | [x] | [x] |
+| `LineChart` | [x] | [x] | [x] |
+| `AreaChart` | [x] | [x] | [x] |
+| `StackedAreaChart` | [x] | [x] | [x]  |
+| `ScatterChart` | [x] | [x] | [x]  |
+| `BubbleChart` | [x] | [x] | [x] |
+| `PieChart` | [x] | [x] | [ ]  pie ag 이상|
+| `RadarChart` | [x] | [x] | [ ] |
 | `BoxPlotChart` | [x] | [x] | [ ] 사람 리터치 필요 |
-| `CandlestickChart` | [ ] | [ ] |
-| `ComboChart` | [ ] | [ ] |
-| `DonutChart` | [ ] | [ ] |
-| `FunnelChart` | [ ] | [ ] |
-| `GanttChart` | [ ] | [ ] |
-| `GaugeChart` | [ ] | [ ] |
-| `HeatmapChart` | [ ] | [x] |
-| `HistogramChart` | [ ] | [ ] |
-| `NetworkChart` | [ ] | [ ] |
-| `PolarAreaChart` | [ ] | [ ] |
-| `ProgressChart` | [ ] | [ ] |
-| `SankeyChart` | [ ] | [ ] |
-| `SunburstChart` | [ ] | [ ] |
-| `TreemapChart` | [ ] | [ ] |
-| `WaterfallChart` | [ ] | [ ] |
+| `CandlestickChart` | [x] | [x] | [ ] 사람 리터치 필요 |
+| `ComboChart` | [x] | [x] | [ ] 사람 리터치 필요 |
+| `DonutChart` | [x] | [x] | [ ] 사람 리터치 필요 |
+| `FunnelChart` | [x] | [x] | [ ] 사람 리터치 필요 |
+| `GanttChart` | [x] | [x] | [ ] 사람 리터치 필요 |
+| `GaugeChart` | [x] | [x] | [ ] 사람 리터치 필요 |
+| `HeatmapChart` | [x] | [x] | [ ] 사람 리터치 필요 |
+| `HistogramChart` | [x] | [x] | [ ] 사람 리터치 필요 |
+| `NetworkChart` | [x] | [x] | [ ] 사람 리터치 필요 |
+| `PolarAreaChart` | [x] | [x] | [ ] 사람 리터치 필요 |
+| `ProgressChart` | [x] | [x] | [ ] 사람 리터치 필요 |
+| `SankeyChart` | [x] | [x] | [ ] 사람 리터치 필요 |
+| `SunburstChart` | [x] | [x] | [ ] 사람 리터치 필요 |
+| `TreemapChart` | [x] | [x] | [ ] 사람 리터치 필요 |
+| `WaterfallChart` | [x] | [x] | [ ] 사람 리터치 필요 |
+
+완료 조건:
+- `Review` 칸의 `[ ] 사람 리터치 필요`는 모든 차트에 대해 기본적으로 열어둔 상태가 정상이다.
+- 에이전트 작업 완료 기준은 사람 리터치용 `Review` 칸을 제외한 모든 `[ ]`를 `[x]`로 바꾸는 것이다.
+- 즉, 작업이 끝났을 때 남아 있어도 되는 유일한 미완료 표시는 `Review` 칸의 `[ ] 사람 리터치 필요`뿐이다.
 
 ## 2. Work Order
 
@@ -38,7 +43,7 @@
 1. bar-chart의 preset 구조 + 스토리 구조를 먼저 파악
 2. 각 차트를 외부 레퍼런스(AG Charts, Toast UI Chart)와 대조
 3. 기존 코드 탐색하며 현재 상태 파악
-4. preset 구현 → storybook 확인 → 체크
+4. preset 구현 → storybook 확인 → `Review`를 제외한 남은 체크박스를 모두 `[x]`로 체크
 5. 작업 중 발견한 이슈나 노트는 해당 차트 md에 기록
 
 상세 UX/디자인 스펙은 미리 쓰지 않는다.
@@ -48,6 +53,7 @@
 - 외부 레퍼런스(AG Charts, Toast UI Chart) 스크린샷 찍어서 비교
 - 스토리북(chart-story, localhost:6007)에서도 스크린샷 찍어서 레퍼런스와 대조
 - 분석하면서 파악한 UX 포인트는 해당 차트의 `NON_DUAL_STYLE_AUDIT/<Chart>.md`에 정리
+- 멈추지 말고 각 차트의 AG/Toast 구현을 끝까지 마무리해서, 최종적으로 `Review` 칸만 `[ ] 사람 리터치 필요` 상태로 남긴다
 - 레퍼런스처럼 나올 때까지 반복
 
 _(순서 TBD)_

@@ -1,14 +1,19 @@
 import {
   BoxDecoration,
   Border,
+  BoxShadow,
   Container,
   EdgeInsets,
   GestureDetector,
   Offset,
   Opacity,
+  StatefulWidget,
+  State,
+  ZIndex,
   type Widget,
 } from "flitter-core";
 import type { HeatmapCustom } from "flitter-ui/chart";
+import type { HeatmapController } from "flitter-ui/chart";
 import type { AgHeatmapChartConfig } from "../config";
 import { agTooltipContent } from "../../../_styles/ag/index";
 import { HoverTooltip } from "flitter-ui/chart";
@@ -47,6 +52,133 @@ export function interpolateColor(
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
+class _AgHoverableSegment extends StatefulWidget {
+  controller: HeatmapController;
+  color: string;
+  gap: number;
+  value: number;
+  xIndex: number;
+  yIndex: number;
+  xLabel: string;
+  yLabel: string;
+  tooltip: Widget | null;
+
+  constructor(props: {
+    controller: HeatmapController;
+    color: string;
+    gap: number;
+    value: number;
+    xIndex: number;
+    yIndex: number;
+    xLabel: string;
+    yLabel: string;
+    tooltip: Widget | null;
+  }) {
+    super();
+    this.controller = props.controller;
+    this.color = props.color;
+    this.gap = props.gap;
+    this.value = props.value;
+    this.xIndex = props.xIndex;
+    this.yIndex = props.yIndex;
+    this.xLabel = props.xLabel;
+    this.yLabel = props.yLabel;
+    this.tooltip = props.tooltip;
+  }
+
+  createState() {
+    return new _AgHoverableSegmentState();
+  }
+}
+
+class _AgHoverableSegmentState extends State<_AgHoverableSegment> {
+  #onHoverChange = () => {
+    this.setState(() => {});
+  };
+
+  override initState(): void {
+    this.widget.controller.addHoverListener(this.#onHoverChange);
+  }
+
+  override didUpdateWidget(oldWidget: _AgHoverableSegment): void {
+    if (oldWidget.controller !== this.widget.controller) {
+      oldWidget.controller.removeHoverListener(this.#onHoverChange);
+      this.widget.controller.addHoverListener(this.#onHoverChange);
+    }
+  }
+
+  override dispose(): void {
+    this.widget.controller.removeHoverListener(this.#onHoverChange);
+  }
+
+  override build(): Widget {
+    const {
+      controller,
+      color,
+      gap,
+      tooltip,
+      value,
+      xIndex,
+      yIndex,
+      xLabel,
+      yLabel,
+    } = this.widget;
+    const hovered = controller.hovered;
+    const isActive = hovered?.xIndex === xIndex && hovered?.yIndex === yIndex;
+    const isDimmed = hovered != null && !isActive;
+
+    const segment = Container({
+      margin: EdgeInsets.all(gap),
+      decoration: new BoxDecoration({
+        color,
+        border: isActive
+          ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
+          : undefined,
+        boxShadow: isActive
+          ? [new BoxShadow({ color: "rgba(0,0,0,0.18)", blurRadius: 12 })]
+          : undefined,
+      }),
+    });
+
+    const content = ZIndex({
+      zIndex: isActive ? 1 : 0,
+      child: Opacity({
+        opacity: isDimmed ? 0.3 : 1,
+        child: segment,
+      }),
+    });
+
+    const onMouseEnter = () =>
+      controller.setHovered({
+        value,
+        xIndex,
+        yIndex,
+        xLabel,
+        yLabel,
+      });
+    const onMouseLeave = () => controller.setHovered(null);
+
+    if (tooltip == null) {
+      return GestureDetector({
+        cursor: "default",
+        onMouseEnter,
+        onMouseLeave,
+        child: content,
+      });
+    }
+
+    return new HoverTooltip({
+      position: "topCenter",
+      offset: new Offset({ x: 0, y: -0.1 }),
+      tooltip,
+      renderChild: () => content,
+      onMouseEnter,
+      onMouseLeave,
+      cursor: "default",
+    });
+  }
+}
+
 export function agSegment(
   ...[{ value, xIndex, yIndex }, ctx]: Parameters<HeatmapCustom<AgHeatmapChartConfig>["segment"]>
 ): Widget {
@@ -54,43 +186,24 @@ export function agSegment(
   const { min, max } = ctx.scale;
   const fraction = max === min ? 0.5 : (value - min) / (max - min);
   const color = interpolateColor(heatmap.colorRange, fraction);
-  const hovered = ctx.hovered?.xIndex === xIndex && ctx.hovered?.yIndex === yIndex;
+  const xLabel = ctx.data.xLabels[xIndex] ?? `${xIndex}`;
+  const yLabel = ctx.data.yLabels[yIndex] ?? `${yIndex}`;
 
-  const segment = Container({
-    margin: EdgeInsets.all(heatmap.segment.gap),
-    decoration: new BoxDecoration({
-      color,
-      border: hovered
-        ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
-        : undefined,
-    }),
-  });
-
-  const base = GestureDetector({
-    cursor: "default",
-    child: hovered ? segment : Opacity({ opacity: 1, child: segment }),
-  });
-
-  if (!tooltip.enabled) return base;
-
-  return new HoverTooltip({
-    position: "topCenter",
-    offset: new Offset({ x: 0, y: -0.1 }),
-    tooltip: agTooltipContent({
-      label: `${ctx.data.yLabels[yIndex] ?? ""} / ${ctx.data.xLabels[xIndex] ?? ""}`,
-      items: { legend: "Value", color, value },
-      config: ctx.config as any,
-    }),
-    renderChild: () => base,
-    onMouseEnter: () =>
-      ctx.setHovered({
-        value,
-        xIndex,
-        yIndex,
-        xLabel: ctx.data.xLabels[xIndex] ?? "",
-        yLabel: ctx.data.yLabels[yIndex] ?? "",
-      }),
-    onMouseLeave: () => ctx.setHovered(null),
-    cursor: "default",
+  return new _AgHoverableSegment({
+    controller: ctx as unknown as HeatmapController,
+    color,
+    gap: heatmap.segment.gap,
+    value,
+    xIndex,
+    yIndex,
+    xLabel,
+    yLabel,
+    tooltip: tooltip.enabled
+      ? agTooltipContent({
+          label: `${yLabel} / ${xLabel}`,
+          items: { legend: "Value", color, value },
+          config: ctx.config as any,
+        })
+      : null,
   });
 }

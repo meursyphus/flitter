@@ -1,15 +1,10 @@
 import {
-  BoxDecoration,
-  BorderRadius,
-  Container,
+  Column,
   CrossAxisAlignment,
   CustomPaint,
-  EdgeInsets,
   LayoutBuilder,
   MainAxisAlignment,
   MainAxisSize,
-  Padding,
-  Radius,
   Row,
   SizedBox,
   Text,
@@ -18,13 +13,12 @@ import {
 } from "flitter-core";
 import type { HeatmapContext } from "flitter-ui/chart";
 import type { AgHeatmapChartConfig } from "../config";
-import { interpolateColor } from "./segment";
 
 const BAR_HEIGHT = 12;
 const LABEL_GAP = 6;
 const MAX_BAR_WIDTH = 360;
 
-function generateTicks(min: number, max: number, count: number = 6): number[] {
+function generateTicks(min: number, max: number, count: number = 3): number[] {
   if (min === max) return [min];
   const step = (max - min) / (count - 1);
   const isInt = Number.isInteger(min) && Number.isInteger(max);
@@ -101,66 +95,33 @@ export function agHeatmapLegend(
   _args: undefined,
   context: HeatmapContext<AgHeatmapChartConfig>,
 ): Widget {
-  const { scale, hovered, config } = context;
+  const { scale, config } = context;
   const ticks = generateTicks(scale.min, scale.max);
 
   return LayoutBuilder({
     builder: (_ctx, constraints) => {
-      const barWidth = Math.min(MAX_BAR_WIDTH, constraints.maxWidth || MAX_BAR_WIDTH);
-      const indicator =
-        hovered == null
-          ? null
-          : Container({
-              padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
-              decoration: new BoxDecoration({
-                color: interpolateColor(
-                  config.heatmap.colorRange,
-                  scale.max === scale.min ? 0.5 : (hovered.value - scale.min) / (scale.max - scale.min),
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(4)),
-              }),
-              child: Text(
-                `${hovered.yLabel} / ${hovered.xLabel}: ${Number.isInteger(hovered.value) ? hovered.value : hovered.value.toFixed(1)}`,
-                {
-                  style: new TextStyle({
-                    fontFamily: config.font.family,
-                    fontSize: 12,
-                    fontWeight: "600",
-                    color: "white",
-                  }),
-                },
-              ),
-            });
+      const availableWidth =
+        Number.isFinite(constraints.maxWidth) && constraints.maxWidth > 0
+          ? constraints.maxWidth
+          : MAX_BAR_WIDTH;
+      const barWidth = Math.min(MAX_BAR_WIDTH, availableWidth);
 
-      return Padding({
-        padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
-        child: Container({
-          padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 10 }),
-          decoration: new BoxDecoration({
-            color: "white",
-            borderRadius: BorderRadius.all(Radius.circular(6)),
+      return Row({
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox({
+            width: barWidth,
+            child: Column({
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                gradientBar(config.heatmap.colorRange, barWidth),
+                SizedBox({ height: LABEL_GAP }),
+                buildTickLabels(ticks, config.font, config.axis.label.color),
+              ],
+            }),
           }),
-          child: Row({
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox({
-                width: barWidth,
-                child: Row({
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox({
-                      width: barWidth,
-                      child: gradientBar(config.heatmap.colorRange, barWidth),
-                    }),
-                  ],
-                }),
-              }),
-              indicator ? SizedBox({ width: 12 }) : SizedBox.shrink(),
-              indicator ?? SizedBox.shrink(),
-            ],
-          }),
-        }),
+        ],
       });
     },
   });

@@ -1,17 +1,22 @@
 import type { GaugeChartCustom } from "@headless/gauge-chart/types";
-import { Text, TextStyle } from "flitter-core";
+import { type Widget } from "flitter-core";
 import * as Base from "../base";
 import type { GaugeChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "@utils/index";
 import { HoverTooltip } from "@shared/interaction/hover-tooltip";
-import { agTooltipContent, agTitle } from "@styles/ag";
+import { agTooltipContent } from "@styles/ag";
+import { agGaugeLayout } from "./parts/layout";
+import { agGaugeTitle } from "./parts/title";
+import { agNeedle } from "./parts/needle";
+import { agScale } from "./parts/scale";
+import { agValueLabel } from "./parts/value-label";
 
 export { type GaugeChartConfig } from "./config";
 
 const agCustom: Partial<GaugeChartCustom<GaugeChartConfig>> = {
-  layout: Base.Layout,
-  title: agTitle as any,
+  layout: agGaugeLayout,
+  title: agGaugeTitle,
   gauge: (args, ctx) =>
     new HoverTooltip({
       position: "topCenter",
@@ -22,17 +27,9 @@ const agCustom: Partial<GaugeChartCustom<GaugeChartConfig>> = {
       }),
       renderChild: () => Base.Gauge(args, ctx),
     }),
-  needle: Base.Needle,
-  valueLabel: ({ value }, ctx) =>
-    Text(value.toString(), {
-      style: new TextStyle({
-        fontFamily: ctx.config.font.family,
-        fontSize: 24,
-        fontWeight: "bold",
-        color: ctx.config.gauge.valueColor,
-      }),
-    }),
-  scale: Base.Scale,
+  needle: agNeedle,
+  valueLabel: agValueLabel,
+  scale: agScale,
 };
 
 export const styleConfig = {

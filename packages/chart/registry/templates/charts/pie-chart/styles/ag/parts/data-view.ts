@@ -1,6 +1,7 @@
 import {
   AnimatedOpacity,
   AnimatedPositioned,
+  LayoutBuilder,
   ConstraintsTransformBox,
   Curves,
   FractionalTranslation,
@@ -62,86 +63,99 @@ class _AgPieTooltipOverlayState extends State<_AgPieTooltipOverlay> {
     const { args, context } = this.widget;
     const { hoveredIndex, config } = context;
 
-    let tooltipData: {
-      label: string;
-      legend: string;
-      color: string;
-      value: number;
-      pixelX: number;
-      pixelY: number;
-    } | null = null;
+    return LayoutBuilder({
+      builder: (_ctx, constraints) => {
+        const width =
+          Number.isFinite(constraints.maxWidth) && constraints.maxWidth > 0
+            ? constraints.maxWidth
+            : context.width;
+        const height =
+          Number.isFinite(constraints.maxHeight) && constraints.maxHeight > 0
+            ? constraints.maxHeight
+            : context.height;
 
-    if (hoveredIndex != null && config.tooltip.enabled && args.slices[hoveredIndex]) {
-      const slice: PieSlice = args.slices[hoveredIndex];
-      const colorIndex = context.legends.indexOf(slice.name);
-      const color = config.colors.fills[
-        (colorIndex >= 0 ? colorIndex : hoveredIndex) % config.colors.fills.length
-      ];
-      const outerRadius = Math.min(context.width, context.height) / 2;
-      const innerRadius = outerRadius * config.pie.innerRadiusRatio;
-      const anchorRadius = innerRadius + (outerRadius - innerRadius) * 0.82;
-      const midAngle = -Math.PI / 2 + slice.startAngle + slice.sweepAngle / 2;
-      const angleX = Math.cos(midAngle);
-      const angleY = Math.sin(midAngle);
-      const pixelX = context.width / 2 + anchorRadius * angleX;
-      const pixelY = context.height / 2 + anchorRadius * angleY;
+        let tooltipData: {
+          label: string;
+          legend: string;
+          color: string;
+          value: number;
+          pixelX: number;
+          pixelY: number;
+        } | null = null;
 
-      tooltipData = {
-        label: slice.name,
-        legend: "Value",
-        color,
-        value: slice.value,
-        pixelX,
-        pixelY,
-      };
-    }
+        if (hoveredIndex != null && config.tooltip.enabled && args.slices[hoveredIndex]) {
+          const slice: PieSlice = args.slices[hoveredIndex];
+          const colorIndex = context.legends.indexOf(slice.name);
+          const color = config.colors.fills[
+            (colorIndex >= 0 ? colorIndex : hoveredIndex) % config.colors.fills.length
+          ];
+          const outerRadius = Math.min(width, height) / 2;
+          const innerRadius = outerRadius * config.pie.innerRadiusRatio;
+          const anchorRadius = innerRadius + (outerRadius - innerRadius) * 0.82;
+          const midAngle = -Math.PI / 2 + slice.startAngle + slice.sweepAngle / 2;
+          const angleX = Math.cos(midAngle);
+          const angleY = Math.sin(midAngle);
+          const pixelX = width / 2 + anchorRadius * angleX;
+          const pixelY = height / 2 + anchorRadius * angleY;
 
-    if (tooltipData != null) {
-      this.lastTooltipData = tooltipData;
-    }
+          tooltipData = {
+            label: slice.name,
+            legend: "Value",
+            color,
+            value: slice.value,
+            pixelX,
+            pixelY,
+          };
+        }
 
-    const isVisible = tooltipData != null;
-    const showData = this.lastTooltipData;
-    const positionDuration = !this.wasVisible && isVisible ? 0 : ANIMATION_DURATION;
-    this.wasVisible = isVisible;
+        if (tooltipData != null) {
+          this.lastTooltipData = tooltipData;
+        }
 
-    return Stack({
-      fit: StackFit.expand,
-      clipped: false,
-      children: [
-        this.widget.child,
-        showData
-          ? AnimatedPositioned({
-              duration: positionDuration,
-              curve: Curves.easeOut,
-              left: showData.pixelX,
-              top: showData.pixelY,
-              child: AnimatedOpacity({
-                duration: FADE_DURATION,
-                curve: Curves.easeOut,
-                opacity: isVisible ? 1 : 0,
-                child: FractionalTranslation({
-                  translation: new Offset({ x: -0.5, y: -1.05 }),
-                  child: ConstraintsTransformBox({
-                    constraintsTransform: ConstraintsTransformBox.unconstrained,
-                    child: ZIndex({
-                      zIndex: 9999,
-                      child: agTooltipContent({
-                        label: showData.label,
-                        items: {
-                          legend: showData.legend,
-                          color: showData.color,
-                          value: showData.value,
-                        },
-                        config,
+        const isVisible = tooltipData != null;
+        const showData = this.lastTooltipData;
+        const positionDuration = !this.wasVisible && isVisible ? 0 : ANIMATION_DURATION;
+        this.wasVisible = isVisible;
+
+        return Stack({
+          fit: StackFit.expand,
+          clipped: false,
+          children: [
+            this.widget.child,
+            showData
+              ? AnimatedPositioned({
+                  duration: positionDuration,
+                  curve: Curves.easeOut,
+                  left: showData.pixelX,
+                  top: showData.pixelY,
+                  child: AnimatedOpacity({
+                    duration: FADE_DURATION,
+                    curve: Curves.easeOut,
+                    opacity: isVisible ? 1 : 0,
+                    child: FractionalTranslation({
+                      translation: new Offset({ x: -0.5, y: -1.05 }),
+                      child: ConstraintsTransformBox({
+                        constraintsTransform: ConstraintsTransformBox.unconstrained,
+                        child: ZIndex({
+                          zIndex: 9999,
+                          child: agTooltipContent({
+                            label: showData.label,
+                            items: {
+                              legend: showData.legend,
+                              color: showData.color,
+                              value: showData.value,
+                            },
+                            config,
+                          }),
+                        }),
                       }),
                     }),
                   }),
-                }),
-              }),
-            })
-          : Stack({ fit: StackFit.passthrough, children: [] }),
-      ],
+                })
+              : Stack({ fit: StackFit.passthrough, children: [] }),
+          ],
+        });
+      },
     });
   }
 }

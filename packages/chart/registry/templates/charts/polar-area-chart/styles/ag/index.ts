@@ -2,7 +2,6 @@ import type { PolarAreaChartCustom } from "@headless/polar-area-chart/types";
 import {
   Alignment,
   Center,
-  Container,
   FractionallySizedBox,
   Stack,
   StackFit,
@@ -14,6 +13,7 @@ import { agSlice } from "../../pie-chart/styles/ag/parts/slice";
 import type { PolarAreaChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "@utils/index";
+import { agScale } from "./parts/scale";
 
 export { type PolarAreaChartConfig } from "./config";
 
@@ -45,7 +45,7 @@ const agCustom: Partial<PolarAreaChartCustom<PolarAreaChartConfig>> = {
         }),
       }),
     }),
-  scale: () => Container({ width: 0, height: 0 }),
+  scale: agScale,
   legend: (args, ctx) => agLegend(args as any, ctx as any, { markerShape: "circle" }),
   title: (args, ctx) => agTitle(args as any, ctx as any),
 };
