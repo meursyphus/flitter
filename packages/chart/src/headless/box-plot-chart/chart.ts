@@ -201,19 +201,6 @@ class BoxPlotGroup extends StatelessWidget {
 
 	override build(context: BuildContext): Widget {
 		const ctx = BoxPlotChartProvider.of(context);
-		const outliers = this.#dataPoints.flatMap((dataPoint, datasetIndex) =>
-			(dataPoint.outliers ?? []).map(
-				(value, outlierIndex) =>
-					new Outlier({
-						value,
-						outlierIndex,
-						index: this.#index,
-						legend: ctx.data.datasets[datasetIndex].legend,
-						label: ctx.data.labels[this.#index],
-						datasetIndex,
-					}),
-			),
-		);
 
 		return ctx.custom.boxPlotGroup(
 			{
@@ -221,16 +208,27 @@ class BoxPlotGroup extends StatelessWidget {
 				label: ctx.data.labels[this.#index],
 				dataPoints: this.#dataPoints,
 				boxPlots: this.#dataPoints.map(
-					(dataPoint, datasetIndex) =>
-						new BoxPlot({
+					(dataPoint, datasetIndex) => ({
+						boxPlot: new BoxPlot({
 							dataPoint,
 							index: this.#index,
 							legend: ctx.data.datasets[datasetIndex].legend,
 							label: ctx.data.labels[this.#index],
 							datasetIndex,
 						}),
+						outliers: (dataPoint.outliers ?? []).map(
+							(value, outlierIndex) =>
+								new Outlier({
+									value,
+									outlierIndex,
+									index: this.#index,
+									legend: ctx.data.datasets[datasetIndex].legend,
+									label: ctx.data.labels[this.#index],
+									datasetIndex,
+								}),
+						),
+					}),
 				),
-				outliers,
 			},
 			ctx,
 		);

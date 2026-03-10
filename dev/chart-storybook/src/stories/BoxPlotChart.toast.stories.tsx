@@ -13,40 +13,25 @@ type StoryArgs = {
   animationDuration: number;
 };
 
-const basicData = {
-  labels: ["Math", "Science", "English", "History"],
+const data = {
+  labels: ["Budget", "Income", "Expenses", "Debt"],
   datasets: [
     {
-      legend: "Scores",
+      legend: "2020",
       data: [
-        { min: 45, q1: 60, median: 72, q3: 85, max: 98, outliers: [30] },
-        { min: 50, q1: 65, median: 75, q3: 88, max: 95 },
-        { min: 40, q1: 55, median: 68, q3: 80, max: 92, outliers: [25, 98] },
-        { min: 55, q1: 62, median: 70, q3: 82, max: 90 },
-      ],
-    },
-  ],
-};
-
-const comparisonData = {
-  labels: ["Q1", "Q2", "Q3", "Q4"],
-  datasets: [
-    {
-      legend: "Product A",
-      data: [
-        { min: 12, q1: 18, median: 24, q3: 28, max: 34 },
-        { min: 10, q1: 16, median: 20, q3: 26, max: 30 },
-        { min: 14, q1: 20, median: 26, q3: 30, max: 36 },
-        { min: 11, q1: 17, median: 23, q3: 27, max: 31 },
+        { min: 1000, q1: 2500, median: 3714, q3: 5500, max: 7000, outliers: [14000] },
+        { min: 1000, q1: 2750, median: 4571, q3: 5250, max: 8000 },
+        { min: 3000, q1: 4000, median: 4714, q3: 6000, max: 7000, outliers: [10000] },
+        { min: 1000, q1: 2250, median: 3142, q3: 4750, max: 6000, outliers: [9600] },
       ],
     },
     {
-      legend: "Product B",
+      legend: "2021",
       data: [
-        { min: 8, q1: 12, median: 18, q3: 22, max: 26 },
-        { min: 9, q1: 14, median: 19, q3: 24, max: 28 },
-        { min: 7, q1: 11, median: 16, q3: 21, max: 25 },
-        { min: 10, q1: 15, median: 20, q3: 24, max: 29 },
+        { min: 2000, q1: 4500, median: 6714, q3: 11500, max: 13000 },
+        { min: 3000, q1: 5750, median: 7571, q3: 8250, max: 9000, outliers: [14000] },
+        { min: 5000, q1: 8000, median: 8714, q3: 9000, max: 10000 },
+        { min: 7000, q1: 9250, median: 10142, q3: 11750, max: 12000 },
       ],
     },
   ],
@@ -57,8 +42,8 @@ const meta: Meta<StoryArgs> = {
   parameters: { layout: "centered" },
   args: {
     renderer: "svg",
-    title: "",
-    legendPosition: "bottom",
+    title: "Monthly Revenue",
+    legendPosition: "right",
     legendVisible: true,
     boxWidth: 24,
     whiskerWidth: 14,
@@ -80,11 +65,11 @@ const meta: Meta<StoryArgs> = {
 export default meta;
 type Story = StoryObj<StoryArgs>;
 
-export const Basic: Story = {
+export const Vertical: Story = {
   render: (args) => (
     <Widget
       widget={ToastBoxPlotChart({
-        data: basicData,
+        data,
         config: {
           title: { text: args.title, visible: !!args.title },
           legend: { position: args.legendPosition, visible: args.legendVisible },
@@ -99,13 +84,14 @@ export const Basic: Story = {
   ),
 };
 
-export const Comparison: Story = {
+export const Horizontal: Story = {
   render: (args) => (
     <Widget
       widget={ToastBoxPlotChart({
-        data: comparisonData,
+        data,
+        direction: "horizontal",
         config: {
-          title: { text: args.title || "Product Comparison", visible: true },
+          title: { text: args.title, visible: !!args.title },
           legend: { position: args.legendPosition, visible: args.legendVisible },
           boxPlot: { boxWidth: args.boxWidth, whiskerWidth: args.whiskerWidth },
           animation: { enabled: args.animationEnabled, duration: args.animationDuration },

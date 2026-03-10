@@ -1,8 +1,8 @@
 import type { Widget } from "flitter-core";
-import type { BoxPlotChartCustom } from "flitter-ui/chart";
+import type { BoxPlotChartCustom } from "@headless/box-plot-chart/types";
 import type { ToastBoxPlotChartConfig } from "../config";
-import { DataView } from "../../base/data-view";
-import { AnimatedDataView } from "../../../_styles/toast/cartesian/animated-data-view";
+import { DataView } from "../../../base/data-view";
+import { AnimatedDataView } from "@styles/toast/cartesian/animated-data-view";
 
 export function toastDataView(
   ...[args, context]: Parameters<BoxPlotChartCustom<ToastBoxPlotChartConfig>["dataView"]>

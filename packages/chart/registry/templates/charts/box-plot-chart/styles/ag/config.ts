@@ -1,4 +1,4 @@
-import { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "../../_styles/ag/index";
+import { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "@styles/ag";
 
 export type AgBoxPlotChartConfig = AgCartesianBaseConfig & {
   boxPlot: {

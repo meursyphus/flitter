@@ -1,39 +1,75 @@
 import type { Widget } from "flitter-core";
-import type { DeepPartial } from "flitter-ui/chart";
-import { BaseBoxPlotChart } from "./base";
+import { BoxPlotChart as HeadlessBoxPlotChart } from "flitter-ui/chart";
 import type {
+  BoxPlotChartContext,
   BoxPlotChartCustom,
   BoxPlotChartData,
   BoxPlotChartDirection,
   GetScaleFn,
   GetScaleOptionsFn,
-} from "./base";
-import { agStyleConfig, type AgBoxPlotChartConfig } from "./style";
+} from "./types";
+import * as Base from "./base";
+import { styleConfig, type BoxPlotChartConfig } from "./style";
+import type { DeepPartial } from "flitter-ui/chart";
 
-export * from "./base";
-export { type AgBoxPlotChartConfig } from "./style";
+export type {
+  BoxPlotChartContext,
+  BoxPlotChartCustom,
+  BoxPlotDataPoint,
+  BoxPlotChartData,
+  BoxPlotChartScale,
+  BoxPlotChartDirection,
+  BoxPlotChartScaleOptions,
+  GetScaleFn,
+  GetScaleOptionsFn,
+} from "./types";
+export { BoxPlotChartController } from "./types";
+export { type BoxPlotChartConfig } from "./style";
+
+const baseDefaults: Partial<BoxPlotChartCustom> = {
+  boxPlotGroup: Base.BoxPlotGroup,
+  boxPlot: Base.BoxPlot,
+  outlier: Base.Outlier,
+  xAxis: Base.XAxis,
+  xAxisLabel: Base.XAxisLabel,
+  xAxisTick: Base.XAxisTick,
+  yAxis: Base.YAxis,
+  yAxisLabel: Base.YAxisLabel,
+  yAxisTick: Base.YAxisTick,
+  dataView: Base.DataView,
+  layout: Base.Layout,
+  plot: Base.Plot,
+  legend: Base.Legend,
+  title: Base.Title,
+  xAxisLine: Base.XAxisLine,
+  yAxisLine: Base.YAxisLine,
+  grid: Base.Grid,
+  gridXLine: Base.GridXLine,
+  gridYLine: Base.GridYLine,
+  axisCorner: Base.AxisCorner,
+};
 
 export default function BoxPlotChart({
   config,
-  data,
   custom,
+  getScale = Base.getScale,
   getScaleOptions,
   direction = "vertical",
   ...rest
 }: {
-  config?: DeepPartial<AgBoxPlotChartConfig>;
+  config?: DeepPartial<BoxPlotChartConfig>;
+  custom?: Partial<BoxPlotChartCustom<BoxPlotChartConfig>>;
   data: BoxPlotChartData;
-  custom?: Partial<BoxPlotChartCustom<AgBoxPlotChartConfig>>;
+  direction?: BoxPlotChartDirection;
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
-  direction?: BoxPlotChartDirection;
 }): Widget {
-  return BaseBoxPlotChart({
-    data,
-    config: agStyleConfig.createConfig(config),
-    custom: { ...agStyleConfig.custom, ...custom },
-    getScaleOptions: getScaleOptions ?? agStyleConfig.getScaleOptions,
-    direction,
+  return HeadlessBoxPlotChart({
     ...rest,
+    getScale,
+    direction,
+    config: styleConfig.createConfig(config),
+    getScaleOptions: getScaleOptions ?? styleConfig.getScaleOptions,
+    custom: { ...baseDefaults, ...styleConfig.custom, ...custom } as BoxPlotChartCustom<BoxPlotChartConfig>,
   });
 }

@@ -9,6 +9,8 @@ import type {
   GetScaleOptionsFn,
 } from "./types";
 import * as Base from "./base";
+import { styleConfig, type BoxPlotChartConfig } from "./style";
+import type { DeepPartial } from "@utils/index";
 
 export type {
   BoxPlotChartContext,
@@ -22,9 +24,11 @@ export type {
   GetScaleOptionsFn,
 } from "./types";
 export { BoxPlotChartController } from "./types";
+export { type BoxPlotChartConfig } from "./style";
 
 const baseDefaults: Partial<BoxPlotChartCustom> = {
   boxPlotGroup: Base.BoxPlotGroup,
+  boxPlotBox: Base.BoxPlotBox,
   boxPlot: Base.BoxPlot,
   outlier: Base.Outlier,
   xAxis: Base.XAxis,
@@ -46,21 +50,27 @@ const baseDefaults: Partial<BoxPlotChartCustom> = {
   axisCorner: Base.AxisCorner,
 };
 
-export default function BoxPlotChart<TConfig = {}>({
+export default function BoxPlotChart({
+  config,
   custom,
   getScale = Base.getScale,
+  getScaleOptions,
+  direction = "vertical",
   ...rest
 }: {
-  custom?: Partial<BoxPlotChartCustom<TConfig>>;
+  config?: DeepPartial<BoxPlotChartConfig>;
+  custom?: Partial<BoxPlotChartCustom<BoxPlotChartConfig>>;
   data: BoxPlotChartData;
   direction?: BoxPlotChartDirection;
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
-  config?: TConfig;
 }): Widget {
   return HeadlessBoxPlotChart({
     ...rest,
     getScale,
-    custom: { ...baseDefaults, ...custom } as BoxPlotChartCustom<TConfig>,
+    direction,
+    config: styleConfig.createConfig(config),
+    getScaleOptions: getScaleOptions ?? styleConfig.getScaleOptions,
+    custom: { ...baseDefaults, ...styleConfig.custom, ...custom } as BoxPlotChartCustom<BoxPlotChartConfig>,
   });
 }

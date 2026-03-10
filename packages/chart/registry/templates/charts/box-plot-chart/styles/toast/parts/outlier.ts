@@ -18,9 +18,9 @@ import {
   type Widget,
 } from "flitter-core";
 import Tooltip from "flitter-core/component/Tooltip";
-import type { BoxPlotChartCustom } from "flitter-ui/chart";
+import type { BoxPlotChartCustom } from "@headless/box-plot-chart/types";
 import type { ToastBoxPlotChartConfig } from "../config";
-import { tooltipContent } from "../../../_styles/toast/index";
+import { tooltipContent } from "@styles/toast";
 
 const TOOLTIP_GAP = 4;
 

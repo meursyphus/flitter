@@ -1,38 +1,76 @@
 import type { Widget } from "flitter-core";
-import type { DeepPartial } from "flitter-ui/chart";
-import { BaseBoxPlotChart } from "../box-plot-chart/base";
+import { BoxPlotChart as HeadlessBoxPlotChart } from "flitter-ui/chart";
 import type {
+  BoxPlotChartContext,
   BoxPlotChartCustom,
   BoxPlotChartData,
   BoxPlotChartDirection,
   GetScaleFn,
   GetScaleOptionsFn,
-} from "../box-plot-chart/base";
-import { toastStyleConfig, type ToastBoxPlotChartConfig } from "./style";
+} from "./types";
+import * as Base from "./base";
+import { styleConfig, type BoxPlotChartConfig } from "./style";
+import type { DeepPartial } from "flitter-ui/chart";
 
-export { type ToastBoxPlotChartConfig } from "./style";
+export type {
+  BoxPlotChartContext,
+  BoxPlotChartCustom,
+  BoxPlotDataPoint,
+  BoxPlotChartData,
+  BoxPlotChartScale,
+  BoxPlotChartDirection,
+  BoxPlotChartScaleOptions,
+  GetScaleFn,
+  GetScaleOptionsFn,
+} from "./types";
+export { BoxPlotChartController } from "./types";
+export { type BoxPlotChartConfig } from "./style";
 
-export default function ToastBoxPlotChart({
+const baseDefaults: Partial<BoxPlotChartCustom> = {
+  boxPlotGroup: Base.BoxPlotGroup,
+  boxPlotBox: Base.BoxPlotBox,
+  boxPlot: Base.BoxPlot,
+  outlier: Base.Outlier,
+  xAxis: Base.XAxis,
+  xAxisLabel: Base.XAxisLabel,
+  xAxisTick: Base.XAxisTick,
+  yAxis: Base.YAxis,
+  yAxisLabel: Base.YAxisLabel,
+  yAxisTick: Base.YAxisTick,
+  dataView: Base.DataView,
+  layout: Base.Layout,
+  plot: Base.Plot,
+  legend: Base.Legend,
+  title: Base.Title,
+  xAxisLine: Base.XAxisLine,
+  yAxisLine: Base.YAxisLine,
+  grid: Base.Grid,
+  gridXLine: Base.GridXLine,
+  gridYLine: Base.GridYLine,
+  axisCorner: Base.AxisCorner,
+};
+
+export default function BoxPlotChart({
   config,
-  data,
   custom,
+  getScale = Base.getScale,
   getScaleOptions,
   direction = "vertical",
   ...rest
 }: {
-  config?: DeepPartial<ToastBoxPlotChartConfig>;
+  config?: DeepPartial<BoxPlotChartConfig>;
+  custom?: Partial<BoxPlotChartCustom<BoxPlotChartConfig>>;
   data: BoxPlotChartData;
-  custom?: Partial<BoxPlotChartCustom<ToastBoxPlotChartConfig>>;
+  direction?: BoxPlotChartDirection;
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
-  direction?: BoxPlotChartDirection;
 }): Widget {
-  return BaseBoxPlotChart({
-    data,
-    config: toastStyleConfig.createConfig(config),
-    custom: { ...toastStyleConfig.custom, ...custom },
-    getScaleOptions: getScaleOptions ?? toastStyleConfig.getScaleOptions,
-    direction,
+  return HeadlessBoxPlotChart({
     ...rest,
+    getScale,
+    direction,
+    config: styleConfig.createConfig(config),
+    getScaleOptions: getScaleOptions ?? styleConfig.getScaleOptions,
+    custom: { ...baseDefaults, ...styleConfig.custom, ...custom } as BoxPlotChartCustom<BoxPlotChartConfig>,
   });
 }

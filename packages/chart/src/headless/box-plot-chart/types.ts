@@ -22,11 +22,21 @@ export type BoxPlotDataPoint = {
 export type BoxPlotChartCustom<TConfig = {}> = {
 	boxPlotGroup: CustomArgs<
 		{
-			boxPlots: Widget[];
-			outliers: Widget[];
+			boxPlots: { boxPlot: Widget; outliers: Widget[] }[];
 			index: number;
 			label: string;
 			dataPoints: BoxPlotDataPoint[];
+		},
+		TConfig
+	>;
+	boxPlotBox: CustomArgs<
+		{
+			boxPlot: Widget;
+			outliers: Widget[];
+			minRatio: number;
+			maxRatio: number;
+			index: number;
+			datasetIndex: number;
 		},
 		TConfig
 	>;

@@ -1,6 +1,9 @@
 // Common (used by all chart types)
 export { CheckBox } from "./checkbox";
-export { type ToastBaseConfig, defaultToastBaseConfig } from "./cartesian/config";
+export {
+  type ToastBaseConfig,
+  defaultToastBaseConfig,
+} from "./cartesian/config";
 export { toastTitle } from "./title";
 export { toastLegend } from "./legend";
 export { drawSplineLine } from "@utils/draw-spline-line";

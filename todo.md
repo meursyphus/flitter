@@ -159,7 +159,9 @@ Do not treat a chart as complete just because one style is complete.
 - [ ] `BoxPlotBar / Ag`
 - [ ] `BoxPlotBar / Toast`
 - [ ] `RadarChart / Ag`
-- [ ] `RadarChart / Toast`
+- [ㅅ] `RadarChart / Toast`
+- [ ] `CandlestickChart / Ag`
+- [ ] `CandlestickChart / Toast`
 - [ ] `DonutChart / Ag`
 - [ ] `DonutChart / Toast`
 - [ ] `PolarAreaChart / Ag`
@@ -176,8 +178,6 @@ Do not treat a chart as complete just because one style is complete.
 - [ ] `SunburstChart / Toast`
 - [ ] `WaterfallChart / Ag`
 - [ ] `WaterfallChart / Toast`
-- [ ] `CandlestickChart / Ag`
-- [ ] `CandlestickChart / Toast`
 - [ ] `FunnelChart / Ag`
 - [ ] `FunnelChart / Toast`
 - [ ] `ComboChart / Ag`

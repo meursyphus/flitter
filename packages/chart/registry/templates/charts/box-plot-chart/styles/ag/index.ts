@@ -1,13 +1,13 @@
-import type { BoxPlotChartCustom, BoxPlotChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
+import type { BoxPlotChartCustom, GetScaleOptionsFn } from "@headless/box-plot-chart/types";
 import type { AgBoxPlotChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
-import { deepMerge } from "flitter-ui/chart";
+import { deepMerge } from "@utils/index";
 import {
   agTitle,
   agLegend,
   agScaleOptions,
   cartesian,
-} from "../../_styles/ag/index";
+} from "@styles/ag";
 
 export { type AgBoxPlotChartConfig } from "./config";
 export type { AgBoxPlotChartConfig as BoxPlotChartConfig } from "./config";

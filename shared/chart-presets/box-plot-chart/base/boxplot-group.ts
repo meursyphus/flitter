@@ -4,29 +4,35 @@ import {
 	Container,
 	CrossAxisAlignment,
 	Flex,
+	Flexible,
 	MainAxisAlignment,
-	Positioned,
 	Stack,
+	StackFit,
 } from 'flitter-core';
 
 export function BoxPlotGroup(
-	...[{ boxPlots, outliers }]: Parameters<BoxPlotChartCustom['boxPlotGroup']>
+	...[{ boxPlots }, ctx]: Parameters<BoxPlotChartCustom['boxPlotGroup']>
 ) {
+	const isVertical = ctx.direction === 'vertical';
 	return Container({
 		width: Infinity,
 		height: Infinity,
-		child: Stack({
-			children: [
-				Positioned.fill({
-					child: Flex({
-						mainAxisAlignment: MainAxisAlignment.center,
-						crossAxisAlignment: CrossAxisAlignment.end,
-						direction: Axis.horizontal,
-						children: boxPlots,
+		child: Flex({
+			mainAxisAlignment: MainAxisAlignment.center,
+			crossAxisAlignment: isVertical
+				? CrossAxisAlignment.end
+				: CrossAxisAlignment.start,
+			direction: isVertical ? Axis.horizontal : Axis.vertical,
+			children: boxPlots.map(({ boxPlot, outliers }) =>
+				Flexible({
+					flex: 1,
+					child: Stack({
+						fit: StackFit.expand,
+						clipped: false,
+						children: [boxPlot, ...outliers],
 					}),
 				}),
-				...outliers,
-			],
+			),
 		}),
 	});
 }
