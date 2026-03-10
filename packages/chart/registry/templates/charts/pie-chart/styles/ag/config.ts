@@ -17,9 +17,12 @@ export const defaultAgConfig: AgPieChartConfig = {
   background: defaultAgCartesianBaseConfig.background,
   colors: defaultAgCartesianBaseConfig.colors,
   font: defaultAgCartesianBaseConfig.font,
-  title: defaultAgCartesianBaseConfig.title,
+  title: {
+    ...defaultAgCartesianBaseConfig.title,
+    alignment: "center" as const,
+  },
   subtitle: defaultAgCartesianBaseConfig.subtitle,
-  legend: { ...defaultAgCartesianBaseConfig.legend, position: "right-top" },
+  legend: { ...defaultAgCartesianBaseConfig.legend, visible: false, position: "right-top" },
   padding: defaultAgCartesianBaseConfig.padding,
   tooltip: defaultAgCartesianBaseConfig.tooltip,
   pie: {

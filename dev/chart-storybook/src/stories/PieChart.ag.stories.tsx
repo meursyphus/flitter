@@ -8,6 +8,7 @@ const TITLE_OPTIONS = ["top-start", "top-center", "top-end", "bottom-start", "bo
 type PieChartArgs = {
 	renderer: "svg" | "canvas";
 	title: string;
+	subtitle: string;
 	titlePlacement: (typeof TITLE_OPTIONS)[number];
 	legendVisible: boolean;
 	legendPosition: (typeof LEGEND_POSITIONS)[number];
@@ -40,6 +41,10 @@ function AgPieChart({ args }: { args: PieChartArgs }) {
 				data: defaultData,
 				config: {
 					title: { text: args.title, position, alignment },
+					subtitle: {
+						text: args.subtitle,
+						visible: !!args.subtitle,
+					},
 					legend: {
 						visible: args.legendVisible,
 						position: args.legendPosition,
@@ -65,6 +70,7 @@ const meta: Meta<PieChartArgs> = {
 	argTypes: {
 		renderer: { control: "inline-radio", options: ["svg", "canvas"] },
 		title: { control: "text" },
+		subtitle: { control: "text" },
 		titlePlacement: { control: "select", options: TITLE_OPTIONS },
 		legendVisible: { control: "boolean" },
 		legendPosition: { control: "select", options: LEGEND_POSITIONS },
@@ -76,8 +82,9 @@ const meta: Meta<PieChartArgs> = {
 	args: {
 		renderer: "svg",
 		title: "Browser Usage Share",
-		titlePlacement: "top-start",
-		legendVisible: true,
+		subtitle: "2024 Global Statistics",
+		titlePlacement: "top-center",
+		legendVisible: false,
 		legendPosition: "right-top",
 		legendGap: 16,
 		strokeColor: "white",
@@ -97,6 +104,7 @@ export const Donut: Story = {
 	args: {
 		innerRadiusRatio: 0.5,
 		title: "Browser Usage (Donut)",
+		subtitle: "2024 Global Statistics",
 	},
 	render: (args) => <AgPieChart args={args} />,
 };

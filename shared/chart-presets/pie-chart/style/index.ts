@@ -1,5 +1,5 @@
 import type { PieChartCustom } from "flitter-ui/chart";
-import { BoxDecoration, Container, Text, TextStyle, type Widget } from "flitter-core";
+import { BoxDecoration, Column, Container, MainAxisSize, SizedBox, Text, TextStyle, type Widget } from "flitter-core";
 import type { AgPieChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
@@ -14,14 +14,32 @@ function agPieTitle(
   _args: undefined,
   context: { config: AgPieChartConfig },
 ): Widget {
-  const { title, font } = context.config;
-  return Text(title.text, {
+  const { title, subtitle, font } = context.config;
+  const titleWidget = Text(title.text, {
     style: new TextStyle({
       fontFamily: title.fontFamily ?? font.family,
       fontSize: title.fontSize,
       fontWeight: title.fontWeight,
       color: title.color,
     }),
+  });
+
+  if (!subtitle.visible || !subtitle.text) return titleWidget;
+
+  return Column({
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      titleWidget,
+      SizedBox({ height: 4 }),
+      Text(subtitle.text, {
+        style: new TextStyle({
+          fontFamily: subtitle.fontFamily ?? font.family,
+          fontSize: subtitle.fontSize,
+          fontWeight: subtitle.fontWeight,
+          color: subtitle.color,
+        }),
+      }),
+    ],
   });
 }
 
