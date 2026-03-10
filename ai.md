@@ -1,272 +1,227 @@
-# Flitter AI Guide - Essential Syntax and Usage
+# AI Guide for Chart Work
 
-## Overview
-Flitter is a JavaScript rendering engine inspired by Flutter. This guide helps AI assistants write correct Flitter code by highlighting common syntax patterns and mistakes to avoid.
+## Purpose
 
-## ⚠️ Critical Import Rules
+This document defines how AI should work on the chart library in this repository.
 
-### React Widget Import
-```typescript
-// ✅ CORRECT - Default import only
-import Widget from '@flitterjs/react';
+The goal is not to react immediately and patch files blindly. The goal is to:
 
-// ❌ WRONG - Never destructure
-import { Widget } from '@flitterjs/react';  // ERROR!
-```
+- understand the current chart architecture first
+- compare the current result against the intended reference UX
+- discuss the target chart with the user before making changes
+- keep `headless`, template, preset, and Storybook layers aligned
 
-### Flitter Components Import
-```typescript
-// ✅ CORRECT - Named imports for all Flitter components
-import { 
-  Container, 
-  Text, 
-  Row, 
-  Column,
-  // ... other components
-} from 'flitter-core';
-```
+## Current Context
 
-## 🎯 Object Creation Rules
+- This repo is building a shadcn-style chart library on top of `flitter`.
+- The library currently exposes two style directions:
+  - `Ag`
+  - `Toast`
+- Validation happens through Storybook at `http://127.0.0.1:6007`.
+- Only `Ag` and `Toast` story variants matter for review.
+- `Styles` stories are intentionally removed and should not be recreated unless the user explicitly asks for them.
 
-### Widgets - Use Factory Functions (NO new keyword)
-```typescript
-// ✅ CORRECT
-Container({ width: 100, height: 100 })
-Text('Hello World')
-Row({ children: [...] })
+## Architecture Map
 
-// ❌ WRONG
-new Container({ ... })  // Never use 'new' with widgets!
-new Text('Hello')      // Never use 'new' with widgets!
-```
+- `packages/chart/src/headless`
+  - headless chart engines
+  - non-visual primitive layer
+- `packages/chart/registry/templates`
+  - chart template source of truth
+  - style templates and shared parts live here
+- `shared/chart-presets`
+  - generated-like concrete chart package used for local development and chart Storybook
+  - synchronized from the internal CLI/template system
+- `dev/shared/chart.ts`
+  - re-exports `chart-presets`
+- `dev/chart-storybook`
+  - final inspection point for current chart output
 
-### Type Classes - Use 'new' Keyword
-```typescript
-// ✅ CORRECT - These require 'new'
-new TextStyle({ fontSize: 16, color: '#FF0000' })
-new BoxDecoration({ color: '#FF0000', borderRadius: BorderRadius.circular(8) })
-new EdgeInsets.all(10)
-new BorderSide({ color: '#000000', width: 1 })
-new Border({ top: new BorderSide(...), right: ..., bottom: ..., left: ... })
+## Counting Model
 
-// ❌ WRONG
-TextStyle({ ... })      // Missing 'new'!
-BoxDecoration({ ... })  // Missing 'new'!
-```
+- Headless chart engines: `22`
+- Storybook chart families: `25`
+- `shared/chart-presets` concrete exports: `25 Ag-neutral exports + 25 Toast exports`
 
-## 🎨 Color Format Rules
+The count differs because some visible chart families reuse an existing headless engine:
 
-### Always Use String Format
-```typescript
-// ✅ CORRECT
-color: '#FF0000'              // HEX string
-color: 'rgba(255, 0, 0, 0.5)' // RGBA string
-color: 'red'                  // Named color
+- `AreaChart` uses `line-chart` headless
+- `StackedAreaChart` uses `line-chart` headless
+- `StackedBarChart` uses `bar-chart` headless
 
-// ❌ WRONG
-color: 0xFFFF0000   // Flutter-style hex numbers don't work!
-color: 0xFF000000   // No numeric color values!
-```
+Do not assume every Storybook chart family has its own dedicated `headless/<chart>` directory.
 
-## 📐 Common Type Usage
+## Reference Sites
 
-### EdgeInsets
-```typescript
-// ✅ CORRECT
-padding: EdgeInsets.all(16)
-padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 10 })
-padding: EdgeInsets.only({ left: 10, top: 20, right: 10, bottom: 20 })
+Use these two roots as the official reference entry points for browser exploration:
 
-// ❌ WRONG
-padding: { all: 16 }  // Not a plain object!
-```
+- AG Charts: `https://www.ag-grid.com/charts/`
+- TOAST UI Chart: `https://nhn.github.io/tui.chart/latest/`
 
-### Border & BorderSide
-```typescript
-// ✅ CORRECT - All sides must be specified
-border: new Border({
-  top: new BorderSide({ color: '#000', width: 1 }),
-  right: new BorderSide({ color: '#000', width: 1 }),
-  bottom: new BorderSide({ color: '#000', width: 1 }),
-  left: new BorderSide({ color: '#000', width: 1 })
-})
+If browser exploration is needed, `agent-browser` should start from these roots and navigate from there.
 
-// Or use the helper
-border: Border.all({ color: '#000', width: 1 })
+## Style Intent
 
-// ❌ WRONG - Partial borders
-border: new Border({ top: new BorderSide(...) })  // Missing other sides!
-```
+Both styles are reference-driven. The purpose is to imitate the UX language of the reference libraries, not to invent a third visual system.
 
-### BorderRadius
-```typescript
-// ✅ CORRECT
-borderRadius: BorderRadius.circular(8)
-borderRadius: BorderRadius.only({ 
-  topLeft: Radius.circular(8),
-  topRight: Radius.circular(8),
-  bottomLeft: Radius.circular(0),
-  bottomRight: Radius.circular(0)
-})
+### Ag
 
-// ❌ WRONG
-borderRadius: 8  // Not a number!
-```
+- Mimic AG Charts style and interaction tone.
+- More structural, restrained, and chart-tool oriented.
+- Hover behavior tends to emphasize the active element while de-emphasizing surrounding series with transparency.
 
-## 🔄 State Management - Flutter Style Only!
+### Toast
 
-### ❌ NEVER Use React Patterns
-```typescript
-// ❌ WRONG - No React hooks!
-const [count, setCount] = useState(0);
-let isExpanded = false;  // No outside state variables!
-```
+- Mimic TOAST UI Chart style and interaction tone.
+- More lifted, contrasted, and visually separated.
+- Hover behavior tends to make the active element feel raised and more explicit.
 
-### ✅ ALWAYS Use StatefulWidget Pattern
-```typescript
-class MyWidget extends StatefulWidget {
-  createState() {
-    return new MyWidgetState();
-  }
-}
+### BarChart Hover Reference
 
-class MyWidgetState extends State<MyWidget> {
-  // State as class properties
-  count = 0;
-  isExpanded = false;
-  
-  build(context) {
-    return Container({
-      child: Text(`Count: ${this.count}`)
-    });
-  }
-  
-  incrementCount() {
-    this.setState(() => {
-      this.count++;
-    });
-  }
-}
+Use `BarChart` as the baseline example when reasoning about style differences:
 
-// Export as factory function
-export default function MyWidget(props) {
-  return new MyWidget(props);
-}
-```
+- `Ag`
+  - when one bar is hovered, non-active bars become more transparent
+  - active emphasis is driven by opacity contrast
+- `Toast`
+  - when one bar is hovered, the active bar gets a white outline and lifted emphasis
+  - active emphasis is driven by outline and raised visual weight
 
-## 🖱️ Event Handling
+## Config And Sync Notes
 
-### Use GestureDetector for All Interactions
-```typescript
-// ✅ CORRECT
-GestureDetector({
-  onClick: () => {
-    this.setState(() => {
-      this.isClicked = true;
-    });
-  },
-  onMouseEnter: () => { /* hover */ },
-  onMouseLeave: () => { /* unhover */ },
-  child: Container({ ... })
-})
+Before changing any chart, understand how config is layered and reused.
 
-// ❌ WRONG - No direct event handlers on widgets
-Container({ 
-  onClick: () => {},  // Containers don't have onClick!
-  child: Text('Click me')
-})
-```
+- AG-style cartesian charts inherit shared AG base config
+- Toast-style cartesian charts inherit shared Toast base config
+- chart-specific config extends those shared bases
+- Storybook charts are consuming `shared/chart`, which re-exports `chart-presets`
+- `shared/chart-presets` is not the source of truth; it is a synchronized consumer package
+- template and CLI changes may require preset sync, not just local edits
 
-## 📦 Available Widgets
+Relevant mental model:
 
-### Layout Widgets
-- Container, Row, Column, Stack, Positioned
-- Center, Align, Padding, Expanded, Flexible
-- SizedBox, ConstrainedBox, FractionallySizedBox
-- AspectRatio, IntrinsicHeight, IntrinsicWidth
-- Spacer, IndexedStack, Wrap
+- template source: `packages/chart/registry/templates`
+- sync target: `shared/chart-presets`
+- Storybook surface: `dev/chart-storybook`
 
-### Display Widgets
-- Text, RichText, Image
-- DecoratedBox, ColoredBox
-- ClipRect, ClipRRect, ClipOval, ClipPath
-- Opacity, Transform
+When in doubt, inspect shared config first, then the chart-specific style implementation, then the preset output.
 
-### Interactive Widgets
-- GestureDetector
-- Draggable
-- Tooltip
+## Completed Charts
 
-### Animation Widgets
-- AnimatedContainer, AnimatedOpacity, AnimatedPadding
-- AnimatedPositioned, AnimatedAlign, AnimatedScale
-- AnimatedRotation, AnimatedSlide
-- AnimatedFractionallySizedBox
+The following 8 chart families are already considered done for current feedback purposes:
 
-### Specialized Widgets
-- CustomPaint (for custom drawing)
-- OverflowBox, UnconstrainedBox, LimitedBox
-- ConstraintsTransformBox, FractionalTranslation
-- ZIndex
+- `AreaChart`
+- `BarChart`
+- `BoxPlotChart`
+- `BubbleChart`
+- `LineChart`
+- `ScatterChart`
+- `StackedAreaChart`
+- `StackedBarChart`
 
-## 🚫 Common Mistakes to Avoid
+Do not ask the user for new visual feedback on these 8 unless the user explicitly reopens them.
 
-### 3. Widget Props Must Match Documentation
-Always check the actual widget documentation for correct prop names and types.
-Reference: https://github.com/meursyphus/flitter/blob/latest/packages/docs/src/content/docs/en/8_widgets/{WidgetName}/index.mdx
+## Feedback Scope
 
-## 💡 React Integration Pattern
+Current feedback should cover only the remaining 17 chart families.
 
-```typescript
-import React from 'react';
-import Widget from '@flitterjs/react';
-import { Container, Text } from 'flitter-core';
+Each style must be checked separately.
 
-export default function App() {
-  const flitterWidget = Container({
-    width: 200,
-    height: 100,
-    decoration: new BoxDecoration({
-      color: '#3B82F6',
-      borderRadius: BorderRadius.circular(8)
-    }),
-    child: Center({
-      child: Text('Hello Flitter!', {
-        style: new TextStyle({
-          fontSize: 18,
-          color: '#FFFFFF'
-        })
-      })
-    })
-  });
+Do not treat a chart as complete just because one style is complete.
 
-  return (
-    <Widget 
-      width="100%"
-      height="200px"
-      renderer="svg"  // or "canvas"
-      widget={flitterWidget}
-    />
-  );
-}
-```
+## Feedback Checklist
 
-## 📚 Quick Reference Links
+- [ ] `PieChart / Ag`
+- [ ] `PieChart / Toast`
+- [ ] `DonutChart / Ag`
+- [ ] `DonutChart / Toast`
+- [ ] `PolarAreaChart / Ag`
+- [ ] `PolarAreaChart / Toast`
+- [ ] `ProgressChart / Ag`
+- [ ] `ProgressChart / Toast`
+- [ ] `GaugeChart / Ag`
+- [ ] `GaugeChart / Toast`
+- [ ] `RadarChart / Ag`
+- [ ] `RadarChart / Toast`
+- [ ] `HistogramChart / Ag`
+- [ ] `HistogramChart / Toast`
+- [ ] `HeatmapChart / Ag`
+- [x] `HeatmapChart / Toast`
+- [ ] `TreemapChart / Ag`
+- [ ] `TreemapChart / Toast`
+- [ ] `SunburstChart / Ag`
+- [ ] `SunburstChart / Toast`
+- [ ] `WaterfallChart / Ag`
+- [ ] `WaterfallChart / Toast`
+- [ ] `CandlestickChart / Ag`
+- [ ] `CandlestickChart / Toast`
+- [ ] `FunnelChart / Ag`
+- [ ] `FunnelChart / Toast`
+- [ ] `ComboChart / Ag`
+- [ ] `ComboChart / Toast`
+- [ ] `SankeyChart / Ag`
+- [ ] `SankeyChart / Toast`
+- [ ] `GanttChart / Ag`
+- [ ] `GanttChart / Toast`
+- [ ] `NetworkChart / Ag`
+- [ ] `NetworkChart / Toast`
 
-- **Widget Documentation**: `packages/docs/src/content/docs/en/8_widgets/`
-- **Working Examples**: `packages/docs/src/components/pages/docs/`
-- **Core Implementation**: `packages/flitter/src/component/`
+- [ ] `NestedPieChart / Ag`
+- [ ] `NestedPieChart / Toast`
 
-## 🎯 Summary Checklist
+Notes for `NestedPieChart`:
 
-Before generating Flitter code, verify:
-- [ ] Widget imports are named (not default)
-- [ ] React Widget import is default (not named)
-- [ ] Widgets use factory functions (no 'new')
-- [ ] Style classes use 'new' keyword
-- [ ] Colors are strings (not hex numbers)
-- [ ] Borders specify all 4 sides
-- [ ] Event handling uses GestureDetector
-- [ ] State management uses StatefulWidget pattern
-- [ ] No React hooks or patterns
-- [ ] No non-existent APIs (classToFunction, Alignment import)
+- This is not part of the current flat `PieChart` implementation.
+- This should be treated as a future chart to build from the headless layer first.
+- Before any style work begins, define the headless data model, widget structure, hover model, legend behavior, and ring hierarchy strategy.
+- It may be conceptually close to a shallow `SunburstChart`, but it should not be assumed to be the same chart without explicit agreement.
+
+## Working Rules For AI
+
+Before doing implementation work on any target chart, follow this order:
+
+1. Identify the target chart.
+2. Explain the target chart's current headless structure to the user.
+3. Explain the target chart's `datasets` type to the user.
+4. Explain how the widget tree is composed.
+5. Explain where hover, tooltip, label, legend, and config state are handled.
+6. Explain where shared config and chart-specific config are merged.
+7. Discuss this with the user until the direction is clear.
+8. Only after that, inspect reference behavior and compare against Storybook.
+9. Only after that, propose or implement changes.
+
+The explanation step is mandatory. Do not skip directly to code changes.
+
+## What To Explain Before Editing
+
+At minimum, before editing a chart, explain all of the following:
+
+- which `headless` engine is being used
+- whether the chart is a direct engine match or a derived template
+- what the `datasets` shape looks like
+- what the widget structure looks like
+- where style parts are injected
+- where tooltip behavior lives
+- where hover state lives
+- where shared base config comes from
+- whether the chart output is synced into `shared/chart-presets`
+
+## Expected Conversation Style
+
+When discussing a target chart with the user:
+
+- lead with explanation, not implementation
+- use the current code structure as the basis of the explanation
+- verify that the user agrees with your reading before changing code
+- if the reference behavior is ambiguous, show the ambiguity and ask the user to choose
+- prefer a short back-and-forth over a premature implementation
+
+## Storybook Rule
+
+For chart review in this repo, Storybook should be interpreted as:
+
+- one chart family
+- two relevant review tracks: `Ag` and `Toast`
+- no `Styles` review track
+
+If a future change reintroduces `Styles` stories, treat that as a separate request, not as the default review workflow.
