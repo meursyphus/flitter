@@ -4,7 +4,7 @@ import type { ToastPieChartConfig } from "../config";
 import { baseSlice } from "../../base/slice";
 
 export function toastSlice(
-	...[{ index, name, sweepAngle }, ctx]: Parameters<PieChartCustom<ToastPieChartConfig>["slice"]>
+	...[{ index, name, startAngle, sweepAngle }, ctx]: Parameters<PieChartCustom<ToastPieChartConfig>["slice"]>
 ): Widget {
 	const { colors, pie: pieConfig } = ctx.config;
 	const colorIndex = ctx.legends.indexOf(name);
@@ -13,6 +13,7 @@ export function toastSlice(
 
 	const slice = baseSlice({
 		index,
+		startAngle,
 		sweepAngle,
 		innerRadiusRatio: pieConfig.innerRadiusRatio,
 		ctx,

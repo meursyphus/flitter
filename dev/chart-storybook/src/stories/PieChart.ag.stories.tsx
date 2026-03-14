@@ -16,6 +16,10 @@ type PieChartArgs = {
 	strokeColor: string;
 	strokeWidth: number;
 	innerRadiusRatio: number;
+	dataLabelVisible: boolean;
+	dataLabelFontSize: number;
+	dataLabelFontColor: string;
+	dataLabelOffset: number;
 };
 
 function parseTitlePlacement(placement: string) {
@@ -55,10 +59,16 @@ function AgPieChart({ args }: { args: PieChartArgs }) {
 						strokeWidth: args.strokeWidth,
 						innerRadiusRatio: args.innerRadiusRatio,
 					},
+					dataLabel: {
+						visible: args.dataLabelVisible,
+						fontSize: args.dataLabelFontSize,
+						fontColor: args.dataLabelFontColor,
+						offset: args.dataLabelOffset,
+					},
 				},
 			})}
-			width="500px"
-			height="400px"
+			width="700px"
+			height="550px"
 			renderer={args.renderer}
 		/>
 	);
@@ -78,6 +88,10 @@ const meta: Meta<PieChartArgs> = {
 		strokeColor: { control: "color" },
 		strokeWidth: { control: { type: "range", min: 0, max: 6, step: 0.5 } },
 		innerRadiusRatio: { control: { type: "range", min: 0, max: 0.9, step: 0.05 } },
+		dataLabelVisible: { control: "boolean" },
+		dataLabelFontSize: { control: { type: "range", min: 8, max: 24, step: 1 } },
+		dataLabelFontColor: { control: "color" },
+		dataLabelOffset: { control: { type: "range", min: 5, max: 50, step: 1 } },
 	},
 	args: {
 		renderer: "svg",
@@ -90,6 +104,10 @@ const meta: Meta<PieChartArgs> = {
 		strokeColor: "white",
 		strokeWidth: 2,
 		innerRadiusRatio: 0,
+		dataLabelVisible: true,
+		dataLabelFontSize: 16,
+		dataLabelFontColor: "#333333",
+		dataLabelOffset: 20,
 	},
 };
 

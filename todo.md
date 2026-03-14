@@ -58,7 +58,16 @@ Use these two roots as the official reference entry points for browser explorati
 - AG Charts: `https://www.ag-grid.com/charts/`
 - TOAST UI Chart: `https://nhn.github.io/tui.chart/latest/`
 
-If browser exploration is needed, `agent-browser` should start from these roots and navigate from there.
+### Agent Workflow
+
+When starting chart work, immediately spawn two agents:
+
+1. **Research Agent** — handles all visual inspection (reference sites and Storybook). Takes screenshots, reports observations. Does NOT modify code.
+2. **Working Agent** — handles all code changes. Receives screenshots from the research agent and implements based on them. Does NOT browse.
+
+The main conversation (you) acts as a coordinator: relay screenshots and observations between agents, align on direction with the user, and keep both agents focused on their roles.
+
+This separation ensures that browser exploration and code work never mix in the same agent context.
 
 ## Style Intent
 
@@ -156,8 +165,11 @@ Do not treat a chart as complete just because one style is complete.
 ㄴ 데이터 라벨 표시를 각각 하면 됨, 
 - [x] `HeatmapChart / Ag`
 - [x] `HeatmapChart / Toast`
+- [ ] `TreemapChart / Ag`
+- [ ] `TreemapChart / Toast`
 - [ ] `BoxPlotBar / Ag`
 - [ ] `BoxPlotBar / Toast`
+ㄴ 하다 말았음, 겁나 BoxPlot 쪽 위젯구조와 어케 배치할지를 직접 컨트롤 해야할듯,
 - [ ] `RadarChart / Ag`
 - [ㅅ] `RadarChart / Toast`
 - [ ] `CandlestickChart / Ag`
@@ -172,8 +184,6 @@ Do not treat a chart as complete just because one style is complete.
 - [ ] `GaugeChart / Toast`
 - [ ] `HistogramChart / Ag`
 - [ ] `HistogramChart / Toast`
-- [ ] `TreemapChart / Ag`
-- [ ] `TreemapChart / Toast`
 - [ ] `SunburstChart / Ag`
 - [ ] `SunburstChart / Toast`
 - [ ] `WaterfallChart / Ag`

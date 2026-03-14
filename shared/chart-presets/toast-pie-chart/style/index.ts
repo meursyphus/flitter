@@ -4,6 +4,7 @@ import { defaultToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { toastSlice } from "./parts/slice";
 import { toastDataView } from "./parts/data-view";
+import { toastDataLabel } from "./parts/data-label";
 import {
 	toastTitle,
 	toastLegend,
@@ -14,6 +15,7 @@ export { type ToastPieChartConfig } from "./config";
 const toastCustom: Partial<PieChartCustom<ToastPieChartConfig>> = {
 	slice: toastSlice,
 	dataView: toastDataView,
+	dataLabel: toastDataLabel,
 	legend: (args, context) => toastLegend(args, context, { markerShape: "circle" }),
 	title: toastTitle,
 };

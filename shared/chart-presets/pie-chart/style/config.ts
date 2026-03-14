@@ -11,6 +11,17 @@ export type AgPieChartConfig = AgPieSharedConfig & {
     strokeWidth: number;
     innerRadiusRatio: number;
   };
+  dataLabel: {
+    visible: boolean;
+    fontSize: number;
+    fontColor: string;
+    fontFamily?: string;
+    fontWeight?: string;
+    offset: number;
+    lineColor: string;
+    lineWidth: number;
+    formatter: (args: { index: number; name: string; value: number; percentage: number; startAngle: number; sweepAngle: number }) => string;
+  };
 };
 
 export const defaultAgConfig: AgPieChartConfig = {
@@ -23,11 +34,20 @@ export const defaultAgConfig: AgPieChartConfig = {
   },
   subtitle: defaultAgCartesianBaseConfig.subtitle,
   legend: { ...defaultAgCartesianBaseConfig.legend, visible: false, position: "right-top" },
-  padding: defaultAgCartesianBaseConfig.padding,
+  padding: { top: 40, right: 60, bottom: 40, left: 60 },
   tooltip: defaultAgCartesianBaseConfig.tooltip,
   pie: {
     strokeColor: "white",
     strokeWidth: 2,
     innerRadiusRatio: 0,
+  },
+  dataLabel: {
+    visible: true,
+    fontSize: 16,
+    fontColor: "#333333",
+    offset: 20,
+    lineColor: "#999999",
+    lineWidth: 1,
+    formatter: (args) => String(args.value),
   },
 };

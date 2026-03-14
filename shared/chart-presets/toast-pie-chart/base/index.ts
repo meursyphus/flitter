@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitter-core";
 import { PieChart as HeadlessPieChart } from "flitter-ui/chart";
 import type { PieChartCustom, PieChartData } from "flitter-ui/chart";
 import { DataView } from "./data-view";
@@ -10,6 +10,7 @@ export { PieChartController } from "flitter-ui/chart";
 const baseDefaults: Partial<PieChartCustom> = {
 	layout: Layout,
 	dataView: DataView,
+	dataLabel: () => SizedBox.shrink(),
 };
 
 export function BasePieChart<TConfig = {}>({

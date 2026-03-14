@@ -81,7 +81,7 @@ class DataView extends StatelessWidget {
 
 			return {
 				widget: ctx.custom.slice(
-					{ index, name: d.name, value: d.value, percentage, sweepAngle },
+					{ index, name: d.name, value: d.value, percentage, startAngle, sweepAngle },
 					ctx,
 				),
 				startAngle,
@@ -93,6 +93,16 @@ class DataView extends StatelessWidget {
 			};
 		});
 
-		return ctx.custom.dataView({ slices }, ctx);
+		const dataLabels = data.datasets.map((d, index) => {
+			const percentage = total > 0 ? (d.value / total) * 100 : 0;
+			const sweepAngle = total > 0 ? (d.value / total) * Math.PI * 2 : 0;
+			const startAngle = slices[index].startAngle;
+			return ctx.custom.dataLabel(
+				{ index, name: d.name, value: d.value, percentage, startAngle, sweepAngle },
+				ctx,
+			);
+		});
+
+		return ctx.custom.dataView({ slices, dataLabels }, ctx);
 	}
 }

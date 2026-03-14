@@ -17,9 +17,10 @@ export function createSlicePath(
 	outerRadius: number,
 	innerRadius: number,
 	sweepAngle: number,
+	rotationOffset: number = 0,
 ): Path {
 	const path = new Path();
-	const startAngle = -Math.PI / 2;
+	const startAngle = -Math.PI / 2 + rotationOffset;
 	const endAngle = startAngle + sweepAngle;
 
 	const outerStart = new Offset({
@@ -79,6 +80,7 @@ export function isPointInSlice(
 	size: Size,
 	innerRadiusRatio: number,
 	sweepAngle: number,
+	rotationOffset: number = 0,
 ): boolean {
 	const cx = size.width / 2;
 	const cy = size.height / 2;
@@ -91,9 +93,9 @@ export function isPointInSlice(
 
 	if (distance < innerRadius || distance > outerRadius) return false;
 
-	let angle = Math.atan2(dy, dx);
-	let relativeAngle = angle - (-Math.PI / 2);
-	if (relativeAngle < 0) relativeAngle += 2 * Math.PI;
+	const angle = Math.atan2(dy, dx);
+	const sliceStart = -Math.PI / 2 + rotationOffset;
+	let relativeAngle = ((angle - sliceStart) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
 
 	return relativeAngle <= sweepAngle;
 }
@@ -102,6 +104,7 @@ export function isPointInSlice(
 
 export function baseSlice({
 	index,
+	startAngle,
 	sweepAngle,
 	innerRadiusRatio,
 	ctx,
@@ -109,8 +112,10 @@ export function baseSlice({
 	strokeColor,
 	strokeWidth,
 	svgFilter,
+	extraHitTest,
 }: {
 	index: number;
+	startAngle: number;
 	sweepAngle: number;
 	innerRadiusRatio: number;
 	ctx: PieChartContext<any>;
@@ -118,11 +123,14 @@ export function baseSlice({
 	strokeColor: string;
 	strokeWidth: number;
 	svgFilter?: string;
+	/** Optional additional hit test (e.g. for callout label regions). */
+	extraHitTest?: (position: { x: number; y: number }, size: Size) => boolean;
 }): Widget {
 	const paint = CustomPaint({
 		painter: {
 			hitTest: (position, size) =>
-				isPointInSlice(position, size, innerRadiusRatio, sweepAngle),
+				isPointInSlice(position, size, innerRadiusRatio, sweepAngle, startAngle)
+				|| (extraHitTest != null && extraHitTest(position, size)),
 			svg: {
 				createDefaultSvgEl: (context) => ({
 					slice: context.createSvgEl("path"),
@@ -132,7 +140,7 @@ export function baseSlice({
 					const cy = size.height / 2;
 					const radius = Math.min(cx, cy);
 					const innerRadius = radius * innerRadiusRatio;
-					const path = createSlicePath(cx, cy, radius, innerRadius, sweepAngle);
+					const path = createSlicePath(cx, cy, radius, innerRadius, sweepAngle, startAngle);
 					slice.setAttribute("d", path.getD());
 					slice.setAttribute("fill", fill);
 					slice.setAttribute("stroke", strokeColor);
@@ -150,7 +158,7 @@ export function baseSlice({
 					const cy = size.height / 2;
 					const radius = Math.min(cx, cy);
 					const innerRadius = radius * innerRadiusRatio;
-					const path = createSlicePath(cx, cy, radius, innerRadius, sweepAngle);
+					const path = createSlicePath(cx, cy, radius, innerRadius, sweepAngle, startAngle);
 					const canvasPath = path.toCanvasPath();
 					context.canvas.fillStyle = fill;
 					context.canvas.fill(canvasPath);

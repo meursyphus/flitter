@@ -5,6 +5,7 @@ import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "@utils/index";
 import { agSlice } from "./parts/slice";
 import { agDataView } from "./parts/data-view";
+import { agDataLabel } from "./parts/data-label";
 import { Layout as BaseLayout } from "../../base/layout";
 import { agLegend } from "@styles/ag";
 
@@ -59,6 +60,7 @@ const agCustom: Partial<PieChartCustom<AgPieChartConfig>> = {
   layout: agLayout,
   slice: agSlice,
   dataView: agDataView,
+  dataLabel: agDataLabel,
   legend: (args, context) => agLegend(args, context as any, { markerShape: "circle" }),
   title: agPieTitle,
 };

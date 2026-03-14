@@ -52,8 +52,8 @@ function ToastPieChartStory({ args }: { args: PieChartArgs }) {
 					},
 				},
 			})}
-			width="500px"
-			height="400px"
+			width="600px"
+			height="500px"
 			renderer={args.renderer}
 		/>
 	);

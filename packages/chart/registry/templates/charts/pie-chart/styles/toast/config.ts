@@ -6,6 +6,15 @@ export type ToastPieChartConfig = ToastBaseConfig & {
 		strokeWidth: number;
 		innerRadiusRatio: number;
 	};
+	dataLabel: {
+		visible: boolean;
+		fontSize: number;
+		fontColor: string;
+		fontFamily?: string;
+		fontWeight?: string;
+		radiusRatio: number;
+		formatter: (args: { index: number; name: string; value: number; percentage: number; startAngle: number; sweepAngle: number }) => string;
+	};
 };
 
 export const defaultToastConfig: ToastPieChartConfig = {
@@ -16,5 +25,13 @@ export const defaultToastConfig: ToastPieChartConfig = {
 		strokeColor: "white",
 		strokeWidth: 2,
 		innerRadiusRatio: 0,
+	},
+	dataLabel: {
+		visible: true,
+		fontSize: 14,
+		fontColor: "white",
+		fontWeight: "bold",
+		radiusRatio: 0.65,
+		formatter: (args) => `${args.percentage.toFixed(1)}%`,
 	},
 };

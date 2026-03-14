@@ -22,11 +22,16 @@ export type PieChartCustom<TConfig = {}> = {
 				name: string;
 				value: number;
 			}[];
+			dataLabels: Widget[];
 		},
 		TConfig
 	>;
 	slice: CustomArgs<
-		{ index: number; name: string; value: number; percentage: number; sweepAngle: number },
+		{ index: number; name: string; value: number; percentage: number; startAngle: number; sweepAngle: number },
+		TConfig
+	>;
+	dataLabel: CustomArgs<
+		{ index: number; name: string; value: number; percentage: number; startAngle: number; sweepAngle: number },
 		TConfig
 	>;
 	legend: CustomArgs<{ name: string; index: number }, TConfig>;

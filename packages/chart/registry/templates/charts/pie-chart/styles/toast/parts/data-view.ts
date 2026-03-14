@@ -38,20 +38,24 @@ type AngleSnapshot = { startAngle: number; sweepAngle: number };
 
 class AnimatedPieDataView extends StatefulWidget {
 	pies: PieSlice[];
+	dataLabels: Widget[];
 	context: PieChartContext<ToastPieChartConfig>;
 	duration: number;
 
 	constructor({
 		pies,
+		dataLabels,
 		context,
 		duration,
 	}: {
 		pies: PieSlice[];
+		dataLabels: Widget[];
 		context: PieChartContext<ToastPieChartConfig>;
 		duration: number;
 	}) {
 		super();
 		this.pies = pies;
+		this.dataLabels = dataLabels;
 		this.context = context;
 		this.duration = duration;
 	}
@@ -109,14 +113,14 @@ class _AnimatedPieDataViewState extends State<AnimatedPieDataView> {
 	}
 
 	override build() {
-		const { pies, context } = this.widget;
+		const { pies, dataLabels, context } = this.widget;
 		const t = this.tween.value;
 
 		if (this.isMountAnimation) {
 			// Mount animation: ClipPath sweep from 0 → 360°
 			const child = buildDataViewTooltipOverlay(
-				DataView({ slices: pies }, context),
-				{ slices: pies },
+				DataView({ slices: pies, dataLabels }, context),
+				{ slices: pies, dataLabels },
 				context,
 			);
 			const done = t >= 1;
@@ -165,8 +169,8 @@ class _AnimatedPieDataViewState extends State<AnimatedPieDataView> {
 			};
 		});
 
-		const dataViewWidget = DataView({ slices: interpolatedPies }, context);
-		return buildDataViewTooltipOverlay(dataViewWidget, { slices: pies }, context);
+		const dataViewWidget = DataView({ slices: interpolatedPies, dataLabels }, context);
+		return buildDataViewTooltipOverlay(dataViewWidget, { slices: pies, dataLabels }, context);
 	}
 }
 
@@ -185,6 +189,7 @@ export function toastDataView(
 
 	return new AnimatedPieDataView({
 		pies: args.slices,
+		dataLabels: args.dataLabels,
 		context,
 		duration: context.config.animation.duration,
 	});
@@ -205,7 +210,7 @@ function buildDataViewTooltipOverlay(
 		const colorIndex = context.legends.indexOf(name);
 		const color = config.colors[(colorIndex >= 0 ? colorIndex : 0) % config.colors.length];
 
-		// actual mid angle in world space: slice draws from -π/2 inside rotated frame
+		// mid angle in world space: slices start at -π/2 (12 o'clock)
 		const midAngle = -Math.PI / 2 + startAngle + sweepAngle / 2;
 
 		const ax = Math.cos(midAngle);
