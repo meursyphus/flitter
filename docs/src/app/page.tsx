@@ -1,83 +1,47 @@
 "use client";
 
 import Link from "next/link";
-import ScrollReveal from "@/components/scroll-reveal";
-import { NegativeVerticalAgBarChart } from "./chart/_data/bar-chart/ag/examples";
-
-const sections = [
-  {
-    title: "Chart",
-    description:
-      "One chart library, every style. Fully customizable and headless — cover any chart style you need with a single dependency.",
-    href: "/chart",
-    demoId: "chart-demo",
-    icon: (
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-        <rect x="4" y="18" width="5" height="10" rx="1" />
-        <rect x="13" y="10" width="5" height="18" rx="1" />
-        <rect x="22" y="4" width="5" height="24" rx="1" />
-      </svg>
-    ),
-  },
-  // {
-  //   title: "Diagram",
-  //   description: "...",
-  //   href: "#",
-  //   comingSoon: true,
-  //   demoId: "diagram-demo",
-  //   icon: ( ... ),
-  // },
-];
+import FlitterLogo from "@/components/flitter-logo";
 
 export default function Home() {
   return (
-    <main>
-      {/* Hero */}
-      <section className="relative px-6 pt-20 pb-16 lg:px-16">
-        <div className="dot-pattern pointer-events-none absolute inset-0 opacity-30" />
-
-        <div className="relative max-w-2xl">
-          <h1
-            className="animate-fade-up text-4xl tracking-tight text-neutral-900 sm:text-5xl"
-            style={{ animationDelay: "0.1s" }}
-          >
-            <span
-              className="italic text-neutral-700"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              Flutter&apos;s rendering,
-            </span>
-            <br />
-            <span className="font-bold">on the web.</span>
+    <main className="overflow-hidden">
+      {/* ── Hero ── */}
+      <section className="relative px-6 pt-28 pb-16 text-center lg:px-16">
+        <div className="mx-auto max-w-3xl">
+          <div className="flex justify-center">
+            <FlitterLogo size={60} />
+          </div>
+          <h1 className="mt-6 text-[3.5rem] font-black leading-[1.1] tracking-tight text-gray-900 sm:text-[4.5rem]">
+            flitter
           </h1>
-          <p
-            className="animate-fade-up mt-5 text-base leading-relaxed text-neutral-500 sm:text-lg"
-            style={{ animationDelay: "0.25s" }}
-          >
-            Declarative widget system for charts, diagrams,
-            <br className="hidden sm:block" />
-            and every visualization.
+          <p className="mt-4 text-xl leading-relaxed text-gray-500 sm:text-2xl">
+            High-quality open-source rendering libraries for web developers.
           </p>
-          <div
-            className="animate-fade-up mt-8 flex items-center gap-4"
-            style={{ animationDelay: "0.4s" }}
-          >
-            <Link
-              href="/chart"
-              className="inline-flex items-center gap-2 rounded-full bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-neutral-700 hover:shadow-lg hover:shadow-neutral-900/10"
+          <p className="mt-3 text-base text-gray-400">
+            Flutter&apos;s widget composition model, reimagined for the web.
+          </p>
+
+          {/* Stats buttons — like TanStack npm/github */}
+          <div className="mt-8 flex items-center justify-center gap-3">
+            <a
+              href="https://www.npmjs.com/package/@meursyphus/flitter"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-[13px] font-medium text-gray-600 shadow-sm transition-all hover:border-gray-300 hover:shadow-md"
             >
-              Get Started
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M1 7h12M8 2l5 5-5 5" />
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="#CB3837">
+                <path d="M0 4.2h14v5.6H7v.93H3.73V9.8H0V4.2zm1.87 3.73h.93V5.6h.93v2.33h.93V4.67H1.87v3.26zm4.66-3.26v4.2h1.87v-.94h1.87V4.67H6.53zm1.87.93h.93v1.4h-.93v-1.4zm2.8-.93v3.26h.93V5.6h.93v2.33h.93V5.6h.94v2.33h.93V4.67h-4.66z" />
               </svg>
-            </Link>
+              npm
+            </a>
             <a
               href="https://github.com/meursyphus/flitter"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-neutral-200 px-5 py-2.5 text-sm font-medium text-neutral-600 transition-all hover:border-neutral-400 hover:text-neutral-900"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-[13px] font-medium text-gray-600 shadow-sm transition-all hover:border-gray-300 hover:shadow-md"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
                 <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
               </svg>
               GitHub
@@ -86,82 +50,234 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sections */}
-      {sections.map((section) => (
-        <section
-          key={section.title}
-          className="border-t border-neutral-100 px-6 py-20 lg:px-16"
-        >
-          <ScrollReveal>
-            <div className="mx-auto max-w-6xl">
-              <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-16">
-                {/* Left — info */}
-                <div className="flex-shrink-0 lg:w-[340px]">
-                  <div className="mb-5 flex items-center gap-3">
-                    <span className="text-neutral-400">{section.icon}</span>
-                    <h2 className="text-2xl font-bold tracking-tight text-neutral-900">
-                      {section.title}
-                    </h2>
-                  </div>
-                  <p className="text-sm leading-relaxed text-neutral-500">
-                    {section.description}
-                  </p>
-                  <Link
-                    href={section.href}
-                    className="group mt-6 inline-flex items-center gap-2 rounded-lg border border-neutral-200 px-5 py-2.5 text-sm font-medium text-neutral-700 transition-all hover:border-neutral-400 hover:text-neutral-900"
-                  >
-                    See more
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:translate-x-0.5">
-                      <path d="M1 6h10M7 2l4 4-4 4" />
-                    </svg>
-                  </Link>
-                </div>
+      {/* ── Open Source Libraries ── */}
+      <section className="px-6 pb-20 lg:px-16">
+        <div className="mx-auto max-w-4xl">
+          <h2 className="text-center text-[13px] font-bold uppercase tracking-[0.15em] text-gray-400">
+            Open Source Libraries
+          </h2>
 
-                {/* Right — demo */}
-                <div className="min-w-0 flex-1">
-                  <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
-                    {/* Browser chrome */}
-                    <div className="flex items-center gap-1.5 border-b border-neutral-100 bg-neutral-50 px-4 py-2.5">
-                      <span className="h-2.5 w-2.5 rounded-full bg-neutral-200" />
-                      <span className="h-2.5 w-2.5 rounded-full bg-neutral-200" />
-                      <span className="h-2.5 w-2.5 rounded-full bg-neutral-200" />
-                    </div>
-                    {/* Demo area */}
-                    <div
-                      className="relative flex aspect-[16/10] items-center justify-center"
-                      id={section.demoId}
-                    >
-                      {section.demoId === "chart-demo" ? (
-                        <NegativeVerticalAgBarChart />
-                      ) : (
-                        <span className="text-xs font-medium uppercase tracking-widest text-neutral-200">
-                          Demo
-                        </span>
-                      )}
-                    </div>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2">
+            {/* Chart — primary product */}
+            <Link
+              href="/chart"
+              className="group relative rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-teal-300 hover:shadow-md"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-50 text-teal-600">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                      <path d="M4 16V8M8 16V5M12 16V10M16 16V3" />
+                    </svg>
                   </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900">Chart</h3>
+                  </div>
+                </div>
+                <span className="rounded-full bg-teal-50 px-2 py-0.5 text-[11px] font-semibold text-teal-600">
+                  stable
+                </span>
+              </div>
+              <p className="mt-3 text-[14px] leading-relaxed text-gray-500">
+                Widget-composable chart library. 10+ chart types, multiple styles. Add with a CLI command — source code lands in your project.
+              </p>
+              <div className="mt-4 flex items-center gap-2 text-[13px] font-medium text-teal-600 opacity-0 transition-opacity group-hover:opacity-100">
+                Explore Charts
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 6h10M7 2l4 4-4 4" />
+                </svg>
+              </div>
+            </Link>
+
+            {/* Diagram — coming soon */}
+            <div className="relative rounded-xl border border-dashed border-gray-200 bg-gray-50/50 p-6">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 text-gray-400">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="2" width="6" height="5" rx="1" />
+                      <rect x="12" y="13" width="6" height="5" rx="1" />
+                      <path d="M5 7v3a2 2 0 002 2h3M15 13v-3a2 2 0 00-2-2h-3" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-400">Diagram</h3>
+                  </div>
+                </div>
+                <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold text-gray-400">
+                  coming soon
+                </span>
+              </div>
+              <p className="mt-3 text-[14px] leading-relaxed text-gray-400">
+                Interactive diagram library built on the same widget composition engine. ERD, flowchart, and more.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Chart Showcase Carousel ── */}
+      <section className="border-t border-gray-100 bg-gray-50/60 py-14">
+        <ChartCarouselStrip />
+      </section>
+
+      {/* ── Why Flitter ── */}
+      <section className="px-6 py-24 lg:px-16">
+        <div className="mx-auto max-w-4xl">
+          <h2 className="text-center text-[13px] font-bold uppercase tracking-[0.15em] text-gray-400">
+            Why Flitter
+          </h2>
+          <p className="mt-4 text-center text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            A rendering engine, not a config wrapper.
+          </p>
+          <p className="mx-auto mt-4 max-w-2xl text-center text-base leading-relaxed text-gray-500">
+            Most chart libraries give you options objects. Flitter gives you a real widget tree — the same composition model that powers Flutter, running natively in your browser.
+          </p>
+
+          <div className="mt-16 grid gap-10 sm:grid-cols-2">
+            {[
+              {
+                title: "Widget Composition",
+                desc: "Every axis, bar, tooltip, and legend is a widget. Swap any piece of the tree — no config API to fight.",
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="5" height="5" rx="1" />
+                    <rect x="12" y="3" width="5" height="5" rx="1" />
+                    <rect x="3" y="12" width="5" height="5" rx="1" />
+                    <rect x="12" y="12" width="5" height="5" rx="1" />
+                  </svg>
+                ),
+              },
+              {
+                title: "Framework Agnostic",
+                desc: "Works with React and Svelte today. Vue support coming. The core engine has zero framework dependencies.",
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="10" cy="10" r="7" />
+                    <path d="M2 10h16M10 3c-2 2.5-2 11 0 14M10 3c2 2.5 2 11 0 14" />
+                  </svg>
+                ),
+              },
+              {
+                title: "Source Code You Own",
+                desc: "Charts land as editable source files in your project. No runtime dependency, no black box. Delete the package after install.",
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M7 7l-4 3 4 3M13 7l4 3-4 3M11 4l-2 12" />
+                  </svg>
+                ),
+              },
+              {
+                title: "LLM Native",
+                desc: "Feed one URL to your AI coding assistant. It reads the full API surface and generates charts end-to-end — data, layout, and styling.",
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 6h12M4 10h8M4 14h10" />
+                  </svg>
+                ),
+              },
+            ].map((item) => (
+              <div key={item.title} className="flex gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-500">
+                  {item.icon}
+                </div>
+                <div>
+                  <h3 className="text-[15px] font-bold text-gray-900">{item.title}</h3>
+                  <p className="mt-1.5 text-[14px] leading-relaxed text-gray-500">{item.desc}</p>
                 </div>
               </div>
-            </div>
-          </ScrollReveal>
-        </section>
-      ))}
-
-      {/* Footer */}
-      <footer className="border-t border-neutral-100 px-6 py-10 lg:px-16">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-bold tracking-tight text-neutral-400" style={{ fontFamily: "var(--font-display)" }}>
-              flitter
-            </span>
-            <span className="text-xs text-neutral-300">&copy; 2025</span>
+            ))}
           </div>
-          <div className="flex items-center gap-5">
+        </div>
+      </section>
+
+      {/* ── How It Works ── */}
+      <section className="border-t border-gray-100 bg-gray-50/60 px-6 py-24 lg:px-16">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="text-center text-[13px] font-bold uppercase tracking-[0.15em] text-gray-400">
+            Getting Started
+          </h2>
+          <p className="mt-4 text-center text-3xl font-bold tracking-tight text-gray-900">
+            Three commands. Full control.
+          </p>
+
+          <div className="mt-14 space-y-8">
+            {[
+              {
+                step: "1",
+                title: "Initialize your project",
+                code: "npx flitter init",
+                desc: "Sets up the Flitter config and installs the rendering engine.",
+              },
+              {
+                step: "2",
+                title: "Add a chart",
+                code: "npx flitter add bar-chart",
+                desc: "Pulls the full chart source code into your project. Pick a style with --style toast or --style ag.",
+              },
+              {
+                step: "3",
+                title: "Make it yours",
+                code: null,
+                desc: "Every part of the chart is a widget. Replace the tooltip, restyle the axis, add animations — it's your code now.",
+              },
+            ].map((item) => (
+              <div key={item.step} className="flex gap-5">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-900 text-[13px] font-bold text-white">
+                  {item.step}
+                </div>
+                <div className="pt-0.5">
+                  <h3 className="text-[15px] font-bold text-gray-900">{item.title}</h3>
+                  {item.code && (
+                    <code className="mt-2 inline-block rounded-md border border-gray-200 bg-white px-3 py-1.5 text-[13px] text-gray-700">
+                      <span className="text-teal-600">$</span> {item.code}
+                    </code>
+                  )}
+                  <p className="mt-2 text-[14px] leading-relaxed text-gray-500">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Framework Support ── */}
+      <section className="px-6 py-16 lg:px-16">
+        <div className="mx-auto flex max-w-2xl items-center justify-center gap-10">
+          <span className="text-[13px] font-medium text-gray-400">Works with</span>
+          <div className="flex items-center gap-2">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="#61DAFB">
+              <circle cx="10" cy="10" r="2" />
+              <ellipse cx="10" cy="10" rx="8" ry="3" fill="none" stroke="#61DAFB" strokeWidth="1" />
+              <ellipse cx="10" cy="10" rx="8" ry="3" fill="none" stroke="#61DAFB" strokeWidth="1" transform="rotate(60 10 10)" />
+              <ellipse cx="10" cy="10" rx="8" ry="3" fill="none" stroke="#61DAFB" strokeWidth="1" transform="rotate(120 10 10)" />
+            </svg>
+            <span className="text-[14px] font-medium text-gray-700">React</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <svg width="18" height="20" viewBox="0 0 256 308" fill="none">
+              <path d="M239.682 40.707C211.113-.182 154.69-12.301 113.895 13.69L42.247 56.859a85.193 85.193 0 00-42.248 73.677 88.018 88.018 0 008.58 37.878A85.244 85.244 0 000 203.136a88.093 88.093 0 0015.223 49.883C43.815 308.28 100.236 320.399 141.03 294.408l71.648-43.169a85.193 85.193 0 0042.248-73.677 88.018 88.018 0 00-8.58-37.878 85.262 85.262 0 008.58-34.722 88.084 88.084 0 00-15.244-64.255z" fill="#FF3E00" transform="scale(0.07)" />
+            </svg>
+            <span className="text-[14px] font-medium text-gray-700">Svelte</span>
+          </div>
+          <span className="text-[13px] text-gray-400">Vue (coming)</span>
+        </div>
+      </section>
+
+      {/* ── Footer ── */}
+      <footer className="border-t border-gray-100 px-6 py-10 lg:px-16">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 sm:flex-row">
+          <div className="flex items-center gap-3">
+            <FlitterLogo size={18} />
+            <span className="text-[13px] font-bold tracking-tight text-gray-400">flitter</span>
+            <span className="text-[12px] text-gray-300">&copy; {new Date().getFullYear()}</span>
+          </div>
+          <div className="flex items-center gap-6">
             <a
               href="https://github.com/meursyphus/flitter"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-neutral-400 transition-colors hover:text-neutral-600"
+              className="text-[13px] text-gray-400 transition-colors hover:text-gray-700"
             >
               GitHub
             </a>
@@ -169,13 +285,69 @@ export default function Home() {
               href="https://www.npmjs.com/package/@meursyphus/flitter"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-neutral-400 transition-colors hover:text-neutral-600"
+              className="text-[13px] text-gray-400 transition-colors hover:text-gray-700"
             >
               npm
+            </a>
+            <a
+              href="https://discord.gg/flitter"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[13px] text-gray-400 transition-colors hover:text-gray-700"
+            >
+              Discord
             </a>
           </div>
         </div>
       </footer>
     </main>
+  );
+}
+
+/* ── Infinite Carousel Strip ── */
+import {
+  VerticalToastBarChart,
+} from "./chart/_data/bar-chart/toast/examples";
+import {
+  VerticalAgBarChart,
+  NegativeVerticalAgBarChart,
+} from "./chart/_data/bar-chart/ag/examples";
+import { DefaultToastLineChart } from "./chart/_data/line-chart/toast/examples";
+import { DefaultAgLineChart } from "./chart/_data/line-chart/ag/examples";
+import { DefaultToastAreaChart } from "./chart/_data/area-chart/toast/examples";
+import { DefaultAgAreaChart } from "./chart/_data/area-chart/ag/examples";
+import { VerticalToastStackedBarChart } from "./chart/_data/stacked-bar-chart/toast/examples";
+import { DefaultToastScatterChart } from "./chart/_data/scatter-chart/toast/examples";
+import { BasicPieChart } from "./chart/_data/pie-chart/toast/examples";
+
+const carouselCharts = [
+  { el: <VerticalToastBarChart />, label: "Bar · Toast" },
+  { el: <VerticalAgBarChart />, label: "Bar · AG" },
+  { el: <DefaultToastLineChart />, label: "Line · Toast" },
+  { el: <DefaultAgLineChart />, label: "Line · AG" },
+  { el: <DefaultToastAreaChart />, label: "Area · Toast" },
+  { el: <DefaultAgAreaChart />, label: "Area · AG" },
+  { el: <NegativeVerticalAgBarChart />, label: "Negative Bar · AG" },
+  { el: <VerticalToastStackedBarChart />, label: "Stacked Bar" },
+  { el: <DefaultToastScatterChart />, label: "Scatter" },
+];
+
+function ChartCarouselStrip() {
+  const items = [...carouselCharts, ...carouselCharts];
+  return (
+    <div className="carousel-container">
+      <div className="carousel-track">
+        {items.map((chart, i) => (
+          <div key={i} className="carousel-item">
+            <div className="h-[280px] overflow-hidden rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
+              <div className="h-full w-full">{chart.el}</div>
+            </div>
+            <p className="mt-2 text-center text-[12px] font-medium text-gray-400">
+              {chart.label}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

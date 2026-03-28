@@ -19,6 +19,7 @@ export type {
   ConfigRow,
   CustomElement,
   ChartModule,
+  ShowcaseExample,
 } from "./types";
 
 export const chartPages: ChartPageData[] = [

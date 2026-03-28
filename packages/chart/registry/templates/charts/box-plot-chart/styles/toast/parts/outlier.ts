@@ -74,7 +74,7 @@ class _HoverableOutlierState extends State<_HoverableOutlier> {
           width: size,
           height: size,
           decoration: new BoxDecoration({
-            color: this.hovered ? `${color}40` : undefined,
+            color: isHovered ? `${color}40` : undefined,
             border: Border.all({ color, width: 1.5 }),
             borderRadius: BorderRadius.all(Radius.circular(size / 2)),
           }),

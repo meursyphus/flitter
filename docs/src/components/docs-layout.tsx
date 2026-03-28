@@ -26,30 +26,37 @@ export default function DocsLayout({
   const closeSidebar = useCallback(() => setSidebarOpen(false), []);
 
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)]">
+    <div className="flex min-h-[calc(100vh-3rem)]">
       {/* Desktop sidebar */}
-      <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-52 shrink-0 border-r border-neutral-100 bg-white md:block">
-        <Sidebar sections={sections} home={home} />
+      <aside className="sticky top-12 hidden h-[calc(100vh-3rem)] w-64 shrink-0 border-r border-neutral-100 bg-white md:block">
+        <Sidebar
+          sections={sections}
+          home={home}
+        />
       </aside>
 
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="absolute inset-0 bg-black/20" onClick={closeSidebar} />
-          <aside className="absolute inset-y-0 left-0 w-60 bg-white shadow-lg animate-slide-in-left">
-            <div className="flex h-14 items-center justify-between border-b border-neutral-100 px-4">
-              <span className="text-sm font-medium text-neutral-700">Navigation</span>
+          <aside className="absolute inset-y-0 left-0 w-72 bg-white shadow-lg animate-slide-in-left">
+            <div className="flex h-12 items-center justify-between border-b border-neutral-100 px-4">
+              <span className="text-[13px] font-semibold text-neutral-700">Navigation</span>
               <button
                 onClick={closeSidebar}
                 className="rounded-md p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
                 aria-label="Close sidebar"
               >
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M5 5l8 8M13 5l-8 8" />
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M4 4l8 8M12 4l-8 8" />
                 </svg>
               </button>
             </div>
-            <Sidebar sections={sections} home={home} onLinkClick={closeSidebar} />
+            <Sidebar
+              sections={sections}
+              home={home}
+              onLinkClick={closeSidebar}
+            />
           </aside>
         </div>
       )}
@@ -69,7 +76,7 @@ export default function DocsLayout({
             Menu
           </button>
         </div>
-        <article className={noProse ? "mx-auto max-w-3xl" : "prose prose-neutral prose-sm mx-auto max-w-3xl prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-code:rounded prose-code:bg-neutral-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-[13px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-pre:rounded-lg prose-pre:text-sm prose-a:text-neutral-900 prose-a:no-underline hover:prose-a:underline"}>
+        <article className={noProse ? "mx-auto max-w-4xl" : "prose prose-neutral prose-sm mx-auto max-w-3xl prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-code:rounded prose-code:bg-neutral-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-[13px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-pre:rounded-lg prose-pre:text-sm prose-a:text-neutral-900 prose-a:no-underline hover:prose-a:underline"}>
           {children}
         </article>
       </main>

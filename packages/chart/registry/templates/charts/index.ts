@@ -50,3 +50,4 @@ export { default as TreemapChart } from "./treemap-chart";
 export { default as SankeyChart } from "./sankey-chart";
 export { default as SunburstChart } from "./sunburst-chart";
 export { default as WaterfallChart } from "./waterfall-chart";
+export { default as BulletChart } from "./bullet-chart";

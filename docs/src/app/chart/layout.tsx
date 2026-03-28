@@ -7,7 +7,10 @@ export default function ChartLayout({
   children: React.ReactNode;
 }) {
   return (
-    <DocsLayout sections={chartNav.sections} home={chartNav.home} noProse>
+    <DocsLayout
+      sections={chartNav.sections}
+      noProse
+    >
       {children}
     </DocsLayout>
   );

@@ -1,6 +1,7 @@
 export type {
   WaterfallChartContext,
   WaterfallBarType,
+  WaterfallTotal,
   WaterfallChartCustom,
   WaterfallChartData,
   WaterfallChartScale,

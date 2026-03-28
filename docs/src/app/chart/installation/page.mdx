@@ -1,0 +1,90 @@
+export const metadata = {
+  title: "Installation — Flitter Chart",
+  description: "Install Flitter Chart in your React or Svelte project.",
+};
+
+<div className="prose prose-neutral prose-sm max-w-3xl prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-code:rounded prose-code:bg-neutral-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-[13px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-pre:rounded-lg prose-pre:text-sm prose-a:text-neutral-900 prose-a:no-underline hover:prose-a:underline">
+
+# Installation
+
+## Prerequisites
+
+- **Node.js** 18 or later
+- **React** 18+ or **Svelte** 4+
+- A package manager: npm, pnpm, or yarn
+
+## Quick setup
+
+Initialize Flitter in your project:
+
+```bash
+npx flitter init
+```
+
+This command will:
+1. Install the core rendering engine (`@meursyphus/flitter`)
+2. Install the framework adapter (`@meursyphus/flitter-react` or `@meursyphus/flitter-svelte`)
+3. Create a `flitter.config.ts` in your project root
+
+## Add your first chart
+
+```bash
+npx flitter add bar-chart
+```
+
+This pulls the full chart source code into your project. You get:
+- The chart component file
+- All sub-widgets (axis, tooltip, legend, etc.)
+- Type definitions
+
+## Choose a style
+
+Each chart comes with multiple visual styles. Pick one during install:
+
+```bash
+npx flitter add bar-chart --style toast
+npx flitter add bar-chart --style ag
+```
+
+If you don't specify a style, you'll be prompted to choose.
+
+## Framework setup
+
+### React
+
+```tsx
+import { Widget } from "@meursyphus/flitter-react";
+import BarChart from "./charts/bar-chart";
+
+export default function App() {
+  return (
+    <Widget
+      widget={BarChart({ data: [...] })}
+      width="100%"
+      height={400}
+    />
+  );
+}
+```
+
+### Svelte
+
+```svelte
+<script>
+  import Widget from "@meursyphus/flitter-svelte";
+  import BarChart from "./charts/bar-chart";
+</script>
+
+<Widget
+  widget={BarChart({ data: [...] })}
+  width="100%"
+  height={400}
+/>
+```
+
+## Next steps
+
+- [Quick Start](/chart/quick-start) — Build your first chart in 5 minutes
+- [Browse Charts](/chart) — See all available chart types
+
+</div>

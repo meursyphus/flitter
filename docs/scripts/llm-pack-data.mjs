@@ -1716,7 +1716,10 @@ export const chartFamilies = [
     dataShape: `{
   labels: ["Start", "Upsell", "Churn", "Expansion", "End"],
   values: [120, 24, -18, 12, 0],
-  totalIndices: [0, 4]
+  totals: [
+    { totalType: "total", index: 0 },
+    { totalType: "total", index: 4 }
+  ]
 }`,
     sourcePaths: [
       "shared/chart-presets/charts/waterfall-chart",

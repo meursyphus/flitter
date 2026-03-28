@@ -3,18 +3,23 @@ import {
   Axis,
   Border,
   BoxDecoration,
+  Column,
   Container,
+  CrossAxisAlignment,
   CustomPaint,
   EdgeInsets,
   Flex,
   Flexible,
   FractionallySizedBox,
+  MainAxisSize,
   Opacity,
   Path,
   Padding,
   Positioned,
   SizedBox,
   Stack,
+  Text,
+  TextStyle,
   type Widget,
 } from "flitter-core";
 import type { WaterfallBarType, WaterfallChartCustom } from "@headless/waterfall-chart/types";
@@ -31,12 +36,14 @@ const TYPE_INDEX: Record<WaterfallBarType, number> = {
   increase: 0,
   decrease: 1,
   total: 2,
+  subtotal: 2,
 };
 
 const TYPE_LABEL: Record<WaterfallBarType, string> = {
   increase: "Increase",
   decrease: "Decrease",
   total: "Total",
+  subtotal: "Subtotal",
 };
 
 const agCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
@@ -84,6 +91,22 @@ const agCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
     const hoveredBar = ctx.hoveredBar;
     const isHovered = ctx.isBarHovered(index);
     const activeOpacity = hoveredBar == null || isHovered ? 1 : 0.35;
+    const dlCfg = ctx.config.waterfall.dataLabel;
+    const isPositive = value >= 0;
+    const formattedValue = (isPositive ? "+" : "") + value.toLocaleString();
+
+    const dataLabelWidget = dlCfg.visible
+      ? Padding({
+          padding: EdgeInsets.only({ bottom: isPositive ? 2 : 0, top: isPositive ? 0 : 2 }),
+          child: Text(formattedValue, {
+            style: new TextStyle({
+              fontSize: dlCfg.fontSize,
+              color: dlCfg.color,
+              fontFamily: dlCfg.fontFamily ?? ctx.config.font.family,
+            }),
+          }),
+        })
+      : SizedBox.shrink();
 
     return new HoverTooltip({
       position: "topCenter",
@@ -110,28 +133,39 @@ const agCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
                 : FractionallySizedBox({
                     heightFactor: outerHeightFactor,
                     alignment: Alignment.bottomCenter,
-                    child: Container({
-                      alignment: Alignment.topCenter,
-                      child: FractionallySizedBox({
-                        heightFactor: innerHeightFactor,
-                        alignment: Alignment.topCenter,
-                        child: Padding({
-                          padding: EdgeInsets.symmetric({
-                            horizontal: Math.max(2, ctx.config.waterfall.barGap / 2),
-                          }),
-                          child: Container({
-                            width: Infinity,
-                            height: Infinity,
-                            decoration: new BoxDecoration({
-                              color,
-                              border:
-                                hovered
-                                  ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
-                                  : undefined,
+                    child: Column({
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ...(isPositive && dlCfg.visible
+                          ? [dataLabelWidget]
+                          : []),
+                        Flexible({
+                          child: FractionallySizedBox({
+                            heightFactor: innerHeightFactor,
+                            alignment: Alignment.topCenter,
+                            child: Padding({
+                              padding: EdgeInsets.symmetric({
+                                horizontal: Math.max(2, ctx.config.waterfall.barGap / 2),
+                              }),
+                              child: Container({
+                                width: Infinity,
+                                height: Infinity,
+                                decoration: new BoxDecoration({
+                                  color,
+                                  border:
+                                    hovered
+                                      ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
+                                      : undefined,
+                                }),
+                              }),
                             }),
                           }),
                         }),
-                      }),
+                        ...(!isPositive && dlCfg.visible
+                          ? [dataLabelWidget]
+                          : []),
+                      ],
                     }),
                   }),
           }),

@@ -8,12 +8,18 @@ type AgWaterfallSharedConfig = Pick<
 export type WaterfallChartConfig = AgWaterfallSharedConfig & {
   waterfall: {
     barGap: number;
+    dataLabel: {
+      visible: boolean;
+      fontSize: number;
+      color: string;
+      fontFamily?: string;
+    };
   };
 };
 
 const semanticAgColors = {
-  fills: ["#5A8FD3", "#F28B44", "#51A95B"],
-  strokes: ["#5A8FD3", "#F28B44", "#51A95B"],
+  fills: ["#F3A261", "#5C8FD4", "#999999"],
+  strokes: ["#F3A261", "#5C8FD4", "#999999"],
 };
 
 export const defaultAgConfig: WaterfallChartConfig = {
@@ -29,5 +35,10 @@ export const defaultAgConfig: WaterfallChartConfig = {
   grid: defaultAgCartesianBaseConfig.grid,
   waterfall: {
     barGap: 8,
+    dataLabel: {
+      visible: true,
+      fontSize: 11,
+      color: "#585858",
+    },
   },
 };

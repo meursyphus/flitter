@@ -90,6 +90,13 @@ const HEADLESS_SHIMS = {
   "sunburst-chart": { symbol: "SunburstChart", aliases: {} },
   "treemap-chart": { symbol: "TreemapChart", aliases: {} },
   "waterfall-chart": { symbol: "WaterfallChart", aliases: {} },
+  "bullet-chart": {
+    symbol: "BulletChart",
+    aliases: {
+      GetScaleFn: "BulletChartGetScaleFn",
+      GetScaleOptionsFn: "BulletChartGetScaleOptionsFn",
+    },
+  },
 };
 
 const ROOT_PRIMITIVES_IMPORT = "flitter-ui/chart";
@@ -132,6 +139,11 @@ function getHeadlessTypeAliases(chartName) {
     case "radar-chart":
       return {
         GetScaleFn: "RadarChartGetScaleFn",
+      };
+    case "bullet-chart":
+      return {
+        GetScaleFn: "BulletChartGetScaleFn",
+        GetScaleOptionsFn: "BulletChartGetScaleOptionsFn",
       };
     default:
       return {};

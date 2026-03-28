@@ -45,40 +45,40 @@ import { BasicHeatmapChart } from "../_data/heatmap-chart/toast/examples";
 
 export const chartShowcase: ChartItem[] = [
   // Bar
-  { title: "Bar Chart", subtitle: "Toast Style", chart: <VerticalToastBarChart /> },
-  { title: "Bar Chart", subtitle: "AG Style", chart: <VerticalAgBarChart /> },
+  { title: "Bar Chart", subtitle: "Toast Style", chart: <VerticalToastBarChart />, command: "flitter add bar-chart", href: "/chart/bar-chart" },
+  { title: "Bar Chart", subtitle: "AG Style", chart: <VerticalAgBarChart />, command: "flitter add bar-chart --style ag", href: "/chart/bar-chart" },
 
   // Line
-  { title: "Line Chart", subtitle: "Toast Style", chart: <DefaultToastLineChart /> },
-  { title: "Line Chart", subtitle: "AG Style", chart: <DefaultAgLineChart /> },
+  { title: "Line Chart", subtitle: "Toast Style", chart: <DefaultToastLineChart />, command: "flitter add line-chart", href: "/chart/line-chart" },
+  { title: "Line Chart", subtitle: "AG Style", chart: <DefaultAgLineChart />, command: "flitter add line-chart --style ag", href: "/chart/line-chart" },
 
   // Area
-  { title: "Area Chart", subtitle: "Toast Style", chart: <DefaultToastAreaChart /> },
-  { title: "Area Chart", subtitle: "AG Style", chart: <DefaultAgAreaChart /> },
+  { title: "Area Chart", subtitle: "Toast Style", chart: <DefaultToastAreaChart />, command: "flitter add area-chart", href: "/chart/area-chart" },
+  { title: "Area Chart", subtitle: "AG Style", chart: <DefaultAgAreaChart />, command: "flitter add area-chart --style ag", href: "/chart/area-chart" },
 
   // Stacked Bar
-  { title: "Stacked Bar", subtitle: "Toast Style", chart: <VerticalToastStackedBarChart /> },
-  { title: "Stacked Bar", subtitle: "AG Style", chart: <VerticalAgStackedBarChart /> },
+  { title: "Stacked Bar", subtitle: "Toast Style", chart: <VerticalToastStackedBarChart />, command: "flitter add stacked-bar-chart", href: "/chart/stacked-bar-chart" },
+  { title: "Stacked Bar", subtitle: "AG Style", chart: <VerticalAgStackedBarChart />, command: "flitter add stacked-bar-chart --style ag", href: "/chart/stacked-bar-chart" },
 
   // Stacked Area
-  { title: "Stacked Area", subtitle: "Toast Style", chart: <DefaultToastStackedAreaChart /> },
-  { title: "Stacked Area", subtitle: "AG Style", chart: <DefaultAgStackedAreaChart /> },
+  { title: "Stacked Area", subtitle: "Toast Style", chart: <DefaultToastStackedAreaChart />, command: "flitter add stacked-area-chart", href: "/chart/stacked-area-chart" },
+  { title: "Stacked Area", subtitle: "AG Style", chart: <DefaultAgStackedAreaChart />, command: "flitter add stacked-area-chart --style ag", href: "/chart/stacked-area-chart" },
 
   // Scatter
-  { title: "Scatter Chart", subtitle: "Toast Style", chart: <DefaultToastScatterChart /> },
-  { title: "Scatter Chart", subtitle: "AG Style", chart: <DefaultAgScatterChart /> },
+  { title: "Scatter Chart", subtitle: "Toast Style", chart: <DefaultToastScatterChart />, command: "flitter add scatter-chart", href: "/chart/scatter-chart" },
+  { title: "Scatter Chart", subtitle: "AG Style", chart: <DefaultAgScatterChart />, command: "flitter add scatter-chart --style ag", href: "/chart/scatter-chart" },
 
   // Bubble
-  { title: "Bubble Chart", subtitle: "Toast Style", chart: <DefaultToastBubbleChart /> },
-  { title: "Bubble Chart", subtitle: "AG Style", chart: <DefaultAgBubbleChart /> },
+  { title: "Bubble Chart", subtitle: "Toast Style", chart: <DefaultToastBubbleChart />, command: "flitter add bubble-chart", href: "/chart/bubble-chart" },
+  { title: "Bubble Chart", subtitle: "AG Style", chart: <DefaultAgBubbleChart />, command: "flitter add bubble-chart --style ag", href: "/chart/bubble-chart" },
 
   // Pie
-  { title: "Pie Chart", subtitle: "Toast Style", chart: <BasicPieChart /> },
-  { title: "Donut Chart", subtitle: "Toast Style", chart: <DonutPieChart /> },
+  { title: "Pie Chart", subtitle: "Toast Style", chart: <BasicPieChart />, command: "flitter add pie-chart", href: "/chart/pie-chart" },
+  { title: "Donut Chart", subtitle: "Toast Style", chart: <DonutPieChart />, command: "flitter add pie-chart", href: "/chart/pie-chart" },
 
   // Radar
-  { title: "Radar Chart", subtitle: "Toast Style", chart: <BasicRadarChart /> },
+  { title: "Radar Chart", subtitle: "Toast Style", chart: <BasicRadarChart />, command: "flitter add radar-chart", href: "/chart/radar-chart" },
 
   // Heatmap
-  { title: "Heatmap Chart", subtitle: "Toast Style", chart: <BasicHeatmapChart /> },
+  { title: "Heatmap Chart", subtitle: "Toast Style", chart: <BasicHeatmapChart />, command: "flitter add heatmap-chart", href: "/chart/heatmap-chart" },
 ];

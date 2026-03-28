@@ -7,9 +7,10 @@ export default function FlitterLogo({ size = 28 }: { size?: number }) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <circle cx="16" cy="10" r="9" fill="#171717" opacity="0.28" />
-      <circle cx="10" cy="20" r="9" fill="#171717" opacity="0.28" />
-      <circle cx="22" cy="20" r="9" fill="#171717" opacity="0.28" />
+      {/* Layered widget blocks — representing composition */}
+      <rect x="4" y="8" width="16" height="16" rx="3" fill="#0d9488" opacity="0.9" />
+      <rect x="10" y="4" width="16" height="16" rx="3" fill="#14b8a6" opacity="0.75" />
+      <rect x="14" y="12" width="14" height="14" rx="3" fill="#2dd4bf" opacity="0.6" />
     </svg>
   );
 }

@@ -23,9 +23,41 @@ export const libraryNav: NavItem[] = [
   { title: "Diagram", href: "#", status: "coming" },
 ];
 
-export const chartNav: Navigation = {
-  home: { title: "Chart", href: "/chart" },
+// Ecosystem-level sidebar navigation (TanStack-style landing nav)
+export const ecosystemNav: Navigation = {
   sections: [
+    {
+      title: "Getting Started",
+      items: [
+        { title: "Overview", href: "/" },
+      ],
+    },
+    {
+      title: "Products",
+      items: [
+        { title: "Chart", href: "/chart", status: "new" },
+        { title: "Diagram", href: "/diagram", status: "coming" },
+      ],
+    },
+    {
+      title: "Resources",
+      items: [
+        { title: "Integration", href: "/integration" },
+      ],
+    },
+  ],
+};
+
+export const chartNav: Navigation = {
+  sections: [
+  {
+    title: "Getting Started",
+    items: [
+      { title: "Overview", href: "/chart" },
+      { title: "Installation", href: "/chart/installation" },
+      { title: "Quick Start", href: "/chart/quick-start" },
+    ],
+  },
   {
     title: "Charts",
     items: [

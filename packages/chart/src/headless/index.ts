@@ -118,6 +118,7 @@ export { WaterfallChartProvider } from "./waterfall-chart/provider";
 export type {
 	WaterfallChartContext,
 	WaterfallBarType,
+	WaterfallTotal,
 	WaterfallChartCustom,
 	WaterfallChartData,
 	WaterfallChartScale,
@@ -256,3 +257,17 @@ export type {
 	ProgressChartCustom,
 } from "./progress-chart/types";
 export { ProgressChartController } from "./progress-chart/controller";
+
+export { default as BulletChart } from "./bullet-chart";
+export { BulletChartProvider } from "./bullet-chart/provider";
+export type {
+	BulletChartContext,
+	BulletChartCustom,
+	BulletChartData,
+	BulletChartDataset,
+	BulletChartScale,
+	BulletChartScaleOptions,
+	GetScaleFn as BulletChartGetScaleFn,
+	GetScaleOptionsFn as BulletChartGetScaleOptionsFn,
+} from "./bullet-chart/types";
+export { BulletChartController } from "./bullet-chart/controller";

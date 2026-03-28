@@ -46,4 +46,6 @@ export { default as SankeyChart } from "./sankey-chart";
 export { default as ToastSankeyChart } from "./toast-sankey-chart";
 export { default as TreemapChart } from "./treemap-chart";
 export { default as ToastTreemapChart } from "./toast-treemap-chart";
+export { default as BulletChart } from "./bullet-chart";
+export { default as ToastBulletChart } from "./toast-bullet-chart";
 export { default as SunburstChart } from "./sunburst-chart";

@@ -68,16 +68,6 @@ figure[data-rehype-pretty-code-figure] [data-line] {
   to { opacity: 1; }
 }
 
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-@keyframes draw-line {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
 .animate-fade-up {
   animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -93,51 +83,9 @@ figure[data-rehype-pretty-code-figure] [data-line] {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.chart-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
 .chart-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 30px -8px rgba(0, 0, 0, 0.08);
-}
-
-.chart-card:hover::before {
-  opacity: 1;
-}
-
-.chart-card:hover .chart-icon {
-  transform: scale(1.05);
-}
-
-.chart-icon {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Accent line */
-.accent-line {
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    #a3a3a3 20%,
-    #525252 50%,
-    #a3a3a3 80%,
-    transparent
-  );
-}
-
-/* Dot pattern background */
-.dot-pattern {
-  background-image: radial-gradient(circle, #d4d4d4 0.75px, transparent 0.75px);
-  background-size: 24px 24px;
 }
 
 /* ── Infinite carousel ── */
@@ -153,30 +101,28 @@ figure[data-rehype-pretty-code-figure] [data-line] {
 .carousel-container {
   position: relative;
   overflow: hidden;
-  /* Fade edges */
   mask-image: linear-gradient(
     to right,
     transparent,
-    black 80px,
-    black calc(100% - 80px),
+    black 120px,
+    black calc(100% - 120px),
     transparent
   );
   -webkit-mask-image: linear-gradient(
     to right,
     transparent,
-    black 80px,
-    black calc(100% - 80px),
+    black 120px,
+    black calc(100% - 120px),
     transparent
   );
 }
 
 .carousel-track {
   display: flex;
-  gap: 24px;
+  gap: 20px;
   width: max-content;
-  /* 18 items * (480px + 24px gap) per set; we scroll one set */
-  --carousel-total-width: calc(18 * (480px + 24px));
-  animation: carousel-scroll 90s linear infinite;
+  --carousel-total-width: calc(9 * (420px + 20px));
+  animation: carousel-scroll 50s linear infinite;
 }
 
 .carousel-track:hover {
@@ -185,7 +131,7 @@ figure[data-rehype-pretty-code-figure] [data-line] {
 
 .carousel-item {
   flex-shrink: 0;
-  width: 480px;
+  width: 420px;
   display: block;
   text-decoration: none;
 }

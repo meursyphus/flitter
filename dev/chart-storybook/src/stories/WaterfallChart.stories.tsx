@@ -9,13 +9,19 @@ type StoryArgs = {
 const revenueData = {
   labels: ["Revenue", "COGS", "Gross Profit", "OpEx", "Tax", "Net Income"],
   values: [500, -200, 300, -150, -50, 100],
-  totalIndices: [2, 5],
+  totals: [
+    { totalType: "subtotal" as const, index: 2 },
+    { totalType: "total" as const, index: 5 },
+  ],
 };
 
 const negativeData = {
   labels: ["Start", "FX", "Returns", "Costs", "Revisions", "End"],
   values: [220, -30, -45, -20, 18, 143],
-  totalIndices: [0, 5],
+  totals: [
+    { totalType: "total" as const, index: 0 },
+    { totalType: "total" as const, index: 5 },
+  ],
 };
 
 const meta: Meta<StoryArgs> = {

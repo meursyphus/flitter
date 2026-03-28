@@ -42,39 +42,58 @@ export class HistogramChartController extends ChangeNotifier {
 	}
 
 	#recalculate(): void {
-		if ("bins" in this.#rawData) {
-			this.#bins = this.#rawData.bins.map((bin) => ({
+		const { values, bins: customBins, binCount } = this.#rawData;
+
+		if (values.length === 0) {
+			this.#bins = [];
+		} else if (customBins && customBins.length > 0) {
+			// Custom bin boundaries (AG-style tuples)
+			const bins: HistogramBin[] = customBins.map(([lo, hi]) => ({
+				min: lo,
+				max: hi,
+				count: 0,
+				label: formatRangeLabel(lo, hi),
+			}));
+
+			for (const value of values) {
+				for (let i = 0; i < bins.length; i++) {
+					const bin = bins[i];
+					const inBin =
+						i === bins.length - 1
+							? value >= bin.min && value <= bin.max
+							: value >= bin.min && value < bin.max;
+					if (inBin) {
+						bin.count += 1;
+						break;
+					}
+				}
+			}
+
+			this.#bins = bins;
+		} else {
+			// Auto-bin using Sturges' rule or explicit binCount
+			const min = Math.min(...values);
+			const max = Math.max(...values);
+			const count = binCount ?? sturgesRule(values.length);
+			const range = max - min || 1;
+			const binWidth = range / count;
+			const bins = Array.from({ length: count }, (_, index) => ({
+				min: min + index * binWidth,
+				max: index === count - 1 ? max : min + (index + 1) * binWidth,
+				count: 0,
+				label: "",
+			}));
+
+			for (const value of values) {
+				const relative = (value - min) / range;
+				const index = Math.min(count - 1, Math.floor(relative * count));
+				bins[index].count += 1;
+			}
+
+			this.#bins = bins.map((bin) => ({
 				...bin,
 				label: formatRangeLabel(bin.min, bin.max),
 			}));
-		} else {
-			const values = this.#rawData.values;
-			if (values.length === 0) {
-				this.#bins = [];
-			} else {
-				const min = Math.min(...values);
-				const max = Math.max(...values);
-				const count = this.#rawData.binCount ?? sturgesRule(values.length);
-				const range = max - min || 1;
-				const binWidth = range / count;
-				const bins = Array.from({ length: count }, (_, index) => ({
-					min: min + index * binWidth,
-					max: index === count - 1 ? max : min + (index + 1) * binWidth,
-					count: 0,
-					label: "",
-				}));
-
-				values.forEach((value) => {
-					const relative = (value - min) / range;
-					const index = Math.min(count - 1, Math.floor(relative * count));
-					bins[index].count += 1;
-				});
-
-				this.#bins = bins.map((bin) => ({
-					...bin,
-					label: formatRangeLabel(bin.min, bin.max),
-				}));
-			}
 		}
 
 		const maxCount = this.#bins.reduce((max, bin) => Math.max(max, bin.count), 0);

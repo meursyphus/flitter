@@ -17,14 +17,11 @@ export type HistogramBin = {
 	label: string;
 };
 
-export type HistogramChartData =
-	| {
-			values: number[];
-			binCount?: number;
-	  }
-	| {
-			bins: { min: number; max: number; count: number }[];
-	  };
+export type HistogramChartData = {
+	values: number[];
+	binCount?: number;
+	bins?: [number, number][];
+};
 
 export type HistogramChartScale = {
 	min: number;

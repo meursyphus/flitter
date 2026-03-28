@@ -5,6 +5,7 @@ import type {
 	WaterfallChartCustom,
 	WaterfallChartData,
 	WaterfallChartScale,
+	WaterfallTotal,
 } from "./types";
 
 function buildScale(values: number[]): WaterfallChartScale {
@@ -54,7 +55,11 @@ export class WaterfallChartController extends ChangeNotifier {
 	}
 
 	#recalculate(): void {
-		const totalIndices = new Set(this.#rawData.totalIndices ?? []);
+		const totalsMap = new Map<number, WaterfallTotal>();
+		for (const t of this.#rawData.totals ?? []) {
+			totalsMap.set(t.index, t);
+		}
+
 		const cumulativeValues: number[] = [];
 		const types: WaterfallBarType[] = [];
 		const scaleValues: number[] = [];
@@ -62,18 +67,22 @@ export class WaterfallChartController extends ChangeNotifier {
 
 		for (let index = 0; index < this.#rawData.values.length; index++) {
 			const value = this.#rawData.values[index];
-			const type: WaterfallBarType = totalIndices.has(index)
-				? "total"
+			const totalInfo = totalsMap.get(index);
+			const type: WaterfallBarType = totalInfo
+				? totalInfo.totalType
 				: value >= 0
 					? "increase"
 					: "decrease";
 
 			types.push(type);
 
-			if (type === "total") {
+			if (totalInfo) {
 				cumulativeValues.push(value);
 				scaleValues.push(0, value);
-				runningTotal = value;
+				if (totalInfo.totalType === "total") {
+					runningTotal = value;
+				}
+				// subtotal: don't reset runningTotal
 			} else {
 				const start = runningTotal;
 				runningTotal += value;

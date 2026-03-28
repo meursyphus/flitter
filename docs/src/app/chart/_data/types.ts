@@ -46,12 +46,29 @@ export type StyleSummary = {
   chart?: React.ReactNode;
 };
 
+export type ShowcaseExample = {
+  /** Display title, e.g. "Monthly Revenue" */
+  title: string;
+  /** Short subtitle describing the use case */
+  subtitle: string;
+  /** Style variant badge label */
+  style: "Toast" | "AG";
+  /** The chart component to render */
+  chart: React.ReactNode;
+  /** Card height in px (default 360) */
+  height?: number;
+  /** When true, rendered as a full-width hero card above the grid */
+  featured?: boolean;
+};
+
 export type OverviewPageData = ChartPageBase & {
   pageType: "overview";
   /** Quick start code snippet */
   quickStartCode?: string;
   /** Style variants shown on the overview page */
   styles?: StyleSummary[];
+  /** Showcase examples displayed in the gallery grid */
+  showcaseExamples?: ShowcaseExample[];
   /** Whether an advanced page exists */
   hasAdvanced?: boolean;
 };

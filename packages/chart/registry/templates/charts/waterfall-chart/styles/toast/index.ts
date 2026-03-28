@@ -34,12 +34,14 @@ const TYPE_INDEX: Record<WaterfallBarType, number> = {
   increase: 0,
   decrease: 1,
   total: 2,
+  subtotal: 2,
 };
 
 const TYPE_LABEL: Record<WaterfallBarType, string> = {
   increase: "Increase",
   decrease: "Decrease",
   total: "Total",
+  subtotal: "Subtotal",
 };
 
 const toastCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {

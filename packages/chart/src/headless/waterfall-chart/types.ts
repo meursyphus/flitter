@@ -10,12 +10,18 @@ export type WaterfallChartContext<TConfig = {}> = WaterfallChartController & {
 	config: TConfig;
 };
 
-export type WaterfallBarType = "increase" | "decrease" | "total";
+export type WaterfallBarType = "increase" | "decrease" | "total" | "subtotal";
+
+export type WaterfallTotal = {
+	totalType: "total" | "subtotal";
+	index: number;
+	label?: string;
+};
 
 export type WaterfallChartData = {
 	labels: string[];
 	values: number[];
-	totalIndices?: number[];
+	totals?: WaterfallTotal[];
 };
 
 export type WaterfallChartScale = {

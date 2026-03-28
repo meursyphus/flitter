@@ -2,145 +2,96 @@ import Link from "next/link";
 import ChartCarousel from "./chart-carousel";
 import { chartShowcase } from "./chart-showcase";
 
+function Principle({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <h3 className="text-sm font-semibold text-neutral-900">{title}</h3>
+      <p className="text-sm leading-relaxed text-neutral-500">{description}</p>
+    </div>
+  );
+}
+
 export default function ChartLanding() {
   return (
     <div className="-mx-6 -mt-8 md:-mx-10">
       {/* Hero */}
-      <section className="relative px-6 pt-20 pb-16 md:px-10">
-        <div className="dot-pattern pointer-events-none absolute inset-0 opacity-20" />
-
-        <div className="relative max-w-2xl">
-          <h1
-            className="animate-fade-up text-4xl tracking-tight text-neutral-900 sm:text-5xl"
-            style={{ animationDelay: "0.1s" }}
-          >
-            <span
-              className="italic text-neutral-700"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              Every style you've seen,
-            </span>
-            <br />
-            <span className="font-bold">all in one library.</span>
+      <section className="relative px-6 pt-14 pb-10 md:px-10">
+        <div className="max-w-2xl">
+          <h1 className="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
+            Charts
           </h1>
-          <p
-            className="animate-fade-up mt-5 max-w-lg text-base leading-relaxed text-neutral-500"
-            style={{ animationDelay: "0.25s" }}
-          >
-            Styles from every chart library — paid or free — rebuilt here.
-            <br className="hidden sm:block" />
-            All features, all open source.
-          </p>
-          <div
-            className="animate-fade-up mt-8 flex items-center gap-4"
-            style={{ animationDelay: "0.4s" }}
-          >
-            <Link
-              href="/chart/getting-started"
-              className="inline-flex items-center gap-2 rounded-full bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-neutral-700 hover:shadow-lg hover:shadow-neutral-900/10"
-            >
-              Get Started
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 14 14"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M1 7h12M8 2l5 5-5 5" />
-              </svg>
-            </Link>
-            <a
-              href="https://github.com/meursyphus/flitter"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-neutral-200 px-5 py-2.5 text-sm font-medium text-neutral-600 transition-all hover:border-neutral-400 hover:text-neutral-900"
-            >
-              GitHub
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* LLM Native */}
-      <section className="px-6 py-12 md:px-10">
-        <div
-          className="animate-fade-up max-w-2xl"
-          style={{ animationDelay: "0.5s" }}
-        >
-          <p className="text-xs font-medium uppercase tracking-widest text-neutral-400">
-            LLM Native
-          </p>
-          <p className="mt-3 text-lg tracking-tight text-neutral-900 sm:text-xl">
-            <span
-              className="italic text-neutral-700"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              Paste the URL,
-            </span>{" "}
-            <span className="font-bold">your AI sets it up.</span>
-          </p>
-          <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-neutral-100 px-4 py-2">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-neutral-400"
-            >
-              <path d="M10 1.5H11.5A1.5 1.5 0 0 1 13 3v8a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 1 11V3a1.5 1.5 0 0 1 1.5-1.5H4" />
-              <path d="M5 1h4v2H5z" />
-            </svg>
-            <code className="text-sm text-neutral-600">
-              ui.flitter.dev/llm/chart.md
-            </code>
-          </div>
-          <p className="mt-3 text-sm leading-relaxed text-neutral-400">
-            Feed this to Claude Code or Cursor and get a fully configured chart
-            in seconds.
-          </p>
-        </div>
-      </section>
-
-      {/* Accent line */}
-      <div className="accent-line mx-6 md:mx-10" />
-
-      {/* Chart demos */}
-      <section className="py-16">
-        <div className="px-6 md:px-10">
-          <p
-            className="animate-fade-up text-xs font-medium uppercase tracking-widest text-neutral-400"
-            style={{ animationDelay: "0.6s" }}
-          >
-            All Charts
-          </p>
-          <p
-            className="animate-fade-up mt-3 text-lg tracking-tight text-neutral-900 sm:text-xl"
-            style={{ animationDelay: "0.7s" }}
-          >
-            <span className="font-bold">Multiple styles,</span>{" "}
-            <span
-              className="italic text-neutral-700"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              one library.
+          <p className="mt-4 text-lg leading-relaxed text-neutral-600">
+            This is not a chart config wrapper.{" "}
+            <span className="font-semibold text-neutral-900">
+              It&apos;s a rendering engine.
             </span>
           </p>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-neutral-500">
+            Every chart is built from composable widgets — the same primitives
+            that power the core engine. You get the source code. You own it.
+            Modify anything.
+          </p>
+          <div className="mt-5 flex items-center gap-3">
+            <div className="inline-flex items-center gap-2 rounded-full bg-neutral-50 border border-neutral-200 px-4 py-2">
+              <code className="text-sm text-neutral-600">
+                <span className="text-teal-500">$</span> npx flitter add bar-chart
+              </code>
+            </div>
+          </div>
         </div>
+      </section>
 
-        <div
-          className="animate-fade-up mt-8 w-full px-6 md:px-10"
-          style={{ animationDelay: "0.8s" }}
-        >
-          <ChartCarousel charts={chartShowcase} />
+      {/* Principles */}
+      <section className="px-6 pb-10 md:px-10">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <Principle
+            title="Widget Composition"
+            description="Charts are trees of widgets — Container, Stack, Positioned, Text — not opaque config objects. Swap any part."
+          />
+          <Principle
+            title="Source Code You Own"
+            description="Run npx flitter add and the full source lands in your project. No hidden internals. Read it, change it, learn from it."
+          />
+          <Principle
+            title="Framework Agnostic"
+            description="Pure JavaScript core. Use it standalone, or plug into React or Svelte with a one-line integration package."
+          />
+          <Principle
+            title="LLM Native"
+            description="Feed the chart spec to your AI assistant and let it generate, customize, or explain any chart for you."
+          />
         </div>
+      </section>
+
+      {/* LLM Native badge */}
+      <section className="px-6 pb-8 md:px-10">
+        <div className="inline-flex items-center gap-3 rounded-lg border border-teal-100 bg-teal-50 px-4 py-2.5">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-teal-100">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#0d9488" strokeWidth="1.5" strokeLinecap="round">
+              <path d="M6 1v10M1 6h10" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-teal-700">LLM Native</p>
+            <p className="text-[11px] text-teal-600">
+              Feed <code className="font-mono">ui.flitter.dev/llm/chart.md</code> to your AI assistant
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Chart grid */}
+      <section className="px-6 pb-16 md:px-10">
+        <h2 className="mb-6 text-xl font-bold tracking-tight text-neutral-900">
+          Browse Charts
+        </h2>
+        <ChartCarousel charts={chartShowcase} />
       </section>
     </div>
   );

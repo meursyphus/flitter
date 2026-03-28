@@ -10,14 +10,14 @@ CLI Target: es2020
 CLI Cleaning output folder
 CJS Build start
 ESM Build start
-ESM dist/index.js 46.00 B
-ESM dist/chart.js 47.00 B
-ESM ⚡️ Build success in 6ms
 CJS dist/chart.cjs 1.07 KB
 CJS dist/index.cjs 1.06 KB
-CJS ⚡️ Build success in 6ms
+CJS ⚡️ Build success in 5ms
+ESM dist/index.js 46.00 B
+ESM dist/chart.js 47.00 B
+ESM ⚡️ Build success in 5ms
 DTS Build start
-DTS ⚡️ Build success in 1097ms
+DTS ⚡️ Build success in 1467ms
 DTS dist/index.d.cts 54.00 B
 DTS dist/chart.d.cts 31.00 B
 DTS dist/index.d.ts  54.00 B
