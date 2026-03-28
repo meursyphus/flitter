@@ -6,41 +6,21 @@ type StoryArgs = {
   renderer: "svg" | "canvas";
 };
 
-const energyData = {
-  nodes: [
-    { id: "solar", label: "Solar" },
-    { id: "wind", label: "Wind" },
-    { id: "hydro", label: "Hydro" },
-    { id: "grid", label: "Grid" },
-    { id: "home", label: "Home" },
-    { id: "industry", label: "Industry" },
-  ],
-  links: [
-    { source: "solar", target: "grid", value: 40 },
-    { source: "wind", target: "grid", value: 30 },
-    { source: "hydro", target: "grid", value: 20 },
-    { source: "grid", target: "home", value: 50 },
-    { source: "grid", target: "industry", value: 40 },
-  ],
-};
+const energyData = [
+  { from: "Solar", to: "Grid", value: 40 },
+  { from: "Wind", to: "Grid", value: 30 },
+  { from: "Hydro", to: "Grid", value: 20 },
+  { from: "Grid", to: "Home", value: 50 },
+  { from: "Grid", to: "Industry", value: 40 },
+];
 
-const multiLevelData = {
-  nodes: [
-    { id: "ads", label: "Ads" },
-    { id: "organic", label: "Organic" },
-    { id: "site", label: "Site" },
-    { id: "trial", label: "Trial" },
-    { id: "paid", label: "Paid" },
-    { id: "retained", label: "Retained" },
-  ],
-  links: [
-    { source: "ads", target: "site", value: 180 },
-    { source: "organic", target: "site", value: 120 },
-    { source: "site", target: "trial", value: 150 },
-    { source: "trial", target: "paid", value: 90 },
-    { source: "paid", target: "retained", value: 72 },
-  ],
-};
+const multiLevelData = [
+  { from: "Ads", to: "Site", value: 180 },
+  { from: "Organic", to: "Site", value: 120 },
+  { from: "Site", to: "Trial", value: 150 },
+  { from: "Trial", to: "Paid", value: 90 },
+  { from: "Paid", to: "Retained", value: 72 },
+];
 
 const meta: Meta<StoryArgs> = {
   title: "Charts/SankeyChart/Toast",

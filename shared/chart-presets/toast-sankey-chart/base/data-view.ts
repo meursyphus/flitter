@@ -7,8 +7,8 @@ import {
   Column,
 } from "flitter-core";
 
-export function Sankey(
-  ...[{ nodes, links, nodeLabels }]: Parameters<SankeyChartCustom["sankey"]>
+export function DataView(
+  ...[{ nodes, links, nodeLabels }]: Parameters<SankeyChartCustom["dataView"]>
 ) {
   return Column({
     children: [

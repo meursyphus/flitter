@@ -40,7 +40,7 @@ export default function ChartLanding() {
           <div className="mt-5 flex items-center gap-3">
             <div className="inline-flex items-center gap-2 rounded-full bg-neutral-50 border border-neutral-200 px-4 py-2">
               <code className="text-sm text-neutral-600">
-                <span className="text-teal-500">$</span> npx flitter add bar-chart
+                <span className="text-teal-500">$</span> npx flitter-ui add bar-chart
               </code>
             </div>
           </div>
@@ -56,7 +56,7 @@ export default function ChartLanding() {
           />
           <Principle
             title="Source Code You Own"
-            description="Run npx flitter add and the full source lands in your project. No hidden internals. Read it, change it, learn from it."
+            description="Run npx flitter-ui add and the full source lands in your project. No hidden internals. Read it, change it, learn from it."
           />
           <Principle
             title="Framework Agnostic"

@@ -206,13 +206,13 @@ export default function Home() {
               {
                 step: "1",
                 title: "Initialize your project",
-                code: "npx flitter init",
+                code: "npx flitter-ui init",
                 desc: "Sets up the Flitter config and installs the rendering engine.",
               },
               {
                 step: "2",
                 title: "Add a chart",
-                code: "npx flitter add bar-chart",
+                code: "npx flitter-ui add bar-chart",
                 desc: "Pulls the full chart source code into your project. Pick a style with --style toast or --style ag.",
               },
               {

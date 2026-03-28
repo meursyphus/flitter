@@ -11,8 +11,8 @@ High-quality open-source rendering libraries for web developers. Flutter's widge
 Widget-composable chart library. 10+ chart types, multiple styles. Add with a CLI command — source code lands in your project.
 
 ```bash
-npx flitter init
-npx flitter add bar-chart
+npx flitter-ui init
+npx flitter-ui add bar-chart
 ```
 
 Every axis, bar, tooltip, and legend is a widget. Swap any piece of the tree — no config API to fight.
@@ -26,7 +26,7 @@ Interactive diagram library built on the same widget composition engine. ERD, fl
 This is not a chart config wrapper. It's a rendering engine.
 
 - **Widget Composition** — Charts are trees of widgets (Container, Stack, Positioned, Text), not opaque config objects. Swap any part.
-- **Source Code You Own** — `npx flitter add` drops full source into your project. No hidden internals. Read it, change it, learn from it.
+- **Source Code You Own** — `npx flitter-ui add` drops full source into your project. No hidden internals. Read it, change it, learn from it.
 - **Framework Agnostic** — Pure JavaScript core. Works standalone, or plug into React or Svelte with a one-line integration.
 - **LLM Native** — Feed `ui.flitter.dev/llm/chart.md` to your AI assistant and let it generate charts for you.
 
@@ -37,7 +37,7 @@ This is not a chart config wrapper. It's a rendering engine.
 npx flitter init
 
 # 2. Add a chart
-npx flitter add bar-chart
+npx flitter-ui add bar-chart
 
 # 3. Use in React
 ```

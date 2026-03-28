@@ -2,12 +2,13 @@ import { type ToastBaseConfig, defaultToastBaseConfig } from "../../_styles/toas
 
 type ToastSankeySharedConfig = Pick<
   ToastBaseConfig,
-  "font" | "title" | "tooltip" | "animation"
+  "colors" | "font" | "title" | "tooltip" | "animation"
 >;
 
 export type SankeyChartConfig = ToastSankeySharedConfig;
 
 export const defaultToastConfig: SankeyChartConfig = {
+  colors: defaultToastBaseConfig.colors,
   font: defaultToastBaseConfig.font,
   title: defaultToastBaseConfig.title,
   tooltip: defaultToastBaseConfig.tooltip,

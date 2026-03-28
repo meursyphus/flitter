@@ -10,10 +10,7 @@ export type SankeyChartContext<TConfig = {}> = SankeyChartController & {
 	config: TConfig;
 };
 
-export type SankeyChartData = {
-	nodes: { id: string; label?: string; color?: string }[];
-	links: { source: string; target: string; value: number }[];
-};
+export type SankeyChartData = { from: string; to: string; value: number }[];
 
 export type SankeyNodeLayout = {
   id: string;
@@ -47,8 +44,8 @@ export type SankeyLayout = {
 };
 
 export type SankeyChartCustom<TConfig = {}> = {
-	layout: CustomArgs<{ title: Widget; sankey: Widget }, TConfig>;
-	sankey: CustomArgs<{ nodes: Widget[]; links: Widget[]; nodeLabels: Widget[] }, TConfig>;
+	layout: CustomArgs<{ title: Widget; dataView: Widget }, TConfig>;
+	dataView: CustomArgs<{ nodes: Widget[]; links: Widget[]; nodeLabels: Widget[] }, TConfig>;
 	node: CustomArgs<
 		{
 			id: string;

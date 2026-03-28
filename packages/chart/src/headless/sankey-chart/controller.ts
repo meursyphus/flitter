@@ -20,23 +20,39 @@ const DEFAULT_COLORS = [
 	"#bab0ac",
 ];
 
+function resolveColors(colors: unknown): string[] {
+	if (Array.isArray(colors)) return colors;
+	if (colors && typeof colors === "object" && "fills" in (colors as any)) {
+		return (colors as { fills: string[] }).fills;
+	}
+	return [];
+}
+
 const NODE_WIDTH_RATIO = 0.02;
 const NODE_PADDING_RATIO = 0.03;
 
-function computeLayout(data: SankeyChartData): SankeyLayout {
-	const { nodes: rawNodes, links: rawLinks } = data;
+function computeLayout(data: SankeyChartData, colors: string[]): SankeyLayout {
+	const palette = colors.length > 0 ? colors : DEFAULT_COLORS;
+
+	// Infer unique nodes from flat data, preserving insertion order
+	const nodeIdSet = new Set<string>();
+	for (const link of data) {
+		nodeIdSet.add(link.from);
+		nodeIdSet.add(link.to);
+	}
+	const nodeIds = Array.from(nodeIdSet);
 
 	const outgoing = new Map<string, { target: string; value: number }[]>();
 	const incoming = new Map<string, { source: string; value: number }[]>();
 
-	for (const node of rawNodes) {
-		outgoing.set(node.id, []);
-		incoming.set(node.id, []);
+	for (const id of nodeIds) {
+		outgoing.set(id, []);
+		incoming.set(id, []);
 	}
 
-	for (const link of rawLinks) {
-		outgoing.get(link.source)?.push({ target: link.target, value: link.value });
-		incoming.get(link.target)?.push({ source: link.source, value: link.value });
+	for (const link of data) {
+		outgoing.get(link.from)?.push({ target: link.to, value: link.value });
+		incoming.get(link.to)?.push({ source: link.from, value: link.value });
 	}
 
 	const columns = new Map<string, number>();
@@ -61,23 +77,23 @@ function computeLayout(data: SankeyChartData): SankeyLayout {
 		return maxColumn;
 	};
 
-	for (const node of rawNodes) {
-		assignColumn(node.id);
+	for (const id of nodeIds) {
+		assignColumn(id);
 	}
 
 	const totalColumns = Math.max(0, ...Array.from(columns.values())) + 1;
 	const nodeValues = new Map<string, number>();
 
-	for (const node of rawNodes) {
-		const outgoingTotal = (outgoing.get(node.id) ?? []).reduce(
+	for (const id of nodeIds) {
+		const outgoingTotal = (outgoing.get(id) ?? []).reduce(
 			(sum, link) => sum + link.value,
 			0,
 		);
-		const incomingTotal = (incoming.get(node.id) ?? []).reduce(
+		const incomingTotal = (incoming.get(id) ?? []).reduce(
 			(sum, link) => sum + link.value,
 			0,
 		);
-		nodeValues.set(node.id, Math.max(outgoingTotal, incomingTotal));
+		nodeValues.set(id, Math.max(outgoingTotal, incomingTotal));
 	}
 
 	const columnGroups = new Map<number, string[]>();
@@ -95,8 +111,8 @@ function computeLayout(data: SankeyChartData): SankeyLayout {
 	const nodeLayoutMap = new Map<string, SankeyNodeLayout>();
 	const colorMap = new Map<string, string>();
 
-	rawNodes.forEach((node, index) => {
-		colorMap.set(node.id, node.color ?? DEFAULT_COLORS[index % DEFAULT_COLORS.length]);
+	nodeIds.forEach((id, index) => {
+		colorMap.set(id, palette[index % palette.length]);
 	});
 
 	for (let column = 0; column < totalColumns; column++) {
@@ -114,12 +130,11 @@ function computeLayout(data: SankeyChartData): SankeyLayout {
 
 		for (const id of ids) {
 			const totalValue = nodeValues.get(id) ?? 0;
-			const node = rawNodes.find((entry) => entry.id === id)!;
 			const height = totalValue * scaleFactor;
 
 			nodeLayoutMap.set(id, {
 				id,
-				label: node.label ?? node.id,
+				label: id,
 				color: colorMap.get(id)!,
 				x,
 				y: currentY,
@@ -136,24 +151,24 @@ function computeLayout(data: SankeyChartData): SankeyLayout {
 	const sourceOffsets = new Map<string, number>();
 	const targetOffsets = new Map<string, number>();
 
-	for (const node of rawNodes) {
-		sourceOffsets.set(node.id, 0);
-		targetOffsets.set(node.id, 0);
+	for (const id of nodeIds) {
+		sourceOffsets.set(id, 0);
+		targetOffsets.set(id, 0);
 	}
 
-	const linkLayouts: SankeyLinkLayout[] = rawLinks.map((link) => {
-		const sourceNode = nodeLayoutMap.get(link.source)!;
-		const targetNode = nodeLayoutMap.get(link.target)!;
-		const sourceOffset = sourceOffsets.get(link.source)!;
-		const targetOffset = targetOffsets.get(link.target)!;
+	const linkLayouts: SankeyLinkLayout[] = data.map((link) => {
+		const sourceNode = nodeLayoutMap.get(link.from)!;
+		const targetNode = nodeLayoutMap.get(link.to)!;
+		const sourceOffset = sourceOffsets.get(link.from)!;
+		const targetOffset = targetOffsets.get(link.to)!;
 		const sourceHeight =
 			sourceNode.totalValue > 0 ? sourceNode.height * (link.value / sourceNode.totalValue) : 0;
 		const targetHeight =
 			targetNode.totalValue > 0 ? targetNode.height * (link.value / targetNode.totalValue) : 0;
 
 		const layout: SankeyLinkLayout = {
-			source: link.source,
-			target: link.target,
+			source: link.from,
+			target: link.to,
 			value: link.value,
 			sourceX: sourceNode.x + sourceNode.width,
 			sourceY: sourceNode.y + sourceOffset,
@@ -161,11 +176,11 @@ function computeLayout(data: SankeyChartData): SankeyLayout {
 			targetX: targetNode.x,
 			targetY: targetNode.y + targetOffset,
 			targetHeight,
-			color: colorMap.get(link.source)!,
+			color: colorMap.get(link.from)!,
 		};
 
-		sourceOffsets.set(link.source, sourceOffset + sourceHeight);
-		targetOffsets.set(link.target, targetOffset + targetHeight);
+		sourceOffsets.set(link.from, sourceOffset + sourceHeight);
+		targetOffsets.set(link.to, targetOffset + targetHeight);
 		return layout;
 	});
 
@@ -198,13 +213,13 @@ export class SankeyChartController extends ChangeNotifier {
 	}) {
 		super();
 		this.#rawData = data;
-		this.#layout = computeLayout(data);
+		this.#layout = computeLayout(data, resolveColors(config.colors));
 		this.custom = custom;
 		this.config = config;
 	}
 
 	#recalculateLayout(): void {
-		this.#layout = computeLayout(this.#rawData);
+		this.#layout = computeLayout(this.#rawData, resolveColors(this.config.colors));
 	}
 
 	set data(value: SankeyChartData) {

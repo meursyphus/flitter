@@ -9,7 +9,7 @@ export { type SankeyChartConfig } from "./config";
 
 const agCustom: Partial<SankeyChartCustom<SankeyChartConfig>> = {
   layout: Base.Layout,
-  sankey: Base.Sankey,
+  dataView: Base.DataView,
   node: Base.Node,
   link: Base.Link,
   nodeLabel: Base.NodeLabel,

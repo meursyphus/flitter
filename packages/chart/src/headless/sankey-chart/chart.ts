@@ -32,7 +32,7 @@ class LayoutWidget extends StatelessWidget {
 		return ctx.custom.layout(
 			{
 				title: new TitleWidget(),
-				sankey: new SankeyWidget(),
+				dataView: new SankeyWidget(),
 			},
 			ctx,
 		);
@@ -94,7 +94,7 @@ class SankeyWidget extends StatelessWidget {
 				}),
 		);
 
-		return ctx.custom.sankey({ nodes, links, nodeLabels }, ctx);
+		return ctx.custom.dataView({ nodes, links, nodeLabels }, ctx);
 	}
 }
 

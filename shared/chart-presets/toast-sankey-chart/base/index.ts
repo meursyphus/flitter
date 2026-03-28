@@ -1,6 +1,6 @@
 export * from "./layout";
 export * from "./title";
-export * from "./sankey";
+export * from "./data-view";
 export * from "./node";
 export * from "./link";
 export * from "./node-label";

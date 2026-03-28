@@ -7,7 +7,7 @@ import {
 } from "flitter-core";
 
 export function Layout(
-  ...[{ title, sankey }, config]: Parameters<SankeyChartCustom["layout"]>
+  ...[{ title, dataView }, config]: Parameters<SankeyChartCustom["layout"]>
 ) {
   return Container({
     padding: EdgeInsets.only({
@@ -18,7 +18,7 @@ export function Layout(
     }),
     child: Column({
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [title, sankey],
+      children: [title, dataView],
     }),
   });
 }

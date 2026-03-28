@@ -35,7 +35,7 @@ export default async function OverviewPage({
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <div className="inline-flex items-center gap-2 rounded-full bg-neutral-50 border border-neutral-200 px-3 py-1.5">
             <code className="text-xs text-neutral-600">
-              <span className="text-teal-500">$</span> npx flitter add {slug[0]}
+              <span className="text-teal-500">$</span> npx flitter-ui add {slug[0]}
             </code>
           </div>
 

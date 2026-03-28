@@ -2,12 +2,13 @@ import { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "@style
 
 type AgSankeySharedConfig = Pick<
   AgCartesianBaseConfig,
-  "font" | "title" | "tooltip"
+  "colors" | "font" | "title" | "tooltip"
 >;
 
 export type SankeyChartConfig = AgSankeySharedConfig;
 
 export const defaultAgConfig: SankeyChartConfig = {
+  colors: defaultAgCartesianBaseConfig.colors,
   font: defaultAgCartesianBaseConfig.font,
   title: defaultAgCartesianBaseConfig.title,
   tooltip: defaultAgCartesianBaseConfig.tooltip,

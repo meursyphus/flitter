@@ -9,7 +9,7 @@ export { type SankeyChartConfig } from "./config";
 
 const toastCustom: Partial<SankeyChartCustom<SankeyChartConfig>> = {
   layout: Base.Layout,
-  sankey: Base.Sankey,
+  dataView: Base.DataView,
   node: (...args) => {
     const [nodeArgs, ctx] = args;
     return AnimatedScale({
