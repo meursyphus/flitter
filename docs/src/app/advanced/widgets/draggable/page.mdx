@@ -20,7 +20,7 @@ The Draggable widget enables user interaction to move widgets around on the scre
 ## Basic Usage
 
 ```typescript
-import { Draggable, Container } from '@meursyphus/flitter';
+import { Draggable, Container } from 'flitter-ui';
 
 Draggable({
   onDragUpdate: ({ delta, movement }) => {
@@ -62,7 +62,7 @@ Draggable({
 
 
 ```typescript
-import { Draggable, Container, Text } from '@meursyphus/flitter';
+import { Draggable, Container, Text } from 'flitter-ui';
 
 Draggable({
   onDragUpdate: ({ movement }) => {
@@ -86,7 +86,7 @@ Draggable({
 
 
 ```typescript
-import { StatefulWidget, State, Draggable, Container, Transform } from '@meursyphus/flitter';
+import { StatefulWidget, State, Draggable, Container, Transform } from 'flitter-ui';
 
 class DraggableBox extends StatefulWidget {
   createState() {
@@ -141,7 +141,7 @@ class DraggableBoxState extends State<DraggableBox> {
 
 
 ```typescript
-import { Draggable, Container } from '@meursyphus/flitter';
+import { Draggable, Container } from 'flitter-ui';
 
 class BoundedDraggable extends StatefulWidget {
   createState() {
@@ -187,7 +187,7 @@ class BoundedDraggableState extends State<BoundedDraggable> {
 
 
 ```typescript
-import { Draggable, Container, Text, Opacity } from '@meursyphus/flitter';
+import { Draggable, Container, Text, Opacity } from 'flitter-ui';
 
 Draggable({
   child: Container({
@@ -217,7 +217,7 @@ Draggable({
 
 
 ```typescript
-import { Column, Draggable, Container, Text, EdgeInsets } from '@meursyphus/flitter';
+import { Column, Draggable, Container, Text, EdgeInsets } from 'flitter-ui';
 
 const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12'];
 const items = colors.map((color, index) => 
@@ -249,7 +249,7 @@ Column({
 
 
 ```typescript
-import { Draggable, Container, Text, Column } from '@meursyphus/flitter';
+import { Draggable, Container, Text, Column } from 'flitter-ui';
 
 class DragVisualizer extends StatefulWidget {
   createState() {

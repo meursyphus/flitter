@@ -1,21 +1,6 @@
-import Link from "next/link";
 import ChartCarousel from "./chart-carousel";
 import { chartShowcase } from "./chart-showcase";
 
-function Principle({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="space-y-1.5">
-      <h3 className="text-sm font-semibold text-neutral-900">{title}</h3>
-      <p className="text-sm leading-relaxed text-neutral-500">{description}</p>
-    </div>
-  );
-}
 
 export default function ChartLanding() {
   return (
@@ -33,9 +18,8 @@ export default function ChartLanding() {
             </span>
           </p>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-neutral-500">
-            Every chart is built from composable widgets — the same primitives
-            that power the core engine. You get the source code. You own it.
-            Modify anything.
+            Every chart is a tree of widgets — Container, Stack, Positioned, Text. Run{" "}
+            <code className="font-mono text-neutral-700">npx flitter-ui add</code> to get the source. Read it. Change it. Own it.
           </p>
           <div className="mt-5 flex items-center gap-3">
             <div className="inline-flex items-center gap-2 rounded-full bg-neutral-50 border border-neutral-200 px-4 py-2">
@@ -47,50 +31,130 @@ export default function ChartLanding() {
         </div>
       </section>
 
-      {/* Principles */}
+      {/* How It's Different */}
       <section className="px-6 pb-10 md:px-10">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <Principle
-            title="Widget Composition"
-            description="Charts are trees of widgets — Container, Stack, Positioned, Text — not opaque config objects. Swap any part."
-          />
-          <Principle
-            title="Source Code You Own"
-            description="Run npx flitter-ui add and the full source lands in your project. No hidden internals. Read it, change it, learn from it."
-          />
-          <Principle
-            title="Framework Agnostic"
-            description="Pure JavaScript core. Use it standalone, or plug into React or Svelte with a one-line integration package."
-          />
-          <Principle
-            title="LLM Native"
-            description="Feed the chart spec to your AI assistant and let it generate, customize, or explain any chart for you."
-          />
-        </div>
-      </section>
-
-      {/* LLM Native badge */}
-      <section className="px-6 pb-8 md:px-10">
-        <div className="inline-flex items-center gap-3 rounded-lg border border-teal-100 bg-teal-50 px-4 py-2.5">
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-teal-100">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#0d9488" strokeWidth="1.5" strokeLinecap="round">
-              <path d="M6 1v10M1 6h10" />
-            </svg>
+        <h2 className="mb-6 text-lg font-bold tracking-tight text-neutral-900">
+          How It&apos;s Different
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {/* Config Libraries */}
+          <div className="rounded-xl border border-neutral-200 bg-white p-5">
+            <span className="inline-block rounded-full bg-neutral-100 px-3 py-1 text-xs font-semibold text-neutral-500">
+              Config Libraries
+            </span>
+            <pre className="mt-4 overflow-x-auto rounded-lg bg-neutral-50 border border-neutral-200 px-4 py-3 text-[13px] leading-relaxed text-neutral-700">
+              <code>{`barChart({
+  tooltip: {
+    backgroundColor: '#333',
+    fontSize: 13
+  }
+})`}</code>
+            </pre>
+            <p className="mt-3 text-sm leading-relaxed text-neutral-500">
+              Hope the option exists. File an issue if it doesn&apos;t.
+            </p>
           </div>
-          <div>
-            <p className="text-xs font-semibold text-teal-700">LLM Native</p>
-            <p className="text-[11px] text-teal-600">
-              Feed <code className="font-mono">ui.flitter.dev/llm/chart.md</code> to your AI assistant
+          {/* Flitter */}
+          <div className="rounded-xl border border-teal-200 bg-teal-50/40 p-5">
+            <span className="inline-block rounded-full bg-teal-100 px-3 py-1 text-xs font-semibold text-teal-700">
+              Flitter
+            </span>
+            <pre className="mt-4 overflow-x-auto rounded-lg bg-white border border-teal-200 px-4 py-3 text-[13px] leading-relaxed text-neutral-700">
+              <code>{`custom: {
+  tooltip: (args) =>
+    Container({
+      child: YourComponent(args)
+    })
+}`}</code>
+            </pre>
+            <p className="mt-3 text-sm leading-relaxed text-neutral-600">
+              It&apos;s a widget. Put anything inside it.
             </p>
           </div>
         </div>
       </section>
 
+      {/* What You Can Build */}
+      <section className="px-6 pb-10 md:px-10">
+        <h2 className="mb-2 text-lg font-bold tracking-tight text-neutral-900">
+          What You Can Build
+        </h2>
+        <p className="mb-6 text-sm leading-relaxed text-neutral-500">
+          Because every element is a composable widget, not a config option.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            {
+              title: "Dashboard Cross-Filtering",
+              desc: "Click a bar in one chart to filter every other chart on the page. Share state across widgets \u2014 no plugin needed.",
+            },
+            {
+              title: "Drill-Down Navigation",
+              desc: "Click a category to zoom into sub-categories. Each level is a new widget tree with animated transitions.",
+            },
+            {
+              title: "Real-Time Streaming",
+              desc: "Push new data points and watch the chart animate. The widget tree rebuilds efficiently on every update.",
+            },
+            {
+              title: "Custom Tooltips & Overlays",
+              desc: "Replace any tooltip with a rich card \u2014 images, sparklines, action buttons. It\u2019s a widget slot, not a config property.",
+            },
+            {
+              title: "Threshold Annotations",
+              desc: "Overlay target lines, bands, and callout labels. The plot area is a Stack \u2014 position anything on top.",
+            },
+            {
+              title: "Interactive Data Editing",
+              desc: "Drag bars to change values. The chart recalculates in real-time. GestureDetector on any widget makes it interactive.",
+            },
+          ].map((item) => (
+            <div
+              key={item.title}
+              className="rounded-xl border border-neutral-200 bg-white p-5"
+            >
+              <h3 className="text-sm font-semibold text-neutral-900">
+                {item.title}
+              </h3>
+              <p className="mt-2 text-[13px] leading-relaxed text-neutral-500">
+                {item.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Works With AI Assistants */}
+      <section className="px-6 pb-10 md:px-10">
+        <div className="rounded-xl border border-neutral-200 bg-white p-6">
+          <h3 className="text-base font-bold text-neutral-900">
+            Works With AI Assistants
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-neutral-500">
+            The full chart API is published at a single URL. Feed it to Claude Code, Cursor, or any AI coding assistant for instant chart generation.
+          </p>
+          <a
+            href="https://ui.flitter.dev/llm/chart.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-block rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-2 text-sm font-mono text-teal-700 transition-colors hover:border-teal-300 hover:bg-teal-50"
+          >
+            ui.flitter.dev/llm/chart.md
+          </a>
+          <p className="mt-2 text-xs text-neutral-400">
+            A fast way to explore the API and generate custom charts.
+          </p>
+        </div>
+      </section>
+
       {/* Chart grid */}
       <section className="px-6 pb-16 md:px-10">
-        <h2 className="mb-6 text-xl font-bold tracking-tight text-neutral-900">
+        <h2 className="mb-2 text-xl font-bold tracking-tight text-neutral-900">
           Browse Charts
         </h2>
+        <p className="mb-6 text-sm leading-relaxed text-neutral-500">
+          10+ chart types, 2 visual styles, infinite customization. Pick one and make it yours.
+        </p>
         <ChartCarousel charts={chartShowcase} />
       </section>
     </div>

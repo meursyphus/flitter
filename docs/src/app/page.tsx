@@ -2,6 +2,18 @@
 
 import Link from "next/link";
 import FlitterLogo from "@/components/flitter-logo";
+import {
+  VerticalToastBarChart,
+} from "./chart/_data/bar-chart/toast/examples";
+import {
+  NegativeVerticalAgBarChart,
+} from "./chart/_data/bar-chart/ag/examples";
+import { DefaultToastLineChart } from "./chart/_data/line-chart/toast/examples";
+import { DefaultAgLineChart } from "./chart/_data/line-chart/ag/examples";
+import { DefaultToastAreaChart } from "./chart/_data/area-chart/toast/examples";
+import { VerticalToastStackedBarChart } from "./chart/_data/stacked-bar-chart/toast/examples";
+import { DefaultToastScatterChart } from "./chart/_data/scatter-chart/toast/examples";
+import { BasicPieChart } from "./chart/_data/pie-chart/toast/examples";
 
 export default function Home() {
   return (
@@ -16,16 +28,16 @@ export default function Home() {
             flitter
           </h1>
           <p className="mt-4 text-xl leading-relaxed text-gray-500 sm:text-2xl">
-            High-quality open-source rendering libraries for web developers.
+            Charts are widget trees. You own the source.
           </p>
           <p className="mt-3 text-base text-gray-400">
-            Flutter&apos;s widget composition model, reimagined for the web.
+            A rendering engine that gives you Container, Stack, Text — not config objects. Add charts with a CLI command. Every sub-element is yours to replace.
           </p>
 
           {/* Stats buttons — like TanStack npm/github */}
           <div className="mt-8 flex items-center justify-center gap-3">
             <a
-              href="https://www.npmjs.com/package/@meursyphus/flitter"
+              href="https://www.npmjs.com/package/flitter-ui"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-[13px] font-medium text-gray-600 shadow-sm transition-all hover:border-gray-300 hover:shadow-md"
@@ -121,6 +133,33 @@ export default function Home() {
         <ChartCarouselStrip />
       </section>
 
+      {/* ── What Becomes Possible ── */}
+      <section className="px-6 py-24 lg:px-16">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="text-center text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+            What becomes possible when charts are widget trees
+          </h2>
+          <ul className="mt-10 space-y-4">
+            {[
+              "Click a bar to filter every other chart on the dashboard",
+              "Long-press a data point to open an annotation editor",
+              "Stream real-time values and watch bars animate into place",
+              "Drill from yearly \u2192 quarterly \u2192 daily with a single tap",
+              "Embed any React or Svelte component inside a tooltip",
+              "Generate an entire custom chart by describing it to your AI assistant",
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-3 text-[15px] leading-relaxed text-gray-600">
+                <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 rounded-full bg-teal-500" />
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-8 text-center text-sm leading-relaxed text-gray-400">
+            None of these require plugins. They&apos;re possible because every element is a widget you control.
+          </p>
+        </div>
+      </section>
+
       {/* ── Why Flitter ── */}
       <section className="px-6 py-24 lg:px-16">
         <div className="mx-auto max-w-4xl">
@@ -137,8 +176,8 @@ export default function Home() {
           <div className="mt-16 grid gap-10 sm:grid-cols-2">
             {[
               {
-                title: "Widget Composition",
-                desc: "Every axis, bar, tooltip, and legend is a widget. Swap any piece of the tree — no config API to fight.",
+                title: "Not Config. Widgets.",
+                desc: "Every bar, axis, tooltip, and legend is a real widget \u2014 Container, Stack, Positioned, Text. Not an options object with 200 properties. A tree you can read, modify, and extend.",
                 icon: (
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="3" width="5" height="5" rx="1" />
@@ -149,27 +188,29 @@ export default function Home() {
                 ),
               },
               {
-                title: "Framework Agnostic",
-                desc: "Works with React and Svelte today. Vue support coming. The core engine has zero framework dependencies.",
-                icon: (
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="10" cy="10" r="7" />
-                    <path d="M2 10h16M10 3c-2 2.5-2 11 0 14M10 3c2 2.5 2 11 0 14" />
-                  </svg>
-                ),
-              },
-              {
                 title: "Source Code You Own",
-                desc: "Charts land as editable source files in your project. No runtime dependency, no black box. Delete the package after install.",
+                desc: "npx flitter-ui add bar-chart drops the full source into your project. There is no hidden runtime. Delete the CLI after install. It\u2019s your code now.",
                 icon: (
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M7 7l-4 3 4 3M13 7l4 3-4 3M11 4l-2 12" />
+                    <path d="M12 2H6a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V6l-4-4z" />
+                    <path d="M12 2v4h4" />
+                    <path d="M10 10v4M8 12l2 2 2-2" />
                   </svg>
                 ),
               },
               {
                 title: "LLM Native",
-                desc: "Feed one URL to your AI coding assistant. It reads the full API surface and generates charts end-to-end — data, layout, and styling.",
+                desc: "Feed one URL to Claude, Cursor, or Copilot. It reads the full widget API and generates charts end-to-end. A powerful shortcut when you want to move fast.",
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10 2v3M10 15v3M15 5l-2 2M7 13l-2 2M18 10h-3M5 10H2M15 15l-2-2M7 7L5 5" />
+                    <circle cx="10" cy="10" r="2" />
+                  </svg>
+                ),
+              },
+              {
+                title: "Complex Scenarios, Built In",
+                desc: "Cross-filtering, drill-down, annotations, real-time updates \u2014 these aren\u2019t plugins. They\u2019re structurally possible because every element is a composable widget.",
                 icon: (
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M4 6h12M4 10h8M4 14h10" />
@@ -219,7 +260,7 @@ export default function Home() {
                 step: "3",
                 title: "Make it yours",
                 code: null,
-                desc: "Every part of the chart is a widget. Replace the tooltip, restyle the axis, add animations — it's your code now.",
+                desc: "Open the source. Every axis label, grid line, and tooltip is a widget function. Swap the tooltip for a rich card. Add click handlers to bars. Build drill-down navigation. It\u2019s not configuration \u2014 it\u2019s composition.",
               },
             ].map((item) => (
               <div key={item.step} className="flex gap-5">
@@ -282,7 +323,7 @@ export default function Home() {
               GitHub
             </a>
             <a
-              href="https://www.npmjs.com/package/@meursyphus/flitter"
+              href="https://www.npmjs.com/package/flitter-ui"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[13px] text-gray-400 transition-colors hover:text-gray-700"
@@ -305,31 +346,15 @@ export default function Home() {
 }
 
 /* ── Infinite Carousel Strip ── */
-import {
-  VerticalToastBarChart,
-} from "./chart/_data/bar-chart/toast/examples";
-import {
-  VerticalAgBarChart,
-  NegativeVerticalAgBarChart,
-} from "./chart/_data/bar-chart/ag/examples";
-import { DefaultToastLineChart } from "./chart/_data/line-chart/toast/examples";
-import { DefaultAgLineChart } from "./chart/_data/line-chart/ag/examples";
-import { DefaultToastAreaChart } from "./chart/_data/area-chart/toast/examples";
-import { DefaultAgAreaChart } from "./chart/_data/area-chart/ag/examples";
-import { VerticalToastStackedBarChart } from "./chart/_data/stacked-bar-chart/toast/examples";
-import { DefaultToastScatterChart } from "./chart/_data/scatter-chart/toast/examples";
-import { BasicPieChart } from "./chart/_data/pie-chart/toast/examples";
-
 const carouselCharts = [
-  { el: <VerticalToastBarChart />, label: "Bar · Toast" },
-  { el: <VerticalAgBarChart />, label: "Bar · AG" },
-  { el: <DefaultToastLineChart />, label: "Line · Toast" },
-  { el: <DefaultAgLineChart />, label: "Line · AG" },
-  { el: <DefaultToastAreaChart />, label: "Area · Toast" },
-  { el: <DefaultAgAreaChart />, label: "Area · AG" },
-  { el: <NegativeVerticalAgBarChart />, label: "Negative Bar · AG" },
+  { el: <VerticalToastBarChart />, label: "Bar" },
+  { el: <DefaultToastLineChart />, label: "Line" },
+  { el: <DefaultToastAreaChart />, label: "Area" },
   { el: <VerticalToastStackedBarChart />, label: "Stacked Bar" },
   { el: <DefaultToastScatterChart />, label: "Scatter" },
+  { el: <BasicPieChart />, label: "Pie" },
+  { el: <NegativeVerticalAgBarChart />, label: "Negative Values" },
+  { el: <DefaultAgLineChart />, label: "Line" },
 ];
 
 function ChartCarouselStrip() {

@@ -96,6 +96,189 @@ export function FilledAgScatterChart() {
         data: defaultData,
         config: {
           scatter: { size: 8 },
+          colors: {
+            fills: ["#6366f1", "#ec4899", "#10b981"],
+            strokes: ["#6366f1", "#ec4899", "#10b981"],
+          },
+        },
+      })}
+      width="100%"
+      height="100%"
+    />
+  );
+}
+
+const performanceBenchmarkData = {
+  datasets: [
+    {
+      legend: "System A (Node.js)",
+      data: [
+        { x: 12, y: 8500, label: "GET /api" },
+        { x: 18, y: 7200, label: "POST /data" },
+        { x: 25, y: 6100, label: "PUT /update" },
+        { x: 8, y: 9800, label: "GET /health" },
+        { x: 35, y: 4500, label: "POST /batch" },
+        { x: 15, y: 8000, label: "GET /list" },
+      ],
+    },
+    {
+      legend: "System B (Go)",
+      data: [
+        { x: 5, y: 15000, label: "GET /api" },
+        { x: 8, y: 13500, label: "POST /data" },
+        { x: 12, y: 11000, label: "PUT /update" },
+        { x: 3, y: 18000, label: "GET /health" },
+        { x: 20, y: 9000, label: "POST /batch" },
+        { x: 6, y: 14200, label: "GET /list" },
+      ],
+    },
+    {
+      legend: "System C (Python)",
+      data: [
+        { x: 45, y: 3200, label: "GET /api" },
+        { x: 60, y: 2800, label: "POST /data" },
+        { x: 80, y: 2100, label: "PUT /update" },
+        { x: 30, y: 4000, label: "GET /health" },
+        { x: 100, y: 1500, label: "POST /batch" },
+        { x: 50, y: 3000, label: "GET /list" },
+      ],
+    },
+  ],
+};
+
+export function PerformanceBenchmarkAg() {
+  return (
+    <Widget
+      widget={ScatterChart({
+        data: performanceBenchmarkData,
+        config: {
+          scatter: { size: 12, strokeWidth: 3 },
+          colors: {
+            fills: ["#ef4444", "#3b82f6", "#10b981"],
+            strokes: ["#ef4444", "#3b82f6", "#10b981"],
+          },
+          grid: { dash: [4, 4] },
+          background: "#fafafa",
+        },
+      })}
+      width="100%"
+      height="100%"
+    />
+  );
+}
+
+const studentScoresData = {
+  datasets: [
+    {
+      legend: "Class A",
+      data: [
+        { x: 85, y: 78, label: "Student 1" },
+        { x: 92, y: 88, label: "Student 2" },
+        { x: 76, y: 82, label: "Student 3" },
+        { x: 68, y: 65, label: "Student 4" },
+        { x: 95, y: 91, label: "Student 5" },
+        { x: 80, y: 75, label: "Student 6" },
+      ],
+    },
+    {
+      legend: "Class B",
+      data: [
+        { x: 70, y: 85, label: "Student 1" },
+        { x: 88, y: 92, label: "Student 2" },
+        { x: 65, y: 70, label: "Student 3" },
+        { x: 78, y: 80, label: "Student 4" },
+        { x: 90, y: 95, label: "Student 5" },
+        { x: 72, y: 76, label: "Student 6" },
+      ],
+    },
+    {
+      legend: "Class C",
+      data: [
+        { x: 60, y: 55, label: "Student 1" },
+        { x: 75, y: 70, label: "Student 2" },
+        { x: 82, y: 78, label: "Student 3" },
+        { x: 90, y: 85, label: "Student 4" },
+        { x: 55, y: 60, label: "Student 5" },
+        { x: 68, y: 72, label: "Student 6" },
+      ],
+    },
+  ],
+};
+
+export function StudentScoresAg() {
+  return (
+    <Widget
+      widget={ScatterChart({
+        data: studentScoresData,
+        config: {
+          scatter: { size: 9 },
+          colors: {
+            fills: ["#f59e0b", "#8b5cf6", "#06b6d4"],
+            strokes: ["#f59e0b", "#8b5cf6", "#06b6d4"],
+          },
+        },
+      })}
+      width="100%"
+      height="100%"
+    />
+  );
+}
+
+const customerSatisfactionData = {
+  datasets: [
+    {
+      legend: "Software",
+      data: [
+        { x: 49, y: 4.2, label: "Notion" },
+        { x: 99, y: 4.5, label: "Figma" },
+        { x: 29, y: 3.8, label: "Trello" },
+        { x: 199, y: 4.7, label: "Salesforce" },
+        { x: 79, y: 4.1, label: "Slack" },
+      ],
+    },
+    {
+      legend: "Hardware",
+      data: [
+        { x: 999, y: 4.3, label: "MacBook" },
+        { x: 1299, y: 4.6, label: "iPhone" },
+        { x: 699, y: 3.9, label: "Galaxy" },
+        { x: 349, y: 4.0, label: "Pixel" },
+        { x: 1499, y: 4.4, label: "Surface" },
+      ],
+    },
+    {
+      legend: "Services",
+      data: [
+        { x: 15, y: 4.1, label: "Netflix" },
+        { x: 10, y: 3.5, label: "Spotify" },
+        { x: 12, y: 3.9, label: "Disney+" },
+        { x: 20, y: 4.3, label: "YouTube Premium" },
+        { x: 8, y: 3.2, label: "Hulu" },
+      ],
+    },
+    {
+      legend: "Food Delivery",
+      data: [
+        { x: 25, y: 3.6, label: "DoorDash" },
+        { x: 20, y: 3.4, label: "Uber Eats" },
+        { x: 18, y: 3.8, label: "Grubhub" },
+        { x: 30, y: 3.5, label: "Instacart" },
+      ],
+    },
+  ],
+};
+
+export function CustomerSatisfactionAg() {
+  return (
+    <Widget
+      widget={ScatterChart({
+        data: customerSatisfactionData,
+        config: {
+          scatter: { size: 11, strokeWidth: 2 },
+          colors: {
+            fills: ["#0d9488", "#e11d48", "#2563eb", "#d97706"],
+            strokes: ["#0d9488", "#e11d48", "#2563eb", "#d97706"],
+          },
         },
       })}
       width="100%"

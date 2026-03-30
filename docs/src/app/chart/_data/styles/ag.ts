@@ -6,7 +6,7 @@ import type { ChartExample, ConfigSection, StylePageData, StyleSummary } from ".
 export const ag = {
   name: "ag",
   title: "AG Style",
-  tagline: "Muted tones, minimal animation, clean business dashboard look",
+  tagline: "Data-dense, professional, grid-ready. Inspired by AG Grid's approach to information-heavy interfaces.",
   inspiration: "Inspired by AG Charts",
   reference: "https://www.ag-grid.com/charts/",
   features: [

@@ -1,9 +1,8 @@
 import type { AdvancedPageData } from "../types";
 
-const advancedCode = `import { BubbleChart } from "@flitterjs/chart";
+const advancedCode = `import BubbleChart from "./charts/bubble-chart";
 
 BubbleChart({
-  style: "toast",
   data: { /* ... */ },
   custom: {
     bubble: (args, context) => {
@@ -47,4 +46,30 @@ export const advancedPage: AdvancedPageData = {
   parent: "bubble-chart",
   code: { basic: advancedCode },
   customElements,
+  scenarios: [
+    {
+      title: "Size Legend",
+      description: "Add a bubble-size legend showing what small, medium, and large radii represent. Override the layout renderer to place a custom Row of reference circles with value labels next to the main legend — the context provides the min/max bubble values for accurate sizing.",
+    },
+    {
+      title: "Category Colors",
+      description: "Map bubble color to a categorical dimension like region, department, or risk level. The bubble renderer receives label, legend, and index — use a lookup map to return Container widgets with category-specific BoxDecoration colors and optional border rings.",
+    },
+    {
+      title: "Labels Inside Bubbles",
+      description: "Render text or icons inside large bubbles and external labels with leader lines for small ones. The bubble renderer receives the value which determines rendered size — conditionally return a Stack with centered Text for large bubbles, or a Column with a CustomPaint connector for small ones.",
+    },
+    {
+      title: "Collision Avoidance",
+      description: "Shift overlapping data labels apart automatically using a force-directed layout. Override the dataView renderer to compute label positions with a simple repulsion algorithm, then place each dataLabel widget at its adjusted coordinate via Positioned.",
+    },
+    {
+      title: "Staggered Animated Entry",
+      description: "Bubbles pop in one by one with staggered scale animations on initial load. Each bubble renderer wraps its output in AnimatedScale with a delay based on the index — use Interval curves so bubbles appear sequentially from left to right.",
+    },
+    {
+      title: "Click-to-Detail Panel",
+      description: "Click any bubble to expand a detail panel showing full entity data, trends, or actions. Wrap each bubble in GestureDetector within the bubble renderer — on click, update a StatefulWidget to show an overlay Card positioned near the clicked bubble.",
+    },
+  ],
 };

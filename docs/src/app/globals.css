@@ -41,6 +41,23 @@ figure[data-rehype-pretty-code-figure] [data-line] {
   padding: 0.875rem 0;
 }
 
+/* Force all prose pre/code blocks to light theme */
+.prose pre {
+  background: #fafafa !important;
+  color: #404040 !important;
+  border: 1px solid #e5e5e5;
+  border-radius: 0.5rem;
+}
+
+.prose pre code {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+.prose pre code span {
+  color: inherit !important;
+}
+
 /* Slide-in animation for mobile sidebar */
 @keyframes slide-in-left {
   from { transform: translateX(-100%); }

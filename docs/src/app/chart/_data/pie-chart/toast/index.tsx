@@ -1,6 +1,6 @@
 import type { StylePageData, ConfigSection } from "../../types";
 import { toast } from "../../styles/toast";
-import { BasicPieChart, DonutPieChart } from "./examples";
+import { BasicPieChart, DonutPieChart, MarketSharePieChart, ExpenseBreakdownPieChart } from "./examples";
 
 const pieConfigSections: ConfigSection[] = [
   {
@@ -85,7 +85,95 @@ export const toastStyle: StylePageData = {
   },
   configSections: pieConfigSections,
   examples: [
-    { title: "Basic Pie", chart: <BasicPieChart /> },
-    { title: "Donut", chart: <DonutPieChart /> },
+    {
+      title: "Basic Pie",
+      chart: <BasicPieChart />,
+      code: `import ToastPieChart from "./charts/toast-pie-chart";
+import Widget from "@flitterjs/react";
+
+const chart = ToastPieChart({
+  data: {
+    datasets: [
+      { name: "Chrome", value: 65 },
+      { name: "Safari", value: 18 },
+      { name: "Firefox", value: 8 },
+      { name: "Edge", value: 5 },
+      { name: "Other", value: 4 },
+    ],
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+    },
+    {
+      title: "Donut",
+      chart: <DonutPieChart />,
+      code: `import ToastPieChart from "./charts/toast-pie-chart";
+import Widget from "@flitterjs/react";
+
+const chart = ToastPieChart({
+  data: {
+    datasets: [
+      { name: "Chrome", value: 65 },
+      { name: "Safari", value: 18 },
+      { name: "Firefox", value: 8 },
+      { name: "Edge", value: 5 },
+      { name: "Other", value: 4 },
+    ],
+  },
+  config: {
+    pie: { innerRadiusRatio: 0.5 },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+    },
+    {
+      title: "Market Share",
+      chart: <MarketSharePieChart />,
+      code: `import ToastPieChart from "./charts/toast-pie-chart";
+import Widget from "@flitterjs/react";
+
+const chart = ToastPieChart({
+  data: {
+    datasets: [
+      { name: "Apple", value: 28 },
+      { name: "Samsung", value: 22 },
+      { name: "Xiaomi", value: 13 },
+      { name: "Oppo", value: 9 },
+      { name: "Vivo", value: 8 },
+      { name: "Others", value: 20 },
+    ],
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+    },
+    {
+      title: "Expense Breakdown",
+      chart: <ExpenseBreakdownPieChart />,
+      code: `import ToastPieChart from "./charts/toast-pie-chart";
+import Widget from "@flitterjs/react";
+
+const chart = ToastPieChart({
+  data: {
+    datasets: [
+      { name: "Housing", value: 1800 },
+      { name: "Food", value: 650 },
+      { name: "Transport", value: 420 },
+      { name: "Utilities", value: 280 },
+      { name: "Healthcare", value: 350 },
+      { name: "Entertainment", value: 200 },
+      { name: "Education", value: 300 },
+      { name: "Savings", value: 500 },
+    ],
+  },
+  config: {
+    pie: { innerRadiusRatio: 0.4 },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+    },
   ],
 };

@@ -1,9 +1,8 @@
 import type { AdvancedPageData } from "../types";
 
-const advancedCode = `import { ScatterChart } from "@flitterjs/chart";
+const advancedCode = `import ScatterChart from "./charts/scatter-chart";
 
 ScatterChart({
-  style: "toast",
   data: { /* ... */ },
   custom: {
     scatter: (args, context) => {
@@ -47,4 +46,30 @@ export const advancedPage: AdvancedPageData = {
   parent: "scatter-chart",
   code: { basic: advancedCode },
   customElements,
+  scenarios: [
+    {
+      title: "Cluster Highlighting",
+      description: "Color or encircle point clusters based on K-means or custom grouping logic. The scatter renderer receives the full data context including x, y, and label — apply different Container colors or wrap clusters in a CustomPaint ellipse overlay.",
+    },
+    {
+      title: "Custom Point Shapes",
+      description: "Replace default circle dots with icons, images, or category-specific markers. Each scatter point is an independent widget — return a ClipOval with an Image, a rotated Transform with a diamond shape, or a Container with a custom BoxDecoration.",
+    },
+    {
+      title: "Regression Lines",
+      description: "Overlay trend lines, confidence intervals, or polynomial curve fits on the scatter plot. Override the dataView renderer to add a CustomPaint child that draws the regression path using the scale context to map data coordinates to pixel positions.",
+    },
+    {
+      title: "Lasso Selection",
+      description: "Draw a freeform selection region to highlight and filter points interactively. Use GestureDetector with onPanStart/onPanUpdate in a custom dataView renderer to track the lasso path, then filter visible scatter widgets by hit-testing against the polygon.",
+    },
+    {
+      title: "Quadrant Labels",
+      description: "Divide the plot into four labeled quadrants with colored backgrounds for portfolio analysis or risk matrices. Override the plot renderer to layer Positioned rectangles at the median x/y values with semi-transparent fills and corner-anchored Text labels.",
+    },
+    {
+      title: "Zoom and Pan",
+      description: "Add axis-level zoom with scroll gestures and drag-to-pan. Wrap the plot in a GestureDetector that updates scale min/max values via setState(). Points and axes reposition automatically as the constraint-based layout recalculates.",
+    },
+  ],
 };

@@ -89,6 +89,163 @@ export function SmallAgBubbleChart() {
         data: defaultData,
         config: {
           bubble: { minRadius: 2, maxRadius: 20, opacity: 0.8 },
+          colors: {
+            fills: ["#7c3aed", "#06b6d4", "#f97316"],
+            strokes: ["#7c3aed", "#06b6d4", "#f97316"],
+          },
+        },
+      })}
+      width="100%"
+      height="100%"
+    />
+  );
+}
+
+const techStackData = {
+  datasets: [
+    {
+      legend: "Frontend",
+      data: [
+        { x: 85, y: 4.5, value: 45000, label: "React" },
+        { x: 72, y: 4.7, value: 28000, label: "Vue" },
+        { x: 60, y: 4.6, value: 22000, label: "Svelte" },
+        { x: 40, y: 4.2, value: 15000, label: "Angular" },
+        { x: 30, y: 4.8, value: 8000, label: "Solid" },
+      ],
+    },
+    {
+      legend: "Backend",
+      data: [
+        { x: 78, y: 4.3, value: 52000, label: "Node.js" },
+        { x: 55, y: 4.4, value: 38000, label: "Go" },
+        { x: 65, y: 4.6, value: 42000, label: "Python" },
+        { x: 45, y: 4.5, value: 30000, label: "Rust" },
+      ],
+    },
+    {
+      legend: "Database",
+      data: [
+        { x: 90, y: 4.0, value: 60000, label: "PostgreSQL" },
+        { x: 70, y: 4.2, value: 35000, label: "MongoDB" },
+        { x: 50, y: 4.4, value: 18000, label: "Redis" },
+        { x: 35, y: 4.3, value: 12000, label: "Cassandra" },
+      ],
+    },
+  ],
+};
+
+export function TechStackAgBubble() {
+  return (
+    <Widget
+      widget={BubbleChart({
+        data: techStackData,
+        config: {
+          bubble: { minRadius: 5, maxRadius: 30, opacity: 0.6 },
+          colors: {
+            fills: ["#3b82f6", "#10b981", "#f59e0b"],
+            strokes: ["#3b82f6", "#10b981", "#f59e0b"],
+          },
+          grid: { dash: [4, 4] },
+        },
+      })}
+      width="100%"
+      height="100%"
+    />
+  );
+}
+
+const projectPortfolioData = {
+  datasets: [
+    {
+      legend: "Conservative",
+      data: [
+        { x: 2, y: 5, value: 500000, label: "Gov Bonds" },
+        { x: 3, y: 6, value: 300000, label: "Blue Chip" },
+        { x: 1, y: 4, value: 800000, label: "Treasury" },
+        { x: 4, y: 7, value: 200000, label: "Corp Bonds" },
+      ],
+    },
+    {
+      legend: "Balanced",
+      data: [
+        { x: 5, y: 10, value: 400000, label: "Index Fund" },
+        { x: 6, y: 12, value: 350000, label: "REITs" },
+        { x: 4, y: 8, value: 600000, label: "Growth ETF" },
+        { x: 7, y: 14, value: 250000, label: "Dividend" },
+      ],
+    },
+    {
+      legend: "Aggressive",
+      data: [
+        { x: 9, y: 22, value: 150000, label: "Tech Startup" },
+        { x: 8, y: 18, value: 280000, label: "Emerging Mkt" },
+        { x: 10, y: 25, value: 100000, label: "Crypto Fund" },
+        { x: 7, y: 15, value: 320000, label: "Small Cap" },
+      ],
+    },
+  ],
+};
+
+export function ProjectPortfolioAgBubble() {
+  return (
+    <Widget
+      widget={BubbleChart({
+        data: projectPortfolioData,
+        config: {
+          bubble: { minRadius: 4, maxRadius: 35, opacity: 0.55 },
+          colors: {
+            fills: ["#059669", "#dc2626", "#6366f1"],
+            strokes: ["#059669", "#dc2626", "#6366f1"],
+          },
+          background: "#f8fafc",
+        },
+      })}
+      width="100%"
+      height="100%"
+    />
+  );
+}
+
+const healthMetricsData = {
+  datasets: [
+    {
+      legend: "Age 20-35",
+      data: [
+        { x: 22, y: 118, value: 15000, label: "Active" },
+        { x: 25, y: 125, value: 22000, label: "Moderate" },
+        { x: 28, y: 130, value: 8000, label: "Sedentary" },
+      ],
+    },
+    {
+      legend: "Age 36-50",
+      data: [
+        { x: 24, y: 122, value: 12000, label: "Active" },
+        { x: 27, y: 132, value: 25000, label: "Moderate" },
+        { x: 31, y: 140, value: 18000, label: "Sedentary" },
+      ],
+    },
+    {
+      legend: "Age 51-65",
+      data: [
+        { x: 26, y: 128, value: 8000, label: "Active" },
+        { x: 30, y: 138, value: 20000, label: "Moderate" },
+        { x: 34, y: 148, value: 15000, label: "Sedentary" },
+      ],
+    },
+  ],
+};
+
+export function HealthMetricsAgBubble() {
+  return (
+    <Widget
+      widget={BubbleChart({
+        data: healthMetricsData,
+        config: {
+          bubble: { opacity: 0.5, minRadius: 8, maxRadius: 28 },
+          colors: {
+            fills: ["#ef4444", "#3b82f6", "#10b981"],
+            strokes: ["#ef4444", "#3b82f6", "#10b981"],
+          },
         },
       })}
       width="100%"

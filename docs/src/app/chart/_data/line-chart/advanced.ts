@@ -1,9 +1,8 @@
 import type { AdvancedPageData } from "../types";
 
-const advancedCode = `import { LineChart } from "@flitterjs/chart";
+const advancedCode = `import LineChart from "./charts/line-chart";
 
 LineChart({
-  style: "toast",
   data: { /* ... */ },
   custom: {
     line: (args, context) => {
@@ -47,4 +46,30 @@ export const advancedPage: AdvancedPageData = {
   parent: "line-chart",
   code: { basic: advancedCode },
   customElements,
+  scenarios: [
+    {
+      title: "Gradient Fills",
+      description: "Replace the line renderer with a gradient-filled path using CustomPaint. Fade from the series color at the curve down to transparent at the baseline — each dataset gets its own gradient stops and opacity.",
+    },
+    {
+      title: "Interactive Crosshair",
+      description: "Add a vertical crosshair line that follows the cursor and snaps to the nearest data point. Combine GestureDetector on the plot area with a Positioned tooltip card showing interpolated values for all series.",
+    },
+    {
+      title: "Segmented Lines",
+      description: "Render different line styles per segment based on data characteristics. Use dashed strokes for projections, solid for actuals, and dotted for estimates — the line renderer receives the full value array to decide per-segment styling.",
+    },
+    {
+      title: "Threshold Bands",
+      description: "Overlay colored horizontal bands behind the line to highlight warning, danger, or target zones. The plot renderer is a Stack — layer Positioned rectangles at scale-mapped y-coordinates before the data view.",
+    },
+    {
+      title: "Custom Data Points",
+      description: "Replace default circle dots with icons, images, or animated pulsing markers at each data point. The dataLabel renderer receives the exact x/y position and value — return any widget including animated ones.",
+    },
+    {
+      title: "Multi-Axis",
+      description: "Add a second y-axis with an independent scale on the right side. Override the plot renderer to include a second yAxis widget. Each line renderer knows which axis it maps to via the context object.",
+    },
+  ],
 };

@@ -21,12 +21,27 @@ npx flitter-ui init
 npx flitter-ui add bar-chart --style toast
 ```
 
-This creates chart source files in your project — typically under `src/charts/bar-chart/`.
+This generates the full widget source tree in your project:
+
+```
+charts/
+├── bar-chart/
+│   ├── index.ts          # BarChart — import this
+│   ├── base/             # Headless logic (scales, layout)
+│   └── style/
+│       ├── config.ts     # All config types & defaults
+│       └── parts/        # Visual renderers — edit these to customize
+│           ├── bar.ts
+│           └── data-view.ts
+└── _styles/ag/           # Shared style base
+```
+
+Open `style/parts/bar.ts` to see how individual bars are rendered — it's a widget factory you fully control.
 
 ## 3. Use the chart
 
 ```tsx
-import { Widget } from "@meursyphus/flitter-react";
+import Widget from "@flitterjs/react";
 import BarChart from "./charts/bar-chart";
 
 const data = {
@@ -72,13 +87,22 @@ BarChart({
 })
 ```
 
+This is the key insight: `BarChart()` doesn't have a tooltip option with 20 sub-properties.
+It has a tooltip **widget slot**. You provide a function that returns ANY widget.
+
+Want a tooltip with an image? Return an Image widget.
+Want a tooltip with a sparkline? Return a LineChart widget inside the tooltip.
+Want a tooltip with an action button? Return a GestureDetector wrapping a button.
+
+There are no limits because there is no config API to limit you.
+
 ## What you own
 
-After running `flitter add`, the source code lives in your project. You can:
+After running `npx flitter-ui add`, the source code lives in your project. You can:
 
-- **Edit any widget** — axis labels, grid lines, legends
-- **Add animations** — the full Flutter animation system is available
-- **Delete the CLI** — there's no runtime dependency on the package
+- **Edit any widget** — axis labels are Text widgets, grid lines are Container widgets, legends are Row widgets with GestureDetector for click handling
+- **Add animations** — AnimationController, CurvedAnimation, Tween, and every Flutter animation primitive works out of the box
+- **Delete the CLI** — after `npx flitter-ui add`, the CLI is irrelevant. Your chart has zero dependency on flitter-ui the package.
 
 ## Next steps
 

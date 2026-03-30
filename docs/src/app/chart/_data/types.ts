@@ -21,6 +21,15 @@ export type CustomElement = {
   description: string;
 };
 
+export type ScenarioCard = {
+  title: string;
+  description: string;
+  /** The live demo component — null means placeholder */
+  demo?: React.ReactNode;
+  /** Source code for the demo */
+  code?: string;
+};
+
 // ---------------------------------------------------------------------------
 // Base (common fields for every chart page)
 // ---------------------------------------------------------------------------
@@ -59,6 +68,10 @@ export type ShowcaseExample = {
   height?: number;
   /** When true, rendered as a full-width hero card above the grid */
   featured?: boolean;
+  /** When true, the card spans both columns in the 2-col grid */
+  fullWidth?: boolean;
+  /** Copyable source code string */
+  code?: string;
 };
 
 export type OverviewPageData = ChartPageBase & {
@@ -82,6 +95,8 @@ export type ChartExample = {
   chart: React.ReactNode;
   /** Chart container height in px (default: 500) */
   height?: number;
+  /** Copyable source code string */
+  code?: string;
 };
 
 export type StylePageData = ChartPageBase & {
@@ -109,6 +124,7 @@ export type AdvancedPageData = ChartPageBase & {
     basic: string;
   };
   customElements: CustomElement[];
+  scenarios?: ScenarioCard[];
 };
 
 // ---------------------------------------------------------------------------

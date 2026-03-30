@@ -44,10 +44,9 @@ npx flitter-ui add bar-chart
 
 ```tsx
 import Widget from "@flitterjs/react";
-import { BarChart } from "./flitter-ui/chart";
+import BarChart from "./charts/bar-chart";
 
 const chart = BarChart({
-  style: "toast",
   data: {
     labels: ["Jan", "Feb", "Mar", "Apr"],
     datasets: [{ legend: "Revenue", values: [40, 65, 50, 80] }],
@@ -65,7 +64,7 @@ export default function App() {
 |-----------|---------|--------|
 | React | `@flitterjs/react` | Stable |
 | Svelte | `@flitterjs/svelte` | Stable |
-| Vanilla JS | `@meursyphus/flitter` | Stable |
+| Vanilla JS | `flitter-ui` | Stable |
 | Vue | — | Coming soon |
 
 ## Contributing

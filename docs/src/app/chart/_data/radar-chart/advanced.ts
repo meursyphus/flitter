@@ -1,9 +1,8 @@
 import type { AdvancedPageData } from "../types";
 
-const advancedCode = `import { RadarChart } from "@flitterjs/chart";
+const advancedCode = `import RadarChart from "./charts/radar-chart";
 
 RadarChart({
-  style: "toast",
   data: { /* ... */ },
   custom: {
     radar: (args, context) => {
@@ -41,4 +40,30 @@ export const advancedPage: AdvancedPageData = {
   parent: "radar-chart",
   code: { basic: advancedCode },
   customElements,
+  scenarios: [
+    {
+      title: "Skill Comparison",
+      description: "Overlay multiple team or candidate profiles on one radar chart. Each polygon renderer receives its vertex array — apply distinct fill colors with low opacity and contrasting stroke widths so overlapping regions reveal relative strengths at a glance.",
+    },
+    {
+      title: "Custom Vertex Markers",
+      description: "Replace default vertex dots with score badges, star ratings, or category icons. The radar renderer receives all vertex positions as { nx, ny, angle, ratio, value } — place any widget at each computed coordinate using Positioned in a Stack.",
+    },
+    {
+      title: "Highlighted Axes",
+      description: "Emphasize specific axes by changing spoke color, width, or adding a background wedge. Override angularAxisLine to draw select spokes in an accent color — useful for spotlighting the most important evaluation dimensions.",
+    },
+    {
+      title: "Filled vs Outline Toggle",
+      description: "Let users toggle between filled polygons and outline-only mode per series. Track the display mode in a StatefulWidget and conditionally set fill opacity to 0 in the radar renderer while keeping the stroke visible.",
+    },
+    {
+      title: "Interactive Axis Labels",
+      description: "Make category labels clickable to sort the data, toggle axis visibility, or open detail panels. The angularAxisLabel renderer is a full widget factory — wrap each label in GestureDetector and style the active label with a bold font weight or underline.",
+    },
+    {
+      title: "Animated Profile Morph",
+      description: "Smoothly animate between two data profiles when the user switches datasets. Use an AnimationController with Tween to interpolate each vertex ratio from the old values to the new ones, then rebuild the radar polygon on each animation frame.",
+    },
+  ],
 };

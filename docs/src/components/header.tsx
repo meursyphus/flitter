@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import clsx from "clsx";
 import FlitterLogo from "./flitter-logo";
 
 export default function Header() {
@@ -42,42 +41,8 @@ export default function Header() {
             )}
           </div>
 
-          {/* Right: nav links */}
-          <div className="hidden items-center gap-1 md:flex">
-            <Link
-              href="/chart"
-              className={clsx(
-                "rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors",
-                pathname.startsWith("/chart")
-                  ? "bg-gray-100 text-gray-900"
-                  : "text-gray-500 hover:text-gray-900"
-              )}
-            >
-              Chart
-            </Link>
-            <Link
-              href="/advanced/what-is-flitter"
-              className={clsx(
-                "rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors",
-                pathname.startsWith("/advanced")
-                  ? "bg-gray-100 text-gray-900"
-                  : "text-gray-500 hover:text-gray-900"
-              )}
-            >
-              Core API
-            </Link>
-            <Link
-              href="/integration"
-              className={clsx(
-                "rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors",
-                pathname.startsWith("/integration")
-                  ? "bg-gray-100 text-gray-900"
-                  : "text-gray-500 hover:text-gray-900"
-              )}
-            >
-              Integration
-            </Link>
-            <div className="mx-2 h-4 w-px bg-gray-200" />
+          {/* Right: GitHub link */}
+          <div className="hidden items-center md:flex">
             <a
               href="https://github.com/meursyphus/flitter"
               target="_blank"
@@ -121,36 +86,6 @@ export default function Header() {
               </button>
             </div>
             <div className="px-3 py-4 space-y-0.5">
-              <Link
-                href="/chart"
-                onClick={() => setMenuOpen(false)}
-                className={clsx(
-                  "block rounded-md px-3 py-2 text-[13px] font-medium transition-colors",
-                  pathname.startsWith("/chart") ? "bg-gray-100 text-gray-900" : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
-                )}
-              >
-                Chart
-              </Link>
-              <Link
-                href="/advanced/what-is-flitter"
-                onClick={() => setMenuOpen(false)}
-                className={clsx(
-                  "block rounded-md px-3 py-2 text-[13px] font-medium transition-colors",
-                  pathname.startsWith("/advanced") ? "bg-gray-100 text-gray-900" : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
-                )}
-              >
-                Core API
-              </Link>
-              <Link
-                href="/integration"
-                onClick={() => setMenuOpen(false)}
-                className={clsx(
-                  "block rounded-md px-3 py-2 text-[13px] font-medium transition-colors",
-                  pathname.startsWith("/integration") ? "bg-gray-100 text-gray-900" : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
-                )}
-              >
-                Integration
-              </Link>
               <a
                 href="https://github.com/meursyphus/flitter"
                 target="_blank"

@@ -1,9 +1,8 @@
 import type { AdvancedPageData } from "../types";
 
-const advancedCode = `import { StackedBarChart } from "@flitterjs/chart";
+const advancedCode = `import StackedBarChart from "./charts/stacked-bar-chart";
 
 StackedBarChart({
-  style: "toast",
   data: { /* ... */ },
   custom: {
     bar: (args, context) => {
@@ -49,4 +48,30 @@ export const advancedPage: AdvancedPageData = {
   parent: "stacked-bar-chart",
   code: { basic: advancedCode },
   customElements,
+  scenarios: [
+    {
+      title: "Percentage Mode",
+      description: "Normalize all stacks to 100% height to show proportional contributions instead of absolute values. Override the barGroup renderer to divide each segment's height by the group total — the args provide all bar values and datasetIndex for the calculation.",
+    },
+    {
+      title: "Segment Labels",
+      description: "Show formatted values or percentages inside each stack segment. The dataLabel renderer receives value, label, and legend — return a centered Text widget with white color for dark segments and dark color for light segments based on the bar's background.",
+    },
+    {
+      title: "Diverging Stacks",
+      description: "Center the stack at zero with positive segments extending right and negative segments extending left. Override the barGroup renderer to split bars by sign, arrange them in opposite directions using a Row with mainAxisAlignment center, and apply distinct color palettes per direction.",
+    },
+    {
+      title: "Highlight on Hover",
+      description: "Dim all segments except the hovered series across every group for cross-group comparison. Track the hovered legend index in a StatefulWidget, then in the bar renderer check if the current datasetIndex matches — apply Opacity(0.2) to non-matching bars.",
+    },
+    {
+      title: "Custom Interactive Legends",
+      description: "Replace default legend items with colored toggle switches, inline sparklines, or percentage badges. The legend renderer is a full widget factory — return a Row with a custom CheckBox, series sparkline, and formatted total, all wrapped in GestureDetector for toggle behavior.",
+    },
+    {
+      title: "Waterfall Variant",
+      description: "Offset stacked segments vertically to create a waterfall chart showing running totals. Override the barBox renderer to set each segment's vertical offset based on the cumulative sum of previous segments — the args provide ratio and alignment for precise positioning.",
+    },
+  ],
 };

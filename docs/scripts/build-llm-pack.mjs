@@ -61,7 +61,7 @@ function buildQuickStart(chart) {
       : "";
 
   return `import Widget from "@flitterjs/react";
-import { ${chart.importName} } from "chart-presets";
+import ${chart.importName} from "./charts/${chart.slug}";
 
 const widget = ${chart.importName}({
 ${styleLine}  data: ${chart.dataShape.trim()},

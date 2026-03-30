@@ -96,6 +96,7 @@ export function FilledToastScatterChart() {
         data: defaultData,
         config: {
           scatter: { fill: true, size: 8 },
+          colors: ["#6366f1", "#ec4899", "#f59e0b", "#10b981"],
         },
       })}
       width="100%"
@@ -111,6 +112,171 @@ export function LargeToastScatterChart() {
         data: defaultData,
         config: {
           scatter: { size: 16, strokeWidth: 3 },
+          colors: ["#0d9488", "#d97706", "#dc2626", "#6366f1"],
+        },
+      })}
+      width="100%"
+      height="100%"
+    />
+  );
+}
+
+const salesVsMarketingData = {
+  datasets: [
+    {
+      legend: "Electronics",
+      data: [
+        { x: 12, y: 85, label: "Q1" },
+        { x: 18, y: 120, label: "Q2" },
+        { x: 25, y: 155, label: "Q3" },
+        { x: 30, y: 190, label: "Q4" },
+        { x: 22, y: 140, label: "Q5" },
+      ],
+    },
+    {
+      legend: "Apparel",
+      data: [
+        { x: 8, y: 45, label: "Q1" },
+        { x: 15, y: 78, label: "Q2" },
+        { x: 20, y: 95, label: "Q3" },
+        { x: 28, y: 130, label: "Q4" },
+        { x: 35, y: 160, label: "Q5" },
+      ],
+    },
+    {
+      legend: "Food & Beverage",
+      data: [
+        { x: 5, y: 60, label: "Q1" },
+        { x: 10, y: 90, label: "Q2" },
+        { x: 14, y: 105, label: "Q3" },
+        { x: 18, y: 125, label: "Q4" },
+        { x: 24, y: 150, label: "Q5" },
+        { x: 30, y: 180, label: "Q6" },
+      ],
+    },
+    {
+      legend: "Home & Garden",
+      data: [
+        { x: 6, y: 30, label: "Q1" },
+        { x: 11, y: 55, label: "Q2" },
+        { x: 16, y: 72, label: "Q3" },
+        { x: 21, y: 88, label: "Q4" },
+        { x: 27, y: 110, label: "Q5" },
+      ],
+    },
+  ],
+};
+
+export function SalesVsMarketingToast() {
+  return (
+    <Widget
+      widget={ToastScatterChartWidget({
+        data: salesVsMarketingData,
+        config: {
+          scatter: { fill: true, size: 10, strokeWidth: 0 },
+          colors: ["#3b82f6", "#f97316", "#8b5cf6", "#10b981"],
+        },
+      })}
+      width="100%"
+      height="100%"
+    />
+  );
+}
+
+const heightWeightData = {
+  datasets: [
+    {
+      legend: "Male",
+      data: [
+        { x: 170, y: 72, label: "M1" },
+        { x: 175, y: 80, label: "M2" },
+        { x: 180, y: 85, label: "M3" },
+        { x: 168, y: 68, label: "M4" },
+        { x: 183, y: 92, label: "M5" },
+        { x: 177, y: 78, label: "M6" },
+        { x: 185, y: 95, label: "M7" },
+        { x: 172, y: 74, label: "M8" },
+        { x: 190, y: 100, label: "M9" },
+      ],
+    },
+    {
+      legend: "Female",
+      data: [
+        { x: 155, y: 50, label: "F1" },
+        { x: 160, y: 55, label: "F2" },
+        { x: 165, y: 60, label: "F3" },
+        { x: 158, y: 52, label: "F4" },
+        { x: 170, y: 65, label: "F5" },
+        { x: 163, y: 58, label: "F6" },
+        { x: 168, y: 62, label: "F7" },
+        { x: 157, y: 54, label: "F8" },
+        { x: 172, y: 68, label: "F9" },
+      ],
+    },
+  ],
+};
+
+export function HeightWeightToast() {
+  return (
+    <Widget
+      widget={ToastScatterChartWidget({
+        data: heightWeightData,
+        config: {
+          scatter: { size: 8, strokeWidth: 2 },
+          colors: ["#3b82f6", "#ec4899"],
+        },
+      })}
+      width="100%"
+      height="100%"
+    />
+  );
+}
+
+const realEstateData = {
+  datasets: [
+    {
+      legend: "Downtown",
+      data: [
+        { x: 850, y: 420000, label: "Apt A" },
+        { x: 1100, y: 580000, label: "Apt B" },
+        { x: 1400, y: 720000, label: "Condo C" },
+        { x: 1800, y: 950000, label: "Loft D" },
+        { x: 2200, y: 1150000, label: "Penthouse E" },
+        { x: 950, y: 490000, label: "Studio F" },
+      ],
+    },
+    {
+      legend: "Suburbs",
+      data: [
+        { x: 1200, y: 280000, label: "House A" },
+        { x: 1600, y: 350000, label: "House B" },
+        { x: 2000, y: 420000, label: "House C" },
+        { x: 2500, y: 510000, label: "House D" },
+        { x: 3000, y: 620000, label: "House E" },
+        { x: 1800, y: 380000, label: "House F" },
+      ],
+    },
+    {
+      legend: "Waterfront",
+      data: [
+        { x: 1500, y: 650000, label: "Villa A" },
+        { x: 2000, y: 890000, label: "Villa B" },
+        { x: 2800, y: 1200000, label: "Estate C" },
+        { x: 3500, y: 1500000, label: "Estate D" },
+        { x: 1800, y: 750000, label: "Cottage E" },
+      ],
+    },
+  ],
+};
+
+export function RealEstatePriceToast() {
+  return (
+    <Widget
+      widget={ToastScatterChartWidget({
+        data: realEstateData,
+        config: {
+          scatter: { fill: true, size: 12, strokeWidth: 1 },
+          colors: ["#059669", "#d97706", "#7c3aed"],
         },
       })}
       width="100%"

@@ -1,9 +1,8 @@
 import type { AdvancedPageData } from "../types";
 
-const advancedCode = `import { AreaChart } from "@flitterjs/chart";
+const advancedCode = `import AreaChart from "./charts/area-chart";
 
 AreaChart({
-  style: "toast",
   data: { /* ... */ },
   custom: {
     line: (args, context) => {
@@ -47,4 +46,30 @@ export const advancedPage: AdvancedPageData = {
   parent: "area-chart",
   code: { basic: advancedCode },
   customElements,
+  scenarios: [
+    {
+      title: "Layered Gradients",
+      description: "Stack translucent gradient fills per series using CustomPaint with LinearGradient. Each area renderer controls its own color stops, direction, and opacity — layer semi-transparent fills to show overlap between datasets.",
+    },
+    {
+      title: "Range Highlights",
+      description: "Shade specific x-axis ranges to call out events, seasons, or anomalies. Use the plot renderer to layer Positioned rectangles at scale-mapped x-coordinates — highlight Q4 holiday season or mark outage windows in red.",
+    },
+    {
+      title: "Sparkline Mode",
+      description: "Strip axes, legends, and grid to render a minimal area fill for inline dashboard cards or table cells. Override the layout renderer to return only the dataView — produces a compact, embeddable micro-chart.",
+    },
+    {
+      title: "Animated Reveal",
+      description: "Clip the area from left to right on load using ClipRect with an AnimationController. The line renderer wraps its output in a clipping widget whose width fraction animates from 0 to 1 with a custom Curve.",
+    },
+    {
+      title: "Peak and Trough Labels",
+      description: "Automatically place labels at local maxima and minima in the dataset. The dataLabel renderer receives the value and position — use conditional logic to only render labels where the derivative changes sign.",
+    },
+    {
+      title: "Period Comparison Overlay",
+      description: "Overlay a previous period as a dashed outline on top of the current filled area. The dataView renderer receives all line widgets — add a second semi-transparent line widget with a dashed stroke for year-over-year comparison.",
+    },
+  ],
 };

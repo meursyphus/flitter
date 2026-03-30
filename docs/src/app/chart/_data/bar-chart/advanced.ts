@@ -1,9 +1,8 @@
 import type { AdvancedPageData } from "../types";
 
-const advancedCode = `import { BarChart } from "@flitterjs/chart";
+const advancedCode = `import BarChart from "./charts/bar-chart";
 
 BarChart({
-  style: "toast",
   data: { /* ... */ },
   custom: {
     bar: (args, context) => {
@@ -45,9 +44,35 @@ export const advancedPage: AdvancedPageData = {
   slug: ["bar-chart", "advanced"],
   title: "Bar Chart \u2014 Advanced",
   description:
-    "Custom renderers and headless architecture for bar charts.",
+    "Every visual element in a bar chart is a widget you can replace. Custom tooltips, conditional bar colors, click-to-drill, annotations — build exactly the visualization your product needs.",
   pageType: "advanced",
   parent: "bar-chart",
   code: { basic: advancedCode },
   customElements,
+  scenarios: [
+    {
+      title: "Custom Tooltips",
+      description: "Replace the default tooltip with a rich card showing images, sparklines, or action buttons. The tooltip slot accepts any Flitter widget — Container, Row, Column, Image, or even another chart.",
+    },
+    {
+      title: "Click-to-Drill",
+      description: "Add GestureDetector to any bar to handle clicks. Navigate from yearly overview to quarterly detail to daily breakdown. Each drill level replaces the widget tree with animated transitions via AnimationController.",
+    },
+    {
+      title: "Conditional Styling",
+      description: "Color bars based on data values or business rules. The bar renderer function receives the value, label, and full context — apply any logic to return different Container colors, borders, or gradients.",
+    },
+    {
+      title: "Custom Axis Labels",
+      description: "Replace text labels with icons, images, flag emojis, or mini-charts. The xAxisLabel and yAxisLabel renderers are widget factories — return any widget for each label position.",
+    },
+    {
+      title: "Threshold Annotations",
+      description: "Overlay horizontal target lines, colored threshold bands, or callout labels. The plot area is a Stack widget — use Positioned to place annotations at any data coordinate.",
+    },
+    {
+      title: "Real-Time Updates",
+      description: "Feed new data via setState() and the chart rebuilds its widget tree efficiently. Combine with AnimatedFractionallySizedBox for smooth bar height transitions as values change.",
+    },
+  ],
 };

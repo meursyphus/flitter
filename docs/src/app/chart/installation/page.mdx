@@ -7,6 +7,8 @@ export const metadata = {
 
 # Installation
 
+Flitter charts are source code, not a dependency. After setup, the full chart implementation lives in your project — every widget, every renderer, every type definition. There's no black box.
+
 ## Prerequisites
 
 - **Node.js** 18 or later
@@ -22,8 +24,8 @@ npx flitter-ui init
 ```
 
 This command will:
-1. Install the core rendering engine (`@meursyphus/flitter`)
-2. Install the framework adapter (`@meursyphus/flitter-react` or `@meursyphus/flitter-svelte`)
+1. Install the core rendering engine (`flitter-ui`)
+2. Install the framework adapter (`@flitterjs/react` or `@flitterjs/svelte`)
 3. Create a `flitter.config.ts` in your project root
 
 ## Add your first chart
@@ -32,10 +34,32 @@ This command will:
 npx flitter-ui add bar-chart
 ```
 
-This pulls the full chart source code into your project. You get:
-- The chart component file
-- All sub-widgets (axis, tooltip, legend, etc.)
-- Type definitions
+This generates the full source code in your project:
+
+```
+charts/
+├── bar-chart/
+│   ├── index.ts              # BarChart — the component you import
+│   ├── base/
+│   │   ├── index.ts          # Headless chart logic (scales, layout)
+│   │   └── bar-group.ts      # Bar group layout within each category
+│   └── style/
+│       ├── index.ts          # Style configuration & defaults
+│       ├── config.ts         # TypeScript types for all config options
+│       └── parts/
+│           ├── bar.ts        # Individual bar renderer — edit this to customize bars
+│           └── data-view.ts  # Data layer with tooltip overlay
+└── _styles/
+    └── ag/                   # Shared style base (generated once, reused across charts)
+        ├── index.ts
+        ├── cartesian/        # Axis, grid, labels — shared across cartesian charts
+        ├── bar-like/         # Bar-specific shared components
+        └── utils/
+```
+
+Every file is yours. Open any file, read the widget tree, change what you want. The `parts/` folder is where most visual customization happens — each file is a small widget factory you can replace entirely.
+
+Delete the CLI after install — your chart has zero runtime dependency on `flitter-ui`.
 
 ## Choose a style
 
@@ -53,7 +77,7 @@ If you don't specify a style, you'll be prompted to choose.
 ### React
 
 ```tsx
-import { Widget } from "@meursyphus/flitter-react";
+import Widget from "@flitterjs/react";
 import BarChart from "./charts/bar-chart";
 
 export default function App() {
@@ -71,7 +95,7 @@ export default function App() {
 
 ```svelte
 <script>
-  import Widget from "@meursyphus/flitter-svelte";
+  import Widget from "@flitterjs/svelte";
   import BarChart from "./charts/bar-chart";
 </script>
 

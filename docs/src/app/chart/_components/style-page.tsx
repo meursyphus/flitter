@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { StylePageData } from "../_data";
+import CodePreview from "./code-preview";
 
 export default async function StylePage({
   data,
@@ -59,6 +60,10 @@ export default async function StylePage({
       {/* Config Sections (collapsible) */}
       {configSections.length > 0 && (
         <section className="px-6 pt-6 md:px-10">
+          <p className="mb-3 text-[13px] leading-relaxed text-neutral-400">
+            All configuration is optional — the defaults are production-ready.
+            Expand to see every available property.
+          </p>
           <details className="group">
             <summary className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-neutral-900 select-none">
               <svg
@@ -119,6 +124,18 @@ export default async function StylePage({
               ))}
             </div>
           </details>
+          <p className="mt-4 text-[11px] text-neutral-400">
+            Tip: Paste{" "}
+            <a
+              href="https://ui.flitter.dev/llm/chart.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-neutral-600"
+            >
+              ui.flitter.dev/llm/chart.md
+            </a>{" "}
+            into your AI assistant to explore config options interactively.
+          </p>
         </section>
       )}
 
@@ -131,12 +148,11 @@ export default async function StylePage({
                 <h3 className="mb-3 text-sm font-semibold text-neutral-900">
                   {example.title}
                 </h3>
-                <div
-                  className="rounded-lg border border-neutral-100 bg-white p-4"
-                  style={{ height: example.height ?? 500 }}
-                >
-                  {example.chart}
-                </div>
+                <CodePreview
+                  chart={example.chart}
+                  code={example.code}
+                  height={example.height ?? 500}
+                />
               </div>
             ))}
           </div>

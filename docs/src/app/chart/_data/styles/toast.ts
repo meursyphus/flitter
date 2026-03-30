@@ -6,7 +6,7 @@ import type { ChartExample, ConfigSection, StylePageData, StyleSummary } from ".
 export const toast = {
   name: "toast",
   title: "Toast Style",
-  tagline: "Pastel tones, smooth staggered animations, hover focus effects",
+  tagline: "Clean, minimal, warm. Inspired by modern dashboard design with generous whitespace and soft colors.",
   inspiration: "Inspired by Toast UI Chart",
   reference: "https://ui.toast.com/tui-chart",
   features: [

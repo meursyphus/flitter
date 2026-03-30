@@ -1,6 +1,6 @@
 # Flitter chart generation pack for LLMs
 
-Generated: 2026-03-07
+Generated: 2026-03-30
 
 Start here:
 

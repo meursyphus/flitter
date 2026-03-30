@@ -1,9 +1,8 @@
 import type { AdvancedPageData } from "../types";
 
-const advancedCode = `import { HeatmapChart } from "@flitterjs/chart";
+const advancedCode = `import HeatmapChart from "./charts/heatmap-chart";
 
 HeatmapChart({
-  style: "toast",
   data: { /* ... */ },
   custom: {
     segment: (args, context) => {
@@ -40,4 +39,30 @@ export const advancedPage: AdvancedPageData = {
   parent: "heatmap-chart",
   code: { basic: advancedCode },
   customElements,
+  scenarios: [
+    {
+      title: "Custom Color Scales",
+      description: "Replace the default sequential color ramp with diverging, categorical, or threshold-based palettes. The segment renderer receives the raw value — apply Color.lerp between two endpoints for continuous scales, or use a switch/map for discrete category-to-color mappings.",
+    },
+    {
+      title: "Cell Labels",
+      description: "Render formatted numbers, status icons, or emoji indicators inside each cell. The segment renderer receives value, xIndex, and yIndex — return a Stack with the colored background and a centered Text widget showing the formatted value or a conditional icon.",
+    },
+    {
+      title: "Click-to-Filter",
+      description: "Click any cell to filter a linked table or companion chart. Wrap each segment in GestureDetector within the segment renderer — on click, call setState() to update a shared filter state that other widgets on the page also read.",
+    },
+    {
+      title: "Row and Column Highlights",
+      description: "Highlight an entire row or column on hover by tracking the hovered xIndex and yIndex in a StatefulWidget. The segment renderer reads the hovered indices from context and applies a brighter fill or border to all cells sharing that row or column.",
+    },
+    {
+      title: "Calendar Heatmap",
+      description: "Map dates to x/y positions for a GitHub-style contribution heatmap. Set x-axis labels to week numbers, y-axis labels to weekday abbreviations, and use the segment renderer to color each day cell by commit count or activity level.",
+    },
+    {
+      title: "Rounded and Gapped Cells",
+      description: "Replace square cells with rounded rectangles or circles for a softer look. The segment renderer returns a Container with BorderRadius and margin — add a 2px gap between cells by using Padding, creating a grid of pill-shaped or circular indicators.",
+    },
+  ],
 };

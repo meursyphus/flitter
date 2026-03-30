@@ -1,0 +1,159 @@
+[
+  {
+    "slug": "multi-chart-dashboard",
+    "title": "Multi-Chart Dashboard Composition",
+    "summary": "Compose multiple charts in one screen when one chart family cannot carry the whole story.",
+    "useWhen": [
+      "The prompt asks for overview plus breakdown plus detail",
+      "A single chart would overload encodings",
+      "Different chart families answer different sub-questions"
+    ],
+    "buildPath": [
+      "Choose one dominant chart per question instead of forcing a combo chart.",
+      "Use Column, Row, Expanded, Padding, and Stack to compose the dashboard.",
+      "Share filters or selection state through ChangeNotifierProvider when linked interactions matter."
+    ],
+    "sourcePaths": [
+      "packages/core/src/component",
+      "packages/core/src/provider",
+      "shared/chart-presets/charts"
+    ],
+    "relatedCharts": [
+      "bar-chart",
+      "line-chart",
+      "heatmap-chart",
+      "progress-chart"
+    ],
+    "docsPath": "/llm/patterns/multi-chart-dashboard.md"
+  },
+  {
+    "slug": "linked-hover-and-filter",
+    "title": "Linked Hover And Filter",
+    "summary": "Coordinate hover, legend filtering, and focus across multiple charts or panels.",
+    "useWhen": [
+      "The prompt asks for synchronized hover or shared legend filtering",
+      "One chart should highlight related data in another chart",
+      "The experience is analytical rather than purely static"
+    ],
+    "buildPath": [
+      "Move shared selection or hover into a controller rather than duplicating local state.",
+      "Use GestureDetector for pointer entry and exit.",
+      "Use providers to broadcast selection state across composed widgets."
+    ],
+    "sourcePaths": [
+      "packages/core/src/provider/ChangeNotifierProvider.ts",
+      "packages/core/src/component/GestureDetector.ts",
+      "packages/chart/src/headless"
+    ],
+    "relatedCharts": [
+      "scatter-chart",
+      "bar-chart",
+      "heatmap-chart",
+      "network-chart"
+    ],
+    "docsPath": "/llm/patterns/linked-hover-and-filter.md"
+  },
+  {
+    "slug": "controller-owned-layout",
+    "title": "Controller-Owned Layout Pattern",
+    "summary": "Use the controller to compute geometry first when the chart is fundamentally about layout.",
+    "useWhen": [
+      "The chart needs algorithmic placement, not just axis scaling",
+      "Node-link, flow, hierarchy, or diagram-like geometry is central",
+      "Visual slots are just painting the computed layout"
+    ],
+    "buildPath": [
+      "Keep geometry computation in the controller.",
+      "Keep chart.ts focused on composition and slot dispatch.",
+      "Let custom renderers paint nodes, links, sectors, or segments from precomputed layout."
+    ],
+    "sourcePaths": [
+      "packages/chart/src/headless/sankey-chart",
+      "packages/chart/src/headless/network-chart",
+      "packages/chart/src/headless/sunburst-chart",
+      "packages/chart/src/headless/treemap-chart"
+    ],
+    "relatedCharts": [
+      "sankey-chart",
+      "network-chart",
+      "sunburst-chart",
+      "treemap-chart"
+    ],
+    "docsPath": "/llm/patterns/controller-owned-layout.md"
+  },
+  {
+    "slug": "scorecard-composite",
+    "title": "Scorecard Composite Pattern",
+    "summary": "Build scorecard-like modules from chart parts plus direct Flitter primitives when no canned family fits.",
+    "useWhen": [
+      "The request sounds like ranked cards, thresholds, and hover detail",
+      "Charts and dashboard modules must coexist tightly",
+      "A canned family would force the wrong abstraction"
+    ],
+    "buildPath": [
+      "Use chart-presets only for sub-parts that still map to a real chart family.",
+      "Use Container, Column, Row, Stack, Text, and GestureDetector for the shell.",
+      "Treat the result as direct composition, not as a disguised preset chart."
+    ],
+    "sourcePaths": [
+      "packages/core/src/component",
+      "dev/llm-playground",
+      "docs/public/llm/critic-checklist.md"
+    ],
+    "relatedCharts": [
+      "progress-chart",
+      "bar-chart"
+    ],
+    "docsPath": "/llm/patterns/scorecard-composite.md"
+  },
+  {
+    "slug": "radial-kpi-composite",
+    "title": "Radial KPI Composite",
+    "summary": "Combine donut, gauge, progress, and custom paint ideas into one radial KPI experience.",
+    "useWhen": [
+      "The prompt asks for multiple bounded metrics in a radial arrangement",
+      "A simple donut or gauge is not enough on its own",
+      "The center and ring composition matter as much as the metric values"
+    ],
+    "buildPath": [
+      "Start by deciding whether any ring can stay as an existing chart family.",
+      "Use Stack, Center, and CustomPaint to compose rings and center content.",
+      "Keep each radial layer semantically separate instead of faking one giant custom chart too early."
+    ],
+    "sourcePaths": [
+      "shared/chart-presets/charts/donut-chart",
+      "shared/chart-presets/charts/gauge-chart",
+      "packages/core/src/component/CustomPaint.ts"
+    ],
+    "relatedCharts": [
+      "donut-chart",
+      "gauge-chart",
+      "progress-chart",
+      "polar-area-chart"
+    ],
+    "docsPath": "/llm/patterns/radial-kpi-composite.md"
+  },
+  {
+    "slug": "novel-data-composite",
+    "title": "Novel Data Composite",
+    "summary": "Invent a new chart-like composition when the data story does not match any canonical family.",
+    "useWhen": [
+      "The prompt explicitly rejects standard chart-library screenshots",
+      "Multiple encodings and panels belong to one coherent artifact",
+      "The semantics are closer to an application surface than a single chart"
+    ],
+    "buildPath": [
+      "Prove that the canonical families do not fit first.",
+      "Extract reusable ideas from headless charts, not just their final shapes.",
+      "Build the composition from Flitter primitives, controllers, and custom paint as needed."
+    ],
+    "sourcePaths": [
+      "packages/chart/src/headless",
+      "packages/core/src/component",
+      "packages/core/src/provider",
+      "packages/core/src/animation"
+    ],
+    "relatedCharts": [],
+    "docsPath": "/llm/patterns/novel-data-composite.md"
+  }
+]
