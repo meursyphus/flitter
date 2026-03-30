@@ -28,6 +28,7 @@ export type FlatSegment = {
 	endAngle: number;
 	color: string;
 	path: string[];
+	computedValue: number;
 };
 
 export type SunburstChartCustom<TConfig = {}> = {
@@ -35,8 +36,9 @@ export type SunburstChartCustom<TConfig = {}> = {
 	title: CustomArgs<undefined, TConfig>;
 	legend: CustomArgs<{ items: Widget[] }, TConfig>;
 	legendItem: CustomArgs<{ label: string; color: string }, TConfig>;
-	sunburst: CustomArgs<{ segments: FlatSegment[] }, TConfig>;
+	sunburst: CustomArgs<{ segments: FlatSegment[]; dataLabels: Widget[] }, TConfig>;
 	segment: CustomArgs<{ segment: FlatSegment }, TConfig>;
+	dataLabel: CustomArgs<{ segment: FlatSegment }, TConfig>;
 };
 
 export type SunburstNode = SunburstChartNode;

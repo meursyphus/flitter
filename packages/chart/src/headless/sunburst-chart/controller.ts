@@ -6,7 +6,7 @@ import type {
 	SunburstChartCustom,
 } from "./types";
 
-const DEFAULT_COLORS = [
+export const DEFAULT_COLORS = [
 	"#4e79a7",
 	"#f28e2b",
 	"#e15759",
@@ -50,6 +50,7 @@ function flattenTree(root: SunburstChartNode): FlatSegment[] {
 				endAngle,
 				color,
 				path,
+				computedValue: computeNodeValue(node),
 			});
 		}
 

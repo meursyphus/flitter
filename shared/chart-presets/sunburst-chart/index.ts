@@ -21,6 +21,7 @@ const baseDefaults: Partial<SunburstChartCustom> = {
   legendItem: Base.LegendItem,
   sunburst: Base.Sunburst,
   segment: Base.Segment,
+  dataLabel: Base.DataLabel,
 };
 
 export default function SunburstChart<TConfig = {}>({

@@ -49,3 +49,4 @@ export { default as ToastTreemapChart } from "./toast-treemap-chart";
 export { default as BulletChart } from "./bullet-chart";
 export { default as ToastBulletChart } from "./toast-bullet-chart";
 export { default as SunburstChart } from "./sunburst-chart";
+export { default as ToastSunburstChart } from "./toast-sunburst-chart";

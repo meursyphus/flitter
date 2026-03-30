@@ -84,22 +84,26 @@ class LegendItemWidget extends StatelessWidget {
 	}
 }
 
-class SunburstWidget extends StatelessWidget {
+class DataLabelWidget extends StatelessWidget {
+	#segment: any;
+	constructor({ segment }: { segment: any }) {
+		super();
+		this.#segment = segment;
+	}
 	override build(context: BuildContext): Widget {
 		const ctx = SunburstChartProvider.of(context);
-		return ctx.custom.sunburst({ segments: ctx.segments }, ctx);
+		return ctx.custom.dataLabel({ segment: this.#segment }, ctx);
 	}
 }
 
-const DEFAULT_COLORS = [
-  "#4e79a7",
-  "#f28e2b",
-  "#e15759",
-  "#76b7b2",
-  "#59a14f",
-  "#edc948",
-  "#b07aa1",
-  "#ff9da7",
-  "#9c755f",
-  "#bab0ac",
-];
+class SunburstWidget extends StatelessWidget {
+	override build(context: BuildContext): Widget {
+		const ctx = SunburstChartProvider.of(context);
+		const dataLabels = ctx.segments.map(
+			(segment) => new DataLabelWidget({ segment }),
+		);
+		return ctx.custom.sunburst({ segments: ctx.segments, dataLabels }, ctx);
+	}
+}
+
+import { DEFAULT_COLORS } from "./controller";

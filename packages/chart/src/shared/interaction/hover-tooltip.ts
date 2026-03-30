@@ -43,6 +43,7 @@ export class HoverTooltip extends StatefulWidget {
   offset: Offset;
   translation?: Offset;
   cursor: "default" | "pointer";
+  behavior?: "deferToChild" | "opaque" | "translucent";
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 
@@ -53,6 +54,7 @@ export class HoverTooltip extends StatefulWidget {
     offset = Offset.Constants.zero,
     translation,
     cursor = "default",
+    behavior,
     onMouseEnter,
     onMouseLeave,
   }: {
@@ -62,6 +64,7 @@ export class HoverTooltip extends StatefulWidget {
     offset?: Offset;
     translation?: Offset;
     cursor?: "default" | "pointer";
+    behavior?: "deferToChild" | "opaque" | "translucent";
     onMouseEnter?: () => void;
     onMouseLeave?: () => void;
   }) {
@@ -72,6 +75,7 @@ export class HoverTooltip extends StatefulWidget {
     this.offset = offset;
     this.translation = translation;
     this.cursor = cursor;
+    this.behavior = behavior;
     this.onMouseEnter = onMouseEnter;
     this.onMouseLeave = onMouseLeave;
   }
@@ -91,6 +95,7 @@ class HoverTooltipState extends State<HoverTooltip> {
       children: [
         GestureDetector({
           cursor: this.widget.cursor,
+          behavior: this.widget.behavior,
           child: this.widget.renderChild(this.hovered),
           onMouseEnter: () => {
             this.widget.onMouseEnter?.();
