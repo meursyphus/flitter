@@ -9,6 +9,11 @@ import {
   EdgeInsets,
   Text,
   TextStyle,
+  Column,
+  Row,
+  SizedBox,
+  MainAxisSize,
+  CrossAxisAlignment,
 } from "flitter-ui";
 import { BarChart } from "shared/chart";
 
@@ -26,28 +31,59 @@ export default function ExecutiveRevenueAg() {
           ],
         },
         custom: {
-          title: () =>
-            Container({
+          title: (
+            _args: undefined,
+            context: any,
+          ) => {
+            const { font, title } = context.config;
+            return Container({
               padding: EdgeInsets.only({ bottom: 8 }),
               decoration: new BoxDecoration({
                 border: new Border({
-                  bottom: new BorderSide({ color: "#0d9488", width: 2 }),
+                  bottom: new BorderSide({ color: "#2563eb", width: 2 }),
                 }),
               }),
-              child: Text("Q4 Revenue", {
-                style: new TextStyle({
-                  fontSize: 15,
-                  fontWeight: "700",
-                  color: "#1e293b",
-                }),
+              child: Column({
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row({
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text("Q4 ", {
+                        style: new TextStyle({
+                          fontFamily: title.fontFamily ?? font.family,
+                          fontSize: title.fontSize,
+                          fontWeight: "700",
+                          color: title.color,
+                        }),
+                      }),
+                      Text("Revenue", {
+                        style: new TextStyle({
+                          fontFamily: title.fontFamily ?? font.family,
+                          fontSize: title.fontSize,
+                          fontWeight: "700",
+                          color: "#2563eb",
+                        }),
+                      }),
+                    ],
+                  }),
+                  SizedBox({ height: 2 }),
+                  Text("Breakdown by stream ($M)", {
+                    style: new TextStyle({
+                      fontFamily: font.family,
+                      fontSize: 12,
+                      color: "#94a3b8",
+                    }),
+                  }),
+                ],
               }),
-            }),
+            });
+          },
         },
         config: {
-          background: "#fafafa",
           colors: { fills: ["#2563eb", "#7c3aed", "#e879f9"] },
           title: { text: "Q4 Revenue", visible: true },
-          subtitle: { text: "Breakdown by stream ($M)", visible: true },
           legend: { position: "right-top" },
           bar: { cornerRadius: 4 },
         },

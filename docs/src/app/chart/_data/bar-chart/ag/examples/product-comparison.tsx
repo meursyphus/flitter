@@ -7,6 +7,9 @@ import {
   TextStyle,
   Alignment,
   Container,
+  BoxDecoration,
+  BorderRadius,
+  EdgeInsets,
 } from "flitter-ui";
 import { BarChart } from "shared/chart";
 
@@ -16,25 +19,38 @@ export default function ProductComparisonAg() {
       widget={BarChart({
         direction: "vertical",
         data: {
-          labels: ["Battery Life", "Camera Quality", "Performance", "Customer Support", "Value for Money"],
+          labels: ["Design", "Speed", "Support"],
           datasets: [
-            { legend: "Product A", values: [88, 76, 92, 65, 70] },
-            { legend: "Product B", values: [72, 91, 68, 82, 85] },
-            { legend: "Product C", values: [81, 84, 79, 90, 62] },
+            { legend: "Ours", values: [92, 76, 88] },
+            { legend: "Competitor A", values: [68, 91, 72] },
+            { legend: "Competitor B", values: [79, 84, 65] },
           ],
         },
         custom: {
-          xAxisLabel: ({ name }: { name: string; index: number }) =>
-            Transform.rotate({
-              angle: -Math.PI / 7,
-              alignment: Alignment.center,
-              child: Text(name, {
-                style: new TextStyle({ fontSize: 11, color: "#64748b" }),
+          xAxisLabel: (
+            { name }: { name: string; index: number },
+            context: any,
+          ) => {
+            const { font, axis } = context.config;
+            return Container({
+              padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 3 }),
+              decoration: new BoxDecoration({
+                color: "#f0f9ff",
+                borderRadius: BorderRadius.circular(4),
               }),
-            }),
+              child: Text(name, {
+                style: new TextStyle({
+                  fontFamily: font.family,
+                  fontSize: axis.label.fontSize,
+                  color: "#0369a1",
+                }),
+              }),
+            });
+          },
         },
         config: {
           colors: { fills: ["#0ea5e9", "#f97316", "#8b5cf6"] },
+          title: { text: "Product Comparison", visible: true },
           bar: { cornerRadius: 3 },
         },
       })}
