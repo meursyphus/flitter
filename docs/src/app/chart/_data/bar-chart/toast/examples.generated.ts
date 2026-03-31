@@ -16,6 +16,7 @@ import _TopPerformersToast from "./examples/top-performers";
 import _WeeklySalesTrackerToast from "./examples/weekly-sales";
 
 const _BudgetVsActualToast_code = `import ToastBarChart from "./charts/toast-bar-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = ToastBarChart({
   direction: "vertical",
@@ -26,7 +27,28 @@ const chart = ToastBarChart({
       { legend: "Actual", values: [115, 142, 131, 158] },
     ],
   },
-  config: { colors: ["#0d9488", "#d4d4d4"] },
+  config: {
+    colors: ["#d4d4d4", "#0d9488"],
+    bar: { cornerRadius: 4 },
+    title: { text: "Budget vs Actual ($K)", visible: true },
+  },
+  custom: {
+    dataLabel: (
+      { value, legend }: { value: number; label: string; legend: string },
+      context: any,
+    ) => {
+      if (legend !== "Actual") return Text("", { style: new TextStyle({}) });
+      const { font } = context.config;
+      return Text(\`$\${value}K\`, {
+        style: new TextStyle({
+          fontFamily: font.family,
+          fontSize: 10,
+          fontWeight: "bold",
+          color: "#0d9488",
+        }),
+      });
+    },
+  },
 });`;
 const _ConditionalPLToast_code = `import ToastBarChart from "./charts/toast-bar-chart";
 import { Container, BoxDecoration, EdgeInsets, BorderRadius, Radius } from "flitter-ui";
@@ -177,17 +199,31 @@ const chart = ToastBarChart({
 const _PopulationByAgeToast_code = `import ToastBarChart from "./charts/toast-bar-chart";
 
 const chart = ToastBarChart({
-  direction: "horizontal",
+  direction: "vertical",
   data: {
-    labels: ["0-14", "15-24", "25-34", "35-44", "45-54", "55-64", "65+"],
+    labels: [
+      "Under\\n14",
+      "15 to\\n24",
+      "25 to\\n34",
+      "35 to\\n44",
+      "45 to\\n54",
+      "55 to\\n64",
+      "Over\\n65",
+    ],
     datasets: [
       { legend: "Male (M)", values: [9.8, 8.2, 11.4, 10.6, 9.1, 7.8, 6.5] },
       { legend: "Female (M)", values: [9.3, 7.9, 11.1, 10.9, 9.4, 8.1, 7.2] },
     ],
   },
-  config: { colors: ["#3b82f6", "#ec4899"] },
+  config: {
+    colors: ["#3b82f6", "#ec4899"],
+    title: { text: "Population Distribution by Age", visible: true },
+    legend: { position: "right-center" },
+    bar: { cornerRadius: 2 },
+  },
 });`;
 const _ProfitLossToast_code = `import ToastBarChart from "./charts/toast-bar-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = ToastBarChart({
   direction: "vertical",
@@ -198,7 +234,29 @@ const chart = ToastBarChart({
       { legend: "Operating Cash", values: [15, 22, -10, 38, -25, 19] },
     ],
   },
-  config: { colors: ["#10b981", "#ef4444"] },
+  config: {
+    colors: ["#10b981", "#ef4444"],
+    title: { text: "Quarterly P&L", visible: true },
+    grid: { color: "rgba(0,0,0,0.06)" },
+  },
+  custom: {
+    yAxisLabel: (
+      { name }: { name: string; index: number },
+      context: any,
+    ) => {
+      const { font } = context.config;
+      const val = parseFloat(name);
+      const isZero = val === 0;
+      return Text(name, {
+        style: new TextStyle({
+          fontFamily: font.family,
+          fontSize: font.size,
+          fontWeight: isZero ? "bold" : "normal",
+          color: isZero ? "#ef4444" : "#64748b",
+        }),
+      });
+    },
+  },
 });`;
 const _SalesKpiDashboardToast_code = `import ToastBarChart from "./charts/toast-bar-chart";
 
@@ -225,6 +283,7 @@ const chart = ToastBarChart({
   },
 });`;
 const _SurveyResultsToast_code = `import ToastBarChart from "./charts/toast-bar-chart";
+import { Container, BoxDecoration, EdgeInsets, BorderRadius } from "flitter-ui";
 
 const chart = ToastBarChart({
   direction: "horizontal",
@@ -239,9 +298,39 @@ const chart = ToastBarChart({
     ],
     datasets: [{ legend: "Score (%)", values: [92, 87, 78, 95, 71, 84] }],
   },
-  config: { colors: ["#f59e0b"] },
+  config: {
+    colors: ["#f59e0b"],
+    title: { text: "User Satisfaction Survey", visible: true },
+    bar: { cornerRadius: 32 },
+  },
+  custom: {
+    bar: (
+      { value }: { value: number },
+      context: any,
+    ) => {
+      return Container({
+        margin: EdgeInsets.symmetric({ horizontal: 1 }),
+        decoration: new BoxDecoration({
+          color: value >= 90 ? "#10b981" : value >= 80 ? "#f59e0b" : "#94a3b8",
+          borderRadius: BorderRadius.circular(8),
+        }),
+      });
+    },
+  },
 });`;
 const _TopPerformersToast_code = `import ToastBarChart from "./charts/toast-bar-chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  EdgeInsets,
+  Text,
+  TextStyle,
+  Column,
+  MainAxisSize,
+  CrossAxisAlignment,
+  SizedBox,
+} from "flitter-ui";
 
 const chart = ToastBarChart({
   direction: "vertical",
@@ -249,17 +338,82 @@ const chart = ToastBarChart({
     labels: ["Alice", "Bob", "Carol", "Dave", "Eve"],
     datasets: [{ legend: "Sales ($K)", values: [142, 128, 115, 98, 87] }],
   },
-  config: { colors: ["#f97316"] },
+  config: {
+    colors: ["#f97316"],
+    bar: { cornerRadius: 3 },
+    title: { text: "Top Performers", visible: true, alignment: "center" },
+  },
+  custom: {
+    title: (
+      _args: undefined,
+      context: any,
+    ) => {
+      const { font, title } = context.config;
+      return Container({
+        padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 8 }),
+        decoration: new BoxDecoration({
+          color: "#fff7ed",
+          borderRadius: BorderRadius.circular(8),
+        }),
+        child: Column({
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text("🏆 Top Performers", {
+              style: new TextStyle({
+                fontFamily: title.fontFamily ?? font.family,
+                fontSize: title.fontSize,
+                fontWeight: "700",
+                color: "#c2410c",
+              }),
+            }),
+            SizedBox({ height: 2 }),
+            Text("Monthly sales ranking", {
+              style: new TextStyle({
+                fontFamily: font.family,
+                fontSize: 11,
+                color: "#ea580c",
+              }),
+            }),
+          ],
+        }),
+      });
+    },
+  },
 });`;
 const _WeeklySalesTrackerToast_code = `import ToastBarChart from "./charts/toast-bar-chart";
+import { Transform, Text, TextStyle, Alignment } from "flitter-ui";
 
 const chart = ToastBarChart({
   direction: "vertical",
   data: {
-    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
     datasets: [{ legend: "Units Sold", values: [64, 82, 75, 93, 110, 142, 98] }],
   },
-  config: { colors: ["#6366f1"] },
+  config: {
+    colors: ["#6366f1"],
+    title: { text: "Weekly Sales Tracker", visible: true },
+    bar: { cornerRadius: 2 },
+  },
+  custom: {
+    xAxisLabel: (
+      { name }: { name: string; index: number },
+      context: any,
+    ) => {
+      const { font } = context.config;
+      return Transform.rotate({
+        angle: -Math.PI / 4,
+        alignment: Alignment.centerRight,
+        child: Text(name, {
+          style: new TextStyle({
+            fontFamily: font.family,
+            fontSize: 10,
+            color: "#64748b",
+          }),
+        }),
+      });
+    },
+  },
 });`;
 
 export const FeaturedRevenueToast = { Component: _FeaturedRevenueToast, code: _FeaturedRevenueToast_code };

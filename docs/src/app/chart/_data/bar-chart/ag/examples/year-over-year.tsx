@@ -18,6 +18,7 @@ export default function YearOverYearAg() {
         config: {
           colors: { fills: ["#64748b", "#0d9488"] },
           bar: { cornerRadius: 4 },
+          title: { text: "Year-over-Year Revenue", visible: true, position: "bottom" },
         },
       })}
       width="100%"

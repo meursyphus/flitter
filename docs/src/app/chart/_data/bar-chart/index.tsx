@@ -5,61 +5,135 @@ import { toastStyle } from "./toast";
 import { agStyle } from "./ag";
 import {
   FeaturedRevenueToast,
-  KpiCurrencyToast,
   ConditionalPLToast,
   HorizontalRankingToast,
   MonthlyRevenueToast,
+  BudgetVsActualToast,
+  ProfitLossToast,
+  SurveyResultsToast,
+  WeeklySalesTrackerToast,
+  TopPerformersToast,
+  PopulationByAgeToast,
 } from "./toast/examples.generated";
 import {
   ExecutiveRevenueAg,
   ProductComparisonAg,
+  QuarterlyEarningsAg,
+  YearOverYearAg,
+  TopCountriesAg,
+  CustomerSegmentsAg,
 } from "./ag/examples.generated";
 import { advancedPage } from "./advanced";
 
 const showcaseExamples: ShowcaseExample[] = [
   {
-    title: "Monthly Revenue",
-    subtitle: "Regional breakdown with right-side legend",
+    description:
+      "config.legend position: right-center with 3-series grouped bars and visible title.",
     style: "Toast",
     chart: <FeaturedRevenueToast.Component />,
     featured: true,
     code: FeaturedRevenueToast.code,
   },
   {
-    title: "KPI Currency Formatting",
-    subtitle: "Y-axis formatted as $K for finance dashboards",
-    style: "Toast",
-    chart: <KpiCurrencyToast.Component />,
-    code: KpiCurrencyToast.code,
-  },
-  {
-    title: "Conditional P&L",
-    subtitle: "Green/red bars based on positive/negative values",
+    description:
+      "custom.bar — returns a Container whose color switches between green and red based on the value sign.",
     style: "Toast",
     chart: <ConditionalPLToast.Component />,
     code: ConditionalPLToast.code,
   },
   {
-    title: "Horizontal Ranking",
-    subtitle: "Custom yAxisLabel with rank numbers from context.config",
+    description:
+      "custom.yAxisLabel — prepends a bold rank number using Row + Text, reading font from context.config.",
     style: "Toast",
     chart: <HorizontalRankingToast.Component />,
     height: 380,
     code: HorizontalRankingToast.code,
   },
   {
-    title: "Branded Title",
-    subtitle: "Column + Row title with highlighted text and subtitle",
+    description:
+      "config.bar cornerRadius: 32 for rounded bars. custom.bar applies score-tier colors (green ≥90, amber ≥80, gray otherwise).",
+    style: "Toast",
+    chart: <SurveyResultsToast.Component />,
+    height: 380,
+    code: SurveyResultsToast.code,
+  },
+  {
+    description:
+      "custom.yAxisLabel — highlights the zero baseline in red bold while other labels stay neutral.",
+    style: "Toast",
+    chart: <ProfitLossToast.Component />,
+    code: ProfitLossToast.code,
+  },
+  {
+    description:
+      "custom.xAxisLabel — wraps each label in Transform.rotate(−45°) for long day-of-week names.",
+    style: "Toast",
+    chart: <WeeklySalesTrackerToast.Component />,
+    code: WeeklySalesTrackerToast.code,
+  },
+  {
+    description:
+      "custom.title — centered Column with background color, emoji, and subtitle text inside a rounded Container.",
+    style: "Toast",
+    chart: <TopPerformersToast.Component />,
+    code: TopPerformersToast.code,
+  },
+  {
+    description:
+      "Label strings contain \\n for multi-line x-axis labels (e.g. \"Under\\n14\"). config.legend position: right-center.",
+    style: "Toast",
+    chart: <PopulationByAgeToast.Component />,
+    code: PopulationByAgeToast.code,
+  },
+  {
+    description:
+      "custom.dataLabel — renders \"$120K\" above Actual bars only; returns empty Text for Budget series.",
+    style: "Toast",
+    chart: <BudgetVsActualToast.Component />,
+    code: BudgetVsActualToast.code,
+  },
+  {
+    description:
+      "custom.title — Column with Row for colored keyword, border-bottom accent, and gray subtitle.",
     style: "AG",
     chart: <ExecutiveRevenueAg.Component />,
     code: ExecutiveRevenueAg.code,
   },
   {
-    title: "Styled Labels",
-    subtitle: "X-axis labels with background badges using config font",
+    description:
+      "custom.xAxisLabel — wraps each label in a Container with light-blue background and rounded corners.",
     style: "AG",
     chart: <ProductComparisonAg.Component />,
     code: ProductComparisonAg.code,
+  },
+  {
+    description:
+      "config.bar cornerRadius: 32 for rounded bars. Extra padding for breathing room.",
+    style: "AG",
+    chart: <QuarterlyEarningsAg.Component />,
+    code: QuarterlyEarningsAg.code,
+  },
+  {
+    description:
+      "config.title position: bottom — places the chart title below the plot area.",
+    style: "AG",
+    chart: <YearOverYearAg.Component />,
+    code: YearOverYearAg.code,
+  },
+  {
+    description:
+      "custom.yAxisLabel — prepends country flag emoji from a lookup map using Row + Text.",
+    style: "AG",
+    chart: <TopCountriesAg.Component />,
+    height: 420,
+    code: TopCountriesAg.code,
+  },
+  {
+    description:
+      "custom.bar — applies BoxShadow glow on negative (churn) values. Per-dataset color via context.legends index.",
+    style: "AG",
+    chart: <CustomerSegmentsAg.Component />,
+    code: CustomerSegmentsAg.code,
   },
 ];
 

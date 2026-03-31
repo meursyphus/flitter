@@ -10,6 +10,9 @@ import _TopCountriesAg from "./examples/top-countries";
 import _YearOverYearAg from "./examples/year-over-year";
 
 const _CustomerSegmentsAg_code = `import BarChart from "./charts/bar-chart";
+import { Container, BoxDecoration, EdgeInsets, BorderRadius, BoxShadow } from "flitter-ui";
+
+const datasetColors = ["#10b981", "#3b82f6", "#ef4444"];
 
 const chart = BarChart({
   direction: "vertical",
@@ -22,8 +25,29 @@ const chart = BarChart({
     ],
   },
   config: {
-    colors: { fills: ["#10b981", "#3b82f6", "#ef4444"] },
+    colors: { fills: datasetColors },
     bar: { cornerRadius: 4 },
+    title: { text: "Customer Segments", visible: true },
+  },
+  custom: {
+    bar: (
+      { value, legend }: { value: number; label: string; legend: string; index: number },
+      context: any,
+    ) => {
+      const idx = context.legends.indexOf(legend);
+      const color = datasetColors[idx] ?? "#94a3b8";
+      const isChurn = value < 0;
+      return Container({
+        margin: EdgeInsets.symmetric({ horizontal: 1 }),
+        decoration: new BoxDecoration({
+          color: color,
+          borderRadius: BorderRadius.circular(4),
+          boxShadow: isChurn
+            ? [new BoxShadow({ color: "rgba(239,68,68,0.3)", blurRadius: 6 })]
+            : [],
+        }),
+      });
+    },
   },
 });`;
 const _ExecutiveRevenueAg_code = `import {
@@ -191,10 +215,25 @@ const chart = BarChart({
   },
   config: {
     colors: { fills: ["#2563eb", "#7c3aed"] },
-    bar: { cornerRadius: 4 },
+    bar: { cornerRadius: 32 },
+    padding: { top: 24, right: 24, bottom: 24, left: 24 },
   },
 });`;
 const _TopCountriesAg_code = `import BarChart from "./charts/bar-chart";
+import { Text, TextStyle, Row, SizedBox, MainAxisSize } from "flitter-ui";
+
+const flags: Record<string, string> = {
+  "United States": "🇺🇸",
+  China: "🇨🇳",
+  Japan: "🇯🇵",
+  Germany: "🇩🇪",
+  India: "🇮🇳",
+  "United Kingdom": "🇬🇧",
+  France: "🇫🇷",
+  Brazil: "🇧🇷",
+  Canada: "🇨🇦",
+  "South Korea": "🇰🇷",
+};
 
 const chart = BarChart({
   direction: "horizontal",
@@ -222,6 +261,31 @@ const chart = BarChart({
     colors: { fills: ["#0284c7"] },
     bar: { cornerRadius: 3 },
   },
+  custom: {
+    yAxisLabel: (
+      { name }: { name: string; index: number },
+      context: any,
+    ) => {
+      const { font } = context.config;
+      const flag = flags[name] ?? "";
+      return Row({
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(flag, {
+            style: new TextStyle({ fontSize: 14 }),
+          }),
+          SizedBox({ width: 4 }),
+          Text(name, {
+            style: new TextStyle({
+              fontFamily: font.family,
+              fontSize: font.size,
+              color: "#334155",
+            }),
+          }),
+        ],
+      });
+    },
+  },
 });`;
 const _YearOverYearAg_code = `import BarChart from "./charts/bar-chart";
 
@@ -237,6 +301,7 @@ const chart = BarChart({
   config: {
     colors: { fills: ["#64748b", "#0d9488"] },
     bar: { cornerRadius: 4 },
+    title: { text: "Year-over-Year Revenue", visible: true, position: "bottom" },
   },
 });`;
 

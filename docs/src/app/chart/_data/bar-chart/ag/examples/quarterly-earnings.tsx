@@ -17,7 +17,8 @@ export default function QuarterlyEarningsAg() {
         },
         config: {
           colors: { fills: ["#2563eb", "#7c3aed"] },
-          bar: { cornerRadius: 4 },
+          bar: { cornerRadius: 32 },
+          padding: { top: 24, right: 24, bottom: 24, left: 24 },
         },
       })}
       width="100%"

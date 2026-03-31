@@ -18,6 +18,8 @@ export default async function OverviewPage({
     hasAdvanced,
   } = data;
 
+  const styleNames = styles?.map((s) => s.title.toLowerCase()) ?? [];
+
   const hasShowcase = showcaseExamples && showcaseExamples.length > 0;
 
   return (
@@ -32,35 +34,17 @@ export default async function OverviewPage({
         </p>
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <div className="inline-flex items-center gap-2 rounded-full bg-neutral-50 border border-neutral-200 px-3 py-1.5">
+          <div className="inline-flex flex-col gap-1 rounded-lg bg-neutral-50 border border-neutral-200 px-3 py-2">
             <code className="text-xs text-neutral-600">
               <span className="text-teal-500">$</span> npx flitter-ui add {slug[0]}
             </code>
+            {styleNames.length > 0 && (
+              <code className="text-[11px] text-neutral-400">
+                options: {styleNames.map((s) => `--${s}`).join(", ")}
+              </code>
+            )}
           </div>
 
-          {styles && styles.length > 0 && (
-            <>
-              {styles.map((style) => (
-                <Link
-                  key={style.slug.join("/")}
-                  href={`/chart/${style.slug.join("/")}`}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3.5 py-1.5 text-xs font-medium text-neutral-600 transition-all hover:border-teal-300 hover:text-teal-700 hover:shadow-sm"
-                >
-                  {style.title}
-                  <svg
-                    width="10"
-                    height="10"
-                    viewBox="0 0 12 12"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  >
-                    <path d="M4.5 2.5L8 6l-3.5 3.5" />
-                  </svg>
-                </Link>
-              ))}
-            </>
-          )}
           {hasAdvanced && (
             <Link
               href={`/chart/${slug[0]}/advanced`}

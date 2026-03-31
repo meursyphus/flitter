@@ -56,14 +56,16 @@ export type StyleSummary = {
 };
 
 export type ShowcaseExample = {
-  /** Display title, e.g. "Monthly Revenue" */
-  title: string;
-  /** Short subtitle describing the use case */
-  subtitle: string;
   /** Style variant badge label */
   style: "Toast" | "AG";
   /** The chart component to render */
   chart: React.ReactNode;
+  /** Display title (legacy, optional) */
+  title?: string;
+  /** Short subtitle (legacy, optional) */
+  subtitle?: string;
+  /** 1–2 line description of what was customized or configured */
+  description?: string;
   /** Card height in px (default 360) */
   height?: number;
   /** When true, rendered as a full-width hero card above the grid */

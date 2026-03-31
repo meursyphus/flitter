@@ -4,15 +4,50 @@ import { useState, useEffect } from "react";
 import { codeToHtml } from "shiki";
 
 type ShowcaseItem = {
-  title: string;
-  subtitle: string;
   style: "Toast" | "AG";
   chart: React.ReactNode;
+  title?: string;
+  subtitle?: string;
+  description?: string;
   height?: number;
   featured?: boolean;
   fullWidth?: boolean;
   code?: string;
 };
+
+function CardCaption({ example }: { example: ShowcaseItem }) {
+  if (example.description) {
+    return (
+      <div className="px-5 py-3 border-t border-neutral-100">
+        <span className="mr-2 inline-block rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] font-semibold text-neutral-500 uppercase tracking-wide">
+          {example.style}
+        </span>
+        <span className="text-[13px] text-neutral-500">
+          {example.description}
+        </span>
+      </div>
+    );
+  }
+  if (example.title) {
+    return (
+      <div className="px-5 py-3 border-t border-neutral-100">
+        <span className="mr-2 inline-block rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] font-semibold text-neutral-500 uppercase tracking-wide">
+          {example.style}
+        </span>
+        <span className="text-[13px] font-medium text-neutral-700">
+          {example.title}
+        </span>
+        {example.subtitle && (
+          <span className="text-[13px] text-neutral-400">
+            {" — "}
+            {example.subtitle}
+          </span>
+        )}
+      </div>
+    );
+  }
+  return null;
+}
 
 function CodeExpandSection({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
@@ -104,11 +139,12 @@ export default function ShowcaseGallery({
             <div
               className="h-full w-full rounded-lg bg-neutral-50/50"
               role="img"
-              aria-label={featuredExample.title}
+              aria-label={featuredExample.description ?? featuredExample.title}
             >
               {featuredExample.chart}
             </div>
           </div>
+          <CardCaption example={featuredExample} />
           {featuredExample.code && <CodeExpandSection code={featuredExample.code} />}
         </div>
       )}
@@ -117,7 +153,7 @@ export default function ShowcaseGallery({
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {gridExamples.map((example, i) => (
           <div
-            key={`${i}-${example.title}`}
+            key={`${i}-${example.description ?? example.title}`}
             className={`group overflow-hidden rounded-xl border border-neutral-100 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] hover:border-neutral-200 hover:shadow-md animate-fade-up${
               example.fullWidth ? " lg:col-span-2" : ""
             }`}
@@ -130,11 +166,12 @@ export default function ShowcaseGallery({
               <div
                 className="h-full w-full rounded-lg bg-neutral-50/50"
                 role="img"
-                aria-label={example.title}
+                aria-label={example.description ?? example.title}
               >
                 {example.chart}
               </div>
             </div>
+            <CardCaption example={example} />
             {example.code && <CodeExpandSection code={example.code} />}
           </div>
         ))}

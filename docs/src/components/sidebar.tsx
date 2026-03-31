@@ -97,7 +97,7 @@ function ChildrenGroup({
               "block py-1 pl-3 text-[12.5px] transition-colors",
               isActive
                 ? "border-l-2 border-teal-500 -ml-px font-medium text-teal-700"
-                : "text-neutral-400 hover:text-neutral-900"
+                : "text-neutral-500 hover:text-neutral-900"
             )}
           >
             {item.title}
