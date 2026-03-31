@@ -4,23 +4,25 @@ import { agSummary } from "../styles/ag";
 import { toastStyle } from "./toast";
 import { agStyle } from "./ag";
 import {
-  BasicHeatmapChart,
-  ServerLoadHeatmap,
-  CorrelationMatrixHeatmap,
-  GithubActivityHeatmap,
-  SalesByRegionHeatmap,
-  WebsiteClicksHeatmap,
-  ClassroomAttendanceHeatmap,
-  EnergyUsageHeatmap,
-  SkillMatrixHeatmap,
-  CustomerJourneyHeatmap,
+  BasicHeatmapToast,
+  ServerLoadToast,
+  CorrelationMatrixToast,
+  GithubActivityToast,
+  SalesByRegionToast,
+  WebsiteClicksToast,
+  ClassroomAttendanceToast,
+  EnergyUsageToast,
+  SkillMatrixToast,
+  CustomerJourneyToast,
+  ActivityCalendarToast,
 } from "./toast/examples";
 import {
-  BasicAgHeatmapChart,
-  ServerLoadAgHeatmap,
-  CorrelationMatrixAgHeatmap,
-  GithubActivityAgHeatmap,
-  SalesByRegionAgHeatmap,
+  BasicHeatmapAg,
+  ServerLoadAg,
+  CorrelationMatrixAg,
+  GithubActivityAg,
+  SalesByRegionAg,
+  ServerLoadMonitorAg,
 } from "./ag/examples";
 import { advancedPage } from "./advanced";
 
@@ -29,7 +31,7 @@ const showcaseExamples: ShowcaseExample[] = [
     title: "Weekly Temperature Pattern",
     subtitle: "Average temperatures by day of week across 12 months",
     style: "Toast" as const,
-    chart: <BasicHeatmapChart />,
+    chart: <BasicHeatmapToast />,
     featured: true,
     height: 360,
     code: `import Widget from "@flitterjs/react";
@@ -58,7 +60,7 @@ const chart = ToastHeatmapChart({
     title: "Server Load Monitor",
     subtitle: "CPU utilization by hour of day across a full week",
     style: "AG" as const,
-    chart: <ServerLoadAgHeatmap />,
+    chart: <ServerLoadAg />,
     height: 360,
     code: `import Widget from "@flitterjs/react";
 import HeatmapChart from "./charts/heatmap-chart";
@@ -86,7 +88,7 @@ const chart = HeatmapChart({
     title: "Correlation Matrix",
     subtitle: "Feature correlation across 6 web analytics metrics",
     style: "Toast" as const,
-    chart: <CorrelationMatrixHeatmap />,
+    chart: <CorrelationMatrixToast />,
     height: 360,
     code: `import Widget from "@flitterjs/react";
 import ToastHeatmapChart from "./charts/toast-heatmap-chart";
@@ -115,7 +117,7 @@ const chart = ToastHeatmapChart({
     title: "Contribution Activity",
     subtitle: "GitHub-style sparse activity data over 12 months",
     style: "AG" as const,
-    chart: <GithubActivityAgHeatmap />,
+    chart: <GithubActivityAg />,
     height: 360,
     code: `import Widget from "@flitterjs/react";
 import HeatmapChart from "./charts/heatmap-chart";
@@ -143,7 +145,7 @@ const chart = HeatmapChart({
     title: "Sales by Region",
     subtitle: "Product category revenue intensity across 5 global regions",
     style: "Toast" as const,
-    chart: <SalesByRegionHeatmap />,
+    chart: <SalesByRegionToast />,
     height: 360,
     code: `import Widget from "@flitterjs/react";
 import ToastHeatmapChart from "./charts/toast-heatmap-chart";
@@ -171,7 +173,7 @@ const chart = ToastHeatmapChart({
     title: "Website Click Density",
     subtitle: "Page section clicks by time of day revealing peak engagement zones",
     style: "AG" as const,
-    chart: <WebsiteClicksHeatmap />,
+    chart: <WebsiteClicksToast />,
     height: 360,
     code: `import Widget from "@flitterjs/react";
 import HeatmapChart from "./charts/heatmap-chart";
@@ -199,7 +201,7 @@ const chart = HeatmapChart({
     title: "Classroom Attendance",
     subtitle: "Student attendance rates over an 8-week course",
     style: "Toast" as const,
-    chart: <ClassroomAttendanceHeatmap />,
+    chart: <ClassroomAttendanceToast />,
     height: 360,
     code: `import Widget from "@flitterjs/react";
 import ToastHeatmapChart from "./charts/toast-heatmap-chart";
@@ -228,7 +230,7 @@ const chart = ToastHeatmapChart({
     title: "Home Energy Usage",
     subtitle: "Power consumption by room and time of day",
     style: "AG" as const,
-    chart: <EnergyUsageHeatmap />,
+    chart: <EnergyUsageToast />,
     height: 360,
     code: `import Widget from "@flitterjs/react";
 import HeatmapChart from "./charts/heatmap-chart";
@@ -254,7 +256,7 @@ const chart = HeatmapChart({
     title: "Team Skill Matrix",
     subtitle: "Proficiency levels of 5 team members across 6 technologies",
     style: "Toast" as const,
-    chart: <SkillMatrixHeatmap />,
+    chart: <SkillMatrixToast />,
     height: 360,
     code: `import Widget from "@flitterjs/react";
 import ToastHeatmapChart from "./charts/toast-heatmap-chart";
@@ -282,7 +284,7 @@ const chart = ToastHeatmapChart({
     title: "Customer Journey Funnel",
     subtitle: "Conversion rates by acquisition channel and funnel stage",
     style: "AG" as const,
-    chart: <CustomerJourneyHeatmap />,
+    chart: <CustomerJourneyToast />,
     height: 360,
     code: `import Widget from "@flitterjs/react";
 import HeatmapChart from "./charts/heatmap-chart";
@@ -304,6 +306,68 @@ const chart = HeatmapChart({
 
 <Widget widget={chart} width="600px" height="400px" />`,
   },
+  {
+    title: "Activity Calendar",
+    subtitle: "GitHub-style contribution calendar with weekly breakdown",
+    style: "Toast" as const,
+    chart: <ActivityCalendarToast />,
+    height: 360,
+    code: `import Widget from "@flitterjs/react";
+import ToastHeatmapChart from "./charts/toast-heatmap-chart";
+
+const chart = ToastHeatmapChart({
+  data: {
+    xLabels: ["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8", "W9", "W10", "W11", "W12"],
+    yLabels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    values: [
+      [0, 3, 1, 0, 5, 2, 4, 0, 1, 6, 3, 0],
+      [2, 0, 4, 1, 0, 7, 0, 3, 5, 0, 2, 1],
+      [1, 5, 0, 3, 2, 0, 6, 1, 0, 4, 0, 3],
+      [0, 2, 3, 0, 4, 1, 0, 5, 2, 0, 7, 0],
+      [3, 0, 2, 5, 0, 3, 1, 0, 4, 2, 0, 5],
+      [0, 1, 0, 0, 1, 0, 0, 2, 0, 1, 0, 0],
+      [0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+    ],
+  },
+  config: {
+    title: { text: "Contributions", visible: true },
+    heatmap: { colorRange: ["#ebedf0", "#9be9a8", "#216e39"], segment: { gap: 2 } },
+    padding: { top: 10, right: 10, bottom: 10, left: 10 },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
+    title: "Server Load Monitor",
+    subtitle: "Infrastructure utilization across 6 servers by time slot",
+    style: "AG" as const,
+    chart: <ServerLoadMonitorAg />,
+    height: 360,
+    code: `import Widget from "@flitterjs/react";
+import HeatmapChart from "./charts/heatmap-chart";
+
+const chart = HeatmapChart({
+  data: {
+    xLabels: ["00", "04", "08", "12", "16", "20"],
+    yLabels: ["web-01", "web-02", "api-01", "api-02", "db-01", "cache"],
+    values: [
+      [15, 8, 72, 85, 68, 30],
+      [12, 6, 78, 90, 72, 25],
+      [20, 10, 65, 80, 55, 35],
+      [18, 9, 70, 82, 60, 32],
+      [40, 25, 88, 95, 82, 50],
+      [8, 4, 45, 60, 38, 15],
+    ],
+  },
+  config: {
+    title: { text: "Server Load", visible: true },
+    background: "#111827",
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
 ];
 
 export const pages: ChartModule = [
@@ -316,8 +380,8 @@ export const pages: ChartModule = [
     hasAdvanced: true,
     showcaseExamples,
     styles: [
-      toastSummary("heatmap-chart", <BasicHeatmapChart />),
-      agSummary("heatmap-chart", <BasicAgHeatmapChart />),
+      toastSummary("heatmap-chart", <BasicHeatmapToast />),
+      agSummary("heatmap-chart", <BasicHeatmapAg />),
     ],
   },
   toastStyle,

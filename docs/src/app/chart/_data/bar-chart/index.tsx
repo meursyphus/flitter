@@ -11,6 +11,8 @@ import {
   PopulationByAgeToast,
   WeeklySalesTrackerToast,
   TopPerformersToast,
+  SalesKpiDashboardToast,
+  ConditionalPLToast,
 } from "./toast/examples";
 import {
   QuarterlyEarningsAg,
@@ -19,6 +21,7 @@ import {
   TopCountriesAg,
   CustomerSegmentsAg,
   NegativePLAg,
+  ExecutiveRevenueAg,
 } from "./ag/examples";
 import { advancedPage } from "./advanced";
 
@@ -335,6 +338,104 @@ const chart = BarChart({
   config: {
     colors: { fills: ["#10b981", "#3b82f6", "#ef4444"] },
     bar: { cornerRadius: 4 },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  // --- New examples ---
+  {
+    title: "Sales KPI Dashboard",
+    subtitle: "Regional sales with currency-formatted axis",
+    style: "Toast",
+    chart: <SalesKpiDashboardToast />,
+    code: `import Widget from "@flitterjs/react";
+import ToastBarChart from "./charts/toast-bar-chart";
+
+const chart = ToastBarChart({
+  direction: "vertical",
+  data: {
+    labels: ["West", "East", "South", "North"],
+    datasets: [
+      { legend: "Closed", values: [82, 67, 54, 71] },
+      { legend: "Pipeline", values: [45, 38, 62, 29] },
+    ],
+  },
+  config: {
+    colors: ["#0d9488", "#a7f3d0"],
+    bar: { cornerRadius: 3 },
+    axis: {
+      label: {
+        format: (name, _index, axis) =>
+          axis === "y" ? \`$\${name}K\` : name,
+      },
+    },
+    grid: { color: "rgba(0,0,0,0.04)" },
+    padding: { top: 16, right: 24, bottom: 16, left: 24 },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
+    title: "Executive Revenue Summary",
+    subtitle: "Q4 breakdown with title, subtitle, and right legend",
+    style: "AG",
+    chart: <ExecutiveRevenueAg />,
+    code: `import Widget from "@flitterjs/react";
+import BarChart from "./charts/bar-chart";
+
+const chart = BarChart({
+  direction: "vertical",
+  data: {
+    labels: ["Oct", "Nov", "Dec"],
+    datasets: [
+      { legend: "Product", values: [4.8, 5.2, 6.1] },
+      { legend: "Services", values: [2.1, 2.4, 2.9] },
+      { legend: "Licensing", values: [1.3, 1.1, 1.5] },
+    ],
+  },
+  config: {
+    background: "#fafafa",
+    colors: { fills: ["#2563eb", "#7c3aed", "#e879f9"] },
+    title: { text: "Q4 Revenue", visible: true },
+    subtitle: { text: "Breakdown by stream ($M)", visible: true },
+    legend: { position: "right-top" },
+    bar: { cornerRadius: 4 },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
+    title: "Conditional P&L",
+    subtitle: "Custom bar colors based on positive/negative values",
+    style: "Toast",
+    chart: <ConditionalPLToast />,
+    code: `import Widget from "@flitterjs/react";
+import ToastBarChart from "./charts/toast-bar-chart";
+import { Container, BoxDecoration, EdgeInsets } from "flitter-core";
+
+const chart = ToastBarChart({
+  direction: "vertical",
+  data: {
+    labels: ["Q1", "Q2", "Q3", "Q4"],
+    datasets: [
+      { legend: "Net Income ($K)", values: [120, -45, 85, -60] },
+    ],
+  },
+  config: {
+    colors: ["#10b981"],
+    bar: { cornerRadius: 3 },
+  },
+  custom: {
+    bar: ({ value }) =>
+      Container({
+        margin: EdgeInsets.symmetric({ horizontal: 1 }),
+        decoration: new BoxDecoration({
+          color: value >= 0 ? "#10b981" : "#ef4444",
+        }),
+      }),
   },
 });
 

@@ -40,7 +40,7 @@ const multiMonthData = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Charts/CandlestickChart/Toast",
+  title: "In-Review/CandlestickChart/Toast",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {

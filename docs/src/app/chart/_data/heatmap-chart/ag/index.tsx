@@ -1,10 +1,10 @@
 import { agStylePage } from "../../styles/ag";
 import {
-  BasicAgHeatmapChart,
-  ServerLoadAgHeatmap,
-  CorrelationMatrixAgHeatmap,
-  GithubActivityAgHeatmap,
-  SalesByRegionAgHeatmap,
+  BasicHeatmapAg,
+  ServerLoadAg,
+  CorrelationMatrixAg,
+  GithubActivityAg,
+  SalesByRegionAg,
 } from "./examples";
 
 const heatmapConfigSections = [
@@ -23,7 +23,7 @@ export const agStyle = agStylePage("heatmap-chart", {
   examples: [
     {
       title: "Basic Heatmap",
-      chart: <BasicAgHeatmapChart />,
+      chart: <BasicHeatmapAg />,
       code: `import HeatmapChart from "./charts/heatmap-chart";
 import Widget from "@flitterjs/react";
 
@@ -47,7 +47,7 @@ const chart = HeatmapChart({
     },
     {
       title: "Server Load",
-      chart: <ServerLoadAgHeatmap />,
+      chart: <ServerLoadAg />,
       code: `import HeatmapChart from "./charts/heatmap-chart";
 import Widget from "@flitterjs/react";
 
@@ -71,7 +71,7 @@ const chart = HeatmapChart({
     },
     {
       title: "Correlation Matrix",
-      chart: <CorrelationMatrixAgHeatmap />,
+      chart: <CorrelationMatrixAg />,
       code: `import HeatmapChart from "./charts/heatmap-chart";
 import Widget from "@flitterjs/react";
 
@@ -94,7 +94,7 @@ const chart = HeatmapChart({
     },
     {
       title: "Activity Tracker",
-      chart: <GithubActivityAgHeatmap />,
+      chart: <GithubActivityAg />,
       code: `import HeatmapChart from "./charts/heatmap-chart";
 import Widget from "@flitterjs/react";
 
@@ -118,7 +118,7 @@ const chart = HeatmapChart({
     },
     {
       title: "Sales by Region",
-      chart: <SalesByRegionAgHeatmap />,
+      chart: <SalesByRegionAg />,
       code: `import HeatmapChart from "./charts/heatmap-chart";
 import Widget from "@flitterjs/react";
 

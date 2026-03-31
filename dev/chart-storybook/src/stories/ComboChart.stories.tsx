@@ -23,7 +23,7 @@ const areaOverlayData = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Charts/ComboChart/Ag",
+  title: "TODO/ComboChart/Ag",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {

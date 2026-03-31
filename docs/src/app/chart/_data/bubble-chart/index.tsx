@@ -10,6 +10,7 @@ import {
   MarketAnalysisToastBubble,
   CityComparisonToastBubble,
   StartupFundingToastBubble,
+  MarketOpportunityToastBubble,
 } from "./toast/examples";
 import {
   DefaultAgBubbleChart,
@@ -17,6 +18,7 @@ import {
   TechStackAgBubble,
   ProjectPortfolioAgBubble,
   HealthMetricsAgBubble,
+  DarkAnalysisAgBubble,
 } from "./ag/examples";
 import { advancedPage } from "./advanced";
 
@@ -146,6 +148,44 @@ const chart = ToastBubbleChart({
 <Widget widget={chart} width="600px" height="400px" />`,
   },
   {
+    title: "Market Opportunity Map",
+    subtitle: "Revenue potential vs growth rate, bubble = TAM",
+    style: "Toast" as const,
+    chart: <MarketOpportunityToastBubble />,
+    featured: true,
+    height: 360,
+    code: `import Widget from "@flitterjs/react";
+import ToastBubbleChart from "./charts/toast-bubble-chart";
+
+const chart = ToastBubbleChart({
+  data: {
+    datasets: [
+      { legend: "Enterprise", data: [
+        { x: 520, y: 12, value: 4800, label: "ERP Systems" },
+        { x: 340, y: 18, value: 3200, label: "CRM Platforms" },
+        { x: 180, y: 25, value: 1500, label: "HR Tech" },
+      ]},
+      { legend: "Consumer", data: [
+        { x: 680, y: 8, value: 6200, label: "E-commerce" },
+        { x: 420, y: 22, value: 2800, label: "Streaming" },
+      ]},
+      { legend: "Infrastructure", data: [
+        { x: 290, y: 15, value: 5500, label: "Cloud Infra" },
+        { x: 110, y: 40, value: 1200, label: "Edge Computing" },
+      ]},
+    ],
+  },
+  config: {
+    title: { text: "Market Sizing", visible: true },
+    legend: { position: "right-center" },
+    bubble: { minRadius: 10, maxRadius: 50, opacity: 0.55 },
+    colors: ["#1e40af", "#9333ea", "#0891b2"],
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
     title: "Startup Funding Rounds",
     subtitle: "Funding stage vs valuation, bubble = employee count",
     style: "Toast" as const,
@@ -255,6 +295,51 @@ const chart = BubbleChart({
       strokes: ["#3b82f6", "#10b981", "#f59e0b"],
     },
     grid: { dash: [4, 4] },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
+    title: "Dark Analysis Dashboard",
+    subtitle: "Quarterly metrics on a dark canvas for analyst workflows",
+    style: "AG" as const,
+    chart: <DarkAnalysisAgBubble />,
+    featured: true,
+    height: 360,
+    code: `import Widget from "@flitterjs/react";
+import BubbleChart from "./charts/bubble-chart";
+
+const chart = BubbleChart({
+  data: {
+    datasets: [
+      { legend: "Revenue", data: [
+        { x: 15, y: 82, value: 920, label: "Q1 North" },
+        { x: 28, y: 74, value: 1400, label: "Q2 North" },
+        { x: 42, y: 91, value: 1850, label: "Q3 North" },
+      ]},
+      { legend: "Expenses", data: [
+        { x: 12, y: 65, value: 680, label: "Q1 Ops" },
+        { x: 25, y: 58, value: 1100, label: "Q2 Ops" },
+      ]},
+      { legend: "Profit", data: [
+        { x: 20, y: 45, value: 240, label: "Q1 Net" },
+        { x: 45, y: 60, value: 1100, label: "Q3 Net" },
+      ]},
+    ],
+  },
+  config: {
+    background: "#0f172a",
+    bubble: { minRadius: 8, maxRadius: 40, opacity: 0.7 },
+    colors: {
+      fills: ["#38bdf8", "#f472b6", "#a3e635"],
+      strokes: ["#38bdf8", "#f472b6", "#a3e635"],
+    },
+    axis: {
+      x: { color: "#94a3b8", tick: { color: "#475569" } },
+      y: { color: "#94a3b8", tick: { color: "#475569" } },
+    },
+    grid: { color: "#1e293b", dash: [3, 3] },
   },
 });
 

@@ -3,7 +3,7 @@ import {
   DefaultToastScatterChart,
   FilledToastScatterChart,
   LargeToastScatterChart,
-} from "./examples";
+} from "./examples/index";
 
 const scatterConfigSections = [
   {

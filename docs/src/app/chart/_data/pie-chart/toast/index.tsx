@@ -1,6 +1,12 @@
 import type { StylePageData, ConfigSection } from "../../types";
 import { toast } from "../../styles/toast";
-import { BasicPieChart, DonutPieChart, MarketSharePieChart, ExpenseBreakdownPieChart } from "./examples";
+import {
+  BasicPieChart,
+  DonutPieChart,
+  MarketSharePieChart,
+  ExpenseBreakdownPieChart,
+  BudgetDonutDashboardPie,
+} from "./examples";
 
 const pieConfigSections: ConfigSection[] = [
   {
@@ -170,6 +176,31 @@ const chart = ToastPieChart({
   },
   config: {
     pie: { innerRadiusRatio: 0.4 },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+    },
+    {
+      title: "Budget Donut Dashboard",
+      chart: <BudgetDonutDashboardPie />,
+      code: `import ToastPieChart from "./charts/toast-pie-chart";
+import Widget from "@flitterjs/react";
+
+const chart = ToastPieChart({
+  data: {
+    datasets: [
+      { name: "Payroll", value: 42 },
+      { name: "Infrastructure", value: 18 },
+      { name: "Marketing", value: 15 },
+      { name: "R&D", value: 12 },
+      { name: "Legal", value: 7 },
+      { name: "Misc", value: 6 },
+    ],
+  },
+  config: {
+    legend: { position: "right-center" },
+    pie: { innerRadiusRatio: 0.6 },
   },
 });
 

@@ -14,6 +14,7 @@ import {
   CompanyCultureRadar,
   NutritionProfileRadar,
   FrameworkComparisonRadar,
+  TeamPerformanceCardToast,
 } from "./toast/examples";
 import {
   BasicAgRadarChart,
@@ -21,6 +22,7 @@ import {
   ProductReviewAgRadar,
   TeamPerformanceAgRadar,
   AthleteProfileAgRadar,
+  AssessmentOverviewAg,
 } from "./ag/examples";
 import { advancedPage } from "./advanced";
 
@@ -332,6 +334,60 @@ const chart = ToastRadarChart({
   config: {
     colors: ["#61dafb", "#42b883", "#ff3e00"],
     radar: { fillOpacity: 0.15, strokeWidth: 2.5 },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  // Toast — NEW
+  {
+    title: "Team Performance Card",
+    subtitle: "HR review card comparing quarterly performance across 5 competencies",
+    style: "Toast" as const,
+    chart: <TeamPerformanceCardToast />,
+    height: 400,
+    code: `import Widget from "@flitterjs/react";
+import ToastRadarChart from "./charts/toast-radar-chart";
+
+const chart = ToastRadarChart({
+  data: {
+    labels: ["Execution", "Collaboration", "Initiative", "Reliability", "Growth"],
+    datasets: [
+      { legend: "Q4 Review", values: [88, 92, 75, 95, 80] },
+      { legend: "Q3 Review", values: [78, 85, 70, 90, 72] },
+    ],
+  },
+  config: {
+    title: { text: "Team Metrics", visible: true, position: "bottom", alignment: "center" },
+    colors: ["#6366f1", "#a5b4fc"],
+    radar: { fillOpacity: 0.2, strokeWidth: 2.5 },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  // AG — NEW
+  {
+    title: "Assessment Overview",
+    subtitle: "360-degree evaluation with self, manager, and peer ratings",
+    style: "AG" as const,
+    chart: <AssessmentOverviewAg />,
+    height: 400,
+    code: `import Widget from "@flitterjs/react";
+import RadarChart from "./charts/radar-chart";
+
+const chart = RadarChart({
+  data: {
+    labels: ["Analytics", "Strategy", "Delivery", "Communication", "Leadership"],
+    datasets: [
+      { legend: "Self", values: [82, 78, 90, 85, 70] },
+      { legend: "Manager", values: [75, 88, 85, 80, 82] },
+      { legend: "Peer", values: [80, 72, 88, 92, 68] },
+    ],
+  },
+  config: {
+    legend: { position: "right-top" },
+    background: "#f8fafc",
   },
 });
 

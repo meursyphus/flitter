@@ -38,7 +38,7 @@ const data = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Charts/BoxPlotChart/Toast",
+  title: "In-Review/BoxPlotChart/Toast",
   parameters: { layout: "centered" },
   args: {
     renderer: "svg",

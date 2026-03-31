@@ -10,6 +10,7 @@ import {
   SalesVsMarketingToast,
   HeightWeightToast,
   RealEstatePriceToast,
+  RdInvestmentAnalysisToast,
 } from "./toast/examples";
 import {
   DefaultAgScatterChart,
@@ -17,6 +18,7 @@ import {
   PerformanceBenchmarkAg,
   StudentScoresAg,
   CustomerSatisfactionAg,
+  CompactCorrelationAg,
 } from "./ag/examples";
 import { advancedPage } from "./advanced";
 
@@ -205,6 +207,46 @@ const chart = ToastScatterChart({
 <Widget widget={chart} width="600px" height="400px" />`,
   },
   {
+    title: "R&D Investment Analysis",
+    subtitle: "Research spending vs patent output across industries",
+    style: "Toast" as const,
+    chart: <RdInvestmentAnalysisToast />,
+    featured: true,
+    height: 360,
+    code: `import Widget from "@flitterjs/react";
+import ToastScatterChart from "./charts/toast-scatter-chart";
+
+const chart = ToastScatterChart({
+  data: {
+    datasets: [
+      { legend: "Pharmaceuticals", data: [
+        { x: 4500, y: 128, label: "Pfizer" }, { x: 6200, y: 195, label: "Roche" },
+        { x: 8100, y: 248, label: "J&J" },
+      ]},
+      { legend: "Tech", data: [
+        { x: 12000, y: 385, label: "Alphabet" }, { x: 15000, y: 510, label: "Microsoft" },
+        { x: 18000, y: 620, label: "Amazon" },
+      ]},
+      { legend: "Automotive", data: [
+        { x: 5800, y: 88, label: "Toyota" }, { x: 7200, y: 112, label: "VW" },
+        { x: 9400, y: 156, label: "Tesla" },
+      ]},
+    ],
+  },
+  config: {
+    title: { text: "R&D vs Patents", visible: true },
+    scatter: { fill: true, size: 10, strokeWidth: 1 },
+    colors: ["#2563eb", "#dc2626", "#059669"],
+    axis: {
+      x: { label: { format: (v) => "$" + (v / 1000).toFixed(0) + "M" } },
+      y: { label: { format: (v) => v + " patents" } },
+    },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
     title: "Performance Benchmark",
     subtitle: "Latency vs throughput for 3 backend systems",
     style: "AG" as const,
@@ -357,6 +399,46 @@ const chart = ScatterChart({
       fills: ["#6366f1", "#ec4899", "#10b981"],
       strokes: ["#6366f1", "#ec4899", "#10b981"],
     },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
+    title: "Compact Correlation View",
+    subtitle: "Marketing channel metrics with clean analytical style",
+    style: "AG" as const,
+    chart: <CompactCorrelationAg />,
+    height: 360,
+    code: `import Widget from "@flitterjs/react";
+import ScatterChart from "./charts/scatter-chart";
+
+const chart = ScatterChart({
+  data: {
+    datasets: [
+      { legend: "Engagement", data: [
+        { x: 2.1, y: 34, label: "Email" }, { x: 4.8, y: 67, label: "Social" },
+        { x: 6.5, y: 82, label: "Webinar" },
+      ]},
+      { legend: "Conversion", data: [
+        { x: 1.5, y: 12, label: "Email" }, { x: 3.6, y: 29, label: "Social" },
+        { x: 5.2, y: 41, label: "Webinar" },
+      ]},
+      { legend: "Retention", data: [
+        { x: 3.0, y: 58, label: "Email" }, { x: 4.1, y: 63, label: "Blog" },
+        { x: 5.8, y: 78, label: "Webinar" },
+      ]},
+    ],
+  },
+  config: {
+    scatter: { size: 8, strokeWidth: 2 },
+    colors: {
+      fills: ["#6366f1", "#f43f5e", "#10b981"],
+      strokes: ["#6366f1", "#f43f5e", "#10b981"],
+    },
+    grid: { dash: [3, 3] },
+    legend: { position: "right-top" },
+    background: "#fafafa",
   },
 });
 

@@ -1,5 +1,5 @@
 import { toastStylePage } from "../../styles/toast";
-import { DefaultToastStackedAreaChart, TrafficSourceStackedArea, RevenueStreamStackedArea } from "./examples";
+import { DefaultToastStackedAreaChart, TrafficSourceStackedArea, RevenueStreamStackedArea, AcquisitionChannelsToast } from "./examples";
 
 const areaConfigSections = [
   {
@@ -70,6 +70,31 @@ const chart = ToastStackedAreaChart({
       { legend: "Services", values: [900, 1000, 1100, 1200, 1300, 1400, 1500, 1600] },
       { legend: "Hardware", values: [600, 550, 500, 700, 650, 600, 750, 800] },
     ],
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+    },
+    {
+      title: "Acquisition Channels",
+      chart: <AcquisitionChannelsToast />,
+      code: `import ToastStackedAreaChart from "./charts/toast-stacked-area-chart";
+import Widget from "@flitterjs/react";
+
+const chart = ToastStackedAreaChart({
+  data: {
+    labels: ["Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+    datasets: [
+      { legend: "Organic", values: [1800, 2100, 2400, 2700, 3000, 3200] },
+      { legend: "Paid", values: [1200, 1400, 1100, 1600, 1800, 2000] },
+      { legend: "Referral", values: [600, 750, 900, 850, 1000, 1150] },
+    ],
+  },
+  config: {
+    title: { text: "Acquisition Channels", visible: true },
+    legend: { position: "right" },
+    colors: ["#2563eb", "#f97316", "#10b981"],
+    area: { opacity: 0.45 },
   },
 });
 

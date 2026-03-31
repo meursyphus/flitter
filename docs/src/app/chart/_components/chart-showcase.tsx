@@ -41,7 +41,7 @@ import { BasicPieChart, DonutPieChart } from "../_data/pie-chart/toast/examples"
 import { BasicRadarChart } from "../_data/radar-chart/toast/examples";
 
 // Heatmap Chart
-import { BasicHeatmapChart } from "../_data/heatmap-chart/toast/examples";
+import { BasicHeatmapToast } from "../_data/heatmap-chart/toast/examples";
 
 export const chartShowcase: ChartItem[] = [
   // Bar
@@ -80,5 +80,5 @@ export const chartShowcase: ChartItem[] = [
   { title: "Radar Chart", subtitle: "Toast Style", chart: <BasicRadarChart />, command: "npx flitter-ui add radar-chart", href: "/chart/radar-chart" },
 
   // Heatmap
-  { title: "Heatmap Chart", subtitle: "Toast Style", chart: <BasicHeatmapChart />, command: "npx flitter-ui add heatmap-chart", href: "/chart/heatmap-chart" },
+  { title: "Heatmap Chart", subtitle: "Toast Style", chart: <BasicHeatmapToast />, command: "npx flitter-ui add heatmap-chart", href: "/chart/heatmap-chart" },
 ];

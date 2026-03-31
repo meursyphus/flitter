@@ -10,6 +10,8 @@ import {
   NetworkTrafficToastArea,
   UserEngagementToastArea,
   EnergyConsumptionToastArea,
+  GrowthAnalyticsToastArea,
+  CashFlowToastArea,
 } from "./toast/examples";
 import {
   DefaultAgAreaChart,
@@ -17,6 +19,7 @@ import {
   CloudUsageAgArea,
   AppPerformanceAgArea,
   QuarterlyRevenueAgArea,
+  DarkMonitoringAgArea,
 } from "./ag/examples";
 import { advancedPage } from "./advanced";
 
@@ -57,6 +60,32 @@ const chart = ToastAreaChart({
     ],
   },
   config: { area: { strokeWidth: 2, opacity: 0.3 } },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
+    title: "Cash Flow with Negative Dips",
+    subtitle: "Operating and net P&L crossing zero to show positive and negative regions",
+    style: "Toast" as const,
+    chart: <CashFlowToastArea />,
+    featured: true,
+    height: 380,
+    code: `import Widget from "@flitterjs/react";
+import ToastAreaChart from "./charts/toast-area-chart";
+
+const chart = ToastAreaChart({
+  data: {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+    datasets: [
+      { legend: "Operating", values: [120, -45, 80, -30, 150, -60, 95, 200] },
+      { legend: "Net P&L", values: [60, -90, 25, -55, 70, -110, 40, 130] },
+    ],
+  },
+  config: {
+    colors: ["#10b981", "#ef4444"],
+    area: { strokeWidth: 2, opacity: 0.3 },
+  },
 });
 
 <Widget widget={chart} width="600px" height="400px" />`,
@@ -124,10 +153,10 @@ import ToastAreaChart from "./charts/toast-area-chart";
 
 const chart = ToastAreaChart({
   data: {
-    labels: ["00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"],
+    labels: ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00"],
     datasets: [
-      { legend: "Inbound (Gbps)", values: [2.1, 1.4, 0.8, 0.6, 1.8, 4.5, 6.2, 7.8, 8.1, 6.9, 5.2, 3.4] },
-      { legend: "Outbound (Gbps)", values: [1.8, 1.1, 0.5, 0.4, 1.5, 3.8, 5.5, 6.9, 7.2, 6.1, 4.5, 2.9] },
+      { legend: "Inbound (Gbps)", values: [2.1, 0.8, 1.8, 6.2, 8.1, 5.2] },
+      { legend: "Outbound (Gbps)", values: [1.8, 0.5, 1.5, 5.5, 7.2, 4.5] },
     ],
   },
   config: {
@@ -140,7 +169,7 @@ const chart = ToastAreaChart({
   },
   {
     title: "Cloud Infrastructure Costs",
-    subtitle: "Compute, storage, and network spend across 12 months",
+    subtitle: "Compute, storage, and network spend across the year",
     style: "AG" as const,
     chart: <CloudUsageAgArea />,
     height: 360,
@@ -149,11 +178,11 @@ import AreaChart from "./charts/area-chart";
 
 const chart = AreaChart({
   data: {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    labels: ["Jan", "Mar", "May", "Jul", "Sep", "Nov"],
     datasets: [
-      { legend: "Compute ($K)", values: [12.5, 13.2, 14.8, 16.1, 18.5, 21.0, 23.4, 25.8, 24.2, 22.0, 19.5, 17.8] },
-      { legend: "Storage ($K)", values: [5.2, 5.5, 5.9, 6.4, 7.0, 7.6, 8.2, 8.8, 9.2, 9.6, 10.0, 10.4] },
-      { legend: "Network ($K)", values: [3.1, 3.4, 3.8, 4.2, 4.9, 5.8, 6.5, 7.2, 6.8, 5.9, 5.0, 4.2] },
+      { legend: "Compute ($K)", values: [12.5, 14.8, 18.5, 23.4, 24.2, 19.5] },
+      { legend: "Storage ($K)", values: [5.2, 5.9, 7.0, 8.2, 9.2, 10.0] },
+      { legend: "Network ($K)", values: [3.1, 3.8, 4.9, 6.5, 6.8, 5.0] },
     ],
   },
   config: {
@@ -166,22 +195,49 @@ const chart = AreaChart({
 <Widget widget={chart} width="600px" height="400px" />`,
   },
   {
-    title: "User Engagement Metrics",
-    subtitle: "DAU, WAU, and MAU growth over 12 months",
+    title: "Growth Analytics with Right Legend",
+    subtitle: "MRR, ARR, and NRR growth metrics with right-aligned legend",
     style: "Toast" as const,
-    chart: <UserEngagementToastArea />,
-    featured: true,
+    chart: <GrowthAnalyticsToastArea />,
     height: 380,
     code: `import Widget from "@flitterjs/react";
 import ToastAreaChart from "./charts/toast-area-chart";
 
 const chart = ToastAreaChart({
   data: {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    labels: ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q7", "Q8"],
     datasets: [
-      { legend: "DAU (K)", values: [12, 14, 15, 18, 22, 25, 28, 30, 27, 32, 35, 40] },
-      { legend: "WAU (K)", values: [45, 50, 55, 62, 70, 78, 85, 90, 82, 95, 102, 115] },
-      { legend: "MAU (K)", values: [120, 130, 140, 155, 175, 195, 210, 225, 215, 240, 260, 290] },
+      { legend: "MRR ($K)", values: [18, 24, 31, 38, 47, 55, 64, 76] },
+      { legend: "ARR ($K)", values: [210, 280, 365, 450, 560, 650, 760, 900] },
+      { legend: "NRR (%)", values: [105, 108, 112, 115, 118, 121, 124, 128] },
+    ],
+  },
+  config: {
+    colors: ["#0ea5e9", "#8b5cf6", "#f59e0b"],
+    legend: { position: "right" },
+    title: { text: "Growth Metrics", visible: true },
+    area: { strokeWidth: 2, opacity: 0.25 },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
+    title: "User Engagement Metrics",
+    subtitle: "DAU, WAU, and MAU growth over the year",
+    style: "Toast" as const,
+    chart: <UserEngagementToastArea />,
+    height: 380,
+    code: `import Widget from "@flitterjs/react";
+import ToastAreaChart from "./charts/toast-area-chart";
+
+const chart = ToastAreaChart({
+  data: {
+    labels: ["Jan", "Mar", "May", "Jul", "Sep", "Nov"],
+    datasets: [
+      { legend: "DAU (K)", values: [12, 15, 22, 28, 27, 35] },
+      { legend: "WAU (K)", values: [45, 55, 70, 85, 82, 102] },
+      { legend: "MAU (K)", values: [120, 140, 175, 210, 215, 260] },
     ],
   },
   config: {
@@ -194,22 +250,51 @@ const chart = ToastAreaChart({
 <Widget widget={chart} width="600px" height="400px" />`,
   },
   {
-    title: "App Performance Monitor",
-    subtitle: "CPU and memory utilization over 24 hours with spline smoothing",
+    title: "Dark Monitoring Panel",
+    subtitle: "Network traffic and errors on a dark ops dashboard theme",
     style: "AG" as const,
-    chart: <AppPerformanceAgArea />,
+    chart: <DarkMonitoringAgArea />,
+    featured: true,
     height: 400,
     code: `import Widget from "@flitterjs/react";
 import AreaChart from "./charts/area-chart";
 
 const chart = AreaChart({
   data: {
-    labels: ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00",
-             "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00",
-             "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"],
+    labels: ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00"],
     datasets: [
-      { legend: "CPU (%)", values: [15, 12, 10, 8, 9, 11, 22, 45, 68, 72, 75, 78, 80, 76, 74, 70, 65, 58, 42, 35, 28, 22, 18, 16] },
-      { legend: "Memory (%)", values: [42, 40, 38, 37, 37, 38, 45, 55, 65, 70, 72, 74, 75, 73, 72, 70, 68, 62, 55, 50, 48, 45, 43, 42] },
+      { legend: "Inbound (Gbps)", values: [1.2, 0.4, 3.8, 6.5, 5.1, 2.8] },
+      { legend: "Outbound (Gbps)", values: [0.9, 0.3, 2.5, 4.8, 3.9, 2.1] },
+      { legend: "Errors (K)", values: [0.1, 0.05, 0.3, 0.8, 0.6, 0.2] },
+    ],
+  },
+  config: {
+    colors: { fills: ["#22d3ee", "#a78bfa", "#f87171"], strokes: ["#22d3ee", "#a78bfa", "#f87171"] },
+    background: "#111827",
+    grid: { dash: [4, 4], color: "rgba(255,255,255,0.1)" },
+    axis: { color: "rgba(255,255,255,0.3)", label: { color: "rgba(255,255,255,0.6)" } },
+    legend: { color: "rgba(255,255,255,0.7)" },
+    area: { strokeWidth: 1.5, opacity: 0.2, spline: true },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
+    title: "App Performance Monitor",
+    subtitle: "CPU and memory utilization over 24 hours with spline smoothing",
+    style: "AG" as const,
+    chart: <AppPerformanceAgArea />,
+    height: 360,
+    code: `import Widget from "@flitterjs/react";
+import AreaChart from "./charts/area-chart";
+
+const chart = AreaChart({
+  data: {
+    labels: ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00"],
+    datasets: [
+      { legend: "CPU (%)", values: [15, 10, 68, 80, 65, 28] },
+      { legend: "Memory (%)", values: [42, 38, 65, 75, 68, 48] },
     ],
   },
   config: {
@@ -232,11 +317,11 @@ import ToastAreaChart from "./charts/toast-area-chart";
 
 const chart = ToastAreaChart({
   data: {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    labels: ["Jan", "Mar", "May", "Jul", "Sep", "Nov"],
     datasets: [
-      { legend: "Solar (MWh)", values: [120, 145, 210, 310, 420, 480, 510, 470, 350, 230, 150, 110] },
-      { legend: "Wind (MWh)", values: [380, 350, 310, 280, 220, 180, 160, 170, 240, 300, 360, 390] },
-      { legend: "Grid (MWh)", values: [500, 480, 440, 380, 320, 290, 280, 300, 370, 430, 470, 510] },
+      { legend: "Solar (MWh)", values: [120, 210, 420, 510, 350, 150] },
+      { legend: "Wind (MWh)", values: [380, 310, 220, 160, 240, 360] },
+      { legend: "Grid (MWh)", values: [500, 440, 320, 280, 370, 470] },
     ],
   },
   config: {

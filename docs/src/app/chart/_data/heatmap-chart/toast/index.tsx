@@ -1,6 +1,6 @@
 import type { StylePageData, ConfigSection } from "../../types";
 import { toast } from "../../styles/toast";
-import { BasicHeatmapChart, ServerLoadHeatmap, CorrelationMatrixHeatmap, GithubActivityHeatmap } from "./examples";
+import { BasicHeatmapToast, ServerLoadToast, CorrelationMatrixToast, GithubActivityToast } from "./examples";
 
 const heatmapConfigSections: ConfigSection[] = [
   {
@@ -113,7 +113,7 @@ export const toastStyle: StylePageData = {
   examples: [
     {
       title: "Basic Heatmap",
-      chart: <BasicHeatmapChart />,
+      chart: <BasicHeatmapToast />,
       code: `import ToastHeatmapChart from "./charts/toast-heatmap-chart";
 import Widget from "@flitterjs/react";
 
@@ -137,7 +137,7 @@ const chart = ToastHeatmapChart({
     },
     {
       title: "Server Load",
-      chart: <ServerLoadHeatmap />,
+      chart: <ServerLoadToast />,
       code: `import ToastHeatmapChart from "./charts/toast-heatmap-chart";
 import Widget from "@flitterjs/react";
 
@@ -161,7 +161,7 @@ const chart = ToastHeatmapChart({
     },
     {
       title: "Correlation Matrix",
-      chart: <CorrelationMatrixHeatmap />,
+      chart: <CorrelationMatrixToast />,
       code: `import ToastHeatmapChart from "./charts/toast-heatmap-chart";
 import Widget from "@flitterjs/react";
 
@@ -184,7 +184,7 @@ const chart = ToastHeatmapChart({
     },
     {
       title: "Activity Tracker",
-      chart: <GithubActivityHeatmap />,
+      chart: <GithubActivityToast />,
       code: `import ToastHeatmapChart from "./charts/toast-heatmap-chart";
 import Widget from "@flitterjs/react";
 

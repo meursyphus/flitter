@@ -4,6 +4,7 @@ import {
   SkillComparisonAgRadar,
   ProductReviewAgRadar,
   TeamPerformanceAgRadar,
+  AssessmentOverviewAg,
 } from "./examples";
 
 const radarConfigSections = [
@@ -95,6 +96,29 @@ const chart = RadarChart({
       { legend: "Backend", values: [75, 95, 72, 70, 92] },
       { legend: "DevOps", values: [80, 88, 68, 75, 98] },
     ],
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+    },
+    {
+      title: "Assessment Overview",
+      chart: <AssessmentOverviewAg />,
+      code: `import Widget from "@flitterjs/react";
+import RadarChart from "./charts/radar-chart";
+
+const chart = RadarChart({
+  data: {
+    labels: ["Analytics", "Strategy", "Delivery", "Communication", "Leadership"],
+    datasets: [
+      { legend: "Self", values: [82, 78, 90, 85, 70] },
+      { legend: "Manager", values: [75, 88, 85, 80, 82] },
+      { legend: "Peer", values: [80, 72, 88, 92, 68] },
+    ],
+  },
+  config: {
+    legend: { position: "right-top" },
+    background: "#f8fafc",
   },
 });
 

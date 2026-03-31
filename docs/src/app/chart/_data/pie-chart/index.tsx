@@ -14,6 +14,7 @@ import {
   TimeAllocationPie,
   RevenueByRegionPie,
   DevicePie,
+  BudgetDonutDashboardPie,
 } from "./toast/examples";
 import {
   BasicAgPieChart,
@@ -21,6 +22,7 @@ import {
   MarketShareAgPieChart,
   ExpenseBreakdownAgPieChart,
   EnergyMixAgPie,
+  QuarterlyReportAgPie,
 } from "./ag/examples";
 import { advancedPage } from "./advanced";
 
@@ -192,6 +194,43 @@ const chart = ToastPieChart({
 
 <Widget widget={chart} width="600px" height="400px" />`,
   },
+  // AG — NEW: Quarterly Report Figure
+  {
+    title: "Quarterly Report Figure",
+    subtitle: "Revenue split with bottom-positioned title for report layouts",
+    style: "AG" as const,
+    chart: <QuarterlyReportAgPie />,
+    featured: true,
+    height: 360,
+    code: `import Widget from "@flitterjs/react";
+import PieChart from "./charts/pie-chart";
+
+const chart = PieChart({
+  data: {
+    datasets: [
+      { name: "Product Sales", value: 48 },
+      { name: "Subscriptions", value: 24 },
+      { name: "Licensing", value: 14 },
+      { name: "Consulting", value: 9 },
+      { name: "Support", value: 5 },
+    ],
+  },
+  config: {
+    title: {
+      text: "Revenue Split",
+      visible: true,
+      position: "bottom",
+      alignment: "center",
+    },
+    subtitle: {
+      text: "FY 2025 Q4",
+      visible: true,
+    },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
   // AG
   {
     title: "Expense Breakdown (AG)",
@@ -243,6 +282,35 @@ const chart = ToastPieChart({
   },
   config: {
     colors: ["#3572A5", "#f1e05a", "#3178c6", "#b07219", "#00ADD8", "#dea584"],
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  // Toast — NEW: Budget Donut Dashboard
+  {
+    title: "Budget Donut Dashboard",
+    subtitle: "Department budget as a dashboard-style donut with right legend",
+    style: "Toast" as const,
+    chart: <BudgetDonutDashboardPie />,
+    height: 360,
+    code: `import Widget from "@flitterjs/react";
+import ToastPieChart from "./charts/toast-pie-chart";
+
+const chart = ToastPieChart({
+  data: {
+    datasets: [
+      { name: "Payroll", value: 42 },
+      { name: "Infrastructure", value: 18 },
+      { name: "Marketing", value: 15 },
+      { name: "R&D", value: 12 },
+      { name: "Legal", value: 7 },
+      { name: "Misc", value: 6 },
+    ],
+  },
+  config: {
+    legend: { position: "right-center" },
+    pie: { innerRadiusRatio: 0.6 },
   },
 });
 

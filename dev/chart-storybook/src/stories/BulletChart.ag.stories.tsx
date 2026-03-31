@@ -74,7 +74,7 @@ function AgBulletChart({ args, data }: { args: BulletChartArgs; data: typeof def
 }
 
 const meta: Meta<BulletChartArgs> = {
-  title: "Charts/BulletChart/Ag",
+  title: "TODO/BulletChart/Ag",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },

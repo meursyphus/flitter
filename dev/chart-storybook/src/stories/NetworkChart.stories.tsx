@@ -40,7 +40,7 @@ const productGraph = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Charts/NetworkChart/Ag",
+  title: "TODO/NetworkChart/Ag",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {

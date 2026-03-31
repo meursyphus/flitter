@@ -1,6 +1,6 @@
 import type { StylePageData, ConfigSection } from "../../types";
 import { toast } from "../../styles/toast";
-import { BasicRadarChart, SkillComparisonRadarChart, ProductReviewRadarChart, TeamPerformanceRadarChart } from "./examples";
+import { BasicRadarChart, SkillComparisonRadarChart, ProductReviewRadarChart, TeamPerformanceRadarChart, TeamPerformanceCardToast } from "./examples";
 
 const radarConfigSections: ConfigSection[] = [
   {
@@ -159,6 +159,29 @@ const chart = ToastRadarChart({
       { legend: "Backend", values: [75, 95, 72, 70, 92] },
       { legend: "DevOps", values: [80, 88, 68, 75, 98] },
     ],
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+    },
+    {
+      title: "Team Performance Card",
+      chart: <TeamPerformanceCardToast />,
+      code: `import ToastRadarChart from "./charts/toast-radar-chart";
+import Widget from "@flitterjs/react";
+
+const chart = ToastRadarChart({
+  data: {
+    labels: ["Execution", "Collaboration", "Initiative", "Reliability", "Growth"],
+    datasets: [
+      { legend: "Q4 Review", values: [88, 92, 75, 95, 80] },
+      { legend: "Q3 Review", values: [78, 85, 70, 90, 72] },
+    ],
+  },
+  config: {
+    title: { text: "Team Metrics", visible: true, position: "bottom", alignment: "center" },
+    colors: ["#6366f1", "#a5b4fc"],
+    radar: { fillOpacity: 0.2, strokeWidth: 2.5 },
   },
 });
 

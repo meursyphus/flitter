@@ -44,6 +44,60 @@ function CopyCodeButton({ code }: { code: string }) {
   );
 }
 
+function CodeExpandSection({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <details className="group/code border-t border-neutral-100">
+      <summary className="flex cursor-pointer items-center gap-2 px-5 py-2.5 text-xs font-medium text-neutral-400 transition-colors hover:text-neutral-600 select-none">
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          className="shrink-0 transition-transform group-open/code:rotate-90"
+        >
+          <path d="M4.5 2.5l4 3.5-4 3.5" />
+        </svg>
+        View code
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleCopy();
+          }}
+          className="ml-auto rounded-md p-1 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600"
+          title="Copy code"
+        >
+          {copied ? (
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M3 7.5l3 3 5-6" />
+            </svg>
+          ) : (
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <rect x="4.5" y="4.5" width="8" height="8" rx="1.5" />
+              <path d="M9.5 4.5V2.5a1 1 0 00-1-1h-6a1 1 0 00-1 1v6a1 1 0 001 1h2" />
+            </svg>
+          )}
+        </button>
+      </summary>
+      <div className="max-h-[320px] overflow-auto px-5 pb-4">
+        <pre className="rounded-lg bg-neutral-900 p-4 text-xs leading-relaxed text-neutral-200 overflow-x-auto">
+          <code>{code}</code>
+        </pre>
+      </div>
+    </details>
+  );
+}
+
 function StyleBadge({ style }: { style: "Toast" | "AG" }) {
   return (
     <span
@@ -132,6 +186,7 @@ export default function ShowcaseGallery({
               {featuredExample.chart}
             </div>
           </div>
+          {featuredExample.code && <CodeExpandSection code={featuredExample.code} />}
         </div>
       )}
 
@@ -173,6 +228,7 @@ export default function ShowcaseGallery({
                 {example.chart}
               </div>
             </div>
+            {example.code && <CodeExpandSection code={example.code} />}
           </div>
         ))}
       </div>

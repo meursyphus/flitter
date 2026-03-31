@@ -35,7 +35,7 @@ function ToastBulletChartView({ args, data }: { args: BulletChartArgs; data: typ
 }
 
 const meta: Meta<BulletChartArgs> = {
-  title: "Charts/BulletChart/Toast",
+  title: "TODO/BulletChart/Toast",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },

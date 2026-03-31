@@ -21,7 +21,7 @@ const segmented = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Charts/ProgressChart/Ag",
+  title: "TODO/ProgressChart/Ag",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {

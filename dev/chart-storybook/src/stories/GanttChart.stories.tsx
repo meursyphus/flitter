@@ -24,7 +24,7 @@ const operations = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Charts/GanttChart/Ag",
+  title: "TODO/GanttChart/Ag",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {

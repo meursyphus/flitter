@@ -11,6 +11,8 @@ import {
   ServerResponseToastLine,
   FitnessTrackerToastLine,
   TemperatureTrendToastLine,
+  RevenueNegativeDipsToastLine,
+  CompactSparklineToastLine,
 } from "./toast/examples";
 import {
   DefaultAgLineChart,
@@ -19,6 +21,7 @@ import {
   WebAnalyticsAgLine,
   MonthlySalesAgLine,
   CryptoTrendAgLine,
+  ApiMonitoringAgLine,
 } from "./ag/examples";
 import { advancedPage } from "./advanced";
 
@@ -358,6 +361,85 @@ const chart = ToastLineChart({
 });
 
 <Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
+    title: "Revenue Trend with Negative Dips",
+    subtitle: "Net revenue and operating cash crossing zero baseline",
+    style: "Toast" as const,
+    chart: <RevenueNegativeDipsToastLine />,
+    height: 360,
+    code: `import Widget from "@flitterjs/react";
+import ToastLineChart from "./charts/toast-line-chart";
+
+const chart = ToastLineChart({
+  data: {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+    datasets: [
+      { legend: "Net Revenue ($K)", values: [12, -8, 24, -15, 32, -5, 18, 28] },
+      { legend: "Operating Cash", values: [5, -12, 8, -20, 15, -3, 10, 22] },
+    ],
+  },
+  config: {
+    colors: ["#2563eb", "#f97316"],
+    line: { strokeWidth: 2.5 },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
+    title: "API Monitoring Panel",
+    subtitle: "Server response time with average and peak latency",
+    style: "AG" as const,
+    chart: <ApiMonitoringAgLine />,
+    height: 360,
+    code: `import Widget from "@flitterjs/react";
+import LineChart from "./charts/line-chart";
+
+const chart = LineChart({
+  data: {
+    labels: ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "24:00"],
+    datasets: [
+      { legend: "Avg (ms)", values: [82, 75, 145, 210, 185, 120, 90] },
+      { legend: "Peak (ms)", values: [240, 180, 420, 580, 510, 340, 260] },
+    ],
+  },
+  config: {
+    colors: { fills: ["#22c55e", "#ef4444"], strokes: ["#22c55e", "#ef4444"] },
+    title: { text: "Response Time (ms)", visible: true, alignment: "start" },
+    grid: { dash: [3, 3], color: "#e5e5e5" },
+    axis: { yLine: { visible: false } },
+    line: { strokeWidth: 2, spline: true },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
+    title: "Compact Sparkline",
+    subtitle: "Minimal inline trend visualization without axes or legend",
+    style: "Toast" as const,
+    chart: <CompactSparklineToastLine />,
+    height: 200,
+    code: `import Widget from "@flitterjs/react";
+import ToastLineChart from "./charts/toast-line-chart";
+
+const chart = ToastLineChart({
+  data: {
+    labels: ["", "", "", "", "", "", "", "", "", ""],
+    datasets: [
+      { legend: "Trend", values: [42, 48, 45, 53, 50, 58, 55, 62, 60, 68] },
+    ],
+  },
+  config: {
+    colors: ["#6366f1"],
+    legend: { visible: false },
+    padding: { top: 4, bottom: 4, left: 4, right: 4 },
+    line: { strokeWidth: 2, spline: true },
+  },
+});
+
+<Widget widget={chart} width="300px" height="80px" />`,
   },
 ];
 

@@ -28,7 +28,7 @@ const denseData = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Charts/PolarAreaChart/Ag",
+  title: "TODO/PolarAreaChart/Ag",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {

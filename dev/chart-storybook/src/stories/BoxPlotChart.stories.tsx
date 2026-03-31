@@ -67,7 +67,7 @@ const salaryData = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Charts/BoxPlotChart/Ag",
+  title: "In-Review/BoxPlotChart/Ag",
   parameters: { layout: "centered" },
   args: {
     renderer: "svg",

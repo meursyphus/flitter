@@ -2,7 +2,7 @@ import { agStylePage } from "../../styles/ag";
 import {
   DefaultAgScatterChart,
   FilledAgScatterChart,
-} from "./examples";
+} from "./examples/index";
 
 const scatterConfigSections = [
   {

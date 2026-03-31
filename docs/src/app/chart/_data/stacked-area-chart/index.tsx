@@ -10,6 +10,7 @@ import {
   EnergyMixToastStackedArea,
   AppUsageToastStackedArea,
   SupportTicketsToastStackedArea,
+  AcquisitionChannelsToast,
 } from "./toast/examples";
 import {
   DefaultAgStackedAreaChart,
@@ -17,6 +18,7 @@ import {
   CloudCostAgStackedArea,
   TeamVelocityAgStackedArea,
   MarketShareAgStackedArea,
+  RevenueStreamsMinimalAg,
 } from "./ag/examples";
 import { advancedPage } from "./advanced";
 
@@ -329,6 +331,63 @@ const chart = StackedAreaChart({
     colors: { fills: ["#ef4444", "#3b82f6", "#f59e0b", "#10b981"], strokes: ["#ef4444", "#3b82f6", "#f59e0b", "#10b981"] },
     area: { opacity: 0.6 },
     background: "#fafafa",
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
+    title: "Acquisition Channels",
+    subtitle: "Organic, paid, and referral traffic with right-side legend layout",
+    style: "Toast" as const,
+    chart: <AcquisitionChannelsToast />,
+    height: 360,
+    code: `import Widget from "@flitterjs/react";
+import ToastStackedAreaChart from "./charts/toast-stacked-area-chart";
+
+const chart = ToastStackedAreaChart({
+  data: {
+    labels: ["Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+    datasets: [
+      { legend: "Organic", values: [1800, 2100, 2400, 2700, 3000, 3200] },
+      { legend: "Paid", values: [1200, 1400, 1100, 1600, 1800, 2000] },
+      { legend: "Referral", values: [600, 750, 900, 850, 1000, 1150] },
+    ],
+  },
+  config: {
+    title: { text: "Acquisition Channels", visible: true },
+    legend: { position: "right" },
+    colors: ["#2563eb", "#f97316", "#10b981"],
+    area: { opacity: 0.45 },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
+    title: "Revenue Streams (Minimal)",
+    subtitle: "Clean minimal SaaS, services, and licensing revenue over 6 quarters",
+    style: "AG" as const,
+    chart: <RevenueStreamsMinimalAg />,
+    height: 360,
+    code: `import Widget from "@flitterjs/react";
+import StackedAreaChart from "./charts/stacked-area-chart";
+
+const chart = StackedAreaChart({
+  data: {
+    labels: ["Q1 '24", "Q2 '24", "Q3 '24", "Q4 '24", "Q1 '25", "Q2 '25"],
+    datasets: [
+      { legend: "SaaS", values: [3200, 3600, 4100, 4500, 5000, 5400] },
+      { legend: "Services", values: [1400, 1500, 1350, 1600, 1700, 1550] },
+      { legend: "Licensing", values: [800, 850, 900, 950, 1000, 1050] },
+    ],
+  },
+  config: {
+    colors: { fills: ["#4f46e5", "#0891b2", "#ca8a04"], strokes: ["#4f46e5", "#0891b2", "#ca8a04"] },
+    area: { opacity: 0.4 },
+    axis: { xLine: { visible: false } },
+    background: "#fafafa",
+    grid: { dash: [3, 3], color: "#e5e5e5" },
   },
 });
 

@@ -1,0 +1,24 @@
+"use client";
+
+import Widget from "@flitterjs/react";
+import { ToastRadarChart } from "shared/chart";
+
+export default function BasicRadarChart() {
+  return (
+    <Widget
+      widget={ToastRadarChart({
+        data: {
+          labels: ["JavaScript", "TypeScript", "React", "Node.js", "CSS", "GraphQL", "Testing", "DevOps"],
+          datasets: [
+            { legend: "Senior Dev", values: [95, 90, 85, 80, 70, 75, 80, 65] },
+            { legend: "Junior Dev", values: [70, 50, 60, 40, 65, 30, 35, 20] },
+            { legend: "Full Stack", values: [80, 75, 70, 85, 60, 65, 70, 80] },
+          ],
+        },
+        config: {},
+      })}
+      width="100%"
+      height="100%"
+    />
+  );
+}

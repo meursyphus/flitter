@@ -4,6 +4,7 @@ import {
   DonutAgPieChart,
   MarketShareAgPieChart,
   ExpenseBreakdownAgPieChart,
+  QuarterlyReportAgPie,
 } from "./examples";
 
 const pieConfigSections = [
@@ -106,6 +107,38 @@ const chart = PieChart({
   },
   config: {
     pie: { innerRadiusRatio: 0.4 },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+    },
+    {
+      title: "Quarterly Report Figure",
+      chart: <QuarterlyReportAgPie />,
+      code: `import Widget from "@flitterjs/react";
+import PieChart from "./charts/pie-chart";
+
+const chart = PieChart({
+  data: {
+    datasets: [
+      { name: "Product Sales", value: 48 },
+      { name: "Subscriptions", value: 24 },
+      { name: "Licensing", value: 14 },
+      { name: "Consulting", value: 9 },
+      { name: "Support", value: 5 },
+    ],
+  },
+  config: {
+    title: {
+      text: "Revenue Split",
+      visible: true,
+      position: "bottom",
+      alignment: "center",
+    },
+    subtitle: {
+      text: "FY 2025 Q4",
+      visible: true,
+    },
   },
 });
 

@@ -4,21 +4,23 @@ import { agSummary } from "../styles/ag";
 import { toastStyle } from "./toast";
 import { agStyle } from "./ag";
 import {
-  VerticalToastStackedBarChart,
-  HorizontalToastStackedBarChart,
-  NegativeVerticalToastStackedBarChart,
-  MarketingChannelToastStacked,
-  BudgetAllocationToastStacked,
-  EnergySourceToastStacked,
-  EmployeeDistToastStacked,
+  RegionalRevenueToast,
+  HorizontalCategoryToast,
+  ProductPLMixToast,
+  MarketingChannelToast,
+  BudgetAllocationToast,
+  EnergySourceToast,
+  EmployeeDistributionToast,
+  DepartmentBudgetToast,
 } from "./toast/examples";
 import {
-  VerticalAgStackedBarChart,
-  HorizontalAgStackedBarChart,
-  NegativeVerticalAgStackedBarChart,
-  RevenueByProductAgStacked,
-  SurveyResponsesAgStacked,
-  ProjectTimelineAgStacked,
+  RegionalSalesAg,
+  DepartmentHeadcountAg,
+  VolatileQuarterlyAg,
+  RevenueByProductAg,
+  SurveyResponsesAg,
+  SprintEffortAg,
+  ProjectHoursAg,
 } from "./ag/examples";
 import { advancedPage } from "./advanced";
 
@@ -44,7 +46,7 @@ const showcaseExamples: ShowcaseExample[] = [
     title: "Regional Revenue Breakdown",
     subtitle: "Monthly revenue stacked by North America, Europe, and Asia Pacific",
     style: "Toast" as const,
-    chart: <VerticalToastStackedBarChart />,
+    chart: <RegionalRevenueToast />,
     featured: true,
     height: 360,
     code: `import Widget from "@flitterjs/react";
@@ -69,7 +71,7 @@ const chart = ToastStackedBarChart({
     title: "Department Headcount",
     subtitle: "Horizontal stacked bars for category comparison",
     style: "AG" as const,
-    chart: <HorizontalAgStackedBarChart />,
+    chart: <DepartmentHeadcountAg />,
     height: 380,
     code: `import Widget from "@flitterjs/react";
 import StackedBarChart from "./charts/stacked-bar-chart";
@@ -95,7 +97,7 @@ const chart = StackedBarChart({
     title: "Product P&L Mix",
     subtitle: "Positive and negative values stacked by product line",
     style: "Toast" as const,
-    chart: <NegativeVerticalToastStackedBarChart />,
+    chart: <ProductPLMixToast />,
     height: 360,
     code: `import Widget from "@flitterjs/react";
 import ToastStackedBarChart from "./charts/toast-stacked-bar-chart";
@@ -121,7 +123,7 @@ const chart = ToastStackedBarChart({
     title: "Regional Sales Composition",
     subtitle: "AG style vertical stacked bars",
     style: "AG" as const,
-    chart: <VerticalAgStackedBarChart />,
+    chart: <RegionalSalesAg />,
     height: 360,
     code: `import Widget from "@flitterjs/react";
 import StackedBarChart from "./charts/stacked-bar-chart";
@@ -145,7 +147,7 @@ const chart = StackedBarChart({
     title: "Horizontal Category View",
     subtitle: "Toast style horizontal stacked bars for easy label reading",
     style: "Toast" as const,
-    chart: <HorizontalToastStackedBarChart />,
+    chart: <HorizontalCategoryToast />,
     height: 380,
     code: `import Widget from "@flitterjs/react";
 import ToastStackedBarChart from "./charts/toast-stacked-bar-chart";
@@ -171,7 +173,7 @@ const chart = ToastStackedBarChart({
     title: "Volatile Quarterly Mix",
     subtitle: "AG style with positive and negative stacked values",
     style: "AG" as const,
-    chart: <NegativeVerticalAgStackedBarChart />,
+    chart: <VolatileQuarterlyAg />,
     height: 360,
     code: `import Widget from "@flitterjs/react";
 import StackedBarChart from "./charts/stacked-bar-chart";
@@ -198,7 +200,7 @@ const chart = StackedBarChart({
     title: "Marketing Channel Conversions",
     subtitle: "SEO, paid ads, social, and email conversions by month",
     style: "Toast" as const,
-    chart: <MarketingChannelToastStacked />,
+    chart: <MarketingChannelToast />,
     featured: true,
     height: 360,
     code: `import Widget from "@flitterjs/react";
@@ -226,7 +228,7 @@ const chart = ToastStackedBarChart({
     title: "Budget Allocation by Department",
     subtitle: "Quarterly budget breakdown across Engineering, Marketing, Sales, and Ops",
     style: "Toast" as const,
-    chart: <BudgetAllocationToastStacked />,
+    chart: <BudgetAllocationToast />,
     height: 380,
     code: `import Widget from "@flitterjs/react";
 import ToastStackedBarChart from "./charts/toast-stacked-bar-chart";
@@ -251,10 +253,39 @@ const chart = ToastStackedBarChart({
 <Widget widget={chart} width="600px" height="400px" />`,
   },
   {
+    title: "Department Budget Breakdown",
+    subtitle: "Salaries, tools, training, and travel spend across 5 departments",
+    style: "Toast" as const,
+    chart: <DepartmentBudgetToast />,
+    featured: true,
+    height: 360,
+    code: `import Widget from "@flitterjs/react";
+import ToastStackedBarChart from "./charts/toast-stacked-bar-chart";
+
+const chart = ToastStackedBarChart({
+  direction: "vertical",
+  data: {
+    labels: ["Product", "Engineering", "Design", "Marketing", "Sales"],
+    datasets: [
+      { legend: "Salaries", values: [280, 520, 180, 210, 260] },
+      { legend: "Tools & Infra", values: [45, 190, 60, 85, 40] },
+      { legend: "Training", values: [30, 55, 35, 25, 45] },
+      { legend: "Travel", values: [20, 15, 10, 65, 80] },
+    ],
+  },
+  config: {
+    colors: ["#6366f1", "#a78bfa", "#c4b5fd", "#ddd6fe"],
+    legend: { position: "right-top" },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
     title: "Energy Generation by Source",
     subtitle: "Monthly energy output from solar, wind, hydro, and nuclear",
     style: "Toast" as const,
-    chart: <EnergySourceToastStacked />,
+    chart: <EnergySourceToast />,
     height: 360,
     code: `import Widget from "@flitterjs/react";
 import ToastStackedBarChart from "./charts/toast-stacked-bar-chart";
@@ -281,8 +312,7 @@ const chart = ToastStackedBarChart({
     title: "Employee Distribution by Seniority",
     subtitle: "Junior, mid-level, and senior headcount across departments",
     style: "Toast" as const,
-    chart: <EmployeeDistToastStacked />,
-    featured: true,
+    chart: <EmployeeDistributionToast />,
     height: 380,
     code: `import Widget from "@flitterjs/react";
 import ToastStackedBarChart from "./charts/toast-stacked-bar-chart";
@@ -309,7 +339,7 @@ const chart = ToastStackedBarChart({
     title: "Revenue by Product Line",
     subtitle: "SaaS, mobile, and API revenue growth by quarter",
     style: "AG" as const,
-    chart: <RevenueByProductAgStacked />,
+    chart: <RevenueByProductAg />,
     featured: true,
     height: 360,
     code: `import Widget from "@flitterjs/react";
@@ -337,7 +367,7 @@ const chart = StackedBarChart({
     title: "Employee Survey Responses",
     subtitle: "Agreement levels across workplace satisfaction categories",
     style: "AG" as const,
-    chart: <SurveyResponsesAgStacked />,
+    chart: <SurveyResponsesAg />,
     height: 380,
     code: `import Widget from "@flitterjs/react";
 import StackedBarChart from "./charts/stacked-bar-chart";
@@ -361,10 +391,40 @@ const chart = StackedBarChart({
 <Widget widget={chart} width="600px" height="400px" />`,
   },
   {
+    title: "Project Hours by Phase",
+    subtitle: "Design, development, and QA hours across 5 projects",
+    style: "AG" as const,
+    chart: <ProjectHoursAg />,
+    featured: true,
+    height: 360,
+    code: `import Widget from "@flitterjs/react";
+import StackedBarChart from "./charts/stacked-bar-chart";
+
+const chart = StackedBarChart({
+  direction: "vertical",
+  data: {
+    labels: ["Auth Service", "Dashboard", "Mobile App", "Data Pipeline", "Admin Portal"],
+    datasets: [
+      { legend: "Design", values: [40, 64, 56, 24, 32] },
+      { legend: "Development", values: [120, 180, 160, 200, 96] },
+      { legend: "QA", values: [32, 48, 44, 56, 28] },
+    ],
+  },
+  config: {
+    title: { text: "Hours by Phase", visible: true },
+    subtitle: { text: "Q4 2025 Sprint Review", visible: true },
+    colors: { fills: ["#f59e0b", "#3b82f6", "#10b981"], strokes: ["#f59e0b", "#3b82f6", "#10b981"] },
+    grid: { dash: [2, 2] },
+  },
+});
+
+<Widget widget={chart} width="600px" height="400px" />`,
+  },
+  {
     title: "Sprint Effort Breakdown",
     subtitle: "Design, development, QA, and deployment hours per sprint",
     style: "AG" as const,
-    chart: <ProjectTimelineAgStacked />,
+    chart: <SprintEffortAg />,
     height: 360,
     code: `import Widget from "@flitterjs/react";
 import StackedBarChart from "./charts/stacked-bar-chart";
@@ -401,8 +461,8 @@ export const pages: ChartModule = [
     hasAdvanced: true,
     showcaseExamples,
     styles: [
-      toastSummary("stacked-bar-chart", <VerticalToastStackedBarChart />),
-      agSummary("stacked-bar-chart", <VerticalAgStackedBarChart />),
+      toastSummary("stacked-bar-chart", <RegionalRevenueToast />),
+      agSummary("stacked-bar-chart", <RegionalSalesAg />),
     ],
   },
   toastStyle,

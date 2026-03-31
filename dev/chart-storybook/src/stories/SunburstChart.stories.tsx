@@ -65,7 +65,7 @@ const deepData = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Charts/SunburstChart/Ag",
+  title: "Next/SunburstChart/Ag",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {
