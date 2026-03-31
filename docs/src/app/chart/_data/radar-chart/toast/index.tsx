@@ -1,6 +1,6 @@
 import type { StylePageData, ConfigSection } from "../../types";
 import { toast } from "../../styles/toast";
-import { BasicRadarChart, SkillComparisonRadarChart, ProductReviewRadarChart, TeamPerformanceRadarChart, TeamPerformanceCardToast } from "./examples";
+import { BasicRadarChart, SkillComparisonRadarChart, ProductReviewRadarChart, TeamPerformanceRadarChart, TeamPerformanceCardToast } from "./examples.generated";
 
 const radarConfigSections: ConfigSection[] = [
   {
@@ -91,101 +91,28 @@ export const toastStyle: StylePageData = {
   examples: [
     {
       title: "Basic Radar",
-      chart: <BasicRadarChart />,
-      code: `import ToastRadarChart from "./charts/toast-radar-chart";
-import Widget from "@flitterjs/react";
-
-const chart = ToastRadarChart({
-  data: {
-    labels: ["JavaScript", "TypeScript", "React", "Node.js", "CSS", "GraphQL", "Testing", "DevOps"],
-    datasets: [
-      { legend: "Senior Dev", values: [95, 90, 85, 80, 70, 75, 80, 65] },
-      { legend: "Junior Dev", values: [70, 50, 60, 40, 65, 30, 35, 20] },
-      { legend: "Full Stack", values: [80, 75, 70, 85, 60, 65, 70, 80] },
-    ],
-  },
-});
-
-<Widget widget={chart} width="600px" height="400px" />`,
+      chart: <BasicRadarChart.Component />,
+      code: BasicRadarChart.code,
     },
     {
       title: "Skill Comparison",
-      chart: <SkillComparisonRadarChart />,
-      code: `import ToastRadarChart from "./charts/toast-radar-chart";
-import Widget from "@flitterjs/react";
-
-const chart = ToastRadarChart({
-  data: {
-    labels: ["Leadership", "Problem Solving", "Communication", "Technical", "Creativity", "Teamwork"],
-    datasets: [
-      { legend: "Alice", values: [90, 85, 95, 70, 80, 92] },
-      { legend: "Bob", values: [75, 92, 60, 95, 65, 78] },
-    ],
-  },
-});
-
-<Widget widget={chart} width="600px" height="400px" />`,
+      chart: <SkillComparisonRadarChart.Component />,
+      code: SkillComparisonRadarChart.code,
     },
     {
       title: "Product Review",
-      chart: <ProductReviewRadarChart />,
-      code: `import ToastRadarChart from "./charts/toast-radar-chart";
-import Widget from "@flitterjs/react";
-
-const chart = ToastRadarChart({
-  data: {
-    labels: ["Price", "Quality", "Design", "Durability", "Support"],
-    datasets: [
-      { legend: "Product A", values: [60, 90, 85, 95, 70] },
-      { legend: "Product B", values: [85, 70, 75, 60, 90] },
-      { legend: "Product C", values: [75, 80, 90, 80, 65] },
-    ],
-  },
-});
-
-<Widget widget={chart} width="600px" height="400px" />`,
+      chart: <ProductReviewRadarChart.Component />,
+      code: ProductReviewRadarChart.code,
     },
     {
       title: "Team Performance",
-      chart: <TeamPerformanceRadarChart />,
-      code: `import ToastRadarChart from "./charts/toast-radar-chart";
-import Widget from "@flitterjs/react";
-
-const chart = ToastRadarChart({
-  data: {
-    labels: ["Speed", "Quality", "Communication", "Innovation", "Reliability"],
-    datasets: [
-      { legend: "Frontend", values: [88, 82, 90, 85, 78] },
-      { legend: "Backend", values: [75, 95, 72, 70, 92] },
-      { legend: "DevOps", values: [80, 88, 68, 75, 98] },
-    ],
-  },
-});
-
-<Widget widget={chart} width="600px" height="400px" />`,
+      chart: <TeamPerformanceRadarChart.Component />,
+      code: TeamPerformanceRadarChart.code,
     },
     {
       title: "Team Performance Card",
-      chart: <TeamPerformanceCardToast />,
-      code: `import ToastRadarChart from "./charts/toast-radar-chart";
-import Widget from "@flitterjs/react";
-
-const chart = ToastRadarChart({
-  data: {
-    labels: ["Execution", "Collaboration", "Initiative", "Reliability", "Growth"],
-    datasets: [
-      { legend: "Q4 Review", values: [88, 92, 75, 95, 80] },
-      { legend: "Q3 Review", values: [78, 85, 70, 90, 72] },
-    ],
-  },
-  config: {
-    title: { text: "Team Metrics", visible: true, position: "bottom", alignment: "center" },
-    colors: ["#6366f1", "#a5b4fc"],
-    radar: { fillOpacity: 0.2, strokeWidth: 2.5 },
-  },
-});
-
-<Widget widget={chart} width="600px" height="400px" />`,
+      chart: <TeamPerformanceCardToast.Component />,
+      code: TeamPerformanceCardToast.code,
     },
   ],
 };

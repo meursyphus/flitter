@@ -5,7 +5,7 @@ import {
   MarketShareAgPieChart,
   ExpenseBreakdownAgPieChart,
   QuarterlyReportAgPie,
-} from "./examples";
+} from "./examples.generated";
 
 const pieConfigSections = [
   {
@@ -24,125 +24,28 @@ export const agStyle = agStylePage("pie-chart", {
   examples: [
     {
       title: "Basic Pie",
-      chart: <BasicAgPieChart />,
-      code: `import Widget from "@flitterjs/react";
-import PieChart from "./charts/pie-chart";
-
-const chart = PieChart({
-  data: {
-    datasets: [
-      { name: "Chrome", value: 65 },
-      { name: "Safari", value: 18 },
-      { name: "Firefox", value: 8 },
-      { name: "Edge", value: 5 },
-      { name: "Other", value: 4 },
-    ],
-  },
-});
-
-<Widget widget={chart} width="600px" height="400px" />`,
+      chart: <BasicAgPieChart.Component />,
+      code: BasicAgPieChart.code,
     },
     {
       title: "Donut",
-      chart: <DonutAgPieChart />,
-      code: `import Widget from "@flitterjs/react";
-import PieChart from "./charts/pie-chart";
-
-const chart = PieChart({
-  data: {
-    datasets: [
-      { name: "Chrome", value: 65 },
-      { name: "Safari", value: 18 },
-      { name: "Firefox", value: 8 },
-      { name: "Edge", value: 5 },
-      { name: "Other", value: 4 },
-    ],
-  },
-  config: {
-    pie: { innerRadiusRatio: 0.5 },
-  },
-});
-
-<Widget widget={chart} width="600px" height="400px" />`,
+      chart: <DonutAgPieChart.Component />,
+      code: DonutAgPieChart.code,
     },
     {
       title: "Market Share",
-      chart: <MarketShareAgPieChart />,
-      code: `import Widget from "@flitterjs/react";
-import PieChart from "./charts/pie-chart";
-
-const chart = PieChart({
-  data: {
-    datasets: [
-      { name: "Apple", value: 28 },
-      { name: "Samsung", value: 22 },
-      { name: "Xiaomi", value: 13 },
-      { name: "Oppo", value: 9 },
-      { name: "Vivo", value: 8 },
-      { name: "Others", value: 20 },
-    ],
-  },
-});
-
-<Widget widget={chart} width="600px" height="400px" />`,
+      chart: <MarketShareAgPieChart.Component />,
+      code: MarketShareAgPieChart.code,
     },
     {
       title: "Expense Breakdown",
-      chart: <ExpenseBreakdownAgPieChart />,
-      code: `import Widget from "@flitterjs/react";
-import PieChart from "./charts/pie-chart";
-
-const chart = PieChart({
-  data: {
-    datasets: [
-      { name: "Housing", value: 1800 },
-      { name: "Food", value: 650 },
-      { name: "Transport", value: 420 },
-      { name: "Utilities", value: 280 },
-      { name: "Healthcare", value: 350 },
-      { name: "Entertainment", value: 200 },
-      { name: "Education", value: 300 },
-      { name: "Savings", value: 500 },
-    ],
-  },
-  config: {
-    pie: { innerRadiusRatio: 0.4 },
-  },
-});
-
-<Widget widget={chart} width="600px" height="400px" />`,
+      chart: <ExpenseBreakdownAgPieChart.Component />,
+      code: ExpenseBreakdownAgPieChart.code,
     },
     {
       title: "Quarterly Report Figure",
-      chart: <QuarterlyReportAgPie />,
-      code: `import Widget from "@flitterjs/react";
-import PieChart from "./charts/pie-chart";
-
-const chart = PieChart({
-  data: {
-    datasets: [
-      { name: "Product Sales", value: 48 },
-      { name: "Subscriptions", value: 24 },
-      { name: "Licensing", value: 14 },
-      { name: "Consulting", value: 9 },
-      { name: "Support", value: 5 },
-    ],
-  },
-  config: {
-    title: {
-      text: "Revenue Split",
-      visible: true,
-      position: "bottom",
-      alignment: "center",
-    },
-    subtitle: {
-      text: "FY 2025 Q4",
-      visible: true,
-    },
-  },
-});
-
-<Widget widget={chart} width="600px" height="400px" />`,
+      chart: <QuarterlyReportAgPie.Component />,
+      code: QuarterlyReportAgPie.code,
     },
   ],
 });

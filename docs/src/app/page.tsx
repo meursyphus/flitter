@@ -4,16 +4,16 @@ import Link from "next/link";
 import FlitterLogo from "@/components/flitter-logo";
 import {
   VerticalToastBarChart,
-} from "./chart/_data/bar-chart/toast/examples";
+} from "./chart/_data/bar-chart/toast/examples.generated";
 import {
   NegativeVerticalAgBarChart,
-} from "./chart/_data/bar-chart/ag/examples";
-import { DefaultToastLineChart } from "./chart/_data/line-chart/toast/examples";
-import { DefaultAgLineChart } from "./chart/_data/line-chart/ag/examples";
-import { DefaultToastAreaChart } from "./chart/_data/area-chart/toast/examples";
-import { VerticalToastStackedBarChart } from "./chart/_data/stacked-bar-chart/toast/examples";
-import { DefaultToastScatterChart } from "./chart/_data/scatter-chart/toast/examples";
-import { BasicPieChart } from "./chart/_data/pie-chart/toast/examples";
+} from "./chart/_data/bar-chart/ag/examples.generated";
+import { DefaultToastLineChart } from "./chart/_data/line-chart/toast/examples.generated";
+import { DefaultAgLineChart } from "./chart/_data/line-chart/ag/examples.generated";
+import { DefaultToastAreaChart } from "./chart/_data/area-chart/toast/examples.generated";
+import { RegionalRevenueToast as VerticalToastStackedBarChart } from "./chart/_data/stacked-bar-chart/toast/examples.generated";
+import { DefaultToastScatterChart } from "./chart/_data/scatter-chart/toast/examples.generated";
+import { BasicPieChart } from "./chart/_data/pie-chart/toast/examples.generated";
 
 export default function Home() {
   return (
@@ -347,14 +347,14 @@ export default function Home() {
 
 /* ── Infinite Carousel Strip ── */
 const carouselCharts = [
-  { el: <VerticalToastBarChart />, label: "Bar" },
-  { el: <DefaultToastLineChart />, label: "Line" },
-  { el: <DefaultToastAreaChart />, label: "Area" },
-  { el: <VerticalToastStackedBarChart />, label: "Stacked Bar" },
-  { el: <DefaultToastScatterChart />, label: "Scatter" },
-  { el: <BasicPieChart />, label: "Pie" },
-  { el: <NegativeVerticalAgBarChart />, label: "Negative Values" },
-  { el: <DefaultAgLineChart />, label: "Line" },
+  { el: <VerticalToastBarChart.Component />, label: "Bar" },
+  { el: <DefaultToastLineChart.Component />, label: "Line" },
+  { el: <DefaultToastAreaChart.Component />, label: "Area" },
+  { el: <VerticalToastStackedBarChart.Component />, label: "Stacked Bar" },
+  { el: <DefaultToastScatterChart.Component />, label: "Scatter" },
+  { el: <BasicPieChart.Component />, label: "Pie" },
+  { el: <NegativeVerticalAgBarChart.Component />, label: "Negative Values" },
+  { el: <DefaultAgLineChart.Component />, label: "Line" },
 ];
 
 function ChartCarouselStrip() {
