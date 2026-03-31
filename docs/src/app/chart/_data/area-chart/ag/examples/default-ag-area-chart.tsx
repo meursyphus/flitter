@@ -2,6 +2,7 @@
 
 import Widget from "@flitterjs/react";
 import { AreaChart } from "shared/chart";
+import { Text, TextStyle } from "flitter-ui";
 
 export default function DefaultAgAreaChart() {
   return (
@@ -20,6 +21,19 @@ export default function DefaultAgAreaChart() {
             strokeWidth: 2,
             opacity: 0.3,
             spline: false,
+          },
+        },
+        custom: {
+          yAxisLabel: ({ name }: { name: string; index: number }) => {
+            const value = parseFloat(name);
+            const isHigh = value >= 10;
+            return Text(name, {
+              style: new TextStyle({
+                fontSize: 11,
+                color: isHigh ? "#d97706" : "#6b7280",
+                fontWeight: isHigh ? "700" : undefined,
+              }),
+            });
           },
         },
       })}

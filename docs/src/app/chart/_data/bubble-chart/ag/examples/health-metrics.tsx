@@ -1,6 +1,10 @@
 "use client";
 
 import Widget from "@flitterjs/react";
+import {
+  Text,
+  TextStyle,
+} from "flitter-ui";
 import { BubbleChart } from "shared/chart";
 
 export default function HealthMetricsAgBubble() {
@@ -35,7 +39,24 @@ export default function HealthMetricsAgBubble() {
             },
           ],
         },
+        custom: {
+          yAxisLabel: ({ name }: any) => {
+            const bp = Number(name);
+            // Color-coded blood pressure thresholds
+            const color = bp >= 140 ? "#dc2626" : bp >= 130 ? "#f59e0b" : "#059669";
+            const label = bp >= 140 ? "High" : bp >= 130 ? "Elevated" : "";
+            return Text(label ? `${name} ${label}` : name, {
+              style: new TextStyle({
+                fontSize: 11,
+                color,
+                fontWeight: bp >= 140 ? "bold" : "normal",
+              }),
+            });
+          },
+        },
         config: {
+          title: { text: "Health Metrics by Age Group", visible: true },
+          subtitle: { visible: true, text: "BMI vs blood pressure, bubble = group size" },
           bubble: { opacity: 0.5, minRadius: 8, maxRadius: 28 },
           colors: {
             fills: ["#ef4444", "#3b82f6", "#10b981"],

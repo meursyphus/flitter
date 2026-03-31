@@ -2,13 +2,14 @@
 
 import Widget from "@flitterjs/react";
 import { AreaChart } from "shared/chart";
+import { Text, TextStyle } from "flitter-ui";
 
 export default function CloudUsageAgArea() {
   return (
     <Widget
       widget={AreaChart({
         data: {
-          labels: ["Jan", "Mar", "May", "Jul", "Sep", "Nov"],
+          labels: ["Jan\nQ1", "Mar\nQ1", "May\nQ2", "Jul\nQ3", "Sep\nQ3", "Nov\nQ4"],
           datasets: [
             { legend: "Compute ($K)", values: [12.5, 14.8, 18.5, 23.4, 24.2, 19.5] },
             { legend: "Storage ($K)", values: [5.2, 5.9, 7.0, 8.2, 9.2, 10.0] },
@@ -22,6 +23,17 @@ export default function CloudUsageAgArea() {
             strokeWidth: 2,
             opacity: 0.25,
             spline: false,
+          },
+        },
+        custom: {
+          yAxisLabel: ({ name }: { name: string; index: number }) => {
+            const value = parseFloat(name);
+            return Text(isNaN(value) ? name : `$${name}K`, {
+              style: new TextStyle({
+                fontSize: 11,
+                color: "#64748b",
+              }),
+            });
           },
         },
       })}

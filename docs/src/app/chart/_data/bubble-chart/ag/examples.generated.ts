@@ -8,7 +8,12 @@ import _ProjectPortfolioAgBubble from "./examples/project-portfolio";
 import _SmallAgBubbleChart from "./examples/small-bubbles";
 import _TechStackAgBubble from "./examples/tech-stack";
 
-const _DarkAnalysisAgBubble_code = `import BubbleChart from "./charts/bubble-chart";
+const _DarkAnalysisAgBubble_code = `import {
+  Container,
+  BoxDecoration,
+  BoxShadow,
+} from "flitter-ui";
+import BubbleChart from "./charts/bubble-chart";
 
 const chart = BubbleChart({
   data: {
@@ -39,7 +44,37 @@ const chart = BubbleChart({
       },
     ],
   },
+  custom: {
+    bubble: (
+      { value, legend }: any,
+      context: any,
+    ) => {
+      const { colors, bubble: bubbleConfig } = context.config;
+      const idx = context.legends.indexOf(legend);
+      const fillColor = colors.fills[idx % colors.fills.length];
+      const { scale } = context;
+      const normValue = scale != null
+        ? (value - scale.value.min) / (scale.value.max - scale.value.min || 1)
+        : 0.5;
+      const radius = bubbleConfig.minRadius + normValue * (bubbleConfig.maxRadius - bubbleConfig.minRadius);
+      // Neon glow effect on dark background
+      return Container({
+        width: radius * 2,
+        height: radius * 2,
+        decoration: new BoxDecoration({
+          color: \`\${fillColor}bb\`,
+          shape: "circle",
+          boxShadow: [
+            new BoxShadow({ color: \`\${fillColor}88\`, blurRadius: 16 }),
+            new BoxShadow({ color: \`\${fillColor}44\`, blurRadius: 32 }),
+          ],
+        }),
+      });
+    },
+  },
   config: {
+    title: { text: "Quarterly Analysis", visible: true, color: "#e2e8f0" },
+    subtitle: { visible: true, text: "Revenue vs Expenses vs Profit", color: "#64748b" },
     background: "#0f172a",
     bubble: { minRadius: 8, maxRadius: 40, opacity: 0.7 },
     colors: {
@@ -50,6 +85,7 @@ const chart = BubbleChart({
       color: "#94a3b8",
       label: { color: "#94a3b8" },
     },
+    legend: { color: "#94a3b8" },
     grid: { color: "#1e293b", dash: [3, 3] },
   },
 });`;
@@ -121,9 +157,25 @@ const chart = BubbleChart({
       },
     ],
   },
-  config: {},
+  config: {
+    title: { text: "World Development Overview", visible: true },
+    subtitle: { visible: true, text: "GDP per capita vs life expectancy, sized by population" },
+    axis: {
+      label: {
+        format: (name: string, _index: number, axis: string) => {
+          const n = Number(name);
+          if (axis === "x") return n >= 1000 ? \`$\${(n / 1000).toFixed(0)}K\` : \`$\${n}\`;
+          return \`\${n} yrs\`;
+        },
+      },
+    },
+  },
 });`;
-const _HealthMetricsAgBubble_code = `import BubbleChart from "./charts/bubble-chart";
+const _HealthMetricsAgBubble_code = `import {
+  Text,
+  TextStyle,
+} from "flitter-ui";
+import BubbleChart from "./charts/bubble-chart";
 
 const chart = BubbleChart({
   data: {
@@ -154,7 +206,24 @@ const chart = BubbleChart({
       },
     ],
   },
+  custom: {
+    yAxisLabel: ({ name }: any) => {
+      const bp = Number(name);
+      // Color-coded blood pressure thresholds
+      const color = bp >= 140 ? "#dc2626" : bp >= 130 ? "#f59e0b" : "#059669";
+      const label = bp >= 140 ? "High" : bp >= 130 ? "Elevated" : "";
+      return Text(label ? \`\${name} \${label}\` : name, {
+        style: new TextStyle({
+          fontSize: 11,
+          color,
+          fontWeight: bp >= 140 ? "bold" : "normal",
+        }),
+      });
+    },
+  },
   config: {
+    title: { text: "Health Metrics by Age Group", visible: true },
+    subtitle: { visible: true, text: "BMI vs blood pressure, bubble = group size" },
     bubble: { opacity: 0.5, minRadius: 8, maxRadius: 28 },
     colors: {
       fills: ["#ef4444", "#3b82f6", "#10b981"],
@@ -197,15 +266,37 @@ const chart = BubbleChart({
     ],
   },
   config: {
+    title: { text: "Investment Portfolio", visible: true },
+    subtitle: { visible: true, text: "Risk vs return, sized by allocation" },
     bubble: { minRadius: 4, maxRadius: 35, opacity: 0.55 },
     colors: {
       fills: ["#059669", "#dc2626", "#6366f1"],
       strokes: ["#059669", "#dc2626", "#6366f1"],
     },
     background: "#f8fafc",
+    axis: {
+      label: {
+        format: (name: string, _index: number, axis: string) => {
+          if (axis === "x") return \`Risk \${name}\`;
+          return \`\${name}%\`;
+        },
+      },
+    },
   },
 });`;
-const _SmallAgBubbleChart_code = `import BubbleChart from "./charts/bubble-chart";
+const _SmallAgBubbleChart_code = `import {
+  Container,
+  BoxDecoration,
+  EdgeInsets,
+  BorderRadius,
+  Text,
+  TextStyle,
+  Row,
+  SizedBox,
+  MainAxisSize,
+  CrossAxisAlignment,
+} from "flitter-ui";
+import BubbleChart from "./charts/bubble-chart";
 
 const chart = BubbleChart({
   data: {
@@ -236,7 +327,50 @@ const chart = BubbleChart({
       },
     ],
   },
+  custom: {
+    legend: ({ name, index }: any, context: any) => {
+      const color = context.config.colors.fills[index % context.config.colors.fills.length];
+      // Pill-shaped legend with count badge
+      const dataset = context.data.datasets[index];
+      const count = dataset?.data?.length ?? 0;
+      return Container({
+        padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 3 }),
+        decoration: new BoxDecoration({
+          color: "white",
+          borderRadius: BorderRadius.circular(10),
+        }),
+        child: Row({
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container({
+              width: 8,
+              height: 8,
+              decoration: new BoxDecoration({ color, shape: "circle" }),
+            }),
+            SizedBox({ width: 5 }),
+            Text(name, {
+              style: new TextStyle({ fontSize: 11, color: "#333" }),
+            }),
+            SizedBox({ width: 4 }),
+            Container({
+              padding: EdgeInsets.symmetric({ horizontal: 5, vertical: 1 }),
+              decoration: new BoxDecoration({
+                color: \`\${color}22\`,
+                borderRadius: BorderRadius.circular(8),
+              }),
+              child: Text(\`\${count}\`, {
+                style: new TextStyle({ fontSize: 9, color, fontWeight: "bold" }),
+              }),
+            }),
+          ],
+        }),
+      });
+    },
+  },
   config: {
+    title: { text: "Tight Radius Range", visible: true },
+    subtitle: { visible: true, text: "Custom legend with data-point count badges" },
     bubble: { minRadius: 2, maxRadius: 20, opacity: 0.8 },
     colors: {
       fills: ["#7c3aed", "#06b6d4", "#f97316"],
@@ -244,7 +378,19 @@ const chart = BubbleChart({
     },
   },
 });`;
-const _TechStackAgBubble_code = `import BubbleChart from "./charts/bubble-chart";
+const _TechStackAgBubble_code = `import {
+  Container,
+  BoxDecoration,
+  EdgeInsets,
+  BorderRadius,
+  Text,
+  TextStyle,
+  Row,
+  SizedBox,
+  MainAxisSize,
+  CrossAxisAlignment,
+} from "flitter-ui";
+import BubbleChart from "./charts/bubble-chart";
 
 const chart = BubbleChart({
   data: {
@@ -279,7 +425,36 @@ const chart = BubbleChart({
       },
     ],
   },
+  custom: {
+    xAxisLabel: ({ name }: any) => {
+      const adoption = Number(name);
+      // Mini bar indicator showing adoption level
+      return Row({
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(\`\${name}%\`, {
+            style: new TextStyle({
+              fontSize: 11,
+              color: "#585858",
+            }),
+          }),
+          SizedBox({ width: 3 }),
+          Container({
+            width: Math.max(2, adoption / 5),
+            height: 4,
+            decoration: new BoxDecoration({
+              color: adoption >= 70 ? "#10b981" : adoption >= 40 ? "#f59e0b" : "#94a3b8",
+              borderRadius: BorderRadius.circular(2),
+            }),
+          }),
+        ],
+      });
+    },
+  },
   config: {
+    title: { text: "Tech Stack Landscape 2025", visible: true },
+    subtitle: { visible: true, text: "Adoption vs satisfaction, bubble = job openings" },
     bubble: { minRadius: 5, maxRadius: 30, opacity: 0.6 },
     colors: {
       fills: ["#3b82f6", "#10b981", "#f59e0b"],

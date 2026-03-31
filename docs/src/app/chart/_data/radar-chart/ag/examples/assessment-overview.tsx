@@ -16,7 +16,6 @@ export default function AssessmentOverviewAg() {
           ],
         },
         config: {
-          legend: { position: "right-top" },
           background: "#f8fafc",
         },
       })}

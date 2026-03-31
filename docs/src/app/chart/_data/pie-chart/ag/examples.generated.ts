@@ -20,23 +20,55 @@ const chart = PieChart({
       { name: "Other", value: 4 },
     ],
   },
-  config: {},
+  config: {
+    title: {
+      text: "Browser Market Share",
+      visible: true,
+      alignment: "center",
+    },
+    subtitle: {
+      text: "2025 Global Desktop Usage",
+      visible: true,
+    },
+    legend: {
+      visible: true,
+      position: "bottom",
+    },
+  },
 });`;
 const _DonutAgPieChart_code = `import PieChart from "./charts/pie-chart";
 
 const chart = PieChart({
   data: {
     datasets: [
-      { name: "Chrome", value: 65 },
-      { name: "Safari", value: 18 },
-      { name: "Firefox", value: 8 },
-      { name: "Edge", value: 5 },
-      { name: "Other", value: 4 },
+      { name: "Americas", value: 42 },
+      { name: "EMEA", value: 31 },
+      { name: "APAC", value: 22 },
+      { name: "Other", value: 5 },
     ],
   },
   config: {
+    colors: { fills: ["#2563eb", "#dc2626", "#059669", "#d97706"] },
     pie: {
-      innerRadiusRatio: 0.5,
+      innerRadiusRatio: 0.65,
+      strokeWidth: 3,
+    },
+    title: {
+      text: "Revenue by Region",
+      visible: true,
+      alignment: "center",
+    },
+    dataLabel: {
+      visible: true,
+      fontSize: 14,
+      fontColor: "#1e293b",
+      fontWeight: "bold",
+      formatter: ({ name, percentage }: any) =>
+        \`\${percentage.toFixed(0)}%\`,
+    },
+    legend: {
+      visible: true,
+      position: "bottom",
     },
   },
 });`;
@@ -53,27 +85,94 @@ const chart = PieChart({
       { name: "Hydro", value: 11 },
     ],
   },
-  config: {},
+  config: {
+    colors: { fills: ["#78716c", "#64748b", "#a855f7", "#eab308", "#22c55e", "#06b6d4"] },
+    title: {
+      text: "Global Energy Mix",
+      visible: true,
+      alignment: "start",
+    },
+    dataLabel: {
+      visible: true,
+      fontSize: 13,
+      fontColor: "#475569",
+      formatter: ({ name, value }: any) =>
+        \`\${name}: \${value}%\`,
+    },
+    legend: {
+      visible: false,
+    },
+  },
 });`;
 const _ExpenseBreakdownAgPieChart_code = `import PieChart from "./charts/pie-chart";
+import {
+  Row,
+  Container,
+  BoxDecoration,
+  SizedBox,
+  Text,
+  TextStyle,
+  CrossAxisAlignment,
+  BorderRadius,
+} from "flitter-ui";
+
+const amounts = ["$1,800", "$650", "$500", "$420", "$350", "$300", "$280", "$200"];
+const colors = ["#1e40af", "#b45309", "#059669", "#7c3aed", "#dc2626", "#0d9488", "#64748b", "#94a3b8"];
 
 const chart = PieChart({
   data: {
     datasets: [
       { name: "Housing", value: 1800 },
       { name: "Food", value: 650 },
-      { name: "Transport", value: 420 },
-      { name: "Utilities", value: 280 },
-      { name: "Healthcare", value: 350 },
-      { name: "Entertainment", value: 200 },
-      { name: "Education", value: 300 },
       { name: "Savings", value: 500 },
+      { name: "Transport", value: 420 },
+      { name: "Healthcare", value: 350 },
+      { name: "Education", value: 300 },
+      { name: "Utilities", value: 280 },
+      { name: "Fun", value: 200 },
     ],
   },
   config: {
+    colors: { fills: colors },
     pie: {
-      innerRadiusRatio: 0.4,
+      innerRadiusRatio: 0.45,
     },
+    dataLabel: { visible: false },
+    legend: {
+      visible: true,
+      position: "right-center",
+    },
+  },
+  custom: {
+    legend: ({ name, index }: any) =>
+      Row({
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container({
+            width: 12,
+            height: 12,
+            decoration: new BoxDecoration({
+              color: colors[index],
+              borderRadius: BorderRadius.circular(2),
+            }),
+          }),
+          SizedBox({ width: 8 }),
+          Text(name, {
+            style: new TextStyle({
+              fontSize: 11,
+              color: "#334155",
+            }),
+          }),
+          SizedBox({ width: 6 }),
+          Text(amounts[index], {
+            style: new TextStyle({
+              fontSize: 11,
+              color: "#64748b",
+              fontWeight: "600",
+            }),
+          }),
+        ],
+      }),
   },
 });`;
 const _MarketShareAgPieChart_code = `import PieChart from "./charts/pie-chart";
@@ -89,7 +188,21 @@ const chart = PieChart({
       { name: "Others", value: 20 },
     ],
   },
-  config: {},
+  config: {
+    colors: { fills: ["#1d4ed8", "#0f766e", "#ea580c", "#7c3aed", "#dc2626", "#64748b"] },
+    pie: {
+      strokeWidth: 4,
+      strokeColor: "#f8fafc",
+    },
+    dataLabel: {
+      visible: true,
+      fontSize: 13,
+      fontColor: "#334155",
+      fontWeight: "600",
+      formatter: ({ name, percentage }: any) =>
+        \`\${name} (\${percentage.toFixed(0)}%)\`,
+    },
+  },
 });`;
 const _QuarterlyReportAgPie_code = `import PieChart from "./charts/pie-chart";
 
@@ -107,7 +220,6 @@ const chart = PieChart({
     title: {
       text: "Revenue Split",
       visible: true,
-      position: "bottom",
       alignment: "center",
     },
     subtitle: {

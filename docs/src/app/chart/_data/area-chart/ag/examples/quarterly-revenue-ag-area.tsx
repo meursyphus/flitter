@@ -2,6 +2,7 @@
 
 import Widget from "@flitterjs/react";
 import { AreaChart } from "shared/chart";
+import { Text, TextStyle } from "flitter-ui";
 
 export default function QuarterlyRevenueAgArea() {
   return (
@@ -16,10 +17,23 @@ export default function QuarterlyRevenueAgArea() {
         },
         config: {
           colors: { fills: ["#0d9488", "#d97706"], strokes: ["#0d9488", "#d97706"] },
+          title: { text: "SaaS vs On-Prem Revenue", visible: true },
           area: {
             strokeWidth: 2.5,
             opacity: 0.35,
             spline: false,
+          },
+        },
+        custom: {
+          xAxisLabel: ({ name }: { name: string; index: number }) => {
+            const isQ4 = name.startsWith("Q4");
+            return Text(name, {
+              style: new TextStyle({
+                fontSize: 11,
+                color: isQ4 ? "#0d9488" : "#6b7280",
+                fontWeight: isQ4 ? "700" : undefined,
+              }),
+            });
           },
         },
       })}

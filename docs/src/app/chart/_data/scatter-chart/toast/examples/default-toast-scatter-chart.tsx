@@ -2,6 +2,7 @@
 
 import Widget from "@flitterjs/react";
 import { ToastScatterChart as ToastScatterChartWidget } from "shared/chart";
+import { Text, TextStyle, Transform, Alignment } from "flitter-ui";
 
 export default function DefaultToastScatterChart() {
   return (
@@ -79,7 +80,35 @@ export default function DefaultToastScatterChart() {
             },
           ],
         },
-        config: {},
+        custom: {
+          xAxisLabel: (
+            { name }: { name: string; index: number },
+            context: any,
+          ) => {
+            const { font } = context.config;
+            return Transform.rotate({
+              angle: -Math.PI / 6,
+              alignment: Alignment.centerRight,
+              child: Text(`$${(Number(name) / 1000).toFixed(0)}K`, {
+                style: new TextStyle({
+                  fontFamily: font.family,
+                  fontSize: 10,
+                  color: "#64748b",
+                }),
+              }),
+            });
+          },
+        },
+        config: {
+          title: { text: "GDP vs Life Expectancy", visible: true },
+          scatter: { size: 8, strokeWidth: 2 },
+          axis: {
+            label: {
+              format: (name: string, _index: number, axis: "x" | "y") =>
+                axis === "y" ? `${name} yrs` : name,
+            },
+          },
+        },
       })}
       width="100%"
       height="100%"

@@ -2,6 +2,7 @@
 
 import Widget from "@flitterjs/react";
 import { StackedAreaChart } from "shared/chart";
+import { Text, TextStyle } from "flitter-ui";
 
 export default function CloudCostAgStackedArea() {
   return (
@@ -20,6 +21,23 @@ export default function CloudCostAgStackedArea() {
           colors: { fills: ["#0ea5e9", "#f97316", "#8b5cf6", "#10b981"], strokes: ["#0ea5e9", "#f97316", "#8b5cf6", "#10b981"] },
           area: { opacity: 0.45 },
           grid: { dash: [4, 4] },
+          title: { text: "Cloud Infrastructure Costs", visible: true },
+        },
+        custom: {
+          yAxisLabel: ({ name }: { name: string; index: number }, context: any) => {
+            const { font } = context.config;
+            const value = parseFloat(name);
+            const formatted = value >= 1000 ? `$${(value / 1000).toFixed(0)}K` : `$${value}`;
+            const isBudgetAlert = value >= 12000;
+            return Text(formatted, {
+              style: new TextStyle({
+                fontFamily: font.family,
+                fontSize: font.size,
+                fontWeight: isBudgetAlert ? "bold" : "normal",
+                color: isBudgetAlert ? "#dc2626" : "#585858",
+              }),
+            });
+          },
         },
       })}
       width="100%"

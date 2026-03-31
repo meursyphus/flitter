@@ -17,6 +17,12 @@ export default function TemperatureTrendToastLine() {
         },
         config: {
           colors: ["#ef4444", "#3b82f6", "#10b981"],
+          axis: {
+            label: {
+              format: (name: string, _index: number, axis: "x" | "y") =>
+                axis === "y" ? `${name}\u00B0C` : name,
+            },
+          },
           line: {
             strokeWidth: 2.5,
             spline: true,

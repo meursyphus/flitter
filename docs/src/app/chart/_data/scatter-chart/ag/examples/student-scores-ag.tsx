@@ -2,6 +2,14 @@
 
 import Widget from "@flitterjs/react";
 import { ScatterChart } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  BoxShadow,
+} from "flitter-ui";
+
+const classColors = ["#f59e0b", "#8b5cf6", "#06b6d4"];
 
 export default function StudentScoresAg() {
   return (
@@ -44,12 +52,35 @@ export default function StudentScoresAg() {
             },
           ],
         },
-        config: {
-          scatter: { size: 9 },
-          colors: {
-            fills: ["#f59e0b", "#8b5cf6", "#06b6d4"],
-            strokes: ["#f59e0b", "#8b5cf6", "#06b6d4"],
+        custom: {
+          scatter: (
+            { legend, index }: { label: string; legend: string; index: number },
+            context: any,
+          ) => {
+            const seriesIdx = context.legends.indexOf(legend);
+            const color = classColors[seriesIdx] ?? "#94a3b8";
+            const dataset = context.data.datasets[seriesIdx];
+            const point = dataset?.data[index];
+            const avgScore = point ? (point.x + point.y) / 2 : 0;
+            const isTopPerformer = avgScore >= 85;
+            return Container({
+              decoration: new BoxDecoration({
+                color: isTopPerformer ? color : `${color}88`,
+                borderRadius: BorderRadius.circular(isTopPerformer ? 3 : 100),
+                boxShadow: isTopPerformer
+                  ? [new BoxShadow({ color: `${color}55`, blurRadius: 6 })]
+                  : [],
+              }),
+            });
           },
+        },
+        config: {
+          scatter: { size: 11 },
+          colors: {
+            fills: classColors,
+            strokes: classColors,
+          },
+          title: { text: "Math vs Science Scores", visible: true },
         },
       })}
       width="100%"

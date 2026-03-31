@@ -20,7 +20,6 @@ export default function QuarterlyReportAgPie() {
           title: {
             text: "Revenue Split",
             visible: true,
-            position: "bottom",
             alignment: "center",
           },
           subtitle: {

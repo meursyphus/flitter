@@ -19,6 +19,7 @@ export default function RevenueByProductAg() {
         config: {
           colors: { fills: ["#0d9488", "#d97706", "#7c3aed"], strokes: ["#0d9488", "#d97706", "#7c3aed"] },
           background: "#fafafa",
+          bar: { gap: 4 },
         },
       })}
       width="100%"

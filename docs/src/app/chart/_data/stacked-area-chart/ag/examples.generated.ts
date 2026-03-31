@@ -9,6 +9,7 @@ import _RevenueStreamsMinimalAg from "./examples/revenue-streams-minimal";
 import _TeamVelocityAgStackedArea from "./examples/team-velocity";
 
 const _CloudCostAgStackedArea_code = `import StackedAreaChart from "./charts/stacked-area-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = StackedAreaChart({
   data: {
@@ -24,6 +25,23 @@ const chart = StackedAreaChart({
     colors: { fills: ["#0ea5e9", "#f97316", "#8b5cf6", "#10b981"], strokes: ["#0ea5e9", "#f97316", "#8b5cf6", "#10b981"] },
     area: { opacity: 0.45 },
     grid: { dash: [4, 4] },
+    title: { text: "Cloud Infrastructure Costs", visible: true },
+  },
+  custom: {
+    yAxisLabel: ({ name }: { name: string; index: number }, context: any) => {
+      const { font } = context.config;
+      const value = parseFloat(name);
+      const formatted = value >= 1000 ? \`$\${(value / 1000).toFixed(0)}K\` : \`$\${value}\`;
+      const isBudgetAlert = value >= 12000;
+      return Text(formatted, {
+        style: new TextStyle({
+          fontFamily: font.family,
+          fontSize: font.size,
+          fontWeight: isBudgetAlert ? "bold" : "normal",
+          color: isBudgetAlert ? "#dc2626" : "#585858",
+        }),
+      });
+    },
   },
 });`;
 const _DefaultAgStackedAreaChart_code = `import StackedAreaChart from "./charts/stacked-area-chart";
@@ -38,9 +56,22 @@ const chart = StackedAreaChart({
       { legend: "Referral", values: [50, 60, 55, 65, 70, 75, 80, 78, 85, 90, 95, 100] },
     ],
   },
-  config: {},
+  config: {
+    title: { text: "Revenue Stream Composition", visible: true, alignment: "center" },
+    subtitle: { visible: true, text: "Monthly breakdown by acquisition channel" },
+    area: { opacity: 0.6 },
+    background: "#fafafa",
+  },
 });`;
 const _MarketShareAgStackedArea_code = `import StackedAreaChart from "./charts/stacked-area-chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  EdgeInsets,
+  Text,
+  TextStyle,
+} from "flitter-ui";
 
 const chart = StackedAreaChart({
   data: {
@@ -56,9 +87,40 @@ const chart = StackedAreaChart({
     colors: { fills: ["#ef4444", "#3b82f6", "#f59e0b", "#10b981"], strokes: ["#ef4444", "#3b82f6", "#f59e0b", "#10b981"] },
     area: { opacity: 0.6 },
     background: "#fafafa",
+    title: { text: "Browser Market Share", visible: true },
+    axis: {
+      label: {
+        format: (name: string, _index: number, axis: string) =>
+          axis === "y" ? \`\${name}%\` : name,
+      },
+    },
+  },
+  custom: {
+    xAxisLabel: ({ name, index }: { name: string; index: number }, context: any) => {
+      const { font } = context.config;
+      const isQuarterStart = index % 3 === 0;
+      return Container({
+        padding: isQuarterStart ? EdgeInsets.symmetric({ horizontal: 4, vertical: 1 }) : undefined,
+        decoration: isQuarterStart
+          ? new BoxDecoration({
+              color: "#f1f5f9",
+              borderRadius: BorderRadius.circular(3),
+            })
+          : undefined,
+        child: Text(name, {
+          style: new TextStyle({
+            fontFamily: font.family,
+            fontSize: isQuarterStart ? 12 : 11,
+            fontWeight: isQuarterStart ? "bold" : "normal",
+            color: isQuarterStart ? "#1e293b" : "#94a3b8",
+          }),
+        }),
+      });
+    },
   },
 });`;
 const _ResourceAllocationStackedArea_code = `import StackedAreaChart from "./charts/stacked-area-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = StackedAreaChart({
   data: {
@@ -73,9 +135,37 @@ const chart = StackedAreaChart({
   config: {
     colors: { fills: ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"], strokes: ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"] },
     area: { opacity: 0.5 },
+    title: { text: "Resource Allocation", visible: true },
+  },
+  custom: {
+    yAxisLabel: ({ name }: { name: string; index: number }, context: any) => {
+      const { font } = context.config;
+      const value = parseFloat(name);
+      const isOverCapacity = value >= 80;
+      return Text(\`\${name} hrs\`, {
+        style: new TextStyle({
+          fontFamily: font.family,
+          fontSize: font.size,
+          fontWeight: isOverCapacity ? "bold" : "normal",
+          color: isOverCapacity ? "#dc2626" : "#585858",
+        }),
+      });
+    },
   },
 });`;
 const _RevenueStreamsMinimalAg_code = `import StackedAreaChart from "./charts/stacked-area-chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  EdgeInsets,
+  Text,
+  TextStyle,
+  Column,
+  MainAxisSize,
+  CrossAxisAlignment,
+  SizedBox,
+} from "flitter-ui";
 
 const chart = StackedAreaChart({
   data: {
@@ -92,6 +182,41 @@ const chart = StackedAreaChart({
     axis: { xLine: { visible: false } },
     background: "#fafafa",
     grid: { dash: [3, 3], color: "#e5e5e5" },
+    title: { text: "Revenue Streams", visible: true },
+  },
+  custom: {
+    title: (_args: undefined, context: any) => {
+      const { font, title } = context.config;
+      return Container({
+        padding: EdgeInsets.symmetric({ horizontal: 14, vertical: 5 }),
+        decoration: new BoxDecoration({
+          color: "#eef2ff",
+          borderRadius: BorderRadius.circular(20),
+        }),
+        child: Column({
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Revenue Streams", {
+              style: new TextStyle({
+                fontFamily: title.fontFamily ?? font.family,
+                fontSize: 14,
+                fontWeight: "600",
+                color: "#4338ca",
+              }),
+            }),
+            SizedBox({ height: 1 }),
+            Text("6 quarters  |  3 segments", {
+              style: new TextStyle({
+                fontFamily: font.family,
+                fontSize: 10,
+                color: "#818cf8",
+              }),
+            }),
+          ],
+        }),
+      });
+    },
   },
 });`;
 const _TeamVelocityAgStackedArea_code = `import StackedAreaChart from "./charts/stacked-area-chart";
@@ -108,6 +233,13 @@ const chart = StackedAreaChart({
   config: {
     colors: { fills: ["#6366f1", "#ec4899", "#f59e0b"], strokes: ["#6366f1", "#ec4899", "#f59e0b"] },
     area: { opacity: 0.55, spline: true, strokeWidth: 1.5 },
+    title: { text: "Team Velocity", visible: true },
+    axis: {
+      label: {
+        format: (name: string, _index: number, axis: string) =>
+          axis === "y" ? \`\${name} pts\` : name.replace("Sprint ", "S"),
+      },
+    },
   },
 });`;
 

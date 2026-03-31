@@ -11,6 +11,7 @@ import _SplineToastAreaChart from "./examples/spline-toast-area-chart";
 import _UserEngagementToastArea from "./examples/user-engagement-toast-area";
 
 const _CashFlowToastArea_code = `import ToastAreaChart from "./charts/toast-area-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = ToastAreaChart({
   data: {
@@ -28,12 +29,27 @@ const chart = ToastAreaChart({
       spline: false,
     },
   },
+  custom: {
+    yAxisLabel: ({ name }: { name: string; index: number }) => {
+      const value = parseFloat(name);
+      const isNegative = value < 0;
+      const isZero = value === 0;
+      return Text(name, {
+        style: new TextStyle({
+          fontSize: 11,
+          color: isZero ? "#475569" : isNegative ? "#ef4444" : "#10b981",
+          fontWeight: isZero ? "700" : isNegative ? "600" : undefined,
+        }),
+      });
+    },
+  },
 });`;
 const _DefaultToastAreaChart_code = `import ToastAreaChart from "./charts/toast-area-chart";
+import { Transform, Alignment, Text, TextStyle } from "flitter-ui";
 
 const chart = ToastAreaChart({
   data: {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     datasets: [
       { legend: "Housing starts (MoM %)", values: [0, 12.38, -15.46, 5.56, -4.98, 0.84, -4.67, 9.96, -2.44, -0.37, -4.22, 16.91] },
       { legend: "Unemployment rate Δ (pp)", values: [0, 11.2, -8.4, 6.9, -5.8, 7.5, -6.2, 4.9, -4.1, 8.1, -5.6, 7.2] },
@@ -47,8 +63,34 @@ const chart = ToastAreaChart({
       spline: false,
     },
   },
+  custom: {
+    xAxisLabel: ({ name }: { name: string; index: number }) =>
+      Transform.rotate({
+        angle: -Math.PI / 6,
+        alignment: Alignment.centerRight,
+        child: Text(name, {
+          style: new TextStyle({
+            fontSize: 10,
+            color: "#64748b",
+          }),
+        }),
+      }),
+  },
 });`;
 const _EnergyConsumptionToastArea_code = `import ToastAreaChart from "./charts/toast-area-chart";
+import {
+  Row,
+  Container,
+  BoxDecoration,
+  SizedBox,
+  Text,
+  TextStyle,
+  CrossAxisAlignment,
+  BorderRadius,
+} from "flitter-ui";
+
+const colors = ["#eab308", "#22c55e", "#64748b"];
+const icons = ["\\u2600", "\\u{1F32C}", "\\u26A1"];
 
 const chart = ToastAreaChart({
   data: {
@@ -60,12 +102,38 @@ const chart = ToastAreaChart({
     ],
   },
   config: {
-    colors: ["#eab308", "#22c55e", "#64748b"],
+    colors,
     area: {
       strokeWidth: 2,
       opacity: 0.35,
       spline: true,
     },
+  },
+  custom: {
+    legend: ({ name, index }: { name: string; index: number }) =>
+      Row({
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container({
+            width: 18,
+            height: 18,
+            decoration: new BoxDecoration({
+              color: colors[index] + "20",
+              borderRadius: BorderRadius.circular(4),
+            }),
+            child: Text(icons[index], {
+              style: new TextStyle({ fontSize: 10 }),
+            }),
+          }),
+          SizedBox({ width: 6 }),
+          Text(name, {
+            style: new TextStyle({
+              fontSize: 11,
+              color: "#475569",
+            }),
+          }),
+        ],
+      }),
   },
 });`;
 const _GrowthAnalyticsToastArea_code = `import ToastAreaChart from "./charts/toast-area-chart";
@@ -95,7 +163,6 @@ const chart = ToastAreaChart({
   },
   config: {
     colors: ["#0ea5e9", "#8b5cf6", "#f59e0b"],
-    legend: { position: "right" },
     title: { text: "Growth Metrics", visible: true },
     area: {
       strokeWidth: 2,
@@ -136,6 +203,18 @@ const chart = ToastAreaChart({
   },
 });`;
 const _NetworkTrafficToastArea_code = `import ToastAreaChart from "./charts/toast-area-chart";
+import {
+  Column,
+  Container,
+  BoxDecoration,
+  Text,
+  TextStyle,
+  SizedBox,
+  MainAxisSize,
+  EdgeInsets,
+  Border,
+  BorderSide,
+} from "flitter-ui";
 
 const chart = ToastAreaChart({
   data: {
@@ -153,27 +232,84 @@ const chart = ToastAreaChart({
       spline: true,
     },
   },
+  custom: {
+    title: () =>
+      Container({
+        padding: EdgeInsets.only({ left: 8, bottom: 8 }),
+        decoration: new BoxDecoration({
+          border: new Border({
+            left: new BorderSide({ color: "#3b82f6", width: 3 }),
+          }),
+        }),
+        child: Column({
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("Network Traffic", {
+              style: new TextStyle({
+                fontSize: 14,
+                fontWeight: "700",
+                color: "#1e293b",
+              }),
+            }),
+            SizedBox({ height: 2 }),
+            Text("24-hour bandwidth monitor", {
+              style: new TextStyle({
+                fontSize: 11,
+                color: "#94a3b8",
+              }),
+            }),
+          ],
+        }),
+      }),
+  },
 });`;
 const _RevenueGrowthToastArea_code = `import ToastAreaChart from "./charts/toast-area-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = ToastAreaChart({
   data: {
     labels: ["Q1 '23", "Q2 '23", "Q3 '23", "Q4 '23", "Q1 '24", "Q2 '24", "Q3 '24", "Q4 '24"],
     datasets: [
-      { legend: "Revenue ($M)", values: [4.2, 4.8, 5.1, 5.9, 6.3, 7.0, 7.5, 8.2] },
-      { legend: "Costs ($M)", values: [3.1, 3.4, 3.6, 3.8, 4.0, 4.2, 4.3, 4.5] },
+      { legend: "Revenue ($M)", values: revenueValues },
+      { legend: "Costs ($M)", values: costValues },
     ],
   },
   config: {
     colors: ["#10b981", "#f43f5e"],
+    title: { text: "Revenue vs Costs", visible: true },
     area: {
       strokeWidth: 2,
       opacity: 0.4,
       spline: false,
     },
   },
+  custom: {
+    dataLabel: (
+      { value, label, legend }: { value: number; label: string; legend: string },
+      context: any,
+    ) => {
+      const labels = context.data?.labels ?? [];
+      const isLast = label === labels[labels.length - 1];
+      if (!isLast) return Text("", { style: new TextStyle({}) });
+      return Text(\`$\${value}M\`, {
+        style: new TextStyle({
+          fontSize: 10,
+          fontWeight: "700",
+          color: legend === "Revenue ($M)" ? "#10b981" : "#f43f5e",
+        }),
+      });
+    },
+  },
 });`;
 const _SplineToastAreaChart_code = `import ToastAreaChart from "./charts/toast-area-chart";
+import {
+  Container,
+  BoxDecoration,
+  Text,
+  TextStyle,
+  EdgeInsets,
+  BorderRadius,
+} from "flitter-ui";
 
 const chart = ToastAreaChart({
   data: {
@@ -192,8 +328,28 @@ const chart = ToastAreaChart({
       strokeWidth: 2,
     },
   },
+  custom: {
+    xAxisLabel: ({ name, index }: { name: string; index: number }) => {
+      const isQuarterStart = index % 3 === 0;
+      return Container({
+        padding: EdgeInsets.symmetric({ horizontal: 4, vertical: 2 }),
+        decoration: new BoxDecoration({
+          color: isQuarterStart ? "#f1f5f9" : undefined,
+          borderRadius: BorderRadius.circular(4),
+        }),
+        child: Text(name, {
+          style: new TextStyle({
+            fontSize: 10,
+            color: isQuarterStart ? "#6366f1" : "#94a3b8",
+            fontWeight: isQuarterStart ? "600" : undefined,
+          }),
+        }),
+      });
+    },
+  },
 });`;
 const _UserEngagementToastArea_code = `import ToastAreaChart from "./charts/toast-area-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = ToastAreaChart({
   data: {
@@ -206,11 +362,23 @@ const chart = ToastAreaChart({
   },
   config: {
     colors: ["#6366f1", "#ec4899", "#f59e0b"],
-    legend: { position: "right-top" },
+    title: { text: "User Engagement", visible: true },
     area: {
       strokeWidth: 2.5,
       opacity: 0.25,
       spline: false,
+    },
+  },
+  custom: {
+    yAxisLabel: ({ name }: { name: string; index: number }) => {
+      const value = parseFloat(name);
+      return Text(value >= 1000 ? \`\${(value / 1000).toFixed(0)}K\` : name, {
+        style: new TextStyle({
+          fontSize: 11,
+          color: value >= 200 ? "#6366f1" : "#94a3b8",
+          fontWeight: value >= 200 ? "600" : undefined,
+        }),
+      });
     },
   },
 });`;

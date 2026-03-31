@@ -17,7 +17,21 @@ export default function MarketShareAgPieChart() {
             { name: "Others", value: 20 },
           ],
         },
-        config: {},
+        config: {
+          colors: { fills: ["#1d4ed8", "#0f766e", "#ea580c", "#7c3aed", "#dc2626", "#64748b"] },
+          pie: {
+            strokeWidth: 4,
+            strokeColor: "#f8fafc",
+          },
+          dataLabel: {
+            visible: true,
+            fontSize: 13,
+            fontColor: "#334155",
+            fontWeight: "600",
+            formatter: ({ name, percentage }: any) =>
+              `${name} (${percentage.toFixed(0)}%)`,
+          },
+        },
       })}
       width="100%"
       height="100%"

@@ -2,6 +2,14 @@
 
 import Widget from "@flitterjs/react";
 import { ToastScatterChart as ToastScatterChartWidget } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  BoxShadow,
+} from "flitter-ui";
+
+const seriesColors = ["#3b82f6", "#f97316", "#8b5cf6", "#10b981"];
 
 export default function SalesVsMarketingToast() {
   return (
@@ -52,9 +60,31 @@ export default function SalesVsMarketingToast() {
             },
           ],
         },
+        custom: {
+          scatter: (
+            { legend, index }: { label: string; legend: string; index: number },
+            context: any,
+          ) => {
+            const seriesIdx = context.legends.indexOf(legend);
+            const color = seriesColors[seriesIdx] ?? "#94a3b8";
+            const dataset = context.data.datasets[seriesIdx];
+            const point = dataset?.data[index];
+            const isHighRevenue = point && point.y >= 140;
+            return Container({
+              decoration: new BoxDecoration({
+                color: color,
+                borderRadius: BorderRadius.circular(isHighRevenue ? 4 : 100),
+                boxShadow: isHighRevenue
+                  ? [new BoxShadow({ color: `${color}66`, blurRadius: 8 })]
+                  : [],
+              }),
+            });
+          },
+        },
         config: {
           scatter: { fill: true, size: 10, strokeWidth: 0 },
-          colors: ["#3b82f6", "#f97316", "#8b5cf6", "#10b981"],
+          colors: seriesColors,
+          title: { text: "Sales vs Marketing Spend", visible: true },
         },
       })}
       width="100%"

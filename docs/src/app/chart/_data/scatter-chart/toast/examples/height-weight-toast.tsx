@@ -2,6 +2,22 @@
 
 import Widget from "@flitterjs/react";
 import { ToastScatterChart as ToastScatterChartWidget } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  EdgeInsets,
+  Text,
+  TextStyle,
+  Row,
+  SizedBox,
+  MainAxisSize,
+  BorderRadius,
+} from "flitter-ui";
+
+const legendColors: Record<string, string> = {
+  Male: "#3b82f6",
+  Female: "#ec4899",
+};
 
 export default function HeightWeightToast() {
   return (
@@ -39,9 +55,54 @@ export default function HeightWeightToast() {
             },
           ],
         },
+        custom: {
+          legend: (
+            { name }: { name: string; index: number },
+            context: any,
+          ) => {
+            const { font } = context.config;
+            const color = legendColors[name] ?? "#94a3b8";
+            return Container({
+              padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 3 }),
+              decoration: new BoxDecoration({
+                color: `${color}18`,
+                borderRadius: BorderRadius.circular(12),
+              }),
+              child: Row({
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container({
+                    width: 8,
+                    height: 8,
+                    decoration: new BoxDecoration({
+                      color: color,
+                      borderRadius: BorderRadius.circular(4),
+                    }),
+                  }),
+                  SizedBox({ width: 5 }),
+                  Text(name, {
+                    style: new TextStyle({
+                      fontFamily: font.family,
+                      fontSize: 11,
+                      fontWeight: "600",
+                      color: color,
+                    }),
+                  }),
+                ],
+              }),
+            });
+          },
+        },
         config: {
+          title: { text: "Height vs Weight Distribution", visible: true },
           scatter: { size: 8, strokeWidth: 2 },
           colors: ["#3b82f6", "#ec4899"],
+          axis: {
+            label: {
+              format: (name: string, _index: number, axis: "x" | "y") =>
+                axis === "x" ? `${name} cm` : `${name} kg`,
+            },
+          },
         },
       })}
       width="100%"

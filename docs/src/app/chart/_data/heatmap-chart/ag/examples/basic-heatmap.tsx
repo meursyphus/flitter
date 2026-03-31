@@ -2,6 +2,7 @@
 
 import Widget from "@flitterjs/react";
 import { HeatmapChart } from "shared/chart";
+import { Text, TextStyle, Column, MainAxisSize, CrossAxisAlignment, SizedBox, Container, BoxDecoration, BorderRadius, EdgeInsets } from "flitter-ui";
 
 export default function BasicHeatmapAg() {
   return (
@@ -20,7 +21,43 @@ export default function BasicHeatmapAg() {
             [2, 4, 7, 10, 16, 22, 26, 28, 23, 14, 8, 3],
           ],
         },
-        config: {},
+        config: {
+          heatmap: { colorRange: ["#eff6ff", "#60a5fa", "#1e40af"] },
+        },
+        custom: {
+          title: (_args: undefined, context: any) => {
+            const { font, title } = context.config;
+            return Container({
+              padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 6 }),
+              decoration: new BoxDecoration({
+                color: "#eff6ff",
+                borderRadius: BorderRadius.circular(6),
+              }),
+              child: Column({
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("Weekly Temperature", {
+                    style: new TextStyle({
+                      fontFamily: title?.fontFamily ?? font.family,
+                      fontSize: 14,
+                      fontWeight: "700",
+                      color: "#1e40af",
+                    }),
+                  }),
+                  SizedBox({ height: 2 }),
+                  Text("Avg. daily highs in Celsius", {
+                    style: new TextStyle({
+                      fontFamily: font.family,
+                      fontSize: 10,
+                      color: "#3b82f6",
+                    }),
+                  }),
+                ],
+              }),
+            });
+          },
+        },
       })}
       width="100%"
       height="100%"

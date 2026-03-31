@@ -5,12 +5,19 @@ import { ToastHeatmapChart } from "shared/chart";
 import {
   Container,
   BoxDecoration,
+  BorderRadius,
+  Border,
   Center,
   Text,
   TextStyle,
+  Column,
+  MainAxisSize,
+  SizedBox,
+  EdgeInsets,
 } from "flitter-ui";
 
 export default function SkillMatrixToast() {
+  const labels = ["Beginner", "Basic", "Good", "Strong", "Expert"];
   return (
     <Widget
       widget={ToastHeatmapChart({
@@ -26,26 +33,40 @@ export default function SkillMatrixToast() {
           ],
         },
         config: {
-          heatmap: { colorRange: ["#fef9c3", "#f97316", "#dc2626"], segment: { gap: 1 } },
+          heatmap: { segment: { gap: 2 } },
         },
         custom: {
-          segment: ({ value }: { value: number }) => {
-            const bg =
-              value >= 75
-                ? "#dc2626"
-                : value >= 50
-                  ? "#f97316"
-                  : "#fef9c3";
-            const fg = value >= 50 ? "#ffffff" : "#1e293b";
+          segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+            const level = value >= 90 ? 4 : value >= 75 ? 3 : value >= 60 ? 2 : value >= 45 ? 1 : 0;
+            const colors = ["#fee2e2", "#fef3c7", "#fef9c3", "#d1fae5", "#bbf7d0"];
+            const borders = ["#ef4444", "#f59e0b", "#eab308", "#10b981", "#22c55e"];
+            const label = labels[level];
             return Container({
-              decoration: new BoxDecoration({ color: bg }),
+              margin: EdgeInsets.all(1),
+              decoration: new BoxDecoration({
+                color: colors[level],
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all({ color: borders[level], width: 1.5 }),
+              }),
               child: Center({
-                child: Text(`${value}`, {
-                  style: new TextStyle({
-                    fontSize: 10,
-                    color: fg,
-                    fontWeight: "600",
-                  }),
+                child: Column({
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(`${value}`, {
+                      style: new TextStyle({
+                        fontSize: 11,
+                        fontWeight: "700",
+                        color: borders[level],
+                      }),
+                    }),
+                    SizedBox({ height: 1 }),
+                    Text(label, {
+                      style: new TextStyle({
+                        fontSize: 7,
+                        color: borders[level],
+                      }),
+                    }),
+                  ],
                 }),
               }),
             });

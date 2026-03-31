@@ -2,6 +2,19 @@
 
 import Widget from "@flitterjs/react";
 import { ToastAreaChart as ToastAreaChartWidget } from "shared/chart";
+import {
+  Row,
+  Container,
+  BoxDecoration,
+  SizedBox,
+  Text,
+  TextStyle,
+  CrossAxisAlignment,
+  BorderRadius,
+} from "flitter-ui";
+
+const colors = ["#eab308", "#22c55e", "#64748b"];
+const icons = ["\u2600", "\u{1F32C}", "\u26A1"];
 
 export default function EnergyConsumptionToastArea() {
   return (
@@ -16,12 +29,38 @@ export default function EnergyConsumptionToastArea() {
           ],
         },
         config: {
-          colors: ["#eab308", "#22c55e", "#64748b"],
+          colors,
           area: {
             strokeWidth: 2,
             opacity: 0.35,
             spline: true,
           },
+        },
+        custom: {
+          legend: ({ name, index }: { name: string; index: number }) =>
+            Row({
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container({
+                  width: 18,
+                  height: 18,
+                  decoration: new BoxDecoration({
+                    color: colors[index] + "20",
+                    borderRadius: BorderRadius.circular(4),
+                  }),
+                  child: Text(icons[index], {
+                    style: new TextStyle({ fontSize: 10 }),
+                  }),
+                }),
+                SizedBox({ width: 6 }),
+                Text(name, {
+                  style: new TextStyle({
+                    fontSize: 11,
+                    color: "#475569",
+                  }),
+                }),
+              ],
+            }),
         },
       })}
       width="100%"

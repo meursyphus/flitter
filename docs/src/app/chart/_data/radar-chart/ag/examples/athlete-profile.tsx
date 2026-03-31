@@ -15,7 +15,17 @@ export default function AthleteProfileAgRadar() {
             { legend: "Gymnast", values: [72, 68, 60, 95, 98] },
           ],
         },
-        config: {},
+        config: {
+          background: "#1e293b",
+          colors: { fills: ["#fb923c", "#38bdf8", "#4ade80"] },
+          radar: {
+            fillOpacity: 0.15,
+            strokeWidth: 2.5,
+            gridColor: "rgba(255, 255, 255, 0.1)",
+            axisColor: "rgba(255, 255, 255, 0.15)",
+          },
+          axis: { label: { color: "#94a3b8" } },
+        },
       })}
       width="100%"
       height="100%"

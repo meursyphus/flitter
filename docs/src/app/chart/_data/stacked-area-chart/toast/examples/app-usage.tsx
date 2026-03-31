@@ -2,6 +2,14 @@
 
 import Widget from "@flitterjs/react";
 import { ToastStackedAreaChart as ToastStackedAreaChartWidget } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  Border,
+  BorderSide,
+  Text,
+  TextStyle,
+} from "flitter-ui";
 
 export default function AppUsageToastStackedArea() {
   return (
@@ -18,6 +26,30 @@ export default function AppUsageToastStackedArea() {
         config: {
           colors: ["#3b82f6", "#10b981", "#f59e0b"],
           area: { opacity: 0.45, strokeWidth: 2.5 },
+          title: { text: "App Sessions by Platform", visible: true, alignment: "center" },
+        },
+        custom: {
+          xAxisLabel: ({ name, index }: { name: string; index: number }, context: any) => {
+            const { font } = context.config;
+            const isQuarterStart = index % 3 === 0;
+            return Container({
+              decoration: isQuarterStart
+                ? new BoxDecoration({
+                    border: new Border({
+                      bottom: new BorderSide({ color: "#3b82f6", width: 2 }),
+                    }),
+                  })
+                : undefined,
+              child: Text(name, {
+                style: new TextStyle({
+                  fontFamily: font.family,
+                  fontSize: font.size,
+                  fontWeight: isQuarterStart ? "bold" : "normal",
+                  color: isQuarterStart ? "#1e40af" : "#94a3b8",
+                }),
+              }),
+            });
+          },
         },
       })}
       width="100%"

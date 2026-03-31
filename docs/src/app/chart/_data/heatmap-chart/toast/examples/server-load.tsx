@@ -2,6 +2,14 @@
 
 import Widget from "@flitterjs/react";
 import { ToastHeatmapChart } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  Border,
+  Center,
+  Text,
+  TextStyle,
+} from "flitter-ui";
 
 export default function ServerLoadToast() {
   return (
@@ -22,6 +30,38 @@ export default function ServerLoadToast() {
         },
         config: {
           heatmap: { colorRange: ["#dbeafe", "#3b82f6", "#1e3a5f"], segment: { gap: 2 } },
+          title: { text: "CPU Load (%)", visible: true },
+        },
+        custom: {
+          segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+            const isCritical = value >= 85;
+            const isWarning = value >= 70 && value < 85;
+            const t = Math.min(value / 95, 1);
+            const bg = isCritical
+              ? "#dc2626"
+              : isWarning
+                ? "#f59e0b"
+                : `rgba(59,130,246,${t * 0.8 + 0.05})`;
+            return Container({
+              decoration: new BoxDecoration({
+                color: bg,
+                border: isCritical
+                  ? Border.all({ color: "#fca5a5", width: 2 })
+                  : undefined,
+              }),
+              child: Center({
+                child: isCritical || isWarning
+                  ? Text(`${value}`, {
+                      style: new TextStyle({
+                        fontSize: 8,
+                        color: "#ffffff",
+                        fontWeight: "700",
+                      }),
+                    })
+                  : Text("", { style: new TextStyle({}) }),
+              }),
+            });
+          },
         },
       })}
       width="100%"

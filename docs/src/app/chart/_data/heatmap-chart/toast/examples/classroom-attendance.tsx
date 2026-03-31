@@ -2,6 +2,15 @@
 
 import Widget from "@flitterjs/react";
 import { ToastHeatmapChart } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  Center,
+  Text,
+  TextStyle,
+  EdgeInsets,
+} from "flitter-ui";
 
 export default function ClassroomAttendanceToast() {
   return (
@@ -20,7 +29,25 @@ export default function ClassroomAttendanceToast() {
           ],
         },
         config: {
-          heatmap: { colorRange: ["#fecaca", "#fbbf24", "#22c55e"], segment: { gap: 2 } },
+          heatmap: { segment: { gap: 3 } },
+        },
+        custom: {
+          segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+            const emoji = value === 100 ? "\u2705" : value >= 80 ? "\ud83d\udfe1" : value >= 60 ? "\u26a0\ufe0f" : "\u274c";
+            const bg = value === 100 ? "#dcfce7" : value >= 80 ? "#fef9c3" : value >= 60 ? "#fff7ed" : "#fef2f2";
+            return Container({
+              margin: EdgeInsets.all(1),
+              decoration: new BoxDecoration({
+                color: bg,
+                borderRadius: BorderRadius.circular(4),
+              }),
+              child: Center({
+                child: Text(emoji, {
+                  style: new TextStyle({ fontSize: 12 }),
+                }),
+              }),
+            });
+          },
         },
       })}
       width="100%"

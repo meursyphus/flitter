@@ -11,6 +11,18 @@ import _ProductPLMixToast from "./examples/product-pl-mix";
 import _RegionalRevenueToast from "./examples/regional-revenue";
 
 const _BudgetAllocationToast_code = `import ToastStackedBarChart from "./charts/toast-stacked-bar-chart";
+import {
+  Container,
+  BoxDecoration,
+  EdgeInsets,
+  BorderRadius,
+  Text,
+  TextStyle,
+  Column,
+  MainAxisSize,
+  CrossAxisAlignment,
+  SizedBox,
+} from "flitter-ui";
 
 const chart = ToastStackedBarChart({
   direction: "horizontal",
@@ -23,9 +35,51 @@ const chart = ToastStackedBarChart({
       { legend: "Operations", values: [120, 130, 125, 140] },
     ],
   },
-  config: { colors: ["#2563eb", "#dc2626", "#059669", "#d97706"], bar: { gap: 2 } },
+  config: {
+    colors: ["#2563eb", "#dc2626", "#059669", "#d97706"],
+    bar: { gap: 2 },
+    title: { text: "Budget Allocation", visible: true },
+  },
+  custom: {
+    title: (
+      _args: undefined,
+      context: any,
+    ) => {
+      const { font, title } = context.config;
+      return Container({
+        padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 6 }),
+        decoration: new BoxDecoration({
+          color: "#eff6ff",
+          borderRadius: BorderRadius.circular(6),
+        }),
+        child: Column({
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Budget Allocation ($K)", {
+              style: new TextStyle({
+                fontFamily: title.fontFamily ?? font.family,
+                fontSize: title.fontSize,
+                fontWeight: "700",
+                color: "#1e40af",
+              }),
+            }),
+            SizedBox({ height: 2 }),
+            Text("Quarterly department spend breakdown", {
+              style: new TextStyle({
+                fontFamily: font.family,
+                fontSize: 11,
+                color: "#3b82f6",
+              }),
+            }),
+          ],
+        }),
+      });
+    },
+  },
 });`;
 const _DepartmentBudgetToast_code = `import ToastStackedBarChart from "./charts/toast-stacked-bar-chart";
+import { Transform, Text, TextStyle, Alignment } from "flitter-ui";
 
 const chart = ToastStackedBarChart({
   direction: "vertical",
@@ -40,22 +94,63 @@ const chart = ToastStackedBarChart({
   },
   config: {
     colors: ["#6366f1", "#a78bfa", "#c4b5fd", "#ddd6fe"],
-    legend: { position: "right-top" },
+    title: { text: "Department Budget ($K)", visible: true },
+  },
+  custom: {
+    xAxisLabel: (
+      { name }: { name: string; index: number },
+      context: any,
+    ) => {
+      const { font } = context.config;
+      return Transform.rotate({
+        angle: -Math.PI / 6,
+        alignment: Alignment.centerRight,
+        child: Text(name, {
+          style: new TextStyle({
+            fontFamily: font.family,
+            fontSize: 10,
+            fontWeight: "600",
+            color: "#4338ca",
+          }),
+        }),
+      });
+    },
   },
 });`;
 const _EmployeeDistributionToast_code = `import ToastStackedBarChart from "./charts/toast-stacked-bar-chart";
+import { Container, BoxDecoration, EdgeInsets, BorderRadius } from "flitter-ui";
 
 const chart = ToastStackedBarChart({
   direction: "horizontal",
-  data: {
-    labels: ["Engineering", "Marketing", "Sales", "Support", "Design", "Product"],
-    datasets: [
-      { legend: "Junior", values: [45, 20, 25, 30, 12, 8] },
-      { legend: "Mid-Level", values: [60, 25, 30, 20, 15, 12] },
-      { legend: "Senior", values: [35, 15, 20, 10, 8, 10] },
-    ],
+  data: { labels, datasets },
+  config: {
+    colors: ["#3b82f6", "#f59e0b", "#ef4444"],
+    bar: { gap: 1 },
+    title: { text: "Employee Distribution", visible: true },
   },
-  config: { colors: ["#3b82f6", "#f59e0b", "#ef4444"], bar: { gap: 1 } },
+  custom: {
+    bar: (
+      { value, legend, label }: { value: number; legend: string; label: string },
+      context: any,
+    ) => {
+      const labelIdx = labels.indexOf(label);
+      const total = datasets.reduce((sum, ds) => sum + ds.values[labelIdx], 0);
+      const colorMap: Record<string, string> = {
+        Junior: "#3b82f6",
+        "Mid-Level": "#f59e0b",
+        Senior: "#ef4444",
+      };
+      const baseColor = colorMap[legend] ?? "#3b82f6";
+      const isLargeDept = total >= 100;
+      return Container({
+        margin: EdgeInsets.symmetric({ horizontal: 1 }),
+        decoration: new BoxDecoration({
+          color: isLargeDept ? baseColor : \`\${baseColor}88\`,
+          borderRadius: BorderRadius.circular(2),
+        }),
+      });
+    },
+  },
 });`;
 const _EnergySourceToast_code = `import ToastStackedBarChart from "./charts/toast-stacked-bar-chart";
 
@@ -70,38 +165,99 @@ const chart = ToastStackedBarChart({
       { legend: "Nuclear", values: [300, 300, 295, 305, 300, 310, 305, 300, 298, 302, 300, 305] },
     ],
   },
-  config: { colors: ["#eab308", "#22c55e", "#06b6d4", "#a855f7"] },
+  config: {
+    colors: ["#f59e0b", "#34d399", "#06b6d4", "#a78bfa"],
+    bar: { gap: 4 },
+    title: { text: "Energy Generation (GWh)", visible: true },
+    grid: { color: "rgba(0,0,0,0.04)" },
+  },
 });`;
 const _HorizontalCategoryToast_code = `import ToastStackedBarChart from "./charts/toast-stacked-bar-chart";
+import { Text, TextStyle, Row, SizedBox, MainAxisSize } from "flitter-ui";
 
 const chart = ToastStackedBarChart({
   direction: "horizontal",
   data: {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+    labels: ["Tokyo", "London", "New York", "Berlin", "Sydney", "Toronto", "Singapore"],
     datasets: [
       { legend: "North America", values: [120, 135, 110, 145, 160, 150, 170] },
       { legend: "Europe", values: [90, 85, 100, 95, 110, 105, 120] },
       { legend: "Asia Pacific", values: [65, 80, 75, 90, 85, 95, 100] },
     ],
   },
-  config: { colors: ["#6366f1", "#ec4899", "#f59e0b"] },
+  config: {
+    colors: ["#6366f1", "#ec4899", "#f59e0b"],
+    title: { text: "Office Revenue by Region", visible: true },
+  },
+  custom: {
+    yAxisLabel: (
+      { name, index }: { name: string; index: number },
+      context: any,
+    ) => {
+      const { font } = context.config;
+      const medals = ["#c9a227", "#8a8a8a", "#b87333"];
+      const isMedal = index < 3;
+      return Row({
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(\`\${index + 1}\`, {
+            style: new TextStyle({
+              fontFamily: font.family,
+              fontSize: 10,
+              fontWeight: "bold",
+              color: isMedal ? medals[index] : "#94a3b8",
+            }),
+          }),
+          SizedBox({ width: 4 }),
+          Text(name, {
+            style: new TextStyle({
+              fontFamily: font.family,
+              fontSize: font.size,
+              fontWeight: isMedal ? "bold" : "normal",
+              color: isMedal ? "#1e293b" : "#64748b",
+            }),
+          }),
+        ],
+      });
+    },
+  },
 });`;
 const _MarketingChannelToast_code = `import ToastStackedBarChart from "./charts/toast-stacked-bar-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = ToastStackedBarChart({
   direction: "vertical",
   data: {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-    datasets: [
-      { legend: "SEO", values: [320, 380, 410, 450, 520, 580] },
-      { legend: "Paid Ads", values: [210, 250, 230, 270, 290, 310] },
-      { legend: "Social", values: [140, 160, 180, 200, 220, 250] },
-      { legend: "Email", values: [90, 100, 110, 120, 130, 145] },
-    ],
+    datasets,
   },
-  config: { colors: ["#0ea5e9", "#8b5cf6", "#f97316", "#10b981"] },
+  config: {
+    colors: ["#0ea5e9", "#8b5cf6", "#f97316", "#10b981"],
+    title: { text: "Marketing Conversions", visible: true },
+    bar: { gap: 3 },
+  },
+  custom: {
+    dataLabel: (
+      { value, legend, label }: { value: number; label: string; legend: string },
+      context: any,
+    ) => {
+      const { font } = context.config;
+      const labelIdx = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"].indexOf(label);
+      const total = datasets.reduce((sum, ds) => sum + ds.values[labelIdx], 0);
+      if (legend !== "Email") return Text("", { style: new TextStyle({}) });
+      return Text(\`\${(total / 1000).toFixed(1)}K\`, {
+        style: new TextStyle({
+          fontFamily: font.family,
+          fontSize: 9,
+          fontWeight: "bold",
+          color: "#334155",
+        }),
+      });
+    },
+  },
 });`;
 const _ProductPLMixToast_code = `import ToastStackedBarChart from "./charts/toast-stacked-bar-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = ToastStackedBarChart({
   direction: "vertical",
@@ -113,9 +269,32 @@ const chart = ToastStackedBarChart({
       { legend: "Product C", values: [5, -25, 12, 20, -18, 10, -7] },
     ],
   },
-  config: { colors: ["#10b981", "#ef4444", "#3b82f6"] },
+  config: {
+    colors: ["#10b981", "#ef4444", "#3b82f6"],
+    title: { text: "Quarterly P&L Mix", visible: true },
+    grid: { color: "rgba(0,0,0,0.06)" },
+  },
+  custom: {
+    yAxisLabel: (
+      { name }: { name: string; index: number },
+      context: any,
+    ) => {
+      const { font } = context.config;
+      const val = parseFloat(name);
+      const isZero = val === 0;
+      return Text(isZero ? "--- 0 ---" : name, {
+        style: new TextStyle({
+          fontFamily: font.family,
+          fontSize: font.size,
+          fontWeight: isZero ? "bold" : "normal",
+          color: isZero ? "#ef4444" : val < 0 ? "#94a3b8" : "#334155",
+        }),
+      });
+    },
+  },
 });`;
 const _RegionalRevenueToast_code = `import ToastStackedBarChart from "./charts/toast-stacked-bar-chart";
+import { Container, BoxDecoration, BorderRadius, EdgeInsets, Radius } from "flitter-ui";
 
 const chart = ToastStackedBarChart({
   direction: "vertical",
@@ -127,7 +306,36 @@ const chart = ToastStackedBarChart({
       { legend: "Asia Pacific", values: [65, 80, 75, 90, 85, 95, 100] },
     ],
   },
-  config: {},
+  config: {
+    colors: ["#6366f1", "#a78bfa", "#c4b5fd"],
+    bar: { gap: 2 },
+    title: { text: "Regional Revenue", visible: true },
+  },
+  custom: {
+    bar: (
+      { value, legend }: { value: number; legend: string },
+      context: any,
+    ) => {
+      const colorMap: Record<string, string> = {
+        "North America": "#6366f1",
+        "Europe": "#a78bfa",
+        "Asia Pacific": "#c4b5fd",
+      };
+      const isTopSegment = legend === "Asia Pacific";
+      return Container({
+        margin: EdgeInsets.symmetric({ horizontal: 1 }),
+        decoration: new BoxDecoration({
+          color: colorMap[legend] ?? "#6366f1",
+          borderRadius: isTopSegment
+            ? BorderRadius.only({
+                topLeft: Radius.circular(6),
+                topRight: Radius.circular(6),
+              })
+            : BorderRadius.zero,
+        }),
+      });
+    },
+  },
 });`;
 
 export const RegionalRevenueToast = { Component: _RegionalRevenueToast, code: _RegionalRevenueToast_code };

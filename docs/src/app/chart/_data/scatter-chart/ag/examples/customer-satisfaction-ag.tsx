@@ -2,6 +2,7 @@
 
 import Widget from "@flitterjs/react";
 import { ScatterChart } from "shared/chart";
+import { Text, TextStyle, Row, SizedBox, MainAxisSize } from "flitter-ui";
 
 export default function CustomerSatisfactionAg() {
   return (
@@ -50,11 +51,48 @@ export default function CustomerSatisfactionAg() {
             },
           ],
         },
+        custom: {
+          yAxisLabel: (
+            { name }: { name: string; index: number },
+            context: any,
+          ) => {
+            const { font } = context.config;
+            const val = parseFloat(name);
+            const stars = val >= 4.0 ? "\u2605" : "\u2606";
+            return Row({
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(stars, {
+                  style: new TextStyle({
+                    fontSize: 11,
+                    color: val >= 4.0 ? "#f59e0b" : "#d1d5db",
+                  }),
+                }),
+                SizedBox({ width: 2 }),
+                Text(name, {
+                  style: new TextStyle({
+                    fontFamily: font.family,
+                    fontSize: font.size,
+                    fontWeight: val >= 4.5 ? "bold" : "normal",
+                    color: val >= 4.5 ? "#f59e0b" : "#64748b",
+                  }),
+                }),
+              ],
+            });
+          },
+        },
         config: {
           scatter: { size: 11, strokeWidth: 2 },
           colors: {
             fills: ["#0d9488", "#e11d48", "#2563eb", "#d97706"],
             strokes: ["#0d9488", "#e11d48", "#2563eb", "#d97706"],
+          },
+          title: { text: "Price vs Satisfaction", visible: true },
+          axis: {
+            label: {
+              format: (name: string, _index: number, axis: "x" | "y") =>
+                axis === "x" ? `$${name}` : name,
+            },
           },
         },
       })}

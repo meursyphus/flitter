@@ -2,6 +2,7 @@
 
 import Widget from "@flitterjs/react";
 import { ToastHeatmapChart } from "shared/chart";
+import { Text, TextStyle, Transform, Alignment } from "flitter-ui";
 
 export default function EnergyUsageToast() {
   return (
@@ -20,6 +21,24 @@ export default function EnergyUsageToast() {
         },
         config: {
           heatmap: { colorRange: ["#ecfdf5", "#10b981", "#064e3b"] },
+        },
+        custom: {
+          xAxisLabel: ({ name, index }: { name: string; index: number }, context: any) => {
+            const { font } = context.config;
+            const isPeak = index >= 2 && index <= 6;
+            return Transform.rotate({
+              angle: -Math.PI / 6,
+              alignment: Alignment.center,
+              child: Text(isPeak ? `${name} *` : name, {
+                style: new TextStyle({
+                  fontFamily: font.family,
+                  fontSize: font.size,
+                  fontWeight: isPeak ? "700" : "normal",
+                  color: isPeak ? "#064e3b" : "#6b7280",
+                }),
+              }),
+            });
+          },
         },
       })}
       width="100%"

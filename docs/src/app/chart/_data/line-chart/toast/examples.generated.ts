@@ -30,16 +30,41 @@ const chart = ToastLineChart({
     },
   },
 });`;
-const _DefaultToastLineChart_code = `import ToastLineChart from "./charts/toast-line-chart";
+const _DefaultToastLineChart_code = `import { Text, TextStyle, Container, BoxDecoration, EdgeInsets, BorderRadius } from "flitter-ui";
+import ToastLineChart from "./charts/toast-line-chart";
 
 const chart = ToastLineChart({
   data: {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     datasets: [
       { legend: "Housing starts (MoM %)", values: [0, 12.38, -15.46, 5.56, -4.98, 0.84, -4.67, 9.96, -2.44, -0.37, -4.22, 16.91] },
-      { legend: "Unemployment rate Δ (pp)", values: [0, 11.2, -8.4, 6.9, -5.8, 7.5, -6.2, 4.9, -4.1, 8.1, -5.6, 7.2] },
+      { legend: "Unemployment rate \\u0394 (pp)", values: [0, 11.2, -8.4, 6.9, -5.8, 7.5, -6.2, 4.9, -4.1, 8.1, -5.6, 7.2] },
       { legend: "CPI MoM (1/10 index pts)", values: [0, 12.69, 13.78, 6.78, 1.52, -1.31, 5.25, 4.93, 6.70, 8.99, 8.97, 10.76] },
     ],
+  },
+  custom: {
+    xAxisLabel: ({ name }: { name: string; index: number }) => {
+      const isQuarter = quarterMonths.includes(name);
+      if (isQuarter) {
+        return Container({
+          padding: EdgeInsets.symmetric({ horizontal: 6, vertical: 2 }),
+          decoration: new BoxDecoration({
+            color: "#f0fdf4",
+            borderRadius: BorderRadius.circular(4),
+          }),
+          child: Text(name, {
+            style: new TextStyle({
+              fontSize: 11,
+              fontWeight: "bold",
+              color: "#15803d",
+            }),
+          }),
+        });
+      }
+      return Text(name, {
+        style: new TextStyle({ fontSize: 11, color: "#94a3b8" }),
+      });
+    },
   },
   config: {
     line: {
@@ -48,7 +73,8 @@ const chart = ToastLineChart({
     },
   },
 });`;
-const _FitnessTrackerToastLine_code = `import ToastLineChart from "./charts/toast-line-chart";
+const _FitnessTrackerToastLine_code = `import { Text, TextStyle, Container, BoxDecoration, EdgeInsets, BorderRadius, Row, SizedBox, MainAxisSize } from "flitter-ui";
+import ToastLineChart from "./charts/toast-line-chart";
 
 const chart = ToastLineChart({
   data: {
@@ -59,29 +85,61 @@ const chart = ToastLineChart({
       { legend: "Distance (km)", values: [5.8, 7.4, 5.5, 8.5, 6.6, 10.8, 4.4] },
     ],
   },
+  custom: {
+    legend: ({ name, index }: { name: string; index: number }) => {
+      const color = colors[index % colors.length];
+      return Container({
+        padding: EdgeInsets.symmetric({ horizontal: 10, vertical: 4 }),
+        decoration: new BoxDecoration({
+          color: color + "18",
+          borderRadius: BorderRadius.circular(12),
+        }),
+        child: Row({
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container({
+              width: 8,
+              height: 8,
+              decoration: new BoxDecoration({ color, shape: "circle" }),
+            }),
+            SizedBox({ width: 6 }),
+            Text(name, {
+              style: new TextStyle({ fontSize: 11, color, fontWeight: "600" }),
+            }),
+          ],
+        }),
+      });
+    },
+  },
   config: {
-    colors: ["#8b5cf6", "#f59e0b", "#06b6d4"],
+    colors,
     line: {
       strokeWidth: 2,
       spline: false,
     },
   },
 });`;
-const _MultiMetricToastLineChart_code = `import ToastLineChart from "./charts/toast-line-chart";
+const _MultiMetricToastLineChart_code = `import { Text, TextStyle } from "flitter-ui";
+import ToastLineChart from "./charts/toast-line-chart";
 
 const chart = ToastLineChart({
   data: {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    datasets: [
-      { legend: "Revenue ($K)", values: [120, 135, 128, 142, 155, 148, 162, 170, 165, 178, 185, 195] },
-      { legend: "Users (K)", values: [45, 52, 58, 63, 70, 75, 82, 88, 92, 98, 105, 112] },
-      { legend: "Conversion (%)", values: [3.2, 3.5, 3.1, 3.8, 4.0, 3.6, 4.2, 4.5, 4.1, 4.6, 4.8, 5.0] },
-      { legend: "Churn (%)", values: [2.8, 2.5, 2.9, 2.3, 2.1, 2.4, 2.0, 1.8, 2.2, 1.9, 1.7, 1.5] },
-    ],
+    datasets,
+  },
+  custom: {
+    dataLabel: ({ value, label, legend }: { value: number; label: string; legend: string }) => {
+      const dsIndex = datasets.findIndex((d) => d.legend === legend);
+      const labelIndex = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].indexOf(label);
+      if (labelIndex !== lastIndex) return Text("", { style: new TextStyle({ fontSize: 0 }) });
+      const color = colors[dsIndex % colors.length];
+      return Text(String(value), {
+        style: new TextStyle({ fontSize: 10, fontWeight: "bold", color }),
+      });
+    },
   },
   config: {
-    colors: ["#0d9488", "#f59e0b", "#ef4444", "#8b5cf6"],
-    legend: { position: "right-top" },
+    colors,
     line: {
       strokeWidth: 2,
       spline: false,
@@ -100,13 +158,15 @@ const chart = ToastLineChart({
   },
   config: {
     colors: ["#10b981", "#ef4444"],
+    title: { text: "Revenue vs Expenses", visible: true, alignment: "center" },
     line: {
       strokeWidth: 3,
       spline: false,
     },
   },
 });`;
-const _RevenueNegativeDipsToastLine_code = `import ToastLineChart from "./charts/toast-line-chart";
+const _RevenueNegativeDipsToastLine_code = `import { Text, TextStyle } from "flitter-ui";
+import ToastLineChart from "./charts/toast-line-chart";
 
 const chart = ToastLineChart({
   data: {
@@ -115,6 +175,20 @@ const chart = ToastLineChart({
       { legend: "Net Revenue ($K)", values: [12, -8, 24, -15, 32, -5, 18, 28] },
       { legend: "Operating Cash", values: [5, -12, 8, -20, 15, -3, 10, 22] },
     ],
+  },
+  custom: {
+    yAxisLabel: ({ name }: { name: string; index: number }) => {
+      const value = parseFloat(name);
+      const isNegative = value < 0;
+      const isZero = value === 0;
+      return Text(name, {
+        style: new TextStyle({
+          fontSize: 11,
+          color: isZero ? "#64748b" : isNegative ? "#dc2626" : "#16a34a",
+          fontWeight: isZero ? "bold" : isNegative ? "600" : undefined,
+        }),
+      });
+    },
   },
   config: {
     colors: ["#2563eb", "#f97316"],
@@ -157,19 +231,36 @@ const chart = ToastLineChart({
     },
   },
 });`;
-const _SplineToastLineChart_code = `import ToastLineChart from "./charts/toast-line-chart";
+const _SplineToastLineChart_code = `import { Container, BoxDecoration, EdgeInsets } from "flitter-ui";
+import ToastLineChart from "./charts/toast-line-chart";
 
 const chart = ToastLineChart({
   data: {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     datasets: [
       { legend: "Housing starts (MoM %)", values: [0, 12.38, -15.46, 5.56, -4.98, 0.84, -4.67, 9.96, -2.44, -0.37, -4.22, 16.91] },
-      { legend: "Unemployment rate Δ (pp)", values: [0, 11.2, -8.4, 6.9, -5.8, 7.5, -6.2, 4.9, -4.1, 8.1, -5.6, 7.2] },
+      { legend: "Unemployment rate \\u0394 (pp)", values: [0, 11.2, -8.4, 6.9, -5.8, 7.5, -6.2, 4.9, -4.1, 8.1, -5.6, 7.2] },
       { legend: "CPI MoM (1/10 index pts)", values: [0, 12.69, 13.78, 6.78, 1.52, -1.31, 5.25, 4.93, 6.70, 8.99, 8.97, 10.76] },
     ],
   },
+  custom: {
+    gridYLine: (_args: any, _ctx: any) => {
+      return Container({
+        decoration: new BoxDecoration({ color: "#e2e8f0" }),
+        height: 1,
+        margin: EdgeInsets.symmetric({ vertical: 0 }),
+      });
+    },
+    gridXLine: (_args: any, _ctx: any) => {
+      return Container({
+        decoration: new BoxDecoration({ color: "#e2e8f0" }),
+        width: 1,
+      });
+    },
+  },
   config: {
     colors: ["#6366f1", "#ec4899"],
+    grid: { color: "#e2e8f0" },
     line: {
       strokeWidth: 2,
       spline: true,
@@ -189,6 +280,12 @@ const chart = ToastLineChart({
   },
   config: {
     colors: ["#ef4444", "#3b82f6", "#10b981"],
+    axis: {
+      label: {
+        format: (name: string, _index: number, axis: "x" | "y") =>
+          axis === "y" ? \`\${name}\\u00B0C\` : name,
+      },
+    },
     line: {
       strokeWidth: 2.5,
       spline: true,

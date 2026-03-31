@@ -72,7 +72,19 @@ export default function DefaultAgBubbleChart() {
             },
           ],
         },
-        config: {},
+        config: {
+          title: { text: "World Development Overview", visible: true },
+          subtitle: { visible: true, text: "GDP per capita vs life expectancy, sized by population" },
+          axis: {
+            label: {
+              format: (name: string, _index: number, axis: string) => {
+                const n = Number(name);
+                if (axis === "x") return n >= 1000 ? `$${(n / 1000).toFixed(0)}K` : `$${n}`;
+                return `${n} yrs`;
+              },
+            },
+          },
+        },
       })}
       width="100%"
       height="100%"

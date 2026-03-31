@@ -72,7 +72,18 @@ export default function DefaultToastBubbleChart() {
             },
           ],
         },
-        config: {},
+        config: {
+          title: { text: "GDP vs Life Expectancy", visible: true },
+          axis: {
+            label: {
+              format: (name: string, _index: number, axis: string) => {
+                const n = Number(name);
+                if (axis === "x") return n >= 1000 ? `$${(n / 1000).toFixed(0)}K` : `$${n}`;
+                return `${n} yrs`;
+              },
+            },
+          },
+        },
       })}
       width="100%"
       height="100%"

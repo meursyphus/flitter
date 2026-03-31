@@ -2,6 +2,16 @@
 
 import Widget from "@flitterjs/react";
 import { ToastStackedAreaChart as ToastStackedAreaChartWidget } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  EdgeInsets,
+  Text,
+  TextStyle,
+} from "flitter-ui";
+
+const summerMonths = ["Jun", "Jul", "Aug"];
 
 export default function SupportTicketsToastStackedArea() {
   return (
@@ -19,6 +29,30 @@ export default function SupportTicketsToastStackedArea() {
         config: {
           colors: ["#ef4444", "#6366f1", "#06b6d4", "#f59e0b"],
           area: { opacity: 0.35 },
+          title: { text: "Support Ticket Trends", visible: true },
+        },
+        custom: {
+          xAxisLabel: ({ name }: { name: string; index: number }, context: any) => {
+            const { font } = context.config;
+            const isSummer = summerMonths.includes(name);
+            return Container({
+              padding: isSummer ? EdgeInsets.symmetric({ horizontal: 4, vertical: 2 }) : undefined,
+              decoration: isSummer
+                ? new BoxDecoration({
+                    color: "#fef3c7",
+                    borderRadius: BorderRadius.circular(4),
+                  })
+                : undefined,
+              child: Text(name, {
+                style: new TextStyle({
+                  fontFamily: font.family,
+                  fontSize: 10,
+                  fontWeight: isSummer ? "bold" : "normal",
+                  color: isSummer ? "#b45309" : "#64748b",
+                }),
+              }),
+            });
+          },
         },
       })}
       width="100%"

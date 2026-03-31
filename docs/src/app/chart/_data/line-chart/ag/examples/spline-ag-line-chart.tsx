@@ -17,6 +17,7 @@ export default function SplineAgLineChart() {
         },
         config: {
           colors: { fills: ["#7c3aed", "#06b6d4"], strokes: ["#7c3aed", "#06b6d4"] },
+          subtitle: { visible: true, text: "Dashed grid with subtitle" },
           grid: { dash: [4, 4] },
           line: {
             strokeWidth: 2,

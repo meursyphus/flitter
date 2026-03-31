@@ -2,6 +2,7 @@
 
 import Widget from "@flitterjs/react";
 import { ScatterChart } from "shared/chart";
+import { Text, TextStyle } from "flitter-ui";
 
 export default function PerformanceBenchmarkAg() {
   return (
@@ -44,6 +45,24 @@ export default function PerformanceBenchmarkAg() {
             },
           ],
         },
+        custom: {
+          xAxisLabel: (
+            { name }: { name: string; index: number },
+            context: any,
+          ) => {
+            const { font } = context.config;
+            const val = Number(name);
+            const isSlow = val >= 50;
+            return Text(`${name}ms`, {
+              style: new TextStyle({
+                fontFamily: font.family,
+                fontSize: font.size,
+                fontWeight: isSlow ? "bold" : "normal",
+                color: isSlow ? "#ef4444" : "#64748b",
+              }),
+            });
+          },
+        },
         config: {
           scatter: { size: 12, strokeWidth: 3 },
           colors: {
@@ -52,6 +71,12 @@ export default function PerformanceBenchmarkAg() {
           },
           grid: { dash: [4, 4] },
           background: "#fafafa",
+          axis: {
+            label: {
+              format: (name: string, _index: number, axis: "x" | "y") =>
+                axis === "y" ? `${(Number(name) / 1000).toFixed(0)}K rps` : name,
+            },
+          },
         },
       })}
       width="100%"

@@ -2,6 +2,13 @@
 
 import Widget from "@flitterjs/react";
 import { ToastHeatmapChart } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  EdgeInsets,
+  BoxShadow,
+} from "flitter-ui";
 
 export default function GithubActivityToast() {
   return (
@@ -21,7 +28,23 @@ export default function GithubActivityToast() {
           ],
         },
         config: {
-          heatmap: { colorRange: ["#ebedf0", "#40c463", "#216e39"], segment: { gap: 2 } },
+          heatmap: { segment: { gap: 3 } },
+        },
+        custom: {
+          segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+            const greens = ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"];
+            const level = value === 0 ? 0 : value <= 2 ? 1 : value <= 4 ? 2 : value <= 6 ? 3 : 4;
+            return Container({
+              margin: EdgeInsets.all(1),
+              decoration: new BoxDecoration({
+                color: greens[level],
+                borderRadius: BorderRadius.circular(3),
+                boxShadow: value >= 7
+                  ? [new BoxShadow({ color: "#39d353", blurRadius: 6 })]
+                  : [],
+              }),
+            });
+          },
         },
       })}
       width="100%"

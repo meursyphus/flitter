@@ -19,8 +19,18 @@ export default function DonutPieChart() {
         config: {
           colors: ["#6366f1", "#ec4899", "#f59e0b", "#10b981", "#06b6d4"],
           pie: {
-            innerRadiusRatio: 0.5,
+            innerRadiusRatio: 0.55,
           },
+          dataLabel: {
+            visible: true,
+            fontSize: 11,
+            fontColor: "white",
+            fontWeight: "bold",
+            radiusRatio: 0.75,
+            formatter: ({ name, percentage }: any) =>
+              percentage > 10 ? `${name}\n${percentage.toFixed(0)}%` : "",
+          },
+          legend: { visible: false },
         },
       })}
       width="100%"

@@ -19,6 +19,12 @@ export default function StockPriceAgLineChart() {
           colors: { fills: ["#2563eb", "#dc2626", "#059669"], strokes: ["#2563eb", "#dc2626", "#059669"] },
           background: "#fafafa",
           grid: { dash: [2, 2] },
+          axis: {
+            label: {
+              format: (name: string, _index: number, axis: "x" | "y") =>
+                axis === "y" ? `$${name}` : name,
+            },
+          },
           line: {
             strokeWidth: 2,
             spline: false,

@@ -33,7 +33,7 @@ export default function TeamPerformanceCardToast() {
           },
         },
         config: {
-          title: { text: "Team Metrics", visible: true, position: "bottom", alignment: "center" },
+          title: { text: "Team Metrics", visible: true, alignment: "center" },
           colors: ["#6366f1", "#a5b4fc"],
           radar: { fillOpacity: 0.2, strokeWidth: 2.5 },
         },

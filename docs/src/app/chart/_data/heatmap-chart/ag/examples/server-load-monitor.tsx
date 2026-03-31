@@ -2,6 +2,14 @@
 
 import Widget from "@flitterjs/react";
 import { HeatmapChart } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  Border,
+  Center,
+  Text,
+  TextStyle,
+} from "flitter-ui";
 
 export default function ServerLoadMonitorAg() {
   return (
@@ -20,8 +28,41 @@ export default function ServerLoadMonitorAg() {
           ],
         },
         config: {
-          title: { text: "Server Load", visible: true },
+          title: { text: "Infrastructure Dashboard", visible: true },
           background: "#111827",
+          heatmap: { segment: { gap: 2 } },
+        },
+        custom: {
+          segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+            const status = value >= 90 ? "critical" : value >= 75 ? "warning" : value >= 50 ? "elevated" : "normal";
+            const bgMap: Record<string, string> = {
+              critical: "#dc2626",
+              warning: "#d97706",
+              elevated: "#2563eb",
+              normal: "#1e3a5f",
+            };
+            const borderColor = status === "critical" ? "#fca5a5" : status === "warning" ? "#fcd34d" : "transparent";
+            return Container({
+              decoration: new BoxDecoration({
+                color: bgMap[status],
+                border: status === "critical" || status === "warning"
+                  ? Border.all({ color: borderColor, width: 2 })
+                  : undefined,
+              }),
+              child: Center({
+                child: Text(
+                  status === "critical" ? `!! ${value}%` : `${value}%`,
+                  {
+                    style: new TextStyle({
+                      fontSize: 9,
+                      color: "#ffffff",
+                      fontWeight: status === "critical" ? "800" : status === "warning" ? "600" : "400",
+                    }),
+                  },
+                ),
+              }),
+            });
+          },
         },
       })}
       width="100%"

@@ -2,6 +2,7 @@
 
 import Widget from "@flitterjs/react";
 import { ScatterChart } from "shared/chart";
+import { Text, TextStyle, Transform, Alignment } from "flitter-ui";
 
 export default function DefaultAgScatterChart() {
   return (
@@ -79,7 +80,31 @@ export default function DefaultAgScatterChart() {
             },
           ],
         },
-        config: {},
+        custom: {
+          xAxisLabel: (
+            { name }: { name: string; index: number },
+            context: any,
+          ) => {
+            const { font } = context.config;
+            return Transform.rotate({
+              angle: -Math.PI / 6,
+              alignment: Alignment.centerRight,
+              child: Text(`$${(Number(name) / 1000).toFixed(0)}K`, {
+                style: new TextStyle({
+                  fontFamily: font.family,
+                  fontSize: 10,
+                  color: "#475569",
+                }),
+              }),
+            });
+          },
+        },
+        config: {
+          title: { text: "GDP vs Life Expectancy", visible: true },
+          background: "#fafafa",
+          scatter: { size: 7, strokeWidth: 2 },
+          grid: { dash: [2, 4] },
+        },
       })}
       width="100%"
       height="100%"

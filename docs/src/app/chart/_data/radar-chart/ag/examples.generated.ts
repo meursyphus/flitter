@@ -20,7 +20,6 @@ const chart = RadarChart({
     ],
   },
   config: {
-    legend: { position: "right-top" },
     background: "#f8fafc",
   },
 });`;
@@ -35,7 +34,17 @@ const chart = RadarChart({
       { legend: "Gymnast", values: [72, 68, 60, 95, 98] },
     ],
   },
-  config: {},
+  config: {
+    background: "#1e293b",
+    colors: { fills: ["#fb923c", "#38bdf8", "#4ade80"] },
+    radar: {
+      fillOpacity: 0.15,
+      strokeWidth: 2.5,
+      gridColor: "rgba(255, 255, 255, 0.1)",
+      axisColor: "rgba(255, 255, 255, 0.15)",
+    },
+    axis: { label: { color: "#94a3b8" } },
+  },
 });`;
 const _BasicAgRadarChart_code = `import RadarChart from "./charts/radar-chart";
 
@@ -61,7 +70,11 @@ const chart = RadarChart({
       { legend: "Product C", values: [75, 80, 90, 80, 65] },
     ],
   },
-  config: {},
+  config: {
+    title: { text: "Product Comparison", visible: true },
+    subtitle: { text: "Across 5 key dimensions", visible: true },
+    radar: { fillOpacity: 0.15 },
+  },
 });`;
 const _SkillComparisonAgRadar_code = `import RadarChart from "./charts/radar-chart";
 
@@ -73,7 +86,10 @@ const chart = RadarChart({
       { legend: "Bob", values: [75, 92, 60, 95, 65, 78] },
     ],
   },
-  config: {},
+  config: {
+    background: "#f0f9ff",
+    radar: { fillOpacity: 0.2, strokeWidth: 2.5 },
+  },
 });`;
 const _TeamPerformanceAgRadar_code = `import RadarChart from "./charts/radar-chart";
 
@@ -86,7 +102,10 @@ const chart = RadarChart({
       { legend: "DevOps", values: [80, 88, 68, 75, 98] },
     ],
   },
-  config: {},
+  config: {
+    colors: { fills: ["#7c3aed", "#e11d48", "#0891b2"] },
+    radar: { fillOpacity: 0.4, strokeWidth: 3 },
+  },
 });`;
 
 export const BasicAgRadarChart = { Component: _BasicAgRadarChart, code: _BasicAgRadarChart_code };

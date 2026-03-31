@@ -16,6 +16,7 @@ export default function RevenueExpensesToastLine() {
         },
         config: {
           colors: ["#10b981", "#ef4444"],
+          title: { text: "Revenue vs Expenses", visible: true, alignment: "center" },
           line: {
             strokeWidth: 3,
             spline: false,

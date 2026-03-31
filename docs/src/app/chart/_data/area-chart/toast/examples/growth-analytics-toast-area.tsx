@@ -31,7 +31,6 @@ export default function GrowthAnalyticsToastArea() {
         },
         config: {
           colors: ["#0ea5e9", "#8b5cf6", "#f59e0b"],
-          legend: { position: "right" },
           title: { text: "Growth Metrics", visible: true },
           area: {
             strokeWidth: 2,

@@ -41,8 +41,8 @@ const chart = AreaChart({
 
 const showcaseExamples: ShowcaseExample[] = [
   {
-    title: "Market Indicators Overview",
-    subtitle: "Housing, employment, and CPI trends with filled areas",
+    description:
+      "custom.xAxisLabel — wraps long month names in Transform.rotate(-30deg) for angled readability.",
     style: "Toast" as const,
     chart: <DefaultToastAreaChart.Component />,
     featured: true,
@@ -50,8 +50,8 @@ const showcaseExamples: ShowcaseExample[] = [
     code: DefaultToastAreaChart.code,
   },
   {
-    title: "Cash Flow with Negative Dips",
-    subtitle: "Operating and net P&L crossing zero to show positive and negative regions",
+    description:
+      "custom.yAxisLabel — colors negative values red, positive green, and bolds the zero baseline.",
     style: "Toast" as const,
     chart: <CashFlowToastArea.Component />,
     featured: true,
@@ -59,24 +59,24 @@ const showcaseExamples: ShowcaseExample[] = [
     code: CashFlowToastArea.code,
   },
   {
-    title: "Revenue Growth",
-    subtitle: "Quarterly revenue vs costs showing expanding margins",
+    description:
+      "custom.dataLabel — renders \"$X.XM\" only on the last data point per series. config.title visible.",
     style: "Toast" as const,
     chart: <RevenueGrowthToastArea.Component />,
     height: 360,
     code: RevenueGrowthToastArea.code,
   },
   {
-    title: "Smooth Revenue Forecast",
-    subtitle: "Spline curves for polished financial reporting",
+    description:
+      "custom.xAxisLabel — underlines every quarter-start label with a purple BorderSide accent.",
     style: "AG" as const,
     chart: <SplineAgAreaChart.Component />,
     height: 360,
     code: SplineAgAreaChart.code,
   },
   {
-    title: "Network Traffic",
-    subtitle: "Inbound and outbound bandwidth over 24 hours with smooth curves",
+    description:
+      "custom.title — Column with left border accent, bold heading, and gray subtitle inside a Container.",
     style: "Toast" as const,
     chart: <NetworkTrafficToastArea.Component />,
     featured: true,
@@ -84,32 +84,32 @@ const showcaseExamples: ShowcaseExample[] = [
     code: NetworkTrafficToastArea.code,
   },
   {
-    title: "Cloud Infrastructure Costs",
-    subtitle: "Compute, storage, and network spend across the year",
+    description:
+      "Multi-line labels via \\n (\"Jan\\nQ1\"). custom.yAxisLabel prepends \"$\" and appends \"K\" suffix.",
     style: "AG" as const,
     chart: <CloudUsageAgArea.Component />,
     height: 360,
     code: CloudUsageAgArea.code,
   },
   {
-    title: "Growth Analytics with Right Legend",
-    subtitle: "MRR, ARR, and NRR growth metrics with right-aligned legend",
+    description:
+      "custom.legend — Row with rounded color dot, metric name, and latest value in bold accent color.",
     style: "Toast" as const,
     chart: <GrowthAnalyticsToastArea.Component />,
     height: 380,
     code: GrowthAnalyticsToastArea.code,
   },
   {
-    title: "User Engagement Metrics",
-    subtitle: "DAU, WAU, and MAU growth over the year",
+    description:
+      "config.title position: bottom. custom.yAxisLabel — formats large numbers as \"XK\" and highlights values >= 200 in indigo.",
     style: "Toast" as const,
     chart: <UserEngagementToastArea.Component />,
     height: 380,
     code: UserEngagementToastArea.code,
   },
   {
-    title: "Dark Monitoring Panel",
-    subtitle: "Network traffic and errors on a dark ops dashboard theme",
+    description:
+      "custom.legend — neon glow BoxShadow on color dots for dark theme. Dark background, translucent grid and axis.",
     style: "AG" as const,
     chart: <DarkMonitoringAgArea.Component />,
     featured: true,
@@ -117,40 +117,40 @@ const showcaseExamples: ShowcaseExample[] = [
     code: DarkMonitoringAgArea.code,
   },
   {
-    title: "App Performance Monitor",
-    subtitle: "CPU and memory utilization over 24 hours with spline smoothing",
+    description:
+      "custom.yAxisLabel — appends \"%\" suffix and turns red + bold when utilization >= 70%.",
     style: "AG" as const,
     chart: <AppPerformanceAgArea.Component />,
     height: 360,
     code: AppPerformanceAgArea.code,
   },
   {
-    title: "Energy Mix",
-    subtitle: "Solar, wind, and grid power consumption through the seasons",
+    description:
+      "custom.legend — emoji icons in tinted rounded squares. config.legend position: right for vertical layout.",
     style: "Toast" as const,
     chart: <EnergyConsumptionToastArea.Component />,
     height: 380,
     code: EnergyConsumptionToastArea.code,
   },
   {
-    title: "SaaS vs On-Prem Revenue",
-    subtitle: "Quarterly revenue shift from on-premise to cloud subscriptions",
+    description:
+      "config.title position: bottom. custom.xAxisLabel — bolds Q4 labels in teal to mark fiscal year-end.",
     style: "AG" as const,
     chart: <QuarterlyRevenueAgArea.Component />,
     height: 360,
     code: QuarterlyRevenueAgArea.code,
   },
   {
-    title: "Seasonal Patterns",
-    subtitle: "Spline areas highlighting cyclical trends",
+    description:
+      "custom.xAxisLabel — quarter-start months get a slate background badge with rounded corners and bold text.",
     style: "Toast" as const,
     chart: <SplineToastAreaChart.Component />,
     height: 360,
     code: SplineToastAreaChart.code,
   },
   {
-    title: "Multi-Series Comparison",
-    subtitle: "Three economic indicators with angular precision",
+    description:
+      "custom.yAxisLabel — highlights values >= 10 in bold amber to flag outlier thresholds.",
     style: "AG" as const,
     chart: <DefaultAgAreaChart.Component />,
     height: 360,

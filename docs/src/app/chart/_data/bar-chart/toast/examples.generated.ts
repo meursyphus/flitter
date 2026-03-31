@@ -97,7 +97,6 @@ const chart = ToastBarChart({
   config: {
     colors: ["#0d9488", "#14b8a6", "#99f6e4"],
     title: { text: "Monthly Revenue ($M)", visible: true },
-    legend: { position: "right-center" },
   },
 });`;
 const _HorizontalRankingToast_code = `import ToastBarChart from "./charts/toast-bar-chart";
@@ -218,7 +217,6 @@ const chart = ToastBarChart({
   config: {
     colors: ["#3b82f6", "#ec4899"],
     title: { text: "Population Distribution by Age", visible: true },
-    legend: { position: "right-center" },
     bar: { cornerRadius: 2 },
   },
 });`;

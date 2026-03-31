@@ -16,7 +16,21 @@ export default function BasicAgPieChart() {
             { name: "Other", value: 4 },
           ],
         },
-        config: {},
+        config: {
+          title: {
+            text: "Browser Market Share",
+            visible: true,
+            alignment: "center",
+          },
+          subtitle: {
+            text: "2025 Global Desktop Usage",
+            visible: true,
+          },
+          legend: {
+            visible: true,
+            position: "bottom",
+          },
+        },
       })}
       width="100%"
       height="100%"

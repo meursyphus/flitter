@@ -17,7 +17,13 @@ export default function AthleteProfileRadar() {
         },
         config: {
           colors: ["#ef4444", "#3b82f6", "#10b981"],
-          radar: { fillOpacity: 0.1, strokeWidth: 3 },
+          radar: {
+            fillOpacity: 0.04,
+            strokeWidth: 3.5,
+            gridColor: "rgba(0, 0, 0, 0.06)",
+            axisColor: "rgba(0, 0, 0, 0.15)",
+            axisWidth: 1.5,
+          },
         },
       })}
       width="100%"

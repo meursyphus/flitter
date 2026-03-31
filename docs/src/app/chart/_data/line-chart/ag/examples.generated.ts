@@ -22,8 +22,15 @@ const chart = LineChart({
   config: {
     colors: { fills: ["#22c55e", "#ef4444"], strokes: ["#22c55e", "#ef4444"] },
     title: { text: "Response Time (ms)", visible: true, alignment: "start" },
-    grid: { dash: [3, 3], color: "#e5e5e5" },
-    axis: { yLine: { visible: false } },
+    grid: { dash: [3, 3], color: "#e5e5e5", xLine: { visible: true } },
+    axis: {
+      yLine: { visible: false },
+      tick: { enabled: true, size: 8 },
+      label: {
+        format: (name: string, _index: number, axis: "x" | "y") =>
+          axis === "y" ? \`\${name}ms\` : name,
+      },
+    },
     line: {
       strokeWidth: 2,
       spline: true,
@@ -54,16 +61,28 @@ const chart = LineChart({
     },
   },
 });`;
-const _DefaultAgLineChart_code = `import LineChart from "./charts/line-chart";
+const _DefaultAgLineChart_code = `import { Text, TextStyle, Transform, Alignment } from "flitter-ui";
+import LineChart from "./charts/line-chart";
 
 const chart = LineChart({
   data: {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     datasets: [
       { legend: "Housing starts (MoM %)", values: [0, 12.38, -15.46, 5.56, -4.98, 0.84, -4.67, 9.96, -2.44, -0.37, -4.22, 16.91] },
-      { legend: "Unemployment rate Δ (pp)", values: [0, 11.2, -8.4, 6.9, -5.8, 7.5, -6.2, 4.9, -4.1, 8.1, -5.6, 7.2] },
+      { legend: "Unemployment rate \\u0394 (pp)", values: [0, 11.2, -8.4, 6.9, -5.8, 7.5, -6.2, 4.9, -4.1, 8.1, -5.6, 7.2] },
       { legend: "CPI MoM (1/10 index pts)", values: [0, 12.69, 13.78, 6.78, 1.52, -1.31, 5.25, 4.93, 6.70, 8.99, 8.97, 10.76] },
     ],
+  },
+  custom: {
+    xAxisLabel: ({ name }: { name: string; index: number }) => {
+      return Transform.rotate({
+        angle: -Math.PI / 6,
+        alignment: Alignment.center,
+        child: Text(name, {
+          style: new TextStyle({ fontSize: 11, color: "#585858" }),
+        }),
+      });
+    },
   },
   config: {
     line: {
@@ -85,6 +104,7 @@ const chart = LineChart({
   },
   config: {
     colors: { fills: ["#059669", "#d97706", "#e11d48"], strokes: ["#059669", "#d97706", "#e11d48"] },
+    title: { text: "Product Sales by Category", visible: true, alignment: "center" },
     line: {
       strokeWidth: 2.5,
       spline: true,
@@ -104,6 +124,7 @@ const chart = LineChart({
   },
   config: {
     colors: { fills: ["#7c3aed", "#06b6d4"], strokes: ["#7c3aed", "#06b6d4"] },
+    subtitle: { visible: true, text: "Dashed grid with subtitle" },
     grid: { dash: [4, 4] },
     line: {
       strokeWidth: 2,
@@ -126,26 +147,49 @@ const chart = LineChart({
     colors: { fills: ["#2563eb", "#dc2626", "#059669"], strokes: ["#2563eb", "#dc2626", "#059669"] },
     background: "#fafafa",
     grid: { dash: [2, 2] },
+    axis: {
+      label: {
+        format: (name: string, _index: number, axis: "x" | "y") =>
+          axis === "y" ? \`$\${name}\` : name,
+      },
+    },
     line: {
       strokeWidth: 2,
       spline: false,
     },
   },
 });`;
-const _WebAnalyticsAgLine_code = `import LineChart from "./charts/line-chart";
+const _WebAnalyticsAgLine_code = `import { Text, TextStyle, Column, CrossAxisAlignment, MainAxisSize } from "flitter-ui";
+import LineChart from "./charts/line-chart";
 
 const chart = LineChart({
   data: {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    labels: ["Jan\\n2024", "Feb\\n2024", "Mar\\n2024", "Apr\\n2024", "May\\n2024", "Jun\\n2024", "Jul\\n2024", "Aug\\n2024", "Sep\\n2024", "Oct\\n2024", "Nov\\n2024", "Dec\\n2024"],
     datasets: [
       { legend: "Pageviews (K)", values: [320, 345, 380, 410, 395, 430, 465, 490, 475, 510, 540, 580] },
       { legend: "Sessions (K)", values: [180, 195, 215, 230, 220, 245, 260, 275, 265, 290, 305, 325] },
       { legend: "Bounce Rate (%)", values: [42, 40, 38, 36, 37, 34, 32, 30, 31, 29, 28, 26] },
     ],
   },
+  custom: {
+    xAxisLabel: ({ name }: { name: string; index: number }) => {
+      const parts = name.split("\\n");
+      return Column({
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(parts[0], {
+            style: new TextStyle({ fontSize: 12, fontWeight: "bold", color: "#374151" }),
+          }),
+          Text(parts[1] ?? "", {
+            style: new TextStyle({ fontSize: 9, color: "#9ca3af" }),
+          }),
+        ],
+      });
+    },
+  },
   config: {
     colors: { fills: ["#0ea5e9", "#f97316", "#a855f7"], strokes: ["#0ea5e9", "#f97316", "#a855f7"] },
-    legend: { position: "right-top" },
     line: {
       strokeWidth: 2,
       spline: false,

@@ -17,6 +17,7 @@ export default function MonthlySalesAgLine() {
         },
         config: {
           colors: { fills: ["#059669", "#d97706", "#e11d48"], strokes: ["#059669", "#d97706", "#e11d48"] },
+          title: { text: "Product Sales by Category", visible: true, alignment: "center" },
           line: {
             strokeWidth: 2.5,
             spline: true,

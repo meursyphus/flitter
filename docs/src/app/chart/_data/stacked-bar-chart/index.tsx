@@ -45,6 +45,7 @@ const showcaseExamples: ShowcaseExample[] = [
   {
     title: "Regional Revenue Breakdown",
     subtitle: "Monthly revenue stacked by North America, Europe, and Asia Pacific",
+    description: "custom.bar — rounded corners only on the topmost segment for a polished stacked look",
     style: "Toast" as const,
     chart: <RegionalRevenueToast.Component />,
     featured: true,
@@ -53,7 +54,8 @@ const showcaseExamples: ShowcaseExample[] = [
   },
   {
     title: "Department Headcount",
-    subtitle: "Horizontal stacked bars for category comparison",
+    subtitle: "Horizontal stacked bars with department code prefixes",
+    description: "custom.yAxisLabel — monospace department codes prepended to each label",
     style: "AG" as const,
     chart: <DepartmentHeadcountAg.Component />,
     height: 380,
@@ -62,6 +64,7 @@ const showcaseExamples: ShowcaseExample[] = [
   {
     title: "Product P&L Mix",
     subtitle: "Positive and negative values stacked by product line",
+    description: "custom.yAxisLabel — zero-line highlighted in bold red, negative values dimmed",
     style: "Toast" as const,
     chart: <ProductPLMixToast.Component />,
     height: 360,
@@ -69,15 +72,17 @@ const showcaseExamples: ShowcaseExample[] = [
   },
   {
     title: "Regional Sales Composition",
-    subtitle: "AG style vertical stacked bars",
+    subtitle: "Teal monochrome theme with tinted background",
+    description: "config — custom background color, dashed grid lines, and rounded bar corners",
     style: "AG" as const,
     chart: <RegionalSalesAg.Component />,
     height: 360,
     code: RegionalSalesAg.code,
   },
   {
-    title: "Horizontal Category View",
-    subtitle: "Toast style horizontal stacked bars for easy label reading",
+    title: "Office Revenue by Region",
+    subtitle: "Horizontal bars ranked by total revenue across offices",
+    description: "custom.yAxisLabel — numbered ranking with gold/silver/bronze highlight for top 3",
     style: "Toast" as const,
     chart: <HorizontalCategoryToast.Component />,
     height: 380,
@@ -85,7 +90,8 @@ const showcaseExamples: ShowcaseExample[] = [
   },
   {
     title: "Volatile Quarterly Mix",
-    subtitle: "AG style with positive and negative stacked values",
+    subtitle: "Conditional bar coloring for positive vs negative segments",
+    description: "custom.bar — green for gains, translucent red for losses per segment",
     style: "AG" as const,
     chart: <VolatileQuarterlyAg.Component />,
     height: 360,
@@ -94,6 +100,7 @@ const showcaseExamples: ShowcaseExample[] = [
   {
     title: "Marketing Channel Conversions",
     subtitle: "SEO, paid ads, social, and email conversions by month",
+    description: "custom.dataLabel — stack totals displayed above the topmost segment",
     style: "Toast" as const,
     chart: <MarketingChannelToast.Component />,
     featured: true,
@@ -103,6 +110,7 @@ const showcaseExamples: ShowcaseExample[] = [
   {
     title: "Budget Allocation by Department",
     subtitle: "Quarterly budget breakdown across Engineering, Marketing, Sales, and Ops",
+    description: "custom.title — decorated title card with blue background and subtitle text",
     style: "Toast" as const,
     chart: <BudgetAllocationToast.Component />,
     height: 380,
@@ -111,6 +119,7 @@ const showcaseExamples: ShowcaseExample[] = [
   {
     title: "Department Budget Breakdown",
     subtitle: "Salaries, tools, training, and travel spend across 5 departments",
+    description: "custom.xAxisLabel — angled department names with bold purple styling",
     style: "Toast" as const,
     chart: <DepartmentBudgetToast.Component />,
     featured: true,
@@ -120,6 +129,7 @@ const showcaseExamples: ShowcaseExample[] = [
   {
     title: "Energy Generation by Source",
     subtitle: "Monthly energy output from solar, wind, hydro, and nuclear",
+    description: "config — rounded corners, right-aligned legend, and soft grid lines",
     style: "Toast" as const,
     chart: <EnergySourceToast.Component />,
     height: 360,
@@ -128,6 +138,7 @@ const showcaseExamples: ShowcaseExample[] = [
   {
     title: "Employee Distribution by Seniority",
     subtitle: "Junior, mid-level, and senior headcount across departments",
+    description: "custom.bar — bars dim to translucent for departments with fewer than 100 total employees",
     style: "Toast" as const,
     chart: <EmployeeDistributionToast.Component />,
     height: 380,
@@ -136,6 +147,7 @@ const showcaseExamples: ShowcaseExample[] = [
   {
     title: "Revenue by Product Line",
     subtitle: "SaaS, mobile, and API revenue growth by quarter",
+    description: "config — right-top legend, rounded corners, and subtle background tint",
     style: "AG" as const,
     chart: <RevenueByProductAg.Component />,
     featured: true,
@@ -145,6 +157,7 @@ const showcaseExamples: ShowcaseExample[] = [
   {
     title: "Employee Survey Responses",
     subtitle: "Agreement levels across workplace satisfaction categories",
+    description: "custom.xAxisLabel — percentage annotations below axis values, green highlight for 80%+",
     style: "AG" as const,
     chart: <SurveyResponsesAg.Component />,
     height: 380,
@@ -153,6 +166,7 @@ const showcaseExamples: ShowcaseExample[] = [
   {
     title: "Project Hours by Phase",
     subtitle: "Design, development, and QA hours across 5 projects",
+    description: "custom.title — accent bar indicator with bold heading in a custom Row layout",
     style: "AG" as const,
     chart: <ProjectHoursAg.Component />,
     featured: true,
@@ -162,6 +176,7 @@ const showcaseExamples: ShowcaseExample[] = [
   {
     title: "Sprint Effort Breakdown",
     subtitle: "Design, development, QA, and deployment hours per sprint",
+    description: "custom.dataLabel — total hours shown above each bar, red highlight when over 100h",
     style: "AG" as const,
     chart: <SprintEffortAg.Component />,
     height: 360,

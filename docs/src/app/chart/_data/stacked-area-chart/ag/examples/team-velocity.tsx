@@ -18,6 +18,13 @@ export default function TeamVelocityAgStackedArea() {
         config: {
           colors: { fills: ["#6366f1", "#ec4899", "#f59e0b"], strokes: ["#6366f1", "#ec4899", "#f59e0b"] },
           area: { opacity: 0.55, spline: true, strokeWidth: 1.5 },
+          title: { text: "Team Velocity", visible: true },
+          axis: {
+            label: {
+              format: (name: string, _index: number, axis: string) =>
+                axis === "y" ? `${name} pts` : name.replace("Sprint ", "S"),
+            },
+          },
         },
       })}
       width="100%"

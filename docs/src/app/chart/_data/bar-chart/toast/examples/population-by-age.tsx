@@ -26,7 +26,6 @@ export default function PopulationByAgeToast() {
         config: {
           colors: ["#3b82f6", "#ec4899"],
           title: { text: "Population Distribution by Age", visible: true },
-          legend: { position: "right-center" },
           bar: { cornerRadius: 2 },
         },
       })}

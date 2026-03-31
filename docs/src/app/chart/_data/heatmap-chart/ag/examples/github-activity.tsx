@@ -2,6 +2,7 @@
 
 import Widget from "@flitterjs/react";
 import { HeatmapChart } from "shared/chart";
+import { Text, TextStyle } from "flitter-ui";
 
 export default function GithubActivityAg() {
   return (
@@ -20,7 +21,24 @@ export default function GithubActivityAg() {
             [0, 0, 1, 0, 0, 2, 0, 0, 0, 1, 0, 0],
           ],
         },
-        config: {},
+        config: {
+          heatmap: { colorRange: ["#ebedf0", "#9be9a8", "#216e39"], segment: { gap: 2 } },
+        },
+        custom: {
+          xAxisLabel: ({ name, index }: { name: string; index: number }, context: any) => {
+            const { font } = context.config;
+            const short = name.substring(0, 1);
+            const isQ = index % 3 === 0;
+            return Text(isQ ? name : short, {
+              style: new TextStyle({
+                fontFamily: font.family,
+                fontSize: isQ ? font.size : font.size - 1,
+                fontWeight: isQ ? "700" : "normal",
+                color: isQ ? "#216e39" : "#9ca3af",
+              }),
+            });
+          },
+        },
       })}
       width="100%"
       height="100%"

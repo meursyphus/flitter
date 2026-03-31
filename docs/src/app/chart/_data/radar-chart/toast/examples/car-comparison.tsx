@@ -16,8 +16,18 @@ export default function CarComparisonRadar() {
           ],
         },
         config: {
-          colors: ["#1e40af", "#dc2626", "#064e3b"],
-          radar: { fillOpacity: 0.2, strokeWidth: 2 },
+          colors: ["#38bdf8", "#f472b6", "#a3e635"],
+          radar: {
+            fillOpacity: 0.2,
+            strokeWidth: 2.5,
+            gridColor: "rgba(255, 255, 255, 0.12)",
+            gridWidth: 1,
+            axisColor: "rgba(255, 255, 255, 0.2)",
+            axisWidth: 1,
+          },
+          axis: { label: { color: "#94a3b8" } },
+          title: { text: "Vehicle Comparison", visible: true, color: "#e2e8f0" },
+          tooltip: { backgroundColor: "rgba(15, 23, 42, 0.9)", textColor: "#f1f5f9" },
         },
       })}
       width="100%"

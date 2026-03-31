@@ -2,6 +2,14 @@
 
 import Widget from "@flitterjs/react";
 import { ToastAreaChart as ToastAreaChartWidget } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  Text,
+  TextStyle,
+  EdgeInsets,
+  BorderRadius,
+} from "flitter-ui";
 
 export default function SplineToastAreaChart() {
   return (
@@ -21,6 +29,25 @@ export default function SplineToastAreaChart() {
             opacity: 0.2,
             spline: true,
             strokeWidth: 2,
+          },
+        },
+        custom: {
+          xAxisLabel: ({ name, index }: { name: string; index: number }) => {
+            const isQuarterStart = index % 3 === 0;
+            return Container({
+              padding: EdgeInsets.symmetric({ horizontal: 4, vertical: 2 }),
+              decoration: new BoxDecoration({
+                color: isQuarterStart ? "#f1f5f9" : undefined,
+                borderRadius: BorderRadius.circular(4),
+              }),
+              child: Text(name, {
+                style: new TextStyle({
+                  fontSize: 10,
+                  color: isQuarterStart ? "#6366f1" : "#94a3b8",
+                  fontWeight: isQuarterStart ? "600" : undefined,
+                }),
+              }),
+            });
           },
         },
       })}

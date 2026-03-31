@@ -17,7 +17,12 @@ export default function EnergySourceToast() {
             { legend: "Nuclear", values: [300, 300, 295, 305, 300, 310, 305, 300, 298, 302, 300, 305] },
           ],
         },
-        config: { colors: ["#eab308", "#22c55e", "#06b6d4", "#a855f7"] },
+        config: {
+          colors: ["#f59e0b", "#34d399", "#06b6d4", "#a78bfa"],
+          bar: { gap: 4 },
+          title: { text: "Energy Generation (GWh)", visible: true },
+          grid: { color: "rgba(0,0,0,0.04)" },
+        },
       })}
       width="100%"
       height="100%"

@@ -1,6 +1,18 @@
 "use client";
 
 import Widget from "@flitterjs/react";
+import {
+  Container,
+  BoxDecoration,
+  EdgeInsets,
+  BorderRadius,
+  Text,
+  TextStyle,
+  Row,
+  SizedBox,
+  MainAxisSize,
+  CrossAxisAlignment,
+} from "flitter-ui";
 import { BubbleChart } from "shared/chart";
 
 export default function TechStackAgBubble() {
@@ -39,7 +51,36 @@ export default function TechStackAgBubble() {
             },
           ],
         },
+        custom: {
+          xAxisLabel: ({ name }: any) => {
+            const adoption = Number(name);
+            // Mini bar indicator showing adoption level
+            return Row({
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(`${name}%`, {
+                  style: new TextStyle({
+                    fontSize: 11,
+                    color: "#585858",
+                  }),
+                }),
+                SizedBox({ width: 3 }),
+                Container({
+                  width: Math.max(2, adoption / 5),
+                  height: 4,
+                  decoration: new BoxDecoration({
+                    color: adoption >= 70 ? "#10b981" : adoption >= 40 ? "#f59e0b" : "#94a3b8",
+                    borderRadius: BorderRadius.circular(2),
+                  }),
+                }),
+              ],
+            });
+          },
+        },
         config: {
+          title: { text: "Tech Stack Landscape 2025", visible: true },
+          subtitle: { visible: true, text: "Adoption vs satisfaction, bubble = job openings" },
           bubble: { minRadius: 5, maxRadius: 30, opacity: 0.6 },
           colors: {
             fills: ["#3b82f6", "#10b981", "#f59e0b"],

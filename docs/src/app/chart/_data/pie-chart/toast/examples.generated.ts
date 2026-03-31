@@ -130,8 +130,18 @@ const chart = ToastPieChart({
   config: {
     colors: ["#6366f1", "#ec4899", "#f59e0b", "#10b981", "#06b6d4"],
     pie: {
-      innerRadiusRatio: 0.5,
+      innerRadiusRatio: 0.55,
     },
+    dataLabel: {
+      visible: true,
+      fontSize: 11,
+      fontColor: "white",
+      fontWeight: "bold",
+      radiusRatio: 0.75,
+      formatter: ({ name, percentage }: any) =>
+        percentage > 10 ? \`\${name}\\n\${percentage.toFixed(0)}%\` : "",
+    },
+    legend: { visible: false },
   },
 });`;
 const _EnergyMixPie_code = `import ToastPieChart from "./charts/toast-pie-chart";
@@ -167,10 +177,33 @@ const chart = ToastPieChart({
     ],
   },
   config: {
-    colors: ["#0d9488", "#d97706", "#6366f1", "#ec4899", "#06b6d4", "#f43f5e", "#84cc16", "#a855f7"],
+    colors: [
+      "#0d9488",
+      "#d97706",
+      "#6366f1",
+      "#94a3b8",
+      "#dc2626",
+      "#94a3b8",
+      "#94a3b8",
+      "#059669",
+    ],
     pie: {
       innerRadiusRatio: 0.4,
       strokeWidth: 3,
+    },
+    title: {
+      text: "Monthly Expenses",
+      visible: true,
+      position: "top",
+      alignment: "start",
+    },
+    dataLabel: {
+      visible: true,
+      fontSize: 11,
+      fontColor: "white",
+      fontWeight: "bold",
+      formatter: ({ name, value }: any) =>
+        value >= 500 ? \`$\${(value / 1000).toFixed(1)}K\` : "",
     },
   },
 });`;
@@ -206,6 +239,16 @@ const chart = ToastPieChart({
   },
   config: {
     colors: ["#3572A5", "#f1e05a", "#3178c6", "#b07219", "#00ADD8", "#dea584"],
+    legend: { visible: false },
+    dataLabel: {
+      visible: true,
+      fontSize: 12,
+      fontColor: "white",
+      fontWeight: "bold",
+      radiusRatio: 0.6,
+      formatter: ({ name, percentage }: any) =>
+        \`\${name} \${percentage.toFixed(0)}%\`,
+    },
   },
 });`;
 const _RevenueByRegionPie_code = `import ToastPieChart from "./charts/toast-pie-chart";
@@ -224,24 +267,70 @@ const chart = ToastPieChart({
   },
 });`;
 const _TimeAllocationPie_code = `import ToastPieChart from "./charts/toast-pie-chart";
+import {
+  Row,
+  Container,
+  BoxDecoration,
+  SizedBox,
+  Text,
+  TextStyle,
+  CrossAxisAlignment,
+} from "flitter-ui";
+
+const pctData = [35, 25, 15, 15, 10];
+const colors = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6"];
 
 const chart = ToastPieChart({
   data: {
     datasets: [
-      { name: "Meetings", value: 25 },
       { name: "Coding", value: 35 },
+      { name: "Meetings", value: 25 },
       { name: "Code Review", value: 15 },
       { name: "Planning", value: 15 },
       { name: "Break", value: 10 },
     ],
   },
   config: {
-    colors: ["#ef4444", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6"],
+    colors,
     pie: {
-      innerRadiusRatio: 0.45,
+      innerRadiusRatio: 0.5,
       strokeWidth: 3,
-      strokeColor: "#f5f5f5",
+      strokeColor: "#f8fafc",
     },
+    legend: {
+      position: "right-center",
+    },
+  },
+  custom: {
+    legend: ({ name, index }: any) =>
+      Row({
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container({
+            width: 10,
+            height: 10,
+            decoration: new BoxDecoration({
+              color: colors[index],
+              shape: "circle",
+            }),
+          }),
+          SizedBox({ width: 6 }),
+          Text(name, {
+            style: new TextStyle({
+              fontSize: 11,
+              color: "#334155",
+            }),
+          }),
+          SizedBox({ width: 4 }),
+          Text(\`\${pctData[index]}%\`, {
+            style: new TextStyle({
+              fontSize: 11,
+              color: "#94a3b8",
+              fontWeight: "600",
+            }),
+          }),
+        ],
+      }),
   },
 });`;
 const _TrafficSourcePie_code = `import ToastPieChart from "./charts/toast-pie-chart";
@@ -260,6 +349,19 @@ const chart = ToastPieChart({
     colors: ["#3b82f6", "#10b981", "#f97316", "#ec4899", "#6366f1"],
     pie: {
       innerRadiusRatio: 0.55,
+    },
+    title: {
+      text: "Traffic Sources — Q4 2025",
+      visible: true,
+      fontSize: 14,
+      fontWeight: "600",
+      color: "#1e293b",
+      position: "top",
+      alignment: "center",
+    },
+    legend: {
+      position: "bottom",
+      gap: 16,
     },
   },
 });`;

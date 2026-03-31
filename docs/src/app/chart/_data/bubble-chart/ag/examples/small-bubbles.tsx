@@ -1,6 +1,18 @@
 "use client";
 
 import Widget from "@flitterjs/react";
+import {
+  Container,
+  BoxDecoration,
+  EdgeInsets,
+  BorderRadius,
+  Text,
+  TextStyle,
+  Row,
+  SizedBox,
+  MainAxisSize,
+  CrossAxisAlignment,
+} from "flitter-ui";
 import { BubbleChart } from "shared/chart";
 
 export default function SmallAgBubbleChart() {
@@ -35,7 +47,50 @@ export default function SmallAgBubbleChart() {
             },
           ],
         },
+        custom: {
+          legend: ({ name, index }: any, context: any) => {
+            const color = context.config.colors.fills[index % context.config.colors.fills.length];
+            // Pill-shaped legend with count badge
+            const dataset = context.data.datasets[index];
+            const count = dataset?.data?.length ?? 0;
+            return Container({
+              padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 3 }),
+              decoration: new BoxDecoration({
+                color: "white",
+                borderRadius: BorderRadius.circular(10),
+              }),
+              child: Row({
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container({
+                    width: 8,
+                    height: 8,
+                    decoration: new BoxDecoration({ color, shape: "circle" }),
+                  }),
+                  SizedBox({ width: 5 }),
+                  Text(name, {
+                    style: new TextStyle({ fontSize: 11, color: "#333" }),
+                  }),
+                  SizedBox({ width: 4 }),
+                  Container({
+                    padding: EdgeInsets.symmetric({ horizontal: 5, vertical: 1 }),
+                    decoration: new BoxDecoration({
+                      color: `${color}22`,
+                      borderRadius: BorderRadius.circular(8),
+                    }),
+                    child: Text(`${count}`, {
+                      style: new TextStyle({ fontSize: 9, color, fontWeight: "bold" }),
+                    }),
+                  }),
+                ],
+              }),
+            });
+          },
+        },
         config: {
+          title: { text: "Tight Radius Range", visible: true },
+          subtitle: { visible: true, text: "Custom legend with data-point count badges" },
           bubble: { minRadius: 2, maxRadius: 20, opacity: 0.8 },
           colors: {
             fills: ["#7c3aed", "#06b6d4", "#f97316"],

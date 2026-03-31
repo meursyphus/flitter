@@ -17,7 +17,13 @@ export default function TeamPerformanceRadarChart() {
         },
         config: {
           colors: ["#6366f1", "#ec4899", "#06b6d4"],
-          radar: { fillOpacity: 0.25, strokeWidth: 3 },
+          radar: {
+            fillOpacity: 0.55,
+            strokeWidth: 0.5,
+            gridColor: "rgba(99, 102, 241, 0.12)",
+            gridWidth: 1,
+          },
+          title: { text: "Team KPI Heatmap", visible: true, alignment: "center" },
         },
       })}
       width="100%"

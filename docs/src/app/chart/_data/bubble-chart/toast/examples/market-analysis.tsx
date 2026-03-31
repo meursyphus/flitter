@@ -1,6 +1,12 @@
 "use client";
 
 import Widget from "@flitterjs/react";
+import {
+  Container,
+  BoxDecoration,
+  BoxShadow,
+  Opacity,
+} from "flitter-ui";
 import { ToastBubbleChart as ToastBubbleChartWidget } from "shared/chart";
 
 export default function MarketAnalysisToastBubble() {
@@ -45,7 +51,39 @@ export default function MarketAnalysisToastBubble() {
             },
           ],
         },
+        custom: {
+          bubble: (
+            { value, legend }: any,
+            context: any,
+          ) => {
+            const { colors, bubble: bubbleConfig } = context.config;
+            const idx = context.legends.indexOf(legend);
+            const color = colors[idx % colors.length];
+            const { scale } = context;
+            const normValue = scale != null
+              ? (value - scale.value.min) / (scale.value.max - scale.value.min || 1)
+              : 0.5;
+            const radius = bubbleConfig.minRadius + normValue * (bubbleConfig.maxRadius - bubbleConfig.minRadius);
+            // High-growth sectors (y > 20) get full opacity + glow shadow
+            const dataset = context.data.datasets.find((d: any) => d.legend === legend);
+            const point = dataset?.data.find((d: any) => d.value === value);
+            const isHighGrowth = point && point.y > 20;
+
+            return Container({
+              width: radius * 2,
+              height: radius * 2,
+              decoration: new BoxDecoration({
+                color: isHighGrowth ? color : `${color}88`,
+                shape: "circle",
+                boxShadow: isHighGrowth
+                  ? [new BoxShadow({ color: `${color}66`, blurRadius: 12 })]
+                  : [],
+              }),
+            });
+          },
+        },
         config: {
+          title: { text: "Market Analysis by Industry", visible: true },
           bubble: { minRadius: 8, maxRadius: 45, opacity: 0.5 },
           colors: ["#0ea5e9", "#f97316", "#8b5cf6", "#10b981"],
         },

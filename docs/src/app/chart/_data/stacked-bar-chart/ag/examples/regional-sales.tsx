@@ -16,7 +16,12 @@ export default function RegionalSalesAg() {
             { legend: "Asia Pacific", values: [65, 80, 75, 90, 85, 95, 100] },
           ],
         },
-        config: {},
+        config: {
+          colors: { fills: ["#0f766e", "#14b8a6", "#99f6e4"], strokes: ["#0f766e", "#14b8a6", "#99f6e4"] },
+          background: "#f0fdfa",
+          grid: { dash: [3, 3] },
+          bar: { gap: 3 },
+        },
       })}
       width="100%"
       height="100%"

@@ -2,6 +2,15 @@
 
 import Widget from "@flitterjs/react";
 import { AreaChart } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  Text,
+  TextStyle,
+  EdgeInsets,
+  Border,
+  BorderSide,
+} from "flitter-ui";
 
 export default function SplineAgAreaChart() {
   return (
@@ -23,6 +32,27 @@ export default function SplineAgAreaChart() {
             opacity: 0.2,
             spline: true,
           },
+        },
+        custom: {
+          xAxisLabel: ({ name, index }: { name: string; index: number }) =>
+            Container({
+              padding: EdgeInsets.symmetric({ horizontal: 6, vertical: 3 }),
+              decoration: new BoxDecoration({
+                border: new Border({
+                  bottom: new BorderSide({
+                    color: index % 3 === 0 ? "#7c3aed" : "transparent",
+                    width: 2,
+                  }),
+                }),
+              }),
+              child: Text(name, {
+                style: new TextStyle({
+                  fontSize: 10,
+                  color: index % 3 === 0 ? "#7c3aed" : "#9ca3af",
+                  fontWeight: index % 3 === 0 ? "600" : undefined,
+                }),
+              }),
+            }),
         },
       })}
       width="100%"

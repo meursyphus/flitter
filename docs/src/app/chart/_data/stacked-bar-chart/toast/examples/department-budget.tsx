@@ -2,6 +2,7 @@
 
 import Widget from "@flitterjs/react";
 import { ToastStackedBarChart as ToastStackedBarChartWidget } from "shared/chart";
+import { Transform, Text, TextStyle, Alignment } from "flitter-ui";
 
 export default function DepartmentBudgetToast() {
   return (
@@ -19,7 +20,27 @@ export default function DepartmentBudgetToast() {
         },
         config: {
           colors: ["#6366f1", "#a78bfa", "#c4b5fd", "#ddd6fe"],
-          legend: { position: "right-top" },
+          title: { text: "Department Budget ($K)", visible: true },
+        },
+        custom: {
+          xAxisLabel: (
+            { name }: { name: string; index: number },
+            context: any,
+          ) => {
+            const { font } = context.config;
+            return Transform.rotate({
+              angle: -Math.PI / 6,
+              alignment: Alignment.centerRight,
+              child: Text(name, {
+                style: new TextStyle({
+                  fontFamily: font.family,
+                  fontSize: 10,
+                  fontWeight: "600",
+                  color: "#4338ca",
+                }),
+              }),
+            });
+          },
         },
       })}
       width="100%"

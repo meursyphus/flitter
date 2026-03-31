@@ -84,7 +84,6 @@ export default function ExecutiveRevenueAg() {
         config: {
           colors: { fills: ["#2563eb", "#7c3aed", "#e879f9"] },
           title: { text: "Q4 Revenue", visible: true },
-          legend: { position: "right-top" },
           bar: { cornerRadius: 4 },
         },
       })}

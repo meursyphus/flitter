@@ -2,6 +2,19 @@
 
 import Widget from "@flitterjs/react";
 import { AreaChart } from "shared/chart";
+import {
+  Row,
+  Container,
+  BoxDecoration,
+  SizedBox,
+  Text,
+  TextStyle,
+  CrossAxisAlignment,
+  BorderRadius,
+  BoxShadow,
+} from "flitter-ui";
+
+const colors = ["#22d3ee", "#a78bfa", "#f87171"];
 
 export default function DarkMonitoringAgArea() {
   return (
@@ -20,12 +33,40 @@ export default function DarkMonitoringAgArea() {
           background: "#111827",
           grid: { dash: [4, 4], color: "rgba(255,255,255,0.1)" },
           axis: { color: "rgba(255,255,255,0.3)", label: { color: "rgba(255,255,255,0.6)" } },
-          legend: { color: "rgba(255,255,255,0.7)" },
           area: {
             strokeWidth: 1.5,
             opacity: 0.2,
             spline: true,
           },
+        },
+        custom: {
+          legend: ({ name, index }: { name: string; index: number }) =>
+            Row({
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container({
+                  width: 8,
+                  height: 8,
+                  decoration: new BoxDecoration({
+                    color: colors[index],
+                    borderRadius: BorderRadius.circular(4),
+                    boxShadow: [
+                      new BoxShadow({
+                        color: colors[index] + "80",
+                        blurRadius: 6,
+                      }),
+                    ],
+                  }),
+                }),
+                SizedBox({ width: 6 }),
+                Text(name, {
+                  style: new TextStyle({
+                    fontSize: 11,
+                    color: "rgba(255,255,255,0.7)",
+                  }),
+                }),
+              ],
+            }),
         },
       })}
       width="100%"

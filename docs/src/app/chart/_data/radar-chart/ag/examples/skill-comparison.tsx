@@ -14,7 +14,10 @@ export default function SkillComparisonAgRadar() {
             { legend: "Bob", values: [75, 92, 60, 95, 65, 78] },
           ],
         },
-        config: {},
+        config: {
+          background: "#f0f9ff",
+          radar: { fillOpacity: 0.2, strokeWidth: 2.5 },
+        },
       })}
       width="100%"
       height="100%"

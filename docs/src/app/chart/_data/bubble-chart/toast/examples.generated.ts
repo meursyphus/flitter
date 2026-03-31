@@ -9,7 +9,11 @@ import _MarketOpportunityToastBubble from "./examples/market-opportunity";
 import _SmallBubblestoastBubbleChart from "./examples/small-bubbles";
 import _StartupFundingToastBubble from "./examples/startup-funding";
 
-const _CityComparisonToastBubble_code = `import ToastBubbleChart from "./charts/toast-bubble-chart";
+const _CityComparisonToastBubble_code = `import {
+  Text,
+  TextStyle,
+} from "flitter-ui";
+import ToastBubbleChart from "./charts/toast-bubble-chart";
 
 const chart = ToastBubbleChart({
   data: {
@@ -42,7 +46,22 @@ const chart = ToastBubbleChart({
       },
     ],
   },
+  custom: {
+    xAxisLabel: ({ name }: { name: string }) => {
+      const cost = Number(name);
+      // Red for expensive (80+), amber for moderate (70-79), green for affordable (<70)
+      const color = cost >= 80 ? "#dc2626" : cost >= 70 ? "#d97706" : "#059669";
+      return Text(name, {
+        style: new TextStyle({
+          fontSize: 11,
+          color,
+          fontWeight: cost >= 80 ? "bold" : "normal",
+        }),
+      });
+    },
+  },
   config: {
+    title: { text: "Global City Comparison", visible: true, alignment: "center" },
     bubble: { minRadius: 10, maxRadius: 55, opacity: 0.65 },
     colors: ["#6366f1", "#ec4899", "#06b6d4"],
   },
@@ -115,9 +134,32 @@ const chart = ToastBubbleChart({
       },
     ],
   },
-  config: {},
+  config: {
+    title: { text: "GDP vs Life Expectancy", visible: true },
+    axis: {
+      label: {
+        format: (name: string, _index: number, axis: string) => {
+          const n = Number(name);
+          if (axis === "x") return n >= 1000 ? \`$\${(n / 1000).toFixed(0)}K\` : \`$\${n}\`;
+          return \`\${n} yrs\`;
+        },
+      },
+    },
+  },
 });`;
-const _HighOpacityToastBubbleChart_code = `import ToastBubbleChart from "./charts/toast-bubble-chart";
+const _HighOpacityToastBubbleChart_code = `import {
+  Container,
+  BoxDecoration,
+  EdgeInsets,
+  BorderRadius,
+  Text,
+  TextStyle,
+  Row,
+  SizedBox,
+  MainAxisSize,
+  CrossAxisAlignment,
+} from "flitter-ui";
+import ToastBubbleChart from "./charts/toast-bubble-chart";
 
 const chart = ToastBubbleChart({
   data: {
@@ -144,12 +186,53 @@ const chart = ToastBubbleChart({
       },
     ],
   },
+  custom: {
+    legend: ({ name, index }: any, context: any) => {
+      const color = context.config.colors[index % context.config.colors.length];
+      return Container({
+        padding: EdgeInsets.symmetric({ horizontal: 10, vertical: 4 }),
+        decoration: new BoxDecoration({
+          color: \`\${color}18\`,
+          borderRadius: BorderRadius.circular(12),
+        }),
+        child: Row({
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container({
+              width: 10,
+              height: 10,
+              decoration: new BoxDecoration({
+                color,
+                shape: "circle",
+              }),
+            }),
+            SizedBox({ width: 6 }),
+            Text(name, {
+              style: new TextStyle({
+                fontSize: 11,
+                color,
+                fontWeight: "600",
+              }),
+            }),
+          ],
+        }),
+      });
+    },
+  },
   config: {
+    title: { text: "Europe vs Asia: Developed Nations", visible: true },
     bubble: { opacity: 1.0 },
     colors: ["#dc2626", "#2563eb", "#059669", "#7c3aed", "#d97706"],
   },
 });`;
-const _MarketAnalysisToastBubble_code = `import ToastBubbleChart from "./charts/toast-bubble-chart";
+const _MarketAnalysisToastBubble_code = `import {
+  Container,
+  BoxDecoration,
+  BoxShadow,
+  Opacity,
+} from "flitter-ui";
+import ToastBubbleChart from "./charts/toast-bubble-chart";
 
 const chart = ToastBubbleChart({
   data: {
@@ -190,7 +273,39 @@ const chart = ToastBubbleChart({
       },
     ],
   },
+  custom: {
+    bubble: (
+      { value, legend }: any,
+      context: any,
+    ) => {
+      const { colors, bubble: bubbleConfig } = context.config;
+      const idx = context.legends.indexOf(legend);
+      const color = colors[idx % colors.length];
+      const { scale } = context;
+      const normValue = scale != null
+        ? (value - scale.value.min) / (scale.value.max - scale.value.min || 1)
+        : 0.5;
+      const radius = bubbleConfig.minRadius + normValue * (bubbleConfig.maxRadius - bubbleConfig.minRadius);
+      // High-growth sectors (y > 20) get full opacity + glow shadow
+      const dataset = context.data.datasets.find((d: any) => d.legend === legend);
+      const point = dataset?.data.find((d: any) => d.value === value);
+      const isHighGrowth = point && point.y > 20;
+
+      return Container({
+        width: radius * 2,
+        height: radius * 2,
+        decoration: new BoxDecoration({
+          color: isHighGrowth ? color : \`\${color}88\`,
+          shape: "circle",
+          boxShadow: isHighGrowth
+            ? [new BoxShadow({ color: \`\${color}66\`, blurRadius: 12 })]
+            : [],
+        }),
+      });
+    },
+  },
   config: {
+    title: { text: "Market Analysis by Industry", visible: true },
     bubble: { minRadius: 8, maxRadius: 45, opacity: 0.5 },
     colors: ["#0ea5e9", "#f97316", "#8b5cf6", "#10b981"],
   },
@@ -253,12 +368,17 @@ const chart = ToastBubbleChart({
   },
   config: {
     title: { text: "Market Sizing", visible: true },
-    legend: { position: "right-center" },
     bubble: { minRadius: 10, maxRadius: 50, opacity: 0.55 },
     colors: ["#1e40af", "#9333ea", "#0891b2"],
   },
 });`;
-const _SmallBubblestoastBubbleChart_code = `import ToastBubbleChart from "./charts/toast-bubble-chart";
+const _SmallBubblestoastBubbleChart_code = `import {
+  Container,
+  BoxDecoration,
+  Border,
+  BorderSide,
+} from "flitter-ui";
+import ToastBubbleChart from "./charts/toast-bubble-chart";
 
 const chart = ToastBubbleChart({
   data: {
@@ -289,12 +409,43 @@ const chart = ToastBubbleChart({
       },
     ],
   },
+  custom: {
+    bubble: (
+      { value, legend }: any,
+      context: any,
+    ) => {
+      const { colors, bubble: bubbleConfig } = context.config;
+      const idx = context.legends.indexOf(legend);
+      const color = colors[idx % colors.length];
+      const { scale } = context;
+      const normValue = scale != null
+        ? (value - scale.value.min) / (scale.value.max - scale.value.min || 1)
+        : 0.5;
+      const radius = bubbleConfig.minRadius + normValue * (bubbleConfig.maxRadius - bubbleConfig.minRadius);
+      // Dashed-ring style: white fill with colored border for compact dense views
+      return Container({
+        width: radius * 2,
+        height: radius * 2,
+        decoration: new BoxDecoration({
+          color: \`\${color}22\`,
+          shape: "circle",
+          border: Border.all({ color, width: 2, strokeAlign: 0 }),
+        }),
+      });
+    },
+  },
   config: {
     bubble: { minRadius: 3, maxRadius: 25, opacity: 0.8 },
     colors: ["#6366f1", "#ec4899", "#f59e0b", "#10b981", "#3b82f6"],
   },
 });`;
 const _StartupFundingToastBubble_code = `import ToastBubbleChart from "./charts/toast-bubble-chart";
+const stageLabels: Record<string, string> = {
+  "1": "Seed",
+  "2": "Series A",
+  "3": "Series B",
+  "4": "Series C",
+};
 
 const chart = ToastBubbleChart({
   data: {
@@ -329,6 +480,16 @@ const chart = ToastBubbleChart({
     ],
   },
   config: {
+    title: { text: "Startup Funding Rounds", visible: true },
+    axis: {
+      label: {
+        format: (name: string, _index: number, axis: string) => {
+          if (axis === "x") return stageLabels[name] ?? name;
+          const n = Number(name);
+          return n >= 1000 ? \`$\${(n / 1000).toFixed(0)}B\` : \`$\${n}M\`;
+        },
+      },
+    },
     bubble: { minRadius: 6, maxRadius: 40, opacity: 0.45 },
     colors: ["#10b981", "#f59e0b", "#ef4444"],
   },

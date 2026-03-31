@@ -20,10 +20,33 @@ export default function ExpenseBreakdownPieChart() {
           ],
         },
         config: {
-          colors: ["#0d9488", "#d97706", "#6366f1", "#ec4899", "#06b6d4", "#f43f5e", "#84cc16", "#a855f7"],
+          colors: [
+            "#0d9488",
+            "#d97706",
+            "#6366f1",
+            "#94a3b8",
+            "#dc2626",
+            "#94a3b8",
+            "#94a3b8",
+            "#059669",
+          ],
           pie: {
             innerRadiusRatio: 0.4,
             strokeWidth: 3,
+          },
+          title: {
+            text: "Monthly Expenses",
+            visible: true,
+            position: "top",
+            alignment: "start",
+          },
+          dataLabel: {
+            visible: true,
+            fontSize: 11,
+            fontColor: "white",
+            fontWeight: "bold",
+            formatter: ({ name, value }: any) =>
+              value >= 500 ? `$${(value / 1000).toFixed(1)}K` : "",
           },
         },
       })}

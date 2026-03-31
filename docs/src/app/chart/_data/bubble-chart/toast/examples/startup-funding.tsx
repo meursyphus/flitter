@@ -3,6 +3,13 @@
 import Widget from "@flitterjs/react";
 import { ToastBubbleChart as ToastBubbleChartWidget } from "shared/chart";
 
+const stageLabels: Record<string, string> = {
+  "1": "Seed",
+  "2": "Series A",
+  "3": "Series B",
+  "4": "Series C",
+};
+
 export default function StartupFundingToastBubble() {
   return (
     <Widget
@@ -39,6 +46,16 @@ export default function StartupFundingToastBubble() {
           ],
         },
         config: {
+          title: { text: "Startup Funding Rounds", visible: true },
+          axis: {
+            label: {
+              format: (name: string, _index: number, axis: string) => {
+                if (axis === "x") return stageLabels[name] ?? name;
+                const n = Number(name);
+                return n >= 1000 ? `$${(n / 1000).toFixed(0)}B` : `$${n}M`;
+              },
+            },
+          },
           bubble: { minRadius: 6, maxRadius: 40, opacity: 0.45 },
           colors: ["#10b981", "#f59e0b", "#ef4444"],
         },

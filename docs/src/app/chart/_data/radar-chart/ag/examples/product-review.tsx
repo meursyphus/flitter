@@ -15,7 +15,11 @@ export default function ProductReviewAgRadar() {
             { legend: "Product C", values: [75, 80, 90, 80, 65] },
           ],
         },
-        config: {},
+        config: {
+          title: { text: "Product Comparison", visible: true },
+          subtitle: { text: "Across 5 key dimensions", visible: true },
+          radar: { fillOpacity: 0.15 },
+        },
       })}
       width="100%"
       height="100%"

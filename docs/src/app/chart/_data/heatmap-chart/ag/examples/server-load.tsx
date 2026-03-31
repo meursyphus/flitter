@@ -2,6 +2,13 @@
 
 import Widget from "@flitterjs/react";
 import { HeatmapChart } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  Center,
+  Text,
+  TextStyle,
+} from "flitter-ui";
 
 export default function ServerLoadAg() {
   return (
@@ -20,7 +27,32 @@ export default function ServerLoadAg() {
             [6, 4, 2, 8, 18, 28, 32, 30, 25, 22, 15, 9],
           ],
         },
-        config: {},
+        config: {
+          background: "#0f172a",
+          title: { text: "Server CPU", visible: true },
+        },
+        custom: {
+          segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+            const t = Math.min(value / 95, 1);
+            const bg = value >= 85
+              ? `rgba(239,68,68,${0.7 + t * 0.3})`
+              : value >= 60
+                ? `rgba(251,191,36,${0.4 + t * 0.4})`
+                : `rgba(56,189,248,${0.1 + t * 0.5})`;
+            return Container({
+              decoration: new BoxDecoration({ color: bg }),
+              child: Center({
+                child: Text(`${value}%`, {
+                  style: new TextStyle({
+                    fontSize: 8,
+                    color: value >= 60 ? "#ffffff" : "rgba(255,255,255,0.6)",
+                    fontWeight: value >= 85 ? "700" : "400",
+                  }),
+                }),
+              }),
+            });
+          },
+        },
       })}
       width="100%"
       height="100%"

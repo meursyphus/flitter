@@ -10,6 +10,7 @@ import _RealEstatePriceToast from "./examples/real-estate-price-toast";
 import _SalesVsMarketingToast from "./examples/sales-vs-marketing-toast";
 
 const _DefaultToastScatterChart_code = `import ToastScatterChart from "./charts/toast-scatter-chart";
+import { Text, TextStyle, Transform, Alignment } from "flitter-ui";
 
 const chart = ToastScatterChart({
   data: {
@@ -84,90 +85,117 @@ const chart = ToastScatterChart({
       },
     ],
   },
-  config: {},
+  custom: {
+    xAxisLabel: (
+      { name }: { name: string; index: number },
+      context: any,
+    ) => {
+      const { font } = context.config;
+      return Transform.rotate({
+        angle: -Math.PI / 6,
+        alignment: Alignment.centerRight,
+        child: Text(\`$\${(Number(name) / 1000).toFixed(0)}K\`, {
+          style: new TextStyle({
+            fontFamily: font.family,
+            fontSize: 10,
+            color: "#64748b",
+          }),
+        }),
+      });
+    },
+  },
+  config: {
+    title: { text: "GDP vs Life Expectancy", visible: true },
+    scatter: { size: 8, strokeWidth: 2 },
+    axis: {
+      label: {
+        format: (name: string, _index: number, axis: "x" | "y") =>
+          axis === "y" ? \`\${name} yrs\` : name,
+      },
+    },
+  },
 });`;
 const _FilledToastScatterChart_code = `import ToastScatterChart from "./charts/toast-scatter-chart";
-const defaultData = {
-  datasets: [
-    {
-      legend: "Africa",
-      data: [
-        { x: 4200, y: 70.35, label: "Morocco" },
-        { x: 4200, y: 70.71, label: "Egypt" },
-        { x: 5900, y: 56.46, label: "Gabon" },
-        { x: 6600, y: 72.74, label: "Algeria" },
-        { x: 6700, y: 76.28, label: "Libya" },
-        { x: 7100, y: 74.66, label: "Tunisia" },
-        { x: 10500, y: 69.28, label: "Trinidad and Tobago" },
-        { x: 12800, y: 72.09, label: "Mauritius" },
-        { x: 18200, y: 78.68, label: "Malta" },
-      ],
-    },
-    {
-      legend: "America",
-      data: [
-        { x: 4800, y: 74.64, label: "Paraguay" },
-        { x: 4900, y: 70.92, label: "El Salvador" },
-        { x: 5600, y: 69.22, label: "Peru" },
-        { x: 5800, y: 74.06, label: "Venezuela" },
-        { x: 6600, y: 71.43, label: "Colombia" },
-        { x: 8100, y: 71.41, label: "Brazil" },
-        { x: 9600, y: 76.63, label: "Costa Rica" },
-        { x: 9600, y: 74.94, label: "Mexico" },
-        { x: 12400, y: 75.7, label: "Argentina" },
-        { x: 31500, y: 79.96, label: "Canada" },
-        { x: 32100, y: 77.43, label: "United States" },
-      ],
-    },
-    {
-      legend: "Asia",
-      data: [
-        { x: 5600, y: 71.96, label: "China" },
-        { x: 7700, y: 69.66, label: "Iran" },
-        { x: 8100, y: 71.41, label: "Thailand" },
-        { x: 9700, y: 71.95, label: "Malaysia" },
-        { x: 12000, y: 75.23, label: "Saudi Arabia" },
-        { x: 19200, y: 75.58, label: "Korea, South" },
-        { x: 25300, y: 77.06, label: "Taiwan" },
-        { x: 27800, y: 81.53, label: "Singapore" },
-        { x: 29400, y: 81.04, label: "Japan" },
-        { x: 34200, y: 81.39, label: "Hong Kong" },
-      ],
-    },
-    {
-      legend: "Europe",
-      data: [
-        { x: 9800, y: 66.39, label: "Russia" },
-        { x: 12000, y: 74.16, label: "Poland" },
-        { x: 17900, y: 77.35, label: "Portugal" },
-        { x: 23300, y: 79.37, label: "Spain" },
-        { x: 27700, y: 79.54, label: "Italy" },
-        { x: 28700, y: 78.54, label: "Germany" },
-        { x: 28700, y: 79.44, label: "France" },
-        { x: 29600, y: 78.27, label: "United Kingdom" },
-        { x: 33800, y: 80.31, label: "Switzerland" },
-      ],
-    },
-    {
-      legend: "Oceania",
-      data: [
-        { x: 2200, y: 64.56, label: "Papua New Guinea" },
-        { x: 5900, y: 69.2, label: "Fiji" },
-        { x: 23200, y: 78.49, label: "New Zealand" },
-        { x: 30700, y: 80.26, label: "Australia" },
-      ],
-    },
-  ],
-};
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = ToastScatterChart({
-  data: defaultData,
+  data: {
+    datasets: [
+      {
+        legend: "Solar",
+        data: [
+          { x: 120, y: 18.5, label: "US" },
+          { x: 85, y: 22.1, label: "Germany" },
+          { x: 200, y: 15.3, label: "China" },
+          { x: 45, y: 24.8, label: "Japan" },
+          { x: 30, y: 20.6, label: "India" },
+          { x: 55, y: 21.2, label: "Australia" },
+        ],
+      },
+      {
+        legend: "Wind",
+        data: [
+          { x: 140, y: 35.2, label: "US" },
+          { x: 110, y: 42.1, label: "Germany" },
+          { x: 280, y: 28.7, label: "China" },
+          { x: 25, y: 30.5, label: "Japan" },
+          { x: 60, y: 26.4, label: "India" },
+          { x: 35, y: 38.9, label: "UK" },
+        ],
+      },
+      {
+        legend: "Hydro",
+        data: [
+          { x: 80, y: 45.0, label: "Brazil" },
+          { x: 95, y: 48.3, label: "Canada" },
+          { x: 350, y: 38.2, label: "China" },
+          { x: 45, y: 52.1, label: "Norway" },
+          { x: 20, y: 41.7, label: "Sweden" },
+        ],
+      },
+    ],
+  },
+  custom: {
+    yAxisLabel: (
+      { name }: { name: string; index: number },
+      context: any,
+    ) => {
+      const { font } = context.config;
+      const val = parseFloat(name);
+      const isHigh = val >= 40;
+      return Text(\`\${name}%\`, {
+        style: new TextStyle({
+          fontFamily: font.family,
+          fontSize: font.size,
+          fontWeight: isHigh ? "bold" : "normal",
+          color: isHigh ? "#059669" : "#64748b",
+        }),
+      });
+    },
+  },
   config: {
-    scatter: { fill: true, size: 8 },
-    colors: ["#6366f1", "#ec4899", "#f59e0b", "#10b981"],
+    scatter: { fill: true, size: 10, strokeWidth: 0 },
+    colors: ["#f59e0b", "#3b82f6", "#06b6d4"],
+    title: { text: "Renewable Energy Capacity vs Efficiency", visible: true },
   },
 });`;
 const _HeightWeightToast_code = `import ToastScatterChart from "./charts/toast-scatter-chart";
+import {
+  Container,
+  BoxDecoration,
+  EdgeInsets,
+  Text,
+  TextStyle,
+  Row,
+  SizedBox,
+  MainAxisSize,
+  BorderRadius,
+} from "flitter-ui";
+
+const legendColors: Record<string, string> = {
+  Male: "#3b82f6",
+  Female: "#ec4899",
+};
 
 const chart = ToastScatterChart({
   data: {
@@ -202,90 +230,152 @@ const chart = ToastScatterChart({
       },
     ],
   },
+  custom: {
+    legend: (
+      { name }: { name: string; index: number },
+      context: any,
+    ) => {
+      const { font } = context.config;
+      const color = legendColors[name] ?? "#94a3b8";
+      return Container({
+        padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 3 }),
+        decoration: new BoxDecoration({
+          color: \`\${color}18\`,
+          borderRadius: BorderRadius.circular(12),
+        }),
+        child: Row({
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container({
+              width: 8,
+              height: 8,
+              decoration: new BoxDecoration({
+                color: color,
+                borderRadius: BorderRadius.circular(4),
+              }),
+            }),
+            SizedBox({ width: 5 }),
+            Text(name, {
+              style: new TextStyle({
+                fontFamily: font.family,
+                fontSize: 11,
+                fontWeight: "600",
+                color: color,
+              }),
+            }),
+          ],
+        }),
+      });
+    },
+  },
   config: {
+    title: { text: "Height vs Weight Distribution", visible: true },
     scatter: { size: 8, strokeWidth: 2 },
     colors: ["#3b82f6", "#ec4899"],
+    axis: {
+      label: {
+        format: (name: string, _index: number, axis: "x" | "y") =>
+          axis === "x" ? \`\${name} cm\` : \`\${name} kg\`,
+      },
+    },
   },
 });`;
 const _LargeToastScatterChart_code = `import ToastScatterChart from "./charts/toast-scatter-chart";
-const defaultData = {
-  datasets: [
-    {
-      legend: "Africa",
-      data: [
-        { x: 4200, y: 70.35, label: "Morocco" },
-        { x: 4200, y: 70.71, label: "Egypt" },
-        { x: 5900, y: 56.46, label: "Gabon" },
-        { x: 6600, y: 72.74, label: "Algeria" },
-        { x: 6700, y: 76.28, label: "Libya" },
-        { x: 7100, y: 74.66, label: "Tunisia" },
-        { x: 10500, y: 69.28, label: "Trinidad and Tobago" },
-        { x: 12800, y: 72.09, label: "Mauritius" },
-        { x: 18200, y: 78.68, label: "Malta" },
-      ],
-    },
-    {
-      legend: "America",
-      data: [
-        { x: 4800, y: 74.64, label: "Paraguay" },
-        { x: 4900, y: 70.92, label: "El Salvador" },
-        { x: 5600, y: 69.22, label: "Peru" },
-        { x: 5800, y: 74.06, label: "Venezuela" },
-        { x: 6600, y: 71.43, label: "Colombia" },
-        { x: 8100, y: 71.41, label: "Brazil" },
-        { x: 9600, y: 76.63, label: "Costa Rica" },
-        { x: 9600, y: 74.94, label: "Mexico" },
-        { x: 12400, y: 75.7, label: "Argentina" },
-        { x: 31500, y: 79.96, label: "Canada" },
-        { x: 32100, y: 77.43, label: "United States" },
-      ],
-    },
-    {
-      legend: "Asia",
-      data: [
-        { x: 5600, y: 71.96, label: "China" },
-        { x: 7700, y: 69.66, label: "Iran" },
-        { x: 8100, y: 71.41, label: "Thailand" },
-        { x: 9700, y: 71.95, label: "Malaysia" },
-        { x: 12000, y: 75.23, label: "Saudi Arabia" },
-        { x: 19200, y: 75.58, label: "Korea, South" },
-        { x: 25300, y: 77.06, label: "Taiwan" },
-        { x: 27800, y: 81.53, label: "Singapore" },
-        { x: 29400, y: 81.04, label: "Japan" },
-        { x: 34200, y: 81.39, label: "Hong Kong" },
-      ],
-    },
-    {
-      legend: "Europe",
-      data: [
-        { x: 9800, y: 66.39, label: "Russia" },
-        { x: 12000, y: 74.16, label: "Poland" },
-        { x: 17900, y: 77.35, label: "Portugal" },
-        { x: 23300, y: 79.37, label: "Spain" },
-        { x: 27700, y: 79.54, label: "Italy" },
-        { x: 28700, y: 78.54, label: "Germany" },
-        { x: 28700, y: 79.44, label: "France" },
-        { x: 29600, y: 78.27, label: "United Kingdom" },
-        { x: 33800, y: 80.31, label: "Switzerland" },
-      ],
-    },
-    {
-      legend: "Oceania",
-      data: [
-        { x: 2200, y: 64.56, label: "Papua New Guinea" },
-        { x: 5900, y: 69.2, label: "Fiji" },
-        { x: 23200, y: 78.49, label: "New Zealand" },
-        { x: 30700, y: 80.26, label: "Australia" },
-      ],
-    },
-  ],
-};
+import {
+  Container,
+  BoxDecoration,
+  EdgeInsets,
+  Text,
+  TextStyle,
+  Column,
+  MainAxisSize,
+  CrossAxisAlignment,
+  Border,
+  BorderSide,
+} from "flitter-ui";
 
 const chart = ToastScatterChart({
-  data: defaultData,
+  data: {
+    datasets: [
+      {
+        legend: "Series A",
+        data: [
+          { x: 1.2, y: 4.5, label: "Stripe" },
+          { x: 0.8, y: 3.2, label: "Figma" },
+          { x: 2.1, y: 8.5, label: "SpaceX" },
+          { x: 0.5, y: 2.0, label: "Notion" },
+          { x: 1.8, y: 6.8, label: "Databricks" },
+        ],
+      },
+      {
+        legend: "Series B",
+        data: [
+          { x: 3.5, y: 12.0, label: "Canva" },
+          { x: 5.0, y: 18.5, label: "Discord" },
+          { x: 4.2, y: 15.0, label: "Airtable" },
+          { x: 2.8, y: 9.5, label: "Notion" },
+          { x: 6.0, y: 22.0, label: "Plaid" },
+        ],
+      },
+      {
+        legend: "Series C+",
+        data: [
+          { x: 10.0, y: 35.0, label: "Stripe" },
+          { x: 8.5, y: 28.0, label: "Databricks" },
+          { x: 15.0, y: 50.0, label: "SpaceX" },
+          { x: 7.0, y: 24.0, label: "Canva" },
+          { x: 12.0, y: 42.0, label: "Discord" },
+        ],
+      },
+    ],
+  },
+  custom: {
+    title: (
+      _args: undefined,
+      context: any,
+    ) => {
+      const { font, title } = context.config;
+      return Container({
+        padding: EdgeInsets.only({ bottom: 8 }),
+        decoration: new BoxDecoration({
+          border: new Border({
+            bottom: new BorderSide({ color: "#7c3aed", width: 2 }),
+          }),
+        }),
+        child: Column({
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(title.text, {
+              style: new TextStyle({
+                fontFamily: font.family,
+                fontSize: 15,
+                fontWeight: "bold",
+                color: "#1e1b4b",
+              }),
+            }),
+            Text("Investment rounds across top startups", {
+              style: new TextStyle({
+                fontFamily: font.family,
+                fontSize: 10,
+                color: "#6b7280",
+              }),
+            }),
+          ],
+        }),
+      });
+    },
+  },
   config: {
-    scatter: { size: 16, strokeWidth: 3 },
-    colors: ["#0d9488", "#d97706", "#dc2626", "#6366f1"],
+    title: { text: "Startup Funding Rounds", visible: true },
+    scatter: { size: 14, strokeWidth: 2 },
+    colors: ["#7c3aed", "#ec4899", "#f59e0b"],
+    axis: {
+      label: {
+        format: (name: string, _index: number, axis: "x" | "y") =>
+          axis === "x" ? \`$\${name}B\` : \`$\${name}B\`,
+      },
+    },
   },
 });`;
 const _RdInvestmentAnalysisToast_code = `import {
@@ -362,6 +452,7 @@ const chart = ToastScatterChart({
   },
 });`;
 const _RealEstatePriceToast_code = `import ToastScatterChart from "./charts/toast-scatter-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = ToastScatterChart({
   data: {
@@ -400,12 +491,55 @@ const chart = ToastScatterChart({
       },
     ],
   },
+  custom: {
+    xAxisLabel: (
+      { name }: { name: string; index: number },
+      context: any,
+    ) => {
+      const { font } = context.config;
+      return Text(\`\${name} ft\\u00B2\`, {
+        style: new TextStyle({
+          fontFamily: font.family,
+          fontSize: font.size,
+          color: "#64748b",
+        }),
+      });
+    },
+    yAxisLabel: (
+      { name }: { name: string; index: number },
+      context: any,
+    ) => {
+      const { font } = context.config;
+      const val = Number(name);
+      const formatted = val >= 1000000
+        ? \`$\${(val / 1000000).toFixed(1)}M\`
+        : \`$\${(val / 1000).toFixed(0)}K\`;
+      const isMillionPlus = val >= 1000000;
+      return Text(formatted, {
+        style: new TextStyle({
+          fontFamily: font.family,
+          fontSize: font.size,
+          fontWeight: isMillionPlus ? "bold" : "normal",
+          color: isMillionPlus ? "#7c3aed" : "#64748b",
+        }),
+      });
+    },
+  },
   config: {
     scatter: { fill: true, size: 12, strokeWidth: 1 },
     colors: ["#059669", "#d97706", "#7c3aed"],
+    title: { text: "Real Estate Pricing", visible: true },
   },
 });`;
 const _SalesVsMarketingToast_code = `import ToastScatterChart from "./charts/toast-scatter-chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  BoxShadow,
+} from "flitter-ui";
+
+const seriesColors = ["#3b82f6", "#f97316", "#8b5cf6", "#10b981"];
 
 const chart = ToastScatterChart({
   data: {
@@ -453,9 +587,31 @@ const chart = ToastScatterChart({
       },
     ],
   },
+  custom: {
+    scatter: (
+      { legend, index }: { label: string; legend: string; index: number },
+      context: any,
+    ) => {
+      const seriesIdx = context.legends.indexOf(legend);
+      const color = seriesColors[seriesIdx] ?? "#94a3b8";
+      const dataset = context.data.datasets[seriesIdx];
+      const point = dataset?.data[index];
+      const isHighRevenue = point && point.y >= 140;
+      return Container({
+        decoration: new BoxDecoration({
+          color: color,
+          borderRadius: BorderRadius.circular(isHighRevenue ? 4 : 100),
+          boxShadow: isHighRevenue
+            ? [new BoxShadow({ color: \`\${color}66\`, blurRadius: 8 })]
+            : [],
+        }),
+      });
+    },
+  },
   config: {
     scatter: { fill: true, size: 10, strokeWidth: 0 },
-    colors: ["#3b82f6", "#f97316", "#8b5cf6", "#10b981"],
+    colors: seriesColors,
+    title: { text: "Sales vs Marketing Spend", visible: true },
   },
 });`;
 

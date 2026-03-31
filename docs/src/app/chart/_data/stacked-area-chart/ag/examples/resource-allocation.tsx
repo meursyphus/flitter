@@ -2,6 +2,7 @@
 
 import Widget from "@flitterjs/react";
 import { StackedAreaChart } from "shared/chart";
+import { Text, TextStyle } from "flitter-ui";
 
 export default function ResourceAllocationStackedArea() {
   return (
@@ -19,6 +20,22 @@ export default function ResourceAllocationStackedArea() {
         config: {
           colors: { fills: ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"], strokes: ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"] },
           area: { opacity: 0.5 },
+          title: { text: "Resource Allocation", visible: true },
+        },
+        custom: {
+          yAxisLabel: ({ name }: { name: string; index: number }, context: any) => {
+            const { font } = context.config;
+            const value = parseFloat(name);
+            const isOverCapacity = value >= 80;
+            return Text(`${name} hrs`, {
+              style: new TextStyle({
+                fontFamily: font.family,
+                fontSize: font.size,
+                fontWeight: isOverCapacity ? "bold" : "normal",
+                color: isOverCapacity ? "#dc2626" : "#585858",
+              }),
+            });
+          },
         },
       })}
       width="100%"

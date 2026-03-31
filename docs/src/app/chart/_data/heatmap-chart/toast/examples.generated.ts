@@ -6,6 +6,7 @@ import _BasicHeatmapToast from "./examples/basic-heatmap";
 import _ClassroomAttendanceToast from "./examples/classroom-attendance";
 import _CorrelationMatrixToast from "./examples/correlation-matrix";
 import _CustomerJourneyToast from "./examples/customer-journey";
+import _DefaultHeatmapToast from "./examples/default-heatmap";
 import _EnergyUsageToast from "./examples/energy-usage";
 import _GithubActivityToast from "./examples/github-activity";
 import _SalesByRegionToast from "./examples/sales-by-region";
@@ -14,6 +15,12 @@ import _SkillMatrixToast from "./examples/skill-matrix";
 import _WebsiteClicksToast from "./examples/website-clicks";
 
 const _ActivityCalendarToast_code = `import ToastHeatmapChart from "./charts/toast-heatmap-chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  EdgeInsets,
+} from "flitter-ui";
 
 const chart = ToastHeatmapChart({
   data: {
@@ -31,11 +38,33 @@ const chart = ToastHeatmapChart({
   },
   config: {
     title: { text: "Contributions", visible: true },
-    heatmap: { colorRange: ["#ebedf0", "#9be9a8", "#216e39"], segment: { gap: 2 } },
+    heatmap: { segment: { gap: 3 } },
     padding: { top: 10, right: 10, bottom: 10, left: 10 },
+  },
+  custom: {
+    segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+      const greens = ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"];
+      const level = value === 0 ? 0 : value <= 2 ? 1 : value <= 4 ? 2 : value <= 6 ? 3 : 4;
+      return Container({
+        margin: EdgeInsets.all(1),
+        decoration: new BoxDecoration({
+          color: greens[level],
+          borderRadius: BorderRadius.circular(3),
+        }),
+      });
+    },
   },
 });`;
 const _BasicHeatmapToast_code = `import ToastHeatmapChart from "./charts/toast-heatmap-chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  Center,
+  Text,
+  TextStyle,
+  EdgeInsets,
+} from "flitter-ui";
 
 const chart = ToastHeatmapChart({
   data: {
@@ -51,9 +80,46 @@ const chart = ToastHeatmapChart({
       [2, 4, 7, 10, 16, 22, 26, 28, 23, 14, 8, 3],
     ],
   },
-  config: {},
+  config: {
+    heatmap: { colorRange: ["#dbeafe", "#3b82f6", "#1e3a8a"], segment: { gap: 3 } },
+  },
+  custom: {
+    segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+      const t = Math.min(value / 35, 1);
+      const r = Math.round(219 + (30 - 219) * t);
+      const g = Math.round(234 + (58 - 234) * t);
+      const b = Math.round(254 + (138 - 254) * t);
+      return Container({
+        margin: EdgeInsets.all(1),
+        decoration: new BoxDecoration({
+          color: \`rgb(\${r},\${g},\${b})\`,
+          borderRadius: BorderRadius.circular(6),
+        }),
+        child: Center({
+          child: value >= 15
+            ? Text(\`\${value}°\`, {
+                style: new TextStyle({
+                  fontSize: 9,
+                  color: t > 0.5 ? "#ffffff" : "#1e3a8a",
+                  fontWeight: "600",
+                }),
+              })
+            : Text("", { style: new TextStyle({}) }),
+        }),
+      });
+    },
+  },
 });`;
 const _ClassroomAttendanceToast_code = `import ToastHeatmapChart from "./charts/toast-heatmap-chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  Center,
+  Text,
+  TextStyle,
+  EdgeInsets,
+} from "flitter-ui";
 
 const chart = ToastHeatmapChart({
   data: {
@@ -69,10 +135,36 @@ const chart = ToastHeatmapChart({
     ],
   },
   config: {
-    heatmap: { colorRange: ["#fecaca", "#fbbf24", "#22c55e"], segment: { gap: 2 } },
+    heatmap: { segment: { gap: 3 } },
+  },
+  custom: {
+    segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+      const emoji = value === 100 ? "\\u2705" : value >= 80 ? "\\ud83d\\udfe1" : value >= 60 ? "\\u26a0\\ufe0f" : "\\u274c";
+      const bg = value === 100 ? "#dcfce7" : value >= 80 ? "#fef9c3" : value >= 60 ? "#fff7ed" : "#fef2f2";
+      return Container({
+        margin: EdgeInsets.all(1),
+        decoration: new BoxDecoration({
+          color: bg,
+          borderRadius: BorderRadius.circular(4),
+        }),
+        child: Center({
+          child: Text(emoji, {
+            style: new TextStyle({ fontSize: 12 }),
+          }),
+        }),
+      });
+    },
   },
 });`;
 const _CorrelationMatrixToast_code = `import ToastHeatmapChart from "./charts/toast-heatmap-chart";
+import {
+  Container,
+  BoxDecoration,
+  Center,
+  Text,
+  TextStyle,
+  Border,
+} from "flitter-ui";
 
 const chart = ToastHeatmapChart({
   data: {
@@ -88,10 +180,50 @@ const chart = ToastHeatmapChart({
     ],
   },
   config: {
-    heatmap: { colorRange: ["#3b82f6", "#f5f5f5", "#ef4444"], segment: { gap: 1 } },
+    heatmap: { colorRange: ["#ef4444", "#f5f5f5", "#3b82f6"], segment: { gap: 1 } },
+  },
+  custom: {
+    segment: ({ value, xIndex, yIndex }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+      const isDiagonal = xIndex === yIndex;
+      const t = (value + 100) / 200;
+      const isNeg = value < 0;
+      const abs = Math.abs(value);
+      const bg = isDiagonal
+        ? "#1e293b"
+        : isNeg
+          ? \`rgba(239,68,68,\${abs / 120})\`
+          : \`rgba(59,130,246,\${abs / 120})\`;
+      const fg = isDiagonal || abs > 60 ? "#ffffff" : "#1e293b";
+      return Container({
+        decoration: new BoxDecoration({
+          color: bg,
+          border: isDiagonal
+            ? Border.all({ color: "#3b82f6", width: 2 })
+            : undefined,
+        }),
+        child: Center({
+          child: Text(isDiagonal ? "1.0" : (value / 100).toFixed(2), {
+            style: new TextStyle({
+              fontSize: isDiagonal ? 11 : 9,
+              color: fg,
+              fontWeight: isDiagonal ? "700" : "500",
+            }),
+          }),
+        }),
+      });
+    },
   },
 });`;
 const _CustomerJourneyToast_code = `import ToastHeatmapChart from "./charts/toast-heatmap-chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  Center,
+  Text,
+  TextStyle,
+  Opacity,
+} from "flitter-ui";
 
 const chart = ToastHeatmapChart({
   data: {
@@ -108,8 +240,55 @@ const chart = ToastHeatmapChart({
   config: {
     heatmap: { colorRange: ["#e0f2fe", "#0ea5e9", "#0c4a6e"], segment: { gap: 2 } },
   },
+  custom: {
+    segment: ({ value, xIndex }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+      const funnelOpacity = 1.0 - xIndex * 0.15;
+      const t = Math.min(value / 90, 1);
+      const bg = \`rgba(14,165,233,\${t * 0.9 + 0.1})\`;
+      const isStrong = value >= 60;
+      return Opacity({
+        opacity: funnelOpacity,
+        child: Container({
+          decoration: new BoxDecoration({
+            color: bg,
+            borderRadius: BorderRadius.circular(4),
+          }),
+          child: Center({
+            child: Text(isStrong ? \`\${value}%\` : \`\${value}\`, {
+              style: new TextStyle({
+                fontSize: isStrong ? 11 : 9,
+                color: t > 0.5 ? "#ffffff" : "#0c4a6e",
+                fontWeight: isStrong ? "700" : "400",
+              }),
+            }),
+          }),
+        }),
+      });
+    },
+  },
+});`;
+const _DefaultHeatmapToast_code = `import ToastHeatmapChart from "./charts/toast-heatmap-chart";
+
+const chart = ToastHeatmapChart({
+  data: {
+    xLabels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    yLabels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    values: [
+      [2, 5, 8, 12, 18, 24, 28, 30, 25, 16, 9, 4],
+      [3, 6, 9, 13, 19, 25, 29, 31, 26, 17, 10, 5],
+      [4, 7, 11, 15, 21, 27, 32, 34, 28, 19, 12, 6],
+      [5, 8, 12, 16, 22, 28, 33, 35, 29, 20, 13, 7],
+      [4, 7, 10, 14, 20, 26, 31, 33, 27, 18, 11, 6],
+      [3, 5, 8, 11, 17, 23, 27, 29, 24, 15, 9, 4],
+      [2, 4, 7, 10, 16, 22, 26, 28, 23, 14, 8, 3],
+    ],
+  },
+  config: {
+    heatmap: { colorRange: ["#dbeafe", "#3b82f6", "#1e3a8a"], segment: { gap: 3 } },
+  },
 });`;
 const _EnergyUsageToast_code = `import ToastHeatmapChart from "./charts/toast-heatmap-chart";
+import { Text, TextStyle, Transform, Alignment } from "flitter-ui";
 
 const chart = ToastHeatmapChart({
   data: {
@@ -126,8 +305,33 @@ const chart = ToastHeatmapChart({
   config: {
     heatmap: { colorRange: ["#ecfdf5", "#10b981", "#064e3b"] },
   },
+  custom: {
+    xAxisLabel: ({ name, index }: { name: string; index: number }, context: any) => {
+      const { font } = context.config;
+      const isPeak = index >= 2 && index <= 6;
+      return Transform.rotate({
+        angle: -Math.PI / 6,
+        alignment: Alignment.center,
+        child: Text(isPeak ? \`\${name} *\` : name, {
+          style: new TextStyle({
+            fontFamily: font.family,
+            fontSize: font.size,
+            fontWeight: isPeak ? "700" : "normal",
+            color: isPeak ? "#064e3b" : "#6b7280",
+          }),
+        }),
+      });
+    },
+  },
 });`;
 const _GithubActivityToast_code = `import ToastHeatmapChart from "./charts/toast-heatmap-chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  EdgeInsets,
+  BoxShadow,
+} from "flitter-ui";
 
 const chart = ToastHeatmapChart({
   data: {
@@ -144,10 +348,35 @@ const chart = ToastHeatmapChart({
     ],
   },
   config: {
-    heatmap: { colorRange: ["#ebedf0", "#40c463", "#216e39"], segment: { gap: 2 } },
+    heatmap: { segment: { gap: 3 } },
+  },
+  custom: {
+    segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+      const greens = ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"];
+      const level = value === 0 ? 0 : value <= 2 ? 1 : value <= 4 ? 2 : value <= 6 ? 3 : 4;
+      return Container({
+        margin: EdgeInsets.all(1),
+        decoration: new BoxDecoration({
+          color: greens[level],
+          borderRadius: BorderRadius.circular(3),
+          boxShadow: value >= 7
+            ? [new BoxShadow({ color: "#39d353", blurRadius: 6 })]
+            : [],
+        }),
+      });
+    },
   },
 });`;
 const _SalesByRegionToast_code = `import ToastHeatmapChart from "./charts/toast-heatmap-chart";
+import { Text, TextStyle, Row, SizedBox, MainAxisSize } from "flitter-ui";
+
+const regionFlags: Record<string, string> = {
+  NA: "\\ud83c\\uddfa\\ud83c\\uddf8",
+  EU: "\\ud83c\\uddea\\ud83c\\uddfa",
+  APAC: "\\ud83c\\uddef\\ud83c\\uddf5",
+  LATAM: "\\ud83c\\udde7\\ud83c\\uddf7",
+  ME: "\\ud83c\\udde6\\ud83c\\uddea",
+};
 
 const chart = ToastHeatmapChart({
   data: {
@@ -164,8 +393,39 @@ const chart = ToastHeatmapChart({
   config: {
     heatmap: { colorRange: ["#fef3c7", "#f59e0b", "#92400e"] },
   },
+  custom: {
+    yAxisLabel: ({ name }: { name: string; index: number }, context: any) => {
+      const { font } = context.config;
+      const flag = regionFlags[name] ?? "";
+      return Row({
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(flag, {
+            style: new TextStyle({ fontSize: 13 }),
+          }),
+          SizedBox({ width: 4 }),
+          Text(name, {
+            style: new TextStyle({
+              fontFamily: font.family,
+              fontSize: font.size,
+              fontWeight: "600",
+              color: "#78350f",
+            }),
+          }),
+        ],
+      });
+    },
+  },
 });`;
 const _ServerLoadToast_code = `import ToastHeatmapChart from "./charts/toast-heatmap-chart";
+import {
+  Container,
+  BoxDecoration,
+  Border,
+  Center,
+  Text,
+  TextStyle,
+} from "flitter-ui";
 
 const chart = ToastHeatmapChart({
   data: {
@@ -183,15 +443,53 @@ const chart = ToastHeatmapChart({
   },
   config: {
     heatmap: { colorRange: ["#dbeafe", "#3b82f6", "#1e3a5f"], segment: { gap: 2 } },
+    title: { text: "CPU Load (%)", visible: true },
+  },
+  custom: {
+    segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+      const isCritical = value >= 85;
+      const isWarning = value >= 70 && value < 85;
+      const t = Math.min(value / 95, 1);
+      const bg = isCritical
+        ? "#dc2626"
+        : isWarning
+          ? "#f59e0b"
+          : \`rgba(59,130,246,\${t * 0.8 + 0.05})\`;
+      return Container({
+        decoration: new BoxDecoration({
+          color: bg,
+          border: isCritical
+            ? Border.all({ color: "#fca5a5", width: 2 })
+            : undefined,
+        }),
+        child: Center({
+          child: isCritical || isWarning
+            ? Text(\`\${value}\`, {
+                style: new TextStyle({
+                  fontSize: 8,
+                  color: "#ffffff",
+                  fontWeight: "700",
+                }),
+              })
+            : Text("", { style: new TextStyle({}) }),
+        }),
+      });
+    },
   },
 });`;
 const _SkillMatrixToast_code = `import ToastHeatmapChart from "./charts/toast-heatmap-chart";
 import {
   Container,
   BoxDecoration,
+  BorderRadius,
+  Border,
   Center,
   Text,
   TextStyle,
+  Column,
+  MainAxisSize,
+  SizedBox,
+  EdgeInsets,
 } from "flitter-ui";
 
 const chart = ToastHeatmapChart({
@@ -207,26 +505,40 @@ const chart = ToastHeatmapChart({
     ],
   },
   config: {
-    heatmap: { colorRange: ["#fef9c3", "#f97316", "#dc2626"], segment: { gap: 1 } },
+    heatmap: { segment: { gap: 2 } },
   },
   custom: {
-    segment: ({ value }: { value: number }) => {
-      const bg =
-        value >= 75
-          ? "#dc2626"
-          : value >= 50
-            ? "#f97316"
-            : "#fef9c3";
-      const fg = value >= 50 ? "#ffffff" : "#1e293b";
+    segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+      const level = value >= 90 ? 4 : value >= 75 ? 3 : value >= 60 ? 2 : value >= 45 ? 1 : 0;
+      const colors = ["#fee2e2", "#fef3c7", "#fef9c3", "#d1fae5", "#bbf7d0"];
+      const borders = ["#ef4444", "#f59e0b", "#eab308", "#10b981", "#22c55e"];
+      const label = labels[level];
       return Container({
-        decoration: new BoxDecoration({ color: bg }),
+        margin: EdgeInsets.all(1),
+        decoration: new BoxDecoration({
+          color: colors[level],
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all({ color: borders[level], width: 1.5 }),
+        }),
         child: Center({
-          child: Text(\`\${value}\`, {
-            style: new TextStyle({
-              fontSize: 10,
-              color: fg,
-              fontWeight: "600",
-            }),
+          child: Column({
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(\`\${value}\`, {
+                style: new TextStyle({
+                  fontSize: 11,
+                  fontWeight: "700",
+                  color: borders[level],
+                }),
+              }),
+              SizedBox({ height: 1 }),
+              Text(label, {
+                style: new TextStyle({
+                  fontSize: 7,
+                  color: borders[level],
+                }),
+              }),
+            ],
           }),
         }),
       });
@@ -234,6 +546,14 @@ const chart = ToastHeatmapChart({
   },
 });`;
 const _WebsiteClicksToast_code = `import ToastHeatmapChart from "./charts/toast-heatmap-chart";
+import {
+  Container,
+  BoxDecoration,
+  Border,
+  Center,
+  Text,
+  TextStyle,
+} from "flitter-ui";
 
 const chart = ToastHeatmapChart({
   data: {
@@ -252,8 +572,35 @@ const chart = ToastHeatmapChart({
   config: {
     heatmap: { colorRange: ["#f5f3ff", "#8b5cf6", "#4c1d95"], segment: { gap: 1 } },
   },
+  custom: {
+    segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+      const isHot = value >= 40;
+      const t = Math.min(value / 55, 1);
+      const bg = \`rgba(139,92,246,\${0.1 + t * 0.9})\`;
+      return Container({
+        decoration: new BoxDecoration({
+          color: bg,
+          border: isHot
+            ? Border.all({ color: "#facc15", width: 2 })
+            : undefined,
+        }),
+        child: Center({
+          child: isHot
+            ? Text(\`\${value}\`, {
+                style: new TextStyle({
+                  fontSize: 10,
+                  color: "#facc15",
+                  fontWeight: "800",
+                }),
+              })
+            : Text("", { style: new TextStyle({}) }),
+        }),
+      });
+    },
+  },
 });`;
 
+export const DefaultHeatmapToast = { Component: _DefaultHeatmapToast, code: _DefaultHeatmapToast_code };
 export const BasicHeatmapToast = { Component: _BasicHeatmapToast, code: _BasicHeatmapToast_code };
 export const ServerLoadToast = { Component: _ServerLoadToast, code: _ServerLoadToast_code };
 export const CorrelationMatrixToast = { Component: _CorrelationMatrixToast, code: _CorrelationMatrixToast_code };

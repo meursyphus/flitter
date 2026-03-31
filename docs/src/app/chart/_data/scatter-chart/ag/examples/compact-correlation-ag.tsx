@@ -2,6 +2,14 @@
 
 import Widget from "@flitterjs/react";
 import { ScatterChart } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  EdgeInsets,
+  Text,
+  TextStyle,
+  BorderRadius,
+} from "flitter-ui";
 
 export default function CompactCorrelationAg() {
   return (
@@ -47,6 +55,29 @@ export default function CompactCorrelationAg() {
             },
           ],
         },
+        custom: {
+          dataLabel: (
+            { label, y }: { x: number; y: number; value: number; label?: string; legend: string },
+            _context: any,
+          ) => {
+            const isHighPerformer = y >= 60;
+            if (!isHighPerformer) return null;
+            return Container({
+              padding: EdgeInsets.symmetric({ horizontal: 4, vertical: 1 }),
+              decoration: new BoxDecoration({
+                color: "rgba(255, 255, 255, 0.9)",
+                borderRadius: BorderRadius.circular(3),
+              }),
+              child: Text(label ?? "", {
+                style: new TextStyle({
+                  fontSize: 8,
+                  fontWeight: "600",
+                  color: "#334155",
+                }),
+              }),
+            });
+          },
+        },
         config: {
           scatter: { size: 8, strokeWidth: 2 },
           colors: {
@@ -54,8 +85,8 @@ export default function CompactCorrelationAg() {
             strokes: ["#6366f1", "#f43f5e", "#10b981"],
           },
           grid: { dash: [3, 3] },
-          legend: { position: "right-top" },
           background: "#fafafa",
+          title: { text: "Channel Performance", visible: true },
         },
       })}
       width="100%"

@@ -2,6 +2,12 @@
 
 import Widget from "@flitterjs/react";
 import { ToastHeatmapChart } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  EdgeInsets,
+} from "flitter-ui";
 
 export default function ActivityCalendarToast() {
   return (
@@ -22,8 +28,21 @@ export default function ActivityCalendarToast() {
         },
         config: {
           title: { text: "Contributions", visible: true },
-          heatmap: { colorRange: ["#ebedf0", "#9be9a8", "#216e39"], segment: { gap: 2 } },
+          heatmap: { segment: { gap: 3 } },
           padding: { top: 10, right: 10, bottom: 10, left: 10 },
+        },
+        custom: {
+          segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+            const greens = ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"];
+            const level = value === 0 ? 0 : value <= 2 ? 1 : value <= 4 ? 2 : value <= 6 ? 3 : 4;
+            return Container({
+              margin: EdgeInsets.all(1),
+              decoration: new BoxDecoration({
+                color: greens[level],
+                borderRadius: BorderRadius.circular(3),
+              }),
+            });
+          },
         },
       })}
       width="100%"

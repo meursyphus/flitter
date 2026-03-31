@@ -130,7 +130,6 @@ const chart = BarChart({
   config: {
     colors: { fills: ["#2563eb", "#7c3aed", "#e879f9"] },
     title: { text: "Q4 Revenue", visible: true },
-    legend: { position: "right-top" },
     bar: { cornerRadius: 4 },
   },
 });`;
@@ -301,7 +300,7 @@ const chart = BarChart({
   config: {
     colors: { fills: ["#64748b", "#0d9488"] },
     bar: { cornerRadius: 4 },
-    title: { text: "Year-over-Year Revenue", visible: true, position: "bottom" },
+    title: { text: "Year-over-Year Revenue", visible: true },
   },
 });`;
 

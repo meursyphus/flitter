@@ -30,7 +30,6 @@ export default function AcquisitionChannelsToast() {
         },
         config: {
           title: { text: "Acquisition Channels", visible: true },
-          legend: { position: "right" },
           colors: ["#2563eb", "#f97316", "#10b981"],
           area: { opacity: 0.45 },
         },

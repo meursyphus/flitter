@@ -2,6 +2,14 @@
 
 import Widget from "@flitterjs/react";
 import { ToastHeatmapChart } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  Center,
+  Text,
+  TextStyle,
+  Border,
+} from "flitter-ui";
 
 export default function CorrelationMatrixToast() {
   return (
@@ -20,7 +28,38 @@ export default function CorrelationMatrixToast() {
           ],
         },
         config: {
-          heatmap: { colorRange: ["#3b82f6", "#f5f5f5", "#ef4444"], segment: { gap: 1 } },
+          heatmap: { colorRange: ["#ef4444", "#f5f5f5", "#3b82f6"], segment: { gap: 1 } },
+        },
+        custom: {
+          segment: ({ value, xIndex, yIndex }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+            const isDiagonal = xIndex === yIndex;
+            const t = (value + 100) / 200;
+            const isNeg = value < 0;
+            const abs = Math.abs(value);
+            const bg = isDiagonal
+              ? "#1e293b"
+              : isNeg
+                ? `rgba(239,68,68,${abs / 120})`
+                : `rgba(59,130,246,${abs / 120})`;
+            const fg = isDiagonal || abs > 60 ? "#ffffff" : "#1e293b";
+            return Container({
+              decoration: new BoxDecoration({
+                color: bg,
+                border: isDiagonal
+                  ? Border.all({ color: "#3b82f6", width: 2 })
+                  : undefined,
+              }),
+              child: Center({
+                child: Text(isDiagonal ? "1.0" : (value / 100).toFixed(2), {
+                  style: new TextStyle({
+                    fontSize: isDiagonal ? 11 : 9,
+                    color: fg,
+                    fontWeight: isDiagonal ? "700" : "500",
+                  }),
+                }),
+              }),
+            });
+          },
         },
       })}
       width="100%"

@@ -21,6 +21,19 @@ export default function TrafficSourcePie() {
           pie: {
             innerRadiusRatio: 0.55,
           },
+          title: {
+            text: "Traffic Sources — Q4 2025",
+            visible: true,
+            fontSize: 14,
+            fontWeight: "600",
+            color: "#1e293b",
+            position: "top",
+            alignment: "center",
+          },
+          legend: {
+            position: "bottom",
+            gap: 16,
+          },
         },
       })}
       width="100%"

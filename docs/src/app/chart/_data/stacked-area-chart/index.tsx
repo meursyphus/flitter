@@ -43,6 +43,7 @@ const showcaseExamples: ShowcaseExample[] = [
   {
     title: "Traffic Source Breakdown",
     subtitle: "Organic, direct, social, and referral traffic over 12 months",
+    description: "Custom title with indigo background badge and subtitle text",
     style: "Toast" as const,
     chart: <DefaultToastStackedAreaChart.Component />,
     featured: true,
@@ -52,6 +53,7 @@ const showcaseExamples: ShowcaseExample[] = [
   {
     title: "Website Traffic by Source",
     subtitle: "Search, social, email, and direct visits trending upward",
+    description: "Rotated x-axis labels with quarterly emphasis (bold every 3rd month)",
     style: "Toast" as const,
     chart: <TrafficSourceStackedArea.Component />,
     height: 360,
@@ -60,6 +62,7 @@ const showcaseExamples: ShowcaseExample[] = [
   {
     title: "Revenue by Product Line",
     subtitle: "Quarterly revenue streams from subscriptions, licensing, services, and hardware",
+    description: "Custom y-axis labels with currency formatting ($XK) and teal threshold highlighting",
     style: "Toast" as const,
     chart: <RevenueStreamStackedArea.Component />,
     featured: true,
@@ -68,7 +71,8 @@ const showcaseExamples: ShowcaseExample[] = [
   },
   {
     title: "Revenue Stream Composition",
-    subtitle: "AG style showing how revenue sources evolve over time",
+    subtitle: "AG style with centered title and subtitle",
+    description: "Centered title with subtitle annotation on neutral background",
     style: "AG" as const,
     chart: <DefaultAgStackedAreaChart.Component />,
     height: 360,
@@ -76,7 +80,8 @@ const showcaseExamples: ShowcaseExample[] = [
   },
   {
     title: "Resource Allocation per Sprint",
-    subtitle: "AG style team capacity distribution across development, QA, design, and DevOps",
+    subtitle: "AG style team capacity with hour-suffixed y-axis labels",
+    description: "Custom y-axis labels showing 'hrs' suffix with red bold when over capacity (80+)",
     style: "AG" as const,
     chart: <ResourceAllocationStackedArea.Component />,
     featured: true,
@@ -85,7 +90,8 @@ const showcaseExamples: ShowcaseExample[] = [
   },
   {
     title: "Energy Generation Mix",
-    subtitle: "Monthly power output from solar, wind, gas, and nuclear sources",
+    subtitle: "Monthly power output with spline curves and peak-month legend",
+    description: "Right-side custom legend with peak month annotation per energy source",
     style: "Toast" as const,
     chart: <EnergyMixToastStackedArea.Component />,
     featured: true,
@@ -94,7 +100,8 @@ const showcaseExamples: ShowcaseExample[] = [
   },
   {
     title: "App Sessions by Platform",
-    subtitle: "iOS, Android, and web session trends over 12 months",
+    subtitle: "iOS, Android, and web session trends with quarter-start markers",
+    description: "Top legend + quarter-start x-axis labels underlined in blue with bold styling",
     style: "Toast" as const,
     chart: <AppUsageToastStackedArea.Component />,
     height: 360,
@@ -103,6 +110,7 @@ const showcaseExamples: ShowcaseExample[] = [
   {
     title: "Support Ticket Trends",
     subtitle: "Bug reports, feature requests, questions, and billing tickets over time",
+    description: "Summer months highlighted with amber badge-style x-axis labels",
     style: "Toast" as const,
     chart: <SupportTicketsToastStackedArea.Component />,
     height: 360,
@@ -110,7 +118,8 @@ const showcaseExamples: ShowcaseExample[] = [
   },
   {
     title: "Cloud Infrastructure Costs",
-    subtitle: "Monthly spend across compute, storage, network, and database services",
+    subtitle: "Monthly spend with dollar-formatted y-axis and budget alerts",
+    description: "Custom y-axis with $XK currency format and red bold for budget-exceeding values",
     style: "AG" as const,
     chart: <CloudCostAgStackedArea.Component />,
     featured: true,
@@ -119,7 +128,8 @@ const showcaseExamples: ShowcaseExample[] = [
   },
   {
     title: "Team Velocity by Squad",
-    subtitle: "Frontend, backend, and mobile story points across 10 sprints",
+    subtitle: "Spline curves with abbreviated sprint labels and point suffixes",
+    description: "Config-level axis.label.format for 'S1' sprint abbreviations and 'pts' y-axis suffix, right legend",
     style: "AG" as const,
     chart: <TeamVelocityAgStackedArea.Component />,
     height: 360,
@@ -127,7 +137,8 @@ const showcaseExamples: ShowcaseExample[] = [
   },
   {
     title: "Browser Market Share",
-    subtitle: "Chrome, Safari, Firefox, and Edge share evolving over 12 months",
+    subtitle: "Percentage y-axis with quarterly-highlighted x-axis badges",
+    description: "Percentage-formatted y-axis via config + custom x-axis with pill badges on quarter starts",
     style: "AG" as const,
     chart: <MarketShareAgStackedArea.Component />,
     height: 360,
@@ -136,6 +147,7 @@ const showcaseExamples: ShowcaseExample[] = [
   {
     title: "Acquisition Channels",
     subtitle: "Organic, paid, and referral traffic with right-side legend layout",
+    description: "Custom legend with colored dot, channel name, and latest value in bold",
     style: "Toast" as const,
     chart: <AcquisitionChannelsToast.Component />,
     height: 360,
@@ -143,7 +155,8 @@ const showcaseExamples: ShowcaseExample[] = [
   },
   {
     title: "Revenue Streams (Minimal)",
-    subtitle: "Clean minimal SaaS, services, and licensing revenue over 6 quarters",
+    subtitle: "Clean minimal design with pill-shaped title and metadata",
+    description: "Custom title as rounded pill container with segment count metadata",
     style: "AG" as const,
     chart: <RevenueStreamsMinimalAg.Component />,
     height: 360,

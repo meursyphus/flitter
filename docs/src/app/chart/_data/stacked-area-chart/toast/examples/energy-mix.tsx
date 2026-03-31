@@ -2,6 +2,20 @@
 
 import Widget from "@flitterjs/react";
 import { ToastStackedAreaChart as ToastStackedAreaChartWidget } from "shared/chart";
+import {
+  Row,
+  Container,
+  BoxDecoration,
+  SizedBox,
+  Text,
+  TextStyle,
+  CrossAxisAlignment,
+  BorderRadius,
+} from "flitter-ui";
+
+const colors = ["#eab308", "#22c55e", "#64748b", "#a855f7"];
+const icons = ["Solar", "Wind", "Gas", "Nuclear"];
+const peakMonths = ["Jul", "Jan", "Jan", "Jun"];
 
 export default function EnergyMixToastStackedArea() {
   return (
@@ -17,8 +31,39 @@ export default function EnergyMixToastStackedArea() {
           ],
         },
         config: {
-          colors: ["#eab308", "#22c55e", "#64748b", "#a855f7"],
+          colors,
           area: { opacity: 0.55, spline: true },
+        },
+        custom: {
+          legend: ({ name, index }: { name: string; index: number }) =>
+            Row({
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container({
+                  width: 10,
+                  height: 10,
+                  decoration: new BoxDecoration({
+                    color: colors[index],
+                    borderRadius: BorderRadius.circular(2),
+                  }),
+                }),
+                SizedBox({ width: 6 }),
+                Text(name, {
+                  style: new TextStyle({
+                    fontSize: 11,
+                    color: "#334155",
+                    fontWeight: "600",
+                  }),
+                }),
+                SizedBox({ width: 4 }),
+                Text(`peak: ${peakMonths[index]}`, {
+                  style: new TextStyle({
+                    fontSize: 9,
+                    color: "#94a3b8",
+                  }),
+                }),
+              ],
+            }),
         },
       })}
       width="100%"

@@ -9,6 +9,7 @@ import _ServerLoadMonitorAg from "./examples/server-load-monitor";
 import _ServerLoadAg from "./examples/server-load";
 
 const _BasicHeatmapAg_code = `import HeatmapChart from "./charts/heatmap-chart";
+import { Text, TextStyle, Column, MainAxisSize, CrossAxisAlignment, SizedBox, Container, BoxDecoration, BorderRadius, EdgeInsets } from "flitter-ui";
 
 const chart = HeatmapChart({
   data: {
@@ -24,9 +25,54 @@ const chart = HeatmapChart({
       [2, 4, 7, 10, 16, 22, 26, 28, 23, 14, 8, 3],
     ],
   },
-  config: {},
+  config: {
+    heatmap: { colorRange: ["#eff6ff", "#60a5fa", "#1e40af"] },
+  },
+  custom: {
+    title: (_args: undefined, context: any) => {
+      const { font, title } = context.config;
+      return Container({
+        padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 6 }),
+        decoration: new BoxDecoration({
+          color: "#eff6ff",
+          borderRadius: BorderRadius.circular(6),
+        }),
+        child: Column({
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text("Weekly Temperature", {
+              style: new TextStyle({
+                fontFamily: title?.fontFamily ?? font.family,
+                fontSize: 14,
+                fontWeight: "700",
+                color: "#1e40af",
+              }),
+            }),
+            SizedBox({ height: 2 }),
+            Text("Avg. daily highs in Celsius", {
+              style: new TextStyle({
+                fontFamily: font.family,
+                fontSize: 10,
+                color: "#3b82f6",
+              }),
+            }),
+          ],
+        }),
+      });
+    },
+  },
 });`;
 const _CorrelationMatrixAg_code = `import HeatmapChart from "./charts/heatmap-chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  Center,
+  Text,
+  TextStyle,
+  EdgeInsets,
+} from "flitter-ui";
 
 const chart = HeatmapChart({
   data: {
@@ -41,9 +87,46 @@ const chart = HeatmapChart({
       [70, 75, 82, -55, 72, 100],
     ],
   },
-  config: {},
+  config: {
+    heatmap: { colorRange: ["#ef4444", "#f5f5f5", "#3b82f6"], segment: { gap: 2 } },
+  },
+  custom: {
+    segment: ({ value, xIndex, yIndex }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+      const isDiag = xIndex === yIndex;
+      const isUpper = xIndex > yIndex;
+      if (isUpper) {
+        return Container({
+          decoration: new BoxDecoration({ color: "transparent" }),
+        });
+      }
+      const abs = Math.abs(value);
+      const isNeg = value < 0;
+      const bg = isDiag
+        ? "#334155"
+        : isNeg
+          ? \`rgba(239,68,68,\${abs / 110})\`
+          : \`rgba(59,130,246,\${abs / 110})\`;
+      return Container({
+        margin: EdgeInsets.all(1),
+        decoration: new BoxDecoration({
+          color: bg,
+          borderRadius: BorderRadius.circular(isDiag ? 0 : 4),
+        }),
+        child: Center({
+          child: Text(isDiag ? "1.0" : (value / 100).toFixed(1), {
+            style: new TextStyle({
+              fontSize: 10,
+              color: isDiag || abs > 50 ? "#ffffff" : "#374151",
+              fontWeight: isDiag ? "700" : "400",
+            }),
+          }),
+        }),
+      });
+    },
+  },
 });`;
 const _GithubActivityAg_code = `import HeatmapChart from "./charts/heatmap-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = HeatmapChart({
   data: {
@@ -59,9 +142,38 @@ const chart = HeatmapChart({
       [0, 0, 1, 0, 0, 2, 0, 0, 0, 1, 0, 0],
     ],
   },
-  config: {},
+  config: {
+    heatmap: { colorRange: ["#ebedf0", "#9be9a8", "#216e39"], segment: { gap: 2 } },
+  },
+  custom: {
+    xAxisLabel: ({ name, index }: { name: string; index: number }, context: any) => {
+      const { font } = context.config;
+      const short = name.substring(0, 1);
+      const isQ = index % 3 === 0;
+      return Text(isQ ? name : short, {
+        style: new TextStyle({
+          fontFamily: font.family,
+          fontSize: isQ ? font.size : font.size - 1,
+          fontWeight: isQ ? "700" : "normal",
+          color: isQ ? "#216e39" : "#9ca3af",
+        }),
+      });
+    },
+  },
 });`;
 const _SalesByRegionAg_code = `import HeatmapChart from "./charts/heatmap-chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  Center,
+  Text,
+  TextStyle,
+  Column,
+  MainAxisSize,
+  SizedBox,
+  EdgeInsets,
+} from "flitter-ui";
 
 const chart = HeatmapChart({
   data: {
@@ -75,9 +187,62 @@ const chart = HeatmapChart({
       [150, 170, 250, 110, 200, 60],
     ],
   },
-  config: {},
+  config: {
+    heatmap: { colorRange: ["#fef3c7", "#f59e0b", "#92400e"], segment: { gap: 2 } },
+  },
+  custom: {
+    segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+      const max = 510;
+      const t = Math.min(value / max, 1);
+      const r = Math.round(254 + (146 - 254) * t);
+      const g = Math.round(243 + (64 - 243) * t);
+      const b = Math.round(199 + (14 - 199) * t);
+      const isTop = value >= 400;
+      return Container({
+        margin: EdgeInsets.all(1),
+        decoration: new BoxDecoration({
+          color: \`rgb(\${r},\${g},\${b})\`,
+          borderRadius: BorderRadius.circular(6),
+        }),
+        child: Center({
+          child: Column({
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(isTop ? "$" + value : \`\${value}\`, {
+                style: new TextStyle({
+                  fontSize: isTop ? 11 : 9,
+                  color: t > 0.5 ? "#ffffff" : "#78350f",
+                  fontWeight: isTop ? "700" : "400",
+                }),
+              }),
+              ...(isTop
+                ? [
+                    SizedBox({ height: 1 }),
+                    Text("TOP", {
+                      style: new TextStyle({
+                        fontSize: 6,
+                        color: "#fef3c7",
+                        fontWeight: "700",
+                      }),
+                    }),
+                  ]
+                : []),
+            ],
+          }),
+        }),
+      });
+    },
+  },
 });`;
 const _ServerLoadMonitorAg_code = `import HeatmapChart from "./charts/heatmap-chart";
+import {
+  Container,
+  BoxDecoration,
+  Border,
+  Center,
+  Text,
+  TextStyle,
+} from "flitter-ui";
 
 const chart = HeatmapChart({
   data: {
@@ -93,11 +258,51 @@ const chart = HeatmapChart({
     ],
   },
   config: {
-    title: { text: "Server Load", visible: true },
+    title: { text: "Infrastructure Dashboard", visible: true },
     background: "#111827",
+    heatmap: { segment: { gap: 2 } },
+  },
+  custom: {
+    segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+      const status = value >= 90 ? "critical" : value >= 75 ? "warning" : value >= 50 ? "elevated" : "normal";
+      const bgMap: Record<string, string> = {
+        critical: "#dc2626",
+        warning: "#d97706",
+        elevated: "#2563eb",
+        normal: "#1e3a5f",
+      };
+      const borderColor = status === "critical" ? "#fca5a5" : status === "warning" ? "#fcd34d" : "transparent";
+      return Container({
+        decoration: new BoxDecoration({
+          color: bgMap[status],
+          border: status === "critical" || status === "warning"
+            ? Border.all({ color: borderColor, width: 2 })
+            : undefined,
+        }),
+        child: Center({
+          child: Text(
+            status === "critical" ? \`!! \${value}%\` : \`\${value}%\`,
+            {
+              style: new TextStyle({
+                fontSize: 9,
+                color: "#ffffff",
+                fontWeight: status === "critical" ? "800" : status === "warning" ? "600" : "400",
+              }),
+            },
+          ),
+        }),
+      });
+    },
   },
 });`;
 const _ServerLoadAg_code = `import HeatmapChart from "./charts/heatmap-chart";
+import {
+  Container,
+  BoxDecoration,
+  Center,
+  Text,
+  TextStyle,
+} from "flitter-ui";
 
 const chart = HeatmapChart({
   data: {
@@ -113,7 +318,32 @@ const chart = HeatmapChart({
       [6, 4, 2, 8, 18, 28, 32, 30, 25, 22, 15, 9],
     ],
   },
-  config: {},
+  config: {
+    background: "#0f172a",
+    title: { text: "Server CPU", visible: true },
+  },
+  custom: {
+    segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+      const t = Math.min(value / 95, 1);
+      const bg = value >= 85
+        ? \`rgba(239,68,68,\${0.7 + t * 0.3})\`
+        : value >= 60
+          ? \`rgba(251,191,36,\${0.4 + t * 0.4})\`
+          : \`rgba(56,189,248,\${0.1 + t * 0.5})\`;
+      return Container({
+        decoration: new BoxDecoration({ color: bg }),
+        child: Center({
+          child: Text(\`\${value}%\`, {
+            style: new TextStyle({
+              fontSize: 8,
+              color: value >= 60 ? "#ffffff" : "rgba(255,255,255,0.6)",
+              fontWeight: value >= 85 ? "700" : "400",
+            }),
+          }),
+        }),
+      });
+    },
+  },
 });`;
 
 export const BasicHeatmapAg = { Component: _BasicHeatmapAg, code: _BasicHeatmapAg_code };

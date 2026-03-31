@@ -1,6 +1,11 @@
 "use client";
 
 import Widget from "@flitterjs/react";
+import {
+  Container,
+  BoxDecoration,
+  BoxShadow,
+} from "flitter-ui";
 import { BubbleChart } from "shared/chart";
 
 export default function DarkAnalysisAgBubble() {
@@ -35,7 +40,37 @@ export default function DarkAnalysisAgBubble() {
             },
           ],
         },
+        custom: {
+          bubble: (
+            { value, legend }: any,
+            context: any,
+          ) => {
+            const { colors, bubble: bubbleConfig } = context.config;
+            const idx = context.legends.indexOf(legend);
+            const fillColor = colors.fills[idx % colors.fills.length];
+            const { scale } = context;
+            const normValue = scale != null
+              ? (value - scale.value.min) / (scale.value.max - scale.value.min || 1)
+              : 0.5;
+            const radius = bubbleConfig.minRadius + normValue * (bubbleConfig.maxRadius - bubbleConfig.minRadius);
+            // Neon glow effect on dark background
+            return Container({
+              width: radius * 2,
+              height: radius * 2,
+              decoration: new BoxDecoration({
+                color: `${fillColor}bb`,
+                shape: "circle",
+                boxShadow: [
+                  new BoxShadow({ color: `${fillColor}88`, blurRadius: 16 }),
+                  new BoxShadow({ color: `${fillColor}44`, blurRadius: 32 }),
+                ],
+              }),
+            });
+          },
+        },
         config: {
+          title: { text: "Quarterly Analysis", visible: true, color: "#e2e8f0" },
+          subtitle: { visible: true, text: "Revenue vs Expenses vs Profit", color: "#64748b" },
           background: "#0f172a",
           bubble: { minRadius: 8, maxRadius: 40, opacity: 0.7 },
           colors: {
@@ -46,6 +81,7 @@ export default function DarkAnalysisAgBubble() {
             color: "#94a3b8",
             label: { color: "#94a3b8" },
           },
+          legend: { color: "#94a3b8" },
           grid: { color: "#1e293b", dash: [3, 3] },
         },
       })}

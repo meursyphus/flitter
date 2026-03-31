@@ -1,6 +1,12 @@
 "use client";
 
 import Widget from "@flitterjs/react";
+import {
+  Container,
+  BoxDecoration,
+  Border,
+  BorderSide,
+} from "flitter-ui";
 import { ToastBubbleChart as ToastBubbleChartWidget } from "shared/chart";
 
 export default function SmallBubblestoastBubbleChart() {
@@ -34,6 +40,31 @@ export default function SmallBubblestoastBubbleChart() {
               ],
             },
           ],
+        },
+        custom: {
+          bubble: (
+            { value, legend }: any,
+            context: any,
+          ) => {
+            const { colors, bubble: bubbleConfig } = context.config;
+            const idx = context.legends.indexOf(legend);
+            const color = colors[idx % colors.length];
+            const { scale } = context;
+            const normValue = scale != null
+              ? (value - scale.value.min) / (scale.value.max - scale.value.min || 1)
+              : 0.5;
+            const radius = bubbleConfig.minRadius + normValue * (bubbleConfig.maxRadius - bubbleConfig.minRadius);
+            // Dashed-ring style: white fill with colored border for compact dense views
+            return Container({
+              width: radius * 2,
+              height: radius * 2,
+              decoration: new BoxDecoration({
+                color: `${color}22`,
+                shape: "circle",
+                border: Border.all({ color, width: 2, strokeAlign: 0 }),
+              }),
+            });
+          },
         },
         config: {
           bubble: { minRadius: 3, maxRadius: 25, opacity: 0.8 },

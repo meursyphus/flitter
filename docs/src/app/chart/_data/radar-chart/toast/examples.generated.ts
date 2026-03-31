@@ -26,10 +26,28 @@ const chart = ToastRadarChart({
   },
   config: {
     colors: ["#ef4444", "#3b82f6", "#10b981"],
-    radar: { fillOpacity: 0.1, strokeWidth: 3 },
+    radar: {
+      fillOpacity: 0.04,
+      strokeWidth: 3.5,
+      gridColor: "rgba(0, 0, 0, 0.06)",
+      axisColor: "rgba(0, 0, 0, 0.15)",
+      axisWidth: 1.5,
+    },
   },
 });`;
 const _BasicRadarChart_code = `import ToastRadarChart from "./charts/toast-radar-chart";
+import { Align, Alignment, TextAlign, Row, SizedBox, MainAxisSize, Text, TextStyle } from "flitter-ui";
+
+const skillEmojis: Record<string, string> = {
+  JavaScript: "🟨",
+  TypeScript: "🔷",
+  React: "⚛️",
+  "Node.js": "🟩",
+  CSS: "🎨",
+  GraphQL: "◆",
+  Testing: "🧪",
+  DevOps: "🔧",
+};
 
 const chart = ToastRadarChart({
   data: {
@@ -40,7 +58,34 @@ const chart = ToastRadarChart({
       { legend: "Full Stack", values: [80, 75, 70, 85, 60, 65, 70, 80] },
     ],
   },
-  config: {},
+  custom: {
+    angularAxisLabel: ({ label, angle, nx, ny }: any) => {
+      const emoji = skillEmojis[label] || "";
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      const labelOffset = 0.12;
+      const lx = nx + labelOffset * cos;
+      const ly = ny + labelOffset * sin;
+
+      return Align({
+        alignment: new Alignment({ x: lx * 2 - 1, y: ly * 2 - 1 }),
+        child: Row({
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(emoji, { style: new TextStyle({ fontSize: 11 }) }),
+            SizedBox({ width: 2 }),
+            Text(label, {
+              style: new TextStyle({ fontSize: 10, color: "#334155", fontWeight: "600" }),
+            }),
+          ],
+        }),
+      });
+    },
+  },
+  config: {
+    title: { text: "Developer Skill Radar", visible: true },
+    radar: { fillOpacity: 0.15, strokeWidth: 2.5 },
+  },
 });`;
 const _CarComparisonRadar_code = `import ToastRadarChart from "./charts/toast-radar-chart";
 
@@ -54,27 +99,52 @@ const chart = ToastRadarChart({
     ],
   },
   config: {
-    colors: ["#1e40af", "#dc2626", "#064e3b"],
-    radar: { fillOpacity: 0.2, strokeWidth: 2 },
+    colors: ["#38bdf8", "#f472b6", "#a3e635"],
+    radar: {
+      fillOpacity: 0.2,
+      strokeWidth: 2.5,
+      gridColor: "rgba(255, 255, 255, 0.12)",
+      gridWidth: 1,
+      axisColor: "rgba(255, 255, 255, 0.2)",
+      axisWidth: 1,
+    },
+    axis: { label: { color: "#94a3b8" } },
+    title: { text: "Vehicle Comparison", visible: true, color: "#e2e8f0" },
+    tooltip: { backgroundColor: "rgba(15, 23, 42, 0.9)", textColor: "#f1f5f9" },
   },
 });`;
 const _CompanyCultureRadar_code = `import ToastRadarChart from "./charts/toast-radar-chart";
 
 const chart = ToastRadarChart({
   data: {
-    labels: ["Innovation", "Work-Life", "Compensation", "Growth", "Diversity"],
+    labels: ["Innovation", "Work-Life", "Compensation", "Growth", "Diversity", "Leadership"],
     datasets: [
-      { legend: "Startup", values: [95, 55, 65, 88, 72] },
-      { legend: "Enterprise", values: [60, 80, 90, 70, 85] },
-      { legend: "Agency", values: [82, 65, 72, 78, 68] },
+      { legend: "Startup", values: [95, 55, 65, 88, 72, 60] },
+      { legend: "Enterprise", values: [60, 80, 90, 70, 85, 92] },
+      { legend: "Agency", values: [82, 65, 72, 78, 68, 74] },
     ],
   },
   config: {
-    colors: ["#8b5cf6", "#f59e0b", "#06b6d4"],
-    radar: { fillOpacity: 0.3, strokeWidth: 1.5 },
+    colors: ["#c084fc", "#fbbf24", "#67e8f9"],
+    radar: {
+      fillOpacity: 0.25,
+      strokeWidth: 1.5,
+      gridColor: "rgba(192, 132, 252, 0.1)",
+      gridWidth: 1.5,
+    },
+    title: { text: "Workplace Culture Index", visible: true, alignment: "center", fontSize: 16 },
+    legend: { gap: 16 },
+    padding: { top: 16, right: 24, bottom: 16, left: 24 },
   },
 });`;
 const _FrameworkComparisonRadar_code = `import ToastRadarChart from "./charts/toast-radar-chart";
+import { Align, Alignment, Row, MainAxisSize, SizedBox, Container, BoxDecoration, BorderRadius, Text, TextStyle } from "flitter-ui";
+
+const brandColors: Record<string, string> = {
+  React: "#61dafb",
+  Vue: "#42b883",
+  Svelte: "#ff3e00",
+};
 
 const chart = ToastRadarChart({
   data: {
@@ -85,12 +155,42 @@ const chart = ToastRadarChart({
       { legend: "Svelte", values: [95, 90, 55, 92, 60] },
     ],
   },
+  custom: {
+    legend: ({ name, index }: any) => {
+      const color = brandColors[name] || "#888";
+      return Row({
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container({
+            width: 10,
+            height: 10,
+            decoration: new BoxDecoration({
+              color: color,
+              borderRadius: BorderRadius.circular(5),
+            }),
+          }),
+          SizedBox({ width: 5 }),
+          Text(name, {
+            style: new TextStyle({
+              fontSize: 12,
+              fontWeight: "700",
+              color: color,
+            }),
+          }),
+        ],
+      });
+    },
+  },
   config: {
     colors: ["#61dafb", "#42b883", "#ff3e00"],
-    radar: { fillOpacity: 0.15, strokeWidth: 2.5 },
+    radar: { fillOpacity: 0.1, strokeWidth: 2.5 },
+    legend: { gap: 20 },
   },
 });`;
 const _NutritionProfileRadar_code = `import ToastRadarChart from "./charts/toast-radar-chart";
+import { Text, TextStyle, SizedBox } from "flitter-ui";
+
+const units: Record<number, string> = { 0: "g", 1: "g", 2: "g", 3: "g", 4: "mg" };
 
 const chart = ToastRadarChart({
   data: {
@@ -101,12 +201,30 @@ const chart = ToastRadarChart({
       { legend: "Avocado", values: [12, 20, 85, 55, 72] },
     ],
   },
+  custom: {
+    radialAxisLabel: ({ value, index }: any, context: any) => {
+      if (index === 0) return SizedBox.shrink();
+      return Text(\`\${value}\`, {
+        style: new TextStyle({
+          fontSize: 9,
+          color: value >= 60 ? "#dc2626" : value >= 30 ? "#d97706" : "#16a34a",
+          fontWeight: "500",
+        }),
+      });
+    },
+  },
   config: {
     colors: ["#22c55e", "#f97316", "#ef4444"],
-    radar: { fillOpacity: 0.25 },
+    radar: {
+      fillOpacity: 0.2,
+      gridColor: "rgba(34, 197, 94, 0.12)",
+      gridWidth: 2,
+      axisColor: "rgba(34, 197, 94, 0.2)",
+    },
   },
 });`;
 const _ProductReviewRadarChart_code = `import ToastRadarChart from "./charts/toast-radar-chart";
+import { Text, TextStyle, Container, BoxDecoration, EdgeInsets, BorderRadius, SizedBox } from "flitter-ui";
 
 const chart = ToastRadarChart({
   data: {
@@ -117,12 +235,32 @@ const chart = ToastRadarChart({
       { legend: "Product C", values: [75, 80, 90, 80, 65] },
     ],
   },
+  custom: {
+    radialAxisLabel: ({ value, index }: any) => {
+      if (index === 0) return SizedBox.shrink();
+      return Container({
+        padding: EdgeInsets.symmetric({ horizontal: 4, vertical: 1 }),
+        decoration: new BoxDecoration({
+          color: "rgba(16, 185, 129, 0.08)",
+          borderRadius: BorderRadius.circular(3),
+        }),
+        child: Text(\`\${value}%\`, {
+          style: new TextStyle({ fontSize: 9, color: "#059669", fontWeight: "600" }),
+        }),
+      });
+    },
+  },
   config: {
     colors: ["#10b981", "#f97316", "#8b5cf6"],
-    radar: { fillOpacity: 0.2 },
+    radar: {
+      fillOpacity: 0.2,
+      gridColor: "rgba(16, 185, 129, 0.15)",
+      gridWidth: 1.5,
+    },
   },
 });`;
 const _RestaurantRatingRadar_code = `import ToastRadarChart from "./charts/toast-radar-chart";
+import { Container, BoxDecoration, EdgeInsets, BorderRadius, Text, TextStyle, SizedBox } from "flitter-ui";
 
 const chart = ToastRadarChart({
   data: {
@@ -133,24 +271,77 @@ const chart = ToastRadarChart({
       { legend: "Burger Joint", values: [78, 80, 55, 95, 90] },
     ],
   },
+  custom: {
+    title: (_args: any, context: any) => {
+      const { title } = context.config;
+      if (!title.visible || !title.text) return SizedBox.shrink();
+      return Container({
+        padding: EdgeInsets.symmetric({ horizontal: 14, vertical: 6 }),
+        decoration: new BoxDecoration({
+          color: "#fef3c7",
+          borderRadius: BorderRadius.circular(20),
+        }),
+        child: Text(title.text, {
+          style: new TextStyle({
+            fontSize: 15,
+            fontWeight: "700",
+            color: "#92400e",
+          }),
+        }),
+      });
+    },
+  },
   config: {
+    title: { text: "🍽 Dining Guide", visible: true, alignment: "center" },
     colors: ["#d97706", "#dc2626", "#059669"],
-    radar: { fillOpacity: 0.35, strokeWidth: 2 },
+    radar: { fillOpacity: 0.3, strokeWidth: 2 },
   },
 });`;
 const _SkillComparisonRadarChart_code = `import ToastRadarChart from "./charts/toast-radar-chart";
+import { Align, Alignment, TextAlign, Text, TextStyle, Column, MainAxisSize } from "flitter-ui";
+
+const aliceValues = [90, 85, 95, 70, 80, 92];
+const bobValues = [75, 92, 60, 95, 65, 78];
 
 const chart = ToastRadarChart({
   data: {
     labels: ["Leadership", "Problem Solving", "Communication", "Technical", "Creativity", "Teamwork"],
     datasets: [
-      { legend: "Alice", values: [90, 85, 95, 70, 80, 92] },
-      { legend: "Bob", values: [75, 92, 60, 95, 65, 78] },
+      { legend: "Alice", values: aliceValues },
+      { legend: "Bob", values: bobValues },
     ],
+  },
+  custom: {
+    angularAxisLabel: ({ index, label, angle, nx, ny }: any) => {
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      const labelOffset = 0.13;
+      const lx = nx + labelOffset * cos;
+      const ly = ny + labelOffset * sin;
+
+      const diff = aliceValues[index] - bobValues[index];
+      const winner = diff > 0 ? "A" : diff < 0 ? "B" : "=";
+      const winColor = diff > 0 ? "#3b82f6" : diff < 0 ? "#ef4444" : "#94a3b8";
+
+      return Align({
+        alignment: new Alignment({ x: lx * 2 - 1, y: ly * 2 - 1 }),
+        child: Column({
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(label, {
+              style: new TextStyle({ fontSize: 10, color: "#475569" }),
+            }),
+            Text(winner === "=" ? "TIE" : \`\${winner} +\${Math.abs(diff)}\`, {
+              style: new TextStyle({ fontSize: 9, color: winColor, fontWeight: "700" }),
+            }),
+          ],
+        }),
+      });
+    },
   },
   config: {
     colors: ["#3b82f6", "#ef4444"],
-    radar: { fillOpacity: 0.15, strokeWidth: 2.5 },
+    radar: { fillOpacity: 0.12, strokeWidth: 2.5 },
   },
 });`;
 const _TeamPerformanceCardToast_code = `import ToastRadarChart from "./charts/toast-radar-chart";
@@ -182,7 +373,7 @@ const chart = ToastRadarChart({
     },
   },
   config: {
-    title: { text: "Team Metrics", visible: true, position: "bottom", alignment: "center" },
+    title: { text: "Team Metrics", visible: true, alignment: "center" },
     colors: ["#6366f1", "#a5b4fc"],
     radar: { fillOpacity: 0.2, strokeWidth: 2.5 },
   },
@@ -200,7 +391,13 @@ const chart = ToastRadarChart({
   },
   config: {
     colors: ["#6366f1", "#ec4899", "#06b6d4"],
-    radar: { fillOpacity: 0.25, strokeWidth: 3 },
+    radar: {
+      fillOpacity: 0.55,
+      strokeWidth: 0.5,
+      gridColor: "rgba(99, 102, 241, 0.12)",
+      gridWidth: 1,
+    },
+    title: { text: "Team KPI Heatmap", visible: true, alignment: "center" },
   },
 });`;
 

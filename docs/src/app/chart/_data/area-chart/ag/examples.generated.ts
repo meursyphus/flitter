@@ -9,6 +9,7 @@ import _QuarterlyRevenueAgArea from "./examples/quarterly-revenue-ag-area";
 import _SplineAgAreaChart from "./examples/spline-ag-area-chart";
 
 const _AppPerformanceAgArea_code = `import AreaChart from "./charts/area-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = AreaChart({
   data: {
@@ -27,12 +28,26 @@ const chart = AreaChart({
       spline: true,
     },
   },
+  custom: {
+    yAxisLabel: ({ name }: { name: string; index: number }) => {
+      const value = parseFloat(name);
+      const isCritical = value >= 70;
+      return Text(\`\${name}%\`, {
+        style: new TextStyle({
+          fontSize: 11,
+          color: isCritical ? "#ef4444" : "#6b7280",
+          fontWeight: isCritical ? "700" : undefined,
+        }),
+      });
+    },
+  },
 });`;
 const _CloudUsageAgArea_code = `import AreaChart from "./charts/area-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = AreaChart({
   data: {
-    labels: ["Jan", "Mar", "May", "Jul", "Sep", "Nov"],
+    labels: ["Jan\\nQ1", "Mar\\nQ1", "May\\nQ2", "Jul\\nQ3", "Sep\\nQ3", "Nov\\nQ4"],
     datasets: [
       { legend: "Compute ($K)", values: [12.5, 14.8, 18.5, 23.4, 24.2, 19.5] },
       { legend: "Storage ($K)", values: [5.2, 5.9, 7.0, 8.2, 9.2, 10.0] },
@@ -48,8 +63,32 @@ const chart = AreaChart({
       spline: false,
     },
   },
+  custom: {
+    yAxisLabel: ({ name }: { name: string; index: number }) => {
+      const value = parseFloat(name);
+      return Text(isNaN(value) ? name : \`$\${name}K\`, {
+        style: new TextStyle({
+          fontSize: 11,
+          color: "#64748b",
+        }),
+      });
+    },
+  },
 });`;
 const _DarkMonitoringAgArea_code = `import AreaChart from "./charts/area-chart";
+import {
+  Row,
+  Container,
+  BoxDecoration,
+  SizedBox,
+  Text,
+  TextStyle,
+  CrossAxisAlignment,
+  BorderRadius,
+  BoxShadow,
+} from "flitter-ui";
+
+const colors = ["#22d3ee", "#a78bfa", "#f87171"];
 
 const chart = AreaChart({
   data: {
@@ -65,15 +104,44 @@ const chart = AreaChart({
     background: "#111827",
     grid: { dash: [4, 4], color: "rgba(255,255,255,0.1)" },
     axis: { color: "rgba(255,255,255,0.3)", label: { color: "rgba(255,255,255,0.6)" } },
-    legend: { color: "rgba(255,255,255,0.7)" },
     area: {
       strokeWidth: 1.5,
       opacity: 0.2,
       spline: true,
     },
   },
+  custom: {
+    legend: ({ name, index }: { name: string; index: number }) =>
+      Row({
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container({
+            width: 8,
+            height: 8,
+            decoration: new BoxDecoration({
+              color: colors[index],
+              borderRadius: BorderRadius.circular(4),
+              boxShadow: [
+                new BoxShadow({
+                  color: colors[index] + "80",
+                  blurRadius: 6,
+                }),
+              ],
+            }),
+          }),
+          SizedBox({ width: 6 }),
+          Text(name, {
+            style: new TextStyle({
+              fontSize: 11,
+              color: "rgba(255,255,255,0.7)",
+            }),
+          }),
+        ],
+      }),
+  },
 });`;
 const _DefaultAgAreaChart_code = `import AreaChart from "./charts/area-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = AreaChart({
   data: {
@@ -91,8 +159,22 @@ const chart = AreaChart({
       spline: false,
     },
   },
+  custom: {
+    yAxisLabel: ({ name }: { name: string; index: number }) => {
+      const value = parseFloat(name);
+      const isHigh = value >= 10;
+      return Text(name, {
+        style: new TextStyle({
+          fontSize: 11,
+          color: isHigh ? "#d97706" : "#6b7280",
+          fontWeight: isHigh ? "700" : undefined,
+        }),
+      });
+    },
+  },
 });`;
 const _QuarterlyRevenueAgArea_code = `import AreaChart from "./charts/area-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = AreaChart({
   data: {
@@ -104,14 +186,36 @@ const chart = AreaChart({
   },
   config: {
     colors: { fills: ["#0d9488", "#d97706"], strokes: ["#0d9488", "#d97706"] },
+    title: { text: "SaaS vs On-Prem Revenue", visible: true },
     area: {
       strokeWidth: 2.5,
       opacity: 0.35,
       spline: false,
     },
   },
+  custom: {
+    xAxisLabel: ({ name }: { name: string; index: number }) => {
+      const isQ4 = name.startsWith("Q4");
+      return Text(name, {
+        style: new TextStyle({
+          fontSize: 11,
+          color: isQ4 ? "#0d9488" : "#6b7280",
+          fontWeight: isQ4 ? "700" : undefined,
+        }),
+      });
+    },
+  },
 });`;
 const _SplineAgAreaChart_code = `import AreaChart from "./charts/area-chart";
+import {
+  Container,
+  BoxDecoration,
+  Text,
+  TextStyle,
+  EdgeInsets,
+  Border,
+  BorderSide,
+} from "flitter-ui";
 
 const chart = AreaChart({
   data: {
@@ -130,6 +234,27 @@ const chart = AreaChart({
       opacity: 0.2,
       spline: true,
     },
+  },
+  custom: {
+    xAxisLabel: ({ name, index }: { name: string; index: number }) =>
+      Container({
+        padding: EdgeInsets.symmetric({ horizontal: 6, vertical: 3 }),
+        decoration: new BoxDecoration({
+          border: new Border({
+            bottom: new BorderSide({
+              color: index % 3 === 0 ? "#7c3aed" : "transparent",
+              width: 2,
+            }),
+          }),
+        }),
+        child: Text(name, {
+          style: new TextStyle({
+            fontSize: 10,
+            color: index % 3 === 0 ? "#7c3aed" : "#9ca3af",
+            fontWeight: index % 3 === 0 ? "600" : undefined,
+          }),
+        }),
+      }),
   },
 });`;
 

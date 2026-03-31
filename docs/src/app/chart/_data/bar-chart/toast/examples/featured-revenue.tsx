@@ -19,7 +19,6 @@ export default function FeaturedRevenueToast() {
         config: {
           colors: ["#0d9488", "#14b8a6", "#99f6e4"],
           title: { text: "Monthly Revenue ($M)", visible: true },
-          legend: { position: "right-center" },
         },
       })}
       width="100%"

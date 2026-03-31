@@ -2,6 +2,7 @@
 
 import Widget from "@flitterjs/react";
 import { ToastAreaChart as ToastAreaChartWidget } from "shared/chart";
+import { Text, TextStyle } from "flitter-ui";
 
 export default function UserEngagementToastArea() {
   return (
@@ -17,11 +18,23 @@ export default function UserEngagementToastArea() {
         },
         config: {
           colors: ["#6366f1", "#ec4899", "#f59e0b"],
-          legend: { position: "right-top" },
+          title: { text: "User Engagement", visible: true },
           area: {
             strokeWidth: 2.5,
             opacity: 0.25,
             spline: false,
+          },
+        },
+        custom: {
+          yAxisLabel: ({ name }: { name: string; index: number }) => {
+            const value = parseFloat(name);
+            return Text(value >= 1000 ? `${(value / 1000).toFixed(0)}K` : name, {
+              style: new TextStyle({
+                fontSize: 11,
+                color: value >= 200 ? "#6366f1" : "#94a3b8",
+                fontWeight: value >= 200 ? "600" : undefined,
+              }),
+            });
           },
         },
       })}

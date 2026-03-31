@@ -17,8 +17,15 @@ export default function ApiMonitoringAgLine() {
         config: {
           colors: { fills: ["#22c55e", "#ef4444"], strokes: ["#22c55e", "#ef4444"] },
           title: { text: "Response Time (ms)", visible: true, alignment: "start" },
-          grid: { dash: [3, 3], color: "#e5e5e5" },
-          axis: { yLine: { visible: false } },
+          grid: { dash: [3, 3], color: "#e5e5e5", xLine: { visible: true } },
+          axis: {
+            yLine: { visible: false },
+            tick: { enabled: true, size: 8 },
+            label: {
+              format: (name: string, _index: number, axis: "x" | "y") =>
+                axis === "y" ? `${name}ms` : name,
+            },
+          },
           line: {
             strokeWidth: 2,
             spline: true,

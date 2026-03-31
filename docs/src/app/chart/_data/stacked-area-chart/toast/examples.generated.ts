@@ -35,7 +35,6 @@ const chart = ToastStackedAreaChart({
   },
   config: {
     title: { text: "Acquisition Channels", visible: true },
-    legend: { position: "right" },
     colors: ["#2563eb", "#f97316", "#10b981"],
     area: { opacity: 0.45 },
   },
@@ -72,6 +71,14 @@ const chart = ToastStackedAreaChart({
   },
 });`;
 const _AppUsageToastStackedArea_code = `import ToastStackedAreaChart from "./charts/toast-stacked-area-chart";
+import {
+  Container,
+  BoxDecoration,
+  Border,
+  BorderSide,
+  Text,
+  TextStyle,
+} from "flitter-ui";
 
 const chart = ToastStackedAreaChart({
   data: {
@@ -85,9 +92,45 @@ const chart = ToastStackedAreaChart({
   config: {
     colors: ["#3b82f6", "#10b981", "#f59e0b"],
     area: { opacity: 0.45, strokeWidth: 2.5 },
+    title: { text: "App Sessions by Platform", visible: true, alignment: "center" },
+  },
+  custom: {
+    xAxisLabel: ({ name, index }: { name: string; index: number }, context: any) => {
+      const { font } = context.config;
+      const isQuarterStart = index % 3 === 0;
+      return Container({
+        decoration: isQuarterStart
+          ? new BoxDecoration({
+              border: new Border({
+                bottom: new BorderSide({ color: "#3b82f6", width: 2 }),
+              }),
+            })
+          : undefined,
+        child: Text(name, {
+          style: new TextStyle({
+            fontFamily: font.family,
+            fontSize: font.size,
+            fontWeight: isQuarterStart ? "bold" : "normal",
+            color: isQuarterStart ? "#1e40af" : "#94a3b8",
+          }),
+        }),
+      });
+    },
   },
 });`;
 const _DefaultToastStackedAreaChart_code = `import ToastStackedAreaChart from "./charts/toast-stacked-area-chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  EdgeInsets,
+  Text,
+  TextStyle,
+  Column,
+  MainAxisSize,
+  CrossAxisAlignment,
+  SizedBox,
+} from "flitter-ui";
 
 const chart = ToastStackedAreaChart({
   data: {
@@ -99,9 +142,61 @@ const chart = ToastStackedAreaChart({
       { legend: "Referral", values: [50, 60, 55, 65, 70, 75, 80, 78, 85, 90, 95, 100] },
     ],
   },
-  config: {},
+  config: {
+    colors: ["#6366f1", "#22c55e", "#f59e0b", "#ec4899"],
+    title: { text: "Traffic Source Breakdown", visible: true, alignment: "center" },
+    area: { opacity: 0.5 },
+  },
+  custom: {
+    title: (_args: undefined, context: any) => {
+      const { font, title } = context.config;
+      return Container({
+        padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 8 }),
+        decoration: new BoxDecoration({
+          color: "#eef2ff",
+          borderRadius: BorderRadius.circular(8),
+        }),
+        child: Column({
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text("Traffic Source Breakdown", {
+              style: new TextStyle({
+                fontFamily: title.fontFamily ?? font.family,
+                fontSize: title.fontSize,
+                fontWeight: "700",
+                color: "#4338ca",
+              }),
+            }),
+            SizedBox({ height: 2 }),
+            Text("12-month overview across all channels", {
+              style: new TextStyle({
+                fontFamily: font.family,
+                fontSize: 11,
+                color: "#6366f1",
+              }),
+            }),
+          ],
+        }),
+      });
+    },
+  },
 });`;
 const _EnergyMixToastStackedArea_code = `import ToastStackedAreaChart from "./charts/toast-stacked-area-chart";
+import {
+  Row,
+  Container,
+  BoxDecoration,
+  SizedBox,
+  Text,
+  TextStyle,
+  CrossAxisAlignment,
+  BorderRadius,
+} from "flitter-ui";
+
+const colors = ["#eab308", "#22c55e", "#64748b", "#a855f7"];
+const icons = ["Solar", "Wind", "Gas", "Nuclear"];
+const peakMonths = ["Jul", "Jan", "Jan", "Jun"];
 
 const chart = ToastStackedAreaChart({
   data: {
@@ -114,11 +209,43 @@ const chart = ToastStackedAreaChart({
     ],
   },
   config: {
-    colors: ["#eab308", "#22c55e", "#64748b", "#a855f7"],
+    colors,
     area: { opacity: 0.55, spline: true },
+  },
+  custom: {
+    legend: ({ name, index }: { name: string; index: number }) =>
+      Row({
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container({
+            width: 10,
+            height: 10,
+            decoration: new BoxDecoration({
+              color: colors[index],
+              borderRadius: BorderRadius.circular(2),
+            }),
+          }),
+          SizedBox({ width: 6 }),
+          Text(name, {
+            style: new TextStyle({
+              fontSize: 11,
+              color: "#334155",
+              fontWeight: "600",
+            }),
+          }),
+          SizedBox({ width: 4 }),
+          Text(\`peak: \${peakMonths[index]}\`, {
+            style: new TextStyle({
+              fontSize: 9,
+              color: "#94a3b8",
+            }),
+          }),
+        ],
+      }),
   },
 });`;
 const _RevenueStreamStackedArea_code = `import ToastStackedAreaChart from "./charts/toast-stacked-area-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = ToastStackedAreaChart({
   data: {
@@ -134,8 +261,34 @@ const chart = ToastStackedAreaChart({
     colors: ["#0d9488", "#d97706", "#ec4899", "#64748b"],
     area: { opacity: 0.4, strokeWidth: 1.5 },
   },
+  custom: {
+    yAxisLabel: ({ name }: { name: string; index: number }, context: any) => {
+      const { font } = context.config;
+      const value = parseFloat(name);
+      const formatted = value >= 1000 ? \`$\${(value / 1000).toFixed(0)}K\` : \`$\${value}\`;
+      const isHigh = value >= 10000;
+      return Text(formatted, {
+        style: new TextStyle({
+          fontFamily: font.family,
+          fontSize: font.size,
+          fontWeight: isHigh ? "bold" : "normal",
+          color: isHigh ? "#0d9488" : "#64748b",
+        }),
+      });
+    },
+  },
 });`;
 const _SupportTicketsToastStackedArea_code = `import ToastStackedAreaChart from "./charts/toast-stacked-area-chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  EdgeInsets,
+  Text,
+  TextStyle,
+} from "flitter-ui";
+
+const summerMonths = ["Jun", "Jul", "Aug"];
 
 const chart = ToastStackedAreaChart({
   data: {
@@ -150,13 +303,38 @@ const chart = ToastStackedAreaChart({
   config: {
     colors: ["#ef4444", "#6366f1", "#06b6d4", "#f59e0b"],
     area: { opacity: 0.35 },
+    title: { text: "Support Ticket Trends", visible: true },
+  },
+  custom: {
+    xAxisLabel: ({ name }: { name: string; index: number }, context: any) => {
+      const { font } = context.config;
+      const isSummer = summerMonths.includes(name);
+      return Container({
+        padding: isSummer ? EdgeInsets.symmetric({ horizontal: 4, vertical: 2 }) : undefined,
+        decoration: isSummer
+          ? new BoxDecoration({
+              color: "#fef3c7",
+              borderRadius: BorderRadius.circular(4),
+            })
+          : undefined,
+        child: Text(name, {
+          style: new TextStyle({
+            fontFamily: font.family,
+            fontSize: 10,
+            fontWeight: isSummer ? "bold" : "normal",
+            color: isSummer ? "#b45309" : "#64748b",
+          }),
+        }),
+      });
+    },
   },
 });`;
 const _TrafficSourceStackedArea_code = `import ToastStackedAreaChart from "./charts/toast-stacked-area-chart";
+import { Transform, Text, TextStyle, Alignment } from "flitter-ui";
 
 const chart = ToastStackedAreaChart({
   data: {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     datasets: [
       { legend: "Search", values: [3200, 3400, 3600, 3900, 4100, 4300, 4500, 4200, 4600, 4800, 5000, 5200] },
       { legend: "Social Media", values: [800, 950, 1100, 1300, 1500, 1800, 2000, 2200, 1900, 1700, 1600, 1400] },
@@ -167,6 +345,23 @@ const chart = ToastStackedAreaChart({
   config: {
     colors: ["#3b82f6", "#f97316", "#10b981", "#8b5cf6"],
     area: { opacity: 0.5 },
+  },
+  custom: {
+    xAxisLabel: ({ name, index }: { name: string; index: number }, context: any) => {
+      const { font } = context.config;
+      return Transform.rotate({
+        angle: -Math.PI / 6,
+        alignment: Alignment.centerRight,
+        child: Text(name.slice(0, 3), {
+          style: new TextStyle({
+            fontFamily: font.family,
+            fontSize: 10,
+            fontWeight: index % 3 === 0 ? "bold" : "normal",
+            color: index % 3 === 0 ? "#1e40af" : "#94a3b8",
+          }),
+        }),
+      });
+    },
   },
 });`;
 

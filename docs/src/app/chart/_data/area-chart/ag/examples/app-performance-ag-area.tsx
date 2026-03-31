@@ -2,6 +2,7 @@
 
 import Widget from "@flitterjs/react";
 import { AreaChart } from "shared/chart";
+import { Text, TextStyle } from "flitter-ui";
 
 export default function AppPerformanceAgArea() {
   return (
@@ -21,6 +22,19 @@ export default function AppPerformanceAgArea() {
             strokeWidth: 1.5,
             opacity: 0.15,
             spline: true,
+          },
+        },
+        custom: {
+          yAxisLabel: ({ name }: { name: string; index: number }) => {
+            const value = parseFloat(name);
+            const isCritical = value >= 70;
+            return Text(`${name}%`, {
+              style: new TextStyle({
+                fontSize: 11,
+                color: isCritical ? "#ef4444" : "#6b7280",
+                fontWeight: isCritical ? "700" : undefined,
+              }),
+            });
           },
         },
       })}

@@ -2,6 +2,7 @@
 
 import Widget from "@flitterjs/react";
 import { ToastScatterChart as ToastScatterChartWidget } from "shared/chart";
+import { Text, TextStyle } from "flitter-ui";
 
 export default function RealEstatePriceToast() {
   return (
@@ -43,9 +44,44 @@ export default function RealEstatePriceToast() {
             },
           ],
         },
+        custom: {
+          xAxisLabel: (
+            { name }: { name: string; index: number },
+            context: any,
+          ) => {
+            const { font } = context.config;
+            return Text(`${name} ft\u00B2`, {
+              style: new TextStyle({
+                fontFamily: font.family,
+                fontSize: font.size,
+                color: "#64748b",
+              }),
+            });
+          },
+          yAxisLabel: (
+            { name }: { name: string; index: number },
+            context: any,
+          ) => {
+            const { font } = context.config;
+            const val = Number(name);
+            const formatted = val >= 1000000
+              ? `$${(val / 1000000).toFixed(1)}M`
+              : `$${(val / 1000).toFixed(0)}K`;
+            const isMillionPlus = val >= 1000000;
+            return Text(formatted, {
+              style: new TextStyle({
+                fontFamily: font.family,
+                fontSize: font.size,
+                fontWeight: isMillionPlus ? "bold" : "normal",
+                color: isMillionPlus ? "#7c3aed" : "#64748b",
+              }),
+            });
+          },
+        },
         config: {
           scatter: { fill: true, size: 12, strokeWidth: 1 },
           colors: ["#059669", "#d97706", "#7c3aed"],
+          title: { text: "Real Estate Pricing", visible: true },
         },
       })}
       width="100%"

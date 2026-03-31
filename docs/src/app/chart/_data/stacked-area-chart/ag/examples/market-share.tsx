@@ -2,6 +2,14 @@
 
 import Widget from "@flitterjs/react";
 import { StackedAreaChart } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  BorderRadius,
+  EdgeInsets,
+  Text,
+  TextStyle,
+} from "flitter-ui";
 
 export default function MarketShareAgStackedArea() {
   return (
@@ -20,6 +28,36 @@ export default function MarketShareAgStackedArea() {
           colors: { fills: ["#ef4444", "#3b82f6", "#f59e0b", "#10b981"], strokes: ["#ef4444", "#3b82f6", "#f59e0b", "#10b981"] },
           area: { opacity: 0.6 },
           background: "#fafafa",
+          title: { text: "Browser Market Share", visible: true },
+          axis: {
+            label: {
+              format: (name: string, _index: number, axis: string) =>
+                axis === "y" ? `${name}%` : name,
+            },
+          },
+        },
+        custom: {
+          xAxisLabel: ({ name, index }: { name: string; index: number }, context: any) => {
+            const { font } = context.config;
+            const isQuarterStart = index % 3 === 0;
+            return Container({
+              padding: isQuarterStart ? EdgeInsets.symmetric({ horizontal: 4, vertical: 1 }) : undefined,
+              decoration: isQuarterStart
+                ? new BoxDecoration({
+                    color: "#f1f5f9",
+                    borderRadius: BorderRadius.circular(3),
+                  })
+                : undefined,
+              child: Text(name, {
+                style: new TextStyle({
+                  fontFamily: font.family,
+                  fontSize: isQuarterStart ? 12 : 11,
+                  fontWeight: isQuarterStart ? "bold" : "normal",
+                  color: isQuarterStart ? "#1e293b" : "#94a3b8",
+                }),
+              }),
+            });
+          },
         },
       })}
       width="100%"

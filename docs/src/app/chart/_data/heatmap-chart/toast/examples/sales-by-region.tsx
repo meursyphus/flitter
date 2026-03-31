@@ -2,6 +2,15 @@
 
 import Widget from "@flitterjs/react";
 import { ToastHeatmapChart } from "shared/chart";
+import { Text, TextStyle, Row, SizedBox, MainAxisSize } from "flitter-ui";
+
+const regionFlags: Record<string, string> = {
+  NA: "\ud83c\uddfa\ud83c\uddf8",
+  EU: "\ud83c\uddea\ud83c\uddfa",
+  APAC: "\ud83c\uddef\ud83c\uddf5",
+  LATAM: "\ud83c\udde7\ud83c\uddf7",
+  ME: "\ud83c\udde6\ud83c\uddea",
+};
 
 export default function SalesByRegionToast() {
   return (
@@ -20,6 +29,29 @@ export default function SalesByRegionToast() {
         },
         config: {
           heatmap: { colorRange: ["#fef3c7", "#f59e0b", "#92400e"] },
+        },
+        custom: {
+          yAxisLabel: ({ name }: { name: string; index: number }, context: any) => {
+            const { font } = context.config;
+            const flag = regionFlags[name] ?? "";
+            return Row({
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(flag, {
+                  style: new TextStyle({ fontSize: 13 }),
+                }),
+                SizedBox({ width: 4 }),
+                Text(name, {
+                  style: new TextStyle({
+                    fontFamily: font.family,
+                    fontSize: font.size,
+                    fontWeight: "600",
+                    color: "#78350f",
+                  }),
+                }),
+              ],
+            });
+          },
         },
       })}
       width="100%"

@@ -1,3 +1,4 @@
+export { default as DefaultHeatmapToast } from "./default-heatmap";
 export { default as BasicHeatmapToast } from "./basic-heatmap";
 export { default as ServerLoadToast } from "./server-load";
 export { default as CorrelationMatrixToast } from "./correlation-matrix";

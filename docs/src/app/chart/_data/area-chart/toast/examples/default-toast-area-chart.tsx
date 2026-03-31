@@ -2,13 +2,14 @@
 
 import Widget from "@flitterjs/react";
 import { ToastAreaChart as ToastAreaChartWidget } from "shared/chart";
+import { Transform, Alignment, Text, TextStyle } from "flitter-ui";
 
 export default function DefaultToastAreaChart() {
   return (
     <Widget
       widget={ToastAreaChartWidget({
         data: {
-          labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
           datasets: [
             { legend: "Housing starts (MoM %)", values: [0, 12.38, -15.46, 5.56, -4.98, 0.84, -4.67, 9.96, -2.44, -0.37, -4.22, 16.91] },
             { legend: "Unemployment rate Δ (pp)", values: [0, 11.2, -8.4, 6.9, -5.8, 7.5, -6.2, 4.9, -4.1, 8.1, -5.6, 7.2] },
@@ -21,6 +22,19 @@ export default function DefaultToastAreaChart() {
             opacity: 0.3,
             spline: false,
           },
+        },
+        custom: {
+          xAxisLabel: ({ name }: { name: string; index: number }) =>
+            Transform.rotate({
+              angle: -Math.PI / 6,
+              alignment: Alignment.centerRight,
+              child: Text(name, {
+                style: new TextStyle({
+                  fontSize: 10,
+                  color: "#64748b",
+                }),
+              }),
+            }),
         },
       })}
       width="100%"

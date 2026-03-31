@@ -1,6 +1,18 @@
 "use client";
 
 import Widget from "@flitterjs/react";
+import {
+  Container,
+  BoxDecoration,
+  EdgeInsets,
+  BorderRadius,
+  Text,
+  TextStyle,
+  Row,
+  SizedBox,
+  MainAxisSize,
+  CrossAxisAlignment,
+} from "flitter-ui";
 import { ToastBubbleChart as ToastBubbleChartWidget } from "shared/chart";
 
 export default function HighOpacityToastBubbleChart() {
@@ -31,7 +43,42 @@ export default function HighOpacityToastBubbleChart() {
             },
           ],
         },
+        custom: {
+          legend: ({ name, index }: any, context: any) => {
+            const color = context.config.colors[index % context.config.colors.length];
+            return Container({
+              padding: EdgeInsets.symmetric({ horizontal: 10, vertical: 4 }),
+              decoration: new BoxDecoration({
+                color: `${color}18`,
+                borderRadius: BorderRadius.circular(12),
+              }),
+              child: Row({
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container({
+                    width: 10,
+                    height: 10,
+                    decoration: new BoxDecoration({
+                      color,
+                      shape: "circle",
+                    }),
+                  }),
+                  SizedBox({ width: 6 }),
+                  Text(name, {
+                    style: new TextStyle({
+                      fontSize: 11,
+                      color,
+                      fontWeight: "600",
+                    }),
+                  }),
+                ],
+              }),
+            });
+          },
+        },
         config: {
+          title: { text: "Europe vs Asia: Developed Nations", visible: true },
           bubble: { opacity: 1.0 },
           colors: ["#dc2626", "#2563eb", "#059669", "#7c3aed", "#d97706"],
         },

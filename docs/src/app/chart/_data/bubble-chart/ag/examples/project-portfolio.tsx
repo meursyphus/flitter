@@ -39,12 +39,22 @@ export default function ProjectPortfolioAgBubble() {
           ],
         },
         config: {
+          title: { text: "Investment Portfolio", visible: true },
+          subtitle: { visible: true, text: "Risk vs return, sized by allocation" },
           bubble: { minRadius: 4, maxRadius: 35, opacity: 0.55 },
           colors: {
             fills: ["#059669", "#dc2626", "#6366f1"],
             strokes: ["#059669", "#dc2626", "#6366f1"],
           },
           background: "#f8fafc",
+          axis: {
+            label: {
+              format: (name: string, _index: number, axis: string) => {
+                if (axis === "x") return `Risk ${name}`;
+                return `${name}%`;
+              },
+            },
+          },
         },
       })}
       width="100%"

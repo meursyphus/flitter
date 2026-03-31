@@ -62,7 +62,6 @@ export default function MarketOpportunityToastBubble() {
         },
         config: {
           title: { text: "Market Sizing", visible: true },
-          legend: { position: "right-center" },
           bubble: { minRadius: 10, maxRadius: 50, opacity: 0.55 },
           colors: ["#1e40af", "#9333ea", "#0891b2"],
         },

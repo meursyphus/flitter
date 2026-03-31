@@ -16,7 +16,12 @@ export default function DefaultAgStackedAreaChart() {
             { legend: "Referral", values: [50, 60, 55, 65, 70, 75, 80, 78, 85, 90, 95, 100] },
           ],
         },
-        config: {},
+        config: {
+          title: { text: "Revenue Stream Composition", visible: true, alignment: "center" },
+          subtitle: { visible: true, text: "Monthly breakdown by acquisition channel" },
+          area: { opacity: 0.6 },
+          background: "#fafafa",
+        },
       })}
       width="100%"
       height="100%"

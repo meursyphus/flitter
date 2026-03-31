@@ -10,19 +10,58 @@ import _SurveyResponsesAg from "./examples/survey-responses";
 import _VolatileQuarterlyAg from "./examples/volatile-quarterly";
 
 const _DepartmentHeadcountAg_code = `import StackedBarChart from "./charts/stacked-bar-chart";
+import { Text, TextStyle, Row, SizedBox, MainAxisSize } from "flitter-ui";
 
 const chart = StackedBarChart({
   direction: "horizontal",
   data: {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+    labels: ["Engineering", "Marketing", "Sales", "Support", "Design", "Product", "Finance"],
     datasets: [
-      { legend: "North America", values: [120, 135, 110, 145, 160, 150, 170] },
-      { legend: "Europe", values: [90, 85, 100, 95, 110, 105, 120] },
-      { legend: "Asia Pacific", values: [65, 80, 75, 90, 85, 95, 100] },
+      { legend: "Full-Time", values: [120, 45, 60, 35, 25, 18, 22] },
+      { legend: "Contract", values: [30, 15, 20, 25, 10, 5, 8] },
+      { legend: "Intern", values: [15, 8, 5, 10, 6, 3, 2] },
     ],
   },
   config: {
     colors: { fills: ["#6366f1", "#ec4899", "#10b981"], strokes: ["#6366f1", "#ec4899", "#10b981"] },
+  },
+  custom: {
+    yAxisLabel: (
+      { name }: { name: string; index: number },
+      context: any,
+    ) => {
+      const { font } = context.config;
+      const emojiMap: Record<string, string> = {
+        Engineering: "dev",
+        Marketing: "mkt",
+        Sales: "sales",
+        Support: "ops",
+        Design: "ux",
+        Product: "pm",
+        Finance: "fin",
+      };
+      return Row({
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(emojiMap[name] ?? "", {
+            style: new TextStyle({
+              fontFamily: "monospace",
+              fontSize: 9,
+              fontWeight: "bold",
+              color: "#6366f1",
+            }),
+          }),
+          SizedBox({ width: 4 }),
+          Text(name, {
+            style: new TextStyle({
+              fontFamily: font.family,
+              fontSize: font.size,
+              color: "#334155",
+            }),
+          }),
+        ],
+      });
+    },
   },
 });`;
 const _ProjectHoursAg_code = `import StackedBarChart from "./charts/stacked-bar-chart";
@@ -91,7 +130,12 @@ const chart = StackedBarChart({
       { legend: "Asia Pacific", values: [65, 80, 75, 90, 85, 95, 100] },
     ],
   },
-  config: {},
+  config: {
+    colors: { fills: ["#0f766e", "#14b8a6", "#99f6e4"], strokes: ["#0f766e", "#14b8a6", "#99f6e4"] },
+    background: "#f0fdfa",
+    grid: { dash: [3, 3] },
+    bar: { gap: 3 },
+  },
 });`;
 const _RevenueByProductAg_code = `import StackedBarChart from "./charts/stacked-bar-chart";
 
@@ -108,44 +152,83 @@ const chart = StackedBarChart({
   config: {
     colors: { fills: ["#0d9488", "#d97706", "#7c3aed"], strokes: ["#0d9488", "#d97706", "#7c3aed"] },
     background: "#fafafa",
+    bar: { gap: 4 },
   },
 });`;
 const _SprintEffortAg_code = `import StackedBarChart from "./charts/stacked-bar-chart";
+import { Text, TextStyle } from "flitter-ui";
 
 const chart = StackedBarChart({
   direction: "vertical",
-  data: {
-    labels: ["Sprint 1", "Sprint 2", "Sprint 3", "Sprint 4", "Sprint 5", "Sprint 6"],
-    datasets: [
-      { legend: "Design", values: [24, 16, 12, 20, 14, 10] },
-      { legend: "Development", values: [40, 56, 64, 48, 60, 72] },
-      { legend: "QA", values: [8, 16, 20, 24, 18, 22] },
-      { legend: "Deploy", values: [4, 8, 6, 8, 10, 8] },
-    ],
-  },
+  data: { labels, datasets },
   config: {
     colors: { fills: ["#8b5cf6", "#3b82f6", "#f59e0b", "#ef4444"], strokes: ["#8b5cf6", "#3b82f6", "#f59e0b", "#ef4444"] },
     grid: { dash: [2, 2] },
   },
+  custom: {
+    dataLabel: (
+      { value, legend, label }: { value: number; label: string; legend: string },
+      context: any,
+    ) => {
+      const { font } = context.config;
+      const labelIdx = labels.indexOf(label);
+      const total = datasets.reduce((sum, ds) => sum + ds.values[labelIdx], 0);
+      if (legend !== "Deploy") return Text("", { style: new TextStyle({}) });
+      return Text(\`\${total}h\`, {
+        style: new TextStyle({
+          fontFamily: font.family,
+          fontSize: 9,
+          fontWeight: "bold",
+          color: total >= 100 ? "#dc2626" : "#334155",
+        }),
+      });
+    },
+  },
 });`;
 const _SurveyResponsesAg_code = `import StackedBarChart from "./charts/stacked-bar-chart";
+import { Text, TextStyle, Column, MainAxisSize, CrossAxisAlignment } from "flitter-ui";
 
 const chart = StackedBarChart({
   direction: "horizontal",
-  data: {
-    labels: ["Work-Life Balance", "Compensation", "Growth", "Culture", "Leadership"],
-    datasets: [
-      { legend: "Strongly Agree", values: [45, 28, 38, 52, 35] },
-      { legend: "Agree", values: [30, 32, 28, 25, 30] },
-      { legend: "Neutral", values: [15, 20, 18, 12, 18] },
-      { legend: "Disagree", values: [10, 20, 16, 11, 17] },
-    ],
-  },
+  data: { labels, datasets },
   config: {
     colors: { fills: ["#22c55e", "#86efac", "#fcd34d", "#f87171"], strokes: ["#22c55e", "#86efac", "#fcd34d", "#f87171"] },
   },
+  custom: {
+    xAxisLabel: (
+      { name }: { name: string; index: number },
+      context: any,
+    ) => {
+      const { font } = context.config;
+      const val = parseFloat(name);
+      return Column({
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(name, {
+            style: new TextStyle({
+              fontFamily: font.family,
+              fontSize: font.size,
+              color: "#64748b",
+            }),
+          }),
+          ...(val > 0 ? [
+            Text(\`\${val}%\`, {
+              style: new TextStyle({
+                fontFamily: font.family,
+                fontSize: 8,
+                fontWeight: "bold",
+                color: val >= 80 ? "#16a34a" : "#94a3b8",
+              }),
+            }),
+          ] : []),
+        ],
+      });
+    },
+  },
 });`;
 const _VolatileQuarterlyAg_code = `import StackedBarChart from "./charts/stacked-bar-chart";
+import { Container, BoxDecoration, EdgeInsets, BorderRadius } from "flitter-ui";
 
 const chart = StackedBarChart({
   direction: "vertical",
@@ -160,6 +243,20 @@ const chart = StackedBarChart({
   config: {
     colors: { fills: ["#059669", "#dc2626", "#3b82f6"], strokes: ["#059669", "#dc2626", "#3b82f6"] },
     grid: { dash: [4, 4] },
+  },
+  custom: {
+    bar: (
+      { value }: { value: number },
+      context: any,
+    ) => {
+      return Container({
+        margin: EdgeInsets.symmetric({ horizontal: 1 }),
+        decoration: new BoxDecoration({
+          color: value >= 0 ? "#059669" : "#dc262680",
+          borderRadius: BorderRadius.circular(2),
+        }),
+      });
+    },
   },
 });`;
 

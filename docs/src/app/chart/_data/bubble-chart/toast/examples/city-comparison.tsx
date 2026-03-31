@@ -1,6 +1,10 @@
 "use client";
 
 import Widget from "@flitterjs/react";
+import {
+  Text,
+  TextStyle,
+} from "flitter-ui";
 import { ToastBubbleChart as ToastBubbleChartWidget } from "shared/chart";
 
 export default function CityComparisonToastBubble() {
@@ -37,7 +41,22 @@ export default function CityComparisonToastBubble() {
             },
           ],
         },
+        custom: {
+          xAxisLabel: ({ name }: { name: string }) => {
+            const cost = Number(name);
+            // Red for expensive (80+), amber for moderate (70-79), green for affordable (<70)
+            const color = cost >= 80 ? "#dc2626" : cost >= 70 ? "#d97706" : "#059669";
+            return Text(name, {
+              style: new TextStyle({
+                fontSize: 11,
+                color,
+                fontWeight: cost >= 80 ? "bold" : "normal",
+              }),
+            });
+          },
+        },
         config: {
+          title: { text: "Global City Comparison", visible: true, alignment: "center" },
           bubble: { minRadius: 10, maxRadius: 55, opacity: 0.65 },
           colors: ["#6366f1", "#ec4899", "#06b6d4"],
         },

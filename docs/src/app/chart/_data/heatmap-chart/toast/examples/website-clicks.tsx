@@ -2,6 +2,14 @@
 
 import Widget from "@flitterjs/react";
 import { ToastHeatmapChart } from "shared/chart";
+import {
+  Container,
+  BoxDecoration,
+  Border,
+  Center,
+  Text,
+  TextStyle,
+} from "flitter-ui";
 
 export default function WebsiteClicksToast() {
   return (
@@ -22,6 +30,32 @@ export default function WebsiteClicksToast() {
         },
         config: {
           heatmap: { colorRange: ["#f5f3ff", "#8b5cf6", "#4c1d95"], segment: { gap: 1 } },
+        },
+        custom: {
+          segment: ({ value }: { value: number; xIndex: number; yIndex: number }, _context: any) => {
+            const isHot = value >= 40;
+            const t = Math.min(value / 55, 1);
+            const bg = `rgba(139,92,246,${0.1 + t * 0.9})`;
+            return Container({
+              decoration: new BoxDecoration({
+                color: bg,
+                border: isHot
+                  ? Border.all({ color: "#facc15", width: 2 })
+                  : undefined,
+              }),
+              child: Center({
+                child: isHot
+                  ? Text(`${value}`, {
+                      style: new TextStyle({
+                        fontSize: 10,
+                        color: "#facc15",
+                        fontWeight: "800",
+                      }),
+                    })
+                  : Text("", { style: new TextStyle({}) }),
+              }),
+            });
+          },
         },
       })}
       width="100%"

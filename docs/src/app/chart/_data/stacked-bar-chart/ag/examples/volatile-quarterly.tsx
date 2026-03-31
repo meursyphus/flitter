@@ -2,6 +2,7 @@
 
 import Widget from "@flitterjs/react";
 import { StackedBarChart } from "shared/chart";
+import { Container, BoxDecoration, EdgeInsets, BorderRadius } from "flitter-ui";
 
 export default function VolatileQuarterlyAg() {
   return (
@@ -19,6 +20,20 @@ export default function VolatileQuarterlyAg() {
         config: {
           colors: { fills: ["#059669", "#dc2626", "#3b82f6"], strokes: ["#059669", "#dc2626", "#3b82f6"] },
           grid: { dash: [4, 4] },
+        },
+        custom: {
+          bar: (
+            { value }: { value: number },
+            context: any,
+          ) => {
+            return Container({
+              margin: EdgeInsets.symmetric({ horizontal: 1 }),
+              decoration: new BoxDecoration({
+                color: value >= 0 ? "#059669" : "#dc262680",
+                borderRadius: BorderRadius.circular(2),
+              }),
+            });
+          },
         },
       })}
       width="100%"

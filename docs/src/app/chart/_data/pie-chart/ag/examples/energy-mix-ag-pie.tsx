@@ -17,7 +17,24 @@ export default function EnergyMixAgPie() {
             { name: "Hydro", value: 11 },
           ],
         },
-        config: {},
+        config: {
+          colors: { fills: ["#78716c", "#64748b", "#a855f7", "#eab308", "#22c55e", "#06b6d4"] },
+          title: {
+            text: "Global Energy Mix",
+            visible: true,
+            alignment: "start",
+          },
+          dataLabel: {
+            visible: true,
+            fontSize: 13,
+            fontColor: "#475569",
+            formatter: ({ name, value }: any) =>
+              `${name}: ${value}%`,
+          },
+          legend: {
+            visible: false,
+          },
+        },
       })}
       width="100%"
       height="100%"
