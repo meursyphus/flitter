@@ -3,52 +3,131 @@ import {
 	BoxDecoration,
 	Border,
 	BoxShadow,
-	Container,
 	Column,
+	Container,
 	CrossAxisAlignment,
+	EdgeInsets,
 	Flexible,
 	Opacity,
+	Row,
 	SizedBox,
 } from 'flitter-core';
 import { HoverTooltip } from 'flitter-ui/chart';
 import { agTooltipContent, defaultAgCartesianBaseConfig } from '../../_styles/ag/index';
 
 export function BoxPlot(
-	...[{ dataPoint, index, legend, label, datasetIndex }, ctx]: Parameters<BoxPlotChartCustom['boxPlot']>
+	...[{ dataPoint, index, legend, label, datasetIndex }, ctx]: Parameters<
+		BoxPlotChartCustom['boxPlot']
+	>
 ) {
-	const { scale } = ctx;
+	const { scale, direction } = ctx;
 	if (scale == null) return SizedBox.shrink();
-	const total = scale.max - scale.min;
-	const boxColor =
-		defaultAgCartesianBaseConfig.colors.fills[
-			datasetIndex % defaultAgCartesianBaseConfig.colors.fills.length
-		];
+
+	const isVertical = direction === 'vertical';
+	const total = scale.max - scale.min || 1;
+	const colors =
+		(ctx.config as { colors?: { fills?: string[] } })?.colors?.fills ??
+		defaultAgCartesianBaseConfig.colors.fills;
+	const boxPlotConfig = (ctx.config as {
+		boxPlot?: { boxWidth?: number; whiskerWidth?: number; gap?: number };
+	})?.boxPlot;
+	const boxColor = colors[datasetIndex % colors.length];
 	const whiskerColor = '#333';
 	const medianColor = '#E74C3C';
-
-	const minRatio = (dataPoint.min - scale.min) / total;
-	const q1Ratio = (dataPoint.q1 - scale.min) / total;
-	const medianRatio = (dataPoint.median - scale.min) / total;
-	const q3Ratio = (dataPoint.q3 - scale.min) / total;
+	const boxWidth = boxPlotConfig?.boxWidth ?? 20;
+	const whiskerWidth = boxPlotConfig?.whiskerWidth ?? 12;
+	const gap = boxPlotConfig?.gap ?? 4;
 	const maxRatio = (dataPoint.max - scale.min) / total;
-
-	const boxWidth = 20;
-	const whiskerWidth = 12;
-
-	// Build from bottom to top using flex ratios
-	// Regions: [0..min] [min..q1] [q1..median] [median..q3] [q3..max] [max..1]
-	const belowMin = minRatio;
-	const minToQ1 = q1Ratio - minRatio;
-	const q1ToMedian = medianRatio - q1Ratio;
-	const medianToQ3 = q3Ratio - medianRatio;
-	const q3ToMax = maxRatio - q3Ratio;
-	const aboveMax = 1 - maxRatio;
+	const medianRatio = (dataPoint.median - scale.min) / total;
+	const range = dataPoint.max - dataPoint.min || 1;
+	const minToQ1 = (dataPoint.q1 - dataPoint.min) / range;
+	const q1ToMedian = (dataPoint.median - dataPoint.q1) / range;
+	const medianToQ3 = (dataPoint.q3 - dataPoint.median) / range;
+	const q3ToMax = (dataPoint.max - dataPoint.q3) / range;
 	const hoveredBoxPlot = ctx.hoveredBoxPlot;
 	const isHovered = ctx.isBoxPlotHovered(index, legend);
 	const activeOpacity = hoveredBoxPlot == null || isHovered ? 1 : 0.3;
+	const tooltipPosition = isVertical
+		? maxRatio > 0.75
+			? 'bottomCenter'
+			: 'topCenter'
+		: medianRatio > 0.75
+			? 'centerLeft'
+			: 'centerRight';
+
+	const buildSection = (flex: number, child: ReturnType<typeof Container>) =>
+		flex > 0 ? [Flexible({ flex, child })] : [];
+
+	const sections = isVertical
+		? [
+				Container({ width: whiskerWidth, height: 1, color: whiskerColor }),
+				...buildSection(
+					q3ToMax,
+					Container({
+						width: isHovered ? 2 : 1,
+						height: Infinity,
+						color: whiskerColor,
+					}),
+				),
+				...buildSection(
+					medianToQ3,
+					Container({ width: boxWidth, height: Infinity, color: boxColor }),
+				),
+				Container({
+					width: boxWidth,
+					height: isHovered ? 3 : 2,
+					color: medianColor,
+				}),
+				...buildSection(
+					q1ToMedian,
+					Container({ width: boxWidth, height: Infinity, color: boxColor }),
+				),
+				...buildSection(
+					minToQ1,
+					Container({
+						width: isHovered ? 2 : 1,
+						height: Infinity,
+						color: whiskerColor,
+					}),
+				),
+				Container({ width: whiskerWidth, height: 1, color: whiskerColor }),
+			]
+		: [
+				Container({ width: 1, height: whiskerWidth, color: whiskerColor }),
+				...buildSection(
+					minToQ1,
+					Container({
+						width: Infinity,
+						height: isHovered ? 2 : 1,
+						color: whiskerColor,
+					}),
+				),
+				...buildSection(
+					q1ToMedian,
+					Container({ width: Infinity, height: boxWidth, color: boxColor }),
+				),
+				Container({
+					width: isHovered ? 3 : 2,
+					height: boxWidth,
+					color: medianColor,
+				}),
+				...buildSection(
+					medianToQ3,
+					Container({ width: Infinity, height: boxWidth, color: boxColor }),
+				),
+				...buildSection(
+					q3ToMax,
+					Container({
+						width: Infinity,
+						height: isHovered ? 2 : 1,
+						color: whiskerColor,
+					}),
+				),
+				Container({ width: 1, height: whiskerWidth, color: whiskerColor }),
+			];
 
 	return new HoverTooltip({
-		position: 'topCenter',
+		position: tooltipPosition,
 		tooltip: agTooltipContent({
 			label,
 			items: [
@@ -58,60 +137,43 @@ export function BoxPlot(
 				{ legend: `${legend} q3`, color: boxColor, value: dataPoint.q3 },
 				{ legend: `${legend} max`, color: whiskerColor, value: dataPoint.max },
 			],
-			config: defaultAgCartesianBaseConfig,
+			config: ctx.config ?? defaultAgCartesianBaseConfig,
 		}),
-		onMouseEnter: () => ctx.hoverBoxPlot(index, legend),
-		onMouseLeave: () => ctx.unhoverBoxPlot(),
+		onMouseEnter: () => ctx.hoverBoxPlot(index, legend, { kind: 'boxPlot' }),
+		onMouseLeave: () =>
+			ctx.unhoverBoxPlot({ index, legend, kind: 'boxPlot' }),
 		renderChild: (hovered) =>
 			Opacity({
 				opacity: activeOpacity,
 				child: Container({
-					width: boxWidth + 8,
-					height: Infinity,
+					width: isVertical ? boxWidth + gap * 2 : Infinity,
+					height: isVertical ? Infinity : boxWidth + gap * 2,
+					padding: EdgeInsets.symmetric(
+						isVertical ? { horizontal: gap } : { vertical: gap },
+					),
 					decoration: hovered
 						? new BoxDecoration({
-								border: Border.all({ color: 'rgba(255,255,255,0.35)', width: 1 }),
-								boxShadow: [new BoxShadow({ color: 'rgba(0,0,0,0.18)', blurRadius: 10 })],
+								border: Border.all({
+									color: 'rgba(255,255,255,0.35)',
+									width: 1,
+								}),
+								boxShadow: [
+									new BoxShadow({
+										color: 'rgba(0,0,0,0.18)',
+										blurRadius: 10,
+									}),
+								],
 							})
 						: undefined,
-					child: Column({
-						crossAxisAlignment: CrossAxisAlignment.center,
-						children: [
-							...(aboveMax > 0
-								? [Flexible({ flex: aboveMax, child: SizedBox({ width: 1 }) })]
-								: []),
-							Container({ width: whiskerWidth, height: 1, color: whiskerColor }),
-							...(q3ToMax > 0
-								? [Flexible({
-										flex: q3ToMax,
-										child: Container({ width: hovered ? 2 : 1, color: whiskerColor, height: Infinity }),
-									})]
-								: []),
-							...(medianToQ3 > 0
-								? [Flexible({
-										flex: medianToQ3,
-										child: Container({ width: boxWidth, color: boxColor, height: Infinity }),
-									})]
-								: []),
-							Container({ width: boxWidth, height: hovered ? 3 : 2, color: medianColor }),
-							...(q1ToMedian > 0
-								? [Flexible({
-										flex: q1ToMedian,
-										child: Container({ width: boxWidth, color: boxColor, height: Infinity }),
-									})]
-								: []),
-							...(minToQ1 > 0
-								? [Flexible({
-										flex: minToQ1,
-										child: Container({ width: hovered ? 2 : 1, color: whiskerColor, height: Infinity }),
-									})]
-								: []),
-							Container({ width: whiskerWidth, height: 1, color: whiskerColor }),
-							...(belowMin > 0
-								? [Flexible({ flex: belowMin, child: SizedBox({ width: 1 }) })]
-								: []),
-						],
-					}),
+					child: isVertical
+						? Column({
+								crossAxisAlignment: CrossAxisAlignment.center,
+								children: sections,
+							})
+						: Row({
+								crossAxisAlignment: CrossAxisAlignment.center,
+								children: sections,
+							}),
 				}),
 			}),
 	});

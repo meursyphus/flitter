@@ -8,11 +8,18 @@ import type {
 	GetScaleOptionsFn,
 } from "./types";
 
+type HoveredBoxPlot = {
+	index: number;
+	legend: string;
+	kind: "boxPlot" | "outlier";
+	value?: number;
+};
+
 export class BoxPlotChartController extends ChangeNotifier {
 	#rawData: BoxPlotChartData;
 	#direction: BoxPlotChartDirection;
 	#hiddenSeries: Set<string> = new Set();
-	#hoveredBoxPlot: { index: number; legend: string } | null = null;
+	#hoveredBoxPlot: HoveredBoxPlot | null = null;
 	#scale: BoxPlotChartScale | null = null;
 	#getScale: GetScaleFn;
 	#getScaleOptions: GetScaleOptionsFn | null;
@@ -140,17 +147,61 @@ export class BoxPlotChartController extends ChangeNotifier {
 		this.notifyListeners();
 	}
 
-	get hoveredBoxPlot(): { index: number; legend: string } | null {
+	get hoveredBoxPlot(): HoveredBoxPlot | null {
 		return this.#hoveredBoxPlot;
 	}
 
-	hoverBoxPlot(index: number, legend: string): void {
-		this.#hoveredBoxPlot = { index, legend };
+	hoverBoxPlot(
+		index: number,
+		legend: string,
+		detail: { kind?: HoveredBoxPlot["kind"]; value?: number } = {},
+	): void {
+		const next: HoveredBoxPlot = {
+			index,
+			legend,
+			kind: detail.kind ?? "boxPlot",
+			value: detail.value,
+		};
+		if (
+			this.#hoveredBoxPlot?.index === next.index &&
+			this.#hoveredBoxPlot?.legend === next.legend &&
+			this.#hoveredBoxPlot?.kind === next.kind &&
+			this.#hoveredBoxPlot?.value === next.value
+		) {
+			return;
+		}
+		this.#hoveredBoxPlot = next;
 		this.notifyListeners();
 	}
 
-	unhoverBoxPlot(): void {
+	unhoverBoxPlot(match?: Partial<HoveredBoxPlot>): void {
 		if (this.#hoveredBoxPlot === null) return;
+		if (match != null) {
+			if (
+				match.index != null &&
+				this.#hoveredBoxPlot.index !== match.index
+			) {
+				return;
+			}
+			if (
+				match.legend != null &&
+				this.#hoveredBoxPlot.legend !== match.legend
+			) {
+				return;
+			}
+			if (
+				match.kind != null &&
+				this.#hoveredBoxPlot.kind !== match.kind
+			) {
+				return;
+			}
+			if (
+				match.value != null &&
+				this.#hoveredBoxPlot.value !== match.value
+			) {
+				return;
+			}
+		}
 		this.#hoveredBoxPlot = null;
 		this.notifyListeners();
 	}

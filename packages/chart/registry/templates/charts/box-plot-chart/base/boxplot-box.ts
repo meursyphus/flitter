@@ -1,12 +1,62 @@
 import type { BoxPlotChartCustom } from '../types';
-import { Stack, StackFit } from 'flitter-core';
+import {
+	Alignment,
+	FractionallySizedBox,
+	Stack,
+	StackFit,
+	Align,
+} from 'flitter-core';
+
+function computeBoxAlignment(
+	minRatio: number,
+	maxRatio: number,
+	isVertical: boolean,
+): Alignment {
+	const factor = maxRatio - minRatio;
+	const denominator = 1 - factor;
+	if (denominator <= 0) return Alignment.center;
+
+	if (isVertical) {
+		const y = (2 * (1 - maxRatio)) / denominator - 1;
+		return new Alignment({ x: 0, y });
+	}
+
+	const x = (2 * minRatio) / denominator - 1;
+	return new Alignment({ x, y: 0 });
+}
+
+function outlierAlignment(ratio: number, isVertical: boolean): Alignment {
+	if (isVertical) {
+		return new Alignment({ x: 0, y: 1 - 2 * ratio });
+	}
+	return new Alignment({ x: 2 * ratio - 1, y: 0 });
+}
 
 export function BoxPlotBox(
-	...[{ boxPlot, outliers }]: Parameters<BoxPlotChartCustom['boxPlotBox']>
+	...[{ boxPlot, outliers, minRatio, maxRatio }, ctx]: Parameters<
+		BoxPlotChartCustom['boxPlotBox']
+	>
 ) {
+	const isVertical = ctx.direction === 'vertical';
+	const factor = Math.max(0, maxRatio - minRatio);
+	const alignment = computeBoxAlignment(minRatio, maxRatio, isVertical);
+
 	return Stack({
 		fit: StackFit.expand,
 		clipped: false,
-		children: [boxPlot, ...outliers],
+		children: [
+			FractionallySizedBox({
+				alignment,
+				heightFactor: isVertical ? factor : undefined,
+				widthFactor: isVertical ? undefined : factor,
+				child: boxPlot,
+			}),
+			...outliers.map(({ widget, ratio }) =>
+				Align({
+					alignment: outlierAlignment(ratio, isVertical),
+					child: widget,
+				}),
+			),
+		],
 	});
 }

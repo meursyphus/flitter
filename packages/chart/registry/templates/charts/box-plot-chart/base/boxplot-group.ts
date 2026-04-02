@@ -15,7 +15,7 @@ export function BoxPlotGroup(
 	if (scale == null) return SizedBox.shrink();
 
 	const isVertical = direction === 'vertical';
-	const total = scale.max - scale.min;
+	const total = scale.max - scale.min || 1;
 
 	return Container({
 		width: Infinity,
@@ -27,11 +27,16 @@ export function BoxPlotGroup(
 				const dp = dataPoints[datasetIndex];
 				const minRatio = (dp.min - scale.min) / total;
 				const maxRatio = (dp.max - scale.min) / total;
+				const outlierValues = dp.outliers ?? [];
+				const outliersWithRatio = outliers.map((widget, i) => ({
+					widget,
+					ratio: (outlierValues[i] - scale.min) / total,
+				}));
 
 				return Flexible({
 					flex: 1,
 					child: ctx.custom.boxPlotBox(
-						{ boxPlot, outliers, minRatio, maxRatio, index, datasetIndex },
+						{ boxPlot, outliers: outliersWithRatio, minRatio, maxRatio, index, datasetIndex },
 						ctx,
 					),
 				});

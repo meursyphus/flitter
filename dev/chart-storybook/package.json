@@ -18,14 +18,14 @@
     "shared": "workspace:*"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "^8.6.18",
-    "@storybook/react": "^8.6.18",
-    "@storybook/react-vite": "^8.6.18",
+    "@storybook/react": "^10.3.3",
+    "@storybook/react-vite": "^10.3.3",
     "@types/react": "^18.3.14",
     "@types/react-dom": "^18.3.2",
     "@vitejs/plugin-react": "^4.2.1",
-    "storybook": "^8.6.18",
+    "storybook": "^10.3.3",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8"
+    "vite": "^5.0.8",
+    "@storybook/addon-docs": "^10.3.3"
   }
 }

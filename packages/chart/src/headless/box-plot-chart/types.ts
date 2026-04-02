@@ -32,7 +32,7 @@ export type BoxPlotChartCustom<TConfig = {}> = {
 	boxPlotBox: CustomArgs<
 		{
 			boxPlot: Widget;
-			outliers: Widget[];
+			outliers: { widget: Widget; ratio: number }[];
 			minRatio: number;
 			maxRatio: number;
 			index: number;

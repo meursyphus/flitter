@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import Widget from "@flitterjs/react";
 import { ToastStackedAreaChart as ToastStackedAreaChartWidget } from "shared/chart";
 

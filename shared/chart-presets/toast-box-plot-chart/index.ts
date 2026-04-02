@@ -69,7 +69,7 @@ export default function BoxPlotChart({
     ...rest,
     getScale,
     direction,
-    config: styleConfig.createConfig(config),
+    config: styleConfig.createConfig(config, direction),
     getScaleOptions: getScaleOptions ?? styleConfig.getScaleOptions,
     custom: { ...baseDefaults, ...styleConfig.custom, ...custom } as BoxPlotChartCustom<BoxPlotChartConfig>,
   });

@@ -1,5 +1,6 @@
 import {
   Alignment,
+  Align,
   AnimatedFractionallySizedBox,
   Stack,
   StackFit,
@@ -7,7 +8,7 @@ import {
 import type { BoxPlotChartCustom } from "flitter-ui/chart";
 import type { ToastBoxPlotChartConfig } from "../config";
 
-function computeAlignment(
+function computeBoxAlignment(
   minRatio: number,
   maxRatio: number,
   isVertical: boolean,
@@ -25,6 +26,13 @@ function computeAlignment(
   }
 }
 
+function outlierAlignment(ratio: number, isVertical: boolean): Alignment {
+  if (isVertical) {
+    return new Alignment({ x: 0, y: 1 - 2 * ratio });
+  }
+  return new Alignment({ x: 2 * ratio - 1, y: 0 });
+}
+
 export function toastBoxPlotBox(
   ...[{ boxPlot, outliers, minRatio, maxRatio }, ctx]: Parameters<
     BoxPlotChartCustom<ToastBoxPlotChartConfig>["boxPlotBox"]
@@ -32,7 +40,7 @@ export function toastBoxPlotBox(
 ) {
   const isVertical = ctx.direction === "vertical";
   const factor = maxRatio - minRatio;
-  const alignment = computeAlignment(minRatio, maxRatio, isVertical);
+  const alignment = computeBoxAlignment(minRatio, maxRatio, isVertical);
 
   return Stack({
     fit: StackFit.expand,
@@ -45,7 +53,12 @@ export function toastBoxPlotBox(
         widthFactor: isVertical ? undefined : factor,
         child: boxPlot,
       }),
-      ...outliers,
+      ...outliers.map(({ widget, ratio }) =>
+        Align({
+          alignment: outlierAlignment(ratio, isVertical),
+          child: widget,
+        }),
+      ),
     ],
   });
 }

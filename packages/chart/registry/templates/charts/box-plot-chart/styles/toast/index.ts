@@ -44,6 +44,7 @@ const toastGetScaleOptions: GetScaleOptionsFn = (ctx) =>
 
 export const styleConfig = {
   custom: toastCustom,
-  createConfig: (config: any) => deepMerge(defaultToastConfig, config),
+  createConfig: (config: any, _direction = "vertical") =>
+    deepMerge(defaultToastConfig, config),
   getScaleOptions: toastGetScaleOptions,
 };

@@ -2,37 +2,45 @@ import type { BoxPlotChartCustom } from '../types';
 import {
 	Axis,
 	Container,
-	CrossAxisAlignment,
 	Flex,
 	Flexible,
 	MainAxisAlignment,
-	Stack,
-	StackFit,
+	SizedBox,
 } from 'flitter-core';
 
 export function BoxPlotGroup(
-	...[{ boxPlots }, ctx]: Parameters<BoxPlotChartCustom['boxPlotGroup']>
+	...[{ boxPlots, dataPoints, index }, ctx]: Parameters<BoxPlotChartCustom['boxPlotGroup']>
 ) {
-	const isVertical = ctx.direction === 'vertical';
+	const { scale, direction } = ctx;
+	if (scale == null) return SizedBox.shrink();
+
+	const isVertical = direction === 'vertical';
+	const total = scale.max - scale.min || 1;
+
 	return Container({
 		width: Infinity,
 		height: Infinity,
 		child: Flex({
 			mainAxisAlignment: MainAxisAlignment.center,
-			crossAxisAlignment: isVertical
-				? CrossAxisAlignment.end
-				: CrossAxisAlignment.start,
 			direction: isVertical ? Axis.horizontal : Axis.vertical,
-			children: boxPlots.map(({ boxPlot, outliers }) =>
-				Flexible({
+			children: boxPlots.map(({ boxPlot, outliers }, datasetIndex) => {
+				const dp = dataPoints[datasetIndex];
+				const minRatio = (dp.min - scale.min) / total;
+				const maxRatio = (dp.max - scale.min) / total;
+				const outlierValues = dp.outliers ?? [];
+				const outliersWithRatio = outliers.map((widget, i) => ({
+					widget,
+					ratio: (outlierValues[i] - scale.min) / total,
+				}));
+
+				return Flexible({
 					flex: 1,
-					child: Stack({
-						fit: StackFit.expand,
-						clipped: false,
-						children: [boxPlot, ...outliers],
-					}),
-				}),
-			),
+					child: ctx.custom.boxPlotBox(
+						{ boxPlot, outliers: outliersWithRatio, minRatio, maxRatio, index, datasetIndex },
+						ctx,
+					),
+				});
+			}),
 		}),
 	});
 }

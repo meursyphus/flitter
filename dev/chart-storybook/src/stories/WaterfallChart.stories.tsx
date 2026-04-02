@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import Widget from "@flitterjs/react";
 import { WaterfallChart } from "shared/chart";
 

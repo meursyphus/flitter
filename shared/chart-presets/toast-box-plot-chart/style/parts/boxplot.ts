@@ -332,7 +332,8 @@ export function toastBoxPlot(
     chartWidth: ctx.width,
     chartHeight: ctx.height,
     isHovered,
-    onHover: () => ctx.hoverBoxPlot(index, legend),
-    onUnhover: () => ctx.unhoverBoxPlot(),
+    onHover: () => ctx.hoverBoxPlot(index, legend, { kind: "boxPlot" }),
+    onUnhover: () =>
+      ctx.unhoverBoxPlot({ index, legend, kind: "boxPlot" }),
   });
 }

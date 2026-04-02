@@ -28,6 +28,7 @@ export { type BoxPlotChartConfig } from "./style";
 
 const baseDefaults: Partial<BoxPlotChartCustom> = {
   boxPlotGroup: Base.BoxPlotGroup,
+  boxPlotBox: Base.BoxPlotBox,
   boxPlot: Base.BoxPlot,
   outlier: Base.Outlier,
   xAxis: Base.XAxis,
@@ -68,7 +69,7 @@ export default function BoxPlotChart({
     ...rest,
     getScale,
     direction,
-    config: styleConfig.createConfig(config),
+    config: styleConfig.createConfig(config, direction),
     getScaleOptions: getScaleOptions ?? styleConfig.getScaleOptions,
     custom: { ...baseDefaults, ...styleConfig.custom, ...custom } as BoxPlotChartCustom<BoxPlotChartConfig>,
   });
