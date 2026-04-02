@@ -28,8 +28,8 @@ const agCustom: Partial<CandlestickChartCustom<CandlestickChartConfig>> = {
       },
       ctx as any,
     ),
-  plot: ({ xAxis, yAxis, dataView, grid, axisCorner }) =>
-    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner }),
+  plot: ({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }) =>
+    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }),
   dataView: agDataView,
   candlestick: agCandlestick,
   tooltip: agTooltip,
@@ -60,7 +60,6 @@ const agCustom: Partial<CandlestickChartCustom<CandlestickChartConfig>> = {
       {
         config: ctx.config as any,
         isSeriesVisible: ctx.isSeriesVisible.bind(ctx),
-        toggleSeries: ctx.toggleSeries.bind(ctx),
       },
     ),
   title: agTitle as any,

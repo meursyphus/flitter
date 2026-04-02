@@ -58,7 +58,6 @@ const agCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
       {
         config: ctx.config as any,
         isSeriesVisible: () => true,
-        toggleSeries: () => {},
       },
     ),
   title: agTitle as any,

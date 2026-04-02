@@ -38,7 +38,7 @@ function getAxisScale(ctx: any, axisId: "primary" | "secondary") {
 const toastCustom: Partial<ComboChartCustom<ComboChartConfig>> = {
   layout: ({ title, legends, plot }) => Cartesian.Layout({ title, legends, plot }),
   plot: ({ xAxis, yAxis, dataView, grid, axisCorner }) =>
-    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner }),
+    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea: SizedBox.shrink() }),
   dataView: ({ areas, bars, lines }, ctx) =>
     Stack({
       children: [
@@ -328,7 +328,6 @@ const toastCustom: Partial<ComboChartCustom<ComboChartConfig>> = {
           colors: ctx.config.colors,
         } as any,
         isSeriesVisible: ctx.isSeriesVisible.bind(ctx),
-        toggleSeries: ctx.toggleSeries.bind(ctx),
       },
       { markerShape: "circle" },
     ),

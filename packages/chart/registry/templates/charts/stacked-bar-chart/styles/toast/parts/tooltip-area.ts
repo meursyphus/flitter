@@ -1,10 +1,12 @@
 import type { Widget } from "flitter-core";
 import type { BarChartCustom } from "@headless/bar-chart/types";
-import type { ToastBarChartConfig } from "../config";
+import type { ToastStackedBarChartConfig } from "../config";
 import { cartesian } from "@styles/toast";
 
 export function toastTooltipArea(
-  ...[{ tooltip, hoveredBar }, ctx]: Parameters<BarChartCustom<ToastBarChartConfig>['tooltipArea']>
+  ...[{ tooltip, hoveredBar }, ctx]: Parameters<
+    BarChartCustom<ToastStackedBarChartConfig>["tooltipArea"]
+  >
 ): Widget {
   return cartesian.toastRectTooltipArea({
     tooltip,

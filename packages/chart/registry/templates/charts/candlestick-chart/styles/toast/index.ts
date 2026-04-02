@@ -28,8 +28,8 @@ const toastCustom: Partial<CandlestickChartCustom<CandlestickChartConfig>> = {
       },
       ctx as any,
     ),
-  plot: ({ xAxis, yAxis, dataView, grid, axisCorner }) =>
-    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner }),
+  plot: ({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }) =>
+    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }),
   dataView: toastDataView,
   candlestick: toastCandlestick,
   tooltip: toastTooltipContent,
@@ -60,7 +60,6 @@ const toastCustom: Partial<CandlestickChartCustom<CandlestickChartConfig>> = {
       {
         config: ctx.config as any,
         isSeriesVisible: ctx.isSeriesVisible.bind(ctx),
-        toggleSeries: ctx.toggleSeries.bind(ctx),
       },
       { markerShape: "circle" },
     ),

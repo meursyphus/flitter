@@ -1,4 +1,5 @@
 import type { BulletChartCustom, GetScaleOptionsFn } from "@headless/bullet-chart/types";
+import { SizedBox } from "flitter-core";
 import type { ToastBulletChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
@@ -21,7 +22,7 @@ export type { ToastBulletChartConfig as BulletChartConfig } from "./config";
 const toastCustom: Partial<BulletChartCustom<ToastBulletChartConfig>> = {
   layout: cartesian.toastLayout,
   plot: ({ xAxis, yAxis, dataView, grid, axisCorner }) =>
-    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner }),
+    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea: SizedBox.shrink() }),
   bulletGroup: toastBulletGroup,
   valueBar: toastValueBar,
   targetMarker: toastTargetMarker,

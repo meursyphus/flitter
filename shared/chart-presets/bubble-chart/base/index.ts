@@ -17,7 +17,7 @@ export { BubbleChartController } from "flitter-ui/chart";
 /** Structural (non-visual) defaults provided by base */
 const baseDefaults: Partial<BubbleChartCustom> = {
   dataView: DataView,
-  plot: (...args) => Cartesian.Plot(args[0]),
+  plot: (...args) => Cartesian.Plot({ ...args[0], tooltipArea: SizedBox.shrink() }),
   dataLabel: (...args) => Cartesian.DataLabel(args[0]),
   grid: (...[{ xLine, yLine }, ctx]) =>
     PointLikeGrid({ xLine, yLine, scale: ctx.scale }),

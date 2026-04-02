@@ -51,7 +51,6 @@ const agCustom: Partial<TreemapCustom<TreemapChartConfig>> = {
     agLegend(args, {
       config: defaultAgCartesianBaseConfig,
       isSeriesVisible: ctx.isSeriesVisible.bind(ctx),
-      toggleSeries: ctx.toggleSeries.bind(ctx),
     }),
   treemap: ({ nodes }) => Stack({ children: nodes }),
   node: ({ label, value, color, x, y, width, height, index }) =>

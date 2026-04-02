@@ -1,5 +1,5 @@
-import type { AgPieChartConfig } from "../../pie-chart/styles/ag/config";
-import { defaultAgConfig as defaultAgPieConfig } from "../../pie-chart/styles/ag/config";
+import type { AgPieChartConfig } from "../../../pie-chart/styles/ag/config";
+import { defaultAgConfig as defaultAgPieConfig } from "../../../pie-chart/styles/ag/config";
 
 export type DonutChartConfig = AgPieChartConfig & {
   centerText?: string;

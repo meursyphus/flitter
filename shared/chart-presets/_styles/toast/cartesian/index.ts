@@ -5,5 +5,6 @@ export { toastXAxisLine, toastYAxisLine } from "./axis-line";
 export { toastGridXLine, toastGridYLine } from "./grid-line";
 export { toastAxisCorner } from "./axis-corner";
 export { toastLayout } from "./layout";
+export { toastRectTooltipArea } from "./rect-tooltip-area";
 export { toastXAxis } from "./x-axis";
 export { toastYAxis } from "./y-axis";

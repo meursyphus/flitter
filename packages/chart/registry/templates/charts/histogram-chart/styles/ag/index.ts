@@ -21,8 +21,8 @@ function agTooltip(
 const agCustom: Partial<HistogramChartCustom<HistogramChartConfig>> = {
   layout: ({ title, plot }, ctx) =>
     cartesian.agLayout({ title, legends: [], plot }, ctx as any),
-  plot: ({ xAxis, yAxis, dataView, grid, axisCorner }) =>
-    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner }),
+  plot: ({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }) =>
+    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }),
   dataView: agDataView,
   bar: agBar,
   tooltip: agTooltip,

@@ -58,7 +58,6 @@ const toastCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
       {
         config: ctx.config as any,
         isSeriesVisible: () => true,
-        toggleSeries: () => {},
       },
       { markerShape: "circle" },
     ),

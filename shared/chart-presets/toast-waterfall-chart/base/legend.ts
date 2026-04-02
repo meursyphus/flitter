@@ -5,6 +5,5 @@ export function Legend(...args: Parameters<WaterfallChartCustom['legend']>) {
 	return agLegend(args[0], {
 		config: defaultAgCartesianBaseConfig,
 		isSeriesVisible: () => true,
-		toggleSeries: () => {},
 	});
 }

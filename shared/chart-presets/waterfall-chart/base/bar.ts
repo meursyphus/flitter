@@ -1,4 +1,4 @@
-import type { WaterfallChartCustom } from '../types';
+import type { WaterfallBarType, WaterfallChartCustom } from '../types';
 import {
 	Alignment,
 	BoxDecoration,
@@ -11,10 +11,11 @@ import {
 	SizedBox,
 } from 'flitter-core';
 
-const COLORS = {
+const COLORS: Record<WaterfallBarType, string> = {
 	increase: '#4CAF50',
 	decrease: '#F44336',
-	total: '#2196F3'
+	total: '#2196F3',
+	subtotal: '#2196F3',
 };
 
 export function Bar(

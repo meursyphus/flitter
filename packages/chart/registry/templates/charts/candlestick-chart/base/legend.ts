@@ -6,6 +6,5 @@ export function Legend(...args: Parameters<CandlestickChartCustom['legend']>) {
 	return agLegend(legend, {
 		config: defaultAgCartesianBaseConfig,
 		isSeriesVisible: context.isSeriesVisible.bind(context),
-		toggleSeries: context.toggleSeries.bind(context),
 	});
 }

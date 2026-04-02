@@ -1,4 +1,5 @@
 import type { BulletChartCustom, GetScaleOptionsFn } from "@headless/bullet-chart/types";
+import { SizedBox } from "flitter-core";
 import type { AgBulletChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
@@ -21,7 +22,7 @@ export type { AgBulletChartConfig as BulletChartConfig } from "./config";
 const agCustom: Partial<BulletChartCustom<AgBulletChartConfig>> = {
   layout: cartesian.agLayout,
   plot: ({ xAxis, yAxis, dataView, grid, axisCorner }) =>
-    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner }),
+    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea: SizedBox.shrink() }),
   bulletGroup: agBulletGroup,
   valueBar: agValueBar,
   targetMarker: agTargetMarker,

@@ -592,10 +592,13 @@ export async function renderTemplateFile({
       (_, quote, prefix) => `${quote}${prefix}style${quote}`,
     )
     .replace(
-      /(['"])\.\.\/pie-chart\/([^'"]+)\1/gu,
-      (_, quote, subpath) => {
-        const pieOutputDir = targetDirs.get("toast-pie-chart") ?? "toast-pie-chart";
-        return `${quote}${relativeTo(path.join(pieOutputDir, subpath))}${quote}`;
+      /(['"])(?:\.\.\/)+(pie-chart|toast-pie-chart)\/([^'"]+)\1/gu,
+      (_, quote, chartName, subpath) => {
+        const dependencyId =
+          chartName === "pie-chart" ? "ag-pie-chart" : "toast-pie-chart";
+        const dependencyOutputDir =
+          targetDirs.get(dependencyId) ?? chartName;
+        return `${quote}${relativeTo(path.join(dependencyOutputDir, subpath))}${quote}`;
       },
     );
 
@@ -605,8 +608,13 @@ export async function renderTemplateFile({
         /(['"])\.\.\/\.\.\/\.\.\/base\//gu,
         "$1../../base/",
       );
+      content = content.replace(
+        /(['"])\.\.\/\.\.\/\.\.\/base\1/gu,
+        "$1../../base$1",
+      );
     } else if (file.source.endsWith(`/styles/${item.style}/index.ts`)) {
       content = content.replace(/(['"])\.\.\/\.\.\/base\//gu, "$1../base/");
+      content = content.replace(/(['"])\.\.\/\.\.\/base\1/gu, "$1../base$1");
     }
   }
 
