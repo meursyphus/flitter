@@ -4,6 +4,7 @@ import { defaultToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "@utils/index";
 import { toastSegment } from "./parts/segment";
 import { toastHeatmapLegend } from "./parts/legend";
+import { toastTooltipArea } from "./parts/tooltip-area";
 import { DataView } from "../../base/data-view";
 import {
 	toastTitle,
@@ -12,6 +13,7 @@ import {
 } from "@styles/toast";
 import type { HeatmapContext } from "@headless/heatmap-chart/types";
 import type { Widget } from "flitter-core";
+import { interpolateColor } from "./parts/segment";
 
 export { type ToastHeatmapChartConfig } from "./config";
 
@@ -19,7 +21,21 @@ function toastTooltipContent(
 	args: { label: string; items: { legend: string; color: string; value: number }[] },
 	context: HeatmapContext<ToastHeatmapChartConfig>,
 ): Widget {
-	return tooltipContent({ label: args.label, items: args.items, config: context.config });
+	const hoveredSegment = context.hoveredSegment;
+	const item = args.items[0];
+	if (hoveredSegment == null || item == null) {
+		return tooltipContent({ label: args.label, items: args.items, config: context.config });
+	}
+
+	const { min, max } = context.scale;
+	const range = max - min;
+	const fraction = range === 0 ? 0.5 : (hoveredSegment.value - min) / range;
+	const color = interpolateColor(context.config.heatmap.colorRange, fraction);
+	return tooltipContent({
+		label: `${hoveredSegment.xLabel}, ${hoveredSegment.yLabel}`,
+		items: [{ legend: item.legend, color, value: hoveredSegment.value }],
+		config: context.config,
+	});
 }
 
 const toastCustom: Partial<HeatmapCustom<ToastHeatmapChartConfig>> = {
@@ -33,6 +49,7 @@ const toastCustom: Partial<HeatmapCustom<ToastHeatmapChartConfig>> = {
 	legend: toastHeatmapLegend,
 	title: toastTitle,
 	tooltip: toastTooltipContent,
+	tooltipArea: toastTooltipArea,
 	axisCorner: cartesian.toastAxisCorner,
 	xAxisLabel: cartesian.toastXAxisLabel,
 	yAxisLabel: cartesian.toastYAxisLabel,

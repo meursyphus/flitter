@@ -1,11 +1,18 @@
-import { ChangeNotifier } from "flitter-core";
-import type { HeatmapCustom, HeatmapData, HeatmapScale } from "./types";
+import { ChangeNotifier, GlobalKey } from "flitter-core";
+import type {
+	HeatmapCustom,
+	HeatmapData,
+	HeatmapHoveredSegment,
+	HeatmapScale,
+} from "./types";
 
 export class HeatmapController extends ChangeNotifier {
 	#rawData: HeatmapData;
 	#width: number = 0;
 	#height: number = 0;
-	#hoveredSegment: { value: number; xIndex: number; yIndex: number; xLabel: string; yLabel: string } | null = null;
+	#hoveredSegment:
+		| (HeatmapHoveredSegment & { anchorKey: GlobalKey })
+		| null = null;
 
 	// static config
 	custom!: HeatmapCustom<any>;
@@ -49,15 +56,21 @@ export class HeatmapController extends ChangeNotifier {
 
 	// --- hover ---
 
-	get hoveredSegment(): { value: number; xIndex: number; yIndex: number; xLabel: string; yLabel: string } | null {
-		return this.#hoveredSegment;
+	get hoveredSegment(): HeatmapHoveredSegment | null {
+		if (this.#hoveredSegment == null) return null;
+		const { anchorKey: _anchorKey, ...hoveredSegment } = this.#hoveredSegment;
+		return hoveredSegment;
 	}
 
-	hoverSegment(xIndex: number, yIndex: number): void {
+	get hoveredSegmentAnchorKey(): GlobalKey | null {
+		return this.#hoveredSegment?.anchorKey ?? null;
+	}
+
+	hoverSegment(xIndex: number, yIndex: number, anchorKey: GlobalKey): void {
 		const value = this.#rawData.values[yIndex]?.[xIndex] ?? 0;
 		const xLabel = this.#rawData.xLabels[xIndex] ?? `${xIndex}`;
 		const yLabel = this.#rawData.yLabels[yIndex] ?? `${yIndex}`;
-		this.#hoveredSegment = { value, xIndex, yIndex, xLabel, yLabel };
+		this.#hoveredSegment = { value, xIndex, yIndex, xLabel, yLabel, anchorKey };
 		this.notifyListeners();
 	}
 

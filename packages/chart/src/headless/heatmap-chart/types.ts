@@ -8,10 +8,31 @@ type CustomArgs<T = undefined, TConfig = {}> = (
 
 export type HeatmapContext<TConfig = {}> = HeatmapController & { config: TConfig };
 
+export type HeatmapHoveredSegment = {
+	value: number;
+	xIndex: number;
+	yIndex: number;
+	xLabel: string;
+	yLabel: string;
+};
+
+export type HeatmapHoveredSegmentRect = HeatmapHoveredSegment & {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+};
+
 export type HeatmapCustom<TConfig = {}> = {
 	layout: CustomArgs<{ title: Widget; legend: Widget; plot: Widget }, TConfig>;
 	plot: CustomArgs<
-		{ xAxis: Widget; yAxis: Widget; dataView: Widget; axisCorner: Widget },
+		{
+			xAxis: Widget;
+			yAxis: Widget;
+			dataView: Widget;
+			axisCorner: Widget;
+			tooltipArea: Widget;
+		},
 		TConfig
 	>;
 
@@ -31,6 +52,13 @@ export type HeatmapCustom<TConfig = {}> = {
 	legend: CustomArgs<undefined, TConfig>;
 	title: CustomArgs<undefined, TConfig>;
 	tooltip: CustomArgs<{ label: string; items: { legend: string; color: string; value: number }[] }, TConfig>;
+	tooltipArea: CustomArgs<
+		{
+			tooltip: Widget | null;
+			hoveredSegment: HeatmapHoveredSegmentRect | null;
+		},
+		TConfig
+	>;
 };
 
 export type HeatmapData = {

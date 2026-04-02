@@ -1,10 +1,17 @@
 import {
+	StatefulWidget,
+	State,
+	GlobalKey,
 	StatelessWidget,
 	type Widget,
 	type BuildContext,
 	LayoutBuilder,
 	GestureDetector,
+	SizedBox,
+	Stack,
+	StackFit,
 } from "flitter-core";
+import { resolveOverlayRect } from "@headless/_shared/cartesian-scaffold";
 import { HeatmapChartProvider } from "./provider";
 
 class Chart extends StatelessWidget {
@@ -64,6 +71,7 @@ class PlotWidget extends StatelessWidget {
 				yAxis: new YAxis(),
 				dataView: new HeatmapWidget(),
 				axisCorner: new AxisCorner(),
+				tooltipArea: new TooltipArea(),
 			},
 			ctx,
 		);
@@ -195,10 +203,62 @@ class HeatmapWidget extends StatelessWidget {
 	}
 }
 
-class SegmentWidget extends StatelessWidget {
-	#value: number;
-	#xIndex: number;
-	#yIndex: number;
+class TooltipArea extends StatefulWidget {
+	createState() {
+		return new TooltipAreaState();
+	}
+}
+
+class TooltipAreaState extends State<TooltipArea> {
+	overlayKey = new GlobalKey();
+
+	override build(context: BuildContext): Widget {
+		const ctx = HeatmapChartProvider.of(context);
+		const hoveredSegment = ctx.hoveredSegment;
+		const anchorKey = ctx.hoveredSegmentAnchorKey;
+		const rect =
+			hoveredSegment == null || anchorKey == null
+				? null
+				: resolveOverlayRect(this.overlayKey, anchorKey);
+		const resolvedHoveredSegment =
+			hoveredSegment == null || rect == null
+				? null
+				: { ...hoveredSegment, ...rect };
+		const tooltip =
+			hoveredSegment == null
+				? null
+				: ctx.custom.tooltip(
+						{
+							label: `${hoveredSegment.xLabel}, ${hoveredSegment.yLabel}`,
+							items: [
+								{
+									legend: "Value",
+									color: "#888",
+									value: hoveredSegment.value,
+								},
+							],
+						},
+						ctx,
+					);
+
+		return Stack({
+			fit: StackFit.expand,
+			clipped: false,
+			children: [
+				SizedBox({ key: this.overlayKey, width: Infinity, height: Infinity }),
+				ctx.custom.tooltipArea(
+					{ tooltip, hoveredSegment: resolvedHoveredSegment },
+					ctx,
+				),
+			],
+		});
+	}
+}
+
+class SegmentWidget extends StatefulWidget {
+	value: number;
+	xIndex: number;
+	yIndex: number;
 
 	constructor({
 		value,
@@ -210,24 +270,29 @@ class SegmentWidget extends StatelessWidget {
 		yIndex: number;
 	}) {
 		super();
-		this.#value = value;
-		this.#xIndex = xIndex;
-		this.#yIndex = yIndex;
+		this.value = value;
+		this.xIndex = xIndex;
+		this.yIndex = yIndex;
 	}
+
+	createState() {
+		return new SegmentWidgetState();
+	}
+}
+
+class SegmentWidgetState extends State<SegmentWidget> {
+	anchorKey = new GlobalKey();
 
 	override build(context: BuildContext): Widget {
 		const ctx = HeatmapChartProvider.of(context);
-		const xIndex = this.#xIndex;
-		const yIndex = this.#yIndex;
+		const { value, xIndex, yIndex } = this.widget;
 		const isHovered = ctx.isSegmentHovered(xIndex, yIndex);
 		return GestureDetector({
+			key: this.anchorKey,
 			cursor: "default",
-			onMouseEnter: () => ctx.hoverSegment(xIndex, yIndex),
+			onMouseEnter: () => ctx.hoverSegment(xIndex, yIndex, this.anchorKey),
 			onMouseLeave: () => ctx.unhoverSegment(xIndex, yIndex),
-			child: ctx.custom.segment(
-				{ value: this.#value, xIndex, yIndex, isHovered },
-				ctx,
-			),
+			child: ctx.custom.segment({ value, xIndex, yIndex, isHovered }, ctx),
 		});
 	}
 }

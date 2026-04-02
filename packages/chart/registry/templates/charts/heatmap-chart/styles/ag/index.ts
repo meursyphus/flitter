@@ -4,7 +4,7 @@ import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "@utils/index";
 import { agSegment } from "./parts/segment";
 import { agHeatmapLegend } from "./parts/legend";
-import { AgHeatmapTooltipOverlay } from "./parts/tooltip-overlay";
+import { agTooltipArea } from "./parts/tooltip-area";
 import { DataView } from "../../base/data-view";
 import {
   agTitle,
@@ -13,6 +13,7 @@ import {
 } from "@styles/ag";
 import type { HeatmapContext } from "@headless/heatmap-chart/types";
 import type { Widget } from "flitter-core";
+import { interpolateColor } from "./parts/segment";
 
 export { type AgHeatmapChartConfig } from "./config";
 
@@ -20,7 +21,20 @@ function agTooltip(
   args: { label: string; items: { legend: string; color: string; value: number }[] },
   context: HeatmapContext<AgHeatmapChartConfig>,
 ): Widget {
-  return agTooltipContent({ label: args.label, items: args.items, config: context.config });
+  const hoveredSegment = context.hoveredSegment;
+  const item = args.items[0];
+  if (hoveredSegment == null || item == null) {
+    return agTooltipContent({ label: args.label, items: args.items, config: context.config });
+  }
+
+  const { min, max } = context.scale;
+  const fraction = max === min ? 0.5 : (hoveredSegment.value - min) / (max - min);
+  const color = interpolateColor(context.config.heatmap.colorRange, fraction);
+  return agTooltipContent({
+    label: `${hoveredSegment.yLabel} / ${hoveredSegment.xLabel}`,
+    items: [{ legend: item.legend, color, value: hoveredSegment.value }],
+    config: context.config,
+  });
 }
 
 const agCustom: Partial<HeatmapCustom<AgHeatmapChartConfig>> = {
@@ -29,15 +43,12 @@ const agCustom: Partial<HeatmapCustom<AgHeatmapChartConfig>> = {
       { title: args.title, legends: [args.legend], plot: args.plot },
       ctx as any,
     ),
-  dataView: (args, ctx) =>
-    AgHeatmapTooltipOverlay({
-      child: DataView(args, ctx),
-      context: ctx,
-    }),
+  dataView: DataView,
   segment: agSegment,
   legend: agHeatmapLegend,
   title: agTitle as any,
   tooltip: agTooltip,
+  tooltipArea: agTooltipArea,
   axisCorner: cartesian.agAxisCorner,
   xAxisLabel: cartesian.agXAxisLabel,
   yAxisLabel: cartesian.agYAxisLabel,
