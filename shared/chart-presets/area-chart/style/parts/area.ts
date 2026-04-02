@@ -10,7 +10,7 @@ import { drawSplineLine } from "../../../_styles/toast/index";
 import type { AgAreaChartConfig } from "../config";
 
 export function agArea(
-  ...[{ values, legend }, ctx]: Parameters<LineChartCustom<AgAreaChartConfig>["line"]>
+  ...[{ values, legend, isHovered }, ctx]: Parameters<LineChartCustom<AgAreaChartConfig>["line"]>
 ) {
   const { scale, config, hoveredPoint } = ctx;
   if (scale == null) return SizedBox.shrink();
@@ -21,7 +21,7 @@ export function agArea(
 
   let opacity = 1;
   if (hoveredPoint != null) {
-    opacity = hoveredPoint.legend === legend ? 1 : 0.3;
+    opacity = isHovered ? 1 : 0.3;
   }
 
   const paint = CustomPaint({

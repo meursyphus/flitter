@@ -12,11 +12,10 @@ import {
 	Row,
 	SizedBox,
 } from 'flitter-core';
-import { HoverTooltip } from 'flitter-ui/chart';
-import { agTooltipContent, defaultAgCartesianBaseConfig } from '../../_styles/ag/index';
+import { defaultAgCartesianBaseConfig } from '../../_styles/ag/index';
 
 export function BoxPlot(
-	...[{ dataPoint, index, legend, label, datasetIndex }, ctx]: Parameters<
+	...[{ dataPoint, index, legend, label, datasetIndex, isHovered }, ctx]: Parameters<
 		BoxPlotChartCustom['boxPlot']
 	>
 ) {
@@ -24,7 +23,6 @@ export function BoxPlot(
 	if (scale == null) return SizedBox.shrink();
 
 	const isVertical = direction === 'vertical';
-	const total = scale.max - scale.min || 1;
 	const colors =
 		(ctx.config as { colors?: { fills?: string[] } })?.colors?.fills ??
 		defaultAgCartesianBaseConfig.colors.fills;
@@ -37,23 +35,13 @@ export function BoxPlot(
 	const boxWidth = boxPlotConfig?.boxWidth ?? 20;
 	const whiskerWidth = boxPlotConfig?.whiskerWidth ?? 12;
 	const gap = boxPlotConfig?.gap ?? 4;
-	const maxRatio = (dataPoint.max - scale.min) / total;
-	const medianRatio = (dataPoint.median - scale.min) / total;
 	const range = dataPoint.max - dataPoint.min || 1;
 	const minToQ1 = (dataPoint.q1 - dataPoint.min) / range;
 	const q1ToMedian = (dataPoint.median - dataPoint.q1) / range;
 	const medianToQ3 = (dataPoint.q3 - dataPoint.median) / range;
 	const q3ToMax = (dataPoint.max - dataPoint.q3) / range;
 	const hoveredBoxPlot = ctx.hoveredBoxPlot;
-	const isHovered = ctx.isBoxPlotHovered(index, legend);
 	const activeOpacity = hoveredBoxPlot == null || isHovered ? 1 : 0.3;
-	const tooltipPosition = isVertical
-		? maxRatio > 0.75
-			? 'bottomCenter'
-			: 'topCenter'
-		: medianRatio > 0.75
-			? 'centerLeft'
-			: 'centerRight';
 
 	const buildSection = (flex: number, child: ReturnType<typeof Container>) =>
 		flex > 0 ? [Flexible({ flex, child })] : [];
@@ -126,55 +114,37 @@ export function BoxPlot(
 				Container({ width: 1, height: whiskerWidth, color: whiskerColor }),
 			];
 
-	return new HoverTooltip({
-		position: tooltipPosition,
-		tooltip: agTooltipContent({
-			label,
-			items: [
-				{ legend: `${legend} min`, color: whiskerColor, value: dataPoint.min },
-				{ legend: `${legend} q1`, color: boxColor, value: dataPoint.q1 },
-				{ legend: `${legend} median`, color: medianColor, value: dataPoint.median },
-				{ legend: `${legend} q3`, color: boxColor, value: dataPoint.q3 },
-				{ legend: `${legend} max`, color: whiskerColor, value: dataPoint.max },
-			],
-			config: ctx.config ?? defaultAgCartesianBaseConfig,
-		}),
-		onMouseEnter: () => ctx.hoverBoxPlot(index, legend, { kind: 'boxPlot' }),
-		onMouseLeave: () =>
-			ctx.unhoverBoxPlot({ index, legend, kind: 'boxPlot' }),
-		renderChild: (hovered) =>
-			Opacity({
-				opacity: activeOpacity,
-				child: Container({
-					width: isVertical ? boxWidth + gap * 2 : Infinity,
-					height: isVertical ? Infinity : boxWidth + gap * 2,
-					padding: EdgeInsets.symmetric(
-						isVertical ? { horizontal: gap } : { vertical: gap },
-					),
-					decoration: hovered
-						? new BoxDecoration({
-								border: Border.all({
-									color: 'rgba(255,255,255,0.35)',
-									width: 1,
-								}),
-								boxShadow: [
-									new BoxShadow({
-										color: 'rgba(0,0,0,0.18)',
-										blurRadius: 10,
-									}),
-								],
-							})
-						: undefined,
-					child: isVertical
-						? Column({
-								crossAxisAlignment: CrossAxisAlignment.center,
-								children: sections,
-							})
-						: Row({
-								crossAxisAlignment: CrossAxisAlignment.center,
-								children: sections,
+	return Opacity({
+		opacity: activeOpacity,
+		child: Container({
+			width: isVertical ? boxWidth + gap * 2 : Infinity,
+			height: isVertical ? Infinity : boxWidth + gap * 2,
+			padding: EdgeInsets.symmetric(
+				isVertical ? { horizontal: gap } : { vertical: gap },
+			),
+			decoration: isHovered
+				? new BoxDecoration({
+						border: Border.all({
+							color: 'rgba(255,255,255,0.35)',
+							width: 1,
+						}),
+						boxShadow: [
+							new BoxShadow({
+								color: 'rgba(0,0,0,0.18)',
+								blurRadius: 10,
 							}),
-				}),
-			}),
+						],
+					})
+				: undefined,
+			child: isVertical
+				? Column({
+						crossAxisAlignment: CrossAxisAlignment.center,
+						children: sections,
+					})
+				: Row({
+						crossAxisAlignment: CrossAxisAlignment.center,
+						children: sections,
+					}),
+		}),
 	});
 }

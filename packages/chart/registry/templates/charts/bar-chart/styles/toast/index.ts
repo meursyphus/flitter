@@ -10,11 +10,21 @@ import { toastBarBox } from "./parts/bar-box";
 import {
   toastTitle,
   toastLegend,
+  tooltipContent,
   toastScaleOptions,
   cartesian,
 } from "@styles/toast";
+import type { BarChartContext } from "@headless/bar-chart/types";
+import type { Widget } from "flitter-core";
 
 export { type ToastBarChartConfig } from "./config";
+
+function toastTooltipContent(
+  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  context: BarChartContext<ToastBarChartConfig>,
+): Widget {
+  return tooltipContent({ label: args.label, items: args.items, config: context.config });
+}
 
 const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
   layout: cartesian.toastLayout,
@@ -23,6 +33,7 @@ const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
   barBox: toastBarBox,
   legend: toastLegend,
   title: toastTitle,
+  tooltip: toastTooltipContent,
   axisCorner: cartesian.toastAxisCorner,
   xAxisLabel: cartesian.toastXAxisLabel,
   yAxisLabel: cartesian.toastYAxisLabel,

@@ -4,6 +4,7 @@ import {
 	type BuildContext,
 	LayoutBuilder,
 	SizedBox,
+	GestureDetector,
 } from "flitter-core";
 import { BoxPlotChartProvider } from "./provider";
 import type { BoxPlotDataPoint } from "./types";
@@ -265,16 +266,25 @@ class BoxPlot extends StatelessWidget {
 
 	override build(context: BuildContext): Widget {
 		const ctx = BoxPlotChartProvider.of(context);
-		return ctx.custom.boxPlot(
-			{
-				dataPoint: this.#dataPoint,
-				index: this.#index,
-				legend: this.#legend,
-				label: this.#label,
-				datasetIndex: this.#datasetIndex,
-			},
-			ctx,
-		);
+		const index = this.#index;
+		const legend = this.#legend;
+		const isHovered = ctx.isBoxPlotHovered(index, legend);
+		return GestureDetector({
+			cursor: "default",
+			onMouseEnter: () => ctx.hoverBoxPlot(index, legend, { kind: "boxPlot" }),
+			onMouseLeave: () => ctx.unhoverBoxPlot({ index, legend, kind: "boxPlot" }),
+			child: ctx.custom.boxPlot(
+				{
+					dataPoint: this.#dataPoint,
+					index,
+					legend,
+					label: this.#label,
+					datasetIndex: this.#datasetIndex,
+					isHovered,
+				},
+				ctx,
+			),
+		});
 	}
 }
 
@@ -305,17 +315,27 @@ class Outlier extends StatelessWidget {
 
 	override build(context: BuildContext): Widget {
 		const ctx = BoxPlotChartProvider.of(context);
-		return ctx.custom.outlier(
-			{
-				value: this.#value,
-				outlierIndex: this.#outlierIndex,
-				index: this.#index,
-				legend: this.#legend,
-				label: this.#label,
-				datasetIndex: this.#datasetIndex,
-			},
-			ctx,
-		);
+		const index = this.#index;
+		const legend = this.#legend;
+		const value = this.#value;
+		const isHovered = ctx.isBoxPlotHovered(index, legend);
+		return GestureDetector({
+			cursor: "default",
+			onMouseEnter: () => ctx.hoverBoxPlot(index, legend, { kind: "outlier", value }),
+			onMouseLeave: () => ctx.unhoverBoxPlot({ index, legend, kind: "outlier", value }),
+			child: ctx.custom.outlier(
+				{
+					value,
+					outlierIndex: this.#outlierIndex,
+					index,
+					legend,
+					label: this.#label,
+					datasetIndex: this.#datasetIndex,
+					isHovered,
+				},
+				ctx,
+			),
+		});
 	}
 }
 
@@ -347,17 +367,21 @@ class DataView extends StatelessWidget {
 		const ctx = BoxPlotChartProvider.of(context);
 		if (ctx.scale == null) return SizedBox.shrink();
 
-		return ctx.custom.dataView(
-			{
-				boxPlotGroups: Array.from({ length: ctx.data.labels.length }, (_, index) => {
-					return new BoxPlotGroup({
-						dataPoints: ctx.data.datasets.map(({ data }) => data[index]),
-						index,
-					});
-				}),
-			},
-			ctx,
-		);
+		return GestureDetector({
+			behavior: "translucent",
+			onMouseLeave: () => ctx.unhoverBoxPlot(),
+			child: ctx.custom.dataView(
+				{
+					boxPlotGroups: Array.from({ length: ctx.data.labels.length }, (_, index) => {
+						return new BoxPlotGroup({
+							dataPoints: ctx.data.datasets.map(({ data }) => data[index]),
+							index,
+						});
+					}),
+				},
+				ctx,
+			),
+		});
 	}
 }
 

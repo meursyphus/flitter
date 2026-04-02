@@ -20,7 +20,6 @@ import type { BubbleChartCustom } from "flitter-ui/chart";
 import type { AgBubbleChartConfig } from "../config";
 import { DataView } from "../../base/data-view";
 import { BubbleChartProvider } from "flitter-ui/chart";
-import { agTooltipContent } from "../../../_styles/ag/index";
 
 export function agDataView(
   ...[args, context]: Parameters<BubbleChartCustom<AgBubbleChartConfig>["dataView"]>
@@ -33,6 +32,7 @@ export function agDataView(
 
 const ANIMATION_DURATION = 150;
 const FADE_DURATION = 100;
+const MOUSE_THRESHOLD = 3;
 
 class _BubbleTooltipOverlay extends StatefulWidget {
   child: Widget;
@@ -48,15 +48,10 @@ class _BubbleTooltipOverlay extends StatefulWidget {
 }
 
 class _BubbleTooltipOverlayState extends State<_BubbleTooltipOverlay> {
-  pointPixelX = 0;
-  pointPixelY = 0;
+  mouseX = 0;
+  mouseY = 0;
   wasVisible = false;
-  lastTooltipData: {
-    label: string;
-    legend: string;
-    color: string;
-    value: number;
-  } | null = null;
+  lastTooltipWidget: Widget | null = null;
 
   private getLocalPosition(e: MouseEvent): { x: number; y: number } {
     const ro = this.element.renderObject;
@@ -74,18 +69,10 @@ class _BubbleTooltipOverlayState extends State<_BubbleTooltipOverlay> {
   override build(context: BuildContext): Widget {
     const ctx = BubbleChartProvider.of(context);
     const config: AgBubbleChartConfig = ctx.config;
-    const { tooltip } = config;
     const { hoveredBubble } = ctx;
 
     // Resolve tooltip data from hovered bubble
-    let tooltipData: {
-      label: string;
-      legend: string;
-      color: string;
-      value: number;
-      normX: number;
-      normY: number;
-    } | null = null;
+    let tooltipWidget: Widget | null = null;
 
     if (hoveredBubble != null && ctx.scale != null) {
       const { index, legend } = hoveredBubble;
@@ -94,95 +81,58 @@ class _BubbleTooltipOverlayState extends State<_BubbleTooltipOverlay> {
       if (point != null) {
         const legendIdx = ctx.legends.indexOf(legend);
         const color = config.colors.fills[legendIdx % config.colors.fills.length];
-        const scale = ctx.scale;
-        const normX = (point.x - scale.x.min) / (scale.x.max - scale.x.min);
-        const normY = (point.y - scale.y.min) / (scale.y.max - scale.y.min);
-        tooltipData = { label: point.label, legend, color, value: point.value, normX, normY };
+        tooltipWidget = ctx.custom.tooltip(
+          { label: point.label, items: [{ legend, color, value: point.value }] },
+          ctx,
+        );
       }
     }
 
-    // Keep last tooltip data for fade-out animation
-    if (tooltipData != null) {
-      this.lastTooltipData = {
-        label: tooltipData.label,
-        legend: tooltipData.legend,
-        color: tooltipData.color,
-        value: tooltipData.value,
-      };
-      const ro = this.element.renderObject;
-      const size = ro.size;
-      if (size.width > 0 && size.height > 0) {
-        this.pointPixelX = tooltipData.normX * size.width;
-        this.pointPixelY = (1 - tooltipData.normY) * size.height;
-      }
+    // Keep last tooltip widget for fade-out animation
+    if (tooltipWidget != null) {
+      this.lastTooltipWidget = tooltipWidget;
     }
 
-    const isVisible = tooltipData != null;
+    const isVisible = tooltipWidget != null;
+
+    // Use duration 0 for first appearance to avoid sliding from old position
     const positionDuration = !this.wasVisible && isVisible ? 0 : ANIMATION_DURATION;
     this.wasVisible = isVisible;
 
-    const showData = this.lastTooltipData;
+    const showWidget = this.lastTooltipWidget;
 
     const children: Widget[] = [
       this.widget.child,
 
-      // Mouse tracking layer for closest-point hover detection
+      // Mouse tracking layer for position updates only
+      // onMouseLeave is handled by headless (dataView wrapper), only onMouseMove for position tracking
       Positioned.fill({
         child: GestureDetector({
+          behavior: "translucent",
           cursor: "default",
           onMouseMove: (e: MouseEvent) => {
             const local = this.getLocalPosition(e);
-            const ro = this.element.renderObject;
-            const size = ro.size;
-            if (size.width <= 0 || size.height <= 0) return;
-            if (ctx.scale == null) return;
-
-            const scale = ctx.scale;
-            let closestIndex = -1;
-            let closestLegend = "";
-            let minDist = Infinity;
-
-            for (const dataset of ctx.data.datasets) {
-              for (let i = 0; i < dataset.data.length; i++) {
-                const pt = dataset.data[i];
-                const normX = (pt.x - scale.x.min) / (scale.x.max - scale.x.min);
-                const normY = (pt.y - scale.y.min) / (scale.y.max - scale.y.min);
-                const px = normX * size.width;
-                const py = (1 - normY) * size.height;
-                const dx = local.x - px;
-                const dy = local.y - py;
-                const dist = dx * dx + dy * dy;
-                if (dist < minDist) {
-                  minDist = dist;
-                  closestIndex = i;
-                  closestLegend = dataset.legend;
-                }
-              }
-            }
-
-            if (closestIndex >= 0) {
-              const hb = ctx.hoveredBubble;
-              if (hb == null || hb.index !== closestIndex || hb.legend !== closestLegend) {
-                ctx.hoverBubble(closestIndex, closestLegend);
-              }
-            }
-          },
-          onMouseLeave: () => {
-            ctx.unhoverBubble();
+            const dx = local.x - this.mouseX;
+            const dy = local.y - this.mouseY;
+            if (dx * dx + dy * dy < MOUSE_THRESHOLD * MOUSE_THRESHOLD) return;
+            this.setState(() => {
+              this.mouseX = local.x;
+              this.mouseY = local.y;
+            });
           },
           child: SizedBox.expand(),
         }),
       }),
     ];
 
-    // Tooltip at hovered point position
-    if (showData != null) {
+    // Tooltip at mouse position
+    if (showWidget != null) {
       children.push(
         AnimatedPositioned({
           duration: positionDuration,
           curve: Curves.easeOut,
-          left: this.pointPixelX,
-          top: this.pointPixelY,
+          left: this.mouseX,
+          top: this.mouseY - 12,
           child: AnimatedOpacity({
             duration: FADE_DURATION,
             opacity: isVisible ? 1 : 0,
@@ -193,11 +143,7 @@ class _BubbleTooltipOverlayState extends State<_BubbleTooltipOverlay> {
                 constraintsTransform: ConstraintsTransformBox.unconstrained,
                 child: ZIndex({
                   zIndex: 9999,
-                  child: agTooltipContent({
-                    label: showData.label,
-                    items: { legend: showData.legend, color: showData.color, value: showData.value },
-                    config,
-                  }),
+                  child: showWidget,
                 }),
               }),
             }),

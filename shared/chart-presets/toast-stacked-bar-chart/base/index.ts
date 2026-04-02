@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitter-core";
 import { BarChart as HeadlessBarChart } from "flitter-ui/chart";
 import type {
   BarChartCustom,
@@ -21,6 +21,7 @@ const baseDefaults: Partial<BarChartCustom> = {
   plot: (...args) => Cartesian.Plot(args[0]),
   dataLabel: (...args) => Cartesian.DataLabel(args[0]),
   grid: Grid,
+  tooltip: () => SizedBox.shrink(),
 };
 
 export function BaseStackedBarChart<TConfig = {}>({

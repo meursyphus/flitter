@@ -33,7 +33,7 @@ function outlierAlignment(ratio: number, isVertical: boolean): Alignment {
 }
 
 export function BoxPlotBox(
-	...[{ boxPlot, outliers, minRatio, maxRatio }, ctx]: Parameters<
+	...[{ boxPlot, outliers, minRatio, maxRatio, label: _label, legend: _legend, isHovered: _isHovered, dataPoint: _dataPoint }, ctx]: Parameters<
 		BoxPlotChartCustom['boxPlotBox']
 	>
 ) {

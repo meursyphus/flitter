@@ -38,6 +38,7 @@ export type WaterfallChartCustom<TConfig = {}> = {
 			index: number;
 			label: string;
 			type: WaterfallBarType;
+			isHovered: boolean;
 		},
 		TConfig
 	>;

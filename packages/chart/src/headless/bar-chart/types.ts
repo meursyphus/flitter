@@ -7,8 +7,8 @@ export type BarChartContext<TConfig = {}> = BarChartController & { config: TConf
 
 export type BarChartCustom<TConfig = {}> = {
 	barGroup: CustomArgs<{ bars: { bar: Widget; value: number; datasetIndex: number }[]; index: number; label: string }, TConfig>;
-	barBox: CustomArgs<{ bar: Widget; value: number; ratio: number; alignment: Alignment; index: number }, TConfig>;
-	bar: CustomArgs<{ value: number; label: string; legend: string; index: number }, TConfig>;
+	barBox: CustomArgs<{ bar: Widget; value: number; ratio: number; alignment: Alignment; index: number; label: string; legend: string; isHovered: boolean }, TConfig>;
+	bar: CustomArgs<{ value: number; label: string; legend: string; index: number; isHovered: boolean }, TConfig>;
 	xAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
 	yAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
 	xAxisLabel: CustomArgs<{ name: string; index: number }, TConfig>;
@@ -18,7 +18,7 @@ export type BarChartCustom<TConfig = {}> = {
 	dataView: CustomArgs<{ barGroups: Widget[] }, TConfig>;
 	layout: CustomArgs<{ title: Widget; legends: Widget[]; plot: Widget }, TConfig>;
 	plot: CustomArgs<{ xAxis: Widget; yAxis: Widget; dataView: Widget; grid: Widget; axisCorner: Widget }, TConfig>;
-	legend: CustomArgs<{ name: string; index: number }, TConfig>;
+	legend: CustomArgs<{ name: string; index: number; isVisible: boolean }, TConfig>;
 	title: CustomArgs<undefined, TConfig>;
 	dataLabel: CustomArgs<{ value: number; label: string; legend: string }, TConfig>;
 	xAxisLine: CustomArgs<undefined, TConfig>;
@@ -27,6 +27,7 @@ export type BarChartCustom<TConfig = {}> = {
 	grid: CustomArgs<{ xLine: Widget; yLine: Widget }, TConfig>;
 	gridXLine: CustomArgs<undefined, TConfig>;
 	gridYLine: CustomArgs<undefined, TConfig>;
+	tooltip: CustomArgs<{ label: string; items: { legend: string; color: string; value: number }[] }, TConfig>;
 };
 
 export type BarChartData = {

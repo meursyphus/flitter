@@ -16,9 +16,7 @@ import {
   type Widget,
 } from "flitter-core";
 import type { HeatmapContext } from "@headless/heatmap-chart/types";
-import type { HeatmapController } from "@headless/heatmap-chart/controller";
 import type { AgHeatmapChartConfig } from "../config";
-import { agTooltipContent } from "@styles/ag";
 import { interpolateColor } from "./segment";
 
 const TOOLTIP_OFFSET = 12;
@@ -57,33 +55,6 @@ class _AgHeatmapTooltipOverlayState extends State<_AgHeatmapTooltipOverlay> {
     value: number;
   } | null = null;
 
-  #onHoverChange = () => {
-    this.setState(() => {});
-  };
-
-  override initState(): void {
-    (
-      this.widget.chartContext as unknown as HeatmapController
-    ).addHoverListener(this.#onHoverChange);
-  }
-
-  override didUpdateWidget(oldWidget: _AgHeatmapTooltipOverlay): void {
-    if (oldWidget.chartContext !== this.widget.chartContext) {
-      (
-        oldWidget.chartContext as unknown as HeatmapController
-      ).removeHoverListener(this.#onHoverChange);
-      (
-        this.widget.chartContext as unknown as HeatmapController
-      ).addHoverListener(this.#onHoverChange);
-    }
-  }
-
-  override dispose(): void {
-    (
-      this.widget.chartContext as unknown as HeatmapController
-    ).removeHoverListener(this.#onHoverChange);
-  }
-
   private getLocalPosition(e: MouseEvent): { x: number; y: number } {
     const ro = this.element.renderObject;
     const view = ro.renderOwner.renderContext.view;
@@ -100,7 +71,7 @@ class _AgHeatmapTooltipOverlayState extends State<_AgHeatmapTooltipOverlay> {
   override build(): Widget {
     const ctx = this.widget.chartContext;
     const config = ctx.config;
-    const hovered = ctx.hovered;
+    const hovered = ctx.hoveredSegment;
 
     let tooltipData: {
       label: string;
@@ -133,6 +104,8 @@ class _AgHeatmapTooltipOverlayState extends State<_AgHeatmapTooltipOverlay> {
 
     const children: Widget[] = [
       this.widget.child,
+      // Transparent mouse-tracking layer (translucent so segments below still receive hit tests)
+      // onMouseLeave is handled by headless (dataView wrapper), only onMouseMove for position tracking
       Positioned.fill({
         child: GestureDetector({
           behavior: "translucent",
@@ -146,9 +119,6 @@ class _AgHeatmapTooltipOverlayState extends State<_AgHeatmapTooltipOverlay> {
               this.mouseX = local.x;
               this.mouseY = local.y;
             });
-          },
-          onMouseLeave: () => {
-            ctx.setHovered(null);
           },
           child: SizedBox.expand(),
         }),
@@ -172,15 +142,10 @@ class _AgHeatmapTooltipOverlayState extends State<_AgHeatmapTooltipOverlay> {
                 constraintsTransform: ConstraintsTransformBox.unconstrained,
                 child: ZIndex({
                   zIndex: 9999,
-                  child: agTooltipContent({
-                    label: showData.label,
-                    items: {
-                      legend: "Value",
-                      color: showData.color,
-                      value: showData.value,
-                    },
-                    config: config as any,
-                  }),
+                  child: ctx.custom.tooltip(
+                    { label: showData.label, items: [{ legend: "Value", color: showData.color, value: showData.value }] },
+                    ctx,
+                  ),
                 }),
               }),
             }),

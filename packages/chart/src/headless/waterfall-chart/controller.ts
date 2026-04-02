@@ -149,6 +149,12 @@ export class WaterfallChartController extends ChangeNotifier {
 		this.notifyListeners();
 	}
 
+	unhoverAllBars(): void {
+		if (this.#hoveredBar === null) return;
+		this.#hoveredBar = null;
+		this.notifyListeners();
+	}
+
 	isBarHovered(index: number): boolean {
 		return this.#hoveredBar === index;
 	}

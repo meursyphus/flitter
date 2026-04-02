@@ -157,7 +157,14 @@ export class BarChartController extends ChangeNotifier {
     this.notifyListeners();
   }
 
-  unhoverBar(): void {
+  unhoverBar(index: number, legend: string): void {
+    if (this.#hoveredBar === null) return;
+    if (this.#hoveredBar.index !== index || this.#hoveredBar.legend !== legend) return;
+    this.#hoveredBar = null;
+    this.notifyListeners();
+  }
+
+  unhoverAllBars(): void {
     if (this.#hoveredBar === null) return;
     this.#hoveredBar = null;
     this.notifyListeners();

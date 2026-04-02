@@ -4,6 +4,7 @@ import {
 	type BuildContext,
 	LayoutBuilder,
 	SizedBox,
+	GestureDetector,
 } from "flitter-core";
 import { HistogramChartProvider } from "./provider";
 
@@ -172,20 +173,24 @@ class DataView extends StatelessWidget {
 		const ctx = HistogramChartProvider.of(context);
 		if (ctx.scale == null) return SizedBox.shrink();
 
-		return ctx.custom.dataView(
-			{
-				bars: ctx.bins.map(
-					(bin, index) =>
-						new Bar({
-							binMin: bin.min,
-							binMax: bin.max,
-							count: bin.count,
-							index,
-						}),
-				),
-			},
-			ctx,
-		);
+		return GestureDetector({
+			behavior: "translucent",
+			onMouseLeave: () => ctx.unhoverAllBins(),
+			child: ctx.custom.dataView(
+				{
+					bars: ctx.bins.map(
+						(bin, index) =>
+							new Bar({
+								binMin: bin.min,
+								binMax: bin.max,
+								count: bin.count,
+								index,
+							}),
+					),
+				},
+				ctx,
+			),
+		});
 	}
 }
 
@@ -205,15 +210,23 @@ class Bar extends StatelessWidget {
 
 	override build(context: BuildContext): Widget {
 		const ctx = HistogramChartProvider.of(context);
-		return ctx.custom.bar(
-			{
-				binMin: this.#binMin,
-				binMax: this.#binMax,
-				count: this.#count,
-				index: this.#index,
-			},
-			ctx,
-		);
+		const index = this.#index;
+		const isHovered = ctx.isBinHovered(index);
+		return GestureDetector({
+			cursor: "default",
+			onMouseEnter: () => ctx.hoverBin(index),
+			onMouseLeave: () => ctx.unhoverBin(index),
+			child: ctx.custom.bar(
+				{
+					binMin: this.#binMin,
+					binMax: this.#binMax,
+					count: this.#count,
+					index,
+					isHovered,
+				},
+				ctx,
+			),
+		});
 	}
 }
 

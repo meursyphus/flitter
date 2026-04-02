@@ -14,21 +14,11 @@ import {
   Stack,
   StackFit,
   Positioned,
-  GestureDetector,
   ZIndex,
   Padding,
   FractionalTranslation,
   ConstraintsTransformBox,
-  Container,
   SizedBox,
-  Row,
-  MainAxisSize,
-  Text,
-  TextStyle,
-  BoxDecoration,
-  BoxShadow,
-  BorderRadius,
-  Radius,
   EdgeInsets,
   type Widget,
   type TooltipPosition,
@@ -80,68 +70,6 @@ function computeTooltipLayout(
   };
 }
 
-// --- Scatter tooltip content ---
-
-function scatterTooltipContent({
-  legend,
-  color,
-  x,
-  y,
-  config,
-}: {
-  legend: string;
-  color: string;
-  x: number;
-  y: number;
-  config: ToastScatterChartConfig;
-}): Widget {
-  const { tooltip, font } = config;
-
-  return Container({
-    padding: EdgeInsets.symmetric({ horizontal: tooltip.padding + 2, vertical: tooltip.padding }),
-    decoration: new BoxDecoration({
-      color: tooltip.backgroundColor,
-      borderRadius: tooltip.borderRadius > 0 ? BorderRadius.all(Radius.circular(tooltip.borderRadius)) : undefined,
-      boxShadow: [
-        new BoxShadow({
-          color: "rgba(0,0,0,0.2)",
-          blurRadius: 16,
-        }),
-      ],
-    }),
-    child: Row({
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container({
-          width: 12,
-          height: 12,
-          decoration: new BoxDecoration({
-            color,
-            borderRadius: BorderRadius.all(Radius.circular(2)),
-          }),
-        }),
-        SizedBox({ width: 10 }),
-        Text(legend, {
-          style: new TextStyle({
-            fontFamily: font.family,
-            fontSize: 12,
-            color: tooltip.textColor,
-          }),
-        }),
-        SizedBox({ width: 16 }),
-        Text(`(${x}, ${y})`, {
-          style: new TextStyle({
-            fontFamily: font.family,
-            fontSize: 12,
-            fontWeight: "bold",
-            color: tooltip.textColor,
-          }),
-        }),
-      ],
-    }),
-  });
-}
-
 // --- Mount animation ---
 
 class _MountScale extends StatefulWidget {
@@ -185,53 +113,59 @@ class _MountScaleState extends State<_MountScale> {
   }
 }
 
-// --- Hoverable scatter ---
+// --- Tooltip positioner ---
 
-class _HoverableScatter extends StatefulWidget {
+/**
+ * Lightweight StatefulWidget solely for tooltip positioning.
+ * Hover state is managed by headless; this only computes layout
+ * when isHovered becomes true.
+ */
+class _TooltipPositioner extends StatefulWidget {
   pointWidget: Widget;
-  legend: string;
-  color: string;
+  tooltipWidget: Widget;
+  isHovered: boolean;
   shape: Shape;
-  dataX: number;
-  dataY: number;
-  config: ToastScatterChartConfig;
+  color: string;
+  scatterSize: number;
+  strokeWidth: number;
+  fill: boolean;
 
   constructor({
-    key,
     pointWidget,
-    legend,
-    color,
+    tooltipWidget,
+    isHovered,
     shape,
-    dataX,
-    dataY,
-    config,
+    color,
+    scatterSize,
+    strokeWidth,
+    fill,
   }: {
-    key?: any;
     pointWidget: Widget;
-    legend: string;
-    color: string;
+    tooltipWidget: Widget;
+    isHovered: boolean;
     shape: Shape;
-    dataX: number;
-    dataY: number;
-    config: ToastScatterChartConfig;
+    color: string;
+    scatterSize: number;
+    strokeWidth: number;
+    fill: boolean;
   }) {
-    super(key);
+    super();
     this.pointWidget = pointWidget;
-    this.legend = legend;
-    this.color = color;
+    this.tooltipWidget = tooltipWidget;
+    this.isHovered = isHovered;
     this.shape = shape;
-    this.dataX = dataX;
-    this.dataY = dataY;
-    this.config = config;
+    this.color = color;
+    this.scatterSize = scatterSize;
+    this.strokeWidth = strokeWidth;
+    this.fill = fill;
   }
 
   createState() {
-    return new _HoverableScatterState();
+    return new _TooltipPositionerState();
   }
 }
 
-class _HoverableScatterState extends State<_HoverableScatter> {
-  hovered = false;
+class _TooltipPositionerState extends State<_TooltipPositioner> {
   tooltipLayout: TooltipLayout | null = null;
 
   private findPlotGlobal(): { x: number; y: number; width: number; height: number } | null {
@@ -247,86 +181,71 @@ class _HoverableScatterState extends State<_HoverableScatter> {
     return null;
   }
 
+  private computeLayout() {
+    const plot = this.findPlotGlobal();
+    const pointGlobal = this.element.renderObject.localToGlobal();
+    if (plot) {
+      this.tooltipLayout = computeTooltipLayout(
+        plot,
+        pointGlobal,
+        plot.width,
+        plot.height,
+      );
+    }
+  }
+
   override build(): Widget {
-    const { pointWidget, legend, color, shape, dataX, dataY, config } = this.widget;
-    const { scatter: scatterConfig } = config;
-    const hitSize = scatterConfig.size + HOVER_OUTLINE_EXTRA * 2;
+    const { pointWidget, tooltipWidget, isHovered, shape, color, scatterSize, strokeWidth, fill } = this.widget;
+
+    if (isHovered) {
+      this.computeLayout();
+    }
 
     const children: Widget[] = [];
 
     // Always keep pointWidget in tree (prevents animation re-trigger)
     children.push(pointWidget);
 
-    // Transparent hit area (Positioned around the 0x0 CustomPaint center)
-    children.push(
-      Positioned({
-        key: "__hit__",
-        left: -hitSize / 2,
-        top: -hitSize / 2,
-        width: hitSize,
-        height: hitSize,
-        child: GestureDetector({
-          cursor: "pointer",
-          onMouseEnter: () => {
-            const plot = this.findPlotGlobal();
-            const pointGlobal = this.element.renderObject.localToGlobal();
-            if (plot) {
-              this.tooltipLayout = computeTooltipLayout(
-                plot,
-                pointGlobal,
-                plot.width,
-                plot.height,
-              );
-            }
-            this.setState(() => {
-              this.hovered = true;
-            });
-          },
-          onMouseLeave: () => {
-            this.setState(() => {
-              this.hovered = false;
-            });
-          },
-          child: SizedBox.expand(),
-        }),
-      }),
-    );
-
     // Hover: thicker outline (same shape, same color) + tooltip
-    if (this.hovered) {
-      const outerSize = scatterConfig.size + HOVER_OUTLINE_EXTRA;
-      const outerStroke = scatterConfig.strokeWidth + 2;
+    if (isHovered) {
+      const outerSize = scatterSize + HOVER_OUTLINE_EXTRA;
+      const outerStroke = strokeWidth + 2;
+      const halfOuter = outerSize / 2;
+      const offset = (scatterSize - outerSize) / 2;
 
       children.push(
-        CustomPaint({
+        Positioned({
           key: "__outline__",
-          painter: {
-            svg: {
-              createDefaultSvgEl: (ctx) => ({
-                outline: ctx.createSvgEl("path"),
-              }),
-              paint: ({ outline }) => {
-                const path = createShapePath({ shape, size: outerSize });
-                outline.setAttribute("fill", scatterConfig.fill ? color : "none");
-                outline.setAttribute("stroke", color);
-                outline.setAttribute("stroke-width", String(outerStroke));
-                outline.setAttribute("d", path.getD());
+          top: offset, left: offset, right: offset, bottom: offset,
+          child: CustomPaint({
+            painter: {
+              svg: {
+                createDefaultSvgEl: (ctx) => ({
+                  outline: ctx.createSvgEl("path"),
+                }),
+                paint: ({ outline }) => {
+                  const path = createShapePath({ shape, size: outerSize, center: new Offset({ x: halfOuter, y: halfOuter }) });
+                  outline.setAttribute("fill", fill ? color : "none");
+                  outline.setAttribute("stroke", color);
+                  outline.setAttribute("stroke-width", String(outerStroke));
+                  outline.setAttribute("d", path.getD());
+                },
+              },
+              canvas: {
+                paint: (ctx, _size) => {
+                  const path = createShapePath({ shape, size: outerSize, center: new Offset({ x: halfOuter, y: halfOuter }) });
+                  const canvasPath = path.toCanvasPath();
+                  if (fill) {
+                    ctx.canvas.fillStyle = color;
+                    ctx.canvas.fill(canvasPath);
+                  }
+                  ctx.canvas.strokeStyle = color;
+                  ctx.canvas.lineWidth = outerStroke;
+                  ctx.canvas.stroke(canvasPath);
+                },
               },
             },
-            canvas: {
-              paint: (ctx, _size) => {
-                const path = createShapePath({ shape, size: outerSize });
-                const canvasPath = path.toCanvasPath();
-                if (scatterConfig.fill) {
-                  ctx.canvas.fillStyle = color;
-                  ctx.canvas.fill(canvasPath);
-                }
-                ctx.canvas.strokeStyle = color;
-                ctx.canvas.lineWidth = outerStroke;
-                ctx.canvas.stroke(canvasPath);
-              },
-            },
-          },
+          }),
         }),
       );
 
@@ -347,13 +266,7 @@ class _HoverableScatterState extends State<_HoverableScatter> {
                   zIndex: 9999,
                   child: Padding({
                     padding: layout?.padding ?? EdgeInsets.only({ left: TOOLTIP_GAP }),
-                    child: scatterTooltipContent({
-                      legend,
-                      color,
-                      x: dataX,
-                      y: dataY,
-                      config,
-                    }),
+                    child: tooltipWidget,
                   }),
                 }),
               }),
@@ -374,7 +287,7 @@ class _HoverableScatterState extends State<_HoverableScatter> {
 // --- Main export ---
 
 export function toastScatter(
-  ...[{ legend, label, index }, ctx]: Parameters<ScatterChartCustom<ToastScatterChartConfig>["scatter"]>
+  ...[{ legend, label, index, isHovered }, ctx]: Parameters<ScatterChartCustom<ToastScatterChartConfig>["scatter"]>
 ) {
   const { colors, scatter: scatterConfig, animation, tooltip } = ctx.config;
   const idx = ctx.legends.indexOf(legend);
@@ -382,40 +295,45 @@ export function toastScatter(
   const shape = SHAPES[idx % SHAPES.length];
   const { size, fill, strokeWidth } = scatterConfig;
 
-  const point = CustomPaint({
-    painter: {
-      svg: {
-        createDefaultSvgEl: (context) => ({
-          scatter: context.createSvgEl("path"),
-        }),
-        paint: ({ scatter }) => {
-          const path = createShapePath({ shape, size });
-          if (fill) {
-            scatter.setAttribute("fill", color);
-            scatter.removeAttribute("stroke");
-            scatter.removeAttribute("stroke-width");
-          } else {
-            scatter.setAttribute("fill", "none");
-            scatter.setAttribute("stroke", color);
-            scatter.setAttribute("stroke-width", String(strokeWidth));
-          }
-          scatter.setAttribute("d", path.getD());
+  const halfSize = size / 2;
+  const point = SizedBox({
+    width: size,
+    height: size,
+    child: CustomPaint({
+      painter: {
+        svg: {
+          createDefaultSvgEl: (context) => ({
+            scatter: context.createSvgEl("path"),
+          }),
+          paint: ({ scatter }) => {
+            const path = createShapePath({ shape, size, center: new Offset({ x: halfSize, y: halfSize }) });
+            if (fill) {
+              scatter.setAttribute("fill", color);
+              scatter.removeAttribute("stroke");
+              scatter.removeAttribute("stroke-width");
+            } else {
+              scatter.setAttribute("fill", "none");
+              scatter.setAttribute("stroke", color);
+              scatter.setAttribute("stroke-width", String(strokeWidth));
+            }
+            scatter.setAttribute("d", path.getD());
+          },
+        },
+        canvas: {
+          paint: (context, _size) => {
+            const path = createShapePath({ shape, size, center: new Offset({ x: halfSize, y: halfSize }) });
+            if (fill) {
+              context.canvas.fillStyle = color;
+              context.canvas.fill(path.toCanvasPath());
+            } else {
+              context.canvas.strokeStyle = color;
+              context.canvas.lineWidth = strokeWidth;
+              context.canvas.stroke(path.toCanvasPath());
+            }
+          },
         },
       },
-      canvas: {
-        paint: (context, _size) => {
-          const path = createShapePath({ shape, size });
-          if (fill) {
-            context.canvas.fillStyle = color;
-            context.canvas.fill(path.toCanvasPath());
-          } else {
-            context.canvas.strokeStyle = color;
-            context.canvas.lineWidth = strokeWidth;
-            context.canvas.stroke(path.toCanvasPath());
-          }
-        },
-      },
-    },
+    }),
   });
 
   let wrapped: Widget = point;
@@ -430,51 +348,58 @@ export function toastScatter(
 
   if (!tooltip.enabled) return wrapped;
 
-  // Lookup x, y from data
+  // Lookup x, y from data for tooltip content
   const dataset = ctx.data.datasets.find((d) => d.legend === legend);
   const dataPoint = dataset?.data[index];
 
-  return new _HoverableScatter({
-    key: `hover-${legend}-${label}`,
+  const tooltipWidget = ctx.custom.tooltip(
+    { label: dataPoint?.label ?? label, items: [{ legend, color, value: dataPoint?.y ?? 0 }] },
+    ctx,
+  );
+
+  return new _TooltipPositioner({
     pointWidget: wrapped,
-    legend,
-    color,
+    tooltipWidget,
+    isHovered,
     shape,
-    dataX: dataPoint?.x ?? 0,
-    dataY: dataPoint?.y ?? 0,
-    config: ctx.config,
+    color,
+    scatterSize: size,
+    strokeWidth,
+    fill,
   });
 }
 
 // --- Shape path ---
 
-export function createShapePath({ shape, size }: { shape: Shape; size: number }): Path {
+export function createShapePath({ shape, size, center = new Offset({ x: 0, y: 0 }) }: { shape: Shape; size: number; center?: Offset }): Path {
   const halfSize = size / 2;
+  const cx = center.x;
+  const cy = center.y;
   const path = new Path();
 
   switch (shape) {
     case "circle": {
       path.addOval(
         Rect.fromCircle({
-          center: new Offset({ x: 0, y: 0 }),
+          center: new Offset({ x: cx, y: cy }),
           radius: halfSize,
         }),
       );
       return path;
     }
     case "square": {
-      path.moveTo({ x: -halfSize, y: -halfSize });
-      path.lineTo({ x: halfSize, y: -halfSize });
-      path.lineTo({ x: halfSize, y: halfSize });
-      path.lineTo({ x: -halfSize, y: halfSize });
+      path.moveTo({ x: cx - halfSize, y: cy - halfSize });
+      path.lineTo({ x: cx + halfSize, y: cy - halfSize });
+      path.lineTo({ x: cx + halfSize, y: cy + halfSize });
+      path.lineTo({ x: cx - halfSize, y: cy + halfSize });
       path.close();
       return path;
     }
     case "triangle": {
       const h = halfSize * Math.sqrt(3);
-      path.moveTo({ x: 0, y: -halfSize });
-      path.lineTo({ x: h / 2, y: halfSize / 2 });
-      path.lineTo({ x: -h / 2, y: halfSize / 2 });
+      path.moveTo({ x: cx, y: cy - halfSize });
+      path.lineTo({ x: cx + h / 2, y: cy + halfSize / 2 });
+      path.lineTo({ x: cx - h / 2, y: cy + halfSize / 2 });
       path.close();
       return path;
     }
@@ -485,8 +410,8 @@ export function createShapePath({ shape, size }: { shape: Shape; size: number })
       for (let i = 0; i < points * 2; i++) {
         const radius = i % 2 === 0 ? outerRadius : innerRadius;
         const angle = (Math.PI / points) * i - Math.PI / 2;
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
+        const x = cx + Math.cos(angle) * radius;
+        const y = cy + Math.sin(angle) * radius;
         if (i === 0) {
           path.moveTo({ x, y });
         } else {

@@ -33,10 +33,14 @@ export function BoxPlotGroup(
 					ratio: (outlierValues[i] - scale.min) / total,
 				}));
 
+				const legend = ctx.data.datasets[datasetIndex].legend;
+				const label = ctx.data.labels[index];
+				const isHovered = ctx.isBoxPlotHovered(index, legend);
+
 				return Flexible({
 					flex: 1,
 					child: ctx.custom.boxPlotBox(
-						{ boxPlot, outliers: outliersWithRatio, minRatio, maxRatio, index, datasetIndex },
+						{ boxPlot, outliers: outliersWithRatio, minRatio, maxRatio, index, datasetIndex, label, legend, isHovered, dataPoint: dataPoints[datasetIndex] },
 						ctx,
 					),
 				});

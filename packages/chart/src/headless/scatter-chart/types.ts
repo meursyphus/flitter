@@ -28,7 +28,7 @@ export type ScatterChartScale = {
 };
 
 export type ScatterChartCustom<TConfig = {}> = {
-	scatter: CustomArgs<{ label: string; legend: string; index: number }, TConfig>;
+	scatter: CustomArgs<{ label: string; legend: string; index: number; isHovered: boolean }, TConfig>;
 	xAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
 	yAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
 	xAxisLabel: CustomArgs<{ name: string; index: number }, TConfig>;
@@ -38,7 +38,7 @@ export type ScatterChartCustom<TConfig = {}> = {
 	dataView: CustomArgs<{ scatters: { widget: Widget; x: number; y: number }[]; scale: ScatterChartScale }, TConfig>;
 	layout: CustomArgs<{ title: Widget; legends: Widget[]; plot: Widget }, TConfig>;
 	plot: CustomArgs<{ xAxis: Widget; yAxis: Widget; dataView: Widget; grid: Widget; axisCorner: Widget }, TConfig>;
-	legend: CustomArgs<{ name: string; index: number }, TConfig>;
+	legend: CustomArgs<{ name: string; index: number; isVisible: boolean }, TConfig>;
 	title: CustomArgs<undefined, TConfig>;
 	dataLabel: CustomArgs<{ x: number; y: number; value: number; label: string; legend: string }, TConfig>;
 	xAxisLine: CustomArgs<undefined, TConfig>;
@@ -47,6 +47,7 @@ export type ScatterChartCustom<TConfig = {}> = {
 	grid: CustomArgs<{ xLine: Widget; yLine: Widget }, TConfig>;
 	gridXLine: CustomArgs<undefined, TConfig>;
 	gridYLine: CustomArgs<undefined, TConfig>;
+	tooltip: CustomArgs<{ label: string; items: { legend: string; color: string; value: number }[] }, TConfig>;
 };
 
 export type ScatterChartScaleOptions = {

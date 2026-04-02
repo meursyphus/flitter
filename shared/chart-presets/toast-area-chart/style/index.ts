@@ -1,6 +1,8 @@
 import type { LineChartCustom } from "flitter-ui/chart";
 import type { LineChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
 import type { ToastAreaChartConfig } from "./config";
+import type { LineChartContext } from "flitter-ui/chart";
+import type { Widget } from "flitter-core";
 import { defaultToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { toastArea } from "./parts/area";
@@ -8,11 +10,19 @@ import { toastDataView } from "./parts/data-view";
 import {
   toastTitle,
   toastLegend,
+  tooltipContent,
   toastScaleOptions,
   cartesian,
 } from "../../_styles/toast/index";
 
 export { type ToastAreaChartConfig } from "./config";
+
+function toastTooltip(
+  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  context: LineChartContext<ToastAreaChartConfig>,
+): Widget {
+  return tooltipContent({ label: args.label, items: args.items, config: context.config });
+}
 
 const toastCustom: Partial<LineChartCustom<ToastAreaChartConfig>> = {
   layout: cartesian.toastLayout,
@@ -20,6 +30,7 @@ const toastCustom: Partial<LineChartCustom<ToastAreaChartConfig>> = {
   dataView: toastDataView,
   legend: toastLegend,
   title: toastTitle,
+  tooltip: toastTooltip,
   axisCorner: cartesian.toastAxisCorner,
   xAxisLabel: cartesian.toastXAxisLabel,
   yAxisLabel: cartesian.toastYAxisLabel,

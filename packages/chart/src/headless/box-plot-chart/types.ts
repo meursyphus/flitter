@@ -37,6 +37,10 @@ export type BoxPlotChartCustom<TConfig = {}> = {
 			maxRatio: number;
 			index: number;
 			datasetIndex: number;
+			label: string;
+			legend: string;
+			isHovered: boolean;
+			dataPoint: BoxPlotDataPoint;
 		},
 		TConfig
 	>;
@@ -47,6 +51,7 @@ export type BoxPlotChartCustom<TConfig = {}> = {
 			legend: string;
 			label: string;
 			datasetIndex: number;
+			isHovered: boolean;
 		},
 		TConfig
 	>;
@@ -58,6 +63,7 @@ export type BoxPlotChartCustom<TConfig = {}> = {
 			legend: string;
 			label: string;
 			datasetIndex: number;
+			isHovered: boolean;
 		},
 		TConfig
 	>;

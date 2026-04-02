@@ -1,20 +1,11 @@
 import { ChangeNotifier } from "flitter-core";
 import type { HeatmapCustom, HeatmapData, HeatmapScale } from "./types";
 
-export type HeatmapHoverInfo = {
-	value: number;
-	xIndex: number;
-	yIndex: number;
-	xLabel: string;
-	yLabel: string;
-} | null;
-
 export class HeatmapController extends ChangeNotifier {
 	#rawData: HeatmapData;
 	#width: number = 0;
 	#height: number = 0;
-	#hovered: HeatmapHoverInfo = null;
-	#hoverListeners: Set<() => void> = new Set();
+	#hoveredSegment: { value: number; xIndex: number; yIndex: number; xLabel: string; yLabel: string } | null = null;
 
 	// static config
 	custom!: HeatmapCustom<any>;
@@ -56,28 +47,37 @@ export class HeatmapController extends ChangeNotifier {
 		};
 	}
 
-	// --- hover (separate listener to avoid full tree rebuild) ---
+	// --- hover ---
 
-	get hovered(): HeatmapHoverInfo {
-		return this.#hovered;
+	get hoveredSegment(): { value: number; xIndex: number; yIndex: number; xLabel: string; yLabel: string } | null {
+		return this.#hoveredSegment;
 	}
 
-	setHovered(info: HeatmapHoverInfo): void {
-		if (
-			this.#hovered?.xIndex === info?.xIndex &&
-			this.#hovered?.yIndex === info?.yIndex
-		)
-			return;
-		this.#hovered = info;
-		for (const fn of this.#hoverListeners) fn();
+	hoverSegment(xIndex: number, yIndex: number): void {
+		const value = this.#rawData.values[yIndex]?.[xIndex] ?? 0;
+		const xLabel = this.#rawData.xLabels[xIndex] ?? `${xIndex}`;
+		const yLabel = this.#rawData.yLabels[yIndex] ?? `${yIndex}`;
+		this.#hoveredSegment = { value, xIndex, yIndex, xLabel, yLabel };
+		this.notifyListeners();
 	}
 
-	addHoverListener(fn: () => void): void {
-		this.#hoverListeners.add(fn);
+	unhoverSegment(xIndex: number, yIndex: number): void {
+		if (this.#hoveredSegment === null) return;
+		if (this.#hoveredSegment.xIndex !== xIndex || this.#hoveredSegment.yIndex !== yIndex) return;
+		this.#hoveredSegment = null;
+		this.notifyListeners();
 	}
 
-	removeHoverListener(fn: () => void): void {
-		this.#hoverListeners.delete(fn);
+	unhoverAllSegments(): void {
+		if (this.#hoveredSegment === null) return;
+		this.#hoveredSegment = null;
+		this.notifyListeners();
+	}
+
+	isSegmentHovered(xIndex: number, yIndex: number): boolean {
+		return (
+			this.#hoveredSegment?.xIndex === xIndex && this.#hoveredSegment?.yIndex === yIndex
+		);
 	}
 
 	// --- chart size ---

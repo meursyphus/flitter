@@ -9,7 +9,7 @@ import type { ScatterChartCustom } from "@headless/scatter-chart/types";
 import type { AgScatterChartConfig } from "../config";
 
 export function agScatter(
-  ...[{ legend, index }, ctx]: Parameters<ScatterChartCustom<AgScatterChartConfig>["scatter"]>
+  ...[{ legend, index, isHovered }, ctx]: Parameters<ScatterChartCustom<AgScatterChartConfig>["scatter"]>
 ) {
   const { colors, scatter: scatterConfig } = ctx.config;
   const idx = ctx.legends.indexOf(legend);
@@ -19,7 +19,7 @@ export function agScatter(
 
   let opacity = 1;
   if (hoveredPoint != null) {
-    if (ctx.isPointHovered(index, legend)) {
+    if (isHovered) {
       opacity = 1;
     } else if (hoveredPoint.legend === legend) {
       opacity = 0.8;

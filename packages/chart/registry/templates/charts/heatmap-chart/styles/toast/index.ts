@@ -1,4 +1,3 @@
-import { GestureDetector } from "flitter-core";
 import type { HeatmapCustom } from "@headless/heatmap-chart/types";
 import type { ToastHeatmapChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
@@ -8,10 +7,20 @@ import { toastHeatmapLegend } from "./parts/legend";
 import { DataView } from "../../base/data-view";
 import {
 	toastTitle,
+	tooltipContent,
 	cartesian,
 } from "@styles/toast";
+import type { HeatmapContext } from "@headless/heatmap-chart/types";
+import type { Widget } from "flitter-core";
 
 export { type ToastHeatmapChartConfig } from "./config";
+
+function toastTooltipContent(
+	args: { label: string; items: { legend: string; color: string; value: number }[] },
+	context: HeatmapContext<ToastHeatmapChartConfig>,
+): Widget {
+	return tooltipContent({ label: args.label, items: args.items, config: context.config });
+}
 
 const toastCustom: Partial<HeatmapCustom<ToastHeatmapChartConfig>> = {
 	layout: (args, ctx) =>
@@ -19,14 +28,11 @@ const toastCustom: Partial<HeatmapCustom<ToastHeatmapChartConfig>> = {
 			{ title: args.title, legends: [args.legend], plot: args.plot },
 			ctx,
 		),
-	dataView: (args, ctx) =>
-		GestureDetector({
-			onMouseLeave: () => ctx.setHovered(null),
-			child: DataView(args, ctx),
-		}),
+	dataView: DataView,
 	segment: toastSegment,
 	legend: toastHeatmapLegend,
 	title: toastTitle,
+	tooltip: toastTooltipContent,
 	axisCorner: cartesian.toastAxisCorner,
 	xAxisLabel: cartesian.toastXAxisLabel,
 	yAxisLabel: cartesian.toastYAxisLabel,

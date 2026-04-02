@@ -8,7 +8,7 @@ import type { BubbleChartCustom } from "flitter-ui/chart";
 import type { AgBubbleChartConfig } from "../config";
 
 export function agBubble(
-  ...[{ value, legend, label, index }, ctx]: Parameters<BubbleChartCustom<AgBubbleChartConfig>["bubble"]>
+  ...[{ value, legend, label, index, isHovered }, ctx]: Parameters<BubbleChartCustom<AgBubbleChartConfig>["bubble"]>
 ) {
   const { colors, bubble: bubbleConfig } = ctx.config;
   const idx = ctx.legends.indexOf(legend);
@@ -21,10 +21,10 @@ export function agBubble(
     : 0.5;
   const radius = bubbleConfig.minRadius + normValue * (bubbleConfig.maxRadius - bubbleConfig.minRadius);
 
-  // Hovered bubble gets full opacity; others use base × hover
+  // Hovered bubble gets full opacity; others use base x hover
   let finalOpacity = bubbleConfig.opacity;
   if (hoveredBubble != null) {
-    if (ctx.isBubbleHovered(index, legend)) {
+    if (isHovered) {
       finalOpacity = 1;
     } else if (hoveredBubble.legend === legend) {
       finalOpacity = bubbleConfig.opacity * 0.8;

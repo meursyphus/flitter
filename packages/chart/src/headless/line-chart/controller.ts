@@ -140,7 +140,14 @@ export class LineChartController extends ChangeNotifier {
     this.notifyListeners();
   }
 
-  unhoverPoint(): void {
+  unhoverPoint(index: number, legend: string): void {
+    if (this.#hoveredPoint === null) return;
+    if (this.#hoveredPoint.index !== index || this.#hoveredPoint.legend !== legend) return;
+    this.#hoveredPoint = null;
+    this.notifyListeners();
+  }
+
+  unhoverAllPoints(): void {
     if (this.#hoveredPoint === null) return;
     this.#hoveredPoint = null;
     this.notifyListeners();

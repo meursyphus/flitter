@@ -16,11 +16,10 @@ import {
   type Widget,
   type BuildContext,
 } from "flitter-core";
-import type { ScatterChartCustom } from "flitter-ui/chart";
+import type { ScatterChartCustom, ScatterChartContext } from "flitter-ui/chart";
 import type { AgScatterChartConfig } from "../config";
 import { DataView } from "../../base/data-view";
 import { ScatterChartProvider } from "flitter-ui/chart";
-import { agTooltipContent } from "../../../_styles/ag/index";
 
 export function agDataView(
   ...[args, context]: Parameters<ScatterChartCustom<AgScatterChartConfig>["dataView"]>
@@ -72,9 +71,8 @@ class _ScatterTooltipOverlayState extends State<_ScatterTooltipOverlay> {
   }
 
   override build(context: BuildContext): Widget {
-    const ctx = ScatterChartProvider.of(context);
+    const ctx = ScatterChartProvider.of(context) as ScatterChartContext<AgScatterChartConfig>;
     const config: AgScatterChartConfig = ctx.config;
-    const { tooltip } = config;
     const { hoveredPoint } = ctx;
 
     // Resolve tooltip data from hovered point
@@ -168,7 +166,7 @@ class _ScatterTooltipOverlayState extends State<_ScatterTooltipOverlay> {
             }
           },
           onMouseLeave: () => {
-            ctx.unhoverPoint();
+            ctx.unhoverAllPoints();
           },
           child: SizedBox.expand(),
         }),
@@ -193,11 +191,10 @@ class _ScatterTooltipOverlayState extends State<_ScatterTooltipOverlay> {
                 constraintsTransform: ConstraintsTransformBox.unconstrained,
                 child: ZIndex({
                   zIndex: 9999,
-                  child: agTooltipContent({
-                    label: showData.label,
-                    items: { legend: showData.legend, color: showData.color, value: showData.value },
-                    config,
-                  }),
+                  child: ctx.custom.tooltip(
+                    { label: showData.label, items: [{ legend: showData.legend, color: showData.color, value: showData.value }] },
+                    ctx,
+                  ),
                 }),
               }),
             }),

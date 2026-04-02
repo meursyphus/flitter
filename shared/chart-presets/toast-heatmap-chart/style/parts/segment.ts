@@ -7,7 +7,6 @@ import {
 	BoxDecoration,
 	Border,
 	BoxShadow,
-	GestureDetector,
 	ZIndex,
 	Offset,
 	type Widget,
@@ -15,9 +14,7 @@ import {
 } from "flitter-core";
 import Tooltip from "flitter-core/component/Tooltip";
 import type { HeatmapContext } from "flitter-ui/chart";
-import { HeatmapChartProvider } from "flitter-ui/chart";
 import type { ToastHeatmapChartConfig } from "../config";
-import { tooltipContent } from "../../../_styles/toast/index";
 
 export function interpolateColor(
 	colorRange: [string, string, string],
@@ -102,50 +99,39 @@ function computeTooltipLayout({
 	};
 }
 
-class _HoverableSegment extends StatefulWidget {
-	color: string;
-	gap: number;
-	value: number;
-	xIndex: number;
-	yIndex: number;
-	xLabel: string;
-	yLabel: string;
-	tooltip: Widget;
+/**
+ * Lightweight StatefulWidget solely for tooltip positioning.
+ * Hover state is managed by headless; this only computes layout
+ * when isHovered becomes true.
+ */
+class _TooltipPositioner extends StatefulWidget {
+	segmentWidget: Widget;
+	tooltipWidget: Widget;
 	chartWidth: number;
 	chartHeight: number;
+	isHovered: boolean;
 
 	constructor(props: {
-		color: string;
-		gap: number;
-		value: number;
-		xIndex: number;
-		yIndex: number;
-		xLabel: string;
-		yLabel: string;
-		tooltip: Widget;
+		segmentWidget: Widget;
+		tooltipWidget: Widget;
 		chartWidth: number;
 		chartHeight: number;
+		isHovered: boolean;
 	}) {
 		super();
-		this.color = props.color;
-		this.gap = props.gap;
-		this.value = props.value;
-		this.xIndex = props.xIndex;
-		this.yIndex = props.yIndex;
-		this.xLabel = props.xLabel;
-		this.yLabel = props.yLabel;
-		this.tooltip = props.tooltip;
+		this.segmentWidget = props.segmentWidget;
+		this.tooltipWidget = props.tooltipWidget;
 		this.chartWidth = props.chartWidth;
 		this.chartHeight = props.chartHeight;
+		this.isHovered = props.isHovered;
 	}
 
 	createState() {
-		return new _HoverableSegmentState();
+		return new _TooltipPositionerState();
 	}
 }
 
-class _HoverableSegmentState extends State<_HoverableSegment> {
-	hovered = false;
+class _TooltipPositionerState extends State<_TooltipPositioner> {
 	tooltipLayout: TooltipLayout | null = null;
 
 	private findPlotGlobal(): { x: number; y: number } | null {
@@ -184,21 +170,19 @@ class _HoverableSegmentState extends State<_HoverableSegment> {
 	}
 
 	override build() {
-		const { color, gap, tooltip, value, xIndex, yIndex, xLabel, yLabel } = this.widget;
+		const { isHovered, tooltipWidget } = this.widget;
 
-		const decoration = this.hovered
-			? new BoxDecoration({
-				color,
-				border: Border.all({ color: "white", width: 4, strokeAlign: 1 }),
-				boxShadow: [
-					new BoxShadow({ color: "rgba(0,0,0,0.3)", blurRadius: 8 }),
-				],
-			})
-			: new BoxDecoration({ color });
+		if (isHovered) {
+			this.computeLayout();
+		}
 
 		const layout = this.tooltipLayout;
 
-		const segment = Tooltip({
+		if (!isHovered) {
+			return this.widget.segmentWidget;
+		}
+
+		return Tooltip({
 			position: layout?.position ?? "topRight",
 			offset: layout?.offset ?? Offset.Constants.zero,
 			translation: layout?.translation,
@@ -206,40 +190,16 @@ class _HoverableSegmentState extends State<_HoverableSegment> {
 				zIndex: 9999,
 				child: Padding({
 					padding: layout?.padding ?? EdgeInsets.only({ left: TOOLTIP_GAP }),
-					child: tooltip,
+					child: tooltipWidget,
 				}),
 			}),
-			child: GestureDetector({
-				cursor: "default",
-				child: Container({
-					margin: EdgeInsets.all(gap),
-					decoration,
-				}),
-				onMouseEnter: () => {
-					this.computeLayout();
-					const ctx = HeatmapChartProvider.of(this.element);
-					ctx.setHovered({ value, xIndex, yIndex, xLabel, yLabel });
-					this.setState(() => {
-						this.hovered = true;
-					});
-				},
-				onMouseLeave: () => {
-					this.setState(() => {
-						this.hovered = false;
-					});
-				},
-			}),
-		});
-
-		return ZIndex({
-			zIndex: this.hovered ? 1 : 0,
-			child: segment,
+			child: this.widget.segmentWidget,
 		});
 	}
 }
 
 export function toastSegment(
-	{ value, xIndex, yIndex }: { value: number; xIndex: number; yIndex: number },
+	{ value, xIndex, yIndex, isHovered }: { value: number; xIndex: number; yIndex: number; isHovered: boolean },
 	context: HeatmapContext<ToastHeatmapChartConfig>,
 ): Widget {
 	const { heatmap: heatmapConfig } = context.config;
@@ -251,30 +211,38 @@ export function toastSegment(
 	const xLabel = context.data.xLabels[xIndex] ?? `${xIndex}`;
 	const yLabel = context.data.yLabels[yIndex] ?? `${yIndex}`;
 
+	const decoration = isHovered
+		? new BoxDecoration({
+			color,
+			border: Border.all({ color: "white", width: 4, strokeAlign: 1 }),
+			boxShadow: [
+				new BoxShadow({ color: "rgba(0,0,0,0.3)", blurRadius: 8 }),
+			],
+		})
+		: new BoxDecoration({ color });
+
+	const segmentWidget = ZIndex({
+		zIndex: isHovered ? 1 : 0,
+		child: Container({
+			margin: EdgeInsets.all(heatmapConfig.segment.gap),
+			decoration,
+		}),
+	});
+
 	if (!context.config.tooltip.enabled) {
-		return ZIndex({
-			zIndex: 0,
-			child: Container({
-				margin: EdgeInsets.all(heatmapConfig.segment.gap),
-				decoration: new BoxDecoration({ color }),
-			}),
-		});
+		return segmentWidget;
 	}
 
-	return new _HoverableSegment({
-		color,
-		gap: heatmapConfig.segment.gap,
-		value,
-		xIndex,
-		yIndex,
-		xLabel,
-		yLabel,
-		tooltip: tooltipContent({
-			label: `${xLabel}, ${yLabel}`,
-			items: { legend: "Value", color, value },
-			config: context.config,
-		}),
+	const tooltipWidget = context.custom.tooltip(
+		{ label: `${xLabel}, ${yLabel}`, items: [{ legend: "Value", color, value }] },
+		context,
+	);
+
+	return new _TooltipPositioner({
+		segmentWidget,
+		tooltipWidget,
 		chartWidth: context.width,
 		chartHeight: context.height,
+		isHovered,
 	});
 }

@@ -8,11 +8,10 @@ import {
 	Radius,
 	SizedBox,
 } from 'flitter-core';
-import { HoverTooltip } from 'flitter-ui/chart';
-import { agTooltipContent, defaultAgCartesianBaseConfig } from '../../_styles/ag/index';
+import { defaultAgCartesianBaseConfig } from '../../_styles/ag/index';
 
 export function Outlier(
-	...[{ value, index, legend, label, datasetIndex }, ctx]: Parameters<
+	...[{ value, index, legend, label, datasetIndex, isHovered }, ctx]: Parameters<
 		BoxPlotChartCustom['outlier']
 	>
 ) {
@@ -20,7 +19,6 @@ export function Outlier(
 	if (scale == null) return SizedBox.shrink();
 
 	const hoveredBoxPlot = ctx.hoveredBoxPlot;
-	const isHovered = ctx.isBoxPlotHovered(index, legend);
 	const activeOpacity = hoveredBoxPlot == null || isHovered ? 1 : 0.3;
 	const colors =
 		(ctx.config as { colors?: { fills?: string[] } })?.colors?.fills ??
@@ -29,28 +27,16 @@ export function Outlier(
 
 	const size = isHovered ? 8 : 6;
 
-	return new HoverTooltip({
-		tooltip: agTooltipContent({
-			label,
-			items: { legend: `${legend} outlier`, color, value },
-			config: ctx.config ?? defaultAgCartesianBaseConfig,
-		}),
-		onMouseEnter: () =>
-			ctx.hoverBoxPlot(index, legend, { kind: 'outlier', value }),
-		onMouseLeave: () =>
-			ctx.unhoverBoxPlot({ index, legend, kind: 'outlier', value }),
-		renderChild: (_hovered) =>
-			Opacity({
-				opacity: activeOpacity,
-				child: Container({
-					width: size,
-					height: size,
-					decoration: new BoxDecoration({
-						color: isHovered ? `${color}30` : undefined,
-						border: Border.all({ color, width: 1.5 }),
-						borderRadius: BorderRadius.all(Radius.circular(size / 2)),
-					}),
-				}),
+	return Opacity({
+		opacity: activeOpacity,
+		child: Container({
+			width: size,
+			height: size,
+			decoration: new BoxDecoration({
+				color: isHovered ? `${color}30` : undefined,
+				border: Border.all({ color, width: 1.5 }),
+				borderRadius: BorderRadius.all(Radius.circular(size / 2)),
 			}),
+		}),
 	});
 }

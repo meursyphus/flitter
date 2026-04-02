@@ -137,7 +137,7 @@ class _AnimatedLineState extends State<_AnimatedLine> {
 }
 
 export function toastLine(
-  ...[{ values, legend }, ctx]: Parameters<LineChartCustom<ToastLineChartConfig>["line"]>
+  ...[{ values, legend, isHovered: _isHovered }, ctx]: Parameters<LineChartCustom<ToastLineChartConfig>["line"]>
 ) {
   const { scale, config } = ctx;
   if (scale == null) return SizedBox.shrink();

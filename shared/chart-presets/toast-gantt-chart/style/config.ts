@@ -10,7 +10,6 @@ export type GanttChartConfig = ToastGanttSharedConfig & {
     rowHeight: number;
     barHeight: number;
     milestoneColor: string;
-    dependencyColor: string;
   };
 };
 
@@ -24,6 +23,5 @@ export const defaultToastConfig: GanttChartConfig = {
     rowHeight: 36,
     barHeight: 18,
     milestoneColor: "#f2b544",
-    dependencyColor: "rgba(0,0,0,0.22)",
   },
 };

@@ -150,9 +150,19 @@ export class HistogramChartController extends ChangeNotifier {
 		this.notifyListeners();
 	}
 
-	unhoverBin(): void {
+	unhoverBin(index: number): void {
+		if (this.#hoveredBin !== index) return;
+		this.#hoveredBin = null;
+		this.notifyListeners();
+	}
+
+	unhoverAllBins(): void {
 		if (this.#hoveredBin === null) return;
 		this.#hoveredBin = null;
 		this.notifyListeners();
+	}
+
+	isBinHovered(index: number): boolean {
+		return this.#hoveredBin === index;
 	}
 }

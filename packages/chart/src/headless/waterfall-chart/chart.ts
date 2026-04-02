@@ -4,6 +4,7 @@ import {
 	type BuildContext,
 	LayoutBuilder,
 	SizedBox,
+	GestureDetector,
 } from "flitter-core";
 import { WaterfallChartProvider } from "./provider";
 import type { WaterfallBarType } from "./types";
@@ -208,16 +209,24 @@ class Bar extends StatelessWidget {
 
 	override build(context: BuildContext): Widget {
 		const ctx = WaterfallChartProvider.of(context);
-		return ctx.custom.bar(
-			{
-				value: this.#value,
-				cumulative: this.#cumulative,
-				index: this.#index,
-				label: this.#label,
-				type: this.#type,
-			},
-			ctx,
-		);
+		const index = this.#index;
+		const isHovered = ctx.isBarHovered(index);
+		return GestureDetector({
+			cursor: "default",
+			onMouseEnter: () => ctx.hoverBar(index),
+			onMouseLeave: () => ctx.unhoverBar(),
+			child: ctx.custom.bar(
+				{
+					value: this.#value,
+					cumulative: this.#cumulative,
+					index,
+					label: this.#label,
+					type: this.#type,
+					isHovered,
+				},
+				ctx,
+			),
+		});
 	}
 }
 
@@ -303,7 +312,11 @@ class DataView extends StatelessWidget {
 			);
 		}
 
-		return ctx.custom.dataView({ bars, connectors }, ctx);
+		return GestureDetector({
+			behavior: "translucent",
+			onMouseLeave: () => ctx.unhoverAllBars(),
+			child: ctx.custom.dataView({ bars, connectors }, ctx),
+		});
 	}
 }
 

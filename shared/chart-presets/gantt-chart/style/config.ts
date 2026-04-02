@@ -10,7 +10,6 @@ export type GanttChartConfig = AgGanttSharedConfig & {
     rowHeight: number;
     barHeight: number;
     milestoneColor: string;
-    dependencyColor: string;
   };
 };
 
@@ -23,6 +22,5 @@ export const defaultAgConfig: GanttChartConfig = {
     rowHeight: 36,
     barHeight: 18,
     milestoneColor: "#ffb840",
-    dependencyColor: "#c4ccd7",
   },
 };

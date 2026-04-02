@@ -139,7 +139,14 @@ export class BubbleChartController extends ChangeNotifier {
     this.notifyListeners();
   }
 
-  unhoverBubble(): void {
+  unhoverBubble(index: number, legend: string): void {
+    if (this.#hoveredBubble === null) return;
+    if (this.#hoveredBubble.index !== index || this.#hoveredBubble.legend !== legend) return;
+    this.#hoveredBubble = null;
+    this.notifyListeners();
+  }
+
+  unhoverAllBubbles(): void {
     if (this.#hoveredBubble === null) return;
     this.#hoveredBubble = null;
     this.notifyListeners();

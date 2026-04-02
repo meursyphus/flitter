@@ -26,7 +26,6 @@ import type { LineChartCustom, LineChartScale } from "@headless/line-chart/types
 import type { ToastLineChartConfig } from "../config";
 import { AnimatedDataView } from "@styles/toast/cartesian/animated-data-view";
 import { computeDataPointPosition } from "./line";
-import { tooltipContent } from "@styles/toast";
 
 // --- Tooltip layout ---
 
@@ -91,7 +90,8 @@ class _HoverableColumn extends StatefulWidget {
   plotWidth: number;
   plotHeight: number;
   pointX: number;
-  config: ToastLineChartConfig;
+  labelIndex: number;
+  ctx: any;
 
   constructor({
     key,
@@ -102,7 +102,8 @@ class _HoverableColumn extends StatefulWidget {
     plotWidth,
     plotHeight,
     pointX,
-    config,
+    labelIndex,
+    ctx,
   }: {
     key: string;
     points: ColumnPoint[];
@@ -112,7 +113,8 @@ class _HoverableColumn extends StatefulWidget {
     plotWidth: number;
     plotHeight: number;
     pointX: number;
-    config: ToastLineChartConfig;
+    labelIndex: number;
+    ctx: any;
   }) {
     super(key);
     this.points = points;
@@ -122,7 +124,8 @@ class _HoverableColumn extends StatefulWidget {
     this.plotWidth = plotWidth;
     this.plotHeight = plotHeight;
     this.pointX = pointX;
-    this.config = config;
+    this.labelIndex = labelIndex;
+    this.ctx = ctx;
   }
 
   createState() {
@@ -131,7 +134,6 @@ class _HoverableColumn extends StatefulWidget {
 }
 
 class _HoverableColumnState extends State<_HoverableColumn> {
-  hoveredIndex: number | null = null;
   tooltipLayout: TooltipLayout | null = null;
 
   private findNearestIndex(mouseY: number): number {
@@ -178,28 +180,38 @@ class _HoverableColumnState extends State<_HoverableColumn> {
   }
 
   private handleHover(e: MouseEvent) {
-    const { points, plotWidth, plotHeight, pointX } = this.widget;
+    const { points, plotWidth, plotHeight, pointX, labelIndex, ctx } = this.widget;
     if (points.length === 0) return;
     const mouseY = this.computeMouseY(e);
     if (mouseY == null) return;
 
     const idx = this.findNearestIndex(mouseY);
-    if (idx === this.hoveredIndex) return;
+    const point = points[idx];
+    const legend = point.legend;
+
+    // Check if already hovered on this point
+    const hp = ctx.hoveredPoint;
+    if (hp != null && hp.index === labelIndex && hp.legend === legend) return;
 
     this.tooltipLayout = computePointTooltipLayout({
       pointX,
-      pointY: points[idx].y,
+      pointY: point.y,
       plotWidth,
       plotHeight,
     });
-    this.setState(() => {
-      this.hoveredIndex = idx;
-    });
+
+    ctx.hoverPoint(labelIndex, legend);
   }
 
   override build(): Widget {
-    const { points, label, colLeft, colWidth, plotWidth, plotHeight, pointX, config } = this.widget;
-    const hi = this.hoveredIndex;
+    const { points, label, colLeft, colWidth, plotWidth, plotHeight, pointX, labelIndex, ctx } = this.widget;
+    const hp = ctx.hoveredPoint;
+
+    // Check if hover is within this column
+    const hoveredInColumn = hp != null && hp.index === labelIndex;
+    const hoveredPointInColumn = hoveredInColumn
+      ? points.find((p) => p.legend === hp.legend)
+      : null;
 
     // The dot's x position within this column
     const dotLocalX = pointX - colLeft;
@@ -220,17 +232,17 @@ class _HoverableColumnState extends State<_HoverableColumn> {
           onMouseMove: (e: MouseEvent) => this.handleHover(e),
           onMouseEnter: (e: MouseEvent) => this.handleHover(e),
           onMouseLeave: () => {
-            this.setState(() => {
-              this.hoveredIndex = null;
-            });
+            if (hp != null && hp.index === labelIndex) {
+              ctx.unhoverPoint(hp.index, hp.legend);
+            }
           },
         }),
       }),
     );
 
     // Show dot + tooltip for hovered point
-    if (hi != null && hi >= 0 && hi < points.length) {
-      const p = points[hi];
+    if (hoveredPointInColumn != null) {
+      const p = hoveredPointInColumn;
       const layout = this.tooltipLayout;
 
       const dot = Container({
@@ -250,11 +262,10 @@ class _HoverableColumnState extends State<_HoverableColumn> {
         zIndex: 9999,
         child: Padding({
           padding: layout?.padding ?? EdgeInsets.only({ left: TOOLTIP_GAP }),
-          child: tooltipContent({
-            label,
-            items: { legend: p.legend, color: p.color, value: p.value },
-            config,
-          }),
+          child: ctx.custom.tooltip(
+            { label, items: [{ legend: p.legend, color: p.color, value: p.value }] },
+            ctx,
+          ),
         }),
       });
 
@@ -304,7 +315,7 @@ class _HoverOverlay extends StatelessWidget {
   scale: LineChartScale;
   colors: string[];
   legends: string[];
-  config: ToastLineChartConfig;
+  ctx: any;
 
   constructor({
     datasets,
@@ -312,14 +323,14 @@ class _HoverOverlay extends StatelessWidget {
     scale,
     colors,
     legends,
-    config,
+    ctx,
   }: {
     datasets: { legend: string; values: number[] }[];
     labels: string[];
     scale: LineChartScale;
     colors: string[];
     legends: string[];
-    config: ToastLineChartConfig;
+    ctx: any;
   }) {
     super();
     this.datasets = datasets;
@@ -327,7 +338,7 @@ class _HoverOverlay extends StatelessWidget {
     this.scale = scale;
     this.colors = colors;
     this.legends = legends;
-    this.config = config;
+    this.ctx = ctx;
   }
 
   override build(): Widget {
@@ -390,7 +401,8 @@ class _HoverOverlay extends StatelessWidget {
                 plotWidth: width,
                 plotHeight: height,
                 pointX,
-                config: this.config,
+                labelIndex: li,
+                ctx: this.ctx,
               }),
             }),
           );
@@ -437,7 +449,7 @@ export function toastDataView(
           scale,
           colors,
           legends: ctx.legends,
-          config: ctx.config,
+          ctx,
         }),
       }),
     );

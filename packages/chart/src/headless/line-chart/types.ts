@@ -6,7 +6,7 @@ type CustomArgs<T = undefined, TConfig = {}> = (args: T, context: LineChartConte
 export type LineChartContext<TConfig = {}> = LineChartController & { config: TConfig };
 
 export type LineChartCustom<TConfig = {}> = {
-	line: CustomArgs<{ values: number[]; legend: string; index: number }, TConfig>;
+	line: CustomArgs<{ values: number[]; legend: string; index: number; isHovered: boolean }, TConfig>;
 	xAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
 	yAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
 	xAxisLabel: CustomArgs<{ name: string; index: number }, TConfig>;
@@ -16,7 +16,7 @@ export type LineChartCustom<TConfig = {}> = {
 	dataView: CustomArgs<{ lines: Widget[] }, TConfig>;
 	layout: CustomArgs<{ title: Widget; legends: Widget[]; plot: Widget }, TConfig>;
 	plot: CustomArgs<{ xAxis: Widget; yAxis: Widget; dataView: Widget; grid: Widget; axisCorner: Widget }, TConfig>;
-	legend: CustomArgs<{ name: string; index: number }, TConfig>;
+	legend: CustomArgs<{ name: string; index: number; isVisible: boolean }, TConfig>;
 	title: CustomArgs<undefined, TConfig>;
 	dataLabel: CustomArgs<{ value: number; label: string; legend: string }, TConfig>;
 	xAxisLine: CustomArgs<undefined, TConfig>;
@@ -25,6 +25,7 @@ export type LineChartCustom<TConfig = {}> = {
 	grid: CustomArgs<{ xLine: Widget; yLine: Widget }, TConfig>;
 	gridXLine: CustomArgs<undefined, TConfig>;
 	gridYLine: CustomArgs<undefined, TConfig>;
+	tooltip: CustomArgs<{ label: string; items: { legend: string; color: string; value: number }[] }, TConfig>;
 };
 
 export type LineChartData = {

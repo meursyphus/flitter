@@ -1,22 +1,32 @@
-import type { BubbleChartCustom, BubbleChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
+import type { BubbleChartCustom, BubbleChartContext, BubbleChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
 import type { ToastBubbleChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { toastBubble } from "./parts/bubble";
+import type { Widget } from "flitter-core";
 import {
   toastTitle,
   toastLegend,
+  tooltipContent,
   toastScaleOptions,
   cartesian,
 } from "../../_styles/toast/index";
 
 export { type ToastBubbleChartConfig } from "./config";
 
+function toastTooltipContent(
+  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  context: BubbleChartContext<ToastBubbleChartConfig>,
+): Widget {
+  return tooltipContent({ label: args.label, items: args.items, config: context.config });
+}
+
 const toastCustom: Partial<BubbleChartCustom<ToastBubbleChartConfig>> = {
   layout: cartesian.toastLayout,
   bubble: toastBubble,
   legend: (args, context) => toastLegend(args, context, { markerShape: "circle" }),
   title: toastTitle,
+  tooltip: toastTooltipContent,
   axisCorner: cartesian.toastAxisCorner,
   xAxisLabel: cartesian.toastXAxisLabel,
   yAxisLabel: cartesian.toastYAxisLabel,

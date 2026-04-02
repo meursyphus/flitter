@@ -3,6 +3,8 @@ import {
   type Widget,
   type BuildContext,
   LayoutBuilder,
+  GestureDetector,
+  SizedBox,
 } from "flitter-core";
 import { ScatterChartProvider } from "./provider";
 
@@ -54,7 +56,12 @@ class Legend extends StatelessWidget {
 
   override build(context: BuildContext): Widget {
     const ctx = ScatterChartProvider.of(context);
-    return ctx.custom.legend({ name: this.#name, index: this.#index }, ctx);
+    const name = this.#name;
+    const isVisible = ctx.isSeriesVisible(name);
+    return GestureDetector({
+      onClick: () => ctx.toggleSeries(name),
+      child: ctx.custom.legend({ name, index: this.#index, isVisible }, ctx),
+    });
   }
 }
 
@@ -195,6 +202,35 @@ class YAxisLine extends StatelessWidget {
   }
 }
 
+class Scatter extends StatelessWidget {
+  #label: string;
+  #legend: string;
+  #index: number;
+
+  constructor({ label, legend, index }: { label: string; legend: string; index: number }) {
+    super();
+    this.#label = label;
+    this.#legend = legend;
+    this.#index = index;
+  }
+
+  override build(context: BuildContext): Widget {
+    const ctx = ScatterChartProvider.of(context);
+    const index = this.#index;
+    const legend = this.#legend;
+    const isHovered = ctx.isPointHovered(index, legend);
+    return GestureDetector({
+      cursor: "default",
+      onMouseEnter: () => ctx.hoverPoint(index, legend),
+      onMouseLeave: () => ctx.unhoverPoint(index, legend),
+      child: ctx.custom.scatter(
+        { label: this.#label, legend, index, isHovered },
+        ctx,
+      ),
+    });
+  }
+}
+
 class DataView extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const ctx = ScatterChartProvider.of(context);
@@ -203,16 +239,17 @@ class DataView extends StatelessWidget {
 
     const scatters = data.datasets.flatMap((dataset) =>
       dataset.data.map((pt, pointIndex) => ({
-        widget: ctx.custom.scatter(
-          { label: pt.label, legend: dataset.legend, index: pointIndex },
-          ctx,
-        ),
+        widget: new Scatter({ label: pt.label, legend: dataset.legend, index: pointIndex }),
         x: pt.x,
         y: pt.y,
       })),
     );
 
-    return ctx.custom.dataView({ scatters, scale }, ctx);
+    return GestureDetector({
+      behavior: "translucent",
+      onMouseLeave: () => ctx.unhoverAllPoints(),
+      child: ctx.custom.dataView({ scatters, scale }, ctx),
+    });
   }
 }
 

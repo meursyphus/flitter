@@ -5,7 +5,6 @@ import {
   BorderRadius,
   Radius,
   SizedBox,
-  GestureDetector,
   EdgeInsets,
   ZIndex,
   Offset,
@@ -20,16 +19,15 @@ import { tooltipContent } from "@styles/toast";
 const TOOLTIP_GAP = 4;
 
 export function toastOutlier(
-  ...[{ value, index, legend, label, datasetIndex }, ctx]: Parameters<
+  ...[{ value, index, legend, label, datasetIndex, isHovered }, ctx]: Parameters<
     BoxPlotChartCustom<ToastBoxPlotChartConfig>["outlier"]
   >
 ): Widget {
-  const { scale, config, direction } = ctx;
+  const { scale, config } = ctx;
   if (scale == null) return SizedBox.shrink();
 
   const { colors } = config;
   const color = colors[ctx.legends.indexOf(legend) % colors.length];
-  const isHovered = ctx.isBoxPlotHovered(index, legend);
   const size = isHovered ? 10 : 7;
 
   const dot = Container({
@@ -63,15 +61,6 @@ export function toastOutlier(
         child: tooltip,
       }),
     }),
-    child: GestureDetector({
-      cursor: "default",
-      onMouseEnter: () => {
-        ctx.hoverBoxPlot(index, legend, { kind: "outlier", value });
-      },
-      onMouseLeave: () => {
-        ctx.unhoverBoxPlot({ index, legend, kind: "outlier", value });
-      },
-      child: dot,
-    }),
+    child: dot,
   });
 }

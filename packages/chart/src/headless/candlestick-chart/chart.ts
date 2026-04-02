@@ -4,6 +4,7 @@ import {
 	type BuildContext,
 	LayoutBuilder,
 	SizedBox,
+	GestureDetector,
 } from "flitter-core";
 import { CandlestickChartProvider } from "./provider";
 
@@ -197,19 +198,28 @@ class Candlestick extends StatelessWidget {
 		const ctx = CandlestickChartProvider.of(context);
 		const dataset = ctx.data.datasets[this.#datasetIndex];
 		const point = dataset.data[this.#index];
-		return ctx.custom.candlestick(
-			{
-				open: point.open,
-				high: point.high,
-				low: point.low,
-				close: point.close,
-				label: ctx.data.labels[this.#index],
-				index: this.#index,
-				legend: dataset.legend,
-				datasetIndex: this.#datasetIndex,
-			},
-			ctx,
-		);
+		const index = this.#index;
+		const legend = dataset.legend;
+		const isHovered = ctx.isCandlestickHovered(index, legend);
+		return GestureDetector({
+			cursor: "default",
+			onMouseEnter: () => ctx.hoverCandlestick(index, legend),
+			onMouseLeave: () => ctx.unhoverCandlestick(index, legend),
+			child: ctx.custom.candlestick(
+				{
+					open: point.open,
+					high: point.high,
+					low: point.low,
+					close: point.close,
+					label: ctx.data.labels[this.#index],
+					index,
+					legend,
+					datasetIndex: this.#datasetIndex,
+					isHovered,
+				},
+				ctx,
+			),
+		});
 	}
 }
 
@@ -241,18 +251,22 @@ class DataView extends StatelessWidget {
 		const ctx = CandlestickChartProvider.of(context);
 		if (ctx.scale == null) return SizedBox.shrink();
 
-		return ctx.custom.dataView(
-			{
-				candlestickGroups: Array.from({ length: ctx.data.labels.length }, (_, index) => ({
-					label: ctx.data.labels[index],
-					index,
-					candlesticks: ctx.data.datasets.map(
-						(_, datasetIndex) => new Candlestick({ index, datasetIndex }),
-					),
-				})),
-			},
-			ctx,
-		);
+		return GestureDetector({
+			behavior: "translucent",
+			onMouseLeave: () => ctx.unhoverAllCandlesticks(),
+			child: ctx.custom.dataView(
+				{
+					candlestickGroups: Array.from({ length: ctx.data.labels.length }, (_, index) => ({
+						label: ctx.data.labels[index],
+						index,
+						candlesticks: ctx.data.datasets.map(
+							(_, datasetIndex) => new Candlestick({ index, datasetIndex }),
+						),
+					})),
+				},
+				ctx,
+			),
+		});
 	}
 }
 

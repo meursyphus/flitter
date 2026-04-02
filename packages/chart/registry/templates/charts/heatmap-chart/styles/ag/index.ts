@@ -8,10 +8,20 @@ import { AgHeatmapTooltipOverlay } from "./parts/tooltip-overlay";
 import { DataView } from "../../base/data-view";
 import {
   agTitle,
+  agTooltipContent,
   cartesian,
 } from "@styles/ag";
+import type { HeatmapContext } from "@headless/heatmap-chart/types";
+import type { Widget } from "flitter-core";
 
 export { type AgHeatmapChartConfig } from "./config";
+
+function agTooltip(
+  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  context: HeatmapContext<AgHeatmapChartConfig>,
+): Widget {
+  return agTooltipContent({ label: args.label, items: args.items, config: context.config });
+}
 
 const agCustom: Partial<HeatmapCustom<AgHeatmapChartConfig>> = {
   layout: (args, ctx) =>
@@ -27,6 +37,7 @@ const agCustom: Partial<HeatmapCustom<AgHeatmapChartConfig>> = {
   segment: agSegment,
   legend: agHeatmapLegend,
   title: agTitle as any,
+  tooltip: agTooltip,
   axisCorner: cartesian.agAxisCorner,
   xAxisLabel: cartesian.agXAxisLabel,
   yAxisLabel: cartesian.agYAxisLabel,

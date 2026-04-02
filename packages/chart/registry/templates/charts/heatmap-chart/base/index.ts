@@ -22,6 +22,7 @@ const baseDefaults: Partial<HeatmapCustom> = {
 			grid: SizedBox.shrink(),
 			axisCorner: args[0].axisCorner,
 		}),
+	tooltip: () => SizedBox.shrink(),
 };
 
 export function BaseHeatmapChart<TConfig = {}>({

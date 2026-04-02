@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitter-core";
 import HeadlessScatterChart from "@headless/scatter-chart";
 import type {
   ScatterChartCustom,
@@ -21,6 +21,7 @@ const baseDefaults: Partial<ScatterChartCustom> = {
   dataLabel: (...args) => Cartesian.DataLabel(args[0]),
   grid: (...[{ xLine, yLine }, ctx]) =>
     PointLikeGrid({ xLine, yLine, scale: ctx.scale }),
+  tooltip: () => SizedBox.shrink(),
 };
 
 const defaultGetScale: GetScaleFn = ({ datasets }, options) => {

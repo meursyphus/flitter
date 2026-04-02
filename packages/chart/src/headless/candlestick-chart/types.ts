@@ -46,6 +46,14 @@ export type CandlestickChartCustom<TConfig = {}> = {
 			index: number;
 			legend: string;
 			datasetIndex: number;
+			isHovered: boolean;
+		},
+		TConfig
+	>;
+	tooltip: CustomArgs<
+		{
+			label: string;
+			items: { legend: string; color: string; value: number }[];
 		},
 		TConfig
 	>;

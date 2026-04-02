@@ -26,10 +26,11 @@ export type HeatmapCustom<TConfig = {}> = {
 	yAxisTick: CustomArgs<undefined, TConfig>;
 
 	dataView: CustomArgs<{ segments: Widget[][] }, TConfig>;
-	segment: CustomArgs<{ value: number; xIndex: number; yIndex: number }, TConfig>;
+	segment: CustomArgs<{ value: number; xIndex: number; yIndex: number; isHovered: boolean }, TConfig>;
 
 	legend: CustomArgs<undefined, TConfig>;
 	title: CustomArgs<undefined, TConfig>;
+	tooltip: CustomArgs<{ label: string; items: { legend: string; color: string; value: number }[] }, TConfig>;
 };
 
 export type HeatmapData = {

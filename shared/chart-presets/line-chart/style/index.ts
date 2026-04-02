@@ -8,12 +8,22 @@ import { agDataView } from "./parts/data-view";
 import {
   agTitle,
   agLegend,
+  agTooltipContent,
   agScaleOptions,
   cartesian,
   AgLineLikeTooltipOverlay,
 } from "../../_styles/ag/index";
+import type { LineChartContext } from "flitter-ui/chart";
+import type { Widget } from "flitter-core";
 
 export { type AgLineChartConfig } from "./config";
+
+function agTooltip(
+  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  context: LineChartContext<AgLineChartConfig>,
+): Widget {
+  return agTooltipContent({ label: args.label, items: args.items, config: context.config });
+}
 
 const agCustom: Partial<LineChartCustom<AgLineChartConfig>> = {
   layout: cartesian.agLayout,
@@ -25,6 +35,7 @@ const agCustom: Partial<LineChartCustom<AgLineChartConfig>> = {
     }),
   legend: agLegend,
   title: agTitle,
+  tooltip: agTooltip,
   axisCorner: cartesian.agAxisCorner,
   xAxisLabel: cartesian.agXAxisLabel,
   yAxisLabel: cartesian.agYAxisLabel,

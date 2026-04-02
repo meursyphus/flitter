@@ -1,17 +1,26 @@
-import type { BubbleChartCustom, BubbleChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
+import type { BubbleChartCustom, BubbleChartContext, BubbleChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
 import type { AgBubbleChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { agBubble } from "./parts/bubble";
 import { agDataView } from "./parts/data-view";
+import type { Widget } from "flitter-core";
 import {
   agTitle,
   agLegend,
+  agTooltipContent,
   agScaleOptions,
   cartesian,
 } from "../../_styles/ag/index";
 
 export { type AgBubbleChartConfig } from "./config";
+
+function agTooltip(
+  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  context: BubbleChartContext<AgBubbleChartConfig>,
+): Widget {
+  return agTooltipContent({ label: args.label, items: args.items, config: context.config });
+}
 
 const agCustom: Partial<BubbleChartCustom<AgBubbleChartConfig>> = {
   layout: cartesian.agLayout,
@@ -19,6 +28,7 @@ const agCustom: Partial<BubbleChartCustom<AgBubbleChartConfig>> = {
   dataView: agDataView,
   legend: (args, context) => agLegend(args, context, { markerShape: "circle" }),
   title: agTitle,
+  tooltip: agTooltip,
   axisCorner: cartesian.agAxisCorner,
   xAxisLabel: cartesian.agXAxisLabel,
   yAxisLabel: cartesian.agYAxisLabel,

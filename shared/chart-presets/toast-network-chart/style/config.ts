@@ -5,13 +5,7 @@ type ToastNetworkSharedConfig = Pick<
   "font" | "title" | "tooltip" | "animation" | "colors"
 >;
 
-export type NetworkChartConfig = ToastNetworkSharedConfig & {
-  network: {
-    edgeColor: string;
-    edgeWidth: number;
-    labelOffset: number;
-  };
-};
+export type NetworkChartConfig = ToastNetworkSharedConfig;
 
 export const defaultToastConfig: NetworkChartConfig = {
   font: defaultToastBaseConfig.font,
@@ -19,9 +13,4 @@ export const defaultToastConfig: NetworkChartConfig = {
   tooltip: defaultToastBaseConfig.tooltip,
   animation: defaultToastBaseConfig.animation,
   colors: defaultToastBaseConfig.colors,
-  network: {
-    edgeColor: "rgba(0,0,0,0.18)",
-    edgeWidth: 1.5,
-    labelOffset: 18,
-  },
 };

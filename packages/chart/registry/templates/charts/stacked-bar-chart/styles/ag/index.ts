@@ -10,11 +10,21 @@ import { agDataView } from "./parts/data-view";
 import {
   agTitle,
   agLegend,
+  agTooltipContent,
   agScaleOptions,
   cartesian,
 } from "@styles/ag";
+import type { BarChartContext } from "@headless/bar-chart/types";
+import type { Widget } from "flitter-core";
 
 export { type AgStackedBarChartConfig } from "./config";
+
+function agTooltip(
+  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  context: BarChartContext<AgStackedBarChartConfig>,
+): Widget {
+  return agTooltipContent({ label: args.label, items: args.items, config: context.config });
+}
 
 const agCustom: Partial<BarChartCustom<AgStackedBarChartConfig>> = {
   layout: cartesian.agLayout,
@@ -23,6 +33,7 @@ const agCustom: Partial<BarChartCustom<AgStackedBarChartConfig>> = {
   dataView: agDataView,
   legend: agLegend,
   title: agTitle,
+  tooltip: agTooltip,
   axisCorner: cartesian.agAxisCorner,
   xAxisLabel: cartesian.agXAxisLabel,
   yAxisLabel: cartesian.agYAxisLabel,

@@ -139,9 +139,6 @@ class _AgBoxPlotTooltipOverlayState extends State<AgBoxPlotTooltipOverlay> {
 							this.mouseY = local.y;
 						});
 					},
-					onMouseLeave: () => {
-						ctx.unhoverBoxPlot();
-					},
 					child: SizedBox.expand(),
 				}),
 			}),

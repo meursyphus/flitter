@@ -36,7 +36,8 @@ export type HistogramChartCustom<TConfig = {}> = {
 		TConfig
 	>;
 	dataView: CustomArgs<{ bars: Widget[] }, TConfig>;
-	bar: CustomArgs<{ binMin: number; binMax: number; count: number; index: number }, TConfig>;
+	bar: CustomArgs<{ binMin: number; binMax: number; count: number; index: number; isHovered: boolean }, TConfig>;
+	tooltip: CustomArgs<{ label: string; items: { legend: string; color: string; value: number }[] }, TConfig>;
 	xAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
 	yAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
 	xAxisLabel: CustomArgs<{ name: string; index: number }, TConfig>;

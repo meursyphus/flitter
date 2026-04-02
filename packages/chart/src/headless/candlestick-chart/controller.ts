@@ -133,7 +133,14 @@ export class CandlestickChartController extends ChangeNotifier {
 		this.notifyListeners();
 	}
 
-	unhoverCandlestick(): void {
+	unhoverCandlestick(index: number, legend: string): void {
+		if (this.#hoveredCandlestick === null) return;
+		if (this.#hoveredCandlestick.index !== index || this.#hoveredCandlestick.legend !== legend) return;
+		this.#hoveredCandlestick = null;
+		this.notifyListeners();
+	}
+
+	unhoverAllCandlesticks(): void {
 		if (this.#hoveredCandlestick === null) return;
 		this.#hoveredCandlestick = null;
 		this.notifyListeners();

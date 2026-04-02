@@ -1,18 +1,27 @@
-import type { ScatterChartCustom, GetScaleOptionsFn } from "@headless/scatter-chart/types";
+import type { ScatterChartCustom, GetScaleOptionsFn, ScatterChartContext } from "@headless/scatter-chart/types";
 import type { StyleConfig } from "../../plugin";
 import type { AgScatterChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { agScatter } from "./parts/scatter";
 import { agDataView } from "./parts/data-view";
+import type { Widget } from "flitter-core";
 import {
   agTitle,
   agLegend,
+  agTooltipContent,
   agScaleOptions,
   cartesian,
 } from "@styles/ag";
 
 export { type AgScatterChartConfig } from "./config";
+
+function agTooltip(
+  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  context: ScatterChartContext<AgScatterChartConfig>,
+): Widget {
+  return agTooltipContent({ label: args.label, items: args.items, config: context.config });
+}
 
 const agCustom: Partial<ScatterChartCustom<AgScatterChartConfig>> = {
   layout: cartesian.agLayout,
@@ -20,6 +29,7 @@ const agCustom: Partial<ScatterChartCustom<AgScatterChartConfig>> = {
   dataView: agDataView,
   legend: (args, context) => agLegend(args, context, { markerShape: "circle" }),
   title: agTitle,
+  tooltip: agTooltip,
   axisCorner: cartesian.agAxisCorner,
   xAxisLabel: cartesian.agXAxisLabel,
   yAxisLabel: cartesian.agYAxisLabel,

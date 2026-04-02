@@ -18,7 +18,6 @@ import {
 } from "flitter-core";
 import { LineChartProvider } from "flitter-ui/chart";
 import type { AgCartesianBaseConfig } from "../cartesian/config";
-import { tooltipContent } from "../tooltip";
 
 const ANIMATION_DURATION = 150;
 const FADE_DURATION = 100;
@@ -63,7 +62,6 @@ class _AgLineLikeTooltipOverlayState extends State<_AgLineLikeTooltipOverlay> {
   override build(context: BuildContext): Widget {
     const ctx = LineChartProvider.of(context);
     const config: AgCartesianBaseConfig = ctx.config;
-    const { tooltip } = config;
     const { hoveredPoint } = ctx;
 
     // Resolve tooltip data from hovered point
@@ -117,6 +115,7 @@ class _AgLineLikeTooltipOverlayState extends State<_AgLineLikeTooltipOverlay> {
       this.widget.child,
 
       // Mouse tracking layer for closest-point hover detection (translucent so children below still receive hit tests)
+      // onMouseLeave is handled by headless (dataView wrapper), only onMouseMove for position tracking
       Positioned.fill({
         child: GestureDetector({
           behavior: "translucent",
@@ -158,9 +157,6 @@ class _AgLineLikeTooltipOverlayState extends State<_AgLineLikeTooltipOverlay> {
               }
             }
           },
-          onMouseLeave: () => {
-            ctx.unhoverPoint();
-          },
           child: SizedBox.expand(),
         }),
       }),
@@ -184,11 +180,10 @@ class _AgLineLikeTooltipOverlayState extends State<_AgLineLikeTooltipOverlay> {
                 constraintsTransform: ConstraintsTransformBox.unconstrained,
                 child: ZIndex({
                   zIndex: 9999,
-                  child: tooltipContent({
-                    label: showData.label,
-                    items: { legend: showData.legend, color: showData.color, value: showData.value },
-                    config,
-                  }),
+                  child: ctx.custom.tooltip(
+                    { label: showData.label, items: [{ legend: showData.legend, color: showData.color, value: showData.value }] },
+                    ctx,
+                  ),
                 }),
               }),
             }),

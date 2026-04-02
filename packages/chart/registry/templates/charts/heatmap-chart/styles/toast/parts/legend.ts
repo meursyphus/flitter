@@ -1,6 +1,4 @@
 import {
-	StatefulWidget,
-	State,
 	CustomPaint,
 	Column,
 	Row,
@@ -24,7 +22,6 @@ import {
 	type BuildContext,
 } from "flitter-core";
 import type { HeatmapContext } from "@headless/heatmap-chart/types";
-import type { HeatmapController } from "@headless/heatmap-chart/controller";
 import type { ToastHeatmapChartConfig } from "../config";
 import { interpolateColor } from "./segment";
 
@@ -188,111 +185,60 @@ function buildHoverIndicator(
 	});
 }
 
-// StatefulWidget so we can listen to hover changes without full tree rebuild
-class _HeatmapLegend extends StatefulWidget {
-	controller: HeatmapController;
-	config: ToastHeatmapChartConfig;
-
-	constructor({
-		controller,
-		config,
-	}: {
-		controller: HeatmapController;
-		config: ToastHeatmapChartConfig;
-	}) {
-		super();
-		this.controller = controller;
-		this.config = config;
-	}
-
-	createState() {
-		return new _HeatmapLegendState();
-	}
-}
-
-class _HeatmapLegendState extends State<_HeatmapLegend> {
-	#onHoverChange = () => {
-		this.setState(() => {});
-	};
-
-	override initState(): void {
-		this.widget.controller.addHoverListener(this.#onHoverChange);
-	}
-
-	override didUpdateWidget(oldWidget: _HeatmapLegend): void {
-		if (oldWidget.controller !== this.widget.controller) {
-			oldWidget.controller.removeHoverListener(this.#onHoverChange);
-			this.widget.controller.addHoverListener(this.#onHoverChange);
-		}
-	}
-
-	override dispose(): void {
-		this.widget.controller.removeHoverListener(this.#onHoverChange);
-	}
-
-	override build(): Widget {
-		const { controller, config } = this.widget;
-		const { font, legend: legendConfig, heatmap: heatmapConfig } = config;
-		const { colorRange } = heatmapConfig;
-		const { min, max } = controller.scale;
-		const hovered = controller.hovered;
-
-		if (!legendConfig.visible) {
-			return SizedBox.shrink();
-		}
-
-		const ticks = generateTicks(min, max);
-		const range = max - min;
-
-		return Row({
-			mainAxisAlignment: MainAxisAlignment.center,
-			mainAxisSize: MainAxisSize.max,
-			children: [
-				SizedBox({
-					width: MAX_BAR_WIDTH,
-					child: LayoutBuilder({
-						builder: (_: BuildContext, constraints) => {
-							const barWidth = constraints.maxWidth;
-							const hasHover = hovered != null && range > 0;
-							const fraction = hasHover
-								? (hovered!.value - min) / range
-								: 0;
-							const indicatorColor = hasHover
-								? interpolateColor(colorRange, fraction)
-								: "";
-
-							return Column({
-								mainAxisSize: MainAxisSize.min,
-								crossAxisAlignment: CrossAxisAlignment.stretch,
-								children: [
-									hasHover
-										? buildHoverIndicator(
-												hovered!.value,
-												fraction,
-												indicatorColor,
-												font,
-												barWidth,
-											)
-										: SizedBox({ height: INDICATOR_HEIGHT }),
-									gradientBar(colorRange, barWidth),
-									SizedBox({ height: LABEL_GAP }),
-									buildTickLabels(ticks, font),
-								],
-							});
-						},
-					}),
-				}),
-			],
-		});
-	}
-}
-
 export function toastHeatmapLegend(
 	_args: undefined,
 	context: HeatmapContext<ToastHeatmapChartConfig>,
 ): Widget {
-	return new _HeatmapLegend({
-		controller: context as unknown as HeatmapController,
-		config: context.config,
+	const { font, legend: legendConfig, heatmap: heatmapConfig } = context.config;
+	const { colorRange } = heatmapConfig;
+	const { min, max } = context.scale;
+	const hovered = context.hoveredSegment;
+
+	if (!legendConfig.visible) {
+		return SizedBox.shrink();
+	}
+
+	const ticks = generateTicks(min, max);
+	const range = max - min;
+
+	return Row({
+		mainAxisAlignment: MainAxisAlignment.center,
+		mainAxisSize: MainAxisSize.max,
+		children: [
+			SizedBox({
+				width: MAX_BAR_WIDTH,
+				child: LayoutBuilder({
+					builder: (_: BuildContext, constraints) => {
+						const barWidth = constraints.maxWidth;
+						const hasHover = hovered != null && range > 0;
+						const fraction = hasHover
+							? (hovered!.value - min) / range
+							: 0;
+						const indicatorColor = hasHover
+							? interpolateColor(colorRange, fraction)
+							: "";
+
+						return Column({
+							mainAxisSize: MainAxisSize.min,
+							crossAxisAlignment: CrossAxisAlignment.stretch,
+							children: [
+								hasHover
+									? buildHoverIndicator(
+											hovered!.value,
+											fraction,
+											indicatorColor,
+											font,
+											barWidth,
+										)
+									: SizedBox({ height: INDICATOR_HEIGHT }),
+								gradientBar(colorRange, barWidth),
+								SizedBox({ height: LABEL_GAP }),
+								buildTickLabels(ticks, font),
+							],
+						});
+					},
+				}),
+			}),
+		],
 	});
 }

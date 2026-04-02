@@ -13,7 +13,7 @@ import {
 import type { BarChartCustom } from "flitter-ui/chart";
 
 export function stackedBarGroup<TConfig>(
-  ...[{ bars }, ctx]: Parameters<BarChartCustom<TConfig>['barGroup']>
+  ...[{ bars, label, index: categoryIndex }, ctx]: Parameters<BarChartCustom<TConfig>['barGroup']>
 ): Widget {
   const { scale, direction } = ctx;
   if (scale == null) return SizedBox.shrink();
@@ -41,8 +41,9 @@ export function stackedBarGroup<TConfig>(
   ) => {
     const stackChildren = [...items].reverse().map(({ bar, value, datasetIndex }) => {
       const ratio = Math.abs(value) / rangeMax;
+      const legend = ctx.data.datasets[datasetIndex].legend;
       return ctx.custom.barBox(
-        { bar, value, ratio, alignment: baseAlignment, index: datasetIndex },
+        { bar, value, ratio, alignment: baseAlignment, index: datasetIndex, label, legend, isHovered: ctx.isBarHovered(categoryIndex, legend) },
         ctx,
       );
     });

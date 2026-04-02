@@ -153,7 +153,7 @@ class _AnimatedAreaState extends State<_AnimatedArea> {
 }
 
 export function toastArea(
-  ...[{ values, legend }, ctx]: Parameters<LineChartCustom<ToastAreaChartConfig>["line"]>
+  ...[{ values, legend, isHovered: _isHovered }, ctx]: Parameters<LineChartCustom<ToastAreaChartConfig>["line"]>
 ) {
   const { scale, config } = ctx;
   if (scale == null) return SizedBox.shrink();

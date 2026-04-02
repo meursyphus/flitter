@@ -3,6 +3,7 @@ import {
 	type Widget,
 	type BuildContext,
 	LayoutBuilder,
+	GestureDetector,
 } from "flitter-core";
 import { HeatmapChartProvider } from "./provider";
 
@@ -186,7 +187,11 @@ class HeatmapWidget extends StatelessWidget {
 		const segments: Widget[][] = ctx.data.values.map((row, yIndex) =>
 			row.map((value, xIndex) => new SegmentWidget({ value, xIndex, yIndex })),
 		);
-		return ctx.custom.dataView({ segments }, ctx);
+		return GestureDetector({
+			behavior: "translucent",
+			onMouseLeave: () => ctx.unhoverAllSegments(),
+			child: ctx.custom.dataView({ segments }, ctx),
+		});
 	}
 }
 
@@ -212,9 +217,17 @@ class SegmentWidget extends StatelessWidget {
 
 	override build(context: BuildContext): Widget {
 		const ctx = HeatmapChartProvider.of(context);
-		return ctx.custom.segment(
-			{ value: this.#value, xIndex: this.#xIndex, yIndex: this.#yIndex },
-			ctx,
-		);
+		const xIndex = this.#xIndex;
+		const yIndex = this.#yIndex;
+		const isHovered = ctx.isSegmentHovered(xIndex, yIndex);
+		return GestureDetector({
+			cursor: "default",
+			onMouseEnter: () => ctx.hoverSegment(xIndex, yIndex),
+			onMouseLeave: () => ctx.unhoverSegment(xIndex, yIndex),
+			child: ctx.custom.segment(
+				{ value: this.#value, xIndex, yIndex, isHovered },
+				ctx,
+			),
+		});
 	}
 }

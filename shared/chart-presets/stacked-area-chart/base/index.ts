@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitter-core";
 import { LineChart as HeadlessLineChart } from "flitter-ui/chart";
 import type {
   LineChartCustom,
@@ -19,6 +19,7 @@ const baseDefaults: Partial<LineChartCustom> = {
   plot: (...args) => Cartesian.Plot(args[0]),
   dataLabel: (...args) => Cartesian.DataLabel(args[0]),
   grid: Grid,
+  tooltip: () => SizedBox.shrink(),
 };
 
 export function BaseStackedAreaChart<TConfig = {}>({

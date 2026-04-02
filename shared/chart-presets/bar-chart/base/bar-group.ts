@@ -13,7 +13,7 @@ import {
 import type { BarChartCustom } from 'flitter-ui/chart';
 
 export function BarGroup(
-	...[{ bars }, ctx]: Parameters<BarChartCustom['barGroup']>
+	...[{ bars, index: categoryIndex, label }, ctx]: Parameters<BarChartCustom['barGroup']>
 ): Widget {
 	const { scale, direction } = ctx;
 	if (scale == null) return SizedBox.shrink();
@@ -23,6 +23,9 @@ export function BarGroup(
 	const hasNegative = scale.min < 0;
 
 	const barChildren = bars.map(({ bar, value, datasetIndex }) => {
+		const legend = ctx.data.datasets[datasetIndex].legend;
+		const isHovered = ctx.isBarHovered(categoryIndex, legend);
+
 		if (!hasNegative) {
 			const ratio = value / total;
 			const alignment = isVertical
@@ -30,7 +33,7 @@ export function BarGroup(
 				: Alignment.centerLeft;
 			return Flexible({
 				flex: 1,
-				child: ctx.custom.barBox({ bar, value, ratio, alignment, index: datasetIndex }, ctx),
+				child: ctx.custom.barBox({ bar, value, ratio, alignment, index: datasetIndex, label, legend, isHovered }, ctx),
 			});
 		}
 
@@ -49,7 +52,7 @@ export function BarGroup(
 				? Alignment.topCenter
 				: Alignment.centerRight;
 
-		const barBox = ctx.custom.barBox({ bar, value, ratio, alignment, index: datasetIndex }, ctx);
+		const barBox = ctx.custom.barBox({ bar, value, ratio, alignment, index: datasetIndex, label, legend, isHovered }, ctx);
 
 		const positiveChild = isPositive ? barBox : SizedBox.shrink();
 		const negativeChild = !isPositive ? barBox : SizedBox.shrink();

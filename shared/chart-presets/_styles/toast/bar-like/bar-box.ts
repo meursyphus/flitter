@@ -2,7 +2,7 @@ import type { BarChartCustom } from "flitter-ui/chart";
 import { EdgeInsets, FractionallySizedBox, Padding } from "flitter-core";
 
 export function BarBox(
-  ...[{ bar, ratio, alignment }, { direction }]: Parameters<BarChartCustom["barBox"]>
+  ...[{ bar, ratio, alignment }, { direction }]: Parameters<BarChartCustom['barBox']>
 ) {
   const isVertical = direction === "vertical";
   return FractionallySizedBox({

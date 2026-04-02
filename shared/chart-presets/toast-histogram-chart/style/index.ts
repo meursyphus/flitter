@@ -1,95 +1,31 @@
-import {
-  Alignment,
-  Axis,
-  Border,
-  BoxDecoration,
-  BoxShadow,
-  Container,
-  Flex,
-  Flexible,
-  FractionallySizedBox,
-  type Widget,
-} from "flitter-core";
-import type { HistogramChartCustom } from "flitter-ui/chart";
+import type { HistogramChartCustom, HistogramChartContext } from "flitter-ui/chart";
 import type { HistogramChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import * as Cartesian from "flitter-ui/chart";
 import { toastTitle, tooltipContent, cartesian } from "../../_styles/toast/index";
-import { HoverTooltip } from "flitter-ui/chart";
-import { AnimatedDataView } from "../../_styles/toast/cartesian/animated-data-view";
+import { toastBar } from "./parts/bar";
+import { toastDataView } from "./parts/data-view";
+import type { Widget } from "flitter-core";
+import { Container } from "flitter-core";
 
 export { type HistogramChartConfig } from "./config";
+
+function toastTooltipContent(
+  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  context: HistogramChartContext<HistogramChartConfig>,
+): Widget {
+  return tooltipContent({ label: args.label, items: args.items, config: context.config });
+}
 
 const toastCustom: Partial<HistogramChartCustom<HistogramChartConfig>> = {
   layout: ({ title, plot }, ctx) =>
     cartesian.toastLayout({ title, legends: [], plot }, ctx as any),
   plot: ({ xAxis, yAxis, dataView, grid, axisCorner }) =>
     Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner }),
-  dataView: ({ bars }, ctx) => {
-    const child = Container({
-      width: Infinity,
-      height: Infinity,
-      child: Flex({
-        direction: Axis.horizontal,
-        children: bars.map((bar) =>
-          Flexible({
-            flex: 1,
-            child: bar,
-          }),
-        ),
-      }),
-    });
-
-    const scale = ctx.scale;
-    const baselineRatio =
-      scale ? Math.max(0, Math.min(1, (0 - scale.min) / (scale.max - scale.min))) : 0;
-
-    return new AnimatedDataView({
-      child,
-      duration: ctx.config.animation.duration,
-      isVertical: true,
-      baselineRatio,
-    });
-  },
-  bar: ({ binMin, binMax, count }, ctx) => {
-    const scale = ctx.scale;
-    const ratio =
-      scale && scale.max > scale.min ? (count - scale.min) / (scale.max - scale.min) : 0;
-    const color = ctx.config.colors[0];
-
-    return new HoverTooltip({
-      position: "topCenter",
-      tooltip: tooltipContent({
-        label: `${binMin} - ${binMax}`,
-        items: { legend: "Count", color, value: count },
-        config: ctx.config as any,
-      }),
-      renderChild: (hovered) =>
-        Container({
-          width: Infinity,
-          height: Infinity,
-          alignment: Alignment.bottomCenter,
-          child: FractionallySizedBox({
-            heightFactor: Math.max(0, Math.min(1, ratio)),
-            child: Container({
-              width: Infinity,
-              height: Infinity,
-              decoration: new BoxDecoration({
-                color,
-                border:
-                  hovered
-                    ? Border.all({ color: "white", width: 3, strokeAlign: 1 })
-                    : undefined,
-                boxShadow: hovered
-                  ? [new BoxShadow({ color: "rgba(0,0,0,0.22)", blurRadius: 10 })]
-                  : undefined,
-              }),
-            }),
-          }),
-        }),
-    });
-  },
+  dataView: toastDataView,
+  bar: toastBar,
+  tooltip: toastTooltipContent,
   xAxis: ({ line, labels, tick }, ctx) => cartesian.toastXAxis({ line, labels, tick } as any, { type: "label" }, ctx as any),
   yAxis: ({ line, labels, tick }, ctx) => cartesian.toastYAxis({ line, labels, tick } as any, { type: "value" }, ctx as any),
   xAxisLabel: cartesian.toastXAxisLabel,

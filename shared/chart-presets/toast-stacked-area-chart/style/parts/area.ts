@@ -196,7 +196,7 @@ class _AnimatedStackedAreaState extends State<_AnimatedStackedArea> {
 }
 
 export function toastArea(
-  ...[{ values, legend, index }, ctx]: Parameters<LineChartCustom<ToastStackedAreaChartConfig>["line"]>
+  ...[{ values, legend, index, isHovered: _isHovered }, ctx]: Parameters<LineChartCustom<ToastStackedAreaChartConfig>["line"]>
 ) {
   const { scale, config, data } = ctx;
   if (scale == null) return SizedBox.shrink();

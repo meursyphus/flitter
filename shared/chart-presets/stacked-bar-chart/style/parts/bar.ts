@@ -2,7 +2,6 @@ import {
   Container,
   EdgeInsets,
   BoxDecoration,
-  GestureDetector,
   Opacity,
   type Widget,
 } from "flitter-core";
@@ -10,7 +9,7 @@ import type { BarChartContext } from "flitter-ui/chart";
 import type { AgStackedBarChartConfig } from "../config";
 
 export function agBar(
-  { legend, index }: { value: number; label: string; legend: string; index: number },
+  { legend, index, isHovered }: { value: number; label: string; legend: string; index: number; isHovered: boolean },
   context: BarChartContext<AgStackedBarChartConfig>,
 ): Widget {
   const { colors, bar } = context.config;
@@ -20,7 +19,7 @@ export function agBar(
 
   let opacity = 1;
   if (hoveredBar != null) {
-    if (context.isBarHovered(index, legend)) {
+    if (isHovered) {
       opacity = 1;
     } else if (hoveredBar.legend === legend) {
       opacity = 0.8;
@@ -34,11 +33,7 @@ export function agBar(
     decoration: new BoxDecoration({ color }),
   });
 
-  return GestureDetector({
-    cursor: "default",
-    onMouseEnter: () => context.hoverBar(index, legend),
-    child: opacity < 1
-      ? Opacity({ opacity, child: barWidget })
-      : barWidget,
-  });
+  return opacity < 1
+    ? Opacity({ opacity, child: barWidget })
+    : barWidget;
 }

@@ -4,6 +4,7 @@ import {
   type BuildContext,
   LayoutBuilder,
   SizedBox,
+  GestureDetector,
 } from "flitter-core";
 import { BarChartProvider } from "./provider";
 
@@ -55,7 +56,12 @@ class Legend extends StatelessWidget {
 
   override build(context: BuildContext): Widget {
     const ctx = BarChartProvider.of(context);
-    return ctx.custom.legend({ name: this.#name, index: this.#index }, ctx);
+    const name = this.#name;
+    const isVisible = ctx.isSeriesVisible(name);
+    return GestureDetector({
+      onClick: () => ctx.toggleSeries(name),
+      child: ctx.custom.legend({ name, index: this.#index, isVisible }, ctx),
+    });
   }
 }
 
@@ -257,15 +263,24 @@ class Bar extends StatelessWidget {
 
   override build(context: BuildContext): Widget {
     const ctx = BarChartProvider.of(context);
-    return ctx.custom.bar(
-      {
-        value: this.#value,
-        index: this.#index,
-        legend: this.#legend,
-        label: this.#label,
-      },
-      ctx,
-    );
+    const index = this.#index;
+    const legend = this.#legend;
+    const isHovered = ctx.isBarHovered(index, legend);
+    return GestureDetector({
+      cursor: "default",
+      onMouseEnter: () => ctx.hoverBar(index, legend),
+      onMouseLeave: () => ctx.unhoverBar(index, legend),
+      child: ctx.custom.bar(
+        {
+          value: this.#value,
+          index,
+          legend,
+          label: this.#label,
+          isHovered,
+        },
+        ctx,
+      ),
+    });
   }
 }
 
@@ -290,19 +305,23 @@ class DataView extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const ctx = BarChartProvider.of(context);
     const { data } = ctx;
-    return ctx.custom.dataView(
-      {
-        barGroups: Array.from(
-          { length: data.labels.length },
-          (_, index) =>
-            new BarGroup({
-              values: data.datasets.map(({ values }) => values[index]),
-              index,
-            }),
-        ),
-      },
-      ctx,
-    );
+    return GestureDetector({
+      behavior: "translucent",
+      onMouseLeave: () => ctx.unhoverAllBars(),
+      child: ctx.custom.dataView(
+        {
+          barGroups: Array.from(
+            { length: data.labels.length },
+            (_, index) =>
+              new BarGroup({
+                values: data.datasets.map(({ values }) => values[index]),
+                index,
+              }),
+          ),
+        },
+        ctx,
+      ),
+    });
   }
 }
 

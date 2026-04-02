@@ -7,7 +7,6 @@ import {
   Padding,
   MainAxisSize,
   Opacity,
-  GestureDetector,
   Container,
   BoxDecoration,
   type Widget,
@@ -16,17 +15,16 @@ import { CheckBox } from "./checkbox";
 import type { ToastBaseConfig } from "./cartesian/config";
 
 export function toastLegend(
-  { name, index }: { name: string; index: number },
+  { name, index, isVisible }: { name: string; index: number; isVisible?: boolean },
   context: {
     config: ToastBaseConfig;
-    isSeriesVisible(legend: string): boolean;
-    toggleSeries(legend: string): void;
+    isSeriesVisible?(legend: string): boolean;
   },
   { markerShape }: { markerShape?: "checkbox" | "circle" } = {},
 ): Widget {
   const { colors, font } = context.config;
   const color = colors[index % colors.length];
-  const visible = context.isSeriesVisible(name);
+  const visible = isVisible ?? context.isSeriesVisible?.(name) ?? true;
 
   const marker =
     markerShape === "circle"
@@ -55,13 +53,10 @@ export function toastLegend(
     }),
   });
 
-  return GestureDetector({
-    onClick: () => context.toggleSeries(name),
-    child: visible
-      ? content
-      : Opacity({
-          opacity: 0.4,
-          child: content,
-        }),
-  });
+  return visible
+    ? content
+    : Opacity({
+        opacity: 0.4,
+        child: content,
+      });
 }

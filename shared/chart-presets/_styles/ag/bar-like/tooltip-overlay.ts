@@ -16,7 +16,6 @@ import {
   type Widget,
 } from "flitter-core";
 import type { AgCartesianBaseConfig } from "../cartesian/config";
-import { tooltipContent } from "../tooltip";
 
 const TOOLTIP_OFFSET = 12;
 const ANIMATION_DURATION = 150;
@@ -25,10 +24,12 @@ const MOUSE_THRESHOLD = 3; // px – ignore movements smaller than this to reduc
 
 type BarChartLikeContext = {
   hoveredBar: { index: number; legend: string } | null;
-  unhoverBar(): void;
   data: { datasets: { legend: string; values: number[] }[]; labels: string[] };
   legends: string[];
   config: AgCartesianBaseConfig;
+  custom: {
+    tooltip: (args: { label: string; items: { legend: string; color: string; value: number }[] }, context: any) => Widget;
+  };
 };
 
 class _AgTooltipOverlay extends StatefulWidget {
@@ -112,6 +113,7 @@ class _AgTooltipOverlayState extends State<_AgTooltipOverlay> {
       this.widget.child,
 
       // Transparent mouse-tracking layer (translucent so bars below still receive hit tests)
+      // onMouseLeave is handled by headless (dataView wrapper), only onMouseMove for position tracking
       Positioned.fill({
         child: GestureDetector({
           behavior: "translucent",
@@ -125,9 +127,6 @@ class _AgTooltipOverlayState extends State<_AgTooltipOverlay> {
               this.mouseX = local.x;
               this.mouseY = local.y;
             });
-          },
-          onMouseLeave: () => {
-            ctx.unhoverBar();
           },
           child: SizedBox.expand(),
         }),
@@ -152,11 +151,10 @@ class _AgTooltipOverlayState extends State<_AgTooltipOverlay> {
                 constraintsTransform: ConstraintsTransformBox.unconstrained,
                 child: ZIndex({
                   zIndex: 9999,
-                  child: tooltipContent({
-                    label: showData.label,
-                    items: { legend: showData.legend, color: showData.color, value: showData.value },
-                    config,
-                  }),
+                  child: ctx.custom.tooltip(
+                    { label: showData.label, items: [{ legend: showData.legend, color: showData.color, value: showData.value }] },
+                    ctx,
+                  ),
                 }),
               }),
             }),

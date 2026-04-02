@@ -13,14 +13,11 @@ import {
   Size,
   SizedBox,
   Stack,
-  State,
-  StatefulWidget,
   Text,
   TextStyle,
   type Widget,
 } from "flitter-core";
 import type { HeatmapContext } from "flitter-ui/chart";
-import type { HeatmapController } from "flitter-ui/chart";
 import type { AgHeatmapChartConfig } from "../config";
 
 const BAR_HEIGHT = 12;
@@ -129,140 +126,93 @@ function gradientBar(colorRange: [string, string, string]): Widget {
   });
 }
 
-class _AgHeatmapLegend extends StatefulWidget {
-  context: HeatmapContext<AgHeatmapChartConfig>;
-
-  constructor({ context }: { context: HeatmapContext<AgHeatmapChartConfig> }) {
-    super();
-    this.context = context;
-  }
-
-  createState() {
-    return new _AgHeatmapLegendState();
-  }
-}
-
-class _AgHeatmapLegendState extends State<_AgHeatmapLegend> {
-  #onHoverChange = () => {
-    this.setState(() => {});
-  };
-
-  override initState(): void {
-    (this.widget.context as unknown as HeatmapController).addHoverListener(
-      this.#onHoverChange,
-    );
-  }
-
-  override didUpdateWidget(oldWidget: _AgHeatmapLegend): void {
-    if (oldWidget.context !== this.widget.context) {
-      (oldWidget.context as unknown as HeatmapController).removeHoverListener(
-        this.#onHoverChange,
-      );
-      (this.widget.context as unknown as HeatmapController).addHoverListener(
-        this.#onHoverChange,
-      );
-    }
-  }
-
-  override dispose(): void {
-    (this.widget.context as unknown as HeatmapController).removeHoverListener(
-      this.#onHoverChange,
-    );
-  }
-
-  override build(): Widget {
-    const { context } = this.widget;
-    const { scale, config } = context;
-    const hovered = context.hovered;
-    const ticks = generateNiceTicks(scale.min, scale.max);
-    const range = scale.max - scale.min;
-
-    const textStyle = new TextStyle({
-      fontFamily: config.font.family,
-      fontSize: config.font.size,
-      color: config.axis.label.color,
-    });
-
-    return LayoutBuilder({
-      builder: (_ctx, constraints) => {
-        const availableWidth =
-          Number.isFinite(constraints.maxWidth) && constraints.maxWidth > 0
-            ? constraints.maxWidth
-            : MAX_BAR_WIDTH;
-        const barWidth = Math.min(MAX_BAR_WIDTH, availableWidth);
-
-        const indicatorRow = SizedBox({
-          height: TRIANGLE_HEIGHT + INDICATOR_GAP,
-          child:
-            hovered != null && range > 0
-              ? Stack({
-                  clipped: false,
-                  children: [
-                    SizedBox.expand(),
-                    Positioned({
-                      left:
-                        ((hovered.value - scale.min) / range) * barWidth -
-                        TRIANGLE_WIDTH / 2,
-                      bottom: INDICATOR_GAP,
-                      child: blackTriangle(),
-                    }),
-                  ],
-                })
-              : SizedBox.shrink(),
-        });
-
-        const tickRow = SizedBox({
-          height: 20,
-          child: Stack({
-            clipped: false,
-            children: [
-              SizedBox.expand(),
-              ...ticks.map((tick) => {
-                const fraction =
-                  range > 0 ? (tick - scale.min) / range : 0.5;
-                return Positioned({
-                  left: fraction * barWidth,
-                  top: 0,
-                  child: FractionalTranslation({
-                    translation: new Offset({ x: -0.5, y: 0 }),
-                    child: ConstraintsTransformBox({
-                      constraintsTransform:
-                        ConstraintsTransformBox.unconstrained,
-                      child: Text(`${tick}`, { style: textStyle }),
-                    }),
-                  }),
-                });
-              }),
-            ],
-          }),
-        });
-
-        return Row({
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox({
-              width: barWidth,
-              child: Column({
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  indicatorRow,
-                  gradientBar(config.heatmap.colorRange),
-                  SizedBox({ height: LABEL_GAP }),
-                  tickRow,
-                ],
-              }),
-            }),
-          ],
-        });
-      },
-    });
-  }
-}
-
 export function agHeatmapLegend(
   _args: undefined,
   context: HeatmapContext<AgHeatmapChartConfig>,
 ): Widget {
-  return new _AgHeatmapLegend({ context });
+  const { scale, config } = context;
+  const hovered = context.hoveredSegment;
+  const ticks = generateNiceTicks(scale.min, scale.max);
+  const range = scale.max - scale.min;
+
+  const textStyle = new TextStyle({
+    fontFamily: config.font.family,
+    fontSize: config.font.size,
+    color: config.axis.label.color,
+  });
+
+  return LayoutBuilder({
+    builder: (_ctx, constraints) => {
+      const availableWidth =
+        Number.isFinite(constraints.maxWidth) && constraints.maxWidth > 0
+          ? constraints.maxWidth
+          : MAX_BAR_WIDTH;
+      const barWidth = Math.min(MAX_BAR_WIDTH, availableWidth);
+
+      const indicatorRow = SizedBox({
+        height: TRIANGLE_HEIGHT + INDICATOR_GAP,
+        child:
+          hovered != null && range > 0
+            ? Stack({
+                clipped: false,
+                children: [
+                  SizedBox.expand(),
+                  Positioned({
+                    left:
+                      ((hovered.value - scale.min) / range) * barWidth -
+                      TRIANGLE_WIDTH / 2,
+                    bottom: INDICATOR_GAP,
+                    child: blackTriangle(),
+                  }),
+                ],
+              })
+            : SizedBox.shrink(),
+      });
+
+      const tickRow = SizedBox({
+        height: 20,
+        child: Stack({
+          clipped: false,
+          children: [
+            SizedBox.expand(),
+            ...ticks.map((tick) => {
+              const fraction =
+                range > 0 ? (tick - scale.min) / range : 0.5;
+              return Positioned({
+                left: fraction * barWidth,
+                top: 0,
+                child: FractionalTranslation({
+                  translation: new Offset({ x: -0.5, y: 0 }),
+                  child: ConstraintsTransformBox({
+                    constraintsTransform:
+                      ConstraintsTransformBox.unconstrained,
+                    child: Text(`${tick}`, { style: textStyle }),
+                  }),
+                }),
+              });
+            }),
+          ],
+        }),
+      });
+
+      return Row({
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox({
+            width: barWidth,
+            child: Column({
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                indicatorRow,
+                gradientBar(config.heatmap.colorRange),
+                SizedBox({ height: LABEL_GAP }),
+                tickRow,
+              ],
+            }),
+          }),
+        ],
+      });
+    },
+  });
 }

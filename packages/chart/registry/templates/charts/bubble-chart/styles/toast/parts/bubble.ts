@@ -15,23 +15,17 @@ import {
   Stack,
   StackFit,
   Positioned,
-  GestureDetector,
   ZIndex,
   Padding,
   FractionalTranslation,
   ConstraintsTransformBox,
   SizedBox,
-  Row,
-  MainAxisSize,
-  Text,
-  TextStyle,
-  BorderRadius,
-  Radius,
   EdgeInsets,
   Offset,
   type Widget,
   type TooltipPosition,
 } from "flitter-core";
+import Tooltip from "flitter-core/component/Tooltip";
 import type { BubbleChartCustom } from "@headless/bubble-chart/types";
 import type { ToastBubbleChartConfig } from "../config";
 
@@ -73,68 +67,6 @@ function computeTooltipLayout(
     offset: Offset.Constants.zero,
     padding: EdgeInsets.only({ right: TOOLTIP_GAP }),
   };
-}
-
-// --- Bubble tooltip content ---
-
-function bubbleTooltipContent({
-  legend,
-  color,
-  x,
-  y,
-  config,
-}: {
-  legend: string;
-  color: string;
-  x: number;
-  y: number;
-  config: ToastBubbleChartConfig;
-}): Widget {
-  const { tooltip, font } = config;
-
-  return Container({
-    padding: EdgeInsets.symmetric({ horizontal: tooltip.padding + 2, vertical: tooltip.padding }),
-    decoration: new BoxDecoration({
-      color: tooltip.backgroundColor,
-      borderRadius: tooltip.borderRadius > 0 ? BorderRadius.all(Radius.circular(tooltip.borderRadius)) : undefined,
-      boxShadow: [
-        new BoxShadow({
-          color: "rgba(0,0,0,0.2)",
-          blurRadius: 16,
-        }),
-      ],
-    }),
-    child: Row({
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container({
-          width: 12,
-          height: 12,
-          decoration: new BoxDecoration({
-            color,
-            borderRadius: BorderRadius.all(Radius.circular(2)),
-          }),
-        }),
-        SizedBox({ width: 10 }),
-        Text(legend, {
-          style: new TextStyle({
-            fontFamily: font.family,
-            fontSize: 12,
-            color: tooltip.textColor,
-          }),
-        }),
-        SizedBox({ width: 16 }),
-        Text(`(${x}, ${y})`, {
-          style: new TextStyle({
-            fontFamily: font.family,
-            fontSize: 12,
-            fontWeight: "bold",
-            color: tooltip.textColor,
-          }),
-        }),
-      ],
-    }),
-  });
 }
 
 // --- Mount animation ---
@@ -180,53 +112,39 @@ class _MountScaleState extends State<_MountScale> {
   }
 }
 
-// --- Hoverable bubble ---
+// --- Tooltip positioner ---
 
-class _HoverableBubble extends StatefulWidget {
+/**
+ * Lightweight StatefulWidget solely for tooltip positioning.
+ * Hover state is managed by headless; this only computes layout
+ * when isHovered becomes true.
+ */
+class _TooltipPositioner extends StatefulWidget {
   bubbleWidget: Widget;
-  legend: string;
-  color: string;
-  radius: number;
-  dataX: number;
-  dataY: number;
-  config: ToastBubbleChartConfig;
+  tooltipWidget: Widget;
+  isHovered: boolean;
 
   constructor({
-    key,
     bubbleWidget,
-    legend,
-    color,
-    radius,
-    dataX,
-    dataY,
-    config,
+    tooltipWidget,
+    isHovered,
   }: {
-    key?: any;
     bubbleWidget: Widget;
-    legend: string;
-    color: string;
-    radius: number;
-    dataX: number;
-    dataY: number;
-    config: ToastBubbleChartConfig;
+    tooltipWidget: Widget;
+    isHovered: boolean;
   }) {
-    super(key);
+    super();
     this.bubbleWidget = bubbleWidget;
-    this.legend = legend;
-    this.color = color;
-    this.radius = radius;
-    this.dataX = dataX;
-    this.dataY = dataY;
-    this.config = config;
+    this.tooltipWidget = tooltipWidget;
+    this.isHovered = isHovered;
   }
 
   createState() {
-    return new _HoverableBubbleState();
+    return new _TooltipPositionerState();
   }
 }
 
-class _HoverableBubbleState extends State<_HoverableBubble> {
-  hovered = false;
+class _TooltipPositionerState extends State<_TooltipPositioner> {
   tooltipLayout: TooltipLayout | null = null;
 
   private findPlotGlobal(): { x: number; y: number; width: number; height: number } | null {
@@ -242,105 +160,65 @@ class _HoverableBubbleState extends State<_HoverableBubble> {
     return null;
   }
 
-  override build(): Widget {
-    const { bubbleWidget, legend, color, radius, dataX, dataY, config } = this.widget;
-    const diameter = radius * 2;
-
-    const children: Widget[] = [];
-
-    // Always keep bubbleWidget in tree (prevents animation re-trigger)
-    children.push(bubbleWidget);
-
-    // GestureDetector overlay for hover detection
-    children.push(
-      Positioned({
-        key: "__hit__",
-        top: 0, left: 0, bottom: 0, right: 0,
-        child: GestureDetector({
-          cursor: "pointer",
-          onMouseEnter: () => {
-            const plot = this.findPlotGlobal();
-            const pointGlobal = this.element.renderObject.localToGlobal();
-            if (plot) {
-              this.tooltipLayout = computeTooltipLayout(
-                plot,
-                pointGlobal,
-                plot.width,
-                plot.height,
-              );
-            }
-            this.setState(() => {
-              this.hovered = true;
-            });
-          },
-          onMouseLeave: () => {
-            this.setState(() => {
-              this.hovered = false;
-            });
-          },
-          child: SizedBox.expand(),
-        }),
-      }),
-    );
-
-    if (this.hovered) {
-      // Full opacity bubble + white border + shadow (overlaid)
-      children.push(
-        Positioned({
-          key: "__highlight__",
-          top: 0, left: 0, bottom: 0, right: 0,
-          child: Container({
-            width: diameter,
-            height: diameter,
-            decoration: new BoxDecoration({
-              color,
-              shape: "circle",
-              border: Border.all({ color: "white", width: 2, strokeAlign: 1 }),
-              boxShadow: [
-                new BoxShadow({ color: "rgba(0,0,0,0.3)", blurRadius: 8 }),
-              ],
-            }),
-          }),
-        }),
-      );
-
-      const layout = this.tooltipLayout;
-
-      children.push(
-        Positioned({
-          key: "__tooltip__",
-          top: 0, left: 0, bottom: 0, right: 0,
-          child: FractionalTranslation({
-            translation: layout?.offset ?? Offset.Constants.zero,
-            child: ConstraintsTransformBox({
-              constraintsTransform: ConstraintsTransformBox.unconstrained,
-              alignment: Alignment[layout?.position ?? "topRight"],
-              child: FractionalTranslation({
-                translation: layout?.translation ?? new Offset({ x: 1, y: 0 }),
-                child: ZIndex({
-                  zIndex: 9999,
-                  child: Padding({
-                    padding: layout?.padding ?? EdgeInsets.only({ left: TOOLTIP_GAP }),
-                    child: bubbleTooltipContent({
-                      legend,
-                      color,
-                      x: dataX,
-                      y: dataY,
-                      config,
-                    }),
-                  }),
-                }),
-              }),
-            }),
-          }),
-        }),
+  private computeLayout() {
+    const plot = this.findPlotGlobal();
+    const pointGlobal = this.element.renderObject.localToGlobal();
+    if (plot) {
+      this.tooltipLayout = computeTooltipLayout(
+        plot,
+        pointGlobal,
+        plot.width,
+        plot.height,
       );
     }
+  }
 
-    return Stack({
+  override build(): Widget {
+    const { isHovered, tooltipWidget, bubbleWidget } = this.widget;
+
+    if (isHovered) {
+      this.computeLayout();
+    }
+
+    const layout = this.tooltipLayout;
+
+    const content = Stack({
       fit: StackFit.passthrough,
       clipped: false,
-      children,
+      children: [
+        bubbleWidget,
+        isHovered
+          ? Positioned({
+              key: "__highlight__",
+              top: 0, left: 0, bottom: 0, right: 0,
+              child: Container({
+                decoration: new BoxDecoration({
+                  shape: "circle",
+                  border: Border.all({ color: "white", width: 2, strokeAlign: 1 }),
+                  boxShadow: [
+                    new BoxShadow({ color: "rgba(0,0,0,0.3)", blurRadius: 8 }),
+                  ],
+                }),
+              }),
+            })
+          : SizedBox.shrink(),
+      ],
+    });
+
+    return Tooltip({
+      position: layout?.position ?? "topRight",
+      offset: layout?.offset ?? Offset.Constants.zero,
+      translation: layout?.translation,
+      tooltip: isHovered
+        ? ZIndex({
+            zIndex: 9999,
+            child: Padding({
+              padding: layout?.padding ?? EdgeInsets.only({ left: TOOLTIP_GAP }),
+              child: tooltipWidget,
+            }),
+          })
+        : SizedBox.shrink(),
+      child: content,
     });
   }
 }
@@ -348,7 +226,7 @@ class _HoverableBubbleState extends State<_HoverableBubble> {
 // --- Main export ---
 
 export function toastBubble(
-  ...[{ value, legend, label, index }, ctx]: Parameters<BubbleChartCustom<ToastBubbleChartConfig>["bubble"]>
+  ...[{ value, legend, label, index, isHovered }, ctx]: Parameters<BubbleChartCustom<ToastBubbleChartConfig>["bubble"]>
 ) {
   const { colors, bubble: bubbleConfig, animation, tooltip } = ctx.config;
   const idx = ctx.legends.indexOf(legend);
@@ -361,7 +239,7 @@ export function toastBubble(
   const radius = bubbleConfig.minRadius + normValue * (bubbleConfig.maxRadius - bubbleConfig.minRadius);
 
   const bubble = Opacity({
-    opacity: bubbleConfig.opacity,
+    opacity: isHovered ? 1 : bubbleConfig.opacity,
     child: Container({
       width: radius * 2,
       height: radius * 2,
@@ -388,14 +266,14 @@ export function toastBubble(
   const dataset = ctx.data.datasets.find((d) => d.legend === legend);
   const dataPoint = dataset?.data[index];
 
-  return new _HoverableBubble({
-    key: `hover-${legend}-${label}`,
+  const tooltipWidget = ctx.custom.tooltip(
+    { label: dataPoint?.label ?? label, items: [{ legend, color, value }] },
+    ctx,
+  );
+
+  return new _TooltipPositioner({
     bubbleWidget: wrapped,
-    legend,
-    color,
-    radius,
-    dataX: dataPoint?.x ?? 0,
-    dataY: dataPoint?.y ?? 0,
-    config: ctx.config,
+    tooltipWidget,
+    isHovered,
   });
 }

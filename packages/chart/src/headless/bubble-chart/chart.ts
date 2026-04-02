@@ -3,6 +3,7 @@ import {
   type Widget,
   type BuildContext,
   LayoutBuilder,
+  GestureDetector,
 } from "flitter-core";
 import { BubbleChartProvider } from "./provider";
 
@@ -54,7 +55,12 @@ class Legend extends StatelessWidget {
 
   override build(context: BuildContext): Widget {
     const ctx = BubbleChartProvider.of(context);
-    return ctx.custom.legend({ name: this.#name, index: this.#index }, ctx);
+    const name = this.#name;
+    const isVisible = ctx.isSeriesVisible(name);
+    return GestureDetector({
+      onClick: () => ctx.toggleSeries(name),
+      child: ctx.custom.legend({ name, index: this.#index, isVisible }, ctx),
+    });
   }
 }
 
@@ -195,6 +201,43 @@ class YAxisLine extends StatelessWidget {
   }
 }
 
+class Bubble extends StatelessWidget {
+  #value: number;
+  #label: string;
+  #legend: string;
+  #index: number;
+
+  constructor({ value, label, legend, index }: { value: number; label: string; legend: string; index: number }) {
+    super();
+    this.#value = value;
+    this.#label = label;
+    this.#legend = legend;
+    this.#index = index;
+  }
+
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    const index = this.#index;
+    const legend = this.#legend;
+    const isHovered = ctx.isBubbleHovered(index, legend);
+    return GestureDetector({
+      cursor: "default",
+      onMouseEnter: () => ctx.hoverBubble(index, legend),
+      onMouseLeave: () => ctx.unhoverBubble(index, legend),
+      child: ctx.custom.bubble(
+        {
+          value: this.#value,
+          label: this.#label,
+          legend,
+          index,
+          isHovered,
+        },
+        ctx,
+      ),
+    });
+  }
+}
+
 class DataView extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const ctx = BubbleChartProvider.of(context);
@@ -203,16 +246,22 @@ class DataView extends StatelessWidget {
 
     const bubbles = data.datasets.flatMap((dataset) =>
       dataset.data.map((pt, pointIndex) => ({
-        widget: ctx.custom.bubble(
-          { value: pt.value, label: pt.label, legend: dataset.legend, index: pointIndex },
-          ctx,
-        ),
+        widget: new Bubble({
+          value: pt.value,
+          label: pt.label,
+          legend: dataset.legend,
+          index: pointIndex,
+        }),
         x: pt.x,
         y: pt.y,
       })),
     );
 
-    return ctx.custom.dataView({ bubbles, scale }, ctx);
+    return GestureDetector({
+      behavior: "translucent",
+      onMouseLeave: () => ctx.unhoverAllBubbles(),
+      child: ctx.custom.dataView({ bubbles, scale }, ctx),
+    });
   }
 }
 

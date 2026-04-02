@@ -3,6 +3,7 @@ import {
   type Widget,
   type BuildContext,
   LayoutBuilder,
+  GestureDetector,
 } from "flitter-core";
 import { LineChartProvider } from "./provider";
 
@@ -54,7 +55,12 @@ class Legend extends StatelessWidget {
 
   override build(context: BuildContext): Widget {
     const ctx = LineChartProvider.of(context);
-    return ctx.custom.legend({ name: this.#name, index: this.#index }, ctx);
+    const name = this.#name;
+    const isVisible = ctx.isSeriesVisible(name);
+    return GestureDetector({
+      onClick: () => ctx.toggleSeries(name),
+      child: ctx.custom.legend({ name, index: this.#index, isVisible }, ctx),
+    });
   }
 }
 
@@ -201,11 +207,14 @@ class Line extends StatelessWidget {
 
   override build(context: BuildContext): Widget {
     const ctx = LineChartProvider.of(context);
+    const hoveredPoint = ctx.hoveredPoint;
+    const isHovered = hoveredPoint != null && hoveredPoint.legend === this.#legend;
     return ctx.custom.line(
       {
         values: this.#values,
         legend: this.#legend,
         index: this.#index,
+        isHovered,
       },
       ctx,
     );
@@ -239,19 +248,23 @@ class DataView extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const ctx = LineChartProvider.of(context);
     const { data } = ctx;
-    return ctx.custom.dataView(
-      {
-        lines: data.datasets.map(
-          (dataset, index) =>
-            new Line({
-              values: dataset.values,
-              index,
-              legend: dataset.legend,
-            }),
-        ),
-      },
-      ctx,
-    );
+    return GestureDetector({
+      behavior: "translucent",
+      onMouseLeave: () => ctx.unhoverAllPoints(),
+      child: ctx.custom.dataView(
+        {
+          lines: data.datasets.map(
+            (dataset, index) =>
+              new Line({
+                values: dataset.values,
+                index,
+                legend: dataset.legend,
+              }),
+          ),
+        },
+        ctx,
+      ),
+    });
   }
 }
 
