@@ -7,6 +7,7 @@ import * as Cartesian from "@shared/cartesian";
 import { agLegend, agTitle, agTooltipContent, cartesian } from "@styles/ag";
 import { agCandlestick } from "./parts/candlestick";
 import { agDataView } from "./parts/data-view";
+import { agTooltipArea } from "./parts/tooltip-area";
 
 export { type CandlestickChartConfig } from "./config";
 
@@ -32,6 +33,7 @@ const agCustom: Partial<CandlestickChartCustom<CandlestickChartConfig>> = {
   dataView: agDataView,
   candlestick: agCandlestick,
   tooltip: agTooltip,
+  tooltipArea: agTooltipArea,
   xAxis: ({ line, labels, tick }, ctx) =>
     cartesian.agXAxis({ line, labels, tick } as any, { type: "label" }, ctx as any),
   yAxis: ({ line, labels, tick }, ctx) =>

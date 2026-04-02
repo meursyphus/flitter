@@ -1,4 +1,4 @@
-import { ChangeNotifier } from "flitter-core";
+import { ChangeNotifier, GlobalKey } from "flitter-core";
 import type {
 	BoxPlotChartCustom,
 	BoxPlotChartData,
@@ -13,6 +13,7 @@ type HoveredBoxPlot = {
 	legend: string;
 	kind: "boxPlot" | "outlier";
 	value?: number;
+	anchorKey: GlobalKey;
 };
 
 export class BoxPlotChartController extends ChangeNotifier {
@@ -60,6 +61,7 @@ export class BoxPlotChartController extends ChangeNotifier {
 
 	set data(value: BoxPlotChartData) {
 		this.#rawData = value;
+		this.#hoveredBoxPlot = null;
 		this.#recalcScale();
 		this.notifyListeners();
 	}
@@ -84,6 +86,7 @@ export class BoxPlotChartController extends ChangeNotifier {
 	set direction(value: BoxPlotChartDirection) {
 		if (this.#direction === value) return;
 		this.#direction = value;
+		this.#hoveredBoxPlot = null;
 		this.#recalcScale();
 		this.notifyListeners();
 	}
@@ -122,6 +125,7 @@ export class BoxPlotChartController extends ChangeNotifier {
 		} else {
 			this.#hiddenSeries.add(legend);
 		}
+		this.#hoveredBoxPlot = null;
 		this.#recalcScale();
 		this.notifyListeners();
 	}
@@ -129,6 +133,7 @@ export class BoxPlotChartController extends ChangeNotifier {
 	showSeries(legend: string): void {
 		if (!this.#hiddenSeries.has(legend)) return;
 		this.#hiddenSeries.delete(legend);
+		this.#hoveredBoxPlot = null;
 		this.#recalcScale();
 		this.notifyListeners();
 	}
@@ -136,6 +141,7 @@ export class BoxPlotChartController extends ChangeNotifier {
 	hideSeries(legend: string): void {
 		if (this.#hiddenSeries.has(legend)) return;
 		this.#hiddenSeries.add(legend);
+		this.#hoveredBoxPlot = null;
 		this.#recalcScale();
 		this.notifyListeners();
 	}
@@ -143,6 +149,7 @@ export class BoxPlotChartController extends ChangeNotifier {
 	showAllSeries(): void {
 		if (this.#hiddenSeries.size === 0) return;
 		this.#hiddenSeries.clear();
+		this.#hoveredBoxPlot = null;
 		this.#recalcScale();
 		this.notifyListeners();
 	}
@@ -154,19 +161,21 @@ export class BoxPlotChartController extends ChangeNotifier {
 	hoverBoxPlot(
 		index: number,
 		legend: string,
-		detail: { kind?: HoveredBoxPlot["kind"]; value?: number } = {},
+		detail: { kind?: HoveredBoxPlot["kind"]; value?: number; anchorKey: GlobalKey },
 	): void {
 		const next: HoveredBoxPlot = {
 			index,
 			legend,
 			kind: detail.kind ?? "boxPlot",
 			value: detail.value,
+			anchorKey: detail.anchorKey,
 		};
 		if (
 			this.#hoveredBoxPlot?.index === next.index &&
 			this.#hoveredBoxPlot?.legend === next.legend &&
 			this.#hoveredBoxPlot?.kind === next.kind &&
-			this.#hoveredBoxPlot?.value === next.value
+			this.#hoveredBoxPlot?.value === next.value &&
+			this.#hoveredBoxPlot?.anchorKey === next.anchorKey
 		) {
 			return;
 		}

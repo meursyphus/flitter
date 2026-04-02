@@ -10,18 +10,28 @@ import * as Cartesian from "flitter-ui/chart";
 import { toastBar } from "./parts/bar";
 import { toastConnector } from "./parts/connector";
 import { toastDataView } from "./parts/data-view";
-import { cartesian, toastLegend, toastTitle } from "../../_styles/toast/index";
+import { toastTooltipArea } from "./parts/tooltip-area";
+import { cartesian, toastLegend, toastTitle, tooltipContent } from "../../_styles/toast/index";
 
 export { type WaterfallChartConfig } from "./config";
+
+function toastTooltip(
+  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  context: any,
+): Widget {
+  return tooltipContent({ label: args.label, items: args.items, config: context.config as any });
+}
 
 const toastCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
   layout: ({ title, legends, plot }, ctx) =>
     cartesian.toastLayout({ title, legends, plot }, ctx as any),
-  plot: ({ xAxis, yAxis, dataView, grid, axisCorner }) =>
-    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner }),
+  plot: ({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }) =>
+    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }),
   dataView: toastDataView,
   bar: toastBar,
   connector: toastConnector,
+  tooltip: toastTooltip,
+  tooltipArea: toastTooltipArea,
   xAxis: ({ line, labels, tick }, ctx) =>
     cartesian.toastXAxis({ line, labels, tick } as any, { type: "label" }, ctx as any),
   yAxis: ({ line, labels, tick }, ctx) =>

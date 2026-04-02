@@ -6,6 +6,7 @@ import * as Cartesian from "flitter-ui/chart";
 import { toastTitle, tooltipContent, cartesian } from "../../_styles/toast/index";
 import { toastBar } from "./parts/bar";
 import { toastDataView } from "./parts/data-view";
+import { toastTooltipArea } from "./parts/tooltip-area";
 import type { Widget } from "flitter-core";
 import { Container } from "flitter-core";
 
@@ -26,6 +27,7 @@ const toastCustom: Partial<HistogramChartCustom<HistogramChartConfig>> = {
   dataView: toastDataView,
   bar: toastBar,
   tooltip: toastTooltipContent,
+  tooltipArea: toastTooltipArea,
   xAxis: ({ line, labels, tick }, ctx) => cartesian.toastXAxis({ line, labels, tick } as any, { type: "label" }, ctx as any),
   yAxis: ({ line, labels, tick }, ctx) => cartesian.toastYAxis({ line, labels, tick } as any, { type: "value" }, ctx as any),
   xAxisLabel: cartesian.toastXAxisLabel,

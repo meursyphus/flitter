@@ -7,6 +7,7 @@ import * as Cartesian from "@shared/cartesian";
 import { cartesian, toastLegend, toastTitle, tooltipContent } from "@styles/toast";
 import { toastCandlestick } from "./parts/candlestick";
 import { toastDataView } from "./parts/data-view";
+import { toastTooltipArea } from "./parts/tooltip-area";
 
 export { type CandlestickChartConfig } from "./config";
 
@@ -32,6 +33,7 @@ const toastCustom: Partial<CandlestickChartCustom<CandlestickChartConfig>> = {
   dataView: toastDataView,
   candlestick: toastCandlestick,
   tooltip: toastTooltipContent,
+  tooltipArea: toastTooltipArea,
   xAxis: ({ line, labels, tick }, ctx) =>
     cartesian.toastXAxis({ line, labels, tick } as any, { type: "label" }, ctx as any),
   yAxis: ({ line, labels, tick }, ctx) =>

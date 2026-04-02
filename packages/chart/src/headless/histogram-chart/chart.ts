@@ -1,5 +1,10 @@
 import {
 	StatelessWidget,
+	StatefulWidget,
+	State,
+	GlobalKey,
+	Stack,
+	StackFit,
 	type Widget,
 	type BuildContext,
 	LayoutBuilder,
@@ -162,6 +167,7 @@ class Plot extends StatelessWidget {
 				dataView: new DataView(),
 				grid: new Grid(),
 				axisCorner: new AxisCorner(),
+				tooltipArea: new TooltipOverlay(),
 			},
 			ctx,
 		);
@@ -194,38 +200,127 @@ class DataView extends StatelessWidget {
 	}
 }
 
-class Bar extends StatelessWidget {
-	#binMin: number;
-	#binMax: number;
-	#count: number;
-	#index: number;
+class Bar extends StatefulWidget {
+	binMin: number;
+	binMax: number;
+	count: number;
+	index: number;
 
 	constructor(props: { binMin: number; binMax: number; count: number; index: number }) {
-		super();
-		this.#binMin = props.binMin;
-		this.#binMax = props.binMax;
-		this.#count = props.count;
-		this.#index = props.index;
+		super(`${props.index}`);
+		this.binMin = props.binMin;
+		this.binMax = props.binMax;
+		this.count = props.count;
+		this.index = props.index;
 	}
+
+	createState() {
+		return new BarState();
+	}
+}
+
+class BarState extends State<Bar> {
+	anchorKey = new GlobalKey();
 
 	override build(context: BuildContext): Widget {
 		const ctx = HistogramChartProvider.of(context);
-		const index = this.#index;
+		const { index, binMin, binMax, count } = this.widget;
 		const isHovered = ctx.isBinHovered(index);
 		return GestureDetector({
+			key: this.anchorKey,
 			cursor: "default",
-			onMouseEnter: () => ctx.hoverBin(index),
+			onMouseEnter: () => ctx.hoverBin(index, this.anchorKey),
 			onMouseLeave: () => ctx.unhoverBin(index),
 			child: ctx.custom.bar(
 				{
-					binMin: this.#binMin,
-					binMax: this.#binMax,
-					count: this.#count,
+					binMin,
+					binMax,
+					count,
 					index,
 					isHovered,
 				},
 				ctx,
 			),
+		});
+	}
+}
+
+class TooltipOverlay extends StatefulWidget {
+	createState() {
+		return new TooltipOverlayState();
+	}
+}
+
+class TooltipOverlayState extends State<TooltipOverlay> {
+	overlayKey = new GlobalKey();
+
+	private resolveHoveredBin(
+		ctx: ReturnType<typeof HistogramChartProvider.of>,
+	): {
+		index: number;
+		binMin: number;
+		binMax: number;
+		count: number;
+		label: string;
+		x: number;
+		y: number;
+		width: number;
+		height: number;
+	} | null {
+		const hoveredBin = ctx.hoveredBin;
+		if (hoveredBin == null) return null;
+
+		const bin = ctx.bins[hoveredBin.index];
+		const overlayRenderObject = this.overlayKey.currentContext?.renderObject;
+		const barRenderObject = hoveredBin.anchorKey.currentContext?.renderObject;
+		if (bin == null || overlayRenderObject == null || barRenderObject == null) return null;
+
+		const barGlobal = barRenderObject.localToGlobal();
+		const overlayGlobal = overlayRenderObject.localToGlobal();
+
+		return {
+			index: hoveredBin.index,
+			binMin: bin.min,
+			binMax: bin.max,
+			count: bin.count,
+			label: `${bin.min.toFixed(1)} - ${bin.max.toFixed(1)}`,
+			x: barGlobal.x - overlayGlobal.x,
+			y: barGlobal.y - overlayGlobal.y,
+			width: barRenderObject.size.width,
+			height: barRenderObject.size.height,
+		};
+	}
+
+	override build(context: BuildContext): Widget {
+		const ctx = HistogramChartProvider.of(context);
+		const hoveredBinRect = this.resolveHoveredBin(ctx);
+		const colors =
+			ctx.config?.colors?.fills ??
+			ctx.config?.colors ??
+			["#888"];
+
+		let tooltip: Widget | null = null;
+		if (hoveredBinRect != null) {
+			const color = colors[0] ?? "#888";
+			tooltip = ctx.custom.tooltip(
+				{
+					label: hoveredBinRect.label,
+					items: [{ legend: "Count", color, value: hoveredBinRect.count }],
+				},
+				ctx,
+			);
+		}
+
+		return Stack({
+			fit: StackFit.expand,
+			clipped: false,
+			children: [
+				SizedBox({ key: this.overlayKey, width: Infinity, height: Infinity }),
+				ctx.custom.tooltipArea(
+					{ tooltip, hoveredBin: hoveredBinRect },
+					ctx,
+				),
+			],
 		});
 	}
 }

@@ -1,5 +1,10 @@
 import {
 	StatelessWidget,
+	StatefulWidget,
+	State,
+	GlobalKey,
+	Stack,
+	StackFit,
 	type Widget,
 	type BuildContext,
 	LayoutBuilder,
@@ -241,12 +246,12 @@ class BoxPlotGroup extends StatelessWidget {
 	}
 }
 
-class BoxPlot extends StatelessWidget {
-  #dataPoint: BoxPlotDataPoint;
-  #index: number;
-	#legend: string;
-	#label: string;
-	#datasetIndex: number;
+class BoxPlot extends StatefulWidget {
+  dataPoint: BoxPlotDataPoint;
+  index: number;
+	legend: string;
+	label: string;
+	datasetIndex: number;
 
   constructor({
     dataPoint,
@@ -261,30 +266,38 @@ class BoxPlot extends StatelessWidget {
     label: string;
     datasetIndex: number;
   }) {
-    super();
-    this.#dataPoint = dataPoint;
-    this.#index = index;
-    this.#legend = legend;
-    this.#label = label;
-    this.#datasetIndex = datasetIndex;
+    super(`${datasetIndex}:${index}:boxPlot`);
+    this.dataPoint = dataPoint;
+    this.index = index;
+    this.legend = legend;
+    this.label = label;
+    this.datasetIndex = datasetIndex;
   }
+
+	createState() {
+		return new BoxPlotState();
+  }
+}
+
+class BoxPlotState extends State<BoxPlot> {
+	anchorKey = new GlobalKey();
 
 	override build(context: BuildContext): Widget {
 		const ctx = BoxPlotChartProvider.of(context);
-		const index = this.#index;
-		const legend = this.#legend;
+		const { index, legend, dataPoint, label, datasetIndex } = this.widget;
 		const isHovered = ctx.isBoxPlotHovered(index, legend);
 		return GestureDetector({
+			key: this.anchorKey,
 			cursor: "default",
-			onMouseEnter: () => ctx.hoverBoxPlot(index, legend, { kind: "boxPlot" }),
+			onMouseEnter: () => ctx.hoverBoxPlot(index, legend, { kind: "boxPlot", anchorKey: this.anchorKey }),
 			onMouseLeave: () => ctx.unhoverBoxPlot({ index, legend, kind: "boxPlot" }),
 			child: ctx.custom.boxPlot(
 				{
-					dataPoint: this.#dataPoint,
+					dataPoint,
 					index,
 					legend,
-					label: this.#label,
-					datasetIndex: this.#datasetIndex,
+					label,
+					datasetIndex,
 					isHovered,
 				},
 				ctx,
@@ -293,13 +306,13 @@ class BoxPlot extends StatelessWidget {
 	}
 }
 
-class Outlier extends StatelessWidget {
-	#value: number;
-	#outlierIndex: number;
-	#index: number;
-	#legend: string;
-	#label: string;
-	#datasetIndex: number;
+class Outlier extends StatefulWidget {
+	value: number;
+	outlierIndex: number;
+	index: number;
+	legend: string;
+	label: string;
+	datasetIndex: number;
 
 	constructor(props: {
 		value: number;
@@ -309,33 +322,40 @@ class Outlier extends StatelessWidget {
 		label: string;
 		datasetIndex: number;
 	}) {
-		super();
-		this.#value = props.value;
-		this.#outlierIndex = props.outlierIndex;
-		this.#index = props.index;
-		this.#legend = props.legend;
-		this.#label = props.label;
-		this.#datasetIndex = props.datasetIndex;
+		super(`${props.datasetIndex}:${props.index}:outlier:${props.outlierIndex}`);
+		this.value = props.value;
+		this.outlierIndex = props.outlierIndex;
+		this.index = props.index;
+		this.legend = props.legend;
+		this.label = props.label;
+		this.datasetIndex = props.datasetIndex;
 	}
+
+	createState() {
+		return new OutlierState();
+	}
+}
+
+class OutlierState extends State<Outlier> {
+	anchorKey = new GlobalKey();
 
 	override build(context: BuildContext): Widget {
 		const ctx = BoxPlotChartProvider.of(context);
-		const index = this.#index;
-		const legend = this.#legend;
-		const value = this.#value;
+		const { index, legend, value, label, outlierIndex, datasetIndex } = this.widget;
 		const isHovered = ctx.isBoxPlotHovered(index, legend);
 		return GestureDetector({
+			key: this.anchorKey,
 			cursor: "default",
-			onMouseEnter: () => ctx.hoverBoxPlot(index, legend, { kind: "outlier", value }),
+			onMouseEnter: () => ctx.hoverBoxPlot(index, legend, { kind: "outlier", value, anchorKey: this.anchorKey }),
 			onMouseLeave: () => ctx.unhoverBoxPlot({ index, legend, kind: "outlier", value }),
 			child: ctx.custom.outlier(
 				{
 					value,
-					outlierIndex: this.#outlierIndex,
+					outlierIndex,
 					index,
 					legend,
-					label: this.#label,
-					datasetIndex: this.#datasetIndex,
+					label,
+					datasetIndex,
 					isHovered,
 				},
 				ctx,
@@ -361,6 +381,7 @@ class Plot extends StatelessWidget {
 				dataView: new DataView(),
 				grid: new Grid(),
 				axisCorner: new AxisCorner(),
+				tooltipArea: new TooltipOverlay(),
 			},
 			ctx,
 		);
@@ -411,5 +432,96 @@ class GridYLine extends StatelessWidget {
 	override build(context: BuildContext): Widget {
 		const ctx = BoxPlotChartProvider.of(context);
 		return ctx.custom.gridYLine(undefined, ctx);
+	}
+}
+
+class TooltipOverlay extends StatefulWidget {
+	createState() {
+		return new TooltipOverlayState();
+	}
+}
+
+class TooltipOverlayState extends State<TooltipOverlay> {
+	overlayKey = new GlobalKey();
+
+	private resolveHoveredBoxPlot(
+		ctx: ReturnType<typeof BoxPlotChartProvider.of>,
+	) {
+		const hoveredBoxPlot = ctx.hoveredBoxPlot;
+		if (hoveredBoxPlot == null) return null;
+
+		const overlayRenderObject = this.overlayKey.currentContext?.renderObject;
+		const boxPlotRenderObject = hoveredBoxPlot.anchorKey.currentContext?.renderObject;
+		if (overlayRenderObject == null || boxPlotRenderObject == null) return null;
+
+		const boxPlotGlobal = boxPlotRenderObject.localToGlobal();
+		const overlayGlobal = overlayRenderObject.localToGlobal();
+
+		return {
+			index: hoveredBoxPlot.index,
+			legend: hoveredBoxPlot.legend,
+			label: ctx.data.labels[hoveredBoxPlot.index] ?? "",
+			kind: hoveredBoxPlot.kind,
+			value: hoveredBoxPlot.value,
+			x: boxPlotGlobal.x - overlayGlobal.x,
+			y: boxPlotGlobal.y - overlayGlobal.y,
+			width: boxPlotRenderObject.size.width,
+			height: boxPlotRenderObject.size.height,
+		};
+	}
+
+	override build(context: BuildContext): Widget {
+		const ctx = BoxPlotChartProvider.of(context);
+		const hoveredBoxPlotRect = this.resolveHoveredBoxPlot(ctx);
+		const fills =
+			ctx.config?.colors?.fills ??
+			ctx.config?.colors ??
+			["#888"];
+
+		let tooltip: Widget | null = null;
+		if (hoveredBoxPlotRect != null) {
+			const legendIndex = ctx.legends.indexOf(hoveredBoxPlotRect.legend);
+			const color = fills[legendIndex % fills.length] ?? "#888";
+
+			if (hoveredBoxPlotRect.kind === "outlier" && hoveredBoxPlotRect.value != null) {
+				tooltip = ctx.custom.tooltip(
+					{
+						label: hoveredBoxPlotRect.label,
+						items: [{ legend: `${hoveredBoxPlotRect.legend} outlier`, color, value: hoveredBoxPlotRect.value }],
+					},
+					ctx,
+				);
+			} else {
+				const dataset = ctx.data.datasets.find((d) => d.legend === hoveredBoxPlotRect.legend);
+				const point = dataset?.data[hoveredBoxPlotRect.index];
+				if (point != null) {
+					tooltip = ctx.custom.tooltip(
+						{
+							label: hoveredBoxPlotRect.label,
+							items: [
+								{ legend: `${hoveredBoxPlotRect.legend} min`, color: "#333", value: point.min },
+								{ legend: `${hoveredBoxPlotRect.legend} q1`, color, value: point.q1 },
+								{ legend: `${hoveredBoxPlotRect.legend} median`, color: "#E74C3C", value: point.median },
+								{ legend: `${hoveredBoxPlotRect.legend} q3`, color, value: point.q3 },
+								{ legend: `${hoveredBoxPlotRect.legend} max`, color: "#333", value: point.max },
+							],
+						},
+						ctx,
+					);
+				}
+			}
+		}
+
+		return Stack({
+			fit: StackFit.expand,
+			clipped: false,
+			children: [
+				SizedBox({ key: this.overlayKey, width: Infinity, height: Infinity }),
+				ctx.custom.tooltipArea(
+					{ tooltip, hoveredBoxPlot: hoveredBoxPlotRect },
+					ctx,
+				),
+			],
+		});
 	}
 }

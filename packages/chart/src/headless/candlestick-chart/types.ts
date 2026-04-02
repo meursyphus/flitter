@@ -75,7 +75,26 @@ export type CandlestickChartCustom<TConfig = {}> = {
 	>;
 	layout: CustomArgs<{ title: Widget; legends: Widget[]; plot: Widget }, TConfig>;
 	plot: CustomArgs<
-		{ xAxis: Widget; yAxis: Widget; dataView: Widget; grid: Widget; axisCorner: Widget },
+		{ xAxis: Widget; yAxis: Widget; dataView: Widget; grid: Widget; axisCorner: Widget; tooltipArea: Widget },
+		TConfig
+	>;
+	tooltipArea: CustomArgs<
+		{
+			tooltip: Widget | null;
+			hoveredCandlestick: {
+				index: number;
+				legend: string;
+				label: string;
+				open: number;
+				high: number;
+				low: number;
+				close: number;
+				x: number;
+				y: number;
+				width: number;
+				height: number;
+			} | null;
+		},
 		TConfig
 	>;
 	legend: CustomArgs<{ name: string; index: number; isVisible: boolean }, TConfig>;

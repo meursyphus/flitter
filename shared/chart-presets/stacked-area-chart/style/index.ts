@@ -7,6 +7,7 @@ import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { agArea } from "./parts/area";
 import { agDataView } from "./parts/data-view";
+import { agTooltipArea } from "./parts/tooltip-area";
 import {
   agTitle,
   agLegend,
@@ -28,6 +29,7 @@ const agCustom: Partial<LineChartCustom<AgStackedAreaChartConfig>> = {
   layout: cartesian.agLayout,
   line: agArea,
   dataView: agDataView,
+  tooltipArea: agTooltipArea,
   legend: agLegend,
   title: agTitle,
   tooltip: agTooltip,

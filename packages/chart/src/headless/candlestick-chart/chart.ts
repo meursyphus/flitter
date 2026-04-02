@@ -1,5 +1,10 @@
 import {
 	StatelessWidget,
+	StatefulWidget,
+	State,
+	GlobalKey,
+	Stack,
+	StackFit,
 	type Widget,
 	type BuildContext,
 	LayoutBuilder,
@@ -183,9 +188,9 @@ class YAxisTick extends StatelessWidget {
 	}
 }
 
-class Candlestick extends StatelessWidget {
-	#index: number;
-	#datasetIndex: number;
+class Candlestick extends StatefulWidget {
+	index: number;
+	datasetIndex: number;
 
 	constructor({
 		index,
@@ -194,21 +199,30 @@ class Candlestick extends StatelessWidget {
 		index: number;
 		datasetIndex: number;
 	}) {
-		super();
-		this.#index = index;
-		this.#datasetIndex = datasetIndex;
+		super(`${datasetIndex}:${index}`);
+		this.index = index;
+		this.datasetIndex = datasetIndex;
 	}
+
+	createState() {
+		return new CandlestickState();
+	}
+}
+
+class CandlestickState extends State<Candlestick> {
+	anchorKey = new GlobalKey();
 
 	override build(context: BuildContext): Widget {
 		const ctx = CandlestickChartProvider.of(context);
-		const dataset = ctx.data.datasets[this.#datasetIndex];
-		const point = dataset.data[this.#index];
-		const index = this.#index;
+		const dataset = ctx.data.datasets[this.widget.datasetIndex];
+		const point = dataset.data[this.widget.index];
+		const index = this.widget.index;
 		const legend = dataset.legend;
 		const isHovered = ctx.isCandlestickHovered(index, legend);
 		return GestureDetector({
 			cursor: "default",
-			onMouseEnter: () => ctx.hoverCandlestick(index, legend),
+			key: this.anchorKey,
+			onMouseEnter: () => ctx.hoverCandlestick(index, legend, this.anchorKey),
 			onMouseLeave: () => ctx.unhoverCandlestick(index, legend),
 			child: ctx.custom.candlestick(
 				{
@@ -216,10 +230,10 @@ class Candlestick extends StatelessWidget {
 					high: point.high,
 					low: point.low,
 					close: point.close,
-					label: ctx.data.labels[this.#index],
+					label: ctx.data.labels[this.widget.index],
 					index,
 					legend,
-					datasetIndex: this.#datasetIndex,
+					datasetIndex: this.widget.datasetIndex,
 					isHovered,
 				},
 				ctx,
@@ -245,6 +259,7 @@ class Plot extends StatelessWidget {
 				dataView: new DataView(),
 				grid: new Grid(),
 				axisCorner: new AxisCorner(),
+				tooltipArea: new TooltipOverlay(),
 			},
 			ctx,
 		);
@@ -296,5 +311,95 @@ class GridYLine extends StatelessWidget {
 	override build(context: BuildContext): Widget {
 		const ctx = CandlestickChartProvider.of(context);
 		return ctx.custom.gridYLine(undefined, ctx);
+	}
+}
+
+class TooltipOverlay extends StatefulWidget {
+	createState() {
+		return new TooltipOverlayState();
+	}
+}
+
+class TooltipOverlayState extends State<TooltipOverlay> {
+	overlayKey = new GlobalKey();
+
+	private resolveHoveredCandlestick(
+		ctx: ReturnType<typeof CandlestickChartProvider.of>,
+	): {
+		index: number;
+		legend: string;
+		label: string;
+		open: number;
+		high: number;
+		low: number;
+		close: number;
+		x: number;
+		y: number;
+		width: number;
+		height: number;
+	} | null {
+		const hoveredCandlestick = ctx.hoveredCandlestick;
+		if (hoveredCandlestick == null) return null;
+
+		const dataset = ctx.data.datasets.find((d) => d.legend === hoveredCandlestick.legend);
+		const overlayRenderObject = this.overlayKey.currentContext?.renderObject;
+		const candlestickRenderObject = hoveredCandlestick.anchorKey.currentContext?.renderObject;
+		if (dataset == null || overlayRenderObject == null || candlestickRenderObject == null) return null;
+
+		const point = dataset.data[hoveredCandlestick.index];
+		if (point == null) return null;
+
+		const candlestickGlobal = candlestickRenderObject.localToGlobal();
+		const overlayGlobal = overlayRenderObject.localToGlobal();
+
+		return {
+			index: hoveredCandlestick.index,
+			legend: hoveredCandlestick.legend,
+			label: ctx.data.labels[hoveredCandlestick.index] ?? "",
+			open: point.open,
+			high: point.high,
+			low: point.low,
+			close: point.close,
+			x: candlestickGlobal.x - overlayGlobal.x,
+			y: candlestickGlobal.y - overlayGlobal.y,
+			width: candlestickRenderObject.size.width,
+			height: candlestickRenderObject.size.height,
+		};
+	}
+
+	override build(context: BuildContext): Widget {
+		const ctx = CandlestickChartProvider.of(context);
+		const hoveredCandlestickRect = this.resolveHoveredCandlestick(ctx);
+
+		let tooltip: Widget | null = null;
+		if (hoveredCandlestickRect != null) {
+			const isUp = hoveredCandlestickRect.close >= hoveredCandlestickRect.open;
+			const color = isUp ? ctx.config.candlestick.upColor : ctx.config.candlestick.downColor;
+			const wickColor = ctx.config.candlestick.wickColor;
+			tooltip = ctx.custom.tooltip(
+				{
+					label: hoveredCandlestickRect.label,
+					items: [
+						{ legend: `${hoveredCandlestickRect.legend} open`, color, value: hoveredCandlestickRect.open },
+						{ legend: `${hoveredCandlestickRect.legend} high`, color: wickColor, value: hoveredCandlestickRect.high },
+						{ legend: `${hoveredCandlestickRect.legend} low`, color: wickColor, value: hoveredCandlestickRect.low },
+						{ legend: `${hoveredCandlestickRect.legend} close`, color, value: hoveredCandlestickRect.close },
+					],
+				},
+				ctx,
+			);
+		}
+
+		return Stack({
+			fit: StackFit.expand,
+			clipped: false,
+			children: [
+				SizedBox({ key: this.overlayKey, width: Infinity, height: Infinity }),
+				ctx.custom.tooltipArea(
+					{ tooltip, hoveredCandlestick: hoveredCandlestickRect },
+					ctx,
+				),
+			],
+		});
 	}
 }

@@ -1,5 +1,10 @@
 import {
   StatelessWidget,
+  StatefulWidget,
+  State,
+  GlobalKey,
+  Stack,
+  StackFit,
   type Widget,
   type BuildContext,
   LayoutBuilder,
@@ -221,6 +226,7 @@ class BarGroup extends StatelessWidget {
 
     const bars = this.#values.map((value, datasetIndex) => ({
       bar: new Bar({
+        key: `${this.#index}:${data.datasets[datasetIndex].legend}`,
         value,
         index: this.#index,
         legend: data.datasets[datasetIndex].legend,
@@ -237,45 +243,55 @@ class BarGroup extends StatelessWidget {
   }
 }
 
-class Bar extends StatelessWidget {
-  #value: number;
-  #index: number;
-  #legend: string;
-  #label: string;
+class Bar extends StatefulWidget {
+  value: number;
+  index: number;
+  legend: string;
+  label: string;
 
   constructor({
+    key,
     value,
     index,
     legend,
     label,
   }: {
+    key: string;
     value: number;
     index: number;
     legend: string;
     label: string;
   }) {
-    super();
-    this.#value = value;
-    this.#index = index;
-    this.#legend = legend;
-    this.#label = label;
+    super(key);
+    this.value = value;
+    this.index = index;
+    this.legend = legend;
+    this.label = label;
   }
+
+  createState() {
+    return new BarState();
+  }
+}
+
+class BarState extends State<Bar> {
+  anchorKey = new GlobalKey();
 
   override build(context: BuildContext): Widget {
     const ctx = BarChartProvider.of(context);
-    const index = this.#index;
-    const legend = this.#legend;
+    const { index, legend, value, label } = this.widget;
     const isHovered = ctx.isBarHovered(index, legend);
     return GestureDetector({
+      key: this.anchorKey,
       cursor: "default",
-      onMouseEnter: () => ctx.hoverBar(index, legend),
+      onMouseEnter: () => ctx.hoverBar(index, legend, this.anchorKey),
       onMouseLeave: () => ctx.unhoverBar(index, legend),
       child: ctx.custom.bar(
         {
-          value: this.#value,
+          value,
           index,
           legend,
-          label: this.#label,
+          label,
           isHovered,
         },
         ctx,
@@ -326,103 +342,68 @@ class DataView extends StatelessWidget {
   }
 }
 
-class TooltipOverlay extends StatelessWidget {
-  private computeBarRect(
+class TooltipOverlay extends StatefulWidget {
+  createState() {
+    return new TooltipOverlayState();
+  }
+}
+
+class TooltipOverlayState extends State<TooltipOverlay> {
+  overlayKey = new GlobalKey();
+
+  private resolveHoveredBar(
     ctx: ReturnType<typeof BarChartProvider.of>,
-    dvWidth: number,
-    dvHeight: number,
   ): { index: number; legend: string; value: number; label: string; x: number; y: number; width: number; height: number } | null {
-    const { hoveredBar, data, scale, direction } = ctx;
-    if (hoveredBar == null || scale == null) return null;
+    const hoveredBar = ctx.hoveredBar;
+    if (hoveredBar == null) return null;
 
-    const { index, legend } = hoveredBar;
-    const datasetIndex = data.datasets.findIndex((d) => d.legend === legend);
-    if (datasetIndex < 0) return null;
+    const overlayRenderObject = this.overlayKey.currentContext?.renderObject;
+    const barRenderObject = hoveredBar.anchorKey.currentContext?.renderObject;
+    if (overlayRenderObject == null || barRenderObject == null) return null;
 
-    const value = data.datasets[datasetIndex].values[index] ?? 0;
-    const label = data.labels[index] ?? "";
-    const numGroups = data.labels.length;
-    const numBars = data.datasets.length;
-    const isVertical = direction === "vertical";
-    const total = scale.max - scale.min;
+    const dataset = ctx.data.datasets.find((d) => d.legend === hoveredBar.legend);
+    if (dataset == null || hoveredBar.index >= dataset.values.length) return null;
 
-    if (isVertical) {
-      const groupWidth = dvWidth / numGroups;
-      const barWidth = groupWidth / numBars;
-      const x = index * groupWidth + datasetIndex * barWidth;
+    const barGlobal = barRenderObject.localToGlobal();
+    const overlayGlobal = overlayRenderObject.localToGlobal();
 
-      const hasNegative = scale.min < 0;
-      let y: number;
-      let height: number;
-
-      if (!hasNegative) {
-        height = (value / total) * dvHeight;
-        y = dvHeight - height;
-      } else {
-        const zeroY = (scale.max / total) * dvHeight;
-        if (value >= 0) {
-          height = (value / total) * dvHeight;
-          y = zeroY - height;
-        } else {
-          height = (Math.abs(value) / total) * dvHeight;
-          y = zeroY;
-        }
-      }
-
-      return { index, legend, value, label, x, y, width: barWidth, height };
-    } else {
-      const groupHeight = dvHeight / numGroups;
-      const barHeight = groupHeight / numBars;
-      const y = index * groupHeight + datasetIndex * barHeight;
-
-      const hasNegative = scale.min < 0;
-      let x: number;
-      let width: number;
-
-      if (!hasNegative) {
-        width = (value / total) * dvWidth;
-        x = 0;
-      } else {
-        const zeroX = (Math.abs(scale.min) / total) * dvWidth;
-        if (value >= 0) {
-          width = (value / total) * dvWidth;
-          x = zeroX;
-        } else {
-          width = (Math.abs(value) / total) * dvWidth;
-          x = zeroX - width;
-        }
-      }
-
-      return { index, legend, value, label, x, y, width, height: barHeight };
-    }
+    return {
+      index: hoveredBar.index,
+      legend: hoveredBar.legend,
+      value: dataset.values[hoveredBar.index],
+      label: ctx.data.labels[hoveredBar.index] ?? "",
+      x: barGlobal.x - overlayGlobal.x,
+      y: barGlobal.y - overlayGlobal.y,
+      width: barRenderObject.size.width,
+      height: barRenderObject.size.height,
+    };
   }
 
   override build(context: BuildContext): Widget {
     const ctx = BarChartProvider.of(context);
+    const hoveredBarRect = this.resolveHoveredBar(ctx);
 
-    return LayoutBuilder({
-      builder: (_: BuildContext, constraints) => {
-        const dvWidth = constraints.maxWidth;
-        const dvHeight = constraints.maxHeight;
+    let tooltip: Widget | null = null;
+    if (hoveredBarRect != null) {
+      const legendIdx = ctx.legends.indexOf(hoveredBarRect.legend);
+      const colors = ctx.config?.colors ?? [];
+      const color = colors[legendIdx % colors.length] ?? "#888";
+      tooltip = ctx.custom.tooltip(
+        { label: hoveredBarRect.label, items: [{ legend: hoveredBarRect.legend, color, value: hoveredBarRect.value }] },
+        ctx,
+      );
+    }
 
-        let tooltip: Widget | null = null;
-        let hoveredBarRect = this.computeBarRect(ctx, dvWidth, dvHeight);
-
-        if (hoveredBarRect != null) {
-          const legendIdx = ctx.legends.indexOf(hoveredBarRect.legend);
-          const colors = ctx.config?.colors ?? [];
-          const color = colors[legendIdx % colors.length] ?? "#888";
-          tooltip = ctx.custom.tooltip(
-            { label: hoveredBarRect.label, items: [{ legend: hoveredBarRect.legend, color, value: hoveredBarRect.value }] },
-            ctx,
-          );
-        }
-
-        return ctx.custom.tooltipArea(
+    return Stack({
+      fit: StackFit.expand,
+      clipped: false,
+      children: [
+        SizedBox({ key: this.overlayKey, width: Infinity, height: Infinity }),
+        ctx.custom.tooltipArea(
           { tooltip, hoveredBar: hoveredBarRect },
           ctx,
-        );
-      },
+        ),
+      ],
     });
   }
 }

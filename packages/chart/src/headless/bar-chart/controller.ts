@@ -1,11 +1,11 @@
-import { ChangeNotifier } from "flitter-core";
+import { ChangeNotifier, GlobalKey } from "flitter-core";
 import type { BarChartCustom, BarChartData, BarChartDirection, BarChartScale, GetScaleFn, GetScaleOptionsFn } from "./types";
 
 export class BarChartController extends ChangeNotifier {
   #rawData: BarChartData;
   #direction: BarChartDirection;
   #hiddenSeries: Set<string> = new Set();
-  #hoveredBar: { index: number; legend: string } | null = null;
+  #hoveredBar: { index: number; legend: string; anchorKey: GlobalKey } | null = null;
   #scale: BarChartScale | null = null;
   #getScale: GetScaleFn;
   #getScaleOptions: GetScaleOptionsFn | null;
@@ -51,6 +51,7 @@ export class BarChartController extends ChangeNotifier {
 
   set data(value: BarChartData) {
     this.#rawData = value;
+    this.#hoveredBar = null;
     this.#recalcScale();
     this.notifyListeners();
   }
@@ -121,6 +122,7 @@ export class BarChartController extends ChangeNotifier {
     } else {
       this.#hiddenSeries.add(legend);
     }
+    this.#hoveredBar = null;
     this.#recalcScale();
     this.notifyListeners();
   }
@@ -128,6 +130,7 @@ export class BarChartController extends ChangeNotifier {
   showSeries(legend: string): void {
     if (!this.#hiddenSeries.has(legend)) return;
     this.#hiddenSeries.delete(legend);
+    this.#hoveredBar = null;
     this.#recalcScale();
     this.notifyListeners();
   }
@@ -135,6 +138,7 @@ export class BarChartController extends ChangeNotifier {
   hideSeries(legend: string): void {
     if (this.#hiddenSeries.has(legend)) return;
     this.#hiddenSeries.add(legend);
+    this.#hoveredBar = null;
     this.#recalcScale();
     this.notifyListeners();
   }
@@ -142,18 +146,19 @@ export class BarChartController extends ChangeNotifier {
   showAllSeries(): void {
     if (this.#hiddenSeries.size === 0) return;
     this.#hiddenSeries.clear();
+    this.#hoveredBar = null;
     this.#recalcScale();
     this.notifyListeners();
   }
 
   // --- 호버 ---
 
-  get hoveredBar(): { index: number; legend: string } | null {
+  get hoveredBar(): { index: number; legend: string; anchorKey: GlobalKey } | null {
     return this.#hoveredBar;
   }
 
-  hoverBar(index: number, legend: string): void {
-    this.#hoveredBar = { index, legend };
+  hoverBar(index: number, legend: string, anchorKey: GlobalKey): void {
+    this.#hoveredBar = { index, legend, anchorKey };
     this.notifyListeners();
   }
 

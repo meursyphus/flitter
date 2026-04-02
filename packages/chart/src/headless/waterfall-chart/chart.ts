@@ -1,5 +1,10 @@
 import {
 	StatelessWidget,
+	StatefulWidget,
+	State,
+	GlobalKey,
+	Stack,
+	StackFit,
 	type Widget,
 	type BuildContext,
 	LayoutBuilder,
@@ -8,6 +13,13 @@ import {
 } from "flitter-core";
 import { WaterfallChartProvider } from "./provider";
 import type { WaterfallBarType } from "./types";
+
+const TYPE_LABEL: Record<WaterfallBarType, string> = {
+	increase: "Increase",
+	decrease: "Decrease",
+	total: "Total",
+	subtotal: "Subtotal",
+};
 
 class Chart extends StatelessWidget {
 	override build(_: BuildContext): Widget {
@@ -179,12 +191,12 @@ class YAxisTick extends StatelessWidget {
 	}
 }
 
-class Bar extends StatelessWidget {
-	#value: number;
-	#cumulative: number;
-	#index: number;
-	#label: string;
-	#type: WaterfallBarType;
+class Bar extends StatefulWidget {
+	value: number;
+	cumulative: number;
+	index: number;
+	label: string;
+	type: WaterfallBarType;
 
 	constructor({
 		value,
@@ -199,29 +211,38 @@ class Bar extends StatelessWidget {
 		label: string;
 		type: WaterfallBarType;
 	}) {
-		super();
-		this.#value = value;
-		this.#cumulative = cumulative;
-		this.#index = index;
-		this.#label = label;
-		this.#type = type;
+		super(`${index}`);
+		this.value = value;
+		this.cumulative = cumulative;
+		this.index = index;
+		this.label = label;
+		this.type = type;
 	}
+
+	createState() {
+		return new BarState();
+	}
+}
+
+class BarState extends State<Bar> {
+	anchorKey = new GlobalKey();
 
 	override build(context: BuildContext): Widget {
 		const ctx = WaterfallChartProvider.of(context);
-		const index = this.#index;
+		const { index, value, cumulative, label, type } = this.widget;
 		const isHovered = ctx.isBarHovered(index);
 		return GestureDetector({
 			cursor: "default",
-			onMouseEnter: () => ctx.hoverBar(index),
-			onMouseLeave: () => ctx.unhoverBar(),
+			key: this.anchorKey,
+			onMouseEnter: () => ctx.hoverBar(index, this.anchorKey),
+			onMouseLeave: () => ctx.unhoverBar(index),
 			child: ctx.custom.bar(
 				{
-					value: this.#value,
-					cumulative: this.#cumulative,
+					value,
+					cumulative,
 					index,
-					label: this.#label,
-					type: this.#type,
+					label,
+					type,
 					isHovered,
 				},
 				ctx,
@@ -280,6 +301,7 @@ class Plot extends StatelessWidget {
 				dataView: new DataView(),
 				grid: new Grid(),
 				axisCorner: new AxisCorner(),
+				tooltipArea: new TooltipOverlay(),
 			},
 			ctx,
 		);
@@ -341,5 +363,94 @@ class GridYLine extends StatelessWidget {
 	override build(context: BuildContext): Widget {
 		const ctx = WaterfallChartProvider.of(context);
 		return ctx.custom.gridYLine(undefined, ctx);
+	}
+}
+
+class TooltipOverlay extends StatefulWidget {
+	createState() {
+		return new TooltipOverlayState();
+	}
+}
+
+class TooltipOverlayState extends State<TooltipOverlay> {
+	overlayKey = new GlobalKey();
+
+	private resolveHoveredBar(
+		ctx: ReturnType<typeof WaterfallChartProvider.of>,
+	): {
+		index: number;
+		label: string;
+		value: number;
+		cumulative: number;
+		type: WaterfallBarType;
+		x: number;
+		y: number;
+		width: number;
+		height: number;
+	} | null {
+		const hoveredBar = ctx.hoveredBar;
+		if (hoveredBar == null) return null;
+
+		const overlayRenderObject = this.overlayKey.currentContext?.renderObject;
+		const barRenderObject = hoveredBar.anchorKey.currentContext?.renderObject;
+		if (overlayRenderObject == null || barRenderObject == null) return null;
+
+		const index = hoveredBar.index;
+		const barGlobal = barRenderObject.localToGlobal();
+		const overlayGlobal = overlayRenderObject.localToGlobal();
+
+		return {
+			index,
+			label: ctx.data.labels[index] ?? "",
+			value: ctx.data.values[index] ?? 0,
+			cumulative: ctx.cumulativeValues[index] ?? 0,
+			type: ctx.types[index],
+			x: barGlobal.x - overlayGlobal.x,
+			y: barGlobal.y - overlayGlobal.y,
+			width: barRenderObject.size.width,
+			height: barRenderObject.size.height,
+		};
+	}
+
+	override build(context: BuildContext): Widget {
+		const ctx = WaterfallChartProvider.of(context);
+		const hoveredBarRect = this.resolveHoveredBar(ctx);
+		const palette =
+			ctx.config?.colors?.fills ??
+			ctx.config?.colors ??
+			["#888"];
+
+		let tooltip: Widget | null = null;
+		if (hoveredBarRect != null) {
+			const color = palette[
+				hoveredBarRect.type === "increase"
+					? 0
+					: hoveredBarRect.type === "decrease"
+						? 1
+						: 2
+			] ?? palette[0] ?? "#888";
+			tooltip = ctx.custom.tooltip(
+				{
+					label: hoveredBarRect.label,
+					items: [
+						{ legend: TYPE_LABEL[hoveredBarRect.type], color, value: hoveredBarRect.value },
+						{ legend: "Cumulative", color: ctx.config.axis.color, value: hoveredBarRect.cumulative },
+					],
+				},
+				ctx,
+			);
+		}
+
+		return Stack({
+			fit: StackFit.expand,
+			clipped: false,
+			children: [
+				SizedBox({ key: this.overlayKey, width: Infinity, height: Infinity }),
+				ctx.custom.tooltipArea(
+					{ tooltip, hoveredBar: hoveredBarRect },
+					ctx,
+				),
+			],
+		});
 	}
 }

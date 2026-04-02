@@ -1,4 +1,6 @@
 import {
+  StatefulWidget,
+  State,
   SizedBox,
   Stack,
   StackFit,
@@ -269,56 +271,111 @@ function computeTooltipLayout({
     : horizontalNegative(space, tooltipSize);
 }
 
-export function toastTooltipArea(
-  ...[{ tooltip, hoveredBar }, ctx]: Parameters<BarChartCustom<ToastBarChartConfig>['tooltipArea']>
-): Widget {
-  const { direction, config } = ctx;
+class _ToastTooltipArea extends StatefulWidget {
+  tooltip: Widget | null;
+  hoveredBar: {
+    index: number;
+    legend: string;
+    value: number;
+    label: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null;
+  ctx: any;
 
-  if (!hoveredBar || !tooltip || !config.tooltip.enabled) {
-    return SizedBox.shrink();
+  constructor({
+    tooltip,
+    hoveredBar,
+    ctx,
+  }: {
+    tooltip: Widget | null;
+    hoveredBar: {
+      index: number;
+      legend: string;
+      value: number;
+      label: string;
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    } | null;
+    ctx: any;
+  }) {
+    super();
+    this.tooltip = tooltip;
+    this.hoveredBar = hoveredBar;
+    this.ctx = ctx;
   }
 
-  const layout = computeTooltipLayout({
-    barX: hoveredBar.x,
-    barY: hoveredBar.y,
-    barWidth: hoveredBar.width,
-    barHeight: hoveredBar.height,
-    direction,
-    value: hoveredBar.value,
-    chartWidth: ctx.width,
-    chartHeight: ctx.height,
-  });
+  createState() {
+    return new _ToastTooltipAreaState();
+  }
+}
 
-  const tooltipWidget = ZIndex({
-    zIndex: 9999,
-    child: Padding({
-      padding: layout.padding,
-      child: tooltip,
-    }),
-  });
+class _ToastTooltipAreaState extends State<_ToastTooltipArea> {
+  override build(): Widget {
+    const { tooltip, hoveredBar, ctx } = this.widget;
+    const { direction, config } = ctx;
 
-  return Positioned({
-    key: "__tooltip__",
-    left: hoveredBar.x,
-    top: hoveredBar.y,
-    child: Stack({
-      fit: StackFit.passthrough,
-      clipped: false,
-      children: [
-        Positioned.fill({
-          child: FractionalTranslation({
-            translation: layout.offset,
-            child: ConstraintsTransformBox({
-              constraintsTransform: ConstraintsTransformBox.unconstrained,
-              alignment: Alignment[layout.position],
-              child: FractionalTranslation({
-                translation: layout.translation,
-                child: tooltipWidget,
+    if (!hoveredBar || !tooltip || !config.tooltip.enabled) {
+      return SizedBox.shrink();
+    }
+
+    const size = this.element.renderObject.size;
+    const layout = computeTooltipLayout({
+      barX: hoveredBar.x,
+      barY: hoveredBar.y,
+      barWidth: hoveredBar.width,
+      barHeight: hoveredBar.height,
+      direction,
+      value: hoveredBar.value,
+      chartWidth: size.width,
+      chartHeight: size.height,
+    });
+
+    const tooltipWidget = ZIndex({
+      zIndex: 9999,
+      child: Padding({
+        padding: layout.padding,
+        child: tooltip,
+      }),
+    });
+
+    return Positioned({
+      key: "__tooltip__",
+      left: hoveredBar.x,
+      top: hoveredBar.y,
+      child: Stack({
+        fit: StackFit.passthrough,
+        clipped: false,
+        children: [
+          SizedBox({
+            width: hoveredBar.width,
+            height: hoveredBar.height,
+          }),
+          Positioned.fill({
+            child: FractionalTranslation({
+              translation: layout.offset,
+              child: ConstraintsTransformBox({
+                constraintsTransform: ConstraintsTransformBox.unconstrained,
+                alignment: Alignment[layout.position],
+                child: FractionalTranslation({
+                  translation: layout.translation,
+                  child: tooltipWidget,
+                }),
               }),
             }),
           }),
-        }),
-      ],
-    }),
-  });
+        ],
+      }),
+    });
+  }
+}
+
+export function toastTooltipArea(
+  ...[{ tooltip, hoveredBar }, ctx]: Parameters<BarChartCustom<ToastBarChartConfig>['tooltipArea']>
+): Widget {
+  return new _ToastTooltipArea({ tooltip, hoveredBar, ctx });
 }

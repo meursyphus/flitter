@@ -6,9 +6,11 @@ import { toastBoxPlot } from "./parts/boxplot";
 import { toastBoxPlotBox } from "./parts/boxplot-box";
 import { toastOutlier } from "./parts/outlier";
 import { toastDataView } from "./parts/data-view";
+import { toastTooltipArea } from "./parts/tooltip-area";
 import {
   toastTitle,
   toastLegend,
+  tooltipContent,
   toastScaleOptions,
   cartesian,
 } from "../../_styles/toast/index";
@@ -16,12 +18,21 @@ import {
 export { type ToastBoxPlotChartConfig } from "./config";
 export type { ToastBoxPlotChartConfig as BoxPlotChartConfig } from "./config";
 
+function toastTooltip(
+  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  context: any,
+): Widget {
+  return tooltipContent({ label: args.label, items: args.items, config: context.config as any });
+}
+
 const toastCustom: Partial<BoxPlotChartCustom<ToastBoxPlotChartConfig>> = {
   layout: cartesian.toastLayout,
   boxPlot: toastBoxPlot,
   boxPlotBox: toastBoxPlotBox,
   outlier: toastOutlier,
   dataView: toastDataView,
+  tooltip: toastTooltip,
+  tooltipArea: toastTooltipArea,
   legend: toastLegend,
   title: toastTitle,
   axisCorner: cartesian.toastAxisCorner,

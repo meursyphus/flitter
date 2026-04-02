@@ -58,8 +58,32 @@ export type WaterfallChartCustom<TConfig = {}> = {
 	yAxisTick: CustomArgs<undefined, TConfig>;
 	dataView: CustomArgs<{ bars: Widget[]; connectors: Widget[] }, TConfig>;
 	layout: CustomArgs<{ title: Widget; legends: Widget[]; plot: Widget }, TConfig>;
+	tooltip: CustomArgs<
+		{
+			label: string;
+			items: { legend: string; color: string; value: number }[];
+		},
+		TConfig
+	>;
 	plot: CustomArgs<
-		{ xAxis: Widget; yAxis: Widget; dataView: Widget; grid: Widget; axisCorner: Widget },
+		{ xAxis: Widget; yAxis: Widget; dataView: Widget; grid: Widget; axisCorner: Widget; tooltipArea: Widget },
+		TConfig
+	>;
+	tooltipArea: CustomArgs<
+		{
+			tooltip: Widget | null;
+			hoveredBar: {
+				index: number;
+				label: string;
+				value: number;
+				cumulative: number;
+				type: WaterfallBarType;
+				x: number;
+				y: number;
+				width: number;
+				height: number;
+			} | null;
+		},
 		TConfig
 	>;
 	legend: CustomArgs<{ name: string; index: number; isVisible: boolean }, TConfig>;

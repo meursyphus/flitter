@@ -1,4 +1,4 @@
-import { ChangeNotifier } from "flitter-core";
+import { ChangeNotifier, GlobalKey } from "flitter-core";
 import { refineScale } from "@shared/utils/scale";
 import type {
 	HistogramBin,
@@ -21,7 +21,7 @@ export class HistogramChartController extends ChangeNotifier {
 	#scale: HistogramChartScale | null = null;
 	#width = 0;
 	#height = 0;
-	#hoveredBin: number | null = null;
+	#hoveredBin: { index: number; anchorKey: GlobalKey } | null = null;
 
 	custom!: HistogramChartCustom<any>;
 	config: any;
@@ -109,6 +109,7 @@ export class HistogramChartController extends ChangeNotifier {
 
 	set data(value: HistogramChartData) {
 		this.#rawData = value;
+		this.#hoveredBin = null;
 		this.#recalculate();
 		this.notifyListeners();
 	}
@@ -141,17 +142,17 @@ export class HistogramChartController extends ChangeNotifier {
 		this.notifyListeners();
 	}
 
-	get hoveredBin(): number | null {
+	get hoveredBin(): { index: number; anchorKey: GlobalKey } | null {
 		return this.#hoveredBin;
 	}
 
-	hoverBin(index: number): void {
-		this.#hoveredBin = index;
+	hoverBin(index: number, anchorKey: GlobalKey): void {
+		this.#hoveredBin = { index, anchorKey };
 		this.notifyListeners();
 	}
 
 	unhoverBin(index: number): void {
-		if (this.#hoveredBin !== index) return;
+		if (this.#hoveredBin?.index !== index) return;
 		this.#hoveredBin = null;
 		this.notifyListeners();
 	}
@@ -163,6 +164,6 @@ export class HistogramChartController extends ChangeNotifier {
 	}
 
 	isBinHovered(index: number): boolean {
-		return this.#hoveredBin === index;
+		return this.#hoveredBin?.index === index;
 	}
 }

@@ -7,6 +7,7 @@ import { defaultToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { toastArea } from "./parts/area";
 import { toastDataView } from "./parts/data-view";
+import { toastTooltipArea } from "./parts/tooltip-area";
 import {
   toastTitle,
   toastLegend,
@@ -28,6 +29,7 @@ const toastCustom: Partial<LineChartCustom<ToastStackedAreaChartConfig>> = {
   layout: cartesian.toastLayout,
   line: toastArea,
   dataView: toastDataView,
+  tooltipArea: toastTooltipArea,
   legend: toastLegend,
   title: toastTitle,
   tooltip: toastTooltip,

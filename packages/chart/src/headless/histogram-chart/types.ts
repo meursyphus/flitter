@@ -32,12 +32,26 @@ export type HistogramChartScale = {
 export type HistogramChartCustom<TConfig = {}> = {
 	layout: CustomArgs<{ title: Widget; plot: Widget }, TConfig>;
 	plot: CustomArgs<
-		{ xAxis: Widget; yAxis: Widget; dataView: Widget; grid: Widget; axisCorner: Widget },
+		{ xAxis: Widget; yAxis: Widget; dataView: Widget; grid: Widget; axisCorner: Widget; tooltipArea: Widget },
 		TConfig
 	>;
 	dataView: CustomArgs<{ bars: Widget[] }, TConfig>;
 	bar: CustomArgs<{ binMin: number; binMax: number; count: number; index: number; isHovered: boolean }, TConfig>;
 	tooltip: CustomArgs<{ label: string; items: { legend: string; color: string; value: number }[] }, TConfig>;
+	tooltipArea: CustomArgs<{
+		tooltip: Widget | null;
+		hoveredBin: {
+			index: number;
+			binMin: number;
+			binMax: number;
+			count: number;
+			label: string;
+			x: number;
+			y: number;
+			width: number;
+			height: number;
+		} | null;
+	}, TConfig>;
 	xAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
 	yAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
 	xAxisLabel: CustomArgs<{ name: string; index: number }, TConfig>;

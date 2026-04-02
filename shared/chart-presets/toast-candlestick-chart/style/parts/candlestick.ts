@@ -1,6 +1,4 @@
 import {
-  StatefulWidget,
-  State,
   Alignment,
   AnimatedScale,
   Border,
@@ -9,216 +7,15 @@ import {
   Container,
   Column,
   CrossAxisAlignment,
-  EdgeInsets,
   Expanded,
   FractionallySizedBox,
   MainAxisAlignment,
-  Offset,
   Opacity,
-  Padding,
   SizedBox,
-  ZIndex,
   type Widget,
-  type TooltipPosition,
 } from "flitter-core";
-import Tooltip from "flitter-core/component/Tooltip";
 import type { CandlestickChartContext } from "flitter-ui/chart";
 import type { CandlestickChartConfig } from "../config";
-
-const TOOLTIP_GAP = 4;
-const ESTIMATED_TOOLTIP_WIDTH = 220;
-const ESTIMATED_TOOLTIP_HEIGHT = 80;
-
-type TooltipLayout = {
-  position: TooltipPosition;
-  offset: Offset;
-  translation: Offset;
-  padding: EdgeInsets;
-};
-
-type SpaceAround = {
-  right: number;
-  left: number;
-  top: number;
-  bottom: number;
-};
-
-type TooltipSize = {
-  width: number;
-  height: number;
-};
-
-function topRight(): TooltipLayout {
-  return {
-    position: "topRight",
-    translation: new Offset({ x: 1, y: 0 }),
-    offset: Offset.Constants.zero,
-    padding: EdgeInsets.only({ left: TOOLTIP_GAP }),
-  };
-}
-
-function bottomRight(): TooltipLayout {
-  return {
-    position: "bottomRight",
-    translation: new Offset({ x: 1, y: 0 }),
-    offset: Offset.Constants.zero,
-    padding: EdgeInsets.only({ left: TOOLTIP_GAP }),
-  };
-}
-
-function topLeft(): TooltipLayout {
-  return {
-    position: "topLeft",
-    translation: new Offset({ x: -1, y: 0 }),
-    offset: Offset.Constants.zero,
-    padding: EdgeInsets.only({ right: TOOLTIP_GAP }),
-  };
-}
-
-function bottomLeft(): TooltipLayout {
-  return {
-    position: "bottomLeft",
-    translation: new Offset({ x: -1, y: 0 }),
-    offset: Offset.Constants.zero,
-    padding: EdgeInsets.only({ right: TOOLTIP_GAP }),
-  };
-}
-
-function computeTooltipLayout({
-  elementGlobal,
-  elementSize,
-  plotGlobal,
-  chartWidth,
-  chartHeight,
-}: {
-  elementGlobal: { x: number; y: number };
-  elementSize: { width: number; height: number };
-  plotGlobal: { x: number; y: number };
-  chartWidth: number;
-  chartHeight: number;
-}): TooltipLayout {
-  const localX = elementGlobal.x - plotGlobal.x;
-  const localY = elementGlobal.y - plotGlobal.y;
-  const space: SpaceAround = {
-    right: chartWidth - (localX + elementSize.width),
-    left: localX,
-    top: localY,
-    bottom: chartHeight - (localY + elementSize.height),
-  };
-
-  const tooltipSize: TooltipSize = {
-    width: ESTIMATED_TOOLTIP_WIDTH,
-    height: ESTIMATED_TOOLTIP_HEIGHT,
-  };
-
-  const fitsRight = space.right >= tooltipSize.width + TOOLTIP_GAP;
-  const fitsTop = space.top >= tooltipSize.height;
-
-  if (fitsRight) {
-    return fitsTop ? topRight() : bottomRight();
-  }
-  return fitsTop ? topLeft() : bottomLeft();
-}
-
-class _TooltipPositioner extends StatefulWidget {
-  candlestickWidget: Widget;
-  tooltipWidget: Widget;
-  chartWidth: number;
-  chartHeight: number;
-  isHovered: boolean;
-
-  constructor({
-    candlestickWidget,
-    tooltipWidget,
-    chartWidth,
-    chartHeight,
-    isHovered,
-  }: {
-    candlestickWidget: Widget;
-    tooltipWidget: Widget;
-    chartWidth: number;
-    chartHeight: number;
-    isHovered: boolean;
-  }) {
-    super();
-    this.candlestickWidget = candlestickWidget;
-    this.tooltipWidget = tooltipWidget;
-    this.chartWidth = chartWidth;
-    this.chartHeight = chartHeight;
-    this.isHovered = isHovered;
-  }
-
-  createState() {
-    return new _TooltipPositionerState();
-  }
-}
-
-class _TooltipPositionerState extends State<_TooltipPositioner> {
-  tooltipLayout: TooltipLayout | null = null;
-
-  private findPlotGlobal(): { x: number; y: number } | null {
-    const { chartWidth, chartHeight } = this.widget;
-    let node = this.element.renderObject.parent;
-    while (node) {
-      const s = node.size;
-      if (
-        s &&
-        Math.abs(s.width - chartWidth) < 1 &&
-        Math.abs(s.height - chartHeight) < 1
-      ) {
-        return node.localToGlobal();
-      }
-      node = node.parent;
-    }
-    return null;
-  }
-
-  private computeLayout() {
-    const renderObject = this.element.renderObject;
-    const elementGlobal = renderObject.localToGlobal();
-    const elementSize = renderObject.size;
-    const { chartWidth, chartHeight } = this.widget;
-
-    const plotGlobal = this.findPlotGlobal();
-    if (!plotGlobal) return;
-
-    this.tooltipLayout = computeTooltipLayout({
-      elementGlobal,
-      elementSize,
-      plotGlobal,
-      chartWidth,
-      chartHeight,
-    });
-  }
-
-  override build() {
-    const { isHovered, tooltipWidget } = this.widget;
-
-    if (isHovered) {
-      this.computeLayout();
-    }
-
-    const layout = this.tooltipLayout;
-
-    if (!isHovered) {
-      return this.widget.candlestickWidget;
-    }
-
-    return Tooltip({
-      position: layout?.position ?? "topRight",
-      offset: layout?.offset ?? Offset.Constants.zero,
-      translation: layout?.translation,
-      tooltip: ZIndex({
-        zIndex: 9999,
-        child: Padding({
-          padding: layout?.padding ?? EdgeInsets.only({ left: TOOLTIP_GAP }),
-          child: tooltipWidget,
-        }),
-      }),
-      child: this.widget.candlestickWidget,
-    });
-  }
-}
 
 export function toastCandlestick(
   {
@@ -226,9 +23,6 @@ export function toastCandlestick(
     high,
     low,
     close,
-    label,
-    index,
-    legend,
     isHovered,
   }: {
     open: number;
@@ -260,7 +54,7 @@ export function toastCandlestick(
   const hoveredCandlestick = context.hoveredCandlestick;
   const activeOpacity = hoveredCandlestick == null || isHovered ? 1 : 0.28;
 
-  const candlestickWidget = Opacity({
+  return Opacity({
     opacity: activeOpacity,
     child: Container({
       width: Infinity,
@@ -325,30 +119,5 @@ export function toastCandlestick(
         }),
       }),
     }),
-  });
-
-  if (!context.config.tooltip.enabled) {
-    return candlestickWidget;
-  }
-
-  const tooltipWidget = context.custom.tooltip(
-    {
-      label,
-      items: [
-        { legend: `${legend} open`, color, value: open },
-        { legend: `${legend} high`, color: wickColor, value: high },
-        { legend: `${legend} low`, color: wickColor, value: low },
-        { legend: `${legend} close`, color, value: close },
-      ],
-    },
-    context,
-  );
-
-  return new _TooltipPositioner({
-    candlestickWidget,
-    tooltipWidget,
-    chartWidth: context.width,
-    chartHeight: context.height,
-    isHovered,
   });
 }

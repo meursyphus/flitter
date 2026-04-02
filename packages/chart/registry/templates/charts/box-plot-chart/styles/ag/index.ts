@@ -5,16 +5,27 @@ import { deepMerge } from "@utils/index";
 import {
   agTitle,
   agLegend,
+  agTooltipContent,
   agScaleOptions,
   cartesian,
 } from "@styles/ag";
 import { agDataView } from "./parts/data-view";
+import { agTooltipArea } from "./parts/tooltip-area";
 
 export { type AgBoxPlotChartConfig } from "./config";
 export type { AgBoxPlotChartConfig as BoxPlotChartConfig } from "./config";
 
+function agTooltip(
+  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  context: any,
+): Widget {
+  return agTooltipContent({ label: args.label, items: args.items, config: context.config as any });
+}
+
 const agCustom: Partial<BoxPlotChartCustom<AgBoxPlotChartConfig>> = {
   dataView: agDataView,
+  tooltip: agTooltip,
+  tooltipArea: agTooltipArea,
   layout: cartesian.agLayout,
   legend: agLegend,
   title: agTitle,

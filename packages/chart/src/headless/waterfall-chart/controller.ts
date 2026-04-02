@@ -1,4 +1,4 @@
-import { ChangeNotifier } from "flitter-core";
+import { ChangeNotifier, GlobalKey } from "flitter-core";
 import { refineScale } from "@shared/utils/scale";
 import type {
 	WaterfallBarType,
@@ -34,7 +34,7 @@ export class WaterfallChartController extends ChangeNotifier {
 	#types: WaterfallBarType[] = [];
 	#width = 0;
 	#height = 0;
-	#hoveredBar: number | null = null;
+	#hoveredBar: { index: number; anchorKey: GlobalKey } | null = null;
 
 	custom!: WaterfallChartCustom<any>;
 	config: any;
@@ -98,6 +98,7 @@ export class WaterfallChartController extends ChangeNotifier {
 
 	set data(value: WaterfallChartData) {
 		this.#rawData = value;
+		this.#hoveredBar = null;
 		this.#recalculate();
 		this.notifyListeners();
 	}
@@ -134,17 +135,18 @@ export class WaterfallChartController extends ChangeNotifier {
 		this.notifyListeners();
 	}
 
-	get hoveredBar(): number | null {
+	get hoveredBar(): { index: number; anchorKey: GlobalKey } | null {
 		return this.#hoveredBar;
 	}
 
-	hoverBar(index: number): void {
-		this.#hoveredBar = index;
+	hoverBar(index: number, anchorKey: GlobalKey): void {
+		this.#hoveredBar = { index, anchorKey };
 		this.notifyListeners();
 	}
 
-	unhoverBar(): void {
+	unhoverBar(index?: number): void {
 		if (this.#hoveredBar === null) return;
+		if (index != null && this.#hoveredBar.index !== index) return;
 		this.#hoveredBar = null;
 		this.notifyListeners();
 	}
@@ -156,6 +158,6 @@ export class WaterfallChartController extends ChangeNotifier {
 	}
 
 	isBarHovered(index: number): boolean {
-		return this.#hoveredBar === index;
+		return this.#hoveredBar?.index === index;
 	}
 }

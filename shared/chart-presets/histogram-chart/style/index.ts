@@ -4,11 +4,19 @@ import type { HistogramChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import * as Cartesian from "flitter-ui/chart";
-import { agTitle, cartesian } from "../../_styles/ag/index";
+import { agTitle, agTooltipContent, cartesian } from "../../_styles/ag/index";
 import { agBar } from "./parts/bar";
 import { agDataView } from "./parts/data-view";
+import { agTooltipArea } from "./parts/tooltip-area";
 
 export { type HistogramChartConfig } from "./config";
+
+function agTooltip(
+  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  context: any,
+): Widget {
+  return agTooltipContent({ label: args.label, items: args.items, config: context.config });
+}
 
 const agCustom: Partial<HistogramChartCustom<HistogramChartConfig>> = {
   layout: ({ title, plot }, ctx) =>
@@ -17,6 +25,8 @@ const agCustom: Partial<HistogramChartCustom<HistogramChartConfig>> = {
     Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner }),
   dataView: agDataView,
   bar: agBar,
+  tooltip: agTooltip,
+  tooltipArea: agTooltipArea,
   xAxis: ({ line, labels, tick }, ctx) =>
     cartesian.agXAxis({ line, labels, tick } as any, { type: "label" }, ctx as any),
   yAxis: ({ line, labels, tick }, ctx) =>

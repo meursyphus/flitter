@@ -1,4 +1,4 @@
-import { ChangeNotifier } from "flitter-core";
+import { ChangeNotifier, GlobalKey } from "flitter-core";
 import type {
 	CandlestickChartCustom,
 	CandlestickChartData,
@@ -10,7 +10,7 @@ import type {
 export class CandlestickChartController extends ChangeNotifier {
 	#rawData: CandlestickChartData;
 	#hiddenSeries: Set<string> = new Set();
-	#hoveredCandlestick: { index: number; legend: string } | null = null;
+	#hoveredCandlestick: { index: number; legend: string; anchorKey: GlobalKey } | null = null;
 	#scale: CandlestickChartScale | null = null;
 	#getScale: GetScaleFn;
 	#getScaleOptions: GetScaleOptionsFn | null;
@@ -48,6 +48,7 @@ export class CandlestickChartController extends ChangeNotifier {
 
 	set data(value: CandlestickChartData) {
 		this.#rawData = value;
+		this.#hoveredCandlestick = null;
 		this.#recalcScale();
 		this.notifyListeners();
 	}
@@ -99,6 +100,7 @@ export class CandlestickChartController extends ChangeNotifier {
 		} else {
 			this.#hiddenSeries.add(legend);
 		}
+		this.#hoveredCandlestick = null;
 		this.#recalcScale();
 		this.notifyListeners();
 	}
@@ -106,6 +108,7 @@ export class CandlestickChartController extends ChangeNotifier {
 	showSeries(legend: string): void {
 		if (!this.#hiddenSeries.has(legend)) return;
 		this.#hiddenSeries.delete(legend);
+		this.#hoveredCandlestick = null;
 		this.#recalcScale();
 		this.notifyListeners();
 	}
@@ -113,6 +116,7 @@ export class CandlestickChartController extends ChangeNotifier {
 	hideSeries(legend: string): void {
 		if (this.#hiddenSeries.has(legend)) return;
 		this.#hiddenSeries.add(legend);
+		this.#hoveredCandlestick = null;
 		this.#recalcScale();
 		this.notifyListeners();
 	}
@@ -120,16 +124,17 @@ export class CandlestickChartController extends ChangeNotifier {
 	showAllSeries(): void {
 		if (this.#hiddenSeries.size === 0) return;
 		this.#hiddenSeries.clear();
+		this.#hoveredCandlestick = null;
 		this.#recalcScale();
 		this.notifyListeners();
 	}
 
-	get hoveredCandlestick(): { index: number; legend: string } | null {
+	get hoveredCandlestick(): { index: number; legend: string; anchorKey: GlobalKey } | null {
 		return this.#hoveredCandlestick;
 	}
 
-	hoverCandlestick(index: number, legend: string): void {
-		this.#hoveredCandlestick = { index, legend };
+	hoverCandlestick(index: number, legend: string, anchorKey: GlobalKey): void {
+		this.#hoveredCandlestick = { index, legend, anchorKey };
 		this.notifyListeners();
 	}
 

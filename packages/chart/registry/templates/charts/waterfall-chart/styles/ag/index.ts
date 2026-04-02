@@ -10,18 +10,28 @@ import * as Cartesian from "@shared/cartesian";
 import { agBar } from "./parts/bar";
 import { agConnector } from "./parts/connector";
 import { agDataView } from "./parts/data-view";
-import { agLegend, agTitle, cartesian } from "@styles/ag";
+import { agTooltipArea } from "./parts/tooltip-area";
+import { agLegend, agTitle, agTooltipContent, cartesian } from "@styles/ag";
 
 export { type WaterfallChartConfig } from "./config";
+
+function agTooltip(
+  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  context: any,
+): Widget {
+  return agTooltipContent({ label: args.label, items: args.items, config: context.config as any });
+}
 
 const agCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
   layout: ({ title, legends, plot }, ctx) =>
     cartesian.agLayout({ title, legends, plot }, ctx as any),
-  plot: ({ xAxis, yAxis, dataView, grid, axisCorner }) =>
-    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner }),
+  plot: ({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }) =>
+    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }),
   dataView: agDataView,
   bar: agBar,
   connector: agConnector,
+  tooltip: agTooltip,
+  tooltipArea: agTooltipArea,
   xAxis: ({ line, labels, tick }, ctx) =>
     cartesian.agXAxis({ line, labels, tick } as any, { type: "label" }, ctx as any),
   yAxis: ({ line, labels, tick }, ctx) =>
