@@ -127,7 +127,14 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
     this.onDragMove = onDragMove ?? emptyCallback;
     this.onDragEnd = onDragEnd ?? emptyCallback;
     this.onWheel = onWheel ?? emptyCallback;
-    this.cursor = cursor ?? "pointer";
+    const hasClickOrDrag =
+      onClick != null ||
+      onMouseDown != null ||
+      onMouseUp != null ||
+      onDragStart != null ||
+      onDragMove != null ||
+      onDragEnd != null;
+    this.cursor = cursor ?? (hasClickOrDrag ? "pointer" : "default");
     this.behavior = behavior ?? "opaque";
   }
 

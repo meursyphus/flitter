@@ -4,7 +4,7 @@ import type { LineChartCustom, LineChartData, LineChartScale, GetScaleFn, GetSca
 export class LineChartController extends ChangeNotifier {
   #rawData: LineChartData;
   #hiddenSeries: Set<string> = new Set();
-  #hoveredPoint: { index: number; legend: string } | null = null;
+  #hoveredPoint: { index: number; legend: string; x: number; y: number } | null = null;
   #scale: LineChartScale | null = null;
   #getScale: GetScaleFn;
   #getScaleOptions: GetScaleOptionsFn | null;
@@ -131,12 +131,12 @@ export class LineChartController extends ChangeNotifier {
 
   // --- 호버 ---
 
-  get hoveredPoint(): { index: number; legend: string } | null {
+  get hoveredPoint(): { index: number; legend: string; x: number; y: number } | null {
     return this.#hoveredPoint;
   }
 
-  hoverPoint(index: number, legend: string): void {
-    this.#hoveredPoint = { index, legend };
+  hoverPoint(index: number, legend: string, x: number, y: number): void {
+    this.#hoveredPoint = { index, legend, x, y };
     this.notifyListeners();
   }
 

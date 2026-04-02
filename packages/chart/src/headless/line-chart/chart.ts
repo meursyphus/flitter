@@ -1,5 +1,8 @@
 import {
   StatelessWidget,
+  StatefulWidget,
+  State,
+  GlobalKey,
   type Widget,
   type BuildContext,
   LayoutBuilder,
@@ -244,13 +247,101 @@ class Plot extends StatelessWidget {
   }
 }
 
-class DataView extends StatelessWidget {
+class DataView extends StatefulWidget {
+  createState() {
+    return new DataViewState();
+  }
+}
+
+class DataViewState extends State<DataView> {
+  dataViewKey = new GlobalKey();
+
+  private getLocalPosition(e: MouseEvent): { x: number; y: number } | null {
+    const ro = this.dataViewKey.currentContext?.renderObject;
+    if (ro == null) return null;
+    const view = ro.renderOwner.renderContext.view;
+    const rect = view.getBoundingClientRect();
+    const flitterGlobalX = e.clientX - rect.left;
+    const flitterGlobalY = e.clientY - rect.top;
+    const roGlobal = ro.localToGlobal();
+    return {
+      x: flitterGlobalX - roGlobal.x,
+      y: flitterGlobalY - roGlobal.y,
+    };
+  }
+
+  private computePointPosition(
+    index: number,
+    value: number,
+    numPoints: number,
+    scale: { min: number; max: number },
+    width: number,
+    height: number,
+  ): { x: number; y: number } {
+    const range = scale.max - scale.min;
+    const x = numPoints > 1 ? (index * width) / (numPoints - 1) : width / 2;
+    const y = height - (height * (value - scale.min)) / range;
+    return { x, y };
+  }
+
+  private handleMouseMove(e: MouseEvent, ctx: ReturnType<typeof LineChartProvider.of>) {
+    const local = this.getLocalPosition(e);
+    if (local == null) return;
+
+    const ro = this.dataViewKey.currentContext?.renderObject;
+    if (ro == null) return;
+    const size = ro.size;
+    if (size.width <= 0 || size.height <= 0) return;
+    if (ctx.scale == null) return;
+
+    const scale = ctx.scale;
+    let closestIndex = -1;
+    let closestLegend = "";
+    let closestX = 0;
+    let closestY = 0;
+    let minDist = Infinity;
+
+    for (const dataset of ctx.data.datasets) {
+      const numPoints = dataset.values.length;
+      for (let i = 0; i < numPoints; i++) {
+        const pos = this.computePointPosition(
+          i,
+          dataset.values[i],
+          numPoints,
+          scale,
+          size.width,
+          size.height,
+        );
+        const dx = local.x - pos.x;
+        const dy = local.y - pos.y;
+        const dist = dx * dx + dy * dy;
+        if (dist < minDist) {
+          minDist = dist;
+          closestIndex = i;
+          closestLegend = dataset.legend;
+          closestX = pos.x;
+          closestY = pos.y;
+        }
+      }
+    }
+
+    if (closestIndex >= 0) {
+      const hp = ctx.hoveredPoint;
+      if (hp == null || hp.index !== closestIndex || hp.legend !== closestLegend) {
+        ctx.hoverPoint(closestIndex, closestLegend, closestX, closestY);
+      }
+    }
+  }
+
   override build(context: BuildContext): Widget {
     const ctx = LineChartProvider.of(context);
     const { data } = ctx;
     return GestureDetector({
+      key: this.dataViewKey,
       behavior: "translucent",
+      cursor: "default",
       onMouseLeave: () => ctx.unhoverAllPoints(),
+      onMouseMove: (e: MouseEvent) => this.handleMouseMove(e, ctx),
       child: ctx.custom.dataView(
         {
           lines: data.datasets.map(

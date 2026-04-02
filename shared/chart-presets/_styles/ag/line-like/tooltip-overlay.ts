@@ -3,15 +3,12 @@ import {
   State,
   Stack,
   StackFit,
-  Positioned,
-  GestureDetector,
   AnimatedPositioned,
   AnimatedOpacity,
   FractionalTranslation,
   ConstraintsTransformBox,
   Offset,
   Curves,
-  SizedBox,
   ZIndex,
   type Widget,
   type BuildContext,
@@ -46,19 +43,6 @@ class _AgLineLikeTooltipOverlayState extends State<_AgLineLikeTooltipOverlay> {
     value: number;
   } | null = null;
 
-  private getLocalPosition(e: MouseEvent): { x: number; y: number } {
-    const ro = this.element.renderObject;
-    const view = ro.renderOwner.renderContext.view;
-    const rect = view.getBoundingClientRect();
-    const flitterGlobalX = e.clientX - rect.left;
-    const flitterGlobalY = e.clientY - rect.top;
-    const overlayGlobal = ro.localToGlobal();
-    return {
-      x: flitterGlobalX - overlayGlobal.x,
-      y: flitterGlobalY - overlayGlobal.y,
-    };
-  }
-
   override build(context: BuildContext): Widget {
     const ctx = LineChartProvider.of(context);
     const config: AgCartesianBaseConfig = ctx.config;
@@ -74,22 +58,15 @@ class _AgLineLikeTooltipOverlayState extends State<_AgLineLikeTooltipOverlay> {
       pixelY: number;
     } | null = null;
 
-    if (hoveredPoint != null && ctx.scale != null) {
-      const { index, legend } = hoveredPoint;
+    if (hoveredPoint != null) {
+      const { index, legend, x, y } = hoveredPoint;
       const dataset = ctx.data.datasets.find((d) => d.legend === legend);
       if (dataset != null && index < dataset.values.length) {
         const legendIdx = ctx.legends.indexOf(legend);
         const color = config.colors.fills[legendIdx % config.colors.fills.length];
         const label = ctx.data.labels[index] ?? "";
         const value = dataset.values[index];
-        const scale = ctx.scale;
-        const numPoints = dataset.values.length;
-        const ro = this.element.renderObject;
-        const size = ro.size;
-        const range = scale.max - scale.min;
-        const px = numPoints > 1 ? (index * size.width) / (numPoints - 1) : size.width / 2;
-        const py = size.height - (size.height * (value - scale.min)) / range;
-        tooltipData = { label, legend, color, value, pixelX: px, pixelY: py };
+        tooltipData = { label, legend, color, value, pixelX: x, pixelY: y };
       }
     }
 
@@ -113,53 +90,6 @@ class _AgLineLikeTooltipOverlayState extends State<_AgLineLikeTooltipOverlay> {
 
     const children: Widget[] = [
       this.widget.child,
-
-      // Mouse tracking layer for closest-point hover detection (translucent so children below still receive hit tests)
-      // onMouseLeave is handled by headless (dataView wrapper), only onMouseMove for position tracking
-      Positioned.fill({
-        child: GestureDetector({
-          behavior: "translucent",
-          cursor: "default",
-          onMouseMove: (e: MouseEvent) => {
-            const local = this.getLocalPosition(e);
-            const ro = this.element.renderObject;
-            const size = ro.size;
-            if (size.width <= 0 || size.height <= 0) return;
-            if (ctx.scale == null) return;
-
-            const scale = ctx.scale;
-            const range = scale.max - scale.min;
-            let closestIndex = -1;
-            let closestLegend = "";
-            let minDist = Infinity;
-
-            for (const dataset of ctx.data.datasets) {
-              const numPoints = dataset.values.length;
-              for (let i = 0; i < numPoints; i++) {
-                const value = dataset.values[i];
-                const px = numPoints > 1 ? (i * size.width) / (numPoints - 1) : size.width / 2;
-                const py = size.height - (size.height * (value - scale.min)) / range;
-                const dx = local.x - px;
-                const dy = local.y - py;
-                const dist = dx * dx + dy * dy;
-                if (dist < minDist) {
-                  minDist = dist;
-                  closestIndex = i;
-                  closestLegend = dataset.legend;
-                }
-              }
-            }
-
-            if (closestIndex >= 0) {
-              const hp = ctx.hoveredPoint;
-              if (hp == null || hp.index !== closestIndex || hp.legend !== closestLegend) {
-                ctx.hoverPoint(closestIndex, closestLegend);
-              }
-            }
-          },
-          child: SizedBox.expand(),
-        }),
-      }),
     ];
 
     // Tooltip at hovered point position
