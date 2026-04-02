@@ -7,6 +7,7 @@ export function Plot({
   yAxis,
   grid,
   axisCorner,
+  tooltipArea,
 }: Parameters<CartesianCustom["plot"]>[0]): Widget {
   return DockLayout({
     left: yAxis,
@@ -15,6 +16,6 @@ export function Plot({
       alignment: Alignment.topRight,
       child: axisCorner,
     }),
-    fill: Stack({ children: [grid, dataView] }),
+    fill: Stack({ clipped: false, children: [grid, dataView, tooltipArea] }),
   });
 }

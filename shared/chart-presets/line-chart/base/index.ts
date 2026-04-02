@@ -19,6 +19,7 @@ const baseDefaults: Partial<LineChartCustom> = {
   dataLabel: (...args) => Cartesian.DataLabel(args[0]),
   grid: Grid,
   tooltip: () => SizedBox.shrink(),
+  tooltipArea: () => SizedBox.shrink(),
 };
 
 const defaultGetScale: GetScaleFn = ({ datasets }, options) =>

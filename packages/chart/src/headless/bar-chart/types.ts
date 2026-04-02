@@ -17,7 +17,7 @@ export type BarChartCustom<TConfig = {}> = {
 	yAxisTick: CustomArgs<undefined, TConfig>;
 	dataView: CustomArgs<{ barGroups: Widget[] }, TConfig>;
 	layout: CustomArgs<{ title: Widget; legends: Widget[]; plot: Widget }, TConfig>;
-	plot: CustomArgs<{ xAxis: Widget; yAxis: Widget; dataView: Widget; grid: Widget; axisCorner: Widget }, TConfig>;
+	plot: CustomArgs<{ xAxis: Widget; yAxis: Widget; dataView: Widget; grid: Widget; axisCorner: Widget; tooltipArea: Widget }, TConfig>;
 	legend: CustomArgs<{ name: string; index: number; isVisible: boolean }, TConfig>;
 	title: CustomArgs<undefined, TConfig>;
 	dataLabel: CustomArgs<{ value: number; label: string; legend: string }, TConfig>;
@@ -28,6 +28,19 @@ export type BarChartCustom<TConfig = {}> = {
 	gridXLine: CustomArgs<undefined, TConfig>;
 	gridYLine: CustomArgs<undefined, TConfig>;
 	tooltip: CustomArgs<{ label: string; items: { legend: string; color: string; value: number }[] }, TConfig>;
+	tooltipArea: CustomArgs<{
+		tooltip: Widget | null;
+		hoveredBar: {
+			index: number;
+			legend: string;
+			value: number;
+			label: string;
+			x: number;
+			y: number;
+			width: number;
+			height: number;
+		} | null;
+	}, TConfig>;
 };
 
 export type BarChartData = {

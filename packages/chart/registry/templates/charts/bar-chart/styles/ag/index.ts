@@ -6,6 +6,7 @@ import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { agBar } from "./parts/bar";
 import { agDataView } from "./parts/data-view";
+import { agTooltipArea } from "./parts/tooltip-area";
 import {
   agTitle,
   agLegend,
@@ -32,6 +33,7 @@ const agCustom: Partial<BarChartCustom<AgBarChartConfig>> = {
   legend: agLegend,
   title: agTitle,
   tooltip: agTooltip,
+  tooltipArea: agTooltipArea,
   axisCorner: cartesian.agAxisCorner,
   xAxisLabel: cartesian.agXAxisLabel,
   yAxisLabel: cartesian.agYAxisLabel,

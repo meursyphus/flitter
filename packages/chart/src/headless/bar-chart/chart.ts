@@ -295,7 +295,7 @@ class Plot extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const ctx = BarChartProvider.of(context);
     return ctx.custom.plot(
-      { xAxis: new XAxis(), yAxis: new YAxis(), dataView: new DataView(), grid: new Grid(), axisCorner: new AxisCorner() },
+      { xAxis: new XAxis(), yAxis: new YAxis(), dataView: new DataView(), grid: new Grid(), axisCorner: new AxisCorner(), tooltipArea: new TooltipOverlay() },
       ctx,
     );
   }
@@ -305,6 +305,7 @@ class DataView extends StatelessWidget {
   override build(context: BuildContext): Widget {
     const ctx = BarChartProvider.of(context);
     const { data } = ctx;
+
     return GestureDetector({
       behavior: "translucent",
       onMouseLeave: () => ctx.unhoverAllBars(),
@@ -321,6 +322,107 @@ class DataView extends StatelessWidget {
         },
         ctx,
       ),
+    });
+  }
+}
+
+class TooltipOverlay extends StatelessWidget {
+  private computeBarRect(
+    ctx: ReturnType<typeof BarChartProvider.of>,
+    dvWidth: number,
+    dvHeight: number,
+  ): { index: number; legend: string; value: number; label: string; x: number; y: number; width: number; height: number } | null {
+    const { hoveredBar, data, scale, direction } = ctx;
+    if (hoveredBar == null || scale == null) return null;
+
+    const { index, legend } = hoveredBar;
+    const datasetIndex = data.datasets.findIndex((d) => d.legend === legend);
+    if (datasetIndex < 0) return null;
+
+    const value = data.datasets[datasetIndex].values[index] ?? 0;
+    const label = data.labels[index] ?? "";
+    const numGroups = data.labels.length;
+    const numBars = data.datasets.length;
+    const isVertical = direction === "vertical";
+    const total = scale.max - scale.min;
+
+    if (isVertical) {
+      const groupWidth = dvWidth / numGroups;
+      const barWidth = groupWidth / numBars;
+      const x = index * groupWidth + datasetIndex * barWidth;
+
+      const hasNegative = scale.min < 0;
+      let y: number;
+      let height: number;
+
+      if (!hasNegative) {
+        height = (value / total) * dvHeight;
+        y = dvHeight - height;
+      } else {
+        const zeroY = (scale.max / total) * dvHeight;
+        if (value >= 0) {
+          height = (value / total) * dvHeight;
+          y = zeroY - height;
+        } else {
+          height = (Math.abs(value) / total) * dvHeight;
+          y = zeroY;
+        }
+      }
+
+      return { index, legend, value, label, x, y, width: barWidth, height };
+    } else {
+      const groupHeight = dvHeight / numGroups;
+      const barHeight = groupHeight / numBars;
+      const y = index * groupHeight + datasetIndex * barHeight;
+
+      const hasNegative = scale.min < 0;
+      let x: number;
+      let width: number;
+
+      if (!hasNegative) {
+        width = (value / total) * dvWidth;
+        x = 0;
+      } else {
+        const zeroX = (Math.abs(scale.min) / total) * dvWidth;
+        if (value >= 0) {
+          width = (value / total) * dvWidth;
+          x = zeroX;
+        } else {
+          width = (Math.abs(value) / total) * dvWidth;
+          x = zeroX - width;
+        }
+      }
+
+      return { index, legend, value, label, x, y, width, height: barHeight };
+    }
+  }
+
+  override build(context: BuildContext): Widget {
+    const ctx = BarChartProvider.of(context);
+
+    return LayoutBuilder({
+      builder: (_: BuildContext, constraints) => {
+        const dvWidth = constraints.maxWidth;
+        const dvHeight = constraints.maxHeight;
+
+        let tooltip: Widget | null = null;
+        let hoveredBarRect = this.computeBarRect(ctx, dvWidth, dvHeight);
+
+        if (hoveredBarRect != null) {
+          const legendIdx = ctx.legends.indexOf(hoveredBarRect.legend);
+          const colors = ctx.config?.colors ?? [];
+          const color = colors[legendIdx % colors.length] ?? "#888";
+          tooltip = ctx.custom.tooltip(
+            { label: hoveredBarRect.label, items: [{ legend: hoveredBarRect.legend, color, value: hoveredBarRect.value }] },
+            ctx,
+          );
+        }
+
+        return ctx.custom.tooltipArea(
+          { tooltip, hoveredBar: hoveredBarRect },
+          ctx,
+        );
+      },
     });
   }
 }

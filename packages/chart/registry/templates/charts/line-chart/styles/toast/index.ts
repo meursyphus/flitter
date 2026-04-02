@@ -6,6 +6,7 @@ import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { toastLine } from "./parts/line";
 import { toastDataView } from "./parts/data-view";
+import { toastTooltipArea } from "./parts/tooltip-area";
 import {
   toastTitle,
   toastLegend,
@@ -29,6 +30,7 @@ const toastCustom: Partial<LineChartCustom<ToastLineChartConfig>> = {
   layout: cartesian.toastLayout,
   line: toastLine,
   dataView: toastDataView,
+  tooltipArea: toastTooltipArea,
   legend: toastLegend,
   title: toastTitle,
   tooltip: toastTooltipContent,

@@ -6,13 +6,13 @@ import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { agLine } from "./parts/line";
 import { agDataView } from "./parts/data-view";
+import { agTooltipArea } from "./parts/tooltip-area";
 import {
   agTitle,
   agLegend,
   agTooltipContent,
   agScaleOptions,
   cartesian,
-  AgLineLikeTooltipOverlay,
 } from "@styles/ag";
 import type { LineChartContext } from "@headless/line-chart/types";
 import type { Widget } from "flitter-core";
@@ -29,11 +29,8 @@ function agTooltip(
 const agCustom: Partial<LineChartCustom<AgLineChartConfig>> = {
   layout: cartesian.agLayout,
   line: agLine,
-  dataView: (args, context) =>
-    AgLineLikeTooltipOverlay({
-      child: agDataView(args, context),
-      config: context.config,
-    }),
+  dataView: agDataView,
+  tooltipArea: agTooltipArea,
   legend: agLegend,
   title: agTitle,
   tooltip: agTooltip,

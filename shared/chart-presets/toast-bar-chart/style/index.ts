@@ -6,6 +6,7 @@ import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { toastBar } from "./parts/bar";
 import { toastDataView } from "./parts/data-view";
 import { toastBarBox } from "./parts/bar-box";
+import { toastTooltipArea } from "./parts/tooltip-area";
 import {
   toastTitle,
   toastLegend,
@@ -33,6 +34,7 @@ const toastCustom: Partial<BarChartCustom<ToastBarChartConfig>> = {
   legend: toastLegend,
   title: toastTitle,
   tooltip: toastTooltipContent,
+  tooltipArea: toastTooltipArea,
   axisCorner: cartesian.toastAxisCorner,
   xAxisLabel: cartesian.toastXAxisLabel,
   yAxisLabel: cartesian.toastYAxisLabel,

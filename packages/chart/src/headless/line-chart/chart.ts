@@ -241,6 +241,7 @@ class Plot extends StatelessWidget {
         dataView: new DataView(),
         grid: new Grid(),
         axisCorner: new AxisCorner(),
+        tooltipArea: new TooltipOverlay(),
       },
       ctx,
     );
@@ -336,6 +337,7 @@ class DataViewState extends State<DataView> {
   override build(context: BuildContext): Widget {
     const ctx = LineChartProvider.of(context);
     const { data } = ctx;
+
     return GestureDetector({
       key: this.dataViewKey,
       behavior: "translucent",
@@ -356,6 +358,39 @@ class DataViewState extends State<DataView> {
         ctx,
       ),
     });
+  }
+}
+
+class TooltipOverlay extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = LineChartProvider.of(context);
+    const { data } = ctx;
+
+    let tooltip: Widget | null = null;
+    const hp = ctx.hoveredPoint;
+
+    if (hp != null) {
+      const dataset = data.datasets.find((d) => d.legend === hp.legend);
+      if (dataset != null && hp.index < dataset.values.length) {
+        const legendIdx = ctx.legends.indexOf(hp.legend);
+        const colors = ctx.config?.colors ?? [];
+        const color = colors[legendIdx % colors.length] ?? "#888";
+        const value = dataset.values[hp.index];
+        const label = data.labels[hp.index] ?? "";
+        tooltip = ctx.custom.tooltip(
+          { label, items: [{ legend: hp.legend, color, value }] },
+          ctx,
+        );
+      }
+    }
+
+    return ctx.custom.tooltipArea(
+      {
+        tooltip,
+        hoveredPoint: hp ? { index: hp.index, legend: hp.legend, x: hp.x, y: hp.y } : null,
+      },
+      ctx,
+    );
   }
 }
 
