@@ -79,7 +79,7 @@ export type BoxPlotChartCustom<TConfig = {}> = {
 		{ xAxis: Widget; yAxis: Widget; dataView: Widget; grid: Widget; axisCorner: Widget },
 		TConfig
 	>;
-	legend: CustomArgs<{ name: string; index: number }, TConfig>;
+	legend: CustomArgs<{ name: string; index: number; isVisible: boolean }, TConfig>;
 	title: CustomArgs<undefined, TConfig>;
 	xAxisLine: CustomArgs<undefined, TConfig>;
 	yAxisLine: CustomArgs<undefined, TConfig>;

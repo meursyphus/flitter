@@ -35,7 +35,8 @@ export function BoxPlotGroup(
 
 				const legend = ctx.data.datasets[datasetIndex].legend;
 				const label = ctx.data.labels[index];
-				const isHovered = ctx.isBoxPlotHovered(index, legend);
+				const h = ctx.hoveredBoxPlot;
+				const isHovered = h != null && h.index === index && h.legend === legend && h.kind === "boxPlot";
 
 				return Flexible({
 					flex: 1,

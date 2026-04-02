@@ -62,7 +62,7 @@ export type WaterfallChartCustom<TConfig = {}> = {
 		{ xAxis: Widget; yAxis: Widget; dataView: Widget; grid: Widget; axisCorner: Widget },
 		TConfig
 	>;
-	legend: CustomArgs<{ name: string; index: number }, TConfig>;
+	legend: CustomArgs<{ name: string; index: number; isVisible: boolean }, TConfig>;
 	title: CustomArgs<undefined, TConfig>;
 	dataLabel: CustomArgs<
 		{ value: number; label: string; type: WaterfallBarType },

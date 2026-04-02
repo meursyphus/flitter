@@ -59,7 +59,7 @@ class Legend extends StatelessWidget {
 
 	override build(context: BuildContext): Widget {
 		const ctx = WaterfallChartProvider.of(context);
-		return ctx.custom.legend({ name: this.#name, index: this.#index }, ctx);
+		return ctx.custom.legend({ name: this.#name, index: this.#index, isVisible: true }, ctx);
 	}
 }
 

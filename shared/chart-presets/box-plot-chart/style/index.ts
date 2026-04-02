@@ -8,11 +8,13 @@ import {
   agScaleOptions,
   cartesian,
 } from "../../_styles/ag/index";
+import { agDataView } from "./parts/data-view";
 
 export { type AgBoxPlotChartConfig } from "./config";
 export type { AgBoxPlotChartConfig as BoxPlotChartConfig } from "./config";
 
 const agCustom: Partial<BoxPlotChartCustom<AgBoxPlotChartConfig>> = {
+  dataView: agDataView,
   layout: cartesian.agLayout,
   legend: agLegend,
   title: agTitle,

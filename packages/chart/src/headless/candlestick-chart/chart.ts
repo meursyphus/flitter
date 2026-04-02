@@ -54,7 +54,12 @@ class Legend extends StatelessWidget {
 
 	override build(context: BuildContext): Widget {
 		const ctx = CandlestickChartProvider.of(context);
-		return ctx.custom.legend({ name: this.#name, index: this.#index }, ctx);
+		const name = this.#name;
+		const isVisible = ctx.isSeriesVisible(name);
+		return GestureDetector({
+			onClick: () => ctx.toggleSeries(name),
+			child: ctx.custom.legend({ name, index: this.#index, isVisible }, ctx),
+		});
 	}
 }
 
