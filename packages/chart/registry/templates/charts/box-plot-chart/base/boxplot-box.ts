@@ -2,6 +2,8 @@ import type { BoxPlotChartCustom } from '../types';
 import {
 	Alignment,
 	FractionallySizedBox,
+	IntrinsicWidth,
+	IntrinsicHeight,
 	Stack,
 	StackFit,
 	Align,
@@ -41,7 +43,7 @@ export function BoxPlotBox(
 	const factor = Math.max(0, maxRatio - minRatio);
 	const alignment = computeBoxAlignment(minRatio, maxRatio, isVertical);
 
-	return Stack({
+	const stack = Stack({
 		fit: StackFit.expand,
 		clipped: false,
 		children: [
@@ -59,4 +61,8 @@ export function BoxPlotBox(
 			),
 		],
 	});
+
+	return isVertical
+		? IntrinsicWidth({ child: stack })
+		: IntrinsicHeight({ child: stack });
 }

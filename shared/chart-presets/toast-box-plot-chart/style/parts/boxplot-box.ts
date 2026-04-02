@@ -2,6 +2,8 @@ import {
   Alignment,
   Align,
   AnimatedFractionallySizedBox,
+  IntrinsicWidth,
+  IntrinsicHeight,
   Stack,
   StackFit,
   type Widget,
@@ -43,7 +45,7 @@ export function toastBoxPlotBox(
   const factor = maxRatio - minRatio;
   const alignment = computeBoxAlignment(minRatio, maxRatio, isVertical);
 
-  return Stack({
+  const stack = Stack({
     fit: StackFit.expand,
     clipped: false,
     children: [
@@ -62,4 +64,8 @@ export function toastBoxPlotBox(
       ),
     ],
   });
+
+  return isVertical
+    ? IntrinsicWidth({ child: stack })
+    : IntrinsicHeight({ child: stack });
 }
