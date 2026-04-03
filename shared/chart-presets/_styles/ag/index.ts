@@ -4,7 +4,7 @@ export { agLegend } from "./legend";
 export { tooltipContent as agTooltipContent } from "./tooltip";
 export * as cartesian from "./cartesian";
 export { AgTooltipOverlay } from "./bar-like";
-export { AgLineLikeTooltipOverlay } from "./line-like";
+export { AgLineLikeTooltipOverlay, agLineLikeTooltipArea } from "./line-like";
 
 const DEFAULT_TICK_SPACING = 160;
 

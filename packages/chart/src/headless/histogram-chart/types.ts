@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Alignment, Widget } from "flitter-core";
 import type { HistogramChartController } from "./controller";
 
 type CustomArgs<T = undefined, TConfig = {}> = (
@@ -68,6 +68,14 @@ export type HistogramChartCustom<TConfig = {}> = {
 		TConfig
 	>;
 	dataView: CustomArgs<{ bars: Widget[] }, TConfig>;
+	barBox: CustomArgs<{
+		bar: Widget;
+		bin: HistogramBin;
+		index: number;
+		ratio: number;
+		alignment: Alignment;
+		isHovered: boolean;
+	}, TConfig>;
 	bar: CustomArgs<{ bin: HistogramBin; index: number; isHovered: boolean }, TConfig>;
 	tooltip: CustomArgs<{ label: string; items: { legend: string; color: string; value: number }[] }, TConfig>;
 	tooltipArea: CustomArgs<{

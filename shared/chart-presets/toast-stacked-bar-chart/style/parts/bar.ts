@@ -4,6 +4,7 @@ import {
   BoxDecoration,
   Border,
   BoxShadow,
+  ZIndex,
   type Widget,
 } from "flitter-core";
 import type { BarChartContext } from "flitter-ui/chart";
@@ -27,8 +28,11 @@ export function toastBar(
     })
     : new BoxDecoration({ color });
 
-  return Container({
-    margin: EdgeInsets.symmetric({ horizontal: bar.gap }),
-    decoration,
+  return ZIndex({
+    zIndex: isHovered ? 1 : 0,
+    child: Container({
+      margin: EdgeInsets.symmetric({ horizontal: bar.gap }),
+      decoration,
+    }),
   });
 }

@@ -432,7 +432,7 @@ export { agLegend } from "./legend";
 export { tooltipContent as agTooltipContent } from "./tooltip";
 export * as cartesian from "./cartesian";
 export { AgTooltipOverlay } from "./bar-like";
-export { AgLineLikeTooltipOverlay } from "./line-like";
+export { AgLineLikeTooltipOverlay, agLineLikeTooltipArea } from "./line-like";
 
 const DEFAULT_TICK_SPACING = 160;
 
@@ -455,6 +455,7 @@ export { BarBox } from "./bar-box";
     {
       target: path.join(outputRoot, styleBaseDir, "line-like/index.ts"),
       content: `export { AgLineLikeTooltipOverlay } from "./tooltip-overlay";
+export { agLineLikeTooltipArea } from "./tooltip-area";
 export { DataView } from "./data-view";
 export { Grid } from "./grid";
 `,

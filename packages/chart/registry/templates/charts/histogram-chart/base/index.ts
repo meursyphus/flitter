@@ -1,4 +1,12 @@
-import { Axis, Container, Flex, Flexible, SizedBox, type Widget } from "flitter-core";
+import {
+	Axis,
+	Container,
+	Flex,
+	Flexible,
+	FractionallySizedBox,
+	SizedBox,
+	type Widget,
+} from "flitter-core";
 import HeadlessHistogramChart from "@headless/histogram-chart";
 import type {
 	HistogramAggregation,
@@ -40,6 +48,20 @@ export function DataView(
 	});
 }
 
+export function BarBox(
+	...[{ bar, ratio, alignment }]: Parameters<HistogramChartCustom["barBox"]>
+) {
+	return Container({
+		width: Infinity,
+		height: Infinity,
+		alignment,
+		child: FractionallySizedBox({
+			heightFactor: ratio,
+			child: bar,
+		}),
+	});
+}
+
 export function Grid(
 	...[{ xLine, yLine }, ctx]: Parameters<HistogramChartCustom["grid"]>
 ) {
@@ -54,6 +76,7 @@ export function Grid(
 
 const baseDefaults: Partial<HistogramChartCustom> = {
 	dataView: DataView,
+	barBox: BarBox,
 	plot: (...args) => Cartesian.Plot(args[0]),
 	grid: Grid,
 	dataLabel: () => SizedBox.shrink(),

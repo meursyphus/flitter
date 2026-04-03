@@ -1,4 +1,5 @@
 import {
+	Alignment,
 	StatelessWidget,
 	StatefulWidget,
 	State,
@@ -116,7 +117,12 @@ class BarState extends State<Bar> {
 		const ctx = HistogramChartProvider.of(context);
 		const { bin, index } = this.widget;
 		const isHovered = ctx.isBinHovered(index);
-		return GestureDetector({
+		const scale = ctx.scale;
+		const ratio =
+			scale && scale.max > scale.min
+				? (bin.value - scale.min) / (scale.max - scale.min)
+				: 0;
+		const bar = GestureDetector({
 			key: this.anchorKey,
 			cursor: "default",
 			onMouseEnter: () => ctx.hoverBin(index, this.anchorKey),
@@ -130,6 +136,18 @@ class BarState extends State<Bar> {
 				ctx,
 			),
 		});
+
+		return ctx.custom.barBox(
+			{
+				bar,
+				bin,
+				index,
+				ratio: Math.max(0, Math.min(1, ratio)),
+				alignment: Alignment.bottomCenter,
+				isHovered,
+			},
+			ctx,
+		);
 	}
 }
 
