@@ -1,19 +1,32 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import Widget from "@flitterjs/react";
 import { ToastHistogramChart } from "shared/chart";
+import { populationDistributionScenario } from "./histogramStoryData";
 
 type StoryArgs = {
   renderer: "svg" | "canvas";
 };
 
-const values = {
-  values: [3, 5, 7, 7, 8, 9, 11, 12, 12, 13, 15, 17, 18, 18, 20, 22, 24, 24, 26, 28],
-};
-
-const denseValues = {
-  values: [5, 7, 8, 9, 10, 11, 11, 12, 12, 13, 14, 15, 15, 16, 16, 17, 18, 19, 20, 22, 24, 25],
-  binCount: 8,
-};
+function ToastHistogramStory({ args }: { args: StoryArgs }) {
+  return (
+    <Widget
+      widget={ToastHistogramChart({
+        data: populationDistributionScenario.data,
+        transform: populationDistributionScenario.transform,
+        config: {
+          title: {
+            text: populationDistributionScenario.title,
+            position: "top",
+            alignment: "center",
+          },
+        },
+      })}
+      width="800px"
+      height="460px"
+      renderer={args.renderer}
+    />
+  );
+}
 
 const meta: Meta<StoryArgs> = {
   title: "In-Review/HistogramChart/Toast",
@@ -28,13 +41,5 @@ export default meta;
 type Story = StoryObj<StoryArgs>;
 
 export const Basic: Story = {
-  render: (args) => (
-    <Widget widget={ToastHistogramChart({ data: values })} width="720px" height="400px" renderer={args.renderer} />
-  ),
-};
-
-export const CustomBins: Story = {
-  render: (args) => (
-    <Widget widget={ToastHistogramChart({ data: denseValues })} width="720px" height="400px" renderer={args.renderer} />
-  ),
+  render: (args) => <ToastHistogramStory args={args} />,
 };

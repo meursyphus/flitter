@@ -64,17 +64,7 @@ function computeTooltipLayout({
 
 class _ToastTooltipArea extends StatefulWidget {
   tooltip: Widget | null;
-  hoveredBin: {
-    index: number;
-    binMin: number;
-    binMax: number;
-    count: number;
-    label: string;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  } | null;
+  hoveredBin: Parameters<HistogramChartCustom<HistogramChartConfig>["tooltipArea"]>[0]["hoveredBin"];
   ctx: any;
 
   constructor({
@@ -83,17 +73,7 @@ class _ToastTooltipArea extends StatefulWidget {
     ctx,
   }: {
     tooltip: Widget | null;
-    hoveredBin: {
-      index: number;
-      binMin: number;
-      binMax: number;
-      count: number;
-      label: string;
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-    } | null;
+    hoveredBin: Parameters<HistogramChartCustom<HistogramChartConfig>["tooltipArea"]>[0]["hoveredBin"];
     ctx: any;
   }) {
     super();

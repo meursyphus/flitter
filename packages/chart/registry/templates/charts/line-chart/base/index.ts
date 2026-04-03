@@ -5,6 +5,7 @@ import type {
   LineChartData,
   GetScaleFn,
   GetScaleOptionsFn,
+  GetPointValueFn,
 } from "@headless/line-chart/types";
 import * as Cartesian from "@shared/cartesian/index";
 import { DataView, Grid } from "../../../shared/line-like";
@@ -34,6 +35,7 @@ export function BaseLineChart<TConfig = {}>({
   data: LineChartData;
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
+  getPointValue?: GetPointValueFn;
   config?: TConfig;
 }): Widget {
   return HeadlessLineChart({

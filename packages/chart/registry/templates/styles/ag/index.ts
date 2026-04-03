@@ -7,10 +7,10 @@ export { tooltipContent as agTooltipContent } from "./tooltip";
 export * as cartesian from "./cartesian";
 
 // Bar-like (bar chart, stacked-bar chart)
-export * from "./bar-like";
+export { AgTooltipOverlay } from "./bar-like";
 
 // Line-like (line chart, area chart)
-export * from "./line-like";
+export { AgLineLikeTooltipOverlay, agLineLikeTooltipArea } from "./line-like";
 
 const DEFAULT_TICK_SPACING = 160;
 

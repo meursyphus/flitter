@@ -5,10 +5,12 @@ import type {
   LineChartData,
   GetScaleFn,
   GetScaleOptionsFn,
+  GetPointValueFn,
 } from "@headless/line-chart/types";
 import * as Cartesian from "@shared/cartesian/index";
 import { DataView, Grid } from "../../../shared/line-like";
 import { stackedGetScale } from "./stacked-get-scale";
+import { stackedGetPointValue } from "./stacked-get-point-value";
 
 export type { LineChartCustom, LineChartData, LineChartScale, LineChartScaleOptions, LineChartContext, GetScaleFn, GetScaleOptionsFn } from "@headless/line-chart/types";
 export { LineChartController } from "@headless/line-chart/controller";
@@ -32,11 +34,13 @@ export function BaseStackedAreaChart<TConfig = {}>({
   data: LineChartData;
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
+  getPointValue?: GetPointValueFn;
   config?: TConfig;
 }): Widget {
   return HeadlessLineChart({
     ...rest,
     getScale,
+    getPointValue: rest.getPointValue ?? stackedGetPointValue,
     custom: { ...baseDefaults, ...custom } as LineChartCustom<TConfig>,
   });
 }

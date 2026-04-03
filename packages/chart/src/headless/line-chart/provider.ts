@@ -9,6 +9,7 @@ import type {
   LineChartData,
   GetScaleFn,
   GetScaleOptionsFn,
+  GetPointValueFn,
 } from "./types";
 import { LineChartController } from "./controller";
 import Chart from "./chart";
@@ -19,6 +20,7 @@ export function LineChartProvider({
   custom,
   getScale,
   getScaleOptions,
+  getPointValue,
   data,
   config = {},
 }: {
@@ -26,6 +28,7 @@ export function LineChartProvider({
   data: LineChartData;
   getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
+  getPointValue?: GetPointValueFn;
   config?: any;
 }): Widget {
   return ChangeNotifierProvider({
@@ -35,6 +38,7 @@ export function LineChartProvider({
         data,
         getScale,
         getScaleOptions,
+        getPointValue,
         custom,
         config,
       }),

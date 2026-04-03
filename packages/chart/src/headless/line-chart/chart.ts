@@ -256,6 +256,18 @@ class DataView extends StatefulWidget {
 
 class DataViewState extends State<DataView> {
   dataViewKey = new GlobalKey();
+  scheduledPlotMeasurement = false;
+
+  private schedulePlotMeasurement(ctx: ReturnType<typeof LineChartProvider.of>): void {
+    if (this.scheduledPlotMeasurement) return;
+    this.scheduledPlotMeasurement = true;
+    this.element.scheduler.addPostFrameCallbacks(() => {
+      this.scheduledPlotMeasurement = false;
+      const ro = this.dataViewKey.currentContext?.renderObject;
+      if (ro == null) return;
+      ctx.setPlotSize(ro.size.width, ro.size.height);
+    });
+  }
 
   private getLocalPosition(e: MouseEvent): { x: number; y: number } | null {
     const ro = this.dataViewKey.currentContext?.renderObject;
@@ -271,20 +283,6 @@ class DataViewState extends State<DataView> {
     };
   }
 
-  private computePointPosition(
-    index: number,
-    value: number,
-    numPoints: number,
-    scale: { min: number; max: number },
-    width: number,
-    height: number,
-  ): { x: number; y: number } {
-    const range = scale.max - scale.min;
-    const x = numPoints > 1 ? (index * width) / (numPoints - 1) : width / 2;
-    const y = height - (height * (value - scale.min)) / range;
-    return { x, y };
-  }
-
   private handleMouseMove(e: MouseEvent, ctx: ReturnType<typeof LineChartProvider.of>) {
     const local = this.getLocalPosition(e);
     if (local == null) return;
@@ -295,24 +293,15 @@ class DataViewState extends State<DataView> {
     if (size.width <= 0 || size.height <= 0) return;
     if (ctx.scale == null) return;
 
-    const scale = ctx.scale;
     let closestIndex = -1;
     let closestLegend = "";
-    let closestX = 0;
-    let closestY = 0;
     let minDist = Infinity;
 
     for (const dataset of ctx.data.datasets) {
       const numPoints = dataset.values.length;
       for (let i = 0; i < numPoints; i++) {
-        const pos = this.computePointPosition(
-          i,
-          dataset.values[i],
-          numPoints,
-          scale,
-          size.width,
-          size.height,
-        );
+        const pos = ctx.getPointPosition(i, dataset.legend);
+        if (pos == null) continue;
         const dx = local.x - pos.x;
         const dy = local.y - pos.y;
         const dist = dx * dx + dy * dy;
@@ -320,8 +309,6 @@ class DataViewState extends State<DataView> {
           minDist = dist;
           closestIndex = i;
           closestLegend = dataset.legend;
-          closestX = pos.x;
-          closestY = pos.y;
         }
       }
     }
@@ -329,7 +316,7 @@ class DataViewState extends State<DataView> {
     if (closestIndex >= 0) {
       const hp = ctx.hoveredPoint;
       if (hp == null || hp.index !== closestIndex || hp.legend !== closestLegend) {
-        ctx.hoverPoint(closestIndex, closestLegend, closestX, closestY);
+        ctx.hoverPoint(closestIndex, closestLegend);
       }
     }
   }
@@ -337,6 +324,7 @@ class DataViewState extends State<DataView> {
   override build(context: BuildContext): Widget {
     const ctx = LineChartProvider.of(context);
     const { data } = ctx;
+    this.schedulePlotMeasurement(ctx);
 
     return GestureDetector({
       key: this.dataViewKey,
@@ -387,7 +375,7 @@ class TooltipOverlay extends StatelessWidget {
     return ctx.custom.tooltipArea(
       {
         tooltip,
-        hoveredPoint: hp ? { index: hp.index, legend: hp.legend, x: hp.x, y: hp.y } : null,
+        hoveredPoint: hp ? { index: hp.index, legend: hp.legend } : null,
       },
       ctx,
     );

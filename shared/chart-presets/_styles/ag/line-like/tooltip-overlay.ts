@@ -59,14 +59,24 @@ class _AgLineLikeTooltipOverlayState extends State<_AgLineLikeTooltipOverlay> {
     } | null = null;
 
     if (hoveredPoint != null) {
-      const { index, legend, x, y } = hoveredPoint;
+      const { index, legend } = hoveredPoint;
       const dataset = ctx.data.datasets.find((d) => d.legend === legend);
+      const point = ctx.getPointPosition(index, legend);
       if (dataset != null && index < dataset.values.length) {
         const legendIdx = ctx.legends.indexOf(legend);
         const color = config.colors.fills[legendIdx % config.colors.fills.length];
         const label = ctx.data.labels[index] ?? "";
         const value = dataset.values[index];
-        tooltipData = { label, legend, color, value, pixelX: x, pixelY: y };
+        if (point != null) {
+          tooltipData = {
+            label,
+            legend,
+            color,
+            value,
+            pixelX: point.x,
+            pixelY: point.y,
+          };
+        }
       }
     }
 

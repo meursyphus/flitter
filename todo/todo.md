@@ -167,9 +167,8 @@ Do not treat a chart as complete just because one style is complete.
 - [x] `HeatmapChart / Toast`
 - [ ] `TreemapChart / Ag` [![](screenshots/treemap-ag.png)](https://www.ag-grid.com/charts/gallery/simple-treemap/)
 - [ ] `TreemapChart / Toast` [![](screenshots/treemap-toast.png)](https://nhn.github.io/tui.chart/latest/tutorial-example12-01-treemap-chart-basic)
-- [ ] `BoxPlotBar / Ag` [![](screenshots/boxplotbar-ag.png)](https://www.ag-grid.com/charts/gallery/horizontal-box-plot/)
-- [ ] `BoxPlotBar / Toast` [![](screenshots/boxplotbar-toast.png)](https://nhn.github.io/tui.chart/latest/tutorial-example03-01-boxPlot-chart-basic)
-ㄴ 하다 말았음, 겁나 BoxPlot 쪽 위젯구조와 어케 배치할지를 직접 컨트롤 해야할듯,
+- [x] `BoxPlotChart / Ag` [![](screenshots/boxplotbar-ag.png)](https://www.ag-grid.com/charts/gallery/horizontal-box-plot/)
+- [x] `BoxPlotChart / Toast` [![](screenshots/boxplotbar-toast.png)](https://nhn.github.io/tui.chart/latest/tutorial-example03-01-boxPlot-chart-basic)
 ㄴ Toast BoxPlot은 vertical만 있음 (horizontal 별도 없음)
 - [ ] `RadarChart / Ag` [![](screenshots/radar-ag.png)](https://www.ag-grid.com/charts/gallery/simple-radar-area/)
 - [ㅅ] `RadarChart / Toast` [![](screenshots/radar-toast.png)](https://nhn.github.io/tui.chart/latest/tutorial-example10-01-radar-chart-basic)

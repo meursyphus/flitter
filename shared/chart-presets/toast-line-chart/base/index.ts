@@ -5,6 +5,7 @@ import type {
   LineChartData,
   LineChartGetScaleFn as GetScaleFn,
   LineChartGetScaleOptionsFn as GetScaleOptionsFn,
+  GetPointValueFn,
 } from "flitter-ui/chart";
 import * as Cartesian from "flitter-ui/chart";
 import { DataView, Grid } from "../../_styles/toast/line-like/index";
@@ -34,6 +35,7 @@ export function BaseLineChart<TConfig = {}>({
   data: LineChartData;
   getScale?: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
+  getPointValue?: GetPointValueFn;
   config?: TConfig;
 }): Widget {
   return HeadlessLineChart({

@@ -4,7 +4,11 @@ import {
 	BuildContext,
 	ChangeNotifierProvider,
 } from "flitter-core";
-import type { HistogramChartCustom, HistogramChartData } from "./types";
+import type {
+	HistogramChartCustom,
+	HistogramChartData,
+	HistogramChartTransform,
+} from "./types";
 import { HistogramChartController } from "./controller";
 import Chart from "./chart";
 
@@ -13,10 +17,12 @@ const HISTOGRAM_CHART_KEY = Symbol("HistogramChartKey");
 export function HistogramChartProvider({
 	custom,
 	data,
+	transform = {},
 	config = {},
 }: {
 	custom: HistogramChartCustom<any>;
 	data: HistogramChartData;
+	transform?: HistogramChartTransform;
 	config?: any;
 }): Widget {
 	return ChangeNotifierProvider({
@@ -24,12 +30,14 @@ export function HistogramChartProvider({
 		create: () =>
 			new HistogramChartController({
 				data,
+				transform,
 				custom,
 				config,
 			}),
 		update: (notifier) => {
 			const controller = notifier as HistogramChartController;
 			controller.data = data;
+			controller.transform = transform;
 			controller.custom = custom;
 			controller.config = config;
 		},

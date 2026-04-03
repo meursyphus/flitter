@@ -10,35 +10,97 @@ import {
 } from "flitter-core";
 import {
 	createCartesianChart,
-	getScaleLabels,
 	resolveOverlayRect,
 	type CartesianScaffoldBehavior,
 } from "@headless/_shared/cartesian-scaffold";
 import { HistogramChartProvider } from "./provider";
+import type { HistogramAggregation, HistogramBin } from "./types";
 
-type HoveredBinRect = {
+type HoveredBinRect = HistogramBin & {
 	index: number;
-	binMin: number;
-	binMax: number;
-	count: number;
-	label: string;
 	x: number;
 	y: number;
 	width: number;
 	height: number;
 };
 
+function getAggregationLabel(aggregation: HistogramAggregation): string {
+	switch (aggregation) {
+		case "count":
+			return "Count";
+		case "density":
+			return "Density";
+		case "sum":
+			return "Sum";
+		case "mean":
+			return "Mean";
+		case "min":
+			return "Min";
+		case "max":
+			return "Max";
+	}
+}
+
+function formatScaleLabel(value: number): string {
+	if (Number.isInteger(value)) return value.toString();
+
+	const abs = Math.abs(value);
+	if (abs >= 100) return value.toFixed(0);
+	if (abs >= 10) return value.toFixed(1).replace(/\.0$/, "");
+	if (abs >= 1) return value.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+	return value.toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
+}
+
+function getYAxisScaleLabels(scale: { min: number; max: number; step: number } | null) {
+	if (scale == null) return [];
+
+	const labels: string[] = [];
+	for (let index = 0; index <= (scale.max - scale.min) / scale.step; index += 1) {
+		labels.push(formatScaleLabel(scale.min + scale.step * index));
+	}
+
+	return labels;
+}
+
+function getXAxisBoundaryLabels(bins: HistogramBin[]): string[] {
+	if (bins.length === 0) return [];
+
+	return [bins[0].min, ...bins.map((bin) => bin.max)].map((value) =>
+		formatScaleLabel(value),
+	);
+}
+
+function getTooltipItems(
+	bin: HistogramBin,
+	aggregation: HistogramAggregation,
+	color: string,
+): { legend: string; color: string; value: number }[] {
+	const items = [
+		{
+			legend: getAggregationLabel(aggregation),
+			color,
+			value: bin.value,
+		},
+	];
+
+	if (aggregation !== "count") {
+		items.push({
+			legend: "Count",
+			color: "#64748b",
+			value: bin.count,
+		});
+	}
+
+	return items;
+}
+
 class Bar extends StatefulWidget {
-	binMin: number;
-	binMax: number;
-	count: number;
+	bin: HistogramBin;
 	index: number;
 
-	constructor(props: { binMin: number; binMax: number; count: number; index: number }) {
+	constructor(props: { bin: HistogramBin; index: number }) {
 		super(`${props.index}`);
-		this.binMin = props.binMin;
-		this.binMax = props.binMax;
-		this.count = props.count;
+		this.bin = props.bin;
 		this.index = props.index;
 	}
 
@@ -52,7 +114,7 @@ class BarState extends State<Bar> {
 
 	override build(context: BuildContext): Widget {
 		const ctx = HistogramChartProvider.of(context);
-		const { index, binMin, binMax, count } = this.widget;
+		const { bin, index } = this.widget;
 		const isHovered = ctx.isBinHovered(index);
 		return GestureDetector({
 			key: this.anchorKey,
@@ -61,9 +123,7 @@ class BarState extends State<Bar> {
 			onMouseLeave: () => ctx.unhoverBin(index),
 			child: ctx.custom.bar(
 				{
-					binMin,
-					binMax,
-					count,
+					bin,
 					index,
 					isHovered,
 				},
@@ -91,8 +151,8 @@ const behavior: CartesianScaffoldBehavior<
 			},
 			ctx,
 		),
-	getXAxisLabels: (ctx) => ctx.bins.map((bin) => bin.label),
-	getYAxisLabels: (ctx) => getScaleLabels(ctx.scale),
+	getXAxisLabels: (ctx) => getXAxisBoundaryLabels(ctx.bins),
+	getYAxisLabels: (ctx) => getYAxisScaleLabels(ctx.scale),
 	shouldRenderDataView: (ctx) => ctx.scale != null,
 	buildDataView: (ctx) =>
 		GestureDetector({
@@ -103,9 +163,7 @@ const behavior: CartesianScaffoldBehavior<
 					bars: ctx.bins.map(
 						(bin, index) =>
 							new Bar({
-								binMin: bin.min,
-								binMax: bin.max,
-								count: bin.count,
+								bin,
 								index,
 							}),
 					),
@@ -124,10 +182,7 @@ const behavior: CartesianScaffoldBehavior<
 
 			return {
 				index: hoveredBin.index,
-				binMin: bin.min,
-				binMax: bin.max,
-				count: bin.count,
-				label: `${bin.min.toFixed(1)} - ${bin.max.toFixed(1)}`,
+				...bin,
 				...rect,
 			};
 		},
@@ -136,16 +191,11 @@ const behavior: CartesianScaffoldBehavior<
 				ctx.config?.colors?.fills ??
 				ctx.config?.colors ??
 				["#888"];
+			const color = colors[0] ?? "#888";
 			return ctx.custom.tooltip(
 				{
 					label: hoveredBinRect.label,
-					items: [
-						{
-							legend: "Count",
-							color: colors[0] ?? "#888",
-							value: hoveredBinRect.count,
-						},
-					],
+					items: getTooltipItems(hoveredBinRect, ctx.aggregation, color),
 				},
 				ctx,
 			);

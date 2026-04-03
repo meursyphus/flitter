@@ -10,17 +10,49 @@ export type HistogramChartContext<TConfig = {}> = HistogramChartController & {
 	config: TConfig;
 };
 
+export type HistogramAggregation =
+	| "count"
+	| "density"
+	| "sum"
+	| "mean"
+	| "min"
+	| "max";
+
+export type HistogramChartRow = Record<string, unknown>;
+
+export type HistogramChartValueData = {
+	values: number[];
+};
+
+export type HistogramChartRowData<
+	TRow extends HistogramChartRow = HistogramChartRow,
+> = {
+	rows: TRow[];
+	xKey: keyof TRow & string;
+	yKey?: keyof TRow & string;
+};
+
+export type HistogramChartData<
+	TRow extends HistogramChartRow = HistogramChartRow,
+> = HistogramChartValueData | HistogramChartRowData<TRow>;
+
+export type HistogramChartTransform = {
+	binCount?: number;
+	bins?: [number, number][];
+	aggregation?: HistogramAggregation;
+};
+
 export type HistogramBin = {
 	min: number;
 	max: number;
 	count: number;
 	label: string;
-};
-
-export type HistogramChartData = {
-	values: number[];
-	binCount?: number;
-	bins?: [number, number][];
+	value: number;
+	density: number;
+	sum: number;
+	mean: number | null;
+	minValue: number | null;
+	maxValue: number | null;
 };
 
 export type HistogramChartScale = {
@@ -36,21 +68,17 @@ export type HistogramChartCustom<TConfig = {}> = {
 		TConfig
 	>;
 	dataView: CustomArgs<{ bars: Widget[] }, TConfig>;
-	bar: CustomArgs<{ binMin: number; binMax: number; count: number; index: number; isHovered: boolean }, TConfig>;
+	bar: CustomArgs<{ bin: HistogramBin; index: number; isHovered: boolean }, TConfig>;
 	tooltip: CustomArgs<{ label: string; items: { legend: string; color: string; value: number }[] }, TConfig>;
 	tooltipArea: CustomArgs<{
 		tooltip: Widget | null;
-		hoveredBin: {
+		hoveredBin: (HistogramBin & {
 			index: number;
-			binMin: number;
-			binMax: number;
-			count: number;
-			label: string;
 			x: number;
 			y: number;
 			width: number;
 			height: number;
-		} | null;
+		}) | null;
 	}, TConfig>;
 	xAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
 	yAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;
@@ -65,5 +93,5 @@ export type HistogramChartCustom<TConfig = {}> = {
 	gridYLine: CustomArgs<undefined, TConfig>;
 	axisCorner: CustomArgs<undefined, TConfig>;
 	title: CustomArgs<undefined, TConfig>;
-	dataLabel: CustomArgs<{ count: number; index: number }, TConfig>;
+	dataLabel: CustomArgs<{ bin: HistogramBin; index: number }, TConfig>;
 };

@@ -1,5 +1,11 @@
 import type { Widget } from "flitter-core";
-import type { LineChartCustom, LineChartData, GetScaleFn, GetScaleOptionsFn } from "./types";
+import type {
+  LineChartCustom,
+  LineChartData,
+  GetScaleFn,
+  GetScaleOptionsFn,
+  GetPointValueFn,
+} from "./types";
 import { LineChartProvider } from "./provider";
 
 export default function LineChart<TConfig = {}>(props: {
@@ -7,6 +13,7 @@ export default function LineChart<TConfig = {}>(props: {
   data: LineChartData;
   getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
+  getPointValue?: GetPointValueFn;
   config?: TConfig;
 }): Widget {
   return LineChartProvider(props as any);

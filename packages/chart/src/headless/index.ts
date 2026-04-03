@@ -195,8 +195,10 @@ export { default as HistogramChart } from "./histogram-chart";
 export { HistogramChartProvider } from "./histogram-chart/provider";
 export type {
 	HistogramChartContext,
+	HistogramAggregation,
 	HistogramBin,
 	HistogramChartData,
+	HistogramChartTransform,
 	HistogramChartScale,
 	HistogramChartCustom,
 } from "./histogram-chart/types";

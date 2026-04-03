@@ -4,6 +4,16 @@ import type { LineChartController } from "./controller";
 type CustomArgs<T = undefined, TConfig = {}> = (args: T, context: LineChartContext<TConfig>) => Widget;
 
 export type LineChartContext<TConfig = {}> = LineChartController & { config: TConfig };
+export type HoveredLinePoint = {
+	index: number;
+	legend: string;
+};
+
+export type GetPointValueFn = (args: {
+	data: LineChartData;
+	index: number;
+	legend: string;
+}) => number | null;
 
 export type LineChartCustom<TConfig = {}> = {
 	line: CustomArgs<{ values: number[]; legend: string; index: number; isHovered: boolean }, TConfig>;
@@ -28,12 +38,7 @@ export type LineChartCustom<TConfig = {}> = {
 	tooltip: CustomArgs<{ label: string; items: { legend: string; color: string; value: number }[] }, TConfig>;
 	tooltipArea: CustomArgs<{
 		tooltip: Widget | null;
-		hoveredPoint: {
-			index: number;
-			legend: string;
-			x: number;
-			y: number;
-		} | null;
+		hoveredPoint: HoveredLinePoint | null;
 	}, TConfig>;
 };
 

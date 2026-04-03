@@ -1,15 +1,32 @@
 import { ChangeNotifier } from "flitter-core";
-import type { LineChartCustom, LineChartData, LineChartScale, GetScaleFn, GetScaleOptionsFn } from "./types";
+import type {
+  LineChartCustom,
+  LineChartData,
+  LineChartScale,
+  GetScaleFn,
+  GetScaleOptionsFn,
+  GetPointValueFn,
+  HoveredLinePoint,
+} from "./types";
+
+const defaultGetPointValue: GetPointValueFn = ({ data, index, legend }) => {
+  const dataset = data.datasets.find((d) => d.legend === legend);
+  if (dataset == null || index >= dataset.values.length) return null;
+  return dataset.values[index] ?? null;
+};
 
 export class LineChartController extends ChangeNotifier {
   #rawData: LineChartData;
   #hiddenSeries: Set<string> = new Set();
-  #hoveredPoint: { index: number; legend: string; x: number; y: number } | null = null;
+  #hoveredPoint: HoveredLinePoint | null = null;
   #scale: LineChartScale | null = null;
   #getScale: GetScaleFn;
   #getScaleOptions: GetScaleOptionsFn | null;
+  #getPointValue: GetPointValueFn;
   #width: number = 0;
   #height: number = 0;
+  #plotWidth: number = 0;
+  #plotHeight: number = 0;
 
   // static config
   custom!: LineChartCustom<any>;
@@ -19,12 +36,14 @@ export class LineChartController extends ChangeNotifier {
     data,
     getScale,
     getScaleOptions = null,
+    getPointValue = defaultGetPointValue,
     custom,
     config = {},
   }: {
     data: LineChartData;
     getScale: GetScaleFn;
     getScaleOptions?: GetScaleOptionsFn | null;
+    getPointValue?: GetPointValueFn;
     custom: LineChartCustom<any>;
     config?: any;
   }) {
@@ -32,6 +51,7 @@ export class LineChartController extends ChangeNotifier {
     this.#rawData = data;
     this.#getScale = getScale;
     this.#getScaleOptions = getScaleOptions;
+    this.#getPointValue = getPointValue;
     this.custom = custom;
     this.config = config;
   }
@@ -79,6 +99,21 @@ export class LineChartController extends ChangeNotifier {
     this.#width = width;
     this.#height = height;
     this.#recalcScale();
+    this.notifyListeners();
+  }
+
+  get plotWidth(): number {
+    return this.#plotWidth;
+  }
+
+  get plotHeight(): number {
+    return this.#plotHeight;
+  }
+
+  setPlotSize(width: number, height: number): void {
+    if (this.#plotWidth === width && this.#plotHeight === height) return;
+    this.#plotWidth = width;
+    this.#plotHeight = height;
     this.notifyListeners();
   }
 
@@ -131,12 +166,12 @@ export class LineChartController extends ChangeNotifier {
 
   // --- 호버 ---
 
-  get hoveredPoint(): { index: number; legend: string; x: number; y: number } | null {
+  get hoveredPoint(): HoveredLinePoint | null {
     return this.#hoveredPoint;
   }
 
-  hoverPoint(index: number, legend: string, x: number, y: number): void {
-    this.#hoveredPoint = { index, legend, x, y };
+  hoverPoint(index: number, legend: string): void {
+    this.#hoveredPoint = { index, legend };
     this.notifyListeners();
   }
 
@@ -157,5 +192,34 @@ export class LineChartController extends ChangeNotifier {
     return (
       this.#hoveredPoint?.index === index && this.#hoveredPoint?.legend === legend
     );
+  }
+
+  getPointValue(index: number, legend: string): number | null {
+    return this.#getPointValue({
+      data: this.data,
+      index,
+      legend,
+    });
+  }
+
+  getPointPosition(index: number, legend: string): { x: number; y: number } | null {
+    const scale = this.#scale;
+    if (scale == null || this.#plotWidth <= 0 || this.#plotHeight <= 0) return null;
+
+    const dataset = this.data.datasets.find((d) => d.legend === legend);
+    if (dataset == null || index >= dataset.values.length) return null;
+
+    const value = this.getPointValue(index, legend);
+    if (value == null) return null;
+
+    const x = dataset.values.length > 1
+      ? (index * this.#plotWidth) / (dataset.values.length - 1)
+      : this.#plotWidth / 2;
+    const range = scale.max - scale.min;
+    const y = range === 0
+      ? this.#plotHeight / 2
+      : this.#plotHeight - (this.#plotHeight * (value - scale.min)) / range;
+
+    return { x, y };
   }
 }

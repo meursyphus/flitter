@@ -11,11 +11,11 @@ import type { HistogramChartCustom } from "@headless/histogram-chart/types";
 import type { HistogramChartConfig } from "../config";
 
 export function toastBar(
-  ...[{ binMin, binMax, count, index, isHovered }, ctx]: Parameters<HistogramChartCustom<HistogramChartConfig>["bar"]>
+  ...[{ bin, isHovered }, ctx]: Parameters<HistogramChartCustom<HistogramChartConfig>["bar"]>
 ): Widget {
   const scale = ctx.scale;
   const ratio =
-    scale && scale.max > scale.min ? (count - scale.min) / (scale.max - scale.min) : 0;
+    scale && scale.max > scale.min ? (bin.value - scale.min) / (scale.max - scale.min) : 0;
   const color = ctx.config.colors[0];
 
   const barWidget = Container({

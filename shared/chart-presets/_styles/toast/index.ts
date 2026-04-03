@@ -11,6 +11,7 @@ export { tooltipContent } from "./tooltip";
 
 // Cartesian-specific (axis, grid, layout for cartesian charts)
 export * as cartesian from "./cartesian";
+export { toastLineLikeTooltipArea } from "./line-like/tooltip-area";
 
 const DEFAULT_TICK_SPACING = 80;
 
