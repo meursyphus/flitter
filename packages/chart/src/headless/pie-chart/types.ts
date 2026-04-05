@@ -9,19 +9,29 @@ export type PieChartData = {
 	datasets: { name: string; value: number }[];
 };
 
+export type PieChartSlice = {
+	widget: Widget;
+	startAngle: number;
+	sweepAngle: number;
+	percentage: number;
+	index: number;
+	name: string;
+	value: number;
+};
+
+export type HoveredPieSlice = Omit<PieChartSlice, "widget"> & {
+	midAngle: number;
+	anchorX: number;
+	anchorY: number;
+	directionX: number;
+	directionY: number;
+};
+
 export type PieChartCustom<TConfig = {}> = {
 	layout: CustomArgs<{ title: Widget; legends: Widget[]; dataView: Widget }, TConfig>;
 	dataView: CustomArgs<
 		{
-			slices: {
-				widget: Widget;
-				startAngle: number;
-				sweepAngle: number;
-				percentage: number;
-				index: number;
-				name: string;
-				value: number;
-			}[];
+			slices: PieChartSlice[];
 			dataLabels: Widget[];
 		},
 		TConfig
@@ -31,9 +41,11 @@ export type PieChartCustom<TConfig = {}> = {
 		TConfig
 	>;
 	dataLabel: CustomArgs<
-		{ index: number; name: string; value: number; percentage: number; startAngle: number; sweepAngle: number },
-		TConfig
-	>;
-	legend: CustomArgs<{ name: string; index: number }, TConfig>;
+			{ index: number; name: string; value: number; percentage: number; startAngle: number; sweepAngle: number },
+			TConfig
+		>;
+	legend: CustomArgs<{ name: string; index: number; isVisible: boolean }, TConfig>;
 	title: CustomArgs<undefined, TConfig>;
+	tooltip: CustomArgs<HoveredPieSlice, TConfig>;
+	tooltipArea: CustomArgs<{ tooltip: Widget | null; hoveredSlice: HoveredPieSlice | null }, TConfig>;
 };

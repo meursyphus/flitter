@@ -66,12 +66,7 @@ class _ToastTooltipArea extends StatefulWidget {
   tooltip: Widget | null;
   hoveredCandlestick: {
     index: number;
-    legend: string;
-    label: string;
-    open: number;
-    high: number;
-    low: number;
-    close: number;
+    candle: any;
     x: number;
     y: number;
     width: number;
@@ -87,12 +82,7 @@ class _ToastTooltipArea extends StatefulWidget {
     tooltip: Widget | null;
     hoveredCandlestick: {
       index: number;
-      legend: string;
-      label: string;
-      open: number;
-      high: number;
-      low: number;
-      close: number;
+      candle: any;
       x: number;
       y: number;
       width: number;

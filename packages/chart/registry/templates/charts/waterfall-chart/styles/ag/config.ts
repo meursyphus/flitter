@@ -8,6 +8,16 @@ type AgWaterfallSharedConfig = Pick<
 export type WaterfallChartConfig = AgWaterfallSharedConfig & {
   waterfall: {
     barGap: number;
+    positiveName: string;
+    negativeName: string;
+    totalName: string;
+    valueFormatter: (value: number, type: "increase" | "decrease" | "total" | "subtotal") => string;
+    line: {
+      enabled: boolean;
+      color: string;
+      width: number;
+      dash: number[];
+    };
     dataLabel: {
       visible: boolean;
       fontSize: number;
@@ -35,6 +45,16 @@ export const defaultAgConfig: WaterfallChartConfig = {
   grid: defaultAgCartesianBaseConfig.grid,
   waterfall: {
     barGap: 8,
+    positiveName: "Increase",
+    negativeName: "Decrease",
+    totalName: "Total",
+    valueFormatter: (value) => value.toLocaleString("en-US"),
+    line: {
+      enabled: true,
+      color: defaultAgCartesianBaseConfig.grid.color,
+      width: 1.5,
+      dash: [3, 3],
+    },
     dataLabel: {
       visible: true,
       fontSize: 11,

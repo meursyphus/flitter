@@ -1,4 +1,4 @@
-import type { GetPointValueFn } from "@headless/line-chart/types";
+import type { LineChartGetPointValueFn as GetPointValueFn } from "@headless/line-chart/types";
 
 export const stackedGetPointValue: GetPointValueFn = ({ data, index, legend }) => {
   const datasetIndex = data.datasets.findIndex((dataset) => dataset.legend === legend);

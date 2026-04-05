@@ -1,16 +1,24 @@
 import { ChangeNotifier, GlobalKey } from "flitter-core";
+import { createTicks, normalizeCandles } from "./transform";
 import type {
+	CandlestickChartCandle,
 	CandlestickChartCustom,
 	CandlestickChartData,
 	CandlestickChartScale,
+	CandlestickChartTick,
+	CandlestickChartTransform,
+	CandlestickChartXValueType,
 	GetScaleFn,
 	GetScaleOptionsFn,
 } from "./types";
 
 export class CandlestickChartController extends ChangeNotifier {
 	#rawData: CandlestickChartData;
-	#hiddenSeries: Set<string> = new Set();
-	#hoveredCandlestick: { index: number; legend: string; anchorKey: GlobalKey } | null = null;
+	#transform: CandlestickChartTransform;
+	#candles: CandlestickChartCandle[] = [];
+	#xTicks: CandlestickChartTick[] = [];
+	#xValueType: CandlestickChartXValueType = "string";
+	#hoveredCandlestick: { index: number; anchorKey: GlobalKey } | null = null;
 	#scale: CandlestickChartScale | null = null;
 	#getScale: GetScaleFn;
 	#getScaleOptions: GetScaleOptionsFn | null;
@@ -22,12 +30,14 @@ export class CandlestickChartController extends ChangeNotifier {
 
 	constructor({
 		data,
+		transform = {},
 		getScale,
 		getScaleOptions = null,
 		custom,
 		config = {},
 	}: {
 		data: CandlestickChartData;
+		transform?: CandlestickChartTransform;
 		getScale: GetScaleFn;
 		getScaleOptions?: GetScaleOptionsFn | null;
 		custom: CandlestickChartCustom<any>;
@@ -35,35 +45,60 @@ export class CandlestickChartController extends ChangeNotifier {
 	}) {
 		super();
 		this.#rawData = data;
+		this.#transform = transform;
 		this.#getScale = getScale;
 		this.#getScaleOptions = getScaleOptions;
 		this.custom = custom;
 		this.config = config;
+		this.#recalculate();
 	}
 
-	#recalcScale(): void {
+	#recalculate(): void {
+		const { candles, xValueType } = normalizeCandles(this.#rawData, this.#transform);
+		this.#candles = candles;
+		this.#xValueType = xValueType;
+		this.#xTicks = createTicks(candles, xValueType, this.#transform, this.#width);
+		if (candles.length === 0) {
+			this.#scale = null;
+			return;
+		}
+
 		const options = this.#getScaleOptions?.(this) ?? { roughStepCount: 10 };
-		this.#scale = this.#getScale(this.data, options);
+		this.#scale = this.#getScale(candles, options);
 	}
 
 	set data(value: CandlestickChartData) {
 		this.#rawData = value;
 		this.#hoveredCandlestick = null;
-		this.#recalcScale();
+		this.#recalculate();
 		this.notifyListeners();
 	}
 
 	get data(): CandlestickChartData {
-		return {
-			labels: this.#rawData.labels,
-			datasets: this.#rawData.datasets.filter(
-				(dataset) => !this.#hiddenSeries.has(dataset.legend),
-			),
-		};
+		return this.#rawData;
 	}
 
-	get legends(): string[] {
-		return this.#rawData.datasets.map((dataset) => dataset.legend);
+	set transform(value: CandlestickChartTransform) {
+		this.#transform = value;
+		this.#hoveredCandlestick = null;
+		this.#recalculate();
+		this.notifyListeners();
+	}
+
+	get transform(): CandlestickChartTransform {
+		return this.#transform;
+	}
+
+	get candles(): CandlestickChartCandle[] {
+		return this.#candles;
+	}
+
+	get xTicks(): CandlestickChartTick[] {
+		return this.#xTicks;
+	}
+
+	get xValueType(): CandlestickChartXValueType {
+		return this.#xValueType;
 	}
 
 	get width(): number {
@@ -78,7 +113,7 @@ export class CandlestickChartController extends ChangeNotifier {
 		if (this.#width === width && this.#height === height) return;
 		this.#width = width;
 		this.#height = height;
-		this.#recalcScale();
+		this.#recalculate();
 		this.notifyListeners();
 	}
 
@@ -86,75 +121,28 @@ export class CandlestickChartController extends ChangeNotifier {
 		return this.#scale;
 	}
 
-	get hiddenSeries(): ReadonlySet<string> {
-		return this.#hiddenSeries;
-	}
-
-	isSeriesVisible(legend: string): boolean {
-		return !this.#hiddenSeries.has(legend);
-	}
-
-	toggleSeries(legend: string): void {
-		if (this.#hiddenSeries.has(legend)) {
-			this.#hiddenSeries.delete(legend);
-		} else {
-			this.#hiddenSeries.add(legend);
-		}
-		this.#hoveredCandlestick = null;
-		this.#recalcScale();
-		this.notifyListeners();
-	}
-
-	showSeries(legend: string): void {
-		if (!this.#hiddenSeries.has(legend)) return;
-		this.#hiddenSeries.delete(legend);
-		this.#hoveredCandlestick = null;
-		this.#recalcScale();
-		this.notifyListeners();
-	}
-
-	hideSeries(legend: string): void {
-		if (this.#hiddenSeries.has(legend)) return;
-		this.#hiddenSeries.add(legend);
-		this.#hoveredCandlestick = null;
-		this.#recalcScale();
-		this.notifyListeners();
-	}
-
-	showAllSeries(): void {
-		if (this.#hiddenSeries.size === 0) return;
-		this.#hiddenSeries.clear();
-		this.#hoveredCandlestick = null;
-		this.#recalcScale();
-		this.notifyListeners();
-	}
-
-	get hoveredCandlestick(): { index: number; legend: string; anchorKey: GlobalKey } | null {
+	get hoveredCandlestick(): { index: number; anchorKey: GlobalKey } | null {
 		return this.#hoveredCandlestick;
 	}
 
-	hoverCandlestick(index: number, legend: string, anchorKey: GlobalKey): void {
-		this.#hoveredCandlestick = { index, legend, anchorKey };
+	hoverCandlestick(index: number, anchorKey: GlobalKey): void {
+		this.#hoveredCandlestick = { index, anchorKey };
 		this.notifyListeners();
 	}
 
-	unhoverCandlestick(index: number, legend: string): void {
-		if (this.#hoveredCandlestick === null) return;
-		if (this.#hoveredCandlestick.index !== index || this.#hoveredCandlestick.legend !== legend) return;
+	unhoverCandlestick(index: number): void {
+		if (this.#hoveredCandlestick?.index !== index) return;
 		this.#hoveredCandlestick = null;
 		this.notifyListeners();
 	}
 
 	unhoverAllCandlesticks(): void {
-		if (this.#hoveredCandlestick === null) return;
+		if (this.#hoveredCandlestick == null) return;
 		this.#hoveredCandlestick = null;
 		this.notifyListeners();
 	}
 
-	isCandlestickHovered(index: number, legend: string): boolean {
-		return (
-			this.#hoveredCandlestick?.index === index &&
-			this.#hoveredCandlestick?.legend === legend
-		);
+	isCandlestickHovered(index: number): boolean {
+		return this.#hoveredCandlestick?.index === index;
 	}
 }

@@ -23,10 +23,14 @@ export const defaultAgConfig: CandlestickChartConfig = {
   padding: defaultAgCartesianBaseConfig.padding,
   tooltip: defaultAgCartesianBaseConfig.tooltip,
   axis: defaultAgCartesianBaseConfig.axis,
-  grid: defaultAgCartesianBaseConfig.grid,
+  grid: {
+    ...defaultAgCartesianBaseConfig.grid,
+    xLine: { visible: true },
+    dash: [4, 4],
+  },
   candlestick: {
-    upColor: "#4CAF50",
-    downColor: "#F44336",
-    wickColor: "#333333",
+    upColor: "rgba(255,255,255,0.98)",
+    downColor: "rgba(91,132,196,0.35)",
+    wickColor: "#5b84c4",
   },
 };

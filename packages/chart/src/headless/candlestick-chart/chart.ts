@@ -1,4 +1,5 @@
 import {
+	Alignment,
 	StatelessWidget,
 	StatefulWidget,
 	State,
@@ -15,67 +16,139 @@ import {
 	type CartesianScaffoldBehavior,
 } from "@headless/_shared/cartesian-scaffold";
 import { CandlestickChartProvider } from "./provider";
+import type {
+	CandlestickChartCandle,
+	CandlestickChartGeometry,
+} from "./types";
 
 type HoveredCandlestickRect = {
 	index: number;
-	legend: string;
-	label: string;
-	open: number;
-	high: number;
-	low: number;
-	close: number;
+	candle: CandlestickChartCandle;
 	x: number;
 	y: number;
 	width: number;
 	height: number;
 };
 
-class Candlestick extends StatefulWidget {
+function clamp(value: number, min: number, max: number): number {
+	return Math.max(min, Math.min(max, value));
+}
+
+function computeBoxAlignment(
+	highRatio: number,
+	lowRatio: number,
+): Alignment {
+	const factor = highRatio - lowRatio;
+	const denominator = 1 - factor;
+	if (denominator <= 0) return Alignment.center;
+
+	return new Alignment({
+		x: 0,
+		y: (2 * (1 - highRatio)) / denominator - 1,
+	});
+}
+
+function resolveGeometry(
+	candle: CandlestickChartCandle,
+	scale: { min: number; max: number } | null,
+): CandlestickChartGeometry | null {
+	if (scale == null) return null;
+
+	const totalRange = scale.max - scale.min || 1;
+	const highRatio = clamp((candle.high - scale.min) / totalRange, 0, 1);
+	const lowRatio = clamp((candle.low - scale.min) / totalRange, 0, 1);
+	const boxHeightFactor = Math.max(highRatio - lowRatio, 0.002);
+	const wickRange = candle.high - candle.low || 1;
+	const bodyTop = Math.max(candle.open, candle.close);
+	const bodyBottom = Math.min(candle.open, candle.close);
+	const topWickRatio = clamp((candle.high - bodyTop) / wickRange, 0, 1);
+	const rawBodyRatio = clamp((bodyTop - bodyBottom) / wickRange, 0, 1);
+	const bottomWickRatio = clamp((bodyBottom - candle.low) / wickRange, 0, 1);
+	const bodyRatio = rawBodyRatio > 0 ? rawBodyRatio : 0.06;
+	const segmentTotal = topWickRatio + bodyRatio + bottomWickRatio || 1;
+
+	return {
+		boxAlignment: computeBoxAlignment(highRatio, lowRatio),
+		boxHeightFactor,
+		topWickRatio: topWickRatio / segmentTotal,
+		bodyRatio: bodyRatio / segmentTotal,
+		bottomWickRatio: bottomWickRatio / segmentTotal,
+	};
+}
+
+function formatPrice(value: number): string {
+	const abs = Math.abs(value);
+	const fractionDigits = abs >= 1_000 ? 0 : abs >= 1 ? 3 : 4;
+	return value.toLocaleString("en-US", {
+		minimumFractionDigits: fractionDigits,
+		maximumFractionDigits: fractionDigits,
+	});
+}
+
+function formatSignedPrice(value: number): string {
+	const sign = value > 0 ? "+" : value < 0 ? "-" : "";
+	return `${sign}$${formatPrice(Math.abs(value))}`;
+}
+
+function formatChangeRate(value: number | null): string {
+	if (value == null) return "n/a";
+	const percent = Math.abs(value * 100).toFixed(1);
+	const sign = value > 0 ? "+" : value < 0 ? "-" : "";
+	return `${sign}${percent}%`;
+}
+
+class CandlestickBox extends StatefulWidget {
+	candle: CandlestickChartCandle;
 	index: number;
-	datasetIndex: number;
 
 	constructor({
+		candle,
 		index,
-		datasetIndex,
 	}: {
+		candle: CandlestickChartCandle;
 		index: number;
-		datasetIndex: number;
 	}) {
-		super(`${datasetIndex}:${index}`);
+		super(`${index}`);
+		this.candle = candle;
 		this.index = index;
-		this.datasetIndex = datasetIndex;
 	}
 
 	createState() {
-		return new CandlestickState();
+		return new CandlestickBoxState();
 	}
 }
 
-class CandlestickState extends State<Candlestick> {
+class CandlestickBoxState extends State<CandlestickBox> {
 	anchorKey = new GlobalKey();
 
 	override build(context: BuildContext): Widget {
 		const ctx = CandlestickChartProvider.of(context);
-		const dataset = ctx.data.datasets[this.widget.datasetIndex];
-		const point = dataset.data[this.widget.index];
-		const index = this.widget.index;
-		const legend = dataset.legend;
-		const isHovered = ctx.isCandlestickHovered(index, legend);
+		const { candle, index } = this.widget;
+		const isHovered = ctx.isCandlestickHovered(index);
+		const geometry = resolveGeometry(candle, ctx.scale);
+		if (geometry == null) return SizedBox.shrink();
+
+		const candlestick = ctx.custom.candlestick(
+			{
+				candle,
+				geometry,
+				index,
+				isHovered,
+			},
+			ctx,
+		);
+
 		return GestureDetector({
-			cursor: "default",
 			key: this.anchorKey,
-			onMouseEnter: () => ctx.hoverCandlestick(index, legend, this.anchorKey),
-			onMouseLeave: () => ctx.unhoverCandlestick(index, legend),
-			child: ctx.custom.candlestick(
+			cursor: "default",
+			onMouseEnter: () => ctx.hoverCandlestick(index, this.anchorKey),
+			onMouseLeave: () => ctx.unhoverCandlestick(index),
+			child: ctx.custom.candlestickBox(
 				{
-					open: point.open,
-					high: point.high,
-					low: point.low,
-					close: point.close,
-					label: ctx.data.labels[this.widget.index],
+					candlestick,
+					candle,
+					geometry,
 					index,
-					legend,
-					datasetIndex: this.widget.datasetIndex,
 					isHovered,
 				},
 				ctx,
@@ -89,8 +162,8 @@ const behavior: CartesianScaffoldBehavior<
 	HoveredCandlestickRect
 > = {
 	of: (context) => CandlestickChartProvider.of(context),
-	buildLayout: (ctx, { title, plot, legends }) =>
-		ctx.custom.layout({ title, plot, legends }, ctx),
+	buildLayout: (ctx, { title, plot }) =>
+		ctx.custom.layout({ title, plot, legends: [] }, ctx),
 	buildPlot: (ctx, { xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }) =>
 		ctx.custom.plot(
 			{
@@ -103,15 +176,7 @@ const behavior: CartesianScaffoldBehavior<
 			},
 			ctx,
 		),
-	getLegends: (ctx) =>
-		ctx.legends.map((name, index) => ({
-			name,
-			index,
-			onClick: () => ctx.toggleSeries(name),
-		})),
-	buildLegend: (ctx, { name, index }) =>
-		ctx.custom.legend({ name, index, isVisible: ctx.isSeriesVisible(name) }, ctx),
-	getXAxisLabels: (ctx) => ctx.data.labels,
+	getXAxisLabels: () => [],
 	getYAxisLabels: (ctx) => getScaleLabels(ctx.scale),
 	shouldRenderDataView: (ctx) => ctx.scale != null,
 	buildDataView: (ctx) =>
@@ -120,15 +185,8 @@ const behavior: CartesianScaffoldBehavior<
 			onMouseLeave: () => ctx.unhoverAllCandlesticks(),
 			child: ctx.custom.dataView(
 				{
-					candlestickGroups: Array.from(
-						{ length: ctx.data.labels.length },
-						(_, index) => ({
-							label: ctx.data.labels[index],
-							index,
-							candlesticks: ctx.data.datasets.map(
-								(_, datasetIndex) => new Candlestick({ index, datasetIndex }),
-							),
-						}),
+					candlesticks: ctx.candles.map(
+						(candle, index) => new CandlestickBox({ candle, index }),
 					),
 				},
 				ctx,
@@ -139,53 +197,51 @@ const behavior: CartesianScaffoldBehavior<
 			const hoveredCandlestick = ctx.hoveredCandlestick;
 			if (hoveredCandlestick == null) return null;
 
-			const dataset = ctx.data.datasets.find(
-				(d) => d.legend === hoveredCandlestick.legend,
-			);
-			const point = dataset?.data[hoveredCandlestick.index];
+			const candle = ctx.candles[hoveredCandlestick.index];
 			const rect = resolveOverlayRect(overlayKey, hoveredCandlestick.anchorKey);
-			if (point == null || rect == null) return null;
+			if (candle == null || rect == null) return null;
 
 			return {
 				index: hoveredCandlestick.index,
-				legend: hoveredCandlestick.legend,
-				label: ctx.data.labels[hoveredCandlestick.index] ?? "",
-				open: point.open,
-				high: point.high,
-				low: point.low,
-				close: point.close,
+				candle,
 				...rect,
 			};
 		},
 		buildTooltip: (ctx, hoveredCandlestickRect) => {
-			const isUp = hoveredCandlestickRect.close >= hoveredCandlestickRect.open;
-			const color = isUp
+			const { candle } = hoveredCandlestickRect;
+			const candleColor = candle.isUp
 				? ctx.config.candlestick.upColor
-				: ctx.config.candlestick.downColor;
-			const wickColor = ctx.config.candlestick.wickColor;
+				: candle.isDown
+					? ctx.config.candlestick.downColor
+					: ctx.config.candlestick.wickColor;
 			return ctx.custom.tooltip(
 				{
-					label: hoveredCandlestickRect.label,
+					label: candle.label,
 					items: [
 						{
-							legend: `${hoveredCandlestickRect.legend} open`,
-							color,
-							value: hoveredCandlestickRect.open,
+							legend: "Open",
+							color: candleColor,
+							value: `$${formatPrice(candle.open)}`,
 						},
 						{
-							legend: `${hoveredCandlestickRect.legend} high`,
-							color: wickColor,
-							value: hoveredCandlestickRect.high,
+							legend: "High",
+							color: ctx.config.candlestick.wickColor,
+							value: `$${formatPrice(candle.high)}`,
 						},
 						{
-							legend: `${hoveredCandlestickRect.legend} low`,
-							color: wickColor,
-							value: hoveredCandlestickRect.low,
+							legend: "Low",
+							color: ctx.config.candlestick.wickColor,
+							value: `$${formatPrice(candle.low)}`,
 						},
 						{
-							legend: `${hoveredCandlestickRect.legend} close`,
-							color,
-							value: hoveredCandlestickRect.close,
+							legend: "Close",
+							color: candleColor,
+							value: `$${formatPrice(candle.close)}`,
+						},
+						{
+							legend: "Change",
+							color: candleColor,
+							value: `${formatSignedPrice(candle.change)} (${formatChangeRate(candle.changeRate)})`,
 						},
 					],
 				},

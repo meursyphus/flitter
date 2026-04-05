@@ -1,22 +1,21 @@
 import {
-  Alignment,
   Border,
   BoxDecoration,
   Column,
   Container,
-  CrossAxisAlignment,
   EdgeInsets,
-  Flexible,
-  FractionallySizedBox,
-  MainAxisSize,
-  Opacity,
+  MainAxisAlignment,
   Padding,
   SizedBox,
-  Text,
-  TextStyle,
-  type Widget,
+	Text,
+	TextStyle,
+	type Widget,
 } from "flitter-core";
-import type { WaterfallBarType, WaterfallChartContext } from "flitter-ui/chart";
+import type {
+  WaterfallBarType,
+  WaterfallChartContext,
+  WaterfallChartDatum,
+} from "flitter-ui/chart";
 import type { WaterfallChartConfig } from "../config";
 
 const TYPE_INDEX: Record<WaterfallBarType, number> = {
@@ -27,40 +26,17 @@ const TYPE_INDEX: Record<WaterfallBarType, number> = {
 };
 
 export function agBar(
-  { value, cumulative, type, isHovered }: {
-    value: number;
-    cumulative: number;
+  { item, isHovered }: {
+    item: WaterfallChartDatum;
     index: number;
-    label: string;
-    type: WaterfallBarType;
     isHovered: boolean;
   },
   ctx: WaterfallChartContext<WaterfallChartConfig>,
 ): Widget {
-  const scale = ctx.scale;
-  if (scale == null) return SizedBox.shrink();
-
-  const total = scale.max - scale.min || 1;
-  const barBase =
-    type === "total"
-      ? 0
-      : value >= 0
-        ? cumulative - value
-        : cumulative;
-  const barTop = type === "total" ? cumulative : barBase + value;
-  const minValue = Math.min(barBase, barTop);
-  const maxValue = Math.max(barBase, barTop);
-  const heightRatio = (maxValue - minValue) / total;
-  const bottomRatio = (minValue - scale.min) / total;
-  const outerHeightFactor = Math.max(0, Math.min(1, bottomRatio + heightRatio));
-  const innerHeightFactor =
-    outerHeightFactor > 0 ? Math.max(0, Math.min(1, heightRatio / outerHeightFactor)) : 0;
-  const color = ctx.config.colors.fills[TYPE_INDEX[type]] ?? ctx.config.colors.fills[0];
-  const hoveredBar = ctx.hoveredBar;
-  const activeOpacity = hoveredBar == null || isHovered ? 1 : 0.35;
+  const color = ctx.config.colors.fills[TYPE_INDEX[item.type]] ?? ctx.config.colors.fills[0];
   const dlCfg = ctx.config.waterfall.dataLabel;
-  const isPositive = value >= 0;
-  const formattedValue = (isPositive ? "+" : "") + value.toLocaleString();
+  const isPositive = item.end >= item.start;
+  const formattedValue = ctx.config.waterfall.valueFormatter(item.value, item.type);
 
   const dataLabelWidget = dlCfg.visible
     ? Padding({
@@ -75,49 +51,24 @@ export function agBar(
       })
     : SizedBox.shrink();
 
-  return Opacity({
-    opacity: activeOpacity,
-    child: Container({
-      width: Infinity,
-      height: Infinity,
-      alignment: Alignment.bottomCenter,
-      child:
-        outerHeightFactor <= 0
-          ? SizedBox.shrink()
-          : FractionallySizedBox({
-              heightFactor: outerHeightFactor,
-              alignment: Alignment.bottomCenter,
-              child: Column({
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ...(isPositive && dlCfg.visible ? [dataLabelWidget] : []),
-                  Flexible({
-                    child: FractionallySizedBox({
-                      heightFactor: innerHeightFactor,
-                      alignment: Alignment.topCenter,
-                      child: Padding({
-                        padding: EdgeInsets.symmetric({
-                          horizontal: Math.max(2, ctx.config.waterfall.barGap / 2),
-                        }),
-                        child: Container({
-                          width: Infinity,
-                          height: Infinity,
-                          decoration: new BoxDecoration({
-                            color,
-                            border:
-                              isHovered
-                                ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
-                                : undefined,
-                          }),
-                        }),
-                      }),
-                    }),
-                  }),
-                  ...(!isPositive && dlCfg.visible ? [dataLabelWidget] : []),
-                ],
-              }),
-            }),
+  return SizedBox.expand({
+    child: Column({
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        ...(isPositive && dlCfg.visible ? [dataLabelWidget] : []),
+        Container({
+          width: Infinity,
+          height: Infinity,
+          decoration: new BoxDecoration({
+            color,
+            border:
+              isHovered
+                ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
+                : undefined,
+          }),
+        }),
+        ...(!isPositive && dlCfg.visible ? [dataLabelWidget] : []),
+      ],
     }),
   });
 }

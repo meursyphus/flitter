@@ -1,4 +1,5 @@
 export * from './getScale';
+export * from './candlestick-box';
 export * from './candlestick';
 export * from './data-label';
 export * from './layout';

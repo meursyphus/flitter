@@ -1,4 +1,4 @@
-import type { PieChartCustom } from "flitter-ui/chart";
+import type { HoveredPieSlice, PieChartCustom } from "flitter-ui/chart";
 import { BoxDecoration, Column, Container, MainAxisSize, SizedBox, Text, TextStyle, type Widget } from "flitter-core";
 import type { AgPieChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
@@ -6,8 +6,9 @@ import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { agSlice } from "./parts/slice";
 import { agDataView } from "./parts/data-view";
 import { agDataLabel } from "./parts/data-label";
+import { agTooltipArea } from "./parts/tooltip-area";
 import { Layout as BaseLayout } from "../base/layout";
-import { agLegend } from "../../_styles/ag/index";
+import { agLegend, agTooltipContent } from "../../_styles/ag/index";
 
 export { type AgPieChartConfig } from "./config";
 
@@ -63,6 +64,8 @@ const agCustom: Partial<PieChartCustom<AgPieChartConfig>> = {
   dataLabel: agDataLabel,
   legend: (args, context) => agLegend(args, context as any, { markerShape: "circle" }),
   title: agPieTitle,
+  tooltip: (args, context) => agTooltip(args, context),
+  tooltipArea: agTooltipArea,
 };
 
 export const agStyleConfig = {
@@ -70,3 +73,23 @@ export const agStyleConfig = {
   createConfig: (config?: DeepPartial<AgPieChartConfig>): AgPieChartConfig =>
     deepMerge(defaultAgConfig, config),
 };
+
+function agTooltip(
+  args: HoveredPieSlice,
+  context: { config: AgPieChartConfig; legends: string[] },
+): Widget {
+  const colorIndex = context.legends.indexOf(args.name);
+  const color = context.config.colors.fills[
+    (colorIndex >= 0 ? colorIndex : args.index) % context.config.colors.fills.length
+  ];
+
+	return agTooltipContent({
+		label: args.name,
+		items: {
+			legend: "Value",
+			color,
+			value: args.value,
+		},
+		config: context.config as any,
+	});
+}

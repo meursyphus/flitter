@@ -1,19 +1,42 @@
-import * as Cartesian from "@shared/cartesian/index";
 import { CandlestickChartCustom } from "../types";
+import {
+	Align,
+	Alignment,
+	Column,
+	MainAxisAlignment,
+	Opacity,
+	Stack,
+	StackFit,
+	SizedBox,
+} from "flitter-core";
+
+function alignmentForIndex(index: number, count: number): Alignment {
+	if (count <= 0) return Alignment.center;
+	const x = (index / count) * 2 - 1;
+	return new Alignment({ x, y: 0 });
+}
 
 export function Grid(
-  ...[{ xLine, yLine }, { data, scale }]: Parameters<CandlestickChartCustom["grid"]>
+	...[{ xLine, yLine }, ctx]: Parameters<CandlestickChartCustom["grid"]>
 ) {
-  if (scale == null) {
-    return Cartesian.Grid({ xLine, yLine, x: data.labels.length, y: 0 });
-  }
-  const labelCount = data.labels.length;
-  const valueCount = (scale.max - scale.min) / scale.step;
+	const yCount = ctx.scale == null ? 0 : (ctx.scale.max - ctx.scale.min) / ctx.scale.step;
 
-  return Cartesian.Grid({
-    xLine,
-    yLine,
-    x: labelCount,
-    y: valueCount,
-  });
+	return Stack({
+		fit: StackFit.expand,
+		children: [
+			Column({
+				mainAxisAlignment: MainAxisAlignment.spaceBetween,
+				children: Array.from({ length: yCount + 1 }, (_, index) =>
+					index === yCount ? Opacity({ child: xLine, opacity: 0 }) : xLine,
+				).flat(),
+			}),
+			SizedBox.expand(),
+			...ctx.xTicks.map(({ index }) =>
+				Align({
+					alignment: alignmentForIndex(index, ctx.candles.length),
+					child: yLine,
+				}),
+			),
+		],
+	});
 }

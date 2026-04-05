@@ -1,37 +1,20 @@
 import { ChangeNotifier, GlobalKey } from "flitter-core";
-import { refineScale } from "@shared/utils/scale";
+import { getScale, normalizeWaterfallData } from "./transform";
 import type {
-	WaterfallBarType,
+	GetScaleFn,
+	GetScaleOptionsFn,
 	WaterfallChartCustom,
 	WaterfallChartData,
+	WaterfallChartDatum,
 	WaterfallChartScale,
-	WaterfallTotal,
 } from "./types";
-
-function buildScale(values: number[]): WaterfallChartScale {
-	let min = Infinity;
-	let max = -Infinity;
-
-	for (const value of values) {
-		min = Math.min(min, value);
-		max = Math.max(max, value);
-	}
-
-	const roughMin = min > 0 ? 0 : min;
-	const roughMax = max < 0 ? 0 : max;
-
-	return refineScale({
-		min: roughMin,
-		max: roughMax,
-		step: (roughMax - roughMin || 1) / 10,
-	});
-}
 
 export class WaterfallChartController extends ChangeNotifier {
 	#rawData: WaterfallChartData;
+	#items: WaterfallChartDatum[] = [];
 	#scale: WaterfallChartScale | null = null;
-	#cumulativeValues: number[] = [];
-	#types: WaterfallBarType[] = [];
+	#getScale: GetScaleFn;
+	#getScaleOptions: GetScaleOptionsFn | null;
 	#width = 0;
 	#height = 0;
 	#hoveredBar: { index: number; anchorKey: GlobalKey } | null = null;
@@ -41,59 +24,35 @@ export class WaterfallChartController extends ChangeNotifier {
 
 	constructor({
 		data,
+		getScale: scaleFn = getScale,
+		getScaleOptions = null,
 		custom,
 		config = {},
 	}: {
 		data: WaterfallChartData;
+		getScale?: GetScaleFn;
+		getScaleOptions?: GetScaleOptionsFn | null;
 		custom: WaterfallChartCustom<any>;
 		config?: any;
 	}) {
 		super();
 		this.#rawData = data;
+		this.#getScale = scaleFn;
+		this.#getScaleOptions = getScaleOptions;
 		this.custom = custom;
 		this.config = config;
+		this.#recalculate();
 	}
 
 	#recalculate(): void {
-		const totalsMap = new Map<number, WaterfallTotal>();
-		for (const t of this.#rawData.totals ?? []) {
-			totalsMap.set(t.index, t);
+		this.#items = normalizeWaterfallData(this.#rawData);
+		if (this.#items.length === 0) {
+			this.#scale = null;
+			return;
 		}
 
-		const cumulativeValues: number[] = [];
-		const types: WaterfallBarType[] = [];
-		const scaleValues: number[] = [];
-		let runningTotal = 0;
-
-		for (let index = 0; index < this.#rawData.values.length; index++) {
-			const value = this.#rawData.values[index];
-			const totalInfo = totalsMap.get(index);
-			const type: WaterfallBarType = totalInfo
-				? totalInfo.totalType
-				: value >= 0
-					? "increase"
-					: "decrease";
-
-			types.push(type);
-
-			if (totalInfo) {
-				cumulativeValues.push(value);
-				scaleValues.push(0, value);
-				if (totalInfo.totalType === "total") {
-					runningTotal = value;
-				}
-				// subtotal: don't reset runningTotal
-			} else {
-				const start = runningTotal;
-				runningTotal += value;
-				cumulativeValues.push(runningTotal);
-				scaleValues.push(start, runningTotal);
-			}
-		}
-
-		this.#types = types;
-		this.#cumulativeValues = cumulativeValues;
-		this.#scale = scaleValues.length > 0 ? buildScale(scaleValues) : null;
+		const options = this.#getScaleOptions?.(this) ?? { roughStepCount: 10 };
+		this.#scale = this.#getScale(this.#items, options);
 	}
 
 	set data(value: WaterfallChartData) {
@@ -107,16 +66,12 @@ export class WaterfallChartController extends ChangeNotifier {
 		return this.#rawData;
 	}
 
+	get items(): WaterfallChartDatum[] {
+		return this.#items;
+	}
+
 	get scale(): WaterfallChartScale | null {
 		return this.#scale;
-	}
-
-	get cumulativeValues(): number[] {
-		return this.#cumulativeValues;
-	}
-
-	get types(): WaterfallBarType[] {
-		return this.#types;
 	}
 
 	get width(): number {
@@ -145,14 +100,14 @@ export class WaterfallChartController extends ChangeNotifier {
 	}
 
 	unhoverBar(index?: number): void {
-		if (this.#hoveredBar === null) return;
+		if (this.#hoveredBar == null) return;
 		if (index != null && this.#hoveredBar.index !== index) return;
 		this.#hoveredBar = null;
 		this.notifyListeners();
 	}
 
 	unhoverAllBars(): void {
-		if (this.#hoveredBar === null) return;
+		if (this.#hoveredBar == null) return;
 		this.#hoveredBar = null;
 		this.notifyListeners();
 	}

@@ -15,6 +15,8 @@ export type GetPointValueFn = (args: {
 	legend: string;
 }) => number | null;
 
+export type LineChartGetPointValueFn = GetPointValueFn;
+
 export type LineChartCustom<TConfig = {}> = {
 	line: CustomArgs<{ values: number[]; legend: string; index: number; isHovered: boolean }, TConfig>;
 	xAxis: CustomArgs<{ line: Widget; labels: Widget[]; tick: Widget }, TConfig>;

@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Alignment, Widget } from "flitter-core";
 import type { WaterfallChartController } from "./controller";
 
 type CustomArgs<T = undefined, TConfig = {}> = (
@@ -15,13 +15,36 @@ export type WaterfallBarType = "increase" | "decrease" | "total" | "subtotal";
 export type WaterfallTotal = {
 	totalType: "total" | "subtotal";
 	index: number;
-	label?: string;
+	axisLabel?: string;
 };
 
-export type WaterfallChartData = {
-	labels: string[];
-	values: number[];
+export type WaterfallChartRow = Record<string, unknown>;
+
+export type WaterfallChartData<
+	TRow extends WaterfallChartRow = WaterfallChartRow,
+> = {
+	rows: TRow[];
+	xKey: keyof TRow & string;
+	yKey: keyof TRow & string;
 	totals?: WaterfallTotal[];
+};
+
+export type WaterfallChartDatum<
+	TRow extends WaterfallChartRow = WaterfallChartRow,
+> = {
+	row: TRow | null;
+	label: string;
+	value: number;
+	cumulative: number;
+	start: number;
+	end: number;
+	type: WaterfallBarType;
+	sourceIndex: number;
+};
+
+export type WaterfallBarGeometry = {
+	boxAlignment: Alignment;
+	boxHeightFactor: number;
 };
 
 export type WaterfallChartScale = {
@@ -30,22 +53,33 @@ export type WaterfallChartScale = {
 	step: number;
 };
 
+export type WaterfallChartScaleOptions = {
+	roughStepCount?: number;
+};
+
 export type WaterfallChartCustom<TConfig = {}> = {
+	barBox: CustomArgs<
+		{
+			bar: Widget;
+			item: WaterfallChartDatum;
+			geometry: WaterfallBarGeometry;
+			index: number;
+			isHovered: boolean;
+		},
+		TConfig
+	>;
 	bar: CustomArgs<
 		{
-			value: number;
-			cumulative: number;
+			item: WaterfallChartDatum;
 			index: number;
-			label: string;
-			type: WaterfallBarType;
 			isHovered: boolean;
 		},
 		TConfig
 	>;
 	connector: CustomArgs<
 		{
-			fromCumulative: number;
-			toCumulative: number;
+			from: WaterfallChartDatum;
+			to: WaterfallChartDatum;
 			index: number;
 		},
 		TConfig
@@ -61,7 +95,7 @@ export type WaterfallChartCustom<TConfig = {}> = {
 	tooltip: CustomArgs<
 		{
 			label: string;
-			items: { legend: string; color: string; value: number }[];
+			items: { legend: string; color: string; value: number | string }[];
 		},
 		TConfig
 	>;
@@ -74,10 +108,7 @@ export type WaterfallChartCustom<TConfig = {}> = {
 			tooltip: Widget | null;
 			hoveredBar: {
 				index: number;
-				label: string;
-				value: number;
-				cumulative: number;
-				type: WaterfallBarType;
+				item: WaterfallChartDatum;
 				x: number;
 				y: number;
 				width: number;
@@ -99,3 +130,16 @@ export type WaterfallChartCustom<TConfig = {}> = {
 	gridXLine: CustomArgs<undefined, TConfig>;
 	gridYLine: CustomArgs<undefined, TConfig>;
 };
+
+export type GetScaleFn = (
+	data: WaterfallChartDatum[],
+	options?: WaterfallChartScaleOptions,
+) => WaterfallChartScale;
+
+export type WaterfallChartGetScaleFn = GetScaleFn;
+
+export type GetScaleOptionsFn = (
+	context: WaterfallChartController,
+) => WaterfallChartScaleOptions;
+
+export type WaterfallChartGetScaleOptionsFn = GetScaleOptionsFn;

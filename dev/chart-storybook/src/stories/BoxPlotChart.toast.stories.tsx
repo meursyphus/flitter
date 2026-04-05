@@ -44,7 +44,7 @@ function ToastBoxPlotStory({
 }
 
 const meta: Meta<StoryArgs> = {
-  title: "Charts/BoxPlotChart/Toast",
+  title: "Polish/BoxPlotChart/Toast",
   parameters: { layout: "centered" },
   args: {
     renderer: "svg",

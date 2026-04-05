@@ -1,31 +1,20 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import Widget from "@flitterjs/react";
 import { ToastWaterfallChart } from "shared/chart";
+import {
+  axisMoneyLabel,
+  formatMillions,
+  operatingBridgeRows,
+  operatingBridgeTotals,
+  transferBridgeRows,
+} from "./waterfallStoryData";
 
 type StoryArgs = {
   renderer: "svg" | "canvas";
 };
 
-const revenueData = {
-  labels: ["Revenue", "COGS", "Gross Profit", "OpEx", "Tax", "Net Income"],
-  values: [500, -200, 300, -150, -50, 100],
-  totals: [
-    { totalType: "subtotal" as const, index: 2 },
-    { totalType: "total" as const, index: 5 },
-  ],
-};
-
-const negativeData = {
-  labels: ["Start", "FX", "Returns", "Costs", "Revisions", "End"],
-  values: [220, -30, -45, -20, 18, 143],
-  totals: [
-    { totalType: "total" as const, index: 0 },
-    { totalType: "total" as const, index: 5 },
-  ],
-};
-
 const meta: Meta<StoryArgs> = {
-  title: "In-Review/WaterfallChart/Toast",
+  title: "Polish/WaterfallChart/Toast",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {
@@ -36,14 +25,67 @@ const meta: Meta<StoryArgs> = {
 export default meta;
 type Story = StoryObj<StoryArgs>;
 
-export const RevenueBridge: Story = {
+export const TransferBridge: Story = {
   render: (args) => (
-    <Widget widget={ToastWaterfallChart({ data: revenueData })} width="760px" height="420px" renderer={args.renderer} />
+    <Widget
+      widget={ToastWaterfallChart({
+        data: {
+          rows: transferBridgeRows,
+          xKey: "player",
+          yKey: "amount",
+        },
+        config: {
+          title: { text: "Manchester United Transfers" },
+          waterfall: {
+            positiveName: "Outs",
+            negativeName: "Ins",
+            totalName: "Summary",
+            valueFormatter: formatMillions,
+            dataLabel: { visible: true },
+          },
+          axis: {
+            label: {
+              format: axisMoneyLabel,
+            },
+          },
+        },
+      })}
+      width="940px"
+      height="560px"
+      renderer={args.renderer}
+    />
   ),
 };
 
-export const NegativeHeavy: Story = {
+export const OperatingBridge: Story = {
   render: (args) => (
-    <Widget widget={ToastWaterfallChart({ data: negativeData })} width="760px" height="420px" renderer={args.renderer} />
+    <Widget
+      widget={ToastWaterfallChart({
+        data: {
+          rows: operatingBridgeRows,
+          xKey: "lineItem",
+          yKey: "amount",
+          totals: operatingBridgeTotals,
+        },
+        config: {
+          title: { text: "Q2 Operating Bridge" },
+          waterfall: {
+            positiveName: "Drivers Up",
+            negativeName: "Drivers Down",
+            totalName: "Summary",
+            valueFormatter: formatMillions,
+            dataLabel: { visible: true },
+          },
+          axis: {
+            label: {
+              format: axisMoneyLabel,
+            },
+          },
+        },
+      })}
+      width="940px"
+      height="560px"
+      renderer={args.renderer}
+    />
   ),
 };

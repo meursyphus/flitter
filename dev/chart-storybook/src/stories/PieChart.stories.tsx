@@ -60,7 +60,7 @@ function ToastPieChartStory({ args }: { args: PieChartArgs }) {
 }
 
 const meta: Meta<PieChartArgs> = {
-	title: "Next/PieChart/Toast",
+	title: "In-Review/PieChart/Toast",
 	parameters: { layout: "centered" },
 	argTypes: {
 		renderer: { control: "inline-radio", options: ["svg", "canvas"] },

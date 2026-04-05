@@ -11,6 +11,8 @@ const baseDefaults: Partial<PieChartCustom> = {
 	layout: Layout,
 	dataView: DataView,
 	dataLabel: () => SizedBox.shrink(),
+	tooltip: () => SizedBox.shrink(),
+	tooltipArea: () => SizedBox.shrink(),
 };
 
 export function BasePieChart<TConfig = {}>({

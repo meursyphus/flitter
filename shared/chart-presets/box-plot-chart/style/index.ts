@@ -1,4 +1,5 @@
 import type { BoxPlotChartCustom, BoxPlotChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
+import type { Widget } from "flitter-core";
 import type { AgBoxPlotChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge } from "flitter-ui/chart";
@@ -49,7 +50,7 @@ const agGetScaleOptions: GetScaleOptionsFn = (ctx) =>
 
 export const styleConfig = {
   custom: agCustom,
-  createConfig: (config: any) => {
+  createConfig: (config: any, _direction = "vertical") => {
     const base = deepMerge(defaultAgConfig, {
       grid: { xLine: { visible: true }, yLine: { visible: false } },
       axis: { xLine: { visible: true }, yLine: { visible: false } },

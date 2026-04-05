@@ -38,7 +38,7 @@ function AgBoxPlotStory({
 }
 
 const meta: Meta<StoryArgs> = {
-  title: "Charts/BoxPlotChart/Ag",
+  title: "Polish/BoxPlotChart/Ag",
   parameters: { layout: "centered" },
   args: {
     renderer: "svg",

@@ -1,50 +1,28 @@
-import type { WaterfallChartData, WaterfallChartScale } from '../types';
-import { getScale as cartesianGetScale } from '@shared/cartesian/index';
+import type { GetScaleFn } from "../types";
+import { refineScale } from "@shared/utils/scale";
 
-export function getScale(data: WaterfallChartData): {
-	scale: WaterfallChartScale;
-	cumulativeValues: number[];
-} {
-	const totalsMap = new Map<number, { totalType: string }>();
-	for (const t of data.totals ?? []) {
-		totalsMap.set(t.index, t);
-	}
+export const getScale: GetScaleFn = (
+  items,
+  { roughStepCount = 10 } = {},
+) => {
+  if (items.length === 0) {
+    return { min: 0, max: 0, step: 1 };
+  }
 
-	const cumulativeValues: number[] = [];
-	let cumulative = 0;
+  let min = Infinity;
+  let max = -Infinity;
 
-	for (let i = 0; i < data.values.length; i++) {
-		const totalInfo = totalsMap.get(i);
-		if (totalInfo) {
-			cumulativeValues.push(data.values[i]);
-			if (totalInfo.totalType === 'total') {
-				cumulative = data.values[i];
-			}
-		} else {
-			cumulative += data.values[i];
-			cumulativeValues.push(cumulative);
-		}
-	}
+  for (const item of items) {
+    min = Math.min(min, item.start, item.end);
+    max = Math.max(max, item.start, item.end);
+  }
 
-	const allValues = [...cumulativeValues];
-	// Also include the base of each bar (cumulative before that bar's value)
-	let runningTotal = 0;
-	for (let i = 0; i < data.values.length; i++) {
-		const totalInfo = totalsMap.get(i);
-		if (totalInfo) {
-			allValues.push(0); // total/subtotal bars start from 0
-			if (totalInfo.totalType === 'total') {
-				runningTotal = data.values[i];
-			}
-		} else {
-			allValues.push(runningTotal);
-			runningTotal += data.values[i];
-		}
-	}
+  const roughMin = min > 0 ? 0 : min;
+  const roughMax = max < 0 ? 0 : max;
 
-	const scale = cartesianGetScale({
-		datasets: [{ legend: 'waterfall', values: allValues }]
-	});
-
-	return { scale, cumulativeValues };
-}
+  return refineScale({
+    min: roughMin,
+    max: roughMax,
+    step: (roughMax - roughMin || 1) / roughStepCount,
+  });
+};

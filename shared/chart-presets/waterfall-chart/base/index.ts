@@ -1,4 +1,5 @@
 export * from './getScale'
+export * from './bar-box'
 export * from './bar'
 export * from './connector'
 export * from './data-label'

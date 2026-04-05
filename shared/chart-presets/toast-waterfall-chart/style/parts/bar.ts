@@ -6,13 +6,17 @@ import {
   BoxShadow,
   Container,
   EdgeInsets,
-  FractionallySizedBox,
-  Opacity,
   Padding,
   SizedBox,
-  type Widget,
+	Text,
+	TextStyle,
+	type Widget,
 } from "flitter-core";
-import type { WaterfallBarType, WaterfallChartContext } from "flitter-ui/chart";
+import type {
+  WaterfallBarType,
+  WaterfallChartContext,
+  WaterfallChartDatum,
+} from "flitter-ui/chart";
 import type { WaterfallChartConfig } from "../config";
 
 const TYPE_INDEX: Record<WaterfallBarType, number> = {
@@ -23,83 +27,54 @@ const TYPE_INDEX: Record<WaterfallBarType, number> = {
 };
 
 export function toastBar(
-  { value, cumulative, type, isHovered }: {
-    value: number;
-    cumulative: number;
+  { item, isHovered }: {
+    item: WaterfallChartDatum;
     index: number;
-    label: string;
-    type: WaterfallBarType;
     isHovered: boolean;
   },
   ctx: WaterfallChartContext<WaterfallChartConfig>,
 ): Widget {
-  const scale = ctx.scale;
-  if (scale == null) return SizedBox.shrink();
+  const color = ctx.config.colors[TYPE_INDEX[item.type]] ?? ctx.config.colors[0];
+  const dlCfg = ctx.config.waterfall.dataLabel;
+  const label =
+    dlCfg.visible
+      ? Padding({
+          padding: EdgeInsets.only({ top: item.end >= item.start ? 0 : 4, bottom: item.end >= item.start ? 4 : 0 }),
+          child: Text(ctx.config.waterfall.valueFormatter(item.value, item.type), {
+            style: new TextStyle({
+              fontFamily: dlCfg.fontFamily ?? ctx.config.font.family,
+              fontSize: dlCfg.fontSize,
+              color: dlCfg.color,
+            }),
+          }),
+        })
+      : SizedBox.shrink();
 
-  const total = scale.max - scale.min || 1;
-  const barBase =
-    type === "total"
-      ? 0
-      : value >= 0
-        ? cumulative - value
-        : cumulative;
-  const barTop = type === "total" ? cumulative : barBase + value;
-  const minValue = Math.min(barBase, barTop);
-  const maxValue = Math.max(barBase, barTop);
-  const heightRatio = (maxValue - minValue) / total;
-  const bottomRatio = (minValue - scale.min) / total;
-  const outerHeightFactor = Math.max(0, Math.min(1, bottomRatio + heightRatio));
-  const innerHeightFactor =
-    outerHeightFactor > 0 ? Math.max(0, Math.min(1, heightRatio / outerHeightFactor)) : 0;
-  const color = ctx.config.colors[TYPE_INDEX[type]] ?? ctx.config.colors[0];
-  const hoveredBar = ctx.hoveredBar;
-  const activeOpacity = hoveredBar == null || isHovered ? 1 : 0.28;
-
-  return Opacity({
-    opacity: activeOpacity,
+  return SizedBox.expand({
     child: Container({
       width: Infinity,
       height: Infinity,
-      alignment: Alignment.bottomCenter,
-      child:
-        outerHeightFactor <= 0
-          ? SizedBox.shrink()
-          : FractionallySizedBox({
-              heightFactor: outerHeightFactor,
-              alignment: Alignment.bottomCenter,
-              child: Container({
-                alignment: Alignment.topCenter,
-                child: FractionallySizedBox({
-                  heightFactor: innerHeightFactor,
-                  alignment: Alignment.topCenter,
-                  child: Padding({
-                    padding: EdgeInsets.symmetric({
-                      horizontal: Math.max(2, ctx.config.waterfall.barGap / 2),
-                    }),
-                    child: AnimatedScale({
-                      duration: ctx.config.animation.duration,
-                      scale: isHovered ? 1.02 : 1,
-                      alignment: Alignment.center,
-                      child: Container({
-                        width: Infinity,
-                        height: Infinity,
-                        decoration: new BoxDecoration({
-                          color,
-                          border:
-                            isHovered
-                              ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
-                              : undefined,
-                          boxShadow:
-                            isHovered
-                              ? [new BoxShadow({ color: "rgba(0,0,0,0.24)", blurRadius: 12 })]
-                              : undefined,
-                        }),
-                      }),
-                    }),
-                  }),
-                }),
-              }),
-            }),
+      child: AnimatedScale({
+        duration: ctx.config.animation.duration,
+        scale: isHovered ? 1.02 : 1,
+        alignment: item.end >= item.start ? Alignment.bottomCenter : Alignment.topCenter,
+        child: Container({
+          width: Infinity,
+          height: Infinity,
+          decoration: new BoxDecoration({
+            color,
+            border:
+              isHovered
+                ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
+                : undefined,
+            boxShadow:
+              isHovered
+                ? [new BoxShadow({ color: "rgba(0,0,0,0.24)", blurRadius: 12 })]
+                : undefined,
+          }),
+          child: label,
+        }),
+      }),
     }),
   });
 }

@@ -75,7 +75,7 @@ function AgPieChart({ args }: { args: PieChartArgs }) {
 }
 
 const meta: Meta<PieChartArgs> = {
-	title: "Next/PieChart/Ag",
+	title: "In-Review/PieChart/Ag",
 	parameters: { layout: "centered" },
 	argTypes: {
 		renderer: { control: "inline-radio", options: ["svg", "canvas"] },

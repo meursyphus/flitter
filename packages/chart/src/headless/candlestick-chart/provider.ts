@@ -7,6 +7,7 @@ import {
 import type {
 	CandlestickChartCustom,
 	CandlestickChartData,
+	CandlestickChartTransform,
 	GetScaleFn,
 	GetScaleOptionsFn,
 } from "./types";
@@ -20,10 +21,12 @@ export function CandlestickChartProvider({
 	getScale,
 	getScaleOptions,
 	data,
+	transform = {},
 	config = {},
 }: {
 	custom: CandlestickChartCustom<any>;
 	data: CandlestickChartData;
+	transform?: CandlestickChartTransform;
 	getScale: GetScaleFn;
 	getScaleOptions?: GetScaleOptionsFn;
 	config?: any;
@@ -33,6 +36,7 @@ export function CandlestickChartProvider({
 		create: () =>
 			new CandlestickChartController({
 				data,
+				transform,
 				getScale,
 				getScaleOptions,
 				custom,
@@ -41,6 +45,7 @@ export function CandlestickChartProvider({
 		update: (notifier) => {
 			const controller = notifier as CandlestickChartController;
 			controller.data = data;
+			controller.transform = transform;
 			controller.custom = custom;
 			controller.config = config;
 		},

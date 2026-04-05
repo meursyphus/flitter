@@ -4,7 +4,13 @@ import {
 	BuildContext,
 	ChangeNotifierProvider,
 } from "flitter-core";
-import type { WaterfallChartCustom, WaterfallChartData } from "./types";
+import type {
+	GetScaleFn,
+	GetScaleOptionsFn,
+	WaterfallChartCustom,
+	WaterfallChartData,
+} from "./types";
+import { getScale } from "./transform";
 import { WaterfallChartController } from "./controller";
 import Chart from "./chart";
 
@@ -13,10 +19,14 @@ const WATERFALL_CHART_KEY = Symbol("WaterfallChartKey");
 export function WaterfallChartProvider({
 	custom,
 	data,
+	getScale: scaleFn = getScale,
+	getScaleOptions,
 	config = {},
 }: {
 	custom: WaterfallChartCustom<any>;
 	data: WaterfallChartData;
+	getScale?: GetScaleFn;
+	getScaleOptions?: GetScaleOptionsFn;
 	config?: any;
 }): Widget {
 	return ChangeNotifierProvider({
@@ -24,6 +34,8 @@ export function WaterfallChartProvider({
 		create: () =>
 			new WaterfallChartController({
 				data,
+				getScale: scaleFn,
+				getScaleOptions,
 				custom,
 				config,
 			}),

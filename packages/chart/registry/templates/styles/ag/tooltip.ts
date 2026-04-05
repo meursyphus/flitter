@@ -28,7 +28,7 @@ const ARROW_HEIGHT = 8;
 type TooltipItem = {
   legend: string;
   color: string;
-  value: number;
+  value: number | string;
 };
 
 /**

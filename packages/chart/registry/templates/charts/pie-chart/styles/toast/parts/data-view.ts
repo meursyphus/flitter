@@ -9,37 +9,18 @@ import {
 	Path,
 	Offset,
 	Radius,
-	Stack,
-	StackFit,
-	Align,
-	Alignment,
-	ConstraintsTransformBox,
-	FractionalTranslation,
-	ZIndex,
-	SizedBox,
 	type Widget,
 } from "flitter-core";
-import type { PieChartCustom, PieChartContext } from "@headless/pie-chart/types";
+import type { PieChartCustom, PieChartSlice } from "@headless/pie-chart/types";
 import type { ToastPieChartConfig } from "../config";
 import { DataView } from "../../../base/data-view";
-import { tooltipContent } from "@styles/toast";
-
-type PieSlice = {
-	widget: Widget;
-	startAngle: number;
-	sweepAngle: number;
-	percentage: number;
-	index: number;
-	name: string;
-	value: number;
-};
 
 type AngleSnapshot = { startAngle: number; sweepAngle: number };
 
 class AnimatedPieDataView extends StatefulWidget {
-	pies: PieSlice[];
+	pies: PieChartSlice[];
 	dataLabels: Widget[];
-	context: PieChartContext<ToastPieChartConfig>;
+	context: Parameters<PieChartCustom<ToastPieChartConfig>["dataView"]>[1];
 	duration: number;
 
 	constructor({
@@ -48,9 +29,9 @@ class AnimatedPieDataView extends StatefulWidget {
 		context,
 		duration,
 	}: {
-		pies: PieSlice[];
+		pies: PieChartSlice[];
 		dataLabels: Widget[];
-		context: PieChartContext<ToastPieChartConfig>;
+		context: Parameters<PieChartCustom<ToastPieChartConfig>["dataView"]>[1];
 		duration: number;
 	}) {
 		super();
@@ -90,16 +71,16 @@ class _AnimatedPieDataViewState extends State<AnimatedPieDataView> {
 		const anglesChanged =
 			oldWidget.pies.length !== this.widget.pies.length ||
 			oldWidget.pies.some(
-				(p, i) =>
-					p.startAngle !== this.widget.pies[i]?.startAngle ||
-					p.sweepAngle !== this.widget.pies[i]?.sweepAngle,
+				(pie, index) =>
+					pie.startAngle !== this.widget.pies[index]?.startAngle ||
+					pie.sweepAngle !== this.widget.pies[index]?.sweepAngle,
 			);
 
 		if (anglesChanged) {
 			this.prevAngleMap = new Map(
-				oldWidget.pies.map((p) => [
-					p.name,
-					{ startAngle: p.startAngle, sweepAngle: p.sweepAngle },
+				oldWidget.pies.map((pie) => [
+					pie.name,
+					{ startAngle: pie.startAngle, sweepAngle: pie.sweepAngle },
 				]),
 			);
 			this.isMountAnimation = false;
@@ -117,12 +98,7 @@ class _AnimatedPieDataViewState extends State<AnimatedPieDataView> {
 		const t = this.tween.value;
 
 		if (this.isMountAnimation) {
-			// Mount animation: ClipPath sweep from 0 → 360°
-			const child = buildDataViewTooltipOverlay(
-				DataView({ slices: pies, dataLabels }, context),
-				{ slices: pies, dataLabels },
-				context,
-			);
+			const child = DataView({ slices: pies, dataLabels }, context);
 			const done = t >= 1;
 
 			return ClipPath({
@@ -130,22 +106,20 @@ class _AnimatedPieDataViewState extends State<AnimatedPieDataView> {
 				clipper: (size) => {
 					const cx = size.width / 2;
 					const cy = size.height / 2;
-					const r = Math.max(size.width, size.height);
+					const radius = Math.max(size.width, size.height);
 					const sweepAngle = t * Math.PI * 2;
 
 					const path = new Path();
 					path.moveTo(new Offset({ x: cx, y: cy }));
-					// 12시 방향 (top center)
-					path.lineTo(new Offset({ x: cx, y: cy - r }));
+					path.lineTo(new Offset({ x: cx, y: cy - radius }));
 					if (sweepAngle > 0) {
-						// startAngle = -PI/2 (12시), sweep clockwise
 						const startAngle = -Math.PI / 2;
 						const endAngle = startAngle + sweepAngle;
-						const endX = cx + r * Math.cos(endAngle);
-						const endY = cy + r * Math.sin(endAngle);
+						const endX = cx + radius * Math.cos(endAngle);
+						const endY = cy + radius * Math.sin(endAngle);
 						path.arcToPoint({
 							endPoint: new Offset({ x: endX, y: endY }),
-							radius: Radius.circular(r),
+							radius: Radius.circular(radius),
 							rotation: 0,
 							largeArc: sweepAngle > Math.PI,
 							clockwise: true,
@@ -158,7 +132,6 @@ class _AnimatedPieDataViewState extends State<AnimatedPieDataView> {
 			});
 		}
 
-		// Filter transition: lerp angles for remaining slices
 		const interpolatedPies = pies.map((pie) => {
 			const prev = this.prevAngleMap?.get(pie.name);
 			if (prev == null) return pie;
@@ -169,8 +142,7 @@ class _AnimatedPieDataViewState extends State<AnimatedPieDataView> {
 			};
 		});
 
-		const dataViewWidget = DataView({ slices: interpolatedPies, dataLabels }, context);
-		return buildDataViewTooltipOverlay(dataViewWidget, { slices: pies, dataLabels }, context);
+		return DataView({ slices: interpolatedPies, dataLabels }, context);
 	}
 }
 
@@ -182,9 +154,7 @@ export function toastDataView(
 	...[args, context]: Parameters<PieChartCustom<ToastPieChartConfig>["dataView"]>
 ): Widget {
 	if (!context.config.animation.enabled) {
-		const dataViewWidget = DataView(args, context);
-		const child = buildDataViewTooltipOverlay(dataViewWidget, args, context);
-		return child;
+		return DataView(args, context);
 	}
 
 	return new AnimatedPieDataView({
@@ -192,56 +162,5 @@ export function toastDataView(
 		dataLabels: args.dataLabels,
 		context,
 		duration: context.config.animation.duration,
-	});
-}
-
-function buildDataViewTooltipOverlay(
-	dataViewWidget: Widget,
-	args: Parameters<PieChartCustom<ToastPieChartConfig>["dataView"]>[0],
-	context: Parameters<PieChartCustom<ToastPieChartConfig>["dataView"]>[1],
-): Widget {
-	const { hoveredIndex, config } = context;
-	const showTooltip = hoveredIndex != null && config.tooltip.enabled;
-
-	let tooltipWidget: Widget;
-
-	if (showTooltip && args.slices[hoveredIndex]) {
-		const { startAngle, sweepAngle, name, value } = args.slices[hoveredIndex];
-		const colorIndex = context.legends.indexOf(name);
-		const color = config.colors[(colorIndex >= 0 ? colorIndex : 0) % config.colors.length];
-
-		// mid angle in world space: slices start at -π/2 (12 o'clock)
-		const midAngle = -Math.PI / 2 + startAngle + sweepAngle / 2;
-
-		const ax = Math.cos(midAngle);
-		const ay = Math.sin(midAngle);
-
-		tooltipWidget = ZIndex({
-			zIndex: 99999,
-			child: Align({
-				alignment: new Alignment({ x: ax, y: ay }),
-				child: ConstraintsTransformBox({
-					constraintsTransform: ConstraintsTransformBox.unconstrained,
-					alignment: new Alignment({ x: -ax, y: -ay }),
-					child: FractionalTranslation({
-						translation: new Offset({ x: ax * 0.15, y: ay * 0.15 }),
-						child: tooltipContent({
-							label: name,
-							items: { legend: name, color, value },
-							config,
-						}),
-					}),
-				}),
-			}),
-		});
-	} else {
-		tooltipWidget = SizedBox.shrink();
-	}
-
-	// Always return Stack to keep widget tree structure stable (prevents remount flicker)
-	return Stack({
-		fit: StackFit.expand,
-		clipped: false,
-		children: [dataViewWidget, tooltipWidget],
 	});
 }

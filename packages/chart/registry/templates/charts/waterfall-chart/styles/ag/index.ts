@@ -8,18 +8,19 @@ import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "@utils/index";
 import * as Cartesian from "@shared/cartesian";
 import { agBar } from "./parts/bar";
+import { agBarBox } from "./parts/bar-box";
 import { agConnector } from "./parts/connector";
 import { agDataView } from "./parts/data-view";
 import { agTooltipArea } from "./parts/tooltip-area";
-import { agLegend, agTitle, agTooltipContent, cartesian } from "@styles/ag";
+import { agLegend, agTitle, agTooltipContent, agScaleOptions, cartesian } from "@styles/ag";
 
 export { type WaterfallChartConfig } from "./config";
 
 function agTooltip(
-  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  args: { label: string; items: { legend: string; color: string; value: number | string }[] },
   context: any,
 ): Widget {
-  return agTooltipContent({ label: args.label, items: args.items, config: context.config as any });
+  return agTooltipContent({ label: args.label, items: args.items as any, config: context.config as any });
 }
 
 const agCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
@@ -28,6 +29,7 @@ const agCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
   plot: ({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }) =>
     Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }),
   dataView: agDataView,
+  barBox: agBarBox,
   bar: agBar,
   connector: agConnector,
   tooltip: agTooltip,
@@ -46,7 +48,7 @@ const agCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
     Cartesian.Grid({
       xLine,
       yLine,
-      x: ctx.data.labels.length,
+      x: ctx.items.length,
       y: ctx.scale ? (ctx.scale.max - ctx.scale.min) / ctx.scale.step : 0,
     }),
   gridXLine: cartesian.agGridXLine,
@@ -68,4 +70,5 @@ export const styleConfig = {
   custom: agCustom,
   createConfig: (config?: DeepPartial<WaterfallChartConfig>): WaterfallChartConfig =>
     deepMerge(defaultAgConfig, config),
+  getScaleOptions: (ctx: { height: number }) => agScaleOptions(ctx.height),
 };

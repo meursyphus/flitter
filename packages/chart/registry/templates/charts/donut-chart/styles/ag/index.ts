@@ -1,39 +1,27 @@
-import type { DonutChartCustom } from "@headless/donut-chart/types";
+import type { PieChartContext, PieChartCustom } from "@headless/pie-chart/types";
 import { Center, SizedBox, Stack, StackFit, Text, TextStyle } from "flitter-core";
-import { agDataView as PieDataView } from "../../pie-chart/styles/ag/parts/data-view";
-import { agSlice } from "../../pie-chart/styles/ag/parts/slice";
-import { Layout } from "../../pie-chart/base/layout";
+import { DataView } from "../../pie-chart/base/data-view";
 import type { DonutChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "@utils/index";
-import { agLegend, agTitle } from "@styles/ag";
+import { agStyleConfig as pieAgStyleConfig } from "../../pie-chart/styles/ag";
 
 export { type DonutChartConfig } from "./config";
 
-const agCustom: Partial<DonutChartCustom<DonutChartConfig>> = {
-  layout: (args, ctx) => Layout(args as any, ctx as any),
-  dataView: ({ slices, centerContent }, ctx) =>
+const agCustom: Partial<PieChartCustom<DonutChartConfig>> = {
+  ...(pieAgStyleConfig.custom as Partial<PieChartCustom<DonutChartConfig>>),
+  dataView: ({ slices }, ctx) =>
     Stack({
       fit: StackFit.expand,
       children: [
-        PieDataView({ slices } as any, ctx as any),
-        Center({ child: centerContent }),
+        (pieAgStyleConfig.custom.dataView?.(
+          { slices, dataLabels: [] },
+          ctx as any,
+        ) ?? DataView({ slices, dataLabels: [] }, ctx as any)),
+        Center({ child: agCenterContent(ctx) }),
       ],
     }),
-  slice: (args, ctx) => agSlice(args as any, ctx as any),
-  legend: (args, ctx) => agLegend(args as any, ctx as any, { markerShape: "circle" }),
-  title: (args, ctx) => agTitle(args as any, ctx as any),
-  centerContent: ({ total }, ctx) =>
-    ctx.config.centerText == null
-      ? SizedBox.shrink()
-      : Text(ctx.config.centerText.toString(), {
-          style: new TextStyle({
-            fontFamily: ctx.config.font.family,
-            fontSize: 22,
-            fontWeight: "700",
-            color: ctx.config.title.color,
-          }),
-        }),
+  dataLabel: () => SizedBox.shrink(),
 };
 
 export const styleConfig = {
@@ -41,3 +29,16 @@ export const styleConfig = {
   createConfig: (config?: DeepPartial<DonutChartConfig>): DonutChartConfig =>
     deepMerge(defaultAgConfig, config),
 };
+
+function agCenterContent(ctx: PieChartContext<DonutChartConfig>) {
+  if (ctx.config.centerText == null) return SizedBox.shrink();
+
+  return Text(ctx.config.centerText.toString(), {
+    style: new TextStyle({
+      fontFamily: ctx.config.font.family,
+      fontSize: 22,
+      fontWeight: "700",
+      color: ctx.config.title.color,
+    }),
+  });
+}

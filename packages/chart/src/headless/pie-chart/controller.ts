@@ -31,6 +31,7 @@ export class PieChartController extends ChangeNotifier {
 
 	set data(value: PieChartData) {
 		this.#rawData = value;
+		this.#hoveredIndex = null;
 		this.notifyListeners();
 	}
 
@@ -79,24 +80,28 @@ export class PieChartController extends ChangeNotifier {
 		} else {
 			this.#hiddenSeries.add(name);
 		}
+		this.#hoveredIndex = null;
 		this.notifyListeners();
 	}
 
 	showSeries(name: string): void {
 		if (!this.#hiddenSeries.has(name)) return;
 		this.#hiddenSeries.delete(name);
+		this.#hoveredIndex = null;
 		this.notifyListeners();
 	}
 
 	hideSeries(name: string): void {
 		if (this.#hiddenSeries.has(name)) return;
 		this.#hiddenSeries.add(name);
+		this.#hoveredIndex = null;
 		this.notifyListeners();
 	}
 
 	showAllSeries(): void {
 		if (this.#hiddenSeries.size === 0) return;
 		this.#hiddenSeries.clear();
+		this.#hoveredIndex = null;
 		this.notifyListeners();
 	}
 
@@ -107,14 +112,20 @@ export class PieChartController extends ChangeNotifier {
 	}
 
 	hoverSlice(index: number): void {
+		if (this.#hoveredIndex === index) return;
 		this.#hoveredIndex = index;
 		this.notifyListeners();
 	}
 
-	unhoverSlice(): void {
+	unhoverSlice(index?: number): void {
 		if (this.#hoveredIndex === null) return;
+		if (index != null && this.#hoveredIndex !== index) return;
 		this.#hoveredIndex = null;
 		this.notifyListeners();
+	}
+
+	unhoverAllSlices(): void {
+		this.unhoverSlice();
 	}
 
 	isSliceHovered(index: number): boolean {

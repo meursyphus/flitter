@@ -1,4 +1,5 @@
 import {
+	Alignment,
 	StatelessWidget,
 	StatefulWidget,
 	State,
@@ -15,79 +16,123 @@ import {
 	type CartesianScaffoldBehavior,
 } from "@headless/_shared/cartesian-scaffold";
 import { WaterfallChartProvider } from "./provider";
-import type { WaterfallBarType } from "./types";
-
-const TYPE_LABEL: Record<WaterfallBarType, string> = {
-	increase: "Increase",
-	decrease: "Decrease",
-	total: "Total",
-	subtotal: "Subtotal",
-};
+import type {
+	WaterfallBarGeometry,
+	WaterfallBarType,
+	WaterfallChartDatum,
+} from "./types";
 
 type HoveredWaterfallBarRect = {
 	index: number;
-	label: string;
-	value: number;
-	cumulative: number;
-	type: WaterfallBarType;
+	item: WaterfallChartDatum;
 	x: number;
 	y: number;
 	width: number;
 	height: number;
 };
 
-class Bar extends StatefulWidget {
-	value: number;
-	cumulative: number;
+function clamp(value: number, min: number, max: number): number {
+	return Math.max(min, Math.min(max, value));
+}
+
+function computeBoxAlignment(
+	maxRatio: number,
+	minRatio: number,
+): Alignment {
+	const factor = maxRatio - minRatio;
+	const denominator = 1 - factor;
+	if (denominator <= 0) return Alignment.center;
+
+	return new Alignment({
+		x: 0,
+		y: (2 * (1 - maxRatio)) / denominator - 1,
+	});
+}
+
+function resolveGeometry(
+	item: WaterfallChartDatum,
+	scale: { min: number; max: number } | null,
+): WaterfallBarGeometry | null {
+	if (scale == null) return null;
+	const totalRange = scale.max - scale.min || 1;
+	const minValue = Math.min(item.start, item.end);
+	const maxValue = Math.max(item.start, item.end);
+	const minRatio = clamp((minValue - scale.min) / totalRange, 0, 1);
+	const maxRatio = clamp((maxValue - scale.min) / totalRange, 0, 1);
+
+	return {
+		boxAlignment: computeBoxAlignment(maxRatio, minRatio),
+		boxHeightFactor: Math.max(maxRatio - minRatio, 0.002),
+	};
+}
+
+function formatSignedNumber(value: number): string {
+	const sign = value > 0 ? "+" : value < 0 ? "-" : "";
+	return `${sign}${Math.abs(value).toLocaleString("en-US")}`;
+}
+
+function isSummary(item: WaterfallChartDatum): boolean {
+	return item.type === "total" || item.type === "subtotal";
+}
+
+function typeLabel(ctx: ReturnType<typeof WaterfallChartProvider.of>, item: WaterfallChartDatum): string {
+	if (item.type === "increase") return ctx.config.waterfall.positiveName;
+	if (item.type === "decrease") return ctx.config.waterfall.negativeName;
+	if (item.type === "total") return ctx.config.waterfall.totalName;
+	return "Subtotal";
+}
+
+class BarBox extends StatefulWidget {
+	item: WaterfallChartDatum;
 	index: number;
-	label: string;
-	type: WaterfallBarType;
 
 	constructor({
-		value,
-		cumulative,
+		item,
 		index,
-		label,
-		type,
 	}: {
-		value: number;
-		cumulative: number;
+		item: WaterfallChartDatum;
 		index: number;
-		label: string;
-		type: WaterfallBarType;
 	}) {
 		super(`${index}`);
-		this.value = value;
-		this.cumulative = cumulative;
+		this.item = item;
 		this.index = index;
-		this.label = label;
-		this.type = type;
 	}
 
 	createState() {
-		return new BarState();
+		return new BarBoxState();
 	}
 }
 
-class BarState extends State<Bar> {
+class BarBoxState extends State<BarBox> {
 	anchorKey = new GlobalKey();
 
 	override build(context: BuildContext): Widget {
 		const ctx = WaterfallChartProvider.of(context);
-		const { index, value, cumulative, label, type } = this.widget;
+		const { item, index } = this.widget;
 		const isHovered = ctx.isBarHovered(index);
+		const geometry = resolveGeometry(item, ctx.scale);
+		if (geometry == null) return SizedBox.shrink();
+
+		const bar = ctx.custom.bar(
+			{
+				item,
+				index,
+				isHovered,
+			},
+			ctx,
+		);
+
 		return GestureDetector({
 			cursor: "default",
 			key: this.anchorKey,
 			onMouseEnter: () => ctx.hoverBar(index, this.anchorKey),
 			onMouseLeave: () => ctx.unhoverBar(index),
-			child: ctx.custom.bar(
+			child: ctx.custom.barBox(
 				{
-					value,
-					cumulative,
+					bar,
+					item,
+					geometry,
 					index,
-					label,
-					type,
 					isHovered,
 				},
 				ctx,
@@ -97,22 +142,22 @@ class BarState extends State<Bar> {
 }
 
 class Connector extends StatelessWidget {
-	#fromCumulative: number;
-	#toCumulative: number;
+	#from: WaterfallChartDatum;
+	#to: WaterfallChartDatum;
 	#index: number;
 
 	constructor({
-		fromCumulative,
-		toCumulative,
+		from,
+		to,
 		index,
 	}: {
-		fromCumulative: number;
-		toCumulative: number;
+		from: WaterfallChartDatum;
+		to: WaterfallChartDatum;
 		index: number;
 	}) {
 		super();
-		this.#fromCumulative = fromCumulative;
-		this.#toCumulative = toCumulative;
+		this.#from = from;
+		this.#to = to;
 		this.#index = index;
 	}
 
@@ -120,8 +165,8 @@ class Connector extends StatelessWidget {
 		const ctx = WaterfallChartProvider.of(context);
 		return ctx.custom.connector(
 			{
-				fromCumulative: this.#fromCumulative,
-				toCumulative: this.#toCumulative,
+				from: this.#from,
+				to: this.#to,
 				index: this.#index,
 			},
 			ctx,
@@ -148,37 +193,30 @@ const behavior: CartesianScaffoldBehavior<
 			},
 			ctx,
 		),
-	getLegends: () => [
-		{ name: "Increase", index: 0 },
-		{ name: "Decrease", index: 1 },
-		{ name: "Total", index: 2 },
+	getLegends: (ctx) => [
+		{ name: ctx.config.waterfall.positiveName, index: 0 },
+		{ name: ctx.config.waterfall.negativeName, index: 1 },
 	],
 	buildLegend: (ctx, { name, index }) =>
 		ctx.custom.legend({ name, index, isVisible: true }, ctx),
-	getXAxisLabels: (ctx) => ctx.data.labels,
+	getXAxisLabels: (ctx) => ctx.items.map((item) => item.label),
 	getYAxisLabels: (ctx) => getScaleLabels(ctx.scale),
 	shouldRenderDataView: (ctx) => ctx.scale != null,
 	buildDataView: (ctx) => {
-		const bars = ctx.data.values.map(
-			(value, index) =>
-				new Bar({
-					value,
-					cumulative: ctx.cumulativeValues[index],
+		const bars = ctx.items.map(
+			(item, index) =>
+				new BarBox({
+					item,
 					index,
-					label: ctx.data.labels[index],
-					type: ctx.types[index],
 				}),
 		);
 
 		const connectors: Widget[] = [];
-		for (let index = 0; index < ctx.data.values.length - 1; index++) {
-			connectors.push(
-				new Connector({
-					fromCumulative: ctx.cumulativeValues[index],
-					toCumulative: ctx.cumulativeValues[index + 1],
-					index,
-				}),
-			);
+		for (let index = 0; index < ctx.items.length - 1; index += 1) {
+			const from = ctx.items[index];
+			const to = ctx.items[index + 1];
+			if (isSummary(from) || isSummary(to)) continue;
+			connectors.push(new Connector({ from, to, index }));
 		}
 
 		return GestureDetector({
@@ -193,46 +231,41 @@ const behavior: CartesianScaffoldBehavior<
 			if (hoveredBar == null) return null;
 
 			const rect = resolveOverlayRect(overlayKey, hoveredBar.anchorKey);
-			const index = hoveredBar.index;
-			if (rect == null) return null;
+			const item = ctx.items[hoveredBar.index];
+			if (rect == null || item == null) return null;
 
 			return {
-				index,
-				label: ctx.data.labels[index] ?? "",
-				value: ctx.data.values[index] ?? 0,
-				cumulative: ctx.cumulativeValues[index] ?? 0,
-				type: ctx.types[index],
+				index: hoveredBar.index,
+				item,
 				...rect,
 			};
 		},
 		buildTooltip: (ctx, hoveredBarRect) => {
-			const palette =
-				ctx.config?.colors?.fills ??
-				ctx.config?.colors ??
-				["#888"];
+			const item = hoveredBarRect.item;
 			const color =
-				palette[
-					hoveredBarRect.type === "increase"
-						? 0
-						: hoveredBarRect.type === "decrease"
-							? 1
-							: 2
-				] ??
-				palette[0] ??
-				"#888";
+				item.type === "increase"
+					? ctx.config.colors.fills?.[0] ?? ctx.config.colors?.[0] ?? "#4a90e2"
+					: item.type === "decrease"
+						? ctx.config.colors.fills?.[1] ?? ctx.config.colors?.[1] ?? "#ff6b6b"
+						: ctx.config.colors.fills?.[2] ?? ctx.config.colors?.[2] ?? "#404066";
 			return ctx.custom.tooltip(
 				{
-					label: hoveredBarRect.label,
+					label: item.label,
 					items: [
 						{
-							legend: TYPE_LABEL[hoveredBarRect.type],
+							legend: typeLabel(ctx, item),
 							color,
-							value: hoveredBarRect.value,
+							value: ctx.config.waterfall.valueFormatter(item.value, item.type),
 						},
 						{
-							legend: "Cumulative",
+							legend: "Start",
 							color: ctx.config.axis.color,
-							value: hoveredBarRect.cumulative,
+							value: ctx.config.waterfall.valueFormatter(item.start, item.type),
+						},
+						{
+							legend: "End",
+							color: ctx.config.axis.color,
+							value: ctx.config.waterfall.valueFormatter(item.end, item.type),
 						},
 					],
 				},

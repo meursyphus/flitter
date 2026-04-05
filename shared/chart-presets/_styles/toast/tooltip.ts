@@ -19,7 +19,7 @@ import type { ToastBaseConfig } from "./cartesian/config";
 type TooltipItem = {
   legend: string;
   color: string;
-  value: number;
+  value: number | string;
 };
 
 export function tooltipContent({

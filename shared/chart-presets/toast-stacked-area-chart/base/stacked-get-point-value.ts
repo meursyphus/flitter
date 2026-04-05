@@ -1,4 +1,4 @@
-import type { GetPointValueFn } from "flitter-ui/chart";
+import type { LineChartGetPointValueFn as GetPointValueFn } from "flitter-ui/chart";
 
 export const stackedGetPointValue: GetPointValueFn = ({ data, index, legend }) => {
   const datasetIndex = data.datasets.findIndex((dataset) => dataset.legend === legend);

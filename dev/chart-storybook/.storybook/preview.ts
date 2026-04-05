@@ -8,18 +8,21 @@ const preview: Preview = {
         order: [
           "In-Review",
           [
+            "PieChart",
+            "RadarChart",
+            "TreemapChart",
+          ],
+          "Next",
+          [
+            "SunburstChart",
+            "SankeyChart",
+          ],
+          "Polish",
+          [
             "BoxPlotChart",
             "CandlestickChart",
             "HistogramChart",
             "WaterfallChart",
-          ],
-          "Next",
-          [
-            "PieChart",
-            "RadarChart",
-            "SunburstChart",
-            "TreemapChart",
-            "SankeyChart",
           ],
           "TODO",
           [

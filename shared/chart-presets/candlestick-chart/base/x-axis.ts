@@ -1,6 +1,76 @@
 import type { CandlestickChartCustom } from "../types";
-import * as Cartesian from "flitter-ui/chart";
+import {
+	Align,
+	Alignment,
+	Column,
+	Container,
+	CrossAxisAlignment,
+	MainAxisSize,
+	Stack,
+	StackFit,
+	SizedBox,
+} from "flitter-core";
 
-export function XAxis(...args: Parameters<CandlestickChartCustom["xAxis"]>) {
-  return Cartesian.XAxis(args[0], { type: "label" });
+function alignmentForIndex(index: number, count: number): Alignment {
+	if (count <= 0) return Alignment.center;
+	const x = ((index + 0.5) / count) * 2 - 1;
+	return new Alignment({ x, y: 0 });
+}
+
+export function XAxis(
+	...[{ line, tick }, ctx]: Parameters<CandlestickChartCustom["xAxis"]>
+) {
+	const labelGap = ctx.config?.axis?.label?.gap ?? 0;
+	const showTicks = ctx.config?.axis?.tick?.enabled !== false;
+	const tickSize = showTicks ? (ctx.config?.axis?.tick?.size ?? 6) : 0;
+
+	return Column({
+		mainAxisSize: MainAxisSize.min,
+		crossAxisAlignment: CrossAxisAlignment.start,
+		children: [
+			line,
+			...(showTicks
+				? [
+						Container({
+							width: Infinity,
+							height: tickSize,
+							child: Stack({
+								fit: StackFit.expand,
+								clipped: false,
+								children: [
+									SizedBox.expand(),
+									...ctx.xTicks.map(({ index }) =>
+										Align({
+											alignment: alignmentForIndex(index, ctx.candles.length),
+											child: tick,
+										}),
+									),
+								],
+							}),
+						}),
+				  ]
+				: []),
+			...(labelGap > 0 ? [SizedBox({ height: labelGap })] : []),
+			Container({
+				width: Infinity,
+				height: 18,
+				child: Stack({
+					fit: StackFit.expand,
+					clipped: false,
+					children: [
+						SizedBox.expand(),
+						...ctx.xTicks.map(({ index, label }) =>
+							Align({
+								alignment: alignmentForIndex(index, ctx.candles.length),
+								child: ctx.custom.xAxisLabel(
+									{ name: label, index },
+									ctx,
+								),
+							}),
+						),
+					],
+				}),
+			}),
+		],
+	});
 }

@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Alignment, Widget } from "flitter-core";
 import type { CandlestickChartController } from "./controller";
 
 type CustomArgs<T = undefined, TConfig = {}> = (
@@ -10,19 +10,71 @@ export type CandlestickChartContext<TConfig = {}> = CandlestickChartController &
 	config: TConfig;
 };
 
-export type CandlestickChartDataPoint = {
+export type CandlestickChartRow = Record<string, unknown> & {
 	open: number;
 	high: number;
 	low: number;
 	close: number;
 };
 
-export type CandlestickChartData = {
-	labels: string[];
-	datasets: {
-		legend: string;
-		data: CandlestickChartDataPoint[];
-	}[];
+export type CandlestickChartData<
+	TRow extends CandlestickChartRow = CandlestickChartRow,
+> = {
+	rows: TRow[];
+	xKey: keyof TRow & string;
+};
+
+export type CandlestickChartXValue = Date | number | string;
+
+export type CandlestickChartXValueType = "date" | "number" | "string";
+
+export type CandlestickChartGrouping =
+	| "auto"
+	| "year"
+	| "quarter"
+	| "month"
+	| "week"
+	| "day"
+	| "value";
+
+export type CandlestickChartTransform = {
+	groupBy?: CandlestickChartGrouping;
+	sort?: boolean;
+	tickCount?: number;
+	xValueType?: CandlestickChartXValueType | "auto";
+};
+
+export type CandlestickChartCandle<
+	TRow extends CandlestickChartRow = CandlestickChartRow,
+> = {
+	row: TRow;
+	x: CandlestickChartXValue;
+	xType: CandlestickChartXValueType;
+	label: string;
+	open: number;
+	high: number;
+	low: number;
+	close: number;
+	isUp: boolean;
+	isDown: boolean;
+	isFlat: boolean;
+	change: number;
+	changeRate: number | null;
+	sortValue: number | string;
+};
+
+export type CandlestickChartTick = {
+	index: number;
+	label: string;
+	value: CandlestickChartXValue;
+};
+
+export type CandlestickChartGeometry = {
+	boxAlignment: Alignment;
+	boxHeightFactor: number;
+	topWickRatio: number;
+	bodyRatio: number;
+	bottomWickRatio: number;
 };
 
 export type CandlestickChartScale = {
@@ -36,16 +88,21 @@ export type CandlestickChartScaleOptions = {
 };
 
 export type CandlestickChartCustom<TConfig = {}> = {
+	candlestickBox: CustomArgs<
+		{
+			candlestick: Widget;
+			candle: CandlestickChartCandle;
+			geometry: CandlestickChartGeometry;
+			index: number;
+			isHovered: boolean;
+		},
+		TConfig
+	>;
 	candlestick: CustomArgs<
 		{
-			open: number;
-			high: number;
-			low: number;
-			close: number;
-			label: string;
+			candle: CandlestickChartCandle;
+			geometry: CandlestickChartGeometry;
 			index: number;
-			legend: string;
-			datasetIndex: number;
 			isHovered: boolean;
 		},
 		TConfig
@@ -53,7 +110,7 @@ export type CandlestickChartCustom<TConfig = {}> = {
 	tooltip: CustomArgs<
 		{
 			label: string;
-			items: { legend: string; color: string; value: number }[];
+			items: { legend: string; color: string; value: number | string }[];
 		},
 		TConfig
 	>;
@@ -63,16 +120,7 @@ export type CandlestickChartCustom<TConfig = {}> = {
 	yAxisLabel: CustomArgs<{ name: string; index: number }, TConfig>;
 	xAxisTick: CustomArgs<undefined, TConfig>;
 	yAxisTick: CustomArgs<undefined, TConfig>;
-	dataView: CustomArgs<
-		{
-			candlestickGroups: {
-				label: string;
-				index: number;
-				candlesticks: Widget[];
-			}[];
-		},
-		TConfig
-	>;
+	dataView: CustomArgs<{ candlesticks: Widget[] }, TConfig>;
 	layout: CustomArgs<{ title: Widget; legends: Widget[]; plot: Widget }, TConfig>;
 	plot: CustomArgs<
 		{ xAxis: Widget; yAxis: Widget; dataView: Widget; grid: Widget; axisCorner: Widget; tooltipArea: Widget },
@@ -83,12 +131,7 @@ export type CandlestickChartCustom<TConfig = {}> = {
 			tooltip: Widget | null;
 			hoveredCandlestick: {
 				index: number;
-				legend: string;
-				label: string;
-				open: number;
-				high: number;
-				low: number;
-				close: number;
+				candle: CandlestickChartCandle;
 				x: number;
 				y: number;
 				width: number;
@@ -109,7 +152,7 @@ export type CandlestickChartCustom<TConfig = {}> = {
 };
 
 export type GetScaleFn = (
-	data: CandlestickChartData,
+	candles: CandlestickChartCandle[],
 	options?: CandlestickChartScaleOptions,
 ) => CandlestickChartScale;
 

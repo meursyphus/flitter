@@ -28,12 +28,11 @@ function createConnectorPath({
 }
 
 export function toastConnector(
-  { fromCumulative, index }: { fromCumulative: number; toCumulative: number; index: number },
+  { from, index }: { from: { end: number }; to: { start: number }; index: number },
   ctx: WaterfallChartContext<WaterfallChartConfig>,
 ): Widget {
   const scale = ctx.scale;
-  const nextType = ctx.types[index + 1];
-  if (scale == null || nextType === "total") return SizedBox.shrink();
+  if (scale == null || !ctx.config.waterfall.line.enabled) return SizedBox.shrink();
 
   return CustomPaint({
     painter: {
@@ -42,38 +41,43 @@ export function toastConnector(
           connector: context.createSvgEl("path"),
         }),
         paint: ({ connector }, { width, height }) => {
-          const segmentWidth = width / Math.max(ctx.data.values.length, 1);
+          const segmentWidth = width / Math.max(ctx.items.length, 1);
           const x = segmentWidth * (index + 1);
           const halfSpan = Math.min(
             segmentWidth * 0.18,
             Math.max(ctx.config.waterfall.barGap * 2.5, 14),
           );
-          const y = valueToY(fromCumulative, scale.min, scale.max, height);
+          const y = valueToY(from.end, scale.min, scale.max, height);
           const path = createConnectorPath({ x, y, halfSpan });
 
           connector.setAttribute("d", path.getD());
           connector.setAttribute("fill", "none");
-          connector.setAttribute("stroke", "rgba(0,0,0,0.18)");
-          connector.setAttribute("stroke-width", "1.5");
+          connector.setAttribute("stroke", ctx.config.waterfall.line.color);
+          connector.setAttribute("stroke-width", `${ctx.config.waterfall.line.width}`);
+          if (ctx.config.waterfall.line.dash.length > 0) {
+            connector.setAttribute("stroke-dasharray", ctx.config.waterfall.line.dash.join(" "));
+          }
           connector.setAttribute("stroke-linecap", "round");
         },
       },
       canvas: {
         paint: (context, { width, height }) => {
-          const segmentWidth = width / Math.max(ctx.data.values.length, 1);
+          const segmentWidth = width / Math.max(ctx.items.length, 1);
           const x = segmentWidth * (index + 1);
           const halfSpan = Math.min(
             segmentWidth * 0.18,
             Math.max(ctx.config.waterfall.barGap * 2.5, 14),
           );
-          const y = valueToY(fromCumulative, scale.min, scale.max, height);
+          const y = valueToY(from.end, scale.min, scale.max, height);
           const path = createConnectorPath({ x, y, halfSpan });
           const canvas = context.canvas;
 
-          canvas.strokeStyle = "rgba(0,0,0,0.18)";
-          canvas.lineWidth = 1.5;
+          canvas.strokeStyle = ctx.config.waterfall.line.color;
+          canvas.lineWidth = ctx.config.waterfall.line.width;
+          canvas.setLineDash(ctx.config.waterfall.line.dash);
           canvas.lineCap = "round";
           canvas.stroke(path.toCanvasPath());
+          canvas.setLineDash([]);
         },
       },
     },

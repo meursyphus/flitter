@@ -8,18 +8,19 @@ import { defaultToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "@utils/index";
 import * as Cartesian from "@shared/cartesian";
 import { toastBar } from "./parts/bar";
+import { toastBarBox } from "./parts/bar-box";
 import { toastConnector } from "./parts/connector";
 import { toastDataView } from "./parts/data-view";
 import { toastTooltipArea } from "./parts/tooltip-area";
-import { cartesian, toastLegend, toastTitle, tooltipContent } from "@styles/toast";
+import { cartesian, toastLegend, toastScaleOptions, toastTitle, tooltipContent } from "@styles/toast";
 
 export { type WaterfallChartConfig } from "./config";
 
 function toastTooltip(
-  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  args: { label: string; items: { legend: string; color: string; value: number | string }[] },
   context: any,
 ): Widget {
-  return tooltipContent({ label: args.label, items: args.items, config: context.config as any });
+  return tooltipContent({ label: args.label, items: args.items as any, config: context.config as any });
 }
 
 const toastCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
@@ -28,6 +29,7 @@ const toastCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
   plot: ({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }) =>
     Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }),
   dataView: toastDataView,
+  barBox: toastBarBox,
   bar: toastBar,
   connector: toastConnector,
   tooltip: toastTooltip,
@@ -46,7 +48,7 @@ const toastCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
     Cartesian.Grid({
       xLine,
       yLine,
-      x: ctx.data.labels.length,
+      x: ctx.items.length,
       y: ctx.scale ? (ctx.scale.max - ctx.scale.min) / ctx.scale.step : 0,
     }),
   gridXLine: cartesian.toastGridXLine,
@@ -69,4 +71,5 @@ export const styleConfig = {
   custom: toastCustom,
   createConfig: (config?: DeepPartial<WaterfallChartConfig>): WaterfallChartConfig =>
     deepMerge(defaultToastConfig, config),
+  getScaleOptions: (ctx: { height: number }) => toastScaleOptions(ctx.height),
 };

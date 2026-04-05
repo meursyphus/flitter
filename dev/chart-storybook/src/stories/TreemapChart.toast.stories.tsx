@@ -30,7 +30,7 @@ const portfolioData = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Next/TreemapChart/Toast",
+  title: "In-Review/TreemapChart/Toast",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {

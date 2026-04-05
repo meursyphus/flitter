@@ -1,10 +1,6 @@
-import type { CandlestickChartCustom } from '../types';
-import { agLegend, defaultAgCartesianBaseConfig } from '@styles/ag';
+import type { CandlestickChartCustom } from "../types";
+import { SizedBox } from "flitter-core";
 
-export function Legend(...args: Parameters<CandlestickChartCustom['legend']>) {
-	const [legend, context] = args;
-	return agLegend(legend, {
-		config: defaultAgCartesianBaseConfig,
-		isSeriesVisible: context.isSeriesVisible.bind(context),
-	});
+export function Legend(..._: Parameters<CandlestickChartCustom["legend"]>) {
+	return SizedBox.shrink();
 }

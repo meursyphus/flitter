@@ -22,6 +22,7 @@ export type {
 	LineChartScaleOptions,
 	GetScaleFn as LineChartGetScaleFn,
 	GetScaleOptionsFn as LineChartGetScaleOptionsFn,
+	LineChartGetPointValueFn,
 } from "./line-chart/types";
 export { LineChartController } from "./line-chart/controller";
 
@@ -69,6 +70,8 @@ export type {
 	PieChartContext,
 	PieChartCustom,
 	PieChartData,
+	PieChartSlice,
+	HoveredPieSlice,
 } from "./pie-chart/types";
 export { PieChartController } from "./pie-chart/controller";
 
@@ -104,8 +107,15 @@ export { CandlestickChartProvider } from "./candlestick-chart/provider";
 export type {
 	CandlestickChartContext,
 	CandlestickChartCustom,
-	CandlestickChartDataPoint,
+	CandlestickChartRow,
 	CandlestickChartData,
+	CandlestickChartCandle,
+	CandlestickChartTick,
+	CandlestickChartGeometry,
+	CandlestickChartGrouping,
+	CandlestickChartTransform,
+	CandlestickChartXValue,
+	CandlestickChartXValueType,
 	CandlestickChartScale,
 	CandlestickChartScaleOptions,
 	GetScaleFn as CandlestickChartGetScaleFn,
@@ -118,10 +128,16 @@ export { WaterfallChartProvider } from "./waterfall-chart/provider";
 export type {
 	WaterfallChartContext,
 	WaterfallBarType,
+	WaterfallChartRow,
 	WaterfallTotal,
 	WaterfallChartCustom,
 	WaterfallChartData,
+	WaterfallChartDatum,
+	WaterfallBarGeometry,
 	WaterfallChartScale,
+	WaterfallChartScaleOptions,
+	GetScaleFn as WaterfallChartGetScaleFn,
+	GetScaleOptionsFn as WaterfallChartGetScaleOptionsFn,
 } from "./waterfall-chart/types";
 export { WaterfallChartController } from "./waterfall-chart/controller";
 

@@ -5,14 +5,23 @@ import type {
   LineChartData,
   GetScaleFn,
   GetScaleOptionsFn,
-  GetPointValueFn,
+  LineChartGetPointValueFn as GetPointValueFn,
 } from "@headless/line-chart/types";
 import * as Cartesian from "@shared/cartesian/index";
 import { DataView, Grid } from "../../../shared/line-like";
 import { stackedGetScale } from "./stacked-get-scale";
 import { stackedGetPointValue } from "./stacked-get-point-value";
 
-export type { LineChartCustom, LineChartData, LineChartScale, LineChartScaleOptions, LineChartContext, GetScaleFn, GetScaleOptionsFn } from "@headless/line-chart/types";
+export type {
+  LineChartCustom,
+  LineChartData,
+  LineChartScale,
+  LineChartScaleOptions,
+  LineChartContext,
+  GetScaleFn,
+  GetScaleOptionsFn,
+  LineChartGetPointValueFn as GetPointValueFn,
+} from "@headless/line-chart/types";
 export { LineChartController } from "@headless/line-chart/controller";
 
 /** Structural (non-visual) defaults provided by base */

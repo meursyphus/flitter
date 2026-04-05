@@ -33,7 +33,7 @@ const skillData = {
 };
 
 const meta: Meta<RadarChartArgs> = {
-	title: "Next/RadarChart/Toast",
+	title: "In-Review/RadarChart/Toast",
 	parameters: { layout: "centered" },
 	argTypes: {
 		renderer: { control: "inline-radio", options: ["svg", "canvas"] },

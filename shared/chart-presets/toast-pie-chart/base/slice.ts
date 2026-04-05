@@ -1,6 +1,5 @@
 import {
 	CustomPaint,
-	GestureDetector,
 	Offset,
 	Path,
 	Radius,
@@ -178,13 +177,5 @@ export function baseSlice({
 		},
 	});
 
-	return GestureDetector({
-		behavior: "deferToChild",
-		cursor: "default",
-		child: paint,
-		onMouseEnter: () => ctx.hoverSlice(index),
-		onMouseLeave: () => {
-			if (ctx.hoveredIndex === index) ctx.unhoverSlice();
-		},
-	});
+	return paint;
 }

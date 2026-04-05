@@ -1,37 +1,27 @@
-import type { DonutChartCustom } from "flitter-ui/chart";
-import { Center, Stack, StackFit, Text, TextStyle } from "flitter-core";
-import { toastDataView as PieDataView } from "../../toast-pie-chart/style/parts/data-view";
-import { toastSlice } from "../../toast-pie-chart/style/parts/slice";
-import { Layout } from "../../pie-chart/base/layout";
+import type { PieChartContext, PieChartCustom } from "flitter-ui/chart";
+import { Center, SizedBox, Stack, StackFit, Text, TextStyle } from "flitter-core";
+import { DataView } from "../../pie-chart/base/data-view";
 import type { DonutChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
-import { toastLegend, toastTitle } from "../../_styles/toast/index";
+import { toastStyleConfig as pieToastStyleConfig } from "../../toast-pie-chart/style";
 
 export { type DonutChartConfig } from "./config";
 
-const toastCustom: Partial<DonutChartCustom<DonutChartConfig>> = {
-  layout: (args, ctx) => Layout(args as any, ctx as any),
-  dataView: ({ slices, centerContent }, ctx) =>
+const toastCustom: Partial<PieChartCustom<DonutChartConfig>> = {
+  ...(pieToastStyleConfig.custom as Partial<PieChartCustom<DonutChartConfig>>),
+  dataView: ({ slices }, ctx) =>
     Stack({
       fit: StackFit.expand,
       children: [
-        PieDataView({ slices } as any, ctx as any),
-        Center({ child: centerContent }),
+        (pieToastStyleConfig.custom.dataView?.(
+          { slices, dataLabels: [] },
+          ctx as any,
+        ) ?? DataView({ slices, dataLabels: [] }, ctx as any)),
+        Center({ child: toastCenterContent(ctx) }),
       ],
     }),
-  slice: (args, ctx) => toastSlice(args as any, ctx as any),
-  legend: (args, ctx) => toastLegend(args as any, ctx as any, { markerShape: "circle" }),
-  title: (args, ctx) => toastTitle(args as any, ctx as any),
-  centerContent: ({ total }, ctx) =>
-    Text((ctx.config.centerText ?? total.toString()).toString(), {
-      style: new TextStyle({
-        fontFamily: ctx.config.font.family,
-        fontSize: 22,
-        fontWeight: "700",
-        color: "#333333",
-      }),
-    }),
+  dataLabel: () => SizedBox.shrink(),
 };
 
 export const styleConfig = {
@@ -39,3 +29,16 @@ export const styleConfig = {
   createConfig: (config?: DeepPartial<DonutChartConfig>): DonutChartConfig =>
     deepMerge(defaultToastConfig, config),
 };
+
+function toastCenterContent(ctx: PieChartContext<DonutChartConfig>) {
+  const total = ctx.data.datasets.reduce((sum, dataset) => sum + dataset.value, 0);
+
+  return Text((ctx.config.centerText ?? total.toString()).toString(), {
+    style: new TextStyle({
+      fontFamily: ctx.config.font.family,
+      fontSize: 22,
+      fontWeight: "700",
+      color: "#333333",
+    }),
+  });
+}

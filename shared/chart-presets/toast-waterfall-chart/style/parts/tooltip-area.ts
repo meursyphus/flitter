@@ -100,7 +100,7 @@ class _ToastTooltipAreaState extends State<_ToastTooltipArea> {
       x: hoveredBar.x,
       y: hoveredBar.y,
       width: hoveredBar.width,
-      value: hoveredBar.value,
+      value: hoveredBar.item.value,
       plotWidth: size.width,
       plotHeight: size.height,
     });
