@@ -167,6 +167,7 @@ class Slice extends StatelessWidget {
 
 	override build(context: BuildContext): Widget {
 		const ctx = PieChartProvider.of(context);
+		const isHovered = ctx.isSliceHovered(this.#index);
 		const child = ctx.custom.slice(
 			{
 				index: this.#index,
@@ -176,6 +177,7 @@ class Slice extends StatelessWidget {
 				startAngle: this.#startAngle,
 				sweepAngle: this.#sweepAngle,
 				dataLabel: this.#dataLabel,
+				isHovered,
 			},
 			ctx,
 		);
@@ -208,6 +210,7 @@ class RadialTick extends StatelessWidget {
 
 	override build(context: BuildContext): Widget {
 		const ctx = PieChartProvider.of(context);
+		const isHovered = ctx.isSliceHovered(this.#index);
 		const child = ctx.custom.radialTick(
 			{
 				index: this.#index,
@@ -215,6 +218,7 @@ class RadialTick extends StatelessWidget {
 				value: this.#value,
 				percentage: this.#percentage,
 				angle: this.#angle,
+				isHovered,
 			},
 			ctx,
 		);
@@ -247,6 +251,7 @@ class RadialLabel extends StatelessWidget {
 
 	override build(context: BuildContext): Widget {
 		const ctx = PieChartProvider.of(context);
+		const isHovered = ctx.isSliceHovered(this.#index);
 		const child = ctx.custom.radialLabel(
 			{
 				index: this.#index,
@@ -254,6 +259,7 @@ class RadialLabel extends StatelessWidget {
 				value: this.#value,
 				percentage: this.#percentage,
 				angle: this.#angle,
+				isHovered,
 			},
 			ctx,
 		);

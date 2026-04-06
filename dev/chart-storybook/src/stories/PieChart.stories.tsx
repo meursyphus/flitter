@@ -12,8 +12,6 @@ type PieChartArgs = {
 	legendVisible: boolean;
 	legendPosition: (typeof LEGEND_POSITIONS)[number];
 	legendGap: number;
-	strokeColor: string;
-	strokeWidth: number;
 	radialVisible: boolean;
 	radialGap: number;
 };
@@ -47,8 +45,6 @@ function ToastPieChartStory({ args }: { args: PieChartArgs }) {
 						gap: args.legendGap,
 					},
 					pie: {
-						strokeColor: args.strokeColor,
-						strokeWidth: args.strokeWidth,
 						innerRadiusRatio: 0,
 					},
 					radial: {
@@ -65,7 +61,7 @@ function ToastPieChartStory({ args }: { args: PieChartArgs }) {
 }
 
 const meta: Meta<PieChartArgs> = {
-	title: "In-Review/PieChart/Toast",
+	title: "CHARTS/PieChart/Toast",
 	parameters: { layout: "centered" },
 	argTypes: {
 		renderer: { control: "inline-radio", options: ["svg", "canvas"] },
@@ -74,8 +70,6 @@ const meta: Meta<PieChartArgs> = {
 		legendVisible: { control: "boolean" },
 		legendPosition: { control: "select", options: LEGEND_POSITIONS },
 		legendGap: { control: { type: "range", min: 0, max: 40, step: 2 } },
-		strokeColor: { control: "color" },
-		strokeWidth: { control: { type: "range", min: 0, max: 6, step: 0.5 } },
 		radialVisible: { control: "boolean" },
 		radialGap: { control: { type: "range", min: 0, max: 20, step: 1 } },
 	},
@@ -86,8 +80,6 @@ const meta: Meta<PieChartArgs> = {
 		legendVisible: true,
 		legendPosition: "right-top",
 		legendGap: 12,
-		strokeColor: "white",
-		strokeWidth: 2,
 		radialVisible: false,
 		radialGap: 8,
 	},

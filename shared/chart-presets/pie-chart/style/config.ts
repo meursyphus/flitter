@@ -7,8 +7,6 @@ type AgPieSharedConfig = Pick<
 
 export type AgPieChartConfig = AgPieSharedConfig & {
   pie: {
-    strokeColor: string;
-    strokeWidth: number;
     innerRadiusRatio: number;
   };
   radial: {
@@ -29,6 +27,7 @@ export type AgPieChartConfig = AgPieSharedConfig & {
     fontColor: string;
     fontFamily?: string;
     fontWeight?: string;
+    nameColor: string;
     formatter: (args: { index: number; name: string; value: number; percentage: number; angle: number }) => string;
   };
   radialTick: {
@@ -51,8 +50,6 @@ export const defaultAgConfig: AgPieChartConfig = {
   padding: { top: 40, right: 60, bottom: 40, left: 60 },
   tooltip: defaultAgCartesianBaseConfig.tooltip,
   pie: {
-    strokeColor: "white",
-    strokeWidth: 2,
     innerRadiusRatio: 0,
   },
   radial: {
@@ -68,14 +65,15 @@ export const defaultAgConfig: AgPieChartConfig = {
     formatter: (args) => `${args.percentage.toFixed(1)}%`,
   },
   radialLabel: {
-    fontSize: 12,
+    fontSize: 16,
     fontColor: "#333333",
-    fontWeight: "500",
-    formatter: (args) => args.name,
+    fontWeight: "bold",
+    nameColor: "#777777",
+    formatter: (args) => String(args.value),
   },
   radialTick: {
-    length: 20,
+    length: 14,
     color: "#999999",
-    strokeWidth: 1,
+    strokeWidth: 2,
   },
 };

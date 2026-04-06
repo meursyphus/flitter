@@ -13,8 +13,6 @@ type PieChartArgs = {
 	legendVisible: boolean;
 	legendPosition: (typeof LEGEND_POSITIONS)[number];
 	legendGap: number;
-	strokeColor: string;
-	strokeWidth: number;
 	dataLabelVisible: boolean;
 	dataLabelFontSize: number;
 	dataLabelFontColor: string;
@@ -56,8 +54,6 @@ function AgPieChart({ args }: { args: PieChartArgs }) {
 						gap: args.legendGap,
 					},
 					pie: {
-						strokeColor: args.strokeColor,
-						strokeWidth: args.strokeWidth,
 						innerRadiusRatio: 0,
 					},
 					radial: {
@@ -80,7 +76,7 @@ function AgPieChart({ args }: { args: PieChartArgs }) {
 }
 
 const meta: Meta<PieChartArgs> = {
-	title: "In-Review/PieChart/Ag",
+	title: "CHARTS/PieChart/Ag",
 	parameters: { layout: "centered" },
 	argTypes: {
 		renderer: { control: "inline-radio", options: ["svg", "canvas"] },
@@ -90,8 +86,6 @@ const meta: Meta<PieChartArgs> = {
 		legendVisible: { control: "boolean" },
 		legendPosition: { control: "select", options: LEGEND_POSITIONS },
 		legendGap: { control: { type: "range", min: 0, max: 40, step: 2 } },
-		strokeColor: { control: "color" },
-		strokeWidth: { control: { type: "range", min: 0, max: 6, step: 0.5 } },
 		dataLabelVisible: { control: "boolean" },
 		dataLabelFontSize: { control: { type: "range", min: 8, max: 24, step: 1 } },
 		dataLabelFontColor: { control: "color" },
@@ -107,8 +101,6 @@ const meta: Meta<PieChartArgs> = {
 		legendVisible: false,
 		legendPosition: "right-top",
 		legendGap: 16,
-		strokeColor: "white",
-		strokeWidth: 2,
 		dataLabelVisible: true,
 		dataLabelFontSize: 12,
 		dataLabelFontColor: "#ffffff",

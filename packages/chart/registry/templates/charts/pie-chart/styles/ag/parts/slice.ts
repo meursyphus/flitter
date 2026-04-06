@@ -1,7 +1,9 @@
-import { Opacity, Stack, StackFit, type Widget } from "flitter-core";
+import { Color, Opacity, Stack, StackFit, type Widget } from "flitter-core";
 import type { PieChartCustom } from "@headless/pie-chart/types";
 import type { AgPieChartConfig } from "../config";
-import { baseSlice } from "../../../base/slice";
+import { Slice } from "../../../base/slice";
+
+const AG_SLICE_PADDING = 4;
 
 export function agSlice(
 	...[{ index, name, startAngle, sweepAngle, dataLabel }, ctx]: Parameters<PieChartCustom<AgPieChartConfig>["slice"]>
@@ -9,21 +11,23 @@ export function agSlice(
 	const { colors, pie: pieConfig } = ctx.config;
 	const colorIndex = ctx.legends.indexOf(name);
 	const fill = colors.fills[(colorIndex >= 0 ? colorIndex : index) % colors.fills.length];
+	const strokeColor = Color.of(fill).multiply(0.82).value;
 
 	let opacity = 1;
 	if (ctx.hoveredIndex != null) {
 		opacity = ctx.isSliceHovered(index) ? 1 : 0.35;
 	}
 
-	const slice = baseSlice({
+	const slice = Slice({
 		index,
 		startAngle,
 		sweepAngle,
 		innerRadiusRatio: pieConfig.innerRadiusRatio,
+		padding: AG_SLICE_PADDING,
 		ctx,
 		fill,
-		strokeColor: pieConfig.strokeColor,
-		strokeWidth: pieConfig.strokeWidth,
+		strokeColor,
+		strokeWidth: 1,
 	});
 
 	return Opacity({

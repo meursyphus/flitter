@@ -2,11 +2,38 @@ import {
 	CustomPaint,
 	Offset,
 	Path,
+	Rect,
 	Radius,
 	type Size,
 	type Widget,
 } from "flitter-core";
 import type { PieChartContext } from "flitter-ui/chart";
+
+const FULL_SWEEP_EPSILON = 0.0001;
+
+function resolveAnglePadding(
+	outerRadius: number,
+	sweepAngle: number,
+	padding: number,
+): number {
+	if (padding <= 0 || outerRadius <= 0) return 0;
+	return Math.min(
+		Math.max(0, sweepAngle / 2 - FULL_SWEEP_EPSILON),
+		padding / (2 * outerRadius),
+	);
+}
+
+function resolveTipRadius(
+	outerRadius: number,
+	sweepAngle: number,
+	padding: number,
+): number {
+	if (padding <= 0 || outerRadius <= 0 || sweepAngle <= FULL_SWEEP_EPSILON) return 0;
+	const halfSweep = sweepAngle / 2;
+	const sinHalfSweep = Math.sin(halfSweep);
+	if (sinHalfSweep <= FULL_SWEEP_EPSILON) return 0;
+	return Math.min(outerRadius - FULL_SWEEP_EPSILON, padding / (2 * sinHalfSweep));
+}
 
 // ─── Geometry utilities ───
 
@@ -17,10 +44,18 @@ export function createSlicePath(
 	innerRadius: number,
 	sweepAngle: number,
 	rotationOffset: number = 0,
+	padding: number = 0,
 ): Path {
 	const path = new Path();
-	const startAngle = -Math.PI / 2 + rotationOffset;
-	const endAngle = startAngle + sweepAngle;
+	const isFullSweep = sweepAngle >= Math.PI * 2 - FULL_SWEEP_EPSILON;
+	const anglePadding = isFullSweep ? 0 : resolveAnglePadding(outerRadius, sweepAngle, padding);
+	const startAngle = -Math.PI / 2 + rotationOffset + anglePadding;
+	const adjustedSweep = isFullSweep ? sweepAngle : Math.max(0, sweepAngle - anglePadding * 2);
+	const endAngle = startAngle + adjustedSweep;
+	const tipRadius = innerRadius > 0 || isFullSweep
+		? innerRadius
+		: resolveTipRadius(outerRadius, adjustedSweep, padding);
+	const midAngle = startAngle + adjustedSweep / 2;
 
 	const outerStart = new Offset({
 		x: cx + outerRadius * Math.cos(startAngle),
@@ -30,6 +65,38 @@ export function createSlicePath(
 		x: cx + outerRadius * Math.cos(endAngle),
 		y: cy + outerRadius * Math.sin(endAngle),
 	});
+	const tipPoint = new Offset({
+		x: cx + tipRadius * Math.cos(midAngle),
+		y: cy + tipRadius * Math.sin(midAngle),
+	});
+
+	if (isFullSweep) {
+		const center = new Offset({ x: cx, y: cy });
+		path.addOval(Rect.fromCircle({ center, radius: outerRadius }));
+
+		if (innerRadius > 0) {
+			const innerLeft = new Offset({ x: cx - innerRadius, y: cy });
+			const innerRight = new Offset({ x: cx + innerRadius, y: cy });
+			path.moveTo(innerLeft);
+			path.arcToPoint({
+				endPoint: innerRight,
+				radius: Radius.circular(innerRadius),
+				rotation: 0,
+				largeArc: false,
+				clockwise: false,
+			});
+			path.arcToPoint({
+				endPoint: innerLeft,
+				radius: Radius.circular(innerRadius),
+				rotation: 0,
+				largeArc: false,
+				clockwise: false,
+			});
+			path.close();
+		}
+
+		return path;
+	}
 
 	if (innerRadius > 0) {
 		const innerStart = new Offset({
@@ -46,7 +113,7 @@ export function createSlicePath(
 			endPoint: outerEnd,
 			radius: Radius.circular(outerRadius),
 			rotation: 0,
-			largeArc: sweepAngle > Math.PI,
+			largeArc: adjustedSweep > Math.PI,
 			clockwise: true,
 		});
 		path.lineTo(innerEnd);
@@ -54,20 +121,21 @@ export function createSlicePath(
 			endPoint: innerStart,
 			radius: Radius.circular(innerRadius),
 			rotation: 0,
-			largeArc: sweepAngle > Math.PI,
+			largeArc: adjustedSweep > Math.PI,
 			clockwise: false,
 		});
 		path.close();
 	} else {
-		path.moveTo(new Offset({ x: cx, y: cy }));
+		path.moveTo(tipPoint);
 		path.lineTo(outerStart);
 		path.arcToPoint({
 			endPoint: outerEnd,
 			radius: Radius.circular(outerRadius),
 			rotation: 0,
-			largeArc: sweepAngle > Math.PI,
+			largeArc: adjustedSweep > Math.PI,
 			clockwise: true,
 		});
+		path.lineTo(tipPoint);
 		path.close();
 	}
 
@@ -80,6 +148,7 @@ export function isPointInSlice(
 	innerRadiusRatio: number,
 	sweepAngle: number,
 	rotationOffset: number = 0,
+	padding: number = 0,
 ): boolean {
 	const cx = size.width / 2;
 	const cy = size.height / 2;
@@ -93,15 +162,22 @@ export function isPointInSlice(
 	if (distance < innerRadius || distance > outerRadius) return false;
 
 	const angle = Math.atan2(dy, dx);
-	const sliceStart = -Math.PI / 2 + rotationOffset;
+	const isFullSweep = sweepAngle >= Math.PI * 2 - FULL_SWEEP_EPSILON;
+	const anglePadding = isFullSweep ? 0 : resolveAnglePadding(outerRadius, sweepAngle, padding);
+	const adjustedSweep = isFullSweep ? sweepAngle : Math.max(0, sweepAngle - anglePadding * 2);
+	const effectiveInnerRadius = innerRadius > 0 || isFullSweep
+		? innerRadius
+		: resolveTipRadius(outerRadius, adjustedSweep, padding);
+	if (distance < effectiveInnerRadius) return false;
+	const sliceStart = -Math.PI / 2 + rotationOffset + anglePadding;
 	let relativeAngle = ((angle - sliceStart) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
 
-	return relativeAngle <= sweepAngle;
+	return relativeAngle <= adjustedSweep;
 }
 
 // ─── Base slice widget ───
 
-export function baseSlice({
+export function Slice({
 	index,
 	startAngle,
 	sweepAngle,
@@ -112,6 +188,7 @@ export function baseSlice({
 	strokeWidth,
 	svgFilter,
 	extraHitTest,
+	padding = 0,
 }: {
 	index: number;
 	startAngle: number;
@@ -124,11 +201,12 @@ export function baseSlice({
 	svgFilter?: string;
 	/** Optional additional hit test (e.g. for callout label regions). */
 	extraHitTest?: (position: { x: number; y: number }, size: Size) => boolean;
+	padding?: number;
 }): Widget {
 	const paint = CustomPaint({
 		painter: {
 			hitTest: (position, size) =>
-				isPointInSlice(position, size, innerRadiusRatio, sweepAngle, startAngle)
+				isPointInSlice(position, size, innerRadiusRatio, sweepAngle, startAngle, padding)
 				|| (extraHitTest != null && extraHitTest(position, size)),
 			svg: {
 				createDefaultSvgEl: (context) => ({
@@ -139,7 +217,7 @@ export function baseSlice({
 					const cy = size.height / 2;
 					const radius = Math.min(cx, cy);
 					const innerRadius = radius * innerRadiusRatio;
-					const path = createSlicePath(cx, cy, radius, innerRadius, sweepAngle, startAngle);
+					const path = createSlicePath(cx, cy, radius, innerRadius, sweepAngle, startAngle, padding);
 					slice.setAttribute("d", path.getD());
 					slice.setAttribute("fill", fill);
 					slice.setAttribute("stroke", strokeColor);
@@ -157,7 +235,7 @@ export function baseSlice({
 					const cy = size.height / 2;
 					const radius = Math.min(cx, cy);
 					const innerRadius = radius * innerRadiusRatio;
-					const path = createSlicePath(cx, cy, radius, innerRadius, sweepAngle, startAngle);
+					const path = createSlicePath(cx, cy, radius, innerRadius, sweepAngle, startAngle, padding);
 					const canvasPath = path.toCanvasPath();
 					context.canvas.fillStyle = fill;
 					context.canvas.fill(canvasPath);
