@@ -15,11 +15,11 @@ type PieChartArgs = {
 	legendGap: number;
 	strokeColor: string;
 	strokeWidth: number;
-	innerRadiusRatio: number;
 	dataLabelVisible: boolean;
 	dataLabelFontSize: number;
 	dataLabelFontColor: string;
-	dataLabelOffset: number;
+	dataLabelRadiusRatio: number;
+	radialVisible: boolean;
 };
 
 function parseTitlePlacement(placement: string) {
@@ -57,13 +57,16 @@ function AgPieChart({ args }: { args: PieChartArgs }) {
 					pie: {
 						strokeColor: args.strokeColor,
 						strokeWidth: args.strokeWidth,
-						innerRadiusRatio: args.innerRadiusRatio,
+						innerRadiusRatio: 0,
+					},
+					radial: {
+						visible: args.radialVisible,
 					},
 					dataLabel: {
 						visible: args.dataLabelVisible,
 						fontSize: args.dataLabelFontSize,
 						fontColor: args.dataLabelFontColor,
-						offset: args.dataLabelOffset,
+						radiusRatio: args.dataLabelRadiusRatio,
 					},
 				},
 			})}
@@ -87,11 +90,11 @@ const meta: Meta<PieChartArgs> = {
 		legendGap: { control: { type: "range", min: 0, max: 40, step: 2 } },
 		strokeColor: { control: "color" },
 		strokeWidth: { control: { type: "range", min: 0, max: 6, step: 0.5 } },
-		innerRadiusRatio: { control: { type: "range", min: 0, max: 0.9, step: 0.05 } },
 		dataLabelVisible: { control: "boolean" },
 		dataLabelFontSize: { control: { type: "range", min: 8, max: 24, step: 1 } },
 		dataLabelFontColor: { control: "color" },
-		dataLabelOffset: { control: { type: "range", min: 5, max: 50, step: 1 } },
+		dataLabelRadiusRatio: { control: { type: "range", min: 0.3, max: 0.9, step: 0.05 } },
+		radialVisible: { control: "boolean" },
 	},
 	args: {
 		renderer: "svg",
@@ -103,11 +106,11 @@ const meta: Meta<PieChartArgs> = {
 		legendGap: 16,
 		strokeColor: "white",
 		strokeWidth: 2,
-		innerRadiusRatio: 0,
 		dataLabelVisible: true,
-		dataLabelFontSize: 16,
-		dataLabelFontColor: "#333333",
-		dataLabelOffset: 20,
+		dataLabelFontSize: 12,
+		dataLabelFontColor: "#ffffff",
+		dataLabelRadiusRatio: 0.65,
+		radialVisible: false,
 	},
 };
 
@@ -118,11 +121,9 @@ export const Default: Story = {
 	render: (args) => <AgPieChart args={args} />,
 };
 
-export const Donut: Story = {
+export const RadialVisible: Story = {
 	args: {
-		innerRadiusRatio: 0.5,
-		title: "Browser Usage (Donut)",
-		subtitle: "2024 Global Statistics",
+		radialVisible: true,
 	},
 	render: (args) => <AgPieChart args={args} />,
 };

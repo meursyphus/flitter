@@ -15,9 +15,9 @@ const agCustom: Partial<PieChartCustom<DonutChartConfig>> = {
       fit: StackFit.expand,
       children: [
         (pieAgStyleConfig.custom.dataView?.(
-          { slices, dataLabels: [] },
+          { slices },
           ctx as any,
-        ) ?? DataView({ slices, dataLabels: [] }, ctx as any)),
+        ) ?? DataView({ slices }, ctx as any)),
         Center({ child: agCenterContent(ctx) }),
       ],
     }),

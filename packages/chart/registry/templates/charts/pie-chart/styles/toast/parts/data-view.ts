@@ -19,24 +19,20 @@ type AngleSnapshot = { startAngle: number; sweepAngle: number };
 
 class AnimatedPieDataView extends StatefulWidget {
 	pies: PieChartSlice[];
-	dataLabels: Widget[];
 	context: Parameters<PieChartCustom<ToastPieChartConfig>["dataView"]>[1];
 	duration: number;
 
 	constructor({
 		pies,
-		dataLabels,
 		context,
 		duration,
 	}: {
 		pies: PieChartSlice[];
-		dataLabels: Widget[];
 		context: Parameters<PieChartCustom<ToastPieChartConfig>["dataView"]>[1];
 		duration: number;
 	}) {
 		super();
 		this.pies = pies;
-		this.dataLabels = dataLabels;
 		this.context = context;
 		this.duration = duration;
 	}
@@ -94,11 +90,11 @@ class _AnimatedPieDataViewState extends State<AnimatedPieDataView> {
 	}
 
 	override build() {
-		const { pies, dataLabels, context } = this.widget;
+		const { pies, context } = this.widget;
 		const t = this.tween.value;
 
 		if (this.isMountAnimation) {
-			const child = DataView({ slices: pies, dataLabels }, context);
+			const child = DataView({ slices: pies }, context);
 			const done = t >= 1;
 
 			return ClipPath({
@@ -142,7 +138,7 @@ class _AnimatedPieDataViewState extends State<AnimatedPieDataView> {
 			};
 		});
 
-		return DataView({ slices: interpolatedPies, dataLabels }, context);
+		return DataView({ slices: interpolatedPies }, context);
 	}
 }
 
@@ -159,7 +155,6 @@ export function toastDataView(
 
 	return new AnimatedPieDataView({
 		pies: args.slices,
-		dataLabels: args.dataLabels,
 		context,
 		duration: context.config.animation.duration,
 	});

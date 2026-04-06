@@ -5,6 +5,8 @@ import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { toastSlice } from "./parts/slice";
 import { toastDataView } from "./parts/data-view";
 import { toastDataLabel } from "./parts/data-label";
+import { toastRadialLabel } from "./parts/radial-label";
+import { toastRadialTick } from "./parts/radial-tick";
 import { toastTooltipArea } from "./parts/tooltip-area";
 import {
 	toastTitle,
@@ -18,6 +20,8 @@ const toastCustom: Partial<PieChartCustom<ToastPieChartConfig>> = {
 	slice: toastSlice,
 	dataView: toastDataView,
 	dataLabel: toastDataLabel,
+	radialLabel: toastRadialLabel,
+	radialTick: toastRadialTick,
 	legend: (args, context) => toastLegend(args, context, { markerShape: "circle" }),
 	title: toastTitle,
 	tooltip: (args, context) => toastTooltip(args, context),

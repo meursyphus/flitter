@@ -12,7 +12,7 @@ import {
 
 function alignmentForIndex(index: number, count: number): Alignment {
 	if (count <= 0) return Alignment.center;
-	const x = ((index + 0.5) / count) * 2 - 1;
+	const x = (index / count) * 2 - 1;
 	return new Alignment({ x, y: 0 });
 }
 

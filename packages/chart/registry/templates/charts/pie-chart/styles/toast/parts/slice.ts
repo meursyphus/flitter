@@ -1,10 +1,10 @@
-import { ZIndex, type Widget } from "flitter-core";
+import { Stack, StackFit, ZIndex, type Widget } from "flitter-core";
 import type { PieChartCustom } from "@headless/pie-chart/types";
 import type { ToastPieChartConfig } from "../config";
 import { baseSlice } from "../../../base/slice";
 
 export function toastSlice(
-	...[{ index, name, startAngle, sweepAngle }, ctx]: Parameters<PieChartCustom<ToastPieChartConfig>["slice"]>
+	...[{ index, name, startAngle, sweepAngle, dataLabel }, ctx]: Parameters<PieChartCustom<ToastPieChartConfig>["slice"]>
 ): Widget {
 	const { colors, pie: pieConfig } = ctx.config;
 	const colorIndex = ctx.legends.indexOf(name);
@@ -25,6 +25,10 @@ export function toastSlice(
 
 	return ZIndex({
 		zIndex: hovered ? 9999 : 0,
-		child: slice,
+		child: Stack({
+			fit: StackFit.expand,
+			clipped: false,
+			children: [slice, dataLabel],
+		}),
 	});
 }

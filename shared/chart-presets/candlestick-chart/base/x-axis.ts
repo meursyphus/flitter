@@ -13,7 +13,18 @@ import {
 
 function alignmentForIndex(index: number, count: number): Alignment {
 	if (count <= 0) return Alignment.center;
-	const x = ((index + 0.5) / count) * 2 - 1;
+	const x = (index / count) * 2 - 1;
+	return new Alignment({ x, y: 0 });
+}
+
+function alignmentForLabel(
+	startIndex: number,
+	endIndex: number,
+	count: number,
+): Alignment {
+	if (count <= 0) return Alignment.center;
+	const center = (startIndex + endIndex) / 2;
+	const x = (center / count) * 2 - 1;
 	return new Alignment({ x, y: 0 });
 }
 
@@ -59,15 +70,18 @@ export function XAxis(
 					clipped: false,
 					children: [
 						SizedBox.expand(),
-						...ctx.xTicks.map(({ index, label }) =>
-							Align({
-								alignment: alignmentForIndex(index, ctx.candles.length),
+						...ctx.xTicks.map(({ index, label }, tickIndex) => {
+							const nextIndex =
+								ctx.xTicks[tickIndex + 1]?.index ?? ctx.candles.length;
+
+							return Align({
+								alignment: alignmentForLabel(index, nextIndex, ctx.candles.length),
 								child: ctx.custom.xAxisLabel(
 									{ name: label, index },
 									ctx,
 								),
-							}),
-						),
+							});
+						}),
 					],
 				}),
 			}),

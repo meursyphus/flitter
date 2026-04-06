@@ -14,7 +14,7 @@ type PieChartArgs = {
 	legendGap: number;
 	strokeColor: string;
 	strokeWidth: number;
-	innerRadiusRatio: number;
+	radialVisible: boolean;
 };
 
 function parseTitlePlacement(placement: string) {
@@ -48,7 +48,10 @@ function ToastPieChartStory({ args }: { args: PieChartArgs }) {
 					pie: {
 						strokeColor: args.strokeColor,
 						strokeWidth: args.strokeWidth,
-						innerRadiusRatio: args.innerRadiusRatio,
+						innerRadiusRatio: 0,
+					},
+					radial: {
+						visible: args.radialVisible,
 					},
 				},
 			})}
@@ -71,7 +74,7 @@ const meta: Meta<PieChartArgs> = {
 		legendGap: { control: { type: "range", min: 0, max: 40, step: 2 } },
 		strokeColor: { control: "color" },
 		strokeWidth: { control: { type: "range", min: 0, max: 6, step: 0.5 } },
-		innerRadiusRatio: { control: { type: "range", min: 0, max: 0.9, step: 0.05 } },
+		radialVisible: { control: "boolean" },
 	},
 	args: {
 		renderer: "svg",
@@ -82,7 +85,7 @@ const meta: Meta<PieChartArgs> = {
 		legendGap: 12,
 		strokeColor: "white",
 		strokeWidth: 2,
-		innerRadiusRatio: 0,
+		radialVisible: false,
 	},
 };
 
@@ -93,10 +96,9 @@ export const Default: Story = {
 	render: (args) => <ToastPieChartStory args={args} />,
 };
 
-export const Donut: Story = {
+export const RadialVisible: Story = {
 	args: {
-		innerRadiusRatio: 0.5,
-		title: "Browser Usage (Donut)",
+		radialVisible: true,
 	},
 	render: (args) => <ToastPieChartStory args={args} />,
 };

@@ -6,6 +6,8 @@ import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { agSlice } from "./parts/slice";
 import { agDataView } from "./parts/data-view";
 import { agDataLabel } from "./parts/data-label";
+import { agRadialLabel } from "./parts/radial-label";
+import { agRadialTick } from "./parts/radial-tick";
 import { agTooltipArea } from "./parts/tooltip-area";
 import { Layout as BaseLayout } from "../base/layout";
 import { agLegend, agTooltipContent } from "../../_styles/ag/index";
@@ -62,6 +64,8 @@ const agCustom: Partial<PieChartCustom<AgPieChartConfig>> = {
   slice: agSlice,
   dataView: agDataView,
   dataLabel: agDataLabel,
+  radialLabel: agRadialLabel,
+  radialTick: agRadialTick,
   legend: (args, context) => agLegend(args, context as any, { markerShape: "circle" }),
   title: agPieTitle,
   tooltip: (args, context) => agTooltip(args, context),

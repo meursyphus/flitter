@@ -15,9 +15,9 @@ const toastCustom: Partial<PieChartCustom<DonutChartConfig>> = {
       fit: StackFit.expand,
       children: [
         (pieToastStyleConfig.custom.dataView?.(
-          { slices, dataLabels: [] },
+          { slices },
           ctx as any,
-        ) ?? DataView({ slices, dataLabels: [] }, ctx as any)),
+        ) ?? DataView({ slices }, ctx as any)),
         Center({ child: toastCenterContent(ctx) }),
       ],
     }),
