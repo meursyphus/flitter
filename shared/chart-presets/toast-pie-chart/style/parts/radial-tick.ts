@@ -7,13 +7,18 @@ import type { PieChartCustom } from "flitter-ui/chart";
 import type { ToastPieChartConfig } from "../config";
 
 export function toastRadialTick(
-	...[_, ctx]: Parameters<PieChartCustom<ToastPieChartConfig>["radialTick"]>
+	...[args, ctx]: Parameters<PieChartCustom<ToastPieChartConfig>["radialTick"]>
 ): Widget {
-	const { radial, radialTick } = ctx.config;
+	const { radial, radialTick, colors } = ctx.config;
 
 	if (!radial.visible || radialTick.length <= 0) {
 		return SizedBox.shrink();
 	}
+
+	const colorIndex = ctx.legends.indexOf(args.name);
+	const seriesColor =
+		colors[(colorIndex >= 0 ? colorIndex : args.index) % colors.length]
+		?? radialTick.color;
 
 	return SizedBox({
 		width: radialTick.strokeWidth,
@@ -30,7 +35,7 @@ export function toastRadialTick(
 						line.setAttribute("y1", String(size.height));
 						line.setAttribute("x2", String(size.width / 2));
 						line.setAttribute("y2", "0");
-						line.setAttribute("stroke", radialTick.color);
+						line.setAttribute("stroke", seriesColor);
 						line.setAttribute("stroke-width", String(radialTick.strokeWidth));
 					},
 				},
@@ -39,7 +44,7 @@ export function toastRadialTick(
 						context.canvas.beginPath();
 						context.canvas.moveTo(size.width / 2, size.height);
 						context.canvas.lineTo(size.width / 2, 0);
-						context.canvas.strokeStyle = radialTick.color;
+						context.canvas.strokeStyle = seriesColor;
 						context.canvas.lineWidth = radialTick.strokeWidth;
 						context.canvas.stroke();
 					},

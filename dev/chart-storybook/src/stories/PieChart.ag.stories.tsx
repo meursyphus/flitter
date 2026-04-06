@@ -20,6 +20,7 @@ type PieChartArgs = {
 	dataLabelFontColor: string;
 	dataLabelRadiusRatio: number;
 	radialVisible: boolean;
+	radialGap: number;
 };
 
 function parseTitlePlacement(placement: string) {
@@ -61,6 +62,7 @@ function AgPieChart({ args }: { args: PieChartArgs }) {
 					},
 					radial: {
 						visible: args.radialVisible,
+						gap: args.radialGap,
 					},
 					dataLabel: {
 						visible: args.dataLabelVisible,
@@ -95,6 +97,7 @@ const meta: Meta<PieChartArgs> = {
 		dataLabelFontColor: { control: "color" },
 		dataLabelRadiusRatio: { control: { type: "range", min: 0.3, max: 0.9, step: 0.05 } },
 		radialVisible: { control: "boolean" },
+		radialGap: { control: { type: "range", min: 0, max: 20, step: 1 } },
 	},
 	args: {
 		renderer: "svg",
@@ -111,6 +114,7 @@ const meta: Meta<PieChartArgs> = {
 		dataLabelFontColor: "#ffffff",
 		dataLabelRadiusRatio: 0.65,
 		radialVisible: false,
+		radialGap: 6,
 	},
 };
 

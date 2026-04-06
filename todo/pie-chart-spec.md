@@ -18,6 +18,7 @@
 
 - 여기서 `angle`은 slice의 `midAngle` 의미로 둔다.
 - pie 공용 `base plot`에서 바깥 tick/label 배치와 가운데 pie 최대 영역 계산을 담당한다.
+- `radial.gap`으로 tick 끝과 label 사이 간격을 조절한다.
 
 ## Reference
 

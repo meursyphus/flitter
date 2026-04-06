@@ -8,6 +8,7 @@ export type ToastPieChartConfig = ToastBaseConfig & {
 	};
 	radial: {
 		visible: boolean;
+		gap: number;
 	};
 	dataLabel: {
 		visible: boolean;
@@ -23,7 +24,6 @@ export type ToastPieChartConfig = ToastBaseConfig & {
 		fontColor: string;
 		fontFamily?: string;
 		fontWeight?: string;
-		nameColor: string;
 		formatter: (args: { index: number; name: string; value: number; percentage: number; angle: number }) => string;
 	};
 	radialTick: {
@@ -44,6 +44,7 @@ export const defaultToastConfig: ToastPieChartConfig = {
 	},
 	radial: {
 		visible: false,
+		gap: 8,
 	},
 	dataLabel: {
 		visible: true,
@@ -54,14 +55,13 @@ export const defaultToastConfig: ToastPieChartConfig = {
 		formatter: (args) => `${args.percentage.toFixed(1)}%`,
 	},
 	radialLabel: {
-		fontSize: 12,
+		fontSize: 13,
 		fontColor: "#333333",
-		fontWeight: "bold",
-		nameColor: "#666666",
-		formatter: (args) => String(args.value),
+		fontWeight: "600",
+		formatter: (args) => args.name,
 	},
 	radialTick: {
-		length: 16,
+		length: 18,
 		color: "#999999",
 		strokeWidth: 1,
 	},

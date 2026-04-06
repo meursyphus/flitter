@@ -13,6 +13,7 @@ export type AgPieChartConfig = AgPieSharedConfig & {
   };
   radial: {
     visible: boolean;
+    gap: number;
   };
   dataLabel: {
     visible: boolean;
@@ -28,7 +29,6 @@ export type AgPieChartConfig = AgPieSharedConfig & {
     fontColor: string;
     fontFamily?: string;
     fontWeight?: string;
-    nameColor: string;
     formatter: (args: { index: number; name: string; value: number; percentage: number; angle: number }) => string;
   };
   radialTick: {
@@ -57,6 +57,7 @@ export const defaultAgConfig: AgPieChartConfig = {
   },
   radial: {
     visible: false,
+    gap: 6,
   },
   dataLabel: {
     visible: true,
@@ -67,11 +68,10 @@ export const defaultAgConfig: AgPieChartConfig = {
     formatter: (args) => `${args.percentage.toFixed(1)}%`,
   },
   radialLabel: {
-    fontSize: 16,
+    fontSize: 12,
     fontColor: "#333333",
-    fontWeight: "bold",
-    nameColor: "#666666",
-    formatter: (args) => String(args.value),
+    fontWeight: "500",
+    formatter: (args) => args.name,
   },
   radialTick: {
     length: 20,

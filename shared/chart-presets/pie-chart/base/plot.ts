@@ -18,14 +18,17 @@ const PLOT_CHILD_OFFSET = 1;
 class PiePlotLayout extends MultiChildRenderObjectWidget {
 	angles: number[];
 	itemCount: number;
+	gap: number;
 
 	constructor({
 		content,
 		radialItems,
+		gap,
 		key,
 	}: {
 		content: Widget;
 		radialItems: Parameters<PieChartCustom["plot"]>[0]["radialItems"];
+		gap: number;
 		key?: any;
 	}) {
 		super({
@@ -41,38 +44,45 @@ class PiePlotLayout extends MultiChildRenderObjectWidget {
 					),
 					...radialItems.map((item) => item.label),
 				],
-			});
+		});
 		this.angles = radialItems.map((item) => item.angle);
 		this.itemCount = radialItems.length;
+		this.gap = gap;
 	}
 
 	override createRenderObject(): RenderPiePlotLayout {
 		return new RenderPiePlotLayout({
 			angles: this.angles,
 			itemCount: this.itemCount,
+			gap: this.gap,
 		});
 	}
 
 	override updateRenderObject(renderObject: RenderPiePlotLayout): void {
 		renderObject.angles = this.angles;
 		renderObject.itemCount = this.itemCount;
+		renderObject.gap = this.gap;
 	}
 }
 
 class RenderPiePlotLayout extends MultiChildRenderObject {
 	#angles: number[];
 	#itemCount: number;
+	#gap: number;
 
 	constructor({
 		angles,
 		itemCount,
+		gap,
 	}: {
 		angles: number[];
 		itemCount: number;
+		gap: number;
 	}) {
 		super({ isPainter: false });
 		this.#angles = angles;
 		this.#itemCount = itemCount;
+		this.#gap = gap;
 	}
 
 	get angles(): number[] {
@@ -97,6 +107,16 @@ class RenderPiePlotLayout extends MultiChildRenderObject {
 	set itemCount(value: number) {
 		if (value === this.#itemCount) return;
 		this.#itemCount = value;
+		this.markNeedsLayout();
+	}
+
+	get gap(): number {
+		return this.#gap;
+	}
+
+	set gap(value: number) {
+		if (value === this.#gap) return;
+		this.#gap = value;
 		this.markNeedsLayout();
 	}
 
@@ -194,8 +214,8 @@ class RenderPiePlotLayout extends MultiChildRenderObject {
 
 			if (label != null) {
 				const tickExtent = tick == null ? 0 : tick.size.height;
-				const anchorX = startX + dx * tickExtent;
-				const anchorY = startY + dy * tickExtent;
+				const anchorX = startX + dx * (tickExtent + this.gap);
+				const anchorY = startY + dy * (tickExtent + this.gap);
 				const labelRect = this.resolveLabelRect(label.size, anchorX, anchorY, dx, dy);
 				if (!this.isInside(plotSize, labelRect)) return false;
 			}
@@ -227,8 +247,8 @@ class RenderPiePlotLayout extends MultiChildRenderObject {
 			}
 
 			if (label != null) {
-				const anchorX = startX + dx * tickExtent;
-				const anchorY = startY + dy * tickExtent;
+				const anchorX = startX + dx * (tickExtent + this.gap);
+				const anchorY = startY + dy * (tickExtent + this.gap);
 				const rect = this.resolveLabelRect(label.size, anchorX, anchorY, dx, dy);
 				label.offset = new Offset({
 					x: rect.left,
@@ -307,10 +327,11 @@ class RenderPiePlotLayout extends MultiChildRenderObject {
 }
 
 export function Plot(
-	...[{ dataView, tooltipArea, radialItems }]: Parameters<PieChartCustom["plot"]>
+	...[{ dataView, tooltipArea, radialItems }, context]: Parameters<PieChartCustom["plot"]>
 ): Widget {
 	return new PiePlotLayout({
 		radialItems,
+		gap: Math.max(0, (context as any).config?.radial?.gap ?? 6),
 		content: Stack({
 			fit: StackFit.expand,
 			clipped: false,

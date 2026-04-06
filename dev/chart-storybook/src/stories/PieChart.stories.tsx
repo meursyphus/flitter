@@ -15,6 +15,7 @@ type PieChartArgs = {
 	strokeColor: string;
 	strokeWidth: number;
 	radialVisible: boolean;
+	radialGap: number;
 };
 
 function parseTitlePlacement(placement: string) {
@@ -52,6 +53,7 @@ function ToastPieChartStory({ args }: { args: PieChartArgs }) {
 					},
 					radial: {
 						visible: args.radialVisible,
+						gap: args.radialGap,
 					},
 				},
 			})}
@@ -75,6 +77,7 @@ const meta: Meta<PieChartArgs> = {
 		strokeColor: { control: "color" },
 		strokeWidth: { control: { type: "range", min: 0, max: 6, step: 0.5 } },
 		radialVisible: { control: "boolean" },
+		radialGap: { control: { type: "range", min: 0, max: 20, step: 1 } },
 	},
 	args: {
 		renderer: "svg",
@@ -86,6 +89,7 @@ const meta: Meta<PieChartArgs> = {
 		strokeColor: "white",
 		strokeWidth: 2,
 		radialVisible: false,
+		radialGap: 8,
 	},
 };
 
