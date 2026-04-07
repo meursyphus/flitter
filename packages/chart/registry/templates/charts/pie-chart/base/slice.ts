@@ -206,7 +206,7 @@ export function Slice({
 	const paint = CustomPaint({
 		painter: {
 			hitTest: (position, size) =>
-				isPointInSlice(position, size, innerRadiusRatio, sweepAngle, startAngle, padding)
+				isPointInSlice(position, size, innerRadiusRatio, sweepAngle, startAngle)
 				|| (extraHitTest != null && extraHitTest(position, size)),
 			svg: {
 				createDefaultSvgEl: (context) => ({
