@@ -1,11 +1,19 @@
 import type { Widget } from "flitter-core";
-import type { TreemapCustom, TreemapData } from "./types";
+import type {
+	GetTreemapLayoutFn,
+	GetTreemapLayoutOptionsFn,
+	TreemapCustom,
+	TreemapData,
+	TreemapLegacyData,
+} from "./types";
 import { TreemapChartProvider } from "./provider";
 
 export default function TreemapChart<TConfig = {}>(props: {
 	custom: TreemapCustom<TConfig>;
-	data: TreemapData;
+	data: TreemapData | TreemapLegacyData;
 	config?: TConfig;
+	getLayout?: GetTreemapLayoutFn;
+	getLayoutOptions?: GetTreemapLayoutOptionsFn;
 }): Widget {
 	return TreemapChartProvider(props as any);
 }

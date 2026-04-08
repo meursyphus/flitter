@@ -1,111 +1,158 @@
-import { ChangeNotifier } from "flitter-core";
-import type { TreemapCustom, TreemapData, TreemapLayout } from "./types";
+import { ChangeNotifier, GlobalKey } from "flitter-core";
+import { defaultGetTreemapLayout } from "./layout";
+import type {
+	GetTreemapLayoutFn,
+	GetTreemapLayoutOptionsFn,
+	TreemapCustom,
+	TreemapData,
+	TreemapDataset,
+	TreemapHoveredNode,
+	TreemapLayout,
+	TreemapLayoutItem,
+	TreemapLayoutOptions,
+	TreemapLayoutSize,
+	TreemapLegacyData,
+	TreemapNode,
+	TreemapResolvedData,
+	TreemapResolvedDataset,
+	TreemapResolvedNode,
+} from "./types";
 
-interface SquarifyNode {
-	value: number;
-	index: number;
+function computeNodeValue(node: TreemapNode): number {
+	const children = node.children ?? [];
+	if (children.length > 0) {
+		return children.reduce((sum, child) => sum + computeNodeValue(child), 0);
+	}
+	return Math.max(0, node.value ?? 0);
 }
 
-function worst(row: SquarifyNode[], w: number, totalArea: number): number {
-	const rowArea = row.reduce((sum, node) => sum + node.value, 0);
-	const scaledRow = row.map((node) => (node.value / totalArea) * w * w);
-	const scaledRowArea = (rowArea / totalArea) * w * w;
+function normalizeNode(
+	node: TreemapNode,
+	path: number[],
+	keyPrefix: string,
+): TreemapResolvedNode {
+	const children = (node.children ?? []).map((child, index) =>
+		normalizeNode(child, [...path, index], keyPrefix),
+	);
 
-	if (scaledRow.length === 0 || scaledRowArea === 0) return Infinity;
-
-	const maxVal = Math.max(...scaledRow);
-	const minVal = Math.min(...scaledRow);
-	const s2 = scaledRowArea * scaledRowArea;
-
-	return Math.max((w * w * maxVal) / s2, s2 / (w * w * minVal));
+	return {
+		key: `${keyPrefix}:${path.join(".")}`,
+		path,
+		label: node.label,
+		secondaryLabel: node.secondaryLabel,
+		value: children.length > 0 ? children.reduce((sum, child) => sum + child.value, 0) : Math.max(0, node.value ?? 0),
+		children,
+	};
 }
 
-function squarify(
-	values: SquarifyNode[],
-	width: number,
-	height: number,
-): TreemapLayout[] {
-	const totalValue = values.reduce((sum, node) => sum + node.value, 0);
-	if (totalValue === 0 || values.length === 0) return [];
+function normalizeDataset(
+	dataset: TreemapDataset,
+	datasetIndex: number,
+): TreemapResolvedDataset {
+	const keyPrefix = `${datasetIndex}`;
+	const children =
+		(dataset.children ?? []).length > 0
+			? (dataset.children ?? []).map((child, index) =>
+					normalizeNode(child, [index], keyPrefix),
+			  )
+			: [
+					normalizeNode(
+						{
+							label: dataset.legend,
+							value: dataset.value ?? 0,
+							secondaryLabel: dataset.secondaryLabel,
+						},
+						[0],
+						keyPrefix,
+					),
+			  ];
 
-	const results: TreemapLayout[] = new Array(values.length);
-	const sorted = [...values].sort((a, b) => b.value - a.value);
+	return {
+		legend: dataset.legend,
+		value: children.reduce((sum, child) => sum + child.value, 0),
+		children,
+	};
+}
 
-	let x = 0;
-	let y = 0;
-	let remainingWidth = width;
-	let remainingHeight = height;
-	let remainingValue = totalValue;
-	let cursor = 0;
-
-	while (cursor < sorted.length) {
-		const w = Math.min(remainingWidth, remainingHeight);
-		const isHorizontal = remainingWidth >= remainingHeight;
-		const row: SquarifyNode[] = [sorted[cursor]];
-		let currentWorst = worst(row, w, remainingValue);
-		cursor++;
-
-		while (cursor < sorted.length) {
-			const candidate = [...row, sorted[cursor]];
-			const candidateWorst = worst(candidate, w, remainingValue);
-			if (candidateWorst > currentWorst) break;
-			row.push(sorted[cursor]);
-			currentWorst = candidateWorst;
-			cursor++;
-		}
-
-		const rowArea = row.reduce((sum, node) => sum + node.value, 0);
-		const rowFraction = remainingValue > 0 ? rowArea / remainingValue : 0;
-
-		if (isHorizontal) {
-			const rowWidth = remainingWidth * rowFraction;
-			let currentY = y;
-			for (const node of row) {
-				const nodeFraction = rowArea > 0 ? node.value / rowArea : 0;
-				const nodeHeight = remainingHeight * nodeFraction;
-				results[node.index] = {
-					x,
-					y: currentY,
-					width: rowWidth,
-					height: nodeHeight,
-				};
-				currentY += nodeHeight;
-			}
-			x += rowWidth;
-			remainingWidth -= rowWidth;
-		} else {
-			const rowHeight = remainingHeight * rowFraction;
-			let currentX = x;
-			for (const node of row) {
-				const nodeFraction = rowArea > 0 ? node.value / rowArea : 0;
-				const nodeWidth = remainingWidth * nodeFraction;
-				results[node.index] = {
-					x: currentX,
-					y,
-					width: nodeWidth,
-					height: rowHeight,
-				};
-				currentX += nodeWidth;
-			}
-			y += rowHeight;
-			remainingHeight -= rowHeight;
-		}
-
-		remainingValue -= rowArea;
+function normalizeData(
+	data: TreemapData | TreemapLegacyData | null | undefined,
+): TreemapResolvedData {
+	if (data != null && Array.isArray((data as TreemapData).datasets)) {
+		return {
+			datasets: (data as TreemapData).datasets.map((dataset, index) =>
+				normalizeDataset(dataset, index),
+			),
+		};
 	}
 
-	return results;
+	if (data != null && Array.isArray((data as TreemapLegacyData).nodes)) {
+		return {
+			datasets: [
+				normalizeDataset({
+					legend: "",
+					children: (data as TreemapLegacyData).nodes,
+				}, 0),
+			],
+		};
+	}
+
+	return { datasets: [] };
+}
+
+function resolveInitialHiddenSeries(data: TreemapData | TreemapLegacyData | null | undefined): Set<string> {
+	if (data != null && Array.isArray((data as TreemapData).datasets)) {
+		return new Set(
+			(data as TreemapData).datasets
+				.filter((dataset) => dataset.visible === false)
+				.map((dataset) => dataset.legend),
+		);
+	}
+
+	return new Set();
+}
+
+function reconcileHiddenSeries(
+	hiddenSeries: ReadonlySet<string>,
+	data: TreemapData | TreemapLegacyData | null | undefined,
+): Set<string> {
+	if (data == null || !Array.isArray((data as TreemapData).datasets)) {
+		return new Set(hiddenSeries);
+	}
+
+	const datasets = (data as TreemapData).datasets;
+	const available = new Set(datasets.map((dataset) => dataset.legend));
+	const next = new Set([...hiddenSeries].filter((legend) => available.has(legend)));
+
+	for (const dataset of datasets) {
+		if (dataset.visible === false) {
+			next.add(dataset.legend);
+		}
+	}
+
+	return next;
+}
+
+function toLayoutItems(items: { value: number }[]): TreemapLayoutItem[] {
+	return items.map((item, index) => ({
+		value: item.value,
+		index,
+	}));
 }
 
 export class TreemapController extends ChangeNotifier {
-	#rawData: TreemapData;
-	#hiddenSeries: Set<string> = new Set();
-	#hoveredIndex: number | null = null;
-	#width: number = 0;
-	#height: number = 0;
-	#layouts: TreemapLayout[] = [];
+	#rawData: TreemapResolvedData;
+	#hiddenSeries: Set<string>;
+	#hoveredNode:
+		| (TreemapHoveredNode & {
+				anchorKey: GlobalKey;
+		  })
+		| null = null;
+	#width = 0;
+	#height = 0;
 
-	// static config
+	getLayout: GetTreemapLayoutFn;
+	getLayoutOptions: GetTreemapLayoutOptionsFn | null;
+
 	custom!: TreemapCustom<any>;
 	config: any;
 
@@ -113,42 +160,50 @@ export class TreemapController extends ChangeNotifier {
 		data,
 		custom,
 		config = {},
+		getLayout = defaultGetTreemapLayout,
+		getLayoutOptions = null,
 	}: {
-		data: TreemapData;
+		data: TreemapData | TreemapLegacyData;
 		custom: TreemapCustom<any>;
 		config?: any;
+		getLayout?: GetTreemapLayoutFn;
+		getLayoutOptions?: GetTreemapLayoutOptionsFn | null;
 	}) {
 		super();
-		this.#rawData = data;
+		this.#rawData = normalizeData(data);
+		this.#hiddenSeries = resolveInitialHiddenSeries(data);
+		this.getLayout = getLayout;
+		this.getLayoutOptions = getLayoutOptions;
 		this.custom = custom;
 		this.config = config;
 	}
 
-	// --- data ---
-
-	set data(value: TreemapData) {
-		this.#rawData = value;
-		this.#recalculateLayouts();
+	set data(value: TreemapData | TreemapLegacyData) {
+		this.#rawData = normalizeData(value);
+		this.#hiddenSeries = reconcileHiddenSeries(this.#hiddenSeries, value);
+		this.#hoveredNode = null;
 		this.notifyListeners();
 	}
 
-	get data(): TreemapData {
-		return this.#rawData;
-	}
-
-	get visibleData(): TreemapData {
+	get data(): TreemapResolvedData {
 		return {
-			nodes: this.#rawData.nodes.filter(
-				(n) => !this.#hiddenSeries.has(n.label),
+			datasets: this.#rawData.datasets.filter(
+				(dataset) => !this.#hiddenSeries.has(dataset.legend),
 			),
 		};
 	}
 
-	get legends(): string[] {
-		return this.#rawData.nodes.map((n) => n.label);
+	get rawData(): TreemapResolvedData {
+		return this.#rawData;
 	}
 
-	// --- 차트 크기 ---
+	get legends(): string[] {
+		return this.#rawData.datasets.map((dataset) => dataset.legend);
+	}
+
+	get totalValue(): number {
+		return this.data.datasets.reduce((sum, dataset) => sum + dataset.value, 0);
+	}
 
 	get width(): number {
 		return this.#width;
@@ -162,32 +217,45 @@ export class TreemapController extends ChangeNotifier {
 		if (this.#width === width && this.#height === height) return;
 		this.#width = width;
 		this.#height = height;
-		this.#recalculateLayouts();
 		this.notifyListeners();
 	}
 
-	// --- layouts ---
-
-	get layouts(): TreemapLayout[] {
-		return this.#layouts;
+	getGroupValue(groupIndex: number): number {
+		return this.data.datasets[groupIndex]?.value ?? 0;
 	}
 
-	#recalculateLayouts(): void {
-		const visible = this.visibleData;
-		if (this.#width === 0 || this.#height === 0 || visible.nodes.length === 0) {
-			this.#layouts = [];
-			return;
-		}
-
-		const nodesWithIndex = visible.nodes.map((n, i) => ({
-			value: n.value,
-			index: i,
-		}));
-
-		this.#layouts = squarify(nodesWithIndex, this.#width, this.#height);
+	getGroupNodes(groupIndex: number): TreemapResolvedNode[] {
+		return this.data.datasets[groupIndex]?.children ?? [];
 	}
 
-	// --- 레전드 필터 ---
+	getGroupColor(groupIndex: number): string {
+		return this.#resolveColor(groupIndex);
+	}
+
+	getNodeColor(groupIndex: number): string {
+		return this.#resolveColor(groupIndex);
+	}
+
+	getGroupLayout(size: TreemapLayoutSize): TreemapLayout | null {
+		return this.#resolveLayout(toLayoutItems(this.data.datasets), size);
+	}
+
+	getNodeLayout(
+		nodes: TreemapResolvedNode[],
+		size: TreemapLayoutSize,
+	): TreemapLayout | null {
+		return this.#resolveLayout(toLayoutItems(nodes), size);
+	}
+
+	#resolveLayout(
+		items: TreemapLayoutItem[],
+		size: TreemapLayoutSize,
+		optionsOverride?: TreemapLayoutOptions,
+	): TreemapLayout | null {
+		if (items.length === 0 || size.width <= 0 || size.height <= 0) return null;
+		const options = optionsOverride ?? this.getLayoutOptions?.(this) ?? {};
+		return this.getLayout(items, size, options);
+	}
 
 	get hiddenSeries(): ReadonlySet<string> {
 		return this.#hiddenSeries;
@@ -203,49 +271,77 @@ export class TreemapController extends ChangeNotifier {
 		} else {
 			this.#hiddenSeries.add(name);
 		}
-		this.#recalculateLayouts();
+		this.#hoveredNode = null;
 		this.notifyListeners();
 	}
 
 	showSeries(name: string): void {
 		if (!this.#hiddenSeries.has(name)) return;
 		this.#hiddenSeries.delete(name);
-		this.#recalculateLayouts();
+		this.#hoveredNode = null;
 		this.notifyListeners();
 	}
 
 	hideSeries(name: string): void {
 		if (this.#hiddenSeries.has(name)) return;
 		this.#hiddenSeries.add(name);
-		this.#recalculateLayouts();
+		this.#hoveredNode = null;
 		this.notifyListeners();
 	}
 
 	showAllSeries(): void {
 		if (this.#hiddenSeries.size === 0) return;
 		this.#hiddenSeries.clear();
-		this.#recalculateLayouts();
+		this.#hoveredNode = null;
 		this.notifyListeners();
 	}
 
-	// --- 호버 ---
-
-	get hoveredIndex(): number | null {
-		return this.#hoveredIndex;
+	get hoveredNode(): TreemapHoveredNode | null {
+		if (this.#hoveredNode == null) return null;
+		const { anchorKey: _anchorKey, ...hoveredNode } = this.#hoveredNode;
+		return hoveredNode;
 	}
 
-	hoverNode(index: number): void {
-		this.#hoveredIndex = index;
+	get hoveredNodeAnchorKey(): GlobalKey | null {
+		return this.#hoveredNode?.anchorKey ?? null;
+	}
+
+	hoverNode(node: TreemapHoveredNode, anchorKey: GlobalKey): void {
+		this.#hoveredNode = { ...node, anchorKey };
 		this.notifyListeners();
 	}
 
-	unhoverNode(): void {
-		if (this.#hoveredIndex === null) return;
-		this.#hoveredIndex = null;
+	unhoverNode(key: string): void {
+		if (this.#hoveredNode == null) return;
+		if (this.#hoveredNode.key !== key) return;
+		this.#hoveredNode = null;
 		this.notifyListeners();
 	}
 
-	isNodeHovered(index: number): boolean {
-		return this.#hoveredIndex === index;
+	unhoverAllNodes(): void {
+		if (this.#hoveredNode == null) return;
+		this.#hoveredNode = null;
+		this.notifyListeners();
+	}
+
+	isNodeHovered(key: string): boolean {
+		return this.#hoveredNode?.key === key;
+	}
+
+	isGroupHovered(groupIndex: number): boolean {
+		return this.#hoveredNode?.groupIndex === groupIndex;
+	}
+
+	#resolveColor(groupIndex: number): string {
+		const colors = this.config?.colors;
+		if (Array.isArray(colors)) {
+			return colors[groupIndex % colors.length] ?? "";
+		}
+
+		if (Array.isArray(colors?.fills)) {
+			return colors.fills[groupIndex % colors.fills.length] ?? "";
+		}
+
+		return "";
 	}
 }

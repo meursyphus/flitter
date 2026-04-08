@@ -25,7 +25,7 @@ const altData = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "IN-REVIEW/DonutChart/Ag",
+  title: "In-Review/DonutChart/Ag",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {

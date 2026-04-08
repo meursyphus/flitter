@@ -6,31 +6,46 @@ type StoryArgs = {
   renderer: "svg" | "canvas";
 };
 
-const storageData = {
-  nodes: [
-    { label: "Documents", value: 45 },
-    { label: "Photos", value: 30 },
-    { label: "Videos", value: 25 },
-    { label: "Music", value: 15 },
-    { label: "Downloads", value: 12 },
-    { label: "Apps", value: 10 },
-    { label: "Cache", value: 8 },
-    { label: "Other", value: 5 },
-  ],
-};
-
-const portfolioData = {
-  nodes: [
-    { label: "US Equities", value: 34, color: "#1f77b4" },
-    { label: "Intl Equities", value: 22, color: "#ff7f0e" },
-    { label: "Bonds", value: 18, color: "#2ca02c" },
-    { label: "Cash", value: 9, color: "#8c564b" },
-    { label: "Alternatives", value: 17, color: "#9467bd" },
+const gdpData = {
+  datasets: [
+    {
+      legend: "Documents",
+      children: [
+        {
+          label: "docs",
+          children: [
+            { label: "pages", secondaryLabel: "1.3GB", value: 1.3 },
+            { label: "keynote", secondaryLabel: "2.5GB", value: 2.5 },
+            { label: "numbers", secondaryLabel: "1.2GB", value: 1.2 },
+          ],
+        },
+        { label: "photos", secondaryLabel: "5.5GB", value: 5.5 },
+        { label: "videos", secondaryLabel: "20.7GB", value: 20.7 },
+      ],
+    },
+    {
+      legend: "Downloads",
+      children: [
+        { label: "recent", secondaryLabel: "5.3GB", value: 5.3 },
+        { label: "2020", secondaryLabel: "10.1GB", value: 10.1 },
+        { label: "2019", secondaryLabel: "8.2GB", value: 8.2 },
+      ],
+    },
+    {
+      legend: "Application",
+      value: 16.4,
+      secondaryLabel: "16.4GB",
+    },
+    {
+      legend: "Desktop",
+      value: 4.5,
+      secondaryLabel: "4.5GB",
+    },
   ],
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "In-Review/TreemapChart/Toast",
+  title: "Charts/TreemapChart/Toast",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {
@@ -41,14 +56,21 @@ const meta: Meta<StoryArgs> = {
 export default meta;
 type Story = StoryObj<StoryArgs>;
 
-export const StorageUsage: Story = {
+export const Basic: Story = {
   render: (args) => (
-    <Widget widget={ToastTreemapChart({ data: storageData })} width="700px" height="420px" renderer={args.renderer} />
-  ),
-};
-
-export const Portfolio: Story = {
-  render: (args) => (
-    <Widget widget={ToastTreemapChart({ data: portfolioData })} width="700px" height="420px" renderer={args.renderer} />
+    <Widget
+      widget={ToastTreemapChart({
+        data: gdpData,
+        config: {
+          title: {
+            text: "Used disk space",
+            visible: true,
+          },
+        },
+      })}
+      width="700px"
+      height="420px"
+      renderer={args.renderer}
+    />
   ),
 };

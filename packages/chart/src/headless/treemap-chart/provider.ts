@@ -4,8 +4,15 @@ import {
 	BuildContext,
 	ChangeNotifierProvider,
 } from "flitter-core";
-import type { TreemapCustom, TreemapData } from "./types";
+import type {
+	GetTreemapLayoutFn,
+	GetTreemapLayoutOptionsFn,
+	TreemapCustom,
+	TreemapData,
+	TreemapLegacyData,
+} from "./types";
 import { TreemapController } from "./controller";
+import { defaultGetTreemapLayout } from "./layout";
 import Chart from "./chart";
 
 const TREEMAP_CHART_KEY = Symbol("TreemapChartKey");
@@ -14,10 +21,14 @@ export function TreemapChartProvider({
 	custom,
 	data,
 	config = {},
+	getLayout,
+	getLayoutOptions,
 }: {
 	custom: TreemapCustom<any>;
-	data: TreemapData;
+	data: TreemapData | TreemapLegacyData;
 	config?: any;
+	getLayout?: GetTreemapLayoutFn;
+	getLayoutOptions?: GetTreemapLayoutOptionsFn | null;
 }): Widget {
 	return ChangeNotifierProvider({
 		providerKey: TREEMAP_CHART_KEY,
@@ -26,12 +37,16 @@ export function TreemapChartProvider({
 				data,
 				custom,
 				config,
+				getLayout,
+				getLayoutOptions,
 			}),
 		update: (notifier) => {
 			const controller = notifier as TreemapController;
-			controller.data = data;
+			controller.getLayout = getLayout ?? defaultGetTreemapLayout;
+			controller.getLayoutOptions = getLayoutOptions ?? null;
 			controller.custom = custom;
 			controller.config = config;
+			controller.data = data;
 		},
 		child: new Chart(),
 	});
