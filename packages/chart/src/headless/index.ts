@@ -70,8 +70,9 @@ export type {
 	PieChartContext,
 	PieChartCustom,
 	PieChartData,
-	PieChartSlice,
-	HoveredPieSlice,
+	PieChartSegmentArgs,
+	PieChartSegment,
+	HoveredPieChartSegment,
 } from "./pie-chart/types";
 export { PieChartController } from "./pie-chart/controller";
 
@@ -225,6 +226,8 @@ export type {
 	DonutChartContext,
 	DonutChartData,
 	DonutChartCustom,
+	DonutChartSegmentArgs,
+	HoveredDonutChartSegment,
 } from "./donut-chart/types";
 export { DonutChartController } from "./donut-chart/controller";
 

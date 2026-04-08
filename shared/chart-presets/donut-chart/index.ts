@@ -1,5 +1,5 @@
 import type { Widget } from "flitter-core";
-import { BasePieChart } from "../pie-chart/base";
+import { BaseDonutChart } from "./base";
 import type { DonutChartCustom, DonutChartData } from "./types";
 import { styleConfig, type DonutChartConfig } from "./style";
 import type { DeepPartial } from "flitter-ui/chart";
@@ -16,20 +16,25 @@ export default function DonutChart({
   config,
   data,
   custom,
-  innerRadiusRatio = 0.6,
+  thicknessRatio,
+  innerRadiusRatio,
 }: {
   config?: DeepPartial<DonutChartConfig>;
   data: DonutChartData;
   custom?: Partial<DonutChartCustom<DonutChartConfig>>;
+  thicknessRatio?: number;
   innerRadiusRatio?: number;
 }): Widget {
-  return BasePieChart({
+  const resolvedThicknessRatio = thicknessRatio
+    ?? (innerRadiusRatio == null ? undefined : 1 - innerRadiusRatio);
+
+  return BaseDonutChart({
     data,
     config: styleConfig.createConfig({
       ...config,
-      pie: {
-        ...(config?.pie ?? {}),
-        innerRadiusRatio,
+      donut: {
+        ...(config?.donut ?? {}),
+        ...(resolvedThicknessRatio == null ? {} : { thicknessRatio: resolvedThicknessRatio }),
       },
     }),
     custom: { ...styleConfig.custom, ...custom } as DonutChartCustom<DonutChartConfig>,

@@ -13,12 +13,10 @@ const DONUT_CHART_KEY = Symbol("DonutChartKey");
 export function DonutChartProvider({
 	custom,
 	data,
-	innerRadiusRatio = 0.6,
 	config = {},
 }: {
 	custom: DonutChartCustom<any>;
 	data: DonutChartData;
-	innerRadiusRatio?: number;
 	config?: any;
 }): Widget {
 	return ChangeNotifierProvider({
@@ -27,13 +25,11 @@ export function DonutChartProvider({
 			new DonutChartController({
 				data,
 				custom,
-				innerRadiusRatio,
 				config,
 			}),
 		update: (notifier) => {
 			const controller = notifier as DonutChartController;
 			controller.data = data;
-			controller.innerRadiusRatio = innerRadiusRatio;
 			controller.custom = custom;
 			controller.config = config;
 		},

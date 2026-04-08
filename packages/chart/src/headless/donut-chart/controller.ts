@@ -1,17 +1,12 @@
 import { ChangeNotifier } from "flitter-core";
 import type { DonutChartCustom, DonutChartData } from "./types";
 
-function clamp(value: number, min: number, max: number): number {
-	return Math.max(min, Math.min(max, value));
-}
-
 export class DonutChartController extends ChangeNotifier {
 	#rawData: DonutChartData;
 	#hiddenSeries: Set<string> = new Set();
 	#hoveredIndex: number | null = null;
 	#width = 0;
 	#height = 0;
-	#innerRadiusRatio: number;
 
 	custom!: DonutChartCustom<any>;
 	config: any;
@@ -19,23 +14,21 @@ export class DonutChartController extends ChangeNotifier {
 	constructor({
 		data,
 		custom,
-		innerRadiusRatio = 0.6,
 		config = {},
 	}: {
 		data: DonutChartData;
 		custom: DonutChartCustom<any>;
-		innerRadiusRatio?: number;
 		config?: any;
 	}) {
 		super();
 		this.#rawData = data;
-		this.#innerRadiusRatio = clamp(innerRadiusRatio, 0.05, 0.95);
 		this.custom = custom;
 		this.config = config;
 	}
 
 	set data(value: DonutChartData) {
 		this.#rawData = value;
+		this.#hoveredIndex = null;
 		this.notifyListeners();
 	}
 
@@ -49,17 +42,6 @@ export class DonutChartController extends ChangeNotifier {
 
 	get legends(): string[] {
 		return this.#rawData.datasets.map((dataset) => dataset.name);
-	}
-
-	get innerRadiusRatio(): number {
-		return this.#innerRadiusRatio;
-	}
-
-	set innerRadiusRatio(value: number) {
-		const next = clamp(value, 0.05, 0.95);
-		if (this.#innerRadiusRatio === next) return;
-		this.#innerRadiusRatio = next;
-		this.notifyListeners();
 	}
 
 	get width(): number {
@@ -91,12 +73,14 @@ export class DonutChartController extends ChangeNotifier {
 		} else {
 			this.#hiddenSeries.add(name);
 		}
+		this.#hoveredIndex = null;
 		this.notifyListeners();
 	}
 
 	showAllSeries(): void {
 		if (this.#hiddenSeries.size === 0) return;
 		this.#hiddenSeries.clear();
+		this.#hoveredIndex = null;
 		this.notifyListeners();
 	}
 
@@ -104,18 +88,24 @@ export class DonutChartController extends ChangeNotifier {
 		return this.#hoveredIndex;
 	}
 
-	hoverSlice(index: number): void {
+	hoverSegment(index: number): void {
+		if (this.#hoveredIndex === index) return;
 		this.#hoveredIndex = index;
 		this.notifyListeners();
 	}
 
-	unhoverSlice(): void {
+	unhoverSegment(index?: number): void {
 		if (this.#hoveredIndex === null) return;
+		if (index != null && this.#hoveredIndex !== index) return;
 		this.#hoveredIndex = null;
 		this.notifyListeners();
 	}
 
-	isSliceHovered(index: number): boolean {
+	unhoverAllSegments(): void {
+		this.unhoverSegment();
+	}
+
+	isSegmentHovered(index: number): boolean {
 		return this.#hoveredIndex === index;
 	}
 }

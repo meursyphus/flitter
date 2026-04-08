@@ -1,6 +1,7 @@
 export type {
-  PieChartContext as DonutChartContext,
-  PieChartData as DonutChartData,
-  PieChartCustom as DonutChartCustom,
-} from "@headless/pie-chart/types";
-export { PieChartController as DonutChartController } from "@headless/pie-chart/controller";
+  DonutChartContext,
+  DonutChartData,
+  DonutChartCustom,
+  HoveredDonutChartSegment,
+} from "@headless/donut-chart/types";
+export { DonutChartController } from "@headless/donut-chart/controller";

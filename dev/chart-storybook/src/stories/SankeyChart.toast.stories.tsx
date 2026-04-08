@@ -23,7 +23,7 @@ const multiLevelData = [
 ];
 
 const meta: Meta<StoryArgs> = {
-  title: "Next/SankeyChart/Toast",
+  title: "In-Review/SankeyChart/Toast",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {

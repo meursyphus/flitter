@@ -7,14 +7,19 @@ import {
 } from "flitter-core";
 import { PieChartProvider } from "./provider";
 import type {
-	HoveredPieSlice,
+	HoveredPieChartSegment,
 	PieChartContext,
 	PieChartRadialItem,
-	PieChartSlice,
-	PieChartSliceArgs,
+	PieChartSegment,
+	PieChartSegmentArgs,
 } from "./types";
+import {
+	buildPieLikeSegmentMeta,
+	resolveHoveredPieLikeSegmentAnchor,
+	type PieLikeSegmentMeta,
+} from "@shared/pie-like";
 
-type PieSliceMeta = PieChartSliceArgs & { angle: number };
+type PieSegmentMeta = PieChartSegmentArgs & { angle: number };
 
 class Chart extends StatelessWidget {
 	override build(_: BuildContext): Widget {
@@ -90,9 +95,9 @@ class Title extends StatelessWidget {
 class DataView extends StatelessWidget {
 	override build(context: BuildContext): Widget {
 		const ctx = PieChartProvider.of(context);
-		const slices = buildPieData(ctx);
+		const segments = buildPieData(ctx);
 
-		return ctx.custom.dataView({ slices }, ctx);
+		return ctx.custom.dataView({ segments }, ctx);
 	}
 }
 
@@ -102,7 +107,7 @@ class Plot extends StatelessWidget {
 
 		return GestureDetector({
 			behavior: "translucent",
-			onMouseLeave: () => ctx.unhoverAllSlices(),
+			onMouseLeave: () => ctx.unhoverAllSegments(),
 			child: ctx.custom.plot(
 				{
 					dataView: new DataView(),
@@ -118,26 +123,26 @@ class Plot extends StatelessWidget {
 class TooltipArea extends StatelessWidget {
 	override build(context: BuildContext): Widget {
 		const ctx = PieChartProvider.of(context);
-		const slices = buildPieSlices(ctx);
+		const segments = buildPieSegments(ctx);
 
 		return LayoutBuilder({
 			builder: (_ctx: BuildContext, constraints) => {
-				const hoveredSlice = resolveHoveredSlice(
+				const hoveredSegment = resolveHoveredSegment(
 					ctx,
-					slices,
+					segments,
 					constraints.maxWidth,
 					constraints.maxHeight,
 				);
 				const tooltip =
-					hoveredSlice == null ? null : ctx.custom.tooltip(hoveredSlice, ctx);
+					hoveredSegment == null ? null : ctx.custom.tooltip(hoveredSegment, ctx);
 
-				return ctx.custom.tooltipArea({ tooltip, hoveredSlice }, ctx);
+				return ctx.custom.tooltipArea({ tooltip, hoveredSegment }, ctx);
 			},
 		});
 	}
 }
 
-class Slice extends StatelessWidget {
+class Segment extends StatelessWidget {
 	#index: number;
 	#name: string;
 	#value: number;
@@ -154,7 +159,7 @@ class Slice extends StatelessWidget {
 		startAngle,
 		sweepAngle,
 		dataLabel,
-	}: PieSliceMeta & { dataLabel: Widget }) {
+	}: PieSegmentMeta & { dataLabel: Widget }) {
 		super();
 		this.#index = index;
 		this.#name = name;
@@ -167,8 +172,8 @@ class Slice extends StatelessWidget {
 
 	override build(context: BuildContext): Widget {
 		const ctx = PieChartProvider.of(context);
-		const isHovered = ctx.isSliceHovered(this.#index);
-		const child = ctx.custom.slice(
+		const isHovered = ctx.isSegmentHovered(this.#index);
+		const child = ctx.custom.segment(
 			{
 				index: this.#index,
 				name: this.#name,
@@ -185,8 +190,8 @@ class Slice extends StatelessWidget {
 		return GestureDetector({
 			behavior: "deferToChild",
 			cursor: "default",
-			onMouseEnter: () => ctx.hoverSlice(this.#index),
-			onMouseLeave: () => ctx.unhoverSlice(this.#index),
+			onMouseEnter: () => ctx.hoverSegment(this.#index),
+			onMouseLeave: () => ctx.unhoverSegment(this.#index),
 			child,
 		});
 	}
@@ -199,7 +204,7 @@ class RadialTick extends StatelessWidget {
 	#percentage: number;
 	#angle: number;
 
-	constructor({ index, name, value, percentage, angle }: Pick<PieSliceMeta, "index" | "name" | "value" | "percentage" | "angle">) {
+	constructor({ index, name, value, percentage, angle }: Pick<PieSegmentMeta, "index" | "name" | "value" | "percentage" | "angle">) {
 		super();
 		this.#index = index;
 		this.#name = name;
@@ -210,7 +215,7 @@ class RadialTick extends StatelessWidget {
 
 	override build(context: BuildContext): Widget {
 		const ctx = PieChartProvider.of(context);
-		const isHovered = ctx.isSliceHovered(this.#index);
+		const isHovered = ctx.isSegmentHovered(this.#index);
 		const child = ctx.custom.radialTick(
 			{
 				index: this.#index,
@@ -226,8 +231,8 @@ class RadialTick extends StatelessWidget {
 		return GestureDetector({
 			behavior: "deferToChild",
 			cursor: "default",
-			onMouseEnter: () => ctx.hoverSlice(this.#index),
-			onMouseLeave: () => ctx.unhoverSlice(this.#index),
+			onMouseEnter: () => ctx.hoverSegment(this.#index),
+			onMouseLeave: () => ctx.unhoverSegment(this.#index),
 			child,
 		});
 	}
@@ -240,7 +245,7 @@ class RadialLabel extends StatelessWidget {
 	#percentage: number;
 	#angle: number;
 
-	constructor({ index, name, value, percentage, angle }: Pick<PieSliceMeta, "index" | "name" | "value" | "percentage" | "angle">) {
+	constructor({ index, name, value, percentage, angle }: Pick<PieSegmentMeta, "index" | "name" | "value" | "percentage" | "angle">) {
 		super();
 		this.#index = index;
 		this.#name = name;
@@ -251,7 +256,7 @@ class RadialLabel extends StatelessWidget {
 
 	override build(context: BuildContext): Widget {
 		const ctx = PieChartProvider.of(context);
-		const isHovered = ctx.isSliceHovered(this.#index);
+		const isHovered = ctx.isSegmentHovered(this.#index);
 		const child = ctx.custom.radialLabel(
 			{
 				index: this.#index,
@@ -267,104 +272,64 @@ class RadialLabel extends StatelessWidget {
 		return GestureDetector({
 			behavior: "deferToChild",
 			cursor: "default",
-			onMouseEnter: () => ctx.hoverSlice(this.#index),
-			onMouseLeave: () => ctx.unhoverSlice(this.#index),
+			onMouseEnter: () => ctx.hoverSegment(this.#index),
+			onMouseLeave: () => ctx.unhoverSegment(this.#index),
 			child,
 		});
 	}
 }
 
-function buildPieSlices(ctx: PieChartContext<any>): PieSliceMeta[] {
-	const { data } = ctx;
-	const total = data.datasets.reduce((sum, dataset) => sum + dataset.value, 0);
-	let currentAngle = 0;
-
-	return data.datasets.map((dataset, index) => {
-		const percentage = total > 0 ? (dataset.value / total) * 100 : 0;
-		const sweepAngle = total > 0 ? (dataset.value / total) * Math.PI * 2 : 0;
-		const startAngle = currentAngle;
-		const angle = -Math.PI / 2 + startAngle + sweepAngle / 2;
-		currentAngle += sweepAngle;
-
-		return {
-			index,
-			name: dataset.name,
-			value: dataset.value,
-			percentage,
-			startAngle,
-			sweepAngle,
-			angle,
-		};
-	});
+function buildPieSegments(ctx: PieChartContext<any>): PieSegmentMeta[] {
+	return buildPieLikeSegmentMeta(ctx.data) as PieLikeSegmentMeta[] as PieSegmentMeta[];
 }
 
-function buildPieData(ctx: PieChartContext<any>): PieChartSlice[] {
-	const sliceMeta = buildPieSlices(ctx);
+function buildPieData(ctx: PieChartContext<any>): PieChartSegment[] {
+	const segmentMeta = buildPieSegments(ctx);
 
-	return sliceMeta.map((slice) => {
+	return segmentMeta.map((segment) => {
 		const dataLabel = ctx.custom.dataLabel(
 			{
-				index: slice.index,
-				name: slice.name,
-				value: slice.value,
-				percentage: slice.percentage,
-				startAngle: slice.startAngle,
-				sweepAngle: slice.sweepAngle,
+				index: segment.index,
+				name: segment.name,
+				value: segment.value,
+				percentage: segment.percentage,
+				startAngle: segment.startAngle,
+				sweepAngle: segment.sweepAngle,
 			},
 			ctx,
 		);
 
 		return {
-			index: slice.index,
-			name: slice.name,
-			value: slice.value,
-			percentage: slice.percentage,
-			startAngle: slice.startAngle,
-			sweepAngle: slice.sweepAngle,
-			widget: new Slice({ ...slice, dataLabel }),
+			index: segment.index,
+			name: segment.name,
+			value: segment.value,
+			percentage: segment.percentage,
+			startAngle: segment.startAngle,
+			sweepAngle: segment.sweepAngle,
+			widget: new Segment({ ...segment, dataLabel }),
 		};
 	});
 }
 
 function buildRadialItems(ctx: PieChartContext<any>): PieChartRadialItem[] {
-	return buildPieSlices(ctx).map((slice) => ({
-		angle: slice.angle,
-		tick: new RadialTick(slice),
-		label: new RadialLabel(slice),
+	return buildPieSegments(ctx).map((segment) => ({
+		angle: segment.angle,
+		tick: new RadialTick(segment),
+		label: new RadialLabel(segment),
 	}));
 }
 
-function resolveHoveredSlice(
+function resolveHoveredSegment(
 	ctx: PieChartContext<any>,
-	slices: PieSliceMeta[],
+	segments: PieSegmentMeta[],
 	width: number,
 	height: number,
-): HoveredPieSlice | null {
-	const hoveredIndex = ctx.hoveredIndex;
-	if (hoveredIndex == null || hoveredIndex >= slices.length) return null;
-	if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
-		return null;
-	}
-
-	const slice = slices[hoveredIndex];
-	const outerRadius = Math.min(width, height) / 2;
-	const innerRadius = outerRadius * (ctx.config?.pie?.innerRadiusRatio ?? 0);
-	const anchorRadius = innerRadius + (outerRadius - innerRadius) * 0.5;
-	const midAngle = slice.angle;
-	const directionX = Math.cos(midAngle);
-	const directionY = Math.sin(midAngle);
-
-	return {
-		index: slice.index,
-		name: slice.name,
-		value: slice.value,
-		percentage: slice.percentage,
-		startAngle: slice.startAngle,
-		sweepAngle: slice.sweepAngle,
-		midAngle,
-		anchorX: width / 2 + anchorRadius * directionX,
-		anchorY: height / 2 + anchorRadius * directionY,
-		directionX,
-		directionY,
-	};
+): HoveredPieChartSegment | null {
+	return resolveHoveredPieLikeSegmentAnchor({
+		segments,
+		hoveredIndex: ctx.hoveredIndex,
+		width,
+		height,
+		innerRadiusRatio: ctx.config?.pie?.innerRadiusRatio ?? 0,
+	}) as HoveredPieChartSegment | null;
 }

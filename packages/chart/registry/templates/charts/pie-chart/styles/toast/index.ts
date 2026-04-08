@@ -1,31 +1,34 @@
-import type { HoveredPieSlice, PieChartCustom } from "@headless/pie-chart/types";
+import type { HoveredPieChartSegment, PieChartCustom } from "@headless/pie-chart/types";
 import type { ToastPieChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "@utils/index";
-import { toastSlice } from "./parts/slice";
-import { toastDataView } from "./parts/data-view";
-import { toastDataLabel } from "./parts/data-label";
-import { toastRadialLabel } from "./parts/radial-label";
-import { toastRadialTick } from "./parts/radial-tick";
-import { toastTooltipArea } from "./parts/tooltip-area";
+import {
+	toastPieLikeDataLabel,
+	toastPieLikeDataView,
+	toastPieLikeRadialLabel,
+	toastPieLikeRadialTick,
+	toastPieLikeSegment,
+	toastPieLikeTooltip,
+	toastPieLikeTooltipArea,
+} from "@styles/toast/polar-like";
 import {
 	toastTitle,
 	toastLegend,
-	tooltipContent,
 } from "@styles/toast";
 
 export { type ToastPieChartConfig } from "./config";
 
 const toastCustom: Partial<PieChartCustom<ToastPieChartConfig>> = {
-	slice: toastSlice,
-	dataView: toastDataView,
-	dataLabel: toastDataLabel,
-	radialLabel: toastRadialLabel,
-	radialTick: toastRadialTick,
+	segment: (args, context) => toastPieLikeSegment(args, context),
+	dataView: ({ segments }, context) => toastPieLikeDataView({ segments }, context),
+	dataLabel: (args, context) => toastPieLikeDataLabel(args, context),
+	radialLabel: (args, context) => toastPieLikeRadialLabel(args, context),
+	radialTick: (args, context) => toastPieLikeRadialTick(args, context),
 	legend: (args, context) => toastLegend(args, context, { markerShape: "circle" }),
 	title: toastTitle,
 	tooltip: (args, context) => toastTooltip(args, context),
-	tooltipArea: toastTooltipArea,
+	tooltipArea: ({ tooltip, hoveredSegment }, context) =>
+		toastPieLikeTooltipArea({ tooltip, hoveredSegment }, context),
 };
 
 export const toastStyleConfig = {
@@ -35,22 +38,8 @@ export const toastStyleConfig = {
 };
 
 function toastTooltip(
-	args: HoveredPieSlice,
+	args: HoveredPieChartSegment,
 	context: { config: ToastPieChartConfig; legends: string[] },
 ) {
-	const colorIndex = context.legends.indexOf(args.name);
-	const color =
-		context.config.colors[
-			(colorIndex >= 0 ? colorIndex : args.index) % context.config.colors.length
-		];
-
-	return tooltipContent({
-		label: args.name,
-		items: {
-			legend: args.name,
-			color,
-			value: args.value,
-		},
-		config: context.config,
-	});
+	return toastPieLikeTooltip(args, context);
 }

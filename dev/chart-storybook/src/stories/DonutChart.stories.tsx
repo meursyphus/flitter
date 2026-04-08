@@ -8,24 +8,24 @@ type StoryArgs = {
 
 const data = {
   datasets: [
-    { name: "North", value: 34 },
-    { name: "South", value: 22 },
-    { name: "East", value: 28 },
-    { name: "West", value: 16 },
+    { name: "Chrome", value: 65 },
+    { name: "Safari", value: 18 },
+    { name: "Firefox", value: 8 },
+    { name: "Edge", value: 5 },
+    { name: "Other", value: 4 },
   ],
 };
 
-const altData = {
-  datasets: [
-    { name: "Product A", value: 48 },
-    { name: "Product B", value: 27 },
-    { name: "Product C", value: 15 },
-    { name: "Product D", value: 10 },
-  ],
+const baseConfig = {
+  title: {
+    text: "Browser Usage Share",
+    position: "top" as const,
+    alignment: "start" as const,
+  },
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "In-Review/DonutChart/Toast",
+  title: "CHARTS/DonutChart/Toast",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {
@@ -36,18 +36,56 @@ const meta: Meta<StoryArgs> = {
 export default meta;
 type Story = StoryObj<StoryArgs>;
 
-export const Basic: Story = {
+export const Default: Story = {
   render: (args) => (
-    <Widget widget={ToastDonutChart({ data })} width="560px" height="400px" renderer={args.renderer} />
+    <Widget
+      widget={ToastDonutChart({ data, config: baseConfig })}
+      width="600px"
+      height="500px"
+      renderer={args.renderer}
+    />
   ),
 };
 
-export const CenterLabel: Story = {
+export const DataCenterVisible: Story = {
   render: (args) => (
     <Widget
-      widget={ToastDonutChart({ data: altData, config: { centerText: "100%" } })}
-      width="560px"
-      height="400px"
+      widget={ToastDonutChart({
+        data,
+        config: {
+          ...baseConfig,
+          dataCenter: {
+            visible: true,
+            mode: "total",
+            formatter: ({ total }) => ({
+              label: "Share",
+              value: `${total}%`,
+            }),
+          },
+        },
+      })}
+      width="600px"
+      height="500px"
+      renderer={args.renderer}
+    />
+  ),
+};
+
+export const RadialVisible: Story = {
+  render: (args) => (
+    <Widget
+      widget={ToastDonutChart({
+        data,
+        config: {
+          ...baseConfig,
+          radial: {
+            visible: true,
+            gap: 8,
+          },
+        },
+      })}
+      width="600px"
+      height="500px"
       renderer={args.renderer}
     />
   ),

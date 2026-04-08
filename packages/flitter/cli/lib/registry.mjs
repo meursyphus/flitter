@@ -563,7 +563,7 @@ export async function renderTemplateFile({
         `${quote}${relativeTo(subpath ? `${agBaseOutputDir}/${subpath}` : `${agBaseOutputDir}/index.ts`)}${quote}`,
     )
     .replace(
-      /(['"])(?:\.\.\/)+shared\/(bar-like|line-like|point-like)(?:\/index)?\1/gu,
+      /(['"])(?:\.\.\/)+shared\/(bar-like|line-like|pie-like|point-like)(?:\/index)?\1/gu,
       (_, quote, helperName) => {
         const styleBase =
           item.style === "ag"

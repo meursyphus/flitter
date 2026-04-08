@@ -1,44 +1,84 @@
-import type { PieChartContext, PieChartCustom } from "flitter-ui/chart";
-import { Center, SizedBox, Stack, StackFit, Text, TextStyle } from "flitter-core";
-import { DataView } from "../../pie-chart/base/data-view";
+import type { DonutChartContext, DonutChartCustom } from "flitter-ui/chart";
+import { Column, MainAxisSize, SizedBox, Text, TextStyle, type Widget } from "flitter-core";
 import type { DonutChartConfig } from "./config";
-import { defaultAgConfig } from "./config";
+import { defaultAgConfig, normalizeDonutAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
-import { agStyleConfig as pieAgStyleConfig } from "../../pie-chart/style";
+import {
+	agPieLikeDataLabel,
+	agPieLikeDataView,
+	agPieLikeLayout,
+	agPieLikeRadialLabel,
+	agPieLikeRadialTick,
+	agPieLikeSegment,
+	agPieLikeTitle,
+	agPieLikeTooltip,
+	agPieLikeTooltipArea,
+} from "../../_styles/ag/polar-like";
+import { agLegend } from "../../_styles/ag/index";
 
 export { type DonutChartConfig } from "./config";
 
-const agCustom: Partial<PieChartCustom<DonutChartConfig>> = {
-  ...(pieAgStyleConfig.custom as Partial<PieChartCustom<DonutChartConfig>>),
-  dataView: ({ slices }, ctx) =>
-    Stack({
-      fit: StackFit.expand,
-      children: [
-        (pieAgStyleConfig.custom.dataView?.(
-          { slices },
-          ctx as any,
-        ) ?? DataView({ slices }, ctx as any)),
-        Center({ child: agCenterContent(ctx) }),
-      ],
-    }),
-  dataLabel: () => SizedBox.shrink(),
+const agCustom: Partial<DonutChartCustom<DonutChartConfig>> = {
+	layout: (args, context) => agPieLikeLayout(args, context),
+	segment: (args, context) => agPieLikeSegment(args, context),
+	dataView: ({ segments, dataCenter }) =>
+		agPieLikeDataView({ segments, dataCenter }),
+	dataLabel: (args, context) => agPieLikeDataLabel(args, context),
+	radialLabel: (args, context) => agPieLikeRadialLabel(args, context),
+	radialTick: (args, context) => agPieLikeRadialTick(args, context),
+	legend: (args, context) => agLegend(args, context as any, { markerShape: "circle" }),
+	title: (args, context) => agPieLikeTitle(args, context),
+	dataCenter: (args, context) => agDataCenter(args, context),
+	tooltip: (args, context) => agPieLikeTooltip(args, context),
+	tooltipArea: ({ tooltip, hoveredSegment }, context) =>
+		agPieLikeTooltipArea({ tooltip, hoveredSegment }, context),
 };
 
 export const styleConfig = {
   custom: agCustom,
   createConfig: (config?: DeepPartial<DonutChartConfig>): DonutChartConfig =>
-    deepMerge(defaultAgConfig, config),
+    normalizeDonutAgConfig(deepMerge(defaultAgConfig, config)),
 };
 
-function agCenterContent(ctx: PieChartContext<DonutChartConfig>) {
-  if (ctx.config.centerText == null) return SizedBox.shrink();
+function agDataCenter(
+	args: Parameters<DonutChartCustom<DonutChartConfig>["dataCenter"]>[0],
+	ctx: DonutChartContext<DonutChartConfig>,
+): Widget {
+	const centerConfig = ctx.config.dataCenter;
+	if (!centerConfig.visible) return SizedBox.shrink();
 
-  return Text(ctx.config.centerText.toString(), {
-    style: new TextStyle({
-      fontFamily: ctx.config.font.family,
-      fontSize: 22,
-      fontWeight: "700",
-      color: ctx.config.title.color,
-    }),
-  });
+	const content = centerConfig.formatter({
+		total: args.total,
+		hoveredSegment: args.hoveredSegment,
+		mode: centerConfig.mode,
+	});
+
+	if (!content.value) return SizedBox.shrink();
+
+	return Column({
+		mainAxisSize: MainAxisSize.min,
+		children: [
+			...(content.label
+				? [
+					Text(content.label, {
+						style: new TextStyle({
+							fontFamily: centerConfig.labelFontFamily ?? ctx.config.font.family,
+							fontSize: centerConfig.labelFontSize,
+							fontWeight: centerConfig.labelFontWeight,
+							color: centerConfig.labelColor,
+						}),
+					}),
+					SizedBox({ height: centerConfig.gap }),
+				]
+				: []),
+			Text(content.value, {
+				style: new TextStyle({
+					fontFamily: centerConfig.valueFontFamily ?? ctx.config.font.family,
+					fontSize: centerConfig.valueFontSize,
+					fontWeight: centerConfig.valueFontWeight,
+					color: centerConfig.valueColor,
+				}),
+			}),
+		],
+	});
 }

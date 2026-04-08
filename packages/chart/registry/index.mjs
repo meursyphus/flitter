@@ -55,6 +55,7 @@ function styleBaseItem(style) {
       ...mapDir(`styles/${style}`, outputDir),
       ...mapDir("shared/bar-like", `${outputDir}/bar-like`),
       ...mapDir("shared/line-like", `${outputDir}/line-like`),
+      ...mapDir("shared/pie-like", `${outputDir}/pie-like`),
       ...mapDir("shared/point-like", `${outputDir}/point-like`),
     ],
   };
@@ -300,8 +301,8 @@ export const registryItems = [
   ...presetCharts.map(({ name, style }) => presetChartItem(name, style)),
   styledCopyChartItem("box-plot-chart", "ag", ["ag-base"]),
   styledCopyChartItem("box-plot-chart", "toast", ["toast-base"]),
-  styledCopyChartItem("donut-chart", "ag", ["ag-base", "ag-pie-chart"]),
-  styledCopyChartItem("donut-chart", "toast", ["toast-base", "toast-pie-chart"]),
+  styledCopyChartItem("donut-chart", "ag", ["ag-base"]),
+  styledCopyChartItem("donut-chart", "toast", ["toast-base"]),
   styledCopyChartItem("gauge-chart", "ag", ["ag-base"]),
   styledCopyChartItem("gauge-chart", "toast", ["toast-base"]),
   styledCopyChartItem("histogram-chart", "ag", ["ag-base"]),

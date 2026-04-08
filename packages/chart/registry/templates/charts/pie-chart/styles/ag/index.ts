@@ -1,75 +1,35 @@
-import type { HoveredPieSlice, PieChartCustom } from "@headless/pie-chart/types";
-import { BoxDecoration, Column, Container, MainAxisSize, SizedBox, Text, TextStyle, type Widget } from "flitter-core";
+import type { HoveredPieChartSegment, PieChartCustom } from "@headless/pie-chart/types";
+import type { Widget } from "flitter-core";
 import type { AgPieChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "@utils/index";
-import { agSlice } from "./parts/slice";
-import { agDataView } from "./parts/data-view";
-import { agDataLabel } from "./parts/data-label";
-import { agRadialLabel } from "./parts/radial-label";
-import { agRadialTick } from "./parts/radial-tick";
-import { agTooltipArea } from "./parts/tooltip-area";
-import { Layout as BaseLayout } from "../../base/layout";
-import { agLegend, agTooltipContent } from "@styles/ag";
+import {
+	agPieLikeDataLabel,
+	agPieLikeDataView,
+	agPieLikeLayout,
+	agPieLikeRadialLabel,
+	agPieLikeRadialTick,
+	agPieLikeSegment,
+	agPieLikeTitle,
+	agPieLikeTooltip,
+	agPieLikeTooltipArea,
+} from "@styles/ag/polar-like";
+import { agLegend } from "@styles/ag";
 
 export { type AgPieChartConfig } from "./config";
 
-function agPieTitle(
-  _args: undefined,
-  context: { config: AgPieChartConfig },
-): Widget {
-  const { title, subtitle, font } = context.config;
-  const titleWidget = Text(title.text, {
-    style: new TextStyle({
-      fontFamily: title.fontFamily ?? font.family,
-      fontSize: title.fontSize,
-      fontWeight: title.fontWeight,
-      color: title.color,
-    }),
-  });
-
-  if (!subtitle.visible || !subtitle.text) return titleWidget;
-
-  return Column({
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      titleWidget,
-      SizedBox({ height: 4 }),
-      Text(subtitle.text, {
-        style: new TextStyle({
-          fontFamily: subtitle.fontFamily ?? font.family,
-          fontSize: subtitle.fontSize,
-          fontWeight: subtitle.fontWeight,
-          color: subtitle.color,
-        }),
-      }),
-    ],
-  });
-}
-
-function agLayout(
-  args: Parameters<PieChartCustom<AgPieChartConfig>["layout"]>[0],
-  context: Parameters<PieChartCustom<AgPieChartConfig>["layout"]>[1],
-): Widget {
-  return Container({
-    decoration: new BoxDecoration({
-      color: context.config.background,
-    }),
-    child: BaseLayout(args as any, context as any),
-  });
-}
-
 const agCustom: Partial<PieChartCustom<AgPieChartConfig>> = {
-  layout: agLayout,
-  slice: agSlice,
-  dataView: agDataView,
-  dataLabel: agDataLabel,
-  radialLabel: agRadialLabel,
-  radialTick: agRadialTick,
+  layout: (args, context) => agPieLikeLayout(args, context),
+  segment: (args, context) => agPieLikeSegment(args, context),
+  dataView: ({ segments }) => agPieLikeDataView({ segments }),
+  dataLabel: (args, context) => agPieLikeDataLabel(args, context),
+  radialLabel: (args, context) => agPieLikeRadialLabel(args, context),
+  radialTick: (args, context) => agPieLikeRadialTick(args, context),
   legend: (args, context) => agLegend(args, context as any, { markerShape: "circle" }),
-  title: agPieTitle,
+  title: (args, context) => agPieLikeTitle(args, context),
   tooltip: (args, context) => agTooltip(args, context),
-  tooltipArea: agTooltipArea,
+  tooltipArea: ({ tooltip, hoveredSegment }, context) =>
+    agPieLikeTooltipArea({ tooltip, hoveredSegment }, context),
 };
 
 export const agStyleConfig = {
@@ -79,21 +39,8 @@ export const agStyleConfig = {
 };
 
 function agTooltip(
-  args: HoveredPieSlice,
+  args: HoveredPieChartSegment,
   context: { config: AgPieChartConfig; legends: string[] },
 ): Widget {
-  const colorIndex = context.legends.indexOf(args.name);
-  const color = context.config.colors.fills[
-    (colorIndex >= 0 ? colorIndex : args.index) % context.config.colors.fills.length
-  ];
-
-	return agTooltipContent({
-		label: args.name,
-		items: {
-			legend: "Value",
-			color,
-			value: args.value,
-		},
-		config: context.config as any,
-	});
+	return agPieLikeTooltip(args, context);
 }

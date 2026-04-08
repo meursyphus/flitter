@@ -111,24 +111,24 @@ export class PieChartController extends ChangeNotifier {
 		return this.#hoveredIndex;
 	}
 
-	hoverSlice(index: number): void {
+	hoverSegment(index: number): void {
 		if (this.#hoveredIndex === index) return;
 		this.#hoveredIndex = index;
 		this.notifyListeners();
 	}
 
-	unhoverSlice(index?: number): void {
+	unhoverSegment(index?: number): void {
 		if (this.#hoveredIndex === null) return;
 		if (index != null && this.#hoveredIndex !== index) return;
 		this.#hoveredIndex = null;
 		this.notifyListeners();
 	}
 
-	unhoverAllSlices(): void {
-		this.unhoverSlice();
+	unhoverAllSegments(): void {
+		this.unhoverSegment();
 	}
 
-	isSliceHovered(index: number): boolean {
+	isSegmentHovered(index: number): boolean {
 		return this.#hoveredIndex === index;
 	}
 }

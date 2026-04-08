@@ -9,7 +9,7 @@ export type PieChartData = {
 	datasets: { name: string; value: number }[];
 };
 
-export type PieChartSliceArgs = {
+export type PieChartSegmentArgs = {
 	index: number;
 	name: string;
 	value: number;
@@ -18,7 +18,7 @@ export type PieChartSliceArgs = {
 	sweepAngle: number;
 };
 
-export type PieChartSlice = {
+export type PieChartSegment = {
 	widget: Widget;
 	startAngle: number;
 	sweepAngle: number;
@@ -28,7 +28,7 @@ export type PieChartSlice = {
 	value: number;
 };
 
-export type HoveredPieSlice = Omit<PieChartSlice, "widget"> & {
+export type HoveredPieChartSegment = Omit<PieChartSegment, "widget"> & {
 	midAngle: number;
 	anchorX: number;
 	anchorY: number;
@@ -45,13 +45,13 @@ export type PieChartRadialItem = {
 export type PieChartCustom<TConfig = {}> = {
 	layout: CustomArgs<{ title: Widget; legends: Widget[]; plot: Widget }, TConfig>;
 	plot: CustomArgs<{ dataView: Widget; tooltipArea: Widget; radialItems: PieChartRadialItem[] }, TConfig>;
-	dataView: CustomArgs<{ slices: PieChartSlice[] }, TConfig>;
-	slice: CustomArgs<PieChartSliceArgs & { dataLabel: Widget; isHovered: boolean }, TConfig>;
-	dataLabel: CustomArgs<PieChartSliceArgs, TConfig>;
+	dataView: CustomArgs<{ segments: PieChartSegment[] }, TConfig>;
+	segment: CustomArgs<PieChartSegmentArgs & { dataLabel: Widget; isHovered: boolean }, TConfig>;
+	dataLabel: CustomArgs<PieChartSegmentArgs, TConfig>;
 	radialLabel: CustomArgs<{ index: number; name: string; value: number; percentage: number; angle: number; isHovered: boolean }, TConfig>;
 	radialTick: CustomArgs<{ index: number; name: string; value: number; percentage: number; angle: number; isHovered: boolean }, TConfig>;
 	legend: CustomArgs<{ name: string; index: number; isVisible: boolean }, TConfig>;
 	title: CustomArgs<undefined, TConfig>;
-	tooltip: CustomArgs<HoveredPieSlice, TConfig>;
-	tooltipArea: CustomArgs<{ tooltip: Widget | null; hoveredSlice: HoveredPieSlice | null }, TConfig>;
+	tooltip: CustomArgs<HoveredPieChartSegment, TConfig>;
+	tooltipArea: CustomArgs<{ tooltip: Widget | null; hoveredSegment: HoveredPieChartSegment | null }, TConfig>;
 };

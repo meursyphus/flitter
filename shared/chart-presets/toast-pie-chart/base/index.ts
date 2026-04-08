@@ -1,9 +1,7 @@
 import { SizedBox, type Widget } from "flitter-core";
 import { PieChart as HeadlessPieChart } from "flitter-ui/chart";
 import type { PieChartCustom, PieChartData } from "flitter-ui/chart";
-import { DataView } from "./data-view";
-import { Layout } from "./layout";
-import { Plot } from "./plot";
+import { DataView, Layout, Plot } from "../../_styles/toast/pie-like/index";
 
 export type { PieChartCustom, PieChartData, PieChartContext } from "flitter-ui/chart";
 export { PieChartController } from "flitter-ui/chart";
@@ -11,7 +9,7 @@ export { PieChartController } from "flitter-ui/chart";
 const baseDefaults: Partial<PieChartCustom> = {
 	layout: Layout,
 	plot: Plot,
-	dataView: DataView,
+	dataView: ({ segments }) => DataView({ items: segments }),
 	radialLabel: () => SizedBox.shrink(),
 	radialTick: () => SizedBox.shrink(),
 	dataLabel: () => SizedBox.shrink(),

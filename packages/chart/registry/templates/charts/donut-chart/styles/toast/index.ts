@@ -1,44 +1,81 @@
-import type { PieChartContext, PieChartCustom } from "@headless/pie-chart/types";
-import { Center, SizedBox, Stack, StackFit, Text, TextStyle } from "flitter-core";
-import { DataView } from "../../pie-chart/base/data-view";
+import type { DonutChartContext, DonutChartCustom } from "@headless/donut-chart/types";
+import { Column, MainAxisSize, SizedBox, Text, TextStyle } from "flitter-core";
 import type { DonutChartConfig } from "./config";
-import { defaultToastConfig } from "./config";
+import { defaultToastConfig, normalizeDonutToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "@utils/index";
-import { toastStyleConfig as pieToastStyleConfig } from "../../toast-pie-chart/style";
+import {
+	toastPieLikeDataLabel,
+	toastPieLikeDataView,
+	toastPieLikeRadialLabel,
+	toastPieLikeRadialTick,
+	toastPieLikeSegment,
+	toastPieLikeTooltip,
+	toastPieLikeTooltipArea,
+} from "@styles/toast/polar-like";
+import { toastLegend, toastTitle } from "@styles/toast";
 
 export { type DonutChartConfig } from "./config";
 
-const toastCustom: Partial<PieChartCustom<DonutChartConfig>> = {
-  ...(pieToastStyleConfig.custom as Partial<PieChartCustom<DonutChartConfig>>),
-  dataView: ({ slices }, ctx) =>
-    Stack({
-      fit: StackFit.expand,
-      children: [
-        (pieToastStyleConfig.custom.dataView?.(
-          { slices },
-          ctx as any,
-        ) ?? DataView({ slices }, ctx as any)),
-        Center({ child: toastCenterContent(ctx) }),
-      ],
-    }),
-  dataLabel: () => SizedBox.shrink(),
+const toastCustom: Partial<DonutChartCustom<DonutChartConfig>> = {
+	segment: (args, context) => toastPieLikeSegment(args, context),
+	dataView: ({ segments, dataCenter }, context) =>
+		toastPieLikeDataView({ segments, dataCenter }, context),
+	dataLabel: (args, context) => toastPieLikeDataLabel(args, context),
+	radialLabel: (args, context) => toastPieLikeRadialLabel(args, context),
+	radialTick: (args, context) => toastPieLikeRadialTick(args, context),
+	legend: (args, context) => toastLegend(args, context, { markerShape: "circle" }),
+	title: toastTitle,
+	dataCenter: (args, context) => toastDataCenter(args, context),
+	tooltip: (args, context) => toastPieLikeTooltip(args, context),
+	tooltipArea: ({ tooltip, hoveredSegment }, context) =>
+		toastPieLikeTooltipArea({ tooltip, hoveredSegment }, context),
 };
 
 export const styleConfig = {
   custom: toastCustom,
   createConfig: (config?: DeepPartial<DonutChartConfig>): DonutChartConfig =>
-    deepMerge(defaultToastConfig, config),
+    normalizeDonutToastConfig(deepMerge(defaultToastConfig, config)),
 };
 
-function toastCenterContent(ctx: PieChartContext<DonutChartConfig>) {
-  const total = ctx.data.datasets.reduce((sum, dataset) => sum + dataset.value, 0);
+function toastDataCenter(
+	args: Parameters<DonutChartCustom<DonutChartConfig>["dataCenter"]>[0],
+	ctx: DonutChartContext<DonutChartConfig>,
+) {
+	const centerConfig = ctx.config.dataCenter;
+	if (!centerConfig.visible) return SizedBox.shrink();
 
-  return Text((ctx.config.centerText ?? total.toString()).toString(), {
-    style: new TextStyle({
-      fontFamily: ctx.config.font.family,
-      fontSize: 22,
-      fontWeight: "700",
-      color: "#333333",
-    }),
-  });
+	const content = centerConfig.formatter({
+		total: args.total,
+		hoveredSegment: args.hoveredSegment,
+		mode: centerConfig.mode,
+	});
+
+	if (!content.value) return SizedBox.shrink();
+
+	return Column({
+		mainAxisSize: MainAxisSize.min,
+		children: [
+			...(content.label
+				? [
+					Text(content.label, {
+						style: new TextStyle({
+							fontFamily: centerConfig.labelFontFamily ?? ctx.config.font.family,
+							fontSize: centerConfig.labelFontSize,
+							fontWeight: centerConfig.labelFontWeight,
+							color: centerConfig.labelColor,
+						}),
+					}),
+					SizedBox({ height: centerConfig.gap }),
+				]
+				: []),
+			Text(content.value, {
+				style: new TextStyle({
+					fontFamily: centerConfig.valueFontFamily ?? ctx.config.font.family,
+					fontSize: centerConfig.valueFontSize,
+					fontWeight: centerConfig.valueFontWeight,
+					color: centerConfig.valueColor,
+				}),
+			}),
+		],
+	});
 }

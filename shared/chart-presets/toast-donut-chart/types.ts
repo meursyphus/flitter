@@ -1,6 +1,7 @@
 export type {
-  PieChartContext as DonutChartContext,
-  PieChartData as DonutChartData,
-  PieChartCustom as DonutChartCustom,
+  DonutChartContext,
+  DonutChartData,
+  DonutChartCustom,
+  HoveredDonutChartSegment,
 } from "flitter-ui/chart";
-export { PieChartController as DonutChartController } from "flitter-ui/chart";
+export { DonutChartController } from "flitter-ui/chart";
