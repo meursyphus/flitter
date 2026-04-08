@@ -1,6 +1,6 @@
 # Novel Chart Patterns
 
-Generated: 2026-04-07
+Generated: 2026-04-08
 
 Use these patterns when the prompt should not be forced into one canonical chart family.
 
@@ -50,13 +50,13 @@ Use when:
 
 ## Radial KPI Composite
 
-Combine donut, gauge, and custom paint ideas into one radial KPI experience.
+Combine donut and custom paint ideas into one radial KPI experience.
 
 Doc: `/llm/patterns/radial-kpi-composite.md`
 
 Use when:
 - The prompt asks for multiple bounded metrics in a radial arrangement
-- A simple donut or gauge is not enough on its own
+- A simple donut is not enough on its own
 - The center and ring composition matter as much as the metric values
 
 ## Novel Data Composite

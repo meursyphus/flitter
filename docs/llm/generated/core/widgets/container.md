@@ -2,7 +2,7 @@
 
 General-purpose box for size, decoration, alignment, and background.
 
-Generated: 2026-04-07
+Generated: 2026-04-08
 
 ## Use When
 

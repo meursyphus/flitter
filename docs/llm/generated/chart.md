@@ -2,7 +2,7 @@
 
 Use this pack when an agent needs to implement or customize charts in this repository with as little hidden context as possible.
 
-Generated: 2026-04-07
+Generated: 2026-04-08
 
 ## What This Pack Covers
 
@@ -45,7 +45,6 @@ These still have a `chart-presets` entry point, but they behave more like struct
 - `candlestick-chart`: Represent open-high-low-close movement for each interval.
 - `donut-chart`: Part-to-whole chart with center content and an inner radius.
 - `funnel-chart`: Show sequential stage dropoff and conversion through a funnel.
-- `gauge-chart`: Display a single KPI against a bounded range and optional zones.
 - `histogram-chart`: Show numeric distribution by bins rather than individual raw points.
 - `sankey-chart`: Show weighted flow between stages with controller-owned layout.
 - `sunburst-chart`: Display hierarchical composition as concentric radial segments.

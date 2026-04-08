@@ -2,7 +2,7 @@
 
 Hover, selection, and tooltip behavior come from explicit hit-testing widgets and shared state.
 
-Generated: 2026-04-07
+Generated: 2026-04-08
 
 ## Key Points
 

@@ -2,7 +2,7 @@
 
 Arc, path, link, and other bespoke marks should be painted directly when widgets are not enough.
 
-Generated: 2026-04-07
+Generated: 2026-04-08
 
 ## Key Points
 

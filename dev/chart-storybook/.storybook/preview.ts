@@ -32,7 +32,6 @@ const preview: Preview = {
             "ComboChart",
             "FunnelChart",
             "GanttChart",
-            "GaugeChart",
             "NetworkChart",
             "ProgressChart",
           ],

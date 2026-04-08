@@ -1,31 +1,45 @@
 import type { Widget } from "flitter-core";
-import { FunnelChart as HeadlessFunnelChart } from "flitter-ui/chart";
-import type { FunnelChartCustom, FunnelChartData } from "./types";
+import { BaseFunnelChart } from "./base";
+import type {
+	FunnelChartCustom,
+	FunnelChartData,
+	FunnelChartDirection,
+} from "./base";
 import { styleConfig, type FunnelChartConfig } from "./style";
 import type { DeepPartial } from "@utils/index";
 
 export type {
-  FunnelChartContext,
-  FunnelChartStage,
-  FunnelChartStageView,
-  FunnelChartData,
-  FunnelChartCustom,
-} from "./types";
-export { FunnelChartController } from "./types";
+	FunnelChartContext,
+	FunnelChartStage,
+	FunnelChartStageView,
+	FunnelChartHoveredStage,
+	FunnelChartHoveredStageRect,
+	FunnelChartData,
+	FunnelChartCustom,
+	FunnelChartDirection,
+} from "./base";
+export { FunnelChartController } from "./base";
 export { type FunnelChartConfig } from "./style";
 
 export default function FunnelChart({
-  data,
-  config,
-  custom,
+	data,
+	config,
+	custom,
+	direction,
 }: {
-  custom?: Partial<FunnelChartCustom<FunnelChartConfig>>;
-  data: FunnelChartData;
-  config?: DeepPartial<FunnelChartConfig>;
+	custom?: Partial<FunnelChartCustom<FunnelChartConfig>>;
+	data: FunnelChartData;
+	config?: DeepPartial<FunnelChartConfig>;
+	direction?: FunnelChartDirection;
 }): Widget {
-  return HeadlessFunnelChart({
-    data,
-    config: styleConfig.createConfig(config),
-    custom: { ...styleConfig.custom, ...custom } as FunnelChartCustom<FunnelChartConfig>,
-  });
+	const resolvedDirection = direction ?? styleConfig.defaultDirection;
+	return BaseFunnelChart({
+		data,
+		direction: resolvedDirection,
+		config: styleConfig.createConfig(config),
+		custom: {
+			...styleConfig.custom,
+			...custom,
+		} as FunnelChartCustom<FunnelChartConfig>,
+	});
 }

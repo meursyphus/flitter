@@ -25,8 +25,38 @@ const conversionData = {
   ],
 };
 
+function AgFunnelStory({
+  args,
+  data,
+  title,
+  direction = "vertical",
+}: {
+  args: StoryArgs;
+  data: typeof salesData;
+  title: string;
+  direction?: "vertical" | "horizontal";
+}) {
+  return (
+    <Widget
+      widget={FunnelChart({
+        data,
+        direction,
+        config: {
+          title: {
+            text: title,
+            alignment: "center",
+          },
+        },
+      })}
+      width="720px"
+      height="420px"
+      renderer={args.renderer}
+    />
+  );
+}
+
 const meta: Meta<StoryArgs> = {
-  title: "NEXT/FunnelChart/Ag",
+  title: "Charts/FunnelChart/Ag",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {
@@ -39,12 +69,31 @@ type Story = StoryObj<StoryArgs>;
 
 export const SalesPipeline: Story = {
   render: (args) => (
-    <Widget widget={FunnelChart({ data: salesData })} width="620px" height="420px" renderer={args.renderer} />
+    <AgFunnelStory
+      args={args}
+      data={salesData}
+      title="Enterprise Sales Pipeline Performance"
+    />
   ),
 };
 
 export const ConversionRates: Story = {
   render: (args) => (
-    <Widget widget={FunnelChart({ data: conversionData })} width="620px" height="420px" renderer={args.renderer} />
+    <AgFunnelStory
+      args={args}
+      data={conversionData}
+      title="Conversion Drop Off"
+    />
+  ),
+};
+
+export const HorizontalPipeline: Story = {
+  render: (args) => (
+    <AgFunnelStory
+      args={args}
+      data={salesData}
+      title="Enterprise Sales Pipeline Performance"
+      direction="horizontal"
+    />
   ),
 };

@@ -21,8 +21,8 @@ export type {
 } from "flitter-ui/chart";
 export { RadarChartController } from "flitter-ui/chart";
 
-const baseDefaults: Partial<RadarChartCustom> = {
-	layout: Layout,
+const baseDefaults: Partial<RadarChartCustom<any>> = {
+	layout: Layout as RadarChartCustom<any>["layout"],
 	plot: Plot,
 	dataView: DataView,
 	radialAxis: RadialAxis,
@@ -44,7 +44,7 @@ function defaultGetScale(data: RadarChartData) {
 	return { min: 0, max, step };
 }
 
-export function BaseRadarChart<TConfig = {}>({
+export function BaseRadarChart<TConfig extends object = {}>({
 	custom,
 	getScale = defaultGetScale,
 	...rest

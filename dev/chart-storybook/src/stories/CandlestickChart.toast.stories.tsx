@@ -11,7 +11,7 @@ type StoryArgs = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Polish/CandlestickChart/Toast",
+  title: "In-Review/CandlestickChart/Toast",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {

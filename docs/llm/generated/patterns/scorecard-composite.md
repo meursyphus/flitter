@@ -2,7 +2,7 @@
 
 Build scorecard-like modules from chart parts plus direct Flitter primitives when no canned family fits.
 
-Generated: 2026-04-07
+Generated: 2026-04-08
 
 ## Use When
 

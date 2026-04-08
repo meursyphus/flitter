@@ -152,20 +152,13 @@ export type {
 	FunnelChartContext,
 	FunnelChartStage,
 	FunnelChartStageView,
+	FunnelChartHoveredStage,
+	FunnelChartHoveredStageRect,
 	FunnelChartData,
 	FunnelChartCustom,
+	FunnelChartDirection,
 } from "./funnel-chart/types";
 export { FunnelChartController } from "./funnel-chart/controller";
-
-export { default as GaugeChart } from "./gauge-chart";
-export { GaugeChartProvider } from "./gauge-chart/provider";
-export type {
-	GaugeChartContext,
-	GaugeChartZone,
-	GaugeChartData,
-	GaugeChartCustom,
-} from "./gauge-chart/types";
-export { GaugeChartController } from "./gauge-chart/controller";
 
 export { default as TreemapChart } from "./treemap-chart";
 export { TreemapChartProvider } from "./treemap-chart/provider";
@@ -186,6 +179,8 @@ export type {
 	TreemapLayoutItem,
 	TreemapLayoutSize,
 	TreemapLayoutOptions,
+	GetTreemapLayoutFn,
+	GetTreemapLayoutOptionsFn,
 	GetTreemapLayoutFn as TreemapChartGetLayoutFn,
 	GetTreemapLayoutOptionsFn as TreemapChartGetLayoutOptionsFn,
 } from "./treemap-chart/types";
@@ -213,7 +208,13 @@ export type {
 	SunburstChartContext,
 	SunburstChartNode,
 	SunburstChartData,
+	SunburstLegacyData,
+	SunburstResolvedNode,
+	SunburstResolvedData,
 	SunburstChartCustom,
+	SunburstChartSegmentArgs,
+	SunburstChartSegment,
+	HoveredSunburstSegment,
 	FlatSegment,
 	SunburstNode,
 	SunburstCustom,

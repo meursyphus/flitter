@@ -1,6 +1,6 @@
 # Testing Prompts
 
-Generated: 2026-04-07
+Generated: 2026-04-08
 
 Use these prompts to test a first-read agent against the pack.
 
@@ -186,19 +186,6 @@ Success criteria:
 - Treats stage ordering as fixed
 - Calls out conversion labeling needs
 
-## Single KPI with thresholds
-
-Show system health as a gauge with red, amber, and green threshold zones.
-
-Pack links:
-- `/llm/chart.md`
-- `/llm/chart/gauge-chart.md`
-
-Success criteria:
-- Chooses gauge for a bounded KPI with zones
-- Does not use gauge when progress alone would do
-- Keeps the work inside the base wrapper unless radial behavior becomes custom
-
 ## Continuous latency distribution
 
 Show the distribution of API latency so we can see whether values cluster or spread out.
@@ -312,7 +299,7 @@ Pack links:
 - `/llm/patterns/radial-kpi-composite.md`
 
 Success criteria:
-- Uses donut and gauge ideas without pretending one canned chart solves everything
+- Uses donut plus custom threshold arcs without pretending one canned chart solves everything
 - Separates radial layers semantically
 - Escalates to custom composition only where needed
 

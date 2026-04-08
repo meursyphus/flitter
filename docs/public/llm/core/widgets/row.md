@@ -2,7 +2,7 @@
 
 Horizontal layout primitive for legends, paired metrics, and x-axis label rows.
 
-Generated: 2026-04-07
+Generated: 2026-04-08
 
 ## Use When
 

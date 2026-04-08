@@ -1005,75 +1005,6 @@ export const chartFamilies = [
     },
   }),
   chart({
-    slug: "gauge-chart",
-    title: "Gauge Chart",
-    importName: "GaugeChart",
-    category: "kpi",
-    surface: "base-wrapper",
-    supportedStyles: [],
-    supportsStyleArg: false,
-    summary: "Display a single KPI against a bounded range and optional zones.",
-    useWhen: [
-      "The prompt is one bounded KPI with qualitative thresholds",
-      "A radial scale communicates status clearly",
-      "Zones or ranges matter as much as the absolute value",
-    ],
-    avoidWhen: [
-      "A linear progress track would be clearer",
-      "The user wants multi-dimensional comparison, not one KPI",
-    ],
-    askBeforeCoding: [
-      "Is the min/max fixed or derived?",
-      "Do threshold zones need explicit colors and labels?",
-      "Would a progress chart communicate the same KPI more cleanly?",
-    ],
-    implementationNotes: [
-      "Use chart-presets GaugeChart as a base wrapper.",
-      "Gauge charts are easy to misuse; confirm the bounded-range story first.",
-      "Zones are often the real reason to choose gauge over progress.",
-    ],
-    overrideSurface: [
-      "gauge / scale: own the arc and zone rendering",
-      "needle: control the pointer treatment",
-      "valueLabel: change how the KPI is expressed",
-      "layout: reposition title, gauge, and value stack",
-    ],
-    escapeHatch:
-      "Go headless if the gauge becomes a composite radial dashboard or needs non-standard arc behavior.",
-    dataShape: `{
-  value: 72,
-  min: 0,
-  max: 100,
-  zones: [
-    { min: 0, max: 50, color: "#ff6b6b" },
-    { min: 50, max: 80, color: "#ffd166" },
-    { min: 80, max: 100, color: "#06d6a0" }
-  ]
-}`,
-    sourcePaths: [
-      "shared/chart-presets/charts/gauge-chart",
-      "packages/chart/src/headless/gauge-chart",
-    ],
-    evaluation: {
-      title: "Single KPI with thresholds",
-      prompt:
-        "Show system health as a gauge with red, amber, and green threshold zones.",
-      mustAsk: [
-        "Is the min/max fixed?",
-        "Are threshold zones required and labeled?",
-      ],
-      successCriteria: [
-        "Chooses gauge for a bounded KPI with zones",
-        "Does not use gauge when progress alone would do",
-        "Keeps the work inside the base wrapper unless radial behavior becomes custom",
-      ],
-      criticFocus: [
-        "Did the reader skip threshold-zone semantics?",
-        "Did it choose gauge without a real bounded-range story?",
-      ],
-    },
-  }),
-  chart({
     slug: "histogram-chart",
     title: "Histogram Chart",
     importName: "HistogramChart",
@@ -1498,10 +1429,10 @@ export const novelPatterns = [
   {
     slug: "radial-kpi-composite",
     title: "Radial KPI Composite",
-    summary: "Combine donut, gauge, and custom paint ideas into one radial KPI experience.",
+    summary: "Combine donut and custom paint ideas into one radial KPI experience.",
     useWhen: [
       "The prompt asks for multiple bounded metrics in a radial arrangement",
-      "A simple donut or gauge is not enough on its own",
+      "A simple donut is not enough on its own",
       "The center and ring composition matter as much as the metric values",
     ],
     buildPath: [
@@ -1511,10 +1442,9 @@ export const novelPatterns = [
     ],
     sourcePaths: [
       "shared/chart-presets/charts/donut-chart",
-      "shared/chart-presets/charts/gauge-chart",
       "packages/core/src/component/CustomPaint.ts",
     ],
-    relatedCharts: ["donut-chart", "gauge-chart"],
+    relatedCharts: ["donut-chart"],
   },
   {
     slug: "novel-data-composite",
@@ -1939,14 +1869,14 @@ export const novelEvaluationCases = [
     title: "Radial KPI composite",
     prompt:
       "Create a radial KPI module with an overall completion donut, an inner status label, and threshold arcs around it for health.",
-    recommendedCharts: ["donut-chart", "gauge-chart"],
+    recommendedCharts: ["donut-chart"],
     pack: ["/llm/chart.md", "/llm/patterns/radial-kpi-composite.md"],
     mustAsk: [
       "Which ring is a real chart family and which ring is custom composition?",
       "What does the center content need to express?",
     ],
     successCriteria: [
-      "Uses donut and gauge ideas without pretending one canned chart solves everything",
+      "Uses donut plus custom threshold arcs without pretending one canned chart solves everything",
       "Separates radial layers semantically",
       "Escalates to custom composition only where needed",
     ],

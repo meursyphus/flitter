@@ -1,250 +1,340 @@
 import {
-	StatelessWidget,
-	type Widget,
-	type BuildContext,
-	LayoutBuilder,
+  CustomPaint,
+  FractionallySizedBox,
+  GestureDetector,
+  GlobalKey,
+  Align,
+  Alignment,
+  Positioned,
+  SizedBox,
+  Stack,
+  StackFit,
+  StatelessWidget,
+  StatefulWidget,
+  State,
+  type Widget,
+  type BuildContext,
 } from "flitter-core";
+import { resolveOverlayRect } from "@headless/_shared/cartesian-scaffold";
 import { SankeyChartProvider } from "./provider";
+import { createRibbonPolygon, isPointInPolygon } from "./geometry";
+import type {
+  SankeyHoveredRect,
+  SankeyLinkLayout,
+  SankeyNodeLayout,
+  SankeyPlacedNode,
+} from "./types";
 
 class SankeyChart extends StatelessWidget {
-	override build(_: BuildContext): Widget {
-		return new SizeTracker();
-	}
+  override build(_: BuildContext): Widget {
+    return new LayoutWidget();
+  }
 }
 
 export default SankeyChart;
 
-class SizeTracker extends StatelessWidget {
-	override build(context: BuildContext): Widget {
-		const ctx = SankeyChartProvider.of(context);
-		return LayoutBuilder({
-			builder: (_ctx, constraints) => {
-				ctx.setSize(constraints.maxWidth, constraints.maxHeight);
-				return new LayoutWidget();
-			},
-		});
-	}
-}
-
 class LayoutWidget extends StatelessWidget {
-	override build(context: BuildContext): Widget {
-		const ctx = SankeyChartProvider.of(context);
-		return ctx.custom.layout(
-			{
-				title: new TitleWidget(),
-				dataView: new SankeyWidget(),
-			},
-			ctx,
-		);
-	}
+  override build(context: BuildContext): Widget {
+    const ctx = SankeyChartProvider.of(context);
+    return ctx.custom.layout(
+      {
+        title: new TitleWidget(),
+        dataView: new SankeyWidget(),
+        tooltipArea: new TooltipArea(),
+      },
+      ctx,
+    );
+  }
 }
 
 class TitleWidget extends StatelessWidget {
-	override build(context: BuildContext): Widget {
-		const ctx = SankeyChartProvider.of(context);
-		return ctx.custom.title(undefined, ctx);
-	}
+  override build(context: BuildContext): Widget {
+    const ctx = SankeyChartProvider.of(context);
+    return ctx.custom.title(undefined, ctx);
+  }
 }
 
 class SankeyWidget extends StatelessWidget {
-	override build(context: BuildContext): Widget {
-		const ctx = SankeyChartProvider.of(context);
-		const sankeyLayout = ctx.layout;
+  override build(context: BuildContext): Widget {
+    const ctx = SankeyChartProvider.of(context);
+    const sankeyLayout = ctx.layout;
 
-		const nodes = sankeyLayout.nodes.map(
-			(node) =>
-				new NodeWidget({
-					id: node.id,
-					label: node.label,
-					color: node.color,
-					x: node.x,
-					y: node.y,
-					width: node.width,
-					height: node.height,
-				}),
-		);
+    const nodes: SankeyPlacedNode[] = sankeyLayout.nodes.map((node) => ({
+      id: node.id,
+      column: node.column,
+      x: node.x,
+      width: node.width,
+      top: node.top,
+      height: node.height,
+      widget: new NodeWidget(node),
+    }));
 
-		const links = sankeyLayout.links.map(
-			(link) =>
-				new LinkWidget({
-					source: link.source,
-					target: link.target,
-					value: link.value,
-					sourceX: link.sourceX,
-					sourceY: link.sourceY,
-					sourceHeight: link.sourceHeight,
-					targetX: link.targetX,
-					targetY: link.targetY,
-					targetHeight: link.targetHeight,
-					color: link.color,
-				}),
-		);
+    const links = sankeyLayout.links.map((link) => new LinkWidget(link));
 
-		const nodeLabels = sankeyLayout.nodes.map(
-			(node) =>
-				new NodeLabelWidget({
-					id: node.id,
-					label: node.label,
-					x: node.x,
-					y: node.y,
-					width: node.width,
-					height: node.height,
-					column: node.column,
-					totalColumns: sankeyLayout.totalColumns,
-				}),
-		);
-
-		return ctx.custom.dataView({ nodes, links, nodeLabels }, ctx);
-	}
+    return GestureDetector({
+      behavior: "translucent",
+      onMouseLeave: () => ctx.unhoverAll(),
+      child: ctx.custom.dataView({ nodes, links }, ctx),
+    });
+  }
 }
 
-class NodeWidget extends StatelessWidget {
-  #id: string;
-  #label: string;
-  #color: string;
-  #x: number;
-  #y: number;
-  #width: number;
-  #height: number;
-
-  constructor(props: {
-    id: string;
-    label: string;
-    color: string;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  }) {
-    super();
-    this.#id = props.id;
-    this.#label = props.label;
-    this.#color = props.color;
-    this.#x = props.x;
-    this.#y = props.y;
-    this.#width = props.width;
-    this.#height = props.height;
+class TooltipArea extends StatefulWidget {
+  createState() {
+    return new TooltipAreaState();
   }
-
-	override build(context: BuildContext): Widget {
-		const ctx = SankeyChartProvider.of(context);
-		return ctx.custom.node(
-			{
-				id: this.#id,
-				label: this.#label,
-				color: this.#color,
-				x: this.#x,
-				y: this.#y,
-				width: this.#width,
-				height: this.#height,
-			},
-			ctx,
-		);
-	}
 }
 
-class LinkWidget extends StatelessWidget {
-  #source: string;
-  #target: string;
-  #value: number;
-  #sourceX: number;
-  #sourceY: number;
-  #sourceHeight: number;
-  #targetX: number;
-  #targetY: number;
-  #targetHeight: number;
-  #color: string;
+class TooltipAreaState extends State<TooltipArea> {
+  overlayKey = new GlobalKey();
 
-  constructor(props: {
-    source: string;
-    target: string;
-    value: number;
-    sourceX: number;
-    sourceY: number;
-    sourceHeight: number;
-    targetX: number;
-    targetY: number;
-    targetHeight: number;
-    color: string;
-  }) {
-    super();
-    this.#source = props.source;
-    this.#target = props.target;
-    this.#value = props.value;
-    this.#sourceX = props.sourceX;
-    this.#sourceY = props.sourceY;
-    this.#sourceHeight = props.sourceHeight;
-    this.#targetX = props.targetX;
-    this.#targetY = props.targetY;
-    this.#targetHeight = props.targetHeight;
-    this.#color = props.color;
+  override build(context: BuildContext): Widget {
+    const ctx = SankeyChartProvider.of(context);
+    const hovered = this.resolveHoveredRect(context);
+    const tooltip =
+      hovered == null
+        ? null
+        : hovered.kind === "node"
+          ? ctx.custom.tooltip(
+              {
+                label: hovered.label,
+                items: [
+                  {
+                    legend: "Node",
+                    color: hovered.color,
+                    value: hovered.value,
+                  },
+                ],
+              },
+              ctx,
+            )
+          : ctx.custom.tooltip(
+              {
+                label: `${hovered.source} → ${hovered.target}`,
+                items: [
+                  {
+                    legend: "Flow",
+                    color: hovered.color,
+                    value: hovered.value,
+                  },
+                ],
+              },
+              ctx,
+            );
+
+    return Stack({
+      fit: StackFit.expand,
+      clipped: false,
+      children: [
+        SizedBox({
+          key: this.overlayKey,
+          width: Infinity,
+          height: Infinity,
+        }),
+        ctx.custom.tooltipArea({ tooltip, hovered }, ctx),
+      ],
+    });
   }
 
-	override build(context: BuildContext): Widget {
-		const ctx = SankeyChartProvider.of(context);
-		return ctx.custom.link(
-			{
-				source: this.#source,
-				target: this.#target,
-				value: this.#value,
-				sourceX: this.#sourceX,
-				sourceY: this.#sourceY,
-				sourceHeight: this.#sourceHeight,
-				targetX: this.#targetX,
-				targetY: this.#targetY,
-				targetHeight: this.#targetHeight,
-				color: this.#color,
-			},
-			ctx,
-		);
-	}
+  private resolveHoveredRect(context: BuildContext): SankeyHoveredRect | null {
+    const ctx = SankeyChartProvider.of(context);
+    const hoveredNode = ctx.hoveredNode;
+    const hoveredLink = ctx.hoveredLinkLayout;
+    if (hoveredNode == null && hoveredLink == null) return null;
+    const anchorKey =
+      hoveredNode != null ? ctx.hoveredNodeAnchorKey : ctx.hoveredLinkAnchorKey;
+    const rect =
+      anchorKey == null ? null : resolveOverlayRect(this.overlayKey, anchorKey);
+    if (rect == null) return null;
+
+    if (hoveredNode != null) {
+      return {
+        kind: "node",
+        id: hoveredNode.id,
+        label: hoveredNode.label,
+        color: hoveredNode.color,
+        value: hoveredNode.totalValue,
+        ...rect,
+      };
+    }
+
+    if (hoveredLink != null) {
+      return {
+        kind: "link",
+        source: hoveredLink.source,
+        target: hoveredLink.target,
+        color: hoveredLink.color,
+        value: hoveredLink.value,
+        ...rect,
+      };
+    }
+
+    return null;
+  }
 }
 
-class NodeLabelWidget extends StatelessWidget {
-  #id: string;
-  #label: string;
-  #x: number;
-  #y: number;
-  #width: number;
-  #height: number;
-  #column: number;
-  #totalColumns: number;
+class NodeWidget extends StatefulWidget {
+  #node: SankeyNodeLayout;
 
-  constructor(props: {
-    id: string;
-    label: string;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    column: number;
-    totalColumns: number;
-  }) {
+  constructor(node: SankeyNodeLayout) {
     super();
-    this.#id = props.id;
-    this.#label = props.label;
-    this.#x = props.x;
-    this.#y = props.y;
-    this.#width = props.width;
-    this.#height = props.height;
-    this.#column = props.column;
-    this.#totalColumns = props.totalColumns;
+    this.#node = node;
   }
 
-	override build(context: BuildContext): Widget {
-		const ctx = SankeyChartProvider.of(context);
-		return ctx.custom.nodeLabel(
-			{
-				id: this.#id,
-				label: this.#label,
-				x: this.#x,
-				y: this.#y,
-				width: this.#width,
-				height: this.#height,
-				column: this.#column,
-				totalColumns: this.#totalColumns,
-			},
-			ctx,
-		);
-	}
+  get node(): SankeyNodeLayout {
+    return this.#node;
+  }
+
+  createState() {
+    return new NodeWidgetState();
+  }
+}
+
+class NodeWidgetState extends State<NodeWidget> {
+  anchorKey = new GlobalKey();
+
+  override build(context: BuildContext): Widget {
+    const ctx = SankeyChartProvider.of(context);
+    const node = this.widget.node;
+    const isHovered = ctx.hoveredNodeId === node.id;
+    const isActive = ctx.isNodeActive(node.id);
+    const isDimmed = ctx.isNodeDimmed(node.id);
+    const labelWidget = ctx.custom.nodeLabel(
+      {
+        id: node.id,
+        label: node.label,
+        color: node.color,
+        value: node.totalValue,
+        isHovered,
+        isActive,
+        isDimmed,
+      },
+      ctx,
+    );
+
+    return GestureDetector({
+      key: this.anchorKey,
+      cursor: "default",
+      onMouseEnter: () => ctx.hoverNode(node.id, this.anchorKey),
+      onMouseLeave: () => ctx.unhoverNode(node.id),
+      child: ctx.custom.node(
+        {
+          id: node.id,
+          label: node.label,
+          color: node.color,
+          value: node.totalValue,
+          column: node.column,
+          totalColumns: ctx.layout.totalColumns,
+          labelWidget,
+          isHovered,
+          isActive,
+          isDimmed,
+        },
+        ctx,
+      ),
+    });
+  }
+}
+
+class LinkWidget extends StatefulWidget {
+  #link: SankeyLinkLayout;
+
+  constructor(link: SankeyLinkLayout) {
+    super();
+    this.#link = link;
+  }
+
+  get link(): SankeyLinkLayout {
+    return this.#link;
+  }
+
+  createState() {
+    return new LinkWidgetState();
+  }
+}
+
+class LinkWidgetState extends State<LinkWidget> {
+  anchorKey = new GlobalKey();
+
+  override build(context: BuildContext): Widget {
+    const ctx = SankeyChartProvider.of(context);
+    const link = this.widget.link;
+    const isHovered = ctx.isLinkHovered(link.source, link.target);
+    const isActive = ctx.isLinkActive(link.source, link.target);
+    const isDimmed = ctx.isLinkDimmed(link.source, link.target);
+    const labelWidget = ctx.custom.linkLabel(
+      {
+        source: link.source,
+        target: link.target,
+        value: link.value,
+        color: link.color,
+        isHovered,
+        isActive,
+        isDimmed,
+      },
+      ctx,
+    );
+
+    return GestureDetector({
+      cursor: "default",
+      child: Stack({
+        fit: StackFit.expand,
+        clipped: false,
+        children: [
+          CustomPaint({
+            painter: {
+              hitTest: (position, size) =>
+                isPointInPolygon(position, createRibbonPolygon(link, size)),
+              svg: {
+                createDefaultSvgEl: (paintContext) => ({
+                  group: paintContext.createSvgEl("g"),
+                }),
+                paint: () => {},
+              },
+              canvas: {
+                paint: () => {},
+              },
+            },
+            child: ctx.custom.link(
+              {
+                source: link.source,
+                target: link.target,
+                value: link.value,
+                color: link.color,
+                ribbon: link,
+                labelAnchor: {
+                  x: link.anchorX + link.anchorWidth / 2,
+                  y: link.anchorY + link.anchorHeight / 2,
+                },
+                labelWidget,
+                isHovered,
+                isActive,
+                isDimmed,
+              },
+              ctx,
+            ),
+          }),
+          Positioned.fill({
+            child: Align({
+              alignment: new Alignment({
+                x: (link.anchorX + link.anchorWidth / 2) * 2 - 1,
+                y: (link.anchorY + link.anchorHeight / 2) * 2 - 1,
+              }),
+              child: FractionallySizedBox({
+                widthFactor: link.anchorWidth,
+                heightFactor: link.anchorHeight,
+                child: SizedBox({
+                  key: this.anchorKey,
+                  width: Infinity,
+                  height: Infinity,
+                }),
+              }),
+            }),
+          }),
+        ],
+      }),
+      onMouseEnter: () => ctx.hoverLink(link.source, link.target, this.anchorKey),
+      onMouseLeave: () => ctx.unhoverLink(link.source, link.target),
+    });
+  }
 }

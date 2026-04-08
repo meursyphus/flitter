@@ -1,6 +1,6 @@
 # Flitter chart generation pack for LLMs
 
-Generated: 2026-04-07
+Generated: 2026-04-08
 
 Start here:
 
@@ -35,7 +35,6 @@ Chart family briefs:
 - /llm/chart/candlestick-chart.md
 - /llm/chart/donut-chart.md
 - /llm/chart/funnel-chart.md
-- /llm/chart/gauge-chart.md
 - /llm/chart/histogram-chart.md
 - /llm/chart/sankey-chart.md
 - /llm/chart/sunburst-chart.md

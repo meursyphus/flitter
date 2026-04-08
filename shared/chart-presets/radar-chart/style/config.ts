@@ -2,7 +2,7 @@ import { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "../../
 
 type AgRadarSharedConfig = Pick<
   AgCartesianBaseConfig,
-  "background" | "colors" | "font" | "title" | "subtitle" | "legend" | "padding" | "tooltip" | "axis"
+  "background" | "colors" | "font" | "title" | "subtitle" | "legend" | "padding" | "tooltip" | "axis" | "grid"
 >;
 
 export type AgRadarChartConfig = AgRadarSharedConfig & {
@@ -27,6 +27,7 @@ export const defaultAgConfig: AgRadarChartConfig = {
   padding: { ...defaultAgCartesianBaseConfig.padding, top: 36 },
   tooltip: defaultAgCartesianBaseConfig.tooltip,
   axis: defaultAgCartesianBaseConfig.axis,
+  grid: defaultAgCartesianBaseConfig.grid,
   radar: {
     fillOpacity: 0.3,
     strokeWidth: 2,

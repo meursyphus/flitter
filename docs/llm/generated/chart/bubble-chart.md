@@ -2,7 +2,7 @@
 
 Scatter chart with a third numeric value encoded by bubble size.
 
-Generated: 2026-04-07
+Generated: 2026-04-08
 
 ## Surface
 

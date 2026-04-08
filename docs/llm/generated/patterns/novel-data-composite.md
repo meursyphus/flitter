@@ -2,7 +2,7 @@
 
 Invent a new chart-like composition when the data story does not match any canonical family.
 
-Generated: 2026-04-07
+Generated: 2026-04-08
 
 ## Use When
 

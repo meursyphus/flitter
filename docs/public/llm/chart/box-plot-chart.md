@@ -2,7 +2,7 @@
 
 Show distribution through quartiles, whiskers, and optional outliers.
 
-Generated: 2026-04-07
+Generated: 2026-04-08
 
 ## Surface
 

@@ -173,8 +173,6 @@ Do not treat a chart as complete just because one style is complete.
 - [ ] `DonutChart / Toast` [![](screenshots/donut-toast.png)](https://nhn.github.io/tui.chart/latest/tutorial-example09-05-pie-chart-donut)
 - [x] `BulletChart / Ag` [![](screenshots/bullet-ag.png)](https://www.ag-grid.com/charts/gallery/simple-bullet/)
 - N/A `BulletChart / Toast` (Toast UI에 없음)
-- [ ] `GaugeChart / Ag` [![](screenshots/gauge-ag.png)](https://www.ag-grid.com/charts/gallery/simple-radial-gauge/)
-- [ ] `GaugeChart / Toast` [![](screenshots/gauge-toast.png)](https://nhn.github.io/tui.chart/latest/tutorial-example20-01-gauge-chart-basic)
 - [x] `HistogramChart / Ag` [![](screenshots/histogram-ag.png)](https://www.ag-grid.com/charts/gallery/histogram-with-specified-bins/)
 - N/A `HistogramChart / Toast` (Toast UI에 없음)
 - [ ] `SunburstChart / Ag` [![](screenshots/sunburst-ag.png)](https://www.ag-grid.com/charts/gallery/simple-sunburst/)

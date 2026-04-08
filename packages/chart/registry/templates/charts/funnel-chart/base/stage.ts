@@ -1,129 +1,169 @@
-import type { FunnelChartCustom } from "../types";
 import {
-  Alignment,
-  BorderRadius,
-  BoxDecoration,
-  Border,
-  BoxShadow,
-  Column,
-  Container,
-  EdgeInsets,
-  LayoutBuilder,
-  MainAxisSize,
-  Opacity,
-  Positioned,
-  Radius,
-  Row,
-  SizedBox,
-  Stack,
-  CrossAxisAlignment,
-  MainAxisAlignment,
-  type Widget,
+	LayoutBuilder,
+	Positioned,
+	SizedBox,
+	Stack,
+	StackFit,
+	type Widget,
 } from "flitter-core";
-import { HoverTooltip } from "@shared/interaction/hover-tooltip";
-import { agTooltipContent, defaultAgCartesianBaseConfig } from "@styles/ag";
+import type { FunnelChartCustom } from "../types";
+import { getVisualRatio } from "./utils";
 
-export function Stage(
-  ...args: Parameters<FunnelChartCustom["stage"]>
+type StageLayoutConfig = {
+	funnel: {
+		connectorSize: number;
+		minSegmentRatio: number;
+		labelGap: number;
+		labelColumnWidth: number;
+		labelBandSize: number;
+	};
+};
+
+export function Stage<TConfig extends StageLayoutConfig>(
+	...[stageArgs, ctx]: Parameters<FunnelChartCustom<TConfig>["stage"]>
 ): Widget {
-  const [{ index, label, value, ratio, color, stageLabel, dataLabel }, ctx] = args;
-  const hoveredIndex = ctx.hoveredIndex;
-  const isHovered = ctx.isStageHovered(index);
-  const activeOpacity = hoveredIndex == null || isHovered ? 1 : 0.3;
+	const { index, ratio, nextRatio, segment, connector } = stageArgs;
+	const { funnel } = ctx.config;
 
-  return SizedBox({
-    width: Infinity,
-    height: 40,
-    child: new HoverTooltip({
-      position: "topCenter",
-      tooltip: agTooltipContent({
-        label,
-        items: { legend: `Stage ${index + 1}`, color, value },
-        config: defaultAgCartesianBaseConfig,
-      }),
-      onMouseEnter: () => ctx.hoverStage(index),
-      onMouseLeave: () => ctx.unhoverStage(),
-      renderChild: (hovered) =>
-        LayoutBuilder({
-          builder: (_ctx, constraints) => {
-            const fullWidth = constraints.maxWidth;
-            const stageWidth = Math.max(fullWidth * Math.max(ratio, 0.05), 28);
-            const compact = stageWidth < 180;
-            const barLeft = (fullWidth - stageWidth) / 2;
-            const chipWidth = Math.min(180, Math.max(120, fullWidth * 0.28));
-            const chipLeft = Math.max(
-              0,
-              Math.min(fullWidth - chipWidth, barLeft + stageWidth + 8),
-            );
+	return LayoutBuilder({
+		builder: (_context, constraints) => {
+			if (ctx.direction === "vertical") {
+				return buildVerticalStage({
+					index,
+					stageCount: Math.max(ctx.stages.length, 1),
+					constraints,
+					funnel,
+					ratio,
+					nextRatio,
+					segment,
+					connector,
+				});
+			}
 
-            return Stack({
-              children: [
-                Positioned({
-                  left: barLeft,
-                  top: 0,
-                  child: Opacity({
-                    opacity: activeOpacity,
-                    child: Container({
-                      width: stageWidth,
-                      height: constraints.maxHeight,
-                      alignment: Alignment.center,
-                      decoration: new BoxDecoration({
-                        color,
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                        border: hovered
-                          ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
-                          : undefined,
-                        boxShadow: hovered
-                          ? [new BoxShadow({ color: "rgba(0,0,0,0.18)", blurRadius: 12 })]
-                          : undefined,
-                      }),
-                      child: compact
-                        ? undefined
-                        : Row({
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container({
-                                margin: EdgeInsets.only({ right: 8 }),
-                                child: stageLabel,
-                              }),
-                              dataLabel,
-                            ],
-                          }),
-                    }),
-                  }),
-                }),
-                compact
-                  ? Positioned({
-                      left: chipLeft,
-                      top: 2,
-                      child: Opacity({
-                        opacity: activeOpacity,
-                        child: Container({
-                          width: chipWidth,
-                          padding: EdgeInsets.symmetric({ horizontal: 10, vertical: 6 }),
-                          decoration: new BoxDecoration({
-                            color,
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                            boxShadow: hovered
-                              ? [new BoxShadow({ color: "rgba(0,0,0,0.18)", blurRadius: 10 })]
-                              : undefined,
-                          }),
-                          child: Column({
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              stageLabel,
-                              dataLabel,
-                            ],
-                          }),
-                        }),
-                      }),
-                    })
-                  : SizedBox.shrink(),
-              ],
-            });
-          },
-        }),
-    }),
-  });
+			return buildHorizontalStage({
+				index,
+				stageCount: Math.max(ctx.stages.length, 1),
+				constraints,
+				funnel,
+				ratio,
+				nextRatio,
+				segment,
+				connector,
+			});
+		},
+	});
+}
+
+function buildVerticalStage({
+	index,
+	stageCount,
+	constraints,
+	funnel,
+	ratio,
+	nextRatio,
+	segment,
+	connector,
+}: {
+	index: number;
+	stageCount: number;
+	constraints: { maxWidth: number; maxHeight: number };
+	funnel: StageLayoutConfig["funnel"];
+	ratio: number;
+	nextRatio: number | null;
+	segment: Widget;
+	connector: Widget | null;
+}): Widget {
+	const currentRatio = getVisualRatio(ratio, funnel.minSegmentRatio);
+	const nextVisualRatio =
+		nextRatio == null
+			? currentRatio
+			: getVisualRatio(nextRatio, funnel.minSegmentRatio);
+	const transitionRatio = Math.max(currentRatio, nextVisualRatio);
+	const connectorExtent = connector == null ? 0 : funnel.connectorSize;
+	const bandHeight = constraints.maxHeight / stageCount;
+	const top = bandHeight * index;
+	const segmentHeight = Math.max(0, bandHeight - connectorExtent);
+	const segmentWidth = constraints.maxWidth * currentRatio;
+	const connectorWidth = constraints.maxWidth * transitionRatio;
+	const segmentLeft = (constraints.maxWidth - segmentWidth) / 2;
+	const connectorLeft = (constraints.maxWidth - connectorWidth) / 2;
+
+	return Stack({
+		fit: StackFit.expand,
+		children: [
+			Positioned({
+				left: segmentLeft,
+				top,
+				width: segmentWidth,
+				height: segmentHeight,
+				child: segment,
+			}),
+			connector == null
+				? SizedBox.shrink()
+				: Positioned({
+						left: connectorLeft,
+						top: top + segmentHeight,
+						width: connectorWidth,
+						height: connectorExtent,
+						child: connector,
+				  }),
+		],
+	});
+}
+
+function buildHorizontalStage({
+	index,
+	stageCount,
+	constraints,
+	funnel,
+	ratio,
+	nextRatio,
+	segment,
+	connector,
+}: {
+	index: number;
+	stageCount: number;
+	constraints: { maxWidth: number; maxHeight: number };
+	funnel: StageLayoutConfig["funnel"];
+	ratio: number;
+	nextRatio: number | null;
+	segment: Widget;
+	connector: Widget | null;
+}): Widget {
+	const currentRatio = getVisualRatio(ratio, funnel.minSegmentRatio);
+	const nextVisualRatio =
+		nextRatio == null
+			? currentRatio
+			: getVisualRatio(nextRatio, funnel.minSegmentRatio);
+	const transitionRatio = Math.max(currentRatio, nextVisualRatio);
+	const connectorExtent = connector == null ? 0 : funnel.connectorSize;
+	const bandWidth = constraints.maxWidth / stageCount;
+	const left = bandWidth * index;
+	const segmentWidth = Math.max(0, bandWidth - connectorExtent);
+	const segmentHeight = constraints.maxHeight * currentRatio;
+	const connectorHeight = constraints.maxHeight * transitionRatio;
+	const segmentTop = (constraints.maxHeight - segmentHeight) / 2;
+	const connectorTop = (constraints.maxHeight - connectorHeight) / 2;
+
+	return Stack({
+		fit: StackFit.expand,
+		children: [
+			Positioned({
+				left,
+				top: segmentTop,
+				width: segmentWidth,
+				height: segmentHeight,
+				child: segment,
+			}),
+			connector == null
+				? SizedBox.shrink()
+				: Positioned({
+						left: left + segmentWidth,
+						top: connectorTop,
+						width: connectorExtent,
+						height: connectorHeight,
+						child: connector,
+				  }),
+		],
+	});
 }

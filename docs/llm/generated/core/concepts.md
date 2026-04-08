@@ -1,6 +1,6 @@
 # Core Concepts For Chart Authoring
 
-Generated: 2026-04-07
+Generated: 2026-04-08
 
 Use these when presets stop being enough or when you need to compose novel chart experiences directly with Flitter primitives.
 

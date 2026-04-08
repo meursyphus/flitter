@@ -6,11 +6,8 @@ export function toastPlot(
 	args: Parameters<RadarChartCustom<ToastRadarChartConfig>["plot"]>[0],
 	context: Parameters<RadarChartCustom<ToastRadarChartConfig>["plot"]>[1],
 ) {
-	return BasePlot<ToastRadarChartConfig>(
-		{
-			...args,
-			gap: Math.max(0, context.config.radar.labelMargin ?? 5),
-		},
-		context,
-	);
+	return BasePlot<ToastRadarChartConfig>({
+		...args,
+		gap: Math.max(0, context.config.radar.labelMargin ?? 5),
+	});
 }

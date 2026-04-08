@@ -43,7 +43,6 @@ const HEADLESS_SHIMS = {
   },
   "donut-chart": { symbol: "DonutChart", aliases: {} },
   "funnel-chart": { symbol: "FunnelChart", aliases: {} },
-  "gauge-chart": { symbol: "GaugeChart", aliases: {} },
   "heatmap-chart": { symbol: "HeatmapChart", aliases: {} },
   "histogram-chart": { symbol: "HistogramChart", aliases: {} },
   "line-chart": {

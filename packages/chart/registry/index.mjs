@@ -78,7 +78,6 @@ const presetCharts = [
 ];
 
 const standaloneCharts = [
-  { name: "sunburst-chart" },
 ];
 
 function pluginChartItem(chart, style, family) {
@@ -303,8 +302,6 @@ export const registryItems = [
   styledCopyChartItem("box-plot-chart", "toast", ["toast-base"]),
   styledCopyChartItem("donut-chart", "ag", ["ag-base"]),
   styledCopyChartItem("donut-chart", "toast", ["toast-base"]),
-  styledCopyChartItem("gauge-chart", "ag", ["ag-base"]),
-  styledCopyChartItem("gauge-chart", "toast", ["toast-base"]),
   styledCopyChartItem("histogram-chart", "ag", ["ag-base"]),
   styledCopyChartItem("histogram-chart", "toast", ["toast-base"]),
   styledCopyChartItem("waterfall-chart", "ag", ["ag-base"]),
@@ -317,6 +314,8 @@ export const registryItems = [
   styledCopyChartItem("sankey-chart", "toast", ["toast-base"]),
   styledCopyChartItem("treemap-chart", "ag", ["ag-base"]),
   styledCopyChartItem("treemap-chart", "toast", ["toast-base"]),
+  styledCopyChartItem("sunburst-chart", "ag", ["ag-base"]),
+  styledCopyChartItem("sunburst-chart", "toast", ["toast-base"]),
   styledCopyChartItem("bullet-chart", "ag", ["ag-base"]),
   styledCopyChartItem("bullet-chart", "toast", ["toast-base"]),
   ...standaloneCharts.map(({ name, registryDependencies }) =>

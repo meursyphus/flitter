@@ -4,7 +4,11 @@ import {
 	BuildContext,
 	ChangeNotifierProvider,
 } from "flitter-core";
-import type { SunburstChartCustom, SunburstChartData } from "./types";
+import type {
+	SunburstChartCustom,
+	SunburstChartData,
+	SunburstLegacyData,
+} from "./types";
 import { SunburstChartController } from "./controller";
 import Chart from "./chart";
 
@@ -16,7 +20,7 @@ export function SunburstChartProvider({
 	config = {},
 }: {
 	custom: SunburstChartCustom<any>;
-	data: SunburstChartData;
+	data: SunburstChartData | SunburstLegacyData;
 	config?: any;
 }): Widget {
 	return ChangeNotifierProvider({

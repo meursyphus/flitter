@@ -2,7 +2,7 @@
 
 Compare totals while preserving contribution by series inside each category.
 
-Generated: 2026-04-07
+Generated: 2026-04-08
 
 ## Surface
 

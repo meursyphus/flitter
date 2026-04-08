@@ -351,31 +351,6 @@
     ]
   },
   {
-    "id": "gauge-chart",
-    "title": "Single KPI with thresholds",
-    "prompt": "Show system health as a gauge with red, amber, and green threshold zones.",
-    "recommendedCharts": [
-      "gauge-chart"
-    ],
-    "pack": [
-      "/llm/chart.md",
-      "/llm/chart/gauge-chart.md"
-    ],
-    "mustAsk": [
-      "Is the min/max fixed?",
-      "Are threshold zones required and labeled?"
-    ],
-    "successCriteria": [
-      "Chooses gauge for a bounded KPI with zones",
-      "Does not use gauge when progress alone would do",
-      "Keeps the work inside the base wrapper unless radial behavior becomes custom"
-    ],
-    "criticFocus": [
-      "Did the reader skip threshold-zone semantics?",
-      "Did it choose gauge without a real bounded-range story?"
-    ]
-  },
-  {
     "id": "histogram-chart",
     "title": "Continuous latency distribution",
     "prompt": "Show the distribution of API latency so we can see whether values cluster or spread out.",
@@ -581,8 +556,7 @@
     "title": "Radial KPI composite",
     "prompt": "Create a radial KPI module with an overall completion donut, an inner status label, and threshold arcs around it for health.",
     "recommendedCharts": [
-      "donut-chart",
-      "gauge-chart"
+      "donut-chart"
     ],
     "pack": [
       "/llm/chart.md",
@@ -593,7 +567,7 @@
       "What does the center content need to express?"
     ],
     "successCriteria": [
-      "Uses donut and gauge ideas without pretending one canned chart solves everything",
+      "Uses donut plus custom threshold arcs without pretending one canned chart solves everything",
       "Separates radial layers semantically",
       "Escalates to custom composition only where needed"
     ],

@@ -1,6 +1,6 @@
 # Widget Catalog For Charting
 
-Generated: 2026-04-07
+Generated: 2026-04-08
 
 This is the chart-relevant Flitter widget list. Use it when leaving preset-only work and composing custom chart shells, overlays, or novel composites.
 

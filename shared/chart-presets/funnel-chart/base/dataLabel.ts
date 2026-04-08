@@ -1,13 +1,15 @@
 import type { FunnelChartCustom } from "../types";
 import { Text, TextStyle, type Widget } from "flitter-core";
 
-export function DataLabel(
-  ...[{ value, percentage }]: Parameters<FunnelChartCustom["dataLabel"]>
+export function DataLabel<TConfig extends { font: { family: string } }>(
+	...[{ value }, ctx]: Parameters<FunnelChartCustom<TConfig>["dataLabel"]>
 ): Widget {
-  return Text(`${value.toLocaleString()} (${percentage.toFixed(1)}%)`, {
-    style: new TextStyle({
-      fontSize: 11,
-      color: "rgba(255,255,255,0.85)",
-    }),
-  });
+	return Text(value.toLocaleString(), {
+		style: new TextStyle({
+			fontFamily: ctx.config.font.family,
+			fontSize: 12,
+			fontWeight: "600",
+			color: "white",
+		}),
+	});
 }

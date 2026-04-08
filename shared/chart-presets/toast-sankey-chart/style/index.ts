@@ -1,11 +1,22 @@
 import type { SankeyChartCustom } from "flitter-ui/chart";
-import { AnimatedScale, SizedBox } from "flitter-core";
+import { AnimatedScale } from "flitter-core";
 import type { SankeyChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import * as Base from "../base";
+import { toastTitle, tooltipContent } from "../../_styles/toast/index";
+import type { SankeyChartContext } from "flitter-ui/chart";
+import type { Widget } from "flitter-core";
+import { toastTooltipArea } from "./parts/tooltip-area";
 
 export { type SankeyChartConfig } from "./config";
+
+function toastTooltip(
+  args: { label: string; items: { legend: string; color: string; value: number | string }[] },
+  context: SankeyChartContext<SankeyChartConfig>,
+): Widget {
+  return tooltipContent({ label: args.label, items: args.items, config: context.config });
+}
 
 const toastCustom: Partial<SankeyChartCustom<SankeyChartConfig>> = {
   layout: Base.Layout,
@@ -23,7 +34,10 @@ const toastCustom: Partial<SankeyChartCustom<SankeyChartConfig>> = {
   },
   link: Base.Link,
   nodeLabel: Base.NodeLabel,
-  title: () => SizedBox.shrink(),
+  linkLabel: Base.LinkLabel,
+  title: toastTitle as any,
+  tooltip: toastTooltip,
+  tooltipArea: toastTooltipArea,
 };
 
 export const styleConfig = {

@@ -1,30 +1,36 @@
 import type { SankeyChartCustom } from "../types";
 import {
-  Stack,
+  Align,
+  Alignment,
+  FractionallySizedBox,
   Positioned,
-  SizedBox,
-  Flexible,
-  Column,
+  Stack,
+  StackFit,
 } from "flitter-core";
 
 export function DataView(
-  ...[{ nodes, links, nodeLabels }]: Parameters<SankeyChartCustom["dataView"]>
+  ...[{ nodes, links }]: Parameters<SankeyChartCustom["dataView"]>
 ) {
-  return Column({
+  return Stack({
+    fit: StackFit.expand,
+    clipped: false,
     children: [
-      Flexible({
-        flex: 1,
-        child: Stack({
-          children: [
-            // Links go first (behind nodes)
-            ...links.map((link) => Positioned.fill({ child: link })),
-            // Nodes on top
-            ...nodes.map((node) => Positioned.fill({ child: node })),
-            // Labels on top of everything
-            ...nodeLabels.map((label) => Positioned.fill({ child: label })),
-          ],
+      ...links.map((link) => Positioned.fill({ child: link })),
+      ...nodes.map((node) =>
+        Positioned.fill({
+          child: Align({
+            alignment: new Alignment({
+              x: (node.x + node.width / 2) * 2 - 1,
+              y: (node.top + node.height / 2) * 2 - 1,
+            }),
+            child: FractionallySizedBox({
+              widthFactor: node.width,
+              heightFactor: node.height,
+              child: node.widget,
+            }),
+          }),
         }),
-      }),
+      ),
     ],
   });
 }

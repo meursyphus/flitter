@@ -1,14 +1,9 @@
+import type { Widget } from "flitter-core";
 import type { FunnelChartCustom } from "../types";
-import { Column, Container, CrossAxisAlignment, type Widget } from "flitter-core";
+import { DataView } from "./data-view";
 
 export function Funnel(
-  ...[{ stages }]: Parameters<FunnelChartCustom["funnel"]>
+	...[{ stages }, ctx]: Parameters<FunnelChartCustom["funnel"]>
 ): Widget {
-  return Container({
-    width: Infinity,
-    child: Column({
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: stages,
-    }),
-  });
+	return DataView({ stages }, ctx);
 }

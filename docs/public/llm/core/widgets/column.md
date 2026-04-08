@@ -2,7 +2,7 @@
 
 Vertical layout primitive for chart shells, legends, and stacked panels.
 
-Generated: 2026-04-07
+Generated: 2026-04-08
 
 ## Use When
 

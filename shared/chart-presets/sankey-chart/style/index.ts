@@ -1,11 +1,21 @@
 import type { SankeyChartCustom } from "flitter-ui/chart";
-import { SizedBox } from "flitter-core";
 import type { SankeyChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import * as Base from "../base";
+import { agTitle, agTooltipContent } from "../../_styles/ag/index";
+import type { SankeyChartContext } from "flitter-ui/chart";
+import type { Widget } from "flitter-core";
+import { agTooltipArea } from "./parts/tooltip-area";
 
 export { type SankeyChartConfig } from "./config";
+
+function agTooltip(
+  args: { label: string; items: { legend: string; color: string; value: number | string }[] },
+  context: SankeyChartContext<SankeyChartConfig>,
+): Widget {
+  return agTooltipContent({ label: args.label, items: args.items, config: context.config });
+}
 
 const agCustom: Partial<SankeyChartCustom<SankeyChartConfig>> = {
   layout: Base.Layout,
@@ -13,7 +23,10 @@ const agCustom: Partial<SankeyChartCustom<SankeyChartConfig>> = {
   node: Base.Node,
   link: Base.Link,
   nodeLabel: Base.NodeLabel,
-  title: Base.Title,
+  linkLabel: Base.LinkLabel,
+  title: agTitle as any,
+  tooltip: agTooltip,
+  tooltipArea: agTooltipArea,
 };
 
 export const styleConfig = {

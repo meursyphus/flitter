@@ -4,10 +4,13 @@ import {
   Container,
   CrossAxisAlignment,
   EdgeInsets,
+  Flexible,
+  Stack,
+  StackFit,
 } from "flitter-core";
 
 export function Layout(
-  ...[{ title, dataView }, config]: Parameters<SankeyChartCustom["layout"]>
+  ...[{ title, dataView, tooltipArea }]: Parameters<SankeyChartCustom["layout"]>
 ) {
   return Container({
     padding: EdgeInsets.only({
@@ -18,7 +21,17 @@ export function Layout(
     }),
     child: Column({
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [title, dataView],
+      children: [
+        title,
+        Flexible({
+          flex: 1,
+          child: Stack({
+            fit: StackFit.expand,
+            clipped: false,
+            children: [dataView, tooltipArea],
+          }),
+        }),
+      ],
     }),
   });
 }

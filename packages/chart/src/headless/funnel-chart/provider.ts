@@ -4,7 +4,11 @@ import {
 	BuildContext,
 	ChangeNotifierProvider,
 } from "flitter-core";
-import type { FunnelChartCustom, FunnelChartData } from "./types";
+import type {
+	FunnelChartCustom,
+	FunnelChartData,
+	FunnelChartDirection,
+} from "./types";
 import { FunnelChartController } from "./controller";
 import Chart from "./chart";
 
@@ -13,10 +17,12 @@ const FUNNEL_CHART_KEY = Symbol("FunnelChartKey");
 export function FunnelChartProvider({
 	custom,
 	data,
+	direction = "vertical",
 	config = {},
 }: {
 	custom: FunnelChartCustom<any>;
 	data: FunnelChartData;
+	direction?: FunnelChartDirection;
 	config?: any;
 }): Widget {
 	return ChangeNotifierProvider({
@@ -25,12 +31,14 @@ export function FunnelChartProvider({
 			new FunnelChartController({
 				data,
 				custom,
+				direction,
 				config,
 			}),
 		update: (notifier) => {
 			const controller = notifier as FunnelChartController;
 			controller.data = data;
 			controller.custom = custom;
+			controller.direction = direction;
 			controller.config = config;
 		},
 		child: new Chart(),

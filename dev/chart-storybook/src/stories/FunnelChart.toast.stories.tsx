@@ -25,8 +25,38 @@ const conversionData = {
   ],
 };
 
+function ToastFunnelStory({
+  args,
+  data,
+  title,
+  direction = "horizontal",
+}: {
+  args: StoryArgs;
+  data: typeof salesData;
+  title: string;
+  direction?: "vertical" | "horizontal";
+}) {
+  return (
+    <Widget
+      widget={ToastFunnelChart({
+        data,
+        direction,
+        config: {
+          title: {
+            text: title,
+            alignment: "center",
+          },
+        },
+      })}
+      width="720px"
+      height="420px"
+      renderer={args.renderer}
+    />
+  );
+}
+
 const meta: Meta<StoryArgs> = {
-  title: "NEXT/FunnelChart/Toast",
+  title: "Charts/FunnelChart/Toast",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {
@@ -39,12 +69,31 @@ type Story = StoryObj<StoryArgs>;
 
 export const SalesPipeline: Story = {
   render: (args) => (
-    <Widget widget={ToastFunnelChart({ data: salesData })} width="620px" height="420px" renderer={args.renderer} />
+    <ToastFunnelStory
+      args={args}
+      data={salesData}
+      title="Enterprise Sales Pipeline Performance"
+    />
   ),
 };
 
 export const ConversionRates: Story = {
   render: (args) => (
-    <Widget widget={ToastFunnelChart({ data: conversionData })} width="620px" height="420px" renderer={args.renderer} />
+    <ToastFunnelStory
+      args={args}
+      data={conversionData}
+      title="Conversion Drop Off"
+    />
+  ),
+};
+
+export const HorizontalPipeline: Story = {
+  render: (args) => (
+    <ToastFunnelStory
+      args={args}
+      data={salesData}
+      title="Enterprise Sales Pipeline Performance"
+      direction="horizontal"
+    />
   ),
 };

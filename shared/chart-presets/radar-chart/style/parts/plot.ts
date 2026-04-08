@@ -6,11 +6,8 @@ export function agPlot(
 	args: Parameters<RadarChartCustom<AgRadarChartConfig>["plot"]>[0],
 	context: Parameters<RadarChartCustom<AgRadarChartConfig>["plot"]>[1],
 ) {
-	return BasePlot<AgRadarChartConfig>(
-		{
-			...args,
-			gap: Math.max(0, (context.config.radar.labelMargin ?? 20) / 2),
-		},
-		context,
-	);
+	return BasePlot<AgRadarChartConfig>({
+		...args,
+		gap: Math.max(0, (context.config.radar.labelMargin ?? 20) / 2),
+	});
 }

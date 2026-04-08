@@ -1,39 +1,43 @@
 import type { Widget } from "flitter-core";
-import HeadlessSunburstChart from "@headless/sunburst-chart";
-import type { SunburstChartCustom, SunburstChartData } from "./types";
-import * as Base from "./base";
+import { BaseSunburstChart } from "./base";
+import type {
+	SunburstChartCustom,
+	SunburstChartData,
+	SunburstLegacyData,
+} from "./base";
+import { styleConfig, type SunburstChartConfig } from "./style";
+import type { DeepPartial } from "@utils/index";
 
 export type {
-  SunburstChartContext,
-  SunburstChartNode,
-  SunburstChartData,
-  SunburstChartCustom,
-  FlatSegment,
-  SunburstNode,
-  SunburstCustom,
-} from "./types";
-export { SunburstChartController } from "./types";
+	SunburstChartContext,
+	SunburstChartNode,
+	SunburstChartData,
+	SunburstLegacyData,
+	SunburstResolvedNode,
+	SunburstResolvedData,
+	SunburstChartCustom,
+	SunburstChartSegmentArgs,
+	SunburstChartSegment,
+	HoveredSunburstSegment,
+	FlatSegment,
+	SunburstNode,
+	SunburstCustom,
+} from "./base";
+export { SunburstChartController } from "./base";
+export { type SunburstChartConfig } from "./style";
 
-const baseDefaults: Partial<SunburstChartCustom> = {
-  layout: Base.Layout,
-  title: Base.Title,
-  legend: Base.Legend,
-  legendItem: Base.LegendItem,
-  sunburst: Base.Sunburst,
-  segment: Base.Segment,
-  dataLabel: Base.DataLabel,
-};
-
-export default function SunburstChart<TConfig = {}>({
-  custom,
-  ...rest
+export default function SunburstChart({
+	data,
+	config,
+	custom,
 }: {
-  custom?: Partial<SunburstChartCustom<TConfig>>;
-  data: SunburstChartData;
-  config?: TConfig;
+	custom?: Partial<SunburstChartCustom<SunburstChartConfig>>;
+	data: SunburstChartData | SunburstLegacyData;
+	config?: DeepPartial<SunburstChartConfig>;
 }): Widget {
-  return HeadlessSunburstChart({
-    ...rest,
-    custom: { ...baseDefaults, ...custom } as SunburstChartCustom<TConfig>,
-  });
+	return BaseSunburstChart({
+		data,
+		config: styleConfig.createConfig(config),
+		custom: { ...styleConfig.custom, ...custom } as SunburstChartCustom<SunburstChartConfig>,
+	});
 }
