@@ -308,8 +308,6 @@ export const registryItems = [
   styledCopyChartItem("waterfall-chart", "toast", ["toast-base"]),
   styledCopyChartItem("candlestick-chart", "ag", ["ag-base"]),
   styledCopyChartItem("candlestick-chart", "toast", ["toast-base"]),
-  styledCopyChartItem("funnel-chart", "ag", ["ag-base"]),
-  styledCopyChartItem("funnel-chart", "toast", ["toast-base"]),
   styledCopyChartItem("sankey-chart", "ag", ["ag-base"]),
   styledCopyChartItem("sankey-chart", "toast", ["toast-base"]),
   styledCopyChartItem("treemap-chart", "ag", ["ag-base"]),

@@ -38,7 +38,6 @@ export { type ToastHeatmapChartConfig } from "./heatmap-chart";
 export { default as BoxPlotChart } from "./box-plot-chart";
 export { default as CandlestickChart } from "./candlestick-chart";
 export { default as DonutChart } from "./donut-chart";
-export { default as FunnelChart } from "./funnel-chart";
 export { default as HistogramChart } from "./histogram-chart";
 export { default as TreemapChart } from "./treemap-chart";
 export { default as SankeyChart } from "./sankey-chart";

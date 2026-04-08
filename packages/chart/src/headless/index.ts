@@ -146,20 +146,6 @@ export type {
 } from "./waterfall-chart/types";
 export { WaterfallChartController } from "./waterfall-chart/controller";
 
-export { default as FunnelChart } from "./funnel-chart";
-export { FunnelChartProvider } from "./funnel-chart/provider";
-export type {
-	FunnelChartContext,
-	FunnelChartStage,
-	FunnelChartStageView,
-	FunnelChartHoveredStage,
-	FunnelChartHoveredStageRect,
-	FunnelChartData,
-	FunnelChartCustom,
-	FunnelChartDirection,
-} from "./funnel-chart/types";
-export { FunnelChartController } from "./funnel-chart/controller";
-
 export { default as TreemapChart } from "./treemap-chart";
 export { TreemapChartProvider } from "./treemap-chart/provider";
 export type {
