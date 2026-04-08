@@ -1,17 +1,8 @@
-import {
-	Stack,
-	StackFit,
-	type Widget,
-} from "flitter-core";
+import { SizedBox, type Widget } from "flitter-core";
 import type { RadarChartCustom } from "@headless/radar-chart/types";
 
-export function RadialAxis(
-	...[{ line, labels: _labels }]: Parameters<RadarChartCustom["radialAxis"]>
+export function RadialAxis<TConfig = {}>(
+	...[{ labels }]: Parameters<RadarChartCustom<TConfig>["radialAxis"]>
 ): Widget {
-	// Default: just render the concentric polygons.
-	// Scale labels are not shown by default (toast overrides radialAxisLabel to hide them).
-	return Stack({
-		fit: StackFit.expand,
-		children: [line],
-	});
+	return labels.length > 0 ? SizedBox.expand() : SizedBox.shrink();
 }

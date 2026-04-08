@@ -872,72 +872,6 @@ export const chartFamilies = [
     },
   }),
   chart({
-    slug: "combo-chart",
-    title: "Combo Chart",
-    importName: "ComboChart",
-    category: "hybrid",
-    surface: "base-wrapper",
-    supportedStyles: [],
-    supportsStyleArg: false,
-    summary: "Combine bars, lines, and areas, optionally with primary and secondary axes.",
-    useWhen: [
-      "The request explicitly mixes chart mark types",
-      "Different series need different encodings",
-      "A secondary axis is materially useful",
-    ],
-    avoidWhen: [
-      "A single chart family would explain the data more clearly",
-      "The second axis would obscure rather than clarify interpretation",
-    ],
-    askBeforeCoding: [
-      "Which datasets are bars, lines, or areas?",
-      "Does any dataset truly require a secondary axis?",
-      "Would linked small multiples communicate the story better than one hybrid chart?",
-    ],
-    implementationNotes: [
-      "Use chart-presets ComboChart as a composition-ready base wrapper.",
-      "Do not jump to combo unless the prompt genuinely needs mixed marks.",
-      "Secondary axis usage should be justified, not automatic.",
-    ],
-    overrideSurface: [
-      "bar / line / area: customize each mark family independently",
-      "yAxis2: own the secondary-axis shell",
-      "dataView: control layering order",
-      "linePoint / dataLabel: annotate critical hybrid signals",
-    ],
-    escapeHatch:
-      "Go headless when the hybrid behavior needs cross-series coordination, novel overlays, or interaction beyond the base wrapper.",
-    dataShape: `{
-  labels: ["Jan", "Feb", "Mar", "Apr"],
-  datasets: [
-    { legend: "Revenue", type: "bar", values: [120, 142, 136, 168], yAxisId: "primary" },
-    { legend: "Margin", type: "line", values: [28, 31, 30, 34], yAxisId: "secondary" }
-  ]
-}`,
-    sourcePaths: [
-      "shared/chart-presets/charts/combo-chart",
-      "packages/chart/src/headless/combo-chart",
-    ],
-    evaluation: {
-      title: "Revenue plus margin hybrid chart",
-      prompt:
-        "Show revenue as bars and margin as a line on the same chart. Margin may need a secondary axis.",
-      mustAsk: [
-        "Does margin truly require a secondary axis?",
-        "Which series types belong to which datasets?",
-      ],
-      successCriteria: [
-        "Chooses combo only because mixed marks are explicit",
-        "Explains the secondary-axis tradeoff",
-        "Uses the base wrapper rather than inventing a themed preset",
-      ],
-      criticFocus: [
-        "Did the reader overuse a secondary axis?",
-        "Did it ignore the mixed-mark requirement?",
-      ],
-    },
-  }),
-  chart({
     slug: "donut-chart",
     title: "Donut Chart",
     importName: "DonutChart",
@@ -1071,72 +1005,6 @@ export const chartFamilies = [
     },
   }),
   chart({
-    slug: "gantt-chart",
-    title: "Gantt Chart",
-    importName: "GanttChart",
-    category: "timeline",
-    surface: "base-wrapper",
-    supportedStyles: [],
-    supportsStyleArg: false,
-    summary: "Visualize tasks across time with optional dependencies and progress.",
-    useWhen: [
-      "The data is task start/end over a shared timeline",
-      "Task duration and overlap matter",
-      "Dependencies or milestones may matter",
-    ],
-    avoidWhen: [
-      "The prompt is about aggregated progress only",
-      "There is no real time range per task",
-    ],
-    askBeforeCoding: [
-      "What time unit should the x-axis use?",
-      "Do we need progress bars, milestones, dependencies, or group rows?",
-      "Should the layout prioritize schedule density or readability?",
-    ],
-    implementationNotes: [
-      "Use chart-presets GanttChart as a base wrapper.",
-      "Time scale and dependency rendering are the first constraints to clarify.",
-      "If the layout becomes a true project board, consider direct composition or a novel pattern.",
-    ],
-    overrideSurface: [
-      "taskBar / milestone / dependency: own timeline marks",
-      "xAxis: control time labeling",
-      "yAxisLabel: control task row labeling",
-      "dataView / layout: reshape the entire schedule view",
-    ],
-    escapeHatch:
-      "Go headless if scheduling logic, grouped swimlanes, or dependency routing exceed the base wrapper.",
-    dataShape: `{
-  tasks: [
-    { id: "design", label: "Design", start: 0, end: 4, progress: 1 },
-    { id: "build", label: "Build", start: 3, end: 10, progress: 0.6, dependencies: ["design"] },
-    { id: "qa", label: "QA", start: 9, end: 12, progress: 0.2, dependencies: ["build"] }
-  ]
-}`,
-    sourcePaths: [
-      "shared/chart-presets/charts/gantt-chart",
-      "packages/chart/src/headless/gantt-chart",
-    ],
-    evaluation: {
-      title: "Project plan timeline",
-      prompt:
-        "Render a project timeline with task durations and dependencies so we can see overlap and sequence at a glance.",
-      mustAsk: [
-        "What time unit should the x-axis use?",
-        "Do dependencies and progress need to be visible?",
-      ],
-      successCriteria: [
-        "Chooses gantt instead of bar or line",
-        "Calls out time-unit and dependency questions",
-        "Uses the base wrapper unless the layout becomes highly custom",
-      ],
-      criticFocus: [
-        "Did the reader flatten the tasks into a bar chart?",
-        "Did it skip dependency requirements?",
-      ],
-    },
-  }),
-  chart({
     slug: "gauge-chart",
     title: "Gauge Chart",
     importName: "GaugeChart",
@@ -1265,210 +1133,6 @@ export const chartFamilies = [
       criticFocus: [
         "Did the reader confuse histogram with categorical bar chart?",
         "Did it ignore the binning question?",
-      ],
-    },
-  }),
-  chart({
-    slug: "network-chart",
-    title: "Network Chart",
-    importName: "NetworkChart",
-    category: "diagram",
-    surface: "base-wrapper",
-    supportedStyles: [],
-    supportsStyleArg: false,
-    summary: "Render nodes and edges with controller-owned spatial layout.",
-    useWhen: [
-      "The data is a graph of nodes and relationships",
-      "Connectivity matters more than a strict x/y axis",
-      "The request sounds like topology, dependency, or relationship mapping",
-    ],
-    avoidWhen: [
-      "A sankey or treemap would explain weighted flow or area better",
-      "The layout must be editor-like and highly interactive from the start",
-    ],
-    askBeforeCoding: [
-      "Should layout be deterministic or force-directed?",
-      "Do node size, group, or edge weight matter visually?",
-      "How dense can labels be before they need hover-only treatment?",
-    ],
-    implementationNotes: [
-      "Use chart-presets NetworkChart as a base wrapper.",
-      "This is controller-owned layout territory, so source-path honesty matters.",
-      "If the chart is drifting toward a node editor, stop pretending it is just a chart.",
-    ],
-    overrideSurface: [
-      "node / edge / nodeLabel: own the visible graph marks",
-      "network: control layering order",
-      "legend: explain grouping if group colors matter",
-      "layout: reshape the overall shell around the graph",
-    ],
-    escapeHatch:
-      "Go headless or direct-flitter if the graph becomes a full interactive diagram surface.",
-    dataShape: `{
-  nodes: [
-    { id: "api", label: "API", group: "backend", size: 2 },
-    { id: "worker", label: "Worker", group: "backend", size: 1 },
-    { id: "db", label: "DB", group: "storage", size: 3 }
-  ],
-  edges: [
-    { source: "api", target: "worker", weight: 2 },
-    { source: "worker", target: "db", weight: 1 }
-  ]
-}`,
-    sourcePaths: [
-      "shared/chart-presets/charts/network-chart",
-      "packages/chart/src/headless/network-chart",
-    ],
-    evaluation: {
-      title: "Service dependency graph",
-      prompt:
-        "Visualize service dependencies as nodes and edges so engineers can see relationship topology at a glance.",
-      mustAsk: [
-        "Should layout be deterministic or more organic?",
-        "Do group or weight semantics need encoding?",
-      ],
-      successCriteria: [
-        "Chooses network rather than scatter or sankey",
-        "Recognizes layout is controller-owned",
-        "Names the point where this would become a diagram tool instead of a chart",
-      ],
-      criticFocus: [
-        "Did the reader force graph data into scatter coordinates?",
-        "Did it ignore layout semantics?",
-      ],
-    },
-  }),
-  chart({
-    slug: "polar-area-chart",
-    title: "Polar Area Chart",
-    importName: "PolarAreaChart",
-    category: "polar",
-    surface: "base-wrapper",
-    supportedStyles: [],
-    supportsStyleArg: false,
-    summary: "Use equal-angle sectors with radial magnitude rather than slice angle for value.",
-    useWhen: [
-      "Categories share equal angular space but differ by radial magnitude",
-      "The request sounds like pie-like categories with varying radius",
-      "Relative category magnitude matters more than exact proportion angle",
-    ],
-    avoidWhen: [
-      "A pie or donut would better communicate pure composition",
-      "A radar chart would better communicate multi-axis profiles",
-    ],
-    askBeforeCoding: [
-      "Is radial magnitude really more meaningful than angle-based composition?",
-      "Do we need explicit scale rings or only the sectors?",
-      "Would pie or radar be easier to read for this audience?",
-    ],
-    implementationNotes: [
-      "Use chart-presets PolarAreaChart as a base wrapper that reuses pie-style visuals.",
-      "Explain why this is not a pie chart; otherwise the user may just want donut or pie.",
-      "Keep the scale semantics explicit.",
-    ],
-    overrideSurface: [
-      "sector: own the radial sector rendering",
-      "scale: add or refine radial guide rings",
-      "legend / title: explain category meaning",
-      "dataView: manage sector layering with scale backdrop",
-    ],
-    escapeHatch:
-      "Go headless if the radial scale, layering, or composite interaction exceeds the base wrapper.",
-    dataShape: `{
-  datasets: [
-    { name: "North", value: 18 },
-    { name: "South", value: 12 },
-    { name: "West", value: 22 },
-    { name: "East", value: 15 }
-  ]
-}`,
-    sourcePaths: [
-      "shared/chart-presets/charts/polar-area-chart",
-      "packages/chart/src/headless/polar-area-chart",
-    ],
-    evaluation: {
-      title: "Equal-angle radial category chart",
-      prompt:
-        "Show four regions with equal-angle sectors but different radial reach so the audience compares category magnitude radially, not by slice angle.",
-      mustAsk: [
-        "Is radial magnitude truly the intended encoding?",
-        "Do scale rings need to be visible?",
-      ],
-      successCriteria: [
-        "Chooses polar area only when its radial semantics are explicit",
-        "Explains why pie or radar are not the same thing",
-        "Uses the base wrapper as the starting point",
-      ],
-      criticFocus: [
-        "Did the reader collapse polar area into pie?",
-        "Did it ignore scale semantics?",
-      ],
-    },
-  }),
-  chart({
-    slug: "progress-chart",
-    title: "Progress Chart",
-    importName: "ProgressChart",
-    category: "kpi",
-    surface: "base-wrapper",
-    supportedStyles: [],
-    supportsStyleArg: false,
-    summary: "Linear progress track for a single value or segmented completion state.",
-    useWhen: [
-      "The prompt is bounded completion or progress",
-      "A simple track reads better than a gauge",
-      "The data is a single KPI or segmented completion breakdown",
-    ],
-    avoidWhen: [
-      "Multiple categorical comparisons are needed",
-      "The user actually needs a gauge with zones or a donut with center summary",
-    ],
-    askBeforeCoding: [
-      "Is this a single value or segmented progress?",
-      "What is the max or target value?",
-      "Do segment labels live on-track, off-track, or only in surrounding text?",
-    ],
-    implementationNotes: [
-      "Use chart-presets ProgressChart as a base wrapper.",
-      "Gauge is not the default; choose progress when a linear bounded track is clearer.",
-      "Segmented progress often drifts toward composite scorecards, so watch scope creep.",
-    ],
-    overrideSurface: [
-      "track / fill: own the progress body",
-      "segmentLabel: control per-segment text",
-      "valueLabel: summarize completion clearly",
-      "layout: pair the track with contextual labels or KPIs",
-    ],
-    escapeHatch:
-      "Go headless or direct composition if the progress track becomes part of a richer scorecard or dashboard module.",
-    dataShape: `{
-  segments: [
-    { label: "Complete", value: 64, color: "#06d6a0" },
-    { label: "In Review", value: 20, color: "#ffd166" },
-    { label: "Blocked", value: 16, color: "#ef476f" }
-  ],
-  max: 100
-}`,
-    sourcePaths: [
-      "shared/chart-presets/charts/progress-chart",
-      "packages/chart/src/headless/progress-chart",
-    ],
-    evaluation: {
-      title: "Segmented delivery completion",
-      prompt:
-        "Show completion across Complete, In Review, and Blocked on one bounded track.",
-      mustAsk: [
-        "Is this single-value or segmented progress?",
-        "What is the max or target?",
-      ],
-      successCriteria: [
-        "Chooses progress rather than gauge",
-        "Calls out segmented-vs-single mode",
-        "Uses the base wrapper as the start point",
-      ],
-      criticFocus: [
-        "Did the reader choose gauge when a track is enough?",
-        "Did it ignore the target/max question?",
       ],
     },
   }),
@@ -1766,7 +1430,7 @@ export const novelPatterns = [
       "packages/core/src/provider",
       "shared/chart-presets/charts",
     ],
-    relatedCharts: ["bar-chart", "line-chart", "heatmap-chart", "progress-chart"],
+    relatedCharts: ["bar-chart", "line-chart", "heatmap-chart"],
   },
   {
     slug: "linked-hover-and-filter",
@@ -1787,7 +1451,7 @@ export const novelPatterns = [
       "packages/core/src/component/GestureDetector.ts",
       "packages/chart/src/headless",
     ],
-    relatedCharts: ["scatter-chart", "bar-chart", "heatmap-chart", "network-chart"],
+    relatedCharts: ["scatter-chart", "bar-chart", "heatmap-chart"],
   },
   {
     slug: "controller-owned-layout",
@@ -1805,11 +1469,10 @@ export const novelPatterns = [
     ],
     sourcePaths: [
       "packages/chart/src/headless/sankey-chart",
-      "packages/chart/src/headless/network-chart",
       "packages/chart/src/headless/sunburst-chart",
       "packages/chart/src/headless/treemap-chart",
     ],
-    relatedCharts: ["sankey-chart", "network-chart", "sunburst-chart", "treemap-chart"],
+    relatedCharts: ["sankey-chart", "sunburst-chart", "treemap-chart"],
   },
   {
     slug: "scorecard-composite",
@@ -1830,12 +1493,12 @@ export const novelPatterns = [
       "dev/llm-playground",
       "docs/public/llm/critic-checklist.md",
     ],
-    relatedCharts: ["progress-chart", "bar-chart"],
+    relatedCharts: ["bar-chart"],
   },
   {
     slug: "radial-kpi-composite",
     title: "Radial KPI Composite",
-    summary: "Combine donut, gauge, progress, and custom paint ideas into one radial KPI experience.",
+    summary: "Combine donut, gauge, and custom paint ideas into one radial KPI experience.",
     useWhen: [
       "The prompt asks for multiple bounded metrics in a radial arrangement",
       "A simple donut or gauge is not enough on its own",
@@ -1851,7 +1514,7 @@ export const novelPatterns = [
       "shared/chart-presets/charts/gauge-chart",
       "packages/core/src/component/CustomPaint.ts",
     ],
-    relatedCharts: ["donut-chart", "gauge-chart", "progress-chart", "polar-area-chart"],
+    relatedCharts: ["donut-chart", "gauge-chart"],
   },
   {
     slug: "novel-data-composite",

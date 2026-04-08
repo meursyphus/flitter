@@ -33,7 +33,7 @@ const skillData = {
 };
 
 const meta: Meta<RadarChartArgs> = {
-	title: "In-Review/RadarChart/Ag",
+	title: "Charts/RadarChart/Ag",
 	parameters: { layout: "centered" },
 	argTypes: {
 		renderer: { control: "inline-radio", options: ["svg", "canvas"] },
@@ -51,7 +51,7 @@ const meta: Meta<RadarChartArgs> = {
 		renderer: "svg",
 		title: "Developer Skills",
 		titlePlacement: "top-start",
-		legendVisible: true,
+		legendVisible: false,
 		legendPosition: "right-top",
 		legendGap: 16,
 		fillOpacity: 0.3,

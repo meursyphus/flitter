@@ -2,7 +2,7 @@
 
 Show sequential stage dropoff and conversion through a funnel.
 
-Generated: 2026-03-30
+Generated: 2026-04-07
 
 ## Surface
 

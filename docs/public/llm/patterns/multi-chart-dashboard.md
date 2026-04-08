@@ -2,7 +2,7 @@
 
 Compose multiple charts in one screen when one chart family cannot carry the whole story.
 
-Generated: 2026-03-30
+Generated: 2026-04-07
 
 ## Use When
 
@@ -21,7 +21,6 @@ Generated: 2026-03-30
 - `bar-chart`
 - `line-chart`
 - `heatmap-chart`
-- `progress-chart`
 
 ## Source Paths
 

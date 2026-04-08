@@ -49,6 +49,5 @@ Headless.SankeyChart({
 
 Use the same controller-first approach for:
 
-- `NetworkChart`
 - `TreemapChart`
 - `SunburstChart`

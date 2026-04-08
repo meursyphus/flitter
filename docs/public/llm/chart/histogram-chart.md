@@ -2,7 +2,7 @@
 
 Show numeric distribution by bins rather than individual raw points.
 
-Generated: 2026-03-30
+Generated: 2026-04-07
 
 ## Surface
 

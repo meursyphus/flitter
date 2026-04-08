@@ -1,29 +1,41 @@
 import { ChangeNotifier } from "flitter-core";
-import type { RadarChartCustom, RadarChartData, RadarChartScale, GetScaleFn } from "./types";
+import type {
+	HoveredRadar,
+	HoveredRadarPoint,
+	RadarChartCustom,
+	RadarChartData,
+	RadarChartScale,
+	RadarVertex,
+	GetScaleFn,
+} from "./types";
+import { computeRadarVertices, getRadarAnchorPoint } from "./geometry";
 
-export class RadarChartController extends ChangeNotifier {
+export class RadarChartController<TConfig extends object = {}> extends ChangeNotifier {
 	#rawData: RadarChartData;
 	#hiddenSeries: Set<string> = new Set();
-	#hoveredRadar: { index: number; legend: string } | null = null;
+	#hoveredRadar: HoveredRadar | null = null;
+	#hoveredPoint: HoveredRadarPoint | null = null;
 	#scale: RadarChartScale | null = null;
 	#getScale: GetScaleFn;
 	#width: number = 0;
 	#height: number = 0;
+	#plotWidth: number = 0;
+	#plotHeight: number = 0;
 
 	// static config
-	custom!: RadarChartCustom<any>;
-	config: any;
+	custom!: RadarChartCustom<TConfig>;
+	config: TConfig;
 
 	constructor({
 		data,
 		getScale,
 		custom,
-		config = {},
+		config = {} as TConfig,
 	}: {
 		data: RadarChartData;
 		getScale: GetScaleFn;
-		custom: RadarChartCustom<any>;
-		config?: any;
+		custom: RadarChartCustom<TConfig>;
+		config?: TConfig;
 	}) {
 		super();
 		this.#rawData = data;
@@ -44,6 +56,8 @@ export class RadarChartController extends ChangeNotifier {
 	set data(value: RadarChartData) {
 		this.#rawData = value;
 		this.#recalcScale();
+		this.#normalizeHoveredRadar();
+		this.#normalizeHoveredPoint();
 		this.notifyListeners();
 	}
 
@@ -77,6 +91,21 @@ export class RadarChartController extends ChangeNotifier {
 		this.notifyListeners();
 	}
 
+	get plotWidth(): number {
+		return this.#plotWidth;
+	}
+
+	get plotHeight(): number {
+		return this.#plotHeight;
+	}
+
+	setPlotSize(width: number, height: number): void {
+		if (this.#plotWidth === width && this.#plotHeight === height) return;
+		this.#plotWidth = width;
+		this.#plotHeight = height;
+		this.notifyListeners();
+	}
+
 	// --- scale ---
 
 	get scale(): RadarChartScale | null {
@@ -100,6 +129,8 @@ export class RadarChartController extends ChangeNotifier {
 			this.#hiddenSeries.add(legend);
 		}
 		this.#recalcScale();
+		this.#normalizeHoveredRadar();
+		this.#normalizeHoveredPoint();
 		this.notifyListeners();
 	}
 
@@ -107,6 +138,8 @@ export class RadarChartController extends ChangeNotifier {
 		if (!this.#hiddenSeries.has(legend)) return;
 		this.#hiddenSeries.delete(legend);
 		this.#recalcScale();
+		this.#normalizeHoveredRadar();
+		this.#normalizeHoveredPoint();
 		this.notifyListeners();
 	}
 
@@ -114,6 +147,8 @@ export class RadarChartController extends ChangeNotifier {
 		if (this.#hiddenSeries.has(legend)) return;
 		this.#hiddenSeries.add(legend);
 		this.#recalcScale();
+		this.#normalizeHoveredRadar();
+		this.#normalizeHoveredPoint();
 		this.notifyListeners();
 	}
 
@@ -121,29 +156,168 @@ export class RadarChartController extends ChangeNotifier {
 		if (this.#hiddenSeries.size === 0) return;
 		this.#hiddenSeries.clear();
 		this.#recalcScale();
+		this.#normalizeHoveredRadar();
+		this.#normalizeHoveredPoint();
 		this.notifyListeners();
 	}
 
 	// --- hover ---
 
-	get hoveredRadar(): { index: number; legend: string } | null {
+	get hoveredRadar(): HoveredRadar | null {
 		return this.#hoveredRadar;
 	}
 
+	get hoveredPoint(): HoveredRadarPoint | null {
+		return this.#hoveredPoint;
+	}
+
 	hoverRadar(index: number, legend: string): void {
+		if (this.#hoveredRadar?.index === index && this.#hoveredRadar.legend === legend) {
+			return;
+		}
 		this.#hoveredRadar = { index, legend };
 		this.notifyListeners();
 	}
 
-	unhoverRadar(): void {
+	unhoverRadar(index: number, legend: string): void {
+		if (this.#hoveredRadar === null) return;
+		if (this.#hoveredRadar.index !== index || this.#hoveredRadar.legend !== legend) return;
+		this.#hoveredRadar = null;
+		this.notifyListeners();
+	}
+
+	unhoverAllRadars(): void {
 		if (this.#hoveredRadar === null) return;
 		this.#hoveredRadar = null;
 		this.notifyListeners();
+	}
+
+	hoverPoint(index: number, legend: string, pointIndex: number): void {
+		if (
+			this.#hoveredPoint?.index === index &&
+			this.#hoveredPoint.legend === legend &&
+			this.#hoveredPoint.pointIndex === pointIndex
+		) {
+			return;
+		}
+		this.#hoveredPoint = { index, legend, pointIndex };
+		this.notifyListeners();
+	}
+
+	unhoverPoint(index: number, legend: string, pointIndex: number): void {
+		if (this.#hoveredPoint === null) return;
+		if (
+			this.#hoveredPoint.index !== index ||
+			this.#hoveredPoint.legend !== legend ||
+			this.#hoveredPoint.pointIndex !== pointIndex
+		) {
+			return;
+		}
+		this.#hoveredPoint = null;
+		this.notifyListeners();
+	}
+
+	unhoverAllPoints(): void {
+		if (this.#hoveredPoint === null) return;
+		this.#hoveredPoint = null;
+		this.notifyListeners();
+	}
+
+	isPointHovered(index: number, legend: string, pointIndex: number): boolean {
+		return (
+			this.#hoveredPoint?.index === index &&
+			this.#hoveredPoint?.legend === legend &&
+			this.#hoveredPoint?.pointIndex === pointIndex
+		);
 	}
 
 	isRadarHovered(index: number, legend: string): boolean {
 		return (
 			this.#hoveredRadar?.index === index && this.#hoveredRadar?.legend === legend
 		);
+	}
+
+	getRadarVertices(index: number, legend: string): RadarVertex[] | null {
+		const scale = this.#scale;
+		if (scale == null) return null;
+
+		const dataset = this.data.datasets[index];
+		if (dataset == null || dataset.legend !== legend) return null;
+
+		return computeRadarVertices(
+			dataset.values,
+			this.data.labels,
+			scale.max,
+		);
+	}
+
+	getRadarAnchorPosition(index: number, legend: string): { x: number; y: number } | null {
+		if (this.#plotWidth <= 0 || this.#plotHeight <= 0) return null;
+
+		const vertices = this.getRadarVertices(index, legend);
+		if (vertices == null) return null;
+
+		return getRadarAnchorPoint(vertices, this.#plotWidth, this.#plotHeight);
+	}
+
+	getRadarPoint(index: number, legend: string, pointIndex: number): RadarVertex | null {
+		const vertices = this.getRadarVertices(index, legend);
+		if (vertices == null || pointIndex < 0 || pointIndex >= vertices.length) return null;
+		return vertices[pointIndex] ?? null;
+	}
+
+	getRadarPointPosition(index: number, legend: string, pointIndex: number): { x: number; y: number } | null {
+		if (this.#plotWidth <= 0 || this.#plotHeight <= 0) return null;
+
+		const vertex = this.getRadarPoint(index, legend, pointIndex);
+		if (vertex == null) return null;
+
+		return {
+			x: vertex.nx * this.#plotWidth,
+			y: vertex.ny * this.#plotHeight,
+		};
+	}
+
+	#normalizeHoveredRadar(): void {
+		if (this.#hoveredRadar == null) return;
+
+		const visibleIndex = this.data.datasets.findIndex(
+			(dataset) => dataset.legend === this.#hoveredRadar?.legend,
+		);
+
+		if (visibleIndex < 0) {
+			this.#hoveredRadar = null;
+			return;
+		}
+
+		this.#hoveredRadar = {
+			index: visibleIndex,
+			legend: this.#hoveredRadar.legend,
+		};
+	}
+
+	#normalizeHoveredPoint(): void {
+		if (this.#hoveredPoint == null) return;
+
+		const visibleIndex = this.data.datasets.findIndex(
+			(dataset) => dataset.legend === this.#hoveredPoint?.legend,
+		);
+
+		if (visibleIndex < 0) {
+			this.#hoveredPoint = null;
+			return;
+		}
+
+		const dataset = this.data.datasets[visibleIndex];
+		if (dataset == null || this.#hoveredPoint.pointIndex >= dataset.values.length) {
+			this.#hoveredPoint = null;
+			return;
+		}
+
+		this.#hoveredPoint = {
+			index: visibleIndex,
+			legend: this.#hoveredPoint.legend,
+			pointIndex: this.#hoveredPoint.pointIndex,
+		};
 	}
 }

@@ -1,10 +1,17 @@
 import type { Widget } from "flitter-core";
-import type { BulletChartCustom, BulletChartData, GetScaleFn, GetScaleOptionsFn } from "./types";
+import type {
+  BulletChartCustom,
+  BulletChartData,
+  BulletChartDirection,
+  GetScaleFn,
+  GetScaleOptionsFn,
+} from "./types";
 import { BulletChartProvider } from "./provider";
 
 export default function BulletChart<TConfig = {}>(props: {
   custom: BulletChartCustom<TConfig>;
   data: BulletChartData;
+  direction?: BulletChartDirection;
   getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
   config?: TConfig;

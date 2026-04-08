@@ -2,7 +2,7 @@
 
 Build scorecard-like modules from chart parts plus direct Flitter primitives when no canned family fits.
 
-Generated: 2026-03-30
+Generated: 2026-04-07
 
 ## Use When
 
@@ -18,7 +18,6 @@ Generated: 2026-03-30
 
 ## Related Charts
 
-- `progress-chart`
 - `bar-chart`
 
 ## Source Paths

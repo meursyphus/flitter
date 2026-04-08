@@ -2,7 +2,7 @@
 
 Show weighted flow between stages with controller-owned layout.
 
-Generated: 2026-03-30
+Generated: 2026-04-07
 
 ## Surface
 

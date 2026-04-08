@@ -41,10 +41,8 @@ const HEADLESS_SHIMS = {
       GetScaleOptionsFn: "CandlestickChartGetScaleOptionsFn",
     },
   },
-  "combo-chart": { symbol: "ComboChart", aliases: {} },
   "donut-chart": { symbol: "DonutChart", aliases: {} },
   "funnel-chart": { symbol: "FunnelChart", aliases: {} },
-  "gantt-chart": { symbol: "GanttChart", aliases: {} },
   "gauge-chart": { symbol: "GaugeChart", aliases: {} },
   "heatmap-chart": { symbol: "HeatmapChart", aliases: {} },
   "histogram-chart": { symbol: "HistogramChart", aliases: {} },
@@ -55,10 +53,7 @@ const HEADLESS_SHIMS = {
       GetScaleOptionsFn: "LineChartGetScaleOptionsFn",
     },
   },
-  "network-chart": { symbol: "NetworkChart", aliases: {} },
   "pie-chart": { symbol: "PieChart", aliases: {} },
-  "polar-area-chart": { symbol: "PolarAreaChart", aliases: {} },
-  "progress-chart": { symbol: "ProgressChart", aliases: {} },
   "radar-chart": {
     symbol: "RadarChart",
     aliases: {

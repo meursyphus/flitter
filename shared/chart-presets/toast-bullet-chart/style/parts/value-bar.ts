@@ -1,46 +1,50 @@
 import {
   Alignment,
+  Border,
+  BorderRadius,
+  BoxDecoration,
+  BoxShadow,
   Container,
   FractionallySizedBox,
-  BoxDecoration,
-  GestureDetector,
-  Opacity,
+  Radius,
+  ZIndex,
   type Widget,
 } from "flitter-core";
 import type { BulletChartContext } from "flitter-ui/chart";
 import type { ToastBulletChartConfig } from "../config";
 
 export function toastValueBar(
-  { value, index }: { value: number; index: number; label: string },
+  { value: _value, index: _index, isHovered }: { value: number; index: number; label: string; isHovered: boolean; isDimmed: boolean },
   context: BulletChartContext<ToastBulletChartConfig>,
 ): Widget {
   const { bullet } = context.config;
-  const { scale } = context;
-  if (scale == null) return Container({});
+  const isVertical = context.direction === "vertical";
 
-  const total = scale.max - scale.min;
-  const ratio = (value - scale.min) / total;
+  const decoration = isHovered
+    ? new BoxDecoration({
+        color: bullet.valueBarColor,
+        borderRadius: BorderRadius.all(Radius.circular(4)),
+        border: Border.all({ color: "white", width: 4, strokeAlign: 1 }),
+        boxShadow: [
+          new BoxShadow({ color: "rgba(0,0,0,0.3)", blurRadius: 8 }),
+        ],
+      })
+    : new BoxDecoration({
+        color: bullet.valueBarColor,
+        borderRadius: BorderRadius.all(Radius.circular(4)),
+      });
 
-  const isHovered = context.hoveredBullet != null;
-  const isThisHovered = context.isBulletHovered(index);
-
-  let opacity = 1;
-  if (isHovered && !isThisHovered) {
-    opacity = 0.3;
-  }
-
-  const bar = FractionallySizedBox({
-    alignment: Alignment.centerLeft,
-    widthFactor: ratio,
-    heightFactor: bullet.valueBarHeightRatio,
-    child: Container({
-      decoration: new BoxDecoration({ color: bullet.valueBarColor }),
+  return ZIndex({
+    zIndex: isHovered ? 1 : 0,
+    child: FractionallySizedBox({
+      alignment: isVertical ? Alignment.bottomCenter : Alignment.centerLeft,
+      widthFactor: isVertical ? bullet.valueBarHeightRatio : undefined,
+      heightFactor: isVertical ? undefined : bullet.valueBarHeightRatio,
+      child: Container({
+        width: Infinity,
+        height: Infinity,
+        decoration,
+      }),
     }),
-  });
-
-  return GestureDetector({
-    cursor: "default",
-    onMouseEnter: () => context.hoverBullet(index),
-    child: opacity < 1 ? Opacity({ opacity, child: bar }) : bar,
   });
 }

@@ -34,6 +34,6 @@ export const defaultAgConfig: AgRadarChartConfig = {
     gridWidth: defaultAgCartesianBaseConfig.grid.thickness,
     axisColor: defaultAgCartesianBaseConfig.axis.color,
     axisWidth: defaultAgCartesianBaseConfig.axis.thickness,
-    labelMargin: 24,
+    labelMargin: 20,
   },
 };

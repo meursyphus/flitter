@@ -2,7 +2,7 @@
 
 Use the controller to compute geometry first when the chart is fundamentally about layout.
 
-Generated: 2026-03-30
+Generated: 2026-04-07
 
 ## Use When
 
@@ -19,13 +19,11 @@ Generated: 2026-03-30
 ## Related Charts
 
 - `sankey-chart`
-- `network-chart`
 - `sunburst-chart`
 - `treemap-chart`
 
 ## Source Paths
 
 - `packages/chart/src/headless/sankey-chart`
-- `packages/chart/src/headless/network-chart`
 - `packages/chart/src/headless/sunburst-chart`
 - `packages/chart/src/headless/treemap-chart`

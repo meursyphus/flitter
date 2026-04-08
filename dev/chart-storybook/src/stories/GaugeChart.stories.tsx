@@ -29,7 +29,7 @@ const fullRangeGauge = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "TODO/GaugeChart/Ag",
+  title: "NEXT/GaugeChart/Ag",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {

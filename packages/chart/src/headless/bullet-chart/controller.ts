@@ -1,9 +1,17 @@
-import { ChangeNotifier } from "flitter-core";
-import type { BulletChartCustom, BulletChartData, BulletChartScale, GetScaleFn, GetScaleOptionsFn } from "./types";
+import { ChangeNotifier, GlobalKey } from "flitter-core";
+import type {
+  BulletChartCustom,
+  BulletChartData,
+  BulletChartDirection,
+  BulletChartScale,
+  GetScaleFn,
+  GetScaleOptionsFn,
+} from "./types";
 
 export class BulletChartController extends ChangeNotifier {
   #rawData: BulletChartData;
-  #hoveredBullet: number | null = null;
+  #direction: BulletChartDirection;
+  #hoveredBullet: { index: number; anchorKey: GlobalKey } | null = null;
   #scale: BulletChartScale | null = null;
   #getScale: GetScaleFn;
   #getScaleOptions: GetScaleOptionsFn | null;
@@ -18,12 +26,14 @@ export class BulletChartController extends ChangeNotifier {
     data,
     getScale,
     getScaleOptions = null,
+    direction = "horizontal",
     custom,
     config = {},
   }: {
     data: BulletChartData;
     getScale: GetScaleFn;
     getScaleOptions?: GetScaleOptionsFn | null;
+    direction?: BulletChartDirection;
     custom: BulletChartCustom<any>;
     config?: any;
   }) {
@@ -31,6 +41,7 @@ export class BulletChartController extends ChangeNotifier {
     this.#rawData = data;
     this.#getScale = getScale;
     this.#getScaleOptions = getScaleOptions;
+    this.#direction = direction;
     this.custom = custom;
     this.config = config;
   }
@@ -46,6 +57,7 @@ export class BulletChartController extends ChangeNotifier {
 
   set data(value: BulletChartData) {
     this.#rawData = value;
+    this.#hoveredBullet = null;
     this.#recalcScale();
     this.notifyListeners();
   }
@@ -56,6 +68,18 @@ export class BulletChartController extends ChangeNotifier {
 
   get legends(): string[] {
     return this.#rawData.labels;
+  }
+
+  get direction(): BulletChartDirection {
+    return this.#direction;
+  }
+
+  set direction(value: BulletChartDirection) {
+    if (this.#direction === value) return;
+    this.#direction = value;
+    this.#hoveredBullet = null;
+    this.#recalcScale();
+    this.notifyListeners();
   }
 
   // --- chart size ---
@@ -84,23 +108,31 @@ export class BulletChartController extends ChangeNotifier {
 
   // --- hover ---
 
-  get hoveredBullet(): number | null {
+  get hoveredBullet(): { index: number; anchorKey: GlobalKey } | null {
     return this.#hoveredBullet;
   }
 
-  hoverBullet(index: number): void {
-    this.#hoveredBullet = index;
+  hoverBullet(index: number, anchorKey: GlobalKey): void {
+    if (
+      this.#hoveredBullet?.index === index &&
+      this.#hoveredBullet?.anchorKey === anchorKey
+    ) {
+      return;
+    }
+
+    this.#hoveredBullet = { index, anchorKey };
     this.notifyListeners();
   }
 
-  unhoverBullet(): void {
+  unhoverBullet(index?: number): void {
     if (this.#hoveredBullet === null) return;
+    if (index != null && this.#hoveredBullet.index !== index) return;
     this.#hoveredBullet = null;
     this.notifyListeners();
   }
 
   isBulletHovered(index: number): boolean {
-    return this.#hoveredBullet === index;
+    return this.#hoveredBullet?.index === index;
   }
 
   // --- legend compatibility (no-op, bullet chart has no series toggling) ---

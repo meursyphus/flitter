@@ -2,7 +2,7 @@
 
 Trend chart where filled magnitude and cumulative visual weight matter.
 
-Generated: 2026-03-30
+Generated: 2026-04-07
 
 ## Surface
 

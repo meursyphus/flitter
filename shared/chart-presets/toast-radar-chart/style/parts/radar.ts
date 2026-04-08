@@ -1,112 +1,121 @@
 import {
 	CustomPaint,
-	Path,
 	Offset,
+	Path,
 	type Widget,
 } from "flitter-core";
 import type { RadarChartCustom } from "flitter-ui/chart";
 import type { ToastRadarChartConfig } from "../config";
-import { HoverTooltip } from "flitter-ui/chart";
-import { tooltipContent } from "../../../_styles/toast/index";
 
 export function toastRadar(
-	...[{ legend, index, vertices }, ctx]: Parameters<RadarChartCustom<ToastRadarChartConfig>["radar"]>
+	...[{ legend, index, vertices, hoveredPointIndex }, ctx]: Parameters<RadarChartCustom<ToastRadarChartConfig>["radar"]>
 ): Widget {
 	const { colors, radar: radarConfig } = ctx.config;
 	const colorIndex = ctx.legends.indexOf(legend);
 	const color = colors[(colorIndex >= 0 ? colorIndex : index) % colors.length];
-	const hoveredRadar = ctx.hoveredRadar;
-	const isHovered = ctx.isRadarHovered(index, legend);
-	const hasActiveHover = hoveredRadar != null;
+	const hoveredPoint = ctx.hoveredPoint;
+	const isActiveDataset =
+		hoveredPoint?.legend === legend &&
+		hoveredPoint?.index === index;
+	const hasActiveHover = hoveredPoint != null;
+	const hoveredVertex = hoveredPointIndex != null
+		? vertices[hoveredPointIndex] ?? null
+		: null;
 	const fillOpacity = hasActiveHover
-		? isHovered
+		? isActiveDataset
 			? radarConfig.fillOpacity
 			: Math.max(0.08, radarConfig.fillOpacity * 0.35)
 		: radarConfig.fillOpacity;
 	const strokeOpacity = hasActiveHover
-		? isHovered
+		? isActiveDataset
 			? 1
 			: 0.28
 		: 1;
+	const strokeWidth = isActiveDataset
+		? radarConfig.strokeWidth + 1.5
+		: radarConfig.strokeWidth;
 
-	return new HoverTooltip({
-		position: "topCenter",
-		tooltip: tooltipContent({
-			label: legend,
-			items: vertices.map((vertex) => ({
-				legend: vertex.label,
-				color,
-				value: vertex.value,
-			})),
-			config: ctx.config,
-		}),
-		renderChild: () =>
-			CustomPaint({
-				painter: {
-					hitTest: (position, size) =>
-						isPointInPolygon(
-							position,
-							vertices.map((vertex) => ({
-								x: vertex.nx * size.width,
-								y: vertex.ny * size.height,
-							})),
-						),
-					svg: {
-						createDefaultSvgEl: (context) => ({
-							fill: context.createSvgEl("path"),
-							stroke: context.createSvgEl("path"),
-						}),
-						paint: ({ fill, stroke }, size) => {
-							const path = createDatasetPath(vertices, size.width, size.height);
-							const d = path.getD();
+	return CustomPaint({
+		painter: {
+			svg: {
+				createDefaultSvgEl: (context) => ({
+					fill: context.createSvgEl("path"),
+					stroke: context.createSvgEl("path"),
+					point: context.createSvgEl("circle"),
+				}),
+				paint: ({ fill, stroke, point }, size) => {
+					const path = createDatasetPath(vertices, size.width, size.height);
+					const d = path.getD();
 
-							fill.setAttribute("d", d);
-							fill.setAttribute("fill", color);
-							fill.setAttribute("fill-opacity", String(fillOpacity));
-							fill.setAttribute("stroke", "none");
+					fill.setAttribute("d", d);
+					fill.setAttribute("fill", color);
+					fill.setAttribute("fill-opacity", String(fillOpacity));
+					fill.setAttribute("stroke", "none");
 
-							stroke.setAttribute("d", d);
-							stroke.setAttribute("fill", "none");
-							stroke.setAttribute("stroke", color);
-							stroke.setAttribute(
-								"stroke-width",
-								String(isHovered ? radarConfig.strokeWidth + 1.5 : radarConfig.strokeWidth),
-							);
-							stroke.setAttribute("stroke-opacity", String(strokeOpacity));
-							if (isHovered) {
-								stroke.setAttribute("filter", "drop-shadow(0 0 8px rgba(0,0,0,0.24))");
-							} else {
-								stroke.removeAttribute("filter");
-							}
-						},
-					},
-					canvas: {
-						paint: (context, size) => {
-							const path = createDatasetPath(vertices, size.width, size.height);
-							const canvasPath = path.toCanvasPath();
-							const canvas = context.canvas;
+					stroke.setAttribute("d", d);
+					stroke.setAttribute("fill", "none");
+					stroke.setAttribute("stroke", color);
+					stroke.setAttribute("stroke-width", String(strokeWidth));
+					stroke.setAttribute("stroke-opacity", String(strokeOpacity));
+					if (isActiveDataset) {
+						stroke.setAttribute("filter", "drop-shadow(0 0 8px rgba(0,0,0,0.24))");
+					} else {
+						stroke.removeAttribute("filter");
+					}
 
-							canvas.globalAlpha = fillOpacity;
-							canvas.fillStyle = color;
-							canvas.fill(canvasPath);
-							canvas.globalAlpha = strokeOpacity;
-							canvas.strokeStyle = color;
-							canvas.lineWidth = isHovered
-								? radarConfig.strokeWidth + 1.5
-								: radarConfig.strokeWidth;
-							if (isHovered) {
-								canvas.shadowColor = "rgba(0,0,0,0.24)";
-								canvas.shadowBlur = 8;
-							}
-							canvas.stroke(canvasPath);
-							canvas.globalAlpha = 1;
-							canvas.shadowBlur = 0;
-						},
-					},
+					if (hoveredVertex != null) {
+						point.setAttribute("cx", String(hoveredVertex.nx * size.width));
+						point.setAttribute("cy", String(hoveredVertex.ny * size.height));
+						point.setAttribute("r", "5");
+						point.setAttribute("fill", color);
+						point.setAttribute("stroke", "white");
+						point.setAttribute("stroke-width", "2");
+						point.setAttribute("filter", "drop-shadow(0 0 6px rgba(0,0,0,0.2))");
+					} else {
+						point.setAttribute("r", "0");
+						point.removeAttribute("filter");
+					}
 				},
-			}),
-		offset: new Offset({ x: 0, y: -0.15 }),
-		cursor: "default",
+			},
+			canvas: {
+				paint: (context, size) => {
+					const path = createDatasetPath(vertices, size.width, size.height);
+					const canvasPath = path.toCanvasPath();
+					const canvas = context.canvas;
+
+					canvas.globalAlpha = fillOpacity;
+					canvas.fillStyle = color;
+					canvas.fill(canvasPath);
+					canvas.globalAlpha = strokeOpacity;
+					canvas.strokeStyle = color;
+					canvas.lineWidth = strokeWidth;
+					if (isActiveDataset) {
+						canvas.shadowColor = "rgba(0,0,0,0.24)";
+						canvas.shadowBlur = 8;
+					}
+					canvas.stroke(canvasPath);
+					canvas.shadowBlur = 0;
+
+					if (hoveredVertex != null) {
+						const x = hoveredVertex.nx * size.width;
+						const y = hoveredVertex.ny * size.height;
+						canvas.globalAlpha = 1;
+						canvas.shadowColor = "rgba(0,0,0,0.2)";
+						canvas.shadowBlur = 6;
+						canvas.fillStyle = color;
+						canvas.beginPath();
+						canvas.arc(x, y, 5, 0, Math.PI * 2);
+						canvas.fill();
+						canvas.shadowBlur = 0;
+						canvas.strokeStyle = "white";
+						canvas.lineWidth = 2;
+						canvas.beginPath();
+						canvas.arc(x, y, 5, 0, Math.PI * 2);
+						canvas.stroke();
+					}
+				},
+			},
+		},
 	});
 }
 
@@ -118,36 +127,17 @@ function createDatasetPath(
 	const path = new Path();
 	if (vertices.length === 0) return path;
 
-	for (let i = 0; i <= vertices.length; i++) {
-		const v = vertices[i % vertices.length];
-		const x = v.nx * width;
-		const y = v.ny * height;
+	for (let i = 0; i <= vertices.length; i += 1) {
+		const vertex = vertices[i % vertices.length];
+		const x = vertex.nx * width;
+		const y = vertex.ny * height;
 		if (i === 0) {
 			path.moveTo(new Offset({ x, y }));
 		} else {
 			path.lineTo(new Offset({ x, y }));
 		}
 	}
+
 	path.close();
 	return path;
-}
-
-function isPointInPolygon(
-	position: { x: number; y: number },
-	points: { x: number; y: number }[],
-): boolean {
-	let inside = false;
-	for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
-		const xi = points[i].x;
-		const yi = points[i].y;
-		const xj = points[j].x;
-		const yj = points[j].y;
-
-		const intersects =
-			yi > position.y !== yj > position.y &&
-			position.x < ((xj - xi) * (position.y - yi)) / ((yj - yi) || 0.00001) + xi;
-
-		if (intersects) inside = !inside;
-	}
-	return inside;
 }

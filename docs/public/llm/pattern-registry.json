@@ -21,8 +21,7 @@
     "relatedCharts": [
       "bar-chart",
       "line-chart",
-      "heatmap-chart",
-      "progress-chart"
+      "heatmap-chart"
     ],
     "docsPath": "/llm/patterns/multi-chart-dashboard.md"
   },
@@ -48,8 +47,7 @@
     "relatedCharts": [
       "scatter-chart",
       "bar-chart",
-      "heatmap-chart",
-      "network-chart"
+      "heatmap-chart"
     ],
     "docsPath": "/llm/patterns/linked-hover-and-filter.md"
   },
@@ -69,13 +67,11 @@
     ],
     "sourcePaths": [
       "packages/chart/src/headless/sankey-chart",
-      "packages/chart/src/headless/network-chart",
       "packages/chart/src/headless/sunburst-chart",
       "packages/chart/src/headless/treemap-chart"
     ],
     "relatedCharts": [
       "sankey-chart",
-      "network-chart",
       "sunburst-chart",
       "treemap-chart"
     ],
@@ -101,7 +97,6 @@
       "docs/public/llm/critic-checklist.md"
     ],
     "relatedCharts": [
-      "progress-chart",
       "bar-chart"
     ],
     "docsPath": "/llm/patterns/scorecard-composite.md"
@@ -109,7 +104,7 @@
   {
     "slug": "radial-kpi-composite",
     "title": "Radial KPI Composite",
-    "summary": "Combine donut, gauge, progress, and custom paint ideas into one radial KPI experience.",
+    "summary": "Combine donut, gauge, and custom paint ideas into one radial KPI experience.",
     "useWhen": [
       "The prompt asks for multiple bounded metrics in a radial arrangement",
       "A simple donut or gauge is not enough on its own",
@@ -127,9 +122,7 @@
     ],
     "relatedCharts": [
       "donut-chart",
-      "gauge-chart",
-      "progress-chart",
-      "polar-area-chart"
+      "gauge-chart"
     ],
     "docsPath": "/llm/patterns/radial-kpi-composite.md"
   },

@@ -47,10 +47,10 @@ const rightAlignmentMap: Record<string, MainAxisAlignment> = {
 	"right-bottom": MainAxisAlignment.end,
 };
 
-export function Layout(
-	...[{ title, legends, plot }, context]: Parameters<RadarChartCustom<{ config: LayoutConfig }>["layout"]>
+export function Layout<TConfig extends LayoutConfig>(
+	...[{ title, legends, plot }, context]: Parameters<RadarChartCustom<TConfig>["layout"]>
 ): Widget {
-	const { padding, title: titleConfig, legend: legendConfig } = (context as any).config as LayoutConfig;
+	const { padding, title: titleConfig, legend: legendConfig } = context.config;
 	const legendGap = legendConfig.gap;
 	const isRight = isRightPosition(legendConfig.position);
 

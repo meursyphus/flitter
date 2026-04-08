@@ -4,7 +4,17 @@ import type { RadarChartCustom, RadarChartData } from "./base";
 import type { DeepPartial } from "@utils/index";
 import { toastStyleConfig, type ToastRadarChartConfig } from "./styles/toast";
 
-export type { RadarChartCustom, RadarChartData, RadarChartContext, RadarChartScale, RadarVertex } from "./base";
+export type {
+	RadarChartCustom,
+	RadarChartData,
+	RadarChartContext,
+	RadarChartScale,
+	HoveredRadar,
+	HoveredRadarPoint,
+	AngularItem,
+	RadialLabelItem,
+	RadarVertex,
+} from "./base";
 export { RadarChartController } from "./base";
 export { type ToastRadarChartConfig } from "./styles/toast";
 

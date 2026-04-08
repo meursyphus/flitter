@@ -39,9 +39,9 @@ The goal is not to react immediately and patch files blindly. The goal is to:
 
 ## Counting Model
 
-- Headless chart engines: `22`
-- Storybook chart families: `25`
-- `shared/chart-presets` concrete exports: `25 Ag-neutral exports + 25 Toast exports`
+- Headless chart engines: `17`
+- Storybook chart families: `20`
+- `shared/chart-presets` concrete exports: `20 Ag-neutral exports + 20 Toast exports`
 
 The count differs because some visible chart families reuse an existing headless engine:
 
@@ -137,71 +137,54 @@ When in doubt, inspect shared config first, then the chart-specific style implem
 
 ## Completed Charts
 
-The following 8 chart families are already considered done for current feedback purposes:
+The following 9 chart families are already considered done for current feedback purposes:
 
 - `AreaChart`
 - `BarChart`
 - `BoxPlotChart`
 - `BubbleChart`
 - `LineChart`
+- `RadarChart`
 - `ScatterChart`
 - `StackedAreaChart`
 - `StackedBarChart`
 
-Do not ask the user for new visual feedback on these 8 unless the user explicitly reopens them.
+Do not ask the user for new visual feedback on these 9 unless the user explicitly reopens them.
 
 ## Feedback Scope
 
-Current feedback should cover only the remaining 17 chart families.
+Current feedback should cover only the remaining 11 chart families.
 
 Each style must be checked separately.
 
 Do not treat a chart as complete just because one style is complete.
 
 ## Feedback Checklist
-
-- [ㅅ] `PieChart / Ag`
-- [ㅅ] `PieChart / Toast`
-ㄴ 데이터 라벨 표시를 각각 하면 됨, 
-- [x] `HeatmapChart / Ag`
-- [x] `HeatmapChart / Toast`
 - [ ] `TreemapChart / Ag` [![](screenshots/treemap-ag.png)](https://www.ag-grid.com/charts/gallery/simple-treemap/)
 - [ ] `TreemapChart / Toast` [![](screenshots/treemap-toast.png)](https://nhn.github.io/tui.chart/latest/tutorial-example12-01-treemap-chart-basic)
 - [x] `BoxPlotChart / Ag` [![](screenshots/boxplotbar-ag.png)](https://www.ag-grid.com/charts/gallery/horizontal-box-plot/)
 - [x] `BoxPlotChart / Toast` [![](screenshots/boxplotbar-toast.png)](https://nhn.github.io/tui.chart/latest/tutorial-example03-01-boxPlot-chart-basic)
 ㄴ Toast BoxPlot은 vertical만 있음 (horizontal 별도 없음)
-- [ ] `RadarChart / Ag` [![](screenshots/radar-ag.png)](https://www.ag-grid.com/charts/gallery/simple-radar-area/)
-- [ㅅ] `RadarChart / Toast` [![](screenshots/radar-toast.png)](https://nhn.github.io/tui.chart/latest/tutorial-example10-01-radar-chart-basic)
-- [ ] `CandlestickChart / Ag` [![](screenshots/candlestick-ag.png)](https://www.ag-grid.com/charts/gallery/candlestick/)
+- [x] `RadarChart / Ag` [![](screenshots/radar-ag.png)](https://www.ag-grid.com/charts/gallery/simple-radar-area/)
+- [x] `RadarChart / Toast` [![](screenshots/radar-toast.png)](https://nhn.github.io/tui.chart/latest/tutorial-example10-01-radar-chart-basic)
+- [x] `CandlestickChart / Ag` [![](screenshots/candlestick-ag.png)](https://www.ag-grid.com/charts/gallery/candlestick/)
 - N/A `CandlestickChart / Toast` (Toast UI에 없음)
 - [ ] `DonutChart / Ag` [![](screenshots/donut-ag.png)](https://www.ag-grid.com/charts/gallery/simple-donut/)
 - [ ] `DonutChart / Toast` [![](screenshots/donut-toast.png)](https://nhn.github.io/tui.chart/latest/tutorial-example09-05-pie-chart-donut)
-- [ ] `PolarAreaChart / Ag` [![](screenshots/polararea-ag.png)](https://www.ag-grid.com/charts/gallery/multiple-nightingale-series/)
-- [ ] `PolarAreaChart / Toast` [![](screenshots/polararea-toast.png)](https://nhn.github.io/tui.chart/latest/tutorial-example18-01-radialBar-chart-basic)
-ㄴ Toast에서는 RadialBarChart로 불림
-- [ ] `ProgressChart / Ag` [![](screenshots/progress-ag.png)](https://www.ag-grid.com/charts/gallery/simple-linear-gauge/)
-- N/A `ProgressChart / Toast` (Toast UI에 없음)
-- [ ] `BulletChart / Ag` [![](screenshots/bullet-ag.png)](https://www.ag-grid.com/charts/gallery/simple-bullet/)
+- [x] `BulletChart / Ag` [![](screenshots/bullet-ag.png)](https://www.ag-grid.com/charts/gallery/simple-bullet/)
 - N/A `BulletChart / Toast` (Toast UI에 없음)
 - [ ] `GaugeChart / Ag` [![](screenshots/gauge-ag.png)](https://www.ag-grid.com/charts/gallery/simple-radial-gauge/)
 - [ ] `GaugeChart / Toast` [![](screenshots/gauge-toast.png)](https://nhn.github.io/tui.chart/latest/tutorial-example20-01-gauge-chart-basic)
-- [ ] `HistogramChart / Ag` [![](screenshots/histogram-ag.png)](https://www.ag-grid.com/charts/gallery/histogram-with-specified-bins/)
+- [x] `HistogramChart / Ag` [![](screenshots/histogram-ag.png)](https://www.ag-grid.com/charts/gallery/histogram-with-specified-bins/)
 - N/A `HistogramChart / Toast` (Toast UI에 없음)
 - [ ] `SunburstChart / Ag` [![](screenshots/sunburst-ag.png)](https://www.ag-grid.com/charts/gallery/simple-sunburst/)
 - N/A `SunburstChart / Toast` (Toast UI에 없음)
-- [ ] `WaterfallChart / Ag` [![](screenshots/waterfall-ag.png)](https://www.ag-grid.com/charts/gallery/simple-waterfall/)
+- [x] `WaterfallChart / Ag` [![](screenshots/waterfall-ag.png)](https://www.ag-grid.com/charts/gallery/simple-waterfall/)
 - N/A `WaterfallChart / Toast` (Toast UI에 없음)
 - [ ] `FunnelChart / Ag` [![](screenshots/funnel-ag.png)](https://www.ag-grid.com/charts/gallery/simple-funnel/)
 - N/A `FunnelChart / Toast` (Toast UI에 없음)
-- [ ] `ComboChart / Ag` [![](screenshots/combo-ag.png)](https://www.ag-grid.com/charts/gallery/bar-line-combination/)
-- [ ] `ComboChart / Toast` [![](screenshots/combo-toast.png)](https://nhn.github.io/tui.chart/latest/tutorial-example13-01-columnLine-chart-basic)
-ㄴ Toast에는 LineArea, LineScatter 콤보도 있음
 - [ ] `SankeyChart / Ag` [![](screenshots/sankey-ag.png)](https://www.ag-grid.com/charts/gallery/sankey/)
 - N/A `SankeyChart / Toast` (Toast UI에 없음)
-- N/A `GanttChart / Ag` (AG Charts에 없음)
-- N/A `GanttChart / Toast` (Toast UI에 없음)
-- N/A `NetworkChart / Ag` (AG Charts에 없음)
-- N/A `NetworkChart / Toast` (Toast UI에 없음)
 
 - [ ] `NestedPieChart / Ag` [![](screenshots/nestedpie-ag.png)](https://www.ag-grid.com/charts/gallery/pie-in-a-donut/)
 - [ ] `NestedPieChart / Toast` [![](screenshots/nestedpie-toast.png)](https://nhn.github.io/tui.chart/latest/tutorial-example16-01-NestedPie-chart-basic)

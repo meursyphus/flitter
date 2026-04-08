@@ -1,8 +1,8 @@
 # Radial KPI Composite
 
-Combine donut, gauge, progress, and custom paint ideas into one radial KPI experience.
+Combine donut, gauge, and custom paint ideas into one radial KPI experience.
 
-Generated: 2026-03-30
+Generated: 2026-04-07
 
 ## Use When
 
@@ -20,8 +20,6 @@ Generated: 2026-03-30
 
 - `donut-chart`
 - `gauge-chart`
-- `progress-chart`
-- `polar-area-chart`
 
 ## Source Paths
 

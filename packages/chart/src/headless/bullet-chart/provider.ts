@@ -7,6 +7,7 @@ import {
 import type {
   BulletChartCustom,
   BulletChartData,
+  BulletChartDirection,
   GetScaleFn,
   GetScaleOptionsFn,
 } from "./types";
@@ -20,10 +21,12 @@ export function BulletChartProvider({
   getScale,
   getScaleOptions,
   data,
+  direction = "horizontal",
   config = {},
 }: {
   custom: BulletChartCustom<any>;
   data: BulletChartData;
+  direction?: BulletChartDirection;
   getScale: GetScaleFn;
   getScaleOptions?: GetScaleOptionsFn;
   config?: any;
@@ -35,12 +38,14 @@ export function BulletChartProvider({
         data,
         getScale,
         getScaleOptions,
+        direction,
         custom,
         config,
       }),
     update: (notifier) => {
       const controller = notifier as BulletChartController;
       controller.data = data;
+      controller.direction = direction;
       controller.custom = custom;
       controller.config = config;
     },

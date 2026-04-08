@@ -1,15 +1,19 @@
 import type { RadarChartCustom } from "flitter-ui/chart";
+import type { RadarChartContext } from "flitter-ui/chart";
 import { BoxDecoration, Container, type Widget } from "flitter-core";
 import type { AgRadarChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { agRadar } from "./parts/radar";
+import { agPlot } from "./parts/plot";
+import { agTooltipArea } from "./parts/tooltip-area";
 import { agAngularAxisLine } from "./parts/angular-axis-line";
 import { agAngularAxisLabel } from "./parts/angular-axis-label";
+import { agRadialAxis } from "./parts/radial-axis";
 import { agRadialAxisLine } from "./parts/radial-axis-line";
 import { agRadialAxisLabel } from "./parts/radial-axis-label";
 import { Layout as BaseLayout } from "../base/layout";
-import { agTitle, agLegend } from "../../_styles/ag/index";
+import { agTitle, agLegend, agTooltipContent } from "../../_styles/ag/index";
 
 export { type AgRadarChartConfig } from "./config";
 
@@ -21,18 +25,29 @@ function agLayout(
     decoration: new BoxDecoration({
       color: context.config.background,
     }),
-    child: BaseLayout(args as any, context as any),
+    child: BaseLayout<AgRadarChartConfig>(args, context),
   });
+}
+
+function agTooltip(
+  args: { label: string; items: { legend: string; color: string; value: number }[] },
+  context: RadarChartContext<AgRadarChartConfig>,
+): Widget {
+  return agTooltipContent({ label: args.label, items: args.items, config: context.config });
 }
 
 const agCustom: Partial<RadarChartCustom<AgRadarChartConfig>> = {
   layout: agLayout,
+  plot: agPlot,
   radar: agRadar,
-  angularAxisLine: agAngularAxisLine,
+  angularLine: agAngularAxisLine,
   angularAxisLabel: agAngularAxisLabel,
-  radialAxisLine: agRadialAxisLine,
+  radialAxis: agRadialAxis,
+  radialLine: agRadialAxisLine,
   radialAxisLabel: agRadialAxisLabel,
-  legend: (args, context) => agLegend(args, context as any, { markerShape: "circle" }),
+  tooltipArea: agTooltipArea,
+  tooltip: agTooltip,
+  legend: (args, context) => agLegend(args, context, { markerShape: "circle" }),
   title: agTitle,
 };
 

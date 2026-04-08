@@ -1,6 +1,6 @@
 # Testing Prompts
 
-Generated: 2026-03-30
+Generated: 2026-04-07
 
 Use these prompts to test a first-read agent against the pack.
 
@@ -160,19 +160,6 @@ Success criteria:
 - Treats finance semantics as primary
 - Does not pretend a fully themed preset exists
 
-## Revenue plus margin hybrid chart
-
-Show revenue as bars and margin as a line on the same chart. Margin may need a secondary axis.
-
-Pack links:
-- `/llm/chart.md`
-- `/llm/chart/combo-chart.md`
-
-Success criteria:
-- Chooses combo only because mixed marks are explicit
-- Explains the secondary-axis tradeoff
-- Uses the base wrapper rather than inventing a themed preset
-
 ## Completion split with center KPI
 
 Show Completed, In Progress, and Blocked as a donut with the total number of tasks in the center.
@@ -199,19 +186,6 @@ Success criteria:
 - Treats stage ordering as fixed
 - Calls out conversion labeling needs
 
-## Project plan timeline
-
-Render a project timeline with task durations and dependencies so we can see overlap and sequence at a glance.
-
-Pack links:
-- `/llm/chart.md`
-- `/llm/chart/gantt-chart.md`
-
-Success criteria:
-- Chooses gantt instead of bar or line
-- Calls out time-unit and dependency questions
-- Uses the base wrapper unless the layout becomes highly custom
-
 ## Single KPI with thresholds
 
 Show system health as a gauge with red, amber, and green threshold zones.
@@ -237,45 +211,6 @@ Success criteria:
 - Chooses histogram rather than bar
 - Treats binning as a first-class question
 - Recognizes this is a base-wrapper chart
-
-## Service dependency graph
-
-Visualize service dependencies as nodes and edges so engineers can see relationship topology at a glance.
-
-Pack links:
-- `/llm/chart.md`
-- `/llm/chart/network-chart.md`
-
-Success criteria:
-- Chooses network rather than scatter or sankey
-- Recognizes layout is controller-owned
-- Names the point where this would become a diagram tool instead of a chart
-
-## Equal-angle radial category chart
-
-Show four regions with equal-angle sectors but different radial reach so the audience compares category magnitude radially, not by slice angle.
-
-Pack links:
-- `/llm/chart.md`
-- `/llm/chart/polar-area-chart.md`
-
-Success criteria:
-- Chooses polar area only when its radial semantics are explicit
-- Explains why pie or radar are not the same thing
-- Uses the base wrapper as the starting point
-
-## Segmented delivery completion
-
-Show completion across Complete, In Review, and Blocked on one bounded track.
-
-Pack links:
-- `/llm/chart.md`
-- `/llm/chart/progress-chart.md`
-
-Success criteria:
-- Chooses progress rather than gauge
-- Calls out segmented-vs-single mode
-- Uses the base wrapper as the start point
 
 ## Weighted stage-to-stage flow
 

@@ -1,20 +1,35 @@
-import type { Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitter-core";
 import { RadarChart as HeadlessRadarChart } from "flitter-ui/chart";
 import type { RadarChartCustom, RadarChartData, RadarChartGetScaleFn as GetScaleFn } from "flitter-ui/chart";
-import { Plot, DataView } from "./data-view";
+import { DataView } from "./data-view";
 import { Layout } from "./layout";
-import { AngularAxis } from "./angular-axis";
+import { Plot } from "./plot";
 import { RadialAxis } from "./radial-axis";
+import { Web } from "./web";
 
-export type { RadarChartCustom, RadarChartData, RadarChartContext, RadarChartScale, RadarVertex, RadarChartGetScaleFn as GetScaleFn } from "flitter-ui/chart";
+export type {
+	RadarChartCustom,
+	RadarChartData,
+	RadarChartContext,
+	RadarChartScale,
+	HoveredRadar,
+	HoveredRadarPoint,
+	AngularItem,
+	RadialLabelItem,
+	RadarVertex,
+	RadarChartGetScaleFn as GetScaleFn,
+} from "flitter-ui/chart";
 export { RadarChartController } from "flitter-ui/chart";
 
 const baseDefaults: Partial<RadarChartCustom> = {
 	layout: Layout,
 	plot: Plot,
 	dataView: DataView,
-	angularAxis: AngularAxis,
 	radialAxis: RadialAxis,
+	web: Web,
+	radialAxisLabel: () => SizedBox.shrink(),
+	tooltip: () => SizedBox.shrink(),
+	tooltipArea: () => SizedBox.shrink(),
 };
 
 function defaultGetScale(data: RadarChartData) {

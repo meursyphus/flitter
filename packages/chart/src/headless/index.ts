@@ -82,6 +82,10 @@ export type {
 	RadarChartCustom,
 	RadarChartData,
 	RadarChartScale,
+	HoveredRadar,
+	HoveredRadarPoint,
+	AngularItem,
+	RadialLabelItem,
 	RadarVertex,
 	GetScaleFn as RadarChartGetScaleFn,
 } from "./radar-chart/types";
@@ -168,10 +172,27 @@ export type {
 	TreemapContext,
 	TreemapCustom,
 	TreemapData,
+	TreemapLegacyData,
+	TreemapDataset,
+	TreemapResolvedData,
+	TreemapResolvedDataset,
+	TreemapResolvedNode,
+	TreemapHoveredNode,
+	TreemapHoveredNodeRect,
 	TreemapNode,
 	TreemapLayout,
+	TreemapLayoutDirection,
+	TreemapLayoutItem,
+	TreemapLayoutSize,
+	TreemapLayoutOptions,
+	GetTreemapLayoutFn as TreemapChartGetLayoutFn,
+	GetTreemapLayoutOptionsFn as TreemapChartGetLayoutOptionsFn,
 } from "./treemap-chart/types";
 export { TreemapController } from "./treemap-chart/controller";
+export {
+	defaultGetTreemapLayout,
+	squarifyTreemapLayout,
+} from "./treemap-chart/layout";
 
 export { default as SankeyChart } from "./sankey-chart";
 export { SankeyChartProvider } from "./sankey-chart/provider";
@@ -220,62 +241,6 @@ export type {
 } from "./histogram-chart/types";
 export { HistogramChartController } from "./histogram-chart/controller";
 
-export { default as PolarAreaChart } from "./polar-area-chart";
-export { PolarAreaChartProvider } from "./polar-area-chart/provider";
-export type {
-	PolarAreaChartContext,
-	PolarAreaChartData,
-	PolarAreaChartCustom,
-} from "./polar-area-chart/types";
-export { PolarAreaChartController } from "./polar-area-chart/controller";
-
-export { default as ComboChart } from "./combo-chart";
-export { ComboChartProvider } from "./combo-chart/provider";
-export type {
-	ComboChartContext,
-	ComboDataset,
-	ComboChartData,
-	ComboAxisScale,
-	ComboChartScale,
-	ComboChartCustom,
-} from "./combo-chart/types";
-export { ComboChartController } from "./combo-chart/controller";
-
-export { default as GanttChart } from "./gantt-chart";
-export { GanttChartProvider } from "./gantt-chart/provider";
-export type {
-	GanttChartContext,
-	GanttTask,
-	GanttChartData,
-	GanttChartScale,
-	GanttChartCustom,
-} from "./gantt-chart/types";
-export { GanttChartController } from "./gantt-chart/controller";
-
-export { default as NetworkChart } from "./network-chart";
-export { NetworkChartProvider } from "./network-chart/provider";
-export type {
-	NetworkChartContext,
-	NetworkNode,
-	NetworkEdge,
-	NetworkChartData,
-	NetworkNodeLayout,
-	NetworkEdgeLayout,
-	NetworkLayout,
-	NetworkChartCustom,
-} from "./network-chart/types";
-export { NetworkChartController } from "./network-chart/controller";
-
-export { default as ProgressChart } from "./progress-chart";
-export { ProgressChartProvider } from "./progress-chart/provider";
-export type {
-	ProgressChartContext,
-	ProgressChartData,
-	ProgressSegment,
-	ProgressChartCustom,
-} from "./progress-chart/types";
-export { ProgressChartController } from "./progress-chart/controller";
-
 export { default as BulletChart } from "./bullet-chart";
 export { BulletChartProvider } from "./bullet-chart/provider";
 export type {
@@ -283,6 +248,7 @@ export type {
 	BulletChartCustom,
 	BulletChartData,
 	BulletChartDataset,
+	BulletChartDirection,
 	BulletChartScale,
 	BulletChartScaleOptions,
 	GetScaleFn as BulletChartGetScaleFn,

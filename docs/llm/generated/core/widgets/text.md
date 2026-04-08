@@ -2,7 +2,7 @@
 
 Basic text primitive for labels and titles.
 
-Generated: 2026-03-30
+Generated: 2026-04-07
 
 ## Use When
 

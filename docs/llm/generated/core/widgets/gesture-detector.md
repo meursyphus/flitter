@@ -2,7 +2,7 @@
 
 Capture pointer and gesture events.
 
-Generated: 2026-03-30
+Generated: 2026-04-07
 
 ## Use When
 

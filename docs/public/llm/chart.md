@@ -2,7 +2,7 @@
 
 Use this pack when an agent needs to implement or customize charts in this repository with as little hidden context as possible.
 
-Generated: 2026-03-30
+Generated: 2026-04-07
 
 ## What This Pack Covers
 
@@ -43,15 +43,10 @@ These still have a `chart-presets` entry point, but they behave more like struct
 
 - `box-plot-chart`: Show distribution through quartiles, whiskers, and optional outliers.
 - `candlestick-chart`: Represent open-high-low-close movement for each interval.
-- `combo-chart`: Combine bars, lines, and areas, optionally with primary and secondary axes.
 - `donut-chart`: Part-to-whole chart with center content and an inner radius.
 - `funnel-chart`: Show sequential stage dropoff and conversion through a funnel.
-- `gantt-chart`: Visualize tasks across time with optional dependencies and progress.
 - `gauge-chart`: Display a single KPI against a bounded range and optional zones.
 - `histogram-chart`: Show numeric distribution by bins rather than individual raw points.
-- `network-chart`: Render nodes and edges with controller-owned spatial layout.
-- `polar-area-chart`: Use equal-angle sectors with radial magnitude rather than slice angle for value.
-- `progress-chart`: Linear progress track for a single value or segmented completion state.
 - `sankey-chart`: Show weighted flow between stages with controller-owned layout.
 - `sunburst-chart`: Display hierarchical composition as concentric radial segments.
 - `treemap-chart`: Represent proportional rectangles in a dense area-based map.

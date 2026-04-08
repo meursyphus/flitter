@@ -14,28 +14,28 @@ import Chart from "./chart";
 
 const RADAR_CHART_KEY = Symbol("RadarChartKey");
 
-export function RadarChartProvider({
+export function RadarChartProvider<TConfig extends object = {}>({
 	custom,
 	getScale,
 	data,
-	config = {},
+	config = {} as TConfig,
 }: {
-	custom: RadarChartCustom<any>;
+	custom: RadarChartCustom<TConfig>;
 	data: RadarChartData;
 	getScale: GetScaleFn;
-	config?: any;
+	config?: TConfig;
 }): Widget {
 	return ChangeNotifierProvider({
 		providerKey: RADAR_CHART_KEY,
 		create: () =>
-			new RadarChartController({
+			new RadarChartController<TConfig>({
 				data,
 				getScale,
 				custom,
 				config,
 			}),
 		update: (notifier) => {
-			const controller = notifier as RadarChartController;
+			const controller = notifier as RadarChartController<TConfig>;
 			controller.data = data;
 			controller.custom = custom;
 			controller.config = config;
@@ -44,6 +44,6 @@ export function RadarChartProvider({
 	});
 }
 
-RadarChartProvider.of = (context: BuildContext): RadarChartController => {
-	return Provider.of(RADAR_CHART_KEY, context) as RadarChartController;
+RadarChartProvider.of = <TConfig extends object = {}>(context: BuildContext): RadarChartController<TConfig> => {
+	return Provider.of(RADAR_CHART_KEY, context) as RadarChartController<TConfig>;
 };

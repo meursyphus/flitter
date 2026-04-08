@@ -3,6 +3,7 @@ export type {
   BulletChartCustom,
   BulletChartData,
   BulletChartDataset,
+  BulletChartDirection,
   BulletChartScale,
   BulletChartScaleOptions,
   BulletChartGetScaleFn as GetScaleFn,

@@ -45,7 +45,5 @@ Headless.PieChart({
 Use the same structure for:
 
 - `DonutChart`
-- `PolarAreaChart`
-- `ProgressChart`
 
 Swap only the chart-specific slots.

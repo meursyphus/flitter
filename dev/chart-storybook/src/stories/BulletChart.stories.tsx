@@ -1,41 +1,41 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import Widget from "@flitterjs/react";
 import { ToastBulletChart } from "shared/chart";
+import {
+  bulletRevenueData,
+  bulletRevenueTitle,
+} from "./bulletStoryData";
 
 type BulletChartArgs = {
   renderer: "svg" | "canvas";
   title: string;
 };
 
-const defaultData = {
-  labels: ["Revenue", "Profit", "Satisfaction", "New Customers", "Market Share"],
-  datasets: [
-    { value: 275, target: 250, ranges: [150, 225, 300] },
-    { value: 45, target: 50, ranges: [20, 40, 60] },
-    { value: 4.5, target: 4.2, ranges: [2, 3.5, 5] },
-    { value: 1450, target: 1500, ranges: [500, 1000, 2000] },
-    { value: 32, target: 35, ranges: [15, 25, 40] },
-  ],
-};
-
-function ToastBulletChartView({ args, data }: { args: BulletChartArgs; data: typeof defaultData }) {
+function ToastBulletChartView({
+  args,
+  direction,
+}: {
+  args: BulletChartArgs;
+  direction: "vertical" | "horizontal";
+}) {
   return (
     <Widget
       widget={ToastBulletChart({
-        data,
+        data: bulletRevenueData,
+        direction,
         config: {
           title: { text: args.title },
         },
       })}
-      width="800px"
-      height="400px"
+      width={direction === "vertical" ? "700px" : "800px"}
+      height={direction === "vertical" ? "520px" : "400px"}
       renderer={args.renderer}
     />
   );
 }
 
 const meta: Meta<BulletChartArgs> = {
-  title: "TODO/BulletChart/Toast",
+  title: "Polish/BulletChart/Toast",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },
@@ -43,13 +43,17 @@ const meta: Meta<BulletChartArgs> = {
   },
   args: {
     renderer: "svg",
-    title: "KPI Dashboard",
+    title: bulletRevenueTitle,
   },
 };
 
 export default meta;
 type Story = StoryObj<BulletChartArgs>;
 
-export const Default: Story = {
-  render: (args) => <ToastBulletChartView args={args} data={defaultData} />,
+export const Horizontal: Story = {
+  render: (args) => <ToastBulletChartView args={args} direction="horizontal" />,
+};
+
+export const Vertical: Story = {
+  render: (args) => <ToastBulletChartView args={args} direction="vertical" />,
 };

@@ -8,7 +8,7 @@ import type { RadarChartCustom } from "flitter-ui/chart";
 import type { ToastRadarChartConfig } from "../config";
 
 export function toastRadialAxisLine(
-	...[{ levels, axisCount }, ctx]: Parameters<RadarChartCustom<ToastRadarChartConfig>["radialAxisLine"]>
+	...[_args, ctx]: Parameters<RadarChartCustom<ToastRadarChartConfig>["radialLine"]>
 ): Widget {
 	const { radar: radarConfig } = ctx.config;
 
@@ -18,59 +18,38 @@ export function toastRadialAxisLine(
 				createDefaultSvgEl: (context) => ({
 					gridLines: context.createSvgEl("path"),
 				}),
-				paint: ({ gridLines }, size) => {
-					const cx = size.width / 2;
-					const cy = size.height / 2;
-					const maxRadius = Math.min(cx, cy);
-
-					const gridPath = createGridPath(cx, cy, maxRadius, levels, axisCount);
-					gridLines.setAttribute("d", gridPath.getD());
-					gridLines.setAttribute("fill", "none");
-					gridLines.setAttribute("stroke", radarConfig.gridColor);
-					gridLines.setAttribute("stroke-width", String(radarConfig.gridWidth));
+					paint: ({ gridLines }, size) => {
+						const cx = size.width / 2;
+						const cy = size.height / 2;
+						const gridPath = createSpokePath(cx, cy);
+						gridLines.setAttribute("d", gridPath.getD());
+						gridLines.setAttribute("fill", "none");
+						gridLines.setAttribute("stroke", radarConfig.axisColor);
+						gridLines.setAttribute("stroke-width", String(radarConfig.axisWidth));
+					},
 				},
-			},
-			canvas: {
-				paint: (context, size) => {
-					const cx = size.width / 2;
-					const cy = size.height / 2;
-					const maxRadius = Math.min(cx, cy);
-					const canvas = context.canvas;
+				canvas: {
+					paint: (context, size) => {
+						const cx = size.width / 2;
+						const cy = size.height / 2;
+						const canvas = context.canvas;
 
-					const gridPath = createGridPath(cx, cy, maxRadius, levels, axisCount);
-					canvas.strokeStyle = radarConfig.gridColor;
-					canvas.lineWidth = radarConfig.gridWidth;
-					canvas.stroke(gridPath.toCanvasPath());
+						const gridPath = createSpokePath(cx, cy);
+						canvas.strokeStyle = radarConfig.axisColor;
+						canvas.lineWidth = radarConfig.axisWidth;
+						canvas.stroke(gridPath.toCanvasPath());
+					},
 				},
-			},
 		},
 	});
 }
 
-function createGridPath(
+function createSpokePath(
 	cx: number,
 	cy: number,
-	maxRadius: number,
-	levels: number,
-	axisCount: number,
 ): Path {
 	const path = new Path();
-	const angleStep = (2 * Math.PI) / axisCount;
-	const startAngle = -Math.PI / 2;
-
-	for (let level = 1; level <= levels; level++) {
-		const radius = (maxRadius * level) / levels;
-		for (let i = 0; i <= axisCount; i++) {
-			const idx = i % axisCount;
-			const angle = startAngle + idx * angleStep;
-			const x = cx + radius * Math.cos(angle);
-			const y = cy + radius * Math.sin(angle);
-			if (i === 0) {
-				path.moveTo(new Offset({ x, y }));
-			} else {
-				path.lineTo(new Offset({ x, y }));
-			}
-		}
-	}
+	path.moveTo(new Offset({ x: cx, y: cy }));
+	path.lineTo(new Offset({ x: cx, y: 0 }));
 	return path;
 }

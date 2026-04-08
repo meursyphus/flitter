@@ -3,44 +3,28 @@ import {
   Container,
   FractionallySizedBox,
   BoxDecoration,
-  Opacity,
   type Widget,
 } from "flitter-core";
 import type { BulletChartContext } from "flitter-ui/chart";
 import type { ToastBulletChartConfig } from "../config";
 
 export function toastTargetMarker(
-  { target, index }: { target: number; index: number; label: string },
+  { target: _target, index: _index }: { target: number; index: number; label: string; isHovered: boolean; isDimmed: boolean },
   context: BulletChartContext<ToastBulletChartConfig>,
 ): Widget {
   const { bullet } = context.config;
-  const { scale } = context;
-  if (scale == null) return Container({});
-
-  const total = scale.max - scale.min;
-  const fraction = (target - scale.min) / total;
-
-  const isHovered = context.hoveredBullet != null;
-  const isThisHovered = context.isBulletHovered(index);
-
-  let opacity = 1;
-  if (isHovered && !isThisHovered) {
-    opacity = 0.3;
-  }
-
-  const marker = FractionallySizedBox({
-    alignment: Alignment.centerLeft,
-    widthFactor: fraction,
-    heightFactor: bullet.targetMarkerHeightRatio,
+  const isVertical = context.direction === "vertical";
+  return FractionallySizedBox({
+    alignment: isVertical ? Alignment.topCenter : Alignment.centerLeft,
+    widthFactor: isVertical ? bullet.targetMarkerHeightRatio : undefined,
+    heightFactor: isVertical ? undefined : bullet.targetMarkerHeightRatio,
     child: Container({
-      alignment: Alignment.centerRight,
+      alignment: isVertical ? Alignment.topCenter : Alignment.centerRight,
       child: Container({
-        width: bullet.targetMarkerWidth,
-        height: Infinity,
+        width: isVertical ? Infinity : bullet.targetMarkerWidth,
+        height: isVertical ? bullet.targetMarkerWidth : Infinity,
         decoration: new BoxDecoration({ color: bullet.targetMarkerColor }),
       }),
     }),
   });
-
-  return opacity < 1 ? Opacity({ opacity, child: marker }) : marker;
 }

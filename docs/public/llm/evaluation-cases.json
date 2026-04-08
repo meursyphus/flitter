@@ -301,31 +301,6 @@
     ]
   },
   {
-    "id": "combo-chart",
-    "title": "Revenue plus margin hybrid chart",
-    "prompt": "Show revenue as bars and margin as a line on the same chart. Margin may need a secondary axis.",
-    "recommendedCharts": [
-      "combo-chart"
-    ],
-    "pack": [
-      "/llm/chart.md",
-      "/llm/chart/combo-chart.md"
-    ],
-    "mustAsk": [
-      "Does margin truly require a secondary axis?",
-      "Which series types belong to which datasets?"
-    ],
-    "successCriteria": [
-      "Chooses combo only because mixed marks are explicit",
-      "Explains the secondary-axis tradeoff",
-      "Uses the base wrapper rather than inventing a themed preset"
-    ],
-    "criticFocus": [
-      "Did the reader overuse a secondary axis?",
-      "Did it ignore the mixed-mark requirement?"
-    ]
-  },
-  {
     "id": "donut-chart",
     "title": "Completion split with center KPI",
     "prompt": "Show Completed, In Progress, and Blocked as a donut with the total number of tasks in the center.",
@@ -376,31 +351,6 @@
     ]
   },
   {
-    "id": "gantt-chart",
-    "title": "Project plan timeline",
-    "prompt": "Render a project timeline with task durations and dependencies so we can see overlap and sequence at a glance.",
-    "recommendedCharts": [
-      "gantt-chart"
-    ],
-    "pack": [
-      "/llm/chart.md",
-      "/llm/chart/gantt-chart.md"
-    ],
-    "mustAsk": [
-      "What time unit should the x-axis use?",
-      "Do dependencies and progress need to be visible?"
-    ],
-    "successCriteria": [
-      "Chooses gantt instead of bar or line",
-      "Calls out time-unit and dependency questions",
-      "Uses the base wrapper unless the layout becomes highly custom"
-    ],
-    "criticFocus": [
-      "Did the reader flatten the tasks into a bar chart?",
-      "Did it skip dependency requirements?"
-    ]
-  },
-  {
     "id": "gauge-chart",
     "title": "Single KPI with thresholds",
     "prompt": "Show system health as a gauge with red, amber, and green threshold zones.",
@@ -448,81 +398,6 @@
     "criticFocus": [
       "Did the reader confuse histogram with categorical bar chart?",
       "Did it ignore the binning question?"
-    ]
-  },
-  {
-    "id": "network-chart",
-    "title": "Service dependency graph",
-    "prompt": "Visualize service dependencies as nodes and edges so engineers can see relationship topology at a glance.",
-    "recommendedCharts": [
-      "network-chart"
-    ],
-    "pack": [
-      "/llm/chart.md",
-      "/llm/chart/network-chart.md"
-    ],
-    "mustAsk": [
-      "Should layout be deterministic or more organic?",
-      "Do group or weight semantics need encoding?"
-    ],
-    "successCriteria": [
-      "Chooses network rather than scatter or sankey",
-      "Recognizes layout is controller-owned",
-      "Names the point where this would become a diagram tool instead of a chart"
-    ],
-    "criticFocus": [
-      "Did the reader force graph data into scatter coordinates?",
-      "Did it ignore layout semantics?"
-    ]
-  },
-  {
-    "id": "polar-area-chart",
-    "title": "Equal-angle radial category chart",
-    "prompt": "Show four regions with equal-angle sectors but different radial reach so the audience compares category magnitude radially, not by slice angle.",
-    "recommendedCharts": [
-      "polar-area-chart"
-    ],
-    "pack": [
-      "/llm/chart.md",
-      "/llm/chart/polar-area-chart.md"
-    ],
-    "mustAsk": [
-      "Is radial magnitude truly the intended encoding?",
-      "Do scale rings need to be visible?"
-    ],
-    "successCriteria": [
-      "Chooses polar area only when its radial semantics are explicit",
-      "Explains why pie or radar are not the same thing",
-      "Uses the base wrapper as the starting point"
-    ],
-    "criticFocus": [
-      "Did the reader collapse polar area into pie?",
-      "Did it ignore scale semantics?"
-    ]
-  },
-  {
-    "id": "progress-chart",
-    "title": "Segmented delivery completion",
-    "prompt": "Show completion across Complete, In Review, and Blocked on one bounded track.",
-    "recommendedCharts": [
-      "progress-chart"
-    ],
-    "pack": [
-      "/llm/chart.md",
-      "/llm/chart/progress-chart.md"
-    ],
-    "mustAsk": [
-      "Is this single-value or segmented progress?",
-      "What is the max or target?"
-    ],
-    "successCriteria": [
-      "Chooses progress rather than gauge",
-      "Calls out segmented-vs-single mode",
-      "Uses the base wrapper as the start point"
-    ],
-    "criticFocus": [
-      "Did the reader choose gauge when a track is enough?",
-      "Did it ignore the target/max question?"
     ]
   },
   {

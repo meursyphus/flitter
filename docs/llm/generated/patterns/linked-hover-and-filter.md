@@ -2,7 +2,7 @@
 
 Coordinate hover, legend filtering, and focus across multiple charts or panels.
 
-Generated: 2026-03-30
+Generated: 2026-04-07
 
 ## Use When
 
@@ -21,7 +21,6 @@ Generated: 2026-03-30
 - `scatter-chart`
 - `bar-chart`
 - `heatmap-chart`
-- `network-chart`
 
 ## Source Paths
 

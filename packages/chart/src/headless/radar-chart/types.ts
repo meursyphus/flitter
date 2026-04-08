@@ -33,28 +33,59 @@ export type RadarVertex = {
 	index: number;
 };
 
+export type HoveredRadar = {
+	index: number;
+	legend: string;
+};
+
+export type HoveredRadarPoint = {
+	index: number;
+	legend: string;
+	pointIndex: number;
+};
+
+export type AngularItem = {
+	angle: number;
+	label: Widget;
+};
+
+export type RadialLabelItem = {
+	ratio: number;
+	value: number;
+	label: Widget;
+};
+
+export type WebAngularGuide = {
+	ratio: number;
+	line: Widget;
+};
+
+export type WebRadialGuide = {
+	angle: number;
+	line: Widget;
+};
+
 export type RadarChartCustom<TConfig = {}> = {
 	// Structure
 	layout: CustomArgs<{ title: Widget; legends: Widget[]; plot: Widget }, TConfig>;
-	plot: CustomArgs<{ angularAxis: Widget; radialAxis: Widget; dataView: Widget }, TConfig>;
+	plot: CustomArgs<{ dataView: Widget; tooltipArea: Widget; web: Widget; radialAxis: Widget; angularItems: AngularItem[] }, TConfig>;
 
-	// Angular axis (spokes + category labels)
-	angularAxis: CustomArgs<{ line: Widget; labels: Widget[] }, TConfig>;
-	angularAxisLine: CustomArgs<{ axisCount: number }, TConfig>;
-	angularAxisLabel: CustomArgs<{ index: number; label: string; angle: number; nx: number; ny: number }, TConfig>;
+	// Radar guides + labels
+	radialAxis: CustomArgs<{ labels: RadialLabelItem[] }, TConfig>;
+	web: CustomArgs<{ angularLines: WebAngularGuide[]; radialLines: WebRadialGuide[] }, TConfig>;
+	angularLine: CustomArgs<{ axisCount: number }, TConfig>;
+	radialLine: CustomArgs<undefined, TConfig>;
+	angularAxisLabel: CustomArgs<{ index: number; label: string; angle: number }, TConfig>;
+	radialAxisLabel: CustomArgs<{ value: number; index: number; ratio: number }, TConfig>;
 
-	// Radial axis (concentric polygons + scale labels)
-	radialAxis: CustomArgs<{ line: Widget; labels: Widget[] }, TConfig>;
-	radialAxisLine: CustomArgs<{ levels: number; axisCount: number }, TConfig>;
-	radialAxisLabel: CustomArgs<{ value: number; index: number }, TConfig>;
-
-	// Data
 	dataView: CustomArgs<{ radars: Widget[] }, TConfig>;
-	radar: CustomArgs<{ legend: string; index: number; vertices: RadarVertex[] }, TConfig>;
+	radar: CustomArgs<{ legend: string; index: number; vertices: RadarVertex[]; isHovered: boolean; hoveredPointIndex: number | null }, TConfig>;
 
 	// Decorations
-	legend: CustomArgs<{ name: string; index: number }, TConfig>;
+	legend: CustomArgs<{ name: string; index: number; isVisible: boolean }, TConfig>;
 	title: CustomArgs<undefined, TConfig>;
+	tooltip: CustomArgs<{ label: string; items: { legend: string; color: string; value: number }[] }, TConfig>;
+	tooltipArea: CustomArgs<{ hoveredRadar: HoveredRadar | null; hoveredPoint: HoveredRadarPoint | null }, TConfig>;
 };
 
 export type GetScaleFn = (data: RadarChartData) => RadarChartScale;

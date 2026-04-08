@@ -24,6 +24,6 @@ export const defaultToastConfig: ToastRadarChartConfig = {
 		gridWidth: 1,
 		axisColor: "rgba(0, 0, 0, 0.1)",
 		axisWidth: 1,
-		labelMargin: 24,
+		labelMargin: 5,
 	},
 };

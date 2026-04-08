@@ -2,7 +2,7 @@ import type { BulletChartCustom } from "flitter-ui/chart";
 import * as Cartesian from "flitter-ui/chart";
 
 export function BulletGrid(
-  ...[{ xLine, yLine }, { scale: _scale, data }]: Parameters<
+  ...[{ xLine, yLine }, { scale: _scale, data, direction }]: Parameters<
     BulletChartCustom["grid"]
   >
 ) {
@@ -10,11 +10,10 @@ export function BulletGrid(
   const labelCount = data.labels.length;
   const valueCount = (scale.max - scale.min) / scale.step;
 
-  // Bullet chart is always horizontal: X = value axis, Y = category axis
   return Cartesian.Grid({
     xLine,
     yLine,
-    x: valueCount,
-    y: labelCount,
+    x: direction === "vertical" ? labelCount : valueCount,
+    y: direction === "vertical" ? valueCount : labelCount,
   });
 }
