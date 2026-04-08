@@ -2,18 +2,7 @@
 
 import Link from "next/link";
 import FlitterLogo from "@/components/flitter-logo";
-import {
-  VerticalToastBarChart,
-} from "./chart/_data/bar-chart/toast/examples.generated";
-import {
-  NegativeVerticalAgBarChart,
-} from "./chart/_data/bar-chart/ag/examples.generated";
-import { DefaultToastLineChart } from "./chart/_data/line-chart/toast/examples.generated";
-import { DefaultAgLineChart } from "./chart/_data/line-chart/ag/examples.generated";
-import { DefaultToastAreaChart } from "./chart/_data/area-chart/toast/examples.generated";
-import { RegionalRevenueToast as VerticalToastStackedBarChart } from "./chart/_data/stacked-bar-chart/toast/examples.generated";
-import { DefaultToastScatterChart } from "./chart/_data/scatter-chart/toast/examples.generated";
-import { BasicPieChart } from "./chart/_data/pie-chart/toast/examples.generated";
+import { galleryEntries } from "./chart/_data/gallery";
 
 export default function Home() {
   return (
@@ -346,16 +335,10 @@ export default function Home() {
 }
 
 /* ── Infinite Carousel Strip ── */
-const carouselCharts = [
-  { el: <VerticalToastBarChart.Component />, label: "Bar" },
-  { el: <DefaultToastLineChart.Component />, label: "Line" },
-  { el: <DefaultToastAreaChart.Component />, label: "Area" },
-  { el: <VerticalToastStackedBarChart.Component />, label: "Stacked Bar" },
-  { el: <DefaultToastScatterChart.Component />, label: "Scatter" },
-  { el: <BasicPieChart.Component />, label: "Pie" },
-  { el: <NegativeVerticalAgBarChart.Component />, label: "Negative Values" },
-  { el: <DefaultAgLineChart.Component />, label: "Line" },
-];
+const carouselCharts = galleryEntries.slice(0, 8).map((entry) => ({
+  el: <entry.Component />,
+  label: entry.title,
+}));
 
 function ChartCarouselStrip() {
   const items = [...carouselCharts, ...carouselCharts];

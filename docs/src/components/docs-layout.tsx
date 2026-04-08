@@ -9,11 +9,13 @@ export default function DocsLayout({
   sections,
   home,
   noProse = false,
+  fullWidth = false,
   children,
 }: {
   sections: NavSection[];
   home?: NavItem;
   noProse?: boolean;
+  fullWidth?: boolean;
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -26,7 +28,7 @@ export default function DocsLayout({
   const closeSidebar = useCallback(() => setSidebarOpen(false), []);
 
   return (
-    <div className="flex min-h-[calc(100vh-3rem)]">
+    <div className="mx-auto flex min-h-[calc(100vh-3rem)] max-w-[1920px]">
       {/* Desktop sidebar */}
       <aside className="sticky top-12 hidden h-[calc(100vh-3rem)] w-64 shrink-0 border-r border-neutral-100 bg-white md:block">
         <Sidebar
@@ -76,7 +78,7 @@ export default function DocsLayout({
             Menu
           </button>
         </div>
-        <article className={noProse ? "mx-auto max-w-4xl" : "prose prose-neutral prose-sm mx-auto max-w-3xl prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-code:rounded prose-code:bg-neutral-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-[13px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-pre:rounded-lg prose-pre:text-sm prose-a:text-neutral-900 prose-a:no-underline hover:prose-a:underline"}>
+        <article className={fullWidth ? "" : noProse ? "mx-auto max-w-4xl" : "prose prose-neutral prose-sm mx-auto max-w-3xl prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-code:rounded prose-code:bg-neutral-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-[13px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-pre:rounded-lg prose-pre:text-sm prose-a:text-neutral-900 prose-a:no-underline hover:prose-a:underline"}>
           {children}
         </article>
       </main>

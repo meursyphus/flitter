@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import type { NavItem, NavSection } from "@/lib/navigation";
+import GalleryCategoryNav from "./gallery-category-nav";
 
 /** Strip trailing slash so "/chart/bar-chart/" matches "/chart/bar-chart" */
 function normPath(p: string) {
@@ -133,6 +135,8 @@ function NavLink({
     );
   }
 
+  const isGalleryPage = item.href === "/chart/gallery" && pathname.startsWith("/chart/gallery");
+
   return (
     <li>
       <Link
@@ -148,10 +152,71 @@ function NavLink({
         {item.title}
         {item.status && <StatusBadge status={item.status} />}
       </Link>
-      {hasChildren && isExpanded && (
+      {isGalleryPage && <GalleryCategoryNav />}
+      {hasChildren && isExpanded && !isGalleryPage && (
         <ChildrenGroup children={item.children!} onLinkClick={onLinkClick} />
       )}
     </li>
+  );
+}
+
+/* ── Collapsible Section ── */
+function SidebarSection({
+  section,
+  onLinkClick,
+}: {
+  section: NavSection;
+  onLinkClick?: () => void;
+}) {
+  const pathname = normPath(usePathname());
+  const hasActiveChild = section.items.some(
+    (item) =>
+      pathname === item.href ||
+      item.children?.some((c) => pathname === c.href),
+  );
+  const [isOpen, setIsOpen] = useState(hasActiveChild);
+
+  const isCollapsible = section.collapsible ?? false;
+
+  return (
+    <div className="mb-5">
+      <h3
+        className={clsx(
+          "mb-1.5 px-2 text-[11px] font-bold uppercase tracking-wider text-neutral-400",
+          isCollapsible && "flex cursor-pointer items-center justify-between select-none hover:text-neutral-600",
+        )}
+        onClick={isCollapsible ? () => setIsOpen(!isOpen) : undefined}
+      >
+        {section.title}
+        {isCollapsible && (
+          <svg
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            className={clsx(
+              "transition-transform",
+              isOpen && "rotate-90",
+            )}
+          >
+            <path d="M3.5 1.5L7 5l-3.5 3.5" />
+          </svg>
+        )}
+      </h3>
+      {(!isCollapsible || isOpen) && (
+        <ul className="space-y-0.5">
+          {section.items.map((item) => (
+            <NavLink
+              key={item.href}
+              item={item}
+              onLinkClick={onLinkClick}
+            />
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
@@ -189,20 +254,11 @@ export default function Sidebar({
 
       {/* Sections */}
       {sections.map((section) => (
-        <div key={section.title} className="mb-5">
-          <h3 className="mb-1.5 px-2 text-[11px] font-bold uppercase tracking-wider text-neutral-400">
-            {section.title}
-          </h3>
-          <ul className="space-y-0.5">
-            {section.items.map((item) => (
-              <NavLink
-                key={item.href}
-                item={item}
-                onLinkClick={onLinkClick}
-              />
-            ))}
-          </ul>
-        </div>
+        <SidebarSection
+          key={section.title}
+          section={section}
+          onLinkClick={onLinkClick}
+        />
       ))}
     </nav>
   );

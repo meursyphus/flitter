@@ -121,7 +121,12 @@ class AnimationController extends Animation<number> {
     target: number,
     overrideOptions: { onComplete?: () => void } = {},
   ) {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") {
+      this.internalSetValue(target);
+      this.notifyListeners();
+      overrideOptions.onComplete?.();
+      return;
+    }
 
     // Stop any existing animation
     if (this.unsubscribe) {

@@ -10,6 +10,7 @@ export type NavItem = {
 export type NavSection = {
   title: string;
   items: NavItem[];
+  collapsible?: boolean;
 };
 
 export type Navigation = {
@@ -57,61 +58,27 @@ export const chartNav: Navigation = {
         { title: "Overview", href: "/chart" },
         { title: "Installation", href: "/chart/installation" },
         { title: "Quick Start", href: "/chart/quick-start" },
+        { title: "Gallery", href: "/chart/gallery" },
       ],
     },
     {
-      title: "Charts",
+      title: "API",
+      collapsible: true,
       items: [
-        {
-          title: "Bar Chart",
-          href: "/chart/bar-chart",
-          children: [{ title: "Advanced", href: "/chart/bar-chart/advanced" }],
-        },
-        {
-          title: "Line Chart",
-          href: "/chart/line-chart",
-          children: [{ title: "Advanced", href: "/chart/line-chart/advanced" }],
-        },
-        {
-          title: "Area Chart",
-          href: "/chart/area-chart",
-          children: [{ title: "Advanced", href: "/chart/area-chart/advanced" }],
-        },
-        {
-          title: "Pie Chart",
-          href: "/chart/pie-chart",
-          children: [{ title: "Advanced", href: "/chart/pie-chart/advanced" }],
-        },
-        {
-          title: "Scatter Chart",
-          href: "/chart/scatter-chart",
-          children: [{ title: "Advanced", href: "/chart/scatter-chart/advanced" }],
-        },
-        {
-          title: "Radar Chart",
-          href: "/chart/radar-chart",
-          children: [{ title: "Advanced", href: "/chart/radar-chart/advanced" }],
-        },
-        {
-          title: "Bubble Chart",
-          href: "/chart/bubble-chart",
-          children: [{ title: "Advanced", href: "/chart/bubble-chart/advanced" }],
-        },
-        {
-          title: "Heatmap Chart",
-          href: "/chart/heatmap-chart",
-          children: [{ title: "Advanced", href: "/chart/heatmap-chart/advanced" }],
-        },
-        {
-          title: "Stacked Bar Chart",
-          href: "/chart/stacked-bar-chart",
-          children: [{ title: "Advanced", href: "/chart/stacked-bar-chart/advanced" }],
-        },
-        {
-          title: "Stacked Area Chart",
-          href: "/chart/stacked-area-chart",
-          children: [{ title: "Advanced", href: "/chart/stacked-area-chart/advanced" }],
-        },
+        { title: "Common", href: "/chart/api" },
+        { title: "Area Chart", href: "/chart/api/area-chart" },
+        { title: "Bar Chart", href: "/chart/api/bar-chart" },
+        { title: "Bubble Chart", href: "/chart/api/bubble-chart" },
+        { title: "Donut Chart", href: "/chart/api/donut-chart" },
+        { title: "Heatmap Chart", href: "/chart/api/heatmap-chart" },
+        { title: "Line Chart", href: "/chart/api/line-chart" },
+        { title: "Pie Chart", href: "/chart/api/pie-chart" },
+        { title: "Radar Chart", href: "/chart/api/radar-chart" },
+        { title: "Scatter Chart", href: "/chart/api/scatter-chart" },
+        { title: "Stacked Area Chart", href: "/chart/api/stacked-area-chart" },
+        { title: "Stacked Bar Chart", href: "/chart/api/stacked-bar-chart" },
+        { title: "Sunburst Chart", href: "/chart/api/sunburst-chart" },
+        { title: "Treemap Chart", href: "/chart/api/treemap-chart" },
       ],
     },
   ],

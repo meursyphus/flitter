@@ -14,7 +14,7 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-md">
-        <div className="flex h-12 items-center justify-between px-5">
+        <div className="mx-auto flex h-12 max-w-[1920px] items-center justify-between px-5">
           {/* Left: Brand + product nav */}
           <div className="flex items-center gap-1">
             <Link href="/" className="flex items-center gap-1.5">

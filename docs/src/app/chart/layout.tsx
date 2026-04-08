@@ -10,6 +10,7 @@ export default function ChartLayout({
     <DocsLayout
       sections={chartNav.sections}
       noProse
+      fullWidth
     >
       {children}
     </DocsLayout>

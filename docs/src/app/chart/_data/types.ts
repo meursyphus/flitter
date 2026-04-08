@@ -80,12 +80,6 @@ export type OverviewPageData = ChartPageBase & {
   pageType: "overview";
   /** Quick start code snippet */
   quickStartCode?: string;
-  /** Style variants shown on the overview page */
-  styles?: StyleSummary[];
-  /** Showcase examples displayed in the gallery grid */
-  showcaseExamples?: ShowcaseExample[];
-  /** Whether an advanced page exists */
-  hasAdvanced?: boolean;
 };
 
 // ---------------------------------------------------------------------------
@@ -130,10 +124,73 @@ export type AdvancedPageData = ChartPageBase & {
 };
 
 // ---------------------------------------------------------------------------
+// Gallery — single-page showcase with detail drill-down
+// ---------------------------------------------------------------------------
+
+export type GalleryIndexPageData = ChartPageBase & {
+  pageType: "gallery-index";
+};
+
+export type GalleryDetailPageData = ChartPageBase & {
+  pageType: "gallery-detail";
+  entry: {
+    slug: string;
+    chartType: string;
+    style: "Toast" | "AG";
+    title: string;
+    Component: React.ComponentType;
+    code: string;
+    installCommand: string;
+  };
+  relatedEntries: {
+    slug: string;
+    chartType: string;
+    style: "Toast" | "AG";
+    title: string;
+    Component: React.ComponentType;
+    code: string;
+    installCommand: string;
+  }[];
+};
+
+// ---------------------------------------------------------------------------
+// API — per-chart reference page
+// ---------------------------------------------------------------------------
+
+export type ContextProperty = {
+  name: string;
+  type: string;
+  description: string;
+  kind: "property" | "method";
+};
+
+export type ApiPageData = ChartPageBase & {
+  pageType: "api";
+  parent?: string;
+  dataFormat?: {
+    typeName: string;
+    typeDefinition: string;
+    description: string;
+  };
+  agConfig?: { sections: ConfigSection[] };
+  toastConfig?: { sections: ConfigSection[] };
+  customParts?: CustomElement[];
+  context?: {
+    typeName: string;
+    properties: ContextProperty[];
+  };
+  overrideExample?: string;
+};
+
+// ---------------------------------------------------------------------------
 // Union type — discriminated by `pageType`
 // ---------------------------------------------------------------------------
 
-export type ChartPageData = OverviewPageData | StylePageData | AdvancedPageData;
+export type ChartPageData =
+  | OverviewPageData
+  | GalleryIndexPageData
+  | GalleryDetailPageData
+  | ApiPageData;
 
 // ---------------------------------------------------------------------------
 // Module contract — every chart folder exports this

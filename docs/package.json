@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "llm:build": "node ./scripts/build-llm-pack.mjs",
-    "gen:examples": "node ./scripts/generate-example-strings.mjs"
+    "gen:examples": "node ./scripts/generate-example-strings.mjs",
+    "gen:gallery": "node scripts/generate-gallery.mjs",
+    "gen:thumbs": "npx tsx scripts/generate-gallery-thumbnails.mts",
+    "gen:gallery:all": "npm run gen:thumbs && npm run gen:gallery"
   },
   "dependencies": {
     "@flitterjs/react": "workspace:*",
@@ -16,8 +19,9 @@
     "@mdx-js/react": "^3.1.1",
     "@next/mdx": "^16.1.6",
     "clsx": "^2.1.1",
-    "flitter-core": "workspace:*",
+    "comwit": "^0.3.1",
     "flitter-chart": "workspace:*",
+    "flitter-core": "workspace:*",
     "next": "^15.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -33,6 +37,7 @@
     "@types/node": "^20.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "linkedom": "^0.14.26",
     "postcss": "^8.5.6",
     "react-grab": "^0.1.21",
     "tailwindcss": "^4.2.1",

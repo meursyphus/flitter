@@ -4,6 +4,7 @@ import { Instrument_Serif } from "next/font/google";
 import Script from "next/script";
 import Header from "@/components/header";
 import GlobalSidebar from "@/components/global-sidebar";
+import Providers from "./providers";
 import "./globals.css";
 
 const pretendard = localFont({
@@ -46,11 +47,13 @@ export default function RootLayout({
         className="bg-white text-neutral-900 antialiased"
         style={{ fontFamily: "var(--font-body)" }}
       >
-        <Header />
-        <div className="flex">
-          <GlobalSidebar />
-          <div className="flex-1 min-w-0">{children}</div>
-        </div>
+        <Providers>
+          <Header />
+          <div className="mx-auto flex max-w-[1920px]">
+            <GlobalSidebar />
+            <div className="flex-1 min-w-0">{children}</div>
+          </div>
+        </Providers>
       </body>
     </html>
   );

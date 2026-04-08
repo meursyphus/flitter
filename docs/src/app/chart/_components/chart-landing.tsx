@@ -1,12 +1,9 @@
-import ChartCarousel from "./chart-carousel";
-import { chartShowcase } from "./chart-showcase";
-
 
 export default function ChartLanding() {
   return (
-    <div className="-mx-6 -mt-8 md:-mx-10">
+    <div className="mx-auto max-w-5xl">
       {/* Hero */}
-      <section className="relative px-6 pt-14 pb-10 md:px-10">
+      <section className="relative pt-14 pb-10">
         <div className="max-w-2xl">
           <h1 className="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
             Charts
@@ -32,7 +29,7 @@ export default function ChartLanding() {
       </section>
 
       {/* How It's Different */}
-      <section className="px-6 pb-10 md:px-10">
+      <section className="pb-10">
         <h2 className="mb-6 text-lg font-bold tracking-tight text-neutral-900">
           How It&apos;s Different
         </h2>
@@ -75,7 +72,7 @@ export default function ChartLanding() {
       </section>
 
       {/* What You Can Build */}
-      <section className="px-6 pb-10 md:px-10">
+      <section className="pb-10">
         <h2 className="mb-2 text-lg font-bold tracking-tight text-neutral-900">
           What You Can Build
         </h2>
@@ -125,7 +122,7 @@ export default function ChartLanding() {
       </section>
 
       {/* Works With AI Assistants */}
-      <section className="px-6 pb-10 md:px-10">
+      <section className="pb-10">
         <div className="rounded-xl border border-neutral-200 bg-white p-6">
           <h3 className="text-base font-bold text-neutral-900">
             Works With AI Assistants
@@ -147,16 +144,6 @@ export default function ChartLanding() {
         </div>
       </section>
 
-      {/* Chart grid */}
-      <section className="px-6 pb-16 md:px-10">
-        <h2 className="mb-2 text-xl font-bold tracking-tight text-neutral-900">
-          Browse Charts
-        </h2>
-        <p className="mb-6 text-sm leading-relaxed text-neutral-500">
-          10+ chart types, 2 visual styles, infinite customization. Pick one and make it yours.
-        </p>
-        <ChartCarousel charts={chartShowcase} />
-      </section>
     </div>
   );
 }
