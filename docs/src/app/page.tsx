@@ -15,18 +15,6 @@ const DISPLAY_FONT = "var(--font-display), sans-serif";
 function IntroSection() {
   return (
     <section className="relative overflow-hidden">
-      {/* Faint grid texture — full bleed */}
-      <div
-        className="pointer-events-none absolute inset-y-0 opacity-[0.03]"
-        style={{
-          left: "-16rem",
-          right: 0,
-          backgroundImage:
-            "linear-gradient(#2563EB 1px, transparent 1px), linear-gradient(90deg, #2563EB 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
-        }}
-      />
-
       <div className="relative grid min-h-[85vh] grid-cols-1 items-center gap-0 lg:grid-cols-[1fr_1.1fr]">
         {/* Left — Text */}
         <div className="flex flex-col justify-center px-6 py-20 sm:px-10 lg:py-0 lg:pl-12 xl:pl-16">
@@ -34,17 +22,14 @@ function IntroSection() {
             className="text-5xl sm:text-6xl lg:text-[72px] xl:text-[80px] font-black leading-[1.06] tracking-tight text-gray-900"
             style={{ fontFamily: DISPLAY_FONT }}
           >
-            Powerful
+            <span className="text-amber-400">JavaScript</span>{" "}
+            <span className="text-rose-500">Rendering</span>
             <br />
-            <span className="text-blue-600">Rendering</span>
-            <br />
-            for the Web
+            for <span className="text-blue-600">Data Visualization</span>
           </h1>
 
           <p className="mt-6 max-w-[420px] text-base sm:text-lg font-semibold leading-relaxed text-gray-500">
-            A JavaScript rendering engine inspired by Flutter.
-            Declarative widgets, constraint-based layout, SVG &amp; Canvas
-            — in one unified API.
+            Charts, Diagrams, and beyond — powered by one engine.
           </p>
 
           <div className="mt-10 flex flex-wrap gap-3">
@@ -148,41 +133,101 @@ function ShowcaseSection() {
         </div>
       </div>
 
-      {/* EasyRD — static reference */}
-      <div className="mt-20 mx-auto max-w-6xl px-6 sm:px-10 lg:px-12">
-        <div className="overflow-hidden">
-          <img
-            className="w-full"
-            src="/home/easyrd.jpg"
-            alt="EasyRD - ERD diagram built with Flitter"
-          />
-        </div>
-        <p className="mt-3 text-sm text-gray-400">
-          Also powering{" "}
+      {/* EasyRD — production showcase */}
+      <div className="mt-20 mx-auto max-w-7xl px-6 sm:px-10 lg:px-12">
+        <h3
+          className="text-4xl sm:text-5xl lg:text-[64px] font-black tracking-tight leading-[1.08] text-gray-900"
+          style={{ fontFamily: DISPLAY_FONT }}
+        >
+          Used in Production —{" "}
           <a
             href="https://easyrd.dev"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-500 hover:underline"
+            className="text-violet-500 hover:underline"
           >
             easyrd.dev
           </a>
-          {" "}— an ERD diagram tool built entirely with Flitter.
+        </h3>
+        <p className="mt-4 max-w-2xl text-lg leading-relaxed text-gray-500">
+          A database table editor used by 10,000+ users.
+          Built with SvelteKit + Flitter + DBML.
         </p>
+        <div className="mt-6 overflow-hidden rounded-lg">
+          <img
+            className="w-full"
+            src="/home/easyrd.jpg"
+            alt="EasyRD - ERD diagram editor powered by Flitter"
+          />
+        </div>
       </div>
     </section>
   );
 }
 
 /* ════════════════════════════════════════════════════════
-   Section 3 — WHY (Flutter + Flitter code comparison)
+   Section 3 — MAINTAINER
+   ════════════════════════════════════════════════════════ */
+function MaintainerSection() {
+  return (
+    <section className="relative py-24 px-6 sm:px-10 lg:px-12">
+      <div className="mx-auto max-w-2xl text-center">
+        {/* Photo — vertical, centered */}
+        <div className="mx-auto w-full max-w-sm overflow-hidden rounded-xl">
+          <img
+            src="/home/maintainer.jpeg"
+            alt="Daeseung Moon"
+            className="w-full object-cover object-top"
+          />
+        </div>
+
+        {/* Info */}
+        <div className="mt-8">
+          <h3
+            className="text-3xl sm:text-4xl font-black tracking-tight text-gray-900"
+            style={{ fontFamily: DISPLAY_FONT }}
+          >
+            Daeseung Moon
+          </h3>
+
+          {/* Quote-style bio */}
+          <blockquote className="mt-4 border-l-2 border-emerald-400 pl-4 text-left text-[17px] leading-relaxed text-gray-500 italic">
+            Korean frontend developer, 7 years in.
+            <br />
+            I love building visual experiences on the web.
+          </blockquote>
+
+          {/* ssgoi OG card */}
+          <p className="mt-8 mb-1 text-[12px] font-bold uppercase tracking-wider text-gray-400">
+            Another project by this maintainer
+          </p>
+          <p className="mb-3 text-[14px] text-gray-500">
+            ssgoi — Smooth page transition library for SvelteKit
+          </p>
+          <a
+            href="https://ssgoi.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block overflow-hidden border border-gray-200 transition-all hover:border-gray-300 hover:shadow-md"
+          >
+            <img
+              src="https://ssgoi.dev/og.png"
+              alt="ssgoi — Page transitions for SvelteKit"
+              className="w-full"
+            />
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════
+   Section 4 — WHY (Flutter + Flitter code comparison)
    ════════════════════════════════════════════════════════ */
 function WhySection() {
   return (
     <section className="relative px-6 py-24 sm:px-10 lg:px-12">
-      {/* Decorative accent line */}
-      <div className="absolute left-6 top-0 h-px w-20 bg-blue-600 sm:left-10 lg:left-12" />
-
       <div>
         <h2
           className="max-w-3xl text-[clamp(2rem,4vw,3.5rem)] font-black leading-[1.08] tracking-tight text-gray-900"
@@ -190,23 +235,22 @@ function WhySection() {
             fontFamily: "var(--font-display), Georgia, serif",
           }}
         >
-          Bringing{" "}
-          <span className="text-blue-500">Flutter&apos;s</span>{" "}
-          Brilliance
+          <span className="text-blue-600">Google&apos;s</span>{" "}
+          Creative <span className="text-rose-500">Power</span>,
           <br className="hidden sm:block" />
-          to{" "}
-          <span className="text-blue-600">JavaScript</span>
+          Now on the <span className="text-emerald-500">Web</span>
         </h2>
 
         <p className="mt-5 text-[16px] text-gray-400">
-          Same API, same patterns -- just JavaScript.
+          Flutter&apos;s declarative API, now in JavaScript. SVG &amp; Canvas, one unified engine.
         </p>
 
         {/* Code comparison */}
         <div className="mt-16 grid gap-6 md:grid-cols-2">
           <div>
             <div className="mb-4 flex items-center gap-3">
-              <span className="text-xl font-bold text-gray-900">
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="#027DFD"><path d="M14.314 0L2.3 12 6 15.7 21.684 0h-7.357zm0 11.066L7.758 17.38l2.39 2.39 4.17-4.17 5.32-5.32-1.324-1.214z" /></svg>
+              <span className="text-xl font-bold text-blue-500">
                 Flutter
               </span>
               <span className="text-base text-gray-400">
@@ -225,6 +269,7 @@ function WhySection() {
 
           <div>
             <div className="mb-4 flex items-center gap-3">
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="#F7DF1E"><path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.405-.6-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z" /></svg>
               <span className="text-xl font-bold text-blue-600">
                 Flitter
               </span>
@@ -248,7 +293,7 @@ function WhySection() {
 }
 
 /* ════════════════════════════════════════════════════════
-   Section 4 — CODING (Scroll-synced Lottie + text)
+   Section 5 — CODING (Scroll-synced Lottie + text)
    ════════════════════════════════════════════════════════ */
 function CodingSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -362,20 +407,11 @@ function CodingSection() {
 }
 
 /* ════════════════════════════════════════════════════════
-   Section 5 — LAST (CTA)
+   Section 6 — LAST (CTA)
    ════════════════════════════════════════════════════════ */
 function LastSection() {
   return (
     <section className="relative flex min-h-[70vh] items-center justify-center overflow-hidden px-6 sm:px-10 lg:px-12">
-      {/* Radial glow */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(37,99,235,0.04) 0%, transparent 70%)",
-        }}
-      />
-
       <div className="relative max-w-[640px] text-center">
         <h2
           className="text-[clamp(2.5rem,5vw,4rem)] font-black leading-[1.08] tracking-tight text-gray-900"
@@ -383,64 +419,33 @@ function LastSection() {
             fontFamily: "var(--font-display), Georgia, serif",
           }}
         >
-          Start building with{" "}
-          <span className="text-blue-600">Flitter</span>
+          See What&apos;s Possible
         </h2>
         <p className="mx-auto mt-5 max-w-md text-[15px] leading-relaxed text-gray-400">
-          Three commands to go from zero to a fully composable chart in
-          your project.
+          Explore the chart gallery, dive into the docs, or contribute on GitHub.
         </p>
-
-        {/* Terminal-like steps */}
-        <div className="mx-auto mt-10 max-w-md space-y-2 text-left">
-          {[
-            { cmd: "npx flitter-ui init", note: "Set up Flitter" },
-            {
-              cmd: "npx flitter-ui add bar-chart",
-              note: "Add a chart",
-            },
-            { cmd: null, note: "Open the source. Make it yours." },
-          ].map((step, i) => (
-            <div key={i}>
-              {step.cmd ? (
-                <code className="block rounded-md bg-gray-50 px-4 py-2.5 text-[13px] font-medium text-gray-600">
-                  <span className="mr-2 text-blue-500">$</span>
-                  {step.cmd}
-                </code>
-              ) : (
-                <p className="px-4 py-2 text-[13px] text-gray-300 italic">
-                  {step.note}
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
           <Link
-            href="/docs"
-            className="inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 px-8 text-[14px] font-semibold text-white transition-all hover:bg-blue-700"
+            href="/chart"
+            className="inline-flex h-11 items-center justify-center rounded-lg bg-emerald-500 px-8 text-[14px] font-semibold text-white transition-all hover:bg-emerald-600"
           >
-            Get Started
+            Chart Gallery
           </Link>
           <Link
-            href="/chart"
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-gray-200 px-8 text-[14px] font-semibold text-gray-600 transition-all hover:border-gray-300 hover:bg-gray-50"
+            href="/docs"
+            className="inline-flex h-11 items-center justify-center rounded-lg border border-gray-200 px-8 text-[14px] font-semibold text-gray-600 transition-all hover:border-gray-300 hover:bg-gray-50"
           >
-            Explore Charts
-            <svg
-              width="13"
-              height="13"
-              viewBox="0 0 14 14"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M1 7h12M9 3l4 4-4 4" />
-            </svg>
+            Read the Docs
           </Link>
+          <a
+            href="https://github.com/meursyphus/flitter"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-11 items-center justify-center rounded-lg border border-gray-200 px-8 text-[14px] font-semibold text-gray-600 transition-all hover:border-gray-300 hover:bg-gray-50"
+          >
+            GitHub
+          </a>
         </div>
       </div>
     </section>
@@ -501,6 +506,7 @@ export default function Home() {
     <main className="overflow-x-clip">
       <IntroSection />
       <ShowcaseSection />
+      <MaintainerSection />
       <WhySection />
       <CodingSection />
       <LastSection />

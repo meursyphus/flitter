@@ -15,7 +15,7 @@ function normPath(p: string) {
 function StatusBadge({ status }: { status: string }) {
   if (status === "new")
     return (
-      <span className="ml-auto rounded bg-teal-50 px-1.5 py-0.5 text-[10px] font-semibold text-teal-600">
+      <span className="ml-auto rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-semibold text-blue-600">
         New
       </span>
     );
@@ -50,7 +50,7 @@ function ChildrenGroup({
           return (
             <span
               key={item.href}
-              className="block py-1 pl-3 text-[12.5px] text-neutral-300 cursor-default"
+              className="block py-1.5 pl-3 text-[13px] text-neutral-300 cursor-default"
             >
               {item.title}
             </span>
@@ -63,9 +63,9 @@ function ChildrenGroup({
             href={item.href}
             onClick={onLinkClick}
             className={clsx(
-              "block py-1 pl-3 text-[13px] font-medium transition-colors",
+              "block py-1.5 pl-3 text-[14px] font-medium transition-colors",
               isActive
-                ? "border-l-2 border-teal-500 -ml-px font-medium text-teal-700"
+                ? "border-l-2 border-blue-500 -ml-px font-bold text-blue-600"
                 : "text-neutral-700 hover:text-neutral-900"
             )}
           >
@@ -83,7 +83,7 @@ function ChildrenGroup({
           return (
             <span
               key={item.href}
-              className="block py-1 pl-3 text-[12.5px] text-neutral-300 cursor-default"
+              className="block py-1.5 pl-3 text-[13px] text-neutral-300 cursor-default"
             >
               {item.title}
             </span>
@@ -96,9 +96,9 @@ function ChildrenGroup({
             href={item.href}
             onClick={onLinkClick}
             className={clsx(
-              "block py-1 pl-3 text-[13px] font-medium transition-colors",
+              "block py-1.5 pl-3 text-[14px] font-medium transition-colors",
               isActive
-                ? "border-l-2 border-teal-500 -ml-px font-medium text-teal-700"
+                ? "border-l-2 border-blue-500 -ml-px font-bold text-blue-600"
                 : "text-neutral-700 hover:text-neutral-900"
             )}
           >
@@ -128,7 +128,7 @@ function NavLink({
   if (isComing) {
     return (
       <li>
-        <span className="flex items-center gap-1.5 rounded-md px-2 py-1 text-[13px] text-neutral-300 cursor-default">
+        <span className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[14px] text-neutral-300 cursor-default">
           {item.title}
         </span>
       </li>
@@ -143,12 +143,15 @@ function NavLink({
         href={item.href}
         onClick={onLinkClick}
         className={clsx(
-          "flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] font-medium transition-colors",
+          "flex items-center gap-2 rounded-md px-2 py-2 text-[14px] font-semibold transition-colors",
           isActive
-            ? "font-bold text-teal-700 bg-teal-50"
+            ? "font-bold text-blue-600 bg-blue-100"
             : "text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
         )}
       >
+        {item.dot && (
+          <span className={clsx("h-4 w-4 shrink-0 rounded-sm", item.dot)} />
+        )}
         {item.title}
         {item.status && <StatusBadge status={item.status} />}
       </Link>
@@ -182,7 +185,7 @@ function SidebarSection({
     <div className="mb-5">
       <h3
         className={clsx(
-          "mb-1.5 px-2 text-[11px] font-bold uppercase tracking-wider text-neutral-400",
+          "mb-1.5 px-2 text-[12px] font-bold uppercase tracking-wider text-neutral-400",
           isCollapsible && "flex cursor-pointer items-center justify-between select-none hover:text-neutral-600",
         )}
         onClick={isCollapsible ? () => setIsOpen(!isOpen) : undefined}
@@ -223,7 +226,7 @@ function SidebarSection({
 /* ── Search Bar (placeholder) ── */
 function SearchBar() {
   return (
-    <button className="flex w-full items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-[13px] text-neutral-400 transition-colors hover:border-neutral-300 hover:bg-white">
+    <button className="flex w-full items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-[14px] text-neutral-400 transition-colors hover:border-neutral-300 hover:bg-white">
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="shrink-0">
         <circle cx="7" cy="7" r="5" />
         <path d="M11 11l3 3" />

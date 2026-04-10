@@ -22,7 +22,7 @@ export default function GlobalSidebar() {
   }
 
   return (
-    <aside className="sticky top-12 hidden h-[calc(100vh-3rem)] w-64 shrink-0 border-r border-neutral-100 bg-white md:block">
+    <aside className="sticky top-16 hidden h-[calc(100vh-4rem)] w-64 shrink-0 border-r border-neutral-100 bg-white md:block">
       <Sidebar sections={ecosystemNav.sections} />
     </aside>
   );

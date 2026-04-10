@@ -14,27 +14,29 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-md">
-        <div className="mx-auto flex h-12 max-w-[1920px] items-center justify-between px-5">
+        <div className="mx-auto flex h-16 max-w-[1920px] items-center justify-between px-5">
           {/* Left: Brand + product nav */}
           <div className="flex items-center gap-1">
-            <Link href="/" className="flex items-center gap-1.5">
-              <FlitterLogo size={20} />
-              <span className="text-[15px] font-black tracking-tight text-gray-900">
+            <Link href="/" className="flex items-center gap-2">
+              <FlitterLogo size={28} />
+              <span className="text-[20px] font-black tracking-tight text-gray-900">
                 FLITTER
               </span>
             </Link>
 
             {/* Product indicator — like TanStack QUERY */}
             {!isLanding && pathname.startsWith("/chart") && (
-              <Link href="/chart" className="flex items-center gap-1 ml-0.5">
-                <span className="text-[15px] font-black tracking-tight text-teal-600">
+              <Link href="/chart" className="flex items-center gap-1.5 ml-1">
+                <span className="h-3.5 w-3.5 rounded-sm bg-rose-500" />
+                <span className="text-[17px] font-black tracking-tight text-rose-500">
                   CHART
                 </span>
               </Link>
             )}
             {!isLanding && pathname.startsWith("/advanced") && (
-              <Link href="/advanced/what-is-flitter" className="flex items-center gap-1 ml-0.5">
-                <span className="text-[15px] font-black tracking-tight text-teal-600">
+              <Link href="/advanced/what-is-flitter" className="flex items-center gap-1.5 ml-1">
+                <span className="h-3.5 w-3.5 rounded-sm bg-violet-400" />
+                <span className="text-[17px] font-black tracking-tight text-violet-500">
                   CORE
                 </span>
               </Link>
@@ -73,7 +75,7 @@ export default function Header() {
         <div className="fixed inset-0 z-[100] md:hidden">
           <div className="absolute inset-0 bg-black/20" onClick={() => setMenuOpen(false)} />
           <nav className="absolute right-0 top-0 h-full w-64 bg-white shadow-lg border-l border-gray-200">
-            <div className="flex h-12 items-center justify-between border-b border-gray-100 px-5">
+            <div className="flex h-14 items-center justify-between border-b border-gray-100 px-5">
               <span className="text-[13px] font-bold text-gray-900">Menu</span>
               <button
                 className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-gray-100"

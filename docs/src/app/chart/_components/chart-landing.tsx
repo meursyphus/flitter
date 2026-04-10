@@ -1,61 +1,88 @@
+"use client";
+
+import { galleryEntries } from "../_data/gallery";
+
+const DISPLAY_FONT = "var(--font-display), Georgia, serif";
+
+const previewCharts = galleryEntries.slice(0, 8);
 
 export default function ChartLanding() {
   return (
     <div>
       {/* ═══════════════════════════════════════════
-          Brand Banner — 띠지
+          Brand Banner — dark, rose accent, chart carousel
           ═══════════════════════════════════════════ */}
-      <section className="relative flex items-center justify-center overflow-hidden bg-gray-950 py-20 sm:py-28">
-        {/* Background chart silhouettes */}
-        <div className="pointer-events-none absolute inset-0 opacity-[0.06]">
-          <svg className="h-full w-full" viewBox="0 0 800 200" preserveAspectRatio="none">
-            <rect x="60" y="80" width="40" height="120" fill="#2563EB" rx="4" />
-            <rect x="120" y="40" width="40" height="160" fill="#2563EB" rx="4" />
-            <rect x="180" y="100" width="40" height="100" fill="#2563EB" rx="4" />
-            <rect x="240" y="20" width="40" height="180" fill="#2563EB" rx="4" />
-            <rect x="300" y="60" width="40" height="140" fill="#2563EB" rx="4" />
-            <rect x="460" y="90" width="40" height="110" fill="#2563EB" rx="4" />
-            <rect x="520" y="50" width="40" height="150" fill="#2563EB" rx="4" />
-            <rect x="580" y="110" width="40" height="90" fill="#2563EB" rx="4" />
-            <rect x="640" y="30" width="40" height="170" fill="#2563EB" rx="4" />
-            <rect x="700" y="70" width="40" height="130" fill="#2563EB" rx="4" />
-          </svg>
-        </div>
+      <section className="relative overflow-hidden bg-gray-950 py-14 sm:py-18 lg:py-20">
+        <div className="relative mx-auto max-w-7xl px-6 sm:px-10 lg:px-12">
+          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_1fr]">
+            {/* Left — Title */}
+            <div>
+              <h1
+                className="text-[clamp(3rem,7vw,5.5rem)] font-black leading-[1] tracking-tight text-white"
+                style={{ fontFamily: DISPLAY_FONT }}
+              >
+                Flitter{" "}
+                <span className="text-rose-500">Chart</span>
+              </h1>
+              <p className="mt-4 max-w-md text-lg text-gray-400">
+                shadcn-style chart library. Install via CLI, own the source, customize everything.
+              </p>
+            </div>
 
-        <div className="relative text-center">
-          <h1
-            className="text-[clamp(3.5rem,8vw,7rem)] font-black leading-[1] tracking-tight text-white"
-            style={{ fontFamily: "var(--font-display), Georgia, serif" }}
-          >
-            Flitter <span className="text-blue-400">Chart</span>
-          </h1>
+            {/* Right — Single column vertical scroll carousel */}
+            <div className="hidden lg:block relative h-[480px] overflow-hidden">
+              {/* Dim effect top & bottom */}
+              <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-16 bg-gradient-to-b from-gray-950 to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t from-gray-950 to-transparent" />
+
+              <div className="chart-vertical-scroll flex flex-col gap-4">
+                {[...previewCharts, ...previewCharts].map((entry, i) => (
+                  <div
+                    key={i}
+                    className="h-[360px] shrink-0 overflow-hidden rounded-lg bg-white"
+                  >
+                    <div className="h-full w-full">
+                      <entry.Component />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════
-          Hero — Message + CLI
+          Hero — shadcn approach: CLI + own the code
           ═══════════════════════════════════════════ */}
       <section className="mx-auto max-w-5xl px-6 pt-16 pb-12 sm:pt-24 sm:pb-16">
         <h2
           className="text-[clamp(2rem,4.5vw,3.5rem)] font-black leading-[1.08] tracking-tight text-gray-900"
-          style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+          style={{ fontFamily: DISPLAY_FONT }}
         >
-          Every element is a <span className="text-blue-600">widget</span>.
-          <br />
-          Download the source. Replace anything.
+          Not a dependency.{" "}
+          <span className="text-rose-500">Your code.</span>
         </h2>
+        <p className="mt-4 max-w-xl text-[16px] leading-relaxed text-gray-500">
+          Install charts via CLI. The source lands in your project — read it, edit it, own it.
+        </p>
 
-        <div className="mt-8 inline-flex items-center gap-2 bg-gray-50 px-5 py-3">
-          <code className="text-[15px] font-medium text-gray-700">
-            <span className="mr-2 text-blue-500">$</span>
-            npx flitter-ui add bar-chart
-          </code>
+        <div className="mt-8 space-y-2">
+          {[
+            "npx flitter-ui init",
+            "npx flitter-ui add bar-chart",
+          ].map((cmd, i) => (
+            <code key={i} className="block bg-gray-50 px-5 py-3 text-[14px] font-medium text-gray-700">
+              <span className="mr-2 text-rose-500">$</span>
+              {cmd}
+            </code>
+          ))}
         </div>
 
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           <a
             href="/chart/gallery"
-            className="inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 px-7 text-[14px] font-semibold text-white transition-all hover:bg-blue-700"
+            className="inline-flex h-11 items-center justify-center rounded-lg bg-rose-500 px-7 text-[14px] font-semibold text-white transition-all hover:bg-rose-600"
           >
             Browse Charts
           </a>
@@ -77,7 +104,7 @@ export default function ChartLanding() {
           <div>
             <h3
               className="text-[clamp(1.4rem,2.5vw,2rem)] font-black tracking-tight text-gray-900"
-              style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+              style={{ fontFamily: DISPLAY_FONT }}
             >
               Replace any part
             </h3>
@@ -95,7 +122,7 @@ export default function ChartLanding() {
           <div>
             <h3
               className="text-[clamp(1.4rem,2.5vw,2rem)] font-black tracking-tight text-gray-900"
-              style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+              style={{ fontFamily: DISPLAY_FONT }}
             >
               Own the source
             </h3>
@@ -105,7 +132,7 @@ export default function ChartLanding() {
                 "npx flitter-ui add bar-chart",
               ].map((cmd, i) => (
                 <code key={i} className="block bg-gray-50 px-5 py-3 text-[13px] font-medium text-gray-700">
-                  <span className="mr-2 text-blue-500">$</span>
+                  <span className="mr-2 text-rose-500">$</span>
                   {cmd}
                 </code>
               ))}
@@ -120,7 +147,7 @@ export default function ChartLanding() {
       <section className="mx-auto max-w-7xl px-6 pb-20 sm:pb-28">
         <h2
           className="mb-6 text-[clamp(1.8rem,3.5vw,2.8rem)] font-black leading-[1.08] tracking-tight text-gray-900"
-          style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+          style={{ fontFamily: DISPLAY_FONT }}
         >
           See what&apos;s possible
         </h2>
@@ -137,7 +164,7 @@ export default function ChartLanding() {
       <section className="mx-auto max-w-7xl px-6 pb-20 sm:pb-28">
         <h2
           className="mb-6 text-[clamp(1.8rem,3.5vw,2.8rem)] font-black leading-[1.08] tracking-tight text-gray-900"
-          style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+          style={{ fontFamily: DISPLAY_FONT }}
         >
           Go beyond defaults
         </h2>
@@ -147,6 +174,19 @@ export default function ChartLanding() {
           </p>
         </div>
       </section>
+
+      <style jsx>{`
+        .chart-vertical-scroll {
+          animation: scrollUp 30s linear infinite;
+        }
+        @keyframes scrollUp {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(-50%); }
+        }
+        .chart-vertical-scroll:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
     </div>
   );
 }

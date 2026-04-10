@@ -5,6 +5,8 @@ export type NavItem = {
   children?: NavItem[];
   /** Visual hint: "style" items are grouped as siblings, others render normally */
   kind?: "style";
+  /** Ecosystem color dot (tailwind color class, e.g. "bg-emerald-400") */
+  dot?: string;
 };
 
 export type NavSection = {
@@ -36,8 +38,8 @@ export const ecosystemNav: Navigation = {
     {
       title: "Products",
       items: [
-        { title: "Chart", href: "/chart", status: "new" },
-        { title: "Diagram", href: "/diagram", status: "coming" },
+        { title: "Chart", href: "/chart", status: "new", dot: "bg-rose-500" },
+        { title: "Diagram", href: "/diagram", status: "coming", dot: "bg-violet-400" },
       ],
     },
     {

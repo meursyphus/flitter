@@ -28,9 +28,9 @@ export default function DocsLayout({
   const closeSidebar = useCallback(() => setSidebarOpen(false), []);
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-3rem)] max-w-[1920px]">
+    <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-[1920px]">
       {/* Desktop sidebar */}
-      <aside className="sticky top-12 hidden h-[calc(100vh-3rem)] w-64 shrink-0 border-r border-neutral-100 bg-white md:block">
+      <aside className="sticky top-16 hidden h-[calc(100vh-4rem)] w-64 shrink-0 border-r border-neutral-100 bg-white md:block">
         <Sidebar
           sections={sections}
           home={home}
