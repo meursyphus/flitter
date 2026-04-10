@@ -63,10 +63,10 @@ function ChildrenGroup({
             href={item.href}
             onClick={onLinkClick}
             className={clsx(
-              "block py-1 pl-3 text-[12.5px] transition-colors",
+              "block py-1 pl-3 text-[13px] font-medium transition-colors",
               isActive
                 ? "border-l-2 border-teal-500 -ml-px font-medium text-teal-700"
-                : "text-neutral-500 hover:text-neutral-900"
+                : "text-neutral-700 hover:text-neutral-900"
             )}
           >
             {item.title}
@@ -96,10 +96,10 @@ function ChildrenGroup({
             href={item.href}
             onClick={onLinkClick}
             className={clsx(
-              "block py-1 pl-3 text-[12.5px] transition-colors",
+              "block py-1 pl-3 text-[13px] font-medium transition-colors",
               isActive
                 ? "border-l-2 border-teal-500 -ml-px font-medium text-teal-700"
-                : "text-neutral-500 hover:text-neutral-900"
+                : "text-neutral-700 hover:text-neutral-900"
             )}
           >
             {item.title}
@@ -143,10 +143,10 @@ function NavLink({
         href={item.href}
         onClick={onLinkClick}
         className={clsx(
-          "flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] transition-colors",
+          "flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] font-medium transition-colors",
           isActive
-            ? "font-semibold text-teal-700 bg-teal-50"
-            : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
+            ? "font-bold text-teal-700 bg-teal-50"
+            : "text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
         )}
       >
         {item.title}

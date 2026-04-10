@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Instrument_Serif } from "next/font/google";
-import Script from "next/script";
+import { Inter } from "next/font/google";
 import Header from "@/components/header";
 import GlobalSidebar from "@/components/global-sidebar";
 import Providers from "./providers";
@@ -13,9 +12,10 @@ const pretendard = localFont({
   weight: "45 920",
   variable: "--font-body",
 });
-const instrumentSerif = Instrument_Serif({
-  weight: "400",
+
+const displayFont = Inter({
   subsets: ["latin"],
+  weight: ["400", "700", "900"],
   variable: "--font-display",
 });
 
@@ -32,21 +32,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${pretendard.variable} ${instrumentSerif.variable}`}
+      className={`${pretendard.variable} ${displayFont.variable}`}
     >
-      <head>
-        {process.env.NODE_ENV === "development" && (
-          <Script
-            src="//unpkg.com/react-grab/dist/index.global.js"
-            crossOrigin="anonymous"
-            strategy="beforeInteractive"
-          />
-        )}
-      </head>
-      <body
-        className="bg-white text-neutral-900 antialiased"
-        style={{ fontFamily: "var(--font-body)" }}
-      >
+      <head />
+      <body className="bg-white text-neutral-900 antialiased">
         <Providers>
           <Header />
           <div className="mx-auto flex max-w-[1920px]">

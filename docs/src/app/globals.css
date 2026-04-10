@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@theme {
+  --default-font-family: var(--font-body), 'Pretendard', sans-serif;
+}
+
+
 /* rehype-pretty-code */
 figure[data-rehype-pretty-code-figure] {
   margin: 1.5em 0;
@@ -105,50 +110,57 @@ figure[data-rehype-pretty-code-figure] [data-line] {
   box-shadow: 0 8px 30px -8px rgba(0, 0, 0, 0.08);
 }
 
-/* ── Infinite carousel ── */
-@keyframes carousel-scroll {
+/* ── Showcase carousel ── */
+@keyframes showcase-scroll {
   0% {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(calc(-1 * var(--carousel-total-width)));
+    transform: translateX(calc(-1 * var(--showcase-total-width)));
   }
 }
 
-.carousel-container {
+.showcase-carousel {
   position: relative;
   overflow: hidden;
   mask-image: linear-gradient(
     to right,
     transparent,
-    black 120px,
-    black calc(100% - 120px),
+    black 80px,
+    black calc(100% - 80px),
     transparent
   );
   -webkit-mask-image: linear-gradient(
     to right,
     transparent,
-    black 120px,
-    black calc(100% - 120px),
+    black 80px,
+    black calc(100% - 80px),
     transparent
   );
 }
 
-.carousel-track {
+.showcase-track {
   display: flex;
-  gap: 20px;
+  gap: 24px;
   width: max-content;
-  --carousel-total-width: calc(9 * (420px + 20px));
-  animation: carousel-scroll 50s linear infinite;
+  --showcase-total-width: calc(10 * (480px + 24px));
+  animation: showcase-scroll 70s linear infinite;
 }
 
-.carousel-track:hover {
+.showcase-track:hover {
   animation-play-state: paused;
 }
 
-.carousel-item {
+.showcase-panel {
   flex-shrink: 0;
-  width: 420px;
-  display: block;
-  text-decoration: none;
+  width: 480px;
+}
+
+@media (max-width: 640px) {
+  .showcase-panel {
+    width: 340px;
+  }
+  .showcase-track {
+    --showcase-total-width: calc(10 * (340px + 24px));
+  }
 }

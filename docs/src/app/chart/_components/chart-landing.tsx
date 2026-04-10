@@ -1,149 +1,152 @@
 
 export default function ChartLanding() {
   return (
-    <div className="mx-auto max-w-5xl">
-      {/* Hero */}
-      <section className="relative pt-14 pb-10">
-        <div className="max-w-2xl">
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
-            Charts
+    <div>
+      {/* ═══════════════════════════════════════════
+          Brand Banner — 띠지
+          ═══════════════════════════════════════════ */}
+      <section className="relative flex items-center justify-center overflow-hidden bg-gray-950 py-20 sm:py-28">
+        {/* Background chart silhouettes */}
+        <div className="pointer-events-none absolute inset-0 opacity-[0.06]">
+          <svg className="h-full w-full" viewBox="0 0 800 200" preserveAspectRatio="none">
+            <rect x="60" y="80" width="40" height="120" fill="#2563EB" rx="4" />
+            <rect x="120" y="40" width="40" height="160" fill="#2563EB" rx="4" />
+            <rect x="180" y="100" width="40" height="100" fill="#2563EB" rx="4" />
+            <rect x="240" y="20" width="40" height="180" fill="#2563EB" rx="4" />
+            <rect x="300" y="60" width="40" height="140" fill="#2563EB" rx="4" />
+            <rect x="460" y="90" width="40" height="110" fill="#2563EB" rx="4" />
+            <rect x="520" y="50" width="40" height="150" fill="#2563EB" rx="4" />
+            <rect x="580" y="110" width="40" height="90" fill="#2563EB" rx="4" />
+            <rect x="640" y="30" width="40" height="170" fill="#2563EB" rx="4" />
+            <rect x="700" y="70" width="40" height="130" fill="#2563EB" rx="4" />
+          </svg>
+        </div>
+
+        <div className="relative text-center">
+          <h1
+            className="text-[clamp(3.5rem,8vw,7rem)] font-black leading-[1] tracking-tight text-white"
+            style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+          >
+            Flitter <span className="text-blue-400">Chart</span>
           </h1>
-          <p className="mt-4 text-lg leading-relaxed text-neutral-600">
-            This is not a chart config wrapper.{" "}
-            <span className="font-semibold text-neutral-900">
-              It&apos;s a rendering engine.
-            </span>
-          </p>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-neutral-500">
-            Every chart is a tree of widgets — Container, Stack, Positioned, Text. Run{" "}
-            <code className="font-mono text-neutral-700">npx flitter-ui add</code> to get the source. Read it. Change it. Own it.
-          </p>
-          <div className="mt-5 flex items-center gap-3">
-            <div className="inline-flex items-center gap-2 rounded-full bg-neutral-50 border border-neutral-200 px-4 py-2">
-              <code className="text-sm text-neutral-600">
-                <span className="text-teal-500">$</span> npx flitter-ui add bar-chart
-              </code>
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* How It's Different */}
-      <section className="pb-10">
-        <h2 className="mb-6 text-lg font-bold tracking-tight text-neutral-900">
-          How It&apos;s Different
+      {/* ═══════════════════════════════════════════
+          Hero — Message + CLI
+          ═══════════════════════════════════════════ */}
+      <section className="mx-auto max-w-5xl px-6 pt-16 pb-12 sm:pt-24 sm:pb-16">
+        <h2
+          className="text-[clamp(2rem,4.5vw,3.5rem)] font-black leading-[1.08] tracking-tight text-gray-900"
+          style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+        >
+          Every element is a <span className="text-blue-600">widget</span>.
+          <br />
+          Download the source. Replace anything.
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {/* Config Libraries */}
-          <div className="rounded-xl border border-neutral-200 bg-white p-5">
-            <span className="inline-block rounded-full bg-neutral-100 px-3 py-1 text-xs font-semibold text-neutral-500">
-              Config Libraries
-            </span>
-            <pre className="mt-4 overflow-x-auto rounded-lg bg-neutral-50 border border-neutral-200 px-4 py-3 text-[13px] leading-relaxed text-neutral-700">
-              <code>{`barChart({
-  tooltip: {
-    backgroundColor: '#333',
-    fontSize: 13
-  }
-})`}</code>
-            </pre>
-            <p className="mt-3 text-sm leading-relaxed text-neutral-500">
-              Hope the option exists. File an issue if it doesn&apos;t.
-            </p>
-          </div>
-          {/* Flitter */}
-          <div className="rounded-xl border border-teal-200 bg-teal-50/40 p-5">
-            <span className="inline-block rounded-full bg-teal-100 px-3 py-1 text-xs font-semibold text-teal-700">
-              Flitter
-            </span>
-            <pre className="mt-4 overflow-x-auto rounded-lg bg-white border border-teal-200 px-4 py-3 text-[13px] leading-relaxed text-neutral-700">
+
+        <div className="mt-8 inline-flex items-center gap-2 bg-gray-50 px-5 py-3">
+          <code className="text-[15px] font-medium text-gray-700">
+            <span className="mr-2 text-blue-500">$</span>
+            npx flitter-ui add bar-chart
+          </code>
+        </div>
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          <a
+            href="/chart/gallery"
+            className="inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 px-7 text-[14px] font-semibold text-white transition-all hover:bg-blue-700"
+          >
+            Browse Charts
+          </a>
+          <a
+            href="/docs"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-gray-200 px-7 text-[14px] font-semibold text-gray-600 transition-all hover:border-gray-300 hover:bg-gray-50"
+          >
+            Documentation
+          </a>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          Benefits — Code only, minimal text
+          ═══════════════════════════════════════════ */}
+      <section className="mx-auto max-w-5xl px-6 pb-20 sm:pb-28">
+        <div className="grid gap-16 md:grid-cols-2 md:gap-12">
+          {/* Benefit 1: Customize */}
+          <div>
+            <h3
+              className="text-[clamp(1.4rem,2.5vw,2rem)] font-black tracking-tight text-gray-900"
+              style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+            >
+              Replace any part
+            </h3>
+            <pre className="mt-5 overflow-x-auto bg-gray-50 px-5 py-4 text-[13px] leading-relaxed text-gray-600">
               <code>{`custom: {
   tooltip: (args) =>
     Container({
-      child: YourComponent(args)
+      child: YourWidget(args)
     })
 }`}</code>
             </pre>
-            <p className="mt-3 text-sm leading-relaxed text-neutral-600">
-              It&apos;s a widget. Put anything inside it.
-            </p>
+          </div>
+
+          {/* Benefit 2: Own the code */}
+          <div>
+            <h3
+              className="text-[clamp(1.4rem,2.5vw,2rem)] font-black tracking-tight text-gray-900"
+              style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+            >
+              Own the source
+            </h3>
+            <div className="mt-5 space-y-2">
+              {[
+                "npx flitter-ui init",
+                "npx flitter-ui add bar-chart",
+              ].map((cmd, i) => (
+                <code key={i} className="block bg-gray-50 px-5 py-3 text-[13px] font-medium text-gray-700">
+                  <span className="mr-2 text-blue-500">$</span>
+                  {cmd}
+                </code>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* What You Can Build */}
-      <section className="pb-10">
-        <h2 className="mb-2 text-lg font-bold tracking-tight text-neutral-900">
-          What You Can Build
+      {/* ═══════════════════════════════════════════
+          Demo Slot 1
+          ═══════════════════════════════════════════ */}
+      <section className="mx-auto max-w-7xl px-6 pb-20 sm:pb-28">
+        <h2
+          className="mb-6 text-[clamp(1.8rem,3.5vw,2.8rem)] font-black leading-[1.08] tracking-tight text-gray-900"
+          style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+        >
+          See what&apos;s possible
         </h2>
-        <p className="mb-6 text-sm leading-relaxed text-neutral-500">
-          Because every element is a composable widget, not a config option.
-        </p>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            {
-              title: "Dashboard Cross-Filtering",
-              desc: "Click a bar in one chart to filter every other chart on the page. Share state across widgets \u2014 no plugin needed.",
-            },
-            {
-              title: "Drill-Down Navigation",
-              desc: "Click a category to zoom into sub-categories. Each level is a new widget tree with animated transitions.",
-            },
-            {
-              title: "Real-Time Streaming",
-              desc: "Push new data points and watch the chart animate. The widget tree rebuilds efficiently on every update.",
-            },
-            {
-              title: "Custom Tooltips & Overlays",
-              desc: "Replace any tooltip with a rich card \u2014 images, sparklines, action buttons. It\u2019s a widget slot, not a config property.",
-            },
-            {
-              title: "Threshold Annotations",
-              desc: "Overlay target lines, bands, and callout labels. The plot area is a Stack \u2014 position anything on top.",
-            },
-            {
-              title: "Interactive Data Editing",
-              desc: "Drag bars to change values. The chart recalculates in real-time. GestureDetector on any widget makes it interactive.",
-            },
-          ].map((item) => (
-            <div
-              key={item.title}
-              className="rounded-xl border border-neutral-200 bg-white p-5"
-            >
-              <h3 className="text-sm font-semibold text-neutral-900">
-                {item.title}
-              </h3>
-              <p className="mt-2 text-[13px] leading-relaxed text-neutral-500">
-                {item.desc}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Works With AI Assistants */}
-      <section className="pb-10">
-        <div className="rounded-xl border border-neutral-200 bg-white p-6">
-          <h3 className="text-base font-bold text-neutral-900">
-            Works With AI Assistants
-          </h3>
-          <p className="mt-2 text-sm leading-relaxed text-neutral-500">
-            The full chart API is published at a single URL. Feed it to Claude Code, Cursor, or any AI coding assistant for instant chart generation.
-          </p>
-          <a
-            href="https://ui.flitter.dev/llm/chart.md"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 inline-block rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-2 text-sm font-mono text-teal-700 transition-colors hover:border-teal-300 hover:bg-teal-50"
-          >
-            ui.flitter.dev/llm/chart.md
-          </a>
-          <p className="mt-2 text-xs text-neutral-400">
-            A fast way to explore the API and generate custom charts.
+        <div className="flex min-h-[480px] items-center justify-center border border-dashed border-gray-300 bg-gray-50/50">
+          <p className="text-[15px] font-medium text-gray-300">
+            Interactive Demo — Coming Soon
           </p>
         </div>
       </section>
 
+      {/* ═══════════════════════════════════════════
+          Demo Slot 2
+          ═══════════════════════════════════════════ */}
+      <section className="mx-auto max-w-7xl px-6 pb-20 sm:pb-28">
+        <h2
+          className="mb-6 text-[clamp(1.8rem,3.5vw,2.8rem)] font-black leading-[1.08] tracking-tight text-gray-900"
+          style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+        >
+          Go beyond defaults
+        </h2>
+        <div className="flex min-h-[480px] items-center justify-center border border-dashed border-gray-300 bg-gray-50/50">
+          <p className="text-[15px] font-medium text-gray-300">
+            Interactive Demo — Coming Soon
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

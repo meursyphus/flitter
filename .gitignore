@@ -25,3 +25,4 @@ intergrations/*/.turbo/
 out/
 NON_DUAL_STYLE_AUDIT/
 NON_DUAL_STYLE_AUDIT.md
+.worktree/
