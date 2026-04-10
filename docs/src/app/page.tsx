@@ -149,7 +149,7 @@ function ShowcaseSection() {
       </div>
 
       {/* EasyRD — static reference */}
-      <div className="mt-20 px-6 sm:px-10 lg:px-12">
+      <div className="mt-20 mx-auto max-w-6xl px-6 sm:px-10 lg:px-12">
         <div className="overflow-hidden">
           <img
             className="w-full"
