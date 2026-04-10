@@ -1,4 +1,6 @@
 import ChartLanding from "./_components/chart-landing";
+import CliCodeBlock from "./_components/cli-code-block";
+import { CustomCodeBlock, OwnCodeBlock } from "./_components/benefits-code-blocks";
 
 export const metadata = {
   title: "Chart",
@@ -6,5 +8,11 @@ export const metadata = {
 };
 
 export default function ChartHome() {
-  return <ChartLanding />;
+  return (
+    <ChartLanding
+      cliCodeBlock={<CliCodeBlock />}
+      customCodeBlock={<CustomCodeBlock />}
+      ownCodeBlock={<OwnCodeBlock />}
+    />
+  );
 }

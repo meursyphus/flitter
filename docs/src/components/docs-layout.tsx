@@ -64,7 +64,7 @@ export default function DocsLayout({
       )}
 
       {/* Main content */}
-      <main className="flex-1 min-w-0 overflow-x-hidden px-6 py-8 md:px-10">
+      <main className="flex-1 min-w-0 overflow-x-hidden px-6 py-8 md:px-10 lg:px-16 lg:py-14">
         {/* Mobile menu button */}
         <div className="mb-4 md:hidden">
           <button

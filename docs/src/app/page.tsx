@@ -98,7 +98,7 @@ function ShowcaseSection() {
   const items = [...showcaseCharts, ...showcaseCharts];
 
   return (
-    <section className="relative py-20 bg-[#fafbfc]">
+    <section className="relative py-20 lg:py-40 bg-[#fafbfc]">
       <div className="mb-12 px-6 sm:px-10 lg:px-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-gray-900"
@@ -144,7 +144,7 @@ function ShowcaseSection() {
             href="https://easyrd.dev"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-violet-500 hover:underline"
+            className="text-violet-600 font-semibold hover:underline"
           >
             easyrd.dev
           </a>
@@ -170,7 +170,7 @@ function ShowcaseSection() {
    ════════════════════════════════════════════════════════ */
 function MaintainerSection() {
   return (
-    <section className="relative py-24 px-6 sm:px-10 lg:px-12">
+    <section className="relative py-24 lg:py-40 px-6 sm:px-10 lg:px-12">
       <div className="mx-auto max-w-2xl text-center">
         {/* Photo — vertical, centered */}
         <div className="mx-auto w-full max-w-sm overflow-hidden rounded-xl">
@@ -197,13 +197,22 @@ function MaintainerSection() {
             I love building visual experiences on the web.
           </blockquote>
 
-          {/* ssgoi OG card */}
+          {/* ssgoi card */}
           <p className="mt-8 mb-1 text-[12px] font-bold uppercase tracking-wider text-gray-400">
-            Another project by this maintainer
+            Also built by Daeseung
           </p>
-          <p className="mb-3 text-[14px] text-gray-500">
-            ssgoi — Smooth page transition library for SvelteKit
-          </p>
+          <a
+            href="https://github.com/meursyphus/ssgoi"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mb-3 inline-flex items-center gap-2 text-[14px] text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <span>ssgoi — Page transition library for the web</span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-0.5 text-[12px] font-semibold text-gray-700">
+              <span className="text-yellow-500">&#9733;</span>
+              800+
+            </span>
+          </a>
           <a
             href="https://ssgoi.dev"
             target="_blank"
@@ -212,7 +221,7 @@ function MaintainerSection() {
           >
             <img
               src="https://ssgoi.dev/og.png"
-              alt="ssgoi — Page transitions for SvelteKit"
+              alt="ssgoi — Page transition library for the web"
               className="w-full"
             />
           </a>
@@ -227,7 +236,7 @@ function MaintainerSection() {
    ════════════════════════════════════════════════════════ */
 function WhySection() {
   return (
-    <section className="relative px-6 py-24 sm:px-10 lg:px-12">
+    <section className="relative px-6 py-24 lg:py-40 sm:px-10 lg:px-12">
       <div>
         <h2
           className="max-w-3xl text-[clamp(2rem,4vw,3.5rem)] font-black leading-[1.08] tracking-tight text-gray-900"
@@ -506,9 +515,9 @@ export default function Home() {
     <main className="overflow-x-clip">
       <IntroSection />
       <ShowcaseSection />
-      <MaintainerSection />
       <WhySection />
       <CodingSection />
+      <MaintainerSection />
       <LastSection />
       <Footer />
     </main>

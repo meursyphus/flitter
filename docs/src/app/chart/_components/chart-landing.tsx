@@ -6,7 +6,15 @@ const DISPLAY_FONT = "var(--font-display), Georgia, serif";
 
 const previewCharts = galleryEntries.slice(0, 8);
 
-export default function ChartLanding() {
+export default function ChartLanding({
+  cliCodeBlock,
+  customCodeBlock,
+  ownCodeBlock,
+}: {
+  cliCodeBlock?: React.ReactNode;
+  customCodeBlock?: React.ReactNode;
+  ownCodeBlock?: React.ReactNode;
+}) {
   return (
     <div>
       {/* ═══════════════════════════════════════════
@@ -60,37 +68,20 @@ export default function ChartLanding() {
           className="text-[clamp(2rem,4.5vw,3.5rem)] font-black leading-[1.08] tracking-tight text-gray-900"
           style={{ fontFamily: DISPLAY_FONT }}
         >
-          Not a dependency.{" "}
-          <span className="text-rose-500">Your code.</span>
+          No lock-in.{" "}
+          <span className="text-rose-500">Full custom.</span>
         </h2>
-        <p className="mt-4 max-w-xl text-[16px] leading-relaxed text-gray-500">
-          Install charts via CLI. The source lands in your project — read it, edit it, own it.
-        </p>
 
-        <div className="mt-8 space-y-2">
-          {[
-            "npx flitter-ui init",
-            "npx flitter-ui add bar-chart",
-          ].map((cmd, i) => (
-            <code key={i} className="block bg-gray-50 px-5 py-3 text-[14px] font-medium text-gray-700">
-              <span className="mr-2 text-rose-500">$</span>
-              {cmd}
-            </code>
-          ))}
+        <div className="mt-8">
+          {cliCodeBlock}
         </div>
 
-        <div className="mt-8 flex flex-wrap gap-3">
+        <div className="mt-8">
           <a
             href="/chart/gallery"
             className="inline-flex h-11 items-center justify-center rounded-lg bg-rose-500 px-7 text-[14px] font-semibold text-white transition-all hover:bg-rose-600"
           >
             Browse Charts
-          </a>
-          <a
-            href="/docs"
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-gray-200 px-7 text-[14px] font-semibold text-gray-600 transition-all hover:border-gray-300 hover:bg-gray-50"
-          >
-            Documentation
           </a>
         </div>
       </section>
@@ -108,14 +99,7 @@ export default function ChartLanding() {
             >
               Replace any part
             </h3>
-            <pre className="mt-5 overflow-x-auto bg-gray-50 px-5 py-4 text-[13px] leading-relaxed text-gray-600">
-              <code>{`custom: {
-  tooltip: (args) =>
-    Container({
-      child: YourWidget(args)
-    })
-}`}</code>
-            </pre>
+            {customCodeBlock}
           </div>
 
           {/* Benefit 2: Own the code */}
@@ -126,17 +110,7 @@ export default function ChartLanding() {
             >
               Own the source
             </h3>
-            <div className="mt-5 space-y-2">
-              {[
-                "npx flitter-ui init",
-                "npx flitter-ui add bar-chart",
-              ].map((cmd, i) => (
-                <code key={i} className="block bg-gray-50 px-5 py-3 text-[13px] font-medium text-gray-700">
-                  <span className="mr-2 text-rose-500">$</span>
-                  {cmd}
-                </code>
-              ))}
-            </div>
+            {ownCodeBlock}
           </div>
         </div>
       </section>
