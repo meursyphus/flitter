@@ -68,6 +68,49 @@ function CodeBlock({ code }: { code: string }) {
   );
 }
 
+function ChartPreview({ Component }: { Component: React.ComponentType }) {
+  const [chartKey, setChartKey] = useState(0);
+  const [spinning, setSpinning] = useState(false);
+
+  const handleReplay = () => {
+    setSpinning(true);
+    setChartKey((k) => k + 1);
+    setTimeout(() => setSpinning(false), 600);
+  };
+
+  return (
+    <section className="relative">
+      <div className="h-[400px] md:h-[500px] rounded-2xl bg-neutral-50 p-6">
+        <div className="h-full w-full">
+          <Component key={chartKey} />
+        </div>
+      </div>
+      <button
+        onClick={handleReplay}
+        className="absolute right-3 top-3 rounded-full p-2 text-neutral-300 transition-colors hover:bg-neutral-200/60 hover:text-neutral-500 active:scale-90"
+        title="Replay animation"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={spinning ? "animate-[spin_0.5s_ease-in-out]" : ""}
+        >
+          <path d="M2.5 8a5.5 5.5 0 0 1 9.3-4" />
+          <path d="M13.5 8a5.5 5.5 0 0 1-9.3 4" />
+          <path d="M11 1.5L12 4l-2.5.5" />
+          <path d="M5 14.5L4 12l2.5-.5" />
+        </svg>
+      </button>
+    </section>
+  );
+}
+
 function TabbedCodeBlock({
   files,
 }: {
@@ -143,15 +186,7 @@ export default function GalleryDetailPage({
       </section>
 
       {/* Chart */}
-      <section>
-        <div className="overflow-hidden rounded-xl border border-neutral-100 bg-white shadow-sm">
-          <div className="h-[400px] md:h-[500px] p-4">
-            <div className="h-full w-full rounded-lg bg-neutral-50/50">
-              <entry.Component />
-            </div>
-          </div>
-        </div>
-      </section>
+      <ChartPreview Component={entry.Component} />
 
       {/* Code */}
       <section className="pt-8">
@@ -167,14 +202,14 @@ export default function GalleryDetailPage({
           <h2 className="mb-4 text-sm font-semibold uppercase tracking-widest text-neutral-400">
             Related Charts
           </h2>
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             {relatedEntries.map((rel, i) => (
               <GalleryCard
                 key={rel.slug}
                 slug={rel.slug}
                 title={rel.title}
                 style={rel.style}
-                chart={<rel.Component />}
+                thumbnailUrl={rel.thumbnailUrl}
                 index={i}
               />
             ))}

@@ -22,9 +22,9 @@ export default function GalleryCard({
   return (
     <Link
       href={`/chart/gallery/${slug}`}
-      className="group block overflow-hidden rounded-md border border-neutral-200 bg-white transition-colors hover:outline hover:outline-2 hover:outline-teal-600"
+      className="group block overflow-hidden rounded-xl bg-neutral-50 transition-all duration-200 hover:bg-neutral-100/80"
     >
-      <div className="flex h-[300px] items-center justify-center p-4">
+      <div className="flex h-[280px] items-center justify-center p-5 transition-transform duration-200 group-hover:scale-[1.02]">
         {thumbnailUrl ? (
           <img
             src={thumbnailUrl}
@@ -36,8 +36,8 @@ export default function GalleryCard({
         )}
       </div>
 
-      <div className="border-t border-neutral-200 px-4 py-2">
-        <span className="text-xs font-medium text-neutral-500">{title}</span>
+      <div className="px-5 pb-3">
+        <span className="text-[13px] font-medium text-neutral-500 group-hover:text-neutral-700 transition-colors">{title}</span>
       </div>
     </Link>
   );

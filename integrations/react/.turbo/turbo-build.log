@@ -1,15 +1,13 @@
 
+
 > @flitterjs/react@0.0.2 build /Users/moon/work/flitter/integrations/react
 > vite build
 
-vite v4.5.14 building for production...
-transforming...
-✓ 2 modules transformed.
-rendering chunks...
-
-[vite:dts] Start generate declaration files...
-computing gzip size...
-dist/react.js  0.99 kB │ gzip: 0.50 kB
-[vite:dts] Declaration files built in 660ms.
-
-✓ built in 692ms
+[36mvite v4.5.14 [32mbuilding for production...[36m[39m
+[2K[1Gtransforming (1) [2msrc/lib/index.ts[22m[2K[1G[32m✓[39m 2 modules transformed.
+[2K[1Grendering chunks (1)...[2K[1G[32m
+[36m[vite:dts][32m Start generate declaration files...[39m
+[2K[1Gcomputing gzip size (0)...[2K[1Gcomputing gzip size (1)...[2K[1G[2mdist/[22m[36mreact.js  [39m[1m[2m0.99 kB[22m[1m[22m[2m │ gzip: 0.50 kB[22m
+[32m[36m[vite:dts][32m Declaration files built in 639ms.
+[39m
+[32m✓ built in 674ms[39m

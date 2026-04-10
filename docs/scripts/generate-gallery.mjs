@@ -4,8 +4,7 @@
  * Scans gallery entry files and generates a single entries.generated.ts file.
  *
  * Supports two entry formats:
- *   1. Single file:  entries/bar-chart-ag.tsx
- *   2. Folder:       entries/bar-chart-ag/index.tsx  (+ auxiliary files)
+ *   entries/{chartType}/{style}/{exampleName}/index.tsx  (+ optional auxiliary files)
  *
  * For each entry:
  *   - index.tsx is transformed (strip boilerplate, rewrite imports) → main code snippet
@@ -197,111 +196,95 @@ function transformAuxFile(source) {
   return code.trim();
 }
 
-// ── Filename parsing ────────────────────────────────────────────────────────
-
-function parseEntryName(name) {
-  // Last segment is style (toast or ag)
-  const styleMatch = name.match(/^(.+)-(toast|ag)$/);
-  if (!styleMatch) return null;
-
-  const chartType = styleMatch[1];
-  const styleLower = styleMatch[2];
-  const style = styleLower === "ag" ? "AG" : "Toast";
-  const title = toTitleCase(chartType);
-  const installCommand = `npx flitter-ui add ${chartType} --${styleLower}`;
-
-  return { slug: name, chartType, style, title, installCommand };
-}
-
-// ── Discover entries (file or folder) ───────────────────────────────────────
+// ── Discover entries (folder structure) ─────────────────────────────────────
+//
+// Expected layout:
+//   entries/{chartType}/{style}/{exampleName}/index.tsx  (+ optional aux files)
 
 function discoverEntries() {
-  const items = fs.readdirSync(ENTRIES_DIR);
   const results = [];
+  const chartTypes = fs.readdirSync(ENTRIES_DIR).filter((d) => {
+    return fs.statSync(path.join(ENTRIES_DIR, d)).isDirectory();
+  });
 
-  for (const item of items) {
-    const fullPath = path.join(ENTRIES_DIR, item);
-    const stat = fs.statSync(fullPath);
+  for (const chartType of chartTypes) {
+    const chartDir = path.join(ENTRIES_DIR, chartType);
+    const styles = fs.readdirSync(chartDir).filter((d) => {
+      return fs.statSync(path.join(chartDir, d)).isDirectory();
+    });
 
-    if (stat.isDirectory()) {
-      // Folder entry: must have index.tsx
-      const indexPath = path.join(fullPath, "index.tsx");
-      if (!fs.existsSync(indexPath)) continue;
-
-      const meta = parseEntryName(item);
-      if (!meta) {
-        console.warn(`  Could not parse folder name: ${item}`);
+    for (const styleLower of styles) {
+      if (styleLower !== "ag" && styleLower !== "toast") {
+        console.warn(`  Skipping unknown style directory: ${chartType}/${styleLower}`);
         continue;
       }
 
-      // Read all files in the folder
-      const folderFiles = fs.readdirSync(fullPath)
-        .filter((f) => f.endsWith(".tsx") || f.endsWith(".ts"))
-        .sort((a, b) => {
-          // index.tsx always first
-          if (a === "index.tsx") return -1;
-          if (b === "index.tsx") return 1;
-          return a.localeCompare(b);
-        });
+      const styleDir = path.join(chartDir, styleLower);
+      const examples = fs.readdirSync(styleDir).filter((d) => {
+        return fs.statSync(path.join(styleDir, d)).isDirectory();
+      });
 
-      const codeFiles = [];
-      let mainSnippet = null;
-
-      for (const file of folderFiles) {
-        const source = fs.readFileSync(path.join(fullPath, file), "utf-8");
-
-        if (file === "index.tsx") {
-          mainSnippet = transformMainEntry(source);
-          if (!mainSnippet) {
-            console.warn(`  Could not transform main entry: ${item}/index.tsx`);
-            break;
-          }
-          codeFiles.push({ filename: file, code: mainSnippet });
-
-          // Extract galleryTitle
-          const titleMatch = source.match(/export\s+const\s+galleryTitle\s*=\s*["'`]([^"'`]+)["'`]/);
-          if (titleMatch) meta.title = titleMatch[1];
-        } else {
-          codeFiles.push({ filename: file, code: transformAuxFile(source) });
+      for (const exampleName of examples) {
+        const exampleDir = path.join(styleDir, exampleName);
+        const indexPath = path.join(exampleDir, "index.tsx");
+        if (!fs.existsSync(indexPath)) {
+          console.warn(`  No index.tsx in ${chartType}/${styleLower}/${exampleName}`);
+          continue;
         }
+
+        const style = styleLower === "ag" ? "AG" : "Toast";
+        const slug = `${chartType}-${styleLower}-${exampleName}`;
+        const title = toTitleCase(chartType);
+        const installCommand = `npx flitter-ui add ${chartType} --${styleLower}`;
+
+        // Read all files in the example folder
+        const folderFiles = fs
+          .readdirSync(exampleDir)
+          .filter((f) => f.endsWith(".tsx") || f.endsWith(".ts"))
+          .sort((a, b) => {
+            if (a === "index.tsx") return -1;
+            if (b === "index.tsx") return 1;
+            return a.localeCompare(b);
+          });
+
+        const codeFiles = [];
+        let mainSnippet = null;
+        let entryTitle = title;
+
+        for (const file of folderFiles) {
+          const source = fs.readFileSync(path.join(exampleDir, file), "utf-8");
+
+          if (file === "index.tsx") {
+            mainSnippet = transformMainEntry(source);
+            if (!mainSnippet) {
+              console.warn(`  Could not transform: ${chartType}/${styleLower}/${exampleName}/index.tsx`);
+              break;
+            }
+            codeFiles.push({ filename: file, code: mainSnippet });
+
+            const titleMatch = source.match(/export\s+const\s+galleryTitle\s*=\s*["'`]([^"'`]+)["'`]/);
+            if (titleMatch) entryTitle = titleMatch[1];
+          } else {
+            codeFiles.push({ filename: file, code: transformAuxFile(source) });
+          }
+        }
+
+        if (!mainSnippet) continue;
+
+        const importAlias = "_" + toPascalCase(slug);
+        const importPath = `${chartType}/${styleLower}/${exampleName}`;
+
+        results.push({
+          slug,
+          chartType,
+          style,
+          title: entryTitle,
+          installCommand,
+          importAlias,
+          importPath,
+          codeFiles,
+        });
       }
-
-      if (!mainSnippet) continue;
-
-      results.push({
-        ...meta,
-        importAlias: "_" + toPascalCase(meta.slug),
-        importPath: item,
-        isFolder: true,
-        codeFiles,
-      });
-    } else if (item.endsWith(".tsx")) {
-      // Single file entry
-      const name = item.replace(/\.tsx$/, "");
-      const meta = parseEntryName(name);
-      if (!meta) {
-        console.warn(`  Could not parse filename: ${item}`);
-        continue;
-      }
-
-      const source = fs.readFileSync(fullPath, "utf-8");
-      const snippet = transformMainEntry(source);
-      if (!snippet) {
-        console.warn(`  Could not transform: ${item}`);
-        continue;
-      }
-
-      // Extract galleryTitle
-      const titleMatch = source.match(/export\s+const\s+galleryTitle\s*=\s*["'`]([^"'`]+)["'`]/);
-      if (titleMatch) meta.title = titleMatch[1];
-
-      results.push({
-        ...meta,
-        importAlias: "_" + toPascalCase(meta.slug),
-        importPath: name,
-        isFolder: false,
-        codeFiles: [{ filename: "index.tsx", code: snippet }],
-      });
     }
   }
 

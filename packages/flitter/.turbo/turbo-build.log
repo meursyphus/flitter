@@ -1,23 +1,24 @@
 
+
 > flitter-ui@0.0.1 build /Users/moon/work/flitter/packages/flitter
 > tsup
 
-CLI Building entry: {"index":"src/index.ts","chart":"src/chart.ts"}
-CLI Using tsconfig: tsconfig.json
-CLI tsup v8.5.1
-CLI Using tsup config: /Users/moon/work/flitter/packages/flitter/tsup.config.ts
-CLI Target: es2020
-CLI Cleaning output folder
-CJS Build start
-ESM Build start
-CJS dist/chart.cjs 1.07 KB
-CJS dist/index.cjs 1.06 KB
-CJS ⚡️ Build success in 5ms
-ESM dist/chart.js 47.00 B
-ESM dist/index.js 46.00 B
-ESM ⚡️ Build success in 5ms
+[34mCLI[39m Building entry: {"index":"src/index.ts","chart":"src/chart.ts"}
+[34mCLI[39m Using tsconfig: tsconfig.json
+[34mCLI[39m tsup v8.5.1
+[34mCLI[39m Using tsup config: /Users/moon/work/flitter/packages/flitter/tsup.config.ts
+[34mCLI[39m Target: es2020
+[34mCLI[39m Cleaning output folder
+[34mCJS[39m Build start
+[34mESM[39m Build start
+[32mESM[39m [1mdist/index.js [22m[32m46.00 B[39m
+[32mESM[39m [1mdist/chart.js [22m[32m47.00 B[39m
+[32mESM[39m ⚡️ Build success in 5ms
+[32mCJS[39m [1mdist/chart.cjs [22m[32m1.07 KB[39m
+[32mCJS[39m [1mdist/index.cjs [22m[32m1.06 KB[39m
+[32mCJS[39m ⚡️ Build success in 5ms
 DTS Build start
-DTS ⚡️ Build success in 1027ms
+DTS ⚡️ Build success in 965ms
 DTS dist/index.d.cts 54.00 B
 DTS dist/chart.d.cts 31.00 B
 DTS dist/index.d.ts  54.00 B

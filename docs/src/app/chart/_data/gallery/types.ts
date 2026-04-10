@@ -13,6 +13,7 @@ export type GalleryEntry = {
   chartType: string;
   style: "Toast" | "AG";
   title: string;
+  thumbnailUrl: string;
   Component: React.ComponentType;
   files: GalleryCodeFile[];
   installCommand: string;

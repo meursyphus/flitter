@@ -8,10 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "llm:build": "node ./scripts/build-llm-pack.mjs",
-    "gen:examples": "node ./scripts/generate-example-strings.mjs",
     "gen:gallery": "node scripts/generate-gallery.mjs",
     "gen:thumbs": "npx tsx scripts/generate-gallery-thumbnails.mts",
-    "gen:gallery:all": "npm run gen:thumbs & npm run gen:gallery & wait"
+    "gen:charts": "npm run gen:gallery && npm run gen:thumbs"
   },
   "dependencies": {
     "@flitterjs/react": "workspace:*",

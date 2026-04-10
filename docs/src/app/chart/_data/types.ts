@@ -21,15 +21,6 @@ export type CustomElement = {
   description: string;
 };
 
-export type ScenarioCard = {
-  title: string;
-  description: string;
-  /** The live demo component — null means placeholder */
-  demo?: React.ReactNode;
-  /** Source code for the demo */
-  code?: string;
-};
-
 // ---------------------------------------------------------------------------
 // Base (common fields for every chart page)
 // ---------------------------------------------------------------------------
@@ -44,84 +35,12 @@ type ChartPageBase = {
 // Overview — the landing page for a chart type
 // ---------------------------------------------------------------------------
 
-export type StyleSummary = {
-  slug: string[];
-  title: string;
-  tagline: string;
-  inspiration?: string;
-  /** Link to the original reference */
-  reference?: string;
-  /** Representative chart component rendered on the overview page */
-  chart?: React.ReactNode;
-};
-
-export type ShowcaseExample = {
-  /** Style variant badge label */
-  style: "Toast" | "AG";
-  /** The chart component to render */
-  chart: React.ReactNode;
-  /** Display title (legacy, optional) */
-  title?: string;
-  /** Short subtitle (legacy, optional) */
-  subtitle?: string;
-  /** 1–2 line description of what was customized or configured */
-  description?: string;
-  /** Card height in px (default 360) */
-  height?: number;
-  /** When true, rendered as a full-width hero card above the grid */
-  featured?: boolean;
-  /** When true, the card spans both columns in the 2-col grid */
-  fullWidth?: boolean;
-  /** Copyable source code string */
-  code?: string;
-};
-
 export type OverviewPageData = ChartPageBase & {
   pageType: "overview";
   /** Quick start code snippet */
   quickStartCode?: string;
 };
 
-// ---------------------------------------------------------------------------
-// Style — a specific visual style (toast, high, …)
-// ---------------------------------------------------------------------------
-
-export type ChartExample = {
-  title: string;
-  chart: React.ReactNode;
-  /** Chart container height in px (default: 500) */
-  height?: number;
-  /** Copyable source code string */
-  code?: string;
-};
-
-export type StylePageData = ChartPageBase & {
-  pageType: "style";
-  parent: string;
-  styleMeta: {
-    tagline: string;
-    features: string[];
-    inspiration?: string;
-    reference?: string;
-  };
-  configSections: ConfigSection[];
-  /** Chart examples displayed on the style page */
-  examples?: ChartExample[];
-};
-
-// ---------------------------------------------------------------------------
-// Advanced — headless API & custom renderers
-// ---------------------------------------------------------------------------
-
-export type AdvancedPageData = ChartPageBase & {
-  pageType: "advanced";
-  parent: string;
-  code: {
-    basic: string;
-  };
-  customElements: CustomElement[];
-  scenarios?: ScenarioCard[];
-};
 
 // ---------------------------------------------------------------------------
 // Gallery — single-page showcase with detail drill-down
@@ -147,6 +66,7 @@ export type GalleryDetailPageData = ChartPageBase & {
     chartType: string;
     style: "Toast" | "AG";
     title: string;
+    thumbnailUrl: string;
     Component: React.ComponentType;
     files: { filename: string; code: string }[];
     installCommand: string;
