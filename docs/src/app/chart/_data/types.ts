@@ -139,7 +139,7 @@ export type GalleryDetailPageData = ChartPageBase & {
     style: "Toast" | "AG";
     title: string;
     Component: React.ComponentType;
-    code: string;
+    files: { filename: string; code: string }[];
     installCommand: string;
   };
   relatedEntries: {
@@ -148,7 +148,7 @@ export type GalleryDetailPageData = ChartPageBase & {
     style: "Toast" | "AG";
     title: string;
     Component: React.ComponentType;
-    code: string;
+    files: { filename: string; code: string }[];
     installCommand: string;
   }[];
 };

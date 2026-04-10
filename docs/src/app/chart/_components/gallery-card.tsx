@@ -6,7 +6,7 @@ type GalleryCardProps = {
   slug: string;
   title: string;
   style: "Toast" | "AG";
-  thumbnail?: string;
+  thumbnailUrl?: string;
   chart?: React.ReactNode;
   index?: number;
 };
@@ -14,13 +14,10 @@ type GalleryCardProps = {
 export default function GalleryCard({
   slug,
   title,
-  thumbnail,
+  thumbnailUrl,
   chart,
   index = 0,
 }: GalleryCardProps) {
-  const thumbnailSrc = thumbnail
-    ? `data:image/svg+xml,${encodeURIComponent(thumbnail)}`
-    : null;
 
   return (
     <Link
@@ -28,9 +25,9 @@ export default function GalleryCard({
       className="group block overflow-hidden rounded-md border border-neutral-200 bg-white transition-colors hover:outline hover:outline-2 hover:outline-teal-600"
     >
       <div className="flex h-[300px] items-center justify-center p-4">
-        {thumbnailSrc ? (
+        {thumbnailUrl ? (
           <img
-            src={thumbnailSrc}
+            src={thumbnailUrl}
             alt={title}
             className="h-full w-full object-contain"
           />

@@ -56,14 +56,43 @@ function CodeBlock({ code }: { code: string }) {
       </button>
       {html ? (
         <div
-          className="rounded-lg overflow-x-auto text-[13px] leading-relaxed [&_pre]:!m-0 [&_pre]:!p-4 [&_pre]:!rounded-lg [&_code]:!text-[13px] [&_code]:!leading-relaxed"
+          className="overflow-x-auto text-[13px] leading-relaxed [&_pre]:!m-0 [&_pre]:!p-4 [&_pre]:!rounded-none [&_code]:!text-[13px] [&_code]:!leading-relaxed"
           dangerouslySetInnerHTML={{ __html: html }}
         />
       ) : (
-        <pre className="rounded-lg bg-neutral-900 p-4 text-[13px] leading-relaxed text-neutral-200 overflow-x-auto">
+        <pre className="bg-neutral-900 p-4 text-[13px] leading-relaxed text-neutral-200 overflow-x-auto">
           <code>{code}</code>
         </pre>
       )}
+    </div>
+  );
+}
+
+function TabbedCodeBlock({
+  files,
+}: {
+  files: { filename: string; code: string }[];
+}) {
+  const [activeTab, setActiveTab] = useState(0);
+
+  return (
+    <div className="rounded-lg overflow-hidden border border-neutral-800">
+      <div className="flex bg-neutral-900 border-b border-neutral-800">
+        {files.map((file, i) => (
+          <button
+            key={file.filename}
+            onClick={() => setActiveTab(i)}
+            className={`px-4 py-2 text-[12px] font-mono transition-colors border-b-2 ${
+              i === activeTab
+                ? "text-neutral-200 border-teal-400 bg-neutral-800/60"
+                : "text-neutral-500 border-transparent hover:text-neutral-300"
+            }`}
+          >
+            {file.filename}
+          </button>
+        ))}
+      </div>
+      <CodeBlock code={files[activeTab].code} />
     </div>
   );
 }
@@ -129,7 +158,7 @@ export default function GalleryDetailPage({
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-widest text-neutral-400">
           Code
         </h2>
-        <CodeBlock code={entry.code} />
+        <TabbedCodeBlock files={entry.files} />
       </section>
 
       {/* Related charts */}

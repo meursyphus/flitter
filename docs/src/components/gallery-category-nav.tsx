@@ -1,6 +1,8 @@
 "use client";
 
 import clsx from "clsx";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useGallery } from "@/state/gallery";
 import {
   galleryCategories,
@@ -16,17 +18,19 @@ function toLabel(id: string) {
 }
 
 export default function GalleryCategoryNav() {
-  const { activeCategoryId, actions } = useGallery((s) => ({
+  const pathname = usePathname();
+  const isGalleryIndex = pathname === "/chart/gallery" || pathname === "/chart/gallery/";
+  const { activeCategoryId } = useGallery((s) => ({
     activeCategoryId: s.activeCategoryId,
-    actions: s.actions,
   }));
 
   return (
     <div className="mt-0.5 ml-3 border-l border-neutral-200">
       {galleryCategories.map((cat) => (
-        <a
+        <Link
           key={cat.id}
-          href={`#${cat.id}`}
+          href={`/chart/gallery#${cat.id}`}
+          scroll={false}
           className={clsx(
             "block py-1 pl-3 text-[12.5px] transition-colors",
             activeCategoryId === cat.id
@@ -34,15 +38,16 @@ export default function GalleryCategoryNav() {
               : "text-neutral-500 hover:text-neutral-900",
           )}
           onClick={(e) => {
-            e.preventDefault();
-            document
-              .getElementById(cat.id)
-              ?.scrollIntoView({ behavior: "smooth", block: "start" });
-            actions.setActiveCategory(cat.id);
+            if (isGalleryIndex) {
+              e.preventDefault();
+              document
+                .getElementById(cat.id)
+                ?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
           }}
         >
           {cat.label}
-        </a>
+        </Link>
       ))}
 
       {todoCategories.length > 0 && (

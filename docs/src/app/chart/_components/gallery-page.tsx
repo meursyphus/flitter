@@ -62,7 +62,7 @@ function GalleryGrid() {
             slug={entry.slug}
             title={entry.title}
             style={entry.style}
-            thumbnail={entry.thumbnail}
+            thumbnailUrl={entry.thumbnailUrl}
             index={i}
           />
         </div>
@@ -75,7 +75,16 @@ export default function GalleryPage() {
   const { actions } = useGallery((s) => ({ actions: s.actions }));
 
   useEffect(() => {
-    if (galleryCategories.length > 0) {
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      // Delay slightly to let the DOM render before scrolling
+      requestAnimationFrame(() => {
+        document
+          .getElementById(hash)
+          ?.scrollIntoView({ behavior: "smooth", block: "start" });
+        actions.setActiveCategory(hash);
+      });
+    } else if (galleryCategories.length > 0) {
       actions.setActiveCategory(galleryCategories[0].id);
     }
   }, [actions]);

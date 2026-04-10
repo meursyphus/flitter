@@ -1,70 +1,140 @@
+/**
+ * Generates SVG thumbnails for gallery entries using Playwright.
+ *
+ * Launches a Next.js dev server, opens a single page that renders ALL charts,
+ * waits for animations to settle, then extracts each rendered SVG.
+ *
+ * Usage: npm run gen:thumbs
+ */
+
 import fs from "fs";
 import path from "path";
-import { fileURLToPath, pathToFileURL } from "url";
-import { parseHTML } from "linkedom";
-import { AppRunner } from "flitter-core";
+import { fileURLToPath } from "url";
+import { spawn, type ChildProcess } from "child_process";
+import { chromium } from "playwright";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ENTRIES_DIR = path.resolve(
-  __dirname,
-  "../src/app/chart/_data/gallery/entries",
-);
-const THUMBS_DIR = path.resolve(
-  __dirname,
-  "../src/app/chart/_data/gallery/thumbnails",
-);
-const SSR_SIZE = { width: 800, height: 500 };
+const THUMBS_DIR = path.resolve(__dirname, "../public/charts");
 
-function wrapSvg(innerHTML) {
-  return `<svg xmlns='http://www.w3.org/2000/svg' width='800' height='500' viewBox='0 0 800 500'>${innerHTML}</svg>`;
+const ANIMATION_WAIT_MS = 5000;
+const DEV_PORT = 3099;
+const SERVER_TIMEOUT_MS = 120_000;
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+/** Wait until a URL responds with 2xx. */
+async function waitForServer(
+  url: string,
+  timeout = SERVER_TIMEOUT_MS,
+): Promise<void> {
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) return;
+    } catch {
+      // server not ready yet
+    }
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  throw new Error(`Dev server not ready after ${timeout}ms`);
 }
 
-async function renderEntry(entryPath) {
-  const entryModule = await import(pathToFileURL(entryPath).href);
-
-  if (typeof entryModule.createWidget !== "function") {
-    throw new Error(`Missing createWidget export in ${path.basename(entryPath)}`);
-  }
-
-  const widget = entryModule.createWidget();
-  const { document: _document, window: _window } = parseHTML("<svg></svg>");
-  const svg = _document.querySelector("svg") as any;
-  const runner = new AppRunner({
-    view: svg,
-    window: _window as any,
-    document: _document as any,
-    ssrSize: SSR_SIZE,
+/** Start the Next.js dev server on DEV_PORT and return the child process. */
+function startDevServer(): ChildProcess {
+  const child = spawn("npx", ["next", "dev", "--port", String(DEV_PORT)], {
+    cwd: path.resolve(__dirname, ".."),
+    stdio: "pipe",
+    env: { ...process.env, BROWSER: "none" },
   });
 
-  try {
-    return wrapSvg(runner.runApp(widget));
-  } finally {
-    runner.dispose();
-  }
+  child.stderr?.on("data", (chunk: Buffer) => {
+    const msg = chunk.toString();
+    if (msg.includes("Error") || msg.includes("error")) {
+      process.stderr.write(msg);
+    }
+  });
+
+  return child;
 }
 
-async function main() {
-  if (!fs.existsSync(ENTRIES_DIR)) {
-    console.log("No entries directory found. Nothing to generate.");
-    return;
-  }
+// ── Main ──────────────────────────────────────────────────────────────────
 
+async function main() {
+  // Clean out old thumbnails before generating
+  if (fs.existsSync(THUMBS_DIR)) {
+    for (const file of fs.readdirSync(THUMBS_DIR)) {
+      fs.unlinkSync(path.join(THUMBS_DIR, file));
+    }
+  }
   fs.mkdirSync(THUMBS_DIR, { recursive: true });
 
-  const files = fs
-    .readdirSync(ENTRIES_DIR)
-    .filter((file) => file.endsWith(".tsx"))
-    .sort();
+  console.log("Starting dev server...");
 
-  for (const file of files) {
-    const entryPath = path.join(ENTRIES_DIR, file);
-    const thumbnailPath = path.join(THUMBS_DIR, file.replace(/\.tsx$/, ".svg"));
-    const svg = await renderEntry(entryPath);
-    fs.writeFileSync(thumbnailPath, svg);
-    console.log(`Generated ${path.basename(thumbnailPath)}`);
+  const server = startDevServer();
+  const baseUrl = `http://localhost:${DEV_PORT}`;
+
+  try {
+    await waitForServer(baseUrl);
+    console.log("Dev server ready. Launching browser...\n");
+
+    const browser = await chromium.launch();
+    const page = await browser.newPage();
+
+    // Navigate to the single page that renders all charts
+    await page.goto(`${baseUrl}/thumbnail/`, { waitUntil: "networkidle" });
+
+    // Wait until every chart container has a non-empty SVG
+    const totalRendered = await page.waitForFunction(
+      () => {
+        const containers = document.querySelectorAll("[data-slug]");
+        if (containers.length === 0) return false;
+        const allReady = Array.from(containers).every((el) => {
+          const svg = el.querySelector("svg");
+          return svg && svg.children.length > 0;
+        });
+        return allReady ? containers.length : false;
+      },
+      { timeout: 60_000 },
+    );
+
+    console.log(`All ${await totalRendered.jsonValue()} charts rendered.`);
+
+    // Wait for animations to settle
+    await page.waitForTimeout(ANIMATION_WAIT_MS);
+
+    // Extract all SVGs at once
+    const results = await page.evaluate(() => {
+      const containers = document.querySelectorAll("[data-slug]");
+      return Array.from(containers).map((el) => {
+        const slug = el.getAttribute("data-slug")!;
+        const svg = el.querySelector("svg");
+        if (!svg) return { slug, svg: null };
+        svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        svg.setAttribute("width", "800");
+        svg.setAttribute("height", "500");
+        return { slug, svg: svg.outerHTML };
+      });
+    });
+
+    let succeeded = 0;
+    for (const { slug, svg } of results) {
+      if (svg) {
+        fs.writeFileSync(path.join(THUMBS_DIR, `${slug}.svg`), svg);
+        console.log(`  ✓ ${slug}.svg`);
+        succeeded++;
+      } else {
+        console.warn(`  ✗ No SVG found for ${slug}`);
+      }
+    }
+
+    await page.close();
+    await browser.close();
+
+    console.log(`\nDone! Generated ${succeeded}/${results.length} thumbnails.`);
+  } finally {
+    server.kill();
   }
-
-  console.log(`Done! Generated ${files.length} gallery thumbnails.`);
 }
 
 await main();
