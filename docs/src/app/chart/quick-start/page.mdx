@@ -1,0 +1,113 @@
+export const metadata = {
+  title: "Quick Start — Flitter Chart",
+  description: "Build your first Flitter chart in 5 minutes.",
+};
+
+<div className="prose prose-neutral prose-sm mx-auto max-w-3xl prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-code:rounded prose-code:bg-neutral-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-[13px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-pre:rounded-lg prose-pre:text-sm prose-a:text-neutral-900 prose-a:no-underline hover:prose-a:underline">
+
+# Quick Start
+
+Build a bar chart from scratch in under 5 minutes.
+
+## 1. Initialize
+
+```bash
+npx flitter-ui init
+```
+
+## 2. Add a bar chart
+
+```bash
+npx flitter-ui add bar-chart --style toast
+```
+
+This generates the full widget source tree in your project:
+
+```
+charts/
+├── bar-chart/
+│   ├── index.ts          # BarChart — import this
+│   ├── base/             # Headless logic (scales, layout)
+│   └── style/
+│       ├── config.ts     # All config types & defaults
+│       └── parts/        # Visual renderers — edit these to customize
+│           ├── bar.ts
+│           └── data-view.ts
+└── _styles/ag/           # Shared style base
+```
+
+Open `style/parts/bar.ts` to see how individual bars are rendered — it's a widget factory you fully control.
+
+## 3. Use the chart
+
+```tsx
+import Widget from "@flitterjs/react";
+import BarChart from "./charts/bar-chart";
+
+const data = {
+  labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+  datasets: [
+    {
+      legend: "Revenue",
+      values: [120, 190, 150, 210, 180],
+    },
+  ],
+};
+
+export default function Dashboard() {
+  return (
+    <Widget
+      widget={BarChart({ data })}
+      width="100%"
+      height={400}
+    />
+  );
+}
+```
+
+## 4. Customize
+
+Every part of the chart is a widget you can replace. Want a custom tooltip?
+
+```tsx
+BarChart({
+  data,
+  custom: {
+    tooltip: (props) => Container({
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration({
+        color: "#1a1a2e",
+        borderRadius: BorderRadius.circular(6),
+      }),
+      child: Text(props.label, {
+        style: new TextStyle({ color: "white", fontSize: 13 }),
+      }),
+    }),
+  },
+})
+```
+
+This is the key insight: `BarChart()` doesn't have a tooltip option with 20 sub-properties.
+It has a tooltip **widget slot**. You provide a function that returns ANY widget.
+
+Want a tooltip with an image? Return an Image widget.
+Want a tooltip with a sparkline? Return a LineChart widget inside the tooltip.
+Want a tooltip with an action button? Return a GestureDetector wrapping a button.
+
+There are no limits because there is no config API to limit you.
+
+## What you own
+
+After running `npx flitter-ui add`, the source code lives in your project. You can:
+
+- **Edit any widget** — axis labels are Text widgets, grid lines are Container widgets, legends are Row widgets with GestureDetector for click handling
+- **Add animations** — AnimationController, CurvedAnimation, Tween, and every Flutter animation primitive works out of the box
+- **Delete the CLI** — after `npx flitter-ui add`, the CLI is irrelevant. Your chart has zero dependency on flitter-ui the package.
+
+## Next steps
+
+- [Browse all chart types](/chart) — 10+ charts with multiple styles
+- [Bar Chart](/chart/bar-chart) — Deep dive into bar chart configuration
+- [Core API](/advanced/what-is-flitter) — Learn about Flitter's widget system
+
+</div>

@@ -1,63 +1,31 @@
 {
   "name": "flitter-workspace",
-  "version": "2.1.0",
-  "description": "Flitter: A high-performance JavaScript rendering engine and framework inspired by Flutter. Features declarative programming, SVG and Canvas support, and optimized for complex data visualizations, interactive charts, and graphic editors in web applications.",
-  "homepage": "https://flitter.dev",
-  "keywords": [
-    "rendering-engine",
-    "data-visualization",
-    "svg",
-    "canvas",
-    "flutter-like",
-    "javascript",
-    "interactive-charts",
-    "graphics",
-    "ui-framework"
-  ],
-  "bugs": {
-    "url": "https://github.com/meursyphus/flitter/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/meursyphus/flitter.git"
-  },
+  "version": "0.0.0",
+  "private": true,
+  "description": "Flitter monorepo",
   "scripts": {
-    "flitter:build": "npm run build -workspace=@meursyphus/flitter",
-    "docs": "npm run docs:start",
-    "docs:start": "npm run start --workspace=@meursyphus/flitter-docs",
-    "docs:build": "npm run build --workspace=@meursyphus/flitter-docs",
-    "story:start": "npm run storybook --workspace=@meursyphus/flitter-story",
-    "story:build": "npm run build-storybook --workspace=@meursyphus/flitter-story",
-    "story:chromatic": "npm run chromatic --workspace=@meursyphus/flitter-story",
-    "test:dev": "npm run dev --workspace=@meursyphus/test",
-    "test:playwright": "npm run test:integration --workspace=@meursyphus/test",
-    "pretest:playwright": "npm run flitter:build",
-    "pretest:dev": "npm run flitter:build",
-    "prestory:chromatic": "npm run flitter:build",
-    "prestory:build": "npm run flitter:build",
-    "predocs:build": "npm run flitter:build && cd packages/flitter-svelte && npx svelte-kit sync && cd ../..",
-    "lunaria:build": "lunaria build && cp -r dist/lunaria/index.html packages/docs/public/lunaria.html",
-    "lunaria:preview": "lunaria preview"
+    "build": "turbo build",
+    "build:core": "turbo build --filter=flitter-core",
+    "build:chart": "turbo build --filter=flitter-chart",
+    "build:flitter": "turbo build --filter=flitter",
+    "llm:build": "pnpm --dir docs llm:build",
+    "llm:kit": "node docs/scripts/llm-kit.mjs",
+    "llm:playground:dev": "pnpm llm:build && node dev/llm-playground/server.mjs",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "clean": "turbo clean",
+    "docs:dev": "turbo dev --filter=flitter-docs",
+    "docs:build": "turbo build --filter=flitter-docs",
+    "story:dev": "turbo dev --filter=flitter-storybook",
+    "chart-story:dev": "turbo dev --filter=chart-storybook",
+    "chart-story:validate": "pnpm --dir dev/performance exec playwright test --config playwright.chart-storybook.config.ts tests/chart-storybook-llm-evaluation.spec.ts",
+    "perf:dev": "turbo dev --filter=flitter-performance",
+    "test": "turbo test --filter=flitter-performance",
+    "test:integration": "pnpm --filter flitter-performance test:integration",
+    "chromatic": "turbo build --filter=flitter-storybook^... && pnpm --filter flitter-storybook chromatic"
   },
-  "author": "meursyphus",
-  "license": "MIT",
-  "workspaces": [
-    "packages/*",
-    "shared"
-  ],
   "devDependencies": {
-    "@lunariajs/core": "^0.1.1",
-    "@types/node": "^20.11.30",
-    "husky": "^9.0.11",
-    "lint-staged": "^15.2.2"
+    "turbo": "^2.4.0"
   },
-  "lint-staged": {
-    "packages/**/*.{astro,js,jsx,ts,tsx,svelte,mdx}": [
-      "prettier --write"
-    ]
-  },
-  "dependencies": {
-    "@meursyphus/flitter-chart": "^0.0.9",
-    "astro": "^5.0.3"
-  }
+  "packageManager": "pnpm@10.29.3"
 }

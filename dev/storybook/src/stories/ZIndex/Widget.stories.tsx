@@ -1,0 +1,36 @@
+import type { Meta, StoryObj } from '@storybook/react';
+import DualRenderer from '../../components/DualRenderer';
+import * as Stories from './example/index.js';
+
+const meta = {
+	title: 'Painting/ZIndex',
+	component: DualRenderer,
+	args: {
+		width: '600px',
+		height: '300px'
+	}
+} satisfies Meta<typeof DualRenderer>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Basic: Story = {
+	args: Stories.Basic
+};
+
+export const Case1: Story = {
+	name: 'Stacking Context/Case1',
+	args: Stories.StackingContext.Case1
+};
+export const Case2: Story = {
+	name: 'Stacking Context/Case2',
+	args: Stories.StackingContext.Case2
+};
+export const Case3: Story = {
+	name: 'Stacking Context/Case3',
+	args: Stories.StackingContext.Case3
+};
+export const Case4: Story = {
+	name: 'Stacking Context/Case4',
+	args: Stories.StackingContext.Case4
+};

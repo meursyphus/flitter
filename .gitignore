@@ -18,3 +18,12 @@ packages/*/node_modules/
 # OS generated files
 .DS_Store
 .netlify
+.turbo/
+packages/*/.turbo/
+intergrations/*/.turbo/
+.next/
+out/
+NON_DUAL_STYLE_AUDIT/
+NON_DUAL_STYLE_AUDIT.md
+.worktree/
+temp/

@@ -1,0 +1,310 @@
+export const metadata = { title: "ConstrainedBox", description: "A widget that imposes additional constraints on its child" };
+
+## Overview
+
+ConstrainedBox is a widget that imposes additional constraints on its child widget. It combines the constraints from its parent with its own defined constraints to control the child's size.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/o2KveVr7adg"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowFullScreen
+></iframe>
+
+Reference: [https://api.flutter.dev/flutter/widgets/ConstrainedBox-class.html](https://api.flutter.dev/flutter/widgets/ConstrainedBox-class.html)
+
+## When to Use
+
+- When you want to limit the minimum or maximum size of a widget
+- When child widgets should only have sizes within a specific range
+- When size constraints are needed in responsive layouts
+- When you want to ensure minimum height in scrollable areas
+- When limiting the maximum size of images or videos
+
+## Basic Usage
+
+```typescript
+// Setting minimum size
+ConstrainedBox({
+  constraints: new Constraints({
+    minWidth: 100,
+    minHeight: 100
+  }),
+  child: Container({
+    color: 'blue'
+  })
+})
+
+// Setting maximum size
+ConstrainedBox({
+  constraints: new Constraints({
+    maxWidth: 200,
+    maxHeight: 200
+  }),
+  child: Container({
+    color: 'red',
+    width: 300,  // Limited to 200
+    height: 300  // Limited to 200
+  })
+})
+
+// Setting fixed size
+ConstrainedBox({
+  constraints: Constraints.tight({ width: 150, height: 150 }),
+  child: Container({
+    color: 'green'
+  })
+})
+```
+
+## Props
+
+### constraints (required)
+**Type: Constraints**
+
+The constraints to impose on the child widget. Constraints has the following properties:
+
+- `minWidth`: Minimum width (default: 0)
+- `maxWidth`: Maximum width (default: Infinity)
+- `minHeight`: Minimum height (default: 0)
+- `maxHeight`: Maximum height (default: Infinity)
+
+```typescript
+// Various constraint examples
+ConstrainedBox({
+  constraints: new Constraints({
+    minWidth: 100,
+    maxWidth: 300,
+    minHeight: 50,
+    maxHeight: 200
+  }),
+  child: child
+})
+```
+
+### child (optional)
+**Type: Widget | undefined**
+
+The child widget to which the constraints will be applied.
+
+## Constraints Constructors
+
+Constraints provides several convenience constructors:
+
+```typescript
+// Default constructor
+new Constraints({
+  minWidth: 0,
+  maxWidth: Infinity,
+  minHeight: 0,
+  maxHeight: Infinity
+})
+
+// Tight constraints (fixed size)
+Constraints.tight({ width: 100, height: 100 })
+
+// Loose constraints (only max size limited)
+Constraints.loose({ width: 200, height: 200 })
+
+// Expand (expand to parent size)
+Constraints.expand()  // Expand in all directions
+Constraints.expand({ width: 300 })  // Width is 300, height expands
+Constraints.expand({ height: 400 })  // Height is 400, width expands
+```
+
+## Constraint Combination
+
+ConstrainedBox combines parent constraints with its own constraints:
+
+```typescript
+// Parent constraints: min(50, 50), max(200, 200)
+// ConstrainedBox constraints: min(100, 100), max(150, 150)
+// Result: min(100, 100), max(150, 150)
+
+Container({
+  constraints: new Constraints({
+    minWidth: 50,
+    maxWidth: 200,
+    minHeight: 50,
+    maxHeight: 200
+  }),
+  child: ConstrainedBox({
+    constraints: new Constraints({
+      minWidth: 100,
+      maxWidth: 150,
+      minHeight: 100,
+      maxHeight: 150
+    }),
+    child: Container({ color: 'blue' })
+  })
+})
+```
+
+## Practical Examples
+
+### Example 1: Ensuring Minimum Button Size
+
+```typescript
+const MinSizeButton = ({ onPressed, child, minWidth = 88, minHeight = 36 }) => {
+  return ConstrainedBox({
+    constraints: new Constraints({
+      minWidth: minWidth,
+      minHeight: minHeight
+    }),
+    child: ElevatedButton({
+      onPressed: onPressed,
+      child: child
+    })
+  });
+};
+
+// Usage
+MinSizeButton({
+  onPressed: () => console.log('clicked'),
+  child: Text('OK')  // Minimum size ensured even with short text
+})
+```
+
+### Example 2: Limiting Image Size
+
+```typescript
+const ConstrainedImage = ({ src, maxSize = 300 }) => {
+  return Container({
+    decoration: BoxDecoration({
+      border: Border.all({ color: '#E0E0E0' }),
+      borderRadius: BorderRadius.circular(8)
+    }),
+    child: ConstrainedBox({
+      constraints: new Constraints({
+        maxWidth: maxSize,
+        maxHeight: maxSize
+      }),
+      child: Image({
+        src: src,
+        objectFit: 'contain'
+      })
+    })
+  });
+};
+```
+
+### Example 3: Responsive Card
+
+```typescript
+const ResponsiveCard = ({ title, content }) => {
+  return ConstrainedBox({
+    constraints: new Constraints({
+      minHeight: 100,
+      maxWidth: 400
+    }),
+    child: Card({
+      child: Padding({
+        padding: EdgeInsets.all(16),
+        child: Column({
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(title, {
+              style: TextStyle({
+                fontSize: 20,
+                fontWeight: 'bold'
+              })
+            }),
+            SizedBox({ height: 8 }),
+            Text(content, {
+              style: TextStyle({
+                fontSize: 16,
+                color: '#666'
+              })
+            })
+          ]
+        })
+      })
+    })
+  });
+};
+```
+
+### Example 4: Minimum Height for Scrollable Area
+
+```typescript
+const ScrollableContent = ({ children, minHeight = 300 }) => {
+  return SingleChildScrollView({
+    child: ConstrainedBox({
+      constraints: new Constraints({
+        minHeight: minHeight
+      }),
+      child: Column({
+        children: children
+      })
+    })
+  });
+};
+```
+
+### Example 5: Constrained Box with Aspect Ratio
+
+```typescript
+const ConstrainedAspectBox = ({ 
+  child, 
+  aspectRatio = 16/9, 
+  maxWidth = 600 
+}) => {
+  return ConstrainedBox({
+    constraints: new Constraints({
+      maxWidth: maxWidth
+    }),
+    child: AspectRatio({
+      aspectRatio: aspectRatio,
+      child: Container({
+        decoration: BoxDecoration({
+          color: '#F5F5F5',
+          borderRadius: BorderRadius.circular(12)
+        }),
+        child: child
+      })
+    })
+  });
+};
+
+// Usage example: Video player
+ConstrainedAspectBox({
+  aspectRatio: 16/9,
+  maxWidth: 800,
+  child: VideoPlayer({ url: 'video.mp4' })
+})
+```
+
+## Nested ConstrainedBox
+
+When nesting multiple ConstrainedBoxes, the most restrictive constraint applies:
+
+```typescript
+ConstrainedBox({
+  constraints: new Constraints({ minWidth: 200, minHeight: 200 }),
+  child: ConstrainedBox({
+    constraints: new Constraints({ minWidth: 100, minHeight: 100 }),
+    child: Container({ color: 'blue' })
+  })
+})
+// Result: Minimum size is 200x200
+```
+
+## Important Notes
+
+- Parent constraints always take precedence
+- Conflicting constraints result in the most restrictive being applied
+- With infinite size constraints, the child's intrinsic size is used
+- Too much nesting can impact layout performance
+- Tight constraints completely ignore the child's size
+
+## Related Widgets
+
+- **Container**: Provides the same functionality with constraints property
+- **SizedBox**: Simple way to set fixed size
+- **LimitedBox**: Limits size only in infinite constraints
+- **UnconstrainedBox**: Removes constraints from child
+- **OverflowBox**: Allows child to exceed parent constraints

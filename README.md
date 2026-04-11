@@ -1,268 +1,262 @@
-# Flitter
+<p align="center">
+  <img src="assets/readme/logo.png" alt="Flitter" width="120" />
+</p>
 
-Flitter is a powerful JavaScript rendering engine and framework inspired by Flutter, supporting both SVG and Canvas to create high-performance graphics and user interfaces. As a rendering engine, it provides fine-grained control over the rendering process, allowing developers to create complex, interactive visualizations with ease. It is designed to efficiently implement data visualizations, interactive charts, diagrams, and graphic editors in web applications.
+<h1 align="center">Flitter</h1>
 
-## Key Features
+<p align="center">
+  A JavaScript rendering engine inspired by Flutter.<br/>
+  Build any visualization library — charts, diagrams, editors — with widget composition.
+</p>
 
-- **Advanced Rendering Engine**: At its core, Flitter is a sophisticated rendering engine that gives developers precise control over how elements are drawn and updated on the screen.
+<p align="center">
+  <a href="https://www.npmjs.com/package/flitter-ui"><img src="https://img.shields.io/npm/v/flitter-ui.svg" alt="npm version" /></a>
+  <a href="https://github.com/meursyphus/flitter/blob/latest/LICENSE"><img src="https://img.shields.io/npm/l/flitter-ui.svg" alt="license" /></a>
+  <a href="https://discord.gg/kUZp4SaHzF"><img src="https://img.shields.io/discord/1213364239498936411?logo=discord&label=discord" alt="discord" /></a>
+</p>
 
-- **Render Object Tree**: Flitter uses a render object tree for efficient rendering, allowing easy management and manipulation of complex layouts. This tree-based approach, central to Flitter's rendering engine, enables optimized updates and redraws.
+<p align="center">
+  <a href="https://ui.flitter.dev">Documentation</a> ·
+  <a href="https://ui.flitter.dev/chart/">Chart Gallery</a> ·
+  <a href="https://discord.gg/kUZp4SaHzF">Discord</a>
+</p>
 
-- **Declarative Programming**: Following a declarative paradigm, the screen automatically updates when values change, simplifying application state management and reducing the complexity of manual DOM manipulation.
+---
 
-- **Optimized Rendering Pipeline**: Re-rendering, painting, and layout recalculations are managed by the renderer pipeline, with optimizations applied to update only necessary parts. This ensures high performance even with complex, data-heavy visualizations.
+## What is Flitter?
 
-- **Dual Renderer Support**: As a flexible rendering engine, Flitter supports both SVG and Canvas, meeting various graphic requirements. Developers can choose the appropriate renderer as needed, switching seamlessly between vector and bitmap graphics.
+Flitter is not a chart library. It is a **rendering engine** that lets you build chart libraries, diagram editors, and any visual interface you can imagine — all from composable widgets.
 
-- **Box Model Layout**: Users can easily compose layouts using the familiar Box model, providing a intuitive way to structure complex UIs within the rendering engine.
+At its core, Flitter provides:
 
-- **Diverse Applications**: Can be utilized in various fields such as charts, diagrams, data visualization, and graphic editors, leveraging the power of the underlying rendering engine.
+- **Render Object Tree** — efficient rendering through a tree-based layout engine, with optimized updates that only repaint what changed.
+- **Declarative Widgets** — Flutter-style widget composition (`Container`, `Stack`, `Column`, `Row`, `Text`, ...) for building any visual structure.
+- **Dual Renderer** — choose SVG or Canvas per use case. Switch seamlessly between vector and bitmap graphics.
+- **Constraint-based Layout** — familiar box model layout with automatic size negotiation between parent and child.
+- **Built-in Animation** — animation controllers, curves, and tweens for smooth interactive graphics.
 
-# Showcase
-Here are some examples of what you can create with Flitter:
-Interactive ERD (Entity-Relationship Diagram)[https://easyrd.dev]
+The first library built on Flitter is a **chart library** — but the engine is designed for anything visual.
 
-![Interactive ERD](https://flitter.dev/home/easyrd.jpg)
+## Showcase
 
-This interactive ERD demonstrates Flitter's capability to create complex, interactive diagrams. Users can manipulate entities, add relationships, and visualize database structures in real-time. This showcase highlights Flitter's strengths in:
+### Charts — built on Flitter
 
-Creating responsive, draggable elements
-Handling complex user interactions
-Rendering intricate diagrams with ease
-Real-time updates based on user input
-## Installation Guide
+20+ chart types, two visual styles, fully composable. Every axis, bar, tooltip, and legend is a widget you can swap.
 
-Flitter can be used in various JavaScript environments. Here are installation and usage methods for major environments:
+<table border="1" bordercolor="#000000" cellspacing="0" cellpadding="8">
+  <tr>
+    <td bgcolor="#ffffff" align="center" valign="middle"><img src="assets/readme/bar-chart-toast-department-revenue.svg" width="280" /></td>
+    <td bgcolor="#ffffff" align="center" valign="middle"><img src="assets/readme/line-chart-ag-monthly-active-users.svg" width="280" /></td>
+    <td bgcolor="#ffffff" align="center" valign="middle"><img src="assets/readme/area-chart-toast-app-downloads.svg" width="280" /></td>
+  </tr>
+  <tr>
+    <td bgcolor="#ffffff" align="center" valign="middle"><img src="assets/readme/pie-chart-ag-browser-share.svg" width="280" /></td>
+    <td bgcolor="#ffffff" align="center" valign="middle"><img src="assets/readme/radar-chart-toast-team-comparison.svg" width="280" /></td>
+    <td bgcolor="#ffffff" align="center" valign="middle"><img src="assets/readme/scatter-chart-ag-revenue-growth.svg" width="280" /></td>
+  </tr>
+  <tr>
+    <td bgcolor="#ffffff" align="center" valign="middle"><img src="assets/readme/heatmap-chart-toast-monthly-product-sales.svg" width="280" /></td>
+    <td bgcolor="#ffffff" align="center" valign="middle"><img src="assets/readme/treemap-chart-ag-disk-space-usage.svg" width="280" /></td>
+    <td bgcolor="#ffffff" align="center" valign="middle">&nbsp;</td>
+  </tr>
+</table>
 
-### Pure JavaScript
+Bar · Line · Area · Pie · Donut · Radar · Scatter · Bubble · Heatmap · Treemap · Stacked Bar · Stacked Area · Box Plot · Candlestick · Waterfall · Funnel · Histogram · Sankey · Sunburst · Bullet
+
+### Diagrams — built on Flitter
+
+Interactive ERD editor with draggable entities, real-time relationship rendering, and live code-to-diagram synchronization.
+
+![Interactive ERD built with Flitter](assets/readme/easyrd.gif)
+
+## Quick Start
+
+### Install a chart in seconds
 
 ```bash
-npm install @meursyphus/flitter
+npx flitter-ui init        # initialize project
+npx flitter-ui add bar-chart   # add a chart (source code lands in your project)
 ```
 
-```javascript 
-import { Container } from "@meursyphus/flitter";
+This is a **shadcn-style** workflow — you get the full source code, not a black-box dependency. Read it, modify it, learn from it.
 
-/**
- * canvas style must be set to 100%, 100%
- * and you also must wrap div for canvas in order to calculate the size of the canvas
- */
-document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
-  <div style="width: 100vw; height: 100vh" id="container">
-    <canvas style="width: 100%; height: 100%;" id="view" />
-  </div>
-`;
-// Note: SVG is also supported
-// document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
-//   <div style="width: 100vw; height: 100vh" id="container">
-//     <svg style="width: 100%; height: 100%;" id="view"></svg>
-//   </div>
-// `;
-const app = new AppRunner({
-  view: document.querySelector<HTMLCanvasElement>("#view")!,
+### Use in React
+
+```bash
+npm install flitter-ui @flitterjs/react
+```
+
+```tsx
+import Widget from "@flitterjs/react";
+import BarChart from "./charts/bar-chart";
+
+const chart = BarChart({
+  data: {
+    labels: ["Jan", "Feb", "Mar", "Apr"],
+    datasets: [{ legend: "Revenue", values: [40, 65, 50, 80] }],
+  },
 });
-/**
- * you must set resizeTarget to calculate the size of the canvas
- */
-app.onMount({
-  resizeTarget: document.querySelector<HTMLDivElement>("#container")!,
-});
 
-app.runApp(Container({ color: 'lightblue' }));
+export default function App() {
+  return <Widget widget={chart} width="600px" height="400px" />;
+}
 ```
 
-### React
+### Use in Svelte
 
 ```bash
-npm install @meursyphus/flitter @meursyphus/flitter-react
-```
-
-```jsx
-import { Container, Alignment, Text, TextStyle } from '@meursyphus/flitter';
-import Widget from '@meursyphus/flitter-react';
-
-const App = () => (
-  <>
-    <Widget
-      width="600px"
-      height="300px"
-      renderer="canvas" // or svg
-      widget={Container({
-        alignment: Alignment.center,
-        color: 'lightblue',
-        child: Text("Hello, Flitter SVG!", { style: TextStyle({ fontSize: 30, weight: 'bold' }) })
-      })}
-    />
-  </>
-);
-```
-
-### Svelte
-
-```bash
-npm install @meursyphus/flitter @meursyphus/flitter-svelte
+npm install flitter-ui @flitterjs/svelte
 ```
 
 ```svelte
 <script>
-  import { Container, Alignment, Text, TextStyle } from '@meursyphus/flitter';
-  import Widget from '@meursyphus/flitter-svelte';
+  import Widget from "@flitterjs/svelte";
+  import BarChart from "./charts/bar-chart";
+
+  const chart = BarChart({
+    data: {
+      labels: ["Jan", "Feb", "Mar", "Apr"],
+      datasets: [{ legend: "Revenue", values: [40, 65, 50, 80] }],
+    },
+  });
 </script>
 
-<Widget
-  width="600px"
-  height="300px"
-  renderer="canvas" <!-- or "svg" -->
-  widget={Container({
-    alignment: Alignment.center,
-    color: 'lightblue',
-    child: Text("Hello, Flitter SVG!", { style: TextStyle({ fontSize: 30, weight: 'bold' }) })
-  })}
-/>
+<Widget widget={chart} width="600px" height="400px" />
 ```
 
-## Usage Example
+### Use with Vanilla JS
 
-Example of creating a simple chart using Flitter:
+```bash
+npm install flitter-ui
+```
 
 ```javascript
+import { Container, Alignment, Text, TextStyle, AppRunner } from "flitter-ui";
+
+const app = new AppRunner({
+  view: document.querySelector("#view"),
+});
+
+app.onMount({
+  resizeTarget: document.querySelector("#container"),
+});
+
+app.runApp(
+  Container({
+    alignment: Alignment.center,
+    color: "lightblue",
+    child: Text("Hello, Flitter!", {
+      style: new TextStyle({ fontSize: 24, fontWeight: "bold" }),
+    }),
+  })
+);
+```
+
+## How It Works — Widget Composition
+
+Flitter follows Flutter's widget composition model. Everything is a widget, and complex UIs are built by nesting simple widgets:
+
+```typescript
 import {
   Container,
-  Animation,
+  Column,
+  Row,
   Text,
   TextStyle,
-  StatefulWidget,
-  State,
-  Alignment,
   SizedBox,
-  Column,
-  MainAxisSize,
   MainAxisAlignment,
-  Row,
   CrossAxisAlignment,
-  FractionallySizedBox,
   BoxDecoration,
   BorderRadius,
   Radius,
+  StatefulWidget,
+  State,
   AnimationController,
   Tween,
   CurvedAnimation,
-  Curves
-} from '@meursyphus/flitter';
+  Curves,
+} from "flitter-ui";
 
-export default function BarChart() {
-  return Container({
-    alignment: Alignment.center,
-    color: 'lightgrey',
-    child: Column({
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text('BarChart', { style: new TextStyle({ fontFamily: 'Intent', fontWeight: '600' }) }),
-        SizedBox({
-          width: 200,
-          height: 150,
-          child: Row({
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              { label: 'S', value: 60 },
-              { label: 'M', value: 20 },
-              { label: 'T', value: 30 },
-              { label: 'W', value: 90 },
-              { label: 'T', value: 70 },
-              { label: 'F', value: 50 },
-              { label: 'S', value: 40 }
-            ].map(({ label, value }) => new Bar(label, value))
-          })
-        })
-      ]
-    })
-  });
-}
-
+// A simple animated bar chart built from scratch with widgets
 class Bar extends StatefulWidget {
   constructor(public label: string, public value: number) {
     super();
   }
-
-  createState(): State<StatefulWidget> {
+  createState() {
     return new BarState();
   }
 }
 
 class BarState extends State<Bar> {
-  animationController!: AnimationController;
-  tweenAnimation!: Animation<number>;
+  animationController = new AnimationController({ duration: 800 });
 
-  override initState(): void {
-    this.animationController = new AnimationController({
-      duration: 10000
-    });
-    this.animationController.addListener(() => {
-      this.setState();
-    });
+  initState() {
+    super.initState();
     const tween = new Tween({ begin: 0, end: this.widget.value });
     this.tweenAnimation = tween.animated(
       new CurvedAnimation({
         parent: this.animationController,
-        curve: Curves.easeInOut
+        curve: Curves.easeInOut,
       })
     );
+    this.animationController.addListener(() => this.setState());
     this.animationController.forward();
   }
 
-  override build() {
+  build() {
     return Column({
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        FractionallySizedBox({
-          heightFactor: this.tweenAnimation.value / 100,
-          child: Column({
-            children: [
-              Container({
-                width: 20,
-                decoration: new BoxDecoration({
-                  color: '#1a1a1a',
-                  borderRadius: BorderRadius.only({
-                    topLeft: Radius.circular(4),
-                    topRight: Radius.circular(4)
-                  })
-                })
-              }),
-              SizedBox({ height: 5 }),
-              Text(this.widget.label, { style: new TextStyle({ fontFamily: 'Intent' }) })
-            ]
-          })
-        })
-      ]
+        Container({
+          width: 24,
+          height: this.tweenAnimation.value,
+          decoration: new BoxDecoration({
+            color: "#3b82f6",
+            borderRadius: BorderRadius.only({
+              topLeft: Radius.circular(4),
+              topRight: Radius.circular(4),
+            }),
+          }),
+        }),
+        SizedBox({ height: 4 }),
+        Text(this.widget.label, {
+          style: new TextStyle({ fontSize: 12 }),
+        }),
+      ],
     });
   }
 }
 ```
 
-## Why Flitter?
+This is the same composition model used inside Flitter's chart library. Every chart is just a tree of widgets — and you can swap any piece.
 
-1. **Powerful Rendering Engine**: Flitter's core strength lies in its advanced rendering capabilities, allowing for smooth handling of complex graphics and animations.
+## Packages
 
-2. **Easy Learning Curve**: Uses syntax similar to Flutter, allowing mobile developers to easily adapt to the web environment while leveraging a powerful web-based rendering engine.
+| Package | Description | Version |
+|---------|-------------|---------|
+| [`flitter-ui`](https://www.npmjs.com/package/flitter-ui) | Core engine + CLI | [![npm](https://img.shields.io/npm/v/flitter-ui.svg)](https://www.npmjs.com/package/flitter-ui) |
+| [`@flitterjs/react`](https://www.npmjs.com/package/@flitterjs/react) | React integration | [![npm](https://img.shields.io/npm/v/@flitterjs/react.svg)](https://www.npmjs.com/package/@flitterjs/react) |
+| [`@flitterjs/svelte`](https://www.npmjs.com/package/@flitterjs/svelte) | Svelte integration (SSR supported) | [![npm](https://img.shields.io/npm/v/@flitterjs/svelte.svg)](https://www.npmjs.com/package/@flitterjs/svelte) |
 
-3. **High Performance**: The optimized rendering pipeline ensures smooth performance even with complex, data-intensive visualizations.
+## LLM Native
 
-4. **Flexibility**: Abstracts SVG and Canvas manipulation, allowing developers to focus on business logic while the rendering engine handles the low-level drawing operations.
+Feed your AI assistant the chart documentation and let it generate charts for you:
 
-5. **Renderer Selection**: Can choose between SVG and Canvas renderers as needed, meeting various graphic requirements and allowing for the best performance in different scenarios.
+```
+https://ui.flitter.dev/llm/chart.md
+```
 
-6. **Reusability**: Increases code reusability through a component-based approach, enabled by the underlying rendering engine's architecture.
+## Documentation
 
+Full documentation, interactive examples, and API reference at **[ui.flitter.dev](https://ui.flitter.dev)**.
 
 ## Contributing
 
-Flitter is an open-source project. We welcome all forms of contributions including bug reports, feature suggestions, and pull requests. For more details, please visit [Discord](https://discord.gg/kUZp4SaHzF) 
+Flitter is open source. Bug reports, feature suggestions, and pull requests are welcome.
+
+- [Discord](https://discord.gg/kUZp4SaHzF)
+- [GitHub Issues](https://github.com/meursyphus/flitter/issues)
 
 ## License
 
-Flitter is provided under the MIT license. 
-
-## Learn More
-
-For detailed documentation and examples, visit the [Flitter Official Documentation](https://flitter.dev).
+[MIT](LICENSE)

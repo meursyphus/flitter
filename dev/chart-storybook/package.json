@@ -1,0 +1,31 @@
+{
+  "name": "chart-storybook",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "storybook dev -p 6007 --no-open",
+    "build": "storybook build",
+    "storybook": "storybook dev -p 6007 --no-open",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "flitter-core": "workspace:*",
+    "flitter-chart": "workspace:*",
+    "@flitterjs/react": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@storybook/react": "^10.3.3",
+    "@storybook/react-vite": "^10.3.3",
+    "@types/react": "^18.3.14",
+    "@types/react-dom": "^18.3.2",
+    "@vitejs/plugin-react": "^4.2.1",
+    "storybook": "^10.3.3",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8",
+    "@storybook/addon-docs": "^10.3.3"
+  }
+}

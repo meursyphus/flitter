@@ -1,0 +1,315 @@
+export const metadata = { title: "CustomPaint", description: "A widget that provides custom graphics drawing using Canvas or SVG" };
+
+## Overview
+
+`CustomPaint` is a widget that allows you to draw custom graphics using Canvas API or SVG. Inspired by Flutter's CustomPaint, it's used when you need to draw complex graphics, charts, diagrams, or any custom visual elements.
+
+A unique feature of Flitter's CustomPaint is its support for both SVG and Canvas rendering. While the interface differs slightly from Flutter due to SVG support, the layout rules remain the same.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/kp14Y4uHpHs"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowFullScreen
+></iframe>
+
+See: [https://api.flutter.dev/flutter/widgets/CustomPaint-class.html](https://api.flutter.dev/flutter/widgets/CustomPaint-class.html)
+
+## When to Use?
+
+- When you need to draw complex graphics or shapes
+- When implementing custom charts or graphs
+- When creating custom UI with animations
+- When developing games or visualization tools
+- When existing widgets can't express your specific UI requirements
+
+## Basic Usage
+
+```typescript
+import { CustomPaint, Size } from 'flitter';
+
+// Canvas rendering example
+const MyCanvasPaint = CustomPaint({
+  size: new Size(200, 200),
+  painter: {
+    canvas: {
+      paint: (context, size) => {
+        const ctx = context.canvas;
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(0, 0, size.width, size.height);
+      }
+    }
+  }
+});
+
+// SVG rendering example
+const MySvgPaint = CustomPaint({
+  size: new Size(200, 200),
+  painter: {
+    svg: {
+      createDefaultSvgEl: ({ createSvgEl }) => {
+        return {
+          rect: createSvgEl('rect')
+        };
+      },
+      paint: ({ rect }, size) => {
+        rect.setAttribute('fill', 'red');
+        rect.setAttribute('width', `${size.width}`);
+        rect.setAttribute('height', `${size.height}`);
+      }
+    }
+  }
+});
+```
+
+## Props
+
+### size (optional)
+**Value: Size** (default: **Size.zero**)
+
+Specifies the size of the CustomPaint area. When `Size.zero`, it follows the child widget's size. Use `Size.infinite` to expand to the maximum available size.
+
+```typescript
+// Fixed size
+size: new Size(300, 200)
+
+// Expand to maximum size
+size: Size.infinite
+
+// Follow child size (default)
+size: Size.zero
+```
+
+### painter (required)
+**Value: Painter**
+
+The Painter object containing the graphics drawing logic. You can implement SVG, Canvas, or both.
+
+#### Painter Type Definition:
+```typescript
+type Painter<SVGEls, D> = {
+  dependencies?: D;  // Dependency data
+  shouldRepaint?: (oldPainter: Painter<SVGEls, D>) => boolean;  // Determine repaint
+  svg?: CustomSvgPainter<SVGEls>;    // SVG rendering implementation
+  canvas?: CustomCanvasPainter;       // Canvas rendering implementation
+};
+```
+
+#### Canvas Painter:
+```typescript
+type CustomCanvasPainter = {
+  paint: (context: CanvasPaintingContext, size: Size) => void;
+};
+```
+
+#### SVG Painter:
+```typescript
+type CustomSvgPainter<T> = {
+  createDefaultSvgEl: (context: SvgPaintContext) => T;  // Create SVG elements
+  paint: (els: T, size: Size) => void;                  // Update SVG elements
+};
+```
+
+### child (optional)
+**Value: Widget**
+
+The child widget to be drawn on top of the CustomPaint. When a child is present, CustomPaint is drawn behind it.
+
+## Real-World Examples
+
+### Example 1: Drawing Simple Shapes
+
+```typescript
+import { CustomPaint, Size } from 'flitter';
+
+const SimpleShapes = CustomPaint({
+  size: new Size(300, 300),
+  painter: {
+    canvas: {
+      paint: (context, size) => {
+        const ctx = context.canvas;
+        
+        // Background
+        ctx.fillStyle = '#f0f0f0';
+        ctx.fillRect(0, 0, size.width, size.height);
+        
+        // Draw circle
+        ctx.fillStyle = '#3498db';
+        ctx.beginPath();
+        ctx.arc(150, 100, 50, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Draw rectangle
+        ctx.fillStyle = '#e74c3c';
+        ctx.fillRect(100, 160, 100, 80);
+        
+        // Draw triangle
+        ctx.fillStyle = '#2ecc71';
+        ctx.beginPath();
+        ctx.moveTo(150, 250);
+        ctx.lineTo(100, 320);
+        ctx.lineTo(200, 320);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+  }
+});
+```
+
+### Example 2: Animated Chart
+
+```typescript
+import { CustomPaint, Size, StatefulWidget, State } from 'flitter';
+
+class AnimatedChart extends StatefulWidget {
+  createState() {
+    return new AnimatedChartState();
+  }
+}
+
+class AnimatedChartState extends State<AnimatedChart> {
+  values = [30, 50, 80, 40, 60];
+  
+  build() {
+    return CustomPaint({
+      size: new Size(400, 300),
+      painter: {
+        dependencies: this.values,  // Add dependencies
+        shouldRepaint: (oldPainter) => {
+          // Repaint only when values change
+          return oldPainter.dependencies !== this.values;
+        },
+        canvas: {
+          paint: (context, size) => {
+            const ctx = context.canvas;
+            const barWidth = size.width / this.values.length;
+            const maxValue = Math.max(...this.values);
+            
+            // Background
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, size.width, size.height);
+            
+            // Bar chart
+            this.values.forEach((value, index) => {
+              const barHeight = (value / maxValue) * size.height * 0.8;
+              const x = index * barWidth + barWidth * 0.1;
+              const y = size.height - barHeight;
+              const width = barWidth * 0.8;
+              
+              // Bar
+              ctx.fillStyle = '#3498db';
+              ctx.fillRect(x, y, width, barHeight);
+              
+              // Value label
+              ctx.fillStyle = '#2c3e50';
+              ctx.font = '14px Arial';
+              ctx.textAlign = 'center';
+              ctx.fillText(value.toString(), x + width / 2, y - 10);
+            });
+          }
+        }
+      }
+    });
+  }
+}
+```
+
+### Example 3: Complex Path with SVG
+
+```typescript
+import { CustomPaint, Size } from 'flitter';
+
+const SvgPathExample = CustomPaint({
+  size: new Size(300, 300),
+  painter: {
+    svg: {
+      createDefaultSvgEl: ({ createSvgEl }) => {
+        return {
+          background: createSvgEl('rect'),
+          path: createSvgEl('path'),
+          circle: createSvgEl('circle')
+        };
+      },
+      paint: (els, size) => {
+        // Background
+        els.background.setAttribute('fill', '#f0f0f0');
+        els.background.setAttribute('width', `${size.width}`);
+        els.background.setAttribute('height', `${size.height}`);
+        
+        // Complex path
+        const pathData = `
+          M ${size.width * 0.2} ${size.height * 0.5}
+          Q ${size.width * 0.5} ${size.height * 0.2}
+            ${size.width * 0.8} ${size.height * 0.5}
+          T ${size.width * 0.5} ${size.height * 0.8}
+          Z
+        `;
+        els.path.setAttribute('d', pathData);
+        els.path.setAttribute('fill', 'none');
+        els.path.setAttribute('stroke', '#3498db');
+        els.path.setAttribute('stroke-width', '3');
+        
+        // Center point
+        els.circle.setAttribute('cx', `${size.width * 0.5}`);
+        els.circle.setAttribute('cy', `${size.height * 0.5}`);
+        els.circle.setAttribute('r', '5');
+        els.circle.setAttribute('fill', '#e74c3c');
+      }
+    }
+  }
+});
+```
+
+### Example 4: Using with Child Widget
+
+```typescript
+import { CustomPaint, Size, Container, Text } from 'flitter';
+
+const BackgroundPattern = CustomPaint({
+  painter: {
+    canvas: {
+      paint: (context, size) => {
+        const ctx = context.canvas;
+        
+        // Draw pattern
+        for (let x = 0; x < size.width; x += 20) {
+          for (let y = 0; y < size.height; y += 20) {
+            ctx.fillStyle = (x + y) % 40 === 0 ? '#e0e0e0' : '#f5f5f5';
+            ctx.fillRect(x, y, 20, 20);
+          }
+        }
+      }
+    }
+  },
+  child: Container({
+    alignment: Alignment.center,
+    padding: EdgeInsets.all(20),
+    child: Text('Text on CustomPaint background', {
+      style: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#2c3e50'
+      }
+    })
+  })
+});
+```
+
+## Best Practices
+
+- Implement `shouldRepaint` method properly to avoid unnecessary repainting
+- When using Canvas API, pre-calculate complex computations for better performance
+- Choose the appropriate renderer for your use case (SVG maintains quality when scaled, Canvas is better for complex animations)
+- Don't forget to clean up animations to prevent memory leaks
+- Use `dependencies` to efficiently manage painter state changes
+
+## Related Widgets
+
+- **Container**: When you only need simple background color or border
+- **DecoratedBox**: When you need complex decoration but not custom drawing
+- **Transform**: When you can achieve the desired effect by transforming existing widgets
+- **ClipPath**: When you only need to clip with a custom shape

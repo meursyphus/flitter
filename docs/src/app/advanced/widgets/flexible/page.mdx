@@ -1,0 +1,325 @@
+export const metadata = { title: "Flexible", description: "A widget that controls how a child flexes within Row, Column, or Flex" };
+
+## Overview
+
+Flexible is a widget that controls how a child widget flexes to fill available space within a Row, Column, or Flex.
+
+Flexible provides flexible sizing options for child widgets. Through the `fit` property, you can determine whether the child must fill all allocated space (tight) or can use only what it needs (loose). Expanded is actually a special case of Flexible with `fit: FlexFit.tight` applied.
+
+## When to use it?
+
+- When you want child widgets to be smaller than their allocated space
+- When distributing space in Row/Column while respecting children's intrinsic sizes
+- When you need more granular layout control than Expanded provides
+- When you need min/max size constraints in responsive layouts
+- When maintaining ratios between widgets without forcing expansion
+
+## Basic Usage
+
+```typescript
+// Flexible's default behavior (loose fit)
+Row({
+  children: [
+    Container({ width: 100, height: 50, color: 'blue' }),
+    Flexible({
+      child: Container({ 
+        width: 50,  // Uses only 50px (even if more space available)
+        height: 50, 
+        color: 'red' 
+      })
+    }),
+    Container({ width: 100, height: 50, color: 'green' })
+  ]
+})
+
+// Using tight fit (same as Expanded)
+Row({
+  children: [
+    Flexible({
+      fit: FlexFit.tight,
+      child: Container({ height: 50, color: 'purple' })
+    })
+  ]
+})
+```
+
+## Props
+
+### child (required)
+
+**Value: Widget**
+
+The child widget to be wrapped with Flexible.
+
+```typescript
+Flexible({
+  child: Text('Flexible text')
+})
+```
+
+### flex
+
+**Value: number** (default: **1**)
+
+Defines the flex factor - how much space this widget should take relative to other Flexible/Expanded widgets.
+
+- Must be 0 or greater
+- Higher values get more allocated space
+- Space is distributed as a ratio with other flex children
+
+```typescript
+Row({
+  children: [
+    Flexible({
+      flex: 2,  // Gets 2/3 of space
+      child: Container({ color: 'red' })
+    }),
+    Flexible({
+      flex: 1,  // Gets 1/3 of space
+      child: Container({ color: 'blue' })
+    })
+  ]
+})
+```
+
+### fit
+
+**Value: FlexFit** (default: **FlexFit.loose**)
+
+Determines how the child widget occupies the allocated space.
+
+- **FlexFit.loose**: Child uses only the space it needs (default)
+- **FlexFit.tight**: Child fills all allocated space
+
+```typescript
+// loose fit - child maintains its own size
+Row({
+  children: [
+    Flexible({
+      fit: FlexFit.loose,
+      child: Container({ 
+        width: 100,  // Uses only 100px
+        height: 50, 
+        color: 'blue' 
+      })
+    })
+  ]
+})
+
+// tight fit - child fills all space
+Row({
+  children: [
+    Flexible({
+      fit: FlexFit.tight,
+      child: Container({ 
+        height: 50, 
+        color: 'red'  // Takes all available width
+      })
+    })
+  ]
+})
+```
+
+## FlexFit Behavior Comparison
+
+### FlexFit.loose (default)
+```typescript
+Row({
+  children: [
+    Container({ width: 50, height: 50, color: 'gray' }),
+    Flexible({
+      fit: FlexFit.loose,
+      flex: 1,
+      child: Container({ 
+        width: 80,  // Uses only 80px (even if more space allocated)
+        height: 50, 
+        color: 'blue' 
+      })
+    }),
+    Container({ width: 50, height: 50, color: 'gray' })
+  ]
+})
+```
+
+### FlexFit.tight
+```typescript
+Row({
+  children: [
+    Container({ width: 50, height: 50, color: 'gray' }),
+    Flexible({
+      fit: FlexFit.tight,
+      flex: 1,
+      child: Container({ 
+        height: 50, 
+        color: 'red'  // Takes all allocated space
+      })
+    }),
+    Container({ width: 50, height: 50, color: 'gray' })
+  ]
+})
+```
+
+## Practical Examples
+
+### Example 1: Responsive Text Layout
+
+```typescript
+const responsiveTextLayout = Row({
+  children: [
+    Flexible({
+      fit: FlexFit.loose,
+      child: Text(
+        'This text takes only the space it needs',
+        { style: TextStyle({ overflow: 'ellipsis' }) }
+      )
+    }),
+    SizedBox({ width: 16 }),
+    Container({
+      padding: EdgeInsets.all(8),
+      color: 'blue',
+      child: Text('Fixed', { style: TextStyle({ color: 'white' }) })
+    })
+  ]
+});
+```
+
+### Example 2: Mixed Layout
+
+```typescript
+const mixedLayout = Row({
+  children: [
+    // Fixed size
+    Icon({ icon: Icons.home, size: 24 }),
+    SizedBox({ width: 8 }),
+    
+    // Flexible but content-sized
+    Flexible({
+      fit: FlexFit.loose,
+      child: Chip({
+        label: Text('Tag'),
+        backgroundColor: 'lightblue'
+      })
+    }),
+    
+    // Takes all remaining space
+    Flexible({
+      fit: FlexFit.tight,
+      child: Container({
+        height: 40,
+        color: 'lightgray',
+        alignment: Alignment.center,
+        child: Text('Expanded')
+      })
+    }),
+    
+    // Fixed size
+    IconButton({
+      icon: Icons.more_vert,
+      onPressed: () => {}
+    })
+  ]
+});
+```
+
+### Example 3: Maximum Width Constraint
+
+```typescript
+const constrainedFlexible = Row({
+  children: [
+    Flexible({
+      fit: FlexFit.loose,
+      child: Container({
+        constraints: Constraints({ maxWidth: 200 }),
+        padding: EdgeInsets.all(16),
+        color: 'orange',
+        child: Text('Expands up to 200px max')
+      })
+    }),
+    Spacer(),
+    ElevatedButton({
+      onPressed: () => {},
+      child: Text('Button')
+    })
+  ]
+});
+```
+
+### Example 4: Proportional Grid
+
+```typescript
+const proportionalGrid = Column({
+  children: [
+    Row({
+      children: [
+        Flexible({
+          flex: 2,
+          fit: FlexFit.tight,
+          child: Container({ height: 100, color: 'red' })
+        }),
+        SizedBox({ width: 8 }),
+        Flexible({
+          flex: 1,
+          fit: FlexFit.tight,
+          child: Container({ height: 100, color: 'green' })
+        })
+      ]
+    }),
+    SizedBox({ height: 8 }),
+    Row({
+      children: [
+        Flexible({
+          flex: 1,
+          fit: FlexFit.tight,
+          child: Container({ height: 100, color: 'blue' })
+        }),
+        SizedBox({ width: 8 }),
+        Flexible({
+          flex: 1,
+          fit: FlexFit.tight,
+          child: Container({ height: 100, color: 'yellow' })
+        }),
+        SizedBox({ width: 8 }),
+        Flexible({
+          flex: 1,
+          fit: FlexFit.tight,
+          child: Container({ height: 100, color: 'purple' })
+        })
+      ]
+    })
+  ]
+});
+```
+
+## Relationship with Expanded
+
+```typescript
+// These two are completely identical
+Expanded({ 
+  flex: 2, 
+  child: widget 
+})
+
+Flexible({ 
+  flex: 2, 
+  fit: FlexFit.tight,
+  child: widget 
+})
+
+// Expanded is simply a convenience wrapper
+```
+
+## Important Notes
+
+- Flexible must be a direct child of Row, Column, or Flex.
+- When using `fit: FlexFit.loose`, the child widget should have an intrinsic size in the main axis for it to be meaningful.
+- If all Flexible children use loose fit and there's remaining space, that space remains unused.
+- The flex value must be 0 or greater; negative values cause errors.
+- Cannot nest Flexible directly inside another Flexible.
+
+## Related Widgets
+
+- **Expanded**: Special case of Flexible where fit is always tight
+- **Spacer**: Expanded used to create empty space
+- **Row**: Horizontal flex layout
+- **Column**: Vertical flex layout
+- **Flex**: Base widget for Row and Column

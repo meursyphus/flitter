@@ -1,0 +1,46 @@
+import {
+	type Widget,
+	Provider,
+	BuildContext,
+	ChangeNotifierProvider,
+} from "flitter-core";
+import type {
+	SunburstChartCustom,
+	SunburstChartData,
+	SunburstLegacyData,
+} from "./types";
+import { SunburstChartController } from "./controller";
+import Chart from "./chart";
+
+const SUNBURST_CHART_KEY = Symbol("SunburstChartKey");
+
+export function SunburstChartProvider<TConfig extends object = object>({
+	custom,
+	data,
+	config,
+}: {
+	custom: SunburstChartCustom<TConfig>;
+	data: SunburstChartData | SunburstLegacyData;
+	config?: TConfig;
+}): Widget {
+	return ChangeNotifierProvider({
+		providerKey: SUNBURST_CHART_KEY,
+		create: () =>
+			new SunburstChartController({
+				data,
+				custom,
+				config: config ?? {},
+			}),
+		update: (notifier) => {
+			const controller = notifier as SunburstChartController;
+			controller.data = data;
+			controller.custom = custom;
+			controller.config = config ?? {};
+		},
+		child: new Chart(),
+	});
+}
+
+SunburstChartProvider.of = (context: BuildContext): SunburstChartController => {
+	return Provider.of(SUNBURST_CHART_KEY, context) as SunburstChartController;
+};

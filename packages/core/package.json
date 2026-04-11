@@ -1,0 +1,69 @@
+{
+  "name": "flitter-core",
+  "version": "0.0.1",
+  "description": "Flitter: A high-performance JavaScript rendering engine and framework inspired by Flutter. Features declarative programming, SVG and Canvas support, and optimized for complex data visualizations, interactive charts, and graphic editors in web applications.",
+  "keywords": [
+    "rendering-engine",
+    "data-visualization",
+    "svg",
+    "canvas",
+    "flutter-like",
+    "javascript",
+    "interactive-charts",
+    "graphics",
+    "ui-framework"
+  ],
+  "homepage": "https://flitter.dev",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsup && cp package.json dist/package.json && cp README.md dist/README.md && node ./scripts/fix-package.mjs",
+    "lint": "eslint src/**",
+    "postbuild": "echo \"Build complete. Please run: \n\ncd dist\nnpm publish\n\"",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@typescript-eslint/eslint-plugin": "^6.16.0",
+    "cp": "^0.2.0",
+    "eslint": "^8.56.0",
+    "eslint-config-standard-with-typescript": "^43.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "prettier": "^3.2.5",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "color-rgba": "^3.0.0",
+    "short-unique-id": "^5.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meursyphus/flitter.git"
+  },
+  "author": "meursyphus",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/meursyphus/flitter/issues"
+  },
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./component/Tooltip": {
+      "types": "./src/component/Tooltip.ts",
+      "import": "./src/component/Tooltip.ts",
+      "default": "./src/component/Tooltip.ts"
+    }
+  },
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,38 @@
+import {
+  Container,
+  EdgeInsets,
+  BoxDecoration,
+  Border,
+  BoxShadow,
+  ZIndex,
+  type Widget,
+} from "flitter-ui";
+import type { BarChartContext } from "flitter-ui/chart";
+import type { ToastStackedBarChartConfig } from "../config";
+
+export function toastBar(
+  { legend, isHovered }: { value: number; label: string; legend: string; index: number; isHovered: boolean },
+  context: BarChartContext<ToastStackedBarChartConfig>,
+): Widget {
+  const { colors, bar } = context.config;
+  const idx = context.legends.indexOf(legend);
+  const color = colors[idx % colors.length];
+
+  const decoration = isHovered
+    ? new BoxDecoration({
+      color,
+      border: Border.all({ color: "white", width: 4, strokeAlign: 1 }),
+      boxShadow: [
+        new BoxShadow({ color: "rgba(0,0,0,0.3)", blurRadius: 8 }),
+      ],
+    })
+    : new BoxDecoration({ color });
+
+  return ZIndex({
+    zIndex: isHovered ? 1 : 0,
+    child: Container({
+      margin: EdgeInsets.symmetric({ horizontal: bar.gap }),
+      decoration,
+    }),
+  });
+}

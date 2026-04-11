@@ -1,0 +1,54 @@
+<script lang="ts">
+	import {
+		Center,
+		Container,
+		Element,
+		GestureDetector,
+		Positioned,
+		Stack,
+		State,
+		StatefulWidget,
+		Text,
+		Widget
+	} from 'flitter-core';
+	import SvelteWidget from '@flitterjs/svelte';
+
+	class CustomWidget extends StatefulWidget {
+		override createState(): State<StatefulWidget> {
+			return new CustomState();
+		}
+	}
+
+	class CustomState extends State<CustomWidget> {
+		number = 0;
+
+		build(_context: Element): Widget {
+			return Stack({
+				children: [
+					Positioned({
+						top: 0,
+						right: 0,
+						child: GestureDetector({
+							onClick: () => {
+								this.number += 1;
+								this.setState();
+							},
+							child: GestureDetector({
+								onClick: () => {},
+								child: Container({
+									color: 'yellow',
+									child: Text('click')
+								})
+							})
+						})
+					}),
+					Center({
+						child: Text(this.number.toString())
+					})
+				]
+			});
+		}
+	}
+</script>
+
+<SvelteWidget width="200px" height="200px" widget={new CustomWidget()} />

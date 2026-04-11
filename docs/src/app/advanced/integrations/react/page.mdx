@@ -1,0 +1,35 @@
+export const metadata = {
+  title: "React Integration",
+  description: "How to use Flitter with React",
+};
+
+# React Integration
+
+Install the React integration package:
+
+```bash
+npm install @flitterjs/react
+```
+
+## Basic Usage
+
+```tsx
+import Widget from "@flitterjs/react";
+import { Container, Text, Center } from "flitter";
+
+function App() {
+  return (
+    <Widget
+      width="400px"
+      height="300px"
+      widget={Center({ child: Text("Hello Flitter!") })}
+    />
+  );
+}
+```
+
+The `Widget` component renders a Flitter widget tree inside a React component. It accepts:
+
+- **widget** - The root Flitter widget to render
+- **width** / **height** - Container dimensions
+- **renderer** - `"svg"` (default) or `"canvas"`

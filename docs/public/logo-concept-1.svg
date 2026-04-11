@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    Concept 1: Abstract Geometric - "Prism Burst"
+    A bold diamond/crystal form composed of angular facets,
+    suggesting a rendering engine breaking light into pixels.
+    Symmetric, grand, works at all sizes.
+  -->
+  <g fill="currentColor">
+    <!-- Top facet - crown -->
+    <polygon points="32,2 44,18 32,22 20,18"/>
+    <!-- Upper left facet -->
+    <polygon points="20,18 32,22 26,34 8,28" opacity="0.8"/>
+    <!-- Upper right facet -->
+    <polygon points="44,18 56,28 38,34 32,22" opacity="0.65"/>
+    <!-- Center left facet -->
+    <polygon points="8,28 26,34 22,48 6,42" opacity="0.55"/>
+    <!-- Center right facet -->
+    <polygon points="56,28 58,42 42,48 38,34" opacity="0.45"/>
+    <!-- Lower center - core -->
+    <polygon points="26,34 38,34 42,48 32,62 22,48" opacity="0.75"/>
+    <!-- Bottom left -->
+    <polygon points="6,42 22,48 32,62 14,54" opacity="0.35"/>
+    <!-- Bottom right -->
+    <polygon points="58,42 50,54 32,62 42,48" opacity="0.3"/>
+  </g>
+</svg>
