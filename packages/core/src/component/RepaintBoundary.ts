@@ -6,6 +6,10 @@ class RepaintBoundary extends SingleChildRenderObjectWidget {
   override createRenderObject(): RenderRepaintBoundary {
     return new RenderRepaintBoundary();
   }
+
+  override updateRenderObject(_renderObject: RenderRepaintBoundary): void {
+    // No properties to update
+  }
 }
 
 export default classToFunction(RepaintBoundary);
