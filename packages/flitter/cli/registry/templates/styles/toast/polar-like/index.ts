@@ -71,6 +71,10 @@ type ToastPieLikeConfig = {
 	};
 	tooltip: {
 		enabled: boolean;
+		backgroundColor: string;
+		textColor: string;
+		borderRadius: number;
+		padding: number;
 	};
 };
 
@@ -269,7 +273,9 @@ class AnimatedToastSegmentState extends AnimatedBaseWidgetState<AnimatedToastSeg
 
 export function toastPieLikeDataView(
 	args: { segments: { widget: Widget }[]; dataCenter?: Widget },
-	context: { config: ToastPieLikeConfig },
+	context: {
+		config: Pick<ToastPieLikeConfig, "animation">;
+	},
 ): Widget {
 	const child = DataView({
 		items: args.segments,
@@ -426,13 +432,18 @@ export function toastPieLikeTooltip(
 			color,
 			value: args.value,
 		},
-		config: context.config as any,
+		config: context.config,
 	});
 }
 
-export function toastPieLikeTooltipArea(
-	args: { tooltip: Widget | null; hoveredSegment: PieLikeTooltipArgs | null },
-	context: { config: ToastPieLikeConfig },
+export function toastPieLikeTooltipArea<
+	THoveredSegment extends { directionX: number; directionY: number },
+	TConfig extends Pick<ToastPieLikeConfig, "tooltip">,
+>(
+	args: { tooltip: Widget | null; hoveredSegment: THoveredSegment | null },
+	context: {
+		config: TConfig;
+	},
 ): Widget {
 	if (!context.config.tooltip.enabled || args.tooltip == null || args.hoveredSegment == null) {
 		return SizedBox.shrink();

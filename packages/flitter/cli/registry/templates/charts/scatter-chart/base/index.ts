@@ -55,7 +55,7 @@ const defaultGetScale: GetScaleFn = ({ datasets }, options) => {
   return { x: xScale, y: yScale };
 };
 
-export function BaseScatterChart<TConfig = {}>({
+export function BaseScatterChart<TConfig extends object = object>({
   custom,
   getScale = defaultGetScale,
   ...rest

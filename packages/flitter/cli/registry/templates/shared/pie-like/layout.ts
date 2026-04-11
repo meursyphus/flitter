@@ -11,7 +11,7 @@ import {
 	type Widget,
 } from "flitter-core";
 
-type LayoutConfig = {
+export type PieLikeLayoutConfig = {
 	padding: { top: number; right: number; bottom: number; left: number };
 	title: {
 		visible: boolean;
@@ -56,7 +56,7 @@ export function Layout(
 		legends: Widget[];
 		plot: Widget;
 	},
-	context: { config: LayoutConfig },
+	context: { config: PieLikeLayoutConfig },
 ): Widget {
 	const { padding, title: titleConfig, legend: legendConfig } = context.config;
 	const legendGap = legendConfig.gap;

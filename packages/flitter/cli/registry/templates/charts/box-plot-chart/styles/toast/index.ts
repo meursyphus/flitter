@@ -20,10 +20,9 @@ export { type ToastBoxPlotChartConfig } from "./config";
 export type { ToastBoxPlotChartConfig as BoxPlotChartConfig } from "./config";
 
 function toastTooltip(
-  args: { label: string; items: { legend: string; color: string; value: number }[] },
-  context: any,
+  ...[args, context]: Parameters<BoxPlotChartCustom<ToastBoxPlotChartConfig>["tooltip"]>
 ): Widget {
-  return tooltipContent({ label: args.label, items: args.items, config: context.config as any });
+  return tooltipContent({ label: args.label, items: args.items, config: context.config });
 }
 
 const toastCustom: Partial<BoxPlotChartCustom<ToastBoxPlotChartConfig>> = {

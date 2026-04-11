@@ -14,11 +14,11 @@ function agTooltip(
   args: { label: string; items: { legend: string; color: string; value: number | string }[] },
   context: CandlestickChartContext<CandlestickChartConfig>,
 ): Widget {
-  return agTooltipContent({ label: args.label, items: args.items as any, config: context.config as any });
+  return agTooltipContent({ label: args.label, items: args.items, config: context.config });
 }
 
 const agCustom: Partial<CandlestickChartCustom<CandlestickChartConfig>> = {
-  layout: cartesian.agLayout as any,
+  layout: (args, context) => cartesian.agLayout(args, context),
   candlestickBox: agCandlestickBox,
   candlestick: agCandlestick,
   tooltip: agTooltip,
@@ -32,7 +32,7 @@ const agCustom: Partial<CandlestickChartCustom<CandlestickChartConfig>> = {
   gridXLine: cartesian.agGridXLine,
   gridYLine: cartesian.agGridYLine,
   axisCorner: cartesian.agAxisCorner,
-  title: agTitle as any,
+  title: (args, context) => agTitle(args, context),
 };
 
 export const styleConfig = {

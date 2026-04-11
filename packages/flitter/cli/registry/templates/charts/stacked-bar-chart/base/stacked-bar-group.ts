@@ -12,7 +12,7 @@ import {
 } from "flitter-core";
 import type { BarChartCustom } from "@headless/bar-chart/types";
 
-export function stackedBarGroup<TConfig>(
+export function stackedBarGroup<TConfig extends object>(
   ...[{ bars, label, index: categoryIndex }, ctx]: Parameters<BarChartCustom<TConfig>['barGroup']>
 ): Widget {
   const { scale, direction } = ctx;

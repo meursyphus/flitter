@@ -16,6 +16,11 @@ import {
 } from "flitter-core";
 import type { ToastBaseConfig } from "./cartesian/config";
 
+type ToastTooltipConfig = {
+  font: Pick<ToastBaseConfig["font"], "family">;
+  tooltip: ToastBaseConfig["tooltip"];
+};
+
 type TooltipItem = {
   legend: string;
   color: string;
@@ -29,7 +34,7 @@ export function tooltipContent({
 }: {
   label: string;
   items: TooltipItem | TooltipItem[];
-  config: ToastBaseConfig;
+  config: ToastTooltipConfig;
 }): Widget {
   const { tooltip, font } = config;
   const itemList = Array.isArray(items) ? items : [items];

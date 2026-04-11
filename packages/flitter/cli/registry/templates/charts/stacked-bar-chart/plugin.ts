@@ -3,7 +3,7 @@ import { toastStyleConfig, type ToastStackedBarChartConfig } from "./styles/toas
 import { agStyleConfig, type AgStackedBarChartConfig } from "./styles/ag";
 import type { DeepPartial } from "@utils/index";
 
-export type StyleConfig<TConfig> = {
+export type StyleConfig<TConfig extends object> = {
   custom: Partial<BarChartCustom<TConfig>>;
   createConfig: (
     config?: DeepPartial<TConfig>,

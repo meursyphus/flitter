@@ -22,13 +22,13 @@ function agTooltip(
 	return agTooltipContent({
 		label: args.label,
 		items: args.items,
-		config: ctx.config as typeof defaultAgCartesianBaseConfig,
+		config: ctx.config,
 	});
 }
 
 const agCustom: Partial<TreemapCustom<TreemapChartConfig>> = {
 	title: agTitle as TreemapCustom<TreemapChartConfig>["title"],
-	legend: (args, ctx) => agLegend(args, ctx as any),
+	legend: (args, ctx) => agLegend(args, ctx),
 	group: agGroup,
 	groupTitle: agGroupTitle,
 	node: agNode,

@@ -64,7 +64,7 @@ const defaultGetScale: GetScaleFn = ({ datasets }, options) => {
   return { x: xScale, y: yScale, value: valueScale };
 };
 
-export function BaseBubbleChart<TConfig = {}>({
+export function BaseBubbleChart<TConfig extends object = object>({
   custom,
   getScale = defaultGetScale,
   ...rest

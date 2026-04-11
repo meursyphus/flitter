@@ -17,13 +17,13 @@ function toastTooltip(
 	return tooltipContent({
 		label: args.label,
 		items: args.items,
-		config: ctx.config as any,
+		config: ctx.config,
 	});
 }
 
 const toastCustom: Partial<TreemapCustom<TreemapChartConfig>> = {
 	title: toastTitle as TreemapCustom<TreemapChartConfig>["title"],
-	legend: (args, ctx) => toastLegend(args, ctx as any),
+	legend: (args, ctx) => toastLegend(args, ctx),
 	group: toastGroup,
 	groupTitle: () => SizedBox.shrink(),
 	node: toastNode,

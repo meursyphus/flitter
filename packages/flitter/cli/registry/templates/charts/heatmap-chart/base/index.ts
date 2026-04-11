@@ -27,7 +27,7 @@ const baseDefaults: Partial<HeatmapCustom> = {
 	tooltipArea: () => SizedBox.shrink(),
 };
 
-export function BaseHeatmapChart<TConfig = {}>({
+export function BaseHeatmapChart<TConfig extends object = object>({
 	custom,
 	...rest
 }: {

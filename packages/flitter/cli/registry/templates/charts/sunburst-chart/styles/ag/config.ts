@@ -2,7 +2,7 @@ import {
 	type AgCartesianBaseConfig,
 	defaultAgCartesianBaseConfig,
 } from "@styles/ag";
-import { formatSunburstValue } from "../base/format";
+import { formatSunburstValue } from "../../base/format";
 
 type AgSunburstSharedConfig = Pick<
 	AgCartesianBaseConfig,

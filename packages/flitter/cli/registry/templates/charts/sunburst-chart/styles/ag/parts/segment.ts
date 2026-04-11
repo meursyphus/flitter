@@ -12,7 +12,7 @@ import {
 	createArcPath,
 	getRingMetrics,
 	isPointInSegment,
-} from "../../base/geometry";
+} from "../../../base/geometry";
 
 function resolveFill(config: SunburstChartConfig, branchIndex: number): string {
 	return config.colors.fills[branchIndex % config.colors.fills.length] ?? "";

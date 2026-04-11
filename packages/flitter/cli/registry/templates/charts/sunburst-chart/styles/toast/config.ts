@@ -1,5 +1,5 @@
 import { type ToastBaseConfig, defaultToastBaseConfig } from "@styles/toast";
-import { formatSunburstValue } from "../base/format";
+import { formatSunburstValue } from "../../base/format";
 
 type ToastSunburstSharedConfig = Pick<
 	ToastBaseConfig,

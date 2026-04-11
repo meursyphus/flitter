@@ -17,7 +17,7 @@ const baseDefaults: Partial<PieChartCustom> = {
 	tooltipArea: () => SizedBox.shrink(),
 };
 
-export function BasePieChart<TConfig = {}>({
+export function BasePieChart<TConfig extends object = object>({
 	custom,
 	...rest
 }: {

@@ -1,8 +1,38 @@
 
 
-> flitter-ui@0.0.1 build /Users/moon/work/flitter/packages/flitter
-> tsup
+> flitter-ui@0.0.4 build /Users/moon/work/flitter/packages/flitter
+> pnpm --filter flitter-core build && pnpm --filter flitter-chart build && node ./scripts/sync-cli-registry.mjs && tsup && node ./scripts/sync-bundled-types.mjs
 
+
+> flitter-core@0.0.1 build /Users/moon/work/flitter/packages/core
+> tsup && cp package.json dist/package.json && cp README.md dist/README.md && node ./scripts/fix-package.mjs
+
+
+> flitter-core@0.0.1 postbuild /Users/moon/work/flitter/packages/core
+> echo "Build complete. Please run: 
+
+cd dist
+npm publish
+"
+
+Build complete. Please run: 
+
+cd dist
+npm publish
+
+
+> flitter-chart@0.0.1 build /Users/moon/work/flitter/packages/chart
+> vite build
+
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+[2K[1Gtransforming (1) [2msrc/index[2K[1G[2K[1G[2K[1G[2K[1G[2K[1G[2K[1G[2K[1G[2K[1G[2K[1G[2K[1G[2K[1G[2K[1G[2K[1G[2K[1G[2K[1G[2K[1G[2K[1G[32m✓[39m 98 modules transformed.
+[2K[1Grendering chunks (1)...[2K[1G[32m
+[36m[vite:dts][32m Start generate declaration files...[39m
+[2K[1Gcomputing gzip size (0)...[2K[1Gcomputing gzip size (1)...[2K[1G[2mdist/[22m[36mflitter-chart.es.js  [39m[1m[2m198.19 kB[22m[1m[22m[2m │ gzip: 40.68 kB[22m
+[32m[36m[vite:dts][32m Declaration files built in 918ms.
+[39m
+[2K[1Grendering chunks (1)...[2K[1G[2K[1Gcomputing gzip size (1)...[2K[1G[2mdist/[22m[36mflitter-chart.umd.js  [39m[1m[2m142.49 kB[22m[1m[22m[2m │ gzip: 34.31 kB[22m
+[32m✓ built in 1.15s[39m
 [34mCLI[39m Building entry: {"index":"src/index.ts","chart":"src/chart.ts"}
 [34mCLI[39m Using tsconfig: tsconfig.json
 [34mCLI[39m tsup v8.5.1
@@ -11,15 +41,16 @@
 [34mCLI[39m Cleaning output folder
 [34mCJS[39m Build start
 [34mESM[39m Build start
-[32mESM[39m [1mdist/index.js [22m[32m46.00 B[39m
-[32mESM[39m [1mdist/chart.js [22m[32m47.00 B[39m
-[32mESM[39m ⚡️ Build success in 5ms
-[32mCJS[39m [1mdist/chart.cjs [22m[32m1.07 KB[39m
-[32mCJS[39m [1mdist/index.cjs [22m[32m1.06 KB[39m
-[32mCJS[39m ⚡️ Build success in 5ms
+[32mCJS[39m [1mdist/index.cjs [22m[32m538.90 KB[39m
+[32mCJS[39m [1mdist/chart.cjs [22m[32m689.02 KB[39m
+[32mCJS[39m ⚡️ Build success in 69ms
+[32mESM[39m [1mdist/chart.js          [22m[32m207.95 KB[39m
+[32mESM[39m [1mdist/index.js          [22m[32m8.07 KB[39m
+[32mESM[39m [1mdist/chunk-4TGM67Z6.js [22m[32m532.94 KB[39m
+[32mESM[39m ⚡️ Build success in 69ms
 DTS Build start
-DTS ⚡️ Build success in 965ms
-DTS dist/index.d.cts 54.00 B
-DTS dist/chart.d.cts 31.00 B
-DTS dist/index.d.ts  54.00 B
-DTS dist/chart.d.ts  31.00 B
+DTS ⚡️ Build success in 1438ms
+DTS dist/index.d.cts 502.00 B
+DTS dist/chart.d.cts 525.00 B
+DTS dist/index.d.ts  502.00 B
+DTS dist/chart.d.ts  525.00 B

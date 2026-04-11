@@ -22,6 +22,11 @@ import {
 } from "flitter-core";
 import type { AgCartesianBaseConfig } from "./cartesian/config";
 
+type AgTooltipConfig = {
+  font: Pick<AgCartesianBaseConfig["font"], "family">;
+  tooltip: AgCartesianBaseConfig["tooltip"];
+};
+
 const ARROW_WIDTH = 16;
 const ARROW_HEIGHT = 8;
 
@@ -41,7 +46,7 @@ function tooltipBox({
 }: {
   label: string;
   items: TooltipItem[];
-  config: AgCartesianBaseConfig;
+  config: AgTooltipConfig;
 }): Widget {
   const { tooltip, font } = config;
 
@@ -121,7 +126,7 @@ export function tooltipContent({
 }: {
   label: string;
   items: TooltipItem | TooltipItem[];
-  config: AgCartesianBaseConfig;
+  config: AgTooltipConfig;
 }): Widget {
   const { tooltip } = config;
   const itemList = Array.isArray(items) ? items : [items];

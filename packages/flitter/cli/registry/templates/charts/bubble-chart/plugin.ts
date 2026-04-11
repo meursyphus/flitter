@@ -3,7 +3,7 @@ import { toastStyleConfig, type ToastBubbleChartConfig } from "./styles/toast";
 import { agStyleConfig, type AgBubbleChartConfig } from "./styles/ag";
 import type { DeepPartial } from "@utils/index";
 
-export type StyleConfig<TConfig> = {
+export type StyleConfig<TConfig extends object> = {
   custom: Partial<BubbleChartCustom<TConfig>>;
   createConfig: (config?: DeepPartial<TConfig>) => TConfig;
   getScaleOptions: GetScaleOptionsFn;

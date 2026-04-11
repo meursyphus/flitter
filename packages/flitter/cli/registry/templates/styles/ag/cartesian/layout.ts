@@ -13,6 +13,11 @@ import {
 } from "flitter-core";
 import type { AgCartesianBaseConfig } from "./config";
 
+type AgLayoutConfig = Pick<
+  AgCartesianBaseConfig,
+  "background" | "legend" | "padding" | "title"
+>;
+
 function interleave(items: Widget[], separator: () => Widget): Widget[] {
   return items.flatMap((item, i) => (i < items.length - 1 ? [item, separator()] : [item]));
 }
@@ -37,11 +42,11 @@ const rightAlignmentMap: Record<string, MainAxisAlignment> = {
 /**
  * AG Charts layout includes a white background and subtitle support.
  */
-export function agLayout(
+export function agLayout<TConfig extends AgLayoutConfig>(
   { title, plot, legends }: { title: Widget; legends: Widget[]; plot: Widget },
-  context: { config: AgCartesianBaseConfig },
+  context: { config: TConfig },
 ): Widget {
-  const { padding, title: titleConfig, subtitle: subtitleConfig, legend: legendConfig } = context.config;
+  const { padding, title: titleConfig, legend: legendConfig } = context.config;
   const legendGap = legendConfig.gap;
   const isRight = isRightPosition(legendConfig.position);
 

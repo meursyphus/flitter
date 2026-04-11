@@ -41,12 +41,12 @@ const agCustom: Partial<HeatmapCustom<AgHeatmapChartConfig>> = {
   layout: (args, ctx) =>
     cartesian.agLayout(
       { title: args.title, legends: [args.legend], plot: args.plot },
-      ctx as any,
+      ctx,
     ),
   dataView: DataView,
   segment: agSegment,
   legend: agHeatmapLegend,
-  title: agTitle as any,
+  title: (args, context) => agTitle(args, context),
   tooltip: agTooltip,
   tooltipArea: agTooltipArea,
   axisCorner: cartesian.agAxisCorner,
@@ -57,9 +57,9 @@ const agCustom: Partial<HeatmapCustom<AgHeatmapChartConfig>> = {
   xAxisLine: cartesian.agXAxisLine,
   yAxisLine: cartesian.agYAxisLine,
   xAxis: (args, context) =>
-    cartesian.agXAxis(args, { type: "label" }, context as any),
+    cartesian.agXAxis(args, { type: "label" }, context),
   yAxis: (args, context) =>
-    cartesian.agYAxis(args, { type: "label" }, context as any),
+    cartesian.agYAxis(args, { type: "label" }, context),
 };
 
 export const agStyleConfig = {

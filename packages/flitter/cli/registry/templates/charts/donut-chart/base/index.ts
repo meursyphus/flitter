@@ -23,7 +23,7 @@ const baseDefaults: Partial<DonutChartCustom> = {
 	tooltipArea: () => SizedBox.shrink(),
 };
 
-export function BaseDonutChart<TConfig = {}>({
+export function BaseDonutChart<TConfig extends object = object>({
 	custom,
 	...rest
 }: {

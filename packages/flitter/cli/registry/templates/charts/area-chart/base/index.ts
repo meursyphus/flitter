@@ -35,7 +35,7 @@ const baseDefaults: Partial<LineChartCustom> = {
 const defaultGetScale: GetScaleFn = ({ datasets }, options) =>
   Cartesian.getScale({ datasets }, options);
 
-export function BaseAreaChart<TConfig = {}>({
+export function BaseAreaChart<TConfig extends object = object>({
   custom,
   getScale = defaultGetScale,
   ...rest

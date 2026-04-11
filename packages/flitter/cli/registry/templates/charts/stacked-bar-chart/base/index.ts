@@ -25,7 +25,7 @@ const baseDefaults: Partial<BarChartCustom> = {
   tooltipArea: () => SizedBox.shrink(),
 };
 
-export function BaseStackedBarChart<TConfig = {}>({
+export function BaseStackedBarChart<TConfig extends object = object>({
   custom,
   getScale = stackedGetScale,
   ...rest

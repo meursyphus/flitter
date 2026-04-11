@@ -13,15 +13,17 @@ import {
 } from "flitter-core";
 import type { AgCartesianBaseConfig } from "./cartesian/config";
 
+type AgLegendConfig = Pick<AgCartesianBaseConfig, "colors" | "font" | "legend">;
+
 /**
  * AG Charts legend uses a colored marker (square or circle).
  * Visibility is indicated by dimmed opacity.
  * Click handling (toggleSeries) is managed by headless.
  */
-export function agLegend(
+export function agLegend<TConfig extends AgLegendConfig>(
   { name, index, isVisible }: { name: string; index: number; isVisible?: boolean },
   context: {
-    config: AgCartesianBaseConfig;
+    config: TConfig;
     isSeriesVisible?(legend: string): boolean;
   },
   { markerShape = "rectangle" }: { markerShape?: "rectangle" | "circle" } = {},

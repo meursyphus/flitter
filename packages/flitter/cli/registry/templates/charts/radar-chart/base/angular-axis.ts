@@ -3,10 +3,9 @@ import {
 	StackFit,
 	type Widget,
 } from "flitter-core";
-import type { RadarChartCustom } from "@headless/radar-chart/types";
 
 export function AngularAxis(
-	...[{ line, labels }]: Parameters<RadarChartCustom["angularAxis"]>
+	{ line, labels }: { line: Widget; labels: Widget[] }
 ): Widget {
 	return Stack({
 		fit: StackFit.expand,

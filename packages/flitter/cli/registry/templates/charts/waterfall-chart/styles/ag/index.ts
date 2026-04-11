@@ -17,15 +17,14 @@ import { agLegend, agTitle, agTooltipContent, agScaleOptions, cartesian } from "
 export { type WaterfallChartConfig } from "./config";
 
 function agTooltip(
-  args: { label: string; items: { legend: string; color: string; value: number | string }[] },
-  context: any,
+  ...[args, context]: Parameters<WaterfallChartCustom<WaterfallChartConfig>["tooltip"]>
 ): Widget {
-  return agTooltipContent({ label: args.label, items: args.items as any, config: context.config as any });
+  return agTooltipContent({ label: args.label, items: args.items, config: context.config });
 }
 
 const agCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
   layout: ({ title, legends, plot }, ctx) =>
-    cartesian.agLayout({ title, legends, plot }, ctx as any),
+    cartesian.agLayout({ title, legends, plot }, ctx),
   plot: ({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }) =>
     Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }),
   dataView: agDataView,
@@ -35,9 +34,9 @@ const agCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
   tooltip: agTooltip,
   tooltipArea: agTooltipArea,
   xAxis: ({ line, labels, tick }, ctx) =>
-    cartesian.agXAxis({ line, labels, tick } as any, { type: "label" }, ctx as any),
+    cartesian.agXAxis({ line, labels, tick }, { type: "label" }, ctx),
   yAxis: ({ line, labels, tick }, ctx) =>
-    cartesian.agYAxis({ line, labels, tick } as any, { type: "value" }, ctx as any),
+    cartesian.agYAxis({ line, labels, tick }, { type: "value" }, ctx),
   xAxisLabel: cartesian.agXAxisLabel,
   yAxisLabel: cartesian.agYAxisLabel,
   xAxisTick: cartesian.agXAxisTick,
@@ -54,15 +53,8 @@ const agCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
   gridXLine: cartesian.agGridXLine,
   gridYLine: cartesian.agGridYLine,
   axisCorner: cartesian.agAxisCorner,
-  legend: ({ name, index }, ctx) =>
-    agLegend(
-      { name, index },
-      {
-        config: ctx.config as any,
-        isSeriesVisible: () => true,
-      },
-    ),
-  title: agTitle as any,
+  legend: (args, ctx) => agLegend(args, ctx),
+  title: (args, context) => agTitle(args, context),
   dataLabel: () => SizedBox.shrink(),
 };
 

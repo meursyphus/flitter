@@ -24,7 +24,7 @@ const agCustom: Partial<SankeyChartCustom<SankeyChartConfig>> = {
   link: Base.Link,
   nodeLabel: Base.NodeLabel,
   linkLabel: Base.LinkLabel,
-  title: agTitle as any,
+  title: (args, context) => agTitle(args, context),
   tooltip: agTooltip,
   tooltipArea: agTooltipArea,
 };

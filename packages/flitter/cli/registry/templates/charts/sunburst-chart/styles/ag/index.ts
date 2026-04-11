@@ -4,7 +4,6 @@ import {
 	agLegend,
 	agTitle,
 	agTooltipContent,
-	defaultAgCartesianBaseConfig,
 } from "@styles/ag";
 import {
 	agPieLikeLayout,
@@ -32,7 +31,7 @@ function agTooltip(
 			color,
 			value: args.value,
 		},
-		config: ctx.config as typeof defaultAgCartesianBaseConfig,
+		config: ctx.config,
 	});
 }
 
@@ -40,10 +39,10 @@ const agCustom: Partial<SunburstChartCustom<SunburstChartConfig>> = {
 	layout: (args, context) => agPieLikeLayout(args, context),
 	segment: agSegment,
 	dataLabel: agDataLabel,
-	legend: (args, context) => agLegend(args, context as any, { markerShape: "circle" }),
-	title: agTitle as SunburstChartCustom<SunburstChartConfig>["title"],
+	legend: (args, context) => agLegend(args, context, { markerShape: "circle" }),
+	title: (args, context) => agTitle(args, context),
 	tooltip: agTooltip,
-	tooltipArea: (args, context) => agPieLikeTooltipArea(args as any, context as any),
+	tooltipArea: (args, context) => agPieLikeTooltipArea(args, context),
 };
 
 export const styleConfig = {
