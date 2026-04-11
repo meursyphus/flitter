@@ -35,10 +35,11 @@ function IntroSection() {
 
           <div className="mt-10 flex flex-wrap gap-3">
             <Link
-              href="/docs"
-              className="inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 px-7 text-sm font-semibold text-white transition-all hover:bg-blue-700"
+              href="/chart"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-rose-500 px-7 text-sm font-semibold text-white transition-all hover:bg-rose-600"
             >
-              Read the Docs
+              <span className="h-2.5 w-2.5 rounded-sm bg-white/40" />
+              Explore Charts
             </Link>
             <a
               href="https://github.com/meursyphus/flitter"
@@ -491,16 +492,23 @@ function LastSection() {
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
           <Link
-            href="/chart"
-            className="inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 px-8 text-[14px] font-semibold text-white transition-all hover:bg-blue-700"
+            href="/chart/gallery"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-rose-500 px-8 text-[14px] font-semibold text-white transition-all hover:bg-rose-600"
           >
+            <span className="h-2.5 w-2.5 rounded-sm bg-white/40" />
             Chart Gallery
+          </Link>
+          <Link
+            href="/advanced/what-is-flitter"
+            className="inline-flex h-11 items-center justify-center rounded-lg bg-gray-900 px-8 text-[14px] font-semibold text-white transition-all hover:bg-gray-800"
+          >
+            Core API
           </Link>
           <a
             href="https://github.com/meursyphus/flitter"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-11 items-center justify-center rounded-lg bg-gray-900 px-8 text-[14px] font-semibold text-white transition-all hover:bg-gray-800"
+            className="inline-flex h-11 items-center justify-center rounded-lg border border-gray-200 px-8 text-[14px] font-semibold text-gray-600 transition-all hover:bg-gray-50"
           >
             GitHub
           </a>
