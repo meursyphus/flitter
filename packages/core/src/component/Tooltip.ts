@@ -1,18 +1,14 @@
-import type { BuildContext, Widget } from "../index";
-import {
-  ConstraintsTransformBox,
-  GestureDetector,
-  Stack,
-  StackFit,
-  State,
-  StatefulWidget,
-  Positioned,
-  FractionalTranslation,
-  Offset,
-  SizedBox,
-  Alignment,
-} from "../";
+import { type BuildContext, State } from "../element";
+import { Alignment, Offset, StackFit } from "../type";
 import { classToFunction } from "../utils";
+import type Widget from "../widget/Widget";
+import StatefulWidget from "../widget/StatefulWidget";
+import ConstraintsTransformBox from "./ConstraintsTransformBox";
+import FractionalTranslation from "./FractionalTranslation";
+import GestureDetector from "./GestureDetector";
+import Positioned from "./Positioned";
+import SizedBox from "./SizedBox";
+import Stack from "./Stack";
 
 export type TooltipPosition =
   | "topLeft"
