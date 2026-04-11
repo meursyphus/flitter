@@ -1,6 +1,6 @@
 {
   "name": "flitter-ui",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "description": "Flitter — A high-performance JavaScript rendering engine inspired by Flutter. Declarative Canvas/SVG graphics, interactive charts, and complex UIs for the web.",
   "bin": {
