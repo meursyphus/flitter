@@ -46,15 +46,13 @@ type PreparedLineChunk = {
   consumedEndSegmentIndex: number;
 };
 
-type SegmenterLike = { segment(input: string): Iterable<{ segment: string; index: number }> };
+let sharedGraphemeSegmenter: Intl.Segmenter | null = null;
 
-let sharedGraphemeSegmenter: SegmenterLike | null = null;
-
-function getSharedGraphemeSegmenter(): SegmenterLike {
+function getSharedGraphemeSegmenter(): Intl.Segmenter {
   if (sharedGraphemeSegmenter === null) {
-    sharedGraphemeSegmenter = new (Intl as any).Segmenter(undefined, { granularity: "grapheme" });
+    sharedGraphemeSegmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
   }
-  return sharedGraphemeSegmenter!;
+  return sharedGraphemeSegmenter;
 }
 
 type MeasuredTextUnit = {

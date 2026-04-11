@@ -34,9 +34,7 @@ const MAX_PREFIX_FIT_GRAPHEMES = 96;
 
 const emojiPresentationRe = /\p{Emoji_Presentation}/u;
 const maybeEmojiRe = /[\p{Emoji_Presentation}\p{Extended_Pictographic}\p{Regional_Indicator}\uFE0F\u20E3]/u;
-type SegmenterLike = { segment(input: string): Iterable<{ segment: string; index: number }> };
-
-let sharedGraphemeSegmenter: SegmenterLike | null = null;
+let sharedGraphemeSegmenter: Intl.Segmenter | null = null;
 const emojiCorrectionCache = new Map<string, number>();
 
 export function getMeasureContext(): CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D {
@@ -120,11 +118,11 @@ export function parseFontSize(font: string): number {
   return m ? parseFloat(m[1]!) : 16;
 }
 
-function getSharedGraphemeSegmenter(): SegmenterLike {
+function getSharedGraphemeSegmenter(): Intl.Segmenter {
   if (sharedGraphemeSegmenter === null) {
-    sharedGraphemeSegmenter = new (Intl as any).Segmenter(undefined, { granularity: "grapheme" });
+    sharedGraphemeSegmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
   }
-  return sharedGraphemeSegmenter!;
+  return sharedGraphemeSegmenter;
 }
 
 function isEmojiGrapheme(g: string): boolean {

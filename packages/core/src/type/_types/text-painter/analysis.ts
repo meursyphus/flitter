@@ -78,16 +78,14 @@ function normalizeWhitespacePreWrap(text: string): string {
   return text.replace(/\r\n/g, "\n").replace(/[\r\f]/g, "\n");
 }
 
-type SegmenterLike = { segment(input: string): Iterable<{ segment: string; index: number; isWordLike?: boolean }> };
-
-let sharedWordSegmenter: SegmenterLike | null = null;
+let sharedWordSegmenter: Intl.Segmenter | null = null;
 let segmenterLocale: string | undefined;
 
-function getSharedWordSegmenter(): SegmenterLike {
+function getSharedWordSegmenter(): Intl.Segmenter {
   if (sharedWordSegmenter === null) {
-    sharedWordSegmenter = new (Intl as any).Segmenter(segmenterLocale, { granularity: "word" });
+    sharedWordSegmenter = new Intl.Segmenter(segmenterLocale, { granularity: "word" });
   }
-  return sharedWordSegmenter!;
+  return sharedWordSegmenter;
 }
 
 export function clearAnalysisCaches(): void {

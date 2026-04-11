@@ -117,7 +117,7 @@ export class SvgPainter extends Painter {
   } {
     const container = this.domNode;
     const svgEls: Record<string, SVGElement> = {};
-    for (const element of container.children) {
+    for (const element of Array.from(container.children)) {
       const child = element;
       const name = child.getAttribute("data-render-name")!;
       svgEls[name] = child as unknown as SVGElement;

@@ -933,8 +933,8 @@ export class Paragraph {
     let cached = this.segmentGraphemeCache.get(text);
     if (cached != null) return cached;
 
-    if (typeof Intl !== "undefined" && typeof (Intl as any).Segmenter === "function") {
-      const segmenter = new (Intl as any).Segmenter(undefined, { granularity: "grapheme" });
+    if (typeof Intl !== "undefined" && typeof Intl.Segmenter === "function") {
+      const segmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
       cached = [];
       for (const gs of segmenter.segment(text)) {
         cached.push(gs.segment);
