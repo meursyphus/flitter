@@ -3,7 +3,7 @@ import type { RenderObjectElement } from "../element";
 import { CanvasPainter, type RenderPipeline, SvgPainter } from "../framework";
 import { NotImplementedError } from "../exception";
 import type { RenderObjectVisitor } from "./RenderObjectVisitor";
-import { HitTestEntry, HitTestResult } from "../hit-test/HitTestResult";
+import { HitTestEntry, type HitTestResult } from "../hit-test/HitTestResult";
 
 /*
   It does more things than flutters' RenderObject 
@@ -17,6 +17,7 @@ export class RenderObject {
   paintTransform: Matrix4 = Matrix4.Constants.identity;
   parent?: RenderObject;
   needsPaint = true;
+  needsCompositedLayerUpdate = false;
   needsLayout = true;
   needsPaintTransformUpdate = true;
   depth = 0;
@@ -188,6 +189,11 @@ export class RenderObject {
   updatePaintTransform(
     parentPaintTransform: Matrix4 = this.parent?.paintTransform ??
       Matrix4.Constants.identity,
+    {
+      skipPaintInvalidation = false,
+    }: {
+      skipPaintInvalidation?: boolean;
+    } = {},
   ) {
     const oldTransform = this.paintTransform;
     const newTransform = parentPaintTransform.translated(
@@ -199,10 +205,14 @@ export class RenderObject {
     }
     this.needsPaintTransformUpdate = false;
     this.paintTransform = newTransform;
-    this.#didChangePaintTransform();
+    if (!skipPaintInvalidation) {
+      this.#didChangePaintTransform();
+    }
     const childPaintTransform = this.applyPaintTransform(newTransform);
     this.visitChildren(child => {
-      child.updatePaintTransform(childPaintTransform);
+      child.updatePaintTransform(childPaintTransform, {
+        skipPaintInvalidation: this.canvasPainter.isRepaintBoundary,
+      });
     });
   }
 
