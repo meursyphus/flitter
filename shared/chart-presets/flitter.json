@@ -1,5 +1,5 @@
 {
-  "$schema": "./node_modules/flitter-ui/schema/flitter.json",
+  "$schema": "https://ui.flitter.dev/schema/flitter.json",
   "tsx": true,
   "framework": "react",
   "defaultChartStyle": "ag",
