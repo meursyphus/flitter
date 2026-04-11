@@ -19,60 +19,66 @@ const defaultTextStyle = {
 
 const HARD_BREAK = "\n";
 const SOFT_HYPHEN = "\u00AD";
-const FIT_EPSILON = 0.001;
+const TAB = "\t";
+const FIT_EPSILON = 0.005;
+const MAX_PREFIX_FIT_GRAPHEMES = 96;
+const TAB_STOP_SPACES = 8;
+const FLITTER_ENGINE_PROFILE_KEY = "__flitter_engine_profile__";
 
+type EngineProfile = {
+  lineFitEpsilon: number;
+  preferEarlySoftHyphenBreak: boolean;
+};
+
+function detectEngineProfile(): EngineProfile {
+  if (typeof navigator === "undefined") {
+    return { lineFitEpsilon: 0.005, preferEarlySoftHyphenBreak: false };
+  }
+  const ua = navigator.userAgent;
+  const isSafari = /^(?!.*Chrome).*Safari.*/i.test(ua);
+  return {
+    lineFitEpsilon: isSafari ? 1 / 64 : 0.005,
+    preferEarlySoftHyphenBreak: isSafari,
+  };
+}
+
+function getEngineProfile(): EngineProfile {
+  if (typeof window === "undefined") {
+    return { lineFitEpsilon: 0.005, preferEarlySoftHyphenBreak: false };
+  }
+  const win = window as any;
+  if (win[FLITTER_ENGINE_PROFILE_KEY] == null) {
+    win[FLITTER_ENGINE_PROFILE_KEY] = detectEngineProfile();
+  }
+  return win[FLITTER_ENGINE_PROFILE_KEY];
+}
+
+// Kinsoku shori rules from pretext (chenglou/pretext)
+// Characters prohibited at line start
 const LINE_START_PROHIBITED = new Set([
-  ",",
-  ".",
-  "!",
-  "?",
-  ":",
-  ";",
-  ")",
-  "]",
-  "}",
-  "%",
-  "”",
-  "’",
-  "»",
-  "›",
-  "、",
-  "。",
-  "，",
-  "．",
-  "！",
-  "？",
-  "：",
-  "；",
-  "）",
-  "］",
-  "｝",
-  "》",
-  "」",
-  "』",
-  "】",
-  "ー",
+  // kinsokuStart - CJK line-start prohibitions
+  "，", "．", "！", "：", "；", "？",
+  "、", "。", "・",
+  "）", "〕", "〉", "》", "」", "』", "】", "〗", "〙", "〛",
+  "ー", "々", "〻", "ゝ", "ゞ", "ヽ", "ヾ",
+  // leftStickyPunctuation - sticks to preceding word
+  ".", ",", "!", "?", ":", ";",
+  "،", "؛", "؟",
+  "।", "॥",
+  "၊", "။", "၌", "၍", "၏",
+  ")", "]", "}", "%", '"',
+  "”", "’", "»", "›",
   "…",
 ]);
 
+// Characters prohibited at line end
 const LINE_END_PROHIBITED = new Set([
-  "(",
-  "[",
-  "{",
-  "“",
-  "‘",
-  "«",
-  "‹",
-  "（",
-  "［",
-  "｛",
-  "《",
-  "「",
-  "『",
-  "【",
+  '"', "(", "[", "{",
+  "“", "‘", "«", "‹",
+  "（", "〔", "〈", "《", "「", "『", "【", "〖", "〘", "〚",
 ]);
 
-type SegmentKind = "text" | "space" | "hard-break" | "soft-hyphen";
+type SegmentKind = "text" | "space" | "hard-break" | "soft-hyphen" | "tab";
 
 type LayoutCursor = {
   segmentIndex: number;
@@ -109,6 +115,7 @@ type PreparedSegment = PreparedSpanStyle & {
   graphemes: string[];
   hyphenWidth: number;
   kind: SegmentKind;
+  lineEndFitWidth: number;
   prefixWidths: number[];
   start: number;
 };
@@ -149,15 +156,19 @@ type Span = {
   height: number;
 };
 
-let sharedWordSegmenter: SegmenterLike | null = null;
-let sharedGraphemeSegmenter: SegmenterLike | null = null;
-
 type SegmenterLike = {
   segment(text: string): Iterable<{
     index: number;
     isWordLike?: boolean;
     segment: string;
   }>;
+};
+
+const FLITTER_SEGMENTER_KEY = "__flitter_segmenters__";
+
+type SegmenterStore = {
+  word: SegmenterLike | null;
+  grapheme: SegmenterLike | null;
 };
 
 function getSegmenter(granularity: "grapheme" | "word"): SegmenterLike | null {
@@ -168,27 +179,82 @@ function getSegmenter(granularity: "grapheme" | "word"): SegmenterLike | null {
     return null;
   }
 
-  if (granularity === "word") {
-    sharedWordSegmenter ??= new (Intl as any).Segmenter(undefined, {
-      granularity: "word",
-    });
-    return sharedWordSegmenter;
+  // On server, create ephemeral instances (no caching to avoid memory leak)
+  if (typeof window === "undefined") {
+    return new (Intl as any).Segmenter(undefined, { granularity });
   }
 
-  sharedGraphemeSegmenter ??= new (Intl as any).Segmenter(undefined, {
+  const win = window as any;
+  if (win[FLITTER_SEGMENTER_KEY] == null) {
+    win[FLITTER_SEGMENTER_KEY] = {
+      word: null,
+      grapheme: null,
+    } satisfies SegmenterStore;
+  }
+
+  const store: SegmenterStore = win[FLITTER_SEGMENTER_KEY];
+
+  if (granularity === "word") {
+    store.word ??= new (Intl as any).Segmenter(undefined, {
+      granularity: "word",
+    });
+    return store.word;
+  }
+
+  store.grapheme ??= new (Intl as any).Segmenter(undefined, {
     granularity: "grapheme",
   });
-  return sharedGraphemeSegmenter;
+  return store.grapheme;
 }
 
 function resolveFontStyle(fontStyle: FontStyle = FontStyle.normal): string {
   return fontStyle === FontStyle.italic ? "italic" : "normal";
 }
 
-function containsCJK(text: string): boolean {
-  return /[\u3000-\u303f\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uac00-\ud7af\uff00-\uffef]/u.test(
-    text,
+// Comprehensive CJK detection from pretext (chenglou/pretext)
+function isCJKCodePoint(codePoint: number): boolean {
+  return (
+    (codePoint >= 0x4e00 && codePoint <= 0x9fff) || // CJK Unified Ideographs
+    (codePoint >= 0x3400 && codePoint <= 0x4dbf) || // CJK Extension A
+    (codePoint >= 0x20000 && codePoint <= 0x2a6df) || // CJK Extension B
+    (codePoint >= 0x2a700 && codePoint <= 0x2b73f) || // CJK Extension C
+    (codePoint >= 0x2b740 && codePoint <= 0x2b81f) || // CJK Extension D
+    (codePoint >= 0x2b820 && codePoint <= 0x2ceaf) || // CJK Extension E
+    (codePoint >= 0x2ceb0 && codePoint <= 0x2ebef) || // CJK Extension F
+    (codePoint >= 0x2ebf0 && codePoint <= 0x2ee5d) || // CJK Extension I
+    (codePoint >= 0x2f800 && codePoint <= 0x2fa1f) || // CJK Compatibility Ideographs Supplement
+    (codePoint >= 0x30000 && codePoint <= 0x3134f) || // CJK Extension G
+    (codePoint >= 0x31350 && codePoint <= 0x323af) || // CJK Extension H
+    (codePoint >= 0x323b0 && codePoint <= 0x33479) || // CJK Extension J (tentative)
+    (codePoint >= 0xf900 && codePoint <= 0xfaff) || // CJK Compatibility Ideographs
+    (codePoint >= 0x3000 && codePoint <= 0x303f) || // CJK Symbols and Punctuation
+    (codePoint >= 0x3040 && codePoint <= 0x309f) || // Hiragana
+    (codePoint >= 0x30a0 && codePoint <= 0x30ff) || // Katakana
+    (codePoint >= 0xac00 && codePoint <= 0xd7af) || // Hangul Syllables
+    (codePoint >= 0xff00 && codePoint <= 0xffef) // Halfwidth and Fullwidth Forms
   );
+}
+
+function containsCJK(text: string): boolean {
+  for (let i = 0; i < text.length; i++) {
+    const first = text.charCodeAt(i);
+    if (first < 0x3000) continue;
+
+    // Handle surrogate pairs for supplementary planes
+    if (first >= 0xd800 && first <= 0xdbff && i + 1 < text.length) {
+      const second = text.charCodeAt(i + 1);
+      if (second >= 0xdc00 && second <= 0xdfff) {
+        const codePoint =
+          ((first - 0xd800) << 10) + (second - 0xdc00) + 0x10000;
+        if (isCJKCodePoint(codePoint)) return true;
+        i++;
+        continue;
+      }
+    }
+
+    if (isCJKCodePoint(first)) return true;
+  }
+  return false;
 }
 
 function isWhitespaceOnly(text: string): boolean {
@@ -829,11 +895,14 @@ export class Paragraph {
     const kind: SegmentKind =
       content === SOFT_HYPHEN
         ? "soft-hyphen"
-        : isWhitespaceOnly(content)
-          ? "space"
-          : "text";
+        : content === TAB
+          ? "tab"
+          : isWhitespaceOnly(content)
+            ? "space"
+            : "text";
 
     if (kind === "soft-hyphen") {
+      const hyphenWidth = getTextWidth({ text: "-", font: style.font });
       return {
         ...style,
         boundaryOffsets: [0, content.length],
@@ -841,8 +910,25 @@ export class Paragraph {
         content,
         end: start + content.length,
         graphemes: [content],
-        hyphenWidth: getTextWidth({ text: "-", font: style.font }),
+        hyphenWidth,
         kind,
+        lineEndFitWidth: hyphenWidth,
+        prefixWidths: [0, 0],
+        start,
+      };
+    }
+
+    if (kind === "tab") {
+      return {
+        ...style,
+        boundaryOffsets: [0, content.length],
+        containsCJK: false,
+        content,
+        end: start + content.length,
+        graphemes: [content],
+        hyphenWidth: 0,
+        kind,
+        lineEndFitWidth: 0,
         prefixWidths: [0, 0],
         start,
       };
@@ -854,12 +940,24 @@ export class Paragraph {
     const graphemes: string[] = [];
     let prefix = "";
 
+    // MAX_PREFIX_FIT_GRAPHEMES guard: avoid superlinear prepare time
+    // on pathological inputs by measuring individual graphemes instead
+    const useIndividualWidths = graphemeParts.length > MAX_PREFIX_FIT_GRAPHEMES;
+    let runningWidth = 0;
+
     graphemeParts.forEach(part => {
       graphemes.push(part.text);
-      prefix += part.text;
       boundaryOffsets.push(part.end);
-      prefixWidths.push(getTextWidth({ text: prefix, font: style.font }));
+      if (useIndividualWidths) {
+        runningWidth += getTextWidth({ text: part.text, font: style.font });
+        prefixWidths.push(runningWidth);
+      } else {
+        prefix += part.text;
+        prefixWidths.push(getTextWidth({ text: prefix, font: style.font }));
+      }
     });
+
+    const fullWidth = prefixWidths[prefixWidths.length - 1] ?? 0;
 
     return {
       ...style,
@@ -870,6 +968,8 @@ export class Paragraph {
       graphemes,
       hyphenWidth: 0,
       kind,
+      // Trailing whitespace hangs past line edge (CSS behavior)
+      lineEndFitWidth: kind === "space" ? 0 : fullWidth,
       prefixWidths,
       start,
     };
@@ -1125,17 +1225,22 @@ export class Paragraph {
       startOffset: this.getCursorTextOffset(startCursor),
     });
     const maxWidth = Number.isFinite(width) ? width : Infinity;
+    const fitEpsilon = getEngineProfile().lineFitEpsilon;
     let cursor: LayoutCursor = {
       graphemeIndex: startCursor.graphemeIndex,
       segmentIndex: startCursor.segmentIndex,
     };
     let pendingBreak: PendingBreak | null = null;
+    // fitWidth tracks the "non-hanging" width for line-break decisions.
+    // Trailing whitespace hangs past the line edge (CSS behavior), so
+    // space segments contribute 0 to fitWidth but still get visual width.
+    let fitWidth = 0;
 
     const finalizePendingBreak = () => {
       if (
         pendingBreak?.hyphenSegment != null &&
-        line.width + pendingBreak.hyphenSegment.hyphenWidth <=
-          maxWidth + FIT_EPSILON
+        fitWidth + pendingBreak.hyphenSegment.hyphenWidth <=
+          maxWidth + fitEpsilon
       ) {
         line.addSpanBox(
           this.createSyntheticSpanBox({
@@ -1186,16 +1291,49 @@ export class Paragraph {
         continue;
       }
 
+      // Tab stop support: advance to next tab stop position
+      if (segment.kind === "tab") {
+        const spaceWidth = getTextWidth({ text: " ", font: segment.font });
+        const tabStopAdvance = spaceWidth * TAB_STOP_SPACES;
+        const tabWidth =
+          tabStopAdvance > 0
+            ? tabStopAdvance - (line.width % tabStopAdvance || tabStopAdvance)
+            : 0;
+        const tabBox = this.createSyntheticSpanBox({
+          content: " ",
+          offset: segment.start,
+          style: segment,
+          width: tabWidth,
+        });
+        line.addSpanBox(tabBox);
+        fitWidth += tabWidth;
+        pendingBreak = {
+          nextCursor: {
+            graphemeIndex: 0,
+            segmentIndex: cursor.segmentIndex + 1,
+          },
+        };
+        cursor = {
+          graphemeIndex: 0,
+          segmentIndex: cursor.segmentIndex + 1,
+        };
+        continue;
+      }
+
       const totalGraphemes = segment.boundaryOffsets.length - 1;
       const remainingWidth = this.getSegmentWidthBetween(
         segment,
         cursor.graphemeIndex,
         totalGraphemes,
       );
+      // lineEndFitWidth: for spaces = 0 (trailing whitespace hangs),
+      // for text = full width. This is the key pretext optimization.
+      const remainingFitWidth =
+        segment.kind === "space" ? 0 : remainingWidth;
 
       if (
         !Number.isFinite(maxWidth) ||
-        line.width + remainingWidth <= maxWidth + FIT_EPSILON
+        fitWidth + remainingFitWidth <= maxWidth + fitEpsilon
       ) {
         const spanBox = this.createSpanBoxFromSegment(
           segment,
@@ -1205,6 +1343,7 @@ export class Paragraph {
         if (spanBox != null) {
           line.addSpanBox(spanBox);
         }
+        fitWidth += remainingFitWidth;
 
         if (segment.kind === "space") {
           pendingBreak = {
@@ -1291,7 +1430,7 @@ export class Paragraph {
         continue;
       }
 
-      const chunks = sourceSpan.content.split(/(\n)/u);
+      const chunks = sourceSpan.content.split(/(\n|\t)/u);
       let localOffset = 0;
       chunks.forEach(chunk => {
         if (chunk.length === 0) {
@@ -1308,6 +1447,7 @@ export class Paragraph {
             graphemes: [],
             hyphenWidth: 0,
             kind: "hard-break",
+            lineEndFitWidth: 0,
             prefixWidths: [],
             start: spanStart + localOffset,
           });
@@ -1316,6 +1456,18 @@ export class Paragraph {
             lineWidth,
           );
           lineWidth = 0;
+          localOffset += chunk.length;
+          return;
+        }
+
+        if (chunk === TAB) {
+          const absoluteStart = spanStart + localOffset;
+          const segment = this.createPreparedSegment(
+            style,
+            chunk,
+            absoluteStart,
+          );
+          this.preparedSegments.push(segment);
           localOffset += chunk.length;
           return;
         }
@@ -1417,11 +1569,14 @@ export class Paragraph {
       return false;
     }
 
+    // CJK text can break at any grapheme boundary (kinsoku rules handled above)
     if (segment.containsCJK) {
       return true;
     }
 
-    return segment.kind === "text";
+    // Non-CJK word segments: don't prefer mid-word breaks.
+    // fitSegmentToWidth will force-break as a last resort.
+    return false;
   }
 }
 

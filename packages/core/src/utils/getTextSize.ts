@@ -10,6 +10,33 @@ const DEFAULT_FONT_STYLE = "normal";
 const MAX_FONT_CACHE_SIZE = 64;
 const MAX_SEGMENT_CACHE_SIZE = 2048;
 
+const FLITTER_TEXT_CACHE_KEY = "__flitter_text_cache__";
+
+type TextMeasurementStore = {
+  ctx: CanvasRenderingContext2D | null;
+  currentFont: string;
+  fontWidthCache: Map<string, Map<string, number>>;
+  fontStringCache: Map<string, string>;
+};
+
+function getStore(): TextMeasurementStore | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const win = window as any;
+  if (win[FLITTER_TEXT_CACHE_KEY] == null) {
+    win[FLITTER_TEXT_CACHE_KEY] = {
+      ctx: null,
+      currentFont: "",
+      fontWidthCache: new Map<string, Map<string, number>>(),
+      fontStringCache: new Map<string, string>(),
+    } satisfies TextMeasurementStore;
+  }
+
+  return win[FLITTER_TEXT_CACHE_KEY];
+}
+
 function getTextWidthMap(mapStr: string): Record<string, number> {
   const map: Record<string, number> = {};
   if (typeof JSON === "undefined") {
@@ -25,21 +52,17 @@ function getTextWidthMap(mapStr: string): Record<string, number> {
 
 export const DEFAULT_TEXT_WIDTH_MAP = getTextWidthMap(defaultWidthMapStr);
 
-let _ctx: CanvasRenderingContext2D;
-let _currentFont = "";
-const FONT_WIDTH_CACHE = new Map<string, Map<string, number>>();
-const FONT_STRING_CACHE = new Map<string, string>();
-
 function getCtxOrNull(): CanvasRenderingContext2D | null {
-  if (typeof window === "undefined") {
+  const store = getStore();
+  if (store == null) {
     return null;
   }
 
-  if (_ctx == null) {
-    _ctx = document.createElement("canvas").getContext("2d")!;
+  if (store.ctx == null) {
+    store.ctx = document.createElement("canvas").getContext("2d")!;
   }
 
-  return _ctx;
+  return store.ctx;
 }
 
 export function getTextWidth({
@@ -49,17 +72,21 @@ export function getTextWidth({
   text: string;
   font: string;
 }): number {
-  const cachedWidth = getCachedWidth(font, text);
-  if (cachedWidth != null) {
-    return cachedWidth;
+  const store = getStore();
+  if (store != null) {
+    const cachedWidth = getCachedWidth(store, font, text);
+    if (cachedWidth != null) {
+      return cachedWidth;
+    }
   }
 
   const ctx = getCtxOrNull();
   let width: number;
   if (ctx != null) {
-    if (_currentFont !== font) {
+    const store = getStore()!;
+    if (store.currentFont !== font) {
       ctx.font = font;
-      _currentFont = font;
+      store.currentFont = font;
     }
     width = Math.ceil(ctx.measureText(text).width);
   } else {
@@ -79,7 +106,9 @@ export function getTextWidth({
   }
 
   width = Math.ceil(width);
-  setCachedWidth(font, text, width);
+  if (store != null) {
+    setCachedWidth(store, font, text, width);
+  }
   return width;
 }
 /*
@@ -106,25 +135,37 @@ export function getPooledFontString({
   fontWeight?: string;
   fontStyle?: string;
 }): string {
+  const store = getStore();
   const key = `${fontStyle}|${fontWeight}|${fontSize}|${fontFamily}`;
-  let font = FONT_STRING_CACHE.get(key);
 
-  if (font == null) {
-    font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
-    FONT_STRING_CACHE.set(key, font);
+  if (store != null) {
+    let font = store.fontStringCache.get(key);
+    if (font != null) {
+      return font;
+    }
+    const font_ = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
+    store.fontStringCache.set(key, font_);
+    return font_;
   }
 
-  return font;
+  return `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
 }
 
 export function clearTextMeasurementCache() {
-  FONT_WIDTH_CACHE.clear();
-  FONT_STRING_CACHE.clear();
-  _currentFont = "";
+  const store = getStore();
+  if (store != null) {
+    store.fontWidthCache.clear();
+    store.fontStringCache.clear();
+    store.currentFont = "";
+  }
 }
 
-function getCachedWidth(font: string, text: string): number | undefined {
-  const fontCache = FONT_WIDTH_CACHE.get(font);
+function getCachedWidth(
+  store: TextMeasurementStore,
+  font: string,
+  text: string,
+): number | undefined {
+  const fontCache = store.fontWidthCache.get(font);
   if (fontCache == null) {
     return undefined;
   }
@@ -140,21 +181,29 @@ function getCachedWidth(font: string, text: string): number | undefined {
   return cachedWidth;
 }
 
-function getOrCreateFontCache(font: string): Map<string, number> {
-  let fontCache = FONT_WIDTH_CACHE.get(font);
+function getOrCreateFontCache(
+  store: TextMeasurementStore,
+  font: string,
+): Map<string, number> {
+  let fontCache = store.fontWidthCache.get(font);
   if (fontCache == null) {
     fontCache = new Map();
-    FONT_WIDTH_CACHE.set(font, fontCache);
-    trimFontCache();
+    store.fontWidthCache.set(font, fontCache);
+    trimFontCache(store);
   } else {
-    FONT_WIDTH_CACHE.delete(font);
-    FONT_WIDTH_CACHE.set(font, fontCache);
+    store.fontWidthCache.delete(font);
+    store.fontWidthCache.set(font, fontCache);
   }
   return fontCache;
 }
 
-function setCachedWidth(font: string, text: string, width: number) {
-  const fontCache = getOrCreateFontCache(font);
+function setCachedWidth(
+  store: TextMeasurementStore,
+  font: string,
+  text: string,
+  width: number,
+) {
+  const fontCache = getOrCreateFontCache(store, font);
   if (fontCache.has(text)) {
     fontCache.delete(text);
   } else if (fontCache.size >= MAX_SEGMENT_CACHE_SIZE) {
@@ -167,12 +216,12 @@ function setCachedWidth(font: string, text: string, width: number) {
   fontCache.set(text, width);
 }
 
-function trimFontCache() {
-  while (FONT_WIDTH_CACHE.size > MAX_FONT_CACHE_SIZE) {
-    const oldestKey = FONT_WIDTH_CACHE.keys().next().value;
+function trimFontCache(store: TextMeasurementStore) {
+  while (store.fontWidthCache.size > MAX_FONT_CACHE_SIZE) {
+    const oldestKey = store.fontWidthCache.keys().next().value;
     if (oldestKey == null) {
       break;
     }
-    FONT_WIDTH_CACHE.delete(oldestKey);
+    store.fontWidthCache.delete(oldestKey);
   }
 }
