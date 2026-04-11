@@ -19,16 +19,15 @@
     "ts-dedent": "^2.2.0"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^3.2.7",
-    "@storybook/addon-docs": "^8.4.7",
-    "@storybook/addon-essentials": "^8.4.7",
-    "@storybook/react": "^8.4.7",
-    "@storybook/react-vite": "^8.4.7",
+    "@chromatic-com/storybook": "^5.1.1",
+    "@storybook/addon-docs": "^10.3.5",
+    "@storybook/react": "^10.3.5",
+    "@storybook/react-vite": "^10.3.5",
     "@types/react": "^18.3.14",
     "@types/react-dom": "^18.3.2",
     "@vitejs/plugin-react": "^4.2.1",
-    "chromatic": "^15.2.0",
-    "storybook": "^8.4.7",
+    "chromatic": "^16.2.0",
+    "storybook": "^10.3.5",
     "typescript": "^5.2.2",
     "vite": "^5.0.8"
   }
