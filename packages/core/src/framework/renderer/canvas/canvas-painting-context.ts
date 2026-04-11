@@ -9,7 +9,11 @@ import {
   PictureRecorder,
 } from "./layer";
 
-type AncestorNode = { node: RenderObject; offset: Offset };
+type AncestorNode = {
+  node: RenderObject;
+  offset: Offset;
+  handlesOffset: boolean;
+};
 
 type CollectedPainter = (
   | {
@@ -135,9 +139,14 @@ export class CanvasPaintingContext {
     }
     node.needsCompositedLayerUpdate = false;
 
+    const paintBounds = node.canvasPainter.paintBounds;
+    if (paintBounds.width <= 0 || paintBounds.height <= 0) {
+      return;
+    }
+
     const childContext = new CanvasPaintingContext(
       childLayer,
-      node.canvasPainter.paintBounds,
+      paintBounds,
     );
 
     // Phase 1: Collect all painter render objects with ancestor node chains
@@ -215,13 +224,13 @@ export class CanvasPaintingContext {
       });
     }
 
-    // All nodes go into the ancestor chain. During ancestor replay,
-    // the proxy suppresses pixel-drawing operations (fillRect, fill,
-    // stroke, etc.) so only canvas state changes (transforms, clips,
-    // opacity) persist. This means any node type — whether it draws
-    // pixels (Container) or only modifies state (Transform, ClipPath)
-    // — can safely be replayed as an ancestor.
-    const childAncestorChain = [...ancestorChain, { node, offset }];
+    // Only replay ancestors that intentionally affect descendant painting.
+    // Replaying arbitrary painter ancestors leaks local canvas state
+    // (fillStyle, shadow, path state, etc.) into descendants.
+    const ancestorNode = CanvasPaintingContext.#createAncestorNode(node, offset);
+    const childAncestorChain = ancestorNode == null
+      ? ancestorChain
+      : [...ancestorChain, ancestorNode];
 
     node.visitChildren(child => {
       CanvasPaintingContext.#collectPainters(
@@ -232,6 +241,19 @@ export class CanvasPaintingContext {
         result,
       );
     });
+  }
+
+  static #createAncestorNode(
+    node: RenderObject,
+    offset: Offset,
+  ): AncestorNode | null {
+    const layer = node.canvasPainter.createAncestorLayer(offset);
+    if (layer == null) return null;
+    return {
+      node,
+      offset,
+      handlesOffset: "offset" in layer,
+    };
   }
 
   static updateLayerProperties(node: RenderObject): void {
@@ -317,13 +339,21 @@ export class CanvasPaintingContext {
     }
 
     let layer: Layer = child.canvasPainter.layer;
-    // The child boundary's own OffsetLayer already tracks child.offset so that
-    // independent layer updates can move it without repainting the parent.
-    // Only wrap the ancestor portion of the accumulated offset here.
-    const ancestorOffset =
-      accumulatedOffset == null
-        ? null
-        : accumulatedOffset.minus(child.offset);
+    let nearestPositionedAncestorOffset = Offset.Constants.zero;
+    for (let i = ancestors.length - 1; i >= 0; i--) {
+      if (!ancestors[i].handlesOffset) continue;
+      nearestPositionedAncestorOffset = ancestors[i].offset;
+      break;
+    }
+    // child.layer already carries child.offset. Positional ancestor layers
+    // such as TransformLayer / ClipPathLayer are expressed in the parent
+    // boundary's coordinate space, so only the remaining layout translation
+    // needs to be wrapped here.
+    const ancestorOffset = accumulatedOffset == null
+      ? null
+      : accumulatedOffset
+          .minus(child.offset)
+          .minus(nearestPositionedAncestorOffset);
 
     if (
       ancestorOffset != null &&
