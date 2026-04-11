@@ -1,0 +1,294 @@
+export const metadata = { title: "Padding", description: "A widget that adds empty space around its child" };
+
+## Overview
+
+Padding is a layout widget that adds empty space around its child widget.
+
+Padding is a fundamental layout widget used to create space between a child widget and its surroundings. Using EdgeInsets, you can specify padding individually or collectively for each direction (top, bottom, left, right). It provides the same effect as Container's padding property but is more efficient when you only need padding without other styling.
+
+## When to use it?
+
+- When adding internal spacing to widgets
+- When creating space around text or icons
+- When setting internal margins for buttons or cards
+- When you only need padding without Container's other features
+- When improving layout readability and usability
+
+## Basic Usage
+
+```typescript
+// Same padding on all sides
+Padding({
+  padding: EdgeInsets.all(16),
+  child: Text('16 pixel padding')
+})
+
+// Symmetric horizontal/vertical padding
+Padding({
+  padding: EdgeInsets.symmetric({ horizontal: 20, vertical: 10 }),
+  child: Text('Horizontal 20, Vertical 10')
+})
+
+// Individual direction padding
+Padding({
+  padding: EdgeInsets.only({ top: 20, left: 10 }),
+  child: Text('Top 20, Left 10')
+})
+```
+
+## Props
+
+### padding
+
+**Value: EdgeInsets** (default: **EdgeInsets.all(0)**)
+
+Defines the space around the child widget. You can specify padding in various ways using EdgeInsets class static methods.
+
+```typescript
+Padding({
+  padding: EdgeInsets.all(20),
+  child: Container({ color: 'blue' })
+})
+```
+
+### child
+
+**Value: Widget | undefined**
+
+The child widget to apply padding to.
+
+```typescript
+Padding({
+  padding: EdgeInsets.all(8),
+  child: Icon({ icon: Icons.star })
+})
+```
+
+## EdgeInsets Usage
+
+### EdgeInsets.all()
+
+Applies the same padding to all sides.
+
+```typescript
+Padding({
+  padding: EdgeInsets.all(16),
+  child: Text('16 pixels on all sides')
+})
+```
+
+### EdgeInsets.symmetric()
+
+Applies symmetric padding for horizontal and vertical directions.
+
+```typescript
+Padding({
+  padding: EdgeInsets.symmetric({ 
+    horizontal: 24,  // 24 pixels left and right
+    vertical: 12     // 12 pixels top and bottom
+  }),
+  child: Text('Symmetric padding')
+})
+```
+
+### EdgeInsets.only()
+
+Applies padding only to specific sides.
+
+```typescript
+Padding({
+  padding: EdgeInsets.only({ 
+    top: 20,
+    bottom: 10,
+    left: 15
+    // right is 0 (default)
+  }),
+  child: Text('Selective padding')
+})
+```
+
+### EdgeInsets.fromLTRB()
+
+Specifies padding in left, top, right, bottom order.
+
+```typescript
+Padding({
+  padding: EdgeInsets.fromLTRB({
+    left: 10,
+    top: 20,
+    right: 30,
+    bottom: 40
+  }),
+  child: Text('LTRB padding')
+})
+```
+
+## Practical Examples
+
+### Example 1: Card Internal Padding
+
+```typescript
+const card = Container({
+  decoration: BoxDecoration({
+    color: 'white',
+    borderRadius: BorderRadius.circular(8),
+    boxShadow: [
+      BoxShadow({
+        color: 'rgba(0, 0, 0, 0.1)',
+        blurRadius: 4,
+        offset: { x: 0, y: 2 }
+      })
+    ]
+  }),
+  child: Padding({
+    padding: EdgeInsets.all(16),
+    child: Column({
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Card Title', { 
+          style: TextStyle({ fontSize: 18, fontWeight: 'bold' }) 
+        }),
+        SizedBox({ height: 8 }),
+        Text('Card content goes here.')
+      ]
+    })
+  })
+});
+```
+
+### Example 2: List Item
+
+```typescript
+const listItem = Container({
+  decoration: BoxDecoration({
+    border: Border({ bottom: BorderSide({ color: '#E0E0E0' }) })
+  }),
+  child: Padding({
+    padding: EdgeInsets.symmetric({ horizontal: 16, vertical: 12 }),
+    child: Row({
+      children: [
+        Icon({ icon: Icons.folder, color: 'blue' }),
+        SizedBox({ width: 12 }),
+        Expanded({
+          child: Text('Documents Folder')
+        }),
+        Icon({ icon: Icons.arrow_forward_ios, size: 16, color: 'gray' })
+      ]
+    })
+  })
+});
+```
+
+### Example 3: Custom Button
+
+```typescript
+const customButton = GestureDetector({
+  onTap: () => console.log('Button clicked'),
+  child: Container({
+    decoration: BoxDecoration({
+      color: 'blue',
+      borderRadius: BorderRadius.circular(8)
+    }),
+    child: Padding({
+      padding: EdgeInsets.symmetric({ horizontal: 24, vertical: 12 }),
+      child: Text('Custom Button', {
+        style: TextStyle({ color: 'white', fontWeight: 'bold' })
+      })
+    })
+  })
+});
+```
+
+### Example 4: Nested Padding
+
+```typescript
+const nestedPadding = Container({
+  color: 'lightgray',
+  child: Padding({
+    padding: EdgeInsets.all(20),  // Outer padding
+    child: Container({
+      color: 'white',
+      child: Padding({
+        padding: EdgeInsets.all(10),  // Inner padding
+        child: Text('Nested padding')
+      })
+    })
+  })
+});
+```
+
+### Example 5: Responsive Padding
+
+```typescript
+const responsivePadding = (isTablet: boolean) => {
+  return Padding({
+    padding: EdgeInsets.symmetric({
+      horizontal: isTablet ? 48 : 16,
+      vertical: isTablet ? 24 : 12
+    }),
+    child: Column({
+      children: [
+        Text('Responsive Layout'),
+        Text('Padding changes based on device')
+      ]
+    })
+  });
+};
+```
+
+## EdgeInsets Properties and Methods
+
+### Properties
+- **top**: Top padding
+- **bottom**: Bottom padding
+- **left**: Left padding
+- **right**: Right padding
+- **horizontal**: Sum of horizontal padding (left + right)
+- **vertical**: Sum of vertical padding (top + bottom)
+
+### Methods
+- **add(other)**: Adds two EdgeInsets together
+- **deflateRect(rect)**: Shrinks a rectangle by the padding amount
+
+```typescript
+const padding1 = EdgeInsets.all(10);
+const padding2 = EdgeInsets.symmetric({ horizontal: 5 });
+const combined = padding1.add(padding2); // All sides 10 + horizontal 5 more
+```
+
+## Difference from Container
+
+### Use Padding
+```typescript
+// When you only need padding
+Padding({
+  padding: EdgeInsets.all(16),
+  child: Text('Text')
+})
+```
+
+### Use Container
+```typescript
+// When you need padding along with other styling
+Container({
+  padding: EdgeInsets.all(16),
+  color: 'blue',
+  decoration: BoxDecoration({ borderRadius: BorderRadius.circular(8) }),
+  child: Text('Text')
+})
+```
+
+## Important Notes
+
+- Cannot use Expanded widget as a direct child of Padding. Use it inside Row or Column.
+- EdgeInsets values cannot be negative.
+- Excessive padding can cause layout overflow.
+- It's more efficient to combine EdgeInsets using add() rather than nesting multiple Padding widgets.
+
+## Related Widgets
+
+- **Container**: Provides various styling options beyond padding
+- **AnimatedPadding**: Animated padding changes
+- **SizedBox**: Creates fixed-size empty space
+- **EdgeInsetsDirectional**: Padding that considers text direction
+- **SafeArea**: Automatically applies padding to avoid system UI

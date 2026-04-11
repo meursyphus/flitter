@@ -1,0 +1,272 @@
+export const metadata = { title: "ColoredBox", description: "A widget that paints a box with a solid color" };
+
+## Overview
+
+ColoredBox is a widget that paints a box with a solid color.
+
+ColoredBox provides the same effect as Container's color property but is lighter and more efficient. It offers performance benefits when you only need a color and don't require Container's other features (padding, margin, decoration, etc.).
+
+## When to use it?
+
+- When only a simple color background is needed
+- When a lighter widget than Container is required
+- When performance optimization is important
+- When creating color overlays
+- When specifying background colors for list items
+
+## Basic Usage
+
+```typescript
+// Solid color background
+ColoredBox({
+  color: 'blue',
+  child: Text('Blue background')
+})
+
+// Color with transparency
+ColoredBox({
+  color: 'rgba(255, 0, 0, 0.5)',
+  child: Padding({
+    padding: EdgeInsets.all(20),
+    child: Text('Semi-transparent red background')
+  })
+})
+```
+
+## Props
+
+### color (required)
+
+**Value: string**
+
+The background color of the box. CSS color values can be used.
+
+```typescript
+ColoredBox({
+  color: 'red',  // Color name
+  child: Text('Red background')
+})
+
+ColoredBox({
+  color: '#FF5733',  // HEX color
+  child: Text('Orange background')
+})
+
+ColoredBox({
+  color: 'rgba(0, 0, 255, 0.3)',  // RGBA
+  child: Text('Semi-transparent blue background')
+})
+```
+
+### child
+
+**Value: Widget | undefined**
+
+The child widget to be displayed on top of the color background.
+
+```typescript
+ColoredBox({
+  color: 'lightgray',
+  child: Center({
+    child: Text('Centered text')
+  })
+})
+```
+
+## Difference from Container
+
+### Use ColoredBox
+```typescript
+// When only color is needed
+ColoredBox({
+  color: 'blue',
+  child: Text('Text')
+})
+```
+
+### Use Container
+```typescript
+// When color and other styling are needed
+Container({
+  color: 'blue',
+  padding: EdgeInsets.all(16),
+  margin: EdgeInsets.all(8),
+  child: Text('Text')
+})
+```
+
+## Practical Examples
+
+### Example 1: Status Badge
+
+```typescript
+const StatusBadge = ({ status }) => {
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'active': return '#4CAF50';
+      case 'pending': return '#FF9800';
+      case 'inactive': return '#F44336';
+      default: return '#9E9E9E';
+    }
+  };
+
+  return ColoredBox({
+    color: getStatusColor(status),
+    child: Padding({
+      padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 4 }),
+      child: Text(status.toUpperCase(), {
+        style: TextStyle({
+          color: 'white',
+          fontSize: 12,
+          fontWeight: 'bold'
+        })
+      })
+    })
+  });
+};
+```
+
+### Example 2: Striped Background
+
+```typescript
+const StripedBackground = ({ children }) => {
+  return Stack({
+    children: [
+      Column({
+        children: Array.from({ length: 10 }, (_, i) => 
+          Expanded({
+            child: ColoredBox({
+              color: i % 2 === 0 ? '#F5F5F5' : 'white'
+            })
+          })
+        )
+      }),
+      children
+    ]
+  });
+};
+```
+
+### Example 3: Color Palette
+
+```typescript
+const ColorPalette = ({ colors, onColorSelect }) => {
+  return Wrap({
+    spacing: 8,
+    runSpacing: 8,
+    children: colors.map(color => 
+      GestureDetector({
+        onTap: () => onColorSelect(color),
+        child: Container({
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration({
+            border: Border.all({ color: '#E0E0E0', width: 2 }),
+            borderRadius: BorderRadius.circular(8)
+          }),
+          clipped: true,
+          child: ColoredBox({ color })
+        })
+      })
+    )
+  });
+};
+```
+
+### Example 4: Loading Skeleton
+
+```typescript
+const SkeletonLoader = () => {
+  return Column({
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // Title skeleton
+      ColoredBox({
+        color: '#E0E0E0',
+        child: SizedBox({ width: 200, height: 24 })
+      }),
+      SizedBox({ height: 12 }),
+      // Body skeleton
+      ColoredBox({
+        color: '#E0E0E0',
+        child: SizedBox({ width: double.infinity, height: 16 })
+      }),
+      SizedBox({ height: 8 }),
+      ColoredBox({
+        color: '#E0E0E0',
+        child: SizedBox({ width: 300, height: 16 })
+      }),
+      SizedBox({ height: 8 }),
+      ColoredBox({
+        color: '#E0E0E0',
+        child: SizedBox({ width: 250, height: 16 })
+      })
+    ]
+  });
+};
+```
+
+### Example 5: Overlay Effect
+
+```typescript
+const ImageWithOverlay = ({ imageUrl, text }) => {
+  return Stack({
+    children: [
+      Image({
+        src: imageUrl,
+        width: 300,
+        height: 200,
+        objectFit: 'cover'
+      }),
+      Positioned.fill({
+        child: ColoredBox({
+          color: 'rgba(0, 0, 0, 0.4)',
+          child: Center({
+            child: Text(text, {
+              style: TextStyle({
+                color: 'white',
+                fontSize: 24,
+                fontWeight: 'bold'
+              })
+            })
+          })
+        })
+      })
+    ]
+  });
+};
+```
+
+## Performance Considerations
+
+ColoredBox is lighter than Container:
+
+1. **Memory usage**: Uses less memory than Container
+2. **Rendering performance**: Fast processing with simple rendering logic
+3. **Useful in lists**: Particularly effective in lists with many items
+
+```typescript
+// In performance-critical lists
+ListView({
+  children: items.map(item => 
+    ColoredBox({
+      color: item.isSelected ? '#E3F2FD' : 'white',
+      child: ListTile({ title: item.name })
+    })
+  )
+})
+```
+
+## Important Notes
+
+- ColoredBox can only specify colors. Use Container or DecoratedBox for gradients, images, borders, etc.
+- The size of ColoredBox is determined by the size of its child widget.
+- Consider blending with the background when using colors with transparency.
+- Works properly in SVG rendering mode as well.
+
+## Related Widgets
+
+- **Container**: When more styling options are needed
+- **DecoratedBox**: When complex decoration is required
+- **Opacity**: To adjust the transparency of the entire widget
+- **AnimatedContainer**: To animate color changes

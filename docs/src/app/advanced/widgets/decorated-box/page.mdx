@@ -1,0 +1,307 @@
+export const metadata = { title: "DecoratedBox", description: "A widget that adds background decoration to a child widget" };
+
+## Overview
+
+`DecoratedBox` is a widget that paints decorations (background color, border, shadow, etc.) behind its child widget. Inspired by Flutter's DecoratedBox, it's used to add visual styling to widgets.
+
+The `Container` widget internally uses DecoratedBox when a decoration property is provided. If you only need decoration without other layout properties, using DecoratedBox directly is more efficient.
+
+See: [https://api.flutter.dev/flutter/widgets/DecoratedBox-class.html](https://api.flutter.dev/flutter/widgets/DecoratedBox-class.html)
+
+## When to Use?
+
+- When adding background color or gradients to widgets
+- When you need to draw borders
+- When creating rounded corners (border radius)
+- When adding shadow effects
+- When clipping is needed in circular or rectangular shapes
+
+## Basic Usage
+
+```typescript
+import { DecoratedBox, BoxDecoration } from 'flitter';
+
+// Basic background color
+const ColoredBox = DecoratedBox({
+  decoration: new BoxDecoration({
+    color: '#3498db'
+  }),
+  child: SizedBox({ width: 100, height: 100 })
+});
+
+// Border with rounded corners
+const RoundedBox = DecoratedBox({
+  decoration: new BoxDecoration({
+    color: 'white',
+    border: Border.all({ color: '#2c3e50', width: 2 }),
+    borderRadius: BorderRadius.circular(10)
+  }),
+  child: Padding({
+    padding: EdgeInsets.all(16),
+    child: Text('Rounded Box')
+  })
+});
+```
+
+## Props
+
+### decoration (required)
+**Value: Decoration (BoxDecoration)**
+
+Defines the decoration to apply to the widget. Currently only `BoxDecoration` is supported.
+
+#### BoxDecoration Properties:
+
+- **color**: `Color | string` - Background color (default: "transparent")
+- **border**: `Border` - Border configuration
+- **borderRadius**: `BorderRadiusGeometry` - Corner radius
+- **boxShadow**: `BoxShadow[]` - Array of shadow effects
+- **shape**: `"rectangle" | "circle"` - Shape (default: "rectangle")
+
+### child (optional)
+**Value: Widget**
+
+The child widget to be displayed on top of the decoration. The decoration is always painted behind the child.
+
+## Real-World Examples
+
+### Example 1: Various Background Colors and Shapes
+
+```typescript
+import { DecoratedBox, BoxDecoration, SizedBox, Row } from 'flitter';
+
+const ColorExamples = Row({
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    // Rectangle background
+    DecoratedBox({
+      decoration: new BoxDecoration({
+        color: '#e74c3c'
+      }),
+      child: SizedBox({ width: 80, height: 80 })
+    }),
+    
+    // Circular background
+    DecoratedBox({
+      decoration: new BoxDecoration({
+        color: '#3498db',
+        shape: 'circle'
+      }),
+      child: SizedBox({ width: 80, height: 80 })
+    }),
+    
+    // Background with transparency
+    DecoratedBox({
+      decoration: new BoxDecoration({
+        color: 'rgba(46, 204, 113, 0.5)'
+      }),
+      child: SizedBox({ width: 80, height: 80 })
+    })
+  ]
+});
+```
+
+### Example 2: Border Styling
+
+```typescript
+import { DecoratedBox, BoxDecoration, Border, BorderRadius } from 'flitter';
+
+const BorderExamples = Column({
+  children: [
+    // Full border
+    DecoratedBox({
+      decoration: new BoxDecoration({
+        color: 'white',
+        border: Border.all({ 
+          color: '#34495e', 
+          width: 3 
+        })
+      }),
+      child: Padding({
+        padding: EdgeInsets.all(20),
+        child: Text('Full Border')
+      })
+    }),
+    
+    // Partial border
+    DecoratedBox({
+      decoration: new BoxDecoration({
+        color: '#ecf0f1',
+        border: Border.symmetric({
+          horizontal: new BorderSide({ color: '#e74c3c', width: 2 }),
+          vertical: new BorderSide({ color: '#3498db', width: 2 })
+        })
+      }),
+      child: Padding({
+        padding: EdgeInsets.all(20),
+        child: Text('Symmetric Border')
+      })
+    }),
+    
+    // Rounded border
+    DecoratedBox({
+      decoration: new BoxDecoration({
+        color: 'white',
+        border: Border.all({ color: '#9b59b6', width: 2 }),
+        borderRadius: BorderRadius.circular(20)
+      }),
+      child: Padding({
+        padding: EdgeInsets.all(20),
+        child: Text('Rounded Border')
+      })
+    })
+  ]
+});
+```
+
+### Example 3: Shadow Effects
+
+```typescript
+import { DecoratedBox, BoxDecoration, BoxShadow, Offset } from 'flitter';
+
+const ShadowExample = DecoratedBox({
+  decoration: new BoxDecoration({
+    color: 'white',
+    borderRadius: BorderRadius.circular(10),
+    boxShadow: [
+      new BoxShadow({
+        color: 'rgba(0, 0, 0, 0.2)',
+        offset: new Offset({ x: 0, y: 4 }),
+        blurRadius: 8
+      }),
+      new BoxShadow({
+        color: 'rgba(0, 0, 0, 0.1)',
+        offset: new Offset({ x: 0, y: 2 }),
+        blurRadius: 4
+      })
+    ]
+  }),
+  child: Padding({
+    padding: EdgeInsets.all(24),
+    child: Text('Soft Shadow', {
+      style: { fontSize: 18 }
+    })
+  })
+});
+```
+
+### Example 4: Complex Card Design
+
+```typescript
+import { DecoratedBox, BoxDecoration, Column, Row } from 'flitter';
+
+const Card = ({ title, content, color }) => DecoratedBox({
+  decoration: new BoxDecoration({
+    color: 'white',
+    border: Border.all({ 
+      color: color, 
+      width: 1 
+    }),
+    borderRadius: BorderRadius.only({
+      topLeft: Radius.circular(20),
+      topRight: Radius.circular(20),
+      bottomLeft: Radius.circular(8),
+      bottomRight: Radius.circular(8)
+    }),
+    boxShadow: [
+      new BoxShadow({
+        color: 'rgba(0, 0, 0, 0.1)',
+        offset: new Offset({ x: 0, y: 2 }),
+        blurRadius: 4
+      })
+    ]
+  }),
+  child: Column({
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      // Header
+      DecoratedBox({
+        decoration: new BoxDecoration({
+          color: color,
+          borderRadius: BorderRadius.vertical({
+            top: Radius.circular(19)
+          })
+        }),
+        child: Padding({
+          padding: EdgeInsets.all(16),
+          child: Text(title, {
+            style: { 
+              color: 'white', 
+              fontSize: 18, 
+              fontWeight: 'bold' 
+            }
+          })
+        })
+      }),
+      // Content
+      Padding({
+        padding: EdgeInsets.all(16),
+        child: Text(content)
+      })
+    ]
+  })
+});
+```
+
+### Example 5: Using with Animation
+
+```typescript
+import { AnimatedContainer, BoxDecoration } from 'flitter';
+
+class AnimatedDecoration extends StatefulWidget {
+  createState() {
+    return new AnimatedDecorationState();
+  }
+}
+
+class AnimatedDecorationState extends State {
+  isActive = false;
+  
+  build() {
+    return GestureDetector({
+      onTap: () => this.setState(() => {
+        this.isActive = !this.isActive;
+      }),
+      child: AnimatedContainer({
+        duration: 300,
+        decoration: new BoxDecoration({
+          color: this.isActive ? '#e74c3c' : '#3498db',
+          borderRadius: BorderRadius.circular(
+            this.isActive ? 30 : 10
+          ),
+          boxShadow: this.isActive ? [
+            new BoxShadow({
+              color: 'rgba(231, 76, 60, 0.4)',
+              offset: new Offset({ x: 0, y: 8 }),
+              blurRadius: 16
+            })
+          ] : []
+        }),
+        width: 150,
+        height: 150,
+        child: Center({
+          child: Text(
+            this.isActive ? 'Active' : 'Inactive',
+            { style: { color: 'white', fontSize: 20 } }
+          )
+        })
+      })
+    });
+  }
+}
+```
+
+## Best Practices
+
+- When using `shape: 'circle'`, the child widget should have equal width and height for a perfect circle
+- `borderRadius` only applies when `shape: 'rectangle'`
+- Shadows can impact performance, so use them judiciously
+- Consider `CustomPaint` for complex decorations
+- `Container` widget also supports decoration, so use Container if you need additional layout properties
+
+## Related Widgets
+
+- **Container**: When you need decoration along with padding, margin, and other layout properties
+- **ClipRRect**: When you only need to clip with rounded corners
+- **CustomPaint**: When you need more complex graphics or custom drawing
+- **AnimatedContainer**: When you need animated decoration changes

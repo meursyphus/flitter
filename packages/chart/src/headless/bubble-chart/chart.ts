@@ -1,0 +1,290 @@
+import {
+  StatelessWidget,
+  type Widget,
+  type BuildContext,
+  LayoutBuilder,
+  GestureDetector,
+} from "flitter-core";
+import { BubbleChartProvider } from "./provider";
+
+class Chart extends StatelessWidget {
+  override build(_: BuildContext): Widget {
+    return new SizeTracker();
+  }
+}
+
+class SizeTracker extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    return LayoutBuilder({
+      builder: (_ctx: BuildContext, constraints) => {
+        ctx.setSize(constraints.maxWidth, constraints.maxHeight);
+        return new Layout();
+      },
+    });
+  }
+}
+
+export default Chart;
+
+class Layout extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    return ctx.custom.layout(
+      {
+        title: new Title(),
+        legends: ctx.legends.map(
+          (name, index) => new Legend({ name, index }),
+        ),
+        plot: new Plot(),
+      },
+      ctx,
+    );
+  }
+}
+
+class Legend extends StatelessWidget {
+  #name: string;
+  #index: number;
+
+  constructor({ name, index }: { name: string; index: number }) {
+    super();
+    this.#name = name;
+    this.#index = index;
+  }
+
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    const name = this.#name;
+    const isVisible = ctx.isSeriesVisible(name);
+    return GestureDetector({
+      onClick: () => ctx.toggleSeries(name),
+      child: ctx.custom.legend({ name, index: this.#index, isVisible }, ctx),
+    });
+  }
+}
+
+class Title extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    return ctx.custom.title(undefined, ctx);
+  }
+}
+
+class AxisCorner extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    return ctx.custom.axisCorner(undefined, ctx);
+  }
+}
+
+class Plot extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    return ctx.custom.plot(
+      {
+        xAxis: new XAxis(),
+        yAxis: new YAxis(),
+        dataView: new DataView(),
+        grid: new Grid(),
+        axisCorner: new AxisCorner(),
+      },
+      ctx,
+    );
+  }
+}
+
+class XAxis extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    const { scale } = ctx;
+    if (scale == null) {
+      const axis = ctx.custom.xAxis({ labels: [], tick: new XAxisTick(), line: new XAxisLine() }, ctx);
+      return axis;
+    }
+
+    const xSteps = (scale.x.max - scale.x.min) / scale.x.step;
+    const labels = [];
+    for (let i = 0; i <= xSteps; i++) {
+      labels.push(scale.x.min + i * scale.x.step);
+    }
+
+    const axis = ctx.custom.xAxis(
+      {
+        labels: labels.map((name, index) => new XAxisLabel({ name: `${name}`, index })),
+        tick: new XAxisTick(),
+        line: new XAxisLine(),
+      },
+      ctx,
+    );
+    return axis;
+  }
+}
+
+class YAxis extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    const { scale } = ctx;
+    if (scale == null) {
+      const axis = ctx.custom.yAxis({ labels: [], tick: new YAxisTick(), line: new YAxisLine() }, ctx);
+      return axis;
+    }
+
+    const ySteps = (scale.y.max - scale.y.min) / scale.y.step;
+    const labels = [];
+    for (let i = 0; i <= ySteps; i++) {
+      labels.push(scale.y.min + i * scale.y.step);
+    }
+
+    const axis = ctx.custom.yAxis(
+      {
+        labels: labels.map((name, index) => new YAxisLabel({ name: `${name}`, index })),
+        tick: new YAxisTick(),
+        line: new YAxisLine(),
+      },
+      ctx,
+    );
+    return axis;
+  }
+}
+
+abstract class Label extends StatelessWidget {
+  protected name: string;
+  protected index: number;
+
+  constructor({ name, index }: { name: string; index: number }) {
+    super();
+    this.name = name;
+    this.index = index;
+  }
+}
+
+class XAxisLabel extends Label {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    return ctx.custom.xAxisLabel({ name: this.name, index: this.index }, ctx);
+  }
+}
+
+class YAxisLabel extends Label {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    return ctx.custom.yAxisLabel({ name: this.name, index: this.index }, ctx);
+  }
+}
+
+class XAxisTick extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    return ctx.custom.xAxisTick(undefined, ctx);
+  }
+}
+
+class YAxisTick extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    return ctx.custom.yAxisTick(undefined, ctx);
+  }
+}
+
+class XAxisLine extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    return ctx.custom.xAxisLine(undefined, ctx);
+  }
+}
+
+class YAxisLine extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    return ctx.custom.yAxisLine(undefined, ctx);
+  }
+}
+
+class Bubble extends StatelessWidget {
+  #value: number;
+  #label: string;
+  #legend: string;
+  #index: number;
+
+  constructor({ value, label, legend, index }: { value: number; label: string; legend: string; index: number }) {
+    super();
+    this.#value = value;
+    this.#label = label;
+    this.#legend = legend;
+    this.#index = index;
+  }
+
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    const index = this.#index;
+    const legend = this.#legend;
+    const isHovered = ctx.isBubbleHovered(index, legend);
+    return GestureDetector({
+      cursor: "default",
+      onMouseEnter: () => ctx.hoverBubble(index, legend),
+      onMouseLeave: () => ctx.unhoverBubble(index, legend),
+      child: ctx.custom.bubble(
+        {
+          value: this.#value,
+          label: this.#label,
+          legend,
+          index,
+          isHovered,
+        },
+        ctx,
+      ),
+    });
+  }
+}
+
+class DataView extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    const { data, scale } = ctx;
+    if (scale == null) return ctx.custom.dataView({ bubbles: [], scale: { x: { min: 0, max: 0, step: 1 }, y: { min: 0, max: 0, step: 1 }, value: { min: 0, max: 0, step: 1 } } }, ctx);
+
+    const bubbles = data.datasets.flatMap((dataset) =>
+      dataset.data.map((pt, pointIndex) => ({
+        widget: new Bubble({
+          value: pt.value,
+          label: pt.label,
+          legend: dataset.legend,
+          index: pointIndex,
+        }),
+        x: pt.x,
+        y: pt.y,
+      })),
+    );
+
+    return GestureDetector({
+      behavior: "translucent",
+      onMouseLeave: () => ctx.unhoverAllBubbles(),
+      child: ctx.custom.dataView({ bubbles, scale }, ctx),
+    });
+  }
+}
+
+class Grid extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    return ctx.custom.grid(
+      { xLine: new GridXLine(), yLine: new GridYLine() },
+      ctx,
+    );
+  }
+}
+
+class GridXLine extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    return ctx.custom.gridXLine(undefined, ctx);
+  }
+}
+
+class GridYLine extends StatelessWidget {
+  override build(context: BuildContext): Widget {
+    const ctx = BubbleChartProvider.of(context);
+    return ctx.custom.gridYLine(undefined, ctx);
+  }
+}

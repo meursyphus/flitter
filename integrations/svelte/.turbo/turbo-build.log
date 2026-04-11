@@ -1,0 +1,9 @@
+
+> @flitterjs/svelte@0.0.2 build /Users/moon/work/flitter/integrations/svelte
+> svelte-kit sync && svelte-package
+
+src/lib -> package
+Successfully built '@flitterjs/svelte' package. To publish it to npm:
+  cd package
+  npm publish
+

@@ -1,0 +1,149 @@
+export const metadata = {
+  title: "CustomPaint for Easy Drawing",
+  description: "Learn how to implement custom drawing simply using the CustomPaint widget instead of complex RenderObject",
+};
+
+# CustomPaint for Easy Drawing
+
+## Background
+
+The RenderObjectWidget is powerful but complex. Even when you simply want to draw something, you need to inherit from RenderObject, implement createRenderObject, and override the paint method.
+
+CustomPaint solves this complexity. Just pass the paint behavior as a first-class function and you're done!
+
+### Advantages of CustomPaint
+
+1. **Simple API**: Just pass the painter function
+2. **Fast Prototyping**: No complex class structure needed
+3. **Reusability**: Easy to replace painter functions
+4. **Performance**: Uses internally optimized RenderObject
+
+## Using CustomPaint
+
+### Basic Usage
+
+```typescript
+// For SVG renderer
+CustomPaint({
+  size: new Size(300, 200),
+  painter: {
+    svg: {
+      createDefaultSvgEl(context) {
+        return {
+          circle: context.createSvgEl('circle')
+        };
+      },
+      paint(els, size) {
+        els.circle.setAttribute('cx', `${size.width / 2}`);
+        els.circle.setAttribute('cy', `${size.height / 2}`);
+        els.circle.setAttribute('r', '50');
+        els.circle.setAttribute('fill', '#3B82F6');
+      }
+    }
+  }
+})
+
+// For Canvas renderer
+CustomPaint({
+  size: new Size(300, 200),
+  painter: {
+    canvas: {
+      paint(context, size) {
+        const ctx = context.canvas;
+        ctx.fillStyle = '#3B82F6';
+        ctx.beginPath();
+        ctx.arc(size.width / 2, size.height / 2, 50, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+})
+```
+
+### shouldRepaint Optimization
+
+You can control when to repaint for performance:
+
+```typescript
+CustomPaint({
+  painter: {
+    dependencies: myData, // Dependency data
+    shouldRepaint: (oldPainter) => {
+      // Return true to repaint
+      // Return false to keep previous painting
+      return oldPainter.dependencies !== myData;
+    },
+    svg: {
+      // SVG implementation
+    },
+    canvas: {
+      // Canvas implementation
+    }
+  }
+})
+```
+
+## SVG vs Canvas Rendering
+
+Flitter's CustomPaint supports two rendering methods:
+
+### SVG Rendering
+- **Maintains quality when scaling**
+- **Suitable for vector graphics**
+- **Create SVG elements with createDefaultSvgEl()**
+- **Set attributes with setAttribute in paint()**
+
+```typescript
+svg: {
+  createDefaultSvgEl(context) {
+    return {
+      line: context.createSvgEl('path'),
+      point: context.createSvgEl('circle')
+    };
+  },
+  paint(els, size) {
+    els.line.setAttribute('d', pathData);
+    els.line.setAttribute('stroke', '#3B82F6');
+    els.point.setAttribute('cx', '50');
+    els.point.setAttribute('cy', '50');
+  }
+}
+```
+
+### Canvas Rendering
+- **Suitable for complex pixel manipulation**
+- **Advantageous for high-performance animations**
+- **Same approach as web Canvas API**
+
+```typescript
+canvas: {
+  paint(context, size) {
+    const ctx = context.canvas;
+    ctx.fillStyle = '#3B82F6';
+    ctx.fillRect(0, 0, size.width, size.height);
+    ctx.strokeStyle = '#FF0000';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(100, 100);
+    ctx.stroke();
+  }
+}
+```
+
+## Source Code Location
+
+To examine the implementation of CustomPaint:
+
+- `packages/flitter/src/component/CustomPaint.ts`: CustomPaint widget
+- `packages/flitter/src/engine/canvas/`: Canvas implementation
+- `packages/flitter/src/engine/paint.ts`: Paint class
+
+## Key Summary
+
+1. **CustomPaint hides the complexity of RenderObject**
+2. **Provides separate svg/canvas implementations in the painter object**
+3. **Performance can be optimized with dependencies and shouldRepaint**
+4. **Supports both SVG and Canvas rendering methods**
+5. **You only need to provide implementation for the renderer you use**
+6. **Can be easily combined with animations**

@@ -1,0 +1,35 @@
+{
+  "name": "flitter-storybook",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "storybook dev -p 6006",
+    "build": "storybook build",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "chromatic": "npx chromatic"
+  },
+  "dependencies": {
+    "@flitterjs/react": "workspace:*",
+    "flitter-chart": "workspace:*",
+    "flitter-core": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "ts-dedent": "^2.2.0"
+  },
+  "devDependencies": {
+    "@chromatic-com/storybook": "^3.2.7",
+    "@storybook/addon-docs": "^8.4.7",
+    "@storybook/addon-essentials": "^8.4.7",
+    "@storybook/react": "^8.4.7",
+    "@storybook/react-vite": "^8.4.7",
+    "@types/react": "^18.3.14",
+    "@types/react-dom": "^18.3.2",
+    "@vitejs/plugin-react": "^4.2.1",
+    "chromatic": "^15.2.0",
+    "storybook": "^8.4.7",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8"
+  }
+}

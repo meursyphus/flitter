@@ -1,0 +1,434 @@
+export const metadata = { title: "AnimatedFractionallySizedBox", description: "A widget that animates size transitions proportional to parent size" };
+
+## Overview
+
+AnimatedFractionallySizedBox is a widget that sizes its child relative to the parent widget's size and automatically animates when widthFactor or heightFactor changes. It also animates position changes when alignment is modified. This widget is inspired by Flutter's AnimatedFractionallySizedBox widget.
+
+> Animated version of FractionallySizedBox which automatically transitions the child's size over a given duration whenever the given widthFactor or heightFactor changes, as well as the position whenever the given alignment changes.
+
+Flutter reference: https://api.flutter.dev/flutter/widgets/AnimatedFractionallySizedBox-class.html
+
+## When to use?
+
+- When dynamically adjusting widget size relative to parent size
+- When smoothly transitioning sizes in responsive layouts
+- When animating content size based on screen dimensions
+- When implementing smooth expand/collapse effects
+- When transitioning modal or dialog sizes in stages
+
+## Basic usage
+
+```typescript
+import { AnimatedFractionallySizedBox, Container, StatefulWidget } from '@flitter/core';
+
+class SizeAnimationExample extends StatefulWidget {
+  createState() {
+    return new SizeAnimationExampleState();
+  }
+}
+
+class SizeAnimationExampleState extends State<SizeAnimationExample> {
+  isExpanded = false;
+
+  build() {
+    return Container({
+      width: 300,
+      height: 300,
+      color: "lightgray",
+      child: GestureDetector({
+        onTap: () => {
+          this.setState(() => {
+            this.isExpanded = !this.isExpanded;
+          });
+        },
+        child: AnimatedFractionallySizedBox({
+          widthFactor: this.isExpanded ? 0.8 : 0.4,
+          heightFactor: this.isExpanded ? 0.8 : 0.4,
+          duration: 1000, // 1 second
+          child: Container({
+            color: "blue",
+          }),
+        }),
+      }),
+    });
+  }
+}
+```
+
+## Props
+
+### duration (required)
+**Value: number**
+
+Specifies the animation duration in milliseconds.
+
+### widthFactor (optional)
+**Value: number | undefined**
+
+Sets the child widget's width as a ratio of the parent widget's width.
+- 0.5 = 50% of parent width
+- 1.0 = 100% of parent width
+- If not specified, uses the child's intrinsic width
+
+### heightFactor (optional)
+**Value: number | undefined**
+
+Sets the child widget's height as a ratio of the parent widget's height.
+- 0.5 = 50% of parent height
+- 1.0 = 100% of parent height
+- If not specified, uses the child's intrinsic height
+
+### alignment (optional)
+**Value: Alignment** (default: **Alignment.center**)
+
+Specifies the alignment position of the child widget. Predefined values:
+- `Alignment.topLeft`: Top left
+- `Alignment.topCenter`: Top center
+- `Alignment.topRight`: Top right
+- `Alignment.centerLeft`: Center left
+- `Alignment.center`: Center
+- `Alignment.centerRight`: Center right
+- `Alignment.bottomLeft`: Bottom left
+- `Alignment.bottomCenter`: Bottom center
+- `Alignment.bottomRight`: Bottom right
+
+### curve (optional)
+**Value: Curve** (default: **Curves.linear**)
+
+Specifies the animation progression curve. Available curves:
+- `Curves.linear`: Constant speed
+- `Curves.easeIn`: Slow start
+- `Curves.easeOut`: Slow end
+- `Curves.easeInOut`: Slow start and end
+- `Curves.circIn`: Circular acceleration start
+- `Curves.circOut`: Circular deceleration end
+- `Curves.circInOut`: Circular acceleration/deceleration
+- `Curves.backIn`: Goes back then starts
+- `Curves.backOut`: Overshoots target then returns
+- `Curves.backInOut`: backIn + backOut
+- `Curves.anticipate`: Anticipatory motion before proceeding
+- `Curves.bounceIn`: Bounces at start
+- `Curves.bounceOut`: Bounces at end
+- `Curves.bounceInOut`: Bounces at start/end
+
+### child (optional)
+**Value: Widget | undefined**
+
+The child widget whose size will be adjusted.
+
+### key (optional)
+**Value: any**
+
+A unique identifier for the widget.
+
+## Real-world examples
+
+### Example 1: Responsive card expand/collapse
+
+```typescript
+import { AnimatedFractionallySizedBox, Container, Card, Curves } from '@flitter/core';
+
+class ResponsiveCard extends StatefulWidget {
+  createState() {
+    return new ResponsiveCardState();
+  }
+}
+
+class ResponsiveCardState extends State<ResponsiveCard> {
+  isExpanded = false;
+
+  build() {
+    return Container({
+      width: 400,
+      height: 600,
+      color: "#f0f0f0",
+      child: Center({
+        child: GestureDetector({
+          onTap: () => {
+            this.setState(() => {
+              this.isExpanded = !this.isExpanded;
+            });
+          },
+          child: AnimatedFractionallySizedBox({
+            widthFactor: this.isExpanded ? 0.9 : 0.6,
+            heightFactor: this.isExpanded ? 0.7 : 0.4,
+            duration: 600,
+            curve: Curves.easeInOut,
+            alignment: Alignment.center,
+            child: Card({
+              elevation: 4,
+              child: Container({
+                decoration: BoxDecoration({
+                  gradient: LinearGradient({
+                    colors: ["#4A90E2", "#7B68EE"],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  }),
+                }),
+                child: Center({
+                  child: Column({
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon({
+                        icon: this.isExpanded ? Icons.unfold_less : Icons.unfold_more,
+                        size: 48,
+                        color: "white",
+                      }),
+                      SizedBox({ height: 16 }),
+                      Text(
+                        this.isExpanded ? "Click to Collapse" : "Click to Expand",
+                        { style: TextStyle({ color: "white", fontSize: 18 }) }
+                      ),
+                    ],
+                  }),
+                }),
+              }),
+            }),
+          }),
+        }),
+      }),
+    });
+  }
+}
+```
+
+### Example 2: Multi-stage size transitions
+
+```typescript
+import { AnimatedFractionallySizedBox, Container, Row, Curves } from '@flitter/core';
+
+class MultiSizeTransition extends StatefulWidget {
+  createState() {
+    return new MultiSizeTransitionState();
+  }
+}
+
+class MultiSizeTransitionState extends State<MultiSizeTransition> {
+  sizeLevel = 0; // 0: small, 1: medium, 2: large
+  sizes = [
+    { width: 0.3, height: 0.3 },
+    { width: 0.6, height: 0.5 },
+    { width: 0.9, height: 0.8 },
+  ];
+
+  build() {
+    const currentSize = this.sizes[this.sizeLevel];
+    
+    return Column({
+      children: [
+        // Control buttons
+        Row({
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton({
+              onPressed: () => this.changeSize(0),
+              child: Text("Small"),
+              style: ButtonStyle({
+                backgroundColor: this.sizeLevel === 0 ? "blue" : "gray",
+              }),
+            }),
+            SizedBox({ width: 8 }),
+            ElevatedButton({
+              onPressed: () => this.changeSize(1),
+              child: Text("Medium"),
+              style: ButtonStyle({
+                backgroundColor: this.sizeLevel === 1 ? "blue" : "gray",
+              }),
+            }),
+            SizedBox({ width: 8 }),
+            ElevatedButton({
+              onPressed: () => this.changeSize(2),
+              child: Text("Large"),
+              style: ButtonStyle({
+                backgroundColor: this.sizeLevel === 2 ? "blue" : "gray",
+              }),
+            }),
+          ],
+        }),
+        SizedBox({ height: 20 }),
+        
+        // Animation area
+        Expanded({
+          child: Container({
+            color: "#e0e0e0",
+            child: AnimatedFractionallySizedBox({
+              widthFactor: currentSize.width,
+              heightFactor: currentSize.height,
+              duration: 800,
+              curve: Curves.anticipate,
+              child: Container({
+                decoration: BoxDecoration({
+                  color: "deepPurple",
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow({
+                      color: "rgba(0,0,0,0.3)",
+                      blurRadius: 10,
+                      offset: Offset({ x: 0, y: 5 }),
+                    }),
+                  ],
+                }),
+                child: Center({
+                  child: Text(
+                    `${Math.round(currentSize.width * 100)}% x ${Math.round(currentSize.height * 100)}%`,
+                    { style: TextStyle({ color: "white", fontSize: 24, fontWeight: "bold" }) }
+                  ),
+                }),
+              }),
+            }),
+          }),
+        }),
+      ],
+    });
+  }
+
+  changeSize(level: number) {
+    this.setState(() => {
+      this.sizeLevel = level;
+    });
+  }
+}
+```
+
+### Example 3: Alignment and size animation combined
+
+```typescript
+import { AnimatedFractionallySizedBox, Container, Alignment, Curves } from '@flitter/core';
+
+class AlignmentAndSizeAnimation extends StatefulWidget {
+  createState() {
+    return new AlignmentAndSizeAnimationState();
+  }
+}
+
+class AlignmentAndSizeAnimationState extends State<AlignmentAndSizeAnimation> {
+  currentIndex = 0;
+  configs = [
+    { alignment: Alignment.topLeft, widthFactor: 0.3, heightFactor: 0.3 },
+    { alignment: Alignment.topRight, widthFactor: 0.5, heightFactor: 0.2 },
+    { alignment: Alignment.center, widthFactor: 0.8, heightFactor: 0.8 },
+    { alignment: Alignment.bottomLeft, widthFactor: 0.4, heightFactor: 0.6 },
+    { alignment: Alignment.bottomRight, widthFactor: 0.6, heightFactor: 0.4 },
+  ];
+
+  build() {
+    const config = this.configs[this.currentIndex];
+    
+    return GestureDetector({
+      onTap: () => this.nextConfiguration(),
+      child: Container({
+        width: double.infinity,
+        height: double.infinity,
+        color: "lightblue",
+        child: AnimatedFractionallySizedBox({
+          alignment: config.alignment,
+          widthFactor: config.widthFactor,
+          heightFactor: config.heightFactor,
+          duration: 1000,
+          curve: Curves.easeInOut,
+          child: Container({
+            decoration: BoxDecoration({
+              color: "orange",
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all({ color: "darkorange", width: 3 }),
+            }),
+            child: Center({
+              child: Column({
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    `Position ${this.currentIndex + 1}/5`,
+                    { style: TextStyle({ fontSize: 20, fontWeight: "bold" }) }
+                  ),
+                  SizedBox({ height: 8 }),
+                  Text(
+                    "Tap for Next",
+                    { style: TextStyle({ fontSize: 16 }) }
+                  ),
+                ],
+              }),
+            }),
+          }),
+        }),
+      }),
+    });
+  }
+
+  nextConfiguration() {
+    this.setState(() => {
+      this.currentIndex = (this.currentIndex + 1) % this.configs.length;
+    });
+  }
+}
+```
+
+### Example 4: Aspect ratio preserved image container
+
+```typescript
+import { AnimatedFractionallySizedBox, Container, Image, Curves } from '@flitter/core';
+
+class AspectRatioImageContainer extends StatefulWidget {
+  createState() {
+    return new AspectRatioImageContainerState();
+  }
+}
+
+class AspectRatioImageContainerState extends State<AspectRatioImageContainer> {
+  isFullscreen = false;
+
+  build() {
+    return Container({
+      width: double.infinity,
+      height: double.infinity,
+      color: "black",
+      child: GestureDetector({
+        onTap: () => {
+          this.setState(() => {
+            this.isFullscreen = !this.isFullscreen;
+          });
+        },
+        child: AnimatedFractionallySizedBox({
+          widthFactor: this.isFullscreen ? 1.0 : 0.7,
+          heightFactor: this.isFullscreen ? 1.0 : 0.5,
+          duration: 500,
+          curve: Curves.easeOut,
+          alignment: Alignment.center,
+          child: Container({
+            decoration: BoxDecoration({
+              boxShadow: this.isFullscreen ? [] : [
+                BoxShadow({
+                  color: "rgba(0,0,0,0.5)",
+                  blurRadius: 20,
+                  spreadRadius: 5,
+                }),
+              ],
+            }),
+            child: ClipRRect({
+              borderRadius: BorderRadius.circular(this.isFullscreen ? 0 : 16),
+              child: Image({
+                src: "https://example.com/landscape.jpg",
+                fit: "cover",
+              }),
+            }),
+          }),
+        }),
+      }),
+    });
+  }
+}
+```
+
+## Notes
+
+- widthFactor and heightFactor must be greater than or equal to 0
+- If both widthFactor and heightFactor are undefined, the child widget's intrinsic size is used
+- When the parent widget's size changes, AnimatedFractionallySizedBox's actual size automatically adjusts
+- When alignment and factor values change simultaneously, they all animate together
+- For performance considerations, avoid too frequent size changes
+
+## Related widgets
+
+- **FractionallySizedBox**: Basic widget that sets size proportional to parent without animation
+- **AnimatedContainer**: Animates multiple properties simultaneously
+- **AnimatedAlign**: Animates only alignment transitions
+- **SizedBox**: Widget for setting fixed size

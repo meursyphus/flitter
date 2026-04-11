@@ -1,0 +1,101 @@
+[
+  {
+    "slug": "composition-layout",
+    "title": "Composition And Layout",
+    "summary": "Most chart shells are built from standard layout widgets before any custom painting happens.",
+    "points": [
+      "Use Column, Row, Expanded, Padding, Stack, Positioned, and SizedBox to shape the chart shell.",
+      "Keep layout predictable before introducing custom geometry.",
+      "When a chart needs size awareness, pair the shell with LayoutBuilder-like patterns or controller size updates."
+    ],
+    "sourcePaths": [
+      "packages/core/src/component",
+      "docs/src/app/advanced/layout-constraints/page.mdx",
+      "docs/src/app/advanced/widgets/column/page.mdx",
+      "docs/src/app/advanced/widgets/stack/page.mdx"
+    ],
+    "docsPath": "/llm/core/concepts/composition-layout.md"
+  },
+  {
+    "slug": "provider-controller-state",
+    "title": "Provider And Controller State",
+    "summary": "Headless charts rely on controllers plus providers rather than local ad hoc state.",
+    "points": [
+      "Use ChangeNotifier for chart state and derived layout.",
+      "Use ChangeNotifierProvider to expose controllers to composed widgets.",
+      "Put shared hover, filtering, and visibility state in controllers when multiple parts need it."
+    ],
+    "sourcePaths": [
+      "packages/core/src/provider/ChangeNotifier.ts",
+      "packages/core/src/provider/ChangeNotifierProvider.ts",
+      "docs/src/app/advanced/state-management/page.mdx"
+    ],
+    "docsPath": "/llm/core/concepts/provider-controller-state.md"
+  },
+  {
+    "slug": "animation-primitives",
+    "title": "Animation Primitives",
+    "summary": "Chart motion is built from explicit animation controllers, tweens, and animated widgets.",
+    "points": [
+      "Use AnimationController, Tween, and CurvedAnimation for controlled motion.",
+      "Use animated widgets when the motion maps to size, position, opacity, or transform.",
+      "Keep animation local to view behavior unless controller state genuinely owns it."
+    ],
+    "sourcePaths": [
+      "packages/core/src/animation",
+      "docs/src/app/advanced/animation/page.mdx",
+      "docs/src/app/advanced/widgets/animated-fractionally-sized-box/page.mdx"
+    ],
+    "docsPath": "/llm/core/concepts/animation-primitives.md"
+  },
+  {
+    "slug": "custom-paint-geometry",
+    "title": "Custom Paint And Geometry",
+    "summary": "Arc, path, link, and other bespoke marks should be painted directly when widgets are not enough.",
+    "points": [
+      "Use CustomPaint for slices, arcs, links, and arbitrary vector shapes.",
+      "Keep geometry data outside the painter when the same geometry must drive labels or interaction.",
+      "Let controllers compute reusable layout and let painters render it."
+    ],
+    "sourcePaths": [
+      "packages/core/src/component/CustomPaint.ts",
+      "docs/src/app/advanced/widgets/custom-paint/page.mdx",
+      "packages/chart/src/shared/utils"
+    ],
+    "docsPath": "/llm/core/concepts/custom-paint-geometry.md"
+  },
+  {
+    "slug": "interaction-and-hit-testing",
+    "title": "Interaction And Hit Testing",
+    "summary": "Hover, selection, and tooltip behavior come from explicit hit-testing widgets and shared state.",
+    "points": [
+      "Use GestureDetector for hover and click behavior.",
+      "Use Tooltip and ZIndex when focus detail must float above chart content.",
+      "Coordinate interaction state through providers when multiple marks must respond together."
+    ],
+    "sourcePaths": [
+      "packages/core/src/component/GestureDetector.ts",
+      "packages/core/src/component/Tooltip.ts",
+      "packages/core/src/component/ZIndex.ts",
+      "docs/src/app/advanced/widgets/gesture-detector/page.mdx",
+      "docs/src/app/advanced/widgets/tooltip/page.mdx"
+    ],
+    "docsPath": "/llm/core/concepts/interaction-and-hit-testing.md"
+  },
+  {
+    "slug": "novel-chart-decision",
+    "title": "Novel Chart Decision",
+    "summary": "Leave preset land only after proving that the canonical families cannot answer the prompt honestly.",
+    "points": [
+      "Reject the nearest canned chart if it distorts the semantics.",
+      "Reuse controller, layout, and paint ideas from headless charts instead of starting from zero.",
+      "Document why the result is a direct composition or novel chart pattern."
+    ],
+    "sourcePaths": [
+      "docs/public/llm/chart.md",
+      "docs/public/llm/critic-checklist.md",
+      "packages/chart/src/headless"
+    ],
+    "docsPath": "/llm/core/concepts/novel-chart-decision.md"
+  }
+]

@@ -1,0 +1,114 @@
+export const metadata = {
+  title: "Installation — Flitter Chart",
+  description: "Install Flitter Chart in your React or Svelte project.",
+};
+
+<div className="prose prose-neutral prose-sm mx-auto max-w-3xl prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-code:rounded prose-code:bg-neutral-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-[13px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-pre:rounded-lg prose-pre:text-sm prose-a:text-neutral-900 prose-a:no-underline hover:prose-a:underline">
+
+# Installation
+
+Flitter charts are source code, not a dependency. After setup, the full chart implementation lives in your project — every widget, every renderer, every type definition. There's no black box.
+
+## Prerequisites
+
+- **Node.js** 18 or later
+- **React** 18+ or **Svelte** 4+
+- A package manager: npm, pnpm, or yarn
+
+## Quick setup
+
+Initialize Flitter in your project:
+
+```bash
+npx flitter-ui init
+```
+
+This command will:
+1. Install the core rendering engine (`flitter-ui`)
+2. Install the framework adapter (`@flitterjs/react` or `@flitterjs/svelte`)
+3. Create a `flitter.config.ts` in your project root
+
+## Add your first chart
+
+```bash
+npx flitter-ui add bar-chart
+```
+
+This generates the full source code in your project:
+
+```
+charts/
+├── bar-chart/
+│   ├── index.ts              # BarChart — the component you import
+│   ├── base/
+│   │   ├── index.ts          # Headless chart logic (scales, layout)
+│   │   └── bar-group.ts      # Bar group layout within each category
+│   └── style/
+│       ├── index.ts          # Style configuration & defaults
+│       ├── config.ts         # TypeScript types for all config options
+│       └── parts/
+│           ├── bar.ts        # Individual bar renderer — edit this to customize bars
+│           └── data-view.ts  # Data layer with tooltip overlay
+└── _styles/
+    └── ag/                   # Shared style base (generated once, reused across charts)
+        ├── index.ts
+        ├── cartesian/        # Axis, grid, labels — shared across cartesian charts
+        ├── bar-like/         # Bar-specific shared components
+        └── utils/
+```
+
+Every file is yours. Open any file, read the widget tree, change what you want. The `parts/` folder is where most visual customization happens — each file is a small widget factory you can replace entirely.
+
+Delete the CLI after install — your chart has zero runtime dependency on `flitter-ui`.
+
+## Choose a style
+
+Each chart comes with multiple visual styles. Pick one during install:
+
+```bash
+npx flitter-ui add bar-chart --style toast
+npx flitter-ui add bar-chart --style ag
+```
+
+If you don't specify a style, you'll be prompted to choose.
+
+## Framework setup
+
+### React
+
+```tsx
+import Widget from "@flitterjs/react";
+import BarChart from "./charts/bar-chart";
+
+export default function App() {
+  return (
+    <Widget
+      widget={BarChart({ data: [...] })}
+      width="100%"
+      height={400}
+    />
+  );
+}
+```
+
+### Svelte
+
+```svelte
+<script>
+  import Widget from "@flitterjs/svelte";
+  import BarChart from "./charts/bar-chart";
+</script>
+
+<Widget
+  widget={BarChart({ data: [...] })}
+  width="100%"
+  height={400}
+/>
+```
+
+## Next steps
+
+- [Quick Start](/chart/quick-start) — Build your first chart in 5 minutes
+- [Browse Charts](/chart) — See all available chart types
+
+</div>

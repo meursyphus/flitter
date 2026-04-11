@@ -1,0 +1,283 @@
+export const metadata = { title: "SizedBox", description: "A simple box widget with a specified size" };
+
+## Overview
+
+SizedBox is a simple widget that creates a box with a specific width and height.
+
+SizedBox is a single-purpose widget focused solely on sizing, making it lighter and more efficient than Container. It's commonly used to create spacing between widgets, constrain child widget sizes, or create empty space in conditional rendering. Internally, it uses ConstrainedBox with tight constraints.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/EHPu_DzRfqA"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowFullScreen
+></iframe>
+
+See: [https://api.flutter.dev/flutter/widgets/SizedBox-class.html](https://api.flutter.dev/flutter/widgets/SizedBox-class.html)
+
+## When to use it?
+
+- When creating fixed spacing between widgets
+- When forcing a fixed size on child widgets
+- When needing empty space in conditional rendering
+- When you don't need Container's other features (color, padding, decoration, etc.)
+- When performance matters and you only need to specify size
+
+## Basic Usage
+
+```typescript
+// Fixed size box
+SizedBox({
+  width: 200,
+  height: 100,
+  child: Text('Fixed size')
+})
+
+// Creating spacing (most common use)
+Column({
+  children: [
+    Text('Top'),
+    SizedBox({ height: 20 }), // 20 pixel vertical spacing
+    Text('Bottom')
+  ]
+})
+
+// Horizontal spacing
+Row({
+  children: [
+    Icon({ icon: Icons.star }),
+    SizedBox({ width: 8 }), // 8 pixel horizontal spacing
+    Text('Star')
+  ]
+})
+```
+
+## Props
+
+### width
+
+**Value: number | undefined**
+
+Specifies the width of the box in pixels. If not specified, it depends on the child's width.
+
+```typescript
+SizedBox({
+  width: 100,
+  child: Text('Width 100px')
+})
+```
+
+### height
+
+**Value: number | undefined**
+
+Specifies the height of the box in pixels. If not specified, it depends on the child's height.
+
+```typescript
+SizedBox({
+  height: 50,
+  child: Text('Height 50px')
+})
+```
+
+### child
+
+**Value: Widget | undefined**
+
+The child widget to place inside the SizedBox. If there's no child, it creates empty space.
+
+```typescript
+SizedBox({
+  width: 200,
+  height: 200,
+  child: Container({ color: 'blue' })
+})
+```
+
+## Static Methods
+
+### SizedBox.shrink()
+
+Creates a SizedBox with zero size. Useful when you don't want to display anything in conditional rendering.
+
+```typescript
+// Conditional rendering
+const widget = showButton 
+  ? ElevatedButton({ child: Text('Click') })
+  : SizedBox.shrink();
+
+// Basic usage
+SizedBox.shrink() // width: 0, height: 0
+
+// With child
+SizedBox.shrink({
+  child: Text('Not visible') // Not displayed due to zero size
+})
+```
+
+### SizedBox.expand()
+
+Creates a SizedBox that takes up all available space.
+
+```typescript
+// Take up all space
+SizedBox.expand({
+  child: Container({ color: 'red' })
+})
+
+// Expand only in one direction
+SizedBox.expand({
+  width: 100, // Fixed width
+  child: Container({ color: 'blue' }) // Only height expands
+})
+```
+
+### SizedBox.fromSize()
+
+Creates a SizedBox from a Size object.
+
+```typescript
+const size = Size({ width: 150, height: 75 });
+
+SizedBox.fromSize({
+  size: size,
+  child: Text('Using Size object')
+})
+```
+
+### SizedBox.square()
+
+Creates a square SizedBox.
+
+```typescript
+// 100x100 square
+SizedBox.square({
+  dimension: 100,
+  child: Container({ color: 'green' })
+})
+```
+
+## Practical Examples
+
+### Example 1: List Item Spacing
+
+```typescript
+const listWithSpacing = Column({
+  children: [
+    ListTile({ title: Text('Item 1') }),
+    SizedBox({ height: 8 }),
+    ListTile({ title: Text('Item 2') }),
+    SizedBox({ height: 8 }),
+    ListTile({ title: Text('Item 3') })
+  ]
+});
+```
+
+### Example 2: Button Group
+
+```typescript
+const buttonGroup = Row({
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    ElevatedButton({
+      onPressed: () => {},
+      child: Text('Previous')
+    }),
+    SizedBox({ width: 16 }), // Space between buttons
+    ElevatedButton({
+      onPressed: () => {},
+      child: Text('Next')
+    })
+  ]
+});
+```
+
+### Example 3: Conditional Spacing
+
+```typescript
+const conditionalSpacing = Column({
+  children: [
+    Text('Title'),
+    hasSubtitle ? SizedBox({ height: 8 }) : SizedBox.shrink(),
+    hasSubtitle ? Text('Subtitle') : SizedBox.shrink(),
+    SizedBox({ height: 16 }),
+    Text('Body')
+  ]
+});
+```
+
+### Example 4: Fixed Size Image Container
+
+```typescript
+const imageGrid = GridView({
+  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount({
+    crossAxisCount: 3,
+    spacing: 8
+  }),
+  children: images.map(img => 
+    SizedBox.square({
+      dimension: 100,
+      child: Image({
+        src: img,
+        fit: 'cover'
+      })
+    })
+  )
+});
+```
+
+### Example 5: Constraining Loading Indicator
+
+```typescript
+const loadingIndicator = Center({
+  child: SizedBox({
+    width: 50,
+    height: 50,
+    child: CircularProgressIndicator()
+  })
+});
+```
+
+## Difference from Container
+
+### Use SizedBox
+```typescript
+// When you only need size
+SizedBox({ 
+  width: 100, 
+  height: 50,
+  child: widget 
+})
+```
+
+### Use Container
+```typescript
+// When you need other styling besides size
+Container({ 
+  width: 100, 
+  height: 50,
+  padding: EdgeInsets.all(8),
+  color: 'blue',
+  child: widget 
+})
+```
+
+**Performance difference**: SizedBox creates only a single ConstrainedBox, while Container combines multiple widgets, making SizedBox more efficient.
+
+## Important Notes
+
+- If only width or height is specified, the other dimension follows the child's size.
+- SizedBox.expand() can cause errors if the parent allows infinite size.
+- A SizedBox without a child creates empty space of the specified size.
+- Negative sizes are not allowed.
+
+## Related Widgets
+
+- **Container**: When you need various styling besides size
+- **ConstrainedBox**: When you need min/max size constraints
+- **AspectRatio**: When you need to maintain aspect ratio
+- **FractionallySizedBox**: When sizing based on parent's size percentage
+- **Spacer**: When creating flexible space in Row/Column

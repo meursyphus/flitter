@@ -1,0 +1,161 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --default-font-family: var(--font-body), 'Pretendard', sans-serif;
+}
+
+
+/* rehype-pretty-code */
+figure[data-rehype-pretty-code-figure] {
+  margin: 1.5em 0;
+}
+
+figure[data-rehype-pretty-code-figure] pre {
+  overflow-x: auto;
+  background: #fafafa !important;
+  border: 1px solid #e5e5e5;
+  border-radius: 0.5rem;
+  padding: 0.875rem 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+figure[data-rehype-pretty-code-figure] code {
+  font-size: 13px;
+  line-height: 1.7;
+  background: transparent !important;
+}
+
+figure[data-rehype-pretty-code-figure] [data-line] {
+  padding: 0 1rem;
+}
+
+/* Inline code (not inside pre) */
+:not(pre) > code {
+  background-color: #f5f5f5;
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.375rem;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+/* Remove prose overrides on pretty-code pre blocks */
+.prose figure[data-rehype-pretty-code-figure] pre {
+  background: #fafafa !important;
+  padding: 0.875rem 0;
+}
+
+/* Force all prose pre/code blocks to light theme */
+.prose pre {
+  background: #fafafa !important;
+  color: #404040 !important;
+  border: 1px solid #e5e5e5;
+  border-radius: 0.5rem;
+}
+
+.prose pre code {
+  background: transparent !important;
+}
+
+/* Slide-in animation for mobile sidebar */
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.2s ease-out forwards;
+}
+
+/* ── Landing page animations ── */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease both;
+}
+
+/* Chart card styles */
+.chart-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chart-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px -8px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Showcase carousel ── */
+@keyframes showcase-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-1 * var(--showcase-total-width)));
+  }
+}
+
+.showcase-carousel {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 80px,
+    black calc(100% - 80px),
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 80px,
+    black calc(100% - 80px),
+    transparent
+  );
+}
+
+.showcase-track {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  --showcase-total-width: calc(10 * (480px + 24px));
+  animation: showcase-scroll 70s linear infinite;
+}
+
+.showcase-track:hover {
+  animation-play-state: paused;
+}
+
+.showcase-panel {
+  flex-shrink: 0;
+  width: 480px;
+}
+
+@media (max-width: 640px) {
+  .showcase-panel {
+    width: 340px;
+  }
+  .showcase-track {
+    --showcase-total-width: calc(10 * (340px + 24px));
+  }
+}

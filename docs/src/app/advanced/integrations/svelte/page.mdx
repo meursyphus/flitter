@@ -1,0 +1,35 @@
+export const metadata = {
+  title: "Svelte Integration",
+  description: "How to use Flitter with Svelte",
+};
+
+# Svelte Integration
+
+Install the Svelte integration package:
+
+```bash
+npm install @flitterjs/svelte
+```
+
+## Basic Usage
+
+```svelte
+<script>
+  import Widget from "@flitterjs/svelte";
+  import { Container, Text, Center } from "flitter";
+
+  const widget = Center({ child: Text("Hello Flitter!") });
+</script>
+
+<Widget
+  width="400px"
+  height="300px"
+  {widget}
+/>
+```
+
+The `Widget` component renders a Flitter widget tree inside a Svelte component. It accepts:
+
+- **widget** - The root Flitter widget to render
+- **width** / **height** - Container dimensions
+- **renderer** - `"svg"` (default) or `"canvas"`

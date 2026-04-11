@@ -1,0 +1,380 @@
+:root {
+  color-scheme: light;
+  --bg: #f3ece1;
+  --bg-alt: #efe3d4;
+  --panel: rgba(255, 252, 247, 0.86);
+  --panel-strong: rgba(255, 252, 247, 0.96);
+  --line: rgba(99, 73, 42, 0.18);
+  --line-strong: rgba(99, 73, 42, 0.34);
+  --text: #2f241a;
+  --muted: #6e5840;
+  --accent: #0d7b7a;
+  --accent-soft: rgba(13, 123, 122, 0.12);
+  --warning: #9c5a25;
+  --shadow: 0 24px 60px rgba(67, 46, 20, 0.12);
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.6), transparent 36%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-alt) 100%);
+}
+
+a {
+  color: inherit;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+.loading-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.loading-card {
+  width: min(680px, 100%);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  padding: 32px;
+  background: var(--panel-strong);
+  box-shadow: var(--shadow);
+}
+
+.shell {
+  width: min(1500px, 100%);
+  margin: 0 auto;
+  padding: 32px 24px 40px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.hero-copy,
+.hero-meta,
+.panel,
+.sidebar-card {
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.hero-copy {
+  padding: 30px 32px;
+}
+
+.hero-copy h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+}
+
+.lede {
+  margin: 16px 0 0;
+  max-width: 60ch;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.hero-meta {
+  padding: 24px;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.meta-chip {
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.meta-chip span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.meta-chip strong {
+  font-size: 1.6rem;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 24px;
+}
+
+.sidebar {
+  display: grid;
+  gap: 20px;
+  align-content: start;
+}
+
+.sidebar-card,
+.panel {
+  padding: 22px;
+}
+
+.case-list {
+  display: grid;
+  gap: 10px;
+}
+
+.case-button {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px 16px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.case-button:hover,
+.case-button-active {
+  transform: translateY(-1px);
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.case-button span,
+.case-button small {
+  display: block;
+}
+
+.case-button small {
+  margin-top: 6px;
+  color: var(--muted);
+}
+
+.link-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.link-stack a,
+.doc-link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.link-stack a:hover,
+.doc-link:hover {
+  text-decoration: underline;
+}
+
+.command-card {
+  display: grid;
+  gap: 10px;
+}
+
+.command-card code {
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--text);
+  font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.content {
+  display: grid;
+  gap: 20px;
+}
+
+.prompt-grid,
+.detail-grid,
+.style-grid,
+.catalog-grid,
+.widget-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.prompt-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.detail-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 20px;
+}
+
+.style-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 18px;
+}
+
+.catalog-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.widget-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 18px;
+}
+
+.panel-head,
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.panel-head h2,
+.card-head h3,
+.style-card h3,
+.detail-card h3 {
+  margin: 0;
+}
+
+.panel-head.compact {
+  align-items: center;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.case-prompt,
+.card-copy,
+.card-foot,
+.style-card p {
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.detail-card,
+.catalog-card,
+.style-card {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.compact-card {
+  padding: 16px;
+}
+
+.detail-card ul,
+.style-card ul {
+  margin: 12px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.84rem;
+}
+
+.pill-warning {
+  background: rgba(156, 90, 37, 0.14);
+  color: var(--warning);
+}
+
+.copy-button {
+  border: 1px solid rgba(13, 123, 122, 0.28);
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(13, 123, 122, 0.08);
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.prompt-box {
+  width: 100%;
+  min-height: 360px;
+  margin-top: 18px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 16px;
+  resize: vertical;
+  background: #f7f1e8;
+  color: #3a2e23;
+  font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+  line-height: 1.6;
+}
+
+@media (max-width: 1120px) {
+  .hero,
+  .workspace,
+  .prompt-grid,
+  .detail-grid,
+  .style-grid,
+  .catalog-grid,
+  .widget-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    order: 2;
+  }
+}
+
+@media (max-width: 720px) {
+  .shell {
+    padding: 20px 14px 28px;
+  }
+
+  .hero-copy,
+  .hero-meta,
+  .sidebar-card,
+  .panel {
+    border-radius: 22px;
+    padding: 18px;
+  }
+
+  .prompt-box {
+    min-height: 280px;
+  }
+}

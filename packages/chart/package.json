@@ -1,0 +1,36 @@
+{
+  "name": "flitter-chart",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Chart library built on Flitter framework",
+  "scripts": {
+    "build": "vite build",
+    "lint": "eslint . --ext ts,tsx",
+    "registry:validate": "node ./registry/validate.mjs",
+    "prepublishOnly": "node ./registry/validate.mjs"
+  },
+  "dependencies": {
+    "flitter-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8",
+    "vite-plugin-dts": "^3.6.4",
+    "vite-tsconfig-paths": "^4.3.2"
+  },
+  "main": "./dist/flitter-chart.es.js",
+  "module": "./dist/flitter-chart.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/flitter-chart.es.js",
+      "default": "./dist/flitter-chart.es.js"
+    },
+    "./registry": "./registry/index.mjs",
+    "./registry/*": "./registry/*"
+  },
+  "files": ["dist", "registry"]
+}

@@ -1,0 +1,381 @@
+export const metadata = { title: "UnconstrainedBox", description: "A widget that imposes no constraints on its child, allowing it to render at its 'natural' size" };
+
+## Overview
+
+UnconstrainedBox is a widget that imposes no constraints on its child, allowing it to render at its "natural" size.
+
+This allows a child to render at the size it would render if it were alone on an infinite canvas with no constraints. This container will then attempt to adopt the same size, within the limits of its own constraints. If it ends up with a different size, it will align the child based on alignment. If the box cannot expand enough to accommodate the entire child, the child will be clipped.
+
+See: [https://api.flutter.dev/flutter/widgets/UnconstrainedBox-class.html](https://api.flutter.dev/flutter/widgets/UnconstrainedBox-class.html)
+
+## When to use it?
+
+- When a child needs to render at its own size without being affected by parent constraints
+- When you want to remove constraints only on a specific axis (horizontal or vertical)
+- When temporarily removing constraints for overflow debugging
+- When you need to determine the actual size of a child widget
+- When you want a child to have a flexible size ignoring parent's tight constraints
+
+## Basic Usage
+
+```typescript
+// Remove all constraints
+UnconstrainedBox({
+  child: Container({
+    width: 200,
+    height: 100,
+    color: 'blue'
+  })
+})
+
+// Remove constraints only on vertical axis (horizontal follows parent)
+UnconstrainedBox({
+  constrainedAxis: 'horizontal',
+  child: Container({
+    width: 200,  // Follows parent width
+    height: 100, // Freely set to 100
+    color: 'green'
+  })
+})
+
+// Use with alignment
+UnconstrainedBox({
+  alignment: Alignment.topLeft,
+  child: Container({
+    width: 50,
+    height: 50,
+    color: 'red'
+  })
+})
+```
+
+## Props Details
+
+### constrainedAxis
+
+**Value: 'vertical' | 'horizontal' | undefined**
+
+Use when you want to maintain constraints on a specific axis only.
+
+- `undefined` (default): Remove constraints on all axes
+- `'vertical'`: Keep vertical constraints, remove horizontal constraints only
+- `'horizontal'`: Keep horizontal constraints, remove vertical constraints only
+
+```typescript
+// Keep vertical constraints (horizontal is free)
+UnconstrainedBox({
+  constrainedAxis: 'vertical',
+  child: Container({
+    width: 300,   // Can be set freely
+    height: 100,  // Follows parent's vertical constraints
+    color: 'blue'
+  })
+})
+
+// Keep horizontal constraints (vertical is free)
+UnconstrainedBox({
+  constrainedAxis: 'horizontal',
+  child: Container({
+    width: 300,   // Follows parent's horizontal constraints
+    height: 100,  // Can be set freely
+    color: 'green'
+  })
+})
+```
+
+### alignment
+
+**Value: Alignment** (default: **Alignment.center**)
+
+Specifies how to align the child when it's smaller than the UnconstrainedBox.
+
+```typescript
+UnconstrainedBox({
+  alignment: Alignment.topRight,
+  child: Container({
+    width: 50,
+    height: 50,
+    color: 'purple'
+  })
+})
+
+UnconstrainedBox({
+  alignment: Alignment.bottomCenter,
+  child: Text('Bottom Aligned Text')
+})
+```
+
+### clipped
+
+**Value: boolean** (default: **false**)
+
+Determines whether to clip when the child overflows the UnconstrainedBox boundaries.
+
+- `false`: Allow overflow (useful for debugging)
+- `true`: Clip parts that exceed boundaries
+
+```typescript
+// Allow overflow
+UnconstrainedBox({
+  clipped: false,
+  child: Container({
+    width: 500,
+    height: 500,
+    color: 'red'
+  })
+})
+
+// Clip overflow
+UnconstrainedBox({
+  clipped: true,
+  child: Container({
+    width: 500,
+    height: 500,
+    color: 'blue'
+  })
+})
+```
+
+### child
+
+**Value: Widget | undefined**
+
+The child widget from which constraints will be removed.
+
+## Practical Examples
+
+### Example 1: Responsive Button Group
+
+```typescript
+const ResponsiveButtonGroup = ({ buttons }) => {
+  return Row({
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: buttons.map(button => 
+      Padding({
+        padding: EdgeInsets.symmetric({ horizontal: 8 }),
+        child: UnconstrainedBox({
+          child: ElevatedButton({
+            onPressed: button.onPressed,
+            child: Padding({
+              padding: EdgeInsets.symmetric({ 
+                horizontal: 24, 
+                vertical: 12 
+              }),
+              child: Text(button.label, {
+                style: TextStyle({
+                  fontSize: 16,
+                  fontWeight: 'bold'
+                })
+              })
+            })
+          })
+        })
+      })
+    )
+  });
+};
+```
+
+### Example 2: Overflow Detection Debug Tool
+
+```typescript
+const DebugOverflowWrapper = ({ child, showBounds }) => {
+  return Stack({
+    children: [
+      UnconstrainedBox({
+        clipped: false,
+        child: child
+      }),
+      if (showBounds) 
+        Positioned.fill({
+          child: Container({
+            decoration: BoxDecoration({
+              border: Border.all({
+                color: 'red',
+                width: 2,
+                style: 'dashed'
+              })
+            })
+          })
+        })
+    ]
+  });
+};
+
+// Usage example
+DebugOverflowWrapper({
+  showBounds: true,
+  child: Container({
+    width: 400,
+    height: 100,
+    color: 'rgba(0, 0, 255, 0.3)',
+    child: Center({
+      child: Text('This container can be larger than its parent')
+    })
+  })
+});
+```
+
+### Example 3: Dynamic Size Card
+
+```typescript
+const DynamicSizeCard = ({ title, content, maxWidth }) => {
+  return Center({
+    child: UnconstrainedBox({
+      child: Container({
+        constraints: BoxConstraints({
+          maxWidth: maxWidth || 600,
+          minWidth: 200
+        }),
+        padding: EdgeInsets.all(24),
+        decoration: BoxDecoration({
+          color: 'white',
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow({
+              color: 'rgba(0,0,0,0.1)',
+              blurRadius: 10,
+              offset: { x: 0, y: 4 }
+            })
+          ]
+        }),
+        child: Column({
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, {
+              style: TextStyle({
+                fontSize: 24,
+                fontWeight: 'bold'
+              })
+            }),
+            SizedBox({ height: 16 }),
+            Text(content, {
+              style: TextStyle({
+                fontSize: 16,
+                color: '#666'
+              })
+            }),
+            SizedBox({ height: 24 }),
+            UnconstrainedBox({
+              alignment: Alignment.centerRight,
+              child: ElevatedButton({
+                onPressed: () => console.log('Clicked'),
+                child: Text('Learn More')
+              })
+            })
+          ]
+        })
+      })
+    })
+  });
+};
+```
+
+### Example 4: Axis-Specific Constraint Removal Layout
+
+```typescript
+const FlexibleLayout = ({ orientation, children }) => {
+  return Container({
+    color: '#f5f5f5',
+    padding: EdgeInsets.all(16),
+    child: Column({
+      children: [
+        // Header uses full width
+        Container({
+          height: 60,
+          color: '#2196F3',
+          child: Center({
+            child: Text('Header', {
+              style: TextStyle({
+                color: 'white',
+                fontSize: 20
+              })
+            })
+          })
+        }),
+        SizedBox({ height: 16 }),
+        // Content has horizontal constraints removed
+        UnconstrainedBox({
+          constrainedAxis: 'vertical',
+          alignment: Alignment.topCenter,
+          child: Container({
+            width: 800, // Can be wider than parent
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration({
+              color: 'white',
+              borderRadius: BorderRadius.circular(8)
+            }),
+            child: Column({
+              children: children
+            })
+          })
+        })
+      ]
+    })
+  });
+};
+```
+
+### Example 5: Tooltip Positioning
+
+```typescript
+const TooltipWithUnconstrainedBox = ({ target, tooltip, isVisible }) => {
+  return Stack({
+    clipBehavior: 'none',
+    children: [
+      target,
+      if (isVisible)
+        Positioned({
+          top: -40,
+          left: 0,
+          right: 0,
+          child: UnconstrainedBox({
+            child: Container({
+              padding: EdgeInsets.symmetric({ 
+                horizontal: 16, 
+                vertical: 8 
+              }),
+              decoration: BoxDecoration({
+                color: 'rgba(0,0,0,0.8)',
+                borderRadius: BorderRadius.circular(4)
+              }),
+              child: Text(tooltip, {
+                style: TextStyle({
+                  color: 'white',
+                  fontSize: 14
+                })
+              })
+            })
+          })
+        })
+    ]
+  });
+};
+
+// Usage example
+TooltipWithUnconstrainedBox({
+  isVisible: showTooltip,
+  tooltip: 'This is an unconstrained tooltip. Size auto-adjusts based on content.',
+  target: IconButton({
+    icon: Icons.info,
+    onPressed: () => setShowTooltip(!showTooltip)
+  })
+});
+```
+
+## Important Notes
+
+- Excessive use of UnconstrainedBox can cause layout overflow
+- In production environments, use `clipped: true` to prevent overflow
+- For debugging purposes, use only in development environments
+- Nested UnconstrainedBoxes can cause unexpected layout issues
+- Use carefully in performance-sensitive areas
+
+## Related Widgets
+
+- **ConstrainedBox**: Imposes additional constraints on its child
+- **LimitedBox**: Applies size limits only when unconstrained
+- **OverflowBox**: Ignores parent constraints and imposes different constraints
+- **SizedBox**: Specifies a fixed size
+- **FittedBox**: Scales child to fit parent

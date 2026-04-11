@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Flitter Configuration",
+  "description": "Configuration file for flitter-ui CLI",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
+    "tsx": {
+      "type": "boolean",
+      "description": "Whether to use TypeScript",
+      "default": true
+    },
+    "framework": {
+      "type": "string",
+      "enum": ["react", "svelte"],
+      "description": "Target framework",
+      "default": "react"
+    },
+    "defaultChartStyle": {
+      "type": "string",
+      "enum": ["ag", "toast"],
+      "description": "Default chart style when --style flag is omitted",
+      "default": "ag"
+    },
+    "aliases": {
+      "type": "object",
+      "properties": {
+        "charts": {
+          "type": "string",
+          "description": "Import alias path for chart output directory",
+          "default": "@/components/chart"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
