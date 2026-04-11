@@ -317,12 +317,20 @@ export class CanvasPaintingContext {
     }
 
     let layer: Layer = child.canvasPainter.layer;
+    // The child boundary's own OffsetLayer already tracks child.offset so that
+    // independent layer updates can move it without repainting the parent.
+    // Only wrap the ancestor portion of the accumulated offset here.
+    const ancestorOffset =
+      accumulatedOffset == null
+        ? null
+        : accumulatedOffset.minus(child.offset);
+
     if (
-      accumulatedOffset &&
-      (accumulatedOffset.x !== 0 || accumulatedOffset.y !== 0)
+      ancestorOffset != null &&
+      (ancestorOffset.x !== 0 || ancestorOffset.y !== 0)
     ) {
       const wrapper = new OffsetLayer();
-      wrapper.offset = accumulatedOffset;
+      wrapper.offset = ancestorOffset;
       wrapper.append(layer);
       layer = wrapper;
     }
