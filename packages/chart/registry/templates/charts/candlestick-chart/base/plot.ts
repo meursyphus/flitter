@@ -1,5 +1,5 @@
 import type { CandlestickChartCustom } from "../types";
-import { Align, Alignment, Stack } from "flitter-core";
+import { Align, Alignment, RepaintBoundary, Stack } from "flitter-core";
 import { DockFrame } from "@shared/cartesian/index";
 
 export function Plot(...args: Parameters<CandlestickChartCustom["plot"]>) {
@@ -14,7 +14,11 @@ export function Plot(...args: Parameters<CandlestickChartCustom["plot"]>) {
     }),
     fill: Stack({
       clipped: false,
-      children: [grid, dataView, tooltipArea],
+      children: [
+        RepaintBoundary({ child: grid }),
+        RepaintBoundary({ child: dataView }),
+        tooltipArea,
+      ],
     }),
   });
 }
