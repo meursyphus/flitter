@@ -1,5 +1,5 @@
 {
-  "extends": "../../../../tsconfig.json",
+  "extends": "../../../../../tsconfig.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "resolveJsonModule": true,
@@ -7,11 +7,21 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "flitter-ui/chart": ["../../../flitter/src/chart.ts"],
-      "@headless/*": ["../../src/headless/*"],
-      "@shared/*": ["../../src/shared/*"],
-      "@utils/*": ["../../src/shared/utils/*"],
-      "@styles/*": ["./styles/*"]
+      "flitter-ui/chart": [
+        "../../../src/chart.ts"
+      ],
+      "@headless/*": [
+        "../../../../chart/src/headless/*"
+      ],
+      "@shared/*": [
+        "../../../../chart/src/shared/*"
+      ],
+      "@utils/*": [
+        "../../../../chart/src/shared/utils/*"
+      ],
+      "@styles/*": [
+        "../../../../chart/registry/templates/styles/*"
+      ]
     }
   },
   "include": [
