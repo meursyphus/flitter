@@ -1,9 +1,20 @@
-import type InlineSpan from "./Inline-span";
-import Utils, { assert, getPooledFontString, getTextWidth } from "../../utils";
-import type { SvgPaintContext } from "../../framework";
-import type Offset from "./_offset";
-import { TextDirection, TextAlign, TextWidthBasis } from "..";
-import { FontStyle } from "./text-style";
+import type InlineSpan from "../Inline-span";
+import Utils, { assert, getPooledFontString, getTextWidth } from "../../../utils";
+import type { SvgPaintContext } from "../../../framework";
+import type Offset from "../_offset";
+import { TextDirection, TextAlign, TextWidthBasis } from "../..";
+import { FontStyle } from "../text-style";
+import {
+  measureSpanText,
+  combineMeasuredSpans,
+  type MeasuredSpanResult,
+} from "./layout";
+import type { PreparedLineBreakData } from "./line-break";
+import {
+  walkPreparedLines,
+  type InternalLayoutLine,
+} from "./line-break";
+import type { SegmentBreakKind } from "./analysis";
 
 function getTextHeight({ fontSize }: { fontSize: number }) {
   return fontSize;
@@ -17,83 +28,7 @@ const defaultTextStyle = {
   height: 1.2,
 };
 
-const HARD_BREAK = "\n";
-const SOFT_HYPHEN = "\u00AD";
-const TAB = "\t";
 const FIT_EPSILON = 0.005;
-const MAX_PREFIX_FIT_GRAPHEMES = 96;
-const TAB_STOP_SPACES = 8;
-const FLITTER_ENGINE_PROFILE_KEY = "__flitter_engine_profile__";
-
-type EngineProfile = {
-  lineFitEpsilon: number;
-  preferEarlySoftHyphenBreak: boolean;
-};
-
-function detectEngineProfile(): EngineProfile {
-  if (typeof navigator === "undefined") {
-    return { lineFitEpsilon: 0.005, preferEarlySoftHyphenBreak: false };
-  }
-  const ua = navigator.userAgent;
-  const isSafari = /^(?!.*Chrome).*Safari.*/i.test(ua);
-  return {
-    lineFitEpsilon: isSafari ? 1 / 64 : 0.005,
-    preferEarlySoftHyphenBreak: isSafari,
-  };
-}
-
-function getEngineProfile(): EngineProfile {
-  if (typeof window === "undefined") {
-    return { lineFitEpsilon: 0.005, preferEarlySoftHyphenBreak: false };
-  }
-  const win = window as any;
-  if (win[FLITTER_ENGINE_PROFILE_KEY] == null) {
-    win[FLITTER_ENGINE_PROFILE_KEY] = detectEngineProfile();
-  }
-  return win[FLITTER_ENGINE_PROFILE_KEY];
-}
-
-// Kinsoku shori rules from pretext (chenglou/pretext)
-// Characters prohibited at line start
-const LINE_START_PROHIBITED = new Set([
-  // kinsokuStart - CJK line-start prohibitions
-  "，", "．", "！", "：", "；", "？",
-  "、", "。", "・",
-  "）", "〕", "〉", "》", "」", "』", "】", "〗", "〙", "〛",
-  "ー", "々", "〻", "ゝ", "ゞ", "ヽ", "ヾ",
-  // leftStickyPunctuation - sticks to preceding word
-  ".", ",", "!", "?", ":", ";",
-  "،", "؛", "؟",
-  "।", "॥",
-  "၊", "။", "၌", "၍", "၏",
-  ")", "]", "}", "%", '"',
-  "”", "’", "»", "›",
-  "…",
-]);
-
-// Characters prohibited at line end
-const LINE_END_PROHIBITED = new Set([
-  '"', "(", "[", "{",
-  "“", "‘", "«", "‹",
-  "（", "〔", "〈", "《", "「", "『", "【", "〖", "〘", "〚",
-]);
-
-type SegmentKind = "text" | "space" | "hard-break" | "soft-hyphen" | "tab";
-
-type LayoutCursor = {
-  segmentIndex: number;
-  graphemeIndex: number;
-};
-
-type SegmentSlice = {
-  start: number;
-  text: string;
-};
-
-type GraphemePart = {
-  end: number;
-  text: string;
-};
 
 type PreparedSpanStyle = {
   color: string;
@@ -105,30 +40,6 @@ type PreparedSpanStyle = {
   fontWeight: string;
   height: number;
   lineHeight: number;
-};
-
-type PreparedSegment = PreparedSpanStyle & {
-  boundaryOffsets: number[];
-  containsCJK: boolean;
-  content: string;
-  end: number;
-  graphemes: string[];
-  hyphenWidth: number;
-  kind: SegmentKind;
-  lineEndFitWidth: number;
-  prefixWidths: number[];
-  start: number;
-};
-
-type LineLayoutResult = {
-  line: ParagraphLine;
-  nextCursor: LayoutCursor;
-  trailingBlankLineStyle: PreparedSpanStyle | null;
-};
-
-type PendingBreak = {
-  hyphenSegment?: PreparedSegment;
-  nextCursor: LayoutCursor;
 };
 
 type ParagraphCaretInfo = {
@@ -156,202 +67,20 @@ type Span = {
   height: number;
 };
 
-type SegmenterLike = {
-  segment(text: string): Iterable<{
-    index: number;
-    isWordLike?: boolean;
-    segment: string;
-  }>;
-};
-
-const FLITTER_SEGMENTER_KEY = "__flitter_segmenters__";
-
-type SegmenterStore = {
-  word: SegmenterLike | null;
-  grapheme: SegmenterLike | null;
-};
-
-function getSegmenter(granularity: "grapheme" | "word"): SegmenterLike | null {
-  if (
-    typeof Intl === "undefined" ||
-    typeof (Intl as any).Segmenter !== "function"
-  ) {
-    return null;
-  }
-
-  // On server, create ephemeral instances (no caching to avoid memory leak)
-  if (typeof window === "undefined") {
-    return new (Intl as any).Segmenter(undefined, { granularity });
-  }
-
-  const win = window as any;
-  if (win[FLITTER_SEGMENTER_KEY] == null) {
-    win[FLITTER_SEGMENTER_KEY] = {
-      word: null,
-      grapheme: null,
-    } satisfies SegmenterStore;
-  }
-
-  const store: SegmenterStore = win[FLITTER_SEGMENTER_KEY];
-
-  if (granularity === "word") {
-    store.word ??= new (Intl as any).Segmenter(undefined, {
-      granularity: "word",
-    });
-    return store.word;
-  }
-
-  store.grapheme ??= new (Intl as any).Segmenter(undefined, {
-    granularity: "grapheme",
-  });
-  return store.grapheme;
-}
-
 function resolveFontStyle(fontStyle: FontStyle = FontStyle.normal): string {
   return fontStyle === FontStyle.italic ? "italic" : "normal";
 }
 
-// Comprehensive CJK detection from pretext (chenglou/pretext)
-function isCJKCodePoint(codePoint: number): boolean {
-  return (
-    (codePoint >= 0x4e00 && codePoint <= 0x9fff) || // CJK Unified Ideographs
-    (codePoint >= 0x3400 && codePoint <= 0x4dbf) || // CJK Extension A
-    (codePoint >= 0x20000 && codePoint <= 0x2a6df) || // CJK Extension B
-    (codePoint >= 0x2a700 && codePoint <= 0x2b73f) || // CJK Extension C
-    (codePoint >= 0x2b740 && codePoint <= 0x2b81f) || // CJK Extension D
-    (codePoint >= 0x2b820 && codePoint <= 0x2ceaf) || // CJK Extension E
-    (codePoint >= 0x2ceb0 && codePoint <= 0x2ebef) || // CJK Extension F
-    (codePoint >= 0x2ebf0 && codePoint <= 0x2ee5d) || // CJK Extension I
-    (codePoint >= 0x2f800 && codePoint <= 0x2fa1f) || // CJK Compatibility Ideographs Supplement
-    (codePoint >= 0x30000 && codePoint <= 0x3134f) || // CJK Extension G
-    (codePoint >= 0x31350 && codePoint <= 0x323af) || // CJK Extension H
-    (codePoint >= 0x323b0 && codePoint <= 0x33479) || // CJK Extension J (tentative)
-    (codePoint >= 0xf900 && codePoint <= 0xfaff) || // CJK Compatibility Ideographs
-    (codePoint >= 0x3000 && codePoint <= 0x303f) || // CJK Symbols and Punctuation
-    (codePoint >= 0x3040 && codePoint <= 0x309f) || // Hiragana
-    (codePoint >= 0x30a0 && codePoint <= 0x30ff) || // Katakana
-    (codePoint >= 0xac00 && codePoint <= 0xd7af) || // Hangul Syllables
-    (codePoint >= 0xff00 && codePoint <= 0xffef) // Halfwidth and Fullwidth Forms
-  );
-}
-
-function containsCJK(text: string): boolean {
-  for (let i = 0; i < text.length; i++) {
-    const first = text.charCodeAt(i);
-    if (first < 0x3000) continue;
-
-    // Handle surrogate pairs for supplementary planes
-    if (first >= 0xd800 && first <= 0xdbff && i + 1 < text.length) {
-      const second = text.charCodeAt(i + 1);
-      if (second >= 0xdc00 && second <= 0xdfff) {
-        const codePoint =
-          ((first - 0xd800) << 10) + (second - 0xdc00) + 0x10000;
-        if (isCJKCodePoint(codePoint)) return true;
-        i++;
-        continue;
-      }
-    }
-
-    if (isCJKCodePoint(first)) return true;
-  }
-  return false;
-}
-
-function isWhitespaceOnly(text: string): boolean {
-  return text.length > 0 && /^[^\S\r\n]+$/u.test(text);
-}
-
-function segmentTextContent(text: string): SegmentSlice[] {
-  if (text.length === 0) {
-    return [];
-  }
-
-  const segmenter = getSegmenter("word");
-  if (segmenter != null) {
-    const parts: SegmentSlice[] = [];
-    for (const part of segmenter.segment(text)) {
-      if (part.segment.length === 0) {
-        continue;
-      }
-      parts.push({
-        start: part.index,
-        text: part.segment,
-      });
-    }
-    if (parts.length > 0) {
-      return parts;
-    }
-  }
-
-  const parts: SegmentSlice[] = [];
-  const regex = /[^\S\r\n]+|\S+/gu;
-  let match: RegExpExecArray | null;
-  while ((match = regex.exec(text)) != null) {
-    parts.push({
-      start: match.index,
-      text: match[0],
-    });
-  }
-  return parts;
-}
-
-function splitSoftHyphen(text: string, start: number): SegmentSlice[] {
-  const parts: SegmentSlice[] = [];
-  let cursor = 0;
-
-  while (cursor < text.length) {
-    const softHyphenIndex = text.indexOf(SOFT_HYPHEN, cursor);
-    if (softHyphenIndex === -1) {
-      parts.push({
-        start: start + cursor,
-        text: text.slice(cursor),
-      });
-      break;
-    }
-
-    if (softHyphenIndex > cursor) {
-      parts.push({
-        start: start + cursor,
-        text: text.slice(cursor, softHyphenIndex),
-      });
-    }
-
-    parts.push({
-      start: start + softHyphenIndex,
-      text: SOFT_HYPHEN,
-    });
-    cursor = softHyphenIndex + SOFT_HYPHEN.length;
-  }
-
-  return parts.filter(part => part.text.length > 0);
-}
-
-function splitGraphemes(text: string): GraphemePart[] {
-  const segmenter = getSegmenter("grapheme");
-  if (segmenter != null) {
-    const parts: GraphemePart[] = [];
-    for (const part of segmenter.segment(text)) {
-      parts.push({
-        end: part.index + part.segment.length,
-        text: part.segment,
-      });
-    }
-    if (parts.length > 0) {
-      return parts;
-    }
-  }
-
-  const parts: GraphemePart[] = [];
-  let offset = 0;
-  for (const grapheme of Array.from(text)) {
-    offset += grapheme.length;
-    parts.push({
-      end: offset,
-      text: grapheme,
-    });
-  }
-  return parts;
-}
+// Prepared segment info: tracks which source style each segment belongs to,
+// plus the segment text and character offset for SpanBox creation.
+type PreparedSegmentInfo = {
+  style: PreparedSpanStyle;
+  text: string;
+  // Absolute character offset in the full paragraph text
+  charStart: number;
+  charEnd: number;
+  kind: SegmentBreakKind;
+};
 
 export default class TextPainter {
   text?: InlineSpan;
@@ -559,8 +288,11 @@ export class Paragraph {
   private preparedIntrinsicHeight = this.defaultLineStyle.lineHeight;
   private preparedIntrinsicWidth = 0;
   private preparedLongestLine = 0;
-  private preparedSegments: PreparedSegment[] = [];
   private preparedTextLength = 0;
+
+  // Pretext pipeline data
+  private preparedLineBreakData: PreparedLineBreakData | null = null;
+  private preparedSegmentInfos: PreparedSegmentInfo[] = [];
 
   constructor(
     text: InlineSpan | null,
@@ -647,7 +379,10 @@ export class Paragraph {
     this.lines = [];
     this.lastLayoutWidth = width;
 
-    if (this.preparedSegments.length === 0) {
+    if (
+      this.preparedLineBreakData == null ||
+      this.preparedSegmentInfos.length === 0
+    ) {
       this.lines.push(
         new ParagraphLine({
           defaultStyle: this.defaultLineStyle,
@@ -659,35 +394,45 @@ export class Paragraph {
     }
 
     const maxLineCount = this.maxLines ?? Infinity;
-    let cursor: LayoutCursor = {
-      segmentIndex: 0,
-      graphemeIndex: 0,
-    };
-    let trailingBlankLineStyle: PreparedSpanStyle | null = null;
+    const layoutLines: InternalLayoutLine[] = [];
 
-    while (cursor.segmentIndex < this.preparedSegments.length) {
-      if (this.lines.length >= maxLineCount) {
-        break;
+    // Use pretext's fast line walker
+    walkPreparedLines(this.preparedLineBreakData, width, line => {
+      if (layoutLines.length < maxLineCount) {
+        layoutLines.push(line);
       }
+    });
 
-      const result = this.layoutNextLine(cursor, width);
-      this.lines.push(result.line);
-      cursor = result.nextCursor;
-      trailingBlankLineStyle = result.trailingBlankLineStyle;
+    const isTruncated = layoutLines.length >= maxLineCount &&
+      this.hasMoreContentAfterLine(layoutLines[layoutLines.length - 1]);
+
+    // Convert InternalLayoutLines to ParagraphLines with SpanBoxes
+    for (const layoutLine of layoutLines) {
+      const paragraphLine = this.buildParagraphLine(layoutLine);
+      this.lines.push(paragraphLine);
     }
 
-    const isTruncated = cursor.segmentIndex < this.preparedSegments.length;
+    // Handle trailing blank line (when text ends with \n)
     if (
       !isTruncated &&
-      trailingBlankLineStyle != null &&
-      this.lines.length < maxLineCount
+      layoutLines.length > 0 &&
+      layoutLines.length < maxLineCount
     ) {
-      this.lines.push(
-        new ParagraphLine({
-          defaultStyle: trailingBlankLineStyle,
-          startOffset: this.preparedTextLength,
-        }),
-      );
+      const lastLayoutLine = layoutLines[layoutLines.length - 1]!;
+      const lastSegIdx = lastLayoutLine.endSegmentIndex - 1;
+      if (
+        lastSegIdx >= 0 &&
+        lastSegIdx < this.preparedSegmentInfos.length &&
+        this.preparedSegmentInfos[lastSegIdx]!.kind === "hard-break"
+      ) {
+        const style = this.preparedSegmentInfos[lastSegIdx]!.style;
+        this.lines.push(
+          new ParagraphLine({
+            defaultStyle: style,
+            startOffset: this.preparedTextLength,
+          }),
+        );
+      }
     }
 
     if (
@@ -887,144 +632,6 @@ export class Paragraph {
     return truncatedLine;
   }
 
-  private createPreparedSegment(
-    style: PreparedSpanStyle,
-    content: string,
-    start: number,
-  ): PreparedSegment {
-    const kind: SegmentKind =
-      content === SOFT_HYPHEN
-        ? "soft-hyphen"
-        : content === TAB
-          ? "tab"
-          : isWhitespaceOnly(content)
-            ? "space"
-            : "text";
-
-    if (kind === "soft-hyphen") {
-      const hyphenWidth = getTextWidth({ text: "-", font: style.font });
-      return {
-        ...style,
-        boundaryOffsets: [0, content.length],
-        containsCJK: false,
-        content,
-        end: start + content.length,
-        graphemes: [content],
-        hyphenWidth,
-        kind,
-        lineEndFitWidth: hyphenWidth,
-        prefixWidths: [0, 0],
-        start,
-      };
-    }
-
-    if (kind === "tab") {
-      return {
-        ...style,
-        boundaryOffsets: [0, content.length],
-        containsCJK: false,
-        content,
-        end: start + content.length,
-        graphemes: [content],
-        hyphenWidth: 0,
-        kind,
-        lineEndFitWidth: 0,
-        prefixWidths: [0, 0],
-        start,
-      };
-    }
-
-    const graphemeParts = splitGraphemes(content);
-    const boundaryOffsets = [0];
-    const prefixWidths = [0];
-    const graphemes: string[] = [];
-    let prefix = "";
-
-    // MAX_PREFIX_FIT_GRAPHEMES guard: avoid superlinear prepare time
-    // on pathological inputs by measuring individual graphemes instead
-    const useIndividualWidths = graphemeParts.length > MAX_PREFIX_FIT_GRAPHEMES;
-    let runningWidth = 0;
-
-    graphemeParts.forEach(part => {
-      graphemes.push(part.text);
-      boundaryOffsets.push(part.end);
-      if (useIndividualWidths) {
-        runningWidth += getTextWidth({ text: part.text, font: style.font });
-        prefixWidths.push(runningWidth);
-      } else {
-        prefix += part.text;
-        prefixWidths.push(getTextWidth({ text: prefix, font: style.font }));
-      }
-    });
-
-    const fullWidth = prefixWidths[prefixWidths.length - 1] ?? 0;
-
-    return {
-      ...style,
-      boundaryOffsets,
-      containsCJK: kind === "text" && containsCJK(content),
-      content,
-      end: start + content.length,
-      graphemes,
-      hyphenWidth: 0,
-      kind,
-      // Trailing whitespace hangs past line edge (CSS behavior)
-      lineEndFitWidth: kind === "space" ? 0 : fullWidth,
-      prefixWidths,
-      start,
-    };
-  }
-
-  private createSpanBoxFromSegment(
-    segment: PreparedSegment,
-    startGraphemeIndex: number,
-    endGraphemeIndex: number,
-  ): SpanBox | null {
-    if (segment.kind === "hard-break" || segment.kind === "soft-hyphen") {
-      return null;
-    }
-
-    const localStart = segment.boundaryOffsets[startGraphemeIndex] ?? 0;
-    const localEnd =
-      segment.boundaryOffsets[endGraphemeIndex] ?? segment.content.length;
-    const boundaryOffsets = [0];
-    const prefixWidths = [0];
-    const baseWidth = segment.prefixWidths[startGraphemeIndex] ?? 0;
-
-    for (
-      let index = startGraphemeIndex + 1;
-      index <= endGraphemeIndex;
-      index++
-    ) {
-      boundaryOffsets.push(
-        (segment.boundaryOffsets[index] ?? localEnd) - localStart,
-      );
-      prefixWidths.push((segment.prefixWidths[index] ?? baseWidth) - baseWidth);
-    }
-
-    const content = segment.content.slice(localStart, localEnd);
-    return new SpanBox({
-      boundaryOffsets,
-      color: segment.color,
-      content,
-      endOffset: segment.start + localEnd,
-      font: segment.font,
-      fontFamily: segment.fontFamily,
-      fontSize: segment.fontSize,
-      fontStyle: segment.fontStyle,
-      fontStyleValue: segment.fontStyleValue,
-      fontWeight: segment.fontWeight,
-      height: segment.height,
-      prefixWidths,
-      startOffset: segment.start + localStart,
-      width: this.getSegmentWidthBetween(
-        segment,
-        startGraphemeIndex,
-        endGraphemeIndex,
-      ),
-    });
-  }
-
   private createSyntheticSpanBox({
     content,
     offset,
@@ -1106,401 +713,328 @@ export class Paragraph {
     return this.lines.length - 1;
   }
 
-  private fitSegmentToWidth(
-    segment: PreparedSegment,
-    startGraphemeIndex: number,
-    maxWidth: number,
-  ): {
-    endGrapheme: number;
-    width: number;
-  } {
-    const totalGraphemes = segment.boundaryOffsets.length - 1;
-    let fittedEnd = startGraphemeIndex;
-    let fittedWidth = 0;
-    let lastBreakEnd = startGraphemeIndex;
-    let lastBreakWidth = 0;
-
-    for (
-      let graphemeIndex = startGraphemeIndex + 1;
-      graphemeIndex <= totalGraphemes;
-      graphemeIndex++
-    ) {
-      const fragmentWidth = this.getSegmentWidthBetween(
-        segment,
-        startGraphemeIndex,
-        graphemeIndex,
-      );
-      if (fragmentWidth > maxWidth + FIT_EPSILON) {
-        break;
-      }
-
-      fittedEnd = graphemeIndex;
-      fittedWidth = fragmentWidth;
-      if (
-        graphemeIndex < totalGraphemes &&
-        this.canBreakInsideSegment(segment, graphemeIndex)
-      ) {
-        lastBreakEnd = graphemeIndex;
-        lastBreakWidth = fragmentWidth;
-      }
-    }
-
-    if (fittedEnd === totalGraphemes) {
-      return {
-        endGrapheme: fittedEnd,
-        width: fittedWidth,
-      };
-    }
-
-    if (lastBreakEnd > startGraphemeIndex) {
-      return {
-        endGrapheme: lastBreakEnd,
-        width: lastBreakWidth,
-      };
-    }
-
-    if (fittedEnd > startGraphemeIndex) {
-      return {
-        endGrapheme: fittedEnd,
-        width: fittedWidth,
-      };
-    }
-
-    const forcedEnd = Math.min(startGraphemeIndex + 1, totalGraphemes);
-    return {
-      endGrapheme: forcedEnd,
-      width: this.getSegmentWidthBetween(
-        segment,
-        startGraphemeIndex,
-        forcedEnd,
-      ),
-    };
+  private hasMoreContentAfterLine(line: InternalLayoutLine | undefined): boolean {
+    if (line == null || this.preparedLineBreakData == null) return false;
+    return line.endSegmentIndex < this.preparedLineBreakData.widths.length ||
+      line.endGraphemeIndex > 0;
   }
 
-  private getCursorTextOffset(cursor: LayoutCursor): number {
-    if (cursor.segmentIndex >= this.preparedSegments.length) {
-      return this.preparedTextLength;
-    }
+  /**
+   * Build a ParagraphLine from an InternalLayoutLine by creating SpanBoxes
+   * for each segment range [startSegmentIndex, endSegmentIndex).
+   */
+  private buildParagraphLine(layoutLine: InternalLayoutLine): ParagraphLine {
+    const startSegIdx = layoutLine.startSegmentIndex;
+    const endSegIdx = layoutLine.endSegmentIndex;
 
-    const segment = this.preparedSegments[cursor.segmentIndex];
-    if (cursor.graphemeIndex <= 0) {
-      return segment.start;
-    }
+    // Determine default style from the first segment in this line
+    const defaultStyle = startSegIdx < this.preparedSegmentInfos.length
+      ? this.preparedSegmentInfos[startSegIdx]!.style
+      : this.defaultLineStyle;
 
-    const localOffset =
-      segment.boundaryOffsets[cursor.graphemeIndex] ?? segment.content.length;
-    return segment.start + localOffset;
-  }
+    const startOffset = startSegIdx < this.preparedSegmentInfos.length
+      ? this.preparedSegmentInfos[startSegIdx]!.charStart
+      : this.preparedTextLength;
 
-  private getDefaultStyleForCursor(cursor: LayoutCursor): PreparedSpanStyle {
-    if (cursor.segmentIndex >= this.preparedSegments.length) {
-      return this.preparedSegments[this.preparedSegments.length - 1]?.font !=
-        null
-        ? this.preparedSegments[this.preparedSegments.length - 1]
-        : this.defaultLineStyle;
-    }
-
-    return this.preparedSegments[cursor.segmentIndex];
-  }
-
-  private getSegmentWidthBetween(
-    segment: PreparedSegment,
-    startGraphemeIndex: number,
-    endGraphemeIndex: number,
-  ): number {
-    const endWidth =
-      segment.prefixWidths[endGraphemeIndex] ??
-      segment.prefixWidths[segment.prefixWidths.length - 1] ??
-      0;
-    const startWidth = segment.prefixWidths[startGraphemeIndex] ?? 0;
-    return endWidth - startWidth;
-  }
-
-  private layoutNextLine(
-    startCursor: LayoutCursor,
-    width: number,
-  ): LineLayoutResult {
-    const line = new ParagraphLine({
-      defaultStyle: this.getDefaultStyleForCursor(startCursor),
-      startOffset: this.getCursorTextOffset(startCursor),
+    const paragraphLine = new ParagraphLine({
+      defaultStyle,
+      startOffset,
     });
-    const maxWidth = Number.isFinite(width) ? width : Infinity;
-    const fitEpsilon = getEngineProfile().lineFitEpsilon;
-    let cursor: LayoutCursor = {
-      graphemeIndex: startCursor.graphemeIndex,
-      segmentIndex: startCursor.segmentIndex,
-    };
-    let pendingBreak: PendingBreak | null = null;
-    // fitWidth tracks the "non-hanging" width for line-break decisions.
-    // Trailing whitespace hangs past the line edge (CSS behavior), so
-    // space segments contribute 0 to fitWidth but still get visual width.
-    let fitWidth = 0;
 
-    const finalizePendingBreak = () => {
-      if (
-        pendingBreak?.hyphenSegment != null &&
-        fitWidth + pendingBreak.hyphenSegment.hyphenWidth <=
-          maxWidth + fitEpsilon
-      ) {
-        line.addSpanBox(
-          this.createSyntheticSpanBox({
-            content: "-",
-            offset: pendingBreak.hyphenSegment.start,
-            style: pendingBreak.hyphenSegment,
-            width: pendingBreak.hyphenSegment.hyphenWidth,
-          }),
-        );
-      }
+    if (startSegIdx >= endSegIdx) {
+      return paragraphLine;
+    }
 
-      return {
-        line,
-        nextCursor: pendingBreak?.nextCursor ?? cursor,
-        trailingBlankLineStyle: null,
-      };
-    };
+    // Group consecutive segments with the same style into single SpanBoxes
+    let groupStart = startSegIdx;
+    let groupStyle = this.preparedSegmentInfos[startSegIdx]!.style;
+    let groupStartGrapheme = layoutLine.startGraphemeIndex;
 
-    while (cursor.segmentIndex < this.preparedSegments.length) {
-      const segment = this.preparedSegments[cursor.segmentIndex];
+    for (let i = startSegIdx; i < endSegIdx; i++) {
+      const info = this.preparedSegmentInfos[i];
+      if (info == null) continue;
 
-      if (segment.kind === "hard-break") {
-        return {
-          line,
-          nextCursor: {
-            graphemeIndex: 0,
-            segmentIndex: cursor.segmentIndex + 1,
-          },
-          trailingBlankLineStyle:
-            cursor.segmentIndex + 1 >= this.preparedSegments.length
-              ? segment
-              : null,
-        };
-      }
-
-      if (segment.kind === "soft-hyphen") {
-        pendingBreak = {
-          hyphenSegment: segment,
-          nextCursor: {
-            graphemeIndex: 0,
-            segmentIndex: cursor.segmentIndex + 1,
-          },
-        };
-        cursor = {
-          graphemeIndex: 0,
-          segmentIndex: cursor.segmentIndex + 1,
-        };
-        continue;
-      }
-
-      // Tab stop support: advance to next tab stop position
-      if (segment.kind === "tab") {
-        const spaceWidth = getTextWidth({ text: " ", font: segment.font });
-        const tabStopAdvance = spaceWidth * TAB_STOP_SPACES;
-        const tabWidth =
-          tabStopAdvance > 0
-            ? tabStopAdvance - (line.width % tabStopAdvance || tabStopAdvance)
-            : 0;
-        const tabBox = this.createSyntheticSpanBox({
-          content: " ",
-          offset: segment.start,
-          style: segment,
-          width: tabWidth,
-        });
-        line.addSpanBox(tabBox);
-        fitWidth += tabWidth;
-        pendingBreak = {
-          nextCursor: {
-            graphemeIndex: 0,
-            segmentIndex: cursor.segmentIndex + 1,
-          },
-        };
-        cursor = {
-          graphemeIndex: 0,
-          segmentIndex: cursor.segmentIndex + 1,
-        };
-        continue;
-      }
-
-      const totalGraphemes = segment.boundaryOffsets.length - 1;
-      const remainingWidth = this.getSegmentWidthBetween(
-        segment,
-        cursor.graphemeIndex,
-        totalGraphemes,
-      );
-      // lineEndFitWidth: for spaces = 0 (trailing whitespace hangs),
-      // for text = full width. This is the key pretext optimization.
-      const remainingFitWidth =
-        segment.kind === "space" ? 0 : remainingWidth;
-
-      if (
-        !Number.isFinite(maxWidth) ||
-        fitWidth + remainingFitWidth <= maxWidth + fitEpsilon
-      ) {
-        const spanBox = this.createSpanBoxFromSegment(
-          segment,
-          cursor.graphemeIndex,
-          totalGraphemes,
-        );
-        if (spanBox != null) {
-          line.addSpanBox(spanBox);
+      // Skip non-visual segments
+      if (info.kind === "hard-break" || info.kind === "soft-hyphen") {
+        // Flush current group first
+        if (i > groupStart) {
+          const spanBox = this.buildSpanBoxForRange(
+            groupStart,
+            i,
+            groupStartGrapheme,
+            0,
+            groupStyle,
+          );
+          if (spanBox != null) {
+            paragraphLine.addSpanBox(spanBox);
+          }
         }
-        fitWidth += remainingFitWidth;
-
-        if (segment.kind === "space") {
-          pendingBreak = {
-            nextCursor: {
-              graphemeIndex: 0,
-              segmentIndex: cursor.segmentIndex + 1,
-            },
-          };
+        groupStart = i + 1;
+        groupStartGrapheme = 0;
+        if (groupStart < this.preparedSegmentInfos.length) {
+          groupStyle = this.preparedSegmentInfos[groupStart]!.style;
         }
-
-        cursor = {
-          graphemeIndex: 0,
-          segmentIndex: cursor.segmentIndex + 1,
-        };
         continue;
       }
 
-      if (pendingBreak != null && line.spanBoxes.length > 0) {
-        return finalizePendingBreak();
+      // Style change — flush group
+      if (info.style.font !== groupStyle.font || info.style.color !== groupStyle.color) {
+        if (i > groupStart) {
+          const spanBox = this.buildSpanBoxForRange(
+            groupStart,
+            i,
+            groupStartGrapheme,
+            0,
+            groupStyle,
+          );
+          if (spanBox != null) {
+            paragraphLine.addSpanBox(spanBox);
+          }
+        }
+        groupStart = i;
+        groupStartGrapheme = 0;
+        groupStyle = info.style;
       }
+    }
 
-      if (line.spanBoxes.length > 0) {
-        return {
-          line,
-          nextCursor: cursor,
-          trailingBlankLineStyle: null,
-        };
-      }
-
-      const fitted = this.fitSegmentToWidth(
-        segment,
-        cursor.graphemeIndex,
-        Math.max(0, maxWidth),
-      );
-      const spanBox = this.createSpanBoxFromSegment(
-        segment,
-        cursor.graphemeIndex,
-        fitted.endGrapheme,
+    // Flush final group
+    if (groupStart < endSegIdx) {
+      const endGrapheme = layoutLine.endGraphemeIndex;
+      const spanBox = this.buildSpanBoxForRange(
+        groupStart,
+        endSegIdx,
+        groupStartGrapheme,
+        endGrapheme,
+        groupStyle,
       );
       if (spanBox != null) {
-        line.addSpanBox(spanBox);
+        paragraphLine.addSpanBox(spanBox);
       }
-
-      return {
-        line,
-        nextCursor:
-          fitted.endGrapheme >= totalGraphemes
-            ? {
-                graphemeIndex: 0,
-                segmentIndex: cursor.segmentIndex + 1,
-              }
-            : {
-                graphemeIndex: fitted.endGrapheme,
-                segmentIndex: cursor.segmentIndex,
-              },
-        trailingBlankLineStyle: null,
-      };
     }
 
-    return {
-      line,
-      nextCursor: cursor,
-      trailingBlankLineStyle: null,
-    };
+    return paragraphLine;
   }
 
+  /**
+   * Build a SpanBox covering segments [startSeg, endSeg) with the given style.
+   * startGrapheme/endGrapheme handle partial segments at line boundaries.
+   */
+  private buildSpanBoxForRange(
+    startSeg: number,
+    endSeg: number,
+    startGrapheme: number,
+    endGrapheme: number,
+    style: PreparedSpanStyle,
+  ): SpanBox | null {
+    if (startSeg >= endSeg) return null;
+    if (this.preparedLineBreakData == null) return null;
+
+    const { widths, breakableFitAdvances } = this.preparedLineBreakData;
+    let content = "";
+    let totalWidth = 0;
+    let charStart = this.preparedSegmentInfos[startSeg]?.charStart ?? 0;
+    let charEnd = charStart;
+    const boundaryOffsets: number[] = [0];
+    const prefixWidths: number[] = [0];
+
+    for (let i = startSeg; i < endSeg; i++) {
+      const info = this.preparedSegmentInfos[i];
+      if (info == null) continue;
+      if (info.kind === "hard-break" || info.kind === "soft-hyphen") continue;
+
+      const segText = info.text;
+      const segWidth = widths[i] ?? 0;
+
+      // Handle partial first segment (startGrapheme > 0)
+      if (i === startSeg && startGrapheme > 0 && breakableFitAdvances[i] != null) {
+        const fitAdvances = breakableFitAdvances[i]!;
+        // Build partial content from graphemes
+        const graphemes = this.getSegmentGraphemes(segText);
+        let partialText = "";
+        let partialWidth = 0;
+        for (let g = startGrapheme; g < graphemes.length; g++) {
+          partialText += graphemes[g];
+          partialWidth += fitAdvances[g] ?? 0;
+          boundaryOffsets.push(content.length + partialText.length);
+          prefixWidths.push(totalWidth + partialWidth);
+        }
+        content += partialText;
+        totalWidth += partialWidth;
+        charStart = info.charStart + this.graphemeOffset(segText, startGrapheme);
+        charEnd = info.charEnd;
+        continue;
+      }
+
+      // Handle partial last segment (endGrapheme > 0)
+      if (i === endSeg - 1 && endGrapheme > 0 && breakableFitAdvances[i] != null) {
+        const fitAdvances = breakableFitAdvances[i]!;
+        const graphemes = this.getSegmentGraphemes(segText);
+        let partialText = "";
+        let partialWidth = 0;
+        const graphemeStart = (i === startSeg) ? startGrapheme : 0;
+        for (let g = graphemeStart; g < endGrapheme && g < graphemes.length; g++) {
+          partialText += graphemes[g];
+          partialWidth += fitAdvances[g] ?? 0;
+          boundaryOffsets.push(content.length + partialText.length);
+          prefixWidths.push(totalWidth + partialWidth);
+        }
+        content += partialText;
+        totalWidth += partialWidth;
+        if (i === startSeg) {
+          charStart = info.charStart + this.graphemeOffset(segText, startGrapheme);
+        }
+        charEnd = info.charStart + this.graphemeOffset(segText, endGrapheme);
+        continue;
+      }
+
+      // Full segment
+      content += segText;
+      totalWidth += segWidth;
+      // Add per-grapheme boundaries for text segments
+      if (breakableFitAdvances[i] != null) {
+        const fitAdvances = breakableFitAdvances[i]!;
+        const graphemes = this.getSegmentGraphemes(segText);
+        let runWidth = totalWidth - segWidth;
+        for (let g = 0; g < graphemes.length; g++) {
+          runWidth += fitAdvances[g] ?? 0;
+          boundaryOffsets.push(content.length - segText.length + this.graphemeEndOffset(graphemes, g));
+          prefixWidths.push(runWidth);
+        }
+      } else {
+        boundaryOffsets.push(content.length);
+        prefixWidths.push(totalWidth);
+      }
+      charEnd = info.charEnd;
+    }
+
+    if (content.length === 0) return null;
+
+    return new SpanBox({
+      boundaryOffsets,
+      color: style.color,
+      content,
+      endOffset: charEnd,
+      font: style.font,
+      fontFamily: style.fontFamily,
+      fontSize: style.fontSize,
+      fontStyle: style.fontStyle,
+      fontStyleValue: style.fontStyleValue,
+      fontWeight: style.fontWeight,
+      height: style.height,
+      prefixWidths,
+      startOffset: charStart,
+      width: totalWidth,
+    });
+  }
+
+  private segmentGraphemeCache = new Map<string, string[]>();
+
+  private getSegmentGraphemes(text: string): string[] {
+    let cached = this.segmentGraphemeCache.get(text);
+    if (cached != null) return cached;
+
+    if (typeof Intl !== "undefined" && typeof (Intl as any).Segmenter === "function") {
+      const segmenter = new (Intl as any).Segmenter(undefined, { granularity: "grapheme" });
+      cached = [];
+      for (const gs of segmenter.segment(text)) {
+        cached.push(gs.segment);
+      }
+    } else {
+      cached = Array.from(text);
+    }
+    this.segmentGraphemeCache.set(text, cached);
+    return cached;
+  }
+
+  private graphemeOffset(text: string, graphemeIndex: number): number {
+    const graphemes = this.getSegmentGraphemes(text);
+    let offset = 0;
+    for (let i = 0; i < graphemeIndex && i < graphemes.length; i++) {
+      offset += graphemes[i]!.length;
+    }
+    return offset;
+  }
+
+  private graphemeEndOffset(graphemes: string[], graphemeIndex: number): number {
+    let offset = 0;
+    for (let i = 0; i <= graphemeIndex && i < graphemes.length; i++) {
+      offset += graphemes[i]!.length;
+    }
+    return offset;
+  }
+
+  private getCursorTextOffset(segmentIndex: number): number {
+    if (segmentIndex >= this.preparedSegmentInfos.length) {
+      return this.preparedTextLength;
+    }
+    return this.preparedSegmentInfos[segmentIndex]!.charStart;
+  }
+
+  /**
+   * Pretext-based prepare: analyze and measure each source span, then combine
+   * into a single PreparedLineBreakData for the line walker.
+   */
   private prepare() {
     if (this.prepared) {
       return;
     }
 
     this.prepared = true;
-    this.preparedSegments = [];
+    this.preparedSegmentInfos = [];
     this.preparedTextLength = 0;
     this.preparedIntrinsicWidth = 0;
     this.preparedIntrinsicHeight = this.defaultLineStyle.lineHeight;
     this.preparedLongestLine = 0;
+    this.preparedLineBreakData = null;
+    this.segmentGraphemeCache.clear();
 
-    let lineWidth = 0;
+    const measuredSpans: MeasuredSpanResult[] = [];
+
     for (const sourceSpan of this.source) {
-      const style = Paragraph.toPreparedStyle(sourceSpan);
-      const spanStart = this.preparedTextLength;
       if (sourceSpan.content.length === 0) {
         continue;
       }
 
-      const chunks = sourceSpan.content.split(/(\n|\t)/u);
-      let localOffset = 0;
-      chunks.forEach(chunk => {
-        if (chunk.length === 0) {
-          return;
-        }
+      const style = Paragraph.toPreparedStyle(sourceSpan);
+      const spanStart = this.preparedTextLength;
 
-        if (chunk === HARD_BREAK) {
-          this.preparedSegments.push({
-            ...style,
-            boundaryOffsets: [],
-            containsCJK: false,
-            content: chunk,
-            end: spanStart + localOffset + chunk.length,
-            graphemes: [],
-            hyphenWidth: 0,
-            kind: "hard-break",
-            lineEndFitWidth: 0,
-            prefixWidths: [],
-            start: spanStart + localOffset,
-          });
-          this.preparedIntrinsicWidth = Math.max(
-            this.preparedIntrinsicWidth,
-            lineWidth,
-          );
-          lineWidth = 0;
-          localOffset += chunk.length;
-          return;
-        }
+      // Use pretext's analyzeText + measureAnalysis pipeline
+      const measured = measureSpanText(sourceSpan.content, style.font);
+      measuredSpans.push(measured);
 
-        if (chunk === TAB) {
-          const absoluteStart = spanStart + localOffset;
-          const segment = this.createPreparedSegment(
-            style,
-            chunk,
-            absoluteStart,
-          );
-          this.preparedSegments.push(segment);
-          localOffset += chunk.length;
-          return;
-        }
+      // Build segment info for SpanBox creation
+      for (let i = 0; i < measured.segments.length; i++) {
+        const segText = measured.segments[i]!;
+        const segStart = measured.segmentStarts[i]!;
+        const segKind = measured.kinds[i]!;
 
-        for (const part of segmentTextContent(chunk)) {
-          for (const piece of splitSoftHyphen(part.text, part.start)) {
-            const absoluteStart = spanStart + localOffset + piece.start;
-            const segment = this.createPreparedSegment(
-              style,
-              piece.text,
-              absoluteStart,
-            );
-            this.preparedSegments.push(segment);
-            if (segment.kind !== "soft-hyphen") {
-              lineWidth += this.getSegmentWidthBetween(
-                segment,
-                0,
-                segment.boundaryOffsets.length - 1,
-              );
-            }
-          }
-        }
-
-        localOffset += chunk.length;
-      });
+        this.preparedSegmentInfos.push({
+          style,
+          text: segText,
+          charStart: spanStart + segStart,
+          charEnd: spanStart + segStart + segText.length,
+          kind: segKind,
+        });
+      }
 
       this.preparedTextLength = spanStart + sourceSpan.content.length;
     }
 
-    this.preparedIntrinsicWidth = Math.max(
-      this.preparedIntrinsicWidth,
-      lineWidth,
-    );
+    // Combine all measured spans into a single PreparedLineBreakData
+    const { prepared, segments, segmentStarts } = combineMeasuredSpans(measuredSpans);
+    this.preparedLineBreakData = prepared;
+
+    // Compute intrinsic width (widest line at infinite width)
+    if (prepared.widths.length > 0) {
+      let lineWidth = 0;
+      walkPreparedLines(prepared, Infinity, line => {
+        if (line.width > lineWidth) {
+          lineWidth = line.width;
+        }
+      });
+      this.preparedIntrinsicWidth = lineWidth;
+    }
+
     this.preparedLongestLine = this.preparedIntrinsicWidth;
   }
 
@@ -1545,38 +1079,6 @@ export class Paragraph {
       height,
       lineHeight: getTextHeight({ fontSize }) * height,
     };
-  }
-
-  private canBreakInsideSegment(
-    segment: PreparedSegment,
-    graphemeIndex: number,
-  ): boolean {
-    if (graphemeIndex <= 0 || graphemeIndex >= segment.graphemes.length) {
-      return false;
-    }
-
-    if (segment.kind === "space") {
-      return true;
-    }
-
-    const previousGrapheme = segment.graphemes[graphemeIndex - 1];
-    const nextGrapheme = segment.graphemes[graphemeIndex];
-
-    if (
-      LINE_END_PROHIBITED.has(previousGrapheme) ||
-      LINE_START_PROHIBITED.has(nextGrapheme)
-    ) {
-      return false;
-    }
-
-    // CJK text can break at any grapheme boundary (kinsoku rules handled above)
-    if (segment.containsCJK) {
-      return true;
-    }
-
-    // Non-CJK word segments: don't prefer mid-word breaks.
-    // fitSegmentToWidth will force-break as a last resort.
-    return false;
   }
 }
 
