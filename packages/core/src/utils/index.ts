@@ -1,7 +1,12 @@
 import applyMixins from "./applyMixins";
 import assert from "./assert";
 import lerp from "./lerp";
-import { getTextHeight, getTextWidth } from "./getTextSize";
+import {
+  clearTextMeasurementCache,
+  getPooledFontString,
+  getTextHeight,
+  getTextWidth,
+} from "./getTextSize";
 import classToFunction from "./classToFunction";
 import type { Calculable } from "../type";
 export { default as createUniqueId } from "./createUniqueId";
@@ -9,7 +14,15 @@ export { default as TypedObject } from "./TypedObject";
 export * from "./environment";
 export { default as never } from "./never";
 
-export { assert, applyMixins, getTextHeight, getTextWidth, classToFunction };
+export {
+  assert,
+  applyMixins,
+  clearTextMeasurementCache,
+  getPooledFontString,
+  getTextHeight,
+  getTextWidth,
+  classToFunction,
+};
 
 export default class Utils {
   static sumReducer = (acc: number, value: number) => acc + value;
