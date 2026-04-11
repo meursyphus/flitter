@@ -4,6 +4,7 @@ import {
   CanvasPainter,
   type CanvasPaintingContext,
 } from "../../framework";
+import { OpacityLayer } from "../../framework/renderer/canvas/layer";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import { assert } from "../../utils";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
@@ -78,6 +79,13 @@ class SvgPainterOpacity extends SvgPainter {
 class CanvasPainterOpacity extends CanvasPainter {
   get opacity() {
     return (this.renderObject as RenderOpacity).opacityProp;
+  }
+
+  override createAncestorLayer(_offset: Offset) {
+    if (this.opacity === 1) return null;
+    const layer = new OpacityLayer();
+    layer.opacity = this.opacity;
+    return layer;
   }
 
   override performPaint(context: CanvasPaintingContext, offset: Offset) {

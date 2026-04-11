@@ -5,6 +5,7 @@ import { assert } from "../../utils";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 import { CanvasPainter } from "../../framework/renderer/canvas/canvas-painter";
+import { TransformLayer } from "../../framework/renderer/canvas/layer";
 import type { CanvasPaintingContext } from "../../framework/renderer/canvas/canvas-painting-context";
 import type { HitTestResult } from "../../hit-test/HitTestResult";
 
@@ -279,6 +280,13 @@ class RenderTransform extends SingleChildRenderObject {
 class TransformCanvasPainter extends CanvasPainter {
   get effectiveTransform(): Matrix4 {
     return (this.renderObject as RenderTransform)._effectiveTransform;
+  }
+
+  override createAncestorLayer(offset: Offset) {
+    const layer = new TransformLayer();
+    layer.offset = offset;
+    layer.transform = this.effectiveTransform;
+    return layer;
   }
 
   protected performPaint(context: CanvasPaintingContext, offset: Offset): void {
