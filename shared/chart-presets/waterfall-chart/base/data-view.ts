@@ -1,5 +1,5 @@
 import type { WaterfallChartCustom } from '../types';
-import { Container, Flexible, Flex, Axis } from 'flitter-core';
+import { Container, Flexible, Flex, Axis } from 'flitter-ui';
 
 export function DataView(
 	...[{ bars }, _config]: Parameters<WaterfallChartCustom['dataView']>

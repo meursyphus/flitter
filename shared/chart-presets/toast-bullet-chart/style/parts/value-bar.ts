@@ -9,7 +9,7 @@ import {
   Radius,
   ZIndex,
   type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { BulletChartContext } from "flitter-ui/chart";
 import type { ToastBulletChartConfig } from "../config";
 

@@ -6,7 +6,7 @@ import {
 	BoxShadow,
 	ZIndex,
 	type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { HeatmapContext } from "flitter-ui/chart";
 import type { ToastHeatmapChartConfig } from "../config";
 

@@ -7,7 +7,7 @@ import {
   Flexible,
   Stack,
   StackFit,
-} from "flitter-core";
+} from "flitter-ui";
 
 export function Layout(
   ...[{ title, dataView, tooltipArea }]: Parameters<SankeyChartCustom["layout"]>

@@ -1,6 +1,6 @@
 import type { RadarChartCustom } from "flitter-ui/chart";
 import type { ToastRadarChartConfig } from "../config";
-import { cartesian } from "../../../_styles/toast/index";
+import { cartesian } from "../../../_shared/toast/index";
 
 export function toastTooltipArea(
 	...[{ hoveredPoint }, ctx]: Parameters<RadarChartCustom<ToastRadarChartConfig>["tooltipArea"]>

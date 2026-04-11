@@ -1,7 +1,7 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitter-ui";
 import { DonutChart as HeadlessDonutChart } from "flitter-ui/chart";
 import type { DonutChartCustom, DonutChartData } from "flitter-ui/chart";
-import { DataView, Layout, Plot } from "../../_styles/toast/pie-like/index";
+import { DataView, Layout, Plot } from "../../_shared/toast/pie-like/index";
 
 export type {
 	DonutChartCustom,

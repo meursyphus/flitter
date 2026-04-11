@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-core";
-import { SizedBox } from "flitter-core";
+import type { Widget } from "flitter-ui";
+import { SizedBox } from "flitter-ui";
 import { HeatmapChart as HeadlessHeatmapChart } from "flitter-ui/chart";
 import type {
 	HeatmapCustom,

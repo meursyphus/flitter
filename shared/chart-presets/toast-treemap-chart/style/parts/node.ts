@@ -9,7 +9,7 @@ import {
 	SizedBox,
 	ZIndex,
 	type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { TreemapCustom } from "flitter-ui/chart";
 import { resolveTreemapNodeColor } from "../../base/color";
 import type { TreemapChartConfig } from "../config";

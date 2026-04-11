@@ -1,7 +1,7 @@
-import { SizedBox } from "flitter-core";
+import { SizedBox } from "flitter-ui";
 import type { TreemapCustom } from "flitter-ui/chart";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
-import { toastLegend, toastTitle, tooltipContent } from "../../_styles/toast/index";
+import { toastLegend, toastTitle, tooltipContent } from "../../_shared/toast/index";
 import type { TreemapChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { toastDataLabel } from "./parts/data-label";

@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import type { DeepPartial } from "flitter-ui/chart";
 import { BaseAreaChart } from "./base";
 import type { LineChartCustom, LineChartData, GetScaleFn, GetScaleOptionsFn } from "./base";

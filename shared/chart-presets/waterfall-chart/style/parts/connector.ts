@@ -3,7 +3,7 @@ import {
   Path,
   SizedBox,
   type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { WaterfallChartContext } from "flitter-ui/chart";
 import type { WaterfallChartConfig } from "../config";
 

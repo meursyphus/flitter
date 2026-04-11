@@ -3,14 +3,14 @@ import type { ToastBubbleChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { toastBubble } from "./parts/bubble";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import {
   toastTitle,
   toastLegend,
   tooltipContent,
   toastScaleOptions,
   cartesian,
-} from "../../_styles/toast/index";
+} from "../../_shared/toast/index";
 
 export { type ToastBubbleChartConfig } from "./config";
 

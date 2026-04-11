@@ -1,5 +1,5 @@
 import type { BulletChartCustom } from "flitter-ui/chart";
-import { Axis, Container, Flex, Flexible } from "flitter-core";
+import { Axis, Container, Flex, Flexible } from "flitter-ui";
 
 export function BulletDataView(...[{ bulletGroups }, { direction }]: Parameters<BulletChartCustom["dataView"]>) {
   return Container({

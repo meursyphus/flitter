@@ -2,7 +2,7 @@ import type { LineChartCustom } from "flitter-ui/chart";
 import type { LineChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
 import type { AgAreaChartConfig } from "./config";
 import type { LineChartContext } from "flitter-ui/chart";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { agArea } from "./parts/area";
@@ -14,7 +14,7 @@ import {
   agTooltipContent,
   agScaleOptions,
   cartesian,
-} from "../../_styles/ag/index";
+} from "../../_shared/ag/index";
 
 export { type AgAreaChartConfig } from "./config";
 

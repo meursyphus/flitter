@@ -2,7 +2,7 @@ import {
   AnimatedFractionallySizedBox,
   EdgeInsets,
   Padding,
-} from "flitter-core";
+} from "flitter-ui";
 import type { BarChartCustom } from "flitter-ui/chart";
 import type { ToastStackedBarChartConfig } from "../config";
 

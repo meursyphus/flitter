@@ -1,7 +1,7 @@
 import {
   SizedBox,
   type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { WaterfallChartCustom } from "flitter-ui/chart";
 import type { WaterfallChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
@@ -12,7 +12,7 @@ import { toastBarBox } from "./parts/bar-box";
 import { toastConnector } from "./parts/connector";
 import { toastDataView } from "./parts/data-view";
 import { toastTooltipArea } from "./parts/tooltip-area";
-import { cartesian, toastLegend, toastScaleOptions, toastTitle, tooltipContent } from "../../_styles/toast/index";
+import { cartesian, toastLegend, toastScaleOptions, toastTitle, tooltipContent } from "../../_shared/toast/index";
 
 export { type WaterfallChartConfig } from "./config";
 

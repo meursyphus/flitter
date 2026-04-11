@@ -4,14 +4,14 @@ import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { agBubble } from "./parts/bubble";
 import { agDataView } from "./parts/data-view";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import {
   agTitle,
   agLegend,
   agTooltipContent,
   agScaleOptions,
   cartesian,
-} from "../../_styles/ag/index";
+} from "../../_shared/ag/index";
 
 export { type AgBubbleChartConfig } from "./config";
 

@@ -10,7 +10,7 @@ import {
   Border,
   BoxShadow,
   type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { BoxPlotChartCustom, BoxPlotDataPoint } from "flitter-ui/chart";
 import type { ToastBoxPlotChartConfig } from "../config";
 

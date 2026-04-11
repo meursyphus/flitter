@@ -6,7 +6,7 @@ import {
   Radius,
   SizedBox,
   type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { BoxPlotChartCustom } from "flitter-ui/chart";
 import type { ToastBoxPlotChartConfig } from "../config";
 

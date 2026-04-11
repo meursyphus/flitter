@@ -1,5 +1,5 @@
 import type { DonutChartContext, DonutChartCustom } from "flitter-ui/chart";
-import { Column, MainAxisSize, SizedBox, Text, TextStyle, type Widget } from "flitter-core";
+import { Column, MainAxisSize, SizedBox, Text, TextStyle, type Widget } from "flitter-ui";
 import type { DonutChartConfig } from "./config";
 import { defaultAgConfig, normalizeDonutAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
@@ -13,8 +13,8 @@ import {
 	agPieLikeTitle,
 	agPieLikeTooltip,
 	agPieLikeTooltipArea,
-} from "../../_styles/ag/polar-like";
-import { agLegend } from "../../_styles/ag/index";
+} from "../../_shared/ag/polar-like";
+import { agLegend } from "../../_shared/ag/index";
 
 export { type DonutChartConfig } from "./config";
 

@@ -15,7 +15,7 @@ import {
   StackFit,
   Align,
   Alignment,
-} from "flitter-core";
+} from "flitter-ui";
 
 export function Node(
   ...[{ color, column, totalColumns, labelWidget, isHovered, isActive, isDimmed }]: Parameters<

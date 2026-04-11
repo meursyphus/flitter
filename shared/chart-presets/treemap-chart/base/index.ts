@@ -1,4 +1,4 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitter-ui";
 import { TreemapChart as HeadlessTreemapChart } from "flitter-ui/chart";
 import { defaultGetTreemapLayout } from "@headless/treemap-chart/layout";
 import type {

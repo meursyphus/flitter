@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import type { TreemapCustom } from "flitter-ui/chart";
 
 export function Nodes(

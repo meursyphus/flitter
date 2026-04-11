@@ -4,7 +4,7 @@ import {
   Container,
   FractionallySizedBox,
   type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { WaterfallChartCustom } from "flitter-ui/chart";
 import type { WaterfallChartConfig } from "../config";
 

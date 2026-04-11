@@ -1,5 +1,5 @@
 import type { FlatSegment } from "../types";
-import { Offset, Path, Radius } from "flitter-core";
+import { Offset, Path, Radius } from "flitter-ui";
 
 export type RingMetrics = {
 	cx: number;

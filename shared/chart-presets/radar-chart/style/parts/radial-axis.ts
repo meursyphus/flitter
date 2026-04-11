@@ -7,7 +7,7 @@ import {
 	StackFit,
 	type BuildContext,
 	type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { RadarChartCustom } from "flitter-ui/chart";
 import type { AgRadarChartConfig } from "../config";
 

@@ -5,6 +5,7 @@ import { readText, toRelativeImport } from "./fs.mjs";
 
 const require = createRequire(import.meta.url);
 
+const ROOT_WIDGETS_IMPORT = "flitter-ui";
 const HEADLESS_SHIMS = {
   "area-chart": {
     symbol: "LineChart",
@@ -156,8 +157,23 @@ function rewriteHeadlessTypeSpecifiers(specifiers, chartName) {
 }
 
 export async function loadRegistry() {
-  const module = await import("flitter-chart/registry");
-  return module.getRegistry ? module.getRegistry() : module.default;
+  const candidates = [
+    new URL("../registry/index.mjs", import.meta.url),
+    new URL("../../../chart/registry/index.mjs", import.meta.url),
+  ];
+
+  for (const candidate of candidates) {
+    try {
+      const module = await import(candidate);
+      return module.getRegistry ? module.getRegistry() : module.default;
+    } catch (error) {
+      if (candidate === candidates[candidates.length - 1]) {
+        throw error;
+      }
+    }
+  }
+
+  throw new Error("Unable to load Flitter chart registry");
 }
 
 export function findRegistryItem(registry, chartName, style, preferredStyle = "ag") {
@@ -189,11 +205,11 @@ export function findRegistryItem(registry, chartName, style, preferredStyle = "a
 }
 
 function resolveStyleBaseOutputDir(style) {
-  return `_styles/${style}`;
+  return `_shared/${style}`;
 }
 
 export function resolveItemOutputDir(item, defaultStyle) {
-  if (item.kind === "style-base") {
+  if (item.kind === "style-base" || item.kind === "style-family") {
     return resolveStyleBaseOutputDir(item.style);
   }
 
@@ -288,7 +304,7 @@ function buildHoverTooltipShim() {
   SizedBox,
   Alignment,
   type Widget,
-} from "flitter-core";
+} from "${ROOT_WIDGETS_IMPORT}";
 
 export type HoverTooltipPosition =
   | "topLeft"
@@ -410,22 +426,18 @@ export function generateSupportFiles(outputRoot) {
 }
 
 export function generateStyleBaseOverrides(item, outputRoot, defaultStyle = "ag") {
-  if (item.kind !== "style-base" || item.style !== "ag") {
-    return [];
-  }
-
   const styleBaseDir = resolveItemOutputDir(item, defaultStyle);
 
-  return [
-    {
-      target: path.join(outputRoot, styleBaseDir, "index.ts"),
-      content: `export { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "./cartesian/config";
+  if (item.kind === "style-base") {
+    if (item.style === "ag") {
+      return [
+        {
+          target: path.join(outputRoot, styleBaseDir, "index.ts"),
+          content: `export { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "./cartesian/config";
 export { agTitle } from "./title";
 export { agLegend } from "./legend";
 export { tooltipContent as agTooltipContent } from "./tooltip";
 export * as cartesian from "./cartesian";
-export { AgTooltipOverlay } from "./bar-like";
-export { AgLineLikeTooltipOverlay, agLineLikeTooltipArea } from "./line-like";
 
 const DEFAULT_TICK_SPACING = 160;
 
@@ -436,24 +448,70 @@ export const agScaleOptions = (axisLength: number) => ({
       : 10,
 });
 `,
-    },
-    {
-      target: path.join(outputRoot, styleBaseDir, "bar-like/index.ts"),
-      content: `export { AgTooltipOverlay } from "./tooltip-overlay";
+        },
+      ];
+    }
+
+    if (item.style === "toast") {
+      return [
+        {
+          target: path.join(outputRoot, styleBaseDir, "index.ts"),
+          content: `export { CheckBox } from "./checkbox";
+export {
+  type ToastBaseConfig,
+  defaultToastBaseConfig,
+} from "./cartesian/config";
+export { toastTitle } from "./title";
+export { toastLegend } from "./legend";
+export { drawSplineLine } from "flitter-ui/chart";
+export { tooltipContent } from "./tooltip";
+export * as cartesian from "./cartesian";
+
+const DEFAULT_TICK_SPACING = 80;
+
+export const toastScaleOptions = (axisLength: number) => ({
+  roughStepCount:
+    axisLength > 0
+      ? Math.max(2, Math.floor(axisLength / DEFAULT_TICK_SPACING))
+      : 10,
+});
+`,
+        },
+      ];
+    }
+
+    return [];
+  }
+
+  if (item.kind === "style-family") {
+    const overrides = [];
+
+    if (item.style === "ag" && item.family === "bar") {
+      overrides.push({
+        target: path.join(outputRoot, styleBaseDir, "bar-like/index.ts"),
+        content: `export { AgTooltipOverlay } from "./tooltip-overlay";
 export { DataView } from "./data-view";
 export { Grid } from "./grid";
 export { BarBox } from "./bar-box";
 `,
-    },
-    {
-      target: path.join(outputRoot, styleBaseDir, "line-like/index.ts"),
-      content: `export { AgLineLikeTooltipOverlay } from "./tooltip-overlay";
+      });
+    }
+
+    if (item.style === "ag" && item.family === "line") {
+      overrides.push({
+        target: path.join(outputRoot, styleBaseDir, "line-like/index.ts"),
+        content: `export { AgLineLikeTooltipOverlay } from "./tooltip-overlay";
 export { agLineLikeTooltipArea } from "./tooltip-area";
 export { DataView } from "./data-view";
 export { Grid } from "./grid";
 `,
-    },
-  ];
+      });
+    }
+
+    return overrides;
+  }
+
+  return [];
 }
 
 export async function renderTemplateFile({
@@ -489,6 +547,14 @@ export async function renderTemplateFile({
     file.source.endsWith(`/styles/${item.style}/index.ts`);
 
   content = content
+    .replace(
+      /(['"])flitter-core\1/gu,
+      (_, quote) => `${quote}${ROOT_WIDGETS_IMPORT}${quote}`,
+    )
+    .replace(
+      /(['"])flitter-chart\1/gu,
+      (_, quote) => `${quote}${ROOT_PRIMITIVES_IMPORT}${quote}`,
+    )
     .replace(
       /import\s+([A-Za-z_$][\w$]*)\s+from\s+(['"])@headless\/([^/'"]+)\2/gu,
       (_, localName, quote, chartName) => {
@@ -639,7 +705,7 @@ export function generatePluginIndex(item, metadata) {
   const componentName = `${styleName[0].toUpperCase()}${styleName.slice(1)}${metadata.componentName}`;
   const createConfigCall = `${styleConfigConst}.createConfig(config)`;
 
-  return `import type { Widget } from "flitter-core";
+  return `import type { Widget } from "${ROOT_WIDGETS_IMPORT}";
 import type { DeepPartial } from "${ROOT_PRIMITIVES_IMPORT}";
 import { ${metadata.baseName} } from "./base";
 import type { ${metadata.customType}, ${metadata.dataType}${metadata.supportsGetScale ? ", GetScaleFn" : ""}${metadata.supportsGetScaleOptions ? ", GetScaleOptionsFn" : ""} } from "./base";

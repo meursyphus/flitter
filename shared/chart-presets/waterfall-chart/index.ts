@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import { WaterfallChart as HeadlessWaterfallChart } from "flitter-ui/chart";
 import type {
   GetScaleFn,

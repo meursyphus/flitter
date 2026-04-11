@@ -6,7 +6,7 @@ import {
   Positioned,
   Stack,
   StackFit,
-} from "flitter-core";
+} from "flitter-ui";
 
 export function DataView(
   ...[{ nodes, links }]: Parameters<SankeyChartCustom["dataView"]>

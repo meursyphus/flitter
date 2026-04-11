@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import { BaseDonutChart } from "./base";
 import type { DonutChartCustom, DonutChartData } from "./types";
 import { styleConfig, type DonutChartConfig } from "./style";

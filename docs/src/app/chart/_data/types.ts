@@ -57,6 +57,7 @@ export type GalleryDetailPageData = ChartPageBase & {
     chartType: string;
     style: "Toast" | "AG";
     title: string;
+    thumbnailUrl: string;
     Component: React.ComponentType;
     files: { filename: string; code: string }[];
     installCommand: string;

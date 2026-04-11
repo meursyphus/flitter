@@ -13,9 +13,9 @@ import {
   tooltipContent,
   toastScaleOptions,
   cartesian,
-} from "../../_styles/toast/index";
+} from "../../_shared/toast/index";
 import type { BarChartContext } from "flitter-ui/chart";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 
 export { type ToastStackedBarChartConfig } from "./config";
 

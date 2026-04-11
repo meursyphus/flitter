@@ -1,5 +1,5 @@
 import type { SankeyChartCustom } from "../types";
-import { Text, TextStyle } from "flitter-core";
+import { Text, TextStyle } from "flitter-ui";
 
 export function NodeLabel(
   ...[{ label }, ctx]: Parameters<SankeyChartCustom["nodeLabel"]>

@@ -5,10 +5,10 @@ import {
   Positioned,
   Stack,
   type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { WaterfallChartCustom } from "flitter-ui/chart";
 import type { WaterfallChartConfig } from "../config";
-import { AnimatedDataView } from "../../../_styles/toast/cartesian/animated-data-view";
+import { AnimatedDataView } from "../../../_shared/toast/cartesian/animated-data-view";
 
 export function toastDataView(
   ...[{ bars, connectors }, ctx]: Parameters<WaterfallChartCustom<WaterfallChartConfig>["dataView"]>

@@ -1,5 +1,5 @@
 import type { BulletChartCustom, BulletChartContext, BulletChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
-import { type Widget } from "flitter-core";
+import { type Widget } from "flitter-ui";
 import type { ToastBulletChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "flitter-ui/chart";
@@ -15,7 +15,7 @@ import {
   toastScaleOptions,
   tooltipContent,
   cartesian,
-} from "../../_styles/toast/index";
+} from "../../_shared/toast/index";
 import * as Cartesian from "flitter-ui/chart";
 
 export { type ToastBulletChartConfig } from "./config";

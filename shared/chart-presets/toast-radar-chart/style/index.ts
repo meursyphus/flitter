@@ -1,6 +1,6 @@
 import type { RadarChartCustom } from "flitter-ui/chart";
 import type { RadarChartContext } from "flitter-ui/chart";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import type { ToastRadarChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
@@ -16,7 +16,7 @@ import {
 	toastTitle,
 	toastLegend,
 	tooltipContent,
-} from "../../_styles/toast/index";
+} from "../../_shared/toast/index";
 
 export { type ToastRadarChartConfig } from "./config";
 

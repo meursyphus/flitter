@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import type { DeepPartial } from "flitter-ui/chart";
 import { BaseBubbleChart } from "./base";
 import type { BubbleChartCustom, BubbleChartData, GetScaleFn, GetScaleOptionsFn } from "./base";

@@ -1,4 +1,4 @@
-import { Text, TextStyle, type Widget } from "flitter-core";
+import { Text, TextStyle, type Widget } from "flitter-ui";
 import type { TreemapCustom } from "flitter-ui/chart";
 import type { TreemapChartConfig } from "../config";
 

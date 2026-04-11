@@ -2,6 +2,7 @@ import path from "node:path";
 import { fileExists, readJson, writeJson } from "./fs.mjs";
 
 export const FLITTER_CONFIG_FILENAME = "flitter.json";
+const LOCAL_SCHEMA_PATH = "./node_modules/flitter-ui/schema/flitter.json";
 
 function parseJsonc(raw) {
   let output = "";
@@ -120,7 +121,7 @@ export async function createDefaultFlitterConfig(projectRoot) {
   const tsconfig = await readTsconfig(projectRoot);
 
   return {
-    $schema: "https://flitter.dev/schema/flitter.json",
+    $schema: LOCAL_SCHEMA_PATH,
     tsx: tsconfig != null,
     framework: detectFramework(packageJson),
     defaultChartStyle: "ag",

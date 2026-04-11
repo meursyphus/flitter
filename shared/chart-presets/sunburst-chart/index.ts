@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import { BaseSunburstChart } from "./base";
 import type {
 	SunburstChartCustom,

@@ -5,8 +5,8 @@ import {
   Path,
   SizedBox,
   type Widget,
-} from "flitter-core";
-import { drawSplineLine } from "../../../_styles/toast/index";
+} from "flitter-ui";
+import { drawSplineLine } from "../../../_shared/toast/index";
 import type { AgStackedAreaChartConfig } from "../config";
 
 export function agArea(

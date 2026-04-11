@@ -7,7 +7,7 @@ import {
 	Padding,
 	SizedBox,
 	type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { TreemapCustom } from "flitter-ui/chart";
 import type { TreemapChartConfig } from "../config";
 

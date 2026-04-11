@@ -5,7 +5,7 @@ import {
 	agTitle,
 	agTooltipContent,
 	defaultAgCartesianBaseConfig,
-} from "../../_styles/ag/index";
+} from "../../_shared/ag/index";
 import type { TreemapChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { agDataLabel } from "./parts/data-label";

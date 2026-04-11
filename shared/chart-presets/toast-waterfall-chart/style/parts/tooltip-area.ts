@@ -14,7 +14,7 @@ import {
   Offset,
   type Widget,
   type TooltipPosition,
-} from "flitter-core";
+} from "flitter-ui";
 import type { WaterfallChartCustom } from "flitter-ui/chart";
 import type { WaterfallChartConfig } from "../config";
 

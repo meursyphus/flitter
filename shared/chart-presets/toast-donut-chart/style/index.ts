@@ -1,5 +1,5 @@
 import type { DonutChartContext, DonutChartCustom } from "flitter-ui/chart";
-import { Column, MainAxisSize, SizedBox, Text, TextStyle } from "flitter-core";
+import { Column, MainAxisSize, SizedBox, Text, TextStyle } from "flitter-ui";
 import type { DonutChartConfig } from "./config";
 import { defaultToastConfig, normalizeDonutToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
@@ -11,8 +11,8 @@ import {
 	toastPieLikeSegment,
 	toastPieLikeTooltip,
 	toastPieLikeTooltipArea,
-} from "../../_styles/toast/polar-like";
-import { toastLegend, toastTitle } from "../../_styles/toast/index";
+} from "../../_shared/toast/polar-like";
+import { toastLegend, toastTitle } from "../../_shared/toast/index";
 
 export { type DonutChartConfig } from "./config";
 

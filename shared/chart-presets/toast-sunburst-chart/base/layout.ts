@@ -1,4 +1,4 @@
-import { Layout as PieLikeLayout } from "../../_styles/toast/pie-like/index";
+import { Layout as PieLikeLayout } from "../../_shared/toast/pie-like/index";
 import type { SunburstCustom } from "../types";
 
 export function Layout(

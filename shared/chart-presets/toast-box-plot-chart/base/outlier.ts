@@ -7,8 +7,8 @@ import {
 	Opacity,
 	Radius,
 	SizedBox,
-} from 'flitter-core';
-import { defaultAgCartesianBaseConfig } from '../../_styles/ag/index';
+} from 'flitter-ui';
+import { defaultAgCartesianBaseConfig } from '../../_shared/ag/index';
 
 export function Outlier(
 	...[{ value, index, legend, label, datasetIndex, isHovered }, ctx]: Parameters<

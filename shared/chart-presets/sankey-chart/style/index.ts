@@ -3,9 +3,9 @@ import type { SankeyChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import * as Base from "../base";
-import { agTitle, agTooltipContent } from "../../_styles/ag/index";
+import { agTitle, agTooltipContent } from "../../_shared/ag/index";
 import type { SankeyChartContext } from "flitter-ui/chart";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import { agTooltipArea } from "./parts/tooltip-area";
 
 export { type SankeyChartConfig } from "./config";

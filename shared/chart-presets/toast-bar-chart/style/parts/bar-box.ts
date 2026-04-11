@@ -2,12 +2,12 @@ import {
   AnimatedFractionallySizedBox,
   EdgeInsets,
   Padding,
-} from "flitter-core";
+} from "flitter-ui";
 import type { BarChartCustom } from "flitter-ui/chart";
 import type { ToastBarChartConfig } from "../config";
 
 export function toastBarBox(
-  ...[{ bar, ratio, alignment, value, label, legend, isHovered }, ctx]: Parameters<BarChartCustom<ToastBarChartConfig>['barBox']>
+  ...[{ bar, ratio, alignment }, ctx]: Parameters<BarChartCustom<ToastBarChartConfig>["barBox"]>
 ) {
   const { direction, config } = ctx;
   const isVertical = direction === "vertical";

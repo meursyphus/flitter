@@ -15,7 +15,7 @@ import {
   ZIndex,
   type Widget,
   type BuildContext,
-} from "flitter-core";
+} from "flitter-ui";
 import type { ScatterChartCustom, ScatterChartContext } from "flitter-ui/chart";
 import type { AgScatterChartConfig } from "../config";
 import { DataView } from "../../base/data-view";

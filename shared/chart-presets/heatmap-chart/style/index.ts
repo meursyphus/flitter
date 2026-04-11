@@ -10,9 +10,9 @@ import {
   agTitle,
   agTooltipContent,
   cartesian,
-} from "../../_styles/ag/index";
+} from "../../_shared/ag/index";
 import type { HeatmapContext } from "flitter-ui/chart";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import { interpolateColor } from "./parts/segment";
 
 export { type AgHeatmapChartConfig } from "./config";

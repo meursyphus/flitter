@@ -5,7 +5,7 @@ import {
   Stack,
   StackFit,
   SizedBox,
-} from "flitter-core";
+} from "flitter-ui";
 import type { BulletChartCustom } from "flitter-ui/chart";
 
 const MIN_ANCHOR_RATIO = 0.02;

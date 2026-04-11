@@ -10,11 +10,11 @@ import {
 	toastPieLikeSegment,
 	toastPieLikeTooltip,
 	toastPieLikeTooltipArea,
-} from "../../_styles/toast/polar-like";
+} from "../../_shared/toast/polar-like";
 import {
 	toastTitle,
 	toastLegend,
-} from "../../_styles/toast/index";
+} from "../../_shared/toast/index";
 
 export { type ToastPieChartConfig } from "./config";
 

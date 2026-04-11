@@ -1,23 +1,43 @@
 {
   "name": "flitter-ui",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "type": "module",
-  "description": "Flitter - A high-performance JavaScript rendering engine inspired by Flutter",
+  "description": "Flitter — A high-performance JavaScript rendering engine inspired by Flutter. Declarative Canvas/SVG graphics, interactive charts, and complex UIs for the web.",
   "bin": {
     "flitter": "./cli/index.mjs"
   },
-  "keywords": ["rendering-engine", "data-visualization", "svg", "canvas", "flutter-like"],
-  "homepage": "https://flitter.dev",
-  "repository": "https://github.com/meursyphus/flitter",
+  "keywords": [
+    "flitter",
+    "rendering-engine",
+    "data-visualization",
+    "svg",
+    "canvas",
+    "flutter-like",
+    "javascript",
+    "charts",
+    "ui-framework",
+    "declarative",
+    "interactive",
+    "graphics",
+    "typescript"
+  ],
+  "homepage": "https://ui.flitter.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meursyphus/flitter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/meursyphus/flitter/issues"
+  },
+  "author": "meursyphus",
   "license": "MIT",
   "scripts": {
-    "build": "tsup"
-  },
-  "dependencies": {
-    "flitter-core": "workspace:*",
-    "flitter-chart": "workspace:*"
+    "build": "pnpm --filter flitter-core build && pnpm --filter flitter-chart build && node ./scripts/sync-cli-registry.mjs && tsup && node ./scripts/sync-bundled-types.mjs",
+    "prepack": "pnpm run build"
   },
   "devDependencies": {
+    "flitter-core": "workspace:*",
+    "flitter-chart": "workspace:*",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"
   },
@@ -36,7 +56,11 @@
       "require": "./dist/chart.cjs"
     }
   },
-  "files": ["dist", "cli"],
+  "files": [
+    "dist",
+    "cli",
+    "schema"
+  ],
   "publishConfig": {
     "access": "public"
   }

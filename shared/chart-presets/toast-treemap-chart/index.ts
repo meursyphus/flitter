@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import { BaseTreemapChart } from "./base";
 import type {
 	GetTreemapLayoutFn,

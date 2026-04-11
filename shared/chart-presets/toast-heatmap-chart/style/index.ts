@@ -10,9 +10,9 @@ import {
 	toastTitle,
 	tooltipContent,
 	cartesian,
-} from "../../_styles/toast/index";
+} from "../../_shared/toast/index";
 import type { HeatmapContext } from "flitter-ui/chart";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import { interpolateColor } from "./parts/segment";
 
 export { type ToastHeatmapChartConfig } from "./config";

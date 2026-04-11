@@ -1,7 +1,7 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitter-ui";
 import { PieChart as HeadlessPieChart } from "flitter-ui/chart";
 import type { PieChartCustom, PieChartData } from "flitter-ui/chart";
-import { DataView, Layout, Plot } from "../../_styles/toast/pie-like/index";
+import { DataView, Layout, Plot } from "../../_shared/toast/pie-like/index";
 
 export type { PieChartCustom, PieChartData, PieChartContext } from "flitter-ui/chart";
 export { PieChartController } from "flitter-ui/chart";

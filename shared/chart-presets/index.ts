@@ -27,7 +27,6 @@ export { default as ToastHistogramChart } from "./toast-histogram-chart";
 export { default as WaterfallChart } from "./waterfall-chart";
 export { default as ToastWaterfallChart } from "./toast-waterfall-chart";
 export { default as CandlestickChart } from "./candlestick-chart";
-export { default as ToastCandlestickChart } from "./toast-candlestick-chart";
 export { default as SankeyChart } from "./sankey-chart";
 export { default as ToastSankeyChart } from "./toast-sankey-chart";
 export { default as TreemapChart } from "./treemap-chart";

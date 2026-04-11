@@ -3,7 +3,7 @@ import {
 	Path,
 	Offset,
 	type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { RadarChartCustom } from "flitter-ui/chart";
 import type { ToastRadarChartConfig } from "../config";
 

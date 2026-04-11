@@ -4,7 +4,7 @@ import {
 	Stack,
 	StackFit,
 	type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { SunburstChartCustom } from "flitter-ui/chart";
 import type { SunburstChartConfig } from "../config";
 import {

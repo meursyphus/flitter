@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import { BulletChart as HeadlessBulletChart } from "flitter-ui/chart";
 import type {
   BulletChartCustom,

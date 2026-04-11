@@ -6,7 +6,7 @@ import {
 	Flexible,
 	MainAxisAlignment,
 	SizedBox,
-} from 'flitter-core';
+} from 'flitter-ui';
 
 export function BoxPlotGroup(
 	...[{ boxPlots, dataPoints, index }, ctx]: Parameters<BoxPlotChartCustom['boxPlotGroup']>

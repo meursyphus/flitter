@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Integration",
+  description:
+    "Use Flitter with React, Svelte, or vanilla JavaScript. Framework-agnostic chart widgets with thin adapters.",
+};
+
 export default function IntegrationLayout({
   children,
 }: {

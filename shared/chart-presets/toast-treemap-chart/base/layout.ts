@@ -9,7 +9,7 @@ import {
 	Row,
 	SizedBox,
 	type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { TreemapCustom } from "flitter-ui/chart";
 
 type LayoutConfig = {

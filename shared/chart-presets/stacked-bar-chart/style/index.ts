@@ -12,9 +12,9 @@ import {
   agTooltipContent,
   agScaleOptions,
   cartesian,
-} from "../../_styles/ag/index";
+} from "../../_shared/ag/index";
 import type { BarChartContext } from "flitter-ui/chart";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 
 export { type AgStackedBarChartConfig } from "./config";
 

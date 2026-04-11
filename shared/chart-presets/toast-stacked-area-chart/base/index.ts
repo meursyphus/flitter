@@ -1,4 +1,4 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitter-ui";
 import { LineChart as HeadlessLineChart } from "flitter-ui/chart";
 import type {
   LineChartCustom,
@@ -8,7 +8,7 @@ import type {
   LineChartGetPointValueFn as GetPointValueFn,
 } from "flitter-ui/chart";
 import * as Cartesian from "flitter-ui/chart";
-import { DataView, Grid } from "../../_styles/toast/line-like/index";
+import { DataView, Grid } from "../../_shared/toast/line-like/index";
 import { stackedGetScale } from "./stacked-get-scale";
 import { stackedGetPointValue } from "./stacked-get-point-value";
 

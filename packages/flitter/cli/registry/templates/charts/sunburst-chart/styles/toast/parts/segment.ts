@@ -1,0 +1,117 @@
+import {
+	CustomPaint,
+	Stack,
+	StackFit,
+	ZIndex,
+	type Widget,
+} from "flitter-core";
+import type { SunburstChartCustom } from "@headless/sunburst-chart/types";
+import type { SunburstChartConfig } from "../config";
+import {
+	createArcCanvasPath,
+	createArcPath,
+	getRingMetrics,
+	isPointInSegment,
+} from "../../base/geometry";
+
+function resolveFill(config: SunburstChartConfig, branchIndex: number): string {
+	return config.colors[branchIndex % config.colors.length] ?? "";
+}
+
+export function toastSegment(
+	...[args, ctx]: Parameters<SunburstChartCustom<SunburstChartConfig>["segment"]>
+): Widget {
+	const fill = resolveFill(ctx.config, args.branchIndex);
+
+	return ZIndex({
+		zIndex: args.isHovered ? 9999 : 0,
+		child: Stack({
+			fit: StackFit.expand,
+			clipped: false,
+			children: [
+				CustomPaint({
+					painter: {
+						hitTest: (position, size) => {
+							const metrics = getRingMetrics(
+								size.width,
+								size.height,
+								ctx.segments,
+								ctx.config.sunburst.innerRadiusRatio,
+							);
+							if (!metrics) return false;
+							return isPointInSegment(position, metrics, args);
+						},
+						svg: {
+							createDefaultSvgEl: (context) => ({
+								path: context.createSvgEl("path"),
+							}),
+							paint: ({ path }, size) => {
+								const metrics = getRingMetrics(
+									size.width,
+									size.height,
+									ctx.segments,
+									ctx.config.sunburst.innerRadiusRatio,
+								);
+								if (!metrics) return;
+
+								path.setAttribute("d", createArcPath(metrics, args));
+								path.setAttribute("fill", fill);
+								path.setAttribute(
+									"stroke",
+									args.isHovered
+										? ctx.config.sunburst.hoverBorderColor
+										: ctx.config.sunburst.strokeColor,
+								);
+								path.setAttribute(
+									"stroke-width",
+									String(
+										args.isHovered
+											? ctx.config.sunburst.hoverBorderWidth
+											: ctx.config.sunburst.strokeWidth,
+									),
+								);
+								if (args.isHovered) {
+									path.setAttribute(
+										"filter",
+										`drop-shadow(0 0 8px ${ctx.config.sunburst.hoverShadowColor})`,
+									);
+								} else {
+									path.removeAttribute("filter");
+								}
+							},
+						},
+						canvas: {
+							paint: (context, size) => {
+								const metrics = getRingMetrics(
+									size.width,
+									size.height,
+									ctx.segments,
+									ctx.config.sunburst.innerRadiusRatio,
+								);
+								if (!metrics) return;
+
+								const canvasPath = createArcCanvasPath(metrics, args);
+								const canvas = context.canvas;
+								canvas.fillStyle = fill;
+								canvas.fill(canvasPath);
+								canvas.strokeStyle = args.isHovered
+									? ctx.config.sunburst.hoverBorderColor
+									: ctx.config.sunburst.strokeColor;
+								canvas.lineWidth = args.isHovered
+									? ctx.config.sunburst.hoverBorderWidth
+									: ctx.config.sunburst.strokeWidth;
+								if (args.isHovered) {
+									canvas.shadowColor = ctx.config.sunburst.hoverShadowColor;
+									canvas.shadowBlur = 8;
+								}
+								canvas.stroke(canvasPath);
+								canvas.shadowBlur = 0;
+							},
+						},
+					},
+				}),
+				args.dataLabel,
+			],
+		}),
+	});
+}

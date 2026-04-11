@@ -2,10 +2,10 @@ import {
   Stack,
   Positioned,
   type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { LineChartCustom } from "flitter-ui/chart";
 import type { ToastLineChartConfig } from "../config";
-import { AnimatedDataView } from "../../../_styles/toast/cartesian/animated-data-view";
+import { AnimatedDataView } from "../../../_shared/toast/cartesian/animated-data-view";
 
 export function toastDataView(
   ...[args, ctx]: Parameters<LineChartCustom<ToastLineChartConfig>["dataView"]>

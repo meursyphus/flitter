@@ -1,5 +1,5 @@
 import type { BoxPlotChartCustom, BoxPlotChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import type { AgBoxPlotChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge } from "flitter-ui/chart";
@@ -9,7 +9,7 @@ import {
   agTooltipContent,
   agScaleOptions,
   cartesian,
-} from "../../_styles/ag/index";
+} from "../../_shared/ag/index";
 import { agDataView } from "./parts/data-view";
 import { agTooltipArea } from "./parts/tooltip-area";
 

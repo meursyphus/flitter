@@ -1,0 +1,14 @@
+import type { Widget } from "flitter-ui";
+import type { AgCartesianBaseConfig } from "./config";
+import { XAxis } from "flitter-ui/chart";
+
+export function agXAxis(
+  { line, labels, tick }: { line: Widget; labels: Widget[]; tick: Widget },
+  options: { type: "label" | "value" },
+  context: { config: AgCartesianBaseConfig },
+): Widget {
+  return XAxis({ line, labels, tick }, {
+    type: options.type,
+    gap: context.config.axis.label.gap,
+  });
+}

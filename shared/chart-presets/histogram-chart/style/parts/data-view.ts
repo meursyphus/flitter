@@ -4,7 +4,7 @@ import {
   Flex,
   Flexible,
   type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { HistogramChartCustom } from "flitter-ui/chart";
 import type { HistogramChartConfig } from "../config";
 

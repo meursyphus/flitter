@@ -9,7 +9,7 @@ import {
   MainAxisAlignment,
   SizedBox,
   type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { BarChartCustom } from "flitter-ui/chart";
 
 export function stackedBarGroup<TConfig>(

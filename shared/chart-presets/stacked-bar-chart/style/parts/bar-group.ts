@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import type { BarChartCustom } from "flitter-ui/chart";
 import type { AgStackedBarChartConfig } from "../config";
 import { stackedBarGroup } from "../../base/stacked-bar-group";

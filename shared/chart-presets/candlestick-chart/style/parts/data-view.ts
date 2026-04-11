@@ -1,4 +1,4 @@
-import { type Widget } from "flitter-core";
+import { type Widget } from "flitter-ui";
 import type { CandlestickChartCustom } from "flitter-ui/chart";
 import type { CandlestickChartConfig } from "../config";
 import { DataView } from "../../base/data-view";

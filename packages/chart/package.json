@@ -7,7 +7,8 @@
   "scripts": {
     "build": "vite build",
     "lint": "eslint . --ext ts,tsx",
-    "registry:validate": "node ./registry/validate.mjs"
+    "registry:validate": "node ./registry/validate.mjs",
+    "prepublishOnly": "node ./registry/validate.mjs"
   },
   "dependencies": {
     "flitter-core": "workspace:*"

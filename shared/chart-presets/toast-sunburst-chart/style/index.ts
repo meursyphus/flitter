@@ -1,10 +1,10 @@
 import type { SunburstChartCustom } from "flitter-ui/chart";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
-import { toastLegend, toastTitle, tooltipContent } from "../../_styles/toast/index";
+import { toastLegend, toastTitle, tooltipContent } from "../../_shared/toast/index";
 import {
 	toastPieLikeDataView,
 	toastPieLikeTooltipArea,
-} from "../../_styles/toast/polar-like";
+} from "../../_shared/toast/polar-like";
 import type { SunburstChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { toastDataLabel } from "./parts/data-label";

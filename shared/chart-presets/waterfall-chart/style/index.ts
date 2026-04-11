@@ -1,7 +1,7 @@
 import {
   SizedBox,
   type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { WaterfallChartCustom } from "flitter-ui/chart";
 import type { WaterfallChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
@@ -12,7 +12,7 @@ import { agBarBox } from "./parts/bar-box";
 import { agConnector } from "./parts/connector";
 import { agDataView } from "./parts/data-view";
 import { agTooltipArea } from "./parts/tooltip-area";
-import { agLegend, agTitle, agTooltipContent, agScaleOptions, cartesian } from "../../_styles/ag/index";
+import { agLegend, agTitle, agTooltipContent, agScaleOptions, cartesian } from "../../_shared/ag/index";
 
 export { type WaterfallChartConfig } from "./config";
 

@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import Widget from "@flitterjs/react";
 import { CandlestickChart } from "shared/chart";
 import {
-  bitcoinDailyTimestampRows,
   bitcoinMonthlyRows,
+  bitcoinTimestampRows,
 } from "./candlestick.data";
 
 type StoryArgs = {
@@ -22,6 +22,13 @@ const meta: Meta<StoryArgs> = {
 export default meta;
 type Story = StoryObj<StoryArgs>;
 
+function formatUsdAxisLabel(name: string, _index: number, axis: "x" | "y"): string {
+  if (axis !== "y") return name;
+  const value = Number(name);
+  if (!Number.isFinite(value)) return name;
+  return `$${Math.round(value).toLocaleString("en-US")}`;
+}
+
 export const BitcoinMonthly: Story = {
   render: (args) => (
     <Widget
@@ -33,6 +40,11 @@ export const BitcoinMonthly: Story = {
         config: {
           title: { text: "Bitcoin USD" },
           subtitle: { visible: true, text: "(BTC-USD)" },
+          axis: {
+            label: {
+              format: formatUsdAxisLabel,
+            },
+          },
         },
       })}
       width="920px"
@@ -42,21 +54,26 @@ export const BitcoinMonthly: Story = {
   ),
 };
 
-export const BitcoinDailyTimestamps: Story = {
+export const BitcoinMonthlyTimestamps: Story = {
   render: (args) => (
     <Widget
       widget={CandlestickChart({
         data: {
-          rows: bitcoinDailyTimestampRows,
+          rows: bitcoinTimestampRows,
           xKey: "timestamp",
         },
         transform: {
-          groupBy: "week",
-          tickCount: 9,
+          groupBy: "year",
+          tickCount: 8,
         },
         config: {
-          title: { text: "Bitcoin USD YTD" },
+          title: { text: "Bitcoin USD" },
           subtitle: { visible: true, text: "(BTC-USD)" },
+          axis: {
+            label: {
+              format: formatUsdAxisLabel,
+            },
+          },
         },
       })}
       width="920px"

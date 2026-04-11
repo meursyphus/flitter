@@ -6,7 +6,7 @@ import {
 	StackFit,
 	Transform,
 	type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { RadarChartCustom } from "flitter-ui/chart";
 
 export function Web(

@@ -1,11 +1,11 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitter-ui";
 import { SunburstChart as HeadlessSunburstChart } from "flitter-ui/chart";
 import type {
 	SunburstChartCustom,
 	SunburstChartData,
 	SunburstLegacyData,
 } from "flitter-ui/chart";
-import { DataView as PieLikeDataView } from "../../_styles/toast/pie-like/index";
+import { DataView as PieLikeDataView } from "../../_shared/toast/pie-like/index";
 import { Layout } from "./layout";
 import { Plot } from "./plot";
 

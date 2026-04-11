@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import { SankeyChart as HeadlessSankeyChart } from "flitter-ui/chart";
 import type { SankeyChartCustom, SankeyChartData } from "./types";
 import { styleConfig, type SankeyChartConfig } from "./style";

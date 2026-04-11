@@ -10,8 +10,8 @@ import {
   Curves,
   Tween,
   type Widget,
-} from "flitter-core";
-import { drawSplineLine } from "../../../_styles/toast/index";
+} from "flitter-ui";
+import { drawSplineLine } from "../../../_shared/toast/index";
 import type { ToastStackedAreaChartConfig } from "../config";
 
 class _AnimatedStackedArea extends StatefulWidget {

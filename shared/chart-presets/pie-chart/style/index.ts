@@ -1,5 +1,5 @@
 import type { HoveredPieChartSegment, PieChartCustom } from "flitter-ui/chart";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import type { AgPieChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
@@ -13,8 +13,8 @@ import {
 	agPieLikeTitle,
 	agPieLikeTooltip,
 	agPieLikeTooltipArea,
-} from "../../_styles/ag/polar-like";
-import { agLegend } from "../../_styles/ag/index";
+} from "../../_shared/ag/polar-like";
+import { agLegend } from "../../_shared/ag/index";
 
 export { type AgPieChartConfig } from "./config";
 

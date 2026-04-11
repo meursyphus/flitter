@@ -1,7 +1,7 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import type { TreemapCustom } from "flitter-ui/chart";
 import type { TreemapChartConfig } from "../config";
-import { cartesian } from "../../../_styles/toast/index";
+import { cartesian } from "../../../_shared/toast/index";
 
 export function toastTooltipArea(
 	...[{ tooltip, hoveredNode }, ctx]: Parameters<

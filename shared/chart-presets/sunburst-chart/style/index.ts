@@ -5,11 +5,11 @@ import {
 	agTitle,
 	agTooltipContent,
 	defaultAgCartesianBaseConfig,
-} from "../../_styles/ag/index";
+} from "../../_shared/ag/index";
 import {
 	agPieLikeLayout,
 	agPieLikeTooltipArea,
-} from "../../_styles/ag/polar-like";
+} from "../../_shared/ag/polar-like";
 import type { SunburstChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { agDataLabel } from "./parts/data-label";

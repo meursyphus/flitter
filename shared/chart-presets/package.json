@@ -14,7 +14,6 @@
     "./*": "./*"
   },
   "dependencies": {
-    "flitter-ui": "workspace:*",
-    "flitter-core": "workspace:*"
+    "flitter-ui": "workspace:*"
   }
 }

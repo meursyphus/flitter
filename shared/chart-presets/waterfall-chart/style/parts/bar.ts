@@ -10,7 +10,7 @@ import {
 	Text,
 	TextStyle,
 	type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type {
   WaterfallBarType,
   WaterfallChartContext,

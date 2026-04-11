@@ -1,6 +1,6 @@
 import type { RadarChartCustom } from "flitter-ui/chart";
 import type { RadarChartContext } from "flitter-ui/chart";
-import { BoxDecoration, Container, type Widget } from "flitter-core";
+import { BoxDecoration, Container, type Widget } from "flitter-ui";
 import type { AgRadarChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
@@ -13,7 +13,7 @@ import { agRadialAxis } from "./parts/radial-axis";
 import { agRadialAxisLine } from "./parts/radial-axis-line";
 import { agRadialAxisLabel } from "./parts/radial-axis-label";
 import { Layout as BaseLayout } from "../base/layout";
-import { agTitle, agLegend, agTooltipContent } from "../../_styles/ag/index";
+import { agTitle, agLegend, agTooltipContent } from "../../_shared/ag/index";
 
 export { type AgRadarChartConfig } from "./config";
 

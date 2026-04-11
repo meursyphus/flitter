@@ -1,5 +1,5 @@
 import type { SankeyChartCustom } from "../types";
-import { CustomPaint, Path, Positioned, Stack, StackFit, Align, Alignment, Opacity, SizedBox } from "flitter-core";
+import { CustomPaint, Path, Positioned, Stack, StackFit, Align, Alignment, Opacity, SizedBox } from "flitter-ui";
 
 export function Link(
   ...[{ color, ribbon, labelAnchor, labelWidget, isHovered, isActive, isDimmed }]: Parameters<

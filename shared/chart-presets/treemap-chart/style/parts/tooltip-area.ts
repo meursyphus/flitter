@@ -1,7 +1,7 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import type { TreemapCustom } from "flitter-ui/chart";
 import type { TreemapChartConfig } from "../config";
-import { cartesian } from "../../../_styles/ag/index";
+import { cartesian } from "../../../_shared/ag/index";
 
 export function agTooltipArea(
 	...[{ tooltip }, ctx]: Parameters<TreemapCustom<TreemapChartConfig>["tooltipArea"]>

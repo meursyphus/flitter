@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import type { BulletChartCustom } from "flitter-ui/chart";
 import type { ToastBulletChartConfig } from "../config";
 import { BulletDataView } from "../../base/data-view";

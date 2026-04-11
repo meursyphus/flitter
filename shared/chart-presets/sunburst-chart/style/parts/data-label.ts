@@ -1,4 +1,4 @@
-import { CustomPaint, Opacity, SizedBox, type Widget } from "flitter-core";
+import { CustomPaint, Opacity, SizedBox, type Widget } from "flitter-ui";
 import type { SunburstChartCustom } from "flitter-ui/chart";
 import type { SunburstChartConfig } from "../config";
 import { getRingMetrics, getSegmentLabelMetrics } from "../../base/geometry";

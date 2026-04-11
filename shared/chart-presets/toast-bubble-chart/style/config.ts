@@ -1,4 +1,4 @@
-import { type ToastBaseConfig, defaultToastBaseConfig } from "../../_styles/toast/index";
+import { type ToastBaseConfig, defaultToastBaseConfig } from "../../_shared/toast/index";
 
 export type ToastBubbleChartConfig = ToastBaseConfig & {
   bubble: {

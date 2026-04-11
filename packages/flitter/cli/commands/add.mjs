@@ -35,6 +35,32 @@ export async function runAdd({
 
   const defaultStyle = getDefaultChartStyle(flitterConfig.value);
   const registry = await loadRegistry();
+  const chartVariants = registry.items.filter(
+    (item) =>
+      item.name === chartName &&
+      item.kind !== "support" &&
+      item.kind !== "style-base" &&
+      item.kind !== "style-family",
+  );
+
+  if (chartVariants.length === 0) {
+    throw new Error(`Unknown chart: ${chartName}`);
+  }
+
+  if (style != null && !chartVariants.some((item) => item.style === style)) {
+    const availableStyles = [
+      ...new Set(
+        chartVariants
+          .map((item) => item.style)
+          .filter((itemStyle) => itemStyle != null),
+      ),
+    ];
+
+    throw new Error(
+      `${chartName} does not support ${style} style. Available: ${availableStyles.join(", ")}`,
+    );
+  }
+
   const selectedItem = findRegistryItem(
     registry,
     chartName,
@@ -63,8 +89,20 @@ export async function runAdd({
     const itemRoot = path.join(outputRoot, itemOutputDir);
     const itemExists = await fileExists(itemRoot);
 
+    // For style-family items (e.g., _shared/toast/bar-like), the outputDir
+    // is shared with the core style-base (_shared/toast). So the parent
+    // directory existing doesn't mean this family is already installed.
+    // Check whether the first family-specific file exists instead.
     if (item.id !== selectedItem.id && itemExists) {
-      continue;
+      if (item.kind === "style-family" && item.files.length > 0) {
+        const firstFamilyFile = path.join(outputRoot, item.files[0].target);
+        if (await fileExists(firstFamilyFile)) {
+          continue;
+        }
+        // Family directory not yet installed — fall through to write it
+      } else {
+        continue;
+      }
     }
 
     if (item.id === selectedItem.id && itemExists && !overwrite) {

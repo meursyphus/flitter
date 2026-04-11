@@ -1,4 +1,4 @@
-import { Layout as PieLikeLayout } from "../../_styles/ag/pie-like/index";
+import { Layout as PieLikeLayout } from "../../_shared/ag/pie-like/index";
 import type { SunburstCustom } from "../types";
 
 export function Layout(

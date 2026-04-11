@@ -1,15 +1,16 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import type { CandlestickChartCustom, CandlestickChartContext } from "flitter-ui/chart";
 import type { CandlestickChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import * as Base from "../base";
-import * as Cartesian from "flitter-ui/chart";
-import { agTitle, agTooltipContent, agScaleOptions, cartesian } from "../../_styles/ag/index";
+import { agTitle, agTooltipContent, agScaleOptions, cartesian } from "../../_shared/ag/index";
 import { agCandlestick } from "./parts/candlestick";
 import { agCandlestickBox } from "./parts/candlestick-box";
 import { agDataView } from "./parts/data-view";
+import { agCandlestickPlot } from "./parts/plot";
 import { agTooltipArea } from "./parts/tooltip-area";
+import { agRightYAxis } from "./parts/y-axis";
 
 export { type CandlestickChartConfig } from "./config";
 
@@ -31,15 +32,14 @@ const agCustom: Partial<CandlestickChartCustom<CandlestickChartConfig>> = {
       ctx as any,
     ),
   plot: ({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }) =>
-    Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }),
+    agCandlestickPlot({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }),
   dataView: agDataView,
   candlestickBox: agCandlestickBox,
   candlestick: agCandlestick,
   tooltip: agTooltip,
   tooltipArea: agTooltipArea,
   xAxis: Base.XAxis as any,
-  yAxis: ({ line, labels, tick }, ctx) =>
-    cartesian.agYAxis({ line, labels, tick } as any, { type: "value" }, ctx as any),
+  yAxis: agRightYAxis,
   xAxisLabel: cartesian.agXAxisLabel,
   yAxisLabel: cartesian.agYAxisLabel,
   xAxisTick: cartesian.agXAxisTick,

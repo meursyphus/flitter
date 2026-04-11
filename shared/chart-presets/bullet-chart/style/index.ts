@@ -1,5 +1,5 @@
 import type { BulletChartCustom, BulletChartContext, BulletChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
-import { type Widget } from "flitter-core";
+import { type Widget } from "flitter-ui";
 import type { AgBulletChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge } from "flitter-ui/chart";
@@ -15,7 +15,7 @@ import {
   agScaleOptions,
   agTooltipContent,
   cartesian,
-} from "../../_styles/ag/index";
+} from "../../_shared/ag/index";
 import * as Cartesian from "flitter-ui/chart";
 
 export { type AgBulletChartConfig } from "./config";

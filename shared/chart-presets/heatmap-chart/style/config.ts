@@ -1,4 +1,4 @@
-import { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "../../_styles/ag/index";
+import { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "../../_shared/ag/index";
 
 type AgHeatmapSharedConfig = Pick<
   AgCartesianBaseConfig,

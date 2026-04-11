@@ -1,4 +1,4 @@
-import { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "../../_styles/ag/index";
+import { type AgCartesianBaseConfig, defaultAgCartesianBaseConfig } from "../../_shared/ag/index";
 
 export type AgBubbleChartConfig = AgCartesianBaseConfig & {
   bubble: {

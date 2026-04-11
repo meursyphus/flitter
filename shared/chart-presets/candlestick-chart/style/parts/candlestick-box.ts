@@ -5,7 +5,7 @@ import {
   Stack,
   StackFit,
   type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { CandlestickChartCustom } from "flitter-ui/chart";
 import type { CandlestickChartConfig } from "../config";
 

@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import type { DeepPartial } from "flitter-ui/chart";
 import { BasePieChart } from "./base";
 import type { PieChartCustom, PieChartData } from "./base";

@@ -6,7 +6,9 @@ export default defineConfig({
     chart: "src/chart.ts",
   },
   format: ["cjs", "esm"],
-  dts: true,
+  dts: {
+    resolve: ["flitter-core", "flitter-chart"],
+  },
   clean: true,
-  external: ["flitter-core", "flitter-chart"],
+  noExternal: ["flitter-core", "flitter-chart"],
 });

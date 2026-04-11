@@ -13,7 +13,7 @@ import {
 	Curves,
 	ZIndex,
 	type Widget,
-} from "flitter-core";
+} from "flitter-ui";
 import type { HeatmapCustom } from "flitter-ui/chart";
 import type { AgHeatmapChartConfig } from "../config";
 

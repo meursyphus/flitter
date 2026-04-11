@@ -1,7 +1,7 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import type { BoxPlotChartCustom } from "flitter-ui/chart";
 import type { ToastBoxPlotChartConfig } from "../config";
-import { cartesian } from "../../../_styles/toast/index";
+import { cartesian } from "../../../_shared/toast/index";
 
 export function toastTooltipArea(
   ...[{ tooltip, hoveredBoxPlot }, ctx]: Parameters<BoxPlotChartCustom<ToastBoxPlotChartConfig>["tooltipArea"]>

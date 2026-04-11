@@ -1,8 +1,8 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import type { BarChartCustom } from "flitter-ui/chart";
 import type { ToastBarChartConfig } from "../config";
-import { DataView } from "../../../_styles/toast/bar-like/index";
-import { AnimatedDataView } from "../../../_styles/toast/cartesian/animated-data-view";
+import { DataView } from "../../../_shared/toast/bar-like/index";
+import { AnimatedDataView } from "../../../_shared/toast/cartesian/animated-data-view";
 
 export function toastDataView(
   ...[args, context]: Parameters<BarChartCustom<ToastBarChartConfig>["dataView"]>

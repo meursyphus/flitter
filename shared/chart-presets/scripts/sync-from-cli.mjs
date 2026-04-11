@@ -277,7 +277,10 @@ const flitterConfig = JSON.parse(await readFile(flitterConfigPath, "utf8"));
 const defaultStyle = flitterConfig.defaultChartStyle ?? "ag";
 const registry = getRegistry();
 const allItems = registry.items.filter(
-  (item) => item.kind !== "support" && item.kind !== "style-base",
+  (item) =>
+    item.kind !== "support" &&
+    item.kind !== "style-base" &&
+    item.kind !== "style-family",
 );
 const args = parseArgs(process.argv.slice(2));
 

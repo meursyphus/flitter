@@ -1,5 +1,5 @@
 import type { BoxPlotChartCustom, BoxPlotChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import type { ToastBoxPlotChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "flitter-ui/chart";
@@ -14,7 +14,7 @@ import {
   tooltipContent,
   toastScaleOptions,
   cartesian,
-} from "../../_styles/toast/index";
+} from "../../_shared/toast/index";
 
 export { type ToastBoxPlotChartConfig } from "./config";
 export type { ToastBoxPlotChartConfig as BoxPlotChartConfig } from "./config";

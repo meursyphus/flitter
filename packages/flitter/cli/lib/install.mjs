@@ -33,11 +33,13 @@ function hasDependency(packageJson, dependencyName) {
   );
 }
 
-function resolveInstallSpecifier(packageName) {
+function resolveInstallSpecifier(packageName, packageManagerName) {
   const packageRoot = resolveRegistryPackageRoot(packageName);
   return packageRoot.includes(`${path.sep}node_modules${path.sep}`)
     ? packageName
-    : `link:${packageRoot}`;
+    : packageManagerName === "npm"
+      ? `file:${packageRoot}`
+      : `link:${packageRoot}`;
 }
 
 function runCommand(command, args, cwd) {
@@ -69,6 +71,8 @@ export async function ensureDependencies(projectRoot, dependencyNames) {
   }
 
   const packageManager = await detectPackageManager(projectRoot);
-  const specs = missing.map(resolveInstallSpecifier);
+  const specs = missing.map((dependencyName) =>
+    resolveInstallSpecifier(dependencyName, packageManager.name),
+  );
   await runCommand(packageManager.command, [...packageManager.args, ...specs], projectRoot);
 }

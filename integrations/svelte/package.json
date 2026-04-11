@@ -3,10 +3,31 @@
   "version": "0.0.2",
   "private": false,
   "type": "module",
-  "description": "Svelte integration for Flitter",
-  "keywords": ["flitter", "svelte", "data-visualization", "svg", "canvas"],
-  "homepage": "https://flitter.dev",
-  "repository": "https://github.com/meursyphus/flitter",
+  "description": "Svelte integration for Flitter — Mount high-performance Canvas/SVG widgets and charts in Svelte applications with SSR support.",
+  "keywords": [
+    "flitter",
+    "svelte",
+    "data-visualization",
+    "svg",
+    "canvas",
+    "charts",
+    "rendering-engine",
+    "svelte-component",
+    "flutter-like",
+    "ssr",
+    "interactive-charts",
+    "typescript"
+  ],
+  "homepage": "https://ui.flitter.dev/integration/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meursyphus/flitter.git",
+    "directory": "integrations/svelte"
+  },
+  "bugs": {
+    "url": "https://github.com/meursyphus/flitter/issues"
+  },
+  "author": "meursyphus",
   "license": "MIT",
   "main": "./src/lib/index.ts",
   "publishConfig": {
@@ -24,7 +45,7 @@
     "linkedom": "^0.14.21"
   },
   "peerDependencies": {
-    "flitter-ui": "workspace:^",
+    "flitter-ui": "workspace:^*",
     "svelte": "^4.0.0 || ^5.0.0"
   },
   "devDependencies": {

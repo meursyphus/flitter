@@ -1,9 +1,9 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import type { HistogramChartCustom } from "flitter-ui/chart";
 import type { HistogramChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
-import { agTitle, agTooltipContent, cartesian } from "../../_styles/ag/index";
+import { agTitle, agTooltipContent, cartesian } from "../../_shared/ag/index";
 import { agBar } from "./parts/bar";
 import { agTooltipArea } from "./parts/tooltip-area";
 

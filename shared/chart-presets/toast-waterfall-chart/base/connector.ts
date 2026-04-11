@@ -1,5 +1,5 @@
 import type { WaterfallChartCustom } from '../types';
-import { Container } from 'flitter-core';
+import { Container } from 'flitter-ui';
 
 export function Connector(
 	...[_args, _config]: Parameters<WaterfallChartCustom['connector']>

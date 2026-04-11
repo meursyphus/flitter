@@ -2,7 +2,7 @@ import type { LineChartCustom } from "flitter-ui/chart";
 import type { LineChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
 import type { ToastStackedAreaChartConfig } from "./config";
 import type { LineChartContext } from "flitter-ui/chart";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitter-ui";
 import { defaultToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "flitter-ui/chart";
 import { toastArea } from "./parts/area";
@@ -14,7 +14,7 @@ import {
   tooltipContent,
   toastScaleOptions,
   cartesian,
-} from "../../_styles/toast/index";
+} from "../../_shared/toast/index";
 
 export { type ToastStackedAreaChartConfig } from "./config";
 

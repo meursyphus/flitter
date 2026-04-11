@@ -1,4 +1,4 @@
-import { type Widget } from "flitter-core";
+import { type Widget } from "flitter-ui";
 import type { BoxPlotChartCustom } from "flitter-ui/chart";
 import type { AgBoxPlotChartConfig } from "../config";
 import { DataView } from "../../base/data-view";

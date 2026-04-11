@@ -5,7 +5,7 @@ Concrete chart package for local development and Storybook.
 ## Intent
 
 - Mirror the shape of chart code that `flitter add` would place in an app.
-- Keep `flitter-chart` as the runtime primitive layer.
+- Keep `flitter-ui` as the public runtime import surface.
 - Expose concrete styled charts instead of a runtime `style` factory API.
 
 ## Naming
@@ -17,7 +17,7 @@ Concrete chart package for local development and Storybook.
 ## Layout
 
 - `flitter-ui/chart`: runtime primitive import surface used directly by generated chart code.
-- `_styles/ag/`, `_styles/toast/`: internal style-base primitives reused by concrete charts.
+- `_shared/ag/`, `_shared/toast/`: internal style-base primitives reused by concrete charts.
 - `<chart>/`: default AG concrete charts.
 - `toast-<chart>/`: optional Toast concrete charts.
 - `<chart>/style/`: concrete style implementation for that chart variant.

@@ -15,7 +15,7 @@ import {
   ZIndex,
   type Widget,
   type BuildContext,
-} from "flitter-core";
+} from "flitter-ui";
 import type { BubbleChartCustom } from "flitter-ui/chart";
 import type { AgBubbleChartConfig } from "../config";
 import { DataView } from "../../base/data-view";

@@ -1,4 +1,4 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitter-ui";
 import { BubbleChart as HeadlessBubbleChart } from "flitter-ui/chart";
 import type {
   BubbleChartCustom,
@@ -8,7 +8,7 @@ import type {
 } from "flitter-ui/chart";
 import * as Cartesian from "flitter-ui/chart";
 import { getValueEdge, refineScale } from "flitter-ui/chart";
-import { Grid as PointLikeGrid } from "../../_styles/toast/point-like/index";
+import { Grid as PointLikeGrid } from "../../_shared/toast/point-like/index";
 import { DataView } from "./data-view";
 
 export type { BubbleChartCustom, BubbleChartData, BubbleChartScale, BubbleChartContext, BubbleChartScaleOptions, BubbleChartGetScaleFn as GetScaleFn, BubbleChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
