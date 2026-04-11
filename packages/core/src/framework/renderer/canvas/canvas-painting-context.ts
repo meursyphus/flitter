@@ -4,6 +4,7 @@ import { Offset, type Rect } from "../../../type";
 import {
   type ContainerLayer,
   type Layer,
+  OffsetLayer,
   PictureLayer,
   PictureRecorder,
 } from "./layer";
@@ -21,6 +22,7 @@ type CollectedPainter = (
   | {
       kind: "boundary";
       renderObject: RenderObject;
+      offset: Offset;
       ancestors: AncestorNode[];
       zOrder: number;
     }
@@ -156,7 +158,11 @@ export class CanvasPaintingContext {
     let proxyCanvas: CanvasProxy | null = null;
     for (const entry of painters) {
       if (entry.kind === "boundary") {
-        childContext.compositeChild(entry.renderObject, entry.ancestors);
+        childContext.compositeChild(
+          entry.renderObject,
+          entry.ancestors,
+          entry.offset,
+        );
         continue;
       }
 
@@ -192,6 +198,7 @@ export class CanvasPaintingContext {
       result.push({
         kind: "boundary",
         renderObject: node,
+        offset,
         ancestors: [...ancestorChain],
         zOrder: node.minDescendantZOrder,
       });
@@ -293,7 +300,11 @@ export class CanvasPaintingContext {
     child.canvasPainter.paint(this, offset);
   }
 
-  compositeChild(child: RenderObject, ancestors: AncestorNode[]) {
+  compositeChild(
+    child: RenderObject,
+    ancestors: AncestorNode[],
+    accumulatedOffset?: Offset,
+  ) {
     assert(
       child.canvasPainter.isRepaintBoundary,
       "compositeChild must be called on a repaint boundary",
@@ -306,6 +317,16 @@ export class CanvasPaintingContext {
     }
 
     let layer: Layer = child.canvasPainter.layer;
+    if (
+      accumulatedOffset &&
+      (accumulatedOffset.x !== 0 || accumulatedOffset.y !== 0)
+    ) {
+      const wrapper = new OffsetLayer();
+      wrapper.offset = accumulatedOffset;
+      wrapper.append(layer);
+      layer = wrapper;
+    }
+
     for (let i = ancestors.length - 1; i >= 0; i--) {
       const ancestor = ancestors[i];
       const ancestorLayer = ancestor.node.canvasPainter.createAncestorLayer(
