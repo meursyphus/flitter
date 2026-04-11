@@ -30,12 +30,15 @@ export class CanvasRenderPipeline extends RenderPipeline {
     dirties
       .sort((a, b) => b.depth - a.depth)
       .forEach(node => {
+        if (!node.needsPaint && !node.needsCompositedLayerUpdate) return;
+
+        assert(
+          node.canvasPainter.isRepaintBoundary,
+          "isRepaintBoundary must be true on flushPaint",
+        );
+
         const layer = node.canvasPainter.layer;
         if (layer == null) {
-          assert(
-            node.canvasPainter.isRepaintBoundary,
-            "isRepaintBoundary must be true on flushPaint",
-          );
           if (node.needsPaint || node.needsCompositedLayerUpdate) {
             CanvasPaintingContext.repaintCompositedChild(node);
           }
@@ -43,10 +46,6 @@ export class CanvasRenderPipeline extends RenderPipeline {
         }
 
         if (layer.attached) {
-          assert(
-            node.canvasPainter.isRepaintBoundary,
-            "isRepaintBoundary must be true on flushPaint",
-          );
           if (node.needsPaint) {
             CanvasPaintingContext.repaintCompositedChild(node);
           } else if (node.needsCompositedLayerUpdate) {

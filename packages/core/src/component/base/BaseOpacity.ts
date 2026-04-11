@@ -89,6 +89,10 @@ class CanvasPainterOpacity extends CanvasPainter {
   }
 
   override performPaint(context: CanvasPaintingContext, offset: Offset) {
+    if (this.opacity >= 1) {
+      this.defaultPaint(context, offset);
+      return;
+    }
     context.canvas.save();
     context.canvas.globalAlpha *= this.opacity;
     this.defaultPaint(context, offset);

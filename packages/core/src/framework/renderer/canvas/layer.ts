@@ -80,6 +80,10 @@ export class OffsetLayer extends ContainerLayer {
   offset: Offset = Offset.Constants.zero;
 
   override addToScene(builder: SceneBuilder) {
+    if (this.offset.x === 0 && this.offset.y === 0) {
+      super.addToScene(builder);
+      return;
+    }
     builder.pushOffset(this.offset);
     super.addToScene(builder);
     builder.pop();
@@ -104,6 +108,10 @@ export class OpacityLayer extends ContainerLayer {
   opacity: number = 1;
 
   override addToScene(builder: SceneBuilder) {
+    if (this.opacity >= 1) {
+      super.addToScene(builder);
+      return;
+    }
     builder.pushOpacity(this.opacity);
     super.addToScene(builder);
     builder.pop();
