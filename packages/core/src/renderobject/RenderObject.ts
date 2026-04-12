@@ -121,6 +121,14 @@ export class RenderObject {
     this.markNeedsUpdateZOrder();
   }
 
+  detach() {
+    if (this.isPainter) {
+      this.svgPainter.detach();
+    }
+    this.canvasPainter.detach();
+    this.parent = undefined;
+  }
+
   dispose() {
     this.renderOwner.disposeRenderObject(this);
   }

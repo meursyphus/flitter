@@ -70,11 +70,11 @@ class LayoutBuilderElement extends RenderObjectElement {
     }
   }
 
-  override unmount(): void {
-    this._child?.unmount();
-    this._renderObject.dispose();
-    this.parent = undefined;
-    this._renderObject.markNeedsParentLayout();
+  override forgetChild(child: Element): void {
+    super.forgetChild(child);
+    if (this._child === child) {
+      this._child = null;
+    }
   }
 }
 
