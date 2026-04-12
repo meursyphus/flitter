@@ -24,7 +24,7 @@ export class RenderFlexible extends SingleChildRenderObject {
     // you must call child's layout function and determine size of widget.
     let size = Size.zero();
     if (this.child != null) {
-      this.child.layout(childConstraint);
+      this.child.layout(childConstraint, { parentUsesSize: true });
       size = this.child.size;
     }
     this.size = this.constraint.constrain(size);

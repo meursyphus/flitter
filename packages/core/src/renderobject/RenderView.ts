@@ -13,16 +13,36 @@ class RenderView extends RenderObject {
     this.renderOwner.hitTestDispatcher.setRenderView(this);
     this.constraints = Constraints.tight({ width: 0, height: 0 });
   }
+  override get sizedByParent(): boolean {
+    return true;
+  }
+
+  protected override performResize(): void {
+    const constraint = this.constraints;
+    if (!constraint.isTight)
+      throw new Error("constraint must be tight on render view");
+
+    this.size = new Size({
+      width: constraint.maxWidth,
+      height: constraint.maxHeight,
+    });
+  }
+
+  protected override computeDryLayout(constraints: Constraints): Size {
+    if (!constraints.isTight)
+      throw new Error("constraint must be tight on render view");
+
+    return constraints.biggest;
+  }
+
   preformLayout(): void {
     const constraint = this.constraints;
     if (!constraint.isTight)
       throw new Error("constraint must be tight on render view");
     if (constraint.maxWidth === 0 || constraint.maxHeight === 0) return;
-    this.size = new Size({
-      width: constraint.maxWidth,
-      height: constraint.maxHeight,
-    });
-    this.children.forEach(child => child.layout(Constraints.loose(this.size)));
+    this.children.forEach(child =>
+      child.layout(Constraints.loose(this.size), { parentUsesSize: false })
+    );
   }
 
   protected createCanvasPainter(): CanvasPainter {

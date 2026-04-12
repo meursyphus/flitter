@@ -1,5 +1,5 @@
 import RenderAligningShiftedBox from "../../renderobject/RenderAligningShiftedBox";
-import { Alignment, Constraints, TextDirection } from "../../type";
+import { Alignment, Constraints, Size, TextDirection } from "../../type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
@@ -116,11 +116,23 @@ class RenderOverflowBox extends RenderAligningShiftedBox {
     this._minWidth = minWidth;
   }
 
-  override preformLayout(): void {
-    this.size = this.constraints.biggest;
+  override get sizedByParent(): boolean {
+    return true;
+  }
 
+  protected override performResize(): void {
+    this.size = this.constraints.biggest;
+  }
+
+  protected override computeDryLayout(constraints: Constraints): Size {
+    return constraints.biggest;
+  }
+
+  override preformLayout(): void {
     if (this.child != null) {
-      this.child.layout(this.getInnerConstraints(this.constraints));
+      this.child.layout(this.getInnerConstraints(this.constraints), {
+        parentUsesSize: true,
+      });
       this.alignChild();
     }
   }

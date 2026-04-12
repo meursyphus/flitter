@@ -1,6 +1,6 @@
 import RenderAligningShiftedBox from "../../renderobject/RenderAligningShiftedBox";
 import type SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
-import { Alignment, Constraints, TextDirection } from "../../type";
+import { Alignment, Constraints, Size, TextDirection } from "../../type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
@@ -85,13 +85,13 @@ class RenderConstraintsTransformBox extends RenderAligningShiftedBox {
     this._constraintsTransform = constraintsTransform;
   }
 
-  override getIntrinsicHeight(width: number): number {
+  protected override computeIntrinsicHeight(width: number): number {
     return super.getIntrinsicHeight(
       this.constraintsTransform(new Constraints({ maxWidth: width })).maxWidth,
     );
   }
 
-  override getIntrinsicWidth(height: number): number {
+  protected override computeIntrinsicWidth(height: number): number {
     return super.getIntrinsicWidth(
       this.constraintsTransform(new Constraints({ maxHeight: height }))
         .maxHeight,
@@ -105,9 +105,18 @@ class RenderConstraintsTransformBox extends RenderAligningShiftedBox {
     }
 
     const childConstraints = this.constraintsTransform(this.constraints);
-    this.child.layout(childConstraints);
+    this.child.layout(childConstraints, { parentUsesSize: true });
     this.size = this.constraints.constrain(this.child.size);
     this.alignChild();
+  }
+
+  protected override computeDryLayout(constraints: Constraints): Size {
+    if (this.child == null) {
+      return constraints.smallest;
+    }
+
+    const childConstraints = this.constraintsTransform(constraints);
+    return constraints.constrain(this.child.getDryLayout(childConstraints));
   }
 }
 

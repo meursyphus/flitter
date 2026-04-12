@@ -15,7 +15,7 @@ export class SingleChildRenderObject extends RenderObject {
     if (this.child == null) {
       this.size = this.computeSizeForNoChild(this.constraints);
     } else {
-      this.child.layout(this.constraints);
+      this.child.layout(this.constraints, { parentUsesSize: true });
       this.size = this.constraints.constrain(this.child.size);
     }
   }
@@ -35,12 +35,20 @@ export class SingleChildRenderObject extends RenderObject {
     return child.hitTest(result, childPosition);
   }
 
-  override getIntrinsicWidth(height: number): number {
+  protected override computeIntrinsicWidth(height: number): number {
     return this.child?.getIntrinsicWidth(height) || 0;
   }
 
-  override getIntrinsicHeight(width: number): number {
+  protected override computeIntrinsicHeight(width: number): number {
     return this.child?.getIntrinsicHeight(width) || 0;
+  }
+
+  protected override computeDryLayout(constraints: Constraints): Size {
+    if (this.child == null) {
+      return this.computeSizeForNoChild(constraints);
+    }
+
+    return constraints.constrain(this.child.getDryLayout(constraints));
   }
 }
 

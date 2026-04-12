@@ -59,11 +59,12 @@ function analyzeTrace(tracePath) {
 	const trace = JSON.parse(fs.readFileSync(tracePath, { encoding: 'utf8' }));
 	const analyzer = new ChromeTraceAnalyzer(trace);
 	return {
-		runApp: analyzer.getDurationMs('runApp'),
-		mount: analyzer.getDurationMs('mount'),
-		draw: analyzer.getDurationMs('draw'),
-		layout: analyzer.getDurationMs('layout'),
-		paint: analyzer.getDurationMs('paint')
+		runApp: analyzer.getDurationMs('runApp', { optional: true }),
+		mount: analyzer.getDurationMs('mount', { optional: true }),
+		draw: analyzer.getDurationMs('draw', { optional: true }),
+		layout: analyzer.getDurationMs('layout', { optional: true }),
+		paintTransform: analyzer.getDurationMs('paintTransform', { optional: true }),
+		paint: analyzer.getDurationMs('paint', { optional: true })
 	};
 }
 
@@ -110,6 +111,7 @@ const totals = {
 	mount: 0,
 	draw: 0,
 	layout: 0,
+	paintTransform: 0,
 	paint: 0
 };
 
@@ -118,6 +120,7 @@ for (const metrics of metricsList) {
 	totals.mount += metrics.mount;
 	totals.draw += metrics.draw;
 	totals.layout += metrics.layout;
+	totals.paintTransform += metrics.paintTransform;
 	totals.paint += metrics.paint;
 }
 
@@ -127,6 +130,7 @@ const duration = {
 	mount: totals.mount / RUN_COUNT,
 	draw: totals.draw / RUN_COUNT,
 	layout: totals.layout / RUN_COUNT,
+	paintTransform: totals.paintTransform / RUN_COUNT,
 	paint: totals.paint / RUN_COUNT,
 	note: runNote
 };
@@ -136,6 +140,7 @@ console.log(`runApp: ${duration.runApp}ms`);
 console.log(`mount: ${duration.mount}ms`);
 console.log(`draw: ${duration.draw}ms`);
 console.log(`layout: ${duration.layout}ms`);
+console.log(`paintTransform: ${duration.paintTransform}ms`);
 console.log(`paint: ${duration.paint}ms`);
 console.log('********************');
 

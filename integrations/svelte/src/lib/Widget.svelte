@@ -22,6 +22,7 @@
 		| undefined = undefined;
 	export let width = '100%';
 	export let height = '300px';
+	export let perf = false;
 
 	let renderEl: SVGSVGElement | HTMLCanvasElement;
 	let containerEl: HTMLElement;
@@ -37,13 +38,14 @@
 			view: _svg,
 			window: _window,
 			document: _document,
-			ssrSize: ssr?.size
+			ssrSize: ssr?.size,
+			perf
 		});
-		innerHTML = runner.runApp(widget);
+		innerHTML = runner.runApp(widget, { perf });
 	}
 
 	$: {
-		[mounted, widget, runner];
+		[mounted, perf, widget, runner];
 		rerender();
 	}
 
@@ -54,7 +56,8 @@
 			view: renderEl,
 			window: window,
 			document: document,
-			ssrSize: ssr?.size
+			ssrSize: ssr?.size,
+			perf
 		});
 		renderEl.innerHTML = '';
 		runner.onMount({
@@ -70,7 +73,7 @@
 		if (!browser) return;
 		if (!mounted) return;
 		if (!runner) return;
-		runner.runApp(widget);
+		runner.runApp(widget, { perf });
 	};
 </script>
 

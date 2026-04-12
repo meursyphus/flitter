@@ -8,6 +8,7 @@ import {
 } from "flitter-ui";
 
 type WidgetComponentProps = {
+  perf?: boolean;
   widget?: Widget;
   width?: string;
   height?: string;
@@ -17,6 +18,7 @@ type WidgetComponentProps = {
 function WidgetComponent({
   width = "100%",
   height = "300px",
+  perf = false,
   renderer = "svg",
   widget = Container({
     width: Infinity,
@@ -33,8 +35,9 @@ function WidgetComponent({
       view: ref.current!,
       window: window,
       document: document,
+      perf,
     });
-    runner.runApp(widget);
+    runner.runApp(widget, { perf });
     runner.onMount({
       resizeTarget: containerRef.current!,
     });
@@ -42,7 +45,7 @@ function WidgetComponent({
     return () => {
       runner.dispose();
     };
-  }, [widget, renderer]);
+  }, [widget, renderer, perf]);
 
   return (
     <div style={{ width, height }} ref={containerRef}>

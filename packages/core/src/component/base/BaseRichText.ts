@@ -97,8 +97,6 @@ class RichText extends RenderObjectWidget {
 
 export class RenderParagraph extends RenderObject {
   #softWrap: boolean;
-  #intrinsicHeightCache?: number;
-  #intrinsicWidthCache?: number;
   #overflow: TextOverflow;
   get softWrap(): boolean {
     return this.#softWrap;
@@ -239,12 +237,6 @@ export class RenderParagraph extends RenderObject {
     );
   }
 
-  protected override markNeedsLayout() {
-    this.#intrinsicHeightCache = undefined;
-    this.#intrinsicWidthCache = undefined;
-    super.markNeedsLayout();
-  }
-
   previousWidth!: number;
   previousHeight!: number;
   changedLayout!: boolean;
@@ -272,24 +264,14 @@ export class RenderParagraph extends RenderObject {
       this.textPainter.height !== this.previousHeight;
   }
 
-  override getIntrinsicHeight(): number {
-    if (this.#intrinsicHeightCache != null) {
-      return this.#intrinsicHeightCache;
-    }
-
+  protected override computeIntrinsicHeight(): number {
     this.textPainter.layout();
-    this.#intrinsicHeightCache = this.textPainter.height;
-    return this.#intrinsicHeightCache;
+    return this.textPainter.height;
   }
 
-  override getIntrinsicWidth(): number {
-    if (this.#intrinsicWidthCache != null) {
-      return this.#intrinsicWidthCache;
-    }
-
+  protected override computeIntrinsicWidth(): number {
     this.textPainter.layout();
-    this.#intrinsicWidthCache = this.textPainter.width;
-    return this.#intrinsicWidthCache;
+    return this.textPainter.width;
   }
 
   protected override createSvgPainter(): SvgPainter {
