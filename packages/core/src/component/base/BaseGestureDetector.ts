@@ -5,7 +5,7 @@ import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectW
 import type Widget from "../../widget/Widget";
 import type { Offset } from "../../type";
 import type { RenderObjectVisitor } from "../../renderobject/RenderObjectVisitor";
-import { HitTestEntry, HitTestResult } from "../../hit-test/HitTestResult";
+import { HitTestEntry, type HitTestResult } from "../../hit-test/HitTestResult";
 
 export type HitTestBehavior = "deferToChild" | "opaque" | "translucent";
 
@@ -173,6 +173,7 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
 export class RenderGestureDetector extends SingleChildRenderObject {
   isRenderGestureDetector = true;
   id = createUniqueId();
+  #isListening = false;
   behavior: HitTestBehavior;
   private _cursor: Cursor;
   get cursor(): Cursor {
@@ -322,27 +323,35 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     this.addEventListeners();
   }
 
+  override detach(): void {
+    this.removeEventListeners();
+    super.detach();
+  }
+
   dispose(): void {
     this.removeEventListeners();
+    super.dispose();
+  }
+
+  private removeEventListeners() {
+    if (!this.#isListening) return;
+    getSingletonDragBackend().disconnectDragSource(this.id);
+    this.#isListening = false;
     backendRefCount--;
     if (backendRefCount === 0) {
       getSingletonDragBackend().teardown();
       globalDragBackend = null as any;
     }
-    super.dispose();
-  }
-
-  private removeEventListeners() {
-    getSingletonDragBackend().disconnectDragSource(this.id);
   }
 
   private addEventListeners() {
     const isBrowser = typeof window !== "undefined";
-    if (!isBrowser) return;
+    if (!isBrowser || this.#isListening) return;
 
     const dragBackend = getSingletonDragBackend();
     dragBackend.isSetup || dragBackend.setup();
     backendRefCount++;
+    this.#isListening = true;
 
     dragBackend.connectDragSource(this, {
       onDragStart: this.onDragStart,

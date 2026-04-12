@@ -42,7 +42,7 @@ class Provider<ProviderKey, Value> extends Widget {
 
 class ProviderElement extends Element {
   declare widget: Provider<unknown, unknown>;
-  child!: Element;
+  child: Element | null = null;
   override readonly type = ElementType.provider;
 
   get providerKey() {
@@ -54,7 +54,9 @@ class ProviderElement extends Element {
   }
 
   visitChildren(visitor: (child: Element) => void): void {
-    visitor(this.child);
+    if (this.child != null) {
+      visitor(this.child);
+    }
   }
 
   mount(newParent?: Element | undefined): void {
@@ -62,9 +64,9 @@ class ProviderElement extends Element {
     this.child = this.inflateWidget(this.widget.child);
   }
 
-  override unmount(): void {
-    super.unmount();
-    this.child.unmount();
+  override activate(newParent?: Element): void {
+    super.activate(newParent);
+    this.child?.activate(this);
   }
 
   update(newWidget: Widget): void {
@@ -73,13 +75,18 @@ class ProviderElement extends Element {
   }
 
   protected override performRebuild(): void {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.child = this.updateChild(this.child, this.widget.child)!;
+    this.child = this.updateChild(this.child, this.widget.child) ?? null;
   }
 
   constructor(widget: Provider<unknown, unknown>) {
     super(widget);
     this.widget = widget;
+  }
+
+  override forgetChild(child: Element): void {
+    if (this.child === child) {
+      this.child = null;
+    }
   }
 }
 

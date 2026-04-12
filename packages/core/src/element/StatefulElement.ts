@@ -2,6 +2,7 @@ import type Widget from "../widget/Widget";
 import ComponentElement from "./ComponentElement";
 import type StatefulWidget from "../widget/StatefulWidget";
 import type { BuildContext } from "./index";
+import type Element from "./Element";
 
 export class StatefulElement extends ComponentElement {
   state: State<StatefulWidget>;
@@ -20,9 +21,19 @@ export class StatefulElement extends ComponentElement {
     return this.state.build(this);
   }
 
-  unmount(): void {
-    super.unmount();
+  override deactivate(): void {
+    this.state.deactivate();
+    super.deactivate();
+  }
+
+  override activate(newParent?: Element): void {
+    super.activate(newParent);
+    this.state.activate();
+  }
+
+  override unmount(): void {
     this.state.dispose();
+    super.unmount();
   }
 
   update(newWidget: StatefulWidget): void {
@@ -44,6 +55,8 @@ export class State<T extends StatefulWidget> {
     callback?.();
     this.element.markNeedsBuild();
   }
+  deactivate() {}
+  activate() {}
   dispose() {}
   didUpdateWidget(_oldWidget: T) {}
 }
