@@ -169,7 +169,7 @@ class Constraints extends Data {
   }
 
   get isTight(): boolean {
-    return this.hasTightWidth && this.hasBoundedHeight;
+    return this.hasTightWidth && this.hasTightHeight;
   }
 
   get hasBoundedWidth(): boolean {

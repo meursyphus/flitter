@@ -85,9 +85,19 @@ class RenderRadarPlotLayout extends MultiChildRenderObject {
 		this.markNeedsLayout();
 	}
 
-	protected preformLayout(): void {
-		this.size = this.constraints.constrain(Size.infinite);
+	override get sizedByParent(): boolean {
+		return true;
+	}
 
+	protected override performResize(): void {
+		this.size = this.constraints.constrain(Size.infinite);
+	}
+
+	protected override computeDryLayout(constraints: Constraints): Size {
+		return constraints.constrain(Size.infinite);
+	}
+
+	protected preformLayout(): void {
 		const width = Number.isFinite(this.size.width) ? this.size.width : 0;
 		const height = Number.isFinite(this.size.height) ? this.size.height : 0;
 		const plotSize = new Size({ width, height });
@@ -104,14 +114,14 @@ class RenderRadarPlotLayout extends MultiChildRenderObject {
 		});
 
 		for (let index = 0; index < this.#angles.length; index += 1) {
-			this.labelChild(index)?.layout(looseConstraints);
+			this.labelChild(index)?.layout(looseConstraints, { parentUsesSize: true });
 		}
 
 		const radius = this.resolveRadius(plotSize);
 		const diameter = Math.max(0, radius * 2);
 		const contentSize = new Size({ width: diameter, height: diameter });
 
-		content.layout(Constraints.tight(contentSize));
+		content.layout(Constraints.tight(contentSize), { parentUsesSize: false });
 		content.offset = new Offset({
 			x: (width - diameter) / 2,
 			y: (height - diameter) / 2,
@@ -120,14 +130,14 @@ class RenderRadarPlotLayout extends MultiChildRenderObject {
 		this.positionAngularLabels(plotSize, radius);
 	}
 
-	override getIntrinsicWidth(height: number): number {
+	protected override computeIntrinsicWidth(height: number): number {
 		return this.children.reduce(
 			(maxWidth, child) => Math.max(maxWidth, child.getIntrinsicWidth(height)),
 			0,
 		);
 	}
 
-	override getIntrinsicHeight(width: number): number {
+	protected override computeIntrinsicHeight(width: number): number {
 		return this.children.reduce(
 			(maxHeight, child) => Math.max(maxHeight, child.getIntrinsicHeight(width)),
 			0,

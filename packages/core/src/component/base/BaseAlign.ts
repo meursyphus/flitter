@@ -1,5 +1,5 @@
 import { RenderAligningShiftedBox } from "../../renderobject";
-import { Alignment, TextDirection } from "../../type";
+import { Alignment, Constraints, Size, TextDirection } from "../../type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
@@ -88,7 +88,7 @@ class RenderAlign extends RenderAligningShiftedBox {
       this.heightFactor != null || constraints.maxHeight == Infinity;
 
     if (this.child != null) {
-      this.child.layout(constraints.loosen());
+      this.child.layout(constraints.loosen(), { parentUsesSize: true });
       this.size = constraints.constrain({
         width: shrinkWrapWidth
           ? this.child.size.width * (this.widthFactor ?? 1)
@@ -104,6 +104,30 @@ class RenderAlign extends RenderAligningShiftedBox {
         height: shrinkWrapHeight ? 0 : Infinity,
       });
     }
+  }
+
+  protected override computeDryLayout(constraints: Constraints): Size {
+    const shrinkWrapWidth =
+      this.widthFactor != null || constraints.maxWidth == Infinity;
+    const shrinkWrapHeight =
+      this.heightFactor != null || constraints.maxHeight == Infinity;
+
+    if (this.child == null) {
+      return constraints.constrain({
+        width: shrinkWrapWidth ? 0 : Infinity,
+        height: shrinkWrapHeight ? 0 : Infinity,
+      });
+    }
+
+    const childSize = this.child.getDryLayout(constraints.loosen());
+    return constraints.constrain({
+      width: shrinkWrapWidth
+        ? childSize.width * (this.widthFactor ?? 1)
+        : Infinity,
+      height: shrinkWrapHeight
+        ? childSize.height * (this.heightFactor ?? 1)
+        : Infinity,
+    });
   }
 }
 

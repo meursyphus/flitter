@@ -157,10 +157,19 @@ class RenderBaseGrid extends MultiChildRenderObject {
     );
   }
 
-  protected preformLayout(): void {
-    // stretch to fit parent
-    this.size = this.constraints.constrain(Size.infinite);
+  override get sizedByParent(): boolean {
+    return true;
+  }
 
+  protected override performResize(): void {
+    this.size = this.constraints.constrain(Size.infinite);
+  }
+
+  protected override computeDryLayout(constraints: Constraints): Size {
+    return constraints.constrain(Size.infinite);
+  }
+
+  protected preformLayout(): void {
     const contentFitColumnWidths: number[] = Array.from(
       { length: this.columnCount },
       () => 0,
@@ -293,7 +302,7 @@ class RenderBaseGrid extends MultiChildRenderObject {
           maxWidth: widths[columnIndex],
         });
 
-        child.layout(childConstraint);
+        child.layout(childConstraint, { parentUsesSize: false });
 
         child.offset = new Offset({
           x: widths.slice(0, columnIndex).reduce(sum, 0),
@@ -302,7 +311,7 @@ class RenderBaseGrid extends MultiChildRenderObject {
       });
     });
   }
-  getIntrinsicWidth(height: number): number {
+  protected override computeIntrinsicWidth(height: number): number {
     return this.childrenByRow
       .map(row =>
         row
@@ -312,7 +321,7 @@ class RenderBaseGrid extends MultiChildRenderObject {
       .reduce(Utils.maxReducer);
   }
 
-  getIntrinsicHeight(width: number): number {
+  protected override computeIntrinsicHeight(width: number): number {
     return this.childrenByRow
       .map(row =>
         row

@@ -21,6 +21,9 @@ export class RenderObject {
   needsLayout = true;
   needsPaintTransformUpdate = true;
   depth = 0;
+  private _relayoutBoundary: RenderObject | null = null;
+  private _intrinsicCache = new Map<string, number>();
+  private _dryLayoutCache = new Map<string, Size>();
 
   /**
    * zOrder is used to order the render objects in the z axis
@@ -98,17 +101,32 @@ export class RenderObject {
     this._size = value;
   }
   parentUsesSize = false;
+  get sizedByParent(): boolean {
+    return false;
+  }
 
   layout(
     constraint: Constraints,
-    { parentUsesSize = true }: { parentUsesSize?: boolean } = {},
+    { parentUsesSize = false }: { parentUsesSize?: boolean } = {},
   ) {
     const normalizedConstraints = constraint.normalize();
+    this.parentUsesSize = parentUsesSize;
+    this._relayoutBoundary =
+      !parentUsesSize ||
+      this.sizedByParent ||
+      normalizedConstraints.isTight ||
+      this.parent == null
+        ? this
+        : this.parent?._relayoutBoundary ?? null;
+
     if (this.constraints.equals(normalizedConstraints) && !this.needsLayout) {
       return;
     }
+
     this.constraints = normalizedConstraints;
-    this.parentUsesSize = parentUsesSize;
+    if (this.sizedByParent) {
+      this.performResize();
+    }
     this.preformLayout();
     this.needsLayout = false;
     this.markNeedsPaint();
@@ -117,6 +135,7 @@ export class RenderObject {
   attach(ownerElement: RenderObjectElement) {
     this.ownerElement = ownerElement;
     this.depth = ownerElement.depth;
+    this._relayoutBoundary = null;
     this.markNeedsPaintTransformUpdate();
     this.markNeedsUpdateZOrder();
   }
@@ -127,18 +146,71 @@ export class RenderObject {
     }
     this.canvasPainter.detach();
     this.parent = undefined;
+    this._relayoutBoundary = null;
   }
 
   dispose() {
     this.renderOwner.disposeRenderObject(this);
   }
 
-  getIntrinsicWidth(_height: number) {
+  getIntrinsicWidth(height: number) {
+    const cacheKey = `width:${height}`;
+    const cached = this._intrinsicCache.get(cacheKey);
+    if (cached != null) {
+      return cached;
+    }
+
+    const result = this.computeIntrinsicWidth(height);
+    this._intrinsicCache.set(cacheKey, result);
+    return result;
+  }
+
+  getIntrinsicHeight(width: number) {
+    const cacheKey = `height:${width}`;
+    const cached = this._intrinsicCache.get(cacheKey);
+    if (cached != null) {
+      return cached;
+    }
+
+    const result = this.computeIntrinsicHeight(width);
+    this._intrinsicCache.set(cacheKey, result);
+    return result;
+  }
+
+  getDryLayout(constraints: Constraints): Size {
+    const normalizedConstraints = constraints.normalize();
+    if (!this.needsLayout && this.constraints.equals(normalizedConstraints)) {
+      return this.size;
+    }
+
+    const cacheKey = [
+      normalizedConstraints.minWidth,
+      normalizedConstraints.maxWidth,
+      normalizedConstraints.minHeight,
+      normalizedConstraints.maxHeight,
+    ].join(":");
+    const cached = this._dryLayoutCache.get(cacheKey);
+    if (cached != null) {
+      return cached;
+    }
+
+    const result = normalizedConstraints.constrain(
+      this.computeDryLayout(normalizedConstraints),
+    );
+    this._dryLayoutCache.set(cacheKey, result);
+    return result;
+  }
+
+  protected computeIntrinsicWidth(_height: number) {
     return 0;
   }
 
-  getIntrinsicHeight(_width: number) {
+  protected computeIntrinsicHeight(_width: number) {
     return 0;
+  }
+
+  protected computeDryLayout(constraints: Constraints): Size {
+    return constraints.constrain(this.size);
   }
   /*
    * Do not call this method directly. instead call layout
@@ -147,21 +219,50 @@ export class RenderObject {
     throw new NotImplementedError("performLayout");
   }
 
+  protected performResize(): void {}
+
   layoutWithoutResize() {
     this.layout(this.constraints, { parentUsesSize: this.parentUsesSize });
   }
 
+  markNeedsLayoutForSizedByParentChange() {
+    this.markNeedsLayout();
+    if (this.parent != null) {
+      this.markNeedsParentLayout();
+    }
+  }
+
   markNeedsParentLayout() {
+    this.needsLayout = true;
     this.parent?.markNeedsLayout();
   }
 
   protected markNeedsLayout() {
+    if (this.needsLayout) {
+      return;
+    }
+
     this.needsLayout = true;
-    if (this.parentUsesSize && this.parent != null) {
+    const hadCachedLayoutResult =
+      this._intrinsicCache.size > 0 || this._dryLayoutCache.size > 0;
+    if (hadCachedLayoutResult) {
+      this._intrinsicCache.clear();
+      this._dryLayoutCache.clear();
+    }
+
+    if (hadCachedLayoutResult && this.parent != null) {
       this.markNeedsParentLayout();
-    } else {
+      return;
+    }
+
+    if (this._relayoutBoundary === this || this.parent == null) {
       this.renderOwner.needsLayoutRenderObjects.push(this);
       this.renderOwner.requestVisualUpdate();
+      return;
+    }
+
+    if (this.parent != null) {
+      this.markNeedsParentLayout();
     }
   }
 

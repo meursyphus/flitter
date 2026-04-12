@@ -38,7 +38,9 @@ class RenderAspectRatio extends SingleChildRenderObject {
   set aspectRatio(value: number) {
     assert(value > 0);
     assert(Number.isFinite(value));
+    if (this._aspectRatio === value) return;
     this._aspectRatio = value;
+    this.markNeedsLayout();
   }
 
   constructor({ aspectRatio }: { aspectRatio: number }) {
@@ -46,7 +48,7 @@ class RenderAspectRatio extends SingleChildRenderObject {
     this._aspectRatio = aspectRatio;
   }
 
-  getIntrinsicWidth(height: number): number {
+  protected override computeIntrinsicWidth(height: number): number {
     if (Number.isFinite(height)) {
       return height * this.aspectRatio;
     }
@@ -58,7 +60,7 @@ class RenderAspectRatio extends SingleChildRenderObject {
     return 0;
   }
 
-  getIntrinsicHeight(width: number): number {
+  protected override computeIntrinsicHeight(width: number): number {
     if (Number.isFinite(width)) {
       return width / this.aspectRatio;
     }
@@ -108,10 +110,23 @@ class RenderAspectRatio extends SingleChildRenderObject {
     return constraints.constrain(new Size({ width, height }));
   }
 
-  protected override preformLayout(): void {
+  override get sizedByParent(): boolean {
+    return true;
+  }
+
+  protected override performResize(): void {
     this.size = this._applyAspectRatio(this.constraints);
+  }
+
+  protected override computeDryLayout(constraints: Constraints): Size {
+    return this._applyAspectRatio(constraints);
+  }
+
+  protected override preformLayout(): void {
     if (this.child != null) {
-      this.child.layout(Constraints.tight(this.size));
+      this.child.layout(Constraints.tight(this.size), {
+        parentUsesSize: false,
+      });
     }
   }
 }
