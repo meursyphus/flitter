@@ -13,6 +13,7 @@ import {
   Size,
   type Offset,
 } from "../../type";
+import type { Constraints } from "../../type";
 import RenderObjectWidget from "../../widget/RenderObjectWidget";
 import type InlineSpan from "../../type/_types/Inline-span";
 import TextPainter from "../../type/_types/text-painter";
@@ -241,6 +242,12 @@ export class RenderParagraph extends RenderObject {
   previousHeight!: number;
   changedLayout!: boolean;
 
+  private getLayoutMaxWidth(maxWidth: number): number {
+    return this.softWrap || this.overflow === TextOverflow.ellipsis
+      ? maxWidth
+      : Infinity;
+  }
+
   private layoutText({
     maxWidth = Infinity,
     minWidth = 0,
@@ -248,15 +255,12 @@ export class RenderParagraph extends RenderObject {
     minWidth?: number;
     maxWidth?: number;
   }) {
-    const widthMatters =
-      this.softWrap || this.overflow === TextOverflow.ellipsis;
-
     this.previousWidth = this.textPainter.width;
     this.previousHeight = this.textPainter.height;
 
     this.textPainter.layout({
       minWidth: minWidth,
-      maxWidth: widthMatters ? maxWidth : Infinity,
+      maxWidth: this.getLayoutMaxWidth(maxWidth),
     });
 
     this.changedLayout =
@@ -272,6 +276,30 @@ export class RenderParagraph extends RenderObject {
   protected override computeIntrinsicWidth(): number {
     this.textPainter.layout();
     return this.textPainter.width;
+  }
+
+  protected override computeDryLayout(constraints: Constraints): Size {
+    const dryTextPainter = new TextPainter({
+      text: this.textPainter.text,
+      textAlign: this.textPainter.textAlign,
+      textDirection: this.textPainter.textDirection,
+      textScaleFactor: this.textPainter.textScaleFactor,
+      maxLines: this.textPainter.maxLines,
+      ellipsis: this.textPainter.ellipsis,
+      textWidthBasis: this.textPainter.textWidthBasis,
+    });
+
+    dryTextPainter.layout({
+      minWidth: constraints.minWidth,
+      maxWidth: this.getLayoutMaxWidth(constraints.maxWidth),
+    });
+
+    return constraints.constrain(
+      new Size({
+        width: dryTextPainter.width,
+        height: dryTextPainter.height,
+      }),
+    );
   }
 
   protected override createSvgPainter(): SvgPainter {

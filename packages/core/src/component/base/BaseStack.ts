@@ -1,4 +1,7 @@
 import MultiChildRenderObject from "../../renderobject/MultiChildRenderObject";
+import ChildLayoutHelper, {
+  type ChildLayouter,
+} from "../../renderobject/ChildLayoutHelper";
 import {
   Alignment,
   Constraints,
@@ -92,7 +95,13 @@ export class RenderStack extends MultiChildRenderObject {
     return this.alignment.resolve(this.textDirection);
   }
 
-  private computeSize({ constraints }: { constraints: Constraints }) {
+  private computeSize({
+    constraints,
+    layoutChild,
+  }: {
+    constraints: Constraints;
+    layoutChild: ChildLayouter;
+  }) {
     let hasNonPositionedChildren = false;
     if (this.children.length === 0) {
       return constraints.biggest.isFinite
@@ -123,10 +132,10 @@ export class RenderStack extends MultiChildRenderObject {
       )
         return;
       hasNonPositionedChildren = true;
-      child.layout(nonPositionedConstraints, { parentUsesSize: true });
+      const childSize = layoutChild(child, nonPositionedConstraints);
 
-      width = Math.max(width, child.size.width);
-      height = Math.max(height, child.size.height);
+      width = Math.max(width, childSize.width);
+      height = Math.max(height, childSize.height);
     });
 
     let size: Size;
@@ -206,6 +215,7 @@ export class RenderStack extends MultiChildRenderObject {
   protected preformLayout(): void {
     this.size = this.computeSize({
       constraints: this.constraints,
+      layoutChild: ChildLayoutHelper.layoutChild,
     });
 
     this.children.forEach(child => {
@@ -225,6 +235,13 @@ export class RenderStack extends MultiChildRenderObject {
           alignment: this.resolvedAlignment,
         });
       }
+    });
+  }
+
+  protected override computeDryLayout(constraints: Constraints): Size {
+    return this.computeSize({
+      constraints,
+      layoutChild: ChildLayoutHelper.dryLayoutChild,
     });
   }
 

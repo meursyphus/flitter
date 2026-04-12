@@ -6,8 +6,10 @@ import SingleChildRenderObject from "./SingleChildRenderObject";
 import RenderAligningShiftedBox from "./RenderAligningShiftedBox";
 import RenderAnimatedSize from "./RenderAnimatedSize";
 import RenderRepaintBoundary from "./RenderRepaintBoundary";
+import ChildLayoutHelper from "./ChildLayoutHelper";
 
 export {
+  ChildLayoutHelper,
   RenderAligningShiftedBox,
   RenderAnimatedSize,
   MultiChildRenderObject,

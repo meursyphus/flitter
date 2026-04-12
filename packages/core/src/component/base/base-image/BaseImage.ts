@@ -5,7 +5,7 @@ import {
   SvgPainter,
 } from "../../../framework";
 import { SingleChildRenderObject } from "../../../renderobject";
-import { type Offset, Size } from "../../../type";
+import { type Constraints, type Offset, Size } from "../../../type";
 import { browser, assert } from "../../../utils";
 import { SingleChildRenderObjectWidget } from "../../../widget";
 
@@ -172,43 +172,63 @@ class RenderImage extends SingleChildRenderObject {
     height: number;
   };
 
-  #mounted = false;
-  override preformLayout(): void {
-    this.#mounted = true;
-
-    if (!this.imageLoaded) {
-      this.size = this.constraints.constrain(
-        new Size({
-          width: this.width ?? 0,
-          height: this.height ?? 0,
-        }),
-      );
-
-      return;
+  private computeResolvedImageLayout(constraints: Constraints): {
+    imageSize?: {
+      width: number;
+      height: number;
+    };
+    size: Size;
+  } {
+    if (!this.imageLoaded || this.image == null) {
+      return {
+        size: constraints.constrain(
+          new Size({
+            width: this.width ?? 0,
+            height: this.height ?? 0,
+          }),
+        ),
+      };
     }
 
-    assert(this.image != null);
     const sourceSize = { width: this.image.width, height: this.image.height };
-
+    const resolvedContainer = {
+      width:
+        this.width != null ? constraints.constrainWidth(this.width) : undefined,
+      height:
+        this.height != null
+          ? constraints.constrainHeight(this.height)
+          : undefined,
+    };
     const { width, height } = calculateSize(
       sourceSize,
-      {
-        width: this.width && this.constraints.constrainWidth(this.width),
-        height: this.height && this.constraints.constrainHeight(this.height),
-      },
+      resolvedContainer,
       this.fit,
     );
-    const size = new Size({ width, height });
-    this.size = this.constraints.constrain(size);
-
-    this.calculatedImageSize = calculateSize(
+    const size = constraints.constrain(new Size({ width, height }));
+    const imageSize = calculateSize(
       sourceSize,
       {
-        width: this.size.width,
-        height: this.size.height,
+        width: size.width,
+        height: size.height,
       },
       this.fit,
     ).image;
+
+    return { size, imageSize };
+  }
+
+  #mounted = false;
+  override preformLayout(): void {
+    this.#mounted = true;
+    const { size, imageSize } = this.computeResolvedImageLayout(
+      this.constraints,
+    );
+    this.size = size;
+    this.calculatedImageSize = imageSize;
+  }
+
+  protected override computeDryLayout(constraints: Constraints): Size {
+    return this.computeResolvedImageLayout(constraints).size;
   }
 
   override createCanvasPainter(): CanvasPainter {
