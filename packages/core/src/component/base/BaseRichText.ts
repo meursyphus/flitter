@@ -268,6 +268,17 @@ export class RenderParagraph extends RenderObject {
       this.textPainter.height !== this.previousHeight;
   }
 
+  ensureTextLayoutForPaint(): void {
+    if (this.textPainter.paragraph != null) {
+      return;
+    }
+
+    this.layoutText({
+      maxWidth: this.constraints.maxWidth,
+      minWidth: this.constraints.minWidth,
+    });
+  }
+
   protected override computeIntrinsicHeight(): number {
     this.textPainter.layout();
     return this.textPainter.height;
@@ -315,6 +326,11 @@ class ParagraphSvgPainter extends SvgPainter {
   get textPainter() {
     return (this.renderObject as RenderParagraph).textPainter;
   }
+
+  private ensureTextLayoutForPaint() {
+    (this.renderObject as RenderParagraph).ensureTextLayoutForPaint();
+  }
+
   get changedLayout() {
     return (this.renderObject as RenderParagraph).changedLayout;
   }
@@ -349,11 +365,13 @@ class ParagraphSvgPainter extends SvgPainter {
       newTextEl.setAttribute("data-render-name", "text");
       textEl.parentNode!.appendChild(newTextEl);
       textEl.remove();
+      this.ensureTextLayoutForPaint();
       this.textPainter.paintOnSvg(newTextEl, context);
       return;
     }
 
     if (!this.needsPaint && !this.changedLayout) return;
+    this.ensureTextLayoutForPaint();
     this.textPainter.paintOnSvg(textEl, context);
   }
 }
@@ -363,10 +381,15 @@ class ParagraphCanvasPainter extends CanvasPainter {
     return (this.renderObject as RenderParagraph).textPainter;
   }
 
+  private ensureTextLayoutForPaint() {
+    (this.renderObject as RenderParagraph).ensureTextLayoutForPaint();
+  }
+
   protected override performPaint(
     context: CanvasPaintingContext,
     offset: Offset,
   ): void {
+    this.ensureTextLayoutForPaint();
     this.textPainter.paintOnCanvas(context.canvas, offset);
   }
 }
