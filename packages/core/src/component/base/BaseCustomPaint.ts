@@ -120,7 +120,7 @@ export class RenderCustomPaint<
         ? this.preferredSize.width
         : 0;
     }
-    return super.getIntrinsicWidth(height);
+    return super.computeIntrinsicWidth(height);
   }
 
   protected override computeIntrinsicHeight(width: number): number {
@@ -130,7 +130,7 @@ export class RenderCustomPaint<
         : 0;
     }
 
-    return super.getIntrinsicHeight(width);
+    return super.computeIntrinsicHeight(width);
   }
 
   protected override createSvgPainter() {

@@ -1,6 +1,7 @@
 import RenderAligningShiftedBox from "../../renderobject/RenderAligningShiftedBox";
 import type SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
-import { Alignment, Constraints, Size, TextDirection } from "../../type";
+import { Alignment, Constraints, TextDirection } from "../../type";
+import type { Size } from "../../type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
@@ -86,13 +87,13 @@ class RenderConstraintsTransformBox extends RenderAligningShiftedBox {
   }
 
   protected override computeIntrinsicHeight(width: number): number {
-    return super.getIntrinsicHeight(
+    return super.computeIntrinsicHeight(
       this.constraintsTransform(new Constraints({ maxWidth: width })).maxWidth,
     );
   }
 
   protected override computeIntrinsicWidth(height: number): number {
-    return super.getIntrinsicWidth(
+    return super.computeIntrinsicWidth(
       this.constraintsTransform(new Constraints({ maxHeight: height }))
         .maxHeight,
     );

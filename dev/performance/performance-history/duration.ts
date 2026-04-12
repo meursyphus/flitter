@@ -147,4 +147,4 @@ histories.push({"timestamp":1775917885411,"runApp":34.025099999999995,"mount":9.
 histories.push({"timestamp":1775964596017,"runApp":35.105599999999995,"mount":9.9202,"draw":24.864299999999997,"layout":18.065199999999997,"paint":2.3900999999999994,"note":"Issue #31 lazy element deactivation / GlobalKey reparenting PR #135"});
 histories.push({"timestamp":1775966196051,"runApp":10.3255,"mount":9.7897,"draw":0.4593999999999999,"layout":0.4353000000000001,"paint":0.6648999999999999,"note":"Issue #125 relayout boundaries + sizedByParent + dry/intrinsic cache"});
 histories.push({"timestamp":1775980210769,"runApp":4.2697,"mount":7.9485,"draw":0.389,"layout":0.3646,"paintTransform":0,"paint":0.6706,"note":"Issue #125 relayout boundaries + phase markers"});
-histories.push({"timestamp":1775997780259,"runApp":2.0614,"mount":1.9245,"draw":0.0754,"layout":0.0754,"paintTransform":0,"paint":0.16440000000000002,"note":"Issue #132 dry layout helpers PR #139"});
+histories.push({"timestamp":1775998306391,"runApp":0.1018,"mount":2.9842,"draw":7.2894000000000005,"layout":5.2943,"paintTransform":0,"paint":0.7060000000000001,"note":"Issue #132 intrinsic recursion fix"});
