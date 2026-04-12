@@ -11,6 +11,7 @@ import {
   BoxDecoration,
   Border,
   BoxShadow,
+  LayoutBuilder,
   type Widget,
 } from "flitter-core";
 import {
@@ -90,40 +91,9 @@ class _ToastPointTooltipArea extends StatefulWidget {
 }
 
 class _ToastPointTooltipAreaState extends State<_ToastPointTooltipArea> {
-  areaKey = new GlobalKey();
   tooltipKey = new GlobalKey();
-  measuredPlotSize: PlotSize | null = null;
   measuredTooltipSize: TooltipSize | null = null;
-  scheduledPlotMeasurement = false;
   scheduledMeasurement = false;
-
-  private schedulePlotMeasurement(): void {
-    if (this.scheduledPlotMeasurement) return;
-    this.scheduledPlotMeasurement = true;
-    this.element.scheduler.addPostFrameCallbacks(() => {
-      this.scheduledPlotMeasurement = false;
-      if (this.areaKey.buildOwner == null) return;
-
-      const plotRenderObject = this.areaKey.findCurrentContext()?.renderObject;
-      if (plotRenderObject == null) return;
-
-      const nextSize = {
-        width: plotRenderObject.size.width,
-        height: plotRenderObject.size.height,
-      };
-
-      if (
-        this.measuredPlotSize?.width === nextSize.width &&
-        this.measuredPlotSize?.height === nextSize.height
-      ) {
-        return;
-      }
-
-      this.setState(() => {
-        this.measuredPlotSize = nextSize;
-      });
-    });
-  }
 
   private scheduleTooltipMeasurement(): void {
     if (this.scheduledMeasurement) return;
@@ -154,6 +124,16 @@ class _ToastPointTooltipAreaState extends State<_ToastPointTooltipArea> {
   }
 
   override build(): Widget {
+    return LayoutBuilder({
+      builder: (_context, constraints) =>
+        this.buildWithPlotSize({
+          width: constraints.maxWidth,
+          height: constraints.maxHeight,
+        }),
+    });
+  }
+
+  private buildWithPlotSize(plotSize: PlotSize): Widget {
     const {
       tooltip,
       anchorPoint,
@@ -169,9 +149,6 @@ class _ToastPointTooltipAreaState extends State<_ToastPointTooltipArea> {
     }
 
     this.scheduleTooltipMeasurement();
-    this.schedulePlotMeasurement();
-
-    const plotSize = this.measuredPlotSize;
     const tooltipSize = this.measuredTooltipSize ?? estimatedTooltipSize;
     const anchorRect = toAnchorRect(anchorPoint);
     const fallbackBounds = {
@@ -200,7 +177,6 @@ class _ToastPointTooltipAreaState extends State<_ToastPointTooltipArea> {
     }
 
     return Stack({
-      key: this.areaKey,
       fit: StackFit.expand,
       clipped: false,
       children: [

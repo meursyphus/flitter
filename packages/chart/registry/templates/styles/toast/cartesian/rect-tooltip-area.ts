@@ -1,7 +1,6 @@
 import {
   StatefulWidget,
   State,
-  GlobalKey,
   SizedBox,
   Stack,
   StackFit,
@@ -11,6 +10,7 @@ import {
   FractionalTranslation,
   ConstraintsTransformBox,
   Alignment,
+  LayoutBuilder,
   type Widget,
 } from "flitter-core";
 import {
@@ -147,39 +147,17 @@ class _ToastRectTooltipArea extends StatefulWidget {
 }
 
 class _ToastRectTooltipAreaState extends State<_ToastRectTooltipArea> {
-  areaKey = new GlobalKey();
-  measuredPlotSize: PlotSize | null = null;
-  scheduledMeasurement = false;
-
-  private schedulePlotSizeMeasurement(): void {
-    if (this.scheduledMeasurement) return;
-    this.scheduledMeasurement = true;
-    this.element.scheduler.addPostFrameCallbacks(() => {
-      this.scheduledMeasurement = false;
-      if (this.areaKey.buildOwner == null) return;
-
-      const plotRenderObject = this.areaKey.findCurrentContext()?.renderObject;
-      if (plotRenderObject == null) return;
-
-      const nextSize = {
-        width: plotRenderObject.size.width,
-        height: plotRenderObject.size.height,
-      };
-
-      if (
-        this.measuredPlotSize?.width === nextSize.width &&
-        this.measuredPlotSize?.height === nextSize.height
-      ) {
-        return;
-      }
-
-      this.setState(() => {
-        this.measuredPlotSize = nextSize;
-      });
+  override build(): Widget {
+    return LayoutBuilder({
+      builder: (_context, constraints) =>
+        this.buildWithPlotSize({
+          width: constraints.maxWidth,
+          height: constraints.maxHeight,
+        }),
     });
   }
 
-  override build(): Widget {
+  private buildWithPlotSize(plotSize: PlotSize): Widget {
     const {
       tooltip,
       anchorRect,
@@ -194,59 +172,53 @@ class _ToastRectTooltipAreaState extends State<_ToastRectTooltipArea> {
     }
 
     let tooltipPositioned: Widget = SizedBox.shrink();
-    this.schedulePlotSizeMeasurement();
-    const plotSize = this.measuredPlotSize;
+    const resolution = resolveTooltipPlacement(
+      anchorRect,
+      plotSize,
+      estimatedTooltipSize,
+      tooltipGap,
+      getCandidateOrder(mode, anchorRect, plotSize),
+    );
+    const { layout } = resolution;
 
-    if (plotSize != null) {
-      const resolution = resolveTooltipPlacement(
-        anchorRect,
-        plotSize,
-        estimatedTooltipSize,
-        tooltipGap,
-        getCandidateOrder(mode, anchorRect, plotSize),
-      );
-      const { layout } = resolution;
+    const tooltipWidget = ZIndex({
+      zIndex: 9999,
+      child: Padding({
+        padding: layout.padding,
+        child: tooltip,
+      }),
+    });
 
-      const tooltipWidget = ZIndex({
-        zIndex: 9999,
-        child: Padding({
-          padding: layout.padding,
-          child: tooltip,
-        }),
-      });
-
-      tooltipPositioned = Positioned({
-        key: "__tooltip__",
-        left: anchorRect.x,
-        top: anchorRect.y,
-        child: Stack({
-          fit: StackFit.passthrough,
-          clipped: false,
-          children: [
-            SizedBox({
-              width: anchorRect.width,
-              height: anchorRect.height,
-            }),
-            Positioned.fill({
-              child: FractionalTranslation({
-                translation: layout.offset,
-                child: ConstraintsTransformBox({
-                  constraintsTransform: ConstraintsTransformBox.unconstrained,
-                  alignment: Alignment[layout.position],
-                  child: FractionalTranslation({
-                    translation: layout.translation,
-                    child: tooltipWidget,
-                  }),
+    tooltipPositioned = Positioned({
+      key: "__tooltip__",
+      left: anchorRect.x,
+      top: anchorRect.y,
+      child: Stack({
+        fit: StackFit.passthrough,
+        clipped: false,
+        children: [
+          SizedBox({
+            width: anchorRect.width,
+            height: anchorRect.height,
+          }),
+          Positioned.fill({
+            child: FractionalTranslation({
+              translation: layout.offset,
+              child: ConstraintsTransformBox({
+                constraintsTransform: ConstraintsTransformBox.unconstrained,
+                alignment: Alignment[layout.position],
+                child: FractionalTranslation({
+                  translation: layout.translation,
+                  child: tooltipWidget,
                 }),
               }),
             }),
-          ],
-        }),
-      });
-    }
+          }),
+        ],
+      }),
+    });
 
     return Stack({
-      key: this.areaKey,
       fit: StackFit.expand,
       clipped: false,
       children: [tooltipPositioned],

@@ -529,8 +529,10 @@ class CartesianTooltipOverlayState<
 		this.scheduleHoveredRefresh(ctx, tooltipBehavior, hovered);
 		const tooltip =
 			hovered == null ? null : tooltipBehavior.buildTooltip(ctx, hovered);
+		const overlaySignature = this.getHoverSignature(hovered);
 
 		return Stack({
+			key: overlaySignature,
 			fit: StackFit.expand,
 			clipped: false,
 			children: [
