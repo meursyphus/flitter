@@ -40,7 +40,7 @@ class RenderFractionalTranslation extends SingleChildRenderObject {
     if (this._translation.x === value.x && this._translation.y === value.y)
       return;
     this._translation = value;
-    this.markNeedsLayout;
+    this.markNeedsLayout();
   }
   constructor({ translation }: { translation: BriefOffset }) {
     super({ isPainter: false });

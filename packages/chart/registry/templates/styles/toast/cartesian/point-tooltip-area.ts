@@ -104,7 +104,7 @@ class _ToastPointTooltipAreaState extends State<_ToastPointTooltipArea> {
       this.scheduledPlotMeasurement = false;
       if (this.areaKey.buildOwner == null) return;
 
-      const plotRenderObject = this.areaKey.currentContext?.renderObject;
+      const plotRenderObject = this.areaKey.findCurrentContext()?.renderObject;
       if (plotRenderObject == null) return;
 
       const nextSize = {
@@ -132,7 +132,7 @@ class _ToastPointTooltipAreaState extends State<_ToastPointTooltipArea> {
       this.scheduledMeasurement = false;
       if (this.tooltipKey.buildOwner == null) return;
 
-      const tooltipRenderObject = this.tooltipKey.currentContext?.renderObject;
+      const tooltipRenderObject = this.tooltipKey.findCurrentContext()?.renderObject;
       if (tooltipRenderObject == null) return;
 
       const nextSize = {
@@ -169,9 +169,7 @@ class _ToastPointTooltipAreaState extends State<_ToastPointTooltipArea> {
     }
 
     this.scheduleTooltipMeasurement();
-    if (this.measuredPlotSize == null) {
-      this.schedulePlotMeasurement();
-    }
+    this.schedulePlotMeasurement();
 
     const plotSize = this.measuredPlotSize;
     const tooltipSize = this.measuredTooltipSize ?? estimatedTooltipSize;

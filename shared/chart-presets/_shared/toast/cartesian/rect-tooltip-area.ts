@@ -158,7 +158,7 @@ class _ToastRectTooltipAreaState extends State<_ToastRectTooltipArea> {
       this.scheduledMeasurement = false;
       if (this.areaKey.buildOwner == null) return;
 
-      const plotRenderObject = this.areaKey.currentContext?.renderObject;
+      const plotRenderObject = this.areaKey.findCurrentContext()?.renderObject;
       if (plotRenderObject == null) return;
 
       const nextSize = {
@@ -194,10 +194,8 @@ class _ToastRectTooltipAreaState extends State<_ToastRectTooltipArea> {
     }
 
     let tooltipPositioned: Widget = SizedBox.shrink();
+    this.schedulePlotSizeMeasurement();
     const plotSize = this.measuredPlotSize;
-    if (plotSize == null) {
-      this.schedulePlotSizeMeasurement();
-    }
 
     if (plotSize != null) {
       const resolution = resolveTooltipPlacement(

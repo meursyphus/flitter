@@ -261,16 +261,16 @@ class DataViewState extends State<DataView> {
   private schedulePlotMeasurement(ctx: ReturnType<typeof LineChartProvider.of>): void {
     if (this.scheduledPlotMeasurement) return;
     this.scheduledPlotMeasurement = true;
-    this.element.scheduler.addPostFrameCallbacks(() => {
-      this.scheduledPlotMeasurement = false;
-      const ro = this.dataViewKey.currentContext?.renderObject;
+      this.element.scheduler.addPostFrameCallbacks(() => {
+        this.scheduledPlotMeasurement = false;
+      const ro = this.dataViewKey.findCurrentContext()?.renderObject;
       if (ro == null) return;
       ctx.setPlotSize(ro.size.width, ro.size.height);
     });
   }
 
   private getLocalPosition(e: MouseEvent): { x: number; y: number } | null {
-    const ro = this.dataViewKey.currentContext?.renderObject;
+    const ro = this.dataViewKey.findCurrentContext()?.renderObject;
     if (ro == null) return null;
     const view = ro.renderOwner.renderContext.view;
     const rect = view.getBoundingClientRect();
@@ -287,7 +287,7 @@ class DataViewState extends State<DataView> {
     const local = this.getLocalPosition(e);
     if (local == null) return;
 
-    const ro = this.dataViewKey.currentContext?.renderObject;
+    const ro = this.dataViewKey.findCurrentContext()?.renderObject;
     if (ro == null) return;
     const size = ro.size;
     if (size.width <= 0 || size.height <= 0) return;

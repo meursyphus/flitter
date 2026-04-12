@@ -255,6 +255,15 @@ export class RenderObject {
       return;
     }
 
+    // Be conservative for child-size-dependent nodes. Several overlays and
+    // chart layouts still rely on parent relayout when a descendant mutates
+    // layout-affecting state, and stopping at a relayout boundary here can
+    // leave parent positioning stale.
+    if (this.parentUsesSize && this.parent != null) {
+      this.markNeedsParentLayout();
+      return;
+    }
+
     if (this._relayoutBoundary === this || this.parent == null) {
       this.renderOwner.needsLayoutRenderObjects.push(this);
       this.renderOwner.requestVisualUpdate();

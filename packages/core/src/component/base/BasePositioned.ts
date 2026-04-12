@@ -74,7 +74,7 @@ export class RenderPositioned extends SingleChildRenderObject {
   set top(newTop: number | undefined) {
     if (this._top === newTop) return; // early return
     this._top = newTop;
-    this.markNeedsLayout();
+    this.markNeedsParentLayout();
   }
 
   get bottom(): number | undefined {
@@ -84,7 +84,7 @@ export class RenderPositioned extends SingleChildRenderObject {
   set bottom(newBottom: number | undefined) {
     if (this._bottom === newBottom) return; // early return
     this._bottom = newBottom;
-    this.markNeedsLayout();
+    this.markNeedsParentLayout();
   }
 
   get right(): number | undefined {
@@ -94,7 +94,7 @@ export class RenderPositioned extends SingleChildRenderObject {
   set right(newRight: number | undefined) {
     if (this._right === newRight) return; // early return
     this._right = newRight;
-    this.markNeedsLayout();
+    this.markNeedsParentLayout();
   }
 
   get left(): number | undefined {
@@ -104,7 +104,7 @@ export class RenderPositioned extends SingleChildRenderObject {
   set left(newLeft: number | undefined) {
     if (this._left === newLeft) return; // early return
     this._left = newLeft;
-    this.markNeedsLayout();
+    this.markNeedsParentLayout();
   }
 
   get width(): number | undefined {
@@ -114,7 +114,7 @@ export class RenderPositioned extends SingleChildRenderObject {
   set width(newWidth: number | undefined) {
     if (this._width === newWidth) return; // early return
     this._width = newWidth;
-    this.markNeedsLayout();
+    this.markNeedsParentLayout();
   }
 
   get height(): number | undefined {
@@ -124,7 +124,7 @@ export class RenderPositioned extends SingleChildRenderObject {
   set height(newHeight: number | undefined) {
     if (this._height === newHeight) return; // early return
     this._height = newHeight;
-    this.markNeedsLayout();
+    this.markNeedsParentLayout();
   }
   constructor({
     top,

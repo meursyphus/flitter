@@ -4,15 +4,21 @@ import type BuildOwner from "./BuildOwner";
 class GlobalKey {
   isGlobalKey = true;
   buildOwner!: BuildOwner;
+  findCurrentContext(): BuildContext | null {
+    if (this.buildOwner == null) {
+      return null;
+    }
+
+    return (this.buildOwner.findByGlobalKey(this) as BuildContext | undefined) ?? null;
+  }
+
   get currentContext(): BuildContext {
-    assert(
-      this.buildOwner != null,
-      "buildOwner is null, currentContext must be called after initState",
-    );
-    const currentContext = this.buildOwner.findByGlobalKey(this);
+    const currentContext = this.findCurrentContext();
     assert(
       currentContext != null,
-      "currentContext is null, the widget might be inactive or unmounted",
+      this.buildOwner != null
+        ? "currentContext is null, the widget might be inactive or unmounted"
+        : "buildOwner is null, currentContext must be called after initState",
     );
     return currentContext;
   }

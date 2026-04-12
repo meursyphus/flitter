@@ -41,6 +41,18 @@ export type CartesianRect = {
 	height: number;
 };
 
+type RenderObjectLike = {
+	offset: {
+		x: number;
+		y: number;
+	};
+	size: {
+		width: number;
+		height: number;
+	};
+	parent?: RenderObjectLike;
+};
+
 export type CartesianLegend = {
 	name: string;
 	index: number;
@@ -106,12 +118,12 @@ export function resolveOverlayRect(
 	overlayKey: GlobalKey,
 	anchorKey: GlobalKey,
 ): CartesianRect | null {
-	const overlayRenderObject = overlayKey.currentContext?.renderObject;
-	const anchorRenderObject = anchorKey.currentContext?.renderObject;
+	const overlayRenderObject = overlayKey.findCurrentContext()?.renderObject;
+	const anchorRenderObject = anchorKey.findCurrentContext()?.renderObject;
 	if (overlayRenderObject == null || anchorRenderObject == null) return null;
 
-	const anchorGlobal = anchorRenderObject.localToGlobal();
-	const overlayGlobal = overlayRenderObject.localToGlobal();
+	const anchorGlobal = resolveLayoutGlobalOffset(anchorRenderObject);
+	const overlayGlobal = resolveLayoutGlobalOffset(overlayRenderObject);
 
 	return {
 		x: anchorGlobal.x - overlayGlobal.x,
@@ -119,6 +131,23 @@ export function resolveOverlayRect(
 		width: anchorRenderObject.size.width,
 		height: anchorRenderObject.size.height,
 	};
+}
+
+function resolveLayoutGlobalOffset(renderObject: RenderObjectLike): {
+	x: number;
+	y: number;
+} {
+	let x = 0;
+	let y = 0;
+	let current: RenderObjectLike | undefined = renderObject;
+
+	while (current != null) {
+		x += current.offset.x;
+		y += current.offset.y;
+		current = current.parent;
+	}
+
+	return { x, y };
 }
 
 export function createCartesianChart<
@@ -449,6 +478,46 @@ class CartesianTooltipOverlayState<
 	THovered,
 > extends State<CartesianTooltipOverlay<TContext, THovered>> {
 	overlayKey = new GlobalKey();
+	scheduledHoveredRefresh = false;
+
+	private getHoverSignature(hovered: THovered | null): string {
+		if (hovered == null) return "null";
+
+		try {
+			return JSON.stringify(hovered);
+		} catch {
+			return `${hovered}`;
+		}
+	}
+
+	private scheduleHoveredRefresh(
+		ctx: TContext,
+		tooltipBehavior: CartesianTooltipBehavior<TContext, THovered>,
+		hovered: THovered | null,
+	): void {
+		if (this.scheduledHoveredRefresh) return;
+		this.scheduledHoveredRefresh = true;
+		const hoveredSignature = this.getHoverSignature(hovered);
+
+		this.element.scheduler.addPostFrameCallbacks(() => {
+			this.scheduledHoveredRefresh = false;
+			if (!this.element.isActive) return;
+
+			const refreshedHovered = tooltipBehavior.resolveHovered(
+				ctx,
+				this.overlayKey,
+			);
+			if (this.getHoverSignature(refreshedHovered) === hoveredSignature) {
+				if (refreshedHovered == null) {
+					return;
+				}
+				this.setState();
+				return;
+			}
+
+			this.setState();
+		});
+	}
 
 	override build(context: BuildContext): Widget {
 		const { behavior } = this.widget;
@@ -457,6 +526,7 @@ class CartesianTooltipOverlayState<
 
 		const ctx = behavior.of(context);
 		const hovered = tooltipBehavior.resolveHovered(ctx, this.overlayKey);
+		this.scheduleHoveredRefresh(ctx, tooltipBehavior, hovered);
 		const tooltip =
 			hovered == null ? null : tooltipBehavior.buildTooltip(ctx, hovered);
 
