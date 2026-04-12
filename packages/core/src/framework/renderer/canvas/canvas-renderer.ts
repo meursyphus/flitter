@@ -7,20 +7,34 @@ import { SceneBuilder } from "./layer";
 
 export class CanvasRenderPipeline extends RenderPipeline {
   override drawFrame(): void {
-    this.flushLayout();
-    this.flushPaintTransformUpdate();
-    this.recalculateZOrder();
-    this.flushPaint();
-    this.#compositeFrame();
+    this.measurePhase("drawFrame", () => {
+      this.measurePhase("layout", () => this.flushLayout());
+      this.measurePhase("paintTransform", () =>
+        this.flushPaintTransformUpdate(),
+      );
+      this.recalculateZOrder();
+      this.measurePhase("paint", () => {
+        this.flushPaint();
+        this.#compositeFrame();
+      });
+    });
   }
 
   override reinitializeFrame(): void {
-    this.renderView.layout(Constraints.tight(this.renderContext.viewSize));
-    this.renderView.updatePaintTransform();
-    this.notifyZOrderChanged();
-    this.recalculateZOrder();
-    CanvasPaintingContext.repaintCompositedChild(this.renderView);
-    this.#compositeFrame();
+    this.measurePhase("drawFrame", () => {
+      this.measurePhase("layout", () =>
+        this.renderView.layout(Constraints.tight(this.renderContext.viewSize)),
+      );
+      this.measurePhase("paintTransform", () =>
+        this.renderView.updatePaintTransform(),
+      );
+      this.notifyZOrderChanged();
+      this.recalculateZOrder();
+      this.measurePhase("paint", () => {
+        CanvasPaintingContext.repaintCompositedChild(this.renderView);
+        this.#compositeFrame();
+      });
+    });
   }
 
   override flushPaint(): void {
