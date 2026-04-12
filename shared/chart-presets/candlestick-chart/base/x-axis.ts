@@ -103,7 +103,7 @@ class _XAxisLabelsState extends State<_XAxisLabels> {
 			this.scheduledMeasurement = false;
 			if (this.areaKey.buildOwner == null) return;
 
-			const areaRenderObject = this.areaKey.currentContext?.renderObject;
+			const areaRenderObject = this.areaKey.findCurrentContext()?.renderObject;
 			if (areaRenderObject == null) return;
 
 			const nextWidth = areaRenderObject.size.width;
