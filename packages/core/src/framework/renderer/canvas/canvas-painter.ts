@@ -46,12 +46,6 @@ export class CanvasPainter extends Painter {
     this.#layer = layer;
   }
 
-  detach() {
-    if (this.#layer != null && this.#layer.attached) {
-      this.#layer.detach();
-    }
-  }
-
   updateCompositedLayer(oldLayer: ContainerLayer | null) {
     assert(
       this.isRepaintBoundary,

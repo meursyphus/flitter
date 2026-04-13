@@ -59,7 +59,6 @@ export class AppRunner {
     this.scheduler.addPersistenceCallbacks(() =>
       this.renderPipeline.drawFrame(),
     );
-    this.scheduler.addPersistenceCallbacks(() => this.buildOwner.finalizeTree());
   }
   private didRun = false;
 
@@ -74,8 +73,7 @@ export class AppRunner {
       return "";
 
     if (this.root) {
-      this.root.unmountRecursively();
-      this.buildOwner.finalizeTree();
+      this.root.unmount();
       this.root = null as unknown as RenderObjectElement;
     }
 
@@ -110,14 +108,12 @@ export class AppRunner {
 
   draw() {
     this.renderPipeline.reinitializeFrame();
-    this.buildOwner.finalizeTree();
     this.scheduler.flushPostCallbacks();
   }
 
   dispose() {
     if (this.root) {
-      this.root.unmountRecursively();
-      this.buildOwner.finalizeTree();
+      this.root.unmount();
       this.root = null as unknown as RenderObjectElement;
     }
     this.renderContext.dispose();

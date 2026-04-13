@@ -144,12 +144,6 @@ export class SvgPainter extends Painter {
     this.paint(context, this.#clipId, this.#opacity);
   }
 
-  detach() {
-    if (this.#domNode != null) {
-      this.#domNode.remove();
-    }
-  }
-
   /**
    * It is currently only used on ZIndexRenderObject
    */

@@ -9,12 +9,7 @@ class GlobalKey {
       this.buildOwner != null,
       "buildOwner is null, currentContext must be called after initState",
     );
-    const currentContext = this.buildOwner.findByGlobalKey(this);
-    assert(
-      currentContext != null,
-      "currentContext is null, the widget might be inactive or unmounted",
-    );
-    return currentContext;
+    return this.buildOwner.findByGlobalKey(this);
   }
 }
 

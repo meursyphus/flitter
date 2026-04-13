@@ -143,4 +143,3 @@ histories.push({
 });
 histories.push({"timestamp":1775915369686,"runApp":33.951,"mount":9.3387,"draw":24.305500000000002,"layout":18.006700000000002,"paint":2.1998,"note":"Text layout improvement PR #134 applied"});
 histories.push({"timestamp":1775917885411,"runApp":34.025099999999995,"mount":9.476,"draw":24.2177,"layout":17.768500000000003,"paint":2.0959,"note":"Canvas repaint boundary + layer optimizations (OffsetLayer/OpacityLayer skip, flushPaint guard)"});
-histories.push({"timestamp":1775964596017,"runApp":35.105599999999995,"mount":9.9202,"draw":24.864299999999997,"layout":18.065199999999997,"paint":2.3900999999999994,"note":"Issue #31 lazy element deactivation / GlobalKey reparenting PR #135"});
