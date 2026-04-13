@@ -34,19 +34,9 @@ class RenderDockFrame extends MultiChildRenderObject {
     super({ isPainter: false });
   }
 
-  override get sizedByParent(): boolean {
-    return true;
-  }
-
-  protected override performResize(): void {
-    this.size = this.constraints.constrain(Size.infinite);
-  }
-
-  protected override computeDryLayout(constraints: Constraints): Size {
-    return constraints.constrain(Size.infinite);
-  }
-
   protected preformLayout(): void {
+    this.size = this.constraints.constrain(Size.infinite);
+
     const left = this.children[DockSlot.left];
     const right = this.children[DockSlot.right];
     const bottom = this.children[DockSlot.bottom];
@@ -59,7 +49,6 @@ class RenderDockFrame extends MultiChildRenderObject {
         maxWidth: this.size.width,
         maxHeight: this.size.height,
       }),
-      { parentUsesSize: true },
     );
     const bottomHeight = bottom.size.height;
     const sideHeight = Math.max(0, this.size.height - bottomHeight);
@@ -70,7 +59,6 @@ class RenderDockFrame extends MultiChildRenderObject {
         maxHeight: sideHeight,
         maxWidth: this.size.width,
       }),
-      { parentUsesSize: true },
     );
     right.layout(
       new Constraints({
@@ -78,7 +66,6 @@ class RenderDockFrame extends MultiChildRenderObject {
         maxHeight: sideHeight,
         maxWidth: this.size.width,
       }),
-      { parentUsesSize: true },
     );
 
     const leftWidth = left.size.width;
@@ -92,20 +79,16 @@ class RenderDockFrame extends MultiChildRenderObject {
         maxWidth: fillWidth,
         maxHeight: this.size.height,
       }),
-      { parentUsesSize: false },
     );
 
     leftCorner.layout(
       Constraints.tight(new Size({ width: leftWidth, height: bottomHeight })),
-      { parentUsesSize: false },
     );
     rightCorner.layout(
       Constraints.tight(new Size({ width: rightWidth, height: bottomHeight })),
-      { parentUsesSize: false },
     );
     fill.layout(
       Constraints.tight(new Size({ width: fillWidth, height: fillHeight })),
-      { parentUsesSize: false },
     );
 
     left.offset = new Offset({ x: 0, y: 0 });
@@ -122,7 +105,7 @@ class RenderDockFrame extends MultiChildRenderObject {
     });
   }
 
-  protected override computeIntrinsicWidth(height: number): number {
+  getIntrinsicWidth(height: number): number {
     const left = this.children[DockSlot.left];
     const right = this.children[DockSlot.right];
     const fill = this.children[DockSlot.fill];
@@ -133,7 +116,7 @@ class RenderDockFrame extends MultiChildRenderObject {
     );
   }
 
-  protected override computeIntrinsicHeight(width: number): number {
+  getIntrinsicHeight(width: number): number {
     const bottom = this.children[DockSlot.bottom];
     const fill = this.children[DockSlot.fill];
     return bottom.getIntrinsicHeight(width) + fill.getIntrinsicHeight(width);

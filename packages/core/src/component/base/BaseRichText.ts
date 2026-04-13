@@ -82,15 +82,12 @@ class RichText extends RenderObjectWidget {
   updateRenderObject(renderObject: RenderParagraph): void {
     if (this.softWrap != null) renderObject.softWrap = this.softWrap;
     if (this.overflow != null) renderObject.overflow = this.overflow;
-    if (this.textScaleFactor != null)
-      renderObject.textScaleFactor = this.textScaleFactor;
+    if (this.textScaleFactor != null) renderObject.textScaleFactor = this.textScaleFactor;
     if (this.maxLines != null) renderObject.maxLines = this.maxLines;
-    if (this.textWidthBasis != null)
-      renderObject.textWidthBasis = this.textWidthBasis;
+    if (this.textWidthBasis != null) renderObject.textWidthBasis = this.textWidthBasis;
     if (this.text != null) renderObject.text = this.text;
     if (this.textAlign != null) renderObject.textAlign = this.textAlign;
-    if (this.textDirection != null)
-      renderObject.textDirection = this.textDirection;
+    if (this.textDirection != null) renderObject.textDirection = this.textDirection;
     if (this.textPainter != null) renderObject.textPainter = this.textPainter;
   }
 }
@@ -264,12 +261,12 @@ export class RenderParagraph extends RenderObject {
       this.textPainter.height !== this.previousHeight;
   }
 
-  protected override computeIntrinsicHeight(): number {
+  override getIntrinsicHeight(): number {
     this.textPainter.layout();
     return this.textPainter.height;
   }
 
-  protected override computeIntrinsicWidth(): number {
+  override getIntrinsicWidth(): number {
     this.textPainter.layout();
     return this.textPainter.width;
   }

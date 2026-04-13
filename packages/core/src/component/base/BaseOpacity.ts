@@ -4,7 +4,6 @@ import {
   CanvasPainter,
   type CanvasPaintingContext,
 } from "../../framework";
-import { OpacityLayer } from "../../framework/renderer/canvas/layer";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import { assert } from "../../utils";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
@@ -54,7 +53,7 @@ class RenderOpacity extends SingleChildRenderObject {
 
   protected override preformLayout(): void {
     if (this.child != null) {
-      this.child.layout(this.constraints, { parentUsesSize: true });
+      this.child.layout(this.constraints);
       this.size = this.child.size;
     }
   }
@@ -81,18 +80,7 @@ class CanvasPainterOpacity extends CanvasPainter {
     return (this.renderObject as RenderOpacity).opacityProp;
   }
 
-  override createAncestorLayer(_offset: Offset) {
-    if (this.opacity === 1) return null;
-    const layer = new OpacityLayer();
-    layer.opacity = this.opacity;
-    return layer;
-  }
-
   override performPaint(context: CanvasPaintingContext, offset: Offset) {
-    if (this.opacity >= 1) {
-      this.defaultPaint(context, offset);
-      return;
-    }
     context.canvas.save();
     context.canvas.globalAlpha *= this.opacity;
     this.defaultPaint(context, offset);

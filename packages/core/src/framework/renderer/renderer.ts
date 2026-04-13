@@ -4,7 +4,6 @@ import type { HitTestDispatcher } from "../../hit-test/HitTestDispatcher";
 import { type Matrix4, type Offset, Size } from "../../type";
 import type { RenderZIndex } from "../../component/base/BaseZIndex";
 import type { RenderGestureDetector } from "../../component/base/BaseGestureDetector";
-import type PerfTimeline from "../PerfTimeline";
 
 export class RenderContext {
   document: Document;
@@ -94,7 +93,6 @@ export abstract class RenderPipeline {
   hitTestDispatcher: HitTestDispatcher;
   readonly renderContext: RenderContext;
   private onNeedVisualUpdate: () => void;
-  protected readonly perfTimeline: PerfTimeline;
   needsPaintRenderObjects: RenderObject[] = [];
   needsLayoutRenderObjects: RenderObject[] = [];
   needsPaintTransformUpdateRenderObjects: RenderObject[] = [];
@@ -104,17 +102,14 @@ export abstract class RenderPipeline {
   renderView!: RenderObject;
   constructor({
     onNeedVisualUpdate,
-    perfTimeline,
     renderContext,
     hitTestDispatcher,
   }: {
     onNeedVisualUpdate: () => void;
-    perfTimeline: PerfTimeline;
     renderContext: RenderContext;
     hitTestDispatcher: HitTestDispatcher;
   }) {
     this.onNeedVisualUpdate = onNeedVisualUpdate;
-    this.perfTimeline = perfTimeline;
     this.renderContext = renderContext;
     this.hitTestDispatcher = hitTestDispatcher;
     this.hitTestDispatcher.init({ renderContext: this.renderContext });
@@ -122,13 +117,6 @@ export abstract class RenderPipeline {
 
   requestVisualUpdate() {
     this.onNeedVisualUpdate();
-  }
-
-  protected measurePhase<T>(
-    phase: "drawFrame" | "layout" | "paint" | "paintTransform",
-    callback: () => T,
-  ): T {
-    return this.perfTimeline.measure(phase, callback);
   }
 
   protected flushLayout() {

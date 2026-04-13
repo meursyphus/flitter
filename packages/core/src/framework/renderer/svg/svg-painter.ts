@@ -117,7 +117,7 @@ export class SvgPainter extends Painter {
   } {
     const container = this.domNode;
     const svgEls: Record<string, SVGElement> = {};
-    for (const element of Array.from(container.children)) {
+    for (const element of container.children) {
       const child = element;
       const name = child.getAttribute("data-render-name")!;
       svgEls[name] = child as unknown as SVGElement;
@@ -142,12 +142,6 @@ export class SvgPainter extends Painter {
 
   paintWithoutLayout(context: SvgPaintContext) {
     this.paint(context, this.#clipId, this.#opacity);
-  }
-
-  detach() {
-    if (this.#domNode != null) {
-      this.#domNode.remove();
-    }
   }
 
   /**

@@ -70,11 +70,11 @@ class LayoutBuilderElement extends RenderObjectElement {
     }
   }
 
-  override forgetChild(child: Element): void {
-    super.forgetChild(child);
-    if (this._child === child) {
-      this._child = null;
-    }
+  override unmount(): void {
+    this._child?.unmount();
+    this._renderObject.dispose();
+    this.parent = undefined;
+    this._renderObject.markNeedsParentLayout();
   }
 }
 
@@ -98,7 +98,7 @@ class RenderLayoutBuilder extends SingleChildRenderObject {
 
     // Now lay out the child
     if (this.child != null) {
-      this.child.layout(this.constraints, { parentUsesSize: true });
+      this.child.layout(this.constraints);
       this.size = this.constraints.constrain(this.child.size);
     } else {
       this.size = this.constraints.constrain(Size.zero);

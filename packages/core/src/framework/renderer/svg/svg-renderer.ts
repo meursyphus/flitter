@@ -5,31 +5,19 @@ import { RenderPipeline } from "../renderer";
 
 export class SvgRenderPipeline extends RenderPipeline {
   override drawFrame() {
-    this.measurePhase("drawFrame", () => {
-      this.measurePhase("layout", () => this.flushLayout());
-      this.measurePhase("paintTransform", () =>
-        this.flushPaintTransformUpdate(),
-      );
-      this.measurePhase("paint", () => this.flushPaint());
-      const painterRenderObjects = this.recalculateZOrder();
-      this.#rearrangeDomOrder(painterRenderObjects);
-    });
+    this.flushLayout();
+    this.flushPaintTransformUpdate();
+    this.flushPaint();
+    const painterRenderObjects = this.recalculateZOrder();
+    this.#rearrangeDomOrder(painterRenderObjects);
   }
 
   override reinitializeFrame() {
-    this.measurePhase("drawFrame", () => {
-      this.measurePhase("layout", () =>
-        this.renderView.layout(Constraints.tight(this.renderContext.viewSize)),
-      );
-      this.measurePhase("paintTransform", () =>
-        this.renderView.updatePaintTransform(),
-      );
-      this.measurePhase("paint", () =>
-        this.renderView.svgPainter.paint(this.paintContext),
-      );
-      const painterRenderObjects = this.recalculateZOrder();
-      this.#rearrangeDomOrder(painterRenderObjects);
-    });
+    this.renderView.layout(Constraints.tight(this.renderContext.viewSize));
+    this.renderView.updatePaintTransform();
+    this.renderView.svgPainter.paint(this.paintContext);
+    const painterRenderObjects = this.recalculateZOrder();
+    this.#rearrangeDomOrder(painterRenderObjects);
   }
 
   paintContext: SvgPaintContext = {

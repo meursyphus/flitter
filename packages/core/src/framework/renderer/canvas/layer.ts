@@ -1,17 +1,12 @@
-import { Offset, type Matrix4, type Rect } from "../../../type";
-import type Path from "../../../type/_types/_path";
+import type { Offset, Matrix4, Rect } from "../../../type";
 import type { CanvasRenderPipeline } from "./canvas-renderer";
 export abstract class Layer {
   attached: boolean = false;
   owner!: CanvasRenderPipeline;
 
   attach(owner: CanvasRenderPipeline) {
-    this.owner = owner;
     this.attached = true;
-  }
-  detach() {
-    this.attached = false;
-    this.owner = null as unknown as CanvasRenderPipeline;
+    this.owner = owner;
   }
   abstract addToScene(builder: SceneBuilder): void;
 }
@@ -34,18 +29,6 @@ export class PictureLayer extends Layer {
 
 export class ContainerLayer extends Layer {
   children: Layer[] = [];
-  override attach(owner: CanvasRenderPipeline) {
-    super.attach(owner);
-    this.visitChildren(layer => {
-      layer.attach(owner);
-    });
-  }
-  override detach() {
-    this.visitChildren(layer => {
-      layer.detach();
-    });
-    super.detach();
-  }
   override addToScene(builder: SceneBuilder) {
     this.visitChildren(layer => {
       layer.addToScene(builder);
@@ -58,9 +41,6 @@ export class ContainerLayer extends Layer {
     }
   }
   removeAllChildren() {
-    this.visitChildren(layer => {
-      layer.detach();
-    });
     this.children = [];
   }
 
@@ -70,165 +50,38 @@ export class ContainerLayer extends Layer {
 
   append(child: Layer) {
     this.children.push(child);
-    if (this.attached) {
-      child.attach(this.owner);
-    }
+    child.attach(this.owner);
   }
 }
 
 export class OffsetLayer extends ContainerLayer {
-  offset: Offset = Offset.Constants.zero;
-
-  override addToScene(builder: SceneBuilder) {
-    if (this.offset.x === 0 && this.offset.y === 0) {
-      super.addToScene(builder);
-      return;
-    }
-    builder.pushOffset(this.offset);
-    super.addToScene(builder);
-    builder.pop();
-  }
+  offset!: Offset;
 }
 export class TransformLayer extends OffsetLayer {
   transform!: Matrix4;
-
-  override addToScene(builder: SceneBuilder) {
-    builder.pushTransform({
-      offset: this.offset,
-      transform: this.transform,
-    });
-    this.visitChildren(layer => {
-      layer.addToScene(builder);
-    });
-    builder.pop();
-  }
-}
-
-export class OpacityLayer extends ContainerLayer {
-  opacity: number = 1;
-
-  override addToScene(builder: SceneBuilder) {
-    if (this.opacity >= 1) {
-      super.addToScene(builder);
-      return;
-    }
-    builder.pushOpacity(this.opacity);
-    super.addToScene(builder);
-    builder.pop();
-  }
-}
-
-export class ClipPathLayer extends ContainerLayer {
-  offset: Offset = Offset.Constants.zero;
-  path!: Path;
-
-  override addToScene(builder: SceneBuilder) {
-    builder.pushClipPath({
-      offset: this.offset,
-      path: this.path,
-    });
-    super.addToScene(builder);
-    builder.pop();
-  }
 }
 
 export class SceneBuilder {
-  #commands: (
-    | { type: "picture"; x: number; y: number; picture: Picture }
-    | { type: "pushOffset"; offset: Offset }
-    | { type: "pushTransform"; offset: Offset; transform: Matrix4 }
-    | { type: "pushOpacity"; opacity: number }
-    | { type: "pushClipPath"; offset: Offset; path: Path }
-    | { type: "pop" }
-  )[] = [];
+  #pictures: { x: number; y: number; picture: Picture }[] = [];
 
   render(ctx: CanvasRenderingContext2D) {
-    for (const command of this.#commands) {
-      switch (command.type) {
-        case "picture":
-          ctx.drawImage(
-            command.picture.toImage(),
-            command.x,
-            command.y,
-            command.picture.size.width,
-            command.picture.size.height,
-          );
-          break;
-        case "pushOffset":
-          ctx.save();
-          ctx.translate(command.offset.x, command.offset.y);
-          break;
-        case "pushTransform": {
-          const arr = command.transform._m4storage;
-          ctx.save();
-          ctx.translate(command.offset.x, command.offset.y);
-          ctx.transform(
-            arr[0],
-            arr[1],
-            arr[4],
-            arr[5],
-            arr[12],
-            arr[13],
-          );
-          ctx.translate(-command.offset.x, -command.offset.y);
-          break;
-        }
-        case "pushOpacity":
-          ctx.save();
-          ctx.globalAlpha *= command.opacity;
-          break;
-        case "pushClipPath":
-          ctx.save();
-          ctx.translate(command.offset.x, command.offset.y);
-          ctx.clip(command.path.toCanvasPath());
-          ctx.translate(-command.offset.x, -command.offset.y);
-          break;
-        case "pop":
-          ctx.restore();
-          break;
-      }
+    /**
+     * Vertical layering not yet considered.
+     * Addition required!
+     */
+    for (const { x, y, picture } of this.#pictures) {
+      ctx.drawImage(
+        picture.toImage(),
+        x,
+        y,
+        picture.size.width,
+        picture.size.height,
+      );
     }
   }
 
   addPicture(props: { x: number; y: number; picture: Picture }) {
-    this.#commands.push({
-      type: "picture",
-      ...props,
-    });
-  }
-
-  pushOffset(offset: Offset) {
-    this.#commands.push({
-      type: "pushOffset",
-      offset,
-    });
-  }
-
-  pushTransform(props: { offset: Offset; transform: Matrix4 }) {
-    this.#commands.push({
-      type: "pushTransform",
-      ...props,
-    });
-  }
-
-  pushOpacity(opacity: number) {
-    this.#commands.push({
-      type: "pushOpacity",
-      opacity,
-    });
-  }
-
-  pushClipPath(props: { offset: Offset; path: Path }) {
-    this.#commands.push({
-      type: "pushClipPath",
-      ...props,
-    });
-  }
-
-  pop() {
-    this.#commands.push({
-      type: "pop",
-    });
+    this.#pictures.push(props);
   }
 }
 

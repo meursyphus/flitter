@@ -49,7 +49,7 @@ class RenderFractionalTranslation extends SingleChildRenderObject {
 
   protected override preformLayout(): void {
     if (this.child != null) {
-      this.child.layout(this.constraints, { parentUsesSize: true });
+      this.child.layout(this.constraints);
       this.size = this.child.size;
       this.child.offset = new Offset({
         x: this.translation.x * this.size.width,

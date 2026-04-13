@@ -166,7 +166,7 @@ class RenderFlex extends MultiChildRenderObject {
         : [...this.children].reverse();
 
     sortedChildren.forEach(child => {
-      child.layout(this.constraints.loosen(), { parentUsesSize: true });
+      child.layout(this.constraints.loosen());
       const flex = (child as RenderFlexible)?.isRenderFlexible
         ? (child as RenderFlexible).flex
         : 0;
@@ -203,9 +203,7 @@ class RenderFlex extends MultiChildRenderObject {
         );
       }
 
-      child.layout(childConstraint.enforce(this.constraints.loosen()), {
-        parentUsesSize: true,
-      });
+      child.layout(childConstraint.enforce(this.constraints.loosen()));
     });
 
     /*
@@ -360,7 +358,7 @@ class RenderFlex extends MultiChildRenderObject {
     return offsetOnCrossAxis;
   }
 
-  protected override computeIntrinsicHeight(width: number): number {
+  override getIntrinsicHeight(width: number): number {
     const sum = (acc: number, value: number) => acc + value;
     const max = (acc: number, value: number) => Math.max(acc, value);
     const childIntrinsicHeights = this.children.map(child =>
@@ -371,7 +369,7 @@ class RenderFlex extends MultiChildRenderObject {
       : childIntrinsicHeights.reduce(sum, 0);
   }
 
-  protected override computeIntrinsicWidth(height: number): number {
+  override getIntrinsicWidth(height: number): number {
     const sum = (acc: number, value: number) => acc + value;
     const max = (acc: number, value: number) => Math.max(acc, value);
     const childIntrinsicWidths = this.children.map(child =>

@@ -2,7 +2,7 @@ import type Widget from "../widget/Widget";
 import Element from "./Element";
 
 class ComponentElement extends Element {
-  child: Element | null = null;
+  child!: Element;
 
   declare widget: Widget;
   constructor(widget: Widget) {
@@ -12,16 +12,12 @@ class ComponentElement extends Element {
 
   override unmount(): void {
     super.unmount();
+    this.child.unmount();
   }
 
   override mount(newParent?: Element | undefined): void {
     super.mount(newParent);
     this._firstBuild();
-  }
-
-  override activate(newParent?: Element): void {
-    super.activate(newParent);
-    this.child?.activate(this);
   }
 
   override update(newWidget: Widget): void {
@@ -44,19 +40,12 @@ class ComponentElement extends Element {
 
   override performRebuild(): void {
     const built = this.build();
-    this.child = this.updateChild(this.child, built) ?? null;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.child = this.updateChild(this.child, built)!;
   }
 
   override visitChildren(visitor: (child: Element) => void): void {
-    if (this.child != null) {
-      visitor(this.child);
-    }
-  }
-
-  override forgetChild(child: Element): void {
-    if (this.child === child) {
-      this.child = null;
-    }
+    visitor(this.child);
   }
 }
 

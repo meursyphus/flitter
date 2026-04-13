@@ -55,7 +55,6 @@ import Painter from "./base/BaseCustomPaint";
 import TextField from "./TextField";
 import Image from "./Image";
 import LayoutBuilder from "./LayoutBuilder";
-import RepaintBoundary from "./RepaintBoundary";
 
 export {
   Painter,
@@ -113,5 +112,4 @@ export {
   TextField,
   Image,
   LayoutBuilder,
-  RepaintBoundary,
 };

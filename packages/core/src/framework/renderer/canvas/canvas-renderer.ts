@@ -7,34 +7,20 @@ import { SceneBuilder } from "./layer";
 
 export class CanvasRenderPipeline extends RenderPipeline {
   override drawFrame(): void {
-    this.measurePhase("drawFrame", () => {
-      this.measurePhase("layout", () => this.flushLayout());
-      this.measurePhase("paintTransform", () =>
-        this.flushPaintTransformUpdate(),
-      );
-      this.recalculateZOrder();
-      this.measurePhase("paint", () => {
-        this.flushPaint();
-        this.#compositeFrame();
-      });
-    });
+    this.flushLayout();
+    this.flushPaintTransformUpdate();
+    this.recalculateZOrder();
+    this.flushPaint();
+    this.#compositeFrame();
   }
 
   override reinitializeFrame(): void {
-    this.measurePhase("drawFrame", () => {
-      this.measurePhase("layout", () =>
-        this.renderView.layout(Constraints.tight(this.renderContext.viewSize)),
-      );
-      this.measurePhase("paintTransform", () =>
-        this.renderView.updatePaintTransform(),
-      );
-      this.notifyZOrderChanged();
-      this.recalculateZOrder();
-      this.measurePhase("paint", () => {
-        CanvasPaintingContext.repaintCompositedChild(this.renderView);
-        this.#compositeFrame();
-      });
-    });
+    this.renderView.layout(Constraints.tight(this.renderContext.viewSize));
+    this.renderView.updatePaintTransform();
+    this.notifyZOrderChanged();
+    this.recalculateZOrder();
+    CanvasPaintingContext.repaintCompositedChild(this.renderView);
+    this.#compositeFrame();
   }
 
   override flushPaint(): void {
@@ -44,25 +30,14 @@ export class CanvasRenderPipeline extends RenderPipeline {
     dirties
       .sort((a, b) => b.depth - a.depth)
       .forEach(node => {
-        if (!node.needsPaint && !node.needsCompositedLayerUpdate) return;
-
-        assert(
-          node.canvasPainter.isRepaintBoundary,
-          "isRepaintBoundary must be true on flushPaint",
-        );
-
-        const layer = node.canvasPainter.layer;
-        if (layer == null) {
-          if (node.needsPaint || node.needsCompositedLayerUpdate) {
-            CanvasPaintingContext.repaintCompositedChild(node);
-          }
-          return;
-        }
-
-        if (layer.attached) {
+        if (node.canvasPainter.layer?.attached) {
+          assert(
+            node.canvasPainter.isRepaintBoundary,
+            "isRepaintBoundary must be true on flushPaint",
+          );
           if (node.needsPaint) {
             CanvasPaintingContext.repaintCompositedChild(node);
-          } else if (node.needsCompositedLayerUpdate) {
+          } else {
             CanvasPaintingContext.updateLayerProperties(node);
           }
         } else {
@@ -76,66 +51,26 @@ export class CanvasRenderPipeline extends RenderPipeline {
   }
 
   override markNeedsPaint(renderObject: RenderObject): void {
-    const boundary = this.#findRepaintBoundary(renderObject);
-    if (boundary == null) return;
-    this.scheduleRepaintBoundary(boundary, { needsPaint: true });
+    let parent = renderObject;
+    while (parent != null && !parent.canvasPainter.isRepaintBoundary) {
+      parent = parent.parent!;
+    }
+    if (parent != null) {
+      if (!parent.needsPaint) {
+        parent.needsPaint = true;
+        this.needsPaintRenderObjects.push(parent);
+      }
+    }
   }
 
   override markNeedsPaintTransformUpdate(renderObject: RenderObject): void {
     renderObject.needsPaintTransformUpdate = true;
     this.needsPaintTransformUpdateRenderObjects.push(renderObject);
-    this.requestVisualUpdate();
-  }
-
-  override didChangePaintTransform(renderObject: RenderObject): void {
-    if (renderObject.canvasPainter.isRepaintBoundary) {
-      this.scheduleRepaintBoundary(renderObject, {
-        needsCompositedLayerUpdate: true,
-      });
-      return;
-    }
     this.markNeedsPaint(renderObject);
   }
 
-  scheduleRepaintBoundary(
-    renderObject: RenderObject,
-    {
-      needsPaint = false,
-      needsCompositedLayerUpdate = false,
-    }: {
-      needsPaint?: boolean;
-      needsCompositedLayerUpdate?: boolean;
-    },
-  ) {
-    assert(
-      renderObject.canvasPainter.isRepaintBoundary,
-      "scheduleRepaintBoundary must be called on a repaint boundary",
-    );
-
-    if (this.needsPaintRenderObjects.indexOf(renderObject) === -1) {
-      this.needsPaintRenderObjects.push(renderObject);
-    }
-    if (needsPaint) {
-      renderObject.needsPaint = true;
-      renderObject.needsCompositedLayerUpdate = false;
-    } else if (
-      needsCompositedLayerUpdate &&
-      !renderObject.needsPaint &&
-      renderObject.canvasPainter.layer != null
-    ) {
-      renderObject.needsCompositedLayerUpdate = true;
-    } else if (renderObject.canvasPainter.layer == null) {
-      renderObject.needsPaint = true;
-    }
-    this.requestVisualUpdate();
-  }
-
-  #findRepaintBoundary(renderObject: RenderObject): RenderObject | null {
-    let parent: RenderObject | undefined = renderObject;
-    while (parent != null && !parent.canvasPainter.isRepaintBoundary) {
-      parent = parent.parent;
-    }
-    return parent ?? null;
+  override didChangePaintTransform(renderObjet: RenderObject): void {
+    renderObjet.markNeedsPaint();
   }
 
   #compositeFrame() {

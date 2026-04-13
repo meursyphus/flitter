@@ -87,8 +87,8 @@ export class RenderCustomPaint<
     return this._preferredSize;
   }
   set preferredSize(value) {
-    if (value.equal(this._preferredSize)) return;
-    this._preferredSize = value;
+    if (value.equal(this.preferredSize)) return;
+    this.preferredSize = value;
     this.markNeedsLayout();
   }
 
@@ -114,7 +114,7 @@ export class RenderCustomPaint<
     return constraints.constrain(this.preferredSize);
   }
 
-  protected override computeIntrinsicWidth(height: number): number {
+  override getIntrinsicWidth(height: number): number {
     if (this.child == null) {
       return Number.isFinite(this.preferredSize.width)
         ? this.preferredSize.width
@@ -123,7 +123,7 @@ export class RenderCustomPaint<
     return super.getIntrinsicWidth(height);
   }
 
-  protected override computeIntrinsicHeight(width: number): number {
+  override getIntrinsicHeight(width: number): number {
     if (this.child == null) {
       return Number.isFinite(this.preferredSize.height)
         ? this.preferredSize.height

@@ -7,7 +7,6 @@ import {
   type SvgPaintContext,
   type CanvasPaintingContext,
 } from "../../framework";
-import { ClipPathLayer } from "../../framework/renderer/canvas/layer";
 import type Widget from "../../widget/Widget";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import { createUniqueId } from "../../utils";
@@ -133,13 +132,6 @@ class ClipPathCanvasPainter extends CanvasPainter {
     return (this.renderObject as RenderClipPath).clipper(
       this.renderObject.size,
     );
-  }
-
-  override createAncestorLayer(offset: Offset) {
-    const layer = new ClipPathLayer();
-    layer.offset = offset;
-    layer.path = this.clipper;
-    return layer;
   }
 
   protected override performPaint(

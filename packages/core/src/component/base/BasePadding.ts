@@ -1,5 +1,5 @@
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
-import { Constraints, Size, Offset, EdgeInsets } from "../../type";
+import { Size, Offset, EdgeInsets } from "../../type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 import type Flexible from "./BaseFlexible";
@@ -49,14 +49,11 @@ class RenderPadding extends SingleChildRenderObject {
   }
 
   protected preformLayout(): void {
-    if (this.child == null) {
-      this.size = this.constraints.constrain(Size.zero);
-      return;
-    }
+    if (this.child == null) return;
     const { top, left, right, bottom } = this.padding;
     const childConstraints = this.constraints.deflate(this.padding);
 
-    this.child.layout(childConstraints, { parentUsesSize: true });
+    this.child.layout(childConstraints);
     const { size: childSize } = this.child;
 
     this.size = this.constraints.constrain(
@@ -69,25 +66,11 @@ class RenderPadding extends SingleChildRenderObject {
     this.child.offset = new Offset({ x: left, y: top });
   }
 
-  protected override computeIntrinsicWidth(height: number): number {
+  getIntrinsicWidth(height: number): number {
     return super.getIntrinsicWidth(height) + this.padding.horizontal;
   }
 
-  protected override computeIntrinsicHeight(width: number): number {
+  getIntrinsicHeight(width: number): number {
     return super.getIntrinsicHeight(width) + this.padding.vertical;
-  }
-
-  protected override computeDryLayout(constraints: Constraints): Size {
-    if (this.child == null) {
-      return constraints.constrain(Size.zero);
-    }
-
-    const childSize = this.child.getDryLayout(constraints.deflate(this.padding));
-    return constraints.constrain(
-      new Size({
-        width: childSize.width + this.padding.horizontal,
-        height: childSize.height + this.padding.vertical,
-      }),
-    );
   }
 }

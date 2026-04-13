@@ -9,7 +9,7 @@
 	export let subscribe: Subscribe = () => () => {};
 </script>
 
-<Widget widget={Diagram({ project, subscribe })} width="100%" height="100%" perf={true} />
+<Widget widget={Diagram({ project, subscribe })} width="100%" height="100%" />
 
 <style>
 	:global(svg text) {
