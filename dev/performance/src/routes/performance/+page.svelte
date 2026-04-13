@@ -1,31 +1,25 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { ToastStackedBarChart, ToastLineChart } from 'shared/chart';
+	import { StackedBarChart, LineChart } from 'flitter-chart';
 	import SvelteWidget from '@flitterjs/svelte';
+	import { formatDate } from '$lib/formatDate';
 
 	export let data: PageData;
 
-	const chartHistories = data.histories
+	const histories = data.histories
 		.slice(data.histories.length - 6, data.histories.length)
 		.sort((a, b) => a.timestamp - b.timestamp);
-	const recentHistories = [...chartHistories].sort((a, b) => b.timestamp - a.timestamp);
 
-	const lineChartData = convertChartData(chartHistories);
-	const stackedChart = convertChartData(chartHistories, ['paint', 'layout', 'mount']);
-
-	function formatDayLabel(date: Date) {
-		const month = String(date.getMonth() + 1).padStart(2, '0');
-		const day = String(date.getDate()).padStart(2, '0');
-		return `${date.getFullYear()}-${month}-${day}`;
-	}
+	const lineChartData = convertChartData(histories);
+	const stackedChart = convertChartData(histories, ['paint', 'layout', 'mount']);
 
 	function convertChartData(
 		histories: PageData['histories'],
 		keys: (keyof PageData['histories'][number])[] = ['runApp', 'mount', 'draw', 'layout', 'paint']
 	) {
-		const labels = histories.map((d) => formatDayLabel(new Date(d.timestamp)));
-		const datasets: { values: number[]; legend: string }[] = keys.map((legend) => ({
-			values: histories.map((d) => Math.floor(d[legend] as number)),
+		const labels = histories.map((d) => formatDate(new Date(d.timestamp)));
+		const datasets: { data: number[]; legend: string }[] = keys.map((legend) => ({
+			data: histories.map((d) => Math.floor(d[legend] as number)),
 			legend
 		}));
 
@@ -41,57 +35,46 @@
 		width="800px"
 		height="600px"
 		renderer="canvas"
-		widget={ToastLineChart({
-			data: lineChartData,
-			config: {
-				colors: ['#785fff', '#00bd9f', '#ffb840', '#ff6b6b', '#4c6ef5']
-			}
+		widget={LineChart({
+			data: lineChartData
 		})}
 	/>
 	<SvelteWidget
 		width="700px"
 		height="600px"
-		widget={ToastStackedBarChart({
+		widget={StackedBarChart({
 			data: {
 				...stackedChart
 			},
-			config: {
-				colors: ['#785fff', '#00bd9f', '#ffb840']
+			theme: {
+				series: {
+					colors: ['#785fff', '#00bd9f', '#ffb840']
+				}
+			},
+
+			custom: {
+				series: {
+					type: 'config'
+				},
+				dataLabel: {
+					type: 'config',
+					visible: true,
+					font: {
+						fontSize: 14
+					}
+				},
+				bar: {
+					type: 'config',
+					thickness: 60
+				}
 			}
 		})}
 	/>
-</div>
-
-<div class="history-list">
-	{#each recentHistories as history}
-		<div class="history-item">
-			<strong>{formatDayLabel(new Date(history.timestamp))}</strong>
-			<p>{history.note?.trim() || 'No label'}</p>
-		</div>
-	{/each}
 </div>
 
 <style>
 	.chart-wrapper {
 		display: flex;
 		gap: 1rem;
-	}
-
-	.history-list {
-		margin-top: 1.5rem;
-		display: grid;
-		gap: 0.75rem;
-	}
-
-	.history-item {
-		padding: 0.75rem 1rem;
-		border: 1px solid #d8dde6;
-		border-radius: 0.75rem;
-		background: #f8fafc;
-	}
-
-	.history-item p {
-		margin: 0.25rem 0 0;
-		color: #4b5563;
 	}
 </style>

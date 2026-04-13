@@ -82,23 +82,18 @@ class RichText extends RenderObjectWidget {
   updateRenderObject(renderObject: RenderParagraph): void {
     if (this.softWrap != null) renderObject.softWrap = this.softWrap;
     if (this.overflow != null) renderObject.overflow = this.overflow;
-    if (this.textScaleFactor != null)
-      renderObject.textScaleFactor = this.textScaleFactor;
+    if (this.textScaleFactor != null) renderObject.textScaleFactor = this.textScaleFactor;
     if (this.maxLines != null) renderObject.maxLines = this.maxLines;
-    if (this.textWidthBasis != null)
-      renderObject.textWidthBasis = this.textWidthBasis;
+    if (this.textWidthBasis != null) renderObject.textWidthBasis = this.textWidthBasis;
     if (this.text != null) renderObject.text = this.text;
     if (this.textAlign != null) renderObject.textAlign = this.textAlign;
-    if (this.textDirection != null)
-      renderObject.textDirection = this.textDirection;
+    if (this.textDirection != null) renderObject.textDirection = this.textDirection;
     if (this.textPainter != null) renderObject.textPainter = this.textPainter;
   }
 }
 
 export class RenderParagraph extends RenderObject {
   #softWrap: boolean;
-  #intrinsicHeightCache?: number;
-  #intrinsicWidthCache?: number;
   #overflow: TextOverflow;
   get softWrap(): boolean {
     return this.#softWrap;
@@ -239,12 +234,6 @@ export class RenderParagraph extends RenderObject {
     );
   }
 
-  protected override markNeedsLayout() {
-    this.#intrinsicHeightCache = undefined;
-    this.#intrinsicWidthCache = undefined;
-    super.markNeedsLayout();
-  }
-
   previousWidth!: number;
   previousHeight!: number;
   changedLayout!: boolean;
@@ -273,23 +262,13 @@ export class RenderParagraph extends RenderObject {
   }
 
   override getIntrinsicHeight(): number {
-    if (this.#intrinsicHeightCache != null) {
-      return this.#intrinsicHeightCache;
-    }
-
     this.textPainter.layout();
-    this.#intrinsicHeightCache = this.textPainter.height;
-    return this.#intrinsicHeightCache;
+    return this.textPainter.height;
   }
 
   override getIntrinsicWidth(): number {
-    if (this.#intrinsicWidthCache != null) {
-      return this.#intrinsicWidthCache;
-    }
-
     this.textPainter.layout();
-    this.#intrinsicWidthCache = this.textPainter.width;
-    return this.#intrinsicWidthCache;
+    return this.textPainter.width;
   }
 
   protected override createSvgPainter(): SvgPainter {

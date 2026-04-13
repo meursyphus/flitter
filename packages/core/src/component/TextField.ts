@@ -100,12 +100,21 @@ class TextField extends StatefulWidget {
   }
 }
 
+interface LineInfo {
+  y: number;
+  height: number;
+  accumulatedChars: number;
+  lineLength: number;
+}
+
 interface SelectionSegment {
   y: number;
   start: number;
   end: number;
   height: number;
 }
+
+const ZERO_WIDTH_SPACE = "\u200B";
 
 type CurrentCharUI = {
   rect: Rect;
@@ -123,8 +132,9 @@ class TextFieldState extends State<TextField> {
   #textFieldPosition: { x: number; y: number } | null = null;
   #focused = false;
   #isTyping = false;
-  #typingTimer?: ReturnType<typeof setTimeout>;
+	  #typingTimer?: ReturnType<typeof setTimeout>;
   #isComposing = false;
+  #lineInfo: LineInfo[] = [];
   #currentCharUI?: CurrentCharUI;
 
   constructor() {
@@ -140,6 +150,10 @@ class TextFieldState extends State<TextField> {
 
       return;
     }
+  }
+
+  get paragraphLines() {
+    return this.#textPainter.paragraph?.lines;
   }
 
   get #hasSelection() {
@@ -164,7 +178,7 @@ class TextFieldState extends State<TextField> {
       this.widget.onChanged?.(this.#nativeInput.value);
     });
 
-    this.#nativeInput.addEventListener("keydown", e => {
+    this.#nativeInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
         this.widget.onSubmitted?.(this.#nativeInput.value);
         return;
@@ -211,11 +225,25 @@ class TextFieldState extends State<TextField> {
       ellipsis: undefined,
     });
     this.#render();
+    this.element.scheduler.addPostFrameCallbacks(() => {
+      this.#lineInfo = this.#calculateLineInfo();
+    });
   }
   #toTextSpan() {
     return new TextSpan({
-      text: this.value,
+      /**
+       * Please insert an empty string.
+       * Otherwise, the caret position cannot be calculated when there are no lines and nothing is present.
+       */
+      text: this.value ? "" : ZERO_WIDTH_SPACE,
       style: this.widget.style,
+      children: this.value.split("").map(
+        text =>
+          new TextSpan({
+            text,
+            style: this.widget.style,
+          }),
+      ),
     });
   }
 
@@ -253,40 +281,127 @@ class TextFieldState extends State<TextField> {
     this.setState();
   }
 
+  #calculateLineInfo(): LineInfo[] {
+    const lines = this.#textPainter.paragraph!.lines;
+    let accumulatedChars = 0;
+    let accumulatedHeight = 0;
+
+    return lines.map(line => {
+      const lineInfo: LineInfo = {
+        y: accumulatedHeight,
+        height: line.height,
+        accumulatedChars: accumulatedChars,
+        lineLength: line.spanBoxes.length,
+      };
+      accumulatedChars += line.spanBoxes.length;
+      accumulatedHeight += line.height;
+      return lineInfo;
+    });
+  }
+
+  #findLineIndexForPosition(position: number): number {
+    let low = 0;
+    let high = this.#lineInfo.length - 1;
+
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      const lineStart = this.#lineInfo[mid].accumulatedChars;
+      const lineEnd = lineStart + this.#lineInfo[mid].lineLength;
+
+      if (position >= lineStart && position < lineEnd) {
+        return mid;
+      } else if (position < lineStart) {
+        high = mid - 1;
+      } else {
+        low = mid + 1;
+      }
+    }
+
+    return this.#lineInfo.length - 1; // handle the last line
+  }
+
   #calculateCurrentCharRect(caretLocation: number): CurrentCharUI {
-    const caretInfo = this.#textPainter.paragraph?.getCaretInfo(
-      Math.min(caretLocation, this.value.length),
-    );
-    if (caretInfo == null) {
-      return {
+    const lineIndex = this.#findLineIndexForPosition(caretLocation);
+    const line = this.#lineInfo[lineIndex];
+    const localCaretPosition = caretLocation - line.accumulatedChars;
+
+    const lines = this.#textPainter?.paragraph?.lines ?? [];
+    const spanBoxes = lines[lineIndex]?.spanBoxes ?? [];
+
+    let charUI: CurrentCharUI = {
+      rect: Rect.fromLTWH({
+        left: 0,
+        top: line.y,
+        width: 0,
+        height: line.height,
+      }),
+      color: "black",
+    };
+
+    if (localCaretPosition > 0 && localCaretPosition <= spanBoxes.length) {
+      const prevChar = spanBoxes[localCaretPosition - 1];
+      charUI = {
         rect: Rect.fromLTWH({
-          left: 0,
-          top: 0,
-          width: 0,
-          height: 0,
+          left: prevChar.offset.x,
+          top: line.y,
+          width: prevChar.size.width,
+          height: line.height,
         }),
-        color: "black",
+        color: prevChar.color,
+      };
+    } else if (spanBoxes.length > 0) {
+      charUI = {
+        rect: Rect.fromLTWH({
+          left: spanBoxes[0].offset.x,
+          top: line.y,
+          width: 0,
+          height: line.height,
+        }),
+        color: spanBoxes[0].color,
       };
     }
 
-    return {
-      rect: Rect.fromLTWH({
-        left: caretInfo.left,
-        top: caretInfo.top,
-        width: caretInfo.width,
-        height: caretInfo.height,
-      }),
-      color: caretInfo.color,
-    };
+    return charUI;
   }
 
   #calculateSelectionUI(start: number, end: number): SelectionSegment[] {
-    return (
-      this.#textPainter.paragraph?.getSelectionRects(
-        Math.min(start, this.value.length),
-        Math.min(end, this.value.length),
-      ) ?? []
-    );
+    const startLineIndex = this.#findLineIndexForPosition(start);
+    const endLineIndex = this.#findLineIndexForPosition(end);
+
+    const segments: SelectionSegment[] = [];
+    const lines = this.#textPainter?.paragraph?.lines ?? [];
+
+    for (let i = startLineIndex; i <= endLineIndex; i++) {
+      const line = this.#lineInfo[i];
+      const spanBoxes = lines[i]?.spanBoxes ?? [];
+
+      const segmentStart =
+        i === startLineIndex ? start - line.accumulatedChars : 0;
+      const segmentEnd =
+        i === endLineIndex ? end - line.accumulatedChars : line.lineLength;
+
+      const startX =
+        segmentStart > 0 && segmentStart <= spanBoxes.length
+          ? spanBoxes[segmentStart - 1].offset.x +
+            spanBoxes[segmentStart - 1].size.width
+          : spanBoxes[0]?.offset.x || 0;
+
+      const endX =
+        segmentEnd > 0 && segmentEnd <= spanBoxes.length
+          ? spanBoxes[segmentEnd - 1].offset.x +
+            spanBoxes[segmentEnd - 1].size.width
+          : spanBoxes[spanBoxes.length - 1]?.offset.x +
+              spanBoxes[spanBoxes.length - 1]?.size.width || 0;
+
+      segments.push({
+        y: line.y,
+        start: startX,
+        end: endX,
+        height: line.height,
+      });
+    }
+
+    return segments;
   }
 
   #setSelection(start: number, end: number = start) {
@@ -318,10 +433,84 @@ class TextFieldState extends State<TextField> {
       e.clientY - this.#textFieldPosition.y,
     ];
 
-    return Math.min(
-      this.value.length,
-      this.#textPainter.paragraph?.getPositionForOffset(x, y) ?? 0,
-    );
+    const lines = this.#textPainter?.paragraph?.lines ?? [];
+    if (lines.length === 0) {
+      return 0;
+    }
+
+    const accumulatedHeights = lines.reduce((acc, line, index) => {
+      acc.push((acc[index - 1] || 0) + line.height);
+      return acc;
+    }, [] as number[]);
+
+    // Binary search to find the correct line
+    let low = 0;
+    let high = lines.length - 1;
+    let lineIndex = -1;
+
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      const lineTop = mid > 0 ? accumulatedHeights[mid - 1] : 0;
+      const lineBottom = accumulatedHeights[mid];
+
+      if (y >= lineTop && y < lineBottom) {
+        lineIndex = mid;
+        break;
+      } else if (y < lineTop) {
+        high = mid - 1;
+      } else {
+        low = mid + 1;
+      }
+    }
+
+    // If the click is below the last line, handle it as the last line
+    if (lineIndex === -1) {
+      lineIndex = lines.length - 1;
+    }
+
+    let globalCharIndex = 0;
+
+    // Calculate the number of characters in previous lines
+    for (let i = 0; i < lineIndex; i++) {
+      globalCharIndex += lines[i].spanBoxes.length;
+    }
+
+    const line = lines[lineIndex];
+
+    // Binary search to find the correct spanBox in the line
+    low = 0;
+    high = line.spanBoxes.length - 1;
+    let spanBoxIndex = -1;
+
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      const box = line.spanBoxes[mid];
+      const boxStart = box.offset.x;
+      const boxEnd = boxStart + box.size.width;
+
+      if (x >= boxStart && x < boxEnd) {
+        spanBoxIndex = mid;
+        break;
+      } else if (x < boxStart) {
+        high = mid - 1;
+      } else {
+        low = mid + 1;
+      }
+    }
+
+    // If the click is after the last character, handle it as the next character
+    if (spanBoxIndex === -1) {
+      globalCharIndex += line.spanBoxes.length;
+    } else {
+      globalCharIndex += spanBoxIndex;
+      const box = line.spanBoxes[spanBoxIndex];
+      // Move to the next character if the click is on the right half of the character
+      if (x > box.offset.x + box.size.width / 2) {
+        globalCharIndex++;
+      }
+    }
+
+    return globalCharIndex;
   };
 
   handleMouseDown = (e: MouseEvent) => {
@@ -475,7 +664,7 @@ class Caret extends StatefulWidget {
 
 class CaretState extends State<Caret> {
   visible = true;
-  interval?: ReturnType<typeof setInterval>;
+	  interval?: ReturnType<typeof setInterval>;
 
   initState(): void {
     this.startBlinking();
