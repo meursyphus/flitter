@@ -5,7 +5,7 @@ import {
   CustomPaint,
   EdgeInsets,
   FractionalTranslation,
-  LayoutBuilder,
+  GlobalKey,
   Offset,
   Positioned,
   Radius,
@@ -13,6 +13,8 @@ import {
   SizedBox,
   Stack,
   StackFit,
+  StatefulWidget,
+  State,
   Text,
   TextStyle,
   type Widget,
@@ -204,38 +206,95 @@ function buildOverlay({
   });
 }
 
+class _AgTooltipArea extends StatefulWidget {
+  ctx: CandlestickChartContext<CandlestickChartConfig>;
+  hoveredCandlestick: HoveredCandlestick | null;
+  tooltip: Widget | null;
+
+  constructor({
+    ctx,
+    hoveredCandlestick,
+    tooltip,
+  }: {
+    ctx: CandlestickChartContext<CandlestickChartConfig>;
+    hoveredCandlestick: HoveredCandlestick | null;
+    tooltip: Widget | null;
+  }) {
+    super();
+    this.ctx = ctx;
+    this.hoveredCandlestick = hoveredCandlestick;
+    this.tooltip = tooltip;
+  }
+
+  createState() {
+    return new _AgTooltipAreaState();
+  }
+}
+
+class _AgTooltipAreaState extends State<_AgTooltipArea> {
+  areaKey = new GlobalKey();
+  measuredPlotSize: { width: number; height: number } | null = null;
+  scheduledMeasurement = false;
+
+  private schedulePlotMeasurement(): void {
+    if (this.scheduledMeasurement) return;
+    this.scheduledMeasurement = true;
+    this.element.scheduler.addPostFrameCallbacks(() => {
+      this.scheduledMeasurement = false;
+      if (this.areaKey.buildOwner == null) return;
+
+      const areaRenderObject = this.areaKey.currentContext?.renderObject;
+      if (areaRenderObject == null) return;
+
+      const nextSize = {
+        width: areaRenderObject.size.width,
+        height: areaRenderObject.size.height,
+      };
+
+      if (
+        this.measuredPlotSize?.width === nextSize.width &&
+        this.measuredPlotSize?.height === nextSize.height
+      ) {
+        return;
+      }
+
+      this.setState(() => {
+        this.measuredPlotSize = nextSize;
+      });
+    });
+  }
+
+  override build(): Widget {
+    const { ctx, hoveredCandlestick, tooltip } = this.widget;
+    this.schedulePlotMeasurement();
+
+    return Stack({
+      key: this.areaKey,
+      fit: StackFit.passthrough,
+      clipped: false,
+      children: [
+        cartesian.agMouseTooltipArea({
+          tooltip,
+          enabled: ctx.config.tooltip.enabled,
+          overlay: ({ hasMousePosition, mouseY }) =>
+            buildOverlay({
+              ctx,
+              hoveredCandlestick,
+              plotSize: this.measuredPlotSize,
+              mouseY,
+              hasMousePosition,
+            }),
+        }),
+      ],
+    });
+  }
+}
+
 export function agTooltipArea(
   ...[{ tooltip, hoveredCandlestick }, ctx]: Parameters<
     CandlestickChartCustom<CandlestickChartConfig>["tooltipArea"]
   >
 ): Widget {
   if (!ctx.config.tooltip.enabled) return SizedBox.shrink();
-
-  return LayoutBuilder({
-    builder: (_context, constraints) => {
-      const plotSize = {
-        width: constraints.maxWidth,
-        height: constraints.maxHeight,
-      };
-
-      return Stack({
-        fit: StackFit.passthrough,
-        clipped: false,
-        children: [
-          cartesian.agMouseTooltipArea({
-            tooltip,
-            enabled: ctx.config.tooltip.enabled,
-            overlay: ({ hasMousePosition, mouseY }) =>
-              buildOverlay({
-                ctx,
-                hoveredCandlestick,
-                plotSize,
-                mouseY,
-                hasMousePosition,
-              }),
-          }),
-        ],
-      });
-    },
-  });
+  return new _AgTooltipArea({ ctx, hoveredCandlestick, tooltip });
 }

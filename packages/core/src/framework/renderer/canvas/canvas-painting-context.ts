@@ -3,34 +3,19 @@ import type { RenderObject } from "../../../renderobject";
 import { Offset, type Rect } from "../../../type";
 import {
   type ContainerLayer,
-  type Layer,
-  OffsetLayer,
   PictureLayer,
   PictureRecorder,
+  type Layer,
 } from "./layer";
+import { NotImplementedError } from "../../../exception";
 
-type AncestorNode = {
-  node: RenderObject;
+type AncestorNode = { node: RenderObject; offset: Offset };
+
+type CollectedPainter = {
+  renderObject: RenderObject;
   offset: Offset;
-  handlesOffset: boolean;
+  ancestors: AncestorNode[];
 };
-
-type CollectedPainter = (
-  | {
-      kind: "painter";
-      renderObject: RenderObject;
-      offset: Offset;
-      ancestors: AncestorNode[];
-      zOrder: number;
-    }
-  | {
-      kind: "boundary";
-      renderObject: RenderObject;
-      offset: Offset;
-      ancestors: AncestorNode[];
-      zOrder: number;
-    }
-);
 
 type CanvasProxy = CanvasRenderingContext2D & {
   __enterSuppress: () => void;
@@ -59,7 +44,7 @@ function createCanvasProxy(ctx: CanvasRenderingContext2D): CanvasProxy {
   let suppressing = false;
 
   const proxy = new Proxy(ctx, {
-    get(target, prop, _receiver) {
+    get(target, prop, receiver) {
       if (prop === "__enterSuppress")
         return () => {
           suppressing = true;
@@ -123,7 +108,6 @@ export class CanvasPaintingContext {
       node.canvasPainter.isRepaintBoundary,
       "isRepaintBoundary must be true on repaintCompositedChild",
     );
-    node.needsPaint = false;
     let childLayer = node.canvasPainter.layer;
     if (childLayer == null) {
       childLayer = node.canvasPainter.updateCompositedLayer(null);
@@ -137,22 +121,15 @@ export class CanvasPaintingContext {
       );
       updatedChildLayer.removeAllChildren();
     }
-    node.needsCompositedLayerUpdate = false;
-
-    const paintBounds = node.canvasPainter.paintBounds;
-    if (paintBounds.width <= 0 || paintBounds.height <= 0) {
-      return;
-    }
 
     const childContext = new CanvasPaintingContext(
       childLayer,
-      paintBounds,
+      node.canvasPainter.paintBounds,
     );
 
     // Phase 1: Collect all painter render objects with ancestor node chains
     const painters: CollectedPainter[] = [];
     CanvasPaintingContext.#collectPainters(
-      node,
       node,
       Offset.Constants.zero,
       [],
@@ -160,36 +137,26 @@ export class CanvasPaintingContext {
     );
 
     // Phase 2: Sort by z-order (calculated by ZOrderCalculatorVisitor)
-    painters.sort((a, b) => a.zOrder - b.zOrder);
+    painters.sort((a, b) => a.renderObject.zOrder - b.renderObject.zOrder);
 
     // Phase 3: Paint each painter in z-order with ancestor ctx state replayed
+    const proxyCanvas = childContext.canvas as unknown as CanvasProxy;
     childContext.#skipChildPainting = true;
-    let proxyCanvas: CanvasProxy | null = null;
-    for (const entry of painters) {
-      if (entry.kind === "boundary") {
-        childContext.compositeChild(
-          entry.renderObject,
-          entry.ancestors,
-          entry.offset,
-        );
-        continue;
-      }
-
-      proxyCanvas ??= childContext.canvas as unknown as CanvasProxy;
+    for (const { renderObject, offset, ancestors } of painters) {
       proxyCanvas.__raw.save();
       // Replay ancestors with suppressed save/restore
-      for (const { node: ancestorNode, offset: ancOffset } of entry.ancestors) {
+      for (const { node: ancestorNode, offset: ancOffset } of ancestors) {
         proxyCanvas.__enterSuppress();
         ancestorNode.canvasPainter.paint(childContext, ancOffset);
         proxyCanvas.__exitSuppress();
       }
       // Paint the actual painter
-      entry.renderObject.canvasPainter.paint(childContext, entry.offset);
+      renderObject.canvasPainter.paint(childContext, offset);
       proxyCanvas.__raw.restore();
     }
     childContext.#skipChildPainting = false;
 
-    childContext.stopRecordingIfNeeded();
+    childContext.stopRecording();
   }
 
   /**
@@ -197,44 +164,29 @@ export class CanvasPaintingContext {
    * with their accumulated offsets and ancestor node chains.
    */
   static #collectPainters(
-    root: RenderObject,
     node: RenderObject,
     offset: Offset,
     ancestorChain: AncestorNode[],
     result: CollectedPainter[],
   ) {
-    if (node !== root && node.canvasPainter.isRepaintBoundary) {
-      result.push({
-        kind: "boundary",
-        renderObject: node,
-        offset,
-        ancestors: [...ancestorChain],
-        zOrder: node.minDescendantZOrder,
-      });
-      return;
-    }
-
     if (node.isPainter) {
       result.push({
-        kind: "painter",
         renderObject: node,
         offset,
         ancestors: [...ancestorChain],
-        zOrder: node.zOrder,
       });
     }
 
-    // Only replay ancestors that intentionally affect descendant painting.
-    // Replaying arbitrary painter ancestors leaks local canvas state
-    // (fillStyle, shadow, path state, etc.) into descendants.
-    const ancestorNode = CanvasPaintingContext.#createAncestorNode(node, offset);
-    const childAncestorChain = ancestorNode == null
-      ? ancestorChain
-      : [...ancestorChain, ancestorNode];
+    // All nodes go into the ancestor chain. During ancestor replay,
+    // the proxy suppresses pixel-drawing operations (fillRect, fill,
+    // stroke, etc.) so only canvas state changes (transforms, clips,
+    // opacity) persist. This means any node type — whether it draws
+    // pixels (Container) or only modifies state (Transform, ClipPath)
+    // — can safely be replayed as an ancestor.
+    const childAncestorChain = [...ancestorChain, { node, offset }];
 
     node.visitChildren(child => {
       CanvasPaintingContext.#collectPainters(
-        root,
         child,
         offset.plus(child.offset),
         childAncestorChain,
@@ -243,34 +195,8 @@ export class CanvasPaintingContext {
     });
   }
 
-  static #createAncestorNode(
-    node: RenderObject,
-    offset: Offset,
-  ): AncestorNode | null {
-    const layer = node.canvasPainter.createAncestorLayer(offset);
-    if (layer == null) return null;
-    return {
-      node,
-      offset,
-      handlesOffset: "offset" in layer,
-    };
-  }
-
-  static updateLayerProperties(node: RenderObject): void {
-    assert(
-      node.canvasPainter.isRepaintBoundary,
-      "isRepaintBoundary must be true on updateLayerProperties",
-    );
-    assert(node.canvasPainter.layer != null, "layer must exist on updateLayerProperties");
-    assert(!node.needsPaint, "updateLayerProperties requires a clean paint state");
-
-    const childLayer = node.canvasPainter.layer;
-    const updatedChildLayer = node.canvasPainter.updateCompositedLayer(childLayer);
-    assert(
-      childLayer === updatedChildLayer,
-      "updateCompositedLayer must return the same layer",
-    );
-    node.needsCompositedLayerUpdate = false;
+  static updateLayerProperties(_: RenderObject): void {
+    throw new NotImplementedError("updateLayerProperties is not implemented");
   }
 
   #recorder!: PictureRecorder;
@@ -296,13 +222,8 @@ export class CanvasPaintingContext {
     this.#currentLayer = null;
   }
 
-  stopRecordingIfNeeded() {
-    if (this.#currentLayer == null) return;
-    this.stopRecording();
-  }
-
   addLayer(layer: Layer) {
-    this.stopRecordingIfNeeded();
+    this.stopRecording();
     this.#appendLayer(layer);
   }
 
@@ -320,61 +241,5 @@ export class CanvasPaintingContext {
   paintChild(child: RenderObject, offset: Offset) {
     if (this.#skipChildPainting) return;
     child.canvasPainter.paint(this, offset);
-  }
-
-  compositeChild(
-    child: RenderObject,
-    ancestors: AncestorNode[],
-    accumulatedOffset?: Offset,
-  ) {
-    assert(
-      child.canvasPainter.isRepaintBoundary,
-      "compositeChild must be called on a repaint boundary",
-    );
-
-    if (child.needsPaint || child.canvasPainter.layer == null) {
-      CanvasPaintingContext.repaintCompositedChild(child);
-    } else if (child.needsCompositedLayerUpdate) {
-      CanvasPaintingContext.updateLayerProperties(child);
-    }
-
-    let layer: Layer = child.canvasPainter.layer;
-    let nearestPositionedAncestorOffset = Offset.Constants.zero;
-    for (let i = ancestors.length - 1; i >= 0; i--) {
-      if (!ancestors[i].handlesOffset) continue;
-      nearestPositionedAncestorOffset = ancestors[i].offset;
-      break;
-    }
-    // child.layer already carries child.offset. Positional ancestor layers
-    // such as TransformLayer / ClipPathLayer are expressed in the parent
-    // boundary's coordinate space, so only the remaining layout translation
-    // needs to be wrapped here.
-    const ancestorOffset = accumulatedOffset == null
-      ? null
-      : accumulatedOffset
-          .minus(child.offset)
-          .minus(nearestPositionedAncestorOffset);
-
-    if (
-      ancestorOffset != null &&
-      (ancestorOffset.x !== 0 || ancestorOffset.y !== 0)
-    ) {
-      const wrapper = new OffsetLayer();
-      wrapper.offset = ancestorOffset;
-      wrapper.append(layer);
-      layer = wrapper;
-    }
-
-    for (let i = ancestors.length - 1; i >= 0; i--) {
-      const ancestor = ancestors[i];
-      const ancestorLayer = ancestor.node.canvasPainter.createAncestorLayer(
-        ancestor.offset,
-      );
-      if (ancestorLayer == null) continue;
-      ancestorLayer.append(layer);
-      layer = ancestorLayer;
-    }
-
-    this.addLayer(layer);
   }
 }

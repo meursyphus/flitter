@@ -87,8 +87,8 @@ export class RenderCustomPaint<
     return this._preferredSize;
   }
   set preferredSize(value) {
-    if (value.equal(this._preferredSize)) return;
-    this._preferredSize = value;
+    if (value.equal(this.preferredSize)) return;
+    this.preferredSize = value;
     this.markNeedsLayout();
   }
 

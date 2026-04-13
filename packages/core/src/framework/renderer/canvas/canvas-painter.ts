@@ -1,4 +1,5 @@
 import { Rect, type Offset } from "../../../type";
+import { NotImplementedError } from "../../../exception";
 import { Painter } from "../renderer";
 import type { CanvasRenderPipeline } from "./canvas-renderer";
 import type { CanvasPaintingContext } from "./canvas-painting-context";
@@ -31,8 +32,8 @@ export class CanvasPainter extends Painter {
 
   get paintBounds(): Rect {
     return Rect.fromLTWH({
-      left: 0,
-      top: 0,
+      left: this.offset.x,
+      top: this.offset.y,
       width: this.size.width,
       height: this.size.height,
     });
@@ -54,32 +55,7 @@ export class CanvasPainter extends Painter {
     return oldLayer ?? new OffsetLayer();
   }
 
-  createAncestorLayer(_offset: Offset): ContainerLayer | null {
-    return null;
-  }
-
   skippedPaintingOnLayer() {
-    assert(
-      this.isRepaintBoundary,
-      "skippedPaintingOnLayer must be called on a repaint boundary",
-    );
-    assert(this.layer != null, "layer must exist on skippedPaintingOnLayer");
-    assert(!this.layer.attached, "layer must be detached on skippedPaintingOnLayer");
-
-    let node = this.renderObject.parent;
-    while (node != null) {
-      if (node.canvasPainter.isRepaintBoundary) {
-        const layer = node.canvasPainter.layer;
-        if (layer == null) {
-          break;
-        }
-        if (layer.attached) {
-          this.renderOwner.scheduleRepaintBoundary(node, { needsPaint: true });
-          break;
-        }
-        node.needsPaint = true;
-      }
-      node = node.parent;
-    }
+    throw new NotImplementedError("skippedPaintingOnLayer on CanvasPainter");
   }
 }
