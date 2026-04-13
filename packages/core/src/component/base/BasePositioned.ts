@@ -161,11 +161,11 @@ export class RenderPositioned extends SingleChildRenderObject {
     );
   }
 
-  protected override computeIntrinsicWidth(height: number): number {
+  override getIntrinsicWidth(height: number): number {
     return this.child?.getIntrinsicWidth(height) || 0;
   }
 
-  protected override computeIntrinsicHeight(width: number): number {
+  override getIntrinsicHeight(width: number): number {
     return this.child?.getIntrinsicHeight(width) || 0;
   }
 }

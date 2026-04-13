@@ -157,12 +157,12 @@ class RenderImage extends SingleChildRenderObject {
     }
   }
 
-  protected override computeIntrinsicWidth(): number {
+  override getIntrinsicWidth(): number {
     if (this.width != null) return this.width;
     return 0;
   }
 
-  protected override computeIntrinsicHeight(): number {
+  override getIntrinsicHeight(): number {
     if (this.height != null) return this.height;
     return 0;
   }

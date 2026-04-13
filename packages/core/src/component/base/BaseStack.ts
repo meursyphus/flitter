@@ -123,7 +123,7 @@ export class RenderStack extends MultiChildRenderObject {
       )
         return;
       hasNonPositionedChildren = true;
-      child.layout(nonPositionedConstraints, { parentUsesSize: true });
+      child.layout(nonPositionedConstraints);
 
       width = Math.max(width, child.size.width);
       height = Math.max(height, child.size.height);
@@ -179,7 +179,7 @@ export class RenderStack extends MultiChildRenderObject {
       });
     }
 
-    child.layout(childConstraints, { parentUsesSize: true });
+    child.layout(childConstraints);
 
     let x: number;
 
@@ -228,13 +228,13 @@ export class RenderStack extends MultiChildRenderObject {
     });
   }
 
-  protected override computeIntrinsicWidth(height: number): number {
+  getIntrinsicWidth(height: number): number {
     return this.children
       .map(child => child.getIntrinsicWidth(height))
       .reduce(Utils.maxReducer, 0);
   }
 
-  protected override computeIntrinsicHeight(width: number): number {
+  getIntrinsicHeight(width: number): number {
     return this.children
       .map(child => child.getIntrinsicHeight(width))
       .reduce(Utils.maxReducer, 0);

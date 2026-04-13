@@ -77,9 +77,7 @@ class RenderLimitedBox extends SingleChildRenderObject {
       this.size = this.limitConstraints(this.constraints).constrain(Size.zero);
       return;
     }
-    this.child.layout(this.limitConstraints(this.constraints), {
-      parentUsesSize: true,
-    });
+    this.child.layout(this.limitConstraints(this.constraints));
     this.size = this.child.size;
   }
 
@@ -94,15 +92,6 @@ class RenderLimitedBox extends SingleChildRenderObject {
         ? constraints.maxHeight
         : constraints.constrainHeight(this.maxHeight),
     });
-  }
-
-  protected override computeDryLayout(constraints: Constraints): Size {
-    const limitedConstraints = this.limitConstraints(constraints);
-    if (this.child == null) {
-      return limitedConstraints.constrain(Size.zero);
-    }
-
-    return this.child.getDryLayout(limitedConstraints);
   }
 }
 

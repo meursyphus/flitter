@@ -11,12 +11,7 @@
 	const recentHistories = [...chartHistories].sort((a, b) => b.timestamp - a.timestamp);
 
 	const lineChartData = convertChartData(chartHistories);
-	const stackedChart = convertChartData(chartHistories, [
-		'paint',
-		'paintTransform',
-		'layout',
-		'mount'
-	]);
+	const stackedChart = convertChartData(chartHistories, ['paint', 'layout', 'mount']);
 
 	function formatDayLabel(date: Date) {
 		const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -26,18 +21,11 @@
 
 	function convertChartData(
 		histories: PageData['histories'],
-		keys: (keyof PageData['histories'][number])[] = [
-			'runApp',
-			'mount',
-			'draw',
-			'layout',
-			'paintTransform',
-			'paint'
-		]
+		keys: (keyof PageData['histories'][number])[] = ['runApp', 'mount', 'draw', 'layout', 'paint']
 	) {
 		const labels = histories.map((d) => formatDayLabel(new Date(d.timestamp)));
 		const datasets: { values: number[]; legend: string }[] = keys.map((legend) => ({
-			values: histories.map((d) => Math.floor(Number(d[legend] ?? 0))),
+			values: histories.map((d) => Math.floor(d[legend] as number)),
 			legend
 		}));
 
@@ -56,7 +44,7 @@
 		widget={ToastLineChart({
 			data: lineChartData,
 			config: {
-				colors: ['#785fff', '#00bd9f', '#ffb840', '#ff6b6b', '#4c6ef5', '#3bb7d6']
+				colors: ['#785fff', '#00bd9f', '#ffb840', '#ff6b6b', '#4c6ef5']
 			}
 		})}
 	/>
@@ -68,7 +56,7 @@
 				...stackedChart
 			},
 			config: {
-				colors: ['#785fff', '#3bb7d6', '#00bd9f', '#ffb840']
+				colors: ['#785fff', '#00bd9f', '#ffb840']
 			}
 		})}
 	/>

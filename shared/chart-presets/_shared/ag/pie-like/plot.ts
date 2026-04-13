@@ -125,19 +125,9 @@ class RenderPiePlotLayout extends MultiChildRenderObject {
 		this.markNeedsLayout();
 	}
 
-	override get sizedByParent(): boolean {
-		return true;
-	}
-
-	protected override performResize(): void {
-		this.size = this.constraints.constrain(Size.infinite);
-	}
-
-	protected override computeDryLayout(constraints: Constraints): Size {
-		return constraints.constrain(Size.infinite);
-	}
-
 	protected preformLayout(): void {
+		this.size = this.constraints.constrain(Size.infinite);
+
 		const width = Number.isFinite(this.size.width) ? this.size.width : 0;
 		const height = Number.isFinite(this.size.height) ? this.size.height : 0;
 		const plotSize = new Size({ width, height });
@@ -154,14 +144,14 @@ class RenderPiePlotLayout extends MultiChildRenderObject {
 		});
 
 		for (let index = 0; index < this.itemCount; index += 1) {
-			this.tickChild(index)?.layout(looseConstraints, { parentUsesSize: true });
-			this.labelChild(index)?.layout(looseConstraints, { parentUsesSize: true });
+			this.tickChild(index)?.layout(looseConstraints);
+			this.labelChild(index)?.layout(looseConstraints);
 		}
 
 		const radius = this.resolveRadius(plotSize);
 		const diameter = Math.max(0, radius * 2);
 		const contentSize = new Size({ width: diameter, height: diameter });
-		content.layout(Constraints.tight(contentSize), { parentUsesSize: false });
+		content.layout(Constraints.tight(contentSize));
 		content.offset = new Offset({
 			x: (width - diameter) / 2,
 			y: (height - diameter) / 2,
@@ -170,14 +160,14 @@ class RenderPiePlotLayout extends MultiChildRenderObject {
 		this.positionRadialChildren(plotSize, radius);
 	}
 
-	protected override computeIntrinsicWidth(height: number): number {
+	override getIntrinsicWidth(height: number): number {
 		return this.children.reduce(
 			(maxWidth, child) => Math.max(maxWidth, child.getIntrinsicWidth(height)),
 			0,
 		);
 	}
 
-	protected override computeIntrinsicHeight(width: number): number {
+	override getIntrinsicHeight(width: number): number {
 		return this.children.reduce(
 			(maxHeight, child) => Math.max(maxHeight, child.getIntrinsicHeight(width)),
 			0,
