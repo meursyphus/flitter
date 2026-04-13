@@ -50,9 +50,7 @@ let sharedGraphemeSegmenter: Intl.Segmenter | null = null;
 
 function getSharedGraphemeSegmenter(): Intl.Segmenter {
   if (sharedGraphemeSegmenter === null) {
-    sharedGraphemeSegmenter = new Intl.Segmenter(undefined, {
-      granularity: "grapheme",
-    });
+    sharedGraphemeSegmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
   }
   return sharedGraphemeSegmenter;
 }
@@ -85,11 +83,7 @@ function buildBaseCjkUnits(
     unitIsSingleKinsokuEnd = false;
   }
 
-  function startUnit(
-    grapheme: string,
-    start: number,
-    graphemeContainsCJK: boolean,
-  ): void {
+  function startUnit(grapheme: string, start: number, graphemeContainsCJK: boolean): void {
     unitParts = [grapheme];
     unitStart = start;
     unitContainsCJK = graphemeContainsCJK;
@@ -102,8 +96,7 @@ function buildBaseCjkUnits(
     unitContainsCJK = unitContainsCJK || graphemeContainsCJK;
     const graphemeEndsWithClosingQuote = endsWithClosingQuote(grapheme);
     if (grapheme.length === 1 && leftStickyPunctuation.has(grapheme)) {
-      unitEndsWithClosingQuote =
-        unitEndsWithClosingQuote || graphemeEndsWithClosingQuote;
+      unitEndsWithClosingQuote = unitEndsWithClosingQuote || graphemeEndsWithClosingQuote;
     } else {
       unitEndsWithClosingQuote = graphemeEndsWithClosingQuote;
     }
@@ -155,10 +148,7 @@ function mergeKeepAllTextUnits(units: MeasuredTextUnit[]): MeasuredTextUnit[] {
 
   function flushCurrent(): void {
     merged.push({
-      text:
-        currentTextParts.length === 1
-          ? currentTextParts[0]!
-          : currentTextParts.join(""),
+      text: currentTextParts.length === 1 ? currentTextParts[0]! : currentTextParts.join(""),
       start: currentStart,
     });
   }
@@ -214,12 +204,7 @@ export function measureSpanText(
   options?: PrepareOptions,
 ): MeasuredSpanResult {
   const wordBreak = options?.wordBreak ?? "normal";
-  const analysis = analyzeText(
-    text,
-    getEngineProfile(),
-    options?.whiteSpace,
-    wordBreak,
-  );
+  const analysis = analyzeText(text, getEngineProfile(), options?.whiteSpace, wordBreak);
   return measureAnalysisWithFont(analysis, font, wordBreak);
 }
 
@@ -233,16 +218,8 @@ function measureAnalysisWithFont(
     font,
     textMayContainEmoji(analysis.normalized),
   );
-  const discretionaryHyphenWidth = getCorrectedSegmentWidth(
-    "-",
-    getSegmentMetrics("-", cache),
-    emojiCorrection,
-  );
-  const spaceWidth = getCorrectedSegmentWidth(
-    " ",
-    getSegmentMetrics(" ", cache),
-    emojiCorrection,
-  );
+  const discretionaryHyphenWidth = getCorrectedSegmentWidth("-", getSegmentMetrics("-", cache), emojiCorrection);
+  const spaceWidth = getCorrectedSegmentWidth(" ", getSegmentMetrics(" ", cache), emojiCorrection);
   const tabStopAdvance = spaceWidth * 8;
 
   if (analysis.len === 0) {
@@ -269,9 +246,7 @@ function measureAnalysisWithFont(
   const breakableFitAdvances: (number[] | null)[] = [];
   const segments: string[] = [];
   const segmentStarts: number[] = [];
-  const preparedStartByAnalysisIndex = Array.from<number>({
-    length: analysis.len,
-  });
+  const preparedStartByAnalysisIndex = Array.from<number>({ length: analysis.len });
 
   function pushMeasuredSegment(
     text: string,
@@ -304,13 +279,13 @@ function measureAnalysisWithFont(
     const textMetrics = getSegmentMetrics(text, cache);
     const width = getCorrectedSegmentWidth(text, textMetrics, emojiCorrection);
     const lineEndFitAdvance =
-      kind === "space" ||
-      kind === "preserved-space" ||
-      kind === "zero-width-break"
+      kind === "space" || kind === "preserved-space" || kind === "zero-width-break"
         ? 0
         : width;
     const lineEndPaintAdvance =
-      kind === "space" || kind === "zero-width-break" ? 0 : width;
+      kind === "space" || kind === "zero-width-break"
+        ? 0
+        : width;
 
     if (allowOverflowBreaks && wordLike && text.length > 1) {
       let fitMode: BreakableFitMode = "sum-graphemes";
@@ -383,8 +358,9 @@ function measureAnalysisWithFont(
 
     if (segKind === "text" && segMetrics.containsCJK) {
       const baseUnits = buildBaseCjkUnits(segText, engineProfile);
-      const measuredUnits =
-        wordBreak === "keep-all" ? mergeKeepAllTextUnits(baseUnits) : baseUnits;
+      const measuredUnits = wordBreak === "keep-all"
+        ? mergeKeepAllTextUnits(baseUnits)
+        : baseUnits;
 
       for (let i = 0; i < measuredUnits.length; i++) {
         const unit = measuredUnits[i]!;
@@ -402,11 +378,7 @@ function measureAnalysisWithFont(
     pushMeasuredTextSegment(segText, segKind, segStart, segWordLike, true);
   }
 
-  const chunks = mapAnalysisChunksToPreparedChunks(
-    analysis.chunks,
-    preparedStartByAnalysisIndex,
-    widths.length,
-  );
+  const chunks = mapAnalysisChunksToPreparedChunks(analysis.chunks, preparedStartByAnalysisIndex, widths.length);
 
   return {
     widths,
@@ -453,44 +425,14 @@ function mapAnalysisChunksToPreparedChunks(
   return preparedChunks;
 }
 
-function compilePreparedChunksFromKinds(
-  kinds: SegmentBreakKind[],
-): PreparedLineChunk[] {
-  if (kinds.length === 0) {
-    return [];
-  }
-
-  const preparedChunks: PreparedLineChunk[] = [];
-  let startSegmentIndex = 0;
-
-  for (let i = 0; i < kinds.length; i++) {
-    if (kinds[i] !== "hard-break") continue;
-
-    preparedChunks.push({
-      startSegmentIndex,
-      endSegmentIndex: i,
-      consumedEndSegmentIndex: i + 1,
-    });
-    startSegmentIndex = i + 1;
-  }
-
-  if (startSegmentIndex < kinds.length) {
-    preparedChunks.push({
-      startSegmentIndex,
-      endSegmentIndex: kinds.length,
-      consumedEndSegmentIndex: kinds.length,
-    });
-  }
-
-  return preparedChunks;
-}
-
 /**
  * Combine multiple MeasuredSpanResults (one per source span) into a single
  * PreparedLineBreakData for the line walker. Also returns per-segment metadata
  * for creating SpanBoxes after layout.
  */
-export function combineMeasuredSpans(spans: MeasuredSpanResult[]): {
+export function combineMeasuredSpans(
+  spans: MeasuredSpanResult[],
+): {
   prepared: PreparedLineBreakData;
   segments: string[];
   segmentStarts: number[];
@@ -543,8 +485,11 @@ export function combineMeasuredSpans(spans: MeasuredSpanResult[]): {
   let simpleLineWalkFastPath = true;
   let discretionaryHyphenWidth = 0;
   let tabStopAdvance = 0;
+  const allChunks: PreparedLineChunk[] = [];
 
   for (const span of spans) {
+    const offset = widths.length;
+
     widths.push(...span.widths);
     lineEndFitAdvances.push(...span.lineEndFitAdvances);
     lineEndPaintAdvances.push(...span.lineEndPaintAdvances);
@@ -564,13 +509,28 @@ export function combineMeasuredSpans(spans: MeasuredSpanResult[]): {
     if (tabStopAdvance === 0 && span.tabStopAdvance > 0) {
       tabStopAdvance = span.tabStopAdvance;
     }
+
+    // Offset chunk indices
+    for (const chunk of span.chunks) {
+      allChunks.push({
+        startSegmentIndex: chunk.startSegmentIndex + offset,
+        endSegmentIndex: chunk.endSegmentIndex + offset,
+        consumedEndSegmentIndex: chunk.consumedEndSegmentIndex + offset,
+      });
+    }
   }
 
-  const allChunks = compilePreparedChunksFromKinds(kinds);
-
-  // Span boundaries should stay inline; only actual hard breaks split chunks.
+  // When combining multiple spans that each have no hard breaks (<=1 chunk),
+  // the combined result might still be simple if no individual span broke it
   if (allChunks.length > 1) {
     simpleLineWalkFastPath = false;
+  } else if (allChunks.length === 0 && widths.length > 0) {
+    // No chunks from any span — treat as single chunk spanning everything
+    allChunks.push({
+      startSegmentIndex: 0,
+      endSegmentIndex: widths.length,
+      consumedEndSegmentIndex: widths.length,
+    });
   }
 
   return {

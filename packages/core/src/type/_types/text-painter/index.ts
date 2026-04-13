@@ -1,9 +1,5 @@
 import type InlineSpan from "../Inline-span";
-import Utils, {
-  assert,
-  getPooledFontString,
-  getTextWidth,
-} from "../../../utils";
+import Utils, { assert, getPooledFontString, getTextWidth } from "../../../utils";
 import type { SvgPaintContext } from "../../../framework";
 import type Offset from "../_offset";
 import { TextDirection, TextAlign, TextWidthBasis } from "../..";
@@ -14,7 +10,10 @@ import {
   type MeasuredSpanResult,
 } from "./layout";
 import type { PreparedLineBreakData } from "./line-break";
-import { walkPreparedLines, type InternalLayoutLine } from "./line-break";
+import {
+  walkPreparedLines,
+  type InternalLayoutLine,
+} from "./line-break";
 import type { SegmentBreakKind } from "./analysis";
 
 function getTextHeight({ fontSize }: { fontSize: number }) {
@@ -404,8 +403,7 @@ export class Paragraph {
       }
     });
 
-    const isTruncated =
-      layoutLines.length >= maxLineCount &&
+    const isTruncated = layoutLines.length >= maxLineCount &&
       this.hasMoreContentAfterLine(layoutLines[layoutLines.length - 1]);
 
     // Convert InternalLayoutLines to ParagraphLines with SpanBoxes
@@ -715,14 +713,10 @@ export class Paragraph {
     return this.lines.length - 1;
   }
 
-  private hasMoreContentAfterLine(
-    line: InternalLayoutLine | undefined,
-  ): boolean {
+  private hasMoreContentAfterLine(line: InternalLayoutLine | undefined): boolean {
     if (line == null || this.preparedLineBreakData == null) return false;
-    return (
-      line.endSegmentIndex < this.preparedLineBreakData.widths.length ||
-      line.endGraphemeIndex > 0
-    );
+    return line.endSegmentIndex < this.preparedLineBreakData.widths.length ||
+      line.endGraphemeIndex > 0;
   }
 
   /**
@@ -734,15 +728,13 @@ export class Paragraph {
     const endSegIdx = layoutLine.endSegmentIndex;
 
     // Determine default style from the first segment in this line
-    const defaultStyle =
-      startSegIdx < this.preparedSegmentInfos.length
-        ? this.preparedSegmentInfos[startSegIdx]!.style
-        : this.defaultLineStyle;
+    const defaultStyle = startSegIdx < this.preparedSegmentInfos.length
+      ? this.preparedSegmentInfos[startSegIdx]!.style
+      : this.defaultLineStyle;
 
-    const startOffset =
-      startSegIdx < this.preparedSegmentInfos.length
-        ? this.preparedSegmentInfos[startSegIdx]!.charStart
-        : this.preparedTextLength;
+    const startOffset = startSegIdx < this.preparedSegmentInfos.length
+      ? this.preparedSegmentInfos[startSegIdx]!.charStart
+      : this.preparedTextLength;
 
     const paragraphLine = new ParagraphLine({
       defaultStyle,
@@ -786,10 +778,7 @@ export class Paragraph {
       }
 
       // Style change — flush group
-      if (
-        info.style.font !== groupStyle.font ||
-        info.style.color !== groupStyle.color
-      ) {
+      if (info.style.font !== groupStyle.font || info.style.color !== groupStyle.color) {
         if (i > groupStart) {
           const spanBox = this.buildSpanBoxForRange(
             groupStart,
@@ -857,11 +846,7 @@ export class Paragraph {
       const segWidth = widths[i] ?? 0;
 
       // Handle partial first segment (startGrapheme > 0)
-      if (
-        i === startSeg &&
-        startGrapheme > 0 &&
-        breakableFitAdvances[i] != null
-      ) {
+      if (i === startSeg && startGrapheme > 0 && breakableFitAdvances[i] != null) {
         const fitAdvances = breakableFitAdvances[i]!;
         // Build partial content from graphemes
         const graphemes = this.getSegmentGraphemes(segText);
@@ -875,28 +860,19 @@ export class Paragraph {
         }
         content += partialText;
         totalWidth += partialWidth;
-        charStart =
-          info.charStart + this.graphemeOffset(segText, startGrapheme);
+        charStart = info.charStart + this.graphemeOffset(segText, startGrapheme);
         charEnd = info.charEnd;
         continue;
       }
 
       // Handle partial last segment (endGrapheme > 0)
-      if (
-        i === endSeg - 1 &&
-        endGrapheme > 0 &&
-        breakableFitAdvances[i] != null
-      ) {
+      if (i === endSeg - 1 && endGrapheme > 0 && breakableFitAdvances[i] != null) {
         const fitAdvances = breakableFitAdvances[i]!;
         const graphemes = this.getSegmentGraphemes(segText);
         let partialText = "";
         let partialWidth = 0;
-        const graphemeStart = i === startSeg ? startGrapheme : 0;
-        for (
-          let g = graphemeStart;
-          g < endGrapheme && g < graphemes.length;
-          g++
-        ) {
+        const graphemeStart = (i === startSeg) ? startGrapheme : 0;
+        for (let g = graphemeStart; g < endGrapheme && g < graphemes.length; g++) {
           partialText += graphemes[g];
           partialWidth += fitAdvances[g] ?? 0;
           boundaryOffsets.push(content.length + partialText.length);
@@ -905,8 +881,7 @@ export class Paragraph {
         content += partialText;
         totalWidth += partialWidth;
         if (i === startSeg) {
-          charStart =
-            info.charStart + this.graphemeOffset(segText, startGrapheme);
+          charStart = info.charStart + this.graphemeOffset(segText, startGrapheme);
         }
         charEnd = info.charStart + this.graphemeOffset(segText, endGrapheme);
         continue;
@@ -922,11 +897,7 @@ export class Paragraph {
         let runWidth = totalWidth - segWidth;
         for (let g = 0; g < graphemes.length; g++) {
           runWidth += fitAdvances[g] ?? 0;
-          boundaryOffsets.push(
-            content.length -
-              segText.length +
-              this.graphemeEndOffset(graphemes, g),
-          );
+          boundaryOffsets.push(content.length - segText.length + this.graphemeEndOffset(graphemes, g));
           prefixWidths.push(runWidth);
         }
       } else {
@@ -963,9 +934,7 @@ export class Paragraph {
     if (cached != null) return cached;
 
     if (typeof Intl !== "undefined" && typeof Intl.Segmenter === "function") {
-      const segmenter = new Intl.Segmenter(undefined, {
-        granularity: "grapheme",
-      });
+      const segmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
       cached = [];
       for (const gs of segmenter.segment(text)) {
         cached.push(gs.segment);
@@ -986,10 +955,7 @@ export class Paragraph {
     return offset;
   }
 
-  private graphemeEndOffset(
-    graphemes: string[],
-    graphemeIndex: number,
-  ): number {
+  private graphemeEndOffset(graphemes: string[], graphemeIndex: number): number {
     let offset = 0;
     for (let i = 0; i <= graphemeIndex && i < graphemes.length; i++) {
       offset += graphemes[i]!.length;
@@ -1033,9 +999,7 @@ export class Paragraph {
       const spanStart = this.preparedTextLength;
 
       // Use pretext's analyzeText + measureAnalysis pipeline
-      const measured = measureSpanText(sourceSpan.content, style.font, {
-        whiteSpace: "pre-line",
-      });
+      const measured = measureSpanText(sourceSpan.content, style.font);
       measuredSpans.push(measured);
 
       // Build segment info for SpanBox creation
@@ -1057,8 +1021,7 @@ export class Paragraph {
     }
 
     // Combine all measured spans into a single PreparedLineBreakData
-    const { prepared, segments, segmentStarts } =
-      combineMeasuredSpans(measuredSpans);
+    const { prepared, segments, segmentStarts } = combineMeasuredSpans(measuredSpans);
     this.preparedLineBreakData = prepared;
 
     // Compute intrinsic width (widest line at infinite width)

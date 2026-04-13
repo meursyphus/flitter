@@ -35,11 +35,7 @@ class TextSpan extends InlineSpan {
   }
 
   protected override computeToPlainText(): string {
-    let plainText = this.text ?? "";
-    this.children.forEach(child => {
-      plainText += child.toPlainText();
-    });
-    return plainText;
+    return this.text || "";
   }
 
   build(
