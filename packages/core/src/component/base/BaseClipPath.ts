@@ -1,5 +1,5 @@
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
-import type { Offset, Size } from "../../type";
+import { Offset, type Size } from "../../type";
 import type { Path } from "../../type/_types/_path";
 import {
   SvgPainter,

@@ -2,7 +2,6 @@ import type { RenderObject } from "../../../renderobject/RenderObject";
 import { RenderPipeline } from "../renderer";
 import { Constraints } from "../../../type";
 import { CanvasPaintingContext } from "./canvas-painting-context";
-import { assert } from "../../../utils";
 import { SceneBuilder } from "./layer";
 
 export class CanvasRenderPipeline extends RenderPipeline {
@@ -36,11 +35,11 @@ export class CanvasRenderPipeline extends RenderPipeline {
     dirties
       .sort((a, b) => b.depth - a.depth)
       .forEach(node => {
+        if (!node.needsPaint && !node.needsCompositedLayerUpdate) {
+          return;
+        }
+
         if (node.canvasPainter.layer?.attached) {
-          assert(
-            node.canvasPainter.isRepaintBoundary,
-            "isRepaintBoundary must be true on flushPaint",
-          );
           if (node.needsPaint) {
             CanvasPaintingContext.repaintCompositedChild(node);
           } else {
@@ -65,17 +64,39 @@ export class CanvasRenderPipeline extends RenderPipeline {
       if (!parent.needsPaint) {
         parent.needsPaint = true;
         this.needsPaintRenderObjects.push(parent);
+        this.requestVisualUpdate();
       }
     }
+  }
+
+  override markNeedsCompositedLayerUpdate(renderObject: RenderObject): void {
+    if (renderObject.needsPaint || renderObject.needsCompositedLayerUpdate) {
+      return;
+    }
+
+    renderObject.needsCompositedLayerUpdate = true;
+
+    if (renderObject.canvasPainter.layer != null) {
+      this.needsPaintRenderObjects.push(renderObject);
+      this.requestVisualUpdate();
+      return;
+    }
+
+    this.markNeedsPaint(renderObject);
   }
 
   override markNeedsPaintTransformUpdate(renderObject: RenderObject): void {
     renderObject.needsPaintTransformUpdate = true;
     this.needsPaintTransformUpdateRenderObjects.push(renderObject);
-    this.markNeedsPaint(renderObject);
+    this.requestVisualUpdate();
   }
 
   override didChangePaintTransform(renderObjet: RenderObject): void {
+    if (renderObjet.canvasPainter.layer != null) {
+      renderObjet.markNeedsCompositedLayerUpdate();
+      return;
+    }
+
     renderObjet.markNeedsPaint();
   }
 
@@ -84,7 +105,7 @@ export class CanvasRenderPipeline extends RenderPipeline {
     const ctx = this.#prepareCanvas(
       this.renderContext.view as HTMLCanvasElement,
     );
-    this.renderView.canvasPainter.layer.buildScene(builder);
+    this.renderView.canvasPainter.layer?.buildScene(builder);
     builder.render(ctx);
   }
 
