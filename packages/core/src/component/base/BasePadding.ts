@@ -62,7 +62,7 @@ class RenderPadding extends SingleChildRenderObject {
 
     const childConstraints = this.constraints.deflate(this.padding);
 
-    this.child.layout(childConstraints);
+    this.child.layout(childConstraints, { parentUsesSize: true });
     const { size: childSize } = this.child;
 
     this.size = this.constraints.constrain(

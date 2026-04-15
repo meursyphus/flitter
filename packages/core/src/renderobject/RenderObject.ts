@@ -21,6 +21,7 @@ export class RenderObject {
   needsLayout = true;
   needsPaintTransformUpdate = true;
   depth = 0;
+  private relayoutBoundary: RenderObject | null = null;
 
   /**
    * zOrder is used to order the render objects in the z axis
@@ -102,14 +103,23 @@ export class RenderObject {
 
   layout(
     constraint: Constraints,
-    { parentUsesSize = true }: { parentUsesSize?: boolean } = {},
+    { parentUsesSize = false }: { parentUsesSize?: boolean } = {},
   ) {
     const normalizedConstraints = constraint.normalize();
+    this.parentUsesSize = parentUsesSize;
+    this.relayoutBoundary =
+      !parentUsesSize ||
+      this.sizedByParent ||
+      normalizedConstraints.isTight ||
+      this.parent == null
+        ? this
+        : this.parent?.relayoutBoundary ?? null;
+
     if (this.constraints.equals(normalizedConstraints) && !this.needsLayout) {
       return;
     }
+
     this.constraints = normalizedConstraints;
-    this.parentUsesSize = parentUsesSize;
     if (this.sizedByParent) {
       this.performResize();
     }
@@ -121,8 +131,14 @@ export class RenderObject {
   attach(ownerElement: RenderObjectElement) {
     this.ownerElement = ownerElement;
     this.depth = ownerElement.depth;
+    this.relayoutBoundary = null;
     this.markNeedsPaintTransformUpdate();
     this.markNeedsUpdateZOrder();
+  }
+
+  detach() {
+    this.parent = undefined;
+    this.relayoutBoundary = null;
   }
 
   dispose() {
@@ -172,18 +188,38 @@ export class RenderObject {
     this.layout(this.constraints, { parentUsesSize: this.parentUsesSize });
   }
 
+  markNeedsLayoutForSizedByParentChange() {
+    this.markNeedsLayout();
+    if (this.parent != null) {
+      this.markNeedsParentLayout();
+    }
+  }
+
   markNeedsParentLayout() {
+    this.needsLayout = true;
     this.parent?.markNeedsLayout();
   }
 
   protected markNeedsLayout() {
+    if (this.needsLayout) return;
+
     this.needsLayout = true;
+    const hadCachedDryLayoutResult = this.dryLayoutCache.size > 0;
     this.dryLayoutCache.clear();
-    if (this.parentUsesSize && this.parent != null) {
+
+    if (hadCachedDryLayoutResult && this.parent != null) {
       this.markNeedsParentLayout();
-    } else {
+      return;
+    }
+
+    if (this.relayoutBoundary === this || this.parent == null) {
       this.renderOwner.needsLayoutRenderObjects.push(this);
       this.renderOwner.requestVisualUpdate();
+      return;
+    }
+
+    if (this.parent != null) {
+      this.markNeedsParentLayout();
     }
   }
 

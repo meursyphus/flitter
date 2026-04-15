@@ -77,7 +77,9 @@ class RenderLimitedBox extends SingleChildRenderObject {
       this.size = this.limitConstraints(this.constraints).constrain(Size.zero);
       return;
     }
-    this.child.layout(this.limitConstraints(this.constraints));
+    this.child.layout(this.limitConstraints(this.constraints), {
+      parentUsesSize: true,
+    });
     this.size = this.child.size;
   }
 

@@ -77,6 +77,7 @@ class BuildOwner {
   }
 
   deactivate(element: Element) {
+    if (element.lifecycleState !== ElementLifecycleState.active) return;
     this.inactiveElements.add(element);
     element.deactivate();
   }
@@ -105,6 +106,15 @@ class BuildOwner {
 
   finalizeTree() {
     if (this.inactiveElements.size === 0) return;
+
+    if (this.inactiveElements.size === 1) {
+      const [element] = this.inactiveElements;
+      this.inactiveElements.clear();
+      if (element.lifecycleState === ElementLifecycleState.inactive) {
+        element.unmount();
+      }
+      return;
+    }
 
     const inactiveElements = Array.from(this.inactiveElements);
     this.inactiveElements.clear();

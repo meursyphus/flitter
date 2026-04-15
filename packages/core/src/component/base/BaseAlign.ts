@@ -49,7 +49,7 @@ class RenderAlign extends RenderAligningShiftedBox {
   set widthFactor(value: number | undefined) {
     if (this._widthFactor === value) return;
     this._widthFactor = value;
-    this.markNeedsLayout();
+    this.markNeedsLayoutForSizedByParentChange();
   }
   _heightFactor?: number;
   get heightFactor() {
@@ -58,7 +58,7 @@ class RenderAlign extends RenderAligningShiftedBox {
   set heightFactor(value: number | undefined) {
     if (this._heightFactor === value) return;
     this._heightFactor = value;
-    this.markNeedsLayout();
+    this.markNeedsLayoutForSizedByParentChange();
   }
   constructor({
     alignment,
@@ -95,7 +95,7 @@ class RenderAlign extends RenderAligningShiftedBox {
     const shrinkWrapHeight = this.shouldShrinkWrapHeight(constraints);
 
     if (this.child != null) {
-      this.child.layout(constraints.loosen());
+      this.child.layout(constraints.loosen(), { parentUsesSize: true });
       if (!this.sizedByParent) {
         this.size = this.getDryLayoutForChild(constraints, this.child.size);
       }

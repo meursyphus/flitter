@@ -105,7 +105,9 @@ class RenderFractionallySizedBox extends RenderAligningShiftedBox {
 
   protected preformLayout(): void {
     if (this.child != null) {
-      this.child.layout(this.getInnerConstraints(this.constraints));
+      this.child.layout(this.getInnerConstraints(this.constraints), {
+        parentUsesSize: true,
+      });
       this.size = this.constraints.constrain(this.child.size);
       this.alignChild();
     } else {

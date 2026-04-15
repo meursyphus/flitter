@@ -17,7 +17,7 @@ export class SingleChildRenderObject extends RenderObject {
         this.size = this.computeSizeForNoChild(this.constraints);
       }
     } else {
-      this.child.layout(this.constraints);
+      this.child.layout(this.constraints, { parentUsesSize: true });
       if (!this.sizedByParent) {
         this.size = this.constraints.constrain(this.child.size);
       }
