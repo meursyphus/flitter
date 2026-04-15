@@ -13,15 +13,26 @@ export class SingleChildRenderObject extends RenderObject {
 
   protected preformLayout(): void {
     if (this.child == null) {
-      this.size = this.computeSizeForNoChild(this.constraints);
+      if (!this.sizedByParent) {
+        this.size = this.computeSizeForNoChild(this.constraints);
+      }
     } else {
       this.child.layout(this.constraints);
-      this.size = this.constraints.constrain(this.child.size);
+      if (!this.sizedByParent) {
+        this.size = this.constraints.constrain(this.child.size);
+      }
     }
   }
 
   protected computeSizeForNoChild(constraints: Constraints) {
     return constraints.constrain(Size.zero);
+  }
+
+  protected override computeDryLayout(constraints: Constraints) {
+    if (this.child == null) {
+      return this.computeSizeForNoChild(constraints);
+    }
+    return constraints.constrain(this.child.getDryLayout(constraints));
   }
 
   override hitTestChildren(result: HitTestResult, position: Offset): boolean {

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { StackedBarChart, LineChart } from 'shared/chart';
+	import { ToastStackedBarChart, LineChart } from 'shared/chart';
 	import SvelteWidget from '@flitterjs/svelte';
-	import { formatDate } from '$lib/formatDate';
 
 	export let data: PageData;
 
@@ -17,13 +16,21 @@
 		histories: PageData['histories'],
 		keys: (keyof PageData['histories'][number])[] = ['runApp', 'mount', 'draw', 'layout', 'paint']
 	) {
-		const labels = histories.map((d) => formatDate(new Date(d.timestamp)));
-		const datasets: { data: number[]; legend: string }[] = keys.map((legend) => ({
-			data: histories.map((d) => Math.floor(d[legend] as number)),
+		const labels = histories.map((d) => formatChartLabel(new Date(d.timestamp)));
+		const datasets: { values: number[]; legend: string }[] = keys.map((legend) => ({
+			values: histories.map((d) => Math.floor(d[legend] as number)),
 			legend
 		}));
 
 		return { labels, datasets };
+	}
+
+	function formatChartLabel(date: Date) {
+		const year = `${date.getFullYear()}`;
+		const month = `${date.getMonth() + 1}`.padStart(2, '0');
+		const day = `${date.getDate()}`.padStart(2, '0');
+
+		return `${year}-${month}-${day}`;
 	}
 </script>
 
@@ -40,32 +47,25 @@
 		})}
 	/>
 	<SvelteWidget
-		width="700px"
+		width="760px"
 		height="600px"
-		widget={StackedBarChart({
+		widget={ToastStackedBarChart({
 			data: {
 				...stackedChart
 			},
-			theme: {
-				series: {
-					colors: ['#785fff', '#00bd9f', '#ffb840']
-				}
-			},
-
-			custom: {
-				series: {
-					type: 'config'
-				},
-				dataLabel: {
-					type: 'config',
+			config: {
+				legend: {
 					visible: true,
-					font: {
-						fontSize: 14
-					}
+					position: 'bottom',
+					gap: 12
+				},
+				animation: {
+					enabled: true,
+					duration: 300,
+					staggerDelay: 60
 				},
 				bar: {
-					type: 'config',
-					thickness: 60
+					gap: 0
 				}
 			}
 		})}
@@ -75,6 +75,8 @@
 <style>
 	.chart-wrapper {
 		display: flex;
+		flex-wrap: wrap;
 		gap: 1rem;
+		align-items: flex-start;
 	}
 </style>

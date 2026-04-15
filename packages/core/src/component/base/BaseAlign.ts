@@ -1,5 +1,5 @@
 import { RenderAligningShiftedBox } from "../../renderobject";
-import { Alignment, TextDirection } from "../../type";
+import { Alignment, Constraints, Size, TextDirection } from "../../type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 
@@ -80,30 +80,64 @@ class RenderAlign extends RenderAligningShiftedBox {
     this._heightFactor = heightFactor;
   }
 
+  protected override get sizedByParent(): boolean {
+    return (
+      this.widthFactor == null &&
+      this.heightFactor == null &&
+      this.constraints.hasBoundedWidth &&
+      this.constraints.hasBoundedHeight
+    );
+  }
+
   protected preformLayout(): void {
     const constraints = this.constraints;
-    const shrinkWrapWidth =
-      this.widthFactor != null || constraints.maxWidth == Infinity;
-    const shrinkWrapHeight =
-      this.heightFactor != null || constraints.maxHeight == Infinity;
+    const shrinkWrapWidth = this.shouldShrinkWrapWidth(constraints);
+    const shrinkWrapHeight = this.shouldShrinkWrapHeight(constraints);
 
     if (this.child != null) {
       this.child.layout(constraints.loosen());
-      this.size = constraints.constrain({
-        width: shrinkWrapWidth
-          ? this.child.size.width * (this.widthFactor ?? 1)
-          : Infinity,
-        height: shrinkWrapHeight
-          ? this.child.size.height * (this.heightFactor ?? 1)
-          : Infinity,
-      });
+      if (!this.sizedByParent) {
+        this.size = this.getDryLayoutForChild(constraints, this.child.size);
+      }
       this.alignChild();
     } else {
-      this.size = constraints.constrain({
-        width: shrinkWrapWidth ? 0 : Infinity,
-        height: shrinkWrapHeight ? 0 : Infinity,
+      if (!this.sizedByParent) {
+        this.size = constraints.constrain({
+          width: shrinkWrapWidth ? 0 : Infinity,
+          height: shrinkWrapHeight ? 0 : Infinity,
+        });
+      }
+    }
+  }
+
+  protected override computeDryLayout(constraints: Constraints) {
+    const childSize = this.child?.getDryLayout(constraints.loosen());
+    if (childSize == null) {
+      return constraints.constrain({
+        width: this.shouldShrinkWrapWidth(constraints) ? 0 : Infinity,
+        height: this.shouldShrinkWrapHeight(constraints) ? 0 : Infinity,
       });
     }
+    return this.getDryLayoutForChild(constraints, childSize);
+  }
+
+  private shouldShrinkWrapWidth(constraints: Constraints) {
+    return this.widthFactor != null || constraints.maxWidth == Infinity;
+  }
+
+  private shouldShrinkWrapHeight(constraints: Constraints) {
+    return this.heightFactor != null || constraints.maxHeight == Infinity;
+  }
+
+  private getDryLayoutForChild(constraints: Constraints, childSize: Size) {
+    return constraints.constrain({
+      width: this.shouldShrinkWrapWidth(constraints)
+        ? childSize.width * (this.widthFactor ?? 1)
+        : Infinity,
+      height: this.shouldShrinkWrapHeight(constraints)
+        ? childSize.height * (this.heightFactor ?? 1)
+        : Infinity,
+    });
   }
 }
 

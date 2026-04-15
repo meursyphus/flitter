@@ -1,4 +1,5 @@
 import MultiChildRenderObject from "../../renderobject/MultiChildRenderObject";
+import ChildLayoutHelper from "../../renderobject/ChildLayoutHelper";
 import {
   Constraints,
   CrossAxisAlignment,
@@ -12,6 +13,7 @@ import {
 import MultiChildRenderObjectWidget from "../../widget/MultiChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 import type { RenderFlexible } from "./BaseFlexible";
+import type RenderObject from "../../renderobject/RenderObject";
 
 class Flex extends MultiChildRenderObjectWidget {
   direction: Axis;
@@ -158,71 +160,13 @@ class RenderFlex extends MultiChildRenderObject {
     this._mainAxisSize = mainAxisSize;
   }
   protected preformLayout(): void {
-    let totalFlex = 0;
-    let [childIntrinsicMainAxisValue, crossAxisValue] = [0, 0];
-    const sortedChildren =
-      this.verticalDirection === VerticalDirection.down
-        ? this.children
-        : [...this.children].reverse();
-
-    sortedChildren.forEach(child => {
-      child.layout(this.constraints.loosen());
-      const flex = (child as RenderFlexible)?.isRenderFlexible
-        ? (child as RenderFlexible).flex
-        : 0;
-      totalFlex += flex;
-      if (flex === 0) {
-        childIntrinsicMainAxisValue += child.size[this.mainAxisSizeName];
-      }
-      crossAxisValue =
-        this.crossAxisAlignment === CrossAxisAlignment.stretch
-          ? this.constraints.getMax(this.crossAxisSizeName)
-          : Math.max(crossAxisValue, child.size[this.crossAxisSizeName]);
-    });
-
-    const flexUnitSize =
-      (this.constraints.getMax(this.mainAxisSizeName) -
-        childIntrinsicMainAxisValue) /
-      totalFlex;
-
-    /*
-      layout children
-    */
-    sortedChildren.forEach(child => {
-      let childConstraint: Constraints;
-
-      if (!(child as RenderFlexible).isRenderFlexible) {
-        childConstraint = this.getNonFlexItemConstraint(crossAxisValue);
-      } else {
-        const flexible = child as RenderFlexible;
-        const flex = flexible.flex;
-        const childMainAxisValue = flex * flexUnitSize;
-        childConstraint = this.getFlexItemConstraint(
-          childMainAxisValue,
-          flexible.fit,
-        );
-      }
-
-      child.layout(childConstraint.enforce(this.constraints.loosen()));
-    });
-
-    /*
-      determine size of widget
-    */
-    this.size = this.constraints.constrain(
-      new Size({
-        [this.mainAxisSizeName]:
-          this.mainAxisSize === MainAxisSize.max
-            ? this.constraints.getMax(this.mainAxisSizeName)
-            : sortedChildren
-                .map(child => child.size[this.mainAxisSizeName])
-                .reduce((acc, childMainAxisSize) => acc + childMainAxisSize, 0),
-        [this.crossAxisSizeName]: crossAxisValue,
-      } as any),
+    const { sortedChildren, childSizes, size } = this.computeLayout(
+      ChildLayoutHelper.layoutChild,
     );
+    this.size = size;
 
     const mainAxisOffsets = this.getChildOffsetsOnMainAxis(
-      sortedChildren.map(({ size }) => size[this.mainAxisSizeName]),
+      childSizes.map(childSize => childSize[this.mainAxisSizeName]),
     );
 
     sortedChildren.forEach((child, i) => {
@@ -238,23 +182,35 @@ class RenderFlex extends MultiChildRenderObject {
     });
   }
 
-  private getNonFlexItemConstraint(crossAxisValue: number) {
+  protected override computeDryLayout(constraints: Constraints) {
+    return this.computeLayout(ChildLayoutHelper.dryLayoutChild, constraints)
+      .size;
+  }
+
+  private getNonFlexItemConstraint(
+    constraints: Constraints,
+    crossAxisValue: number,
+  ) {
     if (this.crossAxisAlignment === CrossAxisAlignment.stretch) {
       return Constraints.tightFor({
         [this.crossAxisSizeName]: crossAxisValue,
       });
     }
 
-    return this.constraints.loosen();
+    return constraints.loosen();
   }
 
-  private getFlexItemConstraint(childExtent: number, fit: "loose" | "tight") {
+  private getFlexItemConstraint(
+    constraints: Constraints,
+    childExtent: number,
+    fit: "loose" | "tight",
+  ) {
     return new Constraints({
       [this.minCrossAxisSizeName]:
         this.crossAxisAlignment === CrossAxisAlignment.stretch
-          ? this.constraints[this.maxCrossAxisSizeName]
+          ? constraints[this.maxCrossAxisSizeName]
           : 0,
-      [this.maxCrossAxisSizeName]: this.constraints[this.maxCrossAxisSizeName],
+      [this.maxCrossAxisSizeName]: constraints[this.maxCrossAxisSizeName],
       [this.maxMainAxisSizeName]: childExtent,
       [this.minMainAxisSizeName]: fit === "tight" ? childExtent : 0,
     });
@@ -379,6 +335,80 @@ class RenderFlex extends MultiChildRenderObject {
     return this.direction === Axis.vertical
       ? childIntrinsicWidths.reduce(max, 0)
       : childIntrinsicWidths.reduce(sum, 0);
+  }
+
+  private computeLayout(
+    layoutChild: (child: RenderObject, constraints: Constraints) => Size,
+    constraints: Constraints = this.constraints,
+  ) {
+    let totalFlex = 0;
+    let childIntrinsicMainAxisValue = 0;
+    let crossAxisValue = 0;
+    const sortedChildren =
+      this.verticalDirection === VerticalDirection.down
+        ? this.children
+        : [...this.children].reverse();
+    const looseConstraints = constraints.loosen();
+
+    sortedChildren.forEach(child => {
+      const childSize = layoutChild(child, looseConstraints);
+      const flex = (child as RenderFlexible)?.isRenderFlexible
+        ? (child as RenderFlexible).flex
+        : 0;
+      totalFlex += flex;
+      if (flex === 0) {
+        childIntrinsicMainAxisValue += childSize[this.mainAxisSizeName];
+      }
+      crossAxisValue =
+        this.crossAxisAlignment === CrossAxisAlignment.stretch
+          ? constraints.getMax(this.crossAxisSizeName)
+          : Math.max(crossAxisValue, childSize[this.crossAxisSizeName]);
+    });
+
+    const flexUnitSize =
+      (constraints.getMax(this.mainAxisSizeName) -
+        childIntrinsicMainAxisValue) /
+      totalFlex;
+
+    const childSizes = sortedChildren.map(child => {
+      let childConstraint: Constraints;
+
+      if (!(child as RenderFlexible).isRenderFlexible) {
+        childConstraint = this.getNonFlexItemConstraint(
+          constraints,
+          crossAxisValue,
+        );
+      } else {
+        const flexible = child as RenderFlexible;
+        const flex = flexible.flex;
+        const childMainAxisValue = flex * flexUnitSize;
+        childConstraint = this.getFlexItemConstraint(
+          constraints,
+          childMainAxisValue,
+          flexible.fit,
+        );
+      }
+
+      return layoutChild(child, childConstraint.enforce(looseConstraints));
+    });
+
+    return {
+      sortedChildren,
+      crossAxisValue,
+      childSizes,
+      size: constraints.constrain(
+        new Size({
+          [this.mainAxisSizeName]:
+            this.mainAxisSize === MainAxisSize.max
+              ? constraints.getMax(this.mainAxisSizeName)
+              : childSizes.reduce(
+                  (acc, childSize) => acc + childSize[this.mainAxisSizeName],
+                  0,
+                ),
+          [this.crossAxisSizeName]: crossAxisValue,
+        } as any),
+      ),
+    };
   }
 }
 

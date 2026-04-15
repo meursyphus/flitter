@@ -6,6 +6,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 
+const perfTraceNote = process.env.PERF_TRACE_NOTE?.trim();
+
+if (perfTraceNote == null || perfTraceNote === '') {
+	throw new Error(
+		'PERF_TRACE_NOTE is required. Run via `pnpm run perf:trace -- --note "<summary>"`.'
+	);
+}
+
 const waitForFlitterMeasures = async (page: Page, names: string[]) => {
 	await page.waitForFunction(
 		(requiredNames) =>
@@ -50,7 +58,7 @@ test.describe('Performance Tracking', () => {
 			draw: 0,
 			layout: 0,
 			paint: 0,
-			note: ''
+			note: perfTraceNote
 		};
 		for (let i = 0; i < COUNT; i++) {
 			const browser = await chromium.launch({ headless: true });
