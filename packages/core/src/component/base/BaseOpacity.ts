@@ -53,7 +53,7 @@ class RenderOpacity extends SingleChildRenderObject {
 
   protected override preformLayout(): void {
     if (this.child != null) {
-      this.child.layout(this.constraints);
+      this.child.layout(this.constraints, { parentUsesSize: true });
       this.size = this.child.size;
     }
   }

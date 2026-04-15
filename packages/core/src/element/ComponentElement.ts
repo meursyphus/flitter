@@ -25,6 +25,11 @@ class ComponentElement extends Element {
     this.rebuild({ force: true });
   }
 
+  override activate(newParent?: Element): void {
+    super.activate(newParent);
+    this.child?.activate(this);
+  }
+
   initState(): void {
     throw new Error("not implemented initState on component element");
   }

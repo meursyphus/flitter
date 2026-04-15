@@ -123,7 +123,7 @@ export class RenderStack extends MultiChildRenderObject {
       )
         return;
       hasNonPositionedChildren = true;
-      child.layout(nonPositionedConstraints);
+      child.layout(nonPositionedConstraints, { parentUsesSize: true });
 
       width = Math.max(width, child.size.width);
       height = Math.max(height, child.size.height);
@@ -179,7 +179,7 @@ export class RenderStack extends MultiChildRenderObject {
       });
     }
 
-    child.layout(childConstraints);
+    child.layout(childConstraints, { parentUsesSize: true });
 
     let x: number;
 

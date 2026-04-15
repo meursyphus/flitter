@@ -126,11 +126,9 @@ class Element {
     if (key?.isGlobalKey) {
       const inactiveChild = this.buildOwner.retakeElement(key, childWidget);
       if (inactiveChild != null) {
-        inactiveChild.activateWithParent(this);
-        const updatedChild = this.updateChild(inactiveChild, childWidget);
-        if (updatedChild != null) {
-          return updatedChild;
-        }
+        inactiveChild.activate(this);
+        inactiveChild.update(childWidget);
+        return inactiveChild;
       }
     }
 
@@ -158,8 +156,14 @@ class Element {
     this.buildOwner.scheduleFor(this);
   }
 
-  activate() {
+  activate(newParent?: Element) {
     if (this.lifecycleState !== ElementLifecycleState.inactive) return;
+    if (newParent != null) {
+      this.buildOwner = newParent.buildOwner;
+      this.scheduler = newParent.scheduler;
+      this.parent = newParent;
+      this.depth = newParent.depth + 1;
+    }
     this.lifecycleState = ElementLifecycleState.active;
     this.mounted = true;
     if ((this.widget.key as GlobalKey)?.isGlobalKey) {
@@ -177,15 +181,7 @@ class Element {
   }
 
   activateWithParent(newParent: Element) {
-    this.buildOwner = newParent.buildOwner;
-    this.scheduler = newParent.scheduler;
-    this.parent = newParent;
-    this.depth = newParent.depth + 1;
-    this.activate();
-    this.visitChildren(child => {
-      child.activateWithParent(this);
-    });
-    this.attachRenderObject();
+    this.activate(newParent);
   }
 
   deactivate() {

@@ -90,7 +90,7 @@ export class RenderAnimatedSize extends RenderAligningShiftedBox {
       return;
     }
 
-    this.child.layout(this.constraints);
+    this.child.layout(this.constraints, { parentUsesSize: true });
 
     const childSize = this.child.size;
 

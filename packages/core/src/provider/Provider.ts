@@ -97,6 +97,11 @@ class ProviderElement<ProviderKey = unknown, Value = unknown>
     this.child = this.inflateWidget(this.widget.child);
   }
 
+  override activate(newParent?: Element): void {
+    super.activate(newParent);
+    this.child?.activate(this);
+  }
+
   override unmount(): void {
     super.unmount();
     this.child?.unmount();
