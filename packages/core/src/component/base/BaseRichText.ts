@@ -261,12 +261,12 @@ export class RenderParagraph extends RenderObject {
       this.textPainter.height !== this.previousHeight;
   }
 
-  override getIntrinsicHeight(): number {
+  protected override computeIntrinsicHeight(_width: number): number {
     this.textPainter.layout();
     return this.textPainter.height;
   }
 
-  override getIntrinsicWidth(): number {
+  protected override computeIntrinsicWidth(_height: number): number {
     this.textPainter.layout();
     return this.textPainter.width;
   }

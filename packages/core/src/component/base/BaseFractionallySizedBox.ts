@@ -117,7 +117,7 @@ class RenderFractionallySizedBox extends RenderAligningShiftedBox {
     }
   }
 
-  override getIntrinsicHeight(width: number): number {
+  protected override computeIntrinsicHeight(width: number): number {
     let result: number;
     if (this.child == null) {
       result = super.getIntrinsicHeight(width);
@@ -128,7 +128,7 @@ class RenderFractionallySizedBox extends RenderAligningShiftedBox {
     return result / (this.heightFactor ?? 1);
   }
 
-  override getIntrinsicWidth(height: number): number {
+  protected override computeIntrinsicWidth(height: number): number {
     let result: number;
     if (this.child == null) {
       result = super.getIntrinsicWidth(height);

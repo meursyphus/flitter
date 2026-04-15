@@ -228,13 +228,13 @@ export class RenderStack extends MultiChildRenderObject {
     });
   }
 
-  getIntrinsicWidth(height: number): number {
+  protected override computeIntrinsicWidth(height: number): number {
     return this.children
       .map(child => child.getIntrinsicWidth(height))
       .reduce(Utils.maxReducer, 0);
   }
 
-  getIntrinsicHeight(width: number): number {
+  protected override computeIntrinsicHeight(width: number): number {
     return this.children
       .map(child => child.getIntrinsicHeight(width))
       .reduce(Utils.maxReducer, 0);

@@ -114,7 +114,7 @@ export class RenderCustomPaint<
     return constraints.constrain(this.preferredSize);
   }
 
-  override getIntrinsicWidth(height: number): number {
+  protected override computeIntrinsicWidth(height: number): number {
     if (this.child == null) {
       return Number.isFinite(this.preferredSize.width)
         ? this.preferredSize.width
@@ -123,7 +123,7 @@ export class RenderCustomPaint<
     return super.getIntrinsicWidth(height);
   }
 
-  override getIntrinsicHeight(width: number): number {
+  protected override computeIntrinsicHeight(width: number): number {
     if (this.child == null) {
       return Number.isFinite(this.preferredSize.height)
         ? this.preferredSize.height

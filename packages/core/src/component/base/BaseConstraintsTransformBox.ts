@@ -85,13 +85,13 @@ class RenderConstraintsTransformBox extends RenderAligningShiftedBox {
     this._constraintsTransform = constraintsTransform;
   }
 
-  override getIntrinsicHeight(width: number): number {
+  protected override computeIntrinsicHeight(width: number): number {
     return super.getIntrinsicHeight(
       this.constraintsTransform(new Constraints({ maxWidth: width })).maxWidth,
     );
   }
 
-  override getIntrinsicWidth(height: number): number {
+  protected override computeIntrinsicWidth(height: number): number {
     return super.getIntrinsicWidth(
       this.constraintsTransform(new Constraints({ maxHeight: height }))
         .maxHeight,
