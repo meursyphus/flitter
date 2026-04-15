@@ -105,7 +105,7 @@ class RenderConstraintsTransformBox extends RenderAligningShiftedBox {
     }
 
     const childConstraints = this.constraintsTransform(this.constraints);
-    this.child.layout(childConstraints);
+    this.child.layout(childConstraints, { parentUsesSize: true });
     this.size = this.constraints.constrain(this.child.size);
     this.alignChild();
   }

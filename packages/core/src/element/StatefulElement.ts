@@ -1,4 +1,5 @@
 import type Widget from "../widget/Widget";
+import type Element from "./Element";
 import ComponentElement from "./ComponentElement";
 import type StatefulWidget from "../widget/StatefulWidget";
 import type { BuildContext } from "./index";
@@ -42,8 +43,8 @@ export class StatefulElement extends ComponentElement {
     }
   }
 
-  override activate(): void {
-    super.activate();
+  override activate(newParent?: Element): void {
+    super.activate(newParent);
     this.state.activate();
     this.markNeedsBuild();
   }

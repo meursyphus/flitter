@@ -18,6 +18,11 @@ export class HitTestDispatcher {
   #rootPosition: Offset | null = null;
   #renderContext!: RenderContext;
   #renderView: RenderObject | null = null;
+  #isMouseDown = false;
+  #activePointerHits: RenderGestureDetector[] | null = null;
+  #lastPressHits: RenderGestureDetector[] | null = null;
+  #lastHoverPosition: Offset | null = null;
+  #lastHoverHits: RenderGestureDetector[] | null = null;
 
   init({ renderContext }: { renderContext: RenderContext }) {
     if (!this.#activated) return;
@@ -36,27 +41,44 @@ export class HitTestDispatcher {
 
   setRenderView(renderView: RenderObject) {
     this.#renderView = renderView;
+    this.#previousHits = new Set();
+    this.#previousCursorDetector = null;
+    this.#isMouseDown = false;
+    this.#activePointerHits = null;
+    this.#lastPressHits = null;
+    this.#lastHoverPosition = null;
+    this.#lastHoverHits = null;
   }
 
   #handleMouseDown = (e: Wrapped<MouseEvent>) => {
-    this.#dispatchEvent(e, "onMouseDown");
+    const detectors = this.#performHitTest(e);
+    this.#isMouseDown = true;
+    this.#activePointerHits = detectors;
+    this.#lastPressHits = detectors;
+    this.#dispatchDetectors(detectors, e, "onMouseDown");
   };
 
   #handleClick = (e: Wrapped<MouseEvent>) => {
-    this.#dispatchEvent(e, "onClick");
+    const detectors = this.#performHitTest(e);
+    const resolvedDetectors =
+      detectors.length > 0 ? detectors : (this.#lastPressHits ?? []);
+    this.#lastPressHits = null;
+    this.#dispatchDetectors(resolvedDetectors, e, "onClick");
   };
 
   #previousHits: Set<RenderGestureDetector> = new Set();
   #previousCursorDetector: RenderGestureDetector | null = null;
 
   #handleMouseMove = (e: Wrapped<MouseEvent>) => {
-    const hitDetectors = this.#performHitTest(e);
+    if (this.#isMouseDown && this.#activePointerHits != null) {
+      this.#dispatchDetectors(this.#activePointerHits, e, "onMouseMove");
+      return;
+    }
+
+    const hitDetectors = this.#performHoverHitTest(e);
 
     // dispatch onMouseMove
-    for (const detector of hitDetectors) {
-      if (e.isPropagationStopped) break;
-      detector.invokeCallback("onMouseMove", e);
-    }
+    this.#dispatchDetectors(hitDetectors, e, "onMouseMove");
 
     const currentHits = new Set(hitDetectors);
 
@@ -92,7 +114,13 @@ export class HitTestDispatcher {
   };
 
   #handleMouseUp = (e: Wrapped<MouseEvent>) => {
-    this.#dispatchEvent(e, "onMouseUp");
+    const detectors = this.#activePointerHits ?? this.#performHitTest(e);
+    this.#dispatchDetectors(detectors, e, "onMouseUp");
+    this.#isMouseDown = false;
+    this.#activePointerHits = null;
+    this.#lastPressHits = detectors;
+    this.#lastHoverPosition = null;
+    this.#lastHoverHits = null;
   };
 
   #handleMouseWheel = (e: Wrapped<WheelEvent>) => {
@@ -100,11 +128,9 @@ export class HitTestDispatcher {
   };
 
   #handleMouseEnter = (_e: Wrapped<MouseEvent>) => {
-    const rect = this.#renderContext.view.getBoundingClientRect();
-    this.#rootPosition = new Offset({
-      x: rect.left,
-      y: rect.top,
-    });
+    this.#updateRootPosition();
+    this.#lastHoverPosition = null;
+    this.#lastHoverHits = null;
   };
 
   #handleMouseLeave = (e: Wrapped<MouseEvent>) => {
@@ -119,24 +145,60 @@ export class HitTestDispatcher {
       this.#previousCursorDetector = null;
       this.#renderContext.view.style.cursor = "default";
     }
+
+    this.#isMouseDown = false;
+    this.#activePointerHits = null;
+    this.#lastPressHits = null;
+    this.#lastHoverPosition = null;
+    this.#lastHoverHits = null;
   };
 
   #convertToLocalPosition(e: MouseEvent): Offset {
     if (this.#rootPosition == null) {
-      return new Offset({ x: 0, y: 0 });
+      this.#updateRootPosition();
     }
+    const rootPosition = this.#rootPosition!;
     const { translation, scale } = this.#renderContext.viewPort;
-    const domX = e.clientX - this.#rootPosition.x;
-    const domY = e.clientY - this.#rootPosition.y;
+    const domX = e.clientX - rootPosition.x;
+    const domY = e.clientY - rootPosition.y;
     return new Offset({
       x: domX / scale - translation.x,
       y: domY / scale - translation.y,
     });
   }
 
+  #updateRootPosition() {
+    const rect = this.#renderContext.view.getBoundingClientRect();
+    this.#rootPosition = new Offset({
+      x: rect.left,
+      y: rect.top,
+    });
+  }
+
   #performHitTest(e: MouseEvent): RenderGestureDetector[] {
     if (this.#renderView == null) return [];
     const position = this.#convertToLocalPosition(e);
+    return this.#performHitTestAt(position);
+  }
+
+  #performHoverHitTest(e: MouseEvent): RenderGestureDetector[] {
+    const position = this.#convertToLocalPosition(e);
+    if (
+      this.#lastHoverPosition != null &&
+      this.#lastHoverHits != null &&
+      this.#lastHoverPosition.equals(position)
+    ) {
+      return this.#lastHoverHits;
+    }
+
+    const detectors = this.#performHitTestAt(position);
+    this.#lastHoverPosition = position;
+    this.#lastHoverHits = detectors;
+    return detectors;
+  }
+
+  #performHitTestAt(position: Offset): RenderGestureDetector[] {
+    if (this.#renderView == null) return [];
     const result = new HitTestResult();
     this.#renderView.hitTest(result, position);
 
@@ -150,15 +212,23 @@ export class HitTestDispatcher {
     return detectors;
   }
 
+  #dispatchDetectors(
+    detectors: RenderGestureDetector[],
+    e: Wrapped<MouseEvent | WheelEvent>,
+    type: EventHandlerType,
+  ) {
+    for (const detector of detectors) {
+      if (e.isPropagationStopped) return;
+      detector.invokeCallback(type, e);
+    }
+  }
+
   #dispatchEvent = (
     e: Wrapped<MouseEvent | WheelEvent>,
     type: EventHandlerType,
   ) => {
     const detectors = this.#performHitTest(e);
-    for (const detector of detectors) {
-      if (e.isPropagationStopped) return;
-      detector.invokeCallback(type, e);
-    }
+    this.#dispatchDetectors(detectors, e, type);
   };
 
   #wrapEvent =

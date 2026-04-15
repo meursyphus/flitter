@@ -36,7 +36,7 @@ class RenderConstrainedBox extends SingleChildRenderObject {
   set additionalConstraint(constraint: Constraints) {
     if (constraint.equals(this._additionalConstraint)) return;
     this._additionalConstraint = constraint;
-    this.markNeedsLayout();
+    this.markNeedsLayoutForSizedByParentChange();
   }
 
   constructor({ constraint }: { constraint: Constraints }) {
@@ -51,7 +51,7 @@ class RenderConstrainedBox extends SingleChildRenderObject {
   protected override preformLayout(): void {
     const enforcedConstraints = this.getEnforcedConstraints(this.constraints);
     if (this.child != null) {
-      this.child.layout(enforcedConstraints);
+      this.child.layout(enforcedConstraints, { parentUsesSize: true });
     }
     if (!this.sizedByParent) {
       this.size = this.computeDryLayout(this.constraints);

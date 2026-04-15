@@ -5,7 +5,7 @@ import Element from "./Element";
 import { ElementType } from "./ElementType";
 
 class RenderObjectElement extends Element {
-  children!: Element[];
+  children: Element[] = [];
 
   _renderObject!: RenderObject;
   override type: ElementType = ElementType.render;
@@ -43,38 +43,101 @@ class RenderObjectElement extends Element {
     this._renderObject.markNeedsParentLayout();
   }
 
+  override activate(newParent?: Element): void {
+    super.activate(newParent);
+    this.attachSelfRenderObject();
+    this.children.forEach(child => {
+      child.activate(this);
+    });
+    this._renderObject.markNeedsParentLayout();
+  }
+
   override update(newWidget: Widget): void {
     super.update(newWidget);
     this.rebuild({ force: true });
   }
 
   updateChildren(newWidgets: Widget[]) {
-    const updatedChildIndexes: number[] = [];
     const oldChildren = this.children;
-    const newChildren = newWidgets.map(newWidget => {
-      const matchedChildIndex = oldChildren.findIndex(
-        (oldChild, oldChildIndex) =>
-          !updatedChildIndexes.includes(oldChildIndex) &&
-          Widget.canUpdate(newWidget, oldChild.widget),
-      );
+    const newChildren: Element[] = new Array(newWidgets.length);
 
-      let matchedChild: Element | null;
-      if (matchedChildIndex === -1) {
-        matchedChild = null;
+    let oldTop = 0;
+    let newTop = 0;
+    let oldBottom = oldChildren.length - 1;
+    let newBottom = newWidgets.length - 1;
+
+    while (oldTop <= oldBottom && newTop <= newBottom) {
+      const oldChild = oldChildren[oldTop];
+      const newWidget = newWidgets[newTop];
+      if (!Widget.canUpdate(oldChild.widget, newWidget)) break;
+      newChildren[newTop] = this.updateChild(oldChild, newWidget)!;
+      oldTop++;
+      newTop++;
+    }
+
+    while (oldTop <= oldBottom && newTop <= newBottom) {
+      const oldChild = oldChildren[oldBottom];
+      const newWidget = newWidgets[newBottom];
+      if (!Widget.canUpdate(oldChild.widget, newWidget)) break;
+      newChildren[newBottom] = this.updateChild(oldChild, newWidget)!;
+      oldBottom--;
+      newBottom--;
+    }
+
+    const oldKeyedChildren = new Map<any, Element>();
+    const oldUnkeyedChildren: Element[] = [];
+
+    for (let i = oldTop; i <= oldBottom; i++) {
+      const oldChild = oldChildren[i];
+      if (oldChild.widget.key != null) {
+        oldKeyedChildren.set(oldChild.widget.key, oldChild);
       } else {
-        matchedChild = oldChildren[matchedChildIndex];
-        updatedChildIndexes.push(matchedChildIndex);
+        oldUnkeyedChildren.push(oldChild);
+      }
+    }
+
+    let oldUnkeyedIndex = 0;
+    while (newTop <= newBottom) {
+      const newWidget = newWidgets[newTop];
+      let matchedChild: Element | null = null;
+
+      if (newWidget.key != null) {
+        const keyedChild = oldKeyedChildren.get(newWidget.key) ?? null;
+        if (
+          keyedChild != null &&
+          Widget.canUpdate(keyedChild.widget, newWidget)
+        ) {
+          matchedChild = keyedChild;
+          oldKeyedChildren.delete(newWidget.key);
+        }
+      } else {
+        while (oldUnkeyedIndex < oldUnkeyedChildren.length) {
+          const candidate = oldUnkeyedChildren[oldUnkeyedIndex++];
+          if (candidate.parent !== this) continue;
+          if (Widget.canUpdate(candidate.widget, newWidget)) {
+            matchedChild = candidate;
+            break;
+          }
+          this.deactivateChild(candidate);
+        }
       }
 
-      return this.updateChild(matchedChild, newWidget);
-    });
+      newChildren[newTop] = this.updateChild(matchedChild, newWidget)!;
+      newTop++;
+    }
 
-    oldChildren.forEach((oldChild, i) => {
-      if (updatedChildIndexes.includes(i)) return;
-      this.updateChild(oldChild, null);
-    });
+    while (oldUnkeyedIndex < oldUnkeyedChildren.length) {
+      const oldChild = oldUnkeyedChildren[oldUnkeyedIndex++];
+      if (oldChild.parent !== this) continue;
+      this.deactivateChild(oldChild);
+    }
 
-    this.children = newChildren as Element[];
+    for (const oldChild of oldKeyedChildren.values()) {
+      if (oldChild.parent !== this) continue;
+      this.deactivateChild(oldChild);
+    }
+
+    this.children = newChildren;
   }
 
   performRebuild(): void {
@@ -97,7 +160,7 @@ class RenderObjectElement extends Element {
     super.detachRenderObject();
     this._renderObject.markNeedsParentLayout();
     this._renderObject.renderOwner.disposeRenderObject(this._renderObject);
-    this._renderObject.parent = undefined;
+    this._renderObject.detach();
   }
 
   private attachSelfRenderObject() {
@@ -113,7 +176,9 @@ class RenderObjectElement extends Element {
   }
 
   forgetChild(child: Element) {
-    this.children = this.children.filter(current => current !== child);
+    const index = this.children.indexOf(child);
+    if (index === -1) return;
+    this.children.splice(index, 1);
   }
 
   private ancestorRenderObjectElement!: RenderObjectElement | null;
