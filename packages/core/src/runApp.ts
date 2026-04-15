@@ -11,12 +11,17 @@ import {
 import { HitTestDispatcher } from "./hit-test/HitTestDispatcher";
 import { RenderContext } from "./framework/renderer/renderer";
 import { Constraints } from "./type";
+import { PerformanceTracer } from "./framework/performance-tracing";
 
 type AppRunnerProps = {
   document?: Document;
   window?: Window;
   view: SVGSVGElement | HTMLCanvasElement;
   ssrSize?: { width: number; height: number };
+};
+
+export type RunAppOptions = {
+  performanceTracing?: boolean;
 };
 
 export class AppRunner {
@@ -26,6 +31,8 @@ export class AppRunner {
   private renderPipeline: RenderPipeline;
   private scheduler: Scheduler;
   private rendererType: "canvas" | "svg";
+  private performanceTracer = new PerformanceTracer();
+  private performanceTracingEnabled = false;
 
   constructor({
     view,
@@ -53,45 +60,55 @@ export class AppRunner {
       onNeedVisualUpdate: () => this.scheduler.ensureVisualUpdate(),
       renderContext: this.renderContext,
       hitTestDispatcher: new HitTestDispatcher(),
+      performanceTracer: this.performanceTracer,
     }).get(this.rendererType)!;
 
-    this.scheduler.addPersistenceCallbacks(() => this.buildOwner.flushBuild());
     this.scheduler.addPersistenceCallbacks(() =>
-      this.renderPipeline.drawFrame(),
+      this.trace("flushBuild", () => this.buildOwner.flushBuild()),
+    );
+    this.scheduler.addPersistenceCallbacks(() =>
+      this.trace("drawFrame", () => this.renderPipeline.drawFrame()),
     );
   }
   private didRun = false;
 
   private widget!: Widget;
-  runApp(widget: Widget): string {
-    this.widget = widget;
-    if (
-      this.renderContext.viewSize == null ||
-      this.renderContext.viewSize.width === 0 ||
-      this.renderContext.viewSize.height === 0
-    )
-      return "";
-
-    if (this.root) {
-      this.root.unmount();
-      this.root = null as unknown as RenderObjectElement;
+  runApp(widget: Widget, options?: RunAppOptions): string {
+    if (options?.performanceTracing != null) {
+      this.performanceTracingEnabled = options.performanceTracing;
+      this.performanceTracer.setEnabled(this.performanceTracingEnabled);
     }
 
-    this.root = new RenderObjectToWidgetAdapter({
-      app: widget,
-      buildOwner: this.buildOwner,
-      renderPipeline: this.renderPipeline,
-      scheduler: this.scheduler,
-    }).createElement();
-    this.root.mount(undefined);
-    this.root.renderObject.constraints = Constraints.tight(
-      this.renderContext.viewSize,
-    );
+    return this.trace("runApp", () => {
+      this.widget = widget;
+      if (
+        this.renderContext.viewSize == null ||
+        this.renderContext.viewSize.width === 0 ||
+        this.renderContext.viewSize.height === 0
+      )
+        return "";
 
-    this.didRun = true;
-    this.draw();
+      if (this.root) {
+        this.root.unmount();
+        this.root = null as unknown as RenderObjectElement;
+      }
 
-    return this.renderContext.view.innerHTML;
+      this.root = new RenderObjectToWidgetAdapter({
+        app: widget,
+        buildOwner: this.buildOwner,
+        renderPipeline: this.renderPipeline,
+        scheduler: this.scheduler,
+      }).createElement();
+      this.trace("mount", () => this.root.mount(undefined));
+      this.root.renderObject.constraints = Constraints.tight(
+        this.renderContext.viewSize,
+      );
+
+      this.didRun = true;
+      this.draw();
+
+      return this.renderContext.view.innerHTML;
+    });
   }
 
   onMount({ resizeTarget }: { resizeTarget?: HTMLElement }) {
@@ -107,8 +124,10 @@ export class AppRunner {
   };
 
   draw() {
-    this.renderPipeline.reinitializeFrame();
-    this.scheduler.flushPostCallbacks();
+    this.trace("draw", () => {
+      this.renderPipeline.reinitializeFrame();
+      this.scheduler.flushPostCallbacks();
+    });
   }
 
   dispose() {
@@ -117,5 +136,9 @@ export class AppRunner {
       this.root = null as unknown as RenderObjectElement;
     }
     this.renderContext.dispose();
+  }
+
+  private trace<T>(name: string, fn: () => T): T {
+    return this.performanceTracer.measure(name, fn);
   }
 }

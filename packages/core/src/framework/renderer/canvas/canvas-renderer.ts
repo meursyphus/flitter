@@ -7,20 +7,26 @@ import { SceneBuilder } from "./layer";
 
 export class CanvasRenderPipeline extends RenderPipeline {
   override drawFrame(): void {
-    this.flushLayout();
+    this.trace("layout", () => this.flushLayout());
     this.flushPaintTransformUpdate();
     this.recalculateZOrder();
-    this.flushPaint();
-    this.#compositeFrame();
+    this.trace("paint", () => {
+      this.flushPaint();
+      this.#compositeFrame();
+    });
   }
 
   override reinitializeFrame(): void {
-    this.renderView.layout(Constraints.tight(this.renderContext.viewSize));
+    this.trace("layout", () =>
+      this.renderView.layout(Constraints.tight(this.renderContext.viewSize)),
+    );
     this.renderView.updatePaintTransform();
     this.notifyZOrderChanged();
     this.recalculateZOrder();
-    CanvasPaintingContext.repaintCompositedChild(this.renderView);
-    this.#compositeFrame();
+    this.trace("paint", () => {
+      CanvasPaintingContext.repaintCompositedChild(this.renderView);
+      this.#compositeFrame();
+    });
   }
 
   override flushPaint(): void {

@@ -4,6 +4,7 @@ import type { HitTestDispatcher } from "../../hit-test/HitTestDispatcher";
 import { type Matrix4, type Offset, Size } from "../../type";
 import type { RenderZIndex } from "../../component/base/BaseZIndex";
 import type { RenderGestureDetector } from "../../component/base/BaseGestureDetector";
+import type { PerformanceTracer } from "../performance-tracing";
 
 export class RenderContext {
   document: Document;
@@ -93,6 +94,7 @@ export abstract class RenderPipeline {
   hitTestDispatcher: HitTestDispatcher;
   readonly renderContext: RenderContext;
   private onNeedVisualUpdate: () => void;
+  protected performanceTracer: PerformanceTracer;
   needsPaintRenderObjects: RenderObject[] = [];
   needsLayoutRenderObjects: RenderObject[] = [];
   needsPaintTransformUpdateRenderObjects: RenderObject[] = [];
@@ -104,19 +106,26 @@ export abstract class RenderPipeline {
     onNeedVisualUpdate,
     renderContext,
     hitTestDispatcher,
+    performanceTracer,
   }: {
     onNeedVisualUpdate: () => void;
     renderContext: RenderContext;
     hitTestDispatcher: HitTestDispatcher;
+    performanceTracer: PerformanceTracer;
   }) {
     this.onNeedVisualUpdate = onNeedVisualUpdate;
     this.renderContext = renderContext;
     this.hitTestDispatcher = hitTestDispatcher;
+    this.performanceTracer = performanceTracer;
     this.hitTestDispatcher.init({ renderContext: this.renderContext });
   }
 
   requestVisualUpdate() {
     this.onNeedVisualUpdate();
+  }
+
+  protected trace<T>(name: string, fn: () => T): T {
+    return this.performanceTracer.measure(name, fn);
   }
 
   protected flushLayout() {

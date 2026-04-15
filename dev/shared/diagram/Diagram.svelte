@@ -7,9 +7,15 @@
 
 	export let project: Project;
 	export let subscribe: Subscribe = () => () => {};
+	export let performanceTracing = false;
 </script>
 
-<Widget widget={Diagram({ project, subscribe })} width="100%" height="100%" />
+<Widget
+	widget={Diagram({ project, subscribe })}
+	width="100%"
+	height="100%"
+	performanceTracing={performanceTracing}
+/>
 
 <style>
 	:global(svg text) {

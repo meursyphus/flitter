@@ -19,7 +19,7 @@
 
 <div class="diagram-wrapper">
 	{#if show}
-		<Diagram {project} />
+		<Diagram {project} performanceTracing={true} />
 	{/if}
 </div>
 
