@@ -7,6 +7,7 @@ import { SceneBuilder } from "./layer";
 export class CanvasRenderPipeline extends RenderPipeline {
   override drawFrame(): void {
     this.trace("layout", () => this.flushLayout());
+    this.trace("compositingBits", () => this.flushCompositingBits());
     this.flushPaintTransformUpdate();
     this.recalculateZOrder();
     this.trace("paint", () => {
@@ -19,6 +20,7 @@ export class CanvasRenderPipeline extends RenderPipeline {
     this.trace("layout", () =>
       this.renderView.layout(Constraints.tight(this.renderContext.viewSize)),
     );
+    this.trace("compositingBits", () => this.flushCompositingBits());
     this.renderView.updatePaintTransform();
     this.notifyZOrderChanged();
     this.recalculateZOrder();
@@ -36,6 +38,13 @@ export class CanvasRenderPipeline extends RenderPipeline {
       .sort((a, b) => b.depth - a.depth)
       .forEach(node => {
         if (!node.needsPaint && !node.needsCompositedLayerUpdate) {
+          return;
+        }
+
+        if (node.canvasPainter.layer == null) {
+          if (node.needsPaint && node.canvasPainter.isRepaintBoundary) {
+            CanvasPaintingContext.repaintCompositedChild(node);
+          }
           return;
         }
 
@@ -67,6 +76,11 @@ export class CanvasRenderPipeline extends RenderPipeline {
         this.requestVisualUpdate();
       }
     }
+  }
+
+  override markNeedsCompositingBitsUpdate(renderObject: RenderObject): void {
+    this.needsCompositingBitsUpdateRenderObjects.push(renderObject);
+    this.requestVisualUpdate();
   }
 
   override markNeedsCompositedLayerUpdate(renderObject: RenderObject): void {

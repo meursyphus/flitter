@@ -95,6 +95,7 @@ export abstract class RenderPipeline {
   readonly renderContext: RenderContext;
   private onNeedVisualUpdate: () => void;
   protected performanceTracer: PerformanceTracer;
+  needsCompositingBitsUpdateRenderObjects: RenderObject[] = [];
   needsPaintRenderObjects: RenderObject[] = [];
   needsLayoutRenderObjects: RenderObject[] = [];
   needsPaintTransformUpdateRenderObjects: RenderObject[] = [];
@@ -137,6 +138,18 @@ export abstract class RenderPipeline {
       .forEach(renderObject => {
         if (!renderObject.needsLayout) return;
         renderObject.layoutWithoutResize();
+      });
+  }
+
+  protected flushCompositingBits() {
+    const dirties = this.needsCompositingBitsUpdateRenderObjects;
+    this.needsCompositingBitsUpdateRenderObjects = [];
+
+    dirties
+      .sort((a, b) => a.depth - b.depth)
+      .forEach(renderObject => {
+        if (!renderObject.needsCompositingBitsUpdate) return;
+        renderObject.updateCompositingBits();
       });
   }
 
@@ -188,6 +201,7 @@ export abstract class RenderPipeline {
   }
   abstract disposeRenderObject(renderObject: RenderObject): void;
   abstract markNeedsPaint(renderObject: RenderObject): void;
+  abstract markNeedsCompositingBitsUpdate(renderObject: RenderObject): void;
   abstract markNeedsCompositedLayerUpdate(renderObject: RenderObject): void;
   abstract markNeedsPaintTransformUpdate(renderObject: RenderObject): void;
   abstract didChangePaintTransform(renderObject: RenderObject): void;

@@ -158,6 +158,7 @@ class RenderObjectElement extends Element {
 
   override detachRenderObject(): void {
     super.detachRenderObject();
+    this._renderObject.parent?.markNeedsCompositingBitsUpdate();
     this._renderObject.markNeedsParentLayout();
     this._renderObject.renderOwner.disposeRenderObject(this._renderObject);
     this._renderObject.detach();
@@ -169,6 +170,7 @@ class RenderObjectElement extends Element {
     if (ancestorRenderObject) {
       this.renderObject.parent = ancestorRenderObject;
       this.renderObject.renderOwner = ancestorRenderObject.renderOwner;
+      ancestorRenderObject.markNeedsCompositingBitsUpdate();
     } else {
       this.renderObject.parent = undefined;
     }

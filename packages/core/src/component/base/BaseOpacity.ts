@@ -1,9 +1,10 @@
-import type { Offset } from "../../type";
+import { Offset } from "../../type";
 import {
   SvgPainter,
   CanvasPainter,
   type CanvasPaintingContext,
 } from "../../framework";
+import { OpacityLayer } from "../../framework/renderer/canvas/layer";
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
 import { assert } from "../../utils";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
@@ -37,18 +38,42 @@ class Opacity extends SingleChildRenderObjectWidget {
 
 class RenderOpacity extends SingleChildRenderObject {
   _opacityProp!: number;
+  _alpha!: number;
   get opacityProp(): number {
     return this._opacityProp;
   }
   set opacityProp(value: number) {
     assert(value >= 0 && value <= 1.0);
+    if (this._opacityProp === value) return;
+    const didNeedCompositing = this.alwaysNeedsCompositing;
     this._opacityProp = value;
+    this._alpha = Math.round(value * 255);
+    if (didNeedCompositing !== this.alwaysNeedsCompositing) {
+      this.markNeedsCompositingBitsUpdate();
+    }
+    if (this.alwaysNeedsCompositing) {
+      this.markNeedsCompositedLayerUpdate();
+      return;
+    }
     this.markNeedsPaint();
   }
 
   constructor({ opacity }: { opacity: number }) {
     super({ isPainter: false });
     this._opacityProp = opacity;
+    this._alpha = Math.round(opacity * 255);
+  }
+
+  get alpha(): number {
+    return this._alpha;
+  }
+
+  protected override get alwaysNeedsCompositing(): boolean {
+    return this.child != null && this._alpha > 0 && this._alpha < 255;
+  }
+
+  get usesCompositedOpacityLayer(): boolean {
+    return this.alwaysNeedsCompositing;
   }
 
   protected override preformLayout(): void {
@@ -80,9 +105,33 @@ class CanvasPainterOpacity extends CanvasPainter {
     return (this.renderObject as RenderOpacity).opacityProp;
   }
 
+  get alpha() {
+    return (this.renderObject as RenderOpacity).alpha;
+  }
+
+  override get isRepaintBoundary() {
+    return (this.renderObject as RenderOpacity).usesCompositedOpacityLayer;
+  }
+
+  override updateCompositedLayer(oldLayer: OpacityLayer | null) {
+    const layer =
+      oldLayer ?? new OpacityLayer({ offset: Offset.Constants.zero, opacity: 1 });
+    layer.offset = this.compositedOffset;
+    layer.opacity = this.opacity;
+    return layer;
+  }
+
   override performPaint(context: CanvasPaintingContext, offset: Offset) {
+    if (this.renderObject.children.length === 0 || this.alpha === 0) {
+      return;
+    }
+
+    if (this.alpha === 255) {
+      this.defaultPaint(context, offset);
+      return;
+    }
+
     context.canvas.save();
-    context.canvas.globalAlpha *= this.opacity;
     this.defaultPaint(context, offset);
     context.canvas.restore();
   }

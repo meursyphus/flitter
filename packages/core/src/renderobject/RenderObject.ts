@@ -17,6 +17,8 @@ export class RenderObject {
   paintTransform: Matrix4 = Matrix4.Constants.identity;
   parent?: RenderObject;
   needsPaint = true;
+  needsCompositing = false;
+  needsCompositingBitsUpdate = false;
   needsCompositedLayerUpdate = false;
   needsLayout = true;
   needsPaintTransformUpdate = true;
@@ -133,6 +135,7 @@ export class RenderObject {
     this.ownerElement = ownerElement;
     this.depth = ownerElement.depth;
     this.relayoutBoundary = null;
+    this.markNeedsCompositingBitsUpdate();
     this.markNeedsPaintTransformUpdate();
     this.markNeedsUpdateZOrder();
   }
@@ -171,6 +174,10 @@ export class RenderObject {
   }
 
   protected get sizedByParent(): boolean {
+    return false;
+  }
+
+  protected get alwaysNeedsCompositing(): boolean {
     return false;
   }
 
@@ -262,6 +269,46 @@ export class RenderObject {
 
   markNeedsCompositedLayerUpdate() {
     this.renderOwner.markNeedsCompositedLayerUpdate(this);
+  }
+
+  markNeedsCompositingBitsUpdate() {
+    if (this.needsCompositingBitsUpdate) return;
+    this.needsCompositingBitsUpdate = true;
+
+    const parent = this.parent;
+    if (parent != null) {
+      if (parent.needsCompositingBitsUpdate) {
+        return;
+      }
+
+      if (!this.canvasPainter.isRepaintBoundary && !parent.canvasPainter.isRepaintBoundary) {
+        parent.markNeedsCompositingBitsUpdate();
+        return;
+      }
+    }
+
+    this.renderOwner.markNeedsCompositingBitsUpdate(this);
+  }
+
+  updateCompositingBits() {
+    if (!this.needsCompositingBitsUpdate) return;
+
+    const oldNeedsCompositing = this.needsCompositing;
+    let nextNeedsCompositing = this.alwaysNeedsCompositing;
+
+    this.visitChildren(child => {
+      child.updateCompositingBits();
+      if (child.needsCompositing) {
+        nextNeedsCompositing = true;
+      }
+    });
+
+    this.needsCompositing = nextNeedsCompositing;
+    this.needsCompositingBitsUpdate = false;
+
+    if (oldNeedsCompositing !== nextNeedsCompositing) {
+      this.markNeedsPaint();
+    }
   }
 
   localToGlobal(additionalOffset: Offset = Offset.Constants.zero) {
