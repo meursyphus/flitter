@@ -1,6 +1,8 @@
 import type { Offset, Matrix4, Rect } from "../../../type";
+import type { Path } from "../../../type/_types/_path";
 import type { CanvasRenderPipeline } from "./canvas-renderer";
 export abstract class Layer {
+  parent: ContainerLayer | null = null;
   attached: boolean = false;
   owner!: CanvasRenderPipeline;
 
@@ -8,6 +10,15 @@ export abstract class Layer {
     this.attached = true;
     this.owner = owner;
   }
+
+  detach() {
+    this.attached = false;
+  }
+
+  remove() {
+    this.parent?.removeChild(this);
+  }
+
   abstract addToScene(builder: SceneBuilder): void;
 }
 
@@ -29,6 +40,21 @@ export class PictureLayer extends Layer {
 
 export class ContainerLayer extends Layer {
   children: Layer[] = [];
+
+  override attach(owner: CanvasRenderPipeline) {
+    super.attach(owner);
+    this.visitChildren(child => {
+      child.attach(owner);
+    });
+  }
+
+  override detach() {
+    this.visitChildren(child => {
+      child.detach();
+    });
+    super.detach();
+  }
+
   override addToScene(builder: SceneBuilder) {
     this.visitChildren(layer => {
       layer.addToScene(builder);
@@ -41,6 +67,10 @@ export class ContainerLayer extends Layer {
     }
   }
   removeAllChildren() {
+    this.children.forEach(child => {
+      child.parent = null;
+      child.detach();
+    });
     this.children = [];
   }
 
@@ -49,39 +79,244 @@ export class ContainerLayer extends Layer {
   }
 
   append(child: Layer) {
+    child.remove();
     this.children.push(child);
-    child.attach(this.owner);
+    child.parent = this;
+    if (this.attached) {
+      child.attach(this.owner);
+    }
+  }
+
+  removeChild(child: Layer) {
+    const index = this.children.indexOf(child);
+    if (index === -1) return;
+    this.children.splice(index, 1);
+    child.parent = null;
+    child.detach();
   }
 }
 
 export class OffsetLayer extends ContainerLayer {
-  offset!: Offset;
+  offset: Offset;
+
+  constructor(offset: Offset) {
+    super();
+    this.offset = offset;
+  }
+
+  override addToScene(builder: SceneBuilder) {
+    builder.pushOffset(this.offset);
+    super.addToScene(builder);
+    builder.pop();
+  }
 }
 export class TransformLayer extends OffsetLayer {
-  transform!: Matrix4;
+  transform: Matrix4;
+
+  constructor({
+    offset,
+    transform,
+  }: {
+    offset: Offset;
+    transform: Matrix4;
+  }) {
+    super(offset);
+    this.transform = transform;
+  }
+
+  override addToScene(builder: SceneBuilder) {
+    builder.pushTransform(this.transform, this.offset);
+    this.visitChildren(layer => {
+      layer.addToScene(builder);
+    });
+    builder.pop();
+  }
+}
+
+export class OpacityLayer extends OffsetLayer {
+  opacity: number;
+
+  constructor({
+    offset,
+    opacity,
+  }: {
+    offset: Offset;
+    opacity: number;
+  }) {
+    super(offset);
+    this.opacity = opacity;
+  }
+
+  override addToScene(builder: SceneBuilder) {
+    builder.pushOpacity(this.opacity, this.offset);
+    this.visitChildren(layer => {
+      layer.addToScene(builder);
+    });
+    builder.pop();
+  }
+}
+
+export class ClipPathLayer extends OffsetLayer {
+  clipPath: Path;
+
+  constructor({
+    offset,
+    clipPath,
+  }: {
+    offset: Offset;
+    clipPath: Path;
+  }) {
+    super(offset);
+    this.clipPath = clipPath;
+  }
+
+  override addToScene(builder: SceneBuilder) {
+    builder.pushClipPath(this.clipPath, this.offset);
+    this.visitChildren(layer => {
+      layer.addToScene(builder);
+    });
+    builder.pop();
+  }
+}
+
+export class ClipRectLayer extends OffsetLayer {
+  clipRect: Rect;
+
+  constructor({
+    offset,
+    clipRect,
+  }: {
+    offset: Offset;
+    clipRect: Rect;
+  }) {
+    super(offset);
+    this.clipRect = clipRect;
+  }
+
+  override addToScene(builder: SceneBuilder) {
+    builder.pushClipRect(this.clipRect, this.offset);
+    this.visitChildren(layer => {
+      layer.addToScene(builder);
+    });
+    builder.pop();
+  }
 }
 
 export class SceneBuilder {
-  #pictures: { x: number; y: number; picture: Picture }[] = [];
+  #commands: (
+    | { type: "save" }
+    | { type: "restore" }
+    | { type: "translate"; offset: Offset }
+    | { type: "transform"; offset: Offset; transform: Matrix4 }
+    | { type: "opacity"; opacity: number; offset: Offset }
+    | { type: "clipPath"; clipPath: Path; offset: Offset }
+    | { type: "clipRect"; clipRect: Rect; offset: Offset }
+    | { type: "picture"; x: number; y: number; picture: Picture }
+  )[] = [];
 
   render(ctx: CanvasRenderingContext2D) {
-    /**
-     * Vertical layering not yet considered.
-     * Addition required!
-     */
-    for (const { x, y, picture } of this.#pictures) {
-      ctx.drawImage(
-        picture.toImage(),
-        x,
-        y,
-        picture.size.width,
-        picture.size.height,
-      );
+    for (const command of this.#commands) {
+      switch (command.type) {
+        case "save":
+          ctx.save();
+          break;
+        case "restore":
+          ctx.restore();
+          break;
+        case "translate":
+          ctx.translate(command.offset.x, command.offset.y);
+          break;
+        case "transform": {
+          ctx.translate(command.offset.x, command.offset.y);
+          const arr = command.transform._m4storage;
+          ctx.transform(arr[0], arr[1], arr[4], arr[5], arr[12], arr[13]);
+          break;
+        }
+        case "opacity":
+          ctx.translate(command.offset.x, command.offset.y);
+          ctx.globalAlpha *= command.opacity;
+          break;
+        case "clipPath":
+          ctx.translate(command.offset.x, command.offset.y);
+          ctx.clip(command.clipPath.toCanvasPath());
+          break;
+        case "clipRect":
+          ctx.translate(command.offset.x, command.offset.y);
+          ctx.beginPath();
+          ctx.rect(
+            command.clipRect.left,
+            command.clipRect.top,
+            command.clipRect.width,
+            command.clipRect.height,
+          );
+          ctx.clip();
+          break;
+        case "picture":
+          ctx.drawImage(
+            command.picture.toImage(),
+            command.x,
+            command.y,
+            command.picture.size.width,
+            command.picture.size.height,
+          );
+          break;
+      }
     }
   }
 
   addPicture(props: { x: number; y: number; picture: Picture }) {
-    this.#pictures.push(props);
+    this.#commands.push({
+      type: "picture",
+      ...props,
+    });
+  }
+
+  pushOffset(offset: Offset) {
+    this.#commands.push({ type: "save" });
+    this.#commands.push({
+      type: "translate",
+      offset,
+    });
+  }
+
+  pushTransform(transform: Matrix4, offset: Offset) {
+    this.#commands.push({ type: "save" });
+    this.#commands.push({
+      type: "transform",
+      offset,
+      transform,
+    });
+  }
+
+  pushOpacity(opacity: number, offset: Offset) {
+    this.#commands.push({ type: "save" });
+    this.#commands.push({
+      type: "opacity",
+      opacity,
+      offset,
+    });
+  }
+
+  pushClipPath(clipPath: Path, offset: Offset) {
+    this.#commands.push({ type: "save" });
+    this.#commands.push({
+      type: "clipPath",
+      clipPath,
+      offset,
+    });
+  }
+
+  pushClipRect(clipRect: Rect, offset: Offset) {
+    this.#commands.push({ type: "save" });
+    this.#commands.push({
+      type: "clipRect",
+      clipRect,
+      offset,
+    });
+  }
+
+  pop() {
+    this.#commands.push({ type: "restore" });
   }
 }
 

@@ -17,6 +17,7 @@ export class RenderObject {
   paintTransform: Matrix4 = Matrix4.Constants.identity;
   parent?: RenderObject;
   needsPaint = true;
+  needsCompositedLayerUpdate = false;
   needsLayout = true;
   needsPaintTransformUpdate = true;
   depth = 0;
@@ -188,6 +189,10 @@ export class RenderObject {
 
   markNeedsPaint() {
     this.renderOwner.markNeedsPaint(this);
+  }
+
+  markNeedsCompositedLayerUpdate() {
+    this.renderOwner.markNeedsCompositedLayerUpdate(this);
   }
 
   localToGlobal(additionalOffset: Offset = Offset.Constants.zero) {

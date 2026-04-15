@@ -188,6 +188,7 @@ export abstract class RenderPipeline {
   }
   abstract disposeRenderObject(renderObject: RenderObject): void;
   abstract markNeedsPaint(renderObject: RenderObject): void;
+  abstract markNeedsCompositedLayerUpdate(renderObject: RenderObject): void;
   abstract markNeedsPaintTransformUpdate(renderObject: RenderObject): void;
   abstract didChangePaintTransform(renderObject: RenderObject): void;
 }

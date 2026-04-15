@@ -78,10 +78,14 @@ export class SvgRenderPipeline extends RenderPipeline {
     this.requestVisualUpdate();
   }
 
+  override markNeedsCompositedLayerUpdate(renderObject: RenderObject): void {
+    this.markNeedsPaint(renderObject);
+  }
+
   override markNeedsPaintTransformUpdate(renderObject: RenderObject): void {
     renderObject.needsPaintTransformUpdate = true;
     this.needsPaintTransformUpdateRenderObjects.push(renderObject);
-    this.markNeedsPaint(renderObject);
+    this.requestVisualUpdate();
   }
 
   override didChangePaintTransform(renderObject: RenderObject): void {
