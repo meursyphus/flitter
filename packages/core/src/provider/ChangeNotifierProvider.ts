@@ -38,10 +38,13 @@ class ChangeNotifierProvider extends StatefulWidget {
 class ChangeNotifierProviderState extends State<ChangeNotifierProvider> {
   value!: ChangeNotifier;
   private listener!: () => void;
+  private version = 0;
   initState(_: BuildContext): void {
     this.value = this.widget.create();
     this.listener = () => {
-      this.setState();
+      this.setState(() => {
+        this.version += 1;
+      });
     };
     this.value.addListener(this.listener);
   }
@@ -63,6 +66,7 @@ class ChangeNotifierProviderState extends State<ChangeNotifierProvider> {
       child: this.widget.child,
       value: this.value,
       providerKey: this.widget.providerKey,
+      notifyToken: this.version,
     });
   }
 }
