@@ -5,17 +5,19 @@ import { RenderPipeline } from "../renderer";
 
 export class SvgRenderPipeline extends RenderPipeline {
   override drawFrame() {
-    this.flushLayout();
+    this.trace("layout", () => this.flushLayout());
     this.flushPaintTransformUpdate();
-    this.flushPaint();
+    this.trace("paint", () => this.flushPaint());
     const painterRenderObjects = this.recalculateZOrder();
     this.#rearrangeDomOrder(painterRenderObjects);
   }
 
   override reinitializeFrame() {
-    this.renderView.layout(Constraints.tight(this.renderContext.viewSize));
+    this.trace("layout", () =>
+      this.renderView.layout(Constraints.tight(this.renderContext.viewSize)),
+    );
     this.renderView.updatePaintTransform();
-    this.renderView.svgPainter.paint(this.paintContext);
+    this.trace("paint", () => this.renderView.svgPainter.paint(this.paintContext));
     const painterRenderObjects = this.recalculateZOrder();
     this.#rearrangeDomOrder(painterRenderObjects);
   }

@@ -1,10 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { formatDate } from '../src/lib/formatDate';
-import { chromium, test } from '@playwright/test';
+import { chromium, expect, test, type Page } from '@playwright/test';
 import ChromeTraceAnalyzer from '../src/lib/ChromeTraceAnalyzer';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+
+const waitForFlitterMeasures = async (page: Page, names: string[]) => {
+	await page.waitForFunction(
+		(requiredNames) =>
+			requiredNames.every((name) => window.performance.getEntriesByName(name).length > 0),
+		names
+	);
+};
 
 test.describe('Performance Tracking', () => {
 	test('Capture performance traces ans save json file on diagram is rendered', async ({
@@ -18,7 +26,13 @@ test.describe('Performance Tracking', () => {
 
 		await page.evaluate(() => window.performance.mark('Perf:Started'));
 		await page.click('button');
-		await page.waitForSelector('svg');
+		await waitForFlitterMeasures(page, [
+			'flitter:runApp',
+			'flitter:mount',
+			'flitter:draw',
+			'flitter:layout',
+			'flitter:paint'
+		]);
 		await page.evaluate(() => window.performance.mark('Perf:Ended'));
 		await page.evaluate(() => window.performance.measure('overall', 'Perf:Started', 'Perf:Ended'));
 
@@ -27,6 +41,7 @@ test.describe('Performance Tracking', () => {
 
 	test('Capture analyzed trace when diagram is rendered', async () => {
 		const COUNT = 10;
+		const metricNames = ['runApp', 'mount', 'draw', 'layout', 'paint'] as const;
 
 		const duration = {
 			timestamp: Date.now(),
@@ -43,9 +58,19 @@ test.describe('Performance Tracking', () => {
 			const page = await context.newPage();
 			await page.goto('http://localhost:4173/performance/diagram');
 			await browser.startTracing(page, {});
+			await page.evaluate(() => {
+				window.performance.clearMarks();
+				window.performance.clearMeasures();
+			});
 			await page.evaluate(() => window.performance.mark('Perf:Started'));
 			await page.click('button');
-			await page.waitForSelector('svg');
+			await waitForFlitterMeasures(page, [
+				'flitter:runApp',
+				'flitter:mount',
+				'flitter:draw',
+				'flitter:layout',
+				'flitter:paint'
+			]);
 			await page.evaluate(() => window.performance.mark('Perf:Ended'));
 			await page.evaluate(() =>
 				window.performance.measure('overall', 'Perf:Started', 'Perf:Ended')
@@ -55,12 +80,16 @@ test.describe('Performance Tracking', () => {
 			const jsonString = buffer.toString('utf8'); // buffer를 UTF-8 문자열로 변환
 			const trace = JSON.parse(jsonString); // 문자열을 JSON 객체로 파싱
 			const analyzer = new ChromeTraceAnalyzer(trace);
-			duration.runApp += analyzer.getDurationMs('runApp') / COUNT;
-			duration.mount += analyzer.getDurationMs('mount') / COUNT;
-			duration.draw += analyzer.getDurationMs('draw') / COUNT;
-			duration.layout += analyzer.getDurationMs('layout') / COUNT;
-			duration.paint += analyzer.getDurationMs('paint') / COUNT;
-			browser.close();
+
+			const metrics = Object.fromEntries(
+				metricNames.map((name) => [name, analyzer.getDurationMs(name)])
+			) as Record<(typeof metricNames)[number], number>;
+
+			for (const name of metricNames) {
+				expect(metrics[name]).toBeGreaterThan(0);
+				duration[name] += metrics[name] / COUNT;
+			}
+			await browser.close();
 		}
 
 		console.log('****Execution Time****');

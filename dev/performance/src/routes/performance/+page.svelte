@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { StackedBarChart, LineChart } from 'flitter-chart';
+	import { StackedBarChart, LineChart } from 'shared/chart';
 	import SvelteWidget from '@flitterjs/svelte';
 	import { formatDate } from '$lib/formatDate';
 
