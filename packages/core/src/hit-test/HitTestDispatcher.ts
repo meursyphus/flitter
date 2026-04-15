@@ -41,6 +41,13 @@ export class HitTestDispatcher {
 
   setRenderView(renderView: RenderObject) {
     this.#renderView = renderView;
+    this.#previousHits = new Set();
+    this.#previousCursorDetector = null;
+    this.#isMouseDown = false;
+    this.#activePointerHits = null;
+    this.#lastPressHits = null;
+    this.#lastHoverPosition = null;
+    this.#lastHoverHits = null;
   }
 
   #handleMouseDown = (e: Wrapped<MouseEvent>) => {
@@ -52,9 +59,11 @@ export class HitTestDispatcher {
   };
 
   #handleClick = (e: Wrapped<MouseEvent>) => {
-    const detectors = this.#lastPressHits ?? this.#performHitTest(e);
+    const detectors = this.#performHitTest(e);
+    const resolvedDetectors =
+      detectors.length > 0 ? detectors : (this.#lastPressHits ?? []);
     this.#lastPressHits = null;
-    this.#dispatchDetectors(detectors, e, "onClick");
+    this.#dispatchDetectors(resolvedDetectors, e, "onClick");
   };
 
   #previousHits: Set<RenderGestureDetector> = new Set();
@@ -119,11 +128,7 @@ export class HitTestDispatcher {
   };
 
   #handleMouseEnter = (_e: Wrapped<MouseEvent>) => {
-    const rect = this.#renderContext.view.getBoundingClientRect();
-    this.#rootPosition = new Offset({
-      x: rect.left,
-      y: rect.top,
-    });
+    this.#updateRootPosition();
     this.#lastHoverPosition = null;
     this.#lastHoverHits = null;
   };
@@ -150,14 +155,23 @@ export class HitTestDispatcher {
 
   #convertToLocalPosition(e: MouseEvent): Offset {
     if (this.#rootPosition == null) {
-      return new Offset({ x: 0, y: 0 });
+      this.#updateRootPosition();
     }
+    const rootPosition = this.#rootPosition!;
     const { translation, scale } = this.#renderContext.viewPort;
-    const domX = e.clientX - this.#rootPosition.x;
-    const domY = e.clientY - this.#rootPosition.y;
+    const domX = e.clientX - rootPosition.x;
+    const domY = e.clientY - rootPosition.y;
     return new Offset({
       x: domX / scale - translation.x,
       y: domY / scale - translation.y,
+    });
+  }
+
+  #updateRootPosition() {
+    const rect = this.#renderContext.view.getBoundingClientRect();
+    this.#rootPosition = new Offset({
+      x: rect.left,
+      y: rect.top,
     });
   }
 
