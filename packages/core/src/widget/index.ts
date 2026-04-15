@@ -2,6 +2,7 @@ import MultiChildRenderObjectWidget from "./MultiChildRenderObjectWidget";
 import SingleChildRenderObjectWidget from "./SingleChildRenderObjectWidget";
 import RenderObjectToWidgetAdapter from "./RenderObjectToWidgetAdapter";
 import RenderObjectWidget from "./RenderObjectWidget";
+import InheritedWidget from "./InheritedWidget";
 import Widget from "./Widget";
 import StatelessWidget from "./StatelessWidget";
 import StatefulWidget from "./StatefulWidget";
@@ -17,6 +18,7 @@ export {
   MultiChildRenderObjectWidget,
   SingleChildRenderObjectWidget,
   Widget,
+  InheritedWidget,
   RenderObjectToWidgetAdapter,
   RenderObjectWidget,
   Element,

@@ -2,7 +2,7 @@ import type Widget from "../widget/Widget";
 import Element from "./Element";
 
 class ComponentElement extends Element {
-  child!: Element;
+  child?: Element;
 
   declare widget: Widget;
   constructor(widget: Widget) {
@@ -12,7 +12,7 @@ class ComponentElement extends Element {
 
   override unmount(): void {
     super.unmount();
-    this.child.unmount();
+    this.child?.unmount();
   }
 
   override mount(newParent?: Element | undefined): void {
@@ -38,14 +38,27 @@ class ComponentElement extends Element {
     this.performRebuild();
   }
 
+  protected beforeBuild() {
+    this.unsubscribeFromInheritedWidgets();
+  }
+
   override performRebuild(): void {
+    this.beforeBuild();
     const built = this.build();
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.child = this.updateChild(this.child, built)!;
+    this.child = this.updateChild(this.child, built) ?? undefined;
   }
 
   override visitChildren(visitor: (child: Element) => void): void {
-    visitor(this.child);
+    if (this.child) {
+      visitor(this.child);
+    }
+  }
+
+  forgetChild(child: Element) {
+    if (this.child === child) {
+      this.child = undefined;
+    }
   }
 }
 

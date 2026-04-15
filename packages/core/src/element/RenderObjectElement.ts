@@ -36,18 +36,10 @@ class RenderObjectElement extends Element {
   override mount(newParent?: Element | undefined): void {
     super.mount(newParent);
     this._renderObject = this.createRenderObject();
-    this.ancestorRenderObjectElement = this.findAncestorRenderObjectElement();
-    const ancestorRenderObject = this.ancestorRenderObjectElement?.renderObject;
-    if (ancestorRenderObject) {
-      this.renderObject.parent = ancestorRenderObject;
-      this.renderObject.renderOwner = ancestorRenderObject.renderOwner;
-    }
-
+    this.attachSelfRenderObject();
     this.children = (this.widget as RenderObjectWidget).children.map(
       childWidget => this.inflateWidget(childWidget),
     );
-
-    this._renderObject.attach(this);
     this._renderObject.markNeedsParentLayout();
   }
 
@@ -93,6 +85,35 @@ class RenderObjectElement extends Element {
 
   visitChildren(visitor: (child: Element) => void): void {
     this.children.forEach(child => visitor(child));
+  }
+
+  override attachRenderObject(): void {
+    this.attachSelfRenderObject();
+    this._renderObject.markNeedsParentLayout();
+    super.attachRenderObject();
+  }
+
+  override detachRenderObject(): void {
+    super.detachRenderObject();
+    this._renderObject.markNeedsParentLayout();
+    this._renderObject.renderOwner.disposeRenderObject(this._renderObject);
+    this._renderObject.parent = undefined;
+  }
+
+  private attachSelfRenderObject() {
+    this.ancestorRenderObjectElement = this.findAncestorRenderObjectElement();
+    const ancestorRenderObject = this.ancestorRenderObjectElement?.renderObject;
+    if (ancestorRenderObject) {
+      this.renderObject.parent = ancestorRenderObject;
+      this.renderObject.renderOwner = ancestorRenderObject.renderOwner;
+    } else {
+      this.renderObject.parent = undefined;
+    }
+    this._renderObject.attach(this);
+  }
+
+  forgetChild(child: Element) {
+    this.children = this.children.filter(current => current !== child);
   }
 
   private ancestorRenderObjectElement!: RenderObjectElement | null;
