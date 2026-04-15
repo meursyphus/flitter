@@ -72,7 +72,7 @@ class RenderConstrainedBox extends SingleChildRenderObject {
     ) {
       return this.additionalConstraint.minHeight;
     }
-    const height = super.getIntrinsicHeight(width);
+    const height = super.computeIntrinsicHeight(width);
 
     if (!this.additionalConstraint.hasInfiniteHeight) {
       return this.additionalConstraint.constrainHeight(height);
@@ -88,7 +88,7 @@ class RenderConstrainedBox extends SingleChildRenderObject {
     ) {
       return this.additionalConstraint.minWidth;
     }
-    const width = super.getIntrinsicWidth(height);
+    const width = super.computeIntrinsicWidth(height);
     if (!this.additionalConstraint.hasInfiniteWidth) {
       return this.additionalConstraint.constrainWidth(width);
     }
