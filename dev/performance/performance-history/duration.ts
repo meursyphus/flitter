@@ -150,3 +150,13 @@ histories.push({
 	paint: 2.8495999999999997,
 	note: ''
 });
+histories.push({
+	timestamp: 1776260114307,
+	runApp: 25.626099999999997,
+	mount: 9.8765,
+	draw: 15.396699999999997,
+	layout: 9.113700000000001,
+	paint: 2.8064999999999998,
+	note:
+		'Issue #132: added dry layout/getDryLayout cache and sizedByParent/performResize, implemented dry layout for Padding/Align/ConstrainedBox/Flex, fixed Constraints.isTight, and removed hardcoded Tooltip type hashes in sync-bundled-types.'
+});

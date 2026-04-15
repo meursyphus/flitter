@@ -1,5 +1,5 @@
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
-import { Size, Offset, EdgeInsets } from "../../type";
+import { Size, Offset, EdgeInsets, Constraints } from "../../type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
 import type Flexible from "./BaseFlexible";
@@ -49,8 +49,17 @@ class RenderPadding extends SingleChildRenderObject {
   }
 
   protected preformLayout(): void {
-    if (this.child == null) return;
     const { top, left, right, bottom } = this.padding;
+    if (this.child == null) {
+      this.size = this.constraints.constrain(
+        new Size({
+          width: left + right,
+          height: top + bottom,
+        }),
+      );
+      return;
+    }
+
     const childConstraints = this.constraints.deflate(this.padding);
 
     this.child.layout(childConstraints);
@@ -64,6 +73,19 @@ class RenderPadding extends SingleChildRenderObject {
     );
 
     this.child.offset = new Offset({ x: left, y: top });
+  }
+
+  protected override computeDryLayout(constraints: Constraints) {
+    const { top, left, right, bottom } = this.padding;
+    const childSize =
+      this.child?.getDryLayout(constraints.deflate(this.padding)) ?? Size.zero;
+
+    return constraints.constrain(
+      new Size({
+        width: childSize.width + left + right,
+        height: childSize.height + top + bottom,
+      }),
+    );
   }
 
   getIntrinsicWidth(height: number): number {

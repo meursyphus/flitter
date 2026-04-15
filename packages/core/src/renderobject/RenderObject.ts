@@ -97,6 +97,7 @@ export class RenderObject {
     this._size = value;
   }
   parentUsesSize = false;
+  private dryLayoutCache = new Map<string, Size>();
 
   layout(
     constraint: Constraints,
@@ -108,6 +109,9 @@ export class RenderObject {
     }
     this.constraints = normalizedConstraints;
     this.parentUsesSize = parentUsesSize;
+    if (this.sizedByParent) {
+      this.performResize();
+    }
     this.preformLayout();
     this.needsLayout = false;
     this.markNeedsPaint();
@@ -131,6 +135,31 @@ export class RenderObject {
   getIntrinsicHeight(_width: number) {
     return 0;
   }
+
+  protected get sizedByParent(): boolean {
+    return false;
+  }
+
+  getDryLayout(constraint: Constraints) {
+    const normalizedConstraints = constraint.normalize();
+    const cacheKey = RenderObject.getDryLayoutCacheKey(normalizedConstraints);
+    const cachedSize = this.dryLayoutCache.get(cacheKey);
+    if (cachedSize != null) {
+      return cachedSize;
+    }
+
+    const size = this.computeDryLayout(normalizedConstraints);
+    this.dryLayoutCache.set(cacheKey, size);
+    return size;
+  }
+
+  protected computeDryLayout(constraints: Constraints): Size {
+    return constraints.constrain(Size.zero);
+  }
+
+  protected performResize(): void {
+    this.size = this.computeDryLayout(this.constraints);
+  }
   /*
    * Do not call this method directly. instead call layout
    */
@@ -148,6 +177,7 @@ export class RenderObject {
 
   protected markNeedsLayout() {
     this.needsLayout = true;
+    this.dryLayoutCache.clear();
     if (this.parentUsesSize && this.parent != null) {
       this.markNeedsParentLayout();
     } else {
@@ -208,7 +238,10 @@ export class RenderObject {
 
   hitTest(result: HitTestResult, position: Offset): boolean {
     if (this.size.contains(position)) {
-      if (this.hitTestChildren(result, position) || this.hitTestSelf(position)) {
+      if (
+        this.hitTestChildren(result, position) ||
+        this.hitTestSelf(position)
+      ) {
         result.add(new HitTestEntry(this));
         return true;
       }
@@ -236,6 +269,15 @@ export class RenderObject {
 
   #didChangePaintTransform(): void {
     this.renderOwner.didChangePaintTransform(this);
+  }
+
+  private static getDryLayoutCacheKey(constraints: Constraints) {
+    return [
+      constraints.minWidth,
+      constraints.maxWidth,
+      constraints.minHeight,
+      constraints.maxHeight,
+    ].join(":");
   }
 }
 
