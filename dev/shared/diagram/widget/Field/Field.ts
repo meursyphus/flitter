@@ -4,10 +4,10 @@ import {
 	State,
 	BuildContext,
 	GlobalKey,
-	Tooltip,
 	ToolTipPosition,
 	GestureDetector
 } from 'flitter-core';
+import Tooltip from 'flitter-core/component/Tooltip';
 import type { Field as FieldProps } from '../../type';
 import { classToFunction } from '../utils';
 import ChangedLayoutNotifier from '../ChangeNotifier/ChangedLayoutNotifier';

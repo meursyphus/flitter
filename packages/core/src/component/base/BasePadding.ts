@@ -88,11 +88,11 @@ class RenderPadding extends SingleChildRenderObject {
     );
   }
 
-  getIntrinsicWidth(height: number): number {
-    return super.getIntrinsicWidth(height) + this.padding.horizontal;
+  protected override computeIntrinsicWidth(height: number): number {
+    return super.computeIntrinsicWidth(height) + this.padding.horizontal;
   }
 
-  getIntrinsicHeight(width: number): number {
-    return super.getIntrinsicHeight(width) + this.padding.vertical;
+  protected override computeIntrinsicHeight(width: number): number {
+    return super.computeIntrinsicHeight(width) + this.padding.vertical;
   }
 }

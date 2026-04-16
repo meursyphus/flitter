@@ -114,23 +114,23 @@ export class RenderCustomPaint<
     return constraints.constrain(this.preferredSize);
   }
 
-  override getIntrinsicWidth(height: number): number {
+  protected override computeIntrinsicWidth(height: number): number {
     if (this.child == null) {
       return Number.isFinite(this.preferredSize.width)
         ? this.preferredSize.width
         : 0;
     }
-    return super.getIntrinsicWidth(height);
+    return super.computeIntrinsicWidth(height);
   }
 
-  override getIntrinsicHeight(width: number): number {
+  protected override computeIntrinsicHeight(width: number): number {
     if (this.child == null) {
       return Number.isFinite(this.preferredSize.height)
         ? this.preferredSize.height
         : 0;
     }
 
-    return super.getIntrinsicHeight(width);
+    return super.computeIntrinsicHeight(width);
   }
 
   protected override createSvgPainter() {

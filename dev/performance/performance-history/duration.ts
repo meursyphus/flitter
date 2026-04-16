@@ -161,3 +161,5 @@ histories.push({
 		'Issue #132: added dry layout/getDryLayout cache and sizedByParent/performResize, implemented dry layout for Padding/Align/ConstrainedBox/Flex, fixed Constraints.isTight, and removed hardcoded Tooltip type hashes in sync-bundled-types.'
 });
 histories.push({"timestamp":1776262912000,"runApp":26.824699999999993,"mount":10.8068,"draw":15.6527,"layout":9.165000000000001,"paint":2.8459,"note":"Issue #126 build phase optimization"});
+histories.push({"timestamp":1776295443943,"runApp":25.8947,"mount":10.187299999999999,"draw":15.370899999999999,"layout":9.5963,"paint":2.4985999999999997,"note":"Issue #125 relayout boundary follow-up"});
+histories.push({"timestamp":1776295997841,"runApp":26.3901,"mount":10.3033,"draw":15.738,"layout":9.6742,"paint":2.5785,"note":"Issue #127 and #141 compositing + tooltip import"});

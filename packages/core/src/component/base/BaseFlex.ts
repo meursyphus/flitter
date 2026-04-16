@@ -314,7 +314,7 @@ class RenderFlex extends MultiChildRenderObject {
     return offsetOnCrossAxis;
   }
 
-  override getIntrinsicHeight(width: number): number {
+  protected override computeIntrinsicHeight(width: number): number {
     const sum = (acc: number, value: number) => acc + value;
     const max = (acc: number, value: number) => Math.max(acc, value);
     const childIntrinsicHeights = this.children.map(child =>
@@ -325,7 +325,7 @@ class RenderFlex extends MultiChildRenderObject {
       : childIntrinsicHeights.reduce(sum, 0);
   }
 
-  override getIntrinsicWidth(height: number): number {
+  protected override computeIntrinsicWidth(height: number): number {
     const sum = (acc: number, value: number) => acc + value;
     const max = (acc: number, value: number) => Math.max(acc, value);
     const childIntrinsicWidths = this.children.map(child =>

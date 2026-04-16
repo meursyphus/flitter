@@ -6,6 +6,7 @@ import { RenderPipeline } from "../renderer";
 export class SvgRenderPipeline extends RenderPipeline {
   override drawFrame() {
     this.trace("layout", () => this.flushLayout());
+    this.trace("compositingBits", () => this.flushCompositingBits());
     this.flushPaintTransformUpdate();
     this.trace("paint", () => this.flushPaint());
     const painterRenderObjects = this.recalculateZOrder();
@@ -16,6 +17,7 @@ export class SvgRenderPipeline extends RenderPipeline {
     this.trace("layout", () =>
       this.renderView.layout(Constraints.tight(this.renderContext.viewSize)),
     );
+    this.trace("compositingBits", () => this.flushCompositingBits());
     this.renderView.updatePaintTransform();
     this.trace("paint", () => this.renderView.svgPainter.paint(this.paintContext));
     const painterRenderObjects = this.recalculateZOrder();
@@ -75,6 +77,11 @@ export class SvgRenderPipeline extends RenderPipeline {
   override markNeedsPaint(renderObject: RenderObject): void {
     renderObject.needsPaint = true;
     this.needsPaintRenderObjects.push(renderObject);
+    this.requestVisualUpdate();
+  }
+
+  override markNeedsCompositingBitsUpdate(renderObject: RenderObject): void {
+    this.needsCompositingBitsUpdateRenderObjects.push(renderObject);
     this.requestVisualUpdate();
   }
 

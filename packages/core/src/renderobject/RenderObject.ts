@@ -17,11 +17,14 @@ export class RenderObject {
   paintTransform: Matrix4 = Matrix4.Constants.identity;
   parent?: RenderObject;
   needsPaint = true;
+  needsCompositing = false;
+  needsCompositingBitsUpdate = false;
   needsCompositedLayerUpdate = false;
   needsLayout = true;
   needsPaintTransformUpdate = true;
   depth = 0;
   private relayoutBoundary: RenderObject | null = null;
+  private intrinsicCache = new Map<string, number>();
 
   /**
    * zOrder is used to order the render objects in the z axis
@@ -132,6 +135,7 @@ export class RenderObject {
     this.ownerElement = ownerElement;
     this.depth = ownerElement.depth;
     this.relayoutBoundary = null;
+    this.markNeedsCompositingBitsUpdate();
     this.markNeedsPaintTransformUpdate();
     this.markNeedsUpdateZOrder();
   }
@@ -145,29 +149,63 @@ export class RenderObject {
     this.renderOwner.disposeRenderObject(this);
   }
 
-  getIntrinsicWidth(_height: number) {
-    return 0;
+  getIntrinsicWidth(height: number) {
+    const cacheKey = `width:${height}`;
+    const cached = this.intrinsicCache.get(cacheKey);
+    if (cached != null) {
+      return cached;
+    }
+
+    const result = this.computeIntrinsicWidth(height);
+    this.intrinsicCache.set(cacheKey, result);
+    return result;
   }
 
-  getIntrinsicHeight(_width: number) {
-    return 0;
+  getIntrinsicHeight(width: number) {
+    const cacheKey = `height:${width}`;
+    const cached = this.intrinsicCache.get(cacheKey);
+    if (cached != null) {
+      return cached;
+    }
+
+    const result = this.computeIntrinsicHeight(width);
+    this.intrinsicCache.set(cacheKey, result);
+    return result;
   }
 
   protected get sizedByParent(): boolean {
     return false;
   }
 
+  protected get alwaysNeedsCompositing(): boolean {
+    return false;
+  }
+
   getDryLayout(constraint: Constraints) {
     const normalizedConstraints = constraint.normalize();
+    if (!this.needsLayout && this.constraints.equals(normalizedConstraints)) {
+      return this.size;
+    }
+
     const cacheKey = RenderObject.getDryLayoutCacheKey(normalizedConstraints);
     const cachedSize = this.dryLayoutCache.get(cacheKey);
     if (cachedSize != null) {
       return cachedSize;
     }
 
-    const size = this.computeDryLayout(normalizedConstraints);
+    const size = normalizedConstraints.constrain(
+      this.computeDryLayout(normalizedConstraints),
+    );
     this.dryLayoutCache.set(cacheKey, size);
     return size;
+  }
+
+  protected computeIntrinsicWidth(_height: number) {
+    return 0;
+  }
+
+  protected computeIntrinsicHeight(_width: number) {
+    return 0;
   }
 
   protected computeDryLayout(constraints: Constraints): Size {
@@ -204,10 +242,12 @@ export class RenderObject {
     if (this.needsLayout) return;
 
     this.needsLayout = true;
-    const hadCachedDryLayoutResult = this.dryLayoutCache.size > 0;
+    const hadCachedLayoutResult =
+      this.intrinsicCache.size > 0 || this.dryLayoutCache.size > 0;
+    this.intrinsicCache.clear();
     this.dryLayoutCache.clear();
 
-    if (hadCachedDryLayoutResult && this.parent != null) {
+    if (hadCachedLayoutResult && this.parent != null) {
       this.markNeedsParentLayout();
       return;
     }
@@ -229,6 +269,46 @@ export class RenderObject {
 
   markNeedsCompositedLayerUpdate() {
     this.renderOwner.markNeedsCompositedLayerUpdate(this);
+  }
+
+  markNeedsCompositingBitsUpdate() {
+    if (this.needsCompositingBitsUpdate) return;
+    this.needsCompositingBitsUpdate = true;
+
+    const parent = this.parent;
+    if (parent != null) {
+      if (parent.needsCompositingBitsUpdate) {
+        return;
+      }
+
+      if (!this.canvasPainter.isRepaintBoundary && !parent.canvasPainter.isRepaintBoundary) {
+        parent.markNeedsCompositingBitsUpdate();
+        return;
+      }
+    }
+
+    this.renderOwner.markNeedsCompositingBitsUpdate(this);
+  }
+
+  updateCompositingBits() {
+    if (!this.needsCompositingBitsUpdate) return;
+
+    const oldNeedsCompositing = this.needsCompositing;
+    let nextNeedsCompositing = this.alwaysNeedsCompositing;
+
+    this.visitChildren(child => {
+      child.updateCompositingBits();
+      if (child.needsCompositing) {
+        nextNeedsCompositing = true;
+      }
+    });
+
+    this.needsCompositing = nextNeedsCompositing;
+    this.needsCompositingBitsUpdate = false;
+
+    if (oldNeedsCompositing !== nextNeedsCompositing) {
+      this.markNeedsPaint();
+    }
   }
 
   localToGlobal(additionalOffset: Offset = Offset.Constants.zero) {

@@ -1,4 +1,4 @@
-import type { Offset } from "../../type";
+import { Offset } from "../../type";
 import {
   SvgPainter,
   CanvasPainter,
@@ -37,18 +37,26 @@ class Opacity extends SingleChildRenderObjectWidget {
 
 class RenderOpacity extends SingleChildRenderObject {
   _opacityProp!: number;
+  _alpha!: number;
   get opacityProp(): number {
     return this._opacityProp;
   }
   set opacityProp(value: number) {
     assert(value >= 0 && value <= 1.0);
+    if (this._opacityProp === value) return;
     this._opacityProp = value;
+    this._alpha = Math.round(value * 255);
     this.markNeedsPaint();
   }
 
   constructor({ opacity }: { opacity: number }) {
     super({ isPainter: false });
     this._opacityProp = opacity;
+    this._alpha = Math.round(opacity * 255);
+  }
+
+  get alpha(): number {
+    return this._alpha;
   }
 
   protected override preformLayout(): void {
@@ -80,7 +88,20 @@ class CanvasPainterOpacity extends CanvasPainter {
     return (this.renderObject as RenderOpacity).opacityProp;
   }
 
+  get alpha() {
+    return (this.renderObject as RenderOpacity).alpha;
+  }
+
   override performPaint(context: CanvasPaintingContext, offset: Offset) {
+    if (this.renderObject.children.length === 0 || this.alpha === 0) {
+      return;
+    }
+
+    if (this.alpha === 255) {
+      this.defaultPaint(context, offset);
+      return;
+    }
+
     context.canvas.save();
     context.canvas.globalAlpha *= this.opacity;
     this.defaultPaint(context, offset);

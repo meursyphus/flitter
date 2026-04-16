@@ -46,11 +46,11 @@ export class SingleChildRenderObject extends RenderObject {
     return child.hitTest(result, childPosition);
   }
 
-  override getIntrinsicWidth(height: number): number {
+  protected override computeIntrinsicWidth(height: number): number {
     return this.child?.getIntrinsicWidth(height) || 0;
   }
 
-  override getIntrinsicHeight(width: number): number {
+  protected override computeIntrinsicHeight(width: number): number {
     return this.child?.getIntrinsicHeight(width) || 0;
   }
 }
