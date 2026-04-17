@@ -1,13 +1,23 @@
-const KEY = "__flitterTextMeasureCache__";
+const CACHE_SYMBOL = Symbol.for("__flitterTextMeasureCache__");
 const CAPACITY = 2000;
 const SEPARATOR = "\x1f";
 
-const g = globalThis as unknown as Record<
-  string,
-  Map<string, number> | undefined
->;
-const cache: Map<string, number> =
-  g[KEY] ?? (g[KEY] = new Map<string, number>());
+type Cache = Map<string, number>;
+
+let resolved: Cache | null = null;
+
+function getCache(): Cache | null {
+  if (resolved !== null) return resolved;
+  if (typeof window === "undefined") return null;
+  const w = window as unknown as Record<symbol, Cache | undefined>;
+  let existing = w[CACHE_SYMBOL];
+  if (existing === undefined) {
+    existing = new Map<string, number>();
+    w[CACHE_SYMBOL] = existing;
+  }
+  resolved = existing;
+  return resolved;
+}
 
 function makeKey(text: string, font: string): string {
   return `${text}${SEPARATOR}${font}`;
@@ -17,6 +27,8 @@ export function getCachedWidth(
   text: string,
   font: string,
 ): number | undefined {
+  const cache = getCache();
+  if (cache === null) return undefined;
   const key = makeKey(text, font);
   const value = cache.get(key);
   if (value === undefined) return undefined;
@@ -30,6 +42,8 @@ export function setCachedWidth(
   font: string,
   width: number,
 ): void {
+  const cache = getCache();
+  if (cache === null) return;
   const key = makeKey(text, font);
   if (cache.has(key)) {
     cache.delete(key);
@@ -43,5 +57,7 @@ export function setCachedWidth(
 }
 
 export function clearMeasurementCache(): void {
+  const cache = getCache();
+  if (cache === null) return;
   cache.clear();
 }
