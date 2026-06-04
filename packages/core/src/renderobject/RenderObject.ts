@@ -78,11 +78,26 @@ export class RenderObject {
     this.isPainter = isPainter;
   }
   type = this.constructor.name;
+  private _childrenCache: RenderObject[] | null = null;
+  private _childrenCacheEpoch = -1;
   get children(): RenderObject[] {
-    return this.ownerElement.children.map(child => child.renderObject);
+    const owner = this.renderOwner;
+    if (owner == null) {
+      return this.ownerElement.children.map(child => child.renderObject);
+    }
+    if (
+      this._childrenCache !== null &&
+      this._childrenCacheEpoch === owner.structureEpoch
+    ) {
+      return this._childrenCache;
+    }
+    const result = this.ownerElement.children.map(child => child.renderObject);
+    this._childrenCache = result;
+    this._childrenCacheEpoch = owner.structureEpoch;
+    return result;
   }
-  constraints: Constraints = Constraints.loose(Size.maximum());
-  private _offset: Offset = Offset.zero();
+  constraints: Constraints = Constraints.Constants.default;
+  private _offset: Offset = Offset.Constants.zero;
   get offset() {
     return this._offset;
   }
@@ -141,6 +156,7 @@ export class RenderObject {
   }
 
   detach() {
+    this.renderOwner?.bumpStructureEpoch();
     this.parent = undefined;
     this.relayoutBoundary = null;
   }

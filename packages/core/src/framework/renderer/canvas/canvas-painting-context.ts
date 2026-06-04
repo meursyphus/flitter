@@ -207,20 +207,22 @@ export class CanvasPaintingContext {
         kind: "painter",
         renderObject: node,
         offset,
-        ancestors: [...ancestorChain],
+        // Snapshot only when emitting a painter (which retains the chain for
+        // later ancestor replay); the traversal itself reuses one mutable stack.
+        ancestors: ancestorChain.slice(),
       });
     }
 
-    const childAncestorChain = [...ancestorChain, { node, offset }];
-
+    ancestorChain.push({ node, offset });
     node.visitChildren(child => {
       CanvasPaintingContext.#collectPaintItems(
         child,
         offset.plus(child.offset),
-        childAncestorChain,
+        ancestorChain,
         result,
       );
     });
+    ancestorChain.pop();
   }
 
   static updateLayerProperties(node: RenderObject): void {

@@ -96,6 +96,23 @@ class Constraints extends Data {
     });
   }
 
+  /**
+   * Shared, frozen default constraints (fully unbounded/loose). Constraints are
+   * immutable — every operation returns a new instance — so render objects can
+   * share this as their initial value instead of each allocating an identical
+   * Size + Constraints pair at construction time.
+   */
+  static Constants = {
+    default: Object.freeze(
+      new Constraints({
+        minWidth: 0,
+        maxWidth: Infinity,
+        minHeight: 0,
+        maxHeight: Infinity,
+      }),
+    ) as Constraints,
+  };
+
   static tight({ width, height }: { width: number; height: number }) {
     return Constraints.tightFor({ width, height });
   }
