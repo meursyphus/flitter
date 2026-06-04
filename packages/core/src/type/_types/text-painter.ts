@@ -59,6 +59,28 @@ export default class TextPainter {
 
   paragraph?: Paragraph;
 
+  // Layout cache — mirrors Flutter's TextPainter._layoutCache. A laid-out
+  // paragraph is fully determined by its inputs, so when none of them changed
+  // since the last layout we keep the existing paragraph instead of rebuilding
+  // and re-measuring every word. This is the "compute once" payoff for repeated
+  // relayouts (animation frames, parent-driven relayouts with stable text).
+  #cachedText?: InlineSpan;
+  #cachedMinWidth = NaN;
+  #cachedMaxWidth = NaN;
+  #cachedTextAlign?: TextAlign;
+  #cachedTextDirection?: TextDirection;
+  #cachedTextScaleFactor = NaN;
+  #cachedMaxLines?: number;
+  #cachedTextWidthBasis?: TextWidthBasis;
+  #cachedEllipsis?: string;
+
+  /** Invalidate the cached paragraph, forcing the next layout to rebuild. */
+  markNeedsLayout(): void {
+    this.#cachedText = undefined;
+    this.#cachedMinWidth = NaN;
+    this.#cachedMaxWidth = NaN;
+  }
+
   get width(): number {
     if (this.paragraph == null) return 0;
     return this.paragraph.width;
@@ -150,8 +172,34 @@ export default class TextPainter {
     minWidth?: number;
     maxWidth?: number;
   } = {}) {
+    if (
+      this.paragraph != null &&
+      this.#cachedText === this.text &&
+      this.#cachedMinWidth === minWidth &&
+      this.#cachedMaxWidth === maxWidth &&
+      this.#cachedTextAlign === this.textAlign &&
+      this.#cachedTextDirection === this.textDirection &&
+      this.#cachedTextScaleFactor === this.textScaleFactor &&
+      this.#cachedMaxLines === this.maxLines &&
+      this.#cachedTextWidthBasis === this.textWidthBasis &&
+      this.#cachedEllipsis === this.ellipsis
+    ) {
+      // Inputs unchanged since the last layout — reuse the existing paragraph.
+      return;
+    }
+
     this.paragraph = this.createParagraph(this.text);
     this.layoutParagraph({ minWidth, maxWidth });
+
+    this.#cachedText = this.text;
+    this.#cachedMinWidth = minWidth;
+    this.#cachedMaxWidth = maxWidth;
+    this.#cachedTextAlign = this.textAlign;
+    this.#cachedTextDirection = this.textDirection;
+    this.#cachedTextScaleFactor = this.textScaleFactor;
+    this.#cachedMaxLines = this.maxLines;
+    this.#cachedTextWidthBasis = this.textWidthBasis;
+    this.#cachedEllipsis = this.ellipsis;
   }
 
   private layoutParagraph({
