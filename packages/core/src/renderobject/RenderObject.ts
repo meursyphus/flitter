@@ -24,7 +24,9 @@ export class RenderObject {
   needsPaintTransformUpdate = true;
   depth = 0;
   private relayoutBoundary: RenderObject | null = null;
-  private intrinsicCache = new Map<string, number>();
+  // Numeric-keyed so a lookup doesn't allocate a transient string key every call.
+  private intrinsicWidthCache = new Map<number, number>();
+  private intrinsicHeightCache = new Map<number, number>();
 
   /**
    * zOrder is used to order the render objects in the z axis
@@ -166,26 +168,24 @@ export class RenderObject {
   }
 
   getIntrinsicWidth(height: number) {
-    const cacheKey = `width:${height}`;
-    const cached = this.intrinsicCache.get(cacheKey);
+    const cached = this.intrinsicWidthCache.get(height);
     if (cached != null) {
       return cached;
     }
 
     const result = this.computeIntrinsicWidth(height);
-    this.intrinsicCache.set(cacheKey, result);
+    this.intrinsicWidthCache.set(height, result);
     return result;
   }
 
   getIntrinsicHeight(width: number) {
-    const cacheKey = `height:${width}`;
-    const cached = this.intrinsicCache.get(cacheKey);
+    const cached = this.intrinsicHeightCache.get(width);
     if (cached != null) {
       return cached;
     }
 
     const result = this.computeIntrinsicHeight(width);
-    this.intrinsicCache.set(cacheKey, result);
+    this.intrinsicHeightCache.set(width, result);
     return result;
   }
 
@@ -259,8 +259,11 @@ export class RenderObject {
 
     this.needsLayout = true;
     const hadCachedLayoutResult =
-      this.intrinsicCache.size > 0 || this.dryLayoutCache.size > 0;
-    this.intrinsicCache.clear();
+      this.intrinsicWidthCache.size > 0 ||
+      this.intrinsicHeightCache.size > 0 ||
+      this.dryLayoutCache.size > 0;
+    this.intrinsicWidthCache.clear();
+    this.intrinsicHeightCache.clear();
     this.dryLayoutCache.clear();
 
     if (hadCachedLayoutResult && this.parent != null) {
@@ -328,10 +331,36 @@ export class RenderObject {
   }
 
   localToGlobal(additionalOffset: Offset = Offset.Constants.zero) {
+    const transform = this.#computePaintTransform();
     return new Offset({
-      x: this.paintTransform.storage[12] + additionalOffset.x,
-      y: this.paintTransform.storage[13] + additionalOffset.y,
+      x: transform.storage[12] + additionalOffset.x,
+      y: transform.storage[13] + additionalOffset.y,
     });
+  }
+
+  /**
+   * Lazily reproduces the absolute paint transform of this node by walking from
+   * the root down — translate by each node's offset, then apply that node's
+   * paint transform for its descendants. Mirrors Flutter's getTransformTo: the
+   * transform is computed on demand (localToGlobal has a single caller) instead
+   * of being cached on every node by a per-frame tree walk. The SVG renderer
+   * still maintains paintTransform eagerly for DOM element placement.
+   */
+  #computePaintTransform(): Matrix4 {
+    const chain: RenderObject[] = [];
+    let node: RenderObject | undefined = this;
+    while (node != null) {
+      chain.push(node);
+      node = node.parent;
+    }
+    let parentTransform: Matrix4 = Matrix4.Constants.identity;
+    let transform: Matrix4 = Matrix4.Constants.identity;
+    for (let i = chain.length - 1; i >= 0; i--) {
+      const current = chain[i];
+      transform = parentTransform.translated(current.offset.x, current.offset.y);
+      parentTransform = current.applyPaintTransform(transform);
+    }
+    return transform;
   }
 
   visitChildren(callback: (child: RenderObject) => void) {
@@ -409,12 +438,9 @@ export class RenderObject {
   }
 
   private static getDryLayoutCacheKey(constraints: Constraints) {
-    return [
-      constraints.minWidth,
-      constraints.maxWidth,
-      constraints.minHeight,
-      constraints.maxHeight,
-    ].join(":");
+    // Template literal instead of array.join avoids the intermediate array
+    // allocation; the four numbers separated by ":" stay collision-free.
+    return `${constraints.minWidth}:${constraints.maxWidth}:${constraints.minHeight}:${constraints.maxHeight}`;
   }
 }
 
