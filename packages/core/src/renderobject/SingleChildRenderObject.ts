@@ -11,6 +11,17 @@ export class SingleChildRenderObject extends RenderObject {
     return this.children[0];
   }
 
+  /*
+    Specialized traversal for the single-child shape (Padding, Align, SizedBox,
+    DecoratedBox, Opacity, ClipRect, ...). Avoids the Array.prototype.forEach
+    closure dispatch of the base implementation on the hottest render-object
+    shape, which is walked once per node in every layout/compositing/paint pass.
+  */
+  override visitChildren(callback: (child: RenderObject) => void): void {
+    const child = this.children[0];
+    if (child != null) callback(child);
+  }
+
   protected preformLayout(): void {
     if (this.child == null) {
       if (!this.sizedByParent) {

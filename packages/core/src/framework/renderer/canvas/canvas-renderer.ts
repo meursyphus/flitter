@@ -8,7 +8,9 @@ export class CanvasRenderPipeline extends RenderPipeline {
   override drawFrame(): void {
     this.trace("layout", () => this.flushLayout());
     this.trace("compositingBits", () => this.flushCompositingBits());
-    this.flushPaintTransformUpdate();
+    // No paint-transform pass: canvas paints by walking accumulated offsets, and
+    // offset changes are turned directly into repaint/layer-offset updates in
+    // markNeedsPaintTransformUpdate below (localToGlobal computes lazily).
     this.recalculateZOrder();
     this.trace("paint", () => {
       this.flushPaint();
@@ -21,7 +23,6 @@ export class CanvasRenderPipeline extends RenderPipeline {
       this.renderView.layout(Constraints.tight(this.renderContext.viewSize)),
     );
     this.trace("compositingBits", () => this.flushCompositingBits());
-    this.renderView.updatePaintTransform();
     this.notifyZOrderChanged();
     this.recalculateZOrder();
     this.trace("paint", () => {
@@ -100,9 +101,12 @@ export class CanvasRenderPipeline extends RenderPipeline {
   }
 
   override markNeedsPaintTransformUpdate(renderObject: RenderObject): void {
-    renderObject.needsPaintTransformUpdate = true;
-    this.needsPaintTransformUpdateRenderObjects.push(renderObject);
-    this.requestVisualUpdate();
+    // There is no cached paint transform to refresh for canvas. An offset change
+    // only needs the affected node to repaint, or — if it is a repaint boundary —
+    // its composited layer's offset to update. This is exactly the effect the
+    // old paint-transform pass produced via didChangePaintTransform, applied here
+    // directly without a separate full-tree walk.
+    this.didChangePaintTransform(renderObject);
   }
 
   override didChangePaintTransform(renderObjet: RenderObject): void {

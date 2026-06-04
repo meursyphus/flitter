@@ -100,6 +100,19 @@ export abstract class RenderPipeline {
   needsLayoutRenderObjects: RenderObject[] = [];
   needsPaintTransformUpdateRenderObjects: RenderObject[] = [];
   /*
+    Monotonic counter bumped whenever the render-object child composition can
+    change (a render object attaches/detaches, or an element reorders/forgets a
+    child). RenderObject.children memoizes its derived child array against this
+    epoch so the many full-tree traversals in a single frame (layout, compositing
+    bits, paint-transform, z-order, paint) don't each re-walk the element tree.
+    Mirrors how Flutter keeps a materialized render-child list instead of
+    deriving it on every access.
+  */
+  structureEpoch = 0;
+  bumpStructureEpoch() {
+    this.structureEpoch++;
+  }
+  /*
    this will be set by RenderView
   */
   renderView!: RenderObject;

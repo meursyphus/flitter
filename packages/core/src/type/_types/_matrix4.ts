@@ -665,6 +665,33 @@ Sets the entire matrix to the matrix in [arg].
     } else {
       throw new Error("Unsupported argument type.");
     }
+    const m = this._m4storage;
+    // Fast path: an identity/translation-only affine matrix (the dominant case
+    // in the per-frame paint-transform pass, reached via
+    // `parentPaintTransform.translated(offset.x, offset.y)`) makes the full 4x4
+    // multiply collapse to a vector add. Numerically identical to the general
+    // path for that matrix shape (proven in the matrix4 translate fast-path test).
+    if (
+      tw === 1 &&
+      m[0] === 1 &&
+      m[5] === 1 &&
+      m[10] === 1 &&
+      m[15] === 1 &&
+      m[1] === 0 &&
+      m[2] === 0 &&
+      m[3] === 0 &&
+      m[4] === 0 &&
+      m[6] === 0 &&
+      m[7] === 0 &&
+      m[8] === 0 &&
+      m[9] === 0 &&
+      m[11] === 0
+    ) {
+      m[12] += tx;
+      m[13] += ty;
+      m[14] += tz;
+      return this;
+    }
     const t1 =
       this._m4storage[0] * tx +
       this._m4storage[4] * ty +

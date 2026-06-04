@@ -138,6 +138,7 @@ class RenderObjectElement extends Element {
     }
 
     this.children = newChildren;
+    this._renderObject.renderOwner?.bumpStructureEpoch();
   }
 
   performRebuild(): void {
@@ -175,12 +176,14 @@ class RenderObjectElement extends Element {
       this.renderObject.parent = undefined;
     }
     this._renderObject.attach(this);
+    this._renderObject.renderOwner?.bumpStructureEpoch();
   }
 
   forgetChild(child: Element) {
     const index = this.children.indexOf(child);
     if (index === -1) return;
     this.children.splice(index, 1);
+    this._renderObject.renderOwner?.bumpStructureEpoch();
   }
 
   private ancestorRenderObjectElement!: RenderObjectElement | null;
