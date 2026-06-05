@@ -23,10 +23,10 @@
     "perf:trace": "node dev/performance/scripts/run-perf-trace.mjs",
     "test": "turbo test --filter=flitter-performance",
     "test:integration": "pnpm --filter flitter-performance test:integration",
-    "chromatic": "turbo build --filter=flitter-storybook^... && pnpm --dir dev/storybook exec chromatic --exit-zero-on-changes"
+    "chromatic": "turbo build --filter=flitter-storybook^... && pnpm --dir dev/storybook exec chromatic"
   },
   "devDependencies": {
-    "turbo": "^2.4.0"
+    "turbo": "^2.9.16"
   },
   "packageManager": "pnpm@10.29.3"
 }
