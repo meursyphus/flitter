@@ -59,7 +59,7 @@ export class RenderStack extends MultiChildRenderObject {
     return this._fit;
   }
   set fit(value: StackFit) {
-    if (this._fit !== value) return;
+    if (this._fit === value) return;
     this._fit = value;
     this.markNeedsLayout();
   }
@@ -68,7 +68,7 @@ export class RenderStack extends MultiChildRenderObject {
     return this._textDirection;
   }
   set textDirection(value: TextDirection) {
-    if (this._textDirection !== value) return;
+    if (this._textDirection === value) return;
     this._textDirection = value;
     this.markNeedsPaint();
   }
