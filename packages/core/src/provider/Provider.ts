@@ -40,6 +40,19 @@ class Provider<ProviderKey, Value> extends InheritedWidget {
   }
 
   static of<V>(key: unknown, context: Element) {
+    const inherited = context.inheritedProviders?.get(key) as
+      | ProviderElement
+      | undefined;
+    if (inherited != null && inherited.providerKey === key) {
+      return context.dependOnInheritedElement(inherited).value as V;
+    }
+
+    /*
+      Parent-chain walk kept as fallback for contexts whose inheritedProviders
+      was never wired (detached/SSR-constructed elements). A map miss also
+      falls through so a wiring gap can only cost the walk, never change the
+      result.
+    */
     let parent = context.parent;
     while (parent != null) {
       const current = parent;
@@ -106,11 +119,35 @@ class ProviderElement<ProviderKey = unknown, Value = unknown>
     super.unmount();
     this.child?.unmount();
     this.dependents.clear();
+    this.child = undefined;
+  }
+
+  /*
+    Copy-on-write override of the parent map (Flutter's
+    InheritedElement._updateInheritance): descendants get this provider's
+    entry while siblings and ancestors keep the parent's map untouched. A
+    nearer provider with the same key naturally wins because it overwrites
+    the inherited entry in its own copy.
+  */
+  protected override updateInheritance(): void {
+    const incoming = this.parent?.inheritedProviders;
+    const inheritedProviders: Map<unknown, Element> =
+      incoming != null ? new Map(incoming) : new Map();
+    inheritedProviders.set(this.providerKey, this);
+    this.inheritedProviders = inheritedProviders;
   }
 
   update(newWidget: Widget): void {
     const oldWidget = this.widget;
     super.update(newWidget);
+    if (oldWidget.providerKey !== this.widget.providerKey) {
+      /*
+        Widget.canUpdate compares type and key only, so an in-place update may
+        change providerKey; the descendant map snapshots would otherwise keep
+        the stale entry.
+      */
+      this.refreshInheritanceRecursively();
+    }
     if (this.widget.updateShouldNotify(oldWidget)) {
       this.notifyClients(oldWidget);
     }

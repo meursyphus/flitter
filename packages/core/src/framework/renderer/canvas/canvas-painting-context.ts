@@ -26,12 +26,6 @@ type CollectedBoundary = {
 
 type CollectedPaintItem = CollectedPainter | CollectedBoundary;
 
-type CanvasProxy = CanvasRenderingContext2D & {
-  __enterSuppress: () => void;
-  __exitSuppress: () => void;
-  __raw: CanvasRenderingContext2D;
-};
-
 // Drawing operations that produce pixels — suppressed during ancestor replay
 // so that only canvas state changes (transforms, clips, opacity) persist.
 const DRAWING_OPS: ReadonlySet<string | symbol> = new Set([
@@ -48,64 +42,104 @@ const DRAWING_OPS: ReadonlySet<string | symbol> = new Set([
 
 const NOOP = () => {};
 
-function createCanvasProxy(ctx: CanvasRenderingContext2D): CanvasProxy {
-  let suppressDepth = 0;
-  let suppressing = false;
+/**
+ * One picture recording. Painters receive the raw CanvasRenderingContext2D in
+ * the normal path; the intercepting wrapper only exists for the ancestor-state
+ * replay window in repaintCompositedChild, where pixel-producing calls must be
+ * swallowed while canvas state changes persist.
+ *
+ * Suppression state is owned by the recording, not the painting context: the
+ * z-walk in repaintCompositedChild captures the recording it started with, so
+ * a recording ended mid-walk (by a boundary item) keeps the suppression
+ * toggles bound to it rather than to whatever recording is started next.
+ */
+class CanvasRecording {
+  readonly raw: CanvasRenderingContext2D;
+  #suppressing = false;
+  #suppressDepth = 0;
+  #wrapper: CanvasRenderingContext2D | null = null;
 
-  const proxy = new Proxy(ctx, {
-    get(target, prop) {
-      if (prop === "__enterSuppress")
-        return () => {
-          suppressing = true;
-          suppressDepth = 0;
-        };
-      if (prop === "__exitSuppress")
-        return () => {
-          suppressing = false;
-        };
-      if (prop === "__raw") return target;
+  constructor(raw: CanvasRenderingContext2D) {
+    this.raw = raw;
+  }
 
-      if (suppressing) {
-        if (prop === "save") {
-          return () => {
-            suppressDepth++;
-            if (suppressDepth > 1) target.save();
-          };
-        }
-        if (prop === "restore") {
-          return () => {
-            if (suppressDepth > 1) target.restore();
-            suppressDepth--;
-          };
-        }
-        if (DRAWING_OPS.has(prop)) {
-          return NOOP;
-        }
-      }
+  get suppressing(): boolean {
+    return this.#suppressing;
+  }
 
-      const value = Reflect.get(target, prop, target);
-      return typeof value === "function" ? value.bind(target) : value;
-    },
-    set(target, prop, value) {
-      return Reflect.set(target, prop, value);
-    },
-  });
+  enterSuppress(): void {
+    this.#suppressing = true;
+    this.#suppressDepth = 0;
+  }
 
-  return proxy as CanvasProxy;
+  exitSuppress(): void {
+    this.#suppressing = false;
+  }
+
+  get wrapper(): CanvasRenderingContext2D {
+    if (this.#wrapper == null) {
+      this.#wrapper = this.#createWrapper();
+    }
+    return this.#wrapper;
+  }
+
+  #createWrapper(): CanvasRenderingContext2D {
+    const target = this.raw;
+    // A replayed ancestor's first-level save/restore pair is swallowed so the
+    // state it establishes survives for the painter that follows; deeper
+    // pairs are forwarded untouched.
+    const save = () => {
+      this.#suppressDepth++;
+      if (this.#suppressDepth > 1) target.save();
+    };
+    const restore = () => {
+      if (this.#suppressDepth > 1) target.restore();
+      this.#suppressDepth--;
+    };
+    const boundMethods = new Map<string | symbol, unknown>();
+    return new Proxy(target, {
+      get(t, prop) {
+        if (prop === "save") return save;
+        if (prop === "restore") return restore;
+        if (DRAWING_OPS.has(prop)) return NOOP;
+        const cached = boundMethods.get(prop);
+        if (cached != null) return cached;
+        const value = Reflect.get(t, prop, t);
+        if (typeof value !== "function") return value;
+        const bound = (value as (...args: unknown[]) => unknown).bind(t);
+        boundMethods.set(prop, bound);
+        return bound;
+      },
+      set(t, prop, value) {
+        return Reflect.set(t, prop, value);
+      },
+    }) as CanvasRenderingContext2D;
+  }
 }
 
 export class CanvasPaintingContext {
   #estimateBound: Rect;
   #containerLayer: ContainerLayer;
+  /**
+   * Backing canvases harvested from the PictureLayers this repaint discards.
+   * A new recording with the same device-pixel size reuses one instead of
+   * allocating a fresh DOM canvas (see PictureRecorder).
+   */
+  #recycledCanvases: HTMLCanvasElement[] | null;
 
-  constructor(containerLayer: ContainerLayer, estimateBound: Rect) {
+  constructor(
+    containerLayer: ContainerLayer,
+    estimateBound: Rect,
+    recycledCanvases: HTMLCanvasElement[] | null = null,
+  ) {
     this.#containerLayer = containerLayer;
     this.#estimateBound = estimateBound;
+    this.#recycledCanvases = recycledCanvases;
   }
 
   #currentLayer: PictureLayer | null = null;
   #recorder: PictureRecorder | null = null;
-  #ctx: CanvasProxy | null = null;
+  #recording: CanvasRecording | null = null;
 
   /**
    * When true, paintChild becomes a no-op. Used during z-ordered
@@ -122,6 +156,7 @@ export class CanvasPaintingContext {
     );
 
     let childLayer = node.canvasPainter.layer;
+    let recycledCanvases: HTMLCanvasElement[] | null = null;
     if (childLayer == null) {
       childLayer = node.canvasPainter.updateCompositedLayer(null);
       node.canvasPainter.layer = childLayer;
@@ -132,6 +167,8 @@ export class CanvasPaintingContext {
         childLayer === updatedChildLayer,
         "updateCompositedLayer must return the same layer",
       );
+      recycledCanvases =
+        CanvasPaintingContext.#harvestRecycledCanvases(updatedChildLayer);
       updatedChildLayer.removeAllChildren();
     }
 
@@ -140,6 +177,7 @@ export class CanvasPaintingContext {
     const childContext = new CanvasPaintingContext(
       childLayer,
       node.canvasPainter.paintBounds,
+      recycledCanvases,
     );
 
     const items: CollectedPaintItem[] = [];
@@ -163,7 +201,7 @@ export class CanvasPaintingContext {
       return aOrder - bOrder;
     });
 
-    const proxyCanvas = childContext.canvas as unknown as CanvasProxy;
+    const recording = childContext.#ensureRecording();
     childContext.#skipChildPainting = true;
     for (const item of items) {
       if (item.kind === "boundary") {
@@ -172,18 +210,37 @@ export class CanvasPaintingContext {
       }
 
       const { renderObject, offset, ancestors } = item;
-      proxyCanvas.__raw.save();
+      recording.raw.save();
       for (const { node: ancestorNode, offset: ancestorOffset } of ancestors) {
-        proxyCanvas.__enterSuppress();
+        recording.enterSuppress();
         ancestorNode.canvasPainter.paint(childContext, ancestorOffset);
-        proxyCanvas.__exitSuppress();
+        recording.exitSuppress();
       }
       renderObject.canvasPainter.paint(childContext, offset);
-      proxyCanvas.__raw.restore();
+      recording.raw.restore();
     }
     childContext.#skipChildPainting = false;
 
     childContext.stopRecordingIfNeeded();
+  }
+
+  /**
+   * Collects the backing canvases of the PictureLayers about to be discarded
+   * by removeAllChildren. Only direct PictureLayer children may donate their
+   * canvas: nested boundary layers keep their own pictures alive and are
+   * re-appended as-is by compositeChild.
+   */
+  static #harvestRecycledCanvases(
+    layer: ContainerLayer,
+  ): HTMLCanvasElement[] | null {
+    let canvases: HTMLCanvasElement[] | null = null;
+    layer.visitChildren(child => {
+      if (!(child instanceof PictureLayer)) return;
+      const source = child.recycleSource();
+      if (source == null) return;
+      (canvases ??= []).push(source);
+    });
+    return canvases;
   }
 
   static #collectPaintItems(
@@ -241,16 +298,24 @@ export class CanvasPaintingContext {
   }
 
   get canvas(): CanvasRenderingContext2D {
-    if (this.#ctx == null) {
+    const recording = this.#ensureRecording();
+    return recording.suppressing ? recording.wrapper : recording.raw;
+  }
+
+  #ensureRecording(): CanvasRecording {
+    if (this.#recording == null) {
       this.#startRecording();
     }
-    return this.#ctx!;
+    return this.#recording!;
   }
 
   #startRecording() {
     this.#currentLayer = new PictureLayer(this.#estimateBound);
-    this.#recorder = new PictureRecorder(this.#estimateBound);
-    this.#ctx = createCanvasProxy(this.#recorder.createCanvasContext());
+    this.#recorder = new PictureRecorder(
+      this.#estimateBound,
+      this.#recycledCanvases?.pop() ?? null,
+    );
+    this.#recording = new CanvasRecording(this.#recorder.createCanvasContext());
     this.#appendLayer(this.#currentLayer);
   }
 
@@ -258,7 +323,7 @@ export class CanvasPaintingContext {
     if (this.#currentLayer == null || this.#recorder == null) return;
     this.#currentLayer.picture = this.#recorder.endRecording();
     this.#recorder = null;
-    this.#ctx = null;
+    this.#recording = null;
     this.#currentLayer = null;
   }
 

@@ -143,15 +143,31 @@ export abstract class RenderPipeline {
   }
 
   protected flushLayout() {
-    const dirties = this.needsLayoutRenderObjects;
-    this.needsLayoutRenderObjects = [];
+    /*
+      Nodes can be marked dirty while laying out (LayoutBuilder-style
+      callbacks), so drain until convergence like Flutter's
+      PipelineOwner.flushLayout, re-sorting depth-ascending per pass. The pass
+      cap guards against runaway re-dirtying cycles; anything left after the
+      cap stays queued for the next scheduled frame — never throw.
+    */
+    let passes = 0;
+    while (this.needsLayoutRenderObjects.length > 0) {
+      if (passes >= 8) {
+        this.requestVisualUpdate();
+        break;
+      }
+      passes += 1;
 
-    dirties
-      .sort((a, b) => a.depth - b.depth)
-      .forEach(renderObject => {
-        if (!renderObject.needsLayout) return;
+      const dirties = this.needsLayoutRenderObjects;
+      this.needsLayoutRenderObjects = [];
+
+      dirties.sort((a, b) => a.depth - b.depth);
+      for (let i = 0; i < dirties.length; i++) {
+        const renderObject = dirties[i];
+        if (!renderObject.needsLayout) continue;
         renderObject.layoutWithoutResize();
-      });
+      }
+    }
   }
 
   protected flushCompositingBits() {

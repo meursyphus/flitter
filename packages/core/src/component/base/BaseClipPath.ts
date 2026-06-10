@@ -39,6 +39,9 @@ class BaseClipPath extends SingleChildRenderObjectWidget {
 
 class RenderClipPath extends SingleChildRenderObject {
   _clipper: Clipper;
+  private _clip: Path | null = null;
+  private _clipWidth = 0;
+  private _clipHeight = 0;
 
   get clipper() {
     return this._clipper;
@@ -47,11 +50,31 @@ class RenderClipPath extends SingleChildRenderObject {
   set clipper(value: Clipper) {
     if (this._clipper === value) return;
     this._clipper = value;
+    this._clip = null;
     this.markNeedsPaint();
   }
   constructor({ clipper }: { clipper: Clipper }) {
     super({ isPainter: true });
     this._clipper = clipper;
+  }
+
+  /**
+   * The clip is pure in (clipper, size): an identical clipper reference is
+   * already treated as "no reclip" by the setter, so reusing the path while
+   * both stay unchanged cannot change pixels.
+   */
+  getClip(): Path {
+    const { width, height } = this.size;
+    if (
+      this._clip == null ||
+      this._clipWidth !== width ||
+      this._clipHeight !== height
+    ) {
+      this._clip = this._clipper(this.size);
+      this._clipWidth = width;
+      this._clipHeight = height;
+    }
+    return this._clip;
   }
 
   protected override createSvgPainter() {
@@ -72,9 +95,7 @@ class SvgPainterClipPath extends SvgPainter {
   }
 
   get clipper() {
-    return (this.renderObject as RenderClipPath).clipper(
-      this.renderObject.size,
-    );
+    return (this.renderObject as RenderClipPath).getClip();
   }
 
   protected override performPaint({
@@ -129,9 +150,7 @@ class SvgPainterClipPath extends SvgPainter {
 
 class ClipPathCanvasPainter extends CanvasPainter {
   get clipper() {
-    return (this.renderObject as RenderClipPath).clipper(
-      this.renderObject.size,
-    );
+    return (this.renderObject as RenderClipPath).getClip();
   }
 
   protected override performPaint(

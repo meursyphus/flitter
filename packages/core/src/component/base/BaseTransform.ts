@@ -222,7 +222,10 @@ class RenderTransform extends SingleChildRenderObject {
   }
 
   get _effectiveTransform(): Matrix4 {
-    const resolvedAlignment = this.alignment?.resolve(this.textDirection);
+    const resolvedAlignment = this._alignment?.resolve(this.textDirection);
+    if (this._origin == null && resolvedAlignment == null) {
+      return this._transform;
+    }
     const translation = resolvedAlignment?.alongSize(this.size) ?? {
       x: 0,
       y: 0,
@@ -245,11 +248,24 @@ class RenderTransform extends SingleChildRenderObject {
     const child = this.child;
     if (child == null) return false;
 
+    const effectiveTransform = this._effectiveTransform;
+    const childOffset = child.offset;
+    const translation = effectiveTransform.getAsTranslation();
+    if (translation != null) {
+      // The inverse of a pure translation is the negated translation.
+      return child.hitTest(
+        result,
+        new Offset({
+          x: position.x - childOffset.x - translation.x,
+          y: position.y - childOffset.y - translation.y,
+        }),
+      );
+    }
+
     const inverse = Matrix4.identity();
-    const det = inverse.copyInverse(this._effectiveTransform);
+    const det = inverse.copyInverse(effectiveTransform);
     if (det === 0.0) return false;
 
-    const childOffset = child.offset;
     const localPosition = new Offset({
       x: position.x - childOffset.x,
       y: position.y - childOffset.y,
@@ -268,7 +284,12 @@ class RenderTransform extends SingleChildRenderObject {
   }
 
   override applyPaintTransform(transform: Matrix4): Matrix4 {
-    return transform.multipliedMatrix(this._effectiveTransform);
+    const effectiveTransform = this._effectiveTransform;
+    const translation = effectiveTransform.getAsTranslation();
+    if (translation != null) {
+      return transform.translated(translation.x, translation.y);
+    }
+    return transform.multipliedMatrix(effectiveTransform);
   }
 
   protected override createCanvasPainter(): CanvasPainter {
@@ -282,11 +303,25 @@ class TransformCanvasPainter extends CanvasPainter {
   }
 
   protected performPaint(context: CanvasPaintingContext, offset: Offset): void {
+    // No translation-only fast path here: in the z-ordered paint architecture
+    // descendant painters are positioned by the collect walk (render-object
+    // offsets only) and a Transform contributes exclusively through canvas
+    // state replayed for each descendant. Skipping the canvas transform would
+    // drop the translation for every descendant painter.
     const arr = this.effectiveTransform._m4storage;
+    const translationOnly =
+      arr[0] === 1 &&
+      arr[1] === 0 &&
+      arr[4] === 0 &&
+      arr[5] === 1;
     context.canvas.save();
-    context.canvas.translate(offset.x, offset.y);
-    context.canvas.transform(arr[0], arr[1], arr[4], arr[5], arr[12], arr[13]);
-    context.canvas.translate(-offset.x, -offset.y);
+    if (translationOnly) {
+      context.canvas.translate(arr[12], arr[13]);
+    } else {
+      context.canvas.translate(offset.x, offset.y);
+      context.canvas.transform(arr[0], arr[1], arr[4], arr[5], arr[12], arr[13]);
+      context.canvas.translate(-offset.x, -offset.y);
+    }
     this.defaultPaint(context, offset);
     context.canvas.restore();
   }

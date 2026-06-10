@@ -1,4 +1,5 @@
 import type InlineSpan from "./Inline-span";
+import { RenderComparison } from "./Inline-span";
 import Utils, { assert, getTextWidth } from "../../utils";
 import type { SvgPaintContext } from "../../framework";
 import type Offset from "./_offset";
@@ -18,7 +19,34 @@ const defaultTextStyle = {
 };
 
 export default class TextPainter {
-  text?: InlineSpan;
+  #text?: InlineSpan;
+
+  get text(): InlineSpan | undefined {
+    return this.#text;
+  }
+
+  set text(value: InlineSpan | undefined) {
+    if (this.#text === value) return;
+    const comparison =
+      this.#text == null || value == null
+        ? RenderComparison.layout
+        : this.#text.compareTo(value);
+    this.#text = value;
+    if (comparison >= RenderComparison.layout) {
+      this.markNeedsLayout();
+      return;
+    }
+    // The cached paragraph's geometry is still valid for the new span; re-key
+    // the cache to the new reference so the next layout() keeps hitting it.
+    this.#cachedText = value;
+    if (comparison >= RenderComparison.paint) {
+      // Paint properties (color) are baked into the paragraph's span boxes,
+      // so the paragraph must be rebuilt from the new span before it is
+      // painted again — see #ensureParagraphForPaint.
+      this.#rebuildParagraphForPaint = true;
+    }
+  }
+
   textAlign: TextAlign;
   textDirection?: TextDirection;
   ellipsis?: string;
@@ -74,11 +102,28 @@ export default class TextPainter {
   #cachedTextWidthBasis?: TextWidthBasis;
   #cachedEllipsis?: string;
 
+  // Whether the cached paragraph holds outdated paint information (set by a
+  // paint-tier text change) and must be rebuilt before the next paint.
+  #rebuildParagraphForPaint = false;
+
   /** Invalidate the cached paragraph, forcing the next layout to rebuild. */
   markNeedsLayout(): void {
     this.#cachedText = undefined;
     this.#cachedMinWidth = NaN;
     this.#cachedMaxWidth = NaN;
+  }
+
+  // Rebuilding at the exact width the cached paragraph was last laid out at
+  // reproduces identical line breaks and offsets (layout is deterministic in
+  // its geometry inputs, and a paint-tier text change cannot alter them),
+  // while the rebuilt span boxes pick up the new paint properties.
+  #ensureParagraphForPaint(): void {
+    if (!this.#rebuildParagraphForPaint) return;
+    this.#rebuildParagraphForPaint = false;
+    if (this.paragraph == null) return;
+    const paragraph = this.createParagraph(this.text);
+    paragraph.layout(this.paragraph.width);
+    this.paragraph = paragraph;
   }
 
   get width(): number {
@@ -107,6 +152,7 @@ export default class TextPainter {
   }
 
   paintOnCanvas(ctx: CanvasRenderingContext2D, offset: Offset): void {
+    this.#ensureParagraphForPaint();
     assert(this.paragraph != null, "paragraph should not be null");
     this.paragraph.lines.forEach(line => {
       line.spanBoxes.forEach(
@@ -129,6 +175,7 @@ export default class TextPainter {
   }
 
   paintOnSvg(textEl: SVGTextElement, { createSvgEl }: SvgPaintContext) {
+    this.#ensureParagraphForPaint();
     this.resetText(textEl);
     assert(this.paragraph != null, "paragraph should not be null");
 
@@ -172,23 +219,38 @@ export default class TextPainter {
     minWidth?: number;
     maxWidth?: number;
   } = {}) {
-    if (
+    const nonWidthInputsUnchanged =
       this.paragraph != null &&
       this.#cachedText === this.text &&
-      this.#cachedMinWidth === minWidth &&
-      this.#cachedMaxWidth === maxWidth &&
       this.#cachedTextAlign === this.textAlign &&
       this.#cachedTextDirection === this.textDirection &&
       this.#cachedTextScaleFactor === this.textScaleFactor &&
       this.#cachedMaxLines === this.maxLines &&
       this.#cachedTextWidthBasis === this.textWidthBasis &&
-      this.#cachedEllipsis === this.ellipsis
-    ) {
-      // Inputs unchanged since the last layout — reuse the existing paragraph.
-      return;
+      this.#cachedEllipsis === this.ellipsis;
+
+    if (nonWidthInputsUnchanged) {
+      if (
+        this.#cachedMinWidth === minWidth &&
+        this.#cachedMaxWidth === maxWidth
+      ) {
+        // Inputs unchanged since the last layout — reuse the existing paragraph.
+        return;
+      }
+
+      if (this.#canReuseLineBreaks(maxWidth)) {
+        // Width-only change that provably cannot move a line break — keep the
+        // measured lines and just recompute the paragraph width and the
+        // alignment offsets the way a full layout would.
+        this.#resizeParagraph(minWidth, maxWidth);
+        this.#cachedMinWidth = minWidth;
+        this.#cachedMaxWidth = maxWidth;
+        return;
+      }
     }
 
     this.paragraph = this.createParagraph(this.text);
+    this.#rebuildParagraphForPaint = false;
     this.layoutParagraph({ minWidth, maxWidth });
 
     this.#cachedText = this.text;
@@ -200,6 +262,41 @@ export default class TextPainter {
     this.#cachedMaxLines = this.maxLines;
     this.#cachedTextWidthBasis = this.textWidthBasis;
     this.#cachedEllipsis = this.ellipsis;
+  }
+
+  // A soft line break can only occur when a line's accumulated content width
+  // exceeds the available width. `intrinsicWidth` is the sum of every span
+  // box, which no per-line accumulation can exceed, so when both the width
+  // the cached lines were broken at and the requested width are at least that
+  // total, neither layout can soft-wrap: every break comes from an explicit
+  // "\n" and the line composition is provably identical.
+  #canReuseLineBreaks(maxWidth: number): boolean {
+    const contentWidth = this.paragraph!.intrinsicWidth;
+    return this.#cachedMaxWidth >= contentWidth && maxWidth >= contentWidth;
+  }
+
+  // Mirrors the width selection of layoutParagraph (same operations, same
+  // order, so the resulting width is bit-identical), but reuses the already
+  // measured lines instead of re-running word wrap.
+  #resizeParagraph(minWidth: number, maxWidth: number): void {
+    const paragraph = this.paragraph!;
+    let newWidth = maxWidth;
+    if (minWidth !== maxWidth) {
+      switch (this.textWidthBasis) {
+        case TextWidthBasis.longestLine:
+          newWidth = paragraph.longestLine;
+          break;
+        case TextWidthBasis.parent:
+          newWidth = paragraph.intrinsicWidth;
+          break;
+        default:
+          assert(false, `Unknown text width basis: ${this.textWidthBasis}`);
+      }
+      newWidth = Utils.clampDouble(newWidth, minWidth, maxWidth);
+    }
+    if (newWidth !== paragraph.width) {
+      paragraph.resize(newWidth);
+    }
   }
 
   private layoutParagraph({
@@ -354,6 +451,18 @@ export class Paragraph {
       this.lines.push(currentLine);
     }
 
+    this.align();
+  }
+
+  /**
+   * Repositions the existing lines for a new paragraph width without
+   * re-measuring or re-breaking. Only valid when the caller has proven that
+   * no soft line break can change at either the old or the new width: the
+   * alignment pass is the same one a full layout ends with, so the resulting
+   * offsets are bit-identical to a full relayout.
+   */
+  resize(width: number): void {
+    this.width = width;
     this.align();
   }
 

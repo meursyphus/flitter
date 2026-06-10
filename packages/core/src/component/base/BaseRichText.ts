@@ -15,6 +15,7 @@ import {
 } from "../../type";
 import RenderObjectWidget from "../../widget/RenderObjectWidget";
 import type InlineSpan from "../../type/_types/Inline-span";
+import { RenderComparison } from "../../type/_types/Inline-span";
 import TextPainter from "../../type/_types/text-painter";
 import { assert } from "../../utils";
 
@@ -165,9 +166,25 @@ export class RenderParagraph extends RenderObject {
   }
 
   set text(value: InlineSpan) {
+    // `equals` ignores TextStyle.height while `compareTo` classifies it as a
+    // layout change; checking `equals` first preserves the long-standing
+    // no-op behavior for spans that only differ in `height`.
     if (this.textPainter.text!.equals(value)) return;
-    this.textPainter.text = value;
-    this.markNeedsLayout();
+    switch (this.textPainter.text!.compareTo(value)) {
+      case RenderComparison.identical:
+        return;
+      case RenderComparison.metadata:
+        this.textPainter.text = value;
+        return;
+      case RenderComparison.paint:
+        this.textPainter.text = value;
+        this.markNeedsPaint();
+        return;
+      case RenderComparison.layout:
+        this.textPainter.text = value;
+        this.markNeedsLayout();
+        return;
+    }
   }
 
   get textWidthBasis(): TextWidthBasis {

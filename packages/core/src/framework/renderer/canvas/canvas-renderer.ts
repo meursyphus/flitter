@@ -5,6 +5,15 @@ import { CanvasPaintingContext } from "./canvas-painting-context";
 import { SceneBuilder } from "./layer";
 
 export class CanvasRenderPipeline extends RenderPipeline {
+  /**
+   * Retained-rendering dirty bit, the analog of Flutter's
+   * Layer._needsAddToScene: set on every path that can mutate the layer tree
+   * (and therefore the composited scene), cleared after compositing. While it
+   * stays false the on-screen canvas already shows the identical scene, so
+   * the SceneBuilder rebuild + replay can be skipped entirely.
+   */
+  #needsComposite = true;
+
   override drawFrame(): void {
     this.trace("layout", () => this.flushLayout());
     this.trace("compositingBits", () => this.flushCompositingBits());
@@ -14,11 +23,14 @@ export class CanvasRenderPipeline extends RenderPipeline {
     this.recalculateZOrder();
     this.trace("paint", () => {
       this.flushPaint();
-      this.#compositeFrame();
+      if (this.#needsComposite) {
+        this.#compositeFrame();
+      }
     });
   }
 
   override reinitializeFrame(): void {
+    this.#needsComposite = true;
     this.trace("layout", () =>
       this.renderView.layout(Constraints.tight(this.renderContext.viewSize)),
     );
@@ -66,6 +78,7 @@ export class CanvasRenderPipeline extends RenderPipeline {
   }
 
   override markNeedsPaint(renderObject: RenderObject): void {
+    this.#needsComposite = true;
     let parent = renderObject;
     while (parent != null && !parent.canvasPainter.isRepaintBoundary) {
       parent = parent.parent!;
@@ -80,11 +93,13 @@ export class CanvasRenderPipeline extends RenderPipeline {
   }
 
   override markNeedsCompositingBitsUpdate(renderObject: RenderObject): void {
+    this.#needsComposite = true;
     this.needsCompositingBitsUpdateRenderObjects.push(renderObject);
     this.requestVisualUpdate();
   }
 
   override markNeedsCompositedLayerUpdate(renderObject: RenderObject): void {
+    this.#needsComposite = true;
     if (renderObject.needsPaint || renderObject.needsCompositedLayerUpdate) {
       return;
     }
@@ -110,12 +125,18 @@ export class CanvasRenderPipeline extends RenderPipeline {
   }
 
   override didChangePaintTransform(renderObjet: RenderObject): void {
+    this.#needsComposite = true;
     if (renderObjet.canvasPainter.layer != null) {
       renderObjet.markNeedsCompositedLayerUpdate();
       return;
     }
 
     renderObjet.markNeedsPaint();
+  }
+
+  override notifyZOrderChanged(): void {
+    this.#needsComposite = true;
+    super.notifyZOrderChanged();
   }
 
   #compositeFrame() {
@@ -125,15 +146,39 @@ export class CanvasRenderPipeline extends RenderPipeline {
     );
     this.renderView.canvasPainter.layer?.buildScene(builder);
     builder.render(ctx);
+    this.#needsComposite = false;
   }
+
+  #preparedCanvas: HTMLCanvasElement | null = null;
+  #preparedWidth = -1;
+  #preparedHeight = -1;
+  #preparedDpr = -1;
 
   #prepareCanvas(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
     const size = this.renderContext.viewSize;
     const dpr = window.devicePixelRatio;
+    const ctx = canvas.getContext("2d")!;
+    if (
+      this.#preparedCanvas === canvas &&
+      this.#preparedWidth === size.width &&
+      this.#preparedHeight === size.height &&
+      this.#preparedDpr === dpr
+    ) {
+      // Same backing store as last frame: clearing in place is bit-identical
+      // to reallocating the buffer and skips the realloc + implicit context
+      // reset. setTransform (not scale) so the dpr transform cannot
+      // accumulate across frames.
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, size.width, size.height);
+      return ctx;
+    }
     canvas.width = size.width * dpr;
     canvas.height = size.height * dpr;
-    const ctx = canvas.getContext("2d")!;
-    ctx.scale(dpr, dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.#preparedCanvas = canvas;
+    this.#preparedWidth = size.width;
+    this.#preparedHeight = size.height;
+    this.#preparedDpr = dpr;
     return ctx;
   }
 }
