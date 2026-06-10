@@ -3,6 +3,7 @@ import Draggable from './Draggable';
 import Field from '../Field/Field';
 import {
 	GestureDetector,
+	RepaintBoundary,
 	Column,
 	Container,
 	MainAxisSize,
@@ -35,6 +36,11 @@ import {
 import DiagramControllerProvider from '../Provider/DiagramControllerProvider';
 import type { DiagramController } from '../../controller';
 import { ChangedLayoutNotifier } from '../ChangeNotifier';
+
+// Stable reference: an inline closure here would compare unequal on every
+// rebuild and force the node subtree to relayout/repaint each frame.
+const minWidth230 = (constraints: Constraints) =>
+	new Constraints({ ...constraints, minWidth: 230 });
 
 class baseNode extends StatefulWidget {
 	table: Table;
@@ -138,7 +144,8 @@ class BaseNodeState extends State<baseNode> {
 		const {
 			table: { fields, name }
 		} = this.widget;
-		return ChangedLayoutNotifier({
+		return RepaintBoundary({
+			child: ChangedLayoutNotifier({
 			onChange: this.handleChangeSize,
 			child: GestureDetector({
 				key: this.key,
@@ -149,8 +156,7 @@ class BaseNodeState extends State<baseNode> {
 				},
 				child: Container({
 					child: ConstraintsTransformBox({
-						constraintsTransform: (constraints) =>
-							new Constraints({ ...constraints, minWidth: 230 }),
+						constraintsTransform: minWidth230,
 						child: IntrinsicWidth({
 							child: Column({
 								mainAxisSize: MainAxisSize.min,
@@ -185,6 +191,7 @@ class BaseNodeState extends State<baseNode> {
 					})
 				})
 			})
+		})
 		});
 	}
 }

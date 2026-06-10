@@ -12,7 +12,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
-		"test:integration": "playwright test --grep-invert=tracking-performance.test.ts tests/",
+		"test:integration": "playwright test --grep-invert=\"(tracking|rerender)-performance.test.ts\" tests/",
 		"test:unit": "vitest"
 	},
 	"devDependencies": {

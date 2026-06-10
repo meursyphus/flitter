@@ -55,6 +55,21 @@ function NoteTooltip({
                   path.setAttribute("d", p.getD());
                 },
               },
+              canvas: {
+                paint(context, { width, height }) {
+                  const p = new Path();
+                  p.moveTo({ x: 0, y: height / 2 })
+                    .lineTo({ x: width, y: height })
+                    .lineTo({ x: width, y: 0 })
+                    .close();
+
+                  const ctx = context.canvas;
+                  ctx.save();
+                  ctx.fillStyle = "black";
+                  ctx.fill(p.toCanvasPath());
+                  ctx.restore();
+                },
+              },
             },
           }),
         }),
