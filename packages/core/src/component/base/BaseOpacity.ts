@@ -8,6 +8,10 @@ import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject"
 import { assert } from "../../utils";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
+import {
+  OpacityLayer,
+  type Layer,
+} from "../../framework/renderer/canvas/layer";
 
 class Opacity extends SingleChildRenderObjectWidget {
   opacity: number;
@@ -84,6 +88,23 @@ class SvgPainterOpacity extends SvgPainter {
 }
 
 class CanvasPainterOpacity extends CanvasPainter {
+  private opacityLayer: OpacityLayer | null = null;
+  private boundaryLayers = new WeakMap<Layer, OpacityLayer>();
+
+  override wrapLayer(child: Layer): Layer {
+    let layer = this.boundaryLayers.get(child);
+    if (layer == null) {
+      layer = new OpacityLayer({
+        offset: Offset.Constants.zero,
+        opacity: this.opacity,
+      });
+      this.boundaryLayers.set(child, layer);
+    }
+    layer.opacity = this.opacity;
+    layer.removeAllChildren();
+    layer.append(child);
+    return layer;
+  }
   get opacity() {
     return (this.renderObject as RenderOpacity).opacityProp;
   }
@@ -94,11 +115,25 @@ class CanvasPainterOpacity extends CanvasPainter {
 
   override performPaint(context: CanvasPaintingContext, offset: Offset) {
     if (this.renderObject.children.length === 0 || this.alpha === 0) {
+      if (!context.paintsChildren && this.alpha === 0)
+        context.canvas.globalAlpha = 0;
       return;
     }
 
     if (this.alpha === 255) {
       this.defaultPaint(context, offset);
+      return;
+    }
+
+    if (context.paintsChildren && this.renderObject.needsCompositing) {
+      const layer = (this.opacityLayer ??= new OpacityLayer({
+        offset: Offset.Constants.zero,
+        opacity: this.opacity,
+      }));
+      layer.opacity = this.opacity;
+      context.pushLayer(layer, childContext =>
+        this.defaultPaint(childContext, offset),
+      );
       return;
     }
 

@@ -69,6 +69,17 @@ export class AppRunner {
     this.scheduler.addPersistenceCallbacks(() =>
       this.trace("drawFrame", () => this.renderPipeline.drawFrame()),
     );
+    this.scheduler.addPersistenceCallbacks(() =>
+      this.renderPipeline.hitTestDispatcher.invalidate(),
+    );
+    /*
+      Flutter frame order: buildScope -> drawFrame -> finalizeTree
+      (WidgetsBinding.drawFrame). Deferring unmount/dispose past drawFrame is
+      pixel-safe because deactivateChild already detached the render objects.
+    */
+    this.scheduler.addPersistenceCallbacks(() =>
+      this.trace("finalizeTree", () => this.buildOwner.finalizeTree()),
+    );
   }
   private didRun = false;
 
@@ -126,11 +137,14 @@ export class AppRunner {
   draw() {
     this.trace("draw", () => {
       this.renderPipeline.reinitializeFrame();
+      this.renderPipeline.hitTestDispatcher.invalidate();
       this.scheduler.flushPostCallbacks();
     });
   }
 
   dispose() {
+    this.scheduler.dispose();
+    this.renderPipeline.hitTestDispatcher.dispose();
     if (this.root) {
       this.root.unmount();
       this.root = null as unknown as RenderObjectElement;

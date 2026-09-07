@@ -11,6 +11,10 @@ class BaseRepaintBoundary extends SingleChildRenderObjectWidget {
   override createRenderObject(): SingleChildRenderObject {
     return new RenderRepaintBoundary();
   }
+
+  override updateRenderObject(): void {
+    // RepaintBoundary has no mutable properties to copy to its render object.
+  }
 }
 
 class RenderRepaintBoundary extends SingleChildRenderObject {

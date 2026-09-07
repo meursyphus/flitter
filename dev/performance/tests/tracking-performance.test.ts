@@ -8,11 +8,16 @@ import { fileURLToPath } from 'url';
 
 const perfTraceNote = process.env.PERF_TRACE_NOTE?.trim();
 
-if (perfTraceNote == null || perfTraceNote === '') {
-	throw new Error(
-		'PERF_TRACE_NOTE is required. Run via `pnpm run perf:trace -- --note "<summary>"`.'
-	);
-}
+// Validated inside the tests (not at module load) so unrelated playwright runs
+// that merely collect this file don't crash.
+const requireNote = (): string => {
+	if (perfTraceNote == null || perfTraceNote === '') {
+		throw new Error(
+			'PERF_TRACE_NOTE is required. Run via `pnpm run perf:trace -- --note "<summary>"`.'
+		);
+	}
+	return perfTraceNote;
+};
 
 const waitForFlitterMeasures = async (page: Page, names: string[]) => {
 	await page.waitForFunction(
@@ -27,6 +32,7 @@ test.describe('Performance Tracking', () => {
 		page,
 		browser
 	}) => {
+		requireNote();
 		await browser.startTracing(page, {
 			path: `./performance-history/${formatDate(new Date())}.json`
 		});
@@ -48,6 +54,7 @@ test.describe('Performance Tracking', () => {
 	});
 
 	test('Capture analyzed trace when diagram is rendered', async () => {
+		const note = requireNote();
 		const COUNT = 10;
 		const metricNames = ['runApp', 'mount', 'draw', 'layout', 'paint'] as const;
 
@@ -58,7 +65,7 @@ test.describe('Performance Tracking', () => {
 			draw: 0,
 			layout: 0,
 			paint: 0,
-			note: perfTraceNote
+			note
 		};
 		for (let i = 0; i < COUNT; i++) {
 			const browser = await chromium.launch({ headless: true });

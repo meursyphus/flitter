@@ -36,6 +36,16 @@ export class PictureLayer extends Layer {
       picture: this.picture,
     });
   }
+
+  /**
+   * Hands this layer's backing canvas to the caller so a new recording can
+   * reuse the buffer. Only valid once the layer has been removed from the
+   * layer tree: the picture must never be drawn again afterwards.
+   */
+  recycleSource(): HTMLCanvasElement | null {
+    const picture = this.picture as Picture | undefined;
+    return picture == null ? null : picture.source;
+  }
 }
 
 export class ContainerLayer extends Layer {
@@ -113,13 +123,7 @@ export class OffsetLayer extends ContainerLayer {
 export class TransformLayer extends OffsetLayer {
   transform: Matrix4;
 
-  constructor({
-    offset,
-    transform,
-  }: {
-    offset: Offset;
-    transform: Matrix4;
-  }) {
+  constructor({ offset, transform }: { offset: Offset; transform: Matrix4 }) {
     super(offset);
     this.transform = transform;
   }
@@ -136,13 +140,7 @@ export class TransformLayer extends OffsetLayer {
 export class OpacityLayer extends OffsetLayer {
   opacity: number;
 
-  constructor({
-    offset,
-    opacity,
-  }: {
-    offset: Offset;
-    opacity: number;
-  }) {
+  constructor({ offset, opacity }: { offset: Offset; opacity: number }) {
     super(offset);
     this.opacity = opacity;
   }
@@ -158,20 +156,24 @@ export class OpacityLayer extends OffsetLayer {
 
 export class ClipPathLayer extends OffsetLayer {
   clipPath: Path;
+  translateContents: boolean;
 
   constructor({
     offset,
     clipPath,
+    translateContents = true,
   }: {
     offset: Offset;
     clipPath: Path;
+    translateContents?: boolean;
   }) {
     super(offset);
     this.clipPath = clipPath;
+    this.translateContents = translateContents;
   }
 
   override addToScene(builder: SceneBuilder) {
-    builder.pushClipPath(this.clipPath, this.offset);
+    builder.pushClipPath(this.clipPath, this.offset, this.translateContents);
     this.visitChildren(layer => {
       layer.addToScene(builder);
     });
@@ -182,13 +184,7 @@ export class ClipPathLayer extends OffsetLayer {
 export class ClipRectLayer extends OffsetLayer {
   clipRect: Rect;
 
-  constructor({
-    offset,
-    clipRect,
-  }: {
-    offset: Offset;
-    clipRect: Rect;
-  }) {
+  constructor({ offset, clipRect }: { offset: Offset; clipRect: Rect }) {
     super(offset);
     this.clipRect = clipRect;
   }
@@ -209,12 +205,22 @@ export class SceneBuilder {
     | { type: "translate"; offset: Offset }
     | { type: "transform"; offset: Offset; transform: Matrix4 }
     | { type: "opacity"; opacity: number; offset: Offset }
-    | { type: "clipPath"; clipPath: Path; offset: Offset }
+    | {
+        type: "clipPath";
+        clipPath: Path;
+        offset: Offset;
+        translateContents: boolean;
+      }
     | { type: "clipRect"; clipRect: Rect; offset: Offset }
     | { type: "picture"; x: number; y: number; picture: Picture }
   )[] = [];
 
   render(ctx: CanvasRenderingContext2D) {
+    // The compositor reuses the on-screen context across frames; the replay
+    // must therefore stay hermetic. push*/pop pairs are balanced, but this
+    // outer save/restore additionally guards any state a command mutates
+    // outside its own save window from leaking into the next frame.
+    ctx.save();
     for (const command of this.#commands) {
       switch (command.type) {
         case "save":
@@ -239,6 +245,8 @@ export class SceneBuilder {
         case "clipPath":
           ctx.translate(command.offset.x, command.offset.y);
           ctx.clip(command.clipPath.toCanvasPath());
+          if (!command.translateContents)
+            ctx.translate(-command.offset.x, -command.offset.y);
           break;
         case "clipRect":
           ctx.translate(command.offset.x, command.offset.y);
@@ -262,6 +270,7 @@ export class SceneBuilder {
           break;
       }
     }
+    ctx.restore();
   }
 
   addPicture(props: { x: number; y: number; picture: Picture }) {
@@ -297,12 +306,13 @@ export class SceneBuilder {
     });
   }
 
-  pushClipPath(clipPath: Path, offset: Offset) {
+  pushClipPath(clipPath: Path, offset: Offset, translateContents = true) {
     this.#commands.push({ type: "save" });
     this.#commands.push({
       type: "clipPath",
       clipPath,
       offset,
+      translateContents,
     });
   }
 
@@ -335,6 +345,13 @@ class Picture {
       height: this.#source.height / window.devicePixelRatio,
     };
   }
+  /**
+   * Internal: the backing canvas, exposed only so a discarded picture's
+   * buffer can be recycled into a new recording (PictureLayer.recycleSource).
+   */
+  get source(): HTMLCanvasElement {
+    return this.#source;
+  }
 }
 
 export class PictureRecorder {
@@ -344,11 +361,53 @@ export class PictureRecorder {
    *
    * @implements: This recorder is currently under implementation and does not actually record but directly reflects on the canvas context. Temporarily, it requires the paintSize immediately. The recorder is intended to manage the drawing order for implementing z-index. Once implemented, it will function as a recorder by not directly drawing on the canvas context but recording the operations.
    */
-  constructor(paintBounds: Rect) {
-    this.#source = document.createElement("canvas");
+  constructor(
+    paintBounds: Rect,
+    recycledCanvas: HTMLCanvasElement | null = null,
+  ) {
     const dpr = window.devicePixelRatio;
-    this.#source.width = paintBounds.width * dpr;
-    this.#source.height = paintBounds.height * dpr;
+    const width = paintBounds.width * dpr;
+    const height = paintBounds.height * dpr;
+    this.#source =
+      (recycledCanvas != null
+        ? PictureRecorder.#resetForReuse(recycledCanvas, width, height)
+        : null) ?? PictureRecorder.#createSource(width, height);
+  }
+
+  static #createSource(width: number, height: number): HTMLCanvasElement {
+    const source = document.createElement("canvas");
+    source.width = width;
+    source.height = height;
+    return source;
+  }
+
+  /**
+   * A canvas may only be reused when its backing store already has the target
+   * size and the context can be returned to the pristine state of a freshly
+   * created canvas. ctx.reset() guarantees exactly that (clears the bitmap and
+   * resets the transform, clip, styles and the state stack); without it the
+   * context could leak paint state from the canvas's previous recording, so
+   * fall back to a fresh allocation instead.
+   */
+  static #resetForReuse(
+    canvas: HTMLCanvasElement,
+    width: number,
+    height: number,
+  ): HTMLCanvasElement | null {
+    // The width/height IDL setters truncate, so compare against the truncated
+    // target to recognize a same-size backing store.
+    if (
+      canvas.width !== Math.trunc(width) ||
+      canvas.height !== Math.trunc(height)
+    ) {
+      return null;
+    }
+    const ctx = canvas.getContext("2d") as
+      | (CanvasRenderingContext2D & { reset?: () => void })
+      | null;
+    if (ctx == null || typeof ctx.reset !== "function") return null;
+    ctx.reset();
+    return canvas;
   }
 
   /**
@@ -358,7 +417,10 @@ export class PictureRecorder {
    */
   createCanvasContext(): CanvasRenderingContext2D {
     const ctx = this.#source!.getContext("2d")!;
-    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    const dpr = window.devicePixelRatio;
+    // setTransform rather than scale: both a fresh canvas and a reset() one
+    // start at identity, and setTransform cannot accumulate across reuses.
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     return ctx;
   }
 

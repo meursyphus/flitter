@@ -2,6 +2,7 @@
 import Calculable from "./_calculable";
 import type Matrix2 from "./_matrix2";
 import Matrix3 from "./_matrix3";
+import Offset from "./_offset";
 import type { Vector } from "./_vector";
 import type Vector2 from "./_vector2";
 import Vector3 from "./_vector3";
@@ -2106,6 +2107,33 @@ Rotate this matrix [angle] radians around [axis].
       this._m4storage[14] == 0.0 &&
       this._m4storage[15] == 1.0
     );
+  }
+
+  /// Returns this matrix as an [Offset] if it is nothing but a 2D
+  /// translation, otherwise null. Mirrors MatrixUtils.getAsTranslation, but
+  /// additionally requires a zero z-translation since canvas/SVG are 2D.
+  getAsTranslation(): Offset | null {
+    const m = this._m4storage;
+    if (
+      m[0] === 1.0 && // col 1
+      m[1] === 0.0 &&
+      m[2] === 0.0 &&
+      m[3] === 0.0 &&
+      m[4] === 0.0 && // col 2
+      m[5] === 1.0 &&
+      m[6] === 0.0 &&
+      m[7] === 0.0 &&
+      m[8] === 0.0 && // col 3
+      m[9] === 0.0 &&
+      m[10] === 1.0 &&
+      m[11] === 0.0 &&
+      // col 4: [12] and [13] hold the 2D translation.
+      m[14] === 0.0 &&
+      m[15] === 1.0
+    ) {
+      return new Offset({ x: m[12], y: m[13] });
+    }
+    return null;
   }
 
   /// Is this the zero matrix?

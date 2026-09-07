@@ -59,7 +59,6 @@ class RenderObjectElement extends Element {
 
   updateChildren(newWidgets: Widget[]) {
     const oldChildren = this.children;
-    const newChildren: Element[] = new Array(newWidgets.length);
 
     let oldTop = 0;
     let newTop = 0;
@@ -70,10 +69,17 @@ class RenderObjectElement extends Element {
       const oldChild = oldChildren[oldTop];
       const newWidget = newWidgets[newTop];
       if (!Widget.canUpdate(oldChild.widget, newWidget)) break;
-      newChildren[newTop] = this.updateChild(oldChild, newWidget)!;
+      this.updateChild(oldChild, newWidget);
       oldTop++;
       newTop++;
     }
+
+    // The usual rebuild keeps every element in place. Preserve the children
+    // array and render-child caches, and avoid allocating diff bookkeeping.
+    if (oldTop > oldBottom && newTop > newBottom) return;
+
+    const newChildren: Element[] = new Array(newWidgets.length);
+    for (let i = 0; i < newTop; i++) newChildren[i] = oldChildren[i];
 
     while (oldTop <= oldBottom && newTop <= newBottom) {
       const oldChild = oldChildren[oldBottom];
@@ -138,7 +144,7 @@ class RenderObjectElement extends Element {
     }
 
     this.children = newChildren;
-    this._renderObject.renderOwner?.bumpStructureEpoch();
+    this._renderObject.markNeedsChildrenUpdate();
   }
 
   performRebuild(): void {

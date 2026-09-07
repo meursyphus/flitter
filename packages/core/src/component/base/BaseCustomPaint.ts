@@ -87,8 +87,8 @@ export class RenderCustomPaint<
     return this._preferredSize;
   }
   set preferredSize(value) {
-    if (value.equal(this.preferredSize)) return;
-    this.preferredSize = value;
+    if (value.equal(this._preferredSize)) return;
+    this._preferredSize = value;
     this.markNeedsLayout();
   }
 
@@ -161,6 +161,9 @@ class SvgPainterCustomPaint<
 }
 
 class CanvasPainterCustomPaint extends CanvasPainter {
+  override get paintsChildState() {
+    return false;
+  }
   get painter() {
     return (this.renderObject as RenderCustomPaint).painter;
   }
@@ -169,12 +172,17 @@ class CanvasPainterCustomPaint extends CanvasPainter {
     context: CanvasPaintingContext,
     offset: Offset,
   ): void {
-    context.canvas.translate(offset.x, offset.y);
+    const canvas = context.canvas;
+    canvas.save();
+    canvas.translate(offset.x, offset.y);
     if (this.painter.canvas == null) {
       throw new Error("canvas painter is not defined");
     }
-    this.painter.canvas.paint(context, this.size);
-    context.canvas.translate(-offset.x, -offset.y);
+    try {
+      this.painter.canvas.paint(context, this.size);
+    } finally {
+      canvas.restore();
+    }
     this.defaultPaint(context, offset);
   }
 }

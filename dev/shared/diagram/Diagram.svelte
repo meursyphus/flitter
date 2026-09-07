@@ -8,6 +8,7 @@
 	export let project: Project;
 	export let subscribe: Subscribe = () => () => {};
 	export let performanceTracing = false;
+	export let renderer: 'svg' | 'canvas' = 'svg';
 </script>
 
 <Widget
@@ -15,6 +16,7 @@
 	width="100%"
 	height="100%"
 	performanceTracing={performanceTracing}
+	{renderer}
 />
 
 <style>

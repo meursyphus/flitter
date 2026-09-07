@@ -22,6 +22,15 @@ class Element {
   parent?: Element;
   dirty = true;
   depth = 0;
+  inDirtyList = false;
+  /*
+    Closest-ancestor provider table, shared BY REFERENCE down the tree
+    (Flutter's Element._inheritedElements). Only ProviderElement installs a
+    copy-on-write copy with itself added, so descendants see it while
+    siblings/ancestors keep the parent map. Null above the first provider and
+    while detached.
+  */
+  inheritedProviders: Map<unknown, Element> | null = null;
   protected mounted = false;
   lifecycleState: ElementLifecycleState = ElementLifecycleState.defunct;
   private dependencies = new Set<InheritedDependencySource>();
@@ -100,6 +109,16 @@ class Element {
     this.mounted = false;
     this.parent = undefined;
     this.lifecycleState = ElementLifecycleState.defunct;
+    this.inDirtyList = false;
+    this.inheritedProviders = null;
+    /*
+      Release the widget so a defunct element that is accidentally retained
+      does not keep its whole widget subtree alive. Subclass unmount bodies
+      run after this (super-first convention here) but only touch their own
+      fields; every lifecycle entry point (rebuild/markNeedsBuild/activate)
+      bails out before reading widget on a defunct element.
+    */
+    this.widget = null as unknown as Widget;
   }
 
   mount(newParent?: Element) {
@@ -115,6 +134,7 @@ class Element {
     if ((this.widget.key as GlobalKey)?.isGlobalKey) {
       this.buildOwner.registerGlobalKey(this.widget.key, this);
     }
+    this.updateInheritance();
   }
 
   update(newWidget: Widget) {
@@ -169,6 +189,7 @@ class Element {
     if ((this.widget.key as GlobalKey)?.isGlobalKey) {
       this.buildOwner.registerGlobalKey(this.widget.key, this);
     }
+    this.updateInheritance();
     const hadDependencies = this.hadDependencies;
     this.dependencies.clear();
     this.hadDependencies = false;
@@ -187,6 +208,7 @@ class Element {
   deactivate() {
     if (this.lifecycleState !== ElementLifecycleState.active) return;
     this.unsubscribeFromInheritedWidgets({ keepDependencyState: true });
+    this.inheritedProviders = null;
     this.lifecycleState = ElementLifecycleState.inactive;
     this.visitChildren(child => {
       child.deactivate();
@@ -210,6 +232,22 @@ class Element {
   detachRenderObject() {
     this.visitChildren(child => {
       child.detachRenderObject();
+    });
+  }
+
+  protected updateInheritance() {
+    this.inheritedProviders = this.parent?.inheritedProviders ?? null;
+  }
+
+  /*
+    Re-derives inheritedProviders for this subtree. Needed when a provider's
+    key changes in place (Widget.canUpdate only compares type and key), since
+    descendants hold the map by reference or as copy-on-write snapshots.
+  */
+  protected refreshInheritanceRecursively() {
+    this.updateInheritance();
+    this.visitChildren(child => {
+      child.refreshInheritanceRecursively();
     });
   }
 

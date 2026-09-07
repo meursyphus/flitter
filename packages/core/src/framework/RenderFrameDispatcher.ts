@@ -1,7 +1,8 @@
-import { Vsync } from './Vsync';
+import { Vsync } from "./Vsync";
 
 class RenderFrameDispatcher {
   private onFrame?: () => void;
+  private frameCallback = () => this.onFrame?.();
   #vsync: Vsync | null = null;
   get vsync() {
     if (!this.#vsync) {
@@ -20,9 +21,12 @@ class RenderFrameDispatcher {
 
   dispatch() {
     if (typeof window === "undefined") return;
-    this.vsync.requestCallback(() => {
-      this.onFrame?.();
-    });
+    this.vsync.requestCallback(this.frameCallback);
+  }
+
+  dispose() {
+    this.#vsync?.cancelCallback(this.frameCallback);
+    this.onFrame = undefined;
   }
 }
 

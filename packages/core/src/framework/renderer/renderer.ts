@@ -143,15 +143,31 @@ export abstract class RenderPipeline {
   }
 
   protected flushLayout() {
-    const dirties = this.needsLayoutRenderObjects;
-    this.needsLayoutRenderObjects = [];
+    /*
+      Nodes can be marked dirty while laying out (LayoutBuilder-style
+      callbacks), so drain until convergence like Flutter's
+      PipelineOwner.flushLayout, re-sorting depth-ascending per pass. The pass
+      cap guards against runaway re-dirtying cycles; anything left after the
+      cap stays queued for the next scheduled frame — never throw.
+    */
+    let passes = 0;
+    while (this.needsLayoutRenderObjects.length > 0) {
+      if (passes >= 8) {
+        this.requestVisualUpdate();
+        break;
+      }
+      passes += 1;
 
-    dirties
-      .sort((a, b) => a.depth - b.depth)
-      .forEach(renderObject => {
-        if (!renderObject.needsLayout) return;
+      const dirties = this.needsLayoutRenderObjects;
+      this.needsLayoutRenderObjects = [];
+
+      dirties.sort((a, b) => a.depth - b.depth);
+      for (let i = 0; i < dirties.length; i++) {
+        const renderObject = dirties[i];
+        if (!renderObject.needsLayout) continue;
         renderObject.layoutWithoutResize();
-      });
+      }
+    }
   }
 
   protected flushCompositingBits() {
@@ -167,6 +183,8 @@ export abstract class RenderPipeline {
   }
 
   #zOrderChanged = false;
+  #paintOrder: RenderObject[] = [];
+  #paintOrderStructureEpoch = -1;
   notifyZOrderChanged() {
     this.#zOrderChanged = true;
     this.requestVisualUpdate();
@@ -178,6 +196,19 @@ export abstract class RenderPipeline {
     this.renderView.accept(visitor);
     const painterRenderObjects = visitor.getRenderObjectsByDomOrder();
 
+    const orderUnchanged =
+      painterRenderObjects.length === this.#paintOrder.length &&
+      painterRenderObjects.every(
+        (node, index) => node === this.#paintOrder[index],
+      );
+    if (
+      orderUnchanged &&
+      this.#paintOrderStructureEpoch === this.structureEpoch
+    )
+      return [];
+    this.#paintOrder = painterRenderObjects;
+    this.#paintOrderStructureEpoch = this.structureEpoch;
+
     for (let i = painterRenderObjects.length - 1; i >= 0; i--) {
       const renderObject = painterRenderObjects[i];
       renderObject.updateZOrder(i);
@@ -186,16 +217,25 @@ export abstract class RenderPipeline {
     // Compute minDescendantZOrder bottom-up for canvas z-ordered tree walk
     RenderPipeline.#computeMinDescendantZOrder(this.renderView);
 
-    return painterRenderObjects;
+    return orderUnchanged ? [] : painterRenderObjects;
   }
 
-  static #computeMinDescendantZOrder(node: RenderObject): number {
+  static #computeMinDescendantZOrder(node: RenderObject): {
+    min: number;
+    max: number;
+  } {
     let min = node.isPainter ? node.zOrder : Infinity;
+    let max = node.isPainter ? node.zOrder : -Infinity;
+    let treeOrder = true;
     node.visitChildren(child => {
-      min = Math.min(min, RenderPipeline.#computeMinDescendantZOrder(child));
+      const range = RenderPipeline.#computeMinDescendantZOrder(child);
+      if (!child.paintOrderIsTreeOrder || range.min < max) treeOrder = false;
+      min = Math.min(min, range.min);
+      max = Math.max(max, range.max);
     });
     node.minDescendantZOrder = min === Infinity ? (node.zOrder ?? 0) : min;
-    return node.minDescendantZOrder;
+    node.paintOrderIsTreeOrder = treeOrder;
+    return { min, max };
   }
 
   abstract drawFrame(): void;

@@ -2,7 +2,7 @@ import { Offset, Rect } from "../../../type";
 import { Painter } from "../renderer";
 import type { CanvasRenderPipeline } from "./canvas-renderer";
 import type { CanvasPaintingContext } from "./canvas-painting-context";
-import { OffsetLayer, type ContainerLayer } from "./layer";
+import { OffsetLayer, type ContainerLayer, type Layer } from "./layer";
 import { assert } from "../../../utils";
 
 export class CanvasPainter extends Painter {
@@ -11,6 +11,16 @@ export class CanvasPainter extends Painter {
   }
   get isRepaintBoundary() {
     return false;
+  }
+
+  /** Whether replaying this painter can establish state for its descendants. */
+  get paintsChildState(): boolean {
+    return this.performPaint !== CanvasPainter.prototype.performPaint;
+  }
+
+  /** Preserve an ancestor effect around an independently retained picture. */
+  wrapLayer(layer: Layer, _offset: Offset): Layer {
+    return layer;
   }
 
   paint(context: CanvasPaintingContext, offset: Offset) {
