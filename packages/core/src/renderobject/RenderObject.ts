@@ -42,6 +42,8 @@ export class RenderObject {
    * Used by canvas renderer to sort children for z-ordered tree walk painting.
    */
   minDescendantZOrder: number = 0;
+  /** Computed with z-order, never guessed from the current widget types. */
+  paintOrderIsTreeOrder = true;
   updateZOrder(value: number) {
     this.#zOrder = value;
     if (this.#svgPainter != null) {
@@ -133,7 +135,7 @@ export class RenderObject {
       normalizedConstraints.isTight ||
       this.parent == null
         ? this
-        : this.parent?.relayoutBoundary ?? null;
+        : (this.parent?.relayoutBoundary ?? null);
 
     if (this.constraints.equals(normalizedConstraints) && !this.needsLayout) {
       return;
@@ -250,21 +252,21 @@ export class RenderObject {
   }
 
   markNeedsParentLayout() {
+    this.clearLayoutCaches();
     this.needsLayout = true;
     this.parent?.markNeedsLayout();
   }
 
   protected markNeedsLayout() {
-    if (this.needsLayout) return;
+    // Dry/intrinsic queries may repopulate caches while this node is already
+    // dirty (including before its first layout). Invalidate before the guard.
+    const hadCachedLayoutResult = this.clearLayoutCaches();
+    if (this.needsLayout) {
+      if (hadCachedLayoutResult) this.parent?.markNeedsLayout();
+      return;
+    }
 
     this.needsLayout = true;
-    const hadCachedLayoutResult =
-      this.intrinsicWidthCache.size > 0 ||
-      this.intrinsicHeightCache.size > 0 ||
-      this.dryLayoutCache.size > 0;
-    this.intrinsicWidthCache.clear();
-    this.intrinsicHeightCache.clear();
-    this.dryLayoutCache.clear();
 
     if (hadCachedLayoutResult && this.parent != null) {
       this.markNeedsParentLayout();
@@ -280,6 +282,24 @@ export class RenderObject {
     if (this.parent != null) {
       this.markNeedsParentLayout();
     }
+  }
+
+  private clearLayoutCaches(): boolean {
+    const hadCachedLayoutResult =
+      this.intrinsicWidthCache.size > 0 ||
+      this.intrinsicHeightCache.size > 0 ||
+      this.dryLayoutCache.size > 0;
+    this.intrinsicWidthCache.clear();
+    this.intrinsicHeightCache.clear();
+    this.dryLayoutCache.clear();
+    return hadCachedLayoutResult;
+  }
+
+  /** Reconciliation changed the child identities or their order. */
+  markNeedsChildrenUpdate() {
+    this.renderOwner.bumpStructureEpoch();
+    this.markNeedsLayout();
+    this.markNeedsUpdateZOrder();
   }
 
   markNeedsPaint() {
@@ -300,7 +320,10 @@ export class RenderObject {
         return;
       }
 
-      if (!this.canvasPainter.isRepaintBoundary && !parent.canvasPainter.isRepaintBoundary) {
+      if (
+        !this.canvasPainter.isRepaintBoundary &&
+        !parent.canvasPainter.isRepaintBoundary
+      ) {
         parent.markNeedsCompositingBitsUpdate();
         return;
       }
@@ -313,7 +336,8 @@ export class RenderObject {
     if (!this.needsCompositingBitsUpdate) return;
 
     const oldNeedsCompositing = this.needsCompositing;
-    let nextNeedsCompositing = this.alwaysNeedsCompositing;
+    let nextNeedsCompositing =
+      this.alwaysNeedsCompositing || this.canvasPainter.isRepaintBoundary;
 
     this.visitChildren(child => {
       child.updateCompositingBits();
@@ -357,7 +381,10 @@ export class RenderObject {
     let transform: Matrix4 = Matrix4.Constants.identity;
     for (let i = chain.length - 1; i >= 0; i--) {
       const current = chain[i];
-      transform = parentTransform.translated(current.offset.x, current.offset.y);
+      transform = parentTransform.translated(
+        current.offset.x,
+        current.offset.y,
+      );
       parentTransform = current.applyPaintTransform(transform);
     }
     return transform;

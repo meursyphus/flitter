@@ -113,17 +113,19 @@ export default class TextPainter {
     this.#cachedMaxWidth = NaN;
   }
 
-  // Rebuilding at the exact width the cached paragraph was last laid out at
-  // reproduces identical line breaks and offsets (layout is deterministic in
-  // its geometry inputs, and a paint-tier text change cannot alter them),
-  // while the rebuilt span boxes pick up the new paint properties.
+  // Paint-tier changes preserve the existing measured boxes and line breaks.
+  // Build only the resolved source spans, then copy their fill colors by index.
   #ensureParagraphForPaint(): void {
     if (!this.#rebuildParagraphForPaint) return;
     this.#rebuildParagraphForPaint = false;
     if (this.paragraph == null) return;
     const paragraph = this.createParagraph(this.text);
-    paragraph.layout(this.paragraph.width);
-    this.paragraph = paragraph;
+    if (!this.paragraph.updatePaint(paragraph.source)) {
+      // Conservative fallback for custom InlineSpan implementations whose
+      // compareTo understates a geometry change.
+      paragraph.layout(this.paragraph.width);
+      this.paragraph = paragraph;
+    }
   }
 
   get width(): number {
@@ -154,6 +156,10 @@ export default class TextPainter {
   paintOnCanvas(ctx: CanvasRenderingContext2D, offset: Offset): void {
     this.#ensureParagraphForPaint();
     assert(this.paragraph != null, "paragraph should not be null");
+    ctx.textAlign = "start";
+    ctx.textBaseline = "hanging";
+    let lastFont: string | undefined;
+    let lastColor: string | undefined;
     this.paragraph.lines.forEach(line => {
       line.spanBoxes.forEach(
         ({
@@ -164,10 +170,9 @@ export default class TextPainter {
           fontWeight,
           color,
         }) => {
-          ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
-          ctx.textAlign = "start";
-          ctx.textBaseline = "hanging";
-          ctx.fillStyle = color;
+          const font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+          if (lastFont !== font) ctx.font = lastFont = font;
+          if (lastColor !== color) ctx.fillStyle = lastColor = color;
           ctx.fillText(content, x + offset.x, y + offset.y);
         },
       );
@@ -377,10 +382,35 @@ export class Paragraph {
     return this.lines.reduce((acc, line) => Math.max(acc + line.height), 0);
   }
 
+  /** Update fill colors without tokenizing, measuring or breaking lines. */
+  updatePaint(source: Span[]): boolean {
+    if (source.length !== this.source.length) return false;
+    for (let i = 0; i < source.length; i++) {
+      const a = source[i];
+      const b = this.source[i];
+      if (
+        a.content !== b.content ||
+        a.fontSize !== b.fontSize ||
+        a.fontFamily !== b.fontFamily ||
+        a.fontWeight !== b.fontWeight ||
+        a.fontStyle !== b.fontStyle ||
+        a.height !== b.height
+      )
+        return false;
+    }
+    for (const line of this.lines) {
+      for (const box of line.spanBoxes)
+        box.color = source[box.sourceIndex].color;
+    }
+    this.source = source;
+    return true;
+  }
+
   layout(width: number = Infinity) {
     this.width = width;
     this.lines = [];
     let currentLine = new ParagraphLine();
+    let sourceIndex = 0;
     let currentStyle: {
       fontSize: number;
       fontFamily: string;
@@ -404,6 +434,7 @@ export class Paragraph {
       }
       currentLine.addSpanBox(
         new SpanBox({
+          sourceIndex,
           content: word,
           ...currentStyle,
           size: {
@@ -423,6 +454,7 @@ export class Paragraph {
             addNewLine();
             currentLine.addSpanBox(
               new SpanBox({
+                sourceIndex,
                 content: "\n",
                 ...currentStyle,
                 size: {
@@ -440,7 +472,8 @@ export class Paragraph {
       }
     };
 
-    this.source.forEach(({ content, ...style }) => {
+    this.source.forEach(({ content, ...style }, index) => {
+      sourceIndex = index;
       currentStyle = style;
       const font = `${currentStyle.fontWeight} ${currentStyle.fontSize}px ${currentStyle.fontFamily}`;
       const words = content.match(/\S+|\s+/g) || [];
@@ -541,6 +574,7 @@ type Span = {
 };
 
 class SpanBox {
+  readonly sourceIndex: number;
   fontSize: number;
   fontFamily: string;
   fontWeight: string;
@@ -552,6 +586,7 @@ class SpanBox {
   offset: { x: number; y: number } = { x: 0, y: 0 };
 
   constructor({
+    sourceIndex,
     fontFamily,
     fontSize,
     fontStyle,
@@ -560,7 +595,8 @@ class SpanBox {
     content,
     height,
     size,
-  }: Span & { size: { width: number; height: number } }) {
+  }: Span & { sourceIndex: number; size: { width: number; height: number } }) {
+    this.sourceIndex = sourceIndex;
     this.fontFamily = fontFamily;
     this.fontStyle = fontStyle;
     this.fontWeight = fontWeight;
@@ -574,16 +610,15 @@ class SpanBox {
 
 class ParagraphLine {
   spanBoxes: SpanBox[] = [];
+  private measuredWidth = 0;
+  private measuredHeight = 0;
 
   get height() {
-    return this.spanBoxes.reduce(
-      (acc, { size, height }) => Math.max(acc, size.height * height),
-      0,
-    );
+    return this.measuredHeight;
   }
 
   get width() {
-    return this.spanBoxes.reduce((acc, { size }) => acc + size.width, 0);
+    return this.measuredWidth;
   }
 
   layout(
@@ -617,5 +652,10 @@ class ParagraphLine {
 
   addSpanBox(spanBox: SpanBox) {
     this.spanBoxes.push(spanBox);
+    this.measuredWidth += spanBox.size.width;
+    this.measuredHeight = Math.max(
+      this.measuredHeight,
+      spanBox.size.height * spanBox.height,
+    );
   }
 }

@@ -135,8 +135,18 @@ export class CanvasRenderPipeline extends RenderPipeline {
   }
 
   override notifyZOrderChanged(): void {
-    this.#needsComposite = true;
     super.notifyZOrderChanged();
+  }
+
+  protected override recalculateZOrder(): RenderObject[] {
+    const changed = super.recalculateZOrder();
+    if (changed.length > 0) {
+      // Pictures bake in draw order. Re-record affected boundaries only when
+      // the resolved order changes, not merely when a numeric zIndex changes.
+      this.markNeedsPaint(this.renderView);
+      for (const node of changed) this.markNeedsPaint(node);
+    }
+    return changed;
   }
 
   #compositeFrame() {

@@ -10,6 +10,10 @@ import {
 import type Widget from "../../widget/Widget";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import { createUniqueId } from "../../utils";
+import {
+  ClipPathLayer,
+  type Layer,
+} from "../../framework/renderer/canvas/layer";
 
 type Clipper = (size: Size) => Path;
 
@@ -149,6 +153,25 @@ class SvgPainterClipPath extends SvgPainter {
 }
 
 class ClipPathCanvasPainter extends CanvasPainter {
+  private clipLayer: ClipPathLayer | null = null;
+  private boundaryLayers = new WeakMap<Layer, ClipPathLayer>();
+
+  override wrapLayer(child: Layer, offset: Offset): Layer {
+    let layer = this.boundaryLayers.get(child);
+    if (layer == null) {
+      layer = new ClipPathLayer({
+        offset,
+        clipPath: this.clipper,
+        translateContents: false,
+      });
+      this.boundaryLayers.set(child, layer);
+    }
+    layer.offset = offset;
+    layer.clipPath = this.clipper;
+    layer.removeAllChildren();
+    layer.append(child);
+    return layer;
+  }
   get clipper() {
     return (this.renderObject as RenderClipPath).getClip();
   }
@@ -157,6 +180,21 @@ class ClipPathCanvasPainter extends CanvasPainter {
     context: CanvasPaintingContext,
     offset: Offset,
   ): void {
+    if (context.paintsChildren && this.renderObject.needsCompositing) {
+      // Keep picture coordinates in the enclosing boundary's space; only
+      // translate the clip, not the separately recorded contents.
+      const layer = (this.clipLayer ??= new ClipPathLayer({
+        offset,
+        clipPath: this.clipper,
+        translateContents: false,
+      }));
+      layer.offset = offset;
+      layer.clipPath = this.clipper;
+      context.pushLayer(layer, childContext =>
+        this.defaultPaint(childContext, offset),
+      );
+      return;
+    }
     context.canvas.save();
     context.canvas.translate(offset.x, offset.y);
     context.canvas.clip(this.clipper.toCanvasPath());

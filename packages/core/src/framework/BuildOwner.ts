@@ -32,7 +32,7 @@ class BuildOwner {
     if (this.isFlushingBuild) {
       this.dirtyElementsNeedsResorting = true;
     }
-    if (!this.buildScheduled) {
+    if (!this.buildScheduled && !this.isFlushingBuild) {
       this.buildScheduled = true;
       this.requestVisualUpdate();
     }
@@ -49,14 +49,21 @@ class BuildOwner {
 
     try {
       let index = 0;
-      while (index < this.dirtyElements.length) {
+      while (
+        index < this.dirtyElements.length ||
+        this.dirtyElementsNeedsResorting
+      ) {
         if (this.dirtyElementsNeedsResorting) {
           this.dirtyElements.sort(BuildOwner.elementSort);
           this.dirtyElementsNeedsResorting = false;
+          // Reparenting or a dependency notification can introduce a dirty
+          // element before the cursor. Flutter's build scope rewinds over the
+          // dirty prefix after resorting so those elements are not dropped.
+          while (index > 0 && this.dirtyElements[index - 1].dirty) index--;
         }
+        if (index >= this.dirtyElements.length) break;
 
         const elememt = this.dirtyElements[index];
-        elememt.inDirtyList = false;
 
         if (
           elememt.dirty &&

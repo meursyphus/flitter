@@ -183,6 +183,8 @@ export abstract class RenderPipeline {
   }
 
   #zOrderChanged = false;
+  #paintOrder: RenderObject[] = [];
+  #paintOrderStructureEpoch = -1;
   notifyZOrderChanged() {
     this.#zOrderChanged = true;
     this.requestVisualUpdate();
@@ -194,6 +196,19 @@ export abstract class RenderPipeline {
     this.renderView.accept(visitor);
     const painterRenderObjects = visitor.getRenderObjectsByDomOrder();
 
+    const orderUnchanged =
+      painterRenderObjects.length === this.#paintOrder.length &&
+      painterRenderObjects.every(
+        (node, index) => node === this.#paintOrder[index],
+      );
+    if (
+      orderUnchanged &&
+      this.#paintOrderStructureEpoch === this.structureEpoch
+    )
+      return [];
+    this.#paintOrder = painterRenderObjects;
+    this.#paintOrderStructureEpoch = this.structureEpoch;
+
     for (let i = painterRenderObjects.length - 1; i >= 0; i--) {
       const renderObject = painterRenderObjects[i];
       renderObject.updateZOrder(i);
@@ -202,16 +217,25 @@ export abstract class RenderPipeline {
     // Compute minDescendantZOrder bottom-up for canvas z-ordered tree walk
     RenderPipeline.#computeMinDescendantZOrder(this.renderView);
 
-    return painterRenderObjects;
+    return orderUnchanged ? [] : painterRenderObjects;
   }
 
-  static #computeMinDescendantZOrder(node: RenderObject): number {
+  static #computeMinDescendantZOrder(node: RenderObject): {
+    min: number;
+    max: number;
+  } {
     let min = node.isPainter ? node.zOrder : Infinity;
+    let max = node.isPainter ? node.zOrder : -Infinity;
+    let treeOrder = true;
     node.visitChildren(child => {
-      min = Math.min(min, RenderPipeline.#computeMinDescendantZOrder(child));
+      const range = RenderPipeline.#computeMinDescendantZOrder(child);
+      if (!child.paintOrderIsTreeOrder || range.min < max) treeOrder = false;
+      min = Math.min(min, range.min);
+      max = Math.max(max, range.max);
     });
     node.minDescendantZOrder = min === Infinity ? (node.zOrder ?? 0) : min;
-    return node.minDescendantZOrder;
+    node.paintOrderIsTreeOrder = treeOrder;
+    return { min, max };
   }
 
   abstract drawFrame(): void;

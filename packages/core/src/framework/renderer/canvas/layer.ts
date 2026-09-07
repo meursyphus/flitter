@@ -123,13 +123,7 @@ export class OffsetLayer extends ContainerLayer {
 export class TransformLayer extends OffsetLayer {
   transform: Matrix4;
 
-  constructor({
-    offset,
-    transform,
-  }: {
-    offset: Offset;
-    transform: Matrix4;
-  }) {
+  constructor({ offset, transform }: { offset: Offset; transform: Matrix4 }) {
     super(offset);
     this.transform = transform;
   }
@@ -146,13 +140,7 @@ export class TransformLayer extends OffsetLayer {
 export class OpacityLayer extends OffsetLayer {
   opacity: number;
 
-  constructor({
-    offset,
-    opacity,
-  }: {
-    offset: Offset;
-    opacity: number;
-  }) {
+  constructor({ offset, opacity }: { offset: Offset; opacity: number }) {
     super(offset);
     this.opacity = opacity;
   }
@@ -168,20 +156,24 @@ export class OpacityLayer extends OffsetLayer {
 
 export class ClipPathLayer extends OffsetLayer {
   clipPath: Path;
+  translateContents: boolean;
 
   constructor({
     offset,
     clipPath,
+    translateContents = true,
   }: {
     offset: Offset;
     clipPath: Path;
+    translateContents?: boolean;
   }) {
     super(offset);
     this.clipPath = clipPath;
+    this.translateContents = translateContents;
   }
 
   override addToScene(builder: SceneBuilder) {
-    builder.pushClipPath(this.clipPath, this.offset);
+    builder.pushClipPath(this.clipPath, this.offset, this.translateContents);
     this.visitChildren(layer => {
       layer.addToScene(builder);
     });
@@ -192,13 +184,7 @@ export class ClipPathLayer extends OffsetLayer {
 export class ClipRectLayer extends OffsetLayer {
   clipRect: Rect;
 
-  constructor({
-    offset,
-    clipRect,
-  }: {
-    offset: Offset;
-    clipRect: Rect;
-  }) {
+  constructor({ offset, clipRect }: { offset: Offset; clipRect: Rect }) {
     super(offset);
     this.clipRect = clipRect;
   }
@@ -219,7 +205,12 @@ export class SceneBuilder {
     | { type: "translate"; offset: Offset }
     | { type: "transform"; offset: Offset; transform: Matrix4 }
     | { type: "opacity"; opacity: number; offset: Offset }
-    | { type: "clipPath"; clipPath: Path; offset: Offset }
+    | {
+        type: "clipPath";
+        clipPath: Path;
+        offset: Offset;
+        translateContents: boolean;
+      }
     | { type: "clipRect"; clipRect: Rect; offset: Offset }
     | { type: "picture"; x: number; y: number; picture: Picture }
   )[] = [];
@@ -254,6 +245,8 @@ export class SceneBuilder {
         case "clipPath":
           ctx.translate(command.offset.x, command.offset.y);
           ctx.clip(command.clipPath.toCanvasPath());
+          if (!command.translateContents)
+            ctx.translate(-command.offset.x, -command.offset.y);
           break;
         case "clipRect":
           ctx.translate(command.offset.x, command.offset.y);
@@ -313,12 +306,13 @@ export class SceneBuilder {
     });
   }
 
-  pushClipPath(clipPath: Path, offset: Offset) {
+  pushClipPath(clipPath: Path, offset: Offset, translateContents = true) {
     this.#commands.push({ type: "save" });
     this.#commands.push({
       type: "clipPath",
       clipPath,
       offset,
+      translateContents,
     });
   }
 

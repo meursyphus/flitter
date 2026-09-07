@@ -4,6 +4,7 @@
   "private": true,
   "description": "Flitter monorepo",
   "scripts": {
+    "test:engine": "pnpm --dir packages/core exec tsc --noEmit && pnpm --dir dev/performance test:engine",
     "build": "turbo build",
     "build:core": "turbo build --filter=flitter-core",
     "build:chart": "turbo build --filter=flitter-chart",
@@ -22,6 +23,7 @@
     "perf:dev": "turbo dev --filter=flitter-performance",
     "perf:trace": "node dev/performance/scripts/run-perf-trace.mjs",
     "perf:rerender": "node dev/performance/scripts/run-perf-rerender.mjs",
+    "perf:engine": "node dev/performance/scripts/run-perf-engine.mjs",
     "test": "turbo test --filter=flitter-performance",
     "test:integration": "pnpm --filter flitter-performance test:integration",
     "chromatic": "turbo build --filter=flitter-storybook^... && pnpm --dir dev/storybook exec chromatic"

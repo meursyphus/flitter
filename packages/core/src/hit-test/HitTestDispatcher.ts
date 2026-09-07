@@ -23,20 +23,32 @@ export class HitTestDispatcher {
   #lastPressHits: RenderGestureDetector[] | null = null;
   #lastHoverPosition: Offset | null = null;
   #lastHoverHits: RenderGestureDetector[] | null = null;
+  #listeners: { type: string; handler: EventListener }[] = [];
 
   init({ renderContext }: { renderContext: RenderContext }) {
     if (!this.#activated) return;
     this.#renderContext = renderContext;
     const { view } = this.#renderContext;
 
-    view.addEventListener("mousedown", this.#wrapEvent(this.#handleMouseDown));
-    view.addEventListener("click", this.#wrapEvent(this.#handleClick));
-    view.addEventListener("mousemove", this.#wrapEvent(this.#handleMouseMove));
-    view.addEventListener("mouseup", this.#wrapEvent(this.#handleMouseUp));
-    view.addEventListener("wheel", this.#wrapEvent(this.#handleMouseWheel));
-
-    view.addEventListener("mouseenter", this.#wrapEvent(this.#handleMouseEnter));
-    view.addEventListener("mouseleave", this.#wrapEvent(this.#handleMouseLeave));
+    const handlers = {
+      mousedown: this.#handleMouseDown,
+      click: this.#handleClick,
+      mousemove: this.#handleMouseMove,
+      mouseup: this.#handleMouseUp,
+      wheel: this.#handleMouseWheel,
+      mouseenter: this.#handleMouseEnter,
+      mouseleave: this.#handleMouseLeave,
+    };
+    for (const [type, callback] of Object.entries(handlers)) {
+      const handler = this.#wrapEvent(callback);
+      this.#listeners.push({ type, handler });
+      view.addEventListener(type, handler);
+    }
+    this.#renderContext.window.addEventListener(
+      "scroll",
+      this.invalidate,
+      true,
+    );
   }
 
   setRenderView(renderView: RenderObject) {
@@ -48,6 +60,29 @@ export class HitTestDispatcher {
     this.#lastPressHits = null;
     this.#lastHoverPosition = null;
     this.#lastHoverHits = null;
+  }
+
+  /** A retained hit at the same coordinates is valid only for the same scene. */
+  invalidate = () => {
+    this.#rootPosition = null;
+    this.#lastHoverPosition = null;
+    this.#lastHoverHits = null;
+  };
+
+  dispose() {
+    for (const { type, handler } of this.#listeners)
+      this.#renderContext.view.removeEventListener(type, handler);
+    this.#listeners = [];
+    this.#renderContext?.window?.removeEventListener(
+      "scroll",
+      this.invalidate,
+      true,
+    );
+    this.#renderView = null;
+    this.#previousHits.clear();
+    this.#activePointerHits = this.#lastPressHits = null;
+    this.#previousCursorDetector = null;
+    this.invalidate();
   }
 
   #handleMouseDown = (e: Wrapped<MouseEvent>) => {
@@ -231,8 +266,7 @@ export class HitTestDispatcher {
     this.#dispatchDetectors(detectors, e, type);
   };
 
-  #wrapEvent =
-    <E extends Event>(callback: (e: Wrapped<E>) => void) =>
+  #wrapEvent = <E extends Event>(callback: (e: Wrapped<E>) => void) =>
     ((e: E) => {
       const wrapped = e as Wrapped<E>;
       const stopPropagation = wrapped.stopPropagation.bind(wrapped);

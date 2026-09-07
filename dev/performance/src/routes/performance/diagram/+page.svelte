@@ -1,8 +1,13 @@
 <script lang="ts">
 	import { Diagram } from 'shared';
 	import { project } from '$lib/diagram/fixture';
+	import { onMount } from 'svelte';
 
 	let show = false;
+	let hydrated = false;
+	onMount(() => {
+		hydrated = true;
+	});
 
 	function toggle() {
 		show = !show;
@@ -14,7 +19,7 @@
 </script>
 
 <div>
-	<button on:click={handleClick}>{show ? 'Hide' : 'Show'}</button>
+	<button disabled={!hydrated} on:click={handleClick}>{show ? 'Hide' : 'Show'}</button>
 </div>
 
 <div class="diagram-wrapper">

@@ -2,6 +2,7 @@
 	import { Diagram } from 'shared';
 	import { project as baseProject } from '$lib/diagram/fixture';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
 	type Field = { name: string };
 	type Table = { fields: Field[] };
@@ -18,6 +19,10 @@
 	const scenario = $page.url.searchParams.get('scenario') ?? 'identity';
 
 	let show = false;
+	let hydrated = false;
+	onMount(() => {
+		hydrated = true;
+	});
 
 	// Mutable deep copy so scenario mutations never touch the shared fixture.
 	const project = structuredClone(baseProject) as Project;
@@ -88,7 +93,7 @@
 </script>
 
 <div>
-	<button on:click={() => (show = !show)}>{show ? 'Hide' : 'Show'}</button>
+	<button disabled={!hydrated} on:click={() => (show = !show)}>{show ? 'Hide' : 'Show'}</button>
 </div>
 
 <div class="diagram-wrapper">

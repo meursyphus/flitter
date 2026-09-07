@@ -26,10 +26,11 @@ class Scheduler {
   }
 
   flushPostCallbacks() {
-    this.postFrameCallbacks.forEach(callback => {
+    const callbacks = this.postFrameCallbacks;
+    this.postFrameCallbacks = [];
+    callbacks.forEach(callback => {
       callback();
     });
-    this.postFrameCallbacks = [];
   }
 
   ensureVisualUpdate() {
@@ -76,6 +77,13 @@ class Scheduler {
 
   addPostFrameCallbacks(callback: () => void) {
     this.postFrameCallbacks.push(() => callback());
+  }
+
+  dispose() {
+    this.renderFrameDispatcher.dispose();
+    this.persistenceCallbacks = [];
+    this.postFrameCallbacks = [];
+    this.hasScheduledFrame = false;
   }
 }
 

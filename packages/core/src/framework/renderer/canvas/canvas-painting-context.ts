@@ -22,6 +22,7 @@ type CollectedBoundary = {
   kind: "boundary";
   renderObject: RenderObject;
   offset: Offset;
+  ancestors: AncestorNode[];
 };
 
 type CollectedPaintItem = CollectedPainter | CollectedBoundary;
@@ -180,6 +181,15 @@ export class CanvasPaintingContext {
       recycledCanvases,
     );
 
+    if (node.paintOrderIsTreeOrder) {
+      // Most scenes already have monotone paint order. A single DFS preserves
+      // canvas state naturally and visits each node once, instead of sorting
+      // every painter and replaying its entire ancestor path.
+      node.canvasPainter.paint(childContext, Offset.Constants.zero);
+      childContext.stopRecordingIfNeeded();
+      return;
+    }
+
     const items: CollectedPaintItem[] = [];
     CanvasPaintingContext.#collectPaintItems(
       node,
@@ -201,14 +211,20 @@ export class CanvasPaintingContext {
       return aOrder - bOrder;
     });
 
-    const recording = childContext.#ensureRecording();
     childContext.#skipChildPainting = true;
     for (const item of items) {
       if (item.kind === "boundary") {
-        childContext.compositeChild(item.renderObject, item.offset);
+        childContext.compositeChild(
+          item.renderObject,
+          item.offset,
+          item.ancestors,
+        );
         continue;
       }
 
+      // A boundary ends the preceding picture. Bind save/replay/restore to
+      // the active recording, including the first painter after a boundary.
+      const recording = childContext.#ensureRecording();
       const { renderObject, offset, ancestors } = item;
       recording.raw.save();
       for (const { node: ancestorNode, offset: ancestorOffset } of ancestors) {
@@ -222,6 +238,7 @@ export class CanvasPaintingContext {
     childContext.#skipChildPainting = false;
 
     childContext.stopRecordingIfNeeded();
+    node.needsPaint = false;
   }
 
   /**
@@ -255,6 +272,7 @@ export class CanvasPaintingContext {
         kind: "boundary",
         renderObject: node,
         offset,
+        ancestors: ancestorChain.slice(),
       });
       return;
     }
@@ -270,7 +288,8 @@ export class CanvasPaintingContext {
       });
     }
 
-    ancestorChain.push({ node, offset });
+    const paintsChildState = node.canvasPainter.paintsChildState;
+    if (paintsChildState) ancestorChain.push({ node, offset });
     node.visitChildren(child => {
       CanvasPaintingContext.#collectPaintItems(
         child,
@@ -279,7 +298,8 @@ export class CanvasPaintingContext {
         result,
       );
     });
-    ancestorChain.pop();
+    if (paintsChildState) ancestorChain.pop();
+    if (!node.isPainter) node.needsPaint = false;
   }
 
   static updateLayerProperties(node: RenderObject): void {
@@ -300,6 +320,27 @@ export class CanvasPaintingContext {
   get canvas(): CanvasRenderingContext2D {
     const recording = this.#ensureRecording();
     return recording.suppressing ? recording.wrapper : recording.raw;
+  }
+
+  get paintsChildren(): boolean {
+    return !this.#skipChildPainting;
+  }
+
+  /** Flutter's pushLayer: preserve state across separately recorded pictures. */
+  pushLayer(
+    layer: ContainerLayer,
+    painter: (context: CanvasPaintingContext) => void,
+  ) {
+    const recycled = CanvasPaintingContext.#harvestRecycledCanvases(layer);
+    layer.removeAllChildren();
+    this.addLayer(layer);
+    const context = new CanvasPaintingContext(
+      layer,
+      this.#estimateBound,
+      recycled,
+    );
+    painter(context);
+    context.stopRecordingIfNeeded();
   }
 
   #ensureRecording(): CanvasRecording {
@@ -348,12 +389,20 @@ export class CanvasPaintingContext {
     child.canvasPainter.paint(this, offset);
   }
 
-  compositeChild(child: RenderObject, offset: Offset) {
+  compositeChild(
+    child: RenderObject,
+    offset: Offset,
+    ancestors?: AncestorNode[],
+  ) {
     this.stopRecordingIfNeeded();
-    this.#compositeChild(child, offset);
+    this.#compositeChild(child, offset, ancestors);
   }
 
-  #compositeChild(child: RenderObject, offset: Offset) {
+  #compositeChild(
+    child: RenderObject,
+    offset: Offset,
+    ancestors?: AncestorNode[],
+  ) {
     assert(
       child.canvasPainter.isRepaintBoundary,
       "isRepaintBoundary must be true on compositeChild",
@@ -371,6 +420,13 @@ export class CanvasPaintingContext {
       "repaint boundary layer must be an OffsetLayer",
     );
     childLayer.offset = offset;
-    this.#appendLayer(childLayer);
+    let layer: Layer = childLayer;
+    if (ancestors != null) {
+      for (let i = ancestors.length - 1; i >= 0; i--) {
+        const ancestor = ancestors[i];
+        layer = ancestor.node.canvasPainter.wrapLayer(layer, ancestor.offset);
+      }
+    }
+    this.#appendLayer(layer);
   }
 }

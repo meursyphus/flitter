@@ -29,6 +29,10 @@ export class PerformanceTracer {
     } finally {
       performance.mark(endMark);
       performance.measure(measureName, startMark, endMark);
+      // The measures are the public trace. Private marks otherwise accumulate
+      // twice per phase per frame in long-running animation sessions.
+      performance.clearMarks(startMark);
+      performance.clearMarks(endMark);
     }
   }
 }
