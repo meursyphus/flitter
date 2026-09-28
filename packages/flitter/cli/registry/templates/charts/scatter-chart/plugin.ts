@@ -3,7 +3,7 @@ import { toastStyleConfig, type ToastScatterChartConfig } from "./styles/toast";
 import { agStyleConfig, type AgScatterChartConfig } from "./styles/ag";
 import type { DeepPartial } from "@utils/index";
 
-export type StyleConfig<TConfig> = {
+export type StyleConfig<TConfig extends object> = {
   custom: Partial<ScatterChartCustom<TConfig>>;
   createConfig: (config?: DeepPartial<TConfig>) => TConfig;
   getScaleOptions: GetScaleOptionsFn;

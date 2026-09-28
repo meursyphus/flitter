@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"strict": true,
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"noEmit": true,
+		"lib": ["ES2022", "DOM", "DOM.Iterable"],
+		"types": ["node"],
+		"baseUrl": ".",
+		"paths": { "flitter-core": ["../../packages/core/src/index.ts"] }
+	},
+	"include": [
+		"src/lib/engine-bench.ts",
+		"src/text-algorithms.test.ts",
+		"src/transform-cache.test.ts",
+		"src/build-phase-optimization.test.ts",
+		"tests/engine-regression.test.ts",
+		"tests/engine-performance.test.ts"
+	]
+}

@@ -79,6 +79,9 @@ class SvgPainterColoredBox extends SvgPainter {
 }
 
 class CanvasPainterColoredBox extends CanvasPainter {
+  override get paintsChildState() {
+    return false;
+  }
   get color() {
     return (this.renderObject as RenderColoredBox).color;
   }

@@ -19,6 +19,7 @@ import {
 	type Widget,
 } from "flitter-core";
 import { DataView, Layout, Segment } from "../../../shared/pie-like";
+import type { PieLikeLayoutConfig } from "../../../shared/pie-like/layout";
 import { tooltipContent as agTooltipContent } from "../tooltip";
 import { agMouseTooltipArea } from "../cartesian/mouse-tooltip-area";
 
@@ -74,6 +75,11 @@ type AgPieLikeConfig = {
 	};
 	tooltip: {
 		enabled: boolean;
+		backgroundColor: string;
+		textColor: string;
+		borderColor: string;
+		borderRadius: number;
+		padding: number;
 	};
 };
 
@@ -111,7 +117,7 @@ type PieLikeTooltipArgs = {
 	directionY: number;
 };
 
-export function agPieLikeLayout<TConfig extends AgPieLikeConfig>(
+export function agPieLikeLayout<TConfig extends AgPieLikeConfig & PieLikeLayoutConfig>(
 	args: { title: Widget; legends: Widget[]; plot: Widget },
 	context: { config: TConfig },
 ): Widget {
@@ -119,7 +125,7 @@ export function agPieLikeLayout<TConfig extends AgPieLikeConfig>(
 		decoration: new BoxDecoration({
 			color: context.config.background,
 		}),
-		child: Layout(args, context as any),
+		child: Layout(args, context),
 	});
 }
 
@@ -339,12 +345,12 @@ export function agPieLikeTooltip<TConfig extends AgPieLikeConfig>(
 			color,
 			value: args.value,
 		},
-		config: context.config as any,
+		config: context.config,
 	});
 }
 
-export function agPieLikeTooltipArea<TConfig extends AgPieLikeConfig>(
-	args: { tooltip: Widget | null; hoveredSegment: PieLikeTooltipArgs | null },
+export function agPieLikeTooltipArea<TConfig extends Pick<AgPieLikeConfig, "tooltip">>(
+	args: { tooltip: Widget | null; hoveredSegment: unknown | null },
 	context: { config: TConfig },
 ): Widget {
 	return agMouseTooltipArea({

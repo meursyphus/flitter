@@ -35,6 +35,35 @@ function getCtxOrNull(): CanvasRenderingContext2D | null {
   return _ctx;
 }
 
+/*
+  Flyweight cache for canvas text measurement. `ctx.measureText` is the dominant
+  cost of text layout and its result is fully determined by (font, text), so the
+  measured width is shared across every caller and every relayout — measure each
+  distinct pair once while it remains in the bounded LRU cache. The cache is bound to `window` (never a
+  module global) so it cannot leak across renders in a long-running Node SSR
+  process, and it is cleared when web fonts finish loading so a width measured
+  with a fallback font is never reused after the real font arrives.
+*/
+const TEXT_WIDTH_CACHE_KEY = Symbol.for("flitter.textWidthMeasurementCache");
+const TEXT_WIDTH_CACHE_LIMIT = 8192;
+
+function getTextWidthCache(): Map<string, number> | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  const host = window as unknown as Record<symbol, Map<string, number>>;
+  let cache = host[TEXT_WIDTH_CACHE_KEY];
+  if (cache == null) {
+    cache = new Map<string, number>();
+    host[TEXT_WIDTH_CACHE_KEY] = cache;
+    const fonts = (document as Document & { fonts?: FontFaceSet }).fonts;
+    if (fonts != null && typeof fonts.addEventListener === "function") {
+      fonts.addEventListener("loadingdone", () => cache!.clear());
+    }
+  }
+  return cache;
+}
+
 export function getTextWidth({
   text,
   font,
@@ -44,8 +73,27 @@ export function getTextWidth({
 }): number {
   const ctx = getCtxOrNull();
   if (ctx != null) {
-    ctx.font = font;
+    const cache = getTextWidthCache();
+    const cacheKey = cache != null ? `${font}\u0000${text}` : null;
+    if (cache != null && cacheKey != null) {
+      const cached = cache.get(cacheKey);
+      if (cached !== undefined) {
+        // LRU: hot axis labels survive a stream of unique live-data values.
+        cache.delete(cacheKey);
+        cache.set(cacheKey, cached);
+        return cached;
+      }
+    }
+
+    if (ctx.font !== font) ctx.font = font;
     const width = Math.ceil(ctx.measureText(text).width);
+
+    if (cache != null && cacheKey != null) {
+      if (cache.size >= TEXT_WIDTH_CACHE_LIMIT) {
+        cache.delete(cache.keys().next().value!);
+      }
+      cache.set(cacheKey, width);
+    }
     return width;
   }
 

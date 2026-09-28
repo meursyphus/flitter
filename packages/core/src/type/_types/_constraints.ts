@@ -43,7 +43,12 @@ class Constraints extends Data {
   }
 
   private static validateInterpolation(a: Constraints, b: Constraints) {
-    const dimensions: (keyof Constraints)[] = ["minWidth", "maxWidth", "minHeight", "maxHeight"];
+    const dimensions: (keyof Constraints)[] = [
+      "minWidth",
+      "maxWidth",
+      "minHeight",
+      "maxHeight",
+    ];
     dimensions.forEach(dimension => {
       assert(
         (Number.isFinite(a[dimension]) && Number.isFinite(b[dimension])) ||
@@ -90,6 +95,23 @@ class Constraints extends Data {
       maxWidth: size.width,
     });
   }
+
+  /**
+   * Shared, frozen default constraints (fully unbounded/loose). Constraints are
+   * immutable — every operation returns a new instance — so render objects can
+   * share this as their initial value instead of each allocating an identical
+   * Size + Constraints pair at construction time.
+   */
+  static Constants = {
+    default: Object.freeze(
+      new Constraints({
+        minWidth: 0,
+        maxWidth: Infinity,
+        minHeight: 0,
+        maxHeight: Infinity,
+      }),
+    ) as Constraints,
+  };
 
   static tight({ width, height }: { width: number; height: number }) {
     return Constraints.tightFor({ width, height });
@@ -169,7 +191,7 @@ class Constraints extends Data {
   }
 
   get isTight(): boolean {
-    return this.hasTightWidth && this.hasBoundedHeight;
+    return this.hasTightWidth && this.hasTightHeight;
   }
 
   get hasBoundedWidth(): boolean {

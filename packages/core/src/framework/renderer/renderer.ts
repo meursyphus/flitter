@@ -4,6 +4,7 @@ import type { HitTestDispatcher } from "../../hit-test/HitTestDispatcher";
 import { type Matrix4, type Offset, Size } from "../../type";
 import type { RenderZIndex } from "../../component/base/BaseZIndex";
 import type { RenderGestureDetector } from "../../component/base/BaseGestureDetector";
+import type { PerformanceTracer } from "../performance-tracing";
 
 export class RenderContext {
   document: Document;
@@ -93,9 +94,24 @@ export abstract class RenderPipeline {
   hitTestDispatcher: HitTestDispatcher;
   readonly renderContext: RenderContext;
   private onNeedVisualUpdate: () => void;
+  protected performanceTracer: PerformanceTracer;
+  needsCompositingBitsUpdateRenderObjects: RenderObject[] = [];
   needsPaintRenderObjects: RenderObject[] = [];
   needsLayoutRenderObjects: RenderObject[] = [];
   needsPaintTransformUpdateRenderObjects: RenderObject[] = [];
+  /*
+    Monotonic counter bumped whenever the render-object child composition can
+    change (a render object attaches/detaches, or an element reorders/forgets a
+    child). RenderObject.children memoizes its derived child array against this
+    epoch so the many full-tree traversals in a single frame (layout, compositing
+    bits, paint-transform, z-order, paint) don't each re-walk the element tree.
+    Mirrors how Flutter keeps a materialized render-child list instead of
+    deriving it on every access.
+  */
+  structureEpoch = 0;
+  bumpStructureEpoch() {
+    this.structureEpoch++;
+  }
   /*
    this will be set by RenderView
   */
@@ -104,14 +120,17 @@ export abstract class RenderPipeline {
     onNeedVisualUpdate,
     renderContext,
     hitTestDispatcher,
+    performanceTracer,
   }: {
     onNeedVisualUpdate: () => void;
     renderContext: RenderContext;
     hitTestDispatcher: HitTestDispatcher;
+    performanceTracer: PerformanceTracer;
   }) {
     this.onNeedVisualUpdate = onNeedVisualUpdate;
     this.renderContext = renderContext;
     this.hitTestDispatcher = hitTestDispatcher;
+    this.performanceTracer = performanceTracer;
     this.hitTestDispatcher.init({ renderContext: this.renderContext });
   }
 
@@ -119,19 +138,53 @@ export abstract class RenderPipeline {
     this.onNeedVisualUpdate();
   }
 
+  protected trace<T>(name: string, fn: () => T): T {
+    return this.performanceTracer.measure(name, fn);
+  }
+
   protected flushLayout() {
-    const dirties = this.needsLayoutRenderObjects;
-    this.needsLayoutRenderObjects = [];
+    /*
+      Nodes can be marked dirty while laying out (LayoutBuilder-style
+      callbacks), so drain until convergence like Flutter's
+      PipelineOwner.flushLayout, re-sorting depth-ascending per pass. The pass
+      cap guards against runaway re-dirtying cycles; anything left after the
+      cap stays queued for the next scheduled frame — never throw.
+    */
+    let passes = 0;
+    while (this.needsLayoutRenderObjects.length > 0) {
+      if (passes >= 8) {
+        this.requestVisualUpdate();
+        break;
+      }
+      passes += 1;
+
+      const dirties = this.needsLayoutRenderObjects;
+      this.needsLayoutRenderObjects = [];
+
+      dirties.sort((a, b) => a.depth - b.depth);
+      for (let i = 0; i < dirties.length; i++) {
+        const renderObject = dirties[i];
+        if (!renderObject.needsLayout) continue;
+        renderObject.layoutWithoutResize();
+      }
+    }
+  }
+
+  protected flushCompositingBits() {
+    const dirties = this.needsCompositingBitsUpdateRenderObjects;
+    this.needsCompositingBitsUpdateRenderObjects = [];
 
     dirties
       .sort((a, b) => a.depth - b.depth)
       .forEach(renderObject => {
-        if (!renderObject.needsLayout) return;
-        renderObject.layoutWithoutResize();
+        if (!renderObject.needsCompositingBitsUpdate) return;
+        renderObject.updateCompositingBits();
       });
   }
 
   #zOrderChanged = false;
+  #paintOrder: RenderObject[] = [];
+  #paintOrderStructureEpoch = -1;
   notifyZOrderChanged() {
     this.#zOrderChanged = true;
     this.requestVisualUpdate();
@@ -143,6 +196,19 @@ export abstract class RenderPipeline {
     this.renderView.accept(visitor);
     const painterRenderObjects = visitor.getRenderObjectsByDomOrder();
 
+    const orderUnchanged =
+      painterRenderObjects.length === this.#paintOrder.length &&
+      painterRenderObjects.every(
+        (node, index) => node === this.#paintOrder[index],
+      );
+    if (
+      orderUnchanged &&
+      this.#paintOrderStructureEpoch === this.structureEpoch
+    )
+      return [];
+    this.#paintOrder = painterRenderObjects;
+    this.#paintOrderStructureEpoch = this.structureEpoch;
+
     for (let i = painterRenderObjects.length - 1; i >= 0; i--) {
       const renderObject = painterRenderObjects[i];
       renderObject.updateZOrder(i);
@@ -151,16 +217,25 @@ export abstract class RenderPipeline {
     // Compute minDescendantZOrder bottom-up for canvas z-ordered tree walk
     RenderPipeline.#computeMinDescendantZOrder(this.renderView);
 
-    return painterRenderObjects;
+    return orderUnchanged ? [] : painterRenderObjects;
   }
 
-  static #computeMinDescendantZOrder(node: RenderObject): number {
+  static #computeMinDescendantZOrder(node: RenderObject): {
+    min: number;
+    max: number;
+  } {
     let min = node.isPainter ? node.zOrder : Infinity;
+    let max = node.isPainter ? node.zOrder : -Infinity;
+    let treeOrder = true;
     node.visitChildren(child => {
-      min = Math.min(min, RenderPipeline.#computeMinDescendantZOrder(child));
+      const range = RenderPipeline.#computeMinDescendantZOrder(child);
+      if (!child.paintOrderIsTreeOrder || range.min < max) treeOrder = false;
+      min = Math.min(min, range.min);
+      max = Math.max(max, range.max);
     });
     node.minDescendantZOrder = min === Infinity ? (node.zOrder ?? 0) : min;
-    return node.minDescendantZOrder;
+    node.paintOrderIsTreeOrder = treeOrder;
+    return { min, max };
   }
 
   abstract drawFrame(): void;
@@ -179,6 +254,8 @@ export abstract class RenderPipeline {
   }
   abstract disposeRenderObject(renderObject: RenderObject): void;
   abstract markNeedsPaint(renderObject: RenderObject): void;
+  abstract markNeedsCompositingBitsUpdate(renderObject: RenderObject): void;
+  abstract markNeedsCompositedLayerUpdate(renderObject: RenderObject): void;
   abstract markNeedsPaintTransformUpdate(renderObject: RenderObject): void;
   abstract didChangePaintTransform(renderObject: RenderObject): void;
 }

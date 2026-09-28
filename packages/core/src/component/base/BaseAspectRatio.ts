@@ -46,7 +46,7 @@ class RenderAspectRatio extends SingleChildRenderObject {
     this._aspectRatio = aspectRatio;
   }
 
-  getIntrinsicWidth(height: number): number {
+  protected override computeIntrinsicWidth(height: number): number {
     if (Number.isFinite(height)) {
       return height * this.aspectRatio;
     }
@@ -58,7 +58,7 @@ class RenderAspectRatio extends SingleChildRenderObject {
     return 0;
   }
 
-  getIntrinsicHeight(width: number): number {
+  protected override computeIntrinsicHeight(width: number): number {
     if (Number.isFinite(width)) {
       return width / this.aspectRatio;
     }

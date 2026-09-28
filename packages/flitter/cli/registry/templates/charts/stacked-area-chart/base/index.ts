@@ -34,7 +34,7 @@ const baseDefaults: Partial<LineChartCustom> = {
   tooltipArea: () => SizedBox.shrink(),
 };
 
-export function BaseStackedAreaChart<TConfig = {}>({
+export function BaseStackedAreaChart<TConfig extends object = object>({
   custom,
   getScale = stackedGetScale,
   ...rest

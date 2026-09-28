@@ -1,4 +1,4 @@
-import InlineSpan from "./Inline-span";
+import InlineSpan, { RenderComparison } from "./Inline-span";
 import type { Paragraph } from "./text-painter";
 import TextStyle from "./text-style";
 
@@ -13,6 +13,33 @@ class TextSpan extends InlineSpan {
       this.style!.equals(other.style!) &&
       InlineSpan.equals(this.children, other.children)
     );
+  }
+
+  override compareTo(other: InlineSpan): RenderComparison {
+    if (this === other) return RenderComparison.identical;
+    if (other.constructor !== this.constructor) {
+      return RenderComparison.layout;
+    }
+    const textSpan = other as TextSpan;
+    if (
+      this.text !== textSpan.text ||
+      this.children.length !== textSpan.children.length ||
+      (this.style == null) !== (textSpan.style == null)
+    ) {
+      return RenderComparison.layout;
+    }
+    let result = RenderComparison.identical;
+    if (this.style != null) {
+      const candidate = this.style.compareTo(textSpan.style!);
+      if (candidate > result) result = candidate;
+      if (result === RenderComparison.layout) return result;
+    }
+    for (let index = 0; index < this.children.length; index += 1) {
+      const candidate = this.children[index].compareTo(textSpan.children[index]);
+      if (candidate > result) result = candidate;
+      if (result === RenderComparison.layout) return result;
+    }
+    return result;
   }
 
   constructor({

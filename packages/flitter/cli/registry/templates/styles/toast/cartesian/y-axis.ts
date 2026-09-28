@@ -12,6 +12,8 @@ import {
 import type { ToastBaseConfig } from "./config";
 import { YAxis } from "@shared/cartesian";
 
+type ToastAxisConfig = Pick<ToastBaseConfig, "animation" | "axis">;
+
 class _AnimatedYAxis extends StatefulWidget {
   child: Widget;
   animationConfig: ToastBaseConfig["animation"];
@@ -72,10 +74,10 @@ class _AnimatedYAxisState extends State<_AnimatedYAxis> {
   }
 }
 
-export function toastYAxis(
+export function toastYAxis<TConfig extends ToastAxisConfig>(
   { line, labels, tick }: { line: Widget; labels: Widget[]; tick: Widget },
   options: { type: "label" | "value" },
-  context: { config: ToastBaseConfig },
+  context: { config: TConfig },
 ): Widget {
   const axis = YAxis({ line, labels, tick }, {
     type: options.type,

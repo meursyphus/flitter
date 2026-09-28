@@ -1,5 +1,6 @@
 import type TextAlign from "./text-align";
 import type TextDirection from "./text-direction";
+import { RenderComparison } from "./Inline-span";
 
 class TextStyle {
   inherit: boolean;
@@ -30,6 +31,36 @@ class TextStyle {
       this.textBaseline === other.textBaseline &&
       this.fontStyle === other.fontStyle
     );
+  }
+
+  /**
+   * Describe the difference between this style and another, in terms of how
+   * much damage it will make to the rendering.
+   *
+   * Every property of TextStyle must be classified here. Anything that can
+   * change glyph geometry is RenderComparison.layout; only properties that
+   * provably cannot (the fill color) are RenderComparison.paint, so a
+   * misclassification can only ever cause an unnecessary relayout, never a
+   * stale one.
+   */
+  compareTo(other: TextStyle): RenderComparison {
+    if (this === other) return RenderComparison.identical;
+
+    if (
+      this.inherit !== other.inherit ||
+      this.fontSize !== other.fontSize ||
+      this.fontWeight !== other.fontWeight ||
+      this.fontFamily !== other.fontFamily ||
+      this.textBaseline !== other.textBaseline ||
+      this.fontStyle !== other.fontStyle ||
+      this.height !== other.height
+    ) {
+      return RenderComparison.layout;
+    }
+    if (this.color !== other.color) {
+      return RenderComparison.paint;
+    }
+    return RenderComparison.identical;
   }
 
   constructor({

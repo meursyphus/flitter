@@ -1,9 +1,11 @@
 import { Text, TextStyle, type Widget } from "flitter-core";
 import type { ToastBaseConfig } from "./cartesian/config";
 
-export function toastTitle(
+type ToastTitleConfig = Pick<ToastBaseConfig, "font" | "title">;
+
+export function toastTitle<TConfig extends ToastTitleConfig>(
   _args: undefined,
-  context: { config: ToastBaseConfig },
+  context: { config: TConfig },
 ): Widget {
   const { title, font } = context.config;
   return Text(title.text, {

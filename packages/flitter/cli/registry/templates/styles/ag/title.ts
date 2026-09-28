@@ -1,15 +1,17 @@
 import { Column, MainAxisSize, CrossAxisAlignment, SizedBox, Text, TextStyle, type Widget } from "flitter-core";
 import type { AgCartesianBaseConfig } from "./cartesian/config";
 
+type AgTitleConfig = Pick<AgCartesianBaseConfig, "font" | "title" | "subtitle">;
+
 const titleAlignmentMap = {
   start: CrossAxisAlignment.start,
   center: CrossAxisAlignment.center,
   end: CrossAxisAlignment.end,
 } as const;
 
-export function agTitle(
+export function agTitle<TConfig extends AgTitleConfig>(
   _args: undefined,
-  context: { config: AgCartesianBaseConfig },
+  context: { config: TConfig },
 ): Widget {
   const { title, subtitle, font } = context.config;
   const titleWidget = Text(title.text, {

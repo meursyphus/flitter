@@ -159,6 +159,29 @@ class EdgeState extends State<Edge> {
             path.setAttribute("d", painter.getD());
           },
         },
+        canvas: {
+          paint: (context) => {
+            if (this.from == null || this.to == null) return;
+            const painter = new Path();
+            drawEdge({
+              path: painter,
+              fromField: {
+                rect: this.from,
+                relation: this.widget.from.relation,
+              },
+              toField: {
+                rect: this.to,
+                relation: this.widget.to.relation,
+              },
+            });
+            const ctx = context.canvas;
+            ctx.save();
+            ctx.strokeStyle = this.active ? "white" : "lightgrey";
+            ctx.lineWidth = this.active ? 2 : 1;
+            ctx.stroke(painter.toCanvasPath());
+            ctx.restore();
+          },
+        },
       },
     });
   }

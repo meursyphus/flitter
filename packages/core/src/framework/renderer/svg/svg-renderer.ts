@@ -5,17 +5,21 @@ import { RenderPipeline } from "../renderer";
 
 export class SvgRenderPipeline extends RenderPipeline {
   override drawFrame() {
-    this.flushLayout();
+    this.trace("layout", () => this.flushLayout());
+    this.trace("compositingBits", () => this.flushCompositingBits());
     this.flushPaintTransformUpdate();
-    this.flushPaint();
+    this.trace("paint", () => this.flushPaint());
     const painterRenderObjects = this.recalculateZOrder();
     this.#rearrangeDomOrder(painterRenderObjects);
   }
 
   override reinitializeFrame() {
-    this.renderView.layout(Constraints.tight(this.renderContext.viewSize));
+    this.trace("layout", () =>
+      this.renderView.layout(Constraints.tight(this.renderContext.viewSize)),
+    );
+    this.trace("compositingBits", () => this.flushCompositingBits());
     this.renderView.updatePaintTransform();
-    this.renderView.svgPainter.paint(this.paintContext);
+    this.trace("paint", () => this.renderView.svgPainter.paint(this.paintContext));
     const painterRenderObjects = this.recalculateZOrder();
     this.#rearrangeDomOrder(painterRenderObjects);
   }
@@ -76,10 +80,19 @@ export class SvgRenderPipeline extends RenderPipeline {
     this.requestVisualUpdate();
   }
 
+  override markNeedsCompositingBitsUpdate(renderObject: RenderObject): void {
+    this.needsCompositingBitsUpdateRenderObjects.push(renderObject);
+    this.requestVisualUpdate();
+  }
+
+  override markNeedsCompositedLayerUpdate(renderObject: RenderObject): void {
+    this.markNeedsPaint(renderObject);
+  }
+
   override markNeedsPaintTransformUpdate(renderObject: RenderObject): void {
     renderObject.needsPaintTransformUpdate = true;
     this.needsPaintTransformUpdateRenderObjects.push(renderObject);
-    this.markNeedsPaint(renderObject);
+    this.requestVisualUpdate();
   }
 
   override didChangePaintTransform(renderObject: RenderObject): void {

@@ -5,7 +5,7 @@ import Element from "./Element";
 import { ElementType } from "./ElementType";
 
 class RenderObjectElement extends Element {
-  children!: Element[];
+  children: Element[] = [];
 
   _renderObject!: RenderObject;
   override type: ElementType = ElementType.render;
@@ -36,18 +36,19 @@ class RenderObjectElement extends Element {
   override mount(newParent?: Element | undefined): void {
     super.mount(newParent);
     this._renderObject = this.createRenderObject();
-    this.ancestorRenderObjectElement = this.findAncestorRenderObjectElement();
-    const ancestorRenderObject = this.ancestorRenderObjectElement?.renderObject;
-    if (ancestorRenderObject) {
-      this.renderObject.parent = ancestorRenderObject;
-      this.renderObject.renderOwner = ancestorRenderObject.renderOwner;
-    }
-
+    this.attachSelfRenderObject();
     this.children = (this.widget as RenderObjectWidget).children.map(
       childWidget => this.inflateWidget(childWidget),
     );
+    this._renderObject.markNeedsParentLayout();
+  }
 
-    this._renderObject.attach(this);
+  override activate(newParent?: Element): void {
+    super.activate(newParent);
+    this.attachSelfRenderObject();
+    this.children.forEach(child => {
+      child.activate(this);
+    });
     this._renderObject.markNeedsParentLayout();
   }
 
@@ -57,32 +58,93 @@ class RenderObjectElement extends Element {
   }
 
   updateChildren(newWidgets: Widget[]) {
-    const updatedChildIndexes: number[] = [];
     const oldChildren = this.children;
-    const newChildren = newWidgets.map(newWidget => {
-      const matchedChildIndex = oldChildren.findIndex(
-        (oldChild, oldChildIndex) =>
-          !updatedChildIndexes.includes(oldChildIndex) &&
-          Widget.canUpdate(newWidget, oldChild.widget),
-      );
 
-      let matchedChild: Element | null;
-      if (matchedChildIndex === -1) {
-        matchedChild = null;
+    let oldTop = 0;
+    let newTop = 0;
+    let oldBottom = oldChildren.length - 1;
+    let newBottom = newWidgets.length - 1;
+
+    while (oldTop <= oldBottom && newTop <= newBottom) {
+      const oldChild = oldChildren[oldTop];
+      const newWidget = newWidgets[newTop];
+      if (!Widget.canUpdate(oldChild.widget, newWidget)) break;
+      this.updateChild(oldChild, newWidget);
+      oldTop++;
+      newTop++;
+    }
+
+    // The usual rebuild keeps every element in place. Preserve the children
+    // array and render-child caches, and avoid allocating diff bookkeeping.
+    if (oldTop > oldBottom && newTop > newBottom) return;
+
+    const newChildren: Element[] = new Array(newWidgets.length);
+    for (let i = 0; i < newTop; i++) newChildren[i] = oldChildren[i];
+
+    while (oldTop <= oldBottom && newTop <= newBottom) {
+      const oldChild = oldChildren[oldBottom];
+      const newWidget = newWidgets[newBottom];
+      if (!Widget.canUpdate(oldChild.widget, newWidget)) break;
+      newChildren[newBottom] = this.updateChild(oldChild, newWidget)!;
+      oldBottom--;
+      newBottom--;
+    }
+
+    const oldKeyedChildren = new Map<any, Element>();
+    const oldUnkeyedChildren: Element[] = [];
+
+    for (let i = oldTop; i <= oldBottom; i++) {
+      const oldChild = oldChildren[i];
+      if (oldChild.widget.key != null) {
+        oldKeyedChildren.set(oldChild.widget.key, oldChild);
       } else {
-        matchedChild = oldChildren[matchedChildIndex];
-        updatedChildIndexes.push(matchedChildIndex);
+        oldUnkeyedChildren.push(oldChild);
+      }
+    }
+
+    let oldUnkeyedIndex = 0;
+    while (newTop <= newBottom) {
+      const newWidget = newWidgets[newTop];
+      let matchedChild: Element | null = null;
+
+      if (newWidget.key != null) {
+        const keyedChild = oldKeyedChildren.get(newWidget.key) ?? null;
+        if (
+          keyedChild != null &&
+          Widget.canUpdate(keyedChild.widget, newWidget)
+        ) {
+          matchedChild = keyedChild;
+          oldKeyedChildren.delete(newWidget.key);
+        }
+      } else {
+        while (oldUnkeyedIndex < oldUnkeyedChildren.length) {
+          const candidate = oldUnkeyedChildren[oldUnkeyedIndex++];
+          if (candidate.parent !== this) continue;
+          if (Widget.canUpdate(candidate.widget, newWidget)) {
+            matchedChild = candidate;
+            break;
+          }
+          this.deactivateChild(candidate);
+        }
       }
 
-      return this.updateChild(matchedChild, newWidget);
-    });
+      newChildren[newTop] = this.updateChild(matchedChild, newWidget)!;
+      newTop++;
+    }
 
-    oldChildren.forEach((oldChild, i) => {
-      if (updatedChildIndexes.includes(i)) return;
-      this.updateChild(oldChild, null);
-    });
+    while (oldUnkeyedIndex < oldUnkeyedChildren.length) {
+      const oldChild = oldUnkeyedChildren[oldUnkeyedIndex++];
+      if (oldChild.parent !== this) continue;
+      this.deactivateChild(oldChild);
+    }
 
-    this.children = newChildren as Element[];
+    for (const oldChild of oldKeyedChildren.values()) {
+      if (oldChild.parent !== this) continue;
+      this.deactivateChild(oldChild);
+    }
+
+    this.children = newChildren;
+    this._renderObject.markNeedsChildrenUpdate();
   }
 
   performRebuild(): void {
@@ -93,6 +155,41 @@ class RenderObjectElement extends Element {
 
   visitChildren(visitor: (child: Element) => void): void {
     this.children.forEach(child => visitor(child));
+  }
+
+  override attachRenderObject(): void {
+    this.attachSelfRenderObject();
+    this._renderObject.markNeedsParentLayout();
+    super.attachRenderObject();
+  }
+
+  override detachRenderObject(): void {
+    super.detachRenderObject();
+    this._renderObject.parent?.markNeedsCompositingBitsUpdate();
+    this._renderObject.markNeedsParentLayout();
+    this._renderObject.renderOwner.disposeRenderObject(this._renderObject);
+    this._renderObject.detach();
+  }
+
+  private attachSelfRenderObject() {
+    this.ancestorRenderObjectElement = this.findAncestorRenderObjectElement();
+    const ancestorRenderObject = this.ancestorRenderObjectElement?.renderObject;
+    if (ancestorRenderObject) {
+      this.renderObject.parent = ancestorRenderObject;
+      this.renderObject.renderOwner = ancestorRenderObject.renderOwner;
+      ancestorRenderObject.markNeedsCompositingBitsUpdate();
+    } else {
+      this.renderObject.parent = undefined;
+    }
+    this._renderObject.attach(this);
+    this._renderObject.renderOwner?.bumpStructureEpoch();
+  }
+
+  forgetChild(child: Element) {
+    const index = this.children.indexOf(child);
+    if (index === -1) return;
+    this.children.splice(index, 1);
+    this._renderObject.renderOwner?.bumpStructureEpoch();
   }
 
   private ancestorRenderObjectElement!: RenderObjectElement | null;

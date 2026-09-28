@@ -29,13 +29,13 @@ const toastCustom: Partial<SankeyChartCustom<SankeyChartConfig>> = {
         ctx.hoveredNodeId === nodeArgs.id
           ? 1.04
           : 1,
-      child: Base.Node(nodeArgs as any, ctx as any),
+      child: Base.Node(nodeArgs, ctx),
     });
   },
   link: Base.Link,
   nodeLabel: Base.NodeLabel,
   linkLabel: Base.LinkLabel,
-  title: toastTitle as any,
+  title: (args, context) => toastTitle(args, context),
   tooltip: toastTooltip,
   tooltipArea: toastTooltipArea,
 };

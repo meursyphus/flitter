@@ -12,6 +12,8 @@ import {
 } from "flitter-core";
 import type { ToastBaseConfig } from "./config";
 
+type ToastLayoutConfig = Pick<ToastBaseConfig, "legend" | "padding" | "title">;
+
 function interleave(items: Widget[], separator: () => Widget): Widget[] {
   return items.flatMap((item, i) =>
     i < items.length - 1 ? [item, separator()] : [item],
@@ -35,9 +37,9 @@ const rightAlignmentMap: Record<string, MainAxisAlignment> = {
   "right-bottom": MainAxisAlignment.end,
 };
 
-export function toastLayout(
+export function toastLayout<TConfig extends ToastLayoutConfig>(
   { title, plot, legends }: { title: Widget; legends: Widget[]; plot: Widget },
-  context: { config: ToastBaseConfig },
+  context: { config: TConfig },
 ): Widget {
   const { padding, title: titleConfig, legend: legendConfig } = context.config;
   const legendGap = legendConfig.gap;

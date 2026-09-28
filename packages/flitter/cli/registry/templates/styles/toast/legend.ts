@@ -14,10 +14,12 @@ import {
 import { CheckBox } from "./checkbox";
 import type { ToastBaseConfig } from "./cartesian/config";
 
-export function toastLegend(
+type ToastLegendConfig = Pick<ToastBaseConfig, "colors" | "font">;
+
+export function toastLegend<TConfig extends ToastLegendConfig>(
   { name, index, isVisible }: { name: string; index: number; isVisible?: boolean },
   context: {
-    config: ToastBaseConfig;
+    config: TConfig;
     isSeriesVisible?(legend: string): boolean;
   },
   { markerShape }: { markerShape?: "checkbox" | "circle" } = {},

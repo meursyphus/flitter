@@ -20,7 +20,7 @@ packages/*/node_modules/
 .netlify
 .turbo/
 packages/*/.turbo/
-intergrations/*/.turbo/
+integrations/*/.turbo/
 .next/
 out/
 NON_DUAL_STYLE_AUDIT/

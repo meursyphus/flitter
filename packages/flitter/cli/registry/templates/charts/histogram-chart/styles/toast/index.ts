@@ -19,13 +19,13 @@ function toastTooltipContent(
 
 const toastCustom: Partial<HistogramChartCustom<HistogramChartConfig>> = {
   layout: ({ title, plot }, ctx) =>
-    cartesian.toastLayout({ title, legends: [], plot }, ctx as any),
+    cartesian.toastLayout({ title, legends: [], plot }, ctx),
   dataView: toastDataView,
   bar: toastBar,
   tooltip: toastTooltipContent,
   tooltipArea: toastTooltipArea,
-  xAxis: ({ line, labels, tick }, ctx) => cartesian.toastXAxis({ line, labels, tick } as any, { type: "value" }, ctx as any),
-  yAxis: ({ line, labels, tick }, ctx) => cartesian.toastYAxis({ line, labels, tick } as any, { type: "value" }, ctx as any),
+  xAxis: ({ line, labels, tick }, ctx) => cartesian.toastXAxis({ line, labels, tick }, { type: "value" }, ctx),
+  yAxis: ({ line, labels, tick }, ctx) => cartesian.toastYAxis({ line, labels, tick }, { type: "value" }, ctx),
   xAxisLabel: cartesian.toastXAxisLabel,
   yAxisLabel: cartesian.toastYAxisLabel,
   xAxisTick: cartesian.toastXAxisTick,
@@ -35,7 +35,7 @@ const toastCustom: Partial<HistogramChartCustom<HistogramChartConfig>> = {
   gridXLine: cartesian.toastGridXLine,
   gridYLine: cartesian.toastGridYLine,
   axisCorner: cartesian.toastAxisCorner,
-  title: toastTitle as any,
+  title: (args, context) => toastTitle(args, context),
 };
 
 export const styleConfig = {

@@ -3,9 +3,18 @@ import type { RRect } from "./r-rect";
 
 export class Path {
   private _d: string = "";
+  private _canvasPath: Path2D | null = null;
 
   getD(): string {
     return this._d;
+  }
+
+  // Every mutation of _d must go through here so the cached Path2D
+  // can never go stale.
+  private _append(segment: string) {
+    this._d += segment;
+    this._canvasPath = null;
+    return this;
   }
 
   moveTo(point: Offset) {
@@ -186,8 +195,7 @@ export class Path {
   }
 
   close() {
-    this._d += "Z";
-    return this;
+    return this._append("Z");
   }
 
   private _quadraticBezierTo(
@@ -200,20 +208,19 @@ export class Path {
     },
     relative: boolean,
   ) {
-    this._d += `${relative ? "q" : "Q"}${controlPoint.x} ${controlPoint.y} ${
-      endPoint.x
-    } ${endPoint.y}`;
-    return this;
+    return this._append(
+      `${relative ? "q" : "Q"}${controlPoint.x} ${controlPoint.y} ${
+        endPoint.x
+      } ${endPoint.y}`,
+    );
   }
 
   private _lineTo({ x, y }: Offset, relative: boolean) {
-    this._d += `${relative ? "l" : "L"}${x} ${y}`;
-    return this;
+    return this._append(`${relative ? "l" : "L"}${x} ${y}`);
   }
 
   private _moveTo({ x, y }: Offset, relative: boolean) {
-    this._d += `${relative ? "m" : "M"}${x} ${y}`;
-    return this;
+    return this._append(`${relative ? "m" : "M"}${x} ${y}`);
   }
 
   private _cubicTo(
@@ -228,10 +235,11 @@ export class Path {
     },
     relative: boolean,
   ) {
-    this._d += `${relative ? "c" : "C"}${startControlPoint.x} ${
-      startControlPoint.y
-    } ${endControlPoint.x} ${endControlPoint.y} ${endPoint.x} ${endPoint.y}`;
-    return this;
+    return this._append(
+      `${relative ? "c" : "C"}${startControlPoint.x} ${
+        startControlPoint.y
+      } ${endControlPoint.x} ${endControlPoint.y} ${endPoint.x} ${endPoint.y}`,
+    );
   }
 
   private _arcToPoint(
@@ -250,14 +258,15 @@ export class Path {
     },
     relative: boolean,
   ) {
-    this._d += `${relative ? "a" : "A"}${radius.x} ${radius.y} ${rotation} ${
-      largeArc ? 1 : 0
-    } ${clockwise ? 1 : 0} ${endPoint.x} ${endPoint.y}`;
-    return this;
+    return this._append(
+      `${relative ? "a" : "A"}${radius.x} ${radius.y} ${rotation} ${
+        largeArc ? 1 : 0
+      } ${clockwise ? 1 : 0} ${endPoint.x} ${endPoint.y}`,
+    );
   }
 
   toCanvasPath() {
-    return new Path2D(this._d);
+    return (this._canvasPath ??= new Path2D(this._d));
   }
 }
 

@@ -235,7 +235,7 @@ class RenderRadarPlotLayout extends MultiChildRenderObject {
 	}
 }
 
-export function Plot<TConfig = {}>(
+export function Plot<TConfig extends object = object>(
 	{
 		dataView,
 		tooltipArea,

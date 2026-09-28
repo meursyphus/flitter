@@ -1,7 +1,7 @@
 import { CustomPaint, Opacity, SizedBox, type Widget } from "flitter-core";
 import type { SunburstChartCustom } from "@headless/sunburst-chart/types";
 import type { SunburstChartConfig } from "../config";
-import { getRingMetrics, getSegmentLabelMetrics } from "../../base/geometry";
+import { getRingMetrics, getSegmentLabelMetrics } from "../../../base/geometry";
 
 export function agDataLabel(
 	...[args, ctx]: Parameters<SunburstChartCustom<SunburstChartConfig>["dataLabel"]>

@@ -9,7 +9,12 @@ class GlobalKey {
       this.buildOwner != null,
       "buildOwner is null, currentContext must be called after initState",
     );
-    return this.buildOwner.findByGlobalKey(this);
+    const element = this.buildOwner.findByGlobalKey(this);
+    assert(
+      element != null,
+      "can not find requested element for currentContext",
+    );
+    return element;
   }
 }
 

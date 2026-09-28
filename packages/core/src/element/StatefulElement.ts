@@ -1,10 +1,12 @@
 import type Widget from "../widget/Widget";
+import type Element from "./Element";
 import ComponentElement from "./ComponentElement";
 import type StatefulWidget from "../widget/StatefulWidget";
 import type { BuildContext } from "./index";
 
 export class StatefulElement extends ComponentElement {
   state: State<StatefulWidget>;
+  private didChangeDependenciesFlag = false;
 
   constructor(widget: StatefulWidget) {
     super(widget);
@@ -14,7 +16,8 @@ export class StatefulElement extends ComponentElement {
   }
 
   initState(): void {
-    return this.state.initState(this);
+    this.state.initState(this);
+    this.state.didChangeDependencies();
   }
   build(): Widget {
     return this.state.build(this);
@@ -31,6 +34,30 @@ export class StatefulElement extends ComponentElement {
     this.state.didUpdateWidget(oldWidget);
     super.update(newWidget);
   }
+
+  protected override beforeBuild(): void {
+    this.unsubscribeFromInheritedWidgets();
+    if (this.didChangeDependenciesFlag) {
+      this.state.didChangeDependencies();
+      this.didChangeDependenciesFlag = false;
+    }
+  }
+
+  override activate(newParent?: Element): void {
+    super.activate(newParent);
+    this.state.activate();
+    this.markNeedsBuild();
+  }
+
+  override deactivate(): void {
+    this.state.deactivate();
+    super.deactivate();
+  }
+
+  override didChangeDependencies(): void {
+    super.didChangeDependencies();
+    this.didChangeDependenciesFlag = true;
+  }
 }
 
 export class State<T extends StatefulWidget> {
@@ -46,4 +73,7 @@ export class State<T extends StatefulWidget> {
   }
   dispose() {}
   didUpdateWidget(_oldWidget: T) {}
+  didChangeDependencies() {}
+  activate() {}
+  deactivate() {}
 }

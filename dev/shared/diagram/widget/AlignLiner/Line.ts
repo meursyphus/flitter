@@ -82,6 +82,21 @@ class LineState extends State<Line> {
             line.setAttribute("stroke-dasharray", "5,5");
           },
         },
+        canvas: {
+          paint: (context) => {
+            const { x1, y1, x2, y2 } = this.resolveProps(this.widget.line);
+            const ctx = context.canvas;
+            ctx.save();
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+            ctx.restore();
+          },
+        },
       },
     });
   }

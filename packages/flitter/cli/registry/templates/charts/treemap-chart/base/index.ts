@@ -47,7 +47,7 @@ const baseDefaults: Partial<TreemapCustom> = {
 	tooltipArea: () => SizedBox.shrink(),
 };
 
-export function BaseTreemapChart<TConfig = {}>({
+export function BaseTreemapChart<TConfig extends object = object>({
 	custom,
 	getLayout = defaultGetTreemapLayout,
 	...rest

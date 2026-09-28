@@ -28,7 +28,7 @@ const baseDefaults: Partial<BarChartCustom> = {
 const defaultGetScale: GetScaleFn = ({ datasets }, options) =>
   Cartesian.getScale({ datasets }, options);
 
-export function BaseBarChart<TConfig = {}>({
+export function BaseBarChart<TConfig extends object = object>({
   custom,
   getScale = defaultGetScale,
   ...rest

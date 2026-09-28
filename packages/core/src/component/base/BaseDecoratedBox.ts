@@ -87,6 +87,9 @@ class SvgPainterDecoratedBox extends SvgPainter {
 }
 
 class CanvasPainterDecoratedBox extends CanvasPainter {
+  override get paintsChildState() {
+    return false;
+  }
   get decoration() {
     return (this.renderObject as RenderDecoratedBox).decoration;
   }

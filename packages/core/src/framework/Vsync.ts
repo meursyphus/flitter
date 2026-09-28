@@ -14,10 +14,10 @@ export class Vsync {
   }
 
   public static getInstance(): Vsync {
-    if (typeof window === 'undefined') {
-      throw new Error('Vsync requires window object');
+    if (typeof window === "undefined") {
+      throw new Error("Vsync requires window object");
     }
-    
+
     if (!(window as any).__flitter_vsync__) {
       (window as any).__flitter_vsync__ = new Vsync();
     }
@@ -31,7 +31,7 @@ export class Vsync {
    */
   public requestCallback(callback: (time: number) => void): void {
     this.callbacks.push(callback);
-    
+
     if (!this.frameRequested) {
       this.frameRequested = true;
       this.rafId = requestAnimationFrame(this.handleFrame);
@@ -46,7 +46,7 @@ export class Vsync {
     if (index !== -1) {
       this.callbacks.splice(index, 1);
     }
-    
+
     if (this.callbacks.length === 0 && this.rafId !== null) {
       cancelAnimationFrame(this.rafId);
       this.frameRequested = false;
@@ -62,9 +62,9 @@ export class Vsync {
     this.rafId = null;
 
     // Get current callbacks and clear the queue
-    const callbacksToRun = [...this.callbacks];
+    const callbacksToRun = this.callbacks;
     this.callbacks = [];
-    
+
     // Execute all callbacks with the current time
     for (const callback of callbacksToRun) {
       callback(time);

@@ -37,7 +37,7 @@ const baseDefaults: Partial<SunburstChartCustom> = {
 	tooltipArea: () => SizedBox.shrink(),
 };
 
-export function BaseSunburstChart<TConfig = {}>({
+export function BaseSunburstChart<TConfig extends object = object>({
 	custom,
 	...rest
 }: {

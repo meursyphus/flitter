@@ -10,22 +10,21 @@ import { agTooltipArea } from "./parts/tooltip-area";
 export { type HistogramChartConfig } from "./config";
 
 function agTooltip(
-  args: { label: string; items: { legend: string; color: string; value: number }[] },
-  context: any,
+  ...[args, context]: Parameters<HistogramChartCustom<HistogramChartConfig>["tooltip"]>
 ): Widget {
   return agTooltipContent({ label: args.label, items: args.items, config: context.config });
 }
 
 const agCustom: Partial<HistogramChartCustom<HistogramChartConfig>> = {
   layout: ({ title, plot }, ctx) =>
-    cartesian.agLayout({ title, legends: [], plot }, ctx as any),
+    cartesian.agLayout({ title, legends: [], plot }, ctx),
   bar: agBar,
   tooltip: agTooltip,
   tooltipArea: agTooltipArea,
   xAxis: ({ line, labels, tick }, ctx) =>
-    cartesian.agXAxis({ line, labels, tick } as any, { type: "value" }, ctx as any),
+    cartesian.agXAxis({ line, labels, tick }, { type: "value" }, ctx),
   yAxis: ({ line, labels, tick }, ctx) =>
-    cartesian.agYAxis({ line, labels, tick } as any, { type: "value" }, ctx as any),
+    cartesian.agYAxis({ line, labels, tick }, { type: "value" }, ctx),
   xAxisLabel: cartesian.agXAxisLabel,
   yAxisLabel: cartesian.agYAxisLabel,
   xAxisTick: cartesian.agXAxisTick,
@@ -35,7 +34,7 @@ const agCustom: Partial<HistogramChartCustom<HistogramChartConfig>> = {
   gridXLine: cartesian.agGridXLine,
   gridYLine: cartesian.agGridYLine,
   axisCorner: cartesian.agAxisCorner,
-  title: agTitle as any,
+  title: (args, context) => agTitle(args, context),
 };
 
 export const styleConfig = {

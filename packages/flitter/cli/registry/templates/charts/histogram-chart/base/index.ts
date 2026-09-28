@@ -84,7 +84,7 @@ const baseDefaults: Partial<HistogramChartCustom> = {
 	tooltipArea: () => SizedBox.shrink(),
 };
 
-export function BaseHistogramChart<TConfig = {}>({
+export function BaseHistogramChart<TConfig extends object = object>({
 	custom,
 	...rest
 }: {

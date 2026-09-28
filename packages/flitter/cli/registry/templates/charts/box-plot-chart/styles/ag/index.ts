@@ -17,10 +17,9 @@ export { type AgBoxPlotChartConfig } from "./config";
 export type { AgBoxPlotChartConfig as BoxPlotChartConfig } from "./config";
 
 function agTooltip(
-  args: { label: string; items: { legend: string; color: string; value: number }[] },
-  context: any,
+  ...[args, context]: Parameters<BoxPlotChartCustom<AgBoxPlotChartConfig>["tooltip"]>
 ): Widget {
-  return agTooltipContent({ label: args.label, items: args.items, config: context.config as any });
+  return agTooltipContent({ label: args.label, items: args.items, config: context.config });
 }
 
 const agCustom: Partial<BoxPlotChartCustom<AgBoxPlotChartConfig>> = {

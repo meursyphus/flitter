@@ -2,10 +2,12 @@ import type { Widget } from "flitter-core";
 import type { AgCartesianBaseConfig } from "./config";
 import { XAxis } from "@shared/cartesian";
 
-export function agXAxis(
+type AgAxisConfig = Pick<AgCartesianBaseConfig, "axis">;
+
+export function agXAxis<TConfig extends AgAxisConfig>(
   { line, labels, tick }: { line: Widget; labels: Widget[]; tick: Widget },
   options: { type: "label" | "value" },
-  context: { config: AgCartesianBaseConfig },
+  context: { config: TConfig },
 ): Widget {
   return XAxis({ line, labels, tick }, {
     type: options.type,

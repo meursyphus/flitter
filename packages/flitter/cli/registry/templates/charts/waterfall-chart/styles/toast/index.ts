@@ -17,15 +17,14 @@ import { cartesian, toastLegend, toastScaleOptions, toastTitle, tooltipContent }
 export { type WaterfallChartConfig } from "./config";
 
 function toastTooltip(
-  args: { label: string; items: { legend: string; color: string; value: number | string }[] },
-  context: any,
+  ...[args, context]: Parameters<WaterfallChartCustom<WaterfallChartConfig>["tooltip"]>
 ): Widget {
-  return tooltipContent({ label: args.label, items: args.items as any, config: context.config as any });
+  return tooltipContent({ label: args.label, items: args.items, config: context.config });
 }
 
 const toastCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
   layout: ({ title, legends, plot }, ctx) =>
-    cartesian.toastLayout({ title, legends, plot }, ctx as any),
+    cartesian.toastLayout({ title, legends, plot }, ctx),
   plot: ({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }) =>
     Cartesian.Plot({ xAxis, yAxis, dataView, grid, axisCorner, tooltipArea }),
   dataView: toastDataView,
@@ -35,9 +34,9 @@ const toastCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
   tooltip: toastTooltip,
   tooltipArea: toastTooltipArea,
   xAxis: ({ line, labels, tick }, ctx) =>
-    cartesian.toastXAxis({ line, labels, tick } as any, { type: "label" }, ctx as any),
+    cartesian.toastXAxis({ line, labels, tick }, { type: "label" }, ctx),
   yAxis: ({ line, labels, tick }, ctx) =>
-    cartesian.toastYAxis({ line, labels, tick } as any, { type: "value" }, ctx as any),
+    cartesian.toastYAxis({ line, labels, tick }, { type: "value" }, ctx),
   xAxisLabel: cartesian.toastXAxisLabel,
   yAxisLabel: cartesian.toastYAxisLabel,
   xAxisTick: cartesian.toastXAxisTick,
@@ -54,16 +53,8 @@ const toastCustom: Partial<WaterfallChartCustom<WaterfallChartConfig>> = {
   gridXLine: cartesian.toastGridXLine,
   gridYLine: cartesian.toastGridYLine,
   axisCorner: cartesian.toastAxisCorner,
-  legend: ({ name, index }, ctx) =>
-    toastLegend(
-      { name, index },
-      {
-        config: ctx.config as any,
-        isSeriesVisible: () => true,
-      },
-      { markerShape: "circle" },
-    ),
-  title: toastTitle as any,
+  legend: (args, ctx) => toastLegend(args, ctx, { markerShape: "circle" }),
+  title: (args, context) => toastTitle(args, context),
   dataLabel: () => SizedBox.shrink(),
 };
 

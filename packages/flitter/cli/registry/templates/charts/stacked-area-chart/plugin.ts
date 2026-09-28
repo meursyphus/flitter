@@ -3,7 +3,7 @@ import { toastStyleConfig, type ToastStackedAreaChartConfig } from "./styles/toa
 import { agStyleConfig, type AgStackedAreaChartConfig } from "./styles/ag";
 import type { DeepPartial } from "@utils/index";
 
-export type StyleConfig<TConfig> = {
+export type StyleConfig<TConfig extends object> = {
   custom: Partial<LineChartCustom<TConfig>>;
   createConfig: (config?: DeepPartial<TConfig>) => TConfig;
   getScaleOptions: GetScaleOptionsFn;

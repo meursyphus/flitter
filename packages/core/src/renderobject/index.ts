@@ -5,8 +5,10 @@ import RenderView from "./RenderView";
 import SingleChildRenderObject from "./SingleChildRenderObject";
 import RenderAligningShiftedBox from "./RenderAligningShiftedBox";
 import RenderAnimatedSize from "./RenderAnimatedSize";
+import ChildLayoutHelper from "./ChildLayoutHelper";
 
 export {
+  ChildLayoutHelper,
   RenderAligningShiftedBox,
   RenderAnimatedSize,
   MultiChildRenderObject,

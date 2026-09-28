@@ -25,18 +25,18 @@ function toastTooltip(
 			color,
 			value: args.value,
 		},
-		config: ctx.config as any,
+		config: ctx.config,
 	});
 }
 
 const toastCustom: Partial<SunburstChartCustom<SunburstChartConfig>> = {
-	dataView: (args, context) => toastPieLikeDataView(args as any, context as any),
+	dataView: (args, context) => toastPieLikeDataView(args, context),
 	segment: toastSegment,
 	dataLabel: toastDataLabel,
-	legend: (args, context) => toastLegend(args, context as any, { markerShape: "circle" }),
-	title: toastTitle as SunburstChartCustom<SunburstChartConfig>["title"],
+	legend: (args, context) => toastLegend(args, context, { markerShape: "circle" }),
+	title: (args, context) => toastTitle(args, context),
 	tooltip: toastTooltip,
-	tooltipArea: (args, context) => toastPieLikeTooltipArea(args as any, context as any),
+	tooltipArea: (args, context) => toastPieLikeTooltipArea(args, context),
 };
 
 export const styleConfig = {

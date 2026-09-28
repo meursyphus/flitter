@@ -105,7 +105,9 @@ class RenderFractionallySizedBox extends RenderAligningShiftedBox {
 
   protected preformLayout(): void {
     if (this.child != null) {
-      this.child.layout(this.getInnerConstraints(this.constraints));
+      this.child.layout(this.getInnerConstraints(this.constraints), {
+        parentUsesSize: true,
+      });
       this.size = this.constraints.constrain(this.child.size);
       this.alignChild();
     } else {
@@ -115,10 +117,10 @@ class RenderFractionallySizedBox extends RenderAligningShiftedBox {
     }
   }
 
-  override getIntrinsicHeight(width: number): number {
+  protected override computeIntrinsicHeight(width: number): number {
     let result: number;
     if (this.child == null) {
-      result = super.getIntrinsicHeight(width);
+      result = super.computeIntrinsicHeight(width);
     } else {
       result = this.child.getIntrinsicHeight(width * (this.widthFactor ?? 1));
     }
@@ -126,10 +128,10 @@ class RenderFractionallySizedBox extends RenderAligningShiftedBox {
     return result / (this.heightFactor ?? 1);
   }
 
-  override getIntrinsicWidth(height: number): number {
+  protected override computeIntrinsicWidth(height: number): number {
     let result: number;
     if (this.child == null) {
-      result = super.getIntrinsicWidth(height);
+      result = super.computeIntrinsicWidth(height);
     } else {
       result = this.child.getIntrinsicWidth(height * (this.heightFactor ?? 1));
     }

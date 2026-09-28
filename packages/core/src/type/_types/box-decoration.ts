@@ -126,6 +126,42 @@ export default class BoxDecoration extends Data {
     }
   }
 
+  private _backgroundPath?: Path;
+  private _backgroundPathKey?: string;
+
+  /**
+   * The background path is pure in (this, rect): all decoration fields are
+   * readonly and RenderDecoratedBox keeps the same instance while the
+   * decoration is unchanged, so a single-slot memo can never go stale.
+   */
+  _resolveBackgroundPath(rect: Rect): Path {
+    const key = `${rect.left} ${rect.top} ${rect.width} ${rect.height}`;
+    if (this._backgroundPath == null || this._backgroundPathKey !== key) {
+      this._backgroundPathKey = key;
+      this._backgroundPath = this._buildBackgroundPath(rect);
+    }
+    return this._backgroundPath;
+  }
+
+  private _buildBackgroundPath(rect: Rect): Path {
+    const path = new Path();
+    if (this.shape === "circle") {
+      return path.addOval(rect);
+    }
+    if (this.borderRadius == null) {
+      return path.addRect(rect);
+    }
+    return path.addRRect(
+      RRect.fromRectAndCorners({
+        rect,
+        topLeft: this.borderRadius.topLeft,
+        topRight: this.borderRadius.topRight,
+        bottomLeft: this.borderRadius.bottomLeft,
+        bottomRight: this.borderRadius.bottomRight,
+      }),
+    );
+  }
+
   createSvgBoxPainter() {
     return new BoxDecorationSvgPainter(this);
   }
@@ -219,31 +255,7 @@ class BoxDecorationSvgPainter {
   private paintBackgroundColor(box: SVGPathElement, rect: Rect) {
     box.setAttribute("stroke-width", "0");
     box.setAttribute("fill", this.decoration.color.value || "none");
-
-    if (this.decoration.shape == "circle") {
-      box.setAttribute("d", new Path().addOval(rect).getD());
-      return;
-    }
-
-    if (this.decoration.borderRadius == null) {
-      box.setAttribute("d", new Path().addRect(rect).getD());
-      return;
-    }
-
-    box.setAttribute(
-      "d",
-      new Path()
-        .addRRect(
-          RRect.fromRectAndCorners({
-            rect,
-            topLeft: this.decoration.borderRadius.topLeft,
-            topRight: this.decoration.borderRadius.topRight,
-            bottomLeft: this.decoration.borderRadius.bottomLeft,
-            bottomRight: this.decoration.borderRadius.bottomRight,
-          }),
-        )
-        .getD(),
-    );
+    box.setAttribute("d", this.decoration._resolveBackgroundPath(rect).getD());
   }
 }
 
@@ -284,28 +296,8 @@ class BoxDecorationCanvasPainter {
 
   private paintBackgroundColor(ctx: CanvasRenderingContext2D, rect: Rect) {
     ctx.fillStyle = this.decoration.color.value || "none";
-    const path = new Path();
-    if (this.decoration.shape == "circle") {
-      ctx.fill(path.addOval(rect).toCanvasPath());
-      return path;
-    }
-    if (this.decoration.borderRadius == null) {
-      ctx.fill(path.addRect(rect).toCanvasPath());
-      return path;
-    }
-    ctx.fill(
-      path
-        .addRRect(
-          RRect.fromRectAndCorners({
-            rect,
-            topLeft: this.decoration.borderRadius.topLeft,
-            topRight: this.decoration.borderRadius.topRight,
-            bottomLeft: this.decoration.borderRadius.bottomLeft,
-            bottomRight: this.decoration.borderRadius.bottomRight,
-          }),
-        )
-        .toCanvasPath(),
-    );
+    const path = this.decoration._resolveBackgroundPath(rect);
+    ctx.fill(path.toCanvasPath());
     return path;
   }
 }

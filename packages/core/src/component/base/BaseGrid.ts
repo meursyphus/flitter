@@ -302,7 +302,7 @@ class RenderBaseGrid extends MultiChildRenderObject {
       });
     });
   }
-  getIntrinsicWidth(height: number): number {
+  protected override computeIntrinsicWidth(height: number): number {
     return this.childrenByRow
       .map(row =>
         row
@@ -312,7 +312,7 @@ class RenderBaseGrid extends MultiChildRenderObject {
       .reduce(Utils.maxReducer);
   }
 
-  getIntrinsicHeight(width: number): number {
+  protected override computeIntrinsicHeight(width: number): number {
     return this.childrenByRow
       .map(row =>
         row

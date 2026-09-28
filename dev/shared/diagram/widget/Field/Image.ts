@@ -1,5 +1,17 @@
 import { CustomPaint, Size } from "flitter-core";
 
+const imageCache = new Map<string, HTMLImageElement>();
+
+function loadImage(src: string): HTMLImageElement {
+  let image = imageCache.get(src);
+  if (image == null) {
+    image = document.createElement("img");
+    image.src = src;
+    imageCache.set(src, image);
+  }
+  return image;
+}
+
 function Image({
   width,
   height,
@@ -34,6 +46,13 @@ function Image({
           image.setAttribute("width", `${size.width}`);
           image.setAttribute("height", `${size.height}`);
           image.setAttribute("href", src);
+        },
+      },
+      canvas: {
+        paint(context, size) {
+          const image = loadImage(src);
+          if (!image.complete || image.naturalWidth === 0) return;
+          context.canvas.drawImage(image, 0, 0, size.width, size.height);
         },
       },
     },

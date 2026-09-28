@@ -20,6 +20,7 @@
 				};
 		  }
 		| undefined = undefined;
+	export let performanceTracing = false;
 	export let width = '100%';
 	export let height = '300px';
 
@@ -70,7 +71,9 @@
 		if (!browser) return;
 		if (!mounted) return;
 		if (!runner) return;
-		runner.runApp(widget);
+		runner.runApp(widget, {
+			performanceTracing
+		});
 	};
 </script>
 
