@@ -10,6 +10,7 @@ export type CandlestickChartConfig = AgCandlestickSharedConfig & {
     upColor: string;
     downColor: string;
     wickColor: string;
+    crosshairColor: string;
   };
 };
 
@@ -32,5 +33,6 @@ export const defaultAgConfig: CandlestickChartConfig = {
     upColor: "rgba(255,255,255,0.98)",
     downColor: "rgba(91,132,196,0.35)",
     wickColor: "#5b84c4",
+    crosshairColor: "rgba(28, 31, 34, 0.75)",
   },
 };

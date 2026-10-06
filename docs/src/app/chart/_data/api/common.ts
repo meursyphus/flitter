@@ -454,6 +454,12 @@ export const commonApiPage: ApiPageData = {
             default: "12",
             description: "Gap between legend items in pixels.",
           },
+          {
+            property: "legend.color",
+            type: "string",
+            default: '"#333333"',
+            description: "Text color of legend labels.",
+          },
         ],
       },
       {

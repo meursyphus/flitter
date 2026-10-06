@@ -30,6 +30,8 @@ export function toastDataView(
   const baselineRatio =
     scale ? Math.max(0, Math.min(1, (0 - scale.min) / (scale.max - scale.min))) : 0;
 
+  if (!ctx.config.animation.enabled) return child;
+
   return new AnimatedDataView({
     child,
     duration: ctx.config.animation.duration,

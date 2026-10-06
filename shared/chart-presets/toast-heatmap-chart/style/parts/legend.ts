@@ -92,11 +92,12 @@ function gradientBar(
 function buildTickLabels(
 	ticks: number[],
 	font: { family: string; size: number },
+	color: string,
 ): Widget {
 	const style = new TextStyle({
 		fontFamily: font.family,
 		fontSize: font.size,
-		color: "#666666",
+		color,
 	});
 	return Row({
 		mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -233,7 +234,7 @@ export function toastHeatmapLegend(
 									: SizedBox({ height: INDICATOR_HEIGHT }),
 								gradientBar(colorRange, barWidth),
 								SizedBox({ height: LABEL_GAP }),
-								buildTickLabels(ticks, font),
+								buildTickLabels(ticks, font, legendConfig.color),
 							],
 						});
 					},

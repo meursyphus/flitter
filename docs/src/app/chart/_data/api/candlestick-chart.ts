@@ -46,6 +46,12 @@ type CandlestickChartData<TRow extends CandlestickChartRow = CandlestickChartRow
             default: '"#5b84c4"',
             description: "Color of the wick (high–low line).",
           },
+          {
+            property: "candlestick.crosshairColor",
+            type: "string",
+            default: '"rgba(28, 31, 34, 0.75)"',
+            description: "Color of the dashed hover crosshair.",
+          },
         ],
       },
     ],

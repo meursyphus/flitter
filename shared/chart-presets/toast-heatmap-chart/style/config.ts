@@ -9,7 +9,7 @@ export type ToastHeatmapChartConfig = ToastBaseConfig & {
 
 export const defaultToastConfig: ToastHeatmapChartConfig = {
 	...defaultToastBaseConfig,
-	legend: { ...defaultToastBaseConfig.legend, position: "bottom" },
+	legend: { ...defaultToastBaseConfig.legend, position: "bottom", color: "#666666" },
 	padding: { top: 30, right: 20, bottom: 20, left: 60 },
 	heatmap: {
 		colorRange: ["#FDE68A", "#F97316", "#B91C1C"],

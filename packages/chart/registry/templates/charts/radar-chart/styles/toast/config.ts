@@ -10,6 +10,9 @@ export type ToastRadarChartConfig = ToastBaseConfig & {
 		axisWidth: number;
 		/** Margin around the radar plot area for axis labels */
 		labelMargin: number;
+		/** Chip behind the radial (value) tick labels */
+		tickLabelBackground: string;
+		tickLabelBorderColor: string;
 	};
 };
 
@@ -25,5 +28,7 @@ export const defaultToastConfig: ToastRadarChartConfig = {
 		axisColor: "rgba(0, 0, 0, 0.1)",
 		axisWidth: 1,
 		labelMargin: 5,
+		tickLabelBackground: "#f3f4f6",
+		tickLabelBorderColor: "rgba(0, 0, 0, 0.08)",
 	},
 };
