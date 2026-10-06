@@ -1,4 +1,4 @@
-import { codeToHtml } from "shiki";
+import { highlight } from "@/lib/highlight";
 
 type CodeBlockProps = {
   code: string;
@@ -11,24 +11,17 @@ export default async function CodeBlock({
   lang = "typescript",
   filename,
 }: CodeBlockProps) {
-  const html = await codeToHtml(code.trim(), {
-    lang,
-    theme: "github-light",
-  });
+  const html = await highlight(code, lang);
 
   return (
-    <div>
+    <div className="code-surface overflow-hidden rounded-lg">
       {filename && (
-        <div className="flex items-center border border-b-0 border-neutral-200 rounded-t-lg bg-neutral-100/60 px-4 py-2">
-          <span className="text-[12px] font-medium text-neutral-500 tracking-wide">
-            {filename}
-          </span>
+        <div className="border-b border-line px-4 py-2 text-[12px] text-faint">
+          {filename}
         </div>
       )}
       <div
-        className={`code-block overflow-x-auto border border-neutral-200 bg-[#fafafa] text-[13px] leading-relaxed ${
-          filename ? "rounded-b-lg" : "rounded-lg"
-        } [&_pre]:!bg-transparent [&_pre]:p-4 [&_pre]:m-0 [&_code]:text-[13px] [&_code]:leading-relaxed`}
+        className="text-[13px] leading-relaxed [&_pre]:p-4"
         dangerouslySetInnerHTML={{ __html: html }}
       />
     </div>

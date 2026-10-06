@@ -2,8 +2,7 @@
 
 export const galleryTitle = "City Temperatures by Month";
 
-import Widget from "@flitterjs/react";
-import { HeatmapChart } from "shared/chart";
+import { HeatmapChart } from "@/lib/charts";
 
 export function createWidget() {
   return HeatmapChart({
@@ -25,14 +24,4 @@ export function createWidget() {
       title: { text: "Average Monthly Temperature (\u00B0C)", visible: true },
     },
   });
-}
-
-export default function HourlyTraffic() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

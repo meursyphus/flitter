@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Espresso Flavor Profile";
 
-import Widget from "@flitterjs/react";
-import { RadarChart } from "shared/chart";
+import { RadarChart } from "@/lib/charts";
 
 export function createWidget() {
   return RadarChart({
@@ -24,14 +23,4 @@ export function createWidget() {
       legend: { visible: false },
     },
   });
-}
-
-export default function RadarChartAg() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

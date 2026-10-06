@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Global Streaming Revenue (2025)";
 
-import Widget from "@flitterjs/react";
-import { ToastTreemapChart } from "shared/chart";
+import { ToastTreemapChart } from "@/lib/charts";
 
 export function createWidget() {
   return ToastTreemapChart({
@@ -42,14 +41,4 @@ export function createWidget() {
       title: { text: "Global Streaming Revenue by Platform (2025)", visible: true },
     },
   });
-}
-
-export default function TreemapChartToast() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

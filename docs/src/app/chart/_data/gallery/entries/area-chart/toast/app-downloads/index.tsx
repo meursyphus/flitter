@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Transportation Usage by Country";
 
-import Widget from "@flitterjs/react";
-import { ToastAreaChart } from "shared/chart";
+import { ToastAreaChart } from "@/lib/charts";
 
 export function createWidget() {
   return ToastAreaChart({
@@ -20,14 +19,4 @@ export function createWidget() {
           area: { spline: true, strokeWidth: 2, opacity: 0.3 },
         },
       });
-}
-
-export default function AreaChartToastAppDownloads() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

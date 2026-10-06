@@ -25,7 +25,7 @@ export default function GalleryCategoryNav() {
   }));
 
   return (
-    <div className="mt-0.5 ml-3 border-l border-neutral-200">
+    <div className="mt-0.5 ml-3 border-l border-line">
       {galleryCategories.map((cat) => (
         <Link
           key={cat.id}
@@ -34,8 +34,8 @@ export default function GalleryCategoryNav() {
           className={clsx(
             "block py-1 pl-3 text-[12.5px] transition-colors",
             activeCategoryId === cat.id
-              ? "border-l-2 border-teal-500 -ml-px font-medium text-teal-700"
-              : "text-neutral-500 hover:text-neutral-900",
+              ? "-ml-px border-l-2 border-accent font-medium text-ink"
+              : "text-soft hover:text-ink",
           )}
           onClick={(e) => {
             if (isGalleryIndex) {
@@ -53,14 +53,14 @@ export default function GalleryCategoryNav() {
       {todoCategories.length > 0 && (
         <>
           <div className="pt-2 pb-0.5 pl-3">
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-neutral-300">
-              Coming Soon
+            <span className="text-[11px] font-semibold text-faint">
+              Coming soon
             </span>
           </div>
           {todoCategories.map((id) => (
             <span
               key={id}
-              className="block py-1 pl-3 text-[12.5px] text-neutral-300 cursor-default"
+              className="block cursor-default py-1 pl-3 text-[12.5px] text-faint/60"
             >
               {toLabel(id)}
             </span>

@@ -12,7 +12,7 @@ export function Tabs({
 
   return (
     <div className="not-prose my-6">
-      <div className="flex gap-0 border-b border-neutral-200">
+      <div className="flex gap-0 border-b border-line">
         {items.map((item, i) => (
           <button
             key={item.label}
@@ -20,8 +20,8 @@ export function Tabs({
             className={clsx(
               "px-4 py-2 text-sm font-medium transition-colors",
               active === i
-                ? "border-b-2 border-neutral-900 text-neutral-900"
-                : "text-neutral-400 hover:text-neutral-600"
+                ? "-mb-px border-b-2 border-accent text-ink"
+                : "text-faint hover:text-soft"
             )}
           >
             {item.label}

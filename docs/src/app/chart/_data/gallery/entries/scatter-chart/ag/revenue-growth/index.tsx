@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Revenue vs Growth Rate";
 
-import Widget from "@flitterjs/react";
-import { ScatterChart } from "shared/chart";
+import { ScatterChart } from "@/lib/charts";
 
 export function createWidget() {
   return ScatterChart({
@@ -62,14 +61,4 @@ export function createWidget() {
       },
     },
   });
-}
-
-export default function RevenueGrowth() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

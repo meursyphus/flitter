@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Quarterly Profit & Loss by Division";
 
-import Widget from "@flitterjs/react";
-import { AreaChart } from "shared/chart";
+import { AreaChart } from "@/lib/charts";
 
 export function createWidget() {
   return AreaChart({
@@ -21,14 +20,4 @@ export function createWidget() {
           area: { spline: false, strokeWidth: 2, opacity: 0.25 },
         },
       });
-}
-
-export default function AreaChartAgProfitLoss() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

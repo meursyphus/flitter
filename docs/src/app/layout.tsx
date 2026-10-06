@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Inter } from "next/font/google";
+import { Archivo, JetBrains_Mono } from "next/font/google";
 import Header from "@/components/header";
 import GlobalSidebar from "@/components/global-sidebar";
+import { DEFAULT_THEME, themeInitScript } from "@/lib/theme";
 import Providers from "./providers";
 import "./globals.css";
 
@@ -10,13 +11,21 @@ const pretendard = localFont({
   src: "../fonts/PretendardVariable.woff2",
   display: "swap",
   weight: "45 920",
-  variable: "--font-body",
+  variable: "--ff-body",
 });
 
-const displayFont = Inter({
+const displayFont = Archivo({
   subsets: ["latin"],
-  weight: ["400", "700", "900"],
-  variable: "--font-display",
+  axes: ["wdth"],
+  display: "swap",
+  variable: "--ff-display",
+});
+
+// Same face as the code screenshots in /public/home.
+const monoFont = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--ff-mono",
 });
 
 export const metadata: Metadata = {
@@ -79,9 +88,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${pretendard.variable} ${displayFont.variable}`}
+      data-theme={DEFAULT_THEME}
+      className={`${pretendard.variable} ${displayFont.variable} ${monoFont.variable}`}
+      suppressHydrationWarning
     >
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -103,7 +115,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-white text-neutral-900 antialiased">
+      <body className="antialiased">
         <Providers>
           <Header />
           <div className="mx-auto flex max-w-[1920px]">

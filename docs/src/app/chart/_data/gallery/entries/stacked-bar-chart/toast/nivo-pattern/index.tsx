@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Monthly Financial Breakdown";
 
-import Widget from "@flitterjs/react";
-import { ToastStackedBarChart } from "shared/chart";
+import { ToastStackedBarChart } from "@/lib/charts";
 import {
   Container,
   EdgeInsets,
@@ -238,7 +237,7 @@ function PatternLegend(
         Text(name, {
           style: new TextStyle({
             fontSize: 12,
-            color: "#333333",
+            color: context.config.legend.color,
           }),
         }),
       ],
@@ -279,14 +278,4 @@ export function createWidget() {
       },
     },
   });
-}
-
-export default function StackedBarChartToastNivoPattern() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

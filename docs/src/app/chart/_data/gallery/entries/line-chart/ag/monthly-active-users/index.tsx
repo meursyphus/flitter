@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Average Monthly Temperature by City";
 
-import Widget from "@flitterjs/react";
-import { LineChart } from "shared/chart";
+import { LineChart } from "@/lib/charts";
 
 export function createWidget() {
   return LineChart({
@@ -20,14 +19,4 @@ export function createWidget() {
       subtitle: { text: "Celsius degrees by city (2024)", visible: true },
     },
   });
-}
-
-export default function SocialMediaUsers() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

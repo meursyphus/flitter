@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Website Traffic Sources (K visits)";
 
-import Widget from "@flitterjs/react";
-import { ToastStackedAreaChart } from "shared/chart";
+import { ToastStackedAreaChart } from "@/lib/charts";
 
 export function createWidget() {
   return ToastStackedAreaChart({
@@ -20,14 +19,4 @@ export function createWidget() {
       area: { opacity: 0.6, strokeWidth: 2, spline: true },
     },
   });
-}
-
-export default function StackedAreaChartToastTrafficSources() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }
