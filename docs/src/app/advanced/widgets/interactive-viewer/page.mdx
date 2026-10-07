@@ -1,0 +1,96 @@
+export const metadata = { title: "InteractiveViewer", description: "Zoom to the cursor and pan a scene with SVG and Canvas renderers." };
+
+# InteractiveViewer
+
+## Overview
+
+`InteractiveViewer` adds cursor-centered wheel zoom and mouse drag panning around a child. It clips the result to a viewport and applies scale and translation boundaries. It follows the design of [Flutter's InteractiveViewer](https://api.flutter.dev/flutter/widgets/InteractiveViewer-class.html).
+
+## When to use it?
+
+- Explore a chart with densely packed marks.
+- Pan across a large diagram.
+- Inspect an image at different zoom levels.
+- Build a map-like grid or editing canvas.
+- Provide reset and zoom controls for a scene.
+
+## Basic Usage
+
+```typescript
+import {
+  Column, Container, Expanded, GestureDetector, InteractiveViewer,
+  Matrix4, State, StatefulWidget, Text, TransformationController,
+} from 'flitter-ui';
+
+class ViewerExample extends StatefulWidget {
+  createState() { return new ViewerExampleState(); }
+}
+
+class ViewerExampleState extends State<ViewerExample> {
+  controller = new TransformationController();
+
+  dispose() {
+    this.controller.dispose();
+    super.dispose();
+  }
+
+  build() {
+    return Container({ width: 400, height: 300, child: Column({ children: [
+      GestureDetector({
+        onClick: () => { this.controller.value = Matrix4.identity(); },
+        child: Text('Reset view'),
+      }),
+      Expanded({ child: InteractiveViewer({
+        transformationController: this.controller,
+        constrained: false,
+        minScale: 0.5,
+        maxScale: 4,
+        child: Container({ width: 800, height: 600, color: '#dbeafe',
+          child: Text('Wheel to zoom; drag to pan'),
+        }),
+      }) }),
+    ] }) });
+  }
+}
+
+export default function ViewerExampleWidget() { return new ViewerExample(); }
+```
+
+## Props
+
+| Prop | Type | Default / behavior |
+| --- | --- | --- |
+| `child` | `Widget` | Required scene |
+| `transformationController` | `TransformationController` | Created internally when omitted |
+| `constrained` | `boolean` | `true`; use `false` for a child larger than the viewport |
+| `minScale`, `maxScale` | `number` | `0.8`, `2.5`; finite and positive |
+| `boundaryMargin` | `EdgeInsets` | Zero; scene-space margin available for panning |
+| `panEnabled`, `scaleEnabled` | `boolean` | `true`; controls user input only |
+| `clipBehavior` | `'hardEdge' \| 'none'` | `'hardEdge'` |
+| `alignment` | `Alignment` | `Alignment.topLeft`; positions a scaled scene smaller than the viewport |
+| `onInteractionStart` | `(details: ScaleStartDetails) => void` | Global and local focal point |
+| `onInteractionUpdate` | `(details: ScaleUpdateDetails) => void` | Focal points, scale ratio, and movement delta |
+| `onInteractionEnd` | `(details: ScaleEndDetails) => void` | Zero velocity for this non-inertial implementation |
+| `key` | `any` | Widget reconciliation key |
+
+## Practical Examples
+
+Set `boundaryMargin: EdgeInsets.all(100)` to allow an extra 100 scene pixels around the child, or `EdgeInsets.all(Infinity)` for unrestricted panning. Use `panEnabled: false` for zoom-only interaction.
+
+Assign `controller.value = Matrix4.diagonal3Values(2, 2, 1)` to zoom to 2×. `controller.toScene(new Offset({ x, y }))` maps a viewport point into scene coordinates; `toViewport` performs the reverse mapping. These methods include translation and scaling. A singular matrix cannot be inverted and `toScene` throws.
+
+To change a matrix, assign a new instance or a modified clone to `value`; mutating the current matrix in place does not notify listeners. `addListener` and `removeListener` can update associated controls.
+
+## Important Notes
+
+Both viewport dimensions must be bounded. With `constrained: false`, the child must still choose a finite size. Each wheel event emits one start/update/end sequence; a drag emits one start, a series of updates, and one end. Mouse gesture scaling preserves the scene point under the cursor unless a boundary prevents it. Scale values in updates are relative to that update, and drag updates have a scale of one.
+
+Programmatic matrices are applied as supplied, allowing custom reset and navigation behavior. Limits apply to user gestures. The `alignment` option aligns undersized scenes; the controller matrix always uses a top-left origin, so coordinate conversion stays consistent.
+
+This version supports mouse input. Touch/pinch gestures, automatic inertial movement, and perspective-aware pan boundaries are not implemented. Disabling clipping allows painting outside the viewport, but input remains limited to its original bounds. Dispose controllers that your `State` owns.
+
+## Related Widgets
+
+- [SingleChildScrollView](/advanced/widgets/single-child-scroll-view) for one-axis scrolling.
+- [Transform](/advanced/widgets/transform) for direct matrix transforms.
+- [GestureDetector](/advanced/widgets/gesture-detector) for custom interactions.

@@ -32,6 +32,7 @@ class _Text extends StatelessWidget {
   softWrap?: boolean;
   textWidthBasis?: TextWidthBasis;
   overflow?: TextOverflow;
+  maxLines?: number;
 
   constructor({
     data,
@@ -42,14 +43,17 @@ class _Text extends StatelessWidget {
     textWidthBasis,
     style,
     overflow,
+    maxLines,
+    key,
   }: TextProps & { data?: string; textSpan?: InlineSpan }) {
-    super();
+    super(key);
     this.softWrap = softWrap;
     this.textAlign = textAlign;
     this.textDirection = textDirection;
     this.textWidthBasis = textWidthBasis;
     this.style = style;
     this.overflow = overflow;
+    this.maxLines = maxLines;
 
     this.data = data;
     this.textSpan = textSpan;
@@ -61,6 +65,7 @@ class _Text extends StatelessWidget {
       textDirection: this.textDirection,
       softWrap: this.softWrap,
       overflow: this.overflow,
+      maxLines: this.maxLines,
       textWidthBasis: this.textWidthBasis,
       text: new TextSpan({
         style: this.style,
@@ -72,6 +77,9 @@ class _Text extends StatelessWidget {
 }
 
 type TextProps = {
+  key?: any;
+  /** Maximum number of visible lines. Omit for unlimited lines. */
+  maxLines?: number;
   overflow?: TextOverflow;
   style?: TextStyle;
   textAlign?: TextAlign;

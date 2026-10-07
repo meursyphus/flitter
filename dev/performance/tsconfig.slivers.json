@@ -1,0 +1,8 @@
+{
+	"extends": "./tsconfig.engine.json",
+	"include": [
+		"src/sliver-virtualization.test.ts",
+		"tests/sliver-virtualization.test.ts",
+		"fixtures/slivers/main.ts"
+	]
+}

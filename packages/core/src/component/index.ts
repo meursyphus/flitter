@@ -57,6 +57,20 @@ import Image from "./Image";
 import LayoutBuilder from "./LayoutBuilder";
 import RepaintBoundary from "./RepaintBoundary";
 
+export { default as ScrollController } from "./ScrollController";
+export { default as SingleChildScrollView } from "./SingleChildScrollView";
+export type { SingleChildScrollViewProps } from "./SingleChildScrollView";
+export { default as InteractiveViewer } from "./InteractiveViewer";
+export type {
+  InteractiveViewerProps,
+  ScaleStartDetails,
+  ScaleUpdateDetails,
+  ScaleEndDetails,
+} from "./InteractiveViewer";
+export { default as TransformationController } from "./TransformationController";
+export type { ViewportClip } from "./base/viewport-utils";
+export * from "../scroll";
+
 export {
   Painter,
   ConstrainedBox,
@@ -115,3 +129,15 @@ export {
   LayoutBuilder,
   RepaintBoundary,
 };
+export {
+  default as ListView,
+  type ListViewProps,
+  type ListViewBuilderProps,
+} from "./ListView";
+export { default as Viewport, type ViewportProps } from "./Viewport";
+export {
+  default as SliverList,
+  SliverFixedExtentList,
+  type SliverListProps,
+} from "./SliverList";
+export { default as SliverPadding } from "./SliverPadding";
