@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
 	import { mountTextFieldBench, type TextFieldBench } from '$lib/text-field-bench';
 	let host: HTMLDivElement;
 	onMount(() => {
 		const bench = mountTextFieldBench(
 			host,
-			$page.url.searchParams.get('renderer') === 'svg' ? 'svg' : 'canvas'
+			new URL(window.location.href).searchParams.get('renderer') === 'svg' ? 'svg' : 'canvas'
 		);
 		(window as unknown as { __textFieldBench: TextFieldBench }).__textFieldBench = bench;
 		return () => bench.dispose();
