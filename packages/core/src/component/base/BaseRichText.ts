@@ -84,7 +84,7 @@ class RichText extends RenderObjectWidget {
     if (this.softWrap != null) renderObject.softWrap = this.softWrap;
     if (this.overflow != null) renderObject.overflow = this.overflow;
     if (this.textScaleFactor != null) renderObject.textScaleFactor = this.textScaleFactor;
-    if (this.maxLines != null) renderObject.maxLines = this.maxLines;
+    if (this.textPainter == null) renderObject.maxLines = this.maxLines;
     if (this.textWidthBasis != null) renderObject.textWidthBasis = this.textWidthBasis;
     if (this.text != null) renderObject.text = this.text;
     if (this.textAlign != null) renderObject.textAlign = this.textAlign;

@@ -18,6 +18,7 @@
 		"src/text-editing.test.ts",
 		"tests/text-field.test.ts",
 		"src/text-algorithms.test.ts",
+		"src/text-max-lines.test.ts",
 		"src/text-preparation.test.ts",
 		"src/transform-cache.test.ts",
 		"src/build-phase-optimization.test.ts",
