@@ -1,13 +1,24 @@
+import {
+  defaultSankeyAppearance,
+  type SankeyAppearance,
+} from "../base/config";
 import { type ToastBaseConfig, defaultToastBaseConfig } from "../../_shared/toast/index";
 
 type ToastSankeySharedConfig = Pick<
   ToastBaseConfig,
-  "colors" | "font" | "title" | "tooltip" | "animation"
+  "colors" | "font" | "title" | "tooltip" | "animation" | "padding"
 >;
 
-export type SankeyChartConfig = ToastSankeySharedConfig;
+export type SankeyChartConfig = ToastSankeySharedConfig & SankeyAppearance;
 
 export const defaultToastConfig: SankeyChartConfig = {
+  padding: defaultToastBaseConfig.padding,
+  sankey: {
+    ...defaultSankeyAppearance,
+    labelColor: defaultToastBaseConfig.title.color,
+    labelFontSize: defaultToastBaseConfig.font.size,
+    outline: true,
+  },
   colors: defaultToastBaseConfig.colors,
   font: defaultToastBaseConfig.font,
   title: defaultToastBaseConfig.title,

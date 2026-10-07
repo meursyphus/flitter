@@ -122,22 +122,22 @@ class BarBoxState extends State<BarBox> {
 			ctx,
 		);
 
-		return GestureDetector({
-			cursor: "default",
-			key: this.anchorKey,
-			onMouseEnter: () => ctx.hoverBar(index, this.anchorKey),
-			onMouseLeave: () => ctx.unhoverBar(index),
-			child: ctx.custom.barBox(
-				{
-					bar,
-					item,
-					geometry,
-					index,
-					isHovered,
-				},
-				ctx,
-			),
-		});
+		return ctx.custom.barBox(
+			{
+				bar: GestureDetector({
+					cursor: "default",
+					key: this.anchorKey,
+					onMouseEnter: () => ctx.hoverBar(index, this.anchorKey),
+					onMouseLeave: () => ctx.unhoverBar(index),
+					child: bar,
+				}),
+				item,
+				geometry,
+				index,
+				isHovered,
+			},
+			ctx,
+		);
 	}
 }
 
@@ -196,6 +196,7 @@ const behavior: CartesianScaffoldBehavior<
 	getLegends: (ctx) => [
 		{ name: ctx.config.waterfall.positiveName, index: 0 },
 		{ name: ctx.config.waterfall.negativeName, index: 1 },
+		...(ctx.items.some(isSummary) ? [{ name: ctx.config.waterfall.totalName, index: 2 }] : []),
 	],
 	buildLegend: (ctx, { name, index }) =>
 		ctx.custom.legend({ name, index, isVisible: true }, ctx),

@@ -246,3 +246,8 @@ export type {
 	GetScaleOptionsFn as BulletChartGetScaleOptionsFn,
 } from "./bullet-chart/types";
 export { BulletChartController } from "./bullet-chart/controller";
+
+export { default as FunnelChart } from "./funnel-chart";
+export { FunnelChartProvider } from "./funnel-chart/provider";
+export { FunnelChartController } from "./funnel-chart/controller";
+export type { FunnelChartData, FunnelChartContext, FunnelChartCustom, FunnelStage } from "./funnel-chart/types";

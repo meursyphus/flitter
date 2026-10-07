@@ -13,6 +13,7 @@
     "baseUrl": ".",
     "paths": {
       "flitter-ui/chart": ["../../packages/flitter/src/chart.ts"],
+      "flitter-ui": ["../../packages/flitter/src/index.ts"],
       "flitter-chart": ["../../packages/chart/src/index.ts"],
       "flitter-chart/*": ["../../packages/chart/src/*"],
       "flitter-core": ["../../packages/core/src/index.ts"],

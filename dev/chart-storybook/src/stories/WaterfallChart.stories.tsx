@@ -14,7 +14,7 @@ type StoryArgs = {
 };
 
 const meta: Meta<StoryArgs> = {
-  title: "Polish/WaterfallChart/Ag",
+  title: "Charts/WaterfallChart/Ag",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {
@@ -36,7 +36,10 @@ export const TransferBridge: Story = {
         },
         config: {
           title: { text: "Manchester United Transfers" },
-          subtitle: { visible: true, text: "Outgoing Sales & Incoming Signings from Season 2023-2024" },
+          subtitle: {
+            visible: true,
+            text: "Outgoing Sales & Incoming Signings from Season 2023-2024",
+          },
           waterfall: {
             positiveName: "Outs",
             negativeName: "Ins",

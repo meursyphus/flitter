@@ -73,6 +73,7 @@ export const chartNav: Navigation = {
         { title: "Bubble Chart", href: "/chart/api/bubble-chart" },
         { title: "Candlestick Chart", href: "/chart/api/candlestick-chart" },
         { title: "Donut Chart", href: "/chart/api/donut-chart" },
+        { title: "Funnel Chart", href: "/chart/api/funnel-chart" },
         { title: "Heatmap Chart", href: "/chart/api/heatmap-chart" },
         { title: "Line Chart", href: "/chart/api/line-chart" },
         { title: "Pie Chart", href: "/chart/api/pie-chart" },

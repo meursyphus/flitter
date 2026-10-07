@@ -7,9 +7,9 @@ export function NodeLabel(
   return Text(label, {
     style: new TextStyle({
       fontFamily: ctx.config.font.family,
-      fontSize: 13,
+      fontSize: ctx.config.sankey.labelFontSize,
       fontWeight: "500",
-      color: "#1f1f1f",
+      color: ctx.config.sankey.labelColor,
     }),
   });
 }

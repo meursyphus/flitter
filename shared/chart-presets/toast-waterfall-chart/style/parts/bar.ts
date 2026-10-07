@@ -1,16 +1,18 @@
 import {
+  Align,
   Alignment,
-  AnimatedScale,
   Border,
   BoxDecoration,
   BoxShadow,
   Container,
   EdgeInsets,
   Padding,
-  SizedBox,
-	Text,
-	TextStyle,
-	type Widget,
+  Stack,
+  StackFit,
+  Text,
+  TextStyle,
+  ZIndex,
+  type Widget,
 } from "flitter-ui";
 import type {
   WaterfallBarType,
@@ -27,54 +29,58 @@ const TYPE_INDEX: Record<WaterfallBarType, number> = {
 };
 
 export function toastBar(
-  { item, isHovered }: {
-    item: WaterfallChartDatum;
-    index: number;
-    isHovered: boolean;
-  },
+  {
+    item,
+    isHovered,
+  }: { item: WaterfallChartDatum; index: number; isHovered: boolean },
   ctx: WaterfallChartContext<WaterfallChartConfig>,
 ): Widget {
-  const color = ctx.config.colors[TYPE_INDEX[item.type]] ?? ctx.config.colors[0];
-  const dlCfg = ctx.config.waterfall.dataLabel;
-  const label =
-    dlCfg.visible
-      ? Padding({
-          padding: EdgeInsets.only({ top: item.end >= item.start ? 0 : 4, bottom: item.end >= item.start ? 4 : 0 }),
-          child: Text(ctx.config.waterfall.valueFormatter(item.value, item.type), {
-            style: new TextStyle({
-              fontFamily: dlCfg.fontFamily ?? ctx.config.font.family,
-              fontSize: dlCfg.fontSize,
-              color: dlCfg.color,
-            }),
-          }),
-        })
-      : SizedBox.shrink();
-
-  return SizedBox.expand({
-    child: Container({
-      width: Infinity,
-      height: Infinity,
-      child: AnimatedScale({
-        duration: ctx.config.animation.duration,
-        scale: isHovered ? 1.02 : 1,
-        alignment: item.end >= item.start ? Alignment.bottomCenter : Alignment.topCenter,
-        child: Container({
+  const colors = ctx.config.colors;
+  const color = colors[TYPE_INDEX[item.type]] ?? colors[0];
+  const label = ctx.config.waterfall.dataLabel;
+  return ZIndex({
+    zIndex: isHovered ? 1 : 0,
+    child: Stack({
+      fit: StackFit.expand,
+      clipped: false,
+      children: [
+        Container({
           width: Infinity,
           height: Infinity,
           decoration: new BoxDecoration({
             color,
-            border:
-              isHovered
-                ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
-                : undefined,
-            boxShadow:
-              isHovered
-                ? [new BoxShadow({ color: "rgba(0,0,0,0.24)", blurRadius: 12 })]
-                : undefined,
+            border: isHovered
+              ? Border.all({ color: "white", width: 4, strokeAlign: 1 })
+              : undefined,
+            boxShadow: isHovered
+              ? [new BoxShadow({ color: "rgba(0,0,0,0.24)", blurRadius: 8 })]
+              : undefined,
           }),
-          child: label,
         }),
-      }),
+        ...(label.visible
+          ? [
+              Align({
+                alignment:
+                  item.end >= item.start
+                    ? Alignment.topCenter
+                    : Alignment.bottomCenter,
+                child: Padding({
+                  padding: EdgeInsets.symmetric({ vertical: 4 }),
+                  child: Text(
+                    ctx.config.waterfall.valueFormatter(item.value, item.type),
+                    {
+                      style: new TextStyle({
+                        fontFamily: label.fontFamily ?? ctx.config.font.family,
+                        fontSize: label.fontSize,
+                        color: label.color,
+                      }),
+                    },
+                  ),
+                }),
+              }),
+            ]
+          : []),
+      ],
     }),
   });
 }

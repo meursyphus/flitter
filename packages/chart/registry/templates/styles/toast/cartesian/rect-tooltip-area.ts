@@ -7,10 +7,8 @@ import {
   StackFit,
   Positioned,
   ZIndex,
-  Padding,
-  FractionalTranslation,
   ConstraintsTransformBox,
-  Alignment,
+  LayoutBuilder,
   type Widget,
 } from "flitter-core";
 import {
@@ -71,19 +69,41 @@ function getCandidateOrder(
   const bottomEdgeCandidates = getBottomEdgeCandidates(anchorRect, plotSize);
   const rightEdgeCandidates = getRightEdgeCandidates(anchorRect, plotSize);
   const leftEdgeCandidates = getLeftEdgeCandidates(anchorRect, plotSize);
-  const rightDiagonalCandidates = getRightDiagonalCandidates(anchorRect, plotSize);
-  const leftDiagonalCandidates = getLeftDiagonalCandidates(anchorRect, plotSize);
+  const rightDiagonalCandidates = getRightDiagonalCandidates(
+    anchorRect,
+    plotSize,
+  );
+  const leftDiagonalCandidates = getLeftDiagonalCandidates(
+    anchorRect,
+    plotSize,
+  );
 
   if (mode.variant === "bar") {
     if (mode.direction === "vertical") {
       return mode.value >= 0
-        ? [...topEdgeCandidates, ...aboveCornerCandidates, ...belowCornerCandidates]
-        : [...bottomEdgeCandidates, ...belowCornerCandidates, ...aboveCornerCandidates];
+        ? [
+            ...topEdgeCandidates,
+            ...aboveCornerCandidates,
+            ...belowCornerCandidates,
+          ]
+        : [
+            ...bottomEdgeCandidates,
+            ...belowCornerCandidates,
+            ...aboveCornerCandidates,
+          ];
     }
 
     return mode.value >= 0
-      ? [...rightEdgeCandidates, ...rightDiagonalCandidates, ...leftEdgeCandidates]
-      : [...leftEdgeCandidates, ...leftDiagonalCandidates, ...rightEdgeCandidates];
+      ? [
+          ...rightEdgeCandidates,
+          ...rightDiagonalCandidates,
+          ...leftEdgeCandidates,
+        ]
+      : [
+          ...leftEdgeCandidates,
+          ...leftDiagonalCandidates,
+          ...rightEdgeCandidates,
+        ];
   }
 
   if (mode.variant === "heatmap") {
@@ -102,7 +122,11 @@ function getCandidateOrder(
   }
 
   if (mode.direction === "vertical") {
-    return [...topEdgeCandidates, ...aboveCornerCandidates, ...belowCornerCandidates];
+    return [
+      ...topEdgeCandidates,
+      ...aboveCornerCandidates,
+      ...belowCornerCandidates,
+    ];
   }
 
   return [
@@ -147,34 +171,27 @@ class _ToastRectTooltipArea extends StatefulWidget {
 }
 
 class _ToastRectTooltipAreaState extends State<_ToastRectTooltipArea> {
-  areaKey = new GlobalKey();
-  measuredPlotSize: PlotSize | null = null;
-  scheduledMeasurement = false;
+  tooltipKey = new GlobalKey();
+  measuredTooltipSize: TooltipSize | null = null;
+  measurementScheduled = false;
 
-  private schedulePlotSizeMeasurement(): void {
-    if (this.scheduledMeasurement) return;
-    this.scheduledMeasurement = true;
+  private measureTooltip(): void {
+    if (this.measurementScheduled) return;
+    this.measurementScheduled = true;
     this.element.scheduler.addPostFrameCallbacks(() => {
-      this.scheduledMeasurement = false;
-      if (this.areaKey.buildOwner == null) return;
-
-      const plotRenderObject = this.areaKey.currentContext?.renderObject;
-      if (plotRenderObject == null) return;
-
-      const nextSize = {
-        width: plotRenderObject.size.width,
-        height: plotRenderObject.size.height,
-      };
-
+      this.measurementScheduled = false;
+      const element = this.tooltipKey.buildOwner?.findByGlobalKey(
+        this.tooltipKey,
+      );
+      if (element == null) return;
+      const size = element.renderObject.size;
       if (
-        this.measuredPlotSize?.width === nextSize.width &&
-        this.measuredPlotSize?.height === nextSize.height
-      ) {
+        this.measuredTooltipSize?.width === size.width &&
+        this.measuredTooltipSize?.height === size.height
+      )
         return;
-      }
-
       this.setState(() => {
-        this.measuredPlotSize = nextSize;
+        this.measuredTooltipSize = { width: size.width, height: size.height };
       });
     });
   }
@@ -188,70 +205,55 @@ class _ToastRectTooltipAreaState extends State<_ToastRectTooltipArea> {
       tooltipGap,
       estimatedTooltipSize,
     } = this.widget;
-
-    if (anchorRect == null || tooltip == null || !enabled) {
+    if (anchorRect == null || tooltip == null || !enabled)
       return SizedBox.shrink();
-    }
+    this.measureTooltip();
 
-    let tooltipPositioned: Widget = SizedBox.shrink();
-    const plotSize = this.measuredPlotSize;
-    if (plotSize == null) {
-      this.schedulePlotSizeMeasurement();
-    }
-
-    if (plotSize != null) {
-      const resolution = resolveTooltipPlacement(
-        anchorRect,
-        plotSize,
-        estimatedTooltipSize,
-        tooltipGap,
-        getCandidateOrder(mode, anchorRect, plotSize),
-      );
-      const { layout } = resolution;
-
-      const tooltipWidget = ZIndex({
-        zIndex: 9999,
-        child: Padding({
-          padding: layout.padding,
-          child: tooltip,
-        }),
-      });
-
-      tooltipPositioned = Positioned({
-        key: "__tooltip__",
-        left: anchorRect.x,
-        top: anchorRect.y,
-        child: Stack({
-          fit: StackFit.passthrough,
+    return LayoutBuilder({
+      builder: (_, constraints) => {
+        const plotSize = {
+          width: constraints.maxWidth,
+          height: constraints.maxHeight,
+        };
+        const tooltipSize = this.measuredTooltipSize ?? estimatedTooltipSize;
+        const candidates = getCandidateOrder(mode, anchorRect, plotSize);
+        // Wide horizontal marks may leave no room on either side.
+        const resolution = resolveTooltipPlacement(
+          anchorRect,
+          plotSize,
+          tooltipSize,
+          tooltipGap,
+          [...candidates, "aboveCenter", "belowCenter"],
+        );
+        const bounds = resolution.candidates.find(
+          (entry) => entry.candidate === resolution.candidate,
+        )!.bounds;
+        const left = Math.max(
+          0,
+          Math.min(bounds.left, plotSize.width - tooltipSize.width),
+        );
+        const top = Math.max(
+          0,
+          Math.min(bounds.top, plotSize.height - tooltipSize.height),
+        );
+        return Stack({
+          fit: StackFit.expand,
           clipped: false,
           children: [
-            SizedBox({
-              width: anchorRect.width,
-              height: anchorRect.height,
-            }),
-            Positioned.fill({
-              child: FractionalTranslation({
-                translation: layout.offset,
-                child: ConstraintsTransformBox({
-                  constraintsTransform: ConstraintsTransformBox.unconstrained,
-                  alignment: Alignment[layout.position],
-                  child: FractionalTranslation({
-                    translation: layout.translation,
-                    child: tooltipWidget,
-                  }),
+            Positioned({
+              left,
+              top,
+              child: ConstraintsTransformBox({
+                constraintsTransform: ConstraintsTransformBox.unconstrained,
+                child: ZIndex({
+                  zIndex: 9999,
+                  child: SizedBox({ key: this.tooltipKey, child: tooltip }),
                 }),
               }),
             }),
           ],
-        }),
-      });
-    }
-
-    return Stack({
-      key: this.areaKey,
-      fit: StackFit.expand,
-      clipped: false,
-      children: [tooltipPositioned],
+        });
+      },
     });
   }
 }

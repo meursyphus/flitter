@@ -6,7 +6,7 @@ export { BulletGroup } from "./bullet-group";
 export { BulletBox } from "./bullet-box";
 export { BulletDataView } from "./data-view";
 export { BulletGrid } from "./grid";
-export { Plot } from "@shared/cartesian/plot";
+export { Plot } from "@shared/cartesian";
 
 export const defaultGetScale = (
   data: { datasets: { value: number; target: number; ranges: number[] }[] },

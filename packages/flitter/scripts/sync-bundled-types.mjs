@@ -29,6 +29,26 @@ await cp(path.join(chartDistRoot, "shared"), path.join(distRoot, "shared"), {
   recursive: true,
 });
 
+// Copied chart templates import widgets from flitter-ui. Their headless types
+// must use the same declarations, rather than the private workspace core package.
+async function rewriteCoreTypeImports(directory) {
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const file = path.join(directory, entry.name);
+    if (entry.isDirectory()) {
+      await rewriteCoreTypeImports(file);
+    } else if (/\.d\.(?:ts|cts)$/.test(entry.name)) {
+      const source = await readFile(file, "utf8");
+      await writeFile(
+        file,
+        source.replace(/(['"])flitter-core\1/g, "$1flitter-ui$1"),
+      );
+    }
+  }
+}
+
+await rewriteCoreTypeImports(path.join(distRoot, "headless"));
+await rewriteCoreTypeImports(path.join(distRoot, "shared"));
+
 const coreDistFiles = await readdir(coreDistRoot);
 const tooltipTypeDefinitions = coreDistFiles.filter((file) =>
   /^Tooltip-.*\.d\.(cts|ts)$/.test(file),

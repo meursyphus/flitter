@@ -7,6 +7,7 @@ import {
 	type BuildContext,
 	SizedBox,
 	GestureDetector,
+	CustomPaint,
 } from "flitter-core";
 import {
 	createCartesianChart,
@@ -113,22 +114,32 @@ class BulletGroupState extends State<BulletGroup> {
 			ctx,
 		);
 
-		return GestureDetector({
-			behavior: "translucent",
-			cursor: "default",
-			onMouseEnter: () => ctx.hoverBullet(index, this.anchorKey),
-			onMouseLeave: () => ctx.unhoverBullet(index),
-			child: ctx.custom.bulletGroup(
-				{
-					bulletBox,
-					index,
-					label,
-					isHovered,
-					isDimmed,
-				},
-				ctx,
-			),
-		});
+		const extent = clampRatio((Math.max(0, dataset.value, dataset.target, ...dataset.ranges) - ctx.scale.min) / total);
+		return ctx.custom.bulletGroup(
+			{
+				bulletBox: GestureDetector({
+					behavior: "deferToChild",
+					cursor: "default",
+					onMouseEnter: () => ctx.hoverBullet(index, this.anchorKey),
+					onMouseLeave: () => ctx.unhoverBullet(index),
+					child: CustomPaint({
+						painter: {
+							hitTest: (point, size) => ctx.direction === "vertical"
+								? point.y >= size.height * (1 - extent)
+								: point.x <= size.width * extent,
+							svg: { createDefaultSvgEl: (context) => ({ group: context.createSvgEl("g") }), paint: () => {} },
+							canvas: { paint: () => {} },
+						},
+						child: bulletBox,
+					}),
+				}),
+				index,
+				label,
+				isHovered,
+				isDimmed,
+			},
+			ctx,
+		);
 	}
 }
 

@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { getRegistry, resolveTemplatePath } from "./index.mjs";
 
 const registry = getRegistry();
@@ -31,7 +32,7 @@ for (const item of chartItems) {
 }
 
 const templatesChartsDir = path.join(
-  path.dirname(new URL(import.meta.url).pathname),
+  path.dirname(fileURLToPath(import.meta.url)),
   "templates",
   "charts",
 );

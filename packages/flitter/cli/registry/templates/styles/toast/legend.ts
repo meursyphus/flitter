@@ -14,7 +14,7 @@ import {
 import { CheckBox } from "./checkbox";
 import type { ToastBaseConfig } from "./cartesian/config";
 
-type ToastLegendConfig = Pick<ToastBaseConfig, "colors" | "font">;
+type ToastLegendConfig = Pick<ToastBaseConfig, "colors" | "font" | "legend">;
 
 export function toastLegend<TConfig extends ToastLegendConfig>(
   { name, index, isVisible }: { name: string; index: number; isVisible?: boolean },
@@ -24,7 +24,7 @@ export function toastLegend<TConfig extends ToastLegendConfig>(
   },
   { markerShape }: { markerShape?: "checkbox" | "circle" } = {},
 ): Widget {
-  const { colors, font } = context.config;
+  const { colors, font, legend } = context.config;
   const color = colors[index % colors.length];
   const visible = isVisible ?? context.isSeriesVisible?.(name) ?? true;
 
@@ -48,7 +48,7 @@ export function toastLegend<TConfig extends ToastLegendConfig>(
           style: new TextStyle({
             fontFamily: font.family,
             fontSize: font.size,
-            color: "#333333",
+            color: legend.color,
           }),
         }),
       ],

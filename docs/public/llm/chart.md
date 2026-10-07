@@ -2,7 +2,7 @@
 
 Use this pack when an agent needs to implement or customize charts in this repository with as little hidden context as possible.
 
-Generated: 2026-04-08
+Generated: 2026-10-07
 
 ## What This Pack Covers
 
@@ -36,6 +36,7 @@ These have stronger ready-made defaults and are the first stop for common chart 
 - `pie-chart`: Show simple part-to-whole breakdowns with a small number of slices. Styles: toast.
 - `radar-chart`: Compare multivariate profiles across shared radial axes. Styles: toast.
 - `heatmap-chart`: Show matrix patterns by mapping numeric intensity onto a cell grid. Styles: toast.
+- `funnel-chart`: Show sequential stage dropoff and conversion through a funnel. Styles: ag, toast.
 
 ### Base-Wrapper Charts
 
@@ -44,7 +45,6 @@ These still have a `chart-presets` entry point, but they behave more like struct
 - `box-plot-chart`: Show distribution through quartiles, whiskers, and optional outliers.
 - `candlestick-chart`: Represent open-high-low-close movement for each interval.
 - `donut-chart`: Part-to-whole chart with center content and an inner radius.
-- `funnel-chart`: Show sequential stage dropoff and conversion through a funnel.
 - `histogram-chart`: Show numeric distribution by bins rather than individual raw points.
 - `sankey-chart`: Show weighted flow between stages with controller-owned layout.
 - `sunburst-chart`: Display hierarchical composition as concentric radial segments.

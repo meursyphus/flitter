@@ -58,8 +58,8 @@ export const defaultAgConfig: SunburstChartConfig = {
 		innerRadiusRatio: 0.18,
 		strokeColor: "white",
 		strokeWidth: 1,
-		hoverStrokeWidth: 2,
-		hoverShadowColor: "rgba(0,0,0,0.20)",
+		hoverStrokeWidth: 1,
+		hoverShadowColor: "transparent",
 		dimOpacity: 0.32,
 	},
 	dataLabel: {

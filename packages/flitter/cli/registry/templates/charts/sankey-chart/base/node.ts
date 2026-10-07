@@ -13,17 +13,20 @@ import {
   SizedBox,
   Stack,
   StackFit,
-  Align,
+  ConstraintsTransformBox,
+  Padding,
+  EdgeInsets,
   Alignment,
 } from "flitter-core";
 
 export function Node(
-  ...[{ color, column, totalColumns, labelWidget, isHovered, isActive, isDimmed }]: Parameters<
-    SankeyChartCustom["node"]
-  >
+  ...[
+    { color, column, totalColumns, labelWidget, isHovered, isActive, isDimmed },
+    ctx,
+  ]: Parameters<SankeyChartCustom["node"]>
 ) {
   const opacity = isDimmed ? 0.28 : 1;
-  const emphasized = isHovered || isActive;
+  const emphasized = ctx.config.sankey.outline && (isHovered || isActive);
   const isLastColumn = column === totalColumns - 1;
 
   return Opacity({
@@ -39,7 +42,11 @@ export function Node(
             color,
             borderRadius: BorderRadius.all(Radius.circular(2)),
             border: emphasized
-              ? Border.all({ color: "rgba(255,255,255,0.92)", width: 2, strokeAlign: 1 })
+              ? Border.all({
+                  color: "rgba(255,255,255,0.92)",
+                  width: 2,
+                  strokeAlign: 1,
+                })
               : undefined,
             boxShadow: emphasized
               ? [new BoxShadow({ color: "rgba(0,0,0,0.18)", blurRadius: 10 })]
@@ -49,13 +56,19 @@ export function Node(
         labelWidget == null
           ? SizedBox.shrink()
           : Positioned.fill({
-              child: Align({
-                alignment: isLastColumn ? Alignment.centerLeft : Alignment.centerRight,
+              child: ConstraintsTransformBox({
+                constraintsTransform: ConstraintsTransformBox.unconstrained,
+                alignment: isLastColumn
+                  ? Alignment.centerLeft
+                  : Alignment.centerRight,
                 child: FractionalTranslation({
                   translation: isLastColumn
                     ? new Offset({ x: -1, y: 0 })
                     : new Offset({ x: 1, y: 0 }),
-                  child: labelWidget,
+                  child: Padding({
+                    padding: EdgeInsets.symmetric({ horizontal: 8 }),
+                    child: labelWidget,
+                  }),
                 }),
               }),
             }),

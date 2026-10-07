@@ -1,5 +1,6 @@
 import type { ApiPageData } from "../types";
 import { commonApiPage } from "./common";
+import { funnelChartApiPage } from "./funnel-chart";
 import { areaChartApiPage } from "./area-chart";
 import { barChartApiPage } from "./bar-chart";
 import { bubbleChartApiPage } from "./bubble-chart";
@@ -17,6 +18,7 @@ import { treemapChartApiPage } from "./treemap-chart";
 
 export const apiPages: ApiPageData[] = [
   commonApiPage,
+  funnelChartApiPage,
   areaChartApiPage,
   barChartApiPage,
   bubbleChartApiPage,
