@@ -34,6 +34,16 @@ import Matrix3 from "./_types/_matrix3";
 
 import { BorderSide } from "./_types/_borders";
 export { ToolTipPosition } from "./_types/tool-tip-position";
+export {
+  default as TextEditingController,
+  type TextSelection,
+  type TextEditingValue,
+} from "./_types/text-editing-controller";
+export { default as FocusNode } from "./_types/focus-node";
+export {
+  default as InputDecoration,
+  type InputDecorationProps,
+} from "./_types/input-decoration";
 export { default as TextPainter, Paragraph } from "./_types/text-painter";
 export * as Colors from "./colors";
 export { ObjectFit } from "./_types/object-fit";
