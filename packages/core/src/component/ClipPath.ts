@@ -27,8 +27,12 @@ class ClipPath extends StatelessWidget {
   }
 
   build(_: Element): Widget {
-    if (!this.clipped) return this.child!;
-    return new BaseClipPath({ child: this.child, clipper: this.clipper });
+    // Keep the render-object wrapper so toggling clipping preserves child state.
+    return new BaseClipPath({
+      child: this.child,
+      clipper: this.clipper,
+      clipped: this.clipped,
+    });
   }
 }
 
