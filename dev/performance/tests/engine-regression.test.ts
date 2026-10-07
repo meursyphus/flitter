@@ -7,6 +7,39 @@ declare global {
 	}
 }
 
+test('Canvas clips bound recording allocation for tall and far-translated content', async ({
+	page
+}) => {
+	const errors: string[] = [];
+	page.on('pageerror', (error) => errors.push(error.message));
+	await page.goto('http://localhost:4173/performance/engine?renderer=canvas');
+	await page.waitForFunction(() => !!window.__engineBench);
+	for (const farTranslation of [false, true]) {
+		const sizes = await page.evaluate(
+			(far) => window.__engineBench.measureClippedRecording(far),
+			farTranslation
+		);
+		expect(sizes).toContainEqual({ width: 120, height: 80 });
+		expect(sizes.every((size) => size.width <= 960 && size.height <= 540)).toBe(true);
+		const pixels = await page.evaluate(() =>
+			window.__engineBench.pixels([
+				[30, 30],
+				[30, 100]
+			])
+		);
+		expect(pixels[0]).toEqual(farTranslation ? [0, 0, 0, 0] : [255, 0, 0, 255]);
+		expect(pixels[1]).toEqual([0, 0, 0, 0]);
+	}
+	const empty = await page.evaluate(() =>
+		window.__engineBench.measureClippedRecording(false, true)
+	);
+	expect(empty).toContainEqual({ width: 0, height: 0 });
+	expect(await page.evaluate(() => window.__engineBench.pixels([[30, 30]]))).toEqual([
+		[0, 0, 0, 0]
+	]);
+	expect(errors).toEqual([]);
+});
+
 for (const deviceScaleFactor of [1, 2]) {
 	for (const renderer of ['canvas', 'svg']) {
 		test.describe(`${renderer} transformed text at DPR ${deviceScaleFactor}`, () => {

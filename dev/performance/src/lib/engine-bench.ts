@@ -10,6 +10,7 @@ import {
 	Matrix4,
 	Offset,
 	Opacity,
+	OverflowBox,
 	Positioned,
 	RepaintBoundary,
 	Row,
@@ -369,6 +370,51 @@ export function mountEngineBench(
 			);
 			await nextFrame();
 			await nextFrame();
+		},
+		async measureClippedRecording(farTranslation: boolean, empty = false) {
+			const canvases: HTMLCanvasElement[] = [];
+			const createElement = document.createElement;
+			document.createElement = function (
+				this: Document,
+				...args: Parameters<typeof createElement>
+			) {
+				const result = createElement.apply(this, args);
+				if (args[0] === 'canvas') canvases.push(result as HTMLCanvasElement);
+				return result;
+			} as typeof createElement;
+			try {
+				runner.runApp(
+					Container({
+						width: 120,
+						height: 80,
+						child: RepaintBoundary({
+							key: `${farTranslation}-${empty}`,
+							child: ClipRect({
+								clipper: () =>
+									Rect.fromLTWH({
+										left: 0,
+										top: 0,
+										width: empty ? 0 : 120,
+										height: empty ? 0 : 80
+									}),
+								child: OverflowBox({
+									alignment: Alignment.topLeft,
+									maxHeight: Infinity,
+									child: Transform.translate({
+										offset: new Offset({ x: 0, y: farTranslation ? 10000 : 0 }),
+										child: Container({ width: 120, height: 10000, color: '#ff0000' })
+									})
+								})
+							})
+						})
+					})
+				);
+				await nextFrame();
+				await nextFrame();
+				return canvases.map((canvas) => ({ width: canvas.width, height: canvas.height }));
+			} finally {
+				document.createElement = createElement;
+			}
 		},
 		pixels(points: [number, number][]) {
 			if (!(view instanceof HTMLCanvasElement)) throw new Error('Pixel sampling requires canvas');

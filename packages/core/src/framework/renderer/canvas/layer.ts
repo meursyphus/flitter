@@ -259,15 +259,18 @@ export class SceneBuilder {
           );
           ctx.clip();
           break;
-        case "picture":
+        case "picture": {
+          const size = command.picture.size;
+          if (size.width === 0 || size.height === 0) break;
           ctx.drawImage(
             command.picture.toImage(),
             command.x,
             command.y,
-            command.picture.size.width,
-            command.picture.size.height,
+            size.width,
+            size.height,
           );
           break;
+        }
       }
     }
     ctx.restore();

@@ -40,12 +40,12 @@ export class CanvasPainter extends Painter {
   }
 
   get paintBounds(): Rect {
-    let left = 0;
-    let top = 0;
-    let right = this.size.width;
-    let bottom = this.size.height;
-    // A repaint boundary is not a clip. Include paint-only transforms and
-    // overflowing descendants when sizing its temporary raster recording.
+    let left = this.renderObject.isPainter ? 0 : Infinity;
+    let top = this.renderObject.isPainter ? 0 : Infinity;
+    let right = this.renderObject.isPainter ? this.size.width : -Infinity;
+    let bottom = this.renderObject.isPainter ? this.size.height : -Infinity;
+    // Include painted descendants and their transforms. Non-painting layout
+    // wrappers contribute only their children, so a clip can bound a viewport.
     this.renderObject.visitChildren(child => {
       const bounds = child.canvasPainter.paintBounds;
       left = Math.min(left, bounds.left + child.offset.x);
@@ -53,6 +53,7 @@ export class CanvasPainter extends Painter {
       right = Math.max(right, bounds.right + child.offset.x);
       bottom = Math.max(bottom, bounds.bottom + child.offset.y);
     });
+    if (left === Infinity) return this.layoutBounds;
     const transform = this.renderObject.applyPaintTransform(
       Matrix4.Constants.identity,
     );

@@ -170,6 +170,16 @@ class SvgPainterClipPath extends SvgPainter {
 }
 
 class ClipPathCanvasPainter extends CanvasPainter {
+  override get paintBounds() {
+    const render = this.renderObject as RenderClipPath;
+    // Rectangular clips bound all visible descendants, including long text
+    // and scroll content. Unknown custom paths keep the conservative estimate.
+    return (
+      (render.clipped ? this.clipper.getBounds() : undefined) ??
+      super.paintBounds
+    );
+  }
+
   private clipLayer: ClipPathLayer | null = null;
   private boundaryLayers = new WeakMap<Layer, ClipPathLayer>();
 
