@@ -196,10 +196,8 @@ class TextFieldState extends State<TextField> {
       oldWidget.controller?.removeListener(this.#controllerChanged);
       this.widget.controller?.addListener(this.#controllerChanged);
     }
-    if (oldWidget.focusNode !== this.widget.focusNode) {
-      this.#detachFocus?.();
-      this.#attachFocus();
-    }
+    const focusNodeChanged = oldWidget.focusNode !== this.widget.focusNode;
+    if (focusNodeChanged) this.#detachFocus?.();
     const text =
       this.widget.controller?.text ??
       (oldWidget.text !== this.widget.text ? this.widget.text : this.value);
@@ -215,6 +213,10 @@ class TextFieldState extends State<TextField> {
     )
       this.#setText(text);
     if (this.widget.controller) this.#controllerChanged();
+    // A replacement node can carry a pending focus request. Attach only after
+    // the replacement value/selection is installed: focus() writes selection
+    // back to that controller and must never overwrite it with the old text.
+    if (focusNodeChanged) this.#attachFocus();
   }
 
   get paragraphLines() {

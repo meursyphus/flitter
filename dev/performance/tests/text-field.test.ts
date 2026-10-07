@@ -293,3 +293,32 @@ for (const renderer of ['svg', 'canvas']) {
 		expect(await page.evaluate(() => window.__textFieldBench.focusNode.hasFocus)).toBe(false);
 	});
 }
+
+for (const renderer of ['svg', 'canvas']) {
+	test(`${renderer} a pending replacement focus preserves the replacement controller value`, async ({
+		page
+	}) => {
+		await page.goto(`/performance/text-field?renderer=${renderer}`);
+		await page.waitForFunction(() => !!window.__textFieldBench);
+		const input = page.getByRole('textbox', { name: 'Message' });
+		await page.evaluate(() => {
+			const bench = window.__textFieldBench;
+			bench.controller.text = 'Original';
+			bench.replaceHandles();
+			bench.activeController.selection = { start: 1, end: 4 };
+			bench.activeFocusNode.requestFocus();
+		});
+		await expect(input).toBeFocused();
+		await expect(input).toHaveValue('Replacement');
+		await expect
+			.poll(() => page.evaluate(() => window.__textFieldBench.renderedText))
+			.toBe('Replacement');
+		expect(await page.evaluate(() => window.__textFieldBench.activeController.value)).toEqual({
+			text: 'Replacement',
+			selection: { start: 1, end: 4 }
+		});
+		expect(
+			await input.evaluate((el: HTMLTextAreaElement) => [el.selectionStart, el.selectionEnd])
+		).toEqual([1, 4]);
+	});
+}
