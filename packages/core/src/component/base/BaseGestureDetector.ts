@@ -317,17 +317,23 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     this.behavior = behavior;
   }
 
+  private hasDragListeners = false;
+
   attach(ownerElement: RenderObjectElement): void {
     super.attach(ownerElement);
-    this.addEventListeners();
+    // Keep-alive reactivation reattaches the same render object.
+    if (!this.hasDragListeners) this.addEventListeners();
   }
 
   dispose(): void {
-    this.removeEventListeners();
-    backendRefCount--;
-    if (backendRefCount === 0) {
-      getSingletonDragBackend().teardown();
-      globalDragBackend = null as any;
+    if (this.hasDragListeners) {
+      this.removeEventListeners();
+      this.hasDragListeners = false;
+      backendRefCount--;
+      if (backendRefCount === 0) {
+        getSingletonDragBackend().teardown();
+        globalDragBackend = null as any;
+      }
     }
     super.dispose();
   }
@@ -343,6 +349,7 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     const dragBackend = getSingletonDragBackend();
     dragBackend.isSetup || dragBackend.setup();
     backendRefCount++;
+    this.hasDragListeners = true;
 
     dragBackend.connectDragSource(this, {
       onDragStart: this.onDragStart,
