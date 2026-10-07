@@ -112,6 +112,7 @@ export class RenderParagraph extends RenderObject {
   set overflow(newOverflow: TextOverflow) {
     if (this.#overflow === newOverflow) return; // early return
     this.#overflow = newOverflow;
+    this.textPainter.ellipsis = newOverflow === TextOverflow.ellipsis ? "\u2026" : undefined;
     this.markNeedsLayout();
   }
   #textPainter: TextPainter;

@@ -46,6 +46,55 @@ function getCtxOrNull(): CanvasRenderingContext2D | null {
 */
 const TEXT_WIDTH_CACHE_KEY = Symbol.for("flitter.textWidthMeasurementCache");
 const TEXT_WIDTH_CACHE_LIMIT = 8192;
+const TEXT_WIDTH_GENERATION_KEY = Symbol.for(
+  "flitter.textWidthMeasurementGeneration",
+);
+
+/** Share the generation with the width cache, including across bundled copies. */
+export function getTextMeasurementGeneration(): number {
+  if (typeof window === "undefined") return 0;
+  return (
+    (window as unknown as Record<symbol, number | undefined>)[
+      TEXT_WIDTH_GENERATION_KEY
+    ] ?? 0
+  );
+}
+
+const fontPool = new Map<
+  string,
+  Map<string, Map<number, Map<boolean, string>>>
+>();
+let pooledFonts = 0;
+/** Pool resolved font strings; segment preparation never formats per word. */
+export function getTextFont({
+  fontFamily,
+  fontWeight,
+  fontSize,
+  italic = false,
+}: {
+  fontFamily: string;
+  fontWeight: string;
+  fontSize: number;
+  italic?: boolean;
+}): string {
+  if (pooledFonts >= 256) {
+    fontPool.clear();
+    pooledFonts = 0;
+  }
+  let weights = fontPool.get(fontFamily);
+  if (!weights) fontPool.set(fontFamily, (weights = new Map()));
+  let sizes = weights.get(fontWeight);
+  if (!sizes) weights.set(fontWeight, (sizes = new Map()));
+  let styles = sizes.get(fontSize);
+  if (!styles) sizes.set(fontSize, (styles = new Map()));
+  let font = styles.get(italic);
+  if (!font) {
+    font = `${italic ? "italic " : ""}${fontWeight} ${fontSize}px ${fontFamily}`;
+    styles.set(italic, font);
+    pooledFonts++;
+  }
+  return font;
+}
 
 function getTextWidthCache(): Map<string, number> | null {
   if (typeof window === "undefined") {
@@ -58,7 +107,12 @@ function getTextWidthCache(): Map<string, number> | null {
     host[TEXT_WIDTH_CACHE_KEY] = cache;
     const fonts = (document as Document & { fonts?: FontFaceSet }).fonts;
     if (fonts != null && typeof fonts.addEventListener === "function") {
-      fonts.addEventListener("loadingdone", () => cache!.clear());
+      fonts.addEventListener("loadingdone", () => {
+        cache!.clear();
+        const generations = window as unknown as Record<symbol, number>;
+        generations[TEXT_WIDTH_GENERATION_KEY] =
+          getTextMeasurementGeneration() + 1;
+      });
     }
   }
   return cache;
