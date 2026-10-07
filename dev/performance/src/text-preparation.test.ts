@@ -150,3 +150,40 @@ describe('segmentation fallback', () => {
     }
   });
 });
+
+import TextField from '../../../packages/core/src/component/TextField';
+import type { Widget } from '../../../packages/core/src/widget';
+
+function findPainter(value: unknown, seen = new Set<object>()): TextPainter | undefined {
+  if (value instanceof TextPainter) return value;
+  if (!value || typeof value !== 'object' || seen.has(value)) return;
+  seen.add(value);
+  for (const child of Object.values(value)) {
+    const painter = findPainter(child, seen);
+    if (painter) return painter;
+  }
+}
+
+it('uses one TextField span and reuses cached prefix measurements on a repeated edit', () => {
+  const widget = TextField('A😀 hello');
+  const state = widget.createState();
+  const callbacks: (() => void)[] = [];
+  state.widget = widget;
+  state.element = {
+    markNeedsBuild() {},
+    scheduler: { addPostFrameCallbacks(callback: () => void) { callbacks.push(callback); } },
+  } as unknown as typeof state.element;
+  state.initState();
+  const painter = findPainter(state.build())!;
+  expect((painter.text as TextSpan).children).toHaveLength(0);
+  painter.layout({maxWidth: 200});
+  callbacks.splice(0).forEach(callback => callback());
+  expect(state.paragraphLines![0].spanBoxes.map(box => [box.content, box.textStart, box.textEnd])).toContainEqual(['😀', 1, 3]);
+  measureText.mockClear();
+  state.widget = TextField('A😀 hello');
+  state.didUpdateWidget(TextField('previous'));
+  const next = findPainter(state.build())!;
+  next.layout({maxWidth: 200});
+  callbacks.splice(0).forEach(callback => callback());
+  expect(measureText).not.toHaveBeenCalled();
+});
