@@ -46,6 +46,34 @@ function getCtxOrNull(): CanvasRenderingContext2D | null {
 */
 const TEXT_WIDTH_CACHE_KEY = Symbol.for("flitter.textWidthMeasurementCache");
 const TEXT_WIDTH_CACHE_LIMIT = 8192;
+let measurementGeneration = 0;
+
+/** Paragraph preparations must also expire when fallback font metrics change. */
+export function getTextMeasurementGeneration(): number {
+  return measurementGeneration;
+}
+
+const fontPool = new Map<string, Map<string, Map<number, Map<boolean, string>>>>();
+let pooledFonts = 0;
+/** Pool resolved font strings; segment preparation never formats per word. */
+export function getTextFont({ fontFamily, fontWeight, fontSize, italic = false }: {
+  fontFamily: string; fontWeight: string; fontSize: number; italic?: boolean;
+}): string {
+  if (pooledFonts >= 256) { fontPool.clear(); pooledFonts = 0; }
+  let weights = fontPool.get(fontFamily);
+  if (!weights) fontPool.set(fontFamily, weights = new Map());
+  let sizes = weights.get(fontWeight);
+  if (!sizes) weights.set(fontWeight, sizes = new Map());
+  let styles = sizes.get(fontSize);
+  if (!styles) sizes.set(fontSize, styles = new Map());
+  let font = styles.get(italic);
+  if (!font) {
+    font = `${italic ? "italic " : ""}${fontWeight} ${fontSize}px ${fontFamily}`;
+    styles.set(italic, font);
+    pooledFonts++;
+  }
+  return font;
+}
 
 function getTextWidthCache(): Map<string, number> | null {
   if (typeof window === "undefined") {
@@ -58,7 +86,10 @@ function getTextWidthCache(): Map<string, number> | null {
     host[TEXT_WIDTH_CACHE_KEY] = cache;
     const fonts = (document as Document & { fonts?: FontFaceSet }).fonts;
     if (fonts != null && typeof fonts.addEventListener === "function") {
-      fonts.addEventListener("loadingdone", () => cache!.clear());
+      fonts.addEventListener("loadingdone", () => {
+        cache!.clear();
+        measurementGeneration++;
+      });
     }
   }
   return cache;
