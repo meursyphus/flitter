@@ -15,6 +15,7 @@
 	"include": [
 		"src/lib/engine-bench.ts",
 		"src/text-algorithms.test.ts",
+		"src/text-max-lines.test.ts",
 		"src/transform-cache.test.ts",
 		"src/build-phase-optimization.test.ts",
 		"tests/engine-regression.test.ts",
