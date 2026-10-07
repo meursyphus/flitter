@@ -53,19 +53,33 @@ export function getTextMeasurementGeneration(): number {
   return measurementGeneration;
 }
 
-const fontPool = new Map<string, Map<string, Map<number, Map<boolean, string>>>>();
+const fontPool = new Map<
+  string,
+  Map<string, Map<number, Map<boolean, string>>>
+>();
 let pooledFonts = 0;
 /** Pool resolved font strings; segment preparation never formats per word. */
-export function getTextFont({ fontFamily, fontWeight, fontSize, italic = false }: {
-  fontFamily: string; fontWeight: string; fontSize: number; italic?: boolean;
+export function getTextFont({
+  fontFamily,
+  fontWeight,
+  fontSize,
+  italic = false,
+}: {
+  fontFamily: string;
+  fontWeight: string;
+  fontSize: number;
+  italic?: boolean;
 }): string {
-  if (pooledFonts >= 256) { fontPool.clear(); pooledFonts = 0; }
+  if (pooledFonts >= 256) {
+    fontPool.clear();
+    pooledFonts = 0;
+  }
   let weights = fontPool.get(fontFamily);
-  if (!weights) fontPool.set(fontFamily, weights = new Map());
+  if (!weights) fontPool.set(fontFamily, (weights = new Map()));
   let sizes = weights.get(fontWeight);
-  if (!sizes) weights.set(fontWeight, sizes = new Map());
+  if (!sizes) weights.set(fontWeight, (sizes = new Map()));
   let styles = sizes.get(fontSize);
-  if (!styles) sizes.set(fontSize, styles = new Map());
+  if (!styles) sizes.set(fontSize, (styles = new Map()));
   let font = styles.get(italic);
   if (!font) {
     font = `${italic ? "italic " : ""}${fontWeight} ${fontSize}px ${fontFamily}`;

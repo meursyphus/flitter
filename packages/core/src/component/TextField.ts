@@ -290,6 +290,8 @@ class TextFieldState extends State<TextField> {
   }
 
   #findLineIndexForPosition(position: number): number {
+    // Constraints can reflow the paragraph without changing the field value.
+    this.#lineInfo = this.#calculateLineInfo();
     let low = 0;
     let high = this.#lineInfo.length - 1;
 

@@ -4,11 +4,10 @@ import Utils, { assert, getTextWidth } from "../../utils";
 import type { SvgPaintContext } from "../../framework";
 import type Offset from "./_offset";
 import { graphemes, segmentText } from "./text-segments";
-import { getTextFont, getTextMeasurementGeneration } from "../../utils/getTextSize";
-
-function getTextHeight({ fontSize }: { fontSize: number }) {
-  return fontSize;
-}
+import {
+  getTextFont,
+  getTextMeasurementGeneration,
+} from "../../utils/getTextSize";
 
 import { TextDirection, TextAlign, TextWidthBasis } from "..";
 import { FontStyle } from "./text-style";
@@ -174,7 +173,12 @@ export default class TextPainter {
           fontStyle,
           color,
         }) => {
-          const font = `${fontStyle === FontStyle.italic ? "italic " : ""}${fontWeight} ${fontSize}px ${fontFamily}`;
+          const font = getTextFont({
+            fontWeight,
+            fontSize,
+            fontFamily,
+            italic: fontStyle === FontStyle.italic,
+          });
           if (lastFont !== font) ctx.font = lastFont = font;
           if (lastColor !== color) ctx.fillStyle = lastColor = color;
           ctx.fillText(content, x + offset.x, y + offset.y);
@@ -190,7 +194,15 @@ export default class TextPainter {
 
     this.paragraph!.lines.forEach(line => {
       line.spanBoxes.forEach(
-        ({ offset, fontFamily, content, fontSize, fontWeight, fontStyle, color }) => {
+        ({
+          offset,
+          fontFamily,
+          content,
+          fontSize,
+          fontWeight,
+          fontStyle,
+          color,
+        }) => {
           const tspanEl = createSvgEl("tspan");
           tspanEl.setAttribute("x", `${offset.x}`);
           tspanEl.setAttribute("y", `${offset.y}`);
@@ -200,7 +212,10 @@ export default class TextPainter {
           tspanEl.setAttribute("font-size", `${fontSize}`);
           tspanEl.setAttribute("font-family", `${fontFamily}`);
           tspanEl.setAttribute("font-weight", fontWeight);
-          tspanEl.setAttribute("font-style", fontStyle === FontStyle.italic ? "italic" : "normal");
+          tspanEl.setAttribute(
+            "font-style",
+            fontStyle === FontStyle.italic ? "italic" : "normal",
+          );
           tspanEl.textContent = content;
           textEl.appendChild(tspanEl);
         },
@@ -291,8 +306,11 @@ export default class TextPainter {
   // "\n" and the line composition is provably identical.
   #canReuseLineBreaks(maxWidth: number): boolean {
     const contentWidth = this.paragraph!.intrinsicWidth;
-    return !this.paragraph!.didExceedMaxLines &&
-      this.#cachedMaxWidth >= contentWidth && maxWidth >= contentWidth;
+    return (
+      !this.paragraph!.didExceedMaxLines &&
+      this.#cachedMaxWidth >= contentWidth &&
+      maxWidth >= contentWidth
+    );
   }
 
   // Mirrors the width selection of layoutParagraph (same operations, same
@@ -378,7 +396,10 @@ export class Paragraph {
       textDirection: TextDirection;
     },
   ) {
-    assert(maxLines == null || (Number.isInteger(maxLines) && maxLines > 0), "maxLines must be a positive integer");
+    assert(
+      maxLines == null || (Number.isInteger(maxLines) && maxLines > 0),
+      "maxLines must be a positive integer",
+    );
     this.maxLines = maxLines;
     this.ellipsis = ellipsis;
     this.textAlign = textAlign;
@@ -444,7 +465,10 @@ export class Paragraph {
     let sourceStart = 0;
     this.prepared = segments.map(segment => {
       const parts: PreparedPart[] = [];
-      while (sourceIndex < this.source.length && sourceStart + this.source[sourceIndex].content.length <= segment.start) {
+      while (
+        sourceIndex < this.source.length &&
+        sourceStart + this.source[sourceIndex].content.length <= segment.start
+      ) {
         sourceStart += this.source[sourceIndex++].content.length;
       }
       let index = sourceIndex;
@@ -453,13 +477,17 @@ export class Paragraph {
         const source = this.source[index];
         const from = Math.max(start, segment.start);
         const to = Math.min(start + source.content.length, segment.end);
-        if (to > from) parts.push({
-          sourceIndex: index,
-          textStart: from,
-          textEnd: to,
-          content: text.slice(from, to),
-          font: getTextFont({ ...source, italic: source.fontStyle === FontStyle.italic }),
-        });
+        if (to > from)
+          parts.push({
+            sourceIndex: index,
+            textStart: from,
+            textEnd: to,
+            content: text.slice(from, to),
+            font: getTextFont({
+              ...source,
+              italic: source.fontStyle === FontStyle.italic,
+            }),
+          });
         start += source.content.length;
         index++;
       }
@@ -470,7 +498,7 @@ export class Paragraph {
 
   private measureText(text: string, font: string): number {
     let widths = this.preparedWidths.get(font);
-    if (!widths) this.preparedWidths.set(font, widths = new Map());
+    if (!widths) this.preparedWidths.set(font, (widths = new Map()));
     let width = widths.get(text);
     if (width === undefined) {
       width = getTextWidth({ text, font });
@@ -480,12 +508,16 @@ export class Paragraph {
   }
 
   private measure(part: PreparedPart): number {
-    return part.width ??= /^[\r\n\u00ad]+$/.test(part.content)
+    return (part.width ??= /^[\r\n\u00ad]+$/.test(part.content)
       ? 0
-      : this.measureText(part.content, part.font);
+      : this.measureText(part.content, part.font));
   }
 
-  private box(part: PreparedPart, content = part.content, width = this.measure(part)): SpanBox {
+  private box(
+    part: PreparedPart,
+    content = part.content,
+    width = this.measure(part),
+  ): SpanBox {
     return new SpanBox({
       ...this.source[part.sourceIndex],
       sourceIndex: part.sourceIndex,
@@ -504,7 +536,8 @@ export class Paragraph {
     const segments = this.prepare();
     let currentLine = new ParagraphLine();
     let discretionaryBreak: PreparedPart | undefined;
-    const lastLine = () => this.maxLines != null && this.lines.length + 1 >= this.maxLines;
+    const lastLine = () =>
+      this.maxLines != null && this.lines.length + 1 >= this.maxLines;
     const finish = () => {
       this.lines.push(currentLine);
       currentLine = new ParagraphLine();
@@ -519,13 +552,22 @@ export class Paragraph {
       const segment = segments[index];
       if (/^[\r\n]/.test(segment.content)) {
         // The newline belongs to the line it terminates, including empty lines.
-        for (const part of segment.parts) currentLine.addSpanBox(this.box(part, "", 0));
-        if (lastLine()) { truncate(); break; }
+        for (const part of segment.parts)
+          currentLine.addSpanBox(this.box(part, "", 0));
+        if (lastLine()) {
+          truncate();
+          break;
+        }
         finish();
         // A trailing hard break still creates an empty final line.
-        if (index === segments.length - 1 && (this.maxLines == null || this.lines.length < this.maxLines)) {
+        if (
+          index === segments.length - 1 &&
+          (this.maxLines == null || this.lines.length < this.maxLines)
+        ) {
           const part = segment.parts[segment.parts.length - 1];
-          currentLine.addSpanBox(this.box({ ...part, textStart: part.textEnd }, "", 0));
+          currentLine.addSpanBox(
+            this.box({ ...part, textStart: part.textEnd }, "", 0),
+          );
         }
         continue;
       }
@@ -534,9 +576,18 @@ export class Paragraph {
         currentLine.addSpanBox(this.box(discretionaryBreak, "", 0));
         continue;
       }
-      const segmentWidth = segment.parts.reduce((total, part) => total + this.measure(part), 0);
-      if (currentLine.spanBoxes.length > 0 && currentLine.width + segmentWidth > width) {
-        if (lastLine()) { truncate(); break; }
+      const segmentWidth = segment.parts.reduce(
+        (total, part) => total + this.measure(part),
+        0,
+      );
+      if (
+        currentLine.spanBoxes.length > 0 &&
+        currentLine.width + segmentWidth > width
+      ) {
+        if (lastLine()) {
+          truncate();
+          break;
+        }
         if (discretionaryBreak) {
           const hyphen = this.measureText("-", discretionaryBreak.font);
           if (currentLine.width + hyphen <= width) {
@@ -547,7 +598,11 @@ export class Paragraph {
       }
       discretionaryBreak = undefined;
       for (const part of segment.parts) currentLine.addSpanBox(this.box(part));
-      if (currentLine.width > width && this.ellipsis && (this.maxLines == null || lastLine())) {
+      if (
+        currentLine.width > width &&
+        this.ellipsis &&
+        (this.maxLines == null || lastLine())
+      ) {
         truncate();
         break;
       }
@@ -559,7 +614,10 @@ export class Paragraph {
   private ellipsize(line: ParagraphLine, width: number): void {
     const last = line.spanBoxes[line.spanBoxes.length - 1];
     if (!last) return;
-    const font = getTextFont({ ...last, italic: last.fontStyle === FontStyle.italic });
+    const font = getTextFont({
+      ...last,
+      italic: last.fontStyle === FontStyle.italic,
+    });
     const ellipsisWidth = this.measureText(this.ellipsis!, font);
     const kept: SpanBox[] = [];
     let used = 0;
@@ -569,7 +627,10 @@ export class Paragraph {
         used += box.size.width;
         continue;
       }
-      const boxFont = getTextFont({ ...box, italic: box.fontStyle === FontStyle.italic });
+      const boxFont = getTextFont({
+        ...box,
+        italic: box.fontStyle === FontStyle.italic,
+      });
       let content = "";
       let contentWidth = 0;
       for (const grapheme of graphemes(box.content)) {
@@ -579,21 +640,39 @@ export class Paragraph {
         content = candidate;
         contentWidth = candidateWidth;
       }
-      if (content) kept.push(new SpanBox({ ...box, content,
-        textEnd: box.textStart + content.length,
-        size: { ...box.size, width: contentWidth },
-      }));
+      if (content)
+        kept.push(
+          new SpanBox({
+            ...box,
+            content,
+            textEnd: box.textStart + content.length,
+            size: { ...box.size, width: contentWidth },
+          }),
+        );
       break;
     }
     const textEnd = kept[kept.length - 1]?.textEnd ?? last.textStart;
     // An ellipsis wider than the constraint is itself clipped by omitting it.
-    if (ellipsisWidth <= width) kept.push(new SpanBox({ ...last,
-      content: this.ellipsis!, textStart: textEnd, textEnd,
-      size: { ...last.size, width: ellipsisWidth },
-    }));
-    if (kept.length === 0) kept.push(new SpanBox({ ...last,
-      content: "", textStart: textEnd, textEnd, size: { ...last.size, width: 0 },
-    }));
+    if (ellipsisWidth <= width)
+      kept.push(
+        new SpanBox({
+          ...last,
+          content: this.ellipsis!,
+          textStart: textEnd,
+          textEnd,
+          size: { ...last.size, width: ellipsisWidth },
+        }),
+      );
+    if (kept.length === 0)
+      kept.push(
+        new SpanBox({
+          ...last,
+          content: "",
+          textStart: textEnd,
+          textEnd,
+          size: { ...last.size, width: 0 },
+        }),
+      );
     line.replaceSpanBoxes(kept);
   }
 
@@ -605,28 +684,47 @@ export class Paragraph {
       height: line.height,
       spanBoxes: line.spanBoxes.flatMap(box => {
         if (!box.content) return [box];
-        const font = getTextFont({ ...box, italic: box.fontStyle === FontStyle.italic });
+        const font = getTextFont({
+          ...box,
+          italic: box.fontStyle === FontStyle.italic,
+        });
         let previousWidth = 0;
         const characters = graphemes(box.content);
         // Prefix shaping is exact for ordinary words. Bound work for pasted
         // megawords: individual advances scaled to the measured segment avoid
         // quadratic prefix strings and keep the final caret at the painted end.
-        const advances = characters.length > 256
-          ? characters.map(character => this.measureText(character.segment, font))
-          : undefined;
-        const advanceTotal = advances?.reduce((sum, advance) => sum + advance, 0) ?? 0;
+        const advances =
+          characters.length > 256
+            ? characters.map(character =>
+                this.measureText(character.segment, font),
+              )
+            : undefined;
+        const advanceTotal =
+          advances?.reduce((sum, advance) => sum + advance, 0) ?? 0;
         let advance = 0;
         return characters.map(({ segment, index }, characterIndex) => {
           const end = index + segment.length;
           if (advances) advance += advances[characterIndex];
-          const width = end === box.content.length ? box.size.width
-            : advances ? box.size.width * advance / (advanceTotal || 1)
-            : Math.min(box.size.width, this.measureText(box.content.slice(0, end), font));
-          const character = new SpanBox({ ...box, content: segment,
-            textStart: box.textStart + index, textEnd: box.textStart + end,
+          const width =
+            end === box.content.length
+              ? box.size.width
+              : advances
+                ? (box.size.width * advance) / (advanceTotal || 1)
+                : Math.min(
+                    box.size.width,
+                    this.measureText(box.content.slice(0, end), font),
+                  );
+          const character = new SpanBox({
+            ...box,
+            content: segment,
+            textStart: box.textStart + index,
+            textEnd: box.textStart + end,
             size: { ...box.size, width: Math.max(0, width - previousWidth) },
           });
-          character.offset = { x: box.offset.x + previousWidth, y: box.offset.y };
+          character.offset = {
+            x: box.offset.x + previousWidth,
+            y: box.offset.y,
+          };
           previousWidth = width;
           return character;
         });
@@ -765,7 +863,12 @@ class SpanBox {
     content,
     height,
     size,
-  }: Span & { sourceIndex: number; textStart: number; textEnd: number; size: { width: number; height: number } }) {
+  }: Span & {
+    sourceIndex: number;
+    textStart: number;
+    textEnd: number;
+    size: { width: number; height: number };
+  }) {
     this.sourceIndex = sourceIndex;
     this.textStart = textStart;
     this.textEnd = textEnd;
