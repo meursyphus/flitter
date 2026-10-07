@@ -254,8 +254,14 @@ export default class TextPainter {
       }
     }
 
-    this.paragraph = this.createParagraph(this.text);
-    this.#rebuildParagraphForPaint = false;
+    if (nonWidthInputsUnchanged) {
+      // A narrower width may change wrapping, but the resolved source spans
+      // are unchanged. Keep the paragraph and only run its layout phase.
+      this.#ensureParagraphForPaint();
+    } else {
+      this.paragraph = this.createParagraph(this.text);
+      this.#rebuildParagraphForPaint = false;
+    }
     this.layoutParagraph({ minWidth, maxWidth });
 
     this.#cachedText = this.text;
