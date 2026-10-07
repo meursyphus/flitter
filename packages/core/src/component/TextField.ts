@@ -5,11 +5,16 @@ import {
   Border,
   BoxDecoration,
   Constraints,
+  CrossAxisAlignment,
   EdgeInsets,
+  FocusNode,
+  InputDecoration,
+  MainAxisSize,
   Rect,
   TextAlign,
   TextDirection,
   TextPainter,
+  TextEditingController,
   TextSpan,
   TextStyle,
   TextWidthBasis,
@@ -24,9 +29,17 @@ import Positioned from "./Positioned";
 import RichText from "./RichText";
 import SizedBox from "./SizedBox";
 import Stack from "./Stack";
+import Column from "./Column";
+import Row from "./Row";
+import Expanded from "./Expanded";
+import Text from "./Text";
 
 type TextFieldProps = {
   key?: any;
+  controller?: TextEditingController;
+  focusNode?: FocusNode;
+  autofocus?: boolean;
+  ariaLabel?: string;
   onChanged?: (text: string) => void;
   onSubmitted?: (text: string) => void;
   onFocused?: () => void;
@@ -35,7 +48,7 @@ type TextFieldProps = {
   maxLines?: number;
   textAlign?: TextAlign;
   textDirection?: TextDirection;
-  decoration?: BoxDecoration;
+  decoration?: BoxDecoration | InputDecoration;
   padding?: EdgeInsets;
   width?: number;
   height?: number;
@@ -43,6 +56,11 @@ type TextFieldProps = {
 };
 
 class TextField extends StatefulWidget {
+  controller?: TextEditingController;
+  focusNode?: FocusNode;
+  autofocus: boolean;
+  ariaLabel?: string;
+  inputDecoration?: InputDecoration;
   text: string;
   onChanged?: (text: string) => void;
   onSubmitted?: (text: string) => void;
@@ -58,9 +76,13 @@ class TextField extends StatefulWidget {
   height?: number;
   focusedBorder?: Border;
   constructor(
-    text: string,
+    text: string = "",
     {
       key,
+      controller,
+      focusNode,
+      autofocus = false,
+      ariaLabel,
       onChanged,
       onSubmitted,
       onFocused,
@@ -79,6 +101,12 @@ class TextField extends StatefulWidget {
     }: TextFieldProps = {},
   ) {
     super(key);
+    this.controller = controller;
+    this.focusNode = focusNode;
+    this.autofocus = autofocus;
+    this.ariaLabel = ariaLabel;
+    this.inputDecoration =
+      decoration instanceof InputDecoration ? decoration : undefined;
     this.text = text;
     this.onChanged = onChanged;
     this.onSubmitted = onSubmitted;
@@ -88,11 +116,17 @@ class TextField extends StatefulWidget {
     this.maxLines = maxLines;
     this.textAlign = textAlign;
     this.textDirection = textDirection;
-    this.decoration = decoration;
-    this.padding = padding;
+    this.decoration =
+      decoration instanceof InputDecoration
+        ? new BoxDecoration({
+            border:
+              decoration.border ?? Border.all({ color: "black", width: 1 }),
+          })
+        : decoration;
+    this.padding = this.inputDecoration?.contentPadding ?? padding;
     this.width = width;
     this.height = height;
-    this.focusedBorder = focusedBorder;
+    this.focusedBorder = this.inputDecoration?.focusedBorder ?? focusedBorder;
   }
   createState(): TextFieldState {
     return new TextFieldState();
@@ -131,7 +165,11 @@ class TextFieldState extends State<TextField> {
   #textFieldPosition: { x: number; y: number } | null = null;
   #focused = false;
   #isTyping = false;
-	  #typingTimer?: ReturnType<typeof setTimeout>;
+  #typingTimer?: ReturnType<typeof setTimeout>;
+  #keyTimer?: ReturnType<typeof setTimeout>;
+  #disposed = false;
+  #updatingController = false;
+  #detachFocus?: () => void;
   #isComposing = false;
   #lineInfo: LineInfo[] = [];
   #currentCharUI?: CurrentCharUI;
@@ -141,14 +179,30 @@ class TextFieldState extends State<TextField> {
   }
 
   override didUpdateWidget(oldWidget: TextField): void {
-    if (
-      oldWidget.text !== this.widget.text ||
-      !oldWidget.style.equals(this.widget.style)
-    ) {
-      this.#setText(this.widget.text);
-
-      return;
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller !== this.widget.controller) {
+      oldWidget.controller?.removeListener(this.#controllerChanged);
+      this.widget.controller?.addListener(this.#controllerChanged);
     }
+    if (oldWidget.focusNode !== this.widget.focusNode) {
+      this.#detachFocus?.();
+      this.#attachFocus();
+    }
+    const text =
+      this.widget.controller?.text ??
+      (oldWidget.text !== this.widget.text ? this.widget.text : this.value);
+    this.#nativeInput.configure(this.widget);
+    this.#nativeInput.value = text;
+    if (
+      text !== this.value ||
+      !oldWidget.style.equals(this.widget.style) ||
+      oldWidget.style.height !== this.widget.style.height ||
+      oldWidget.maxLines !== this.widget.maxLines ||
+      oldWidget.textAlign !== this.widget.textAlign ||
+      oldWidget.textDirection !== this.widget.textDirection
+    )
+      this.#setText(text);
+    if (this.widget.controller) this.#controllerChanged();
   }
 
   get paragraphLines() {
@@ -160,7 +214,8 @@ class TextFieldState extends State<TextField> {
   }
 
   override initState(): void {
-    this.#setText(this.widget.text);
+    super.initState(this.element);
+    this.#setText(this.widget.controller?.text ?? this.widget.text);
 
     this.#nativeInput.addEventListener("compositionstart", () => {
       this.setState(() => {
@@ -173,17 +228,21 @@ class TextFieldState extends State<TextField> {
       });
     });
 
-    this.#nativeInput.addEventListener("input", _ => {
-      this.widget.onChanged?.(this.#nativeInput.value);
+    this.#nativeInput.addEventListener("input", () => {
+      const previous = this.value;
+      this.#syncThis();
+      if (previous !== this.value) this.widget.onChanged?.(this.value);
     });
 
-    this.#nativeInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
+    this.#nativeInput.addEventListener("keydown", e => {
+      if (e.key === "Enter" && !e.isComposing && this.widget.maxLines === 1) {
         this.widget.onSubmitted?.(this.#nativeInput.value);
         return;
       }
 
-      setTimeout(() => {
+      clearTimeout(this.#keyTimer);
+      this.#keyTimer = setTimeout(() => {
+        if (this.#disposed) return;
         this.#syncThis();
       }, 0);
     });
@@ -194,12 +253,83 @@ class TextFieldState extends State<TextField> {
     });
 
     this.#nativeInput.addEventListener("focus", () => {
+      this.setState(() => {
+        this.#focused = true;
+      });
+      this.widget.focusNode?.updateFocus(true);
+      this.#syncSelectionAfterLayout();
       this.widget.onFocused?.();
     });
+    this.#nativeInput.addEventListener("selection", () => {
+      if (this.#focused) {
+        this.#updateController();
+        this.#syncSelectionAfterLayout();
+      }
+    });
+    this.#nativeInput.configure(this.widget);
+    this.#nativeInput.value = this.value;
+    this.widget.controller?.addListener(this.#controllerChanged);
+    if (this.widget.controller) this.#controllerChanged();
+    this.#attachFocus();
+    if (this.widget.autofocus) this.#afterLayout(() => this.focus());
   }
 
   override dispose(): void {
+    this.#disposed = true;
+    clearTimeout(this.#typingTimer);
+    clearTimeout(this.#keyTimer);
+    this.widget.controller?.removeListener(this.#controllerChanged);
+    this.#detachFocus?.();
     this.#nativeInput.dispose();
+    super.dispose();
+  }
+
+  #afterLayout(callback: () => void) {
+    this.element.scheduler.addPostFrameCallbacks(() => {
+      if (!this.#disposed) callback();
+    });
+    this.element.scheduler.ensureVisualUpdate();
+  }
+
+  #attachFocus() {
+    this.#detachFocus = this.widget.focusNode?.attach(
+      () => this.#afterLayout(() => this.focus()),
+      () => this.blur(),
+    );
+    this.widget.focusNode?.updateFocus(this.#focused);
+  }
+
+  #controllerChanged = () => {
+    if (this.#updatingController || this.#disposed) return;
+    const controller = this.widget.controller;
+    if (!controller) return;
+    if (controller.text !== this.value) this.#setText(controller.text);
+    this.#nativeInput.value = controller.text;
+    this.#nativeInput.setSelection(
+      controller.selection.start,
+      controller.selection.end,
+    );
+    if (this.#focused) this.#syncSelectionAfterLayout();
+  };
+
+  #updateController() {
+    const controller = this.widget.controller;
+    if (!controller) return;
+    const [start, end] = this.#nativeInput.getSelection();
+    this.#updatingController = true;
+    try {
+      controller.value = { text: this.value, selection: { start, end } };
+    } finally {
+      this.#updatingController = false;
+    }
+  }
+
+  #syncSelectionAfterLayout() {
+    this.#afterLayout(() => {
+      if (!this.#focused) return;
+      this.#lineInfo = this.#calculateLineInfo();
+      this.#setSelection(...this.#nativeInput.getSelection());
+    });
   }
 
   #resetTypingTimer() {
@@ -207,24 +337,27 @@ class TextFieldState extends State<TextField> {
       clearTimeout(this.#typingTimer);
     }
     this.#typingTimer = setTimeout(() => {
-      this.#isTyping = false;
-      this.#render();
+      if (!this.#disposed)
+        this.setState(() => {
+          this.#isTyping = false;
+        });
     }, 10);
   }
 
   #setText(text: string) {
-    this.value = text;
-    this.#textPainter = new TextPainter({
-      text: this.#toTextSpan(),
-      textDirection: this.widget.textDirection,
-      textScaleFactor: 1,
-      textWidthBasis: TextWidthBasis.parent,
-      textAlign: this.widget.textAlign,
-      maxLines: this.widget.maxLines,
-      ellipsis: undefined,
+    this.setState(() => {
+      this.value = text;
+      this.#textPainter = new TextPainter({
+        text: this.#toTextSpan(),
+        textDirection: this.widget.textDirection,
+        textScaleFactor: 1,
+        textWidthBasis: TextWidthBasis.parent,
+        textAlign: this.widget.textAlign,
+        maxLines: this.widget.maxLines,
+        ellipsis: undefined,
+      });
     });
-    this.#render();
-    this.element.scheduler.addPostFrameCallbacks(() => {
+    this.#afterLayout(() => {
       this.#lineInfo = this.#calculateLineInfo();
     });
   }
@@ -240,34 +373,49 @@ class TextFieldState extends State<TextField> {
    * Sync the text field with the native input.
    */
   #syncThis() {
-    this.#setText(this.#nativeInput.value);
-    this.#isTyping = true;
-    this.#resetTypingTimer();
-    this.element.scheduler.addPostFrameCallbacks(() => {
-      this.#setSelection(...this.#nativeInput.getSelection());
-      this.#render();
+    if (this.#nativeInput.value !== this.value)
+      this.#setText(this.#nativeInput.value);
+    this.setState(() => {
+      this.#isTyping = true;
     });
+    this.#resetTypingTimer();
+    this.#updateController();
+    this.#syncSelectionAfterLayout();
   }
 
   #syncBlur = () => {
-    this.#selection = [0, 0];
-    this.#currentCharUI = undefined;
-    this.#selectionUI = [];
-    this.#focused = false;
-    this.#render();
+    if (this.#disposed) return;
+    this.setState(() => {
+      this.#selection = [0, 0];
+      this.#currentCharUI = undefined;
+      this.#selectionUI = [];
+      this.#focused = false;
+    });
+    this.widget.focusNode?.updateFocus(false);
   };
 
-  focus = (location: number = this.value.length) => {
+  focus = (location?: number) => {
+    if (this.#disposed) return;
+    const selection =
+      location === undefined && this.widget.controller
+        ? this.widget.controller.selection
+        : {
+            start: location ?? this.value.length,
+            end: location ?? this.value.length,
+          };
     this.#nativeInput.value = this.value;
     this.#nativeInput.focus();
-    this.#setSelection(location);
-    this.#nativeInput.setCaret(location);
-    this.#focused = true;
-    this.#render();
+    this.#nativeInput.setSelection(selection.start, selection.end);
+    this.setState(() => {
+      this.#focused = true;
+    });
+    this.widget.focusNode?.updateFocus(true);
+    this.#updateController();
+    this.#syncSelectionAfterLayout();
   };
 
   #render() {
-    this.setState();
+    if (!this.#disposed) this.setState();
   }
 
   #calculateLineInfo(): LineInfo[] {
@@ -367,6 +515,7 @@ class TextFieldState extends State<TextField> {
   }
 
   #setSelection(start: number, end: number = start) {
+    if (this.#lineInfo.length === 0) return;
     this.#selection = [start, end];
     const caretLocation = start;
 
@@ -496,6 +645,7 @@ class TextFieldState extends State<TextField> {
 
     this.#setSelection(start, end);
     this.#nativeInput.setSelection(start, end);
+    this.#updateController();
   };
 
   handleMouseUp = () => {
@@ -503,6 +653,28 @@ class TextFieldState extends State<TextField> {
   };
 
   override build() {
+    const decoration = this.widget.inputDecoration;
+    const editable = GestureDetector({
+      onMouseDown: this.handleMouseDown,
+      onMouseMove: this.handleMouseMove,
+      onMouseUp: this.handleMouseUp,
+      cursor: "text",
+      child: this.#buildEditingArea(),
+    });
+    const content =
+      decoration?.prefixIcon || decoration?.suffixIcon
+        ? Row({
+            children: [
+              ...(decoration.prefixIcon
+                ? [decoration.prefixIcon, SizedBox({ width: 8 })]
+                : []),
+              Expanded({ child: editable }),
+              ...(decoration.suffixIcon
+                ? [SizedBox({ width: 8 }), decoration.suffixIcon]
+                : []),
+            ],
+          })
+        : editable;
     return Container({
       width: this.widget.width,
       padding: this.widget.padding,
@@ -511,84 +683,107 @@ class TextFieldState extends State<TextField> {
         : this.widget.decoration!.copyWith({
             border: this.widget.focusedBorder,
           }),
-      child: GestureDetector({
-        onMouseDown: this.handleMouseDown,
-        onMouseMove: this.handleMouseMove,
-        onMouseUp: this.handleMouseUp,
-        cursor: "text",
-        child: Stack({
-          clipped: false,
-          children: [
-            Container({
-              child: ConstraintsTransformBox({
-                alignment: Alignment.topLeft,
-                constraintsTransform: constraints => {
-                  return new Constraints({
-                    minHeight: Math.max(
-                      this.widget.height!,
-                      constraints.minHeight,
-                    ),
-                    minWidth: constraints.minWidth,
-                    maxHeight: constraints.maxHeight,
-                    maxWidth: constraints.maxWidth,
-                  });
-                },
-                child: RichText({
-                  key: this.#textKey,
-                  text: undefined as unknown as TextSpan,
-                  textPainter: this.#textPainter,
-                }),
+      child: decoration?.labelText
+        ? Column({
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(decoration.labelText, {
+                style:
+                  decoration.labelStyle ??
+                  new TextStyle({ fontSize: 12, color: "#555555" }),
               }),
+              SizedBox({ height: 4 }),
+              content,
+            ],
+          })
+        : content,
+    });
+  }
+
+  #buildEditingArea() {
+    return Stack({
+      clipped: false,
+      children: [
+        Container({
+          child: ConstraintsTransformBox({
+            alignment: Alignment.topLeft,
+            constraintsTransform: constraints => {
+              return new Constraints({
+                minHeight: Math.max(this.widget.height!, constraints.minHeight),
+                minWidth: constraints.minWidth,
+                maxHeight: constraints.maxHeight,
+                maxWidth: constraints.maxWidth,
+              });
+            },
+            child: RichText({
+              key: this.#textKey,
+              text: undefined as unknown as TextSpan,
+              textPainter: this.#textPainter,
             }),
+          }),
+        }),
 
-            /**
-             * selection
-             */
-            ...(this.#selectionUI?.map(segment =>
+        ...(this.value === "" && this.widget.inputDecoration?.hintText
+          ? [
               Positioned({
-                top: segment.y,
-                left: segment.start,
-                child: Container({
-                  width: segment.end - segment.start,
-                  height: segment.height,
-                  color: "rgba(0, 0, 255, 0.3)",
+                left: 0,
+                top: 0,
+                child: Text(this.widget.inputDecoration.hintText, {
+                  style:
+                    this.widget.inputDecoration.hintStyle ??
+                    this.widget.style.copyWidth({ color: "#777777" }),
                 }),
               }),
-            ) ?? []),
+            ]
+          : []),
 
-            /**
-             * caret
-             */
-            this.#currentCharUI
-              ? Positioned({
-                  top: this.#currentCharUI.rect.top,
-                  left: this.#currentCharUI.rect.right,
-                  child: new Caret({
-                    width: 1,
-                    height: this.#currentCharUI.rect.height,
-                    color: this.#currentCharUI.color,
-                    isTyping: this.#isTyping,
-                  }),
-                })
-              : SizedBox.shrink(),
+        /**
+         * selection
+         */
+        ...(this.#selectionUI?.map(segment =>
+          Positioned({
+            top: segment.y,
+            left: segment.start,
+            child: Container({
+              width: segment.end - segment.start,
+              height: segment.height,
+              color: "rgba(0, 0, 255, 0.3)",
+            }),
+          }),
+        ) ?? []),
 
-            /**
-             * composing
-             */
-            this.#currentCharUI && this.#isComposing
-              ? Positioned({
-                  top: this.#currentCharUI.rect.bottom,
-                  left: this.#currentCharUI.rect.left + 1,
-                  child: Container({
-                    width: this.#currentCharUI.rect.width - 1,
-                    height: 2,
-                    color: "rgba(0, 0, 255, 0.8)",
-                  }),
-                })
-              : SizedBox.shrink(),
-          ],
-        }),
-      }),
+        /**
+         * caret
+         */
+        this.#currentCharUI
+          ? Positioned({
+              top: this.#currentCharUI.rect.top,
+              left: this.#currentCharUI.rect.right,
+              child: new Caret({
+                width: 1,
+                height: this.#currentCharUI.rect.height,
+                color: this.#currentCharUI.color,
+                isTyping: this.#isTyping,
+              }),
+            })
+          : SizedBox.shrink(),
+
+        /**
+         * composing
+         */
+        this.#currentCharUI && this.#isComposing
+          ? Positioned({
+              top: this.#currentCharUI.rect.bottom,
+              left: this.#currentCharUI.rect.left + 1,
+              child: Container({
+                width: this.#currentCharUI.rect.width - 1,
+                height: 2,
+                color: "rgba(0, 0, 255, 0.8)",
+              }),
+            })
+          : SizedBox.shrink(),
+      ],
     });
   }
 }
@@ -623,7 +818,7 @@ class Caret extends StatefulWidget {
 
 class CaretState extends State<Caret> {
   visible = true;
-	  interval?: ReturnType<typeof setInterval>;
+  interval?: ReturnType<typeof setInterval>;
 
   initState(): void {
     this.startBlinking();
@@ -680,7 +875,13 @@ type InputEventType = {
   input: { value: string };
   compositionstart: undefined;
   compositionend: undefined;
-  keydown: { key: string; ctrlKey: boolean; shiftKey: boolean };
+  keydown: {
+    key: string;
+    ctrlKey: boolean;
+    shiftKey: boolean;
+    isComposing: boolean;
+  };
+  selection: undefined;
   focus: undefined;
   blur: undefined;
 };
@@ -690,6 +891,7 @@ type InputEventType = {
  * example) chrome: composingstart, composingend does not work
  */
 class NativeInput {
+  #multiline = false;
   #isComposing: boolean = false;
   #element: HTMLTextAreaElement | null = null;
   #listeners: Partial<{
@@ -719,10 +921,15 @@ class NativeInput {
     const el = document.createElement("textarea");
     el.setAttribute(
       "style",
-      "position: absolute; opacity: 0; height: 0; width: 0;",
+      "position: fixed; left: 0; top: 0; opacity: 0; height: 1px; width: 1px; padding: 0; border: 0; pointer-events: none;",
     );
 
     el.addEventListener("input", ((e: InputEvent) => {
+      if (!this.#multiline && /[\r\n]/.test(el.value)) {
+        const selection = el.selectionStart;
+        el.value = el.value.replace(/[\r\n]+/g, " ");
+        el.setSelectionRange(selection, selection);
+      }
       this.#dispatch("input", { value: this.value });
 
       /**
@@ -737,19 +944,30 @@ class NativeInput {
     }) as EventListener);
 
     el.addEventListener("keydown", (e: KeyboardEvent) => {
-      if (e.key === "Enter" && !e.shiftKey) {
+      if (
+        e.key === "Enter" &&
+        !e.isComposing &&
+        !this.#isComposing &&
+        !this.#multiline
+      ) {
         e.preventDefault();
-        this.#setComposing(false);
       }
-
-      this.#setComposing(e.isComposing);
 
       this.#dispatch("keydown", {
         key: e.key,
         ctrlKey: e.ctrlKey,
         shiftKey: e.shiftKey,
+        isComposing: e.isComposing || this.#isComposing,
       });
     });
+
+    el.addEventListener("compositionstart", () => this.#setComposing(true));
+    el.addEventListener("compositionend", () => {
+      this.#setComposing(false);
+      this.#dispatch("input", { value: this.value });
+    });
+    el.addEventListener("select", () => this.#dispatch("selection", undefined));
+    el.addEventListener("keyup", () => this.#dispatch("selection", undefined));
 
     el.addEventListener("focus", () => {
       this.#dispatch("focus", undefined);
@@ -760,6 +978,21 @@ class NativeInput {
     });
 
     return el;
+  }
+
+  configure(widget: TextField) {
+    this.#multiline = widget.maxLines !== 1;
+    if (!browser) return;
+    this.element.setAttribute(
+      "aria-label",
+      widget.ariaLabel ??
+        widget.inputDecoration?.labelText ??
+        widget.inputDecoration?.hintText ??
+        "Text input",
+    );
+    this.element.setAttribute("aria-multiline", String(this.#multiline));
+    this.element.setAttribute("autocomplete", "off");
+    this.element.setAttribute("data-flitter-text-input", "");
   }
 
   #setComposing(isComposing: boolean) {
@@ -777,10 +1010,11 @@ class NativeInput {
     this.#element?.remove();
     this.#element = null;
     this.#disposed = true;
+    this.#listeners = {};
   };
 
   set value(newValue: string) {
-    this.element.value = newValue;
+    if (this.element.value !== newValue) this.element.value = newValue;
   }
   get value(): string {
     return this.element.value;

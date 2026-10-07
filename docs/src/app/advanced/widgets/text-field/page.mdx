@@ -1,0 +1,123 @@
+export const metadata = { title: "TextField", description: "Editable text with controllers, focus, labels, selection and native keyboard input" };
+
+## Overview
+
+`TextField(initialText, props)` renders editable text on SVG and Canvas. A native textarea receives keyboard, clipboard and composition events while Flitter paints the text, selection and caret. The API follows the controller and focus concepts of [Flutter TextField](https://api.flutter.dev/flutter/material/TextField-class.html).
+
+## When to use it?
+
+- Search fields with an `onChanged` callback.
+- Forms whose values are read through a `TextEditingController`.
+- Programmatically focused inputs using `FocusNode`.
+- Short multiline notes using `maxLines` greater than one.
+- Inputs with a label, hint, prefix or suffix icon.
+- Text entry using native selection, clipboard shortcuts and IME composition.
+
+## Basic Usage
+
+```typescript
+import {
+  Container, EdgeInsets, FocusNode, InputDecoration, State, StatefulWidget,
+  TextEditingController, TextField, TextStyle, classToFunction, type Widget,
+} from 'flitter-core';
+
+class MessageInput extends StatefulWidget {
+  createState() { return new MessageInputState(); }
+}
+
+class MessageInputState extends State<MessageInput> {
+  controller = new TextEditingController('Hello');
+  focusNode = new FocusNode();
+
+  dispose() {
+    this.controller.dispose();
+    this.focusNode.dispose();
+    super.dispose();
+  }
+
+  build(): Widget {
+    return Container({
+      padding: EdgeInsets.all(16),
+      child: TextField('', {
+        controller: this.controller,
+        focusNode: this.focusNode,
+        width: 320,
+        style: new TextStyle({ fontSize: 18 }),
+        decoration: new InputDecoration({
+          labelText: 'Message',
+          hintText: 'Write a message',
+          contentPadding: EdgeInsets.all(8),
+        }),
+      }),
+    });
+  }
+}
+
+export default classToFunction(MessageInput);
+```
+
+## Props
+
+| Property | Type | Purpose |
+| --- | --- | --- |
+| First argument | `string` | Initial text, default `''`. Changing it updates an uncontrolled field. |
+| `controller` | `TextEditingController` | Supplies text and UTF-16 selection offsets. Takes precedence over the first argument. |
+| `focusNode` | `FocusNode` | Exposes `requestFocus()`, `unfocus()` and `hasFocus`. Use one node per field. |
+| `autofocus` | `boolean` | Focuses after the first layout. Defaults to `false`. |
+| `ariaLabel` | `string` | Accessible name for the native input; otherwise uses the label or hint. |
+| `onChanged` | `(text: string) => void` | Receives user edits. Programmatic controller changes do not call it. |
+| `onSubmitted` | `(text: string) => void` | Receives Enter in a single-line field after IME composition finishes. |
+| `onFocused`, `onBlurred` | `() => void` | Receive native focus changes, including keyboard navigation. |
+| `maxLines` | `number` | Defaults to `1`; a larger value enables multiline input and Enter inserts a newline. |
+| `style` | `TextStyle` | Text font, size, color and line height. |
+| `textAlign`, `textDirection` | `TextAlign`, `TextDirection` | Text layout options. |
+| `decoration` | `InputDecoration` or `BoxDecoration` | Labels and hints, or the existing box styling API. |
+| `focusedBorder` | `Border` | Border when focused; `InputDecoration.focusedBorder` takes precedence. |
+| `padding` | `EdgeInsets` | Inner padding; `InputDecoration.contentPadding` takes precedence. |
+| `width`, `height` | `number` | Field width and minimum editable area height. |
+| `key` | `any` | Widget identity during reconciliation. |
+
+`InputDecoration` accepts `labelText`, `hintText`, `labelStyle`, `hintStyle`, `prefixIcon`, `suffixIcon`, `border`, `focusedBorder` and `contentPadding`. Prefix and suffix icons are Flitter widgets.
+
+## Practical Examples
+
+### Update and select text
+
+Inside the state class from the example:
+
+```typescript
+this.controller.value = {
+  text: 'Hello world',
+  selection: { start: 6, end: 11 },
+};
+this.focusNode.requestFocus();
+```
+
+`controller.text = 'New text'` moves the selection to the end. `controller.clear()` empties the field. Controller listeners observe both text and selection changes.
+
+### Uncontrolled multiline input
+
+```typescript
+TextField('First line\nSecond line', {
+  width: 320,
+  height: 100,
+  maxLines: 4,
+  decoration: new InputDecoration({ labelText: 'Notes' }),
+});
+```
+
+User edits persist across ordinary parent rebuilds. Without a controller, changing the first argument replaces the current value.
+
+## Important Notes
+
+- Dispose caller-owned controllers and focus nodes with their owning state. Removing a field detaches them and removes its native textarea.
+- The native textarea provides clipboard and composition handling. The painted SVG/Canvas text is the visible field; provide a meaningful accessible label.
+- Browser tests exercise composition events. Real keyboard/IME behavior should also be checked on the platforms your application supports.
+- Selection offsets use UTF-16 code units, matching browser textareas.
+- This widget does not implement password masking, form validation, autofill integration or a full bidirectional editing engine.
+
+## Related Widgets
+
+- [RichText](/advanced/widgets/rich-text) for styled, non-editable text.
+- [GestureDetector](/advanced/widgets/gesture-detector) for actions around an input.
+- [Container](/advanced/widgets/container) for surrounding layout and decoration.
