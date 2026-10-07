@@ -46,11 +46,18 @@ function getCtxOrNull(): CanvasRenderingContext2D | null {
 */
 const TEXT_WIDTH_CACHE_KEY = Symbol.for("flitter.textWidthMeasurementCache");
 const TEXT_WIDTH_CACHE_LIMIT = 8192;
-let measurementGeneration = 0;
+const TEXT_WIDTH_GENERATION_KEY = Symbol.for(
+  "flitter.textWidthMeasurementGeneration",
+);
 
-/** Paragraph preparations must also expire when fallback font metrics change. */
+/** Share the generation with the width cache, including across bundled copies. */
 export function getTextMeasurementGeneration(): number {
-  return measurementGeneration;
+  if (typeof window === "undefined") return 0;
+  return (
+    (window as unknown as Record<symbol, number | undefined>)[
+      TEXT_WIDTH_GENERATION_KEY
+    ] ?? 0
+  );
 }
 
 const fontPool = new Map<
@@ -102,7 +109,9 @@ function getTextWidthCache(): Map<string, number> | null {
     if (fonts != null && typeof fonts.addEventListener === "function") {
       fonts.addEventListener("loadingdone", () => {
         cache!.clear();
-        measurementGeneration++;
+        const generations = window as unknown as Record<symbol, number>;
+        generations[TEXT_WIDTH_GENERATION_KEY] =
+          getTextMeasurementGeneration() + 1;
       });
     }
   }
