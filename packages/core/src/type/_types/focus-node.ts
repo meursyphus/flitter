@@ -5,6 +5,19 @@ export default class FocusNode extends ChangeNotifier {
   #focused = false;
   #pending = false;
   #disposed = false;
+  #callbacks: (() => void)[] = [];
+
+  override addListener(listener: () => void): void {
+    if (this.#disposed) throw new Error("FocusNode is disposed");
+    this.#callbacks.push(listener);
+    super.addListener(listener);
+  }
+
+  override removeListener(listener: () => void): void {
+    const index = this.#callbacks.indexOf(listener);
+    if (index >= 0) this.#callbacks.splice(index, 1);
+    super.removeListener(listener);
+  }
   #binding?: { focus: () => void; blur: () => void };
 
   get hasFocus(): boolean {
@@ -36,14 +49,18 @@ export default class FocusNode extends ChangeNotifier {
   }
   /** @internal Called for real native focus/blur events, including Tab navigation. */
   updateFocus(focused: boolean): void {
+    if (this.#disposed) return;
     this.#pending = focused;
     if (this.#focused === focused) return;
     this.#focused = focused;
     this.notifyListeners();
   }
   dispose(): void {
+    if (this.#disposed) return;
     this.unfocus();
     this.#binding = undefined;
     this.#disposed = true;
+    for (const listener of this.#callbacks) super.removeListener(listener);
+    this.#callbacks = [];
   }
 }

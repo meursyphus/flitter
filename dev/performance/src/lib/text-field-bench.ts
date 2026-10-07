@@ -1,3 +1,4 @@
+import type RenderObject from '../../../../packages/core/src/renderobject/RenderObject';
 import {
 	AppRunner,
 	Column,
@@ -27,6 +28,8 @@ export function mountTextFieldBench(host: HTMLElement, renderer: 'svg' | 'canvas
 	const runner = new AppRunner({ view, ssrSize: { width: 480, height: 240 } });
 	const controller = new TextEditingController('Hello');
 	const focusNode = new FocusNode();
+	const ownedControllers = [controller];
+	const ownedFocusNodes = [focusNode];
 	const fieldKey = new GlobalKey();
 	const changes: string[] = [];
 	const submitted: string[] = [];
@@ -40,6 +43,8 @@ export function mountTextFieldBench(host: HTMLElement, renderer: 'svg' | 'canvas
 	}
 	class SceneState extends State<Scene> {
 		controlled = true;
+		activeController = controller;
+		activeFocusNode = focusNode;
 		mounted = true;
 		multiline = false;
 		revision = 0;
@@ -55,8 +60,8 @@ export function mountTextFieldBench(host: HTMLElement, renderer: 'svg' | 'canvas
 						this.mounted
 							? TextField('', {
 									key: fieldKey,
-									controller: this.controlled ? controller : undefined,
-									focusNode,
+									controller: this.controlled ? this.activeController : undefined,
+									focusNode: this.activeFocusNode,
 									ariaLabel: 'Message',
 									maxLines: this.multiline ? 4 : 1,
 									width: 400,
@@ -83,6 +88,40 @@ export function mountTextFieldBench(host: HTMLElement, renderer: 'svg' | 'canvas
 		focusNode,
 		changes,
 		submitted,
+		get activeController() {
+			return state.activeController;
+		},
+		get activeFocusNode() {
+			return state.activeFocusNode;
+		},
+		replaceHandles() {
+			const replacement = new TextEditingController('Replacement');
+			const replacementFocus = new FocusNode();
+			ownedControllers.push(replacement);
+			ownedFocusNodes.push(replacementFocus);
+			state.setState(() => {
+				state.activeController = replacement;
+				state.activeFocusNode = replacementFocus;
+			});
+		},
+		get viewportBounds() {
+			const findViewport = (render: RenderObject): RenderObject | undefined => {
+				if ('clipped' in render && render.clipped === true) return render;
+				for (const child of render.children) {
+					const found = findViewport(child);
+					if (found) return found;
+				}
+			};
+			const viewport = findViewport(fieldKey.currentContext.renderObject)!;
+			const origin = viewport.localToGlobal();
+			const bounds = view.getBoundingClientRect();
+			return {
+				x: origin.x + bounds.x,
+				y: origin.y + bounds.y,
+				width: viewport.size.width,
+				height: viewport.size.height
+			};
+		},
 		get renderedText() {
 			return (fieldKey.currentContext as any).state.value;
 		},
@@ -103,8 +142,8 @@ export function mountTextFieldBench(host: HTMLElement, renderer: 'svg' | 'canvas
 		},
 		dispose() {
 			runner.dispose();
-			controller.dispose();
-			focusNode.dispose();
+			ownedControllers.forEach((controller) => controller.dispose());
+			ownedFocusNodes.forEach((focusNode) => focusNode.dispose());
 			host.replaceChildren();
 		}
 	};

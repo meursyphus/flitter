@@ -10,6 +10,7 @@ import {
   FocusNode,
   InputDecoration,
   MainAxisSize,
+  Offset,
   Rect,
   TextAlign,
   TextDirection,
@@ -33,6 +34,8 @@ import Column from "./Column";
 import Row from "./Row";
 import Expanded from "./Expanded";
 import Text from "./Text";
+import ClipRect from "./ClipRect";
+import Transform from "./Transform";
 
 type TextFieldProps = {
   key?: any;
@@ -101,6 +104,10 @@ class TextField extends StatefulWidget {
     }: TextFieldProps = {},
   ) {
     super(key);
+    assert(
+      Number.isInteger(maxLines) && maxLines > 0,
+      "maxLines must be a positive integer",
+    );
     this.controller = controller;
     this.focusNode = focusNode;
     this.autofocus = autofocus;
@@ -161,6 +168,11 @@ class TextFieldState extends State<TextField> {
   #textPainter!: TextPainter;
   #selectionUI: SelectionSegment[] = [];
   #textKey = new GlobalKey();
+  #viewportKey = new GlobalKey();
+  #scrollX = 0;
+  #scrollY = 0;
+  #lastViewportWidth = NaN;
+  #lastViewportHeight = NaN;
   #selectionStart: number = 0;
   #textFieldPosition: { x: number; y: number } | null = null;
   #focused = false;
@@ -281,6 +293,10 @@ class TextFieldState extends State<TextField> {
     this.widget.controller?.removeListener(this.#controllerChanged);
     this.#detachFocus?.();
     this.#nativeInput.dispose();
+    if (browser) {
+      document.removeEventListener("mousemove", this.handleMouseMove);
+      document.removeEventListener("mouseup", this.handleMouseUp);
+    }
     super.dispose();
   }
 
@@ -292,8 +308,11 @@ class TextFieldState extends State<TextField> {
   }
 
   #attachFocus() {
-    this.#detachFocus = this.widget.focusNode?.attach(
-      () => this.#afterLayout(() => this.focus()),
+    const node = this.widget.focusNode;
+    this.#detachFocus = node?.attach(
+      // Native focus is ready after configure(); only selection geometry waits
+      // for layout. An unfocus in the same turn can therefore cancel normally.
+      () => this.focus(),
       () => this.blur(),
     );
     this.widget.focusNode?.updateFocus(this.#focused);
@@ -353,14 +372,37 @@ class TextFieldState extends State<TextField> {
         textScaleFactor: 1,
         textWidthBasis: TextWidthBasis.parent,
         textAlign: this.widget.textAlign,
-        maxLines: this.widget.maxLines,
+        // maxLines bounds the viewport, never the editable document.
         ellipsis: undefined,
       });
     });
-    this.#afterLayout(() => {
-      this.#lineInfo = this.#calculateLineInfo();
-    });
+    this.#afterLayout(() => this.#refreshViewport());
   }
+
+  #refreshViewport() {
+    this.#lineInfo = this.#calculateLineInfo();
+    if (!this.#viewportKey.buildOwner) return;
+    if (this.#focused) {
+      this.#setSelection(...this.#nativeInput.getSelection());
+      return;
+    }
+    const { width, height } =
+      this.#viewportKey.currentContext.renderObject.size;
+    const x = Math.max(
+      0,
+      Math.min(this.#scrollX, this.#textPainter.width + 1 - width),
+    );
+    const y = Math.max(
+      0,
+      Math.min(this.#scrollY, this.#textPainter.height - height),
+    );
+    if (x !== this.#scrollX || y !== this.#scrollY)
+      this.setState(() => {
+        this.#scrollX = x;
+        this.#scrollY = y;
+      });
+  }
+
   #toTextSpan() {
     return new TextSpan({
       // Keep an empty editable line available for the caret.
@@ -428,8 +470,10 @@ class TextFieldState extends State<TextField> {
         y: accumulatedHeight,
         height: line.height,
         accumulatedChars: line.spanBoxes[0]?.textStart ?? accumulatedChars,
-        lineLength: (line.spanBoxes[line.spanBoxes.length - 1]?.textEnd ?? accumulatedChars)
-          - (line.spanBoxes[0]?.textStart ?? accumulatedChars),
+        lineLength:
+          (line.spanBoxes[line.spanBoxes.length - 1]?.textEnd ??
+            accumulatedChars) -
+          (line.spanBoxes[0]?.textStart ?? accumulatedChars),
       };
       accumulatedChars = lineInfo.accumulatedChars + lineInfo.lineLength;
       accumulatedHeight += line.height;
@@ -464,7 +508,9 @@ class TextFieldState extends State<TextField> {
     const lineIndex = this.#findLineIndexForPosition(caretLocation);
     const line = this.#lineInfo[lineIndex];
     const boxes = this.paragraphLines?.[lineIndex]?.spanBoxes ?? [];
-    const previous = boxes.find(box => box.textStart < caretLocation && box.textEnd >= caretLocation);
+    const previous = boxes.find(
+      box => box.textStart < caretLocation && box.textEnd >= caretLocation,
+    );
     return {
       rect: Rect.fromLTWH({
         left: previous?.offset.x ?? boxes[0]?.offset.x ?? 0,
@@ -516,17 +562,46 @@ class TextFieldState extends State<TextField> {
 
   #setSelection(start: number, end: number = start) {
     if (this.#lineInfo.length === 0) return;
-    this.#selection = [start, end];
-    const caretLocation = start;
+    this.setState(() => {
+      this.#selection = [start, end];
+      if (this.#hasSelection) {
+        this.#selectionUI = this.#calculateSelectionUI(start, end);
+        this.#currentCharUI = undefined;
+      } else {
+        this.#selectionUI = [];
+        this.#currentCharUI = this.#calculateCurrentCharRect(start);
+      }
+      this.#scrollToCaret(this.#nativeInput.activeSelectionOffset);
+    });
+  }
 
-    if (this.#hasSelection) {
-      this.#selectionUI = this.#calculateSelectionUI(start, end);
-      this.#currentCharUI = undefined;
-    } else {
-      this.#selectionUI = [];
-      this.#currentCharUI = this.#calculateCurrentCharRect(caretLocation);
-    }
-    this.#render();
+  #scrollToCaret(position: number) {
+    const viewport = this.#viewportKey.currentContext?.renderObject;
+    if (!viewport) return;
+    const caret = this.#calculateCurrentCharRect(position).rect;
+    const { width, height } = viewport.size;
+    if (caret.right < this.#scrollX) this.#scrollX = caret.right;
+    else if (caret.right + 1 > this.#scrollX + width)
+      this.#scrollX = caret.right + 1 - width;
+    if (caret.top < this.#scrollY) this.#scrollY = caret.top;
+    else if (caret.bottom > this.#scrollY + height)
+      this.#scrollY = caret.bottom - height;
+    this.#scrollX = Math.max(
+      0,
+      Math.min(this.#scrollX, this.#textPainter.width + 1 - width),
+    );
+    this.#scrollY = Math.max(
+      0,
+      Math.min(this.#scrollY, this.#textPainter.height - height),
+    );
+    const root =
+      viewport.renderOwner.renderContext.view.getBoundingClientRect();
+    const origin = viewport.localToGlobal();
+    this.#nativeInput.position(
+      root.x + origin.x + caret.right - this.#scrollX,
+      root.y + origin.y + caret.top - this.#scrollY,
+      caret.height,
+    );
   }
 
   blur = () => {
@@ -540,8 +615,8 @@ class TextFieldState extends State<TextField> {
     }
 
     const [x, y] = [
-      e.clientX - this.#textFieldPosition.x,
-      e.clientY - this.#textFieldPosition.y,
+      e.clientX - this.#textFieldPosition.x + this.#scrollX,
+      e.clientY - this.#textFieldPosition.y + this.#scrollY,
     ];
 
     const lines = this.paragraphLines ?? [];
@@ -576,14 +651,16 @@ class TextFieldState extends State<TextField> {
 
     // If the click is below the last line, handle it as the last line
     if (lineIndex === -1) {
-      lineIndex = lines.length - 1;
+      lineIndex = y < 0 ? 0 : lines.length - 1;
     }
 
     let globalCharIndex = 0;
 
     // Calculate the number of characters in previous lines
     for (let i = 0; i < lineIndex; i++) {
-      globalCharIndex = lines[i].spanBoxes[lines[i].spanBoxes.length - 1]?.textEnd ?? globalCharIndex;
+      globalCharIndex =
+        lines[i].spanBoxes[lines[i].spanBoxes.length - 1]?.textEnd ??
+        globalCharIndex;
     }
 
     const line = lines[lineIndex];
@@ -612,10 +689,12 @@ class TextFieldState extends State<TextField> {
     if (spanBoxIndex === -1) {
       const first = line.spanBoxes[0];
       const last = line.spanBoxes[line.spanBoxes.length - 1];
-      globalCharIndex = first && x < first.offset.x ? first.textStart : last?.textEnd ?? 0;
+      globalCharIndex =
+        first && x < first.offset.x ? first.textStart : (last?.textEnd ?? 0);
     } else {
       const box = line.spanBoxes[spanBoxIndex];
-      globalCharIndex = x > box.offset.x + box.size.width / 2 ? box.textEnd : box.textStart;
+      globalCharIndex =
+        x > box.offset.x + box.size.width / 2 ? box.textEnd : box.textStart;
     }
 
     return Math.min(this.value.length, globalCharIndex);
@@ -626,7 +705,8 @@ class TextFieldState extends State<TextField> {
 
     const root = this.element.renderObject.renderOwner.renderContext.view;
     const rootPosition = root.getBoundingClientRect();
-    const position = this.#textKey.currentContext.renderObject.localToGlobal();
+    const position =
+      this.#viewportKey.currentContext.renderObject.localToGlobal();
     this.#textFieldPosition = {
       x: rootPosition.x + position.x,
       y: rootPosition.y + position.y,
@@ -635,6 +715,10 @@ class TextFieldState extends State<TextField> {
     const globalCharIndex = this.#getCharIndexFromMouseEvent(e);
     this.#selectionStart = globalCharIndex;
     this.focus(globalCharIndex);
+    if (browser) {
+      document.addEventListener("mousemove", this.handleMouseMove);
+      document.addEventListener("mouseup", this.handleMouseUp);
+    }
   };
 
   handleMouseMove = (e: MouseEvent) => {
@@ -643,21 +727,24 @@ class TextFieldState extends State<TextField> {
     const start = Math.min(this.#selectionStart, currentIndex);
     const end = Math.max(this.#selectionStart, currentIndex);
 
-    this.#setSelection(start, end);
     this.#nativeInput.setSelection(start, end);
+    this.#setSelection(start, end);
+    this.setState(() => this.#scrollToCaret(currentIndex));
     this.#updateController();
   };
 
   handleMouseUp = () => {
     this.#textFieldPosition = null;
+    if (browser) {
+      document.removeEventListener("mousemove", this.handleMouseMove);
+      document.removeEventListener("mouseup", this.handleMouseUp);
+    }
   };
 
   override build() {
     const decoration = this.widget.inputDecoration;
     const editable = GestureDetector({
       onMouseDown: this.handleMouseDown,
-      onMouseMove: this.handleMouseMove,
-      onMouseUp: this.handleMouseUp,
       cursor: "text",
       child: this.#buildEditingArea(),
     });
@@ -702,6 +789,31 @@ class TextFieldState extends State<TextField> {
   }
 
   #buildEditingArea() {
+    const lineHeight =
+      (this.widget.style.fontSize ?? 16) * (this.widget.style.height ?? 1.2);
+    return SizedBox({
+      height: Math.max(
+        this.widget.height ?? 20,
+        lineHeight * (this.widget.maxLines ?? 1),
+      ),
+      child: ClipRect({
+        key: this.#viewportKey,
+        clipper: size =>
+          Rect.fromLTWH({
+            left: 0,
+            top: 0,
+            width: size.width,
+            height: size.height,
+          }),
+        child: Transform.translate({
+          offset: new Offset({ x: -this.#scrollX, y: -this.#scrollY }),
+          child: this.#buildEditableContents(),
+        }),
+      }),
+    });
+  }
+
+  #buildEditableContents() {
     return Stack({
       clipped: false,
       children: [
@@ -709,17 +821,27 @@ class TextFieldState extends State<TextField> {
           child: ConstraintsTransformBox({
             alignment: Alignment.topLeft,
             constraintsTransform: constraints => {
+              if (
+                this.#lastViewportWidth !== constraints.maxWidth ||
+                this.#lastViewportHeight !== constraints.maxHeight
+              ) {
+                this.#lastViewportWidth = constraints.maxWidth;
+                this.#lastViewportHeight = constraints.maxHeight;
+                this.#afterLayout(() => this.#refreshViewport());
+              }
               return new Constraints({
-                minHeight: Math.max(this.widget.height!, constraints.minHeight),
+                minHeight: constraints.minHeight,
                 minWidth: constraints.minWidth,
-                maxHeight: constraints.maxHeight,
-                maxWidth: constraints.maxWidth,
+                maxHeight: Infinity,
+                maxWidth:
+                  this.widget.maxLines === 1 ? Infinity : constraints.maxWidth,
               });
             },
             child: RichText({
               key: this.#textKey,
               text: undefined as unknown as TextSpan,
               textPainter: this.#textPainter,
+              softWrap: this.widget.maxLines !== 1,
             }),
           }),
         }),
@@ -926,9 +1048,15 @@ class NativeInput {
 
     el.addEventListener("input", ((e: InputEvent) => {
       if (!this.#multiline && /[\r\n]/.test(el.value)) {
-        const selection = el.selectionStart;
-        el.value = el.value.replace(/[\r\n]+/g, " ");
-        el.setSelectionRange(selection, selection);
+        const before = el.value;
+        const start = before
+          .slice(0, el.selectionStart)
+          .replace(/[\r\n]+/g, " ").length;
+        const end = before
+          .slice(0, el.selectionEnd)
+          .replace(/[\r\n]+/g, " ").length;
+        el.value = before.replace(/[\r\n]+/g, " ");
+        el.setSelectionRange(start, end);
       }
       this.#dispatch("input", { value: this.value });
 
@@ -1027,6 +1155,19 @@ class NativeInput {
   blur = () => {
     this.element.blur();
   };
+
+  get activeSelectionOffset(): number {
+    return this.element.selectionDirection === "backward"
+      ? this.element.selectionStart
+      : this.element.selectionEnd;
+  }
+
+  position(x: number, y: number, height: number) {
+    if (!browser) return;
+    this.element.style.left = `${x}px`;
+    this.element.style.top = `${y}px`;
+    this.element.style.height = `${height}px`;
+  }
 
   getSelection = (): [number, number] => {
     return [this.element.selectionStart, this.element.selectionEnd];

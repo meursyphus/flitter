@@ -53,3 +53,16 @@ describe('FocusNode', () => {
 		expect(() => node.requestFocus()).toThrow('disposed');
 	});
 });
+
+it('releases all listeners on disposal and rejects new subscriptions', () => {
+	for (const owner of [new TextEditingController(), new FocusNode()]) {
+		const listener = vi.fn();
+		owner.addListener(listener);
+		owner.addListener(listener);
+		owner.dispose();
+		owner.notifyListeners();
+		expect(listener).not.toHaveBeenCalled();
+		expect(() => owner.addListener(listener)).toThrow('disposed');
+		owner.dispose();
+	}
+});

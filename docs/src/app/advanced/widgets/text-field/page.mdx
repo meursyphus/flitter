@@ -18,14 +18,14 @@ export const metadata = { title: "TextField", description: "Editable text with c
 ```typescript
 import {
   Container, EdgeInsets, FocusNode, InputDecoration, State, StatefulWidget,
-  TextEditingController, TextField, TextStyle, classToFunction, type Widget,
+  TextEditingController, TextField, TextStyle, type Widget,
 } from 'flitter-core';
 
-class MessageInput extends StatefulWidget {
+class _MessageInput extends StatefulWidget {
   createState() { return new MessageInputState(); }
 }
 
-class MessageInputState extends State<MessageInput> {
+class MessageInputState extends State<_MessageInput> {
   controller = new TextEditingController('Hello');
   focusNode = new FocusNode();
 
@@ -53,7 +53,9 @@ class MessageInputState extends State<MessageInput> {
   }
 }
 
-export default classToFunction(MessageInput);
+export default function MessageInput(): Widget {
+  return new _MessageInput();
+}
 ```
 
 ## Props
@@ -68,7 +70,7 @@ export default classToFunction(MessageInput);
 | `onChanged` | `(text: string) => void` | Receives user edits. Programmatic controller changes do not call it. |
 | `onSubmitted` | `(text: string) => void` | Receives Enter in a single-line field after IME composition finishes. |
 | `onFocused`, `onBlurred` | `() => void` | Receive native focus changes, including keyboard navigation. |
-| `maxLines` | `number` | Defaults to `1`; a larger value enables multiline input and Enter inserts a newline. |
+| `maxLines` | `number` | Visible row count, default `1`. Larger values enable multiline input and Enter inserts a newline; content scrolls rather than being truncated. |
 | `style` | `TextStyle` | Text font, size, color and line height. |
 | `textAlign`, `textDirection` | `TextAlign`, `TextDirection` | Text layout options. |
 | `decoration` | `InputDecoration` or `BoxDecoration` | Labels and hints, or the existing box styling API. |
@@ -113,7 +115,9 @@ User edits persist across ordinary parent rebuilds. Without a controller, changi
 - Dispose caller-owned controllers and focus nodes with their owning state. Removing a field detaches them and removes its native textarea.
 - The native textarea provides clipboard and composition handling. The painted SVG/Canvas text is the visible field; provide a meaningful accessible label.
 - Browser tests exercise composition events. Real keyboard/IME behavior should also be checked on the platforms your application supports.
-- Selection offsets use UTF-16 code units, matching browser textareas.
+- Selection offsets use UTF-16 code units, matching browser textareas. Programmatic focus preserves the controller's selection.
+- Single-line fields scroll horizontally; multiline fields wrap and scroll vertically to keep the active caret visible. The full value remains editable beyond `maxLines`.
+- The viewport is at least `height` pixels tall, or `maxLines` times the text line height when that is larger.
 - This widget does not implement password masking, form validation, autofill integration or a full bidirectional editing engine.
 
 ## Related Widgets

@@ -199,6 +199,7 @@ it('uses one TextField span and reuses cached prefix measurements on a repeated 
 	state.element = {
 		markNeedsBuild() {},
 		scheduler: {
+			ensureVisualUpdate() {},
 			addPostFrameCallbacks(callback: () => void) {
 				callbacks.push(callback);
 			}

@@ -10,6 +10,19 @@ export type TextEditingValue = Readonly<{
 export default class TextEditingController extends ChangeNotifier {
   #value: TextEditingValue;
   #disposed = false;
+  #callbacks: (() => void)[] = [];
+
+  override addListener(listener: () => void): void {
+    if (this.#disposed) throw new Error("TextEditingController is disposed");
+    this.#callbacks.push(listener);
+    super.addListener(listener);
+  }
+
+  override removeListener(listener: () => void): void {
+    const index = this.#callbacks.indexOf(listener);
+    if (index >= 0) this.#callbacks.splice(index, 1);
+    super.removeListener(listener);
+  }
 
   constructor(text = "") {
     super();
@@ -51,7 +64,10 @@ export default class TextEditingController extends ChangeNotifier {
     this.text = "";
   }
   dispose(): void {
+    if (this.#disposed) return;
     this.#disposed = true;
+    for (const listener of this.#callbacks) super.removeListener(listener);
+    this.#callbacks = [];
   }
 
   private normalize({ text, selection }: TextEditingValue): TextEditingValue {
