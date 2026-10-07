@@ -60,8 +60,12 @@ class _AgMouseTooltipAreaState extends State<_AgMouseTooltipArea> {
     this.measurementScheduled = true;
     this.element.scheduler.addPostFrameCallbacks(() => {
       this.measurementScheduled = false;
-      if (this.tooltipKey.buildOwner == null) return;
-      const size = this.tooltipKey.currentContext?.renderObject?.size;
+      const element = this.tooltipKey.buildOwner?.findByGlobalKey(
+        this.tooltipKey,
+      );
+      // A fast move can remove the tooltip before this post-frame measurement.
+      if (element == null || this.widget.tooltip == null) return;
+      const size = element.renderObject.size;
       if (!size) return;
       if (
         size.width === this.tooltipWidth &&

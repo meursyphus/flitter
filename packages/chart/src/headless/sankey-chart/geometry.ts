@@ -12,6 +12,28 @@ function scalePoint(point: SankeyPoint, size: NumericSize): SankeyPoint {
   };
 }
 
+/** Match the painted cubic ribbon, including narrow gaps near its edges. */
+export function isPointInRibbon(point: SankeyPoint, ribbon: SankeyRibbon, size: NumericSize): boolean {
+  const left = ribbon.startTop.x * size.width;
+  const right = ribbon.endTop.x * size.width;
+  if (right <= left || point.x < left || point.x > right || size.height <= 0) return false;
+  const x = (point.x - left) / (right - left);
+  // Both boundaries use the same monotonic x curve (controls at the midpoint).
+  let lower = 0;
+  let upper = 1;
+  for (let i = 0; i < 32; i++) {
+    const t = (lower + upper) / 2;
+    const curveX = 1.5 * t - 1.5 * t * t + t * t * t;
+    if (curveX < x) lower = t;
+    else upper = t;
+  }
+  const t = (lower + upper) / 2;
+  const blend = t * t * (3 - 2 * t);
+  const top = (ribbon.startTop.y + (ribbon.endTop.y - ribbon.startTop.y) * blend) * size.height;
+  const bottom = (ribbon.startBottom.y + (ribbon.endBottom.y - ribbon.startBottom.y) * blend) * size.height;
+  return point.y >= top && point.y <= bottom;
+}
+
 export function cubicPoint(
   p0: SankeyPoint,
   p1: SankeyPoint,

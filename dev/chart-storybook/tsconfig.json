@@ -12,6 +12,7 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
+      "@/*": ["../../docs/src/*"],
       "flitter-core/component/Tooltip": ["../../packages/core/src/component/Tooltip.ts"],
       "flitter-core": ["../../packages/core/src/index.ts"],
       "flitter-ui/chart": ["../../packages/flitter/src/chart.ts"],

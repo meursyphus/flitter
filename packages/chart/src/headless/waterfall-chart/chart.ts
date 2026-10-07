@@ -122,22 +122,22 @@ class BarBoxState extends State<BarBox> {
 			ctx,
 		);
 
-		return GestureDetector({
-			cursor: "default",
-			key: this.anchorKey,
-			onMouseEnter: () => ctx.hoverBar(index, this.anchorKey),
-			onMouseLeave: () => ctx.unhoverBar(index),
-			child: ctx.custom.barBox(
-				{
-					bar,
-					item,
-					geometry,
-					index,
-					isHovered,
-				},
-				ctx,
-			),
-		});
+		return ctx.custom.barBox(
+			{
+				bar: GestureDetector({
+					cursor: "default",
+					key: this.anchorKey,
+					onMouseEnter: () => ctx.hoverBar(index, this.anchorKey),
+					onMouseLeave: () => ctx.unhoverBar(index),
+					child: bar,
+				}),
+				item,
+				geometry,
+				index,
+				isHovered,
+			},
+			ctx,
+		);
 	}
 }
 

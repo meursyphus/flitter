@@ -20,6 +20,7 @@
     "story:dev": "turbo dev --filter=flitter-storybook",
     "chart-story:dev": "turbo dev --filter=chart-storybook",
     "chart-story:test": "pnpm --dir dev/performance exec playwright test --config playwright.chart-gallery.config.ts",
+    "chart-story:hit-test": "pnpm --dir dev/performance exec playwright test --config playwright.chart-hit-testing.config.ts",
     "chart-story:validate": "pnpm --dir dev/performance exec playwright test --config playwright.chart-storybook.config.ts tests/chart-storybook-llm-evaluation.spec.ts",
     "perf:dev": "turbo dev --filter=flitter-performance",
     "perf:trace": "node dev/performance/scripts/run-perf-trace.mjs",

@@ -38,6 +38,7 @@ const config: StorybookConfig = {
       "@shared": path.resolve(chartRoot, "src/shared"),
       "@utils": path.resolve(chartRoot, "src/shared/utils"),
       "@headless": path.resolve(chartRoot, "src/headless"),
+      "@": path.resolve(__dirname, "../../../docs/src"),
     };
     config.build = {
       ...config.build,

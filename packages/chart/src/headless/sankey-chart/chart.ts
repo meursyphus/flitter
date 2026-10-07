@@ -15,7 +15,7 @@ import {
 } from "flitter-core";
 import { resolveOverlayRect } from "@headless/_shared/cartesian-scaffold";
 import { SankeyChartProvider } from "./provider";
-import { createRibbonPolygon, isPointInPolygon } from "./geometry";
+import { isPointInRibbon } from "./geometry";
 import type {
   SankeyHoveredRect,
   SankeyLinkLayout,
@@ -274,6 +274,7 @@ class LinkWidgetState extends State<LinkWidget> {
     );
 
     return GestureDetector({
+      behavior: "deferToChild",
       cursor: "default",
       child: Stack({
         fit: StackFit.expand,
@@ -282,7 +283,7 @@ class LinkWidgetState extends State<LinkWidget> {
           CustomPaint({
             painter: {
               hitTest: (position, size) =>
-                isPointInPolygon(position, createRibbonPolygon(link, size)),
+                isPointInRibbon(position, link, size),
               svg: {
                 createDefaultSvgEl: (paintContext) => ({
                   group: paintContext.createSvgEl("g"),
