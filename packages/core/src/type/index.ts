@@ -76,3 +76,8 @@ export {
   Matrix3,
   BorderSide,
 };
+export {
+  default as SliverConstraints,
+  type ScrollDirection,
+} from "./SliverConstraints";
+export { default as SliverGeometry } from "./SliverGeometry";
