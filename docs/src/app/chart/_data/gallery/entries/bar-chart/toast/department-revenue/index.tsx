@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Monthly Visitors by City";
 
-import Widget from "@flitterjs/react";
-import { ToastBarChart } from "shared/chart";
+import { ToastBarChart } from "@/lib/charts";
 
 export function createWidget() {
   return ToastBarChart({
@@ -20,14 +19,4 @@ export function createWidget() {
       legend: { visible: true },
     },
   });
-}
-
-export default function BarChartToast() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

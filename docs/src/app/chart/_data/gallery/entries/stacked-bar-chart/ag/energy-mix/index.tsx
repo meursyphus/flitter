@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Monthly Financial Overview";
 
-import Widget from "@flitterjs/react";
-import { StackedBarChart } from "shared/chart";
+import { StackedBarChart } from "@/lib/charts";
 
 export function createWidget() {
   return StackedBarChart({
@@ -21,14 +20,4 @@ export function createWidget() {
       legend: { visible: true, position: "right" },
     },
   });
-}
-
-export default function StackedBarChartAgEnergyMix() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

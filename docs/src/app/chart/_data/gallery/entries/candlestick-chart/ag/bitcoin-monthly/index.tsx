@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Bitcoin Monthly OHLC";
 
-import Widget from "@flitterjs/react";
-import { CandlestickChart } from "shared/chart";
+import { CandlestickChart } from "@/lib/charts";
 
 function formatUsd(name: string, _index: number, axis: "x" | "y"): string {
   if (axis !== "y") return name;
@@ -49,14 +48,4 @@ export function createWidget() {
       axis: { label: { format: formatUsd } },
     },
   });
-}
-
-export default function CandlestickChartAg() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

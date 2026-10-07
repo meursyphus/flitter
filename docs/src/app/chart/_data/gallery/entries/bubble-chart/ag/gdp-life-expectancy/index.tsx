@@ -2,8 +2,7 @@
 
 export const galleryTitle = "GDP vs Life Expectancy";
 
-import Widget from "@flitterjs/react";
-import { BubbleChart } from "shared/chart";
+import { BubbleChart } from "@/lib/charts";
 
 export function createWidget() {
   return BubbleChart({
@@ -73,14 +72,4 @@ export function createWidget() {
       },
     },
   });
-}
-
-export default function BubbleChartAgGdpLifeExpectancy() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

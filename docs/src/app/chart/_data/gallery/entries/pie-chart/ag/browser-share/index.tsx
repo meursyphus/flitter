@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Browser Market Share";
 
-import Widget from "@flitterjs/react";
-import { PieChart } from "shared/chart";
+import { PieChart } from "@/lib/charts";
 
 export function createWidget() {
   return PieChart({
@@ -26,14 +25,4 @@ export function createWidget() {
       },
     },
   });
-}
-
-export default function BrowserShare() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

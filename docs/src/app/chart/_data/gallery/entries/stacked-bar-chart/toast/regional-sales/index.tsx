@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Monthly Revenue Breakdown";
 
-import Widget from "@flitterjs/react";
-import { ToastStackedBarChart } from "shared/chart";
+import { ToastStackedBarChart } from "@/lib/charts";
 
 export function createWidget() {
   return ToastStackedBarChart({
@@ -20,14 +19,4 @@ export function createWidget() {
       title: { text: "Monthly Revenue Breakdown", visible: true },
     },
   });
-}
-
-export default function StackedBarChartToastRegionalSales() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

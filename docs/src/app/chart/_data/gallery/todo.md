@@ -162,8 +162,7 @@ Example: `entries/bar-chart/toast/department-revenue/index.tsx`
 
 export const galleryTitle = "Quarterly Revenue by Department";
 
-import Widget from "@flitterjs/react";
-import { ToastBarChart } from "shared/chart";
+import { ToastBarChart } from "@/lib/charts";
 
 export function createWidget() {
   return ToastBarChart({
@@ -180,23 +179,14 @@ export function createWidget() {
   });
 }
 
-export default function BarChartToast() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
-}
 ```
 
 ### Key rules
 
 - `galleryTitle` — displayed in gallery, used as title
-- `createWidget()` — must be exported, script extracts this for code snippets
-- Default export — React component for rendering
-- Import chart from `shared/chart` (script rewrites to `@/components/flitter/charts/...`)
-- AG charts: `import { BarChart } from "shared/chart"` (no prefix)
-- Toast charts: `import { ToastBarChart } from "shared/chart"` (Toast prefix)
+- `createWidget()` — must be exported; the site renders it live (`LiveChart`) and the script extracts it for code snippets
+- Import charts from `@/lib/charts` — the presets with the docs theme (dark/light) and static-render mode applied. The script rewrites the import to `@/components/flitter/charts/...` for snippets
+- AG charts: `import { BarChart } from "@/lib/charts"` (no prefix)
+- Toast charts: `import { ToastBarChart } from "@/lib/charts"` (Toast prefix)
+- Avoid hardcoded text colors in custom parts; read them from `context.config` so dark mode works
 - After adding, run `npm run gen:gallery` from `docs/` to regenerate

@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Cloud Infrastructure Spend";
 
-import Widget from "@flitterjs/react";
-import { ToastDonutChart } from "shared/chart";
+import { ToastDonutChart } from "@/lib/charts";
 
 export function createWidget() {
   return ToastDonutChart({
@@ -22,14 +21,4 @@ export function createWidget() {
           radial: { visible: false },
         },
       });
-}
-
-export default function DonutChartToastProjectStatus() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

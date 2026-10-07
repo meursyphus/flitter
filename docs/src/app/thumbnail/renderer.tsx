@@ -1,10 +1,14 @@
 "use client";
 
+import type { Widget } from "flitter-core";
+import LiveChart from "@/components/live-chart";
+
 type Entry = {
   slug: string;
-  Component: React.ComponentType;
+  createWidget: () => Widget;
 };
 
+/** Every gallery chart at 800×500 on white, for scripts/generate-gallery-thumbnails. */
 export default function ThumbnailGrid({ entries }: { entries: Entry[] }) {
   return (
     <div>
@@ -19,7 +23,7 @@ export default function ThumbnailGrid({ entries }: { entries: Entry[] }) {
             overflow: "hidden",
           }}
         >
-          <entry.Component />
+          <LiveChart create={entry.createWidget} theme="light" animate={false} />
         </div>
       ))}
     </div>

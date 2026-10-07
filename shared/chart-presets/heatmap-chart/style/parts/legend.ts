@@ -45,7 +45,7 @@ function generateNiceTicks(min: number, max: number): number[] {
   return ticks.length > 0 ? ticks : [Math.round((min + max) / 2)];
 }
 
-function blackTriangle(): Widget {
+function indicatorTriangle(color: string): Widget {
   return SizedBox({
     width: TRIANGLE_WIDTH,
     height: TRIANGLE_HEIGHT,
@@ -60,7 +60,7 @@ function blackTriangle(): Widget {
             const w = size.width;
             const h = size.height;
             fill.setAttribute("points", `0,0 ${w},0 ${w / 2},${h}`);
-            fill.setAttribute("fill", "#333");
+            fill.setAttribute("fill", color);
           },
         },
         canvas: {
@@ -73,7 +73,7 @@ function blackTriangle(): Widget {
             c.lineTo(w, 0);
             c.lineTo(w / 2, h);
             c.closePath();
-            c.fillStyle = "#333";
+            c.fillStyle = color;
             c.fill();
           },
         },
@@ -162,7 +162,7 @@ export function agHeatmapLegend(
                       ((hovered.value - scale.min) / range) * barWidth -
                       TRIANGLE_WIDTH / 2,
                     bottom: INDICATOR_GAP,
-                    child: blackTriangle(),
+                    child: indicatorTriangle(config.title.color),
                   }),
                 ],
               })

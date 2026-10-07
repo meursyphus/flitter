@@ -114,6 +114,18 @@ export const radarChartApiPage: ApiPageData = {
             default: "5",
             description: "Margin around the radar plot area for axis labels.",
           },
+          {
+            property: "radar.tickLabelBackground",
+            type: "string",
+            default: '"#f3f4f6"',
+            description: "Background of the chip behind radial value labels.",
+          },
+          {
+            property: "radar.tickLabelBorderColor",
+            type: "string",
+            default: '"rgba(0, 0, 0, 0.08)"',
+            description: "Border color of the chip behind radial value labels.",
+          },
         ],
       },
     ],

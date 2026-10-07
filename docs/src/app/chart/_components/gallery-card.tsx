@@ -1,43 +1,32 @@
 "use client";
 
 import Link from "next/link";
+import LiveChart from "@/components/live-chart";
+import type { GalleryEntry } from "../_data/gallery";
+import StyleBadge from "./style-badge";
 
-type GalleryCardProps = {
-  slug: string;
-  title: string;
-  style: "Toast" | "AG";
-  thumbnailUrl?: string;
-  chart?: React.ReactNode;
-  index?: number;
-};
-
+/** A gallery tile: the chart drawn live, at its final frame. */
 export default function GalleryCard({
-  slug,
-  title,
-  thumbnailUrl,
-  chart,
-  index = 0,
-}: GalleryCardProps) {
-
+  entry,
+  height = 340,
+}: {
+  entry: GalleryEntry;
+  height?: number;
+}) {
   return (
     <Link
-      href={`/chart/gallery/${slug}`}
-      className="group block overflow-hidden rounded-xl bg-neutral-50 transition-all duration-200 hover:bg-neutral-100/80"
+      href={`/chart/gallery/${entry.slug}`}
+      className="group block overflow-hidden rounded-xl border border-line bg-[var(--chart-bg)] transition-colors hover:border-line-strong"
     >
-      <div className="flex h-[280px] items-center justify-center p-5 transition-transform duration-200 group-hover:scale-[1.02]">
-        {thumbnailUrl ? (
-          <img
-            src={thumbnailUrl}
-            alt={title}
-            className="h-full w-full object-contain"
-          />
-        ) : (
-          chart
-        )}
+      {/* Charts take pointer events; the link still works via the caption and padding. */}
+      <div className="p-4" style={{ height }}>
+        <LiveChart create={entry.createWidget} animate={false} lazy />
       </div>
-
-      <div className="px-5 pb-3">
-        <span className="text-[13px] font-medium text-neutral-500 group-hover:text-neutral-700 transition-colors">{title}</span>
+      <div className="flex items-center justify-between gap-3 border-t border-line px-4 py-3">
+        <span className="truncate text-[14px] font-medium text-soft transition-colors group-hover:text-ink">
+          {entry.title}
+        </span>
+        <StyleBadge style={entry.style} />
       </div>
     </Link>
   );

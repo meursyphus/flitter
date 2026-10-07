@@ -1,3 +1,5 @@
+import type { Widget } from "flitter-core";
+
 export type GalleryCategory = {
   id: string;
   label: string;
@@ -14,7 +16,7 @@ export type GalleryEntry = {
   style: "Toast" | "AG";
   title: string;
   thumbnailUrl: string;
-  Component: React.ComponentType;
+  createWidget: () => Widget;
   files: GalleryCodeFile[];
   installCommand: string;
 };

@@ -1,3 +1,5 @@
+import type { GalleryEntry } from "./gallery/types";
+
 // ---------------------------------------------------------------------------
 // Shared sub-types
 // ---------------------------------------------------------------------------
@@ -52,26 +54,8 @@ export type GalleryIndexPageData = ChartPageBase & {
 
 export type GalleryDetailPageData = ChartPageBase & {
   pageType: "gallery-detail";
-  entry: {
-    slug: string;
-    chartType: string;
-    style: "Toast" | "AG";
-    title: string;
-    thumbnailUrl: string;
-    Component: React.ComponentType;
-    files: { filename: string; code: string }[];
-    installCommand: string;
-  };
-  relatedEntries: {
-    slug: string;
-    chartType: string;
-    style: "Toast" | "AG";
-    title: string;
-    thumbnailUrl: string;
-    Component: React.ComponentType;
-    files: { filename: string; code: string }[];
-    installCommand: string;
-  }[];
+  entry: GalleryEntry;
+  relatedEntries: GalleryEntry[];
 };
 
 // ---------------------------------------------------------------------------

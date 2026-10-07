@@ -1,7 +1,7 @@
 "use client";
 
-import Widget from "@flitterjs/react";
-import { CandlestickChart } from "shared/chart";
+import LiveChart from "@/components/live-chart";
+import { CandlestickChart } from "@/lib/charts";
 import { bitcoinMonthlyRows } from "./bitcoin-candlestick-data";
 
 function formatUsd(name: string, _index: number, axis: "x" | "y"): string {
@@ -10,8 +10,8 @@ function formatUsd(name: string, _index: number, axis: "x" | "y"): string {
   return Number.isFinite(v) ? `$${Math.round(v).toLocaleString("en-US")}` : name;
 }
 
-export default function LiveCandlestickDemo() {
-  const widget = CandlestickChart({
+function createWidget() {
+  return CandlestickChart({
     data: { rows: bitcoinMonthlyRows, xKey: "date" },
     config: {
       title: { text: "Bitcoin USD" },
@@ -20,8 +20,8 @@ export default function LiveCandlestickDemo() {
       legend: { visible: false },
     },
   });
+}
 
-  return (
-    <Widget widget={widget} width="100%" height="100%" renderer="canvas" />
-  );
+export default function LiveCandlestickDemo() {
+  return <LiveChart create={createWidget} renderer="canvas" lazy />;
 }

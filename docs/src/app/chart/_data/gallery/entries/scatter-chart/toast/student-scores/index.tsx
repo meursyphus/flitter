@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Student Test Scores";
 
-import Widget from "@flitterjs/react";
-import { ToastScatterChart } from "shared/chart";
+import { ToastScatterChart } from "@/lib/charts";
 
 export function createWidget() {
   return ToastScatterChart({
@@ -73,14 +72,4 @@ export function createWidget() {
       },
     },
   });
-}
-
-export default function StudentScores() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

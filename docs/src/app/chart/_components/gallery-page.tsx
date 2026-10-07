@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import {
   galleryCategories,
   galleryEntries,
@@ -9,104 +9,75 @@ import {
 import { useGallery } from "@/state/gallery";
 import GalleryCard from "./gallery-card";
 
-function GalleryGrid() {
+function useCategoryScrollSpy() {
   const { actions } = useGallery((s) => ({ actions: s.actions }));
-  const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
-    observerRef.current = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            actions.setActiveCategory(entry.target.getAttribute("data-category")!);
+            actions.setActiveCategory(entry.target.id);
           }
         }
       },
       { rootMargin: "-80px 0px -60% 0px", threshold: 0 },
     );
-
-    const markers = document.querySelectorAll("[data-category-marker]");
-    markers.forEach((el) => observerRef.current!.observe(el));
-
-    return () => observerRef.current?.disconnect();
+    for (const category of galleryCategories) {
+      const el = document.getElementById(category.id);
+      if (el) observer.observe(el);
+    }
+    return () => observer.disconnect();
   }, [actions]);
-
-  // Build flat list with category markers on first entry of each group
-  const firstOfCategory = new Set<string>();
-  const flatEntries = galleryEntries.map((entry) => {
-    const isFirst = !firstOfCategory.has(entry.chartType);
-    if (isFirst) firstOfCategory.add(entry.chartType);
-    return { ...entry, isFirstOfCategory: isFirst };
-  });
-
-  return (
-    <div
-      className="grid gap-5"
-      style={{
-        gridTemplateColumns: "repeat(auto-fill, minmax(400px, 1fr))",
-      }}
-    >
-      {flatEntries.map((entry, i) => (
-        <div
-          key={entry.slug}
-          {...(entry.isFirstOfCategory
-            ? {
-                id: entry.chartType,
-                "data-category-marker": true,
-                "data-category": entry.chartType,
-                className: "scroll-mt-20",
-              }
-            : {})}
-        >
-          <GalleryCard
-            slug={entry.slug}
-            title={entry.title}
-            style={entry.style}
-            thumbnailUrl={entry.thumbnailUrl}
-            index={i}
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-export default function GalleryPage() {
-  const { actions } = useGallery((s) => ({ actions: s.actions }));
 
   useEffect(() => {
     const hash = window.location.hash.slice(1);
     if (hash) {
-      // Delay slightly to let the DOM render before scrolling
       requestAnimationFrame(() => {
-        document
-          .getElementById(hash)
-          ?.scrollIntoView({ behavior: "smooth", block: "start" });
+        document.getElementById(hash)?.scrollIntoView({ block: "start" });
         actions.setActiveCategory(hash);
       });
     } else if (galleryCategories.length > 0) {
       actions.setActiveCategory(galleryCategories[0].id);
     }
   }, [actions]);
+}
+
+export default function GalleryPage() {
+  useCategoryScrollSpy();
 
   return (
-    <div className="-mx-6 -mt-8 md:-mx-10">
-      {/* Header */}
-      <section className="px-6 pt-10 pb-6 md:px-10">
-        <div className="max-w-2xl">
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
-            Chart Gallery
-          </h1>
-          <p className="mt-2 text-base leading-relaxed text-neutral-500">
-            Browse all available chart styles. Click any chart to see its code
-            and installation command.
-          </p>
-        </div>
-      </section>
+    <div className="px-5 pb-20 md:px-10">
+      <header className="relative max-w-3xl pt-10 pb-10 lg:pt-14">
+        <h1 className="display text-[clamp(2.25rem,5vw,3.5rem)] text-ink">
+          Chart gallery
+        </h1>
+        <p className="mt-4 max-w-xl text-[17px] leading-relaxed text-soft">
+          {galleryEntries.length} examples across {galleryCategories.length} chart
+          types, each drawn live by Flitter. Hover to inspect, open one for its
+          code and install command.
+        </p>
+      </header>
 
-      {/* Grid — single flat grid */}
-      <div className="px-6 pb-16 md:px-10 max-w-[1600px]">
-        <GalleryGrid />
+      <div className="max-w-[1600px] space-y-14">
+        {galleryCategories.map((category) => {
+          const entries = getEntriesByCategory(category.id);
+          return (
+            <section key={category.id} id={category.id} className="scroll-mt-24">
+              <h2 className="mb-4 flex items-baseline gap-2 text-[15px] font-semibold text-ink">
+                {category.label}
+                <span className="text-[13px] font-normal text-faint">
+                  {entries.length}
+                </span>
+              </h2>
+              <div className="grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(min(100%,380px),1fr))]">
+                {entries.map((entry) => (
+                  <GalleryCard key={entry.slug} entry={entry} />
+                ))}
+              </div>
+            </section>
+          );
+        })}
       </div>
     </div>
   );

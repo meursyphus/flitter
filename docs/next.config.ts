@@ -17,8 +17,9 @@ const withMDX = createMDX({
       [
         rehypePrettyCode,
         {
-          theme: "github-light",
-          keepBackground: true,
+          // Emitted as --shiki-dark / --shiki-light; globals.css picks one.
+          theme: { dark: "one-dark-pro", light: "github-light" },
+          keepBackground: false,
         },
       ],
     ],

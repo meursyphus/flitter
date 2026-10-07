@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Ice Cream Sales by Flavor ($K)";
 
-import Widget from "@flitterjs/react";
-import { ToastHeatmapChart } from "shared/chart";
+import { ToastHeatmapChart } from "@/lib/charts";
 
 export function createWidget() {
   return ToastHeatmapChart({
@@ -33,14 +32,4 @@ export function createWidget() {
       },
     },
   });
-}
-
-export default function MonthlyProductSales() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

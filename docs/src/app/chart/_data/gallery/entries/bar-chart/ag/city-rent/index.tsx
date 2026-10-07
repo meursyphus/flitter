@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Weekend Coffee Orders by City";
 
-import Widget from "@flitterjs/react";
-import { BarChart } from "shared/chart";
+import { BarChart } from "@/lib/charts";
 
 export function createWidget() {
   return BarChart({
@@ -32,14 +31,4 @@ export function createWidget() {
       bar: { cornerRadius: 2 },
     },
   });
-}
-
-export default function BarChartAg() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Pokémon Stats Battle";
 
-import Widget from "@flitterjs/react";
-import { ToastRadarChart } from "shared/chart";
+import { ToastRadarChart } from "@/lib/charts";
 
 export function createWidget() {
   return ToastRadarChart({
@@ -26,14 +25,4 @@ export function createWidget() {
       title: { text: "Pokémon Stats Battle", visible: true },
     },
   });
-}
-
-export default function RadarChartToast() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }
