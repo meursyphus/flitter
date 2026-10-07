@@ -17,3 +17,9 @@ export {
   RenderView,
   SingleChildRenderObject,
 };
+export { default as RenderSliver } from "./RenderSliver";
+export { default as RenderViewport } from "./RenderViewport";
+export {
+  default as RenderSliverList,
+  RenderSliverFixedExtentList,
+} from "./RenderSliverList";
