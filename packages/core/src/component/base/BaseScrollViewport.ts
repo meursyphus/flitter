@@ -26,6 +26,7 @@ export default class BaseScrollViewport extends SingleChildRenderObjectWidget {
 
 export class RenderScrollViewport extends SingleChildRenderObject {
   private inLayout = false;
+  private listening = false;
   constructor(private props: Props) {
     super({ isPainter: false });
   }
@@ -34,18 +35,25 @@ export class RenderScrollViewport extends SingleChildRenderObject {
   };
   override attach(owner: RenderObjectElement): void {
     super.attach(owner);
-    this.props.controller.addListener(this.changed);
+    if (!this.listening) this.props.controller.addListener(this.changed);
+    this.listening = true;
+  }
+  override detach(): void {
+    this.props.controller.removeListener(this.changed);
+    this.listening = false;
+    super.detach();
   }
   update(props: Props): void {
     if (this.props.controller !== props.controller) {
       this.props.controller.removeListener(this.changed);
-      props.controller.addListener(this.changed);
+      if (this.listening) props.controller.addListener(this.changed);
     }
     this.props = props;
     this.markNeedsLayout();
   }
   override dispose(): void {
     this.props.controller.removeListener(this.changed);
+    this.listening = false;
     super.dispose();
   }
   protected override preformLayout(): void {

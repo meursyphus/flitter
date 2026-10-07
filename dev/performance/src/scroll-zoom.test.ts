@@ -36,6 +36,9 @@ function viewport(axis = Axis.vertical, reverse = false) {
 		requestVisualUpdate() {},
 		markNeedsPaint() {},
 		markNeedsPaintTransformUpdate() {},
+		markNeedsCompositingBitsUpdate() {},
+		notifyZOrderChanged() {},
+		bumpStructureEpoch() {},
 		didChangePaintTransform() {},
 		disposeRenderObject() {}
 	} as any;
@@ -85,6 +88,25 @@ describe('scroll viewport', () => {
 	it('rejects an unbounded viewport with a useful error', () => {
 		const { render } = viewport();
 		expect(() => render.layout(new Constraints())).toThrow('bounded constraints');
+	});
+
+	it('ignores controller updates while detached and resumes when a kept-alive viewport reattaches', () => {
+		const { render, controller, layout } = viewport();
+		const element = render.ownerElement;
+		render.attach(element);
+		controller.jumpTo(100);
+		expect(render.needsLayout).toBe(true);
+		layout();
+		render.detach();
+		controller.jumpTo(200);
+		expect(render.needsLayout).toBe(false);
+		render.attach(element);
+		controller.jumpTo(250);
+		expect(render.needsLayout).toBe(true);
+		layout();
+		render.dispose();
+		controller.jumpTo(300);
+		expect(render.needsLayout).toBe(false);
 	});
 });
 

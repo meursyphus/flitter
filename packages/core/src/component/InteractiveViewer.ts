@@ -82,6 +82,12 @@ class InteractiveViewerState extends State<InteractiveViewer> {
       this.controller.addListener(this.changed);
     }
   }
+  override deactivate(): void {
+    this.setState(() => {
+      this.dragPosition = undefined;
+    });
+    super.deactivate();
+  }
   override dispose(): void {
     this.controller.removeListener(this.changed);
     this.ownedController.dispose();

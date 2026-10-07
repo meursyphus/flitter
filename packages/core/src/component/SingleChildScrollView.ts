@@ -95,6 +95,12 @@ class ScrollViewState extends State<SingleChildScrollView> {
       this.dragPosition = undefined;
     });
   };
+  override deactivate(): void {
+    this.setState(() => {
+      this.dragPosition = undefined;
+    });
+    super.deactivate();
+  }
   override dispose(): void {
     this.ownedController.dispose();
     super.dispose();
