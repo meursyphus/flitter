@@ -1,13 +1,16 @@
 import {
 	AppRunner,
+	Alignment,
 	CanvasPainter,
 	Column,
 	Container,
 	EdgeInsets,
 	GestureDetector,
 	MainAxisSize,
+	Matrix4,
 	Offset,
 	Opacity,
+	Positioned,
 	RepaintBoundary,
 	Row,
 	State,
@@ -330,6 +333,40 @@ export function mountEngineBench(
 				});
 			}
 			runner.runApp(child, { performanceTracing: true });
+			await nextFrame();
+			await nextFrame();
+		},
+		async renderTextOverflowCase(name: string, boundary: boolean, gestureOutside: boolean) {
+			const text = Text('Visible transformed text', {
+				style: new TextStyle({ fontSize: 24, color: '#000000', fontFamily: 'sans-serif' })
+			});
+			const gesture = (child: Widget) => GestureDetector({ onClick() {}, child });
+			const matrix = Matrix4.translationValues(
+				name === 'negative' ? -30.25 : 30.25,
+				name === 'negative' ? -40.25 : 40.25,
+				0
+			);
+			if (name === 'rotated') matrix.rotateZ(Math.PI / 6);
+			matrix.multiplyMatrix(Matrix4.diagonal3Values(1.1, 1.1, 1));
+			let content = gestureOutside ? text : gesture(text);
+			if (name === 'nested') content = RepaintBoundary({ child: content });
+			content = Transform({ transform: matrix, alignment: Alignment.topLeft, child: content });
+			if (gestureOutside) content = gesture(content);
+			if (name === 'clipped')
+				content = ClipRect({
+					clipper: (size) =>
+						Rect.fromLTWH({ left: 0, top: 0, width: size.width, height: size.height }),
+					child: content
+				});
+			if (boundary) content = RepaintBoundary({ child: content });
+			runner.runApp(
+				Stack({
+					children: [
+						Container({ width: 960, height: 540, color: '#ffffff' }),
+						Positioned({ left: 100, top: 100, child: content })
+					]
+				})
+			);
 			await nextFrame();
 			await nextFrame();
 		},

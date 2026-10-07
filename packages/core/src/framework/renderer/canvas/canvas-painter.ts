@@ -1,4 +1,4 @@
-import { Offset, Rect } from "../../../type";
+import { Matrix4, Offset, Rect } from "../../../type";
 import { Painter } from "../renderer";
 import type { CanvasRenderPipeline } from "./canvas-renderer";
 import type { CanvasPaintingContext } from "./canvas-painting-context";
@@ -40,6 +40,44 @@ export class CanvasPainter extends Painter {
   }
 
   get paintBounds(): Rect {
+    let left = 0;
+    let top = 0;
+    let right = this.size.width;
+    let bottom = this.size.height;
+    // A repaint boundary is not a clip. Include paint-only transforms and
+    // overflowing descendants when sizing its temporary raster recording.
+    this.renderObject.visitChildren(child => {
+      const bounds = child.canvasPainter.paintBounds;
+      left = Math.min(left, bounds.left + child.offset.x);
+      top = Math.min(top, bounds.top + child.offset.y);
+      right = Math.max(right, bounds.right + child.offset.x);
+      bottom = Math.max(bottom, bounds.bottom + child.offset.y);
+    });
+    const transform = this.renderObject.applyPaintTransform(
+      Matrix4.Constants.identity,
+    );
+    if (transform === Matrix4.Constants.identity) {
+      return Rect.fromLTRB({ left, top, right, bottom });
+    }
+    const m = transform.storage;
+    const points = [
+      [left, top],
+      [right, top],
+      [left, bottom],
+      [right, bottom],
+    ].map(([x, y]) => ({
+      x: m[0] * x + m[4] * y + m[12],
+      y: m[1] * x + m[5] * y + m[13],
+    }));
+    return Rect.fromLTRB({
+      left: Math.min(...points.map(point => point.x)),
+      top: Math.min(...points.map(point => point.y)),
+      right: Math.max(...points.map(point => point.x)),
+      bottom: Math.max(...points.map(point => point.y)),
+    });
+  }
+
+  protected get layoutBounds(): Rect {
     return Rect.fromLTWH({
       left: 0,
       top: 0,

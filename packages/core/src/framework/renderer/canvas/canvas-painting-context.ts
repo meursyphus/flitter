@@ -1,6 +1,6 @@
 import { assert } from "../../../utils";
 import type { RenderObject } from "../../../renderobject";
-import { Offset, type Rect } from "../../../type";
+import { Offset, Rect } from "../../../type";
 import {
   type ContainerLayer,
   OffsetLayer,
@@ -175,9 +175,19 @@ export class CanvasPaintingContext {
 
     node.needsCompositedLayerUpdate = false;
 
+    const bounds = node.canvasPainter.paintBounds;
+    const dpr = node.renderOwner.renderContext.window.devicePixelRatio;
+    // Align the picture origin to physical pixels: composing a fractional
+    // origin would resample otherwise unchanged text and blur retained layers.
+    const recordingBounds = Rect.fromLTRB({
+      left: Math.floor(bounds.left * dpr) / dpr,
+      top: Math.floor(bounds.top * dpr) / dpr,
+      right: Math.ceil(bounds.right * dpr) / dpr,
+      bottom: Math.ceil(bounds.bottom * dpr) / dpr,
+    });
     const childContext = new CanvasPaintingContext(
       childLayer,
-      node.canvasPainter.paintBounds,
+      recordingBounds,
       recycledCanvases,
     );
 
