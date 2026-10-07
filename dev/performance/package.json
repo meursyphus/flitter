@@ -3,6 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
+		"test:slivers": "tsc -p tsconfig.slivers.json && vitest run src/sliver-virtualization.test.ts && playwright test --config playwright.slivers.config.ts",
 		"test:engine": "tsc -p tsconfig.engine.json && vitest run && playwright test tests/engine-regression.test.ts tests/interaction.test.ts --workers=1",
 		"dev": "vite dev",
 		"production": "npm run build && npm run preview",
