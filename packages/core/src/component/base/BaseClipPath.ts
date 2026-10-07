@@ -19,30 +19,36 @@ type Clipper = (size: Size) => Path;
 
 class BaseClipPath extends SingleChildRenderObjectWidget {
   public clipper: Clipper;
+  public clipped: boolean;
   constructor({
     child,
     clipper,
+    clipped = true,
     key,
   }: {
     child?: Widget;
     clipper: Clipper;
+    clipped?: boolean;
     key?: any;
   }) {
     super({ child, key });
     this.clipper = clipper;
+    this.clipped = clipped;
   }
 
   createRenderObject(): SingleChildRenderObject {
-    return new RenderClipPath({ clipper: this.clipper });
+    return new RenderClipPath({ clipper: this.clipper, clipped: this.clipped });
   }
 
   updateRenderObject(renderObject: RenderClipPath): void {
     renderObject.clipper = this.clipper;
+    renderObject.clipped = this.clipped;
   }
 }
 
 class RenderClipPath extends SingleChildRenderObject {
   _clipper: Clipper;
+  private _clipped: boolean;
   private _clip: Path | null = null;
   private _clipWidth = 0;
   private _clipHeight = 0;
@@ -55,11 +61,23 @@ class RenderClipPath extends SingleChildRenderObject {
     if (this._clipper === value) return;
     this._clipper = value;
     this._clip = null;
+    // Disabled clips retain their wrapper, but new clippers must not dirty it.
+    if (this.clipped) this.markNeedsPaint();
+  }
+  get clipped() {
+    return this._clipped;
+  }
+
+  set clipped(value: boolean) {
+    if (this._clipped === value) return;
+    this._clipped = value;
     this.markNeedsPaint();
   }
-  constructor({ clipper }: { clipper: Clipper }) {
+
+  constructor({ clipper, clipped }: { clipper: Clipper; clipped: boolean }) {
     super({ isPainter: true });
     this._clipper = clipper;
+    this._clipped = clipped;
   }
 
   /**
@@ -92,10 +110,8 @@ class RenderClipPath extends SingleChildRenderObject {
 
 class SvgPainterClipPath extends SvgPainter {
   private id = createUniqueId();
-  protected override getChildClipId(
-    _parentId?: string | undefined,
-  ): string | undefined {
-    return this.id;
+  protected override getChildClipId(parentId?: string): string | undefined {
+    return (this.renderObject as RenderClipPath).clipped ? this.id : parentId;
   }
 
   get clipper() {
@@ -107,6 +123,7 @@ class SvgPainterClipPath extends SvgPainter {
   }: {
     [key: string]: SVGElement;
   }): void {
+    if (!(this.renderObject as RenderClipPath).clipped) return;
     const pathEl = clipPath.getElementsByTagName("path")[0];
     const d = this.clipper.getD();
     pathEl.setAttribute("d", d);
@@ -157,6 +174,7 @@ class ClipPathCanvasPainter extends CanvasPainter {
   private boundaryLayers = new WeakMap<Layer, ClipPathLayer>();
 
   override wrapLayer(child: Layer, offset: Offset): Layer {
+    if (!(this.renderObject as RenderClipPath).clipped) return child;
     let layer = this.boundaryLayers.get(child);
     if (layer == null) {
       layer = new ClipPathLayer({
@@ -180,6 +198,10 @@ class ClipPathCanvasPainter extends CanvasPainter {
     context: CanvasPaintingContext,
     offset: Offset,
   ): void {
+    if (!(this.renderObject as RenderClipPath).clipped) {
+      this.defaultPaint(context, offset);
+      return;
+    }
     if (context.paintsChildren && this.renderObject.needsCompositing) {
       // Keep picture coordinates in the enclosing boundary's space; only
       // translate the clip, not the separately recorded contents.
