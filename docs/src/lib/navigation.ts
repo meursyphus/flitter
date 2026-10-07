@@ -135,6 +135,8 @@ export const advancedNav: NavSection[] = [
       { title: "CustomPaint", href: "/advanced/widgets/custom-paint" },
       { title: "DecoratedBox", href: "/advanced/widgets/decorated-box" },
       { title: "Draggable", href: "/advanced/widgets/draggable" },
+      { title: "InteractiveViewer", href: "/advanced/widgets/interactive-viewer" },
+      { title: "SingleChildScrollView", href: "/advanced/widgets/single-child-scroll-view" },
       { title: "Expanded", href: "/advanced/widgets/expanded" },
       { title: "Flex", href: "/advanced/widgets/flex" },
       { title: "Flexible", href: "/advanced/widgets/flexible" },

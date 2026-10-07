@@ -21,6 +21,8 @@
 		"src/text-max-lines.test.ts",
 		"src/text-preparation.test.ts",
 		"src/transform-cache.test.ts",
+		"src/scroll-zoom.test.ts",
+		"tests/scroll-zoom.test.ts",
 		"src/build-phase-optimization.test.ts",
 		"tests/engine-regression.test.ts",
 		"tests/engine-performance.test.ts"
