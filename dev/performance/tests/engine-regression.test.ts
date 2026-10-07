@@ -7,6 +7,140 @@ declare global {
 	}
 }
 
+test('Canvas clips bound recording allocation for tall and far-translated content', async ({
+	page
+}) => {
+	const errors: string[] = [];
+	page.on('pageerror', (error) => errors.push(error.message));
+	await page.goto('http://localhost:4173/performance/engine?renderer=canvas');
+	await page.waitForFunction(() => !!window.__engineBench);
+	for (const farTranslation of [false, true]) {
+		const sizes = await page.evaluate(
+			(far) => window.__engineBench.measureClippedRecording(far),
+			farTranslation
+		);
+		expect(sizes).toContainEqual({ width: 120, height: 80 });
+		expect(sizes.every((size) => size.width <= 960 && size.height <= 540)).toBe(true);
+		const pixels = await page.evaluate(() =>
+			window.__engineBench.pixels([
+				[30, 30],
+				[30, 100]
+			])
+		);
+		expect(pixels[0]).toEqual(farTranslation ? [0, 0, 0, 0] : [255, 0, 0, 255]);
+		expect(pixels[1]).toEqual([0, 0, 0, 0]);
+	}
+	const empty = await page.evaluate(() =>
+		window.__engineBench.measureClippedRecording(false, true)
+	);
+	expect(empty).toContainEqual({ width: 0, height: 0 });
+	expect(await page.evaluate(() => window.__engineBench.pixels([[30, 30]]))).toEqual([
+		[0, 0, 0, 0]
+	]);
+	expect(errors).toEqual([]);
+});
+
+for (const deviceScaleFactor of [1, 2]) {
+	for (const renderer of ['canvas', 'svg']) {
+		test.describe(`${renderer} transformed text at DPR ${deviceScaleFactor}`, () => {
+			test.use({ deviceScaleFactor });
+			for (const gestureOutside of [false, true]) {
+				test(`retaining paint overflow preserves text pixels (gestureOutside=${gestureOutside})`, async ({
+					page
+				}, testInfo) => {
+					const errors: string[] = [];
+					page.on('pageerror', (error) => errors.push(error.message));
+					await page.goto(`http://localhost:4173/performance/engine?renderer=${renderer}`);
+					await page.waitForFunction(() => !!window.__engineBench);
+					const cases = ['positive', 'negative', 'rotated', 'nested', 'clipped'];
+					const direct = new Map<string, Buffer>();
+					const view = page.locator('[data-testid="engine"]');
+					for (const name of cases) {
+						await page.evaluate(
+							({ name, gestureOutside }) =>
+								window.__engineBench.renderTextOverflowCase(name, false, gestureOutside),
+							{ name, gestureOutside }
+						);
+						direct.set(name, await view.screenshot());
+					}
+					// Keep the boundary mounted while geometry changes, exercising both
+					// newly allocated and recycled recording buffers.
+					for (const name of cases) {
+						await page.evaluate(
+							({ name, gestureOutside }) =>
+								window.__engineBench.renderTextOverflowCase(name, true, gestureOutside),
+							{ name, gestureOutside }
+						);
+						const retained = await view.screenshot();
+						if (!retained.equals(direct.get(name)!)) {
+							await testInfo.attach(`${name}-retained`, {
+								body: retained,
+								contentType: 'image/png'
+							});
+							await testInfo.attach(`${name}-direct`, {
+								body: direct.get(name)!,
+								contentType: 'image/png'
+							});
+						}
+						const difference = await page.evaluate(
+							async ({ reference, actual }) => {
+								const decode = async (data: string) => {
+									const image = new Image();
+									image.src = `data:image/png;base64,${data}`;
+									await image.decode();
+									const canvas = document.createElement('canvas');
+									canvas.width = image.width;
+									canvas.height = image.height;
+									const context = canvas.getContext('2d')!;
+									context.drawImage(image, 0, 0);
+									return context.getImageData(0, 0, image.width, image.height).data;
+								};
+								const [a, b] = await Promise.all([decode(reference), decode(actual)]);
+								let max = 0,
+									changed = 0;
+								for (let i = 0; i < a.length; i++) {
+									const delta = Math.abs(a[i] - b[i]);
+									max = Math.max(max, delta);
+									if (delta) changed++;
+								}
+								return { max, changed };
+							},
+							{
+								reference: direct.get(name)!.toString('base64'),
+								actual: retained.toString('base64')
+							}
+						);
+						// Transparent intermediate text can round antialias coverage by one
+						// channel level compared with painting straight onto opaque white.
+						expect(difference.max, `${name}: ${JSON.stringify(difference)}`).toBeLessThanOrEqual(1);
+						if (renderer === 'canvas') {
+							const ink = await page.evaluate(() => {
+								const canvas = document.querySelector('canvas')!;
+								const pixels = canvas
+									.getContext('2d')!
+									.getImageData(0, 0, canvas.width, canvas.height).data;
+								let count = 0;
+								for (let i = 0; i < pixels.length; i += 4)
+									if (
+										pixels[i] < 100 &&
+										pixels[i + 1] < 100 &&
+										pixels[i + 2] < 100 &&
+										pixels[i + 3] > 100
+									)
+										count++;
+								return count;
+							});
+							if (name === 'clipped') expect(ink).toBe(0);
+							else expect(ink).toBeGreaterThan(300);
+						}
+					}
+					expect(errors).toEqual([]);
+				});
+			}
+		});
+	}
+}
+
 for (const renderer of ['canvas', 'svg']) {
 	for (const boundary of [false, true]) {
 		for (const nested of [false, true]) {

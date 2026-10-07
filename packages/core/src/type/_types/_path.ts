@@ -1,9 +1,23 @@
-import type Rect from "./_rect";
+import Rect from "./_rect";
 import type { RRect } from "./r-rect";
 
 export class Path {
   private _d: string = "";
   private _canvasPath: Path2D | null = null;
+  private _bounds: Rect | undefined;
+
+  /** Conservative bounds when the path consists entirely of known shapes. */
+  getBounds(): Rect | undefined {
+    const bounds = this._bounds;
+    return bounds == null
+      ? undefined
+      : Rect.fromLTRB({
+          left: bounds.left,
+          top: bounds.top,
+          right: bounds.right,
+          bottom: bounds.bottom,
+        });
+  }
 
   getD(): string {
     return this._d;
@@ -14,6 +28,7 @@ export class Path {
   private _append(segment: string) {
     this._d += segment;
     this._canvasPath = null;
+    this._bounds = undefined;
     return this;
   }
 
@@ -78,11 +93,21 @@ export class Path {
   }
 
   addRect(rect: Rect) {
-    return this.moveTo({ x: rect.left, y: rect.top })
+    const previous = this._bounds;
+    const known = this._d === "" || previous != null;
+    this.moveTo({ x: rect.left, y: rect.top })
       .lineTo({ x: rect.right, y: rect.top })
       .lineTo({ x: rect.right, y: rect.bottom })
       .lineTo({ x: rect.left, y: rect.bottom })
       .close();
+    if (known)
+      this._bounds = Rect.fromLTRB({
+        left: Math.min(previous?.left ?? Infinity, rect.left, rect.right),
+        top: Math.min(previous?.top ?? Infinity, rect.top, rect.bottom),
+        right: Math.max(previous?.right ?? -Infinity, rect.left, rect.right),
+        bottom: Math.max(previous?.bottom ?? -Infinity, rect.top, rect.bottom),
+      });
+    return this;
   }
 
   addRRect(rRect: RRect, { clockwise = true }: { clockwise?: boolean } = {}) {
