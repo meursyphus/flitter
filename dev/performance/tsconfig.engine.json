@@ -14,7 +14,12 @@
 	},
 	"include": [
 		"src/lib/engine-bench.ts",
+		"src/lib/text-field-bench.ts",
+		"src/text-editing.test.ts",
+		"tests/text-field.test.ts",
 		"src/text-algorithms.test.ts",
+		"src/text-max-lines.test.ts",
+		"src/text-preparation.test.ts",
 		"src/transform-cache.test.ts",
 		"src/scroll-zoom.test.ts",
 		"tests/scroll-zoom.test.ts",

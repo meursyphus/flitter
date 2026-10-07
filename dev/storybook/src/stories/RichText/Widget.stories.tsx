@@ -169,3 +169,44 @@ export const LineChangeAtN: Story = {
 		})
 	}
 };
+
+
+export const EllipsisAndCjk: Story = {
+  args: {
+    width: '600px',
+    height: '200px',
+    widget: Center({
+      child: Container({
+        width: 180,
+        color: '#eef2ff',
+        child: RichText({
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          text: new TextSpan({
+            text: '「こんにちは」世界。你好，世界！ 긴 문장도 자연스럽게 여러 줄로 표시됩니다.',
+            style: new TextStyle({fontSize: 18})
+          })
+        })
+      })
+    })
+  }
+};
+
+export const EmptyLinesAndSoftHyphens: Story = {
+  args: {
+    width: '600px',
+    height: '200px',
+    widget: Center({
+      child: Container({
+        width: 130,
+        color: '#f0fdf4',
+        child: RichText({
+          text: new TextSpan({
+            text: 'First line\n\ninter\u00adnational\u00adization\n',
+            style: new TextStyle({fontSize: 20})
+          })
+        })
+      })
+    })
+  }
+};

@@ -153,6 +153,7 @@ export const advancedNav: NavSection[] = [
       { title: "Padding", href: "/advanced/widgets/padding" },
       { title: "Positioned", href: "/advanced/widgets/positioned" },
       { title: "RichText", href: "/advanced/widgets/rich-text" },
+      { title: "TextField", href: "/advanced/widgets/text-field" },
       { title: "Row", href: "/advanced/widgets/row" },
       { title: "SizedBox", href: "/advanced/widgets/sized-box" },
       { title: "Spacer", href: "/advanced/widgets/spacer" },
