@@ -1,10 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import Widget from "@flitterjs/react";
 import { ToastBulletChart } from "shared/chart";
-import {
-  bulletRevenueData,
-  bulletRevenueTitle,
-} from "./bulletStoryData";
+import { bulletRevenueData, bulletRevenueTitle } from "./bulletStoryData";
 
 type BulletChartArgs = {
   renderer: "svg" | "canvas";
@@ -35,7 +32,7 @@ function ToastBulletChartView({
 }
 
 const meta: Meta<BulletChartArgs> = {
-  title: "Polish/BulletChart/Toast",
+  title: "Charts/BulletChart/Toast",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },

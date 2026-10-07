@@ -7,14 +7,14 @@ Status: `[ ]` = TODO, `[~]` = in progress, `[x]` = done
 ---
 
 ### Bar Chart
-- [ ] AG / `city-rent` — Average rent by city, single series, simple
-- [ ] Toast / `department-revenue` — Quarterly revenue by department, multi legend
-- [ ] Toast / `horizontal-pill` — Horizontal, negative data included, custom bar (pill-shaped borderRadius, lighter fill + outline, custom colors)
+- [x] AG / `city-rent` — Average rent by city, single series, simple
+- [x] Toast / `department-revenue` — Quarterly revenue by department, multi legend
+- [x] Toast / `horizontal-pill` — Horizontal, negative data included, custom bar (pill-shaped borderRadius, lighter fill + outline, custom colors)
 
 ### Stacked Bar Chart
-- [ ] AG / `energy-mix` — Vertical, energy source composition by year
-- [ ] Toast / `regional-sales` — Horizontal, product category sales by region
-- [ ] Toast / `nivo-pattern` — Vertical, custom bar with CustomPaint (per-legend patterns: dots, stripes, nivo-style), legend position right-bottom, legend color box 2x bigger than toast default. Reference code below:
+- [x] AG / `energy-mix` — Vertical, energy source composition by year
+- [x] Toast / `regional-sales` — Horizontal, product category sales by region
+- [x] Toast / `nivo-pattern` — Vertical, custom bar with CustomPaint (per-legend patterns: dots, stripes, nivo-style), legend position right-bottom, legend color box 2x bigger than toast default. Reference code below:
 ```ts
 // CustomPaint bar example (dots for "fries", stripes for "sandwich")
 const Bar = (...[{ label, legend, value }, { data }]) => {
@@ -75,73 +75,73 @@ const Bar = (...[{ label, legend, value }, { data }]) => {
 ```
 
 ### Line Chart
-- [ ] AG / `monthly-active-users` — Multi line, monthly active users
-- [ ] Toast / `channel-traffic` — Multi line, spline, negative data included
+- [x] AG / `monthly-active-users` — Multi line, monthly active users
+- [x] Toast / `channel-traffic` — Multi line, spline, negative data included
 
 ### Area Chart
-- [ ] AG / `profit-loss` — Multi area, spline, negative data included
-- [ ] Toast / `app-downloads` — Multi area, linear (pointy), no negatives
+- [x] AG / `profit-loss` — Multi area, spline, negative data included
+- [x] Toast / `app-downloads` — Multi area, linear (pointy), no negatives
 
 ### Stacked Area Chart
-- [ ] AG / `monthly-expenses` — Monthly expense composition
-- [ ] Toast / `traffic-sources` — Session count by traffic source
+- [x] AG / `monthly-expenses` — Monthly expense composition
+- [x] Toast / `traffic-sources` — Session count by traffic source
 
 ### Pie Chart
-- [ ] AG / `browser-share` — Legend hidden, outer axis hidden, minimal
-- [ ] Toast / `budget-allocation` — Outer labels visible, inner data labels visible
+- [x] AG / `browser-share` — Legend hidden, outer axis hidden, minimal
+- [x] Toast / `budget-allocation` — Outer labels visible, inner data labels visible
 
 ### Donut Chart
-- [ ] AG / `payment-methods` — Outer labels + inner data labels visible, center content shown
-- [ ] Toast / `project-status` — Legend hidden, outer axis hidden, minimal
+- [x] AG / `payment-methods` — Outer labels + inner data labels visible, center content shown
+- [x] Toast / `project-status` — Legend hidden, outer axis hidden, minimal
 
 ### Scatter Chart
-- [ ] AG / `revenue-growth` — Lots of data points, upward trend
-- [ ] Toast / `student-scores` — Multi series, scattered distribution, varied point shapes (circle/square etc.)
+- [x] AG / `revenue-growth` — Lots of data points, upward trend
+- [x] Toast / `student-scores` — Multi series, scattered distribution, varied point shapes (circle/square etc.)
 
 ### Bubble Chart
-- [ ] AG / `gdp-life-expectancy` — Country GDP vs life expectancy (population = size), distinct distribution
-- [ ] Toast / `product-margin` — Product revenue vs margin (sales volume = size), different distribution pattern from AG
+- [x] AG / `gdp-life-expectancy` — Country GDP vs life expectancy (population = size), distinct distribution
+- [x] Toast / `product-margin` — Product revenue vs margin (sales volume = size), different distribution pattern from AG
 
 ### Radar Chart
-- [ ] AG / `skill-assessment` — Single series, legend hidden
-- [ ] Toast / `team-comparison` — Multi series (Team A vs Team B)
+- [x] AG / `skill-assessment` — Single series, legend hidden
+- [x] Toast / `team-comparison` — Multi series (Team A vs Team B)
 
 ### Heatmap Chart
-- [ ] AG / `hourly-traffic` — Day × hour website traffic, default color tone
-- [ ] Toast / `monthly-product-sales` — Month × product sales, red color palette
+- [x] AG / `hourly-traffic` — Day × hour website traffic, default color tone
+- [x] Toast / `monthly-product-sales` — Month × product sales, red color palette
 
 ### Treemap Chart
-- [ ] AG / TBD — implementer's choice
-- [ ] Toast / TBD — implementer's choice
+- [x] AG / `disk-space-usage`
+- [x] Toast / `global-revenue-breakdown`
 
 ### Sunburst Chart
-- [ ] AG / `org-structure` — Company org chart (Dept > Team > Member)
-- [ ] Toast / `world-population` — World population (Continent > Region > Country)
+- [x] AG / `org-structure` — Company org chart (Dept > Team > Member)
+- [x] Toast / `world-population` — World population (Continent > Region > Country)
 
 ---
 
-## TODO Charts (chart not yet gallery-ready)
+## Additional charts — gallery complete
 
 ### Box Plot
-- [ ] TBD
+- [x] AG / `api-latency`; Toast / `delivery-times`
 
 ### Bullet Chart
-- [ ] TBD
+- [x] AG / `revenue-targets`; Toast / `service-quality`
 
 ### Candlestick Chart
-- [ ] TBD
+- [x] AG / `bitcoin-monthly`
 
 ### Funnel Chart
-- [ ] TBD
+- [x] AG / `product-onboarding`; Toast / `sales-pipeline`
 
 ### Histogram
-- [ ] TBD
+- [x] AG / `parcel-weights`; Toast / `response-times`
 
 ### Sankey Chart
-- [ ] TBD
+- [x] AG / `energy-flow`; Toast / `customer-journey`
 
 ### Waterfall Chart
-- [ ] TBD
+- [x] AG / `operating-profit`; Toast / `project-budget`
 
 ---
 
@@ -162,8 +162,7 @@ Example: `entries/bar-chart/toast/department-revenue/index.tsx`
 
 export const galleryTitle = "Quarterly Revenue by Department";
 
-import Widget from "@flitterjs/react";
-import { ToastBarChart } from "shared/chart";
+import { ToastBarChart } from "@/lib/charts";
 
 export function createWidget() {
   return ToastBarChart({
@@ -180,23 +179,14 @@ export function createWidget() {
   });
 }
 
-export default function BarChartToast() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
-}
 ```
 
 ### Key rules
 
 - `galleryTitle` — displayed in gallery, used as title
-- `createWidget()` — must be exported, script extracts this for code snippets
-- Default export — React component for rendering
-- Import chart from `shared/chart` (script rewrites to `@/components/flitter/charts/...`)
-- AG charts: `import { BarChart } from "shared/chart"` (no prefix)
-- Toast charts: `import { ToastBarChart } from "shared/chart"` (Toast prefix)
+- `createWidget()` — must be exported; the site renders it live (`LiveChart`) and the script extracts it for code snippets
+- Import charts from `@/lib/charts` — the presets with the docs theme (dark/light) and static-render mode applied. The script rewrites the import to `@/components/flitter/charts/...` for snippets
+- AG charts: `import { BarChart } from "@/lib/charts"` (no prefix)
+- Toast charts: `import { ToastBarChart } from "@/lib/charts"` (Toast prefix)
+- Avoid hardcoded text colors in custom parts; read them from `context.config` so dark mode works
 - After adding, run `npm run gen:gallery` from `docs/` to regenerate

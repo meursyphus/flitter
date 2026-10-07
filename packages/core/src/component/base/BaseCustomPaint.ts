@@ -78,8 +78,8 @@ export class RenderCustomPaint<
   }
   private didUpdatePainter(newPainter: Painter<T>, oldPainter: Painter<T>) {
     const { shouldRepaint } = newPainter;
-    if (shouldRepaint == null) return;
-    if (!shouldRepaint(oldPainter)) return;
+    // A new delegate changes the painting unless it explicitly opts out.
+    if (shouldRepaint?.(oldPainter) === false) return;
     this.markNeedsPaint();
   }
   _preferredSize: Size;

@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Monthly Household Expenses ($)";
 
-import Widget from "@flitterjs/react";
-import { StackedAreaChart } from "shared/chart";
+import { StackedAreaChart } from "@/lib/charts";
 
 export function createWidget() {
   return StackedAreaChart({
@@ -21,14 +20,4 @@ export function createWidget() {
       area: { opacity: 0.65, spline: true },
     },
   });
-}
-
-export default function StackedAreaChartAgMonthlyExpenses() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

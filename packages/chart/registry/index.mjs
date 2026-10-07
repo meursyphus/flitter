@@ -370,6 +370,8 @@ export const registryItems = [
   styledCopyChartItem("sunburst-chart", "toast", ["toast-base", "toast-base-radial"]),
   styledCopyChartItem("bullet-chart", "ag", ["ag-base"]),
   styledCopyChartItem("bullet-chart", "toast", ["toast-base"]),
+  styledCopyChartItem("funnel-chart", "ag", ["ag-base", "ag-base-radial"]),
+  styledCopyChartItem("funnel-chart", "toast", ["toast-base", "toast-base-radial"]),
   ...standaloneCharts.map(({ name, registryDependencies }) =>
     standaloneChartItem(name, registryDependencies),
   ),

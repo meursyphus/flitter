@@ -6,50 +6,32 @@ const preview: Preview = {
     options: {
       storySort: {
         order: [
-          "In-Review",
-          [
-            "PieChart",
-            "RadarChart",
-            "TreemapChart",
-          ],
-          "Next",
-          [
-            "SunburstChart",
-            "SankeyChart",
-          ],
-          "Polish",
-          [
-            "BoxPlotChart",
-            "CandlestickChart",
-            "HistogramChart",
-            "WaterfallChart",
-          ],
-          "TODO",
-          [
-            "DonutChart",
-            "PolarAreaChart",
-            "BulletChart",
-            "ComboChart",
-            "FunnelChart",
-            "GanttChart",
-            "NetworkChart",
-            "ProgressChart",
-          ],
           "Charts",
           [
             "BarChart",
             "StackedBarChart",
             "LineChart",
             "AreaChart",
+            "StackedAreaChart",
             "ScatterChart",
             "BubbleChart",
-            "StackedAreaChart",
+            "PieChart",
+            "DonutChart",
+            "RadarChart",
             "HeatmapChart",
+            "TreemapChart",
+            "SunburstChart",
+            "BoxPlotChart",
+            "BulletChart",
+            "CandlestickChart",
+            "HistogramChart",
+            "WaterfallChart",
+            "SankeyChart",
+            "FunnelChart",
           ],
         ],
       },
     },
   },
 };
-
 export default preview;

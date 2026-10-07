@@ -1,4 +1,4 @@
-import { codeToHtml } from "shiki";
+import { highlight } from "@/lib/highlight";
 
 const CUSTOM_CODE = `import { BarChart } from "@/components/charts/bar-chart"
 
@@ -31,14 +31,11 @@ const FILE_TREE = `src/components/charts/
             └── point.ts`;
 
 export async function CustomCodeBlock() {
-  const html = await codeToHtml(CUSTOM_CODE, {
-    lang: "javascript",
-    theme: "github-dark",
-  });
+  const html = await highlight(CUSTOM_CODE, "javascript");
 
   return (
     <div
-      className="mt-5 overflow-x-auto rounded-lg text-[13px] leading-relaxed [&_pre]:px-5 [&_pre]:py-4 [&_pre]:m-0 [&_code]:text-[13px] [&_code]:leading-relaxed"
+      className="code-surface overflow-hidden rounded-lg text-[13px] leading-relaxed [&_pre]:px-5 [&_pre]:py-4"
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
@@ -46,19 +43,13 @@ export async function CustomCodeBlock() {
 
 export function OwnCodeBlock() {
   return (
-    <pre className="mt-5 overflow-x-auto rounded-lg bg-[#24292e] px-5 py-4 text-[13px] leading-relaxed text-[#e1e4e8] font-mono">
+    <pre className="code-surface overflow-x-auto rounded-lg px-5 py-4 text-[13px] leading-relaxed">
       {FILE_TREE.split("\n").map((line, i) => {
-        const arrow = line.includes("←");
+        const [path, note] = line.split("←");
         return (
           <div key={i}>
-            {arrow ? (
-              <>
-                <span>{line.split("←")[0]}</span>
-                <span className="text-emerald-400">← {line.split("←")[1].trim()}</span>
-              </>
-            ) : (
-              <span className="text-gray-400">{line}</span>
-            )}
+            <span className={note ? "text-ink" : "text-faint"}>{path}</span>
+            {note && <span className="text-accent">← {note.trim()}</span>}
           </div>
         );
       })}

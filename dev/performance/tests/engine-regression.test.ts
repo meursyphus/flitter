@@ -8,6 +8,76 @@ declare global {
 }
 
 for (const renderer of ['canvas', 'svg']) {
+	for (const boundary of [false, true]) {
+		for (const nested of [false, true]) {
+			test(`${renderer} clip toggle preserves state (boundary=${boundary}, nested=${nested})`, async ({
+				page
+			}) => {
+				const errors: string[] = [];
+				page.on('pageerror', (error) => errors.push(error.message));
+				await page.goto(`http://localhost:4173/performance/engine?renderer=${renderer}`);
+				await page.waitForFunction(() => !!window.__engineBench);
+				await page.evaluate(
+					async ({ boundary, nested }) => {
+						await window.__engineBench.renderClipToggleCase(boundary, nested);
+					},
+					{ boundary, nested }
+				);
+				const view = page.locator('[data-testid="engine"]');
+				const clipped = await view.screenshot();
+				let unclipped: Buffer;
+				for (let i = 0; i < 2; i++) {
+					const before = await page.evaluate(() => window.__engineBench.clipCounts);
+					await page.evaluate(() => window.__engineBench.setClipped(false));
+					expect(await page.evaluate(() => window.__engineBench.clipCounts)).toEqual(before);
+					unclipped = await view.screenshot();
+					expect(unclipped.equals(clipped)).toBe(false);
+					if (renderer === 'canvas') {
+						const pixels = await page.evaluate(() =>
+							window.__engineBench.pixels([
+								[10, 10],
+								[50, 10],
+								[70, 10]
+							])
+						);
+						expect(pixels).toEqual([
+							[255, 0, 0, 255],
+							[255, 0, 0, 255],
+							nested ? [0, 0, 0, 0] : [255, 0, 0, 255]
+						]);
+					}
+					await page.evaluate(() => window.__engineBench.setClipped(true));
+					expect(await page.evaluate(() => window.__engineBench.clipCounts)).toMatchObject({
+						mounts: 1,
+						disposals: 0
+					});
+					expect((await view.screenshot()).equals(clipped)).toBe(true);
+				}
+				await page.evaluate(
+					async ({ boundary, nested }) => {
+						await window.__engineBench.renderClipToggleCase(boundary, nested, false);
+					},
+					{ boundary, nested }
+				);
+				expect(await page.evaluate(() => window.__engineBench.clipCounts)).toEqual({
+					mounts: 1,
+					disposals: 0,
+					clips: 0
+				});
+				expect((await view.screenshot()).equals(unclipped!)).toBe(true);
+				await page.evaluate(() => window.__engineBench.setClipped(true));
+				expect(await page.evaluate(() => window.__engineBench.clipCounts)).toMatchObject({
+					mounts: 1,
+					disposals: 0
+				});
+				expect((await view.screenshot()).equals(clipped)).toBe(true);
+				expect(errors).toEqual([]);
+			});
+		}
+	}
+}
+
+for (const renderer of ['canvas', 'svg']) {
 	for (const scenario of [
 		'identity',
 		'paint-one',
@@ -97,7 +167,8 @@ for (const scenario of ['identity', 'paint-one', 'paint-all', 'transform', 'opac
 		expect(counts.textMeasurements).toBe(0);
 		expect(counts.canvasAllocations).toBe(0);
 		if (scenario === 'identity' || scenario === 'z-stable') expect(counts.paints).toBe(0);
-		if (scenario === 'paint-one') expect(counts.paints).toBeLessThan(60);
+		// Repaint only one row, including its ten persistent text clip wrappers.
+		if (scenario === 'paint-one') expect(counts.paints).toBeLessThan(70);
 		if (scenario === 'transform' || scenario === 'opacity') expect(counts.paints).toBeLessThan(10);
 	});
 }

@@ -23,7 +23,7 @@ const multiLevelData = [
 ];
 
 const meta: Meta<StoryArgs> = {
-  title: "Polish/SankeyChart/Ag",
+  title: "Charts/SankeyChart/Ag",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {
@@ -36,12 +36,22 @@ type Story = StoryObj<StoryArgs>;
 
 export const EnergyFlow: Story = {
   render: (args) => (
-    <Widget widget={SankeyChart({ data: energyData })} width="760px" height="420px" renderer={args.renderer} />
+    <Widget
+      widget={SankeyChart({ data: energyData })}
+      width="760px"
+      height="420px"
+      renderer={args.renderer}
+    />
   ),
 };
 
 export const MultiLevel: Story = {
   render: (args) => (
-    <Widget widget={SankeyChart({ data: multiLevelData })} width="760px" height="420px" renderer={args.renderer} />
+    <Widget
+      widget={SankeyChart({ data: multiLevelData })}
+      width="760px"
+      height="420px"
+      renderer={args.renderer}
+    />
   ),
 };

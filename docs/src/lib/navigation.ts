@@ -5,7 +5,7 @@ export type NavItem = {
   children?: NavItem[];
   /** Visual hint: "style" items are grouped as siblings, others render normally */
   kind?: "style";
-  /** Ecosystem color dot (tailwind color class, e.g. "bg-emerald-400") */
+  /** Ecosystem color dot (tailwind color class, e.g. "bg-chart") */
   dot?: string;
 };
 
@@ -38,14 +38,14 @@ export const ecosystemNav: Navigation = {
     {
       title: "Products",
       items: [
-        { title: "Chart", href: "/chart", status: "new", dot: "bg-rose-500" },
-        { title: "Diagram", href: "/diagram", status: "coming", dot: "bg-violet-400" },
+        { title: "Chart", href: "/chart", status: "new", dot: "bg-chart" },
+        { title: "Diagram", href: "/diagram", status: "coming", dot: "bg-script" },
       ],
     },
     {
       title: "Learn",
       items: [
-        { title: "Core API", href: "/advanced/what-is-flitter" },
+        { title: "Core API", href: "/advanced/what-is-flitter", dot: "bg-core" },
         { title: "Integration", href: "/integration" },
       ],
     },
@@ -73,6 +73,7 @@ export const chartNav: Navigation = {
         { title: "Bubble Chart", href: "/chart/api/bubble-chart" },
         { title: "Candlestick Chart", href: "/chart/api/candlestick-chart" },
         { title: "Donut Chart", href: "/chart/api/donut-chart" },
+        { title: "Funnel Chart", href: "/chart/api/funnel-chart" },
         { title: "Heatmap Chart", href: "/chart/api/heatmap-chart" },
         { title: "Line Chart", href: "/chart/api/line-chart" },
         { title: "Pie Chart", href: "/chart/api/pie-chart" },

@@ -26,7 +26,6 @@ import type {
 import { cartesian } from "@styles/ag";
 import type { CandlestickChartConfig } from "../config";
 
-const CROSSHAIR_COLOR = "rgba(28, 31, 34, 0.75)";
 const CROSSHAIR_DASH = [6, 4];
 const AXIS_LABEL_GAP = 8;
 const AXIS_LABEL_PADDING_X = 10;
@@ -170,7 +169,7 @@ function buildOverlay({
         left: clamp(hoveredCenterX, 0, plotSize.width),
         top: 0,
         child: dashedLine({
-          color: CROSSHAIR_COLOR,
+          color: ctx.config.candlestick.crosshairColor,
           dash: CROSSHAIR_DASH,
           isVertical: true,
           length: plotSize.height,
@@ -180,7 +179,7 @@ function buildOverlay({
         left: 0,
         top: activeMouseY,
         child: dashedLine({
-          color: CROSSHAIR_COLOR,
+          color: ctx.config.candlestick.crosshairColor,
           dash: CROSSHAIR_DASH,
           isVertical: false,
           length: plotSize.width,

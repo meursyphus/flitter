@@ -10,6 +10,8 @@ export function toastDataView(
   const child = DataView(args, context);
   const isVertical = context.direction === "vertical";
 
+  if (!context.config.animation.enabled) return child;
+
   return new AnimatedDataView({
     child,
     duration: context.config.animation.duration,

@@ -24,14 +24,16 @@ export function agBulletGroup(
   const { scale, config, direction } = context;
   if (scale == null) return SizedBox.shrink();
 
-  const child = isDimmed
-    ? Opacity({ opacity: 0.35, child: bulletBox })
-    : bulletBox;
+  const child = Opacity({ opacity: isDimmed ? 0.35 : 1, child: bulletBox });
 
   return Container({
     width: Infinity,
     height: Infinity,
-    padding: EdgeInsets.symmetric(direction === "vertical" ? { horizontal: config.bullet.gap } : { vertical: config.bullet.gap }),
+    padding: EdgeInsets.symmetric(
+      direction === "vertical"
+        ? { horizontal: config.bullet.gap }
+        : { vertical: config.bullet.gap },
+    ),
     child,
   });
 }

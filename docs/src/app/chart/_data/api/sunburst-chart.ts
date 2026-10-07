@@ -47,13 +47,13 @@ type SunburstChartData = {
           {
             property: "sunburst.hoverStrokeWidth",
             type: "number",
-            default: "2",
+            default: "1",
             description: "Stroke width when a segment is hovered.",
           },
           {
             property: "sunburst.hoverShadowColor",
             type: "string",
-            default: '"rgba(0,0,0,0.20)"',
+            default: '"transparent"',
             description: "Shadow color on hovered segments.",
           },
           {

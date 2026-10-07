@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Monthly Temperature by City";
 
-import Widget from "@flitterjs/react";
-import { ToastLineChart } from "shared/chart";
+import { ToastLineChart } from "@/lib/charts";
 
 export function createWidget() {
   return ToastLineChart({
@@ -20,14 +19,4 @@ export function createWidget() {
       line: { spline: true },
     },
   });
-}
-
-export default function StockIndexReturns() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

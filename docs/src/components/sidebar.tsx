@@ -15,13 +15,13 @@ function normPath(p: string) {
 function StatusBadge({ status }: { status: string }) {
   if (status === "new")
     return (
-      <span className="ml-auto rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-semibold text-blue-600">
+      <span className="ml-auto rounded bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold text-accent">
         New
       </span>
     );
   if (status === "beta")
     return (
-      <span className="ml-auto rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500">
+      <span className="ml-auto rounded bg-surface px-1.5 py-0.5 text-[10px] font-medium text-soft">
         Beta
       </span>
     );
@@ -41,7 +41,7 @@ function ChildrenGroup({
   const others = children.filter((c) => c.kind !== "style");
 
   return (
-    <div className="mt-0.5 ml-3 border-l border-neutral-200">
+    <div className="mt-0.5 ml-3 border-l border-line">
       {styles.map((item) => {
         const isActive = pathname === item.href;
         const isComing = item.status === "coming";
@@ -50,7 +50,7 @@ function ChildrenGroup({
           return (
             <span
               key={item.href}
-              className="block py-1.5 pl-3 text-[13px] text-neutral-300 cursor-default"
+              className="block cursor-default py-1.5 pl-3 text-[13px] text-faint/60"
             >
               {item.title}
             </span>
@@ -63,10 +63,10 @@ function ChildrenGroup({
             href={item.href}
             onClick={onLinkClick}
             className={clsx(
-              "block py-1.5 pl-3 text-[14px] font-medium transition-colors",
+              "block py-1.5 pl-3 text-[14px] transition-colors",
               isActive
-                ? "border-l-2 border-blue-500 -ml-px font-bold text-blue-600"
-                : "text-neutral-700 hover:text-neutral-900"
+                ? "-ml-px border-l-2 border-accent font-semibold text-ink"
+                : "text-soft hover:text-ink"
             )}
           >
             {item.title}
@@ -83,7 +83,7 @@ function ChildrenGroup({
           return (
             <span
               key={item.href}
-              className="block py-1.5 pl-3 text-[13px] text-neutral-300 cursor-default"
+              className="block cursor-default py-1.5 pl-3 text-[13px] text-faint/60"
             >
               {item.title}
             </span>
@@ -96,10 +96,10 @@ function ChildrenGroup({
             href={item.href}
             onClick={onLinkClick}
             className={clsx(
-              "block py-1.5 pl-3 text-[14px] font-medium transition-colors",
+              "block py-1.5 pl-3 text-[14px] transition-colors",
               isActive
-                ? "border-l-2 border-blue-500 -ml-px font-bold text-blue-600"
-                : "text-neutral-700 hover:text-neutral-900"
+                ? "-ml-px border-l-2 border-accent font-semibold text-ink"
+                : "text-soft hover:text-ink"
             )}
           >
             {item.title}
@@ -128,7 +128,8 @@ function NavLink({
   if (isComing) {
     return (
       <li>
-        <span className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[14px] text-neutral-300 cursor-default">
+        <span className="flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-[14px] text-faint/60">
+          {item.dot && <span className={clsx("h-3 w-3 shrink-0 rounded-[3px] opacity-40", item.dot)} />}
           {item.title}
         </span>
       </li>
@@ -143,14 +144,14 @@ function NavLink({
         href={item.href}
         onClick={onLinkClick}
         className={clsx(
-          "flex items-center gap-2 rounded-md px-2 py-2 text-[14px] font-semibold transition-colors",
+          "flex items-center gap-2 rounded-md px-2 py-1.5 text-[14px] font-medium transition-colors",
           isActive
-            ? "font-bold text-blue-600 bg-blue-100"
-            : "text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
+            ? "bg-accent/12 font-semibold text-ink"
+            : "text-soft hover:bg-surface hover:text-ink"
         )}
       >
         {item.dot && (
-          <span className={clsx("h-4 w-4 shrink-0 rounded-sm", item.dot)} />
+          <span className={clsx("h-3 w-3 shrink-0 rounded-[3px]", item.dot)} />
         )}
         {item.title}
         {item.status && <StatusBadge status={item.status} />}
@@ -185,8 +186,8 @@ function SidebarSection({
     <div className="mb-5">
       <h3
         className={clsx(
-          "mb-1.5 px-2 text-[12px] font-bold uppercase tracking-wider text-neutral-400",
-          isCollapsible && "flex cursor-pointer items-center justify-between select-none hover:text-neutral-600",
+          "mb-1.5 px-2 text-[12px] font-semibold text-faint",
+          isCollapsible && "flex cursor-pointer select-none items-center justify-between hover:text-ink",
         )}
         onClick={isCollapsible ? () => setIsOpen(!isOpen) : undefined}
       >
@@ -226,13 +227,13 @@ function SidebarSection({
 /* ── Search Bar (placeholder) ── */
 function SearchBar() {
   return (
-    <button className="flex w-full items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-[14px] text-neutral-400 transition-colors hover:border-neutral-300 hover:bg-white">
+    <button className="flex w-full items-center gap-2 rounded-lg border border-line bg-surface px-3 py-2 text-[14px] text-faint transition-colors hover:border-line-strong">
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="shrink-0">
         <circle cx="7" cy="7" r="5" />
         <path d="M11 11l3 3" />
       </svg>
       Search...
-      <kbd className="ml-auto rounded border border-neutral-200 bg-white px-1.5 py-0.5 text-[10px] font-medium text-neutral-400">
+      <kbd className="ml-auto rounded border border-line bg-canvas px-1.5 py-0.5 font-sans text-[10px] font-medium text-faint">
         ⌘K
       </kbd>
     </button>

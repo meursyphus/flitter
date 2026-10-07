@@ -29,7 +29,7 @@ function AgHistogramStory({ args }: { args: StoryArgs }) {
 }
 
 const meta: Meta<StoryArgs> = {
-  title: "Polish/HistogramChart/Ag",
+  title: "Charts/HistogramChart/Ag",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {

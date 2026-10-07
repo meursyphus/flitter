@@ -28,6 +28,7 @@ import {
 	BoxShadow,
 	type Widget
 } from 'flitter-core';
+import { createClipToggleScene, type ClipToggleState } from './clip-toggle-scene';
 
 export const engineScenarios = [
 	'identity',
@@ -147,6 +148,7 @@ export function mountEngineBench(
 	host.append(view);
 	const runner = new AppRunner({ view, ssrSize: { width: 960, height: 540 } });
 	let state: SceneState;
+	let clipState: ClipToggleState;
 	const hits: number[] = [];
 	const hoverHits: number[] = [];
 	let shadowBlurAtChild = -1;
@@ -167,6 +169,19 @@ export function mountEngineBench(
 	return {
 		hits,
 		hoverHits,
+		get clipCounts() {
+			return { ...clipState.counts };
+		},
+		async renderClipToggleCase(boundary: boolean, nested: boolean, clipped = true) {
+			runner.runApp(
+				createClipToggleScene(boundary, nested, clipped, (state) => (clipState = state))
+			);
+			await this.settle();
+		},
+		async setClipped(clipped: boolean) {
+			clipState.setClipped(clipped);
+			await this.settle();
+		},
 		get shadowBlurAtChild() {
 			return shadowBlurAtChild;
 		},

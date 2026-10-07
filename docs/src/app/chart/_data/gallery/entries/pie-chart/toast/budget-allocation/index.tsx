@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Enterprise Software Market";
 
-import Widget from "@flitterjs/react";
-import { ToastPieChart } from "shared/chart";
+import { ToastPieChart } from "@/lib/charts";
 
 export function createWidget() {
   return ToastPieChart({
@@ -30,14 +29,4 @@ export function createWidget() {
       },
     },
   });
-}
-
-export default function BudgetAllocation() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

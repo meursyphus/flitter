@@ -16,5 +16,9 @@ export default function AdvancedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <DocsLayout sections={advancedNav}>{children}</DocsLayout>;
+  return (
+    <DocsLayout sections={advancedNav} product="core">
+      {children}
+    </DocsLayout>
+  );
 }

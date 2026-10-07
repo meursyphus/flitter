@@ -4,12 +4,11 @@ import {
   Stack,
   StackFit,
   AnimatedPositioned,
-  AnimatedOpacity,
-  FractionalTranslation,
+  LayoutBuilder,
+  GlobalKey,
   ConstraintsTransformBox,
   GestureDetector,
   SizedBox,
-  Offset,
   Curves,
   ZIndex,
   type Widget,
@@ -17,7 +16,6 @@ import {
 
 const TOOLTIP_OFFSET = 12;
 const ANIMATION_DURATION = 150;
-const FADE_DURATION = 100;
 const MOUSE_THRESHOLD = 3;
 
 export type AgMouseTooltipOverlayArgs = {
@@ -52,7 +50,34 @@ class _AgMouseTooltipAreaState extends State<_AgMouseTooltipArea> {
   mouseX = 0;
   mouseY = 0;
   wasVisible = false;
-  lastTooltip: Widget | null = null;
+  tooltipKey = new GlobalKey();
+  tooltipWidth = 220;
+  tooltipHeight = 100;
+  measurementScheduled = false;
+
+  private measureTooltip(): void {
+    if (this.measurementScheduled) return;
+    this.measurementScheduled = true;
+    this.element.scheduler.addPostFrameCallbacks(() => {
+      this.measurementScheduled = false;
+      const element = this.tooltipKey.buildOwner?.findByGlobalKey(
+        this.tooltipKey,
+      );
+      // A fast move can remove the tooltip before this post-frame measurement.
+      if (element == null || this.widget.tooltip == null) return;
+      const size = element.renderObject.size;
+      if (!size) return;
+      if (
+        size.width === this.tooltipWidth &&
+        size.height === this.tooltipHeight
+      )
+        return;
+      this.setState(() => {
+        this.tooltipWidth = size.width;
+        this.tooltipHeight = size.height;
+      });
+    });
+  }
 
   private getLocalPosition(e: MouseEvent): { x: number; y: number } {
     const ro = this.element.renderObject;
@@ -70,12 +95,11 @@ class _AgMouseTooltipAreaState extends State<_AgMouseTooltipArea> {
   override build(): Widget {
     const { overlay, tooltip } = this.widget;
 
-    if (tooltip != null) {
-      this.lastTooltip = tooltip;
-    }
+    if (tooltip != null) this.measureTooltip();
 
     const isVisible = tooltip != null;
-    const positionDuration = !this.wasVisible && isVisible ? 0 : ANIMATION_DURATION;
+    const positionDuration =
+      !this.wasVisible && isVisible ? 0 : ANIMATION_DURATION;
     this.wasVisible = isVisible;
 
     const overlayWidget = overlay?.({
@@ -83,61 +107,74 @@ class _AgMouseTooltipAreaState extends State<_AgMouseTooltipArea> {
       mouseY: this.mouseY,
       hasMousePosition: this.hasMousePosition,
     });
-    const showTooltip = this.lastTooltip;
+    // Remove the tooltip on leave; retaining a transparent subtree can leave
+    // SVG shadow/filter pixels behind when the mark subtree is reconciled.
+    const showTooltip = tooltip;
 
-    const children: Widget[] = [
-      GestureDetector({
-        behavior: "translucent",
-        cursor: "default",
-        onMouseMove: (e: MouseEvent) => {
-          const local = this.getLocalPosition(e);
-          const dx = local.x - this.mouseX;
-          const dy = local.y - this.mouseY;
-          if (dx * dx + dy * dy < MOUSE_THRESHOLD * MOUSE_THRESHOLD) return;
-          this.setState(() => {
-            this.hasMousePosition = true;
-            this.mouseX = local.x;
-            this.mouseY = local.y;
-          });
-        },
-        child: SizedBox.expand(),
-      }),
-    ];
+    return LayoutBuilder({
+      builder: (_, constraints) => {
+        const children: Widget[] = [
+          GestureDetector({
+            behavior: "translucent",
+            cursor: "default",
+            onMouseMove: (e: MouseEvent) => {
+              const local = this.getLocalPosition(e);
+              const dx = local.x - this.mouseX;
+              const dy = local.y - this.mouseY;
+              if (dx * dx + dy * dy < MOUSE_THRESHOLD * MOUSE_THRESHOLD) return;
+              this.setState(() => {
+                this.hasMousePosition = true;
+                this.mouseX = local.x;
+                this.mouseY = local.y;
+              });
+            },
+            child: SizedBox.expand(),
+          }),
+        ];
 
-    if (overlayWidget != null) {
-      children.push(overlayWidget);
-    }
+        if (overlayWidget != null) {
+          children.push(overlayWidget);
+        }
 
-    if (showTooltip != null) {
-      children.push(
-        AnimatedPositioned({
-          duration: positionDuration,
-          curve: Curves.easeOut,
-          left: this.mouseX,
-          top: this.mouseY - TOOLTIP_OFFSET,
-          child: AnimatedOpacity({
-            duration: FADE_DURATION,
-            opacity: isVisible ? 1 : 0,
-            curve: Curves.easeOut,
-            child: FractionalTranslation({
-              translation: new Offset({ x: -0.5, y: -1 }),
+        if (showTooltip != null) {
+          children.push(
+            AnimatedPositioned({
+              duration: positionDuration,
+              curve: Curves.easeOut,
+              left: Math.max(
+                4,
+                Math.min(
+                  this.mouseX - this.tooltipWidth / 2,
+                  constraints.maxWidth - this.tooltipWidth - 4,
+                ),
+              ),
+              top: Math.max(
+                4,
+                Math.min(
+                  this.mouseY - TOOLTIP_OFFSET - this.tooltipHeight,
+                  constraints.maxHeight - this.tooltipHeight - 4,
+                ),
+              ),
               child: ConstraintsTransformBox({
                 constraintsTransform: ConstraintsTransformBox.unconstrained,
                 child: ZIndex({
                   zIndex: 9999,
-                  child: showTooltip,
+                  child: SizedBox({
+                    key: this.tooltipKey,
+                    child: showTooltip,
+                  }),
                 }),
               }),
             }),
-          }),
-        }),
-      );
-    }
+          );
+        }
 
-    return Stack({
-      fit: StackFit.passthrough,
-      clipped: false,
-      children,
+        return Stack({
+          fit: StackFit.passthrough,
+          clipped: false,
+          children,
+        });
+      },
     });
   }
 }

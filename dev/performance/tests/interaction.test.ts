@@ -6,6 +6,8 @@ import { test, expect, type Page } from '@playwright/test';
  */
 
 async function click(page: Page) {
+	// The SVG host exists before the engine's first ResizeObserver-driven frame.
+	await expect(page.getByText('click', { exact: true })).toBeVisible();
 	const svgElement = page.locator('svg');
 	const boundingBox = await svgElement.boundingBox();
 	if (boundingBox) {

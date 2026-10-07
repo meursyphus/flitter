@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Disk Space Usage";
 
-import Widget from "@flitterjs/react";
-import { TreemapChart } from "shared/chart";
+import { TreemapChart } from "@/lib/charts";
 
 export function createWidget() {
   return TreemapChart({
@@ -42,14 +41,4 @@ export function createWidget() {
       title: { text: "Disk Space Usage (195 GB)", visible: true },
     },
   });
-}
-
-export default function TreemapChartAg() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

@@ -20,14 +20,14 @@ export function toastRadialAxisLabel(
 ): Widget {
   if (index === 0 || ratio >= 0.9999) return SizedBox.shrink();
 
-  const { font, axis } = ctx.config;
+  const { font, axis, radar } = ctx.config;
 
   return Container({
     padding: EdgeInsets.symmetric({ horizontal: 3, vertical: 1 }),
     decoration: new BoxDecoration({
-      color: "#f3f4f6",
+      color: radar.tickLabelBackground,
       borderRadius: BorderRadius.all(Radius.circular(4)),
-      border: Border.all({ color: "rgba(0, 0, 0, 0.08)", width: 1 }),
+      border: Border.all({ color: radar.tickLabelBorderColor, width: 1 }),
     }),
     child: Text(String(value), {
       style: new TextStyle({

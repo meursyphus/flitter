@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Product Revenue vs Margin";
 
-import Widget from "@flitterjs/react";
-import { ToastBubbleChart } from "shared/chart";
+import { ToastBubbleChart } from "@/lib/charts";
 
 export function createWidget() {
   return ToastBubbleChart({
@@ -60,14 +59,4 @@ export function createWidget() {
       title: { text: "Product Revenue vs Profit Margin", visible: true },
     },
   });
-}
-
-export default function BubbleChartToastProductMargin() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

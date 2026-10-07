@@ -44,8 +44,9 @@ export class SvgPainter extends Painter {
 
     if (this.isPainter) {
       const { svgEls, container } = this.resolveSvgEl();
-      if (clipId && clipIdChanged) {
-        container.setAttribute("clip-path", `url(#${clipId})`);
+      if (clipIdChanged) {
+        if (clipId) container.setAttribute("clip-path", `url(#${clipId})`);
+        else container.removeAttribute("clip-path");
       }
       if (opacityChanged) {
         container.setAttribute("opacity", `${opacity}`);

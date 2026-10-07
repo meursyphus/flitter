@@ -1,5 +1,6 @@
 import Link from "next/link";
 import CodeBlock from "@/components/code-block";
+import CopyCommand from "@/components/copy-command";
 import type { OverviewPageData } from "../_data";
 
 export default async function OverviewPage({
@@ -10,26 +11,22 @@ export default async function OverviewPage({
   const { title, description, quickStartCode, slug } = data;
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div className="mx-auto max-w-5xl px-5 md:px-10">
       {/* Header */}
       <section className="pt-10 pb-2">
-        <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
+        <h1 className="display text-[clamp(2rem,5vw,3rem)] text-ink">
           {title}
         </h1>
-        <p className="mt-2 text-base leading-relaxed text-neutral-500 max-w-2xl">
+        <p className="mt-3 max-w-2xl text-base leading-relaxed text-soft">
           {description}
         </p>
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <div className="inline-flex flex-col gap-1 rounded-lg bg-neutral-50 border border-neutral-200 px-3 py-2">
-            <code className="text-xs text-neutral-600">
-              <span className="text-teal-500">$</span> npx flitter-ui add {slug[0]}
-            </code>
-          </div>
+          <CopyCommand command={`npx flitter-ui add ${slug[0]}`} />
 
           <Link
             href={`/chart/gallery`}
-            className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3.5 py-1.5 text-xs font-medium text-neutral-600 transition-all hover:border-teal-300 hover:text-teal-700 hover:shadow-sm"
+            className="inline-flex items-center gap-1.5 rounded-full border border-line px-3.5 py-1.5 text-[13px] font-medium text-soft transition-colors hover:border-accent hover:text-ink"
           >
             Gallery
             <svg
@@ -46,7 +43,7 @@ export default async function OverviewPage({
 
           <Link
             href={`/chart/api/${slug[0]}`}
-            className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3.5 py-1.5 text-xs font-medium text-neutral-600 transition-all hover:border-teal-300 hover:text-teal-700 hover:shadow-sm"
+            className="inline-flex items-center gap-1.5 rounded-full border border-line px-3.5 py-1.5 text-[13px] font-medium text-soft transition-colors hover:border-accent hover:text-ink"
           >
             API Reference
             <svg
@@ -67,7 +64,7 @@ export default async function OverviewPage({
       {quickStartCode && (
         <section className="pt-6">
           <details className="group max-w-2xl">
-            <summary className="flex cursor-pointer items-center gap-2 rounded-md bg-neutral-100 px-3 py-2 text-xs font-medium uppercase tracking-widest text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-700 select-none">
+            <summary className="flex cursor-pointer select-none items-center gap-2 rounded-md border border-line bg-surface px-3 py-2 text-[13px] font-medium text-soft transition-colors hover:text-ink">
               <svg
                 width="12"
                 height="12"
@@ -85,11 +82,11 @@ export default async function OverviewPage({
             </summary>
             <div className="mt-4">
               <CodeBlock code={quickStartCode} lang="tsx" />
-              <p className="mt-3 text-[13px] text-neutral-400">
+              <p className="mt-3 text-[13px] text-faint">
                 See{" "}
                 <Link
                   href="/integration"
-                  className="text-neutral-600 underline underline-offset-2 hover:text-neutral-900"
+                  className="text-soft underline underline-offset-2 hover:text-ink"
                 >
                   Integration guide
                 </Link>{" "}

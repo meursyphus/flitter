@@ -2,8 +2,7 @@
 
 export const galleryTitle = "Quarterly Profit / Loss by Division";
 
-import Widget from "@flitterjs/react";
-import { ToastBarChart } from "shared/chart";
+import { ToastBarChart } from "@/lib/charts";
 import {
   Container,
   EdgeInsets,
@@ -68,14 +67,4 @@ export function createWidget() {
       bar: { cornerRadius: 10, gap: 1 },
     },
   });
-}
-
-export default function BarChartToast() {
-  return (
-    <Widget
-      widget={createWidget()}
-      width="100%"
-      height="100%"
-    />
-  );
 }

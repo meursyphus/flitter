@@ -31,11 +31,7 @@ export default function ChartLayout({
   children: React.ReactNode;
 }) {
   return (
-    <DocsLayout
-      sections={chartNav.sections}
-      noProse
-      fullWidth
-    >
+    <DocsLayout sections={chartNav.sections} product="chart" noProse fullWidth>
       {children}
     </DocsLayout>
   );

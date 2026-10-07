@@ -2,11 +2,11 @@
 
 Show sequential stage dropoff and conversion through a funnel.
 
-Generated: 2026-04-08
+Generated: 2026-10-07
 
 ## Surface
 
-Base-wrapper chart. Start with `chart-presets FunnelChart` for structural defaults, but expect to own `custom` and `config` sooner than with fully themed preset charts.
+Preset chart. Start with `chart-presets FunnelChart`. The wrapper already has a default visual direction, so style switching is not the first decision.
 
 ## Use When
 
@@ -35,7 +35,6 @@ const widget = FunnelChart({
   ]
 },
 });
-// Add config/custom overrides as the request becomes more specific.
 
 <Widget widget={widget} width="720px" height="420px" />
 ```
@@ -61,14 +60,14 @@ const widget = FunnelChart({
 
 ## Implementation Notes
 
-- Use chart-presets FunnelChart as a base wrapper.
-- Clarify whether this is raw-stage volume, conversion, or both.
+- Install funnel-chart with --ag or --toast; the CLI copies an editable styled chart.
+- Labels show raw values and percentage of the first stage; tooltips also show conversion from the previous stage.
 - Branching flows are not funnel charts; use sankey instead.
 
 ## Override Surface
 
 - stage: own segment geometry and labels
-- stageLabel / dataLabel: explain conversion semantics
+- dataLabel: explain conversion semantics
 - legend: reinforce stage meaning if colors carry semantics
 - layout: reshape the chart for a more product or dashboard tone
 
@@ -78,5 +77,5 @@ Go headless if the funnel needs novel geometry, interactive stage expansion, or 
 
 ## Source Paths
 
-- `shared/chart-presets/charts/funnel-chart`
+- `packages/chart/registry/templates/charts/funnel-chart`
 - `packages/chart/src/headless/funnel-chart`
