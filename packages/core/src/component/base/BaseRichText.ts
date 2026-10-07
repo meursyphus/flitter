@@ -112,6 +112,7 @@ export class RenderParagraph extends RenderObject {
   set overflow(newOverflow: TextOverflow) {
     if (this.#overflow === newOverflow) return; // early return
     this.#overflow = newOverflow;
+    this.textPainter.ellipsis = newOverflow === TextOverflow.ellipsis ? "\u2026" : undefined;
     this.markNeedsLayout();
   }
   #textPainter: TextPainter;
@@ -166,10 +167,6 @@ export class RenderParagraph extends RenderObject {
   }
 
   set text(value: InlineSpan) {
-    // `equals` ignores TextStyle.height while `compareTo` classifies it as a
-    // layout change; checking `equals` first preserves the long-standing
-    // no-op behavior for spans that only differ in `height`.
-    if (this.textPainter.text!.equals(value)) return;
     switch (this.textPainter.text!.compareTo(value)) {
       case RenderComparison.identical:
         return;
@@ -278,14 +275,35 @@ export class RenderParagraph extends RenderObject {
       this.textPainter.height !== this.previousHeight;
   }
 
-  protected override computeIntrinsicHeight(_width: number): number {
-    this.textPainter.layout();
-    return this.textPainter.height;
+  // Intrinsic queries must not replace the paragraph currently used for paint.
+  // RenderObject caches these results by dimension and constraint and clears
+  // them when a layout input changes.
+  private createIntrinsicTextPainter(): TextPainter {
+    return new TextPainter({
+      text: this.text,
+      textAlign: this.textAlign,
+      textDirection: this.textDirection,
+      textScaleFactor: this.textScaleFactor,
+      maxLines: this.maxLines,
+      ellipsis: this.textPainter.ellipsis,
+      textWidthBasis: this.textWidthBasis,
+    });
+  }
+
+  protected override computeIntrinsicHeight(width: number): number {
+    const painter = this.createIntrinsicTextPainter();
+    painter.layout({
+      maxWidth: this.softWrap || this.overflow === TextOverflow.ellipsis
+        ? width
+        : Infinity,
+    });
+    return painter.height;
   }
 
   protected override computeIntrinsicWidth(_height: number): number {
-    this.textPainter.layout();
-    return this.textPainter.width;
+    const painter = this.createIntrinsicTextPainter();
+    painter.layout();
+    return painter.width;
   }
 
   protected override createSvgPainter(): SvgPainter {
