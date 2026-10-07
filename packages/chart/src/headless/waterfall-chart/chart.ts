@@ -196,6 +196,7 @@ const behavior: CartesianScaffoldBehavior<
 	getLegends: (ctx) => [
 		{ name: ctx.config.waterfall.positiveName, index: 0 },
 		{ name: ctx.config.waterfall.negativeName, index: 1 },
+		...(ctx.items.some(isSummary) ? [{ name: ctx.config.waterfall.totalName, index: 2 }] : []),
 	],
 	buildLegend: (ctx, { name, index }) =>
 		ctx.custom.legend({ name, index, isVisible: true }, ctx),

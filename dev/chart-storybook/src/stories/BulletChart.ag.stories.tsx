@@ -1,12 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import Widget from "@flitterjs/react";
 import { BulletChart } from "shared/chart";
-import {
-  bulletRevenueData,
-  bulletRevenueTitle,
-} from "./bulletStoryData";
+import { bulletRevenueData, bulletRevenueTitle } from "./bulletStoryData";
 
-const TITLE_OPTIONS = ["top-start", "top-center", "top-end", "bottom-start", "bottom-center", "bottom-end"] as const;
+const TITLE_OPTIONS = [
+  "top-start",
+  "top-center",
+  "top-end",
+  "bottom-start",
+  "bottom-center",
+  "bottom-end",
+] as const;
 
 type BulletChartArgs = {
   renderer: "svg" | "canvas";
@@ -20,7 +24,10 @@ type BulletChartArgs = {
 };
 
 function parseTitlePlacement(placement: string) {
-  const [position, alignment] = placement.split("-") as ["top" | "bottom", "start" | "center" | "end"];
+  const [position, alignment] = placement.split("-") as [
+    "top" | "bottom",
+    "start" | "center" | "end",
+  ];
   return { position, alignment };
 }
 
@@ -56,7 +63,7 @@ function AgBulletChart({
 }
 
 const meta: Meta<BulletChartArgs> = {
-  title: "Polish/BulletChart/Ag",
+  title: "Charts/BulletChart/Ag",
   parameters: { layout: "centered" },
   argTypes: {
     renderer: { control: "inline-radio", options: ["svg", "canvas"] },
@@ -64,8 +71,12 @@ const meta: Meta<BulletChartArgs> = {
     titlePlacement: { control: "select", options: TITLE_OPTIONS },
     valueBarColor: { control: "color" },
     targetMarkerColor: { control: "color" },
-    valueBarHeightRatio: { control: { type: "range", min: 0.1, max: 0.9, step: 0.05 } },
-    targetMarkerHeightRatio: { control: { type: "range", min: 0.3, max: 1, step: 0.05 } },
+    valueBarHeightRatio: {
+      control: { type: "range", min: 0.1, max: 0.9, step: 0.05 },
+    },
+    targetMarkerHeightRatio: {
+      control: { type: "range", min: 0.3, max: 1, step: 0.05 },
+    },
     bulletGap: { control: { type: "range", min: 0, max: 20, step: 1 } },
   },
   args: {

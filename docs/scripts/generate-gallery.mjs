@@ -393,14 +393,11 @@ lines.push("");
 
 // 6. Todo categories
 lines.push("export const todoCategories = [");
+const galleryChartTypes = new Set(entries.map((entry) => entry.chartType));
 const todos = [
-  "box-plot-chart",
-  "bullet-chart",
-  "funnel-chart",
-  "histogram-chart",
-  "sankey-chart",
-  "waterfall-chart",
-];
+  "box-plot-chart", "bullet-chart", "funnel-chart", "histogram-chart",
+  "sankey-chart", "sunburst-chart", "waterfall-chart",
+].filter((chartType) => !galleryChartTypes.has(chartType));
 for (const t of todos) {
   lines.push(`  "${t}",`);
 }

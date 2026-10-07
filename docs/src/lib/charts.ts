@@ -48,6 +48,16 @@ const darkLayers: Record<ChartStyle, ConfigLayer> = {
     radialTick: { color: axisLine },
     dataCenter: { labelColor: soft, valueColor: ink },
     treemap: { groupTitle: { color: soft } },
+    boxPlot: { whiskerColor: soft },
+    sankey: { labelColor: soft },
+    waterfall: { line: { color: axisLine }, dataLabel: { color: "#181d1f" } },
+    dataLabel: { color: ink },
+    bullet: {
+      valueBarColor: "#d4d8de",
+      targetMarkerColor: "#f5f7fa",
+      rangeColors: ["#46505e", "#333c49", "#252d38"],
+    },
+    sunburst: { strokeColor: "#14171c" },
     candlestick: {
       upColor: surface,
       crosshairColor: "rgba(238, 240, 244, 0.5)",
@@ -68,6 +78,14 @@ const darkLayers: Record<ChartStyle, ConfigLayer> = {
     radialLabel: { fontColor: ink },
     radialTick: { color: axisLine },
     dataCenter: { labelColor: faint, valueColor: ink },
+    sankey: { labelColor: soft },
+    waterfall: { line: { color: axisLine }, dataLabel: { color: "#181d1f" } },
+    dataLabel: { color: ink },
+    bullet: {
+      valueBarColor: "#d4d8de",
+      targetMarkerColor: "#f5f7fa",
+      rangeColors: ["#46505e", "#333c49", "#252d38"],
+    },
   },
 };
 
@@ -102,7 +120,9 @@ function merge(base: ConfigLayer, override: ConfigLayer): ConfigLayer {
   for (const [key, value] of Object.entries(override)) {
     const current = result[key];
     result[key] =
-      isPlainObject(value) && isPlainObject(current) ? merge(current, value) : value;
+      isPlainObject(value) && isPlainObject(current)
+        ? merge(current, value)
+        : value;
   }
   return result;
 }
@@ -120,7 +140,10 @@ function resolveConfig(style: ChartStyle, config: unknown) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function themed<F extends (props: any) => unknown>(factory: F, style: ChartStyle): F {
+function themed<F extends (props: any) => unknown>(
+  factory: F,
+  style: ChartStyle,
+): F {
   const wrapped = (props: { config?: unknown }) =>
     factory({ ...props, config: resolveConfig(style, props.config) });
   return wrapped as F;
@@ -149,6 +172,27 @@ export const ToastLineChart = themed(presets.ToastLineChart, "toast");
 export const ToastPieChart = themed(presets.ToastPieChart, "toast");
 export const ToastRadarChart = themed(presets.ToastRadarChart, "toast");
 export const ToastScatterChart = themed(presets.ToastScatterChart, "toast");
-export const ToastStackedAreaChart = themed(presets.ToastStackedAreaChart, "toast");
-export const ToastStackedBarChart = themed(presets.ToastStackedBarChart, "toast");
+export const ToastStackedAreaChart = themed(
+  presets.ToastStackedAreaChart,
+  "toast",
+);
+export const ToastStackedBarChart = themed(
+  presets.ToastStackedBarChart,
+  "toast",
+);
 export const ToastTreemapChart = themed(presets.ToastTreemapChart, "toast");
+
+export const BoxPlotChart = themed(presets.BoxPlotChart, "ag");
+export const BulletChart = themed(presets.BulletChart, "ag");
+export const FunnelChart = themed(presets.FunnelChart, "ag");
+export const HistogramChart = themed(presets.HistogramChart, "ag");
+export const SankeyChart = themed(presets.SankeyChart, "ag");
+export const WaterfallChart = themed(presets.WaterfallChart, "ag");
+export const SunburstChart = themed(presets.SunburstChart, "ag");
+export const ToastBoxPlotChart = themed(presets.ToastBoxPlotChart, "toast");
+export const ToastBulletChart = themed(presets.ToastBulletChart, "toast");
+export const ToastFunnelChart = themed(presets.ToastFunnelChart, "toast");
+export const ToastHistogramChart = themed(presets.ToastHistogramChart, "toast");
+export const ToastSankeyChart = themed(presets.ToastSankeyChart, "toast");
+export const ToastWaterfallChart = themed(presets.ToastWaterfallChart, "toast");
+export const ToastSunburstChart = themed(presets.ToastSunburstChart, "toast");

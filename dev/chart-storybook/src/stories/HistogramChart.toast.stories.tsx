@@ -29,7 +29,7 @@ function ToastHistogramStory({ args }: { args: StoryArgs }) {
 }
 
 const meta: Meta<StoryArgs> = {
-  title: "Polish/HistogramChart/Toast",
+  title: "Charts/HistogramChart/Toast",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {

@@ -26,7 +26,10 @@ function AgBoxPlotStory({
         direction,
         config: {
           title: { text: args.title, visible: !!args.title },
-          legend: { position: args.legendPosition, visible: args.legendVisible },
+          legend: {
+            position: args.legendPosition,
+            visible: args.legendVisible,
+          },
           boxPlot: { boxWidth: args.boxWidth, whiskerWidth: args.whiskerWidth },
         },
       })}
@@ -38,7 +41,7 @@ function AgBoxPlotStory({
 }
 
 const meta: Meta<StoryArgs> = {
-  title: "Polish/BoxPlotChart/Ag",
+  title: "Charts/BoxPlotChart/Ag",
   parameters: { layout: "centered" },
   args: {
     renderer: "svg",

@@ -58,7 +58,7 @@ export const defaultAgConfig: WaterfallChartConfig = {
     dataLabel: {
       visible: true,
       fontSize: 11,
-      color: "#585858",
+      color: "#181d1f",
     },
   },
 };

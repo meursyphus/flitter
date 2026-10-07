@@ -23,7 +23,7 @@ const multiLevelData = [
 ];
 
 const meta: Meta<StoryArgs> = {
-  title: "Polish/SankeyChart/Toast",
+  title: "Charts/SankeyChart/Toast",
   parameters: { layout: "centered" },
   args: { renderer: "svg" },
   argTypes: {
@@ -36,12 +36,22 @@ type Story = StoryObj<StoryArgs>;
 
 export const EnergyFlow: Story = {
   render: (args) => (
-    <Widget widget={ToastSankeyChart({ data: energyData })} width="760px" height="420px" renderer={args.renderer} />
+    <Widget
+      widget={ToastSankeyChart({ data: energyData })}
+      width="760px"
+      height="420px"
+      renderer={args.renderer}
+    />
   ),
 };
 
 export const MultiLevel: Story = {
   render: (args) => (
-    <Widget widget={ToastSankeyChart({ data: multiLevelData })} width="760px" height="420px" renderer={args.renderer} />
+    <Widget
+      widget={ToastSankeyChart({ data: multiLevelData })}
+      width="760px"
+      height="420px"
+      renderer={args.renderer}
+    />
   ),
 };

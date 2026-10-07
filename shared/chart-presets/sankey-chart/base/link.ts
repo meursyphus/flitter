@@ -1,13 +1,24 @@
 import type { SankeyChartCustom } from "../types";
-import { CustomPaint, Path, Positioned, Stack, StackFit, Align, Alignment, Opacity, SizedBox } from "flitter-ui";
+import {
+  CustomPaint,
+  Path,
+  Positioned,
+  Stack,
+  StackFit,
+  Align,
+  Alignment,
+  Opacity,
+  SizedBox,
+} from "flitter-ui";
 
 export function Link(
-  ...[{ color, ribbon, labelAnchor, labelWidget, isHovered, isActive, isDimmed }]: Parameters<
-    SankeyChartCustom["link"]
-  >
+  ...[
+    { color, ribbon, labelAnchor, labelWidget, isHovered, isActive, isDimmed },
+    ctx,
+  ]: Parameters<SankeyChartCustom["link"]>
 ) {
   const opacity = isDimmed ? 0.12 : isHovered ? 0.85 : isActive ? 0.72 : 0.4;
-  const shouldStroke = isHovered;
+  const shouldStroke = ctx.config.sankey.outline && isHovered;
 
   return Opacity({
     opacity,

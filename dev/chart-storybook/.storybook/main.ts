@@ -8,7 +8,10 @@ const __dirname = dirname(__filename);
 
 const chartRoot = path.resolve(__dirname, "../../../packages/chart");
 const flitterUiRoot = path.resolve(__dirname, "../../../packages/flitter");
-const chartPresetsRoot = path.resolve(__dirname, "../../../shared/chart-presets");
+const chartPresetsRoot = path.resolve(
+  __dirname,
+  "../../../shared/chart-presets",
+);
 const coreRoot = path.resolve(__dirname, "../../../packages/core");
 
 const config: StorybookConfig = {
@@ -22,8 +25,12 @@ const config: StorybookConfig = {
     config.resolve = config.resolve || {};
     config.resolve.alias = {
       ...config.resolve.alias,
-      "flitter-core/component/Tooltip": path.resolve(coreRoot, "src/component/Tooltip.ts"),
+      "flitter-core/component/Tooltip": path.resolve(
+        coreRoot,
+        "src/component/Tooltip.ts",
+      ),
       "flitter-ui/chart": path.resolve(flitterUiRoot, "src/chart.ts"),
+      "flitter-ui": path.resolve(flitterUiRoot, "src/index.ts"),
       "flitter-chart": path.resolve(chartRoot, "src/index.ts"),
       "flitter-core": path.resolve(coreRoot, "src/index.ts"),
       "shared/chart": path.resolve(__dirname, "../../shared/chart.ts"),
@@ -38,7 +45,8 @@ const config: StorybookConfig = {
       rollupOptions: {
         ...config.build?.rollupOptions,
         onwarn(warning, warn) {
-          const message = typeof warning === "string" ? warning : warning.message ?? "";
+          const message =
+            typeof warning === "string" ? warning : (warning.message ?? "");
           if (
             message.includes("@storybook/core/dist/preview/runtime.js") &&
             message.includes("Use of eval")

@@ -942,8 +942,8 @@ export const chartFamilies = [
     title: "Funnel Chart",
     importName: "FunnelChart",
     category: "staged",
-    surface: "base-wrapper",
-    supportedStyles: [],
+    surface: "preset",
+    supportedStyles: ["ag", "toast"],
     supportsStyleArg: false,
     summary: "Show sequential stage dropoff and conversion through a funnel.",
     useWhen: [
@@ -961,13 +961,13 @@ export const chartFamilies = [
       "Does the chart need stage-to-stage conversion labels?",
     ],
     implementationNotes: [
-      "Use chart-presets FunnelChart as a base wrapper.",
-      "Clarify whether this is raw-stage volume, conversion, or both.",
+      "Install funnel-chart with --ag or --toast; the CLI copies an editable styled chart.",
+      "Labels show raw values and percentage of the first stage; tooltips also show conversion from the previous stage.",
       "Branching flows are not funnel charts; use sankey instead.",
     ],
     overrideSurface: [
       "stage: own segment geometry and labels",
-      "stageLabel / dataLabel: explain conversion semantics",
+      "dataLabel: explain conversion semantics",
       "legend: reinforce stage meaning if colors carry semantics",
       "layout: reshape the chart for a more product or dashboard tone",
     ],
@@ -982,7 +982,7 @@ export const chartFamilies = [
   ]
 }`,
     sourcePaths: [
-      "shared/chart-presets/charts/funnel-chart",
+      "packages/chart/registry/templates/charts/funnel-chart",
       "packages/chart/src/headless/funnel-chart",
     ],
     evaluation: {

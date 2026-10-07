@@ -7,19 +7,29 @@ import { createWidget as _AreaChartToastAppDownloads } from "./entries/area-char
 import { createWidget as _BarChartAgCityRent } from "./entries/bar-chart/ag/city-rent";
 import { createWidget as _BarChartToastDepartmentRevenue } from "./entries/bar-chart/toast/department-revenue";
 import { createWidget as _BarChartToastHorizontalPill } from "./entries/bar-chart/toast/horizontal-pill";
+import { createWidget as _BoxPlotChartAgApiLatency } from "./entries/box-plot-chart/ag/api-latency";
+import { createWidget as _BoxPlotChartToastDeliveryTimes } from "./entries/box-plot-chart/toast/delivery-times";
 import { createWidget as _BubbleChartAgGdpLifeExpectancy } from "./entries/bubble-chart/ag/gdp-life-expectancy";
 import { createWidget as _BubbleChartToastProductMargin } from "./entries/bubble-chart/toast/product-margin";
+import { createWidget as _BulletChartAgRevenueTargets } from "./entries/bullet-chart/ag/revenue-targets";
+import { createWidget as _BulletChartToastServiceQuality } from "./entries/bullet-chart/toast/service-quality";
 import { createWidget as _CandlestickChartAgBitcoinMonthly } from "./entries/candlestick-chart/ag/bitcoin-monthly";
 import { createWidget as _DonutChartAgPaymentMethods } from "./entries/donut-chart/ag/payment-methods";
 import { createWidget as _DonutChartToastProjectStatus } from "./entries/donut-chart/toast/project-status";
+import { createWidget as _FunnelChartAgProductOnboarding } from "./entries/funnel-chart/ag/product-onboarding";
+import { createWidget as _FunnelChartToastSalesPipeline } from "./entries/funnel-chart/toast/sales-pipeline";
 import { createWidget as _HeatmapChartAgHourlyTraffic } from "./entries/heatmap-chart/ag/hourly-traffic";
 import { createWidget as _HeatmapChartToastMonthlyProductSales } from "./entries/heatmap-chart/toast/monthly-product-sales";
+import { createWidget as _HistogramChartAgParcelWeights } from "./entries/histogram-chart/ag/parcel-weights";
+import { createWidget as _HistogramChartToastResponseTimes } from "./entries/histogram-chart/toast/response-times";
 import { createWidget as _LineChartAgMonthlyActiveUsers } from "./entries/line-chart/ag/monthly-active-users";
 import { createWidget as _LineChartToastChannelTraffic } from "./entries/line-chart/toast/channel-traffic";
 import { createWidget as _PieChartAgBrowserShare } from "./entries/pie-chart/ag/browser-share";
 import { createWidget as _PieChartToastBudgetAllocation } from "./entries/pie-chart/toast/budget-allocation";
 import { createWidget as _RadarChartAgSkillAssessment } from "./entries/radar-chart/ag/skill-assessment";
 import { createWidget as _RadarChartToastTeamComparison } from "./entries/radar-chart/toast/team-comparison";
+import { createWidget as _SankeyChartAgEnergyFlow } from "./entries/sankey-chart/ag/energy-flow";
+import { createWidget as _SankeyChartToastCustomerJourney } from "./entries/sankey-chart/toast/customer-journey";
 import { createWidget as _ScatterChartAgRevenueGrowth } from "./entries/scatter-chart/ag/revenue-growth";
 import { createWidget as _ScatterChartToastStudentScores } from "./entries/scatter-chart/toast/student-scores";
 import { createWidget as _StackedAreaChartAgMonthlyExpenses } from "./entries/stacked-area-chart/ag/monthly-expenses";
@@ -27,8 +37,12 @@ import { createWidget as _StackedAreaChartToastTrafficSources } from "./entries/
 import { createWidget as _StackedBarChartAgEnergyMix } from "./entries/stacked-bar-chart/ag/energy-mix";
 import { createWidget as _StackedBarChartToastNivoPattern } from "./entries/stacked-bar-chart/toast/nivo-pattern";
 import { createWidget as _StackedBarChartToastRegionalSales } from "./entries/stacked-bar-chart/toast/regional-sales";
+import { createWidget as _SunburstChartAgOrgStructure } from "./entries/sunburst-chart/ag/org-structure";
+import { createWidget as _SunburstChartToastWorldPopulation } from "./entries/sunburst-chart/toast/world-population";
 import { createWidget as _TreemapChartAgDiskSpaceUsage } from "./entries/treemap-chart/ag/disk-space-usage";
 import { createWidget as _TreemapChartToastGlobalRevenueBreakdown } from "./entries/treemap-chart/toast/global-revenue-breakdown";
+import { createWidget as _WaterfallChartAgOperatingProfit } from "./entries/waterfall-chart/ag/operating-profit";
+import { createWidget as _WaterfallChartToastProjectBudget } from "./entries/waterfall-chart/toast/project-budget";
 
 const _AreaChartAgProfitLoss_files = [
   { filename: "index.tsx", code: `import AreaChart from "@/components/flitter/charts/area-chart";
@@ -186,6 +200,171 @@ const chart = ToastBarChart({
 });` },
 ];
 
+const _BoxPlotChartAgApiLatency_files = [
+  { filename: "index.tsx", code: `import BoxPlotChart from "@/components/flitter/charts/box-plot-chart";
+
+const chart = BoxPlotChart({
+  data: {
+    labels: ["Search", "Catalog", "Checkout", "Billing"],
+    datasets: [
+      {
+        legend: "Baseline",
+        data: [
+          {
+            min: 60,
+            q1: 80,
+            median: 95,
+            q3: 120,
+            max: 150,
+            outliers: [195],
+          },
+          {
+            min: 35,
+            q1: 48,
+            median: 60,
+            q3: 76,
+            max: 90,
+          },
+          {
+            min: 120,
+            q1: 160,
+            median: 195,
+            q3: 235,
+            max: 280,
+            outliers: [340],
+          },
+          {
+            min: 70,
+            q1: 95,
+            median: 110,
+            q3: 145,
+            max: 175,
+          },
+        ],
+      },
+      {
+        legend: "Peak traffic",
+        data: [
+          {
+            min: 85,
+            q1: 110,
+            median: 138,
+            q3: 170,
+            max: 210,
+          },
+          {
+            min: 45,
+            q1: 60,
+            median: 75,
+            q3: 95,
+            max: 120,
+          },
+          {
+            min: 155,
+            q1: 195,
+            median: 230,
+            q3: 280,
+            max: 330,
+            outliers: [390],
+          },
+          {
+            min: 90,
+            q1: 115,
+            median: 140,
+            q3: 175,
+            max: 210,
+          },
+        ],
+      },
+    ],
+  },
+
+  config: { title: { text: galleryTitle, visible: true } },
+});` },
+];
+
+const _BoxPlotChartToastDeliveryTimes_files = [
+  { filename: "index.tsx", code: `import ToastBoxPlotChart from "@/components/flitter/charts/toast-box-plot-chart";
+
+const chart = ToastBoxPlotChart({
+  data: {
+    labels: ["North", "South", "East", "West"],
+    datasets: [
+      {
+        legend: "Standard",
+        data: [
+          {
+            min: 2,
+            q1: 3,
+            median: 4,
+            q3: 5,
+            max: 7,
+            outliers: [9],
+          },
+          {
+            min: 3,
+            q1: 4,
+            median: 5,
+            q3: 6,
+            max: 8,
+          },
+          {
+            min: 2,
+            q1: 3,
+            median: 3.5,
+            q3: 4.5,
+            max: 6,
+          },
+          {
+            min: 3,
+            q1: 4,
+            median: 5,
+            q3: 7,
+            max: 9,
+          },
+        ],
+      },
+      {
+        legend: "Express",
+        data: [
+          {
+            min: 1,
+            q1: 1.5,
+            median: 2,
+            q3: 2.5,
+            max: 3.5,
+          },
+          {
+            min: 1,
+            q1: 2,
+            median: 2.5,
+            q3: 3,
+            max: 4,
+          },
+          {
+            min: 0.5,
+            q1: 1,
+            median: 1.5,
+            q3: 2,
+            max: 3,
+          },
+          {
+            min: 1,
+            q1: 1.5,
+            median: 2,
+            q3: 3,
+            max: 4,
+            outliers: [5.5],
+          },
+        ],
+      },
+    ],
+  },
+  direction: "horizontal",
+  config: { title: { text: galleryTitle, visible: true } },
+});` },
+];
+
 const _BubbleChartAgGdpLifeExpectancy_files = [
   { filename: "index.tsx", code: `import BubbleChart from "@/components/flitter/charts/bubble-chart";
 
@@ -317,6 +496,74 @@ const chart = ToastBubbleChart({
 });` },
 ];
 
+const _BulletChartAgRevenueTargets_files = [
+  { filename: "index.tsx", code: `import BulletChart from "@/components/flitter/charts/bullet-chart";
+
+const chart = BulletChart({
+  data: {
+    labels: ["Americas", "Europe", "Asia Pacific", "Other"],
+    datasets: [
+      {
+        value: 118,
+        target: 110,
+        ranges: [65, 95, 130],
+      },
+      {
+        value: 92,
+        target: 100,
+        ranges: [50, 80, 115],
+      },
+      {
+        value: 104,
+        target: 100,
+        ranges: [60, 85, 120],
+      },
+      {
+        value: 48,
+        target: 55,
+        ranges: [25, 40, 65],
+      },
+    ],
+  },
+  direction: "horizontal",
+  config: { title: { text: galleryTitle, visible: true } },
+});` },
+];
+
+const _BulletChartToastServiceQuality_files = [
+  { filename: "index.tsx", code: `import ToastBulletChart from "@/components/flitter/charts/toast-bullet-chart";
+
+const chart = ToastBulletChart({
+  data: {
+    labels: ["Chat", "Email", "Phone", "Self-service"],
+    datasets: [
+      {
+        value: 94,
+        target: 95,
+        ranges: [70, 85, 100],
+      },
+      {
+        value: 88,
+        target: 90,
+        ranges: [70, 85, 100],
+      },
+      {
+        value: 97,
+        target: 95,
+        ranges: [70, 85, 100],
+      },
+      {
+        value: 82,
+        target: 90,
+        ranges: [70, 85, 100],
+      },
+    ],
+  },
+  direction: "horizontal",
+  config: { title: { text: galleryTitle, visible: true } },
+});` },
+];
+
 const _CandlestickChartAgBitcoinMonthly_files = [
   { filename: "index.tsx", code: `import CandlestickChart from "@/components/flitter/charts/candlestick-chart";
 function formatUsd(name: string, _index: number, axis: "x" | "y"): string {
@@ -408,6 +655,72 @@ const chart = ToastDonutChart({
 });` },
 ];
 
+const _FunnelChartAgProductOnboarding_files = [
+  { filename: "index.tsx", code: `import FunnelChart from "@/components/flitter/charts/funnel-chart";
+
+const chart = FunnelChart({
+  data: {
+    stages: [
+      {
+        label: "Sign-ups",
+        value: 12000,
+      },
+      {
+        label: "Email verified",
+        value: 9600,
+      },
+      {
+        label: "Workspace created",
+        value: 7200,
+      },
+      {
+        label: "First project",
+        value: 4800,
+      },
+      {
+        label: "Team invited",
+        value: 3000,
+      },
+    ],
+  },
+
+  config: { title: { text: galleryTitle, visible: true } },
+});` },
+];
+
+const _FunnelChartToastSalesPipeline_files = [
+  { filename: "index.tsx", code: `import ToastFunnelChart from "@/components/flitter/charts/toast-funnel-chart";
+
+const chart = ToastFunnelChart({
+  data: {
+    stages: [
+      {
+        label: "Leads",
+        value: 2400,
+      },
+      {
+        label: "Qualified",
+        value: 1680,
+      },
+      {
+        label: "Demo booked",
+        value: 1080,
+      },
+      {
+        label: "Proposal sent",
+        value: 720,
+      },
+      {
+        label: "Closed won",
+        value: 480,
+      },
+    ],
+  },
+
+  config: { title: { text: galleryTitle, visible: true } },
+});` },
+];
+
 const _HeatmapChartAgHourlyTraffic_files = [
   { filename: "index.tsx", code: `import HeatmapChart from "@/components/flitter/charts/heatmap-chart";
 
@@ -461,6 +774,232 @@ const chart = ToastHeatmapChart({
       segment: { gap: 0 },
     },
   },
+});` },
+];
+
+const _HistogramChartAgParcelWeights_files = [
+  { filename: "index.tsx", code: `import HistogramChart from "@/components/flitter/charts/histogram-chart";
+
+const chart = HistogramChart({
+  data: {
+    rows: [
+      {
+        weight: 0.4,
+      },
+      {
+        weight: 0.6,
+      },
+      {
+        weight: 0.7,
+      },
+      {
+        weight: 0.8,
+      },
+      {
+        weight: 0.9,
+      },
+      {
+        weight: 1,
+      },
+      {
+        weight: 1.1,
+      },
+      {
+        weight: 1.2,
+      },
+      {
+        weight: 1.3,
+      },
+      {
+        weight: 1.3,
+      },
+      {
+        weight: 1.4,
+      },
+      {
+        weight: 1.5,
+      },
+      {
+        weight: 1.5,
+      },
+      {
+        weight: 1.6,
+      },
+      {
+        weight: 1.6,
+      },
+      {
+        weight: 1.7,
+      },
+      {
+        weight: 1.8,
+      },
+      {
+        weight: 1.8,
+      },
+      {
+        weight: 1.9,
+      },
+      {
+        weight: 2,
+      },
+      {
+        weight: 2,
+      },
+      {
+        weight: 2.1,
+      },
+      {
+        weight: 2.2,
+      },
+      {
+        weight: 2.2,
+      },
+      {
+        weight: 2.3,
+      },
+      {
+        weight: 2.4,
+      },
+      {
+        weight: 2.4,
+      },
+      {
+        weight: 2.5,
+      },
+      {
+        weight: 2.6,
+      },
+      {
+        weight: 2.8,
+      },
+      {
+        weight: 2.9,
+      },
+      {
+        weight: 3,
+      },
+      {
+        weight: 3.2,
+      },
+      {
+        weight: 3.4,
+      },
+      {
+        weight: 3.8,
+      },
+      {
+        weight: 4.1,
+      },
+    ],
+    xKey: "weight",
+  },
+  transform: { binCount: 8, aggregation: "count" },
+  config: { title: { text: galleryTitle, visible: true } },
+});` },
+];
+
+const _HistogramChartToastResponseTimes_files = [
+  { filename: "index.tsx", code: `import ToastHistogramChart from "@/components/flitter/charts/toast-histogram-chart";
+
+const chart = ToastHistogramChart({
+  data: {
+    rows: [
+      {
+        latency: 45,
+      },
+      {
+        latency: 58,
+      },
+      {
+        latency: 63,
+      },
+      {
+        latency: 71,
+      },
+      {
+        latency: 74,
+      },
+      {
+        latency: 79,
+      },
+      {
+        latency: 83,
+      },
+      {
+        latency: 86,
+      },
+      {
+        latency: 88,
+      },
+      {
+        latency: 92,
+      },
+      {
+        latency: 95,
+      },
+      {
+        latency: 98,
+      },
+      {
+        latency: 101,
+      },
+      {
+        latency: 103,
+      },
+      {
+        latency: 108,
+      },
+      {
+        latency: 110,
+      },
+      {
+        latency: 112,
+      },
+      {
+        latency: 117,
+      },
+      {
+        latency: 122,
+      },
+      {
+        latency: 128,
+      },
+      {
+        latency: 136,
+      },
+      {
+        latency: 145,
+      },
+      {
+        latency: 157,
+      },
+      {
+        latency: 168,
+      },
+      {
+        latency: 184,
+      },
+      {
+        latency: 201,
+      },
+      {
+        latency: 225,
+      },
+      {
+        latency: 252,
+      },
+      {
+        latency: 286,
+      },
+      {
+        latency: 320,
+      },
+    ],
+    xKey: "latency",
+  },
+  transform: { binCount: 8, aggregation: "count" },
+  config: { title: { text: galleryTitle, visible: true } },
 });` },
 ];
 
@@ -601,6 +1140,83 @@ const chart = ToastRadarChart({
   config: {
     title: { text: "Pokémon Stats Battle", visible: true },
   },
+});` },
+];
+
+const _SankeyChartAgEnergyFlow_files = [
+  { filename: "index.tsx", code: `import SankeyChart from "@/components/flitter/charts/sankey-chart";
+
+const chart = SankeyChart({
+  data: [
+    {
+      from: "Solar",
+      to: "Grid",
+      value: 36,
+    },
+    {
+      from: "Wind",
+      to: "Grid",
+      value: 44,
+    },
+    {
+      from: "Hydro",
+      to: "Grid",
+      value: 20,
+    },
+    {
+      from: "Grid",
+      to: "Homes",
+      value: 42,
+    },
+    {
+      from: "Grid",
+      to: "Industry",
+      value: 38,
+    },
+    {
+      from: "Grid",
+      to: "Transport",
+      value: 20,
+    },
+  ],
+
+  config: { title: { text: galleryTitle, visible: true } },
+});` },
+];
+
+const _SankeyChartToastCustomerJourney_files = [
+  { filename: "index.tsx", code: `import ToastSankeyChart from "@/components/flitter/charts/toast-sankey-chart";
+
+const chart = ToastSankeyChart({
+  data: [
+    {
+      from: "Search",
+      to: "Trial",
+      value: 420,
+    },
+    {
+      from: "Referrals",
+      to: "Trial",
+      value: 260,
+    },
+    {
+      from: "Social",
+      to: "Trial",
+      value: 180,
+    },
+    {
+      from: "Trial",
+      to: "Subscribed",
+      value: 560,
+    },
+    {
+      from: "Trial",
+      to: "Not converted",
+      value: 300,
+    },
+  ],
+
+  config: { title: { text: galleryTitle, visible: true } },
 });` },
 ];
 
@@ -1093,6 +1709,175 @@ const chart = ToastStackedBarChart({
 });` },
 ];
 
+const _SunburstChartAgOrgStructure_files = [
+  { filename: "index.tsx", code: `import SunburstChart from "@/components/flitter/charts/sunburst-chart";
+
+const chart = SunburstChart({
+  data: {
+    nodes: [
+      {
+        label: "Engineering",
+        value: 66,
+        children: [
+          {
+            label: "Frontend",
+            value: 28,
+            children: [],
+          },
+          {
+            label: "Platform",
+            value: 22,
+            children: [],
+          },
+          {
+            label: "Data",
+            value: 16,
+            children: [],
+          },
+        ],
+      },
+      {
+        label: "Product",
+        value: 20,
+        children: [
+          {
+            label: "Design",
+            value: 12,
+            children: [],
+          },
+          {
+            label: "Research",
+            value: 8,
+            children: [],
+          },
+        ],
+      },
+      {
+        label: "Business",
+        value: 42,
+        children: [
+          {
+            label: "Sales",
+            value: 18,
+            children: [],
+          },
+          {
+            label: "Success",
+            value: 14,
+            children: [],
+          },
+          {
+            label: "Operations",
+            value: 10,
+            children: [],
+          },
+        ],
+      },
+    ],
+  },
+
+  config: { title: { text: galleryTitle, visible: true } },
+});` },
+];
+
+const _SunburstChartToastWorldPopulation_files = [
+  { filename: "index.tsx", code: `import ToastSunburstChart from "@/components/flitter/charts/toast-sunburst-chart";
+
+const chart = ToastSunburstChart({
+  data: {
+    nodes: [
+      {
+        label: "Asia",
+        value: 4820,
+        children: [
+          {
+            label: "East",
+            value: 1660,
+            children: [],
+          },
+          {
+            label: "South",
+            value: 2050,
+            children: [],
+          },
+          {
+            label: "Southeast",
+            value: 690,
+            children: [],
+          },
+          {
+            label: "West & Central",
+            value: 420,
+            children: [],
+          },
+        ],
+      },
+      {
+        label: "Africa",
+        value: 1520,
+        children: [
+          {
+            label: "North",
+            value: 270,
+            children: [],
+          },
+          {
+            label: "Sub-Saharan",
+            value: 1250,
+            children: [],
+          },
+        ],
+      },
+      {
+        label: "Americas",
+        value: 1040,
+        children: [
+          {
+            label: "North",
+            value: 380,
+            children: [],
+          },
+          {
+            label: "Latin America",
+            value: 660,
+            children: [],
+          },
+        ],
+      },
+      {
+        label: "Europe",
+        value: 740,
+        children: [
+          {
+            label: "West & North",
+            value: 310,
+            children: [],
+          },
+          {
+            label: "East & South",
+            value: 430,
+            children: [],
+          },
+        ],
+      },
+      {
+        label: "Oceania",
+        value: 46,
+        children: [
+          {
+            label: "Oceania",
+            value: 46,
+            children: [],
+          },
+        ],
+      },
+    ],
+  },
+
+  config: { title: { text: galleryTitle, visible: true } },
+});` },
+];
+
 const _TreemapChartAgDiskSpaceUsage_files = [
   { filename: "index.tsx", code: `import TreemapChart from "@/components/flitter/charts/treemap-chart";
 
@@ -1175,6 +1960,94 @@ const chart = ToastTreemapChart({
 });` },
 ];
 
+const _WaterfallChartAgOperatingProfit_files = [
+  { filename: "index.tsx", code: `import WaterfallChart from "@/components/flitter/charts/waterfall-chart";
+
+const chart = WaterfallChart({
+  data: {
+    rows: [
+      {
+        item: "Revenue",
+        amount: 180,
+      },
+      {
+        item: "Services",
+        amount: 25,
+      },
+      {
+        item: "Materials",
+        amount: -54,
+      },
+      {
+        item: "Payroll",
+        amount: -62,
+      },
+      {
+        item: "Operations",
+        amount: -24,
+      },
+    ],
+    xKey: "item",
+    yKey: "amount",
+    totals: [
+      {
+        totalType: "total",
+        index: 4,
+        axisLabel: "Profit",
+      },
+    ],
+  },
+
+  config: { title: { text: galleryTitle, visible: true } },
+});` },
+];
+
+const _WaterfallChartToastProjectBudget_files = [
+  { filename: "index.tsx", code: `import ToastWaterfallChart from "@/components/flitter/charts/toast-waterfall-chart";
+
+const chart = ToastWaterfallChart({
+  data: {
+    rows: [
+      {
+        item: "Budget",
+        amount: 120,
+      },
+      {
+        item: "Design",
+        amount: -22,
+      },
+      {
+        item: "Engineering",
+        amount: -46,
+      },
+      {
+        item: "QA",
+        amount: -14,
+      },
+      {
+        item: "Scope added",
+        amount: 18,
+      },
+      {
+        item: "Launch",
+        amount: -12,
+      },
+    ],
+    xKey: "item",
+    yKey: "amount",
+    totals: [
+      {
+        totalType: "total",
+        index: 5,
+        axisLabel: "Remaining",
+      },
+    ],
+  },
+
+  config: { title: { text: galleryTitle, visible: true } },
+});` },
+];
+
 export type GalleryEntryGenerated = {
   slug: string;
   chartType: string;
@@ -1238,6 +2111,26 @@ export const galleryEntries: GalleryEntryGenerated[] = [
     installCommand: "npx flitter-ui add bar-chart --toast",
   },
   {
+    slug: "box-plot-chart-ag-api-latency",
+    chartType: "box-plot-chart",
+    style: "AG",
+    title: "API Latency Distribution (ms)",
+    createWidget: _BoxPlotChartAgApiLatency,
+    thumbnailUrl: "/charts/box-plot-chart-ag-api-latency.svg",
+    files: _BoxPlotChartAgApiLatency_files,
+    installCommand: "npx flitter-ui add box-plot-chart --ag",
+  },
+  {
+    slug: "box-plot-chart-toast-delivery-times",
+    chartType: "box-plot-chart",
+    style: "Toast",
+    title: "Delivery Times by Region (days)",
+    createWidget: _BoxPlotChartToastDeliveryTimes,
+    thumbnailUrl: "/charts/box-plot-chart-toast-delivery-times.svg",
+    files: _BoxPlotChartToastDeliveryTimes_files,
+    installCommand: "npx flitter-ui add box-plot-chart --toast",
+  },
+  {
     slug: "bubble-chart-ag-gdp-life-expectancy",
     chartType: "bubble-chart",
     style: "AG",
@@ -1256,6 +2149,26 @@ export const galleryEntries: GalleryEntryGenerated[] = [
     thumbnailUrl: "/charts/bubble-chart-toast-product-margin.svg",
     files: _BubbleChartToastProductMargin_files,
     installCommand: "npx flitter-ui add bubble-chart --toast",
+  },
+  {
+    slug: "bullet-chart-ag-revenue-targets",
+    chartType: "bullet-chart",
+    style: "AG",
+    title: "Revenue Against Target ($M)",
+    createWidget: _BulletChartAgRevenueTargets,
+    thumbnailUrl: "/charts/bullet-chart-ag-revenue-targets.svg",
+    files: _BulletChartAgRevenueTargets_files,
+    installCommand: "npx flitter-ui add bullet-chart --ag",
+  },
+  {
+    slug: "bullet-chart-toast-service-quality",
+    chartType: "bullet-chart",
+    style: "Toast",
+    title: "Service Quality Against Target (%)",
+    createWidget: _BulletChartToastServiceQuality,
+    thumbnailUrl: "/charts/bullet-chart-toast-service-quality.svg",
+    files: _BulletChartToastServiceQuality_files,
+    installCommand: "npx flitter-ui add bullet-chart --toast",
   },
   {
     slug: "candlestick-chart-ag-bitcoin-monthly",
@@ -1288,6 +2201,26 @@ export const galleryEntries: GalleryEntryGenerated[] = [
     installCommand: "npx flitter-ui add donut-chart --toast",
   },
   {
+    slug: "funnel-chart-ag-product-onboarding",
+    chartType: "funnel-chart",
+    style: "AG",
+    title: "Product Onboarding Funnel",
+    createWidget: _FunnelChartAgProductOnboarding,
+    thumbnailUrl: "/charts/funnel-chart-ag-product-onboarding.svg",
+    files: _FunnelChartAgProductOnboarding_files,
+    installCommand: "npx flitter-ui add funnel-chart --ag",
+  },
+  {
+    slug: "funnel-chart-toast-sales-pipeline",
+    chartType: "funnel-chart",
+    style: "Toast",
+    title: "Sales Pipeline Conversion",
+    createWidget: _FunnelChartToastSalesPipeline,
+    thumbnailUrl: "/charts/funnel-chart-toast-sales-pipeline.svg",
+    files: _FunnelChartToastSalesPipeline_files,
+    installCommand: "npx flitter-ui add funnel-chart --toast",
+  },
+  {
     slug: "heatmap-chart-ag-hourly-traffic",
     chartType: "heatmap-chart",
     style: "AG",
@@ -1306,6 +2239,26 @@ export const galleryEntries: GalleryEntryGenerated[] = [
     thumbnailUrl: "/charts/heatmap-chart-toast-monthly-product-sales.svg",
     files: _HeatmapChartToastMonthlyProductSales_files,
     installCommand: "npx flitter-ui add heatmap-chart --toast",
+  },
+  {
+    slug: "histogram-chart-ag-parcel-weights",
+    chartType: "histogram-chart",
+    style: "AG",
+    title: "Parcel Weight Distribution (kg)",
+    createWidget: _HistogramChartAgParcelWeights,
+    thumbnailUrl: "/charts/histogram-chart-ag-parcel-weights.svg",
+    files: _HistogramChartAgParcelWeights_files,
+    installCommand: "npx flitter-ui add histogram-chart --ag",
+  },
+  {
+    slug: "histogram-chart-toast-response-times",
+    chartType: "histogram-chart",
+    style: "Toast",
+    title: "Response Time Distribution (ms)",
+    createWidget: _HistogramChartToastResponseTimes,
+    thumbnailUrl: "/charts/histogram-chart-toast-response-times.svg",
+    files: _HistogramChartToastResponseTimes_files,
+    installCommand: "npx flitter-ui add histogram-chart --toast",
   },
   {
     slug: "line-chart-ag-monthly-active-users",
@@ -1366,6 +2319,26 @@ export const galleryEntries: GalleryEntryGenerated[] = [
     thumbnailUrl: "/charts/radar-chart-toast-team-comparison.svg",
     files: _RadarChartToastTeamComparison_files,
     installCommand: "npx flitter-ui add radar-chart --toast",
+  },
+  {
+    slug: "sankey-chart-ag-energy-flow",
+    chartType: "sankey-chart",
+    style: "AG",
+    title: "Clean Energy Distribution (GWh)",
+    createWidget: _SankeyChartAgEnergyFlow,
+    thumbnailUrl: "/charts/sankey-chart-ag-energy-flow.svg",
+    files: _SankeyChartAgEnergyFlow_files,
+    installCommand: "npx flitter-ui add sankey-chart --ag",
+  },
+  {
+    slug: "sankey-chart-toast-customer-journey",
+    chartType: "sankey-chart",
+    style: "Toast",
+    title: "From Discovery to Subscription",
+    createWidget: _SankeyChartToastCustomerJourney,
+    thumbnailUrl: "/charts/sankey-chart-toast-customer-journey.svg",
+    files: _SankeyChartToastCustomerJourney_files,
+    installCommand: "npx flitter-ui add sankey-chart --toast",
   },
   {
     slug: "scatter-chart-ag-revenue-growth",
@@ -1438,6 +2411,26 @@ export const galleryEntries: GalleryEntryGenerated[] = [
     installCommand: "npx flitter-ui add stacked-bar-chart --toast",
   },
   {
+    slug: "sunburst-chart-ag-org-structure",
+    chartType: "sunburst-chart",
+    style: "AG",
+    title: "Company Organization",
+    createWidget: _SunburstChartAgOrgStructure,
+    thumbnailUrl: "/charts/sunburst-chart-ag-org-structure.svg",
+    files: _SunburstChartAgOrgStructure_files,
+    installCommand: "npx flitter-ui add sunburst-chart --ag",
+  },
+  {
+    slug: "sunburst-chart-toast-world-population",
+    chartType: "sunburst-chart",
+    style: "Toast",
+    title: "World Population by Region (millions)",
+    createWidget: _SunburstChartToastWorldPopulation,
+    thumbnailUrl: "/charts/sunburst-chart-toast-world-population.svg",
+    files: _SunburstChartToastWorldPopulation_files,
+    installCommand: "npx flitter-ui add sunburst-chart --toast",
+  },
+  {
     slug: "treemap-chart-ag-disk-space-usage",
     chartType: "treemap-chart",
     style: "AG",
@@ -1457,29 +2450,50 @@ export const galleryEntries: GalleryEntryGenerated[] = [
     files: _TreemapChartToastGlobalRevenueBreakdown_files,
     installCommand: "npx flitter-ui add treemap-chart --toast",
   },
+  {
+    slug: "waterfall-chart-ag-operating-profit",
+    chartType: "waterfall-chart",
+    style: "AG",
+    title: "Revenue to Operating Profit ($k)",
+    createWidget: _WaterfallChartAgOperatingProfit,
+    thumbnailUrl: "/charts/waterfall-chart-ag-operating-profit.svg",
+    files: _WaterfallChartAgOperatingProfit_files,
+    installCommand: "npx flitter-ui add waterfall-chart --ag",
+  },
+  {
+    slug: "waterfall-chart-toast-project-budget",
+    chartType: "waterfall-chart",
+    style: "Toast",
+    title: "Project Budget Remaining ($k)",
+    createWidget: _WaterfallChartToastProjectBudget,
+    thumbnailUrl: "/charts/waterfall-chart-toast-project-budget.svg",
+    files: _WaterfallChartToastProjectBudget_files,
+    installCommand: "npx flitter-ui add waterfall-chart --toast",
+  },
 ];
 
 export const galleryCategories = [
   { id: "area-chart", label: "Area" },
   { id: "bar-chart", label: "Bar" },
+  { id: "box-plot-chart", label: "Box Plot" },
   { id: "bubble-chart", label: "Bubble" },
+  { id: "bullet-chart", label: "Bullet" },
   { id: "candlestick-chart", label: "Candlestick" },
   { id: "donut-chart", label: "Donut" },
+  { id: "funnel-chart", label: "Funnel" },
   { id: "heatmap-chart", label: "Heatmap" },
+  { id: "histogram-chart", label: "Histogram" },
   { id: "line-chart", label: "Line" },
   { id: "pie-chart", label: "Pie" },
   { id: "radar-chart", label: "Radar" },
+  { id: "sankey-chart", label: "Sankey" },
   { id: "scatter-chart", label: "Scatter" },
   { id: "stacked-area-chart", label: "Stacked Area" },
   { id: "stacked-bar-chart", label: "Stacked Bar" },
+  { id: "sunburst-chart", label: "Sunburst" },
   { id: "treemap-chart", label: "Treemap" },
+  { id: "waterfall-chart", label: "Waterfall" },
 ];
 
 export const todoCategories = [
-  "box-plot-chart",
-  "bullet-chart",
-  "funnel-chart",
-  "histogram-chart",
-  "sankey-chart",
-  "waterfall-chart",
 ];

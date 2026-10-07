@@ -1,15 +1,16 @@
 import {
-  Border,
+  Align,
+  Alignment,
   BoxDecoration,
-  Column,
   Container,
   EdgeInsets,
-  MainAxisAlignment,
+  Opacity,
   Padding,
-  SizedBox,
-	Text,
-	TextStyle,
-	type Widget,
+  Stack,
+  StackFit,
+  Text,
+  TextStyle,
+  type Widget,
 } from "flitter-core";
 import type {
   WaterfallBarType,
@@ -26,48 +27,51 @@ const TYPE_INDEX: Record<WaterfallBarType, number> = {
 };
 
 export function agBar(
-  { item, isHovered }: {
-    item: WaterfallChartDatum;
-    index: number;
-    isHovered: boolean;
-  },
+  {
+    item,
+    isHovered,
+  }: { item: WaterfallChartDatum; index: number; isHovered: boolean },
   ctx: WaterfallChartContext<WaterfallChartConfig>,
 ): Widget {
-  const color = ctx.config.colors.fills[TYPE_INDEX[item.type]] ?? ctx.config.colors.fills[0];
-  const dlCfg = ctx.config.waterfall.dataLabel;
-  const isPositive = item.end >= item.start;
-  const formattedValue = ctx.config.waterfall.valueFormatter(item.value, item.type);
-
-  const dataLabelWidget = dlCfg.visible
-    ? Padding({
-        padding: EdgeInsets.only({ bottom: isPositive ? 2 : 0, top: isPositive ? 0 : 2 }),
-        child: Text(formattedValue, {
-          style: new TextStyle({
-            fontSize: dlCfg.fontSize,
-            color: dlCfg.color,
-            fontFamily: dlCfg.fontFamily ?? ctx.config.font.family,
-          }),
-        }),
-      })
-    : SizedBox.shrink();
-
-  return SizedBox.expand({
-    child: Column({
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  const colors = ctx.config.colors.fills;
+  const color = colors[TYPE_INDEX[item.type]] ?? colors[0];
+  const label = ctx.config.waterfall.dataLabel;
+  return Opacity({
+    opacity: ctx.hoveredBar != null && !isHovered ? 0.35 : 1,
+    child: Stack({
+      fit: StackFit.expand,
+      clipped: false,
       children: [
-        ...(isPositive && dlCfg.visible ? [dataLabelWidget] : []),
         Container({
           width: Infinity,
           height: Infinity,
           decoration: new BoxDecoration({
             color,
-            border:
-              isHovered
-                ? Border.all({ color: "white", width: 2, strokeAlign: 1 })
-                : undefined,
           }),
         }),
-        ...(!isPositive && dlCfg.visible ? [dataLabelWidget] : []),
+        ...(label.visible
+          ? [
+              Align({
+                alignment:
+                  item.end >= item.start
+                    ? Alignment.topCenter
+                    : Alignment.bottomCenter,
+                child: Padding({
+                  padding: EdgeInsets.symmetric({ vertical: 4 }),
+                  child: Text(
+                    ctx.config.waterfall.valueFormatter(item.value, item.type),
+                    {
+                      style: new TextStyle({
+                        fontFamily: label.fontFamily ?? ctx.config.font.family,
+                        fontSize: label.fontSize,
+                        color: label.color,
+                      }),
+                    },
+                  ),
+                }),
+              }),
+            ]
+          : []),
       ],
     }),
   });

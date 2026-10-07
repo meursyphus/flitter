@@ -15,6 +15,7 @@
       "flitter-core/component/Tooltip": ["../../packages/core/src/component/Tooltip.ts"],
       "flitter-core": ["../../packages/core/src/index.ts"],
       "flitter-ui/chart": ["../../packages/flitter/src/chart.ts"],
+      "flitter-ui": ["../../packages/flitter/src/index.ts"],
       "flitter-chart": ["../../packages/chart/src/index.ts"],
       "flitter-chart/*": ["../../packages/chart/src/*"],
       "shared": ["../../dev/shared/index.ts"],

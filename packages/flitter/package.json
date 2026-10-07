@@ -32,6 +32,7 @@
   "author": "meursyphus",
   "license": "MIT",
   "scripts": {
+    "test:install": "pnpm run build && node ./scripts/check-chart-install.mjs",
     "build": "pnpm --filter flitter-core build && pnpm --filter flitter-chart build && node ./scripts/sync-cli-registry.mjs && tsup && node ./scripts/sync-bundled-types.mjs",
     "prepack": "pnpm run build"
   },

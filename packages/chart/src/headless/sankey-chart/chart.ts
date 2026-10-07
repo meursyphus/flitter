@@ -1,10 +1,8 @@
 import {
   CustomPaint,
-  FractionallySizedBox,
+  LayoutBuilder,
   GestureDetector,
   GlobalKey,
-  Align,
-  Alignment,
   Positioned,
   SizedBox,
   Stack,
@@ -314,26 +312,29 @@ class LinkWidgetState extends State<LinkWidget> {
               ctx,
             ),
           }),
-          Positioned.fill({
-            child: Align({
-              alignment: new Alignment({
-                x: (link.anchorX + link.anchorWidth / 2) * 2 - 1,
-                y: (link.anchorY + link.anchorHeight / 2) * 2 - 1,
+          LayoutBuilder({
+            builder: (_, constraints) =>
+              Stack({
+                fit: StackFit.expand,
+                children: [
+                  Positioned({
+                    left: link.anchorX * constraints.maxWidth,
+                    top: link.anchorY * constraints.maxHeight,
+                    width: link.anchorWidth * constraints.maxWidth,
+                    height: link.anchorHeight * constraints.maxHeight,
+                    child: SizedBox({
+                      key: this.anchorKey,
+                      width: Infinity,
+                      height: Infinity,
+                    }),
+                  }),
+                ],
               }),
-              child: FractionallySizedBox({
-                widthFactor: link.anchorWidth,
-                heightFactor: link.anchorHeight,
-                child: SizedBox({
-                  key: this.anchorKey,
-                  width: Infinity,
-                  height: Infinity,
-                }),
-              }),
-            }),
           }),
         ],
       }),
-      onMouseEnter: () => ctx.hoverLink(link.source, link.target, this.anchorKey),
+      onMouseEnter: () =>
+        ctx.hoverLink(link.source, link.target, this.anchorKey),
       onMouseLeave: () => ctx.unhoverLink(link.source, link.target),
     });
   }

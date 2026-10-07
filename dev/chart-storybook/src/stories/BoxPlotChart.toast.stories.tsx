@@ -28,7 +28,10 @@ function ToastBoxPlotStory({
         direction,
         config: {
           title: { text: args.title, visible: !!args.title },
-          legend: { position: args.legendPosition, visible: args.legendVisible },
+          legend: {
+            position: args.legendPosition,
+            visible: args.legendVisible,
+          },
           boxPlot: { boxWidth: args.boxWidth, whiskerWidth: args.whiskerWidth },
           animation: {
             enabled: args.animationEnabled,
@@ -44,7 +47,7 @@ function ToastBoxPlotStory({
 }
 
 const meta: Meta<StoryArgs> = {
-  title: "Polish/BoxPlotChart/Toast",
+  title: "Charts/BoxPlotChart/Toast",
   parameters: { layout: "centered" },
   args: {
     renderer: "svg",
@@ -64,7 +67,9 @@ const meta: Meta<StoryArgs> = {
     boxWidth: { control: { type: "range", min: 10, max: 40, step: 2 } },
     whiskerWidth: { control: { type: "range", min: 6, max: 30, step: 2 } },
     animationEnabled: { control: "boolean" },
-    animationDuration: { control: { type: "range", min: 0, max: 2000, step: 100 } },
+    animationDuration: {
+      control: { type: "range", min: 0, max: 2000, step: 100 },
+    },
   },
 };
 

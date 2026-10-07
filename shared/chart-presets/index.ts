@@ -35,3 +35,5 @@ export { default as SunburstChart } from "./sunburst-chart";
 export { default as ToastSunburstChart } from "./toast-sunburst-chart";
 export { default as BulletChart } from "./bullet-chart";
 export { default as ToastBulletChart } from "./toast-bullet-chart";
+export { default as FunnelChart } from "./funnel-chart";
+export { default as ToastFunnelChart } from "./toast-funnel-chart";
