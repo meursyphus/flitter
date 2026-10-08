@@ -26,6 +26,10 @@
 		"tests/scroll-zoom.test.ts",
 		"src/build-phase-optimization.test.ts",
 		"tests/engine-regression.test.ts",
-		"tests/engine-performance.test.ts"
+		"tests/engine-performance.test.ts",
+		"src/diagram-geometry.test.ts",
+		"src/diagram-layout.test.ts",
+		"tests/diagram.test.ts",
+		"src/transform-bounds.test.ts"
 	]
 }

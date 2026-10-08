@@ -20,6 +20,7 @@ export default defineConfig({
 				find: 'flitter-core/component/Tooltip',
 				replacement: `${coreSource}/component/Tooltip.ts`
 			},
+			{ find: /^flitter-diagram$/, replacement: resolveFromHere('../../packages/diagram/src/index.ts') },
 			{ find: '@headless', replacement: resolveFromHere('../../packages/chart/src/headless') },
 			{ find: '@shared', replacement: resolveFromHere('../../packages/chart/src/shared') },
 			{ find: '@utils', replacement: resolveFromHere('../../packages/chart/src/shared/utils') }
