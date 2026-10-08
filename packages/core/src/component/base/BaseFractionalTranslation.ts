@@ -1,4 +1,5 @@
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
+import type { HitTestResult } from "../../hit-test/HitTestResult";
 import { Offset } from "../../type";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
 import type Widget from "../../widget/Widget";
@@ -40,7 +41,7 @@ class RenderFractionalTranslation extends SingleChildRenderObject {
     if (this._translation.x === value.x && this._translation.y === value.y)
       return;
     this._translation = value;
-    this.markNeedsLayout;
+    this.markNeedsLayout();
   }
   constructor({ translation }: { translation: BriefOffset }) {
     super({ isPainter: false });
@@ -56,6 +57,15 @@ class RenderFractionalTranslation extends SingleChildRenderObject {
         y: this.translation.y * this.size.height,
       });
     }
+  }
+
+  /**
+   * The child is painted shifted out of this box, so hit testing cannot be
+   * gated by the untranslated bounds (Flutter's RenderFractionalTranslation
+   * overrides hitTest the same way).
+   */
+  override hitTest(result: HitTestResult, position: Offset): boolean {
+    return this.hitTestChildren(result, position);
   }
 }
 

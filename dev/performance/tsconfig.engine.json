@@ -14,10 +14,22 @@
 	},
 	"include": [
 		"src/lib/engine-bench.ts",
+		"src/lib/text-field-bench.ts",
+		"src/text-editing.test.ts",
+		"tests/text-field.test.ts",
 		"src/text-algorithms.test.ts",
+		"src/text-max-lines.test.ts",
+		"src/text-preparation.test.ts",
 		"src/transform-cache.test.ts",
+		"src/path-bounds.test.ts",
+		"src/scroll-zoom.test.ts",
+		"tests/scroll-zoom.test.ts",
 		"src/build-phase-optimization.test.ts",
 		"tests/engine-regression.test.ts",
-		"tests/engine-performance.test.ts"
+		"tests/engine-performance.test.ts",
+		"src/diagram-geometry.test.ts",
+		"src/diagram-layout.test.ts",
+		"tests/diagram.test.ts",
+		"src/transform-bounds.test.ts"
 	]
 }

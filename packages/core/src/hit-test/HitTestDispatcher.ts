@@ -24,6 +24,7 @@ export class HitTestDispatcher {
   #lastHoverPosition: Offset | null = null;
   #lastHoverHits: RenderGestureDetector[] | null = null;
   #listeners: { type: string; handler: EventListener }[] = [];
+  #touch: TouchSession | null = null;
 
   init({ renderContext }: { renderContext: RenderContext }) {
     if (!this.#activated) return;
@@ -43,6 +44,24 @@ export class HitTestDispatcher {
       const handler = this.#wrapEvent(callback);
       this.#listeners.push({ type, handler });
       view.addEventListener(type, handler);
+    }
+    /*
+      Touch input is translated into the mouse events above: one finger acts
+      as the mouse (drag, tap -> click), two fingers pinch-zoom (a wheel event
+      carrying `pinchScale`) while panning with their midpoint. Only touches
+      that land on a detector with drag handlers are captured; anything else
+      keeps the browser's default scrolling and compatibility mouse events.
+    */
+    const touchHandlers: Record<string, (e: TouchEvent) => void> = {
+      touchstart: this.#handleTouchStart,
+      touchmove: this.#handleTouchMove,
+      touchend: this.#handleTouchEnd,
+      touchcancel: this.#handleTouchEnd,
+    };
+    for (const [type, callback] of Object.entries(touchHandlers)) {
+      const handler = callback as EventListener;
+      this.#listeners.push({ type, handler });
+      view.addEventListener(type, handler, { passive: false });
     }
     this.#renderContext.window.addEventListener(
       "scroll",
@@ -160,6 +179,167 @@ export class HitTestDispatcher {
 
   #handleMouseWheel = (e: Wrapped<WheelEvent>) => {
     this.#dispatchEvent(e, "onWheel");
+  };
+
+  // --- touch emulation -----------------------------------------------------
+
+  #touchPoint(touches: TouchList): { x: number; y: number } {
+    let x = 0;
+    let y = 0;
+    for (let i = 0; i < touches.length; i++) {
+      x += touches[i].clientX;
+      y += touches[i].clientY;
+    }
+    return { x: x / touches.length, y: y / touches.length };
+  }
+
+  #touchSpan(touches: TouchList): number {
+    if (touches.length < 2) return 0;
+    return Math.hypot(
+      touches[1].clientX - touches[0].clientX,
+      touches[1].clientY - touches[0].clientY,
+    );
+  }
+
+  #synthesizeMouse(
+    type: "mousedown" | "mousemove" | "mouseup" | "click",
+    point: { x: number; y: number },
+    source: TouchEvent,
+  ) {
+    const event = new MouseEvent(type, {
+      clientX: point.x,
+      clientY: point.y,
+      screenX: point.x,
+      screenY: point.y,
+      button: 0,
+      buttons: type === "mouseup" || type === "click" ? 0 : 1,
+      bubbles: true,
+      cancelable: true,
+      shiftKey: source.shiftKey,
+      ctrlKey: source.ctrlKey,
+      metaKey: source.metaKey,
+      altKey: source.altKey,
+    });
+    (event as SyntheticPointerEvent).fromTouch = true;
+    // Dispatched on the view so both the view listeners (this dispatcher) and
+    // document listeners (drag tracking) observe it, exactly like a real mouse.
+    this.#renderContext.view.dispatchEvent(event);
+  }
+
+  #handleTouchStart = (e: TouchEvent) => {
+    if (this.#renderView == null) return;
+    const touches = e.touches;
+    if (touches.length === 1) {
+      const point = this.#touchPoint(touches);
+      // Only capture when the touch lands on something draggable; otherwise the
+      // page keeps scrolling and the browser's compatibility mouse events fire.
+      const detectors = this.#performHitTestAt(
+        this.#convertToLocalPosition({ clientX: point.x, clientY: point.y } as MouseEvent),
+      );
+      if (!detectors.some(detector => detector.wantsDrag)) {
+        this.#touch = null;
+        return;
+      }
+      e.preventDefault();
+      this.#touch = {
+        start: point,
+        last: point,
+        moved: false,
+        span: 0,
+        pinching: false,
+      };
+      this.#synthesizeMouse("mousedown", point, e);
+      return;
+    }
+    if (touches.length === 2) {
+      const point = this.#touchPoint(touches);
+      if (this.#touch == null) {
+        // Two fingers at once: pan/zoom the pane under the midpoint, but only
+        // when something there takes gestures; otherwise the page keeps its
+        // own pinch-zoom and scroll.
+        const detectors = this.#performHitTestAt(
+          this.#convertToLocalPosition({ clientX: point.x, clientY: point.y } as MouseEvent),
+        );
+        if (!detectors.some(detector => detector.wantsDrag)) return;
+        e.preventDefault();
+        this.#touch = { start: point, last: point, moved: false, span: 0, pinching: false };
+        this.#synthesizeMouse("mousedown", point, e);
+      } else {
+        e.preventDefault();
+        // A second finger joined a drag: restart the emulated pointer at the
+        // midpoint so the content does not jump to it.
+        this.#reanchor(point, e);
+      }
+      this.#touch.pinching = true;
+      this.#touch.span = this.#touchSpan(touches);
+    }
+  };
+
+  /** End the emulated drag where it is and start a new one at `point` (no jump). */
+  #reanchor(point: { x: number; y: number }, source: TouchEvent) {
+    const session = this.#touch;
+    if (session == null) return;
+    this.#synthesizeMouse("mouseup", session.last, source);
+    this.#synthesizeMouse("mousedown", point, source);
+    session.last = point;
+  }
+
+  #handleTouchMove = (e: TouchEvent) => {
+    const session = this.#touch;
+    if (session == null) return;
+    e.preventDefault();
+    const touches = e.touches;
+    const point = this.#touchPoint(touches);
+    if (Math.hypot(point.x - session.start.x, point.y - session.start.y) > 4) {
+      session.moved = true;
+    }
+    if (touches.length >= 2) {
+      const span = this.#touchSpan(touches);
+      if (session.pinching && session.span > 0 && span > 0) {
+        const ratio = span / session.span;
+        if (Math.abs(ratio - 1) > 1e-4) {
+          const wheel = new WheelEvent("wheel", {
+            clientX: point.x,
+            clientY: point.y,
+            deltaX: 0,
+            // Chosen so the default wheel curve (exp(-pixels / 200)) reproduces the pinch ratio.
+            deltaY: -200 * Math.log(ratio),
+            deltaMode: 0,
+            ctrlKey: true,
+            bubbles: true,
+            cancelable: true,
+          }) as PinchWheelEvent;
+          wheel.pinchScale = ratio;
+          this.#renderContext.view.dispatchEvent(wheel);
+        }
+      }
+      session.pinching = true;
+      session.span = span;
+    }
+    this.#synthesizeMouse("mousemove", point, e);
+    session.last = point;
+  };
+
+  #handleTouchEnd = (e: TouchEvent) => {
+    const session = this.#touch;
+    if (session == null) return;
+    if (e.touches.length > 0) {
+      // A finger lifted but others remain: continue from the new midpoint
+      // without moving the content there.
+      const point = this.#touchPoint(e.touches);
+      session.pinching = e.touches.length >= 2;
+      session.span = this.#touchSpan(e.touches);
+      this.#reanchor(point, e);
+      return;
+    }
+    e.preventDefault();
+    this.#touch = null;
+    this.#synthesizeMouse("mouseup", session.last, e);
+    if (!session.moved && !session.pinching && e.type !== "touchcancel") {
+      this.#synthesizeMouse("click", session.last, e);
+    }
+    // Touch has no hover: release detectors that saw mouseenter from the drag.
+    this.#handleMouseLeave(e as unknown as Wrapped<MouseEvent>);
   };
 
   #handleMouseEnter = (_e: Wrapped<MouseEvent>) => {
@@ -285,3 +465,17 @@ function isGestureDetector(
 }
 
 type Wrapped<E extends Event> = E & { isPropagationStopped: boolean };
+
+type TouchSession = {
+  start: { x: number; y: number };
+  last: { x: number; y: number };
+  moved: boolean;
+  span: number;
+  pinching: boolean;
+};
+
+/** Mouse event synthesized from touch input. */
+export type SyntheticPointerEvent = MouseEvent & { fromTouch?: boolean };
+
+/** Wheel event synthesized from a two-finger pinch; `pinchScale` is the zoom ratio of this step. */
+export type PinchWheelEvent = WheelEvent & { pinchScale?: number };

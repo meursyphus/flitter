@@ -1,13 +1,17 @@
 import {
 	AppRunner,
+	Alignment,
 	CanvasPainter,
 	Column,
 	Container,
 	EdgeInsets,
 	GestureDetector,
 	MainAxisSize,
+	Matrix4,
 	Offset,
 	Opacity,
+	OverflowBox,
+	Positioned,
 	RepaintBoundary,
 	Row,
 	State,
@@ -332,6 +336,85 @@ export function mountEngineBench(
 			runner.runApp(child, { performanceTracing: true });
 			await nextFrame();
 			await nextFrame();
+		},
+		async renderTextOverflowCase(name: string, boundary: boolean, gestureOutside: boolean) {
+			const text = Text('Visible transformed text', {
+				style: new TextStyle({ fontSize: 24, color: '#000000', fontFamily: 'sans-serif' })
+			});
+			const gesture = (child: Widget) => GestureDetector({ onClick() {}, child });
+			const matrix = Matrix4.translationValues(
+				name === 'negative' ? -30.25 : 30.25,
+				name === 'negative' ? -40.25 : 40.25,
+				0
+			);
+			if (name === 'rotated') matrix.rotateZ(Math.PI / 6);
+			matrix.multiplyMatrix(Matrix4.diagonal3Values(1.1, 1.1, 1));
+			let content = gestureOutside ? text : gesture(text);
+			if (name === 'nested') content = RepaintBoundary({ child: content });
+			content = Transform({ transform: matrix, alignment: Alignment.topLeft, child: content });
+			if (gestureOutside) content = gesture(content);
+			if (name === 'clipped')
+				content = ClipRect({
+					clipper: (size) =>
+						Rect.fromLTWH({ left: 0, top: 0, width: size.width, height: size.height }),
+					child: content
+				});
+			if (boundary) content = RepaintBoundary({ child: content });
+			runner.runApp(
+				Stack({
+					children: [
+						Container({ width: 960, height: 540, color: '#ffffff' }),
+						Positioned({ left: 100, top: 100, child: content })
+					]
+				})
+			);
+			await nextFrame();
+			await nextFrame();
+		},
+		async measureClippedRecording(farTranslation: boolean, empty = false) {
+			const canvases: HTMLCanvasElement[] = [];
+			const createElement = document.createElement;
+			document.createElement = function (
+				this: Document,
+				...args: Parameters<typeof createElement>
+			) {
+				const result = createElement.apply(this, args);
+				if (args[0] === 'canvas') canvases.push(result as HTMLCanvasElement);
+				return result;
+			} as typeof createElement;
+			try {
+				runner.runApp(
+					Container({
+						width: 120,
+						height: 80,
+						child: RepaintBoundary({
+							key: `${farTranslation}-${empty}`,
+							child: ClipRect({
+								clipper: () =>
+									Rect.fromLTWH({
+										left: 0,
+										top: 0,
+										width: empty ? 0 : 120,
+										height: empty ? 0 : 80
+									}),
+								child: OverflowBox({
+									alignment: Alignment.topLeft,
+									maxHeight: Infinity,
+									child: Transform.translate({
+										offset: new Offset({ x: 0, y: farTranslation ? 10000 : 0 }),
+										child: Container({ width: 120, height: 10000, color: '#ff0000' })
+									})
+								})
+							})
+						})
+					})
+				);
+				await nextFrame();
+				await nextFrame();
+				return canvases.map((canvas) => ({ width: canvas.width, height: canvas.height }));
+			} finally {
+				document.createElement = createElement;
+			}
 		},
 		pixels(points: [number, number][]) {
 			if (!(view instanceof HTMLCanvasElement)) throw new Error('Pixel sampling requires canvas');

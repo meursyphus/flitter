@@ -10,6 +10,7 @@ import ThemeToggle from "./theme-toggle";
 
 const PRODUCTS = [
   { id: "chart", label: "Chart", href: "/chart", match: "/chart" },
+  { id: "diagram", label: "Diagram", href: "/diagram", match: "/diagram" },
   {
     id: "core",
     label: "Core",
@@ -21,6 +22,7 @@ const PRODUCTS = [
 const NAV_LINKS = [
   { label: "Chart", href: "/chart", match: "/chart" },
   { label: "Gallery", href: "/chart/gallery", match: "/chart/gallery" },
+  { label: "Diagram", href: "/diagram", match: "/diagram" },
   { label: "Core API", href: "/advanced/what-is-flitter", match: "/advanced" },
   { label: "Integration", href: "/integration", match: "/integration" },
 ];

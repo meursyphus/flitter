@@ -1,0 +1,230 @@
+export const metadata = {
+  title: "Edges — Flitter Diagram",
+  description: "FlowEdge fields, built-in edge types, markers, labels, custom edge types and path helpers.",
+};
+
+<div className="docs-prose prose prose-sm mx-auto max-w-3xl px-5 py-10 prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-3xl prose-h2:text-xl prose-h3:text-lg prose-pre:rounded-lg prose-pre:text-sm md:px-10 lg:py-14">
+
+# Edges
+
+## FlowEdge
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | Unique id |
+| `source`, `target` | `string` | Node ids |
+| `sourceHandle`, `targetHandle` | `string \| null` | Handle ids. Omit to use the node's first handle of that type. |
+| `type` | `string` | Key into `edgeTypes`. Defaults to `"default"`, a Bézier curve. |
+| `data` | `TData` | Your data |
+| `label` | `string` | Text drawn at the middle of the path |
+| `selected` | `boolean` | Initial selection; updated by the editor |
+| `animated` | `boolean` | Draw marching dashes along the edge |
+| `hidden` | `boolean` | Not drawn. Edges to hidden nodes are hidden too. |
+| `deletable` | `boolean` | `false` protects this edge from deletion |
+| `selectable` | `boolean` | `false` makes this edge unselectable |
+| `markerStart`, `markerEnd` | `MarkerShape \| EdgeMarker` | Arrow heads; see Markers below |
+| `zIndex` | `number` | Paint order among edges. Edges always paint below nodes. |
+| `style` | `{ stroke?, strokeWidth? }` | Stroke overrides for this edge |
+| `pathOptions` | `{ curvature?, offset?, borderRadius? }` | Options for the built-in path types |
+| `reconnectable` | `boolean \| "source" \| "target"` | Which ends can be dragged to another handle. Omitted or `true` allows both, `"source"` or `"target"` only that end, `false` neither. Needs `edgesReconnectable`, which is on by default, and `nodesConnectable`. |
+
+## Built-in edge types
+
+| Type | Path | Options |
+| --- | --- | --- |
+| `default`, `bezier` | Cubic Bézier that leaves and enters along the handle directions | `curvature`, default `0.25` |
+| `simplebezier` | Cubic Bézier with control points halfway between the ends | None |
+| `straight` | Straight line | None |
+| `step` | Right angles | `offset`, default `20` |
+| `smoothstep` | Right angles with rounded corners | `offset`, default `20`; `borderRadius`, default `5` |
+
+The defaults come from `config.edge.curvature`, `config.edge.stepOffset` and `config.edge.stepBorderRadius`. An edge's `pathOptions` overrides them for that edge.
+
+```typescript
+const edges: FlowEdge[] = [
+  { id: "a-b", source: "a", target: "b", type: "smoothstep", pathOptions: { borderRadius: 12 } },
+  { id: "a-c", source: "a", target: "c", pathOptions: { curvature: 0.5 } },
+];
+```
+
+## Markers
+
+`markerStart` and `markerEnd` take a shape name or an `EdgeMarker` object.
+
+```typescript
+{ markerEnd: "arrowclosed" }
+{ markerEnd: { type: "arrow", color: "#f59e0b", width: 20, strokeWidth: 1.5 } }
+```
+
+| `EdgeMarker` field | Description |
+| --- | --- |
+| `type` | `"arrow"` (open chevron) or `"arrowclosed"` (filled triangle) |
+| `color` | Defaults to `config.edge.markerColor`, then to the edge's stroke |
+| `width`, `height` | Marker box in pixels. Both default to `config.edge.markerSize`, 12.5. The arrow scales to fit the smaller side, like an SVG `viewBox` with `meet`. |
+| `strokeWidth` | Outline width. The marker also scales with it. |
+
+Markers point along the path where it ends, so they follow curves and steps.
+
+## Labels and style
+
+`label` is drawn by `custom.edgeLabel`, centred on the path's label point. The built-in label is 10px text on `colors.edgeLabelBackground`, outlined while the edge is selected. Clicking a label selects its edge. Return `null` from `custom.edgeLabel` to hide labels.
+
+The stroke defaults to `colors.edgeStroke`, or `colors.edgeStrokeSelected` while selected, at `config.edge.strokeWidth`. While one of its ends is being reconnected, the edge turns `colors.edgeStrokeUpdating`, the grey React Flow uses for an edge being updated. `style.stroke` and `style.strokeWidth` replace all of these. Animated edges use a 5px dash that completes a cycle every 500ms (`config.edge.animatedDash` and `config.edge.animationDuration`).
+
+Edges are hit-tested along their path within `edgeInteractionWidth / 2`, 10 units by default, so thin edges are still easy to click.
+
+## Custom edge types
+
+An edge type is a builder function, or `{ build, getPath }` when it also changes the geometry.
+
+```typescript
+type EdgeType = EdgeBuilder | { build: EdgeBuilder; getPath?: (params: EdgePathParams, edge: FlowEdge | null) => EdgePathResult };
+type EdgeBuilder = (args: EdgeBuilderArgs, context: FlowContext<XyflowFlowConfig>) => Widget;
+```
+
+The editor computes the path first, translates it into the edge widget's local coordinates, and passes it to the builder. Draw the path at its local coordinates and size the widget to `size`.
+
+| `EdgeBuilderArgs` | Description |
+| --- | --- |
+| `edge` | The `FlowEdge` |
+| `path` | `EdgePathResult` in local coordinates |
+| `origin` | Top-left of the edge widget in flow coordinates |
+| `size` | Size of the edge widget, `{ width, height }` |
+| `endpoints` | Source and target points in flow coordinates, their sides and resolved handles |
+| `selected`, `hovered`, `animated` | State |
+| `sourceNode`, `targetNode` | The connected nodes |
+| `markerStart`, `markerEnd` | Resolved `EdgeMarker` objects, or `null` |
+| `interactionWidth` | The `edgeInteractionWidth` option |
+| `reconnecting` | One end of this edge is being dragged to a new handle |
+
+`ShapePaint` draws named SVG path strings on both renderers. It is what the built-in edges use.
+
+```typescript
+import {
+  FlowDiagram,
+  ShapePaint,
+  commandsToD,
+  sampleCommands,
+  xyflowEdge,
+  type EdgeBuilderArgs,
+  type EdgePathParams,
+  type EdgePathResult,
+  type FlowContext,
+  type PathCommand,
+  type XyflowFlowConfig,
+} from "flitter-diagram";
+
+// A new look on the default geometry
+function dashedEdge({ path, size, selected }: EdgeBuilderArgs, context: FlowContext<XyflowFlowConfig>) {
+  return ShapePaint({
+    width: size.width,
+    height: size.height,
+    shapes: {
+      line: {
+        d: commandsToD(path.commands),
+        stroke: selected ? context.config.colors.edgeStrokeSelected : "#f59e0b",
+        strokeWidth: 2,
+        dash: [6, 4],
+      },
+    },
+  });
+}
+
+// New geometry with the default look: a quadratic arc that bows to one side
+function arcPath({ sourceX, sourceY, targetX, targetY }: EdgePathParams): EdgePathResult {
+  const cx = (sourceX + targetX) / 2 + (targetY - sourceY) * 0.25;
+  const cy = (sourceY + targetY) / 2 - (targetX - sourceX) * 0.25;
+  const commands: PathCommand[] = [
+    { type: "M", x: sourceX, y: sourceY },
+    { type: "Q", cx, cy, x: targetX, y: targetY },
+  ];
+  const labelX = 0.25 * sourceX + 0.5 * cx + 0.25 * targetX;
+  const labelY = 0.25 * sourceY + 0.5 * cy + 0.25 * targetY;
+  return {
+    commands,
+    labelX,
+    labelY,
+    offsetX: Math.abs(labelX - sourceX),
+    offsetY: Math.abs(labelY - sourceY),
+    points: sampleCommands(commands, 24),
+  };
+}
+
+FlowDiagram({
+  nodes,
+  edges,
+  edgeTypes: {
+    dashed: dashedEdge,
+    arc: { build: xyflowEdge, getPath: arcPath },
+  },
+});
+```
+
+`getPath` works in flow coordinates. Its `points` are the sampled polyline the editor uses for hit testing and for sizing the edge widget, so always fill them, for example with `sampleCommands`.
+
+A custom builder draws only what it returns. To keep markers, draw `markerStart`/`markerEnd` yourself with `getMarkerCommands` and `commandsEndAngle`, or delegate to `xyflowEdge` and change only the geometry.
+
+To change the geometry of every built-in type at once, override `custom.edgePath` instead. It receives `{ edge, params, type }` and also shapes the line drawn while connecting.
+
+## Reconnecting
+
+Dragging either end of an edge onto another handle moves that end. The grab area is a circle of `reconnectRadius`, 10 flow units, around each end. Node handles are drawn on top of it and take the press where they overlap, so press on the edge just outside the handle. Pressing the handle itself starts a new connection.
+
+```typescript
+FlowDiagram({
+  controller,
+  nodes,
+  edges: [
+    { id: "a-b", source: "a", target: "b" },
+    { id: "a-c", source: "a", target: "c", reconnectable: "target" },
+    { id: "fixed", source: "b", target: "c", reconnectable: false },
+  ],
+  // Keep edge ids stable; the editor would otherwise assign a new one
+  onReconnect: (oldEdge, connection) => {
+    controller.reconnectEdge(oldEdge, connection, { shouldReplaceId: false });
+  },
+});
+```
+
+Without `onReconnect`, the editor applies the reconnection itself and the edge gets a new `xy-edge__…` id. `custom.reconnectHandle` draws the grab areas; the built-in one is invisible. See [Interaction](/diagram/api/interaction) for the callbacks and the connection state.
+
+## Connection line
+
+While a connection is dragged, `custom.connectionLine` draws a path of type `connectionLineType`, `"default"` unless set. In `FlowDiagram` the line turns green over a valid handle and red over an invalid one. Custom `edgeTypes` do not apply to it; use a built-in type name.
+
+## Path helpers
+
+The path functions port React Flow's. They return an object instead of React Flow's `[path, labelX, labelY, offsetX, offsetY]` tuple, and `commands` instead of an SVG string.
+
+```typescript
+type EdgePathParams = {
+  sourceX: number; sourceY: number; sourcePosition?: Position;
+  targetX: number; targetY: number; targetPosition?: Position;
+};
+
+type EdgePathResult = {
+  commands: PathCommand[];   // absolute M, L, Q and C commands
+  labelX: number;
+  labelY: number;
+  offsetX: number;
+  offsetY: number;
+  points: XYPosition[];      // sampled polyline
+};
+```
+
+| Function | Description |
+| --- | --- |
+| `getBezierPath(params & { curvature? })` | `default` and `bezier` edges |
+| `getSimpleBezierPath(params)` | `simplebezier` edges |
+| `getStraightPath(params)` | `straight` edges |
+| `getStepPath(params & { offset?, centerX?, centerY? })` | `step` edges |
+| `getSmoothStepPath(params & { borderRadius?, offset?, centerX?, centerY? })` | `smoothstep` edges |
+| `getEdgePathByType(type, params, options?)` | Any built-in type by name. Unknown names give a Bézier. |
+| `commandsToD(commands)` | SVG path data string |
+| `commandsToPath(commands, path?)` | A Flitter `Path`, for `CustomPaint` canvas code |
+| `sampleCommands(commands, segments?)` | Polyline points along the commands |
+| `translateEdgePath(path, dx, dy)` | Moves a whole `EdgePathResult` |
+| `getMarkerCommands(point, angle, { type?, size?, strokeWidth? })` | Arrow head commands at `point` |
+| `commandsStartAngle(commands)`, `commandsEndAngle(commands)` | Direction in radians at either end, for markers |
+
+</div>

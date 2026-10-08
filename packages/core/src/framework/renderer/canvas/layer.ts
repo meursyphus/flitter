@@ -259,15 +259,18 @@ export class SceneBuilder {
           );
           ctx.clip();
           break;
-        case "picture":
+        case "picture": {
+          const size = command.picture.size;
+          if (size.width === 0 || size.height === 0) break;
           ctx.drawImage(
             command.picture.toImage(),
             command.x,
             command.y,
-            command.picture.size.width,
-            command.picture.size.height,
+            size.width,
+            size.height,
           );
           break;
+        }
       }
     }
     ctx.restore();
@@ -356,6 +359,7 @@ class Picture {
 
 export class PictureRecorder {
   #source: HTMLCanvasElement | null;
+  #paintBounds: Rect;
 
   /**
    *
@@ -365,6 +369,7 @@ export class PictureRecorder {
     paintBounds: Rect,
     recycledCanvas: HTMLCanvasElement | null = null,
   ) {
+    this.#paintBounds = paintBounds;
     const dpr = window.devicePixelRatio;
     const width = paintBounds.width * dpr;
     const height = paintBounds.height * dpr;
@@ -420,7 +425,14 @@ export class PictureRecorder {
     const dpr = window.devicePixelRatio;
     // setTransform rather than scale: both a fresh canvas and a reset() one
     // start at identity, and setTransform cannot accumulate across reuses.
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.setTransform(
+      dpr,
+      0,
+      0,
+      dpr,
+      -this.#paintBounds.left * dpr,
+      -this.#paintBounds.top * dpr,
+    );
     return ctx;
   }
 

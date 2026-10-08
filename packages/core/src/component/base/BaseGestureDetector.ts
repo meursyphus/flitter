@@ -5,7 +5,7 @@ import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectW
 import type Widget from "../../widget/Widget";
 import type { Offset } from "../../type";
 import type { RenderObjectVisitor } from "../../renderobject/RenderObjectVisitor";
-import { HitTestEntry, HitTestResult } from "../../hit-test/HitTestResult";
+import { HitTestEntry, type HitTestResult } from "../../hit-test/HitTestResult";
 
 export type HitTestBehavior = "deferToChild" | "opaque" | "translucent";
 
@@ -317,17 +317,23 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     this.behavior = behavior;
   }
 
+  private hasDragListeners = false;
+
   attach(ownerElement: RenderObjectElement): void {
     super.attach(ownerElement);
-    this.addEventListeners();
+    // Keep-alive reactivation reattaches the same render object.
+    if (!this.hasDragListeners) this.addEventListeners();
   }
 
   dispose(): void {
-    this.removeEventListeners();
-    backendRefCount--;
-    if (backendRefCount === 0) {
-      getSingletonDragBackend().teardown();
-      globalDragBackend = null as any;
+    if (this.hasDragListeners) {
+      this.removeEventListeners();
+      this.hasDragListeners = false;
+      backendRefCount--;
+      if (backendRefCount === 0) {
+        getSingletonDragBackend().teardown();
+        globalDragBackend = null as any;
+      }
     }
     super.dispose();
   }
@@ -343,12 +349,22 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     const dragBackend = getSingletonDragBackend();
     dragBackend.isSetup || dragBackend.setup();
     backendRefCount++;
+    this.hasDragListeners = true;
 
     dragBackend.connectDragSource(this, {
       onDragStart: this.onDragStart,
       onDragMove: this.onDragMove,
       onDragEnd: this.onDragEnd,
     });
+  }
+
+  /** True when a drag handler is set: touch input then drives this detector instead of scrolling the page. */
+  get wantsDrag(): boolean {
+    return (
+      this._onDragStart !== emptyCallback ||
+      this._onDragMove !== emptyCallback ||
+      this._onDragEnd !== emptyCallback
+    );
   }
 
   override hitTest(result: HitTestResult, position: Offset): boolean {

@@ -1,6 +1,6 @@
 import { assert } from "../../../utils";
 import type { RenderObject } from "../../../renderobject";
-import { Offset, type Rect } from "../../../type";
+import { Offset, Rect } from "../../../type";
 import {
   type ContainerLayer,
   OffsetLayer,
@@ -175,9 +175,19 @@ export class CanvasPaintingContext {
 
     node.needsCompositedLayerUpdate = false;
 
+    const bounds = node.canvasPainter.paintBounds;
+    const dpr = node.renderOwner.renderContext.window.devicePixelRatio;
+    // Align the picture origin to physical pixels: composing a fractional
+    // origin would resample otherwise unchanged text and blur retained layers.
+    const recordingBounds = Rect.fromLTRB({
+      left: Math.floor(bounds.left * dpr) / dpr,
+      top: Math.floor(bounds.top * dpr) / dpr,
+      right: Math.ceil(bounds.right * dpr) / dpr,
+      bottom: Math.ceil(bounds.bottom * dpr) / dpr,
+    });
     const childContext = new CanvasPaintingContext(
       childLayer,
-      node.canvasPainter.paintBounds,
+      recordingBounds,
       recycledCanvases,
     );
 
@@ -326,19 +336,26 @@ export class CanvasPaintingContext {
     return !this.#skipChildPainting;
   }
 
-  /** Flutter's pushLayer: preserve state across separately recorded pictures. */
+  /** Region, in this context's coordinates, that recordings are sized to. */
+  get estimateBound(): Rect {
+    return this.#estimateBound;
+  }
+
+  /**
+   * Flutter's pushLayer: preserve state across separately recorded pictures.
+   * `estimateBound` lets a layer that transforms its children (scale, rotate)
+   * record in the children's coordinate space; without it a zoomed-out scene
+   * would be culled to the parent's bounds before the transform is applied.
+   */
   pushLayer(
     layer: ContainerLayer,
     painter: (context: CanvasPaintingContext) => void,
+    estimateBound: Rect = this.#estimateBound,
   ) {
     const recycled = CanvasPaintingContext.#harvestRecycledCanvases(layer);
     layer.removeAllChildren();
     this.addLayer(layer);
-    const context = new CanvasPaintingContext(
-      layer,
-      this.#estimateBound,
-      recycled,
-    );
+    const context = new CanvasPaintingContext(layer, estimateBound, recycled);
     painter(context);
     context.stopRecordingIfNeeded();
   }

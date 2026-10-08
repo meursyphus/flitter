@@ -16,7 +16,9 @@
     "flitter-core": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "ts-dedent": "^2.2.0"
+    "ts-dedent": "^2.2.0",
+    "flitter-diagram": "workspace:*",
+    "diagram-presets": "workspace:*"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.1.1",

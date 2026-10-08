@@ -15,13 +15,19 @@
     },
     "framework": {
       "type": "string",
-      "enum": ["react", "svelte"],
+      "enum": [
+        "react",
+        "svelte"
+      ],
       "description": "Target framework",
       "default": "react"
     },
     "defaultChartStyle": {
       "type": "string",
-      "enum": ["ag", "toast"],
+      "enum": [
+        "ag",
+        "toast"
+      ],
       "description": "Default chart style when --style flag is omitted",
       "default": "ag"
     },
@@ -32,9 +38,22 @@
           "type": "string",
           "description": "Import alias path for chart output directory",
           "default": "@/components/chart"
+        },
+        "diagrams": {
+          "type": "string",
+          "description": "Import alias path for diagram output directory",
+          "default": "@/components/diagram"
         }
       },
       "additionalProperties": false
+    },
+    "defaultDiagramStyle": {
+      "type": "string",
+      "enum": [
+        "xyflow"
+      ],
+      "description": "Default diagram style when --style flag is omitted",
+      "default": "xyflow"
     }
   },
   "additionalProperties": false

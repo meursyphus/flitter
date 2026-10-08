@@ -23,7 +23,7 @@ export type Navigation = {
 // Global sidebar for landing — library catalog
 export const libraryNav: NavItem[] = [
   { title: "Chart", href: "/chart", status: "available" },
-  { title: "Diagram", href: "#", status: "coming" },
+  { title: "Diagram", href: "/diagram", status: "new" },
 ];
 
 // Ecosystem-level sidebar navigation (TanStack-style landing nav)
@@ -39,7 +39,7 @@ export const ecosystemNav: Navigation = {
       title: "Products",
       items: [
         { title: "Chart", href: "/chart", status: "new", dot: "bg-chart" },
-        { title: "Diagram", href: "/diagram", status: "coming", dot: "bg-script" },
+        { title: "Diagram", href: "/diagram", status: "new", dot: "bg-script" },
       ],
     },
     {
@@ -83,6 +83,31 @@ export const chartNav: Navigation = {
         { title: "Stacked Bar Chart", href: "/chart/api/stacked-bar-chart" },
         { title: "Sunburst Chart", href: "/chart/api/sunburst-chart" },
         { title: "Treemap Chart", href: "/chart/api/treemap-chart" },
+      ],
+    },
+  ],
+};
+
+export const diagramNav: Navigation = {
+  sections: [
+    {
+      title: "Getting Started",
+      items: [
+        { title: "Overview", href: "/diagram" },
+        { title: "Installation", href: "/diagram/installation" },
+        { title: "Quick Start", href: "/diagram/quick-start" },
+      ],
+    },
+    {
+      title: "API",
+      items: [
+        { title: "FlowDiagram", href: "/diagram/api" },
+        { title: "Interaction", href: "/diagram/api/interaction" },
+        { title: "FlowController", href: "/diagram/api/controller" },
+        { title: "Nodes & Handles", href: "/diagram/api/nodes-and-handles" },
+        { title: "Edges", href: "/diagram/api/edges" },
+        { title: "Layout", href: "/diagram/api/layout" },
+        { title: "Styling", href: "/diagram/api/styling" },
       ],
     },
   ],
@@ -135,6 +160,8 @@ export const advancedNav: NavSection[] = [
       { title: "CustomPaint", href: "/advanced/widgets/custom-paint" },
       { title: "DecoratedBox", href: "/advanced/widgets/decorated-box" },
       { title: "Draggable", href: "/advanced/widgets/draggable" },
+      { title: "InteractiveViewer", href: "/advanced/widgets/interactive-viewer" },
+      { title: "SingleChildScrollView", href: "/advanced/widgets/single-child-scroll-view" },
       { title: "Expanded", href: "/advanced/widgets/expanded" },
       { title: "Flex", href: "/advanced/widgets/flex" },
       { title: "Flexible", href: "/advanced/widgets/flexible" },
@@ -151,6 +178,7 @@ export const advancedNav: NavSection[] = [
       { title: "Padding", href: "/advanced/widgets/padding" },
       { title: "Positioned", href: "/advanced/widgets/positioned" },
       { title: "RichText", href: "/advanced/widgets/rich-text" },
+      { title: "TextField", href: "/advanced/widgets/text-field" },
       { title: "Row", href: "/advanced/widgets/row" },
       { title: "SizedBox", href: "/advanced/widgets/sized-box" },
       { title: "Spacer", href: "/advanced/widgets/spacer" },

@@ -1,0 +1,23 @@
+{
+  "name": "diagram-presets",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync": "node ./scripts/sync-from-cli.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "main": "./index.ts",
+  "module": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./*": "./*"
+  },
+  "dependencies": {
+    "flitter-ui": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}

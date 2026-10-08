@@ -3,10 +3,11 @@ import { RenderComparison } from "./Inline-span";
 import Utils, { assert, getTextWidth } from "../../utils";
 import type { SvgPaintContext } from "../../framework";
 import type Offset from "./_offset";
-
-function getTextHeight({ fontSize }: { fontSize: number }) {
-  return fontSize;
-}
+import { graphemes, segmentText } from "./text-segments";
+import {
+  getTextFont,
+  getTextMeasurementGeneration,
+} from "../../utils/getTextSize";
 
 import { TextDirection, TextAlign, TextWidthBasis } from "..";
 import { FontStyle } from "./text-style";
@@ -101,6 +102,7 @@ export default class TextPainter {
   #cachedMaxLines?: number;
   #cachedTextWidthBasis?: TextWidthBasis;
   #cachedEllipsis?: string;
+  #cachedMeasurementGeneration = -1;
 
   // Whether the cached paragraph holds outdated paint information (set by a
   // paint-tier text change) and must be rebuilt before the next paint.
@@ -168,9 +170,15 @@ export default class TextPainter {
           content,
           fontSize,
           fontWeight,
+          fontStyle,
           color,
         }) => {
-          const font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+          const font = getTextFont({
+            fontWeight,
+            fontSize,
+            fontFamily,
+            italic: fontStyle === FontStyle.italic,
+          });
           if (lastFont !== font) ctx.font = lastFont = font;
           if (lastColor !== color) ctx.fillStyle = lastColor = color;
           ctx.fillText(content, x + offset.x, y + offset.y);
@@ -186,7 +194,15 @@ export default class TextPainter {
 
     this.paragraph!.lines.forEach(line => {
       line.spanBoxes.forEach(
-        ({ offset, fontFamily, content, fontSize, fontWeight, color }) => {
+        ({
+          offset,
+          fontFamily,
+          content,
+          fontSize,
+          fontWeight,
+          fontStyle,
+          color,
+        }) => {
           const tspanEl = createSvgEl("tspan");
           tspanEl.setAttribute("x", `${offset.x}`);
           tspanEl.setAttribute("y", `${offset.y}`);
@@ -196,6 +212,10 @@ export default class TextPainter {
           tspanEl.setAttribute("font-size", `${fontSize}`);
           tspanEl.setAttribute("font-family", `${fontFamily}`);
           tspanEl.setAttribute("font-weight", fontWeight);
+          tspanEl.setAttribute(
+            "font-style",
+            fontStyle === FontStyle.italic ? "italic" : "normal",
+          );
           tspanEl.textContent = content;
           textEl.appendChild(tspanEl);
         },
@@ -207,6 +227,7 @@ export default class TextPainter {
     return new Paragraph(text ?? null, {
       textAlign: this.textAlign,
       ellipsis: this.ellipsis,
+      maxLines: this.maxLines,
       textDirection: this.textDirection || TextDirection.ltr,
     });
   }
@@ -226,6 +247,7 @@ export default class TextPainter {
   } = {}) {
     const nonWidthInputsUnchanged =
       this.paragraph != null &&
+      this.#cachedMeasurementGeneration === getTextMeasurementGeneration() &&
       this.#cachedText === this.text &&
       this.#cachedTextAlign === this.textAlign &&
       this.#cachedTextDirection === this.textDirection &&
@@ -254,10 +276,17 @@ export default class TextPainter {
       }
     }
 
-    this.paragraph = this.createParagraph(this.text);
-    this.#rebuildParagraphForPaint = false;
+    if (nonWidthInputsUnchanged) {
+      // A narrower width may change wrapping, but the resolved source spans
+      // are unchanged. Keep the paragraph and only run its layout phase.
+      this.#ensureParagraphForPaint();
+    } else {
+      this.paragraph = this.createParagraph(this.text);
+      this.#rebuildParagraphForPaint = false;
+    }
     this.layoutParagraph({ minWidth, maxWidth });
 
+    this.#cachedMeasurementGeneration = getTextMeasurementGeneration();
     this.#cachedText = this.text;
     this.#cachedMinWidth = minWidth;
     this.#cachedMaxWidth = maxWidth;
@@ -277,7 +306,11 @@ export default class TextPainter {
   // "\n" and the line composition is provably identical.
   #canReuseLineBreaks(maxWidth: number): boolean {
     const contentWidth = this.paragraph!.intrinsicWidth;
-    return this.#cachedMaxWidth >= contentWidth && maxWidth >= contentWidth;
+    return (
+      !this.paragraph!.didExceedMaxLines &&
+      this.#cachedMaxWidth >= contentWidth &&
+      maxWidth >= contentWidth
+    );
   }
 
   // Mirrors the width selection of layoutParagraph (same operations, same
@@ -313,6 +346,9 @@ export default class TextPainter {
   }) {
     this.paragraph!.layout(maxWidth);
 
+    // A truncated paragraph must retain the available width: its visible
+    // content is no longer a valid estimate of the untruncated intrinsic width.
+    if (this.paragraph!.didExceedMaxLines) return;
     if (minWidth !== maxWidth) {
       let newWidth: number;
       switch (this.textWidthBasis) {
@@ -336,6 +372,11 @@ export default class TextPainter {
 
 export class Paragraph {
   ellipsis?: string;
+  maxLines?: number;
+  didExceedMaxLines = false;
+  private prepared?: PreparedSegment[];
+  private characterLines?: CharacterLine[];
+  private preparedWidths = new Map<string, Map<string, number>>();
   source: Span[] = [];
   lines: ParagraphLine[] = [];
   textDirection: TextDirection;
@@ -346,13 +387,20 @@ export class Paragraph {
     {
       textAlign,
       ellipsis,
+      maxLines,
       textDirection,
     }: {
       textAlign: TextAlign;
       ellipsis?: string;
+      maxLines?: number;
       textDirection: TextDirection;
     },
   ) {
+    assert(
+      maxLines == null || (Number.isInteger(maxLines) && maxLines > 0),
+      "maxLines must be a positive integer",
+    );
+    this.maxLines = maxLines;
     this.ellipsis = ellipsis;
     this.textAlign = textAlign;
     this.textDirection = textDirection;
@@ -403,88 +451,286 @@ export class Paragraph {
         box.color = source[box.sourceIndex].color;
     }
     this.source = source;
+    this.characterLines = undefined;
     return true;
+  }
+
+  /** Resolve boundaries once. Widths are prepared lazily so truncated tails
+   * never reach measureText; each visible (segment, font) is then reusable. */
+  prepare(): PreparedSegment[] {
+    if (this.prepared) return this.prepared;
+    const text = this.source.map(span => span.content).join("");
+    const segments = segmentText(text);
+    let sourceIndex = 0;
+    let sourceStart = 0;
+    this.prepared = segments.map(segment => {
+      const parts: PreparedPart[] = [];
+      while (
+        sourceIndex < this.source.length &&
+        sourceStart + this.source[sourceIndex].content.length <= segment.start
+      ) {
+        sourceStart += this.source[sourceIndex++].content.length;
+      }
+      let index = sourceIndex;
+      let start = sourceStart;
+      while (index < this.source.length && start < segment.end) {
+        const source = this.source[index];
+        const from = Math.max(start, segment.start);
+        const to = Math.min(start + source.content.length, segment.end);
+        if (to > from)
+          parts.push({
+            sourceIndex: index,
+            textStart: from,
+            textEnd: to,
+            content: text.slice(from, to),
+            font: getTextFont({
+              ...source,
+              italic: source.fontStyle === FontStyle.italic,
+            }),
+          });
+        start += source.content.length;
+        index++;
+      }
+      return { ...segment, parts };
+    });
+    return this.prepared;
+  }
+
+  private measureText(text: string, font: string): number {
+    let widths = this.preparedWidths.get(font);
+    if (!widths) this.preparedWidths.set(font, (widths = new Map()));
+    let width = widths.get(text);
+    if (width === undefined) {
+      width = getTextWidth({ text, font });
+      widths.set(text, width);
+    }
+    return width;
+  }
+
+  private measure(part: PreparedPart): number {
+    return (part.width ??= /^[\r\n\u00ad]+$/.test(part.content)
+      ? 0
+      : this.measureText(part.content, part.font));
+  }
+
+  private box(
+    part: PreparedPart,
+    content = part.content,
+    width = this.measure(part),
+  ): SpanBox {
+    return new SpanBox({
+      ...this.source[part.sourceIndex],
+      sourceIndex: part.sourceIndex,
+      textStart: part.textStart,
+      textEnd: part.textEnd,
+      content,
+      size: { width, height: this.source[part.sourceIndex].fontSize },
+    });
   }
 
   layout(width: number = Infinity) {
     this.width = width;
     this.lines = [];
+    this.characterLines = undefined;
+    this.didExceedMaxLines = false;
+    const segments = this.prepare();
     let currentLine = new ParagraphLine();
-    let sourceIndex = 0;
-    let currentStyle: {
-      fontSize: number;
-      fontFamily: string;
-      fontWeight: string;
-      fontStyle: FontStyle;
-      color: string;
-      height: number;
-    };
-
-    const addNewLine = () => {
-      if (currentLine.spanBoxes.length > 0) {
-        this.lines.push(currentLine);
-      }
+    let discretionaryBreak: PreparedPart | undefined;
+    const lastLine = () =>
+      this.maxLines != null && this.lines.length + 1 >= this.maxLines;
+    const finish = () => {
+      this.lines.push(currentLine);
       currentLine = new ParagraphLine();
+      discretionaryBreak = undefined;
+    };
+    const truncate = () => {
+      this.didExceedMaxLines = true;
+      if (this.ellipsis) this.ellipsize(currentLine, width);
     };
 
-    const addWordToLine = (word: string, font: string) => {
-      const wordWidth = getTextWidth({ text: word, font });
-      if (currentLine.width + wordWidth > width) {
-        addNewLine();
+    for (let index = 0; index < segments.length; index++) {
+      const segment = segments[index];
+      if (/^[\r\n]/.test(segment.content)) {
+        // The newline belongs to the line it terminates, including empty lines.
+        for (const part of segment.parts)
+          currentLine.addSpanBox(this.box(part, "", 0));
+        if (lastLine()) {
+          truncate();
+          break;
+        }
+        finish();
+        // A trailing hard break still creates an empty final line.
+        if (
+          index === segments.length - 1 &&
+          (this.maxLines == null || this.lines.length < this.maxLines)
+        ) {
+          const part = segment.parts[segment.parts.length - 1];
+          currentLine.addSpanBox(
+            this.box({ ...part, textStart: part.textEnd }, "", 0),
+          );
+        }
+        continue;
       }
-      currentLine.addSpanBox(
+      if (segment.content === "\u00ad") {
+        discretionaryBreak = segment.parts[0];
+        currentLine.addSpanBox(this.box(discretionaryBreak, "", 0));
+        continue;
+      }
+      const segmentWidth = segment.parts.reduce(
+        (total, part) => total + this.measure(part),
+        0,
+      );
+      if (
+        currentLine.spanBoxes.length > 0 &&
+        currentLine.width + segmentWidth > width
+      ) {
+        if (lastLine()) {
+          truncate();
+          break;
+        }
+        if (discretionaryBreak) {
+          const hyphen = this.measureText("-", discretionaryBreak.font);
+          if (currentLine.width + hyphen <= width) {
+            currentLine.addSpanBox(this.box(discretionaryBreak, "-", hyphen));
+            finish();
+          }
+        } else finish();
+      }
+      discretionaryBreak = undefined;
+      for (const part of segment.parts) currentLine.addSpanBox(this.box(part));
+      if (
+        currentLine.width > width &&
+        this.ellipsis &&
+        (this.maxLines == null || lastLine())
+      ) {
+        truncate();
+        break;
+      }
+    }
+    if (currentLine.spanBoxes.length > 0) this.lines.push(currentLine);
+    this.align();
+  }
+
+  private ellipsize(line: ParagraphLine, width: number): void {
+    const last = line.spanBoxes[line.spanBoxes.length - 1];
+    if (!last) return;
+    const font = getTextFont({
+      ...last,
+      italic: last.fontStyle === FontStyle.italic,
+    });
+    const ellipsisWidth = this.measureText(this.ellipsis!, font);
+    const kept: SpanBox[] = [];
+    let used = 0;
+    for (const box of line.spanBoxes) {
+      if (used + box.size.width + ellipsisWidth <= width) {
+        kept.push(box);
+        used += box.size.width;
+        continue;
+      }
+      const boxFont = getTextFont({
+        ...box,
+        italic: box.fontStyle === FontStyle.italic,
+      });
+      let content = "";
+      let contentWidth = 0;
+      for (const grapheme of graphemes(box.content)) {
+        const candidate = content + grapheme.segment;
+        const candidateWidth = this.measureText(candidate, boxFont);
+        if (used + candidateWidth + ellipsisWidth > width) break;
+        content = candidate;
+        contentWidth = candidateWidth;
+      }
+      if (content)
+        kept.push(
+          new SpanBox({
+            ...box,
+            content,
+            textEnd: box.textStart + content.length,
+            size: { ...box.size, width: contentWidth },
+          }),
+        );
+      break;
+    }
+    const textEnd = kept[kept.length - 1]?.textEnd ?? last.textStart;
+    // An ellipsis wider than the constraint is itself clipped by omitting it.
+    if (ellipsisWidth <= width)
+      kept.push(
         new SpanBox({
-          sourceIndex,
-          content: word,
-          ...currentStyle,
-          size: {
-            height: getTextHeight({ fontSize: currentStyle.fontSize }),
-            width: wordWidth,
-          },
+          ...last,
+          content: this.ellipsis!,
+          textStart: textEnd,
+          textEnd,
+          size: { ...last.size, width: ellipsisWidth },
         }),
       );
-    };
+    if (kept.length === 0)
+      kept.push(
+        new SpanBox({
+          ...last,
+          content: "",
+          textStart: textEnd,
+          textEnd,
+          size: { ...last.size, width: 0 },
+        }),
+      );
+    line.replaceSpanBoxes(kept);
+  }
 
-    const processWord = (font: string) => (word: string) => {
-      const containsNewline = word.includes("\n");
-
-      if (containsNewline) {
-        word.split(/(\n)/).forEach(part => {
-          if (part === "\n") {
-            addNewLine();
-            currentLine.addSpanBox(
-              new SpanBox({
-                sourceIndex,
-                content: "\n",
-                ...currentStyle,
-                size: {
-                  height: getTextHeight({ fontSize: currentStyle.fontSize }),
-                  width: 0,
-                },
-              }),
-            );
-          } else if (part.length > 0) {
-            addWordToLine(part, font);
-          }
+  /** UTF-16 ranges agree with textarea selectionStart/End. Measure prefixes
+   * only when editing needs them, preserving kerning and grapheme boundaries. */
+  getCharacterLines(): CharacterLine[] {
+    if (this.characterLines) return this.characterLines;
+    this.characterLines = this.lines.map(line => ({
+      height: line.height,
+      spanBoxes: line.spanBoxes.flatMap(box => {
+        if (!box.content) return [box];
+        const font = getTextFont({
+          ...box,
+          italic: box.fontStyle === FontStyle.italic,
         });
-      } else {
-        addWordToLine(word, font);
-      }
-    };
-
-    this.source.forEach(({ content, ...style }, index) => {
-      sourceIndex = index;
-      currentStyle = style;
-      const font = `${currentStyle.fontWeight} ${currentStyle.fontSize}px ${currentStyle.fontFamily}`;
-      const words = content.match(/\S+|\s+/g) || [];
-      words.forEach(processWord(font));
-    });
-
-    if (currentLine.spanBoxes.length > 0) {
-      this.lines.push(currentLine);
-    }
-
-    this.align();
+        let previousWidth = 0;
+        const characters = graphemes(box.content);
+        // Prefix shaping is exact for ordinary words. Bound work for pasted
+        // megawords: individual advances scaled to the measured segment avoid
+        // quadratic prefix strings and keep the final caret at the painted end.
+        const advances =
+          characters.length > 256
+            ? characters.map(character =>
+                this.measureText(character.segment, font),
+              )
+            : undefined;
+        const advanceTotal =
+          advances?.reduce((sum, advance) => sum + advance, 0) ?? 0;
+        let advance = 0;
+        return characters.map(({ segment, index }, characterIndex) => {
+          const end = index + segment.length;
+          if (advances) advance += advances[characterIndex];
+          const width =
+            end === box.content.length
+              ? box.size.width
+              : advances
+                ? (box.size.width * advance) / (advanceTotal || 1)
+                : Math.min(
+                    box.size.width,
+                    this.measureText(box.content.slice(0, end), font),
+                  );
+          const character = new SpanBox({
+            ...box,
+            content: segment,
+            textStart: box.textStart + index,
+            textEnd: box.textStart + end,
+            size: { ...box.size, width: Math.max(0, width - previousWidth) },
+          });
+          character.offset = {
+            x: box.offset.x + previousWidth,
+            y: box.offset.y,
+          };
+          previousWidth = width;
+          return character;
+        });
+      }),
+    }));
+    return this.characterLines;
   }
 
   /**
@@ -495,6 +741,7 @@ export class Paragraph {
    * offsets are bit-identical to a full relayout.
    */
   resize(width: number): void {
+    this.characterLines = undefined;
     this.width = width;
     this.align();
   }
@@ -544,6 +791,7 @@ export class Paragraph {
     color?: string;
     height?: number;
   }) {
+    this.prepared = undefined;
     this.source.push({
       height,
       fontFamily,
@@ -573,8 +821,26 @@ type Span = {
   height: number; // this is line height
 };
 
+type PreparedPart = {
+  sourceIndex: number;
+  content: string;
+  textStart: number;
+  textEnd: number;
+  font: string;
+  width?: number;
+};
+type PreparedSegment = {
+  content: string;
+  start: number;
+  end: number;
+  parts: PreparedPart[];
+};
+type CharacterLine = { height: number; spanBoxes: SpanBox[] };
+
 class SpanBox {
   readonly sourceIndex: number;
+  readonly textStart: number;
+  readonly textEnd: number;
   fontSize: number;
   fontFamily: string;
   fontWeight: string;
@@ -587,6 +853,8 @@ class SpanBox {
 
   constructor({
     sourceIndex,
+    textStart,
+    textEnd,
     fontFamily,
     fontSize,
     fontStyle,
@@ -595,8 +863,15 @@ class SpanBox {
     content,
     height,
     size,
-  }: Span & { sourceIndex: number; size: { width: number; height: number } }) {
+  }: Span & {
+    sourceIndex: number;
+    textStart: number;
+    textEnd: number;
+    size: { width: number; height: number };
+  }) {
     this.sourceIndex = sourceIndex;
+    this.textStart = textStart;
+    this.textEnd = textEnd;
     this.fontFamily = fontFamily;
     this.fontStyle = fontStyle;
     this.fontWeight = fontWeight;
@@ -648,6 +923,13 @@ class ParagraphLine {
       spanBox.offset.x = currentX;
       currentX += spanBox.size.width;
     });
+  }
+
+  replaceSpanBoxes(boxes: SpanBox[]) {
+    this.spanBoxes = [];
+    this.measuredWidth = 0;
+    this.measuredHeight = 0;
+    for (const box of boxes) this.addSpanBox(box);
   }
 
   addSpanBox(spanBox: SpanBox) {

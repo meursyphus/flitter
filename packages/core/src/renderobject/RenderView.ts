@@ -51,6 +51,12 @@ class RenderView extends RenderObject {
 }
 
 class RootCanvasPainter extends CanvasPainter {
+  // The host canvas is the final viewport clip. Only retained subtree
+  // recordings need to expand for visual overflow.
+  override get paintBounds() {
+    return this.layoutBounds;
+  }
+
   constructor(renderView: RenderView) {
     super(renderView);
     this.layer = new ContainerLayer();

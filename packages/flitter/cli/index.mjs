@@ -9,6 +9,7 @@ function printHelp() {
 Usage:
   flitter init [--cwd <path>]
   flitter add <chart-name> [--style <toast|ag>] [--overwrite] [--skip-install] [--cwd <path>]
+  flitter add flow-diagram [--style xyflow] [--overwrite] [--skip-install] [--cwd <path>]
 `);
 }
 
@@ -53,7 +54,9 @@ async function main() {
         break;
       case "add":
         if (args._.length === 0) {
-          throw new Error("Missing chart name. Example: flitter add bar-chart --style toast");
+          throw new Error(
+            "Missing chart or diagram name. Examples: flitter add bar-chart --style toast, flitter add flow-diagram",
+          );
         }
         await runAdd({
           cwd,

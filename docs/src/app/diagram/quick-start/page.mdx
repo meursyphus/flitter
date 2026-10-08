@@ -1,0 +1,209 @@
+import QuickStartDemo from "../_components/quick-start-demo";
+
+export const metadata = {
+  title: "Quick Start — Flitter Diagram",
+  description: "Build a node editor with Flitter Diagram: data, mounting, change events, connections and fitView.",
+};
+
+<div className="docs-prose prose prose-sm mx-auto max-w-3xl px-5 py-10 prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-3xl prose-h2:text-xl prose-h3:text-lg prose-pre:rounded-lg prose-pre:text-sm md:px-10 lg:py-14">
+
+# Quick Start
+
+Build a small node editor: describe the graph, mount it, react to changes, and handle new connections.
+
+This guide assumes you ran `npx flitter-ui add flow-diagram`, as described in [Installation](/diagram/installation). The editor's style is then in `@/components/diagram/flow-diagram`, the engine in `flitter-ui/diagram` and the widgets in `flitter-ui`. That CLI path ships in `flitter-ui` 0.2.0 and later. Inside the Flitter monorepo, import the style and the engine from `flitter-diagram` and the widgets from `flitter-core` instead.
+
+<QuickStartDemo />
+
+## 1. Describe nodes and edges
+
+Nodes and edges are plain objects with the same shape as React Flow's. A node needs an `id`, a `position` in flow coordinates and a `data` object. The default node renders `data.label`.
+
+```typescript
+import type { FlowEdge, FlowNode } from "flitter-ui/diagram";
+
+export const initialNodes: FlowNode[] = [
+  { id: "1", type: "input", position: { x: 0, y: 0 }, data: { label: "Input" } },
+  { id: "2", position: { x: -100, y: 120 }, data: { label: "Default" } },
+  { id: "3", position: { x: 100, y: 120 }, data: { label: "Default" } },
+  { id: "4", type: "output", position: { x: 0, y: 240 }, data: { label: "Output" } },
+];
+
+export const initialEdges: FlowEdge[] = [
+  { id: "e1-2", source: "1", target: "2" },
+  { id: "e1-3", source: "1", target: "3", animated: true },
+  { id: "e2-4", source: "2", target: "4", label: "label" },
+];
+```
+
+The built-in node types decide which handles a node has:
+
+| Type | Handles |
+| --- | --- |
+| `default` (or no `type`) | Target on top, source on the bottom |
+| `input` | Source on the bottom |
+| `output` | Target on top |
+| `group` | None; a container for child nodes |
+
+## 2. Render the diagram
+
+`FlowDiagram` returns a widget with React Flow's look and behaviour. `fitView: true` zooms and centres the graph once every node has been measured.
+
+```typescript
+import { FlowDiagram } from "@/components/diagram/flow-diagram";
+import { initialEdges, initialNodes } from "./graph";
+
+export const diagram = FlowDiagram({
+  nodes: initialNodes,
+  edges: initialEdges,
+  fitView: true,
+});
+```
+
+Mount it with the React adapter. The editor fills the adapter's box.
+
+```tsx
+import Widget from "@flitterjs/react";
+import { diagram } from "./diagram";
+
+export default function Editor() {
+  return <Widget widget={diagram} width="100%" height="480px" renderer="canvas" />;
+}
+```
+
+> Create the widget once, at module scope or inside `useMemo`. A new widget instance remounts the editor and starts over from the initial arrays.
+
+That is already a working editor:
+
+| Gesture | Result |
+| --- | --- |
+| Drag the background | Pan |
+| Mouse wheel, trackpad pinch | Zoom toward the pointer (0.5× to 2× by default) |
+| Double-click the background | Zoom in 2×; Shift+double-click zooms out |
+| Click a node or edge | Select it; click the background to clear |
+| Cmd+click (macOS) or Ctrl+click | Add to or remove from the selection |
+| Shift+drag | Box-select nodes, plus the edges between them |
+| Drag a node | Move it; dragging a selected node moves the whole selection |
+| Drag from a handle to another handle | Connect them; the line snaps to handles within 20 units |
+| Click a handle, then another | Connect them (Escape cancels) |
+| Backspace or Delete | Delete the selection and every edge attached to it |
+| Hold Space and drag the background | Pan, even when dragging would box-select |
+| Drag either end of an edge onto another handle | Reconnect it. Press on the edge just outside the handle it ends at. |
+| Touch | Tap selects, one finger drags nodes or pans, two fingers pinch to zoom |
+
+[Interaction](/diagram/api/interaction) covers every gesture, plus node resizing and toolbars, which are off until you enable them.
+
+The controls in the bottom-left zoom, fit the view and lock interaction. The minimap in the bottom-right shows the whole graph; drag it to pan.
+
+## 3. Who owns the state
+
+The editor keeps nodes and edges in a `FlowController`. Every interaction updates the controller first, then reports what happened through React Flow-style change objects. You do not have to apply the changes back for the editor to work.
+
+```typescript
+FlowDiagram({
+  nodes: initialNodes,
+  edges: initialEdges,
+  fitView: true,
+  onNodesChange: (changes) => {
+    for (const change of changes) {
+      // `dragging: false` marks the end of a drag
+      if (change.type === "position" && change.dragging === false) {
+        savePosition(change.id, change.position);
+      }
+    }
+  },
+  onEdgesChange: (changes) => console.log(changes),
+  onSelectionChange: ({ nodes, edges }) => console.log(nodes.length, edges.length),
+});
+```
+
+Two rules follow from this:
+
+- **The `nodes` and `edges` props seed the controller.** Passing a new array identity replaces the controller's nodes or edges. Keep the arrays stable, for example as module constants or `State` fields, so a parent rebuild does not reset the editor.
+- **Change callbacks are notifications.** Use them to persist or mirror the graph. `applyNodeChanges` and `applyEdgeChanges` update your own copy of the arrays.
+
+## 4. Handle new connections
+
+When a connection ends on a valid handle, the editor calls `onConnect` with `{ source, target, sourceHandle, targetHandle }`. Without `onConnect`, it adds a default edge for you. With `onConnect`, adding the edge is up to you, which lets you style it or reject it.
+
+To change the graph from outside, give the editor your own `FlowController`. Create it in a `State` so it lives as long as the widget, and dispose it there.
+
+```typescript
+import { State, StatefulWidget, type Widget } from "flitter-ui";
+import { FlowController } from "flitter-ui/diagram";
+import { FlowDiagram } from "@/components/diagram/flow-diagram";
+import { initialEdges, initialNodes } from "./graph";
+
+class Editor extends StatefulWidget {
+  createState() {
+    return new EditorState();
+  }
+}
+
+class EditorState extends State<Editor> {
+  controller = new FlowController();
+
+  dispose() {
+    this.controller.dispose();
+    super.dispose();
+  }
+
+  build(): Widget {
+    return FlowDiagram({
+      controller: this.controller,
+      nodes: initialNodes,
+      edges: initialEdges,
+      fitView: true,
+      onConnect: (connection) => {
+        this.controller.addEdges({ ...connection, markerEnd: "arrowclosed" });
+      },
+    });
+  }
+}
+
+export default function EditorWidget(): Widget {
+  return new Editor();
+}
+```
+
+The controller mirrors React Flow's `useReactFlow()` instance. A few things you can do with it:
+
+```typescript
+controller.addNodes({ id: "5", position: { x: 220, y: 240 }, data: { label: "New" } });
+controller.updateNodeData("2", { label: "Renamed" });
+await controller.deleteElements({ nodes: [{ id: "3" }] });
+const { nodes, edges, viewport } = controller.toObject();
+```
+
+These calls emit the same `onNodesChange` and `onEdgesChange` events as the matching gestures. `setNodes` and `setEdges` replace the arrays without emitting changes. See [FlowController](/diagram/api/controller) for the full list.
+
+If you only need the controller after mount, `onInit: (controller) => { ... }` hands you the one the editor created.
+
+## 5. Fit the view
+
+`fitView: true` runs once, after the first measurement. Tune it with `fitViewOptions`, or call it later:
+
+```typescript
+FlowDiagram({
+  nodes: initialNodes,
+  edges: initialEdges,
+  fitView: true,
+  fitViewOptions: { padding: 0.2, maxZoom: 1 },
+});
+
+// later, animated over 300ms
+await controller.fitView({ duration: 300 });
+// or frame a few nodes
+await controller.fitView({ nodes: [{ id: "2" }, { id: "4" }], padding: 0.4 });
+```
+
+`padding` adds room around the nodes as a fraction of their bounding box (0.1, or 10%, by default). Zoom stays within `minZoom` and `maxZoom` unless `fitViewOptions` overrides them.
+
+## Next steps
+
+- [FlowDiagram API](/diagram/api) for every option and callback
+- [Nodes and handles](/diagram/api/nodes-and-handles) for custom node types
+- [Layout](/diagram/api/layout) to position nodes automatically
+- [Styling](/diagram/api/styling) for dark mode and theme tokens
+
+</div>

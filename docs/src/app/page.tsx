@@ -234,27 +234,32 @@ function LibrariesSection() {
         </Link>
 
         {/* Diagram */}
-        <div className="flex flex-col rounded-2xl border border-dashed border-line-strong p-7">
+        <Link
+          href="/diagram"
+          data-product="diagram"
+          className="group flex flex-col rounded-2xl border border-line bg-surface p-7 transition-colors hover:border-script/60"
+        >
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="wordmark text-[26px] text-ink">
               FLITTER <span className="text-script">DIAGRAM</span>
             </span>
-            <span className="whitespace-nowrap rounded-full border border-line px-2.5 py-0.5 text-[12px] font-medium text-faint">
-              Coming soon
+            <span className="whitespace-nowrap rounded-full bg-script/15 px-2.5 py-0.5 text-[12px] font-semibold text-script">
+              New
             </span>
           </div>
           <p className="mt-3 text-[16px] leading-relaxed text-soft">
-            Node-and-edge editors like the ERD canvas in easyrd, packaged the
-            same way as the charts.
+            Node-and-edge editors with React Flow&apos;s interactions, like the
+            ERD canvas in easyrd. Pluggable layouts, SVG or Canvas.
           </p>
           <div className="mt-5 h-28 overflow-hidden rounded-lg border border-line">
             <img
               src="/home/easyrd.jpg"
               alt=""
-              className="w-full object-cover object-[70%_30%] opacity-70 grayscale"
+              className="w-full object-cover object-[70%_30%]"
             />
           </div>
-        </div>
+          <span className="mt-5 text-[15px] font-semibold text-script">Open Flitter Diagram</span>
+        </Link>
       </div>
     </section>
   );

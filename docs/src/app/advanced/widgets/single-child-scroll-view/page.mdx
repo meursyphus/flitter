@@ -1,0 +1,92 @@
+export const metadata = { title: "SingleChildScrollView", description: "Scroll a finite child with wheel, drag, and programmatic control." };
+
+# SingleChildScrollView
+
+## Overview
+
+`SingleChildScrollView` lays out a child with unlimited space along one axis and clips it to a bounded viewport. It supports mouse wheels and click-drag scrolling in both SVG and Canvas. The API follows [Flutter's SingleChildScrollView](https://api.flutter.dev/flutter/widgets/SingleChildScrollView-class.html).
+
+## When to use it?
+
+- Scroll a dashboard panel that exceeds its available height.
+- Display a horizontally scrolling row of cards.
+- Keep a small form accessible in a compact container.
+- Scroll to a selected section with a controller.
+- Place a horizontal scroller inside a vertical page.
+
+## Basic Usage
+
+```typescript
+import {
+  Column, Container, Expanded, GestureDetector, MainAxisSize,
+  ScrollController, SingleChildScrollView, State, StatefulWidget,
+  Text,
+} from 'flitter-ui';
+
+class ScrollExample extends StatefulWidget {
+  createState() { return new ScrollExampleState(); }
+}
+
+class ScrollExampleState extends State<ScrollExample> {
+  controller = new ScrollController();
+
+  dispose() {
+    this.controller.dispose();
+    super.dispose();
+  }
+
+  build() {
+    return Container({ width: 320, height: 300, child: Column({ children: [
+      GestureDetector({
+        onClick: () => { void this.controller.animateTo(240, { duration: 400 }); },
+        child: Text('Scroll to item 5'),
+      }),
+      Expanded({ child: SingleChildScrollView({
+        controller: this.controller,
+        child: Column({ mainAxisSize: MainAxisSize.min, children:
+          Array.from({ length: 20 }, (_, i) => Container({
+            height: 60, child: Text(`Item ${i + 1}`),
+          })),
+        }),
+      }) }),
+    ] }) });
+  }
+}
+
+export default function ScrollExampleWidget() { return new ScrollExample(); }
+```
+
+## Props
+
+| Prop | Type | Default / behavior |
+| --- | --- | --- |
+| `child` | `Widget` | Required; finite size on the scrolling axis |
+| `scrollDirection` | `Axis` | `Axis.vertical` |
+| `controller` | `ScrollController` | An internal controller when omitted |
+| `physics` | `ScrollPhysics` | `ClampingScrollPhysics` |
+| `reverse` | `boolean` | `false`; start at the bottom or right when true |
+| `padding` | `EdgeInsets` | Padding included in the scrollable extent |
+| `clipBehavior` | `'hardEdge' \| 'none'` | `'hardEdge'` |
+| `key` | `any` | Widget reconciliation key |
+
+`ScrollController` exposes `offset`, `minScrollExtent`, `maxScrollExtent`, `viewportDimension`, and `hasContentDimensions`. Listen with `addListener` and unregister with `removeListener`. `jumpTo(offset)` updates immediately; `animateTo(offset, { duration, curve })` returns a promise and uses Flitter's animation ticker. Duration is in milliseconds. `stop()`, a new scroll, or `dispose()` resolves an interrupted animation. Read content dimensions after layout, for example from a controller listener or an event callback.
+
+## Practical Examples
+
+Horizontal cards use `scrollDirection: Axis.horizontal` with a `Row({ mainAxisSize: MainAxisSize.min, children })` child. `reverse: true` places offset zero at the trailing edge. Padding scrolls with the content.
+
+Use `physics: new NeverScrollableScrollPhysics()` to disable wheel and drag input while retaining `jumpTo` and `animateTo` control. At a scroll boundary, unconsumed wheel input can reach an enclosing scroller.
+
+## Important Notes
+
+The parent must bound the scrolling axis, such as a `SizedBox`, a fixed-size `Container`, or `Expanded` inside a bounded `Column`. Children receive unbounded constraints along that axis, so avoid `Expanded` inside the scrollable content itself. A shrink-wrapped `Column` or `Row` should use `MainAxisSize.min`.
+
+Every child is laid out eagerly. Large lists should use a lazy list viewport. This implementation supports wheel, mouse drag and one-finger touch drag (the engine translates touch input into pointer gestures); overscroll bounce, scrollbars, and momentum gestures are separate features. `ScrollPhysics` exposes a clamped ballistic simulation for integrations, but the scroll view does not start flings automatically.
+
+Own and dispose externally provided controllers in your `State`. The widget only disposes the controller it created. Clipping can be disabled, but interaction remains inside the original viewport.
+
+## Related Widgets
+
+- [InteractiveViewer](/advanced/widgets/interactive-viewer) for two-dimensional zoom and pan.
+- [Column](/advanced/widgets/column) and [Row](/advanced/widgets/row) for scrollable content.
+- [ClipRect](/advanced/widgets/clip-rect) for explicit clipping.

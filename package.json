@@ -28,7 +28,9 @@
     "perf:engine": "node dev/performance/scripts/run-perf-engine.mjs",
     "test": "turbo test --filter=flitter-performance",
     "test:integration": "pnpm --filter flitter-performance test:integration",
-    "chromatic": "turbo build --filter=flitter-storybook^... && pnpm --dir dev/storybook exec chromatic"
+    "chromatic": "turbo build --filter=flitter-storybook^... && pnpm --dir dev/storybook exec chromatic",
+    "diagram:typecheck": "pnpm --dir packages/diagram typecheck",
+    "diagram:test": "pnpm --dir dev/performance test:diagram"
   },
   "devDependencies": {
     "turbo": "^2.9.16"
