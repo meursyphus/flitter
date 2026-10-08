@@ -9,7 +9,7 @@ export const metadata = {
 
 Flitter Diagram installs the way Flitter Chart does. The CLI copies the styled editor, React Flow's look, into your project as source code you own. The engine underneath it, with the controller, gestures, layouts and path helpers, stays a dependency and comes from the `flitter-ui/diagram` entry of the `flitter-ui` package.
 
-> **Release status.** The `flow-diagram` CLI item and the `flitter-ui/diagram` entry ship with the next `flitter-ui` release. The version on npm today, 0.1.0, contains neither. Until then, use the workspace package inside the Flitter monorepo, described under **Use it from the monorepo** below.
+> **Release status.** The `flow-diagram` CLI item and the `flitter-ui/diagram` entry ship in `flitter-ui` 0.2.0 and later. The monorepo route under **Use it from the monorepo** below is for working on the engine itself.
 
 ## Prerequisites
 
@@ -162,7 +162,7 @@ Mouse, trackpad and touch input work on both. See [Interaction](/diagram/api/int
 
 ## Use it from the monorepo
 
-Inside the Flitter monorepo, the editor is the `flitter-diagram` workspace package at `packages/diagram`. It is private and is not published on its own. Use it until the CLI release reaches npm, or when you work on the engine.
+Inside the Flitter monorepo, the editor is the `flitter-diagram` workspace package at `packages/diagram`. It is private and is not published on its own. Use it when you work on the engine.
 
 Add the workspace packages to your app's `package.json`:
 
