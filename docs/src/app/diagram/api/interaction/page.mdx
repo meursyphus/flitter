@@ -1,0 +1,322 @@
+import InteractionDemo from "../../_components/interaction-demo";
+
+export const metadata = {
+  title: "Interaction — Flitter Diagram",
+  description: "Mouse, keyboard and touch gestures, viewport limits, edge reconnection, node resizing and node toolbars.",
+};
+
+<div className="docs-prose prose prose-sm mx-auto max-w-3xl px-5 py-10 prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-3xl prose-h2:text-xl prose-h3:text-lg prose-pre:rounded-lg prose-pre:text-sm md:px-10 lg:py-14">
+
+# Interaction
+
+The editor wires every gesture itself, so custom nodes and edges never need their own drag or click handlers. This page lists the gestures by input, then covers the features you configure: viewport limits, reconnecting edges, resizing nodes and node toolbars.
+
+The examples use the workspace imports, `flitter-diagram` and `flitter-core`. [Installation](/diagram/installation) lists the matching paths after a CLI install.
+
+<InteractionDemo />
+
+## Mouse and trackpad
+
+| Gesture | Result | Option |
+| --- | --- | --- |
+| Drag the background | Pan | `panOnDrag` |
+| Mouse wheel | Zoom toward the pointer, or pan with `panOnScroll` | `zoomOnScroll`, `panOnScroll` |
+| Trackpad pinch | Zoom toward the pointer. Browsers report it as a wheel event with Ctrl held. | `zoomOnPinch` |
+| Double-click the background | Zoom in 2×; Shift+double-click zooms out | `zoomOnDoubleClick` |
+| Click a node or edge | Select it. Clicking the background clears the selection. | `elementsSelectable` |
+| Cmd+click (macOS) or Ctrl+click | Add to or remove from the selection | `multiSelectionKeyCode` |
+| Shift+drag the background | Box-select nodes, plus the edges between them | `selectionKeyCode`, `selectionOnDrag` |
+| Drag a node | Move it. Dragging a selected node moves the whole selection. | `nodesDraggable` |
+| Drag from a handle to another handle | Connect them | `nodesConnectable` |
+| Click a handle, then another | Connect them | `connectOnClick` |
+| Drag the end of an edge | Reconnect it, see Reconnecting edges | `edgesReconnectable` |
+| Drag a resize control | Resize the node, see Resizing nodes | `nodesResizable` |
+| Drag the minimap | Pan | `config.minimap.pannable` |
+
+Dragging a node or a connection near the pane edge pans the view (`autoPanOnNodeDrag`, `autoPanOnConnect`).
+
+## Keyboard
+
+| Key | Result | Option |
+| --- | --- | --- |
+| Backspace or Delete | Delete the selection and every edge attached to it | `deleteKeyCode` |
+| Shift, held | Dragging the background box-selects | `selectionKeyCode` |
+| Cmd or Ctrl, held | Clicking adds to the selection. With `panOnScroll`, the wheel zooms. | `multiSelectionKeyCode`, `zoomActivationKeyCode` |
+| Space, held | Dragging the background pans, even when it would box-select | `panActivationKeyCode` |
+| Escape | Cancel a connection or reconnection in progress | |
+
+The editor listens on the whole document and ignores keys typed into inputs, textareas, selects and editable elements. See the [Keyboard options](/diagram/api) for the key names.
+
+## Touch
+
+Flitter turns touch input into the mouse events the editor already handles, so touch needs no options of its own. The core does this for every Flitter widget with drag handlers, so [`InteractiveViewer`](/advanced/widgets/interactive-viewer) responds to touch the same way.
+
+| Gesture | Result |
+| --- | --- |
+| Tap | A click. Selects a node or edge, clears the selection on the background, and completes a click connection. |
+| One finger on a node | Drags it |
+| One finger on the background | Pans |
+| One finger from a handle | Draws a connection |
+| One finger on an edge end or a resize control | Reconnects the edge or resizes the node |
+| Two fingers | Pinch to zoom around their midpoint; move both to pan |
+
+How it behaves:
+
+- **The pinch midpoint is the pointer.** Lifting one finger hands over to the other without a jump.
+- **Pinching uses `zoomOnPinch`.** Set it to `false` to turn pinch zoom off. `minZoom` and `maxZoom` still apply.
+- **There is no hover.** Hover styles end when the finger lifts.
+- **There are no modifier keys.** Shift+drag box selection and Cmd/Ctrl+click need a hardware keyboard.
+- **The diagram captures touches that start on it.** The page does not scroll from there, while touches elsewhere scroll it as usual. On phones, leave some page around a full-width diagram so readers can still scroll past it.
+
+Callbacks receive the synthesized `MouseEvent`. It carries `fromTouch: true`, which `SyntheticPointerEvent` from `flitter-core` types:
+
+```typescript
+import type { SyntheticPointerEvent } from "flitter-core";
+
+FlowDiagram({
+  nodes,
+  edges,
+  onNodeClick: (event, node) => {
+    const input = (event as SyntheticPointerEvent).fromTouch ? "touch" : "mouse";
+    console.log(`${node.id} clicked with ${input}`);
+  },
+});
+```
+
+## Viewport limits
+
+`minZoom` and `maxZoom` bound the zoom. `translateExtent` bounds the area the viewport may show, as `[[minX, minY], [maxX, maxY]]` in flow coordinates.
+
+```typescript
+FlowDiagram({
+  nodes,
+  edges,
+  minZoom: 1,
+  translateExtent: [
+    [0, 0],
+    [1200, 800],
+  ],
+});
+```
+
+The extent is enforced on every viewport change: dragging, the wheel, pinching, auto-pan, the minimap, controller calls such as `setViewport`, `fitView` and `setCenter`, and the initial `defaultViewport` once the pane has a size. When the extent is narrower or shorter than the pane at the current zoom, it is centred on that axis instead. The extent does not limit zoom, so pair it with a `minZoom` that keeps it larger than the pane if users must never see past it.
+
+## Reconnecting edges
+
+Drag either end of an edge onto another handle to move that end. The line snaps to handles within `connectionRadius` and checks the target with `connectionMode` and `isValidConnection`, exactly like a new connection. Dropping it anywhere else leaves the edge unchanged.
+
+The grab area is a circle of `reconnectRadius`, 10 flow units by default, centred on each end of the edge. Node handles are drawn above it and take the press where they overlap, so press on the edge just outside the handle. Pressing the handle itself starts a new connection instead.
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `edgesReconnectable` | `true` | Allow reconnecting edges. Set it to `false` to turn reconnecting off while keeping new connections. |
+| `reconnectRadius` | `10` | Radius of each end's grab area in flow units |
+| `edge.reconnectable` | Both ends | `true`, `"source"`, `"target"` or `false`, per edge |
+
+Reconnecting also stops when `nodesConnectable` is `false` and while interaction is locked from the controls.
+
+### Applying the change
+
+Without `onReconnect`, the editor calls `controller.reconnectEdge(oldEdge, connection)`. That emits a `replace` change keyed by the old id, and the edge gets the id `getEdgeId(connection)` generates, `xy-edge__…`, as React Flow's `reconnectEdge` does. With `onReconnect`, the editor changes nothing and you decide:
+
+```typescript
+FlowDiagram({
+  controller,
+  nodes,
+  edges,
+  isValidConnection: (connection) => connection.source !== connection.target,
+  onReconnect: (oldEdge, connection) => {
+    // Keep the edge's id instead of generating a new one
+    controller.reconnectEdge(oldEdge, connection, { shouldReplaceId: false });
+  },
+  onReconnectEnd: (_event, edge, end, state) => {
+    if (state.isValid === null) console.log(`The ${end} end of ${edge.id} was dropped away from a handle`);
+  },
+});
+```
+
+| Callback | Arguments |
+| --- | --- |
+| `onReconnectStart` | `(event, edge, handleType)`, where `handleType` is the end being moved |
+| `onReconnect` | `(oldEdge, connection)` when the end lands on a valid handle |
+| `onReconnectEnd` | `(event, edge, handleType, state)` when the drag ends, valid or not |
+
+`onConnect`, `onConnectStart` and `onConnectEnd` do not fire for reconnections.
+
+### While dragging
+
+`controller.connection` describes the gesture like a new connection does. `reconnectingEdge` is the edge and `reconnectingEnd` the end being moved. `fromNode` and `fromHandle` are the end that stays attached, which is where the connection line starts.
+
+Edge builders receive `reconnecting: true` for that edge. The built-in edge draws it in `colors.edgeStrokeUpdating`, a grey.
+
+`custom.reconnectHandle` draws the grab areas. It receives `{ edge, end, size }`, where `size` is the diameter, and the widget it returns is centred on the end. The built-in one is an invisible box. This one shows a dot on the ends of selected edges:
+
+```typescript
+import { Alignment, BoxDecoration, Container } from "flitter-core";
+
+FlowDiagram({
+  nodes,
+  edges,
+  custom: {
+    reconnectHandle: ({ edge, size }) =>
+      Container({
+        width: size,
+        height: size,
+        alignment: Alignment.center,
+        child: edge.selected
+          ? Container({ width: 8, height: 8, decoration: new BoxDecoration({ shape: "circle", color: "#3367d9" }) })
+          : undefined,
+      }),
+  },
+});
+```
+
+## Resizing nodes
+
+Resize controls appear around a node while it is selected, if it is resizable. Turn them on for every node with `nodesResizable: true`, or per node with `resizable`. A node's `resizable` wins in both directions. Locking interaction from the controls hides them.
+
+By default a node gets a line along each side and a handle on each corner. Lines change one dimension and corners change both. Resizing from a top or left control moves the node so the opposite side stays in place.
+
+```typescript
+FlowDiagram({
+  nodes: [
+    { id: "note", position: { x: 0, y: 0 }, data: { label: "Resize me" }, resizable: true },
+    {
+      id: "frame",
+      position: { x: 220, y: 0 },
+      width: 160,
+      height: 90,
+      data: { label: "16:9" },
+      resizable: true,
+      resizeOptions: { keepAspectRatio: true, minWidth: 80, handles: ["bottom-right"], lines: [] },
+    },
+  ],
+  edges: [],
+  nodeResizeOptions: { minWidth: 100, minHeight: 40, maxWidth: 400 },
+  onNodeResizeEnd: (_event, node, { width, height }) => console.log(node.id, width, height),
+});
+```
+
+| `NodeResizeOptions` | Default | Description |
+| --- | --- | --- |
+| `minWidth`, `minHeight` | `10` | Smallest size in flow units |
+| `maxWidth`, `maxHeight` | None | Largest size |
+| `keepAspectRatio` | `false` | Keep the ratio the node had when the resize started |
+| `handles` | The four corners | Handles to show: `"top-left"`, `"top-right"`, `"bottom-left"`, `"bottom-right"`, and the sides `"top"`, `"right"`, `"bottom"`, `"left"` |
+| `lines` | All four sides | Side lines to show. `[]` hides them. |
+
+The `nodeResizeOptions` prop sets the defaults and each node's `resizeOptions` is merged over them. With `snapToGrid`, the width and height snap to `snapGrid` without going below the minimum.
+
+### What a resize changes
+
+The new size is written to `node.width` and `node.height`, so the node keeps it. From then on its widget is laid out at exactly that size, so a custom node should let its content grow and shrink. While resizing, `node.resizing` is `true` and node builders receive `resizing: true`.
+
+`onNodesChange` receives `dimensions` changes with `resizing: true` and `setAttributes: true`, a `position` change when a top or left control moves the node, and a final `dimensions` change with `resizing: false`.
+
+| Callback | Arguments |
+| --- | --- |
+| `onNodeResizeStart` | `(event, node)` |
+| `onNodeResize` | `(event, node, params)` on every pointer move |
+| `onNodeResizeEnd` | `(event, node, params)` with the last params |
+
+`params` is `{ x, y, width, height, direction }`. `x` and `y` are the node's position, relative to its parent when it has one. `direction` holds the sign of the pointer movement on each axis.
+
+Resizing respects `nodeExtent` and the node's `extent`. The resized box stays inside the extent, and a child with `extent: "parent"` stays inside its parent. The extent is applied after `keepAspectRatio`, so a box clamped by it can lose its ratio, and the minimum size still wins when the extent is smaller than it.
+
+`custom.resizeControl` draws each line and handle. It receives `{ node, position, variant, resizing }`, where `variant` is `"line"` or `"handle"`. The widget's size is its grab area. The `resize` tokens of [Styling](/diagram/api/styling) change the built-in look.
+
+## Node toolbar
+
+A toolbar is a widget shown beside a node, like React Flow's `NodeToolbar`. Give every node type the same toolbar with the `nodeToolbar` prop, or one node type its own with `toolbar` in `nodeTypes`. A type's `toolbar` takes precedence over the prop.
+
+```typescript
+import {
+  Container, EdgeInsets, GestureDetector, MainAxisSize, Row, SizedBox, Text, TextStyle, type Widget,
+} from "flitter-core";
+import { FlowDiagram } from "flitter-diagram";
+
+function button(label: string, onClick: () => void): Widget {
+  return GestureDetector({
+    onClick,
+    child: Container({
+      padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
+      color: "#1a192b",
+      child: Text(label, { style: new TextStyle({ color: "#ffffff", fontSize: 12 }) }),
+    }),
+  });
+}
+
+FlowDiagram({
+  nodes,
+  edges,
+  nodeToolbar: ({ node }, flow) =>
+    Row({
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        button("Duplicate", () =>
+          flow.addNodes({
+            id: crypto.randomUUID(),
+            type: node.type,
+            data: node.data,
+            position: { x: node.position.x + 40, y: node.position.y + 40 },
+          }),
+        ),
+        SizedBox({ width: 4 }),
+        button("Delete", () => void flow.deleteElements({ nodes: [node] })),
+      ],
+    }),
+});
+```
+
+The builder receives `{ node, selected }` and the context, which is the controller with `config` attached. Return `null` to show nothing for a node.
+
+By default the toolbar shows while its node is the only selected node. `node.toolbar` places it and can force it:
+
+| `node.toolbar` | Default | Description |
+| --- | --- | --- |
+| `position` | `"top"` | Side of the node: `"top"`, `"right"`, `"bottom"` or `"left"` |
+| `align` | `"center"` | `"start"`, `"center"` or `"end"` along that side |
+| `offset` | `10` | Gap between the node and the toolbar in screen pixels |
+| `isVisible` | Unset | `true` always shows the toolbar, `false` never does |
+
+```typescript
+import { Text } from "flitter-core";
+import { FlowDiagram, xyflowNode } from "flitter-diagram";
+
+FlowDiagram({
+  nodes: [
+    { id: "a", type: "task", position: { x: 0, y: 0 }, data: { label: "Task" }, toolbar: { position: "right", align: "start" } },
+    { id: "b", type: "task", position: { x: 0, y: 120 }, data: { label: "Pinned" }, toolbar: { isVisible: true, position: "bottom" } },
+  ],
+  edges: [],
+  nodeTypes: {
+    task: { build: xyflowNode, toolbar: ({ node }) => Text(`Task ${node.id}`) },
+  },
+});
+```
+
+The toolbar lives in screen space. It keeps its size at every zoom level and follows the node while you pan, zoom or drag. It is drawn above the nodes and below the panels. Clicks inside it do not reach the pane, so pressing a button neither clears the selection nor starts a pan.
+
+Toolbars are rebuilt with the pane, on every change of the diagram, including each frame of a pan. Keep them light.
+
+## Locking interaction
+
+The lock button in the controls calls `controller.setInteractive(false)`. Panning and zooming keep working. Nodes can no longer be selected, connected or resized, and edges can no longer be reconnected. Nodes can no longer be dragged either, except those with `draggable: true`, which stays in force under the lock. A node that was selected before the lock keeps its toolbar.
+
+Use the options to turn single gestures off for good, for example a read-only viewer:
+
+```typescript
+FlowDiagram({
+  nodes,
+  edges,
+  nodesDraggable: false,
+  nodesConnectable: false,
+  elementsSelectable: false,
+  zoomOnDoubleClick: false,
+  config: { controls: { showInteractive: false } },
+});
+```
+
+`nodesConnectable: false` also turns off reconnecting edges.
+
+</div>

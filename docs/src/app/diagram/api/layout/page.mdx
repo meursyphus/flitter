@@ -1,0 +1,275 @@
+export const metadata = {
+  title: "Layout — Flitter Diagram",
+  description: "Automatic node placement: built-in algorithms, options, rerunning layouts and custom or async algorithms such as dagre and ELK.",
+};
+
+<div className="docs-prose prose prose-sm mx-auto max-w-3xl px-5 py-10 prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-3xl prose-h2:text-xl prose-h3:text-lg prose-pre:rounded-lg prose-pre:text-sm md:px-10 lg:py-14">
+
+# Layout
+
+A layout algorithm reads node sizes and edges and returns new positions. The editor runs it after every node has been measured, so it works with nodes whose size depends on their content.
+
+```typescript
+import { FlowDiagram, layeredLayout } from "flitter-diagram";
+
+// Positions can be anything; the layout replaces them.
+FlowDiagram({ nodes, edges, layout: layeredLayout });
+```
+
+## The `layout` prop
+
+Pass an algorithm, or a `LayoutConfig` to set options:
+
+```typescript
+FlowDiagram({
+  nodes,
+  edges,
+  layout: {
+    algorithm: layeredLayout,
+    options: { direction: "LR", nodeSpacing: 40, rankSpacing: 120 },
+    fitView: true,
+    runOn: "mount",
+  },
+});
+```
+
+| `LayoutConfig` field | Default | Description |
+| --- | --- | --- |
+| `algorithm` | Required | A `LayoutAlgorithm` |
+| `options` | `{}` | `LayoutOptions` for the algorithm |
+| `fitView` | `true` | Fit the view after the layout is applied, using `fitViewOptions` |
+| `runOn` | `"mount"` | `"mount"` runs once after the first measurement. `"manual"` waits for `controller.layout()`. |
+
+The layout runs once per mount. Changing the `layout` prop later does not rerun it; it only changes what `controller.layout()` uses by default. Positions from a layout are reported through `onNodesChange` as `position` changes.
+
+## Options
+
+| Option | Default | Used by |
+| --- | --- | --- |
+| `direction` | `"TB"` | `layered`, `tree`. One of `"TB"`, `"BT"`, `"LR"`, `"RL"`. |
+| `nodeSpacing` | `50` | All built-ins. Gap between neighbours in the same rank, or between cells and around the circle. |
+| `rankSpacing` | `100` | `layered`, `tree`, `grid`. Gap between ranks, or between grid rows. |
+| `origin` | `{ x: 0, y: 0 }` | All built-ins. Top-left of the laid-out graph. |
+| `columns` | `ceil(sqrt(n))` | `grid` |
+| `radius` | Fits the nodes | `circular`. A minimum radius. |
+| `iterations` | `300` | `force` |
+| `seed` | `42` | `force`. The same seed gives the same layout. |
+| `childPadding` | `20` | Every algorithm, through the editor and `layoutNodes`. Padding between a parent's border and its laid-out children, on every side. |
+| `fitParents` | `true` | Every algorithm, through the editor and `layoutNodes`. Grow each parent so its laid-out children fit inside `childPadding`. |
+
+`LayoutOptions` also accepts any other key, which custom algorithms can read.
+
+## Built-in algorithms
+
+| Algorithm | Description |
+| --- | --- |
+| `layeredLayout` | Sugiyama-style layering, like dagre: breaks cycles, ranks nodes by longest path, orders each rank to reduce crossings, then centres the ranks. Best for flowcharts and pipelines. |
+| `treeLayout` | Tidy tree: each subtree gets its own span and parents sit centred over their children. A node with several parents stays under the first. Several roots are placed side by side. |
+| `forceLayout` | Fruchterman-Reingold force simulation. Seeded and deterministic. Nodes away from the origin start from their current position. |
+| `gridLayout` | Equal cells in rows, in node order |
+| `circularLayout` | Nodes evenly spaced on a circle, in node order |
+| `manualLayout` | Leaves every node where it is |
+
+Layouts move nodes; they do not move handles. With `direction: "LR"` or `"RL"`, give your nodes handles on the left and right so edges run with the flow:
+
+```typescript
+import { FlowDiagram, treeLayout, xyflowNode } from "flitter-diagram";
+
+FlowDiagram({
+  nodes,
+  edges,
+  layout: { algorithm: treeLayout, options: { direction: "LR", rankSpacing: 80 } },
+  nodeTypes: {
+    default: {
+      build: xyflowNode,
+      handles: [
+        { type: "target", position: "left" },
+        { type: "source", position: "right" },
+      ],
+    },
+  },
+});
+```
+
+Overriding `default` covers every node without a `type`. See [Nodes and handles](/diagram/api/nodes-and-handles) for the full lookup order.
+
+Hidden nodes are skipped.
+
+## Sub-flows
+
+Layouts respect `parentId`. The editor splits the graph into containers, the top level and every node that has children, and runs the algorithm once per container:
+
+- Top-level nodes are laid out from `origin`.
+- A parent's children are laid out from `{ x: childPadding, y: childPadding }`. Their positions are relative to the parent, like any child position.
+- An edge that crosses containers is laid out between the ancestors that share a container. An edge from a node inside group `frontend` to the top-level node `api` counts as `frontend → api` in the top-level layout. An edge between a parent and its own descendant is ignored.
+
+```typescript
+import { FlowDiagram, layeredLayout, type FlowEdge, type FlowNode } from "flitter-diagram";
+
+const nodes: FlowNode[] = [
+  { id: "frontend", type: "group", position: { x: 0, y: 0 }, width: 220, height: 260, data: {} },
+  { id: "web", parentId: "frontend", extent: "parent", position: { x: 0, y: 0 }, data: { label: "Web" } },
+  { id: "bff", parentId: "frontend", extent: "parent", position: { x: 0, y: 0 }, data: { label: "BFF" } },
+  { id: "api", position: { x: 0, y: 0 }, data: { label: "API" } },
+];
+
+const edges: FlowEdge[] = [
+  { id: "web-bff", source: "web", target: "bff" },
+  { id: "bff-api", source: "bff", target: "api" }, // frontend → api at the top level
+];
+
+FlowDiagram({ nodes, edges, layout: { algorithm: layeredLayout, options: { childPadding: 30 } } });
+```
+
+Every container uses the same algorithm and options.
+
+After laying out a parent's children, the layout grows the parent so every child fits inside `childPadding` on all four sides. Parents only grow, never shrink, and a parent that already fits is left alone. Containers are processed deepest first, so a nested parent that grew takes part in its own container's layout at its new size.
+
+In the editor, a grown size is applied as a `dimensions` change with `setAttributes: true`. The parent gets a fixed `width` and `height`, exactly as if the user had resized it, and `onNodesChange` receives the change. The `fitView` after the layout uses the grown sizes. Pass `fitParents: false` to keep parent sizes as they are; then give each parent a `width` and `height` that fits its laid-out children.
+
+## Running a layout again
+
+`controller.layout()` reruns the configured layout. Pass an algorithm or options to override them for that run. It resolves once positions and grown parent sizes are applied and the view is fitted.
+
+```typescript
+await controller.layout();                                      // configured algorithm
+await controller.layout(forceLayout, { seed: 7 });               // something else
+await controller.layout(undefined, { direction: "LR", fitView: false });
+```
+
+Use `runOn: "manual"` when the first layout should wait, for example until data has loaded.
+
+## Layout outside the editor
+
+`layoutNodes` runs an algorithm over plain arrays, in tests or on a server. Nodes need `width`/`height` or `measured` sizes; nodes without either count as 0×0. Nested nodes are laid out inside their parent, exactly as in the editor, and a parent that grew to fit them comes back with its new `width` and `height`.
+
+```typescript
+import { layeredLayout, layoutNodes } from "flitter-diagram";
+
+const positioned = await layoutNodes(nodes, edges, layeredLayout, { direction: "TB" });
+```
+
+It returns a promise of the nodes with new positions. `toLayoutGraph(nodes, edges, options)` builds a flat graph of every visible node with the default options filled in. That is what an algorithm receives for a graph without `parentId`; it does not split containers.
+
+## Custom algorithms
+
+An algorithm is a name and a `compute` function. `compute` receives the graph and returns positions keyed by node id. Nodes you leave out keep their position. It may return a promise.
+
+`compute` runs once per container, deepest first. For a graph with sub-flows, each call receives the nodes of one container, the edges between them, and that container's `origin`. A parent that grew earlier is passed at its new size.
+
+```typescript
+type LayoutAlgorithm = {
+  name: string;
+  compute: (graph: LayoutGraph) => LayoutResult | Promise<LayoutResult>;
+};
+
+type LayoutGraph = {
+  nodes: { id: string; width: number; height: number; position: XYPosition; parentId?: string; data?: unknown }[];
+  edges: { id: string; source: string; target: string }[];
+  options: LayoutOptions; // direction, nodeSpacing, rankSpacing and origin are always set
+};
+
+type LayoutResult = { positions: Record<string, XYPosition> }; // top-left corners
+```
+
+A row of nodes, sorted by label:
+
+```typescript
+import type { LayoutAlgorithm } from "flitter-diagram";
+
+export const alphabeticalRow: LayoutAlgorithm = {
+  name: "alphabetical-row",
+  compute: ({ nodes, options }) => {
+    const sorted = [...nodes].sort((a, b) =>
+      String((a.data as { label?: string })?.label).localeCompare(String((b.data as { label?: string })?.label)),
+    );
+    const positions: Record<string, { x: number; y: number }> = {};
+    let x = options.origin.x;
+    for (const node of sorted) {
+      positions[node.id] = { x, y: options.origin.y };
+      x += node.width + options.nodeSpacing;
+    }
+    return { positions };
+  },
+};
+```
+
+### dagre
+
+dagre reports node centres, so convert them to top-left corners.
+
+```typescript
+import dagre from "@dagrejs/dagre";
+import type { LayoutAlgorithm } from "flitter-diagram";
+
+export const dagreLayout: LayoutAlgorithm = {
+  name: "dagre",
+  compute: ({ nodes, edges, options }) => {
+    const g = new dagre.graphlib.Graph();
+    g.setGraph({ rankdir: options.direction, nodesep: options.nodeSpacing, ranksep: options.rankSpacing });
+    g.setDefaultEdgeLabel(() => ({}));
+    for (const node of nodes) g.setNode(node.id, { width: node.width, height: node.height });
+    for (const edge of edges) g.setEdge(edge.source, edge.target);
+    dagre.layout(g);
+
+    const positions: Record<string, { x: number; y: number }> = {};
+    for (const node of nodes) {
+      const { x, y } = g.node(node.id);
+      positions[node.id] = { x: x - node.width / 2, y: y - node.height / 2 };
+    }
+    return { positions };
+  },
+};
+```
+
+### ELK (async)
+
+ELK lays out asynchronously, which `compute` supports directly. ELK already reports top-left corners.
+
+```typescript
+import ELK from "elkjs/lib/elk.bundled.js";
+import type { LayoutAlgorithm } from "flitter-diagram";
+
+const elk = new ELK();
+const elkDirection = { TB: "DOWN", BT: "UP", LR: "RIGHT", RL: "LEFT" } as const;
+
+export const elkLayout: LayoutAlgorithm = {
+  name: "elk",
+  compute: async ({ nodes, edges, options }) => {
+    const result = await elk.layout({
+      id: "root",
+      layoutOptions: {
+        "elk.algorithm": "layered",
+        "elk.direction": elkDirection[options.direction ?? "TB"],
+        "elk.spacing.nodeNode": String(options.nodeSpacing),
+        "elk.layered.spacing.nodeNodeBetweenLayers": String(options.rankSpacing),
+      },
+      children: nodes.map((n) => ({ id: n.id, width: n.width, height: n.height })),
+      edges: edges.map((e) => ({ id: e.id, sources: [e.source], targets: [e.target] })),
+    });
+
+    const positions: Record<string, { x: number; y: number }> = {};
+    for (const child of result.children ?? []) {
+      positions[child.id] = { x: child.x ?? 0, y: child.y ?? 0 };
+    }
+    return { positions };
+  },
+};
+```
+
+Pass either one like a built-in: `layout: elkLayout`. While an async layout runs, the nodes stay where they are. They move when the promise resolves.
+
+## Errors
+
+If `compute` throws or its promise rejects, the editor calls `onError("layout", message)`. The message starts with the algorithm's `name`. The nodes keep their positions and the view is not fitted. Without an `onError` callback the error propagates: `controller.layout()` rejects, and a layout that runs on mount surfaces as an unhandled promise rejection.
+
+```typescript
+FlowDiagram({
+  nodes,
+  edges,
+  layout: elkLayout,
+  onError: (code, message) => console.warn(code, message),
+});
+```
+
+</div>

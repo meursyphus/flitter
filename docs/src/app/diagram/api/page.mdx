@@ -1,0 +1,275 @@
+export const metadata = {
+  title: "FlowDiagram API — Flitter Diagram",
+  description: "Props, behavioural options, callbacks and change events of FlowDiagram.",
+};
+
+<div className="docs-prose prose prose-sm mx-auto max-w-3xl px-5 py-10 prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-3xl prose-h2:text-xl prose-h3:text-lg prose-pre:rounded-lg prose-pre:text-sm md:px-10 lg:py-14">
+
+# FlowDiagram
+
+```typescript
+import { FlowDiagram } from "flitter-diagram";
+
+FlowDiagram(props: FlowDiagramProps): Widget
+```
+
+`FlowDiagram` is the styled entry point: the headless [`Flow`](/diagram/api/styling) widget with React Flow's look, its four node types, its six edge types, the controls and the minimap. It accepts every `Flow` prop except that `config` is a deep partial of [`XyflowFlowConfig`](/diagram/api/styling) and `custom` is a partial override.
+
+Option and callback names follow React Flow. Where a default is listed, it is React Flow's default too.
+
+> **Imports on these pages.** The examples import from the workspace packages: `flitter-diagram` for the engine and the style, `flitter-core` for widgets. After `npx flitter-ui add flow-diagram`, import the style (`FlowDiagram`, `xyflow…`, `XyflowFlowConfig`, `ShapePaint`) from `@/components/diagram/flow-diagram`, the engine (`Flow`, `FlowController`, types, layouts, helpers) from `flitter-ui/diagram`, and widgets from `flitter-ui`. See [Installation](/diagram/installation).
+
+Gestures, touch input, edge reconnection, node resizing and node toolbars are described in [Interaction](/diagram/api/interaction).
+
+## Data and appearance
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `nodes` | `FlowNode[]` | Initial nodes. A new array identity replaces the editor's nodes. See [Nodes and handles](/diagram/api/nodes-and-handles). |
+| `edges` | `FlowEdge[]` | Initial edges. A new array identity replaces the editor's edges. See [Edges](/diagram/api/edges). |
+| `controller` | `FlowController` | Bring your own controller to drive the editor from outside. Created internally when omitted. See [FlowController](/diagram/api/controller). |
+| `nodeTypes` | `Record<string, NodeType>` | Extra node types, merged over `default`, `input`, `output` and `group`. |
+| `edgeTypes` | `Record<string, EdgeType>` | Extra edge types, merged over the built-in path types. |
+| `config` | `DeepPartial<XyflowFlowConfig>` | Colours, sizes, background, controls and minimap. See [Styling](/diagram/api/styling). |
+| `custom` | `Partial<FlowCustom>` | Replace any rendering slot: node, edge, label, handle, background, selection, connection line, resize controls and reconnect grab areas. |
+| `panels` | `FlowPanel[]` | Widgets pinned to a corner or edge of the pane: `{ position, child }`. Added after the controls and minimap. |
+| `nodeToolbar` | `NodeToolbarBuilder` | Toolbar for node types that do not define their own `toolbar`. See [Node toolbar](/diagram/api/interaction). |
+| `defaultViewport` | `Viewport` | Initial `{ x, y, zoom }`, clamped to the zoom limits and, once the pane has a size, to `translateExtent`. `fitView` and layouts replace it when they run. |
+| `fitView` | `boolean` | Fit every node once they have been measured. Runs once. |
+| `fitViewOptions` | `FitViewOptions` | Options for that first fit, and for fits after a layout. |
+| `layout` | `LayoutAlgorithm \| LayoutConfig` | Position nodes automatically. See [Layout](/diagram/api/layout). |
+| `key` | `unknown` | Widget key. |
+
+`FitViewOptions` is `{ padding?, minZoom?, maxZoom?, duration?, nodes?, includeHiddenNodes? }`. `padding` is a fraction of the nodes' bounding box and defaults to `0.1`. `nodes` limits the fit to those ids.
+
+`PanelPosition` is one of `"top-left"`, `"top-center"`, `"top-right"`, `"bottom-left"`, `"bottom-center"` or `"bottom-right"`. Panels sit 15px from the pane edge.
+
+## Viewport options
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `minZoom` | `0.5` | Smallest zoom for gestures and controller calls |
+| `maxZoom` | `2` | Largest zoom |
+| `zoomOnScroll` | `true` | Mouse wheel zooms toward the pointer, using d3-zoom's curve |
+| `zoomOnPinch` | `true` | Trackpad pinch (a wheel event with Ctrl or Meta held) zooms |
+| `panOnScroll` | `false` | Wheel pans instead of zooming; pinch still zooms |
+| `panOnScrollSpeed` | `0.5` | Multiplier for wheel panning |
+| `zoomOnDoubleClick` | `true` | Double-click the background to zoom in 2×, Shift+double-click to zoom out |
+| `panOnDrag` | `true` | Dragging the background pans |
+| `autoPanOnNodeDrag` | `true` | Pan when a dragged node nears the pane edge |
+| `autoPanOnConnect` | `true` | Pan when a connection line nears the pane edge |
+| `autoPanSpeed` | `15` | Pixels per frame for auto-pan |
+| `translateExtent` | Unbounded | `[[minX, minY], [maxX, maxY]]` in flow coordinates. The viewport never shows anything outside it. |
+
+`translateExtent` clamps every viewport change: dragging, the wheel, pinching, auto-pan, the minimap, controller calls such as `setViewport`, `fitView` and `setCenter`, and the initial `defaultViewport` once the pane has a size. When the extent is narrower or shorter than the pane at the current zoom, it is centred on that axis. It does not limit zoom; combine it with `minZoom` to stop users zooming out past it.
+
+## Selection and dragging
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `elementsSelectable` | `true` | Nodes and edges can be selected. `selectable: false` turns it off for one node or edge. |
+| `selectionOnDrag` | `false` | Dragging the background box-selects instead of panning |
+| `selectionMode` | `"full"` | `"full"` selects nodes fully inside the box, `"partial"` any overlap |
+| `nodesDraggable` | `true` | Nodes can be dragged; a node's `draggable` overrides it |
+| `selectNodesOnDrag` | `true` | Dragging an unselected node selects it first |
+| `nodeDragThreshold` | `1` | Pixels the pointer must move before a drag starts |
+| `snapToGrid` | `false` | Snap dragged positions to `snapGrid` |
+| `snapGrid` | `[15, 15]` | Grid size for snapping |
+| `nodeExtent` | Unbounded | `[[minX, minY], [maxX, maxY]]` that nodes stay inside while dragged or resized |
+| `elevateNodesOnSelect` | `true` | Draw selected nodes above the rest |
+| `elevateEdgesOnSelect` | `false` | Draw selected edges above the rest |
+
+## Connections
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `nodesConnectable` | `true` | Handles start connections. `connectable: false` on a node or handle turns it off for that one. |
+| `connectionMode` | `"strict"` | `"strict"` connects source to target only; `"loose"` lets any handle connect to any other |
+| `connectionRadius` | `20` | Distance in flow units within which the line snaps to a handle, also when reconnecting an edge |
+| `connectOnClick` | `true` | Click one handle, then another, to connect |
+| `isValidConnection` | `() => true` | Reject a candidate connection by returning `false`. Reconnections are checked too. |
+| `connectionLineType` | `"default"` | Path type of the line drawn while connecting |
+| `defaultEdgeOptions` | `{}` | Fields merged into edges added by connecting or `controller.addEdges()`. Not applied to the `edges` prop. |
+
+## Reconnecting and resizing
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `edgesReconnectable` | `true` | Dragging either end of an edge onto another handle reconnects it. `edge.reconnectable` limits it per edge. Also needs `nodesConnectable`. |
+| `reconnectRadius` | `10` | Radius in flow units of the grab area at each edge end, so it is 20 units across |
+| `nodesResizable` | `false` | Selected nodes show resize controls. `node.resizable` overrides it per node. |
+| `nodeResizeOptions` | `{ minWidth: 10, minHeight: 10 }` | Default `NodeResizeOptions`, merged under each node's `resizeOptions` |
+
+React Flow has no props for resizing or toolbars. It uses the `NodeResizer` and `NodeToolbar` components, which `nodesResizable`, `nodeResizeOptions` and the `nodeToolbar` prop replace here.
+
+Reconnecting also stops when `nodesConnectable` is `false`. Reconnecting and resizing both stop while interaction is locked, with the controls' lock button or `controller.setInteractive(false)`. See [Interaction](/diagram/api/interaction) for the gestures and the resize options.
+
+## Keyboard
+
+Each option takes a key name, an array of names, or `null` to disable it. Names are `KeyboardEvent.key` values, with `"Space"` for the space bar. Keys typed into an input, textarea, select or editable element are ignored.
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `deleteKeyCode` | `["Backspace", "Delete"]` | Deletes selected nodes and edges, and edges attached to deleted nodes |
+| `selectionKeyCode` | `"Shift"` | Hold to box-select by dragging |
+| `multiSelectionKeyCode` | `"Meta"` on macOS, else `"Control"` | Hold while clicking to add to or remove from the selection |
+| `panActivationKeyCode` | `"Space"` | Hold to pan by dragging, even when dragging would box-select |
+| `zoomActivationKeyCode` | `"Meta"` on macOS, else `"Control"` | Hold to make the wheel zoom while `panOnScroll` is on |
+
+Escape cancels a connection in progress.
+
+The editor listens for keys on the whole document. The pan key only calls `preventDefault` while the pointer is over the diagram, so Space still scrolls the page and presses focused buttons everywhere else.
+
+## Hit testing
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `handleSize` | `config.handle.size` (6) | Handle size used for anchoring edges when a `HandleSpec` has no size |
+| `edgeInteractionWidth` | `20` | Width of the invisible stroke used to hover and click edges |
+
+## Callbacks
+
+All callbacks are optional. Mouse callbacks receive the DOM `MouseEvent`. On touch screens they receive a `MouseEvent` synthesized from the touch, with `fromTouch: true` set on it.
+
+### Changes
+
+| Callback | Arguments | Fires when |
+| --- | --- | --- |
+| `onNodesChange` | `(changes: NodeChange[])` | Nodes move, are measured, selected, added, replaced or removed |
+| `onEdgesChange` | `(changes: EdgeChange[])` | Edges are selected, added, replaced or removed |
+| `onSelectionChange` | `({ nodes, edges })` | The set of selected nodes or edges changes |
+| `onInit` | `(controller)` | After the first frame |
+| `onError` | `(code: "layout", message)` | A layout algorithm throws or rejects. Without this callback the error propagates. |
+
+### Connections
+
+| Callback | Arguments | Fires when |
+| --- | --- | --- |
+| `onConnect` | `(connection: Connection)` | A connection ends on a valid handle. When set, the editor does not add the edge itself. |
+| `onConnectStart` | `(event, { nodeId, handleId, handleType })` | A connection drag starts |
+| `onConnectEnd` | `(event, state: ConnectionState)` | A connection drag ends, valid or not |
+| `onClickConnectStart` | `(event, { nodeId, handleId, handleType })` | The first handle of a click connection is clicked |
+| `onClickConnectEnd` | `(event, state: ConnectionState)` | The second handle of a click connection is clicked |
+
+`Connection` is `{ source, target, sourceHandle, targetHandle }`, with `null` handles when the handle has no id. A connection started from a target handle is reported source-first.
+
+### Reconnecting edges
+
+| Callback | Arguments | Fires when |
+| --- | --- | --- |
+| `onReconnect` | `(oldEdge, connection: Connection)` | An edge end is dropped on a valid handle. When set, the editor does not change the edge itself. Without it, the editor calls `controller.reconnectEdge(oldEdge, connection)`. |
+| `onReconnectStart` | `(event, edge, handleType)` | An edge end starts moving. `handleType` is the end being moved, `"source"` or `"target"`. |
+| `onReconnectEnd` | `(event, edge, handleType, state: ConnectionState)` | The drag ends, valid or not |
+
+Reconnecting does not call `onConnect`, `onConnectStart` or `onConnectEnd`.
+
+### Resizing nodes
+
+| Callback | Arguments | Fires when |
+| --- | --- | --- |
+| `onNodeResizeStart` | `(event, node)` | A resize control is pressed |
+| `onNodeResize` | `(event, node, params: ResizeParams)` | Every pointer move while resizing |
+| `onNodeResizeEnd` | `(event, node, params: ResizeParams)` | The control is released. `params` are the last ones `onNodeResize` received. |
+
+`ResizeParams` is `{ x, y, width, height, direction }`. `x` and `y` are the node's `position`, relative to its parent when it has one. `direction` is the sign of the pointer movement on each axis, `[-1 | 0 | 1, -1 | 0 | 1]`.
+
+### Nodes and edges
+
+| Callback | Arguments |
+| --- | --- |
+| `onNodeClick`, `onNodeDoubleClick` | `(event, node)` |
+| `onNodeMouseEnter`, `onNodeMouseLeave` | `(event, node)` |
+| `onNodeDragStart`, `onNodeDrag`, `onNodeDragStop` | `(event, node, nodes)`, where `nodes` are all nodes being dragged |
+| `onEdgeClick`, `onEdgeDoubleClick` | `(event, edge)` |
+| `onEdgeMouseEnter`, `onEdgeMouseLeave` | `(event, edge)` |
+
+### Pane and viewport
+
+| Callback | Arguments | Fires when |
+| --- | --- | --- |
+| `onPaneClick`, `onPaneDoubleClick` | `(event)` | The background is clicked without dragging |
+| `onSelectionStart`, `onSelectionEnd` | `(event)` | A box selection starts or ends |
+| `onMoveStart`, `onMoveEnd` | `(viewport)` | A user pan or zoom gesture starts or ends |
+| `onMove` | `(viewport)` | The viewport changes for any reason, including controller calls and the minimap |
+
+### Deleting
+
+| Callback | Arguments | Description |
+| --- | --- | --- |
+| `onBeforeDelete` | `({ nodes, edges })` | Return `false` to cancel, a smaller `{ nodes, edges }` to delete only those, or a promise of either |
+| `onNodesDelete` | `(nodes)` | Nodes were deleted |
+| `onEdgesDelete` | `(edges)` | Edges were deleted, including those attached to deleted nodes |
+| `onDelete` | `({ nodes, edges })` | Anything was deleted |
+
+## Change events
+
+The editor applies every change to its controller first and then reports it. Callbacks are notifications. You never have to apply changes back for the editor to update.
+
+```typescript
+type NodeChange =
+  | { type: "position"; id: string; position?: XYPosition; dragging?: boolean }
+  | { type: "dimensions"; id: string; dimensions: Dimensions; setAttributes?: boolean; resizing?: boolean }
+  | { type: "select"; id: string; selected: boolean }
+  | { type: "remove"; id: string }
+  | { type: "add"; item: FlowNode; index?: number }
+  | { type: "replace"; id: string; item: FlowNode };
+
+type EdgeChange =
+  | { type: "select"; id: string; selected: boolean }
+  | { type: "remove"; id: string }
+  | { type: "add"; item: FlowEdge; index?: number }
+  | { type: "replace"; id: string; item: FlowEdge };
+```
+
+| Source | Changes |
+| --- | --- |
+| Dragging nodes | `position` with `dragging: true`, then `dragging: false` on release |
+| First render and size changes | `dimensions` |
+| Resizing a node | `dimensions` with `resizing: true`, then `resizing: false` on release. Resizing from a top or left control adds a `position` change. |
+| Clicks, box selection, `selectNodes()` | `select` |
+| Delete key, `deleteElements()` | `remove`, edges first |
+| Connecting, `addNodes()`, `addEdges()` | `add` |
+| `updateNode()`, `updateNodeData()` and the edge equivalents | `replace` |
+| Reconnecting an edge, `reconnectEdge()` | `replace` keyed by the old edge id |
+| A layout | `position` without `dragging`, plus `dimensions` with `setAttributes: true` for each parent it grew |
+
+Resize changes carry `setAttributes: true`, which writes the new size to `node.width` and `node.height` as well as `measured`. A resized node keeps that fixed size from then on.
+
+To keep your own copy of the graph, for example to save it, apply the changes to that copy:
+
+```typescript
+import { applyEdgeChanges, applyNodeChanges } from "flitter-diagram";
+
+FlowDiagram({
+  nodes: initialNodes,
+  edges: initialEdges,
+  onNodesChange: (changes) => {
+    store.nodes = applyNodeChanges(changes, store.nodes);
+  },
+  onEdgesChange: (changes) => {
+    store.edges = applyEdgeChanges(changes, store.edges);
+  },
+});
+```
+
+Here `store` is whatever holds your app's data. Two things to avoid:
+
+- Do not feed changes back into the controller, as in `controller.setNodes(applyNodeChanges(changes, controller.nodes))`. They are already applied, and an `add` change would insert the node twice.
+- Do not pass a freshly built `nodes` array on every rebuild. Each new identity replaces the editor's nodes. Pass the same array, or drive changes through the [controller](/diagram/api/controller). If you only need a snapshot, `controller.toObject()` returns `{ nodes, edges, viewport }`.
+
+## Graph helpers
+
+These pure functions take and return plain arrays. They work with or without a mounted editor.
+
+| Function | Description |
+| --- | --- |
+| `applyNodeChanges(changes, nodes)` | Returns a new node array with the changes applied |
+| `applyEdgeChanges(changes, edges)` | Returns a new edge array with the changes applied |
+| `addEdge(edgeOrConnection, edges)` | Appends an edge unless the same connection exists. Generates an `xy-edge__…` id when none is given. |
+| `reconnectEdge(oldEdge, connection, edges, { shouldReplaceId })` | Replaces an edge's endpoints. `shouldReplaceId` defaults to `true`. |
+| `getConnectedEdges(nodes, edges)` | Edges touching any of `nodes` |
+| `getIncomers(node, nodes, edges)` | Nodes with an edge into `node` |
+| `getOutgoers(node, nodes, edges)` | Nodes `node` has an edge to |
+| `getEdgeId(connection)` | The id `addEdge` would generate |
+
+</div>

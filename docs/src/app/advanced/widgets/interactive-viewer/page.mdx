@@ -1,10 +1,10 @@
-export const metadata = { title: "InteractiveViewer", description: "Zoom to the cursor and pan a scene with SVG and Canvas renderers." };
+export const metadata = { title: "InteractiveViewer", description: "Zoom to the cursor or a pinch and pan a scene with mouse, trackpad or touch, on SVG and Canvas renderers." };
 
 # InteractiveViewer
 
 ## Overview
 
-`InteractiveViewer` adds cursor-centered wheel zoom and mouse drag panning around a child. It clips the result to a viewport and applies scale and translation boundaries. It follows the design of [Flutter's InteractiveViewer](https://api.flutter.dev/flutter/widgets/InteractiveViewer-class.html).
+`InteractiveViewer` adds zooming and panning around a child. The wheel and pinch gestures zoom around the pointer, and dragging with a mouse or one finger pans. It clips the result to a viewport and applies scale and translation boundaries. It follows the design of [Flutter's InteractiveViewer](https://api.flutter.dev/flutter/widgets/InteractiveViewer-class.html).
 
 ## When to use it?
 
@@ -68,6 +68,9 @@ export default function ViewerExampleWidget() { return new ViewerExample(); }
 | `panEnabled`, `scaleEnabled` | `boolean` | `true`; controls user input only |
 | `clipBehavior` | `'hardEdge' \| 'none'` | `'hardEdge'` |
 | `alignment` | `Alignment` | `Alignment.topLeft`; positions a scaled scene smaller than the viewport |
+| `wheelScale` | `(event: WheelEvent, viewportHeight: number) => number` | Scale ratio for one wheel event. Defaults to `exp(-pixels / 200)`, or to the event's `pinchScale` for a touch pinch; return `2 ** (-event.deltaY * 0.002)` for the d3-zoom curve React Flow uses |
+| `panOnScroll` | `boolean` | `false`; when `true`, a plain wheel pans and a wheel with Ctrl or Meta held (trackpad pinch) still zooms |
+| `panOnScrollSpeed` | `number` | `0.5`; multiplier applied to wheel deltas when panning |
 | `onInteractionStart` | `(details: ScaleStartDetails) => void` | Global and local focal point |
 | `onInteractionUpdate` | `(details: ScaleUpdateDetails) => void` | Focal points, scale ratio, and movement delta |
 | `onInteractionEnd` | `(details: ScaleEndDetails) => void` | Zero velocity for this non-inertial implementation |
@@ -76,6 +79,31 @@ export default function ViewerExampleWidget() { return new ViewerExample(); }
 ## Practical Examples
 
 Set `boundaryMargin: EdgeInsets.all(100)` to allow an extra 100 scene pixels around the child, or `EdgeInsets.all(Infinity)` for unrestricted panning. Use `panEnabled: false` for zoom-only interaction.
+
+For design-tool style navigation, set `panOnScroll: true`: the wheel and two-finger trackpad scrolling pan the scene, and pinching zooms. Wheel panning respects `panEnabled`. Pass `wheelScale` to change how fast the wheel zooms; the result is a ratio applied to the current scale, so `1` ignores the event.
+
+### Touch
+
+Touch works without extra props. One finger drags to pan. Two fingers pinch to zoom around their midpoint, and moving them together pans. A touch that starts on the viewer is captured, so the page does not scroll from there; touches elsewhere scroll the page as usual.
+
+Flitter delivers each pinch step as a wheel event with Ctrl held and a `pinchScale` property, the zoom ratio of that step. Without `wheelScale`, the viewer applies `pinchScale` directly, so a pinch follows the fingers exactly. With `panOnScroll`, a pinch still zooms because Ctrl is held. A custom `wheelScale` receives the pinch events too and has to read `pinchScale` itself:
+
+```typescript
+import { Container, InteractiveViewer, type PinchWheelEvent } from 'flitter-ui';
+
+InteractiveViewer({
+  minScale: 0.5,
+  maxScale: 4,
+  wheelScale: (event) => {
+    const pinch = (event as PinchWheelEvent).pinchScale;
+    if (pinch != null) return pinch; // two-finger pinch: follow the fingers
+    return 2 ** (-event.deltaY * 0.002); // mouse wheel: the d3-zoom curve
+  },
+  child: Container({ width: 800, height: 600, color: '#dbeafe' }),
+});
+```
+
+### Controller
 
 Assign `controller.value = Matrix4.diagonal3Values(2, 2, 1)` to zoom to 2×. `controller.toScene(new Offset({ x, y }))` maps a viewport point into scene coordinates; `toViewport` performs the reverse mapping. These methods include translation and scaling. A singular matrix cannot be inverted and `toScene` throws.
 
@@ -87,7 +115,7 @@ Both viewport dimensions must be bounded. With `constrained: false`, the child m
 
 Programmatic matrices are applied as supplied, allowing custom reset and navigation behavior. Limits apply to user gestures. The `alignment` option aligns undersized scenes; the controller matrix always uses a top-left origin, so coordinate conversion stays consistent.
 
-This version supports mouse input. Touch/pinch gestures, automatic inertial movement, and perspective-aware pan boundaries are not implemented. Disabling clipping allows painting outside the viewport, but input remains limited to its original bounds. Dispose controllers that your `State` owns.
+Mouse, trackpad and touch input are supported; each pinch step emits one start/update/end sequence like a wheel event. Automatic inertial movement and perspective-aware pan boundaries are not implemented. Disabling clipping allows painting outside the viewport, but input remains limited to its original bounds. Dispose controllers that your `State` owns.
 
 ## Related Widgets
 

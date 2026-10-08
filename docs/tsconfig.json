@@ -24,6 +24,7 @@
       "flitter-ui/chart": ["../packages/flitter/src/chart.ts"],
       "flitter-chart": ["../packages/chart/src/index.ts"],
       "flitter-chart/*": ["../packages/chart/src/*"],
+      "flitter-diagram": ["../packages/diagram/src/index.ts"],
       "shared": ["../dev/shared/index.ts"],
       "shared/chart": ["../dev/shared/chart.ts"],
       "chart-presets": ["../shared/chart-presets/index.ts"],

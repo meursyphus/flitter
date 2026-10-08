@@ -81,7 +81,7 @@ Use `physics: new NeverScrollableScrollPhysics()` to disable wheel and drag inpu
 
 The parent must bound the scrolling axis, such as a `SizedBox`, a fixed-size `Container`, or `Expanded` inside a bounded `Column`. Children receive unbounded constraints along that axis, so avoid `Expanded` inside the scrollable content itself. A shrink-wrapped `Column` or `Row` should use `MainAxisSize.min`.
 
-Every child is laid out eagerly. Large lists should use a lazy list viewport. This initial implementation supports desktop wheel and mouse drag input; touch, overscroll bounce, scrollbars, and momentum gestures are separate features. `ScrollPhysics` exposes a clamped ballistic simulation for integrations, but the scroll view does not start flings automatically.
+Every child is laid out eagerly. Large lists should use a lazy list viewport. This implementation supports wheel, mouse drag and one-finger touch drag (the engine translates touch input into pointer gestures); overscroll bounce, scrollbars, and momentum gestures are separate features. `ScrollPhysics` exposes a clamped ballistic simulation for integrations, but the scroll view does not start flings automatically.
 
 Own and dispose externally provided controllers in your `State`. The widget only disposes the controller it created. Clipping can be disabled, but interaction remains inside the original viewport.
 

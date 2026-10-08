@@ -1,0 +1,320 @@
+export const metadata = {
+  title: "Styling — Flitter Diagram",
+  description: "XyflowFlowConfig tokens, dark mode, background variants, controls, minimap, panels, custom slots and the headless Flow widget.",
+};
+
+<div className="docs-prose prose prose-sm mx-auto max-w-3xl px-5 py-10 prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-3xl prose-h2:text-xl prose-h3:text-lg prose-pre:rounded-lg prose-pre:text-sm md:px-10 lg:py-14">
+
+# Styling
+
+`FlowDiagram` draws React Flow's default theme. There are three levels of control:
+
+1. **`config`** changes tokens: colours, sizes, the background, the controls and the minimap.
+2. **`custom`**, **`nodeTypes`** and **`edgeTypes`** replace individual parts with your own widgets.
+3. The headless **`Flow`** widget drops the React Flow look entirely and keeps the behaviour.
+
+## Config
+
+`config` is a deep partial of `XyflowFlowConfig`. It is merged over the defaults, so set only what you change. `colorMode` picks the light or dark palette first, then `colors` overrides single tokens.
+
+```typescript
+FlowDiagram({
+  nodes,
+  edges,
+  config: {
+    colorMode: "dark",
+    colors: { background: "#0d0f13", edgeStroke: "#4b5563" },
+    background: { variant: "lines", gap: 24 },
+    controls: { position: "top-left", showInteractive: false },
+    minimap: { visible: false },
+  },
+});
+```
+
+To follow a site theme, rebuild the widget with the other `colorMode` when the theme changes. `createXyflowConfig(partial)` returns the fully merged config if you need to read the resolved values.
+
+### Colours
+
+Values mirror React Flow's `style.css` custom properties.
+
+| Token | Light | Dark |
+| --- | --- | --- |
+| `background` | `#ffffff` | `#141414` |
+| `patternDots` | `#91919a` | `#777777` |
+| `patternLines` | `#eeeeee` | `#777777` |
+| `patternCross` | `#e2e2e2` | `#777777` |
+| `nodeBackground` | `#ffffff` | `#1e1e1e` |
+| `nodeGroupBackground` | `rgba(240, 240, 240, 0.25)` | `rgba(240, 240, 240, 0.25)` |
+| `nodeBorder` | `#1a192b` | `#3c3c3c` |
+| `nodeSelectedBorder` | `#1a192b` | `#999999` |
+| `nodeColor` | `#222222` | `#f8f8f8` |
+| `nodeHoverShadow` | `rgba(0, 0, 0, 0.08)` | `rgba(255, 255, 255, 0.08)` |
+| `handleBackground` | `#1a192b` | `#bebebe` |
+| `handleBorder` | `#ffffff` | `#1e1e1e` |
+| `handleValid` | `#55dd99` | `#55dd99` |
+| `handleInvalid` | `#ff0072` | `#ff0072` |
+| `edgeStroke` | `#b1b1b7` | `#3e3e3e` |
+| `edgeStrokeSelected` | `#555555` | `#727272` |
+| `edgeStrokeUpdating` | `#777777` | `#777777` |
+| `edgeLabelBackground` | `#ffffff` | `#141414` |
+| `edgeLabelColor` | `#222222` | `#f8f8f8` |
+| `connectionLine` | `#b1b1b7` | `#b1b1b7` |
+| `selectionBackground` | `rgba(0, 89, 220, 0.08)` | `rgba(200, 200, 220, 0.08)` |
+| `selectionBorder` | `rgba(0, 89, 220, 0.8)` | `rgba(200, 200, 220, 0.8)` |
+| `controlsBackground` | `#fefefe` | `#2b2b2b` |
+| `controlsBackgroundHover` | `#f4f4f4` | `#3e3e3e` |
+| `controlsColor` | `#222222` | `#f8f8f8` |
+| `controlsBorder` | `#eeeeee` | `#5b5b5b` |
+| `controlsShadow` | `rgba(0, 0, 0, 0.08)` | `rgba(0, 0, 0, 0.08)` |
+| `minimapBackground` | `#ffffff` | `#141414` |
+| `minimapMask` | `rgba(240, 240, 240, 0.6)` | `rgba(60, 60, 60, 0.6)` |
+| `minimapNode` | `#e2e2e2` | `#2b2b2b` |
+| `minimapViewportStroke` | `transparent` | `transparent` |
+
+The palettes are exported as `xyflowLightColors` and `xyflowDarkColors`.
+
+### Node, handle and edge
+
+| Token | Default | Description |
+| --- | --- | --- |
+| `node.width` | `150` | Width of built-in nodes without a `width` |
+| `node.padding` | `10` | Inner padding |
+| `node.borderRadius` | `3` | Corner radius |
+| `node.borderWidth` | `1` | Border width; selected nodes add 0.5 |
+| `node.fontSize` | `12` | Label size |
+| `node.fontFamily` | System UI stack | Label and edge label font |
+| `handle.size` | `6` | Handle diameter. `FlowDiagram` also uses it as the `handleSize` option. |
+| `handle.borderWidth` | `1` | Handle outline |
+| `handle.hitPadding` | `4` | Transparent margin around connectable handles |
+| `edge.strokeWidth` | `1` | Edge stroke |
+| `edge.curvature` | `0.25` | Bézier curvature |
+| `edge.stepOffset` | `20` | Distance a step edge travels before its first turn |
+| `edge.stepBorderRadius` | `5` | Corner radius of `smoothstep` edges |
+| `edge.markerColor` | `null` | Marker colour; `null` uses the edge stroke |
+| `edge.markerSize` | `12.5` | Default marker width and height in pixels |
+| `edge.animatedDash` | `5` | Dash length of animated edges |
+| `edge.animationDuration` | `500` | Milliseconds per dash cycle |
+| `edgeLabel.fontSize` | `10` | Label size |
+| `edgeLabel.paddingX`, `edgeLabel.paddingY` | `4`, `2` | Label padding |
+| `edgeLabel.borderRadius` | `2` | Label corner radius |
+| `edgeLabel.showBackground` | `true` | Draw `colors.edgeLabelBackground` behind the label |
+| `connectionLine.strokeWidth` | `1` | Stroke of the line drawn while connecting |
+| `selection.dash` | `1` | Dash length of the selection rectangle outline |
+| `selection.borderWidth` | `1` | Outline width of the selection rectangle |
+
+### Resize controls
+
+The controls drawn around a selected resizable node, React Flow's `NodeResizer` look.
+
+| Token | Default | Description |
+| --- | --- | --- |
+| `resize.color` | `#3367d9` | Colour of the lines and handles |
+| `resize.handleSize` | `4` | Size of the square handles |
+| `resize.lineWidth` | `1` | Width of the side lines |
+| `resize.hitPadding` | `4` | Transparent margin that still grabs a line or handle |
+
+### Background
+
+| Token | Default | Description |
+| --- | --- | --- |
+| `background.visible` | `true` | `false` leaves only the pane colour |
+| `background.variant` | `"dots"` | `"dots"`, `"lines"` or `"cross"` |
+| `background.gap` | `20` | Pattern spacing in flow units; it scales with zoom |
+| `background.size` | `null` | Dot diameter (default 1) or cross length (default 6). Not used by `"lines"`. |
+| `background.lineWidth` | `1` | Stroke width for `"lines"` and `"cross"` |
+| `background.color` | `null` | Pattern colour; `null` uses `patternDots`, `patternLines` or `patternCross` |
+
+The pattern follows the viewport, so it moves and scales with the graph.
+
+### Controls
+
+The controls panel holds zoom in, zoom out, fit view and a lock that toggles `controller.setInteractive()`.
+
+| Token | Default | Description |
+| --- | --- | --- |
+| `controls.visible` | `true` | Show the panel |
+| `controls.position` | `"bottom-left"` | A `PanelPosition` |
+| `controls.showZoom` | `true` | Zoom in and out buttons |
+| `controls.showFitView` | `true` | Fit view button |
+| `controls.showInteractive` | `true` | Lock button |
+| `controls.buttonSize` | `26` | Button size in pixels |
+| `controls.iconSize` | `12` | Icon size in pixels |
+| `controls.fitViewDuration` | `200` | Fit animation in milliseconds |
+| `controls.zoomDuration` | `0` | Zoom animation in milliseconds |
+
+### Minimap
+
+The minimap draws every visible node and masks the area outside the viewport. Drag it to pan.
+
+| Token | Default | Description |
+| --- | --- | --- |
+| `minimap.visible` | `true` | Show the minimap |
+| `minimap.position` | `"bottom-right"` | A `PanelPosition` |
+| `minimap.width`, `minimap.height` | `200`, `150` | Size in pixels |
+| `minimap.pannable` | `true` | Dragging the minimap pans the diagram |
+| `minimap.nodeBorderRadius` | `5` | Corner radius of node shapes |
+| `minimap.offsetScale` | `5` | Padding around the content |
+| `minimap.nodeColor` | `null` | Node fill; `null` uses `colors.minimapNode` |
+| `minimap.maskColor` | `null` | Mask fill; `null` uses `colors.minimapMask` |
+
+## Panels
+
+`panels` pins widgets over the pane, 15px from its edge. Inside a panel, `FlowProvider.of(context)` returns the controller, and the panel rebuilds whenever the diagram changes, including every frame of a pan or drag. Keep panels light.
+
+```typescript
+import {
+  type BuildContext, Container, EdgeInsets, StatelessWidget, Text, TextStyle, type Widget,
+} from "flitter-core";
+import { FlowDiagram, FlowProvider } from "flitter-diagram";
+
+class ZoomLabelWidget extends StatelessWidget {
+  build(context: BuildContext): Widget {
+    const flow = FlowProvider.of(context);
+    return Container({
+      padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
+      color: "#ffffff",
+      child: Text(`${Math.round(flow.getZoom() * 100)}%`, { style: new TextStyle({ fontSize: 12 }) }),
+    });
+  }
+}
+
+function ZoomLabel(): Widget {
+  return new ZoomLabelWidget();
+}
+
+FlowDiagram({
+  nodes,
+  edges,
+  panels: [{ position: "top-right", child: ZoomLabel() }],
+});
+```
+
+`XyflowControls()` and `XyflowMiniMap()` are panels too. `FlowDiagram` adds them from `config.controls` and `config.minimap`, before your own panels.
+
+## Custom slots
+
+`custom` replaces any rendering slot. `FlowDiagram` fills the slots you leave out with React Flow's look. Each builder receives its arguments and a context, which is the controller with `config` attached.
+
+| Slot | Arguments | Returns |
+| --- | --- | --- |
+| `node` | `NodeBuilderArgs` | Fallback node widget when `nodeTypes` has no match |
+| `edge` | `EdgeBuilderArgs` | Fallback edge widget when `edgeTypes` has no match |
+| `edgeLabel` | `{ edge, label, selected, hovered, x, y }` | Label widget, or `null` to hide it |
+| `handle` | `HandleBuilderArgs` | Handle widget, centred on the handle |
+| `defaultHandles` | `(node)` | `HandleSpec[]` when neither the node nor its type declares handles |
+| `connectionLine` | `{ connection, path, from, to, isValid, size, … }` | The line drawn while connecting |
+| `background` | `{ viewport, width, height }` | Pane background, or `null` |
+| `selectionBox` | `{ rect }` | The box drawn during box selection, in pane pixels |
+| `nodesSelectionRect` | `{ rect, nodes }` | The frame around a multi-node selection, or `null` |
+| `edgePath` | `{ edge, params, type }` | `EdgePathResult` for built-in edge types and the connection line |
+| `resizeControl` | `{ node, position, variant, resizing }` | One resize line (`variant: "line"`) or handle (`"handle"`). Its size is the grab area. |
+| `reconnectHandle` | `{ edge, end, size }` | The grab area at an edge end, `size` units across. Invisible by default. |
+
+A resize line is stretched along its side: top and bottom lines get the node's width, left and right lines its height. Give it a thickness on the other axis. A handle is centred on its corner or side.
+
+The defaults are exported as `xyflowCustom` and one by one: `xyflowNode`, `xyflowEdge`, `xyflowEdgeLabel`, `xyflowHandle`, `xyflowDefaultHandles`, `xyflowConnectionLine`, `xyflowBackground`, `xyflowSelectionBox`, `xyflowNodesSelectionRect`, `xyflowEdgePath`, `xyflowResizeControl` and `xyflowReconnectHandle`. The built-in type maps are `xyflowNodeTypes` and `xyflowEdgeTypes`.
+
+The editor wires all gestures itself. Builders should read `selected`, `hovered`, `dragging` and the connection flags from their arguments rather than add their own hover or click handlers.
+
+For drawing, `ShapePaint({ width, height, shapes })` paints named SVG path strings, and `IconPaint({ d, viewBox, size, color })` paints a single icon path. Both produce the same result on SVG and Canvas. `rectPathD(x, y, width, height, radius?)` builds a rectangle path string.
+
+## Headless Flow
+
+`Flow` is the engine without a look. It has the same behaviour, options and callbacks as `FlowDiagram`, with three differences:
+
+- `custom` is required and must fill every slot.
+- `config` is passed through untouched, typed as whatever your builders expect.
+- There are no built-in node types, edge types, controls or minimap. Add them through `nodeTypes`, `edgeTypes` and `panels`.
+
+```typescript
+import { Border, BoxDecoration, Container, EdgeInsets, SizedBox, Text, TextStyle } from "flitter-core";
+import {
+  Flow,
+  ShapePaint,
+  commandsToD,
+  getEdgePathByType,
+  rectPathD,
+  type FlowCustom,
+  type HandleSpec,
+} from "flitter-diagram";
+
+type InkConfig = { ink: string; paper: string; accent: string };
+
+const sideHandles: HandleSpec[] = [
+  { type: "target", position: "left" },
+  { type: "source", position: "right" },
+];
+
+const inkCustom: FlowCustom<InkConfig> = {
+  node: ({ node, selected }, { config }) =>
+    Container({
+      padding: EdgeInsets.symmetric({ horizontal: 14, vertical: 8 }),
+      decoration: new BoxDecoration({
+        color: config.paper,
+        border: Border.all({ color: selected ? config.accent : config.ink, width: 2 }),
+      }),
+      child: Text(String(node.data.label ?? node.id), {
+        style: new TextStyle({ color: config.ink, fontSize: 13 }),
+      }),
+    }),
+  edge: ({ path, size, selected }, { config }) =>
+    ShapePaint({
+      width: size.width,
+      height: size.height,
+      shapes: {
+        line: { d: commandsToD(path.commands), stroke: selected ? config.accent : config.ink, strokeWidth: 2 },
+      },
+    }),
+  edgeLabel: () => null,
+  handle: ({ handle }, { config }) =>
+    Container({ width: handle.width + 4, height: handle.height + 4, color: config.ink }),
+  defaultHandles: () => sideHandles,
+  connectionLine: ({ path, size }, { config }) =>
+    ShapePaint({
+      width: size.width,
+      height: size.height,
+      shapes: {
+        line: { d: commandsToD(path.commands), stroke: config.accent, strokeWidth: 2, dash: [4, 4] },
+      },
+    }),
+  background: ({ width, height }, { config }) => Container({ width, height, color: config.paper }),
+  selectionBox: ({ rect }, { config }) =>
+    ShapePaint({
+      width: rect.width,
+      height: rect.height,
+      shapes: { box: { d: rectPathD(0, 0, rect.width, rect.height), stroke: config.accent, strokeWidth: 1 } },
+    }),
+  nodesSelectionRect: () => null,
+  edgePath: ({ type, params }) => getEdgePathByType(type, params),
+  // Lines are invisible 8px strips; handles are accent squares
+  resizeControl: ({ variant }, { config }) =>
+    variant === "line" ? SizedBox({ width: 8, height: 8 }) : Container({ width: 8, height: 8, color: config.accent }),
+  reconnectHandle: ({ size }) => SizedBox({ width: size, height: size }),
+};
+
+export const inkDiagram = Flow<InkConfig>({
+  nodes,
+  edges,
+  custom: inkCustom,
+  config: { ink: "#1f2937", paper: "#fdfaf3", accent: "#d97706" },
+  fitView: true,
+});
+```
+
+To keep most of React Flow's look and change a few slots, spread `xyflowCustom` and pass a config from `createXyflowConfig()`:
+
+```typescript
+import { Flow, XyflowControls, createXyflowConfig, xyflowCustom, type XyflowFlowConfig } from "flitter-diagram";
+
+Flow<XyflowFlowConfig>({
+  nodes,
+  edges,
+  config: createXyflowConfig({ colorMode: "dark" }),
+  custom: { ...xyflowCustom, nodesSelectionRect: () => null },
+  panels: [{ position: "bottom-left", child: XyflowControls() }],
+});
+```
+
+`XyflowControls` and `XyflowMiniMap` read `XyflowFlowConfig` tokens, so use them only with that config.
+
+</div>
