@@ -162,12 +162,9 @@ function rewriteHeadlessTypeSpecifiers(specifiers, chartName) {
     );
 }
 
-export async function loadRegistry() {
-  const candidates = [
-    new URL("../../../chart/registry/index.mjs", import.meta.url),
-    new URL("../registry/index.mjs", import.meta.url),
-  ];
+const ROOT_DIAGRAM_IMPORT = "flitter-ui/diagram";
 
+async function loadRegistryFrom(candidates, label) {
   for (const candidate of candidates) {
     try {
       const module = await import(candidate);
@@ -178,8 +175,67 @@ export async function loadRegistry() {
       }
     }
   }
+  throw new Error(`Unable to load Flitter ${label} registry`);
+}
 
-  throw new Error("Unable to load Flitter chart registry");
+/**
+ * Charts and diagrams ship separate registries; the CLI sees them as one list.
+ * Diagram template sources are prefixed (`diagram:`) so the merged
+ * `resolveTemplatePath` can route them to the right templates root.
+ */
+export async function loadRegistry() {
+  const chart = await loadRegistryFrom(
+    [
+      new URL("../../../chart/registry/index.mjs", import.meta.url),
+      new URL("../registry/index.mjs", import.meta.url),
+    ],
+    "chart",
+  );
+  let diagram = null;
+  try {
+    diagram = await loadRegistryFrom(
+      [
+        new URL("../../../diagram/registry/index.mjs", import.meta.url),
+        new URL("../registry-diagram/index.mjs", import.meta.url),
+      ],
+      "diagram",
+    );
+  } catch {
+    diagram = null;
+  }
+  if (!diagram) return chart;
+  const prefix = diagram.sourcePrefix ?? "diagram:";
+  return {
+    ...chart,
+    items: [...chart.items, ...diagram.items],
+    diagramMetadata: diagram.diagramMetadata,
+    resolveTemplatePath: (source) =>
+      source.startsWith(prefix) ? diagram.resolveTemplatePath(source) : chart.resolveTemplatePath(source),
+  };
+}
+
+export function isDiagramItem(item) {
+  return item?.kind === "diagram-style";
+}
+
+/**
+ * Diagram styles live next to the engine in this repository and import it
+ * with relative paths; in a project they import the published engine from
+ * `flitter-ui/diagram`. Everything else (config, parts) stays relative.
+ */
+export async function renderDiagramTemplateFile({ registry, item, file, outputRoot, targetOutputDir = item.outputDir }) {
+  const sourcePath = registry.resolveTemplatePath(file.source);
+  let content = await readText(sourcePath);
+  const relativeTarget = path.posix.relative(item.outputDir, file.target);
+  const targetPath = path.join(outputRoot, targetOutputDir, relativeTarget);
+  content = content
+    .replace(/(['"])flitter-core\1/gu, (_, quote) => `${quote}${ROOT_WIDGETS_IMPORT}${quote}`)
+    .replace(/(['"])flitter-diagram(?:\/engine)?\1/gu, (_, quote) => `${quote}${ROOT_DIAGRAM_IMPORT}${quote}`)
+    .replace(
+      /(['"])(?:\.\.\/)+(?:headless\/flow|shared\/(?:geometry|edges|changes|layout|utils))(?:\/[A-Za-z0-9_-]+)*\1/gu,
+      (_, quote) => `${quote}${ROOT_DIAGRAM_IMPORT}${quote}`,
+    );
+  return { targetPath, content };
 }
 
 export function findRegistryItem(registry, chartName, style, preferredStyle = "ag") {
