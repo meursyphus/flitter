@@ -336,19 +336,26 @@ export class CanvasPaintingContext {
     return !this.#skipChildPainting;
   }
 
-  /** Flutter's pushLayer: preserve state across separately recorded pictures. */
+  /** Region, in this context's coordinates, that recordings are sized to. */
+  get estimateBound(): Rect {
+    return this.#estimateBound;
+  }
+
+  /**
+   * Flutter's pushLayer: preserve state across separately recorded pictures.
+   * `estimateBound` lets a layer that transforms its children (scale, rotate)
+   * record in the children's coordinate space; without it a zoomed-out scene
+   * would be culled to the parent's bounds before the transform is applied.
+   */
   pushLayer(
     layer: ContainerLayer,
     painter: (context: CanvasPaintingContext) => void,
+    estimateBound: Rect = this.#estimateBound,
   ) {
     const recycled = CanvasPaintingContext.#harvestRecycledCanvases(layer);
     layer.removeAllChildren();
     this.addLayer(layer);
-    const context = new CanvasPaintingContext(
-      layer,
-      this.#estimateBound,
-      recycled,
-    );
+    const context = new CanvasPaintingContext(layer, estimateBound, recycled);
     painter(context);
     context.stopRecordingIfNeeded();
   }

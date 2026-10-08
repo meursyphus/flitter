@@ -15,6 +15,7 @@ import {
   wheelPixels,
   type ViewportClip,
 } from "./base/viewport-utils";
+import type { PinchWheelEvent } from "../hit-test/HitTestDispatcher";
 
 export type ScaleStartDetails = { focalPoint: Offset; localFocalPoint: Offset };
 export type ScaleUpdateDetails = ScaleStartDetails & {
@@ -34,6 +35,19 @@ export type InteractiveViewerProps = {
   clipBehavior?: ViewportClip;
   /** Alignment used when the scaled scene is smaller than the viewport. */
   alignment?: Alignment;
+  /**
+   * Scale ratio applied for one wheel event. Defaults to
+   * `exp(-pixels / 200)`; return `2 ** (-event.deltaY * 0.002)` for the
+   * d3-zoom curve used by React Flow.
+   */
+  wheelScale?: (event: WheelEvent, viewportHeight: number) => number;
+  /**
+   * When true a plain wheel pans the scene instead of zooming; a wheel with
+   * ctrl/meta (trackpad pinch) still zooms. Off by default.
+   */
+  panOnScroll?: boolean;
+  /** Multiplier for wheel panning. Defaults to 0.5. */
+  panOnScrollSpeed?: number;
   onInteractionStart?: (details: ScaleStartDetails) => void;
   onInteractionUpdate?: (details: ScaleUpdateDetails) => void;
   onInteractionEnd?: (details: ScaleEndDetails) => void;
@@ -156,18 +170,53 @@ class InteractiveViewerState extends State<InteractiveViewer> {
     return matrix;
   }
   private onWheel = (event: WheelEvent) => {
-    if (this.widget.props.scaleEnabled === false) return;
+    const props = this.widget.props;
+    const pinch = event.ctrlKey || event.metaKey;
+    if (props.panOnScroll && !pinch) {
+      if (props.panEnabled === false) return;
+      const unit =
+        event.deltaMode === 1
+          ? 16
+          : event.deltaMode === 2
+            ? this.geometry.viewport.height
+            : 1;
+      const speed = props.panOnScrollSpeed ?? 0.5;
+      const delta = new Offset({
+        x: -event.deltaX * unit * speed,
+        y: -event.deltaY * unit * speed,
+      });
+      const point = this.local(event);
+      const next = this.controller.value.clone();
+      next.storage[12] += delta.x;
+      next.storage[13] += delta.y;
+      const details = this.details(event, point);
+      props.onInteractionStart?.(details);
+      this.controller.value = this.constrain(next);
+      props.onInteractionUpdate?.({
+        ...details,
+        scale: 1,
+        focalPointDelta: delta,
+      });
+      props.onInteractionEnd?.({ velocity: Offset.zero() });
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    if (props.scaleEnabled === false) return;
     const point = this.local(event);
     const current = this.controller.value;
     const scale = Math.hypot(current.storage[0], current.storage[1]);
     if (scale === 0) return;
+    const viewportHeight = this.geometry.viewport.height;
+    const pinchScale = (event as PinchWheelEvent).pinchScale;
+    const wheelRatio =
+      pinchScale != null && props.wheelScale == null
+        ? pinchScale
+        : (props.wheelScale?.(event, viewportHeight) ??
+          Math.exp(-wheelPixels(event, viewportHeight) / 200));
     const nextScale = Math.max(
-      this.widget.props.minScale ?? 0.8,
-      Math.min(
-        this.widget.props.maxScale ?? 2.5,
-        scale *
-          Math.exp(-wheelPixels(event, this.geometry.viewport.height) / 200),
-      ),
+      props.minScale ?? 0.8,
+      Math.min(props.maxScale ?? 2.5, scale * wheelRatio),
     );
     if (scale === nextScale) return;
     const ratio = nextScale / scale;

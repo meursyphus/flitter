@@ -5,7 +5,7 @@ import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectW
 import type Widget from "../../widget/Widget";
 import type { Offset } from "../../type";
 import type { RenderObjectVisitor } from "../../renderobject/RenderObjectVisitor";
-import { HitTestEntry, HitTestResult } from "../../hit-test/HitTestResult";
+import { HitTestEntry, type HitTestResult } from "../../hit-test/HitTestResult";
 
 export type HitTestBehavior = "deferToChild" | "opaque" | "translucent";
 
@@ -356,6 +356,15 @@ export class RenderGestureDetector extends SingleChildRenderObject {
       onDragMove: this.onDragMove,
       onDragEnd: this.onDragEnd,
     });
+  }
+
+  /** True when a drag handler is set: touch input then drives this detector instead of scrolling the page. */
+  get wantsDrag(): boolean {
+    return (
+      this._onDragStart !== emptyCallback ||
+      this._onDragMove !== emptyCallback ||
+      this._onDragEnd !== emptyCallback
+    );
   }
 
   override hitTest(result: HitTestResult, position: Offset): boolean {
