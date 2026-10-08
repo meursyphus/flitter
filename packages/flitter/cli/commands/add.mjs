@@ -1,6 +1,7 @@
 import path from "node:path";
 import {
   getDefaultChartStyle,
+  getDefaultDiagramStyle,
   readFlitterConfig,
   resolveChartsDirectory,
 } from "../lib/config.mjs";
@@ -15,7 +16,9 @@ import {
   generatePluginIndex,
   generateSupportFiles,
   generateStyleBaseOverrides,
+  isDiagramItem,
   loadRegistry,
+  renderDiagramTemplateFile,
   renderTemplateFile,
   resolveItemOutputDir,
   resolveRegistryItems,
@@ -33,7 +36,6 @@ export async function runAdd({
     throw new Error("flitter.json not found. Run `flitter init` first.");
   }
 
-  const defaultStyle = getDefaultChartStyle(flitterConfig.value);
   const registry = await loadRegistry();
   const chartVariants = registry.items.filter(
     (item) =>
@@ -44,8 +46,13 @@ export async function runAdd({
   );
 
   if (chartVariants.length === 0) {
-    throw new Error(`Unknown chart: ${chartName}`);
+    throw new Error(`Unknown chart or diagram: ${chartName}`);
   }
+
+  const isDiagram = chartVariants.every(isDiagramItem);
+  const defaultStyle = isDiagram
+    ? getDefaultDiagramStyle(flitterConfig.value)
+    : getDefaultChartStyle(flitterConfig.value);
 
   if (style != null && !chartVariants.some((item) => item.style === style)) {
     const availableStyles = [
@@ -74,7 +81,9 @@ export async function runAdd({
 
   const outputRoot = await resolveChartsDirectory(
     cwd,
-    flitterConfig.value.aliases?.charts ?? "@/components/chart",
+    isDiagram
+      ? (flitterConfig.value.aliases?.diagrams ?? "@/components/diagram")
+      : (flitterConfig.value.aliases?.charts ?? "@/components/chart"),
   );
   await ensureDirectory(outputRoot);
 
@@ -118,6 +127,21 @@ export async function runAdd({
           content: file.content,
         })),
       );
+      continue;
+    }
+
+    if (isDiagramItem(item)) {
+      for (const file of item.files) {
+        plannedWrites.push(
+          await renderDiagramTemplateFile({
+            registry,
+            item,
+            file,
+            outputRoot,
+            targetOutputDir: itemOutputDir,
+          }),
+        );
+      }
       continue;
     }
 

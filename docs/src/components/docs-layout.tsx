@@ -19,7 +19,7 @@ export default function DocsLayout({
 }: {
   sections: NavSection[];
   home?: NavItem;
-  /** Sets the accent color for this section ("chart" | "core"). */
+  /** Sets the accent color for this section ("chart" | "diagram" | "core"). */
   product?: string;
   noProse?: boolean;
   fullWidth?: boolean;

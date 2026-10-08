@@ -1,0 +1,219 @@
+export const metadata = {
+  title: "Installation — Flitter Diagram",
+  description: "Copy the flow diagram into your project with the flitter CLI, or use the flitter-diagram workspace package from the Flitter monorepo.",
+};
+
+<div className="docs-prose prose prose-sm mx-auto max-w-3xl px-5 py-10 prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-3xl prose-h2:text-xl prose-h3:text-lg prose-pre:rounded-lg prose-pre:text-sm md:px-10 lg:py-14">
+
+# Installation
+
+Flitter Diagram installs the way Flitter Chart does. The CLI copies the styled editor, React Flow's look, into your project as source code you own. The engine underneath it, with the controller, gestures, layouts and path helpers, stays a dependency and comes from the `flitter-ui/diagram` entry of the `flitter-ui` package.
+
+> **Release status.** The `flow-diagram` CLI item and the `flitter-ui/diagram` entry ship with the next `flitter-ui` release. The version on npm today, 0.1.0, contains neither. Until then, use the workspace package inside the Flitter monorepo, described under **Use it from the monorepo** below.
+
+## Prerequisites
+
+- **Node.js** 18 or later
+- **React** 18+ with `@flitterjs/react`, or **Svelte** 4+ with `@flitterjs/svelte`
+- **TypeScript** is recommended. The copied files are `.ts`.
+
+## Install with the CLI
+
+### 1. Install the framework adapter
+
+```bash
+npm install @flitterjs/react
+```
+
+Use `@flitterjs/svelte` in a Svelte project. The CLI never installs the adapter, so add it yourself. It installs `flitter-ui` for you in step 3.
+
+### 2. Create `flitter.json`
+
+```bash
+npx flitter-ui init
+```
+
+`init` only writes `flitter.json` to the project root. It does nothing when the file already exists.
+
+```json
+{
+  "$schema": "https://ui.flitter.dev/schema/flitter.json",
+  "tsx": true,
+  "framework": "react",
+  "defaultChartStyle": "ag",
+  "defaultDiagramStyle": "xyflow",
+  "aliases": {
+    "charts": "@/components/chart",
+    "diagrams": "@/components/diagram"
+  }
+}
+```
+
+| Field | Description |
+| --- | --- |
+| `aliases.diagrams` | Where diagrams are copied. Defaults to `@/components/diagram`. |
+| `aliases.charts` | Where charts are copied. Diagrams never go here. |
+| `defaultDiagramStyle` | The style `add` copies when you pass no `--style`. `xyflow`, React Flow's look, is the only diagram style today. |
+
+A `flitter.json` written before diagrams existed has neither diagram field. The CLI then uses `@/components/diagram` and `xyflow`.
+
+### 3. Add the flow diagram
+
+```bash
+npx flitter-ui add flow-diagram
+```
+
+This copies the xyflow style into a `flow-diagram` folder under `aliases.diagrams`:
+
+```
+src/components/diagram/
+└── flow-diagram/
+    ├── index.ts          # FlowDiagram and every part's export
+    ├── config.ts         # XyflowFlowConfig, light and dark palettes, defaults
+    └── parts/
+        ├── node.ts       # default, input, output and group nodes
+        ├── edge.ts       # edge types, labels, markers, connection line
+        ├── handle.ts
+        ├── resize.ts     # node resize controls, edge reconnect grab areas
+        ├── selection.ts
+        ├── background.ts
+        ├── controls.ts
+        ├── minimap.ts
+        ├── icons.ts
+        └── paint.ts      # ShapePaint, IconPaint
+```
+
+Every file is yours to change. While copying, the CLI rewrites the imports: widgets come from `flitter-ui` and the engine from `flitter-ui/diagram`. The look lives in your project, and engine fixes arrive with `flitter-ui` updates.
+
+After copying, `add` installs `flitter-ui` when `package.json` does not list it yet. It picks the package manager from your lockfile and uses pnpm when there is none.
+
+| Flag | Description |
+| --- | --- |
+| `--style xyflow` | The style to copy. Defaults to `defaultDiagramStyle`. |
+| `--overwrite` | Replace an existing `flow-diagram` folder. Without it, `add` stops when the folder exists. |
+| `--skip-install` | Do not install `flitter-ui` |
+| `--cwd <path>` | Run in another project directory |
+
+### Where the alias points
+
+The CLI resolves `aliases.diagrams` to a folder in this order:
+
+1. A matching entry in `compilerOptions.paths` of `tsconfig.json` or `jsconfig.json`, such as `"@/*": ["./src/*"]`
+2. Otherwise `@/` means `src/` and `~/` means the project root
+3. Any other value is a path relative to the project root
+
+You import the copied files through the same alias, so your bundler has to resolve it too. Next.js reads `paths` from `tsconfig.json`. Vite needs a matching `resolve.alias` entry.
+
+## Imports
+
+After a CLI install, names come from three places:
+
+| Import from | Names |
+| --- | --- |
+| `@/components/diagram/flow-diagram` | The style: `FlowDiagram`, `FlowDiagramProps`, `XyflowFlowConfig`, `createXyflowConfig`, `xyflowCustom`, the `xyflow…` parts, `XyflowControls`, `XyflowMiniMap`, `ShapePaint`, `IconPaint` and `rectPathD` |
+| `flitter-ui/diagram` | The engine: `Flow`, `FlowController`, `FlowProvider`, the types such as `FlowNode` and `HandleSpec`, the layouts, the edge path and change helpers, and the geometry helpers |
+| `flitter-ui` | Flitter widgets such as `Container`, `Text` and `StatefulWidget` |
+
+The API pages of this documentation use the workspace imports from **Use it from the monorepo** below: `flitter-diagram` for the first two rows and `flitter-core` for the third.
+
+## Mount the editor
+
+`FlowDiagram` returns a Flitter widget. The editor fills its parent, so give the adapter a definite width and height.
+
+### React
+
+```tsx
+import Widget from "@flitterjs/react";
+import type { FlowEdge, FlowNode } from "flitter-ui/diagram";
+import { FlowDiagram } from "@/components/diagram/flow-diagram";
+
+const nodes: FlowNode[] = [{ id: "1", position: { x: 0, y: 0 }, data: { label: "Hello" } }];
+const edges: FlowEdge[] = [];
+
+// Create the widget once. A new widget instance remounts the editor
+// and resets its nodes, edges and viewport.
+const diagram = FlowDiagram({ nodes, edges, fitView: true });
+
+export default function App() {
+  return <Widget widget={diagram} width="100%" height="480px" renderer="svg" />;
+}
+```
+
+If the widget depends on component props, build it inside `useMemo` so it is only recreated when those props change.
+
+### Svelte
+
+```svelte
+<script>
+  import Widget from "@flitterjs/svelte";
+  import { FlowDiagram } from "@/components/diagram/flow-diagram";
+
+  const diagram = FlowDiagram({ nodes: [], edges: [], fitView: true });
+</script>
+
+<Widget widget={diagram} width="100%" height="480px" />
+```
+
+## SVG or Canvas
+
+Pass `renderer="svg"` or `renderer="canvas"` to the adapter. Both renderers draw the same widget tree, including the dotted background, edge markers, resize controls, toolbars and the minimap. Canvas is the better choice for large graphs. SVG keeps every node in the DOM, which is easier to inspect.
+
+Mouse, trackpad and touch input work on both. See [Interaction](/diagram/api/interaction) for the gestures.
+
+## Use it from the monorepo
+
+Inside the Flitter monorepo, the editor is the `flitter-diagram` workspace package at `packages/diagram`. It is private and is not published on its own. Use it until the CLI release reaches npm, or when you work on the engine.
+
+Add the workspace packages to your app's `package.json`:
+
+```json
+{
+  "dependencies": {
+    "@flitterjs/react": "workspace:*",
+    "flitter-core": "workspace:*",
+    "flitter-diagram": "workspace:*"
+  }
+}
+```
+
+Then install from the repository root:
+
+```bash
+pnpm install
+```
+
+`flitter-diagram` exports both the engine and the xyflow style, so one import covers the first two rows of the imports table above. Widgets come from `flitter-core`. `flitter-diagram/engine` exports only the engine, and it is what `flitter-ui/diagram` re-exports.
+
+```typescript
+import { FlowController, FlowDiagram, type FlowNode } from "flitter-diagram";
+```
+
+The package points `main` and `types` at its TypeScript source, so your bundler compiles it with your app. Vite handles this out of the box. In Next.js, map the packages to their source in `tsconfig.json` the way this documentation site does:
+
+```json
+{
+  "compilerOptions": {
+    "paths": {
+      "flitter-core": ["../packages/core/src/index.ts"],
+      "flitter-diagram": ["../packages/diagram/src/index.ts"]
+    }
+  }
+}
+```
+
+### The generated presets
+
+`shared/diagram-presets` holds what `npx flitter-ui add flow-diagram` produces from `packages/diagram/src/styles`. Storybook renders it, and its type check compiles it against `flitter-ui/diagram`, which proves the copied files work outside the repository. It is generated, so never edit it by hand. Regenerate it after changing a style:
+
+```bash
+pnpm --dir shared/diagram-presets run sync
+pnpm --dir shared/diagram-presets run typecheck
+```
+
+## Next steps
+
+- [Quick Start](/diagram/quick-start) builds an editor with nodes, edges and connections
+- [FlowDiagram API](/diagram/api) lists every prop and callback
+- [Interaction](/diagram/api/interaction) covers gestures, touch, reconnecting edges, resizing and toolbars
+
+</div>

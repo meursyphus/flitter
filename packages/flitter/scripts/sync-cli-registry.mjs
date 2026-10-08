@@ -9,3 +9,13 @@ const targetRoot = path.resolve(packageRoot, "cli/registry");
 
 await rm(targetRoot, { recursive: true, force: true });
 await cp(sourceRoot, targetRoot, { recursive: true });
+
+// The diagram registry's templates are the style sources themselves; bundle
+// them under templates/styles so the published CLI can copy them.
+const diagramSourceRoot = path.resolve(packageRoot, "../diagram/registry");
+const diagramStylesRoot = path.resolve(packageRoot, "../diagram/src/styles");
+const diagramTargetRoot = path.resolve(packageRoot, "cli/registry-diagram");
+
+await rm(diagramTargetRoot, { recursive: true, force: true });
+await cp(diagramSourceRoot, diagramTargetRoot, { recursive: true });
+await cp(diagramStylesRoot, path.join(diagramTargetRoot, "templates", "styles"), { recursive: true });

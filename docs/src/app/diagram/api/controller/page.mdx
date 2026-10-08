@@ -1,0 +1,208 @@
+export const metadata = {
+  title: "FlowController — Flitter Diagram",
+  description: "The diagram's state owner: nodes, edges, selection, viewport, geometry and layout methods.",
+};
+
+<div className="docs-prose prose prose-sm mx-auto max-w-3xl px-5 py-10 prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-3xl prose-h2:text-xl prose-h3:text-lg prose-pre:rounded-lg prose-pre:text-sm md:px-10 lg:py-14">
+
+# FlowController
+
+`FlowController` holds a diagram's nodes, edges, selection and viewport, and runs its gestures. Its public methods mirror the instance React Flow returns from `useReactFlow()`.
+
+## Getting a controller
+
+There are three ways to reach it:
+
+- **Pass your own** as the `controller` prop. You create it, so you dispose it.
+- **Receive it** in `onInit(controller)` after the first frame. The editor owns and disposes this one.
+- **Read it inside the tree** with `FlowProvider.of(context)`, from a custom node, edge or panel.
+
+```typescript
+import { State, StatefulWidget, type Widget } from "flitter-core";
+import { FlowController, FlowDiagram } from "flitter-diagram";
+
+class Editor extends StatefulWidget {
+  createState() {
+    return new EditorState();
+  }
+}
+
+class EditorState extends State<Editor> {
+  controller = new FlowController();
+
+  dispose() {
+    this.controller.dispose();
+    super.dispose();
+  }
+
+  build(): Widget {
+    return FlowDiagram({ controller: this.controller, nodes, edges, fitView: true });
+  }
+}
+```
+
+`new FlowController({ transformationController })` accepts an existing `TransformationController` if you want to share the viewport matrix with another widget.
+
+`FlowController` is a `ChangeNotifier`. `addListener(callback)` runs `callback` after every change to nodes, edges, selection, viewport or interaction state, including every frame of a pan. Use it to sync a toolbar outside the diagram, and remove the listener when you are done. To follow one node or edge, use its signal instead, as described under Signals and rebuilds.
+
+## Nodes and edges
+
+| Method | Description |
+| --- | --- |
+| `nodes`, `getNodes()` | Current nodes, in insertion order |
+| `edges`, `getEdges()` | Current edges |
+| `getNode(id)`, `getEdge(id)` | One element, or `undefined` |
+| `setNodes(nodes \| (nodes) => nodes)` | Replace all nodes. Emits no change events. |
+| `setEdges(edges \| (edges) => edges)` | Replace all edges. Emits no change events. |
+| `addNodes(node \| node[])` | Add nodes. Emits `add`. |
+| `addEdges(edge \| connection \| …[])` | Add edges. Applies `defaultEdgeOptions`, skips duplicate connections and generates missing ids. Emits `add`. |
+| `updateNode(id, patch \| (node) => patch, { replace? })` | Merge a patch into a node, or replace it with `replace: true`. Emits `replace`. |
+| `updateNodeData(id, data \| (node) => data, { replace? })` | Merge into `node.data`. Emits `replace`. |
+| `updateEdge(id, patch \| (edge) => patch, { replace? })` | Same for edges |
+| `updateEdgeData(id, data \| (edge) => data, { replace? })` | Same for `edge.data` |
+| `reconnectEdge(oldEdge, connection, { shouldReplaceId? })` | Move an edge's ends to `connection`. Emits `replace` keyed by the old id. With `shouldReplaceId` at its default, `true`, the edge gets the id `getEdgeId(connection)` would generate, `xy-edge__…`. Pass `false` to keep its id. |
+| `deleteElements({ nodes?, edges? })` | Delete nodes, their children, attached edges and the given edges. Skips elements with `deletable: false`, runs `onBeforeDelete`, and resolves to `{ deletedNodes, deletedEdges }`. |
+| `getIncomers(node)`, `getOutgoers(node)` | Neighbouring nodes |
+| `getConnectedEdges(nodes)` | Edges touching any of `nodes` |
+| `toObject()` | A copy of `{ nodes, edges, viewport }` for saving |
+
+`setNodes` keeps the measured size of nodes whose id it already knows, so replacing the array does not cause a visible re-measure.
+
+## Selection
+
+| Method | Description |
+| --- | --- |
+| `getSelectedNodes()`, `getSelectedEdges()` | Selected elements |
+| `selectNodes(ids, { additive? })` | Select these nodes. Clears other nodes and edges unless `additive` is `true`. |
+| `selectEdges(ids, { additive? })` | Same for edges |
+| `clearSelection()` | Deselect everything |
+
+Selection changes emit `select` changes and `onSelectionChange`.
+
+## Viewport
+
+A viewport is `{ x, y, zoom }`: the pane-pixel offset of the flow origin and the scale. Every method clamps zoom to `minZoom`/`maxZoom` and the offset to `translateExtent`. Methods that take `duration` animate over that many milliseconds with an ease-in-out curve and return a promise that resolves when they finish.
+
+| Method | Description |
+| --- | --- |
+| `viewport`, `getViewport()`, `getZoom()` | Current viewport |
+| `setViewport(partial, { duration? })` | Set any of `x`, `y`, `zoom` |
+| `panBy({ x, y })` | Pan by pane pixels. Returns `false` for a zero delta. |
+| `zoomIn({ duration? })`, `zoomOut({ duration? })` | Zoom by 1.2× around the pane centre |
+| `zoomTo(zoom, { duration? })` | Zoom around the pane centre |
+| `zoomAt(point, ratio, { duration? })` | Zoom by `ratio` around a point in pane pixels |
+| `fitView(options?)` | Fit nodes into the pane. Resolves `false` when no node is measured yet or the pane has no size. |
+| `fitBounds(rect, { padding?, duration?, minZoom?, maxZoom? })` | Fit a rectangle in flow coordinates. `padding` defaults to `0.1`. |
+| `setCenter(x, y, { zoom?, duration? })` | Centre a flow point. `zoom` defaults to `maxZoom`. |
+| `getViewportRect()` | Visible area in flow coordinates |
+
+### Coordinates
+
+| Method | Converts |
+| --- | --- |
+| `screenToFlowPosition(point, { snapToGrid? })` | Client coordinates, such as `event.clientX/Y`, to flow coordinates |
+| `flowToScreenPosition(point)` | Flow coordinates to client coordinates |
+| `paneToFlowPosition(point, snapToGrid?)` | Pane pixels to flow coordinates |
+| `flowToPanePosition(point)` | Flow coordinates to pane pixels |
+
+`screenToFlowPosition` is what you need to drop a node where the user released the mouse:
+
+```typescript
+const position = controller.screenToFlowPosition({ x: event.clientX, y: event.clientY });
+controller.addNodes({ id: crypto.randomUUID(), position, data: { label: "Dropped" } });
+```
+
+## Geometry
+
+Sizes are known only after a node is measured, so these return `null` or empty results until then.
+
+| Method | Description |
+| --- | --- |
+| `getNodePositionAbsolute(node)` | Position with all parent offsets added |
+| `getNodeDimensions(node)` | `width`/`height` when set, else the measured size |
+| `getNodeRect(nodeOrId)` | Absolute rectangle |
+| `getNodesBounds(nodes?)` | Bounding box of these nodes, or all visible nodes |
+| `getIntersectingNodes(nodeOrRect, partially = true, nodes?)` | Nodes overlapping a node or rectangle |
+| `isNodeIntersecting(nodeOrRect, area, partially = true)` | Whether a node overlaps `area` |
+| `getHandleSpecs(node)` | Declared handles: the node's, its type's, or the style default |
+| `getNodeHandles(nodeOrId)` | Handles with absolute centre and size |
+| `getHandle(nodeId, type, handleId?)` | One resolved handle |
+| `getHandleEndpoint(handle)` | The point on the handle's outer edge where an edge attaches |
+| `getEdgeEndpoints(edge)` | Source and target points, sides and handles of an edge |
+| `getEdgePath(edge, endpoints)` | The edge's path, from its type's `getPath`, `custom.edgePath` or the built-in path |
+| `getVisibleNodes()`, `getVisibleEdges()` | Non-hidden elements in paint order, bottom to top |
+| `getNodeZIndex(node)` | The node's `zIndex`, plus 1000 while selected when `elevateNodesOnSelect` is on |
+| `resolveHandle(node, rect, spec)` | Resolve one `HandleSpec` against a node rectangle |
+| `getConnectionLinePath(connection)` | The path of the line drawn while connecting |
+
+## Layout
+
+| Method | Description |
+| --- | --- |
+| `layout(algorithm?, options?)` | Run a layout and apply the positions as `position` changes, and the size of each parent it grew as a `dimensions` change. Uses the `layout` prop's algorithm and options when arguments are omitted. Fits the view afterwards; pass `fitView: false` in `options`, or set it on the layout config, to skip that. |
+
+See [Layout](/diagram/api/layout).
+
+## Interaction state
+
+Custom nodes, edges, panels and toolbars can read these while building. A node builder only reruns when its own node changes, as described under Signals and rebuilds.
+
+| Member | Description |
+| --- | --- |
+| `hoveredNodeId`, `hoveredEdgeId` | Element under the pointer |
+| `connection` | The `ConnectionState` of a connection in progress, or `null` |
+| `selectionBox` | The box-selection rectangle in pane pixels, or `null` |
+| `isDraggingNodes` | Whether nodes are being dragged |
+| `resizingNodeId` | The node being resized, or `null` |
+| `isEdgeReconnectable(edge)` | Whether `edgesReconnectable`, `nodesConnectable`, `edge.reconnectable` and the lock allow moving this edge's ends |
+| `getReconnectableEnds(edge)` | The ends that can move: `["source", "target"]`, one of them, or none |
+| `isNodeResizable(node)` | `node.resizable`, else `nodesResizable`, combined with the lock |
+| `getNodeResizeOptions(node)` | `nodeResizeOptions` merged with `node.resizeOptions`, with `minWidth` and `minHeight` filled in |
+| `getNodeToolbarBuilder(node)` | The node type's `toolbar`, else the `nodeToolbar` prop, or `null` |
+| `isNodeToolbarVisible(node)` | `node.toolbar.isVisible` when set, else whether this is the only selected node |
+| `isInteractive`, `setInteractive(value)` | The lock toggled by the controls. When `false`, nodes cannot be selected, connected or resized, edges cannot be reconnected, and only nodes with `draggable: true` can be dragged. |
+| `nodesDraggable`, `nodesConnectable`, `elementsSelectable` | Options combined with the lock |
+| `isNodeDraggable(node)`, `isNodeSelectable(node)`, `isNodeConnectable(node)` | The same for one node |
+| `panEnabled` | Whether a plain drag on the background pans right now, given `panOnDrag`, `selectionOnDrag` and the held keys |
+| `zoomEnabled` | Whether `zoomOnScroll` or `zoomOnPinch` is on |
+| `isPointerInside` | Whether the pointer is over the pane |
+| `zoomActivationHeld` | Whether the zoom activation key is held |
+| `cancelConnection()` | Abort a connection in progress |
+| `options` | The resolved options, defaults included |
+| `paneSize` | Pane size in pixels |
+| `config`, `custom`, `nodeTypes`, `edgeTypes`, `panels`, `nodeToolbar` | The style configuration the editor was built with |
+| `transformation` | The underlying `TransformationController` |
+
+## Signals and rebuilds
+
+The editor does not rebuild the whole scene on every change. It creates one widget per node and per edge, keeps it across rebuilds, and rebuilds it only when that element's signal fires.
+
+| Member | Type | Fires when |
+| --- | --- | --- |
+| `nodeSignal(id)` | `ChangeNotifier` | That node moves, is measured, resized, selected, hovered or replaced, or a connection starts at or snaps to one of its handles |
+| `edgeSignal(id)` | `ChangeNotifier` | That edge is selected, hovered or replaced, or one of its ends starts or stops being reconnected |
+| `connectionSignal` | `ChangeNotifier` | A connection or reconnection starts, moves, snaps to a handle or ends |
+| `styleVersion` | `number` | Not a signal. It increases when every node and edge has to rebuild, see below. |
+
+Each widget listens to the signals it depends on:
+
+- A node widget listens to its node's signal.
+- An edge widget listens to its edge's signal and to the signals of its source and target nodes, so moving a node redraws the edges attached to it.
+- The connection line listens to `connectionSignal`.
+
+In practice:
+
+- **Dragging a node** rebuilds that node and its edges. No other node rebuilds.
+- **Panning and zooming** rebuild no node and no edge. The pane around them rebuilds: the background, node toolbars and panels.
+- **`setNodes` and `setEdges`** fire every node or edge signal.
+- **`styleVersion`** increases every time the `Flow` or `FlowDiagram` widget receives props, and when `setInteractive` toggles the lock. The editor then drops its cached widgets and every node and edge rebuilds once. A parent that rebuilds the diagram widget on every change, for example by calling `setState` from `onNodesChange`, rebuilds the whole graph each time. Keep the widget stable and change the graph through the controller.
+
+A node builder reruns only when its own node's signal fires. If a node's look depends on something else, such as another node or your app state, update that node with `updateNode` or `updateNodeData` so its signal fires.
+
+Panels and toolbars are rebuilt with the pane, and a panel that reads `FlowProvider.of(context)` rebuilds on every change, including every frame of a pan. That is fine for light widgets such as a zoom label or a few buttons. Keep heavy work out of them.
+
+## Internal methods
+
+`configure`, `attachPane`, `setPaneSize`, `setNodeDimensions`, `setPointerInside`, the `handle…` gesture methods (including `handleReconnectStart` and `handleResizeStart`/`handleResizeMove`/`handleResizeEnd`), `hoverNode`/`unhoverNode`, `hoverEdge`/`unhoverEdge` and `resetPointerMovement` are called by the `Flow` widget. They are public so custom renderers can reuse the engine, but application code should not call them.
+
+</div>

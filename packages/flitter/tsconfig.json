@@ -7,7 +7,18 @@
     "strict": true,
     "skipLibCheck": true,
     "declaration": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "flitter-diagram/engine": [
+        "../diagram/src/engine.ts"
+      ],
+      "flitter-diagram": [
+        "../diagram/src/index.ts"
+      ]
+    }
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

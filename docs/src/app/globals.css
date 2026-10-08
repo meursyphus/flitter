@@ -66,6 +66,10 @@ html[data-theme="light"] {
   --accent: var(--core);
 }
 
+[data-product="diagram"] {
+  --accent: var(--script);
+}
+
 @theme inline {
   --font-sans: var(--ff-body), "Pretendard", system-ui, sans-serif;
   --font-display: var(--ff-display), var(--ff-body), system-ui, sans-serif;

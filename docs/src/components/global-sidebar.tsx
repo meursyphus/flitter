@@ -8,7 +8,7 @@ import { ecosystemNav } from "@/lib/navigation";
  * Routes that have their own DocsLayout sidebar.
  * GlobalSidebar hides itself on these routes to avoid double sidebars.
  */
-const ROUTES_WITH_OWN_SIDEBAR = ["/chart", "/advanced"];
+const ROUTES_WITH_OWN_SIDEBAR = ["/chart", "/diagram", "/advanced"];
 
 export default function GlobalSidebar() {
   const pathname = usePathname();

@@ -1,5 +1,5 @@
 import SingleChildRenderObject from "../../renderobject/SingleChildRenderObject";
-import { Offset } from "../../type";
+import { Offset, Rect } from "../../type";
 import { Alignment, Matrix4, TextDirection } from "../../type";
 import { assert } from "../../utils";
 import SingleChildRenderObjectWidget from "../../widget/SingleChildRenderObjectWidget";
@@ -330,6 +330,72 @@ class RenderTransform extends SingleChildRenderObject {
   }
 }
 
+/**
+ * Largest picture (in device pixels) a transformed subtree records into.
+ * Beyond this the recording is clamped around its centre: browsers blank
+ * canvases past their area limit, and a 0.1x zoom would ask for 100x pixels.
+ */
+const MAX_TRANSFORMED_PICTURE_PIXELS = 64_000_000;
+
+/**
+ * Bounding box of `bounds` mapped through the inverse of `transform`, i.e. the
+ * region of a transformed child's coordinate space that stays visible. The
+ * result is aligned to physical pixels so consecutive frames with the same
+ * transform recycle their backing canvas, and clamped to a sane pixel budget.
+ */
+export function inverseTransformBounds(
+  transform: Matrix4,
+  bounds: Rect,
+  devicePixelRatio = 1,
+): Rect {
+  const inverse = Matrix4.tryInvert(transform);
+  if (inverse == null) return bounds;
+  const m = inverse.storage;
+  const corners = [
+    [bounds.left, bounds.top],
+    [bounds.right, bounds.top],
+    [bounds.left, bounds.bottom],
+    [bounds.right, bounds.bottom],
+  ].map(([x, y]) => ({
+    x: m[0] * x + m[4] * y + m[12],
+    y: m[1] * x + m[5] * y + m[13],
+  }));
+  let left = Math.min(...corners.map(point => point.x));
+  let top = Math.min(...corners.map(point => point.y));
+  let right = Math.max(...corners.map(point => point.x));
+  let bottom = Math.max(...corners.map(point => point.y));
+  if (
+    ![left, top, right, bottom].every(Number.isFinite) ||
+    right <= left ||
+    bottom <= top
+  ) {
+    return bounds;
+  }
+  const dpr = devicePixelRatio > 0 ? devicePixelRatio : 1;
+  const maxArea = MAX_TRANSFORMED_PICTURE_PIXELS / (dpr * dpr);
+  const area = (right - left) * (bottom - top);
+  if (area > maxArea) {
+    const shrink = Math.sqrt(maxArea / area);
+    const centerX = (left + right) / 2;
+    const centerY = (top + bottom) / 2;
+    const halfWidth = ((right - left) * shrink) / 2;
+    const halfHeight = ((bottom - top) * shrink) / 2;
+    left = centerX - halfWidth;
+    right = centerX + halfWidth;
+    top = centerY - halfHeight;
+    bottom = centerY + halfHeight;
+  }
+  // Tolerate float noise from rotations (cos(pi/2) != 0) so a mapped edge
+  // that is an integer up to rounding error does not grow by a whole pixel.
+  const epsilon = 1e-6;
+  return Rect.fromLTRB({
+    left: Math.floor(left * dpr + epsilon) / dpr,
+    top: Math.floor(top * dpr + epsilon) / dpr,
+    right: Math.ceil(right * dpr - epsilon) / dpr,
+    bottom: Math.ceil(bottom * dpr - epsilon) / dpr,
+  });
+}
+
 class TransformCanvasPainter extends CanvasPainter {
   private transformLayer: TransformLayer | null = null;
   private boundaryLayers = new WeakMap<Layer, TransformLayer>();
@@ -365,8 +431,16 @@ class TransformCanvasPainter extends CanvasPainter {
         transform,
       }));
       layer.transform = transform;
-      context.pushLayer(layer, childContext =>
-        this.defaultPaint(childContext, offset),
+      // The child picture is recorded before the layer transform applies, so
+      // size it to the parent's visible region mapped into child coordinates.
+      context.pushLayer(
+        layer,
+        childContext => this.defaultPaint(childContext, offset),
+        inverseTransformBounds(
+          transform,
+          context.estimateBound,
+          this.renderObject.renderOwner.renderContext.window.devicePixelRatio,
+        ),
       );
       return;
     }

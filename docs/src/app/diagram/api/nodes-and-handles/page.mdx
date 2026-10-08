@@ -1,0 +1,327 @@
+export const metadata = {
+  title: "Nodes and Handles — Flitter Diagram",
+  description: "FlowNode fields, declared handles, built-in node types and custom node types.",
+};
+
+<div className="docs-prose prose prose-sm mx-auto max-w-3xl px-5 py-10 prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-3xl prose-h2:text-xl prose-h3:text-lg prose-pre:rounded-lg prose-pre:text-sm md:px-10 lg:py-14">
+
+# Nodes and Handles
+
+## FlowNode
+
+```typescript
+type FlowNode<TData = Record<string, unknown>> = { id: string; position: XYPosition; data: TData; /* … */ };
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | Unique id. Edges refer to it. |
+| `position` | `{ x, y }` | Top-left in flow coordinates, or relative to the parent when `parentId` is set |
+| `data` | `TData` | Your data. The built-in nodes render `data.label`, or the id when there is no label. |
+| `type` | `string` | Key into `nodeTypes`. Unknown types fall back to `default`. |
+| `width`, `height` | `number` | Fixed size. The node's widget is laid out at exactly this size. When omitted, the editor measures the rendered widget. Resizing sets both, and so does a layout that grows a parent to fit its children (`fitParents`). |
+| `measured` | `{ width, height }` | Written by the editor after measuring. Do not set it. |
+| `selected` | `boolean` | Initial selection; updated by the editor |
+| `dragging` | `boolean` | Set by the editor while the node is dragged |
+| `draggable` | `boolean` | Overrides `nodesDraggable` for this node |
+| `selectable` | `boolean` | `false` makes this node unselectable |
+| `connectable` | `boolean` | `false` disables every handle on this node |
+| `deletable` | `boolean` | `false` protects this node from deletion |
+| `hidden` | `boolean` | Not drawn, not laid out, not fitted; its edges are hidden too |
+| `parentId` | `string` | Makes this node a child of another node |
+| `extent` | `"parent" \| [[x1, y1], [x2, y2]]` | Area the node stays inside while dragged or resized. `"parent"` keeps it inside its parent. Overrides `nodeExtent`. |
+| `zIndex` | `number` | Paint order. Children always paint above their parent. |
+| `sourcePosition`, `targetPosition` | `Position` | Side edges attach to when the node has no handles. Default `"bottom"` and `"top"`. |
+| `handles` | `HandleSpec[]` | This node's handles. Overrides the node type's handles. |
+| `resizable` | `boolean` | Show resize controls while the node is selected. Overrides `nodesResizable`. |
+| `resizeOptions` | `NodeResizeOptions` | Size limits, aspect ratio and which controls to show. Merged over `nodeResizeOptions`. |
+| `resizing` | `boolean` | Set by the editor while the node is resized |
+| `toolbar` | `NodeToolbarOptions` | Where the node's toolbar sits, and whether it is forced visible or hidden |
+
+Resizing and toolbars are covered in [Interaction](/diagram/api/interaction).
+
+`Position` is `"top" | "right" | "bottom" | "left"`.
+
+## Built-in node types
+
+`FlowDiagram` ships React Flow's node types. They share one builder: a box with a 1px border, 3px radius and a centred label, 150px wide by default.
+
+| Type | Handles |
+| --- | --- |
+| `default` | `target` on top, `source` on the bottom |
+| `input` | `source` on the bottom |
+| `output` | `target` on top |
+| `group` | None. A translucent container with no label; give it a `width` and `height`. |
+
+## Sub-flows
+
+Set `parentId` to place a node inside another. Its `position` becomes relative to the parent, so moving the parent moves its children. Deleting a parent deletes its children.
+
+```typescript
+const nodes: FlowNode[] = [
+  { id: "g", type: "group", position: { x: 0, y: 0 }, width: 320, height: 200, data: {} },
+  { id: "a", parentId: "g", extent: "parent", position: { x: 20, y: 40 }, data: { label: "Inside" } },
+];
+```
+
+Layouts respect `parentId`: children are laid out inside their parent, with positions relative to it. See [Layout](/diagram/api/layout).
+
+## Handles are declared
+
+React Flow measures handle elements in the DOM. Flitter Diagram doesn't measure them: a node lists its handles as `HandleSpec` objects, and edge anchors come straight from those declarations. That keeps edges correct before anything is painted, and on both renderers.
+
+```typescript
+type HandleSpec = {
+  id?: string;
+  type: "source" | "target";
+  position: "top" | "right" | "bottom" | "left";
+  align?: number;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  connectable?: boolean;
+  data?: unknown;
+};
+```
+
+| Field | Description |
+| --- | --- |
+| `id` | Matches `edge.sourceHandle` or `edge.targetHandle`. Needed when a node has several handles of one type. |
+| `type` | `source` starts edges, `target` ends them. In `connectionMode: "loose"` either end can use either. |
+| `position` | The side of the node. Also the direction edges leave or enter. |
+| `align` | Fraction along that side, from `0` to `1`. Defaults to `0.5`, the middle. |
+| `x`, `y` | Exact centre relative to the node's top-left. Each overrides the side placement on its axis. |
+| `width`, `height` | Size used for anchoring. Defaults to the `handleSize` option, 6. |
+| `connectable` | `false` disables this handle |
+| `data` | Anything you want to read back in a custom handle builder |
+
+Edges attach to the outer edge of the handle: a `bottom` handle anchors `height / 2` below the node.
+
+### Where handles come from
+
+The editor resolves a node's handles in this order:
+
+1. `node.handles`
+2. The `handles` of the node's type, an array or a function of the node. A node without a `type`, or with an unregistered one, uses the `default` type, the same lookup that picks its builder.
+3. `custom.defaultHandles(node, context)`, the style-level fallback when the type declares no handles. In `FlowDiagram` that is a `target` on top and a `source` on the bottom.
+
+For an edge, the editor picks the handle whose `id` matches `sourceHandle` or `targetHandle`. Without an id, it uses the node's first handle of the right type. In loose mode an id can match a handle of either type; when a source and a target share an id, the one of the requested type wins.
+
+```typescript
+// Three outputs along the bottom of one node
+const node: FlowNode = {
+  id: "switch",
+  position: { x: 0, y: 0 },
+  data: { label: "Switch" },
+  handles: [
+    { type: "target", position: "top" },
+    { id: "a", type: "source", position: "bottom", align: 0.2 },
+    { id: "b", type: "source", position: "bottom", align: 0.5 },
+    { id: "c", type: "source", position: "bottom", align: 0.8 },
+  ],
+};
+
+const edge: FlowEdge = { id: "switch-b", source: "switch", sourceHandle: "b", target: "next" };
+```
+
+## Custom node types
+
+A node type is either a builder function or `{ build, handles }`. Register it in `nodeTypes` and set `node.type` to its key.
+
+```typescript
+type NodeType =
+  | NodeBuilder
+  | {
+      build: NodeBuilder;
+      handles?: HandleSpec[] | ((node: FlowNode) => HandleSpec[]);
+      toolbar?: NodeToolbarBuilder;
+    };
+type NodeBuilder = (args: NodeBuilderArgs, context: FlowContext<XyflowFlowConfig>) => Widget;
+```
+
+The builder returns any Flitter widget. The editor wraps it with the drag, click and hover gestures, so read state from the arguments instead of adding your own `GestureDetector` for hover or selection.
+
+| `NodeBuilderArgs` | Description |
+| --- | --- |
+| `node` | The `FlowNode` |
+| `selected`, `dragging`, `hovered` | Interaction state |
+| `draggable`, `selectable`, `connectable` | Resolved permissions, including the controls' lock |
+| `positionAbsolute` | Top-left in flow coordinates, parents included |
+| `zIndex` | Resolved paint order |
+| `isConnectionTarget` | A connection line is snapped to one of this node's handles |
+| `resizable` | Resize controls are enabled for this node, including the controls' lock |
+| `resizing` | The node is being resized |
+
+`toolbar` draws a toolbar next to nodes of this type. It takes precedence over the `nodeToolbar` prop. See [Node toolbar](/diagram/api/interaction).
+
+A builder reruns only when its own node changes, so read state from the arguments and from the node. See [Signals and rebuilds](/diagram/api/controller).
+
+`context` is the [`FlowController`](/diagram/api/controller) with the style's `config` attached, so `context.config.colors` gives you the theme.
+
+### Reuse the default look with other handles
+
+`xyflowNode` is the built-in builder. Pair it with new handles to make left-to-right nodes. Overriding `default` changes every node without a `type`:
+
+```typescript
+import { FlowDiagram, xyflowNode } from "flitter-diagram";
+
+FlowDiagram({
+  nodes,
+  edges,
+  nodeTypes: {
+    default: {
+      build: xyflowNode,
+      handles: [
+        { type: "target", position: "left" },
+        { type: "source", position: "right" },
+      ],
+    },
+  },
+});
+```
+
+Register it under another name, such as `sideways`, to change only the nodes whose `type` is set to that name.
+
+### Example: database tables with a handle per column
+
+Handles can depend on the node. Here each column of a table gets a target on the left and a source on the right, pinned to the centre of its row with `y`.
+
+```typescript
+import {
+  Border, BorderRadius, BoxDecoration, Column, Container, CrossAxisAlignment,
+  EdgeInsets, MainAxisSize, Text, TextStyle, type Widget,
+} from "flitter-core";
+import {
+  FlowDiagram,
+  type FlowContext,
+  type FlowEdge,
+  type FlowNode,
+  type HandleSpec,
+  type NodeBuilderArgs,
+  type XyflowFlowConfig,
+} from "flitter-diagram";
+
+type TableData = { label: string; fields: { name: string; type: string }[] };
+
+const HEADER_HEIGHT = 28;
+const ROW_HEIGHT = 22;
+
+function tableNode({ node, selected }: NodeBuilderArgs, context: FlowContext<XyflowFlowConfig>): Widget {
+  const table = node.data as TableData;
+  const { colors } = context.config;
+  return Container({
+    width: 200,
+    decoration: new BoxDecoration({
+      color: colors.nodeBackground,
+      border: Border.all({ color: selected ? "#3367d9" : colors.nodeBorder }),
+      borderRadius: BorderRadius.circular(4),
+    }),
+    child: Column({
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container({
+          height: HEADER_HEIGHT,
+          color: "#1a192b",
+          padding: EdgeInsets.symmetric({ horizontal: 10, vertical: 7 }),
+          child: Text(table.label, {
+            style: new TextStyle({ fontSize: 12, fontWeight: "700", color: "#ffffff" }),
+          }),
+        }),
+        ...table.fields.map((field) =>
+          Container({
+            height: ROW_HEIGHT,
+            padding: EdgeInsets.symmetric({ horizontal: 10, vertical: 4 }),
+            child: Text(`${field.name}  ${field.type}`, {
+              style: new TextStyle({ fontSize: 11, color: colors.nodeColor }),
+            }),
+          }),
+        ),
+      ],
+    }),
+  });
+}
+
+function tableHandles(node: FlowNode): HandleSpec[] {
+  const table = node.data as TableData;
+  return table.fields.flatMap((field, index): HandleSpec[] => {
+    const y = HEADER_HEIGHT + ROW_HEIGHT * index + ROW_HEIGHT / 2;
+    return [
+      { id: field.name, type: "target", position: "left", y },
+      { id: field.name, type: "source", position: "right", y },
+    ];
+  });
+}
+
+const tables: FlowNode[] = [
+  {
+    id: "posts",
+    type: "table",
+    position: { x: 0, y: 0 },
+    data: { label: "posts", fields: [{ name: "id", type: "int" }, { name: "author_id", type: "int" }] },
+  },
+  {
+    id: "users",
+    type: "table",
+    position: { x: 300, y: 40 },
+    data: { label: "users", fields: [{ name: "id", type: "int" }, { name: "team_id", type: "int" }] },
+  },
+  {
+    id: "teams",
+    type: "table",
+    position: { x: 600, y: 0 },
+    data: { label: "teams", fields: [{ name: "id", type: "int" }, { name: "name", type: "text" }] },
+  },
+];
+
+const relations: FlowEdge[] = [
+  { id: "posts-users", source: "posts", sourceHandle: "author_id", target: "users", targetHandle: "id", type: "smoothstep", markerEnd: "arrowclosed" },
+  { id: "users-teams", source: "users", sourceHandle: "team_id", target: "teams", targetHandle: "id", type: "smoothstep", markerEnd: "arrowclosed" },
+];
+
+export const erd = FlowDiagram({
+  nodes: tables,
+  edges: relations,
+  nodeTypes: { table: { build: tableNode, handles: tableHandles } },
+  fitView: true,
+});
+```
+
+Each row's source and target share the column name as their id. Edges pick the handle of the requested type, so this works in both connection modes. Add `connectionMode: "loose"` to let users connect any column to any other.
+
+## Custom handles
+
+Every handle is drawn by `custom.handle`. The widget is centred on the handle, and its size is the area that starts a connection, so a transparent margin makes small handles easier to grab. The built-in handle draws a 6px dot inside a 4px transparent margin.
+
+| `HandleBuilderArgs` | Description |
+| --- | --- |
+| `node` | The owning node |
+| `handle` | The resolved handle: its spec plus `nodeId`, absolute centre `x`/`y`, `width` and `height` |
+| `connectable` | Whether this handle can connect right now |
+| `isConnecting` | This handle started the connection in progress |
+| `isConnectionCandidate` | The connection line is snapped to this handle |
+| `isValidCandidate` | `true` or `false` for the candidate, `null` otherwise |
+| `connectionInProgress` | Any connection is in progress |
+
+```typescript
+import { BoxDecoration, Container } from "flitter-core";
+
+FlowDiagram({
+  nodes,
+  edges,
+  custom: {
+    handle: ({ handle, isConnectionCandidate, isValidCandidate }) =>
+      Container({
+        width: handle.width + 8,
+        height: handle.height + 8,
+        decoration: new BoxDecoration({
+          shape: "circle",
+          color: isConnectionCandidate ? (isValidCandidate ? "#22c55e" : "#ef4444") : "#f59e0b",
+        }),
+      }),
+  },
+});
+```
+
+</div>

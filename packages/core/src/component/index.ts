@@ -69,6 +69,7 @@ export type {
 } from "./InteractiveViewer";
 export { default as TransformationController } from "./TransformationController";
 export type { ViewportClip } from "./base/viewport-utils";
+export { eventPosition } from "./base/viewport-utils";
 export * from "../scroll";
 
 export {
