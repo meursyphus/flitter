@@ -21,6 +21,7 @@ packages/
 ├── flitter-react/    # React integration
 ├── flitter-svelte/   # Svelte integration
 ├── chart/            # Chart library (shadcn-style, CLI-installable)
+├── diagram/          # Node/edge diagram editor (React Flow UX on Flitter)
 ├── docs/             # Documentation site (Astro)
 ├── story/            # Storybook components
 └── test/             # Test suite
@@ -97,6 +98,26 @@ pnpm --dir shared/chart-presets run sync -- --chart <name> --style <style> # spe
 pnpm --dir shared/chart-presets run sync -- --changed                      # git-changed only
 pnpm --dir shared/chart-presets run sync                                   # full sync
 ```
+
+## Diagram Library
+
+`packages/diagram/` (`flitter-diagram`) is a node/edge editor that reproduces
+React Flow's interaction model on Flitter. See `packages/diagram/CLAUDE.md` for
+the layer rules (headless engine vs. `xyflow` style) and verification commands.
+
+```bash
+pnpm diagram:typecheck                          # tsc for packages/diagram
+pnpm diagram:test                               # vitest (paths, layouts, changes) + Playwright (SVG/Canvas, mouse + touch)
+pnpm story:dev                                  # Storybook: Diagram/* stories (incl. the CLI preset)
+pnpm --dir shared/diagram-presets run sync      # regenerate the `flitter add flow-diagram` output used by Storybook
+pnpm --dir packages/flitter test:install        # build flitter-ui and type-check copied charts + diagram templates
+```
+
+The CLI installs diagram styles with `flitter add flow-diagram [--style xyflow]` into
+`aliases.diagrams` (default `@/components/diagram`); the copied files import the
+engine from `flitter-ui/diagram` (= `flitter-diagram/engine`). The style source of
+truth is `packages/diagram/src/styles/<style>`; `packages/diagram/registry` lists it
+and `shared/diagram-presets` is generated from it (never edit by hand).
 
 ## Development Commands
 
