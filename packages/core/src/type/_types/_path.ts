@@ -115,20 +115,27 @@ export class Path {
       return this;
     }
 
-    const {
-      left,
-      right,
-      top,
-      bottom,
-      tlRadiusX,
-      tlRadiusY,
-      trRadiusX,
-      trRadiusY,
-      blRadiusX,
-      blRadiusY,
-      brRadiusX,
-      brRadiusY,
-    } = rRect;
+    const { left, right, top, bottom } = rRect;
+    // Like Flutter's RRect.scaleRadii (and CSS): radii that overflow a side
+    // shrink together, so `circular(999)` on a small box draws a pill instead
+    // of crossing arcs.
+    const width = Math.abs(rRect.width);
+    const height = Math.abs(rRect.height);
+    const scale = Math.min(
+      1,
+      width / (rRect.tlRadiusX + rRect.trRadiusX || Infinity),
+      width / (rRect.blRadiusX + rRect.brRadiusX || Infinity),
+      height / (rRect.tlRadiusY + rRect.blRadiusY || Infinity),
+      height / (rRect.trRadiusY + rRect.brRadiusY || Infinity),
+    );
+    const tlRadiusX = rRect.tlRadiusX * scale;
+    const tlRadiusY = rRect.tlRadiusY * scale;
+    const trRadiusX = rRect.trRadiusX * scale;
+    const trRadiusY = rRect.trRadiusY * scale;
+    const blRadiusX = rRect.blRadiusX * scale;
+    const blRadiusY = rRect.blRadiusY * scale;
+    const brRadiusX = rRect.brRadiusX * scale;
+    const brRadiusY = rRect.brRadiusY * scale;
 
     const common = {
       rotation: 0,
