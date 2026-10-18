@@ -149,9 +149,11 @@ export type FlowEdge<TData = Record<string, unknown>> = {
   markerEnd?: EdgeMarker | MarkerShape;
   zIndex?: number;
   style?: EdgeStyle;
-  /** Options for the built-in path algorithms (curvature, offset, borderRadius). */
+  /** Bend points in flow coordinates that the path routes through (see `edit.waypoints`). */
   waypoints?: XYPosition[];
+  /** What happens to the bends when an endpoint node moves: keep them, move only the end segments (default), or stretch all. */
   adjusting?: "none" | "ends" | "stretch";
+  /** Options for the built-in path algorithms (curvature, offset, borderRadius). */
   pathOptions?: { curvature?: number; offset?: number; borderRadius?: number };
 };
 

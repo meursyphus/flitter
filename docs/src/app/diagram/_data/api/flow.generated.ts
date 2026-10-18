@@ -2703,19 +2703,19 @@ export const flowApi: FlowApiGenerated = {
       "name": "waypoints",
       "type": "XYPosition[]",
       "optional": true,
-      "doc": "Options for the built-in path algorithms (curvature, offset, borderRadius)."
+      "doc": "Bend points in flow coordinates that the path routes through (see `edit.waypoints`)."
     },
     {
       "name": "adjusting",
       "type": "\"none\" | \"ends\" | \"stretch\"",
       "optional": true,
-      "doc": ""
+      "doc": "What happens to the bends when an endpoint node moves: keep them, move only the end segments (default), or stretch all."
     },
     {
       "name": "pathOptions",
       "type": "{ curvature?: number; offset?: number; borderRadius?: number }",
       "optional": true,
-      "doc": ""
+      "doc": "Options for the built-in path algorithms (curvature, offset, borderRadius)."
     }
   ]
 };
