@@ -79,6 +79,12 @@ export const pieChartApiPage: ApiPageData = {
             description: "Position of data label as ratio of radius (0 = center, 1 = edge).",
           },
           {
+            property: "dataLabel.outsideThreshold",
+            type: "number",
+            default: "10",
+            description: "Slices below this percentage move their data label outside with a leader line, or drop it when radial labels are shown. 0 keeps every label inside.",
+          },
+          {
             property: "dataLabel.formatter",
             type: "(args: { index, name, value, percentage, startAngle, sweepAngle }) => string",
             default: '(args) => `${args.percentage.toFixed(1)}%`',
@@ -208,6 +214,12 @@ export const pieChartApiPage: ApiPageData = {
             type: "number",
             default: "0.65",
             description: "Position of data label as ratio of radius.",
+          },
+          {
+            property: "dataLabel.outsideThreshold",
+            type: "number",
+            default: "10",
+            description: "Slices below this percentage move their data label outside with a leader line, or drop it when radial labels are shown. 0 keeps every label inside.",
           },
           {
             property: "dataLabel.formatter",
