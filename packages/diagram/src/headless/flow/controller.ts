@@ -2676,7 +2676,11 @@ export class FlowController extends ChangeNotifier {
     }
     if (changes.length) this.#applyNodeChanges(changes);
     const node = this.#nodeLookup.get(drag.nodeId);
-    if (node && this.#interaction.drag.dropIntoGroup) this.#setDropTarget(this.#findDropTarget(node)?.id ?? null);
+    if (node && this.#interaction.drag.dropIntoGroup) {
+      // Highlight only a change of parent; moving inside the current group is not a drop.
+      const target = this.#findDropTarget(node);
+      this.#setDropTarget(target && target.id !== node.parentId ? target.id : null);
+    }
     if (node) this.#callbacks.drag?.(event, node, this.#dragItemNodes(drag));
   }
 
