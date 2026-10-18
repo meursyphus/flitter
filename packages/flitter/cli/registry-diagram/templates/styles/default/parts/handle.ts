@@ -1,9 +1,9 @@
 import { Border, BoxDecoration, Center, Container, SizedBox, type Widget } from "flitter-core";
 import type { FlowContext, HandleBuilderArgs } from "../../../headless/flow/types";
-import type { XyflowFlowConfig } from "../config";
+import type { DefaultFlowConfig } from "../config";
 
 /** 6px circle on the node border; grows a transparent hit area for easier grabbing. */
-export function xyflowHandle(args: HandleBuilderArgs, context: FlowContext<XyflowFlowConfig>): Widget {
+export function defaultHandle(args: HandleBuilderArgs, context: FlowContext<DefaultFlowConfig>): Widget {
   const { colors, handle: h } = context.config;
   const { handle, isConnectionCandidate, isValidCandidate, connectable } = args;
   let color = colors.handleBackground;

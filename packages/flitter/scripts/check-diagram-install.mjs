@@ -19,14 +19,13 @@ try {
     JSON.stringify({
       tsx: true,
       framework: "react",
-      defaultDiagramStyle: "xyflow",
       aliases: { diagrams: "./diagrams" },
     }),
   );
   await mkdir(path.join(directory, "node_modules"));
   await symlink(packageRoot, path.join(directory, "node_modules/flitter-ui"), "junction");
 
-  await runAdd({ cwd: directory, chartName: "flow-diagram", style: "xyflow", overwrite: true, skipInstall: true });
+  await runAdd({ cwd: directory, chartName: "flow-diagram", overwrite: true, skipInstall: true });
 
   // A consumer file: the copied style must compile against the public engine entry.
   await writeFile(
@@ -44,7 +43,7 @@ const props: FlowDiagramProps = {
   edges,
   layout: layeredLayout,
   config: { colorMode: "dark", background: { variant: "lines" } },
-  onConnect: (connection) => void connection,
+  on: { connect: (connection) => void connection },
 };
 export const widget = FlowDiagram(props);
 export const controller = new FlowController();

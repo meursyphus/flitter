@@ -14,7 +14,7 @@ for (const entry of await readdir(presetsRoot, { withFileTypes: true })) {
 
 const registry = await loadRegistry();
 const items = registry.items.filter(isDiagramItem);
-const defaultStyle = "xyflow";
+const defaultStyle = "default";
 const lines = [];
 for (const item of items) {
   await runAdd({ cwd: presetsRoot, chartName: item.name, style: item.style, overwrite: true, skipInstall: true });

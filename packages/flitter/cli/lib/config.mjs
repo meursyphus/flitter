@@ -125,7 +125,7 @@ export async function createDefaultFlitterConfig(projectRoot) {
     tsx: tsconfig != null,
     framework: detectFramework(packageJson),
     defaultChartStyle: "ag",
-    defaultDiagramStyle: "xyflow",
+    defaultDiagramStyle: "default",
     aliases: {
       charts: "@/components/chart",
       diagrams: "@/components/diagram",
@@ -138,7 +138,7 @@ export function getDefaultChartStyle(config) {
 }
 
 export function getDefaultDiagramStyle(config) {
-  return config?.defaultDiagramStyle ?? "xyflow";
+  return config?.defaultDiagramStyle ?? "default";
 }
 
 export async function readFlitterConfig(projectRoot) {

@@ -6,13 +6,13 @@ import {
 } from "flitter-ui";
 import { FlowProvider } from "flitter-ui/diagram";
 import { type Rect, getBoundsOfRects } from "flitter-ui/diagram";
-import type { XyflowFlowConfig } from "../config";
+import type { DefaultFlowConfig } from "../config";
 import { ShapePaint, rectPathD } from "./paint";
 
 /** Overview of all nodes with a mask showing the current viewport, like React Flow's `<MiniMap>`. */
-class XyflowMiniMapWidget extends StatelessWidget {
+class DefaultMiniMapWidget extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const ctx = FlowProvider.of<XyflowFlowConfig>(context);
+    const ctx = FlowProvider.of<DefaultFlowConfig>(context);
     const { colors, minimap } = ctx.config;
     const elementWidth = minimap.width;
     const elementHeight = minimap.height;
@@ -90,6 +90,6 @@ class XyflowMiniMapWidget extends StatelessWidget {
   }
 }
 
-export function XyflowMiniMap(): Widget {
-  return new XyflowMiniMapWidget();
+export function DefaultMiniMap(): Widget {
+  return new DefaultMiniMapWidget();
 }

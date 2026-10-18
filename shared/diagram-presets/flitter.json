@@ -2,7 +2,7 @@
   "$schema": "https://ui.flitter.dev/schema/flitter.json",
   "tsx": true,
   "framework": "react",
-  "defaultDiagramStyle": "xyflow",
+  "defaultDiagramStyle": "default",
   "aliases": {
     "diagrams": "."
   }

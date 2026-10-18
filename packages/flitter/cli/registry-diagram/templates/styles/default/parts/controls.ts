@@ -13,7 +13,7 @@ import {
   type Widget,
 } from "flitter-core";
 import { FlowProvider } from "../../../headless/flow/provider";
-import type { XyflowFlowConfig } from "../config";
+import type { DefaultFlowConfig } from "../config";
 import { IconPaint } from "./paint";
 import { icons } from "./icons";
 
@@ -36,7 +36,7 @@ class ControlButton extends StatefulWidget {
 class ControlButtonState extends State<ControlButton> {
   hovered = false;
   override build(context: BuildContext): Widget {
-    const ctx = FlowProvider.of<XyflowFlowConfig>(context);
+    const ctx = FlowProvider.of<DefaultFlowConfig>(context);
     const { colors, controls } = ctx.config;
     const size = controls.buttonSize;
     return GestureDetector({
@@ -66,9 +66,9 @@ class ControlButtonState extends State<ControlButton> {
 }
 
 /** Zoom in / zoom out / fit view / lock buttons, styled like React Flow's `<Controls>`. */
-class XyflowControlsWidget extends StatelessWidget {
+class DefaultControlsWidget extends StatelessWidget {
   override build(context: BuildContext): Widget {
-    const ctx = FlowProvider.of<XyflowFlowConfig>(context);
+    const ctx = FlowProvider.of<DefaultFlowConfig>(context);
     const { colors, controls } = ctx.config;
     const buttons: { icon: { d: string; viewBox: [number, number] }; onClick: () => void }[] = [];
     if (controls.showZoom) {
@@ -106,6 +106,6 @@ class XyflowControlsWidget extends StatelessWidget {
   }
 }
 
-export function XyflowControls(): Widget {
-  return new XyflowControlsWidget();
+export function DefaultControls(): Widget {
+  return new DefaultControlsWidget();
 }

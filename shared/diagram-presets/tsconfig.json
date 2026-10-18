@@ -14,5 +14,5 @@
       "flitter-core": ["../../packages/core/src/index.ts"]
     }
   },
-  "include": ["index.ts", "flow-diagram/**/*.ts", "xyflow-*/**/*.ts"]
+  "include": ["index.ts", "flow-diagram/**/*.ts"]
 }

@@ -50,10 +50,10 @@
     "defaultDiagramStyle": {
       "type": "string",
       "enum": [
-        "xyflow"
+        "default"
       ],
       "description": "Default diagram style when --style flag is omitted",
-      "default": "xyflow"
+      "default": "default"
     }
   },
   "additionalProperties": false

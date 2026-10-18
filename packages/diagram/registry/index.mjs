@@ -37,10 +37,10 @@ function listFiles(relativeDir) {
   return files.sort();
 }
 
-const diagrams = [{ name: "flow-diagram", styles: ["xyflow"] }];
+const diagrams = [{ name: "flow-diagram", styles: ["default"] }];
 
 function styleItem(diagram, style) {
-  const outputDir = `${style}-${diagram}`;
+  const outputDir = diagram;
   return {
     id: outputDir,
     kind: "diagram-style",
@@ -64,7 +64,7 @@ export function resolveTemplatePath(source) {
 export const diagramMetadata = {
   "flow-diagram": {
     componentName: "FlowDiagram",
-    configTypes: { xyflow: "XyflowFlowConfig" },
+    configTypes: { default: "DefaultFlowConfig" },
   },
 };
 

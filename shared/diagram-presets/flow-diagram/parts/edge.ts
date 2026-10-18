@@ -29,7 +29,7 @@ import type {
   EdgeTypeDefinition,
   FlowContext,
 } from "flitter-ui/diagram";
-import type { XyflowFlowConfig } from "../config";
+import type { DefaultFlowConfig } from "../config";
 import { ShapePaint, type ShapeSpec } from "./paint";
 
 function markerShape(
@@ -38,7 +38,7 @@ function markerShape(
   end: "start" | "end",
   stroke: string,
   strokeWidth: number,
-  config: XyflowFlowConfig,
+  config: DefaultFlowConfig,
 ): ShapeSpec | null {
   if (!marker) return null;
   const commands = path.commands;
@@ -108,7 +108,7 @@ class AnimatedEdgePaintState extends State<AnimatedEdgePaint> {
 }
 
 /** React Flow's default edge: 1px stroke, selected edges darker, optional arrow markers. */
-export function xyflowEdge(args: EdgeBuilderArgs, context: FlowContext<XyflowFlowConfig>): Widget {
+export function defaultEdge(args: EdgeBuilderArgs, context: FlowContext<DefaultFlowConfig>): Widget {
   const { config } = context;
   const { edge, path, size, selected, animated, reconnecting } = args;
   const stroke =
@@ -132,7 +132,7 @@ export function xyflowEdge(args: EdgeBuilderArgs, context: FlowContext<XyflowFlo
   return ShapePaint({ width: size.width, height: size.height, shapes });
 }
 
-export function xyflowEdgeLabel(args: EdgeLabelBuilderArgs, context: FlowContext<XyflowFlowConfig>): Widget {
+export function defaultEdgeLabel(args: EdgeLabelBuilderArgs, context: FlowContext<DefaultFlowConfig>): Widget {
   const { colors, edgeLabel, node } = context.config;
   return Container({
     padding: EdgeInsets.symmetric({ horizontal: edgeLabel.paddingX, vertical: edgeLabel.paddingY }),
@@ -147,7 +147,7 @@ export function xyflowEdgeLabel(args: EdgeLabelBuilderArgs, context: FlowContext
   });
 }
 
-export function xyflowConnectionLine(args: ConnectionLineBuilderArgs, context: FlowContext<XyflowFlowConfig>): Widget {
+export function defaultConnectionLine(args: ConnectionLineBuilderArgs, context: FlowContext<DefaultFlowConfig>): Widget {
   const { colors, connectionLine } = context.config;
   const stroke = args.isValid === false ? colors.handleInvalid : args.isValid ? colors.handleValid : colors.connectionLine;
   return ShapePaint({
@@ -160,7 +160,7 @@ export function xyflowConnectionLine(args: ConnectionLineBuilderArgs, context: F
 }
 
 /** Built-in path geometry with the style's curvature/offset defaults. */
-export function xyflowEdgePath(args: EdgePathBuilderArgs, context: FlowContext<XyflowFlowConfig>) {
+export function defaultEdgePath(args: EdgePathBuilderArgs, context: FlowContext<DefaultFlowConfig>) {
   const { edge: e } = context.config;
   const options = {
     curvature: args.edge?.pathOptions?.curvature ?? e.curvature,
@@ -170,11 +170,11 @@ export function xyflowEdgePath(args: EdgePathBuilderArgs, context: FlowContext<X
   return getEdgePathByType(args.type, args.params, options);
 }
 
-export const xyflowEdgeTypes: Record<string, EdgeTypeDefinition<XyflowFlowConfig>> = {
-  default: { build: xyflowEdge },
-  bezier: { build: xyflowEdge },
-  simplebezier: { build: xyflowEdge },
-  straight: { build: xyflowEdge },
-  step: { build: xyflowEdge },
-  smoothstep: { build: xyflowEdge },
+export const defaultEdgeTypes: Record<string, EdgeTypeDefinition<DefaultFlowConfig>> = {
+  default: { build: defaultEdge },
+  bezier: { build: defaultEdge },
+  simplebezier: { build: defaultEdge },
+  straight: { build: defaultEdge },
+  step: { build: defaultEdge },
+  smoothstep: { build: defaultEdge },
 };
