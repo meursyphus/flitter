@@ -8,32 +8,17 @@ import CopyCommand from "@/components/copy-command";
 import FlitterLogo from "@/components/flitter-logo";
 import LiveChart from "@/components/live-chart";
 import LiveDiagram from "@/components/live-diagram";
-import { ToastAreaChart } from "@/lib/charts";
 import { DISCORD_URL, GITHUB_REPO_URL, INSTALL_COMMAND, NPM_URL } from "@/lib/site-config";
 import { galleryCategories, galleryEntries } from "../chart/_data/gallery";
 import StyleBadge from "../chart/_components/style-badge";
 import { createLandingDiagram } from "./landing-diagram";
+import { Counter } from "./counter";
 
 /** Server-highlighted HTML for each code panel (see ../page.tsx). */
 export type HomeCode = { hero: string; flutter: string; flitter: string };
 
-/** Hero chart; HERO_CODE in ./snippets.ts shows this call. Plays the Toast entrance animation on load. */
-function createHeroChart() {
-  return ToastAreaChart({
-    data: {
-      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-      datasets: [
-        { legend: "Seoul", values: [65, 59, 80, 81, 56, 72, 90] },
-        { legend: "Seattle", values: [28, 48, 40, 52, 86, 64, 70] },
-        { legend: "Sydney", values: [35, 25, 30, 45, 35, 40, 52] },
-      ],
-    },
-    config: {
-      title: { text: "Monthly visitors by city" },
-      area: { spline: true, opacity: 0.28 },
-    },
-  });
-}
+/** The hero renders ./counter.ts, the same file its code panel shows. */
+const createCounter = () => new Counter();
 
 /** One example per chart type, the most visual ones first. */
 const reelOrder = ["treemap", "area", "bubble", "pie", "radar", "heatmap", "candlestick"];
@@ -90,8 +75,8 @@ function IntroSection({ code }: { code: HomeCode }) {
         aria-hidden="true"
       />
 
-      <div className="relative mx-auto grid max-w-[1400px] grid-cols-[minmax(0,1fr)] items-center gap-12 px-5 pt-16 pb-20 sm:px-10 lg:pt-24 lg:pb-28 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] xl:gap-10 xl:px-14">
-        <div>
+      <div className="relative mx-auto max-w-[1400px] px-5 pt-16 pb-20 sm:px-10 lg:pt-24 lg:pb-24 xl:px-14">
+        <div className="grid grid-cols-[minmax(0,1fr)] items-end gap-8 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] xl:gap-12">
           <h1 className="display text-[clamp(2.75rem,6.4vw,5rem)] leading-[0.98] text-ink [font-stretch:100%] xl:text-[clamp(3rem,4.4vw,4.75rem)]">
             <span className="text-script">JavaScript</span>{" "}
             <span className="text-chart">Rendering</span>
@@ -99,46 +84,45 @@ function IntroSection({ code }: { code: HomeCode }) {
             for <span className="text-brand">Data Visualization</span>
           </h1>
 
-          <p className="mt-7 max-w-[30rem] text-[18px] leading-relaxed text-soft">
-            Charts, diagrams and interfaces drawn by one engine. Flutter&apos;s
-            widget model, rendered to SVG or Canvas.
-          </p>
+          <div>
+            <p className="max-w-[30rem] text-[18px] leading-relaxed text-soft">
+              Charts, diagrams and interfaces drawn by one engine. Flutter&apos;s
+              widget model, rendered to SVG or Canvas.
+            </p>
 
-          <div className="mt-9 flex flex-wrap items-center gap-3">
-            <Link
-              href="/chart"
-              className="inline-flex h-11 items-center rounded-lg bg-brand px-6 text-[15px] font-semibold text-on-accent transition-opacity hover:opacity-90"
-            >
-              Explore Flitter Chart
-            </Link>
-            <Link
-              href="/advanced/what-is-flitter"
-              className="inline-flex h-11 items-center rounded-lg border border-line-strong px-6 text-[15px] font-semibold text-ink transition-colors hover:bg-surface"
-            >
-              Read the docs
-            </Link>
-          </div>
-
-          <CopyCommand command={INSTALL_COMMAND} className="mt-8" />
-        </div>
-
-        {/* The code, and what it draws: one stacked window, nothing overlaps */}
-        <div className="mx-auto w-full max-w-[620px]">
-          <CodeWindow
-            filename="visitors-chart.ts"
-            html={code.hero}
-            className="rounded-b-none border-b-0"
-            bodyClassName="xl:text-[11.5px] xl:[&_pre]:px-3"
-          />
-          <div className="overflow-hidden rounded-b-xl border border-line-strong bg-[var(--chart-bg)] shadow-[0_40px_100px_-40px_rgba(0,0,0,0.55)]">
-            <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-2 text-[12px] text-faint">
-              <span>Rendered live in your browser · hover or toggle a legend</span>
-              <Link href="/chart/gallery" className="shrink-0 font-semibold text-chart hover:underline">
-                Gallery →
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              <Link
+                href="/chart"
+                className="inline-flex h-11 items-center rounded-lg bg-brand px-6 text-[15px] font-semibold text-on-accent transition-opacity hover:opacity-90"
+              >
+                Explore Flitter Chart
+              </Link>
+              <Link
+                href="/advanced/what-is-flitter"
+                className="inline-flex h-11 items-center rounded-lg border border-line-strong px-6 text-[15px] font-semibold text-ink transition-colors hover:bg-surface"
+              >
+                Read the docs
               </Link>
             </div>
-            <div className="h-[240px] p-3 sm:h-[260px]">
-              <LiveChart create={createHeroChart} />
+
+            <CopyCommand command={INSTALL_COMMAND} className="mt-6" />
+          </div>
+        </div>
+
+        {/* A Flutter-style widget beside what it draws: side by side, nothing overlaps */}
+        <div className="mt-14 grid grid-cols-[minmax(0,1fr)] overflow-hidden rounded-xl border border-line-strong shadow-[0_40px_100px_-40px_rgba(0,0,0,0.55)] xl:grid-cols-[minmax(0,1.8fr)_minmax(0,1fr)]">
+          <CodeWindow
+            filename="counter.ts"
+            html={code.hero}
+            className="rounded-none border-0 border-b border-line xl:border-b-0 xl:border-r"
+          />
+          <div className="flex min-h-[240px] flex-col bg-[var(--chart-bg)]">
+            <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 text-[12px] text-faint">
+              <span>Rendered live · click the button</span>
+              <span className="text-soft">SVG</span>
+            </div>
+            <div className="min-h-[200px] flex-1">
+              <LiveDiagram create={createCounter} />
             </div>
           </div>
         </div>

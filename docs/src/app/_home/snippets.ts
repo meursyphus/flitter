@@ -3,24 +3,6 @@
  * (no screenshots), so package names and APIs stay greppable.
  */
 
-/** Matches `createHeroChart` in ./home.tsx; keep the two in sync. */
-export const HERO_CODE = `import ToastAreaChart from "./charts/toast-area-chart";
-
-ToastAreaChart({
-  data: {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-    datasets: [
-      { legend: "Seoul", values: [65, 59, 80, 81, 56, 72, 90] },
-      { legend: "Seattle", values: [28, 48, 40, 52, 86, 64, 70] },
-      { legend: "Sydney", values: [35, 25, 30, 45, 35, 40, 52] },
-    ],
-  },
-  config: {
-    title: { text: "Monthly visitors by city" },
-    area: { spline: true, opacity: 0.28 },
-  },
-});`;
-
 export const FLUTTER_CODE = `import 'package:flutter/material.dart';
 
 Widget profileCard() {
