@@ -184,5 +184,5 @@ Realistic wall clock: 3 hours if P2 lands clean, 4 if the waypoint router or his
 - [x] P0 research (`todo/diagram-research.md`) and this guide
 - [x] P1 API (Astra, 2026-10-18; Codex sandbox cannot commit or bind ports, so Fable commits and runs Playwright)
 - [x] P2 interactions (Astra + one Fable fix, 2026-10-18) · [x] P2' docs skeleton (Opus, 2026-10-18: 218 budgeted words, 25 interaction cells of which 13 wait on P2, 12-slug catalog with 5 loaded from the old example files)
-- [x] P3 examples 1–12 (Astra, 2026-10-18; polish pass running: scene z-order so edges paint above filled groups, knowledge-graph straight edges, pipeline-run legibility, hover-only edge slots, search placeholders) · [~] P3' gallery wiring and QA (Opus)
-- [ ] P4 review + PR
+- [x] P3 examples 1–12 (Astra, 2026-10-18; polish pass done: scene z-order so edges paint above filled groups, knowledge-graph straight edges, pipeline-run legibility, hover-only edge slots, search placeholders) · [x] P3' gallery wiring and QA (Opus, 2026-10-18: static SVG thumbnails per theme, 46/46 browser checks over 12 examples, 31 chips and 25 cells, 246 budgeted words)
+- [x] P4 review + PR (Fable, 2026-10-18: full vitest 26 files/244 tests, Playwright 88 passed/1 skipped, docs build 160 pages, PR #169 retitled and described; branch not pushed)
