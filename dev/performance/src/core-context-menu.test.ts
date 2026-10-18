@@ -12,13 +12,13 @@ class PointerEvent extends Event {
 	}
 }
 
-function fixture(callbacks: (((e: MouseEvent) => void) | undefined)[]) {
+function fixture(callbacks: (((e: MouseEvent) => void) | undefined)[], longPressDelay = 500) {
 	const view = Object.assign(new EventTarget(), {
 		style: {},
 		getBoundingClientRect: () => ({ left: 0, top: 0 })
 	});
 	const detectors = callbacks.map((onContextMenu) =>
-		new BaseGestureDetector({ onContextMenu }).createRenderObject()
+		new BaseGestureDetector({ onContextMenu, longPressDelay }).createRenderObject()
 	);
 	const hitTest = vi.fn((result) =>
 		detectors.forEach((detector) => result.add(new HitTestEntry(detector)))
@@ -42,7 +42,7 @@ function fixture(callbacks: (((e: MouseEvent) => void) | undefined)[]) {
 		Object.assign(e, { touches: points });
 		view.dispatchEvent(e);
 	};
-	return { view, dispatcher, mouse, touch, hitTest };
+	return { view, dispatcher, mouse, touch, hitTest, detectors };
 }
 
 beforeEach(() => {
@@ -114,4 +114,21 @@ describe('core context-menu dispatch', () => {
 		expect(listener).toHaveBeenCalledOnce();
 		f.dispatcher.dispose();
 	});
+});
+
+
+describe('context menu timing and cancellation', () => {
+  it('uses the detector long-press delay', () => {
+    const listener = vi.fn(), f = fixture([listener], 80);
+    f.touch('touchstart', [{ clientX: 10, clientY: 10 }]);
+    vi.advanceTimersByTime(79); expect(listener).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(1); expect(listener).toHaveBeenCalledOnce(); f.dispatcher.dispose();
+  });
+  it('marks the emulated mouseup from touchcancel as cancelled', () => {
+    const f = fixture([undefined]), up = vi.fn();
+    f.detectors[0].onDragStart = () => {};
+    f.detectors[0].onMouseUp = up;
+    f.touch('touchstart', [{ clientX: 10, clientY: 10 }]); f.touch('touchcancel', []);
+    expect(up.mock.calls[0][0].cancelled).toBe(true); f.dispatcher.dispose();
+  });
 });

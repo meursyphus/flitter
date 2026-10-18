@@ -245,6 +245,7 @@ export class HitTestDispatcher {
       altKey: source.altKey,
     });
     (event as SyntheticPointerEvent).fromTouch = true;
+    (event as SyntheticPointerEvent).cancelled = source.type === "touchcancel";
     // Dispatched on the view so both the view listeners (this dispatcher) and
     // document listeners (drag tracking) observe it, exactly like a real mouse.
     this.#renderContext.view.dispatchEvent(event);
@@ -259,14 +260,15 @@ export class HitTestDispatcher {
       const detectors = this.#performHitTestAt(
         this.#convertToLocalPosition({ clientX: point.x, clientY: point.y } as MouseEvent),
       );
-      if (detectors.some(detector => detector.wantsContextMenu)) {
+      const contextDetector = detectors.find(detector => detector.wantsContextMenu);
+      if (contextDetector && contextDetector.longPressDelay >= 0) {
         this.#longPressPoint = point;
         this.#longPressTimer = setTimeout(() => {
           this.#cancelLongPress();
           // Suppress the tap that would otherwise follow a handled long press.
           if (this.#touch) this.#touch.moved = true;
           this.#synthesizeMouse("contextmenu", point, e);
-        }, 500);
+        }, contextDetector.longPressDelay);
       }
       // Only capture drags; context-menu-only detectors retain native scrolling.
       if (!detectors.some(detector => detector.wantsDrag)) {
@@ -513,7 +515,7 @@ type TouchSession = {
 };
 
 /** Mouse event synthesized from touch input. */
-export type SyntheticPointerEvent = MouseEvent & { fromTouch?: boolean };
+export type SyntheticPointerEvent = MouseEvent & { fromTouch?: boolean; cancelled?: boolean };
 
 /** Wheel event synthesized from a two-finger pinch; `pinchScale` is the zoom ratio of this step. */
 export type PinchWheelEvent = WheelEvent & { pinchScale?: number };
