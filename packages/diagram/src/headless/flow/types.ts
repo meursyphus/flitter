@@ -100,6 +100,8 @@ export type FlowNode<TData = Record<string, unknown>> = {
   deletable?: boolean;
   hidden?: boolean;
   parentId?: string;
+  collapsible?: boolean;
+  collapsed?: boolean;
   extent?: CoordinateExtent | "parent";
   zIndex?: number;
   /** Fallback edge anchor sides when the node has no handles. */
@@ -148,8 +150,12 @@ export type FlowEdge<TData = Record<string, unknown>> = {
   zIndex?: number;
   style?: EdgeStyle;
   /** Options for the built-in path algorithms (curvature, offset, borderRadius). */
+  waypoints?: XYPosition[];
+  adjusting?: "none" | "ends" | "stretch";
   pathOptions?: { curvature?: number; offset?: number; borderRadius?: number };
 };
+
+export type FlowContent = { nodes: FlowNode[]; edges: FlowEdge[] };
 
 export type EdgeEndpoints = Required<Pick<EdgePathParams, "sourceX" | "sourceY" | "targetX" | "targetY">> & {
   sourcePosition: Position;
@@ -290,7 +296,6 @@ export type FlowEvents = {
   connectStart?: (state: ConnectionState) => void;
   connectEnd?: (result: { state: ConnectionState; dropPosition: XYPosition }) => void;
   beforeConnect?: (connection: Connection) => false | Connection | void;
-  // P2: emitted by waypoint, text editing, history and context-menu gestures.
   reshapeStart?: (args: EdgeHandleBuilderArgs) => void;
   reshape?: (args: EdgeHandleBuilderArgs) => void;
   reshapeEnd?: (args: EdgeHandleBuilderArgs) => void;
@@ -306,13 +311,14 @@ export type GestureTarget = { kind: "node" | "edge" | "pane" | "selection"; id?:
 
 export type FlowInteraction = {
   pane: { drag: "pan" | "select"; scroll: "zoom" | "pan"; scrollSpeed: number; pinch: boolean; doubleClick: "zoom" | "none"; autoPan: boolean | { speed: number }; panKey: KeyCode; selectKey: KeyCode };
-  select: { enabled: boolean; mode: SelectionMode; toggleKey: KeyCode; elevate: boolean; edgeHitWidth: number };
+  select: { enabled: boolean; box: boolean; mode: SelectionMode; toggleKey: KeyCode; elevate: boolean; edgeHitWidth: number };
   drag: { enabled: boolean; threshold: number; snap: { grid: false | [number, number]; guides: boolean; radius: number }; overlap: "allow" | "push" | "reject"; dropIntoGroup: boolean };
   connect: { enabled: boolean; mode: ConnectionMode; radius: number; onClick: boolean; reconnect: boolean; reconnectRadius: number; lineType: string; validate?: (connection: Connection) => boolean };
   edit: { text: boolean; waypoints: boolean; resize: boolean | NodeResizeOptions };
   history: { enabled: boolean; limit: number };
   clipboard: { enabled: boolean; offset: XYPosition; system: boolean };
   contextMenu: { enabled: boolean; longPress: number };
+  /** Custom nudge arrays bind left, right, up, down, in that order. */
   keys: { delete: KeyCode; undo: KeyCode; redo: KeyCode; copy: KeyCode; paste: KeyCode; duplicate: KeyCode; selectAll: KeyCode; fitView: KeyCode; zoomIn: KeyCode; zoomOut: KeyCode; nudge: KeyCode; escape: KeyCode };
   touch: boolean;
 };
@@ -350,7 +356,6 @@ export type NodeBuilderArgs = {
   collapsed: boolean;
   hiddenChildCount: number;
   isNeighbour: boolean;
-  zoom: number;
 };
 
 export type EdgeBuilderArgs = {
@@ -459,13 +464,12 @@ export type EdgePathBuilderArgs = {
   type: string;
 };
 
-export type Guide = { from: XYPosition; to: XYPosition };
-export type ContextMenuBuilderArgs = { target: GestureTarget; ids: string[]; position: XYPosition };
-export type GuidesBuilderArgs = { lines: Guide[] };
+export type Guide = { axis: "x" | "y"; position: number; from: number; to: number };
+export type ContextMenuBuilderArgs = { target: GestureTarget["kind"]; ids: string[]; position: XYPosition; screenPosition: XYPosition };
+export type GuidesBuilderArgs = { /** Overlay-local coordinates; controller.guides uses flow coordinates. */ lines: Guide[] };
 export type EdgeHandleBuilderArgs = { edge: FlowEdge; kind: "waypoint" | "midpoint"; index: number; active: boolean };
 
 export type FlowCustom<TConfig extends object = object> = {
-  // P2: slots are available to templates; gesture overlays will consume them.
   contextMenu: (args: ContextMenuBuilderArgs, context: FlowContext<TConfig>) => Widget | null;
   guides: (args: GuidesBuilderArgs, context: FlowContext<TConfig>) => Widget | null;
   edgeHandle: Builder<EdgeHandleBuilderArgs, TConfig>;
@@ -492,6 +496,10 @@ export type FlowCustom<TConfig extends object = object> = {
 export type NodeBuilder<TConfig extends object = object> = Builder<NodeBuilderArgs, TConfig>;
 export type NodeTypeDefinition<TConfig extends object = object> = {
   build: NodeBuilder<TConfig>;
+  /** Zoom breakpoints that opt this type into discrete LOD rebuilds. */
+  lod?: number[];
+  group?: true;
+  editable?: true;
   handles?: HandleSpec[] | ((node: FlowNode) => HandleSpec[]);
   /** Toolbar rendered in screen space next to the node (see `node.toolbar`). */
   toolbar?: NodeToolbarBuilder<TConfig>;

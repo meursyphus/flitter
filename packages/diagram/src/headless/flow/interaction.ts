@@ -1,7 +1,7 @@
 import { deepMerge, isMacOs, type DeepPartial } from "../../shared/utils";
 import type { FlowInteraction, FlowOptions, FlowProps } from "./types";
 
-/** Defaults follow todo/diagram-research.md §A; P2 fields are stored now. */
+/** Defaults follow todo/diagram-research.md §A and the editor tiers. */
 export function resolveInteraction(input?: FlowProps["interaction"]): FlowInteraction {
   const mod = isMacOs() ? "Meta" : "Control";
   const editor: FlowInteraction = {
@@ -15,7 +15,7 @@ export function resolveInteraction(input?: FlowProps["interaction"]): FlowIntera
       panKey: "Space",
       selectKey: "Shift",
     },
-    select: { enabled: true, mode: "full", toggleKey: mod, elevate: true, edgeHitWidth: 20 },
+    select: { enabled: true, box: true, mode: "full", toggleKey: mod, elevate: true, edgeHitWidth: 20 },
     drag: {
       enabled: true,
       threshold: 1,
@@ -56,7 +56,7 @@ export function resolveInteraction(input?: FlowProps["interaction"]): FlowIntera
   const overrides: DeepPartial<FlowInteraction> =
     preset === "viewer"
       ? {
-          select: { enabled: false },
+          select: { enabled: true, box: false },
           drag: { enabled: false, dropIntoGroup: false },
           connect: { enabled: false, onClick: false, reconnect: false },
           history: { enabled: false },
@@ -84,7 +84,7 @@ export function resolveInteraction(input?: FlowProps["interaction"]): FlowIntera
   return deepMerge(deepMerge(editor, overrides), partial);
 }
 
-/** Only existing gestures are normalized here. P2 will read the remaining groups directly. */
+/** The legacy viewport/connection kernels consume normalized options; newer gestures read the groups. */
 export function interactionOptions(i: FlowInteraction): Partial<FlowOptions> {
   return {
     panOnDrag: i.pane.drag === "pan",

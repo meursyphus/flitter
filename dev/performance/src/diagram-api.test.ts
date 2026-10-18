@@ -34,7 +34,7 @@ function pointer(x = 0, y = 0): MouseEvent {
 }
 
 describe('grouped diagram API', () => {
-	it('normalizes editor defaults and stores P2 fields without enabling gestures', () => {
+	it('normalizes editor defaults and merges nested interaction settings', () => {
 		const f = setup();
 		expect(f.interaction.drag).toEqual({
 			enabled: true,
@@ -70,7 +70,7 @@ describe('grouped diagram API', () => {
 		expect(f.zoomEnabled).toBe(true);
 		expect(f.isNodeDraggable(node)).toBe(false);
 		expect(f.isNodeResizable(node)).toBe(false);
-		expect(f.isNodeSelectable(node)).toBe(false);
+		expect(f.isNodeSelectable(node)).toBe(true);
 		expect(f.isNodeConnectable(node)).toBe(false);
 		expect(f.isEdgeReconnectable(edges[0])).toBe(false);
 		expect(f.interaction.history.enabled).toBe(false);
