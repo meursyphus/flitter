@@ -1,9 +1,9 @@
 import { type Widget } from "flitter-ui";
 import type { FlowContext, NodesSelectionRectBuilderArgs, SelectionBoxBuilderArgs } from "flitter-ui/diagram";
-import type { XyflowFlowConfig } from "../config";
+import type { DefaultFlowConfig } from "../config";
 import { ShapePaint, rectPathD } from "./paint";
 
-function selectionRect(width: number, height: number, context: FlowContext<XyflowFlowConfig>): Widget {
+function selectionRect(width: number, height: number, context: FlowContext<DefaultFlowConfig>): Widget {
   const { colors, selection } = context.config;
   const inset = selection.borderWidth / 2;
   return ShapePaint({
@@ -23,14 +23,14 @@ function selectionRect(width: number, height: number, context: FlowContext<Xyflo
 }
 
 /** Rubber-band rectangle drawn while shift-dragging on the pane. */
-export function xyflowSelectionBox(args: SelectionBoxBuilderArgs, context: FlowContext<XyflowFlowConfig>): Widget {
+export function defaultSelectionBox(args: SelectionBoxBuilderArgs, context: FlowContext<DefaultFlowConfig>): Widget {
   return selectionRect(args.rect.width, args.rect.height, context);
 }
 
 /** Dashed frame around a multi-node selection. */
-export function xyflowNodesSelectionRect(
+export function defaultNodesSelectionRect(
   args: NodesSelectionRectBuilderArgs,
-  context: FlowContext<XyflowFlowConfig>,
+  context: FlowContext<DefaultFlowConfig>,
 ): Widget | null {
   return selectionRect(args.rect.width, args.rect.height, context);
 }

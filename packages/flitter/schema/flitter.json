@@ -46,14 +46,6 @@
         }
       },
       "additionalProperties": false
-    },
-    "defaultDiagramStyle": {
-      "type": "string",
-      "enum": [
-        "xyflow"
-      ],
-      "description": "Default diagram style when --style flag is omitted",
-      "default": "xyflow"
     }
   },
   "additionalProperties": false

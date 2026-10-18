@@ -1,3 +1,4 @@
+import { defaultNodeTypes, type NodeToolbarBuilder, type DefaultFlowConfig } from "flitter-diagram";
 import type { Meta, StoryObj } from "@storybook/react";
 import DualRenderer from "../../components/DualRenderer";
 import {
@@ -34,9 +35,11 @@ declare global {
 
 /** Exposes controllers on `window.__flows` so browser tests can inspect state. */
 const expose = {
-  onInit: (controller: unknown) => {
-    if (typeof window === "undefined") return;
-    (window.__flows ??= []).push(controller);
+  on: {
+    init: (controller: unknown) => {
+      if (typeof window === "undefined") return;
+      (window.__flows ??= []).push(controller);
+    },
   },
 };
 
@@ -68,7 +71,12 @@ export const Basic: Story = {
   args: {
     width: "560px",
     height: "400px",
-    widget: FlowDiagram({ ...expose, nodes: basicNodes, edges: basicEdges, fitView: true }),
+    widget: FlowDiagram({
+      ...expose,
+      nodes: basicNodes,
+      edges: basicEdges,
+      viewport: { fitView: true },
+    }),
     description:
       "React Flow's default example. Drag nodes, wheel to zoom, drag the pane to pan, shift+drag to box select, drag from a handle to connect, Backspace to delete.",
   },
@@ -96,7 +104,12 @@ export const EdgeTypes: Story = {
   args: {
     width: "560px",
     height: "440px",
-    widget: FlowDiagram({ ...expose, nodes: edgeTypeNodes, edges: edgeTypeEdges, fitView: true }),
+    widget: FlowDiagram({
+      ...expose,
+      nodes: edgeTypeNodes,
+      edges: edgeTypeEdges,
+      viewport: { fitView: true },
+    }),
     description: "Every built-in edge type with labels and markers.",
   },
 };
@@ -109,8 +122,8 @@ export const DarkMode: Story = {
     widget: FlowDiagram({
       nodes: basicNodes,
       edges: basicEdges,
-      fitView: true,
       config: { colorMode: "dark", background: { variant: "lines" } },
+      viewport: { fitView: true },
     }),
     description: "Dark colour mode with the line background variant.",
   },
@@ -135,8 +148,13 @@ export const LayeredLayout: Story = {
   args: {
     width: "640px",
     height: "460px",
-    widget: FlowDiagram({ ...expose, ...chain(10), layout: layeredLayout }),
-    description: "Nodes start at (0,0); the layered (Sugiyama) algorithm positions them after measurement and fits the view.",
+    widget: FlowDiagram({
+      ...expose,
+      ...chain(10),
+      layout: layeredLayout,
+    }),
+    description:
+      "Nodes start at (0,0); the layered (Sugiyama) algorithm positions them after measurement and fits the view.",
   },
 };
 
@@ -165,7 +183,11 @@ export const ForceLayout: Story = {
   args: {
     width: "640px",
     height: "460px",
-    widget: FlowDiagram({ ...chain(10), layout: forceLayout, config: { background: { variant: "cross" } } }),
+    widget: FlowDiagram({
+      ...chain(10),
+      layout: forceLayout,
+      config: { background: { variant: "cross" } },
+    }),
     description: "Force-directed layout (Fruchterman-Reingold), deterministic seed.",
   },
 };
@@ -270,8 +292,6 @@ export const CustomNodesERD: Story = {
       ...expose,
       nodes: erdNodes,
       edges: erdEdges,
-      fitView: true,
-      connectionMode: "loose",
       nodeTypes: {
         table: {
           build: tableNode,
@@ -287,8 +307,11 @@ export const CustomNodesERD: Story = {
         },
       },
       config: { minimap: { visible: false } },
+      viewport: { fitView: true },
+      interaction: { connect: { mode: "loose" } },
     }),
-    description: "Custom table nodes with declared per-row handles (an ERD). Loose connection mode lets any handle connect to any other.",
+    description:
+      "Custom table nodes with declared per-row handles (an ERD). Loose connection mode lets any handle connect to any other.",
   },
 };
 
@@ -299,12 +322,9 @@ export const ReadOnly: Story = {
     widget: FlowDiagram({
       nodes: basicNodes,
       edges: basicEdges,
-      fitView: true,
-      nodesDraggable: false,
-      nodesConnectable: false,
-      elementsSelectable: false,
-      zoomOnDoubleClick: false,
       config: { controls: { showInteractive: false }, minimap: { visible: false } },
+      viewport: { fitView: true },
+      interaction: "viewer",
     }),
     description: "Pan and zoom only: nodes cannot be dragged, selected or connected.",
   },
@@ -319,12 +339,14 @@ export const PanOnScroll: Story = {
       ...expose,
       nodes: basicNodes,
       edges: basicEdges,
-      fitView: true,
-      panOnScroll: true,
-      selectionOnDrag: true,
-      snapToGrid: true,
+      viewport: { fitView: true },
+      interaction: {
+        pane: { scroll: "pan", drag: "select" },
+        drag: { snap: { grid: [15, 15] } },
+      },
     }),
-    description: "Figma-style controls: wheel pans, pinch (ctrl+wheel) zooms, dragging the pane box-selects, hold Space to pan; snap to a 15px grid.",
+    description:
+      "Figma-style controls: wheel pans, pinch (ctrl+wheel) zooms, dragging the pane box-selects, hold Space to pan; snap to a 15px grid.",
   },
 };
 
@@ -346,28 +368,52 @@ export const ResizeToolbarReconnect: Story = {
     widget: FlowDiagram({
       ...expose,
       nodes: [
-        { id: "a", type: "input", position: { x: 60, y: 40 }, data: { label: "Select me, then resize" }, resizable: true },
-        { id: "b", position: { x: 320, y: 60 }, data: { label: "Toolbar on the right" }, toolbar: { position: "right", align: "start" } },
+        {
+          id: "a",
+          type: "input",
+          position: { x: 60, y: 40 },
+          data: { label: "Select me, then resize" },
+          resizable: true,
+          resizeOptions: { minWidth: 120, minHeight: 30, keepAspectRatio: false },
+        },
+        {
+          id: "b",
+          position: { x: 320, y: 60 },
+          data: { label: "Toolbar on the right" },
+          toolbar: { position: "right", align: "start" },
+        },
         { id: "c", type: "output", position: { x: 180, y: 240 }, data: { label: "Drag an edge end here" } },
       ],
       edges: [
         { id: "ab", source: "a", target: "b", markerEnd: "arrowclosed" },
         { id: "ac", source: "a", target: "c", label: "reconnectable", reconnectable: "target" },
       ],
-      fitView: true,
-      nodeResizeOptions: { minWidth: 120, minHeight: 30, keepAspectRatio: false },
-      nodeToolbar: ({ node }, ctx) =>
-        Row({
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            toolbarButton("duplicate", () =>
-              ctx.addNodes({ ...node, id: `${node.id}-copy-${Date.now() % 1000}`, position: { x: node.position.x + 40, y: node.position.y + 40 }, selected: false }),
-            ),
-            Container({ width: 2 }),
-            toolbarButton("delete", () => void ctx.deleteElements({ nodes: [node] })),
-          ],
-        }),
+      nodeTypes: Object.fromEntries(
+        Object.entries(defaultNodeTypes).map(([name, definition]) => [
+          name,
+          {
+            ...definition,
+            toolbar: (({ node }, ctx) =>
+              Row({
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  toolbarButton("duplicate", () =>
+                    ctx.addNodes({
+                      ...node,
+                      id: `${node.id}-copy-${Date.now() % 1000}`,
+                      position: { x: node.position.x + 40, y: node.position.y + 40 },
+                      selected: false,
+                    }),
+                  ),
+                  Container({ width: 2 }),
+                  toolbarButton("delete", () => void ctx.deleteElements({ nodes: [node] })),
+                ],
+              })) as NodeToolbarBuilder<DefaultFlowConfig>,
+          },
+        ]),
+      ),
       config: { minimap: { visible: false } },
+      viewport: { fitView: true },
     }),
     description:
       "Node a shows resize lines and corner handles while selected; the selected node gets a screen-space toolbar (duplicate/delete); edge a→c can be re-targeted by dragging its arrow end onto another handle.",
@@ -382,12 +428,14 @@ export const TranslateExtent: Story = {
       ...expose,
       nodes: basicNodes,
       edges: basicEdges,
-      translateExtent: [
-        [0, 0],
-        [600, 400],
-      ],
-      minZoom: 1,
       config: { background: { variant: "lines" }, minimap: { visible: false } },
+      viewport: {
+        extent: [
+          [0, 0],
+          [600, 400],
+        ],
+        minZoom: 1,
+      },
     }),
     description: "The viewport cannot be panned outside the 600×400 flow region; the lines background shows the clamp.",
   },

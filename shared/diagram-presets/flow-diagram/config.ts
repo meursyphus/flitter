@@ -1,8 +1,10 @@
 import { type DeepPartial, deepMerge } from "flitter-ui/diagram";
+import type { ContextMenuBuilderArgs } from "flitter-ui/diagram";
+import type { FlowController } from "flitter-ui/diagram";
 import type { PanelPosition } from "flitter-ui/diagram";
 
 /** Colour tokens. Values mirror React Flow's `style.css` custom properties. */
-export type XyflowColors = {
+export type DefaultColors = {
   background: string;
   patternDots: string;
   patternLines: string;
@@ -36,7 +38,7 @@ export type XyflowColors = {
   minimapViewportStroke: string;
 };
 
-export const lightColors: XyflowColors = {
+export const lightColors: DefaultColors = {
   background: "#ffffff",
   patternDots: "#91919a",
   patternLines: "#eeeeee",
@@ -70,7 +72,7 @@ export const lightColors: XyflowColors = {
   minimapViewportStroke: "transparent",
 };
 
-export const darkColors: XyflowColors = {
+export const darkColors: DefaultColors = {
   background: "#141414",
   patternDots: "#777777",
   patternLines: "#777777",
@@ -104,9 +106,10 @@ export const darkColors: XyflowColors = {
   minimapViewportStroke: "transparent",
 };
 
-export type XyflowFlowConfig = {
+export type DefaultFlowConfig = {
+  contextMenu: { items?: (args: ContextMenuBuilderArgs, flow: FlowController) => { label: string; onSelect(): void; disabled?: boolean; separator?: boolean }[] };
   colorMode: "light" | "dark";
-  colors: XyflowColors;
+  colors: DefaultColors;
   node: {
     width: number;
     padding: number;
@@ -185,7 +188,8 @@ export type XyflowFlowConfig = {
   };
 };
 
-export const defaultXyflowConfig: XyflowFlowConfig = {
+export const defaultConfig: DefaultFlowConfig = {
+  contextMenu: {},
   colorMode: "light",
   colors: lightColors,
   node: {
@@ -236,10 +240,10 @@ export const defaultXyflowConfig: XyflowFlowConfig = {
   },
 };
 
-export function createXyflowConfig(config?: DeepPartial<XyflowFlowConfig>): XyflowFlowConfig {
-  const colorMode = config?.colorMode ?? defaultXyflowConfig.colorMode;
-  const base: XyflowFlowConfig = {
-    ...defaultXyflowConfig,
+export function createDefaultConfig(config?: DeepPartial<DefaultFlowConfig>): DefaultFlowConfig {
+  const colorMode = config?.colorMode ?? defaultConfig.colorMode;
+  const base: DefaultFlowConfig = {
+    ...defaultConfig,
     colorMode,
     colors: colorMode === "dark" ? darkColors : lightColors,
   };

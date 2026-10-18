@@ -1,9 +1,9 @@
 import { Border, BorderRadius, BoxDecoration, Center, Container, SizedBox, type Widget } from "flitter-ui";
 import type { FlowContext, ReconnectHandleBuilderArgs, ResizeControlBuilderArgs } from "flitter-ui/diagram";
-import type { XyflowFlowConfig } from "../config";
+import type { DefaultFlowConfig } from "../config";
 
 /** React Flow's NodeResizer look: 1px blue lines and 4px blue squares with a white border. */
-export function xyflowResizeControl(args: ResizeControlBuilderArgs, context: FlowContext<XyflowFlowConfig>): Widget {
+export function defaultResizeControl(args: ResizeControlBuilderArgs, context: FlowContext<DefaultFlowConfig>): Widget {
   const { resize } = context.config;
   const thickness = resize.lineWidth + resize.hitPadding * 2;
   if (args.variant === "line") {
@@ -40,6 +40,6 @@ export function xyflowResizeControl(args: ResizeControlBuilderArgs, context: Flo
 }
 
 /** Invisible circle-sized grab area at an edge endpoint (React Flow's edge updater). */
-export function xyflowReconnectHandle(args: ReconnectHandleBuilderArgs, _context: FlowContext<XyflowFlowConfig>): Widget {
+export function defaultReconnectHandle(args: ReconnectHandleBuilderArgs, _context: FlowContext<DefaultFlowConfig>): Widget {
   return SizedBox({ width: args.size, height: args.size });
 }

@@ -16,7 +16,7 @@
 		"format": "prettier --write .",
 		"test:integration": "playwright test --grep-invert=\"(tracking|rerender)-performance.test.ts\" tests/",
 		"test:unit": "vitest",
-		"test:diagram": "vitest run src/diagram-geometry.test.ts src/diagram-layout.test.ts && playwright test --config playwright.diagram.config.ts"
+		"test:diagram": "vitest run src/diagram && playwright test --config playwright.diagram.config.ts"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",

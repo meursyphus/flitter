@@ -1,7 +1,6 @@
 import path from "node:path";
 import {
   getDefaultChartStyle,
-  getDefaultDiagramStyle,
   readFlitterConfig,
   resolveChartsDirectory,
 } from "../lib/config.mjs";
@@ -51,7 +50,7 @@ export async function runAdd({
 
   const isDiagram = chartVariants.every(isDiagramItem);
   const defaultStyle = isDiagram
-    ? getDefaultDiagramStyle(flitterConfig.value)
+    ? "default"
     : getDefaultChartStyle(flitterConfig.value);
 
   if (style != null && !chartVariants.some((item) => item.style === style)) {

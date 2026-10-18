@@ -63,6 +63,8 @@ type EventType =
 type Bubble = Record<EventType, boolean>;
 
 class BaseGestureDetector extends SingleChildRenderObjectWidget {
+  onContextMenu: (e: MouseEvent) => void;
+  longPressDelay: number;
   onClick: (e: MouseEvent) => void;
   onMouseUp: (e: MouseEvent) => void;
   onMouseMove: (e: MouseEvent) => void;
@@ -79,6 +81,8 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
   constructor({
     child,
     onClick,
+    onContextMenu,
+    longPressDelay = 500,
     onMouseDown,
     onMouseMove,
     onMouseUp,
@@ -94,6 +98,8 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
     behavior,
   }: {
     child?: Widget;
+    onContextMenu?: (e: MouseEvent) => void;
+    longPressDelay?: number;
     onClick?: (e: MouseEvent) => void;
     onMouseUp?: (e: MouseEvent) => void;
     onMouseMove?: (e: MouseEvent) => void;
@@ -116,6 +122,8 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
     bubble?: Partial<Bubble>;
   }) {
     super({ child, key });
+    this.onContextMenu = onContextMenu ?? emptyCallback;
+    this.longPressDelay = longPressDelay;
     this.onClick = onClick ?? emptyCallback;
     this.onMouseDown = onMouseDown ?? emptyCallback;
     this.onMouseMove = onMouseMove ?? emptyCallback;
@@ -140,6 +148,8 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
 
   override createRenderObject(): RenderGestureDetector {
     return new RenderGestureDetector({
+      onContextMenu: this.onContextMenu,
+      longPressDelay: this.longPressDelay,
       onClick: this.onClick,
       onMouseDown: this.onMouseDown,
       onMouseMove: this.onMouseMove,
@@ -157,6 +167,8 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
   }
 
   updateRenderObject(renderObject: RenderGestureDetector): void {
+    renderObject.onContextMenu = this.onContextMenu;
+    renderObject.longPressDelay = this.longPressDelay;
     renderObject.onClick = this.onClick;
     renderObject.onMouseOver = this.onMouseOver;
     renderObject.cursor = this.cursor;
@@ -182,6 +194,11 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     if (this._cursor === prop) return;
     this._cursor = prop;
     this.markNeedsPaint();
+  }
+  onContextMenu: MouseEventCallback;
+  longPressDelay: number;
+  get wantsContextMenu(): boolean {
+    return this.onContextMenu !== emptyCallback;
   }
   private _onClick: MouseEventCallback;
   get onClick() {
@@ -274,6 +291,8 @@ export class RenderGestureDetector extends SingleChildRenderObject {
 
   constructor({
     onClick,
+    onContextMenu,
+    longPressDelay = 500,
     onMouseDown,
     onMouseUp,
     onMouseMove,
@@ -287,6 +306,8 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     onWheel,
     behavior,
   }: {
+    onContextMenu?: MouseEventCallback;
+    longPressDelay?: number;
     onClick: MouseEventCallback;
     onMouseUp: MouseEventCallback;
     onMouseMove: MouseEventCallback;
@@ -302,6 +323,8 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     behavior: HitTestBehavior;
   }) {
     super({ isPainter: false });
+    this.onContextMenu = onContextMenu ?? emptyCallback;
+    this.longPressDelay = longPressDelay;
     this._onClick = onClick;
     this._onMouseDown = onMouseDown;
     this._onMouseMove = onMouseMove;
@@ -390,6 +413,7 @@ export class RenderGestureDetector extends SingleChildRenderObject {
 
   invokeCallback(
     type:
+      | "onContextMenu"
       | "onClick"
       | "onMouseDown"
       | "onMouseMove"

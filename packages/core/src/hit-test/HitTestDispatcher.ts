@@ -5,6 +5,7 @@ import { Offset } from "../type";
 import { HitTestResult } from "./HitTestResult";
 
 type EventHandlerType =
+  | "onContextMenu"
   | "onClick"
   | "onMouseMove"
   | "onMouseUp"
@@ -25,6 +26,8 @@ export class HitTestDispatcher {
   #lastHoverHits: RenderGestureDetector[] | null = null;
   #listeners: { type: string; handler: EventListener }[] = [];
   #touch: TouchSession | null = null;
+  #longPressTimer: ReturnType<typeof setTimeout> | null = null;
+  #longPressPoint: { x: number; y: number } | null = null;
 
   init({ renderContext }: { renderContext: RenderContext }) {
     if (!this.#activated) return;
@@ -34,6 +37,7 @@ export class HitTestDispatcher {
     const handlers = {
       mousedown: this.#handleMouseDown,
       click: this.#handleClick,
+      contextmenu: this.#handleContextMenu,
       mousemove: this.#handleMouseMove,
       mouseup: this.#handleMouseUp,
       wheel: this.#handleMouseWheel,
@@ -71,6 +75,7 @@ export class HitTestDispatcher {
   }
 
   setRenderView(renderView: RenderObject) {
+    this.#cancelLongPress();
     this.#renderView = renderView;
     this.#previousHits = new Set();
     this.#previousCursorDetector = null;
@@ -89,6 +94,7 @@ export class HitTestDispatcher {
   };
 
   dispose() {
+    this.#cancelLongPress();
     for (const { type, handler } of this.#listeners)
       this.#renderContext.view.removeEventListener(type, handler);
     this.#listeners = [];
@@ -111,6 +117,24 @@ export class HitTestDispatcher {
     this.#lastPressHits = detectors;
     this.#dispatchDetectors(detectors, e, "onMouseDown");
   };
+
+  #handleContextMenu = (e: Wrapped<MouseEvent>) => {
+    let handled = false;
+    for (const detector of this.#performHitTest(e)) {
+      if (e.isPropagationStopped) break;
+      if (detector.wantsContextMenu) {
+        handled = true;
+        detector.invokeCallback("onContextMenu", e);
+      }
+    }
+    if (handled || e.isPropagationStopped) e.preventDefault();
+  };
+
+  #cancelLongPress() {
+    if (this.#longPressTimer != null) clearTimeout(this.#longPressTimer);
+    this.#longPressTimer = null;
+    this.#longPressPoint = null;
+  }
 
   #handleClick = (e: Wrapped<MouseEvent>) => {
     const detectors = this.#performHitTest(e);
@@ -202,7 +226,7 @@ export class HitTestDispatcher {
   }
 
   #synthesizeMouse(
-    type: "mousedown" | "mousemove" | "mouseup" | "click",
+    type: "mousedown" | "mousemove" | "mouseup" | "click" | "contextmenu",
     point: { x: number; y: number },
     source: TouchEvent,
   ) {
@@ -211,8 +235,8 @@ export class HitTestDispatcher {
       clientY: point.y,
       screenX: point.x,
       screenY: point.y,
-      button: 0,
-      buttons: type === "mouseup" || type === "click" ? 0 : 1,
+      button: type === "contextmenu" ? 2 : 0,
+      buttons: type === "mouseup" || type === "click" || type === "contextmenu" ? 0 : 1,
       bubbles: true,
       cancelable: true,
       shiftKey: source.shiftKey,
@@ -221,6 +245,7 @@ export class HitTestDispatcher {
       altKey: source.altKey,
     });
     (event as SyntheticPointerEvent).fromTouch = true;
+    (event as SyntheticPointerEvent).cancelled = source.type === "touchcancel";
     // Dispatched on the view so both the view listeners (this dispatcher) and
     // document listeners (drag tracking) observe it, exactly like a real mouse.
     this.#renderContext.view.dispatchEvent(event);
@@ -229,13 +254,23 @@ export class HitTestDispatcher {
   #handleTouchStart = (e: TouchEvent) => {
     if (this.#renderView == null) return;
     const touches = e.touches;
+    this.#cancelLongPress();
     if (touches.length === 1) {
       const point = this.#touchPoint(touches);
-      // Only capture when the touch lands on something draggable; otherwise the
-      // page keeps scrolling and the browser's compatibility mouse events fire.
       const detectors = this.#performHitTestAt(
         this.#convertToLocalPosition({ clientX: point.x, clientY: point.y } as MouseEvent),
       );
+      const contextDetector = detectors.find(detector => detector.wantsContextMenu);
+      if (contextDetector && contextDetector.longPressDelay >= 0) {
+        this.#longPressPoint = point;
+        this.#longPressTimer = setTimeout(() => {
+          this.#cancelLongPress();
+          // Suppress the tap that would otherwise follow a handled long press.
+          if (this.#touch) this.#touch.moved = true;
+          this.#synthesizeMouse("contextmenu", point, e);
+        }, contextDetector.longPressDelay);
+      }
+      // Only capture drags; context-menu-only detectors retain native scrolling.
       if (!detectors.some(detector => detector.wantsDrag)) {
         this.#touch = null;
         return;
@@ -285,6 +320,10 @@ export class HitTestDispatcher {
   }
 
   #handleTouchMove = (e: TouchEvent) => {
+    const press = this.#longPressPoint;
+    if (press && (e.touches.length !== 1 || Math.hypot(e.touches[0].clientX - press.x, e.touches[0].clientY - press.y) > 4)) {
+      this.#cancelLongPress();
+    }
     const session = this.#touch;
     if (session == null) return;
     e.preventDefault();
@@ -321,6 +360,7 @@ export class HitTestDispatcher {
   };
 
   #handleTouchEnd = (e: TouchEvent) => {
+    this.#cancelLongPress();
     const session = this.#touch;
     if (session == null) return;
     if (e.touches.length > 0) {
@@ -475,7 +515,7 @@ type TouchSession = {
 };
 
 /** Mouse event synthesized from touch input. */
-export type SyntheticPointerEvent = MouseEvent & { fromTouch?: boolean };
+export type SyntheticPointerEvent = MouseEvent & { fromTouch?: boolean; cancelled?: boolean };
 
 /** Wheel event synthesized from a two-finger pinch; `pinchScale` is the zoom ratio of this step. */
 export type PinchWheelEvent = WheelEvent & { pinchScale?: number };

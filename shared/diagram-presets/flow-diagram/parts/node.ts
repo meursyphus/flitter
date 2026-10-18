@@ -6,13 +6,11 @@ import {
   BoxShadow,
   Container,
   EdgeInsets,
-  Text,
-  TextAlign,
-  TextStyle,
   type Widget,
 } from "flitter-ui";
 import type { FlowContext, FlowNode, HandleSpec, NodeBuilderArgs, NodeTypeDefinition } from "flitter-ui/diagram";
-import type { XyflowFlowConfig } from "../config";
+import { EditableLabel } from "./editable-label";
+import type { DefaultFlowConfig } from "../config";
 
 export function nodeLabel(node: FlowNode): string {
   const data = node.data as { label?: unknown } | undefined;
@@ -20,7 +18,7 @@ export function nodeLabel(node: FlowNode): string {
 }
 
 /** React Flow's default node: 150px wide white box with a 1px border and centred label. */
-export function xyflowNode(args: NodeBuilderArgs, context: FlowContext<XyflowFlowConfig>): Widget {
+export function defaultNode(args: NodeBuilderArgs, context: FlowContext<DefaultFlowConfig>): Widget {
   const { node, selected, hovered } = args;
   const { colors, node: n } = context.config;
   const isGroup = node.type === "group";
@@ -32,7 +30,7 @@ export function xyflowNode(args: NodeBuilderArgs, context: FlowContext<XyflowFlo
     alignment: Alignment.center,
     decoration: new BoxDecoration({
       color: isGroup ? colors.nodeGroupBackground : colors.nodeBackground,
-      border: Border.all({ color: selected ? colors.nodeSelectedBorder : colors.nodeBorder, width: borderWidth }),
+      border: Border.all({ color: args.isDropTarget ? colors.selectionBorder : selected ? colors.nodeSelectedBorder : colors.nodeBorder, width: borderWidth }),
       borderRadius: BorderRadius.circular(n.borderRadius),
       boxShadow:
         hovered && !selected
@@ -41,24 +39,21 @@ export function xyflowNode(args: NodeBuilderArgs, context: FlowContext<XyflowFlo
     }),
     child: isGroup
       ? undefined
-      : Text(nodeLabel(node), {
-          textAlign: TextAlign.center,
-          style: new TextStyle({ fontSize: n.fontSize, color: colors.nodeColor, fontFamily: n.fontFamily }),
-        }),
+      : EditableLabel(args, context),
   });
 }
 
 const targetTop: HandleSpec = { type: "target", position: "top" };
 const sourceBottom: HandleSpec = { type: "source", position: "bottom" };
 
-export function xyflowDefaultHandles(_node: FlowNode): HandleSpec[] {
+export function defaultHandles(_node: FlowNode): HandleSpec[] {
   return [targetTop, sourceBottom];
 }
 
 /** `default`, `input`, `output` and `group` node types, as in React Flow. */
-export const xyflowNodeTypes: Record<string, NodeTypeDefinition<XyflowFlowConfig>> = {
-  default: { build: xyflowNode, handles: [targetTop, sourceBottom] },
-  input: { build: xyflowNode, handles: [sourceBottom] },
-  output: { build: xyflowNode, handles: [targetTop] },
-  group: { build: xyflowNode, handles: [] },
+export const defaultNodeTypes: Record<string, NodeTypeDefinition<DefaultFlowConfig>> = {
+  default: { build: defaultNode, handles: [targetTop, sourceBottom] },
+  input: { build: defaultNode, handles: [sourceBottom] },
+  output: { build: defaultNode, handles: [targetTop] },
+  group: { build: defaultNode, handles: [] },
 };

@@ -1,12 +1,12 @@
 import { CustomPaint, Size, type Widget } from "flitter-ui";
 import type { BackgroundBuilderArgs, FlowContext } from "flitter-ui/diagram";
-import type { XyflowFlowConfig } from "../config";
+import type { DefaultFlowConfig } from "../config";
 
 const defaultSize = { dots: 1, lines: 1, cross: 6 } as const;
 let patternCounter = 0;
 
 /** React Flow's `<Background>`: dot, line or cross pattern that follows the viewport. */
-export function xyflowBackground(args: BackgroundBuilderArgs, context: FlowContext<XyflowFlowConfig>): Widget | null {
+export function defaultBackground(args: BackgroundBuilderArgs, context: FlowContext<DefaultFlowConfig>): Widget | null {
   const { background: bg, colors } = context.config;
   if (!bg.visible) return null;
   const { viewport, width, height } = args;
@@ -35,7 +35,7 @@ export function xyflowBackground(args: BackgroundBuilderArgs, context: FlowConte
       svg: {
         createDefaultSvgEl: (ctx) => {
           const pattern = ctx.createSvgEl("pattern");
-          pattern.id = `xyflow-background-${++patternCounter}`;
+          pattern.id = `default-background-${++patternCounter}`;
           pattern.appendChild(ctx.createSvgEl("circle"));
           pattern.appendChild(ctx.createSvgEl("path"));
           return { fill: ctx.createSvgEl("rect"), pattern, rect: ctx.createSvgEl("rect") };

@@ -20,7 +20,7 @@ import {
   StatelessWidget,
   type Widget,
 } from "flitter-core";
-import { FlowController } from "./controller";
+import { FlowController, getSceneOrder } from "./controller";
 import { FLOW_PROVIDER_KEY, FlowProvider } from "./provider";
 import { FlowNodeItem, FlowScene, FlowSceneGroup, FlowSceneItem, type NodeAttachmentPlacement } from "./scene";
 import type {
@@ -59,13 +59,14 @@ class SceneCache {
   nodes = new Map<string, NodeWidget>();
   edges = new Map<string, EdgeWidget>();
   connectionLine: ConnectionLineWidget | null = null;
+  guides: GuidesWidget | null = null;
   styleVersion = -1;
 
   sync(controller: FlowController): void {
     if (this.styleVersion === controller.styleVersion && this.connectionLine?.controller === controller) return;
     this.nodes.clear();
     this.edges.clear();
-    this.connectionLine = null;
+    this.connectionLine = null; this.guides = null;
     this.styleVersion = controller.styleVersion;
   }
 }
@@ -102,7 +103,7 @@ class FlowRootState extends State<FlowRoot> {
     this.controller.addListener(this.handleChange);
     context.scheduler.addPostFrameCallbacks(() => {
       this.attachHost();
-      props.onInit?.(this.controller);
+      props.on?.init?.(this.controller);
     });
   }
 
@@ -215,7 +216,7 @@ class FlowView extends StatelessWidget {
               maxScale: options.maxZoom,
               panEnabled: ctx.panEnabled,
               scaleEnabled: ctx.zoomEnabled,
-              panOnScroll: options.panOnScroll && !ctx.zoomActivationHeld,
+              panOnScroll: options.panOnScroll && !ctx.zoomActivationHeld && ctx.can("pan", { kind: "pane" }),
               panOnScrollSpeed: options.panOnScrollSpeed,
               wheelScale: (event) => {
                 const pinchScale = (event as PinchWheelEvent).pinchScale;
@@ -228,7 +229,11 @@ class FlowView extends StatelessWidget {
               onInteractionStart: () => ctx.handleViewportInteractionStart(),
               onInteractionUpdate: (details) => ctx.handleViewportInteractionUpdate(details),
               onInteractionEnd: () => ctx.handleViewportInteractionEnd(),
-              child: buildScene(ctx, this.cache),
+              child: GestureDetector({
+                // Stop disabled touch input before it reaches the viewport detector.
+                onMouseDown: (event) => { if (!ctx.acceptsPointer(event)) event.stopPropagation(); },
+                child: buildScene(ctx, this.cache),
+              }),
             }),
           }),
         );
@@ -255,11 +260,26 @@ class FlowView extends StatelessWidget {
           children.push(Positioned.fill({ child: new FlowSceneGroup({ children: toolbars }) }));
         }
         for (const panel of ctx.panels) children.push(positionPanel(panel));
+        const menu = ctx.contextMenu;
+        if (menu) {
+          const content = ctx.custom.contextMenu(menu, ctx as any);
+          const point = ctx.flowToPanePosition(menu.position);
+          if (content) children.push(Positioned.fill({ child: new FlowSceneGroup({ children: [
+            new FlowSceneItem({ key: "context-menu", x: point.x, y: point.y, child: GestureDetector({
+              behavior: "opaque", onMouseDown: event => event.stopPropagation(),
+              onClick: event => event.stopPropagation(), onContextMenu: event => event.stopPropagation(), child: content,
+            }) }),
+          ] }) }));
+        }
         return GestureDetector({
           key: this.paneKey,
           behavior: "opaque",
           cursor: "default",
           onMouseDown: (event) => ctx.handlePanePointerDown(event),
+          onMouseMove: (event) => ctx.handlePanePointerMove(event),
+          onWheel: event => ctx.handlePaneWheel(event),
+          longPressDelay: ctx.interaction.contextMenu.longPress,
+      onContextMenu: (event) => { if (ctx.handleContextMenu({ kind: "pane" }, event)) event.stopPropagation(); },
           onMouseEnter: () => ctx.setPointerInside(true),
           onMouseLeave: () => ctx.setPointerInside(false),
           onClick: (event) => ctx.handlePaneClick(event),
@@ -411,18 +431,26 @@ function resolveEdgeBuilder(ctx: FlowController, type: string | undefined): Edge
 /** Scene children in paint order; cached widgets are reused when nothing about their identity changed. */
 function buildScene(ctx: FlowController, cache: SceneCache): Widget {
   const items: Widget[] = [];
-  const liveEdges = new Set<string>();
-  for (const edge of ctx.getVisibleEdges()) {
-    liveEdges.add(edge.id);
-    let widget = cache.edges.get(edge.id);
-    if (!widget) {
-      widget = new EdgeWidget(ctx, edge.id);
-      cache.edges.set(edge.id, widget);
+  const liveEdges = new Set<string>(), liveNodes = new Set<string>();
+  for (const entry of getSceneOrder(ctx)) {
+    if (entry.kind === "edge") {
+      const id = entry.edge.id;
+      liveEdges.add(id);
+      let widget = cache.edges.get(id);
+      if (!widget) { widget = new EdgeWidget(ctx, id); cache.edges.set(id, widget); }
+      items.push(widget);
+    } else {
+      const id = entry.node.id;
+      liveNodes.add(id);
+      let widget = cache.nodes.get(id);
+      if (!widget) { widget = new NodeWidget(ctx, id); cache.nodes.set(id, widget); }
+      items.push(widget);
     }
-    items.push(widget);
   }
   for (const id of cache.edges.keys()) if (!liveEdges.has(id)) cache.edges.delete(id);
+  for (const id of cache.nodes.keys()) if (!liveNodes.has(id)) cache.nodes.delete(id);
 
+  items.push((cache.guides ??= new GuidesWidget(ctx)));
   const selectedNodes = ctx.getSelectedNodes();
   if (selectedNodes.length > 1) {
     const rect = ctx.getNodesBounds(selectedNodes);
@@ -436,25 +464,20 @@ function buildScene(ctx: FlowController, cache: SceneCache): Widget {
             y: rect.y,
             width: rect.width,
             height: rect.height,
-            interactive: false,
-            child: widget,
+            interactive: ctx.interaction.select.box,
+            child: GestureDetector({
+              longPressDelay: ctx.interaction.contextMenu.longPress,
+              onContextMenu: event => { ctx.handleContextMenu({ kind: "selection" }, event); event.stopPropagation(); },
+              onDragStart: event => { if (ctx.interaction.select.box) { ctx.handleNodeDragStart(selectedNodes[0].id, event); event.stopPropagation(); } },
+              onDragMove: event => ctx.handleNodeDragMove(selectedNodes[0].id, event),
+              onDragEnd: event => ctx.handleNodeDragEnd(selectedNodes[0].id, event),
+              child: widget,
+            }),
           }),
         );
       }
     }
   }
-
-  const liveNodes = new Set<string>();
-  for (const node of ctx.getVisibleNodes()) {
-    liveNodes.add(node.id);
-    let widget = cache.nodes.get(node.id);
-    if (!widget) {
-      widget = new NodeWidget(ctx, node.id);
-      cache.nodes.set(node.id, widget);
-    }
-    items.push(widget);
-  }
-  for (const id of cache.nodes.keys()) if (!liveNodes.has(id)) cache.nodes.delete(id);
 
   items.push((cache.connectionLine ??= new ConnectionLineWidget(ctx)));
 
@@ -512,7 +535,7 @@ class NodeWidgetState extends SignalState<NodeWidget> {
   override build(_context: BuildContext): Widget {
     const ctx = this.widget.controller;
     const node = ctx.getNode(this.widget.id);
-    if (!node || node.hidden) return SizedBox.shrink();
+    if (!node || ctx.isNodeHidden(node)) return SizedBox.shrink();
     const connection = ctx.connection;
     const positionAbsolute = ctx.getNodePositionAbsolute(node);
     const selected = !!node.selected;
@@ -535,6 +558,9 @@ class NodeWidgetState extends SignalState<NodeWidget> {
         isConnectionTarget: connection?.toNode?.id === node.id,
         resizable: ctx.isNodeResizable(node),
         resizing: !!node.resizing,
+        editing: ctx.editingId === node.id, isDropTarget: ctx.dropTargetId === node.id, collapsed: !!node.collapsed, hiddenChildCount: ctx.hiddenChildCount(node.id),
+        isOverlapping: dragging && ctx.getIntersectingNodes(node).length > 0,
+        isNeighbour: ctx.isNodeNeighbour(node.id),
       },
       ctx as any,
     );
@@ -543,7 +569,8 @@ class NodeWidgetState extends SignalState<NodeWidget> {
       cursor: dragging ? "grabbing" : draggable ? "grab" : selectable ? "pointer" : "default",
       onDragStart: (event) => {
         ctx.handleNodeDragStart(node.id, event);
-        event.stopPropagation();
+        // A locked node lets the press fall through so the pane pans or box-selects under it.
+        if (draggable) event.stopPropagation();
       },
       onDragMove: (event) => ctx.handleNodeDragMove(node.id, event),
       onDragEnd: (event) => ctx.handleNodeDragEnd(node.id, event),
@@ -551,6 +578,8 @@ class NodeWidgetState extends SignalState<NodeWidget> {
         ctx.handleNodeClick(node.id, event);
         event.stopPropagation();
       },
+      longPressDelay: ctx.interaction.contextMenu.longPress,
+      onContextMenu: (event) => { ctx.handleContextMenu({ kind: "node", id: node.id }, event); event.stopPropagation(); },
       onMouseEnter: (event) => ctx.hoverNode(node.id, event),
       onMouseLeave: (event) => ctx.unhoverNode(node.id, event),
       child: RepaintBoundary({ child: content }),
@@ -570,7 +599,7 @@ class NodeWidgetState extends SignalState<NodeWidget> {
     const to = connection?.toHandle;
     for (const spec of specs) {
       const handle = ctx.resolveHandle(node, knownRect, spec);
-      const handleConnectable = connectable && handle.connectable !== false;
+      const handleConnectable = ctx.can("connect", { kind: "node", id: node.id }, connectable && handle.connectable !== false);
       const isConnecting =
         !!from && from.nodeId === node.id && from.id === handle.id && from.type === handle.type;
       const isCandidate = !!to && to.nodeId === node.id && to.id === handle.id && to.type === handle.type;
@@ -590,6 +619,8 @@ class NodeWidgetState extends SignalState<NodeWidget> {
         GestureDetector({
           behavior: "opaque",
           cursor: handleConnectable ? "crosshair" : "default",
+          onMouseEnter: event => ctx.hoverNode(node.id, event),
+          onMouseLeave: event => ctx.unhoverNode(node.id, event),
           onDragStart: (event) => {
             ctx.handleConnectionStart(node.id, handle.id, handle.type, event);
             event.stopPropagation();
@@ -660,7 +691,7 @@ class NodeWidgetState extends SignalState<NodeWidget> {
 // ---------------------------------------------------------------------------
 
 function edgeGestures(ctx: FlowController, edge: FlowEdge, child: Widget): Widget {
-  const selectable = ctx.elementsSelectable && edge.selectable !== false;
+  const selectable = ctx.isEdgeSelectable(edge);
   return GestureDetector({
     behavior: "opaque",
     cursor: selectable ? "pointer" : "default",
@@ -672,6 +703,8 @@ function edgeGestures(ctx: FlowController, edge: FlowEdge, child: Widget): Widge
       ctx.handleEdgeClick(edge.id, event);
       event.stopPropagation();
     },
+    longPressDelay: ctx.interaction.contextMenu.longPress,
+    onContextMenu: (event) => { ctx.handleContextMenu({ kind: "edge", id: edge.id }, event); event.stopPropagation(); },
     onMouseEnter: (event) => ctx.hoverEdge(edge.id, event),
     onMouseLeave: (event) => ctx.unhoverEdge(edge.id, event),
     child,
@@ -734,6 +767,7 @@ class EdgeWidgetState extends SignalState<EdgeWidget> {
         markerEnd: resolveMarker(edge.markerEnd),
         interactionWidth,
         reconnecting,
+        waypoints: edge.waypoints ?? [], activeHandle: ctx.activeEdgeHandle?.edgeId === edge.id ? ctx.activeEdgeHandle : null, isNeighbour: ctx.isEdgeNeighbour(edge),
       },
       ctx as any,
     );
@@ -794,6 +828,23 @@ class EdgeWidgetState extends SignalState<EdgeWidget> {
         }),
       );
     }
+    if (selected && ctx.isEdgeReshapable(edge)) {
+      const vertices = [{ x: endpoints.sourceX, y: endpoints.sourceY }, ...(edge.waypoints ?? []), { x: endpoints.targetX, y: endpoints.targetY }];
+      const handles = [
+        ...(edge.waypoints ?? []).map((point, index) => ({ point, kind: "waypoint" as const, index })),
+        ...vertices.slice(1).map((point, index) => ({ point: { x: (vertices[index].x + point.x) / 2, y: (vertices[index].y + point.y) / 2 }, kind: "midpoint" as const, index })),
+      ];
+      for (const { point, kind, index } of handles) {
+        const active = ctx.activeEdgeHandle?.edgeId === edge.id && ctx.activeEdgeHandle.index === index && kind === ctx.activeEdgeHandle.kind;
+        children.push(new FlowSceneItem({ key: `${kind}:${index}`, x: point.x, y: point.y, anchor: "center", child: GestureDetector({
+          cursor: "move", behavior: "opaque",
+          onDragStart: event => { ctx.handleReshapeStart(edge.id, kind, index, event); event.stopPropagation(); },
+          onDragMove: event => ctx.handleReshapeMove(event), onDragEnd: event => ctx.handleReshapeEnd(event),
+          onClick: event => { if (kind === "waypoint") ctx.handleWaypointClick(edge.id, index, event); event.stopPropagation(); },
+          child: ctx.custom.edgeHandle({ edge, kind, index, active }, ctx as any),
+        }) }));
+      }
+    }
     return new FlowSceneGroup({ children });
   }
 }
@@ -851,4 +902,23 @@ class ConnectionLineWidgetState extends SignalState<ConnectionLineWidget> {
 /** Headless diagram widget: bring a `custom` style and get React Flow's behaviour. */
 export function Flow<TConfig extends object = object>(props: FlowProps<TConfig>): Widget {
   return new FlowRoot(props);
+}
+
+class GuidesWidget extends StatefulWidget {
+  constructor(readonly controller: FlowController) { super("guides"); }
+  override createState(): State<GuidesWidget> { return new GuidesState(); }
+}
+class GuidesState extends SignalState<GuidesWidget> {
+  override initState(context: BuildContext): void { super.initState(context); this.subscribe([this.widget.controller.guidesSignal]); }
+  override build(): Widget {
+    const ctx = this.widget.controller;
+    const lines = ctx.guides;
+    if (!lines.length) return SizedBox.shrink();
+    const xs = lines.flatMap(line => line.axis === "x" ? [line.position] : [line.from, line.to]);
+    const ys = lines.flatMap(line => line.axis === "y" ? [line.position] : [line.from, line.to]);
+    const x = Math.min(...xs) - 1, y = Math.min(...ys) - 1;
+    const local = lines.map(line => ({ ...line, position: line.position - (line.axis === "x" ? x : y), from: line.from - (line.axis === "x" ? y : x), to: line.to - (line.axis === "x" ? y : x) }));
+    const child = ctx.custom.guides({ lines: local }, ctx as any);
+    return child ? new FlowSceneItem({ x, y, width: Math.max(...xs) - x + 1, height: Math.max(...ys) - y + 1, interactive: false, child }) : SizedBox.shrink();
+  }
 }

@@ -99,16 +99,15 @@ export const diagramNav: Navigation = {
       ],
     },
     {
-      title: "API",
+      title: "Explore",
       items: [
-        { title: "FlowDiagram", href: "/diagram/api" },
-        { title: "Interaction", href: "/diagram/api/interaction" },
-        { title: "FlowController", href: "/diagram/api/controller" },
-        { title: "Nodes & Handles", href: "/diagram/api/nodes-and-handles" },
-        { title: "Edges", href: "/diagram/api/edges" },
-        { title: "Layout", href: "/diagram/api/layout" },
-        { title: "Styling", href: "/diagram/api/styling" },
+        { title: "Gallery", href: "/diagram/gallery" },
+        { title: "Interactions", href: "/diagram/interactions" },
       ],
+    },
+    {
+      title: "Reference",
+      items: [{ title: "API", href: "/diagram/api" }],
     },
   ],
 };

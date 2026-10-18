@@ -1,59 +1,67 @@
+import { defaultContextMenu } from "./parts/context-menu";
+import { defaultGuides } from "./parts/guides";
+import { defaultEdgeHandle } from "./parts/edge-handle";
 import type { Widget } from "flitter-ui";
 import { Flow } from "flitter-ui/diagram";
 import type { FlowCustom, FlowPanel, FlowProps } from "flitter-ui/diagram";
 import type { DeepPartial } from "flitter-ui/diagram";
-import { type XyflowFlowConfig, createXyflowConfig } from "./config";
-import { xyflowBackground } from "./parts/background";
+import { type DefaultFlowConfig, createDefaultConfig } from "./config";
+import { defaultBackground } from "./parts/background";
 import {
-  xyflowConnectionLine,
-  xyflowEdge,
-  xyflowEdgeLabel,
-  xyflowEdgePath,
-  xyflowEdgeTypes,
+  defaultConnectionLine,
+  defaultEdge,
+  defaultEdgeLabel,
+  defaultEdgePath,
+  defaultEdgeTypes,
 } from "./parts/edge";
-import { xyflowHandle } from "./parts/handle";
-import { xyflowDefaultHandles, xyflowNode, xyflowNodeTypes } from "./parts/node";
-import { xyflowNodesSelectionRect, xyflowSelectionBox } from "./parts/selection";
-import { XyflowControls } from "./parts/controls";
-import { XyflowMiniMap } from "./parts/minimap";
-import { xyflowReconnectHandle, xyflowResizeControl } from "./parts/resize";
+import { defaultHandle } from "./parts/handle";
+import { defaultHandles, defaultNode, defaultNodeTypes } from "./parts/node";
+import { defaultNodesSelectionRect, defaultSelectionBox } from "./parts/selection";
+import { DefaultControls } from "./parts/controls";
+import { DefaultMiniMap } from "./parts/minimap";
+import { defaultReconnectHandle, defaultResizeControl } from "./parts/resize";
 
 export {
-  type XyflowFlowConfig,
-  type XyflowColors,
-  createXyflowConfig,
-  defaultXyflowConfig,
-  lightColors as xyflowLightColors,
-  darkColors as xyflowDarkColors,
+  type DefaultFlowConfig,
+  type DefaultColors,
+  createDefaultConfig,
+  defaultConfig,
+  lightColors as defaultLightColors,
+  darkColors as defaultDarkColors,
 } from "./config";
-export { xyflowNode, xyflowNodeTypes, xyflowDefaultHandles, nodeLabel } from "./parts/node";
-export { xyflowEdge, xyflowEdgeTypes, xyflowEdgeLabel, xyflowConnectionLine, xyflowEdgePath } from "./parts/edge";
-export { xyflowHandle } from "./parts/handle";
-export { xyflowBackground } from "./parts/background";
-export { xyflowSelectionBox, xyflowNodesSelectionRect } from "./parts/selection";
-export { XyflowControls } from "./parts/controls";
-export { xyflowResizeControl, xyflowReconnectHandle } from "./parts/resize";
-export { XyflowMiniMap } from "./parts/minimap";
+export { defaultNode, defaultNodeTypes, defaultHandles, nodeLabel } from "./parts/node";
+export { defaultEdge, defaultEdgeTypes, defaultEdgeLabel, defaultConnectionLine, defaultEdgePath } from "./parts/edge";
+export { defaultHandle } from "./parts/handle";
+export { defaultBackground } from "./parts/background";
+export { defaultSelectionBox, defaultNodesSelectionRect } from "./parts/selection";
+export { DefaultControls } from "./parts/controls";
+export { defaultResizeControl, defaultReconnectHandle } from "./parts/resize";
+export { DefaultMiniMap } from "./parts/minimap";
 export { ShapePaint, IconPaint, rectPathD } from "./parts/paint";
 
-export const xyflowCustom: FlowCustom<XyflowFlowConfig> = {
-  node: xyflowNode,
-  edge: xyflowEdge,
-  edgeLabel: xyflowEdgeLabel,
-  handle: xyflowHandle,
-  defaultHandles: xyflowDefaultHandles,
-  connectionLine: xyflowConnectionLine,
-  background: xyflowBackground,
-  selectionBox: xyflowSelectionBox,
-  nodesSelectionRect: xyflowNodesSelectionRect,
-  edgePath: xyflowEdgePath,
-  resizeControl: xyflowResizeControl,
-  reconnectHandle: xyflowReconnectHandle,
+export { defaultContextMenu, defaultGuides, defaultEdgeHandle };
+
+export const defaultCustom: FlowCustom<DefaultFlowConfig> = {
+  contextMenu: defaultContextMenu,
+  guides: defaultGuides,
+  edgeHandle: defaultEdgeHandle,
+  node: defaultNode,
+  edge: defaultEdge,
+  edgeLabel: defaultEdgeLabel,
+  handle: defaultHandle,
+  defaultHandles: (node, ctx) => defaultHandles(node).map(handle => ({ ...handle, width: ctx.config.handle.size, height: ctx.config.handle.size })),
+  connectionLine: defaultConnectionLine,
+  background: defaultBackground,
+  selectionBox: defaultSelectionBox,
+  nodesSelectionRect: defaultNodesSelectionRect,
+  edgePath: defaultEdgePath,
+  resizeControl: defaultResizeControl,
+  reconnectHandle: defaultReconnectHandle,
 };
 
-export type FlowDiagramProps = Omit<FlowProps<XyflowFlowConfig>, "custom" | "config"> & {
-  config?: DeepPartial<XyflowFlowConfig>;
-  custom?: Partial<FlowCustom<XyflowFlowConfig>>;
+export type FlowDiagramProps = Omit<FlowProps<DefaultFlowConfig>, "custom" | "config"> & {
+  config?: DeepPartial<DefaultFlowConfig>;
+  custom?: Partial<FlowCustom<DefaultFlowConfig>>;
 };
 
 /**
@@ -62,20 +70,29 @@ export type FlowDiagramProps = Omit<FlowProps<XyflowFlowConfig>, "custom" | "con
  * replace any part.
  */
 export function FlowDiagram(props: FlowDiagramProps): Widget {
-  const config = createXyflowConfig(props.config);
+  const config = createDefaultConfig(props.config);
   const panels: FlowPanel[] = [];
-  if (config.controls.visible) panels.push({ position: config.controls.position, child: XyflowControls() });
-  if (config.minimap.visible) panels.push({ position: config.minimap.position, child: XyflowMiniMap() });
+  if (config.controls.visible) panels.push({ position: config.controls.position, child: DefaultControls() });
+  if (config.minimap.visible) panels.push({ position: config.minimap.position, child: DefaultMiniMap() });
   if (props.panels) panels.push(...props.panels);
-  return Flow<XyflowFlowConfig>({
+  return Flow<DefaultFlowConfig>({
     ...props,
     config,
-    custom: { ...xyflowCustom, ...props.custom },
-    nodeTypes: { ...xyflowNodeTypes, ...props.nodeTypes },
-    edgeTypes: { ...xyflowEdgeTypes, ...props.edgeTypes },
-    handleSize: props.handleSize ?? config.handle.size,
+    custom: { ...defaultCustom, ...props.custom },
+    nodeTypes: {
+      ...Object.fromEntries(Object.entries(defaultNodeTypes).map(([name, definition]) => [name, {
+        ...definition,
+        handles: Array.isArray(definition.handles)
+          ? definition.handles.map(handle => ({ ...handle, width: config.handle.size, height: config.handle.size }))
+          : definition.handles,
+      }])),
+      ...props.nodeTypes,
+    },
+    edgeTypes: { ...defaultEdgeTypes, ...props.edgeTypes },
     panels,
   });
 }
 
 export default FlowDiagram;
+
+export { EditableLabel } from "./parts/editable-label";

@@ -9,7 +9,7 @@ function printHelp() {
 Usage:
   flitter init [--cwd <path>]
   flitter add <chart-name> [--style <toast|ag>] [--overwrite] [--skip-install] [--cwd <path>]
-  flitter add flow-diagram [--style xyflow] [--overwrite] [--skip-install] [--cwd <path>]
+  flitter add flow-diagram [--overwrite] [--skip-install] [--cwd <path>]
 `);
 }
 
