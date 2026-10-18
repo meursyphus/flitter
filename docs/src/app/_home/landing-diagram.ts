@@ -1,6 +1,6 @@
 import type { Widget } from "flitter-ui";
 import { layeredLayout, type FlowEdge, type FlowNode, type HandleSpec } from "flitter-ui/diagram";
-import { FlowDiagram } from "@/components/diagram/flow-diagram";
+import FlowDiagram from "@/components/diagram/flow-diagram";
 import type { Theme } from "@/lib/theme";
 
 /** Left-to-right handles, matching the LR layout. */
@@ -24,8 +24,7 @@ const edges: FlowEdge[] = [
 
 export function createLandingDiagram(theme: Theme): Widget {
   return FlowDiagram({
-    nodes,
-    edges,
+    data: { nodes, edges },
     layout: { algorithm: layeredLayout, options: { direction: "LR", rankSpacing: 56, nodeSpacing: 40 } },
     viewport: { fitView: { padding: 0.12 } },
     config: {
