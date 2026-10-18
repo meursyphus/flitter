@@ -2,105 +2,55 @@ import QuickStartDemo from "../_components/quick-start-demo";
 
 export const metadata = {
   title: "Quick Start",
-  description: "Copy a basic diagram, replace its node builder and make the composition your own.",
+  description: "One complete diagram editor with layout, viewport, interaction and events.",
 };
 
-<div className="docs-prose prose prose-sm mx-auto max-w-3xl px-5 py-10 prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-3xl prose-h2:text-xl prose-h3:text-lg prose-pre:rounded-lg prose-pre:text-sm md:px-10 lg:py-14">
+<div className="docs-prose prose prose-sm mx-auto max-w-3xl px-5 py-10 prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-3xl prose-h2:text-xl prose-pre:rounded-lg prose-pre:text-sm md:px-10 lg:py-14">
 
 # Quick Start
 
-Start with a basic editor, then replace its visual parts. For a workflow, organization chart or another complete composition, you can also start from the [gallery](/diagram/gallery).
+<QuickStartDemo />
 
-## 1. Copy the starter
-
-```bash
-npm install @flitterjs/react
-npx flitter-ui init
-npx flitter-ui add flow-diagram
-```
-
-This installs the headless engine and copies the xyflow style into `@/components/diagram/flow-diagram`. `index.ts` assembles the editor, `parts/` contains its widgets and `config.ts` holds that style's defaults. All copied files are yours to edit. See [Installation](/diagram/installation) for aliases and Svelte.
-
-## 2. Describe the graph and mount it
+1. Run the three commands from [Installation](/diagram/installation).
+2. Save this file as `app.tsx`.
+3. Drag, connect, press ⌘Z, right-click.
 
 ```tsx
 import Widget from "@flitterjs/react";
-import type { FlowEdge, FlowNode } from "flitter-ui/diagram";
+import { layeredLayout, type FlowEdge, type FlowNode } from "flitter-ui/diagram";
 import { FlowDiagram } from "@/components/diagram/flow-diagram";
 
+// Positions are placeholders; the layout places every node.
 const nodes: FlowNode[] = [
   { id: "draft", type: "input", position: { x: 0, y: 0 }, data: { label: "Draft" } },
-  { id: "review", position: { x: 0, y: 120 }, data: { label: "Review" } },
-  { id: "publish", type: "output", position: { x: 0, y: 240 }, data: { label: "Publish" } },
-];
-const edges: FlowEdge[] = [
-  { id: "a", source: "draft", target: "review" },
-  { id: "b", source: "review", target: "publish" },
+  { id: "review", position: { x: 0, y: 0 }, data: { label: "Review" } },
+  { id: "publish", type: "output", position: { x: 0, y: 0 }, data: { label: "Publish" } },
 ];
 
-const diagram = FlowDiagram({ nodes, edges, fitView: true });
+const edges: FlowEdge[] = [
+  { id: "a", source: "draft", target: "review" },
+  { id: "b", source: "review", target: "publish", markerEnd: "arrowclosed" },
+];
+
+// Create the widget once. A new instance remounts the editor.
+const diagram = FlowDiagram({
+  nodes,
+  edges,
+  layout: { algorithm: layeredLayout, options: { direction: "TB", rankSpacing: 80 } },
+  viewport: { fitView: { padding: 0.3 } },
+  interaction: { drag: { snap: { grid: [20, 20] } } },
+  on: {
+    connect: (connection) => console.log("connected", connection),
+    nodeClick: (_event, node) => console.log("clicked", node.id),
+    historyChange: ({ canUndo }) => console.log("can undo", canUndo),
+  },
+});
 
 export default function App() {
   return <Widget widget={diagram} width="100%" height="480px" renderer="svg" />;
 }
 ```
 
-The starter draws `data.label` in simple boxes. Its input nodes have a bottom source handle, output nodes a top target handle, and default nodes both. These are definitions in your copied `parts/node.ts`.
-
-<QuickStartDemo />
-
-Drag nodes, connect handles and zoom the view. The headless engine handles these interactions. Keep the widget instance and input arrays stable: a new adapter widget remounts the editor, and a new nodes/edges array identity replaces that controller data.
-
-## 3. Make the node your own
-
-Replace the starter's `default` type with a widget composition. Add these imports, then replace the `diagram` declaration above:
-
-```typescript
-import { Border, BoxDecoration, Container, EdgeInsets, Text, TextStyle } from "flitter-ui";
-
-const diagram = FlowDiagram({
-  nodes, edges, fitView: true,
-  nodeTypes: {
-    default: {
-      build: ({ node, selected }) => Container({
-        padding: EdgeInsets.all(20),
-        decoration: new BoxDecoration({
-          color: "#fff7ed",
-          border: Border.all({ color: selected ? "#c2410c" : "#fed7aa", width: 2 }),
-        }),
-        child: Text(String(node.data.label), {
-          style: new TextStyle({ color: "#9a3412", fontSize: 16 }),
-        }),
-      }),
-      handles: [{ type: "target", position: "top" }, { type: "source", position: "bottom" }],
-    },
-  },
-});
-```
-
-The Review node now uses your widget. Draft and Publish still use the input/output builders. Add a named type for a different kind of content, replace more type entries, or edit the copied builder itself. The [workflow example](/diagram/gallery/workflow) combines title, status, detail and an action in a custom task type.
-
-The same approach applies to edges, labels, handles, backgrounds and panels. [Customization](/diagram/customization) maps each part to its source. [Builders & Context](/diagram/api) describes the arguments available to your code.
-
-## 4. Change the arrangement
-
-A layout places measured nodes without deciding what their widgets look like. For example, add `layout: treeLayout` with an import from `flitter-ui/diagram`. Use an algorithm configuration for another direction or supply your own `LayoutAlgorithm`.
-
-Explore complete combinations:
-
-- [Deployment workflow](/diagram/gallery/workflow): layered layout with horizontal ports and status cards
-- [People and teams](/diagram/gallery/organization): tree layout with avatar nodes
-- [Service traffic](/diagram/gallery/service-map): force layout with data-driven edge drawing
-- [Grouped pipeline](/diagram/gallery/grouped-pipeline): explicit positions inside custom containers
-- [Resource board](/diagram/gallery/card-grid): a grid of cards without edges
-- [A style from scratch](/diagram/gallery/headless): circular layout and an independent set of headless builders
-
-## 5. Connect your application
-
-The editor keeps the graph in a `FlowController`. Change callbacks report updates after the controller has applied them. Use them to persist or mirror data; do not apply them back to the same controller.
-
-Without `onConnect`, the engine adds an edge after a valid connection. When you provide `onConnect`, your handler owns adding it. A controller also lets your own toolbar or panel update nodes, run layouts and save `{ nodes, edges, viewport }`.
-
-See [Controller](/diagram/api/controller) for lifecycle and state management, and the [workflow source](/diagram/gallery/workflow) for an action that updates a task through its builder context.
+Next: [Gallery](/diagram/gallery) · [Interactions](/diagram/interactions) · [API](/diagram/api)
 
 </div>

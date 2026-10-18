@@ -173,10 +173,12 @@ Realistic wall clock: 3 hours if P2 lands clean, 4 if the waypoint router or his
 
 - P1 review: API matches §4. Follow-ups folded into P2: add `select.box` (viewer keeps click selection, loses box select); drop the stale node arg `zoom` in favour of `controller.zoom` plus per-node-type `lod: number[]` breakpoints that rebuild a node only when the zoom crosses one; remove `defaultDiagramStyle` from the CLI config/schema (single style).
 
+- P2' review: docs API tables are generated from `types.ts`, `controller.ts` and `interaction.ts` by `docs/scripts/gen-diagram-api.mjs` (`--check` for staleness; re-run after engine changes). Prose counter: `docs/scripts/count-diagram-prose.mjs`. Before flipping cells: the insert-on-edge "+" lives in the `edgeLabel` slot (confirm label taps reach it) and the collapse demo toggles from `on.nodeClick` (switch to the collapse chevron once the node arg lands).
+
 ## 8. Progress
 
 - [x] P0 research (`todo/diagram-research.md`) and this guide
 - [x] P1 API (Astra, 2026-10-18; Codex sandbox cannot commit or bind ports, so Fable commits and runs Playwright)
-- [ ] P2 interactions · [ ] P2' docs skeleton
+- [~] P2 interactions (Astra, running) · [x] P2' docs skeleton (Opus, 2026-10-18: 218 budgeted words, 25 interaction cells of which 13 wait on P2, 12-slug catalog with 5 loaded from the old example files)
 - [ ] P3 examples 1–8 · [ ] 9–12 · [ ] P3' gallery wiring
 - [ ] P4 review + PR

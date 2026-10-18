@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getAllSlugs } from "./chart/_data";
-import { examples as diagramExamples } from "./diagram/_examples/catalog";
+import { listedEntries as diagramExamples } from "./diagram/_data/gallery/catalog";
 import { advancedNav, diagramNav } from "@/lib/navigation";
 
 export const dynamic = "force-static";

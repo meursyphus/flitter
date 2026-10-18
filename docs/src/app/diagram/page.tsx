@@ -1,16 +1,10 @@
 import DiagramLanding from "./_components/diagram-landing";
-import { MinimalCodeBlock } from "./_components/code-blocks";
 
 export const metadata = {
   title: "Diagram",
-  description:
-    "A headless diagram engine with editable source, custom widget builders and live examples on SVG and Canvas.",
+  description: "A diagram editor with editor-grade interactions built in and every visual part as your own widget.",
 };
 
 export default function DiagramHome() {
-  return (
-    <DiagramLanding
-      minimalCodeBlock={<MinimalCodeBlock />}
-    />
-  );
+  return <DiagramLanding />;
 }

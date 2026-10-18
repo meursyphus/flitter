@@ -1,26 +1,32 @@
 import { highlight } from "@/lib/highlight";
 import CopyButton from "./copy-button";
 
-export const MINIMAL_CODE = `import Widget from "@flitterjs/react";
-import type { FlowEdge, FlowNode } from "flitter-ui/diagram";
+/** The overview's quick start: install output plus one mounted diagram. */
+export const OVERVIEW_CODE = `import Widget from "@flitterjs/react";
+import { layeredLayout, type FlowEdge, type FlowNode } from "flitter-ui/diagram";
 import { FlowDiagram } from "@/components/diagram/flow-diagram";
 
 const nodes: FlowNode[] = [
-  { id: "1", type: "input", position: { x: 0, y: 0 }, data: { label: "Input" } },
-  { id: "2", position: { x: 0, y: 120 }, data: { label: "Default" } },
-  { id: "3", type: "output", position: { x: 0, y: 240 }, data: { label: "Output" } },
+  { id: "draft", type: "input", position: { x: 0, y: 0 }, data: { label: "Draft" } },
+  { id: "review", position: { x: 0, y: 0 }, data: { label: "Review" } },
+  { id: "publish", type: "output", position: { x: 0, y: 0 }, data: { label: "Publish" } },
 ];
 
 const edges: FlowEdge[] = [
-  { id: "e1-2", source: "1", target: "2", animated: true },
-  { id: "e2-3", source: "2", target: "3", markerEnd: "arrowclosed" },
+  { id: "a", source: "draft", target: "review" },
+  { id: "b", source: "review", target: "publish" },
 ];
 
-// Create the widget once. A new instance remounts the editor.
-const diagram = FlowDiagram({ nodes, edges, fitView: true });
+// Undo, copy/paste, context menu and box select are already on.
+const diagram = FlowDiagram({
+  nodes,
+  edges,
+  layout: layeredLayout,
+  viewport: { fitView: true },
+});
 
 export default function App() {
-  return <Widget widget={diagram} width="100%" height="480px" renderer="canvas" />;
+  return <Widget widget={diagram} width="100%" height="480px" />;
 }`;
 
 export async function HighlightedCode({ code, lang }: { code: string; lang: string }) {
@@ -31,8 +37,4 @@ export async function HighlightedCode({ code, lang }: { code: string; lang: stri
       <div dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
-}
-
-export function MinimalCodeBlock() {
-  return <HighlightedCode code={MINIMAL_CODE} lang="tsx" />;
 }

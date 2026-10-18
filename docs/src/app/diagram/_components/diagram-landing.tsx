@@ -1,72 +1,67 @@
 import Link from "next/link";
-import DiagramGallery from "./gallery";
 import ExamplePreview from "./example-preview";
+import GalleryGrid from "./gallery-grid";
+import { HighlightedCode, OVERVIEW_CODE } from "./code-blocks";
 
-export default function DiagramLanding({ minimalCodeBlock }: { minimalCodeBlock: React.ReactNode }) {
+const POINTS = [
+  ["The engine owns interactions.", "Drag, connect, undo, copy, context menu and touch work with zero config."],
+  ["You own every widget.", "Nodes, edges, handles, menus and guides are builders you replace."],
+  ["One copied theme.", "The CLI copies its source into your project to edit."],
+];
+
+export default function DiagramLanding() {
   return (
     <div>
       <section className="relative overflow-hidden border-b border-line">
         <div className="artboard pointer-events-none absolute inset-0" aria-hidden="true" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-5 py-14 md:px-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] lg:py-20">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-5 py-14 md:px-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:py-20">
           <div>
-            <p className="mb-5 text-sm font-semibold text-script">Headless engine. Your widgets.</p>
-            <h1 className="wordmark text-[clamp(3.25rem,8vw,6rem)] leading-[0.92] text-ink">Flitter<br /><span className="text-script">Diagram</span></h1>
+            <h1 className="wordmark text-[clamp(3rem,6.5vw,5.25rem)] leading-[0.92] text-ink">
+              Flitter
+              <br />
+              <span className="text-script">Diagram</span>
+            </h1>
             <p className="mt-6 max-w-md text-lg leading-relaxed text-soft">
-              Build diagrams with a visual language of your own. Start with source code you can edit;
-              let the engine handle graph state, layout and interactions.
+              Editor-grade interactions built in. Every pixel is your widget.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/diagram/gallery" className="inline-flex h-11 items-center rounded-lg bg-accent px-5 text-sm font-semibold text-on-accent hover:opacity-90">Browse the gallery</Link>
-              <Link href="/diagram/installation" className="inline-flex h-11 items-center rounded-lg border border-line-strong px-5 text-sm font-semibold text-ink hover:bg-surface">Install</Link>
+              <Link href="/diagram/gallery" className="inline-flex h-11 items-center rounded-lg bg-accent px-5 text-sm font-semibold text-on-accent hover:opacity-90">
+                Browse the gallery
+              </Link>
+              <Link href="/diagram/interactions" className="inline-flex h-11 items-center rounded-lg border border-line-strong px-5 text-sm font-semibold text-ink hover:bg-surface">
+                Try the interactions
+              </Link>
             </div>
           </div>
-          <div>
-            <ExamplePreview slug="workflow" />
-            <p className="mt-3 text-sm text-faint">Select a task, then mark it complete. Status cards and their actions are custom widgets.</p>
-          </div>
+          <ExamplePreview slug="automation-workflow" />
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-16 md:px-10 lg:py-20">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h2 className="display text-[clamp(2rem,4vw,3rem)] text-ink">One engine, many compositions</h2>
-            <p className="mt-4 max-w-2xl text-base leading-relaxed text-soft">Workflows, people, services, collections. Try each live example, then explore the builders and layouts that make it different.</p>
-          </div>
+      <section className="mx-auto max-w-6xl px-5 py-14 md:px-10">
+        <ul className="grid gap-6 md:grid-cols-3">
+          {POINTS.map(([title, body]) => (
+            <li key={title} className="border-l-2 border-script pl-4">
+              <p className="font-semibold text-ink">{title}</p>
+              <p className="mt-1 text-sm text-soft">{body}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-5 pb-16 md:px-10">
+        <div className="mb-6 flex items-end justify-between gap-4">
+          <h2 className="display text-[clamp(1.75rem,3.5vw,2.5rem)] text-ink">Gallery</h2>
           <Link href="/diagram/gallery" className="text-sm font-semibold text-accent hover:underline">All examples →</Link>
         </div>
-        <DiagramGallery featured />
+        <GalleryGrid limit={6} />
       </section>
 
-      <section className="border-y border-line bg-surface/50">
-        <div className="mx-auto max-w-6xl px-5 py-16 md:px-10">
-          <h2 className="display text-[clamp(2rem,4vw,3rem)] text-ink">Own the parts. Keep the engine.</h2>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-soft">
-            Like Flitter Chart, Diagram separates behaviour from presentation.
-            The CLI copies a basic xyflow style into your project. Every visual part is a widget builder you can edit, compose or replace.
-          </p>
-          <div className="mt-8 grid gap-8 md:grid-cols-3">
-            {[
-              ["Engine", "Flow manages measurements, gestures, selection, connections and graph state. Layout algorithms work with plain graph data."],
-              ["Your source", "FlowDiagram assembles the copied parts. Change nodes, edges, handles, labels, backgrounds, controls and panels in your project."],
-              ["Your design", "Use any Flitter widgets, add your own data and actions, or build directly with Flow and a config type you define yourself."],
-            ].map(([title, body]) => <div key={title} className="border-l-2 border-script pl-5"><h3 className="font-semibold text-ink">{title}</h3><p className="mt-2 text-sm leading-relaxed text-soft">{body}</p></div>)}
-          </div>
-          <div className="mt-8 flex flex-wrap gap-6 text-sm font-semibold text-accent">
-            <Link href="/diagram/customization" className="hover:underline">Customize a composition →</Link>
-            <Link href="/diagram/headless" className="hover:underline">Build your own style →</Link>
-          </div>
+      <section className="mx-auto max-w-4xl px-5 pb-20 md:px-10">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <h2 className="display text-[clamp(1.75rem,3.5vw,2.5rem)] text-ink">Quick start</h2>
+          <Link href="/diagram/installation" className="text-sm font-semibold text-accent hover:underline">Install →</Link>
         </div>
-      </section>
-
-      <section className="mx-auto grid max-w-6xl gap-8 px-5 py-16 md:px-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:py-24">
-        <div>
-          <h2 className="display text-3xl text-ink">A starting point you can change</h2>
-          <p className="mt-4 text-base leading-relaxed text-soft">Describe the graph and mount the copied FlowDiagram. Its default boxes and controls get you running; open the source as soon as your product needs a different composition.</p>
-          <p className="mt-4 text-base leading-relaxed text-soft">Your widgets run on SVG and Canvas. The same headless behaviour supports both renderers.</p>
-          <Link href="/diagram/quick-start" className="mt-6 inline-block text-sm font-semibold text-accent hover:underline">Build and customize your first diagram →</Link>
-        </div>
-        <div className="min-w-0">{minimalCodeBlock}</div>
+        <HighlightedCode code={OVERVIEW_CODE} lang="tsx" />
       </section>
     </div>
   );

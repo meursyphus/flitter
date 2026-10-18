@@ -2,64 +2,87 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { examples } from "../../_examples/catalog";
+import CopyCommand from "@/components/copy-command";
+import { highlight } from "@/lib/highlight";
+import { findEntry, listedEntries, relatedEntries } from "../../_data/gallery/catalog";
+import Chips from "../../_components/chips";
 import ExamplePreview from "../../_components/example-preview";
-import { HighlightedCode } from "../../_components/code-blocks";
+import GalleryCard from "../../_components/gallery-card";
+import TabbedCode from "../../_components/tabbed-code";
 
 export function generateStaticParams() {
-  return examples.map(({ slug }) => ({ slug }));
+  return listedEntries.map(({ slug }) => ({ slug }));
 }
 export const dynamicParams = false;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const entry = examples.find((example) => example.slug === slug);
-  return { title: entry?.title ?? "Example", description: entry?.description };
+  const entry = findEntry(slug);
+  return {
+    title: entry?.title ?? "Example",
+    description: entry && `${entry.title}: a live Flitter diagram in the spirit of ${entry.echoes.join(", ")}.`,
+  };
 }
+
+const mountFile = (slug: string) => `import Widget from "@flitterjs/react";
+import CreateDiagram from "./${slug}";
+
+const diagram = CreateDiagram("light");
+
+export default function App() {
+  return <Widget widget={diagram} width="100%" height="540px" renderer="svg" />;
+}
+`;
 
 export default async function ExamplePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const entry = examples.find((example) => example.slug === slug);
+  const entry = findEntry(slug);
   if (!entry) notFound();
-  // Render the very file used by the live preview, including the public imports.
-  const source = await readFile(path.join(process.cwd(), "src/app/diagram/_examples", `${entry.slug}.ts`), "utf8");
-  const headless = entry.slug === "headless";
-  const mount = `import Widget from "@flitterjs/react";\nimport CreateDiagram from "./${entry.slug}";\n\nconst diagram = CreateDiagram("light");\n\nexport default function App() {\n  return <Widget widget={diagram} width="100%" height="540px" renderer="svg" />;\n}`;
+  // The file the live stage runs, read at build time.
+  const source = await readFile(path.join(process.cwd(), "src/app/diagram/_examples", `${entry.file ?? entry.slug}.ts`), "utf8");
+  const mount = mountFile(entry.slug);
+  const files = [
+    { filename: `${entry.slug}.ts`, code: source, html: await highlight(source, "typescript") },
+    { filename: "mount.tsx", code: mount, html: await highlight(mount, "tsx") },
+  ];
+  const related = relatedEntries(entry.slug);
+
   return (
-    <div className="mx-auto max-w-6xl px-5 py-10 md:px-10 lg:py-14">
-      <Link href="/diagram/gallery" className="text-sm text-accent hover:underline">← All examples</Link>
-      <p className="mt-7 text-xs font-medium uppercase tracking-wide text-faint">{entry.layout}</p>
-      <h1 className="display mt-2 text-4xl text-ink">{entry.title}</h1>
-      <p className="mt-4 mb-7 max-w-2xl text-lg leading-relaxed text-soft">{entry.description}</p>
-      <ExamplePreview slug={entry.slug} />
-      <div className="mt-10 grid gap-8 lg:grid-cols-2">
-        <section>
-          <h2 className="text-xl font-semibold text-ink">How this composition works</h2>
-          <p className="mt-3 text-sm leading-relaxed text-soft">{entry.concept}</p>
-          <p className="mt-3 text-sm leading-relaxed text-soft">The engine supplies measurement, graph state, hit testing and gestures. The widgets in this example own the appearance.</p>
-          <Link href={headless ? "/diagram/headless" : "/diagram/customization"} className="mt-4 inline-block text-sm font-semibold text-accent hover:underline">{headless ? "Build directly with Flow" : "Understand builders and source ownership"} →</Link>
-        </section>
-        <section>
-          <h2 className="text-xl font-semibold text-ink">Make it yours</h2>
-          <ul className="mt-3 space-y-4">
-            {entry.edits.map((edit) => <li key={edit.file}>
-              <code className="break-words text-xs text-accent">{edit.file}</code>
-              <p className="mt-1 text-sm leading-relaxed text-soft">{edit.change}</p>
-            </li>)}
-          </ul>
-        </section>
-      </div>
-      <section className="mt-12 space-y-4">
-        <h2 className="text-xl font-semibold text-ink">Use this example</h2>
-        <p className="text-sm leading-relaxed text-soft">{headless ? "Install the engine and adapter. This example needs no copied preset." : "Install the adapter and copy the starter style, then save the source below in your project."} See <Link href="/diagram/installation" className="text-accent hover:underline">Installation</Link> for Svelte and path aliases.</p>
-        <HighlightedCode code={headless ? "npm install flitter-ui @flitterjs/react" : "npm install @flitterjs/react\nnpx flitter-ui init\nnpx flitter-ui add flow-diagram"} lang="bash" />
-        <h3 className="font-semibold text-ink">{entry.slug}.ts</h3>
-        <p className="text-sm text-soft">This is the complete source running above. The light/dark argument is supplied by the site theme in the preview.</p>
-        <HighlightedCode code={source} lang="typescript" />
-        <h3 className="font-semibold text-ink">Mount the widget</h3>
-        <HighlightedCode code={mount} lang="tsx" />
-        <p className="text-sm text-soft">Keep the widget instance stable in the adapter. For application state, use a Flitter StatefulWidget and dispose any controller you create with its State.</p>
+    <div className="mx-auto max-w-5xl px-5 pb-20 md:px-10">
+      <section className="pt-8 pb-6 lg:pt-12">
+        <Link href="/diagram/gallery" className="inline-flex items-center gap-1 text-[13px] text-faint transition-colors hover:text-ink">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            <path d="M7.5 2.5L4 6l3.5 3.5" />
+          </svg>
+          Gallery
+        </Link>
+        <h1 className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)] text-ink">{entry.title}</h1>
+        <p className="mt-2 text-[13px] text-faint">
+          {entry.echoes.join(" · ")} · {entry.layout}
+        </p>
+        <div className="mt-5 flex flex-wrap items-center gap-3">
+          <Chips chips={entry.chips} linked />
+          <CopyCommand command="npx flitter-ui add flow-diagram" />
+        </div>
       </section>
+
+      <ExamplePreview slug={entry.slug} />
+
+      <section className="pt-12">
+        <h2 className="mb-4 text-[15px] font-semibold text-ink">Code</h2>
+        <TabbedCode files={files} />
+      </section>
+
+      {related.length > 0 && (
+        <section className="pt-14">
+          <h2 className="mb-4 text-[15px] font-semibold text-ink">Related</h2>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            {related.map((other) => (
+              <GalleryCard key={other.slug} entry={other} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

@@ -94,30 +94,20 @@ export const diagramNav: Navigation = {
       title: "Getting Started",
       items: [
         { title: "Overview", href: "/diagram" },
-        { title: "Gallery", href: "/diagram/gallery" },
         { title: "Installation", href: "/diagram/installation" },
         { title: "Quick Start", href: "/diagram/quick-start" },
       ],
     },
     {
-      title: "Make It Yours",
+      title: "Explore",
       items: [
-        { title: "Customization", href: "/diagram/customization" },
-        { title: "Headless Flow", href: "/diagram/headless" },
-        { title: "Layouts", href: "/diagram/api/layout" },
+        { title: "Gallery", href: "/diagram/gallery" },
+        { title: "Interactions", href: "/diagram/interactions" },
       ],
     },
     {
-      title: "API",
-      collapsible: true,
-      items: [
-        { title: "Builders & Context", href: "/diagram/api" },
-        { title: "Nodes & Handles", href: "/diagram/api/nodes-and-handles" },
-        { title: "Edges", href: "/diagram/api/edges" },
-        { title: "Controller", href: "/diagram/api/controller" },
-        { title: "Starter Style", href: "/diagram/api/styling" },
-        { title: "Interaction", href: "/diagram/api/interaction" },
-      ],
+      title: "Reference",
+      items: [{ title: "API", href: "/diagram/api" }],
     },
   ],
 };
