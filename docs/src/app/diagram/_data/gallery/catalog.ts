@@ -57,6 +57,7 @@ export const catalog: GalleryEntry[] = [
     echoes: ["Railway"],
     chips: ["side-panel", "context-menu", "collapse", "live-status"],
     layout: "Manual + layered",
+    load: () => import("../../_examples/deployment-canvas"),
   },
   {
     slug: "schema-visualizer",
@@ -64,8 +65,7 @@ export const catalog: GalleryEntry[] = [
     echoes: ["ChartDB", "Supabase", "dbdiagram"],
     chips: ["per-field-handles", "hover", "connect", "search-zoom"],
     layout: "Layered LR",
-    file: "database-schema",
-    load: () => import("../../_examples/database-schema"),
+    load: () => import("../../_examples/schema-visualizer"),
   },
   {
     slug: "automation-workflow",
@@ -73,8 +73,7 @@ export const catalog: GalleryEntry[] = [
     echoes: ["n8n", "Dify"],
     chips: ["drop-connection", "insert-on-edge", "animated-edges", "undo"],
     layout: "Manual LR + layered",
-    file: "workflow",
-    load: () => import("../../_examples/workflow"),
+    load: () => import("../../_examples/automation-workflow"),
   },
   {
     slug: "linear-steps",
@@ -82,6 +81,7 @@ export const catalog: GalleryEntry[] = [
     echoes: ["Zapier"],
     chips: ["layout", "insert-on-edge", "collapse", "side-panel"],
     layout: "Tree TB",
+    load: () => import("../../_examples/linear-steps"),
   },
   {
     slug: "scenario-router",
@@ -89,6 +89,7 @@ export const catalog: GalleryEntry[] = [
     echoes: ["Make"],
     chips: ["context-menu", "insert-on-edge", "layout"],
     layout: "Manual + layered",
+    load: () => import("../../_examples/scenario-router"),
   },
   {
     slug: "pipeline-run",
@@ -96,8 +97,7 @@ export const catalog: GalleryEntry[] = [
     echoes: ["GitHub Actions", "Dagster"],
     chips: ["read-only", "collapse", "hover", "live-status"],
     layout: "Layered LR, groups",
-    file: "grouped-pipeline",
-    load: () => import("../../_examples/grouped-pipeline"),
+    load: () => import("../../_examples/pipeline-run"),
   },
   {
     slug: "dataflow-graph",
@@ -105,6 +105,7 @@ export const catalog: GalleryEntry[] = [
     echoes: ["ComfyUI", "Blender"],
     chips: ["typed-ports", "reroute", "collapse", "clipboard", "minimap"],
     layout: "Manual",
+    load: () => import("../../_examples/dataflow-graph"),
   },
   {
     slug: "process-diagram",
@@ -112,6 +113,7 @@ export const catalog: GalleryEntry[] = [
     echoes: ["bpmn.io", "Lucidchart"],
     chips: ["context-pad", "waypoints", "text-edit", "snap-guides"],
     layout: "Manual",
+    load: () => import("../../_examples/process-diagram"),
   },
   {
     slug: "whiteboard",
@@ -119,6 +121,7 @@ export const catalog: GalleryEntry[] = [
     echoes: ["Excalidraw", "FigJam"],
     chips: ["quick-add", "resize", "snap-guides", "context-menu"],
     layout: "Manual",
+    load: () => import("../../_examples/whiteboard"),
   },
   {
     slug: "org-chart",
@@ -126,8 +129,7 @@ export const catalog: GalleryEntry[] = [
     echoes: ["Pingboard", "ChartHop"],
     chips: ["collapse", "reparent", "focus-path", "lod"],
     layout: "Tree TB",
-    file: "organization",
-    load: () => import("../../_examples/organization"),
+    load: () => import("../../_examples/org-chart"),
   },
   {
     slug: "knowledge-graph",
@@ -135,8 +137,7 @@ export const catalog: GalleryEntry[] = [
     echoes: ["Obsidian", "Logseq"],
     chips: ["hover", "depth-filter", "recentre", "lod"],
     layout: "Force",
-    file: "service-map",
-    load: () => import("../../_examples/service-map"),
+    load: () => import("../../_examples/knowledge-graph"),
   },
   {
     slug: "state-machine",
@@ -144,6 +145,7 @@ export const catalog: GalleryEntry[] = [
     echoes: ["Stately"],
     chips: ["groups", "drill-down", "connect"],
     layout: "Layered + manual",
+    load: () => import("../../_examples/state-machine"),
   },
 ];
 

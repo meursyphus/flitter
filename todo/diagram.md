@@ -177,10 +177,12 @@ Realistic wall clock: 3 hours if P2 lands clean, 4 if the waypoint router or his
 
 - P2 review (2026-10-18): all ten items landed; 187 vitest, 76/77 Playwright after Astra's fix pass. Fable fixed the last one: a drag attempt on a locked node (viewer preset) never set the movement flag, so the trailing browser click landed on an edge and replaced the selection; now any node press past the threshold counts as movement, and a locked node lets the press fall through so the pane pans or box-selects beneath it (React Flow parity). Storybook `Diagram/Interactions` checked by headless screenshots: context menu (SVG + Canvas), inline edit, waypoint drag, snap guides all behave. Template polish for P3: the context menu uses the browser serif font and has no radius or shadow; match the node font and the controls panel.
 
+- P3 review (2026-10-18): 12 examples, 120–250 lines each, light and dark, no console errors. Engine defect found by screenshots: the scene painted all edges below all nodes, so edges inside filled group nodes (state machine transitions, BPMN cross-lane edge, pipeline stage edges) were hidden; fix = edge z = max(endpoint z), children above parents, one z-sorted list with edges before nodes at equal z.
+
 ## 8. Progress
 
 - [x] P0 research (`todo/diagram-research.md`) and this guide
 - [x] P1 API (Astra, 2026-10-18; Codex sandbox cannot commit or bind ports, so Fable commits and runs Playwright)
 - [x] P2 interactions (Astra + one Fable fix, 2026-10-18) · [x] P2' docs skeleton (Opus, 2026-10-18: 218 budgeted words, 25 interaction cells of which 13 wait on P2, 12-slug catalog with 5 loaded from the old example files)
-- [ ] P3 examples 1–8 · [ ] 9–12 · [ ] P3' gallery wiring
+- [x] P3 examples 1–12 (Astra, 2026-10-18; polish pass running: scene z-order so edges paint above filled groups, knowledge-graph straight edges, pipeline-run legibility, hover-only edge slots, search placeholders) · [~] P3' gallery wiring and QA (Opus)
 - [ ] P4 review + PR
