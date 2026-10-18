@@ -46,14 +46,6 @@
         }
       },
       "additionalProperties": false
-    },
-    "defaultDiagramStyle": {
-      "type": "string",
-      "enum": [
-        "default"
-      ],
-      "description": "Default diagram style when --style flag is omitted",
-      "default": "default"
     }
   },
   "additionalProperties": false

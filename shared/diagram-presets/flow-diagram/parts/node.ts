@@ -6,12 +6,10 @@ import {
   BoxShadow,
   Container,
   EdgeInsets,
-  Text,
-  TextAlign,
-  TextStyle,
   type Widget,
 } from "flitter-ui";
 import type { FlowContext, FlowNode, HandleSpec, NodeBuilderArgs, NodeTypeDefinition } from "flitter-ui/diagram";
+import { EditableLabel } from "./editable-label";
 import type { DefaultFlowConfig } from "../config";
 
 export function nodeLabel(node: FlowNode): string {
@@ -32,7 +30,7 @@ export function defaultNode(args: NodeBuilderArgs, context: FlowContext<DefaultF
     alignment: Alignment.center,
     decoration: new BoxDecoration({
       color: isGroup ? colors.nodeGroupBackground : colors.nodeBackground,
-      border: Border.all({ color: selected ? colors.nodeSelectedBorder : colors.nodeBorder, width: borderWidth }),
+      border: Border.all({ color: args.isDropTarget ? colors.selectionBorder : selected ? colors.nodeSelectedBorder : colors.nodeBorder, width: borderWidth }),
       borderRadius: BorderRadius.circular(n.borderRadius),
       boxShadow:
         hovered && !selected
@@ -41,10 +39,7 @@ export function defaultNode(args: NodeBuilderArgs, context: FlowContext<DefaultF
     }),
     child: isGroup
       ? undefined
-      : Text(nodeLabel(node), {
-          textAlign: TextAlign.center,
-          style: new TextStyle({ fontSize: n.fontSize, color: colors.nodeColor, fontFamily: n.fontFamily }),
-        }),
+      : EditableLabel(args, context),
   });
 }
 

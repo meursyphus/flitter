@@ -1,30 +1,30 @@
-import { Positioned, Stack, type Widget } from "flitter-core";
+import { LayoutBuilder, type Widget } from "flitter-core";
 import type { GuidesBuilderArgs, FlowContext } from "../../../headless/flow/types";
 import type { DefaultFlowConfig } from "../config";
 import { ShapePaint } from "./paint";
 
+/** Local coordinates inside the guide overlay; controller.guides stays in flow coordinates. */
 export function defaultGuides({ lines }: GuidesBuilderArgs, ctx: FlowContext<DefaultFlowConfig>): Widget | null {
   if (!lines.length) return null;
-  return Stack({
-    children: lines.map(({ from, to }) => {
-      const x = Math.min(from.x, to.x),
-        y = Math.min(from.y, to.y);
-      return Positioned({
-        left: x,
-        top: y,
-        child: ShapePaint({
-          width: Math.max(1, Math.abs(to.x - from.x)),
-          height: Math.max(1, Math.abs(to.y - from.y)),
-          shapes: {
-            guide: {
-              d: `M ${from.x - x} ${from.y - y} L ${to.x - x} ${to.y - y}`,
+  return LayoutBuilder({
+    builder: (_context, constraints) =>
+      ShapePaint({
+        width: constraints.maxWidth,
+        height: constraints.maxHeight,
+        shapes: Object.fromEntries(
+          lines.map((line, index) => [
+            String(index),
+            {
+              d:
+                line.axis === "x"
+                  ? `M ${line.position} ${line.from} L ${line.position} ${line.to}`
+                  : `M ${line.from} ${line.position} L ${line.to} ${line.position}`,
               stroke: ctx.config.colors.selectionBorder,
               strokeWidth: 1,
               dash: [4, 4],
             },
-          },
-        }),
-      });
-    }),
+          ]),
+        ),
+      }),
   });
 }

@@ -1,4 +1,6 @@
 import { type DeepPartial, deepMerge } from "../../shared/utils";
+import type { ContextMenuBuilderArgs } from "../../headless/flow/types";
+import type { FlowController } from "../../headless/flow/controller";
 import type { PanelPosition } from "../../headless/flow/types";
 
 /** Colour tokens. Values mirror React Flow's `style.css` custom properties. */
@@ -105,6 +107,7 @@ export const darkColors: DefaultColors = {
 };
 
 export type DefaultFlowConfig = {
+  contextMenu: { items?: (args: ContextMenuBuilderArgs, flow: FlowController) => { label: string; onSelect(): void; disabled?: boolean; separator?: boolean }[] };
   colorMode: "light" | "dark";
   colors: DefaultColors;
   node: {
@@ -186,6 +189,7 @@ export type DefaultFlowConfig = {
 };
 
 export const defaultConfig: DefaultFlowConfig = {
+  contextMenu: {},
   colorMode: "light",
   colors: lightColors,
   node: {

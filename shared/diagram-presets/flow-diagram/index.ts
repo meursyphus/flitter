@@ -94,3 +94,5 @@ export function FlowDiagram(props: FlowDiagramProps): Widget {
 }
 
 export default FlowDiagram;
+
+export { EditableLabel } from "./parts/editable-label";
