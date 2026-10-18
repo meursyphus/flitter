@@ -1,4 +1,4 @@
-import { defaultNodeTypes, type NodeToolbarBuilder, type DefaultFlowConfig } from "flitter-diagram";
+import { defaultNode, type NodeToolbarCustom, type DefaultFlowConfig } from "flitter-diagram";
 import type { Meta, StoryObj } from "@storybook/react";
 import DualRenderer from "../../components/DualRenderer";
 import {
@@ -21,7 +21,7 @@ import {
   FlowDiagram,
   type FlowEdge,
   type FlowNode,
-  type NodeBuilderArgs,
+  type NodeCustomArgs,
   forceLayout,
   layeredLayout,
   treeLayout,
@@ -73,8 +73,8 @@ export const Basic: Story = {
     height: "400px",
     widget: FlowDiagram({
       ...expose,
-      nodes: basicNodes,
-      edges: basicEdges,
+      data: { nodes: basicNodes, edges: basicEdges },
+
       viewport: { fitView: true },
     }),
     description:
@@ -106,8 +106,8 @@ export const EdgeTypes: Story = {
     height: "440px",
     widget: FlowDiagram({
       ...expose,
-      nodes: edgeTypeNodes,
-      edges: edgeTypeEdges,
+      data: { nodes: edgeTypeNodes, edges: edgeTypeEdges },
+
       viewport: { fitView: true },
     }),
     description: "Every built-in edge type with labels and markers.",
@@ -120,8 +120,8 @@ export const DarkMode: Story = {
     width: "560px",
     height: "400px",
     widget: FlowDiagram({
-      nodes: basicNodes,
-      edges: basicEdges,
+      data: { nodes: basicNodes, edges: basicEdges },
+
       config: { colorMode: "dark", background: { variant: "lines" } },
       viewport: { fitView: true },
     }),
@@ -150,7 +150,7 @@ export const LayeredLayout: Story = {
     height: "460px",
     widget: FlowDiagram({
       ...expose,
-      ...chain(10),
+      data: chain(10),
       layout: layeredLayout,
     }),
     description:
@@ -163,7 +163,7 @@ export const TreeLayoutLeftRight: Story = {
     width: "640px",
     height: "460px",
     widget: FlowDiagram({
-      ...chain(10),
+      data: chain(10),
       layout: { algorithm: treeLayout, options: { direction: "LR", rankSpacing: 80 } },
       nodeTypes: {
         default: {
@@ -184,7 +184,7 @@ export const ForceLayout: Story = {
     width: "640px",
     height: "460px",
     widget: FlowDiagram({
-      ...chain(10),
+      data: chain(10),
       layout: forceLayout,
       config: { background: { variant: "cross" } },
     }),
@@ -197,7 +197,7 @@ type TableData = { label: string; fields: { name: string; type: string; pk?: boo
 const ROW_HEIGHT = 22;
 const HEADER_HEIGHT = 28;
 
-function tableNode(args: NodeBuilderArgs, ctx: any): Widget {
+function tableNode(args: NodeCustomArgs, ctx: any): Widget {
   const data = args.node.data as TableData;
   const { colors, node } = ctx.config;
   const rows = data.fields.map((field) =>
@@ -214,7 +214,7 @@ function tableNode(args: NodeBuilderArgs, ctx: any): Widget {
     width: 200,
     decoration: new BoxDecoration({
       color: colors.nodeBackground,
-      border: Border.all({ color: args.selected ? "#3367d9" : colors.nodeBorder, width: args.selected ? 1.5 : 1 }),
+      border: Border.all({ color: args.isSelected ? "#3367d9" : colors.nodeBorder, width: args.isSelected ? 1.5 : 1 }),
       borderRadius: BorderRadius.circular(4),
     }),
     child: Column({
@@ -223,7 +223,7 @@ function tableNode(args: NodeBuilderArgs, ctx: any): Widget {
       children: [
         Container({
           height: HEADER_HEIGHT,
-          color: args.selected ? "#3367d9" : "#1a192b",
+          color: args.isSelected ? "#3367d9" : "#1a192b",
           padding: EdgeInsets.symmetric({ horizontal: 10 }),
           child: Padding({
             padding: EdgeInsets.only({ top: 7 }),
@@ -290,8 +290,8 @@ export const CustomNodesERD: Story = {
     height: "440px",
     widget: FlowDiagram({
       ...expose,
-      nodes: erdNodes,
-      edges: erdEdges,
+      data: { nodes: erdNodes, edges: erdEdges },
+
       nodeTypes: {
         table: {
           build: tableNode,
@@ -320,8 +320,8 @@ export const ReadOnly: Story = {
     width: "560px",
     height: "400px",
     widget: FlowDiagram({
-      nodes: basicNodes,
-      edges: basicEdges,
+      data: { nodes: basicNodes, edges: basicEdges },
+
       config: { controls: { showInteractive: false }, minimap: { visible: false } },
       viewport: { fitView: true },
       interaction: "viewer",
@@ -337,8 +337,8 @@ export const PanOnScroll: Story = {
     height: "400px",
     widget: FlowDiagram({
       ...expose,
-      nodes: basicNodes,
-      edges: basicEdges,
+      data: { nodes: basicNodes, edges: basicEdges },
+
       viewport: { fitView: true },
       interaction: {
         pane: { scroll: "pan", drag: "select" },
@@ -367,7 +367,7 @@ export const ResizeToolbarReconnect: Story = {
     height: "420px",
     widget: FlowDiagram({
       ...expose,
-      nodes: [
+      data: { nodes: [
         {
           id: "a",
           type: "input",
@@ -383,13 +383,13 @@ export const ResizeToolbarReconnect: Story = {
           toolbar: { position: "right", align: "start" },
         },
         { id: "c", type: "output", position: { x: 180, y: 240 }, data: { label: "Drag an edge end here" } },
-      ],
-      edges: [
+      ], edges: [
         { id: "ab", source: "a", target: "b", markerEnd: "arrowclosed" },
         { id: "ac", source: "a", target: "c", label: "reconnectable", reconnectable: "target" },
-      ],
+      ] },
+
       nodeTypes: Object.fromEntries(
-        Object.entries(defaultNodeTypes).map(([name, definition]) => [
+        Object.entries(Object.fromEntries(['default', 'input', 'output', 'group'].map(name => [name, { build: defaultNode }]))).map(([name, definition]) => [
           name,
           {
             ...definition,
@@ -408,7 +408,7 @@ export const ResizeToolbarReconnect: Story = {
                   Container({ width: 2 }),
                   toolbarButton("delete", () => void ctx.deleteElements({ nodes: [node] })),
                 ],
-              })) as NodeToolbarBuilder<DefaultFlowConfig>,
+              })) as NodeToolbarCustom<DefaultFlowConfig>,
           },
         ]),
       ),
@@ -426,8 +426,8 @@ export const TranslateExtent: Story = {
     height: "400px",
     widget: FlowDiagram({
       ...expose,
-      nodes: basicNodes,
-      edges: basicEdges,
+      data: { nodes: basicNodes, edges: basicEdges },
+
       config: { background: { variant: "lines" }, minimap: { visible: false } },
       viewport: {
         extent: [

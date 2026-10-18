@@ -1,3 +1,5 @@
+import { Stack as DiagramStack, StackFit as DiagramStackFit } from "flitter-ui";
+import { layout as baseLayout, positionOverlay } from "@/components/diagram/flow-diagram";
 /**
  * Live micro-demos for /diagram/interactions, keyed by cell id
  * (`_data/interactions/cells.ts`). Factories sit at module scope so
@@ -19,7 +21,7 @@ import {
   type Widget,
 } from "flitter-ui";
 import {
-  FlowController,
+  FlowDiagramController,
   circularLayout,
   deepMerge,
   forceLayout,
@@ -30,11 +32,10 @@ import {
   type FlowEdge,
   type FlowNode,
   type LayoutAlgorithm,
-  type NodeBuilder,
-  type NodeBuilderArgs,
+  type NodeCustom,
+  type NodeCustomArgs,
 } from "flitter-ui/diagram";
-import {
-  FlowDiagram,
+import FlowDiagram, {
   type DefaultFlowConfig,
   type FlowDiagramProps,
 } from "@/components/diagram/flow-diagram";
@@ -69,7 +70,7 @@ const edge = (source: string, target: string, extra: Partial<FlowEdge> = {}): Fl
   ...extra,
 });
 
-type Extra = Omit<FlowDiagramProps, "nodes" | "edges" | "config">;
+type Extra = Omit<FlowDiagramProps, "data" | "config">;
 
 /** A module-scope factory for a small graph. */
 function demo(
@@ -80,8 +81,8 @@ function demo(
 ) {
   return (theme: Theme): Widget =>
     FlowDiagram({
-      nodes,
-      edges,
+      data: { nodes, edges },
+
       viewport: { fitView: { padding: 0.35, maxZoom: 1 } },
       ...(typeof extra === "function" ? extra() : extra),
       config: siteConfig(theme, config),
@@ -110,7 +111,7 @@ function buttons(items: [string, () => void][]): Widget {
 }
 
 /** A plain card whose border turns accent when `lit` says so. */
-function tile(lit: (args: NodeBuilderArgs) => boolean, badge?: (args: NodeBuilderArgs) => string | null): NodeBuilder<DefaultFlowConfig> {
+function tile(lit: (args: NodeCustomArgs) => boolean, badge?: (args: NodeCustomArgs) => string | null): NodeCustom<DefaultFlowConfig> {
   return (args, context) => {
     const { colors } = context.config;
     const on = lit(args);
@@ -148,7 +149,7 @@ const rowNodes = [node("a", 0, 0, "Fetch", { type: "input" }), node("b", 200, 0,
 const hover = demo(
   [node("hub", 160, 0, "Hub"), node("x", 0, 130, "Left"), node("y", 160, 130, "Middle"), node("z", 320, 130, "Right"), node("far", 320, 0, "Unrelated")],
   [edge("hub", "x"), edge("hub", "y"), edge("hub", "z")],
-  { nodeTypes: { default: tile(({ hovered, isNeighbour }) => hovered || isNeighbour) } },
+  { nodeTypes: { default: tile(({ isHovered: hovered, isNeighbour }) => hovered || isNeighbour) } },
 );
 
 const front = demo(
@@ -162,7 +163,7 @@ const connect = demo(
 );
 
 function dropConnection(theme: Theme): Widget {
-  const flow = new FlowController();
+  const flow = new FlowDiagramController();
   return demo([node("a", 0, 0, "Drag from my handle", { type: "input" })], [], {
     controller: flow,
     viewport: { fitView: { padding: 1.2, maxZoom: 1 } },
@@ -205,7 +206,7 @@ const layouts: [string, LayoutAlgorithm][] = [
 ];
 
 function layout(theme: Theme): Widget {
-  const flow = new FlowController();
+  const flow = new FlowDiagramController();
   const ids = ["Gateway", "Auth", "Orders", "Users", "Stock"];
   return demo(
     ids.map((id) => node(id, 0, 0, id)),
@@ -213,12 +214,12 @@ function layout(theme: Theme): Widget {
     {
       controller: flow,
       layout: { algorithm: layeredLayout, options: { rankSpacing: 70 } },
-      panels: [
+      custom: { layout: (args, ctx) => DiagramStack({ fit: DiagramStackFit.expand, children: [baseLayout(args, ctx), ...([
         {
           position: "top-left",
           child: buttons(layouts.map(([label, algorithm]) => [label, () => void flow.layout(algorithm, { fitView: true })])),
         },
-      ],
+      ]).map(({ position, child }) => positionOverlay(position as import("flitter-ui/diagram").PanelPosition, child))] }) },
     },
   )(theme);
 }
@@ -253,7 +254,7 @@ const overlap = demo(
 );
 
 /** A card whose own chevron folds the subtree below it. */
-const teamCard: NodeBuilder<DefaultFlowConfig> = ({ node: n, collapsed, hiddenChildCount }, context) => {
+const teamCard: NodeCustom<DefaultFlowConfig> = ({ node: n, isCollapsed: collapsed, hiddenChildCount }, context) => {
   const { colors } = context.config;
   const style = new TextStyle({ color: colors.nodeColor, fontSize: 12, fontFamily: FONT });
   const chevron = GestureDetector({
@@ -303,7 +304,7 @@ const insertOnEdge = demo(
   [edge("a", "b", { label: "+" })],
   {
     custom: {
-      edgeLabel: ({ edge: e, hovered, x, y }, flow) =>
+      edgeLabel: ({ edge: e, isHovered: hovered, x, y }, flow) =>
         hovered
           ? button("+", () => {
               // Make room below the new step, then drop it on the label anchor.
@@ -313,28 +314,28 @@ const insertOnEdge = demo(
               flow.insertNodeOnEdge(e.id, node(`n${flow.getNodes().length}`, x - 75, y - 18, "New step"));
               void flow.fitView({ padding: 0.35, maxZoom: 1, duration: 200 });
             })
-          : null,
+          : SizedBox.shrink(),
     },
   },
 );
 
 function deleteReconnect(theme: Theme): Widget {
-  const flow = new FlowController();
+  const flow = new FlowDiagramController();
   return demo(chainNodes, chainEdges, {
     controller: flow,
-    panels: [{ position: "top-left", child: button("Remove review", () => void flow.deleteElements(["b"], { reconnect: true })) }],
+    custom: { layout: (args, ctx) => DiagramStack({ fit: DiagramStackFit.expand, children: [baseLayout(args, ctx), ...([{ position: "top-left", child: button("Remove review", () => void flow.deleteElements(["b"], { reconnect: true })) }]).map(({ position, child }) => positionOverlay(position as import("flitter-ui/diagram").PanelPosition, child))] }) },
   })(theme);
 }
 
 function align(theme: Theme): Widget {
-  const flow = new FlowController();
+  const flow = new FlowDiagramController();
   const selected = () => flow.getSelectedNodes().map((n) => n.id);
   return demo(
     [node("a", 0, 0, "One"), node("b", 60, 90, "Two"), node("c", 20, 200, "Three")],
     [],
     {
       controller: flow,
-      panels: [
+      custom: { layout: (args, ctx) => DiagramStack({ fit: DiagramStackFit.expand, children: [baseLayout(args, ctx), ...([
         {
           position: "top-left",
           child: buttons([
@@ -342,7 +343,7 @@ function align(theme: Theme): Widget {
             ["Distribute", () => flow.distributeNodes(selected(), "y")],
           ]),
         },
-      ],
+      ]).map(({ position, child }) => positionOverlay(position as import("flitter-ui/diagram").PanelPosition, child))] }) },
     },
   )(theme);
 }

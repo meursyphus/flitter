@@ -1,12 +1,18 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
-	FlowController,
-	type FlowProps,
+	FlowDiagramController,
+	type FlowDiagramProps,
 	type FlowNode,
 	type FlowEdge,
 	type Connection
 } from '../../../packages/diagram/src/engine';
-import { defaultCustom, createDefaultConfig } from '../../../packages/diagram/src/styles/default';
+import { defaultStyleConfig } from '../../../packages/diagram/registry/templates/diagrams/flow-diagram/styles/default';
+
+import { baseDefaults } from '../../../packages/diagram/registry/templates/diagrams/flow-diagram/base';
+const defaultCustom = {
+	...baseDefaults,
+	...defaultStyleConfig.custom
+} as import('../../../packages/diagram/src/engine').FlowDiagramCustom<any>;
 
 const nodes: FlowNode[] = [
 	{ id: 'a', data: {}, position: { x: 0, y: 0 }, width: 100, height: 50 },
@@ -18,9 +24,18 @@ const edges: FlowEdge[] = [
 	{ id: 'ab', source: 'a', target: 'b' },
 	{ id: 'bc', source: 'b', target: 'c' }
 ];
-function setup(props: Partial<FlowProps<any>> = {}) {
-	const flow = new FlowController();
-	flow.configure({ nodes, edges, custom: defaultCustom, config: createDefaultConfig(), ...props });
+function setup(
+	props: Omit<Partial<FlowDiagramProps<any>>, 'data'> & {
+		data?: Partial<FlowDiagramProps['data']>;
+	} = {}
+) {
+	const flow = new FlowDiagramController();
+	flow.configure({
+		data: { nodes, edges, ...props.data },
+		custom: defaultCustom,
+		config: defaultStyleConfig.createConfig(),
+		...(({ data, ...rest }) => rest)(props)
+	});
 	return flow;
 }
 function pointer(x = 0, y = 0): MouseEvent {
@@ -65,7 +80,7 @@ describe('grouped diagram API', () => {
 	});
 	it('viewer prevents mutation even for explicitly draggable/resizable items', async () => {
 		const node = { ...nodes[0], draggable: true, resizable: true };
-		const f = setup({ nodes: [node, nodes[1]], interaction: 'viewer' });
+		const f = setup({ data: { nodes: [node, nodes[1]] }, interaction: 'viewer' });
 		expect(f.panEnabled).toBe(true);
 		expect(f.zoomEnabled).toBe(true);
 		expect(f.isNodeDraggable(node)).toBe(false);
@@ -104,8 +119,8 @@ describe('grouped diagram API', () => {
 		};
 		const edge = { ...edges[0], reconnectable: false, selectable: false, deletable: false };
 		const allow = setup({
-			nodes: [node, nodes[1]],
-			edges: [edge],
+			data: { nodes: [node, nodes[1]], edges: [edge] },
+
 			interaction: 'viewer',
 			can: () => true
 		});
@@ -170,9 +185,11 @@ describe('grouped diagram API', () => {
 	it.each([false, { source: 'a', target: 'c' }])(
 		'beforeConnect vetoes or patches a connection: %j',
 		(patch) => {
-			const beforeConnect = vi.fn((connection: Connection) => typeof patch === "object" ? { ...connection, ...patch } : false);
+			const beforeConnect = vi.fn((connection: Connection) =>
+				typeof patch === 'object' ? { ...connection, ...patch } : false
+			);
 			const connectEnd = vi.fn();
-			const f = setup({ edges: [], on: { beforeConnect, connectEnd } });
+			const f = setup({ data: { edges: [] }, on: { beforeConnect, connectEnd } });
 			f.handleConnectionStart('a', null, 'source', pointer(50, 50));
 			f.handleConnectionMove(pointer(250, 0));
 			f.handleConnectionEnd(pointer(250, 0));

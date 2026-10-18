@@ -4,7 +4,7 @@ import CopyButton from "./copy-button";
 /** The overview's quick start: install output plus one mounted diagram. */
 export const OVERVIEW_CODE = `import Widget from "@flitterjs/react";
 import { layeredLayout, type FlowEdge, type FlowNode } from "flitter-ui/diagram";
-import { FlowDiagram } from "@/components/diagram/flow-diagram";
+import FlowDiagram from "@/components/diagram/flow-diagram";
 
 const nodes: FlowNode[] = [
   { id: "draft", type: "input", position: { x: 0, y: 0 }, data: { label: "Draft" } },
@@ -19,8 +19,7 @@ const edges: FlowEdge[] = [
 
 // Undo, copy/paste, context menu and box select are already on.
 const diagram = FlowDiagram({
-  nodes,
-  edges,
+  data: { nodes, edges },
   layout: layeredLayout,
   viewport: { fitView: true },
 });

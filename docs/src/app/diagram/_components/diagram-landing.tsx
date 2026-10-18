@@ -33,7 +33,7 @@ export default function DiagramLanding() {
               </Link>
             </div>
           </div>
-          <ExamplePreview slug="automation-workflow" />
+          <ExamplePreview slug="automation-workflow" presentation="hero" />
         </div>
       </section>
 

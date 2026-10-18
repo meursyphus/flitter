@@ -1,11 +1,11 @@
-import { Alignment, Border, BorderRadius, BoxDecoration, Container, EdgeInsets, GestureDetector, MainAxisSize, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextStyle, type Widget } from "flitter-ui";
-import { FlowController, createId, type FlowNode, type FlowEdge } from "flitter-ui/diagram";
-import { FlowDiagram, EditableLabel, ShapePaint } from "@/components/diagram/flow-diagram";
+import { SizedBox, LayoutBuilder, Alignment, Border, BorderRadius, BoxDecoration, Container, EdgeInsets, GestureDetector, MainAxisSize, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextStyle, type Widget } from "flitter-ui";
+import { FlowDiagramController, createId, type FlowNode, type FlowEdge } from "flitter-ui/diagram";
+import FlowDiagram, { EditableLabel, ShapePaint } from "@/components/diagram/flow-diagram";
 
 type Theme = "light" | "dark";
 class Process extends StatefulWidget { constructor(readonly theme: Theme) { super(theme); } createState() { return new ProcessState(); } }
 class ProcessState extends State<Process> {
-  flow = new FlowController();
+  flow = new FlowDiagramController();
   diagram?: Widget;
   nodes: FlowNode[] = [
     { id: "pool", type: "lane", position: { x: 0, y: 0 }, width: 1050, height: 500, data: { label: "ACME PROCUREMENT" }, draggable: false },
@@ -28,7 +28,7 @@ class ProcessState extends State<Process> {
   get c() {
     return this.widget.theme === "dark" ? { bg: "#171d22", card: "#26343d", ink: "#e3f0f5", line: "#496575", muted: "#8ba8b8" } : { bg: "#f7fafc", card: "#ffffff", ink: "#254557", line: "#bed1dc", muted: "#7893a3" };
   }
-  text(value: string, size = 11, color = this.c.ink) { return Text(value, { style: new TextStyle({ fontFamily: "system-ui", fontSize: size, color }) }); }
+  text(value: string, size = 11, color = this.c.ink) { return Text(value, { style: new TextStyle({ fontFamily: "system-ui", fontSize: Math.max(13, size), color }) }); }
   button(label: string, fn: (event: MouseEvent) => void) {
     return GestureDetector({
       onMouseDown: (e) => e.stopPropagation(),
@@ -77,11 +77,11 @@ class ProcessState extends State<Process> {
       });
     return FlowDiagram({
       controller: this.flow,
-      nodes: this.nodes.map((node) => ({ ...node, toolbar: { position: "top", align: "start", offset: 4 } })),
-      edges: this.edges,
-      viewport: { minZoom: 0.2, fitView: { padding: 0.35, maxZoom: 1 } },
+      data: { nodes: this.nodes.map((node) => ({ ...node, toolbar: { position: "top", align: "start", offset: 4 } })), edges: this.edges },
+
+      viewport: { minZoom: 0.2, fitView: { padding: 0.12, maxZoom: 1 } },
       interaction: { edit: { text: true, waypoints: true }, drag: { snap: { grid: [10, 10], guides: true } }, contextMenu: { enabled: false } },
-      config: { colorMode: this.widget.theme, colors: { background: c.bg, edgeStroke: "#688fa2" }, node: { fontSize: 14 }, minimap: { visible: false }, edge: { strokeWidth: 1.5 } },
+      config: { edgeLabel: { fontSize: 13 }, colorMode: this.widget.theme, colors: { background: c.bg, edgeStroke: "#688fa2" }, node: { fontSize: 14 }, minimap: { visible: false }, edge: { strokeWidth: 1.5 } },
       nodeTypes: {
         lane: {
           group: true,
@@ -96,7 +96,7 @@ class ProcessState extends State<Process> {
             Container({
               alignment: Alignment.center,
               padding: EdgeInsets.all(10),
-              decoration: new BoxDecoration({ color: c.card, border: Border.all({ color: args.selected ? "#228ab1" : c.line, width: 2 }), borderRadius: BorderRadius.circular(10) }),
+              decoration: new BoxDecoration({ color: c.card, border: Border.all({ color: args.isSelected ? "#228ab1" : c.line, width: 2 }), borderRadius: BorderRadius.circular(10) }),
               child: EditableLabel(args, ctx)
             })
         },
@@ -107,15 +107,15 @@ class ProcessState extends State<Process> {
             Stack({
               fit: StackFit.expand,
               children: [
-                ShapePaint({ width: 84, height: 84, shapes: { diamond: { d: "M42 2 L82 42 L42 82 L2 42 Z", fill: c.card, stroke: args.selected ? "#228ab1" : c.line, strokeWidth: 2 } } }),
-                Container({ alignment: Alignment.center, padding: EdgeInsets.all(12), child: args.editing ? EditableLabel(args, ctx) : this.text(String(args.node.data.label), 10) })
+                ShapePaint({ width: 84, height: 84, shapes: { diamond: { d: "M42 2 L82 42 L42 82 L2 42 Z", fill: c.card, stroke: args.isSelected ? "#228ab1" : c.line, strokeWidth: 2 } } }),
+                Container({ alignment: Alignment.center, padding: EdgeInsets.all(12), child: args.isEditing ? EditableLabel(args, ctx) : this.text(String(args.node.data.label), 10) })
               ]
             })
         },
         event: {
           handles: ports,
           toolbar,
-          build: ({ node, selected }) => Container({ decoration: new BoxDecoration({ shape: "circle", color: c.card, border: Border.all({ color: selected ? "#228ab1" : c.ink, width: node.data.end ? 4 : 2 }) }) })
+          build: ({ node, isSelected: selected }) => Container({ decoration: new BoxDecoration({ shape: "circle", color: c.card, border: Border.all({ color: selected ? "#228ab1" : c.ink, width: node.data.end ? 4 : 2 }) }) })
         }
       }
     });
@@ -133,11 +133,11 @@ class ProcessState extends State<Process> {
             color: this.c.card,
             child: Row({
               mainAxisSize: MainAxisSize.min,
-              children: [this.text("PURCHASE APPROVAL", 12), this.button("Undo", () => this.flow.history.undo()), this.button("Fit process", () => void this.flow.fitView({ padding: 0.3 }))]
+              children: [this.text("PURCHASE APPROVAL", 12), this.button("Undo", () => this.flow.history.undo()), this.button("Fit process", () => void this.flow.fitView({ padding: 0.12, minZoom: 0.8, maxZoom: 1 }))]
             })
           })
         }),
-        Positioned({ bottom: 14, left: 125, child: this.text("Select → append · double-click → rename · select an edge → drag its bend pins", 10, this.c.muted) })
+        Positioned({ key: "diagram-hint", bottom: 14, left: 0, right: 0, child: LayoutBuilder({ builder: (_context, size) => size.maxWidth < 500 ? SizedBox.shrink() : Container({ padding: EdgeInsets.only({ left: 125, right: 16 }), child: this.text("Select → append · double-click → rename · select an edge → drag its bend pins", 10, this.c.muted) }) }) })
       ]
     });
   }

@@ -1,3 +1,4 @@
+import { buildAction } from '../../../packages/diagram/src/headless/flow-diagram/diagram';
 import { describe, expect, it, vi } from 'vitest';
 import {
 	Constraints,
@@ -17,21 +18,26 @@ import {
 import RenderObject from '../../../packages/core/src/renderobject/RenderObject';
 import type RenderObjectWidget from '../../../packages/core/src/widget/RenderObjectWidget';
 import {
-	FlowController,
+	FlowDiagramController,
 	FlowSceneGroup,
 	FlowSceneItem,
-	type FlowContext,
+	type FlowDiagramContext,
 	type FlowNode,
-	type NodeBuilderArgs
+	type NodeCustomArgs
 } from '../../../packages/diagram/src/engine';
 import {
-	createDefaultConfig,
-	defaultCustom,
+	defaultStyleConfig,
 	defaultContextMenu,
 	EditableLabel,
 	type DefaultFlowConfig
-} from '../../../packages/diagram/src/styles/default';
+} from '../../../packages/diagram/registry/templates/diagrams/flow-diagram/styles/default';
 import { collapseSets } from '../../../packages/diagram/src/shared/interactions';
+
+import { baseDefaults } from '../../../packages/diagram/registry/templates/diagrams/flow-diagram/base';
+const defaultCustom = {
+	...baseDefaults,
+	...defaultStyleConfig.custom
+} as import('../../../packages/diagram/src/engine').FlowDiagramCustom<any>;
 
 const node = (id: string, extra: Partial<FlowNode> = {}): FlowNode => ({
 	id,
@@ -40,8 +46,12 @@ const node = (id: string, extra: Partial<FlowNode> = {}): FlowNode => ({
 	...extra
 });
 function flow(nodes = [node('a'), node('b')], edges = [{ id: 'ab', source: 'a', target: 'b' }]) {
-	const f = new FlowController() as FlowContext<DefaultFlowConfig>;
-	f.configure({ nodes, edges, custom: defaultCustom, config: createDefaultConfig() });
+	const f = new FlowDiagramController() as FlowDiagramContext<DefaultFlowConfig>;
+	f.configure({
+		data: { nodes, edges },
+		custom: defaultCustom,
+		config: defaultStyleConfig.createConfig()
+	});
 	return f;
 }
 const key = (key: string, extra = {}) =>
@@ -62,8 +72,8 @@ it.each(['viewer', { pane: { drag: 'select' }, select: { box: false } }] as cons
 	(interaction) => {
 		const f = flow();
 		f.configure({
-			nodes: f.nodes,
-			edges: f.edges,
+			data: { nodes: f.nodes, edges: f.edges },
+
 			config: f.config,
 			custom: defaultCustom,
 			interaction
@@ -145,7 +155,7 @@ it('the default Duplicate item is hit at its screen-space position after layout'
 							y: 95,
 							child: GestureDetector({
 								onClick: (event) => event.stopPropagation(),
-								child: defaultContextMenu(f.contextMenu!, f)
+								child: defaultContextMenu({ ...f.contextMenu!, action: buildAction }, f)
 							})
 						})
 					]
@@ -178,6 +188,7 @@ it('default menu Delete separates node and edge ids', async () => {
 	const widget = defaultContextMenu(
 		{
 			target: 'selection',
+			action: buildAction,
 			ids: ['a', 'ab'],
 			position: { x: 0, y: 0 },
 			screenPosition: { x: 0, y: 0 }
@@ -202,24 +213,24 @@ it('default menu Delete separates node and edge ids', async () => {
 	await deleted.mock.results[0].value;
 });
 
-function editor(f: FlowContext<DefaultFlowConfig>) {
-	const args: NodeBuilderArgs = {
+function editor(f: FlowDiagramContext<DefaultFlowConfig>) {
+	const args: NodeCustomArgs = {
 		node: f.getNode('a')!,
-		editing: true,
-		selected: true,
-		dragging: false,
-		hovered: false,
-		draggable: false,
-		selectable: false,
-		connectable: false,
+		isEditing: true,
+		isSelected: true,
+		isDragging: false,
+		isHovered: false,
+		isDraggable: false,
+		isSelectable: false,
+		isConnectable: false,
 		positionAbsolute: { x: 0, y: 0 },
 		zIndex: 0,
 		isConnectionTarget: false,
-		resizable: false,
-		resizing: false,
+		isResizable: false,
+		isResizing: false,
 		isDropTarget: false,
 		isOverlapping: false,
-		collapsed: false,
+		isCollapsed: false,
 		hiddenChildCount: 0,
 		isNeighbour: false
 	};

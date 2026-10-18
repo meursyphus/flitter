@@ -1,14 +1,20 @@
 <script lang="ts">
-	import { type NodeToolbarBuilder, type DefaultFlowConfig } from 'flitter-diagram';
+	import {
+		type NodeToolbarCustom,
+		type FlowDiagramCustom,
+		baseDefaults,
+		defaultStyleConfig,
+		type DefaultFlowConfig
+	} from 'flitter-diagram';
 
-	import { getSceneOrder } from '../../../../../../packages/diagram/src/headless/flow/controller';
+	import { getSceneOrder } from '../../../../../../packages/diagram/src/headless/flow-diagram/controller';
 	import { onMount } from 'svelte';
 	import { AppRunner } from 'flitter-core';
 	import { Container, EdgeInsets, Text, TextStyle, GestureDetector } from 'flitter-core';
 	import {
 		FlowDiagram,
 		layeredLayout,
-		defaultNodeTypes,
+		defaultNode,
 		type FlowEdge,
 		type FlowNode,
 		type NodeTypeDefinition
@@ -136,8 +142,30 @@
 		const events: string[] = [];
 		// Count builder invocations per node so tests can assert rebuild locality.
 		const builds: Record<string, number> = {};
+		const slotBuilds: Record<string, number> = {};
+		const defaults = {
+			...baseDefaults,
+			...defaultStyleConfig.custom
+		} as FlowDiagramCustom<DefaultFlowConfig>;
+		const custom = query.has('customSlots')
+			? Object.fromEntries(
+					(['layout', 'viewport', 'nodeBox', 'edgeBox', 'controls', 'minimap'] as const).map(
+						(slot) => [
+							slot,
+							(args: any, ctx: any) => {
+								slotBuilds[slot] = (slotBuilds[slot] ?? 0) + 1;
+								return defaults[slot](args, ctx);
+							}
+						]
+					)
+				)
+			: undefined;
 		const counted = Object.fromEntries(
-			Object.entries(defaultNodeTypes).map(([name, definition]) => [
+			Object.entries(
+				Object.fromEntries(
+					['default', 'input', 'output', 'group'].map((name) => [name, { build: defaultNode }])
+				)
+			).map(([name, definition]) => [
 				name,
 				{
 					...definition,
@@ -145,9 +173,9 @@
 					build: (args, ctx) => {
 						builds[args.node.id] = (builds[args.node.id] ?? 0) + 1;
 						nodeState[args.node.id] = {
-							editing: args.editing,
+							isEditing: args.isEditing,
 							isDropTarget: args.isDropTarget,
-							collapsed: args.collapsed,
+							isCollapsed: args.isCollapsed,
 							hiddenChildCount: args.hiddenChildCount,
 							isNeighbour: args.isNeighbour
 						};
@@ -166,10 +194,11 @@
 		);
 		runner.runApp(
 			FlowDiagram({
-				nodes,
-				edges,
+				data: { nodes, edges },
+
 				layout: scenario === 'layout' ? layeredLayout : undefined,
-				config: { minimap: { visible: false } },
+				config: { minimap: { visible: query.has('minimap') } },
+				custom,
 				nodeTypes: Object.fromEntries(
 					Object.entries(counted).map(([name, definition]) => [
 						name,
@@ -188,7 +217,7 @@
 											style: new TextStyle({ color: '#fff', fontSize: 12 })
 										})
 									})
-								})) as NodeToolbarBuilder<DefaultFlowConfig>
+								})) as NodeToolbarCustom<DefaultFlowConfig>
 						}
 					])
 				),
@@ -230,6 +259,7 @@
 								),
 							events,
 							builds,
+							slotBuilds,
 							nodeState,
 							toolbarClicks: () => toolbarClicks
 						};

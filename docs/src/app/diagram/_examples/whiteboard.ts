@@ -1,11 +1,11 @@
-import { Alignment, Border, BorderRadius, BoxDecoration, Container, EdgeInsets, GestureDetector, MainAxisSize, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextStyle, type Widget } from "flitter-ui";
-import { FlowController, type FlowNode, type FlowEdge } from "flitter-ui/diagram";
-import { FlowDiagram, EditableLabel, ShapePaint, rectPathD } from "@/components/diagram/flow-diagram";
+import { SizedBox, LayoutBuilder, Alignment, Border, BorderRadius, BoxDecoration, Container, EdgeInsets, GestureDetector, MainAxisSize, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextStyle, type Widget } from "flitter-ui";
+import { FlowDiagramController, type FlowNode, type FlowEdge } from "flitter-ui/diagram";
+import FlowDiagram, { EditableLabel, ShapePaint, rectPathD } from "@/components/diagram/flow-diagram";
 
 type Theme = "light" | "dark";
 class Board extends StatefulWidget { constructor(readonly theme: Theme) { super(theme); } createState() { return new BoardState(); } }
 class BoardState extends State<Board> {
-  flow = new FlowController();
+  flow = new FlowDiagramController();
   diagram?: Widget;
   shape = "rect";
   altHeld = false;
@@ -17,7 +17,7 @@ class BoardState extends State<Board> {
   ].map((n) => ({ ...n, type: "shape", width: 190, height: 105 }));
   edges: FlowEdge[] = [{ id: "a", source: "listen", target: "prototype", type: "smoothstep", markerEnd: "arrowclosed" }, { id: "b", source: "prototype", target: "ship", type: "smoothstep", markerEnd: "arrowclosed" }];
   get c() { return this.widget.theme === "dark" ? { bg: "#202326", card: "#30383b", ink: "#e8efeb", line: "#9bb5a6", note: "#66572e" } : { bg: "#fbfaf5", card: "#fff", ink: "#354c42", line: "#86a495", note: "#fff0ae" }; }
-  text(value: string, color = this.c.ink) { return Text(value, { style: new TextStyle({ fontFamily: "system-ui", fontSize: 11, color }) }); }
+  text(value: string, color = this.c.ink) { return Text(value, { style: new TextStyle({ fontFamily: "system-ui", fontSize: 13, color }) }); }
   button(label: string, fn: () => void, active = false) {
     return GestureDetector({
       onMouseDown: (e) => e.stopPropagation(),
@@ -67,15 +67,13 @@ class BoardState extends State<Board> {
     const c = this.c;
     return FlowDiagram({
       controller: this.flow,
-      nodes: this.nodes,
-      edges: this.edges,
+      data: { nodes: this.nodes, edges: this.edges },
       interaction: "whiteboard",
-      viewport: { minZoom: 0.2, fitView: { padding: 0.4, maxZoom: 1 } },
-      config: { colorMode: this.widget.theme, colors: { background: c.bg, nodeColor: c.ink, edgeStroke: c.line }, node: { padding: 14, fontSize: 14 }, minimap: { visible: false }, background: { variant: "dots", gap: 24 } },
-      nodeTypes: {
-        shape: {
-          handles: [{ type: "target", position: "left" }, { type: "source", position: "right" }],
-          build: (args, ctx) => {
+      viewport: { minZoom: 0.2, fitView: { padding: 0.12, maxZoom: 1 } },
+      config: { edgeLabel: { fontSize: 13 }, colorMode: this.widget.theme, colors: { background: c.bg, nodeColor: c.ink, edgeStroke: c.line }, node: { padding: 14, fontSize: 14 }, minimap: { visible: false }, background: { variant: "dots", gap: 24 } },
+      custom: {
+        defaultHandles: () => [{ type: "target", position: "left" }, { type: "source", position: "right" }],
+        node: (args, ctx) => {
             const w = args.node.width ?? 190,
               h = args.node.height ?? 105,
               shape = args.node.data.shape;
@@ -84,11 +82,10 @@ class BoardState extends State<Board> {
             return Stack({
               fit: StackFit.expand,
               children: [
-                ShapePaint({ width: w, height: h, shapes: { body: { d, fill: shape === "note" ? c.note : c.card, stroke: args.selected ? "#4f9e77" : c.line, strokeWidth: args.selected ? 2.5 : 1.5 } } }),
+                ShapePaint({ width: w, height: h, shapes: { body: { d, fill: shape === "note" ? c.note : c.card, stroke: args.isSelected ? "#4f9e77" : c.line, strokeWidth: args.isSelected ? 2.5 : 1.5 } } }),
                 Container({ padding: EdgeInsets.all(14), alignment: Alignment.center, child: EditableLabel(args, ctx) })
               ]
             });
-          }
         }
       },
       on: {
@@ -123,7 +120,7 @@ class BoardState extends State<Board> {
             })
           })
         }),
-        Positioned({ top: 38, left: 16, child: this.text("⌘/Ctrl + arrow: append · Alt-drag: copy · double-click: write") })
+        Positioned({ top: 38, left: 16, right: 16, child: LayoutBuilder({ builder: (_context, size) => size.maxWidth < 468 ? SizedBox.shrink() : this.text("⌘/Ctrl + arrow: append · Alt-drag: copy · double-click: write") }) })
       ]
     });
   }

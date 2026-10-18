@@ -1,78 +1,88 @@
 # Diagram Package Guidelines
 
-`flitter-diagram` is a node/edge editor with React Flow's interaction model,
-built on `flitter-core`. Keep these layers separate:
+`flitter-diagram` is a node/edge editor built on `flitter-core`. Its customization
+structure mirrors `packages/chart` and the bar-chart reference.
 
 ```
-src/headless/flow/   Pure behaviour: FlowController state machine, scene render
-                     objects, gesture wiring. No colours, fonts or shapes.
-src/shared/          Geometry, edge path math, change helpers, layout algorithms.
-                     Plain functions with no widget imports except `Path`.
-src/styles/default/   React Flow look. Everything visual lives here as `custom`
-                     builders; it must only use the headless public API.
+src/headless/flow-diagram/
+  index.ts       Default FlowDiagram({ data, custom, config, ... }) entry
+  provider.ts    FlowDiagramProvider: ChangeNotifierProvider create/update + .of
+  controller.ts  FlowDiagramController state machine and per-id signals
+  diagram.ts     Gesture wiring, widget cache and host keyboard lifecycle
+  types.ts       FlowDiagramCustom, FlowDiagramContext, CustomArgs
+  scene.ts       Internal scene render objects
+  interaction.ts Internal preset resolution
+src/shared/      Pure geometry, edge paths, changes and layout algorithms
+registry/templates/diagrams/flow-diagram/
+  index.ts       Styled entry with style/config/custom props
+  plugin.ts      StyleConfig { custom, createConfig }, FlowDiagramStyleMap
+  base/          BaseFlowDiagram and non-visual baseDefaults
+  styles/default/{config.ts,index.ts,parts/}  Visual functions default<Slot>
 ```
 
 ## Headless rules
 
-- Interaction wiring (GestureDetector) lives in `flow.ts`; style parts never add
-  their own hover/click handlers for nodes, edges or handles. Use the args
-  (`selected`, `hovered`, `dragging`, `isConnectionCandidate`, ...) instead.
-- The controller never notifies during `configure()` or `setPaneSize()`
-  because they run inside a build/layout. Everything else notifies once per
-  change.
-- Node sizes are measured by `RenderFlowScene` and reported post-frame through
-  `setNodeDimensions`; never read render objects from builders.
-- Handles are declared (`HandleSpec`), not measured. Edge anchors are derived
-  from the declared handle geometry.
-- Scene items are built in paint order and hit tested in reverse; never use
-  `ZIndex` inside the scene.
-- Rebuild locality: node/edge widgets are cached per id in `flow.ts` and rebuild
-  from `controller.nodeSignal(id)` / `edgeSignal(id)` / `connectionSignal`. Only
-  structural or global changes may call `notifyListeners()`; per-item changes
-  must notify their signal. `styleVersion` invalidates every cached widget.
-- Overlays that hang outside their anchor (toolbars) go through `FlowSceneGroup`
-  + `FlowSceneItem` fractional anchors; a `Positioned` wrapper gates hit tests by
-  its own bounds.
+- Every GestureDetector lives in `diagram.ts`. Leaves receive interaction state;
+  their returned widgets are wrapped by headless gestures. Parent slots only arrange.
+  Controls and menus use the headless `action` helper for hover and click handling.
+- `FlowDiagram({ data: { nodes, edges }, custom, config, nodeTypes, edgeTypes,
+  layout, viewport, interaction, can, on, controller })` is the public shape.
+- Custom callbacks use `(args, context) => Widget`. Empty visuals return
+  `SizedBox.shrink()`. Every boolean custom arg starts with `is`.
+- Composition is `layout → viewport → nodeBox / edgeBox → leaves`.
+  Screen-space toolbars, controls, minimap and context menus are composed by layout.
+  Extra overlays override `custom.layout`; there is no `panels` prop.
+- `configure()` and `setPaneSize()` never notify during build/layout.
+- Node sizes are measured by `RenderFlowScene`, reported post-frame through
+  `setNodeDimensions`. Handles use declared geometry; never measure them in builders.
+- Scene items paint in controller order and hit test in reverse. Preserve the
+  interleaved group/edge ordering through viewport args `items`; never use ZIndex.
+- Node and edge widgets are cached by id in `diagram.ts`. Per-item changes notify
+  `nodeSignal(id)` / `edgeSignal(id)` / `connectionSignal`; only structural/global
+  changes notify the controller. `styleVersion` invalidates cached widgets.
+- Dragging a node must rebuild only that node. Zoom only rebuilds nodes whose
+  `nodeTypes.*.lod` breakpoint was crossed. `controller.zoom` is always current.
+- Toolbars use unbounded FlowSceneGroup/FlowSceneItem fractional anchors;
+  a Positioned wrapper would gate hit tests by its own bounds.
 
-## Distribution
+## Templates and distribution
 
-- `src/engine.ts` is the public engine surface re-exported as `flitter-ui/diagram`.
-- `registry/index.mjs` exposes `src/styles/<style>` to the CLI; style files may
-  import the engine only through relative paths (rewritten to `flitter-ui/diagram`
-  on install) and `flitter-core` (rewritten to `flitter-ui`).
-- After changing a style, run `pnpm --dir shared/diagram-presets run sync` and
-  `pnpm --dir packages/flitter test:install`.
+- Base owns `defaultHandles`, `edgePath`, `nodeBox`, `edgeBox`, `viewport`, `layout`
+  and the invisible reconnect area. The style owns colours, fonts and shapes.
+- Base layout reads `config.controls.visible` and `config.minimap.visible`.
+- `plugin.ts` registers one style, `default`. Its StyleConfig has `custom` and
+  `createConfig`. The entry merges `{ ...style.custom, ...custom }` and calls
+  `style.createConfig(config)`, like chart.
+- `src/engine.ts` is the public engine surface exposed as `flitter-ui/diagram`.
+  Templates import it through relative paths rewritten by the CLI. `flitter-core`
+  imports become `flitter-ui` on install.
+- `registry/index.mjs` maps templates to `flow-diagram/{index.ts,base/,style/}`.
+  `shared/diagram-presets` is generated by the CLI. Never edit it by hand.
+- Colour/size tokens belong in config.ts. Draw with ShapePaint/IconPaint for
+  renderer parity. Visual values retain React Flow's style.css defaults.
 
-## Style rules
+## Interactions
 
-- Colour/size tokens belong in `config.ts`; parts read them from `context.config`.
-- Visual numbers copy React Flow's `style.css` unless a comment says otherwise.
-- Draw with `ShapePaint`/`IconPaint` so both renderers stay in sync.
+Presets are `editor`, `viewer` and `whiteboard`. Viewer keeps click selection;
+`select.box` gates box and selection-rect dragging. The controller owns history,
+clipboard, groups, editing, guides, waypoints, collapse and arrangement helpers.
+History marks gesture boundaries; `run(..., { history: "ignore" | "merge" })`
+controls programmatic grouping. Guide builder coordinates are overlay-local;
+`controller.guides` is in flow coordinates. EditableLabel binds label data to the
+core TextField; the engine owns no text.
 
 ## Verification
 
 ```bash
-pnpm --dir packages/diagram typecheck
+pnpm diagram:typecheck
+pnpm --dir packages/diagram lint
 pnpm --dir dev/performance exec vitest run src/diagram
-pnpm story:dev     # Diagram/* stories render SVG and Canvas side by side
+pnpm diagram:test                              # includes browser tests
+pnpm --dir shared/diagram-presets run sync
+pnpm --dir packages/flitter test:install
+node docs/scripts/gen-diagram-api.mjs --check
+pnpm --dir docs build
 ```
 
-## Interaction surface
-
-`Flow({ nodes, edges, custom, config, viewport, interaction, can, on, ... })`
-groups settings and events; presets are `editor`, `viewer`, and `whiteboard`.
-Viewer permits click selection; `select.box` gates box/selection-rect dragging.
-`controller.zoom` is current; `nodeTypes.*.lod` opts nodes into breakpoint-only
-zoom notifications. No LOD means no node rebuild on zoom.
-
-Controller owns history, clipboard, context menus, editing, groups, guides,
-waypoints, collapse and arrangement helpers. History marks gesture boundaries;
-`run(..., { history: "ignore" | "merge" })` controls programmatic grouping.
-Guide overlays use `guidesSignal`; node/edge state uses per-item signals.
-`contextMenu` renders above panels in screen space; guides and edge handles
-stay in flow space. Guide builder coordinates are local to their overlay;
-`controller.guides` remains in flow coordinates. Toolbars use `nodeTypes.*.toolbar`.
-`EditableLabel` binds the core TextField to label data; the engine owns no text.
-
-`FlowDiagram` supplies `defaultCustom` and `DefaultFlowConfig`.
-Install with `flitter add flow-diagram`; sync generated presets after style edits.
+Regenerate presets and API tables after source changes. Storybook Diagram/*
+stories and browser tests cover SVG/Canvas, mouse/touch and rebuild locality.

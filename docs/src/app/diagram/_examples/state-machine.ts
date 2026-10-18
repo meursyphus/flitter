@@ -1,11 +1,11 @@
-import { Alignment, Border, BorderRadius, BoxDecoration, Column, Container, CrossAxisAlignment, EdgeInsets, GestureDetector, MainAxisSize, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextStyle, type Widget } from "flitter-ui";
-import { FlowController, layeredLayout, type FlowNode, type FlowEdge } from "flitter-ui/diagram";
-import { FlowDiagram, defaultHandle } from "@/components/diagram/flow-diagram";
+import { SizedBox, LayoutBuilder, Alignment, Border, BorderRadius, BoxDecoration, Column, Container, CrossAxisAlignment, EdgeInsets, GestureDetector, MainAxisSize, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextStyle, type Widget } from "flitter-ui";
+import { FlowDiagramController, getEdgePathByType, layeredLayout, type FlowNode, type FlowEdge } from "flitter-ui/diagram";
+import FlowDiagram, { defaultHandle, defaultEdge } from "@/components/diagram/flow-diagram";
 
 type Theme = "light" | "dark";
 class Machine extends StatefulWidget { constructor(readonly theme: Theme) { super(theme); } createState() { return new MachineState(); } }
 class MachineState extends State<Machine> {
-  flow = new FlowController();
+  flow = new FlowDiagramController();
   diagram?: Widget;
   selected = "authorizing";
   serial = 1;
@@ -28,7 +28,7 @@ class MachineState extends State<Machine> {
     { id: "captured", source: "capturing", target: "complete", label: "CAPTURED" }
   ].map((e) => ({ ...e, type: "smoothstep", markerEnd: "arrowclosed" }));
   get c() { return this.widget.theme === "dark" ? { bg: "#181c2c", card: "#252d46", ink: "#e5eafa", muted: "#99a6ca", line: "#48577f" } : { bg: "#f5f7ff", card: "#fff", ink: "#2e416b", muted: "#8393b5", line: "#ccd6eb" }; }
-  text(value: string, size = 11, color = this.c.ink) { return Text(value, { style: new TextStyle({ fontFamily: "ui-monospace, monospace", fontSize: size, color }) }); }
+  text(value: string, size = 11, color = this.c.ink) { return Text(value, { style: new TextStyle({ fontFamily: "ui-monospace, monospace", fontSize: Math.max(13, size), color }) }); }
   button(label: string, fn: () => void) {
     return GestureDetector({
       onMouseDown: (e) => e.stopPropagation(),
@@ -61,15 +61,14 @@ class MachineState extends State<Machine> {
     const c = this.c;
     return FlowDiagram({
       controller: this.flow,
-      nodes: this.nodes,
-      edges: this.edges,
-      viewport: { minZoom: 0.15, fitView: { padding: 0.3, maxZoom: 1 } },
-      config: { colorMode: this.widget.theme, colors: { background: c.bg, edgeStroke: "#8899d1" }, minimap: { visible: false } },
+      data: { nodes: this.nodes, edges: this.edges },
+      viewport: { minZoom: 0.15, fitView: { padding: 0.12, maxZoom: 1 } },
+      config: { edgeLabel: { fontSize: 13 }, colorMode: this.widget.theme, colors: { background: c.bg, edgeStroke: "#8899d1" }, minimap: { visible: false } },
       nodeTypes: {
         compound: {
           group: true,
           handles: [],
-          build: ({ node, selected }) =>
+          build: ({ node, isSelected: selected }) =>
             Container({
               padding: EdgeInsets.all(14),
               decoration: new BoxDecoration({ color: c.bg, border: Border.all({ color: selected ? "#8498ef" : c.line, width: 1 }), borderRadius: BorderRadius.circular(12) }),
@@ -84,7 +83,7 @@ class MachineState extends State<Machine> {
             ...(node.id === "authorizing" ? [{ id: "decline", type: "source" as const, position: "bottom" as const }] : []),
             ...(node.id === "failed" ? [{ id: "retry", type: "source" as const, position: "left" as const }, { id: "incoming", type: "target" as const, position: "top" as const }] : [])
           ],
-          build: ({ node, selected }) =>
+          build: ({ node, isSelected: selected }) =>
             Container({
               alignment: Alignment.center,
               padding: EdgeInsets.all(8),
@@ -93,6 +92,12 @@ class MachineState extends State<Machine> {
             })
         }
       },
+      edgeTypes: { smoothstep: { build: defaultEdge, getPath: (params, edge) => {
+        const path = getEdgePathByType("smoothstep", params, edge?.pathOptions);
+        if (edge?.id === "retry") return { ...path, labelX: params.targetX - 60, labelY: params.sourceY - 35 };
+        if (edge?.id === "submit") return { ...path, labelY: path.labelY - 20 };
+        return path;
+      } } },
       custom: {
         handle: (args, ctx) =>
           args.handle.id === "add"
@@ -140,12 +145,13 @@ class MachineState extends State<Machine> {
             })
           })
         }),
-        Positioned({
-          bottom: 12,
-          right: 12,
-          child: Container({ padding: EdgeInsets.all(12), color: this.c.card, child: this.text(`Selected: ${n.data.label ?? "initial"} · ${n.parentId ? `inside ${n.parentId}` : "root"}`, 11, this.c.muted) })
-        }),
-        Positioned({ bottom: 14, left: 125, child: this.text("Double-click a frame → child state · click + → state and transition", 10, this.c.muted) })
+        Positioned({ bottom: 12, left: 125, right: 12, child: Column({
+          mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            SizedBox({ key: "diagram-hint", child: LayoutBuilder({ builder: (_context, size) => size.maxWidth < 363 ? SizedBox.shrink() : Container({ padding: EdgeInsets.only({ bottom: 8 }), child: this.text("Double-click frame: add child · +: add transition", 10, this.c.muted) }) }) }),
+            SizedBox({ key: "diagram-status", child: Container({ padding: EdgeInsets.all(12), color: this.c.card, child: this.text(`Selected: ${n.data.label ?? "initial"} · ${n.parentId ? `inside ${n.parentId}` : "root"}`, 11, this.c.muted) }) })
+          ]
+        }) })
       ]
     });
   }

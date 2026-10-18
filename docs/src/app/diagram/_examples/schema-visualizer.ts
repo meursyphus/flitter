@@ -1,6 +1,6 @@
-import { Border, BorderRadius, BoxDecoration, Center, Column, Container, CrossAxisAlignment, EdgeInsets, GestureDetector, MainAxisSize, Opacity, Positioned, Row, SizedBox, Stack, StackFit, State, StatefulWidget, Text, TextField, TextStyle, type Widget } from "flitter-ui";
-import { FlowController, getSmoothStepPath, layeredLayout, type FlowNode, type FlowEdge, type HandleSpec, type Connection } from "flitter-ui/diagram";
-import { FlowDiagram, defaultEdge } from "@/components/diagram/flow-diagram";
+import { LayoutBuilder, Border, BorderRadius, BoxDecoration, Center, Column, Container, CrossAxisAlignment, EdgeInsets, GestureDetector, MainAxisSize, Opacity, Positioned, Row, SizedBox, Stack, StackFit, State, StatefulWidget, Text, TextField, TextStyle, type Widget } from "flitter-ui";
+import { FlowDiagramController, getSmoothStepPath, layeredLayout, type FlowNode, type FlowEdge, type HandleSpec, type Connection } from "flitter-ui/diagram";
+import FlowDiagram, { defaultEdge } from "@/components/diagram/flow-diagram";
 
 type Theme = "light" | "dark";
 type Field = { name: string; type: string; badge?: "PK" | "FK" };
@@ -12,7 +12,7 @@ const tables: Record<string, Field[]> = {
 };
 class Schema extends StatefulWidget { constructor(readonly theme: Theme) { super(theme); } createState() { return new SchemaState(); } }
 class SchemaState extends State<Schema> {
-  flow = new FlowController();
+  flow = new FlowDiagramController();
   diagram?: Widget;
   query = "";
   hovered: string | null = null;
@@ -26,7 +26,7 @@ class SchemaState extends State<Schema> {
   get c() {
     return this.widget.theme === "dark" ? { bg: "#12191c", card: "#1b262b", ink: "#e4f2ed", mute: "#8da9a0", border: "#344b43" } : { bg: "#f3f8f5", card: "#ffffff", ink: "#153b2e", mute: "#6c8178", border: "#d3e2da" };
   }
-  text(value: string, color = this.c.ink, size = 12) { return Text(value, { style: new TextStyle({ fontFamily: "ui-monospace, monospace", fontSize: size, height: 1.2, color }) }); }
+  text(value: string, color = this.c.ink, size = 12) { return Text(value, { style: new TextStyle({ fontFamily: "ui-monospace, monospace", fontSize: Math.max(13, size), height: 1.2, color }) }); }
   focus(id: string) { this.flow.selectNodes([id]); void this.flow.fitView({ nodes: [{ id }], padding: 1, maxZoom: 1.2, duration: 200 }); }
   hover = () => {
     const id = this.flow.hoveredNodeId;
@@ -55,23 +55,22 @@ class SchemaState extends State<Schema> {
     const c = this.c;
     return FlowDiagram({
       controller: this.flow,
-      nodes: this.nodes,
-      edges: this.edges,
+      data: { nodes: this.nodes, edges: this.edges },
       layout: { algorithm: layeredLayout, options: { direction: "LR", rankSpacing: 95, nodeSpacing: 70 } },
-      viewport: { fitView: { padding: 0.35, maxZoom: 0.95 }, minZoom: 0.15 },
+      viewport: { fitView: { padding: 0.12, maxZoom: 1 }, minZoom: 0.15 },
       interaction: { drag: { snap: { grid: [20, 20] } }, connect: { validate: this.compatible } },
-      config: { colorMode: this.widget.theme, colors: { background: c.bg, edgeStroke: "#49a184", edgeStrokeSelected: "#a78bfa" }, minimap: { visible: false } },
+      config: { edgeLabel: { fontSize: 13 }, colorMode: this.widget.theme, colors: { background: c.bg, edgeStroke: "#49a184", edgeStrokeSelected: "#a78bfa" }, minimap: { visible: false } },
       custom: {
         handle: (a, ctx) => {
           if (!a.node.selected && ctx.hoveredNodeId !== a.node.id && !a.isConnectionCandidate) return SizedBox({ width: 8, height: 8 });
-          const color = a.isConnectionCandidate ? a.isValidCandidate ? "#22c55e" : "#ef4444" : a.handle.type === "source" && a.connectable ? "#8b5cf6" : "#49a184";
+          const color = a.isConnectionCandidate ? a.isValidCandidate ? "#22c55e" : "#ef4444" : a.handle.type === "source" && a.isConnectable ? "#8b5cf6" : "#49a184";
           return SizedBox({ width: 16, height: 16, child: Center({ child: Container({ width: 8, height: 8, decoration: new BoxDecoration({ shape: "circle", color, border: Border.all({ color: c.card, width: 1 }) }) }) }) });
         }
       },
       nodeTypes: {
         table: {
           handles: (n) => this.handles(n),
-          build: ({ node, selected, hovered, isNeighbour }) => {
+          build: ({ node, isSelected: selected, isHovered: hovered, isNeighbour }) => {
             const active = this.hovered ?? this.selected;
             const related = !active || node.id === active || isNeighbour;
             return Opacity({
@@ -108,7 +107,7 @@ class SchemaState extends State<Schema> {
         relation: {
           build: (args, ctx) =>
             Opacity({
-              opacity: (!this.hovered && !this.selected) || args.isNeighbour || args.selected ? 1 : 0.2,
+              opacity: (!this.hovered && !this.selected) || args.isNeighbour || args.isSelected ? 1 : 0.2,
               child: defaultEdge({...args, edge: {...args.edge, style: { stroke: args.isNeighbour ? "#8b5cf6" : "#60a58e", strokeWidth: args.isNeighbour ? 2 : 1 } } }, ctx)
             }),
           // Pick the closest pair of table sides without changing persisted FK ids.
@@ -131,10 +130,11 @@ class SchemaState extends State<Schema> {
   }
   build(): Widget {
     const c = this.c;
-    return Stack({
+    // Like ChartDB, the table list is a column beside the canvas on wide stages.
+    return LayoutBuilder({ builder: (_context, size) => Stack({
       fit: StackFit.expand,
       children: [
-        (this.diagram ??= this.createDiagram()),
+        Positioned({ left: size.maxWidth >= 700 ? 229 : 0, top: 0, right: 0, bottom: 0, child: (this.diagram ??= this.createDiagram()) }),
         Positioned({
           left: 12,
           top: 12,
@@ -171,9 +171,9 @@ class SchemaState extends State<Schema> {
             })
           })
         }),
-        Positioned({ bottom: 14, left: 125, child: this.text("Drag a violet FK port to a matching type · 20px grid", c.mute, 10) })
+        Positioned({ key: "diagram-hint", bottom: 14, left: 0, right: 0, child: LayoutBuilder({ builder: (_context, size) => size.maxWidth < 500 ? SizedBox.shrink() : Container({ padding: EdgeInsets.only({ left: size.maxWidth >= 700 ? 280 : 125, right: 16 }), child: this.text("Drag a violet FK port to a matching type · 20px grid", c.mute, 10) }) }) })
       ]
-    });
+    }) });
   }
   dispose() { this.flow.nodes.forEach((n) => this.flow.nodeSignal(n.id).removeListener(this.hover)); this.flow.dispose(); super.dispose(); }
 }

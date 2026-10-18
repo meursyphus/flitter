@@ -36,7 +36,7 @@ export const recipeLabels: Record<RecipeId, string> = {
   "drill-down": "Drill down",
 };
 
-export type ExampleFactory = (theme: Theme) => Widget;
+export type ExampleFactory = (theme: Theme, options?: { presentation?: "gallery" | "hero" }) => Widget;
 
 export type GalleryEntry = {
   slug: string;

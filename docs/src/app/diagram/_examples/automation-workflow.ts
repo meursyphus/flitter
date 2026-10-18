@@ -1,6 +1,6 @@
-import { Border, BorderRadius, BoxDecoration, Column, Container, CrossAxisAlignment, EdgeInsets, GestureDetector, InputDecoration, MainAxisSize, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextField, TextStyle, type Widget } from "flitter-ui";
-import { FlowController, createId, layeredLayout, type FlowNode, type FlowEdge, type XYPosition } from "flitter-ui/diagram";
-import { FlowDiagram, defaultEdge } from "@/components/diagram/flow-diagram";
+import { Alignment, SizedBox, LayoutBuilder, Border, BorderRadius, BoxDecoration, Column, Container, CrossAxisAlignment, EdgeInsets, GestureDetector, InputDecoration, MainAxisSize, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextField, TextStyle, type Widget } from "flitter-ui";
+import { FlowDiagramController, createId, layeredLayout, type FlowNode, type FlowEdge, type XYPosition } from "flitter-ui/diagram";
+import FlowDiagram, { defaultEdge } from "@/components/diagram/flow-diagram";
 
 type Theme = "light" | "dark";
 const actions = [
@@ -8,9 +8,9 @@ const actions = [
   { label: "Create HubSpot contact", icon: "H", detail: "Upsert by email", color: "#ea580c" },
   { label: "Write to Postgres", icon: "DB", detail: "public.signup_events", color: "#2563eb" }
 ];
-class Automation extends StatefulWidget { constructor(readonly theme: Theme) { super(theme); } createState() { return new AutomationState(); } }
+class Automation extends StatefulWidget { constructor(readonly theme: Theme, readonly presentation: "gallery" | "hero" = "gallery") { super(theme); } createState() { return new AutomationState(); } }
 class AutomationState extends State<Automation> {
-  flow = new FlowController();
+  flow = new FlowDiagramController();
   diagram?: Widget;
   query = "";
   running = false;
@@ -22,7 +22,7 @@ class AutomationState extends State<Automation> {
     { id: "qualified", type: "condition", position: { x: 540, y: 100 }, data: { label: "Qualified lead?", detail: "employees ≥ 50", icon: "IF", color: "#16a34a" } },
     { id: "slack", position: { x: 820, y: 10 }, data: actions[0] },
     { id: "nurture", position: { x: 820, y: 210 }, data: { label: "Add to nurture", detail: "Customer.io · welcome", icon: "M", color: "#db2777" } }
-  ].map((n) => ({ ...n, type: n.type ?? "action", width: 205, height: 100 }));
+  ].map((n) => ({ ...n, type: n.type ?? "action", width: 205, height: 82 }));
   edges: FlowEdge[] = [
     { id: "in", source: "webhook", target: "enrich" },
     { id: "check", source: "enrich", target: "qualified" },
@@ -32,7 +32,7 @@ class AutomationState extends State<Automation> {
   get c() {
     return this.widget.theme === "dark" ? { bg: "#18171f", card: "#252330", ink: "#f2edf9", mute: "#a89fb9", border: "#443c52" } : { bg: "#faf8fc", card: "#ffffff", ink: "#302540", mute: "#887a96", border: "#e8dfed" };
   }
-  text(value: string, size = 12, color = this.c.ink) { return Text(value, { style: new TextStyle({ fontFamily: "system-ui", color, fontSize: size }) }); }
+  text(value: string, size = 12, color = this.c.ink) { return Text(value, { style: new TextStyle({ fontFamily: "system-ui", color, fontSize: Math.max(13, size) }) }); }
   button(label: string, action: () => void, primary = false) {
     return GestureDetector({
       onMouseDown: (e) => e.stopPropagation(),
@@ -59,7 +59,7 @@ class AutomationState extends State<Automation> {
     this.flow.history.mark("Add connected action");
     this.flow.run(
       () => {
-        this.flow.addNodes({ id, type: "action", position: search.at, width: 205, height: 100, data: actions[index] });
+        this.flow.addNodes({ id, type: "action", position: search.at, width: 205, height: 82, data: actions[index] });
         this.flow.addEdges({ id: `edge-${id}`, source: search.source, sourceHandle: search.handle, target: id, type: "workflow" });
       },
       { history: "merge" }
@@ -85,12 +85,12 @@ class AutomationState extends State<Automation> {
     this.flow.run(
       () => {
         moving.forEach((key) => { const n = this.flow.getNode(key)!; this.flow.updateNode(key, { position: { x: n.position.x + 270, y: n.position.y } }); });
-        this.flow.insertNodeOnEdge(e.id, { id, type: "action", position: { x: source.position.x + 270, y: target.position.y }, width: 205, height: 100, data: actions[2] });
+        this.flow.insertNodeOnEdge(e.id, { id, type: "action", position: { x: source.position.x + 270, y: target.position.y }, width: 205, height: 82, data: actions[2] });
         this.flow.setEdges((es) => es.map((edge) => (edge.source === id ? { ...edge, label: " " } : edge)));
       },
       { history: "merge" }
     );
-    void this.flow.fitView({ padding: 0.3, maxZoom: 1 });
+    void this.flow.fitView({ padding: 0.12, minZoom: 0.8, maxZoom: 1 });
   }
   run() {
     if (this.running) return;
@@ -111,8 +111,9 @@ class AutomationState extends State<Automation> {
   }
   createDiagram(): Widget {
     const c = this.c;
-    const build = ({ node, selected }: { node: FlowNode; selected: boolean }) =>
+    const build = ({ node, isSelected: selected }: { node: FlowNode; isSelected: boolean }) =>
       Container({
+        alignment: Alignment.centerLeft,
         padding: EdgeInsets.all(14),
         decoration: new BoxDecoration({ color: c.card, border: Border.all({ color: selected ? "#e85d4a" : c.border, width: selected ? 2 : 1 }), borderRadius: BorderRadius.circular(12) }),
         child: Column({
@@ -127,10 +128,9 @@ class AutomationState extends State<Automation> {
       });
     return FlowDiagram({
       controller: this.flow,
-      nodes: this.nodes,
-      edges: this.edges,
-      viewport: { minZoom: 0.15, fitView: { padding: 0.3, maxZoom: 1 } },
-      config: { colorMode: this.widget.theme, colors: { background: c.bg }, minimap: { visible: false }, edge: { strokeWidth: 2 } },
+      data: { nodes: this.nodes, edges: this.edges },
+      viewport: { minZoom: 0.15, fitView: { padding: 0.12, minZoom: this.widget.presentation === "hero" ? 1 : 0.15, maxZoom: 1, nodes: this.widget.presentation === "hero" ? [{ id: "qualified" }, { id: "slack" }, { id: "nurture" }] : undefined } },
+      config: { edgeLabel: { fontSize: 13 }, colorMode: this.widget.theme, colors: { background: c.bg }, minimap: { visible: false }, edge: { strokeWidth: 2 } },
       nodeTypes: {
         action: { build, handles: [{ type: "target", position: "left" }, { type: "source", position: "right" }] },
         condition: { build, handles: [{ type: "target", position: "left" }, { id: "yes", type: "source", position: "right", align: 0.3 }, { id: "no", type: "source", position: "right", align: 0.75 }] }
@@ -138,7 +138,7 @@ class AutomationState extends State<Automation> {
       edgeTypes: { workflow: { build: defaultEdge } },
       custom: {
         edgeLabel: (args) =>
-          args.hovered ? Row({ mainAxisSize: MainAxisSize.min, children: [this.button("+", () => this.insert(args.edge.id)), this.button("×", () => void this.flow.deleteElements({ edges: [args.edge] }))] }) : null
+          args.isHovered ? Row({ mainAxisSize: MainAxisSize.min, children: [this.button("+", () => this.insert(args.edge.id)), this.button("×", () => void this.flow.deleteElements({ edges: [args.edge] }))] }) : SizedBox.shrink()
       },
       // A space label reserves an anchor for hover actions on unlabelled edges.
       on: {
@@ -170,7 +170,7 @@ class AutomationState extends State<Automation> {
             })
           ])
         }),
-        Positioned({ bottom: 14, left: 125, child: this.text("Drag an output into empty space to add an action · hover a connection for + / ×", 11, this.c.mute) }),
+        Positioned({ key: "diagram-hint", bottom: 14, left: 0, right: 0, child: LayoutBuilder({ builder: (_context, size) => size.maxWidth < 500 ? SizedBox.shrink() : Container({ padding: EdgeInsets.only({ left: 125, right: 16 }), child: this.text("Drag an output into empty space to add an action · hover a connection for + / ×", 11, this.c.mute) }) }) }),
         ...(popup
           ? [
               Positioned({
@@ -205,4 +205,4 @@ class AutomationState extends State<Automation> {
   }
   dispose() { clearTimeout(this.timer); this.flow.dispose(); super.dispose(); }
 }
-export default function AutomationWorkflow(theme: Theme = "light"): Widget { return new Automation(theme); }
+export default function AutomationWorkflow(theme: Theme = "light", options?: { presentation?: "gallery" | "hero" }): Widget { return new Automation(theme, options?.presentation); }

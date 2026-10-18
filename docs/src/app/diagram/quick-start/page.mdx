@@ -18,7 +18,7 @@ export const metadata = {
 ```tsx
 import Widget from "@flitterjs/react";
 import { layeredLayout, type FlowEdge, type FlowNode } from "flitter-ui/diagram";
-import { FlowDiagram } from "@/components/diagram/flow-diagram";
+import FlowDiagram from "@/components/diagram/flow-diagram";
 
 // Positions are placeholders; the layout places every node.
 const nodes: FlowNode[] = [
@@ -34,8 +34,7 @@ const edges: FlowEdge[] = [
 
 // Create the widget once. A new instance remounts the editor.
 const diagram = FlowDiagram({
-  nodes,
-  edges,
+  data: { nodes, edges },
   layout: { algorithm: layeredLayout, options: { direction: "TB", rankSpacing: 80 } },
   viewport: { fitView: { padding: 0.3 } },
   interaction: { drag: { snap: { grid: [20, 20] } } },

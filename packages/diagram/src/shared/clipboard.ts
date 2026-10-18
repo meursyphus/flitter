@@ -1,4 +1,4 @@
-import type { FlowContent, FlowNode, XYPosition } from "../headless/flow/types";
+import type { FlowContent, FlowNode, XYPosition } from "../headless/flow-diagram/types";
 import { createId } from "./utils";
 
 /** Remap a closed subgraph, preserving relative positions inside copied parents. */
