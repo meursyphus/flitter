@@ -1,13 +1,23 @@
 /**
- * Browser checks for the diagram docs, run against the exported site:
+ * Browser checks for the diagram docs, against a dev server or the export:
  *   DIAGRAM_DOCS_URL=http://localhost:3017 pnpm test:diagram-docs
  *
  * Gallery entries come from `_data/gallery/catalog.ts` (only those with
  * `load`), interaction cells from `_data/interactions/cells.ts` (live only
  * when `ready`), so flipping either data file changes what is checked.
+ *
+ * Every slug, chip and cell is its own step: a failure is recorded and the
+ * run goes on, then a summary prints and the exit code is 1 if any failed.
+ *
+ *   DIAGRAM_DOCS_BROWSER=chrome     Playwright channel (default: bundled Chromium)
+ *   DIAGRAM_DOCS_ARTIFACTS=dir      write screenshots there
+ *   DIAGRAM_DOCS_THUMBNAILS=1       rewrite public/diagram/thumbnails/<slug>-<theme>.svg
+ *                                   from each example's SVG stage (gallery cards use them)
+ *   DIAGRAM_DOCS_ONLY=a,b           run only these sections (examples, index, cells,
+ *                                   api, links, mobile) or these slugs / cell ids
  */
 import assert from "node:assert/strict";
-import { mkdir, readFile } from "node:fs/promises";
+import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
@@ -15,9 +25,13 @@ import { chromium } from "playwright";
 
 const docs = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const diagramDir = path.join(docs, "src/app/diagram");
+const thumbnailsDir = path.join(docs, "public/diagram/thumbnails");
 const base = process.env.DIAGRAM_DOCS_URL ?? "http://localhost:3017";
 const artifacts = process.env.DIAGRAM_DOCS_ARTIFACTS;
+const capture = process.env.DIAGRAM_DOCS_THUMBNAILS === "1";
+const only = process.env.DIAGRAM_DOCS_ONLY?.split(",").map((s) => s.trim()).filter(Boolean);
 if (artifacts) await mkdir(artifacts, { recursive: true });
+if (capture) await mkdir(thumbnailsDir, { recursive: true });
 
 /** Object literals of an exported array, as { key: literal | true }. */
 async function readArray(file, name) {
@@ -49,14 +63,37 @@ async function readArray(file, name) {
 const entries = (await readArray(path.join(diagramDir, "_data/gallery/catalog.ts"), "catalog")).filter((e) => e.load);
 const cells = await readArray(path.join(diagramDir, "_data/interactions/cells.ts"), "cells");
 const slugs = entries.map((e) => e.slug);
+/** Same order as the filter row in `gallery-grid.tsx`. */
+const chips = [...new Set(entries.flatMap((e) => e.chips))];
+
+const wants = (section, id) => !only || only.includes(section) || (id !== undefined && only.includes(id));
 
 const browser = await chromium.launch({ channel: process.env.DIAGRAM_DOCS_BROWSER });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1100 }, permissions: ["clipboard-read", "clipboard-write"] });
 const page = await context.newPage();
 page.setDefaultTimeout(15000);
+page.setDefaultNavigationTimeout(90000);
 const errors = [];
 page.on("pageerror", (error) => errors.push(error.message));
 page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+
+const results = [];
+/** Runs one named check; browser errors raised during it fail it too. */
+async function step(name, fn) {
+  const before = errors.length;
+  try {
+    const note = await fn();
+    const raised = errors.slice(before);
+    assert.deepEqual(raised, [], "browser errors");
+    results.push({ name, ok: true });
+    console.log(`✓ ${name}${note ? `: ${note}` : ""}`);
+  } catch (error) {
+    const raised = errors.slice(before);
+    const message = `${String(error.message).split("\n")[0]}${raised.length && !String(error.message).startsWith("browser errors") ? ` [browser: ${raised[0]}]` : ""}`;
+    results.push({ name, ok: false, message });
+    console.log(`✗ ${name}: ${message}`);
+  }
+}
 
 async function open(route) {
   const response = await page.goto(`${base}${route}`);
@@ -79,127 +116,365 @@ async function theme(value) {
 async function shot(name, locator = page) {
   if (artifacts) await locator.screenshot({ path: path.join(artifacts, `${name}.png`) });
 }
+const svgText = (scope, text) => scope.locator("svg text").filter({ hasText: new RegExp(`^${text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`) });
 // Flitter performs its own hit testing; SVG text is pointer-events:none.
 async function clickWidget(locator) {
-  await locator.waitFor();
-  const box = await locator.boundingBox();
+  await locator.first().waitFor();
+  const box = await locator.first().boundingBox();
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
 }
+async function center(locator) {
+  await locator.first().waitFor();
+  const box = await locator.first().boundingBox();
+  return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+}
+
+/** The example's SVG stage as a standalone file the card can show with <img>. */
+async function writeThumbnail(preview, slug, color) {
+  await page.mouse.move(0, 0);
+  await page.waitForTimeout(1200); // fitView and mount-time layouts animate
+  const svg = await preview.locator("svg").last().evaluate((el) => {
+    const { width, height } = el.getBoundingClientRect();
+    const font = getComputedStyle(el.querySelector("text") ?? el).fontFamily;
+    const copy = el.cloneNode(true);
+    copy.removeAttribute("style");
+    for (const node of [copy, ...copy.querySelectorAll("*")]) {
+      for (const name of ["data-render-name", "data-render-type"]) node.removeAttribute(name);
+    }
+    copy.setAttribute("viewBox", `0 0 ${Math.round(width)} ${Math.round(height)}`);
+    copy.setAttribute("width", String(Math.round(width)));
+    copy.setAttribute("height", String(Math.round(height)));
+    copy.setAttribute("font-family", `${font}, system-ui, -apple-system, "Segoe UI", sans-serif`);
+    return new XMLSerializer().serializeToString(copy);
+  });
+  await writeFile(path.join(thumbnailsDir, `${slug}-${color}.svg`), `${svg}\n`);
+}
+
+/* Interaction checks beyond "it renders", keyed by cell id. */
+const cellBehaviour = {
+  async collapse(el) {
+    await svgText(el, "Engineer").waitFor();
+    await clickWidget(svgText(el, "▾"));
+    await svgText(el, "+2").waitFor();
+    assert.equal(await svgText(el, "Engineer").count(), 0, "chevron hides the team");
+    await clickWidget(svgText(el, "▸"));
+    await svgText(el, "Engineer").waitFor();
+    return "chevron collapses and expands";
+  },
+  async "insert-on-edge"(el) {
+    const from = await center(svgText(el, "Trigger"));
+    const to = await center(svgText(el, "Action"));
+    await page.mouse.move(from.x, (from.y + to.y) / 2, { steps: 4 });
+    const plus = svgText(el, "+");
+    await plus.waitFor();
+    await clickWidget(plus);
+    await svgText(el, "New step").waitFor();
+    return "hover + click inserts a step";
+  },
+  async keyboard(el) {
+    const x = async () => (await center(svgText(el, "Fetch"))).x;
+    await clickWidget(svgText(el, "Fetch"));
+    const start = await x();
+    await page.keyboard.press("ArrowRight");
+    await settle();
+    const one = (await x()) - start;
+    await page.keyboard.press("Shift+ArrowRight");
+    await settle();
+    const ten = (await x()) - start - one;
+    assert(one > 0 && Math.abs(ten / one - 10) < 1.5, `arrow ${one.toFixed(2)}px, Shift+arrow ${ten.toFixed(2)}px`);
+    return "arrow nudges, Shift moves ten times as far";
+  },
+  async delete(el) {
+    await clickWidget(svgText(el, "Delete me"));
+    await page.keyboard.press("Backspace");
+    await page.waitForFunction(() => ![...document.querySelectorAll('[data-cell="delete"] svg text')].some((t) => t.textContent === "Delete me"));
+    await clickWidget(svgText(el, "Start (kept)"));
+    await page.keyboard.press("Backspace");
+    await page.waitForTimeout(200);
+    assert.equal(await svgText(el, "Start (kept)").count(), 1, "Start is vetoed");
+    return "Backspace deletes, Start is kept";
+  },
+  async clipboard(el) {
+    await clickWidget(svgText(el, "Fetch"));
+    await page.keyboard.press("ControlOrMeta+c");
+    await page.keyboard.press("ControlOrMeta+v");
+    await page.waitForFunction(() => [...document.querySelectorAll('[data-cell="clipboard"] svg text')].filter((t) => t.textContent === "Fetch").length === 2);
+    await page.keyboard.press("ControlOrMeta+d");
+    await page.waitForFunction(() => [...document.querySelectorAll('[data-cell="clipboard"] svg text')].filter((t) => t.textContent === "Fetch").length === 3);
+    return "copy, paste, duplicate";
+  },
+  async undo(el) {
+    const label = svgText(el, "Review");
+    const before = await center(label);
+    await page.mouse.move(before.x, before.y);
+    await page.mouse.down();
+    await page.mouse.move(before.x + 60, before.y + 10, { steps: 6 });
+    await page.mouse.up();
+    assert((await center(label)).x > before.x + 30, "drag moved the node");
+    await page.keyboard.press("ControlOrMeta+z");
+    await settle();
+    assert(Math.abs((await center(label)).x - before.x) < 2, "undo restores the position");
+    await page.keyboard.press("ControlOrMeta+Shift+z");
+    await settle();
+    assert((await center(label)).x > before.x + 30, "redo moves it again");
+    return "drag, undo, redo";
+  },
+  async front(el) {
+    await clickWidget(svgText(el, "Bottom card").first());
+    await settle();
+    const order = await el.locator("svg text").evaluateAll((els) => els.map((t) => t.textContent).filter((t) => t.endsWith(" card")));
+    assert.equal(order.at(-1), "Bottom card", `paint order ${order.join(", ")}`);
+    return "clicked card paints last";
+  },
+  async "context-menu"(el) {
+    await svgText(el, "Review").first().waitFor();
+    const at = await center(svgText(el, "Review"));
+    await page.mouse.click(at.x, at.y, { button: "right" });
+    await svgText(el, "Duplicate").waitFor();
+    await page.keyboard.press("Escape");
+    return "right-click opens the menu";
+  },
+  async layout(el) {
+    const before = await center(svgText(el, "Stock"));
+    await clickWidget(svgText(el, "Grid"));
+    await page.waitForTimeout(800);
+    const after = await center(svgText(el, "Stock"));
+    assert(Math.hypot(after.x - before.x, after.y - before.y) > 10, "Grid moves the nodes");
+    return "buttons re-run the layout";
+  },
+  async "read-only"(el) {
+    const before = await center(svgText(el, "Review"));
+    await page.mouse.move(before.x, before.y);
+    await page.mouse.down();
+    await page.mouse.move(before.x + 60, before.y, { steps: 6 });
+    await page.mouse.up();
+    const after = await center(svgText(el, "Review"));
+    // Dragging a locked node pans the pane, so compare against its neighbour.
+    assert(Math.abs((await center(svgText(el, "Draft"))).x - after.x) < 2, "node did not leave its column");
+    return "nodes stay put";
+  },
+  async overlap(el) {
+    const target = await svgText(el, "Drop onto me").boundingBox();
+    const from = await center(svgText(el, "Drag me"));
+    await page.mouse.move(from.x, from.y);
+    await page.mouse.down();
+    await page.mouse.move(target.x + target.width / 2 + 10, target.y + target.height / 2 + 4, { steps: 10 });
+    await page.mouse.up();
+    await page.waitForTimeout(300);
+    const a = await svgText(el, "Drop onto me").boundingBox();
+    const b = await svgText(el, "Drag me").boundingBox();
+    assert(Math.abs(a.y - b.y) > 20 || Math.abs(a.x - b.x) > 60, "dropped node is pushed aside");
+    return "push on drop";
+  },
+  async align(el) {
+    const box = await el.locator("svg").first().boundingBox();
+    await page.keyboard.down("Shift");
+    // Right to left from the top corner: the button panel sits top-left.
+    await page.mouse.move(box.x + box.width - 4, box.y + 4);
+    await page.mouse.down();
+    await page.mouse.move(box.x + 4, box.y + box.height - 4, { steps: 10 });
+    await page.mouse.up();
+    await page.keyboard.up("Shift");
+    await clickWidget(svgText(el, "Align left"));
+    await settle();
+    const xs = await Promise.all(["One", "Two", "Three"].map(async (t) => (await center(svgText(el, t))).x));
+    assert(Math.max(...xs) - Math.min(...xs) < 2, `aligned x ${xs.map((x) => x.toFixed(0)).join(", ")}`);
+    return "Shift-drag then Align left";
+  },
+  async "delete-reconnect"(el) {
+    await clickWidget(svgText(el, "Remove review"));
+    await page.waitForFunction((cell) => ![...document.querySelectorAll(`[data-cell="${cell}"] svg text`)].some((t) => t.textContent === "Review"), "delete-reconnect");
+    await svgText(el, "Publish").waitFor();
+    return "button removes the middle step";
+  },
+};
 
 try {
-  /* Gallery index: one card per listed entry, chip filters by interaction. */
-  await open("/diagram/gallery/");
-  assert.equal(await page.locator("[data-example]").count(), slugs.length);
-  assert.equal(await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Gallery", exact: true }).getAttribute("href"), "/diagram/gallery/");
-  const filters = page.getByRole("group", { name: "Filter by interaction" });
-  const chipButton = filters.getByRole("button").nth(1);
-  const chipLabel = await chipButton.textContent();
-  await chipButton.click();
-  const filtered = await page.locator("[data-example]").count();
-  assert(filtered >= 1 && filtered <= slugs.length, `filter ${chipLabel}`);
-  await filters.getByRole("button", { name: "All", exact: true }).click();
-  assert.equal(await page.locator("[data-example]").count(), slugs.length);
-  await svgReady(page.locator("[data-example]").first());
-  await shot("gallery-desktop");
-  console.log(`✓ gallery index: ${slugs.length} cards, filter "${chipLabel}" → ${filtered}`);
-
-  /* Detail pages: exact source, SVG/Canvas, light/dark. */
-  for (const entry of entries) {
-    const { slug } = entry;
-    await open(`/diagram/gallery/${slug}/`);
-    const preview = page.locator(`[data-example="${slug}"]`).first();
-    await svgReady(preview);
-    const source = await readFile(path.join(diagramDir, "_examples", `${entry.file ?? slug}.ts`), "utf8");
-    const code = page.locator("[data-code-tabs]");
-    assert.equal(await code.getByRole("tab").first().textContent(), `${slug}.ts`);
-    await code.getByRole("button", { name: "Copy code" }).click();
-    assert.equal(await page.evaluate(() => navigator.clipboard.readText()), source, `${slug}: copied source`);
-    await preview.scrollIntoViewIfNeeded();
-    for (const color of ["light", "dark"]) {
-      await theme(color);
-      for (const renderer of ["SVG", "Canvas"]) {
-        await preview.getByRole("button", { name: renderer, exact: true }).click();
-        if (renderer === "SVG") await svgReady(preview);
-        else {
-          await preview.locator("canvas").first().waitFor();
-          await settle();
-          assert(await preview.locator("canvas").first().evaluate((canvas) => canvas.width > 0 && canvas.height > 0), `${slug}: canvas size`);
+  /* Detail pages: exact source, SVG/Canvas, light/dark (and thumbnails). */
+  if (wants("examples") || slugs.some((slug) => only?.includes(slug))) {
+    for (const entry of entries) {
+      const { slug } = entry;
+      if (!wants("examples", slug)) continue;
+      await step(`example ${slug}`, async () => {
+        await open(`/diagram/gallery/${slug}/`);
+        const preview = page.locator(`[data-example="${slug}"]`).first();
+        await svgReady(preview);
+        const source = await readFile(path.join(diagramDir, "_examples", `${entry.file ?? slug}.ts`), "utf8");
+        const code = page.locator("[data-code-tabs]");
+        assert.equal(await code.getByRole("tab").first().textContent(), `${slug}.ts`);
+        await code.getByRole("button", { name: "Copy code" }).click();
+        assert.equal(await page.evaluate(() => navigator.clipboard.readText()), source, "copied source");
+        await preview.scrollIntoViewIfNeeded();
+        for (const color of ["light", "dark"]) {
+          await theme(color);
+          for (const renderer of ["SVG", "Canvas"]) {
+            await preview.getByRole("button", { name: renderer, exact: true }).click();
+            if (renderer === "SVG") {
+              await svgReady(preview);
+              if (capture) await writeThumbnail(preview, slug, color);
+            } else {
+              await preview.locator("canvas").first().waitFor();
+              await settle();
+              assert(await preview.locator("canvas").first().evaluate((canvas) => canvas.width > 0 && canvas.height > 0), "canvas size");
+            }
+            await shot(`${slug}-${color}-${renderer.toLowerCase()}`, preview);
+          }
         }
-        await shot(`${slug}-${color}-${renderer.toLowerCase()}`, preview);
-      }
+        return `exact source, SVG/Canvas, light/dark${capture ? ", thumbnails written" : ""}`;
+      });
     }
-    console.log(`✓ ${slug}: exact source, SVG/Canvas, light/dark`);
+
+    /* The workflow example's own action, dragging and reset. */
+    if (slugs.includes("automation-workflow") && wants("examples", "automation-workflow")) {
+      await step("automation-workflow interactions", async () => {
+        await open("/diagram/gallery/automation-workflow/");
+        const workflow = page.locator('[data-example="automation-workflow"]').first();
+        await svgReady(workflow);
+        const run = workflow.locator("svg text").filter({ hasText: /Run 12 signups$/ });
+        if (!(await run.count())) return "replaced example, action check skipped";
+        await clickWidget(run);
+        await workflow.locator("svg text").filter({ hasText: /✓ 12 items$/ }).first().waitFor();
+        const signup = svgText(workflow, "New signup");
+        const before = await signup.boundingBox();
+        await page.mouse.move(before.x + before.width / 2, before.y + before.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(before.x + before.width / 2 + 45, before.y + before.height / 2 + 40, { steps: 8 });
+        await page.mouse.up();
+        const after = await signup.boundingBox();
+        assert(after.x > before.x + 20 && after.y > before.y + 20, "custom node drags after its data changes");
+        await workflow.getByRole("button", { name: "Reset", exact: true }).click();
+        await svgReady(workflow);
+        assert.equal(await workflow.locator("svg text").filter({ hasText: /✓ \d+ items$/ }).count(), 0, "Reset restores the initial state");
+        return "run, drag, reset";
+      });
+    }
   }
 
-  /* The workflow example's own action, dragging and reset. */
-  if (slugs.includes("automation-workflow")) {
-    await open("/diagram/gallery/automation-workflow/");
-    const workflow = page.locator('[data-example="automation-workflow"]').first();
-    await svgReady(workflow);
-    const review = workflow.locator("svg text").filter({ hasText: /^Review deploy$/ });
-    if (await review.count()) {
-      await clickWidget(review);
-      await clickWidget(workflow.locator("svg text").filter({ hasText: /^Mark complete$/ }));
-      await workflow.locator("svg text").filter({ hasText: /^Approved just now$/ }).waitFor();
-      const before = await review.boundingBox();
-      await page.mouse.move(before.x + before.width / 2, before.y + before.height / 2);
-      await page.mouse.down();
-      await page.mouse.move(before.x + before.width / 2 + 45, before.y + before.height / 2 + 40, { steps: 8 });
-      await page.mouse.up();
-      const after = await review.boundingBox();
-      assert(after.x > before.x + 20 && after.y > before.y + 20, "Custom node drags after its data changes");
-      await workflow.getByRole("button", { name: "Reset", exact: true }).click();
-      await svgReady(workflow);
-      assert.equal(await workflow.locator("svg text").filter({ hasText: /^Approved just now$/ }).count(), 0);
-      console.log("✓ automation-workflow: action, drag, reset");
-    } else console.log("- automation-workflow: replaced example, action check skipped");
+  /* Gallery index: a thumbnail card per entry, every chip filters correctly. */
+  if (wants("index")) {
+    await step("gallery thumbnails on disk", async () => {
+      for (const slug of slugs) for (const color of ["light", "dark"]) {
+        await access(path.join(thumbnailsDir, `${slug}-${color}.svg`)).catch(() => assert.fail(`missing ${slug}-${color}.svg (run with DIAGRAM_DOCS_THUMBNAILS=1)`));
+      }
+      return `${slugs.length * 2} files`;
+    });
+    await step("gallery index", async () => {
+      await open("/diagram/gallery/");
+      const cards = page.locator("[data-card]");
+      assert.equal(await cards.count(), slugs.length, "one card per listed entry");
+      assert.deepEqual(await cards.evaluateAll((els) => els.map((el) => el.getAttribute("data-card"))), slugs, "catalog order");
+      assert.equal(await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Gallery", exact: true }).getAttribute("href"), "/diagram/gallery/");
+      for (const color of ["light", "dark"]) {
+        await theme(color);
+        for (let i = 0; i < slugs.length; i++) {
+          const img = cards.nth(i).locator(`img[data-thumbnail="${color}"]`);
+          await img.scrollIntoViewIfNeeded();
+          await page.waitForFunction((el) => el.complete, await img.elementHandle());
+          assert(await img.evaluate((el) => el.naturalWidth > 0 && el.getBoundingClientRect().height > 0), `${slugs[i]}: ${color} thumbnail shows`);
+          assert.equal(await cards.nth(i).locator(`img[data-thumbnail="${color === "light" ? "dark" : "light"}"]`).isVisible(), false, `${slugs[i]}: only the ${color} thumbnail shows`);
+        }
+      }
+      await page.evaluate(() => scrollTo(0, 0));
+      await shot("gallery-desktop");
+      return `${slugs.length} cards with light and dark thumbnails`;
+    });
+    await step(`gallery chip filters (${chips.length} chips)`, async () => {
+      const filters = page.getByRole("group", { name: "Filter by interaction" });
+      assert.equal(await filters.getByRole("button").count(), chips.length + 1, "All plus one button per chip");
+      for (let i = 0; i < chips.length; i++) {
+        await filters.getByRole("button").nth(i + 1).click();
+        const expected = entries.filter((e) => e.chips.includes(chips[i])).map((e) => e.slug);
+        assert.deepEqual(await page.locator("[data-card]").evaluateAll((els) => els.map((el) => el.getAttribute("data-card"))), expected, `chip ${chips[i]}`);
+      }
+      await filters.getByRole("button", { name: "All", exact: true }).click();
+      assert.equal(await page.locator("[data-card]").count(), slugs.length);
+      return "every chip shows exactly the entries that list it";
+    });
+    await step("gallery echoes on one line", async () => {
+      for (const width of [1440, 390]) {
+        await page.setViewportSize({ width, height: 1100 });
+        await settle();
+        const wrapped = await page.locator("[data-card] [data-echoes]").evaluateAll((els) =>
+          els.filter((el) => el.getBoundingClientRect().height > parseFloat(getComputedStyle(el).fontSize) * 1.7).map((el) => el.textContent),
+        );
+        assert.deepEqual(wrapped, [], `wraps at ${width}px`);
+      }
+      await page.setViewportSize({ width: 1440, height: 1100 });
+      return "1440px and 390px";
+    });
   }
 
-  /* Interactions: every ready cell renders live, the rest show a placeholder. */
-  await theme("light");
-  await open("/diagram/interactions/");
-  assert.equal(await page.locator("[data-cell]").count(), cells.length);
-  for (const cell of cells) {
-    const el = page.locator(`[data-cell="${cell.id}"]`);
-    await el.scrollIntoViewIfNeeded();
-    if (cell.ready) await svgReady(el);
-    else await el.getByText("Live demo in progress").waitFor();
-    assert(await el.locator("pre").count(), `${cell.id}: snippet`);
+  /* Interactions: every ready cell renders live; some also get exercised. */
+  if (wants("cells") || cells.some((cell) => only?.includes(cell.id))) {
+    await open("/diagram/interactions/");
+    await theme("light");
+    await step("interactions page", async () => {
+      assert.equal(await page.locator("[data-cell]").count(), cells.length);
+      return `${cells.length} cells, ${cells.filter((c) => c.ready).length} live`;
+    });
+    for (const cell of cells) {
+      if (!wants("cells", cell.id)) continue;
+      await step(`cell ${cell.id}`, async () => {
+        const el = page.locator(`[data-cell="${cell.id}"]`);
+        await el.scrollIntoViewIfNeeded();
+        if (cell.ready) await svgReady(el);
+        else await el.getByText("Live demo in progress").waitFor();
+        assert(await el.locator("pre").count(), "snippet");
+        assert(!cell.caption.includes("\n"), "caption is one line");
+        const note = cell.ready && cellBehaviour[cell.id] ? await cellBehaviour[cell.id](el) : cell.ready ? "renders" : "placeholder";
+        await shot(`cell-${cell.id}`, el);
+        return note;
+      });
+    }
   }
-  const ready = cells.filter((c) => c.ready).length;
-  console.log(`✓ interactions: ${ready} live, ${cells.length - ready} placeholder`);
 
   /* API tables come from generated data. */
-  await open("/diagram/api/");
-  for (const id of ["props", "interaction", "custom", "controller", "types"]) await page.locator(`#${id}`).waitFor();
-  assert((await page.locator("table tr").count()) > 100, "API tables rendered");
-  console.log("✓ api sections");
+  if (wants("api")) {
+    await step("api sections", async () => {
+      await open("/diagram/api/");
+      for (const id of ["props", "interaction", "custom", "controller", "types"]) await page.locator(`#${id}`).waitFor();
+      assert((await page.locator("table tr").count()) > 100, "API tables rendered");
+    });
+  }
 
   /* Every /diagram link resolves; the sitemap lists every listed slug. */
-  const routes = ["/diagram/", "/diagram/installation/", "/diagram/quick-start/", "/diagram/gallery/", "/diagram/interactions/", "/diagram/api/"];
-  const links = new Set();
-  for (const route of routes) {
-    await open(route);
-    for (const href of await page.locator('a[href^="/diagram"]').evaluateAll((elements) => elements.map((el) => el.getAttribute("href")))) links.add(href.split("#")[0]);
+  if (wants("links")) {
+    await step("links and sitemap", async () => {
+      const routes = ["/diagram/", "/diagram/installation/", "/diagram/quick-start/", "/diagram/gallery/", "/diagram/interactions/", "/diagram/api/"];
+      const links = new Set();
+      for (const route of routes) {
+        await open(route);
+        for (const href of await page.locator('a[href^="/diagram"]').evaluateAll((elements) => elements.map((el) => el.getAttribute("href")))) links.add(href.split("#")[0]);
+      }
+      for (const href of links) assert.equal((await page.request.get(`${base}${href}`)).status(), 200, href);
+      const sitemap = await (await page.request.get(`${base}/sitemap.xml`)).text();
+      for (const slug of slugs) assert(sitemap.includes(`/diagram/gallery/${slug}/`), `${slug}: sitemap`);
+      for (const route of routes) assert(sitemap.includes(route), `${route}: sitemap`);
+      return `${links.size} links`;
+    });
   }
-  for (const href of links) assert.equal((await page.request.get(`${base}${href}`)).status(), 200, href);
-  const sitemap = await (await page.request.get(`${base}/sitemap.xml`)).text();
-  for (const slug of slugs) assert(sitemap.includes(`/diagram/gallery/${slug}/`), `${slug}: sitemap`);
-  for (const route of routes) assert(sitemap.includes(route), `${route}: sitemap`);
 
   /* Mobile width and navigation. */
-  await page.setViewportSize({ width: 390, height: 844 });
-  for (const route of ["/diagram/", "/diagram/gallery/", `/diagram/gallery/${slugs[0]}/`, "/diagram/interactions/", "/diagram/api/"]) {
-    await open(route);
-    await settle();
-    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${route}: mobile horizontal overflow`);
-    await shot(`mobile-${route.split("/").filter(Boolean).join("-")}`);
+  if (wants("mobile")) {
+    await step("mobile", async () => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      for (const route of ["/diagram/", "/diagram/gallery/", `/diagram/gallery/${slugs[0]}/`, "/diagram/interactions/", "/diagram/api/"]) {
+        await open(route);
+        await settle();
+        assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${route}: mobile horizontal overflow`);
+        await shot(`mobile-${route.split("/").filter(Boolean).join("-")}`);
+      }
+      await page.getByRole("button", { name: "Open sidebar navigation" }).click();
+      await page.getByRole("link", { name: "Interactions", exact: true }).filter({ visible: true }).click();
+      await page.waitForURL("**/diagram/interactions/");
+      await page.setViewportSize({ width: 1440, height: 1100 });
+    });
   }
-  await page.getByRole("button", { name: "Open sidebar navigation" }).click();
-  await page.getByRole("link", { name: "Interactions", exact: true }).filter({ visible: true }).click();
-  await page.waitForURL("**/diagram/interactions/");
-  assert.deepEqual(errors, [], "No browser errors");
-  console.log(`✓ links, sitemap, mobile; ${slugs.length} examples, ${cells.length} cells, no browser errors`);
 } finally {
   await browser.close();
 }
+
+const failed = results.filter((r) => !r.ok);
+console.log(`\n${results.length - failed.length}/${results.length} checks passed (${slugs.length} examples, ${chips.length} chips, ${cells.length} cells)`);
+for (const r of failed) console.log(`  ✗ ${r.name}: ${r.message}`);
+process.exitCode = failed.length ? 1 : 0;

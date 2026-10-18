@@ -311,7 +311,7 @@ on: {
     id: "waypoints",
     title: "Edge waypoints",
     tier: "B",
-    caption: "Drag the dot on an edge to bend it. Double-click a bend to remove it.",
+    caption: "Click the edge, then drag a dot to bend it. Double-click a bend to remove it.",
     snippet: `interaction: { edit: { waypoints: true } },
 edges: [
   { id: "e", source: "a", target: "b", waypoints: [{ x: 200, y: 40 }] },
@@ -359,18 +359,20 @@ flow.resolveOverlaps();`,
     id: "collapse",
     title: "Collapse and expand",
     tier: "B",
-    caption: "Click the lead's card. The team hides and a count appears.",
+    caption: "Click the chevron on Lead. The team hides and a count appears.",
     snippet: `{ id: "lead", collapsible: true, position, data }
 
 nodeTypes: {
-  person: ({ node, collapsed, hiddenChildCount }) =>
-    Card(node.data.name, {
+  default: ({ node, collapsed, hiddenChildCount }, flow) =>
+    Card(node.data.label, {
       badge: collapsed ? \`+\${hiddenChildCount}\` : null,
+      chevron: Chevron({
+        open: !collapsed,
+        onClick: () => flow.toggleCollapsed(node.id),
+      }),
     }),
 },
-on: {
-  nodeClick: (_event, node) => flow.toggleCollapsed(node.id),
-},`,
+// The default context menu adds Collapse / Expand too`,
     ready: true,
   },
   {
@@ -378,17 +380,18 @@ on: {
     title: "Insert on edge",
     tier: "B",
     caption: "Hover the edge and click +. A step lands in between.",
-    snippet: `edgeTypes: {
-  default: ({ edge, hovered, path }, flow) =>
-    EdgeWithButton(path, {
-      showPlus: hovered,
-      onPlus: () =>
-        flow.insertNodeOnEdge(edge.id, {
-          id: crypto.randomUUID(),
-          position: { x: 0, y: 0 },
-          data: { label: "New step" },
-        }),
-    }),
+    snippet: `edges: [{ id: "e", source: "a", target: "b", label: "+" }],
+custom: {
+  // The label slot sits on the edge and keeps its hover
+  edgeLabel: ({ edge, hovered, x, y }, flow) =>
+    hovered
+      ? PlusButton(() =>
+          flow.insertNodeOnEdge(edge.id, {
+            id: crypto.randomUUID(),
+            position: { x: x - 75, y: y - 18 },
+            data: { label: "New step" },
+          }))
+      : null,
 },`,
     ready: true,
   },
@@ -408,7 +411,7 @@ on: {
     id: "align",
     title: "Align and distribute",
     tier: "B",
-    caption: "Box-select the nodes, then click Align left or Distribute.",
+    caption: "Shift-drag around the nodes, then click Align left or Distribute.",
     snippet: `const ids = flow.getSelectedNodes().map((node) => node.id);
 
 flow.alignNodes(ids, "left"); // centerX, right, top, centerY, bottom

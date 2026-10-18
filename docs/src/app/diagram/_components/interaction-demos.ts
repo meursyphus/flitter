@@ -252,38 +252,67 @@ const overlap = demo(
   },
 );
 
-function collapse(theme: Theme): Widget {
-  const flow = new FlowController();
-  return demo(
-    [
-      node("lead", 110, 0, "Lead", { collapsible: true }),
-      node("x", 0, 120, "Engineer"),
-      node("y", 220, 120, "Designer"),
-    ],
-    [edge("lead", "x"), edge("lead", "y")],
-    {
-      controller: flow,
-      nodeTypes: {
-        default: tile(
-          ({ collapsed }) => collapsed,
-          ({ collapsed, hiddenChildCount }) => (collapsed ? `+${hiddenChildCount}` : null),
-        ),
-      },
-      on: { nodeClick: (_event, n) => flow.toggleCollapsed(n.id) },
+/** A card whose own chevron folds the subtree below it. */
+const teamCard: NodeBuilder<DefaultFlowConfig> = ({ node: n, collapsed, hiddenChildCount }, context) => {
+  const { colors } = context.config;
+  const style = new TextStyle({ color: colors.nodeColor, fontSize: 12, fontFamily: FONT });
+  const chevron = GestureDetector({
+    cursor: "pointer",
+    onMouseDown: (event) => event.stopPropagation(),
+    onClick: (event) => {
+      event.stopPropagation();
+      context.toggleCollapsed(n.id);
     },
-  )(theme);
-}
+    child: Container({
+      padding: EdgeInsets.symmetric({ horizontal: 4 }),
+      child: Text(collapsed ? "▸" : "▾", { style: new TextStyle({ color: ACCENT, fontSize: 16, fontFamily: FONT }) }),
+    }),
+  });
+  return Container({
+    width: 130,
+    padding: EdgeInsets.all(10),
+    alignment: Alignment.center,
+    decoration: new BoxDecoration({
+      color: colors.nodeBackground,
+      border: Border.all({ color: collapsed ? ACCENT : colors.nodeBorder, width: collapsed ? 2 : 1 }),
+      borderRadius: BorderRadius.circular(4),
+    }),
+    child: Row({
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(String(n.data.label), { style }),
+        ...(collapsed ? [SizedBox({ width: 6 }), Text(`+${hiddenChildCount}`, { style: new TextStyle({ color: ACCENT, fontSize: 12, fontFamily: FONT }) })] : []),
+        ...(n.collapsible ? [SizedBox({ width: 4 }), chevron] : []),
+      ],
+    }),
+  });
+};
+
+const collapse = demo(
+  [
+    node("lead", 110, 0, "Lead", { collapsible: true }),
+    node("x", 0, 120, "Engineer"),
+    node("y", 220, 120, "Designer"),
+  ],
+  [edge("lead", "x"), edge("lead", "y")],
+  { nodeTypes: { default: teamCard } },
+);
 
 const insertOnEdge = demo(
   [node("a", 0, 0, "Trigger", { type: "input" }), node("b", 0, 200, "Action", { type: "output" })],
   [edge("a", "b", { label: "+" })],
   {
     custom: {
-      edgeLabel: ({ edge: e, hovered }, flow) =>
+      edgeLabel: ({ edge: e, hovered, x, y }, flow) =>
         hovered
-          ? button("+", () =>
-              flow.insertNodeOnEdge(e.id, node(`n${flow.getNodes().length}`, 0, 0, "New step")),
-            )
+          ? button("+", () => {
+              // Make room below the new step, then drop it on the label anchor.
+              for (const other of flow.getNodes()) {
+                if (other.position.y > y) flow.updateNode(other.id, { position: { x: other.position.x, y: other.position.y + 90 } });
+              }
+              flow.insertNodeOnEdge(e.id, node(`n${flow.getNodes().length}`, x - 75, y - 18, "New step"));
+              void flow.fitView({ padding: 0.35, maxZoom: 1, duration: 200 });
+            })
           : null,
     },
   },
