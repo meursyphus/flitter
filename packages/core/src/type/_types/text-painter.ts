@@ -330,7 +330,7 @@ export default class TextPainter {
         default:
           assert(false, `Unknown text width basis: ${this.textWidthBasis}`);
       }
-      newWidth = Utils.clampDouble(newWidth, minWidth, maxWidth);
+      newWidth = Utils.clampDouble(Math.ceil(newWidth), minWidth, maxWidth);
     }
     if (newWidth !== paragraph.width) {
       paragraph.resize(newWidth);
@@ -361,7 +361,9 @@ export default class TextPainter {
         default:
           assert(false, `Unknown text width basis: ${this.textWidthBasis}`);
       }
-      newWidth = Utils.clampDouble(newWidth, minWidth, maxWidth);
+      // Segment widths stay fractional so glyphs sit where the browser would
+      // put them; only the box the paragraph occupies snaps to whole pixels.
+      newWidth = Utils.clampDouble(Math.ceil(newWidth), minWidth, maxWidth);
 
       if (newWidth !== this.paragraph!.width) {
         this.paragraph!.layout(newWidth);
