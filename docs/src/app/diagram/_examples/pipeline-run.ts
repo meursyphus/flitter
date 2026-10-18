@@ -32,8 +32,9 @@ class PipelineState extends State<Pipeline> {
       position: { x: 12, y: 40 + (i % 2) * 64 },
       width: 206,
       height: 52,
-      sourcePosition: "right" as const,
-      targetPosition: "left" as const,
+      // Jobs stacked in one stage connect top to bottom; stages connect left to right.
+      sourcePosition: (id === "staging" ? "bottom" : "right") as "bottom" | "right",
+      targetPosition: (id === "smoke" ? "top" : "left") as "top" | "left",
       data: { label, status, time }
     }))
   ];
