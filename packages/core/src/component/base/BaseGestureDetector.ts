@@ -63,6 +63,7 @@ type EventType =
 type Bubble = Record<EventType, boolean>;
 
 class BaseGestureDetector extends SingleChildRenderObjectWidget {
+  onContextMenu: (e: MouseEvent) => void;
   onClick: (e: MouseEvent) => void;
   onMouseUp: (e: MouseEvent) => void;
   onMouseMove: (e: MouseEvent) => void;
@@ -79,6 +80,7 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
   constructor({
     child,
     onClick,
+    onContextMenu,
     onMouseDown,
     onMouseMove,
     onMouseUp,
@@ -94,6 +96,7 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
     behavior,
   }: {
     child?: Widget;
+    onContextMenu?: (e: MouseEvent) => void;
     onClick?: (e: MouseEvent) => void;
     onMouseUp?: (e: MouseEvent) => void;
     onMouseMove?: (e: MouseEvent) => void;
@@ -116,6 +119,7 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
     bubble?: Partial<Bubble>;
   }) {
     super({ child, key });
+    this.onContextMenu = onContextMenu ?? emptyCallback;
     this.onClick = onClick ?? emptyCallback;
     this.onMouseDown = onMouseDown ?? emptyCallback;
     this.onMouseMove = onMouseMove ?? emptyCallback;
@@ -140,6 +144,7 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
 
   override createRenderObject(): RenderGestureDetector {
     return new RenderGestureDetector({
+      onContextMenu: this.onContextMenu,
       onClick: this.onClick,
       onMouseDown: this.onMouseDown,
       onMouseMove: this.onMouseMove,
@@ -157,6 +162,7 @@ class BaseGestureDetector extends SingleChildRenderObjectWidget {
   }
 
   updateRenderObject(renderObject: RenderGestureDetector): void {
+    renderObject.onContextMenu = this.onContextMenu;
     renderObject.onClick = this.onClick;
     renderObject.onMouseOver = this.onMouseOver;
     renderObject.cursor = this.cursor;
@@ -182,6 +188,10 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     if (this._cursor === prop) return;
     this._cursor = prop;
     this.markNeedsPaint();
+  }
+  onContextMenu: MouseEventCallback;
+  get wantsContextMenu(): boolean {
+    return this.onContextMenu !== emptyCallback;
   }
   private _onClick: MouseEventCallback;
   get onClick() {
@@ -274,6 +284,7 @@ export class RenderGestureDetector extends SingleChildRenderObject {
 
   constructor({
     onClick,
+    onContextMenu,
     onMouseDown,
     onMouseUp,
     onMouseMove,
@@ -287,6 +298,7 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     onWheel,
     behavior,
   }: {
+    onContextMenu?: MouseEventCallback;
     onClick: MouseEventCallback;
     onMouseUp: MouseEventCallback;
     onMouseMove: MouseEventCallback;
@@ -302,6 +314,7 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     behavior: HitTestBehavior;
   }) {
     super({ isPainter: false });
+    this.onContextMenu = onContextMenu ?? emptyCallback;
     this._onClick = onClick;
     this._onMouseDown = onMouseDown;
     this._onMouseMove = onMouseMove;
@@ -390,6 +403,7 @@ export class RenderGestureDetector extends SingleChildRenderObject {
 
   invokeCallback(
     type:
+      | "onContextMenu"
       | "onClick"
       | "onMouseDown"
       | "onMouseMove"
