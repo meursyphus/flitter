@@ -1073,3 +1073,136 @@ for (const renderer of ['svg', 'canvas']) {
 		).toBe(3);
 	});
 }
+
+for (const renderer of ['svg', 'canvas']) {
+	test(`${renderer}: layout skips collapsed descendants and includes them after expansion`, async ({
+		page
+	}) => {
+		await mount(page, renderer, '&scenario=layout');
+		await page.evaluate(async () => {
+			const f = (window as any).__diagram.controller;
+			f.collapse('2');
+			f.updateNode('3', { position: { x: 777, y: 777 } });
+			await f.layout();
+		});
+		expect((await snapshot(page)).nodes.find((n) => n.id === '3')?.position).toEqual({
+			x: 777,
+			y: 777
+		});
+		await page.evaluate(async () => {
+			const f = (window as any).__diagram.controller;
+			f.expand('2');
+			await f.layout();
+		});
+		expect((await snapshot(page)).nodes.find((n) => n.id === '3')?.position).not.toEqual({
+			x: 777,
+			y: 777
+		});
+	});
+}
+
+for (const renderer of ['svg', 'canvas']) {
+	test(`${renderer}: moving from an edge path to its label preserves hover`, async ({ page }) => {
+		await mount(page, renderer);
+		const points = await page.evaluate(() => {
+			const f = (window as any).__diagram.controller,
+				e = f.getEdge('e1-3'),
+				path = f.getEdgePath(e, f.getEdgeEndpoints(e));
+			return {
+				path: f.flowToScreenPosition(path.points[Math.floor(path.points.length / 4)]),
+				label: f.flowToScreenPosition({ x: path.labelX, y: path.labelY })
+			};
+		});
+		await page.mouse.move(points.path.x, points.path.y);
+		await settleDiagram(page);
+		expect(await page.evaluate(() => (window as any).__diagram.controller.hoveredEdgeId)).toBe(
+			'e1-3'
+		);
+		await page.mouse.move(points.label.x, points.label.y);
+		await settleDiagram(page);
+		expect(await page.evaluate(() => (window as any).__diagram.controller.hoveredEdgeId)).toBe(
+			'e1-3'
+		);
+	});
+	test(`${renderer}: moving from a node body to its port preserves hover`, async ({ page }) => {
+		await mount(page, renderer);
+		const body = await nodeCenter(page, '2'),
+			port = await handleCenter(page, '2', 'source');
+		await page.mouse.move(body.x, body.y);
+		await settleDiagram(page);
+		await page.mouse.move(port.x, port.y);
+		await settleDiagram(page);
+		expect(await page.evaluate(() => (window as any).__diagram.controller.hoveredNodeId)).toBe('2');
+	});
+}
+
+for (const renderer of ['svg', 'canvas']) {
+	test(`${renderer}: a locked-node pane drag does not swallow the next history entry`, async ({
+		page
+	}) => {
+		await mount(page, renderer, '&scenario=basic');
+		await page.evaluate(() => {
+			const f = (window as any).__diagram.controller;
+			f.setInteraction({ drag: { enabled: false } });
+			f.history.clear();
+		});
+		await settleDiagram(page);
+		const start = await nodeCenter(page, '1');
+		await dragPointer(page, start, { x: start.x + 50, y: start.y + 20 });
+		await page.evaluate(() =>
+			(window as any).__diagram.controller.updateNodeData('1', { label: 'Edited after pan' })
+		);
+		expect(await page.evaluate(() => (window as any).__diagram.controller.history.canUndo)).toBe(
+			true
+		);
+		await page.evaluate(() => (window as any).__diagram.controller.history.undo());
+		expect(
+			await page.evaluate(() => (window as any).__diagram.controller.getNode('1').data.label)
+		).toBe('Start');
+	});
+}
+
+for (const renderer of ['svg', 'canvas']) {
+	test(`${renderer}: nested groups paint below child edges and child drag stays local`, async ({
+		page
+	}) => {
+		await mount(page, renderer, '&scenario=nested-order');
+		const order = ['outer', 'inner', 'nested-link', 'a', 'b'];
+		expect(await page.evaluate(() => (window as any).__diagram.sceneOrder())).toEqual(order);
+		if (renderer === 'svg') {
+			const labels = ['Outer frame', 'Inner frame', 'Nested transition', 'Child A', 'Child B'];
+			const actual = await page.locator('svg').evaluate(
+				(svg, labels) =>
+					Array.from(svg.querySelectorAll('text'))
+						.map((el) => el.textContent)
+						.filter((text) => labels.includes(text ?? '')),
+				labels
+			);
+			expect(actual).toEqual(labels);
+			expect(
+				await page.locator('svg').evaluate((svg) => {
+					const text = (value: string) =>
+						Array.from(svg.querySelectorAll('text')).find((el) => el.textContent === value)!;
+					const edge = svg.querySelector('path[stroke="#7654ab"]')!;
+					const before = (a: Element, b: Element) =>
+						!!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+					return (
+						!!edge &&
+						before(text('Inner frame'), edge) &&
+						before(edge, text('Child A')) &&
+						before(edge, text('Child B'))
+					);
+				})
+			).toBe(true);
+		}
+		const start = await nodeCenter(page, 'a');
+		await page.mouse.move(start.x, start.y);
+		await page.mouse.click(start.x, start.y);
+		await settleDiagram(page);
+		const before = await page.evaluate(() => ({ ...(window as any).__diagram.builds }));
+		await dragPointer(page, start, { x: start.x + 35, y: start.y + 20 });
+		const after = await page.evaluate(() => ({ ...(window as any).__diagram.builds }));
+		expect(after.a).toBeGreaterThan(before.a);
+		for (const id of ['outer', 'inner', 'b']) expect(after[id]).toBe(before[id]);
+	});
+}

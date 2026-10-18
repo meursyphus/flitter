@@ -1,11 +1,15 @@
 import {
   Border,
+  BorderRadius,
+  BoxShadow,
   BoxDecoration,
   Column,
   Container,
   EdgeInsets,
   GestureDetector,
   MainAxisSize,
+  State,
+  StatefulWidget,
   Text,
   TextStyle,
   type Widget,
@@ -52,32 +56,68 @@ export function defaultContextMenu(args: ContextMenuBuilderArgs, ctx: FlowContex
     padding: EdgeInsets.all(4),
     decoration: new BoxDecoration({
       color: colors.nodeBackground,
+      borderRadius: BorderRadius.circular(4),
+      boxShadow: [new BoxShadow({ color: colors.controlsShadow, offset: { x: 0, y: 0 }, blurRadius: 2 })],
       border: Border.all({ color: colors.nodeBorder, width: 1 }),
     }),
     child: Column({
       mainAxisSize: MainAxisSize.min,
-      children: items.map((item) =>
-        GestureDetector({
-          cursor: item.disabled ? "default" : "pointer",
-          onClick: (event) => {
-            event.stopPropagation();
-            if (!item.disabled) {
-              ctx.closeContextMenu();
-              item.onSelect();
-            }
-          },
-          child: Container({
-            width: 170,
-            padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 6 }),
-            decoration: item.separator
-              ? new BoxDecoration({ border: Border.all({ color: colors.controlsBorder, width: 1 }) })
-              : undefined,
-            child: Text(item.label, {
-              style: new TextStyle({ color: item.disabled ? colors.patternDots : colors.nodeColor, fontSize: 12 }),
-            }),
-          }),
-        }),
-      ),
+      children: items.map((item, index) => new MenuItem(item, ctx, index)),
     }),
   });
+}
+
+type MenuEntry = { label: string; onSelect(): void; disabled?: boolean; separator?: boolean };
+class MenuItem extends StatefulWidget {
+  constructor(
+    readonly item: MenuEntry,
+    readonly context: FlowContext<DefaultFlowConfig>,
+    key: number,
+  ) {
+    super(key);
+  }
+  override createState(): State<MenuItem> {
+    return new MenuItemState();
+  }
+}
+class MenuItemState extends State<MenuItem> {
+  hovered = false;
+  override build(): Widget {
+    const { item, context: ctx } = this.widget;
+    const { colors, node } = ctx.config;
+    return GestureDetector({
+      cursor: item.disabled ? "default" : "pointer",
+      onMouseEnter: () =>
+        this.setState(() => {
+          this.hovered = true;
+        }),
+      onMouseLeave: () =>
+        this.setState(() => {
+          this.hovered = false;
+        }),
+      onClick: (event) => {
+        event.stopPropagation();
+        if (!item.disabled) {
+          ctx.closeContextMenu();
+          item.onSelect();
+        }
+      },
+      child: Container({
+        width: 170,
+        padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 6 }),
+        decoration: new BoxDecoration({
+          color: this.hovered && !item.disabled ? colors.controlsBackgroundHover : colors.nodeBackground,
+          borderRadius: BorderRadius.circular(4),
+          border: item.separator ? Border.all({ color: colors.controlsBorder, width: 1 }) : undefined,
+        }),
+        child: Text(item.label, {
+          style: new TextStyle({
+            fontFamily: node.fontFamily,
+            fontSize: node.fontSize,
+            color: item.disabled ? colors.patternDots : colors.nodeColor,
+          }),
+        }),
+      }),
+    });
+  }
 }

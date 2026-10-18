@@ -20,7 +20,7 @@ import {
   StatelessWidget,
   type Widget,
 } from "flitter-core";
-import { FlowController } from "./controller";
+import { FlowController, getSceneOrder } from "./controller";
 import { FLOW_PROVIDER_KEY, FlowProvider } from "./provider";
 import { FlowNodeItem, FlowScene, FlowSceneGroup, FlowSceneItem, type NodeAttachmentPlacement } from "./scene";
 import type {
@@ -431,17 +431,24 @@ function resolveEdgeBuilder(ctx: FlowController, type: string | undefined): Edge
 /** Scene children in paint order; cached widgets are reused when nothing about their identity changed. */
 function buildScene(ctx: FlowController, cache: SceneCache): Widget {
   const items: Widget[] = [];
-  const liveEdges = new Set<string>();
-  for (const edge of ctx.getVisibleEdges()) {
-    liveEdges.add(edge.id);
-    let widget = cache.edges.get(edge.id);
-    if (!widget) {
-      widget = new EdgeWidget(ctx, edge.id);
-      cache.edges.set(edge.id, widget);
+  const liveEdges = new Set<string>(), liveNodes = new Set<string>();
+  for (const entry of getSceneOrder(ctx)) {
+    if (entry.kind === "edge") {
+      const id = entry.edge.id;
+      liveEdges.add(id);
+      let widget = cache.edges.get(id);
+      if (!widget) { widget = new EdgeWidget(ctx, id); cache.edges.set(id, widget); }
+      items.push(widget);
+    } else {
+      const id = entry.node.id;
+      liveNodes.add(id);
+      let widget = cache.nodes.get(id);
+      if (!widget) { widget = new NodeWidget(ctx, id); cache.nodes.set(id, widget); }
+      items.push(widget);
     }
-    items.push(widget);
   }
   for (const id of cache.edges.keys()) if (!liveEdges.has(id)) cache.edges.delete(id);
+  for (const id of cache.nodes.keys()) if (!liveNodes.has(id)) cache.nodes.delete(id);
 
   items.push((cache.guides ??= new GuidesWidget(ctx)));
   const selectedNodes = ctx.getSelectedNodes();
@@ -471,18 +478,6 @@ function buildScene(ctx: FlowController, cache: SceneCache): Widget {
       }
     }
   }
-
-  const liveNodes = new Set<string>();
-  for (const node of ctx.getVisibleNodes()) {
-    liveNodes.add(node.id);
-    let widget = cache.nodes.get(node.id);
-    if (!widget) {
-      widget = new NodeWidget(ctx, node.id);
-      cache.nodes.set(node.id, widget);
-    }
-    items.push(widget);
-  }
-  for (const id of cache.nodes.keys()) if (!liveNodes.has(id)) cache.nodes.delete(id);
 
   items.push((cache.connectionLine ??= new ConnectionLineWidget(ctx)));
 
@@ -624,6 +619,8 @@ class NodeWidgetState extends SignalState<NodeWidget> {
         GestureDetector({
           behavior: "opaque",
           cursor: handleConnectable ? "crosshair" : "default",
+          onMouseEnter: event => ctx.hoverNode(node.id, event),
+          onMouseLeave: event => ctx.unhoverNode(node.id, event),
           onDragStart: (event) => {
             ctx.handleConnectionStart(node.id, handle.id, handle.type, event);
             event.stopPropagation();

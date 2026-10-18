@@ -1,5 +1,8 @@
 import {
   FocusNode,
+  Border,
+  BoxDecoration,
+  EdgeInsets,
   State,
   StatefulWidget,
   Text,
@@ -85,7 +88,13 @@ class LabelEditorState extends State<LabelEditor> {
       ariaLabel: `Edit ${node.id}`,
       style,
       width: Math.max(30, (node.width ?? flow.config.node.width) - flow.config.node.padding * 2),
-      height: Math.max(24, flow.config.node.fontSize * 1.6),
+      // The enclosing node already supplies padding. Keep the same line box in both modes.
+      padding: EdgeInsets.all(0),
+      textAlign: TextAlign.center,
+      maxLines: Math.max(1, String(node.data.label ?? node.id).split("\n").length),
+      height: flow.config.node.fontSize * 1.2 * Math.max(1, String(node.data.label ?? node.id).split("\n").length),
+      decoration: new BoxDecoration({}),
+      focusedBorder: Border.all({ color: "transparent", width: 0 }),
       onChanged: this.change,
       onSubmitted: (text) => {
         this.change(text);
@@ -102,6 +111,7 @@ export function EditableLabel(args: NodeBuilderArgs, flow: FlowContext<DefaultFl
   const label = String(node.data.label ?? node.id);
   const style = new TextStyle({
     fontSize: flow.config.node.fontSize,
+    height: 1.2,
     color: flow.config.colors.nodeColor,
     fontFamily: flow.config.node.fontFamily,
   });

@@ -10,6 +10,14 @@ const coreSource =
 export default defineConfig({
 	resolve: {
 		alias: [
+			{
+				find: 'flitter-ui/diagram',
+				replacement: resolveFromHere('../../packages/diagram/src/engine.ts')
+			},
+			{
+				find: '@/components/diagram/flow-diagram',
+				replacement: resolveFromHere('../../shared/diagram-presets/flow-diagram/index.ts')
+			},
 			{ find: /^flitter-ui$/, replacement: resolveFromHere('../../packages/flitter/src/index.ts') },
 			{
 				find: 'flitter-ui/chart',
@@ -20,7 +28,10 @@ export default defineConfig({
 				find: 'flitter-core/component/Tooltip',
 				replacement: `${coreSource}/component/Tooltip.ts`
 			},
-			{ find: /^flitter-diagram$/, replacement: resolveFromHere('../../packages/diagram/src/index.ts') },
+			{
+				find: /^flitter-diagram$/,
+				replacement: resolveFromHere('../../packages/diagram/src/index.ts')
+			},
 			{ find: '@headless', replacement: resolveFromHere('../../packages/chart/src/headless') },
 			{ find: '@shared', replacement: resolveFromHere('../../packages/chart/src/shared') },
 			{ find: '@utils', replacement: resolveFromHere('../../packages/chart/src/shared/utils') }

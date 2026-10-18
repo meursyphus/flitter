@@ -214,6 +214,7 @@ export class FlowController extends ChangeNotifier {
 
   setInteraction(partial: DeepPartial<FlowInteraction>): void {
     this.#interaction = deepMerge(this.#interaction, partial);
+    this.#nodeZIndices = null;
     this.#options = { ...this.#options, ...interactionOptions(this.#interaction) };
     if (partial.drag?.enabled !== undefined || partial.select || partial.connect || partial.edit?.resize !== undefined || partial.contextMenu) this.#notifyAllNodes();
     if (partial.select || partial.connect || partial.edit?.waypoints !== undefined || partial.contextMenu) this.#notifyAllEdges();
@@ -620,8 +621,11 @@ export class FlowController extends ChangeNotifier {
   /** Fires on every connection-gesture change (start, move, snap, end). */
   readonly connectionSignal = new ChangeNotifier();
   #styleVersion = 0;
+  #nodeZIndices: Map<string, number> | null = null;
 
   #hoveredNodeId: string | null = null;
+  #nodeEnterEvent: MouseEvent | null = null;
+  #edgeEnterEvent: MouseEvent | null = null;
   #hoveredEdgeId: string | null = null;
   #drag: DragState | null = null;
   #resize: ResizeState | null = null;
@@ -658,6 +662,7 @@ export class FlowController extends ChangeNotifier {
     this.edgeTypes = edgeTypes ?? {};
     this.panels = panels ?? [];
     this.#styleVersion += 1;
+    this.#nodeZIndices = null;
     this.#interaction = resolveInteraction(interaction);
     this.#viewer = (typeof interaction === "string" ? interaction : interaction?.preset) === "viewer";
     this.#can = can;
@@ -778,6 +783,7 @@ export class FlowController extends ChangeNotifier {
   dispose(): void {
     if (this.#disposed) return;
     this.#disposed = true;
+    this.#nodeEnterEvent = this.#edgeEnterEvent = null;
     this.#stopAnimation();
     this.#stopAutoPan();
     this.transformation.removeListener(this.#handleTransformChange);
@@ -1304,26 +1310,31 @@ export class FlowController extends ChangeNotifier {
   /** Nodes to render, bottom to top. */
   getVisibleNodes(): FlowNode[] {
     const nodes = this.#nodes.filter((n) => !this.isNodeHidden(n));
-    const zIndex = new Map<string, number>();
-    const zOf = (node: FlowNode, depth = 0): number => {
-      const cached = zIndex.get(node.id);
-      if (cached != null) return cached;
-      let z = (node.zIndex ?? 0) + ((node.selected || node.dragging) && this.#options.elevateNodesOnSelect ? 1000 : 0);
-      if (node.parentId && depth < 64) {
-        const parent = this.#nodeLookup.get(node.parentId);
-        if (parent) z = Math.max(z, zOf(parent, depth + 1) + 1);
-      }
-      zIndex.set(node.id, z);
-      return z;
-    };
     return nodes
-      .map((node, index) => ({ node, index, z: zOf(node) }))
+      .map((node, index) => ({ node, index, z: this.getNodeZIndex(node) }))
       .sort((a, b) => a.z - b.z || a.index - b.index)
       .map((entry) => entry.node);
   }
 
   getNodeZIndex(node: FlowNode): number {
-    return (node.zIndex ?? 0) + ((node.selected || node.dragging) && this.#options.elevateNodesOnSelect ? 1000 : 0);
+    if (!this.#nodeZIndices) {
+      const resolved = new Map<string, number>(), visiting = new Set<string>();
+      const resolve = (item: FlowNode): number => {
+        const cached = resolved.get(item.id);
+        if (cached != null) return cached;
+        const base = (item.zIndex ?? 0) + ((item.selected || item.dragging) && this.#options.elevateNodesOnSelect ? 1000 : 0);
+        if (visiting.has(item.id)) return base; // Malformed parent cycles must not recurse forever.
+        visiting.add(item.id);
+        const parent = item.parentId ? this.#nodeLookup.get(item.parentId) : undefined;
+        const z = parent ? Math.max(base, resolve(parent) + 1) : base;
+        visiting.delete(item.id);
+        resolved.set(item.id, z);
+        return z;
+      };
+      for (const item of this.#nodes) resolve(item);
+      this.#nodeZIndices = resolved;
+    }
+    return this.#nodeZIndices.get(node.id) ?? 0;
   }
 
   /** Edges to render, bottom to top. */
@@ -1338,7 +1349,7 @@ export class FlowController extends ChangeNotifier {
       .map((edge, index) => ({
         edge,
         index,
-        z: (edge.zIndex ?? 0) + (edge.selected && this.#options.elevateEdgesOnSelect ? 1000 : 0),
+        z: edgeZIndex(this, edge),
       }))
       .sort((a, b) => a.z - b.z || a.index - b.index)
       .map((entry) => entry.edge);
@@ -1358,7 +1369,8 @@ export class FlowController extends ChangeNotifier {
     let positions: Record<string, XYPosition>;
     let dimensions: Record<string, Dimensions>;
     try {
-      ({ positions, dimensions } = await computeHierarchicalLayout(this.#nodes, this.#edges, resolved, layoutOptions));
+      // Collapsed descendants retain their positions until expansion instead of taking layout space.
+      ({ positions, dimensions } = await computeHierarchicalLayout(this.#nodes.filter(node => !this.isNodeHidden(node)), this.#edges, resolved, layoutOptions));
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       if (this.#callbacks.error) this.#callbacks.error("layout", `${resolved.name}: ${message}`);
@@ -1645,7 +1657,13 @@ export class FlowController extends ChangeNotifier {
     this.notifyListeners();
   }
 
+  #finishDelegatedNodePress(): void {
+    const drag = this.#drag, node = drag && this.getNode(drag.nodeId);
+    if (drag && drag.items.size === 0 && (!node || !this.isNodeDraggable(node))) this.#drag = null;
+  }
+
   handleSelectionDragEnd(_event: MouseEvent): void {
+    this.#finishDelegatedNodePress();
     if (!this.#selectionBox) return;
     this.#selectionBox = null;
     this.notifyListeners();
@@ -1663,10 +1681,12 @@ export class FlowController extends ChangeNotifier {
   }
 
   handleViewportInteractionEnd(): void {
+    this.#finishDelegatedNodePress();
     this.#callbacks.viewportChange?.({ phase: "end", viewport: this.viewport });
   }
 
   hoverNode(id: string, _event: MouseEvent): void {
+    this.#nodeEnterEvent = _event;
     if (this.#hoveredNodeId === id) return;
     const previous = this.#hoveredNodeId;
     this.#hoveredNodeId = id;
@@ -1674,12 +1694,14 @@ export class FlowController extends ChangeNotifier {
   }
 
   unhoverNode(id: string, __event: MouseEvent): void {
-    if (this.#hoveredNodeId !== id) return;
+    // Hit testing enters the new part before leaving the old part in the same move.
+    if (this.#hoveredNodeId !== id || this.#nodeEnterEvent === __event) return;
     this.#hoveredNodeId = null;
     this.#notifyNeighbours([id]);
   }
 
   hoverEdge(id: string, _event: MouseEvent): void {
+    this.#edgeEnterEvent = _event;
     if (this.#hoveredEdgeId === id) return;
     const previous = this.#hoveredEdgeId;
     this.#hoveredEdgeId = id;
@@ -1688,7 +1710,7 @@ export class FlowController extends ChangeNotifier {
   }
 
   unhoverEdge(id: string, __event: MouseEvent): void {
-    if (this.#hoveredEdgeId !== id) return;
+    if (this.#hoveredEdgeId !== id || this.#edgeEnterEvent === __event) return;
     this.#hoveredEdgeId = null;
     this.#edgeSignals.get(id)?.notifyListeners();
   }
@@ -2184,6 +2206,7 @@ export class FlowController extends ChangeNotifier {
   }
 
   #rebuildNodeLookup(): void {
+    this.#nodeZIndices = null;
     this.#nodeLookup = new Map(this.#nodes.map((n) => [n.id, n]));
   }
 
@@ -2722,3 +2745,17 @@ export class FlowController extends ChangeNotifier {
 }
 
 export { createId as createFlowId, getEdgeId };
+
+/** Internal scene ordering shared with the renderer and browser regression harness. */
+export function getSceneOrder(controller: FlowController): ({ kind: "node"; node: FlowNode } | { kind: "edge"; edge: FlowEdge })[] {
+  const edges = controller.getVisibleEdges().map(edge => ({ kind: "edge" as const, edge, z: edgeZIndex(controller, edge) }));
+  const nodes = controller.getVisibleNodes().map(node => ({ kind: "node" as const, node, z: controller.getNodeZIndex(node) }));
+  // Stable sorting keeps input order within each kind; edges win ties with nodes.
+  return [...edges, ...nodes].sort((a, b) => a.z - b.z);
+}
+
+function edgeZIndex(controller: FlowController, edge: FlowEdge): number {
+  const endpoints = [controller.getNode(edge.source), controller.getNode(edge.target)].filter((node): node is FlowNode => !!node);
+  if (!endpoints.length) return 0;
+  return Math.max(...endpoints.map(node => controller.getNodeZIndex(node))) + (edge.selected && controller.options.elevateEdgesOnSelect ? 1000 : 0);
+}

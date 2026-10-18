@@ -10,7 +10,7 @@ import {
 	StackFit,
 	StatelessWidget,
 	type BuildContext,
-	type StatefulWidget,
+	StatefulWidget,
 	type TextField,
 	type Widget
 } from 'flitter-core';
@@ -94,6 +94,13 @@ class TextBox extends RenderObject {
 	}
 }
 function render(widget: Widget, parent?: RenderObject, depth = 0): RenderObject {
+	if (widget instanceof StatefulWidget) {
+		const state = widget.createState();
+		state.widget = widget;
+		state.element = { markNeedsBuild() {} } as any;
+		state.initState({} as BuildContext);
+		return render(state.build({} as BuildContext), parent, depth);
+	}
 	if (widget.runtimeType !== '_Text' && widget instanceof StatelessWidget)
 		return render(widget.build({} as BuildContext), parent, depth);
 	const object =

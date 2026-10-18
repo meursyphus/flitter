@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { type NodeToolbarBuilder, type DefaultFlowConfig } from 'flitter-diagram';
 
+	import { getSceneOrder } from '../../../../../../packages/diagram/src/headless/flow/controller';
 	import { onMount } from 'svelte';
 	import { AppRunner } from 'flitter-core';
 	import { Container, EdgeInsets, Text, TextStyle, GestureDetector } from 'flitter-core';
@@ -82,6 +83,55 @@
 			if (scenario === 'lod') nodes[2].type = 'input';
 			if (scenario === 'waypoints') edges[0] = { ...edges[0], selected: true };
 		}
+		if (scenario === 'nested-order') {
+			nodes = [
+				{
+					id: 'outer',
+					type: 'group',
+					position: { x: 70, y: 60 },
+					width: 630,
+					height: 350,
+					data: { label: 'Outer frame' }
+				},
+				{
+					id: 'inner',
+					type: 'group',
+					parentId: 'outer',
+					position: { x: 30, y: 60 },
+					width: 560,
+					height: 250,
+					data: { label: 'Inner frame' }
+				},
+				{
+					id: 'a',
+					parentId: 'inner',
+					position: { x: 40, y: 80 },
+					width: 150,
+					height: 60,
+					sourcePosition: 'right',
+					data: { label: 'Child A' }
+				},
+				{
+					id: 'b',
+					parentId: 'inner',
+					position: { x: 350, y: 80 },
+					width: 150,
+					height: 60,
+					targetPosition: 'left',
+					data: { label: 'Child B' }
+				}
+			];
+			edges = [
+				{
+					id: 'nested-link',
+					source: 'a',
+					target: 'b',
+					label: 'Nested transition',
+					style: { stroke: '#7654ab' }
+				}
+			];
+		}
+
 		const nodeState: Record<string, unknown> = {};
 		const events: string[] = [];
 		// Count builder invocations per node so tests can assert rebuild locality.
@@ -101,6 +151,14 @@
 							hiddenChildCount: args.hiddenChildCount,
 							isNeighbour: args.isNeighbour
 						};
+						if (scenario === 'nested-order' && name === 'group')
+							return Container({
+								padding: EdgeInsets.all(12),
+								color: args.node.id === 'outer' ? '#dce7f4' : '#edf2f8',
+								child: Text(String(args.node.data.label), {
+									style: new TextStyle({ color: '#24374a', fontSize: 12 })
+								})
+							});
 						return definition.build(args, ctx);
 					}
 				} satisfies NodeTypeDefinition<any>
@@ -166,6 +224,10 @@
 					init: (controller) => {
 						(window as any).__diagram = {
 							controller,
+							sceneOrder: () =>
+								getSceneOrder(controller).map((item) =>
+									item.kind === 'node' ? item.node.id : item.edge.id
+								),
 							events,
 							builds,
 							nodeState,
