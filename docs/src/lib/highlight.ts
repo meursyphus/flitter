@@ -2,8 +2,7 @@ import { codeToHtml } from "shiki";
 
 /**
  * Both themes are emitted as CSS variables (`--shiki-dark` / `--shiki-light`);
- * globals.css picks one from the site theme. one-dark-pro matches the code
- * screenshots in /public/home.
+ * globals.css picks one from the site theme.
  */
 export const SHIKI_THEMES = { dark: "one-dark-pro", light: "github-light" } as const;
 

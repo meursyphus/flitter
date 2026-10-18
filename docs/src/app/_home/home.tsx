@@ -7,12 +7,17 @@ import type { LottieRefCurrentProps } from "lottie-react";
 import CopyCommand from "@/components/copy-command";
 import FlitterLogo from "@/components/flitter-logo";
 import LiveChart from "@/components/live-chart";
+import LiveDiagram from "@/components/live-diagram";
 import { ToastAreaChart } from "@/lib/charts";
-import { DISCORD_URL, GITHUB_REPO_URL } from "@/lib/site-config";
-import { galleryCategories, galleryEntries } from "./chart/_data/gallery";
-import StyleBadge from "./chart/_components/style-badge";
+import { DISCORD_URL, GITHUB_REPO_URL, INSTALL_COMMAND, NPM_URL } from "@/lib/site-config";
+import { galleryCategories, galleryEntries } from "../chart/_data/gallery";
+import StyleBadge from "../chart/_components/style-badge";
+import { createLandingDiagram } from "./landing-diagram";
 
-/** Sample data for the hero; plays the Toast entrance animation on load. */
+/** Server-highlighted HTML for each code panel (see ../page.tsx). */
+export type HomeCode = { hero: string; flutter: string; flitter: string };
+
+/** Hero chart; HERO_CODE in ./snippets.ts shows this call. Plays the Toast entrance animation on load. */
 function createHeroChart() {
   return ToastAreaChart({
     data: {
@@ -42,43 +47,35 @@ const reelEntries = galleryCategories
     return rank(a.chartType) - rank(b.chartType);
   });
 
-function GitHubIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
-    </svg>
-  );
-}
-
-/**
- * Frame for the code screenshots. Always dark: the images are dark in both
- * themes, and the fill matches their background (#1a1d23).
- */
-function EditorWindow({
+/** Editor-style frame around server-highlighted code; follows the site theme. */
+function CodeWindow({
   filename,
-  children,
+  html,
   className = "",
+  bodyClassName = "",
 }: {
   filename: string;
-  children: React.ReactNode;
+  html: string;
   className?: string;
+  bodyClassName?: string;
 }) {
   return (
-    <figure
-      className={`overflow-hidden rounded-xl border border-[#2a2f38] bg-[#1a1d23] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)] ${className}`}
-    >
-      <figcaption className="flex items-center gap-2 border-b border-[#2a2f38] px-4 py-2.5 text-[12px] text-[#8b93a1]">
-        <span className="h-2 w-2 rounded-full bg-[#fbbf24]" aria-hidden="true" />
+    <figure className={`code-surface overflow-hidden rounded-xl ${className}`}>
+      <figcaption className="flex items-center gap-2 border-b border-line px-4 py-2.5 font-sans text-[12px] text-faint">
+        <span className="h-2 w-2 rounded-full bg-script" aria-hidden="true" />
         {filename}
       </figcaption>
-      {children}
+      <div
+        className={`overflow-auto text-[12px] leading-[1.6] [&_pre]:px-4 [&_pre]:py-3 ${bodyClassName}`}
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
     </figure>
   );
 }
 
 /* ── Hero ─────────────────────────────────────────────── */
 
-function IntroSection() {
+function IntroSection({ code }: { code: HomeCode }) {
   return (
     <section className="relative overflow-hidden border-b border-line">
       <div className="artboard pointer-events-none absolute inset-0" aria-hidden="true" />
@@ -93,7 +90,7 @@ function IntroSection() {
         aria-hidden="true"
       />
 
-      <div className="relative mx-auto grid max-w-[1400px] items-center gap-14 px-5 pt-16 pb-20 sm:px-10 lg:pt-24 lg:pb-28 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] xl:px-14">
+      <div className="relative mx-auto grid max-w-[1400px] grid-cols-[minmax(0,1fr)] items-center gap-12 px-5 pt-16 pb-20 sm:px-10 lg:pt-24 lg:pb-28 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] xl:gap-10 xl:px-14">
         <div>
           <h1 className="display text-[clamp(2.75rem,6.4vw,5rem)] leading-[0.98] text-ink [font-stretch:100%] xl:text-[clamp(3rem,4.4vw,4.75rem)]">
             <span className="text-script">JavaScript</span>{" "}
@@ -120,45 +117,30 @@ function IntroSection() {
             >
               Read the docs
             </Link>
-            <a
-              href={GITHUB_REPO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-11 items-center gap-2 px-3 text-[15px] font-semibold text-soft transition-colors hover:text-ink"
-            >
-              <GitHubIcon />
-              GitHub
-            </a>
           </div>
 
-          <CopyCommand command="npm install flitter-ui" className="mt-8" />
+          <CopyCommand command={INSTALL_COMMAND} className="mt-8" />
         </div>
 
-        {/* Code, and what it draws */}
-        <div className="relative mx-auto w-full max-w-[640px] pb-24 sm:pb-28 xl:pb-16">
-          <EditorWindow filename="counter.ts" className="ml-auto max-w-[520px]">
-            <div className="relative h-[340px] overflow-hidden sm:h-[420px]">
-              <img
-                src="/home/counter-code.png"
-                alt="A Flitter counter widget written as a StatefulWidget"
-                className="w-full"
-              />
-              <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#1a1d23] to-transparent" />
+        {/* The code, and what it draws: one stacked window, nothing overlaps */}
+        <div className="mx-auto w-full max-w-[620px]">
+          <CodeWindow
+            filename="visitors-chart.ts"
+            html={code.hero}
+            className="rounded-b-none border-b-0"
+            bodyClassName="xl:text-[11.5px] xl:[&_pre]:px-3"
+          />
+          <div className="overflow-hidden rounded-b-xl border border-line-strong bg-[var(--chart-bg)] shadow-[0_40px_100px_-40px_rgba(0,0,0,0.55)]">
+            <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-2 text-[12px] text-faint">
+              <span>Rendered live in your browser · hover or toggle a legend</span>
+              <Link href="/chart/gallery" className="shrink-0 font-semibold text-chart hover:underline">
+                Gallery →
+              </Link>
             </div>
-          </EditorWindow>
-
-          <Link
-            href="/chart"
-            className="absolute bottom-0 left-0 w-[92%] max-w-[480px] overflow-hidden rounded-xl border border-line-strong bg-[var(--chart-bg)] shadow-[0_40px_100px_-30px_rgba(0,0,0,0.65)] sm:w-[80%]"
-          >
-            <div className="flex items-center justify-between border-b border-line px-4 py-2 text-[12px] text-faint">
-              <span>Rendered live in your browser</span>
-              <span className="text-soft">SVG</span>
-            </div>
-            <div className="h-[230px] p-3 sm:h-[270px]">
+            <div className="h-[240px] p-3 sm:h-[260px]">
               <LiveChart create={createHeroChart} />
             </div>
-          </Link>
+          </div>
         </div>
       </div>
     </section>
@@ -183,9 +165,8 @@ function LibrariesSection() {
       </div>
 
       <div className="mt-12 grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
-        {/* Chart */}
-        <Link
-          href="/chart"
+        {/* Chart: the preview is live, so the card is not one big link */}
+        <div
           data-product="chart"
           className="group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-surface p-7 transition-colors hover:border-chart/60 lg:row-span-2"
         >
@@ -204,10 +185,10 @@ function LibrariesSection() {
           <div className="mt-6 min-h-[260px] flex-1 overflow-hidden rounded-xl border border-line bg-[var(--chart-bg)] p-3">
             <LiveChart create={previewEntry.createWidget} animate={false} lazy />
           </div>
-          <span className="mt-5 text-[15px] font-semibold text-chart">
-            Open Flitter Chart
-          </span>
-        </Link>
+          <Link href="/chart" className="mt-5 self-start text-[15px] font-semibold text-chart hover:underline">
+            Open Flitter Chart →
+          </Link>
+        </div>
 
         {/* Core */}
         <Link
@@ -230,12 +211,11 @@ function LibrariesSection() {
               {"}"})
             </code>
           </pre>
-          <span className="mt-5 text-[15px] font-semibold text-core">Read the core docs</span>
+          <span className="mt-5 text-[15px] font-semibold text-core group-hover:underline">Read the core docs →</span>
         </Link>
 
-        {/* Diagram */}
-        <Link
-          href="/diagram"
+        {/* Diagram: live and editable in place (drag, connect, undo) */}
+        <div
           data-product="diagram"
           className="group flex flex-col rounded-2xl border border-line bg-surface p-7 transition-colors hover:border-script/60"
         >
@@ -248,18 +228,16 @@ function LibrariesSection() {
             </span>
           </div>
           <p className="mt-3 text-[16px] leading-relaxed text-soft">
-            Headless diagrams with editable widget builders, like the
-            ERD canvas in easyrd. Pluggable layouts, SVG or Canvas.
+            Node and edge editors with undo, copy and paste, snapping and
+            context menus built in. You own every pixel; SVG or Canvas.
           </p>
-          <div className="mt-5 h-28 overflow-hidden rounded-lg border border-line">
-            <img
-              src="/home/easyrd.jpg"
-              alt=""
-              className="w-full object-cover object-[70%_30%]"
-            />
+          <div className="mt-5 h-52 overflow-hidden rounded-lg border border-line bg-[var(--chart-bg)]">
+            <LiveDiagram create={createLandingDiagram} lazy />
           </div>
-          <span className="mt-5 text-[15px] font-semibold text-script">Open Flitter Diagram</span>
-        </Link>
+          <Link href="/diagram" className="mt-5 self-start text-[15px] font-semibold text-script hover:underline">
+            Open Flitter Diagram →
+          </Link>
+        </div>
       </div>
     </section>
   );
@@ -293,21 +271,23 @@ function ReelSection() {
       <div className="reel mt-12" style={{ ["--reel-duration" as string]: "120s" }}>
         <div className="reel-track">
           {items.map((entry, i) => (
-            <Link
+            <div
               key={`${entry.slug}-${i}`}
-              href={`/chart/gallery/${entry.slug}`}
               aria-hidden={i >= reelEntries.length || undefined}
-              tabIndex={i >= reelEntries.length ? -1 : undefined}
-              className="block w-[340px] shrink-0 overflow-hidden rounded-xl border border-line bg-[var(--chart-bg)] transition-colors hover:border-line-strong sm:w-[440px]"
+              className="w-[340px] shrink-0 overflow-hidden rounded-xl border border-line bg-[var(--chart-bg)] transition-colors hover:border-line-strong sm:w-[440px]"
             >
               <div className="h-[260px] p-3 sm:h-[300px]">
                 <LiveChart create={entry.createWidget} animate={false} lazy />
               </div>
-              <div className="flex items-center justify-between gap-3 border-t border-line px-4 py-2.5">
-                <span className="truncate text-[13px] text-soft">{entry.title}</span>
+              <Link
+                href={`/chart/gallery/${entry.slug}`}
+                tabIndex={i >= reelEntries.length ? -1 : undefined}
+                className="flex items-center justify-between gap-3 border-t border-line px-4 py-2.5 hover:bg-surface"
+              >
+                <span className="truncate text-[13px] text-soft">{entry.title} →</span>
                 <StyleBadge style={entry.style} />
-              </div>
-            </Link>
+              </Link>
+            </div>
           ))}
         </div>
       </div>
@@ -317,7 +297,7 @@ function ReelSection() {
 
 /* ── Flutter → Flitter ────────────────────────────────── */
 
-function WhySection() {
+function WhySection({ code }: { code: HomeCode }) {
   return (
     <section className="mx-auto max-w-[1400px] px-5 py-20 sm:px-10 lg:py-28 xl:px-14">
       <div className="max-w-2xl">
@@ -339,9 +319,7 @@ function WhySection() {
             Flutter
             <span className="font-normal text-faint">Dart</span>
           </div>
-          <EditorWindow filename="profile_card.dart">
-            <img src="/home/flutter-dart.png" alt="A profile card widget in Flutter (Dart)" className="w-full" />
-          </EditorWindow>
+          <CodeWindow filename="profile_card.dart" html={code.flutter} />
         </div>
         <div>
           <div className="mb-3 flex items-center gap-2 text-[15px] font-semibold text-ink">
@@ -349,9 +327,7 @@ function WhySection() {
             Flitter
             <span className="font-normal text-faint">JavaScript</span>
           </div>
-          <EditorWindow filename="profile-card.js">
-            <img src="/home/flitter-javascript.png" alt="The same profile card in Flitter (JavaScript)" className="w-full" />
-          </EditorWindow>
+          <CodeWindow filename="profile-card.ts" html={code.flitter} />
         </div>
       </div>
     </section>
@@ -576,15 +552,21 @@ function LastSection() {
           Draw something
         </h2>
         <p className="mx-auto mt-5 max-w-md text-[17px] leading-relaxed text-soft">
-          Start from a chart in the gallery, or build your own widget tree on
-          the core engine.
+          Start from a chart or a diagram in the gallery, or build your own
+          widget tree on the core engine.
         </p>
         <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/chart/gallery"
             className="inline-flex h-11 items-center rounded-lg bg-chart px-7 text-[15px] font-semibold text-on-accent transition-opacity hover:opacity-90"
           >
-            Open the gallery
+            Chart gallery
+          </Link>
+          <Link
+            href="/diagram/gallery"
+            className="inline-flex h-11 items-center rounded-lg bg-script px-7 text-[15px] font-semibold text-on-accent transition-opacity hover:opacity-90"
+          >
+            Diagram gallery
           </Link>
           <Link
             href="/advanced/what-is-flitter"
@@ -605,15 +587,17 @@ const FOOTER_COLUMNS = [
     title: "Libraries",
     links: [
       { label: "Flitter Chart", href: "/chart" },
+      { label: "Flitter Diagram", href: "/diagram" },
       { label: "Flitter Core", href: "/advanced/what-is-flitter" },
     ],
   },
   {
     title: "Docs",
     links: [
-      { label: "Installation", href: "/chart/installation" },
-      { label: "Quick start", href: "/chart/quick-start" },
-      { label: "Gallery", href: "/chart/gallery" },
+      { label: "Chart quick start", href: "/chart/quick-start" },
+      { label: "Diagram quick start", href: "/diagram/quick-start" },
+      { label: "Chart gallery", href: "/chart/gallery" },
+      { label: "Diagram gallery", href: "/diagram/gallery" },
       { label: "Integration", href: "/integration" },
     ],
   },
@@ -622,7 +606,7 @@ const FOOTER_COLUMNS = [
     links: [
       { label: "GitHub", href: GITHUB_REPO_URL },
       { label: "Discord", href: DISCORD_URL },
-      { label: "npm", href: "https://www.npmjs.com/package/flitter-ui" },
+      { label: "npm", href: NPM_URL },
     ],
   },
 ];
@@ -671,13 +655,13 @@ function Footer() {
   );
 }
 
-export default function Home() {
+export default function Home({ code }: { code: HomeCode }) {
   return (
     <main className="overflow-x-clip">
-      <IntroSection />
+      <IntroSection code={code} />
       <LibrariesSection />
       <ReelSection />
-      <WhySection />
+      <WhySection code={code} />
       <CodingSection />
       <ProductionSection />
       <MaintainerSection />
