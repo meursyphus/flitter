@@ -7,7 +7,7 @@ export const metadata = {
 
 # Installation
 
-Flitter Diagram installs the way Flitter Chart does. The CLI copies the styled editor, React Flow's look, into your project as source code you own. The engine underneath it, with the controller, gestures, layouts and path helpers, stays a dependency and comes from the `flitter-ui/diagram` entry of the `flitter-ui` package.
+Flitter Diagram installs the way Flitter Chart does. The CLI copies a basic xyflow style into your project as source code you own. The engine underneath it, with the controller, gestures, layouts and path helpers, stays a dependency and comes from the `flitter-ui/diagram` entry of the `flitter-ui` package.
 
 > **Release status.** The `flow-diagram` CLI item and the `flitter-ui/diagram` entry ship in `flitter-ui` 0.2.0 and later. The monorepo route under **Use it from the monorepo** below is for working on the engine itself.
 
@@ -114,7 +114,7 @@ After a CLI install, names come from three places:
 | `flitter-ui/diagram` | The engine: `Flow`, `FlowController`, `FlowProvider`, the types such as `FlowNode` and `HandleSpec`, the layouts, the edge path and change helpers, and the geometry helpers |
 | `flitter-ui` | Flitter widgets such as `Container`, `Text` and `StatefulWidget` |
 
-The API pages of this documentation use the workspace imports from **Use it from the monorepo** below: `flitter-diagram` for the first two rows and `flitter-core` for the third.
+The guides and gallery examples use these public imports. The live gallery runs against the generated CLI preset, and its source view shows the same file used by the preview.
 
 ## Mount the editor
 
@@ -139,7 +139,7 @@ export default function App() {
 }
 ```
 
-If the widget depends on component props, build it inside `useMemo` so it is only recreated when those props change.
+For application state, keep a `FlowController` in a Flitter `StatefulWidget` and dispose it with its `State`. See [Controller](/diagram/api/controller).
 
 ### Svelte
 
@@ -159,6 +159,9 @@ If the widget depends on component props, build it inside `useMemo` so it is onl
 Pass `renderer="svg"` or `renderer="canvas"` to the adapter. Both renderers draw the same widget tree, including the dotted background, edge markers, resize controls, toolbars and the minimap. Canvas is the better choice for large graphs. SVG keeps every node in the DOM, which is easier to inspect.
 
 Mouse, trackpad and touch input work on both. See [Interaction](/diagram/api/interaction) for the gestures.
+
+<details>
+<summary>Contributing from the monorepo</summary>
 
 ## Use it from the monorepo
 
@@ -210,10 +213,14 @@ pnpm --dir shared/diagram-presets run sync
 pnpm --dir shared/diagram-presets run typecheck
 ```
 
+</details>
+
 ## Next steps
 
 - [Quick Start](/diagram/quick-start) builds an editor with nodes, edges and connections
-- [FlowDiagram API](/diagram/api) lists every prop and callback
+- [Gallery](/diagram/gallery) shows different layouts and compositions with complete source
+- [Customization](/diagram/customization) explains how to replace parts or edit the copied source
+- [Builders & Context](/diagram/api) documents the headless contracts
 - [Interaction](/diagram/api/interaction) covers gestures, touch, reconnecting edges, resizing and toolbars
 
 </div>

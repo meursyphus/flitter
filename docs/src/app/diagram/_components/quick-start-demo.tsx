@@ -3,7 +3,7 @@
 import LiveDiagram from "@/components/live-diagram";
 import { createQuickStartDiagram } from "./demos";
 
-/** The quick start editor, running. Connections get an arrow via `onConnect`. */
+/** The starter graph from Quick Start, running with the site theme. */
 export default function QuickStartDemo() {
   return (
     <div className="not-prose my-6">

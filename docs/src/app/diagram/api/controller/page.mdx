@@ -7,19 +7,24 @@ export const metadata = {
 
 # FlowController
 
-`FlowController` holds a diagram's nodes, edges, selection and viewport, and runs its gestures. Its public methods mirror the instance React Flow returns from `useReactFlow()`.
+`FlowController` holds a diagram's nodes, edges, selection and viewport, and runs its gestures. Builders receive it as their second argument, with the style config attached. Use it to connect your own actions and panels to the graph; the [workflow example](/diagram/gallery/workflow) shows this in practice.
 
 ## Getting a controller
 
-There are three ways to reach it:
+There are four ways to reach it:
 
+- **Use the builder context** in a node, edge or toolbar builder.
 - **Pass your own** as the `controller` prop. You create it, so you dispose it.
 - **Receive it** in `onInit(controller)` after the first frame. The editor owns and disposes this one.
 - **Read it inside the tree** with `FlowProvider.of(context)`, from a custom node, edge or panel.
 
 ```typescript
-import { State, StatefulWidget, type Widget } from "flitter-core";
-import { FlowController, FlowDiagram } from "flitter-diagram";
+import { State, StatefulWidget, type Widget } from "flitter-ui";
+import { FlowController, type FlowNode, type FlowEdge } from "flitter-ui/diagram";
+import { FlowDiagram } from "@/components/diagram/flow-diagram";
+
+const nodes: FlowNode[] = [{ id: "task", position: { x: 0, y: 0 }, data: { label: "Task" } }];
+const edges: FlowEdge[] = [];
 
 class Editor extends StatefulWidget {
   createState() {
@@ -36,8 +41,14 @@ class EditorState extends State<Editor> {
   }
 
   build(): Widget {
-    return FlowDiagram({ controller: this.controller, nodes, edges, fitView: true });
+    return FlowDiagram({
+      controller: this.controller, nodes, edges, fitView: true,
+      onConnect: (connection) => this.controller.addEdges({ ...connection, markerEnd: "arrowclosed" }),
+    });
   }
+}
+export default function EditorWidget(): Widget {
+  return new Editor();
 }
 ```
 

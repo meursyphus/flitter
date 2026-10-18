@@ -7,79 +7,15 @@ export const metadata = {
 
 # Edges
 
-## FlowEdge
-
-| Field | Type | Description |
-| --- | --- | --- |
-| `id` | `string` | Unique id |
-| `source`, `target` | `string` | Node ids |
-| `sourceHandle`, `targetHandle` | `string \| null` | Handle ids. Omit to use the node's first handle of that type. |
-| `type` | `string` | Key into `edgeTypes`. Defaults to `"default"`, a Bézier curve. |
-| `data` | `TData` | Your data |
-| `label` | `string` | Text drawn at the middle of the path |
-| `selected` | `boolean` | Initial selection; updated by the editor |
-| `animated` | `boolean` | Draw marching dashes along the edge |
-| `hidden` | `boolean` | Not drawn. Edges to hidden nodes are hidden too. |
-| `deletable` | `boolean` | `false` protects this edge from deletion |
-| `selectable` | `boolean` | `false` makes this edge unselectable |
-| `markerStart`, `markerEnd` | `MarkerShape \| EdgeMarker` | Arrow heads; see Markers below |
-| `zIndex` | `number` | Paint order among edges. Edges always paint below nodes. |
-| `style` | `{ stroke?, strokeWidth? }` | Stroke overrides for this edge |
-| `pathOptions` | `{ curvature?, offset?, borderRadius? }` | Options for the built-in path types |
-| `reconnectable` | `boolean \| "source" \| "target"` | Which ends can be dragged to another handle. Omitted or `true` allows both, `"source"` or `"target"` only that end, `false` neither. Needs `edgesReconnectable`, which is on by default, and `nodesConnectable`. |
-
-## Built-in edge types
-
-| Type | Path | Options |
-| --- | --- | --- |
-| `default`, `bezier` | Cubic Bézier that leaves and enters along the handle directions | `curvature`, default `0.25` |
-| `simplebezier` | Cubic Bézier with control points halfway between the ends | None |
-| `straight` | Straight line | None |
-| `step` | Right angles | `offset`, default `20` |
-| `smoothstep` | Right angles with rounded corners | `offset`, default `20`; `borderRadius`, default `5` |
-
-The defaults come from `config.edge.curvature`, `config.edge.stepOffset` and `config.edge.stepBorderRadius`. An edge's `pathOptions` overrides them for that edge.
-
-```typescript
-const edges: FlowEdge[] = [
-  { id: "a-b", source: "a", target: "b", type: "smoothstep", pathOptions: { borderRadius: 12 } },
-  { id: "a-c", source: "a", target: "c", pathOptions: { curvature: 0.5 } },
-];
-```
-
-## Markers
-
-`markerStart` and `markerEnd` take a shape name or an `EdgeMarker` object.
-
-```typescript
-{ markerEnd: "arrowclosed" }
-{ markerEnd: { type: "arrow", color: "#f59e0b", width: 20, strokeWidth: 1.5 } }
-```
-
-| `EdgeMarker` field | Description |
-| --- | --- |
-| `type` | `"arrow"` (open chevron) or `"arrowclosed"` (filled triangle) |
-| `color` | Defaults to `config.edge.markerColor`, then to the edge's stroke |
-| `width`, `height` | Marker box in pixels. Both default to `config.edge.markerSize`, 12.5. The arrow scales to fit the smaller side, like an SVG `viewBox` with `meet`. |
-| `strokeWidth` | Outline width. The marker also scales with it. |
-
-Markers point along the path where it ends, so they follow curves and steps.
-
-## Labels and style
-
-`label` is drawn by `custom.edgeLabel`, centred on the path's label point. The built-in label is 10px text on `colors.edgeLabelBackground`, outlined while the edge is selected. Clicking a label selects its edge. Return `null` from `custom.edgeLabel` to hide labels.
-
-The stroke defaults to `colors.edgeStroke`, or `colors.edgeStrokeSelected` while selected, at `config.edge.strokeWidth`. While one of its ends is being reconnected, the edge turns `colors.edgeStrokeUpdating`, the grey React Flow uses for an edge being updated. `style.stroke` and `style.strokeWidth` replace all of these. Animated edges use a 5px dash that completes a cycle every 500ms (`config.edge.animatedDash` and `config.edge.animationDuration`).
-
-Edges are hit-tested along their path within `edgeInteractionWidth / 2`, 10 units by default, so thin edges are still easy to click.
+An edge builder receives geometry and interaction state and returns your widget. [Service traffic](/diagram/gallery/service-map) maps data to line width; [A style from scratch](/diagram/gallery/headless) supplies its own painter. Both keep the engine's hit testing and selection.
 
 ## Custom edge types
 
 An edge type is a builder function, or `{ build, getPath }` when it also changes the geometry.
 
 ```typescript
-type EdgeType = EdgeBuilder | { build: EdgeBuilder; getPath?: (params: EdgePathParams, edge: FlowEdge | null) => EdgePathResult };
-type EdgeBuilder = (args: EdgeBuilderArgs, context: FlowContext<XyflowFlowConfig>) => Widget;
+type EdgeType<TConfig extends object> = EdgeBuilder<TConfig> | { build: EdgeBuilder<TConfig>; getPath?: (params: EdgePathParams, edge: FlowEdge | null) => EdgePathResult };
+type EdgeBuilder<TConfig extends object> = (args: EdgeBuilderArgs, context: FlowContext<TConfig>) => Widget;
 ```
 
 The editor computes the path first, translates it into the edge widget's local coordinates, and passes it to the builder. Draw the path at its local coordinates and size the widget to `size`.
@@ -100,19 +36,8 @@ The editor computes the path first, translates it into the edge widget's local c
 `ShapePaint` draws named SVG path strings on both renderers. It is what the built-in edges use.
 
 ```typescript
-import {
-  FlowDiagram,
-  ShapePaint,
-  commandsToD,
-  sampleCommands,
-  xyflowEdge,
-  type EdgeBuilderArgs,
-  type EdgePathParams,
-  type EdgePathResult,
-  type FlowContext,
-  type PathCommand,
-  type XyflowFlowConfig,
-} from "flitter-diagram";
+import { commandsToD, sampleCommands, type EdgeBuilderArgs, type EdgePathParams, type EdgePathResult, type FlowContext, type PathCommand } from "flitter-ui/diagram";
+import { FlowDiagram, ShapePaint, xyflowEdge, type XyflowFlowConfig } from "@/components/diagram/flow-diagram";
 
 // A new look on the default geometry
 function dashedEdge({ path, size, selected }: EdgeBuilderArgs, context: FlowContext<XyflowFlowConfig>) {
@@ -226,5 +151,77 @@ type EdgePathResult = {
 | `translateEdgePath(path, dx, dy)` | Moves a whole `EdgePathResult` |
 | `getMarkerCommands(point, angle, { type?, size?, strokeWidth? })` | Arrow head commands at `point` |
 | `commandsStartAngle(commands)`, `commandsEndAngle(commands)` | Direction in radians at either end, for markers |
+
+<details>
+<summary>Edge data and starter style conventions</summary>
+
+## FlowEdge
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | Unique id |
+| `source`, `target` | `string` | Node ids |
+| `sourceHandle`, `targetHandle` | `string \| null` | Handle ids. Omit to use the node's first handle of that type. |
+| `type` | `string` | Key into `edgeTypes`. Defaults to `"default"`, a Bézier curve. |
+| `data` | `TData` | Your data |
+| `label` | `string` | Text drawn at the middle of the path |
+| `selected` | `boolean` | Initial selection; updated by the editor |
+| `animated` | `boolean` | Draw marching dashes along the edge |
+| `hidden` | `boolean` | Not drawn. Edges to hidden nodes are hidden too. |
+| `deletable` | `boolean` | `false` protects this edge from deletion |
+| `selectable` | `boolean` | `false` makes this edge unselectable |
+| `markerStart`, `markerEnd` | `MarkerShape \| EdgeMarker` | Arrow heads; see Markers below |
+| `zIndex` | `number` | Paint order among edges. Edges always paint below nodes. |
+| `style` | `{ stroke?, strokeWidth? }` | Stroke overrides for this edge |
+| `pathOptions` | `{ curvature?, offset?, borderRadius? }` | Options for the built-in path types |
+| `reconnectable` | `boolean \| "source" \| "target"` | Which ends can be dragged to another handle. Omitted or `true` allows both, `"source"` or `"target"` only that end, `false` neither. Needs `edgesReconnectable`, which is on by default, and `nodesConnectable`. |
+
+## Starter edge types
+
+| Type | Path | Options |
+| --- | --- | --- |
+| `default`, `bezier` | Cubic Bézier that leaves and enters along the handle directions | `curvature`, default `0.25` |
+| `simplebezier` | Cubic Bézier with control points halfway between the ends | None |
+| `straight` | Straight line | None |
+| `step` | Right angles | `offset`, default `20` |
+| `smoothstep` | Right angles with rounded corners | `offset`, default `20`; `borderRadius`, default `5` |
+
+These are the copied xyflow builders’ conventions. Your own builders decide how to use edge data. The defaults come from `config.edge.curvature`, `config.edge.stepOffset` and `config.edge.stepBorderRadius`. An edge's `pathOptions` overrides them for that edge.
+
+```typescript
+const edges: FlowEdge[] = [
+  { id: "a-b", source: "a", target: "b", type: "smoothstep", pathOptions: { borderRadius: 12 } },
+  { id: "a-c", source: "a", target: "c", pathOptions: { curvature: 0.5 } },
+];
+```
+
+## Markers
+
+`markerStart` and `markerEnd` take a shape name or an `EdgeMarker` object.
+
+```typescript
+{ markerEnd: "arrowclosed" }
+{ markerEnd: { type: "arrow", color: "#f59e0b", width: 20, strokeWidth: 1.5 } }
+```
+
+| `EdgeMarker` field | Description |
+| --- | --- |
+| `type` | `"arrow"` (open chevron) or `"arrowclosed"` (filled triangle) |
+| `color` | Defaults to `config.edge.markerColor`, then to the edge's stroke |
+| `width`, `height` | Marker box in pixels. Both default to `config.edge.markerSize`, 12.5. The arrow scales to fit the smaller side, like an SVG `viewBox` with `meet`. |
+| `strokeWidth` | Outline width. The marker also scales with it. |
+
+Markers point along the path where it ends, so they follow curves and steps.
+
+## Labels and style
+
+`label` is drawn by `custom.edgeLabel`, centred on the path's label point. The built-in label is 10px text on `colors.edgeLabelBackground`, outlined while the edge is selected. Clicking a label selects its edge. Return `null` from `custom.edgeLabel` to hide labels.
+
+The stroke defaults to `colors.edgeStroke`, or `colors.edgeStrokeSelected` while selected, at `config.edge.strokeWidth`. While one of its ends is being reconnected, the edge turns `colors.edgeStrokeUpdating`, the grey React Flow uses for an edge being updated. `style.stroke` and `style.strokeWidth` replace all of these. Animated edges use a 5px dash that completes a cycle every 500ms (`config.edge.animatedDash` and `config.edge.animationDuration`).
+
+Edges are hit-tested along their path within `edgeInteractionWidth / 2`, 10 units by default, so thin edges are still easy to click.
+
+
+</details>
 
 </div>

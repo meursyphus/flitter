@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test:diagram-docs": "node scripts/check-diagram-gallery.mjs",
     "llm:build": "node ./scripts/build-llm-pack.mjs",
     "gen:gallery": "node scripts/generate-gallery.mjs",
     "gen:thumbs": "npx tsx scripts/generate-gallery-thumbnails.mts",

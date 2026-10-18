@@ -248,7 +248,7 @@ function LibrariesSection() {
             </span>
           </div>
           <p className="mt-3 text-[16px] leading-relaxed text-soft">
-            Node-and-edge editors with React Flow&apos;s interactions, like the
+            Headless diagrams with editable widget builders, like the
             ERD canvas in easyrd. Pluggable layouts, SVG or Canvas.
           </p>
           <div className="mt-5 h-28 overflow-hidden rounded-lg border border-line">

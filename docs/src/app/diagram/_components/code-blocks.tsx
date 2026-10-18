@@ -23,36 +23,10 @@ export default function App() {
   return <Widget widget={diagram} width="100%" height="480px" renderer="canvas" />;
 }`;
 
-const CUSTOM_NODE_CODE = `FlowDiagram({
-  nodes,
-  edges,
-  nodeTypes: {
-    // Any Flitter widget, plus the handles it exposes
-    task: {
-      build: ({ node, selected }) =>
-        Container({
-          width: 180,
-          padding: EdgeInsets.all(12),
-          decoration: new BoxDecoration({
-            color: selected ? "#fff7e6" : "#ffffff",
-            border: Border.all({ color: "#f59e0b" }),
-            borderRadius: BorderRadius.circular(8),
-          }),
-          child: Text(String(node.data.label)),
-        }),
-      handles: [
-        { type: "target", position: "left" },
-        { type: "source", position: "right" },
-      ],
-    },
-  },
-  layout: { algorithm: layeredLayout, options: { direction: "LR" } },
-});`;
-
-async function HighlightedCode({ code, lang }: { code: string; lang: string }) {
+export async function HighlightedCode({ code, lang }: { code: string; lang: string }) {
   const html = await highlight(code, lang);
   return (
-    <div className="code-surface relative overflow-hidden rounded-lg text-[13px] leading-relaxed [&_pre]:px-5 [&_pre]:py-4">
+    <div className="code-surface relative overflow-x-auto rounded-lg text-[13px] leading-relaxed [&_pre]:px-5 [&_pre]:py-4">
       <CopyButton text={code} className="absolute right-2.5 top-2.5" />
       <div dangerouslySetInnerHTML={{ __html: html }} />
     </div>
@@ -61,8 +35,4 @@ async function HighlightedCode({ code, lang }: { code: string; lang: string }) {
 
 export function MinimalCodeBlock() {
   return <HighlightedCode code={MINIMAL_CODE} lang="tsx" />;
-}
-
-export function CustomNodeCodeBlock() {
-  return <HighlightedCode code={CUSTOM_NODE_CODE} lang="typescript" />;
 }

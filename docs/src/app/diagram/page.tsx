@@ -1,17 +1,16 @@
 import DiagramLanding from "./_components/diagram-landing";
-import { CustomNodeCodeBlock, MinimalCodeBlock } from "./_components/code-blocks";
+import { MinimalCodeBlock } from "./_components/code-blocks";
 
 export const metadata = {
   title: "Diagram",
   description:
-    "Node and edge editors with React Flow's interactions, drawn by Flitter on SVG or Canvas.",
+    "A headless diagram engine with editable source, custom widget builders and live examples on SVG and Canvas.",
 };
 
 export default function DiagramHome() {
   return (
     <DiagramLanding
       minimalCodeBlock={<MinimalCodeBlock />}
-      customNodeCodeBlock={<CustomNodeCodeBlock />}
     />
   );
 }

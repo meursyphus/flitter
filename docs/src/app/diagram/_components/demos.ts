@@ -10,8 +10,6 @@ import {
   MainAxisSize,
   Row,
   SizedBox,
-  State,
-  StatefulWidget,
   Text,
   TextStyle,
   type Widget,
@@ -25,7 +23,6 @@ import {
   type LayoutOptions,
   type NodeToolbarBuilder,
   type XyflowFlowConfig,
-  FlowController,
   FlowDiagram,
   circularLayout,
   forceLayout,
@@ -43,37 +40,6 @@ function siteConfig(theme: Theme, extra: DeepPartial<XyflowFlowConfig> = {}): De
     colorMode: theme,
     colors: { background: theme === "dark" ? "#14171c" : "#ffffff", ...extra.colors },
   };
-}
-
-/* ── Hero: a deploy pipeline ─────────────────────────────── */
-
-const pipelineNodes: FlowNode[] = [
-  { id: "push", type: "input", position: { x: 0, y: 0 }, data: { label: "Push to main" } },
-  { id: "lint", position: { x: -190, y: 120 }, data: { label: "Lint" } },
-  { id: "test", position: { x: 0, y: 120 }, data: { label: "Unit tests" } },
-  { id: "build", position: { x: 190, y: 120 }, data: { label: "Build" } },
-  { id: "preview", position: { x: 0, y: 250 }, data: { label: "Preview deploy" } },
-  { id: "prod", type: "output", position: { x: 0, y: 380 }, data: { label: "Production" } },
-];
-
-const pipelineEdges: FlowEdge[] = [
-  { id: "push-lint", source: "push", target: "lint", type: "smoothstep" },
-  { id: "push-test", source: "push", target: "test", animated: true },
-  { id: "push-build", source: "push", target: "build", type: "smoothstep" },
-  { id: "lint-preview", source: "lint", target: "preview" },
-  { id: "test-preview", source: "test", target: "preview" },
-  { id: "build-preview", source: "build", target: "preview", label: "artifact" },
-  { id: "preview-prod", source: "preview", target: "prod", label: "approve", markerEnd: "arrowclosed" },
-];
-
-export function createHeroDiagram(theme: Theme): Widget {
-  return FlowDiagram({
-    nodes: pipelineNodes,
-    edges: pipelineEdges,
-    fitView: true,
-    fitViewOptions: { padding: 0.2 },
-    config: siteConfig(theme, { minimap: { width: 150, height: 100 } }),
-  });
 }
 
 /* ── Layout switcher: a service dependency graph ─────────── */
@@ -125,6 +91,8 @@ function layoutDiagram(
   return (theme: Theme): Widget =>
     FlowDiagram({
       nodes: serviceNodes,
+      minZoom: 0.1,
+      fitViewOptions: { padding: 0.15 },
       edges: serviceEdges,
       layout: { algorithm, options },
       nodeTypes: horizontal ? { default: { build: xyflowNode, handles: sideHandles } } : undefined,
@@ -147,53 +115,23 @@ export const layoutDemos = [
 /* ── Quick start: the guide's editor, live ───────────────── */
 
 const quickStartNodes: FlowNode[] = [
-  { id: "1", type: "input", position: { x: 0, y: 0 }, data: { label: "Input" } },
-  { id: "2", position: { x: -100, y: 120 }, data: { label: "Default" } },
-  { id: "3", position: { x: 100, y: 120 }, data: { label: "Default" } },
-  { id: "4", type: "output", position: { x: 0, y: 240 }, data: { label: "Output" } },
+  { id: "draft", type: "input", position: { x: 0, y: 0 }, data: { label: "Draft" } },
+  { id: "review", position: { x: 0, y: 120 }, data: { label: "Review" } },
+  { id: "publish", type: "output", position: { x: 0, y: 240 }, data: { label: "Publish" } },
 ];
 
 const quickStartEdges: FlowEdge[] = [
-  { id: "e1-2", source: "1", target: "2" },
-  { id: "e1-3", source: "1", target: "3", animated: true },
-  { id: "e2-4", source: "2", target: "4", label: "label" },
+  { id: "a", source: "draft", target: "review" },
+  { id: "b", source: "review", target: "publish" },
 ];
 
-class QuickStartEditor extends StatefulWidget {
-  constructor(readonly theme: Theme) {
-    super();
-  }
-
-  createState(): State<QuickStartEditor> {
-    return new QuickStartEditorState();
-  }
-}
-
-class QuickStartEditorState extends State<QuickStartEditor> {
-  controller = new FlowController();
-
-  override dispose(): void {
-    this.controller.dispose();
-    super.dispose();
-  }
-
-  override build(): Widget {
-    return FlowDiagram({
-      controller: this.controller,
-      nodes: quickStartNodes,
-      edges: quickStartEdges,
-      fitView: true,
-      fitViewOptions: { padding: 0.3 },
-      onConnect: (connection) => {
-        this.controller.addEdges({ ...connection, markerEnd: "arrowclosed" });
-      },
-      config: siteConfig(this.widget.theme, { minimap: { visible: false } }),
-    });
-  }
-}
-
 export function createQuickStartDiagram(theme: Theme): Widget {
-  return new QuickStartEditor(theme);
+  return FlowDiagram({
+    nodes: quickStartNodes,
+    edges: quickStartEdges,
+    fitView: true,
+    config: siteConfig(theme),
+  });
 }
 
 /* ── Interaction: resize, toolbar, reconnect ─────────────── */
@@ -229,15 +167,13 @@ function toolbarButton(label: string, onClick: () => void): Widget {
   });
 }
 
-let copies = 0;
-
 const interactionToolbar: NodeToolbarBuilder<XyflowFlowConfig> = ({ node }, flow) =>
   Row({
     mainAxisSize: MainAxisSize.min,
     children: [
       toolbarButton("Duplicate", () =>
         flow.addNodes({
-          id: `${node.id}-copy-${++copies}`,
+          id: crypto.randomUUID(),
           type: node.type,
           data: node.data,
           position: { x: node.position.x + 40, y: node.position.y + 60 },

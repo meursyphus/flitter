@@ -56,8 +56,14 @@ export default function Header() {
     setMenuOpen(false);
   }, [pathname]);
 
+  const navLinks = NAV_LINKS.map((link) =>
+    link.label === "Gallery" && product?.id === "diagram"
+      ? { ...link, href: "/diagram/gallery", match: "/diagram/gallery" }
+      : link,
+  );
+
   // Most specific match wins, so "Gallery" beats "Chart" inside the gallery.
-  const activeLink = NAV_LINKS.filter((link) => isUnder(pathname, link.match)).sort(
+  const activeLink = navLinks.filter((link) => isUnder(pathname, link.match)).sort(
     (a, b) => b.match.length - a.match.length,
   )[0];
 
@@ -87,7 +93,7 @@ export default function Header() {
 
           <div className="hidden items-center gap-1 md:flex">
             <nav aria-label="Primary" className="mr-3 flex items-center gap-1">
-              {NAV_LINKS.map((link) => (
+              {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -160,7 +166,7 @@ export default function Header() {
               </button>
             </div>
             <div className="flex flex-col px-3 py-3">
-              {NAV_LINKS.map((link) => (
+              {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
