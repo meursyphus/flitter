@@ -11,7 +11,9 @@ export type DeepPartial<T> = T extends (...args: any[]) => any
   : T extends Date
     ? Date
     : T extends Array<infer U>
-      ? DeepPartial<U>[]
+      ? number extends T["length"]
+        ? DeepPartial<U>[]
+        : { [K in keyof T]: DeepPartial<T[K]> }
       : T extends object
         ? { [K in keyof T]?: DeepPartial<T[K]> }
         : T;

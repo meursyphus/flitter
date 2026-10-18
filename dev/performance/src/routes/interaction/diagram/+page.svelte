@@ -1,10 +1,12 @@
 <script lang="ts">
+import { type NodeToolbarBuilder, type DefaultFlowConfig } from "flitter-diagram";
+
 	import { onMount } from 'svelte';
 	import { AppRunner } from 'flitter-core';
 	import { Container, EdgeInsets, Text, TextStyle, GestureDetector } from 'flitter-core';
 	import {
 		FlowDiagram,
-		xyflowNodeTypes,
+		defaultNodeTypes,
 		type FlowEdge,
 		type FlowNode,
 		type NodeTypeDefinition
@@ -40,7 +42,7 @@
 		// Count builder invocations per node so tests can assert rebuild locality.
 		const builds: Record<string, number> = {};
 		const counted = Object.fromEntries(
-			Object.entries(xyflowNodeTypes).map(([name, definition]) => [
+			Object.entries(defaultNodeTypes).map(([name, definition]) => [
 				name,
 				{
 					...definition,
@@ -55,44 +57,57 @@
 			FlowDiagram({
 				nodes,
 				edges,
-				fitView: true,
-				nodeTypes: counted,
-				panOnScroll: query.has('panOnScroll'),
-				snapToGrid: query.has('snap'),
-				translateExtent: extent,
-				// the minimap panel would cover node 3 at this pane size
 				config: { minimap: { visible: false } },
-				nodeToolbar: ({ node }) =>
-					GestureDetector({
-						onClick: () => {
-							toolbarClicks++;
-							events.push(`toolbar:${node.id}`);
+				nodeTypes: Object.fromEntries(
+					Object.entries(counted).map(([name, definition]) => [
+						name,
+						{
+							...definition,
+							toolbar: (({ node }) =>
+								GestureDetector({
+									onClick: () => {
+										toolbarClicks++;
+										events.push(`toolbar:${node.id}`);
+									},
+									child: Container({
+										padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
+										color: '#3367d9',
+										child: Text(`tools ${node.id}`, {
+											style: new TextStyle({ color: '#fff', fontSize: 12 }),
+										}),
+									}),
+								})) as NodeToolbarBuilder<DefaultFlowConfig>,
 						},
-						child: Container({
-							padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
-							color: '#3367d9',
-							child: Text(`tools ${node.id}`, { style: new TextStyle({ color: '#fff', fontSize: 12 }) })
-						})
-					}),
-				onInit: (controller) => {
-					(window as any).__diagram = { controller, events, builds, toolbarClicks: () => toolbarClicks };
+					]),
+				),
+				viewport: { fitView: true, extent: extent },
+				interaction: {
+					pane: { scroll: query.has('panOnScroll') ? 'pan' : 'zoom' },
+					drag: { snap: { grid: query.has('snap') ? [15, 15] : false } },
 				},
-				onReconnect: (oldEdge, connection) => {
-					events.push(`reconnect:${oldEdge.id}->${connection.source}-${connection.target}`);
-					(window as any).__diagram.controller.reconnectEdge(oldEdge, connection);
+				on: {
+					init: (controller) => {
+						(window as any).__diagram = { controller, events, builds, toolbarClicks: () => toolbarClicks };
+					},
+					reconnect: (oldEdge, connection) => {
+						events.push(`reconnect:${oldEdge.id}->${connection.source}-${connection.target}`);
+						(window as any).__diagram.controller.reconnectEdge(oldEdge, connection);
+					},
+					resizeEnd: (_e, node, params) =>
+						events.push(`resize:${node.id}:${Math.round(params.width)}x${Math.round(params.height)}`),
+					nodesChange: (changes) => events.push(...changes.map((c) => `node:${c.type}`)),
+					edgesChange: (changes) => events.push(...changes.map((c) => `edge:${c.type}`)),
+					connect: (connection) => {
+						events.push(`connect:${connection.source}->${connection.target}`);
+						(window as any).__diagram.controller.addEdges(connection);
+					},
+					dragEnd: (_e, node) => events.push(`dragstop:${node.id}`),
+					selectionChange: ({ nodes: selected }) =>
+						events.push(`selection:${selected.map((n) => n.id).join(',')}`),
+					delete: ({ nodes: deletedNodes, edges: deletedEdges }) =>
+						events.push(`delete:${deletedNodes.length}/${deletedEdges.length}`),
 				},
-				onNodeResizeEnd: (_e, node, params) => events.push(`resize:${node.id}:${Math.round(params.width)}x${Math.round(params.height)}`),
-				onNodesChange: (changes) => events.push(...changes.map((c) => `node:${c.type}`)),
-				onEdgesChange: (changes) => events.push(...changes.map((c) => `edge:${c.type}`)),
-				onConnect: (connection) => {
-					events.push(`connect:${connection.source}->${connection.target}`);
-					(window as any).__diagram.controller.addEdges(connection);
-				},
-				onNodeDragStop: (_e, node) => events.push(`dragstop:${node.id}`),
-				onSelectionChange: ({ nodes: selected }) => events.push(`selection:${selected.map((n) => n.id).join(',')}`),
-				onDelete: ({ nodes: deletedNodes, edges: deletedEdges }) =>
-					events.push(`delete:${deletedNodes.length}/${deletedEdges.length}`)
-			})
+			}),
 		);
 		runner.onMount({ resizeTarget: host });
 		return () => runner.dispose();

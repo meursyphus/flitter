@@ -24,43 +24,64 @@ const edges: FlowEdge[] = [
 export default function ServiceMap(theme: "light" | "dark" = "light"): Widget {
   const dark = theme === "dark";
   return FlowDiagram({
-    nodes, edges, minZoom: 0.15,
-    fitViewOptions: { padding: 0.2, maxZoom: 1 },
+    nodes,
+    edges,
     layout: { algorithm: forceLayout, options: { seed: 7, nodeSpacing: 75 } },
     config: { colorMode: theme, controls: { visible: false }, minimap: { visible: false } },
     custom: { background: () => null },
     nodeTypes: {
       service: {
-        build: ({ node, selected, hovered }) => Container({
-          width: 112, height: 112, alignment: Alignment.center,
-          decoration: new BoxDecoration({
-            color: dark ? "#20242e" : "#ffffff",
-            border: Border.all({ color: String(node.data.color), width: selected || hovered ? 5 : 2 }),
-            borderRadius: BorderRadius.circular(56),
+        build: ({ node, selected, hovered }) =>
+          Container({
+            width: 112,
+            height: 112,
+            alignment: Alignment.center,
+            decoration: new BoxDecoration({
+              color: dark ? "#20242e" : "#ffffff",
+              border: Border.all({ color: String(node.data.color), width: selected || hovered ? 5 : 2 }),
+              borderRadius: BorderRadius.circular(56),
+            }),
+            child: Column({
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(String(node.data.label), {
+                  style: new TextStyle({
+                    fontFamily: "system-ui, sans-serif",
+                    color: dark ? "#f1f5f9" : "#172033",
+                    fontSize: 13,
+                    fontWeight: "bold",
+                  }),
+                }),
+                SizedBox({ height: 8 }),
+                Text(String(node.data.metric), {
+                  style: new TextStyle({
+                    fontFamily: "system-ui, sans-serif",
+                    color: String(node.data.color),
+                    fontSize: 11,
+                  }),
+                }),
+              ],
+            }),
           }),
-          child: Column({ mainAxisSize: MainAxisSize.min, children: [
-            Text(String(node.data.label), { style: new TextStyle({ fontFamily: "system-ui, sans-serif", color: dark ? "#f1f5f9" : "#172033", fontSize: 13, fontWeight: "bold" }) }),
-            SizedBox({ height: 8 }),
-            Text(String(node.data.metric), { style: new TextStyle({ fontFamily: "system-ui, sans-serif", color: String(node.data.color), fontSize: 11 }) }),
-          ] }),
-        }),
         handles: [],
       },
     },
     edgeTypes: {
       traffic: {
         getPath: getStraightPath,
-        build: ({ path, size, edge, selected, hovered }) => ShapePaint({
-          ...size,
-          shapes: {
-            traffic: {
-              d: commandsToD(path.commands),
-              stroke: selected || hovered ? "#f59e0b" : dark ? "#697893" : "#b5c2d6",
-              strokeWidth: Number(edge.data?.traffic ?? 1),
+        build: ({ path, size, edge, selected, hovered }) =>
+          ShapePaint({
+            ...size,
+            shapes: {
+              traffic: {
+                d: commandsToD(path.commands),
+                stroke: selected || hovered ? "#f59e0b" : dark ? "#697893" : "#b5c2d6",
+                strokeWidth: Number(edge.data?.traffic ?? 1),
+              },
             },
-          },
-        }),
+          }),
       },
     },
+    viewport: { minZoom: 0.15, fitView: { padding: 0.2, maxZoom: 1 } },
   });
 }

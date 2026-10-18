@@ -191,14 +191,28 @@ for (const renderer of ['svg', 'canvas']) {
 		expect(nonBackground).toBeGreaterThanOrEqual(2);
 	});
 
+	test(`${renderer}: hover rebuilds only the hovered node and its neighbours`, async ({ page }) => {
+		await mount(page, renderer);
+		const before = await page.evaluate(() => ({ ...(window as any).__diagram.builds }));
+		const c2 = await nodeCenter(page, '2');
+		await page.mouse.move(c2.x, c2.y);
+		await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+		const after = await page.evaluate(() => ({ ...(window as any).__diagram.builds }));
+		expect(after['2']).toBeGreaterThan(before['2']);
+		expect(after['1']).toBeGreaterThan(before['1']);
+		expect(after['3']).toBe(before['3']);
+	});
+
 	test(`${renderer}: dragging one node rebuilds only that node`, async ({ page }) => {
 		const box = await mount(page, renderer);
 		const builds = () => page.evaluate(() => ({ ...(window as any).__diagram.builds }));
 		const settle = () =>
 			page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-		const before = await builds();
 		const c2 = await nodeCenter(page, '2');
-		await page.mouse.move(c2.x, c2.y);
+		// Hover/selection changes neighbour args once. Measure drag ticks after those transitions.
+		await page.mouse.click(c2.x, c2.y);
+		await settle();
+		const before = await builds();
 		await page.mouse.down();
 		for (let i = 1; i <= 10; i++) await page.mouse.move(c2.x + i * 6, c2.y + i * 4);
 		await page.mouse.up();

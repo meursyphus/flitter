@@ -169,10 +169,14 @@ Feedback loop: Astra runs via the Codex companion in the background; Fable polls
 
 Realistic wall clock: 3 hours if P2 lands clean, 4 if the waypoint router or history needs a second pass.
 
+## 7b. Checkpoint notes
+
+- P1 review: API matches §4. Follow-ups folded into P2: add `select.box` (viewer keeps click selection, loses box select); drop the stale node arg `zoom` in favour of `controller.zoom` plus per-node-type `lod: number[]` breakpoints that rebuild a node only when the zoom crosses one; remove `defaultDiagramStyle` from the CLI config/schema (single style).
+
 ## 8. Progress
 
 - [x] P0 research (`todo/diagram-research.md`) and this guide
-- [~] P1 API (Astra, started 2026-10-18)
+- [x] P1 API (Astra, 2026-10-18; Codex sandbox cannot commit or bind ports, so Fable commits and runs Playwright)
 - [ ] P2 interactions · [ ] P2' docs skeleton
 - [ ] P3 examples 1–8 · [ ] 9–12 · [ ] P3' gallery wiring
 - [ ] P4 review + PR

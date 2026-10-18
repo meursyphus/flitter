@@ -8,7 +8,7 @@ src/headless/flow/   Pure behaviour: FlowController state machine, scene render
                      objects, gesture wiring. No colours, fonts or shapes.
 src/shared/          Geometry, edge path math, change helpers, layout algorithms.
                      Plain functions with no widget imports except `Path`.
-src/styles/xyflow/   React Flow look. Everything visual lives here as `custom`
+src/styles/default/   React Flow look. Everything visual lives here as `custom`
                      builders; it must only use the headless public API.
 ```
 
@@ -56,3 +56,15 @@ pnpm --dir packages/diagram typecheck
 pnpm --dir dev/performance exec vitest run src/diagram
 pnpm story:dev     # Diagram/* stories render SVG and Canvas side by side
 ```
+
+## P1 public surface
+
+`Flow({ nodes, edges, custom, config, viewport, interaction, can, on, ... })`
+groups viewport settings and events; interaction presets are `editor`, `viewer`
+and `whiteboard` (defaults: `todo/diagram-research.md` §A). `can` overrides item
+permission defaults. Toolbars belong to `nodeTypes.*.toolbar`.
+`FlowDiagram` supplies `defaultCustom` and `DefaultFlowConfig`; install with
+`flitter add flow-diagram`. P2 placeholders are stored in `controller.interaction`
+and updated with `setInteraction`: history, clipboard, context menu, text/waypoint
+editing, guides, overlap/group-drop and extra shortcuts. The contextMenu, guides
+and edgeHandle slots ship now; P2 wires their gestures and overlays.

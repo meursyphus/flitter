@@ -48,13 +48,16 @@ import {
   reconnectEdge as reconnectEdgeHelper,
 } from "../../shared/changes";
 import { type LayoutAlgorithm, type LayoutOptions, computeHierarchicalLayout } from "../../shared/layout";
-import { createId, isMacOs } from "../../shared/utils";
+import { deepMerge, type DeepPartial, createId, isMacOs } from "../../shared/utils";
 import type {
   ConnectionState,
   EdgeEndpoints,
   EdgeType,
   FitViewOptions,
-  FlowCallbacks,
+  FlowEvents,
+  FlowInteraction,
+  Gesture,
+  GestureTarget,
   FlowCustom,
   FlowEdge,
   FlowNode,
@@ -72,6 +75,8 @@ import type {
   ResizeParams,
   ResolvedHandle,
 } from "./types";
+
+import { resolveInteraction, interactionOptions } from "./interaction";
 
 export const DEFAULT_FLOW_OPTIONS: FlowOptions = {
   minZoom: 0.5,
@@ -182,7 +187,25 @@ export class FlowController extends ChangeNotifier {
   #propsNodes: FlowNode[] | undefined;
   #propsEdges: FlowEdge[] | undefined;
   #options: FlowOptions = { ...DEFAULT_FLOW_OPTIONS };
-  #callbacks: FlowCallbacks = {};
+  #callbacks: FlowEvents = {};
+  #interaction = resolveInteraction();
+  #can: FlowProps["can"];
+  #viewer = false;
+  get interaction(): Readonly<FlowInteraction> { return this.#interaction; }
+
+  setInteraction(partial: DeepPartial<FlowInteraction>): void {
+    this.#interaction = deepMerge(this.#interaction, partial);
+    this.#options = { ...this.#options, ...interactionOptions(this.#interaction) };
+    // P2: edit text/waypoints, history, clipboard, contextMenu, guides,
+    // overlap/dropIntoGroup and additional keyboard bindings read this state.
+    this.#styleVersion += 1;
+    this.notifyListeners();
+  }
+
+  can(gesture: Gesture, target: GestureTarget, fallback = true): boolean {
+    return this.#can ? this.#can(gesture, target) : fallback;
+  }
+
   #fitViewOnInit = false;
   #fitViewOptions: FitViewOptions = {};
   #layoutConfig: LayoutConfig | null = null;
@@ -212,7 +235,6 @@ export class FlowController extends ChangeNotifier {
   #drag: DragState | null = null;
   #resize: ResizeState | null = null;
   #connection: ConnectionState | null = null;
-  nodeToolbar: NodeToolbarBuilder<any> | null = null;
   #selectionBox: { start: XYPosition; current: XYPosition } | null = null;
   #keysHeld = new Set<string>();
   #pointerInside = false;
@@ -238,45 +260,25 @@ export class FlowController extends ChangeNotifier {
 
   /** Push widget props into the controller. Never notifies: a build is already in progress. */
   configure(props: FlowProps<any>): void {
-    const {
-      nodes,
-      edges,
-      custom,
-      config,
-      nodeTypes,
-      edgeTypes,
-      defaultViewport,
-      fitView,
-      fitViewOptions,
-      layout,
-      panels,
-      nodeToolbar,
-      controller: _controller,
-      key: _key,
-      ...rest
-    } = props;
-    this.nodeToolbar = nodeToolbar ?? null;
+    const { nodes, edges, custom, config, nodeTypes, edgeTypes, viewport, layout, panels, interaction, can, on } = props;
     this.custom = custom;
     this.config = config ?? {};
     this.nodeTypes = nodeTypes ?? {};
     this.edgeTypes = edgeTypes ?? {};
     this.panels = panels ?? [];
-    // Any prop change may affect how nodes/edges look; cached widgets rebuild.
     this.#styleVersion += 1;
-
-    const options: FlowOptions = { ...DEFAULT_FLOW_OPTIONS };
-    const callbacks: FlowCallbacks = {};
-    for (const [key, value] of Object.entries(rest)) {
-      if (key in DEFAULT_FLOW_OPTIONS) {
-        if (value !== undefined) (options as Record<string, unknown>)[key] = value;
-      } else if (key.startsWith("on") && typeof value === "function") {
-        (callbacks as Record<string, unknown>)[key] = value;
-      }
-    }
-    this.#options = options;
-    this.#callbacks = callbacks;
-    this.#fitViewOptions = fitViewOptions ?? {};
-    if (fitView && !this.#viewportInitialized) this.#fitViewOnInit = true;
+    this.#interaction = resolveInteraction(interaction);
+    this.#viewer = (typeof interaction === "string" ? interaction : interaction?.preset) === "viewer";
+    this.#can = can;
+    this.#options = {
+      ...DEFAULT_FLOW_OPTIONS, ...interactionOptions(this.#interaction),
+      minZoom: viewport?.minZoom ?? DEFAULT_FLOW_OPTIONS.minZoom,
+      maxZoom: viewport?.maxZoom ?? DEFAULT_FLOW_OPTIONS.maxZoom,
+      translateExtent: viewport?.extent ?? infiniteExtent,
+    };
+    this.#callbacks = on ?? {};
+    this.#fitViewOptions = typeof viewport?.fitView === "object" ? viewport.fitView : {};
+    if (viewport?.fitView && !this.#viewportInitialized) this.#fitViewOnInit = true;
     const nextLayout: LayoutConfig | null = layout ? ("compute" in layout ? { algorithm: layout } : layout) : null;
     if (nextLayout && (nextLayout.algorithm !== this.#layoutConfig?.algorithm) && !this.#viewportInitialized) {
       this.#layoutPending = nextLayout.runOn !== "manual";
@@ -293,7 +295,7 @@ export class FlowController extends ChangeNotifier {
     }
     if (!this.#viewportInitialized) {
       this.#viewportInitialized = true;
-      if (defaultViewport) this.#setMatrix(this.#clampViewport(defaultViewport));
+      if (viewport?.initial) this.#setMatrix(this.#clampViewport(viewport.initial));
     }
   }
 
@@ -427,7 +429,9 @@ export class FlowController extends ChangeNotifier {
   }
 
   setEdges(edges: FlowEdge[] | ((edges: FlowEdge[]) => FlowEdge[])): void {
+    const previousNeighbours = this.#neighbourIds();
     this.#replaceEdges(typeof edges === "function" ? edges(this.#edges) : edges);
+    this.#notifyChangedNeighbours(previousNeighbours);
     this.#emitSelectionChange();
     this.#notifyAllEdges();
     this.notifyListeners();
@@ -502,17 +506,17 @@ export class FlowController extends ChangeNotifier {
       const id = queue.shift()!;
       if (nodeIds.has(id)) continue;
       const node = this.#nodeLookup.get(id);
-      if (!node || node.deletable === false) continue;
+      if (!node || !this.can("delete", { kind: "node", id: node.id }, (!this.#viewer || this.#interaction.keys.delete != null) && node.deletable !== false)) continue;
       nodeIds.add(id);
       for (const child of this.#nodes) if (child.parentId === id) queue.push(child.id);
     }
     const nodesToDelete = this.#nodes.filter((n) => nodeIds.has(n.id));
     const edgeIds = new Set(edges.map((e) => e.id));
     for (const edge of getConnectedEdges(nodesToDelete, this.#edges)) edgeIds.add(edge.id);
-    let edgesToDelete = this.#edges.filter((e) => edgeIds.has(e.id) && e.deletable !== false);
+    let edgesToDelete = this.#edges.filter((e) => edgeIds.has(e.id) && this.can("delete", { kind: "edge", id: e.id }, (!this.#viewer || this.#interaction.keys.delete != null) && e.deletable !== false));
     let finalNodes = nodesToDelete;
-    if (this.#callbacks.onBeforeDelete) {
-      const result = await this.#callbacks.onBeforeDelete({ nodes: finalNodes, edges: edgesToDelete });
+    if (this.#callbacks.beforeDelete) {
+      const result = await this.#callbacks.beforeDelete({ nodes: finalNodes, edges: edgesToDelete });
       if (result === false) return { deletedNodes: [], deletedEdges: [] };
       if (typeof result === "object") {
         finalNodes = result.nodes;
@@ -526,9 +530,7 @@ export class FlowController extends ChangeNotifier {
     if (finalNodes.length) {
       this.#applyNodeChanges(finalNodes.map((n) => ({ type: "remove", id: n.id }) as NodeChange<FlowNode>), { silent: true });
     }
-    if (edgesToDelete.length) this.#callbacks.onEdgesDelete?.(edgesToDelete);
-    if (finalNodes.length) this.#callbacks.onNodesDelete?.(finalNodes);
-    this.#callbacks.onDelete?.({ nodes: finalNodes, edges: edgesToDelete });
+    this.#callbacks.delete?.({ nodes: finalNodes, edges: edgesToDelete });
     this.#emitSelectionChange();
     this.notifyListeners();
     return { deletedNodes: finalNodes, deletedEdges: edgesToDelete };
@@ -604,7 +606,7 @@ export class FlowController extends ChangeNotifier {
   }
 
   panBy(delta: XYPosition): boolean {
-    if (delta.x === 0 && delta.y === 0) return false;
+    if (!this.can("pan", { kind: "pane" }) || (delta.x === 0 && delta.y === 0)) return false;
     const current = this.viewport;
     void this.setViewport({ x: current.x + delta.x, y: current.y + delta.y });
     return true;
@@ -944,7 +946,7 @@ export class FlowController extends ChangeNotifier {
       ({ positions, dimensions } = await computeHierarchicalLayout(this.#nodes, this.#edges, resolved, layoutOptions));
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      if (this.#callbacks.onError) this.#callbacks.onError("layout", `${resolved.name}: ${message}`);
+      if (this.#callbacks.error) this.#callbacks.error("layout", `${resolved.name}: ${message}`);
       else throw error;
       return;
     }
@@ -969,6 +971,56 @@ export class FlowController extends ChangeNotifier {
   // ---------------------------------------------------------------------------
   // Interaction state (read by builders)
   // ---------------------------------------------------------------------------
+
+  getNeighbours(id: string): FlowNode[] {
+    const ids = new Set<string>();
+    for (const edge of this.#edges) {
+      if (edge.source === id) ids.add(edge.target);
+      if (edge.target === id) ids.add(edge.source);
+    }
+    return this.#nodes.filter(node => ids.has(node.id));
+  }
+
+  isNodeNeighbour(id: string): boolean {
+    return this.#edges.some(edge =>
+      (edge.source === id && this.#isNeighbourAnchor(edge.target)) ||
+      (edge.target === id && this.#isNeighbourAnchor(edge.source)));
+  }
+
+  isEdgeNeighbour(edge: FlowEdge): boolean {
+    return this.#isNeighbourAnchor(edge.source) || this.#isNeighbourAnchor(edge.target);
+  }
+
+  #isNeighbourAnchor(id: string): boolean {
+    return this.#hoveredNodeId === id || !!this.#nodeLookup.get(id)?.selected;
+  }
+
+  #neighbourIds(): Set<string> {
+    const ids = new Set<string>();
+    for (const edge of this.#edges) {
+      if (this.#isNeighbourAnchor(edge.source)) ids.add(edge.target);
+      if (this.#isNeighbourAnchor(edge.target)) ids.add(edge.source);
+    }
+    return ids;
+  }
+
+  #notifyChangedNeighbours(previous: Set<string>): void {
+    const next = this.#neighbourIds();
+    for (const id of new Set([...previous, ...next])) {
+      if (previous.has(id) !== next.has(id)) this.#nodeSignals.get(id)?.notifyListeners();
+    }
+  }
+
+  #notifyNeighbours(ids: (string | null)[]): void {
+    const affected = new Set(ids.filter((id): id is string => id != null));
+    const nodes = new Set(affected);
+    for (const edge of this.#edges) {
+      if (!affected.has(edge.source) && !affected.has(edge.target)) continue;
+      nodes.add(edge.source); nodes.add(edge.target);
+      this.#edgeSignals.get(edge.id)?.notifyListeners();
+    }
+    for (const id of nodes) this.#nodeSignals.get(id)?.notifyListeners();
+  }
 
   get hoveredNodeId(): string | null {
     return this.#hoveredNodeId;
@@ -997,7 +1049,7 @@ export class FlowController extends ChangeNotifier {
   }
 
   isEdgeReconnectable(edge: FlowEdge): boolean {
-    return this.nodesConnectable && this.#options.edgesReconnectable && edge.reconnectable !== false;
+    return this.can("reconnect", { kind: "edge", id: edge.id }, this.nodesConnectable && this.#options.edgesReconnectable && edge.reconnectable !== false);
   }
 
   /** Which ends of an edge may be dragged to a new handle. */
@@ -1008,7 +1060,7 @@ export class FlowController extends ChangeNotifier {
   }
 
   isNodeResizable(node: FlowNode): boolean {
-    return this.#interactive && (node.resizable ?? this.#options.nodesResizable);
+    return this.can("resize", { kind: "node", id: node.id }, (!this.#viewer || !!this.#interaction.edit.resize) && this.#interactive && (node.resizable ?? this.#options.nodesResizable));
   }
 
   getNodeResizeOptions(node: FlowNode): Required<Pick<NodeResizeOptions, "minWidth" | "minHeight">> & NodeResizeOptions {
@@ -1019,7 +1071,7 @@ export class FlowController extends ChangeNotifier {
   getNodeToolbarBuilder(node: FlowNode): NodeToolbarBuilder<any> | null {
     const type = this.nodeTypes[node.type ?? "default"] ?? this.nodeTypes.default;
     if (type && typeof type !== "function" && type.toolbar) return type.toolbar;
-    return this.nodeToolbar;
+    return null;
   }
 
   /** React Flow shows a toolbar for the single selected node unless `isVisible` says otherwise. */
@@ -1053,27 +1105,36 @@ export class FlowController extends ChangeNotifier {
   }
 
   isNodeDraggable(node: FlowNode): boolean {
-    return node.draggable ?? this.nodesDraggable;
+    return this.can("drag", { kind: "node", id: node.id }, (!this.#viewer || this.#interaction.drag.enabled) && this.#interactive && (node.draggable ?? this.nodesDraggable));
   }
 
   isNodeSelectable(node: FlowNode): boolean {
-    return this.elementsSelectable && node.selectable !== false;
+    return this.can("select", { kind: "node", id: node.id }, this.elementsSelectable && node.selectable !== false);
   }
 
   isNodeConnectable(node: FlowNode): boolean {
-    return this.nodesConnectable && node.connectable !== false;
+    return this.can("connect", { kind: "node", id: node.id }, this.nodesConnectable && node.connectable !== false);
+  }
+
+  isEdgeSelectable(edge: FlowEdge): boolean {
+    return this.can("select", { kind: "edge", id: edge.id }, this.elementsSelectable && edge.selectable !== false);
+  }
+
+  acceptsPointer(event: MouseEvent): boolean {
+    return this.#interaction.touch || !(event as MouseEvent & { fromTouch?: boolean }).fromTouch;
   }
 
   /** Whether the viewport pans on a plain drag right now (keys and options considered). */
   get panEnabled(): boolean {
     const o = this.#options;
+    if (!this.can("pan", { kind: "pane" })) return false;
     if (this.#keyHeld(o.panActivationKeyCode)) return true;
     const selectionIntent = o.selectionOnDrag || this.#keyHeld(o.selectionKeyCode);
     return o.panOnDrag && !selectionIntent;
   }
 
   get zoomEnabled(): boolean {
-    return this.#options.zoomOnScroll || this.#options.zoomOnPinch;
+    return this.can("zoom", { kind: "pane" }) && (this.#options.zoomOnScroll || this.#options.zoomOnPinch);
   }
 
   // ---------------------------------------------------------------------------
@@ -1104,14 +1165,15 @@ export class FlowController extends ChangeNotifier {
   }
 
   handlePaneClick(event: MouseEvent): void {
+    if (!this.acceptsPointer(event)) return;
     if (this.#consumeMovement()) return;
     const double = this.#registerClick("pane", event);
-    if (!this.#isMultiSelect(event)) this.clearSelection();
+    if (!this.#isMultiSelect(event) && this.can("select", { kind: "selection" }, this.elementsSelectable)) this.clearSelection();
     if (this.#connection?.mode === "click") this.cancelConnection();
-    this.#callbacks.onPaneClick?.(event);
+    this.#callbacks.paneClick?.(event);
     if (double) {
-      this.#callbacks.onPaneDoubleClick?.(event);
-      if (this.#options.zoomOnDoubleClick) {
+      this.#callbacks.paneDoubleClick?.(event);
+      if (this.#options.zoomOnDoubleClick && this.can("zoom", { kind: "pane" })) {
         void this.#scaleAt(this.#panePoint(event), event.shiftKey ? 0.5 : 2, 250);
       }
     }
@@ -1119,15 +1181,15 @@ export class FlowController extends ChangeNotifier {
 
   /** Returns true when a box selection started (the caller should stop propagation). */
   handleSelectionDragStart(event: MouseEvent): boolean {
+    if (!this.acceptsPointer(event)) return false;
     if (event.button !== 0) return false;
     this.#beginPress(event);
     const o = this.#options;
     const intent = o.selectionOnDrag || this.#keyHeld(o.selectionKeyCode) || this.#modifierHeld(event, o.selectionKeyCode);
-    if (!intent || !this.elementsSelectable || this.#keyHeld(o.panActivationKeyCode)) return false;
+    if (!intent || !this.can("select", { kind: "selection" }, this.elementsSelectable) || this.#keyHeld(o.panActivationKeyCode)) return false;
     const point = this.#panePoint(event);
     this.#selectionBox = { start: point, current: point };
-    if (!this.#isMultiSelect(event)) this.clearSelection();
-    this.#callbacks.onSelectionStart?.(event);
+    if (!this.#isMultiSelect(event) && this.can("select", { kind: "selection" }, this.elementsSelectable)) this.clearSelection();
     this.notifyListeners();
     return true;
   }
@@ -1155,21 +1217,20 @@ export class FlowController extends ChangeNotifier {
     }
     const edgeIds = new Set<string>();
     for (const edge of this.#edges) {
-      if (nodeIds.has(edge.source) && nodeIds.has(edge.target) && edge.selectable !== false) edgeIds.add(edge.id);
+      if (nodeIds.has(edge.source) && nodeIds.has(edge.target) && this.isEdgeSelectable(edge)) edgeIds.add(edge.id);
     }
     this.#setSelection(nodeIds, edgeIds, { silent: true });
     this.notifyListeners();
   }
 
-  handleSelectionDragEnd(event: MouseEvent): void {
+  handleSelectionDragEnd(_event: MouseEvent): void {
     if (!this.#selectionBox) return;
     this.#selectionBox = null;
-    this.#callbacks.onSelectionEnd?.(event);
     this.notifyListeners();
   }
 
   handleViewportInteractionStart(): void {
-    this.#callbacks.onMoveStart?.(this.viewport);
+    this.#callbacks.viewportChange?.({ phase: "start", viewport: this.viewport });
   }
 
   handleViewportInteractionUpdate(details: { focalPointDelta: XYPosition; scale: number }): void {
@@ -1179,46 +1240,38 @@ export class FlowController extends ChangeNotifier {
   }
 
   handleViewportInteractionEnd(): void {
-    this.#callbacks.onMoveEnd?.(this.viewport);
+    this.#callbacks.viewportChange?.({ phase: "end", viewport: this.viewport });
   }
 
-  hoverNode(id: string, event: MouseEvent): void {
+  hoverNode(id: string, _event: MouseEvent): void {
     if (this.#hoveredNodeId === id) return;
     const previous = this.#hoveredNodeId;
     this.#hoveredNodeId = id;
-    const node = this.#nodeLookup.get(id);
-    if (node) this.#callbacks.onNodeMouseEnter?.(event, node);
-    if (previous) this.#nodeSignals.get(previous)?.notifyListeners();
-    this.#nodeSignals.get(id)?.notifyListeners();
+    this.#notifyNeighbours([previous, id]);
   }
 
-  unhoverNode(id: string, event: MouseEvent): void {
+  unhoverNode(id: string, __event: MouseEvent): void {
     if (this.#hoveredNodeId !== id) return;
     this.#hoveredNodeId = null;
-    const node = this.#nodeLookup.get(id);
-    if (node) this.#callbacks.onNodeMouseLeave?.(event, node);
-    this.#nodeSignals.get(id)?.notifyListeners();
+    this.#notifyNeighbours([id]);
   }
 
-  hoverEdge(id: string, event: MouseEvent): void {
+  hoverEdge(id: string, _event: MouseEvent): void {
     if (this.#hoveredEdgeId === id) return;
     const previous = this.#hoveredEdgeId;
     this.#hoveredEdgeId = id;
-    const edge = this.#edgeLookup.get(id);
-    if (edge) this.#callbacks.onEdgeMouseEnter?.(event, edge);
     if (previous) this.#edgeSignals.get(previous)?.notifyListeners();
     this.#edgeSignals.get(id)?.notifyListeners();
   }
 
-  unhoverEdge(id: string, event: MouseEvent): void {
+  unhoverEdge(id: string, __event: MouseEvent): void {
     if (this.#hoveredEdgeId !== id) return;
     this.#hoveredEdgeId = null;
-    const edge = this.#edgeLookup.get(id);
-    if (edge) this.#callbacks.onEdgeMouseLeave?.(event, edge);
     this.#edgeSignals.get(id)?.notifyListeners();
   }
 
   handleNodeDragStart(id: string, event: MouseEvent): void {
+    if (!this.acceptsPointer(event)) return ;
     this.#beginPress(event);
     if (event.button !== 0) return;
     if (!this.#nodeLookup.has(id)) return;
@@ -1265,11 +1318,12 @@ export class FlowController extends ChangeNotifier {
     this.#applyNodeChanges(changes);
     const node = this.#nodeLookup.get(id);
     if (node) {
-      this.#callbacks.onNodeDragStop?.(event, node, this.#dragItemNodes(drag));
+      this.#callbacks.dragEnd?.(event, node, this.#dragItemNodes(drag));
     }
   }
 
   handleNodeClick(id: string, event: MouseEvent): void {
+    if (!this.acceptsPointer(event)) return;
     if (this.#consumeMovement()) return;
     const node = this.#nodeLookup.get(id);
     if (!node) return;
@@ -1281,8 +1335,8 @@ export class FlowController extends ChangeNotifier {
     }
     if (this.#connection?.mode === "click") this.cancelConnection();
     const current = this.#nodeLookup.get(id) ?? node;
-    this.#callbacks.onNodeClick?.(event, current);
-    if (double) this.#callbacks.onNodeDoubleClick?.(event, current);
+    this.#callbacks.nodeClick?.(event, current);
+    if (double) this.#callbacks.nodeDoubleClick?.(event, current);
   }
 
   handleEdgePointerDown(_id: string, event: MouseEvent): void {
@@ -1290,11 +1344,12 @@ export class FlowController extends ChangeNotifier {
   }
 
   handleEdgeClick(id: string, event: MouseEvent): void {
+    if (!this.acceptsPointer(event)) return;
     if (this.#consumeMovement()) return;
     const edge = this.#edgeLookup.get(id);
     if (!edge) return;
     const double = this.#registerClick(`edge:${id}`, event);
-    if (this.elementsSelectable && edge.selectable !== false) {
+    if (this.isEdgeSelectable(edge)) {
       const multi = this.#isMultiSelect(event);
       if (!edge.selected) {
         const nodeIds = new Set(multi ? this.getSelectedNodes().map((n) => n.id) : []);
@@ -1308,12 +1363,13 @@ export class FlowController extends ChangeNotifier {
       }
     }
     const current = this.#edgeLookup.get(id) ?? edge;
-    this.#callbacks.onEdgeClick?.(event, current);
-    if (double) this.#callbacks.onEdgeDoubleClick?.(event, current);
+    this.#callbacks.edgeClick?.(event, current);
+    if (double) this.#callbacks.edgeDoubleClick?.(event, current);
   }
 
   /** Returns true when a connection drag started (the caller should stop propagation). */
   handleConnectionStart(nodeId: string, handleId: string | null, type: HandleType, event: MouseEvent): boolean {
+    if (!this.acceptsPointer(event)) return false;
     this.#beginPress(event);
     if (event.button !== 0) return false;
     // A click-to-connect gesture is pending: let the upcoming click finish it.
@@ -1337,7 +1393,7 @@ export class FlowController extends ChangeNotifier {
       reconnectingEdge: null,
       reconnectingEnd: null,
     };
-    this.#callbacks.onConnectStart?.(event, { nodeId, handleId: handle.id, handleType: handle.type });
+    this.#callbacks.connectStart?.(this.#connection);
     this.#notifyConnection([nodeId]);
     return true;
   }
@@ -1361,6 +1417,7 @@ export class FlowController extends ChangeNotifier {
   }
 
   handleHandleClick(nodeId: string, handleId: string | null, type: HandleType, event: MouseEvent): void {
+    if (!this.acceptsPointer(event)) return;
     if (this.#consumeMovement()) return;
     if (!this.#options.connectOnClick) return;
     const handle = this.#findHandle(nodeId, handleId, type);
@@ -1384,7 +1441,7 @@ export class FlowController extends ChangeNotifier {
         reconnectingEdge: null,
         reconnectingEnd: null,
       };
-      this.#callbacks.onClickConnectStart?.(event, { nodeId, handleId: handle.id, handleType: handle.type });
+      this.#callbacks.connectStart?.(this.#connection);
       this.#notifyConnection([nodeId]);
       return;
     }
@@ -1407,6 +1464,7 @@ export class FlowController extends ChangeNotifier {
 
   /** Drag an existing edge's `end` to another handle. Returns true when the gesture started. */
   handleReconnectStart(edgeId: string, end: HandleType, event: MouseEvent): boolean {
+    if (!this.acceptsPointer(event)) return false;
     this.#beginPress(event);
     if (event.button !== 0) return false;
     const edge = this.#edgeLookup.get(edgeId);
@@ -1434,7 +1492,7 @@ export class FlowController extends ChangeNotifier {
       reconnectingEdge: edge,
       reconnectingEnd: end,
     };
-    this.#callbacks.onReconnectStart?.(event, edge, end);
+    this.#callbacks.connectStart?.(this.#connection);
     this.#edgeSignals.get(edgeId)?.notifyListeners();
     this.#notifyConnection([fixedNodeId]);
     return true;
@@ -1449,6 +1507,7 @@ export class FlowController extends ChangeNotifier {
   }
 
   handleResizeStart(nodeId: string, position: ResizeControlPosition, event: MouseEvent): boolean {
+    if (!this.acceptsPointer(event)) return false;
     this.#beginPress(event);
     if (event.button !== 0) return false;
     const node = this.#nodeLookup.get(nodeId);
@@ -1466,7 +1525,7 @@ export class FlowController extends ChangeNotifier {
     this.#applyNodeChanges([
       { type: "dimensions", id: nodeId, dimensions, resizing: true, setAttributes: true },
     ]);
-    this.#callbacks.onNodeResizeStart?.(event, this.#nodeLookup.get(nodeId)!);
+    this.#callbacks.resizeStart?.(event, this.#nodeLookup.get(nodeId)!);
     return true;
   }
 
@@ -1524,7 +1583,7 @@ export class FlowController extends ChangeNotifier {
     this.#applyNodeChanges(changes);
     const params: ResizeParams = { x, y, width, height, direction: [Math.sign(dx), Math.sign(dy)] };
     resize.lastParams = params;
-    this.#callbacks.onNodeResize?.(event, this.#nodeLookup.get(node.id)!, params);
+    this.#callbacks.resize?.(event, this.#nodeLookup.get(node.id)!, params);
   }
 
   handleResizeEnd(event: MouseEvent): void {
@@ -1535,7 +1594,7 @@ export class FlowController extends ChangeNotifier {
     if (!node) return;
     const dimensions = this.getNodeDimensions(node) ?? { width: resize.lastParams.width, height: resize.lastParams.height };
     this.#applyNodeChanges([{ type: "dimensions", id: node.id, dimensions, resizing: false, setAttributes: true }]);
-    this.#callbacks.onNodeResizeEnd?.(event, this.#nodeLookup.get(node.id)!, resize.lastParams);
+    this.#callbacks.resizeEnd?.(event, this.#nodeLookup.get(node.id)!, resize.lastParams);
   }
 
   cancelConnection(): void {
@@ -1561,7 +1620,7 @@ export class FlowController extends ChangeNotifier {
       }
       return;
     }
-    if (name === "Escape") {
+    if (toKeyList(this.#interaction.keys.escape).includes(name)) {
       if (this.#connection) this.cancelConnection();
       return;
     }
@@ -1596,7 +1655,7 @@ export class FlowController extends ChangeNotifier {
         return;
       }
     }
-    this.#callbacks.onMove?.(this.viewport);
+    this.#callbacks.viewportChange?.({ phase: "move", viewport: this.viewport });
     this.notifyListeners();
   };
 
@@ -1626,7 +1685,7 @@ export class FlowController extends ChangeNotifier {
     if (changes.length === 0) return;
     this.#nodes = applyNodeChanges(changes, this.#nodes);
     this.#rebuildNodeLookup();
-    this.#callbacks.onNodesChange?.(changes);
+    this.#callbacks.nodesChange?.(changes);
     for (const change of changes) {
       const id = change.type === "add" ? change.item.id : change.id;
       if (change.type === "remove") this.#nodeSignals.delete(id);
@@ -1639,9 +1698,11 @@ export class FlowController extends ChangeNotifier {
 
   #applyEdgeChanges(changes: EdgeChange<FlowEdge>[], { silent = false }: { silent?: boolean } = {}): void {
     if (changes.length === 0) return;
+    const previousNeighbours = this.#neighbourIds();
     this.#edges = applyEdgeChanges(changes, this.#edges);
     this.#rebuildEdgeLookup();
-    this.#callbacks.onEdgesChange?.(changes);
+    this.#notifyChangedNeighbours(previousNeighbours);
+    this.#callbacks.edgesChange?.(changes);
     for (const change of changes) {
       const id = change.type === "add" ? change.item.id : change.id;
       if (change.type === "remove") this.#edgeSignals.delete(id);
@@ -1669,12 +1730,12 @@ export class FlowController extends ChangeNotifier {
   #setSelection(nodeIds: Set<string>, edgeIds: Set<string>, { silent = false }: { silent?: boolean } = {}): void {
     const nodeChanges: NodeChange<FlowNode>[] = [];
     for (const node of this.#nodes) {
-      const selected = nodeIds.has(node.id);
+      const selected = nodeIds.has(node.id) && this.isNodeSelectable(node);
       if (!!node.selected !== selected) nodeChanges.push({ type: "select", id: node.id, selected });
     }
     const edgeChanges: EdgeChange<FlowEdge>[] = [];
     for (const edge of this.#edges) {
-      const selected = edgeIds.has(edge.id);
+      const selected = edgeIds.has(edge.id) && this.isEdgeSelectable(edge);
       if (!!edge.selected !== selected) edgeChanges.push({ type: "select", id: edge.id, selected });
     }
     if (nodeChanges.length === 0 && edgeChanges.length === 0) return;
@@ -1702,8 +1763,10 @@ export class FlowController extends ChangeNotifier {
     const edges = this.getSelectedEdges();
     const key = `${nodes.map((n) => n.id).join(",")}|${edges.map((e) => e.id).join(",")}`;
     if (key === this.#selectionSnapshot) return;
+    const previousIds = this.#selectionSnapshot.split("|")[0].split(",").filter(Boolean);
     this.#selectionSnapshot = key;
-    this.#callbacks.onSelectionChange?.({ nodes, edges });
+    this.#notifyNeighbours([...previousIds, ...nodes.map(node => node.id)]);
+    this.#callbacks.selectionChange?.({ nodes, edges });
   }
 
   #allNodesMeasured(): boolean {
@@ -1777,6 +1840,7 @@ export class FlowController extends ChangeNotifier {
   }
 
   #scaleAt(point: XYPosition, ratio: number, duration: number): Promise<void> {
+    if (!this.can("zoom", { kind: "pane" })) return Promise.resolve();
     const current = this.viewport;
     const zoom = clamp(current.zoom * ratio, this.#options.minZoom, this.#options.maxZoom);
     if (zoom === current.zoom) return Promise.resolve();
@@ -1880,8 +1944,8 @@ export class FlowController extends ChangeNotifier {
 
   #isHandleConnectable(handle: ResolvedHandle): boolean {
     const node = this.#nodeLookup.get(handle.nodeId);
-    if (!node || !this.isNodeConnectable(node)) return false;
-    return handle.connectable !== false;
+    if (!node) return false;
+    return this.can("connect", { kind: "node", id: node.id }, this.nodesConnectable && node.connectable !== false && handle.connectable !== false);
   }
 
   #buildConnection(from: ResolvedHandle, to: ResolvedHandle): Connection {
@@ -1966,25 +2030,30 @@ export class FlowController extends ChangeNotifier {
     if (connection.reconnectingEdge) {
       const edge = connection.reconnectingEdge;
       if (connection.isValid && connection.toHandle) {
-        const params = this.#buildConnection(connection.fromHandle, connection.toHandle);
-        if (this.#callbacks.onReconnect) this.#callbacks.onReconnect(edge, params);
-        else this.reconnectEdge(edge, params);
+        const proposed = this.#buildConnection(connection.fromHandle, connection.toHandle);
+        const patch = this.#callbacks.beforeConnect?.(proposed);
+        const params = patch === false ? null : patch ?? proposed;
+        if (params) {
+          if (this.#callbacks.reconnect) this.#callbacks.reconnect(edge, params);
+          else this.reconnectEdge(edge, params);
+        }
       }
-      this.#callbacks.onReconnectEnd?.(event, edge, connection.reconnectingEnd ?? "target", final);
+      this.#callbacks.connectEnd?.({ state: final, dropPosition: this.paneToFlowPosition(this.#panePoint(event)) });
       this.#edgeSignals.get(edge.id)?.notifyListeners();
       this.#notifyConnection([connection.fromNode.id, connection.toNode?.id]);
       return;
     }
     if (connection.isValid && connection.toHandle) {
-      const params = this.#buildConnection(connection.fromHandle, connection.toHandle);
-      if (this.#callbacks.onConnect) {
-        this.#callbacks.onConnect(params);
-      } else {
+      const proposed = this.#buildConnection(connection.fromHandle, connection.toHandle);
+        const patch = this.#callbacks.beforeConnect?.(proposed);
+        const params = patch === false ? null : patch ?? proposed;
+      if (params && this.#callbacks.connect) {
+        this.#callbacks.connect(params);
+      } else if (params) {
         this.addEdges(params);
       }
     }
-    if (connection.mode === "click") this.#callbacks.onClickConnectEnd?.(event, final);
-    else this.#callbacks.onConnectEnd?.(event, final);
+    this.#callbacks.connectEnd?.({ state: final, dropPosition: this.paneToFlowPosition(this.#panePoint(event)) });
     this.#notifyConnection([connection.fromNode.id, connection.toNode?.id]);
   }
 
@@ -2004,7 +2073,7 @@ export class FlowController extends ChangeNotifier {
     if (draggableItems.length === 0) return;
     for (const item of draggableItems) drag.items.set(item.id, { start: item.position });
     this.#applyNodeChanges(draggableItems.map((n) => ({ type: "position", id: n.id, dragging: true }) as NodeChange<FlowNode>));
-    this.#callbacks.onNodeDragStart?.(event, this.#nodeLookup.get(drag.nodeId)!, this.#dragItemNodes(drag));
+    this.#callbacks.dragStart?.(event, this.#nodeLookup.get(drag.nodeId)!, this.#dragItemNodes(drag));
   }
 
   #hasSelectedAncestor(node: FlowNode): boolean {
@@ -2043,7 +2112,7 @@ export class FlowController extends ChangeNotifier {
     }
     if (changes.length) this.#applyNodeChanges(changes);
     const node = this.#nodeLookup.get(drag.nodeId);
-    if (node) this.#callbacks.onNodeDrag?.(event, node, this.#dragItemNodes(drag));
+    if (node) this.#callbacks.drag?.(event, node, this.#dragItemNodes(drag));
   }
 
   /** Coordinate extent that applies to a node, or null when unbounded. */

@@ -102,7 +102,7 @@ class FlowRootState extends State<FlowRoot> {
     this.controller.addListener(this.handleChange);
     context.scheduler.addPostFrameCallbacks(() => {
       this.attachHost();
-      props.onInit?.(this.controller);
+      props.on?.init?.(this.controller);
     });
   }
 
@@ -215,7 +215,7 @@ class FlowView extends StatelessWidget {
               maxScale: options.maxZoom,
               panEnabled: ctx.panEnabled,
               scaleEnabled: ctx.zoomEnabled,
-              panOnScroll: options.panOnScroll && !ctx.zoomActivationHeld,
+              panOnScroll: options.panOnScroll && !ctx.zoomActivationHeld && ctx.can("pan", { kind: "pane" }),
               panOnScrollSpeed: options.panOnScrollSpeed,
               wheelScale: (event) => {
                 const pinchScale = (event as PinchWheelEvent).pinchScale;
@@ -228,7 +228,11 @@ class FlowView extends StatelessWidget {
               onInteractionStart: () => ctx.handleViewportInteractionStart(),
               onInteractionUpdate: (details) => ctx.handleViewportInteractionUpdate(details),
               onInteractionEnd: () => ctx.handleViewportInteractionEnd(),
-              child: buildScene(ctx, this.cache),
+              child: GestureDetector({
+                // Stop disabled touch input before it reaches the viewport detector.
+                onMouseDown: (event) => { if (!ctx.acceptsPointer(event)) event.stopPropagation(); },
+                child: buildScene(ctx, this.cache),
+              }),
             }),
           }),
         );
@@ -535,6 +539,10 @@ class NodeWidgetState extends SignalState<NodeWidget> {
         isConnectionTarget: connection?.toNode?.id === node.id,
         resizable: ctx.isNodeResizable(node),
         resizing: !!node.resizing,
+        // P2: edit, group-drop and collapse state will replace these defaults.
+        editing: false, isDropTarget: false, collapsed: false, hiddenChildCount: 0,
+        isOverlapping: dragging && ctx.getIntersectingNodes(node).length > 0,
+        isNeighbour: ctx.isNodeNeighbour(node.id), zoom: ctx.viewport.zoom,
       },
       ctx as any,
     );
@@ -570,7 +578,7 @@ class NodeWidgetState extends SignalState<NodeWidget> {
     const to = connection?.toHandle;
     for (const spec of specs) {
       const handle = ctx.resolveHandle(node, knownRect, spec);
-      const handleConnectable = connectable && handle.connectable !== false;
+      const handleConnectable = ctx.can("connect", { kind: "node", id: node.id }, connectable && handle.connectable !== false);
       const isConnecting =
         !!from && from.nodeId === node.id && from.id === handle.id && from.type === handle.type;
       const isCandidate = !!to && to.nodeId === node.id && to.id === handle.id && to.type === handle.type;
@@ -660,7 +668,7 @@ class NodeWidgetState extends SignalState<NodeWidget> {
 // ---------------------------------------------------------------------------
 
 function edgeGestures(ctx: FlowController, edge: FlowEdge, child: Widget): Widget {
-  const selectable = ctx.elementsSelectable && edge.selectable !== false;
+  const selectable = ctx.isEdgeSelectable(edge);
   return GestureDetector({
     behavior: "opaque",
     cursor: selectable ? "pointer" : "default",
@@ -734,6 +742,8 @@ class EdgeWidgetState extends SignalState<EdgeWidget> {
         markerEnd: resolveMarker(edge.markerEnd),
         interactionWidth,
         reconnecting,
+        // P2: waypoint gestures will supply the active handle and data points.
+        waypoints: [], activeHandle: null, isNeighbour: ctx.isEdgeNeighbour(edge),
       },
       ctx as any,
     );

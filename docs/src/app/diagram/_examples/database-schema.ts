@@ -3,14 +3,14 @@ import {
   EdgeInsets, MainAxisSize, Text, TextStyle, type Widget,
 } from "flitter-ui";
 import { type FlowContext, type FlowEdge, type FlowNode, type HandleSpec, type NodeBuilderArgs } from "flitter-ui/diagram";
-import { FlowDiagram, type XyflowFlowConfig } from "@/components/diagram/flow-diagram";
+import { FlowDiagram, type DefaultFlowConfig } from "@/components/diagram/flow-diagram";
 
 type TableData = { label: string; fields: { name: string; type: string }[] };
 
 const HEADER_HEIGHT = 36;
 const ROW_HEIGHT = 28;
 
-function tableNode({ node, selected }: NodeBuilderArgs, context: FlowContext<XyflowFlowConfig>): Widget {
+function tableNode({ node, selected }: NodeBuilderArgs, context: FlowContext<DefaultFlowConfig>): Widget {
   const table = node.data as TableData;
   const { colors } = context.config;
   return Container({
@@ -88,9 +88,13 @@ export default function DatabaseSchema(theme: "light" | "dark" = "light"): Widge
     nodes: tables,
     edges: relations,
     nodeTypes: { table: { build: tableNode, handles: tableHandles } },
-    fitView: true,
-    minZoom: 0.15,
-    fitViewOptions: { padding: 0.15, maxZoom: 1 },
-    config: { colorMode: theme, colors: { edgeStroke: theme === "dark" ? "#71829c" : "#94a3b8" }, edge: { strokeWidth: 1.5 }, controls: { visible: false }, minimap: { visible: false } },
+    config: {
+      colorMode: theme,
+      colors: { edgeStroke: theme === "dark" ? "#71829c" : "#94a3b8" },
+      edge: { strokeWidth: 1.5 },
+      controls: { visible: false },
+      minimap: { visible: false },
+    },
+    viewport: { fitView: { padding: 0.15, maxZoom: 1 }, minZoom: 0.15 },
   });
 }

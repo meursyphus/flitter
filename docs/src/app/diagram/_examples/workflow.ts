@@ -24,47 +24,81 @@ const edges: FlowEdge[] = [
 export default function Workflow(theme: "light" | "dark" = "light"): Widget {
   const dark = theme === "dark";
   return FlowDiagram({
-    nodes, edges,
-    minZoom: 0.15,
-    fitViewOptions: { padding: 0.15, maxZoom: 1 },
+    nodes,
+    edges,
     layout: { algorithm: layeredLayout, options: { direction: "LR", rankSpacing: 70, nodeSpacing: 35 } },
-    config: { colorMode: theme, colors: { edgeStroke: theme === "dark" ? "#71829c" : "#94a3b8" }, edge: { strokeWidth: 1.5 }, controls: { visible: false }, minimap: { visible: false } },
+    config: {
+      colorMode: theme,
+      colors: { edgeStroke: theme === "dark" ? "#71829c" : "#94a3b8" },
+      edge: { strokeWidth: 1.5 },
+      controls: { visible: false },
+      minimap: { visible: false },
+    },
     nodeTypes: {
       task: {
         // A product action uses the same controller as dragging and connecting.
-        toolbar: ({ node }, flow) => GestureDetector({
-          onClick: () => flow.updateNodeData(node.id, { status: "DONE", detail: "Approved just now", color: "#16a34a" }),
-          child: Container({
-            padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 8 }),
-            color: "#166534",
-            child: Text("Mark complete", { style: new TextStyle({ fontFamily: "system-ui, sans-serif", color: "#ffffff", fontSize: 12 }) }),
+        toolbar: ({ node }, flow) =>
+          GestureDetector({
+            onClick: () =>
+              flow.updateNodeData(node.id, { status: "DONE", detail: "Approved just now", color: "#16a34a" }),
+            child: Container({
+              padding: EdgeInsets.symmetric({ horizontal: 12, vertical: 8 }),
+              color: "#166534",
+              child: Text("Mark complete", {
+                style: new TextStyle({ fontFamily: "system-ui, sans-serif", color: "#ffffff", fontSize: 12 }),
+              }),
+            }),
           }),
-        }),
-        build: ({ node, selected, hovered }) => Container({
-          width: 180,
-          padding: EdgeInsets.all(16),
-          decoration: new BoxDecoration({
-            color: dark ? "#20242e" : "#ffffff",
-            border: Border.all({ color: selected || hovered ? String(node.data.color) : dark ? "#3b4252" : "#e2e8f0", width: 2 }),
-            borderRadius: BorderRadius.circular(12),
+        build: ({ node, selected, hovered }) =>
+          Container({
+            width: 180,
+            padding: EdgeInsets.all(16),
+            decoration: new BoxDecoration({
+              color: dark ? "#20242e" : "#ffffff",
+              border: Border.all({
+                color: selected || hovered ? String(node.data.color) : dark ? "#3b4252" : "#e2e8f0",
+                width: 2,
+              }),
+              borderRadius: BorderRadius.circular(12),
+            }),
+            child: Column({
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(String(node.data.status), {
+                  style: new TextStyle({
+                    fontFamily: "system-ui, sans-serif",
+                    color: String(node.data.color),
+                    fontSize: 10,
+                    fontWeight: "bold",
+                  }),
+                }),
+                SizedBox({ height: 10 }),
+                Text(String(node.data.label), {
+                  style: new TextStyle({
+                    fontFamily: "system-ui, sans-serif",
+                    color: dark ? "#f1f5f9" : "#172033",
+                    fontSize: 15,
+                    fontWeight: "bold",
+                  }),
+                }),
+                SizedBox({ height: 6 }),
+                Text(String(node.data.detail), {
+                  style: new TextStyle({
+                    fontFamily: "system-ui, sans-serif",
+                    color: dark ? "#aab6c8" : "#64748b",
+                    fontSize: 11,
+                  }),
+                }),
+              ],
+            }),
           }),
-          child: Column({
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(String(node.data.status), { style: new TextStyle({ fontFamily: "system-ui, sans-serif", color: String(node.data.color), fontSize: 10, fontWeight: "bold" }) }),
-              SizedBox({ height: 10 }),
-              Text(String(node.data.label), { style: new TextStyle({ fontFamily: "system-ui, sans-serif", color: dark ? "#f1f5f9" : "#172033", fontSize: 15, fontWeight: "bold" }) }),
-              SizedBox({ height: 6 }),
-              Text(String(node.data.detail), { style: new TextStyle({ fontFamily: "system-ui, sans-serif", color: dark ? "#aab6c8" : "#64748b", fontSize: 11 }) }),
-            ],
-          }),
-        }),
         handles: [
           { type: "target", position: "left" },
           { type: "source", position: "right" },
         ],
       },
     },
+    viewport: { minZoom: 0.15, fitView: { padding: 0.15, maxZoom: 1 } },
   });
 }

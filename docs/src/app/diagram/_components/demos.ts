@@ -22,19 +22,20 @@ import {
   type LayoutAlgorithm,
   type LayoutOptions,
   type NodeToolbarBuilder,
-  type XyflowFlowConfig,
+  type DefaultFlowConfig,
   FlowDiagram,
   circularLayout,
   forceLayout,
   gridLayout,
   layeredLayout,
   treeLayout,
-  xyflowNode,
+  defaultNode,
+  defaultNodeTypes,
 } from "flitter-diagram";
 import type { Theme } from "@/lib/theme";
 
 /** React Flow colours for the theme, on the same surface as `--chart-bg`. */
-function siteConfig(theme: Theme, extra: DeepPartial<XyflowFlowConfig> = {}): DeepPartial<XyflowFlowConfig> {
+function siteConfig(theme: Theme, extra: DeepPartial<DefaultFlowConfig> = {}): DeepPartial<DefaultFlowConfig> {
   return {
     ...extra,
     colorMode: theme,
@@ -91,12 +92,11 @@ function layoutDiagram(
   return (theme: Theme): Widget =>
     FlowDiagram({
       nodes: serviceNodes,
-      minZoom: 0.1,
-      fitViewOptions: { padding: 0.15 },
       edges: serviceEdges,
       layout: { algorithm, options },
-      nodeTypes: horizontal ? { default: { build: xyflowNode, handles: sideHandles } } : undefined,
+      nodeTypes: horizontal ? { default: { build: defaultNode, handles: sideHandles } } : undefined,
       config: siteConfig(theme, { minimap: { visible: false } }),
+      viewport: { minZoom: 0.1, fitView: { padding: 0.15 } },
     });
 }
 
@@ -129,8 +129,8 @@ export function createQuickStartDiagram(theme: Theme): Widget {
   return FlowDiagram({
     nodes: quickStartNodes,
     edges: quickStartEdges,
-    fitView: true,
     config: siteConfig(theme),
+    viewport: { fitView: true },
   });
 }
 
@@ -143,6 +143,7 @@ const interactionNodes: FlowNode[] = [
     position: { x: 0, y: 0 },
     data: { label: "Drag a blue corner" },
     resizable: true,
+    resizeOptions: { minWidth: 120, minHeight: 36 },
     selected: true,
   },
   { id: "tools", position: { x: 260, y: 10 }, data: { label: "Select me" } },
@@ -167,7 +168,7 @@ function toolbarButton(label: string, onClick: () => void): Widget {
   });
 }
 
-const interactionToolbar: NodeToolbarBuilder<XyflowFlowConfig> = ({ node }, flow) =>
+const interactionToolbar: NodeToolbarBuilder<DefaultFlowConfig> = ({ node }, flow) =>
   Row({
     mainAxisSize: MainAxisSize.min,
     children: [
@@ -188,10 +189,13 @@ export function createInteractionDiagram(theme: Theme): Widget {
   return FlowDiagram({
     nodes: interactionNodes,
     edges: interactionEdges,
-    fitView: true,
-    fitViewOptions: { padding: 0.3 },
-    nodeResizeOptions: { minWidth: 120, minHeight: 36 },
-    nodeToolbar: interactionToolbar,
+    nodeTypes: Object.fromEntries(
+      Object.entries(defaultNodeTypes).map(([name, definition]) => [
+        name,
+        { ...definition, toolbar: interactionToolbar },
+      ]),
+    ),
     config: siteConfig(theme, { minimap: { visible: false } }),
+    viewport: { fitView: { padding: 0.3 } },
   });
 }

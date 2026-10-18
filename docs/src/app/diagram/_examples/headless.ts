@@ -41,6 +41,9 @@ function Stroke(width: number, height: number, d: string, color: string): Widget
 }
 
 const orbitParts: FlowCustom<OrbitTheme> = {
+  contextMenu: () => null,
+  guides: () => null,
+  edgeHandle: () => SizedBox({ width: 8, height: 8 }),
   node: ({ node, selected, hovered }, { config }) => Container({
     width: 112, height: 72, alignment: Alignment.center,
     decoration: new BoxDecoration({
@@ -83,13 +86,14 @@ const edges: FlowEdge[] = nodes.map((node, index) => ({
 
 export default function HeadlessOrbit(theme: "light" | "dark" = "light"): Widget {
   return Flow<OrbitTheme>({
-    nodes, edges,
+    nodes,
+    edges,
     custom: orbitParts,
-    config: theme === "dark"
-      ? { paper: "#172820", ink: "#e0edc5", accent: "#50703d" }
-      : { paper: "#f2efd8", ink: "#253d2d", accent: "#b5d56a" },
+    config:
+      theme === "dark"
+        ? { paper: "#172820", ink: "#e0edc5", accent: "#50703d" }
+        : { paper: "#f2efd8", ink: "#253d2d", accent: "#b5d56a" },
     layout: { algorithm: circularLayout, options: { nodeSpacing: 30 } },
-    minZoom: 0.15,
-    fitViewOptions: { padding: 0.2, maxZoom: 1 },
+    viewport: { minZoom: 0.15, fitView: { padding: 0.2, maxZoom: 1 } },
   });
 }

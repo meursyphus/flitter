@@ -17,7 +17,7 @@ type Story = StoryObj<typeof meta>;
 const nodes: FlowNode[] = [
   { id: "1", type: "input", position: { x: 100, y: 50 }, data: { label: "Installed via CLI" } },
   { id: "2", position: { x: 100, y: 180 }, data: { label: "flow-diagram" }, resizable: true },
-  { id: "3", type: "output", position: { x: 320, y: 180 }, data: { label: "xyflow style" } },
+  { id: "3", type: "output", position: { x: 320, y: 180 }, data: { label: "default style" } },
 ];
 const edges: FlowEdge[] = [
   { id: "e1-2", source: "1", target: "2" },
@@ -31,11 +31,14 @@ export const FromPreset: Story = {
     widget: FlowDiagram({
       nodes,
       edges,
-      fitView: true,
-      onInit: (controller) => {
-        if (typeof window !== "undefined") ((window as any).__flows ??= []).push(controller);
+      viewport: { fitView: true },
+      on: {
+        init: (controller) => {
+          if (typeof window !== "undefined") ((window as any).__flows ??= []).push(controller);
+        },
       },
     }),
-    description: "Rendered from shared/diagram-presets, the copy produced by `flitter add flow-diagram --style xyflow`.",
+    description:
+      "Rendered from shared/diagram-presets, the copy produced by `flitter add flow-diagram`.",
   },
 };

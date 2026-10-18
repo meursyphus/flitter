@@ -19,33 +19,61 @@ const nodes: FlowNode[] = [
 export default function CardGrid(theme: "light" | "dark" = "light"): Widget {
   const dark = theme === "dark";
   return FlowDiagram({
-    nodes, edges: [], minZoom: 0.15,
-    fitViewOptions: { padding: 0.15, maxZoom: 1 },
+    nodes,
+    edges: [],
     layout: { algorithm: gridLayout, options: { columns: 3, nodeSpacing: 24, rankSpacing: 24 } },
     config: { colorMode: theme, controls: { visible: false }, minimap: { visible: false } },
     custom: { background: () => null },
     nodeTypes: {
       resource: {
         handles: [],
-        build: ({ node, selected, hovered }) => Container({
-          width: 190,
-          padding: EdgeInsets.all(18),
-          decoration: new BoxDecoration({
-            color: selected ? dark ? "#283953" : "#eaf2ff" : dark ? "#20242e" : "#ffffff",
-            border: Border.all({ color: selected || hovered ? String(node.data.color) : dark ? "#465066" : "#dbe3ed", width: 2 }),
-            borderRadius: BorderRadius.circular(12),
+        build: ({ node, selected, hovered }) =>
+          Container({
+            width: 190,
+            padding: EdgeInsets.all(18),
+            decoration: new BoxDecoration({
+              color: selected ? (dark ? "#283953" : "#eaf2ff") : dark ? "#20242e" : "#ffffff",
+              border: Border.all({
+                color: selected || hovered ? String(node.data.color) : dark ? "#465066" : "#dbe3ed",
+                width: 2,
+              }),
+              borderRadius: BorderRadius.circular(12),
+            }),
+            child: Column({
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container({ width: 28, height: 5, color: String(node.data.color) }),
+                SizedBox({ height: 16 }),
+                Text(String(node.data.category), {
+                  style: new TextStyle({
+                    fontFamily: "system-ui, sans-serif",
+                    color: dark ? "#aab6c8" : "#64748b",
+                    fontSize: 10,
+                  }),
+                }),
+                SizedBox({ height: 6 }),
+                Text(String(node.data.label), {
+                  style: new TextStyle({
+                    fontFamily: "system-ui, sans-serif",
+                    color: dark ? "#f1f5f9" : "#172033",
+                    fontSize: 14,
+                    fontWeight: "bold",
+                  }),
+                }),
+                SizedBox({ height: 14 }),
+                Text(String(node.data.detail), {
+                  style: new TextStyle({
+                    fontFamily: "system-ui, sans-serif",
+                    color: String(node.data.color),
+                    fontSize: 11,
+                  }),
+                }),
+              ],
+            }),
           }),
-          child: Column({ mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container({ width: 28, height: 5, color: String(node.data.color) }),
-            SizedBox({ height: 16 }),
-            Text(String(node.data.category), { style: new TextStyle({ fontFamily: "system-ui, sans-serif", color: dark ? "#aab6c8" : "#64748b", fontSize: 10 }) }),
-            SizedBox({ height: 6 }),
-            Text(String(node.data.label), { style: new TextStyle({ fontFamily: "system-ui, sans-serif", color: dark ? "#f1f5f9" : "#172033", fontSize: 14, fontWeight: "bold" }) }),
-            SizedBox({ height: 14 }),
-            Text(String(node.data.detail), { style: new TextStyle({ fontFamily: "system-ui, sans-serif", color: String(node.data.color), fontSize: 11 }) }),
-          ] }),
-        }),
       },
     },
+    viewport: { minZoom: 0.15, fitView: { padding: 0.15, maxZoom: 1 } },
   });
 }

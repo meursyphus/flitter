@@ -11,6 +11,7 @@ import type {
 import type { EdgePathParams, EdgePathResult, MarkerShape } from "../../shared/edges";
 import type { Connection, EdgeChange, NodeChange } from "../../shared/changes";
 import type { LayoutAlgorithm, LayoutOptions } from "../../shared/layout";
+import type { DeepPartial } from "../../shared/utils";
 import type { FlowController } from "./controller";
 
 export type { XYPosition, Dimensions, Rect, Position, Viewport, CoordinateExtent, SnapGrid };
@@ -261,48 +262,59 @@ export type FlowOptions = {
   connectionLineType: string;
 };
 
-export type FlowCallbacks = {
-  onNodesChange?: (changes: NodeChange<FlowNode>[]) => void;
-  onEdgesChange?: (changes: EdgeChange<FlowEdge>[]) => void;
-  onConnect?: (connection: Connection) => void;
-  onConnectStart?: (event: MouseEvent, params: { nodeId: string; handleId: string | null; handleType: HandleType }) => void;
-  onConnectEnd?: (event: MouseEvent, state: ConnectionState) => void;
-  onClickConnectStart?: (event: MouseEvent, params: { nodeId: string; handleId: string | null; handleType: HandleType }) => void;
-  onClickConnectEnd?: (event: MouseEvent, state: ConnectionState) => void;
-  onNodeClick?: (event: MouseEvent, node: FlowNode) => void;
-  onNodeDoubleClick?: (event: MouseEvent, node: FlowNode) => void;
-  onNodeMouseEnter?: (event: MouseEvent, node: FlowNode) => void;
-  onNodeMouseLeave?: (event: MouseEvent, node: FlowNode) => void;
-  onNodeDragStart?: (event: MouseEvent, node: FlowNode, nodes: FlowNode[]) => void;
-  onNodeDrag?: (event: MouseEvent, node: FlowNode, nodes: FlowNode[]) => void;
-  onNodeDragStop?: (event: MouseEvent, node: FlowNode, nodes: FlowNode[]) => void;
-  onEdgeClick?: (event: MouseEvent, edge: FlowEdge) => void;
-  onEdgeDoubleClick?: (event: MouseEvent, edge: FlowEdge) => void;
-  onEdgeMouseEnter?: (event: MouseEvent, edge: FlowEdge) => void;
-  onEdgeMouseLeave?: (event: MouseEvent, edge: FlowEdge) => void;
-  onPaneClick?: (event: MouseEvent) => void;
-  onPaneDoubleClick?: (event: MouseEvent) => void;
-  onSelectionChange?: (selection: { nodes: FlowNode[]; edges: FlowEdge[] }) => void;
-  onSelectionStart?: (event: MouseEvent) => void;
-  onSelectionEnd?: (event: MouseEvent) => void;
-  onMoveStart?: (viewport: Viewport) => void;
-  onMove?: (viewport: Viewport) => void;
-  onMoveEnd?: (viewport: Viewport) => void;
-  onNodesDelete?: (nodes: FlowNode[]) => void;
-  onEdgesDelete?: (edges: FlowEdge[]) => void;
-  onDelete?: (deleted: { nodes: FlowNode[]; edges: FlowEdge[] }) => void;
-  onBeforeDelete?: (
+export type FlowEvents = {
+  nodesChange?: (changes: NodeChange<FlowNode>[]) => void;
+  edgesChange?: (changes: EdgeChange<FlowEdge>[]) => void;
+  connect?: (connection: Connection) => void;
+  nodeClick?: (event: MouseEvent, node: FlowNode) => void;
+  nodeDoubleClick?: (event: MouseEvent, node: FlowNode) => void;
+  dragStart?: (event: MouseEvent, node: FlowNode, nodes: FlowNode[]) => void;
+  drag?: (event: MouseEvent, node: FlowNode, nodes: FlowNode[]) => void;
+  dragEnd?: (event: MouseEvent, node: FlowNode, nodes: FlowNode[]) => void;
+  edgeClick?: (event: MouseEvent, edge: FlowEdge) => void;
+  edgeDoubleClick?: (event: MouseEvent, edge: FlowEdge) => void;
+  paneClick?: (event: MouseEvent) => void;
+  paneDoubleClick?: (event: MouseEvent) => void;
+  selectionChange?: (selection: { nodes: FlowNode[]; edges: FlowEdge[] }) => void;
+  delete?: (deleted: { nodes: FlowNode[]; edges: FlowEdge[] }) => void;
+  beforeDelete?: (
     deleted: { nodes: FlowNode[]; edges: FlowEdge[] },
   ) => boolean | { nodes: FlowNode[]; edges: FlowEdge[] } | Promise<boolean | { nodes: FlowNode[]; edges: FlowEdge[] }>;
-  onReconnect?: (oldEdge: FlowEdge, newConnection: Connection) => void;
-  onReconnectStart?: (event: MouseEvent, edge: FlowEdge, handleType: HandleType) => void;
-  onReconnectEnd?: (event: MouseEvent, edge: FlowEdge, handleType: HandleType, state: ConnectionState) => void;
-  onNodeResizeStart?: (event: MouseEvent, node: FlowNode) => void;
-  onNodeResize?: (event: MouseEvent, node: FlowNode, params: ResizeParams) => void;
-  onNodeResizeEnd?: (event: MouseEvent, node: FlowNode, params: ResizeParams) => void;
-  onInit?: (controller: FlowController) => void;
-  /** Called with `"layout"` when a layout algorithm throws (otherwise the error propagates). */
-  onError?: (code: "layout", message: string) => void;
+  reconnect?: (oldEdge: FlowEdge, newConnection: Connection) => void;
+  resizeStart?: (event: MouseEvent, node: FlowNode) => void;
+  resize?: (event: MouseEvent, node: FlowNode, params: ResizeParams) => void;
+  resizeEnd?: (event: MouseEvent, node: FlowNode, params: ResizeParams) => void;
+  init?: (controller: FlowController) => void;
+  error?: (code: "layout", message: string) => void;
+  viewportChange?: (change: { phase: "start" | "move" | "end"; viewport: Viewport }) => void;
+  connectStart?: (state: ConnectionState) => void;
+  connectEnd?: (result: { state: ConnectionState; dropPosition: XYPosition }) => void;
+  beforeConnect?: (connection: Connection) => false | Connection | void;
+  // P2: emitted by waypoint, text editing, history and context-menu gestures.
+  reshapeStart?: (args: EdgeHandleBuilderArgs) => void;
+  reshape?: (args: EdgeHandleBuilderArgs) => void;
+  reshapeEnd?: (args: EdgeHandleBuilderArgs) => void;
+  editStart?: (args: { node: FlowNode }) => void;
+  editEnd?: (args: { node: FlowNode; committed: boolean }) => void;
+  historyChange?: (state: { canUndo: boolean; canRedo: boolean }) => void;
+  contextMenu?: (args: ContextMenuBuilderArgs) => void;
+};
+
+export type InteractionPreset = "editor" | "viewer" | "whiteboard";
+export type Gesture = "pan" | "zoom" | "select" | "drag" | "connect" | "reconnect" | "resize" | "reshape" | "edit" | "delete" | "copy" | "contextMenu";
+export type GestureTarget = { kind: "node" | "edge" | "pane" | "selection"; id?: string };
+
+export type FlowInteraction = {
+  pane: { drag: "pan" | "select"; scroll: "zoom" | "pan"; scrollSpeed: number; pinch: boolean; doubleClick: "zoom" | "none"; autoPan: boolean | { speed: number }; panKey: KeyCode; selectKey: KeyCode };
+  select: { enabled: boolean; mode: SelectionMode; toggleKey: KeyCode; elevate: boolean; edgeHitWidth: number };
+  drag: { enabled: boolean; threshold: number; snap: { grid: false | [number, number]; guides: boolean; radius: number }; overlap: "allow" | "push" | "reject"; dropIntoGroup: boolean };
+  connect: { enabled: boolean; mode: ConnectionMode; radius: number; onClick: boolean; reconnect: boolean; reconnectRadius: number; lineType: string; validate?: (connection: Connection) => boolean };
+  edit: { text: boolean; waypoints: boolean; resize: boolean | NodeResizeOptions };
+  history: { enabled: boolean; limit: number };
+  clipboard: { enabled: boolean; offset: XYPosition; system: boolean };
+  contextMenu: { enabled: boolean; longPress: number };
+  keys: { delete: KeyCode; undo: KeyCode; redo: KeyCode; copy: KeyCode; paste: KeyCode; duplicate: KeyCode; selectAll: KeyCode; fitView: KeyCode; zoomIn: KeyCode; zoomOut: KeyCode; nudge: KeyCode; escape: KeyCode };
+  touch: boolean;
 };
 
 export type ResizeParams = {
@@ -332,6 +344,13 @@ export type NodeBuilderArgs = {
   isConnectionTarget: boolean;
   resizable: boolean;
   resizing: boolean;
+  editing: boolean;
+  isDropTarget: boolean;
+  isOverlapping: boolean;
+  collapsed: boolean;
+  hiddenChildCount: number;
+  isNeighbour: boolean;
+  zoom: number;
 };
 
 export type EdgeBuilderArgs = {
@@ -352,6 +371,9 @@ export type EdgeBuilderArgs = {
   interactionWidth: number;
   /** One endpoint of this edge is being dragged to a new handle. */
   reconnecting: boolean;
+  waypoints: XYPosition[];
+  activeHandle: { kind: "waypoint" | "midpoint"; index: number } | null;
+  isNeighbour: boolean;
 };
 
 export type EdgeLabelBuilderArgs = {
@@ -437,7 +459,16 @@ export type EdgePathBuilderArgs = {
   type: string;
 };
 
+export type Guide = { from: XYPosition; to: XYPosition };
+export type ContextMenuBuilderArgs = { target: GestureTarget; ids: string[]; position: XYPosition };
+export type GuidesBuilderArgs = { lines: Guide[] };
+export type EdgeHandleBuilderArgs = { edge: FlowEdge; kind: "waypoint" | "midpoint"; index: number; active: boolean };
+
 export type FlowCustom<TConfig extends object = object> = {
+  // P2: slots are available to templates; gesture overlays will consume them.
+  contextMenu: (args: ContextMenuBuilderArgs, context: FlowContext<TConfig>) => Widget | null;
+  guides: (args: GuidesBuilderArgs, context: FlowContext<TConfig>) => Widget | null;
+  edgeHandle: Builder<EdgeHandleBuilderArgs, TConfig>;
   /** Fallback node renderer when `nodeTypes` has no entry for `node.type`. */
   node: Builder<NodeBuilderArgs, TConfig>;
   /** Fallback edge renderer when `edgeTypes` has no entry for `edge.type`. */
@@ -479,26 +510,21 @@ export type FlowPanel = {
   child: Widget;
 };
 
-export type FlowProps<TConfig extends object = object> = Partial<FlowOptions> &
-  FlowCallbacks & {
-    nodes?: FlowNode[];
-    edges?: FlowEdge[];
-    /** Bring your own controller to drive the diagram from outside. */
-    controller?: FlowController;
-    custom: FlowCustom<TConfig>;
-    config?: TConfig;
-    nodeTypes?: Record<string, NodeType<TConfig>>;
-    edgeTypes?: Record<string, EdgeType<TConfig>>;
-    defaultViewport?: Viewport;
-    /** Fit all nodes once they are measured. */
-    fitView?: boolean;
-    fitViewOptions?: FitViewOptions;
-    /** Automatic layout algorithm. See `layeredLayout`, `treeLayout`, ... */
-    layout?: LayoutAlgorithm | LayoutConfig;
-    panels?: FlowPanel[];
-    /** Fallback toolbar for node types without their own `toolbar`. */
-    nodeToolbar?: NodeToolbarBuilder<TConfig>;
-    key?: unknown;
-  };
+export type FlowProps<TConfig extends object = object> = {
+  nodes: FlowNode[];
+  edges: FlowEdge[];
+  custom: FlowCustom<TConfig>;
+  config?: TConfig;
+  nodeTypes?: Record<string, NodeType<TConfig>>;
+  edgeTypes?: Record<string, EdgeType<TConfig>>;
+  layout?: LayoutAlgorithm | LayoutConfig;
+  viewport?: { initial?: Viewport; fitView?: boolean | FitViewOptions; minZoom?: number; maxZoom?: number; extent?: CoordinateExtent };
+  interaction?: InteractionPreset | (DeepPartial<FlowInteraction> & { preset?: InteractionPreset });
+  can?: (gesture: Gesture, target: GestureTarget) => boolean;
+  on?: FlowEvents;
+  controller?: FlowController;
+  panels?: FlowPanel[];
+  key?: unknown;
+};
 
 export type FlowBuildContext = BuildContext;

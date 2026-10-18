@@ -21,35 +21,66 @@ const edges: FlowEdge[] = [
 export default function GroupedPipeline(theme: "light" | "dark" = "light"): Widget {
   const dark = theme === "dark";
   return FlowDiagram({
-    nodes, edges, fitView: true, minZoom: 0.15,
-    fitViewOptions: { padding: 0.2, maxZoom: 1 },
-    config: { colorMode: theme, colors: { edgeStroke: theme === "dark" ? "#71829c" : "#94a3b8" }, edge: { strokeWidth: 1.5 }, controls: { visible: false }, minimap: { visible: false } },
+    nodes,
+    edges,
+    config: {
+      colorMode: theme,
+      colors: { edgeStroke: theme === "dark" ? "#71829c" : "#94a3b8" },
+      edge: { strokeWidth: 1.5 },
+      controls: { visible: false },
+      minimap: { visible: false },
+    },
     nodeTypes: {
       stage: {
-        build: ({ node, selected }) => Container({
-          width: node.width, height: node.height, alignment: Alignment.topLeft,
-          padding: EdgeInsets.all(20),
-          decoration: new BoxDecoration({
-            color: dark ? "rgba(29,38,53,0.6)" : "rgba(241,245,251,0.7)",
-            border: Border.all({ color: selected ? String(node.data.color) : dark ? "#465066" : "#cbd5e1", width: 2 }),
-            borderRadius: BorderRadius.circular(16),
+        build: ({ node, selected }) =>
+          Container({
+            width: node.width,
+            height: node.height,
+            alignment: Alignment.topLeft,
+            padding: EdgeInsets.all(20),
+            decoration: new BoxDecoration({
+              color: dark ? "rgba(29,38,53,0.6)" : "rgba(241,245,251,0.7)",
+              border: Border.all({
+                color: selected ? String(node.data.color) : dark ? "#465066" : "#cbd5e1",
+                width: 2,
+              }),
+              borderRadius: BorderRadius.circular(16),
+            }),
+            child: Text(String(node.data.label), {
+              style: new TextStyle({
+                fontFamily: "system-ui, sans-serif",
+                color: dark ? "#b5c7e3" : "#475569",
+                fontSize: 12,
+                fontWeight: "bold",
+              }),
+            }),
           }),
-          child: Text(String(node.data.label), { style: new TextStyle({ fontFamily: "system-ui, sans-serif", color: dark ? "#b5c7e3" : "#475569", fontSize: 12, fontWeight: "bold" }) }),
-        }),
         handles: [],
       },
       default: {
-        build: ({ node, selected }) => Container({
-          width: 180, padding: EdgeInsets.all(16),
-          decoration: new BoxDecoration({
-            color: dark ? "#303b4f" : "#ffffff",
-            border: Border.all({ color: selected ? "#0d9488" : dark ? "#697893" : "#cbd5e1" }),
-            borderRadius: BorderRadius.circular(8),
+        build: ({ node, selected }) =>
+          Container({
+            width: 180,
+            padding: EdgeInsets.all(16),
+            decoration: new BoxDecoration({
+              color: dark ? "#303b4f" : "#ffffff",
+              border: Border.all({ color: selected ? "#0d9488" : dark ? "#697893" : "#cbd5e1" }),
+              borderRadius: BorderRadius.circular(8),
+            }),
+            child: Text(String(node.data.label), {
+              style: new TextStyle({
+                fontFamily: "system-ui, sans-serif",
+                color: dark ? "#f1f5f9" : "#172033",
+                fontSize: 12,
+              }),
+            }),
           }),
-          child: Text(String(node.data.label), { style: new TextStyle({ fontFamily: "system-ui, sans-serif", color: dark ? "#f1f5f9" : "#172033", fontSize: 12 }) }),
-        }),
-        handles: [{ type: "target", position: "left" }, { type: "source", position: "right" }],
+        handles: [
+          { type: "target", position: "left" },
+          { type: "source", position: "right" },
+        ],
       },
     },
+    viewport: { fitView: { padding: 0.2, maxZoom: 1 }, minZoom: 0.15 },
   });
 }
