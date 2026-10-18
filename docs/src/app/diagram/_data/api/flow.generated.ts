@@ -1438,7 +1438,7 @@ export const flowApi: FlowApiGenerated = {
     {
       "name": "activeEdgeHandle",
       "kind": "getter",
-      "signature": "activeEdgeHandle: { edgeId: string; index: number; kind: \"waypoint\" } | null",
+      "signature": "activeEdgeHandle: { edgeId: string; index: number; kind: \"waypoint\" | \"midpoint\" } | null",
       "doc": ""
     },
     {

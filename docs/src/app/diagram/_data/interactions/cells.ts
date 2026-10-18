@@ -163,7 +163,7 @@ custom: {
       ["Delete", () => flow.deleteElements(ids)],
     ]),
 },`,
-    ready: false,
+    ready: true,
   },
   {
     id: "delete",
@@ -193,7 +193,7 @@ on: {
 // From your own buttons
 flow.history.undo();
 flow.run(() => flow.setNodes(tidy), { history: "merge" });`,
-    ready: false,
+    ready: true,
   },
   {
     id: "clipboard",
@@ -208,7 +208,7 @@ flow.run(() => flow.setNodes(tidy), { history: "merge" });`,
 // The same mutations without the keys
 const content = flow.getContent(["a", "b"]);
 flow.putContent(content, { at: flow.pointerFlowPosition });`,
-    ready: false,
+    ready: true,
   },
   {
     id: "keyboard",
@@ -226,7 +226,7 @@ flow.putContent(content, { at: flow.pointerFlowPosition });`,
     duplicate: null, // null disables a binding
   },
 },`,
-    ready: false,
+    ready: true,
   },
   {
     id: "groups",
@@ -243,7 +243,7 @@ interaction: { drag: { dropIntoGroup: true } },
 nodeTypes: {
   group: ({ isDropTarget }) => Frame({ glow: isDropTarget }),
 },`,
-    ready: false,
+    ready: true,
   },
   {
     id: "layout",
@@ -288,7 +288,7 @@ nodeTypes: {
 on: {
   editEnd: ({ node, committed }) => committed && save(node),
 },`,
-    ready: false,
+    ready: true,
   },
   {
     id: "resize",
@@ -321,7 +321,7 @@ custom: {
     Dot({ size: kind === "midpoint" ? 6 : 8, filled: active }),
 },
 on: { reshapeEnd: ({ edge }) => save(edge) },`,
-    ready: false,
+    ready: true,
   },
   {
     id: "snap-guides",
@@ -336,7 +336,7 @@ on: { reshapeEnd: ({ edge }) => save(edge) },`,
 custom: {
   guides: ({ lines }) => GuideLines(lines, { color: "#e11d48" }),
 },`,
-    ready: false,
+    ready: true,
   },
   {
     id: "overlap",
@@ -353,7 +353,7 @@ nodeTypes: {
 
 // After a paste or a layout
 flow.resolveOverlaps();`,
-    ready: false,
+    ready: true,
   },
   {
     id: "collapse",
@@ -371,7 +371,7 @@ nodeTypes: {
 on: {
   nodeClick: (_event, node) => flow.toggleCollapsed(node.id),
 },`,
-    ready: false,
+    ready: true,
   },
   {
     id: "insert-on-edge",
@@ -390,7 +390,7 @@ on: {
         }),
     }),
 },`,
-    ready: false,
+    ready: true,
   },
   {
     id: "delete-reconnect",
@@ -402,7 +402,7 @@ on: {
     flow.deleteElements(["review"], { reconnect: true }),
   child: Button("Remove review"),
 })`,
-    ready: false,
+    ready: true,
   },
   {
     id: "align",
@@ -413,7 +413,7 @@ on: {
 
 flow.alignNodes(ids, "left"); // centerX, right, top, centerY, bottom
 flow.distributeNodes(ids, "y"); // or "x"`,
-    ready: false,
+    ready: true,
   },
 ];
 
