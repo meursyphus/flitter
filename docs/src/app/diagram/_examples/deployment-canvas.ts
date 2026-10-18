@@ -38,7 +38,8 @@ class DeploymentState extends State<Deployment> {
       position: { x: 25, y: 155 },
       data: { label: "invoice-exports", kind: "BUCKET", status: "Healthy", region: "us-east-1", deploy: "Private · encrypted", detail: "4,218 objects", color: "#7c3aed" }
     }
-  ].map((n) => (n.type === "frame" ? n : { ...n, type: "service", width: 225, height: 90 }));
+    // Group toolbars sit at the top-right corner so the header panel never covers them.
+  ].map((n) => (n.type === "frame" ? { ...n, toolbar: { align: "end" as const } } : { ...n, type: "service", width: 225, height: 90 }));
   edges: FlowEdge[] = [
     { id: "database-url", source: "api", target: "db", label: "DATABASE_URL" },
     { id: "queue-db", source: "worker", target: "db", label: "DATABASE_URL" },
