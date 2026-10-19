@@ -1,7 +1,7 @@
 import {
   Stack as DiagramStack,
   StackFit as DiagramStackFit,
-} from "flitter-core";
+} from "flitterjs";
 import {
   layout as baseLayout,
   positionOverlay,
@@ -19,12 +19,12 @@ import {
   TextStyle,
   type BuildContext,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import {
   FlowDiagramProvider,
   type FlowDiagramController,
   type FlowNode,
-} from "flitter-diagram";
+} from "@flitterjs/diagram";
 import FlowDiagram, {
   defaultNode,
   type FlowDiagramProps,
@@ -122,7 +122,7 @@ function story(
                   : []
                 ).map(({ position, child }) =>
                   positionOverlay(
-                    position as import("flitter-diagram").PanelPosition,
+                    position as import("@flitterjs/diagram").PanelPosition,
                     child,
                   ),
                 ),

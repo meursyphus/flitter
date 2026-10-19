@@ -10,8 +10,8 @@
 		StatefulWidget,
 		Text,
 		Widget
-	} from 'flitter-core';
-	import SvelteWidget from '@flitterjs/svelte';
+	} from 'flitterjs';
+	import SvelteWidget from '@flitterjs/adapter-svelte';
 
 	class CustomWidget extends StatefulWidget {
 		override createState(): State<StatefulWidget> {

@@ -18,7 +18,7 @@ import {
   Text,
   TextStyle,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type {
   CandlestickChartContext,
   CandlestickChartCustom,

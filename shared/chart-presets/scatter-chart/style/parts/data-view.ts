@@ -15,11 +15,11 @@ import {
   ZIndex,
   type Widget,
   type BuildContext,
-} from "flitter-ui";
-import type { ScatterChartCustom, ScatterChartContext } from "flitter-ui/chart";
+} from "flitterjs";
+import type { ScatterChartCustom, ScatterChartContext } from "@flitterjs/chart";
 import type { AgScatterChartConfig } from "../config";
 import { DataView } from "../../base/data-view";
-import { ScatterChartProvider } from "flitter-ui/chart";
+import { ScatterChartProvider } from "@flitterjs/chart";
 
 export function agDataView(
   ...[args, context]: Parameters<ScatterChartCustom<AgScatterChartConfig>["dataView"]>

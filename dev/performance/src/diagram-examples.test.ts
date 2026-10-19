@@ -8,7 +8,7 @@ import {
 	StatelessWidget,
 	type BuildContext,
 	type Widget
-} from 'flitter-core';
+} from 'flitterjs';
 import {
 	type FlowDiagramController,
 	type FlowDiagramProps,
@@ -116,7 +116,7 @@ for (const slug of slugs) {
 		const path = new URL(`../../../docs/src/app/diagram/_examples/${slug}.ts`, import.meta.url);
 		const source = readFileSync(path, 'utf8');
 		for (const match of source.matchAll(/from\s+["']([^"']+)["']/g))
-			expect(['flitter-ui', 'flitter-ui/diagram', '@/components/diagram/flow-diagram']).toContain(
+			expect(['flitterjs', '@flitterjs/diagram', '@/components/diagram/flow-diagram']).toContain(
 				match[1]
 			);
 	});

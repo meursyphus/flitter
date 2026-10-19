@@ -1,4 +1,4 @@
-import { ClipRect, Container, Rect, RepaintBoundary, State, StatefulWidget } from 'flitter-core';
+import { ClipRect, Container, Rect, RepaintBoundary, State, StatefulWidget } from 'flitterjs';
 
 class ClipToggleScene extends StatefulWidget {
 	constructor(

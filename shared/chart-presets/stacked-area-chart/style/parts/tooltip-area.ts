@@ -1,4 +1,4 @@
-import type { LineChartCustom } from "flitter-ui/chart";
+import type { LineChartCustom } from "@flitterjs/chart";
 import type { AgStackedAreaChartConfig } from "../config";
 import { agLineLikeTooltipArea } from "../../../_shared/ag/line-like";
 

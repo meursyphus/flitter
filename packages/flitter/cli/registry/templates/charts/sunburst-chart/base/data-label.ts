@@ -14,7 +14,7 @@ import {
   TextOverflow,
   TextStyle,
   Transform,
-} from "flitter-core";
+} from "flitterjs";
 import type { FlatSegment } from "../types";
 import { getRingMetrics, getSegmentLabelMetrics } from "./geometry";
 

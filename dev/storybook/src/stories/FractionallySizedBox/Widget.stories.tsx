@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import DualRenderer from '../../components/DualRenderer';
-import { Container, FractionallySizedBox, Center, Row, Flexible } from 'flitter-core';
+import { Container, FractionallySizedBox, Center, Row, Flexible } from 'flitterjs';
 
 const meta = {
 	title: 'Layout/FractionallySizedBox',

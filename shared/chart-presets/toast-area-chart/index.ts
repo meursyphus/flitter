@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-ui";
-import type { DeepPartial } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import type { DeepPartial } from "@flitterjs/chart";
 import { BaseAreaChart } from "./base";
 import type { LineChartCustom, LineChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
 import { toastStyleConfig, type ToastAreaChartConfig } from "./style";

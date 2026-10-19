@@ -2,7 +2,7 @@
 
 Show total trend over time while preserving how each series contributes.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Preset chart. Start with `chart-presets StackedAreaChart` and choose from `toast
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import StackedAreaChart from "./charts/stacked-area-chart";
 
 const widget = StackedAreaChart({

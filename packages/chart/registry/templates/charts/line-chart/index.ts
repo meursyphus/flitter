@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import { BaseLineChart } from "./base";
 import type { LineChartCustom, LineChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
 import type { DeepPartial } from "@utils/index";

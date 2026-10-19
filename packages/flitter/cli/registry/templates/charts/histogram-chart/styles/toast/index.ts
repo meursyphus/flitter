@@ -6,7 +6,7 @@ import { toastTitle, tooltipContent, cartesian } from "@styles/toast";
 import { toastBar } from "./parts/bar";
 import { toastDataView } from "./parts/data-view";
 import { toastTooltipArea } from "./parts/tooltip-area";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 
 export { type HistogramChartConfig } from "./config";
 

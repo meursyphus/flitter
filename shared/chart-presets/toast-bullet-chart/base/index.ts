@@ -1,12 +1,12 @@
-import { SizedBox, type Widget } from "flitter-ui";
-import * as Cartesian from "flitter-ui/chart";
-import type { BulletChartCustom } from "flitter-ui/chart";
+import { SizedBox, type Widget } from "flitterjs";
+import * as Cartesian from "@flitterjs/chart";
+import type { BulletChartCustom } from "@flitterjs/chart";
 
 export { BulletGroup } from "./bullet-group";
 export { BulletBox } from "./bullet-box";
 export { BulletDataView } from "./data-view";
 export { BulletGrid } from "./grid";
-export { Plot } from "flitter-ui/chart";
+export { Plot } from "@flitterjs/chart";
 
 export const defaultGetScale = (
   data: { datasets: { value: number; target: number; ranges: number[] }[] },

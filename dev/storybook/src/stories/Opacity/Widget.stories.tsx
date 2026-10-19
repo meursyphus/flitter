@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import DualRenderer from '../../components/DualRenderer';
-import { Container, Column, Opacity } from 'flitter-core';
+import { Container, Column, Opacity } from 'flitterjs';
 
 const meta = {
 	title: 'Painting/Opacity',

@@ -10,12 +10,13 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "flitter-core": "workspace:*",
-    "flitter-chart": "workspace:*",
-    "@flitterjs/react": "workspace:*",
+    "flitterjs": "workspace:*",
+    "@flitterjs/chart": "workspace:*",
+    "@flitterjs/adapter-react": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "shared": "workspace:*"
+    "shared": "workspace:*",
+    "@flitterjs/diagram": "workspace:*"
   },
   "devDependencies": {
     "@storybook/react": "^10.3.5",

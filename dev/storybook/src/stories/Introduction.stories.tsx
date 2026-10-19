@@ -43,11 +43,11 @@ function IntroductionPage() {
       <section style={sectionStyle}>
         <h2 style={sectionHeadingStyle}>Usage</h2>
         <h3 style={subheadingStyle}>Pure JavaScript</h3>
-        <CodeBlock code={"npm i flitter-core"} />
+        <CodeBlock code={"npm i flitterjs"} />
         <CodeBlock code={pureJavascript} />
 
         <h3 style={subheadingStyle}>React</h3>
-        <CodeBlock code={"npm i flitter-core @flitterjs/react"} />
+        <CodeBlock code={"npm i flitterjs @flitterjs/adapter-react"} />
         <CodeBlock code={reactExample} />
       </section>
 
@@ -74,8 +74,8 @@ function IntroductionPage() {
 
       <section style={sectionStyle}>
         <h2 style={sectionHeadingStyle}>GitHub</h2>
-        <a href="https://github.com/meursyphus/flitter-chart" style={linkStyle}>
-          https://github.com/meursyphus/flitter-chart
+        <a href="https://github.com/meursyphus/@flitterjs/chart" style={linkStyle}>
+          https://github.com/meursyphus/@flitterjs/chart
         </a>
       </section>
     </div>

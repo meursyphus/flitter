@@ -274,7 +274,7 @@ custom: {
     title: "Layout",
     tier: "D",
     caption: "Pick an algorithm. Nodes move into place and stay draggable.",
-    snippet: `import { layeredLayout } from "flitter-ui/diagram";
+    snippet: `import { layeredLayout } from "@flitterjs/diagram";
 
 FlowDiagram({
   data: { nodes, edges },

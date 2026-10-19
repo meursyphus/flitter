@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { FocusNode, TextEditingController } from 'flitter-core';
+import { FocusNode, TextEditingController } from 'flitterjs';
 
 describe('TextEditingController', () => {
 	it('notifies atomic text and selection changes and clamps native offsets', () => {

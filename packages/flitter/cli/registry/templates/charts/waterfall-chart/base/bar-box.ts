@@ -3,7 +3,7 @@ import {
   Alignment,
   Container,
   FractionallySizedBox,
-} from "flitter-core";
+} from "flitterjs";
 
 export function BarBox(
   ...[{ bar, geometry }]: Parameters<WaterfallChartCustom["barBox"]>

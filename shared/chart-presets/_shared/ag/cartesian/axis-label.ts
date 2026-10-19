@@ -1,6 +1,6 @@
-import type { Widget } from "flitter-ui";
+import type { Widget } from "flitterjs";
 import type { AgCartesianBaseConfig } from "./config";
-import { Label } from "flitter-ui/chart";
+import { Label } from "@flitterjs/chart";
 
 export function agXAxisLabel(
   args: { name: string; index: number },

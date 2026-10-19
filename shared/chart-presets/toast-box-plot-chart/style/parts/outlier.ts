@@ -6,8 +6,8 @@ import {
   Radius,
   SizedBox,
   type Widget,
-} from "flitter-ui";
-import type { BoxPlotChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { BoxPlotChartCustom } from "@flitterjs/chart";
 import type { ToastBoxPlotChartConfig } from "../config";
 
 export function toastOutlier(

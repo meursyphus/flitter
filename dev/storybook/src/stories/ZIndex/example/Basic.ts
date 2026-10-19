@@ -1,4 +1,4 @@
-import { Container, Positioned, Stack, ZIndex, BoxDecoration } from 'flitter-core';
+import { Container, Positioned, Stack, ZIndex, BoxDecoration } from 'flitterjs';
 
 function Example() {
 	return Stack({

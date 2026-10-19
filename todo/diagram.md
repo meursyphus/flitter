@@ -17,7 +17,7 @@ PR #169 only rewrote docs. The product shape it documents is still React Flow's:
 
 - G1 **Chart-shaped API.** `Flow({ nodes, edges, custom, config, layout, viewport, interaction, can, on })`. No flat flag soup. Interaction config is grouped, has presets, and every default is the "editor" behaviour below.
 - G2 **Editor-grade interactions are engine defaults.** Every row marked D in §3 works with zero config; every B row works with one flag. Every visual those gestures need is a `custom.*` builder slot or a builder arg. No colours, fonts or shapes in `src/headless` or `src/shared`.
-- G3 **One theme, copied source.** `flitter add flow-diagram` copies `styles/default` (no `--style`). Users edit the copy; the engine stays in `flitter-ui/diagram`.
+- G3 **One theme, copied source.** `flitter add flow-diagram` copies `styles/default` (no `--style`). Users edit the copy; the engine stays in `@flitterjs/diagram`.
 - G4 **Practical gallery.** 12 examples (§5) that echo shipping products, each showcasing 2–3 built-in interactions. A gallery page = title, interaction chips, install command, live stage, code tabs, related. No paragraphs.
 - G5 **Docs without reading.** Chart structure (§6). Whole diagram section ≤ 2,500 words of prose outside code and tables. Every interaction is shown by a live micro-demo plus the snippet that enables it, never by a paragraph.
 - G6 **Green.** `pnpm diagram:typecheck`, `pnpm --dir packages/diagram lint`, `pnpm diagram:test` (vitest + Playwright, SVG and Canvas, mouse and touch), `pnpm --dir shared/diagram-presets run sync`, `pnpm --dir packages/flitter test:install`, `pnpm --dir docs build`. Drag still rebuilds one node (perf history in `dev/performance/performance-history`).
@@ -140,7 +140,7 @@ Removed from the public surface: the flat `FlowOptions`/`FlowCallbacks` props, `
 | 11 | `knowledge-graph` | Knowledge graph | Obsidian, Logseq | neighbour highlight + fade rest, depth slider, click → recentre, label fade by zoom | force |
 | 12 | `state-machine` | State machine | Stately | nested states, dblclick parent → child, handle click → new state + transition | layered + manual |
 
-Example file rules: one `docs/src/app/diagram/_examples/<slug>.ts` exporting `default (theme) => Widget`, importing only `flitter-ui`, `flitter-ui/diagram` and the copied `@/components/diagram/flow-diagram`. Side panels and popovers are Flitter widgets inside the example (panels or overlays), not React. Every example must run on SVG and Canvas and in light/dark.
+Example file rules: one `docs/src/app/diagram/_examples/<slug>.ts` exporting `default (theme) => Widget`, importing only `flitterjs`, `@flitterjs/diagram` and the copied `@/components/diagram/flow-diagram`. Side panels and popovers are Flitter widgets inside the example (panels or overlays), not React. Every example must run on SVG and Canvas and in light/dark.
 
 ## 6. Docs (Opus)
 
@@ -199,7 +199,7 @@ Reference to copy, file by file: `packages/chart/src/headless/bar-chart/*`, `pac
 | Area | Diagram today | Chart | Target |
 | --- | --- | --- | --- |
 | Headless folder | `src/headless/flow/{flow,controller,provider,scene,interaction,types}.ts` | `src/headless/bar-chart/{chart,controller,provider,types,index}.ts` | `src/headless/flow-diagram/{diagram,controller,provider,types,index}.ts` (+ `scene.ts`, `interaction.ts` kept as internals) |
-| Entry | `Flow(props)` with `nodes`, `edges` top level | `BarChart({ data, custom, config, ... })`, default export of `index.ts` | `FlowDiagram({ data: { nodes, edges }, custom, config, ... })`, default export of `src/headless/flow-diagram/index.ts`; `flitter-ui/diagram` exports it as `FlowDiagram` |
+| Entry | `Flow(props)` with `nodes`, `edges` top level | `BarChart({ data, custom, config, ... })`, default export of `index.ts` | `FlowDiagram({ data: { nodes, edges }, custom, config, ... })`, default export of `src/headless/flow-diagram/index.ts`; `@flitterjs/diagram` exports it as `FlowDiagram` |
 | Provider | `FlowProvider.of` only; `FlowRoot` hand-rolls `Provider` | `BarChartProvider({...})` = `ChangeNotifierProvider` with `create`/`update` + `.of` | `FlowDiagramProvider({...})` with the same shape and `.of` (keep `FlowRoot` internals for host keyboard wiring, but behind the provider) |
 | Controller name | `FlowController` | `BarChartController` | `FlowDiagramController` (no alias; 0.2.0 shipped the old API, nothing to keep compatible) |
 | Context type | `FlowContext<TConfig>` | `BarChartContext<TConfig> = BarChartController & { config: TConfig }` | `FlowDiagramContext<TConfig>` |
@@ -219,7 +219,7 @@ Reference to copy, file by file: `packages/chart/src/headless/bar-chart/*`, `pac
 2. `interaction`, `can`, `on`, `layout`, `viewport`, `controller` stay as behaviour props (the chart analogue is `getScale`, `getScaleOptions`, `direction`). Their shapes do not change in this pass.
 3. `panels` prop is removed. Controls and minimap become slots composed by `layout`; extra overlays are added by overriding `layout` (chart users add things by overriding `layout` too).
 4. One style only (`default`), but the plumbing (`plugin.ts`, `StyleMap`, `style` prop in the template `index.ts`) exists so a second style is a folder, as in chart.
-5. Package names stay as they are (`flitter-ui`, `flitter-ui/diagram`, `flitter-diagram`); the rename is issue #170's own PR.
+5. Package names stay as they are (`flitterjs`, `@flitterjs/diagram`, `@flitterjs/diagram`); the rename is issue #170's own PR.
 
 ### 9.3 Composition slots (new)
 

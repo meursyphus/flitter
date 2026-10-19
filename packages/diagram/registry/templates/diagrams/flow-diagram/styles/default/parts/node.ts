@@ -7,7 +7,7 @@ import {
   Container,
   EdgeInsets,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type {
   FlowDiagramContext,
   FlowNode,

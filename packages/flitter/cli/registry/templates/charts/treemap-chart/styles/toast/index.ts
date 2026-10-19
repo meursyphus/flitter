@@ -1,4 +1,4 @@
-import { SizedBox } from "flitter-core";
+import { SizedBox } from "flitterjs";
 import type { TreemapCustom } from "@headless/treemap-chart/types";
 import { deepMerge, type DeepPartial } from "@utils/index";
 import { toastLegend, toastTitle, tooltipContent } from "@styles/toast";

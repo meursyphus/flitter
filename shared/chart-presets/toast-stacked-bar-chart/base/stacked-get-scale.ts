@@ -1,4 +1,4 @@
-import type { BarChartData, BarChartScale, BarChartScaleOptions } from "flitter-ui/chart";
+import type { BarChartData, BarChartScale, BarChartScaleOptions } from "@flitterjs/chart";
 
 export function stackedGetScale(
   { datasets, labels }: BarChartData,

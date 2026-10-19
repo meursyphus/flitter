@@ -4,7 +4,7 @@ import {
 	type Widget,
 	type BuildContext,
 	LayoutBuilder,
-} from "flitter-core";
+} from "flitterjs";
 import { PieChartProvider } from "./provider";
 import type {
 	HoveredPieChartSegment,

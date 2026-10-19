@@ -17,7 +17,7 @@ import {
 	TextAlign,
 	TextStyle,
 	type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import {
 	DataView,
 	Layout,

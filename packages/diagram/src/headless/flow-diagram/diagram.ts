@@ -15,7 +15,7 @@ import {
   StatefulWidget,
   StatelessWidget,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import { type FlowDiagramController, getSceneOrder } from "./controller";
 import { FlowDiagramProvider } from "./provider";
 import {

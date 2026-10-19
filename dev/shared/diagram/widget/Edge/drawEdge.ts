@@ -1,4 +1,4 @@
-import { Offset, Path, Rect } from 'flitter-core';
+import { Offset, Path, Rect } from 'flitterjs';
 
 const RELATION_LENGTH = 10;
 

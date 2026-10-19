@@ -9,7 +9,7 @@ import {
 	Row,
 	SizedBox,
 	type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { TreemapCustom } from "@headless/treemap-chart/types";
 
 type LayoutConfig = {

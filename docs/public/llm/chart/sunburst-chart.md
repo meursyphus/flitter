@@ -2,7 +2,7 @@
 
 Display hierarchical composition as concentric radial segments.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Base-wrapper chart. Start with `chart-presets SunburstChart` for structural defa
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import SunburstChart from "./charts/sunburst-chart";
 
 const widget = SunburstChart({

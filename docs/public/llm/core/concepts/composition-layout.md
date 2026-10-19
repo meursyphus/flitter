@@ -2,7 +2,7 @@
 
 Most chart shells are built from standard layout widgets before any custom painting happens.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Key Points
 

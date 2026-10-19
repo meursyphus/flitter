@@ -1,4 +1,4 @@
-import { EdgeInsets, Padding, Text, TextStyle, type Widget } from "flitter-core";
+import { EdgeInsets, Padding, Text, TextStyle, type Widget } from "flitterjs";
 
 export function Legend({ name }: { name: string; index: number }): Widget {
   return Padding({

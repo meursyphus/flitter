@@ -4,8 +4,8 @@ import {
 	StackFit,
 	ZIndex,
 	type Widget,
-} from "flitter-ui";
-import type { SunburstChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { SunburstChartCustom } from "@flitterjs/chart";
 import type { SunburstChartConfig } from "../config";
 import {
 	createArcCanvasPath,

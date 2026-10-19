@@ -5,7 +5,7 @@ export {
 } from "./cartesian/config";
 export { toastTitle } from "./title";
 export { toastLegend } from "./legend";
-export { drawSplineLine } from "flitter-ui/chart";
+export { drawSplineLine } from "@flitterjs/chart";
 export { tooltipContent } from "./tooltip";
 export * as cartesian from "./cartesian";
 

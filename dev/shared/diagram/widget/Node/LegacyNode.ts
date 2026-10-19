@@ -5,7 +5,7 @@ import {
   Offset,
   Positioned,
   ZIndex,
-} from "flitter-core";
+} from "flitterjs";
 import type { Table } from "../../type";
 import { classToFunction } from "../utils";
 import DiagramControllerProvider from "../Provider/DiagramControllerProvider";

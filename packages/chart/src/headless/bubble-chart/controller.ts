@@ -1,4 +1,4 @@
-import { ChangeNotifier } from "flitter-core";
+import { ChangeNotifier } from "flitterjs";
 import type { BubbleChartCustom, BubbleChartData, BubbleChartScale, GetScaleFn, GetScaleOptionsFn } from "./types";
 
 export class BubbleChartController extends ChangeNotifier {

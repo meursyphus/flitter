@@ -1,6 +1,6 @@
 # LLM Evaluation Loop
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 Use this loop when tightening the pack for first-read agents.
 

@@ -1,4 +1,4 @@
-import { Stack, StackFit, type Widget } from "flitter-core";
+import { Stack, StackFit, type Widget } from "flitterjs";
 import type { TreemapCustom } from "@headless/treemap-chart/types";
 
 export function Plot(

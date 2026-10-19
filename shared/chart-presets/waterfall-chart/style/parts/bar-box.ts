@@ -5,8 +5,8 @@ import {
   Stack,
   StackFit,
   type Widget,
-} from "flitter-ui";
-import type { WaterfallChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { WaterfallChartCustom } from "@flitterjs/chart";
 import type { WaterfallChartConfig } from "../config";
 
 export function agBarBox(

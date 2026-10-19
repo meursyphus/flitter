@@ -1,5 +1,5 @@
-import { Text, TextStyle, type Widget } from "flitter-ui";
-import type { TreemapCustom } from "flitter-ui/chart";
+import { Text, TextStyle, type Widget } from "flitterjs";
+import type { TreemapCustom } from "@flitterjs/chart";
 import type { TreemapChartConfig } from "../config";
 
 export function agGroupTitle(

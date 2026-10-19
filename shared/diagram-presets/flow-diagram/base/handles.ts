@@ -2,7 +2,7 @@ import type {
   FlowNode,
   FlowDiagramContext,
   HandleSpec,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 
 export function defaultHandles(
   node: FlowNode,

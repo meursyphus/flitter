@@ -1,7 +1,7 @@
 import type { ChartModule } from "../types";
 
 const basicCode = `import CandlestickChart from "./charts/candlestick-chart";
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 
 const chart = CandlestickChart({
   data: {

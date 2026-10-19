@@ -1,10 +1,10 @@
-import type { ScatterChartCustom, ScatterChartGetScaleOptionsFn as GetScaleOptionsFn, ScatterChartContext } from "flitter-ui/chart";
+import type { ScatterChartCustom, ScatterChartGetScaleOptionsFn as GetScaleOptionsFn, ScatterChartContext } from "@flitterjs/chart";
 import type { AgScatterChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import { agScatter } from "./parts/scatter";
 import { agDataView } from "./parts/data-view";
-import type { Widget } from "flitter-ui";
+import type { Widget } from "flitterjs";
 import {
   agTitle,
   agLegend,

@@ -4,7 +4,7 @@ import {
   type Element,
   type RenderObject,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 
 type Controller = ChangeNotifier & {
   custom: Record<string, (...args: any[]) => Widget>;

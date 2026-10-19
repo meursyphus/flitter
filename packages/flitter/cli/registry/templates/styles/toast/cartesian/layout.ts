@@ -9,7 +9,7 @@ import {
   MainAxisSize,
   SizedBox,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { ToastBaseConfig } from "./config";
 
 type ToastLayoutConfig = Pick<ToastBaseConfig, "legend" | "padding" | "title">;

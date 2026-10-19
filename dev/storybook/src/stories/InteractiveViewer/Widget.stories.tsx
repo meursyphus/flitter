@@ -15,7 +15,7 @@ import {
   Text,
   TransformationController,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 
 const meta = {
   title: "Interaction/InteractiveViewer",

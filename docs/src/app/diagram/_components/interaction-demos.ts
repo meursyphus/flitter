@@ -1,5 +1,5 @@
 import { defaultNode } from "@/components/diagram/flow-diagram";
-import { Stack as DiagramStack, StackFit as DiagramStackFit } from "flitter-ui";
+import { Stack as DiagramStack, StackFit as DiagramStackFit } from "flitterjs";
 import {
   layout as baseLayout,
   positionOverlay,
@@ -23,7 +23,7 @@ import {
   Text,
   TextStyle,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import {
   FlowDiagramController,
   circularLayout,
@@ -38,7 +38,7 @@ import {
   type LayoutAlgorithm,
   type NodeCustom,
   type NodeCustomArgs,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import FlowDiagram, {
   type DefaultFlowConfig,
   type FlowDiagramProps,
@@ -329,7 +329,7 @@ function layout(theme: Theme): Widget {
                 },
               ].map(({ position, child }) =>
                 positionOverlay(
-                  position as import("flitter-ui/diagram").PanelPosition,
+                  position as import("@flitterjs/diagram").PanelPosition,
                   child,
                 ),
               ),
@@ -515,7 +515,7 @@ function deleteReconnect(theme: Theme): Widget {
               },
             ].map(({ position, child }) =>
               positionOverlay(
-                position as import("flitter-ui/diagram").PanelPosition,
+                position as import("@flitterjs/diagram").PanelPosition,
                 child,
               ),
             ),
@@ -553,7 +553,7 @@ function align(theme: Theme): Widget {
                 },
               ].map(({ position, child }) =>
                 positionOverlay(
-                  position as import("flitter-ui/diagram").PanelPosition,
+                  position as import("@flitterjs/diagram").PanelPosition,
                   child,
                 ),
               ),

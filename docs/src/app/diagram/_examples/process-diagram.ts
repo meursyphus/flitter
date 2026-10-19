@@ -19,13 +19,13 @@ import {
   Text,
   TextStyle,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import {
   FlowDiagramController,
   createId,
   type FlowNode,
   type FlowEdge,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import FlowDiagram, {
   EditableLabel,
   ShapePaint,
@@ -364,7 +364,7 @@ class ProcessState extends State<Process> {
             (
               args: Parameters<typeof defaultNode>[0],
               ctx: Parameters<typeof defaultNode>[1],
-            ) => import("flitter-ui").Widget
+            ) => import("flitterjs").Widget
           > = { task: toolbar, gateway: toolbar, event: toolbar };
           const view = views[args.node.type ?? "default"] ?? views.default;
           return view

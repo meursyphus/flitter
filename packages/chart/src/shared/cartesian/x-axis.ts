@@ -8,7 +8,7 @@ import {
   Row,
   SizedBox,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import { IgnoreSize } from "@utils/index";
 
 export function XAxis(

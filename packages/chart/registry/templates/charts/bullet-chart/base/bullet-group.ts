@@ -2,7 +2,7 @@ import {
   Container,
   SizedBox,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { BulletChartCustom } from "@headless/bullet-chart/types";
 
 export function BulletGroup(

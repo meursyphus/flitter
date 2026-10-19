@@ -26,7 +26,7 @@ import {
 	StatefulWidget,
 	type TextField,
 	type Widget
-} from 'flitter-core';
+} from 'flitterjs';
 import RenderObject from '../../../packages/core/src/renderobject/RenderObject';
 import type RenderObjectWidget from '../../../packages/core/src/widget/RenderObjectWidget';
 import {

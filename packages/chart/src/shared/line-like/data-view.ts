@@ -1,5 +1,5 @@
 import type { LineChartCustom } from "@headless/line-chart/types";
-import { Stack, Positioned } from "flitter-core";
+import { Stack, Positioned } from "flitterjs";
 
 export function DataView(...[{ lines }]: Parameters<LineChartCustom["dataView"]>) {
   return Stack({

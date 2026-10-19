@@ -3,7 +3,7 @@ import {
 	Provider,
 	BuildContext,
 	ChangeNotifierProvider,
-} from "flitter-core";
+} from "flitterjs";
 import type {
 	HistogramChartCustom,
 	HistogramChartData,

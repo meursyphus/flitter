@@ -29,7 +29,7 @@ Widget profileCard() {
   );
 }`;
 
-export const FLITTER_CODE = `import { BorderRadius, BoxDecoration, BoxShadow, Column, Container, EdgeInsets, Text, TextStyle } from "flitter-ui";
+export const FLITTER_CODE = `import { BorderRadius, BoxDecoration, BoxShadow, Column, Container, EdgeInsets, Text, TextStyle } from "flitterjs";
 
 function profileCard() {
   return Container({

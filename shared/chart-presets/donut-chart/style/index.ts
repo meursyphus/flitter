@@ -1,8 +1,8 @@
-import type { DonutChartContext, DonutChartCustom } from "flitter-ui/chart";
-import { Column, MainAxisSize, SizedBox, Text, TextStyle, type Widget } from "flitter-ui";
+import type { DonutChartContext, DonutChartCustom } from "@flitterjs/chart";
+import { Column, MainAxisSize, SizedBox, Text, TextStyle, type Widget } from "flitterjs";
 import type { DonutChartConfig } from "./config";
 import { defaultAgConfig, normalizeDonutAgConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import {
 	agPieLikeDataLabel,
 	agPieLikeDataView,

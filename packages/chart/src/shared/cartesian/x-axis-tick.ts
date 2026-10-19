@@ -1,5 +1,5 @@
 import type { CartesianCustom } from "./types";
-import { Container, type Widget } from "flitter-core";
+import { Container, type Widget } from "flitterjs";
 
 export function XAxisTick(
   _: Parameters<CartesianCustom["xAxisTick"]>[0],

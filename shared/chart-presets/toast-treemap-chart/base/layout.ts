@@ -9,8 +9,8 @@ import {
 	Row,
 	SizedBox,
 	type Widget,
-} from "flitter-ui";
-import type { TreemapCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { TreemapCustom } from "@flitterjs/chart";
 
 type LayoutConfig = {
 	padding: { top: number; right: number; bottom: number; left: number };

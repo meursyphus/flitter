@@ -1,4 +1,4 @@
-import { BuildContext, Provider, type Widget } from 'flitter-core';
+import { BuildContext, Provider, type Widget } from 'flitterjs';
 import { EventManager } from '../../event';
 
 const KEY = Symbol('EventManagerProvider');

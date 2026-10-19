@@ -1,5 +1,5 @@
 import type { ScatterChartCustom } from "@headless/scatter-chart/types";
-import { Stack, Align, Alignment } from "flitter-core";
+import { Stack, Align, Alignment } from "flitterjs";
 
 export function DataView(
   ...[{ scatters, scale }]: Parameters<ScatterChartCustom["dataView"]>

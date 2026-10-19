@@ -17,14 +17,14 @@ Flitter is a JavaScript rendering engine and framework inspired by Flutter, desi
 ### Monorepo Structure
 ```
 packages/
-├── flitter/          # Core rendering engine
-├── flitter-react/    # React integration
-├── flitter-svelte/   # Svelte integration
-├── chart/            # Chart library (shadcn-style, CLI-installable)
-├── diagram/          # Node/edge diagram editor (React Flow UX on Flitter)
-├── docs/             # Documentation site (Astro)
-├── story/            # Storybook components
-└── test/             # Test suite
+├── core/             # flitterjs: rendering engine
+├── chart/            # @flitterjs/chart: headless chart runtime + source registry
+├── diagram/          # @flitterjs/diagram: headless diagram runtime + source registry
+└── flitter/          # @flitterjs/cli: editable template installer
+integrations/
+├── react/            # @flitterjs/adapter-react
+└── svelte/           # @flitterjs/adapter-svelte
+docs/                 # Documentation site (Next.js)
 shared/
 ├── chart-presets/    # Generated chart presets (synced from templates, do NOT edit directly)
 └── ...               # Other shared diagram components
@@ -101,7 +101,7 @@ pnpm --dir shared/chart-presets run sync                                   # ful
 
 ## Diagram Library
 
-`packages/diagram/` (`flitter-diagram`) is a node/edge editor that reproduces
+`packages/diagram/` (`@flitterjs/diagram`) is a node/edge editor that reproduces
 React Flow's interaction model on Flitter. See `packages/diagram/CLAUDE.md` for
 the layer rules (headless engine vs. `xyflow` style) and verification commands.
 
@@ -110,12 +110,12 @@ pnpm diagram:typecheck                          # tsc for packages/diagram
 pnpm diagram:test                               # vitest (paths, layouts, changes) + Playwright (SVG/Canvas, mouse + touch)
 pnpm story:dev                                  # Storybook: Diagram/* stories (incl. the CLI preset)
 pnpm --dir shared/diagram-presets run sync      # regenerate the `flitter add flow-diagram` output used by Storybook
-pnpm --dir packages/flitter test:install        # build flitter-ui and type-check copied charts + diagram templates
+pnpm --dir packages/flitter test:install        # build flitterjs and type-check copied charts + diagram templates
 ```
 
 The CLI installs diagram styles with `flitter add flow-diagram [--style xyflow]` into
 `aliases.diagrams` (default `@/components/diagram`); the copied files import the
-engine from `flitter-ui/diagram` (= `flitter-diagram/engine`). The style source of
+engine from `@flitterjs/diagram` (= `@flitterjs/diagram`). The style source of
 truth is `packages/diagram/src/styles/<style>`; `packages/diagram/registry` lists it
 and `shared/diagram-presets` is generated from it (never edit by hand).
 
@@ -168,22 +168,22 @@ class MyWidget extends StatefulWidget {
 
 ## Key Development Areas
 
-- **Widget Development**: `packages/flitter/src/component/`
-- **Render Objects**: `packages/flitter/src/renderobject/`
-- **Animation System**: `packages/flitter/src/animation/`
-- **Tests**: `packages/test/tests/`
-- **Documentation**: `packages/docs/src/content/`
+- **Widget Development**: `packages/core/src/component/`
+- **Render Objects**: `packages/core/src/renderobject/`
+- **Animation System**: `packages/core/src/animation/`
+- **Tests**: `dev/performance/tests/`
+- **Documentation**: `docs/src/app/`
 
 ## Testing & Quality
 
-- Write integration tests in `packages/test/tests/`
+- Write integration tests in `dev/performance/tests/`
 - Add Storybook stories for visual components
 - Performance benchmarks tracked in `packages/test/performance-history/`
 - Use TypeScript strict mode
 
 ## Localization
 
-The project supports 14 languages using Lunaria. Documentation is localized in respective language folders under `packages/docs/src/content/`.
+The project supports 14 languages using Lunaria. Documentation is localized in respective language folders under `docs/src/app/`.
 
 ## Important Documentation Guidelines
 

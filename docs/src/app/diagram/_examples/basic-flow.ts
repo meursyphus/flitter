@@ -1,4 +1,4 @@
-import { layeredLayout, type FlowDiagramData } from "flitter-ui/diagram";
+import { layeredLayout, type FlowDiagramData } from "@flitterjs/diagram";
 import FlowDiagram from "@/components/diagram/flow-diagram";
 
 const data: FlowDiagramData = {

@@ -9,7 +9,7 @@ import {
 	StackFit,
 	Transform,
 	type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 
 import { stackLabels } from "./labels";
 

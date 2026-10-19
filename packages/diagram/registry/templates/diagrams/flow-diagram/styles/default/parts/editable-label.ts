@@ -12,7 +12,7 @@ import {
   TextStyle,
   type BuildContext,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type {
   FlowDiagramContext,
   NodeCustomArgs,

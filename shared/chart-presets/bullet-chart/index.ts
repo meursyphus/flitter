@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-ui";
-import { BulletChart as HeadlessBulletChart } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import { BulletChart as HeadlessBulletChart } from "@flitterjs/chart";
 import type {
   BulletChartCustom,
   BulletChartData,
@@ -9,8 +9,8 @@ import type {
 } from "./types";
 import * as Base from "./base";
 import { styleConfig, type BulletChartConfig } from "./style";
-import type { DeepPartial } from "flitter-ui/chart";
-import * as Cartesian from "flitter-ui/chart";
+import type { DeepPartial } from "@flitterjs/chart";
+import * as Cartesian from "@flitterjs/chart";
 
 export type {
   BulletChartContext,

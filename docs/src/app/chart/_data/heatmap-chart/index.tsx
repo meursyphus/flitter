@@ -1,7 +1,7 @@
 import type { ChartModule } from "../types";
 
 const basicCode = `import HeatmapChart from "./charts/heatmap-chart";
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 
 const chart = HeatmapChart({
   data: {

@@ -23,8 +23,8 @@ import {
   BoxDecoration,
   Opacity,
   type Widget as FlitterWidget,
-} from "flitter-core";
-import type { BarChartContext } from "flitter-ui/chart";
+} from "flitterjs";
+import type { BarChartContext } from "@flitterjs/chart";
 
 const backgroundColors = ["#e8c1a0", "#f47560", "#f1e15b", "#e8a838", "#61cdbb"];
 const patternColors = ["#c49c81", "#d4573f", "#c9bd3e", "#c08a25", "#38bcb2"];

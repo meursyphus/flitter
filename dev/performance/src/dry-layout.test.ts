@@ -9,7 +9,7 @@ import {
 	MainAxisSize,
 	Size,
 	VerticalDirection
-} from 'flitter-core';
+} from 'flitterjs';
 import RenderObject from '../../../packages/core/src/renderobject/RenderObject';
 import BaseAlign from '../../../packages/core/src/component/base/BaseAlign';
 import BaseConstrainedBox from '../../../packages/core/src/component/base/BaseConstrainedBox';

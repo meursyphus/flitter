@@ -1,18 +1,18 @@
-import { SizedBox, type Widget } from "flitter-ui";
-import { ScatterChart as HeadlessScatterChart } from "flitter-ui/chart";
+import { SizedBox, type Widget } from "flitterjs";
+import { ScatterChart as HeadlessScatterChart } from "@flitterjs/chart";
 import type {
   ScatterChartCustom,
   ScatterChartData,
   ScatterChartGetScaleFn as GetScaleFn,
   ScatterChartGetScaleOptionsFn as GetScaleOptionsFn,
-} from "flitter-ui/chart";
-import * as Cartesian from "flitter-ui/chart";
-import { getValueEdge, refineScale } from "flitter-ui/chart";
+} from "@flitterjs/chart";
+import * as Cartesian from "@flitterjs/chart";
+import { getValueEdge, refineScale } from "@flitterjs/chart";
 import { Grid as PointLikeGrid } from "../../_shared/toast/point-like/index";
 import { DataView } from "./data-view";
 
-export type { ScatterChartCustom, ScatterChartData, ScatterChartScale, ScatterChartContext, ScatterChartScaleOptions, ScatterChartGetScaleFn as GetScaleFn, ScatterChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
-export { ScatterChartController } from "flitter-ui/chart";
+export type { ScatterChartCustom, ScatterChartData, ScatterChartScale, ScatterChartContext, ScatterChartScaleOptions, ScatterChartGetScaleFn as GetScaleFn, ScatterChartGetScaleOptionsFn as GetScaleOptionsFn } from "@flitterjs/chart";
+export { ScatterChartController } from "@flitterjs/chart";
 
 /** Structural (non-visual) defaults provided by base */
 const baseDefaults: Partial<ScatterChartCustom> = {

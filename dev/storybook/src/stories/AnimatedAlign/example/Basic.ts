@@ -12,7 +12,7 @@ import {
 	Positioned,
 	TextStyle,
 	EdgeInsets
-} from 'flitter-core';
+} from 'flitterjs';
 
 class CustomWidget extends StatefulWidget {
 	createState(): State<StatefulWidget> {
@@ -79,7 +79,7 @@ import {
 	Positioned,
 	TextStyle,
 	EdgeInsets
-} from 'flitter-core';
+} from 'flitterjs';
 
 class CustomWidgetState extends State<CustomWidget> {
 	alignements = [

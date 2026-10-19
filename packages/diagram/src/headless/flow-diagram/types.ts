@@ -1,5 +1,5 @@
 import type { NodeAttachmentPlacement } from "./scene";
-import type { BuildContext, Widget } from "flitter-core";
+import type { BuildContext, Widget } from "flitterjs";
 import type {
   CoordinateExtent,
   Dimensions,

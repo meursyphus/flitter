@@ -1,8 +1,8 @@
-import type { Widget } from "flitter-ui";
+import type { Widget } from "flitterjs";
 import type {
   EdgeHandleCustomArgs,
   FlowDiagramContext,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import type { DefaultFlowConfig } from "../config";
 import { ShapePaint, rectPathD } from "./paint";
 

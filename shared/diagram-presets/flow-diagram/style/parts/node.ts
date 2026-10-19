@@ -7,12 +7,12 @@ import {
   Container,
   EdgeInsets,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import type {
   FlowDiagramContext,
   FlowNode,
   NodeBodyCustomArgs,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import type { DefaultFlowConfig } from "../config";
 
 export function nodeLabel(node: FlowNode): string {

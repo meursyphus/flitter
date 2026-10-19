@@ -6,7 +6,7 @@ import {
 	Radius,
 	type Size,
 	type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 
 const FULL_SWEEP_EPSILON = 0.0001;
 

@@ -5,7 +5,7 @@ import {
 	BoxShadow,
 	Container,
 	SizedBox,
-} from "flitter-ui";
+} from "flitterjs";
 
 const COLORS: Record<WaterfallBarType, string> = {
 	increase: "#4CAF50",

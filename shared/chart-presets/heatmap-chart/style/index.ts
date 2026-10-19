@@ -1,7 +1,7 @@
-import type { HeatmapCustom } from "flitter-ui/chart";
+import type { HeatmapCustom } from "@flitterjs/chart";
 import type { AgHeatmapChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import { agSegment } from "./parts/segment";
 import { agHeatmapLegend } from "./parts/legend";
 import { agTooltipArea } from "./parts/tooltip-area";
@@ -11,8 +11,8 @@ import {
   agTooltipContent,
   cartesian,
 } from "../../_shared/ag/index";
-import type { HeatmapContext } from "flitter-ui/chart";
-import type { Widget } from "flitter-ui";
+import type { HeatmapContext } from "@flitterjs/chart";
+import type { Widget } from "flitterjs";
 import { interpolateColor } from "./parts/segment";
 
 export { type AgHeatmapChartConfig } from "./config";

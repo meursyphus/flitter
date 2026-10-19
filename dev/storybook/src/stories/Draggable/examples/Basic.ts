@@ -1,4 +1,4 @@
-import { Column, Container, Draggable } from 'flitter-core';
+import { Column, Container, Draggable } from 'flitterjs';
 
 const Basic = {
 	widget: Column({

@@ -34,7 +34,11 @@ function hasDependency(packageJson, dependencyName) {
 }
 
 function resolveInstallSpecifier(packageName, packageManagerName) {
-  const packageRoot = resolveRegistryPackageRoot(packageName);
+  // Published CLI installs public runtime packages from npm. Workspace runs may
+  // link the local package without making it a runtime dependency of the CLI.
+  let packageRoot;
+  try { packageRoot = resolveRegistryPackageRoot(packageName); }
+  catch { return packageName; }
   return packageRoot.includes(`${path.sep}node_modules${path.sep}`)
     ? packageName
     : packageManagerName === "npm"

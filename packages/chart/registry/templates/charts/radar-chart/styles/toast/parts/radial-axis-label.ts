@@ -9,7 +9,7 @@ import {
   TextStyle,
   type Widget,
   SizedBox,
-} from "flitter-core";
+} from "flitterjs";
 import type { RadarChartCustom } from "@headless/radar-chart/types";
 import type { ToastRadarChartConfig } from "../config";
 

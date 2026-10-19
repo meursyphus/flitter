@@ -10,12 +10,12 @@ import {
   Text,
   TextStyle,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import type {
   ContextMenuCustomArgs,
   MenuItemCustomArgs,
   FlowDiagramContext,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import type { DefaultFlowConfig } from "../config";
 
 export function defaultContextMenu(

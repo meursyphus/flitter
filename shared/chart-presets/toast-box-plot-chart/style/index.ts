@@ -1,8 +1,8 @@
-import type { BoxPlotChartCustom, BoxPlotChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
-import type { Widget } from "flitter-ui";
+import type { BoxPlotChartCustom, BoxPlotChartGetScaleOptionsFn as GetScaleOptionsFn } from "@flitterjs/chart";
+import type { Widget } from "flitterjs";
 import type { ToastBoxPlotChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge } from "flitter-ui/chart";
+import { deepMerge } from "@flitterjs/chart";
 import { toastBoxPlot } from "./parts/boxplot";
 import { toastBoxPlotBox } from "./parts/boxplot-box";
 import { toastOutlier } from "./parts/outlier";

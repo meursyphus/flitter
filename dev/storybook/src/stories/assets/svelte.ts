@@ -1,8 +1,8 @@
 import { dedent } from 'ts-dedent';
 
 export default dedent`
-import { Container, Alignment } from 'flitter-core';
-import Widget from '@flitterjs/svelte';
+import { Container, Alignment } from 'flitterjs';
+import Widget from '@flitterjs/adapter-svelte';
 
 const App = () => {
 

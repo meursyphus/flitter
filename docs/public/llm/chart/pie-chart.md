@@ -2,7 +2,7 @@
 
 Show simple part-to-whole breakdowns with a small number of slices.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Preset chart. Start with `chart-presets PieChart`. The wrapper already has a def
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import PieChart from "./charts/pie-chart";
 
 const widget = PieChart({

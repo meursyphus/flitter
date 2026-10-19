@@ -8,7 +8,7 @@ import {
   Opacity,
   Row,
   SizedBox,
-} from "flitter-core";
+} from "flitterjs";
 import { defaultAgCartesianBaseConfig } from "@styles/ag";
 
 export function BoxPlot(

@@ -9,7 +9,7 @@ import {
   SizedBox,
   Stack,
   StackFit,
-} from "flitter-ui";
+} from "flitterjs";
 
 export function Layout(
   ...[{ title, dataView, tooltipArea }, ctx]: Parameters<

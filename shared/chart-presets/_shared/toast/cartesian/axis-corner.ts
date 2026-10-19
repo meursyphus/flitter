@@ -1,6 +1,6 @@
-import type { Widget } from "flitter-ui";
+import type { Widget } from "flitterjs";
 import type { ToastBaseConfig } from "./config";
-import { AxisCorner } from "flitter-ui/chart";
+import { AxisCorner } from "@flitterjs/chart";
 
 export function toastAxisCorner(
   _args: undefined,

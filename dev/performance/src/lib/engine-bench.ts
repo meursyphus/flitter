@@ -31,7 +31,7 @@ import {
 	BoxDecoration,
 	BoxShadow,
 	type Widget
-} from 'flitter-core';
+} from 'flitterjs';
 import { createClipToggleScene, type ClipToggleState } from './clip-toggle-scene';
 
 export const engineScenarios = [

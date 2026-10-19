@@ -25,14 +25,14 @@ const config: StorybookConfig = {
     config.resolve = config.resolve || {};
     config.resolve.alias = {
       ...config.resolve.alias,
-      "flitter-core/component/Tooltip": path.resolve(
+      "flitterjs/component/Tooltip": path.resolve(
         coreRoot,
         "src/component/Tooltip.ts",
       ),
-      "flitter-ui/chart": path.resolve(flitterUiRoot, "src/chart.ts"),
-      "flitter-ui": path.resolve(flitterUiRoot, "src/index.ts"),
-      "flitter-chart": path.resolve(chartRoot, "src/index.ts"),
-      "flitter-core": path.resolve(coreRoot, "src/index.ts"),
+      "@flitterjs/chart": path.resolve(flitterUiRoot, "src/chart.ts"),
+      "flitterjs": path.resolve(flitterUiRoot, "src/index.ts"),
+      "@flitterjs/chart": path.resolve(chartRoot, "src/index.ts"),
+      "flitterjs": path.resolve(coreRoot, "src/index.ts"),
       "shared/chart": path.resolve(__dirname, "../../shared/chart.ts"),
       "chart-presets": path.resolve(chartPresetsRoot, "index.ts"),
       "@shared": path.resolve(chartRoot, "src/shared"),

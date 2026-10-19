@@ -11,21 +11,21 @@ import {
   Text,
   TextStyle,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import {
   type EdgePathResult,
   commandsEndAngle,
   commandsStartAngle,
   commandsToD,
   getMarkerCommands,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import type {
   ConnectionLineCustomArgs,
   EdgeCustomArgs,
   EdgeLabelCustomArgs,
   EdgeMarker,
   FlowDiagramContext,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import type { DefaultFlowConfig } from "../config";
 import { ShapePaint, type ShapeSpec } from "./paint";
 

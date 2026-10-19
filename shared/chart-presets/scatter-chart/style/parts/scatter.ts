@@ -4,8 +4,8 @@ import {
   Border,
   Opacity,
   type Widget,
-} from "flitter-ui";
-import type { ScatterChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { ScatterChartCustom } from "@flitterjs/chart";
 import type { AgScatterChartConfig } from "../config";
 
 export function agScatter(

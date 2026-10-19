@@ -13,7 +13,7 @@ import {
   CrossAxisAlignment,
   Padding,
   ZIndex,
-} from "flitter-core";
+} from "flitterjs";
 
 function NoteTooltip({
   name,

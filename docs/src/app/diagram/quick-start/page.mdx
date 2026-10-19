@@ -14,14 +14,14 @@ Install a diagram as source code. Use the default widgets or replace any part, j
 ## 1. Initialize
 
 ```bash
-npm install flitter-ui @flitterjs/react
-npx flitter-ui init
+npm install flitterjs @flitterjs/adapter-react
+npx @flitterjs/cli@latest init
 ```
 
 ## 2. Add a flow diagram
 
 ```bash
-npx flitter-ui add flow-diagram
+npx @flitterjs/cli@latest add flow-diagram
 ```
 
 This copies the preset's widget source into your project:
@@ -39,13 +39,13 @@ components/diagram/flow-diagram/
         └── context-menu.ts
 ```
 
-The runtime in `flitter-ui/diagram` owns gestures, state and geometry. The files you install provide the UI.
+The runtime in `@flitterjs/diagram` owns gestures, state and geometry. The files you install provide the UI.
 
 ## 3. Use the diagram
 
 ```tsx
-import Widget from "@flitterjs/react";
-import { layeredLayout, type FlowDiagramData } from "flitter-ui/diagram";
+import Widget from "@flitterjs/adapter-react";
+import { layeredLayout, type FlowDiagramData } from "@flitterjs/diagram";
 import FlowDiagram from "@/components/diagram/flow-diagram";
 
 const data: FlowDiagramData = {
@@ -97,7 +97,7 @@ import {
   BoxDecoration,
   Container,
   EdgeInsets,
-} from "flitter-ui";
+} from "flitterjs";
 
 FlowDiagram({
   data,
@@ -125,7 +125,7 @@ FlowDiagram({
 Parent widgets work the same way:
 
 ```ts
-import { MainAxisSize, Row } from "flitter-ui";
+import { MainAxisSize, Row } from "flitterjs";
 
 FlowDiagram({
   data,

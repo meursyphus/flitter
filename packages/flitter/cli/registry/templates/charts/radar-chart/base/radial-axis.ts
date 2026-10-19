@@ -1,4 +1,4 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitterjs";
 import type { RadarChartCustom } from "@headless/radar-chart/types";
 
 export function RadialAxis<TConfig extends object = object>(

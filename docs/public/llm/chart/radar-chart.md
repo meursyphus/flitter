@@ -2,7 +2,7 @@
 
 Compare multivariate profiles across shared radial axes.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Preset chart. Start with `chart-presets RadarChart`. The wrapper already has a d
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import RadarChart from "./charts/radar-chart";
 
 const widget = RadarChart({

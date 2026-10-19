@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import { BaseStackedBarChart } from "./base";
 import type { BarChartCustom, BarChartData, GetScaleFn, GetScaleOptionsFn } from "./base";
 import type { DeepPartial } from "@utils/index";

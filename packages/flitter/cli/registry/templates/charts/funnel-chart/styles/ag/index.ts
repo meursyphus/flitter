@@ -1,4 +1,4 @@
-import { Container } from "flitter-core";
+import { Container } from "flitterjs";
 import type { FunnelChartCustom } from "@headless/funnel-chart/types";
 import { deepMerge, type DeepPartial } from "@utils/index";
 import { agTitle, agLegend, agTooltipContent, cartesian } from "@styles/ag";

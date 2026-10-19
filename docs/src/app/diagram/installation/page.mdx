@@ -10,9 +10,9 @@ export const metadata = {
 ## React
 
 ```bash
-npm install flitter-ui @flitterjs/react
-npx flitter-ui init
-npx flitter-ui add flow-diagram
+npm install flitterjs @flitterjs/adapter-react
+npx @flitterjs/cli@latest init
+npx @flitterjs/cli@latest add flow-diagram
 ```
 
 `add` copies one theme into `aliases.diagrams`. There is no `--style` flag.
@@ -30,20 +30,20 @@ src/components/diagram/flow-diagram/
 | Flag | Effect |
 | --- | --- |
 | `--overwrite` | Replace an existing `flow-diagram` folder |
-| `--skip-install` | Skip installing `flitter-ui` |
+| `--skip-install` | Skip installing `flitterjs` and `@flitterjs/diagram` |
 | `--cwd <path>` | Run in another project |
 
 ## Svelte
 
 ```bash
-npm install flitter-ui @flitterjs/svelte
-npx flitter-ui init
-npx flitter-ui add flow-diagram
+npm install flitterjs @flitterjs/adapter-svelte
+npx @flitterjs/cli@latest init
+npx @flitterjs/cli@latest add flow-diagram
 ```
 
 ```svelte
 <script>
-  import Widget from "@flitterjs/svelte";
+  import Widget from "@flitterjs/adapter-svelte";
   import FlowDiagram from "@/components/diagram/flow-diagram";
 
   const diagram = FlowDiagram({ data: { nodes: [], edges: [] } });
@@ -57,8 +57,8 @@ npx flitter-ui add flow-diagram
 | From | Names |
 | --- | --- |
 | `@/components/diagram/flow-diagram` | `FlowDiagram` (default), `defaultStyleConfig`, `DefaultFlowConfig`, every part |
-| `flitter-ui/diagram` | `FlowDiagram`, `FlowDiagramController`, types, layouts, path helpers |
-| `flitter-ui` | Widgets such as `Container` and `Text` |
+| `@flitterjs/diagram` | `FlowDiagram`, `FlowDiagramController`, types, layouts, path helpers |
+| `flitterjs` | Widgets such as `Container` and `Text` |
 
 Your bundler must resolve `@/` the way `tsconfig.json` paths do.
 

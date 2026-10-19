@@ -6,8 +6,8 @@ import {
   BoxShadow,
   ZIndex,
   type Widget,
-} from "flitter-ui";
-import type { BarChartContext } from "flitter-ui/chart";
+} from "flitterjs";
+import type { BarChartContext } from "@flitterjs/chart";
 import type { ToastStackedBarChartConfig } from "../config";
 
 export function toastBar(

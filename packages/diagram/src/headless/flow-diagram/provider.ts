@@ -3,7 +3,7 @@ import {
   type Widget,
   Provider,
   ChangeNotifierProvider,
-} from "flitter-core";
+} from "flitterjs";
 import { FlowDiagramController } from "./controller";
 import { FlowRoot } from "./diagram";
 import type { FlowDiagramProps, FlowDiagramContext } from "./types";

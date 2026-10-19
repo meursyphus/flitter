@@ -3,7 +3,7 @@ import {
 	RenderCustomPaint,
 	type Painter
 } from '../../../packages/core/src/component/base/BaseCustomPaint';
-import { Size } from 'flitter-core';
+import { Size } from 'flitterjs';
 
 function setup(painter: Painter) {
 	const render = new RenderCustomPaint({

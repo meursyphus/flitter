@@ -3,8 +3,8 @@ import {
   EdgeInsets,
   SizedBox,
   type Widget,
-} from "flitter-ui";
-import type { BulletChartContext } from "flitter-ui/chart";
+} from "flitterjs";
+import type { BulletChartContext } from "@flitterjs/chart";
 import type { ToastBulletChartConfig } from "../config";
 
 export function toastBulletGroup(

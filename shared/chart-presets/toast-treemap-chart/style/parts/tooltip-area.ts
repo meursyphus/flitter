@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-ui";
-import type { TreemapCustom } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import type { TreemapCustom } from "@flitterjs/chart";
 import type { TreemapChartConfig } from "../config";
 import { cartesian } from "../../../_shared/toast/index";
 

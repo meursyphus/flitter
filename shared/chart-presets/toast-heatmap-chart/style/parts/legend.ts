@@ -20,8 +20,8 @@ import {
 	FractionalTranslation,
 	type Widget,
 	type BuildContext,
-} from "flitter-ui";
-import type { HeatmapContext } from "flitter-ui/chart";
+} from "flitterjs";
+import type { HeatmapContext } from "@flitterjs/chart";
 import type { ToastHeatmapChartConfig } from "../config";
 import { interpolateColor } from "./segment";
 

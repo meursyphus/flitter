@@ -21,7 +21,7 @@ import {
 	ConstraintsTransformBox,
 	Constraints,
 	Padding
-} from 'flitter-core';
+} from 'flitterjs';
 import { classToFunction } from '../utils';
 import EventManagerProvider from '../Provider/EventManagerProvider';
 import {

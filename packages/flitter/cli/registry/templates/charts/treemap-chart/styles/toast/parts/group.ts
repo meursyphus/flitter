@@ -1,4 +1,4 @@
-import { BoxDecoration, Container, EdgeInsets, type Widget } from "flitter-core";
+import { BoxDecoration, Container, EdgeInsets, type Widget } from "flitterjs";
 import type { TreemapCustom } from "@headless/treemap-chart/types";
 import type { TreemapChartConfig } from "../config";
 

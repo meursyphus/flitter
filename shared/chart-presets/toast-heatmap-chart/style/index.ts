@@ -1,7 +1,7 @@
-import type { HeatmapCustom } from "flitter-ui/chart";
+import type { HeatmapCustom } from "@flitterjs/chart";
 import type { ToastHeatmapChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import { toastSegment } from "./parts/segment";
 import { toastHeatmapLegend } from "./parts/legend";
 import { toastTooltipArea } from "./parts/tooltip-area";
@@ -11,8 +11,8 @@ import {
 	tooltipContent,
 	cartesian,
 } from "../../_shared/toast/index";
-import type { HeatmapContext } from "flitter-ui/chart";
-import type { Widget } from "flitter-ui";
+import type { HeatmapContext } from "@flitterjs/chart";
+import type { Widget } from "flitterjs";
 import { interpolateColor } from "./parts/segment";
 
 export { type ToastHeatmapChartConfig } from "./config";

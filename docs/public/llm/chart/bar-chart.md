@@ -2,7 +2,7 @@
 
 Compare discrete categories with grouped or directional bars.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Preset chart. Start with `chart-presets BarChart` and choose from `toast`, `ag`.
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import BarChart from "./charts/bar-chart";
 
 const widget = BarChart({

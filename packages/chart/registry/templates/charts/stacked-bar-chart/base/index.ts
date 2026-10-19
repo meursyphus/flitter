@@ -1,4 +1,4 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitterjs";
 import HeadlessBarChart from "@headless/bar-chart";
 import type {
   BarChartCustom,

@@ -7,8 +7,8 @@ import {
   Tween,
   ClipRect,
   type Widget,
-} from "flitter-core";
-import { Rect } from "flitter-core";
+} from "flitterjs";
+import { Rect } from "flitterjs";
 
 export class AnimatedDataView extends StatefulWidget {
   child: Widget;

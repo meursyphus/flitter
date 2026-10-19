@@ -3,7 +3,7 @@ import type { GetScaleOptionsFn } from "@headless/line-chart/types";
 import type { StyleConfig } from "../../plugin";
 import type { AgStackedAreaChartConfig } from "./config";
 import type { LineChartContext } from "@headless/line-chart/types";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { agArea } from "./parts/area";

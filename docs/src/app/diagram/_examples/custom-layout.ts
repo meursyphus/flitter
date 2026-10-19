@@ -9,7 +9,7 @@ import {
   StackFit,
   Text,
   TextStyle,
-} from "flitter-ui";
+} from "flitterjs";
 import FlowDiagram from "@/components/diagram/flow-diagram";
 
 export default function CustomLayout(theme: "light" | "dark" = "light") {

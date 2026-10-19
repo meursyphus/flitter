@@ -2,7 +2,7 @@
 
 Part-to-whole chart with center content and an inner radius.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Base-wrapper chart. Start with `chart-presets DonutChart` for structural default
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import DonutChart from "./charts/donut-chart";
 
 const widget = DonutChart({

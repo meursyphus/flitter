@@ -1,5 +1,5 @@
 import { DiagramController } from '../../controller';
-import { BuildContext, Provider, type Widget } from 'flitter-core';
+import { BuildContext, Provider, type Widget } from 'flitterjs';
 
 const KEY = Symbol('DiagramMetaProvider');
 

@@ -1,13 +1,13 @@
-import { SizedBox, type Widget } from "flitter-ui";
-import { LineChart as HeadlessLineChart } from "flitter-ui/chart";
+import { SizedBox, type Widget } from "flitterjs";
+import { LineChart as HeadlessLineChart } from "@flitterjs/chart";
 import type {
   LineChartCustom,
   LineChartData,
   LineChartGetScaleFn as GetScaleFn,
   LineChartGetScaleOptionsFn as GetScaleOptionsFn,
   LineChartGetPointValueFn as GetPointValueFn,
-} from "flitter-ui/chart";
-import * as Cartesian from "flitter-ui/chart";
+} from "@flitterjs/chart";
+import * as Cartesian from "@flitterjs/chart";
 import { DataView, Grid } from "../../_shared/toast/line-like/index";
 import { stackedGetScale } from "./stacked-get-scale";
 import { stackedGetPointValue } from "./stacked-get-point-value";
@@ -21,8 +21,8 @@ export type {
   LineChartGetScaleFn as GetScaleFn,
   LineChartGetScaleOptionsFn as GetScaleOptionsFn,
   LineChartGetPointValueFn as GetPointValueFn,
-} from "flitter-ui/chart";
-export { LineChartController } from "flitter-ui/chart";
+} from "@flitterjs/chart";
+export { LineChartController } from "@flitterjs/chart";
 
 /** Structural (non-visual) defaults provided by base */
 const baseDefaults: Partial<LineChartCustom> = {

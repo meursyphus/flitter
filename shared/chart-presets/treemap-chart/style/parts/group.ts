@@ -7,8 +7,8 @@ import {
 	Padding,
 	SizedBox,
 	type Widget,
-} from "flitter-ui";
-import type { TreemapCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { TreemapCustom } from "@flitterjs/chart";
 import type { TreemapChartConfig } from "../config";
 
 export function agGroup(

@@ -2,7 +2,7 @@
 
 Show sequential stage dropoff and conversion through a funnel.
 
-Generated: 2026-10-07
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Preset chart. Start with `chart-presets FunnelChart`. The wrapper already has a 
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import FunnelChart from "./charts/funnel-chart";
 
 const widget = FunnelChart({

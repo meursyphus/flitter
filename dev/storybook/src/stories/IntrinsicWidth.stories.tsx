@@ -7,7 +7,7 @@ import {
 	CrossAxisAlignment,
 	IntrinsicWidth,
 	MainAxisAlignment
-} from 'flitter-core';
+} from 'flitterjs';
 
 const meta = {
 	title: 'Layout/IntrinsicWidth',

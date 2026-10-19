@@ -1,4 +1,4 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitterjs";
 import HeadlessPieChart from "@headless/pie-chart";
 import type { PieChartCustom, PieChartData } from "@headless/pie-chart/types";
 import { DataView, Layout, Plot } from "../../../shared/pie-like";

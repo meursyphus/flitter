@@ -7,7 +7,7 @@ import {
   type RenderObject,
   TransformationController,
   eventPosition,
-} from "flitter-core";
+} from "flitterjs";
 import {
   type CoordinateExtent,
   type Dimensions,

@@ -4,8 +4,8 @@ import {
   BoxDecoration,
   Container,
   EdgeInsets,
-} from "flitter-ui";
-import type { FlowDiagramCustom } from "flitter-ui/diagram";
+} from "flitterjs";
+import type { FlowDiagramCustom } from "@flitterjs/diagram";
 import FlowDiagram, {
   type DefaultFlowConfig,
 } from "@/components/diagram/flow-diagram";

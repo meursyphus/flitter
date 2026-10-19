@@ -6,7 +6,7 @@ import {
   Size,
   SizedBox,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 
 enum DockSlot {
   left = 0,

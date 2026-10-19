@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import { BaseStackedAreaChart } from "./base";
 import type {
   LineChartCustom,

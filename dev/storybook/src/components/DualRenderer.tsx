@@ -1,5 +1,5 @@
 import React from "react";
-import FlitterWidget from "@flitterjs/react";
+import FlitterWidget from "@flitterjs/adapter-react";
 
 type DualRendererProps = {
   widget: any;

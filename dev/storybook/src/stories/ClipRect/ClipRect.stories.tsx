@@ -8,7 +8,7 @@ import {
 	Positioned,
 	SizedBox,
 	Offset
-} from 'flitter-core';
+} from 'flitterjs';
 
 const meta = {
 	title: 'Painting/ClipRect',

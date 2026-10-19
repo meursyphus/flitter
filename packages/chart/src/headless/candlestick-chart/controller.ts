@@ -1,4 +1,4 @@
-import { ChangeNotifier, GlobalKey } from "flitter-core";
+import { ChangeNotifier, GlobalKey } from "flitterjs";
 import { createTicks, normalizeCandles } from "./transform";
 import type {
 	CandlestickChartCandle,

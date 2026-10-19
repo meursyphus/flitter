@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-ui";
-import type { WaterfallChartCustom } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import type { WaterfallChartCustom } from "@flitterjs/chart";
 import type { WaterfallChartConfig } from "../config";
 import { cartesian } from "../../../_shared/toast/index";
 

@@ -1,12 +1,12 @@
 import {
   SizedBox,
   type Widget,
-} from "flitter-ui";
-import type { WaterfallChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { WaterfallChartCustom } from "@flitterjs/chart";
 import type { WaterfallChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
-import * as Cartesian from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
+import * as Cartesian from "@flitterjs/chart";
 import { agBar } from "./parts/bar";
 import { agBarBox } from "./parts/bar-box";
 import { agConnector } from "./parts/connector";

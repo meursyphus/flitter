@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import DualRenderer from '../../components/DualRenderer';
-import { Container, Center } from 'flitter-core';
+import { Container, Center } from 'flitterjs';
 
 const meta = {
 	title: 'Layout/Center',

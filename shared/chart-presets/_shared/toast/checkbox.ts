@@ -1,4 +1,4 @@
-import { CustomPaint, SizedBox, Path, RRect, Size } from "flitter-ui";
+import { CustomPaint, SizedBox, Path, RRect, Size } from "flitterjs";
 
 export function CheckBox({
   checked,

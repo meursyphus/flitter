@@ -1,8 +1,8 @@
-import type { HoveredPieChartSegment, PieChartCustom } from "flitter-ui/chart";
-import type { Widget } from "flitter-ui";
+import type { HoveredPieChartSegment, PieChartCustom } from "@flitterjs/chart";
+import type { Widget } from "flitterjs";
 import type { AgPieChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import {
 	agPieLikeDataLabel,
 	agPieLikeDataView,

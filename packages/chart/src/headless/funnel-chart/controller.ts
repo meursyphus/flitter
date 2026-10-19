@@ -1,4 +1,4 @@
-import { ChangeNotifier } from "flitter-core";
+import { ChangeNotifier } from "flitterjs";
 import type { FunnelChartCustom, FunnelChartData, FunnelStage } from "./types";
 
 function normalize(data: FunnelChartData): FunnelChartData {

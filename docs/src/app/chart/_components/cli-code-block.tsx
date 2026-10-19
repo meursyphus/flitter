@@ -1,7 +1,7 @@
 import { highlight } from "@/lib/highlight";
 
-const CLI_CODE = `npx flitter-ui init
-npx flitter-ui add bar-chart`;
+const CLI_CODE = `npx @flitterjs/cli@latest init
+npx @flitterjs/cli@latest add bar-chart`;
 
 export default async function CliCodeBlock() {
   const html = await highlight(CLI_CODE, "bash");

@@ -6,9 +6,9 @@
   "scripts": {
     "test:engine": "pnpm --dir packages/core exec tsc --noEmit && pnpm --dir dev/performance test:engine",
     "build": "turbo build",
-    "build:core": "turbo build --filter=flitter-core",
-    "build:chart": "turbo build --filter=flitter-chart",
-    "build:flitter": "turbo build --filter=flitter",
+    "build:core": "turbo build --filter=flitterjs",
+    "build:chart": "turbo build --filter=@flitterjs/chart",
+    "build:flitter": "turbo build --filter=@flitterjs/cli",
     "llm:build": "pnpm --dir docs llm:build",
     "llm:kit": "node docs/scripts/llm-kit.mjs",
     "llm:playground:dev": "pnpm llm:build && node dev/llm-playground/server.mjs",
@@ -30,7 +30,8 @@
     "test:integration": "pnpm --filter flitter-performance test:integration",
     "chromatic": "turbo build --filter=flitter-storybook^... && pnpm --dir dev/storybook exec chromatic",
     "diagram:typecheck": "pnpm --dir packages/diagram typecheck",
-    "diagram:test": "pnpm --dir dev/performance test:diagram"
+    "diagram:test": "pnpm --dir dev/performance test:diagram",
+    "test:release": "pnpm --filter flitterjs --filter \"@flitterjs/*\" -r build && node scripts/check-release-install.mjs"
   },
   "devDependencies": {
     "turbo": "^2.9.16"

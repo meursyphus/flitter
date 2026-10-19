@@ -5,7 +5,7 @@ import {
   Container,
   SizedBox,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type {
   FlowDiagramContext,
   HandleCustomArgs,

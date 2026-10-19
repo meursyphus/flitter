@@ -6,7 +6,7 @@ import {
 	FractionallySizedBox,
 	SizedBox,
 	type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import HeadlessHistogramChart from "@headless/histogram-chart";
 import type {
 	HistogramAggregation,

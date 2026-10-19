@@ -4,7 +4,7 @@ import {
 	StackFit,
 	ZIndex,
 	type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { SunburstChartCustom } from "@headless/sunburst-chart/types";
 import type { SunburstChartConfig } from "../config";
 import {

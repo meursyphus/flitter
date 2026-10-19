@@ -21,14 +21,14 @@ import {
   Text,
   TextStyle,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import {
   FlowDiagramController,
   forceLayout,
   getStraightPath,
   type FlowNode,
   type FlowEdge,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import FlowDiagram, { defaultEdge } from "@/components/diagram/flow-diagram";
 
 type Theme = "light" | "dark";

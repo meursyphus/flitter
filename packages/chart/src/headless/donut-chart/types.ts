@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { DonutChartController } from "./controller";
 
 type CustomArgs<T = undefined, TConfig extends object = object> = (

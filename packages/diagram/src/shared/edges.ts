@@ -1,4 +1,4 @@
-import { Path } from "flitter-core";
+import { Path } from "flitterjs";
 import {
   type Position,
   type Rect,

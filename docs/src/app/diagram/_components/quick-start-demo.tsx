@@ -1,7 +1,7 @@
 "use client";
 
-import type { Widget } from "flitter-ui";
-import { layeredLayout, type FlowEdge, type FlowNode } from "flitter-ui/diagram";
+import type { Widget } from "flitterjs";
+import { layeredLayout, type FlowEdge, type FlowNode } from "@flitterjs/diagram";
 import FlowDiagram from "@/components/diagram/flow-diagram";
 import LiveDiagram from "@/components/live-diagram";
 import type { Theme } from "@/lib/theme";

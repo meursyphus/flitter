@@ -2,7 +2,7 @@
 
 Trend chart where filled magnitude and cumulative visual weight matter.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Preset chart. Start with `chart-presets AreaChart` and choose from `toast`, `ag`
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import AreaChart from "./charts/area-chart";
 
 const widget = AreaChart({

@@ -11,7 +11,7 @@ import {
   SizedBox,
   Alignment,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 
 export type HoverTooltipPosition =
   | "topLeft"

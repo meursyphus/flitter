@@ -12,16 +12,31 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "flitter-ui/chart": ["../../packages/flitter/src/chart.ts"],
-      "flitter-ui": ["../../packages/flitter/src/index.ts"],
-      "flitter-chart": ["../../packages/chart/src/index.ts"],
-      "flitter-chart/*": ["../../packages/chart/src/*"],
-      "flitter-core": ["../../packages/core/src/index.ts"],
-      "flitter-core/component/Tooltip": ["../../packages/core/src/component/Tooltip.ts"],
-      "@headless/*": ["../../packages/chart/src/headless/*"],
-      "@shared/*": ["../../packages/chart/src/shared/*"],
-      "@utils/*": ["../../packages/chart/src/shared/utils/*"]
+      "@flitterjs/chart": [
+        "../../packages/chart/src/index.ts"
+      ],
+      "flitterjs": [
+        "../../packages/core/src/index.ts"
+      ],
+      "@flitterjs/chart/*": [
+        "../../packages/chart/src/*"
+      ],
+      "flitterjs/component/Tooltip": [
+        "../../packages/core/src/component/Tooltip.ts"
+      ],
+      "@headless/*": [
+        "../../packages/chart/src/headless/*"
+      ],
+      "@shared/*": [
+        "../../packages/chart/src/shared/*"
+      ],
+      "@utils/*": [
+        "../../packages/chart/src/shared/utils/*"
+      ]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }

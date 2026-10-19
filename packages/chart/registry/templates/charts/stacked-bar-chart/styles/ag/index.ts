@@ -15,7 +15,7 @@ import {
   cartesian,
 } from "@styles/ag";
 import type { BarChartContext } from "@headless/bar-chart/types";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 
 export { type AgStackedBarChartConfig } from "./config";
 

@@ -1,10 +1,10 @@
-import { SizedBox, type Widget } from "flitter-ui";
-import { SunburstChart as HeadlessSunburstChart } from "flitter-ui/chart";
+import { SizedBox, type Widget } from "flitterjs";
+import { SunburstChart as HeadlessSunburstChart } from "@flitterjs/chart";
 import type {
 	SunburstChartCustom,
 	SunburstChartData,
 	SunburstLegacyData,
-} from "flitter-ui/chart";
+} from "@flitterjs/chart";
 import { DataView as PieLikeDataView } from "../../_shared/toast/pie-like/index";
 import { Layout } from "./layout";
 import { Plot } from "./plot";
@@ -23,8 +23,8 @@ export type {
 	FlatSegment,
 	SunburstNode,
 	SunburstCustom,
-} from "flitter-ui/chart";
-export { SunburstChartController } from "flitter-ui/chart";
+} from "@flitterjs/chart";
+export { SunburstChartController } from "@flitterjs/chart";
 
 const baseDefaults: Partial<SunburstChartCustom> = {
 	layout: Layout,

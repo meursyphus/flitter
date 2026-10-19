@@ -1,6 +1,6 @@
-import { SizedBox, type Widget } from "flitter-ui";
-import { DonutChart as HeadlessDonutChart } from "flitter-ui/chart";
-import type { DonutChartCustom, DonutChartData } from "flitter-ui/chart";
+import { SizedBox, type Widget } from "flitterjs";
+import { DonutChart as HeadlessDonutChart } from "@flitterjs/chart";
+import type { DonutChartCustom, DonutChartData } from "@flitterjs/chart";
 import { DataView, Layout, Plot } from "../../_shared/toast/pie-like/index";
 
 export type {
@@ -8,8 +8,8 @@ export type {
 	DonutChartData,
 	DonutChartContext,
 	HoveredDonutChartSegment,
-} from "flitter-ui/chart";
-export { DonutChartController } from "flitter-ui/chart";
+} from "@flitterjs/chart";
+export { DonutChartController } from "@flitterjs/chart";
 
 const baseDefaults: Partial<DonutChartCustom> = {
 	layout: Layout,

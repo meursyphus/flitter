@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import HeadlessBoxPlotChart from "@headless/box-plot-chart";
 import type {
   BoxPlotChartContext,

@@ -2,8 +2,8 @@ import {
   Container,
   SizedBox,
   type Widget,
-} from "flitter-ui";
-import type { BulletChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { BulletChartCustom } from "@flitterjs/chart";
 
 export function BulletGroup(
   ...[{ bulletBox }, ctx]: Parameters<BulletChartCustom["bulletGroup"]>

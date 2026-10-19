@@ -16,7 +16,7 @@ import {
   State,
   StatefulWidget,
   ZIndex,
-} from "flitter-core";
+} from "flitterjs";
 import { DiagramControllerProvider, EventManagerProvider } from "../Provider";
 import type { Line as LineProps } from "./type";
 import Line from "./Line";

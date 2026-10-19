@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { SankeyChartCustom } from "@headless/sankey-chart/types";
 import type { SankeyChartConfig } from "../config";
 import { cartesian } from "@styles/ag";

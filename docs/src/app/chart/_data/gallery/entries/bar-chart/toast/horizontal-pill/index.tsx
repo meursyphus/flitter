@@ -12,8 +12,8 @@ import {
   Border,
   ZIndex,
   type Widget as FlitterWidget,
-} from "flitter-core";
-import type { BarChartContext } from "flitter-ui/chart";
+} from "flitterjs";
+import type { BarChartContext } from "@flitterjs/chart";
 
 const pillColors = ["#ef4444", "#10b981"];
 

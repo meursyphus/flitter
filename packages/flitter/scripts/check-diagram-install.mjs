@@ -7,7 +7,7 @@ import { promisify } from "node:util";
 import { runAdd } from "../cli/commands/add.mjs";
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const directory = await mkdtemp(path.join(os.tmpdir(), "flitter-diagram-install-"));
+const directory = await mkdtemp(path.join(os.tmpdir(), "diagram-install-"));
 
 try {
   await writeFile(
@@ -23,7 +23,10 @@ try {
     }),
   );
   await mkdir(path.join(directory, "node_modules"));
-  await symlink(packageRoot, path.join(directory, "node_modules/flitter-ui"), "junction");
+  await mkdir(path.join(directory, "node_modules/@flitterjs"), { recursive: true });
+  for (const [name, folder] of [["flitterjs", "core"], ["@flitterjs/chart", "chart"], ["@flitterjs/diagram", "diagram"]]) {
+    await symlink(path.resolve(packageRoot, "..", folder), path.join(directory, "node_modules", name), "junction");
+  }
 
   await runAdd({ cwd: directory, chartName: "flow-diagram", overwrite: true, skipInstall: true });
 
@@ -31,7 +34,7 @@ try {
   await writeFile(
     path.join(directory, "diagrams/usage.ts"),
     `import FlowDiagram, { type FlowDiagramProps } from "./flow-diagram";
-import { layeredLayout, type FlowNode, type FlowEdge, FlowDiagramController } from "flitter-ui/diagram";
+import { layeredLayout, type FlowNode, type FlowEdge, FlowDiagramController } from "@flitterjs/diagram";
 
 const nodes: FlowNode[] = [
   { id: "a", position: { x: 0, y: 0 }, data: { label: "A" }, resizable: true },

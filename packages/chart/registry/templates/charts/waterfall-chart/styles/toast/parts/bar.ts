@@ -13,7 +13,7 @@ import {
   TextStyle,
   ZIndex,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type {
   WaterfallBarType,
   WaterfallChartContext,

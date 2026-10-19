@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-ui";
-import type { DeepPartial, FlowDiagramCustom, FlowDiagramProps as HeadlessProps } from "flitter-ui/diagram";
+import type { Widget } from "flitterjs";
+import type { DeepPartial, FlowDiagramCustom, FlowDiagramProps as HeadlessProps } from "@flitterjs/diagram";
 import { BaseFlowDiagram } from "./base";
 import { defaultStyleConfig, type DefaultFlowConfig } from "./style";
 

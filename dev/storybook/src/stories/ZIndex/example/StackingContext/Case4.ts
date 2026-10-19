@@ -7,7 +7,7 @@ import {
 	Stack,
 	Transform,
 	ZIndex
-} from 'flitter-core';
+} from 'flitterjs';
 
 function ZIndexLocalContext() {
 	return Stack({

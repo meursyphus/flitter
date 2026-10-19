@@ -12,8 +12,8 @@ import {
   ZIndex,
   type Widget,
   type BuildContext,
-} from "flitter-ui";
-import { LineChartProvider } from "flitter-ui/chart";
+} from "flitterjs";
+import { LineChartProvider } from "@flitterjs/chart";
 import type { AgCartesianBaseConfig } from "../cartesian/config";
 
 const ANIMATION_DURATION = 150;

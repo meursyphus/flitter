@@ -4,7 +4,7 @@ import {
   type BuildContext,
   LayoutBuilder,
   GestureDetector,
-} from "flitter-core";
+} from "flitterjs";
 import { BubbleChartProvider } from "./provider";
 
 class Chart extends StatelessWidget {

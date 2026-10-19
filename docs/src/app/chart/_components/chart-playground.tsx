@@ -145,7 +145,7 @@ export default function ChartPlayground() {
 
       <div className="border-t border-line px-3 py-3">
         <CopyCommand
-          command={`npx flitter-ui add ${chart.id} --${style}`}
+          command={`npx @flitterjs/cli@latest add ${chart.id} --style ${style}`}
           className="w-full !bg-transparent !border-0 !px-1"
         />
       </div>

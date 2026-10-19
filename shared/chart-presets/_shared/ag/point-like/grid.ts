@@ -1,12 +1,12 @@
-import * as Cartesian from "flitter-ui/chart";
+import * as Cartesian from "@flitterjs/chart";
 
 export function Grid({
   xLine,
   yLine,
   scale,
 }: {
-  xLine: import("flitter-ui").Widget;
-  yLine: import("flitter-ui").Widget;
+  xLine: import("flitterjs").Widget;
+  yLine: import("flitterjs").Widget;
   scale: { x: { min: number; max: number; step: number }; y: { min: number; max: number; step: number } } | null;
 }) {
   if (scale == null) return Cartesian.Grid({ xLine, yLine, x: 0, y: 0 });

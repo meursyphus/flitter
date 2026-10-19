@@ -1,5 +1,5 @@
-import type { SunburstChartCustom } from "flitter-ui/chart";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import type { SunburstChartCustom } from "@flitterjs/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import {
 	agLegend,
 	agTitle,

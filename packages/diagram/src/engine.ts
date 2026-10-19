@@ -2,7 +2,7 @@
  * Engine-only entry: headless flow widgets, controller, geometry, edge paths,
  * change helpers and layouts. The `default` style is distributed separately
  * (copied into projects by `flitter add flow-diagram`) and imports this
- * surface through `flitter-ui/diagram`.
+ * surface through `@flitterjs/diagram`.
  */
 export * from "./headless/flow-diagram";
 export * from "./shared/geometry";

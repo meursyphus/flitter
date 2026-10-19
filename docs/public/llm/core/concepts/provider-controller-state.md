@@ -2,7 +2,7 @@
 
 Headless charts rely on controllers plus providers rather than local ad hoc state.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Key Points
 

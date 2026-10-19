@@ -12,11 +12,11 @@ import {
   TextStyle,
   type BuildContext,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import type {
   FlowDiagramContext,
   NodeCustomArgs,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import type { DefaultFlowConfig } from "../config";
 
 /** One native input/focus owner per edit session, independent of node rebuilds. */

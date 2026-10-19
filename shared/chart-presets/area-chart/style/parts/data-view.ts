@@ -2,8 +2,8 @@ import {
   Stack,
   Positioned,
   type Widget,
-} from "flitter-ui";
-import type { LineChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { LineChartCustom } from "@flitterjs/chart";
 import type { AgAreaChartConfig } from "../config";
 
 export function agDataView(

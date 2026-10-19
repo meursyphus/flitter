@@ -3,5 +3,5 @@ export type {
   FunnelChartContext,
   FunnelChartCustom,
   FunnelStage,
-} from "flitter-ui/chart";
-export { FunnelChartController } from "flitter-ui/chart";
+} from "@flitterjs/chart";
+export { FunnelChartController } from "@flitterjs/chart";

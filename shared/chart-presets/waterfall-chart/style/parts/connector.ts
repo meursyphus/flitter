@@ -3,8 +3,8 @@ import {
   Path,
   SizedBox,
   type Widget,
-} from "flitter-ui";
-import type { WaterfallChartContext } from "flitter-ui/chart";
+} from "flitterjs";
+import type { WaterfallChartContext } from "@flitterjs/chart";
 import type { WaterfallChartConfig } from "../config";
 
 function valueToY(value: number, min: number, max: number, height: number): number {

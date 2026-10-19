@@ -3,7 +3,7 @@ import {
 	SingleChildRenderObject,
 	SingleChildRenderObjectWidget,
 	Widget
-} from 'flitter-core';
+} from 'flitterjs';
 import { classToFunction } from '../utils';
 
 /*

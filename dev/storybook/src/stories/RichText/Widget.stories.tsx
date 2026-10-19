@@ -11,7 +11,7 @@ import {
 	TextOverflow,
 	ConstrainedBox,
 	Constraints
-} from 'flitter-core';
+} from 'flitterjs';
 
 const meta = {
 	title: 'Text/RichText',

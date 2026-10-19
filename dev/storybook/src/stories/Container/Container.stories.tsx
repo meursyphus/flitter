@@ -10,7 +10,7 @@ import {
 	BorderRadius,
 	Radius,
 	TextStyle
-} from 'flitter-core';
+} from 'flitterjs';
 import { dedent } from 'ts-dedent';
 
 const meta = {

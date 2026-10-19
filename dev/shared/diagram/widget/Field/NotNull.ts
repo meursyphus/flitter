@@ -5,7 +5,7 @@ import {
 	EdgeInsets,
 	Text,
 	TextStyle
-} from 'flitter-core';
+} from 'flitterjs';
 
 function NotNull() {
 	return Container({

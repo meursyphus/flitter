@@ -2,7 +2,7 @@ import {
   getEdgePathByType,
   type EdgePathCustomArgs,
   type FlowDiagramContext,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 
 /** Built-in path geometry with the style's curvature/offset defaults. */
 export function defaultEdgePath(

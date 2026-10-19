@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-ui";
-import { BoxPlotChart as HeadlessBoxPlotChart } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import { BoxPlotChart as HeadlessBoxPlotChart } from "@flitterjs/chart";
 import type {
   BoxPlotChartContext,
   BoxPlotChartCustom,
@@ -10,7 +10,7 @@ import type {
 } from "./types";
 import * as Base from "./base";
 import { styleConfig, type BoxPlotChartConfig } from "./style";
-import type { DeepPartial } from "flitter-ui/chart";
+import type { DeepPartial } from "@flitterjs/chart";
 
 export type {
   BoxPlotChartContext,

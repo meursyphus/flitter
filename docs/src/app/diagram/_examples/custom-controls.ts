@@ -7,7 +7,7 @@ import {
   Row,
   Text,
   TextStyle,
-} from "flitter-ui";
+} from "flitterjs";
 import FlowDiagram from "@/components/diagram/flow-diagram";
 
 export default function CustomControls(theme: "light" | "dark" = "light") {

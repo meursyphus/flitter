@@ -3,7 +3,7 @@ import {
   ConstraintsTransformBox,
   Widget,
   SizedBox,
-} from "flitter-core";
+} from "flitterjs";
 export * from "./scale";
 export * from "./draw-spline-line";
 export * from "./color";

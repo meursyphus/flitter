@@ -1,4 +1,4 @@
-import { SizedBox } from "flitter-core";
+import { SizedBox } from "flitterjs";
 import { EditableLabel } from "./parts/editable-label";
 import type { FlowDiagramCustom } from "../../../../../../src/engine";
 import type { StyleConfig } from "../../plugin";

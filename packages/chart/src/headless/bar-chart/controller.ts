@@ -1,4 +1,4 @@
-import { ChangeNotifier, GlobalKey } from "flitter-core";
+import { ChangeNotifier, GlobalKey } from "flitterjs";
 import type { BarChartCustom, BarChartData, BarChartDirection, BarChartScale, GetScaleFn, GetScaleOptionsFn } from "./types";
 
 export class BarChartController extends ChangeNotifier {

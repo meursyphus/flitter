@@ -1,4 +1,4 @@
-import { Container, type Widget } from "flitter-core";
+import { Container, type Widget } from "flitterjs";
 
 export function GridYLine({
   thickness = 1,

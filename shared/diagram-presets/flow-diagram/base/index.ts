@@ -1,14 +1,14 @@
-import { SizedBox, type Widget } from "flitter-ui";
+import { SizedBox, type Widget } from "flitterjs";
 import {
   FlowDiagram as HeadlessFlowDiagram,
   FlowNodeItem,
   FlowScene,
   FlowSceneGroup,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import type {
   FlowDiagramCustom,
   FlowDiagramProps,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import { defaultHandles } from "./handles";
 import { defaultEdgePath } from "./edge-path";
 import { layout } from "./layout";
@@ -18,8 +18,8 @@ export type {
   FlowDiagramData,
   FlowDiagramContext,
   FlowDiagramProps,
-} from "flitter-ui/diagram";
-export { FlowDiagramController } from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
+export { FlowDiagramController } from "@flitterjs/diagram";
 export { defaultHandles, defaultEdgePath, layout };
 export { positionOverlay } from "./layout";
 

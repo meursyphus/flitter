@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-ui";
+import type { Widget } from "flitterjs";
 import { BaseSunburstChart } from "./base";
 import type {
 	SunburstChartCustom,
@@ -6,7 +6,7 @@ import type {
 	SunburstLegacyData,
 } from "./base";
 import { styleConfig, type SunburstChartConfig } from "./style";
-import type { DeepPartial } from "flitter-ui/chart";
+import type { DeepPartial } from "@flitterjs/chart";
 
 export type {
 	SunburstChartContext,

@@ -5,11 +5,11 @@ import {
   Stack,
   StackFit,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import type {
   FlowDiagramCustom,
   PanelPosition,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 
 /** A layout override can reuse this helper to add screen-space overlays. */
 export function positionOverlay(

@@ -6,7 +6,7 @@ import {
   type SvgPaintContext,
   Matrix4,
   SvgPainter,
-} from "flitter-core";
+} from "flitterjs";
 import { classToFunction } from "../utils";
 
 class ChangedLayoutNotifier extends SingleChildRenderObjectWidget {

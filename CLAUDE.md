@@ -17,14 +17,14 @@ Flitter is a JavaScript rendering engine and framework inspired by Flutter, desi
 ### Monorepo Structure
 ```
 packages/
-├── flitter/          # Core rendering engine
-├── flitter-react/    # React integration
-├── flitter-svelte/   # Svelte integration
-├── chart/            # Chart library (shadcn-style, CLI-installable)
-├── diagram/          # Node/edge diagram editor (React Flow UX on Flitter)
-├── docs/             # Documentation site (Astro)
-├── story/            # Storybook components
-└── test/             # Test suite
+├── core/             # flitterjs: rendering engine
+├── chart/            # @flitterjs/chart: headless chart runtime + source registry
+├── diagram/          # @flitterjs/diagram: headless diagram runtime + source registry
+└── flitter/          # @flitterjs/cli: editable template installer
+integrations/
+├── react/            # @flitterjs/adapter-react
+└── svelte/           # @flitterjs/adapter-svelte
+docs/                 # Documentation site (Next.js)
 shared/
 ├── chart-presets/    # Generated chart presets (synced from templates, do NOT edit directly)
 └── ...               # Other shared diagram components
@@ -101,7 +101,7 @@ pnpm --dir shared/chart-presets run sync                                   # ful
 
 ## Diagram Library
 
-`packages/diagram/` (`flitter-diagram`) keeps the same customization structure as
+`packages/diagram/` (`@flitterjs/diagram`) keeps the same customization structure as
 charts. See `packages/diagram/CLAUDE.md` for interaction and caching rules.
 
 ```
@@ -135,8 +135,8 @@ node docs/scripts/gen-diagram-api.mjs          # regenerate API tables (--check 
 presets. `plugin.ts` registers the single `default` style using
 `StyleConfig { custom, createConfig }`; base merges structural defaults, and the
 entry merges `{ ...style.custom, ...custom }` with `style.createConfig(config)`.
-Copied templates import the engine from `flitter-ui/diagram`
-(= `flitter-diagram/engine`). Package names remain unchanged.
+Copied templates import the engine from `@flitterjs/diagram`
+(= `@flitterjs/diagram`). Package names remain unchanged.
 
 ## Development Commands
 
@@ -187,22 +187,22 @@ class MyWidget extends StatefulWidget {
 
 ## Key Development Areas
 
-- **Widget Development**: `packages/flitter/src/component/`
-- **Render Objects**: `packages/flitter/src/renderobject/`
-- **Animation System**: `packages/flitter/src/animation/`
-- **Tests**: `packages/test/tests/`
-- **Documentation**: `packages/docs/src/content/`
+- **Widget Development**: `packages/core/src/component/`
+- **Render Objects**: `packages/core/src/renderobject/`
+- **Animation System**: `packages/core/src/animation/`
+- **Tests**: `dev/performance/tests/`
+- **Documentation**: `docs/src/app/`
 
 ## Testing & Quality
 
-- Write integration tests in `packages/test/tests/`
+- Write integration tests in `dev/performance/tests/`
 - Add Storybook stories for visual components
 - Performance benchmarks tracked in `packages/test/performance-history/`
 - Use TypeScript strict mode
 
 ## Localization
 
-The project supports 14 languages using Lunaria. Documentation is localized in respective language folders under `packages/docs/src/content/`.
+The project supports 14 languages using Lunaria. Documentation is localized in respective language folders under `docs/src/app/`.
 
 ## Important Documentation Guidelines
 

@@ -4,7 +4,7 @@ import {
   FractionallySizedBox,
   BoxDecoration,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { BulletChartContext } from "@headless/bullet-chart/types";
 import type { ToastBulletChartConfig } from "../config";
 

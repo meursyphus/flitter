@@ -2,7 +2,7 @@ import { dedent } from 'ts-dedent';
 
 export default dedent`
  <script>
-  import { Widget, Container } from 'flitter-core';
+  import { Widget, Container } from 'flitterjs';
 
   const svgElement = document.getElementById('mySvg');
   const runner = new AppRunner({

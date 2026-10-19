@@ -1,4 +1,4 @@
-import { type NodeToolbarCustom } from "flitter-diagram";
+import { type NodeToolbarCustom } from "@flitterjs/diagram";
 import {
   defaultNode,
   type DefaultFlowConfig,
@@ -20,7 +20,7 @@ import {
   Text,
   TextStyle,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import {
   type FlowEdge,
   type FlowNode,
@@ -28,7 +28,7 @@ import {
   forceLayout,
   layeredLayout,
   treeLayout,
-} from "flitter-diagram";
+} from "@flitterjs/diagram";
 import FlowDiagram from "../../../../../shared/diagram-presets/flow-diagram";
 
 declare global {

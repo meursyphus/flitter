@@ -1,4 +1,4 @@
-import { ChangeNotifier } from "flitter-core";
+import { ChangeNotifier } from "flitterjs";
 import type { ScatterChartCustom, ScatterChartData, ScatterChartScale, GetScaleFn, GetScaleOptionsFn } from "./types";
 
 export class ScatterChartController extends ChangeNotifier {

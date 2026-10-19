@@ -12,7 +12,7 @@ import {
   Curves,
   ZIndex,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 
 type HoveredPoint = {
   index: number;

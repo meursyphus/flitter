@@ -22,7 +22,7 @@ import {
   EdgeInsets,
   type Widget,
   type TooltipPosition,
-} from "flitter-core";
+} from "flitterjs";
 import type { ScatterChartCustom, ScatterChartContext } from "@headless/scatter-chart/types";
 import type { ToastScatterChartConfig } from "../config";
 

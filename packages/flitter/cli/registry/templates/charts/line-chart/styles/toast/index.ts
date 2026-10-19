@@ -15,7 +15,7 @@ import {
   cartesian,
 } from "@styles/toast";
 import type { LineChartContext } from "@headless/line-chart/types";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 
 export { type ToastLineChartConfig } from "./config";
 

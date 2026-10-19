@@ -5,11 +5,11 @@ import {
   Container,
   SizedBox,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import type {
   FlowDiagramContext,
   HandleCustomArgs,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import type { DefaultFlowConfig } from "../config";
 
 /** 6px circle on the node border; grows a transparent hit area for easier grabbing. */
