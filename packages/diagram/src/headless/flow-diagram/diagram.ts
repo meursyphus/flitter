@@ -19,18 +19,19 @@ import {
 import { type FlowDiagramController, getSceneOrder } from "./controller";
 import { FlowDiagramProvider } from "./provider";
 import {
+  FlowHandleAnchor,
   FlowSceneGroup,
   FlowSceneItem,
   type NodeAttachmentPlacement,
 } from "./scene";
 import type {
-  EdgeCustom,
   EdgeMarker,
   FlowEdge,
   FlowNode,
   FlowDiagramProps,
   HandleType,
-  NodeCustom,
+  ControlKind,
+  ContextMenuCustomArgs,
   ResizeControlPosition,
 } from "./types";
 import type { MarkerShape } from "../../shared/edges";
@@ -190,7 +191,6 @@ class FlowView extends StatelessWidget {
       builder: (_builderContext, constraints) => {
         const width = constraints.maxWidth;
         const height = constraints.maxHeight;
-        ctx.setPaneSize(width, height);
         const options = ctx.options;
         const toolbars: Widget[] = [];
         this.cache.toolbars.clear();
@@ -209,40 +209,68 @@ class FlowView extends StatelessWidget {
           ),
         });
         const viewport = Positioned.fill({
-          child: InteractiveViewer({
-            transformationController: ctx.transformation,
-            constrained: true,
-            boundaryMargin: EdgeInsets.all(Infinity),
-            minScale: options.minZoom,
-            maxScale: options.maxZoom,
-            panEnabled: ctx.panEnabled,
-            scaleEnabled: ctx.zoomEnabled,
-            panOnScroll:
-              options.panOnScroll &&
-              !ctx.zoomActivationHeld &&
-              ctx.can("pan", { kind: "pane" }),
-            panOnScrollSpeed: options.panOnScrollSpeed,
-            wheelScale: (event) => {
-              const pinchScale = (event as PinchWheelEvent).pinchScale;
-              if (pinchScale != null)
-                return options.zoomOnPinch ? pinchScale : 1;
-              const pinch = event.ctrlKey || event.metaKey;
-              if (pinch ? !options.zoomOnPinch : !options.zoomOnScroll)
-                return 1;
-              return reactFlowWheelScale(event);
+          child: LayoutBuilder({
+            builder: (_context, pane) => {
+              ctx.setPaneSize(pane.maxWidth, pane.maxHeight);
+              return GestureDetector({
+                key: this.paneKey,
+                behavior: "opaque",
+                cursor: "default",
+                onMouseDown: (event) => ctx.handlePanePointerDown(event),
+                onMouseMove: (event) => ctx.handlePanePointerMove(event),
+                onWheel: (event) => ctx.handlePaneWheel(event),
+                longPressDelay: ctx.interaction.contextMenu.longPress,
+                onContextMenu: (event) => {
+                  if (ctx.handleContextMenu({ kind: "pane" }, event))
+                    event.stopPropagation();
+                },
+                onMouseEnter: () => ctx.setPointerInside(true),
+                onMouseLeave: () => ctx.setPointerInside(false),
+                onClick: (event) => ctx.handlePaneClick(event),
+                onDragStart: (event) => {
+                  if (ctx.handleSelectionDragStart(event))
+                    event.stopPropagation();
+                },
+                onDragMove: (event) => ctx.handleSelectionDragMove(event),
+                onDragEnd: (event) => ctx.handleSelectionDragEnd(event),
+                child: InteractiveViewer({
+                  transformationController: ctx.transformation,
+                  constrained: true,
+                  boundaryMargin: EdgeInsets.all(Infinity),
+                  minScale: options.minZoom,
+                  maxScale: options.maxZoom,
+                  panEnabled: ctx.panEnabled,
+                  scaleEnabled: ctx.zoomEnabled,
+                  panOnScroll:
+                    options.panOnScroll &&
+                    !ctx.zoomActivationHeld &&
+                    ctx.can("pan", { kind: "pane" }),
+                  panOnScrollSpeed: options.panOnScrollSpeed,
+                  wheelScale: (event) => {
+                    const pinchScale = (event as PinchWheelEvent).pinchScale;
+                    if (pinchScale != null)
+                      return options.zoomOnPinch ? pinchScale : 1;
+                    const pinch = event.ctrlKey || event.metaKey;
+                    if (pinch ? !options.zoomOnPinch : !options.zoomOnScroll)
+                      return 1;
+                    return reactFlowWheelScale(event);
+                  },
+                  clipBehavior: "hardEdge",
+                  onInteractionStart: () =>
+                    ctx.handleViewportInteractionStart(),
+                  onInteractionUpdate: (details) =>
+                    ctx.handleViewportInteractionUpdate(details),
+                  onInteractionEnd: () => ctx.handleViewportInteractionEnd(),
+                  child: GestureDetector({
+                    // Stop disabled touch input before it reaches the viewport detector.
+                    onMouseDown: (event) => {
+                      if (!ctx.acceptsPointer(event)) event.stopPropagation();
+                    },
+                    child: buildScene(ctx, this.cache),
+                  }),
+                }),
+              });
             },
-            clipBehavior: "hardEdge",
-            onInteractionStart: () => ctx.handleViewportInteractionStart(),
-            onInteractionUpdate: (details) =>
-              ctx.handleViewportInteractionUpdate(details),
-            onInteractionEnd: () => ctx.handleViewportInteractionEnd(),
-            child: GestureDetector({
-              // Stop disabled touch input before it reaches the viewport detector.
-              onMouseDown: (event) => {
-                if (!ctx.acceptsPointer(event)) event.stopPropagation();
-              },
-              child: buildScene(ctx, this.cache),
-            }),
           }),
         });
         const selection = ctx.selectionBox;
@@ -258,10 +286,7 @@ class FlowView extends StatelessWidget {
         const menu = ctx.contextMenu;
         let contextMenu: Widget = SizedBox.shrink();
         if (menu) {
-          const content = ctx.custom.contextMenu(
-            { ...menu, action: buildAction },
-            ctx as any,
-          );
+          const content = buildContextMenu(ctx, menu);
           const point = ctx.flowToPanePosition(menu.position);
           contextMenu = Positioned.fill({
             child: new FlowSceneGroup({
@@ -282,58 +307,20 @@ class FlowView extends StatelessWidget {
             }),
           });
         }
-        return GestureDetector({
-          key: this.paneKey,
-          behavior: "opaque",
-          cursor: "default",
-          onMouseDown: (event) => ctx.handlePanePointerDown(event),
-          onMouseMove: (event) => ctx.handlePanePointerMove(event),
-          onWheel: (event) => ctx.handlePaneWheel(event),
-          longPressDelay: ctx.interaction.contextMenu.longPress,
-          onContextMenu: (event) => {
-            if (ctx.handleContextMenu({ kind: "pane" }, event))
-              event.stopPropagation();
+        return ctx.custom.layout(
+          {
+            background,
+            viewport,
+            selectionBox,
+            toolbars: Positioned.fill({
+              child: new FlowSceneGroup({ children: toolbars }),
+            }),
+            controls: buildControls(ctx),
+            minimap: buildMinimap(ctx),
+            contextMenu,
           },
-          onMouseEnter: () => ctx.setPointerInside(true),
-          onMouseLeave: () => ctx.setPointerInside(false),
-          onClick: (event) => ctx.handlePaneClick(event),
-          onDragStart: (event) => {
-            if (ctx.handleSelectionDragStart(event)) event.stopPropagation();
-          },
-          onDragMove: (event) => ctx.handleSelectionDragMove(event),
-          onDragEnd: (event) => ctx.handleSelectionDragEnd(event),
-          child: ctx.custom.layout(
-            {
-              background,
-              viewport,
-              selectionBox,
-              toolbars: Positioned.fill({
-                child: new FlowSceneGroup({ children: toolbars }),
-              }),
-              controls: ctx.custom.controls(
-                {
-                  zoomIn: (options) => {
-                    void ctx.zoomIn(options);
-                  },
-                  zoomOut: (options) => {
-                    void ctx.zoomOut(options);
-                  },
-                  fitView: (options) => {
-                    void ctx.fitView(options);
-                  },
-                  toggleInteractive: () =>
-                    ctx.setInteractive(!ctx.isInteractive),
-                  isInteractive: ctx.isInteractive,
-                  action: buildAction,
-                },
-                ctx as any,
-              ),
-              minimap: buildMinimap(ctx),
-              contextMenu,
-            },
-            ctx as any,
-          ),
-        });
+          ctx as any,
+        );
       },
     });
   }
@@ -345,7 +332,7 @@ function buildNodeToolbar(
   node: FlowNode,
 ): Widget | null {
   if (!ctx.isNodeToolbarVisible(node)) return null;
-  const builder = ctx.getNodeToolbarCustom(node);
+  const builder = ctx.custom.nodeToolbar;
   if (!builder) return null;
   const rect = ctx.getNodeRect(node);
   if (!rect) return null;
@@ -477,24 +464,6 @@ function resolveMarker(
 ): EdgeMarker | null {
   if (marker == null) return null;
   return typeof marker === "string" ? { type: marker } : marker;
-}
-
-function resolveNodeCustom(
-  ctx: FlowDiagramController,
-  type: string | undefined,
-): NodeCustom<any> {
-  const definition = ctx.nodeTypes[type ?? "default"];
-  if (!definition) return ctx.custom.node;
-  return typeof definition === "function" ? definition : definition.build;
-}
-
-function resolveEdgeCustom(
-  ctx: FlowDiagramController,
-  type: string | undefined,
-): EdgeCustom<any> {
-  const definition = ctx.edgeTypes[type ?? "default"];
-  if (!definition) return ctx.custom.edge;
-  return typeof definition === "function" ? definition : definition.build;
 }
 
 /** Scene children in paint order; cached widgets are reused when nothing about their identity changed. */
@@ -666,37 +635,6 @@ class NodeWidgetState extends SignalState<NodeWidget> {
       isOverlapping: dragging && ctx.getIntersectingNodes(node).length > 0,
       isNeighbour: ctx.isNodeNeighbour(node.id),
     };
-    const content = resolveNodeCustom(ctx, node.type)(args, ctx as any);
-    const body = GestureDetector({
-      behavior: "opaque",
-      cursor: dragging
-        ? "grabbing"
-        : draggable
-          ? "grab"
-          : selectable
-            ? "pointer"
-            : "default",
-      onDragStart: (event) => {
-        ctx.handleNodeDragStart(node.id, event);
-        // A locked node lets the press fall through so the pane pans or box-selects under it.
-        if (draggable) event.stopPropagation();
-      },
-      onDragMove: (event) => ctx.handleNodeDragMove(node.id, event),
-      onDragEnd: (event) => ctx.handleNodeDragEnd(node.id, event),
-      onClick: (event) => {
-        ctx.handleNodeClick(node.id, event);
-        event.stopPropagation();
-      },
-      longPressDelay: ctx.interaction.contextMenu.longPress,
-      onContextMenu: (event) => {
-        ctx.handleContextMenu({ kind: "node", id: node.id }, event);
-        event.stopPropagation();
-      },
-      onMouseEnter: (event) => ctx.hoverNode(node.id, event),
-      onMouseLeave: (event) => ctx.unhoverNode(node.id, event),
-      child: RepaintBoundary({ child: content }),
-    });
-
     // Handles are placed from the body's laid-out size (see FlowNodeItem), but
     // the builder args use the best known rect so styles can read geometry.
     const knownRect: Rect = ctx.getNodeRect(node) ?? {
@@ -707,6 +645,11 @@ class NodeWidgetState extends SignalState<NodeWidget> {
     const specs = ctx.getHandleSpecs(node);
     const attachments: Widget[] = [];
     const placements: NodeAttachmentPlacement[] = [];
+    const inlineHandles: {
+      id: string | null;
+      type: HandleType;
+      handle: Widget;
+    }[] = [];
     const from = connection?.fromHandle;
     const to = connection?.toHandle;
     for (const spec of specs) {
@@ -738,25 +681,32 @@ class NodeWidgetState extends SignalState<NodeWidget> {
         },
         ctx as any,
       );
-      attachments.push(
-        GestureDetector({
-          behavior: "opaque",
-          cursor: handleConnectable ? "crosshair" : "default",
-          onMouseEnter: (event) => ctx.hoverNode(node.id, event),
-          onMouseLeave: (event) => ctx.unhoverNode(node.id, event),
-          onDragStart: (event) => {
-            ctx.handleConnectionStart(node.id, handle.id, handle.type, event);
-            event.stopPropagation();
-          },
-          onDragMove: (event) => ctx.handleConnectionMove(event),
-          onDragEnd: (event) => ctx.handleConnectionEnd(event),
-          onClick: (event) => {
-            ctx.handleHandleClick(node.id, handle.id, handle.type, event);
-            event.stopPropagation();
-          },
-          child: widget,
-        }),
-      );
+      const handleWidget = GestureDetector({
+        behavior: "opaque",
+        cursor: handleConnectable ? "crosshair" : "default",
+        onMouseEnter: (event) => ctx.hoverNode(node.id, event),
+        onMouseLeave: (event) => ctx.unhoverNode(node.id, event),
+        onDragStart: (event) => {
+          ctx.handleConnectionStart(node.id, handle.id, handle.type, event);
+          event.stopPropagation();
+        },
+        onDragMove: (event) => ctx.handleConnectionMove(event),
+        onDragEnd: (event) => ctx.handleConnectionEnd(event),
+        onClick: (event) => {
+          ctx.handleHandleClick(node.id, handle.id, handle.type, event);
+          event.stopPropagation();
+        },
+        child: widget,
+      });
+      if (spec.placement === "inline") {
+        inlineHandles.push({
+          id: handle.id,
+          type: handle.type,
+          handle: FlowHandleAnchor({ id: handle.id, type: handle.type, child: handleWidget }),
+        });
+        continue;
+      }
+      attachments.push(handleWidget);
       placements.push({
         offset: (bodySize, attachmentSize) => {
           const center = handleCenter(spec, {
@@ -773,6 +723,7 @@ class NodeWidgetState extends SignalState<NodeWidget> {
       });
     }
 
+    const boundaryHandleCount = attachments.length;
     if (ctx.isNodeResizable(node) && selected) {
       const options = ctx.getNodeResizeOptions(node);
       const lines = options.lines ?? ["top", "right", "bottom", "left"];
@@ -820,11 +771,49 @@ class NodeWidgetState extends SignalState<NodeWidget> {
       }
     }
 
+    const content = ctx.custom.node(
+      {
+        ...args,
+        label: ctx.custom.nodeLabel(args, ctx as any),
+        handles: inlineHandles,
+      },
+      ctx as any,
+    );
+    const body = GestureDetector({
+      behavior: "opaque",
+      cursor: dragging
+        ? "grabbing"
+        : draggable
+          ? "grab"
+          : selectable
+            ? "pointer"
+            : "default",
+      onDragStart: (event) => {
+        ctx.handleNodeDragStart(node.id, event);
+        // A locked node lets the press fall through so the pane pans or box-selects under it.
+        if (draggable) event.stopPropagation();
+      },
+      onDragMove: (event) => ctx.handleNodeDragMove(node.id, event),
+      onDragEnd: (event) => ctx.handleNodeDragEnd(node.id, event),
+      onClick: (event) => {
+        ctx.handleNodeClick(node.id, event);
+        event.stopPropagation();
+      },
+      longPressDelay: ctx.interaction.contextMenu.longPress,
+      onContextMenu: (event) => {
+        ctx.handleContextMenu({ kind: "node", id: node.id }, event);
+        event.stopPropagation();
+      },
+      onMouseEnter: (event) => ctx.hoverNode(node.id, event),
+      onMouseLeave: (event) => ctx.unhoverNode(node.id, event),
+      child: RepaintBoundary({ child: content }),
+    });
+
     return ctx.custom.nodeBox(
       {
         node: body,
-        handles: attachments.slice(0, specs.length),
-        resizeControls: attachments.slice(specs.length),
+        handles: attachments.slice(0, boundaryHandleCount),
+        resizeControls: attachments.slice(boundaryHandleCount),
         toolbar: this.widget.cache.toolbars.get(node.id) ?? SizedBox.shrink(),
         args,
         placements,
@@ -930,7 +919,7 @@ class EdgeWidgetState extends SignalState<EdgeWidget> {
         ctx.activeEdgeHandle?.edgeId === edge.id ? ctx.activeEdgeHandle : null,
       isNeighbour: ctx.isEdgeNeighbour(edge),
     };
-    const content = resolveEdgeCustom(ctx, edge.type)(args, ctx as any);
+    const content = ctx.custom.edge(args, ctx as any);
     const localPoints = local.points;
     const children: Widget[] = [
       new FlowSceneItem({
@@ -1017,16 +1006,14 @@ class EdgeWidgetState extends SignalState<EdgeWidget> {
           kind: "waypoint" as const,
           index,
         })),
-        ...vertices
-          .slice(1)
-          .map((point, index) => ({
-            point: {
-              x: (vertices[index].x + point.x) / 2,
-              y: (vertices[index].y + point.y) / 2,
-            },
-            kind: "midpoint" as const,
-            index,
-          })),
+        ...vertices.slice(1).map((point, index) => ({
+          point: {
+            x: (vertices[index].x + point.x) / 2,
+            y: (vertices[index].y + point.y) / 2,
+          },
+          kind: "midpoint" as const,
+          index,
+        })),
       ];
       for (const { point, kind, index } of handles) {
         const active =
@@ -1215,35 +1202,64 @@ class ActionState extends State<ActionWidget> {
     });
   }
 }
-export function buildAction(
+function buildAction(
   child: (isHovered: boolean) => Widget,
   onClick: () => void,
   isDisabled = false,
 ): Widget {
   return new ActionWidget(child, onClick, isDisabled);
 }
-function buildMinimap(ctx: FlowDiagramController): Widget {
-  const nodes = ctx.getVisibleNodes().flatMap((node) => {
+export function buildMinimap(ctx: FlowDiagramController): Widget {
+  const entries = ctx.getVisibleNodes().flatMap((node) => {
     const rect = ctx.getNodeRect(node);
-    return rect ? [{ id: node.id, rect }] : [];
+    return rect ? [{ node, rect }] : [];
   });
-  const viewportRect = ctx.getViewportRect();
-  const bounds = nodes.length
-    ? getBoundsOfRects([...nodes.map((node) => node.rect), viewportRect])
-    : viewportRect;
-  const config = (
-    ctx.config as {
-      minimap?: { width?: number; height?: number; pannable?: boolean };
-    }
-  )?.minimap;
-  const viewScale =
-    Math.max(
-      bounds.width / (config?.width ?? 1),
-      bounds.height / (config?.height ?? 1),
-    ) || 1;
+  const view = ctx.getViewportRect();
+  const bounds = entries.length
+    ? getBoundsOfRects([...entries.map((n) => n.rect), view])
+    : view;
+  const {
+    width,
+    height,
+    pannable,
+    padding = 5,
+  } = ctx.getMinimapOptions?.(ctx as any) ?? {
+    width: 200,
+    height: 150,
+    pannable: true,
+  };
+  const viewScale = Math.max(bounds.width / width, bounds.height / height) || 1;
+  const scale = width / (viewScale * (width + padding * 2));
+  const origin = {
+    x: bounds.x - (viewScale * width - bounds.width) / 2 - padding * viewScale,
+    y:
+      bounds.y - (viewScale * height - bounds.height) / 2 - padding * viewScale,
+  };
+  const local = (rect: Rect): Rect => ({
+    x: (rect.x - origin.x) * scale,
+    y: (rect.y - origin.y) * scale,
+    width: rect.width * scale,
+    height: rect.height * scale,
+  });
+  const raw = local(view);
+  const rect = {
+    x: Math.max(0, raw.x),
+    y: Math.max(0, raw.y),
+    width: Math.max(0, Math.min(width, raw.x + raw.width) - Math.max(0, raw.x)),
+    height: Math.max(
+      0,
+      Math.min(height, raw.y + raw.height) - Math.max(0, raw.y),
+    ),
+  };
+  const nodes = entries.map(({ node, rect }) =>
+    ctx.custom.minimapNode(
+      { node, rect: local(rect), isSelected: !!node.selected },
+      ctx as any,
+    ),
+  );
   let last: { x: number; y: number } | null = null;
   return GestureDetector({
-    cursor: config?.pannable ? "grab" : "default",
+    cursor: pannable ? "grab" : "default",
     behavior: "opaque",
     onMouseDown: (event) => event.stopPropagation(),
     onClick: (event) => event.stopPropagation(),
@@ -1252,19 +1268,94 @@ function buildMinimap(ctx: FlowDiagramController): Widget {
       last = { x: event.clientX, y: event.clientY };
     },
     onDragMove: (event) => {
-      if (!config?.pannable || !last) return;
-      const dx = event.clientX - last.x,
-        dy = event.clientY - last.y;
+      if (!pannable || !last) return;
+      ctx.panBy({
+        x: (-(event.clientX - last.x) / scale) * ctx.zoom,
+        y: (-(event.clientY - last.y) / scale) * ctx.zoom,
+      });
       last = { x: event.clientX, y: event.clientY };
-      const zoom = Math.max(1, ctx.viewport.zoom);
-      ctx.panBy({ x: -dx * viewScale * zoom, y: -dy * viewScale * zoom });
     },
     onDragEnd: () => {
       last = null;
     },
     child: ctx.custom.minimap(
-      { nodes, viewport: ctx.viewport, viewportRect, bounds, viewScale },
+      {
+        width,
+        height,
+        nodes,
+        background: ctx.custom.minimapBackground({ width, height }, ctx as any),
+        mask: ctx.custom.minimapMask({ width, height, rect }, ctx as any),
+        viewport: ctx.custom.minimapViewport({ rect }, ctx as any),
+      },
       ctx as any,
     ),
   });
+}
+
+export function buildControls(ctx: FlowDiagramController): Widget {
+  const options = ctx.getControlsOptions?.(ctx as any);
+  const actions: Record<ControlKind, () => void> = {
+    zoomIn: () => {
+      void ctx.zoomIn({ duration: options?.zoomDuration ?? 0 });
+    },
+    zoomOut: () => {
+      void ctx.zoomOut({ duration: options?.zoomDuration ?? 0 });
+    },
+    fitView: () => {
+      void ctx.fitView({ duration: options?.fitViewDuration ?? 200 });
+    },
+    interactive: () => ctx.setInteractive(!ctx.isInteractive),
+  };
+  const button = (kind: ControlKind) =>
+    buildAction(
+      (isHovered) =>
+        ctx.custom.controlButton(
+          {
+            kind,
+            isHovered,
+            isDisabled: false,
+            isInteractive: ctx.isInteractive,
+          },
+          ctx as any,
+        ),
+      actions[kind],
+    );
+  return ctx.custom.controls(
+    {
+      zoomIn: button("zoomIn"),
+      zoomOut: button("zoomOut"),
+      fitView: button("fitView"),
+      interactive: button("interactive"),
+    },
+    ctx as any,
+  );
+}
+
+/** Composes interaction-ready menu items before invoking the menu layout slot. */
+export function buildContextMenu(
+  ctx: FlowDiagramController,
+  menu: ContextMenuCustomArgs,
+): Widget {
+  const items = (ctx.getContextMenuItems?.(menu, ctx as any) ?? []).map(
+    (item, index) =>
+      buildAction(
+        (isHovered) =>
+          ctx.custom.menuItem(
+            {
+              label: item.label,
+              index,
+              isHovered,
+              isDisabled: !!item.disabled,
+              isSeparator: !!item.separator,
+            },
+            ctx as any,
+          ),
+        () => {
+          ctx.closeContextMenu();
+          item.onSelect();
+        },
+        !!item.disabled,
+      ),
+  );
+  return ctx.custom.contextMenu({ ...menu, items }, ctx as any);
 }

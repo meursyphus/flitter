@@ -23,11 +23,20 @@ export default function FlowDiagram<
   style = "default" as S,
   config,
   custom,
+  getControlsOptions,
+  getMinimapOptions,
   ...rest
 }: FlowDiagramProps<S>): Widget {
   const sc = flowDiagramStyleConfigs[style];
   return BaseFlowDiagram({
     ...rest,
+    getControlsOptions: getControlsOptions ?? ((ctx) => ctx.config.controls),
+    getMinimapOptions:
+      getMinimapOptions ??
+      ((ctx) => ({
+        ...ctx.config.minimap,
+        padding: ctx.config.minimap.offsetScale,
+      })),
     config: sc.createConfig(config),
     custom: { ...sc.custom, ...custom },
   });

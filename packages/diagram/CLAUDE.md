@@ -24,8 +24,8 @@ registry/templates/diagrams/flow-diagram/
 
 - Every GestureDetector lives in `diagram.ts`. Leaves receive interaction state;
   their returned widgets are wrapped by headless gestures. Parent slots only arrange.
-  Controls and menus use the headless `action` helper for hover and click handling.
-- `FlowDiagram({ data: { nodes, edges }, custom, config, nodeTypes, edgeTypes,
+  Controls and menus receive interaction-ready child widgets; controlButton and menuItem only draw.
+- `FlowDiagram({ data: { nodes, edges }, custom, config, nodeOptions, getHandles, getEdgePath,
   layout, viewport, interaction, can, on, controller })` is the public shape.
 - Custom callbacks use `(args, context) => Widget`. Empty visuals return
   `SizedBox.shrink()`. Every boolean custom arg starts with `is`.
@@ -34,20 +34,20 @@ registry/templates/diagrams/flow-diagram/
   Extra overlays override `custom.layout`; there is no `panels` prop.
 - `configure()` and `setPaneSize()` never notify during build/layout.
 - Node sizes are measured by `RenderFlowScene`, reported post-frame through
-  `setNodeDimensions`. Handles use declared geometry; never measure them in builders.
+  `setNodeDimensions`. Boundary handles use declared geometry. Inline handle widgets are placed by custom.node and measured by the scene after layout; builders never measure them.
 - Scene items paint in controller order and hit test in reverse. Preserve the
   interleaved group/edge ordering through viewport args `items`; never use ZIndex.
 - Node and edge widgets are cached by id in `diagram.ts`. Per-item changes notify
   `nodeSignal(id)` / `edgeSignal(id)` / `connectionSignal`; only structural/global
   changes notify the controller. `styleVersion` invalidates cached widgets.
 - Dragging a node must rebuild only that node. Zoom only rebuilds nodes whose
-  `nodeTypes.*.lod` breakpoint was crossed. `controller.zoom` is always current.
+  `nodeOptions.*.lod` breakpoint was crossed. `controller.zoom` is always current.
 - Toolbars use unbounded FlowSceneGroup/FlowSceneItem fractional anchors;
   a Positioned wrapper would gate hit tests by its own bounds.
 
 ## Templates and distribution
 
-- Base owns `defaultHandles`, `edgePath`, `nodeBox`, `edgeBox`, `viewport`, `layout`
+- Base supplies `getHandles`, `getEdgePath`, `nodeBox`, `edgeBox`, `viewport`, `layout`
   and the invisible reconnect area. The style owns colours, fonts and shapes.
 - Base layout reads `config.controls.visible` and `config.minimap.visible`.
 - `plugin.ts` registers one style, `default`. Its StyleConfig has `custom` and
@@ -86,3 +86,11 @@ pnpm --dir docs build
 
 Regenerate presets and API tables after source changes. Storybook Diagram/*
 stories and browser tests cover SVG/Canvas, mouse/touch and rebuild locality.
+
+## Widget tree contract
+
+- Every `custom` slot returns a Widget. Geometry strategies (`getHandles`, `getEdgePath`), action data (`getContextMenuItems`) and per-type behavior (`nodeOptions`) are separate props.
+- Nodes and edges always render through `custom.node` / `custom.edge`. Type dispatch belongs in the copied visual code; there is no second rendering registry.
+- `custom.node` receives `label` and inline `handles` as widgets. `controls` receives zoomIn/zoomOut/fitView/interactive widgets; `contextMenu` receives item widgets. Minimap is composed from background, nodes, mask and viewport widgets.
+- `flitter-diagram` and `flitter-ui/diagram` export only the engine. Import styled widgets from the CLI-installed source (or generated presets in local demos).
+- Docs follow chart's installation, quick start, data/config/custom/context API, and gallery structure. Start examples with a small slot override before full applications.

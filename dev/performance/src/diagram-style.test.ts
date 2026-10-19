@@ -8,7 +8,9 @@ import { baseDefaults } from '../../../packages/diagram/registry/templates/diagr
 import {
 	defaultStyleConfig,
 	defaultContextMenu,
-	defaultMinimap,
+	defaultMenuItem,
+	defaultMinimapMask,
+	defaultMinimapViewport,
 	type DefaultFlowConfig
 } from '../../../packages/diagram/registry/templates/diagrams/flow-diagram/styles/default';
 
@@ -42,29 +44,26 @@ for (const theme of ['light', 'dark'] as const)
 	describe(`${theme} diagram parts`, () => {
 		it('keeps the minimap viewport clear and outlines it independently of the outside mask', () => {
 			const flow = context(theme);
-			const paint = defaultMinimap(
-				{
-					nodes: [{ id: 'a', rect: { x: 30, y: 25, width: 20, height: 20 } }],
-					bounds: { x: 0, y: 0, width: 200, height: 150 },
-					viewport: { x: 0, y: 0, zoom: 1 },
-					viewportRect: { x: 20, y: 20, width: 80, height: 60 },
-					viewScale: 1
-				},
-				flow
-			) as any;
-			const elements = paint.painter.svg.createDefaultSvgEl({
-				createSvgEl: () => ({
-					attrs: {} as Record<string, string>,
-					setAttribute(key: string, value: string) {
-						this.attrs[key] = value;
-					},
-					removeAttribute(key: string) {
-						delete this.attrs[key];
-					}
-				})
-			});
-			paint.painter.svg.paint(elements);
-			const viewport = elements.viewport.attrs;
+			const rect = { x: 20, y: 20, width: 80, height: 60 };
+			const maskPaint = defaultMinimapMask({ width: 200, height: 150, rect }, flow) as any;
+			const viewportPaint = (defaultMinimapViewport({ rect }, flow) as any).child;
+			const attributes = (paint: any) => {
+				const elements = paint.painter.svg.createDefaultSvgEl({
+					createSvgEl: () => ({
+						attrs: {} as Record<string, string>,
+						setAttribute(key: string, value: string) {
+							this.attrs[key] = value;
+						},
+						removeAttribute(key: string) {
+							delete this.attrs[key];
+						}
+					})
+				});
+				paint.painter.svg.paint(elements);
+				return elements;
+			};
+			const viewport = attributes(viewportPaint).viewport.attrs;
+			const elements = attributes(maskPaint);
 			expect(viewport.fill).toBe('none');
 			expect(viewport.stroke).toBe(flow.config.colors.minimapViewportStroke);
 			expect(viewport['stroke-width']).toBe('2');
@@ -72,7 +71,7 @@ for (const theme of ['light', 'dark'] as const)
 				[...d.matchAll(/M([\d.-]+) ([\d.-]+)h([\d.-]+)v([\d.-]+)/g)].map(
 					([, x, y, width, height]) => ({ x: +x, y: +y, width: +width, height: +height })
 				);
-			const view = rectangles(viewport.d)[0];
+			const view = rect;
 			const center = { x: view.x + view.width / 2, y: view.y + view.height / 2 };
 			const mask = rectangles(elements.mask.attrs.d);
 			expect(mask).toHaveLength(4);
@@ -103,7 +102,18 @@ for (const theme of ['light', 'dark'] as const)
 					ids: [],
 					position: { x: 0, y: 0 },
 					screenPosition: { x: 0, y: 0 },
-					action: (child) => child(false)
+					items: [
+						defaultMenuItem(
+							{
+								label: 'Duplicate',
+								index: 0,
+								isHovered: false,
+								isDisabled: false,
+								isSeparator: false
+							},
+							flow
+						)
+					]
 				},
 				flow
 			) as any;

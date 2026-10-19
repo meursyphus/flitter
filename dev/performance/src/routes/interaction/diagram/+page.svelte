@@ -1,24 +1,22 @@
 <script lang="ts">
+	import { type NodeToolbarCustom, type FlowDiagramCustom } from 'flitter-diagram';
 	import {
-		type NodeToolbarCustom,
-		type FlowDiagramCustom,
 		baseDefaults,
 		defaultStyleConfig,
 		type DefaultFlowConfig
-	} from 'flitter-diagram';
+	} from '../../../../../../shared/diagram-presets/flow-diagram';
 
 	import { getSceneOrder } from '../../../../../../packages/diagram/src/headless/flow-diagram/controller';
 	import { onMount } from 'svelte';
 	import { AppRunner } from 'flitter-core';
 	import { Container, EdgeInsets, Text, TextStyle, GestureDetector } from 'flitter-core';
 	import {
-		FlowDiagram,
 		layeredLayout,
-		defaultNode,
 		type FlowEdge,
 		type FlowNode,
-		type NodeTypeDefinition
+		type NodeBodyCustomArgs
 	} from 'flitter-diagram';
+	import FlowDiagram, { defaultNode } from '../../../../../../shared/diagram-presets/flow-diagram';
 	let host: HTMLDivElement;
 	onMount(() => {
 		const query = new URLSearchParams(location.search);
@@ -160,67 +158,55 @@
 					)
 				)
 			: undefined;
-		const counted = Object.fromEntries(
-			Object.entries(
-				Object.fromEntries(
-					['default', 'input', 'output', 'group'].map((name) => [name, { build: defaultNode }])
-				)
-			).map(([name, definition]) => [
-				name,
-				{
-					...definition,
-					lod: scenario === 'lod' && name === 'default' ? [1.2] : undefined,
-					build: (args, ctx) => {
-						builds[args.node.id] = (builds[args.node.id] ?? 0) + 1;
-						nodeState[args.node.id] = {
-							isEditing: args.isEditing,
-							isDropTarget: args.isDropTarget,
-							isCollapsed: args.isCollapsed,
-							hiddenChildCount: args.hiddenChildCount,
-							isNeighbour: args.isNeighbour
-						};
-						if (scenario === 'nested-order' && name === 'group')
-							return Container({
-								padding: EdgeInsets.all(12),
-								color: args.node.id === 'outer' ? '#dce7f4' : '#edf2f8',
-								child: Text(String(args.node.data.label), {
-									style: new TextStyle({ color: '#24374a', fontSize: 12 })
-								})
-							});
-						return definition.build(args, ctx);
-					}
-				} satisfies NodeTypeDefinition<any>
-			])
-		);
+		const counted = (args: NodeBodyCustomArgs, ctx: Parameters<typeof defaultNode>[1]) => {
+			builds[args.node.id] = (builds[args.node.id] ?? 0) + 1;
+			nodeState[args.node.id] = {
+				isEditing: args.isEditing,
+				isDropTarget: args.isDropTarget,
+				isCollapsed: args.isCollapsed,
+				hiddenChildCount: args.hiddenChildCount,
+				isNeighbour: args.isNeighbour
+			};
+			if (scenario === 'nested-order' && args.node.type === 'group')
+				return Container({
+					padding: EdgeInsets.all(12),
+					color: args.node.id === 'outer' ? '#dce7f4' : '#edf2f8',
+					child: Text(String(args.node.data.label), {
+						style: new TextStyle({ color: '#24374a', fontSize: 12 })
+					})
+				});
+			return defaultNode(args, ctx);
+		};
 		runner.runApp(
 			FlowDiagram({
 				data: { nodes, edges },
 
 				layout: scenario === 'layout' ? layeredLayout : undefined,
 				config: { minimap: { visible: query.has('minimap') } },
-				custom,
-				nodeTypes: Object.fromEntries(
-					Object.entries(counted).map(([name, definition]) => [
-						name,
-						{
-							...definition,
-							toolbar: (({ node }) =>
-								GestureDetector({
-									onClick: () => {
-										toolbarClicks++;
-										events.push(`toolbar:${node.id}`);
-									},
-									child: Container({
-										padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
-										color: '#3367d9',
-										child: Text(`tools ${node.id}`, {
-											style: new TextStyle({ color: '#fff', fontSize: 12 })
-										})
-									})
-								})) as NodeToolbarCustom<DefaultFlowConfig>
-						}
-					])
-				),
+				nodeOptions: {
+					default: { lod: scenario === 'lod' ? [1.2] : undefined },
+					input: {},
+					output: {},
+					group: {}
+				},
+				custom: {
+					...custom,
+					node: counted,
+					nodeToolbar: ({ node }) =>
+						GestureDetector({
+							onClick: () => {
+								toolbarClicks++;
+								events.push(`toolbar:${node.id}`);
+							},
+							child: Container({
+								padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
+								color: '#3367d9',
+								child: Text(`tools ${node.id}`, {
+									style: new TextStyle({ color: '#fff', fontSize: 12 })
+								})
+							})
+						})
+				},
 				viewport: {
 					fitView: !scenario,
 					initial: scenario ? { x: 0, y: 0, zoom: 1 } : undefined,

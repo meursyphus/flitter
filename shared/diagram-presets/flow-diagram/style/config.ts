@@ -1,6 +1,4 @@
 import { type DeepPartial, deepMerge } from "flitter-ui/diagram";
-import type { ContextMenuCustomArgs } from "flitter-ui/diagram";
-import type { FlowDiagramController } from "flitter-ui/diagram";
 import type { PanelPosition } from "flitter-ui/diagram";
 
 /** Colour tokens. Values mirror React Flow's `style.css` custom properties. */
@@ -116,15 +114,6 @@ export type DefaultFlowConfig = {
     /** null inherits the node font, matching the rest of the diagram. */
     fontFamily: string | null;
     fontSize: number | null;
-    items?: (
-      args: ContextMenuCustomArgs,
-      flow: FlowDiagramController,
-    ) => {
-      label: string;
-      onSelect(): void;
-      disabled?: boolean;
-      separator?: boolean;
-    }[];
   };
   colorMode: "light" | "dark";
   colors: DefaultColors;

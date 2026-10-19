@@ -9,6 +9,7 @@ import {
 } from "flitter-ui";
 import type {
   ControlsCustomArgs,
+  ControlButtonCustomArgs,
   FlowDiagramContext,
 } from "flitter-ui/diagram";
 import type { DefaultFlowConfig } from "../config";
@@ -20,30 +21,10 @@ export function defaultControls(
   ctx: FlowDiagramContext<DefaultFlowConfig>,
 ): Widget {
   const { colors, controls } = ctx.config;
-  const buttons: {
-    icon: { d: string; viewBox: [number, number] };
-    onClick: () => void;
-  }[] = [];
-  if (controls.showZoom) {
-    buttons.push({
-      icon: icons.plus,
-      onClick: () => args.zoomIn({ duration: controls.zoomDuration }),
-    });
-    buttons.push({
-      icon: icons.minus,
-      onClick: () => args.zoomOut({ duration: controls.zoomDuration }),
-    });
-  }
-  if (controls.showFitView)
-    buttons.push({
-      icon: icons.fitView,
-      onClick: () => args.fitView({ duration: controls.fitViewDuration }),
-    });
-  if (controls.showInteractive)
-    buttons.push({
-      icon: args.isInteractive ? icons.unlock : icons.lock,
-      onClick: args.toggleInteractive,
-    });
+  const buttons: Widget[] = [];
+  if (controls.showZoom) buttons.push(args.zoomIn, args.zoomOut);
+  if (controls.showFitView) buttons.push(args.fitView);
+  if (controls.showInteractive) buttons.push(args.interactive);
   return Container({
     decoration: new BoxDecoration({
       color: colors.controlsBorder,
@@ -57,27 +38,35 @@ export function defaultControls(
     }),
     child: Column({
       mainAxisSize: MainAxisSize.min,
-      children: buttons.map((button) =>
-        args.action(
-          (isHovered) =>
-            Container({
-              width: controls.buttonSize,
-              height: controls.buttonSize,
-              color: isHovered
-                ? colors.controlsBackgroundHover
-                : colors.controlsBackground,
-              child: Center({
-                child: IconPaint({
-                  d: button.icon.d,
-                  viewBox: button.icon.viewBox,
-                  size: controls.iconSize,
-                  color: colors.controlsColor,
-                }),
-              }),
-            }),
-          button.onClick,
-        ),
-      ),
+      children: buttons,
+    }),
+  });
+}
+
+export function defaultControlButton(
+  args: ControlButtonCustomArgs,
+  ctx: FlowDiagramContext<DefaultFlowConfig>,
+): Widget {
+  const { colors, controls } = ctx.config;
+  const icon = {
+    zoomIn: icons.plus,
+    zoomOut: icons.minus,
+    fitView: icons.fitView,
+    interactive: args.isInteractive ? icons.unlock : icons.lock,
+  }[args.kind];
+  return Container({
+    width: controls.buttonSize,
+    height: controls.buttonSize,
+    color: args.isHovered
+      ? colors.controlsBackgroundHover
+      : colors.controlsBackground,
+    child: Center({
+      child: IconPaint({
+        d: icon.d,
+        viewBox: icon.viewBox,
+        size: controls.iconSize,
+        color: colors.controlsColor,
+      }),
     }),
   });
 }

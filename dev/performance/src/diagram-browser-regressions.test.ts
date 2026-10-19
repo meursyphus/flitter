@@ -1,7 +1,19 @@
-import { buildAction } from '../../../packages/diagram/src/headless/flow-diagram/diagram';
+import {
+	FlowHandleAnchor,
+	FlowNodeItem,
+	type RenderFlowNodeItem
+} from '../../../packages/diagram/src/headless/flow-diagram/scene';
+import {
+	buildContextMenu,
+	buildControls
+} from '../../../packages/diagram/src/headless/flow-diagram/diagram';
 import { describe, expect, it, vi } from 'vitest';
 import {
 	Constraints,
+	Column,
+	Row,
+	SizedBox,
+	MainAxisSize,
 	GestureDetector,
 	HitTestResult,
 	Offset,
@@ -33,7 +45,10 @@ import {
 } from '../../../packages/diagram/registry/templates/diagrams/flow-diagram/styles/default';
 import { collapseSets } from '../../../packages/diagram/src/shared/interactions';
 
-import { baseDefaults } from '../../../packages/diagram/registry/templates/diagrams/flow-diagram/base';
+import {
+	baseDefaults,
+	defaultHandles
+} from '../../../packages/diagram/registry/templates/diagrams/flow-diagram/base';
 const defaultCustom = {
 	...baseDefaults,
 	...defaultStyleConfig.custom
@@ -50,6 +65,7 @@ function flow(nodes = [node('a'), node('b')], edges = [{ id: 'ab', source: 'a', 
 	f.configure({
 		data: { nodes, edges },
 		custom: defaultCustom,
+		getHandles: defaultHandles,
 		config: defaultStyleConfig.createConfig()
 	});
 	return f;
@@ -76,6 +92,7 @@ it.each(['viewer', { pane: { drag: 'select' }, select: { box: false } }] as cons
 
 			config: f.config,
 			custom: defaultCustom,
+			getHandles: defaultHandles,
 			interaction
 		});
 		f.selectNodes(['a']);
@@ -155,7 +172,7 @@ it('the default Duplicate item is hit at its screen-space position after layout'
 							y: 95,
 							child: GestureDetector({
 								onClick: (event) => event.stopPropagation(),
-								child: defaultContextMenu({ ...f.contextMenu!, action: buildAction }, f)
+								child: buildContextMenu(f, f.contextMenu!)
 							})
 						})
 					]
@@ -185,16 +202,12 @@ it('the default Duplicate item is hit at its screen-space position after layout'
 it('default menu Delete separates node and edge ids', async () => {
 	const f = flow(),
 		deleted = vi.spyOn(f, 'deleteElements');
-	const widget = defaultContextMenu(
-		{
-			target: 'selection',
-			action: buildAction,
-			ids: ['a', 'ab'],
-			position: { x: 0, y: 0 },
-			screenPosition: { x: 0, y: 0 }
-		},
-		f
-	);
+	const widget = buildContextMenu(f, {
+		target: 'selection',
+		ids: ['a', 'ab'],
+		position: { x: 0, y: 0 },
+		screenPosition: { x: 0, y: 0 }
+	});
 	const root = render(widget);
 	root.layout(new Constraints());
 	const hits = new HitTestResult();
@@ -343,4 +356,68 @@ describe('collapse reachability', () => {
 		expect([...sets.get('g')!]).toEqual(['child']);
 		expect([...sets.get('child')!]).toEqual(['grandchild']);
 	});
+});
+
+it('reorders control widgets and replaces button visuals without changing their actions', () => {
+	const f = flow();
+	const zoomOut = vi.spyOn(f, 'zoomOut').mockResolvedValue(true);
+	f.custom.controls = ({ zoomIn, zoomOut }) =>
+		Row({ mainAxisSize: MainAxisSize.min, children: [zoomOut, zoomIn] });
+	f.custom.controlButton = () => SizedBox({ width: 40, height: 30 });
+	const root = render(buildControls(f));
+	root.layout(new Constraints());
+	const hits = new HitTestResult();
+	expect(root.hitTest(hits, new Offset({ x: 10, y: 10 }))).toBe(true);
+	for (const { target } of hits.path) {
+		if ((target as any).isRenderGestureDetector) {
+			(target as any).invokeCallback('onClick', { stopPropagation() {} });
+			break;
+		}
+	}
+	expect(zoomOut).toHaveBeenCalledOnce();
+	f.dispose();
+});
+
+it('measures handles inside node rows and keeps edge endpoints attached after node movement', () => {
+	const a = node('a', {
+		position: { x: 100, y: 50 },
+		handles: [{ id: 'field', type: 'source', position: 'right', placement: 'inline' }]
+	});
+	const f = flow([a, node('b', { position: { x: 400, y: 0 }, width: 100, height: 80 })]);
+	const tree = new FlowNodeItem({
+		x: 100,
+		y: 50,
+		measureId: 'a',
+		attachments: [],
+		placements: [],
+		body: Column({
+			mainAxisSize: MainAxisSize.min,
+			children: [
+				SizedBox({ width: 80, height: 20 }),
+				Row({
+					mainAxisSize: MainAxisSize.min,
+					children: [
+						SizedBox({ width: 30, height: 10 }),
+						FlowHandleAnchor({ id: 'field', type: 'source', child: SizedBox({ width: 10, height: 10 }) })
+					]
+				})
+			]
+		})
+	});
+	const object = render(tree) as RenderFlowNodeItem;
+	object.layout(new Constraints());
+	const measures: import('../../../packages/diagram/src/headless/flow-diagram/scene').MeasureEntry[] =
+		[];
+	object.collectMeasures(measures);
+	f.setNodeDimensions(measures);
+	const handle = f.getHandle('a', 'source', 'field')!;
+	// The second row is centered under the 80px header, so its handle is at x=155.
+	expect(handle).toMatchObject({ x: 155, y: 75, width: 10, height: 10 });
+	const before = f.getEdgeEndpoints({ id: 'ab', source: 'a', target: 'b', sourceHandle: 'field' })!;
+	expect(before.sourceX).toBe(handle.x + handle.width / 2);
+	f.updateNode('a', { position: { x: 140, y: 80 } });
+	const after = f.getEdgeEndpoints({ id: 'ab', source: 'a', target: 'b', sourceHandle: 'field' })!;
+	expect(after.sourceX - before.sourceX).toBe(40);
+	expect(after.sourceY - before.sourceY).toBe(30);
+	f.dispose();
 });

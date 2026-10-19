@@ -1,3 +1,4 @@
+import { getDefaultContextMenuItems } from "./menu";
 import {
   AnimationController,
   ChangeNotifier,
@@ -54,7 +55,6 @@ import type {
   ContextMenuCustomArgs,
   EdgeEndpoints,
   EdgeHandleCustomArgs,
-  EdgeType,
   FitViewOptions,
   FlowEvents,
   FlowInteraction,
@@ -72,8 +72,7 @@ import type {
   KeyCode,
   LayoutConfig,
   NodeResizeOptions,
-  NodeToolbarCustom,
-  NodeType,
+  NodeOptions,
   ResizeControlPosition,
   ResizeParams,
   ResolvedHandle,
@@ -139,7 +138,7 @@ type DragState = {
   items: Map<string, { start: XYPosition }>;
 };
 
-type MeasureEntry = { id: string; width: number; height: number };
+import type { MeasureEntry } from "./scene";
 
 type ResizeState = {
   nodeId: string;
@@ -304,8 +303,11 @@ export class FlowDiagramController extends ChangeNotifier {
   #dropTargetId: string | null = null;
   get dropTargetId(): string | null { return this.#dropTargetId; }
   isGroup(node: FlowNode): boolean {
-    const type = this.nodeTypes[node.type ?? "default"];
-    return node.type === "group" || !!(type && typeof type !== "function" && type.group);
+    const type = this.nodeOptions[node.type ?? "default"];
+    return (
+      node.type === "group" ||
+      !!(type && typeof type !== "function" && type.group)
+    );
   }
   #setDropTarget(id: string | null): void {
     if (id === this.#dropTargetId) return;
@@ -359,11 +361,24 @@ export class FlowDiagramController extends ChangeNotifier {
   #editingId: string | null = null;
   get editingId(): string | null { return this.#editingId; }
   startEditing(id: string): void {
-    const node = this.getNode(id); if (!node || this.#editingId === id) return;
-    const type = this.nodeTypes[node.type ?? "default"] ?? this.nodeTypes.default;
-    const editable = this.#interaction.edit.text || !!(type && typeof type !== "function" && type.editable);
-    if (!this.can("edit", { kind: "node", id }, editable && (!this.#viewer || this.#interaction.edit.text))) return;
-    this.stopEditing({ commit: true }); this.closeContextMenu(); this.history.mark("edit");
+    const node = this.getNode(id);
+    if (!node || this.#editingId === id) return;
+    const type =
+      this.nodeOptions[node.type ?? "default"] ?? this.nodeOptions.default;
+    const editable =
+      this.#interaction.edit.text ||
+      !!(type && typeof type !== "function" && type.editable);
+    if (
+      !this.can(
+        "edit",
+        { kind: "node", id },
+        editable && (!this.#viewer || this.#interaction.edit.text),
+      )
+    )
+      return;
+    this.stopEditing({ commit: true });
+    this.closeContextMenu();
+    this.history.mark("edit");
     this.#editingId = id;
     this.#nodeSignals.get(id)?.notifyListeners();
     this.#callbacks.editStart?.({ node });
@@ -606,8 +621,14 @@ export class FlowDiagramController extends ChangeNotifier {
   /** Static configuration provided by the style layer. */
   custom!: FlowDiagramCustom<any>;
   config: object = {};
-  nodeTypes: Record<string, NodeType<any>> = {};
-  edgeTypes: Record<string, EdgeType<any>> = {};
+  nodeOptions: Record<string, NodeOptions> = {};
+  getHandles?: FlowDiagramProps<any>["getHandles"];
+  edgePath?: FlowDiagramProps<any>["getEdgePath"];
+  getContextMenuItems?: FlowDiagramProps<any>["getContextMenuItems"];
+  getControlsOptions?: FlowDiagramProps<any>["getControlsOptions"];
+  getMinimapOptions?: FlowDiagramProps<any>["getMinimapOptions"];
+  highlightConnected = false;
+  #handleMeasures = new Map<string, NonNullable<MeasureEntry["handles"]>>();
 
   readonly transformation: TransformationController;
   #ownsTransformation: boolean;
@@ -653,27 +674,56 @@ export class FlowDiagramController extends ChangeNotifier {
 
   /** Push widget props into the controller. Never notifies: a build is already in progress. */
   configure(props: FlowDiagramProps<any>): void {
-    const { data: { nodes, edges }, custom, config, nodeTypes, edgeTypes, viewport, layout, interaction, can, on } = props;
+    const {
+      data: { nodes, edges },
+      custom,
+      config,
+      nodeOptions,
+      viewport,
+      layout,
+      interaction,
+      can,
+      on,
+    } = props;
     this.custom = custom;
     this.config = config ?? {};
-    this.nodeTypes = nodeTypes ?? {};
-    this.edgeTypes = edgeTypes ?? {};
+    this.nodeOptions = nodeOptions ?? {};
+    this.getHandles = props.getHandles;
+    this.edgePath = props.getEdgePath;
+    this.getContextMenuItems =
+      props.getContextMenuItems ?? getDefaultContextMenuItems;
+    this.getControlsOptions = props.getControlsOptions;
+    this.getMinimapOptions = props.getMinimapOptions;
+    this.highlightConnected = props.highlightConnected ?? false;
     this.#styleVersion += 1;
     this.#nodeZIndices = null;
     this.#interaction = resolveInteraction(interaction);
-    this.#viewer = (typeof interaction === "string" ? interaction : interaction?.preset) === "viewer";
+    this.#viewer =
+      (typeof interaction === "string" ? interaction : interaction?.preset) ===
+      "viewer";
     this.#can = can;
     this.#options = {
-      ...DEFAULT_FLOW_OPTIONS, ...interactionOptions(this.#interaction),
+      ...DEFAULT_FLOW_OPTIONS,
+      ...interactionOptions(this.#interaction),
       minZoom: viewport?.minZoom ?? DEFAULT_FLOW_OPTIONS.minZoom,
       maxZoom: viewport?.maxZoom ?? DEFAULT_FLOW_OPTIONS.maxZoom,
       translateExtent: viewport?.extent ?? infiniteExtent,
     };
     this.#callbacks = on ?? {};
-    this.#fitViewOptions = typeof viewport?.fitView === "object" ? viewport.fitView : {};
-    if (viewport?.fitView && !this.#viewportInitialized) this.#fitViewOnInit = true;
-    const nextLayout: LayoutConfig | null = layout ? ("compute" in layout ? { algorithm: layout } : layout) : null;
-    if (nextLayout && (nextLayout.algorithm !== this.#layoutConfig?.algorithm) && !this.#viewportInitialized) {
+    this.#fitViewOptions =
+      typeof viewport?.fitView === "object" ? viewport.fitView : {};
+    if (viewport?.fitView && !this.#viewportInitialized)
+      this.#fitViewOnInit = true;
+    const nextLayout: LayoutConfig | null = layout
+      ? "compute" in layout
+        ? { algorithm: layout }
+        : layout
+      : null;
+    if (
+      nextLayout &&
+      nextLayout.algorithm !== this.#layoutConfig?.algorithm &&
+      !this.#viewportInitialized
+    ) {
       this.#layoutPending = nextLayout.runOn !== "manual";
     }
     this.#layoutConfig = nextLayout;
@@ -688,7 +738,8 @@ export class FlowDiagramController extends ChangeNotifier {
     }
     if (!this.#viewportInitialized) {
       this.#viewportInitialized = true;
-      if (viewport?.initial) this.#setMatrix(this.#clampViewport(viewport.initial));
+      if (viewport?.initial)
+        this.#setMatrix(this.#clampViewport(viewport.initial));
     }
   }
 
@@ -759,6 +810,20 @@ export class FlowDiagramController extends ChangeNotifier {
     for (const entry of entries) {
       const node = this.#nodeLookup.get(entry.id);
       if (!node) continue;
+      if (entry.handles) {
+        const before = this.#handleMeasures.get(entry.id) ?? [];
+        const same = before.length === entry.handles.length && before.every((handle, index) => {
+          const next = entry.handles![index];
+          return handle.id === next.id && handle.type === next.type &&
+            Math.abs(handle.x - next.x) < 0.01 && Math.abs(handle.y - next.y) < 0.01 &&
+            Math.abs(handle.width - next.width) < 0.01 && Math.abs(handle.height - next.height) < 0.01;
+        });
+        if (!same) {
+          if (entry.handles.length) this.#handleMeasures.set(entry.id, entry.handles);
+          else this.#handleMeasures.delete(entry.id);
+          this.#nodeSignals.get(entry.id)?.notifyListeners();
+        }
+      }
       const measured = node.measured;
       if (
         measured &&
@@ -1201,11 +1266,14 @@ export class FlowDiagramController extends ChangeNotifier {
   /** Handle specs declared for a node (node > node type > style default). */
   getHandleSpecs(node: FlowNode): HandleSpec[] {
     if (node.handles) return node.handles;
-    const type = this.nodeTypes[node.type ?? "default"] ?? this.nodeTypes.default;
+    const type =
+      this.nodeOptions[node.type ?? "default"] ?? this.nodeOptions.default;
     if (type && typeof type !== "function" && type.handles) {
-      return typeof type.handles === "function" ? type.handles(node) : type.handles;
+      return typeof type.handles === "function"
+        ? type.handles(node)
+        : type.handles;
     }
-    return this.custom?.defaultHandles?.(node, this as any) ?? [];
+    return this.getHandles?.(node, this as any) ?? [];
   }
 
   /** Handles with absolute geometry; empty until the node is measured. */
@@ -1273,7 +1341,6 @@ export class FlowDiagramController extends ChangeNotifier {
 
   getEdgePath(edge: FlowEdge, endpoints: EdgeEndpoints): EdgePathResult {
     const type = edge.type ?? "default";
-    const definition = this.edgeTypes[type];
     const params = {
       waypoints: edge.waypoints,
       sourceX: endpoints.sourceX,
@@ -1283,10 +1350,8 @@ export class FlowDiagramController extends ChangeNotifier {
       targetY: endpoints.targetY,
       targetPosition: endpoints.targetPosition,
     };
-    if (definition && typeof definition !== "function" && definition.getPath) {
-      return definition.getPath(params, edge);
-    }
-    if (this.custom?.edgePath) return this.custom.edgePath({ edge, params, type }, this as any);
+    if (this.edgePath)
+      return this.edgePath({ edge, params, type }, this as any);
     return getEdgePathByType(type, params, edge.pathOptions);
   }
 
@@ -1300,7 +1365,8 @@ export class FlowDiagramController extends ChangeNotifier {
       targetPosition: connection.toPosition,
     };
     const type = this.#options.connectionLineType;
-    if (this.custom?.edgePath) return this.custom.edgePath({ edge: null, params, type }, this as any);
+    if (this.edgePath)
+      return this.edgePath({ edge: null, params, type }, this as any);
     return getEdgePathByType(type, params);
   }
 
@@ -1429,18 +1495,30 @@ export class FlowDiagramController extends ChangeNotifier {
   }
 
   #notifyChangedNeighbours(previous: Set<string>): void {
+    if (this.highlightConnected) {
+      this.#notifyAllNodes();
+      this.#notifyAllEdges();
+      return;
+    }
     const next = this.#neighbourIds();
     for (const id of new Set([...previous, ...next])) {
-      if (previous.has(id) !== next.has(id)) this.#nodeSignals.get(id)?.notifyListeners();
+      if (previous.has(id) !== next.has(id))
+        this.#nodeSignals.get(id)?.notifyListeners();
     }
   }
 
   #notifyNeighbours(ids: (string | null)[]): void {
+    if (this.highlightConnected) {
+      this.#notifyAllNodes();
+      this.#notifyAllEdges();
+      return;
+    }
     const affected = new Set(ids.filter((id): id is string => id != null));
     const nodes = new Set(affected);
     for (const edge of this.#edges) {
       if (!affected.has(edge.source) && !affected.has(edge.target)) continue;
-      nodes.add(edge.source); nodes.add(edge.target);
+      nodes.add(edge.source);
+      nodes.add(edge.target);
       this.#edgeSignals.get(edge.id)?.notifyListeners();
     }
     for (const id of nodes) this.#nodeSignals.get(id)?.notifyListeners();
@@ -1489,13 +1567,6 @@ export class FlowDiagramController extends ChangeNotifier {
 
   getNodeResizeOptions(node: FlowNode): Required<Pick<NodeResizeOptions, "minWidth" | "minHeight">> & NodeResizeOptions {
     return { minWidth: 10, minHeight: 10, ...this.#options.nodeResizeOptions, ...(node.resizeOptions ?? {}) };
-  }
-
-  /** Toolbar builder for a node: its type's, else the diagram-level fallback. */
-  getNodeToolbarCustom(node: FlowNode): NodeToolbarCustom<any> | null {
-    const type = this.nodeTypes[node.type ?? "default"] ?? this.nodeTypes.default;
-    if (type && typeof type !== "function" && type.toolbar) return type.toolbar;
-    return null;
   }
 
   /** React Flow shows a toolbar for the single selected node unless `isVisible` says otherwise. */
@@ -2178,21 +2249,37 @@ export class FlowDiagramController extends ChangeNotifier {
     }
     const zoom = this.zoom;
     for (const node of this.#nodes) {
-      const type = this.nodeTypes[node.type ?? "default"] ?? this.nodeTypes.default;
-      if (type && typeof type !== "function" && type.lod?.some(point => (this.#previousZoom < point) !== (zoom < point))) {
+      const type =
+        this.nodeOptions[node.type ?? "default"] ?? this.nodeOptions.default;
+      if (
+        type &&
+        typeof type !== "function" &&
+        type.lod?.some((point) => this.#previousZoom < point !== zoom < point)
+      ) {
         this.#nodeSignals.get(node.id)?.notifyListeners();
       }
     }
     this.#previousZoom = zoom;
-    this.#callbacks.viewportChange?.({ phase: "move", viewport: this.viewport });
+    this.#callbacks.viewportChange?.({
+      phase: "move",
+      viewport: this.viewport,
+    });
     this.notifyListeners();
   };
 
   #replaceNodes(nodes: FlowNode[]): void {
+    if (this.#handleMeasures.size) {
+      const ids = new Set(nodes.map(node => node.id));
+      for (const id of this.#handleMeasures.keys()) {
+        if (!ids.has(id)) this.#handleMeasures.delete(id);
+      }
+    }
     this.#nodes = nodes.map((node) => {
       if (node.measured) return node;
       const previous = this.#nodeLookup.get(node.id);
-      return previous?.measured ? { ...node, measured: previous.measured } : node;
+      return previous?.measured
+        ? { ...node, measured: previous.measured }
+        : node;
     });
     this.#rebuildNodeLookup();
   }
@@ -2472,13 +2559,21 @@ export class FlowDiagramController extends ChangeNotifier {
   /** Resolve a handle spec against a node rect (public so widgets can place handles before measurement). */
   resolveHandle(node: FlowNode, rect: Rect, spec: HandleSpec): ResolvedHandle {
     const size = this.#options.handleSize;
-    const { x, y } = handleCenter(spec, rect);
+    const measured =
+      spec.placement === "inline"
+        ? this.#handleMeasures
+            .get(node.id)
+            ?.find((h) => h.id === (spec.id ?? null) && h.type === spec.type)
+        : undefined;
+    const { x, y } = measured
+      ? { x: rect.x + measured.x, y: rect.y + measured.y }
+      : handleCenter(spec, rect);
     return {
       ...spec,
       id: spec.id ?? null,
       nodeId: node.id,
-      width: spec.width ?? size,
-      height: spec.height ?? size,
+      width: spec.width ?? measured?.width ?? size,
+      height: spec.height ?? measured?.height ?? size,
       x,
       y,
     };

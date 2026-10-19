@@ -1,3 +1,4 @@
+import { defaultNode } from '../../../packages/diagram/registry/templates/diagrams/flow-diagram';
 import { describe, expect, it, vi } from 'vitest';
 import {
 	FlowDiagramController,
@@ -7,7 +8,10 @@ import {
 import { getSceneOrder } from '../../../packages/diagram/src/headless/flow-diagram/controller';
 import { defaultStyleConfig } from '../../../packages/diagram/registry/templates/diagrams/flow-diagram/styles/default';
 
-import { baseDefaults } from '../../../packages/diagram/registry/templates/diagrams/flow-diagram/base';
+import {
+	baseDefaults,
+	defaultHandles
+} from '../../../packages/diagram/registry/templates/diagrams/flow-diagram/base';
 const defaultCustom = {
 	...baseDefaults,
 	...defaultStyleConfig.custom
@@ -34,6 +38,7 @@ function flow(
 		},
 
 		custom: defaultCustom,
+		getHandles: defaultHandles,
 		config: defaultStyleConfig.createConfig(),
 		...(({ data, ...rest }) => rest)(props)
 	});
@@ -53,7 +58,13 @@ describe('P2 follow-ups and menus', () => {
 	it('only rebuilds opted-in LOD nodes on threshold crossings', async () => {
 		const f = flow({
 			data: { nodes: [{ ...node('a'), type: 'lod' }, node('b')] },
-			nodeTypes: { lod: { build: defaultCustom.node, lod: [0.75, 1.5] } }
+			custom: {
+				node: (args, ctx) => {
+					const views: Record<string, typeof defaultNode> = { lod: defaultCustom.node };
+					return (views[args.node.type ?? 'default'] ?? views.default ?? defaultNode)(args, ctx);
+				}
+			},
+			nodeOptions: { lod: { lod: [0.75, 1.5] } }
 		});
 		const a = vi.fn(),
 			b = vi.fn();
@@ -286,7 +297,15 @@ describe('inline edit', () => {
 		expect(f.nodes[0].data.label).toBe('a');
 	});
 	it('supports per-type opt-in and an edit permission veto', () => {
-		const f = flow({ nodeTypes: { default: { build: defaultCustom.node, editable: true } } });
+		const f = flow({
+			custom: {
+				node: (args, ctx) => {
+					const views: Record<string, typeof defaultNode> = { default: defaultCustom.node };
+					return (views[args.node.type ?? 'default'] ?? views.default ?? defaultNode)(args, ctx);
+				}
+			},
+			nodeOptions: { default: { editable: true } }
+		});
 		f.startEditing('a');
 		expect(f.editingId).toBe('a');
 		f.handlePanePointerDown(pointer());

@@ -25,8 +25,6 @@ export { positionOverlay } from "./layout";
 
 /** Structural (non-visual) defaults provided by base. */
 export const baseDefaults: Partial<FlowDiagramCustom<any>> = {
-  defaultHandles,
-  edgePath: defaultEdgePath,
   // The screen-space toolbar is composed by layout.toolbars, outside the transformed scene.
   nodeBox: ({ node, handles, resizeControls, placements, args }) =>
     new FlowNodeItem({
@@ -54,12 +52,16 @@ export const baseDefaults: Partial<FlowDiagramCustom<any>> = {
 
 export function BaseFlowDiagram<TConfig extends object = object>({
   custom,
+  getHandles = defaultHandles,
+  getEdgePath = defaultEdgePath,
   ...rest
 }: Omit<FlowDiagramProps<TConfig>, "custom"> & {
   custom: Partial<FlowDiagramCustom<TConfig>>;
 }): Widget {
   return HeadlessFlowDiagram({
     ...rest,
+    getHandles,
+    getEdgePath,
     custom: { ...baseDefaults, ...custom } as FlowDiagramCustom<TConfig>,
   });
 }

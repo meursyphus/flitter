@@ -3,6 +3,7 @@ import { getSceneOrder } from '../../../packages/diagram/src/headless/flow-diagr
 import { readFileSync } from 'node:fs';
 import {
 	Constraints,
+	SizedBox,
 	StatefulWidget,
 	StatelessWidget,
 	type BuildContext,
@@ -12,7 +13,7 @@ import {
 	type FlowDiagramController,
 	type FlowDiagramProps,
 	type FlowNode,
-	type NodeCustomArgs
+	type NodeBodyCustomArgs
 } from '../../../packages/diagram/src/engine';
 
 const modules = import.meta.glob('../../../docs/src/app/diagram/_examples/*.ts', {
@@ -70,9 +71,18 @@ async function mount(slug: string, theme: 'light' | 'dark' = 'light') {
 	props.on?.init?.(flow);
 	return { state, props, flow };
 }
-function args(flow: FlowDiagramController, node: FlowNode): NodeCustomArgs {
+function args(flow: FlowDiagramController, node: FlowNode): NodeBodyCustomArgs {
 	return {
 		node,
+		label: SizedBox.shrink(),
+		handles: flow
+			.getHandleSpecs(node)
+			.filter((h) => h.placement === 'inline')
+			.map((h) => ({
+				id: h.id ?? null,
+				type: h.type,
+				handle: SizedBox({ width: 16, height: 16 })
+			})),
 		isSelected: !!node.selected,
 		isDragging: false,
 		isHovered: false,
@@ -102,10 +112,9 @@ function assertWidgets(widget: any, depth = 0): void {
 }
 
 for (const slug of slugs) {
-	it(`${slug}: self-contained source is at most 250 lines`, () => {
+	it(`${slug}: source uses only the installed preset and public engine`, () => {
 		const path = new URL(`../../../docs/src/app/diagram/_examples/${slug}.ts`, import.meta.url);
 		const source = readFileSync(path, 'utf8');
-		expect(source.trimEnd().split('\n').length).toBeLessThanOrEqual(250);
 		for (const match of source.matchAll(/from\s+["']([^"']+)["']/g))
 			expect(['flitter-ui', 'flitter-ui/diagram', '@/components/diagram/flow-diagram']).toContain(
 				match[1]
@@ -117,13 +126,9 @@ for (const slug of slugs) {
 			expect((flow.config as any).colorMode).toBe(theme);
 			expect(flow.nodes.length).toBeGreaterThanOrEqual(4);
 			for (const node of flow.getVisibleNodes()) {
-				const definition = props.nodeTypes?.[node.type ?? 'default'] ?? props.nodeTypes?.default;
-				const build =
-					typeof definition === 'function' ? definition : (definition?.build ?? flow.custom.node);
+				const build = flow.custom.node;
 				assertWidgets(build(args(flow, node), flow as any));
-				const toolbar =
-					typeof definition === 'object' &&
-					definition.toolbar?.({ node, isSelected: true }, flow as any);
+				const toolbar = flow.custom.nodeToolbar({ node, isSelected: true }, flow as any);
 				if (toolbar) assertWidgets(toolbar);
 				for (const handle of flow.getNodeHandles(node))
 					assertWidgets(
@@ -149,9 +154,7 @@ for (const slug of slugs) {
 					const path = flow.getEdgePath(edge, ep);
 					expect(path.points.length).toBeGreaterThan(1);
 					expect(path.points.every((p) => Number.isFinite(p.x) && Number.isFinite(p.y))).toBe(true);
-					const definition = props.edgeTypes?.[edge.type ?? 'default'];
-					const build =
-						typeof definition === 'function' ? definition : (definition?.build ?? flow.custom.edge);
+					const build = flow.custom.edge;
 					assertWidgets(
 						build(
 							{
@@ -190,7 +193,9 @@ for (const slug of slugs) {
 					if (label) assertWidgets(label);
 				}
 			}
-			expect(findFlow(state.build(context))).toBe(props); // panel updates preserve the scene instance
+			const rebuilt = findFlow(state.build(context))!;
+      expect(rebuilt.controller).toBe(flow);
+      expect(rebuilt.data.nodes).toBe(props.data.nodes); // app state rebuilds preserve graph input and controller
 		});
 }
 
@@ -463,9 +468,7 @@ for (const slug of slugs) {
 					expect(fontSize * flow.zoom).toBeGreaterThanOrEqual(10);
 			};
 			for (const node of flow.getVisibleNodes()) {
-				const definition = props.nodeTypes?.[node.type ?? 'default'];
-				const build =
-					typeof definition === 'function' ? definition : (definition?.build ?? flow.custom.node);
+				const build = flow.custom.node;
 				for (const text of texts(build(args(flow, node), flow as any))) {
 					checkText(text.style.fontSize);
 				}

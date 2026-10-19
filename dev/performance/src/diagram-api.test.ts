@@ -8,7 +8,10 @@ import {
 } from '../../../packages/diagram/src/engine';
 import { defaultStyleConfig } from '../../../packages/diagram/registry/templates/diagrams/flow-diagram/styles/default';
 
-import { baseDefaults } from '../../../packages/diagram/registry/templates/diagrams/flow-diagram/base';
+import {
+	baseDefaults,
+	defaultHandles
+} from '../../../packages/diagram/registry/templates/diagrams/flow-diagram/base';
 const defaultCustom = {
 	...baseDefaults,
 	...defaultStyleConfig.custom
@@ -33,6 +36,7 @@ function setup(
 	flow.configure({
 		data: { nodes, edges, ...props.data },
 		custom: defaultCustom,
+		getHandles: defaultHandles,
 		config: defaultStyleConfig.createConfig(),
 		...(({ data, ...rest }) => rest)(props)
 	});

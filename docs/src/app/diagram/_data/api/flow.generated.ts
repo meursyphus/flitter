@@ -22,16 +22,46 @@ export const flowApi: FlowApiGenerated = {
       "doc": ""
     },
     {
-      "name": "nodeTypes",
-      "type": "Record<string, NodeType<TConfig>>",
+      "name": "nodeOptions",
+      "type": "Record<string, NodeOptions>",
       "optional": true,
       "doc": ""
     },
     {
-      "name": "edgeTypes",
-      "type": "Record<string, EdgeType<TConfig>>",
+      "name": "getHandles",
+      "type": "GetHandlesFn<TConfig>",
       "optional": true,
       "doc": ""
+    },
+    {
+      "name": "getEdgePath",
+      "type": "GetEdgePathFn<TConfig>",
+      "optional": true,
+      "doc": ""
+    },
+    {
+      "name": "getContextMenuItems",
+      "type": "GetContextMenuItemsFn<TConfig>",
+      "optional": true,
+      "doc": ""
+    },
+    {
+      "name": "getControlsOptions",
+      "type": "GetControlsOptionsFn<TConfig>",
+      "optional": true,
+      "doc": ""
+    },
+    {
+      "name": "getMinimapOptions",
+      "type": "GetMinimapOptionsFn<TConfig>",
+      "optional": true,
+      "doc": ""
+    },
+    {
+      "name": "highlightConnected",
+      "type": "boolean",
+      "optional": true,
+      "doc": "Rebuild visual slots on graph-wide hover/selection changes (e.g. dim unrelated nodes)."
     },
     {
       "name": "layout",
@@ -884,32 +914,52 @@ export const flowApi: FlowApiGenerated = {
       "doc": "",
       "args": [
         {
-          "name": "action",
-          "type": "( child: (isHovered: boolean) => Widget, onClick: () => void, isDisabled?: boolean, ) => Widget",
-          "optional": false,
-          "doc": ""
-        },
-        {
           "name": "zoomIn",
-          "type": "(options?: { duration?: number }) => void",
+          "type": "Widget",
           "optional": false,
           "doc": ""
         },
         {
           "name": "zoomOut",
-          "type": "(options?: { duration?: number }) => void",
+          "type": "Widget",
           "optional": false,
           "doc": ""
         },
         {
           "name": "fitView",
-          "type": "(options?: FitViewOptions) => void",
+          "type": "Widget",
           "optional": false,
           "doc": ""
         },
         {
-          "name": "toggleInteractive",
-          "type": "() => void",
+          "name": "interactive",
+          "type": "Widget",
+          "optional": false,
+          "doc": ""
+        }
+      ]
+    },
+    {
+      "slot": "controlButton",
+      "argsType": "ControlButtonCustomArgs",
+      "returns": "Widget",
+      "doc": "",
+      "args": [
+        {
+          "name": "kind",
+          "type": "ControlKind",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isHovered",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isDisabled",
+          "type": "boolean",
           "optional": false,
           "doc": ""
         },
@@ -928,31 +978,83 @@ export const flowApi: FlowApiGenerated = {
       "doc": "",
       "args": [
         {
+          "name": "width",
+          "type": "number",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "height",
+          "type": "number",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "background",
+          "type": "Widget",
+          "optional": false,
+          "doc": ""
+        },
+        {
           "name": "nodes",
-          "type": "{ id: string; rect: Rect }[]",
+          "type": "Widget[]",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "mask",
+          "type": "Widget",
           "optional": false,
           "doc": ""
         },
         {
           "name": "viewport",
-          "type": "Viewport",
+          "type": "Widget",
+          "optional": false,
+          "doc": ""
+        }
+      ]
+    },
+    {
+      "slot": "minimapNode",
+      "argsType": "MinimapNodeCustomArgs",
+      "returns": "Widget",
+      "doc": "",
+      "args": [
+        {
+          "name": "node",
+          "type": "FlowNode",
           "optional": false,
           "doc": ""
         },
         {
-          "name": "viewportRect",
+          "name": "rect",
           "type": "Rect",
           "optional": false,
           "doc": ""
         },
         {
-          "name": "bounds",
-          "type": "Rect",
+          "name": "isSelected",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        }
+      ]
+    },
+    {
+      "slot": "minimapBackground",
+      "argsType": "MinimapBackgroundCustomArgs",
+      "returns": "Widget",
+      "doc": "",
+      "args": [
+        {
+          "name": "width",
+          "type": "number",
           "optional": false,
           "doc": ""
         },
         {
-          "name": "viewScale",
+          "name": "height",
           "type": "number",
           "optional": false,
           "doc": ""
@@ -960,8 +1062,48 @@ export const flowApi: FlowApiGenerated = {
       ]
     },
     {
+      "slot": "minimapMask",
+      "argsType": "MinimapMaskCustomArgs",
+      "returns": "Widget",
+      "doc": "",
+      "args": [
+        {
+          "name": "width",
+          "type": "number",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "height",
+          "type": "number",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "rect",
+          "type": "Rect",
+          "optional": false,
+          "doc": ""
+        }
+      ]
+    },
+    {
+      "slot": "minimapViewport",
+      "argsType": "MinimapViewportCustomArgs",
+      "returns": "Widget",
+      "doc": "",
+      "args": [
+        {
+          "name": "rect",
+          "type": "Rect",
+          "optional": false,
+          "doc": ""
+        }
+      ]
+    },
+    {
       "slot": "contextMenu",
-      "argsType": "ContextMenuCustomArgs & ActionCustomArgs",
+      "argsType": "ContextMenuCustomArgs & { items: Widget[] }",
       "returns": "Widget",
       "doc": "",
       "args": [
@@ -990,8 +1132,46 @@ export const flowApi: FlowApiGenerated = {
           "doc": ""
         },
         {
-          "name": "action",
-          "type": "( child: (isHovered: boolean) => Widget, onClick: () => void, isDisabled?: boolean, ) => Widget",
+          "name": "items",
+          "type": "Widget[]",
+          "optional": false,
+          "doc": ""
+        }
+      ]
+    },
+    {
+      "slot": "menuItem",
+      "argsType": "MenuItemCustomArgs",
+      "returns": "Widget",
+      "doc": "",
+      "args": [
+        {
+          "name": "label",
+          "type": "string",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isHovered",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isDisabled",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isSeparator",
+          "type": "boolean",
           "optional": false,
           "doc": ""
         }
@@ -1045,9 +1225,137 @@ export const flowApi: FlowApiGenerated = {
     },
     {
       "slot": "node",
+      "argsType": "NodeBodyCustomArgs",
+      "returns": "Widget",
+      "doc": "",
+      "args": [
+        {
+          "name": "node",
+          "type": "FlowNode",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isSelected",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isDragging",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isHovered",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isDraggable",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isSelectable",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isConnectable",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "positionAbsolute",
+          "type": "XYPosition",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "zIndex",
+          "type": "number",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isConnectionTarget",
+          "type": "boolean",
+          "optional": false,
+          "doc": "A connection is being dragged over this node (any of its handles is the candidate)."
+        },
+        {
+          "name": "isResizable",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isResizing",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isEditing",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isDropTarget",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isOverlapping",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isCollapsed",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "hiddenChildCount",
+          "type": "number",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isNeighbour",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "label",
+          "type": "Widget",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "handles",
+          "type": "{ id: string | null; type: HandleType; handle: Widget }[]",
+          "optional": false,
+          "doc": "Interaction-ready inline handles. Place each handle once in the node's widget tree."
+        }
+      ]
+    },
+    {
+      "slot": "nodeLabel",
       "argsType": "NodeCustomArgs",
       "returns": "Widget",
-      "doc": "Fallback node renderer when `nodeTypes` has no entry for `node.type`.",
+      "doc": "",
       "args": [
         {
           "name": "node",
@@ -1160,10 +1468,30 @@ export const flowApi: FlowApiGenerated = {
       ]
     },
     {
+      "slot": "nodeToolbar",
+      "argsType": "NodeToolbarCustomArgs",
+      "returns": "Widget",
+      "doc": "",
+      "args": [
+        {
+          "name": "node",
+          "type": "FlowNode",
+          "optional": false,
+          "doc": ""
+        },
+        {
+          "name": "isSelected",
+          "type": "boolean",
+          "optional": false,
+          "doc": ""
+        }
+      ]
+    },
+    {
       "slot": "edge",
       "argsType": "EdgeCustomArgs",
       "returns": "Widget",
-      "doc": "Fallback edge renderer when `edgeTypes` has no entry for `edge.type`.",
+      "doc": "",
       "args": [
         {
           "name": "edge",
@@ -1364,20 +1692,6 @@ export const flowApi: FlowApiGenerated = {
       ]
     },
     {
-      "slot": "defaultHandles",
-      "argsType": "FlowNode",
-      "returns": "HandleSpec[]",
-      "doc": "Handles for nodes that declare none (and whose node type declares none).",
-      "args": [
-        {
-          "name": "node",
-          "type": "FlowNode",
-          "optional": false,
-          "doc": ""
-        }
-      ]
-    },
-    {
       "slot": "connectionLine",
       "argsType": "ConnectionLineCustomArgs",
       "returns": "Widget",
@@ -1496,32 +1810,6 @@ export const flowApi: FlowApiGenerated = {
           "type": "FlowNode[]",
           "optional": false,
           "doc": ""
-        }
-      ]
-    },
-    {
-      "slot": "edgePath",
-      "argsType": "EdgePathCustomArgs",
-      "returns": "EdgePathResult",
-      "doc": "Geometry for built-in edge types; override to tune curvature or add types.",
-      "args": [
-        {
-          "name": "edge",
-          "type": "FlowEdge | null",
-          "optional": false,
-          "doc": ""
-        },
-        {
-          "name": "params",
-          "type": "EdgePathParams",
-          "optional": false,
-          "doc": ""
-        },
-        {
-          "name": "type",
-          "type": "string",
-          "optional": false,
-          "doc": "Type being resolved: the edge type, or `connectionLineType` while connecting."
         }
       ]
     },
@@ -2376,12 +2664,6 @@ export const flowApi: FlowApiGenerated = {
       "kind": "method",
       "signature": "getNodeResizeOptions(node: FlowNode): Required<Pick<NodeResizeOptions, \"minWidth\" | \"minHeight\">> & NodeResizeOptions",
       "doc": ""
-    },
-    {
-      "name": "getNodeToolbarCustom",
-      "kind": "method",
-      "signature": "getNodeToolbarCustom(node: FlowNode): NodeToolbarCustom<any> | null",
-      "doc": "Toolbar builder for a node: its type's, else the diagram-level fallback."
     },
     {
       "name": "isNodeToolbarVisible",

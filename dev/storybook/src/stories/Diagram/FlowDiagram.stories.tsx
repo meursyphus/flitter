@@ -1,4 +1,8 @@
-import { defaultNode, type NodeToolbarCustom, type DefaultFlowConfig } from "flitter-diagram";
+import { type NodeToolbarCustom } from "flitter-diagram";
+import {
+  defaultNode,
+  type DefaultFlowConfig,
+} from "../../../../../shared/diagram-presets/flow-diagram";
 import type { Meta, StoryObj } from "@storybook/react";
 import DualRenderer from "../../components/DualRenderer";
 import {
@@ -18,7 +22,6 @@ import {
   type Widget,
 } from "flitter-core";
 import {
-  FlowDiagram,
   type FlowEdge,
   type FlowNode,
   type NodeCustomArgs,
@@ -26,6 +29,7 @@ import {
   layeredLayout,
   treeLayout,
 } from "flitter-diagram";
+import FlowDiagram from "../../../../../shared/diagram-presets/flow-diagram";
 
 declare global {
   interface Window {
@@ -56,9 +60,19 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const basicNodes: FlowNode[] = [
-  { id: "1", type: "input", position: { x: 100, y: 50 }, data: { label: "Input Node" } },
+  {
+    id: "1",
+    type: "input",
+    position: { x: 100, y: 50 },
+    data: { label: "Input Node" },
+  },
   { id: "2", position: { x: 100, y: 180 }, data: { label: "Default Node" } },
-  { id: "3", type: "output", position: { x: 320, y: 180 }, data: { label: "Output Node" } },
+  {
+    id: "3",
+    type: "output",
+    position: { x: 320, y: 180 },
+    data: { label: "Output Node" },
+  },
 ];
 
 const basicEdges: FlowEdge[] = [
@@ -91,11 +105,38 @@ const edgeTypeNodes: FlowNode[] = [
 ];
 
 const edgeTypeEdges: FlowEdge[] = [
-  { id: "ab", source: "a", target: "b", type: "straight", label: "straight", markerEnd: "arrowclosed" },
+  {
+    id: "ab",
+    source: "a",
+    target: "b",
+    type: "straight",
+    label: "straight",
+    markerEnd: "arrowclosed",
+  },
   { id: "ac", source: "a", target: "c", type: "step", label: "step" },
-  { id: "bd", source: "b", target: "d", type: "smoothstep", label: "smoothstep", markerEnd: "arrow" },
-  { id: "cd", source: "c", target: "d", type: "simplebezier", label: "simplebezier" },
-  { id: "ce", source: "c", target: "e", label: "bezier", animated: true, markerEnd: "arrowclosed" },
+  {
+    id: "bd",
+    source: "b",
+    target: "d",
+    type: "smoothstep",
+    label: "smoothstep",
+    markerEnd: "arrow",
+  },
+  {
+    id: "cd",
+    source: "c",
+    target: "d",
+    type: "simplebezier",
+    label: "simplebezier",
+  },
+  {
+    id: "ce",
+    source: "c",
+    target: "e",
+    label: "bezier",
+    animated: true,
+    markerEnd: "arrowclosed",
+  },
   { id: "de", source: "d", target: "e", label: "selected", selected: true },
 ];
 
@@ -133,13 +174,34 @@ function chain(count: number): { nodes: FlowNode[]; edges: FlowEdge[] } {
   const nodes: FlowNode[] = [];
   const edges: FlowEdge[] = [];
   for (let i = 0; i < count; i++) {
-    nodes.push({ id: `n${i}`, position: { x: 0, y: 0 }, data: { label: `Node ${i}` } });
+    nodes.push({
+      id: `n${i}`,
+      position: { x: 0, y: 0 },
+      data: { label: `Node ${i}` },
+    });
   }
   const links: [number, number][] = [
-    [0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6], [3, 7], [5, 7], [4, 8], [6, 8], [7, 9], [8, 9],
+    [0, 1],
+    [0, 2],
+    [1, 3],
+    [1, 4],
+    [2, 5],
+    [2, 6],
+    [3, 7],
+    [5, 7],
+    [4, 8],
+    [6, 8],
+    [7, 9],
+    [8, 9],
   ];
   for (const [s, t] of links) {
-    if (s < count && t < count) edges.push({ id: `e${s}-${t}`, source: `n${s}`, target: `n${t}`, markerEnd: "arrowclosed" });
+    if (s < count && t < count)
+      edges.push({
+        id: `e${s}-${t}`,
+        source: `n${s}`,
+        target: `n${t}`,
+        markerEnd: "arrowclosed",
+      });
   }
   return { nodes, edges };
 }
@@ -164,10 +226,24 @@ export const TreeLayoutLeftRight: Story = {
     height: "460px",
     widget: FlowDiagram({
       data: chain(10),
-      layout: { algorithm: treeLayout, options: { direction: "LR", rankSpacing: 80 } },
-      nodeTypes: {
+      layout: {
+        algorithm: treeLayout,
+        options: { direction: "LR", rankSpacing: 80 },
+      },
+      custom: {
+        node: (args, ctx) => {
+          const views: Record<string, typeof defaultNode> = {
+            default: (args, ctx) => ctx.custom.node(args, ctx),
+          };
+          return (
+            views[args.node.type ?? "default"] ??
+            views.default ??
+            defaultNode
+          )(args, ctx);
+        },
+      },
+      nodeOptions: {
         default: {
-          build: (args, ctx) => ctx.custom.node(args, ctx),
           handles: [
             { type: "target", position: "left" },
             { type: "source", position: "right" },
@@ -175,7 +251,8 @@ export const TreeLayoutLeftRight: Story = {
         },
       },
     }),
-    description: "Tree layout flowing left to right with handles moved to the sides.",
+    description:
+      "Tree layout flowing left to right with handles moved to the sides.",
   },
 };
 
@@ -188,11 +265,15 @@ export const ForceLayout: Story = {
       layout: forceLayout,
       config: { background: { variant: "cross" } },
     }),
-    description: "Force-directed layout (Fruchterman-Reingold), deterministic seed.",
+    description:
+      "Force-directed layout (Fruchterman-Reingold), deterministic seed.",
   },
 };
 
-type TableData = { label: string; fields: { name: string; type: string; pk?: boolean }[] };
+type TableData = {
+  label: string;
+  fields: { name: string; type: string; pk?: boolean }[];
+};
 
 const ROW_HEIGHT = 22;
 const HEADER_HEIGHT = 28;
@@ -206,7 +287,11 @@ function tableNode(args: NodeCustomArgs, ctx: any): Widget {
       padding: EdgeInsets.symmetric({ horizontal: 10 }),
       alignment: undefined,
       child: Text(`${field.pk ? "🔑 " : ""}${field.name}  ${field.type}`, {
-        style: new TextStyle({ fontSize: 11, color: colors.nodeColor, fontFamily: node.fontFamily }),
+        style: new TextStyle({
+          fontSize: 11,
+          color: colors.nodeColor,
+          fontFamily: node.fontFamily,
+        }),
       }),
     }),
   );
@@ -214,7 +299,10 @@ function tableNode(args: NodeCustomArgs, ctx: any): Widget {
     width: 200,
     decoration: new BoxDecoration({
       color: colors.nodeBackground,
-      border: Border.all({ color: args.isSelected ? "#3367d9" : colors.nodeBorder, width: args.isSelected ? 1.5 : 1 }),
+      border: Border.all({
+        color: args.isSelected ? "#3367d9" : colors.nodeBorder,
+        width: args.isSelected ? 1.5 : 1,
+      }),
       borderRadius: BorderRadius.circular(4),
     }),
     child: Column({
@@ -228,7 +316,12 @@ function tableNode(args: NodeCustomArgs, ctx: any): Widget {
           child: Padding({
             padding: EdgeInsets.only({ top: 7 }),
             child: Text(data.label, {
-              style: new TextStyle({ fontSize: 12, color: "#ffffff", fontWeight: "700", fontFamily: node.fontFamily }),
+              style: new TextStyle({
+                fontSize: 12,
+                color: "#ffffff",
+                fontWeight: "700",
+                fontFamily: node.fontFamily,
+              }),
             }),
           }),
         }),
@@ -280,8 +373,23 @@ const erdNodes: FlowNode[] = [
 ];
 
 const erdEdges: FlowEdge[] = [
-  { id: "users-teams", source: "users", sourceHandle: "team_id", target: "teams", targetHandle: "id", type: "smoothstep" },
-  { id: "posts-users", source: "posts", sourceHandle: "author_id", target: "users", targetHandle: "id", type: "smoothstep", markerEnd: "arrowclosed" },
+  {
+    id: "users-teams",
+    source: "users",
+    sourceHandle: "team_id",
+    target: "teams",
+    targetHandle: "id",
+    type: "smoothstep",
+  },
+  {
+    id: "posts-users",
+    source: "posts",
+    sourceHandle: "author_id",
+    target: "users",
+    targetHandle: "id",
+    type: "smoothstep",
+    markerEnd: "arrowclosed",
+  },
 ];
 
 export const CustomNodesERD: Story = {
@@ -291,24 +399,43 @@ export const CustomNodesERD: Story = {
     widget: FlowDiagram({
       ...expose,
       data: { nodes: erdNodes, edges: erdEdges },
-
-      nodeTypes: {
+      config: { minimap: { visible: false } },
+      viewport: { fitView: true },
+      interaction: { connect: { mode: "loose" } },
+      custom: {
+        node: (args, ctx) => {
+          const views: Record<string, typeof defaultNode> = {
+            table: tableNode,
+          };
+          return (
+            views[args.node.type ?? "default"] ??
+            views.default ??
+            defaultNode
+          )(args, ctx);
+        },
+      },
+      nodeOptions: {
         table: {
-          build: tableNode,
-          // one handle pair per field, pinned to the row centre on each side
           handles: (node) =>
             (node.data as TableData).fields.flatMap((field, index) => {
               const y = HEADER_HEIGHT + ROW_HEIGHT * index + ROW_HEIGHT / 2;
               return [
-                { id: field.name, type: "target" as const, position: "left" as const, y },
-                { id: field.name, type: "source" as const, position: "right" as const, y },
+                {
+                  id: field.name,
+                  type: "target" as const,
+                  position: "left" as const,
+                  y,
+                },
+                {
+                  id: field.name,
+                  type: "source" as const,
+                  position: "right" as const,
+                  y,
+                },
               ];
             }),
         },
       },
-      config: { minimap: { visible: false } },
-      viewport: { fitView: true },
-      interaction: { connect: { mode: "loose" } },
     }),
     description:
       "Custom table nodes with declared per-row handles (an ERD). Loose connection mode lets any handle connect to any other.",
@@ -322,11 +449,15 @@ export const ReadOnly: Story = {
     widget: FlowDiagram({
       data: { nodes: basicNodes, edges: basicEdges },
 
-      config: { controls: { showInteractive: false }, minimap: { visible: false } },
+      config: {
+        controls: { showInteractive: false },
+        minimap: { visible: false },
+      },
       viewport: { fitView: true },
       interaction: "viewer",
     }),
-    description: "Pan and zoom only: nodes cannot be dragged, selected or connected.",
+    description:
+      "Pan and zoom only: nodes cannot be dragged, selected or connected.",
   },
 };
 
@@ -356,7 +487,9 @@ function toolbarButton(label: string, onClick: () => void): Widget {
     child: Container({
       padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
       color: "#3367d9",
-      child: Text(label, { style: new TextStyle({ color: "#ffffff", fontSize: 12 }) }),
+      child: Text(label, {
+        style: new TextStyle({ color: "#ffffff", fontSize: 12 }),
+      }),
     }),
   });
 }
@@ -367,51 +500,69 @@ export const ResizeToolbarReconnect: Story = {
     height: "420px",
     widget: FlowDiagram({
       ...expose,
-      data: { nodes: [
-        {
-          id: "a",
-          type: "input",
-          position: { x: 60, y: 40 },
-          data: { label: "Select me, then resize" },
-          resizable: true,
-          resizeOptions: { minWidth: 120, minHeight: 30, keepAspectRatio: false },
-        },
-        {
-          id: "b",
-          position: { x: 320, y: 60 },
-          data: { label: "Toolbar on the right" },
-          toolbar: { position: "right", align: "start" },
-        },
-        { id: "c", type: "output", position: { x: 180, y: 240 }, data: { label: "Drag an edge end here" } },
-      ], edges: [
-        { id: "ab", source: "a", target: "b", markerEnd: "arrowclosed" },
-        { id: "ac", source: "a", target: "c", label: "reconnectable", reconnectable: "target" },
-      ] },
-
-      nodeTypes: Object.fromEntries(
-        Object.entries(Object.fromEntries(['default', 'input', 'output', 'group'].map(name => [name, { build: defaultNode }]))).map(([name, definition]) => [
-          name,
+      data: {
+        nodes: [
           {
-            ...definition,
-            toolbar: (({ node }, ctx) =>
-              Row({
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  toolbarButton("duplicate", () =>
-                    ctx.addNodes({
-                      ...node,
-                      id: `${node.id}-copy-${Date.now() % 1000}`,
-                      position: { x: node.position.x + 40, y: node.position.y + 40 },
-                      selected: false,
-                    }),
-                  ),
-                  Container({ width: 2 }),
-                  toolbarButton("delete", () => void ctx.deleteElements({ nodes: [node] })),
-                ],
-              })) as NodeToolbarCustom<DefaultFlowConfig>,
+            id: "a",
+            type: "input",
+            position: { x: 60, y: 40 },
+            data: { label: "Select me, then resize" },
+            resizable: true,
+            resizeOptions: {
+              minWidth: 120,
+              minHeight: 30,
+              keepAspectRatio: false,
+            },
           },
-        ]),
-      ),
+          {
+            id: "b",
+            position: { x: 320, y: 60 },
+            data: { label: "Toolbar on the right" },
+            toolbar: { position: "right", align: "start" },
+          },
+          {
+            id: "c",
+            type: "output",
+            position: { x: 180, y: 240 },
+            data: { label: "Drag an edge end here" },
+          },
+        ],
+        edges: [
+          { id: "ab", source: "a", target: "b", markerEnd: "arrowclosed" },
+          {
+            id: "ac",
+            source: "a",
+            target: "c",
+            label: "reconnectable",
+            reconnectable: "target",
+          },
+        ],
+      },
+
+      custom: {
+        nodeToolbar: ({ node }, ctx) =>
+          Row({
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              toolbarButton("duplicate", () =>
+                ctx.addNodes({
+                  ...node,
+                  id: `${node.id}-copy-${Date.now() % 1000}`,
+                  position: {
+                    x: node.position.x + 40,
+                    y: node.position.y + 40,
+                  },
+                  selected: false,
+                }),
+              ),
+              Container({ width: 2 }),
+              toolbarButton(
+                "delete",
+                () => void ctx.deleteElements({ nodes: [node] }),
+              ),
+            ],
+          }),
+      },
       config: { minimap: { visible: false } },
       viewport: { fitView: true },
     }),
@@ -437,6 +588,7 @@ export const TranslateExtent: Story = {
         minZoom: 1,
       },
     }),
-    description: "The viewport cannot be panned outside the 600×400 flow region; the lines background shows the clamp.",
+    description:
+      "The viewport cannot be panned outside the 600×400 flow region; the lines background shows the clamp.",
   },
 };

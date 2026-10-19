@@ -68,6 +68,8 @@ export type NodeToolbarOptions = {
  * it, and `x`/`y` pin the centre to an exact offset from the node origin.
  */
 export type HandleSpec = {
+  /** Inline handles are placed by the node widget; their anchors are measured after layout. */
+  placement?: "boundary" | "inline";
   id?: string;
   type: HandleType;
   position: Position;
@@ -621,28 +623,55 @@ export type EdgeBoxCustomArgs = {
   edgeHandles: Widget[];
   args: EdgeCustomArgs;
 };
-/** Headless-owned action gestures; the visual child receives hover state. */
-export type ActionCustomArgs = {
-  action: (
-    child: (isHovered: boolean) => Widget,
-    onClick: () => void,
-    isDisabled?: boolean,
-  ) => Widget;
-};
-export type ControlsCustomArgs = ActionCustomArgs & {
-  zoomIn: (options?: { duration?: number }) => void;
-  zoomOut: (options?: { duration?: number }) => void;
-  fitView: (options?: FitViewOptions) => void;
-  toggleInteractive: () => void;
+export type ControlKind = "zoomIn" | "zoomOut" | "fitView" | "interactive";
+export type ControlButtonCustomArgs = {
+  kind: ControlKind;
+  isHovered: boolean;
+  isDisabled: boolean;
   isInteractive: boolean;
 };
-export type MinimapCustomArgs = {
-  nodes: { id: string; rect: Rect }[];
-  viewport: Viewport;
-  viewportRect: Rect;
-  bounds: Rect;
-  viewScale: number;
+export type ControlsCustomArgs = {
+  zoomIn: Widget;
+  zoomOut: Widget;
+  fitView: Widget;
+  interactive: Widget;
 };
+export type MenuItem = {
+  id?: string;
+  label: string;
+  onSelect(): void;
+  disabled?: boolean;
+  separator?: boolean;
+};
+export type MenuItemCustomArgs = {
+  label: string;
+  index: number;
+  isHovered: boolean;
+  isDisabled: boolean;
+  isSeparator: boolean;
+};
+export type NodeBodyCustomArgs = NodeCustomArgs & {
+  label: Widget;
+  /** Interaction-ready inline handles. Place each handle once in the node's widget tree. */
+  handles: { id: string | null; type: HandleType; handle: Widget }[];
+};
+export type MinimapCustomArgs = {
+  width: number;
+  height: number;
+  background: Widget;
+  nodes: Widget[];
+  mask: Widget;
+  viewport: Widget;
+};
+export type MinimapNodeCustomArgs = {
+  node: FlowNode;
+  rect: Rect;
+  isSelected: boolean;
+};
+export type MinimapViewportCustomArgs = { rect: Rect };
+export type MinimapBackgroundCustomArgs = { width: number; height: number };
+export type MinimapMaskCustomArgs = MinimapBackgroundCustomArgs &
+  MinimapViewportCustomArgs;
 
 export type FlowDiagramCustom<TConfig extends object = object> = {
   layout: CustomArgs<LayoutCustomArgs, TConfig>;
@@ -650,30 +679,26 @@ export type FlowDiagramCustom<TConfig extends object = object> = {
   nodeBox: CustomArgs<NodeBoxCustomArgs, TConfig>;
   edgeBox: CustomArgs<EdgeBoxCustomArgs, TConfig>;
   controls: CustomArgs<ControlsCustomArgs, TConfig>;
+  controlButton: CustomArgs<ControlButtonCustomArgs, TConfig>;
   minimap: CustomArgs<MinimapCustomArgs, TConfig>;
-  contextMenu: CustomArgs<ContextMenuCustomArgs & ActionCustomArgs, TConfig>;
+  minimapNode: CustomArgs<MinimapNodeCustomArgs, TConfig>;
+  minimapBackground: CustomArgs<MinimapBackgroundCustomArgs, TConfig>;
+  minimapMask: CustomArgs<MinimapMaskCustomArgs, TConfig>;
+  minimapViewport: CustomArgs<MinimapViewportCustomArgs, TConfig>;
+  contextMenu: CustomArgs<ContextMenuCustomArgs & { items: Widget[] }, TConfig>;
+  menuItem: CustomArgs<MenuItemCustomArgs, TConfig>;
   guides: CustomArgs<GuidesCustomArgs, TConfig>;
   edgeHandle: CustomArgs<EdgeHandleCustomArgs, TConfig>;
-  /** Fallback node renderer when `nodeTypes` has no entry for `node.type`. */
-  node: CustomArgs<NodeCustomArgs, TConfig>;
-  /** Fallback edge renderer when `edgeTypes` has no entry for `edge.type`. */
+  node: CustomArgs<NodeBodyCustomArgs, TConfig>;
+  nodeLabel: CustomArgs<NodeCustomArgs, TConfig>;
+  nodeToolbar: CustomArgs<NodeToolbarCustomArgs, TConfig>;
   edge: CustomArgs<EdgeCustomArgs, TConfig>;
   edgeLabel: CustomArgs<EdgeLabelCustomArgs, TConfig>;
   handle: CustomArgs<HandleCustomArgs, TConfig>;
-  /** Handles for nodes that declare none (and whose node type declares none). */
-  defaultHandles: (
-    node: FlowNode,
-    context: FlowDiagramContext<TConfig>,
-  ) => HandleSpec[];
   connectionLine: CustomArgs<ConnectionLineCustomArgs, TConfig>;
   background: CustomArgs<BackgroundCustomArgs, TConfig>;
   selectionBox: CustomArgs<SelectionBoxCustomArgs, TConfig>;
   nodesSelectionRect: CustomArgs<NodesSelectionRectCustomArgs, TConfig>;
-  /** Geometry for built-in edge types; override to tune curvature or add types. */
-  edgePath: (
-    args: EdgePathCustomArgs,
-    context: FlowDiagramContext<TConfig>,
-  ) => EdgePathResult;
   /** Resize lines/handles shown around a selected resizable node. */
   resizeControl: CustomArgs<ResizeControlCustomArgs, TConfig>;
   /** Grab area at an edge endpoint; invisible by default. */
@@ -681,34 +706,39 @@ export type FlowDiagramCustom<TConfig extends object = object> = {
 };
 
 export type NodeCustom<TConfig extends object = object> = CustomArgs<
-  NodeCustomArgs,
+  NodeBodyCustomArgs,
   TConfig
 >;
-export type NodeTypeDefinition<TConfig extends object = object> = {
-  build: NodeCustom<TConfig>;
-  /** Zoom breakpoints that opt this type into discrete LOD rebuilds. */
-  lod?: number[];
-  group?: true;
-  editable?: true;
-  handles?: HandleSpec[] | ((node: FlowNode) => HandleSpec[]);
-  /** Toolbar rendered in screen space next to the node (see `node.toolbar`). */
-  toolbar?: NodeToolbarCustom<TConfig>;
-};
-export type NodeType<TConfig extends object = object> =
-  | NodeCustom<TConfig>
-  | NodeTypeDefinition<TConfig>;
-
 export type EdgeCustom<TConfig extends object = object> = CustomArgs<
   EdgeCustomArgs,
   TConfig
 >;
-export type EdgeTypeDefinition<TConfig extends object = object> = {
-  build: EdgeCustom<TConfig>;
-  getPath?: (params: EdgePathParams, edge: FlowEdge | null) => EdgePathResult;
+
+/** Per-type interaction metadata. All visual builders live in `custom`. */
+export type NodeOptions = {
+  lod?: number[];
+  group?: boolean;
+  editable?: boolean;
+  handles?: HandleSpec[] | ((node: FlowNode) => HandleSpec[]);
 };
-export type EdgeType<TConfig extends object = object> =
-  | EdgeCustom<TConfig>
-  | EdgeTypeDefinition<TConfig>;
+export type GetHandlesFn<TConfig extends object = object> = (
+  node: FlowNode,
+  context: FlowDiagramContext<TConfig>,
+) => HandleSpec[];
+export type GetEdgePathFn<TConfig extends object = object> = (
+  args: EdgePathCustomArgs,
+  context: FlowDiagramContext<TConfig>,
+) => EdgePathResult;
+export type GetContextMenuItemsFn<TConfig extends object = object> = (
+  args: ContextMenuCustomArgs,
+  context: FlowDiagramContext<TConfig>,
+) => MenuItem[];
+export type GetControlsOptionsFn<TConfig extends object = object> = (
+  context: FlowDiagramContext<TConfig>,
+) => { zoomDuration?: number; fitViewDuration?: number };
+export type GetMinimapOptionsFn<TConfig extends object = object> = (
+  context: FlowDiagramContext<TConfig>,
+) => { width: number; height: number; pannable: boolean; padding?: number };
 
 export type FlowDiagramData = { nodes: FlowNode[]; edges: FlowEdge[] };
 
@@ -716,8 +746,14 @@ export type FlowDiagramProps<TConfig extends object = object> = {
   data: FlowDiagramData;
   custom: FlowDiagramCustom<TConfig>;
   config?: TConfig;
-  nodeTypes?: Record<string, NodeType<TConfig>>;
-  edgeTypes?: Record<string, EdgeType<TConfig>>;
+  nodeOptions?: Record<string, NodeOptions>;
+  getHandles?: GetHandlesFn<TConfig>;
+  getEdgePath?: GetEdgePathFn<TConfig>;
+  getContextMenuItems?: GetContextMenuItemsFn<TConfig>;
+  getControlsOptions?: GetControlsOptionsFn<TConfig>;
+  getMinimapOptions?: GetMinimapOptionsFn<TConfig>;
+  /** Rebuild visual slots on graph-wide hover/selection changes (e.g. dim unrelated nodes). */
+  highlightConnected?: boolean;
   layout?: LayoutAlgorithm | LayoutConfig;
   viewport?: {
     initial?: Viewport;
