@@ -1,6 +1,6 @@
-import { Border, BorderRadius, BoxDecoration, Column, Container, CrossAxisAlignment, EdgeInsets, GestureDetector, InputDecoration, MainAxisAlignment, MainAxisSize, Opacity, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextField, TextStyle, type Widget } from "flitter-ui";
-import { FlowController, createId, type FlowNode, type FlowEdge, type XYPosition, type HandleSpec } from "flitter-ui/diagram";
-import { FlowDiagram, defaultEdge } from "@/components/diagram/flow-diagram";
+import { SizedBox, LayoutBuilder, Border, BorderRadius, BoxDecoration, Column, Container, CrossAxisAlignment, EdgeInsets, GestureDetector, InputDecoration, MainAxisAlignment, MainAxisSize, Opacity, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextField, TextStyle, type Widget } from "flitter-ui";
+import { FlowDiagramController, createId, type FlowNode, type FlowEdge, type XYPosition, type HandleSpec } from "flitter-ui/diagram";
+import FlowDiagram, { defaultEdge } from "@/components/diagram/flow-diagram";
 
 type Theme = "light" | "dark";
 type Port = { id: string; type: string };
@@ -20,7 +20,7 @@ const kinds: Record<string, { label: string; inputs: Port[]; outputs: Port[]; de
 };
 class Dataflow extends StatefulWidget { constructor(readonly theme: Theme) { super(theme); } createState() { return new DataflowState(); } }
 class DataflowState extends State<Dataflow> {
-  flow = new FlowController();
+  flow = new FlowDiagramController();
   diagram?: Widget;
   query = "";
   search: { at: XYPosition; node: string; handle: string | null; direction: "source" | "target"; type: string } | null = null;
@@ -44,7 +44,7 @@ class DataflowState extends State<Dataflow> {
     return this.widget.theme === "dark" ? { image: "#60a5fa", mask: "#a78bfa", number: "#fbbf24", text: "#4ade80" } : { image: "#1d4ed8", mask: "#6d28d9", number: "#92400e", text: "#15803d" };
   }
   get c() { return this.widget.theme === "dark" ? { bg: "#11141a", card: "#202630", ink: "#e2eaf4", mute: "#8d9aaf", line: "#3b4556" } : { bg: "#edf1f6", card: "#fff", ink: "#233248", mute: "#72849d", line: "#cad5e3" }; }
-  text(value: string, size = 11, color = this.c.ink) { return Text(value, { style: new TextStyle({ fontFamily: "ui-monospace, monospace", fontSize: size, height: 1.2, color }) }); }
+  text(value: string, size = 11, color = this.c.ink) { return Text(value, { style: new TextStyle({ fontFamily: "ui-monospace, monospace", fontSize: Math.max(13, size), height: 1.2, color }) }); }
   button(label: string, fn: () => void) {
     return GestureDetector({
       onMouseDown: (e) => e.stopPropagation(),
@@ -137,10 +137,9 @@ class DataflowState extends State<Dataflow> {
     const c = this.c;
     return FlowDiagram({
       controller: this.flow,
-      nodes: this.nodes,
-      edges: this.edges,
-      viewport: { minZoom: 0.15, fitView: { padding: 0.4, maxZoom: 0.95 } },
-      config: { colorMode: this.widget.theme, colors: { background: c.bg }, minimap: { visible: true, width: 150, height: 100 } },
+      data: { nodes: this.nodes, edges: this.edges },
+      viewport: { minZoom: 0.15, fitView: { padding: 0.12, maxZoom: 1 } },
+      config: { edgeLabel: { fontSize: 13 }, colorMode: this.widget.theme, colors: { background: c.bg }, minimap: { visible: true, width: 150, height: 100 } },
       interaction: { connect: { validate: (e) => e.source !== e.target && !!this.type(e.source, e.sourceHandle, "source") && this.type(e.source, e.sourceHandle, "source") === this.type(e.target, e.targetHandle, "target") } },
       custom: {
         edge: (a, ctx) => Opacity({ opacity: a.sourceNode.data.bypass ? 0.35 : 1, child: defaultEdge({...a, edge: {...a.edge, style: { stroke: this.wire(a.edge), strokeWidth: 2 } } }, ctx) }),
@@ -160,7 +159,7 @@ class DataflowState extends State<Dataflow> {
                 this.button(node.data.bypass ? "Enable" : "Bypass", () => this.flow.updateNodeData(node.id, { bypass: !node.data.bypass }))
               ]
             }),
-          build: ({ node, selected }) => {
+          build: ({ node, isSelected: selected }) => {
             const spec = kinds[String(node.data.kind)],
               rows = Math.max(spec.inputs.length, spec.outputs.length);
             return Container({
@@ -208,7 +207,7 @@ class DataflowState extends State<Dataflow> {
             })
           ])
         }),
-        Positioned({ left: 125, bottom: 12, child: this.text("Blue: image · violet: mask · gold: number · green: text", 10, this.c.mute) }),
+        Positioned({ key: "diagram-hint", bottom: 12, left: 0, right: 0, child: LayoutBuilder({ builder: (_context, size) => size.maxWidth < 500 ? SizedBox.shrink() : Container({ padding: EdgeInsets.only({ left: 125, right: 16 }), child: this.text("Blue: image · violet: mask · gold: number · green: text", 10, this.c.mute) }) }) }),
         ...(point
           ? [
               Positioned({

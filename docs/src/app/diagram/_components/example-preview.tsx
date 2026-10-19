@@ -5,7 +5,7 @@ import LiveDiagram from "@/components/live-diagram";
 import { findEntry, type ExampleFactory } from "../_data/gallery/catalog";
 
 /** A gallery example, loaded on demand, with SVG/Canvas and reset controls. */
-export default function ExamplePreview({ slug }: { slug: string }) {
+export default function ExamplePreview({ slug, presentation = "gallery" }: { slug: string; presentation?: "gallery" | "hero" }) {
   const entry = findEntry(slug);
   const [create, setCreate] = useState<ExampleFactory | null>(null);
   const [renderer, setRenderer] = useState<"svg" | "canvas">("svg");
@@ -14,17 +14,18 @@ export default function ExamplePreview({ slug }: { slug: string }) {
   useEffect(() => {
     let live = true;
     entry?.load?.().then((module) => {
-      if (live) setCreate(() => module.default);
+      if (live) setCreate(() => (theme: Parameters<ExampleFactory>[0]) => module.default(theme, { presentation }));
     });
     return () => {
       live = false;
     };
-  }, [entry]);
+  }, [entry, presentation]);
 
   return (
     <div
       className="overflow-hidden rounded-xl border border-line bg-[var(--chart-bg)]"
       data-example={slug}
+      data-presentation={presentation}
     >
       <div className="flex justify-end gap-1 border-b border-line px-3 py-2">
         {(["svg", "canvas"] as const).map((value) => (
@@ -46,9 +47,9 @@ export default function ExamplePreview({ slug }: { slug: string }) {
           Reset
         </button>
       </div>
-      <div className="h-[420px] sm:h-[540px]">
+      <div data-diagram-stage className={presentation === "hero" ? "h-[300px] sm:h-[380px]" : "h-[320px] sm:h-[540px]"}>
         {create && (
-          <LiveDiagram key={`${renderer}-${revision}`} create={create} renderer={renderer} lazy />
+          <LiveDiagram key={`${renderer}-${revision}`} create={create} renderer={renderer} lazy inspectLayout />
         )}
       </div>
     </div>

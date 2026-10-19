@@ -1,11 +1,11 @@
-import { Alignment, AnimatedRotation, Border, BorderRadius, BoxDecoration, Column, Container, CrossAxisAlignment, EdgeInsets, GestureDetector, MainAxisSize, Opacity, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextStyle, type Widget } from "flitter-ui";
-import { FlowController, layeredLayout, type FlowNode, type FlowEdge } from "flitter-ui/diagram";
-import { FlowDiagram, defaultEdge } from "@/components/diagram/flow-diagram";
+import { SizedBox, LayoutBuilder, Alignment, AnimatedRotation, Border, BorderRadius, BoxDecoration, Column, Container, CrossAxisAlignment, EdgeInsets, GestureDetector, MainAxisSize, Opacity, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextStyle, type Widget } from "flitter-ui";
+import { FlowDiagramController, layeredLayout, type FlowNode, type FlowEdge } from "flitter-ui/diagram";
+import FlowDiagram, { defaultEdge } from "@/components/diagram/flow-diagram";
 
 type Theme = "light" | "dark";
 class Pipeline extends StatefulWidget { constructor(readonly theme: Theme) { super(theme); } createState() { return new PipelineState(); } }
 class PipelineState extends State<Pipeline> {
-  flow = new FlowController();
+  flow = new FlowDiagramController();
   diagram?: Widget;
   selected = "integration";
   hovered: string | null = null;
@@ -40,7 +40,7 @@ class PipelineState extends State<Pipeline> {
   ];
   edges: FlowEdge[] = [["lint", "integration"], ["unit", "integration"], ["unit", "image"], ["integration", "staging"], ["image", "staging"], ["staging", "smoke"]].map(([source, target]) => ({ id: `${source}-${target}`, source, target, type: "run", markerEnd: "arrowclosed" }));
   get c() { return this.widget.theme === "dark" ? { bg: "#101820", card: "#1b2733", ink: "#e5eff8", mute: "#90a3b6", line: "#344759" } : { bg: "#f4f7fb", card: "#fff", ink: "#24374a", mute: "#73859a", line: "#d8e2ed" }; }
-  text(value: string, size = 12, color = this.c.ink) { return Text(value, { style: new TextStyle({ fontFamily: "ui-monospace, monospace", fontSize: size, color }) }); }
+  text(value: string, size = 12, color = this.c.ink) { return Text(value, { style: new TextStyle({ fontFamily: "ui-monospace, monospace", fontSize: Math.max(13, size), color }) }); }
   button(label: string, fn: () => void) {
     return GestureDetector({
       onMouseDown: (e) => e.stopPropagation(),
@@ -105,8 +105,7 @@ class PipelineState extends State<Pipeline> {
     const c = this.c;
     return FlowDiagram({
       controller: this.flow,
-      nodes: this.nodes,
-      edges: this.edges,
+      data: { nodes: this.nodes, edges: this.edges },
       interaction: "viewer",
       // Stages flow LR; jobs keep two compact rows inside each frame.
       layout: {
@@ -114,12 +113,12 @@ class PipelineState extends State<Pipeline> {
         options: { direction: "LR", childPadding: 12, rankSpacing: 36 }
       },
       viewport: { minZoom: 0.15, fitView: { padding: 0.12, maxZoom: 1 } },
-      config: { colorMode: this.widget.theme, colors: { background: c.bg }, minimap: { visible: false }, controls: { showInteractive: false } },
+      config: { edgeLabel: { fontSize: 13 }, colorMode: this.widget.theme, colors: { background: c.bg }, minimap: { visible: false }, controls: { showInteractive: false } },
       nodeTypes: {
         stage: {
           group: true,
           handles: [],
-          build: ({ node, collapsed, hiddenChildCount }) =>
+          build: ({ node, isCollapsed: collapsed, hiddenChildCount }) =>
             Container({
               padding: EdgeInsets.all(12),
               decoration: new BoxDecoration({ color: c.bg, border: Border.all({ color: c.line, width: 1 }), borderRadius: BorderRadius.circular(12) }),
@@ -128,7 +127,7 @@ class PipelineState extends State<Pipeline> {
         },
         job: {
           handles: [],
-          build: ({ node, selected }) => {
+          build: ({ node, isSelected: selected }) => {
             const status = String(node.data.status),
               color = ({ success: "#22a06b", failed: "#e44855", running: "#dba22b", queued: c.mute } as Record<string, string>)[status];
             const icon = Container({
@@ -187,6 +186,7 @@ class PipelineState extends State<Pipeline> {
           })
         }),
         Positioned({
+          key: "diagram-status",
           right: 12,
           bottom: 15,
           child: Container({
@@ -204,7 +204,7 @@ class PipelineState extends State<Pipeline> {
             })
           })
         }),
-        Positioned({ bottom: 14, left: 125, child: this.text("Viewer · hover a job to trace its chain · click a stage to fold", 10, this.c.mute) })
+        Positioned({ bottom: 14, left: 0, right: 0, child: LayoutBuilder({ builder: (_context, size) => size.maxWidth < 800 ? SizedBox.shrink() : Container({ padding: EdgeInsets.only({ left: 125, right: 328 }), child: SizedBox({ key: "diagram-hint", child: this.text("Viewer · hover to trace · click a stage to fold", 10, this.c.mute) }) }) }) })
       ]
     });
   }

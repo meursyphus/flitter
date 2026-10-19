@@ -69,7 +69,7 @@ const chips = [...new Set(entries.flatMap((e) => e.chips))];
 const wants = (section, id) => !only || only.includes(section) || (id !== undefined && only.includes(id));
 
 const browser = await chromium.launch({ channel: process.env.DIAGRAM_DOCS_BROWSER });
-const context = await browser.newContext({ viewport: { width: 1440, height: 1100 }, permissions: ["clipboard-read", "clipboard-write"] });
+const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, permissions: ["clipboard-read", "clipboard-write"] });
 const page = await context.newPage();
 page.setDefaultTimeout(15000);
 page.setDefaultNavigationTimeout(90000);
@@ -127,6 +127,49 @@ async function center(locator) {
   await locator.first().waitFor();
   const box = await locator.first().boundingBox();
   return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+}
+
+/** Read complete node/panel boxes from the live layout, including clipped and Canvas-only content. */
+async function layoutSnapshot(preview) {
+  const probe = preview.locator('[data-diagram-layout]');
+  await page.waitForFunction(el => { try { return el.diagramLayout().nodes.length > 0; } catch { return false; } }, await probe.elementHandle());
+  return probe.evaluate(el => el.diagramLayout());
+}
+const intersects = (a, b) => a.x < b.x + b.width - 0.5 && a.x + a.width > b.x + 0.5 && a.y < b.y + b.height - 0.5 && a.y + a.height > b.y + 0.5;
+async function initialLayout(preview, slug) {
+  const snapshot = await layoutSnapshot(preview);
+  const stage = await preview.locator('[data-diagram-stage]').boundingBox();
+  // The tall, top-anchored tree is the only deliberate partial view. Never accept an arbitrary visible node.
+  const required = slug === "linear-steps" ? snapshot.nodes.filter(node => node.id === "trigger") : snapshot.nodes;
+  assert(required.length, `${slug}: missing required initial nodes`);
+  const clipped = required.filter(node => node.x < 7.5 || node.y < 7.5 || node.x + node.width > stage.width - 7.5 || node.y + node.height > stage.height - 7.5);
+  assert.deepEqual(clipped, [], `${slug}: initial node bounds must fit with an 8px margin`);
+  if (slug === "linear-steps") {
+    const header = snapshot.panels.find(panel => panel.role === "diagram-header");
+    assert(header && required[0].y >= header.y + header.height + 8, "trigger is fully below the header");
+  }
+  const hints = snapshot.panels.filter(panel => panel.role === "diagram-hint");
+  const statuses = snapshot.panels.filter(panel => panel.role === "diagram-status");
+  for (const hint of hints) for (const status of statuses) assert(!intersects(hint, status), `${slug}: hint and status panels intersect`);
+  return snapshot;
+}
+
+/** Prefer >=10px, but do not crop the graph to force that target on a small stage. */
+async function readableText(preview) {
+  const snapshot = await layoutSnapshot(preview);
+  const stage = await preview.locator('[data-diagram-stage]').boundingBox();
+  const nodes = await preview.getAttribute('data-example') === 'linear-steps' ? snapshot.nodes.filter(node => node.id === 'trigger') : snapshot.nodes;
+  const width = Math.max(...nodes.map(n => n.x + n.width)) - Math.min(...nodes.map(n => n.x));
+  const height = Math.max(...nodes.map(n => n.y + n.height)) - Math.min(...nodes.map(n => n.y));
+  const growthToFit = Math.min((stage.width - 16) / width, (stage.height - 16) / height, 1 / nodes[0].scale);
+  const small = await preview.locator("svg text").evaluateAll((texts, growthToFit) => texts.flatMap(el => {
+    const transform = el.getScreenCTM(), style = getComputedStyle(el), box = el.getBoundingClientRect();
+    const stage = el.closest("[data-diagram-stage]")?.getBoundingClientRect();
+    if (!transform || !stage || !el.textContent?.trim() || Number(style.opacity) === 0 || box.right < stage.left || box.left > stage.right || box.bottom < stage.top || box.top > stage.bottom) return [];
+    const pixels = parseFloat(style.fontSize) * Math.hypot(transform.c, transform.d);
+    return pixels < 9.95 && pixels * growthToFit >= 10 ? [{ text: el.textContent, pixels }] : [];
+  }), growthToFit);
+  assert.deepEqual(small, [], "initial text should reach 10px when the complete graph can still fit");
 }
 
 /** The example's SVG stage as a standalone file the card can show with <img>. */
@@ -231,6 +274,9 @@ const cellBehaviour = {
     const at = await center(svgText(el, "Review"));
     await page.mouse.click(at.x, at.y, { button: "right" });
     await svgText(el, "Duplicate").waitFor();
+    const font = await svgText(el, "Duplicate").first().evaluate(el => getComputedStyle(el).fontFamily);
+    assert(font.includes("system-ui"), `menu font: ${font}`);
+    assert(await el.locator('svg [filter*="drop-shadow"]').count(), "menu has a shadow");
     await page.keyboard.press("Escape");
     return "right-click opens the menu";
   },
@@ -311,12 +357,35 @@ try {
             await preview.getByRole("button", { name: renderer, exact: true }).click();
             if (renderer === "SVG") {
               await svgReady(preview);
+              await page.waitForTimeout(1200);
+              await readableText(preview);
+              if (slug === "dataflow-graph") {
+                const stroke = color === "dark" ? "#93c5fd" : "#2563eb";
+                assert(await preview.locator(`svg path[stroke="${stroke}"][stroke-width="2"][fill="none"]`).count(), "minimap has a visible viewport outline");
+              }
               if (capture) await writeThumbnail(preview, slug, color);
             } else {
               await preview.locator("canvas").first().waitFor();
               await settle();
               assert(await preview.locator("canvas").first().evaluate((canvas) => canvas.width > 0 && canvas.height > 0), "canvas size");
+              if (slug === "dataflow-graph") {
+                const pixels = await preview.locator("canvas").first().evaluate((canvas, color) => {
+                  const box = canvas.getBoundingClientRect(), scale = canvas.width / box.width;
+                  const data = canvas.getContext("2d").getImageData(Math.round((box.width - 165) * scale), Math.round((box.height - 115) * scale), Math.round(150 * scale), Math.round(100 * scale)).data;
+                  const node = color === "dark" ? [148, 163, 184] : [100, 116, 139];
+                  const outline = color === "dark" ? [147, 197, 253] : [37, 99, 235];
+                  let nodes = 0, border = 0;
+                  for (let i = 0; i < data.length; i += 4) {
+                    if (node.every((v, channel) => Math.abs(data[i + channel] - v) < 4)) nodes++;
+                    if (outline.every((v, channel) => Math.abs(data[i + channel] - v) < 4)) border++;
+                  }
+                  return { nodes, border };
+                }, color);
+                assert(pixels.nodes > 4 && pixels.border > 4, `minimap contrast in Canvas: ${JSON.stringify(pixels)}`);
+              }
             }
+            await page.waitForTimeout(1200);
+            await initialLayout(preview, slug);
             await shot(`${slug}-${color}-${renderer.toLowerCase()}`, preview);
           }
         }
@@ -348,6 +417,42 @@ try {
         return "run, drag, reset";
       });
     }
+  }
+
+  if (wants("examples", "deployment-canvas")) {
+    await step("deployment inspector follows deletion", async () => {
+      await open("/diagram/gallery/deployment-canvas/");
+      const preview = page.locator('[data-example="deployment-canvas"]').first();
+      await svgReady(preview);
+      await svgText(preview, "Redeploy").waitFor();
+      await clickWidget(svgText(preview, "checkout-api").first());
+      await page.keyboard.press("Backspace");
+      await page.waitForFunction(() => ![...document.querySelectorAll('[data-example="deployment-canvas"] svg text')].some(el => el.textContent === "Redeploy"));
+      assert.equal(await svgText(preview, "checkout-api").count(), 0);
+      return "deleted service and its Redeploy action disappear";
+    });
+  }
+  if (wants("examples", "state-machine")) {
+    await step("state transition labels have separate positions", async () => {
+      await open("/diagram/gallery/state-machine/");
+      const preview = page.locator('[data-example="state-machine"]').first();
+      await svgReady(preview);
+      const a = await svgText(preview, "SUBMIT").first().boundingBox();
+      const b = await svgText(preview, "RETRY").first().boundingBox();
+      assert(a && b && (a.y + a.height < b.y || b.y + b.height < a.y), "SUBMIT and RETRY must not stack");
+    });
+  }
+  if (wants("hero")) {
+    await step("landing focuses the decision branch", async () => {
+      await open("/diagram/");
+      const preview = page.locator('[data-presentation="hero"]').first();
+      await svgReady(preview);
+      await readableText(preview);
+      const label = await svgText(preview, "Qualified lead?").first().boundingBox();
+      const stage = await preview.locator('[data-diagram-stage]').boundingBox();
+      assert(label && stage && label.x >= stage.x && label.x + label.width <= stage.x + stage.width, "decision is framed inside the hero");
+      assert(stage.height <= 380, "hero has a compact stage");
+    });
   }
 
   /* Gallery index: a thumbnail card per entry, every chip filters correctly. */
@@ -399,7 +504,7 @@ try {
         );
         assert.deepEqual(wrapped, [], `wraps at ${width}px`);
       }
-      await page.setViewportSize({ width: 1440, height: 1100 });
+      await page.setViewportSize({ width: 1440, height: 900 });
       return "1440px and 390px";
     });
   }
@@ -464,10 +569,32 @@ try {
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${route}: mobile horizontal overflow`);
         await shot(`mobile-${route.split("/").filter(Boolean).join("-")}`);
       }
+      for (const slug of slugs) {
+        await open(`/diagram/gallery/${slug}/`);
+        const preview = page.locator(`[data-example="${slug}"]`).first();
+        await svgReady(preview);
+        await page.waitForTimeout(1200);
+        const stage = await preview.locator('[data-diagram-stage]').boundingBox();
+        assert(stage.height <= 320, `${slug}: compact mobile stage`);
+        await initialLayout(preview, slug);
+        await readableText(preview);
+        await preview.getByRole("button", { name: "Canvas", exact: true }).click();
+        await preview.locator("canvas").waitFor();
+        await page.waitForTimeout(1200);
+        await initialLayout(preview, slug);
+        await preview.getByRole("button", { name: "SVG", exact: true }).click();
+        await svgReady(preview);
+        const overflowing = await preview.locator('svg text').evaluateAll(texts => texts.filter(el => {
+          const stage = el.closest('[data-diagram-stage]').getBoundingClientRect(), box = el.getBoundingClientRect();
+          // Fixed hint text is at the bottom; node containment is checked separately above.
+          return /Drag an output into empty|right-click empty space|Blue: image|Select → collapse|Double-click frame:|Viewer · hover|Drag a violet FK|Select → append|Right-click a connection →/.test(el.textContent ?? '') && (box.left < stage.left || box.right > stage.right);
+        }).map(el => el.textContent));
+        assert.deepEqual(overflowing, [], `${slug}: no overflowing hint`);
+      }
       await page.getByRole("button", { name: "Open sidebar navigation" }).click();
       await page.getByRole("link", { name: "Interactions", exact: true }).filter({ visible: true }).click();
       await page.waitForURL("**/diagram/interactions/");
-      await page.setViewportSize({ width: 1440, height: 1100 });
+      await page.setViewportSize({ width: 1440, height: 900 });
     });
   }
 } finally {

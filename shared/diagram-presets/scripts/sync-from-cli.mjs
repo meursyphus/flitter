@@ -21,7 +21,7 @@ for (const item of items) {
   const outputDir = resolveItemOutputDir(item, defaultStyle);
   const pascal = item.name.split("-").map((part) => part[0].toUpperCase() + part.slice(1)).join("");
   const exportName = item.style === defaultStyle ? pascal : `${item.style[0].toUpperCase()}${item.style.slice(1)}${pascal}`;
-  lines.push(`export { ${registry.diagramMetadata[item.name].componentName} as ${exportName} } from "./${outputDir}";`);
+  lines.push(`export { default as ${exportName} } from "./${outputDir}";`);
 }
 await writeFile(path.join(presetsRoot, "index.ts"), `${lines.join("\n")}\n`);
 console.log(`Synced ${items.length} diagram preset(s).`);

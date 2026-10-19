@@ -186,3 +186,77 @@ Realistic wall clock: 3 hours if P2 lands clean, 4 if the waypoint router or his
 - [x] P2 interactions (Astra + one Fable fix, 2026-10-18) · [x] P2' docs skeleton (Opus, 2026-10-18: 218 budgeted words, 25 interaction cells of which 13 wait on P2, 12-slug catalog with 5 loaded from the old example files)
 - [x] P3 examples 1–12 (Astra, 2026-10-18; polish pass done: scene z-order so edges paint above filled groups, knowledge-graph straight edges, pipeline-run legibility, hover-only edge slots, search placeholders) · [x] P3' gallery wiring and QA (Opus, 2026-10-18: static SVG thumbnails per theme, 46/46 browser checks over 12 examples, 31 chips and 25 cells, 246 budgeted words)
 - [x] P4 review + PR (Fable, 2026-10-18: full vitest 26 files/244 tests, Playwright 88 passed/1 skipped, docs build 160 pages, PR #169 retitled and described; branch not pushed)
+
+## 9. Chart-identical customization (second pass, 2026-10-18)
+
+User request, verbatim: "다이어그램 이거 커스텀하는거 차트랑 완전 똑같은 구조로 코드 짜셈 ux나 인터렉션을 내장하는거고 커스텀 인터페이스나 이걸 구현하는 과정을 전부 차트 코드와 비슷한 계열로 통일시켜 완전 똑같이".
+Meaning: the engine keeps owning every UX/interaction (§2 rule 1 stands), but the customization surface, the file layout, the layering and the way a style is built must read exactly like a chart (`packages/chart`). Someone who has customized `BarChart` must recognise every file of `flow-diagram` without docs.
+
+Reference to copy, file by file: `packages/chart/src/headless/bar-chart/*`, `packages/chart/registry/templates/charts/bar-chart/*`, `shared/chart-presets/bar-chart/*`.
+
+### 9.1 Gaps found (current → chart)
+
+| Area | Diagram today | Chart | Target |
+| --- | --- | --- | --- |
+| Headless folder | `src/headless/flow/{flow,controller,provider,scene,interaction,types}.ts` | `src/headless/bar-chart/{chart,controller,provider,types,index}.ts` | `src/headless/flow-diagram/{diagram,controller,provider,types,index}.ts` (+ `scene.ts`, `interaction.ts` kept as internals) |
+| Entry | `Flow(props)` with `nodes`, `edges` top level | `BarChart({ data, custom, config, ... })`, default export of `index.ts` | `FlowDiagram({ data: { nodes, edges }, custom, config, ... })`, default export of `src/headless/flow-diagram/index.ts`; `flitter-ui/diagram` exports it as `FlowDiagram` |
+| Provider | `FlowProvider.of` only; `FlowRoot` hand-rolls `Provider` | `BarChartProvider({...})` = `ChangeNotifierProvider` with `create`/`update` + `.of` | `FlowDiagramProvider({...})` with the same shape and `.of` (keep `FlowRoot` internals for host keyboard wiring, but behind the provider) |
+| Controller name | `FlowController` | `BarChartController` | `FlowDiagramController` (no alias; 0.2.0 shipped the old API, nothing to keep compatible) |
+| Context type | `FlowContext<TConfig>` | `BarChartContext<TConfig> = BarChartController & { config: TConfig }` | `FlowDiagramContext<TConfig>` |
+| Slot type | `Builder<TArgs, TConfig>`; some slots return `Widget \| null` | `CustomArgs<T, TConfig> = (args, context) => Widget` | `CustomArgs<T, TConfig>`; "nothing" is `SizedBox.shrink()` like chart (`tooltip: () => SizedBox.shrink()` in base) |
+| Custom type | `FlowCustom<TConfig>` | `BarChartCustom<TConfig>` | `FlowDiagramCustom<TConfig>` |
+| Composition | flat leaf slots; layering fixed in `flow.ts`; controls/minimap pushed as `panels` widgets | parent slots receive built children: `layout({ title, legends, plot })`, `plot({ xAxis, yAxis, dataView, grid, ... })`, `dataView({ barGroups })`, `barBox({ bar })` | see 9.3 |
+| Base layer | none; `defaultCustom` mixes structure (`defaultHandles`, `edgePath`, invisible reconnect area) with visuals | `base/index.ts` with `baseDefaults` (structural, non-visual) + `BaseBarChart` | `base/index.ts` with `baseDefaults` + `BaseFlowDiagram` |
+| Style plumbing | `FlowDiagram` in `styles/default/index.ts`, `createDefaultConfig` | `plugin.ts` (`StyleConfig { custom, createConfig }`, `BarChartStyleMap`, `barChartStyleConfigs`), `styles/<s>/{config,index,parts}`, `index.ts` with `style` prop | identical, with one style `default` |
+| Part naming | `defaultNode`, `DefaultControls`, `DefaultMiniMap` | `agBar`, `agLegend`, `agTitle` (style prefix + slot name, lower camel functions) | `defaultNode`, `defaultControls`, `defaultMinimap` ... every part is a `(args, context) => Widget` function named `<style><Slot>` |
+| Template location | `packages/diagram/src/styles/default` | `packages/chart/registry/templates/charts/<name>/` | `packages/diagram/registry/templates/diagrams/flow-diagram/` (`index.ts`, `plugin.ts`, `base/`, `styles/default/{config.ts,index.ts,parts/}`) |
+| Installed preset | `flow-diagram/{index.ts,config.ts,parts/}` | `bar-chart/{index.ts, base/, style/{index,config}.ts + parts}` | `flow-diagram/{index.ts, base/, style/{index.ts,config.ts,parts/}}` |
+| Arg names | `selected`, `hovered`, `dragging`, `isConnectionTarget`, `isNeighbour` mixed | `isHovered`, `isVisible` | every boolean arg is `is*`: `isSelected`, `isHovered`, `isDragging`, `isDraggable`, `isSelectable`, `isConnectable`, `isResizable`, `isResizing`, `isEditing`, `isDropTarget`, `isOverlapping`, `isCollapsed`, `isNeighbour`, `isConnectionTarget`, `isAnimated`, `isReconnecting`, `isActive`, `isConnecting`, `isConnectionCandidate`, `isValidCandidate`, `isConnectionInProgress` |
+
+### 9.2 Decisions (Opus, 2026-10-18; flag in the PR, user may overrule)
+
+1. `nodeTypes` / `edgeTypes` stay: they are diagram-only registries, the same way `getScale` / `direction` are chart-only props. Their `build` uses the same `CustomArgs` signature as `custom.node`. When `node.type` has no entry, `custom.node` renders it.
+2. `interaction`, `can`, `on`, `layout`, `viewport`, `controller` stay as behaviour props (the chart analogue is `getScale`, `getScaleOptions`, `direction`). Their shapes do not change in this pass.
+3. `panels` prop is removed. Controls and minimap become slots composed by `layout`; extra overlays are added by overriding `layout` (chart users add things by overriding `layout` too).
+4. One style only (`default`), but the plumbing (`plugin.ts`, `StyleMap`, `style` prop in the template `index.ts`) exists so a second style is a folder, as in chart.
+5. Package names stay as they are (`flitter-ui`, `flitter-ui/diagram`, `flitter-diagram`); the rename is issue #170's own PR.
+
+### 9.3 Composition slots (new)
+
+Mirror chart's `layout → plot → dataView → barGroup → barBox → bar` chain. Headless builds every child widget with its gestures already attached and hands it to the parent slot; base provides structural defaults; the style overrides visuals.
+
+```
+layout({ background, viewport, selectionBox, toolbars, controls, minimap, contextMenu })   base: Stack in that order
+  viewport({ edges, nodes, connectionLine, nodesSelectionRect, guides })                  base: the z-sorted scene (keep current paint order rules)
+    nodeBox({ node: Widget, handles: Widget[], resizeControls: Widget[], toolbar }, args)   base: FlowNodeItem placement (structural)
+      node(args)               style
+      handle(args)             style
+      resizeControl(args)      style
+    edgeBox({ edge: Widget, label: Widget, reconnectHandles: Widget[], edgeHandles: Widget[] }, args)  base
+      edge(args) / edgeLabel(args) / reconnectHandle(args) / edgeHandle(args)   style
+  controls({ zoomIn, zoomOut, fitView, toggleInteractive })  style (callbacks come from headless, like chart legend onClick)
+  minimap({ nodes, viewport, ... })                           style
+  contextMenu(args) / selectionBox(args) / background(args) / guides(args) / connectionLine(args) / nodesSelectionRect(args)   style
+```
+
+Non-widget slots stay but move to base: `defaultHandles(node, ctx)` and `edgePath(args, ctx)` (geometry, no visuals). Visibility of controls/minimap is read from config in base (`config.controls.visible`), never a prop.
+
+Headless keeps owning all GestureDetectors (CLAUDE.md headless rule 1). Slots that receive pre-built children must not be able to drop gestures by accident: the gesture wrapper is applied around the slot's returned widget for leaves (as today), and parents only arrange.
+
+Perf invariant stays: per-node/edge signals and the widget cache keyed by id. A node drag must still rebuild one node (Playwright asserts it).
+
+### 9.4 Files that move with it
+
+`packages/diagram/registry/index.mjs` (templates root + preset layout `index.ts, base/, style/`), `shared/diagram-presets` sync script and output, `packages/flitter/scripts/check-diagram-install.mjs` + `sync-cli-registry.mjs` if it lists diagram files, `packages/flitter` CLI renderer (`renderDiagramTemplateFile` import rewrites for the new depth), `packages/diagram/src/index.ts` / `engine.ts`, `docs/src/app/diagram/**` (12 `_examples`, interactions cells, api tables via `node docs/scripts/gen-diagram-api.mjs`), docs alias `@/components/diagram/flow-diagram`, `dev/storybook/src/stories/Diagram/*`, `dev/performance/src/routes/interaction/diagram/+page.svelte` and diagram tests, both CLAUDE.md files (root "Diagram Library" block and `packages/diagram/CLAUDE.md`).
+
+### 9.5 Done check
+
+- Side-by-side read: `shared/chart-presets/bar-chart/{index.ts,base/index.ts,style/index.ts,style/config.ts}` vs `shared/diagram-presets/flow-diagram/{index.ts,base/index.ts,style/index.ts,style/config.ts}` look like the same file family (same exports pattern, same `StyleConfig`, same `{ ...style.custom, ...custom }` merge, same `createConfig(config)`).
+- A gallery example reads like a chart gallery entry: `FlowDiagram({ data, config, custom: { node: (args, ctx) => ... } })`.
+- Green: `pnpm diagram:typecheck`, `pnpm --dir packages/diagram lint`, `pnpm diagram:test` (Playwright too; Fable/Opus runs it, Codex cannot bind ports), `pnpm --dir shared/diagram-presets run sync`, `pnpm --dir packages/flitter test:install`, `node docs/scripts/gen-diagram-api.mjs --check`, `pnpm --dir docs build`.
+
+### 9.6 Progress
+
+- [x] C1 restructure (Astra, worktree `../flitter-wt-diagram`, branch `feat/diagram-chart-structure`), then two UI rounds from `todo/diagram-ui-review.md`
+- [x] C2 Playwright + docs gallery browser check (Opus, 2026-10-19: vitest 156, Playwright 92 + 1 skipped, gallery 49/49, docs build 160 pages, `test:install` green, thumbnails regenerated)
+- [ ] C3 PR (waits for the user; `fix/docs-landing` carries the core rrect fix the deployment badges need)

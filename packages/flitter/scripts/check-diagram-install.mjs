@@ -30,8 +30,8 @@ try {
   // A consumer file: the copied style must compile against the public engine entry.
   await writeFile(
     path.join(directory, "diagrams/usage.ts"),
-    `import { FlowDiagram, type FlowDiagramProps } from "./flow-diagram";
-import { layeredLayout, type FlowNode, type FlowEdge, FlowController } from "flitter-ui/diagram";
+    `import FlowDiagram, { type FlowDiagramProps } from "./flow-diagram";
+import { layeredLayout, type FlowNode, type FlowEdge, FlowDiagramController } from "flitter-ui/diagram";
 
 const nodes: FlowNode[] = [
   { id: "a", position: { x: 0, y: 0 }, data: { label: "A" }, resizable: true },
@@ -39,14 +39,13 @@ const nodes: FlowNode[] = [
 ];
 const edges: FlowEdge[] = [{ id: "ab", source: "a", target: "b", markerEnd: "arrowclosed" }];
 const props: FlowDiagramProps = {
-  nodes,
-  edges,
+  data: { nodes, edges },
   layout: layeredLayout,
   config: { colorMode: "dark", background: { variant: "lines" } },
   on: { connect: (connection) => void connection },
 };
 export const widget = FlowDiagram(props);
-export const controller = new FlowController();
+export const controller = new FlowDiagramController();
 `,
   );
   await writeFile(

@@ -1,3 +1,5 @@
+import { Stack as DiagramStack, StackFit as DiagramStackFit } from "flitter-core";
+import { layout as baseLayout, positionOverlay } from "flitter-diagram";
 import type { Meta, StoryObj } from "@storybook/react";
 import DualRenderer from "../../components/DualRenderer";
 import {
@@ -14,9 +16,9 @@ import {
 } from "flitter-core";
 import {
   FlowDiagram,
-  FlowProvider,
+  FlowDiagramProvider,
   defaultNode,
-  type FlowController,
+  type FlowDiagramController,
   type FlowDiagramProps,
   type FlowNode,
 } from "flitter-diagram";
@@ -28,13 +30,13 @@ const meta = {
 } satisfies Meta<typeof DualRenderer>;
 export default meta;
 type Story = StoryObj<typeof meta>;
-type Action = { label: string; run: (flow: FlowController) => void };
+type Action = { label: string; run: (flow: FlowDiagramController) => void };
 class Actions extends StatelessWidget {
   constructor(readonly actions: Action[]) {
     super();
   }
   override build(context: BuildContext): Widget {
-    const flow = FlowProvider.of(context);
+    const flow = FlowDiagramProvider.of(context);
     return Row({
       mainAxisSize: MainAxisSize.min,
       children: this.actions.map((action) =>
@@ -97,14 +99,14 @@ function story(
       height: "440px",
       description,
       widget: FlowDiagram({
-        nodes,
-        edges,
+        data: { nodes, edges },
+
         viewport: { initial: { x: 0, y: 0, zoom: 1 } },
         config: { minimap: { visible: false } },
         ...props,
-        panels: actions.length
+        custom: { layout: (args, ctx) => DiagramStack({ fit: DiagramStackFit.expand, children: [baseLayout(args, ctx), ...(actions.length
           ? [{ position: "top-left", child: new Actions(actions) }]
-          : undefined,
+          : []).map(({ position, child }) => positionOverlay(position as import("flitter-diagram").PanelPosition, child))] }) },
       }),
     },
   };
@@ -172,7 +174,7 @@ export const Keyboard = story(
 export const GroupsAndOverlap = story(
   "Drop a card into the group or drag it out. Overlaps push apart only at drop.",
   {
-    nodes: [
+    data: { edges, nodes: [
       {
         id: "group",
         type: "group",
@@ -185,7 +187,7 @@ export const GroupsAndOverlap = story(
         ...n,
         position: { x: i ? 290 : 40, y: 100 + i * 80 },
       })),
-    ],
+    ] },
     interaction: { drag: { overlap: "push" } },
   },
 );
@@ -205,7 +207,7 @@ export const SnapGuides = story(
 export const Waypoints = story(
   "Drag a midpoint to insert a bend; drag a pin to move it; double-click a pin to remove it. Escape cancels.",
   {
-    edges: [
+    data: { nodes, edges: [
       {
         ...edges[0],
         type: "smoothstep",
@@ -213,7 +215,7 @@ export const Waypoints = story(
         waypoints: [{ x: 220, y: 230 }],
       },
       edges[1],
-    ],
+    ] },
     interaction: { edit: { waypoints: true } },
   },
 );

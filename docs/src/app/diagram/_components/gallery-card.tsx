@@ -25,7 +25,7 @@ export default function GalleryCard({ entry }: { entry: GalleryEntry }) {
             loading="lazy"
             decoding="async"
             data-thumbnail={theme}
-            className={`h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02] ${theme === "light" ? "hidden light:block" : "light:hidden"}`}
+            className={`h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02] ${theme === "light" ? "hidden light:block" : "light:hidden"}`}
           />
         ))}
       </div>
