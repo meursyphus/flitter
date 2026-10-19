@@ -11,9 +11,8 @@ import {
 import type {
   FlowDiagramContext,
   FlowNode,
-  NodeCustomArgs,
+  NodeBodyCustomArgs,
 } from "flitter-ui/diagram";
-import { EditableLabel } from "./editable-label";
 import type { DefaultFlowConfig } from "../config";
 
 export function nodeLabel(node: FlowNode): string {
@@ -25,7 +24,7 @@ export function nodeLabel(node: FlowNode): string {
 
 /** React Flow's default node: 150px wide white box with a 1px border and centred label. */
 export function defaultNode(
-  args: NodeCustomArgs,
+  args: NodeBodyCustomArgs,
   context: FlowDiagramContext<DefaultFlowConfig>,
 ): Widget {
   const { node, isSelected, isHovered } = args;
@@ -59,6 +58,6 @@ export function defaultNode(
             ]
           : undefined,
     }),
-    child: isGroup ? undefined : EditableLabel(args, context),
+    child: isGroup ? undefined : args.label,
   });
 }

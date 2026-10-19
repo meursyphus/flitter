@@ -1,57 +1,173 @@
 import QuickStartDemo from "../_components/quick-start-demo";
 
 export const metadata = {
-  title: "Quick Start",
-  description: "One complete diagram editor with layout, viewport, interaction and events.",
+  title: "Quick Start — Flitter Diagram",
+  description: "Install a diagram preset, then replace any widget.",
 };
 
 <div className="docs-prose prose prose-sm mx-auto max-w-3xl px-5 py-10 prose-headings:font-semibold prose-headings:tracking-tight prose-h1:text-3xl prose-h2:text-xl prose-pre:rounded-lg prose-pre:text-sm md:px-10 lg:py-14">
 
 # Quick Start
 
-<QuickStartDemo />
+Install a diagram as source code. Use the default widgets or replace any part, just like a Flitter chart.
 
-1. Run the three commands from [Installation](/diagram/installation).
-2. Save this file as `app.tsx`.
-3. Drag, connect, press ⌘Z, right-click.
+## 1. Initialize
+
+```bash
+npm install flitter-ui @flitterjs/react
+npx flitter-ui init
+```
+
+## 2. Add a flow diagram
+
+```bash
+npx flitter-ui add flow-diagram
+```
+
+This copies the preset's widget source into your project:
+
+```text
+components/diagram/flow-diagram/
+├── index.ts          # FlowDiagram — import this
+├── base/             # Structural defaults and geometry helpers
+└── style/
+    ├── config.ts     # Style settings and defaults
+    └── parts/        # Widgets you can edit or replace
+        ├── node.ts
+        ├── handle.ts
+        ├── controls.ts
+        └── context-menu.ts
+```
+
+The runtime in `flitter-ui/diagram` owns gestures, state and geometry. The files you install provide the UI.
+
+## 3. Use the diagram
 
 ```tsx
 import Widget from "@flitterjs/react";
-import { layeredLayout, type FlowEdge, type FlowNode } from "flitter-ui/diagram";
+import { layeredLayout, type FlowDiagramData } from "flitter-ui/diagram";
 import FlowDiagram from "@/components/diagram/flow-diagram";
 
-// Positions are placeholders; the layout places every node.
-const nodes: FlowNode[] = [
-  { id: "draft", type: "input", position: { x: 0, y: 0 }, data: { label: "Draft" } },
-  { id: "review", position: { x: 0, y: 0 }, data: { label: "Review" } },
-  { id: "publish", type: "output", position: { x: 0, y: 0 }, data: { label: "Publish" } },
-];
+const data: FlowDiagramData = {
+  nodes: [
+    {
+      id: "draft",
+      type: "input",
+      position: { x: 0, y: 0 },
+      data: { label: "Draft" },
+    },
+    { id: "review", position: { x: 0, y: 0 }, data: { label: "Review" } },
+    {
+      id: "publish",
+      type: "output",
+      position: { x: 0, y: 0 },
+      data: { label: "Publish" },
+    },
+  ],
+  edges: [
+    { id: "a", source: "draft", target: "review" },
+    { id: "b", source: "review", target: "publish" },
+  ],
+};
 
-const edges: FlowEdge[] = [
-  { id: "a", source: "draft", target: "review" },
-  { id: "b", source: "review", target: "publish", markerEnd: "arrowclosed" },
-];
-
-// Create the widget once. A new instance remounts the editor.
 const diagram = FlowDiagram({
-  data: { nodes, edges },
-  layout: { algorithm: layeredLayout, options: { direction: "TB", rankSpacing: 80 } },
-  viewport: { fitView: { padding: 0.3 } },
-  interaction: { drag: { snap: { grid: [20, 20] } } },
-  on: {
-    connect: (connection) => console.log("connected", connection),
-    nodeClick: (_event, node) => console.log("clicked", node.id),
-    historyChange: ({ canUndo }) => console.log("can undo", canUndo),
-  },
+  data,
+  layout: layeredLayout,
+  viewport: { fitView: true },
+  config: { minimap: { visible: false } },
 });
 
 export default function App() {
-  return <Widget widget={diagram} width="100%" height="480px" renderer="svg" />;
+  return <Widget widget={diagram} width="100%" height="480px" />;
 }
 ```
 
-For a full editor, read [Automation workflow](/diagram/gallery/automation-workflow) or [Schema visualizer](/diagram/gallery/schema-visualizer).
+<QuickStartDemo />
 
-Next: [Gallery](/diagram/gallery) · [Interactions](/diagram/interactions) · [API](/diagram/api)
+Drag a node, connect a handle, select an edge or press ⌘Z / Ctrl+Z. Those interactions are supplied by the engine.
+
+## 4. Customize
+
+`config` adjusts the installed preset. `custom` replaces widgets.
+
+```ts
+import {
+  Border,
+  BorderRadius,
+  BoxDecoration,
+  Container,
+  EdgeInsets,
+} from "flitter-ui";
+
+FlowDiagram({
+  data,
+  custom: {
+    node: ({ label, isHovered, isSelected }) =>
+      Container({
+        width: 180,
+        padding: EdgeInsets.all(16),
+        decoration: new BoxDecoration({
+          color: "#ffffff",
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all({
+            color: isHovered || isSelected ? "#8b5cf6" : "#d4d4d8",
+            width: 2,
+          }),
+        }),
+        child: label,
+      }),
+  },
+});
+```
+
+`label` is an existing child widget. The engine attaches drag, hover and selection to your returned node. You only replace its appearance.
+
+Parent widgets work the same way:
+
+```ts
+import { MainAxisSize, Row } from "flitter-ui";
+
+FlowDiagram({
+  data,
+  custom: {
+    controls: ({ zoomIn, zoomOut, fitView }) =>
+      Row({
+        mainAxisSize: MainAxisSize.min,
+        children: [zoomOut, fitView, zoomIn],
+      }),
+  },
+});
+```
+
+Each button already has its action. Change the row into a column, omit a button, or replace `custom.controlButton` to change the button itself.
+
+## The widget tree
+
+```text
+layout
+├── background
+├── viewport
+│   ├── nodeBox
+│   │   ├── node → nodeLabel + inline handles
+│   │   ├── boundary handles
+│   │   └── resize controls
+│   ├── edgeBox → edge + edgeLabel + reconnect handles
+│   └── connectionLine + guides + selection rectangle
+├── controls → controlButton widgets
+├── minimap → background + nodes + mask + viewport
+├── toolbars → nodeToolbar widgets
+└── contextMenu → menuItem widgets
+```
+
+Every visual slot returns a Widget. Parent slots receive children; leaf slots receive data and interaction state. Geometry strategies such as `getHandles` and `getEdgePath` are separate from the visual tree.
+
+## What you own
+
+- Edit the installed `style/parts` files to change the default UI throughout your app.
+- Override `custom.node`, `custom.edge`, `custom.handle` or any other slot for one instance.
+- Replace parent layouts without reimplementing the children's interactions.
+- Place inline handle widgets inside a node's rows; the engine measures the connection points.
+
+Next: [Gallery](/diagram/gallery) · [Flow Diagram API](/diagram/api/flow-diagram) · [Core API](/advanced/what-is-flitter)
 
 </div>

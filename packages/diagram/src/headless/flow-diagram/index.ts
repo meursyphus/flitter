@@ -22,3 +22,5 @@ export {
 } from "./scene";
 export type { NodeAttachmentPlacement, MeasureEntry } from "./scene";
 export * from "./types";
+
+export { getDefaultContextMenuItems } from "./menu";

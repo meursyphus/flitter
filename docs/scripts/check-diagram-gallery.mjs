@@ -64,7 +64,7 @@ const entries = (await readArray(path.join(diagramDir, "_data/gallery/catalog.ts
 const cells = await readArray(path.join(diagramDir, "_data/interactions/cells.ts"), "cells");
 const slugs = entries.map((e) => e.slug);
 /** Same order as the filter row in `gallery-grid.tsx`. */
-const chips = [...new Set(entries.flatMap((e) => e.chips))];
+const chips = ["Basics", "Custom parts", "Applications"];
 
 const wants = (section, id) => !only || only.includes(section) || (id !== undefined && only.includes(id));
 
@@ -89,7 +89,7 @@ async function step(name, fn) {
     console.log(`✓ ${name}${note ? `: ${note}` : ""}`);
   } catch (error) {
     const raised = errors.slice(before);
-    const message = `${String(error.message).split("\n")[0]}${raised.length && !String(error.message).startsWith("browser errors") ? ` [browser: ${raised[0]}]` : ""}`;
+    const message = `${String(error.message).split("\n")[0]}${raised.length ? ` [browser: ${raised[0]}]` : ""}`;
     results.push({ name, ok: false, message });
     console.log(`✗ ${name}: ${message}`);
   }
@@ -169,7 +169,7 @@ async function readableText(preview) {
     const pixels = parseFloat(style.fontSize) * Math.hypot(transform.c, transform.d);
     return pixels < 9.95 && pixels * growthToFit >= 10 ? [{ text: el.textContent, pixels }] : [];
   }), growthToFit);
-  assert.deepEqual(small, [], "initial text should reach 10px when the complete graph can still fit");
+  assert.deepEqual(small, [], `${await preview.getAttribute("data-example")}: initial text should reach 10px when the complete graph can still fit: ${JSON.stringify(small)}`);
 }
 
 /** The example's SVG stage as a standalone file the card can show with <img>. */
@@ -483,23 +483,23 @@ try {
       await shot("gallery-desktop");
       return `${slugs.length} cards with light and dark thumbnails`;
     });
-    await step(`gallery chip filters (${chips.length} chips)`, async () => {
-      const filters = page.getByRole("group", { name: "Filter by interaction" });
+    await step(`gallery category filters (${chips.length} chips)`, async () => {
+      const filters = page.getByRole("group", { name: "Filter by example type" });
       assert.equal(await filters.getByRole("button").count(), chips.length + 1, "All plus one button per chip");
       for (let i = 0; i < chips.length; i++) {
         await filters.getByRole("button").nth(i + 1).click();
-        const expected = entries.filter((e) => e.chips.includes(chips[i])).map((e) => e.slug);
+        const expected = entries.filter((e) => (e.category ?? "Applications") === chips[i]).map((e) => e.slug);
         assert.deepEqual(await page.locator("[data-card]").evaluateAll((els) => els.map((el) => el.getAttribute("data-card"))), expected, `chip ${chips[i]}`);
       }
       await filters.getByRole("button", { name: "All", exact: true }).click();
       assert.equal(await page.locator("[data-card]").count(), slugs.length);
-      return "every chip shows exactly the entries that list it";
+      return "every category shows the expected examples";
     });
-    await step("gallery echoes on one line", async () => {
+    await step("gallery titles on one line", async () => {
       for (const width of [1440, 390]) {
         await page.setViewportSize({ width, height: 1100 });
         await settle();
-        const wrapped = await page.locator("[data-card] [data-echoes]").evaluateAll((els) =>
+        const wrapped = await page.locator("[data-card] h3").evaluateAll((els) =>
           els.filter((el) => el.getBoundingClientRect().height > parseFloat(getComputedStyle(el).fontSize) * 1.7).map((el) => el.textContent),
         );
         assert.deepEqual(wrapped, [], `wraps at ${width}px`);
@@ -545,7 +545,7 @@ try {
   /* Every /diagram link resolves; the sitemap lists every listed slug. */
   if (wants("links")) {
     await step("links and sitemap", async () => {
-      const routes = ["/diagram/", "/diagram/installation/", "/diagram/quick-start/", "/diagram/gallery/", "/diagram/interactions/", "/diagram/api/"];
+      const routes = ["/diagram/", "/diagram/installation/", "/diagram/quick-start/", "/diagram/gallery/", "/diagram/interactions/", "/diagram/api/", "/diagram/api/flow-diagram/"];
       const links = new Set();
       for (const route of routes) {
         await open(route);
@@ -591,12 +591,22 @@ try {
         }).map(el => el.textContent));
         assert.deepEqual(overflowing, [], `${slug}: no overflowing hint`);
       }
+      await page.setViewportSize({ width: 1440, height: 900 });
+    });
+  }
+  if (wants("mobile") || wants("mobile-navigation")) {
+    await step("mobile sidebar navigation", async () => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await open("/diagram/gallery/");
       await page.getByRole("button", { name: "Open sidebar navigation" }).click();
-      await page.getByRole("link", { name: "Interactions", exact: true }).filter({ visible: true }).click();
+      const interactions = page.getByRole("link", { name: "Interactions", exact: true }).filter({ visible: true });
+      if (!(await interactions.count())) await page.getByRole("heading", { name: "API", exact: true }).filter({ visible: true }).click();
+      await interactions.click();
       await page.waitForURL("**/diagram/interactions/");
       await page.setViewportSize({ width: 1440, height: 900 });
     });
   }
+
 } finally {
   await browser.close();
 }

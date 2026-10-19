@@ -1,5 +1,11 @@
-import { Stack as DiagramStack, StackFit as DiagramStackFit } from "flitter-core";
-import { layout as baseLayout, positionOverlay } from "flitter-diagram";
+import {
+  Stack as DiagramStack,
+  StackFit as DiagramStackFit,
+} from "flitter-core";
+import {
+  layout as baseLayout,
+  positionOverlay,
+} from "../../../../../shared/diagram-presets/flow-diagram";
 import type { Meta, StoryObj } from "@storybook/react";
 import DualRenderer from "../../components/DualRenderer";
 import {
@@ -15,13 +21,14 @@ import {
   type Widget,
 } from "flitter-core";
 import {
-  FlowDiagram,
   FlowDiagramProvider,
-  defaultNode,
   type FlowDiagramController,
-  type FlowDiagramProps,
   type FlowNode,
 } from "flitter-diagram";
+import FlowDiagram, {
+  defaultNode,
+  type FlowDiagramProps,
+} from "../../../../../shared/diagram-presets/flow-diagram";
 
 const meta = {
   title: "Diagram/Interactions",
@@ -104,9 +111,24 @@ function story(
         viewport: { initial: { x: 0, y: 0, zoom: 1 } },
         config: { minimap: { visible: false } },
         ...props,
-        custom: { layout: (args, ctx) => DiagramStack({ fit: DiagramStackFit.expand, children: [baseLayout(args, ctx), ...(actions.length
-          ? [{ position: "top-left", child: new Actions(actions) }]
-          : []).map(({ position, child }) => positionOverlay(position as import("flitter-diagram").PanelPosition, child))] }) },
+        custom: {
+          layout: (args, ctx) =>
+            DiagramStack({
+              fit: DiagramStackFit.expand,
+              children: [
+                baseLayout(args, ctx),
+                ...(actions.length
+                  ? [{ position: "top-left", child: new Actions(actions) }]
+                  : []
+                ).map(({ position, child }) =>
+                  positionOverlay(
+                    position as import("flitter-diagram").PanelPosition,
+                    child,
+                  ),
+                ),
+              ],
+            }),
+        },
       }),
     },
   };
@@ -115,27 +137,34 @@ export const FollowUps = story(
   "Viewer allows click selection. Zoom across 0.9 to change the LOD label; other nodes do not rebuild.",
   {
     interaction: "viewer",
-    nodeTypes: {
-      default: {
-        lod: [0.9],
-        build: (args, ctx) =>
-          defaultNode(
-            {
-              ...args,
-              node: {
-                ...args.node,
-                data: {
-                  label:
-                    ctx.zoom < 0.9
-                      ? args.node.id
-                      : `${args.node.data.label} — detail`,
+    custom: {
+      node: (args, ctx) => {
+        const views: Record<string, typeof defaultNode> = {
+          default: (args, ctx) =>
+            defaultNode(
+              {
+                ...args,
+                node: {
+                  ...args.node,
+                  data: {
+                    label:
+                      ctx.zoom < 0.9
+                        ? args.node.id
+                        : `${args.node.data.label} — detail`,
+                  },
                 },
               },
-            },
-            ctx,
-          ),
+              ctx,
+            ),
+        };
+        return (
+          views[args.node.type ?? "default"] ??
+          views.default ??
+          defaultNode
+        )(args, ctx);
       },
     },
+    nodeOptions: { default: { lod: [0.9] } },
   },
 );
 export const ContextMenu = story(
@@ -174,20 +203,23 @@ export const Keyboard = story(
 export const GroupsAndOverlap = story(
   "Drop a card into the group or drag it out. Overlaps push apart only at drop.",
   {
-    data: { edges, nodes: [
-      {
-        id: "group",
-        type: "group",
-        position: { x: 260, y: 80 },
-        width: 300,
-        height: 270,
-        data: {},
-      },
-      ...nodes.map((n, i) => ({
-        ...n,
-        position: { x: i ? 290 : 40, y: 100 + i * 80 },
-      })),
-    ] },
+    data: {
+      edges,
+      nodes: [
+        {
+          id: "group",
+          type: "group",
+          position: { x: 260, y: 80 },
+          width: 300,
+          height: 270,
+          data: {},
+        },
+        ...nodes.map((n, i) => ({
+          ...n,
+          position: { x: i ? 290 : 40, y: 100 + i * 80 },
+        })),
+      ],
+    },
     interaction: { drag: { overlap: "push" } },
   },
 );
@@ -207,15 +239,18 @@ export const SnapGuides = story(
 export const Waypoints = story(
   "Drag a midpoint to insert a bend; drag a pin to move it; double-click a pin to remove it. Escape cancels.",
   {
-    data: { nodes, edges: [
-      {
-        ...edges[0],
-        type: "smoothstep",
-        selected: true,
-        waypoints: [{ x: 220, y: 230 }],
-      },
-      edges[1],
-    ] },
+    data: {
+      nodes,
+      edges: [
+        {
+          ...edges[0],
+          type: "smoothstep",
+          selected: true,
+          waypoints: [{ x: 220, y: 230 }],
+        },
+        edges[1],
+      ],
+    },
     interaction: { edit: { waypoints: true } },
   },
 );

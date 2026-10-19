@@ -6,16 +6,30 @@
 
 export const propDocs: Record<string, string> = {
   data: "The graph: { nodes, edges }.",
-  custom: "Builder for every visual part. FlowDiagram fills all of them; pass only the ones you replace.",
+  custom:
+    "Builder for every visual part. FlowDiagram fills all of them; pass only the ones you replace.",
   config: "Your theme object. Builders read it as context.config.",
-  nodeTypes: "Builders keyed by node.type, with optional handles and toolbar. lod lists zooms where the node rebuilds.",
-  edgeTypes: "Builders keyed by edge.type, with an optional path function.",
+  nodeOptions:
+    "Per-type interaction metadata: handles, editability, groups and zoom breakpoints. Render through custom.node.",
+  getHandles:
+    "Declare connection points. Inline handles are placed as widgets and measured by the engine.",
+  getEdgePath: "Compute edge geometry used for drawing and hit testing.",
+  getContextMenuItems:
+    "Return application commands. The engine wires their gestures before calling custom.menuItem.",
+  getControlsOptions:
+    "Control action timings; the installed preset derives them from config.controls.",
+  getMinimapOptions:
+    "Minimap geometry and panning; the installed preset derives them from config.minimap.",
+  highlightConnected:
+    "Rebuild visual slots on graph-wide hover and selection changes for dimming unrelated elements.",
   layout: "An algorithm, or { algorithm, options, runOn, fitView }.",
   viewport: "Initial viewport, fit on mount, zoom limits and pan extent.",
-  interaction: "A preset name, or groups merged over a preset. See Interaction below.",
+  interaction:
+    "A preset name, or groups merged over a preset. See Interaction below.",
   can: "One permission check per gesture and target. Wins over per-item flags.",
   on: "Event callbacks. before* hooks return false to veto or a value to patch.",
-  controller: "Your own FlowDiagramController, to drive the graph from outside.",
+  controller:
+    "Your own FlowDiagramController, to drive the graph from outside.",
   key: "Widget key.",
 };
 
@@ -64,8 +78,10 @@ export const interactionDocs: Record<string, string> = {
   "pane.panKey": "Hold to pan with a drag when drag selects.",
   "pane.selectKey": "Hold to box-select with a drag when drag pans.",
   "select.enabled": "Click selection of nodes and edges.",
-  "select.box": "Drag a selection box: with selectKey held, or plainly when pane.drag is select. false frees both.",
-  "select.mode": "full: the box must contain a node. partial: touching is enough.",
+  "select.box":
+    "Drag a selection box: with selectKey held, or plainly when pane.drag is select. false frees both.",
+  "select.mode":
+    "full: the box must contain a node. partial: touching is enough.",
   "select.toggleKey": "Hold to add or remove from the selection.",
   "select.elevate": "Raise selected and dragged nodes above the rest.",
   "select.edgeHitWidth": "Invisible stroke width that hits edges, in px.",
@@ -74,10 +90,13 @@ export const interactionDocs: Record<string, string> = {
   "drag.snap.grid": "Snap positions to this grid, or false.",
   "drag.snap.guides": "Snap to other nodes and draw alignment guides.",
   "drag.snap.radius": "Distance in px at which guides snap.",
-  "drag.overlap": "On drop: allow keeps overlaps, push moves the dropped nodes clear, reject cancels the drag.",
-  "drag.dropIntoGroup": "Dropping a node on a group makes it a child. Dropping it outside detaches it.",
+  "drag.overlap":
+    "On drop: allow keeps overlaps, push moves the dropped nodes clear, reject cancels the drag.",
+  "drag.dropIntoGroup":
+    "Dropping a node on a group makes it a child. Dropping it outside detaches it.",
   "connect.enabled": "Dragging from a handle creates an edge.",
-  "connect.mode": "strict: source to target only. loose: any handle to any handle.",
+  "connect.mode":
+    "strict: source to target only. loose: any handle to any handle.",
   "connect.radius": "Snap distance to a handle, in px.",
   "connect.onClick": "Click one handle, then another, to connect.",
   "connect.reconnect": "Drag an edge end onto another handle.",
@@ -85,7 +104,8 @@ export const interactionDocs: Record<string, string> = {
   "connect.lineType": "Path type of the line while connecting.",
   "connect.validate": "Return false to refuse a connection.",
   "edit.text": "Double-click a node to edit its label.",
-  "edit.waypoints": "On a selected edge, drag a midpoint grip to add a bend. Double-click a bend to remove it.",
+  "edit.waypoints":
+    "On a selected edge, drag a midpoint grip to add a bend. Double-click a bend to remove it.",
   "edit.resize": "Resize controls on selected nodes. Options set size limits.",
   "history.enabled": "Undo and redo, one step per gesture.",
   "history.limit": "Undo steps kept.",
@@ -110,25 +130,38 @@ export const interactionDocs: Record<string, string> = {
 };
 
 export const slotDocs: Record<string, string> = {
-  layout: "Arranges the viewport and screen-space overlays; override it to add extra UI.",
-  viewport: "Arranges cached nodes and edges in paint order, then flow-space overlays.",
-  nodeBox: "Places the pre-built node, connection handles, resize controls and toolbar.",
+  nodeLabel: "Node label widget, including the preset's editable text.",
+  nodeToolbar: "Screen-space toolbar for a selected node.",
+  controlButton:
+    "One control button's appearance. Click and hover behavior are attached by the engine.",
+  menuItem:
+    "One menu item's appearance. Selection, disabled state and menu dismissal are wired by the engine.",
+  minimapNode: "One node in minimap coordinates.",
+  minimapBackground: "Minimap background widget.",
+  minimapViewport: "Current viewport outline in minimap coordinates.",
+  minimapMask: "Mask around the visible portion of the minimap.",
+  layout:
+    "Arranges the viewport and screen-space overlays; override it to add extra UI.",
+  viewport:
+    "Arranges cached nodes and edges in paint order, then flow-space overlays.",
+  nodeBox:
+    "Places the pre-built node, connection handles, resize controls and toolbar.",
   edgeBox: "Arranges the pre-built edge, label and editing handles.",
-  controls: "Zoom, fit and lock controls. Headless supplies callbacks and action gestures.",
-  minimap: "Node overview and viewport mask; headless owns pan gestures.",
-  contextMenu: "Menu for a right-click or long-press. Return SizedBox.shrink() for no menu.",
+  controls:
+    "Arranges zoom, fit and lock child widgets with their actions already attached.",
+  minimap: "Arranges background, node, mask and viewport widgets; the engine owns panning.",
+  contextMenu:
+    "Menu for a right-click or long-press. Return SizedBox.shrink() for no menu.",
   guides: "Alignment guide lines while snapping.",
   edgeHandle: "Waypoint pins and midpoint grips on an editable edge.",
-  node: "Fallback node when nodeTypes has no entry.",
-  edge: "Fallback edge when edgeTypes has no entry.",
+  node: "Node body. Receives a built label and inline handle widgets; the engine attaches node gestures.",
+  edge: "Edge visual. The engine retains hit testing, selection and hover.",
   edgeLabel: "Label drawn at the edge's label point.",
   handle: "A connection handle.",
-  defaultHandles: "Handles for nodes that declare none.",
   connectionLine: "The line drawn while connecting.",
   background: "Pane backdrop. Return SizedBox.shrink() for none.",
   selectionBox: "The rectangle drawn while box-selecting.",
   nodesSelectionRect: "Bounds drawn around a multi-selection.",
-  edgePath: "Path geometry for built-in edge types. Also used for hit testing.",
   resizeControl: "Resize lines and corner handles.",
   reconnectHandle: "Grab area at an edge end. Invisible by default.",
 };
@@ -198,7 +231,7 @@ export const argDocs: Record<string, string> = {
 export const fieldDocs: Record<string, string> = {
   id: "Unique id.",
   data: "Your data. Builders read it.",
-  type: "Key into nodeTypes or edgeTypes.",
+  type: "Application-defined type. Select visual builders inside custom.node or custom.edge.",
   selected: "Selected.",
   dragging: "Written while dragging.",
   draggable: "Per-node drag permission.",
@@ -206,12 +239,17 @@ export const fieldDocs: Record<string, string> = {
   connectable: "Per-node connect permission.",
   deletable: "Per-item delete permission.",
   hidden: "Not drawn or hit tested.",
-  collapsible: "Marks a node that can collapse. The default context menu then offers Collapse and Expand.",
-  collapsed: "Hides downstream nodes no other visible node reaches. Without outgoing edges, hides its child nodes.",
-  resizable: "Shows resize controls while selected. interaction.edit.resize sets the default.",
+  collapsible:
+    "Marks a node that can collapse. The default context menu then offers Collapse and Expand.",
+  collapsed:
+    "Hides downstream nodes no other visible node reaches. Without outgoing edges, hides its child nodes.",
+  resizable:
+    "Shows resize controls while selected. interaction.edit.resize sets the default.",
   waypoints: "Bend points in flow coordinates.",
-  adjusting: "How bends follow moved ends: ends shifts the nearest bends, stretch scales all, none keeps them.",
-  pathOptions: "Curvature, offset and corner radius for the built-in path types.",
+  adjusting:
+    "How bends follow moved ends: ends shifts the nearest bends, stretch scales all, none keeps them.",
+  pathOptions:
+    "Curvature, offset and corner radius for the built-in path types.",
   parentId: "Parent group. position is then relative to it.",
   extent: "Drag bounds, or parent to stay inside the parent.",
   zIndex: "Paint order.",
@@ -246,7 +284,12 @@ export type ControllerGroup =
  * Documented controller members. A name missing from the generated
  * controller is shown with its `planned` signature and a P2 badge.
  */
-export const controllerDocs: { name: string; group: ControllerGroup; doc: string; planned?: string }[] = [
+export const controllerDocs: {
+  name: string;
+  group: ControllerGroup;
+  doc: string;
+  planned?: string;
+}[] = [
   { name: "nodes", group: "Graph", doc: "Current nodes." },
   { name: "edges", group: "Graph", doc: "Current edges." },
   { name: "getNode", group: "Graph", doc: "One node by id." },
@@ -255,82 +298,328 @@ export const controllerDocs: { name: string; group: ControllerGroup; doc: string
   { name: "setEdges", group: "Graph", doc: "Replace all edges, or map them." },
   { name: "addNodes", group: "Graph", doc: "Add one or more nodes." },
   { name: "addEdges", group: "Graph", doc: "Add one or more edges." },
-  { name: "updateNode", group: "Graph", doc: "Patch a node. Rebuilds only that node." },
-  { name: "updateNodeData", group: "Graph", doc: "Merge into node.data, or replace it." },
+  {
+    name: "updateNode",
+    group: "Graph",
+    doc: "Patch a node. Rebuilds only that node.",
+  },
+  {
+    name: "updateNodeData",
+    group: "Graph",
+    doc: "Merge into node.data, or replace it.",
+  },
   { name: "updateEdge", group: "Graph", doc: "Patch an edge." },
-  { name: "updateEdgeData", group: "Graph", doc: "Merge into edge.data, or replace it." },
-  { name: "deleteElements", group: "Graph", doc: "Delete with cascade. reconnect: true links the neighbours. Runs on.beforeDelete." },
-  { name: "reconnectEdge", group: "Graph", doc: "Move an edge to a new connection." },
-  { name: "getIncomers", group: "Graph", doc: "Nodes with an edge into this one." },
-  { name: "getOutgoers", group: "Graph", doc: "Nodes this one has an edge to." },
-  { name: "getConnectedEdges", group: "Graph", doc: "Edges touching any of these nodes." },
+  {
+    name: "updateEdgeData",
+    group: "Graph",
+    doc: "Merge into edge.data, or replace it.",
+  },
+  {
+    name: "deleteElements",
+    group: "Graph",
+    doc: "Delete with cascade. reconnect: true links the neighbours. Runs on.beforeDelete.",
+  },
+  {
+    name: "reconnectEdge",
+    group: "Graph",
+    doc: "Move an edge to a new connection.",
+  },
+  {
+    name: "getIncomers",
+    group: "Graph",
+    doc: "Nodes with an edge into this one.",
+  },
+  {
+    name: "getOutgoers",
+    group: "Graph",
+    doc: "Nodes this one has an edge to.",
+  },
+  {
+    name: "getConnectedEdges",
+    group: "Graph",
+    doc: "Edges touching any of these nodes.",
+  },
   { name: "getNeighbours", group: "Graph", doc: "Nodes one edge away." },
-  { name: "toObject", group: "Graph", doc: "Nodes, edges and viewport, for saving." },
-  { name: "insertNodeOnEdge", group: "Graph", doc: "Split an edge with a new node.", planned: "insertNodeOnEdge(edgeId: string, node: FlowNode): void" },
-  { name: "setParent", group: "Graph", doc: "Move a node into a group, or out with null.", planned: "setParent(id: string, parentId: string | null): void" },
+  {
+    name: "toObject",
+    group: "Graph",
+    doc: "Nodes, edges and viewport, for saving.",
+  },
+  {
+    name: "insertNodeOnEdge",
+    group: "Graph",
+    doc: "Split an edge with a new node.",
+    planned: "insertNodeOnEdge(edgeId: string, node: FlowNode): void",
+  },
+  {
+    name: "setParent",
+    group: "Graph",
+    doc: "Move a node into a group, or out with null.",
+    planned: "setParent(id: string, parentId: string | null): void",
+  },
   { name: "getSelectedNodes", group: "Selection", doc: "Selected nodes." },
   { name: "getSelectedEdges", group: "Selection", doc: "Selected edges." },
-  { name: "selectNodes", group: "Selection", doc: "Select nodes by id. additive keeps the rest." },
+  {
+    name: "selectNodes",
+    group: "Selection",
+    doc: "Select nodes by id. additive keeps the rest.",
+  },
   { name: "selectEdges", group: "Selection", doc: "Select edges by id." },
   { name: "clearSelection", group: "Selection", doc: "Deselect everything." },
-  { name: "selectAll", group: "Selection", doc: "Select every selectable node." },
-  { name: "bringToFront", group: "Selection", doc: "Raise nodes above the rest." },
+  {
+    name: "selectAll",
+    group: "Selection",
+    doc: "Select every selectable node.",
+  },
+  {
+    name: "bringToFront",
+    group: "Selection",
+    doc: "Raise nodes above the rest.",
+  },
   { name: "viewport", group: "Viewport", doc: "Current x, y and zoom." },
   { name: "zoom", group: "Viewport", doc: "Current zoom." },
-  { name: "setViewport", group: "Viewport", doc: "Jump or animate to a viewport." },
+  {
+    name: "setViewport",
+    group: "Viewport",
+    doc: "Jump or animate to a viewport.",
+  },
   { name: "panBy", group: "Viewport", doc: "Pan by a pixel delta." },
   { name: "zoomIn", group: "Viewport", doc: "Zoom in one step." },
   { name: "zoomOut", group: "Viewport", doc: "Zoom out one step." },
-  { name: "zoomTo", group: "Viewport", doc: "Zoom to a level around the centre." },
+  {
+    name: "zoomTo",
+    group: "Viewport",
+    doc: "Zoom to a level around the centre.",
+  },
   { name: "zoomAt", group: "Viewport", doc: "Zoom by a ratio around a point." },
   { name: "fitView", group: "Viewport", doc: "Fit all or some nodes in view." },
   { name: "fitBounds", group: "Viewport", doc: "Fit a rectangle in view." },
   { name: "setCenter", group: "Viewport", doc: "Centre a flow point." },
-  { name: "screenToFlowPosition", group: "Geometry", doc: "Browser point to flow coordinates." },
-  { name: "flowToScreenPosition", group: "Geometry", doc: "Flow point to browser coordinates." },
-  { name: "pointerFlowPosition", group: "Geometry", doc: "Last pointer position in flow coordinates." },
-  { name: "getNodePositionAbsolute", group: "Geometry", doc: "Top-left after parent offsets." },
-  { name: "getNodeRect", group: "Geometry", doc: "Absolute rectangle of a measured node." },
-  { name: "getNodesBounds", group: "Geometry", doc: "Bounds of some or all nodes." },
-  { name: "getIntersectingNodes", group: "Geometry", doc: "Nodes that overlap a node or rectangle." },
-  { name: "getNodeHandles", group: "Geometry", doc: "Resolved handles with absolute centres." },
-  { name: "getEdgeEndpoints", group: "Geometry", doc: "Resolved endpoints and sides of an edge." },
-  { name: "getVisibleNodes", group: "Geometry", doc: "Nodes that are not hidden, in paint order." },
-  { name: "history", group: "History and clipboard", doc: "undo, redo, canUndo, canRedo, mark, clear." },
-  { name: "run", group: "History and clipboard", doc: "Batch changes as one undo step, or keep them out of history." },
-  { name: "getContent", group: "History and clipboard", doc: "Nodes and inner edges for copying." },
-  { name: "putContent", group: "History and clipboard", doc: "Insert copied content with fresh ids." },
-  { name: "duplicate", group: "History and clipboard", doc: "Copy and paste in one step." },
+  {
+    name: "screenToFlowPosition",
+    group: "Geometry",
+    doc: "Browser point to flow coordinates.",
+  },
+  {
+    name: "flowToScreenPosition",
+    group: "Geometry",
+    doc: "Flow point to browser coordinates.",
+  },
+  {
+    name: "pointerFlowPosition",
+    group: "Geometry",
+    doc: "Last pointer position in flow coordinates.",
+  },
+  {
+    name: "getNodePositionAbsolute",
+    group: "Geometry",
+    doc: "Top-left after parent offsets.",
+  },
+  {
+    name: "getNodeRect",
+    group: "Geometry",
+    doc: "Absolute rectangle of a measured node.",
+  },
+  {
+    name: "getNodesBounds",
+    group: "Geometry",
+    doc: "Bounds of some or all nodes.",
+  },
+  {
+    name: "getIntersectingNodes",
+    group: "Geometry",
+    doc: "Nodes that overlap a node or rectangle.",
+  },
+  {
+    name: "getNodeHandles",
+    group: "Geometry",
+    doc: "Resolved handles with absolute centres.",
+  },
+  {
+    name: "getEdgeEndpoints",
+    group: "Geometry",
+    doc: "Resolved endpoints and sides of an edge.",
+  },
+  {
+    name: "getVisibleNodes",
+    group: "Geometry",
+    doc: "Nodes that are not hidden, in paint order.",
+  },
+  {
+    name: "history",
+    group: "History and clipboard",
+    doc: "undo, redo, canUndo, canRedo, mark, clear.",
+  },
+  {
+    name: "run",
+    group: "History and clipboard",
+    doc: "Batch changes as one undo step, or keep them out of history.",
+  },
+  {
+    name: "getContent",
+    group: "History and clipboard",
+    doc: "Nodes and inner edges for copying.",
+  },
+  {
+    name: "putContent",
+    group: "History and clipboard",
+    doc: "Insert copied content with fresh ids.",
+  },
+  {
+    name: "duplicate",
+    group: "History and clipboard",
+    doc: "Copy and paste in one step.",
+  },
   { name: "copy", group: "History and clipboard", doc: "Copy the selection." },
-  { name: "paste", group: "History and clipboard", doc: "Paste at the pointer." },
-  { name: "contextMenu", group: "Context menu", doc: "Open menu args, or null." },
-  { name: "openContextMenu", group: "Context menu", doc: "Open the menu for a target." },
+  {
+    name: "paste",
+    group: "History and clipboard",
+    doc: "Paste at the pointer.",
+  },
+  {
+    name: "contextMenu",
+    group: "Context menu",
+    doc: "Open menu args, or null.",
+  },
+  {
+    name: "openContextMenu",
+    group: "Context menu",
+    doc: "Open the menu for a target.",
+  },
   { name: "closeContextMenu", group: "Context menu", doc: "Close the menu." },
-  { name: "editingId", group: "Editing", doc: "Node in inline text edit, or null.", planned: "editingId: string | null" },
-  { name: "startEditing", group: "Editing", doc: "Start inline text edit on a node.", planned: "startEditing(id: string): void" },
-  { name: "stopEditing", group: "Editing", doc: "End the edit; commit or cancel.", planned: "stopEditing(options: { commit: boolean }): void" },
-  { name: "insertWaypoint", group: "Editing", doc: "Add a bend to an edge.", planned: "insertWaypoint(edgeId: string, index: number, point: XYPosition): void" },
-  { name: "moveWaypoint", group: "Editing", doc: "Move a bend.", planned: "moveWaypoint(edgeId: string, index: number, point: XYPosition): void" },
-  { name: "removeWaypoint", group: "Editing", doc: "Remove a bend.", planned: "removeWaypoint(edgeId: string, index: number): void" },
-  { name: "guides", group: "Editing", doc: "Alignment guides of the current drag.", planned: "guides: Guide[]" },
-  { name: "resolveOverlaps", group: "Editing", doc: "Move the given nodes, or the selection, clear of the nodes they overlap.", planned: "resolveOverlaps(ids?: string[]): void" },
-  { name: "collapse", group: "Editing", doc: "Hide downstream nodes no other visible node reaches. Without outgoing edges, hide child nodes.", planned: "collapse(id: string): void" },
-  { name: "expand", group: "Editing", doc: "Show it again.", planned: "expand(id: string): void" },
-  { name: "toggleCollapsed", group: "Editing", doc: "Collapse or expand.", planned: "toggleCollapsed(id: string): void" },
-  { name: "hiddenChildCount", group: "Editing", doc: "How many nodes a collapsed node hides." },
-  { name: "isNodeHidden", group: "Editing", doc: "Hidden by node.hidden or by a collapse." },
-  { name: "nudge", group: "Editing", doc: "Move the selection by multiplier flow pixels in a direction." },
-  { name: "alignNodes", group: "Editing", doc: "Align nodes to one side or centre.", planned: "alignNodes(ids: string[], side: AlignSide): void" },
-  { name: "distributeNodes", group: "Editing", doc: "Space nodes evenly.", planned: "distributeNodes(ids: string[], axis: \"horizontal\" | \"vertical\"): void" },
-  { name: "layout", group: "Layout", doc: "Run the layout prop, or another algorithm, now." },
+  {
+    name: "editingId",
+    group: "Editing",
+    doc: "Node in inline text edit, or null.",
+    planned: "editingId: string | null",
+  },
+  {
+    name: "startEditing",
+    group: "Editing",
+    doc: "Start inline text edit on a node.",
+    planned: "startEditing(id: string): void",
+  },
+  {
+    name: "stopEditing",
+    group: "Editing",
+    doc: "End the edit; commit or cancel.",
+    planned: "stopEditing(options: { commit: boolean }): void",
+  },
+  {
+    name: "insertWaypoint",
+    group: "Editing",
+    doc: "Add a bend to an edge.",
+    planned:
+      "insertWaypoint(edgeId: string, index: number, point: XYPosition): void",
+  },
+  {
+    name: "moveWaypoint",
+    group: "Editing",
+    doc: "Move a bend.",
+    planned:
+      "moveWaypoint(edgeId: string, index: number, point: XYPosition): void",
+  },
+  {
+    name: "removeWaypoint",
+    group: "Editing",
+    doc: "Remove a bend.",
+    planned: "removeWaypoint(edgeId: string, index: number): void",
+  },
+  {
+    name: "guides",
+    group: "Editing",
+    doc: "Alignment guides of the current drag.",
+    planned: "guides: Guide[]",
+  },
+  {
+    name: "resolveOverlaps",
+    group: "Editing",
+    doc: "Move the given nodes, or the selection, clear of the nodes they overlap.",
+    planned: "resolveOverlaps(ids?: string[]): void",
+  },
+  {
+    name: "collapse",
+    group: "Editing",
+    doc: "Hide downstream nodes no other visible node reaches. Without outgoing edges, hide child nodes.",
+    planned: "collapse(id: string): void",
+  },
+  {
+    name: "expand",
+    group: "Editing",
+    doc: "Show it again.",
+    planned: "expand(id: string): void",
+  },
+  {
+    name: "toggleCollapsed",
+    group: "Editing",
+    doc: "Collapse or expand.",
+    planned: "toggleCollapsed(id: string): void",
+  },
+  {
+    name: "hiddenChildCount",
+    group: "Editing",
+    doc: "How many nodes a collapsed node hides.",
+  },
+  {
+    name: "isNodeHidden",
+    group: "Editing",
+    doc: "Hidden by node.hidden or by a collapse.",
+  },
+  {
+    name: "nudge",
+    group: "Editing",
+    doc: "Move the selection by multiplier flow pixels in a direction.",
+  },
+  {
+    name: "alignNodes",
+    group: "Editing",
+    doc: "Align nodes to one side or centre.",
+    planned: "alignNodes(ids: string[], side: AlignSide): void",
+  },
+  {
+    name: "distributeNodes",
+    group: "Editing",
+    doc: "Space nodes evenly.",
+    planned:
+      'distributeNodes(ids: string[], axis: "horizontal" | "vertical"): void',
+  },
+  {
+    name: "layout",
+    group: "Layout",
+    doc: "Run the layout prop, or another algorithm, now.",
+  },
   { name: "interaction", group: "State", doc: "Resolved interaction config." },
-  { name: "setInteraction", group: "State", doc: "Merge a partial interaction config at runtime." },
-  { name: "can", group: "State", doc: "Ask whether a gesture is allowed on a target." },
+  {
+    name: "setInteraction",
+    group: "State",
+    doc: "Merge a partial interaction config at runtime.",
+  },
+  {
+    name: "can",
+    group: "State",
+    doc: "Ask whether a gesture is allowed on a target.",
+  },
   { name: "hoveredNodeId", group: "State", doc: "Node under the pointer." },
   { name: "hoveredEdgeId", group: "State", doc: "Edge under the pointer." },
-  { name: "connection", group: "State", doc: "Connection being dragged, or null." },
+  {
+    name: "connection",
+    group: "State",
+    doc: "Connection being dragged, or null.",
+  },
   { name: "isDraggingNodes", group: "State", doc: "A node drag is active." },
-  { name: "setInteractive", group: "State", doc: "Lock or unlock editing, like the lock button in the controls." },
-  { name: "cancelConnection", group: "State", doc: "Abort the connection in progress." },
-  { name: "dispose", group: "State", doc: "Release listeners. Call it from your State's dispose." },
+  {
+    name: "setInteractive",
+    group: "State",
+    doc: "Lock or unlock editing, like the lock button in the controls.",
+  },
+  {
+    name: "cancelConnection",
+    group: "State",
+    doc: "Abort the connection in progress.",
+  },
+  {
+    name: "dispose",
+    group: "State",
+    doc: "Release listeners. Call it from your State's dispose.",
+  },
 ];

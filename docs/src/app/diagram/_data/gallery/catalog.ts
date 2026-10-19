@@ -9,10 +9,22 @@ import type { CellId } from "../interactions/cells";
 
 /** Gallery-only recipes built on controller methods (tier R). */
 export type RecipeId =
-  | "side-panel" | "live-status" | "per-field-handles" | "search-zoom"
-  | "animated-edges" | "typed-ports" | "reroute" | "minimap" | "context-pad"
-  | "quick-add" | "reparent" | "focus-path" | "lod" | "depth-filter"
-  | "recentre" | "drill-down";
+  | "side-panel"
+  | "live-status"
+  | "per-field-handles"
+  | "search-zoom"
+  | "animated-edges"
+  | "typed-ports"
+  | "reroute"
+  | "minimap"
+  | "context-pad"
+  | "quick-add"
+  | "reparent"
+  | "focus-path"
+  | "lod"
+  | "depth-filter"
+  | "recentre"
+  | "drill-down";
 
 /** A chip is an interaction cell (links to its demo) or a recipe. */
 export type Interaction = CellId | RecipeId;
@@ -36,11 +48,17 @@ export const recipeLabels: Record<RecipeId, string> = {
   "drill-down": "Drill down",
 };
 
-export type ExampleFactory = (theme: Theme, options?: { presentation?: "gallery" | "hero" }) => Widget;
+export type ExampleFactory = (
+  theme: Theme,
+  options?: { presentation?: "gallery" | "hero" },
+) => Widget;
 
 export type GalleryEntry = {
   slug: string;
   title: string;
+  description?: string;
+  category?: "Basics" | "Custom parts" | "Applications";
+  customParts?: string[];
   /** Products this example echoes. */
   echoes: string[];
   chips: Interaction[];
@@ -52,6 +70,51 @@ export type GalleryEntry = {
 
 export const catalog: GalleryEntry[] = [
   {
+    slug: "basic-flow",
+    title: "Basic flow",
+    description: "The installed preset with data and config.",
+    category: "Basics",
+    customParts: [],
+    echoes: [],
+    chips: ["layout"],
+    layout: "Layered LR",
+    load: () => import("../../_examples/basic-flow"),
+  },
+  {
+    slug: "custom-nodes",
+    title: "Rounded card nodes",
+    description: "Replace one node widget and keep its interactions.",
+    category: "Custom parts",
+    customParts: ["node"],
+    echoes: [],
+    chips: ["hover"],
+    layout: "Manual",
+    load: () => import("../../_examples/custom-nodes"),
+  },
+  {
+    slug: "custom-controls",
+    title: "Horizontal controls",
+    description: "Arrange ready-made buttons and replace their appearance.",
+    category: "Custom parts",
+    customParts: ["controls", "controlButton"],
+    echoes: [],
+    chips: [],
+    layout: "Manual",
+    load: () => import("../../_examples/custom-controls"),
+  },
+  {
+    slug: "custom-layout",
+    title: "Canvas with a footer",
+    description: "Replace the parent layout and retain the child widget tree.",
+    category: "Custom parts",
+    customParts: ["layout", "controls"],
+    echoes: [],
+    chips: [],
+    layout: "Manual",
+    load: () => import("../../_examples/custom-layout"),
+  },
+
+  {
     slug: "deployment-canvas",
     title: "Deployment canvas",
     echoes: ["Railway"],
@@ -62,6 +125,9 @@ export const catalog: GalleryEntry[] = [
   {
     slug: "schema-visualizer",
     title: "Schema visualizer",
+    description:
+      "Table rows compose inline handle widgets; the engine measures their connection points.",
+    customParts: ["node", "handle", "edge"],
     echoes: ["ChartDB", "Supabase", "dbdiagram"],
     chips: ["per-field-handles", "hover", "connect", "search-zoom"],
     layout: "Layered LR",
@@ -162,7 +228,10 @@ export function relatedEntries(slug: string, limit = 2) {
   if (!entry) return [];
   return listedEntries
     .filter((other) => other.slug !== slug)
-    .map((other) => ({ other, shared: other.chips.filter((chip) => entry.chips.includes(chip)).length }))
+    .map((other) => ({
+      other,
+      shared: other.chips.filter((chip) => entry.chips.includes(chip)).length,
+    }))
     .sort((a, b) => b.shared - a.shared)
     .slice(0, limit)
     .map(({ other }) => other);

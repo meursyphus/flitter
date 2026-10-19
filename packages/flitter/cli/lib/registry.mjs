@@ -254,10 +254,14 @@ export default function FlowDiagram({
   config,
   data,
   custom,
+  getControlsOptions,
+  getMinimapOptions,
   ...rest
 }: FlowDiagramProps): Widget {
   return BaseFlowDiagram({
     data,
+    getControlsOptions: getControlsOptions ?? (ctx => ctx.config.controls),
+    getMinimapOptions: getMinimapOptions ?? (ctx => ({ ...ctx.config.minimap, padding: ctx.config.minimap.offsetScale })),
     config: ${styleConfig}.createConfig(config),
     custom: { ...${styleConfig}.custom, ...custom },
     ...rest,

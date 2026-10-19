@@ -1,86 +1,99 @@
-import type { Widget } from "flitter-ui";
-import type {
-  MinimapCustomArgs,
-  FlowDiagramContext,
-} from "flitter-ui/diagram";
+import { Positioned, SizedBox, Stack } from "flitter-ui";
+import type { FlowDiagramCustom } from "flitter-ui/diagram";
 import type { DefaultFlowConfig } from "../config";
 import { ShapePaint, rectPathD } from "./paint";
 
-export function defaultMinimap(
-  args: MinimapCustomArgs,
-  ctx: FlowDiagramContext<DefaultFlowConfig>,
-): Widget {
-  const { colors, minimap } = ctx.config;
-  const elementWidth = minimap.width,
-    elementHeight = minimap.height;
-  const {
-    viewportRect: viewBB,
-    nodes: nodeRects,
-    bounds: boundingRect,
-    viewScale,
-  } = args;
-  const viewWidth = viewScale * elementWidth;
-  const viewHeight = viewScale * elementHeight;
-  const offset = minimap.offsetScale * viewScale;
-  const x = boundingRect.x - (viewWidth - boundingRect.width) / 2 - offset;
-  const y = boundingRect.y - (viewHeight - boundingRect.height) / 2 - offset;
-  const width = viewWidth + offset * 2;
-  const scale = elementWidth / width;
-  const toLocal = (value: number, origin: number) => (value - origin) * scale;
-  const nodesD = nodeRects
-    .map(({ rect }) =>
-      rectPathD(
-        toLocal(rect.x, x),
-        toLocal(rect.y, y),
-        rect.width * scale,
-        rect.height * scale,
-        minimap.nodeBorderRadius * scale,
-      ),
-    )
-    .join("");
-  const left = Math.max(0, toLocal(viewBB.x, x));
-  const top = Math.max(0, toLocal(viewBB.y, y));
-  const right = Math.min(elementWidth, toLocal(viewBB.x + viewBB.width, x));
-  const bottom = Math.min(elementHeight, toLocal(viewBB.y + viewBB.height, y));
-  // Four outside strips leave a real hole under both SVG and Canvas's nonzero fill rule.
-  const maskD = [
-    rectPathD(0, 0, elementWidth, top),
-    rectPathD(0, bottom, elementWidth, Math.max(0, elementHeight - bottom)),
-    rectPathD(0, top, left, Math.max(0, bottom - top)),
-    rectPathD(
-      right,
-      top,
-      Math.max(0, elementWidth - right),
-      Math.max(0, bottom - top),
-    ),
-  ].join("");
+type Parts = FlowDiagramCustom<DefaultFlowConfig>;
+export const defaultMinimap: Parts["minimap"] = ({
+  width,
+  height,
+  background,
+  nodes,
+  mask,
+  viewport,
+}) =>
+  SizedBox({
+    width,
+    height,
+    child: Stack({ children: [background, ...nodes, mask, viewport] }),
+  });
 
-  const paint = ShapePaint({
-    width: elementWidth,
-    height: elementHeight,
+export const defaultMinimapBackground: Parts["minimapBackground"] = (
+  { width, height },
+  ctx,
+) =>
+  ShapePaint({
+    width,
+    height,
     shapes: {
       background: {
-        d: rectPathD(0, 0, elementWidth, elementHeight),
-        fill: colors.minimapBackground,
-      },
-      nodes: nodesD
-        ? { d: nodesD, fill: minimap.nodeColor ?? colors.minimapNode }
-        : null,
-      mask: {
-        d: maskD,
-        fill: minimap.maskColor ?? colors.minimapMask,
-      },
-      viewport: {
-        d: rectPathD(
-          left,
-          top,
-          Math.max(0, right - left),
-          Math.max(0, bottom - top),
-        ),
-        stroke: colors.minimapViewportStroke,
-        strokeWidth: minimap.viewportStrokeWidth,
+        d: rectPathD(0, 0, width, height),
+        fill: ctx.config.colors.minimapBackground,
       },
     },
   });
-  return paint;
-}
+
+export const defaultMinimapNode: Parts["minimapNode"] = ({ rect }, ctx) =>
+  Positioned({
+    left: rect.x,
+    top: rect.y,
+    child: ShapePaint({
+      width: rect.width,
+      height: rect.height,
+      shapes: {
+        node: {
+          d: rectPathD(
+            0,
+            0,
+            rect.width,
+            rect.height,
+            Math.min(ctx.config.minimap.nodeBorderRadius, rect.height / 2),
+          ),
+          fill: ctx.config.minimap.nodeColor ?? ctx.config.colors.minimapNode,
+        },
+      },
+    }),
+  });
+
+export const defaultMinimapViewport: Parts["minimapViewport"] = (
+  { rect },
+  ctx,
+) =>
+  Positioned({
+    left: rect.x,
+    top: rect.y,
+    child: ShapePaint({
+      width: rect.width,
+      height: rect.height,
+      shapes: {
+        viewport: {
+          d: rectPathD(0, 0, rect.width, rect.height),
+          stroke: ctx.config.colors.minimapViewportStroke,
+          strokeWidth: ctx.config.minimap.viewportStrokeWidth,
+        },
+      },
+    }),
+  });
+
+export const defaultMinimapMask: Parts["minimapMask"] = (
+  { width, height, rect },
+  ctx,
+) => {
+  const right = rect.x + rect.width,
+    bottom = rect.y + rect.height;
+  return ShapePaint({
+    width,
+    height,
+    shapes: {
+      mask: {
+        d: [
+          rectPathD(0, 0, width, rect.y),
+          rectPathD(0, bottom, width, height - bottom),
+          rectPathD(0, rect.y, rect.x, rect.height),
+          rectPathD(right, rect.y, width - right, rect.height),
+        ].join(""),
+        fill: ctx.config.minimap.maskColor ?? ctx.config.colors.minimapMask,
+      },
+    },
+  });
+};

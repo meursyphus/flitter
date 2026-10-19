@@ -9,7 +9,22 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    "baseUrl": ".",
+    "allowImportingTsExtensions": true,
+    "paths": {
+      "flitter-ui": [
+        "../../packages/flitter/src/index.ts"
+      ],
+      "flitter-ui/diagram": [
+        "../../packages/diagram/src/engine.ts"
+      ],
+      "flitter-core": [
+        "../../packages/core/src/index.ts"
+      ]
+    }
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

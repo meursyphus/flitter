@@ -116,8 +116,8 @@ charts. See `packages/diagram/CLAUDE.md` for interaction and caching rules.
 `FlowDiagram({ data: { nodes, edges }, custom, config, ... })` uses
 `FlowDiagramController`, `FlowDiagramProvider` and `FlowDiagramCustom`.
 The engine owns gestures; `custom.layout`, `viewport`, `nodeBox` and `edgeBox`
-arrange pre-built children. Controls and minimap are slots; config controls their
-visibility. Add overlays through `custom.layout`. There is no `panels` prop.
+arrange pre-built children. Controls and minimap are parent slots receiving interaction-ready child widgets; config controls their
+visibility. All visual builders live in custom; nodeOptions contains only behavior metadata. Add overlays through `custom.layout`. There is no `panels` prop.
 All boolean custom args use `is*`; an empty visual returns `SizedBox.shrink()`.
 
 ```bash

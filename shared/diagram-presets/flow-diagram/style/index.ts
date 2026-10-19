@@ -1,3 +1,5 @@
+import { SizedBox } from "flitter-ui";
+import { EditableLabel } from "./parts/editable-label";
 import type { FlowDiagramCustom } from "flitter-ui/diagram";
 import type { DeepPartial } from "flitter-ui/diagram";
 
@@ -6,7 +8,7 @@ export type StyleConfig<TConfig extends object> = {
   createConfig: (config?: DeepPartial<TConfig>) => TConfig;
 };
 import { type DefaultFlowConfig, createDefaultConfig } from "./config";
-import { defaultContextMenu } from "./parts/context-menu";
+import { defaultContextMenu, defaultMenuItem } from "./parts/context-menu";
 import { defaultGuides } from "./parts/guides";
 import { defaultEdgeHandle } from "./parts/edge-handle";
 import { defaultBackground } from "./parts/background";
@@ -21,8 +23,14 @@ import {
   defaultNodesSelectionRect,
   defaultSelectionBox,
 } from "./parts/selection";
-import { defaultControls } from "./parts/controls";
-import { defaultMinimap } from "./parts/minimap";
+import { defaultControls, defaultControlButton } from "./parts/controls";
+import {
+  defaultMinimap,
+  defaultMinimapNode,
+  defaultMinimapBackground,
+  defaultMinimapMask,
+  defaultMinimapViewport,
+} from "./parts/minimap";
 import { defaultResizeControl } from "./parts/resize";
 
 export {
@@ -44,18 +52,32 @@ export {
   defaultSelectionBox,
   defaultNodesSelectionRect,
 } from "./parts/selection";
-export { defaultControls } from "./parts/controls";
+export { defaultControls, defaultControlButton } from "./parts/controls";
 export { defaultResizeControl } from "./parts/resize";
-export { defaultMinimap } from "./parts/minimap";
+export {
+  defaultMinimap,
+  defaultMinimapNode,
+  defaultMinimapBackground,
+  defaultMinimapMask,
+  defaultMinimapViewport,
+} from "./parts/minimap";
 export { ShapePaint, IconPaint, rectPathD } from "./parts/paint";
-export { defaultContextMenu, defaultGuides, defaultEdgeHandle };
+export {
+  defaultContextMenu,
+  defaultMenuItem,
+  defaultGuides,
+  defaultEdgeHandle,
+};
 export { EditableLabel } from "./parts/editable-label";
 
 const defaultCustom: Partial<FlowDiagramCustom<DefaultFlowConfig>> = {
   contextMenu: defaultContextMenu,
+  menuItem: defaultMenuItem,
   guides: defaultGuides,
   edgeHandle: defaultEdgeHandle,
   node: defaultNode,
+  nodeLabel: EditableLabel,
+  nodeToolbar: () => SizedBox.shrink(),
   edge: defaultEdge,
   edgeLabel: defaultEdgeLabel,
   handle: defaultHandle,
@@ -65,7 +87,12 @@ const defaultCustom: Partial<FlowDiagramCustom<DefaultFlowConfig>> = {
   nodesSelectionRect: defaultNodesSelectionRect,
   resizeControl: defaultResizeControl,
   controls: defaultControls,
+  controlButton: defaultControlButton,
   minimap: defaultMinimap,
+  minimapNode: defaultMinimapNode,
+  minimapBackground: defaultMinimapBackground,
+  minimapMask: defaultMinimapMask,
+  minimapViewport: defaultMinimapViewport,
 };
 
 export const defaultStyleConfig: StyleConfig<DefaultFlowConfig> = {

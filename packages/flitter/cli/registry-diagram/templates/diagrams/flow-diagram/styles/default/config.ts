@@ -1,6 +1,4 @@
 import { type DeepPartial, deepMerge } from "../../../../../../src/engine";
-import type { ContextMenuCustomArgs } from "../../../../../../src/engine";
-import type { FlowDiagramController } from "../../../../../../src/engine";
 import type { PanelPosition } from "../../../../../../src/engine";
 
 /** Colour tokens. Values mirror React Flow's `style.css` custom properties. */
@@ -116,15 +114,6 @@ export type DefaultFlowConfig = {
     /** null inherits the node font, matching the rest of the diagram. */
     fontFamily: string | null;
     fontSize: number | null;
-    items?: (
-      args: ContextMenuCustomArgs,
-      flow: FlowDiagramController,
-    ) => {
-      label: string;
-      onSelect(): void;
-      disabled?: boolean;
-      separator?: boolean;
-    }[];
   };
   colorMode: "light" | "dark";
   colors: DefaultColors;

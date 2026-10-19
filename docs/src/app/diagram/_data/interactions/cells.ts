@@ -4,11 +4,31 @@
  * `_components/interaction-demos.ts` under the same id.
  */
 export type CellId =
-  | "pan-zoom" | "touch" | "drag" | "select" | "hover" | "front" | "connect"
-  | "drop-connection" | "context-menu" | "delete" | "undo" | "clipboard"
-  | "keyboard" | "groups" | "layout" | "read-only"
-  | "text-edit" | "resize" | "waypoints" | "snap-guides" | "overlap"
-  | "collapse" | "insert-on-edge" | "delete-reconnect" | "align";
+  | "pan-zoom"
+  | "touch"
+  | "drag"
+  | "select"
+  | "hover"
+  | "front"
+  | "connect"
+  | "drop-connection"
+  | "context-menu"
+  | "delete"
+  | "undo"
+  | "clipboard"
+  | "keyboard"
+  | "groups"
+  | "layout"
+  | "read-only"
+  | "text-edit"
+  | "resize"
+  | "waypoints"
+  | "snap-guides"
+  | "overlap"
+  | "collapse"
+  | "insert-on-edge"
+  | "delete-reconnect"
+  | "align";
 
 export type InteractionCell = {
   id: CellId;
@@ -92,8 +112,8 @@ on: {
     title: "Hover neighbours",
     tier: "D",
     caption: "Hover a node. Its neighbours light up.",
-    snippet: `nodeTypes: {
-  default: ({ node, isHovered, isNeighbour }) =>
+    snippet: `custom: {
+  node: ({ node, isHovered, isNeighbour }) =>
     Card(node.data.label, {
       highlight: isHovered || isNeighbour,
     }),
@@ -117,7 +137,8 @@ on: {
     id: "connect",
     title: "Connect",
     tier: "D",
-    caption: "Drag from a handle onto another node. Drag an edge end to reconnect.",
+    caption:
+      "Drag from a handle onto another node. Drag an edge end to reconnect.",
     snippet: `interaction: {
   connect: {
     mode: "strict",  // source → target only
@@ -214,7 +235,8 @@ flow.putContent(content, { at: flow.pointerFlowPosition });`,
     id: "keyboard",
     title: "Keyboard",
     tier: "D",
-    caption: "Click a node, then press the arrow keys. Shift moves ten times as far.",
+    caption:
+      "Click a node, then press the arrow keys. Shift moves ten times as far.",
     snippet: `interaction: {
   keys: {
     selectAll: "Meta+a",
@@ -240,8 +262,10 @@ flow.putContent(content, { at: flow.pointerFlowPosition });`,
 ];
 
 interaction: { drag: { dropIntoGroup: true } },
-nodeTypes: {
-  group: ({ isDropTarget }) => Frame({ glow: isDropTarget }),
+custom: {
+  node: (args, ctx) => args.node.type === "group"
+    ? Frame({ glow: args.isDropTarget })
+    : defaultNode(args, ctx),
 },`,
     ready: true,
   },
@@ -279,11 +303,9 @@ can: (gesture, target) =>
     title: "Inline text edit",
     tier: "B",
     caption: "Double-click a label. Enter commits, Esc cancels.",
-    snippet: `import { EditableLabel } from "@/components/diagram/flow-diagram";
-
-interaction: { edit: { text: true } }, // default nodes edit already
-nodeTypes: {
-  note: (args, flow) => Card({ child: EditableLabel(args, flow) }),
+    snippet: `interaction: { edit: { text: true } }, // default nodes edit already
+custom: {
+  node: ({ label }) => Card({ child: label }),
 },
 on: {
   editEnd: ({ node, committed }) => committed && save(node),
@@ -311,7 +333,8 @@ on: {
     id: "waypoints",
     title: "Edge waypoints",
     tier: "B",
-    caption: "Click the edge, then drag a dot to bend it. Double-click a bend to remove it.",
+    caption:
+      "Click the edge, then drag a dot to bend it. Double-click a bend to remove it.",
     snippet: `interaction: { edit: { waypoints: true } },
 edges: [
   { id: "e", source: "a", target: "b", waypoints: [{ x: 200, y: 40 }] },
@@ -346,8 +369,8 @@ custom: {
     snippet: `interaction: {
   drag: { overlap: "push" }, // or "reject", default "allow"
 },
-nodeTypes: {
-  default: ({ node, isOverlapping }) =>
+custom: {
+  node: ({ node, isOverlapping }) =>
     Card(node.data.label, { warn: isOverlapping }),
 },
 
@@ -362,8 +385,8 @@ flow.resolveOverlaps();`,
     caption: "Click the chevron on Lead. The team hides and a count appears.",
     snippet: `{ id: "lead", collapsible: true, position, data }
 
-nodeTypes: {
-  default: ({ node, isCollapsed, hiddenChildCount }, flow) =>
+custom: {
+  node: ({ node, isCollapsed, hiddenChildCount }, flow) =>
     Card(node.data.label, {
       badge: isCollapsed ? \`+\${hiddenChildCount}\` : null,
       chevron: Chevron({
@@ -411,7 +434,8 @@ custom: {
     id: "align",
     title: "Align and distribute",
     tier: "B",
-    caption: "Shift-drag around the nodes, then click Align left or Distribute.",
+    caption:
+      "Shift-drag around the nodes, then click Align left or Distribute.",
     snippet: `const ids = flow.getSelectedNodes().map((node) => node.id);
 
 flow.alignNodes(ids, "left"); // centerX, right, top, centerY, bottom
@@ -420,4 +444,6 @@ flow.distributeNodes(ids, "y"); // or "x"`,
   },
 ];
 
-export const cellById = Object.fromEntries(cells.map((cell) => [cell.id, cell])) as Record<CellId, InteractionCell>;
+export const cellById = Object.fromEntries(
+  cells.map((cell) => [cell.id, cell]),
+) as Record<CellId, InteractionCell>;

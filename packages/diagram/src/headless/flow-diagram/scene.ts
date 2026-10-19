@@ -2,6 +2,7 @@ import {
   Constraints,
   HitTestEntry,
   type HitTestResult,
+  Matrix4,
   MultiChildRenderObject,
   MultiChildRenderObjectWidget,
   Offset,
@@ -12,7 +13,68 @@ import {
   type Widget,
 } from "flitter-core";
 
-export type MeasureEntry = { id: string; width: number; height: number };
+export type HandleMeasure = {
+  id: string | null;
+  type: "source" | "target";
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+export type MeasureEntry = {
+  id: string;
+  width: number;
+  height: number;
+  handles?: HandleMeasure[];
+};
+
+/** Marks an interaction-ready handle placed inside an arbitrary node widget tree. */
+class _FlowHandleAnchor extends SingleChildRenderObjectWidget {
+  constructor(
+    readonly id: string | null,
+    readonly type: "source" | "target",
+    child: Widget,
+  ) {
+    super({ child, key: `handle:${type}:${id ?? ""}` });
+  }
+  createRenderObject() {
+    return new RenderFlowHandleAnchor(this.id, this.type);
+  }
+  updateRenderObject(render: RenderFlowHandleAnchor) {
+    render.id = this.id;
+    render.type = this.type;
+  }
+}
+export function FlowHandleAnchor({ id, type, child }: { id: string | null; type: "source" | "target"; child: Widget }): Widget {
+  return new _FlowHandleAnchor(id, type, child);
+}
+class RenderFlowHandleAnchor extends SingleChildRenderObject {
+  constructor(
+    public id: string | null,
+    public type: "source" | "target",
+  ) {
+    super({ isPainter: false });
+  }
+  protected preformLayout(): void {
+    this.child?.layout(this.constraints, { parentUsesSize: true });
+    if (this.child) this.child.offset = Offset.zero();
+    this.size = this.child?.size ?? Size.zero;
+  }
+}
+function collectInlineHandles(parent: RenderObject, transform = Matrix4.identity(), out: HandleMeasure[] = []): HandleMeasure[] {
+  if (parent instanceof RenderFlowHandleAnchor) {
+    const m = transform.storage;
+    const corners = [[0, 0], [parent.size.width, 0], [0, parent.size.height], [parent.size.width, parent.size.height]];
+    const xs = corners.map(([x, y]) => m[0] * x + m[4] * y + m[12]);
+    const ys = corners.map(([x, y]) => m[1] * x + m[5] * y + m[13]);
+    const left = Math.min(...xs), top = Math.min(...ys);
+    const width = Math.max(...xs) - left, height = Math.max(...ys) - top;
+    out.push({ id: parent.id, type: parent.type, x: left + width / 2, y: top + height / 2, width, height });
+  }
+  const childTransform = parent.applyPaintTransform(transform);
+  for (const child of parent.children) collectInlineHandles(child, childTransform.translated(child.offset.x, child.offset.y), out);
+  return out;
+}
 /** Which point of the child sits on `(x, y)`: a preset or fractions of the child's size. */
 export type ItemAnchor = "topLeft" | "center" | { x: number; y: number };
 
@@ -21,7 +83,10 @@ function anchorFractions(anchor: ItemAnchor): { x: number; y: number } {
   if (anchor === "center") return { x: 0.5, y: 0.5 };
   return anchor;
 }
-export type ItemHitTest = (position: { x: number; y: number }, size: Size) => boolean;
+export type ItemHitTest = (
+  position: { x: number; y: number },
+  size: Size,
+) => boolean;
 
 /** Render objects a scene group knows how to position. */
 interface PositionedChild extends RenderObject {
@@ -58,7 +123,11 @@ function collectChildMeasures(parent: RenderObject, out: MeasureEntry[]): void {
 }
 
 /** Hit test children only; the container's own bounds never gate pointer events. */
-function hitTestUnbounded(render: RenderObject, result: HitTestResult, position: Offset): boolean {
+function hitTestUnbounded(
+  render: RenderObject,
+  result: HitTestResult,
+  position: Offset,
+): boolean {
   if (render.hitTestChildren(result, position)) {
     result.add(new HitTestEntry(render));
     return true;
@@ -87,7 +156,10 @@ export class FlowSceneGroup extends MultiChildRenderObjectWidget {
   override updateRenderObject(_renderObject: RenderFlowSceneGroup): void {}
 }
 
-export class RenderFlowSceneGroup extends MultiChildRenderObject implements PositionedChild {
+export class RenderFlowSceneGroup
+  extends MultiChildRenderObject
+  implements PositionedChild
+{
   sceneX = 0;
   sceneY = 0;
   sceneAnchor: ItemAnchor = "topLeft";
@@ -156,7 +228,9 @@ export class RenderFlowScene extends MultiChildRenderObject {
     const constraints = this.constraints;
     this.size = new Size({
       width: Number.isFinite(constraints.maxWidth) ? constraints.maxWidth : 0,
-      height: Number.isFinite(constraints.maxHeight) ? constraints.maxHeight : 0,
+      height: Number.isFinite(constraints.maxHeight)
+        ? constraints.maxHeight
+        : 0,
     });
     layoutPositionedChildren(this);
     const measured: MeasureEntry[] = [];
@@ -236,7 +310,10 @@ export class FlowSceneItem extends SingleChildRenderObjectWidget {
   }
 }
 
-export class RenderFlowSceneItem extends SingleChildRenderObject implements PositionedChild {
+export class RenderFlowSceneItem
+  extends SingleChildRenderObject
+  implements PositionedChild
+{
   sceneX: number;
   sceneY: number;
   sceneAnchor: ItemAnchor;
@@ -294,7 +371,12 @@ export class RenderFlowSceneItem extends SingleChildRenderObject implements Posi
 
   collectMeasures(out: MeasureEntry[]): void {
     if (this.measureId != null) {
-      out.push({ id: this.measureId, width: this.size.width, height: this.size.height });
+      out.push({
+        id: this.measureId,
+        width: this.size.width,
+        height: this.size.height,
+        handles: collectInlineHandles(this),
+      });
     }
   }
 
@@ -369,7 +451,10 @@ export class FlowNodeItem extends MultiChildRenderObjectWidget {
   }
 }
 
-export class RenderFlowNodeItem extends MultiChildRenderObject implements PositionedChild {
+export class RenderFlowNodeItem
+  extends MultiChildRenderObject
+  implements PositionedChild
+{
   sceneX: number;
   sceneY: number;
   readonly sceneAnchor: ItemAnchor = "topLeft";
@@ -389,9 +474,12 @@ export class RenderFlowNodeItem extends MultiChildRenderObject implements Positi
   }
 
   update(widget: FlowNodeItem): void {
-    const positionChanged = this.sceneX !== widget.x || this.sceneY !== widget.y;
+    const positionChanged =
+      this.sceneX !== widget.x || this.sceneY !== widget.y;
     const layoutChanged =
-      this.width !== widget.width || this.height !== widget.height || this.placements !== widget.placements;
+      this.width !== widget.width ||
+      this.height !== widget.height ||
+      this.placements !== widget.placements;
     this.sceneX = widget.x;
     this.sceneY = widget.y;
     this.width = widget.width;
@@ -419,15 +507,23 @@ export class RenderFlowNodeItem extends MultiChildRenderObject implements Positi
     for (let i = 1; i < children.length; i++) {
       const attachment = children[i];
       const placement = this.placements[i - 1];
-      const constraints = placement?.constraints?.(this.size) ?? new Constraints();
+      const constraints =
+        placement?.constraints?.(this.size) ?? new Constraints();
       attachment.layout(constraints, { parentUsesSize: true });
-      const offset = placement ? placement.offset(this.size, attachment.size) : { x: 0, y: 0 };
+      const offset = placement
+        ? placement.offset(this.size, attachment.size)
+        : { x: 0, y: 0 };
       attachment.offset = new Offset(offset);
     }
   }
 
   collectMeasures(out: MeasureEntry[]): void {
-    out.push({ id: this.measureId, width: this.size.width, height: this.size.height });
+    out.push({
+      id: this.measureId,
+      width: this.size.width,
+      height: this.size.height,
+      handles: collectInlineHandles(this),
+    });
   }
 
   override hitTest(result: HitTestResult, position: Offset): boolean {
