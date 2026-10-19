@@ -1,11 +1,11 @@
 import { Alignment, Border, BorderRadius, BoxDecoration, Column, Container, CrossAxisAlignment, EdgeInsets, GestureDetector, MainAxisSize, Opacity, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextStyle, type Widget } from "flitter-ui";
-import { FlowController, forceLayout, getStraightPath, type FlowNode, type FlowEdge } from "flitter-ui/diagram";
-import { FlowDiagram, defaultEdge } from "@/components/diagram/flow-diagram";
+import { FlowDiagramController, forceLayout, getStraightPath, type FlowNode, type FlowEdge } from "flitter-ui/diagram";
+import FlowDiagram, { defaultEdge } from "@/components/diagram/flow-diagram";
 
 type Theme = "light" | "dark";
 class Knowledge extends StatefulWidget { constructor(readonly theme: Theme) { super(theme); } createState() { return new KnowledgeState(); } }
 class KnowledgeState extends State<Knowledge> {
-  flow = new FlowController();
+  flow = new FlowDiagramController();
   diagram?: Widget;
   focused = "incident";
   hovered: string | null = null;
@@ -22,7 +22,7 @@ class KnowledgeState extends State<Knowledge> {
     ["webhook", "Stripe webhooks", "W", "#4d91ae", "Events may arrive out of order or more than once."],
     ["slo", "Error budget", "B", "#6aa58c", "42% remaining in the rolling 30-day window."],
     ["postmortem", "Postmortem", "M", "#e07157", "Action: atomic deduplication before charging."]
-  ].map(([id, label, icon, color, note]) => ({ id, type: "note", position: { x: 0, y: 0 }, width: 120, height: 80, selected: id === "incident", data: { label, icon, color, note } }));
+  ].map(([id, label, icon, color, note]) => ({ id, type: "note", position: { x: 0, y: 0 }, width: 150, height: 94, selected: id === "incident", data: { label, icon, color, note } }));
   edges: FlowEdge[] = [
     ["incident", "retries"],
     ["incident", "payments"],
@@ -36,7 +36,7 @@ class KnowledgeState extends State<Knowledge> {
     ["postmortem", "runbook"]
   ].map(([source, target]) => ({ id: `${source}-${target}`, source, target, type: "link" }));
   get c() { return this.widget.theme === "dark" ? { bg: "#191a22", card: "#252733", ink: "#e6e6f1", muted: "#9799b0", line: "#494c63" } : { bg: "#f7f6fb", card: "#fff", ink: "#3c3c59", muted: "#85849b", line: "#d4d1e3" }; }
-  text(value: string, size = 11, color = this.c.ink) { return Text(value, { style: new TextStyle({ fontFamily: "system-ui", fontSize: size, color }) }); }
+  text(value: string, size = 11, color = this.c.ink) { return Text(value, { style: new TextStyle({ fontFamily: "system-ui", fontSize: Math.max(13, size), color }) }); }
   button(label: string, fn: () => void) {
     return GestureDetector({
       onMouseDown: (e) => e.stopPropagation(),
@@ -67,22 +67,21 @@ class KnowledgeState extends State<Knowledge> {
     await this.flow.layout(forceLayout, { seed: 11, nodeSpacing: 20, fitView: false });
     // Layout is a command; positions explicitly pinned by the reader win afterwards.
     this.flow.run(() => this.flow.setNodes((ns) => ns.map((n) => (pinned.has(n.id) ? { ...n, position: pinned.get(n.id)! } : n))), { history: "merge" });
-    await this.flow.fitView({ padding: 0.4, maxZoom: 1 });
+    await this.flow.fitView({ padding: 0.12, maxZoom: 1 });
   }
   createDiagram(): Widget {
     const c = this.c;
     return FlowDiagram({
       controller: this.flow,
-      nodes: this.nodes,
-      edges: this.edges,
+      data: { nodes: this.nodes, edges: this.edges },
       layout: { algorithm: forceLayout, options: { seed: 11, nodeSpacing: 20 } },
-      viewport: { minZoom: 0.15, fitView: { padding: 0.4, maxZoom: 1 } },
-      config: { colorMode: this.widget.theme, colors: { background: c.bg, edgeStroke: c.line }, minimap: { visible: false } },
+      viewport: { minZoom: 0.15, fitView: { padding: 0.12, maxZoom: 1 } },
+      config: { edgeLabel: { fontSize: 13 }, colorMode: this.widget.theme, colors: { background: c.bg, edgeStroke: c.line }, minimap: { visible: false } },
       nodeTypes: {
         note: {
           handles: [],
           lod: [0.45, 0.8],
-          build: ({ node, selected, hovered, isNeighbour }, ctx) =>
+          build: ({ node, isSelected: selected, isHovered: hovered, isNeighbour }, ctx) =>
             Opacity({
               opacity: !this.hovered || hovered || isNeighbour ? 1 : 0.2,
               child: Column({
@@ -95,7 +94,7 @@ class KnowledgeState extends State<Knowledge> {
                     decoration: new BoxDecoration({ shape: "circle", color: String(node.data.color), border: Border.all({ color: selected ? c.ink : c.card, width: selected ? 3 : 1 }) }),
                     child: this.text(String(node.data.icon), 18, "#fff")
                   }),
-                  Opacity({ opacity: ctx.zoom < 0.45 ? 0 : ctx.zoom < 0.8 ? 0.65 : 1, child: this.text(`${node.data.pinned ? "◆ " : ""}${node.data.label}`, 11) })
+                  Opacity({ opacity: ctx.zoom < 0.45 ? 0 : ctx.zoom < 0.8 ? 0.65 : 1, child: Container({ margin: EdgeInsets.only({ top: 6 }), padding: EdgeInsets.symmetric({ horizontal: 4, vertical: 2 }), color: c.bg, child: this.text(`${node.data.pinned ? "◆ " : ""}${node.data.label}`, 15) }) })
                 ]
               })
             })
@@ -177,6 +176,7 @@ class KnowledgeState extends State<Knowledge> {
           })
         }),
         Positioned({
+          key: "diagram-status",
           right: 12,
           bottom: 12,
           child: Container({

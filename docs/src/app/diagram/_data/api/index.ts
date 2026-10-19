@@ -47,7 +47,7 @@ export type ControllerRow = {
   signature: string;
   description: string;
   kind: "method" | "getter" | "property";
-  /** Listed in todo/diagram.md §4 but not on FlowController yet. */
+  /** Listed in todo/diagram.md §4 but not on FlowDiagramController yet. */
   planned: boolean;
 };
 

@@ -74,6 +74,32 @@ async function mount(page: Page, renderer: string, parameters = '') {
 }
 
 for (const renderer of ['svg', 'canvas']) {
+	test(`${renderer}: composition overrides preserve controls, minimap and leaf gestures`, async ({
+		page
+	}) => {
+		const box = await mount(page, renderer, '&scenario=composition&customSlots&minimap');
+		const counts = await page.evaluate(() => ({ ...(window as any).__diagram.slotBuilds }));
+		for (const slot of ['layout', 'viewport', 'nodeBox', 'edgeBox', 'controls', 'minimap'])
+			expect(counts[slot]).toBeGreaterThan(0);
+		const center = await nodeCenter(page, '1');
+		await page.mouse.click(center.x, center.y);
+		expect((await snapshot(page)).nodes.find((node) => node.id === '1')!.selected).toBe(true);
+		const state = await page.evaluate(() => (window as any).__diagram.nodeState['1']);
+		expect(state.isEditing).toBe(false);
+		expect(state.isCollapsed).toBe(false);
+		// Controls remain at the configured bottom-left, with headless click wiring.
+		const before = (await snapshot(page)).viewport.zoom;
+		await page.mouse.click(box.x + 28, box.y + box.height - 15 - 4 * 26 + 13);
+		await expect.poll(async () => (await snapshot(page)).viewport.zoom).toBeGreaterThan(before);
+		// The minimap's default bottom-right placement retains headless pan gestures.
+		const viewport = (await snapshot(page)).viewport;
+		await page.mouse.move(box.x + box.width - 100, box.y + box.height - 75);
+		await page.mouse.down();
+		await page.mouse.move(box.x + box.width - 80, box.y + box.height - 65, { steps: 4 });
+		await page.mouse.up();
+		await expect.poll(async () => (await snapshot(page)).viewport.x).not.toBe(viewport.x);
+	});
+
 	test(`${renderer}: fit view, drag, select, zoom and pan`, async ({ page }) => {
 		const errors: string[] = [];
 		page.on('pageerror', (error) => errors.push(error.message));
@@ -238,39 +264,44 @@ for (const renderer of ['svg', 'canvas']) {
 		expect(after['3']).toBe(before['3']);
 	});
 
-	test(`${renderer}: dragging one node rebuilds only that node`, async ({ page }) => {
-		const box = await mount(page, renderer);
-		const builds = () => page.evaluate(() => ({ ...(window as any).__diagram.builds }));
-		const settle = () =>
-			page.evaluate(
-				() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
-			);
-		const c2 = await nodeCenter(page, '2');
-		// Hover/selection changes neighbour args once. Measure drag ticks after those transitions.
-		await page.mouse.click(c2.x, c2.y);
-		await settle();
-		const before = await builds();
-		await page.mouse.down();
-		for (let i = 1; i <= 10; i++) await page.mouse.move(c2.x + i * 6, c2.y + i * 4);
-		await page.mouse.up();
-		await settle();
-		const after = await builds();
-		// the dragged node rebuilds (selection, dragging flag, positions)...
-		expect(after['2']).toBeGreaterThan(before['2']);
-		// ...while untouched nodes do not rebuild at all
-		expect(after['1']).toBe(before['1']);
-		expect(after['3']).toBe(before['3']);
-		// park the pointer on empty pane (leaving node 2 ends its hover), then zoom:
-		// a viewport change must not rebuild any node body
-		await page.mouse.move(box.x + 10, box.y + 10);
-		await settle();
-		const parked = await builds();
-		await page.mouse.wheel(0, -100);
-		await settle();
-		await page.mouse.wheel(0, 100);
-		await settle();
-		expect(await builds()).toEqual(parked);
-	});
+	for (const customSlots of ['', '&customSlots']) {
+		test(`${renderer}: dragging one node rebuilds only that node ${customSlots}`, async ({
+			page
+		}) => {
+			const box = await mount(page, renderer, customSlots);
+			const builds = () => page.evaluate(() => ({ ...(window as any).__diagram.builds }));
+			const settle = () =>
+				page.evaluate(
+					() =>
+						new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+				);
+			const c2 = await nodeCenter(page, '2');
+			// Hover/selection changes neighbour args once. Measure drag ticks after those transitions.
+			await page.mouse.click(c2.x, c2.y);
+			await settle();
+			const before = await builds();
+			await page.mouse.down();
+			for (let i = 1; i <= 10; i++) await page.mouse.move(c2.x + i * 6, c2.y + i * 4);
+			await page.mouse.up();
+			await settle();
+			const after = await builds();
+			// the dragged node rebuilds (selection, dragging flag, positions)...
+			expect(after['2']).toBeGreaterThan(before['2']);
+			// ...while untouched nodes do not rebuild at all
+			expect(after['1']).toBe(before['1']);
+			expect(after['3']).toBe(before['3']);
+			// park the pointer on empty pane (leaving node 2 ends its hover), then zoom:
+			// a viewport change must not rebuild any node body
+			await page.mouse.move(box.x + 10, box.y + 10);
+			await settle();
+			const parked = await builds();
+			await page.mouse.wheel(0, -100);
+			await settle();
+			await page.mouse.wheel(0, 100);
+			await settle();
+			expect(await builds()).toEqual(parked);
+		});
+	}
 
 	test(`${renderer}: reconnecting an edge endpoint moves it to another handle`, async ({
 		page

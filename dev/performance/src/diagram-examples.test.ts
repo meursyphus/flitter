@@ -1,12 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { getSceneOrder } from '../../../packages/diagram/src/headless/flow/controller';
+import { getSceneOrder } from '../../../packages/diagram/src/headless/flow-diagram/controller';
 import { readFileSync } from 'node:fs';
-import { StatefulWidget, StatelessWidget, type BuildContext, type Widget } from 'flitter-core';
 import {
-	type FlowController,
-	type FlowProps,
+	Constraints,
+	StatefulWidget,
+	StatelessWidget,
+	type BuildContext,
+	type Widget
+} from 'flitter-core';
+import {
+	type FlowDiagramController,
+	type FlowDiagramProps,
 	type FlowNode,
-	type NodeBuilderArgs
+	type NodeCustomArgs
 } from '../../../packages/diagram/src/engine';
 
 const modules = import.meta.glob('../../../docs/src/app/diagram/_examples/*.ts', {
@@ -27,7 +33,9 @@ const slugs = [
 	'state-machine'
 ];
 const mounted: { dispose(): void }[] = [];
-beforeEach(() => vi.useFakeTimers());
+beforeEach(() => {
+	vi.useFakeTimers();
+});
 afterEach(() => {
 	mounted.splice(0).forEach((state) => state.dispose());
 	vi.useRealTimers();
@@ -35,8 +43,10 @@ afterEach(() => {
 const context = {
 	scheduler: { addPostFrameCallbacks() {}, ensureVisualUpdate() {} }
 } as unknown as BuildContext;
-function findFlow(widget: any): FlowProps<any> | null {
-	if (widget.props?.custom && widget.props?.nodes) return widget.props;
+function findFlow(widget: any): FlowDiagramProps<any> | null {
+	if (typeof widget.builder === 'function')
+		return findFlow(widget.builder(context, Constraints.tightFor({ width: 940, height: 540 })));
+	if (widget.props?.custom && widget.props?.data) return widget.props;
 	for (const child of widget.children ?? (widget.child ? [widget.child] : [])) {
 		const found = findFlow(child);
 		if (found) return found;
@@ -53,31 +63,31 @@ async function mount(slug: string, theme: 'light' | 'dark' = 'light') {
 	mounted.push(state);
 	const props = findFlow(state.build(context))!;
 	expect(props).toBeTruthy();
-	const flow = props.controller as FlowController;
+	const flow = props.controller as FlowDiagramController;
 	flow.configure(props);
 	flow.setPaneSize(1100, 540);
 	if (props.layout) await flow.layout();
 	props.on?.init?.(flow);
 	return { state, props, flow };
 }
-function args(flow: FlowController, node: FlowNode): NodeBuilderArgs {
+function args(flow: FlowDiagramController, node: FlowNode): NodeCustomArgs {
 	return {
 		node,
-		selected: !!node.selected,
-		dragging: false,
-		hovered: false,
-		draggable: flow.isNodeDraggable(node),
-		selectable: flow.isNodeSelectable(node),
-		connectable: flow.isNodeConnectable(node),
+		isSelected: !!node.selected,
+		isDragging: false,
+		isHovered: false,
+		isDraggable: flow.isNodeDraggable(node),
+		isSelectable: flow.isNodeSelectable(node),
+		isConnectable: flow.isNodeConnectable(node),
 		positionAbsolute: flow.getNodePositionAbsolute(node),
 		zIndex: 0,
 		isConnectionTarget: false,
-		resizable: flow.isNodeResizable(node),
-		resizing: false,
-		editing: false,
+		isResizable: flow.isNodeResizable(node),
+		isResizing: false,
+		isEditing: false,
 		isDropTarget: false,
 		isOverlapping: false,
-		collapsed: !!node.collapsed,
+		isCollapsed: !!node.collapsed,
 		hiddenChildCount: flow.hiddenChildCount(node.id),
 		isNeighbour: flow.isNodeNeighbour(node.id)
 	};
@@ -113,7 +123,7 @@ for (const slug of slugs) {
 				assertWidgets(build(args(flow, node), flow as any));
 				const toolbar =
 					typeof definition === 'object' &&
-					definition.toolbar?.({ node, selected: true }, flow as any);
+					definition.toolbar?.({ node, isSelected: true }, flow as any);
 				if (toolbar) assertWidgets(toolbar);
 				for (const handle of flow.getNodeHandles(node))
 					assertWidgets(
@@ -121,11 +131,11 @@ for (const slug of slugs) {
 							{
 								node,
 								handle,
-								connectable: true,
+								isConnectable: true,
 								isConnecting: false,
 								isConnectionCandidate: false,
 								isValidCandidate: null,
-								connectionInProgress: false
+								isConnectionInProgress: false
 							},
 							flow as any
 						)
@@ -150,15 +160,15 @@ for (const slug of slugs) {
 								origin: { x: 0, y: 0 },
 								size: { width: 1100, height: 540 },
 								endpoints: ep,
-								selected: !!edge.selected,
-								hovered: false,
-								animated: !!edge.animated,
+								isSelected: !!edge.selected,
+								isHovered: false,
+								isAnimated: !!edge.animated,
 								sourceNode: flow.getNode(edge.source)!,
 								targetNode: flow.getNode(edge.target)!,
 								markerStart: null,
 								markerEnd: null,
 								interactionWidth: 20,
-								reconnecting: false,
+								isReconnecting: false,
 								waypoints: edge.waypoints ?? [],
 								activeHandle: null,
 								isNeighbour: flow.isEdgeNeighbour(edge)
@@ -170,8 +180,8 @@ for (const slug of slugs) {
 						{
 							edge,
 							label: edge.label ?? ' ',
-							selected: false,
-							hovered: true,
+							isSelected: false,
+							isHovered: true,
 							x: path.labelX,
 							y: path.labelY
 						},
@@ -347,10 +357,10 @@ it('workflow edge controls occupy no space until hovered', async () => {
 	const { props, flow } = await mount('automation-workflow');
 	expect(
 		props.custom.edgeLabel(
-			{ edge: flow.edges[0], label: ' ', hovered: false, selected: false, x: 0, y: 0 },
+			{ edge: flow.edges[0], label: ' ', isHovered: false, isSelected: false, x: 0, y: 0 },
 			flow
 		)
-	).toBeNull();
+	).toMatchObject({ constraints: { minWidth: 0, maxWidth: 0, minHeight: 0, maxHeight: 0 } });
 });
 
 it('deployment references clear both group fills and storage folds to a count chip', async () => {
@@ -389,4 +399,114 @@ it('state-machine event labels clear frame headers and the initial edge stays un
 			).toBe(false);
 		}
 	}
+});
+
+function texts(widget: any): { data: string; style: { fontSize: number } }[] {
+	if (widget.runtimeType === '_Text') return [widget];
+	if (typeof widget.builder === 'function')
+		return texts(widget.builder(context, Constraints.tightFor({ width: 940, height: 540 })));
+	if (widget instanceof StatelessWidget) return texts(widget.build(context));
+	return (widget.children ?? (widget.child ? [widget.child] : [])).flatMap(texts);
+}
+
+it('deleting or deselecting a deployment clears the inspector and its action', async () => {
+	const { flow, state } = await mount('deployment-canvas');
+	expect(texts(state.build()).some((t) => t.data === 'Redeploy')).toBe(true);
+	await flow.deleteElements(['api']);
+	expect(state.selected).toBeNull();
+	expect(texts(state.build()).some((t) => t.data === 'Redeploy')).toBe(false);
+	flow.selectNodes(['worker']);
+	expect(state.selected).toBe('worker');
+	flow.clearSelection();
+	expect(state.selected).toBeNull();
+});
+
+for (const slug of slugs) {
+	it(`${slug}: initial view contains the graph (or the tall flow trigger) before enforcing readable text`, async () => {
+		const { flow, props, state } = await mount(slug);
+		for (const width of [940, 350]) {
+			flow.setPaneSize(
+				slug === 'deployment-canvas' && width === 940 ? width - 229 : width,
+				width === 940 ? 540 : 320
+			);
+			if (slug === 'linear-steps') await state.fitStart();
+			else
+				await flow.fitView(
+					typeof props.viewport?.fitView === 'object' ? props.viewport.fitView : {}
+				);
+			const visible = flow.getVisibleNodes();
+			const required =
+				slug === 'linear-steps' ? visible.filter((node) => node.id === 'trigger') : visible;
+			expect(required.length).toBeGreaterThan(0);
+			for (const node of required) {
+				const rect = flow.getNodeRect(node)!;
+				const at = flow.flowToPanePosition(rect);
+				expect(at.x, `${node.id}: left`).toBeGreaterThanOrEqual(8);
+				expect(at.y, `${node.id}: top`).toBeGreaterThanOrEqual(slug === 'linear-steps' ? 112 : 8);
+				expect(at.x + rect.width * flow.zoom, `${node.id}: right`).toBeLessThanOrEqual(
+					flow.paneSize.width - 8
+				);
+				expect(at.y + rect.height * flow.zoom, `${node.id}: bottom`).toBeLessThanOrEqual(
+					flow.paneSize.height - 8
+				);
+			}
+			const bounds = flow.getNodesBounds(required);
+			const bestFit = Math.min(
+				1,
+				(flow.paneSize.width - 16) / bounds.width,
+				(flow.paneSize.height - 16) / bounds.height
+			);
+			const checkText = (fontSize: number) => {
+				expect(fontSize).toBeGreaterThanOrEqual(13);
+				// At narrow widths the whole graph takes priority over the 10px target.
+				if (fontSize * bestFit >= 10 || (slug === 'knowledge-graph' && width === 940))
+					expect(fontSize * flow.zoom).toBeGreaterThanOrEqual(10);
+			};
+			for (const node of flow.getVisibleNodes()) {
+				const definition = props.nodeTypes?.[node.type ?? 'default'];
+				const build =
+					typeof definition === 'function' ? definition : (definition?.build ?? flow.custom.node);
+				for (const text of texts(build(args(flow, node), flow as any))) {
+					checkText(text.style.fontSize);
+				}
+			}
+			for (const edge of flow.getVisibleEdges().filter((e) => e.label)) {
+				const label = flow.custom.edgeLabel(
+					{ edge, label: edge.label!, isHovered: false, isSelected: false, x: 0, y: 0 },
+					flow as any
+				);
+				expect(label).toBeTruthy();
+				for (const text of texts(label)) checkText(text.style.fontSize);
+			}
+		}
+	});
+}
+
+it('state-machine SUBMIT and RETRY labels have separate anchors', async () => {
+	const { flow } = await mount('state-machine');
+	const path = (id: string) => {
+		const e = flow.getEdge(id)!;
+		return flow.getEdgePath(e, flow.getEdgeEndpoints(e)!);
+	};
+	expect(Math.abs(path('submit').labelY - path('retry').labelY)).toBeGreaterThan(60);
+});
+it('scenario branch labels stay away from the other branch paths', async () => {
+	const { flow } = await mount('scenario-router');
+	for (const labelEdge of flow.edges.filter((e) => e.source === 'router')) {
+		const path = flow.getEdgePath(labelEdge, flow.getEdgeEndpoints(labelEdge)!);
+		for (const other of flow.edges.filter((e) => e.id !== labelEdge.id)) {
+			const line = flow.getEdgePath(other, flow.getEdgeEndpoints(other)!);
+			const intersects = line.points.some(
+				(p) => Math.abs(p.x - path.labelX) < 78 && Math.abs(p.y - path.labelY) < 24
+			);
+			expect(intersects, `${other.id} crossing ${labelEdge.id}`).toBe(false);
+		}
+	}
+});
+
+it('the tall tree anchors its trigger below the header automatically after layout', async () => {
+	const { flow } = await mount('linear-steps');
+	const first = flow.getNodeRect('trigger')!;
+	expect(flow.flowToPanePosition(first).y).toBe(112);
+	expect(flow.zoom).toBe(0.85);
 });

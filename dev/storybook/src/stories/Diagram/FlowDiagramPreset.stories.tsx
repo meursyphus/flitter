@@ -29,8 +29,8 @@ export const FromPreset: Story = {
     width: "560px",
     height: "400px",
     widget: FlowDiagram({
-      nodes,
-      edges,
+      data: { nodes, edges },
+
       viewport: { fitView: true },
       on: {
         init: (controller) => {

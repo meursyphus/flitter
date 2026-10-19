@@ -1,11 +1,17 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
-	FlowController,
-	type FlowProps,
+	FlowDiagramController,
+	type FlowDiagramProps,
 	type FlowNode
 } from '../../../packages/diagram/src/engine';
-import { getSceneOrder } from '../../../packages/diagram/src/headless/flow/controller';
-import { defaultCustom, createDefaultConfig } from '../../../packages/diagram/src/styles/default';
+import { getSceneOrder } from '../../../packages/diagram/src/headless/flow-diagram/controller';
+import { defaultStyleConfig } from '../../../packages/diagram/registry/templates/diagrams/flow-diagram/styles/default';
+
+import { baseDefaults } from '../../../packages/diagram/registry/templates/diagrams/flow-diagram/base';
+const defaultCustom = {
+	...baseDefaults,
+	...defaultStyleConfig.custom
+} as import('../../../packages/diagram/src/engine').FlowDiagramCustom<any>;
 
 const node = (id: string, x = 0, y = 0): FlowNode => ({
 	id,
@@ -14,14 +20,22 @@ const node = (id: string, x = 0, y = 0): FlowNode => ({
 	width: 100,
 	height: 50
 });
-function flow(props: Partial<FlowProps<any>> = {}) {
-	const f = new FlowController();
+function flow(
+	props: Omit<Partial<FlowDiagramProps<any>>, 'data'> & {
+		data?: Partial<FlowDiagramProps['data']>;
+	} = {}
+) {
+	const f = new FlowDiagramController();
 	f.configure({
-		nodes: [node('a'), node('b', 200)],
-		edges: [{ id: 'ab', source: 'a', target: 'b' }],
+		data: {
+			nodes: [node('a'), node('b', 200)],
+			edges: [{ id: 'ab', source: 'a', target: 'b' }],
+			...props.data
+		},
+
 		custom: defaultCustom,
-		config: createDefaultConfig(),
-		...props
+		config: defaultStyleConfig.createConfig(),
+		...(({ data, ...rest }) => rest)(props)
 	});
 	return f;
 }
@@ -38,7 +52,7 @@ describe('P2 follow-ups and menus', () => {
 	});
 	it('only rebuilds opted-in LOD nodes on threshold crossings', async () => {
 		const f = flow({
-			nodes: [{ ...node('a'), type: 'lod' }, node('b')],
+			data: { nodes: [{ ...node('a'), type: 'lod' }, node('b')] },
 			nodeTypes: { lod: { build: defaultCustom.node, lod: [0.75, 1.5] } }
 		});
 		const a = vi.fn(),
@@ -123,15 +137,17 @@ describe('history', () => {
 describe('clipboard', () => {
 	it('copies descendants and only internal edges; remaps parents and endpoints', () => {
 		const f = flow({
-			nodes: [
-				{ ...node('group', 100, 100), type: 'group' },
-				{ ...node('child', 20, 20), parentId: 'group' },
-				node('other', 500)
-			],
-			edges: [
-				{ id: 'inside', source: 'group', target: 'child' },
-				{ id: 'outside', source: 'child', target: 'other' }
-			]
+			data: {
+				nodes: [
+					{ ...node('group', 100, 100), type: 'group' },
+					{ ...node('child', 20, 20), parentId: 'group' },
+					node('other', 500)
+				],
+				edges: [
+					{ id: 'inside', source: 'group', target: 'child' },
+					{ id: 'outside', source: 'child', target: 'other' }
+				]
+			}
 		});
 		const content = f.getContent(['group']);
 		expect(content.nodes).toHaveLength(2);
@@ -208,8 +224,7 @@ describe('keyboard baseline', () => {
 describe('groups and overlap', () => {
 	it('reparents in absolute coordinates and rejects cycles', () => {
 		const f = flow({
-			nodes: [{ ...node('g', 100, 100), type: 'group' }, node('a', 150, 130)],
-			edges: []
+			data: { nodes: [{ ...node('g', 100, 100), type: 'group' }, node('a', 150, 130)], edges: [] }
 		});
 		f.setParent('a', 'g');
 		expect(f.getNode('a')?.position).toEqual({ x: 50, y: 30 });
@@ -220,8 +235,10 @@ describe('groups and overlap', () => {
 	});
 	it('chooses the deepest drop group and detaches outside it', () => {
 		const f = flow({
-			nodes: [{ ...node('g', 100, 100), type: 'group', width: 300, height: 300 }, node('a')],
-			edges: []
+			data: {
+				nodes: [{ ...node('g', 100, 100), type: 'group', width: 300, height: 300 }, node('a')],
+				edges: []
+			}
 		});
 		f.handleNodeDragStart('a', pointer());
 		f.handleNodeDragMove('a', pointer(150, 150));
@@ -234,7 +251,7 @@ describe('groups and overlap', () => {
 		expect(f.getNode('a')?.position).toEqual({ x: 0, y: 0 });
 	});
 	it('pushes overlaps only on request and rejects an overlapping drop', () => {
-		const f = flow({ nodes: [node('a'), node('b', 25, 10)], edges: [] });
+		const f = flow({ data: { nodes: [node('a'), node('b', 25, 10)], edges: [] } });
 		f.resolveOverlaps(['a']);
 		expect(f.getIntersectingNodes(f.nodes[0])).toHaveLength(0);
 		f.history.undo();
@@ -286,8 +303,8 @@ describe('inline edit', () => {
 describe('snap guides', () => {
 	it('snaps in flow space and publishes guides without notifying unrelated nodes', () => {
 		const f = flow({
-			nodes: [node('a'), node('b', 200, 100)],
-			edges: [],
+			data: { nodes: [node('a'), node('b', 200, 100)], edges: [] },
+
 			interaction: { drag: { snap: { guides: true, radius: 5 } } }
 		});
 		const guide = vi.fn(),
@@ -325,11 +342,13 @@ describe('waypoint gestures', () => {
 describe('graph helpers', () => {
 	it('collapses outgoing subtrees, handles cycles, and preserves explicitly hidden nodes', () => {
 		const f = flow({
-			nodes: [node('a'), node('b'), { ...node('c'), hidden: true }],
-			edges: [
-				{ id: 'ab', source: 'a', target: 'b' },
-				{ id: 'ba', source: 'b', target: 'a' }
-			]
+			data: {
+				nodes: [node('a'), node('b'), { ...node('c'), hidden: true }],
+				edges: [
+					{ id: 'ab', source: 'a', target: 'b' },
+					{ id: 'ba', source: 'b', target: 'a' }
+				]
+			}
 		});
 		f.collapse('a');
 		expect(f.getVisibleNodes().map((n) => n.id)).toEqual(['a']);
@@ -342,12 +361,14 @@ describe('graph helpers', () => {
 	});
 	it('collapses group children and nested collapsed states survive expansion', () => {
 		const f = flow({
-			nodes: [
-				{ ...node('g'), type: 'group' },
-				{ ...node('a'), parentId: 'g' },
-				{ ...node('b'), parentId: 'a' }
-			],
-			edges: []
+			data: {
+				nodes: [
+					{ ...node('g'), type: 'group' },
+					{ ...node('a'), parentId: 'g' },
+					{ ...node('b'), parentId: 'a' }
+				],
+				edges: []
+			}
 		});
 		f.collapse('a');
 		f.collapse('g');
@@ -369,8 +390,7 @@ describe('graph helpers', () => {
 	});
 	it('aligns and distributes in absolute coordinates', () => {
 		const f = flow({
-			nodes: [node('a', 0, 0), node('b', 40, 100), node('c', 400, 200)],
-			edges: []
+			data: { nodes: [node('a', 0, 0), node('b', 40, 100), node('c', 400, 200)], edges: [] }
 		});
 		f.alignNodes(['a', 'b', 'c'], 'top');
 		expect(f.nodes.map((n) => n.position.y)).toEqual([0, 0, 0]);
@@ -433,11 +453,13 @@ it('disabling an active gesture clears its state and restores the mark', () => {
 
 it('paste anchors the complete subgraph bounds, including children outside a group', () => {
 	const f = flow({
-		nodes: [
-			{ ...node('g', 100, 100), type: 'group' },
-			{ ...node('a', -30, -20), parentId: 'g' }
-		],
-		edges: []
+		data: {
+			nodes: [
+				{ ...node('g', 100, 100), type: 'group' },
+				{ ...node('a', -30, -20), parentId: 'g' }
+			],
+			edges: []
+		}
 	});
 	const copied = f.putContent(f.getContent(['g']), { at: { x: 300, y: 400 } });
 	expect(f.getNodePositionAbsolute(copied.nodes[1])).toEqual({ x: 300, y: 400 });
@@ -456,11 +478,13 @@ it('overlap rejection still restores the drag origin when history is disabled', 
 it('layout leaves collapsed descendants in place until they are expanded', async () => {
 	const { layeredLayout } = await import('../../../packages/diagram/src/engine');
 	const f = flow({
-		nodes: [node('a'), node('b', 200), node('c', 777)],
-		edges: [
-			{ id: 'ab', source: 'a', target: 'b' },
-			{ id: 'bc', source: 'b', target: 'c' }
-		]
+		data: {
+			nodes: [node('a'), node('b', 200), node('c', 777)],
+			edges: [
+				{ id: 'ab', source: 'a', target: 'b' },
+				{ id: 'bc', source: 'b', target: 'c' }
+			]
+		}
 	});
 	f.collapse('b');
 	await f.layout(layeredLayout, { direction: 'LR', fitView: false });
@@ -515,13 +539,15 @@ it.each(['pan', 'select'])(
 describe('nested scene paint order', () => {
 	it('resolves parent z once and interleaves edges below their endpoint nodes', () => {
 		const f = flow({
-			nodes: [
-				{ ...node('child-a'), parentId: 'inner' },
-				{ ...node('child-b', 200), parentId: 'inner' },
-				{ ...node('inner'), parentId: 'outer', type: 'group' },
-				{ ...node('outer'), type: 'group', zIndex: 4 }
-			],
-			edges: [{ id: 'link', source: 'child-a', target: 'child-b' }]
+			data: {
+				nodes: [
+					{ ...node('child-a'), parentId: 'inner' },
+					{ ...node('child-b', 200), parentId: 'inner' },
+					{ ...node('inner'), parentId: 'outer', type: 'group' },
+					{ ...node('outer'), type: 'group', zIndex: 4 }
+				],
+				edges: [{ id: 'link', source: 'child-a', target: 'child-b' }]
+			}
 		});
 		const order = () =>
 			getSceneOrder(f).map((item) => (item.kind === 'node' ? item.node.id : item.edge.id));

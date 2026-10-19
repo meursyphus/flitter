@@ -1,4 +1,4 @@
-import type { Guide, Rect } from "../headless/flow/types";
+import type { Guide, Rect } from "../headless/flow-diagram/types";
 
 export function snapBounds(rect: Rect, others: Rect[], radius: number, anchors: { x?: number[]; y?: number[] } = {}) {
   let dx = 0,

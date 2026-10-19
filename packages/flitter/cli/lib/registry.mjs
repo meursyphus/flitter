@@ -219,9 +219,9 @@ export function isDiagramItem(item) {
 }
 
 /**
- * Diagram styles live next to the engine in this repository and import it
- * with relative paths; in a project they import the published engine from
- * `flitter-ui/diagram`. Everything else (config, parts) stays relative.
+ * Copy a diagram's base and selected style, just like chart presets. Rewrite
+ * template engine imports at any depth and specialize the public entry to the
+ * installed style; the source plugin remains in the registry.
  */
 export async function renderDiagramTemplateFile({ registry, item, file, outputRoot, targetOutputDir = item.outputDir }) {
   const sourcePath = registry.resolveTemplatePath(file.source);
@@ -232,9 +232,42 @@ export async function renderDiagramTemplateFile({ registry, item, file, outputRo
     .replace(/(['"])flitter-core\1/gu, (_, quote) => `${quote}${ROOT_WIDGETS_IMPORT}${quote}`)
     .replace(/(['"])flitter-diagram(?:\/engine)?\1/gu, (_, quote) => `${quote}${ROOT_DIAGRAM_IMPORT}${quote}`)
     .replace(
-      /(['"])(?:\.\.\/)+(?:headless\/flow|shared\/(?:geometry|edges|changes|layout|utils))(?:\/[A-Za-z0-9_-]+)*\1/gu,
+      /(['"])(?:\.\.\/)+(?:src\/engine|headless\/flow-diagram|shared\/(?:geometry|edges|changes|layout|utils))(?:\/[A-Za-z0-9_-]+)*\1/gu,
       (_, quote) => `${quote}${ROOT_DIAGRAM_IMPORT}${quote}`,
     );
+  if (relativeTarget === "index.ts") {
+    const configType = registry.diagramMetadata[item.name].configTypes[item.style];
+    const styleConfig = `${item.style}StyleConfig`;
+    content = `import type { Widget } from "flitter-ui";
+import type { DeepPartial, FlowDiagramCustom, FlowDiagramProps as HeadlessProps } from "flitter-ui/diagram";
+import { BaseFlowDiagram } from "./base";
+import { ${styleConfig}, type ${configType} } from "./style";
+
+export * from "./base";
+export * from "./style";
+export type FlowDiagramProps = Omit<HeadlessProps<${configType}>, "config" | "custom"> & {
+  config?: DeepPartial<${configType}>;
+  custom?: Partial<FlowDiagramCustom<${configType}>>;
+};
+
+export default function FlowDiagram({
+  config,
+  data,
+  custom,
+  ...rest
+}: FlowDiagramProps): Widget {
+  return BaseFlowDiagram({
+    data,
+    config: ${styleConfig}.createConfig(config),
+    custom: { ...${styleConfig}.custom, ...custom },
+    ...rest,
+  });
+}
+`;
+  } else if (relativeTarget === "style/index.ts") {
+    content = content.replace(/import type \{ StyleConfig \} from ["']\.\.\/\.\.\/plugin["'];/u,
+      `import type { DeepPartial } from "flitter-ui/diagram";\n\nexport type StyleConfig<TConfig extends object> = {\n  custom: Partial<FlowDiagramCustom<TConfig>>;\n  createConfig: (config?: DeepPartial<TConfig>) => TConfig;\n};`);
+  }
   return { targetPath, content };
 }
 

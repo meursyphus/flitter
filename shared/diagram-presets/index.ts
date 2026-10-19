@@ -1,1 +1,1 @@
-export { FlowDiagram as FlowDiagram } from "./flow-diagram";
+export { default as FlowDiagram } from "./flow-diagram";

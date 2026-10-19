@@ -1,18 +1,20 @@
-import { Border, BorderRadius, BoxDecoration, Column, Container, CrossAxisAlignment, EdgeInsets, GestureDetector, MainAxisSize, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextStyle, type Widget } from "flitter-ui";
-import { FlowController, createId, layeredLayout, type FlowNode, type FlowEdge } from "flitter-ui/diagram";
-import { FlowDiagram } from "@/components/diagram/flow-diagram";
+import { SizedBox, LayoutBuilder, Border, BorderRadius, BoxDecoration, Column, Container, CrossAxisAlignment, EdgeInsets, GestureDetector, MainAxisSize, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextStyle, type Widget } from "flitter-ui";
+import { FlowDiagramController, createId, layeredLayout, type FlowNode, type FlowEdge } from "flitter-ui/diagram";
+import FlowDiagram from "@/components/diagram/flow-diagram";
 
 type Theme = "light" | "dark";
 class Deployment extends StatefulWidget { constructor(readonly theme: Theme) { super(theme); } createState() { return new DeploymentState(); } }
 class DeploymentState extends State<Deployment> {
-  flow = new FlowController();
+  flow = new FlowDiagramController();
   diagram?: Widget;
   references = false;
-  selected = "api";
+  selected: string | null = "api";
+  initialized = false;
   nodes: FlowNode[] = [
     { id: "production", type: "frame", position: { x: 20, y: 50 }, width: 650, height: 340, data: { label: "Production", size: [650, 340] }, collapsible: true },
     {
       id: "api",
+      selected: true,
       parentId: "production",
       position: { x: 25, y: 60 },
       data: { label: "checkout-api", kind: "SERVICE", status: "Healthy", region: "us-east-1", deploy: "2m ago · 8f3a921", detail: "3 replicas · 42 req/s", color: "#16a34a" }
@@ -36,7 +38,8 @@ class DeploymentState extends State<Deployment> {
       position: { x: 25, y: 155 },
       data: { label: "invoice-exports", kind: "BUCKET", status: "Healthy", region: "us-east-1", deploy: "Private · encrypted", detail: "4,218 objects", color: "#7c3aed" }
     }
-  ].map((n) => (n.type === "frame" ? n : { ...n, type: "service", width: 225, height: 90 }));
+    // Group toolbars sit at the top-right corner so the header panel never covers them.
+  ].map((n) => (n.type === "frame" ? { ...n, toolbar: { align: "end" as const } } : { ...n, type: "service", width: 225, height: 90 }));
   edges: FlowEdge[] = [
     { id: "database-url", source: "api", target: "db", label: "DATABASE_URL" },
     { id: "queue-db", source: "worker", target: "db", label: "DATABASE_URL" },
@@ -45,7 +48,7 @@ class DeploymentState extends State<Deployment> {
   get colors() {
     return this.widget.theme === "dark" ? { bg: "#131720", card: "#202633", ink: "#e7edf8", muted: "#94a3b8", line: "#384255" } : { bg: "#f6f8fc", card: "#ffffff", ink: "#202b40", muted: "#64748b", line: "#dbe2ed" };
   }
-  text(value: string, size = 12, color = this.colors.ink) { return Text(value, { style: new TextStyle({ fontFamily: "system-ui", fontSize: size, color }) }); }
+  text(value: string, size = 12, color = this.colors.ink) { return Text(value, { style: new TextStyle({ fontFamily: "system-ui", fontSize: Math.max(13, size), color }) }); }
   button(label: string, action: () => void) {
     return GestureDetector({
       onMouseDown: (e) => e.stopPropagation(),
@@ -126,10 +129,10 @@ class DeploymentState extends State<Deployment> {
     const c = this.colors;
     return FlowDiagram({
       controller: this.flow,
-      nodes: this.nodes,
-      edges: this.edges,
-      viewport: { fitView: { padding: 0.35, maxZoom: 1 }, minZoom: 0.2 },
+      data: { nodes: this.nodes, edges: this.edges },
+      viewport: { fitView: { padding: 0.12, maxZoom: 1 }, minZoom: 0.2 },
       config: {
+        edgeLabel: { fontSize: 13 },
         colorMode: this.widget.theme,
         colors: { background: c.bg },
         controls: { position: "bottom-left" },
@@ -141,7 +144,7 @@ class DeploymentState extends State<Deployment> {
           group: true,
           handles: [],
           toolbar: ({ node }) => this.box([this.button(node.collapsed ? "Expand group" : "Collapse group", () => this.fold(node.id))]),
-          build: ({ node, collapsed, hiddenChildCount }) =>
+          build: ({ node, isCollapsed: collapsed, hiddenChildCount }) =>
             Container({
               padding: EdgeInsets.all(12),
               decoration: new BoxDecoration({ color: c.bg, border: Border.all({ color: "#8895ae", width: 1 }), borderRadius: BorderRadius.circular(12) }),
@@ -150,7 +153,7 @@ class DeploymentState extends State<Deployment> {
         },
         service: {
           handles: [{ type: "target", position: "left" }, { type: "source", position: "right" }],
-          build: ({ node, selected }) =>
+          build: ({ node, isSelected: selected }) =>
             Container({
               padding: EdgeInsets.all(13),
               decoration: new BoxDecoration({ color: c.card, border: Border.all({ color: selected ? "#6366f1" : c.line, width: selected ? 2 : 1 }), borderRadius: BorderRadius.circular(10) }),
@@ -162,15 +165,21 @@ class DeploymentState extends State<Deployment> {
             })
         }
       },
-      on: { nodeClick: (_e, n) => { if (n.type !== "frame") this.setState(() => { this.selected = n.id; }); } }
+      on: {
+        init: () => this.setState(() => { this.initialized = true; }),
+        selectionChange: ({ nodes }) => this.setState(() => { this.selected = nodes.find(n => n.type !== "frame")?.id ?? null; }),
+        delete: ({ nodes }) => { if (nodes.some(n => n.id === this.selected)) this.setState(() => { this.selected = null; }); }
+      }
     });
   }
   build(): Widget {
-    const n = this.flow.getNode(this.selected) ?? this.nodes[1];
-    return Stack({
+    const n = this.initialized ? this.flow.getNode(this.selected ?? "") : this.nodes.find(n => n.id === this.selected);
+    return LayoutBuilder({ builder: (_context, size) => {
+      const inspector = size.maxWidth >= 700 && n;
+      return Stack({
       fit: StackFit.expand,
       children: [
-        (this.diagram ??= this.createDiagram()),
+        Positioned({ top: 0, bottom: 0, left: 0, right: inspector ? 229 : 0, child: (this.diagram ??= this.createDiagram()) }),
         Positioned({
           top: 12,
           left: 12,
@@ -189,7 +198,7 @@ class DeploymentState extends State<Deployment> {
             })
           ])
         }),
-        Positioned({
+        ...(inspector ? [Positioned({
           right: 12,
           top: 110,
           child: this.box(
@@ -199,14 +208,15 @@ class DeploymentState extends State<Deployment> {
               this.text(`● ${n.data.status}`, 12, String(n.data.color)),
               this.text(String(n.data.region)),
               this.text(String(n.data.deploy), 11, this.colors.muted),
-              this.button("Redeploy", () => { this.flow.updateNodeData(n.id, { status: "Healthy", detail: "Deployment complete", color: "#16a34a", deploy: "Just now · 91a3c72" }); this.setState(); })
+              this.button("Redeploy", () => { if (!this.flow.getNode(n.id)) return; this.flow.updateNodeData(n.id, { status: "Healthy", detail: "Deployment complete", color: "#16a34a", deploy: "Just now · 91a3c72" }); this.setState(); })
             ],
             205
           )
-        }),
-        Positioned({ bottom: 14, left: 125, child: this.text("Select services · right-click empty space to group", 11, this.colors.muted) })
+        })] : []),
+        Positioned({ key: "diagram-hint", bottom: 14, left: 0, right: 0, child: LayoutBuilder({ builder: (_context, size) => size.maxWidth < 500 ? SizedBox.shrink() : Container({ padding: EdgeInsets.only({ left: 125, right: 16 }), child: this.text("Select services · right-click empty space to group", 11, this.colors.muted) }) }) })
       ]
-    });
+      });
+    } });
   }
   dispose() { this.flow.dispose(); super.dispose(); }
 }

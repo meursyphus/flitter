@@ -7,7 +7,7 @@
   "scripts": {
     "build": "vite build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "lint": "eslint src --ext ts",
+    "lint": "eslint src registry/templates --ext ts",
     "registry:validate": "node ./registry/validate.mjs"
   },
   "dependencies": {

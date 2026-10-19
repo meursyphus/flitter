@@ -1,11 +1,11 @@
-import { Alignment, Border, BorderRadius, BoxDecoration, Column, Container, CrossAxisAlignment, EdgeInsets, GestureDetector, MainAxisSize, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextField, TextStyle, type Widget } from "flitter-ui";
-import { FlowController, treeLayout, type FlowNode, type FlowEdge } from "flitter-ui/diagram";
-import { FlowDiagram } from "@/components/diagram/flow-diagram";
+import { SizedBox, LayoutBuilder, Alignment, Border, BorderRadius, BoxDecoration, Column, Container, CrossAxisAlignment, EdgeInsets, GestureDetector, MainAxisSize, Positioned, Row, Stack, StackFit, State, StatefulWidget, Text, TextField, TextStyle, type Widget } from "flitter-ui";
+import { FlowDiagramController, treeLayout, type FlowNode, type FlowEdge } from "flitter-ui/diagram";
+import FlowDiagram from "@/components/diagram/flow-diagram";
 
 type Theme = "light" | "dark";
 class Org extends StatefulWidget { constructor(readonly theme: Theme) { super(theme); } createState() { return new OrgState(); } }
 class OrgState extends State<Org> {
-  flow = new FlowController();
+  flow = new FlowDiagramController();
   diagram?: Widget;
   query = "";
   path = new Set<string>();
@@ -21,7 +21,7 @@ class OrgState extends State<Org> {
   ].map(([id, label, title, initials, color]) => ({ id, type: "person", position: { x: 0, y: 0 }, width: 210, height: 92, collapsible: true, data: { label, title, initials, color } }));
   edges: FlowEdge[] = [["maya", "leo"], ["maya", "amina"], ["leo", "sam"], ["leo", "ruth"], ["amina", "jules"], ["amina", "noah"]].map(([source, target]) => ({ id: `${source}-${target}`, source, target, type: "smoothstep" }));
   get c() { return this.widget.theme === "dark" ? { bg: "#161e27", card: "#24303e", ink: "#e7eff9", mute: "#9fb0c7", line: "#405269" } : { bg: "#f1f6fc", card: "#fff", ink: "#253e60", mute: "#8091aa", line: "#d3dfed" }; }
-  text(value: string, size = 11, color = this.c.ink) { return Text(value, { style: new TextStyle({ fontFamily: "system-ui", fontSize: size, color }) }); }
+  text(value: string, size = 11, color = this.c.ink) { return Text(value, { style: new TextStyle({ fontFamily: "system-ui", fontSize: Math.max(13, size), color }) }); }
   button(label: string, fn: () => void) {
     return GestureDetector({
       onMouseDown: (e) => e.stopPropagation(),
@@ -61,17 +61,16 @@ class OrgState extends State<Org> {
     const c = this.c;
     return FlowDiagram({
       controller: this.flow,
-      nodes: this.nodes,
-      edges: this.edges,
+      data: { nodes: this.nodes, edges: this.edges },
       layout: { algorithm: treeLayout, options: { direction: "TB", rankSpacing: 65, nodeSpacing: 30 } },
-      viewport: { minZoom: 0.2, fitView: { padding: 0.4, maxZoom: 1 } },
-      config: { colorMode: this.widget.theme, colors: { background: c.bg, edgeStroke: "#91a6c2" }, minimap: { visible: false } },
+      viewport: { minZoom: 0.2, fitView: { padding: 0.12, maxZoom: 1 } },
+      config: { edgeLabel: { fontSize: 13 }, colorMode: this.widget.theme, colors: { background: c.bg, edgeStroke: "#91a6c2" }, minimap: { visible: false } },
       nodeTypes: {
         person: {
           lod: [0.6],
           handles: [],
           toolbar: ({ node }) => this.button(node.collapsed ? "Expand reports" : "Collapse reports", () => { this.flow.toggleCollapsed(node.id); void this.tidy(); }),
-          build: ({ node, selected, collapsed, hiddenChildCount }, ctx) =>
+          build: ({ node, isSelected: selected, isCollapsed: collapsed, hiddenChildCount }, ctx) =>
             Container({
               padding: EdgeInsets.all(12),
               decoration: new BoxDecoration({
@@ -166,12 +165,12 @@ class OrgState extends State<Org> {
                   ]
                 }),
                 ...this.nodes.filter((n) => this.query && String(n.data.label).toLowerCase().includes(this.query.toLowerCase())).map((n) => this.button(String(n.data.label), () => this.find(n.id))),
-                this.button("Fit organization", () => void this.flow.fitView({ padding: 0.4 }))
+                this.button("Fit organization", () => void this.flow.fitView({ padding: 0.12, minZoom: 0.85, maxZoom: 1 }))
               ]
             })
           })
         }),
-        Positioned({ left: 125, bottom: 14, child: this.text("Select → collapse · drag onto a manager → re-parent · zoom out for compact cards", 10, this.c.mute) })
+        Positioned({ key: "diagram-hint", bottom: 14, left: 0, right: 0, child: LayoutBuilder({ builder: (_context, size) => size.maxWidth < 500 ? SizedBox.shrink() : Container({ padding: EdgeInsets.only({ left: 125, right: 16 }), child: this.text("Select → collapse · drag onto a manager → re-parent · zoom out for compact cards", 10, this.c.mute) }) }) })
       ]
     });
   }

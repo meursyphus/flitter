@@ -30,7 +30,7 @@ export const cells: InteractionCell[] = [
     tier: "D",
     caption: "Drag the pane to pan. Scroll or pinch to zoom.",
     snippet: `FlowDiagram({
-  nodes, edges,
+  data: { nodes, edges },
   viewport: { fitView: true, minZoom: 0.5, maxZoom: 2 },
   interaction: {
     pane: {
@@ -93,9 +93,9 @@ on: {
     tier: "D",
     caption: "Hover a node. Its neighbours light up.",
     snippet: `nodeTypes: {
-  default: ({ node, hovered, isNeighbour }) =>
+  default: ({ node, isHovered, isNeighbour }) =>
     Card(node.data.label, {
-      highlight: hovered || isNeighbour,
+      highlight: isHovered || isNeighbour,
     }),
 },`,
     ready: true,
@@ -135,10 +135,10 @@ on: { connect: (c) => console.log(c) },`,
     title: "Drop on the pane",
     tier: "D",
     caption: "Drag from a handle and release on empty space.",
-    snippet: `const flow = new FlowController();
+    snippet: `const flow = new FlowDiagramController();
 
 FlowDiagram({
-  nodes, edges, controller: flow,
+  data: { nodes, edges }, controller: flow,
   on: {
     connectEnd: ({ state, dropPosition }) => {
       if (state.toNode) return;
@@ -253,7 +253,7 @@ nodeTypes: {
     snippet: `import { layeredLayout } from "flitter-ui/diagram";
 
 FlowDiagram({
-  nodes, edges,
+  data: { nodes, edges },
   layout: {
     algorithm: layeredLayout, // tree, force, grid, circular
     options: { direction: "LR", rankSpacing: 80 },
@@ -317,8 +317,8 @@ edges: [
   { id: "e", source: "a", target: "b", waypoints: [{ x: 200, y: 40 }] },
 ],
 custom: {
-  edgeHandle: ({ kind, active }) =>
-    Dot({ size: kind === "midpoint" ? 6 : 8, filled: active }),
+  edgeHandle: ({ kind, isActive }) =>
+    Dot({ size: kind === "midpoint" ? 6 : 8, filled: isActive }),
 },
 on: { reshapeEnd: ({ edge }) => save(edge) },`,
     ready: true,
@@ -363,11 +363,11 @@ flow.resolveOverlaps();`,
     snippet: `{ id: "lead", collapsible: true, position, data }
 
 nodeTypes: {
-  default: ({ node, collapsed, hiddenChildCount }, flow) =>
+  default: ({ node, isCollapsed, hiddenChildCount }, flow) =>
     Card(node.data.label, {
-      badge: collapsed ? \`+\${hiddenChildCount}\` : null,
+      badge: isCollapsed ? \`+\${hiddenChildCount}\` : null,
       chevron: Chevron({
-        open: !collapsed,
+        open: !isCollapsed,
         onClick: () => flow.toggleCollapsed(node.id),
       }),
     }),
@@ -383,15 +383,15 @@ nodeTypes: {
     snippet: `edges: [{ id: "e", source: "a", target: "b", label: "+" }],
 custom: {
   // The label slot sits on the edge and keeps its hover
-  edgeLabel: ({ edge, hovered, x, y }, flow) =>
-    hovered
+  edgeLabel: ({ edge, isHovered, x, y }, flow) =>
+    isHovered
       ? PlusButton(() =>
           flow.insertNodeOnEdge(edge.id, {
             id: crypto.randomUUID(),
             position: { x: x - 75, y: y - 18 },
             data: { label: "New step" },
           }))
-      : null,
+      : SizedBox.shrink(),
 },`,
     ready: true,
   },

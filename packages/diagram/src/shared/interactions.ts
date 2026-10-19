@@ -1,4 +1,4 @@
-import type { FlowNode, XYPosition, Rect } from "../headless/flow/types";
+import type { FlowNode, XYPosition, Rect } from "../headless/flow-diagram/types";
 import { getOverlappingArea } from "./geometry";
 
 export function isDescendant(nodes: FlowNode[], id: string, ancestor: string): boolean {
