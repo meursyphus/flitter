@@ -140,7 +140,10 @@ export function getTextWidth({
     }
 
     if (ctx.font !== font) ctx.font = font;
-    const width = Math.ceil(ctx.measureText(text).width);
+    // Keep the browser's fractional advance. Text layout places each segment
+    // at the running sum of these widths, so rounding here would add up to a
+    // pixel per word gap; callers round only where a box size is needed.
+    const width = ctx.measureText(text).width;
 
     if (cache != null && cacheKey != null) {
       if (cache.size >= TEXT_WIDTH_CACHE_LIMIT) {
@@ -165,7 +168,7 @@ export function getTextWidth({
     }
   }
 
-  return Math.ceil(width);
+  return width;
 }
 /*
  * Calculate height of canvas text
