@@ -11,8 +11,14 @@ import {
 	type Widget,
 } from "flitter-core";
 
+import { stackLabels } from "./labels";
+
 const EPSILON = 0.0001;
 const PLOT_CHILD_OFFSET = 1;
+const LABEL_STACK_GAP = 2;
+
+type Rect = { left: number; top: number; right: number; bottom: number };
+type SideRect = Rect & { side: "left" | "right" };
 
 type PieLikeRadialItem = {
 	angle: number;
@@ -199,39 +205,65 @@ class RenderPiePlotLayout extends MultiChildRenderObject {
 	}
 
 	private fits(plotSize: Size, radius: number): boolean {
-		const centerX = plotSize.width / 2;
-		const centerY = plotSize.height / 2;
+		const { ticks, initialLabels, labels, stackFits } = this.resolveRadialRects(plotSize, radius);
 
-		for (let index = 0; index < this.itemCount; index += 1) {
-			const angle = this.angles[index] ?? 0;
-			const dx = Math.cos(angle);
-			const dy = Math.sin(angle);
-			const tick = this.tickChild(index);
-			const label = this.labelChild(index);
+		for (const rect of ticks) {
+			if (rect != null && !this.isInside(plotSize, rect)) return false;
+		}
 
-			const startX = centerX + radius * dx;
-			const startY = centerY + radius * dy;
+		// Where each label would sit without stacking must fit as well, so stacking
+		// only ever shrinks the pie, never grows it by pulling labels inwards.
+		for (const rect of initialLabels) {
+			if (rect != null && !this.isInside(plotSize, rect)) return false;
+		}
 
-			if (tick != null) {
-				const tickRect = this.resolveTickRect(tick.size, startX, startY, angle);
-				if (!this.isInside(plotSize, tickRect)) return false;
-			}
-
-			if (label != null) {
-				const tickExtent = tick == null ? 0 : tick.size.height;
-				const anchorX = startX + dx * (tickExtent + this.#gap);
-				const anchorY = startY + dy * (tickExtent + this.#gap);
-				const labelRect = this.resolveLabelRect(label.size, anchorX, anchorY, dx, dy);
-				if (!this.isInside(plotSize, labelRect)) return false;
-			}
+		for (let index = 0; index < labels.length; index += 1) {
+			const rect = labels[index];
+			if (rect == null) continue;
+			// A side whose stack is taller than the plot can never fit; only its
+			// horizontal extent then limits the radius, or the pie would collapse.
+			const vertical = stackFits[rect.side];
+			if (!this.isInside(plotSize, rect, vertical)) return false;
 		}
 
 		return true;
 	}
 
 	private positionRadialChildren(plotSize: Size, radius: number): void {
+		const { ticks, labels } = this.resolveRadialRects(plotSize, radius);
+
+		for (let index = 0; index < this.itemCount; index += 1) {
+			const tick = this.tickChild(index);
+			const label = this.labelChild(index);
+			const angle = this.angles[index] ?? 0;
+			const startX = plotSize.width / 2 + radius * Math.cos(angle);
+			const startY = plotSize.height / 2 + radius * Math.sin(angle);
+
+			if (tick != null && ticks[index] != null) {
+				tick.offset = new Offset({
+					x: startX - tick.size.width / 2,
+					y: startY - tick.size.height,
+				});
+			}
+
+			const rect = labels[index];
+			if (label != null && rect != null) {
+				label.offset = new Offset({ x: rect.left, y: rect.top });
+			}
+		}
+	}
+
+	/**
+	 * Tick and label rects for a radius. Labels start at the end of their tick,
+	 * then each side is stacked so neighbours never overlap; a label that had
+	 * to move slides along the label circle so it stays clear of the pie.
+	 */
+	private resolveRadialRects(plotSize: Size, radius: number) {
 		const centerX = plotSize.width / 2;
 		const centerY = plotSize.height / 2;
+		const ticks: (Rect | null)[] = [];
+		const labels: (SideRect | null)[] = [];
+		const anchors: { x: number; y: number; dx: number; dy: number; reach: number }[] = [];
 
 		for (let index = 0; index < this.itemCount; index += 1) {
 			const angle = this.angles[index] ?? 0;
@@ -241,26 +273,66 @@ class RenderPiePlotLayout extends MultiChildRenderObject {
 			const label = this.labelChild(index);
 			const startX = centerX + radius * dx;
 			const startY = centerY + radius * dy;
-
 			const tickExtent = tick == null ? 0 : tick.size.height;
+			const reach = radius + tickExtent + this.#gap;
 
-			if (tick != null) {
-				tick.offset = new Offset({
-					x: startX - tick.size.width / 2,
-					y: startY - tick.size.height,
-				});
-			}
+			ticks.push(tick == null ? null : this.resolveTickRect(tick.size, startX, startY, angle));
 
-			if (label != null) {
-				const anchorX = startX + dx * (tickExtent + this.#gap);
-				const anchorY = startY + dy * (tickExtent + this.#gap);
-				const rect = this.resolveLabelRect(label.size, anchorX, anchorY, dx, dy);
-				label.offset = new Offset({
-					x: rect.left,
-					y: rect.top,
-				});
-			}
+			const anchor = { x: centerX + dx * reach, y: centerY + dy * reach, dx, dy, reach };
+			anchors.push(anchor);
+			labels.push(
+				label == null
+					? null
+					: {
+						...this.resolveLabelRect(label.size, anchor.x, anchor.y, dx, dy),
+						side: dx >= 0 ? "right" : "left",
+					},
+			);
 		}
+
+		const initialLabels = [...labels];
+		const stackFits = { left: true, right: true };
+
+		for (const side of ["left", "right"] as const) {
+			const members = labels
+				.map((rect, index) => ({ rect, index }))
+				.filter((entry): entry is { rect: SideRect; index: number } =>
+					entry.rect != null && entry.rect.side === side,
+				);
+			const sized = members.filter(({ rect }) => rect.bottom - rect.top > 0);
+			const stackHeight = sized.reduce((sum, { rect }) => sum + rect.bottom - rect.top, 0)
+				+ Math.max(0, sized.length - 1) * LABEL_STACK_GAP;
+			stackFits[side] = stackHeight <= plotSize.height + EPSILON;
+
+			const tops = stackLabels(
+				members.map(({ rect }) => ({ top: rect.top, height: rect.bottom - rect.top })),
+				{ minY: 0, maxY: plotSize.height, gap: LABEL_STACK_GAP },
+			);
+
+			members.forEach(({ rect, index }, memberIndex) => {
+				const shift = tops[memberIndex] - rect.top;
+				if (Math.abs(shift) <= EPSILON) return;
+
+				const anchor = anchors[index];
+				const label = this.labelChild(index)!;
+				const anchorY = anchor.y + shift;
+				const offsetY = anchorY - centerY;
+				const sign = side === "right" ? 1 : -1;
+				const anchorX = Math.abs(offsetY) < anchor.reach
+					? centerX + sign * Math.sqrt(anchor.reach ** 2 - offsetY ** 2)
+					: centerX;
+				const moved = this.resolveLabelRect(label.size, anchorX, anchor.y, anchor.dx, anchor.dy);
+				labels[index] = {
+					left: moved.left,
+					right: moved.right,
+					top: tops[memberIndex],
+					bottom: tops[memberIndex] + label.size.height,
+					side,
+				};
+			});
+		}
+
+		return { ticks, initialLabels, labels, stackFits };
 	}
 
 	private resolveTickRect(
@@ -318,16 +390,10 @@ class RenderPiePlotLayout extends MultiChildRenderObject {
 		};
 	}
 
-	private isInside(
-		plotSize: Size,
-		rect: { left: number; top: number; right: number; bottom: number },
-	): boolean {
-		return (
-			rect.left >= -EPSILON &&
-			rect.top >= -EPSILON &&
-			rect.right <= plotSize.width + EPSILON &&
-			rect.bottom <= plotSize.height + EPSILON
-		);
+	private isInside(plotSize: Size, rect: Rect, vertical = true): boolean {
+		const horizontal = rect.left >= -EPSILON && rect.right <= plotSize.width + EPSILON;
+		if (!vertical) return horizontal;
+		return horizontal && rect.top >= -EPSILON && rect.bottom <= plotSize.height + EPSILON;
 	}
 }
 

@@ -12,6 +12,11 @@ import {
 	stageGeometry
 } from '../../../packages/chart/registry/templates/charts/funnel-chart/base/geometry';
 import { defaultFunnelAppearance } from '../../../packages/chart/registry/templates/charts/funnel-chart/base/config';
+import {
+	resolveDataLabelPlacement,
+	stackLabels,
+	toDataLabelArgs
+} from '../../../packages/chart/registry/templates/shared/pie-like/labels';
 
 const custom = {} as FunnelChartCustom;
 const data = {
@@ -108,4 +113,60 @@ it('Sunburst keeps a full ring after filtering down to one branch', () => {
 	const path = createArcPath(metrics, controller.segments[0]);
 	expect(path.match(/[Aa]/g)).toHaveLength(4);
 	expect(path).not.toMatch(/NaN|Infinity/);
+});
+
+describe('Pie labels', () => {
+	const hidden = { radial: { visible: false }, dataLabel: { visible: true } };
+
+	it('moves small slices outside, or drops them when radial labels name the slice', () => {
+		expect(resolveDataLabelPlacement(5, hidden)).toBe('outside');
+		expect(resolveDataLabelPlacement(18, hidden)).toBe('inside');
+		expect(resolveDataLabelPlacement(5, { ...hidden, radial: { visible: true } })).toBe('hidden');
+		expect(resolveDataLabelPlacement(18, { ...hidden, radial: { visible: true } })).toBe('inside');
+		expect(resolveDataLabelPlacement(18, { ...hidden, dataLabel: { visible: false } })).toBe('hidden');
+		expect(
+			resolveDataLabelPlacement(5, { ...hidden, dataLabel: { visible: true, outsideThreshold: 0 } })
+		).toBe('inside');
+	});
+
+	it('gives outside labels the formatter args of their slice', () => {
+		const startAngle = Math.PI;
+		const sweepAngle = Math.PI / 2;
+		const args = toDataLabelArgs({
+			index: 2,
+			name: 'Firefox',
+			value: 25,
+			percentage: 25,
+			angle: -Math.PI / 2 + startAngle + sweepAngle / 2
+		});
+		expect(args.startAngle).toBeCloseTo(startAngle);
+		expect(args.sweepAngle).toBeCloseTo(sweepAngle);
+	});
+
+	it('stacks overlapping labels in order and keeps them in bounds', () => {
+		const bounds = { minY: 0, maxY: 100, gap: 2 };
+		// Firefox above Edge, 10px apart, both 30px tall.
+		const tops = stackLabels(
+			[
+				{ top: 20, height: 30 },
+				{ top: 10, height: 30 },
+				{ top: 0, height: 0 }
+			],
+			bounds
+		);
+		expect(tops[1]).toBe(10);
+		expect(tops[0]).toBe(42);
+		expect(tops[2]).toBe(0);
+
+		const pulled = stackLabels(
+			[
+				{ top: 60, height: 30 },
+				{ top: 65, height: 30 }
+			],
+			bounds
+		);
+		expect(pulled).toEqual([38, 70]);
+
+		expect(stackLabels([{ top: 10, height: 20 }, { top: 50, height: 20 }], bounds)).toEqual([10, 50]);
+	});
 });

@@ -18,7 +18,13 @@ import {
 	TextStyle,
 	type Widget,
 } from "flitter-core";
-import { DataView, Layout, Segment } from "../../../shared/pie-like";
+import {
+	DataView,
+	Layout,
+	Segment,
+	resolveDataLabelPlacement,
+	toDataLabelArgs,
+} from "../../../shared/pie-like";
 import type { PieLikeLayoutConfig } from "../../../shared/pie-like/layout";
 import { tooltipContent as agTooltipContent } from "../tooltip";
 import { agMouseTooltipArea } from "../cartesian/mouse-tooltip-area";
@@ -58,6 +64,8 @@ type AgPieLikeConfig = {
 		fontFamily?: string;
 		fontWeight?: string;
 		radiusRatio: number;
+		/** Slices below this percentage move their label outside, or drop it when radial labels are shown. */
+		outsideThreshold?: number;
 		formatter: (args: any) => string;
 	};
 	radialLabel: {
@@ -184,6 +192,9 @@ export function agPieLikeDataLabel<TConfig extends AgPieLikeConfig>(
 	const { startAngle, sweepAngle } = args;
 
 	if (!labelConfig.visible) return SizedBox.shrink();
+	if (resolveDataLabelPlacement(args.percentage, context.config) !== "inside") {
+		return SizedBox.shrink();
+	}
 
 	const text = labelConfig.formatter(args);
 	const angle = -Math.PI / 2 + startAngle + sweepAngle / 2;
@@ -240,7 +251,7 @@ export function agPieLikeRadialLabel<TConfig extends AgPieLikeConfig>(
 ): Widget {
 	const { radial, radialLabel, font } = context.config;
 
-	if (!radial.visible) return SizedBox.shrink();
+	if (!radial.visible) return agOutsideDataLabel(args, context);
 
 	const isRightSide = Math.cos(args.angle) >= 0;
 	const subtitleFontSize = Math.max(11, Math.round(radialLabel.fontSize * 0.68));
@@ -272,13 +283,47 @@ export function agPieLikeRadialLabel<TConfig extends AgPieLikeConfig>(
 	});
 }
 
+/** Text of a data label that moved outside its slice, or null when it stays inside. */
+function agOutsideDataLabelText<TConfig extends AgPieLikeConfig>(
+	args: PieLikeRadialArgs,
+	context: { config: TConfig },
+): string | null {
+	if (resolveDataLabelPlacement(args.percentage, context.config) !== "outside") return null;
+	const text = context.config.dataLabel.formatter(toDataLabelArgs(args));
+	return text ? text : null;
+}
+
+/** A data label too big for its slice, drawn outside at the end of the radial tick. */
+function agOutsideDataLabel<TConfig extends AgPieLikeConfig>(
+	args: PieLikeRadialArgs,
+	context: { config: TConfig },
+): Widget {
+	const text = agOutsideDataLabelText(args, context);
+	if (text == null) return SizedBox.shrink();
+
+	const { dataLabel: labelConfig, radialLabel, font } = context.config;
+	const isRightSide = Math.cos(args.angle) >= 0;
+
+	return Text(text, {
+		textAlign: isRightSide ? TextAlign.left : TextAlign.right,
+		style: new TextStyle({
+			fontFamily: labelConfig.fontFamily ?? font.family,
+			fontSize: labelConfig.fontSize,
+			fontWeight: labelConfig.fontWeight,
+			// The inside colour is picked for the slice fill; outside sits on the background.
+			color: radialLabel.fontColor,
+		}),
+	});
+}
+
 export function agPieLikeRadialTick<TConfig extends AgPieLikeConfig>(
 	args: PieLikeRadialArgs,
 	context: { config: TConfig; legends: string[] },
 ): Widget {
 	const { radial, radialTick, colors } = context.config;
 
-	if (!radial.visible || radialTick.length <= 0) {
+	if (radialTick.length <= 0) return SizedBox.shrink();
+	if (!radial.visible && agOutsideDataLabelText(args, context) == null) {
 		return SizedBox.shrink();
 	}
 
