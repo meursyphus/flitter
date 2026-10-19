@@ -1,9 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import Lottie from "lottie-react";
-import type { LottieRefCurrentProps } from "lottie-react";
 import CopyCommand from "@/components/copy-command";
 import FlitterLogo from "@/components/flitter-logo";
 import LiveChart from "@/components/live-chart";
@@ -318,118 +315,6 @@ function WhySection({ code }: { code: HomeCode }) {
   );
 }
 
-/* ── Scroll-synced Lottie ─────────────────────────────── */
-
-function CodingSection() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [animationData, setAnimationData] = useState<any>(null);
-  const lottieRef = useRef<LottieRefCurrentProps | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tweenRef = useRef<any>(null);
-  const lottieContainerRef = useRef<HTMLDivElement>(null);
-
-  // Fetch animation data
-  useEffect(() => {
-    const abortController = new AbortController();
-    fetch("https://static.flitter.dev/coding.json", {
-      signal: abortController.signal,
-    })
-      .then((res) => res.json())
-      .then((data) => setAnimationData(data))
-      .catch((e) => {
-        if (e instanceof DOMException && e.name === "AbortError") return;
-        console.error("Failed to load coding animation:", e);
-      });
-    return () => {
-      abortController.abort();
-      tweenRef.current?.kill();
-    };
-  }, []);
-
-  // Set up GSAP ScrollTrigger to drive Lottie based on scroll
-  useEffect(() => {
-    if (!animationData) return;
-
-    // Wait for lottie-react to initialize the animation instance
-    const timer = setTimeout(() => {
-      const animItem = lottieRef.current?.animationItem;
-      if (!animItem || !sectionRef.current) return;
-
-      (async () => {
-        const [gsapModule, scrollTriggerModule] = await Promise.all([
-          import("gsap"),
-          import("gsap/ScrollTrigger"),
-        ]);
-        const gsap = gsapModule.default;
-        const ScrollTrigger = scrollTriggerModule.default;
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Drive Lottie frames by scroll progress
-        const playhead = { frame: 0 };
-        tweenRef.current = gsap.to(playhead, {
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top top",
-            end: "bottom bottom",
-            scrub: 1,
-          },
-          frame: animItem.totalFrames - 1,
-          ease: "none",
-          onUpdate: () => animItem.goToAndStop(playhead.frame, true),
-        });
-
-        ScrollTrigger.refresh();
-      })();
-    }, 200);
-
-    return () => clearTimeout(timer);
-  }, [animationData]);
-
-  const phrases = [
-    "Declarative code that reads like a blueprint.",
-    "Box model layouts -- constraint-based, predictable, powerful.",
-    "SVG or Canvas? Both. One API, two renderers.",
-    "Interactive charts with click, hover, and gesture support.",
-    "Canvas events handled elegantly, no hacks required.",
-    "50+ widgets ready to compose into anything you imagine.",
-    "Rendering performance that scales with your ambition.",
-  ];
-
-  return (
-    <section
-      ref={sectionRef}
-      className="relative flex w-full shrink-0 flex-col-reverse border-t border-line lg:flex-row"
-    >
-      {/* Scrolling phrases */}
-      <div className="w-full px-5 sm:px-10 lg:w-1/2 lg:px-12">
-        {phrases.map((phrase, i) => (
-          <p
-            key={i}
-            className="display flex h-screen items-center text-[clamp(1.9rem,3.6vw,3rem)] leading-[1.12] text-ink"
-          >
-            {phrase}
-          </p>
-        ))}
-      </div>
-
-      {/* Pinned Lottie, driven by scroll */}
-      <div ref={lottieContainerRef} className="sticky top-16 flex h-[65vh] w-full items-center justify-center border-line bg-surface lg:h-[calc(100vh-4rem)] lg:w-3/5 lg:border-l">
-        {animationData && (
-          <Lottie
-            lottieRef={lottieRef}
-            animationData={animationData}
-            renderer={"canvas" as "svg"}
-            loop={false}
-            autoplay={false}
-            className="h-full overflow-hidden py-4 lg:h-[90%] lg:py-0"
-          />
-        )}
-      </div>
-    </section>
-  );
-}
-
 /* ── In production ────────────────────────────────────── */
 
 function ProductionSection() {
@@ -646,7 +531,6 @@ export default function Home({ code }: { code: HomeCode }) {
       <LibrariesSection />
       <ReelSection />
       <WhySection code={code} />
-      <CodingSection />
       <ProductionSection />
       <MaintainerSection />
       <LastSection />
