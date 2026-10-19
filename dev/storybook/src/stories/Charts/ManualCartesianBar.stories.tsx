@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { DockFrame } from "flitter-chart";
+import { DockFrame } from "@flitterjs/chart";
 import DualRenderer from "../../components/DualRenderer";
 import {
   Alignment,
@@ -18,7 +18,7 @@ import {
   Stack,
   Text,
   TextStyle,
-} from "flitter-core";
+} from "flitterjs";
 
 const COLORS = ["#4e79a7", "#f28e2b", "#e15759", "#76b7b2"];
 
@@ -180,7 +180,7 @@ function ManualCartesianBarChart() {
         ),
         SizedBox({ height: 6 }),
         Text(
-          "Built directly with flitter-ui primitives. packages/chart is only the reference for layout and scale logic.",
+          "Built directly with flitterjs primitives. packages/chart is only the reference for layout and scale logic.",
           { style: new TextStyle({ fontSize: 12, color: "#6b7280" }) },
         ),
         SizedBox({ height: 18 }),
@@ -223,7 +223,7 @@ const meta = {
     height: "520px",
     widget: ManualCartesianBarChart(),
     description:
-      "This story is a direct-build reference. It uses only flitter-ui primitives plus @flitterjs/react for rendering. Read it together with packages/chart/src/shared/cartesian/* when teaching an agent how to construct charts without importing flitter-chart.",
+      "This story is a direct-build reference. It uses only flitterjs primitives plus @flitterjs/adapter-react for rendering. Read it together with packages/chart/src/shared/cartesian/* when teaching an agent how to construct charts without importing @flitterjs/chart.",
   },
 } satisfies Meta<typeof DualRenderer>;
 

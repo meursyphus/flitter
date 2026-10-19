@@ -1,5 +1,5 @@
-import { BoxDecoration, Container, EdgeInsets, type Widget } from "flitter-ui";
-import type { TreemapCustom } from "flitter-ui/chart";
+import { BoxDecoration, Container, EdgeInsets, type Widget } from "flitterjs";
+import type { TreemapCustom } from "@flitterjs/chart";
 import type { TreemapChartConfig } from "../config";
 
 export function toastGroup(

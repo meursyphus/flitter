@@ -1,4 +1,4 @@
-import { BoxDecoration, Container, Positioned, Stack, ZIndex } from 'flitter-core';
+import { BoxDecoration, Container, Positioned, Stack, ZIndex } from 'flitterjs';
 
 function ZIndexLocalContext() {
 	return Stack({

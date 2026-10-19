@@ -24,7 +24,7 @@ import {
   TextField,
   TextStyle,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import {
   FlowDiagramController,
   createId,
@@ -32,7 +32,7 @@ import {
   type FlowEdge,
   type XYPosition,
   type HandleSpec,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import FlowDiagram, { defaultEdge } from "@/components/diagram/flow-diagram";
 
 type Theme = "light" | "dark";
@@ -490,7 +490,7 @@ class DataflowState extends State<Dataflow> {
             (
               args: Parameters<typeof defaultNode>[0],
               ctx: Parameters<typeof defaultNode>[1],
-            ) => import("flitter-ui").Widget
+            ) => import("flitterjs").Widget
           > = {
             processor: ({ node }) =>
               Row({

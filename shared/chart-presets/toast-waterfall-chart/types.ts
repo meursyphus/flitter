@@ -11,5 +11,5 @@ export type {
   WaterfallChartScaleOptions,
   WaterfallChartGetScaleFn as GetScaleFn,
   WaterfallChartGetScaleOptionsFn as GetScaleOptionsFn,
-} from "flitter-ui/chart";
-export { WaterfallChartController } from "flitter-ui/chart";
+} from "@flitterjs/chart";
+export { WaterfallChartController } from "@flitterjs/chart";

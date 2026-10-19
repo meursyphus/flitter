@@ -12,13 +12,14 @@ Build a bar chart from scratch in under 5 minutes.
 ## 1. Initialize
 
 ```bash
-npx flitter-ui init
+npm install flitterjs @flitterjs/adapter-react
+npx @flitterjs/cli@latest init
 ```
 
 ## 2. Add a bar chart
 
 ```bash
-npx flitter-ui add bar-chart --style toast
+npx @flitterjs/cli@latest add bar-chart --style toast
 ```
 
 This generates the full widget source tree in your project:
@@ -41,7 +42,7 @@ Open `style/parts/bar.ts` to see how individual bars are rendered — it's a wid
 ## 3. Use the chart
 
 ```tsx
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import BarChart from "./charts/bar-chart";
 
 const data = {
@@ -98,11 +99,11 @@ There are no limits because there is no config API to limit you.
 
 ## What you own
 
-After running `npx flitter-ui add`, the source code lives in your project. You can:
+After running `npx @flitterjs/cli@latest add`, the source code lives in your project. You can:
 
 - **Edit any widget** — axis labels are Text widgets, grid lines are Container widgets, legends are Row widgets with GestureDetector for click handling
 - **Add animations** — AnimationController, CurvedAnimation, Tween, and every Flutter animation primitive works out of the box
-- **Delete the CLI** — after `npx flitter-ui add`, the CLI is irrelevant. Your chart has zero dependency on flitter-ui the package.
+- **Delete the CLI** — after `npx @flitterjs/cli@latest add`, the CLI is irrelevant. Keep `flitterjs`, `@flitterjs/chart`, and your framework adapter installed; only the CLI is unnecessary at runtime.
 
 ## Next steps
 

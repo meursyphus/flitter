@@ -1,4 +1,4 @@
-import type { LineChartCustom, LineChartScale } from "flitter-ui/chart";
+import type { LineChartCustom, LineChartScale } from "@flitterjs/chart";
 import {
   CustomPaint,
   Path,
@@ -10,7 +10,7 @@ import {
   Curves,
   Tween,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import { drawSplineLine } from "../../../_shared/toast/index";
 import type { ToastAreaChartConfig } from "../config";
 

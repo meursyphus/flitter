@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BorderRadius, Path, Rect } from 'flitter-core';
+import { BorderRadius, Path, Rect } from 'flitterjs';
 
 function arcRadii(d: string) {
 	return [...d.matchAll(/A\s*([\d.]+)\s+([\d.]+)/g)].map((m) => [Number(m[1]), Number(m[2])]);

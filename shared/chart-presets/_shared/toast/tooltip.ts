@@ -13,7 +13,7 @@ import {
   MainAxisSize,
   CrossAxisAlignment,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import type { ToastBaseConfig } from "./cartesian/config";
 
 type ToastTooltipConfig = {

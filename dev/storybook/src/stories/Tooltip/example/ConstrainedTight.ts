@@ -9,7 +9,7 @@ import {
 	BorderRadius,
 	Radius,
 	Alignment
-} from 'flitter-core';
+} from 'flitterjs';
 
 const BasicStory = {
 	widget: Center({

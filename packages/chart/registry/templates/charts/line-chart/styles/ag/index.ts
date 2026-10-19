@@ -15,7 +15,7 @@ import {
   cartesian,
 } from "@styles/ag";
 import type { LineChartContext } from "@headless/line-chart/types";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 
 export { type AgLineChartConfig } from "./config";
 

@@ -5,18 +5,7 @@ import dts from "vite-plugin-dts";
 export default defineConfig({
   plugins: [tsconfigPaths(), dts()],
   build: {
-    lib: {
-      entry: "src/index.ts",
-      name: "flitter-chart",
-      fileName: (format) => `flitter-chart.${format}.js`,
-    },
-    rollupOptions: {
-      external: ["flitter-core"],
-      output: {
-        globals: {
-          "flitter-core": "flitterCore",
-        },
-      },
-    },
+    lib: { entry: "src/index.ts", formats: ["es"], fileName: () => "index.js" },
+    rollupOptions: { external: (id) => id === "flitterjs" || id.startsWith("flitterjs/") },
   },
 });

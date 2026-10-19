@@ -9,7 +9,7 @@ import {
 	MainAxisAlignment,
 	SizedBox,
 	type Widget,
-} from 'flitter-core';
+} from 'flitterjs';
 import type { BarChartCustom } from '@headless/bar-chart/types';
 
 export function BarGroup(

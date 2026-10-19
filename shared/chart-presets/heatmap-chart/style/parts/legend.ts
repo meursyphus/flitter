@@ -16,8 +16,8 @@ import {
   Text,
   TextStyle,
   type Widget,
-} from "flitter-ui";
-import type { HeatmapContext } from "flitter-ui/chart";
+} from "flitterjs";
+import type { HeatmapContext } from "@flitterjs/chart";
 import type { AgHeatmapChartConfig } from "../config";
 
 const BAR_HEIGHT = 12;

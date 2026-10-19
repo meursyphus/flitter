@@ -5,7 +5,7 @@ import {
   Stack,
   StackFit,
   SizedBox,
-} from "flitter-core";
+} from "flitterjs";
 import type { BulletChartCustom } from "@headless/bullet-chart/types";
 
 const MIN_ANCHOR_RATIO = 0.02;

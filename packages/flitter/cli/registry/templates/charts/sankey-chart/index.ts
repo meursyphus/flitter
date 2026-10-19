@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-core";
-import { SankeyChart as HeadlessSankeyChart } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import { SankeyChart as HeadlessSankeyChart } from "@flitterjs/chart";
 import type { SankeyChartCustom, SankeyChartData } from "./types";
 import { styleConfig, type SankeyChartConfig } from "./style";
 import type { DeepPartial } from "@utils/index";

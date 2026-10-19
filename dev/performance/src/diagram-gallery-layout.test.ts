@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Matrix4, Offset, Size, SizedBox, type RenderObject } from 'flitter-core';
+import { Matrix4, Offset, Size, SizedBox, type RenderObject } from 'flitterjs';
 import { FlowNodeItem } from '../../../packages/diagram/src/engine';
 import { diagramLayoutSnapshot } from '../../../docs/src/components/diagram-layout-snapshot';
 

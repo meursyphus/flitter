@@ -11,7 +11,7 @@ import {
   SingleChildRenderObjectWidget,
   Size,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 
 export type HandleMeasure = {
   id: string | null;

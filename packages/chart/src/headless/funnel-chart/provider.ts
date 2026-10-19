@@ -3,7 +3,7 @@ import {
   Provider,
   type BuildContext,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import { FunnelChartController } from "./controller";
 import type { FunnelChartCustom, FunnelChartData } from "./types";
 import Chart from "./chart";

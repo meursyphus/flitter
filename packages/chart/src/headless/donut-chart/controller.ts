@@ -1,4 +1,4 @@
-import { ChangeNotifier } from "flitter-core";
+import { ChangeNotifier } from "flitterjs";
 import type { DonutChartCustom, DonutChartData } from "./types";
 
 export class DonutChartController extends ChangeNotifier {

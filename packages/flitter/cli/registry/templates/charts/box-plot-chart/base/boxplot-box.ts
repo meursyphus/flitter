@@ -7,7 +7,7 @@ import {
 	Stack,
 	StackFit,
 	Align,
-} from 'flitter-core';
+} from 'flitterjs';
 
 function computeBoxAlignment(
 	minRatio: number,

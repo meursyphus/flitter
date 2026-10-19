@@ -17,7 +17,7 @@ import {
 	StackFit,
 	SizedBox,
 	type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 
 type XAxisContext = Parameters<CandlestickChartCustom["xAxis"]>[1];
 

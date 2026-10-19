@@ -6,7 +6,7 @@ import {
   Container,
   MainAxisSize,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type {
   ControlsCustomArgs,
   ControlButtonCustomArgs,

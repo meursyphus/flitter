@@ -1,6 +1,6 @@
 "use client";
 
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import LiveChart from "@/components/live-chart";
 
 type Entry = {

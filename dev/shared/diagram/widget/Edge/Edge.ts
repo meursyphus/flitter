@@ -6,7 +6,7 @@ import {
   Path,
   Rect,
   GlobalKey,
-} from "flitter-core";
+} from "flitterjs";
 import { classToFunction } from "../utils";
 import drawEdge from "./drawEdge";
 import EventManagerProvider from "../Provider/EventManagerProvider";

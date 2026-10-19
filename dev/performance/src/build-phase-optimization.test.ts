@@ -12,7 +12,7 @@ import {
 	type Widget,
 	Widget as BaseWidget,
 	Element
-} from 'flitter-core';
+} from 'flitterjs';
 
 class HostElement extends Element {
 	child?: Element;

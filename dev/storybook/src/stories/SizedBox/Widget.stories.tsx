@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import DualRenderer from '../../components/DualRenderer';
-import { Container, SizedBox, Align, Alignment } from 'flitter-core';
+import { Container, SizedBox, Align, Alignment } from 'flitterjs';
 
 const meta = {
 	title: 'Layout/SizedBox',

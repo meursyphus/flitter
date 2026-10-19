@@ -14,13 +14,16 @@ importers:
 
   dev/chart-storybook:
     dependencies:
-      '@flitterjs/react':
+      '@flitterjs/adapter-react':
         specifier: workspace:*
         version: link:../../integrations/react
-      flitter-chart:
+      '@flitterjs/chart':
         specifier: workspace:*
         version: link:../../packages/chart
-      flitter-core:
+      '@flitterjs/diagram':
+        specifier: workspace:*
+        version: link:../../packages/diagram
+      flitterjs:
         specifier: workspace:*
         version: link:../../packages/core
       react:
@@ -65,13 +68,16 @@ importers:
 
   dev/performance:
     dependencies:
-      '@flitterjs/svelte':
+      '@flitterjs/adapter-svelte':
         specifier: workspace:*
         version: link:../../integrations/svelte
-      flitter-chart:
+      '@flitterjs/chart':
         specifier: workspace:*
         version: link:../../packages/chart
-      flitter-core:
+      '@flitterjs/diagram':
+        specifier: workspace:*
+        version: link:../../packages/diagram
+      flitterjs:
         specifier: workspace:*
         version: link:../../packages/core
       shared:
@@ -114,9 +120,6 @@ importers:
       eslint-plugin-svelte:
         specifier: ^2.35.1
         version: 2.46.1(eslint@8.57.1)(svelte@4.2.20)
-      flitter-diagram:
-        specifier: workspace:*
-        version: link:../../packages/diagram
       fs:
         specifier: ^0.0.1-security
         version: 0.0.1-security
@@ -153,33 +156,39 @@ importers:
 
   dev/shared:
     dependencies:
-      '@flitterjs/svelte':
+      '@flitterjs/adapter-svelte':
         specifier: workspace:*
         version: link:../../integrations/svelte
+      '@flitterjs/chart':
+        specifier: workspace:*
+        version: link:../../packages/chart
+      '@flitterjs/diagram':
+        specifier: workspace:*
+        version: link:../../packages/diagram
       chart-presets:
         specifier: workspace:*
         version: link:../../shared/chart-presets
-      flitter-core:
+      flitterjs:
         specifier: workspace:*
         version: link:../../packages/core
 
   dev/storybook:
     dependencies:
-      '@flitterjs/react':
+      '@flitterjs/adapter-react':
         specifier: workspace:*
         version: link:../../integrations/react
+      '@flitterjs/chart':
+        specifier: workspace:*
+        version: link:../../packages/chart
+      '@flitterjs/diagram':
+        specifier: workspace:*
+        version: link:../../packages/diagram
       diagram-presets:
         specifier: workspace:*
         version: link:../../shared/diagram-presets
-      flitter-chart:
-        specifier: workspace:*
-        version: link:../../packages/chart
-      flitter-core:
+      flitterjs:
         specifier: workspace:*
         version: link:../../packages/core
-      flitter-diagram:
-        specifier: workspace:*
-        version: link:../../packages/diagram
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -226,9 +235,15 @@ importers:
 
   docs:
     dependencies:
-      '@flitterjs/react':
+      '@flitterjs/adapter-react':
         specifier: workspace:*
         version: link:../integrations/react
+      '@flitterjs/chart':
+        specifier: workspace:*
+        version: link:../packages/chart
+      '@flitterjs/diagram':
+        specifier: workspace:*
+        version: link:../packages/diagram
       '@mdx-js/loader':
         specifier: ^3.1.1
         version: 3.1.1
@@ -244,15 +259,9 @@ importers:
       comwit:
         specifier: ^0.3.1
         version: 0.3.1(react@19.2.4)
-      flitter-chart:
-        specifier: workspace:*
-        version: link:../packages/chart
-      flitter-core:
+      flitterjs:
         specifier: workspace:*
         version: link:../packages/core
-      flitter-diagram:
-        specifier: workspace:*
-        version: link:../packages/diagram
       next:
         specifier: ^15.0.0
         version: 15.5.12(@playwright/test@1.58.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -323,9 +332,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.0.3
         version: 4.7.0(vite@4.5.14(@types/node@20.19.33)(lightningcss@1.31.1))
-      flitter-ui:
-        specifier: workspace:^*
-        version: link:../../packages/flitter
+      flitterjs:
+        specifier: workspace:*
+        version: link:../../packages/core
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -344,9 +353,6 @@ importers:
 
   integrations/svelte:
     dependencies:
-      flitter-ui:
-        specifier: workspace:^*
-        version: link:../../packages/flitter
       linkedom:
         specifier: ^0.14.21
         version: 0.14.26
@@ -360,6 +366,9 @@ importers:
       '@sveltejs/package':
         specifier: ^1.0.0
         version: 1.0.2(svelte@5.53.3)(typescript@5.9.3)
+      flitterjs:
+        specifier: workspace:*
+        version: link:../../packages/core
       svelte:
         specifier: ^5.0.0
         version: 5.53.3
@@ -377,14 +386,13 @@ importers:
         version: 5.4.21(@types/node@20.19.33)(lightningcss@1.31.1)
 
   packages/chart:
-    dependencies:
-      flitter-core:
-        specifier: workspace:*
-        version: link:../core
     devDependencies:
       '@types/node':
         specifier: ^20.10.4
         version: 20.19.33
+      flitterjs:
+        specifier: workspace:*
+        version: link:../core
       typescript:
         specifier: ^5.2.2
         version: 5.9.3
@@ -442,10 +450,6 @@ importers:
         version: 5.9.3
 
   packages/diagram:
-    dependencies:
-      flitter-core:
-        specifier: workspace:*
-        version: link:../core
     devDependencies:
       '@types/node':
         specifier: ^20.10.4
@@ -462,6 +466,9 @@ importers:
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.2(eslint@8.57.1)
+      flitterjs:
+        specifier: workspace:*
+        version: link:../core
       typescript:
         specifier: ^5.2.2
         version: 5.9.3
@@ -474,33 +481,36 @@ importers:
 
   packages/flitter:
     devDependencies:
-      flitter-chart:
+      '@flitterjs/chart':
         specifier: workspace:*
         version: link:../chart
-      flitter-core:
-        specifier: workspace:*
-        version: link:../core
-      flitter-diagram:
+      '@flitterjs/diagram':
         specifier: workspace:*
         version: link:../diagram
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(@microsoft/api-extractor@7.43.0(@types/node@20.19.33))(jiti@2.6.1)(postcss@8.5.6)(typescript@5.9.3)
+      flitterjs:
+        specifier: workspace:*
+        version: link:../core
       typescript:
         specifier: ^5.3.3
         version: 5.9.3
 
   shared/chart-presets:
     dependencies:
-      flitter-ui:
+      '@flitterjs/chart':
         specifier: workspace:*
-        version: link:../../packages/flitter
+        version: link:../../packages/chart
+      flitterjs:
+        specifier: workspace:*
+        version: link:../../packages/core
 
   shared/diagram-presets:
     dependencies:
-      flitter-ui:
+      '@flitterjs/diagram':
         specifier: workspace:*
-        version: link:../../packages/flitter
+        version: link:../../packages/diagram
+      flitterjs:
+        specifier: workspace:*
+        version: link:../../packages/core
     devDependencies:
       typescript:
         specifier: ^5.2.2

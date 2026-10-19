@@ -3,7 +3,7 @@ import {
   StatelessWidget,
   type BuildContext,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import { FunnelChartProvider } from "./provider";
 
 class Chart extends StatelessWidget {

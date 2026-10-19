@@ -60,7 +60,7 @@ function buildQuickStart(chart) {
       ? "\n// Add config/custom overrides as the request becomes more specific."
       : "";
 
-  return `import Widget from "@flitterjs/react";
+  return `import Widget from "@flitterjs/adapter-react";
 import ${chart.importName} from "./charts/${chart.slug}";
 
 const widget = ${chart.importName}({

@@ -1,4 +1,4 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitterjs";
 import HeadlessBubbleChart from "@headless/bubble-chart";
 import type {
   BubbleChartCustom,

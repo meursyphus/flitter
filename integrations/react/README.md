@@ -2,7 +2,7 @@
   <img src="../../assets/readme/logo.png" alt="Flitter" width="80" />
 </p>
 
-<h1 align="center">@flitterjs/react</h1>
+<h1 align="center">@flitterjs/adapter-react</h1>
 
 <p align="center">
   Mount Flitter widgets in React applications.<br/>
@@ -10,8 +10,8 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@flitterjs/react"><img src="https://img.shields.io/npm/v/@flitterjs/react.svg" alt="npm version" /></a>
-  <a href="https://github.com/meursyphus/flitter/blob/latest/LICENSE"><img src="https://img.shields.io/npm/l/@flitterjs/react.svg" alt="license" /></a>
+  <a href="https://www.npmjs.com/package/@flitterjs/adapter-react"><img src="https://img.shields.io/npm/v/@flitterjs/adapter-react.svg" alt="npm version" /></a>
+  <a href="https://github.com/meursyphus/flitter/blob/latest/LICENSE"><img src="https://img.shields.io/npm/l/@flitterjs/adapter-react.svg" alt="license" /></a>
 </p>
 
 <p align="center">
@@ -25,14 +25,14 @@
 ## Installation
 
 ```bash
-npm install flitter-ui @flitterjs/react
+npm install flitterjs @flitterjs/adapter-react
 ```
 
 ## Usage
 
 ```tsx
-import { Container, Alignment, Text, TextStyle } from "flitter-ui";
-import Widget from "@flitterjs/react";
+import { Container, Alignment, Text, TextStyle } from "flitterjs";
+import Widget from "@flitterjs/adapter-react";
 
 function App() {
   return (
@@ -66,12 +66,12 @@ function App() {
 Add charts via the CLI, then render them in React:
 
 ```bash
-npx flitter-ui init
-npx flitter-ui add bar-chart
+npx @flitterjs/cli@latest init
+npx @flitterjs/cli@latest add bar-chart
 ```
 
 ```tsx
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import BarChart from "./charts/bar-chart";
 
 const chart = BarChart({
@@ -92,7 +92,7 @@ export default function Dashboard() {
 ## Requirements
 
 - React 18+ or 19+
-- `flitter-ui` as a peer dependency
+- `flitterjs` as a peer dependency
 
 ## Documentation
 

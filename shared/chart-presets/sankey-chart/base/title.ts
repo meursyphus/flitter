@@ -1,4 +1,4 @@
-import { SizedBox } from "flitter-ui";
+import { SizedBox } from "flitterjs";
 
 export function Title() {
   return SizedBox.shrink();

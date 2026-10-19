@@ -1,7 +1,7 @@
-import { SizedBox } from "flitter-ui";
+import { SizedBox } from "flitterjs";
 import { EditableLabel } from "./parts/editable-label";
-import type { FlowDiagramCustom } from "flitter-ui/diagram";
-import type { DeepPartial } from "flitter-ui/diagram";
+import type { FlowDiagramCustom } from "@flitterjs/diagram";
+import type { DeepPartial } from "@flitterjs/diagram";
 
 export type StyleConfig<TConfig extends object> = {
   custom: Partial<FlowDiagramCustom<TConfig>>;

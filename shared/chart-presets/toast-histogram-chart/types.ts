@@ -6,5 +6,5 @@ export type {
   HistogramChartTransform,
   HistogramChartScale,
   HistogramChartCustom,
-} from "flitter-ui/chart";
-export { HistogramChartController } from "flitter-ui/chart";
+} from "@flitterjs/chart";
+export { HistogramChartController } from "@flitterjs/chart";

@@ -1,4 +1,4 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitterjs";
 import type { AgCartesianBaseConfig } from "./config";
 import { XAxisLine, YAxisLine } from "@shared/cartesian";
 

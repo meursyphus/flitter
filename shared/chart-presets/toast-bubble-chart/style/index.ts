@@ -1,9 +1,9 @@
-import type { BubbleChartCustom, BubbleChartContext, BubbleChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
+import type { BubbleChartCustom, BubbleChartContext, BubbleChartGetScaleOptionsFn as GetScaleOptionsFn } from "@flitterjs/chart";
 import type { ToastBubbleChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import { toastBubble } from "./parts/bubble";
-import type { Widget } from "flitter-ui";
+import type { Widget } from "flitterjs";
 import {
   toastTitle,
   toastLegend,

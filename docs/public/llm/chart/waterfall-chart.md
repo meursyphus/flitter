@@ -2,7 +2,7 @@
 
 Show cumulative change through increases, decreases, and totals.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Base-wrapper chart. Start with `chart-presets WaterfallChart` for structural def
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import WaterfallChart from "./charts/waterfall-chart";
 
 const widget = WaterfallChart({

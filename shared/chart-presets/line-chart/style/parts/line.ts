@@ -1,4 +1,4 @@
-import type { LineChartCustom, LineChartScale } from "flitter-ui/chart";
+import type { LineChartCustom, LineChartScale } from "@flitterjs/chart";
 import {
   CustomPaint,
   Path,
@@ -7,7 +7,7 @@ import {
   Opacity,
   SizedBox,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import { drawSplineLine } from "../../../_shared/toast/index";
 import type { AgLineChartConfig } from "../config";
 

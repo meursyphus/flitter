@@ -22,7 +22,7 @@ export default async function OverviewPage({
         </p>
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <CopyCommand command={`npx flitter-ui add ${slug[0]}`} />
+          <CopyCommand command={`npx @flitterjs/cli@latest add ${slug[0]}`} />
 
           <Link
             href={`/chart/gallery`}

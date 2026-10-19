@@ -5,7 +5,7 @@ import {
   Text,
   TextStyle,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { RadarChartCustom } from "@headless/radar-chart/types";
 import type { AgRadarChartConfig } from "../config";
 

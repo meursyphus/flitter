@@ -1,36 +1,50 @@
 {
-  "name": "flitter-chart",
-  "version": "0.0.1",
-  "private": true,
+  "name": "@flitterjs/chart",
+  "version": "0.1.0",
   "type": "module",
   "description": "Chart library built on Flitter framework",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && node ../../scripts/fix-declaration-imports.mjs dist",
     "lint": "eslint . --ext ts,tsx",
     "registry:validate": "node ./registry/validate.mjs",
     "prepublishOnly": "node ./registry/validate.mjs"
-  },
-  "dependencies": {
-    "flitter-core": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.10.4",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
     "vite-plugin-dts": "^3.6.4",
-    "vite-tsconfig-paths": "^4.3.2"
+    "vite-tsconfig-paths": "^4.3.2",
+    "flitterjs": "workspace:*"
   },
-  "main": "./dist/flitter-chart.es.js",
-  "module": "./dist/flitter-chart.es.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/flitter-chart.es.js",
-      "default": "./dist/flitter-chart.es.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./registry": "./registry/index.mjs",
     "./registry/*": "./registry/*"
   },
-  "files": ["dist", "registry"]
+  "files": [
+    "dist",
+    "registry"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "flitterjs": "^1.0.0"
+  },
+  "license": "MIT",
+  "author": "meursyphus",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meursyphus/flitter.git",
+    "directory": "packages/chart"
+  },
+  "homepage": "https://ui.flitter.dev/chart/"
 }

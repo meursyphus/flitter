@@ -1,9 +1,9 @@
-import { type Widget } from "flitter-ui";
+import { type Widget } from "flitterjs";
 import type {
   FlowDiagramContext,
   NodesSelectionRectCustomArgs,
   SelectionBoxCustomArgs,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import type { DefaultFlowConfig } from "../config";
 import { ShapePaint, rectPathD } from "./paint";
 

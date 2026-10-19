@@ -7,7 +7,7 @@ import {
   type BuildContext,
   SizedBox,
   GestureDetector,
-} from "flitter-core";
+} from "flitterjs";
 import {
   createCartesianChart,
   getScaleLabels,

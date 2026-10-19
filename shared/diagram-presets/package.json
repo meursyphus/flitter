@@ -15,7 +15,8 @@
     "./*": "./*"
   },
   "dependencies": {
-    "flitter-ui": "workspace:*"
+    "flitterjs": "workspace:*",
+    "@flitterjs/diagram": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.2.2"

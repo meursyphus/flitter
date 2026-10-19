@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { ScatterChartCustom, ScatterChartData, GetScaleFn, GetScaleOptionsFn } from "./types";
 import { ScatterChartProvider } from "./provider";
 

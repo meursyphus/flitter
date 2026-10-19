@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SizedBox } from 'flitter-core';
+import { SizedBox } from 'flitterjs';
 import HeadlessFlowDiagram from '../../../packages/diagram/src/headless/flow-diagram';
 import {
 	FlowDiagramController,

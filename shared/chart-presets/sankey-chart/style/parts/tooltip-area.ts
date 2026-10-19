@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-ui";
-import type { SankeyChartCustom } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import type { SankeyChartCustom } from "@flitterjs/chart";
 import type { SankeyChartConfig } from "../config";
 import { cartesian } from "../../../_shared/ag/index";
 

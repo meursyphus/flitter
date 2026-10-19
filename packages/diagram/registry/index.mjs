@@ -40,7 +40,7 @@ function styleItem(diagram, style) {
     name: diagram,
     style,
     outputDir,
-    dependencies: ["flitter-ui"],
+    dependencies: ["flitterjs", "@flitterjs/diagram"],
     registryDependencies: [],
     files: [...listFiles(`${diagram}/base`), ...listFiles(`${diagram}/styles/${style}`), `${diagram}/index.ts`].map((source) => ({
       source: `${SOURCE_PREFIX}${source}`,

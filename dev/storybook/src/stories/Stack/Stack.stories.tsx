@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import DualRenderer from '../../components/DualRenderer';
-import { Container, Alignment, Stack, Positioned, StackFit } from 'flitter-core';
+import { Container, Alignment, Stack, Positioned, StackFit } from 'flitterjs';
 import { dedent } from 'ts-dedent';
 
 const meta = {

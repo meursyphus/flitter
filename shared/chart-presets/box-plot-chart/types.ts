@@ -8,5 +8,5 @@ export type {
   BoxPlotChartScaleOptions,
   BoxPlotChartGetScaleFn as GetScaleFn,
   BoxPlotChartGetScaleOptionsFn as GetScaleOptionsFn,
-} from "flitter-ui/chart";
-export { BoxPlotChartController } from "flitter-ui/chart";
+} from "@flitterjs/chart";
+export { BoxPlotChartController } from "@flitterjs/chart";

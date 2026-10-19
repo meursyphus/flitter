@@ -8,7 +8,7 @@ import {
 	Stack,
 	StackFit,
 	SizedBox,
-} from "flitter-core";
+} from "flitterjs";
 
 function alignmentForIndex(index: number, count: number): Alignment {
 	if (count <= 0) return Alignment.center;

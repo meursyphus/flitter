@@ -1,4 +1,4 @@
-import { Text, TextStyle, type Widget } from "flitter-core";
+import { Text, TextStyle, type Widget } from "flitterjs";
 
 export function Label(
   { name }: { name: string; index: number },

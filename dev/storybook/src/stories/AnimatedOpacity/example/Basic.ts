@@ -10,7 +10,7 @@ import {
 	Alignment,
 	Text,
 	TextStyle
-} from 'flitter-core';
+} from 'flitterjs';
 
 class CustomWidget extends StatefulWidget {
 	createState(): State<StatefulWidget> {
@@ -58,7 +58,7 @@ import {
 	Alignment,
 	Text,
 	TextStyle
-} from 'flitter-core';
+} from 'flitterjs';
 
 class CustomWidget extends StatefulWidget {
 	createState(): State<StatefulWidget> {

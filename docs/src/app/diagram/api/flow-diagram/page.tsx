@@ -82,7 +82,7 @@ const sections = [
   },
 ];
 const EXAMPLE = `import FlowDiagram from "@/components/diagram/flow-diagram";
-import { MainAxisSize, Row } from "flitter-ui";
+import { MainAxisSize, Row } from "flitterjs";
 
 FlowDiagram({
   data,

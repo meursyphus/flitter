@@ -1,5 +1,5 @@
-import { Matrix4, type RenderObject } from "flitter-core";
-import { RenderFlowNodeItem } from "flitter-ui/diagram";
+import { Matrix4, type RenderObject } from "flitterjs";
+import { RenderFlowNodeItem } from "@flitterjs/diagram";
 
 type Box = { x: number; y: number; width: number; height: number };
 export type DiagramLayoutSnapshot = {

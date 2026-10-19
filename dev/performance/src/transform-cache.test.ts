@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { Matrix4, Offset, Size, HitTestResult } from 'flitter-core';
+import { Matrix4, Offset, Size, HitTestResult } from 'flitterjs';
 import Transform from '../../../packages/core/src/component/base/BaseTransform';
 
 afterEach(() => {

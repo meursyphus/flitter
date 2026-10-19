@@ -1,7 +1,6 @@
 {
-  "name": "@flitterjs/svelte",
-  "version": "0.0.2",
-  "private": false,
+  "name": "@flitterjs/adapter-svelte",
+  "version": "0.1.0",
   "type": "module",
   "description": "Svelte integration for Flitter — Mount high-performance Canvas/SVG widgets and charts in Svelte applications with SSR support.",
   "keywords": [
@@ -29,23 +28,23 @@
   },
   "author": "meursyphus",
   "license": "MIT",
-  "main": "./src/lib/index.ts",
+  "main": "./package/index.js",
   "publishConfig": {
-    "main": "./package/index.js",
-    "types": "./package/index.d.ts",
     "access": "public"
   },
-  "files": ["package"],
+  "files": [
+    "package"
+  ],
   "scripts": {
     "dev": "vite dev",
-    "build": "svelte-kit sync && svelte-package",
+    "build": "svelte-kit sync && svelte-package && node -e \"require('fs').unlinkSync('package/package.json')\"",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
     "linkedom": "^0.14.21"
   },
   "peerDependencies": {
-    "flitter-ui": "workspace:^*",
+    "flitterjs": "^1.0.0",
     "svelte": "^4.0.0 || ^5.0.0"
   },
   "devDependencies": {
@@ -56,6 +55,17 @@
     "svelte-check": "^4.0.0",
     "tslib": "^2.4.1",
     "typescript": "^5.0.0",
-    "vite": "^5.0.0"
-  }
+    "vite": "^5.0.0",
+    "flitterjs": "workspace:*"
+  },
+  "types": "./package/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./package/index.d.ts",
+      "svelte": "./package/index.js",
+      "import": "./package/index.js",
+      "default": "./package/index.js"
+    }
+  },
+  "svelte": "./package/index.js"
 }

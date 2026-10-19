@@ -2,8 +2,8 @@ import { highlight } from "@/lib/highlight";
 import CopyButton from "./copy-button";
 
 /** The overview's quick start: install output plus one mounted diagram. */
-export const OVERVIEW_CODE = `import Widget from "@flitterjs/react";
-import { layeredLayout, type FlowEdge, type FlowNode } from "flitter-ui/diagram";
+export const OVERVIEW_CODE = `import Widget from "@flitterjs/adapter-react";
+import { layeredLayout, type FlowEdge, type FlowNode } from "@flitterjs/diagram";
 import FlowDiagram from "@/components/diagram/flow-diagram";
 
 const nodes: FlowNode[] = [

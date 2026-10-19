@@ -24,9 +24,9 @@ import {
   Offset,
   type Widget,
   type TooltipPosition,
-} from "flitter-ui";
-import Tooltip from "flitter-core/component/Tooltip";
-import type { BubbleChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import Tooltip from "flitterjs/component/Tooltip";
+import type { BubbleChartCustom } from "@flitterjs/chart";
 import type { ToastBubbleChartConfig } from "../config";
 
 // --- Tooltip layout ---

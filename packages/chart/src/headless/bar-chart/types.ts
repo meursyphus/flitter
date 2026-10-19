@@ -1,4 +1,4 @@
-import type { Widget, Alignment } from 'flitter-core';
+import type { Widget, Alignment } from 'flitterjs';
 import type { BarChartController } from './controller';
 
 type CustomArgs<T = undefined, TConfig extends object = object> = (args: T, context: BarChartContext<TConfig>) => Widget;

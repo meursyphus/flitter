@@ -1,8 +1,8 @@
-import type { Widget } from "flitter-ui";
-import type { CandlestickChartCustom, CandlestickChartContext } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import type { CandlestickChartCustom, CandlestickChartContext } from "@flitterjs/chart";
 import type { CandlestickChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import { agTitle, agTooltipContent, agScaleOptions, cartesian } from "../../_shared/ag/index";
 import { agCandlestick } from "./parts/candlestick";
 import { agCandlestickBox } from "./parts/candlestick-box";

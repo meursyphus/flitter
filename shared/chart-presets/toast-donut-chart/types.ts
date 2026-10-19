@@ -3,5 +3,5 @@ export type {
   DonutChartData,
   DonutChartCustom,
   HoveredDonutChartSegment,
-} from "flitter-ui/chart";
-export { DonutChartController } from "flitter-ui/chart";
+} from "@flitterjs/chart";
+export { DonutChartController } from "@flitterjs/chart";

@@ -1,5 +1,5 @@
-import { SizedBox, type Widget } from "flitter-ui";
-import { TreemapChart as HeadlessTreemapChart } from "flitter-ui/chart";
+import { SizedBox, type Widget } from "flitterjs";
+import { TreemapChart as HeadlessTreemapChart } from "@flitterjs/chart";
 import { defaultGetTreemapLayout } from "@headless/treemap-chart/layout";
 import type {
 	GetTreemapLayoutFn,
@@ -7,7 +7,7 @@ import type {
 	TreemapCustom,
 	TreemapData,
 	TreemapLegacyData,
-} from "flitter-ui/chart";
+} from "@flitterjs/chart";
 import { Layout } from "./layout";
 import { Plot } from "./plot";
 import { Treemap } from "./treemap";
@@ -32,8 +32,8 @@ export type {
 	TreemapLayoutSize,
 	TreemapLayoutOptions,
 	TreemapNode,
-} from "flitter-ui/chart";
-export { TreemapController } from "flitter-ui/chart";
+} from "@flitterjs/chart";
+export { TreemapController } from "@flitterjs/chart";
 export { defaultGetTreemapLayout, squarifyTreemapLayout } from "@headless/treemap-chart/layout";
 
 const baseDefaults: Partial<TreemapCustom> = {

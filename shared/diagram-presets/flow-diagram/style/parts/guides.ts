@@ -1,9 +1,9 @@
-import { SizedBox } from "flitter-ui";
-import { LayoutBuilder, type Widget } from "flitter-ui";
+import { SizedBox } from "flitterjs";
+import { LayoutBuilder, type Widget } from "flitterjs";
 import type {
   GuidesCustomArgs,
   FlowDiagramContext,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import type { DefaultFlowConfig } from "../config";
 import { ShapePaint } from "./paint";
 

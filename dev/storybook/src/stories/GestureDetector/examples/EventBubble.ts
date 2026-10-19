@@ -7,7 +7,7 @@ import {
 	StatefulWidget,
 	State,
 	EdgeInsets
-} from 'flitter-core';
+} from 'flitterjs';
 
 class CustomWidget extends StatefulWidget {
 	colors: string[];

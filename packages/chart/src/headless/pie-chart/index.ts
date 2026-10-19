@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { PieChartCustom, PieChartData } from "./types";
 import { PieChartProvider } from "./provider";
 

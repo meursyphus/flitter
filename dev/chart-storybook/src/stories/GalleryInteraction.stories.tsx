@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import { observeGallery } from "./gallery-audit";
 import { galleryEntries } from "../../../../docs/src/app/chart/_data/gallery/entries.generated";
 import { buildChart } from "../../../../docs/src/lib/charts";

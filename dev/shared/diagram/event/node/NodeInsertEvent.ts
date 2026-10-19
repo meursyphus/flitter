@@ -1,4 +1,4 @@
-import type { GlobalKey } from 'flitter-core';
+import type { GlobalKey } from 'flitterjs';
 import type { DiagramEvent } from '../Event';
 
 class NodeInsertEvent implements DiagramEvent {

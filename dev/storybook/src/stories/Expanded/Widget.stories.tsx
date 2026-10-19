@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import DualRenderer from '../../components/DualRenderer';
-import { Container, Align, Alignment, Row, Expanded, Spacer } from 'flitter-core';
+import { Container, Align, Alignment, Row, Expanded, Spacer } from 'flitterjs';
 
 const meta = {
 	title: 'Layout/Expanded',

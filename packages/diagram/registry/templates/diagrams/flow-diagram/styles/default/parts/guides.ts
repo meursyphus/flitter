@@ -1,5 +1,5 @@
-import { SizedBox } from "flitter-core";
-import { LayoutBuilder, type Widget } from "flitter-core";
+import { SizedBox } from "flitterjs";
+import { LayoutBuilder, type Widget } from "flitterjs";
 import type {
   GuidesCustomArgs,
   FlowDiagramContext,

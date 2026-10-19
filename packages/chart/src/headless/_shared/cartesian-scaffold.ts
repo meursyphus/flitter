@@ -10,7 +10,7 @@ import {
 	StatefulWidget,
 	StatelessWidget,
 	type Widget,
-} from "flitter-core";
+} from "flitterjs";
 
 type CartesianCustom = {
 	title: (args: undefined, context: any) => Widget;

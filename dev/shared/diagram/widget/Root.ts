@@ -6,7 +6,7 @@ import {
 	BuildContext,
 	Positioned,
 	Alignment
-} from 'flitter-core';
+} from 'flitterjs';
 import InitialNodes from './Node/InitialNodes';
 import InteractiveViewport from './InteractiveViewport';
 import type { Project } from '../type';

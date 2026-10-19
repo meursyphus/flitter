@@ -10,7 +10,7 @@ import {
 	SizedBox,
 	Stack,
 	StackFit,
-} from "flitter-core";
+} from "flitterjs";
 import { resolveOverlayRect } from "@headless/_shared/cartesian-scaffold";
 import { HeatmapChartProvider } from "./provider";
 

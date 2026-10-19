@@ -3,8 +3,8 @@ import {
   Container,
   Opacity,
   type Widget,
-} from "flitter-ui";
-import type { HistogramChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { HistogramChartCustom } from "@flitterjs/chart";
 import type { HistogramChartConfig } from "../config";
 
 export function agBar(

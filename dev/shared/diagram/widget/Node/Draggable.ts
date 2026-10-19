@@ -1,4 +1,4 @@
-import { GestureDetector, Offset, State, StatefulWidget, Widget } from 'flitter-core';
+import { GestureDetector, Offset, State, StatefulWidget, Widget } from 'flitterjs';
 import { classToFunction } from '../utils';
 
 class Draggable extends StatefulWidget {

@@ -1,7 +1,7 @@
 import type { ChartModule } from "../types";
 
 const basicCode = `import PieChart from "./charts/pie-chart";
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 
 const chart = PieChart({
   data: {

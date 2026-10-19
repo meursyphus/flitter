@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-ui";
-import type { HistogramChartCustom } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import type { HistogramChartCustom } from "@flitterjs/chart";
 import type { HistogramChartConfig } from "../config";
 import { cartesian } from "../../../_shared/ag/index";
 

@@ -10,7 +10,7 @@ import {
 	TextStyle,
 	Transform,
 	Widget
-} from 'flitter-core';
+} from 'flitterjs';
 import { dedent } from 'ts-dedent';
 
 class RotateRectangleWidget extends StatefulWidget {

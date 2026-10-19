@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import DualRenderer from '../../components/DualRenderer';
-import { Container, Path, ClipPath, Rect, Offset } from 'flitter-core';
+import { Container, Path, ClipPath, Rect, Offset } from 'flitterjs';
 
 const meta = {
 	title: 'Painting/ClipPath',

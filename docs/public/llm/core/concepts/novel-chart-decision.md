@@ -2,7 +2,7 @@
 
 Leave preset land only after proving that the canonical families cannot answer the prompt honestly.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Key Points
 

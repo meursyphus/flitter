@@ -1,4 +1,4 @@
-import { CustomPaint, Size } from "flitter-core";
+import { CustomPaint, Size } from "flitterjs";
 
 const imageCache = new Map<string, HTMLImageElement>();
 

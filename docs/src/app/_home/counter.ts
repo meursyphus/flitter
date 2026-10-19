@@ -1,7 +1,7 @@
 import {
   Center, Column, Container, EdgeInsets, GestureDetector,
   MainAxisSize, State, StatefulWidget, Text, TextStyle,
-} from "flitter-ui";
+} from "flitterjs";
 
 const font = (color: string, fontSize = 15) =>
   new TextStyle({ fontFamily: "sans-serif", fontSize, color });

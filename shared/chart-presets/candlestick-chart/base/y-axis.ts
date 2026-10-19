@@ -1,5 +1,5 @@
 import type { CandlestickChartCustom } from "../types";
-import * as Cartesian from "flitter-ui/chart";
+import * as Cartesian from "@flitterjs/chart";
 
 export function YAxis(
   ...[{ line, labels, tick }, ctx]: Parameters<CandlestickChartCustom["yAxis"]>

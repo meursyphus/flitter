@@ -5,8 +5,8 @@ import {
   Stack,
   StackFit,
   type Widget,
-} from "flitter-ui";
-import type { CandlestickChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { CandlestickChartCustom } from "@flitterjs/chart";
 import type { CandlestickChartConfig } from "../config";
 
 export function agCandlestickBox(

@@ -1,5 +1,5 @@
 import type { WaterfallChartCustom } from '../types';
-import * as Cartesian from 'flitter-ui/chart';
+import * as Cartesian from '@flitterjs/chart';
 
 export function Plot(...args: Parameters<WaterfallChartCustom['plot']>) {
 	return Cartesian.Plot(args[0]);

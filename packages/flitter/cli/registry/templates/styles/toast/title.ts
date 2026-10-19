@@ -1,4 +1,4 @@
-import { Text, TextStyle, type Widget } from "flitter-core";
+import { Text, TextStyle, type Widget } from "flitterjs";
 import type { ToastBaseConfig } from "./cartesian/config";
 
 type ToastTitleConfig = Pick<ToastBaseConfig, "font" | "title">;

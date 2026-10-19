@@ -1,4 +1,4 @@
-import { Stack, StackFit, type Widget } from "flitter-core";
+import { Stack, StackFit, type Widget } from "flitterjs";
 import type { SunburstCustom } from "../types";
 
 export function Plot(

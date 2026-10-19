@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "chart-presets": "workspace:*",
-    "flitter-core": "workspace:*",
-    "@flitterjs/svelte": "workspace:*"
+    "flitterjs": "workspace:*",
+    "@flitterjs/adapter-svelte": "workspace:*",
+    "@flitterjs/chart": "workspace:*",
+    "@flitterjs/diagram": "workspace:*"
   }
 }

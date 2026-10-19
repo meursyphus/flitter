@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-ui";
-import { CandlestickChart as HeadlessCandlestickChart } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import { CandlestickChart as HeadlessCandlestickChart } from "@flitterjs/chart";
 import type {
   CandlestickChartCustom,
   CandlestickChartData,
@@ -10,7 +10,7 @@ import type {
 } from "./types";
 import * as Base from "./base";
 import { styleConfig, type CandlestickChartConfig } from "./style";
-import type { DeepPartial } from "flitter-ui/chart";
+import type { DeepPartial } from "@flitterjs/chart";
 
 export type {
   CandlestickChartContext,

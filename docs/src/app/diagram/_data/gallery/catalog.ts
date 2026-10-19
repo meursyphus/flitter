@@ -3,7 +3,7 @@
  * hidden everywhere until its example exists. Data only: no widgets are
  * created by importing this file.
  */
-import type { Widget } from "flitter-ui";
+import type { Widget } from "flitterjs";
 import type { Theme } from "@/lib/theme";
 import type { CellId } from "../interactions/cells";
 

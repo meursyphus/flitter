@@ -1,4 +1,4 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitterjs";
 import HeadlessScatterChart from "@headless/scatter-chart";
 import type {
   ScatterChartCustom,

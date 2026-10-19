@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { ScatterChartController } from "./controller";
 
 type CustomArgs<T = undefined, TConfig extends object = object> = (args: T, context: ScatterChartContext<TConfig>) => Widget;

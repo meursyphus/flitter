@@ -11,7 +11,7 @@ import {
 	Positioned,
 	State,
 	StatefulWidget
-} from 'flitter-core';
+} from 'flitterjs';
 
 class SizeChageWidget extends StatefulWidget {
 	count: number;

@@ -1,5 +1,5 @@
-import { SizedBox } from "flitter-core";
-import { CustomPaint, Size, type Widget } from "flitter-core";
+import { SizedBox } from "flitterjs";
+import { CustomPaint, Size, type Widget } from "flitterjs";
 import type {
   BackgroundCustomArgs,
   FlowDiagramContext,

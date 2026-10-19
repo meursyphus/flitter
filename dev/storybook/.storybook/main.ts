@@ -20,19 +20,19 @@ const config: StorybookConfig = {
   },
   viteFinal: async (config) => {
     config.resolve = config.resolve || {};
-    // One copy of the engine: `@flitterjs/react` imports `flitter-ui`, whose
-    // dist bundle would otherwise duplicate `flitter-core` and break
+    // One copy of the engine: `@flitterjs/adapter-react` imports `flitterjs`, whose
+    // dist bundle would otherwise duplicate `flitterjs` and break
     // `instanceof` checks between widgets and the renderer.
     config.resolve.alias = {
       ...config.resolve.alias,
-      "flitter-core/component/Tooltip": path.resolve(coreRoot, "src/component/Tooltip.ts"),
-      "flitter-ui/chart": path.resolve(flitterUiRoot, "src/chart.ts"),
-      "flitter-ui/diagram": path.resolve(flitterUiRoot, "src/diagram.ts"),
-      "flitter-diagram/engine": path.resolve(diagramRoot, "src/engine.ts"),
+      "flitterjs/component/Tooltip": path.resolve(coreRoot, "src/component/Tooltip.ts"),
+      "@flitterjs/chart": path.resolve(flitterUiRoot, "src/chart.ts"),
+      "@flitterjs/diagram": path.resolve(flitterUiRoot, "src/diagram.ts"),
+      "@flitterjs/diagram": path.resolve(diagramRoot, "src/engine.ts"),
       "diagram-presets": path.resolve(diagramPresetsRoot, "index.ts"),
-      "flitter-ui": path.resolve(flitterUiRoot, "src/index.ts"),
-      "flitter-core": path.resolve(coreRoot, "src/index.ts"),
-      "flitter-diagram": path.resolve(diagramRoot, "src/index.ts"),
+      "flitterjs": path.resolve(flitterUiRoot, "src/index.ts"),
+      "flitterjs": path.resolve(coreRoot, "src/index.ts"),
+      "@flitterjs/diagram": path.resolve(diagramRoot, "src/index.ts"),
     };
     return config;
   },

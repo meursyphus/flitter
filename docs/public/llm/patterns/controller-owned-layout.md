@@ -2,7 +2,7 @@
 
 Use the controller to compute geometry first when the chart is fundamentally about layout.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Use When
 

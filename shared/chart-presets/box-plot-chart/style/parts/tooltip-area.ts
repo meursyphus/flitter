@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-ui";
-import type { BoxPlotChartCustom } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import type { BoxPlotChartCustom } from "@flitterjs/chart";
 import type { AgBoxPlotChartConfig } from "../config";
 import { cartesian } from "../../../_shared/ag/index";
 

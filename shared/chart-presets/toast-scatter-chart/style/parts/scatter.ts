@@ -22,8 +22,8 @@ import {
   EdgeInsets,
   type Widget,
   type TooltipPosition,
-} from "flitter-ui";
-import type { ScatterChartCustom, ScatterChartContext } from "flitter-ui/chart";
+} from "flitterjs";
+import type { ScatterChartCustom, ScatterChartContext } from "@flitterjs/chart";
 import type { ToastScatterChartConfig } from "../config";
 
 export const SHAPES = ["circle", "star", "square", "triangle"] as const;

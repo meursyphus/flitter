@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { BarChartCustom } from "@headless/bar-chart/types";
 import type { AgBarChartConfig } from "../config";
 import { cartesian } from "@styles/ag";

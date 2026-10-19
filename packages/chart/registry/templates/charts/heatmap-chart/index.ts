@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import { BaseHeatmapChart } from "./base";
 import type { HeatmapCustom, HeatmapData } from "./base";
 import { toastStyleConfig, type ToastHeatmapChartConfig } from "./styles/toast";

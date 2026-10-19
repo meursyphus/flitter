@@ -1,6 +1,6 @@
 # Novel Chart Patterns
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 Use these patterns when the prompt should not be forced into one canonical chart family.
 

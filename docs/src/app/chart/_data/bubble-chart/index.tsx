@@ -1,7 +1,7 @@
 import type { ChartModule } from "../types";
 
 const basicCode = `import BubbleChart from "./charts/bubble-chart";
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 
 // Create chart widget
 const chart = BubbleChart({

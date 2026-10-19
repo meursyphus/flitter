@@ -1,5 +1,5 @@
-import { type DeepPartial, deepMerge } from "flitter-ui/diagram";
-import type { PanelPosition } from "flitter-ui/diagram";
+import { type DeepPartial, deepMerge } from "@flitterjs/diagram";
+import type { PanelPosition } from "@flitterjs/diagram";
 
 /** Colour tokens. Values mirror React Flow's `style.css` custom properties. */
 export type DefaultColors = {

@@ -1,4 +1,4 @@
-import { LayoutBuilder } from "flitter-core";
+import { LayoutBuilder } from "flitterjs";
 import type { FunnelChartCustom } from "@headless/funnel-chart/types";
 import { deepMerge, type DeepPartial } from "@utils/index";
 import {

@@ -7,7 +7,7 @@ import {
 	IntrinsicHeight,
 	MainAxisAlignment,
 	Row
-} from 'flitter-core';
+} from 'flitterjs';
 
 const meta = {
 	title: 'Layout/IntrinsicHeight',

@@ -1,4 +1,4 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitterjs";
 import * as Cartesian from "@shared/cartesian/index";
 import type { BulletChartCustom } from "@headless/bullet-chart/types";
 

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import DualRenderer from '../../components/DualRenderer';
-import { Container, ConstrainedBox, Constraints } from 'flitter-core';
+import { Container, ConstrainedBox, Constraints } from 'flitterjs';
 
 const meta = {
 	title: 'Layout/ConstrainedBox',

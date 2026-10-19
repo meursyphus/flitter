@@ -2,7 +2,7 @@ import {
 	Stack,
 	StackFit,
 	type Widget,
-} from "flitter-core";
+} from "flitterjs";
 
 export function AngularAxis(
 	{ line, labels }: { line: Widget; labels: Widget[] }

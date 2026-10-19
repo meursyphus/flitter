@@ -20,7 +20,7 @@ export const metadata = { title: "InteractiveViewer", description: "Zoom to the 
 import {
   Column, Container, Expanded, GestureDetector, InteractiveViewer,
   Matrix4, State, StatefulWidget, Text, TransformationController,
-} from 'flitter-ui';
+} from 'flitterjs';
 
 class ViewerExample extends StatefulWidget {
   createState() { return new ViewerExampleState(); }
@@ -89,7 +89,7 @@ Touch works without extra props. One finger drags to pan. Two fingers pinch to z
 Flitter delivers each pinch step as a wheel event with Ctrl held and a `pinchScale` property, the zoom ratio of that step. Without `wheelScale`, the viewer applies `pinchScale` directly, so a pinch follows the fingers exactly. With `panOnScroll`, a pinch still zooms because Ctrl is held. A custom `wheelScale` receives the pinch events too and has to read `pinchScale` itself:
 
 ```typescript
-import { Container, InteractiveViewer, type PinchWheelEvent } from 'flitter-ui';
+import { Container, InteractiveViewer, type PinchWheelEvent } from 'flitterjs';
 
 InteractiveViewer({
   minScale: 0.5,

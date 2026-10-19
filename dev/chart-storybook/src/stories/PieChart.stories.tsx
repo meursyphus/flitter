@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import { ToastPieChart } from "shared/chart";
 
 const LEGEND_POSITIONS = ["top", "bottom", "right", "right-top", "right-center", "right-bottom"] as const;

@@ -33,7 +33,7 @@ export async function generateMetadata({
   };
 }
 
-const mountFile = (slug: string) => `import Widget from "@flitterjs/react";
+const mountFile = (slug: string) => `import Widget from "@flitterjs/adapter-react";
 import CreateDiagram from "./${slug}";
 
 const diagram = CreateDiagram("light");
@@ -102,7 +102,7 @@ export default async function ExamplePage({
           <span className="rounded-full border border-line px-3 py-1.5 text-[12px] text-soft">
             Default
           </span>
-          <CopyCommand command="npx flitter-ui add flow-diagram" />
+          <CopyCommand command="npx @flitterjs/cli@latest add flow-diagram" />
         </div>
       </section>
 

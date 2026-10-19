@@ -2,8 +2,8 @@ import {
   Stack,
   Positioned,
   type Widget,
-} from "flitter-ui";
-import type { LineChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { LineChartCustom } from "@flitterjs/chart";
 import type { ToastAreaChartConfig } from "../config";
 import { AnimatedDataView } from "../../../_shared/toast/cartesian/animated-data-view";
 

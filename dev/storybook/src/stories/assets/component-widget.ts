@@ -1,14 +1,14 @@
 import { dedent } from 'ts-dedent';
 
 export default dedent`
- import { BuildContext } from "flitter-core/src/widget/ComponentWidget"
+ import { BuildContext } from "flitterjs/src/widget/ComponentWidget"
  import {
   ComponentWidget,
   Padding,
   Row,
   Text,
   Widget,
- } from "flitter-core"
+ } from "flitterjs"
 
 class YoutComponent extends ComponentWidget {
 

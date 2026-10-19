@@ -18,12 +18,12 @@ import {
   Text,
   TextStyle,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import {
   FlowDiagramController,
   type FlowNode,
   type FlowEdge,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import FlowDiagram, {
   EditableLabel,
   ShapePaint,

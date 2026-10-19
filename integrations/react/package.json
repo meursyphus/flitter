@@ -1,7 +1,6 @@
 {
-  "name": "@flitterjs/react",
-  "version": "0.0.2",
-  "private": false,
+  "name": "@flitterjs/adapter-react",
+  "version": "0.1.0",
   "type": "module",
   "description": "React integration for Flitter — Mount high-performance Canvas/SVG widgets and charts in React applications.",
   "keywords": [
@@ -33,20 +32,20 @@
     "dev": "vite",
     "lint": "eslint . --ext ts,tsx"
   },
-  "main": "./src/lib/index.ts",
+  "main": "./dist/index.js",
   "publishConfig": {
-    "main": "./dist/react.js",
-    "types": "./dist/index.d.ts",
     "access": "public"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "peerDependencies": {
-    "flitter-ui": "workspace:^*",
+    "flitterjs": "^1.0.0",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
-    "flitter-ui": "workspace:^*",
+    "flitterjs": "workspace:*",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
@@ -55,5 +54,13 @@
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
     "vite-plugin-dts": "^3.6.3"
+  },
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
   }
 }

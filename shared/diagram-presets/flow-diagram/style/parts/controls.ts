@@ -6,12 +6,12 @@ import {
   Container,
   MainAxisSize,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import type {
   ControlsCustomArgs,
   ControlButtonCustomArgs,
   FlowDiagramContext,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import type { DefaultFlowConfig } from "../config";
 import { IconPaint } from "./paint";
 import { icons } from "./icons";

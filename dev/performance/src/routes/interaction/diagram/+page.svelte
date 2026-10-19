@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type NodeToolbarCustom, type FlowDiagramCustom } from 'flitter-diagram';
+	import { type NodeToolbarCustom, type FlowDiagramCustom } from '@flitterjs/diagram';
 	import {
 		baseDefaults,
 		defaultStyleConfig,
@@ -8,14 +8,14 @@
 
 	import { getSceneOrder } from '../../../../../../packages/diagram/src/headless/flow-diagram/controller';
 	import { onMount } from 'svelte';
-	import { AppRunner } from 'flitter-core';
-	import { Container, EdgeInsets, Text, TextStyle, GestureDetector } from 'flitter-core';
+	import { AppRunner } from 'flitterjs';
+	import { Container, EdgeInsets, Text, TextStyle, GestureDetector } from 'flitterjs';
 	import {
 		layeredLayout,
 		type FlowEdge,
 		type FlowNode,
 		type NodeBodyCustomArgs
-	} from 'flitter-diagram';
+	} from '@flitterjs/diagram';
 	import FlowDiagram, { defaultNode } from '../../../../../../shared/diagram-presets/flow-diagram';
 	let host: HTMLDivElement;
 	onMount(() => {

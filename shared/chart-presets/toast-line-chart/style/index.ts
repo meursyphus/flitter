@@ -1,8 +1,8 @@
-import type { LineChartCustom } from "flitter-ui/chart";
-import type { LineChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
+import type { LineChartCustom } from "@flitterjs/chart";
+import type { LineChartGetScaleOptionsFn as GetScaleOptionsFn } from "@flitterjs/chart";
 import type { ToastLineChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import { toastLine } from "./parts/line";
 import { toastDataView } from "./parts/data-view";
 import { toastTooltipArea } from "./parts/tooltip-area";
@@ -13,8 +13,8 @@ import {
   toastScaleOptions,
   cartesian,
 } from "../../_shared/toast/index";
-import type { LineChartContext } from "flitter-ui/chart";
-import type { Widget } from "flitter-ui";
+import type { LineChartContext } from "@flitterjs/chart";
+import type { Widget } from "flitterjs";
 
 export { type ToastLineChartConfig } from "./config";
 

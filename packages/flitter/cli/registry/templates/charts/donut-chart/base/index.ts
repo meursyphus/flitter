@@ -1,4 +1,4 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitterjs";
 import HeadlessDonutChart from "@headless/donut-chart";
 import type { DonutChartCustom, DonutChartData } from "@headless/donut-chart/types";
 import { DataView, Layout, Plot } from "../../../shared/pie-like";

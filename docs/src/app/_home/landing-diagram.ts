@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-ui";
-import { layeredLayout, type FlowEdge, type FlowNode, type HandleSpec } from "flitter-ui/diagram";
+import type { Widget } from "flitterjs";
+import { layeredLayout, type FlowEdge, type FlowNode, type HandleSpec } from "@flitterjs/diagram";
 import FlowDiagram from "@/components/diagram/flow-diagram";
 import type { Theme } from "@/lib/theme";
 

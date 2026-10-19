@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-ui";
-import type { BarChartCustom } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import type { BarChartCustom } from "@flitterjs/chart";
 import type { AgStackedBarChartConfig } from "../config";
 import { stackedBarGroup } from "../../base/stacked-bar-group";
 

@@ -9,7 +9,7 @@ import {
   Row,
   Stack,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import { CartesianCustom } from "./types";
 
 export function Grid(

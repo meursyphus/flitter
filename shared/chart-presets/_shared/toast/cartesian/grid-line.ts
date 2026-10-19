@@ -1,6 +1,6 @@
-import type { Widget } from "flitter-ui";
+import type { Widget } from "flitterjs";
 import type { ToastBaseConfig } from "./config";
-import { GridXLine, GridYLine } from "flitter-ui/chart";
+import { GridXLine, GridYLine } from "@flitterjs/chart";
 
 export function toastGridXLine(
   _args: undefined,

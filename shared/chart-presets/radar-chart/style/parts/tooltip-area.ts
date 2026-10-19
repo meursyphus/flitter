@@ -1,4 +1,4 @@
-import type { RadarChartCustom } from "flitter-ui/chart";
+import type { RadarChartCustom } from "@flitterjs/chart";
 import type { AgRadarChartConfig } from "../config";
 import { cartesian } from "../../../_shared/ag/index";
 

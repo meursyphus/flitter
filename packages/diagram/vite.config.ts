@@ -2,20 +2,9 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 
 export default defineConfig({
-  plugins: [dts()],
+  plugins: [dts({ entryRoot: "src", include: ["src"] })],
   build: {
-    lib: {
-      entry: "src/index.ts",
-      name: "flitter-diagram",
-      fileName: (format) => `flitter-diagram.${format}.js`,
-    },
-    rollupOptions: {
-      external: ["flitter-core"],
-      output: {
-        globals: {
-          "flitter-core": "flitterCore",
-        },
-      },
-    },
+    lib: { entry: "src/index.ts", formats: ["es"], fileName: () => "index.js" },
+    rollupOptions: { external: (id) => id === "flitterjs" || id.startsWith("flitterjs/") },
   },
 });

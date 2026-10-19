@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import { BulletChart } from "shared/chart";
 import { bulletRevenueData, bulletRevenueTitle } from "./bulletStoryData";
 

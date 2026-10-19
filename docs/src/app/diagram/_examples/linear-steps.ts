@@ -19,7 +19,7 @@ import {
   Text,
   TextStyle,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import {
   FlowDiagramController,
   createId,
@@ -27,7 +27,7 @@ import {
   toLayoutGraph,
   type FlowNode,
   type FlowEdge,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import FlowDiagram from "@/components/diagram/flow-diagram";
 
 type Theme = "light" | "dark";
@@ -382,7 +382,7 @@ class StepsState extends State<Steps> {
             (
               args: Parameters<typeof defaultNode>[0],
               ctx: Parameters<typeof defaultNode>[1],
-            ) => import("flitter-ui").Widget
+            ) => import("flitterjs").Widget
           > = {
             step: ({ node }) =>
               node.collapsible

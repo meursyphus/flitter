@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import {
   Container,
   GlobalKey,
   type Widget as FlitterWidget,
-} from "flitter-core";
+} from "flitterjs";
 import { diagramLayoutSnapshot } from "./diagram-layout-snapshot";
 import type { Theme } from "@/lib/theme";
 import { useTheme } from "@/lib/use-theme";
@@ -14,7 +14,7 @@ import { useTheme } from "@/lib/use-theme";
 type LiveDiagramProps = {
   /**
    * Builds the diagram for a site theme. Keep it referentially stable (define
-   * it at module scope): `@flitterjs/react` remounts the app whenever the
+   * it at module scope): `@flitterjs/adapter-react` remounts the app whenever the
    * widget identity changes, which resets every node position.
    */
   create: (theme: Theme) => FlitterWidget;
@@ -29,7 +29,7 @@ type LiveDiagramProps = {
 };
 
 /**
- * Renders a `flitter-diagram` widget client-side. Like `LiveChart`, the widget
+ * Renders a `@flitterjs/diagram` widget client-side. Like `LiveChart`, the widget
  * is built after mount so nothing runs during static prerendering.
  */
 export default function LiveDiagram({

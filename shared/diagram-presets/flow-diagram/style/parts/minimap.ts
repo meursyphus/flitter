@@ -1,5 +1,5 @@
-import { Positioned, SizedBox, Stack } from "flitter-ui";
-import type { FlowDiagramCustom } from "flitter-ui/diagram";
+import { Positioned, SizedBox, Stack } from "flitterjs";
+import type { FlowDiagramCustom } from "@flitterjs/diagram";
 import type { DefaultFlowConfig } from "../config";
 import { ShapePaint, rectPathD } from "./paint";
 

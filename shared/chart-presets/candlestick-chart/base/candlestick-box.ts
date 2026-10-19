@@ -3,7 +3,7 @@ import {
 	Alignment,
 	Container,
 	FractionallySizedBox,
-} from "flitter-ui";
+} from "flitterjs";
 
 export function CandlestickBox(
 	...[{ candlestick, geometry }]: Parameters<CandlestickChartCustom["candlestickBox"]>

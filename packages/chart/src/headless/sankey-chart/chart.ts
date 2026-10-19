@@ -12,7 +12,7 @@ import {
   State,
   type Widget,
   type BuildContext,
-} from "flitter-core";
+} from "flitterjs";
 import { resolveOverlayRect } from "@headless/_shared/cartesian-scaffold";
 import { SankeyChartProvider } from "./provider";
 import { isPointInRibbon } from "./geometry";

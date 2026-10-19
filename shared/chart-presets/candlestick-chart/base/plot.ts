@@ -1,6 +1,6 @@
 import type { CandlestickChartCustom } from "../types";
-import { Align, Alignment, Stack } from "flitter-ui";
-import { DockFrame } from "flitter-ui/chart";
+import { Align, Alignment, Stack } from "flitterjs";
+import { DockFrame } from "@flitterjs/chart";
 
 export function Plot(...args: Parameters<CandlestickChartCustom["plot"]>) {
   const [{ dataView, xAxis, yAxis, grid, axisCorner, tooltipArea }] = args;

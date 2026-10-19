@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Widget from '@flitterjs/svelte';
+	import Widget from '@flitterjs/adapter-svelte';
 	import Diagram from './widget/Diagram';
 	import type { Project } from './type';
 

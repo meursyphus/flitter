@@ -1,4 +1,4 @@
-import { CustomPaint, Size, type Widget } from "flitter-core";
+import { CustomPaint, Size, type Widget } from "flitterjs";
 
 export type ShapeSpec = {
   d: string;

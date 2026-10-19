@@ -6,11 +6,11 @@ import {
   Container,
   SizedBox,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import type {
   FlowDiagramContext,
   ResizeControlCustomArgs,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import type { DefaultFlowConfig } from "../config";
 
 /** React Flow's NodeResizer look: 1px blue lines and 4px blue squares with a white border. */

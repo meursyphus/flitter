@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import { BaseRadarChart } from "./base";
 import type { RadarChartCustom, RadarChartData } from "./base";
 import type { DeepPartial } from "@utils/index";

@@ -9,7 +9,7 @@ import {
 	MainAxisSize,
 	SizedBox,
 	type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 
 export type PieLikeLayoutConfig = {
 	padding: { top: number; right: number; bottom: number; left: number };

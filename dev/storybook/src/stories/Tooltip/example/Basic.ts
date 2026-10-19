@@ -8,7 +8,7 @@ import {
 	TextStyle,
 	BorderRadius,
 	Radius
-} from 'flitter-core';
+} from 'flitterjs';
 
 const BasicStory = {
 	widget: Center({

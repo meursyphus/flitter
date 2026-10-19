@@ -9,7 +9,7 @@ import {
   MainAxisSize,
   Row,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 
 export function Layout(
   ...[{ title, legends, plot }]: Parameters<CartesianCustom["layout"]>

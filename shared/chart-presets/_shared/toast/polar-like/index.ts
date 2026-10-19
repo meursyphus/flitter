@@ -28,7 +28,7 @@ import {
 	type Data,
 	type Nullable,
 	type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import {
 	DataView,
 	Segment,

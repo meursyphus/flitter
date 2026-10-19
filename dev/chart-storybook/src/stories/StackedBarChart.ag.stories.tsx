@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import { StackedBarChart } from "shared/chart";
 
 const TITLE_OPTIONS = ["top-start", "top-center", "top-end", "bottom-start", "bottom-center", "bottom-end"] as const;

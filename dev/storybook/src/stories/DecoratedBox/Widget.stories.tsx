@@ -13,7 +13,7 @@ import {
 	BoxShadow,
 	Offset,
 	BorderSide
-} from 'flitter-core';
+} from 'flitterjs';
 
 const meta = {
 	title: 'Painting/DecoratedBox',

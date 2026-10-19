@@ -7,7 +7,7 @@ import {
 	ConstraintsTransformBox,
 	Alignment,
 	BuildContext
-} from 'flitter-core';
+} from 'flitterjs';
 import { classToFunction, clamp } from './utils';
 import DiagramControllerProvider from './Provider/DiagramControllerProvider';
 import type { DiagramController } from '../controller';

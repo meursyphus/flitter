@@ -6,7 +6,7 @@ import {
 	TextStyle,
 	StatefulWidget,
 	State
-} from 'flitter-core';
+} from 'flitterjs';
 import { dedent } from 'ts-dedent';
 
 class SizeChangeWidget extends StatefulWidget {

@@ -1,4 +1,4 @@
-import { Path } from "flitter-core";
+import { Path } from "flitterjs";
 
 type BezierPoint = {
   x: number;

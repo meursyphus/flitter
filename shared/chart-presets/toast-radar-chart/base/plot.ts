@@ -7,8 +7,8 @@ import {
 	Stack,
 	StackFit,
 	type Widget,
-} from "flitter-ui";
-import type { RadarChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { RadarChartCustom } from "@flitterjs/chart";
 
 const EPSILON = 0.0001;
 const CONTENT_CHILD_OFFSET = 1;

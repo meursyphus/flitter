@@ -1,6 +1,6 @@
 import type { RadarChartCustom } from "@headless/radar-chart/types";
 import type { RadarChartContext } from "@headless/radar-chart/types";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { ToastRadarChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "@utils/index";

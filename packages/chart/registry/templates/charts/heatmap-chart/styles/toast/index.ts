@@ -12,7 +12,7 @@ import {
 	cartesian,
 } from "@styles/toast";
 import type { HeatmapContext } from "@headless/heatmap-chart/types";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import { interpolateColor } from "./parts/segment";
 
 export { type ToastHeatmapChartConfig } from "./config";

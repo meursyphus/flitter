@@ -6,7 +6,7 @@ import {
 	Constraints,
 	ConstrainedBox,
 	Alignment
-} from 'flitter-core';
+} from 'flitterjs';
 
 const meta = {
 	title: 'Layout/ConstraintsTransformBox',

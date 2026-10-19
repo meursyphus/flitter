@@ -1,12 +1,12 @@
 import {
   SizedBox,
   type Widget,
-} from "flitter-ui";
-import type { WaterfallChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { WaterfallChartCustom } from "@flitterjs/chart";
 import type { WaterfallChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
-import * as Cartesian from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
+import * as Cartesian from "@flitterjs/chart";
 import { toastBar } from "./parts/bar";
 import { toastBarBox } from "./parts/bar-box";
 import { toastConnector } from "./parts/connector";

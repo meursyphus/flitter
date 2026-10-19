@@ -12,7 +12,7 @@ import {
 	Flexible,
 	TextStyle,
 	CrossAxisAlignment
-} from 'flitter-core';
+} from 'flitterjs';
 import * as Examples from './example/index.js';
 
 const meta = {

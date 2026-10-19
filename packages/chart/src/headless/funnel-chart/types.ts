@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { FunnelChartController } from "./controller";
 
 export type FunnelChartData = {

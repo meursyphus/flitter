@@ -1,12 +1,12 @@
-import type { HistogramChartCustom, HistogramChartContext } from "flitter-ui/chart";
+import type { HistogramChartCustom, HistogramChartContext } from "@flitterjs/chart";
 import type { HistogramChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import { toastTitle, tooltipContent, cartesian } from "../../_shared/toast/index";
 import { toastBar } from "./parts/bar";
 import { toastDataView } from "./parts/data-view";
 import { toastTooltipArea } from "./parts/tooltip-area";
-import type { Widget } from "flitter-ui";
+import type { Widget } from "flitterjs";
 
 export { type HistogramChartConfig } from "./config";
 

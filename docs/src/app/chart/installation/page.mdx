@@ -7,7 +7,7 @@ export const metadata = {
 
 # Installation
 
-Flitter charts are source code, not a dependency. After setup, the full chart implementation lives in your project — every widget, every renderer, every type definition. There's no black box.
+Flitter chart styles are copied into your project as editable source. They use `@flitterjs/chart` for headless chart logic and `flitterjs` for rendering. Your framework adapter connects the engine to your app.
 
 ## Prerequisites
 
@@ -17,24 +17,23 @@ Flitter charts are source code, not a dependency. After setup, the full chart im
 
 ## Quick setup
 
-Initialize Flitter in your project:
+Install the engine and your framework adapter, then initialize Flitter:
 
 ```bash
-npx flitter-ui init
+npm install flitterjs @flitterjs/adapter-react
+# For Svelte, use @flitterjs/adapter-svelte instead.
+npx @flitterjs/cli@latest init
 ```
 
-This command will:
-1. Install the core rendering engine (`flitter-ui`)
-2. Install the framework adapter (`@flitterjs/react` or `@flitterjs/svelte`)
-3. Create a `flitter.json` in your project root
+`init` creates `flitter.json`. It does not install runtime packages.
 
 ## Add your first chart
 
 ```bash
-npx flitter-ui add bar-chart
+npx @flitterjs/cli@latest add bar-chart
 ```
 
-This generates the full source code in your project:
+`add` installs `flitterjs` and `@flitterjs/chart`, then copies editable chart source into your configured chart directory:
 
 ```
 charts/
@@ -59,25 +58,25 @@ charts/
 
 Every file is yours. Open any file, read the widget tree, change what you want. The `parts/` folder is where most visual customization happens — each file is a small widget factory you can replace entirely.
 
-Delete the CLI after install — your chart has zero runtime dependency on `flitter-ui`.
+The CLI is only needed when copying templates. Keep `flitterjs`, `@flitterjs/chart`, and your framework adapter installed at runtime.
 
 ## Choose a style
 
 Each chart comes with multiple visual styles. Pick one during install:
 
 ```bash
-npx flitter-ui add bar-chart --style toast
-npx flitter-ui add bar-chart --style ag
+npx @flitterjs/cli@latest add bar-chart --style toast
+npx @flitterjs/cli@latest add bar-chart --style ag
 ```
 
-If you don't specify a style, you'll be prompted to choose.
+The CLI uses `defaultChartStyle` from `flitter.json` (AG by default) when no style is specified.
 
 ## Framework setup
 
 ### React
 
 ```tsx
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import BarChart from "./charts/bar-chart";
 
 export default function App() {
@@ -85,7 +84,7 @@ export default function App() {
     <Widget
       widget={BarChart({ data: [...] })}
       width="100%"
-      height={400}
+      height="400px"
     />
   );
 }
@@ -95,14 +94,14 @@ export default function App() {
 
 ```svelte
 <script>
-  import Widget from "@flitterjs/svelte";
+  import Widget from "@flitterjs/adapter-svelte";
   import BarChart from "./charts/bar-chart";
 </script>
 
 <Widget
   widget={BarChart({ data: [...] })}
   width="100%"
-  height={400}
+  height="400px"
 />
 ```
 

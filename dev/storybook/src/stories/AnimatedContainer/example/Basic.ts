@@ -16,7 +16,7 @@ import {
 	BoxShadow,
 	Offset,
 	Matrix4
-} from 'flitter-core';
+} from 'flitterjs';
 
 class CustomWidget extends StatefulWidget {
 	createState(): State<StatefulWidget> {
@@ -98,7 +98,7 @@ import {
 	TextStyle,
 	Offset,
 	AnimatedSlide
-} from 'flitter-core';
+} from 'flitterjs';
 
 class CustomWidget extends StatefulWidget {
 	createState(): State<StatefulWidget> {

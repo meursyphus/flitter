@@ -6,8 +6,8 @@ import {
 	BoxShadow,
 	ZIndex,
 	type Widget,
-} from "flitter-ui";
-import type { HeatmapContext } from "flitter-ui/chart";
+} from "flitterjs";
+import type { HeatmapContext } from "@flitterjs/chart";
 import type { ToastHeatmapChartConfig } from "../config";
 
 export function interpolateColor(

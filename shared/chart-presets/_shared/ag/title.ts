@@ -1,4 +1,4 @@
-import { Column, MainAxisSize, CrossAxisAlignment, SizedBox, Text, TextStyle, type Widget } from "flitter-ui";
+import { Column, MainAxisSize, CrossAxisAlignment, SizedBox, Text, TextStyle, type Widget } from "flitterjs";
 import type { AgCartesianBaseConfig } from "./cartesian/config";
 
 type AgTitleConfig = Pick<AgCartesianBaseConfig, "font" | "title" | "subtitle">;

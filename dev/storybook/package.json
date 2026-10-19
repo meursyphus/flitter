@@ -11,13 +11,13 @@
     "chromatic": "npx chromatic"
   },
   "dependencies": {
-    "@flitterjs/react": "workspace:*",
-    "flitter-chart": "workspace:*",
-    "flitter-core": "workspace:*",
+    "@flitterjs/adapter-react": "workspace:*",
+    "@flitterjs/chart": "workspace:*",
+    "flitterjs": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "ts-dedent": "^2.2.0",
-    "flitter-diagram": "workspace:*",
+    "@flitterjs/diagram": "workspace:*",
     "diagram-presets": "workspace:*"
   },
   "devDependencies": {

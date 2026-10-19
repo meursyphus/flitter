@@ -6,8 +6,8 @@ import {
 	StackFit,
 	Transform,
 	type Widget,
-} from "flitter-ui";
-import type { RadarChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { RadarChartCustom } from "@flitterjs/chart";
 
 export function Web(
 	...[{ angularLines, radialLines }]: Parameters<RadarChartCustom["web"]>

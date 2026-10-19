@@ -1,5 +1,5 @@
 import type { BoxPlotChartCustom, GetScaleOptionsFn } from "@headless/box-plot-chart/types";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { AgBoxPlotChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";

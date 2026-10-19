@@ -11,7 +11,7 @@ import {
 	TextStyle,
 	AnimatedPadding,
 	EdgeInsets
-} from 'flitter-core';
+} from 'flitterjs';
 
 class CustomWidget extends StatefulWidget {
 	createState(): State<StatefulWidget> {
@@ -60,7 +60,7 @@ import {
 	TextStyle,
 	AnimatedPadding,
 	EdgeInsets
-} from 'flitter-core';
+} from 'flitterjs';
 
 class CustomWidget extends StatefulWidget {
 	createState(): State<StatefulWidget> {

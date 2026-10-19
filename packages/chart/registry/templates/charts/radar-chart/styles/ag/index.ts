@@ -1,6 +1,6 @@
 import type { RadarChartCustom } from "@headless/radar-chart/types";
 import type { RadarChartContext } from "@headless/radar-chart/types";
-import { BoxDecoration, Container, type Widget } from "flitter-core";
+import { BoxDecoration, Container, type Widget } from "flitterjs";
 import type { AgRadarChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "@utils/index";

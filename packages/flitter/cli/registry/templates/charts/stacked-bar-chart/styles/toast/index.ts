@@ -16,7 +16,7 @@ import {
   cartesian,
 } from "@styles/toast";
 import type { BarChartContext } from "@headless/bar-chart/types";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 
 export { type ToastStackedBarChartConfig } from "./config";
 

@@ -8,7 +8,7 @@ import {
 	SizedBox,
 	GestureDetector,
 	CustomPaint,
-} from "flitter-core";
+} from "flitterjs";
 import {
 	createCartesianChart,
 	getScaleLabels,

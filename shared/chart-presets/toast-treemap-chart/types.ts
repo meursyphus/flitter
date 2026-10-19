@@ -17,6 +17,6 @@ export type {
 	TreemapLayoutSize,
 	TreemapLayoutOptions,
 	TreemapNode,
-} from "flitter-ui/chart";
-export { TreemapController } from "flitter-ui/chart";
+} from "@flitterjs/chart";
+export { TreemapController } from "@flitterjs/chart";
 export { defaultGetTreemapLayout, squarifyTreemapLayout } from "@headless/treemap-chart/layout";

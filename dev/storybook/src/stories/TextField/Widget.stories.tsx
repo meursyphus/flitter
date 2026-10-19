@@ -12,7 +12,7 @@ import {
   TextField,
   TextStyle,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 
 const meta = {
   title: "Input/TextField",

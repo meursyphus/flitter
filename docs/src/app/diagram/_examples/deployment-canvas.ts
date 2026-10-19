@@ -20,14 +20,14 @@ import {
   Text,
   TextStyle,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import {
   FlowDiagramController,
   createId,
   layeredLayout,
   type FlowNode,
   type FlowEdge,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import FlowDiagram from "@/components/diagram/flow-diagram";
 
 type Theme = "light" | "dark";
@@ -373,7 +373,7 @@ class DeploymentState extends State<Deployment> {
             (
               args: Parameters<typeof defaultNode>[0],
               ctx: Parameters<typeof defaultNode>[1],
-            ) => import("flitter-ui").Widget
+            ) => import("flitterjs").Widget
           > = {
             frame: ({ node }) =>
               this.box([

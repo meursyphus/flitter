@@ -1,9 +1,9 @@
-import { SizedBox } from "flitter-ui";
-import { CustomPaint, Size, type Widget } from "flitter-ui";
+import { SizedBox } from "flitterjs";
+import { CustomPaint, Size, type Widget } from "flitterjs";
 import type {
   BackgroundCustomArgs,
   FlowDiagramContext,
-} from "flitter-ui/diagram";
+} from "@flitterjs/diagram";
 import type { DefaultFlowConfig } from "../config";
 
 const defaultSize = { dots: 1, lines: 1, cross: 6 } as const;

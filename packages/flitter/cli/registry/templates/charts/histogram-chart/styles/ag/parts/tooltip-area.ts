@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { HistogramChartCustom } from "@headless/histogram-chart/types";
 import type { HistogramChartConfig } from "../config";
 import { cartesian } from "@styles/ag";

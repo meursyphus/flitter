@@ -95,7 +95,7 @@ export default function DiagramLanding() {
             charts. Config adjusts the defaults. Custom builders replace the
             widgets. The engine keeps the interaction behavior.
           </p>
-          <HighlightedCode code="npx flitter-ui add flow-diagram" lang="bash" />
+          <HighlightedCode code="npx @flitterjs/cli@latest add flow-diagram" lang="bash" />
         </div>
         <div className="mt-16 grid gap-10 md:grid-cols-2 md:gap-8">
           <div>

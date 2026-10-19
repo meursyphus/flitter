@@ -7,8 +7,8 @@ import {
   Opacity,
   ZIndex,
   type Widget,
-} from "flitter-ui";
-import type { HeatmapCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { HeatmapCustom } from "@flitterjs/chart";
 import type { AgHeatmapChartConfig } from "../config";
 
 export function interpolateColor(

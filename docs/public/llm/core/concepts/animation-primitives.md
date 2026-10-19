@@ -2,7 +2,7 @@
 
 Chart motion is built from explicit animation controllers, tweens, and animated widgets.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Key Points
 

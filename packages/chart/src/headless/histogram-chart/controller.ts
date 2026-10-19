@@ -1,4 +1,4 @@
-import { ChangeNotifier, GlobalKey } from "flitter-core";
+import { ChangeNotifier, GlobalKey } from "flitterjs";
 import { refineScale } from "@shared/utils/scale";
 import type {
 	HistogramAggregation,

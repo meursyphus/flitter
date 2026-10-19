@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { CandlestickChartCustom, CandlestickChartContext } from "@headless/candlestick-chart/types";
 import type { CandlestickChartConfig } from "./config";
 import { defaultAgConfig } from "./config";

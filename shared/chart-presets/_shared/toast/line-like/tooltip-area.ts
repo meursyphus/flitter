@@ -1,7 +1,7 @@
 import {
   SizedBox,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import { toastPointTooltipArea } from "../cartesian";
 
 type HoveredPoint = {

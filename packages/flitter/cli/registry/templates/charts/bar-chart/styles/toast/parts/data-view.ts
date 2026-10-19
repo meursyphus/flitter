@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { BarChartCustom } from "@headless/bar-chart/types";
 import type { ToastBarChartConfig } from "../config";
 import { DataView } from "../../../../../shared/bar-like";

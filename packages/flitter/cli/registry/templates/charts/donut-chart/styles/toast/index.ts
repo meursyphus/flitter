@@ -1,5 +1,5 @@
 import type { DonutChartContext, DonutChartCustom } from "@headless/donut-chart/types";
-import { Column, MainAxisSize, SizedBox, Text, TextStyle } from "flitter-core";
+import { Column, MainAxisSize, SizedBox, Text, TextStyle } from "flitterjs";
 import type { DonutChartConfig } from "./config";
 import { defaultToastConfig, normalizeDonutToastConfig } from "./config";
 import { deepMerge, type DeepPartial } from "@utils/index";

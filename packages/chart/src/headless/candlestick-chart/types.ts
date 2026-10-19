@@ -1,4 +1,4 @@
-import type { Alignment, Widget } from "flitter-core";
+import type { Alignment, Widget } from "flitterjs";
 import type { CandlestickChartController } from "./controller";
 
 type CustomArgs<T = undefined, TConfig extends object = object> = (

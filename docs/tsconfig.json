@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "baseUrl": ".",
     "allowJs": true,
     "skipLibCheck": true,
@@ -16,28 +20,66 @@
     "jsx": "preserve",
     "experimentalDecorators": true,
     "incremental": true,
-    "plugins": [{ "name": "next" }],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "paths": {
-      "@/*": ["./src/*"],
-      "flitter-core/component/Tooltip": ["../packages/core/src/component/Tooltip.ts"],
-      "flitter-core": ["../packages/core/src/index.ts"],
-      "flitter-ui": ["../packages/flitter/src/index.ts"],
-      "flitter-ui/diagram": ["../packages/diagram/src/engine.ts"],
-      "@/components/diagram/flow-diagram/*": ["../shared/diagram-presets/flow-diagram/*"],
-      "@/components/diagram/flow-diagram": ["../shared/diagram-presets/flow-diagram/index.ts"],
-      "flitter-ui/chart": ["../packages/flitter/src/chart.ts"],
-      "flitter-chart": ["../packages/chart/src/index.ts"],
-      "flitter-chart/*": ["../packages/chart/src/*"],
-      "flitter-diagram": ["../packages/diagram/src/index.ts"],
-      "shared": ["../dev/shared/index.ts"],
-      "shared/chart": ["../dev/shared/chart.ts"],
-      "chart-presets": ["../shared/chart-presets/index.ts"],
-      "chart-presets/*": ["../shared/chart-presets/*"],
-      "@headless/*": ["../packages/chart/src/headless/*"],
-      "@shared/*": ["../packages/chart/src/shared/*"],
-      "@utils/*": ["../packages/chart/src/shared/utils/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "flitterjs/component/Tooltip": [
+        "../packages/core/src/component/Tooltip.ts"
+      ],
+      "flitterjs": [
+        "../packages/core/src/index.ts"
+      ],
+      "@/components/diagram/flow-diagram/*": [
+        "../shared/diagram-presets/flow-diagram/*"
+      ],
+      "@/components/diagram/flow-diagram": [
+        "../shared/diagram-presets/flow-diagram/index.ts"
+      ],
+      "@flitterjs/chart": [
+        "../packages/chart/src/index.ts"
+      ],
+      "@flitterjs/chart/*": [
+        "../packages/chart/src/*"
+      ],
+      "@flitterjs/diagram": [
+        "../packages/diagram/src/index.ts"
+      ],
+      "shared": [
+        "../dev/shared/index.ts"
+      ],
+      "shared/chart": [
+        "../dev/shared/chart.ts"
+      ],
+      "chart-presets": [
+        "../shared/chart-presets/index.ts"
+      ],
+      "chart-presets/*": [
+        "../shared/chart-presets/*"
+      ],
+      "@headless/*": [
+        "../packages/chart/src/headless/*"
+      ],
+      "@shared/*": [
+        "../packages/chart/src/shared/*"
+      ],
+      "@utils/*": [
+        "../packages/chart/src/shared/utils/*"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -10,7 +10,7 @@ import {
 	TextStyle,
 	MainAxisAlignment,
 	CrossAxisAlignment
-} from 'flitter-core';
+} from 'flitterjs';
 import { dedent } from 'ts-dedent';
 
 const meta = {

@@ -5,7 +5,7 @@ import {
   LayoutBuilder,
   GestureDetector,
   SizedBox,
-} from "flitter-core";
+} from "flitterjs";
 import { ScatterChartProvider } from "./provider";
 
 class Chart extends StatelessWidget {
