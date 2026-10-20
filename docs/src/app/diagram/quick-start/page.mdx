@@ -159,33 +159,11 @@ You can replace the widget itself, including its children and layout. The galler
 
 The engine still owns the core gesture state machine. Replacing a node widget does not replace dragging or undo; it gives those interactions a different UI. Use your own `StatefulWidget` for product state and `GestureDetector` for additional buttons. Dispose controllers and timers when the example unmounts.
 
-## The widget tree
+## Understand the widget tree
 
-```text
-layout
-├── background
-├── viewport
-│   ├── nodeBox
-│   │   ├── node → nodeLabel + inline handles
-│   │   ├── boundary handles
-│   │   └── resize controls
-│   ├── edgeBox → edge + edgeLabel + reconnect handles
-│   └── connectionLine + guides + selection rectangle
-├── controls → controlButton widgets
-├── minimap → background + nodes + mask + viewport
-├── toolbars → nodeToolbar widgets
-└── contextMenu → menuItem widgets
-```
+The [Widget Structure guide](/diagram/widget-structure) explains each replaceable part, its children, and how the engine attaches behavior.
+Follow it from a node body to the viewport and workspace.
 
-Every visual slot returns a Widget. Parent slots receive children; leaf slots receive data and interaction state. Geometry strategies such as `getHandles` and `getEdgePath` are separate from the visual tree.
-
-## What you own
-
-- Edit the installed `style/parts` files to change the default UI throughout your app.
-- Override `custom.node`, `custom.edge`, `custom.handle` or any other slot for one instance.
-- Replace parent layouts without reimplementing the children's interactions.
-- Place inline handle widgets inside a node's rows; the engine measures the connection points.
-
-Next: [Gallery](/diagram/gallery) · [Flow Diagram API](/diagram/api/flow-diagram) · [Core API](/advanced/what-is-flitter)
+Next: [Widget Structure](/diagram/widget-structure) · [Gallery](/diagram/gallery) · [Flow Diagram API](/diagram/api/flow-diagram)
 
 </div>

@@ -45,11 +45,6 @@ export const defaultCustomization: Customization = {
   edge: "curve",
   controls: "dock",
 };
-export const builderNames = {
-  node: { card: "CardNode", circle: "CircleNode", chart: "ChartNode" },
-  edge: { line: "LineEdge", curve: "CurveEdge", pulse: "PulseEdge" },
-  controls: { dock: "DockControls", rail: "RailControls" },
-} as const;
 
 /** The docs controls notify the mounted widget; they never recreate its graph. */
 export class CustomizationModel extends ChangeNotifier {

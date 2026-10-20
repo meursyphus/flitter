@@ -585,7 +585,7 @@ try {
   /* Every /diagram link resolves; the sitemap lists every listed slug. */
   if (wants("links")) {
     await step("links and sitemap", async () => {
-      const routes = ["/diagram/", "/diagram/installation/", "/diagram/quick-start/", "/diagram/gallery/", "/diagram/interactions/", "/diagram/api/", "/diagram/api/flow-diagram/"];
+      const routes = ["/diagram/", "/diagram/installation/", "/diagram/quick-start/", "/diagram/widget-structure/", "/diagram/gallery/", "/diagram/interactions/", "/diagram/api/", "/diagram/api/flow-diagram/"];
       const links = new Set();
       for (const route of routes) {
         await open(route);
@@ -603,7 +603,7 @@ try {
   if (wants("mobile")) {
     await step("mobile", async () => {
       await page.setViewportSize({ width: 390, height: 844 });
-      for (const route of ["/diagram/", "/diagram/gallery/", `/diagram/gallery/${slugs[0]}/`, "/diagram/interactions/", "/diagram/api/"]) {
+      for (const route of ["/diagram/", "/diagram/widget-structure/", "/diagram/gallery/", `/diagram/gallery/${slugs[0]}/`, "/diagram/interactions/", "/diagram/api/"]) {
         await open(route);
         await settle();
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${route}: mobile horizontal overflow`);
@@ -640,7 +640,6 @@ try {
       await open("/diagram/gallery/");
       await page.getByRole("button", { name: "Open sidebar navigation" }).click();
       const interactions = page.getByRole("link", { name: "Interactions", exact: true }).filter({ visible: true });
-      if (!(await interactions.count())) await page.getByRole("heading", { name: "API", exact: true }).filter({ visible: true }).click();
       await interactions.click();
       await page.waitForURL("**/diagram/interactions/");
       await page.setViewportSize({ width: 1440, height: 900 });

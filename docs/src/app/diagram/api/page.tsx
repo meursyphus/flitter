@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   ApiTable,
   CollapsibleSection,
@@ -17,7 +18,7 @@ import {
 } from "../_data/api";
 
 export const metadata = {
-  title: "Common API",
+  title: "Engine API",
   description:
     "Flow props, interaction defaults per preset, custom parts and their args, controller methods and data types.",
 };
@@ -57,7 +58,7 @@ const argRows: ArgRow[] = customSlots.flatMap((s) =>
 const slotColumns: ApiColumn<(typeof customSlots)[number]>[] = [
   {
     label: "Slot",
-    cell: (s) => <a href={`#slot-${s.slot}`}>{s.slot}</a>,
+    cell: (s) => <a id={`custom-${s.slot}`} href={`#slot-${s.slot}`} className="scroll-mt-24">{s.slot}</a>,
     tone: "name",
   },
   {
@@ -122,11 +123,18 @@ export default function DiagramApiPage() {
     <div className="mx-auto max-w-5xl px-5 md:px-10">
       <section className="pt-8 pb-6 lg:pt-12">
         <h1 className="display text-[clamp(1.75rem,4vw,2.5rem)] text-ink">
-          Common API
+          Engine API
         </h1>
         <p className="mt-3 text-base text-soft">
           Shared data, behavior and controller APIs. The installed preset fills
           the visual slots; pass only the widgets you want to replace.
+        </p>
+        <p className="mt-3 text-sm text-soft">
+          Start with{" "}
+          <Link href="/diagram/widget-structure" className="text-accent underline">
+            Widget Structure
+          </Link>{" "}
+          to understand composition and customization. Use this reference for exact props, builder arguments and controller members.
         </p>
         <nav
           aria-label="API sections"

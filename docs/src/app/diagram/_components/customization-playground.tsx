@@ -5,7 +5,6 @@ import LiveDiagram from "@/components/live-diagram";
 import type { Theme } from "@/lib/theme";
 import CustomizationDemo, {
   CustomizationModel,
-  builderNames,
   type Customization,
 } from "../_overview/customization";
 
@@ -39,7 +38,6 @@ export default function CustomizationPlayground() {
     () => (theme: Theme) => CustomizationDemo(theme, model),
     [model],
   );
-  const code = `custom: {\n  node: ${builderNames.node[options.node]},\n  edge: ${builderNames.edge[options.edge]},\n  controls: ${builderNames.controls[options.controls]},\n}`;
   const reset = () => {
     model.reset();
     setRevision((value) => value + 1);
@@ -102,21 +100,17 @@ export default function CustomizationPlayground() {
         </div>
         <div
           data-customization-stage
+          data-diagram-stage
           className="order-1 h-[340px] sm:order-2 sm:h-[480px] xl:h-[520px]"
         >
           <LiveDiagram
             key={`${renderer}-${revision}`}
             create={create}
             renderer={renderer}
+            inspectLayout
           />
         </div>
       </div>
-      <details className="border-t border-line px-5 py-4">
-        <summary className="cursor-pointer text-base text-soft">Code</summary>
-        <pre className="mt-4 overflow-x-auto font-mono text-base leading-7 text-ink">
-          <code>{code}</code>
-        </pre>
-      </details>
     </section>
   );
 }

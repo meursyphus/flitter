@@ -33,6 +33,9 @@ export default function DiagramLanding() {
           <p className="mt-3 text-base leading-7 text-soft">
             The CLI copies the visual widgets into your project.
           </p>
+          <Link href="/diagram/widget-structure" className="mt-4 inline-block text-base text-accent underline underline-offset-4">
+            Explore the widget tree →
+          </Link>
         </div>
         <CopyCommand command="npx @flitterjs/cli@latest add flow-diagram" />
       </section>

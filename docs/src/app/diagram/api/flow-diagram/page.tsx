@@ -108,6 +108,9 @@ export default function FlowDiagramApi() {
           The installed preset combines data, config and replaceable widgets.
           Import it from your copied source.
         </p>
+        <Link href="/diagram/widget-structure" className="mt-3 inline-block text-sm text-accent underline">
+          Learn how the widget tree fits together →
+        </Link>
       </section>
       <div className="space-y-8">
         <section>
@@ -173,7 +176,7 @@ export default function FlowDiagramApi() {
             getContextMenuItems for application commands. These strategies
             return data, while custom contains only widgets. See the{" "}
             <Link href="/diagram/api" className="text-accent underline">
-              common API
+              engine API
             </Link>{" "}
             for all props and events.
           </p>

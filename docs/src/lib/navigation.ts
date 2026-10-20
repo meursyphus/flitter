@@ -102,12 +102,18 @@ export const diagramNav: Navigation = {
       ],
     },
     {
-      title: "API",
+      title: "Guides",
+      items: [
+        { title: "Widget Structure", href: "/diagram/widget-structure" },
+        { title: "Interactions", href: "/diagram/interactions" },
+      ],
+    },
+    {
+      title: "API Reference",
       collapsible: true,
       items: [
-        { title: "Common", href: "/diagram/api" },
+        { title: "Engine API", href: "/diagram/api" },
         { title: "Flow Diagram", href: "/diagram/api/flow-diagram" },
-        { title: "Interactions", href: "/diagram/interactions" },
       ],
     },
   ],
