@@ -7,6 +7,7 @@ const config: PlaywrightTestConfig = {
 		port: 4173
 	},
 	testDir: 'tests',
+	testIgnore: 'docs.spec.ts',
 	testMatch: /(.+\.)?(test|spec)\.[jt]s/
 };
 

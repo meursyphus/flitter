@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import { TextEditingController } from "flitterjs";
 import CopyCommand from "@/components/copy-command";
 import FlitterLogo from "@/components/flitter-logo";
 import LiveChart from "@/components/live-chart";
@@ -13,13 +15,10 @@ import {
 } from "@/lib/site-config";
 import { galleryCategories, galleryEntries } from "../chart/_data/gallery";
 import { createLandingDiagram } from "./landing-diagram";
-import { Counter } from "./counter";
+import TextInput from "./text-input";
 
 /** Server-highlighted HTML for each code panel (see ../page.tsx). */
 export type HomeCode = { hero: string; flutter: string; flitter: string };
-
-/** The hero renders ./counter.ts, the same file its code panel shows. */
-const createCounter = () => new Counter();
 
 /** One example per chart type, the most visual ones first. */
 const reelOrder = [
@@ -70,6 +69,12 @@ function CodeWindow({
 /* ── Hero ─────────────────────────────────────────────── */
 
 function IntroSection({ code }: { code: HomeCode }) {
+  const [renderer, setRenderer] = useState<"canvas" | "svg">("canvas");
+  const [controller] = useState(() => new TextEditingController("Make it yours."));
+  const createTextInput = useCallback(() => TextInput(controller), [controller]);
+
+  useEffect(() => () => controller.dispose(), [controller]);
+
   return (
     <section className="relative overflow-hidden border-b border-line">
       <div
@@ -126,16 +131,37 @@ function IntroSection({ code }: { code: HomeCode }) {
           </div>
         </div>
 
-        <div className="mt-12 overflow-hidden rounded-xl border border-line bg-[var(--chart-bg)]">
-          <div className="h-[320px]">
-            <LiveDiagram create={createCounter} />
+        <div className="mt-12 overflow-hidden rounded-xl border border-line bg-[var(--chart-bg)]" data-testid="hero-text-input">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-6">
+            <div>
+              <h2 className="text-sm font-semibold text-ink">Text input</h2>
+              <p className="mt-1 text-xs text-soft">Type something. Try both renderers.</p>
+            </div>
+            <div role="group" aria-label="Renderer" className="flex rounded-lg border border-line bg-canvas p-1">
+              {(["canvas", "svg"] as const).map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  aria-pressed={renderer === value}
+                  onClick={() => setRenderer(value)}
+                  className={`min-h-11 rounded-md px-4 text-sm font-medium transition-colors ${
+                    renderer === value ? "bg-brand text-on-accent" : "text-soft hover:text-ink"
+                  }`}
+                >
+                  {value === "canvas" ? "Canvas" : "SVG"}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="h-[240px]" data-renderer={renderer}>
+            <LiveDiagram create={createTextInput} renderer={renderer} />
           </div>
           <details className="border-t border-line p-4">
             <summary className="cursor-pointer text-base text-soft">
               Source code
             </summary>
             <CodeWindow
-              filename="counter.ts"
+              filename="text-input.ts"
               html={code.hero}
               className="mt-4"
             />

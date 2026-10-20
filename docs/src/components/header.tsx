@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { DISCORD_URL, GITHUB_REPO_URL } from "@/lib/site-config";
 import FlitterLogo from "./flitter-logo";
 import ThemeToggle from "./theme-toggle";
+import MobileDrawer from "./mobile-drawer";
 
 const PRODUCTS = [
   { id: "chart", label: "Chart", href: "/chart", match: "/chart" },
@@ -49,6 +50,7 @@ function isUnder(pathname: string, prefix: string) {
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
   const pathname = usePathname();
   const product = PRODUCTS.find((p) => isUnder(pathname, p.match));
 
@@ -134,9 +136,16 @@ export default function Header() {
           <div className="flex items-center gap-2 md:hidden">
             <ThemeToggle />
             <button
-              className="flex h-9 w-9 items-center justify-center rounded-md border border-line text-soft"
-              onClick={() => setMenuOpen(true)}
+              type="button"
+              className="flex h-11 w-11 items-center justify-center rounded-md border border-line text-soft"
+              onClick={(event) => {
+                // Preserve the return focus target on touch devices, including Safari.
+                event.currentTarget.focus();
+                setMenuOpen(true);
+              }}
               aria-label="Open menu"
+              aria-expanded={menuOpen}
+              aria-controls="site-menu"
             >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                 <path d="M3 4.5h12M3 9h12M3 13.5h12" />
@@ -146,62 +155,53 @@ export default function Header() {
         </div>
       </header>
 
-      {menuOpen && (
-        <div className="fixed inset-0 z-[100] md:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setMenuOpen(false)} />
-          <nav
-            aria-label="Menu"
-            className="absolute right-0 top-0 h-full w-64 border-l border-line bg-canvas"
-          >
-            <div className="flex h-16 items-center justify-between border-b border-line px-5">
-              <span className="text-[13px] font-semibold text-ink">Menu</span>
-              <button
-                className="flex h-8 w-8 items-center justify-center rounded-md text-soft hover:text-ink"
-                onClick={() => setMenuOpen(false)}
-                aria-label="Close menu"
+      <MobileDrawer
+        id="site-menu"
+        open={menuOpen}
+        onClose={closeMenu}
+        title="Menu"
+        closeLabel="Close menu"
+        side="right"
+      >
+        <nav aria-label="Menu">
+          <div className="flex flex-col px-3 py-3">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={closeMenu}
+                aria-current={activeLink === link ? "page" : undefined}
+                className={clsx(
+                  "rounded-md px-3 py-2.5 text-[15px] font-medium",
+                  activeLink === link ? "bg-surface text-ink" : "text-soft",
+                )}
               >
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                  <path d="M2 2l10 10M12 2L2 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="flex flex-col px-3 py-3">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={clsx(
-                    "rounded-md px-3 py-2.5 text-[15px] font-medium",
-                    activeLink === link ? "bg-surface text-ink" : "text-soft",
-                  )}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-            <div className="flex items-center gap-2 border-t border-line px-5 py-4">
-              <a
-                href={GITHUB_REPO_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Flitter on GitHub"
-                className="flex h-10 w-10 items-center justify-center rounded-md border border-line text-soft"
-              >
-                <GitHubIcon size={18} />
-              </a>
-              <a
-                href={DISCORD_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Flitter Discord"
-                className="flex h-10 w-10 items-center justify-center rounded-md border border-line text-soft"
-              >
-                <DiscordIcon size={18} />
-              </a>
-            </div>
-          </nav>
-        </div>
-      )}
+                {link.label}
+              </Link>
+            ))}
+          </div>
+          <div className="flex items-center gap-2 border-t border-line px-5 py-4">
+            <a
+              href={GITHUB_REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Flitter on GitHub"
+              className="flex h-10 w-10 items-center justify-center rounded-md border border-line text-soft"
+            >
+              <GitHubIcon size={18} />
+            </a>
+            <a
+              href={DISCORD_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Flitter Discord"
+              className="flex h-10 w-10 items-center justify-center rounded-md border border-line text-soft"
+            >
+              <DiscordIcon size={18} />
+            </a>
+          </div>
+        </nav>
+      </MobileDrawer>
     </>
   );
 }

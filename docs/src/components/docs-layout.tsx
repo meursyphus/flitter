@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Sidebar from "./sidebar";
+import MobileDrawer from "./mobile-drawer";
 import type { NavItem, NavSection } from "@/lib/navigation";
 
 /** Typography for MDX pages. Colors come from `.docs-prose` in globals.css. */
@@ -42,26 +43,15 @@ export default function DocsLayout({
       </aside>
 
       {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-40 md:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={closeSidebar} />
-          <aside className="animate-slide-in-left absolute inset-y-0 left-0 w-72 border-r border-line bg-canvas">
-            <div className="flex h-12 items-center justify-between border-b border-line px-4">
-              <span className="text-[13px] font-semibold text-ink">Navigation</span>
-              <button
-                onClick={closeSidebar}
-                className="rounded-md p-1 text-faint hover:text-ink"
-                aria-label="Close sidebar"
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M4 4l8 8M12 4l-8 8" />
-                </svg>
-              </button>
-            </div>
-            <Sidebar sections={sections} home={home} onLinkClick={closeSidebar} />
-          </aside>
-        </div>
-      )}
+      <MobileDrawer
+        id="docs-navigation"
+        open={sidebarOpen}
+        onClose={closeSidebar}
+        title="Navigation"
+        closeLabel="Close sidebar"
+      >
+        <Sidebar sections={sections} home={home} onLinkClick={closeSidebar} />
+      </MobileDrawer>
 
       {/* Main content */}
       <main
@@ -73,9 +63,16 @@ export default function DocsLayout({
       >
         <div className={fullWidth ? "px-5 pt-4 md:hidden" : "mb-4 md:hidden"}>
           <button
-            onClick={() => setSidebarOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-md border border-line px-2.5 py-1.5 text-xs font-medium text-soft hover:text-ink"
+            type="button"
+            onClick={(event) => {
+              // Safari does not focus buttons on touch; let the dialog restore it.
+              event.currentTarget.focus();
+              setSidebarOpen(true);
+            }}
+            className="inline-flex min-h-11 items-center gap-2 rounded-md border border-line px-3 text-sm font-medium text-soft hover:text-ink"
             aria-label="Open sidebar navigation"
+            aria-expanded={sidebarOpen}
+            aria-controls="docs-navigation"
           >
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M2 4h12M2 8h12M2 12h12" />

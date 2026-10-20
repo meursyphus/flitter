@@ -17,6 +17,7 @@
     "clean": "turbo clean",
     "docs:dev": "turbo dev --filter=flitter-docs",
     "docs:build": "turbo build --filter=flitter-docs",
+    "docs:test": "pnpm --dir dev/performance exec playwright test --config playwright.docs.config.ts",
     "story:dev": "turbo dev --filter=flitter-storybook",
     "chart-story:dev": "turbo dev --filter=chart-storybook",
     "chart-story:test": "pnpm --dir dev/performance exec playwright test --config playwright.chart-gallery.config.ts",
