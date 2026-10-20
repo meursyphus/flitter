@@ -1,6 +1,6 @@
-import { defaultNode } from "@/components/diagram/flow-diagram";
 import {
-  Alignment,
+  Opacity,
+  Expanded,
   SizedBox,
   LayoutBuilder,
   Border,
@@ -27,12 +27,14 @@ import {
 import {
   FlowDiagramController,
   createId,
-  layeredLayout,
   type FlowNode,
   type FlowEdge,
   type XYPosition,
 } from "@flitterjs/diagram";
-import FlowDiagram, { defaultEdge } from "@/components/diagram/flow-diagram";
+import FlowDiagram, {
+  defaultEdge,
+  defaultEdgeLabel,
+} from "@/components/diagram/flow-diagram";
 
 type Theme = "light" | "dark";
 const actions = [
@@ -70,6 +72,8 @@ class AutomationState extends State<Automation> {
   flow = new FlowDiagramController();
   diagram?: Widget;
   query = "";
+  mode: "edit" | "review" = "review";
+  decision: "yes" | "no" | null = null;
   running = false;
   timer?: ReturnType<typeof setTimeout>;
   search: { at: XYPosition; source: string; handle: string | null } | null =
@@ -77,7 +81,7 @@ class AutomationState extends State<Automation> {
   nodes: FlowNode[] = [
     {
       id: "webhook",
-      position: { x: 0, y: 100 },
+      position: { x: 0, y: 30 },
       data: {
         label: "New signup",
         detail: "POST /webhooks/signup",
@@ -87,7 +91,7 @@ class AutomationState extends State<Automation> {
     },
     {
       id: "enrich",
-      position: { x: 270, y: 100 },
+      position: { x: 0, y: 225 },
       data: {
         label: "Enrich company",
         detail: "Clearbit · company lookup",
@@ -98,7 +102,7 @@ class AutomationState extends State<Automation> {
     {
       id: "qualified",
       type: "condition",
-      position: { x: 540, y: 100 },
+      position: { x: 310, y: 130 },
       data: {
         label: "Qualified lead?",
         detail: "employees ≥ 50",
@@ -106,10 +110,10 @@ class AutomationState extends State<Automation> {
         color: "#16a34a",
       },
     },
-    { id: "slack", position: { x: 820, y: 10 }, data: actions[0] },
+    { id: "slack", position: { x: 620, y: 30 }, data: actions[0] },
     {
       id: "nurture",
-      position: { x: 820, y: 210 },
+      position: { x: 620, y: 270 },
       data: {
         label: "Add to nurture",
         detail: "Customer.io · welcome",
@@ -117,7 +121,12 @@ class AutomationState extends State<Automation> {
         color: "#db2777",
       },
     },
-  ].map((n) => ({ ...n, type: n.type ?? "action", width: 205, height: 82 }));
+  ].map((n) => ({
+    ...n,
+    type: n.type ?? "action",
+    width: 220,
+    height: n.type === "condition" ? 154 : 96,
+  }));
   edges: FlowEdge[] = [
     { id: "in", source: "webhook", target: "enrich" },
     { id: "check", source: "enrich", target: "qualified" },
@@ -163,7 +172,7 @@ class AutomationState extends State<Automation> {
       style: new TextStyle({
         fontFamily: "system-ui",
         color,
-        fontSize: Math.max(13, size),
+        fontSize: size,
       }),
     });
   }
@@ -180,7 +189,7 @@ class AutomationState extends State<Automation> {
           color: primary ? "#e85d4a" : this.c.card,
           borderRadius: BorderRadius.circular(6),
         }),
-        child: this.text(label, 11, primary ? "#fff" : this.c.ink),
+        child: this.text(label, 14, primary ? "#fff" : this.c.ink),
       }),
     });
   }
@@ -201,6 +210,7 @@ class AutomationState extends State<Automation> {
     });
   }
   addAction(index: number) {
+    if (this.mode !== "edit" || this.running) return;
     const search = this.search;
     if (!search) return;
     const id = createId("action");
@@ -212,7 +222,7 @@ class AutomationState extends State<Automation> {
           type: "action",
           position: search.at,
           width: 205,
-          height: 82,
+          height: 96,
           data: actions[index],
         });
         this.flow.addEdges({
@@ -231,6 +241,7 @@ class AutomationState extends State<Automation> {
     });
   }
   insert(edgeId: string) {
+    if (this.mode !== "edit" || this.running) return;
     const e = this.flow.getEdge(edgeId);
     if (!e) return;
     const source = this.flow.getNode(e.source)!,
@@ -259,7 +270,7 @@ class AutomationState extends State<Automation> {
           type: "action",
           position: { x: source.position.x + 270, y: target.position.y },
           width: 205,
-          height: 82,
+          height: 96,
           data: actions[2],
         });
         this.flow.setEdges((es) =>
@@ -270,14 +281,17 @@ class AutomationState extends State<Automation> {
       },
       { history: "merge" },
     );
-    void this.flow.fitView({ padding: 0.12, minZoom: 0.8, maxZoom: 1 });
+    void this.flow.fitView({ padding: 0.12, minZoom: 0.15, maxZoom: 1 });
   }
   run() {
-    if (this.running) return;
+    if (this.running || this.mode !== "edit") return;
     this.setState(() => {
       this.running = true;
     });
-    this.flow.setEdges((es) => es.map((e) => ({ ...e, animated: true })));
+    this.flow.run(
+      () => this.flow.setEdges(es => es.map(edge => ({ ...edge, animated: true }))),
+      { history: "ignore" },
+    );
     let i = 0;
     const tick = () => {
       const n = this.flow.nodes[i++];
@@ -288,8 +302,9 @@ class AutomationState extends State<Automation> {
               items: n.id === "nurture" ? 3 : n.id === "slack" ? 9 : 12,
               done: true,
             }),
-          { history: "merge" },
+          { history: "ignore" },
         );
+        this.setState();
         this.timer = setTimeout(tick, 450);
       } else {
         this.flow.run(
@@ -297,7 +312,7 @@ class AutomationState extends State<Automation> {
             this.flow.setEdges((es) =>
               es.map((e) => ({ ...e, animated: false })),
             ),
-          { history: "merge" },
+          { history: "ignore" },
         );
         this.setState(() => {
           this.running = false;
@@ -306,70 +321,145 @@ class AutomationState extends State<Automation> {
     };
     tick();
   }
+  // Product behavior is composed from widgets, controller commands, and policy.
+  // Review mode keeps the graph selectable but protects its structure.
+  setMode(mode: "edit" | "review") {
+    clearTimeout(this.timer);
+    this.clearResults();
+    this.setState(() => {
+      this.mode = mode;
+      this.running = false;
+      this.search = null;
+      this.query = "";
+      this.diagram = undefined;
+    });
+  }
+  clearResults() {
+    clearTimeout(this.timer);
+    this.flow.run(
+      () => {
+        this.flow.nodes.forEach((node) =>
+          this.flow.updateNodeData(node.id, {
+            done: false,
+            items: 0,
+            skipped: false,
+          }),
+        );
+        this.flow.setEdges((edges) =>
+          edges.map((edge) => ({
+            ...edge,
+            animated: false,
+            data: { ...edge.data, active: false, muted: false },
+          })),
+        );
+      },
+      { history: "ignore" },
+    );
+    this.setState(() => {
+      this.decision = null;
+    });
+  }
+  decide(route: "yes" | "no") {
+    if (this.mode !== "review" || this.decision) return;
+    const activeNodes = new Set<string>();
+    const activeEdges = new Set<string>();
+    const queue = ["webhook"];
+    // Follow the edited graph, including actions inserted along either branch.
+    for (let index = 0; index < queue.length; index++) {
+      const id = queue[index];
+      if (activeNodes.has(id) || !this.flow.getNode(id)) continue;
+      activeNodes.add(id);
+      for (const edge of this.flow.edges) {
+        if (
+          edge.source !== id ||
+          (id === "qualified" && edge.sourceHandle !== route)
+        )
+          continue;
+        activeEdges.add(edge.id);
+        queue.push(edge.target);
+      }
+    }
+    this.flow.run(
+      () => {
+        for (const node of this.flow.nodes) {
+          const active = activeNodes.has(node.id);
+          this.flow.updateNodeData(node.id, {
+            done: active,
+            items: active ? 1 : 0,
+            skipped: !active,
+          });
+        }
+        this.flow.setEdges((edges) =>
+          edges.map((edge) => ({
+            ...edge,
+            animated: activeEdges.has(edge.id),
+            data: {
+              ...edge.data,
+              active: activeEdges.has(edge.id),
+              muted: !activeEdges.has(edge.id),
+            },
+          })),
+        );
+        this.flow.selectNodes(
+          [route === "yes" ? "slack" : "nurture"].filter((id) =>
+            activeNodes.has(id),
+          ),
+        );
+      },
+      { history: "ignore" },
+    );
+    this.setState(() => {
+      this.decision = route;
+    });
+    this.timer = setTimeout(() => {
+      this.flow.run(
+        () =>
+          this.flow.setEdges((edges) =>
+            edges.map((edge) => ({ ...edge, animated: false })),
+          ),
+        { history: "ignore" },
+      );
+    }, 1200);
+  }
   createDiagram(): Widget {
     const c = this.c;
-    const build = ({
-      node,
-      isSelected: selected,
-    }: {
-      node: FlowNode;
-      isSelected: boolean;
-    }) =>
-      Container({
-        alignment: Alignment.centerLeft,
-        padding: EdgeInsets.all(14),
-        decoration: new BoxDecoration({
-          color: c.card,
-          border: Border.all({
-            color: selected ? "#e85d4a" : c.border,
-            width: selected ? 2 : 1,
-          }),
-          borderRadius: BorderRadius.circular(12),
-        }),
-        child: Column({
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            this.text(
-              `${node.data.icon}     ${node.data.done ? `✓ ${node.data.items} items` : "READY"}`,
-              11,
-              String(node.data.color),
-            ),
-            this.text(String(node.data.label), 15),
-            this.text(String(node.data.detail), 11, c.mute),
-          ],
-        }),
-      });
     return FlowDiagram({
       controller: this.flow,
       data: { nodes: this.nodes, edges: this.edges },
-      viewport: {
-        minZoom: 0.15,
-        fitView: {
-          padding: 0.12,
-          minZoom: this.widget.presentation === "hero" ? 1 : 0.15,
-          maxZoom: 1,
-          nodes:
-            this.widget.presentation === "hero"
-              ? [{ id: "qualified" }, { id: "slack" }, { id: "nurture" }]
-              : undefined,
-        },
+      viewport: { minZoom: 0.15, fitView: { padding: 0.08, maxZoom: 1.1 } },
+      interaction: this.mode === "edit" ? "editor" : "viewer",
+      can: (gesture) => {
+        if (["pan", "zoom", "select"].includes(gesture)) return true;
+        return (
+          this.mode === "edit" &&
+          !this.running &&
+          [
+            "drag",
+            "connect",
+            "reconnect",
+            "delete",
+            "copy",
+            "contextMenu",
+          ].includes(gesture)
+        );
       },
       config: {
-        edgeLabel: { fontSize: 13 },
         colorMode: this.widget.theme,
         colors: { background: c.bg },
         minimap: { visible: false },
+        controls: { showInteractive: false },
         edge: { strokeWidth: 2 },
+        edgeLabel: { fontSize: 13 },
       },
       on: {
         connectEnd: ({ state, dropPosition }) => {
           if (
+            this.mode === "edit" &&
             !state.toNode &&
             !state.reconnectingEdge &&
             state.mode === "drag" &&
             state.fromHandle.type === "source"
-          )
+          ) {
             this.setState(() => {
               this.search = {
                 at: dropPosition,
@@ -377,49 +467,110 @@ class AutomationState extends State<Automation> {
                 handle: state.fromHandle.id,
               };
             });
+          }
         },
       },
       custom: {
-        edgeLabel: (args) =>
-          args.isHovered
-            ? Row({
+        controls: ({ zoomIn, zoomOut, fitView }) =>
+          Row({
+            mainAxisSize: MainAxisSize.min,
+            children: [zoomOut, zoomIn, fitView],
+          }),
+        node: ({ node, isSelected }) =>
+          Opacity({
+            opacity: node.data.skipped ? 0.35 : 1,
+            child: Container({
+              padding: EdgeInsets.all(14),
+              decoration: new BoxDecoration({
+                color: c.card,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all({
+                  color: node.data.done
+                    ? "#22a06b"
+                    : isSelected
+                      ? "#e85d4a"
+                      : c.border,
+                  width: node.data.done || isSelected ? 2 : 1,
+                }),
+              }),
+              child: Column({
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  this.button("+", () => this.insert(args.edge.id)),
-                  this.button(
-                    "×",
-                    () => void this.flow.deleteElements({ edges: [args.edge] }),
+                  this.text(String(node.data.label), 18),
+                  SizedBox({ height: 8 }),
+                  this.text(
+                    node.data.done
+                      ? `${node.data.items} ${node.data.items === 1 ? "lead" : "leads"} processed`
+                      : String(node.data.detail),
+                    13,
+                    node.data.done ? "#22a06b" : c.mute,
                   ),
+                  ...(node.type === "condition"
+                    ? [
+                        SizedBox({ height: 16 }),
+                        this.mode === "review"
+                          ? this.decision
+                            ? this.text(
+                                this.decision === "yes"
+                                  ? "Approved"
+                                  : "Sent to nurture",
+                                16,
+                                "#22a06b",
+                              )
+                            : Row({
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  this.button(
+                                    "Approve",
+                                    () => this.decide("yes"),
+                                    true,
+                                  ),
+                                  SizedBox({ width: 4 }),
+                                  this.button("Nurture", () =>
+                                    this.decide("no"),
+                                  ),
+                                ],
+                              })
+                          : this.text("Route by company size", 13, c.mute),
+                      ]
+                    : []),
                 ],
-              })
-            : SizedBox.shrink(),
-        node: (args, ctx) => {
-          const views: Record<string, typeof defaultNode> = {
-            action: build,
-            condition: build,
-          };
-          return (
-            views[args.node.type ?? "default"] ??
-            views.default ??
-            defaultNode
-          )(args, ctx);
-        },
-        edge: (args, ctx) => {
-          const views: Record<string, typeof defaultEdge> = {
-            workflow: defaultEdge,
-          };
-          return (
-            views[args.edge.type ?? "default"] ??
-            views.default ??
-            defaultEdge
-          )(args, ctx);
-        },
+              }),
+            }),
+          }),
+        edgeLabel: (args, context) =>
+          this.mode === "edit" && args.isHovered
+            ? this.button("+ Add step", () => this.insert(args.edge.id))
+            : args.label.trim()
+              ? defaultEdgeLabel(args, context)
+              : SizedBox.shrink(),
+        edge: (args, context) =>
+          Opacity({
+            opacity: args.edge.data?.muted ? 0.2 : 1,
+            child: defaultEdge(
+              {
+                ...args,
+                edge: {
+                  ...args.edge,
+                  style: {
+                    stroke: args.edge.data?.active ? "#22a06b" : c.mute,
+                    strokeWidth: args.edge.data?.active ? 3 : 1.5,
+                  },
+                },
+              },
+              context,
+            ),
+          }),
       },
       nodeOptions: {
         action: {
-          handles: [
-            { type: "target", position: "left" },
-            { type: "source", position: "right" },
+          handles: (node) => [
+            { type: "target", position: node.id === "enrich" ? "top" : "left" },
+            {
+              type: "source",
+              position: node.id === "webhook" ? "bottom" : "right",
+            },
           ],
         },
         condition: {
@@ -434,118 +585,125 @@ class AutomationState extends State<Automation> {
   }
   build(): Widget {
     const popup = this.search && this.flow.flowToPanePosition(this.search.at);
-    return Stack({
-      fit: StackFit.expand,
-      children: [
-        (this.diagram ??= this.createDiagram()),
-        Positioned({
-          top: 12,
-          left: 12,
-          child: this.card([
-            this.text("LEAD QUALIFICATION", 10, this.c.mute),
-            Row({
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                this.button(
-                  this.running ? "Running…" : "▶ Run 12 signups",
-                  () => this.run(),
-                  true,
-                ),
-                this.button(
-                  "Tidy up",
-                  () =>
-                    void this.flow.layout(layeredLayout, {
-                      direction: "LR",
-                      rankSpacing: 65,
-                    }),
-                ),
-                this.button("Undo", () => this.flow.history.undo()),
-              ],
-            }),
-          ]),
-        }),
-        Positioned({
-          key: "diagram-hint",
-          bottom: 14,
-          left: 0,
-          right: 0,
-          child: LayoutBuilder({
-            builder: (_context, size) =>
-              size.maxWidth < 500
-                ? SizedBox.shrink()
-                : Container({
-                    padding: EdgeInsets.only({ left: 125, right: 16 }),
-                    child: this.text(
-                      "Drag an output into empty space to add an action · hover a connection for + / ×",
-                      11,
-                      this.c.mute,
-                    ),
-                  }),
-          }),
-        }),
-        ...(popup
-          ? [
-              Positioned({
-                left: Math.max(
-                  10,
-                  Math.min(popup.x, this.flow.paneSize.width - 255),
-                ),
-                top: Math.max(
-                  75,
-                  Math.min(popup.y, this.flow.paneSize.height - 225),
-                ),
-                child: this.card(
-                  [
-                    Row({
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        this.text("ADD THE NEXT ACTION", 10, this.c.mute),
-                        this.button("×", () =>
-                          this.setState(() => {
-                            this.search = null;
-                          }),
-                        ),
-                      ],
-                    }),
-                    TextField("", {
-                      key: "action-search",
-                      ariaLabel: "Search actions",
-                      decoration: new InputDecoration({
-                        hintText: "Search actions…",
-                        hintStyle: new TextStyle({
-                          color: this.c.mute,
-                          fontSize: 11,
-                        }),
-                        border: Border.all({ color: this.c.border, width: 1 }),
-                        contentPadding: EdgeInsets.symmetric({
-                          horizontal: 6,
-                          vertical: 4,
-                        }),
-                      }),
-                      width: 220,
-                      height: 30,
-                      style: new TextStyle({ color: this.c.ink }),
-                      onChanged: (value) =>
-                        this.setState(() => {
-                          this.query = value;
-                        }),
-                    }),
-                    ...actions.flatMap((a, i) =>
-                      a.label.toLowerCase().includes(this.query.toLowerCase())
-                        ? [
-                            this.button(`${a.icon}  ${a.label}`, () =>
-                              this.addAction(i),
-                            ),
-                          ]
-                        : [],
-                    ),
-                  ],
-                  245,
-                ),
+    return LayoutBuilder({
+      builder: (_context, size) =>
+        Column({
+          children: [
+            Container({
+              height: 58,
+              color: this.c.card,
+              padding: EdgeInsets.symmetric({ horizontal: 12 }),
+              child: Row({
+                children: [
+                  Expanded({ child: SizedBox.shrink() }),
+                  this.button(
+                    "Edit",
+                    () => this.setMode("edit"),
+                    this.mode === "edit",
+                  ),
+                  SizedBox({ width: 4 }),
+                  this.button(
+                    "Review",
+                    () => this.setMode("review"),
+                    this.mode === "review",
+                  ),
+                  SizedBox({ width: 12 }),
+                  ...(this.mode === "edit"
+                    ? [
+                        this.button("Undo", () => this.flow.history.undo()),
+                        ...(size.maxWidth >= 540
+                          ? [
+                              this.button(
+                                this.running ? "Running…" : "Run sample",
+                                () => this.run(),
+                              ),
+                            ]
+                          : []),
+                      ]
+                    : this.decision
+                      ? [this.button("Review again", () => this.clearResults())]
+                      : []),
+                ],
               }),
-            ]
-          : []),
-      ],
+            }),
+            Expanded({
+              child: Stack({
+                fit: StackFit.expand,
+                children: [
+                  (this.diagram ??= this.createDiagram()),
+                  ...(popup
+                    ? [
+                        Positioned({
+                          left: Math.max(
+                            10,
+                            Math.min(popup.x, this.flow.paneSize.width - 260),
+                          ),
+                          top: Math.max(
+                            10,
+                            Math.min(popup.y, this.flow.paneSize.height - 245),
+                          ),
+                          child: this.card(
+                            [
+                              Row({
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  this.text("Add a step", 17),
+                                  this.button("Close", () =>
+                                    this.setState(() => {
+                                      this.search = null;
+                                    }),
+                                  ),
+                                ],
+                              }),
+                              SizedBox({ height: 10 }),
+                              TextField("", {
+                                key: "action-search",
+                                ariaLabel: "Search actions",
+                                width: 220,
+                                height: 30,
+                                decoration: new InputDecoration({
+                                  hintText: "Search actions…",
+                                  hintStyle: new TextStyle({
+                                    color: this.c.mute,
+                                    fontSize: 13,
+                                  }),
+                                  border: Border.all({
+                                    color: this.c.border,
+                                    width: 1,
+                                  }),
+                                  contentPadding: EdgeInsets.all(6),
+                                }),
+                                style: new TextStyle({
+                                  color: this.c.ink,
+                                  fontSize: 13,
+                                }),
+                                onChanged: (value) =>
+                                  this.setState(() => {
+                                    this.query = value;
+                                  }),
+                              }),
+                              ...actions.flatMap((action, index) =>
+                                action.label
+                                  .toLowerCase()
+                                  .includes(this.query.toLowerCase())
+                                  ? [
+                                      this.button(action.label, () =>
+                                        this.addAction(index),
+                                      ),
+                                    ]
+                                  : [],
+                              ),
+                            ],
+                            250,
+                          ),
+                        }),
+                      ]
+                    : []),
+                ],
+              }),
+            }),
+          ],
+        }),
     });
   }
   dispose() {

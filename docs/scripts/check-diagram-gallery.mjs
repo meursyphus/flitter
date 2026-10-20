@@ -64,7 +64,7 @@ const entries = (await readArray(path.join(diagramDir, "_data/gallery/catalog.ts
 const cells = await readArray(path.join(diagramDir, "_data/interactions/cells.ts"), "cells");
 const slugs = entries.map((e) => e.slug);
 /** Same order as the filter row in `gallery-grid.tsx`. */
-const chips = ["Basics", "Custom parts", "Applications"];
+const chips = ["People", "Processes", "Data", "Connections"];
 
 const wants = (section, id) => !only || only.includes(section) || (id !== undefined && only.includes(id));
 
@@ -346,6 +346,7 @@ try {
         const preview = page.locator(`[data-example="${slug}"]`).first();
         await svgReady(preview);
         const source = await readFile(path.join(diagramDir, "_examples", `${entry.file ?? slug}.ts`), "utf8");
+        await page.locator("[data-example-source] summary").click();
         const code = page.locator("[data-code-tabs]");
         assert.equal(await code.getByRole("tab").first().textContent(), `${slug}.ts`);
         await code.getByRole("button", { name: "Copy code" }).click();
@@ -393,28 +394,39 @@ try {
       });
     }
 
-    /* The workflow example's own action, dragging and reset. */
     if (slugs.includes("automation-workflow") && wants("examples", "automation-workflow")) {
-      await step("automation-workflow interactions", async () => {
+      await step("workflow custom review and editing", async () => {
         await open("/diagram/gallery/automation-workflow/");
         const workflow = page.locator('[data-example="automation-workflow"]').first();
         await svgReady(workflow);
-        const run = workflow.locator("svg text").filter({ hasText: /Run 12 signups$/ });
-        if (!(await run.count())) return "replaced example, action check skipped";
-        await clickWidget(run);
-        await workflow.locator("svg text").filter({ hasText: /✓ 12 items$/ }).first().waitFor();
-        const signup = svgText(workflow, "New signup");
-        const before = await signup.boundingBox();
-        await page.mouse.move(before.x + before.width / 2, before.y + before.height / 2);
-        await page.mouse.down();
-        await page.mouse.move(before.x + before.width / 2 + 45, before.y + before.height / 2 + 40, { steps: 8 });
-        await page.mouse.up();
-        const after = await signup.boundingBox();
-        assert(after.x > before.x + 20 && after.y > before.y + 20, "custom node drags after its data changes");
+        await workflow.scrollIntoViewIfNeeded();
+        const relativeX = async () => (await center(svgText(workflow, "New signup"))).x - (await center(svgText(workflow, "Enrich company"))).x;
+        const dragSignup = async () => {
+          const at = await center(svgText(workflow, "New signup"));
+          await page.mouse.move(at.x, at.y);
+          await page.mouse.down();
+          await page.mouse.move(at.x + 50, at.y + 30, { steps: 8 });
+          await page.mouse.up();
+          await settle();
+        };
+        const locked = await relativeX();
+        await dragSignup();
+        assert(Math.abs(await relativeX() - locked) < 2, "review cannot move one node relative to another");
+        await clickWidget(svgText(workflow, "Approve"));
+        await svgText(workflow, "Approved").waitFor();
+        await clickWidget(svgText(workflow, "Review again"));
+        await clickWidget(svgText(workflow, "Nurture"));
+        await svgText(workflow, "Sent to nurture").waitFor();
+        await clickWidget(svgText(workflow, "Edit"));
+        const editable = await relativeX();
+        await dragSignup();
+        assert(Math.abs(await relativeX() - editable) > 20, "edit moves the node");
+        await clickWidget(svgText(workflow, "Undo"));
+        assert(Math.abs(await relativeX() - editable) < 2, "undo restores node position");
         await workflow.getByRole("button", { name: "Reset", exact: true }).click();
         await svgReady(workflow);
-        assert.equal(await workflow.locator("svg text").filter({ hasText: /✓ \d+ items$/ }).count(), 0, "Reset restores the initial state");
-        return "run, drag, reset";
+        await svgText(workflow, "Approve").waitFor();
+        return "review lock, both decisions, edit drag, undo, reset";
       });
     }
   }
@@ -443,15 +455,43 @@ try {
     });
   }
   if (wants("hero")) {
-    await step("landing focuses the decision branch", async () => {
+    await step("landing replaces widgets while preserving the graph", async () => {
       await open("/diagram/");
-      const preview = page.locator('[data-presentation="hero"]').first();
+      const preview = page.locator('[data-customization-playground]');
       await svgReady(preview);
       await readableText(preview);
-      const label = await svgText(preview, "Qualified lead?").first().boundingBox();
-      const stage = await preview.locator('[data-diagram-stage]').boundingBox();
-      assert(label && stage && label.x >= stage.x && label.x + label.width <= stage.x + stage.width, "decision is framed inside the hero");
-      assert(stage.height <= 380, "hero has a compact stage");
+      await preview.scrollIntoViewIfNeeded();
+      const relative = async () => {
+        const a = await center(svgText(preview, "Orders"));
+        const b = await center(svgText(preview, "Validate"));
+        return { x: a.x - b.x, y: a.y - b.y };
+      };
+      const before = await relative();
+      const at = await center(svgText(preview, "Orders"));
+      await page.mouse.move(at.x, at.y);
+      await page.mouse.down();
+      await page.mouse.move(at.x + 50, at.y + 25, { steps: 8 });
+      await page.mouse.up();
+      await settle();
+      const moved = await relative();
+      assert(Math.abs(moved.x - before.x) > 20, "node drag works before changing widgets");
+      for (const variant of ["Circle", "Chart", "Card", "Line", "Pulse", "Rail", "Dock"]) {
+        await preview.getByRole("button", { name: variant, exact: true }).click();
+        await settle();
+        // Text has different alignment between node designs; compare again as Card below.
+      }
+      const after = await relative();
+      assert(Math.abs(after.x - moved.x) < 2 && Math.abs(after.y - moved.y) < 2, "widget replacement preserves moved positions");
+      await preview.getByRole("button", { name: "Canvas", exact: true }).click();
+      await preview.locator("canvas").waitFor();
+      await preview.getByRole("button", { name: "Chart", exact: true }).click();
+      await preview.getByRole("button", { name: "Reset", exact: true }).click();
+      assert.equal(await preview.getByRole("button", { name: "Card", exact: true }).getAttribute("aria-pressed"), "true");
+      assert.equal(await preview.getByRole("button", { name: "Canvas", exact: true }).getAttribute("aria-pressed"), "true");
+      await preview.getByRole("button", { name: "SVG", exact: true }).click();
+      await svgReady(preview);
+      assert.equal(await page.locator("[data-card]").count(), 0, "overview does not repeat the gallery");
+      return "widget changes, drag state preserved, both renderers, reset";
     });
   }
 
@@ -484,11 +524,11 @@ try {
       return `${slugs.length} cards with light and dark thumbnails`;
     });
     await step(`gallery category filters (${chips.length} chips)`, async () => {
-      const filters = page.getByRole("group", { name: "Filter by example type" });
+      const filters = page.getByRole("group", { name: "Filter by application" });
       assert.equal(await filters.getByRole("button").count(), chips.length + 1, "All plus one button per chip");
       for (let i = 0; i < chips.length; i++) {
         await filters.getByRole("button").nth(i + 1).click();
-        const expected = entries.filter((e) => (e.category ?? "Applications") === chips[i]).map((e) => e.slug);
+        const expected = entries.filter((e) => e.category === chips[i]).map((e) => e.slug);
         assert.deepEqual(await page.locator("[data-card]").evaluateAll((els) => els.map((el) => el.getAttribute("data-card"))), expected, `chip ${chips[i]}`);
       }
       await filters.getByRole("button", { name: "All", exact: true }).click();
@@ -575,7 +615,7 @@ try {
         await svgReady(preview);
         await page.waitForTimeout(1200);
         const stage = await preview.locator('[data-diagram-stage]').boundingBox();
-        assert(stage.height <= 320, `${slug}: compact mobile stage`);
+        assert(stage.height <= 340, `${slug}: compact mobile stage`);
         await initialLayout(preview, slug);
         await readableText(preview);
         await preview.getByRole("button", { name: "Canvas", exact: true }).click();

@@ -1,6 +1,7 @@
 import { defaultNode } from "@/components/diagram/flow-diagram";
 import {
   SizedBox,
+  Expanded,
   LayoutBuilder,
   Border,
   BorderRadius,
@@ -42,7 +43,7 @@ class Deployment extends StatefulWidget {
 class DeploymentState extends State<Deployment> {
   flow = new FlowDiagramController();
   diagram?: Widget;
-  references = false;
+  references = true;
   selected: string | null = "api";
   initialized = false;
   nodes: FlowNode[] = [
@@ -50,9 +51,9 @@ class DeploymentState extends State<Deployment> {
       id: "production",
       type: "frame",
       position: { x: 20, y: 50 },
-      width: 650,
+      width: 760,
       height: 340,
-      data: { label: "Production", size: [650, 340] },
+      data: { label: "Production", size: [760, 340] },
       collapsible: true,
     },
     {
@@ -88,7 +89,7 @@ class DeploymentState extends State<Deployment> {
       id: "storage",
       type: "frame",
       parentId: "production",
-      position: { x: 270, y: 45 },
+      position: { x: 360, y: 45 },
       width: 350,
       height: 270,
       data: { label: "Managed storage", size: [350, 270] },
@@ -140,7 +141,7 @@ class DeploymentState extends State<Deployment> {
   ].map((e) => ({
     ...e,
     type: "smoothstep",
-    hidden: true,
+    hidden: false,
     markerEnd: "arrowclosed",
   }));
   get colors() {
@@ -178,7 +179,11 @@ class DeploymentState extends State<Deployment> {
       },
       child: Container({
         padding: EdgeInsets.symmetric({ horizontal: 10, vertical: 8 }),
-        child: this.text(label, 11, "#6366f1"),
+        child: this.text(
+          label,
+          12,
+          this.widget.theme === "dark" ? "#b6a2f5" : "#6951b5",
+        ),
       }),
     });
   }
@@ -202,7 +207,7 @@ class DeploymentState extends State<Deployment> {
     return Row({
       mainAxisSize: MainAxisSize.min,
       children: [
-        this.text(String(n.data.kind), 9, this.colors.muted),
+        this.text(String(n.data.kind), 10, this.colors.muted),
         Container({
           margin: EdgeInsets.only({ left: 8 }),
           padding: EdgeInsets.symmetric({ horizontal: 6, vertical: 2 }),
@@ -210,7 +215,7 @@ class DeploymentState extends State<Deployment> {
             color: this.colors.bg,
             borderRadius: BorderRadius.circular(20),
           }),
-          child: this.text(`● ${n.data.status}`, 9, String(n.data.color)),
+          child: this.text(`● ${n.data.status}`, 10, String(n.data.color)),
         }),
       ],
     });
@@ -411,108 +416,97 @@ class DeploymentState extends State<Deployment> {
     const n = this.initialized
       ? this.flow.getNode(this.selected ?? "")
       : this.nodes.find((n) => n.id === this.selected);
+    const c = this.colors;
     return LayoutBuilder({
-      builder: (_context, size) => {
-        const inspector = size.maxWidth >= 700 && n;
-        return Stack({
-          fit: StackFit.expand,
+      builder: (_context, size) =>
+        Column({
           children: [
-            Positioned({
-              top: 0,
-              bottom: 0,
-              left: 0,
-              right: inspector ? 229 : 0,
-              child: (this.diagram ??= this.createDiagram()),
-            }),
-            Positioned({
-              top: 12,
-              left: 12,
-              child: this.box([
-                this.text("ACME / COMMERCE", 10, this.colors.muted),
-                Row({
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    this.button(
-                      this.references
-                        ? "✓ References visible"
-                        : "Show references",
-                      () => {
-                        this.setState(() => {
-                          this.references = !this.references;
-                        });
-                        this.flow.setEdges((es) =>
-                          es.map((e) => ({ ...e, hidden: !this.references })),
-                        );
-                      },
-                    ),
-                    this.button(
-                      "Tidy up",
-                      () =>
-                        void this.flow.layout(layeredLayout, {
-                          direction: "LR",
-                          childPadding: 35,
-                          rankSpacing: 65,
-                        }),
-                    ),
-                    this.button("Fold storage", () => this.fold("storage")),
-                  ],
-                }),
-              ]),
-            }),
-            ...(inspector
-              ? [
-                  Positioned({
-                    right: 12,
-                    top: 110,
-                    child: this.box(
-                      [
-                        this.text("SERVICE DETAILS", 10, this.colors.muted),
-                        this.text(String(n.data.label), 15),
-                        this.text(
-                          `● ${n.data.status}`,
-                          12,
-                          String(n.data.color),
-                        ),
-                        this.text(String(n.data.region)),
-                        this.text(String(n.data.deploy), 11, this.colors.muted),
-                        this.button("Redeploy", () => {
-                          if (!this.flow.getNode(n.id)) return;
-                          this.flow.updateNodeData(n.id, {
-                            status: "Healthy",
-                            detail: "Deployment complete",
-                            color: "#16a34a",
-                            deploy: "Just now · 91a3c72",
-                          });
-                          this.setState();
-                        }),
-                      ],
-                      205,
+            Container({
+              height: 54,
+              color: c.card,
+              padding: EdgeInsets.symmetric({ horizontal: 14 }),
+              child: Row({
+                children: [
+                  Expanded({
+                    child: this.text(
+                      size.maxWidth >= 540
+                        ? "Commerce / Production"
+                        : "Production",
+                      13,
                     ),
                   }),
-                ]
-              : []),
-            Positioned({
-              key: "diagram-hint",
-              bottom: 14,
-              left: 0,
-              right: 0,
-              child: LayoutBuilder({
-                builder: (_context, size) =>
-                  size.maxWidth < 500
-                    ? SizedBox.shrink()
-                    : Container({
-                        padding: EdgeInsets.only({ left: 125, right: 16 }),
-                        child: this.text(
-                          "Select services · right-click empty space to group",
-                          11,
-                          this.colors.muted,
-                        ),
-                      }),
+                  this.button(
+                    this.references ? "Hide references" : "Show references",
+                    () => {
+                      this.setState(() => {
+                        this.references = !this.references;
+                      });
+                      this.flow.setEdges((es) =>
+                        es.map((e) => ({ ...e, hidden: !this.references })),
+                      );
+                    },
+                  ),
+                  ...(size.maxWidth >= 600
+                    ? [this.button("Fold storage", () => this.fold("storage"))]
+                    : []),
+                ],
+              }),
+            }),
+            Expanded({
+              child: Row({
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded({ child: (this.diagram ??= this.createDiagram()) }),
+                  ...(size.maxWidth >= 800 && n
+                    ? [
+                        Container({ width: 1, color: c.line }),
+                        Container({
+                          key: "diagram-status",
+                          width: 220,
+                          color: c.card,
+                          padding: EdgeInsets.all(16),
+                          child: Column({
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              SizedBox({ height: 20 }),
+                              this.text(String(n.data.label), 17),
+                              SizedBox({ height: 8 }),
+                              this.text(
+                                String(n.data.status),
+                                12,
+                                String(n.data.color),
+                              ),
+                              SizedBox({ height: 30 }),
+                              SizedBox({ height: 7 }),
+                              this.text(String(n.data.region), 14),
+                              SizedBox({ height: 22 }),
+                              SizedBox({ height: 7 }),
+                              this.text(String(n.data.deploy), 14),
+                              SizedBox({ height: 22 }),
+                              SizedBox({ height: 7 }),
+                              this.text(String(n.data.detail), 14),
+                              Expanded({ child: SizedBox.shrink() }),
+                              this.button("Redeploy", () => {
+                                if (!this.flow.getNode(n.id)) return;
+                                this.flow.updateNodeData(n.id, {
+                                  status: "Healthy",
+                                  detail: "Deployment complete",
+                                  color: "#16a34a",
+                                  deploy: "Just now · 91a3c72",
+                                });
+                                this.setState();
+                              }),
+                              SizedBox({ height: 8 }),
+                            ],
+                          }),
+                        }),
+                      ]
+                    : []),
+                ],
               }),
             }),
           ],
-        });
-      },
+        }),
     });
   }
   dispose() {

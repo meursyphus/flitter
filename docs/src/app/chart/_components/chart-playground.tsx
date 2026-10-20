@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import clsx from "clsx";
-import CopyCommand from "@/components/copy-command";
 import LiveChart from "@/components/live-chart";
 import {
   AreaChart,
@@ -143,12 +142,7 @@ export default function ChartPlayground() {
         <LiveChart create={create} />
       </div>
 
-      <div className="border-t border-line px-3 py-3">
-        <CopyCommand
-          command={`npx @flitterjs/cli@latest add ${chart.id} --style ${style}`}
-          className="w-full !bg-transparent !border-0 !px-1"
-        />
-      </div>
+
     </div>
   );
 }

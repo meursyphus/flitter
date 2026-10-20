@@ -8,7 +8,6 @@ import { highlight } from "@/lib/highlight";
 import type { GalleryDetailPageData } from "../_data/types";
 import type { GalleryEntry } from "../_data/gallery";
 import GalleryCard from "./gallery-card";
-import StyleBadge from "./style-badge";
 
 function CodeBlock({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
@@ -87,7 +86,17 @@ function ChartStage({ entry }: { entry: GalleryEntry }) {
         onClick={() => setRun((n) => n + 1)}
         className="absolute right-3 top-3 flex h-8 items-center gap-1.5 rounded-md border border-line bg-canvas/80 px-2.5 text-[12px] text-soft backdrop-blur transition-colors hover:text-ink"
       >
-        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 16 16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
           <path d="M2.5 8a5.5 5.5 0 0 1 9.3-4" />
           <path d="M13.5 8a5.5 5.5 0 0 1-9.3 4" />
           <path d="M11 1.5L12 4l-2.5.5" />
@@ -113,7 +122,15 @@ export default function GalleryDetailPage({
           href={`/chart/gallery#${entry.chartType}`}
           className="inline-flex items-center gap-1 text-[13px] text-faint transition-colors hover:text-ink"
         >
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            aria-hidden="true"
+          >
             <path d="M7.5 2.5L4 6l3.5 3.5" />
           </svg>
           Gallery
@@ -122,24 +139,25 @@ export default function GalleryDetailPage({
         <h1 className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)] text-ink">
           {entry.title}
         </h1>
-
-        <div className="mt-5 flex flex-wrap items-center gap-3">
-          <StyleBadge style={entry.style} />
-          <CopyCommand command={entry.installCommand} />
-        </div>
       </section>
 
       <ChartStage entry={entry} />
 
-      <section className="pt-12">
-        <h2 className="mb-4 text-[15px] font-semibold text-ink">Code</h2>
+      <details className="mt-6 rounded-xl border border-line p-5">
+        <summary className="cursor-pointer text-base font-semibold text-ink">
+          Source code
+        </summary>
+        <div className="my-5">
+          <CopyCommand command={entry.installCommand} />
+        </div>
         <TabbedCode files={entry.files} />
-      </section>
+      </details>
 
       {relatedEntries.length > 0 && (
         <section className="pt-14">
-          <h2 className="mb-4 text-[15px] font-semibold text-ink">
-            More {entry.chartType.replace(/-chart$/, "").replace(/-/g, " ")} charts
+          <h2 className="mb-4 text-2xl font-semibold text-ink">
+            More {entry.chartType.replace(/-chart$/, "").replace(/-/g, " ")}{" "}
+            charts
           </h2>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             {relatedEntries.map((related) => (

@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { listedEntries } from "../_data/gallery/catalog";
+import { listedEntries, categories } from "../_data/gallery/catalog";
 import GalleryCard from "./gallery-card";
-
-const categories = ["Basics", "Custom parts", "Applications"];
 
 /** Listed gallery entries; `filter` adds chip filters by interaction. */
 export default function GalleryGrid({
@@ -16,17 +14,17 @@ export default function GalleryGrid({
 }) {
   const [active, setActive] = useState<string | null>(null);
   const entries = listedEntries
-    .filter((entry) => !active || (entry.category ?? "Applications") === active)
+    .filter((entry) => !active || entry.category === active)
     .slice(0, limit);
   const pill = (pressed: boolean) =>
-    `rounded-full border px-3 py-1.5 text-[13px] transition-colors ${pressed ? "border-accent bg-accent text-on-accent" : "border-line text-soft hover:border-line-strong"}`;
+    `rounded-full border px-4 py-2 text-sm transition-colors ${pressed ? "border-accent bg-accent text-on-accent" : "border-line text-soft hover:border-line-strong"}`;
 
   return (
     <div>
       {filter && (
         <div
           role="group"
-          aria-label="Filter by example type"
+          aria-label="Filter by application"
           className="mb-7 flex flex-wrap gap-2"
         >
           <button
@@ -53,7 +51,7 @@ export default function GalleryGrid({
       <p className="sr-only" aria-live="polite">
         {entries.length} examples
       </p>
-      <div className="grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(min(100%,380px),1fr))]">
+      <div className="grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(min(100%,440px),1fr))]">
         {entries.map((entry) => (
           <GalleryCard key={entry.slug} entry={entry} />
         ))}

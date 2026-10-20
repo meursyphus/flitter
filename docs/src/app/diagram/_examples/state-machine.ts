@@ -86,7 +86,7 @@ class MachineState extends State<Machine> {
       position: { x: 75, y: 95 },
       width: 150,
       height: 64,
-      data: { label: "draft", action: "entry: createCart" },
+      data: { label: "draft", action: "Create cart" },
     },
     {
       id: "authorizing",
@@ -95,7 +95,7 @@ class MachineState extends State<Machine> {
       position: { x: 35, y: 65 },
       width: 175,
       height: 64,
-      data: { label: "authorizing", action: "invoke: authorizeCard" },
+      data: { label: "authorizing", action: "Authorize card" },
       selected: true,
     },
     {
@@ -105,7 +105,7 @@ class MachineState extends State<Machine> {
       position: { x: 320, y: 65 },
       width: 175,
       height: 64,
-      data: { label: "capturing", action: "invoke: captureFunds" },
+      data: { label: "capturing", action: "Capture funds" },
     },
     {
       id: "failed",
@@ -114,7 +114,7 @@ class MachineState extends State<Machine> {
       position: { x: 175, y: 195 },
       width: 175,
       height: 64,
-      data: { label: "failed", action: "entry: reportError" },
+      data: { label: "failed", action: "Report error" },
     },
     {
       id: "complete",
@@ -123,7 +123,7 @@ class MachineState extends State<Machine> {
       position: { x: 880, y: 120 },
       width: 175,
       height: 64,
-      data: { label: "complete", action: "type: final" },
+      data: { label: "complete", action: "Order confirmed" },
     },
   ];
   edges: FlowEdge[] = [
@@ -185,7 +185,7 @@ class MachineState extends State<Machine> {
   text(value: string, size = 11, color = this.c.ink) {
     return Text(value, {
       style: new TextStyle({
-        fontFamily: "ui-monospace, monospace",
+        fontFamily: "system-ui",
         fontSize: Math.max(13, size),
         color,
       }),
@@ -465,9 +465,9 @@ class MachineState extends State<Machine> {
             child: Row({
               mainAxisSize: MainAxisSize.min,
               children: [
-                this.text("CHECKOUT MACHINE", 12),
+                this.text("Checkout", 16),
                 this.button(
-                  "✦ Auto layout",
+                  "Arrange",
                   () =>
                     void this.flow.layout(layeredLayout, {
                       direction: "LR",
@@ -478,45 +478,6 @@ class MachineState extends State<Machine> {
                 this.button("Undo", () => this.flow.history.undo()),
               ],
             }),
-          }),
-        }),
-        Positioned({
-          bottom: 12,
-          left: 125,
-          right: 12,
-          child: Column({
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              SizedBox({
-                key: "diagram-hint",
-                child: LayoutBuilder({
-                  builder: (_context, size) =>
-                    size.maxWidth < 363
-                      ? SizedBox.shrink()
-                      : Container({
-                          padding: EdgeInsets.only({ bottom: 8 }),
-                          child: this.text(
-                            "Double-click frame: add child · +: add transition",
-                            10,
-                            this.c.muted,
-                          ),
-                        }),
-                }),
-              }),
-              SizedBox({
-                key: "diagram-status",
-                child: Container({
-                  padding: EdgeInsets.all(12),
-                  color: this.c.card,
-                  child: this.text(
-                    `Selected: ${n.data.label ?? "initial"} · ${n.parentId ? `inside ${n.parentId}` : "root"}`,
-                    11,
-                    this.c.muted,
-                  ),
-                }),
-              }),
-            ],
           }),
         }),
       ],

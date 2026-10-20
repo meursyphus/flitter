@@ -141,6 +141,24 @@ FlowDiagram({
 
 Each button already has its action. Change the row into a column, omit a button, or replace `custom.controlButton` to change the button itself.
 
+## How far can customization go?
+
+You can replace the widget itself, including its children and layout. The gallery contains full applications that use the same engine:
+
+- [Database schema studio](/diagram/gallery/schema-visualizer): table rows with field-level connection ports, a searchable explorer, and a custom workspace layout.
+- [Lead qualification workflow](/diagram/gallery/automation-workflow): execution cards, insertion controls on edges, and a selected-step inspector.
+- [Service architecture](/diagram/gallery/deployment-canvas): nested environments, service cards, and contextual deployment actions.
+
+| Change | Extension point |
+| --- | --- |
+| Colors, spacing, sizes | `config` |
+| Node body, ports, connection labels, buttons, workspace | `custom` widget builders |
+| Port geometry and edge routing | `getHandles`, `getEdgePath`, `nodeOptions` |
+| Connection rules and enabled gestures | `interaction`, `can` |
+| Selection details, add-step actions, simulation | `on`, controller methods, your `StatefulWidget` |
+
+The engine still owns the core gesture state machine. Replacing a node widget does not replace dragging or undo; it gives those interactions a different UI. Use your own `StatefulWidget` for product state and `GestureDetector` for additional buttons. Dispose controllers and timers when the example unmounts.
+
 ## The widget tree
 
 ```text
