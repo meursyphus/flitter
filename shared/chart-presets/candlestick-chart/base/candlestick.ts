@@ -8,7 +8,7 @@ import {
 	Expanded,
 	MainAxisAlignment,
 	SizedBox,
-} from "flitter-ui";
+} from "flitterjs";
 
 export function Candlestick(
 	...[{ candle, geometry }, ctx]: Parameters<CandlestickChartCustom["candlestick"]>

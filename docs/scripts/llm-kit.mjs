@@ -18,7 +18,7 @@ function quickStart(chart) {
       ? `  style: "${chart.supportedStyles[0]}",\n`
       : "";
 
-  return `import Widget from "@flitterjs/react";
+  return `import Widget from "@flitterjs/adapter-react";
 import ${chart.importName} from "./charts/${chart.slug}";
 
 const widget = ${chart.importName}({
@@ -54,7 +54,7 @@ const registry = [
     summary: entry.summary,
     docsPath: `/llm/core/widgets/${entry.slug}.md`,
     sourcePaths: entry.sourcePaths,
-    starter: `import { ${entry.title} } from "flitter-ui";\n\n// Use when: ${entry.useWhen}\n`,
+    starter: `import { ${entry.title} } from "flitterjs";\n\n// Use when: ${entry.useWhen}\n`,
   })),
   ...coreConcepts.map((entry) => ({
     type: "concept",

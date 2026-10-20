@@ -5,7 +5,7 @@ import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { agScatter } from "./parts/scatter";
 import { agDataView } from "./parts/data-view";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import {
   agTitle,
   agLegend,

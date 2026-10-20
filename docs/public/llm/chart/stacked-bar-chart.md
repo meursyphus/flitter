@@ -2,7 +2,7 @@
 
 Compare totals while preserving contribution by series inside each category.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Preset chart. Start with `chart-presets StackedBarChart` and choose from `toast`
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import StackedBarChart from "./charts/stacked-bar-chart";
 
 const widget = StackedBarChart({

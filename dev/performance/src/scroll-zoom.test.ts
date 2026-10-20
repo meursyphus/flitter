@@ -10,7 +10,7 @@ import {
 	TransformationController,
 	ClampingScrollPhysics,
 	NeverScrollableScrollPhysics
-} from 'flitter-core';
+} from 'flitterjs';
 import BaseScrollViewport from '../../../packages/core/src/component/base/BaseScrollViewport';
 import RenderObject from '../../../packages/core/src/renderobject/RenderObject';
 

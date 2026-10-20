@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { WaterfallChartCustom } from "@headless/waterfall-chart/types";
 import type { WaterfallChartConfig } from "../config";
 import { cartesian } from "@styles/ag";

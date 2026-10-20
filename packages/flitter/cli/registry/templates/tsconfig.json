@@ -12,7 +12,7 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "flitter-ui/chart": ["../../../flitter/src/chart.ts"],
+      "@flitterjs/chart": ["../../src/index.ts"],
       "@headless/*": ["../../src/headless/*"],
       "@shared/*": ["../../src/shared/*"],
       "@utils/*": ["../../src/shared/utils/*"],

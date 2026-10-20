@@ -1,4 +1,4 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitterjs";
 import HeadlessRadarChart from "@headless/radar-chart";
 import type { RadarChartCustom, RadarChartData, GetScaleFn } from "@headless/radar-chart/types";
 import { DataView } from "./data-view";

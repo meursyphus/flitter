@@ -1,8 +1,8 @@
-import type { BulletChartCustom, BulletChartContext, BulletChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
-import { type Widget } from "flitter-ui";
+import type { BulletChartCustom, BulletChartContext, BulletChartGetScaleOptionsFn as GetScaleOptionsFn } from "@flitterjs/chart";
+import { type Widget } from "flitterjs";
 import type { ToastBulletChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge } from "flitter-ui/chart";
+import { deepMerge } from "@flitterjs/chart";
 import { toastValueBar } from "./parts/value-bar";
 import { toastTargetMarker } from "./parts/target-marker";
 import { toastRangeBar } from "./parts/range-bar";
@@ -16,7 +16,7 @@ import {
   tooltipContent,
   cartesian,
 } from "../../_shared/toast/index";
-import * as Cartesian from "flitter-ui/chart";
+import * as Cartesian from "@flitterjs/chart";
 
 export { type ToastBulletChartConfig } from "./config";
 export type { ToastBulletChartConfig as BulletChartConfig } from "./config";

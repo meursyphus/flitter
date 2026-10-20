@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { BarChartCustom, BarChartData, GetScaleFn, GetScaleOptionsFn } from "./types";
 import { BarChartProvider } from "./provider";
 

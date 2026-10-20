@@ -2,7 +2,7 @@ import {
   Stack,
   Positioned,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { LineChartCustom } from "@headless/line-chart/types";
 import type { AgStackedAreaChartConfig } from "../config";
 

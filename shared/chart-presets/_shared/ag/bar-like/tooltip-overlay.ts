@@ -14,7 +14,7 @@ import {
   SizedBox,
   ZIndex,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import type { AgCartesianBaseConfig } from "../cartesian/config";
 
 const TOOLTIP_OFFSET = 12;

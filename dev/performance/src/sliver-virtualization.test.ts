@@ -22,7 +22,7 @@ import {
 	SizedBox,
 	type Element,
 	type Widget
-} from 'flitter-core';
+} from 'flitterjs';
 import RenderObjectToWidgetAdapter from '../../../packages/core/src/widget/RenderObjectToWidgetAdapter';
 import RenderObjectWidget from '../../../packages/core/src/widget/RenderObjectWidget';
 import { SliverListElement } from '../../../packages/core/src/component/SliverList';

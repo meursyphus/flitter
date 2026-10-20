@@ -28,8 +28,13 @@ import {
 	type Data,
 	type Nullable,
 	type Widget,
-} from "flitter-ui";
-import { DataView, Segment } from "../pie-like/index";
+} from "flitterjs";
+import {
+	DataView,
+	Segment,
+	resolveDataLabelPlacement,
+	toDataLabelArgs,
+} from "../pie-like/index";
 import { tooltipContent } from "../tooltip";
 
 const TOAST_SEGMENT_PADDING = 0;
@@ -55,6 +60,8 @@ type ToastPieLikeConfig = {
 		fontFamily?: string;
 		fontWeight?: string;
 		radiusRatio: number;
+		/** Slices below this percentage move their label outside, or drop it when radial labels are shown. */
+		outsideThreshold?: number;
 		formatter: (args: any) => string;
 	};
 	radialLabel: {
@@ -316,6 +323,9 @@ export function toastPieLikeDataLabel(
 	const { startAngle, sweepAngle } = args;
 
 	if (!labelConfig.visible) return SizedBox.shrink();
+	if (resolveDataLabelPlacement(args.percentage, context.config) !== "inside") {
+		return SizedBox.shrink();
+	}
 
 	const text = labelConfig.formatter(args);
 	const midAngle = -Math.PI / 2 + startAngle + sweepAngle / 2;
@@ -372,7 +382,7 @@ export function toastPieLikeRadialLabel(
 ): Widget {
 	const { radial, radialLabel, font, colors } = context.config;
 
-	if (!radial.visible) return SizedBox.shrink();
+	if (!radial.visible) return toastOutsideDataLabel(args, context);
 
 	const isRightSide = Math.cos(args.angle) >= 0;
 	const colorIndex = context.legends.indexOf(args.name);
@@ -391,13 +401,47 @@ export function toastPieLikeRadialLabel(
 	});
 }
 
+/** Text of a data label that moved outside its slice, or null when it stays inside. */
+function toastOutsideDataLabelText(
+	args: PieLikeRadialArgs,
+	context: { config: ToastPieLikeConfig },
+): string | null {
+	if (resolveDataLabelPlacement(args.percentage, context.config) !== "outside") return null;
+	const text = context.config.dataLabel.formatter(toDataLabelArgs(args));
+	return text ? text : null;
+}
+
+/** A data label too big for its slice, drawn outside at the end of the radial tick. */
+function toastOutsideDataLabel(
+	args: PieLikeRadialArgs,
+	context: { config: ToastPieLikeConfig },
+): Widget {
+	const text = toastOutsideDataLabelText(args, context);
+	if (text == null) return SizedBox.shrink();
+
+	const { dataLabel: labelConfig, radialLabel, font } = context.config;
+	const isRightSide = Math.cos(args.angle) >= 0;
+
+	return Text(text, {
+		textAlign: isRightSide ? TextAlign.left : TextAlign.right,
+		style: new TextStyle({
+			fontFamily: labelConfig.fontFamily ?? font.family,
+			fontSize: labelConfig.fontSize,
+			fontWeight: labelConfig.fontWeight,
+			// The inside colour is picked for the slice fill; outside sits on the background.
+			color: radialLabel.fontColor,
+		}),
+	});
+}
+
 export function toastPieLikeRadialTick(
 	args: PieLikeRadialArgs,
 	context: { config: ToastPieLikeConfig; legends: string[] },
 ): Widget {
 	const { radial, radialTick, colors } = context.config;
 
-	if (!radial.visible || radialTick.length <= 0) {
+	if (radialTick.length <= 0) return SizedBox.shrink();
+	if (!radial.visible && toastOutsideDataLabelText(args, context) == null) {
 		return SizedBox.shrink();
 	}
 

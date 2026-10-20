@@ -9,8 +9,8 @@ import {
 	MainAxisSize,
 	SizedBox,
 	type Widget,
-} from "flitter-ui";
-import type { RadarChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { RadarChartCustom } from "@flitterjs/chart";
 
 type LayoutConfig = {
 	padding: { top: number; right: number; bottom: number; left: number };

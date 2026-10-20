@@ -3,7 +3,7 @@ import {
 	Provider,
 	BuildContext,
 	ChangeNotifierProvider,
-} from "flitter-core";
+} from "flitterjs";
 import type { HeatmapCustom, HeatmapData } from "./types";
 import { HeatmapController } from "./controller";
 import Chart from "./chart";

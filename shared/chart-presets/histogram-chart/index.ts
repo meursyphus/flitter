@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-ui";
+import type { Widget } from "flitterjs";
 import { BaseHistogramChart } from "./base";
 import type {
   HistogramChartCustom,
@@ -6,7 +6,7 @@ import type {
   HistogramChartTransform,
 } from "./base";
 import { styleConfig, type HistogramChartConfig } from "./style";
-import type { DeepPartial } from "flitter-ui/chart";
+import type { DeepPartial } from "@flitterjs/chart";
 
 export type {
   HistogramChartContext,

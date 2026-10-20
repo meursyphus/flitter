@@ -3,7 +3,7 @@ import type { GetScaleOptionsFn } from "@headless/line-chart/types";
 import type { StyleConfig } from "../../plugin";
 import type { ToastStackedAreaChartConfig } from "./config";
 import type { LineChartContext } from "@headless/line-chart/types";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { toastArea } from "./parts/area";

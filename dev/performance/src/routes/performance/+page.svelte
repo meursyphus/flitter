@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { ToastStackedBarChart, LineChart } from 'shared/chart';
-	import SvelteWidget from '@flitterjs/svelte';
+	import SvelteWidget from '@flitterjs/adapter-svelte';
 
 	export let data: PageData;
 

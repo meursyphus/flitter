@@ -1,4 +1,4 @@
-import { Column, Flexible, Row } from "flitter-core";
+import { Column, Flexible, Row } from "flitterjs";
 import type { HeatmapCustom } from "@headless/heatmap-chart/types";
 
 export function DataView(

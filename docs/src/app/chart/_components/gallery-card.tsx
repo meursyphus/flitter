@@ -3,7 +3,6 @@
 import Link from "next/link";
 import LiveChart from "@/components/live-chart";
 import type { GalleryEntry } from "../_data/gallery";
-import StyleBadge from "./style-badge";
 
 /** A gallery tile: the chart drawn live, at its final frame. */
 export default function GalleryCard({
@@ -22,11 +21,10 @@ export default function GalleryCard({
       <div className="p-4" style={{ height }}>
         <LiveChart create={entry.createWidget} animate={false} lazy />
       </div>
-      <div className="flex items-center justify-between gap-3 border-t border-line px-4 py-3">
-        <span className="truncate text-[14px] font-medium text-soft transition-colors group-hover:text-ink">
+      <div className="flex items-center justify-between gap-3 border-t border-line px-5 py-5">
+        <span className="text-lg font-semibold text-ink transition-colors group-hover:text-ink">
           {entry.title}
         </span>
-        <StyleBadge style={entry.style} />
       </div>
     </Link>
   );

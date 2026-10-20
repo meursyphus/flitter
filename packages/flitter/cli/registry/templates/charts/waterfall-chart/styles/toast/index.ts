@@ -1,7 +1,7 @@
 import {
   SizedBox,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { WaterfallChartCustom } from "@headless/waterfall-chart/types";
 import type { WaterfallChartConfig } from "./config";
 import { defaultToastConfig } from "./config";

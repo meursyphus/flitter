@@ -7,8 +7,8 @@ import {
   StackFit,
   type BuildContext,
   type Widget,
-} from "flitter-ui";
-import type { RadarChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { RadarChartCustom } from "@flitterjs/chart";
 import type { ToastRadarChartConfig } from "../config";
 
 export function toastRadialAxis(

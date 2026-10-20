@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import DualRenderer from '../../components/DualRenderer';
-import { Center, CustomPaint, Size } from 'flitter-core';
+import { Center, CustomPaint, Size } from 'flitterjs';
 
 const meta = {
 	title: 'Painting/CustomPaint',

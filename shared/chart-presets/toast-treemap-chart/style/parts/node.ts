@@ -9,8 +9,8 @@ import {
 	SizedBox,
 	ZIndex,
 	type Widget,
-} from "flitter-ui";
-import type { TreemapCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { TreemapCustom } from "@flitterjs/chart";
 import { resolveTreemapNodeColor } from "../../base/color";
 import type { TreemapChartConfig } from "../config";
 

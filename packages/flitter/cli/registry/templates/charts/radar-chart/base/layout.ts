@@ -9,7 +9,7 @@ import {
 	MainAxisSize,
 	SizedBox,
 	type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { RadarChartCustom } from "@headless/radar-chart/types";
 
 type LayoutConfig = {

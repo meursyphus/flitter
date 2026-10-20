@@ -8,7 +8,7 @@ import {
 	Alignment,
 	Text,
 	TextStyle
-} from 'flitter-core';
+} from 'flitterjs';
 
 const meta = {
 	title: 'Painting/Transform',

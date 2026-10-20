@@ -1,5 +1,5 @@
 import type { HoveredPieChartSegment, PieChartCustom } from "@headless/pie-chart/types";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { AgPieChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge, type DeepPartial } from "@utils/index";

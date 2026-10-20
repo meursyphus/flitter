@@ -2,7 +2,7 @@
   <img src="../../assets/readme/logo.png" alt="Flitter" width="80" />
 </p>
 
-<h1 align="center">@flitterjs/svelte</h1>
+<h1 align="center">@flitterjs/adapter-svelte</h1>
 
 <p align="center">
   Mount Flitter widgets in Svelte applications.<br/>
@@ -10,8 +10,8 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@flitterjs/svelte"><img src="https://img.shields.io/npm/v/@flitterjs/svelte.svg" alt="npm version" /></a>
-  <a href="https://github.com/meursyphus/flitter/blob/latest/LICENSE"><img src="https://img.shields.io/npm/l/@flitterjs/svelte.svg" alt="license" /></a>
+  <a href="https://www.npmjs.com/package/@flitterjs/adapter-svelte"><img src="https://img.shields.io/npm/v/@flitterjs/adapter-svelte.svg" alt="npm version" /></a>
+  <a href="https://github.com/meursyphus/flitter/blob/latest/LICENSE"><img src="https://img.shields.io/npm/l/@flitterjs/adapter-svelte.svg" alt="license" /></a>
 </p>
 
 <p align="center">
@@ -25,15 +25,15 @@
 ## Installation
 
 ```bash
-npm install flitter-ui @flitterjs/svelte
+npm install flitterjs @flitterjs/adapter-svelte
 ```
 
 ## Usage
 
 ```svelte
 <script>
-  import { Container, Alignment, Text, TextStyle } from "flitter-ui";
-  import Widget from "@flitterjs/svelte";
+  import { Container, Alignment, Text, TextStyle } from "flitterjs";
+  import Widget from "@flitterjs/adapter-svelte";
 
   const widget = Container({
     alignment: Alignment.center,
@@ -75,13 +75,13 @@ The Svelte integration supports SSR out of the box. Pass the `ssr` prop to enabl
 Add charts via the CLI, then render them in Svelte:
 
 ```bash
-npx flitter-ui init
-npx flitter-ui add bar-chart
+npx @flitterjs/cli@latest init
+npx @flitterjs/cli@latest add bar-chart
 ```
 
 ```svelte
 <script>
-  import Widget from "@flitterjs/svelte";
+  import Widget from "@flitterjs/adapter-svelte";
   import BarChart from "./charts/bar-chart";
 
   const chart = BarChart({
@@ -101,7 +101,7 @@ npx flitter-ui add bar-chart
 ## Requirements
 
 - Svelte 4+ or 5+
-- `flitter-ui` as a peer dependency
+- `flitterjs` as a peer dependency
 
 ## Documentation
 

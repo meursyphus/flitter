@@ -1,0 +1,2857 @@
+import { getDefaultContextMenuItems } from "./menu";
+import {
+  AnimationController,
+  ChangeNotifier,
+  type GlobalKey,
+  Matrix4,
+  type RenderObject,
+  TransformationController,
+  eventPosition,
+} from "flitterjs";
+import {
+  type CoordinateExtent,
+  type Dimensions,
+  type Rect,
+  type Viewport,
+  type XYPosition,
+  calcAutoPan,
+  clamp,
+  clampPosition,
+  clampViewportToExtent,
+  distance,
+  easeInOutCubic,
+  flowToPanePosition,
+  getBoundsOfRects,
+  getOverlappingArea,
+  getViewportForBounds,
+  handleCenter,
+  infiniteExtent,
+  lerp,
+  oppositePosition,
+  paneToFlowPosition,
+  rectContains,
+  rectFromPoints,
+  rectSidePoint,
+  snapPosition,
+} from "../../shared/geometry";
+import { type EdgePathResult, adjustWaypoints, getEdgePathByType } from "../../shared/edges";
+import {
+  type Connection,
+  type EdgeChange,
+  type NodeChange,
+  addEdge,
+  applyEdgeChanges,
+  applyNodeChanges,
+  getConnectedEdges,
+  getEdgeId,
+  getIncomers,
+  getOutgoers,
+  reconnectEdge as reconnectEdgeHelper,
+} from "../../shared/changes";
+import { type LayoutAlgorithm, type LayoutOptions, computeHierarchicalLayout } from "../../shared/layout";
+import { deepMerge, type DeepPartial, createId, isMacOs } from "../../shared/utils";
+import type {
+  ConnectionState,
+  ContextMenuCustomArgs,
+  EdgeEndpoints,
+  EdgeHandleCustomArgs,
+  FitViewOptions,
+  FlowEvents,
+  FlowInteraction,
+  Gesture,
+  GestureTarget,
+  Guide,
+  FlowDiagramCustom,
+  FlowContent,
+  FlowEdge,
+  FlowNode,
+  FlowOptions,
+  FlowDiagramProps,
+  HandleSpec,
+  HandleType,
+  KeyCode,
+  LayoutConfig,
+  NodeResizeOptions,
+  NodeOptions,
+  ResizeControlPosition,
+  ResizeParams,
+  ResolvedHandle,
+} from "./types";
+
+import { snapBounds } from "../../shared/guides";
+import { isDescendant, pushApart, collapseSets, alignmentPositions, distributionPositions } from "../../shared/interactions";
+import { remapContent } from "../../shared/clipboard";
+import { SnapshotHistory } from "../../shared/history";
+import { resolveInteraction, interactionOptions } from "./interaction";
+
+export const DEFAULT_FLOW_OPTIONS: FlowOptions = {
+  minZoom: 0.5,
+  maxZoom: 2,
+  zoomOnScroll: true,
+  zoomOnPinch: true,
+  panOnScroll: false,
+  panOnScrollSpeed: 0.5,
+  zoomOnDoubleClick: true,
+  panOnDrag: true,
+  selectionOnDrag: false,
+  selectionMode: "full",
+  nodesDraggable: true,
+  nodesConnectable: true,
+  elementsSelectable: true,
+  selectNodesOnDrag: true,
+  nodeDragThreshold: 1,
+  snapToGrid: false,
+  snapGrid: [15, 15],
+  connectionMode: "strict",
+  connectionRadius: 20,
+  connectOnClick: true,
+  autoPanOnNodeDrag: true,
+  autoPanOnConnect: true,
+  autoPanSpeed: 15,
+  elevateNodesOnSelect: true,
+  elevateEdgesOnSelect: false,
+  deleteKeyCode: ["Backspace", "Delete"],
+  multiSelectionKeyCode: isMacOs() ? "Meta" : "Control",
+  selectionKeyCode: "Shift",
+  panActivationKeyCode: "Space",
+  zoomActivationKeyCode: isMacOs() ? "Meta" : "Control",
+  nodeExtent: infiniteExtent,
+  translateExtent: infiniteExtent,
+  edgesReconnectable: true,
+  reconnectRadius: 10,
+  nodesResizable: false,
+  nodeResizeOptions: { minWidth: 10, minHeight: 10 },
+  handleSize: 6,
+  edgeInteractionWidth: 20,
+  defaultEdgeOptions: {},
+  isValidConnection: () => true,
+  connectionLineType: "default",
+};
+
+type DragState = {
+  nodeId: string;
+  startPane: XYPosition;
+  startFlow: XYPosition;
+  lastPane: XYPosition;
+  lastEvent: MouseEvent;
+  started: boolean;
+  items: Map<string, { start: XYPosition }>;
+};
+
+import type { MeasureEntry } from "./scene";
+
+type ResizeState = {
+  nodeId: string;
+  position: ResizeControlPosition;
+  startFlow: XYPosition;
+  startRect: Rect;
+  lastParams: ResizeParams;
+};
+
+function keyNameOf(event: KeyboardEvent): string {
+  if (event.key === " " || event.code === "Space") return "Space";
+  return event.key;
+}
+
+function toKeyList(code: KeyCode): string[] {
+  if (code == null) return [];
+  return Array.isArray(code) ? code : [code];
+}
+
+function keyMatches(event: KeyboardEvent, code: KeyCode): boolean {
+  return toKeyList(code).some(binding => {
+    const parts = binding === "+" ? ["+"] : binding.split("+");
+    const key = parts.pop()!;
+    return (key.toLowerCase() === keyNameOf(event).toLowerCase() || (parts.includes("Shift") && event.code === `Digit${key}`))
+      && event.metaKey === parts.includes("Meta") && event.ctrlKey === parts.includes("Control")
+      && (parts.includes("Shift") ? event.shiftKey : !event.shiftKey || key === "+")
+      && event.altKey === parts.includes("Alt");
+  });
+}
+
+function isInputTarget(target: EventTarget | null): boolean {
+  const element = target as HTMLElement | null;
+  if (!element || typeof element.tagName !== "string") return false;
+  const tag = element.tagName.toLowerCase();
+  return tag === "input" || tag === "textarea" || tag === "select" || element.isContentEditable === true;
+}
+
+function modifierMatches(event: MouseEvent, code: string): boolean | null {
+  switch (code) {
+    case "Meta":
+      return event.metaKey;
+    case "Control":
+      return event.ctrlKey;
+    case "Shift":
+      return event.shiftKey;
+    case "Alt":
+      return event.altKey;
+    default:
+      return null;
+  }
+}
+
+/**
+ * Headless engine state for a node diagram. Owns nodes, edges, the viewport
+ * transformation, selection, drag and connection gestures, and the public
+ * API that mirrors React Flow's `useReactFlow` instance.
+ */
+export class FlowDiagramController extends ChangeNotifier {
+  #nodes: FlowNode[] = [];
+  #edges: FlowEdge[] = [];
+  #nodeLookup = new Map<string, FlowNode>();
+  #edgeLookup = new Map<string, FlowEdge>();
+  #propsNodes: FlowNode[] | undefined;
+  #propsEdges: FlowEdge[] | undefined;
+  #options: FlowOptions = { ...DEFAULT_FLOW_OPTIONS };
+  #callbacks: FlowEvents = {};
+  #interaction = resolveInteraction();
+  #can: FlowDiagramProps["can"];
+  #viewer = false;
+  get interaction(): Readonly<FlowInteraction> { return this.#interaction; }
+
+  setInteraction(partial: DeepPartial<FlowInteraction>): void {
+    this.#interaction = deepMerge(this.#interaction, partial);
+    this.#nodeZIndices = null;
+    this.#options = { ...this.#options, ...interactionOptions(this.#interaction) };
+    if (partial.drag?.enabled !== undefined || partial.select || partial.connect || partial.edit?.resize !== undefined || partial.contextMenu) this.#notifyAllNodes();
+    if (partial.select || partial.connect || partial.edit?.waypoints !== undefined || partial.contextMenu) this.#notifyAllEdges();
+    if (partial.drag?.enabled === false) this.cancelDrag();
+    if (partial.connect?.enabled === false) this.cancelConnection();
+    if (partial.connect) this.connectionSignal.notifyListeners();
+    if (partial.edit?.waypoints === false) this.cancelReshape();
+    if (partial.edit?.resize === false) this.cancelResize();
+    if (partial.edit?.text === false && this.#editingId) this.stopEditing({ commit: true });
+    if (partial.history) this.#callbacks.historyChange?.({ canUndo: this.history.canUndo, canRedo: this.history.canRedo });
+    if (partial.drag?.dropIntoGroup === false) this.#setDropTarget(null);
+    if (partial.drag?.snap?.guides === false) this.#setGuides([]);
+    if (partial.contextMenu?.enabled === false) this.closeContextMenu();
+    this.notifyListeners();
+  }
+
+  can(gesture: Gesture, target: GestureTarget, fallback = true): boolean {
+    return this.#can ? this.#can(gesture, target) : fallback;
+  }
+
+  #historyDepth = 0;
+  #historyIgnore = 0;
+  readonly history = new SnapshotHistory(
+    () => this.#snapshot(), snapshot => this.#restoreSnapshot(snapshot),
+    (a, b) => {
+      const comparable = (snapshot: FlowContent) => ({
+        nodes: snapshot.nodes.map(({ measured: _m, selected: _s, dragging: _d, resizing: _r, ...node }) => node),
+        edges: snapshot.edges.map(({ selected: _s, ...edge }) => edge),
+      });
+      return JSON.stringify(comparable(a)) === JSON.stringify(comparable(b));
+    },
+    () => this.#interaction.history,
+    () => this.#callbacks.historyChange?.({ canUndo: this.history.canUndo, canRedo: this.history.canRedo }),
+  );
+
+  run<T>(fn: () => T, options: { history: "ignore" | "merge" }): T {
+    if (options.history === "ignore") this.#historyIgnore++;
+    else if (!this.history.canUndo && this.#historyDepth === 0 && !this.#drag && !this.#resize && !this.#connection && !this.#reshape && !this.#editingId) this.history.mark();
+    this.#historyDepth++;
+    try { return fn(); } finally {
+      this.#historyDepth--;
+      if (options.history === "ignore") this.#historyIgnore--;
+      else this.#historyChanged();
+    }
+  }
+
+  #snapshot(): { nodes: FlowNode[]; edges: FlowEdge[] } {
+    return { nodes: this.#nodes.map(node => ({ ...node, position: { ...node.position }, data: { ...node.data }, dragging: false, resizing: false })),
+      edges: this.#edges.map(edge => ({ ...edge })) };
+  }
+
+  #restoreSnapshot(snapshot: { nodes: FlowNode[]; edges: FlowEdge[] }): void {
+    this.#replaceNodes(snapshot.nodes);
+    this.#replaceEdges(snapshot.edges);
+    this.#emitSelectionChange();
+    this.#notifyAllNodes(); this.#notifyAllEdges();
+    this.notifyListeners();
+  }
+
+  #recordHistory(label?: string): void {
+    if (!this.#historyDepth && !this.#historyIgnore && !this.#drag && !this.#resize && !this.#connection && !this.#editingId && !this.#reshape) this.history.mark(label);
+  }
+  #historyChanged(): void { if (!this.#historyIgnore) this.history.changed(); }
+
+  #lastNudge: { key: string; time: number } | null = null;
+  selectAll(): void {
+    this.#setSelection(new Set(this.#nodes.filter(node => !this.isNodeHidden(node) && this.isNodeSelectable(node)).map(node => node.id)),
+      new Set(this.#edges.filter(edge => !edge.hidden && this.isEdgeSelectable(edge)).map(edge => edge.id)));
+  }
+
+  nudge(direction: "left" | "right" | "up" | "down", multiplier = 1, merge = false): void {
+    if (!merge) this.#recordHistory("nudge");
+    const grid = this.#interaction.drag.snap.grid || [1, 1];
+    const dx = direction === "left" ? -grid[0] : direction === "right" ? grid[0] : 0;
+    const dy = direction === "up" ? -grid[1] : direction === "down" ? grid[1] : 0;
+    const changes: NodeChange<FlowNode>[] = this.getSelectedNodes().filter(node => this.isNodeDraggable(node) && !this.#hasSelectedAncestor(node)).map(node => ({
+      type: "position", id: node.id, position: this.#clampToExtent(node, { x: node.position.x + dx * multiplier, y: node.position.y + dy * multiplier }),
+    }));
+    this.#applyNodeChanges(changes);
+  }
+
+  cancelDrag(): void {
+    const drag = this.#drag;
+    this.#drag = null; this.#stopAutoPan(); this.#setDropTarget(null); this.#setGuides([]);
+    if (drag?.started) this.history.cancelMark();
+  }
+
+  #dropTargetId: string | null = null;
+  get dropTargetId(): string | null { return this.#dropTargetId; }
+  isGroup(node: FlowNode): boolean {
+    const type = this.nodeOptions[node.type ?? "default"];
+    return (
+      node.type === "group" ||
+      !!(type && typeof type !== "function" && type.group)
+    );
+  }
+  #setDropTarget(id: string | null): void {
+    if (id === this.#dropTargetId) return;
+    const previous = this.#dropTargetId; this.#dropTargetId = id;
+    if (previous) this.#nodeSignals.get(previous)?.notifyListeners();
+    if (id) this.#nodeSignals.get(id)?.notifyListeners();
+  }
+  #findDropTarget(node: FlowNode): FlowNode | null {
+    const rect = this.getNodeRect(node); if (!rect) return null;
+    const center = { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+    let target: FlowNode | null = null;
+    for (const group of this.#nodes) {
+      if (!this.isGroup(group) || this.isNodeHidden(group) || group.id === node.id || isDescendant(this.#nodes, group.id, node.id)) continue;
+      const bounds = this.getNodeRect(group);
+      if (!bounds || center.x < bounds.x || center.x > bounds.x + bounds.width || center.y < bounds.y || center.y > bounds.y + bounds.height) continue;
+      if (!target || isDescendant(this.#nodes, group.id, target.id)) target = group;
+    }
+    return target;
+  }
+  setParent(id: string, parentId: string | null): void {
+    const node = this.getNode(id), parent = parentId ? this.getNode(parentId) : undefined;
+    if (!node || this.#editingId === id || node.parentId === (parentId ?? undefined) || id === parentId || (parentId && (!parent || isDescendant(this.#nodes, parentId, id))) || !this.can("drag", { kind: "node", id }, this.isNodeDraggable(node))) return;
+    const absolute = this.getNodePositionAbsolute(node), origin = parent ? this.getNodePositionAbsolute(parent) : { x: 0, y: 0 };
+    this.#recordHistory("setParent");
+    this.run(() => this.updateNode(id, { parentId: parentId ?? undefined, position: { x: absolute.x - origin.x, y: absolute.y - origin.y } }), { history: "merge" });
+  }
+  resolveOverlaps(ids: string[] = this.getSelectedNodes().map(node => node.id), options: { margin?: number; overlapThreshold?: number } = {}): void {
+    this.#recordHistory("overlap");
+    this.run(() => {
+      for (const id of ids) {
+        const node = this.getNode(id); if (!node || !this.isNodeDraggable(node)) continue;
+        const rects = this.#nodes.filter(other => !other.hidden && !isDescendant(this.#nodes, other.id, id) && !isDescendant(this.#nodes, id, other.id))
+          .flatMap(other => { const rect = this.getNodeRect(other); return rect ? [{ ...rect, id: other.id }] : []; });
+        const position = pushApart(rects, [id], options)[id];
+        if (!position) continue;
+        const parent = node.parentId ? this.getNode(node.parentId) : undefined;
+        const origin = parent ? this.getNodePositionAbsolute(parent) : { x: 0, y: 0 };
+        this.updateNode(id, { position: { x: position.x - origin.x, y: position.y - origin.y } });
+      }
+    }, { history: "merge" });
+  }
+  #rejectsOverlap(id: string): boolean {
+    const node = this.getNode(id), rect = node && this.getNodeRect(node); if (!rect) return false;
+    return this.getIntersectingNodes(rect).some(other => {
+      if (other.id === id || isDescendant(this.#nodes, id, other.id) || isDescendant(this.#nodes, other.id, id)) return false;
+      const bounds = this.getNodeRect(other)!;
+      return getOverlappingArea(rect, bounds) > Math.min(rect.width * rect.height, bounds.width * bounds.height) * 0.5;
+    });
+  }
+
+  #editingId: string | null = null;
+  get editingId(): string | null { return this.#editingId; }
+  startEditing(id: string): void {
+    const node = this.getNode(id);
+    if (!node || this.#editingId === id) return;
+    const type =
+      this.nodeOptions[node.type ?? "default"] ?? this.nodeOptions.default;
+    const editable =
+      this.#interaction.edit.text ||
+      !!(type && typeof type !== "function" && type.editable);
+    if (
+      !this.can(
+        "edit",
+        { kind: "node", id },
+        editable && (!this.#viewer || this.#interaction.edit.text),
+      )
+    )
+      return;
+    this.stopEditing({ commit: true });
+    this.closeContextMenu();
+    this.history.mark("edit");
+    this.#editingId = id;
+    this.#nodeSignals.get(id)?.notifyListeners();
+    this.#callbacks.editStart?.({ node });
+  }
+  stopEditing({ commit = true }: { commit?: boolean } = {}): void {
+    const id = this.#editingId; if (!id) return;
+    this.#editingId = null;
+    if (!commit) this.history.cancelMark(); else this.history.discardMark();
+    const node = this.getNode(id);
+    this.#nodeSignals.get(id)?.notifyListeners();
+    if (node) this.#callbacks.editEnd?.({ node, committed: commit });
+  }
+
+  #guides: Guide[] = [];
+  readonly guidesSignal = new ChangeNotifier();
+  get guides(): Guide[] { return this.#guides; }
+  #setGuides(lines: Guide[]): void {
+    if (JSON.stringify(lines) === JSON.stringify(this.#guides)) return;
+    this.#guides = lines; this.guidesSignal.notifyListeners();
+  }
+  #guideBounds(id: string): Rect[] {
+    return this.#nodes.filter(node => !this.isNodeHidden(node) && node.id !== id && !this.#drag?.items.has(node.id)
+      && ![...(this.#drag?.items.keys() ?? [])].some(id => isDescendant(this.#nodes, node.id, id))
+      && !isDescendant(this.#nodes, id, node.id) && !isDescendant(this.#nodes, node.id, id))
+      .flatMap(node => { const rect = this.getNodeRect(node); return rect ? [rect] : []; });
+  }
+
+  #reshape: { edgeId: string; index: number; pending: boolean; start: XYPosition } | null = null;
+  get activeEdgeHandle(): { edgeId: string; index: number; kind: "waypoint" | "midpoint" } | null {
+    return this.#reshape ? { edgeId: this.#reshape.edgeId, index: this.#reshape.index, kind: this.#reshape.pending ? "midpoint" : "waypoint" } : null;
+  }
+  isEdgeReshapable(edge: FlowEdge): boolean { return this.can("reshape", { kind: "edge", id: edge.id }, this.#interaction.edit.waypoints); }
+  insertWaypoint(edgeId: string, index: number, point: XYPosition): void {
+    const edge = this.getEdge(edgeId); if (!edge || !this.isEdgeReshapable(edge)) return;
+    const waypoints = [...(edge.waypoints ?? [])]; waypoints.splice(Math.max(0, Math.min(index, waypoints.length)), 0, { ...point });
+    this.updateEdge(edgeId, { waypoints });
+  }
+  moveWaypoint(edgeId: string, index: number, point: XYPosition): void {
+    const edge = this.getEdge(edgeId); if (!edge || !this.isEdgeReshapable(edge) || !edge.waypoints?.[index]) return;
+    this.updateEdge(edgeId, { waypoints: edge.waypoints.map((old, i) => i === index ? { ...point } : old) });
+  }
+  removeWaypoint(edgeId: string, index: number): void {
+    const edge = this.getEdge(edgeId); if (!edge || !this.isEdgeReshapable(edge)) return;
+    this.updateEdge(edgeId, { waypoints: (edge.waypoints ?? []).filter((_point, i) => i !== index) });
+  }
+  #reshapeArgs(): EdgeHandleCustomArgs | null {
+    const state = this.#reshape, edge = state && this.getEdge(state.edgeId);
+    return state && edge ? { edge, kind: state.pending ? "midpoint" : "waypoint", index: state.index, isActive: true } : null;
+  }
+  handleReshapeStart(edgeId: string, kind: "waypoint" | "midpoint", index: number, event: MouseEvent): boolean {
+    if (event.button === 0) this.stopEditing({ commit: true });
+    const edge = this.getEdge(edgeId);
+    if (event.button !== 0 || !this.acceptsPointer(event) || !edge || !this.isEdgeReshapable(edge)) return false;
+    this.closeContextMenu(); this.history.mark("reshape"); this.#beginPress(event);
+    this.#reshape = { edgeId, index, pending: kind === "midpoint", start: this.#panePoint(event) };
+    this.#edgeSignals.get(edgeId)?.notifyListeners();
+    this.#callbacks.reshapeStart?.(this.#reshapeArgs()!); return true;
+  }
+  handleReshapeMove(event: MouseEvent): void {
+    if (!this.#reshape) return;
+    const point = this.#panePoint(event);
+    if (distance(point, this.#reshape.start) <= this.#interaction.drag.threshold) return;
+    this.#pointerMoved = true;
+    if (this.#reshape.pending) {
+      this.#reshape.pending = false;
+      this.insertWaypoint(this.#reshape.edgeId, this.#reshape.index, this.paneToFlowPosition(point));
+    } else this.moveWaypoint(this.#reshape.edgeId, this.#reshape.index, this.paneToFlowPosition(point));
+    const args = this.#reshapeArgs(); if (args) this.#callbacks.reshape?.(args);
+  }
+  handleReshapeEnd(event?: MouseEvent): void {
+    if ((event as (MouseEvent & { cancelled?: boolean }) | undefined)?.cancelled) { this.cancelReshape(); return; }
+    const args = this.#reshapeArgs(); this.#reshape = null;
+    if (args) { this.#callbacks.reshapeEnd?.({ ...args, isActive: false }); this.#edgeSignals.get(args.edge.id)?.notifyListeners(); }
+  }
+  cancelReshape(): void {
+    const id = this.#reshape?.edgeId; if (!id) return;
+    this.#reshape = null; this.history.cancelMark(); this.#edgeSignals.get(id)?.notifyListeners();
+  }
+  handleWaypointClick(edgeId: string, index: number, event: MouseEvent): void {
+    if (this.#consumeMovement()) return;
+    if (this.#registerClick(`waypoint:${edgeId}:${index}`, event)) this.removeWaypoint(edgeId, index);
+  }
+
+  #collapseCache: { nodes: FlowNode[]; edges: FlowEdge[]; sets: Map<string, Set<string>>; hidden: Set<string> } | null = null;
+  #collapsedState() {
+    if (this.#collapseCache?.nodes === this.#nodes && this.#collapseCache.edges === this.#edges) return this.#collapseCache;
+    const sets = collapseSets(this.#nodes, this.#edges);
+    this.#collapseCache = { nodes: this.#nodes, edges: this.#edges, sets, hidden: new Set([...sets.values()].flatMap(ids => [...ids])) };
+    return this.#collapseCache;
+  }
+  #notifyCollapseCounts(previous: Map<string, Set<string>>): void {
+    const next = this.#collapsedState().sets;
+    for (const id of new Set([...previous.keys(), ...next.keys()])) {
+      if (previous.get(id)?.size !== next.get(id)?.size) this.#nodeSignals.get(id)?.notifyListeners();
+    }
+  }
+  isNodeHidden(node: FlowNode): boolean { return !!node.hidden || this.#collapsedState().hidden.has(node.id); }
+  hiddenChildCount(id: string): number { return this.#collapsedState().sets.get(id)?.size ?? 0; }
+  collapse(id: string): void { const node = this.getNode(id); if (node && this.can("select", { kind: "node", id }, this.elementsSelectable)) this.updateNode(id, { collapsed: true }); }
+  expand(id: string): void { const node = this.getNode(id); if (node && this.can("select", { kind: "node", id }, this.elementsSelectable)) this.updateNode(id, { collapsed: false }); }
+  toggleCollapsed(id: string): void { if (this.getNode(id)?.collapsed) this.expand(id); else this.collapse(id); }
+
+  insertNodeOnEdge(edgeId: string, node: FlowNode): void {
+    const edge = this.getEdge(edgeId); if (!edge || !this.can("connect", { kind: "edge", id: edgeId }, this.nodesConnectable)) return;
+    this.#recordHistory("insertNodeOnEdge");
+    this.run(() => {
+      this.addNodes(node);
+      this.#applyEdgeChanges([{ type: "remove", id: edgeId }]);
+      this.addEdges([
+        { ...edge, id: createId("edge"), target: node.id, targetHandle: null, waypoints: undefined },
+        { ...edge, id: createId("edge"), source: node.id, sourceHandle: null, waypoints: undefined },
+      ]);
+    }, { history: "merge" });
+  }
+  #arrangeNodes(ids: string[], positions: Record<string, XYPosition>): void {
+    this.#recordHistory("arrange");
+    this.run(() => {
+      for (const id of ids) {
+        const node = this.getNode(id), position = positions[id];
+        if (!node || !position || !this.isNodeDraggable(node)) continue;
+        const parent = node.parentId ? this.getNode(node.parentId) : undefined, origin = parent ? this.getNodePositionAbsolute(parent) : { x: 0, y: 0 };
+        this.updateNode(id, { position: this.#clampToExtent(node, { x: position.x - origin.x, y: position.y - origin.y }) });
+      }
+    }, { history: "merge" });
+  }
+  #arrangementRects(ids: string[]) {
+    return ids.flatMap(id => { const node = this.getNode(id), rect = node && this.getNodeRect(node); return node && this.isNodeDraggable(node) && rect ? [{ ...rect, id }] : []; });
+  }
+  alignNodes(ids: string[], mode: "left" | "centerX" | "right" | "top" | "centerY" | "bottom"): void { this.#arrangeNodes(ids, alignmentPositions(this.#arrangementRects(ids), mode)); }
+  distributeNodes(ids: string[], axis: "x" | "y"): void { this.#arrangeNodes(ids, distributionPositions(this.#arrangementRects(ids), axis)); }
+
+  #clipboard: FlowContent | null = null;
+  getContent(ids: string[] = this.getSelectedNodes().map(node => node.id)): FlowContent {
+    const included = new Set(ids);
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const node of this.#nodes) if (node.parentId && included.has(node.parentId) && !included.has(node.id)) { included.add(node.id); changed = true; }
+    }
+    for (const node of this.#nodes) if (!this.can("copy", { kind: "node", id: node.id })) included.delete(node.id);
+    const nodes = this.#nodes.filter(node => included.has(node.id)).map(node => ({ ...node, data: { ...node.data },
+      position: node.parentId && !included.has(node.parentId) ? this.getNodePositionAbsolute(node) : { ...node.position },
+      parentId: node.parentId && included.has(node.parentId) ? node.parentId : undefined,
+    }));
+    return { nodes, edges: this.#edges.filter(edge => included.has(edge.source) && included.has(edge.target) && this.can("copy", { kind: "edge", id: edge.id })).map(edge => ({ ...edge })) };
+  }
+
+  putContent(content: FlowContent, options: { at?: XYPosition; offset?: XYPosition; select?: boolean } = {}): FlowContent {
+    if (!this.#interaction.clipboard.enabled || !this.can("copy", { kind: "pane" })) return { nodes: [], edges: [] };
+    const copied = remapContent(content, { ...options, offset: options.offset ?? this.#interaction.clipboard.offset });
+    if (!copied.nodes.length) return copied;
+    this.#recordHistory("paste");
+    this.run(() => {
+      if (options.select !== false) this.clearSelection();
+      this.addNodes(copied.nodes); this.addEdges(copied.edges);
+    }, { history: "merge" });
+    return copied;
+  }
+
+  duplicate(ids?: string[]): FlowContent { return this.putContent(this.getContent(ids)); }
+
+  async copy(): Promise<void> {
+    if (!this.#interaction.clipboard.enabled || !this.can("copy", { kind: "selection" })) return;
+    this.#clipboard = this.getContent();
+    if (this.#interaction.clipboard.system && typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+      try { await navigator.clipboard.writeText(JSON.stringify(this.#clipboard)); } catch { /* In-memory clipboard remains available. */ }
+    }
+  }
+
+  async paste(): Promise<FlowContent> {
+    let content = this.#clipboard;
+    if (this.#interaction.clipboard.system && typeof navigator !== "undefined" && navigator.clipboard?.readText) {
+      try {
+        const parsed = JSON.parse(await navigator.clipboard.readText());
+        if (Array.isArray(parsed.nodes) && Array.isArray(parsed.edges)
+          && parsed.nodes.every((node: FlowNode) => typeof node.id === "string" && node.data && Number.isFinite(node.position?.x) && Number.isFinite(node.position?.y))
+          && parsed.edges.every((edge: FlowEdge) => typeof edge.source === "string" && typeof edge.target === "string")) content = parsed;
+      } catch { /* Invalid or unavailable system clipboard falls back to memory. */ }
+    }
+    return content ? this.putContent(content, { at: this.#pointerInside ? this.pointerFlowPosition : undefined }) : { nodes: [], edges: [] };
+  }
+
+  #contextMenu: ContextMenuCustomArgs | null = null;
+  get contextMenu(): ContextMenuCustomArgs | null { return this.#contextMenu; }
+  get pointerFlowPosition(): XYPosition { return this.paneToFlowPosition(this.#lastPanePoint); }
+
+  openContextMenu(target: GestureTarget, position: XYPosition): boolean {
+    if (!this.#interaction.contextMenu.enabled || !this.can("contextMenu", target)) return false;
+    const node = target.kind === "node" && target.id ? this.getNode(target.id) : undefined;
+    const edge = target.kind === "edge" && target.id ? this.getEdge(target.id) : undefined;
+    let kind = target.kind;
+    if (node?.selected || edge?.selected) kind = "selection";
+    else if (node) this.selectNodes([node.id]);
+    else if (edge) this.selectEdges([edge.id]);
+    const ids = kind === "selection"
+      ? [...this.getSelectedNodes(), ...this.getSelectedEdges()].map(item => item.id)
+      : target.id ? [target.id] : [];
+    this.#contextMenu = { target: kind, ids, position, screenPosition: this.flowToScreenPosition(position) };
+    this.#callbacks.contextMenu?.(this.#contextMenu);
+    this.notifyListeners();
+    return true;
+  }
+
+  closeContextMenu(): void {
+    if (!this.#contextMenu) return;
+    this.#contextMenu = null;
+    this.notifyListeners();
+  }
+
+  handleContextMenu(target: GestureTarget, event: MouseEvent): boolean {
+    return this.openContextMenu(target, this.paneToFlowPosition(this.#panePoint(event)));
+  }
+
+  handlePaneWheel(event: WheelEvent): void {
+    if (this.#interaction.pane.scroll !== "pan" || event.ctrlKey || event.metaKey || this.zoomActivationHeld || !this.can("pan", { kind: "pane" })) return;
+    const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? this.#paneSize.height : 1;
+    this.handleViewportInteractionStart();
+    this.panBy({ x: -event.deltaX * unit * this.#interaction.pane.scrollSpeed, y: -event.deltaY * unit * this.#interaction.pane.scrollSpeed });
+    this.handleViewportInteractionEnd(); event.preventDefault(); event.stopPropagation();
+  }
+
+  handlePanePointerMove(event: MouseEvent): void {
+    this.#lastPanePoint = this.#panePoint(event);
+  }
+
+  bringToFront(ids: string[] = this.getSelectedNodes().map(node => node.id)): void {
+    this.#recordHistory("bringToFront");
+    const zIndex = Math.max(0, ...this.#nodes.map(node => node.zIndex ?? 0)) + 1;
+    this.run(() => { for (const id of ids) if (this.getNode(id) && this.can("edit", { kind: "node", id }, !this.#viewer)) this.updateNode(id, { zIndex }); }, { history: "merge" });
+  }
+
+  #fitViewOnInit = false;
+  #fitViewOptions: FitViewOptions = {};
+  #layoutConfig: LayoutConfig | null = null;
+  #layoutPending = false;
+  #viewportInitialized = false;
+  #previousZoom = 1;
+  get zoom(): number { return this.viewport.zoom; }
+
+  /** Static configuration provided by the style layer. */
+  custom!: FlowDiagramCustom<any>;
+  config: object = {};
+  nodeOptions: Record<string, NodeOptions> = {};
+  getHandles?: FlowDiagramProps<any>["getHandles"];
+  edgePath?: FlowDiagramProps<any>["getEdgePath"];
+  getContextMenuItems?: FlowDiagramProps<any>["getContextMenuItems"];
+  getControlsOptions?: FlowDiagramProps<any>["getControlsOptions"];
+  getMinimapOptions?: FlowDiagramProps<any>["getMinimapOptions"];
+  highlightConnected = false;
+  #handleMeasures = new Map<string, NonNullable<MeasureEntry["handles"]>>();
+
+  readonly transformation: TransformationController;
+  #ownsTransformation: boolean;
+  #paneKey: GlobalKey | null = null;
+  #paneSize: Dimensions = { width: 0, height: 0 };
+
+  #nodeSignals = new Map<string, ChangeNotifier>();
+  #edgeSignals = new Map<string, ChangeNotifier>();
+  /** Fires on every connection-gesture change (start, move, snap, end). */
+  readonly connectionSignal = new ChangeNotifier();
+  #styleVersion = 0;
+  #nodeZIndices: Map<string, number> | null = null;
+
+  #hoveredNodeId: string | null = null;
+  #nodeEnterEvent: MouseEvent | null = null;
+  #edgeEnterEvent: MouseEvent | null = null;
+  #hoveredEdgeId: string | null = null;
+  #drag: DragState | null = null;
+  #resize: ResizeState | null = null;
+  #connection: ConnectionState | null = null;
+  #selectionBox: { start: XYPosition; current: XYPosition } | null = null;
+  #keysHeld = new Set<string>();
+  #pointerInside = false;
+  #interactive = true;
+  #pointerMoved = false;
+  #lastClick: { key: string; time: number; x: number; y: number } | null = null;
+  #lastPanePoint: XYPosition = { x: 0, y: 0 };
+  #animation: AnimationController | null = null;
+  #autoPanFrame: number | null = null;
+  #selectionSnapshot = "";
+  #disposed = false;
+
+  constructor({ transformationController }: { transformationController?: TransformationController } = {}) {
+    super();
+    this.transformation = transformationController ?? new TransformationController();
+    this.#ownsTransformation = transformationController == null;
+    this.transformation.addListener(this.#handleTransformChange);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Lifecycle (used by the Flow widget)
+  // ---------------------------------------------------------------------------
+
+  /** Push widget props into the controller. Never notifies: a build is already in progress. */
+  configure(props: FlowDiagramProps<any>): void {
+    const {
+      data: { nodes, edges },
+      custom,
+      config,
+      nodeOptions,
+      viewport,
+      layout,
+      interaction,
+      can,
+      on,
+    } = props;
+    this.custom = custom;
+    this.config = config ?? {};
+    this.nodeOptions = nodeOptions ?? {};
+    this.getHandles = props.getHandles;
+    this.edgePath = props.getEdgePath;
+    this.getContextMenuItems =
+      props.getContextMenuItems ?? getDefaultContextMenuItems;
+    this.getControlsOptions = props.getControlsOptions;
+    this.getMinimapOptions = props.getMinimapOptions;
+    this.highlightConnected = props.highlightConnected ?? false;
+    this.#styleVersion += 1;
+    this.#nodeZIndices = null;
+    this.#interaction = resolveInteraction(interaction);
+    this.#viewer =
+      (typeof interaction === "string" ? interaction : interaction?.preset) ===
+      "viewer";
+    this.#can = can;
+    this.#options = {
+      ...DEFAULT_FLOW_OPTIONS,
+      ...interactionOptions(this.#interaction),
+      minZoom: viewport?.minZoom ?? DEFAULT_FLOW_OPTIONS.minZoom,
+      maxZoom: viewport?.maxZoom ?? DEFAULT_FLOW_OPTIONS.maxZoom,
+      translateExtent: viewport?.extent ?? infiniteExtent,
+    };
+    this.#callbacks = on ?? {};
+    this.#fitViewOptions =
+      typeof viewport?.fitView === "object" ? viewport.fitView : {};
+    if (viewport?.fitView && !this.#viewportInitialized)
+      this.#fitViewOnInit = true;
+    const nextLayout: LayoutConfig | null = layout
+      ? "compute" in layout
+        ? { algorithm: layout }
+        : layout
+      : null;
+    if (
+      nextLayout &&
+      nextLayout.algorithm !== this.#layoutConfig?.algorithm &&
+      !this.#viewportInitialized
+    ) {
+      this.#layoutPending = nextLayout.runOn !== "manual";
+    }
+    this.#layoutConfig = nextLayout;
+
+    if (nodes !== this.#propsNodes) {
+      this.#propsNodes = nodes;
+      if (nodes) this.#replaceNodes(nodes);
+    }
+    if (edges !== this.#propsEdges) {
+      this.#propsEdges = edges;
+      if (edges) this.#replaceEdges(edges);
+    }
+    if (!this.#viewportInitialized) {
+      this.#viewportInitialized = true;
+      if (viewport?.initial)
+        this.#setMatrix(this.#clampViewport(viewport.initial));
+    }
+  }
+
+  attachPane(key: GlobalKey): void {
+    this.#paneKey = key;
+  }
+
+  /** Called from layout; never notifies synchronously. */
+  setPaneSize(width: number, height: number): void {
+    if (!Number.isFinite(width) || !Number.isFinite(height)) return;
+    const hadSize = this.#paneSize.width > 0 && this.#paneSize.height > 0;
+    this.#paneSize = { width, height };
+    // translateExtent could not be applied to defaultViewport before the pane
+    // was measured; enforce it once, outside the build/layout pass.
+    if (!hadSize && width > 0 && height > 0 && this.#options.translateExtent !== infiniteExtent) {
+      const schedule = typeof queueMicrotask === "function" ? queueMicrotask : (fn: () => void) => void Promise.resolve().then(fn);
+      schedule(() => {
+        if (this.#disposed) return;
+        const current = this.viewport;
+        const clamped = this.#clampViewport(current);
+        if (clamped.x !== current.x || clamped.y !== current.y || clamped.zoom !== current.zoom) {
+          this.#setMatrix(clamped);
+        }
+      });
+    }
+  }
+
+  get paneSize(): Dimensions {
+    return this.#paneSize;
+  }
+
+  /**
+   * Per-node change signal. Node widgets subscribe to their own node so a
+   * drag or hover rebuilds one node instead of the whole scene.
+   */
+  nodeSignal(id: string): ChangeNotifier {
+    let signal = this.#nodeSignals.get(id);
+    if (!signal) {
+      signal = new ChangeNotifier();
+      this.#nodeSignals.set(id, signal);
+    }
+    return signal;
+  }
+
+  /** Per-edge change signal (selection, hover, replacement). */
+  edgeSignal(id: string): ChangeNotifier {
+    let signal = this.#edgeSignals.get(id);
+    if (!signal) {
+      signal = new ChangeNotifier();
+      this.#edgeSignals.set(id, signal);
+    }
+    return signal;
+  }
+
+  /** Bumped whenever props that affect every node/edge change (custom, types, options). */
+  get styleVersion(): number {
+    return this.#styleVersion;
+  }
+
+  get options(): Readonly<FlowOptions> {
+    return this.#options;
+  }
+
+  /** Node sizes reported by the scene after layout (post-frame). */
+  setNodeDimensions(entries: MeasureEntry[]): void {
+    if (this.#disposed) return;
+    const changes: NodeChange<FlowNode>[] = [];
+    for (const entry of entries) {
+      const node = this.#nodeLookup.get(entry.id);
+      if (!node) continue;
+      if (entry.handles) {
+        const before = this.#handleMeasures.get(entry.id) ?? [];
+        const same = before.length === entry.handles.length && before.every((handle, index) => {
+          const next = entry.handles![index];
+          return handle.id === next.id && handle.type === next.type &&
+            Math.abs(handle.x - next.x) < 0.01 && Math.abs(handle.y - next.y) < 0.01 &&
+            Math.abs(handle.width - next.width) < 0.01 && Math.abs(handle.height - next.height) < 0.01;
+        });
+        if (!same) {
+          if (entry.handles.length) this.#handleMeasures.set(entry.id, entry.handles);
+          else this.#handleMeasures.delete(entry.id);
+          this.#nodeSignals.get(entry.id)?.notifyListeners();
+        }
+      }
+      const measured = node.measured;
+      if (
+        measured &&
+        Math.abs(measured.width - entry.width) < 0.5 &&
+        Math.abs(measured.height - entry.height) < 0.5
+      ) {
+        continue;
+      }
+      changes.push({
+        type: "dimensions",
+        id: entry.id,
+        dimensions: { width: entry.width, height: entry.height },
+      });
+    }
+    if (changes.length > 0) this.#applyNodeChanges(changes);
+    this.#afterMeasure();
+  }
+
+  dispose(): void {
+    if (this.#disposed) return;
+    this.#disposed = true;
+    this.#nodeEnterEvent = this.#edgeEnterEvent = null;
+    this.#stopAnimation();
+    this.#stopAutoPan();
+    this.transformation.removeListener(this.#handleTransformChange);
+    if (this.#ownsTransformation) this.transformation.dispose();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Nodes & edges
+  // ---------------------------------------------------------------------------
+
+  get nodes(): FlowNode[] {
+    return this.#nodes;
+  }
+
+  get edges(): FlowEdge[] {
+    return this.#edges;
+  }
+
+  getNodes(): FlowNode[] {
+    return this.#nodes;
+  }
+
+  getEdges(): FlowEdge[] {
+    return this.#edges;
+  }
+
+  getNode(id: string): FlowNode | undefined {
+    return this.#nodeLookup.get(id);
+  }
+
+  getEdge(id: string): FlowEdge | undefined {
+    return this.#edgeLookup.get(id);
+  }
+
+  setNodes(nodes: FlowNode[] | ((nodes: FlowNode[]) => FlowNode[])): void {
+    this.#recordHistory();
+    this.#replaceNodes(typeof nodes === "function" ? nodes(this.#nodes) : nodes);
+    this.#historyChanged();
+    this.#emitSelectionChange();
+    this.#notifyAllNodes();
+    this.notifyListeners();
+  }
+
+  setEdges(edges: FlowEdge[] | ((edges: FlowEdge[]) => FlowEdge[])): void {
+    this.#recordHistory();
+    const previousNeighbours = this.#neighbourIds();
+    const previousCollapse = this.#collapsedState().sets;
+    this.#replaceEdges(typeof edges === "function" ? edges(this.#edges) : edges);
+    this.#historyChanged();
+    this.#notifyChangedNeighbours(previousNeighbours);
+    this.#notifyCollapseCounts(previousCollapse);
+    this.#emitSelectionChange();
+    this.#notifyAllEdges();
+    this.notifyListeners();
+  }
+
+  addNodes(nodes: FlowNode | FlowNode[]): void {
+    this.#recordHistory();
+    const list = Array.isArray(nodes) ? nodes : [nodes];
+    this.#applyNodeChanges(list.map((item) => ({ type: "add", item }) as NodeChange<FlowNode>));
+  }
+
+  addEdges(edges: (Partial<FlowEdge> & Connection) | FlowEdge | (Partial<FlowEdge> & Connection)[] | FlowEdge[]): void {
+    this.#recordHistory();
+    const list = (Array.isArray(edges) ? edges : [edges]) as (Partial<FlowEdge> & Connection)[];
+    const changes: EdgeChange<FlowEdge>[] = [];
+    let current = this.#edges;
+    for (const params of list) {
+      const next = addEdge({ ...this.#options.defaultEdgeOptions, ...params } as FlowEdge, current);
+      if (next === current) continue;
+      changes.push({ type: "add", item: next[next.length - 1] });
+      current = next;
+    }
+    if (changes.length) this.#applyEdgeChanges(changes);
+  }
+
+  updateNode(
+    id: string,
+    update: Partial<FlowNode> | ((node: FlowNode) => Partial<FlowNode>),
+    options: { replace?: boolean } = {},
+  ): void {
+    const node = this.#nodeLookup.get(id);
+    if (!node) return;
+    this.#recordHistory();
+    const patch = typeof update === "function" ? update(node) : update;
+    const item = (options.replace ? { ...patch, id } : { ...node, ...patch, id }) as FlowNode;
+    this.#applyNodeChanges([{ type: "replace", id, item }]);
+  }
+
+  updateNodeData(id: string, data: Record<string, unknown> | ((node: FlowNode) => Record<string, unknown>), options: { replace?: boolean } = {}): void {
+    const node = this.#nodeLookup.get(id);
+    if (!node) return;
+    const next = typeof data === "function" ? data(node) : data;
+    this.updateNode(id, { data: options.replace ? next : { ...(node.data as object), ...next } });
+  }
+
+  updateEdge(
+    id: string,
+    update: Partial<FlowEdge> | ((edge: FlowEdge) => Partial<FlowEdge>),
+    options: { replace?: boolean } = {},
+  ): void {
+    const edge = this.#edgeLookup.get(id);
+    if (!edge) return;
+    this.#recordHistory();
+    const patch = typeof update === "function" ? update(edge) : update;
+    const item = (options.replace ? { ...patch, id } : { ...edge, ...patch, id }) as FlowEdge;
+    this.#applyEdgeChanges([{ type: "replace", id, item }]);
+  }
+
+  updateEdgeData(id: string, data: Record<string, unknown> | ((edge: FlowEdge) => Record<string, unknown>), options: { replace?: boolean } = {}): void {
+    const edge = this.#edgeLookup.get(id);
+    if (!edge) return;
+    const next = typeof data === "function" ? data(edge) : data;
+    this.updateEdge(id, { data: options.replace ? next : { ...(edge.data as object), ...next } });
+  }
+
+  async deleteElements(elements: { nodes?: (FlowNode | { id: string })[]; edges?: (FlowEdge | { id: string })[] } | string[], options: { reconnect?: boolean } = {}): Promise<{ deletedNodes: FlowNode[]; deletedEdges: FlowEdge[] }> {
+    const { nodes = [], edges = [] } = Array.isArray(elements)
+      ? { nodes: elements.map(id => ({ id })), edges: elements.map(id => ({ id })) } : elements;
+    const nodeIds = new Set<string>();
+    const queue = nodes.map((n) => n.id);
+    while (queue.length) {
+      const id = queue.shift()!;
+      if (nodeIds.has(id)) continue;
+      const node = this.#nodeLookup.get(id);
+      if (!node || this.#editingId === node.id || !this.can("delete", { kind: "node", id: node.id }, (!this.#viewer || this.#interaction.keys.delete != null) && node.deletable !== false)) continue;
+      nodeIds.add(id);
+      for (const child of this.#nodes) if (child.parentId === id) queue.push(child.id);
+    }
+    const nodesToDelete = this.#nodes.filter((n) => nodeIds.has(n.id));
+    const edgeIds = new Set(edges.map((e) => e.id));
+    for (const edge of getConnectedEdges(nodesToDelete, this.#edges)) edgeIds.add(edge.id);
+    let edgesToDelete = this.#edges.filter((e) => edgeIds.has(e.id) && this.can("delete", { kind: "edge", id: e.id }, (!this.#viewer || this.#interaction.keys.delete != null) && e.deletable !== false));
+    let finalNodes = nodesToDelete;
+    if (this.#callbacks.beforeDelete) {
+      const result = await this.#callbacks.beforeDelete({ nodes: finalNodes, edges: edgesToDelete });
+      if (result === false) return { deletedNodes: [], deletedEdges: [] };
+      if (typeof result === "object") {
+        finalNodes = result.nodes;
+        edgesToDelete = result.edges;
+      }
+    }
+    if (finalNodes.length === 0 && edgesToDelete.length === 0) return { deletedNodes: [], deletedEdges: [] };
+    this.#recordHistory("delete");
+    const replacements: FlowEdge[] = [];
+    if (options.reconnect) {
+      const removed = new Set(finalNodes.map(node => node.id));
+      for (const incoming of this.#edges.filter(edge => !removed.has(edge.source) && removed.has(edge.target))) {
+        const queue = [incoming.target], seen = new Set<string>();
+        while (queue.length) {
+          const id = queue.shift()!; if (seen.has(id)) continue; seen.add(id);
+          for (const outgoing of this.#edges.filter(edge => edge.source === id)) {
+            if (removed.has(outgoing.target)) queue.push(outgoing.target);
+            else if (incoming.source !== outgoing.target) replacements.push({ ...incoming, id: createId("edge"), target: outgoing.target, targetHandle: outgoing.targetHandle, waypoints: undefined });
+          }
+        }
+      }
+    }
+    if (edgesToDelete.length) {
+      this.#applyEdgeChanges(edgesToDelete.map((e) => ({ type: "remove", id: e.id }) as EdgeChange<FlowEdge>), { silent: true });
+    }
+    if (finalNodes.length) {
+      this.#applyNodeChanges(finalNodes.map((n) => ({ type: "remove", id: n.id }) as NodeChange<FlowNode>), { silent: true });
+    }
+    if (replacements.length) this.run(() => this.addEdges(replacements), { history: "merge" });
+    this.#callbacks.delete?.({ nodes: finalNodes, edges: edgesToDelete });
+    this.#emitSelectionChange();
+    this.notifyListeners();
+    return { deletedNodes: finalNodes, deletedEdges: edgesToDelete };
+  }
+
+  getIncomers(node: FlowNode | { id: string }): FlowNode[] {
+    return getIncomers(node, this.#nodes, this.#edges);
+  }
+
+  getOutgoers(node: FlowNode | { id: string }): FlowNode[] {
+    return getOutgoers(node, this.#nodes, this.#edges);
+  }
+
+  getConnectedEdges(nodes: (FlowNode | { id: string })[]): FlowEdge[] {
+    return getConnectedEdges(nodes, this.#edges);
+  }
+
+  toObject(): { nodes: FlowNode[]; edges: FlowEdge[]; viewport: Viewport } {
+    return {
+      nodes: this.#nodes.map((n) => ({ ...n })),
+      edges: this.#edges.map((e) => ({ ...e })),
+      viewport: this.viewport,
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Selection
+  // ---------------------------------------------------------------------------
+
+  getSelectedNodes(): FlowNode[] {
+    return this.#nodes.filter((n) => n.selected);
+  }
+
+  getSelectedEdges(): FlowEdge[] {
+    return this.#edges.filter((e) => e.selected);
+  }
+
+  selectNodes(ids: string[], { additive = false }: { additive?: boolean } = {}): void {
+    const nodeIds = new Set(additive ? [...this.getSelectedNodes().map((n) => n.id), ...ids] : ids);
+    const edgeIds = new Set(additive ? this.getSelectedEdges().map((e) => e.id) : []);
+    this.#setSelection(nodeIds, edgeIds);
+  }
+
+  selectEdges(ids: string[], { additive = false }: { additive?: boolean } = {}): void {
+    const edgeIds = new Set(additive ? [...this.getSelectedEdges().map((e) => e.id), ...ids] : ids);
+    const nodeIds = new Set(additive ? this.getSelectedNodes().map((n) => n.id) : []);
+    this.#setSelection(nodeIds, edgeIds);
+  }
+
+  clearSelection(): void {
+    this.#setSelection(new Set(), new Set());
+  }
+
+  // ---------------------------------------------------------------------------
+  // Viewport
+  // ---------------------------------------------------------------------------
+
+  get viewport(): Viewport {
+    const s = this.transformation.value.storage;
+    return { x: s[12], y: s[13], zoom: s[0] || 1 };
+  }
+
+  getViewport(): Viewport {
+    return this.viewport;
+  }
+
+  getZoom(): number {
+    return this.viewport.zoom;
+  }
+
+  setViewport(viewport: Partial<Viewport>, options: { duration?: number } = {}): Promise<void> {
+    return this.#applyViewport(this.#clampViewport({ ...this.viewport, ...viewport }), options.duration ?? 0);
+  }
+
+  panBy(delta: XYPosition): boolean {
+    if (!this.can("pan", { kind: "pane" }) || (delta.x === 0 && delta.y === 0)) return false;
+    const current = this.viewport;
+    void this.setViewport({ x: current.x + delta.x, y: current.y + delta.y });
+    return true;
+  }
+
+  zoomIn(options: { duration?: number } = {}): Promise<void> {
+    return this.#scaleAt(this.#paneCenter(), 1.2, options.duration ?? 0);
+  }
+
+  zoomOut(options: { duration?: number } = {}): Promise<void> {
+    return this.#scaleAt(this.#paneCenter(), 1 / 1.2, options.duration ?? 0);
+  }
+
+  zoomTo(zoom: number, options: { duration?: number } = {}): Promise<void> {
+    const current = this.viewport.zoom;
+    return this.#scaleAt(this.#paneCenter(), zoom / current, options.duration ?? 0);
+  }
+
+  /** Zoom around a point given in pane pixels. */
+  zoomAt(point: XYPosition, ratio: number, options: { duration?: number } = {}): Promise<void> {
+    return this.#scaleAt(point, ratio, options.duration ?? 0);
+  }
+
+  fitView(options: FitViewOptions = {}): Promise<boolean> {
+    if (!this.can("pan", { kind: "pane" }) || !this.can("zoom", { kind: "pane" })) return Promise.resolve(false);
+    const ids = options.nodes ? new Set(options.nodes.map((n) => n.id)) : null;
+    const rects: Rect[] = [];
+    for (const node of this.#nodes) {
+      if (ids && !ids.has(node.id)) continue;
+      if (this.isNodeHidden(node) && !options.includeHiddenNodes) continue;
+      const rect = this.getNodeRect(node);
+      if (rect) rects.push(rect);
+    }
+    if (rects.length === 0 || this.#paneSize.width === 0 || this.#paneSize.height === 0) {
+      return Promise.resolve(false);
+    }
+    return this.fitBounds(getBoundsOfRects(rects), options).then(() => true);
+  }
+
+  fitBounds(
+    bounds: Rect,
+    options: { padding?: number; duration?: number; minZoom?: number; maxZoom?: number } = {},
+  ): Promise<void> {
+    const viewport = getViewportForBounds(
+      bounds,
+      this.#paneSize.width,
+      this.#paneSize.height,
+      options.minZoom ?? this.#options.minZoom,
+      options.maxZoom ?? this.#options.maxZoom,
+      options.padding ?? 0.1,
+    );
+    return this.#applyViewport(viewport, options.duration ?? 0);
+  }
+
+  setCenter(x: number, y: number, options: { zoom?: number; duration?: number } = {}): Promise<void> {
+    const zoom = clamp(options.zoom ?? this.#options.maxZoom, this.#options.minZoom, this.#options.maxZoom);
+    return this.#applyViewport(
+      {
+        x: this.#paneSize.width / 2 - x * zoom,
+        y: this.#paneSize.height / 2 - y * zoom,
+        zoom,
+      },
+      options.duration ?? 0,
+    );
+  }
+
+  /** Client (screen) coordinates -> flow coordinates. */
+  screenToFlowPosition(point: XYPosition, options: { snapToGrid?: boolean } = {}): XYPosition {
+    const pane = this.#clientToPane(point);
+    const snap = options.snapToGrid ?? this.#options.snapToGrid;
+    return paneToFlowPosition(pane, this.viewport, snap, this.#options.snapGrid);
+  }
+
+  /** Flow coordinates -> client (screen) coordinates. */
+  flowToScreenPosition(point: XYPosition): XYPosition {
+    const pane = flowToPanePosition(point, this.viewport);
+    const render = this.#paneRenderObject();
+    if (!render) return pane;
+    const context = render.renderOwner.renderContext;
+    const rect = context.view.getBoundingClientRect();
+    const global = render.localToGlobal();
+    const { scale, translation } = context.viewPort;
+    return {
+      x: rect.left + (global.x + pane.x + translation.x) * scale,
+      y: rect.top + (global.y + pane.y + translation.y) * scale,
+    };
+  }
+
+  /** Pane pixel -> flow coordinates. */
+  paneToFlowPosition(point: XYPosition, snapToGrid = false): XYPosition {
+    return paneToFlowPosition(point, this.viewport, snapToGrid, this.#options.snapGrid);
+  }
+
+  /** Flow coordinates -> pane pixel. */
+  flowToPanePosition(point: XYPosition): XYPosition {
+    return flowToPanePosition(point, this.viewport);
+  }
+
+  /** Visible region of the flow plane in flow coordinates. */
+  getViewportRect(): Rect {
+    const v = this.viewport;
+    return {
+      x: -v.x / v.zoom,
+      y: -v.y / v.zoom,
+      width: this.#paneSize.width / v.zoom,
+      height: this.#paneSize.height / v.zoom,
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Geometry
+  // ---------------------------------------------------------------------------
+
+  getNodePositionAbsolute(node: FlowNode): XYPosition {
+    let position = node.position;
+    let parentId = node.parentId;
+    let guard = 0;
+    while (parentId && guard++ < 64) {
+      const parent = this.#nodeLookup.get(parentId);
+      if (!parent) break;
+      position = { x: position.x + parent.position.x, y: position.y + parent.position.y };
+      parentId = parent.parentId;
+    }
+    return position;
+  }
+
+  getNodeDimensions(node: FlowNode): Dimensions | null {
+    if (node.width != null && node.height != null) return { width: node.width, height: node.height };
+    return node.measured ?? null;
+  }
+
+  /** Absolute rect of a node, or null until it has been measured. */
+  getNodeRect(nodeOrId: FlowNode | string): Rect | null {
+    const node = typeof nodeOrId === "string" ? this.#nodeLookup.get(nodeOrId) : nodeOrId;
+    if (!node) return null;
+    const dimensions = this.getNodeDimensions(node);
+    if (!dimensions) return null;
+    return { ...this.getNodePositionAbsolute(node), ...dimensions };
+  }
+
+  getNodesBounds(nodes?: (FlowNode | { id: string } | string)[]): Rect {
+    const list = nodes
+      ? nodes.map((n) => (typeof n === "string" ? this.#nodeLookup.get(n) : this.#nodeLookup.get(n.id)))
+      : this.#nodes;
+    const rects: Rect[] = [];
+    for (const node of list) {
+      if (!node || this.isNodeHidden(node)) continue;
+      const rect = this.getNodeRect(node);
+      if (rect) rects.push(rect);
+    }
+    return getBoundsOfRects(rects);
+  }
+
+  getIntersectingNodes(target: FlowNode | { id: string } | Rect, partially = true, nodes?: FlowNode[]): FlowNode[] {
+    const isRect = "width" in target && "x" in target;
+    const rect = isRect ? (target as Rect) : this.getNodeRect((target as { id: string }).id);
+    if (!rect) return [];
+    const targetId = isRect ? null : (target as { id: string }).id;
+    return (nodes ?? this.#nodes).filter((node) => {
+      if (node.id === targetId || this.isNodeHidden(node)) return false;
+      const nodeRect = this.getNodeRect(node);
+      if (!nodeRect) return false;
+      const overlap = getOverlappingArea(rect, nodeRect);
+      if (partially) return overlap > 0;
+      return overlap >= nodeRect.width * nodeRect.height;
+    });
+  }
+
+  isNodeIntersecting(target: FlowNode | { id: string } | Rect, area: Rect, partially = true): boolean {
+    const rect = "width" in target && "x" in target ? (target as Rect) : this.getNodeRect((target as { id: string }).id);
+    if (!rect) return false;
+    const overlap = getOverlappingArea(rect, area);
+    return partially ? overlap > 0 : overlap >= rect.width * rect.height;
+  }
+
+  /** Handle specs declared for a node (node > node type > style default). */
+  getHandleSpecs(node: FlowNode): HandleSpec[] {
+    if (node.handles) return node.handles;
+    const type =
+      this.nodeOptions[node.type ?? "default"] ?? this.nodeOptions.default;
+    if (type && typeof type !== "function" && type.handles) {
+      return typeof type.handles === "function"
+        ? type.handles(node)
+        : type.handles;
+    }
+    return this.getHandles?.(node, this as any) ?? [];
+  }
+
+  /** Handles with absolute geometry; empty until the node is measured. */
+  getNodeHandles(nodeOrId: FlowNode | string): ResolvedHandle[] {
+    const node = typeof nodeOrId === "string" ? this.#nodeLookup.get(nodeOrId) : nodeOrId;
+    if (!node) return [];
+    const rect = this.getNodeRect(node);
+    if (!rect) return [];
+    return this.getHandleSpecs(node).map((spec) => this.resolveHandle(node, rect, spec));
+  }
+
+  getHandle(nodeId: string, type: HandleType, handleId?: string | null): ResolvedHandle | null {
+    const handles = this.getNodeHandles(nodeId);
+    const strict = this.#options.connectionMode === "strict";
+    const pool = strict ? handles.filter((h) => h.type === type) : handles;
+    if (handleId) {
+      return (
+        pool.find((h) => h.id === handleId && h.type === type) ??
+        pool.find((h) => h.id === handleId) ??
+        null
+      );
+    }
+    return pool.find((h) => h.type === type) ?? pool[0] ?? null;
+  }
+
+  /** Point where an edge attaches to a handle (React Flow's getHandlePosition). */
+  getHandleEndpoint(handle: ResolvedHandle): XYPosition {
+    switch (handle.position) {
+      case "top":
+        return { x: handle.x, y: handle.y - handle.height / 2 };
+      case "right":
+        return { x: handle.x + handle.width / 2, y: handle.y };
+      case "bottom":
+        return { x: handle.x, y: handle.y + handle.height / 2 };
+      case "left":
+        return { x: handle.x - handle.width / 2, y: handle.y };
+    }
+  }
+
+  /** Source/target anchors of an edge, or null while either node is unmeasured. */
+  getEdgeEndpoints(edge: FlowEdge): EdgeEndpoints | null {
+    const sourceNode = this.#nodeLookup.get(edge.source);
+    const targetNode = this.#nodeLookup.get(edge.target);
+    if (!sourceNode || !targetNode || this.isNodeHidden(sourceNode) || this.isNodeHidden(targetNode)) return null;
+    const sourceRect = this.getNodeRect(sourceNode);
+    const targetRect = this.getNodeRect(targetNode);
+    if (!sourceRect || !targetRect) return null;
+    const sourceHandle = this.getHandle(edge.source, "source", edge.sourceHandle);
+    const targetHandle = this.getHandle(edge.target, "target", edge.targetHandle);
+    const sourcePosition = sourceHandle?.position ?? sourceNode.sourcePosition ?? "bottom";
+    const targetPosition = targetHandle?.position ?? targetNode.targetPosition ?? "top";
+    const source = sourceHandle ? this.getHandleEndpoint(sourceHandle) : rectSidePoint(sourceRect, sourcePosition);
+    const target = targetHandle ? this.getHandleEndpoint(targetHandle) : rectSidePoint(targetRect, targetPosition);
+    return {
+      sourceX: source.x,
+      sourceY: source.y,
+      targetX: target.x,
+      targetY: target.y,
+      sourcePosition,
+      targetPosition,
+      sourceHandle,
+      targetHandle,
+    };
+  }
+
+  getEdgePath(edge: FlowEdge, endpoints: EdgeEndpoints): EdgePathResult {
+    const type = edge.type ?? "default";
+    const params = {
+      waypoints: edge.waypoints,
+      sourceX: endpoints.sourceX,
+      sourceY: endpoints.sourceY,
+      sourcePosition: endpoints.sourcePosition,
+      targetX: endpoints.targetX,
+      targetY: endpoints.targetY,
+      targetPosition: endpoints.targetPosition,
+    };
+    if (this.edgePath)
+      return this.edgePath({ edge, params, type }, this as any);
+    return getEdgePathByType(type, params, edge.pathOptions);
+  }
+
+  getConnectionLinePath(connection: ConnectionState): EdgePathResult {
+    const params = {
+      sourceX: connection.from.x,
+      sourceY: connection.from.y,
+      sourcePosition: connection.fromPosition,
+      targetX: connection.to.x,
+      targetY: connection.to.y,
+      targetPosition: connection.toPosition,
+    };
+    const type = this.#options.connectionLineType;
+    if (this.edgePath)
+      return this.edgePath({ edge: null, params, type }, this as any);
+    return getEdgePathByType(type, params);
+  }
+
+  /** Nodes to render, bottom to top. */
+  getVisibleNodes(): FlowNode[] {
+    const nodes = this.#nodes.filter((n) => !this.isNodeHidden(n));
+    return nodes
+      .map((node, index) => ({ node, index, z: this.getNodeZIndex(node) }))
+      .sort((a, b) => a.z - b.z || a.index - b.index)
+      .map((entry) => entry.node);
+  }
+
+  getNodeZIndex(node: FlowNode): number {
+    if (!this.#nodeZIndices) {
+      const resolved = new Map<string, number>(), visiting = new Set<string>();
+      const resolve = (item: FlowNode): number => {
+        const cached = resolved.get(item.id);
+        if (cached != null) return cached;
+        const base = (item.zIndex ?? 0) + ((item.selected || item.dragging) && this.#options.elevateNodesOnSelect ? 1000 : 0);
+        if (visiting.has(item.id)) return base; // Malformed parent cycles must not recurse forever.
+        visiting.add(item.id);
+        const parent = item.parentId ? this.#nodeLookup.get(item.parentId) : undefined;
+        const z = parent ? Math.max(base, resolve(parent) + 1) : base;
+        visiting.delete(item.id);
+        resolved.set(item.id, z);
+        return z;
+      };
+      for (const item of this.#nodes) resolve(item);
+      this.#nodeZIndices = resolved;
+    }
+    return this.#nodeZIndices.get(node.id) ?? 0;
+  }
+
+  /** Edges to render, bottom to top. */
+  getVisibleEdges(): FlowEdge[] {
+    const edges = this.#edges.filter((e) => {
+      if (e.hidden) return false;
+      const s = this.#nodeLookup.get(e.source);
+      const t = this.#nodeLookup.get(e.target);
+      return !!s && !!t && !this.isNodeHidden(s) && !this.isNodeHidden(t);
+    });
+    return edges
+      .map((edge, index) => ({
+        edge,
+        index,
+        z: edgeZIndex(this, edge),
+      }))
+      .sort((a, b) => a.z - b.z || a.index - b.index)
+      .map((entry) => entry.edge);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Layout
+  // ---------------------------------------------------------------------------
+
+  /** Run a layout algorithm and apply the positions it returns. */
+  async layout(algorithm?: LayoutAlgorithm, options?: LayoutOptions & { fitView?: boolean }): Promise<void> {
+    const config = this.#layoutConfig;
+    const resolved = algorithm ?? config?.algorithm;
+    if (!resolved) return;
+    const mergedOptions = { ...(config?.options ?? {}), ...(options ?? {}) };
+    const { fitView: shouldFit, ...layoutOptions } = mergedOptions as LayoutOptions & { fitView?: boolean };
+    let positions: Record<string, XYPosition>;
+    let dimensions: Record<string, Dimensions>;
+    try {
+      // Collapsed descendants retain their positions until expansion instead of taking layout space.
+      ({ positions, dimensions } = await computeHierarchicalLayout(this.#nodes.filter(node => !this.isNodeHidden(node)), this.#edges, resolved, layoutOptions));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (this.#callbacks.error) this.#callbacks.error("layout", `${resolved.name}: ${message}`);
+      else throw error;
+      return;
+    }
+    if (this.#disposed) return;
+    const changes: NodeChange<FlowNode>[] = [];
+    for (const [id, position] of Object.entries(positions)) {
+      const node = this.#nodeLookup.get(id);
+      if (!node) continue;
+      if (node.position.x === position.x && node.position.y === position.y) continue;
+      changes.push({ type: "position", id, position });
+    }
+    // Parents grown to fit their children take a fixed size, like a user resize.
+    for (const [id, size] of Object.entries(dimensions)) {
+      if (!this.#nodeLookup.has(id)) continue;
+      changes.push({ type: "dimensions", id, dimensions: size, setAttributes: true });
+    }
+    if (changes.length) { this.#recordHistory("layout"); this.#applyNodeChanges(changes); }
+    const fit = shouldFit ?? config?.fitView ?? true;
+    if (fit) await this.fitView(this.#fitViewOptions);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Interaction state (read by builders)
+  // ---------------------------------------------------------------------------
+
+  getNeighbours(id: string): { nodes: FlowNode[]; edges: FlowEdge[] } {
+    const ids = new Set<string>();
+    for (const edge of this.#edges) {
+      if (edge.source === id) ids.add(edge.target);
+      if (edge.target === id) ids.add(edge.source);
+    }
+    return { nodes: this.#nodes.filter(node => ids.has(node.id)), edges: this.#edges.filter(edge => edge.source === id || edge.target === id) };
+  }
+
+  isNodeNeighbour(id: string): boolean {
+    return this.#edges.some(edge =>
+      (edge.source === id && this.#isNeighbourAnchor(edge.target)) ||
+      (edge.target === id && this.#isNeighbourAnchor(edge.source)));
+  }
+
+  isEdgeNeighbour(edge: FlowEdge): boolean {
+    return this.#isNeighbourAnchor(edge.source) || this.#isNeighbourAnchor(edge.target);
+  }
+
+  #isNeighbourAnchor(id: string): boolean {
+    return this.#hoveredNodeId === id || !!this.#nodeLookup.get(id)?.selected;
+  }
+
+  #neighbourIds(): Set<string> {
+    const ids = new Set<string>();
+    for (const edge of this.#edges) {
+      if (this.#isNeighbourAnchor(edge.source)) ids.add(edge.target);
+      if (this.#isNeighbourAnchor(edge.target)) ids.add(edge.source);
+    }
+    return ids;
+  }
+
+  #notifyChangedNeighbours(previous: Set<string>): void {
+    if (this.highlightConnected) {
+      this.#notifyAllNodes();
+      this.#notifyAllEdges();
+      return;
+    }
+    const next = this.#neighbourIds();
+    for (const id of new Set([...previous, ...next])) {
+      if (previous.has(id) !== next.has(id))
+        this.#nodeSignals.get(id)?.notifyListeners();
+    }
+  }
+
+  #notifyNeighbours(ids: (string | null)[]): void {
+    if (this.highlightConnected) {
+      this.#notifyAllNodes();
+      this.#notifyAllEdges();
+      return;
+    }
+    const affected = new Set(ids.filter((id): id is string => id != null));
+    const nodes = new Set(affected);
+    for (const edge of this.#edges) {
+      if (!affected.has(edge.source) && !affected.has(edge.target)) continue;
+      nodes.add(edge.source);
+      nodes.add(edge.target);
+      this.#edgeSignals.get(edge.id)?.notifyListeners();
+    }
+    for (const id of nodes) this.#nodeSignals.get(id)?.notifyListeners();
+  }
+
+  get hoveredNodeId(): string | null {
+    return this.#hoveredNodeId;
+  }
+
+  get hoveredEdgeId(): string | null {
+    return this.#hoveredEdgeId;
+  }
+
+  get connection(): ConnectionState | null {
+    return this.#connection;
+  }
+
+  /** Selection rectangle in pane pixels while a box selection is in progress. */
+  get selectionBox(): Rect | null {
+    if (!this.#selectionBox) return null;
+    return rectFromPoints(this.#selectionBox.start, this.#selectionBox.current);
+  }
+
+  get isDraggingNodes(): boolean {
+    return !!this.#drag?.started && this.#drag.items.size > 0;
+  }
+
+  get resizingNodeId(): string | null {
+    return this.#resize?.nodeId ?? null;
+  }
+
+  isEdgeReconnectable(edge: FlowEdge): boolean {
+    return this.can("reconnect", { kind: "edge", id: edge.id }, this.nodesConnectable && this.#options.edgesReconnectable && edge.reconnectable !== false);
+  }
+
+  /** Which ends of an edge may be dragged to a new handle. */
+  getReconnectableEnds(edge: FlowEdge): HandleType[] {
+    if (!this.isEdgeReconnectable(edge)) return [];
+    if (edge.reconnectable === "source" || edge.reconnectable === "target") return [edge.reconnectable];
+    return ["source", "target"];
+  }
+
+  isNodeResizable(node: FlowNode): boolean {
+    return this.can("resize", { kind: "node", id: node.id }, (!this.#viewer || !!this.#interaction.edit.resize) && this.#interactive && (node.resizable ?? this.#options.nodesResizable));
+  }
+
+  getNodeResizeOptions(node: FlowNode): Required<Pick<NodeResizeOptions, "minWidth" | "minHeight">> & NodeResizeOptions {
+    return { minWidth: 10, minHeight: 10, ...this.#options.nodeResizeOptions, ...(node.resizeOptions ?? {}) };
+  }
+
+  /** React Flow shows a toolbar for the single selected node unless `isVisible` says otherwise. */
+  isNodeToolbarVisible(node: FlowNode): boolean {
+    if (this.isNodeHidden(node)) return false;
+    if (typeof node.toolbar?.isVisible === "boolean") return node.toolbar.isVisible;
+    return !!node.selected && this.getSelectedNodes().length === 1;
+  }
+
+  get isInteractive(): boolean {
+    return this.#interactive;
+  }
+
+  setInteractive(interactive: boolean): void {
+    if (this.#interactive === interactive) return;
+    this.#interactive = interactive;
+    this.#notifyAllNodes(); this.#notifyAllEdges();
+    this.notifyListeners();
+  }
+
+  get nodesDraggable(): boolean {
+    return this.#interactive && this.#options.nodesDraggable;
+  }
+
+  get nodesConnectable(): boolean {
+    return this.#interactive && this.#options.nodesConnectable;
+  }
+
+  get elementsSelectable(): boolean {
+    return this.#interactive && this.#options.elementsSelectable;
+  }
+
+  isNodeDraggable(node: FlowNode): boolean {
+    if (this.#editingId === node.id) return false;
+    return this.can("drag", { kind: "node", id: node.id }, (!this.#viewer || this.#interaction.drag.enabled) && this.#interactive && (node.draggable ?? this.nodesDraggable));
+  }
+
+  isNodeSelectable(node: FlowNode): boolean {
+    if (this.#editingId === node.id) return false;
+    return this.can("select", { kind: "node", id: node.id }, this.elementsSelectable && node.selectable !== false);
+  }
+
+  isNodeConnectable(node: FlowNode): boolean {
+    return this.can("connect", { kind: "node", id: node.id }, this.nodesConnectable && node.connectable !== false);
+  }
+
+  isEdgeSelectable(edge: FlowEdge): boolean {
+    return this.can("select", { kind: "edge", id: edge.id }, this.elementsSelectable && edge.selectable !== false);
+  }
+
+  acceptsPointer(event: MouseEvent): boolean {
+    return this.#interaction.touch || !(event as MouseEvent & { fromTouch?: boolean }).fromTouch;
+  }
+
+  /** Whether the viewport pans on a plain drag right now (keys and options considered). */
+  get panEnabled(): boolean {
+    const o = this.#options;
+    if (!this.can("pan", { kind: "pane" })) return false;
+    if (this.#keyHeld(o.panActivationKeyCode)) return true;
+    // A disabled box gesture must not reserve Shift or a select-mode pane drag.
+    if (!this.#interaction.select.box) return true;
+    const selectionIntent = o.selectionOnDrag || this.#keyHeld(o.selectionKeyCode);
+    return o.panOnDrag && !selectionIntent;
+  }
+
+  get zoomEnabled(): boolean {
+    return this.can("zoom", { kind: "pane" }) && (this.#options.zoomOnScroll || this.#options.zoomOnPinch);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Gesture handlers (wired by the headless widgets)
+  // ---------------------------------------------------------------------------
+
+  handlePanePointerDown(event: MouseEvent): void {
+    this.stopEditing({ commit: true });
+    this.#beginPress(event);
+  }
+
+  /** Called on every document mousedown so a wheel zoom never swallows the next click. */
+  resetPointerMovement(): void {
+    this.#pointerMoved = false;
+  }
+
+  /** Tracks whether the pointer is over the pane; never notifies. */
+  setPointerInside(inside: boolean): void {
+    this.#pointerInside = inside;
+  }
+
+  get isPointerInside(): boolean {
+    return this.#pointerInside;
+  }
+
+  /** Whether the zoom activation key is held (turns pan-on-scroll into zoom). */
+  get zoomActivationHeld(): boolean {
+    return this.#keyHeld(this.#options.zoomActivationKeyCode);
+  }
+
+  handlePaneClick(event: MouseEvent): void {
+    this.closeContextMenu();
+    if (!this.acceptsPointer(event)) return;
+    if (this.#consumeMovement()) return;
+    const double = this.#registerClick("pane", event);
+    if (!this.#isMultiSelect(event) && this.can("select", { kind: "selection" }, this.elementsSelectable)) this.clearSelection();
+    if (this.#connection?.mode === "click") this.cancelConnection();
+    this.#callbacks.paneClick?.(event);
+    if (double) {
+      this.#callbacks.paneDoubleClick?.(event);
+      if (this.#options.zoomOnDoubleClick && this.can("zoom", { kind: "pane" })) {
+        void this.#scaleAt(this.#panePoint(event), event.shiftKey ? 0.5 : 2, 250);
+      }
+    }
+  }
+
+  /** Returns true when a box selection started (the caller should stop propagation). */
+  handleSelectionDragStart(event: MouseEvent): boolean {
+    if (event.button === 0) this.closeContextMenu();
+    if (!this.acceptsPointer(event)) return false;
+    if (event.button !== 0) return false;
+    this.#beginPress(event);
+    const o = this.#options;
+    const intent = o.selectionOnDrag || this.#keyHeld(o.selectionKeyCode) || this.#modifierHeld(event, o.selectionKeyCode);
+    if (!this.#interaction.select.box || !intent || !this.can("select", { kind: "selection" }, this.elementsSelectable) || this.#keyHeld(o.panActivationKeyCode)) return false;
+    const point = this.#panePoint(event);
+    this.#selectionBox = { start: point, current: point };
+    if (!this.#isMultiSelect(event) && this.can("select", { kind: "selection" }, this.elementsSelectable)) this.clearSelection();
+    this.notifyListeners();
+    return true;
+  }
+
+  handleSelectionDragMove(event: MouseEvent): void {
+    const box = this.#selectionBox;
+    if (!box) return;
+    this.#pointerMoved = true;
+    box.current = this.#panePoint(event);
+    const paneRect = rectFromPoints(box.start, box.current);
+    const v = this.viewport;
+    const flowRect: Rect = {
+      x: (paneRect.x - v.x) / v.zoom,
+      y: (paneRect.y - v.y) / v.zoom,
+      width: paneRect.width / v.zoom,
+      height: paneRect.height / v.zoom,
+    };
+    const nodeIds = new Set<string>();
+    for (const node of this.#nodes) {
+      if (this.isNodeHidden(node) || !this.isNodeSelectable(node)) continue;
+      const rect = this.getNodeRect(node);
+      if (!rect) continue;
+      const inside = this.#options.selectionMode === "full" ? rectContains(flowRect, rect) : getOverlappingArea(flowRect, rect) > 0;
+      if (inside) nodeIds.add(node.id);
+    }
+    const edgeIds = new Set<string>();
+    for (const edge of this.#edges) {
+      if (nodeIds.has(edge.source) && nodeIds.has(edge.target) && this.isEdgeSelectable(edge)) edgeIds.add(edge.id);
+    }
+    this.#setSelection(nodeIds, edgeIds, { silent: true });
+    this.notifyListeners();
+  }
+
+  #finishDelegatedNodePress(): void {
+    const drag = this.#drag, node = drag && this.getNode(drag.nodeId);
+    if (drag && drag.items.size === 0 && (!node || !this.isNodeDraggable(node))) this.#drag = null;
+  }
+
+  handleSelectionDragEnd(_event: MouseEvent): void {
+    this.#finishDelegatedNodePress();
+    if (!this.#selectionBox) return;
+    this.#selectionBox = null;
+    this.notifyListeners();
+  }
+
+  handleViewportInteractionStart(): void {
+    this.closeContextMenu();
+    this.#callbacks.viewportChange?.({ phase: "start", viewport: this.viewport });
+  }
+
+  handleViewportInteractionUpdate(details: { focalPointDelta: XYPosition; scale: number }): void {
+    if (details.focalPointDelta.x !== 0 || details.focalPointDelta.y !== 0 || details.scale !== 1) {
+      this.#pointerMoved = true;
+    }
+  }
+
+  handleViewportInteractionEnd(): void {
+    this.#finishDelegatedNodePress();
+    this.#callbacks.viewportChange?.({ phase: "end", viewport: this.viewport });
+  }
+
+  hoverNode(id: string, _event: MouseEvent): void {
+    this.#nodeEnterEvent = _event;
+    if (this.#hoveredNodeId === id) return;
+    const previous = this.#hoveredNodeId;
+    this.#hoveredNodeId = id;
+    this.#notifyNeighbours([previous, id]);
+  }
+
+  unhoverNode(id: string, __event: MouseEvent): void {
+    // Hit testing enters the new part before leaving the old part in the same move.
+    if (this.#hoveredNodeId !== id || this.#nodeEnterEvent === __event) return;
+    this.#hoveredNodeId = null;
+    this.#notifyNeighbours([id]);
+  }
+
+  hoverEdge(id: string, _event: MouseEvent): void {
+    this.#edgeEnterEvent = _event;
+    if (this.#hoveredEdgeId === id) return;
+    const previous = this.#hoveredEdgeId;
+    this.#hoveredEdgeId = id;
+    if (previous) this.#edgeSignals.get(previous)?.notifyListeners();
+    this.#edgeSignals.get(id)?.notifyListeners();
+  }
+
+  unhoverEdge(id: string, __event: MouseEvent): void {
+    if (this.#hoveredEdgeId !== id || this.#edgeEnterEvent === __event) return;
+    this.#hoveredEdgeId = null;
+    this.#edgeSignals.get(id)?.notifyListeners();
+  }
+
+  handleNodeDragStart(id: string, event: MouseEvent): void {
+    if (this.#editingId && this.#editingId !== id) this.stopEditing({ commit: true });
+    if (event.button === 0) this.closeContextMenu();
+    if (!this.acceptsPointer(event)) return ;
+    this.#beginPress(event);
+    if (event.button !== 0) return;
+    if (!this.#nodeLookup.has(id)) return;
+    const pane = this.#panePoint(event);
+    this.#drag = {
+      nodeId: id,
+      startPane: pane,
+      startFlow: this.paneToFlowPosition(pane),
+      lastPane: pane,
+      lastEvent: event,
+      started: false,
+      items: new Map(),
+    };
+  }
+
+  handleNodeDragMove(id: string, event: MouseEvent): void {
+    const drag = this.#drag;
+    if (!drag || drag.nodeId !== id) return;
+    const pane = this.#panePoint(event);
+    drag.lastPane = pane;
+    drag.lastEvent = event;
+    this.#lastPanePoint = pane;
+    if (!drag.started) {
+      if (distance(pane, drag.startPane) <= this.#options.nodeDragThreshold) return;
+      this.#startNodeDrag(drag, event);
+    }
+    // A press that travelled past the threshold is a drag attempt, never a click,
+    // even when the node turned out not to be draggable (viewer preset, locked nodes).
+    this.#pointerMoved = true;
+    if (drag.items.size === 0) return;
+    this.#updateDragPositions(event);
+    if (this.#options.autoPanOnNodeDrag) this.#ensureAutoPan();
+  }
+
+  handleNodeDragEnd(id: string, event: MouseEvent): void {
+    if ((event as MouseEvent & { cancelled?: boolean }).cancelled) { this.cancelDrag(); return; }
+    const drag = this.#drag;
+    if (!drag || drag.nodeId !== id) return;
+    this.#stopAutoPan();
+    if (!drag.started || drag.items.size === 0) { this.#drag = null; this.#setDropTarget(null); return; }
+    this.run(() => {
+      for (const id of drag.items.keys()) {
+        const node = this.getNode(id)!;
+        if (this.#interaction.drag.dropIntoGroup && node.extent !== "parent") this.setParent(id, this.#findDropTarget(node)?.id ?? null);
+      }
+      if (this.#interaction.drag.overlap === "push") this.resolveOverlaps([...drag.items.keys()]);
+    }, { history: "merge" });
+    if (this.#interaction.drag.overlap === "reject" && [...drag.items.keys()].some(id => this.#rejectsOverlap(id))) {
+      this.cancelDrag(); return;
+    }
+    this.#drag = null; this.#setDropTarget(null); this.#setGuides([]);
+    const changes: NodeChange<FlowNode>[] = [];
+    for (const itemId of drag.items.keys()) {
+      const node = this.#nodeLookup.get(itemId);
+      if (node) changes.push({ type: "position", id: itemId, position: node.position, dragging: false });
+    }
+    this.#applyNodeChanges(changes);
+    const node = this.#nodeLookup.get(id);
+    if (node) {
+      this.#callbacks.dragEnd?.(event, node, this.#dragItemNodes(drag));
+    }
+  }
+
+  handleNodeClick(id: string, event: MouseEvent): void {
+    if (!this.acceptsPointer(event)) return;
+    if (this.#consumeMovement()) return;
+    const node = this.#nodeLookup.get(id);
+    if (!node) return;
+    const double = this.#registerClick(`node:${id}`, event);
+    if (this.isNodeSelectable(node)) {
+      const multi = this.#isMultiSelect(event);
+      if (!node.selected) this.#selectNode(id, multi);
+      else if (multi) this.#deselectNode(id);
+    }
+    if (this.#connection?.mode === "click") this.cancelConnection();
+    const current = this.#nodeLookup.get(id) ?? node;
+    this.#callbacks.nodeClick?.(event, current);
+    if (double) { this.#callbacks.nodeDoubleClick?.(event, current); this.startEditing(id); }
+  }
+
+  handleEdgePointerDown(_id: string, event: MouseEvent): void {
+    this.stopEditing({ commit: true });
+    this.#beginPress(event);
+  }
+
+  handleEdgeClick(id: string, event: MouseEvent): void {
+    if (!this.acceptsPointer(event)) return;
+    if (this.#consumeMovement()) return;
+    const edge = this.#edgeLookup.get(id);
+    if (!edge) return;
+    const double = this.#registerClick(`edge:${id}`, event);
+    if (this.isEdgeSelectable(edge)) {
+      const multi = this.#isMultiSelect(event);
+      if (!edge.selected) {
+        const nodeIds = new Set(multi ? this.getSelectedNodes().map((n) => n.id) : []);
+        const edgeIds = new Set(multi ? this.getSelectedEdges().map((e) => e.id) : []);
+        edgeIds.add(id);
+        this.#setSelection(nodeIds, edgeIds);
+      } else if (multi) {
+        const edgeIds = new Set(this.getSelectedEdges().map((e) => e.id));
+        edgeIds.delete(id);
+        this.#setSelection(new Set(this.getSelectedNodes().map((n) => n.id)), edgeIds);
+      }
+    }
+    const current = this.#edgeLookup.get(id) ?? edge;
+    this.#callbacks.edgeClick?.(event, current);
+    if (double) this.#callbacks.edgeDoubleClick?.(event, current);
+  }
+
+  /** Returns true when a connection drag started (the caller should stop propagation). */
+  handleConnectionStart(nodeId: string, handleId: string | null, type: HandleType, event: MouseEvent): boolean {
+    if (event.button === 0) this.stopEditing({ commit: true });
+    if (event.button === 0) this.closeContextMenu();
+    if (!this.acceptsPointer(event)) return false;
+    this.#beginPress(event);
+    if (event.button !== 0) return false;
+    // A click-to-connect gesture is pending: let the upcoming click finish it.
+    if (this.#connection?.mode === "click") return true;
+    const handle = this.#findHandle(nodeId, handleId, type);
+    if (!handle || !this.#isHandleConnectable(handle)) return false;
+    const node = this.#nodeLookup.get(nodeId)!;
+    const from = this.getHandleEndpoint(handle);
+    this.history.mark("connect");
+    this.#connection = {
+      inProgress: true,
+      from,
+      fromNode: node,
+      fromHandle: handle,
+      fromPosition: handle.position,
+      to: this.paneToFlowPosition(this.#panePoint(event)),
+      toNode: null,
+      toHandle: null,
+      toPosition: oppositePosition(handle.position),
+      isValid: null,
+      mode: "drag",
+      reconnectingEdge: null,
+      reconnectingEnd: null,
+    };
+    this.#callbacks.connectStart?.(this.#connection);
+    this.#notifyConnection([nodeId]);
+    return true;
+  }
+
+  handleConnectionMove(event: MouseEvent): void {
+    const connection = this.#connection;
+    if (!connection || connection.mode !== "drag") return;
+    this.#pointerMoved = true;
+    const pane = this.#panePoint(event);
+    this.#lastPanePoint = pane;
+    const previousTarget = connection.toNode?.id;
+    this.#updateConnectionTarget(this.paneToFlowPosition(pane));
+    if (this.#options.autoPanOnConnect) this.#ensureAutoPan();
+    this.#notifyConnection(previousTarget === connection.toNode?.id ? [] : [previousTarget, connection.toNode?.id]);
+  }
+
+  handleConnectionEnd(event: MouseEvent): void {
+    if ((event as MouseEvent & { cancelled?: boolean }).cancelled) { this.cancelConnection(); return; }
+    const connection = this.#connection;
+    if (!connection || connection.mode !== "drag") return;
+    this.#finishConnection(connection, event);
+  }
+
+  handleHandleClick(nodeId: string, handleId: string | null, type: HandleType, event: MouseEvent): void {
+    if (!this.acceptsPointer(event)) return;
+    if (this.#consumeMovement()) return;
+    if (!this.#options.connectOnClick) return;
+    const handle = this.#findHandle(nodeId, handleId, type);
+    if (!handle) return;
+    const connection = this.#connection;
+    if (!connection || connection.mode !== "click") {
+      if (!this.#isHandleConnectable(handle)) return;
+      const from = this.getHandleEndpoint(handle);
+      this.history.mark("connect");
+    this.#connection = {
+        inProgress: true,
+        from,
+        fromNode: this.#nodeLookup.get(nodeId)!,
+        fromHandle: handle,
+        fromPosition: handle.position,
+        to: from,
+        toNode: null,
+        toHandle: null,
+        toPosition: oppositePosition(handle.position),
+        isValid: null,
+        mode: "click",
+        reconnectingEdge: null,
+        reconnectingEnd: null,
+      };
+      this.#callbacks.connectStart?.(this.#connection);
+      this.#notifyConnection([nodeId]);
+      return;
+    }
+    const sameHandle =
+      connection.fromHandle.nodeId === handle.nodeId &&
+      connection.fromHandle.id === handle.id &&
+      connection.fromHandle.type === handle.type;
+    if (sameHandle) {
+      this.cancelConnection();
+      return;
+    }
+    const valid = this.#isValidConnectionTarget(connection.fromHandle, handle);
+    connection.to = this.getHandleEndpoint(handle);
+    connection.toNode = this.#nodeLookup.get(handle.nodeId) ?? null;
+    connection.toHandle = handle;
+    connection.toPosition = handle.position;
+    connection.isValid = valid;
+    this.#finishConnection(connection, event);
+  }
+
+  /** Drag an existing edge's `end` to another handle. Returns true when the gesture started. */
+  handleReconnectStart(edgeId: string, end: HandleType, event: MouseEvent): boolean {
+    if (event.button === 0) this.stopEditing({ commit: true });
+    if (event.button === 0) this.closeContextMenu();
+    if (!this.acceptsPointer(event)) return false;
+    this.#beginPress(event);
+    if (event.button !== 0) return false;
+    const edge = this.#edgeLookup.get(edgeId);
+    if (!edge || !this.getReconnectableEnds(edge).includes(end)) return false;
+    // the fixed end stays attached; the connection starts from its handle
+    const fixedType: HandleType = end === "source" ? "target" : "source";
+    const fixedNodeId = end === "source" ? edge.target : edge.source;
+    const fixedHandleId = end === "source" ? edge.targetHandle : edge.sourceHandle;
+    const fromHandle = this.getHandle(fixedNodeId, fixedType, fixedHandleId);
+    const fromNode = this.#nodeLookup.get(fixedNodeId);
+    if (!fromHandle || !fromNode) return false;
+    const from = this.getHandleEndpoint(fromHandle);
+    this.history.mark("connect");
+    this.#connection = {
+      inProgress: true,
+      from,
+      fromNode,
+      fromHandle,
+      fromPosition: fromHandle.position,
+      to: this.paneToFlowPosition(this.#panePoint(event)),
+      toNode: null,
+      toHandle: null,
+      toPosition: oppositePosition(fromHandle.position),
+      isValid: null,
+      mode: "drag",
+      reconnectingEdge: edge,
+      reconnectingEnd: end,
+    };
+    this.#callbacks.connectStart?.(this.#connection);
+    this.#edgeSignals.get(edgeId)?.notifyListeners();
+    this.#notifyConnection([fixedNodeId]);
+    return true;
+  }
+
+  /** Replace an edge's endpoints with a new connection (React Flow's `reconnectEdge`). */
+  reconnectEdge(oldEdge: FlowEdge, connection: Connection, options: { shouldReplaceId?: boolean } = {}): void {
+    const next = reconnectEdgeHelper(oldEdge, connection, this.#edges, { shouldReplaceId: options.shouldReplaceId ?? true });
+    if (next === this.#edges) return;
+    const item = next[next.length - 1];
+    this.#applyEdgeChanges([{ type: "replace", id: oldEdge.id, item }]);
+  }
+
+  handleResizeStart(nodeId: string, position: ResizeControlPosition, event: MouseEvent): boolean {
+    if (event.button === 0) this.stopEditing({ commit: true });
+    if (event.button === 0) this.closeContextMenu();
+    if (!this.acceptsPointer(event)) return false;
+    this.#beginPress(event);
+    if (event.button !== 0) return false;
+    const node = this.#nodeLookup.get(nodeId);
+    if (!node || !this.isNodeResizable(node)) return false;
+    const dimensions = this.getNodeDimensions(node);
+    if (!dimensions) return false;
+    const startRect = { x: node.position.x, y: node.position.y, ...dimensions };
+    this.history.mark("resize");
+    this.#resize = {
+      nodeId,
+      position,
+      startFlow: this.paneToFlowPosition(this.#panePoint(event)),
+      startRect,
+      lastParams: { ...startRect, direction: [0, 0] },
+    };
+    this.#applyNodeChanges([
+      { type: "dimensions", id: nodeId, dimensions, resizing: true, setAttributes: true },
+    ]);
+    this.#callbacks.resizeStart?.(event, this.#nodeLookup.get(nodeId)!);
+    return true;
+  }
+
+  handleResizeMove(event: MouseEvent): void {
+    const resize = this.#resize;
+    if (!resize) return;
+    const node = this.#nodeLookup.get(resize.nodeId);
+    if (!node) return;
+    this.#pointerMoved = true;
+    const pointer = this.paneToFlowPosition(this.#panePoint(event));
+    const dx = pointer.x - resize.startFlow.x;
+    const dy = pointer.y - resize.startFlow.y;
+    const { position, startRect } = resize;
+    const o = this.getNodeResizeOptions(node);
+    const affectsLeft = position.endsWith("left");
+    const affectsRight = position.endsWith("right");
+    const affectsTop = position.startsWith("top");
+    const affectsBottom = position.startsWith("bottom");
+    let width = startRect.width + (affectsRight ? dx : affectsLeft ? -dx : 0);
+    let height = startRect.height + (affectsBottom ? dy : affectsTop ? -dy : 0);
+    width = clamp(width, o.minWidth, o.maxWidth ?? Infinity);
+    height = clamp(height, o.minHeight, o.maxHeight ?? Infinity);
+    if (o.keepAspectRatio && startRect.height > 0) {
+      const ratio = startRect.width / startRect.height;
+      const horizontal = affectsLeft || affectsRight;
+      const vertical = affectsTop || affectsBottom;
+      if (horizontal && !vertical) height = width / ratio;
+      else if (vertical && !horizontal) width = height * ratio;
+      else if (Math.abs(dx) >= Math.abs(dy)) height = width / ratio;
+      else width = height * ratio;
+    }
+    if (this.#options.snapToGrid) {
+      const [gx, gy] = this.#options.snapGrid;
+      width = Math.max(o.minWidth, Math.round(width / gx) * gx);
+      height = Math.max(o.minHeight, Math.round(height / gy) * gy);
+    }
+    let x = affectsLeft ? startRect.x + (startRect.width - width) : startRect.x;
+    let y = affectsTop ? startRect.y + (startRect.height - height) : startRect.y;
+    // Keep the resized box inside the node's extent (nodeExtent, node.extent or its parent).
+    const extent = this.#nodeExtentOf(node);
+    if (extent) {
+      const right = Math.min(x + width, extent[1][0]);
+      const bottom = Math.min(y + height, extent[1][1]);
+      x = Math.max(x, extent[0][0]);
+      y = Math.max(y, extent[0][1]);
+      width = Math.max(o.minWidth, right - x);
+      height = Math.max(o.minHeight, bottom - y);
+    }
+    if (this.#interaction.drag.snap.guides) {
+      const absolute = this.getNodePositionAbsolute(node), origin = { x: absolute.x - node.position.x, y: absolute.y - node.position.y };
+      const snap = snapBounds({ x: x + origin.x, y: y + origin.y, width, height }, this.#guideBounds(node.id), this.#interaction.drag.snap.radius,
+        { x: affectsLeft ? [0, 0.5] : affectsRight ? [0.5, 1] : [], y: affectsTop ? [0, 0.5] : affectsBottom ? [0.5, 1] : [] });
+      if (affectsLeft) { const delta = snap.dx / (1 - snap.fx || 1); x += delta; width -= delta; }
+      else if (affectsRight) width += snap.dx / (snap.fx || 1);
+      if (affectsTop) { const delta = snap.dy / (1 - snap.fy || 1); y += delta; height -= delta; }
+      else if (affectsBottom) height += snap.dy / (snap.fy || 1);
+      width = clamp(width, o.minWidth, o.maxWidth ?? Infinity); height = clamp(height, o.minHeight, o.maxHeight ?? Infinity);
+      this.#setGuides(snap.lines);
+    }
+    const changes: NodeChange<FlowNode>[] = [
+      { type: "dimensions", id: node.id, dimensions: { width, height }, resizing: true, setAttributes: true },
+    ];
+    if (x !== node.position.x || y !== node.position.y) {
+      changes.push({ type: "position", id: node.id, position: { x, y } });
+    }
+    this.#applyNodeChanges(changes);
+    const params: ResizeParams = { x, y, width, height, direction: [Math.sign(dx), Math.sign(dy)] };
+    resize.lastParams = params;
+    this.#callbacks.resize?.(event, this.#nodeLookup.get(node.id)!, params);
+  }
+
+  handleResizeEnd(event: MouseEvent): void {
+    if ((event as MouseEvent & { cancelled?: boolean }).cancelled) { this.cancelResize(); return; }
+    const resize = this.#resize;
+    if (!resize) return;
+    this.#resize = null; this.#setGuides([]);
+    const node = this.#nodeLookup.get(resize.nodeId);
+    if (!node) return;
+    const dimensions = this.getNodeDimensions(node) ?? { width: resize.lastParams.width, height: resize.lastParams.height };
+    this.#applyNodeChanges([{ type: "dimensions", id: node.id, dimensions, resizing: false, setAttributes: true }]);
+    this.#callbacks.resizeEnd?.(event, this.#nodeLookup.get(node.id)!, resize.lastParams);
+  }
+
+  cancelResize(): void {
+    if (!this.#resize) return;
+    this.#resize = null; this.#setGuides([]); this.history.cancelMark();
+  }
+
+  cancelConnection(): void {
+    const connection = this.#connection;
+    if (!connection) return;
+    this.#connection = null;
+    this.#stopAutoPan();
+    if (connection.reconnectingEdge) this.#edgeSignals.get(connection.reconnectingEdge.id)?.notifyListeners();
+    this.#notifyConnection([connection.fromNode.id, connection.toNode?.id]);
+  }
+
+  handleKeyDown(event: KeyboardEvent): void {
+    if (this.#editingId) {
+      if (!event.isComposing && (event.key === "Enter" || keyMatches(event, this.#interaction.keys.escape))) {
+        event.preventDefault(); this.stopEditing({ commit: event.key === "Enter" });
+      }
+      return;
+    }
+    if (isInputTarget(event.target)) return;
+    const keys = this.#interaction.keys;
+    if (keyMatches(event, keys.selectAll)) { event.preventDefault(); this.selectAll(); return; }
+    if (keyMatches(event, keys.zoomIn)) { event.preventDefault(); void this.zoomIn(); return; }
+    if (keyMatches(event, keys.zoomOut)) { event.preventDefault(); void this.zoomOut(); return; }
+    if (keyMatches(event, keys.fitView)) { event.preventDefault(); void this.fitView(); return; }
+    const nudgeEvent = { key: event.key, code: event.code, metaKey: event.metaKey, ctrlKey: event.ctrlKey, altKey: event.altKey, shiftKey: false } as KeyboardEvent;
+    const nudgeIndex = toKeyList(keys.nudge).findIndex(binding => keyMatches(event, binding) || keyMatches(nudgeEvent, binding));
+    if (nudgeIndex >= 0) {
+      const direction = ({ ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down" } as const)[event.key as "ArrowLeft"]
+        ?? (["left", "right", "up", "down"] as const)[nudgeIndex % 4];
+      if (direction) {
+        event.preventDefault(); const now = Date.now();
+        const merge = !!event.repeat && this.#lastNudge?.key === event.key && now - this.#lastNudge.time < 300;
+        this.nudge(direction, event.shiftKey ? 10 : 1, merge);
+        this.#lastNudge = { key: event.key, time: now };
+      }
+      return;
+    }
+    if (keyMatches(event, this.#interaction.keys.copy)) { event.preventDefault(); void this.copy(); return; }
+    if (keyMatches(event, this.#interaction.keys.paste)) { event.preventDefault(); void this.paste(); return; }
+    if (keyMatches(event, this.#interaction.keys.duplicate)) { event.preventDefault(); this.duplicate(); return; }
+    if (keyMatches(event, this.#interaction.keys.undo)) { event.preventDefault(); this.history.undo(); return; }
+    if (keyMatches(event, this.#interaction.keys.redo)) { event.preventDefault(); this.history.redo(); return; }
+    const name = keyNameOf(event);
+    const o = this.#options;
+    this.#keysHeld.add(name);
+    if (keyMatches(event, this.#interaction.keys.delete) && !event.repeat) {
+      const nodes = this.getSelectedNodes();
+      const edges = this.getSelectedEdges();
+      if (nodes.length || edges.length) {
+        event.preventDefault();
+        void this.deleteElements({ nodes, edges });
+      }
+      return;
+    }
+    if (keyMatches(event, this.#interaction.keys.escape)) {
+      event.preventDefault();
+      this.cancelDrag(); this.cancelResize(); this.cancelReshape();
+      this.clearSelection();
+      this.closeContextMenu();
+      if (this.#connection) this.cancelConnection();
+      return;
+    }
+    // Space must not scroll the page while it pans the diagram under the pointer.
+    if (toKeyList(o.panActivationKeyCode).includes(name) && this.#pointerInside) event.preventDefault();
+    if (this.#affectsGestures(name)) this.notifyListeners();
+  }
+
+  handleKeyUp(event: KeyboardEvent): void {
+    const name = keyNameOf(event);
+    if (!this.#keysHeld.delete(name)) return;
+    if (this.#affectsGestures(name)) this.notifyListeners();
+  }
+
+  handleWindowBlur(): void {
+    this.cancelDrag(); this.cancelResize(); this.cancelConnection(); this.cancelReshape(); this.closeContextMenu();
+    if (this.#keysHeld.size === 0) return;
+    this.#keysHeld.clear();
+    this.notifyListeners();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Internals
+  // ---------------------------------------------------------------------------
+
+  #handleTransformChange = () => {
+    this.#contextMenu = null;
+    // Gestures from InteractiveViewer bypass #applyViewport: enforce translateExtent here.
+    if (this.#options.translateExtent !== infiniteExtent) {
+      const current = this.viewport;
+      const clamped = this.#clampViewport(current);
+      if (clamped.x !== current.x || clamped.y !== current.y) {
+        this.#setMatrix(clamped); // re-enters this listener with a clamped value
+        return;
+      }
+    }
+    const zoom = this.zoom;
+    for (const node of this.#nodes) {
+      const type =
+        this.nodeOptions[node.type ?? "default"] ?? this.nodeOptions.default;
+      if (
+        type &&
+        typeof type !== "function" &&
+        type.lod?.some((point) => this.#previousZoom < point !== zoom < point)
+      ) {
+        this.#nodeSignals.get(node.id)?.notifyListeners();
+      }
+    }
+    this.#previousZoom = zoom;
+    this.#callbacks.viewportChange?.({
+      phase: "move",
+      viewport: this.viewport,
+    });
+    this.notifyListeners();
+  };
+
+  #replaceNodes(nodes: FlowNode[]): void {
+    if (this.#handleMeasures.size) {
+      const ids = new Set(nodes.map(node => node.id));
+      for (const id of this.#handleMeasures.keys()) {
+        if (!ids.has(id)) this.#handleMeasures.delete(id);
+      }
+    }
+    this.#nodes = nodes.map((node) => {
+      if (node.measured) return node;
+      const previous = this.#nodeLookup.get(node.id);
+      return previous?.measured
+        ? { ...node, measured: previous.measured }
+        : node;
+    });
+    this.#rebuildNodeLookup();
+  }
+
+  #replaceEdges(edges: FlowEdge[]): void {
+    this.#edges = edges;
+    this.#rebuildEdgeLookup();
+  }
+
+  #rebuildNodeLookup(): void {
+    this.#nodeZIndices = null;
+    this.#nodeLookup = new Map(this.#nodes.map((n) => [n.id, n]));
+  }
+
+  #rebuildEdgeLookup(): void {
+    this.#edgeLookup = new Map(this.#edges.map((e) => [e.id, e]));
+  }
+
+  #applyNodeChanges(changes: NodeChange<FlowNode>[], { silent = false }: { silent?: boolean } = {}): void {
+    if (changes.length === 0) return;
+    const previousCollapse = this.#collapsedState().sets;
+    const endpoints = new Map(this.#edges.filter(edge => edge.waypoints?.length).map(edge => [edge.id, this.getEdgeEndpoints(edge)]));
+    this.#nodes = applyNodeChanges(changes, this.#nodes);
+    this.#rebuildNodeLookup();
+    const adjusted: EdgeChange<FlowEdge>[] = [];
+    for (const [id, before] of endpoints) {
+      const edge = this.getEdge(id)!, after = this.getEdgeEndpoints(edge);
+      if (!before || !after || (before.sourceX === after.sourceX && before.sourceY === after.sourceY && before.targetX === after.targetX && before.targetY === after.targetY)) continue;
+      if (edge.adjusting === "none") continue;
+      adjusted.push({ type: "replace", id, item: { ...edge, waypoints: adjustWaypoints(edge.waypoints!, before, after, edge.adjusting) } });
+    }
+    if (adjusted.length) this.#applyEdgeChanges(adjusted, { silent: true });
+    this.#historyChanged();
+    const moved = changes.filter(change => change.type === "position" || change.type === "replace").map(change => "id" in change ? change.id : "");
+    for (const node of this.#nodes) if (moved.some(id => isDescendant(this.#nodes, node.id, id))) this.#nodeSignals.get(node.id)?.notifyListeners();
+    this.#notifyCollapseCounts(previousCollapse);
+    this.#callbacks.nodesChange?.(changes);
+    for (const change of changes) {
+      const id = change.type === "add" ? change.item.id : change.id;
+      if (change.type === "remove") this.#nodeSignals.delete(id);
+      else this.#nodeSignals.get(id)?.notifyListeners();
+    }
+    if (silent) return;
+    this.#emitSelectionChange();
+    this.notifyListeners();
+  }
+
+  #applyEdgeChanges(changes: EdgeChange<FlowEdge>[], { silent = false }: { silent?: boolean } = {}): void {
+    if (changes.length === 0) return;
+    const previousNeighbours = this.#neighbourIds();
+    const previousCollapse = this.#collapsedState().sets;
+    this.#edges = applyEdgeChanges(changes, this.#edges);
+    this.#historyChanged();
+    this.#rebuildEdgeLookup();
+    this.#notifyChangedNeighbours(previousNeighbours);
+    this.#notifyCollapseCounts(previousCollapse);
+    this.#callbacks.edgesChange?.(changes);
+    for (const change of changes) {
+      const id = change.type === "add" ? change.item.id : change.id;
+      if (change.type === "remove") this.#edgeSignals.delete(id);
+      else this.#edgeSignals.get(id)?.notifyListeners();
+    }
+    if (silent) return;
+    this.#emitSelectionChange();
+    this.notifyListeners();
+  }
+
+  #notifyAllNodes(): void {
+    for (const signal of this.#nodeSignals.values()) signal.notifyListeners();
+  }
+
+  #notifyAllEdges(): void {
+    for (const signal of this.#edgeSignals.values()) signal.notifyListeners();
+  }
+
+  /** Connection gesture changed: refresh the line and the handles of the nodes involved. */
+  #notifyConnection(nodeIds: (string | undefined)[]): void {
+    for (const id of new Set(nodeIds)) if (id) this.#nodeSignals.get(id)?.notifyListeners();
+    this.connectionSignal.notifyListeners();
+  }
+
+  #setSelection(nodeIds: Set<string>, edgeIds: Set<string>, { silent = false }: { silent?: boolean } = {}): void {
+    const nodeChanges: NodeChange<FlowNode>[] = [];
+    for (const node of this.#nodes) {
+      const selected = nodeIds.has(node.id) && this.isNodeSelectable(node);
+      if (!!node.selected !== selected) nodeChanges.push({ type: "select", id: node.id, selected });
+    }
+    const edgeChanges: EdgeChange<FlowEdge>[] = [];
+    for (const edge of this.#edges) {
+      const selected = edgeIds.has(edge.id) && this.isEdgeSelectable(edge);
+      if (!!edge.selected !== selected) edgeChanges.push({ type: "select", id: edge.id, selected });
+    }
+    if (nodeChanges.length === 0 && edgeChanges.length === 0) return;
+    if (nodeChanges.length) this.#applyNodeChanges(nodeChanges, { silent: true });
+    if (edgeChanges.length) this.#applyEdgeChanges(edgeChanges, { silent: true });
+    this.#emitSelectionChange();
+    if (!silent) this.notifyListeners();
+  }
+
+  #selectNode(id: string, additive: boolean): void {
+    const nodeIds = new Set(additive ? this.getSelectedNodes().map((n) => n.id) : []);
+    const edgeIds = new Set(additive ? this.getSelectedEdges().map((e) => e.id) : []);
+    nodeIds.add(id);
+    this.#setSelection(nodeIds, edgeIds);
+  }
+
+  #deselectNode(id: string): void {
+    const nodeIds = new Set(this.getSelectedNodes().map((n) => n.id));
+    nodeIds.delete(id);
+    this.#setSelection(nodeIds, new Set(this.getSelectedEdges().map((e) => e.id)));
+  }
+
+  #emitSelectionChange(): void {
+    const nodes = this.getSelectedNodes();
+    const edges = this.getSelectedEdges();
+    const key = `${nodes.map((n) => n.id).join(",")}|${edges.map((e) => e.id).join(",")}`;
+    if (key === this.#selectionSnapshot) return;
+    const previousIds = this.#selectionSnapshot.split("|")[0].split(",").filter(Boolean);
+    this.#selectionSnapshot = key;
+    this.#notifyNeighbours([...previousIds, ...nodes.map(node => node.id)]);
+    this.#callbacks.selectionChange?.({ nodes, edges });
+  }
+
+  #allNodesMeasured(): boolean {
+    return this.#nodes.every((n) => this.isNodeHidden(n) || this.getNodeDimensions(n) != null);
+  }
+
+  #afterMeasure(): void {
+    if (!this.#allNodesMeasured()) return;
+    if (this.#layoutPending) {
+      this.#layoutPending = false;
+      const fit = this.#fitViewOnInit || (this.#layoutConfig?.fitView ?? true);
+      this.#fitViewOnInit = false;
+      void this.layout(undefined, { fitView: fit });
+      return;
+    }
+    if (this.#fitViewOnInit) {
+      this.#fitViewOnInit = false;
+      void this.fitView(this.#fitViewOptions);
+    }
+  }
+
+  #clampViewport(viewport: Viewport): Viewport {
+    const zoomed = { ...viewport, zoom: clamp(viewport.zoom, this.#options.minZoom, this.#options.maxZoom) };
+    const extent = this.#options.translateExtent;
+    if (extent === infiniteExtent || this.#paneSize.width === 0 || this.#paneSize.height === 0) return zoomed;
+    return clampViewportToExtent(zoomed, extent, this.#paneSize);
+  }
+
+  #setMatrix(viewport: Viewport): void {
+    const matrix = Matrix4.translationValues(viewport.x, viewport.y, 0);
+    matrix.multiplyMatrix(Matrix4.diagonal3Values(viewport.zoom, viewport.zoom, 1));
+    this.transformation.value = matrix;
+  }
+
+  #applyViewport(viewport: Viewport, duration: number): Promise<void> {
+    this.#stopAnimation();
+    const target = this.#clampViewport(viewport);
+    const current = this.viewport;
+    if (current.x === target.x && current.y === target.y && current.zoom === target.zoom) return Promise.resolve();
+    if (!(duration > 0) || typeof window === "undefined") {
+      this.#setMatrix(target);
+      return Promise.resolve();
+    }
+    return new Promise((resolve) => {
+      const from = current;
+      const animation = new AnimationController({ duration });
+      this.#animation = animation;
+      animation.addListener(() => {
+        const t = easeInOutCubic(animation.value);
+        this.#setMatrix({
+          x: lerp(from.x, target.x, t),
+          y: lerp(from.y, target.y, t),
+          zoom: lerp(from.zoom, target.zoom, t),
+        });
+        if (animation.value >= 1) {
+          this.#setMatrix(target);
+          if (this.#animation === animation) this.#animation = null;
+          animation.dispose();
+          resolve();
+        }
+      });
+      animation.forward();
+    });
+  }
+
+  #stopAnimation(): void {
+    if (!this.#animation) return;
+    this.#animation.stop();
+    this.#animation.dispose();
+    this.#animation = null;
+  }
+
+  #scaleAt(point: XYPosition, ratio: number, duration: number): Promise<void> {
+    if (!this.can("zoom", { kind: "pane" })) return Promise.resolve();
+    const current = this.viewport;
+    const zoom = clamp(current.zoom * ratio, this.#options.minZoom, this.#options.maxZoom);
+    if (zoom === current.zoom) return Promise.resolve();
+    const k = zoom / current.zoom;
+    return this.#applyViewport(
+      { x: point.x - (point.x - current.x) * k, y: point.y - (point.y - current.y) * k, zoom },
+      duration,
+    );
+  }
+
+  #paneCenter(): XYPosition {
+    return { x: this.#paneSize.width / 2, y: this.#paneSize.height / 2 };
+  }
+
+  #paneRenderObject(): RenderObject | null {
+    if (!this.#paneKey) return null;
+    try {
+      return this.#paneKey.currentContext.renderObject;
+    } catch {
+      return null;
+    }
+  }
+
+  #panePoint(event: MouseEvent): XYPosition {
+    const render = this.#paneRenderObject();
+    if (!render) return { x: event.clientX, y: event.clientY };
+    return eventPosition(render, event);
+  }
+
+  #clientToPane(point: XYPosition): XYPosition {
+    const render = this.#paneRenderObject();
+    if (!render) return point;
+    return eventPosition(render, { clientX: point.x, clientY: point.y } as MouseEvent);
+  }
+
+  #beginPress(event: MouseEvent): void {
+    this.#pointerMoved = false;
+    this.#lastPanePoint = this.#panePoint(event);
+  }
+
+  #consumeMovement(): boolean {
+    const moved = this.#pointerMoved;
+    this.#pointerMoved = false;
+    return moved;
+  }
+
+  #registerClick(key: string, event: MouseEvent): boolean {
+    const now = Date.now();
+    const last = this.#lastClick;
+    const double =
+      !!last &&
+      last.key === key &&
+      now - last.time < 300 &&
+      Math.hypot(event.clientX - last.x, event.clientY - last.y) < 6;
+    this.#lastClick = double ? null : { key, time: now, x: event.clientX, y: event.clientY };
+    return double;
+  }
+
+  #keyHeld(code: KeyCode): boolean {
+    return toKeyList(code).some((key) => this.#keysHeld.has(key));
+  }
+
+  #modifierHeld(event: MouseEvent, code: KeyCode): boolean {
+    return toKeyList(code).some((key) => modifierMatches(event, key) === true);
+  }
+
+  #isMultiSelect(event: MouseEvent): boolean {
+    return toKeyList(this.#options.multiSelectionKeyCode).some(
+      (key) => modifierMatches(event, key) ?? this.#keysHeld.has(key),
+    );
+  }
+
+  #affectsGestures(name: string): boolean {
+    const o = this.#options;
+    return (
+      toKeyList(o.panActivationKeyCode).includes(name) ||
+      toKeyList(o.selectionKeyCode).includes(name) ||
+      toKeyList(o.zoomActivationKeyCode).includes(name)
+    );
+  }
+
+  /** Resolve a handle spec against a node rect (public so widgets can place handles before measurement). */
+  resolveHandle(node: FlowNode, rect: Rect, spec: HandleSpec): ResolvedHandle {
+    const size = this.#options.handleSize;
+    const measured =
+      spec.placement === "inline"
+        ? this.#handleMeasures
+            .get(node.id)
+            ?.find((h) => h.id === (spec.id ?? null) && h.type === spec.type)
+        : undefined;
+    const { x, y } = measured
+      ? { x: rect.x + measured.x, y: rect.y + measured.y }
+      : handleCenter(spec, rect);
+    return {
+      ...spec,
+      id: spec.id ?? null,
+      nodeId: node.id,
+      width: spec.width ?? measured?.width ?? size,
+      height: spec.height ?? measured?.height ?? size,
+      x,
+      y,
+    };
+  }
+
+  #findHandle(nodeId: string, handleId: string | null, type: HandleType): ResolvedHandle | null {
+    const handles = this.getNodeHandles(nodeId);
+    return handles.find((h) => h.type === type && h.id === handleId) ?? null;
+  }
+
+  #isHandleConnectable(handle: ResolvedHandle): boolean {
+    const node = this.#nodeLookup.get(handle.nodeId);
+    if (!node) return false;
+    return this.can("connect", { kind: "node", id: node.id }, this.nodesConnectable && node.connectable !== false && handle.connectable !== false);
+  }
+
+  #buildConnection(from: ResolvedHandle, to: ResolvedHandle): Connection {
+    const isTarget = from.type === "target";
+    return {
+      source: isTarget ? to.nodeId : from.nodeId,
+      sourceHandle: isTarget ? to.id : from.id,
+      target: isTarget ? from.nodeId : to.nodeId,
+      targetHandle: isTarget ? from.id : to.id,
+    };
+  }
+
+  #isValidConnectionTarget(from: ResolvedHandle, to: ResolvedHandle): boolean {
+    if (!this.#isHandleConnectable(to)) return false;
+    const strict = this.#options.connectionMode === "strict";
+    const sameHandle = from.nodeId === to.nodeId && from.id === to.id && from.type === to.type;
+    const typeOk = strict ? from.type !== to.type : !sameHandle;
+    if (!typeOk) return false;
+    return this.#options.isValidConnection(this.#buildConnection(from, to));
+  }
+
+  #closestHandle(point: XYPosition, from: ResolvedHandle): ResolvedHandle | null {
+    const radius = this.#options.connectionRadius;
+    let closest: ResolvedHandle[] = [];
+    let min = Infinity;
+    for (const node of this.#nodes) {
+      if (this.isNodeHidden(node)) continue;
+      const rect = this.getNodeRect(node);
+      if (!rect) continue;
+      // skip nodes whose rect is far from the pointer
+      if (
+        point.x < rect.x - radius * 2 ||
+        point.x > rect.x + rect.width + radius * 2 ||
+        point.y < rect.y - radius * 2 ||
+        point.y > rect.y + rect.height + radius * 2
+      ) {
+        continue;
+      }
+      for (const handle of this.getNodeHandles(node)) {
+        if (handle.nodeId === from.nodeId && handle.id === from.id && handle.type === from.type) continue;
+        const d = distance(point, { x: handle.x, y: handle.y });
+        if (d > radius) continue;
+        if (d < min) {
+          min = d;
+          closest = [handle];
+        } else if (d === min) {
+          closest.push(handle);
+        }
+      }
+    }
+    if (closest.length === 0) return null;
+    if (closest.length > 1) {
+      const opposite = from.type === "source" ? "target" : "source";
+      return closest.find((h) => h.type === opposite) ?? closest[0];
+    }
+    return closest[0];
+  }
+
+  #updateConnectionTarget(flowPoint: XYPosition): void {
+    const connection = this.#connection;
+    if (!connection) return;
+    const closest = this.#closestHandle(flowPoint, connection.fromHandle);
+    if (closest) {
+      connection.to = this.getHandleEndpoint(closest);
+      connection.toNode = this.#nodeLookup.get(closest.nodeId) ?? null;
+      connection.toHandle = closest;
+      connection.toPosition = closest.position;
+      connection.isValid = this.#isValidConnectionTarget(connection.fromHandle, closest);
+    } else {
+      connection.to = flowPoint;
+      connection.toNode = null;
+      connection.toHandle = null;
+      connection.toPosition = oppositePosition(connection.fromPosition);
+      connection.isValid = null;
+    }
+  }
+
+  #finishConnection(connection: ConnectionState, event: MouseEvent): void {
+    this.#connection = null;
+    this.#stopAutoPan();
+    const final = { ...connection, inProgress: false };
+    if (connection.reconnectingEdge) {
+      const edge = connection.reconnectingEdge;
+      if (connection.isValid && connection.toHandle) {
+        const proposed = this.#buildConnection(connection.fromHandle, connection.toHandle);
+        const patch = this.#callbacks.beforeConnect?.(proposed);
+        const params = patch === false ? null : patch ?? proposed;
+        if (params) {
+          if (this.#callbacks.reconnect) this.#callbacks.reconnect(edge, params);
+          else this.reconnectEdge(edge, params);
+        }
+      }
+      this.#callbacks.connectEnd?.({ state: final, dropPosition: this.paneToFlowPosition(this.#panePoint(event)) });
+      this.#edgeSignals.get(edge.id)?.notifyListeners();
+      this.#notifyConnection([connection.fromNode.id, connection.toNode?.id]);
+      return;
+    }
+    if (connection.isValid && connection.toHandle) {
+      const proposed = this.#buildConnection(connection.fromHandle, connection.toHandle);
+        const patch = this.#callbacks.beforeConnect?.(proposed);
+        const params = patch === false ? null : patch ?? proposed;
+      if (params && this.#callbacks.connect) {
+        this.#callbacks.connect(params);
+      } else if (params) {
+        this.addEdges(params);
+      }
+    }
+    this.#callbacks.connectEnd?.({ state: final, dropPosition: this.paneToFlowPosition(this.#panePoint(event)) });
+    this.#notifyConnection([connection.fromNode.id, connection.toNode?.id]);
+  }
+
+  #startNodeDrag(drag: DragState, event: MouseEvent): void {
+    this.history.mark("drag");
+    drag.started = true;
+    const node = this.#nodeLookup.get(drag.nodeId);
+    if (!node) return;
+    if (this.#options.selectNodesOnDrag && this.isNodeSelectable(node) && !node.selected) {
+      this.#selectNode(node.id, this.#isMultiSelect(event));
+    }
+    const current = this.#nodeLookup.get(drag.nodeId)!;
+    const draggableItems = current.selected
+      ? this.#nodes.filter((n) => n.selected && !this.isNodeHidden(n) && this.isNodeDraggable(n) && !this.#hasSelectedAncestor(n))
+      : this.isNodeDraggable(current)
+        ? [current]
+        : [];
+    if (draggableItems.length === 0) return;
+    for (const item of draggableItems) drag.items.set(item.id, { start: item.position });
+    this.#applyNodeChanges(draggableItems.map((n) => ({ type: "position", id: n.id, dragging: true }) as NodeChange<FlowNode>));
+    this.#callbacks.dragStart?.(event, this.#nodeLookup.get(drag.nodeId)!, this.#dragItemNodes(drag));
+  }
+
+  #hasSelectedAncestor(node: FlowNode): boolean {
+    let parentId = node.parentId;
+    let guard = 0;
+    while (parentId && guard++ < 64) {
+      const parent = this.#nodeLookup.get(parentId);
+      if (!parent) return false;
+      if (parent.selected) return true;
+      parentId = parent.parentId;
+    }
+    return false;
+  }
+
+  #dragItemNodes(drag: DragState): FlowNode[] {
+    return Array.from(drag.items.keys())
+      .map((id) => this.#nodeLookup.get(id))
+      .filter((n): n is FlowNode => !!n);
+  }
+
+  #updateDragPositions(event: MouseEvent): void {
+    const drag = this.#drag;
+    if (!drag || !drag.started || drag.items.size === 0) return;
+    const currentFlow = this.paneToFlowPosition(drag.lastPane);
+    const delta = { x: currentFlow.x - drag.startFlow.x, y: currentFlow.y - drag.startFlow.y };
+    const o = this.#options;
+    let guideOffset = { x: 0, y: 0 };
+    const primary = this.getNode(drag.nodeId), start = drag.items.get(drag.nodeId);
+    if (this.#interaction.drag.snap.guides && primary && start) {
+      const rect = this.getNodeRect(primary);
+      if (rect) {
+        let next = { x: start.start.x + delta.x, y: start.start.y + delta.y };
+        if (o.snapToGrid) next = snapPosition(next, o.snapGrid);
+        const proposed = { ...rect, x: rect.x + next.x - primary.position.x, y: rect.y + next.y - primary.position.y };
+        const snap = snapBounds(proposed, this.#guideBounds(primary.id), this.#interaction.drag.snap.radius);
+        guideOffset = { x: snap.dx, y: snap.dy }; this.#setGuides(snap.lines);
+      }
+    }
+    const changes: NodeChange<FlowNode>[] = [];
+    for (const [id, item] of drag.items) {
+      const node = this.#nodeLookup.get(id);
+      if (!node) continue;
+      let next: XYPosition = { x: item.start.x + delta.x, y: item.start.y + delta.y };
+      if (o.snapToGrid) next = snapPosition(next, o.snapGrid);
+      next = { x: next.x + guideOffset.x, y: next.y + guideOffset.y };
+      next = this.#clampToExtent(node, next);
+      if (next.x === node.position.x && next.y === node.position.y) continue;
+      changes.push({ type: "position", id, position: next, dragging: true });
+    }
+    if (changes.length) this.#applyNodeChanges(changes);
+    const node = this.#nodeLookup.get(drag.nodeId);
+    if (node && this.#interaction.drag.dropIntoGroup) {
+      // Highlight only a change of parent; moving inside the current group is not a drop.
+      const target = this.#findDropTarget(node);
+      this.#setDropTarget(target && target.id !== node.parentId ? target.id : null);
+    }
+    if (node) this.#callbacks.drag?.(event, node, this.#dragItemNodes(drag));
+  }
+
+  /** Coordinate extent that applies to a node, or null when unbounded. */
+  #nodeExtentOf(node: FlowNode): CoordinateExtent | null {
+    if (node.extent === "parent") {
+      const parent = node.parentId ? this.#nodeLookup.get(node.parentId) : undefined;
+      const parentDimensions = parent ? this.getNodeDimensions(parent) : null;
+      return parentDimensions
+        ? [
+            [0, 0],
+            [parentDimensions.width, parentDimensions.height],
+          ]
+        : null;
+    }
+    const extent = node.extent ?? this.#options.nodeExtent;
+    return extent === infiniteExtent ? null : extent;
+  }
+
+  #clampToExtent(node: FlowNode, position: XYPosition): XYPosition {
+    const dimensions = this.getNodeDimensions(node) ?? undefined;
+    if (node.extent === "parent") {
+      const parent = node.parentId ? this.#nodeLookup.get(node.parentId) : undefined;
+      const parentDimensions = parent ? this.getNodeDimensions(parent) : null;
+      if (parentDimensions) {
+        const extent: CoordinateExtent = [
+          [0, 0],
+          [parentDimensions.width, parentDimensions.height],
+        ];
+        return clampPosition(position, extent, dimensions);
+      }
+      return position;
+    }
+    const extent = node.extent ?? this.#options.nodeExtent;
+    if (extent === infiniteExtent) return position;
+    return clampPosition(position, extent, dimensions);
+  }
+
+  #ensureAutoPan(): void {
+    if (this.#autoPanFrame != null || typeof requestAnimationFrame === "undefined") return;
+    const tick = () => {
+      this.#autoPanFrame = null;
+      const dragging = !!this.#drag?.started && this.#drag.items.size > 0;
+      const connecting = this.#connection?.mode === "drag";
+      if (!dragging && !connecting) return;
+      const [vx, vy] = calcAutoPan(this.#lastPanePoint, this.#paneSize, this.#options.autoPanSpeed);
+      if (vx !== 0 || vy !== 0) {
+        this.panBy({ x: vx, y: vy });
+        if (dragging && this.#drag) this.#updateDragPositions(this.#drag.lastEvent);
+        if (connecting && this.#connection) {
+          const previousTarget = this.#connection.toNode?.id;
+          this.#updateConnectionTarget(this.paneToFlowPosition(this.#lastPanePoint));
+          this.#notifyConnection([previousTarget, this.#connection.toNode?.id]);
+        }
+      }
+      this.#autoPanFrame = requestAnimationFrame(tick);
+    };
+    this.#autoPanFrame = requestAnimationFrame(tick);
+  }
+
+  #stopAutoPan(): void {
+    if (this.#autoPanFrame == null) return;
+    if (typeof cancelAnimationFrame !== "undefined") cancelAnimationFrame(this.#autoPanFrame);
+    this.#autoPanFrame = null;
+  }
+}
+
+export { createId as createFlowId, getEdgeId };
+
+/** Internal scene ordering shared with the renderer and browser regression harness. */
+export function getSceneOrder(controller: FlowDiagramController): ({ kind: "node"; node: FlowNode } | { kind: "edge"; edge: FlowEdge })[] {
+  const edges = controller.getVisibleEdges().map(edge => ({ kind: "edge" as const, edge, z: edgeZIndex(controller, edge) }));
+  const nodes = controller.getVisibleNodes().map(node => ({ kind: "node" as const, node, z: controller.getNodeZIndex(node) }));
+  // Stable sorting keeps input order within each kind; edges win ties with nodes.
+  return [...edges, ...nodes].sort((a, b) => a.z - b.z);
+}
+
+function edgeZIndex(controller: FlowDiagramController, edge: FlowEdge): number {
+  const endpoints = [controller.getNode(edge.source), controller.getNode(edge.target)].filter((node): node is FlowNode => !!node);
+  if (!endpoints.length) return 0;
+  return Math.max(...endpoints.map(node => controller.getNodeZIndex(node))) + (edge.selected && controller.options.elevateEdgesOnSelect ? 1000 : 0);
+}

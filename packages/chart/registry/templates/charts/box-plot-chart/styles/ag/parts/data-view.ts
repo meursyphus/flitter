@@ -1,4 +1,4 @@
-import { type Widget } from "flitter-core";
+import { type Widget } from "flitterjs";
 import type { BoxPlotChartCustom } from "@headless/box-plot-chart/types";
 import type { AgBoxPlotChartConfig } from "../config";
 import { DataView } from "../../../base/data-view";

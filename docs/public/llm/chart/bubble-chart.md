@@ -2,7 +2,7 @@
 
 Scatter chart with a third numeric value encoded by bubble size.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Preset chart. Start with `chart-presets BubbleChart` and choose from `toast`, `a
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import BubbleChart from "./charts/bubble-chart";
 
 const widget = BubbleChart({

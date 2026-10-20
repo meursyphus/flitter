@@ -11,7 +11,7 @@ import {
   TextStyle,
   ZIndex,
   SizedBox,
-} from "flitter-core";
+} from "flitterjs";
 import type { FunnelChartCustom } from "../types";
 import type { FunnelAppearance } from "./config";
 import { stageContains, stageGeometry } from "./geometry";

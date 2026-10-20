@@ -1,7 +1,7 @@
-import type { HoveredPieChartSegment, PieChartCustom } from "flitter-ui/chart";
+import type { HoveredPieChartSegment, PieChartCustom } from "@flitterjs/chart";
 import type { ToastPieChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import {
 	toastPieLikeDataLabel,
 	toastPieLikeDataView,

@@ -1,5 +1,5 @@
 import type { SankeyChartCustom } from "../types";
-import { LayoutBuilder, Positioned, Stack, StackFit } from "flitter-ui";
+import { LayoutBuilder, Positioned, Stack, StackFit } from "flitterjs";
 
 export function DataView(
   ...[{ nodes, links }]: Parameters<SankeyChartCustom["dataView"]>

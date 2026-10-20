@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     template: "%s | Flitter Diagram",
   },
   description:
-    "Node and edge editors with React Flow's interactions, drawn by Flitter on SVG or Canvas.",
+    "A headless diagram engine with editable source, custom widget builders and live examples on SVG and Canvas.",
   openGraph: {
     images: [
       {

@@ -19,7 +19,7 @@
 		SingleChildScrollView,
 		TransformationController,
 		type Widget
-	} from 'flitter-core';
+	} from 'flitterjs';
 	let host: HTMLDivElement;
 	onMount(() => {
 		const query = new URLSearchParams(location.search);

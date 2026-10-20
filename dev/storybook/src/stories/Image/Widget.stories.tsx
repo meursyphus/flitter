@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import FlitterWidget from '@flitterjs/react';
+import FlitterWidget from '@flitterjs/adapter-react';
 import {
 	Image,
 	Colors,
@@ -9,7 +9,7 @@ import {
 	ObjectFit,
 	ObjectPosition,
 	type Widget
-} from 'flitter-core';
+} from 'flitterjs';
 import profile from './profile.png';
 
 const createImageCase = (

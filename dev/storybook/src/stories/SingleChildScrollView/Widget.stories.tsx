@@ -15,7 +15,7 @@ import {
   StatefulWidget,
   Text,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 
 const meta = {
   title: "Scrolling/SingleChildScrollView",

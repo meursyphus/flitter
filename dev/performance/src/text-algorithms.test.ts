@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import TextPainter, { Paragraph } from '../../../packages/core/src/type/_types/text-painter';
-import { TextSpan, TextStyle, TextAlign, TextDirection, Offset } from 'flitter-core';
+import { TextSpan, TextStyle, TextAlign, TextDirection, Offset } from 'flitterjs';
 import { getTextWidth } from '../../../packages/core/src/utils/getTextSize';
 import { PerformanceTracer } from '../../../packages/core/src/framework/performance-tracing';
 

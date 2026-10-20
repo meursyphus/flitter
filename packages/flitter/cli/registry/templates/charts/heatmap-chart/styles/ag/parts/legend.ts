@@ -16,7 +16,7 @@ import {
   Text,
   TextStyle,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { HeatmapContext } from "@headless/heatmap-chart/types";
 import type { AgHeatmapChartConfig } from "../config";
 

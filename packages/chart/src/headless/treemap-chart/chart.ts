@@ -14,7 +14,7 @@ import {
 	StatelessWidget,
 	type BuildContext,
 	type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import { resolveOverlayRect } from "@headless/_shared/cartesian-scaffold";
 import { TreemapChartProvider } from "./provider";
 import type { TreemapLayout, TreemapResolvedNode } from "./types";

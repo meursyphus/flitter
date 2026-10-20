@@ -1,4 +1,4 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitterjs";
 import HeadlessLineChart from "@headless/line-chart";
 import type {
   LineChartCustom,

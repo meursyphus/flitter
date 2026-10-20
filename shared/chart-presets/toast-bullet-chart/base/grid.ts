@@ -1,5 +1,5 @@
-import type { BulletChartCustom } from "flitter-ui/chart";
-import * as Cartesian from "flitter-ui/chart";
+import type { BulletChartCustom } from "@flitterjs/chart";
+import * as Cartesian from "@flitterjs/chart";
 
 export function BulletGrid(
   ...[{ xLine, yLine }, { scale: _scale, data, direction }]: Parameters<

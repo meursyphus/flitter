@@ -7,7 +7,7 @@ import {
 	Text,
 	TextStyle,
 	type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { TreemapCustom } from "@headless/treemap-chart/types";
 import { formatTreemapValue } from "../../../base/format";
 import type { TreemapChartConfig } from "../config";

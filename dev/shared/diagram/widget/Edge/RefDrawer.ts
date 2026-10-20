@@ -1,4 +1,4 @@
-import { Element, GlobalKey, Stack, State, StatefulWidget, Widget } from 'flitter-core';
+import { Element, GlobalKey, Stack, State, StatefulWidget, Widget } from 'flitterjs';
 import DiagramControllerProvider from '../Provider/DiagramControllerProvider';
 import { classToFunction } from '../utils';
 import Edge from './Edge';

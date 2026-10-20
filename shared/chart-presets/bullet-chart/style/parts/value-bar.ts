@@ -4,8 +4,8 @@ import {
   FractionallySizedBox,
   BoxDecoration,
   type Widget,
-} from "flitter-ui";
-import type { BulletChartContext } from "flitter-ui/chart";
+} from "flitterjs";
+import type { BulletChartContext } from "@flitterjs/chart";
 import type { AgBulletChartConfig } from "../config";
 
 export function agValueBar(

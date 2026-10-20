@@ -6,6 +6,8 @@ import remarkGfm from "remark-gfm";
 const nextConfig: NextConfig = {
   reactStrictMode: false,
   output: "export",
+  // Lets a dev server and a build run side by side without sharing `.next`.
+  distDir: process.env.NEXT_DIST_DIR ?? ".next",
   pageExtensions: ["ts", "tsx", "md", "mdx"],
   trailingSlash: true,
 };

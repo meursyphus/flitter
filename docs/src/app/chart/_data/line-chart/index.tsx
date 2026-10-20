@@ -1,7 +1,7 @@
 import type { ChartModule } from "../types";
 
 const basicCode = `import LineChart from "./charts/line-chart";
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 
 // Create chart widget
 const chart = LineChart({

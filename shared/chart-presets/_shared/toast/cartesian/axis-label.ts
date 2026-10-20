@@ -1,6 +1,6 @@
-import type { Widget } from "flitter-ui";
+import type { Widget } from "flitterjs";
 import type { ToastBaseConfig } from "./config";
-import { Label } from "flitter-ui/chart";
+import { Label } from "@flitterjs/chart";
 
 export function toastXAxisLabel(
   args: { name: string; index: number },

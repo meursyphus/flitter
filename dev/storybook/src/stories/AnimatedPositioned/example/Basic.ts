@@ -13,7 +13,7 @@ import {
 	Curves,
 	Center,
 	SizedBox
-} from 'flitter-core';
+} from 'flitterjs';
 
 class CustomWidget extends StatefulWidget {
 	createState(): State<StatefulWidget> {
@@ -75,7 +75,7 @@ import {
 	Curves,
 	Center,
 	SizedBox
-} from 'flitter-core';
+} from 'flitterjs';
 
 class CustomWidget extends StatefulWidget {
 	createState(): State<StatefulWidget> {

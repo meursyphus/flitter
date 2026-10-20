@@ -1,11 +1,11 @@
-import type { SankeyChartCustom } from "flitter-ui/chart";
+import type { SankeyChartCustom } from "@flitterjs/chart";
 import type { SankeyChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import * as Base from "../base";
 import { toastTitle, tooltipContent } from "../../_shared/toast/index";
-import type { SankeyChartContext } from "flitter-ui/chart";
-import type { Widget } from "flitter-ui";
+import type { SankeyChartContext } from "@flitterjs/chart";
+import type { Widget } from "flitterjs";
 import { toastTooltipArea } from "./parts/tooltip-area";
 
 export { type SankeyChartConfig } from "./config";

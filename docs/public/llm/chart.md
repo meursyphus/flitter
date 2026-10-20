@@ -2,7 +2,7 @@
 
 Use this pack when an agent needs to implement or customize charts in this repository with as little hidden context as possible.
 
-Generated: 2026-10-07
+Generated: 2026-10-19
 
 ## What This Pack Covers
 

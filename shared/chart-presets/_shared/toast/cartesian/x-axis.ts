@@ -8,9 +8,9 @@ import {
   FractionallySizedBox,
   Tween,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import type { ToastBaseConfig } from "./config";
-import { XAxis } from "flitter-ui/chart";
+import { XAxis } from "@flitterjs/chart";
 
 type ToastAxisConfig = Pick<ToastBaseConfig, "animation" | "axis">;
 

@@ -7,7 +7,7 @@ import {
 	StatelessWidget,
 	type BuildContext,
 	type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { RadarChartController } from "./controller";
 import { RadarChartProvider } from "./provider";
 import {

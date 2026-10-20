@@ -3,7 +3,7 @@ import {
   Provider,
   BuildContext,
   ChangeNotifierProvider,
-} from "flitter-core";
+} from "flitterjs";
 import type { SankeyChartCustom, SankeyChartData } from "./types";
 import { SankeyChartController } from "./controller";
 import Chart from "./chart";

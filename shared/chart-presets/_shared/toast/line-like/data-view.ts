@@ -1,5 +1,5 @@
-import type { LineChartCustom } from "flitter-ui/chart";
-import { Positioned, Stack } from "flitter-ui";
+import type { LineChartCustom } from "@flitterjs/chart";
+import { Positioned, Stack } from "flitterjs";
 
 export function DataView(...[{ lines }]: Parameters<LineChartCustom["dataView"]>) {
   return Stack({

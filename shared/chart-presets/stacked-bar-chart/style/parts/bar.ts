@@ -4,8 +4,8 @@ import {
   BoxDecoration,
   Opacity,
   type Widget,
-} from "flitter-ui";
-import type { BarChartContext } from "flitter-ui/chart";
+} from "flitterjs";
+import type { BarChartContext } from "@flitterjs/chart";
 import type { AgStackedBarChartConfig } from "../config";
 
 export function agBar(

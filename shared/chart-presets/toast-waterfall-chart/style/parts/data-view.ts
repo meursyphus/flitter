@@ -5,8 +5,8 @@ import {
   Positioned,
   Stack,
   type Widget,
-} from "flitter-ui";
-import type { WaterfallChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { WaterfallChartCustom } from "@flitterjs/chart";
 import type { WaterfallChartConfig } from "../config";
 import { AnimatedDataView } from "../../../_shared/toast/cartesian/animated-data-view";
 

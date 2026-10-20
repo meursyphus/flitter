@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Text, TextOverflow, TextPainter, TextSpan } from 'flitter-core';
+import { Text, TextOverflow, TextPainter, TextSpan } from 'flitterjs';
 import type { BuildContext } from '../../../packages/core/src/element';
 import BaseRichText, { RenderParagraph } from '../../../packages/core/src/component/base/BaseRichText';
 

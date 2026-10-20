@@ -6,8 +6,8 @@ import {
 	FractionallySizedBox,
 	SizedBox,
 	type Widget,
-} from "flitter-ui";
-import { HistogramChart as HeadlessHistogramChart } from "flitter-ui/chart";
+} from "flitterjs";
+import { HistogramChart as HeadlessHistogramChart } from "@flitterjs/chart";
 import type {
 	HistogramAggregation,
 	HistogramBin,
@@ -16,8 +16,8 @@ import type {
 	HistogramChartData,
 	HistogramChartScale,
 	HistogramChartTransform,
-} from "flitter-ui/chart";
-import * as Cartesian from "flitter-ui/chart";
+} from "@flitterjs/chart";
+import * as Cartesian from "@flitterjs/chart";
 
 export type {
 	HistogramAggregation,
@@ -27,8 +27,8 @@ export type {
 	HistogramChartData,
 	HistogramChartScale,
 	HistogramChartTransform,
-} from "flitter-ui/chart";
-export { HistogramChartController } from "flitter-ui/chart";
+} from "@flitterjs/chart";
+export { HistogramChartController } from "@flitterjs/chart";
 
 export function DataView(
 	...[{ bars }]: Parameters<HistogramChartCustom["dataView"]>

@@ -1,8 +1,8 @@
-import type { DonutChartContext, DonutChartCustom } from "flitter-ui/chart";
-import { Column, MainAxisSize, SizedBox, Text, TextStyle } from "flitter-ui";
+import type { DonutChartContext, DonutChartCustom } from "@flitterjs/chart";
+import { Column, MainAxisSize, SizedBox, Text, TextStyle } from "flitterjs";
 import type { DonutChartConfig } from "./config";
 import { defaultToastConfig, normalizeDonutToastConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import {
 	toastPieLikeDataLabel,
 	toastPieLikeDataView,

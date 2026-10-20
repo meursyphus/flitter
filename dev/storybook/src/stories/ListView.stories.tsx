@@ -7,7 +7,7 @@ import {
   ListView,
   Text,
   TextStyle,
-} from "flitter-core";
+} from "flitterjs";
 
 const meta = {
   title: "Scrolling/ListView",

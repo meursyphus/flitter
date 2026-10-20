@@ -8,14 +8,14 @@ export const metadata = {
 Install the Svelte integration package:
 
 ```bash
-npm install @flitterjs/svelte
+npm install flitterjs @flitterjs/adapter-svelte
 ```
 
 ## Basic Usage
 
 ```svelte
 <script>
-  import Widget from "@flitterjs/svelte";
+  import Widget from "@flitterjs/adapter-svelte";
   import { Container, Text, Center } from "flitter";
 
   const widget = Center({ child: Text("Hello Flitter!") });

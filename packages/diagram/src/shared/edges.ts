@@ -1,4 +1,4 @@
-import { Path } from "flitter-core";
+import { Path } from "flitterjs";
 import {
   type Position,
   type Rect,
@@ -23,6 +23,7 @@ export type PathCommand =
     };
 
 export type EdgePathParams = {
+  waypoints?: XYPosition[];
   sourceX: number;
   sourceY: number;
   sourcePosition?: Position;
@@ -623,6 +624,7 @@ export function getEdgePathByType(
   params: EdgePathParams,
   options: EdgePathOptions = {},
 ): EdgePathResult {
+  if (params.waypoints?.length) return getWaypointPath(type, params, options);
   switch (type) {
     case "straight":
       return getStraightPath(params);
@@ -637,4 +639,50 @@ export function getEdgePathByType(
     default:
       return getBezierPath({ ...params, curvature: options.curvature });
   }
+}
+
+/** Routes through user-owned vertices; no rendering or controller state. */
+export function getWaypointPath(type: string | undefined, params: EdgePathParams, options: EdgePathOptions = {}): EdgePathResult {
+  const vertices = [{ x: params.sourceX, y: params.sourceY }, ...(params.waypoints ?? []), { x: params.targetX, y: params.targetY }];
+  let points = vertices;
+  if (type === "step" || type === "smoothstep") {
+    points = [vertices[0]];
+    for (let i = 1; i < vertices.length; i++) {
+      const a = vertices[i - 1], b = vertices[i];
+      if (a.x !== b.x && a.y !== b.y) points.push({ x: b.x, y: a.y });
+      points.push(b);
+    }
+  }
+  const commands: PathCommand[] = [{ type: "M", ...points[0] }];
+  for (let i = 1; i < points.length; i++) {
+    const b = points[i];
+    if (type === "smoothstep" && i < points.length - 1) commands.push(...getBend(points[i - 1], b, points[i + 1], options.borderRadius ?? 5));
+    else if (type === "straight" || type === "step" || type === "smoothstep") commands.push({ type: "L", ...b });
+    else {
+      const a = points[i - 1], before = points[Math.max(0, i - 2)], after = points[Math.min(points.length - 1, i + 1)];
+      commands.push({ type: "C", c1x: a.x + (b.x - before.x) / 6, c1y: a.y + (b.y - before.y) / 6,
+        c2x: b.x - (after.x - a.x) / 6, c2y: b.y - (after.y - a.y) / 6, x: b.x, y: b.y });
+    }
+  }
+  const sampled = sampleCommands(commands, 16), label = sampled[Math.floor(sampled.length / 2)];
+  return { commands, points: sampled, labelX: label.x, labelY: label.y, offsetX: Math.abs(label.x - params.sourceX), offsetY: Math.abs(label.y - params.sourceY) };
+}
+
+/** A single shared bend in ends mode averages the two endpoint deltas. */
+export function adjustWaypoints(points: XYPosition[], before: EdgePathParams, after: EdgePathParams, mode: "none" | "ends" | "stretch" = "ends"): XYPosition[] {
+  if (mode === "none") return points;
+  return points.map((point, index) => {
+    const next = { ...point };
+    for (const axis of ["x", "y"] as const) {
+      const s = axis === "x" ? "sourceX" : "sourceY", t = axis === "x" ? "targetX" : "targetY";
+      const ds = after[s] - before[s], dt = after[t] - before[t];
+      if (mode === "ends") next[axis] += points.length === 1 ? (ds + dt) / 2 : index === 0 ? ds : index === points.length - 1 ? dt : 0;
+      else {
+        const span = before[t] - before[s];
+        const ratio = Math.abs(span) > 1e-9 ? (point[axis] - before[s]) / span : (index + 1) / (points.length + 1);
+        next[axis] += ds * (1 - ratio) + dt * ratio;
+      }
+    }
+    return next;
+  });
 }

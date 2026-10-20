@@ -15,5 +15,5 @@ export type {
 	CandlestickChartGetScaleFn as GetScaleFn,
 	CandlestickChartGetScaleOptionsFn as GetScaleOptionsFn,
 	CandlestickChartGetTicksFn as GetTicksFn,
-} from "flitter-ui/chart";
-export { CandlestickChartController } from "flitter-ui/chart";
+} from "@flitterjs/chart";
+export { CandlestickChartController } from "@flitterjs/chart";

@@ -76,7 +76,7 @@ describe("TextPainter layout cache (compute once)", () => {
 
 import { RenderParagraph } from "../../../packages/core/src/component/base/BaseRichText";
 import { Paragraph } from "../../../packages/core/src/type/_types/text-painter";
-import { TextAlign } from "flitter-core";
+import { TextAlign } from "flitterjs";
 
 describe("paragraph cache correctness", () => {
   it("widens unwrapped text without line breaking, updating alignment", () => {

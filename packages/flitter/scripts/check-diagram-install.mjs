@@ -7,7 +7,7 @@ import { promisify } from "node:util";
 import { runAdd } from "../cli/commands/add.mjs";
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const directory = await mkdtemp(path.join(os.tmpdir(), "flitter-diagram-install-"));
+const directory = await mkdtemp(path.join(os.tmpdir(), "diagram-install-"));
 
 try {
   await writeFile(
@@ -19,20 +19,22 @@ try {
     JSON.stringify({
       tsx: true,
       framework: "react",
-      defaultDiagramStyle: "xyflow",
       aliases: { diagrams: "./diagrams" },
     }),
   );
   await mkdir(path.join(directory, "node_modules"));
-  await symlink(packageRoot, path.join(directory, "node_modules/flitter-ui"), "junction");
+  await mkdir(path.join(directory, "node_modules/@flitterjs"), { recursive: true });
+  for (const [name, folder] of [["flitterjs", "core"], ["@flitterjs/chart", "chart"], ["@flitterjs/diagram", "diagram"]]) {
+    await symlink(path.resolve(packageRoot, "..", folder), path.join(directory, "node_modules", name), "junction");
+  }
 
-  await runAdd({ cwd: directory, chartName: "flow-diagram", style: "xyflow", overwrite: true, skipInstall: true });
+  await runAdd({ cwd: directory, chartName: "flow-diagram", overwrite: true, skipInstall: true });
 
   // A consumer file: the copied style must compile against the public engine entry.
   await writeFile(
     path.join(directory, "diagrams/usage.ts"),
-    `import { FlowDiagram, type FlowDiagramProps } from "./flow-diagram";
-import { layeredLayout, type FlowNode, type FlowEdge, FlowController } from "flitter-ui/diagram";
+    `import FlowDiagram, { type FlowDiagramProps } from "./flow-diagram";
+import { layeredLayout, type FlowNode, type FlowEdge, FlowDiagramController } from "@flitterjs/diagram";
 
 const nodes: FlowNode[] = [
   { id: "a", position: { x: 0, y: 0 }, data: { label: "A" }, resizable: true },
@@ -40,14 +42,13 @@ const nodes: FlowNode[] = [
 ];
 const edges: FlowEdge[] = [{ id: "ab", source: "a", target: "b", markerEnd: "arrowclosed" }];
 const props: FlowDiagramProps = {
-  nodes,
-  edges,
+  data: { nodes, edges },
   layout: layeredLayout,
   config: { colorMode: "dark", background: { variant: "lines" } },
-  onConnect: (connection) => void connection,
+  on: { connect: (connection) => void connection },
 };
 export const widget = FlowDiagram(props);
-export const controller = new FlowController();
+export const controller = new FlowDiagramController();
 `,
   );
   await writeFile(

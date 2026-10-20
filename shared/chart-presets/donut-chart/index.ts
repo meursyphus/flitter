@@ -1,8 +1,8 @@
-import type { Widget } from "flitter-ui";
+import type { Widget } from "flitterjs";
 import { BaseDonutChart } from "./base";
 import type { DonutChartCustom, DonutChartData } from "./types";
 import { styleConfig, type DonutChartConfig } from "./style";
-import type { DeepPartial } from "flitter-ui/chart";
+import type { DeepPartial } from "@flitterjs/chart";
 
 export type {
   DonutChartContext,

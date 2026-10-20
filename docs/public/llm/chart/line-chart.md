@@ -2,7 +2,7 @@
 
 Show continuous trends, comparisons over time, and line-based overlays.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Preset chart. Start with `chart-presets LineChart` and choose from `toast`, `ag`
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import LineChart from "./charts/line-chart";
 
 const widget = LineChart({

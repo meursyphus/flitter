@@ -1,7 +1,7 @@
 import type { ChartModule } from "../types";
 
 const basicCode = `import StackedBarChart from "./charts/stacked-bar-chart";
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 
 // Create chart widget
 const chart = StackedBarChart({

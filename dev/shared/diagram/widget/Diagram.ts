@@ -1,5 +1,5 @@
 import type { Project } from '../type';
-import { StatelessWidget } from 'flitter-core';
+import { StatelessWidget } from 'flitterjs';
 import EventManagerProvider from './Provider/EventManagerProvider';
 import { classToFunction } from './utils';
 import DiagramRoot from './Root';

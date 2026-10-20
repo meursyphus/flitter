@@ -1,5 +1,5 @@
-import type { BarChartCustom } from "flitter-ui/chart";
-import { Axis, Container, Flex, Flexible } from "flitter-ui";
+import type { BarChartCustom } from "@flitterjs/chart";
+import { Axis, Container, Flex, Flexible } from "flitterjs";
 
 export function DataView(...[{ barGroups }, { direction }]: Parameters<BarChartCustom["dataView"]>) {
   return Container({

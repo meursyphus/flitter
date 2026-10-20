@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Path, Rect } from 'flitter-core';
+import { Path, Rect } from 'flitterjs';
 
 describe('conservative rectangle path bounds', () => {
 	it('unions known rectangles and does not retain mutable input rectangles', () => {

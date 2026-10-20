@@ -10,9 +10,10 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, "src/lib/index.ts"),
       formats: ["es"],
+      fileName: () => "index.js",
     },
     rollupOptions: {
-      external: ["react", "react/jsx-runtime", "flitter-ui"],
+      external: ["react", "react/jsx-runtime", "flitterjs"],
     },
   },
 });

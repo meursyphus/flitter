@@ -1,4 +1,4 @@
-import { GlobalKey, Offset, Rect } from 'flitter-core';
+import { GlobalKey, Offset, Rect } from 'flitterjs';
 import type { Project, Ref, RelatedField, Relation, Table } from '../type';
 
 type TableName = string;

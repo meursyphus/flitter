@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 
 export type CartesianContext<TConfig = Record<string, unknown>> = {
   config: TConfig;

@@ -1,8 +1,8 @@
-import type { BoxPlotChartCustom, BoxPlotChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
-import type { Widget } from "flitter-ui";
+import type { BoxPlotChartCustom, BoxPlotChartGetScaleOptionsFn as GetScaleOptionsFn } from "@flitterjs/chart";
+import type { Widget } from "flitterjs";
 import type { AgBoxPlotChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
-import { deepMerge } from "flitter-ui/chart";
+import { deepMerge } from "@flitterjs/chart";
 import {
   agTitle,
   agLegend,

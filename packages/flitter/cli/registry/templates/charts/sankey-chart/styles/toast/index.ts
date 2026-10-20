@@ -5,7 +5,7 @@ import { deepMerge, type DeepPartial } from "@utils/index";
 import * as Base from "../base";
 import { toastTitle, tooltipContent } from "@styles/toast";
 import type { SankeyChartContext } from "@headless/sankey-chart/types";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import { toastTooltipArea } from "./parts/tooltip-area";
 
 export { type SankeyChartConfig } from "./config";

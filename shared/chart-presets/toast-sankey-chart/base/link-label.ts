@@ -1,5 +1,5 @@
 import type { SankeyChartCustom } from "../types";
-import { SizedBox } from "flitter-ui";
+import { SizedBox } from "flitterjs";
 
 export function LinkLabel(
   ..._args: Parameters<SankeyChartCustom["linkLabel"]>

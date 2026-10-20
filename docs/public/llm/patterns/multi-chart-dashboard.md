@@ -2,7 +2,7 @@
 
 Compose multiple charts in one screen when one chart family cannot carry the whole story.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Use When
 

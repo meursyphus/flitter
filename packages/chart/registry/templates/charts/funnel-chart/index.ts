@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-core";
-import { FunnelChart as HeadlessFunnelChart } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import { FunnelChart as HeadlessFunnelChart } from "@flitterjs/chart";
 import type { DeepPartial } from "@utils/index";
 import type { FunnelChartData, FunnelChartCustom } from "./types";
 import { styleConfig, type FunnelChartConfig } from "./style";

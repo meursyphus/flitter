@@ -119,9 +119,9 @@ body {
 
 .wordmark {
   font-family: var(--font-display);
-  font-stretch: 125%;
+  font-stretch: 110%;
   font-weight: 900;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 /* ── Artboard backdrop: the dotted surface charts get drawn on ── */

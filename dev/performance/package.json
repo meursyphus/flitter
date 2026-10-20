@@ -16,7 +16,7 @@
 		"format": "prettier --write .",
 		"test:integration": "playwright test --grep-invert=\"(tracking|rerender)-performance.test.ts\" tests/",
 		"test:unit": "vitest",
-		"test:diagram": "vitest run src/diagram-geometry.test.ts src/diagram-layout.test.ts && playwright test --config playwright.diagram.config.ts"
+		"test:diagram": "vitest run src/diagram && playwright test --config playwright.diagram.config.ts"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
@@ -41,14 +41,14 @@
 		"typescript": "^5.0.0",
 		"url": "^0.11.3",
 		"vite": "^5.0.3",
-		"vitest": "^1.2.0",
-		"flitter-diagram": "workspace:*"
+		"vitest": "^1.2.0"
 	},
 	"type": "module",
 	"dependencies": {
-		"@flitterjs/svelte": "workspace:*",
-		"flitter-chart": "workspace:*",
-		"flitter-core": "workspace:*",
-		"shared": "workspace:*"
+		"@flitterjs/adapter-svelte": "workspace:*",
+		"@flitterjs/chart": "workspace:*",
+		"flitterjs": "workspace:*",
+		"shared": "workspace:*",
+		"@flitterjs/diagram": "workspace:*"
 	}
 }

@@ -10,7 +10,7 @@ import {
   SizedBox,
   BoxDecoration,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import type { AgCartesianBaseConfig } from "./config";
 
 type AgLayoutConfig = Pick<

@@ -9,7 +9,7 @@ import {
   Alignment,
   Opacity,
   SizedBox,
-} from "flitter-core";
+} from "flitterjs";
 
 export function Link(
   ...[

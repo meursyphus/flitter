@@ -14,8 +14,8 @@ Flitter Chart works with React, Svelte, and vanilla JavaScript.
 ### Install
 
 ```bash
-npm install @flitterjs/react flitter-ui
-npx flitter-ui add bar-chart
+npm install @flitterjs/adapter-react flitterjs
+npx @flitterjs/cli@latest add bar-chart
 ```
 
 The first command installs the rendering engine and React adapter. The second generates the chart source code directly into your project.
@@ -23,7 +23,7 @@ The first command installs the rendering engine and React adapter. The second ge
 ### Usage
 
 ```tsx
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import BarChart from "./charts/bar-chart";
 
 function MyChart() {
@@ -52,14 +52,14 @@ function MyChart() {
 
 ### How It Works
 
-The `Widget` component creates a container `div` with the specified dimensions and mounts an SVG or Canvas element inside it. It uses `AppRunner` from `flitter-ui` to drive the render loop and automatically handles resizing.
+The `Widget` component creates a container `div` with the specified dimensions and mounts an SVG or Canvas element inside it. It uses `AppRunner` from `flitterjs` to drive the render loop and automatically handles resizing.
 
 <details>
 <summary className="cursor-pointer text-sm font-medium text-soft hover:text-ink">View React Widget source</summary>
 
 ```tsx
 import { useEffect, useRef } from "react";
-import { type Widget, Alignment, AppRunner, Container, Text } from "flitter-ui";
+import { type Widget, Alignment, AppRunner, Container, Text } from "flitterjs";
 
 type WidgetComponentProps = {
   widget?: Widget;
@@ -117,8 +117,8 @@ export default WidgetComponent;
 ### Install
 
 ```bash
-npm install @flitterjs/svelte flitter-ui
-npx flitter-ui add bar-chart
+npm install @flitterjs/adapter-svelte flitterjs
+npx @flitterjs/cli@latest add bar-chart
 ```
 
 The first command installs the rendering engine and Svelte adapter. The second generates the chart source code directly into your project.
@@ -127,7 +127,7 @@ The first command installs the rendering engine and Svelte adapter. The second g
 
 ```svelte
 <script>
-  import Widget from "@flitterjs/svelte";
+  import Widget from "@flitterjs/adapter-svelte";
   import BarChart from "./charts/bar-chart";
 
   const chart = BarChart({
@@ -174,7 +174,7 @@ The Svelte integration supports SSR out of the box using `linkedom`:
 <script lang="ts">
   import { onMount } from "svelte";
   import { parseHTML } from "linkedom";
-  import { type Widget, Alignment, AppRunner, Container, Text } from "flitter-ui";
+  import { type Widget, Alignment, AppRunner, Container, Text } from "flitterjs";
   const browser = typeof window !== "undefined";
 
   export let renderer: "svg" | "canvas" = "svg";
@@ -241,8 +241,8 @@ No framework? Use `AppRunner` directly.
 ### Install
 
 ```bash
-npm install flitter-ui
-npx flitter-ui add bar-chart
+npm install flitterjs
+npx @flitterjs/cli@latest add bar-chart
 ```
 
 The first command installs the rendering engine. The second generates the chart source code directly into your project.
@@ -256,7 +256,7 @@ The first command installs the rendering engine. The second generates the chart 
 ```
 
 ```typescript
-import { AppRunner } from "flitter-ui";
+import { AppRunner } from "flitterjs";
 import BarChart from "./charts/bar-chart";
 
 const chart = BarChart({

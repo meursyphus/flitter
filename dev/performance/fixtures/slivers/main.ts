@@ -11,7 +11,7 @@ import {
 	State,
 	StatefulWidget,
 	type Widget
-} from 'flitter-core';
+} from 'flitterjs';
 const params = new URLSearchParams(location.search);
 const renderer = params.get('renderer') ?? 'svg';
 const horizontal = params.has('horizontal');

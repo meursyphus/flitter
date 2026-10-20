@@ -1,3 +1,8 @@
+import { type NodeToolbarCustom } from "@flitterjs/diagram";
+import {
+  defaultNode,
+  type DefaultFlowConfig,
+} from "../../../../../shared/diagram-presets/flow-diagram";
 import type { Meta, StoryObj } from "@storybook/react";
 import DualRenderer from "../../components/DualRenderer";
 import {
@@ -15,16 +20,16 @@ import {
   Text,
   TextStyle,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import {
-  FlowDiagram,
   type FlowEdge,
   type FlowNode,
-  type NodeBuilderArgs,
+  type NodeCustomArgs,
   forceLayout,
   layeredLayout,
   treeLayout,
-} from "flitter-diagram";
+} from "@flitterjs/diagram";
+import FlowDiagram from "../../../../../shared/diagram-presets/flow-diagram";
 
 declare global {
   interface Window {
@@ -34,9 +39,11 @@ declare global {
 
 /** Exposes controllers on `window.__flows` so browser tests can inspect state. */
 const expose = {
-  onInit: (controller: unknown) => {
-    if (typeof window === "undefined") return;
-    (window.__flows ??= []).push(controller);
+  on: {
+    init: (controller: unknown) => {
+      if (typeof window === "undefined") return;
+      (window.__flows ??= []).push(controller);
+    },
   },
 };
 
@@ -53,9 +60,19 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const basicNodes: FlowNode[] = [
-  { id: "1", type: "input", position: { x: 100, y: 50 }, data: { label: "Input Node" } },
+  {
+    id: "1",
+    type: "input",
+    position: { x: 100, y: 50 },
+    data: { label: "Input Node" },
+  },
   { id: "2", position: { x: 100, y: 180 }, data: { label: "Default Node" } },
-  { id: "3", type: "output", position: { x: 320, y: 180 }, data: { label: "Output Node" } },
+  {
+    id: "3",
+    type: "output",
+    position: { x: 320, y: 180 },
+    data: { label: "Output Node" },
+  },
 ];
 
 const basicEdges: FlowEdge[] = [
@@ -68,7 +85,12 @@ export const Basic: Story = {
   args: {
     width: "560px",
     height: "400px",
-    widget: FlowDiagram({ ...expose, nodes: basicNodes, edges: basicEdges, fitView: true }),
+    widget: FlowDiagram({
+      ...expose,
+      data: { nodes: basicNodes, edges: basicEdges },
+
+      viewport: { fitView: true },
+    }),
     description:
       "React Flow's default example. Drag nodes, wheel to zoom, drag the pane to pan, shift+drag to box select, drag from a handle to connect, Backspace to delete.",
   },
@@ -83,11 +105,38 @@ const edgeTypeNodes: FlowNode[] = [
 ];
 
 const edgeTypeEdges: FlowEdge[] = [
-  { id: "ab", source: "a", target: "b", type: "straight", label: "straight", markerEnd: "arrowclosed" },
+  {
+    id: "ab",
+    source: "a",
+    target: "b",
+    type: "straight",
+    label: "straight",
+    markerEnd: "arrowclosed",
+  },
   { id: "ac", source: "a", target: "c", type: "step", label: "step" },
-  { id: "bd", source: "b", target: "d", type: "smoothstep", label: "smoothstep", markerEnd: "arrow" },
-  { id: "cd", source: "c", target: "d", type: "simplebezier", label: "simplebezier" },
-  { id: "ce", source: "c", target: "e", label: "bezier", animated: true, markerEnd: "arrowclosed" },
+  {
+    id: "bd",
+    source: "b",
+    target: "d",
+    type: "smoothstep",
+    label: "smoothstep",
+    markerEnd: "arrow",
+  },
+  {
+    id: "cd",
+    source: "c",
+    target: "d",
+    type: "simplebezier",
+    label: "simplebezier",
+  },
+  {
+    id: "ce",
+    source: "c",
+    target: "e",
+    label: "bezier",
+    animated: true,
+    markerEnd: "arrowclosed",
+  },
   { id: "de", source: "d", target: "e", label: "selected", selected: true },
 ];
 
@@ -96,7 +145,12 @@ export const EdgeTypes: Story = {
   args: {
     width: "560px",
     height: "440px",
-    widget: FlowDiagram({ ...expose, nodes: edgeTypeNodes, edges: edgeTypeEdges, fitView: true }),
+    widget: FlowDiagram({
+      ...expose,
+      data: { nodes: edgeTypeNodes, edges: edgeTypeEdges },
+
+      viewport: { fitView: true },
+    }),
     description: "Every built-in edge type with labels and markers.",
   },
 };
@@ -107,10 +161,10 @@ export const DarkMode: Story = {
     width: "560px",
     height: "400px",
     widget: FlowDiagram({
-      nodes: basicNodes,
-      edges: basicEdges,
-      fitView: true,
+      data: { nodes: basicNodes, edges: basicEdges },
+
       config: { colorMode: "dark", background: { variant: "lines" } },
+      viewport: { fitView: true },
     }),
     description: "Dark colour mode with the line background variant.",
   },
@@ -120,13 +174,34 @@ function chain(count: number): { nodes: FlowNode[]; edges: FlowEdge[] } {
   const nodes: FlowNode[] = [];
   const edges: FlowEdge[] = [];
   for (let i = 0; i < count; i++) {
-    nodes.push({ id: `n${i}`, position: { x: 0, y: 0 }, data: { label: `Node ${i}` } });
+    nodes.push({
+      id: `n${i}`,
+      position: { x: 0, y: 0 },
+      data: { label: `Node ${i}` },
+    });
   }
   const links: [number, number][] = [
-    [0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6], [3, 7], [5, 7], [4, 8], [6, 8], [7, 9], [8, 9],
+    [0, 1],
+    [0, 2],
+    [1, 3],
+    [1, 4],
+    [2, 5],
+    [2, 6],
+    [3, 7],
+    [5, 7],
+    [4, 8],
+    [6, 8],
+    [7, 9],
+    [8, 9],
   ];
   for (const [s, t] of links) {
-    if (s < count && t < count) edges.push({ id: `e${s}-${t}`, source: `n${s}`, target: `n${t}`, markerEnd: "arrowclosed" });
+    if (s < count && t < count)
+      edges.push({
+        id: `e${s}-${t}`,
+        source: `n${s}`,
+        target: `n${t}`,
+        markerEnd: "arrowclosed",
+      });
   }
   return { nodes, edges };
 }
@@ -135,8 +210,13 @@ export const LayeredLayout: Story = {
   args: {
     width: "640px",
     height: "460px",
-    widget: FlowDiagram({ ...expose, ...chain(10), layout: layeredLayout }),
-    description: "Nodes start at (0,0); the layered (Sugiyama) algorithm positions them after measurement and fits the view.",
+    widget: FlowDiagram({
+      ...expose,
+      data: chain(10),
+      layout: layeredLayout,
+    }),
+    description:
+      "Nodes start at (0,0); the layered (Sugiyama) algorithm positions them after measurement and fits the view.",
   },
 };
 
@@ -145,11 +225,25 @@ export const TreeLayoutLeftRight: Story = {
     width: "640px",
     height: "460px",
     widget: FlowDiagram({
-      ...chain(10),
-      layout: { algorithm: treeLayout, options: { direction: "LR", rankSpacing: 80 } },
-      nodeTypes: {
+      data: chain(10),
+      layout: {
+        algorithm: treeLayout,
+        options: { direction: "LR", rankSpacing: 80 },
+      },
+      custom: {
+        node: (args, ctx) => {
+          const views: Record<string, typeof defaultNode> = {
+            default: (args, ctx) => ctx.custom.node(args, ctx),
+          };
+          return (
+            views[args.node.type ?? "default"] ??
+            views.default ??
+            defaultNode
+          )(args, ctx);
+        },
+      },
+      nodeOptions: {
         default: {
-          build: (args, ctx) => ctx.custom.node(args, ctx),
           handles: [
             { type: "target", position: "left" },
             { type: "source", position: "right" },
@@ -157,7 +251,8 @@ export const TreeLayoutLeftRight: Story = {
         },
       },
     }),
-    description: "Tree layout flowing left to right with handles moved to the sides.",
+    description:
+      "Tree layout flowing left to right with handles moved to the sides.",
   },
 };
 
@@ -165,17 +260,25 @@ export const ForceLayout: Story = {
   args: {
     width: "640px",
     height: "460px",
-    widget: FlowDiagram({ ...chain(10), layout: forceLayout, config: { background: { variant: "cross" } } }),
-    description: "Force-directed layout (Fruchterman-Reingold), deterministic seed.",
+    widget: FlowDiagram({
+      data: chain(10),
+      layout: forceLayout,
+      config: { background: { variant: "cross" } },
+    }),
+    description:
+      "Force-directed layout (Fruchterman-Reingold), deterministic seed.",
   },
 };
 
-type TableData = { label: string; fields: { name: string; type: string; pk?: boolean }[] };
+type TableData = {
+  label: string;
+  fields: { name: string; type: string; pk?: boolean }[];
+};
 
 const ROW_HEIGHT = 22;
 const HEADER_HEIGHT = 28;
 
-function tableNode(args: NodeBuilderArgs, ctx: any): Widget {
+function tableNode(args: NodeCustomArgs, ctx: any): Widget {
   const data = args.node.data as TableData;
   const { colors, node } = ctx.config;
   const rows = data.fields.map((field) =>
@@ -184,7 +287,11 @@ function tableNode(args: NodeBuilderArgs, ctx: any): Widget {
       padding: EdgeInsets.symmetric({ horizontal: 10 }),
       alignment: undefined,
       child: Text(`${field.pk ? "🔑 " : ""}${field.name}  ${field.type}`, {
-        style: new TextStyle({ fontSize: 11, color: colors.nodeColor, fontFamily: node.fontFamily }),
+        style: new TextStyle({
+          fontSize: 11,
+          color: colors.nodeColor,
+          fontFamily: node.fontFamily,
+        }),
       }),
     }),
   );
@@ -192,7 +299,10 @@ function tableNode(args: NodeBuilderArgs, ctx: any): Widget {
     width: 200,
     decoration: new BoxDecoration({
       color: colors.nodeBackground,
-      border: Border.all({ color: args.selected ? "#3367d9" : colors.nodeBorder, width: args.selected ? 1.5 : 1 }),
+      border: Border.all({
+        color: args.isSelected ? "#3367d9" : colors.nodeBorder,
+        width: args.isSelected ? 1.5 : 1,
+      }),
       borderRadius: BorderRadius.circular(4),
     }),
     child: Column({
@@ -201,12 +311,17 @@ function tableNode(args: NodeBuilderArgs, ctx: any): Widget {
       children: [
         Container({
           height: HEADER_HEIGHT,
-          color: args.selected ? "#3367d9" : "#1a192b",
+          color: args.isSelected ? "#3367d9" : "#1a192b",
           padding: EdgeInsets.symmetric({ horizontal: 10 }),
           child: Padding({
             padding: EdgeInsets.only({ top: 7 }),
             child: Text(data.label, {
-              style: new TextStyle({ fontSize: 12, color: "#ffffff", fontWeight: "700", fontFamily: node.fontFamily }),
+              style: new TextStyle({
+                fontSize: 12,
+                color: "#ffffff",
+                fontWeight: "700",
+                fontFamily: node.fontFamily,
+              }),
             }),
           }),
         }),
@@ -258,8 +373,23 @@ const erdNodes: FlowNode[] = [
 ];
 
 const erdEdges: FlowEdge[] = [
-  { id: "users-teams", source: "users", sourceHandle: "team_id", target: "teams", targetHandle: "id", type: "smoothstep" },
-  { id: "posts-users", source: "posts", sourceHandle: "author_id", target: "users", targetHandle: "id", type: "smoothstep", markerEnd: "arrowclosed" },
+  {
+    id: "users-teams",
+    source: "users",
+    sourceHandle: "team_id",
+    target: "teams",
+    targetHandle: "id",
+    type: "smoothstep",
+  },
+  {
+    id: "posts-users",
+    source: "posts",
+    sourceHandle: "author_id",
+    target: "users",
+    targetHandle: "id",
+    type: "smoothstep",
+    markerEnd: "arrowclosed",
+  },
 ];
 
 export const CustomNodesERD: Story = {
@@ -268,27 +398,47 @@ export const CustomNodesERD: Story = {
     height: "440px",
     widget: FlowDiagram({
       ...expose,
-      nodes: erdNodes,
-      edges: erdEdges,
-      fitView: true,
-      connectionMode: "loose",
-      nodeTypes: {
+      data: { nodes: erdNodes, edges: erdEdges },
+      config: { minimap: { visible: false } },
+      viewport: { fitView: true },
+      interaction: { connect: { mode: "loose" } },
+      custom: {
+        node: (args, ctx) => {
+          const views: Record<string, typeof defaultNode> = {
+            table: tableNode,
+          };
+          return (
+            views[args.node.type ?? "default"] ??
+            views.default ??
+            defaultNode
+          )(args, ctx);
+        },
+      },
+      nodeOptions: {
         table: {
-          build: tableNode,
-          // one handle pair per field, pinned to the row centre on each side
           handles: (node) =>
             (node.data as TableData).fields.flatMap((field, index) => {
               const y = HEADER_HEIGHT + ROW_HEIGHT * index + ROW_HEIGHT / 2;
               return [
-                { id: field.name, type: "target" as const, position: "left" as const, y },
-                { id: field.name, type: "source" as const, position: "right" as const, y },
+                {
+                  id: field.name,
+                  type: "target" as const,
+                  position: "left" as const,
+                  y,
+                },
+                {
+                  id: field.name,
+                  type: "source" as const,
+                  position: "right" as const,
+                  y,
+                },
               ];
             }),
         },
       },
-      config: { minimap: { visible: false } },
     }),
-    description: "Custom table nodes with declared per-row handles (an ERD). Loose connection mode lets any handle connect to any other.",
+    description:
+      "Custom table nodes with declared per-row handles (an ERD). Loose connection mode lets any handle connect to any other.",
   },
 };
 
@@ -297,16 +447,17 @@ export const ReadOnly: Story = {
     width: "560px",
     height: "400px",
     widget: FlowDiagram({
-      nodes: basicNodes,
-      edges: basicEdges,
-      fitView: true,
-      nodesDraggable: false,
-      nodesConnectable: false,
-      elementsSelectable: false,
-      zoomOnDoubleClick: false,
-      config: { controls: { showInteractive: false }, minimap: { visible: false } },
+      data: { nodes: basicNodes, edges: basicEdges },
+
+      config: {
+        controls: { showInteractive: false },
+        minimap: { visible: false },
+      },
+      viewport: { fitView: true },
+      interaction: "viewer",
     }),
-    description: "Pan and zoom only: nodes cannot be dragged, selected or connected.",
+    description:
+      "Pan and zoom only: nodes cannot be dragged, selected or connected.",
   },
 };
 
@@ -317,14 +468,16 @@ export const PanOnScroll: Story = {
     height: "400px",
     widget: FlowDiagram({
       ...expose,
-      nodes: basicNodes,
-      edges: basicEdges,
-      fitView: true,
-      panOnScroll: true,
-      selectionOnDrag: true,
-      snapToGrid: true,
+      data: { nodes: basicNodes, edges: basicEdges },
+
+      viewport: { fitView: true },
+      interaction: {
+        pane: { scroll: "pan", drag: "select" },
+        drag: { snap: { grid: [15, 15] } },
+      },
     }),
-    description: "Figma-style controls: wheel pans, pinch (ctrl+wheel) zooms, dragging the pane box-selects, hold Space to pan; snap to a 15px grid.",
+    description:
+      "Figma-style controls: wheel pans, pinch (ctrl+wheel) zooms, dragging the pane box-selects, hold Space to pan; snap to a 15px grid.",
   },
 };
 
@@ -334,7 +487,9 @@ function toolbarButton(label: string, onClick: () => void): Widget {
     child: Container({
       padding: EdgeInsets.symmetric({ horizontal: 8, vertical: 4 }),
       color: "#3367d9",
-      child: Text(label, { style: new TextStyle({ color: "#ffffff", fontSize: 12 }) }),
+      child: Text(label, {
+        style: new TextStyle({ color: "#ffffff", fontSize: 12 }),
+      }),
     }),
   });
 }
@@ -345,29 +500,71 @@ export const ResizeToolbarReconnect: Story = {
     height: "420px",
     widget: FlowDiagram({
       ...expose,
-      nodes: [
-        { id: "a", type: "input", position: { x: 60, y: 40 }, data: { label: "Select me, then resize" }, resizable: true },
-        { id: "b", position: { x: 320, y: 60 }, data: { label: "Toolbar on the right" }, toolbar: { position: "right", align: "start" } },
-        { id: "c", type: "output", position: { x: 180, y: 240 }, data: { label: "Drag an edge end here" } },
-      ],
-      edges: [
-        { id: "ab", source: "a", target: "b", markerEnd: "arrowclosed" },
-        { id: "ac", source: "a", target: "c", label: "reconnectable", reconnectable: "target" },
-      ],
-      fitView: true,
-      nodeResizeOptions: { minWidth: 120, minHeight: 30, keepAspectRatio: false },
-      nodeToolbar: ({ node }, ctx) =>
-        Row({
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            toolbarButton("duplicate", () =>
-              ctx.addNodes({ ...node, id: `${node.id}-copy-${Date.now() % 1000}`, position: { x: node.position.x + 40, y: node.position.y + 40 }, selected: false }),
-            ),
-            Container({ width: 2 }),
-            toolbarButton("delete", () => void ctx.deleteElements({ nodes: [node] })),
-          ],
-        }),
+      data: {
+        nodes: [
+          {
+            id: "a",
+            type: "input",
+            position: { x: 60, y: 40 },
+            data: { label: "Select me, then resize" },
+            resizable: true,
+            resizeOptions: {
+              minWidth: 120,
+              minHeight: 30,
+              keepAspectRatio: false,
+            },
+          },
+          {
+            id: "b",
+            position: { x: 320, y: 60 },
+            data: { label: "Toolbar on the right" },
+            toolbar: { position: "right", align: "start" },
+          },
+          {
+            id: "c",
+            type: "output",
+            position: { x: 180, y: 240 },
+            data: { label: "Drag an edge end here" },
+          },
+        ],
+        edges: [
+          { id: "ab", source: "a", target: "b", markerEnd: "arrowclosed" },
+          {
+            id: "ac",
+            source: "a",
+            target: "c",
+            label: "reconnectable",
+            reconnectable: "target",
+          },
+        ],
+      },
+
+      custom: {
+        nodeToolbar: ({ node }, ctx) =>
+          Row({
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              toolbarButton("duplicate", () =>
+                ctx.addNodes({
+                  ...node,
+                  id: `${node.id}-copy-${Date.now() % 1000}`,
+                  position: {
+                    x: node.position.x + 40,
+                    y: node.position.y + 40,
+                  },
+                  selected: false,
+                }),
+              ),
+              Container({ width: 2 }),
+              toolbarButton(
+                "delete",
+                () => void ctx.deleteElements({ nodes: [node] }),
+              ),
+            ],
+          }),
+      },
       config: { minimap: { visible: false } },
+      viewport: { fitView: true },
     }),
     description:
       "Node a shows resize lines and corner handles while selected; the selected node gets a screen-space toolbar (duplicate/delete); edge a→c can be re-targeted by dragging its arrow end onto another handle.",
@@ -380,15 +577,18 @@ export const TranslateExtent: Story = {
     height: "400px",
     widget: FlowDiagram({
       ...expose,
-      nodes: basicNodes,
-      edges: basicEdges,
-      translateExtent: [
-        [0, 0],
-        [600, 400],
-      ],
-      minZoom: 1,
+      data: { nodes: basicNodes, edges: basicEdges },
+
       config: { background: { variant: "lines" }, minimap: { visible: false } },
+      viewport: {
+        extent: [
+          [0, 0],
+          [600, 400],
+        ],
+        minZoom: 1,
+      },
     }),
-    description: "The viewport cannot be panned outside the 600×400 flow region; the lines background shows the clamp.",
+    description:
+      "The viewport cannot be panned outside the 600×400 flow region; the lines background shows the clamp.",
   },
 };

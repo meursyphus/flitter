@@ -15,11 +15,11 @@ import {
   ZIndex,
   type Widget,
   type BuildContext,
-} from "flitter-ui";
-import type { BubbleChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { BubbleChartCustom } from "@flitterjs/chart";
 import type { AgBubbleChartConfig } from "../config";
 import { DataView } from "../../base/data-view";
-import { BubbleChartProvider } from "flitter-ui/chart";
+import { BubbleChartProvider } from "@flitterjs/chart";
 
 export function agDataView(
   ...[args, context]: Parameters<BubbleChartCustom<AgBubbleChartConfig>["dataView"]>

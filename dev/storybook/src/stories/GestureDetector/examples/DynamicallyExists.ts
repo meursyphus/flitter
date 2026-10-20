@@ -9,7 +9,7 @@ import {
 	Stack,
 	Positioned,
 	EdgeInsets
-} from 'flitter-core';
+} from 'flitterjs';
 
 class CustomWidget extends StatefulWidget {
 	createState(): State<StatefulWidget> {

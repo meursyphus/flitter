@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getAllSlugs } from "./chart/_data";
+import { listedEntries as diagramExamples } from "./diagram/_data/gallery/catalog";
 import { advancedNav, diagramNav } from "@/lib/navigation";
 
 export const dynamic = "force-static";
@@ -29,6 +30,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   );
 
+  const diagramGalleryPages: MetadataRoute.Sitemap = diagramExamples.map(({ slug }) => ({
+    url: `${BASE_URL}/diagram/gallery/${slug}/`,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
   // Advanced pages
   const advancedPages: MetadataRoute.Sitemap = advancedNav.flatMap((section) =>
     section.items.map((item) => ({
@@ -38,5 +45,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   );
 
-  return [...staticPages, ...chartPages, ...diagramPages, ...advancedPages];
+  return [...staticPages, ...chartPages, ...diagramPages, ...diagramGalleryPages, ...advancedPages];
 }

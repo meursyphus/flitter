@@ -10,7 +10,7 @@ import {
   Container,
   BoxDecoration,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { AgCartesianBaseConfig } from "./cartesian/config";
 
 type AgLegendConfig = Pick<AgCartesianBaseConfig, "colors" | "font" | "legend">;

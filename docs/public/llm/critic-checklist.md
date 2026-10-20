@@ -1,6 +1,6 @@
 # Critic Checklist
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 Use this after the first-read agent has already proposed an implementation.
 

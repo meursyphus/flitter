@@ -12,7 +12,7 @@ import {
   ZIndex,
   type Widget,
   type BuildContext,
-} from "flitter-core";
+} from "flitterjs";
 import { LineChartProvider } from "@headless/line-chart/provider";
 import type { AgCartesianBaseConfig } from "../cartesian/config";
 

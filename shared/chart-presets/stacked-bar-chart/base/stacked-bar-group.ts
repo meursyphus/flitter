@@ -9,8 +9,8 @@ import {
   MainAxisAlignment,
   SizedBox,
   type Widget,
-} from "flitter-ui";
-import type { BarChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { BarChartCustom } from "@flitterjs/chart";
 
 export function stackedBarGroup<TConfig extends object>(
   ...[{ bars, label, index: categoryIndex }, ctx]: Parameters<BarChartCustom<TConfig>['barGroup']>

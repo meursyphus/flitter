@@ -1,5 +1,5 @@
-import { SizedBox, type Widget } from "flitter-ui";
-import type { RadarChartCustom } from "flitter-ui/chart";
+import { SizedBox, type Widget } from "flitterjs";
+import type { RadarChartCustom } from "@flitterjs/chart";
 
 export function RadialAxis<TConfig extends object = object>(
 	...[{ labels }]: Parameters<RadarChartCustom<TConfig>["radialAxis"]>

@@ -1,6 +1,6 @@
 # Scaffold Guide
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 Use the scaffold tool as a shadcn-like starter materializer for chart authoring.
 

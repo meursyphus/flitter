@@ -1,4 +1,4 @@
-# flitter-core
+# flitterjs
 
 Internal core module for the Flitter framework.
 
@@ -9,7 +9,7 @@ It requires bounded width and height, for example inside a `SizedBox` or an
 `Expanded` child of a bounded `Column`.
 
 ```typescript
-import { ListView, ScrollController, SizedBox, Text } from "flitter-core";
+import { ListView, ScrollController, SizedBox, Text } from "flitterjs";
 
 const controller = new ScrollController();
 const list = SizedBox({

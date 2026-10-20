@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Matrix4, Rect } from "flitter-core";
+import { Matrix4, Rect } from "flitterjs";
 import { inverseTransformBounds } from "../../../packages/core/src/component/base/BaseTransform";
 
 /*

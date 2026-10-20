@@ -1,8 +1,8 @@
-import type { BarChartCustom } from "flitter-ui/chart";
-import type { BarChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
+import type { BarChartCustom } from "@flitterjs/chart";
+import type { BarChartGetScaleOptionsFn as GetScaleOptionsFn } from "@flitterjs/chart";
 import type { ToastStackedBarChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import { toastBar } from "./parts/bar";
 import { toastDataView } from "./parts/data-view";
 import { toastBarBox } from "./parts/bar-box";
@@ -14,8 +14,8 @@ import {
   toastScaleOptions,
   cartesian,
 } from "../../_shared/toast/index";
-import type { BarChartContext } from "flitter-ui/chart";
-import type { Widget } from "flitter-ui";
+import type { BarChartContext } from "@flitterjs/chart";
+import type { Widget } from "flitterjs";
 
 export { type ToastStackedBarChartConfig } from "./config";
 

@@ -5,8 +5,8 @@ export function Grid({
   yLine,
   scale,
 }: {
-  xLine: import("flitter-core").Widget;
-  yLine: import("flitter-core").Widget;
+  xLine: import("flitterjs").Widget;
+  yLine: import("flitterjs").Widget;
   scale: { x: { min: number; max: number; step: number }; y: { min: number; max: number; step: number } } | null;
 }) {
   if (scale == null) return Cartesian.Grid({ xLine, yLine, x: 0, y: 0 });

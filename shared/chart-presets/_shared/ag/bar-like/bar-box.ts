@@ -1,5 +1,5 @@
-import type { BarChartCustom } from "flitter-ui/chart";
-import { EdgeInsets, FractionallySizedBox, Padding } from "flitter-ui";
+import type { BarChartCustom } from "@flitterjs/chart";
+import { EdgeInsets, FractionallySizedBox, Padding } from "flitterjs";
 
 export function BarBox(
   ...[{ bar, ratio, alignment }, { direction }]: Parameters<BarChartCustom['barBox']>

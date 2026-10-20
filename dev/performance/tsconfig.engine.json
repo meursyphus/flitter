@@ -10,7 +10,7 @@
 		"lib": ["ES2022", "DOM", "DOM.Iterable"],
 		"types": ["node"],
 		"baseUrl": ".",
-		"paths": { "flitter-core": ["../../packages/core/src/index.ts"] }
+		"paths": { "flitterjs": ["../../packages/core/src/index.ts"] }
 	},
 	"include": [
 		"src/lib/engine-bench.ts",

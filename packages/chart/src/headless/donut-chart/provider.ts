@@ -3,7 +3,7 @@ import {
 	Provider,
 	BuildContext,
 	ChangeNotifierProvider,
-} from "flitter-core";
+} from "flitterjs";
 import type { DonutChartCustom, DonutChartData } from "./types";
 import { DonutChartController } from "./controller";
 import Chart from "./chart";

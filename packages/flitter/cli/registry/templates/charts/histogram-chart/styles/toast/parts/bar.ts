@@ -5,7 +5,7 @@ import {
   Container,
   ZIndex,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { HistogramChartCustom } from "@headless/histogram-chart/types";
 import type { HistogramChartConfig } from "../config";
 

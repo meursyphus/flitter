@@ -1,15 +1,20 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Widget from "@flitterjs/react";
-import type { Widget as FlitterWidget } from "flitter-core";
+import Widget from "@flitterjs/adapter-react";
+import {
+  Container,
+  GlobalKey,
+  type Widget as FlitterWidget,
+} from "flitterjs";
+import { diagramLayoutSnapshot } from "./diagram-layout-snapshot";
 import type { Theme } from "@/lib/theme";
 import { useTheme } from "@/lib/use-theme";
 
 type LiveDiagramProps = {
   /**
    * Builds the diagram for a site theme. Keep it referentially stable (define
-   * it at module scope): `@flitterjs/react` remounts the app whenever the
+   * it at module scope): `@flitterjs/adapter-react` remounts the app whenever the
    * widget identity changes, which resets every node position.
    */
   create: (theme: Theme) => FlitterWidget;
@@ -19,14 +24,17 @@ type LiveDiagramProps = {
   theme?: Theme;
   renderer?: "svg" | "canvas";
   className?: string;
+  /** Expose a read-only layout probe for the gallery regression checker. */
+  inspectLayout?: boolean;
 };
 
 /**
- * Renders a `flitter-diagram` widget client-side. Like `LiveChart`, the widget
+ * Renders a `@flitterjs/diagram` widget client-side. Like `LiveChart`, the widget
  * is built after mount so nothing runs during static prerendering.
  */
 export default function LiveDiagram({
   create,
+  inspectLayout = false,
   lazy = false,
   theme: pinnedTheme,
   renderer = "svg",
@@ -57,15 +65,43 @@ export default function LiveDiagram({
     return () => observer.disconnect();
   }, [lazy]);
 
+  const layoutKey = useMemo(() => new GlobalKey(), []);
   const widget = useMemo(
-    () => (inView ? create(theme) : null),
-    [inView, theme, create],
+    () =>
+      inView
+        ? inspectLayout
+          ? Container({ key: layoutKey, child: create(theme) })
+          : create(theme)
+        : null,
+    [inView, theme, create, inspectLayout, layoutKey],
   );
+  useEffect(() => {
+    const el = ref.current as
+      | (HTMLDivElement & {
+          diagramLayout?: () => ReturnType<typeof diagramLayoutSnapshot>;
+        })
+      | null;
+    if (!el || !inspectLayout || !widget) return;
+    el.diagramLayout = () =>
+      diagramLayoutSnapshot(layoutKey.currentContext.renderObject);
+    return () => {
+      delete el.diagramLayout;
+    };
+  }, [inspectLayout, widget, layoutKey]);
 
   return (
-    <div ref={ref} className={className}>
+    <div
+      ref={ref}
+      className={className}
+      data-diagram-layout={inspectLayout ? "" : undefined}
+    >
       {widget && (
-        <Widget widget={widget} width="100%" height="100%" renderer={renderer} />
+        <Widget
+          widget={widget}
+          width="100%"
+          height="100%"
+          renderer={renderer}
+        />
       )}
     </div>
   );

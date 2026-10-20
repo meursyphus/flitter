@@ -4,7 +4,7 @@ import {
 	Container,
 	Flex,
 	Flexible,
-} from "flitter-core";
+} from "flitterjs";
 
 export function DataView(
 	...[{ candlesticks }]: Parameters<CandlestickChartCustom["dataView"]>

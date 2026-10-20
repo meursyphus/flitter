@@ -2,7 +2,7 @@
 
 Show numeric distribution by bins rather than individual raw points.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Base-wrapper chart. Start with `chart-presets HistogramChart` for structural def
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import HistogramChart from "./charts/histogram-chart";
 
 const widget = HistogramChart({

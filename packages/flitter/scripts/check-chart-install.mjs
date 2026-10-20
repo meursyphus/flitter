@@ -11,7 +11,7 @@ const packageRoot = path.resolve(
   "..",
 );
 const directory = await mkdtemp(
-  path.join(os.tmpdir(), "flitter-chart-install-"),
+  path.join(os.tmpdir(), "chart-install-"),
 );
 const chartNames = [
   "funnel-chart",
@@ -42,11 +42,10 @@ try {
     }),
   );
   await mkdir(path.join(directory, "node_modules"));
-  await symlink(
-    packageRoot,
-    path.join(directory, "node_modules/flitter-ui"),
-    "junction",
-  );
+  await mkdir(path.join(directory, "node_modules/@flitterjs"), { recursive: true });
+  for (const [name, folder] of [["flitterjs", "core"], ["@flitterjs/chart", "chart"], ["@flitterjs/diagram", "diagram"]]) {
+    await symlink(path.resolve(packageRoot, "..", folder), path.join(directory, "node_modules", name), "junction");
+  }
 
   for (const chartName of chartNames) {
     for (const style of ["ag", "toast"]) {

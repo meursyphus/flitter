@@ -1,5 +1,5 @@
 import type { BulletChartCustom, BulletChartContext, GetScaleOptionsFn } from "@headless/bullet-chart/types";
-import { type Widget } from "flitter-core";
+import { type Widget } from "flitterjs";
 import type { AgBulletChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
 import { deepMerge } from "@utils/index";

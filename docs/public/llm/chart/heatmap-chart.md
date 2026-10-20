@@ -2,7 +2,7 @@
 
 Show matrix patterns by mapping numeric intensity onto a cell grid.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Preset chart. Start with `chart-presets HeatmapChart`. The wrapper already has a
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import HeatmapChart from "./charts/heatmap-chart";
 
 const widget = HeatmapChart({

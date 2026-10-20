@@ -2,7 +2,7 @@ import {
   EdgeInsets,
   Offset,
   type TooltipPosition,
-} from "flitter-ui";
+} from "flitterjs";
 
 export type TooltipLayout = {
   position: TooltipPosition;

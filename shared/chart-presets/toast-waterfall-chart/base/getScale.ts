@@ -1,5 +1,5 @@
 import type { GetScaleFn } from "../types";
-import { refineScale } from "flitter-ui/chart";
+import { refineScale } from "@flitterjs/chart";
 
 export const getScale: GetScaleFn = (
   items,

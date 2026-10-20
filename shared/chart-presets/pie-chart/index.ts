@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-ui";
-import type { DeepPartial } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import type { DeepPartial } from "@flitterjs/chart";
 import { BasePieChart } from "./base";
 import type { PieChartCustom, PieChartData } from "./base";
 import { agStyleConfig, type AgPieChartConfig } from "./style";

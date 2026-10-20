@@ -7,7 +7,7 @@ import {
 	Stack,
 	StackFit,
 	type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { RadarChartCustom } from "@headless/radar-chart/types";
 
 const EPSILON = 0.0001;

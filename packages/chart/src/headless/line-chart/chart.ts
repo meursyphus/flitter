@@ -7,7 +7,7 @@ import {
   type BuildContext,
   LayoutBuilder,
   GestureDetector,
-} from "flitter-core";
+} from "flitterjs";
 import { LineChartProvider } from "./provider";
 
 class Chart extends StatelessWidget {

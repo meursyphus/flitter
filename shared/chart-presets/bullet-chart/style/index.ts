@@ -1,8 +1,8 @@
-import type { BulletChartCustom, BulletChartContext, BulletChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
-import { type Widget } from "flitter-ui";
+import type { BulletChartCustom, BulletChartContext, BulletChartGetScaleOptionsFn as GetScaleOptionsFn } from "@flitterjs/chart";
+import { type Widget } from "flitterjs";
 import type { AgBulletChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
-import { deepMerge } from "flitter-ui/chart";
+import { deepMerge } from "@flitterjs/chart";
 import { agValueBar } from "./parts/value-bar";
 import { agTargetMarker } from "./parts/target-marker";
 import { agRangeBar } from "./parts/range-bar";
@@ -16,7 +16,7 @@ import {
   agTooltipContent,
   cartesian,
 } from "../../_shared/ag/index";
-import * as Cartesian from "flitter-ui/chart";
+import * as Cartesian from "@flitterjs/chart";
 
 export { type AgBulletChartConfig } from "./config";
 export type { AgBulletChartConfig as BulletChartConfig } from "./config";

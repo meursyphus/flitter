@@ -7,7 +7,7 @@ import {
   Opacity,
   ZIndex,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { HeatmapCustom } from "@headless/heatmap-chart/types";
 import type { AgHeatmapChartConfig } from "../config";
 

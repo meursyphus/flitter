@@ -7,7 +7,7 @@ import {
 	Opacity,
 	Radius,
 	SizedBox,
-} from 'flitter-core';
+} from 'flitterjs';
 import { defaultAgCartesianBaseConfig } from '@styles/ag';
 
 export function Outlier(

@@ -1,5 +1,5 @@
-import type { TreemapCustom } from "flitter-ui/chart";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import type { TreemapCustom } from "@flitterjs/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import {
 	agLegend,
 	agTitle,

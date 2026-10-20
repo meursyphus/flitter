@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-core";
-import { CandlestickChart as HeadlessCandlestickChart } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import { CandlestickChart as HeadlessCandlestickChart } from "@flitterjs/chart";
 import type {
   CandlestickChartCustom,
   CandlestickChartData,

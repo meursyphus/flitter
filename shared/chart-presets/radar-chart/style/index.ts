@@ -1,9 +1,9 @@
-import type { RadarChartCustom } from "flitter-ui/chart";
-import type { RadarChartContext } from "flitter-ui/chart";
-import { BoxDecoration, Container, type Widget } from "flitter-ui";
+import type { RadarChartCustom } from "@flitterjs/chart";
+import type { RadarChartContext } from "@flitterjs/chart";
+import { BoxDecoration, Container, type Widget } from "flitterjs";
 import type { AgRadarChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import { agRadar } from "./parts/radar";
 import { agPlot } from "./parts/plot";
 import { agTooltipArea } from "./parts/tooltip-area";

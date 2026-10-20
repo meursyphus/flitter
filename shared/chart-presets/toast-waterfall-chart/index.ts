@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-ui";
-import { WaterfallChart as HeadlessWaterfallChart } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import { WaterfallChart as HeadlessWaterfallChart } from "@flitterjs/chart";
 import type {
   GetScaleFn,
   GetScaleOptionsFn,
@@ -8,7 +8,7 @@ import type {
 } from "./types";
 import * as Base from "./base";
 import { styleConfig, type WaterfallChartConfig } from "./style";
-import type { DeepPartial } from "flitter-ui/chart";
+import type { DeepPartial } from "@flitterjs/chart";
 
 export type {
   WaterfallChartContext,

@@ -2,7 +2,7 @@
 
 Show distribution through quartiles, whiskers, and optional outliers.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Base-wrapper chart. Start with `chart-presets BoxPlotChart` for structural defau
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import BoxPlotChart from "./charts/box-plot-chart";
 
 const widget = BoxPlotChart({

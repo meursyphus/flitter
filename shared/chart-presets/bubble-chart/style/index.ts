@@ -1,10 +1,10 @@
-import type { BubbleChartCustom, BubbleChartContext, BubbleChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
+import type { BubbleChartCustom, BubbleChartContext, BubbleChartGetScaleOptionsFn as GetScaleOptionsFn } from "@flitterjs/chart";
 import type { AgBubbleChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import { agBubble } from "./parts/bubble";
 import { agDataView } from "./parts/data-view";
-import type { Widget } from "flitter-ui";
+import type { Widget } from "flitterjs";
 import {
   agTitle,
   agLegend,

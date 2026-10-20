@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Flitter Configuration",
-  "description": "Configuration file for flitter-ui CLI",
+  "description": "Configuration file for flitterjs CLI",
   "type": "object",
   "properties": {
     "$schema": {
@@ -46,14 +46,6 @@
         }
       },
       "additionalProperties": false
-    },
-    "defaultDiagramStyle": {
-      "type": "string",
-      "enum": [
-        "xyflow"
-      ],
-      "description": "Default diagram style when --style flag is omitted",
-      "default": "xyflow"
     }
   },
   "additionalProperties": false

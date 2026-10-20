@@ -1,5 +1,5 @@
-import { Stack, StackFit, type Widget } from "flitter-ui";
-import type { TreemapCustom } from "flitter-ui/chart";
+import { Stack, StackFit, type Widget } from "flitterjs";
+import type { TreemapCustom } from "@flitterjs/chart";
 
 export function Plot(
 	...[{ treemap, tooltipArea }]: Parameters<TreemapCustom["plot"]>

@@ -7,7 +7,7 @@ import {
 	SizedBox,
 	Spacer,
 	Container
-} from 'flitter-core';
+} from 'flitterjs';
 import type { Field as FieldProps } from '../../type';
 import PK from './PK';
 import Note from './Note';

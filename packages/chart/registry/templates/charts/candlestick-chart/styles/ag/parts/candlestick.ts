@@ -8,7 +8,7 @@ import {
   MainAxisAlignment,
   SizedBox,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { CandlestickChartCustom } from "@headless/candlestick-chart/types";
 import type { CandlestickChartConfig } from "../config";
 

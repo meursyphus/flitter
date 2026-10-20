@@ -1,4 +1,4 @@
-import type { Offset } from 'flitter-core';
+import type { Offset } from 'flitterjs';
 import type { DiagramEvent } from '../Event';
 
 class NodeTranslationEvent implements DiagramEvent {

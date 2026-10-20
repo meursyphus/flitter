@@ -10,7 +10,7 @@ import {
   Container,
   BoxDecoration,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import { CheckBox } from "./checkbox";
 import type { ToastBaseConfig } from "./cartesian/config";
 

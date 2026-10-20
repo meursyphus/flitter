@@ -1,4 +1,4 @@
-import { CustomPaint, SizedBox, Size, type Widget } from "flitter-ui";
+import { CustomPaint, SizedBox, Size, type Widget } from "flitterjs";
 import type { AgCartesianBaseConfig } from "./config";
 
 /**

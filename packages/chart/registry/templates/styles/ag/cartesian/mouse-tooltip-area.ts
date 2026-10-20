@@ -12,7 +12,7 @@ import {
   Curves,
   ZIndex,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 
 const TOOLTIP_OFFSET = 12;
 const ANIMATION_DURATION = 150;

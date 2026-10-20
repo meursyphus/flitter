@@ -15,7 +15,7 @@ import {
 	TextField,
 	TextStyle,
 	type Widget
-} from 'flitter-core';
+} from 'flitterjs';
 
 export function mountTextFieldBench(host: HTMLElement, renderer: 'svg' | 'canvas') {
 	const view =

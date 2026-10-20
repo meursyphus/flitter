@@ -2,7 +2,7 @@
 
 Represent proportional rectangles in a dense area-based map.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Base-wrapper chart. Start with `chart-presets TreemapChart` for structural defau
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import TreemapChart from "./charts/treemap-chart";
 
 const widget = TreemapChart({

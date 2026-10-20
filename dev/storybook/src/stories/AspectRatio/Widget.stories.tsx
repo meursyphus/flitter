@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import DualRenderer from '../../components/DualRenderer';
-import { Container, Alignment, AspectRatio } from 'flitter-core';
+import { Container, Alignment, AspectRatio } from 'flitterjs';
 
 const meta = {
 	title: 'Layout/AspectRatio',

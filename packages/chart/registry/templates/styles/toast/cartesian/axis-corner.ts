@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { ToastBaseConfig } from "./config";
 import { AxisCorner } from "@shared/cartesian";
 

@@ -10,8 +10,8 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/flitter-ui"><img src="https://img.shields.io/npm/v/flitter-ui.svg" alt="npm version" /></a>
-  <a href="https://github.com/meursyphus/flitter/blob/latest/LICENSE"><img src="https://img.shields.io/npm/l/flitter-ui.svg" alt="license" /></a>
+  <a href="https://www.npmjs.com/package/flitterjs"><img src="https://img.shields.io/npm/v/flitterjs.svg" alt="npm version" /></a>
+  <a href="https://github.com/meursyphus/flitter/blob/latest/LICENSE"><img src="https://img.shields.io/npm/l/flitterjs.svg" alt="license" /></a>
   <a href="https://discord.gg/kUZp4SaHzF"><img src="https://img.shields.io/discord/1213364239498936411?logo=discord&label=discord" alt="discord" /></a>
 </p>
 
@@ -74,8 +74,8 @@ Interactive ERD editor with draggable entities, real-time relationship rendering
 ### Install a chart in seconds
 
 ```bash
-npx flitter-ui init        # initialize project
-npx flitter-ui add bar-chart   # add a chart (source code lands in your project)
+npx @flitterjs/cli@latest init        # initialize project
+npx @flitterjs/cli@latest add bar-chart   # add a chart (source code lands in your project)
 ```
 
 This is a **shadcn-style** workflow — you get the full source code, not a black-box dependency. Read it, modify it, learn from it.
@@ -83,11 +83,11 @@ This is a **shadcn-style** workflow — you get the full source code, not a blac
 ### Use in React
 
 ```bash
-npm install flitter-ui @flitterjs/react
+npm install flitterjs @flitterjs/adapter-react
 ```
 
 ```tsx
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import BarChart from "./charts/bar-chart";
 
 const chart = BarChart({
@@ -105,12 +105,12 @@ export default function App() {
 ### Use in Svelte
 
 ```bash
-npm install flitter-ui @flitterjs/svelte
+npm install flitterjs @flitterjs/adapter-svelte
 ```
 
 ```svelte
 <script>
-  import Widget from "@flitterjs/svelte";
+  import Widget from "@flitterjs/adapter-svelte";
   import BarChart from "./charts/bar-chart";
 
   const chart = BarChart({
@@ -127,11 +127,11 @@ npm install flitter-ui @flitterjs/svelte
 ### Use with Vanilla JS
 
 ```bash
-npm install flitter-ui
+npm install flitterjs
 ```
 
 ```javascript
-import { Container, Alignment, Text, TextStyle, AppRunner } from "flitter-ui";
+import { Container, Alignment, Text, TextStyle, AppRunner } from "flitterjs";
 
 const app = new AppRunner({
   view: document.querySelector("#view"),
@@ -175,7 +175,7 @@ import {
   Tween,
   CurvedAnimation,
   Curves,
-} from "flitter-ui";
+} from "flitterjs";
 
 // A simple animated bar chart built from scratch with widgets
 class Bar extends StatefulWidget {
@@ -234,9 +234,12 @@ This is the same composition model used inside Flitter's chart library. Every ch
 
 | Package | Description | Version |
 |---------|-------------|---------|
-| [`flitter-ui`](https://www.npmjs.com/package/flitter-ui) | Core engine + CLI | [![npm](https://img.shields.io/npm/v/flitter-ui.svg)](https://www.npmjs.com/package/flitter-ui) |
-| [`@flitterjs/react`](https://www.npmjs.com/package/@flitterjs/react) | React integration | [![npm](https://img.shields.io/npm/v/@flitterjs/react.svg)](https://www.npmjs.com/package/@flitterjs/react) |
-| [`@flitterjs/svelte`](https://www.npmjs.com/package/@flitterjs/svelte) | Svelte integration (SSR supported) | [![npm](https://img.shields.io/npm/v/@flitterjs/svelte.svg)](https://www.npmjs.com/package/@flitterjs/svelte) |
+| [`flitterjs`](https://www.npmjs.com/package/flitterjs) | Rendering engine | [![npm](https://img.shields.io/npm/v/flitterjs.svg)](https://www.npmjs.com/package/flitterjs) |
+| [`@flitterjs/chart`](https://www.npmjs.com/package/@flitterjs/chart) | Headless chart logic | Independent 0.x releases |
+| [`@flitterjs/diagram`](https://www.npmjs.com/package/@flitterjs/diagram) | Headless diagram editor | Independent 0.x releases |
+| [`@flitterjs/cli`](https://www.npmjs.com/package/@flitterjs/cli) | Editable template installer | Independent 0.x releases |
+| [`@flitterjs/adapter-react`](https://www.npmjs.com/package/@flitterjs/adapter-react) | React integration | [![npm](https://img.shields.io/npm/v/@flitterjs/adapter-react.svg)](https://www.npmjs.com/package/@flitterjs/adapter-react) |
+| [`@flitterjs/adapter-svelte`](https://www.npmjs.com/package/@flitterjs/adapter-svelte) | Svelte integration (SSR supported) | [![npm](https://img.shields.io/npm/v/@flitterjs/adapter-svelte.svg)](https://www.npmjs.com/package/@flitterjs/adapter-svelte) |
 
 ## LLM Native
 

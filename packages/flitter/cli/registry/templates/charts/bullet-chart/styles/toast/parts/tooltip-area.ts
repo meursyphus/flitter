@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { BulletChartCustom } from "@headless/bullet-chart/types";
 import type { ToastBulletChartConfig } from "../config";
 import { cartesian } from "@styles/toast";

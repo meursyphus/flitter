@@ -8,7 +8,7 @@ import {
   FractionallySizedBox,
   Tween,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { ToastBaseConfig } from "./config";
 import { XAxis } from "@shared/cartesian";
 

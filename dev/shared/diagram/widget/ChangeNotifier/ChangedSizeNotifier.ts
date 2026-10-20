@@ -3,7 +3,7 @@ import {
 	SingleChildRenderObjectWidget,
 	Size,
 	Widget
-} from 'flitter-core';
+} from 'flitterjs';
 import { classToFunction } from '../utils';
 
 class ChangedSizeNotifier extends SingleChildRenderObjectWidget {

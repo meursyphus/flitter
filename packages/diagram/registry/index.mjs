@@ -2,16 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-/*
-  Diagram registry for the `flitter add` CLI. Unlike charts, a diagram style is
-  a single self-contained directory (config + parts) that imports the engine
-  from `flitter-ui/diagram`; the CLI rewrites the relative engine imports used
-  inside this repository when it copies the files.
-*/
+// Source templates mirror the chart registry: entry, base, and selected style.
 const registryRoot = path.dirname(fileURLToPath(import.meta.url));
-const bundledTemplatesRoot = path.join(registryRoot, "templates", "styles");
-const workspaceStylesRoot = path.resolve(registryRoot, "../src/styles");
-const templatesRoot = fs.existsSync(bundledTemplatesRoot) ? bundledTemplatesRoot : workspaceStylesRoot;
+const templatesRoot = path.join(registryRoot, "templates", "diagrams");
 
 const SOURCE_PREFIX = "diagram:";
 
@@ -37,21 +30,21 @@ function listFiles(relativeDir) {
   return files.sort();
 }
 
-const diagrams = [{ name: "flow-diagram", styles: ["xyflow"] }];
+const diagrams = [{ name: "flow-diagram", styles: ["default"] }];
 
 function styleItem(diagram, style) {
-  const outputDir = `${style}-${diagram}`;
+  const outputDir = diagram;
   return {
     id: outputDir,
     kind: "diagram-style",
     name: diagram,
     style,
     outputDir,
-    dependencies: ["flitter-ui"],
+    dependencies: ["flitterjs", "@flitterjs/diagram"],
     registryDependencies: [],
-    files: listFiles(style).map((source) => ({
+    files: [...listFiles(`${diagram}/base`), ...listFiles(`${diagram}/styles/${style}`), `${diagram}/index.ts`].map((source) => ({
       source: `${SOURCE_PREFIX}${source}`,
-      target: toPosix(path.join(outputDir, path.relative(style, source))),
+      target: toPosix(path.join(outputDir, path.relative(diagram, source).replace(`styles/${style}/`, "style/"))),
     })),
   };
 }
@@ -64,7 +57,7 @@ export function resolveTemplatePath(source) {
 export const diagramMetadata = {
   "flow-diagram": {
     componentName: "FlowDiagram",
-    configTypes: { xyflow: "XyflowFlowConfig" },
+    configTypes: { default: "DefaultFlowConfig" },
   },
 };
 

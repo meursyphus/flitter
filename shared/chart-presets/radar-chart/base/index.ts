@@ -1,6 +1,6 @@
-import { SizedBox, type Widget } from "flitter-ui";
-import { RadarChart as HeadlessRadarChart } from "flitter-ui/chart";
-import type { RadarChartCustom, RadarChartData, RadarChartGetScaleFn as GetScaleFn } from "flitter-ui/chart";
+import { SizedBox, type Widget } from "flitterjs";
+import { RadarChart as HeadlessRadarChart } from "@flitterjs/chart";
+import type { RadarChartCustom, RadarChartData, RadarChartGetScaleFn as GetScaleFn } from "@flitterjs/chart";
 import { DataView } from "./data-view";
 import { Layout } from "./layout";
 import { Plot } from "./plot";
@@ -18,8 +18,8 @@ export type {
 	RadialLabelItem,
 	RadarVertex,
 	RadarChartGetScaleFn as GetScaleFn,
-} from "flitter-ui/chart";
-export { RadarChartController } from "flitter-ui/chart";
+} from "@flitterjs/chart";
+export { RadarChartController } from "@flitterjs/chart";
 
 const baseDefaults: Partial<RadarChartCustom<any>> = {
 	layout: Layout as RadarChartCustom<any>["layout"],

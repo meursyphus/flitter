@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Widget from "@flitterjs/react";
-import type { Widget as FlitterWidget } from "flitter-core";
+import Widget from "@flitterjs/adapter-react";
+import type { Widget as FlitterWidget } from "flitterjs";
 import { buildChart } from "@/lib/charts";
 import type { Theme } from "@/lib/theme";
 import { useTheme } from "@/lib/use-theme";

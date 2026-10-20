@@ -1,6 +1,6 @@
-import type { Widget } from "flitter-ui";
+import type { Widget } from "flitterjs";
 import type { AgCartesianBaseConfig } from "./config";
-import { XAxis } from "flitter-ui/chart";
+import { XAxis } from "@flitterjs/chart";
 
 type AgAxisConfig = Pick<AgCartesianBaseConfig, "axis">;
 

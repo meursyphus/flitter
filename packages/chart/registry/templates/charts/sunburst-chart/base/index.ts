@@ -1,4 +1,4 @@
-import { SizedBox, type Widget } from "flitter-core";
+import { SizedBox, type Widget } from "flitterjs";
 import HeadlessSunburstChart from "@headless/sunburst-chart";
 import type {
 	SunburstChartCustom,

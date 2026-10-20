@@ -8,5 +8,5 @@ export type {
   BulletChartScaleOptions,
   BulletChartGetScaleFn as GetScaleFn,
   BulletChartGetScaleOptionsFn as GetScaleOptionsFn,
-} from "flitter-ui/chart";
-export { BulletChartController } from "flitter-ui/chart";
+} from "@flitterjs/chart";
+export { BulletChartController } from "@flitterjs/chart";

@@ -1,4 +1,4 @@
-import type { SunburstChartCustom } from "flitter-ui/chart";
+import type { SunburstChartCustom } from "@flitterjs/chart";
 import type { SunburstChartConfig } from "../config";
 import { DataLabel } from "../../base/data-label";
 

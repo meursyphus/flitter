@@ -1,5 +1,5 @@
 import type { CartesianCustom } from "./types";
-import { Align, Alignment, Stack, type Widget } from "flitter-core";
+import { Align, Alignment, Stack, type Widget } from "flitterjs";
 import { DockFrame } from "./dock-frame";
 
 export function Plot({

@@ -1,5 +1,5 @@
-import type { BubbleChartCustom } from "flitter-ui/chart";
-import { Stack, Align, Alignment } from "flitter-ui";
+import type { BubbleChartCustom } from "@flitterjs/chart";
+import { Stack, Align, Alignment } from "flitterjs";
 
 export function DataView(
   ...[{ bubbles, scale }]: Parameters<BubbleChartCustom["dataView"]>

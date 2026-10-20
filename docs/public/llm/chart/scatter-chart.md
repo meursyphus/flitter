@@ -2,7 +2,7 @@
 
 Plot correlation, spread, clusters, and outliers across two numeric axes.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Preset chart. Start with `chart-presets ScatterChart` and choose from `toast`, `
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import ScatterChart from "./charts/scatter-chart";
 
 const widget = ScatterChart({

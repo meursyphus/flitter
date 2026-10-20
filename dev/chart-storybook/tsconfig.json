@@ -12,21 +12,45 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["../../docs/src/*"],
-      "flitter-core/component/Tooltip": ["../../packages/core/src/component/Tooltip.ts"],
-      "flitter-core": ["../../packages/core/src/index.ts"],
-      "flitter-ui/chart": ["../../packages/flitter/src/chart.ts"],
-      "flitter-ui": ["../../packages/flitter/src/index.ts"],
-      "flitter-chart": ["../../packages/chart/src/index.ts"],
-      "flitter-chart/*": ["../../packages/chart/src/*"],
-      "shared": ["../../dev/shared/index.ts"],
-      "shared/chart": ["../../dev/shared/chart.ts"],
-      "chart-presets": ["../../shared/chart-presets/index.ts"],
-      "chart-presets/*": ["../../shared/chart-presets/*"],
-      "@headless/*": ["../../packages/chart/src/headless/*"],
-      "@shared/*": ["../../packages/chart/src/shared/*"],
-      "@utils/*": ["../../packages/chart/src/shared/utils/*"]
+      "@/*": [
+        "../../docs/src/*"
+      ],
+      "flitterjs/component/Tooltip": [
+        "../../packages/core/src/component/Tooltip.ts"
+      ],
+      "flitterjs": [
+        "../../packages/core/src/index.ts"
+      ],
+      "@flitterjs/chart": [
+        "../../packages/chart/src/index.ts"
+      ],
+      "@flitterjs/chart/*": [
+        "../../packages/chart/src/*"
+      ],
+      "shared": [
+        "../../dev/shared/index.ts"
+      ],
+      "shared/chart": [
+        "../../dev/shared/chart.ts"
+      ],
+      "chart-presets": [
+        "../../shared/chart-presets/index.ts"
+      ],
+      "chart-presets/*": [
+        "../../shared/chart-presets/*"
+      ],
+      "@headless/*": [
+        "../../packages/chart/src/headless/*"
+      ],
+      "@shared/*": [
+        "../../packages/chart/src/shared/*"
+      ],
+      "@utils/*": [
+        "../../packages/chart/src/shared/utils/*"
+      ]
     }
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

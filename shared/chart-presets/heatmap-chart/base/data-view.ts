@@ -1,5 +1,5 @@
-import { Column, Flexible, Row } from "flitter-ui";
-import type { HeatmapCustom } from "flitter-ui/chart";
+import { Column, Flexible, Row } from "flitterjs";
+import type { HeatmapCustom } from "@flitterjs/chart";
 
 export function DataView(
   ...[{ segments }]: Parameters<HeatmapCustom["dataView"]>

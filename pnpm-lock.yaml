@@ -14,13 +14,16 @@ importers:
 
   dev/chart-storybook:
     dependencies:
-      '@flitterjs/react':
+      '@flitterjs/adapter-react':
         specifier: workspace:*
         version: link:../../integrations/react
-      flitter-chart:
+      '@flitterjs/chart':
         specifier: workspace:*
         version: link:../../packages/chart
-      flitter-core:
+      '@flitterjs/diagram':
+        specifier: workspace:*
+        version: link:../../packages/diagram
+      flitterjs:
         specifier: workspace:*
         version: link:../../packages/core
       react:
@@ -65,13 +68,16 @@ importers:
 
   dev/performance:
     dependencies:
-      '@flitterjs/svelte':
+      '@flitterjs/adapter-svelte':
         specifier: workspace:*
         version: link:../../integrations/svelte
-      flitter-chart:
+      '@flitterjs/chart':
         specifier: workspace:*
         version: link:../../packages/chart
-      flitter-core:
+      '@flitterjs/diagram':
+        specifier: workspace:*
+        version: link:../../packages/diagram
+      flitterjs:
         specifier: workspace:*
         version: link:../../packages/core
       shared:
@@ -114,9 +120,6 @@ importers:
       eslint-plugin-svelte:
         specifier: ^2.35.1
         version: 2.46.1(eslint@8.57.1)(svelte@4.2.20)
-      flitter-diagram:
-        specifier: workspace:*
-        version: link:../../packages/diagram
       fs:
         specifier: ^0.0.1-security
         version: 0.0.1-security
@@ -153,33 +156,39 @@ importers:
 
   dev/shared:
     dependencies:
-      '@flitterjs/svelte':
+      '@flitterjs/adapter-svelte':
         specifier: workspace:*
         version: link:../../integrations/svelte
+      '@flitterjs/chart':
+        specifier: workspace:*
+        version: link:../../packages/chart
+      '@flitterjs/diagram':
+        specifier: workspace:*
+        version: link:../../packages/diagram
       chart-presets:
         specifier: workspace:*
         version: link:../../shared/chart-presets
-      flitter-core:
+      flitterjs:
         specifier: workspace:*
         version: link:../../packages/core
 
   dev/storybook:
     dependencies:
-      '@flitterjs/react':
+      '@flitterjs/adapter-react':
         specifier: workspace:*
         version: link:../../integrations/react
+      '@flitterjs/chart':
+        specifier: workspace:*
+        version: link:../../packages/chart
+      '@flitterjs/diagram':
+        specifier: workspace:*
+        version: link:../../packages/diagram
       diagram-presets:
         specifier: workspace:*
         version: link:../../shared/diagram-presets
-      flitter-chart:
-        specifier: workspace:*
-        version: link:../../packages/chart
-      flitter-core:
+      flitterjs:
         specifier: workspace:*
         version: link:../../packages/core
-      flitter-diagram:
-        specifier: workspace:*
-        version: link:../../packages/diagram
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -226,9 +235,15 @@ importers:
 
   docs:
     dependencies:
-      '@flitterjs/react':
+      '@flitterjs/adapter-react':
         specifier: workspace:*
         version: link:../integrations/react
+      '@flitterjs/chart':
+        specifier: workspace:*
+        version: link:../packages/chart
+      '@flitterjs/diagram':
+        specifier: workspace:*
+        version: link:../packages/diagram
       '@mdx-js/loader':
         specifier: ^3.1.1
         version: 3.1.1
@@ -244,24 +259,9 @@ importers:
       comwit:
         specifier: ^0.3.1
         version: 0.3.1(react@19.2.4)
-      flitter-chart:
-        specifier: workspace:*
-        version: link:../packages/chart
-      flitter-core:
+      flitterjs:
         specifier: workspace:*
         version: link:../packages/core
-      flitter-diagram:
-        specifier: workspace:*
-        version: link:../packages/diagram
-      gsap:
-        specifier: ^3.14.2
-        version: 3.14.2
-      lottie-react:
-        specifier: ^2.4.1
-        version: 2.4.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      lottie-web:
-        specifier: ^5.13.0
-        version: 5.13.0
       next:
         specifier: ^15.0.0
         version: 15.5.12(@playwright/test@1.58.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -332,9 +332,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.0.3
         version: 4.7.0(vite@4.5.14(@types/node@20.19.33)(lightningcss@1.31.1))
-      flitter-ui:
-        specifier: workspace:^*
-        version: link:../../packages/flitter
+      flitterjs:
+        specifier: workspace:*
+        version: link:../../packages/core
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -353,9 +353,6 @@ importers:
 
   integrations/svelte:
     dependencies:
-      flitter-ui:
-        specifier: workspace:^*
-        version: link:../../packages/flitter
       linkedom:
         specifier: ^0.14.21
         version: 0.14.26
@@ -369,6 +366,9 @@ importers:
       '@sveltejs/package':
         specifier: ^1.0.0
         version: 1.0.2(svelte@5.53.3)(typescript@5.9.3)
+      flitterjs:
+        specifier: workspace:*
+        version: link:../../packages/core
       svelte:
         specifier: ^5.0.0
         version: 5.53.3
@@ -386,14 +386,13 @@ importers:
         version: 5.4.21(@types/node@20.19.33)(lightningcss@1.31.1)
 
   packages/chart:
-    dependencies:
-      flitter-core:
-        specifier: workspace:*
-        version: link:../core
     devDependencies:
       '@types/node':
         specifier: ^20.10.4
         version: 20.19.33
+      flitterjs:
+        specifier: workspace:*
+        version: link:../core
       typescript:
         specifier: ^5.2.2
         version: 5.9.3
@@ -451,10 +450,6 @@ importers:
         version: 5.9.3
 
   packages/diagram:
-    dependencies:
-      flitter-core:
-        specifier: workspace:*
-        version: link:../core
     devDependencies:
       '@types/node':
         specifier: ^20.10.4
@@ -471,6 +466,9 @@ importers:
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.2(eslint@8.57.1)
+      flitterjs:
+        specifier: workspace:*
+        version: link:../core
       typescript:
         specifier: ^5.2.2
         version: 5.9.3
@@ -483,33 +481,36 @@ importers:
 
   packages/flitter:
     devDependencies:
-      flitter-chart:
+      '@flitterjs/chart':
         specifier: workspace:*
         version: link:../chart
-      flitter-core:
-        specifier: workspace:*
-        version: link:../core
-      flitter-diagram:
+      '@flitterjs/diagram':
         specifier: workspace:*
         version: link:../diagram
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(@microsoft/api-extractor@7.43.0(@types/node@20.19.33))(jiti@2.6.1)(postcss@8.5.6)(typescript@5.9.3)
+      flitterjs:
+        specifier: workspace:*
+        version: link:../core
       typescript:
         specifier: ^5.3.3
         version: 5.9.3
 
   shared/chart-presets:
     dependencies:
-      flitter-ui:
+      '@flitterjs/chart':
         specifier: workspace:*
-        version: link:../../packages/flitter
+        version: link:../../packages/chart
+      flitterjs:
+        specifier: workspace:*
+        version: link:../../packages/core
 
   shared/diagram-presets:
     dependencies:
-      flitter-ui:
+      '@flitterjs/diagram':
         specifier: workspace:*
-        version: link:../../packages/flitter
+        version: link:../../packages/diagram
+      flitterjs:
+        specifier: workspace:*
+        version: link:../../packages/core
     devDependencies:
       typescript:
         specifier: ^5.2.2
@@ -3140,9 +3141,6 @@ packages:
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
 
-  gsap@3.14.2:
-    resolution: {integrity: sha512-P8/mMxVLU7o4+55+1TCnQrPmgjPKnwkzkXOK1asnR9Jg2lna4tEY5qBJjMmAaOBDDZWtlRjBXjLa0w53G/uBLA==}
-
   has-bigints@1.1.0:
     resolution: {integrity: sha512-R3pbpkcIqv2Pm3dUwgjclDRVmWpTJW2DcMzcIhEXEx1oh/CEMObMm3KLmRJOdvhM7o4uQBnwr8pzRK2sJWIqfg==}
     engines: {node: '>= 0.4'}
@@ -3602,15 +3600,6 @@ packages:
   loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
     hasBin: true
-
-  lottie-react@2.4.1:
-    resolution: {integrity: sha512-LQrH7jlkigIIv++wIyrOYFLHSKQpEY4zehPicL9bQsrt1rnoKRYCYgpCUe5maqylNtacy58/sQDZTkwMcTRxZw==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
-  lottie-web@5.13.0:
-    resolution: {integrity: sha512-+gfBXl6sxXMPe8tKQm7qzLnUy5DUPJPKIyRHwtpCpyUEYjHYRJC/5gjUvdkuO2c3JllrPtHXH5UJJK8LRYl5yQ==}
 
   loupe@2.3.7:
     resolution: {integrity: sha512-zSMINGVYkdpYSOBmLi0D1Uo7JU9nVdQKrHxC8eYlV+9YKK9WePqAlL7lSlorG/U2Fw1w0hTBmaa/jrQ3UbPHtA==}
@@ -7881,8 +7870,6 @@ snapshots:
 
   graphemer@1.4.0: {}
 
-  gsap@3.14.2: {}
-
   has-bigints@1.1.0: {}
 
   has-flag@4.0.0: {}
@@ -8342,14 +8329,6 @@ snapshots:
   loose-envify@1.4.0:
     dependencies:
       js-tokens: 4.0.0
-
-  lottie-react@2.4.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
-    dependencies:
-      lottie-web: 5.13.0
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
-
-  lottie-web@5.13.0: {}
 
   loupe@2.3.7:
     dependencies:

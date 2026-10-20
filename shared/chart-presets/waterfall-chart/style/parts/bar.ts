@@ -11,12 +11,12 @@ import {
   Text,
   TextStyle,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import type {
   WaterfallBarType,
   WaterfallChartContext,
   WaterfallChartDatum,
-} from "flitter-ui/chart";
+} from "@flitterjs/chart";
 import type { WaterfallChartConfig } from "../config";
 
 const TYPE_INDEX: Record<WaterfallBarType, number> = {

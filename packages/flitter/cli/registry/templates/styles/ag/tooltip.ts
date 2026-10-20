@@ -19,7 +19,7 @@ import {
   CustomPaint,
   Size,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import type { AgCartesianBaseConfig } from "./cartesian/config";
 
 type AgTooltipConfig = {

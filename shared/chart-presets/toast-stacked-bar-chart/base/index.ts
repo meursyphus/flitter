@@ -1,18 +1,18 @@
-import { SizedBox, type Widget } from "flitter-ui";
-import { BarChart as HeadlessBarChart } from "flitter-ui/chart";
+import { SizedBox, type Widget } from "flitterjs";
+import { BarChart as HeadlessBarChart } from "@flitterjs/chart";
 import type {
   BarChartCustom,
   BarChartData,
   BarChartGetScaleFn as GetScaleFn,
   BarChartGetScaleOptionsFn as GetScaleOptionsFn,
-} from "flitter-ui/chart";
-import * as Cartesian from "flitter-ui/chart";
+} from "@flitterjs/chart";
+import * as Cartesian from "@flitterjs/chart";
 import { BarBox, DataView, Grid } from "../../_shared/toast/bar-like/index";
 import { stackedBarGroup } from "./stacked-bar-group";
 import { stackedGetScale } from "./stacked-get-scale";
 
-export type { BarChartCustom, BarChartData, BarChartScale, BarChartDirection, BarChartScaleOptions, BarChartContext, BarChartGetScaleFn as GetScaleFn, BarChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
-export { BarChartController } from "flitter-ui/chart";
+export type { BarChartCustom, BarChartData, BarChartScale, BarChartDirection, BarChartScaleOptions, BarChartContext, BarChartGetScaleFn as GetScaleFn, BarChartGetScaleOptionsFn as GetScaleOptionsFn } from "@flitterjs/chart";
+export { BarChartController } from "@flitterjs/chart";
 
 const baseDefaults: Partial<BarChartCustom> = {
   barGroup: stackedBarGroup,

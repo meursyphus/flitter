@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-ui";
+import type { Widget } from "flitterjs";
 import { BaseTreemapChart } from "./base";
 import type {
 	GetTreemapLayoutFn,
@@ -8,7 +8,7 @@ import type {
 	TreemapLegacyData,
 } from "./base";
 import { styleConfig, type TreemapChartConfig } from "./style";
-import type { DeepPartial } from "flitter-ui/chart";
+import type { DeepPartial } from "@flitterjs/chart";
 
 export type {
 	GetTreemapLayoutFn,

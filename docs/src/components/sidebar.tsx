@@ -13,12 +13,6 @@ function normPath(p: string) {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  if (status === "new")
-    return (
-      <span className="ml-auto rounded bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold text-accent">
-        New
-      </span>
-    );
   if (status === "beta")
     return (
       <span className="ml-auto rounded bg-surface px-1.5 py-0.5 text-[10px] font-medium text-soft">

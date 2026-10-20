@@ -11,7 +11,7 @@ import {
 	AnimatedFractionallySizedBox,
 	Stack,
 	StackFit
-} from 'flitter-core';
+} from 'flitterjs';
 
 class CustomWidget extends StatefulWidget {
 	createState(): State<StatefulWidget> {
@@ -69,7 +69,7 @@ import {
 	AnimatedFractionallySizedBox,
 	Stack,
 	StackFit
-} from 'flitter-core';
+} from 'flitterjs';
 
 class CustomWidget extends StatefulWidget {
 	createState(): State<StatefulWidget> {

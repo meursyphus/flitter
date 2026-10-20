@@ -3,8 +3,8 @@ import {
   BoxDecoration,
   Opacity,
   type Widget,
-} from "flitter-ui";
-import type { BubbleChartCustom } from "flitter-ui/chart";
+} from "flitterjs";
+import type { BubbleChartCustom } from "@flitterjs/chart";
 import type { AgBubbleChartConfig } from "../config";
 
 export function agBubble(

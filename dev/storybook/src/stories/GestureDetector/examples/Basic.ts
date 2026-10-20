@@ -1,4 +1,4 @@
-import { Alignment, Container, GestureDetector, Text, TextStyle } from 'flitter-core';
+import { Alignment, Container, GestureDetector, Text, TextStyle } from 'flitterjs';
 import { dedent } from 'ts-dedent';
 
 const Basic = {
@@ -21,7 +21,7 @@ const Basic = {
 		})
 	}),
 	code: dedent`
-		import { Container, GestureDetector, Alignment, TextStyle, Text } from 'flitter-core';
+		import { Container, GestureDetector, Alignment, TextStyle, Text } from 'flitterjs';
 			
 		Container({
 			alignment: Alignment.center,

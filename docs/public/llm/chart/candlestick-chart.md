@@ -2,7 +2,7 @@
 
 Represent open-high-low-close movement for each interval.
 
-Generated: 2026-04-08
+Generated: 2026-10-19
 
 ## Surface
 
@@ -22,7 +22,7 @@ Base-wrapper chart. Start with `chart-presets CandlestickChart` for structural d
 ## Quick Start
 
 ```ts
-import Widget from "@flitterjs/react";
+import Widget from "@flitterjs/adapter-react";
 import CandlestickChart from "./charts/candlestick-chart";
 
 const widget = CandlestickChart({

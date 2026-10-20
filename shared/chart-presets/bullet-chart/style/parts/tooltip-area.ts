@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-ui";
-import type { BulletChartCustom } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import type { BulletChartCustom } from "@flitterjs/chart";
 import type { AgBulletChartConfig } from "../config";
 import { cartesian } from "../../../_shared/ag/index";
 

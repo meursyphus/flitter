@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { TextAlign, TextDirection, TextSpan, TextStyle } from 'flitter-core';
+import { TextAlign, TextDirection, TextSpan, TextStyle } from 'flitterjs';
 import TextPainter, { Paragraph } from '../../../packages/core/src/type/_types/text-painter';
 import { RenderParagraph } from '../../../packages/core/src/component/base/BaseRichText';
 import TextOverflow from '../../../packages/core/src/type/_types/text-overflow';

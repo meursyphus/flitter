@@ -3,7 +3,7 @@ import {
 	Stack,
 	StackFit,
 	type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 
 type PieLikeItem = {
 	widget: Widget;

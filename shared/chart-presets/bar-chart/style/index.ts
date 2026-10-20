@@ -1,8 +1,8 @@
-import type { BarChartCustom } from "flitter-ui/chart";
-import type { BarChartGetScaleOptionsFn as GetScaleOptionsFn } from "flitter-ui/chart";
+import type { BarChartCustom } from "@flitterjs/chart";
+import type { BarChartGetScaleOptionsFn as GetScaleOptionsFn } from "@flitterjs/chart";
 import type { AgBarChartConfig } from "./config";
 import { defaultAgConfig } from "./config";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import { agBar } from "./parts/bar";
 import { agDataView } from "./parts/data-view";
 import { agTooltipArea } from "./parts/tooltip-area";
@@ -13,8 +13,8 @@ import {
   agScaleOptions,
   cartesian,
 } from "../../_shared/ag/index";
-import type { BarChartContext } from "flitter-ui/chart";
-import type { Widget } from "flitter-ui";
+import type { BarChartContext } from "@flitterjs/chart";
+import type { Widget } from "flitterjs";
 
 export { type AgBarChartConfig } from "./config";
 

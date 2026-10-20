@@ -20,6 +20,8 @@ export type AgPieChartConfig = AgPieSharedConfig & {
     fontFamily?: string;
     fontWeight?: string;
     radiusRatio: number;
+    /** Slices below this percentage put their label outside with a leader line, or drop it when radial labels already name the slice. 0 keeps every label inside. */
+    outsideThreshold: number;
     formatter: (args: { index: number; name: string; value: number; percentage: number; startAngle: number; sweepAngle: number }) => string;
   };
   radialLabel: {
@@ -62,6 +64,7 @@ export const defaultAgConfig: AgPieChartConfig = {
     fontColor: "white",
     fontWeight: "bold",
     radiusRatio: 0.65,
+    outsideThreshold: 10,
     formatter: (args) => `${args.percentage.toFixed(1)}%`,
   },
   radialLabel: {

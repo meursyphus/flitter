@@ -1,4 +1,4 @@
-import type { DonutChartSegmentArgs } from "flitter-ui/chart";
+import type { DonutChartSegmentArgs } from "@flitterjs/chart";
 
 export type DonutDataCenterMode = "total" | "hovered" | "hovered-or-total";
 

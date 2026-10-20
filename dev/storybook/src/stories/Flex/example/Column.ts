@@ -1,8 +1,8 @@
 import { dedent } from 'ts-dedent';
-import { Container, Flex, Axis } from 'flitter-core';
+import { Container, Flex, Axis } from 'flitterjs';
 export default {
 	code: dedent`
-  import { Flex, Container, Axis } from 'flitter-core'
+  import { Flex, Container, Axis } from 'flitterjs'
 
   Container({
 		color: 'lightblue',

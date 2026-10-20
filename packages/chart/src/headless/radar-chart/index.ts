@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import type { RadarChartCustom, RadarChartData, GetScaleFn } from "./types";
 import { RadarChartProvider } from "./provider";
 

@@ -1,5 +1,5 @@
-import type { Widget } from "flitter-ui";
-import type { DeepPartial } from "flitter-ui/chart";
+import type { Widget } from "flitterjs";
+import type { DeepPartial } from "@flitterjs/chart";
 import { BaseHeatmapChart } from "./base";
 import type { HeatmapCustom, HeatmapData } from "./base";
 import { toastStyleConfig, type ToastHeatmapChartConfig } from "./style";

@@ -5,7 +5,7 @@ import {
   StackFit,
   SizedBox,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import type { FunnelChartCustom } from "../types";
 
 export function Plot(

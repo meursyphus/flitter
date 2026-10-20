@@ -5,7 +5,7 @@ import { readText, toRelativeImport } from "./fs.mjs";
 
 const require = createRequire(import.meta.url);
 
-const ROOT_WIDGETS_IMPORT = "flitter-ui";
+const ROOT_WIDGETS_IMPORT = "flitterjs";
 const HEADLESS_SHIMS = {
   "area-chart": {
     symbol: "LineChart",
@@ -94,7 +94,7 @@ const HEADLESS_SHIMS = {
   },
 };
 
-const ROOT_PRIMITIVES_IMPORT = "flitter-ui/chart";
+const ROOT_PRIMITIVES_IMPORT = "@flitterjs/chart";
 
 function getHeadlessTypeAliases(chartName) {
   switch (chartName) {
@@ -162,7 +162,7 @@ function rewriteHeadlessTypeSpecifiers(specifiers, chartName) {
     );
 }
 
-const ROOT_DIAGRAM_IMPORT = "flitter-ui/diagram";
+const ROOT_DIAGRAM_IMPORT = "@flitterjs/diagram";
 
 async function loadRegistryFrom(candidates, label) {
   for (const candidate of candidates) {
@@ -219,9 +219,9 @@ export function isDiagramItem(item) {
 }
 
 /**
- * Diagram styles live next to the engine in this repository and import it
- * with relative paths; in a project they import the published engine from
- * `flitter-ui/diagram`. Everything else (config, parts) stays relative.
+ * Copy a diagram's base and selected style, just like chart presets. Rewrite
+ * template engine imports at any depth and specialize the public entry to the
+ * installed style; the source plugin remains in the registry.
  */
 export async function renderDiagramTemplateFile({ registry, item, file, outputRoot, targetOutputDir = item.outputDir }) {
   const sourcePath = registry.resolveTemplatePath(file.source);
@@ -229,12 +229,49 @@ export async function renderDiagramTemplateFile({ registry, item, file, outputRo
   const relativeTarget = path.posix.relative(item.outputDir, file.target);
   const targetPath = path.join(outputRoot, targetOutputDir, relativeTarget);
   content = content
-    .replace(/(['"])flitter-core\1/gu, (_, quote) => `${quote}${ROOT_WIDGETS_IMPORT}${quote}`)
-    .replace(/(['"])flitter-diagram(?:\/engine)?\1/gu, (_, quote) => `${quote}${ROOT_DIAGRAM_IMPORT}${quote}`)
+    .replace(/(['"])flitterjs\1/gu, (_, quote) => `${quote}${ROOT_WIDGETS_IMPORT}${quote}`)
+    .replace(/(['"])@flitterjs\/diagram(?:\/engine)?\1/gu, (_, quote) => `${quote}${ROOT_DIAGRAM_IMPORT}${quote}`)
     .replace(
-      /(['"])(?:\.\.\/)+(?:headless\/flow|shared\/(?:geometry|edges|changes|layout|utils))(?:\/[A-Za-z0-9_-]+)*\1/gu,
+      /(['"])(?:\.\.\/)+(?:src\/engine|headless\/flow-diagram|shared\/(?:geometry|edges|changes|layout|utils))(?:\/[A-Za-z0-9_-]+)*\1/gu,
       (_, quote) => `${quote}${ROOT_DIAGRAM_IMPORT}${quote}`,
     );
+  if (relativeTarget === "index.ts") {
+    const configType = registry.diagramMetadata[item.name].configTypes[item.style];
+    const styleConfig = `${item.style}StyleConfig`;
+    content = `import type { Widget } from "flitterjs";
+import type { DeepPartial, FlowDiagramCustom, FlowDiagramProps as HeadlessProps } from "@flitterjs/diagram";
+import { BaseFlowDiagram } from "./base";
+import { ${styleConfig}, type ${configType} } from "./style";
+
+export * from "./base";
+export * from "./style";
+export type FlowDiagramProps = Omit<HeadlessProps<${configType}>, "config" | "custom"> & {
+  config?: DeepPartial<${configType}>;
+  custom?: Partial<FlowDiagramCustom<${configType}>>;
+};
+
+export default function FlowDiagram({
+  config,
+  data,
+  custom,
+  getControlsOptions,
+  getMinimapOptions,
+  ...rest
+}: FlowDiagramProps): Widget {
+  return BaseFlowDiagram({
+    data,
+    getControlsOptions: getControlsOptions ?? (ctx => ctx.config.controls),
+    getMinimapOptions: getMinimapOptions ?? (ctx => ({ ...ctx.config.minimap, padding: ctx.config.minimap.offsetScale })),
+    config: ${styleConfig}.createConfig(config),
+    custom: { ...${styleConfig}.custom, ...custom },
+    ...rest,
+  });
+}
+`;
+  } else if (relativeTarget === "style/index.ts") {
+    content = content.replace(/import type \{ StyleConfig \} from ["']\.\.\/\.\.\/plugin["'];/u,
+      `import type { DeepPartial } from "@flitterjs/diagram";\n\nexport type StyleConfig<TConfig extends object> = {\n  custom: Partial<FlowDiagramCustom<TConfig>>;\n  createConfig: (config?: DeepPartial<TConfig>) => TConfig;\n};`);
+  }
   return { targetPath, content };
 }
 
@@ -311,12 +348,12 @@ function buildHeadlessShim(chartName) {
   }
 
   const aliasLines = Object.entries(metadata.aliases).map(
-    ([name, source]) => `export type ${name} = import("flitter-chart").${source};`,
+    ([name, source]) => `export type ${name} = import("@flitterjs/chart").${source};`,
   );
 
-  return `import { Headless } from "flitter-chart";
+  return `import { Headless } from "@flitterjs/chart";
 
-export * from "flitter-chart";
+export * from "@flitterjs/chart";
 export default Headless.${metadata.symbol};
 ${aliasLines.join("\n")}
 `;
@@ -345,9 +382,9 @@ function buildCartesianShim() {
     "getScale",
   ];
 
-  return `import { Cartesian } from "flitter-chart";
+  return `import { Cartesian } from "@flitterjs/chart";
 
-export type { CartesianContext } from "flitter-chart";
+export type { CartesianContext } from "@flitterjs/chart";
 ${members.map((member) => `export const ${member} = Cartesian.${member};`).join("\n")}
 `;
 }
@@ -525,7 +562,7 @@ export {
 } from "./cartesian/config";
 export { toastTitle } from "./title";
 export { toastLegend } from "./legend";
-export { drawSplineLine } from "flitter-ui/chart";
+export { drawSplineLine } from "@flitterjs/chart";
 export { tooltipContent } from "./tooltip";
 export * as cartesian from "./cartesian";
 
@@ -610,11 +647,11 @@ export async function renderTemplateFile({
 
   content = content
     .replace(
-      /(['"])flitter-core\1/gu,
+      /(['"])flitterjs\1/gu,
       (_, quote) => `${quote}${ROOT_WIDGETS_IMPORT}${quote}`,
     )
     .replace(
-      /(['"])flitter-chart\1/gu,
+      /(['"])@flitterjs\/chart\1/gu,
       (_, quote) => `${quote}${ROOT_PRIMITIVES_IMPORT}${quote}`,
     )
     .replace(
@@ -802,10 +839,10 @@ ${metadata.supportsGetScaleOptions ? `    getScaleOptions: getScaleOptions ?? ${
 
 export function resolveRegistryPackageRoot(packageName) {
   const candidates =
-    packageName === "flitter-chart"
-      ? ["flitter-chart/registry", "flitter-chart"]
-      : packageName === "flitter-core"
-        ? ["flitter-core/component/Tooltip", "flitter-core"]
+    packageName === "@flitterjs/chart"
+      ? ["@flitterjs/chart/registry", "@flitterjs/chart"]
+      : packageName === "flitterjs"
+        ? ["flitterjs/component/Tooltip", "flitterjs"]
         : [packageName];
 
   for (const candidate of candidates) {

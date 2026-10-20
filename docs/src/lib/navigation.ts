@@ -31,9 +31,7 @@ export const ecosystemNav: Navigation = {
   sections: [
     {
       title: "Getting Started",
-      items: [
-        { title: "Overview", href: "/" },
-      ],
+      items: [{ title: "Overview", href: "/" }],
     },
     {
       title: "Products",
@@ -45,7 +43,11 @@ export const ecosystemNav: Navigation = {
     {
       title: "Learn",
       items: [
-        { title: "Core API", href: "/advanced/what-is-flitter", dot: "bg-core" },
+        {
+          title: "Core API",
+          href: "/advanced/what-is-flitter",
+          dot: "bg-core",
+        },
         { title: "Integration", href: "/integration" },
       ],
     },
@@ -96,18 +98,16 @@ export const diagramNav: Navigation = {
         { title: "Overview", href: "/diagram" },
         { title: "Installation", href: "/diagram/installation" },
         { title: "Quick Start", href: "/diagram/quick-start" },
+        { title: "Gallery", href: "/diagram/gallery" },
       ],
     },
     {
       title: "API",
+      collapsible: true,
       items: [
-        { title: "FlowDiagram", href: "/diagram/api" },
-        { title: "Interaction", href: "/diagram/api/interaction" },
-        { title: "FlowController", href: "/diagram/api/controller" },
-        { title: "Nodes & Handles", href: "/diagram/api/nodes-and-handles" },
-        { title: "Edges", href: "/diagram/api/edges" },
-        { title: "Layout", href: "/diagram/api/layout" },
-        { title: "Styling", href: "/diagram/api/styling" },
+        { title: "Common", href: "/diagram/api" },
+        { title: "Flow Diagram", href: "/diagram/api/flow-diagram" },
+        { title: "Interactions", href: "/diagram/interactions" },
       ],
     },
   ],
@@ -138,12 +138,24 @@ export const advancedNav: NavSection[] = [
     items: [
       { title: "Align", href: "/advanced/widgets/align" },
       { title: "AnimatedAlign", href: "/advanced/widgets/animated-align" },
-      { title: "AnimatedContainer", href: "/advanced/widgets/animated-container" },
-      { title: "AnimatedFractionallySizedBox", href: "/advanced/widgets/animated-fractionally-sized-box" },
+      {
+        title: "AnimatedContainer",
+        href: "/advanced/widgets/animated-container",
+      },
+      {
+        title: "AnimatedFractionallySizedBox",
+        href: "/advanced/widgets/animated-fractionally-sized-box",
+      },
       { title: "AnimatedOpacity", href: "/advanced/widgets/animated-opacity" },
       { title: "AnimatedPadding", href: "/advanced/widgets/animated-padding" },
-      { title: "AnimatedPositioned", href: "/advanced/widgets/animated-positioned" },
-      { title: "AnimatedRotation", href: "/advanced/widgets/animated-rotation" },
+      {
+        title: "AnimatedPositioned",
+        href: "/advanced/widgets/animated-positioned",
+      },
+      {
+        title: "AnimatedRotation",
+        href: "/advanced/widgets/animated-rotation",
+      },
       { title: "AnimatedScale", href: "/advanced/widgets/animated-scale" },
       { title: "AnimatedSlide", href: "/advanced/widgets/animated-slide" },
       { title: "AspectRatio", href: "/advanced/widgets/aspect-ratio" },
@@ -155,18 +167,33 @@ export const advancedNav: NavSection[] = [
       { title: "ColoredBox", href: "/advanced/widgets/colored-box" },
       { title: "Column", href: "/advanced/widgets/column" },
       { title: "ConstrainedBox", href: "/advanced/widgets/constrained-box" },
-      { title: "ConstraintsTransformBox", href: "/advanced/widgets/constraints-transform-box" },
+      {
+        title: "ConstraintsTransformBox",
+        href: "/advanced/widgets/constraints-transform-box",
+      },
       { title: "Container", href: "/advanced/widgets/container" },
       { title: "CustomPaint", href: "/advanced/widgets/custom-paint" },
       { title: "DecoratedBox", href: "/advanced/widgets/decorated-box" },
       { title: "Draggable", href: "/advanced/widgets/draggable" },
-      { title: "InteractiveViewer", href: "/advanced/widgets/interactive-viewer" },
-      { title: "SingleChildScrollView", href: "/advanced/widgets/single-child-scroll-view" },
+      {
+        title: "InteractiveViewer",
+        href: "/advanced/widgets/interactive-viewer",
+      },
+      {
+        title: "SingleChildScrollView",
+        href: "/advanced/widgets/single-child-scroll-view",
+      },
       { title: "Expanded", href: "/advanced/widgets/expanded" },
       { title: "Flex", href: "/advanced/widgets/flex" },
       { title: "Flexible", href: "/advanced/widgets/flexible" },
-      { title: "FractionalTranslation", href: "/advanced/widgets/fractional-translation" },
-      { title: "FractionallySizedBox", href: "/advanced/widgets/fractionally-sized-box" },
+      {
+        title: "FractionalTranslation",
+        href: "/advanced/widgets/fractional-translation",
+      },
+      {
+        title: "FractionallySizedBox",
+        href: "/advanced/widgets/fractionally-sized-box",
+      },
       { title: "GestureDetector", href: "/advanced/widgets/gesture-detector" },
       { title: "Image", href: "/advanced/widgets/image" },
       { title: "IndexedStack", href: "/advanced/widgets/indexed-stack" },
@@ -186,7 +213,10 @@ export const advancedNav: NavSection[] = [
       { title: "Text", href: "/advanced/widgets/text" },
       { title: "Tooltip", href: "/advanced/widgets/tooltip" },
       { title: "Transform", href: "/advanced/widgets/transform" },
-      { title: "UnconstrainedBox", href: "/advanced/widgets/unconstrained-box" },
+      {
+        title: "UnconstrainedBox",
+        href: "/advanced/widgets/unconstrained-box",
+      },
       { title: "ZIndex", href: "/advanced/widgets/z-index" },
     ],
   },

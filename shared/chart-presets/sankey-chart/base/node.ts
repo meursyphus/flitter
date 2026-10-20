@@ -17,7 +17,7 @@ import {
   Padding,
   EdgeInsets,
   Alignment,
-} from "flitter-ui";
+} from "flitterjs";
 
 export function Node(
   ...[

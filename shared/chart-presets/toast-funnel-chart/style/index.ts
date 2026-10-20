@@ -1,6 +1,6 @@
-import { LayoutBuilder } from "flitter-ui";
-import type { FunnelChartCustom } from "flitter-ui/chart";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { LayoutBuilder } from "flitterjs";
+import type { FunnelChartCustom } from "@flitterjs/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import {
   toastTitle,
   toastLegend,

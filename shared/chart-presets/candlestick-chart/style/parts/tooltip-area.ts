@@ -18,11 +18,11 @@ import {
   Text,
   TextStyle,
   type Widget,
-} from "flitter-ui";
+} from "flitterjs";
 import type {
   CandlestickChartContext,
   CandlestickChartCustom,
-} from "flitter-ui/chart";
+} from "@flitterjs/chart";
 import { cartesian } from "../../../_shared/ag/index";
 import type { CandlestickChartConfig } from "../config";
 

@@ -1,6 +1,6 @@
-import { Container } from "flitter-ui";
-import type { FunnelChartCustom } from "flitter-ui/chart";
-import { deepMerge, type DeepPartial } from "flitter-ui/chart";
+import { Container } from "flitterjs";
+import type { FunnelChartCustom } from "@flitterjs/chart";
+import { deepMerge, type DeepPartial } from "@flitterjs/chart";
 import { agTitle, agLegend, agTooltipContent, cartesian } from "../../_shared/ag/index";
 import { Layout } from "../../_shared/ag/pie-like/layout";
 import { Plot } from "../base/plot";

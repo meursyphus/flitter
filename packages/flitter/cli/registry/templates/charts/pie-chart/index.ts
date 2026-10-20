@@ -1,4 +1,4 @@
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import { BasePieChart } from "./base";
 import type { PieChartCustom, PieChartData } from "./base";
 import { toastStyleConfig, type ToastPieChartConfig } from "./styles/toast";

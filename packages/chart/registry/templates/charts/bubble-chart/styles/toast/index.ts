@@ -4,7 +4,7 @@ import type { ToastBubbleChartConfig } from "./config";
 import { defaultToastConfig } from "./config";
 import { deepMerge } from "@utils/index";
 import { toastBubble } from "./parts/bubble";
-import type { Widget } from "flitter-core";
+import type { Widget } from "flitterjs";
 import {
   toastTitle,
   toastLegend,

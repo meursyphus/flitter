@@ -61,7 +61,7 @@ function styleBaseCoreItem(style) {
     name: `${style}-base`,
     style,
     outputDir,
-    dependencies: ["flitter-ui"],
+    dependencies: ["flitterjs", "@flitterjs/chart"],
     registryDependencies: ["flitter-base"],
     files: mapDir(`styles/${style}`, outputDir, (file) => {
       // Exclude family-specific subdirectories from the core item
@@ -96,7 +96,7 @@ function styleFamilyItem(style, family) {
     style,
     family,
     outputDir,
-    dependencies: ["flitter-ui"],
+    dependencies: ["flitterjs", "@flitterjs/chart"],
     registryDependencies: [`${style}-base`],
     files,
   };
@@ -135,7 +135,7 @@ function pluginChartItem(chart, style, family) {
     style,
     family,
     outputDir,
-    dependencies: ["flitter-ui"],
+    dependencies: ["flitterjs", "@flitterjs/chart"],
     registryDependencies: registryDeps,
     files: [
       ...mapDir(`charts/${chart}/base`, `${outputDir}/base`),
@@ -155,7 +155,7 @@ function presetChartItem(chart, style) {
     name: chart,
     style,
     outputDir,
-    dependencies: ["flitter-ui"],
+    dependencies: ["flitterjs", "@flitterjs/chart"],
     registryDependencies: [`${style}-base`],
     files: mapDir(`charts/${chart}`, outputDir, (file) => {
       if (!file.startsWith(`charts/${chart}/styles/`)) return true;
@@ -172,7 +172,7 @@ function styledCopyChartItem(chart, style, registryDependencies) {
     name: chart,
     style,
     outputDir,
-    dependencies: ["flitter-ui"],
+    dependencies: ["flitterjs", "@flitterjs/chart"],
     registryDependencies,
     files: mapDir(`charts/${chart}`, outputDir, (file) => {
       if (!file.startsWith(`charts/${chart}/styles/`)) return true;
@@ -188,7 +188,7 @@ function standaloneChartItem(chart, registryDependencies = ["flitter-base"]) {
     name: chart,
     style: null,
     outputDir: chart,
-    dependencies: ["flitter-ui"],
+    dependencies: ["flitterjs", "@flitterjs/chart"],
     registryDependencies,
     files: mapDir(`charts/${chart}`, chart),
   };
@@ -342,7 +342,7 @@ export const registryItems = [
     name: "flitter-base",
     style: null,
     outputDir: "_flitter",
-    dependencies: ["flitter-ui"],
+    dependencies: ["flitterjs", "@flitterjs/chart"],
     registryDependencies: [],
     files: [],
   },

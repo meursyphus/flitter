@@ -12,7 +12,7 @@ import {
   Border,
   BoxShadow,
   type Widget,
-} from "flitter-core";
+} from "flitterjs";
 import {
   type PlotSize,
   type TooltipAnchorRect,

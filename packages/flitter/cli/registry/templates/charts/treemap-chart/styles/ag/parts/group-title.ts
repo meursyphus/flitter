@@ -1,4 +1,4 @@
-import { Text, TextStyle, type Widget } from "flitter-core";
+import { Text, TextStyle, type Widget } from "flitterjs";
 import type { TreemapCustom } from "@headless/treemap-chart/types";
 import type { TreemapChartConfig } from "../config";
 
