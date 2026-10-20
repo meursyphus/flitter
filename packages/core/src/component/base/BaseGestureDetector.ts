@@ -375,9 +375,11 @@ export class RenderGestureDetector extends SingleChildRenderObject {
     this.hasDragListeners = true;
 
     dragBackend.connectDragSource(this, {
-      onDragStart: this.onDragStart,
-      onDragMove: this.onDragMove,
-      onDragEnd: this.onDragEnd,
+      // Reconciliation retains this detector, but replaces its widget callbacks.
+      // Resolve them at dispatch time so mode changes and rebuilds take effect.
+      onDragStart: event => this.onDragStart(event),
+      onDragMove: event => this.onDragMove(event),
+      onDragEnd: event => this.onDragEnd(event),
     });
   }
 
