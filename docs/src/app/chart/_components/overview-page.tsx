@@ -8,7 +8,7 @@ export default async function OverviewPage({
 }: {
   data: OverviewPageData;
 }) {
-  const { title, description, quickStartCode, slug } = data;
+  const { title, quickStartCode, slug } = data;
 
   return (
     <div className="mx-auto max-w-5xl px-5 md:px-10">
@@ -17,9 +17,6 @@ export default async function OverviewPage({
         <h1 className="display text-[clamp(2rem,5vw,3rem)] text-ink">
           {title}
         </h1>
-        <p className="mt-3 max-w-2xl text-base leading-relaxed text-soft">
-          {description}
-        </p>
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <CopyCommand command={`npx @flitterjs/cli@latest add ${slug[0]}`} />
@@ -82,16 +79,6 @@ export default async function OverviewPage({
             </summary>
             <div className="mt-4">
               <CodeBlock code={quickStartCode} lang="tsx" />
-              <p className="mt-3 text-[13px] text-faint">
-                See{" "}
-                <Link
-                  href="/integration"
-                  className="text-soft underline underline-offset-2 hover:text-ink"
-                >
-                  Integration guide
-                </Link>{" "}
-                for Svelte, vanilla JS, and more options.
-              </p>
             </div>
           </details>
         </section>

@@ -1,6 +1,7 @@
 import { defaultNode } from "@/components/diagram/flow-diagram";
 import {
   SizedBox,
+  Expanded,
   LayoutBuilder,
   Alignment,
   AnimatedRotation,
@@ -132,7 +133,7 @@ class PipelineState extends State<Pipeline> {
   text(value: string, size = 12, color = this.c.ink) {
     return Text(value, {
       style: new TextStyle({
-        fontFamily: "ui-monospace, monospace",
+        fontFamily: "system-ui",
         fontSize: Math.max(13, size),
         color,
       }),
@@ -155,11 +156,18 @@ class PipelineState extends State<Pipeline> {
   initState(context: Parameters<State<Pipeline>["initState"]>[0]) {
     super.initState(context);
     this.clock = setInterval(() => {
-      this.flow.run(() => {
-        for (const node of this.flow.nodes.filter(n => n.data.status === "running")) {
-          this.flow.updateNodeData(node.id, { turn: Number(node.data.turn ?? 0) + 0.5 });
-        }
-      }, { history: "ignore" });
+      this.flow.run(
+        () => {
+          for (const node of this.flow.nodes.filter(
+            (n) => n.data.status === "running",
+          )) {
+            this.flow.updateNodeData(node.id, {
+              turn: Number(node.data.turn ?? 0) + 0.5,
+            });
+          }
+        },
+        { history: "ignore" },
+      );
     }, 500);
   }
   get hovered() {
@@ -167,14 +175,24 @@ class PipelineState extends State<Pipeline> {
     return id && this.flow.getNode(id)?.type === "job" ? id : null;
   }
   get chain(): Set<string> {
-    const id = this.hovered, chain = new Set(id ? [id] : []);
+    const id = this.hovered,
+      chain = new Set(id ? [id] : []);
     for (const direction of ["source", "target"] as const) {
-      const queue = id ? [id] : [], seen = new Set(queue);
+      const queue = id ? [id] : [],
+        seen = new Set(queue);
       for (let i = 0; i < queue.length; i++) {
         for (const edge of this.flow.getNeighbours(queue[i]).edges) {
-          const next = direction === "source" && edge.target === queue[i] ? edge.source
-            : direction === "target" && edge.source === queue[i] ? edge.target : null;
-          if (next && !seen.has(next)) { seen.add(next); chain.add(next); queue.push(next); }
+          const next =
+            direction === "source" && edge.target === queue[i]
+              ? edge.source
+              : direction === "target" && edge.source === queue[i]
+                ? edge.target
+                : null;
+          if (next && !seen.has(next)) {
+            seen.add(next);
+            chain.add(next);
+            queue.push(next);
+          }
         }
       }
     }
@@ -221,6 +239,7 @@ class PipelineState extends State<Pipeline> {
         },
         { history: "ignore" },
       );
+      this.setState();
       if (step++ >= jobs.length) {
         clearInterval(this.progress);
         this.setState(() => {
@@ -271,6 +290,11 @@ class PipelineState extends State<Pipeline> {
         },
       },
       custom: {
+        controls: ({ zoomIn, zoomOut, fitView }) =>
+          Row({
+            mainAxisSize: MainAxisSize.min,
+            children: [zoomOut, zoomIn, fitView],
+          }),
         node: (args, ctx) => {
           const views: Record<string, typeof defaultNode> = {
             stage: ({ node, isCollapsed: collapsed, hiddenChildCount }) =>
@@ -399,91 +423,89 @@ class PipelineState extends State<Pipeline> {
   }
   build(): Widget {
     const n = this.flow.getNode(this.selected) ?? this.nodes[5];
-    return Stack({
-      fit: StackFit.expand,
-      children: [
-        (this.diagram ??= this.createDiagram()),
-        Positioned({
-          top: 12,
-          left: 12,
-          child: Container({
-            padding: EdgeInsets.all(10),
-            color: this.c.card,
-            child: Column({
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                this.text("acme/checkout · CI #1842", 13),
-                Row({
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    this.button(
-                      this.running ? "Run in progress…" : "▶ Simulate run",
-                      () => this.simulate(),
-                    ),
-                    this.button("Fold Build stage", () => this.fold("build")),
-                  ],
-                }),
-              ],
-            }),
-          }),
-        }),
-        Positioned({
-          key: "diagram-status",
-          right: 12,
-          bottom: 15,
-          child: Container({
-            width: 300,
-            padding: EdgeInsets.all(14),
-            decoration: new BoxDecoration({
+    const failed = n.data.status === "failed";
+    return LayoutBuilder({
+      builder: (_context, size) =>
+        Column({
+          children: [
+            Container({
+              height: 56,
               color: this.c.card,
-              border: Border.all({ color: this.c.line, width: 1 }),
-              borderRadius: BorderRadius.circular(8),
-            }),
-            child: Column({
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                this.text(`LOGS / ${n.data.label}`, 11, this.c.mute),
-                this.text(
-                  n.data.status === "failed"
-                    ? "✗ payment retries › idempotency"
-                    : `● ${n.data.status}`,
-                  11,
-                  n.data.status === "failed" ? "#e44855" : "#22a06b",
-                ),
-                this.text(
-                  n.data.status === "failed"
-                    ? "Expected 1 request, received 2\napi/payments.test.ts:148\nExit code 1"
-                    : "Runner: ubuntu-22.04\nNode.js 22 · pnpm install --frozen\nArtifacts retained for 7 days",
-                  10,
-                ),
-              ],
-            }),
-          }),
-        }),
-        Positioned({
-          bottom: 14,
-          left: 0,
-          right: 0,
-          child: LayoutBuilder({
-            builder: (_context, size) =>
-              size.maxWidth < 800
-                ? SizedBox.shrink()
-                : Container({
-                    padding: EdgeInsets.only({ left: 125, right: 328 }),
-                    child: SizedBox({
-                      key: "diagram-hint",
-                      child: this.text(
-                        "Viewer · hover to trace · click a stage to fold",
-                        10,
-                        this.c.mute,
-                      ),
+              padding: EdgeInsets.symmetric({ horizontal: 14 }),
+              child: Row({
+                children: [
+                  Expanded({
+                    child: Column({
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        this.text("checkout / CI #1842", 13),
+                        SizedBox({ height: 4 }),
+                        this.text("main · 8f3a921 · push", 11, this.c.mute),
+                      ],
                     }),
                   }),
-          }),
+                  this.button(
+                    this.running ? "Running…" : "▶ Simulate run",
+                    () => this.simulate(),
+                  ),
+                ],
+              }),
+            }),
+            Expanded({ child: (this.diagram ??= this.createDiagram()) }),
+            Container({
+              key: "diagram-status",
+              height: size.maxWidth < 540 ? 84 : 146,
+              color: this.c.card,
+              padding: EdgeInsets.all(16),
+              child: Column({
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row({
+                    children: [
+                      Expanded({
+                        child: this.text(`JOB LOG / ${n.data.label}`, 12),
+                      }),
+                      this.text(
+                        String(n.data.status).toUpperCase(),
+                        10,
+                        failed ? "#ed6973" : "#22a06b",
+                      ),
+                    ],
+                  }),
+                  SizedBox({ height: 12 }),
+                  this.text(
+                    failed
+                      ? "FAIL  payment retries › idempotency"
+                      : `Runner ubuntu-22.04 · ${n.data.status}`,
+                    12,
+                    failed ? "#ed6973" : this.c.ink,
+                  ),
+                  ...(size.maxWidth >= 540
+                    ? [
+                        SizedBox({ height: 8 }),
+                        this.text(
+                          failed
+                            ? "Expected 1 request, received 2"
+                            : `Duration: ${n.data.time}`,
+                          12,
+                          this.c.mute,
+                        ),
+                        SizedBox({ height: 6 }),
+                        this.text(
+                          failed
+                            ? "api/payments.test.ts:148  ·  Exit code 1"
+                            : "Node.js 22 · Artifacts retained for 7 days",
+                          11,
+                          this.c.mute,
+                        ),
+                      ]
+                    : []),
+                ],
+              }),
+            }),
+          ],
         }),
-      ],
     });
   }
   dispose() {

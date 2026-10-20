@@ -33,13 +33,15 @@ export async function generateMetadata({
   };
 }
 
-const mountFile = (slug: string) => `import Widget from "@flitterjs/adapter-react";
+const mountFile = (
+  slug: string,
+) => `import Widget from "@flitterjs/adapter-react";
 import CreateDiagram from "./${slug}";
 
 const diagram = CreateDiagram("light");
 
 export default function App() {
-  return <Widget widget={diagram} width="100%" height="540px" renderer="svg" />;
+  return <Widget widget={diagram} width="100%" height="600px" renderer="svg" />;
 }
 `;
 
@@ -72,11 +74,11 @@ export default async function ExamplePage({
   const related = relatedEntries(entry.slug);
 
   return (
-    <div className="mx-auto max-w-5xl px-5 pb-20 md:px-10">
+    <div className="mx-auto max-w-7xl px-5 pb-20 md:px-10">
       <section className="pt-8 pb-6 lg:pt-12">
         <Link
           href="/diagram/gallery"
-          className="inline-flex items-center gap-1 text-[13px] text-faint transition-colors hover:text-ink"
+          className="inline-flex items-center gap-1 text-base text-soft transition-colors hover:text-ink"
         >
           <svg
             width="12"
@@ -94,45 +96,44 @@ export default async function ExamplePage({
         <h1 className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)] text-ink">
           {entry.title}
         </h1>
-        <p className="mt-2 text-[13px] text-faint">
-          {entry.description ??
-            "Custom widgets composed on the installed flow-diagram preset."}
-        </p>
-        <div className="mt-5 flex flex-wrap items-center gap-3">
-          <span className="rounded-full border border-line px-3 py-1.5 text-[12px] text-soft">
-            Default
-          </span>
-          <CopyCommand command="npx @flitterjs/cli@latest add flow-diagram" />
-        </div>
       </section>
 
       <ExamplePreview slug={entry.slug} />
 
-      <section className="pt-6 text-[13px] leading-relaxed text-soft">
-        {entry.customParts?.length ? (
-          <>
-            Replaces <code>{entry.customParts.join(", ")}</code>. The engine
-            keeps drag, selection, hover and connection behavior attached.
-          </>
-        ) : (
-          <>
-            Install the preset, then pass your data and config. Replace any
-            widget through <code>custom</code>.
-          </>
-        )}
-        <p className="mt-2">
-          The command installs the shared preset. Copy the example below into
-          your project to use this variation.
-        </p>
-      </section>
-      <section className="pt-8">
-        <h2 className="mb-4 text-[15px] font-semibold text-ink">Code</h2>
+      <details
+        className="mt-6 rounded-xl border border-line bg-surface/30 p-5"
+        data-example-source
+      >
+        <summary className="cursor-pointer text-sm font-semibold text-ink">
+          Source code
+        </summary>
+        <div className="my-5">
+          <CopyCommand command="npx @flitterjs/cli@latest add flow-diagram" />
+        </div>
         <TabbedCode files={files} />
-      </section>
+        <p className="mt-5 text-sm text-soft">{entry.customization}</p>
+        <p className="mt-3 text-sm text-soft">{entry.tryIt}</p>
+        <p className="mt-3 text-sm text-soft">
+          Demo data; execution and deployment are simulated.
+        </p>
+        <div className="mt-5 flex flex-wrap gap-4">
+          {entry.references.map((reference) => (
+            <a
+              key={reference.url}
+              href={reference.url}
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm text-soft hover:text-accent"
+            >
+              {reference.name} ↗
+            </a>
+          ))}
+        </div>
+      </details>
 
       {related.length > 0 && (
         <section className="pt-14">
-          <h2 className="mb-4 text-[15px] font-semibold text-ink">Related</h2>
+          <h2 className="mb-4 text-2xl font-semibold text-ink">Related</h2>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             {related.map((other) => (
               <GalleryCard key={other.slug} entry={other} />

@@ -301,7 +301,7 @@ class DataflowState extends State<Dataflow> {
     const incoming = this.flow.edges.filter(
       (e) => !ids.has(e.source) && ids.has(e.target),
     );
-    this.flow.history.mark("Paste with incoming links");
+    this.flow.history.mark("Paste linked");
     this.flow.run(
       () => {
         const copy = this.flow.putContent(content, {
@@ -545,37 +545,16 @@ class DataflowState extends State<Dataflow> {
           top: 12,
           left: 12,
           child: this.box([
-            this.text("PRODUCT STUDIO / IMAGE GRAPH", 10, this.c.mute),
+            this.text("Image studio", 16, this.c.mute),
             Row({
               mainAxisSize: MainAxisSize.min,
               children: [
-                this.button("Paste with incoming links", () =>
-                  this.pasteWithLinks(),
-                ),
-                this.button("Add reroute dot", () => this.reroute()),
+                this.button("Paste linked", () => this.pasteWithLinks()),
+                this.button("Reroute", () => this.reroute()),
                 this.button("Undo", () => this.flow.history.undo()),
               ],
             }),
           ]),
-        }),
-        Positioned({
-          key: "diagram-hint",
-          bottom: 12,
-          left: 0,
-          right: 0,
-          child: LayoutBuilder({
-            builder: (_context, size) =>
-              size.maxWidth < 500
-                ? SizedBox.shrink()
-                : Container({
-                    padding: EdgeInsets.only({ left: 125, right: 16 }),
-                    child: this.text(
-                      "Blue: image · violet: mask · gold: number · green: text",
-                      10,
-                      this.c.mute,
-                    ),
-                  }),
-          }),
         }),
         ...(point
           ? [

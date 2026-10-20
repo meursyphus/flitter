@@ -20,6 +20,10 @@ const modules = import.meta.glob('../../../docs/src/app/diagram/_examples/*.ts',
 	eager: true
 }) as Record<string, { default: (theme: 'light' | 'dark') => Widget }>;
 const slugs = [
+	'family-tree',
+	'genetic-pedigree',
+	'decision-flowchart',
+	'edge-routing',
 	'deployment-canvas',
 	'schema-visualizer',
 	'automation-workflow',
@@ -229,8 +233,10 @@ describe('gallery recipes', () => {
 			})
 		).toBe(false);
 	});
-	it('adds an action on connection drop and undoes a complete simulated run', async () => {
+	it('keeps graph edits undoable after a sample run', async () => {
 		const { state, flow } = await mount('automation-workflow');
+		state.setMode('edit');
+		flow.configure(findFlow(state.build())!);
 		flow.handleConnectionStart('webhook', null, 'source', {
 			button: 0,
 			clientX: 200,
@@ -245,7 +251,35 @@ describe('gallery recipes', () => {
 		await vi.advanceTimersByTimeAsync(3500);
 		expect(flow.nodes.every((n) => n.data.done)).toBe(true);
 		flow.history.undo();
+		expect(flow.nodes).toHaveLength(5);
+		expect(flow.edges).toHaveLength(4);
 		expect(flow.nodes.every((n) => !n.data.done)).toBe(true);
+	});
+	it('reviews the selected branch of the edited workflow without enabling structural gestures', async () => {
+		const { state, flow } = await mount('automation-workflow');
+		expect(flow.isNodeDraggable(flow.getNode('webhook')!)).toBe(false);
+		expect(flow.isNodeConnectable(flow.getNode('qualified')!)).toBe(false);
+		state.decide('yes');
+		expect(flow.getNode('slack')!.data.done).toBe(true);
+		expect(flow.getNode('nurture')!.data.skipped).toBe(true);
+		state.clearResults();
+		state.decide('no');
+		expect(flow.getNode('nurture')!.data.done).toBe(true);
+		expect(flow.getNode('slack')!.data.skipped).toBe(true);
+
+		state.setMode('edit');
+		flow.configure(findFlow(state.build())!);
+		expect(flow.isNodeDraggable(flow.getNode('webhook')!)).toBe(true);
+		const originalIds = new Set(flow.nodes.map(node => node.id));
+		state.insert('yes');
+		const inserted = flow.nodes.find(node => !originalIds.has(node.id))!;
+		expect(inserted).toBeTruthy();
+		state.setMode('review');
+		flow.configure(findFlow(state.build())!);
+		state.decide('yes');
+		expect(flow.getNode(inserted.id)!.data.done).toBe(true);
+		expect(flow.getNode('slack')!.data.done).toBe(true);
+		expect(flow.getNode('nurture')!.data.done).toBe(false);
 	});
 	it('inserts a fixed-layout step and folds a path', async () => {
 		const { state, flow } = await mount('linear-steps');
@@ -512,4 +546,69 @@ it('the tall tree anchors its trigger below the header automatically after layou
 	const first = flow.getNodeRect('trigger')!;
 	expect(flow.flowToPanePosition(first).y).toBe(112);
 	expect(flow.zoom).toBe(0.85);
+});
+
+
+describe('distinct diagram applications', () => {
+	it('adds a child to an existing couple and preserves both parents through undo', async () => {
+		const { state, flow } = await mount('family-tree');
+		const before = new Set(flow.nodes.map(node => node.id));
+		state.addChild(flow.getNode('noah'));
+		const child = flow.nodes.find(node => !before.has(node.id))!;
+		expect(child.type).toBe('person');
+		expect(flow.getIncomers(child).map(node => node.id)).toEqual(['noah-family']);
+		expect(flow.getIncomers({ id: 'noah-family' }).map(node => node.id).sort()).toEqual(['mia', 'noah']);
+		flow.history.undo();
+		expect(flow.getNode(child.id)).toBeUndefined();
+		state.toggleBranch(flow.getNode('thomas'));
+		expect(flow.isNodeHidden(flow.getNode('noah')!)).toBe(true);
+		expect(flow.isNodeHidden(flow.getNode('eva')!)).toBe(false);
+		state.toggleBranch(flow.getNode('eva'));
+		expect(flow.isNodeHidden(flow.getNode('noah')!)).toBe(false);
+	});
+	it('edits pedigree traits independently from deceased marks and undoes each change', async () => {
+		const { state, flow, props } = await mount('genetic-pedigree');
+		const click = () => props.on!.nodeClick!({} as MouseEvent, flow.getNode('I-1')!);
+		click();
+		expect(flow.getNode('I-1')!.data.affected).toBe(true);
+		state.mode = 'deceased'; click();
+		expect(flow.getNode('I-1')!.data.deceased).toBe(true);
+		flow.history.undo();
+		expect(flow.getNode('I-1')!.data.deceased).toBe(false);
+		expect(flow.getNode('I-1')!.data.affected).toBe(true);
+		flow.history.undo();
+		expect(flow.getNode('I-1')!.data.affected).toBe(false);
+		state.mode = 'select'; click();
+		expect(flow.getNode('I-1')!.data.affected).toBe(false);
+	});
+	it('appends an editable decision shape and its connection as one undoable operation', async () => {
+		const { state, flow } = await mount('decision-flowchart');
+		const before = new Set(flow.nodes.map(node => node.id));
+		state.append('decision');
+		const decision = flow.nodes.find(node => !before.has(node.id))!;
+		expect(decision).toMatchObject({ type: 'decision', height: 112 });
+		expect(flow.getIncomers(decision).map(node => node.id)).toEqual(['inspect']);
+		flow.startEditing(decision.id);
+		expect(flow.editingId).toBe(decision.id);
+		flow.stopEditing({ commit: false });
+		flow.history.undo();
+		expect(flow.nodes).toHaveLength(7);
+		expect(flow.edges).toHaveLength(6);
+	});
+	it('changes cable geometry without losing editable bends and validates endpoint types', async () => {
+		const { state, flow, props } = await mount('edge-routing');
+		const bends = flow.getEdge('video')!.waypoints;
+		state.route('bezier');
+		expect(flow.edges.every(edge => edge.type === 'bezier')).toBe(true);
+		expect(flow.getEdge('video')!.waypoints).toEqual(bends);
+		flow.history.undo();
+		expect(flow.edges.every(edge => edge.type === 'step')).toBe(true);
+		state.clearBends();
+		expect(flow.edges.every(edge => edge.waypoints?.length === 0)).toBe(true);
+		flow.history.undo();
+		expect(flow.getEdge('video')!.waypoints).toEqual(bends);
+		const validate = (props.interaction as any).connect.validate;
+		expect(validate({ source: 'camera', target: 'encoder' })).toBe(true);
+		expect(validate({ source: 'camera', target: 'recorder' })).toBe(false);
+	});
 });

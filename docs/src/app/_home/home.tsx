@@ -5,9 +5,13 @@ import CopyCommand from "@/components/copy-command";
 import FlitterLogo from "@/components/flitter-logo";
 import LiveChart from "@/components/live-chart";
 import LiveDiagram from "@/components/live-diagram";
-import { DISCORD_URL, GITHUB_REPO_URL, INSTALL_COMMAND, NPM_URL } from "@/lib/site-config";
+import {
+  DISCORD_URL,
+  GITHUB_REPO_URL,
+  INSTALL_COMMAND,
+  NPM_URL,
+} from "@/lib/site-config";
 import { galleryCategories, galleryEntries } from "../chart/_data/gallery";
-import StyleBadge from "../chart/_components/style-badge";
 import { createLandingDiagram } from "./landing-diagram";
 import { Counter } from "./counter";
 
@@ -18,7 +22,15 @@ export type HomeCode = { hero: string; flutter: string; flitter: string };
 const createCounter = () => new Counter();
 
 /** One example per chart type, the most visual ones first. */
-const reelOrder = ["treemap", "area", "bubble", "pie", "radar", "heatmap", "candlestick"];
+const reelOrder = [
+  "treemap",
+  "area",
+  "bubble",
+  "pie",
+  "radar",
+  "heatmap",
+  "candlestick",
+];
 const reelEntries = galleryCategories
   .map((c) => galleryEntries.find((e) => e.chartType === c.id)!)
   .sort((a, b) => {
@@ -60,15 +72,24 @@ function CodeWindow({
 function IntroSection({ code }: { code: HomeCode }) {
   return (
     <section className="relative overflow-hidden border-b border-line">
-      <div className="artboard pointer-events-none absolute inset-0" aria-hidden="true" />
+      <div
+        className="artboard pointer-events-none absolute inset-0"
+        aria-hidden="true"
+      />
       <div
         className="pointer-events-none absolute -left-40 top-10 h-[460px] w-[560px] rounded-full blur-[130px]"
-        style={{ background: "var(--brand)", opacity: "calc(var(--glow) * 0.55)" }}
+        style={{
+          background: "var(--brand)",
+          opacity: "calc(var(--glow) * 0.55)",
+        }}
         aria-hidden="true"
       />
       <div
         className="pointer-events-none absolute -right-32 bottom-0 h-[420px] w-[520px] rounded-full blur-[130px]"
-        style={{ background: "var(--chart)", opacity: "calc(var(--glow) * 0.45)" }}
+        style={{
+          background: "var(--chart)",
+          opacity: "calc(var(--glow) * 0.45)",
+        }}
         aria-hidden="true"
       />
 
@@ -83,8 +104,7 @@ function IntroSection({ code }: { code: HomeCode }) {
 
           <div>
             <p className="max-w-[30rem] text-[18px] leading-relaxed text-soft">
-              Charts, diagrams and interfaces drawn by one engine. Flutter&apos;s
-              widget model, rendered to SVG or Canvas.
+              Charts, diagrams, and UI. SVG or Canvas.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-3">
@@ -106,22 +126,20 @@ function IntroSection({ code }: { code: HomeCode }) {
           </div>
         </div>
 
-        {/* A Flutter-style widget beside what it draws: side by side, nothing overlaps */}
-        <div className="mt-14 grid grid-cols-[minmax(0,1fr)] overflow-hidden rounded-xl border border-line-strong shadow-[0_40px_100px_-40px_rgba(0,0,0,0.55)] xl:grid-cols-[minmax(0,1.8fr)_minmax(0,1fr)]">
-          <CodeWindow
-            filename="counter.ts"
-            html={code.hero}
-            className="rounded-none border-0 border-b border-line xl:border-b-0 xl:border-r"
-          />
-          <div className="flex min-h-[240px] flex-col bg-[var(--chart-bg)]">
-            <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 text-[12px] text-faint">
-              <span>Rendered live · click the button</span>
-              <span className="text-soft">SVG</span>
-            </div>
-            <div className="min-h-[200px] flex-1">
-              <LiveDiagram create={createCounter} />
-            </div>
+        <div className="mt-12 overflow-hidden rounded-xl border border-line bg-[var(--chart-bg)]">
+          <div className="h-[320px]">
+            <LiveDiagram create={createCounter} />
           </div>
+          <details className="border-t border-line p-4">
+            <summary className="cursor-pointer text-base text-soft">
+              Source code
+            </summary>
+            <CodeWindow
+              filename="counter.ts"
+              html={code.hero}
+              className="mt-4"
+            />
+          </details>
         </div>
       </div>
     </section>
@@ -131,18 +149,16 @@ function IntroSection({ code }: { code: HomeCode }) {
 /* ── Libraries ────────────────────────────────────────── */
 
 function LibrariesSection() {
-  const previewEntry = galleryEntries.find((e) => e.slug === "bar-chart-toast-department-revenue")!;
+  const previewEntry = galleryEntries.find(
+    (e) => e.slug === "bar-chart-toast-department-revenue",
+  )!;
 
   return (
     <section className="mx-auto max-w-[1400px] px-5 py-20 sm:px-10 lg:py-28 xl:px-14">
       <div className="max-w-2xl">
         <h2 className="display text-[clamp(2rem,4vw,3.25rem)] text-ink">
-          Libraries on one engine
+          Built with Flitter
         </h2>
-        <p className="mt-4 text-[17px] leading-relaxed text-soft">
-          Each library is a set of Flitter widgets, so they share layout,
-          painting, gestures and animation, and render anywhere Flitter does.
-        </p>
       </div>
 
       <div className="mt-12 grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
@@ -155,18 +171,18 @@ function LibrariesSection() {
             <span className="wordmark text-[26px] text-ink">
               FLITTER <span className="text-chart">CHART</span>
             </span>
-            <span className="rounded-full bg-chart/15 px-2.5 py-0.5 text-[12px] font-semibold text-chart">
-              New
-            </span>
           </div>
-          <p className="mt-3 max-w-md text-[16px] leading-relaxed text-soft">
-            shadcn-style charts installed as source. {galleryCategories.length} chart
-            types, each in AG and Toast styles.
-          </p>
           <div className="mt-6 min-h-[260px] flex-1 overflow-hidden rounded-xl border border-line bg-[var(--chart-bg)] p-3">
-            <LiveChart create={previewEntry.createWidget} animate={false} lazy />
+            <LiveChart
+              create={previewEntry.createWidget}
+              animate={false}
+              lazy
+            />
           </div>
-          <Link href="/chart" className="mt-5 self-start text-[15px] font-semibold text-chart hover:underline">
+          <Link
+            href="/chart"
+            className="mt-5 self-start text-[15px] font-semibold text-chart hover:underline"
+          >
             Open Flitter Chart →
           </Link>
         </div>
@@ -180,19 +196,20 @@ function LibrariesSection() {
           <span className="wordmark text-[26px] text-ink">
             FLITTER <span className="text-core">CORE</span>
           </span>
-          <p className="mt-3 text-[16px] leading-relaxed text-soft">
-            The rendering engine: 50+ widgets, constraint layout, gestures and
-            animation controllers, with React and Svelte adapters.
-          </p>
           <pre className="mt-5 overflow-x-auto rounded-lg border border-line bg-canvas px-4 py-3 text-[13px] leading-relaxed text-soft">
             <code className="!border-0 !bg-transparent !p-0">
-              <span className="text-core">Container</span>({"{"}{"\n"}
-              {"  "}padding: EdgeInsets.<span className="text-core">all</span>(16),{"\n"}
-              {"  "}child: <span className="text-core">Text</span>(<span className="text-ok">&quot;Hello, canvas&quot;</span>),{"\n"}
+              <span className="text-core">Container</span>({"{"}
+              {"\n"}
+              {"  "}padding: EdgeInsets.<span className="text-core">all</span>
+              (16),{"\n"}
+              {"  "}child: <span className="text-core">Text</span>(
+              <span className="text-ok">&quot;Hello, canvas&quot;</span>),{"\n"}
               {"}"})
             </code>
           </pre>
-          <span className="mt-5 text-[15px] font-semibold text-core group-hover:underline">Read the core docs →</span>
+          <span className="mt-5 text-[15px] font-semibold text-core group-hover:underline">
+            Read the core docs →
+          </span>
         </Link>
 
         {/* Diagram: live and editable in place (drag, connect, undo) */}
@@ -204,18 +221,14 @@ function LibrariesSection() {
             <span className="wordmark text-[26px] text-ink">
               FLITTER <span className="text-script">DIAGRAM</span>
             </span>
-            <span className="whitespace-nowrap rounded-full bg-script/15 px-2.5 py-0.5 text-[12px] font-semibold text-script">
-              New
-            </span>
           </div>
-          <p className="mt-3 text-[16px] leading-relaxed text-soft">
-            Node and edge editors with undo, copy and paste, snapping and
-            context menus built in. You own every pixel; SVG or Canvas.
-          </p>
           <div className="mt-5 h-52 overflow-hidden rounded-lg border border-line bg-[var(--chart-bg)]">
             <LiveDiagram create={createLandingDiagram} lazy />
           </div>
-          <Link href="/diagram" className="mt-5 self-start text-[15px] font-semibold text-script hover:underline">
+          <Link
+            href="/diagram"
+            className="mt-5 self-start text-[15px] font-semibold text-script hover:underline"
+          >
             Open Flitter Diagram →
           </Link>
         </div>
@@ -234,12 +247,8 @@ function ReelSection() {
       <div className="mx-auto flex max-w-[1400px] flex-wrap items-end justify-between gap-6 px-5 sm:px-10 xl:px-14">
         <div className="max-w-xl">
           <h2 className="display text-[clamp(2rem,4vw,3.25rem)] text-ink">
-            No screenshots here
+            Charts
           </h2>
-          <p className="mt-4 text-[17px] leading-relaxed text-soft">
-            Every chart on this page is drawn by Flitter as you scroll. Hover
-            one to see its tooltip, or switch the theme up top.
-          </p>
         </div>
         <Link
           href="/chart/gallery"
@@ -249,7 +258,10 @@ function ReelSection() {
         </Link>
       </div>
 
-      <div className="reel mt-12" style={{ ["--reel-duration" as string]: "120s" }}>
+      <div
+        className="reel mt-12"
+        style={{ ["--reel-duration" as string]: "120s" }}
+      >
         <div className="reel-track">
           {items.map((entry, i) => (
             <div
@@ -265,8 +277,9 @@ function ReelSection() {
                 tabIndex={i >= reelEntries.length ? -1 : undefined}
                 className="flex items-center justify-between gap-3 border-t border-line px-4 py-2.5 hover:bg-surface"
               >
-                <span className="truncate text-[13px] text-soft">{entry.title} →</span>
-                <StyleBadge style={entry.style} />
+                <span className="truncate text-base font-medium text-ink">
+                  {entry.title} →
+                </span>
               </Link>
             </div>
           ))}
@@ -285,16 +298,17 @@ function WhySection({ code }: { code: HomeCode }) {
         <h2 className="display text-[clamp(2rem,4vw,3.25rem)] text-ink">
           Flutter&apos;s API, written in JavaScript
         </h2>
-        <p className="mt-4 text-[17px] leading-relaxed text-soft">
-          If you have built a Flutter widget, you can read Flitter. Same
-          widgets, same constraints, one engine for SVG and Canvas.
-        </p>
       </div>
 
       <div className="mt-12 grid gap-6 md:grid-cols-2">
         <div>
           <div className="mb-3 flex items-center gap-2 text-[15px] font-semibold text-ink">
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="#027DFD" aria-hidden="true">
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="#027DFD"
+              aria-hidden="true"
+            >
               <path d="M14.314 0L2.3 12 6 15.7 21.684 0h-7.357zm0 11.066L7.758 17.38l2.39 2.39 4.17-4.17 5.32-5.32-1.324-1.214z" />
             </svg>
             Flutter
@@ -334,10 +348,6 @@ function ProductionSection() {
                 easyrd.dev
               </a>
             </h2>
-            <p className="mt-4 text-[17px] leading-relaxed text-soft">
-              A database diagram editor used by more than 10,000 people, built
-              with SvelteKit, Flitter and DBML.
-            </p>
           </div>
         </div>
         <div className="mt-10 overflow-hidden rounded-2xl border border-line">
@@ -373,16 +383,17 @@ function MaintainerSection() {
               className="text-soft transition-colors hover:text-[#0A66C2]"
               aria-label="Daeseung Moon on LinkedIn"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
                 <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
               </svg>
             </a>
           </h2>
-          <p className="mt-1 text-[15px] text-faint">Maintainer</p>
-          <blockquote className="mt-5 border-l-2 border-ok pl-4 text-[17px] leading-relaxed text-soft">
-            Korean frontend developer, 7 years in. I love building visual
-            experiences on the web.
-          </blockquote>
 
           <a
             href="https://ssgoi.dev"
@@ -399,9 +410,6 @@ function MaintainerSection() {
               <span className="block text-[15px] font-semibold text-ink">
                 Also by Daeseung: ssgoi
               </span>
-              <span className="mt-0.5 block text-[14px] text-soft">
-                Page transitions for the web, 800+ stars on GitHub
-              </span>
             </span>
           </a>
         </div>
@@ -415,15 +423,14 @@ function MaintainerSection() {
 function LastSection() {
   return (
     <section className="relative overflow-hidden border-t border-line">
-      <div className="artboard pointer-events-none absolute inset-0" aria-hidden="true" />
+      <div
+        className="artboard pointer-events-none absolute inset-0"
+        aria-hidden="true"
+      />
       <div className="relative mx-auto max-w-3xl px-5 py-24 text-center sm:px-10 lg:py-32">
         <h2 className="display text-[clamp(2.5rem,5.5vw,4.5rem)] text-ink">
           Draw something
         </h2>
-        <p className="mx-auto mt-5 max-w-md text-[17px] leading-relaxed text-soft">
-          Start from a chart or a diagram in the gallery, or build your own
-          widget tree on the core engine.
-        </p>
         <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/chart/gallery"
@@ -490,12 +497,14 @@ function Footer() {
             <span className="wordmark text-[17px] text-ink">FLITTER</span>
           </div>
           <p className="mt-3 max-w-xs text-[14px] leading-relaxed text-faint">
-            A rendering engine for the web, modeled on Flutter. MIT licensed.
+            MIT licensed.
           </p>
         </div>
         {FOOTER_COLUMNS.map((column) => (
           <div key={column.title}>
-            <h3 className="text-[13px] font-semibold text-ink">{column.title}</h3>
+            <h3 className="text-[13px] font-semibold text-ink">
+              {column.title}
+            </h3>
             <ul className="mt-3 space-y-2">
               {column.links.map((link) => {
                 const external = link.href.startsWith("http");
@@ -503,7 +512,9 @@ function Footer() {
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                      {...(external
+                        ? { target: "_blank", rel: "noopener noreferrer" }
+                        : {})}
                       className="text-[14px] text-soft transition-colors hover:text-ink"
                     >
                       {link.label}
