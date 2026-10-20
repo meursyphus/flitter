@@ -1,0 +1,58 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "docs",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "docs",
+        "dev"
+      ],
+      "port": 3000
+    },
+    {
+      "name": "docs-text-spacing",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "/Users/moon/work/\uc624\ud508\uc18c\uc2a4/flitter-wt-text-spacing/docs",
+        "exec",
+        "next",
+        "dev",
+        "-p",
+        "3100"
+      ],
+      "port": 3100
+    },
+    {
+      "name": "chart-storybook-text-spacing",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "/Users/moon/work/\uc624\ud508\uc18c\uc2a4/flitter-wt-text-spacing/dev/chart-storybook",
+        "exec",
+        "storybook",
+        "dev",
+        "-p",
+        "6107",
+        "--no-open"
+      ],
+      "port": 6107
+    },
+    {
+      "name": "docs-pie-labels",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "/Users/moon/work/오픈소스/flitter-wt-pie-labels/docs",
+        "exec",
+        "next",
+        "dev",
+        "-p",
+        "3200"
+      ],
+      "port": 3200
+    }
+  ]
+}
