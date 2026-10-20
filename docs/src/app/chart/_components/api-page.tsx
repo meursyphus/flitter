@@ -7,7 +7,6 @@ import type { ApiPageData } from "../_data/types";
 export default function ApiPage({ data }: { data: ApiPageData }) {
   const {
     title,
-    description,
     parent,
     dataFormat,
     agConfig,
@@ -42,9 +41,6 @@ export default function ApiPage({ data }: { data: ApiPageData }) {
         <h1 className="display mt-3 text-[clamp(1.75rem,4vw,2.5rem)] text-ink">
           {title}
         </h1>
-        <p className="mt-3 max-w-2xl text-base leading-relaxed text-soft">
-          {description}
-        </p>
       </section>
 
       <div className="space-y-8 pb-16">
@@ -83,12 +79,7 @@ export default function ApiPage({ data }: { data: ApiPageData }) {
             <h2 className="mb-3 text-lg font-semibold text-ink">
               Custom Parts
             </h2>
-            <p className="mb-3 text-[13px] text-soft">
-              Override any visual element by providing a custom builder function:{" "}
-              <code className="text-xs">
-                {"(args, context) => Widget"}
-              </code>
-            </p>
+            <code className="mb-3 block text-sm text-soft">(args, context) =&gt; Widget</code>
             <div className="overflow-x-auto rounded-lg border border-line">
               <table className="w-full text-[13px]">
                 <thead>
@@ -136,9 +127,6 @@ export default function ApiPage({ data }: { data: ApiPageData }) {
                 {context.typeName}
               </code>
             </h2>
-            <p className="mb-3 text-[13px] text-soft">
-              Available in every custom builder via the second argument.
-            </p>
             <div className="overflow-x-auto rounded-lg border border-line">
               <table className="w-full text-[13px]">
                 <thead>

@@ -7,8 +7,6 @@ export const metadata = {
 
 # Installation
 
-Flitter chart styles are copied into your project as editable source. They use `@flitterjs/chart` for headless chart logic and `flitterjs` for rendering. Your framework adapter connects the engine to your app.
-
 ## Prerequisites
 
 - **Node.js** 18 or later
@@ -16,8 +14,6 @@ Flitter chart styles are copied into your project as editable source. They use `
 - A package manager: npm, pnpm, or yarn
 
 ## Quick setup
-
-Install the engine and your framework adapter, then initialize Flitter:
 
 ```bash
 npm install flitterjs @flitterjs/adapter-react
@@ -56,13 +52,11 @@ charts/
         └── utils/
 ```
 
-Every file is yours. Open any file, read the widget tree, change what you want. The `parts/` folder is where most visual customization happens — each file is a small widget factory you can replace entirely.
+Edit `style/parts/` to customize visuals.
 
 The CLI is only needed when copying templates. Keep `flitterjs`, `@flitterjs/chart`, and your framework adapter installed at runtime.
 
 ## Choose a style
-
-Each chart comes with multiple visual styles. Pick one during install:
 
 ```bash
 npx @flitterjs/cli@latest add bar-chart --style toast
@@ -107,7 +101,7 @@ export default function App() {
 
 ## Next steps
 
-- [Quick Start](/chart/quick-start) — Build your first chart in 5 minutes
-- [Browse Charts](/chart) — See all available chart types
+- [Quick Start](/chart/quick-start)
+- [Charts](/chart)
 
 </div>

@@ -13,10 +13,6 @@ export default function DiagramLanding() {
               <br />
               <span className="text-script">a widget.</span>
             </h1>
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-soft">
-              <code className="text-ink">custom</code> replaces the UI. The
-              engine handles drag, connections, and history.
-            </p>
           </div>
           <Link
             href="/diagram/quick-start"
@@ -30,11 +26,8 @@ export default function DiagramLanding() {
       <section className="grid gap-8 border-t border-line py-10 lg:grid-cols-2 lg:items-center">
         <div>
           <h2 className="display text-3xl text-ink">Your source code.</h2>
-          <p className="mt-3 text-base leading-7 text-soft">
-            The CLI copies the visual widgets into your project.
-          </p>
           <Link href="/diagram/widget-structure" className="mt-4 inline-block text-base text-accent underline underline-offset-4">
-            Explore the widget tree →
+            Widget structure →
           </Link>
         </div>
         <CopyCommand command="npx @flitterjs/cli@latest add flow-diagram" />
@@ -44,7 +37,7 @@ export default function DiagramLanding() {
         className="group flex items-center justify-between gap-5 border-y border-line py-8 text-ink hover:text-accent"
       >
         <span className="display text-[clamp(1.75rem,3vw,2.5rem)]">
-          Explore the gallery
+          Gallery
         </span>
         <span
           aria-hidden="true"

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   ApiTable,
   CollapsibleSection,
@@ -95,7 +94,7 @@ const controllerColumns: ApiColumn<ControllerRow>[] = [
         {r.name}
         {r.planned && (
           <span className="rounded bg-surface px-1 py-0.5 font-sans text-[10px] text-faint">
-            P2
+            Planned
           </span>
         )}
       </span>
@@ -125,17 +124,6 @@ export default function DiagramApiPage() {
         <h1 className="display text-[clamp(1.75rem,4vw,2.5rem)] text-ink">
           Engine API
         </h1>
-        <p className="mt-3 text-base text-soft">
-          Shared data, behavior and controller APIs. The installed preset fills
-          the visual slots; pass only the widgets you want to replace.
-        </p>
-        <p className="mt-3 text-sm text-soft">
-          Start with{" "}
-          <Link href="/diagram/widget-structure" className="text-accent underline">
-            Widget Structure
-          </Link>{" "}
-          to understand composition and customization. Use this reference for exact props, builder arguments and controller members.
-        </p>
         <nav
           aria-label="API sections"
           className="mt-4 flex flex-wrap gap-4 text-[13px] text-accent"
@@ -177,7 +165,7 @@ export default function DiagramApiPage() {
         <section className="space-y-4">
           <H2 id="interaction">Interaction</H2>
           <p className="text-[13px] text-soft">
-            Values per preset. Mod is ⌘ on macOS and Ctrl elsewhere.
+            Mod: ⌘ on macOS, Ctrl elsewhere.
           </p>
           <pre className="code-surface overflow-x-auto rounded-lg p-4 text-[13px] text-ink">
             <code>{PRESET_SNIPPET}</code>
@@ -217,8 +205,7 @@ export default function DiagramApiPage() {
         <section className="space-y-4">
           <H2 id="controller">Controller</H2>
           <p className="text-[13px] text-soft">
-            Builders get it as <code className="text-xs">context</code>. P2
-            marks methods still being built.
+            Available as <code className="text-xs">context</code>.
           </p>
           {controllerGroups.map((g, i) => (
             <CollapsibleSection

@@ -43,13 +43,13 @@ FlowDiagram({
 });`;
 
 const extensionPoints = [
-  ["Colors, spacing and default sizes", "config", "Tune the installed widgets without replacing their structure."],
-  ["Node content, labels, ports and edge visuals", "custom.node, nodeLabel, handle, edge, edgeLabel", "Return your own widgets using supplied data and interaction state."],
-  ["Workspace, control layout and minimap", "custom.layout, controls, minimap", "Arrange supplied children, preserving their existing behavior."],
-  ["Connection points and edge routing", "getHandles, getEdgePath", "Return geometry that the engine uses for connections and hit testing."],
-  ["Automatic node arrangement", "layout", "Choose a graph layout algorithm. custom.layout instead arranges the surrounding UI."],
-  ["Gestures, connection rules and permissions", "interaction, can, nodeOptions", "Configure behavior independently from the widgets that display it."],
-  ["Application commands and reactions", "getContextMenuItems, on, controller", "Define menu actions, react to events, or update the graph programmatically."],
+  ["Colors, spacing and sizes", "config"],
+  ["Nodes, labels, ports and edges", "custom.node, custom.nodeLabel, custom.handle, custom.edge, custom.edgeLabel"],
+  ["Workspace and overlays", "custom.layout, custom.controls, custom.minimap"],
+  ["Connection points and routing", "getHandles, getEdgePath"],
+  ["Graph node positions", "layout"],
+  ["Gestures and permissions", "interaction, can, nodeOptions"],
+  ["Commands and events", "getContextMenuItems, on, controller"],
 ];
 
 function Section({
@@ -72,42 +72,24 @@ function Section({
 export default function WidgetStructurePage() {
   return (
     <div className="mx-auto max-w-5xl px-5 pb-16 md:px-10">
-      <header className="pt-8 pb-10 lg:pt-12">
-        <p className="mb-3 text-sm font-medium text-accent">Guides</p>
+      <header className="pt-8 pb-6 lg:pt-12">
         <h1 className="display text-[clamp(2rem,5vw,3rem)] text-ink">Widget structure</h1>
-        <p className="mt-5 max-w-2xl text-lg leading-8 text-soft">
-          A diagram is a tree of widgets. Replace a leaf to change its appearance, or a parent to rearrange its children.
-        </p>
-        <nav aria-label="Guide sections" className="mt-6 flex flex-wrap gap-x-5 gap-y-3 text-sm text-accent">
-          {[
-            ["widget-tree", "The widget tree"],
-            ["how-it-works", "How it works"],
-            ["customize", "Replace a widget"],
-            ["extension-points", "Choose an extension point"],
-          ].map(([id, label]) => <a key={id} href={`#${id}`} className="hover:underline">{label}</a>)}
-        </nav>
       </header>
 
       <div className="space-y-14 text-base leading-7 text-soft">
-        <Section id="widget-tree" title="The widget tree">
-          <p>
-            This is the installed preset&apos;s public composition tree.
-            Gesture wrappers and internal render objects are omitted so you can focus on the replaceable parts.
-          </p>
+        <section id="widget-tree" aria-label="Widget tree" className="scroll-mt-24 space-y-5">
           <WidgetTree />
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="rounded-xl border border-line bg-surface p-5">
               <h3 className="mb-2 font-semibold text-ink">Flow space</h3>
               <p className="text-sm leading-6">
-                Nodes, edges, connection previews and alignment guides move with the viewport.
-                Their coordinates belong to the graph.
+                Nodes, edges and guides pan and zoom with the graph.
               </p>
             </div>
             <div className="rounded-xl border border-line bg-surface p-5">
               <h3 className="mb-2 font-semibold text-ink">Screen space</h3>
               <p className="text-sm leading-6">
-                Controls, toolbars, menus and the selection marquee sit outside the zoom transform.
-                A toolbar follows its node without scaling.
+                Controls, toolbars, menus and the selection marquee keep their size during zoom.
               </p>
             </div>
           </div>
@@ -115,15 +97,15 @@ export default function WidgetStructurePage() {
             <code>nodeBox</code> and <code>edgeBox</code> repeat for each graph item.
             The viewport receives an interleaved <code>items</code> list, preserving paint and hit-test order.
           </p>
-        </Section>
+        </section>
 
-        <Section id="how-it-works" title="How the engine builds it">
+        <Section id="how-it-works" title="How it works">
           <ol className="grid gap-5 sm:grid-cols-2">
             {[
-              ["01", "Resolve the preset", "The installed source merges your config with style defaults. Your custom builders replace matching defaults; all other parts remain available."],
-              ["02", "Build children and attach behavior", "The engine prepares labels, handles and controls. It wraps interactive visuals with gestures before passing them to their parent builders."],
-              ["03", "Compose and measure", "Parent builders place the supplied children. The scene measures node bodies and inline ports after layout, then updates connection geometry."],
-              ["04", "Update the affected widgets", "Controller signals rebuild affected node and edge subtrees. Flitter lays out and paints those widgets using SVG or Canvas."],
+              ["01", "Resolve defaults", "Merge config and custom overrides with the preset."],
+              ["02", "Attach behavior", "Build labels, ports and buttons. Attach gestures before passing children to their parents."],
+              ["03", "Measure", "Lay out widgets, measure node bodies and inline ports, then update connection geometry."],
+              ["04", "Render", "Controller signals rebuild affected subtrees. Flitter paints them with SVG or Canvas."],
             ].map(([number, title, description]) => (
               <li key={number} className="rounded-xl border border-line p-5">
                 <span className="font-mono text-sm text-accent">{number}</span>
@@ -132,82 +114,69 @@ export default function WidgetStructurePage() {
               </li>
             ))}
           </ol>
+          <code className="block text-sm text-ink">(args, context) =&gt; Widget</code>
           <p>
-            A builder receives <code>(args, context)</code> and returns a <code>Widget</code>.
-            Args contain data, derived state and sometimes child widgets.
-            Context provides the controller and resolved config.
-          </p>
-          <p>
-            When a node becomes selected, the engine passes <code>isSelected</code> to its builder.
-            Your widget draws that state; the controller keeps selection, dragging, connections and history consistent.
+            <code>args</code>: data, interaction state and child widgets.{" "}
+            <code>context</code>: controller and resolved config.
           </p>
           <p className="text-sm">
-            Builders describe UI. Keep application state in a <code>StatefulWidget</code>, update it with <code>setState()</code>,
-            and use <code>GestureDetector</code> for additional application actions.
+            Use <code>StatefulWidget</code> and <code>setState()</code> for application state.
+            Add application actions with <code>GestureDetector</code>.
           </p>
         </Section>
 
-        <Section id="customize" title="Replace a widget, keep its behavior">
+        <Section id="customize" title="Custom widgets">
           <p>
-            These examples reuse <code>data</code> from the{" "}
+            <code>data</code> from{" "}
             <Link href="/diagram/quick-start" className="text-accent underline">Quick Start</Link>.
           </p>
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-ink">Start with a node body</h3>
+            <h3 className="text-lg font-semibold text-ink">Node body</h3>
             <p>
-              This override changes the body and selection border.
-              Reusing <code>label</code> keeps the preset&apos;s label implementation, including its editable text.
-              The engine still attaches the node&apos;s standard gestures.
+              Reuse <code>label</code> to keep editable text. The engine attaches node gestures.
             </p>
             <HighlightedCode code={NODE} lang="typescript" />
             <p className="text-sm">
               For several node designs, dispatch on <code>args.node.type</code> inside <code>custom.node</code>.
-              Each design still returns an ordinary Flitter widget.
             </p>
           </div>
           <div className="space-y-4 pt-4">
-            <h3 className="text-lg font-semibold text-ink">Then rearrange a parent</h3>
+            <h3 className="text-lg font-semibold text-ink">Control layout</h3>
             <p>
-              <code>custom.controls</code> receives complete button widgets.
-              Changing their order changes the layout while preserving zoom, fit and lock actions.
-              Use <code>custom.controlButton</code> to change each button&apos;s appearance.
+              Supplied buttons already have actions. Change their appearance with <code>custom.controlButton</code>.
             </p>
             <HighlightedCode code={CONTROLS} lang="typescript" />
           </div>
           <div className="rounded-xl border border-line bg-surface p-5">
-            <h3 className="mb-3 font-semibold text-ink">When replacing larger branches</h3>
+            <h3 className="mb-3 font-semibold text-ink">Structural overrides</h3>
             <ul className="list-disc space-y-2 pl-5 text-sm leading-6">
-              <li>Keep the supplied children you need. Omitting a child also removes its UI and attached interactions.</li>
-              <li>Place each inline handle once inside its node. The engine measures its rendered position.</li>
+              <li>Omitting a supplied child removes its UI and interactions.</li>
+              <li>Place each inline handle once so the engine can measure its position.</li>
               <li>Preserve scene measurement, attachment placement and item order when replacing <code>viewport</code> or <code>nodeBox</code>.</li>
               <li>Start from the copied <code>base/</code> functions for structural overrides. Return <code>SizedBox.shrink()</code> for an empty visual.</li>
             </ul>
           </div>
-          <p>
-            See{" "}
-            <Link href="/diagram/gallery/automation-workflow" className="text-accent underline">a custom workspace</Link>{" "}
-            or{" "}
-            <Link href="/diagram/gallery/schema-visualizer" className="text-accent underline">inline ports inside table rows</Link>{" "}
-            for complete implementations.
-          </p>
+          <div className="flex flex-wrap gap-4">
+            <Link href="/diagram/gallery/automation-workflow" className="text-accent underline">Workspace example →</Link>
+            <Link href="/diagram/gallery/schema-visualizer" className="text-accent underline">Inline ports example →</Link>
+          </div>
         </Section>
 
-        <Section id="extension-points" title="Choose the part you want to change">
+        <Section id="extension-points" title="Extension points">
           <div className="overflow-x-auto rounded-xl border border-line">
             <table className="w-full text-left text-sm leading-6">
               <thead className="bg-surface text-ink">
                 <tr>
-                  <th className="p-4 font-semibold">What you want to change</th>
-                  <th className="p-4 font-semibold">Where it belongs</th>
+                  <th className="p-4 font-semibold">Change</th>
+                  <th className="p-4 font-semibold">API</th>
                 </tr>
               </thead>
               <tbody>
-                {extensionPoints.map(([change, point, description]) => (
+                {extensionPoints.map(([change, point]) => (
                   <tr key={point} className="border-t border-line align-top">
                     <td className="p-4 text-ink">{change}</td>
                     <td className="p-4">
                       <code className="text-xs text-accent">{point}</code>
-                      <p className="mt-1">{description}</p>
                     </td>
                   </tr>
                 ))}
@@ -215,12 +184,11 @@ export default function WidgetStructurePage() {
             </table>
           </div>
           <p>
-            Edit the CLI-installed <code>style/parts/</code> files to change shared defaults.
-            Pass <code>custom</code> overrides to customize one diagram instance.
+            Edit <code>style/parts/</code> for shared defaults; use <code>custom</code> for one diagram instance.
           </p>
           <div className="flex flex-wrap gap-4 border-t border-line pt-6">
-            <Link href="/diagram/api" className="text-accent underline">Engine API: props, builder args and controller →</Link>
-            <Link href="/diagram/api/flow-diagram" className="text-accent underline">Flow Diagram API: preset configuration →</Link>
+            <Link href="/diagram/api" className="text-accent underline">Engine API →</Link>
+            <Link href="/diagram/api/flow-diagram" className="text-accent underline">Flow Diagram API →</Link>
           </div>
         </Section>
       </div>

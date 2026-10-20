@@ -104,13 +104,6 @@ export default function FlowDiagramApi() {
         <h1 className="display mt-3 text-[clamp(1.75rem,4vw,2.5rem)] text-ink">
           Flow Diagram
         </h1>
-        <p className="mt-3 max-w-2xl text-base text-soft">
-          The installed preset combines data, config and replaceable widgets.
-          Import it from your copied source.
-        </p>
-        <Link href="/diagram/widget-structure" className="mt-3 inline-block text-sm text-accent underline">
-          Learn how the widget tree fits together →
-        </Link>
       </section>
       <div className="space-y-8">
         <section>
@@ -119,18 +112,13 @@ export default function FlowDiagramApi() {
         </section>
         <CollapsibleSection title="Default Style Config" defaultOpen>
           <p className="mb-4 text-[13px] text-soft">
-            Nested overrides merge with the defaults. The full typed config
-            lives in your installed style/config.ts.
+            Nested overrides merge with defaults. Full types: <code>style/config.ts</code>.
           </p>
           <ConfigTable sections={sections} />
         </CollapsibleSection>
         <section>
           <h2 className="mb-3 text-lg font-semibold text-ink">Custom Parts</h2>
-          <p className="mb-4 text-[13px] text-soft">
-            Every builder is (args, context) → Widget. Parent slots receive
-            child widgets with behavior already attached. Leaves receive data
-            and derived interaction state.
-          </p>
+          <code className="mb-4 block text-sm text-soft">(args, context) =&gt; Widget</code>
           <ApiTable
             columns={[
               { label: "Part", cell: (s) => s.slot, tone: "name" },
@@ -154,16 +142,13 @@ export default function FlowDiagramApi() {
         <section>
           <h2 className="mb-3 text-lg font-semibold text-ink">Context</h2>
           <p className="text-[13px] leading-relaxed text-soft">
-            Builders receive FlowDiagramController plus the resolved config. Use
-            derived args such as isHovered and isSelected to draw your widgets.
-            Standard gestures are wired by the engine.{" "}
+            <code>FlowDiagramController</code> with resolved <code>config</code>.{" "}
             <Link
               href="/diagram/api#controller"
               className="text-accent underline"
             >
               Controller methods
-            </Link>{" "}
-            support application actions such as search, save and adding nodes.
+            </Link>
           </p>
         </section>
         <section>
@@ -171,14 +156,10 @@ export default function FlowDiagramApi() {
             Geometry and behavior
           </h2>
           <p className="text-[13px] leading-relaxed text-soft">
-            Use getHandles for connection points, getEdgePath for routing,
-            nodeOptions for per-type interaction metadata, and
-            getContextMenuItems for application commands. These strategies
-            return data, while custom contains only widgets. See the{" "}
+            Geometry and behavior props return data; <code>custom</code> returns widgets.{" "}
             <Link href="/diagram/api" className="text-accent underline">
-              engine API
-            </Link>{" "}
-            for all props and events.
+              Engine API →
+            </Link>
           </p>
         </section>
       </div>
